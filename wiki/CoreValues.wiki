@@ -1,7 +1,7 @@
 #summary Core values around which Spock is built.
+#labels Phase-Requirements
 
  * Style matters
  * Make simple things easy, and difficult things possible
  * Reuse where a good solution exists, and innovate where it advances the state-of-the-art
-
 

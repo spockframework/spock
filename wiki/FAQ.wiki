@@ -1,5 +1,3 @@
-#summary Spock Official FAQ
-
 = Spock Official FAQ =
                                                                                           
 0. Why "Spock"?
@@ -8,7 +6,7 @@
 
 1. Given that Spock has been in the works for quite a while, why wasn't it released any sooner?
 
- Our chief ambassador told us to wait for the release of Groovy 1.6, the first Groovy version officially "Designed for Vulcans"(TM).
+ Our chief ambassador told us to wait for the release of Groovy 1.6, the first Groovy version officially _Designed for Vulcans_^TM^.
 
 2. Are you guys Trekkies by any chance?
 

@@ -1,3 +1,5 @@
+#summary The official FAQ.
+
 0. Why "Spock"?
 
  A timely blend of the finest ingredients: "Spec", "Mock", human emotion, and Vulcan brain powder. (Plus, "A`***`Peck" was already taken.)

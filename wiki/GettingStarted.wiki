@@ -15,11 +15,15 @@ Detailed instructions for these two steps can be found in the [http://groovy.cod
 
 Need help? Ask in our [http://groups.google.com/group/spockframework forums].
 
-= Eclipse 3.4 =
+= Eclipse  =
 
  This section will be updated once the Eclipse Groovy plugin adds support for Groovy 1.6.
 
 = IDEA 8.0 =
+ * Download and extract Groovy 1.6.x binary release ([http://groovy.codehaus.org/Download download page])
+ * Create a new project named HelloSpock with a Java module.
+ * Add a Groovy facet with a "New Groovy SDK" pointing to your Groovy folder
+ * In the src folder, create a Groovy class named !HelloSpock with the following content: [http://spock.googlecode.com/files/HelloSpock.groovy HelloSpock.groovy]
 
 Need help? Ask in our [http://groups.google.com/group/spockframework forums].
 

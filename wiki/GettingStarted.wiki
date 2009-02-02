@@ -5,7 +5,9 @@
  * Download and setup Java 5 or higher (JRE will do for our purposes) 
  * Download and setup Groovy 1.6.x
 
-Detailed instructions for these two steps can be found in the [http://groovy.codehaus.org/Tutorial+1+-+Getting+started Groovy tutorial]. `groovyc --version` (note the two dashes) should now give something like:
+Detailed instructions for these two steps can be found in the [http://groovy.codehaus.org/Tutorial+1+-+Getting+started Groovy tutorial].
+
+`groovyc --version` (note the two dashes) should now give something like:
 
 {{{
 Groovy compiler version 1.6.0

@@ -1,4 +1,4 @@
-#summary Run your first specification.
+#summary Run your first Spock specification.
 
 = Command line =
 

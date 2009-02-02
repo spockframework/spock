@@ -21,8 +21,11 @@ Need help? Ask in our [http://groups.google.com/group/spockframework forums].
 
 = IDEA 8.0 =
  * Download and extract Groovy 1.6.x binary release ([http://groovy.codehaus.org/Download download page])
- * Create a new project named !HelloSpock and add a Java module.
+ * Download junit-4.4.jar or higher ([http://sourceforge.net/project/showfiles.php?group_id=15278&package_id=12472 download page]) 
+  * Download spock-0.1.jar or higher ([http://code.google.com/p/spock/downloads/list download page])
+ * Create a new IDEA project named !HelloSpock and add a Java module.
  * Add a Groovy facet and point the "Groovy SDK" to your Groovy folder
+ * In "Module settings", add a "Single-Entry Module Library" for junit-4.4.jar, and another one for spock-0.1.jar
  * In the src folder, create a Groovy class named !HelloSpock with the following content: [http://spock.googlecode.com/files/HelloSpock.groovy HelloSpock.groovy]
 
 Need help? Ask in our [http://groups.google.com/group/spockframework forums].

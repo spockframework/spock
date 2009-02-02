@@ -17,7 +17,7 @@ Need help? Ask in our [http://groups.google.com/group/spockframework forums].
 
 = Eclipse 3.4 =
 
-Need help? Ask in our [http://groups.google.com/group/spockframework forums].
+ This section will be updated once the Eclipse Groovy plugin adds support for Groovy 1.6.
 
 = IDEA 8.0 =
 

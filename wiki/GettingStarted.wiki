@@ -1,45 +1,20 @@
 #summary Getting started with Spock.
 
-= Getting started on the command line =
+= Command line =
 
- * Download and setup Java 5 or higher (JRE will do for our purposes) 
- * Download and setup Groovy 1.6.x
+ * Download and setup Java 5 or higher (JRE will do for our purposes)
+ * Download and setup Groovy 1.6.x ( [http://groovy.codehaus.org/Download download page])
 
 Detailed instructions for these two steps can be found in the [http://groovy.codehaus.org/Tutorial+1+-+Getting+started Groovy tutorial].
 
-`groovyc --version` (note the two dashes) should now give something like:
+ * Download [http://downloads.sourceforge.net/junit/junit-4.5.jar junit-4.5.jar] or higher
+ * Download [http://www.spockframework.org spock-0.1.jar]
+ * Create a file named `!HelloSpock.groovy` with the following content: !HelloSpock.groovy
+ * Compile !HelloSpock with `groovyc HelloSpock.groovy --classpath path_to_junit.jar path_to_spock.jar
+ * Run !HelloSpock with `java org.junit.runner.JUnitCore HelloSpock -cp path_to_groovy-all.jar path_to_junit.jar path_to_spock.jar`
 
-{{{
-Groovy compiler version 1.6.0
-Copyright 2003-2008 The Codehaus. http://groovy.codehaus.org/
-}}}
+= IntelliJ IDEA 8.0 =
 
- * Download and extract JUnit 4.4 or higher
- * Download spock-core-0.1.jar
- * Create a file named `!HelloSpock.groovy` with the following content:
+= Eclipse 3.4 =
 
-{{{
-import org.spockframework.dsl.*
-
-@Speck
-@RunWith(Sputnik)
-class HelloSpock {
-    def "can you figure out what I'm up to?"() {
-        expect:
-        name.size() == size
-
-        where:
-        name << ["Kirk", "Spock", "Scotty"]
-        size << [4, 5, 6]
-    }
-}
-}}}
-
- * Compile the specification with `groovyc HelloSpock.groovy --classpath path_to_junit_jar path_to_spock_jar
- * Run the specification with `java org.junit.runner.JUnitCore HelloSpock -cp path_to_junit_jar path_to_spock_jar`
-
-= Getting started with IntelliJ IDEA 8.0 =
-
-= Getting started with Eclipse 3.4 =
-
-= Getting started with Netbeans 6.5 =
+=  Netbeans 6.5 =

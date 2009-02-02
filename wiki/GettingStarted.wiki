@@ -9,7 +9,7 @@ Detailed instructions for these two steps can be found in the [http://groovy.cod
 
  * Download junit-4.4.jar or higher ([http://sourceforge.net/project/showfiles.php?group_id=15278&package_id=12472 download page])
  * Download spock-0.1.jar or higher ([http://code.google.com/p/spock/downloads/list download page])
- * Create a file named HelloSpock.groovy with the following content: !HelloSpock.groovy
+ * Create a file named !HelloSpock.groovy with the following content: !HelloSpock.groovy
  * Compile !HelloSpock with `groovyc HelloSpock.groovy --classpath path_to_junit.jar path_to_spock.jar`
  * Run !HelloSpock with `java org.junit.runner.JUnitCore HelloSpock -cp path_to_groovy-all.jar path_to_junit.jar path_to_spock.jar`
 

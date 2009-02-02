@@ -3,7 +3,7 @@
 = Command line =
 
  * Download and setup Java 5 or higher (JRE will do for our purposes)
- * Download and setup Groovy 1.6.x ([http://groovy.codehaus.org/Download download page])
+ * Download and setup Groovy 1.6.x binary release ([http://groovy.codehaus.org/Download download page])
 
 Detailed instructions for these two steps can be found in the [http://groovy.codehaus.org/Tutorial+1+-+Getting+started Groovy tutorial].
 

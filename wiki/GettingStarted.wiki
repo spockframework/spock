@@ -13,6 +13,8 @@ Detailed instructions for these two steps can be found in the [http://groovy.cod
  * Compile !HelloSpock with `groovyc HelloSpock.groovy --classpath path_to_junit.jar path_to_spock.jar`
  * Run !HelloSpock with `java org.junit.runner.JUnitCore HelloSpock -cp path_to_groovy-all.jar path_to_junit.jar path_to_spock.jar`
 
+Need help? Ask in our [http://groups.google.com/group/spockframework forums].
+
 = Eclipse 3.4 =
 
 = IDEA 8.0 =

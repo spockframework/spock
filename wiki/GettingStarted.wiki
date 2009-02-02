@@ -21,8 +21,8 @@ Need help? Ask in our [http://groups.google.com/group/spockframework forums].
 
 = IDEA 8.0 =
  * Download and extract Groovy 1.6.x binary release ([http://groovy.codehaus.org/Download download page])
- * Create a new project named HelloSpock with a Java module.
- * Add a Groovy facet with a "New Groovy SDK" pointing to your Groovy folder
+ * Create a new project named !HelloSpock and add a Java module.
+ * Add a Groovy facet and point the "Groovy SDK" to your Groovy folder
  * In the src folder, create a Groovy class named !HelloSpock with the following content: [http://spock.googlecode.com/files/HelloSpock.groovy HelloSpock.groovy]
 
 Need help? Ask in our [http://groups.google.com/group/spockframework forums].

@@ -13,8 +13,8 @@ Detailed instructions for these two steps can be found in the [http://groovy.cod
  * Compile !HelloSpock with `groovyc HelloSpock.groovy --classpath path_to_junit.jar path_to_spock.jar`
  * Run !HelloSpock with `java org.junit.runner.JUnitCore HelloSpock -cp path_to_groovy-all.jar path_to_junit.jar path_to_spock.jar`
 
-= IntelliJ IDEA 8.0 =
-
 = Eclipse 3.4 =
 
-=  Netbeans 6.5 =
+= IDEA 8.0 =
+
+= Netbeans 6.5 =

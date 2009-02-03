@@ -18,4 +18,4 @@
 
 42. Is this the end of the ~~world~~ ~~galaxy~~ ~~fun~~ FAQ?
 
- Yes, but there's a lot more to explore. Give us a try *now*, and we'll throw in a !SpockException for free! (No. It's not that bad. Really.)
+ Yes, but there's a lot more to explore. Give us a try [http://code.google.com/p/spock/downloads/list now], and we'll throw in a !SpockException for free! (No. It's not that bad. Really.)

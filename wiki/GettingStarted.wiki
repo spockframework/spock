@@ -20,7 +20,7 @@ Need help? Ask in our [http://groups.google.com/group/spockframework forums].
 This section will be updated as soon as the Groovy Eclipse plugin adds support for Groovy 1.6. For more information about the Groovy Eclipse plugin, go to http://groovy.codehaus.org/Eclipse+Plugin.
 
 = IDEA 8.0 =
-* Download and extract Groovy 1.6.x binary release ([http://groovy.codehaus.org/Download download page])
+ * Download and extract Groovy 1.6.x binary release ([http://groovy.codehaus.org/Download download page])
  * Download junit-4.4.jar or higher ([http://sourceforge.net/project/showfiles.php?group_id=15278&package_id=12472 download page]) 
  * Download spock-0.1.jar or higher ([http://code.google.com/p/spock/downloads/list download page])
  * Create a new IDEA project named !HelloSpock and add a Java module.

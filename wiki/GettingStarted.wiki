@@ -35,4 +35,4 @@ Need help? Ask in our [http://groups.google.com/group/spockframework forums].
 
 = Netbeans 6.5 =
 
-Need help? Ask in our [http://groups.google.com/group/spockframework forums].
+TODO

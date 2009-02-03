@@ -17,7 +17,7 @@ Need help? Ask in our [http://groups.google.com/group/spockframework forums].
 
 = Eclipse  =
 
- This section will be updated once the Eclipse Groovy plugin adds support for Groovy 1.6.
+ This section will be updated once the Groovy Eclipse plugin adds support for Groovy 1.6.
 
 = IDEA 8.0 =
  * Download and extract Groovy 1.6.x binary release ([http://groovy.codehaus.org/Download download page])

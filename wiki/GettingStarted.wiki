@@ -29,9 +29,9 @@ Need help? Ask in our [http://groups.google.com/group/spockframework forums].
  * In the src folder, create a Groovy class named !HelloSpock with the following content: [http://spock.googlecode.com/files/HelloSpock.groovy HelloSpock.groovy]
  * Run !HelloSpock
 
-[http://spock.googlecode.com/files/HelloSpockIdea.png]
-
 Need help? Ask in our [http://groups.google.com/group/spockframework forums].
+
+[http://spock.googlecode.com/files/HelloSpockIdea.png]
 
 = Netbeans 6.5 =
 

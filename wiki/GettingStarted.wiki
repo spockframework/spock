@@ -35,4 +35,4 @@ Need help? Ask in our [http://groups.google.com/group/spockframework forums].
 
 = Netbeans  =
 
-This section will be updated as soon as the NetBeans Groovy plugin adds support for Groovy 1.6. For general information about the NetBeans Groovy plugin, go to http://groovy.codehaus.org/NetBeans+Plugin.
+This section will be updated as soon as the !NetBeans Groovy plugin adds support for Groovy 1.6. For general information about the !NetBeans Groovy plugin, go to http://groovy.codehaus.org/NetBeans+Plugin.

@@ -19,6 +19,8 @@ Need help? Ask in our [http://groups.google.com/group/spockframework forums].
 
 Here is the POM for a project that uses Spock for its specifications but doesn't use Groovy otherwise. Put your specifications into src/test/groovy and follow the Surefire naming conventions (i.e. class name starts or ends with "Test").
 
+Need help? Ask in our [http://groups.google.com/group/spockframework forums].
+
 {{{
 <?xml version="1.0"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
@@ -37,7 +39,6 @@ Here is the POM for a project that uses Spock for its specifications but doesn't
         <groupId>org.codehaus.groovy.maven</groupId>
         <artifactId>gmaven-plugin</artifactId>
         <version>1.0-rc-5-SNAPSHOT</version>
-        <inherited>true</inherited>
         <dependencies>
           <dependency>
             <groupId>org.codehaus.groovy.maven.runtime</groupId>
@@ -76,6 +77,7 @@ Here is the POM for a project that uses Spock for its specifications but doesn't
 }}}
 
 = IDEA 8.x =
+
  * Download and extract Groovy 1.6.x binary release ([http://groovy.codehaus.org/Download download page])
  * Download junit-4.4.jar or higher ([http://sourceforge.net/project/showfiles.php?group_id=15278&package_id=12472 download page]) 
  * Download spock-0.1.jar or higher ([http://code.google.com/p/spock/downloads/list download page])

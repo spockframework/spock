@@ -15,9 +15,65 @@ Detailed instructions for these two steps can be found in the [http://groovy.cod
 
 Need help? Ask in our [http://groups.google.com/group/spockframework forums].
 
-= Eclipse  =
+= Maven =
 
-This section will be updated as soon as the Eclipse Groovy plugin adds support for Groovy 1.6. For general information about the Eclipse Groovy plugin, go to http://groovy.codehaus.org/Eclipse+Plugin.
+Here is the POM for a project that uses Spock for its specifications but doesn't use Groovy otherwise. Put your specifications into src/test/groovy and follow the Surefire naming conventions (i.e. class name starts or ends with "Test").
+
+{{{
+<?xml version="1.0"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+         
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>yourGroupId</groupId>
+  <artifactId>yourArtifactId</artifactId>
+  <packaging>jar</packaging>
+  <name>your project name</name>
+  
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.groovy.maven</groupId>
+        <artifactId>gmaven-plugin</artifactId>
+        <version>1.0-rc-5-SNAPSHOT</version>
+        <inherited>true</inherited>
+        <dependencies>
+          <dependency>
+            <groupId>org.codehaus.groovy.maven.runtime</groupId>
+            <artifactId>gmaven-runtime-default</artifactId>
+            <version>1.0-rc-5-SNAPSHOT</version>
+          </dependency>
+        </dependencies>
+        <executions>
+          <execution>
+            <id>compile Specks</id>
+            <goals>          
+              <goal>testCompile</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.spockframework</groupId>
+      <artifactId>spock-core</artifactId>
+      <version>0.1</version>
+      <scope>test</scope>
+    </dependency>    
+  </dependencies>
+  
+  <repositories>
+    <repository>
+      <id>Spock</id>
+      <url>http://m2repo.spockframework.org</url>
+    </repository>
+  <repositories>
+</project>
+}}}
 
 = IDEA 8.x =
  * Download and extract Groovy 1.6.x binary release ([http://groovy.codehaus.org/Download download page])
@@ -32,6 +88,10 @@ This section will be updated as soon as the Eclipse Groovy plugin adds support f
 Need help? Ask in our [http://groups.google.com/group/spockframework forums].
 
 [http://spock.googlecode.com/files/HelloSpockIdea.png]
+
+= Eclipse  =
+
+This section will be updated as soon as the Eclipse Groovy plugin adds support for Groovy 1.6. For general information about the Eclipse Groovy plugin, go to http://groovy.codehaus.org/Eclipse+Plugin.
 
 = Netbeans  =
 

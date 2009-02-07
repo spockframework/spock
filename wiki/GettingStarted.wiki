@@ -87,7 +87,9 @@ Need help? Ask in our [http://groups.google.com/group/spockframework forums].
 }}}
 
  * Create file src/test/groovy/!HelloSpock.groovy with the following content: [http://spock.googlecode.com/files/HelloSpock.groovy HelloSpock.groovy]
- * Run !HelloSpock with 'mvn test'
+ * Run !HelloSpock with `mvn test`
+
+Need help? Ask in our [http://groups.google.com/group/spockframework forums].
 
 = IDEA 8.x =
 

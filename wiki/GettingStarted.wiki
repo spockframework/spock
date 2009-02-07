@@ -17,9 +17,7 @@ Need help? Ask in our [http://groups.google.com/group/spockframework forums].
 
 = Maven =
 
-Here is the POM for a project that uses Spock for its specifications but doesn't use Groovy otherwise. Put your specifications into src/test/groovy and follow the Surefire naming conventions (i.e. class name starts or ends with "Test").
-
-Need help? Ask in our [http://groups.google.com/group/spockframework forums].
+ * Create a pom.xml with the following content:
 
 {{{
 <?xml version="1.0"?>
@@ -28,10 +26,10 @@ Need help? Ask in our [http://groups.google.com/group/spockframework forums].
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
          
   <modelVersion>4.0.0</modelVersion>
-  <groupId>yourGroupId</groupId>
-  <artifactId>yourArtifactId</artifactId>
+  <groupId>org.spockframework</groupId>
+  <artifactId>hello-spock</artifactId>
   <packaging>jar</packaging>
-  <name>your project name</name>
+  <name>Hello Spock</name>
   
   <build>
     <plugins>
@@ -55,6 +53,11 @@ Need help? Ask in our [http://groups.google.com/group/spockframework forums].
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <groupId>org.spockframework</groupId>
+        <artifactId>maven-spock-plugin</artifactId>
+        <version>0.1</version>
+      </plugin>
     </plugins>
   </build>
 
@@ -72,9 +75,19 @@ Need help? Ask in our [http://groups.google.com/group/spockframework forums].
       <id>Spock</id>
       <url>http://m2repo.spockframework.org</url>
     </repository>
-  <repositories>
+  </repositories>
+
+  <pluginRepositories>
+    <pluginRepository>
+      <id>Spock</id>
+      <url>http://m2repo.spockframework.org</url>
+    </pluginRepository>
+  </pluginRepositories>
 </project>
 }}}
+
+ * Create file src/test/groovy/!HelloSpock.groovy with the following content: [http://spock.googlecode.com/files/HelloSpock.groovy HelloSpock.groovy]
+ * Run !HelloSpock with 'mvn test'
 
 = IDEA 8.x =
 

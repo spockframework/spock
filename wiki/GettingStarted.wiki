@@ -36,12 +36,12 @@ Need help? Ask in our [http://groups.google.com/group/spockframework forums].
       <plugin>
         <groupId>org.codehaus.groovy.maven</groupId>
         <artifactId>gmaven-plugin</artifactId>
-        <version>1.0-rc-5-SNAPSHOT</version>
+        <version>1.0-rc-5</version>
         <dependencies>
           <dependency>
             <groupId>org.codehaus.groovy.maven.runtime</groupId>
             <artifactId>gmaven-runtime-default</artifactId>
-            <version>1.0-rc-5-SNAPSHOT</version>
+            <version>1.0-rc-5</version>
           </dependency>
         </dependencies>
         <executions>
@@ -55,8 +55,8 @@ Need help? Ask in our [http://groups.google.com/group/spockframework forums].
       </plugin>
       <plugin>
         <groupId>org.spockframework</groupId>
-        <artifactId>maven-spock-plugin</artifactId>
-        <version>0.1</version>
+        <artifactId>spock-maven</artifactId>
+        <version>0.1-SNAPSHOT</version>
       </plugin>
     </plugins>
   </build>
@@ -65,7 +65,7 @@ Need help? Ask in our [http://groups.google.com/group/spockframework forums].
     <dependency>
       <groupId>org.spockframework</groupId>
       <artifactId>spock-core</artifactId>
-      <version>0.1</version>
+      <version>0.1-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>    
   </dependencies>

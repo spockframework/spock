@@ -88,11 +88,12 @@
   </dependencyManagement>
 
   <distributionManagement>
-    <repository>
+    <snapshotRepository>
       <uniqueVersion>false</uniqueVersion>
       <id>spock</id>
-      <url>svn:https://m2repo.spockframework.org</url>
-    </repository>
+      <!-- for some reason, we can't use m2repo.spockframework.org here, but clients can use it -->
+      <url>svn:https://spock.googlecode.com/svn/m2repo</url> 
+    </snapshotRepository>
   </distributionManagement>
     
   <repositories>

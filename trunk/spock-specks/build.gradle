@@ -12,7 +12,7 @@ project(":spock-specks") {
     addMavenRepo()
     addMavenStyleRepo("codehaus", "http://repository.codehaus.org")
     
-    compile "org.codehaus.groovy:groovy-all:1.6-RC-3"
+    compile "org.codehaus.groovy:groovy-all:1.6.0"
     compile project(":spock-core")
     compile "junit:junit:4.5"
     testRuntime "cglib:cglib-nodep:2.1_3"

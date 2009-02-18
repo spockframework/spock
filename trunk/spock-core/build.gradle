@@ -7,7 +7,7 @@ project(":spock-core") {
     addMavenRepo()
     addMavenStyleRepo("codehaus", "http://repository.codehaus.org")
     
-    compile "org.codehaus.groovy:groovy-all:1.6-RC-3"
+    compile "org.codehaus.groovy:groovy-all:1.6.0"
     compile "asm:asm:2.2.3"
     compile "asm:asm-commons:2.2.3"
     compile "junit:junit:4.5"

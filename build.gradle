@@ -1,6 +1,6 @@
 allprojects {
   group = "org.spockframework"
-  version = "0.1"
+  version = "0.1-SNAPSHOT"
 }
 
 createTask("wrapper", type: Wrapper).configure { 

@@ -9,7 +9,7 @@ Detailed instructions for these two steps can be found in the [http://groovy.cod
 
  * Download junit-4.4.jar or higher ([http://sourceforge.net/project/showfiles.php?group_id=15278&package_id=12472 download page])
  * Download spock-0.1.jar or higher ([http://code.google.com/p/spock/downloads/list download page])
- * Create a file named !HelloSpock.groovy with the following content: [http://spock.googlecode.com/files/HelloSpock.groovy HelloSpock.groovy]
+ * Create a file named !HelloSpock.groovy with the following content: [HelloSpock HelloSpock.groovy]
  * Compile !HelloSpock with `groovyc HelloSpock.groovy --classpath path_to_junit.jar path_to_spock.jar`
  * Run !HelloSpock with `java org.junit.runner.JUnitCore HelloSpock -cp path_to_groovy-all.jar path_to_junit.jar path_to_spock.jar`
 
@@ -86,7 +86,7 @@ Need help? Ask in our [http://groups.google.com/group/spockframework forums].
 </project>
 }}}
 
- * Create file src/test/groovy/!HelloSpock.groovy with the following content: [http://spock.googlecode.com/files/HelloSpock.groovy HelloSpock.groovy]
+ * Create file src/test/groovy/!HelloSpock.groovy with the following content: [HelloSpock HelloSpock.groovy]
  * Run !HelloSpock with `mvn test`
 
 Need help? Ask in our [http://groups.google.com/group/spockframework forums].
@@ -99,8 +99,8 @@ Need help? Ask in our [http://groups.google.com/group/spockframework forums].
  * Create a new IDEA project named !HelloSpock and add a Java module.
  * Add a Groovy facet and point the "Groovy SDK" to your Groovy folder
  * In "Module settings", add a "Single-Entry Module Library" for junit-4.4.jar, and another one for spock-0.1.jar
- * In the src folder, create a Groovy class named !HelloSpock with the following content: [http://spock.googlecode.com/files/HelloSpock.groovy HelloSpock.groovy]
- * Run !HelloSpock
+ * In the src folder, create a Groovy class named !HelloSpock with the following content: [HelloSpock HelloSpock.groovy]
+ * In the "Project" window, right-click on !HelloSpock and select "Run"
 
 Need help? Ask in our [http://groups.google.com/group/spockframework forums].
 

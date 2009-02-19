@@ -104,7 +104,7 @@ Need help? Ask in our [http://groups.google.com/group/spockframework forums].
 
 Need help? Ask in our [http://groups.google.com/group/spockframework forums].
 
-[http://svn.spockframework.org/wiki/HelloSpockIdea.png]
+[http://svn.spockframework.org/wiki/GettingStartedIdea.png]
 
 = Eclipse  =
 

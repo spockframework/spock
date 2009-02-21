@@ -1,11 +1,12 @@
 <?xml version="1.0"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd"> 
   <parent>
     <groupId>org.spockframework</groupId>
     <artifactId>spock</artifactId>
     <version>0.1-SNAPSHOT</version>
   </parent>
+  
+  <modelVersion>4.0.0</modelVersion>
   <groupId>org.spockframework</groupId>
   <artifactId>spock-specks</artifactId>
   <packaging>jar</packaging>
@@ -18,31 +19,11 @@
         <artifactId>gmaven-plugin</artifactId>
         <executions>
           <execution>
-            <id>test-compile</id>
-            <phase>test-compile</phase>
             <goals>
               <goal>testCompile</goal>
             </goals>
           </execution>
-        </executions>
-        <dependencies> <!-- for whatever reason, dependency management has no effect here -->
-		      <dependency>
-		        <groupId>org.codehaus.groovy.maven.runtime</groupId>
-	          <artifactId>gmaven-runtime-1.6</artifactId>
-	          <version>1.0-rc-5-SNAPSHOT</version> 
-	          <exclusions>
-		          <exclusion>
-			          <groupId>org.codehaus.groovy</groupId>
-			          <artifactId>groovy-all</artifactId>
-			        </exclusion>
-			      </exclusions>
-	        </dependency>
-	        <dependency>
-	          <groupId>org.codehaus.groovy</groupId>
-	          <artifactId>groovy-all</artifactId>
-	          <version>1.6-RC-3</version>
-	        </dependency>
-        </dependencies>
+        </executions>       
       </plugin>
       <plugin>
         <groupId>org.spockframework</groupId>

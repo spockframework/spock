@@ -106,6 +106,10 @@ Need help? Ask in our [http://groups.google.com/group/spockframework forums].
 
 [http://svn.spockframework.org/wiki/GettingStartedIdea.png]
 
+= Gradle =
+
+This section will be updated as soon as Gradle adds support for Groovy 1.6. If you don't want to wait, have a look at Spock's Gradle build (in particular the spock-specks project).
+
 = Eclipse  =
 
 This section will be updated as soon as the Eclipse Groovy plugin adds support for Groovy 1.6. For general information about the Eclipse Groovy plugin, go to http://groovy.codehaus.org/Eclipse+Plugin.

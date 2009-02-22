@@ -28,6 +28,7 @@ Need help? Ask in our [http://groups.google.com/group/spockframework forums].
   <modelVersion>4.0.0</modelVersion>
   <groupId>hello</groupId>
   <artifactId>spock</artifactId>
+  <version>1.0</version>
   <packaging>jar</packaging>
   <name>Hello Spock</name>
   

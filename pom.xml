@@ -88,43 +88,21 @@
   </dependencyManagement>
 
   <distributionManagement>
-    <snapshotRepository>
-      <uniqueVersion>false</uniqueVersion>
+    <snapshotRepository>     
       <id>spock</id>
-      <!-- for some reason, we can't use m2repo.spockframework.org here, but clients can use it -->
+      <!-- for some reason, we can't use m2repo.spockframework.org here -->
       <url>svn:https://spock.googlecode.com/svn/m2repo</url> 
+      <uniqueVersion>false</uniqueVersion>
     </snapshotRepository>
   </distributionManagement>
     
-  <repositories>
-    <repository>
-      <id>codehaus-releases</id>
-      <name>codehaus-releases</name>
-      <url>http://repository.codehaus.org</url>
-    </repository>
-  </repositories>
-  <pluginRepositories>
-    <pluginRepository>
-      <id>codehaus-releases</id>
-      <name>codehaus-releases</name>
-      <url>http://repository.codehaus.org</url>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-    </pluginRepository>
-    <pluginRepository>
-      <id>codehaus-snapshots</id>
-      <name>codehaus-snapshots</name>
+  <pluginRepositories>   
+    <pluginRepository> <!-- for gmaven-plugin -->
+      <id>codehaus-snapshots</id> 
       <url>http://snapshots.repository.codehaus.org</url>
       <releases>
         <enabled>false</enabled>
       </releases>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
     </pluginRepository>
   </pluginRepositories>
 </project>

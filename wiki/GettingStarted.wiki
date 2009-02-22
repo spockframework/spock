@@ -26,8 +26,8 @@ Need help? Ask in our [http://groups.google.com/group/spockframework forums].
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
          
   <modelVersion>4.0.0</modelVersion>
-  <groupId>org.spockframework</groupId>
-  <artifactId>hello-spock</artifactId>
+  <groupId>hello</groupId>
+  <artifactId>spock</artifactId>
   <packaging>jar</packaging>
   <name>Hello Spock</name>
   
@@ -36,17 +36,12 @@ Need help? Ask in our [http://groups.google.com/group/spockframework forums].
       <plugin>
         <groupId>org.codehaus.groovy.maven</groupId>
         <artifactId>gmaven-plugin</artifactId>
-        <version>1.0-rc-5</version>
-        <dependencies>
-          <dependency>
-            <groupId>org.codehaus.groovy.maven.runtime</groupId>
-            <artifactId>gmaven-runtime-default</artifactId>
-            <version>1.0-rc-5</version>
-          </dependency>
-        </dependencies>
+        <version>1.0-rc-5-SNAPSHOT</version>
+        <configuration>
+          <providerSelection>1.6</providerSelection>
+        </configuration>
         <executions>
           <execution>
-            <id>compile Specks</id>
             <goals>          
               <goal>testCompile</goal>
             </goals>
@@ -78,9 +73,16 @@ Need help? Ask in our [http://groups.google.com/group/spockframework forums].
   </repositories>
 
   <pluginRepositories>
-    <pluginRepository>
+    <pluginRepository> <!-- for spock-maven -->
       <id>Spock</id>
       <url>http://m2repo.spockframework.org</url>
+    </pluginRepository>
+    <pluginRepository> <!-- for gmaven-plugin -->
+      <id>codehaus-snapshots</id>
+      <url>http://snapshots.repository.codehaus.org</url>
+      <releases> 
+        <enabled>false</enabled> 
+      </releases>
     </pluginRepository>
   </pluginRepositories>
 </project>

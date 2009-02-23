@@ -208,10 +208,10 @@ This syntax has two small advantages: First, the exception variable is strongly 
 
 ===== Interactions =====
 
-Whereas conditions describe an object's state, interactions describe how objects communicate with each other. Interactions are devoted a whole [Interactions chapter], and so we only give a short example here. Suppose we want to describe the flow of messages between a publisher and its subscribers. Here is the code:
+Whereas conditions describe an object's state, interactions describe how objects communicate with each other. Interactions are devoted a whole [Interactions chapter], and so we only give a short example here. Suppose we want to describe the flow of events from a publisher to its subscribers. Here is the code:
 
 {{{
-def "messages are published to all subscribers"() {
+def "events are published to all subscribers"() {
   def subscriber1 = Mock(Subscriber)
   def subscriber2 = Mock(Subscriber)
   def publisher = new Publisher()
@@ -219,11 +219,11 @@ def "messages are published to all subscribers"() {
   publisher.add(subscriber2)
   
   when:
-  publisher.publish("msg")
+  publisher.fire("event")
   
   then: 
-  1 * subscriber1.receive("msg")
-  1 * subscriber2.receive("msg")
+  1 * subscriber1.receive("event")
+  1 * subscriber2.receive("event")
 }
 }}}
 
@@ -259,6 +259,20 @@ Object-level specifications usually don't need a cleanup method, as the only res
 Tip: If a specification is designed in such a way that all its feature methods require the same resources, use a cleanup() method; otherwise, prefer cleanup blocks. The same trade-off applies to setup methods and setup-blocks.
 
 ==== Where Blocks ====
+
+Where blocks always come last in a method, and may not be repeated. They allow you to bind values to variables, effectively creating multiple concrete instantiations of an abstract feature method. To give you an idea how this is done, have a look at the following example:
+
+{{{
+expect:
+Math.max(a, b) == c
+
+where:
+a << [ 5, 7, 4]
+b << [ 3, 9, 4]
+c << [ 5, 9, 4]
+}}}
+
+Where blocks are further explained in [ParameterizedFeatures parameterized feature methods]. 
 
 == Helper Methods ==
 

@@ -1,4 +1,4 @@
-#summary Anatomy of a Spock specification (Draft).
+#summary Anatomy of a Spock specification (work in progress).
 #labels Featured
 
 This chapter assumes that you have a basic knowledge of Groovy and unit testing. If you know Java but haven't used Groovy before, don't worry: Groovy was designed to be Java's companion, and will be very easy to pick up for you!
@@ -154,11 +154,11 @@ stack.size() == 2
 [push me]
 }}}
 
-As you can see, Spock has captured all values produced during evaluation of the condition, and presents them in an easily digestible form. Nice, isn't it?
+As you can see, Spock captures all values produced during evaluation of a condition, and presents them in an easily digestible form. Nice, isn't it?
 
 ===== Implicit and explicit conditions =====
 
-Because conditions are an essential ingredient of then-blocks and expect-blocks, all top-level expressions in these blocks are implicitly treated as conditions (unless classified as interactions). To use conditions in other places, you need to make them explicit, which is done with Groovy's assert keyword:
+Because conditions are an essential ingredient of then-blocks and expect-blocks, all top-level expressions in these blocks are implicitly treated as conditions (unless classified as interactions). To use conditions in other places, you need to designate them with Groovy's assert keyword:
 
 {{{
 def setup() {

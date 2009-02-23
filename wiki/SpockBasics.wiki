@@ -125,7 +125,7 @@ when:   // stimulus
 then:   // response
 }}}
 
-When- and then-blocks always occur in pairs. They describe a stimulus and the expected response. Whereas when-blocks may contain arbitrary code, then-blocks are restricted to _conditions_, _interactions_, and variable definitions. A feature method may contain multiple when-then pairs.
+When- and then-blocks always occur in pairs. They describe a stimulus and the expected response. Whereas when-blocks may contain arbitrary code, then-blocks are restricted to _conditions_, _exception conditions_, _interactions_, and variable definitions. A feature method may contain multiple when-then pairs.
 
 ===== Conditions =====
 
@@ -171,7 +171,61 @@ Unsatisfied explicit conditions will produce the same nice diagnostic messages a
 
 ===== Exception Conditions =====
 
+Exception conditions are used to describe that a when-block should throw an exception. They are written using the Predef.thrown() method, passing along the expected exception type. For example, to describe that popping from an empty stack should throw an EmptyStackException, you could write the following:
+
+{{{
+when:
+stack.pop()
+
+then:
+thrown(EmptyStackException)
+stack.empty
+}}}
+
+As you can see, exception conditions may be followed by other conditions (and even other blocks). This is particularly useful for specifying the expected content of an exception. In order to do so, the thrown exception is bound to a variable:
+
+{{{
+when:
+stack.pop()
+
+then:
+def e = thrown(EmptyStackException)
+e.cause == null
+}}}
+
+Alternatively, Spock offers a slight variation on the above syntax:
+
+{{{
+when:
+stack.pop()
+
+then:
+EmptyStackException e = thrown()
+e.cause == null
+}}}
+
+This syntax has two small advantages: First, the exception variable is strongly typed, making it easier for IDEs to offer code completion. Second, the condition reads more like a sentence ("then an EmptyStackException is thrown"). Note that you don't have to repeat the type on the right-hand side, as it is automatically inferred from the variable's type.
+
 ===== Interactions =====
+
+Whereas conditions describe an object's state, interactions describe how objects communicate with each other. Because interactions are devoted a whole chapter, we only give a short example here. Suppose we want to describe the message flow between a publisher and its subscribers. Here is the code:
+
+{{{
+def "messages are published to all subscribers"() {
+  def subscriber1 = Mock(Subscriber)
+  def subscriber2 = Mock(Subscriber)
+  def publisher = new Publisher()
+  publisher.add(subscriber1)
+  publisher.add(subscriber2)
+  
+  when:
+  publisher.publish("msg")
+  
+  then: 
+  1 * subscriber1.receive("msg")
+  1 * subscriber2.receive("msg")
+}
+}}}
 
 ==== Expect Blocks ====
 
@@ -190,11 +244,19 @@ expect:
 Math.max(1, 2) == 2
 }}}
 
-Although semantically equivalent, the second attempt is the clear winner here. As a guideline, use when-then blocks to describe methods with side effects, and expect-blocks to describe purely functional methods.
+Although both snippets are semantically equivalent, the second one is clearly preferable. As a guideline, use when-then blocks to describe methods with side effects, and expect-blocks to describe purely functional methods.
 
-Tip: Study the Groovy JDK, and use methods like any() and every() to create more powerful and elegant conditions.
+Tip: Leverage Groovy JDK methods like any() and every() to create more expressive and succinct conditions.
 
 ==== Cleanup Blocks ====
+
+A cleanup block may only be followed by a where-block, and may not be repeated. Like a cleanup method, it is used to free any resources used by a feature method, and is run even if (a previous part of) the feature method has produced an exception. As a consequence, cleanup blocks must be coded defensively; at the extreme, they must gracefully handle the case where the first statement within a feature method threw an exception, and all local variables have their default values.
+
+Tip: Groovy's safe dereference operator (`foo?.bar()`) can simplify writing defensive code.
+
+Object-level specifications usually don't need a cleanup method, as the only resource they consume is memory, which is automatically reclaimed by the garbage collector. More coarse-grained specifications, however, might use a cleanup-block to release a network connection, clean up the file system, or shut down a service.
+
+Tip: If a specification is designed in such a way that all its feature methods require the same resources, use a cleanup() method; otherwise, prefer cleanup blocks. The same trade-off applies to setup methods and setup-blocks.
 
 ==== Where Blocks ====
 

@@ -204,7 +204,7 @@ EmptyStackException e = thrown()
 e.cause == null
 }}}
 
-This syntax has two small advantages: First, the exception variable is strongly typed, making it easier for IDEs to offer code completion. Second, the condition reads more like a sentence ("then an EmptyStackException is thrown"). Note that you don't have to repeat the type on the right-hand side, as it is automatically inferred from the variable's type.
+This syntax has two small advantages: First, the exception variable is strongly typed, making it easier for IDEs to offer code completion. Second, the condition reads a bit more like a sentence ("then an !EmptyStackException is thrown"). Note that you may omit the expected exception type on the right-hand side, in which case it is inferred from the variable's type.
 
 ===== Interactions =====
 

@@ -167,7 +167,7 @@ def setup() {
 }
 }}}
 
-Unsatisfied explicit conditions will produce the same nice diagnostic messages as implicit conditions.
+If an explicit condition is violated, it will produce the same nice diagnostic message as an implicit condition.
 
 ===== Exception Conditions =====
 

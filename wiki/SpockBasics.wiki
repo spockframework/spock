@@ -40,7 +40,7 @@ class MyFirstSpecification {
 }
 }}}
 
-A specification is represented as a Groovy class annotated with @Speck (short hand for _Spock specification_). Specifications are run by Sputnik, Spock's JUnit runner. Try to choose intention-revealing names for your specifications. If you intend to run your specifications as part of a Maven build, consider using Spock's Maven plugin. It allows you to name your specifications any way you like, and configures Surefire accordingly. For Gradle builds this functionality will be provided in the future. Until then you must adhere to Gradle's naming conventions for JUnit tests (*Test is fine).
+A specification is represented as a Groovy class annotated with @Speck (short hand for _Spock specification_). Specifications are run by Sputnik, Spock's JUnit runner. Try to choose intention-revealing names for your specifications. If you intend to run your specifications as part of a Maven build, consider using Spock's Maven plugin. It allows you to name your specifications any way you like, and configures Surefire accordingly. For Gradle builds this functionality will be provided in the future. Until then, names must adhere to Gradle's naming conventions for JUnit tests (by default, any name ending in `Test(s)`).
 
 == Fields ==
 

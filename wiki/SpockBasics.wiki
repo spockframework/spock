@@ -1,0 +1,211 @@
+#labels Featured
+= Spock Basics (Draft) =
+
+#summary Anatomy of a Spock specification.
+
+This chapter assumes that you have a basic knowledge of Groovy and unit testing. If you know Java but haven't used Groovy before, don't worry: Groovy was designed to be Java's companion, and will be very easy to pick up for you!
+
+The goal of this chapter is to
+ * teach you enough about Spock to write real-world Spock specifications
+ * whet your appetite for more
+
+To learn more about Groovy, go to http://groovy.codehaus.org.
+
+To learn more about unit testing, go to http://en.wikipedia.org/wiki/Unit_testing.
+
+== Terminology == 
+
+Let's start with a little bit of terminology: Spock lets you write _specifications_ that describe expected _features_ (properties, aspects) exhibited by a system of interest. The latter could be a single class, set of classes, component, or application, and is also called _system under specification_. The parts of the system under specification and surrounding environment (collaborators) that are relevant to a particular specification are called the specification's _fixture_.
+
+So much for the theory. The following sections walk you through the basic building blocks commonly found in Spock specifications.
+
+== Imports ==
+
+{{{
+import org.junit.runner.RunWith
+import org.spockframework.dsl.*
+import static org.spockframework.dsl.Predef.*
+}}}
+
+Package org.spockframework.dsl contains the most important classes for writing specifications. Class Predef contains predefined methods and constants for use within specifications. Although Predef members are automatically imported, adding an explicit import statement will make them known to your IDE.
+
+== Specifications ==
+
+{{{
+@Speck
+@RunWith(Sputnik)
+class MyFirstSpecification {
+  // fields
+  // fixture methods
+  // feature methods
+  // helper methods
+}
+}}}
+
+A specification is represented as a Groovy class annotated with @Speck (short hand for _Spock specification_). Specifications are run by Sputnik, Spock's JUnit runner. Try to choose intention-revealing names for your specifications. If you intend to run your specifications as part of a Maven build, consider using Spock's Maven plugin. It allows you to name your specifications any way you like, and configures Surefire accordingly. For Gradle builds this functionality will be provided in the future. Until then you must adhere to Gradle's naming conventions for JUnit tests (*Test is fine).
+
+== Fields ==
+
+{{{
+def obj = new ClassUnderSpecification()
+def coll = new Collaborator()
+}}}
+
+Instance fields are a good place to store objects belonging to the specification's fixture. It is good practice to initialize them right at the point of declaration. (Semantically, this is equivalent to initializing them at the very beginning of the setup() method.) Objects stored into instance fields are _not_ shared between feature methods. Instead, every feature method gets to see its own object. This helps to isolate feature methods from each other, which is often a desirable goal.
+
+{{{
+@Shared res = new VeryExpensiveResource()
+}}}
+
+Sometimes you need to share an object between feature methods. For example, the object might be very expensive to create, or you might want your feature methods to interact with each other. To achieve this, declare a @Shared field. Again it's best to initialize the field right at the point of declaration. (Semantically, this is equivalent to initializing the field at the very beginning of the setupSpeck() method.)
+
+{{{
+static final PI = 3.141592654
+}}}
+
+Static fields should only be used for constants. Otherwise shared fields are preferable, because their semantics are more well-defined.
+
+== Fixture Methods ==
+
+{{{
+def setup() {}          // run before every feature method
+def cleanup() {}        // run after every feature method
+def setupSpeck() {}     // run before the first feature method
+def cleanupSpeck() {}   // run after the last feature method
+}}}
+
+Fixture methods are responsible for setting up and cleaning up the environment in which feature methods are run. Usually it's a good idea to use a separate fixture for every feature method, which is what the setup() and cleanup() methods are for. Occasionally it makes sense for feature methods to share a fixture, which is achieved with the setupSpeck() and cleanupSpeck() methods. All fixture methods are optional. 
+
+== Feature Methods ==
+
+{{{
+def "pushing an element on the stack"() {
+  // blocks go here
+}
+}}}
+
+Feature methods are the heart of a specification. They describe the features (properties, aspects) that you expect to find in the system under specification. By convention, feature methods are named with String literals. Try to choose good names for your feature methods, and feel free to use any characters you like!
+
+Conceptually, a feature method consists of four parts:
+ * Set up the feature's fixture
+ * Provide a _stimulus_ to the system under specification
+ * Describe the _response_ expected from the system
+ * Clean up the feature's fixture
+ 
+Whereas the first and last parts are optional, the stimulus and response parts are always present (except in interacting feature methods), and may occur more than once.
+ 
+=== Blocks ===
+
+{{{
+setup:     // do setup work
+given:     // alias for "setup:"
+when:      // provide a stimulus
+then:      // describe the expected response
+expect:    // describe expected conditions (combines stimulus & response)
+cleanup:   // do cleanup work
+where:     // parameterize a feature method
+}}}
+
+Spock has built-in support for implementing each of the conceptual parts of a feature method. To this end, feature methods are structured into so-called _blocks_. Blocks start with a label, and extend to the beginning of the next block, or the end of the method. There are seven kinds of blocks: setup, given, when, then, expect, cleanup, and where. Any statements between the beginning of the method and the first label form an implicit setup block. A block label may be followed by a String literal, which then serves as the block's description. A feature method must have at least one explicit block - in fact, the presence of an explicit block is what makes a method a feature method. Blocks divide a method into distinct sections, and cannot be nested.
+
+Now, how do blocks correspond to the conceptual parts of a feature method? Well, setup and cleanup are fairly obvious, and given is just an alias for setup. when corresponds to the stimulus part, then to the response part, and expect combines both parts into one block. This leaves us with the where block, which, as we will see later, is used for parameterizing a feature method.
+
+==== Setup (Given) blocks ====
+
+{{{
+setup: "any description goes here"
+def stack = new Stack()
+def elem = "push me"
+}}}
+
+Setup blocks are where you do any setup work for the feature that you are describing. They may not be preceded by other blocks, and may not be repeated. Setup blocks don't have any special semantics. The setup: label serves to structure and document your code, and may be omitted. Given is an alias for setup, and sometimes leads to a more readable description of a feature method (see Behavior Driven Development).
+ 
+==== When and Then Blocks ====
+
+{{{
+when:   // stimulus
+then:   // response
+}}}
+
+When- and then-blocks always occur in pairs. They describe a stimulus and the expected response. Whereas when-blocks may contain arbitrary code, then-blocks are restricted to _conditions_, _interactions_, and variable definitions. A feature method may contain multiple when-then pairs.
+
+===== Conditions =====
+
+Conditions describe an expected state, much like JUnit's assertions. However, conditions are written as plain boolean expressions, eliminating the need for an assertion API. (More precisely, a condition may also produce a non-boolean value, which will then be evaluated according to Groovy truth.) Let's see some conditions in action:
+
+{{{
+when:
+stack.push(elem)
+
+then:
+!stack.empty
+stack.size() == 1
+stack.peek() == elem
+}}}
+
+Tip: Try to keep the number of conditions per feature method to a minimum. One to five conditions is a good guideline. If you have more than that, ask yourself if you are specifying multiple unrelated features at once. If the answer is yes, break up the feature method in several smaller ones. If your conditions only differ in their data, consider using parameterized feature methods.
+
+What kind of feedback does Spock provide if a condition is violated? Let's try and change the second condition to 'stack.size() == 2'. Here is what we get:
+
+{{{
+Condition not satisfied:
+
+stack.size() == 2
+|     |      |   
+|     1      false
+[push me]
+}}}
+
+As you can see, Spock has captured all values produced during evaluation of the condition, and presents them in an easily digestible form. Nice, isn't it?
+
+===== Implicit and explicit conditions =====
+
+Because conditions are an essential ingredient of then-blocks and expect-blocks, all top-level expressions in these blocks are implicitly treated as conditions (unless classified as interactions). To use conditions in other places, you need to make them explicit, which is done with Groovy's assert keyword:
+
+{{{
+def setup() {
+  stack = new Stack()
+  assert stack.empty
+}
+}}}
+
+Unsatisfied explicit conditions will produce the same nice diagnostic messages as implicit conditions.
+
+===== Exception Conditions =====
+
+===== Interactions =====
+
+==== Expect Blocks ====
+
+Expect blocks are more limited than then blocks in that they may only contain conditions and variable definitions. They are useful in situations where it is more natural to describe stimulus and expected response in a single expression. For example, compare the following two attempts to describe the Math.max() method:
+
+{{{
+when:
+def x = Math.max(1, 2)
+
+then:
+x == 2
+}}}
+
+{{{
+expect:
+Math.max(1, 2) == 2
+}}}
+
+Although semantically equivalent, the second attempt is the clear winner here. As a guideline, use when-then blocks to describe methods with side effects, and expect-blocks to describe purely functional methods.
+
+Tip: Study the Groovy JDK, and use methods like any() and every() to create more powerful and elegant conditions.
+
+==== Cleanup Blocks ====
+
+==== Where Blocks ====
+
+== Helper Methods ==
+
+== Behavior Driven Development ==
+
+== Directives ==
+
+== Example Specifications ==
+
+== Comparison to JUnit ==

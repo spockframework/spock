@@ -1,4 +1,5 @@
 #summary Run your first Spock specification.
+#labels Featured
 
 = Command line =
 

@@ -250,7 +250,7 @@ Tip: Leverage Groovy JDK methods like any() and every() to create more expressiv
 
 ==== Cleanup Blocks ====
 
-A cleanup block may only be followed by a where-block, and may not be repeated. Like a cleanup method, it is used to free any resources used by a feature method, and is run even if (a previous part of) the feature method has produced an exception. As a consequence, cleanup blocks must be coded defensively; at the extreme, they must gracefully handle the case where the first statement within a feature method threw an exception, and all local variables have their default values.
+A cleanup block may only be followed by a where-block, and may not be repeated. Like a cleanup method, it is used to free any resources used by a feature method, and is run even if (a previous part of) the feature method has produced an exception. As a consequence, cleanup blocks must be coded defensively; at the extreme, they must gracefully handle the case where the first statement in a feature method throws an exception, and all local variables still have their default values.
 
 Tip: Groovy's safe dereference operator (`foo?.bar()`) can simplify writing defensive code.
 

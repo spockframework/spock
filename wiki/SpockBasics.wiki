@@ -125,7 +125,7 @@ when:   // stimulus
 then:   // response
 }}}
 
-When- and then-blocks always occur in pairs. They describe a stimulus and the expected response. Whereas when-blocks may contain arbitrary code, then-blocks are restricted to _conditions_, _exception conditions_, _interactions_, and variable definitions. A feature method may contain multiple when-then pairs.
+When- and then-blocks always occur in pairs. They describe a stimulus and the expected response. Whereas when-blocks may contain arbitrary code, then-blocks are restricted to _conditions_, _exception conditions_, _interactions_, and variable definitions. A feature method may contain multiple pairs of when-then blocks.
 
 ===== Conditions =====
 

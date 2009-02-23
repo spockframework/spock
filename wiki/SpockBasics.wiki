@@ -182,7 +182,7 @@ thrown(EmptyStackException)
 stack.empty
 }}}
 
-As you can see, exception conditions may be followed by other conditions (and even other blocks). This is particularly useful for specifying the expected content of an exception. In order to do so, the thrown exception is bound to a variable:
+As you can see, exception conditions may be followed by other conditions (and even other blocks). This is particularly useful for specifying the expected content of an exception. To access the exception, first bind it to a variable:
 
 {{{
 when:
@@ -193,7 +193,7 @@ def e = thrown(EmptyStackException)
 e.cause == null
 }}}
 
-Alternatively, Spock offers a slight variation on the above syntax:
+Alternatively, you may use a slight variation of the above syntax:
 
 {{{
 when:

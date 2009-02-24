@@ -246,15 +246,26 @@ Math.max(1, 2) == 2
 
 Although both snippets are semantically equivalent, the second one is clearly preferable. As a guideline, use when-then blocks to describe methods with side effects, and expect-blocks to describe purely functional methods.
 
-Tip: Leverage Groovy JDK methods like any() and every() to create more expressive and succinct conditions.
+Tip: Leverage [Groovy JDK http://groovy.codehaus.org/groovy-jdk/] methods like any() and every() to create more expressive and succinct conditions.
 
 ==== Cleanup Blocks ====
+
+{{{
+setup:
+def file = new File("/some/path")
+file.createNewFile()
+
+// ...
+
+cleanup:
+file.delete()
+}}}
 
 A cleanup block may only be followed by a where-block, and may not be repeated. Like a cleanup method, it is used to free any resources used by a feature method, and is run even if (a previous part of) the feature method has produced an exception. As a consequence, cleanup blocks must be coded defensively; in the worst case, they must gracefully handle the situation where the first statement in a feature method has thrown an exception, and all local variables still have their default values.
 
 Tip: Groovy's safe dereference operator (`foo?.bar()`) simplifies writing defensive code.
 
-Object-level specifications usually don't need a cleanup method, as the only resource they consume is memory, which is automatically reclaimed by the garbage collector. More coarse-grained specifications, however, might use a cleanup-block to release a network connection, clean up the file system, or shut down a service.
+Object-level specifications usually don't need a cleanup method, as the only resource they consume is memory, which is automatically reclaimed by the garbage collector. More coarse-grained specifications, however, might use a cleanup-block to clean up the file system, close a database connection, or shut down a network service.
 
 Tip: If a specification is designed in such a way that all its feature methods require the same resources, use a cleanup() method; otherwise, prefer cleanup blocks. The same trade-off applies to setup methods and setup-blocks.
 

@@ -1,7 +1,7 @@
 #summary Anatomy of a Spock specification.
 #labels Featured
 
-This chapter assumes that you have a basic knowledge of Groovy and unit testing. If you know Java but haven't used Groovy before, don't worry: Groovy was designed to be Java's companion, and will look very familiar to you! So just follow along and consult the Groovy documentation whenever you feel like it.
+This chapter assumes that you have a basic knowledge of Groovy and unit testing. If you know Java but haven't used Groovy yet, don't worry: Groovy was designed to be Java's companion, and will look very familiar to you! So just follow along and consult the Groovy documentation whenever you feel like it.
 
 The goal of this chapter is to
  * teach you enough about Spock to write real-world Spock specifications

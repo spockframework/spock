@@ -1,4 +1,4 @@
-#summary Anatomy of a Spock specification (work in progress).
+#summary Anatomy of a Spock specification.
 #labels Featured
 
 This chapter assumes that you have a basic knowledge of Groovy and unit testing. If you know Java but haven't used Groovy before, don't worry: Groovy was designed to be Java's companion, and will look very familiar to you! So just follow along and consult the Groovy documentation whenever you feel like it.
@@ -25,7 +25,7 @@ import org.spockframework.dsl.*
 import static org.spockframework.dsl.Predef.*
 }}}
 
-Package org.spockframework.dsl contains the most important classes for writing specifications. Class Predef contains predefined methods and constants for use within specifications. Although Predef members are automatically imported, adding an explicit import statement will make them known to your IDE.
+Package `org.spockframework.dsl` contains the most important classes for writing specifications. Class `Predef` contains predefined methods and constants for use within specifications. Although `Predef` members are automatically imported, adding an explicit import statement will make them known to your IDE.
 
 == Specifications ==
 
@@ -40,7 +40,7 @@ class MyFirstSpecification {
 }
 }}}
 
-A specification is represented as a Groovy class annotated with @Speck (short hand for _Spock specification_). Specifications are run by Sputnik, Spock's JUnit runner. Try to choose intention-revealing names for your specifications. If you intend to run your specifications as part of a Maven build, consider using Spock's Maven plugin. It allows you to name your specifications any way you like, and configures Surefire accordingly. For Gradle builds this functionality will be provided in the future. Until then, names must adhere to Gradle's naming conventions for JUnit tests (by default, any name ending in `Test(s)`).
+A specification is represented as a Groovy class annotated with `@Speck`, which is short-hand for _Spock specification_. (Incidentally, Speck is also the German word for bacon.) Specifications are run by `Sputnik`, Spock's JUnit runner. Try to choose intention-revealing names for your specifications. If you intend to run your specifications as part of a Maven build, consider using Spock's Maven plugin. It allows you to name your specifications any way you like, and configures Surefire accordingly. For Gradle builds this functionality will be provided in the future. Until then, names must adhere to Gradle's naming conventions for JUnit tests (by default, any name ending in `Test(s)`).
 
 == Fields ==
 
@@ -49,13 +49,13 @@ def obj = new ClassUnderSpecification()
 def coll = new Collaborator()
 }}}
 
-Instance fields are a good place to store objects belonging to the specification's fixture. It is good practice to initialize them right at the point of declaration. (Semantically, this is equivalent to initializing them at the very beginning of the setup() method.) Objects stored into instance fields are _not_ shared between feature methods. Instead, every feature method gets to see its own object. This helps to isolate feature methods from each other, which is often a desirable goal.
+Instance fields are a good place to store objects belonging to the specification's fixture. It is good practice to initialize them right at the point of declaration. (Semantically, this is equivalent to initializing them at the very beginning of the `setup()` method.) Objects stored into instance fields are _not_ shared between feature methods. Instead, every feature method gets its own object. This helps to isolate feature methods from each other, which is often a desirable goal.
 
 {{{
 @Shared res = new VeryExpensiveResource()
 }}}
 
-Sometimes you need to share an object between feature methods. For example, the object might be very expensive to create, or you might want your feature methods to interact with each other. To achieve this, declare a @Shared field. Again it's best to initialize the field right at the point of declaration. (Semantically, this is equivalent to initializing the field at the very beginning of the setupSpeck() method.)
+Sometimes you need to share an object between feature methods. For example, the object might be very expensive to create, or you might want your feature methods to interact with each other. To achieve this, declare a `@Shared` field. Again it's best to initialize the field right at the point of declaration. (Semantically, this is equivalent to initializing the field at the very beginning of the `setupSpeck()` method.)
 
 {{{
 static final PI = 3.141592654
@@ -72,7 +72,9 @@ def setupSpeck() {}     // run before the first feature method
 def cleanupSpeck() {}   // run after the last feature method
 }}}
 
-Fixture methods are responsible for setting up and cleaning up the environment in which feature methods are run. Usually it's a good idea to use a separate fixture for every feature method, which is what the setup() and cleanup() methods are for. Occasionally it makes sense for feature methods to share a fixture, which is achieved with the setupSpeck() and cleanupSpeck() methods. All fixture methods are optional. 
+Fixture methods are responsible for setting up and cleaning up the environment in which feature methods are run. Usually it's a good idea to use a separate fixture for every feature method, which is what the `setup()` and `cleanup()` methods are for. Occasionally it makes sense for feature methods to share a fixture, which is achieved by using shared fields together with the `setupSpeck()` and `cleanupSpeck()` methods. All fixture methods are optional. 
+
+Note: The `setupSpeck()` and `cleanupSpeck()` methods may not reference instance fields.
 
 == Feature Methods ==
 
@@ -84,39 +86,43 @@ def "pushing an element on the stack"() {
 
 Feature methods are the heart of a specification. They describe the features (properties, aspects) that you expect to find in the system under specification. By convention, feature methods are named with String literals. Try to choose good names for your feature methods, and feel free to use any characters you like!
 
-Conceptually, a feature method consists of four parts:
+Conceptually, a feature method consists of four phases:
  * Set up the feature's fixture
  * Provide a _stimulus_ to the system under specification
  * Describe the _response_ expected from the system
  * Clean up the feature's fixture
  
-Whereas the first and last parts are optional, the stimulus and response parts are always present (except in interacting feature methods), and may occur more than once.
+Whereas the first and last phases are optional, the stimulus and response phases are always present (except in interacting feature methods), and may occur more than once.
  
 === Blocks ===
 
 {{{
 setup:     // do setup work
-given:     // alias for "setup:"
 when:      // provide a stimulus
 then:      // describe the expected response
 expect:    // describe expected conditions (combines stimulus & response)
 cleanup:   // do cleanup work
 where:     // parameterize a feature method
+
+given:     // alias for "setup:"
+and:       // split a block into multiple parts
 }}}
 
-Spock has built-in support for implementing each of the conceptual parts of a feature method. To this end, feature methods are structured into so-called _blocks_. Blocks start with a label, and extend to the beginning of the next block, or the end of the method. There are seven kinds of blocks: setup, given, when, then, expect, cleanup, and where. Any statements between the beginning of the method and the first label form an implicit setup block. A block label may be followed by a String literal, which then serves as the block's description. A feature method must have at least one explicit block - in fact, the presence of an explicit block is what makes a method a feature method. Blocks divide a method into distinct sections, and cannot be nested.
+Spock has built-in support for implementing each of the conceptual phases of a feature method. To this end, feature methods are structured into so-called _blocks_. Blocks start with a label, and extend to the beginning of the next block, or the end of the method. There are six kinds of blocks: `setup`, `when`, `then`, `expect`, `cleanup`, and `where` blocks. Any statements between the beginning of the method and the first explicit block belong to an implicit `setup` block. The 'given:' and 'and:' labels are syntactic sugar to enhance the readability of a specification, and will be further explained in section Specifications as Documentation.
 
-Now, how do blocks correspond to the conceptual parts of a feature method? Well, setup and cleanup are fairly obvious, and given is just an alias for setup. when corresponds to the stimulus part, then to the response part, and expect combines both parts into one block. This leaves us with the where block, which, as we will see later, is used for parameterizing a feature method.
+A feature method must have at least one explicit (i.e. labelled) block - in fact, the presence of an explicit block is what makes a method a feature method. Blocks divide a method into distinct sections, and cannot be nested.
 
-==== Setup (Given) blocks ====
+Now, how do blocks correspond to the conceptual phases of a feature method? Well, `setup` and `cleanup` are fairly obvious. A `when` block corresponds to the stimulus part, `then` to the response part, and `expect` combines both phases into one block. This leaves us with `where`, which, as we will see later, is used for parameterizing a feature method.
+
+==== Setup Blocks ====
 
 {{{
-setup: "any description goes here"
+setup:
 def stack = new Stack()
 def elem = "push me"
 }}}
 
-Setup blocks are where you do any setup work for the feature that you are describing. They may not be preceded by other blocks, and may not be repeated. Setup blocks don't have any special semantics. The setup: label serves to structure and document your code, and may be omitted. Given is an alias for setup, and sometimes leads to a more readable description of a feature method (see Behavior Driven Development).
+The `setup` block is where you do any setup work for the feature that you are describing. It may not be preceded by other blocks, and may not be repeated. A `setup` block doesn't have any special semantics. The `setup:` label is optional and may be omitted, resulting in an _implicit_ `setup` block. The `given:` label is an alias for `setup:`, and sometimes leads to a more readable feature method description (see Specification as Documentation).
  
 ==== When and Then Blocks ====
 
@@ -125,7 +131,7 @@ when:   // stimulus
 then:   // response
 }}}
 
-When- and then-blocks always occur in pairs. They describe a stimulus and the expected response. Whereas when-blocks may contain arbitrary code, then-blocks are restricted to _conditions_, _exception conditions_, _interactions_, and variable definitions. A feature method may contain multiple pairs of when-then blocks.
+The `when` and `then` blocks always occur together. They describe a stimulus and the expected response. Whereas `when` blocks may contain arbitrary code, `then` blocks are restricted to _conditions_, _exception conditions_, _interactions_, and variable definitions. A feature method may contain multiple pairs of `when-then` blocks.
 
 ===== Conditions =====
 
@@ -141,7 +147,7 @@ stack.size() == 1
 stack.peek() == elem
 }}}
 
-Tip: Try to keep the number of conditions per feature method to a minimum. One to five conditions is a good guideline. If you have more than that, ask yourself if you are specifying multiple unrelated features at once. If the answer is yes, break up the feature method in several smaller ones. If your conditions only differ in their data, consider using parameterized feature methods.
+Tip: Try to keep the number of conditions per feature method to a minimum. One to five conditions is a good guideline. If you have more than that, ask yourself if you are specifying multiple unrelated features at once. If the answer is yes, break up the feature method in several smaller ones. If your conditions only differ in their values, consider using parameterized feature methods.
 
 What kind of feedback does Spock provide if a condition is violated? Let's try and change the second condition to 'stack.size() == 2'. Here is what we get:
 
@@ -158,7 +164,7 @@ As you can see, Spock captures all values produced during evaluation of a condit
 
 ===== Implicit and explicit conditions =====
 
-Because conditions are an essential ingredient of then-blocks and expect-blocks, all top-level expressions in these blocks are implicitly treated as conditions (unless classified as interactions). To use conditions in other places, you need to designate them with Groovy's assert keyword:
+Because conditions are an essential ingredient of `then` blocks and `expect` blocks, all top-level expressions in these blocks are implicitly treated as conditions (unless classified as interactions). To use conditions in other places, you need to designate them with Groovy's assert keyword:
 
 {{{
 def setup() {
@@ -171,7 +177,7 @@ If an explicit condition is violated, it will produce the same nice diagnostic m
 
 ===== Exception Conditions =====
 
-Exception conditions are used to describe that a when-block should throw an exception. They are written using the Predef.thrown() method, passing along the expected exception type. For example, to describe that popping from an empty stack should throw an EmptyStackException, you could write the following:
+Exception conditions are used to describe that a `when` block should throw an exception. They are defined using the `Predef.thrown()` method, passing along the expected exception type. For example, to describe that popping from an empty stack should throw an `EmptyStackException`, you could write the following:
 
 {{{
 when:
@@ -204,7 +210,7 @@ EmptyStackException e = thrown()
 e.cause == null
 }}}
 
-This syntax has two small advantages: First, the exception variable is strongly typed, making it easier for IDEs to offer code completion. Second, the condition reads a bit more like a sentence ("then an !EmptyStackException is thrown"). Note that you may omit the expected exception type on the right-hand side, in which case it is inferred from the variable's type.
+This syntax has two small advantages: First, the exception variable is strongly typed, making it easier for IDEs to offer code completion. Second, the condition reads a bit more like a sentence ("then an !EmptyStackException is thrown"). Note that you may omit the exception type passed to the `thrown()` method, in which case it is inferred from the variable type on the left-hand side.
 
 ===== Interactions =====
 
@@ -229,7 +235,7 @@ def "events are published to all subscribers"() {
 
 ==== Expect Blocks ====
 
-Expect blocks are more limited than then blocks in that they may only contain conditions and variable definitions. They are useful in situations where it is more natural to describe stimulus and expected response in a single expression. For example, compare the following two attempts to describe the Math.max() method:
+An `expect` block is more limited than a `then` block in that it may only contain conditions and variable definitions. It is useful in situations where it is more natural to describe stimulus and expected response in a single expression. For example, compare the following two attempts to describe the `Math.max()` method:
 
 {{{
 when:
@@ -244,9 +250,9 @@ expect:
 Math.max(1, 2) == 2
 }}}
 
-Although both snippets are semantically equivalent, the second one is clearly preferable. As a guideline, use when-then blocks to describe methods with side effects, and expect-blocks to describe purely functional methods.
+Although both snippets are semantically equivalent, the second one is clearly preferable. As a guideline, use `when-then` to describe methods with side effects, and `expect` to describe purely functional methods.
 
-Tip: Leverage [Groovy JDK http://groovy.codehaus.org/groovy-jdk/] methods like any() and every() to create more expressive and succinct conditions.
+Tip: Leverage [Groovy JDK http://groovy.codehaus.org/groovy-jdk/] methods like `any()` and `every()` to create more expressive and succinct conditions.
 
 ==== Cleanup Blocks ====
 
@@ -261,17 +267,17 @@ cleanup:
 file.delete()
 }}}
 
-A cleanup block may only be followed by a where-block, and may not be repeated. Like a cleanup method, it is used to free any resources used by a feature method, and is run even if (a previous part of) the feature method has produced an exception. As a consequence, cleanup blocks must be coded defensively; in the worst case, they must gracefully handle the situation where the first statement in a feature method has thrown an exception, and all local variables still have their default values.
+A `cleanup` block may only be followed by a `where` block, and may not be repeated. Like a `cleanup` method, it is used to free any resources used by a feature method, and is run even if (a previous part of) the feature method has produced an exception. As a consequence, a `cleanup` block must be coded defensively; in the worst case, it must gracefully handle the situation where the first statement in a feature method has thrown an exception, and all local variables still have their default values.
 
 Tip: Groovy's safe dereference operator (`foo?.bar()`) simplifies writing defensive code.
 
-Object-level specifications usually don't need a cleanup method, as the only resource they consume is memory, which is automatically reclaimed by the garbage collector. More coarse-grained specifications, however, might use a cleanup-block to clean up the file system, close a database connection, or shut down a network service.
+Object-level specifications usually don't need a `cleanup` method, as the only resource they consume is memory, which is automatically reclaimed by the garbage collector. More coarse-grained specifications, however, might use a `cleanup` block to clean up the file system, close a database connection, or shut down a network service.
 
-Tip: If a specification is designed in such a way that all its feature methods require the same resources, use a cleanup() method; otherwise, prefer cleanup blocks. The same trade-off applies to setup methods and setup-blocks.
+Tip: If a specification is designed in such a way that all its feature methods require the same resources, use a `cleanup()` method; otherwise, prefer `cleanup` blocks. The same trade-off applies to `setup()` methods and `setup` blocks.
 
 ==== Where Blocks ====
 
-Where blocks always come last in a method, and may not be repeated. They allow you to bind values to variables, effectively creating multiple concrete instantiations of an abstract feature method. To give you an idea how this is done, have a look at the following example:
+A `where` blocks always comes last in a method, and may not be repeated. It allows you to bind values to variables, effectively creating multiple concrete instantiations of an abstract feature method. To give you an idea how this is done, have a look at the following example:
 
 {{{
 expect:
@@ -283,7 +289,7 @@ b << [1, 8, 4]
 c << [5, 8, 4]
 }}}
 
-Where blocks are further explained in [ParameterizedFeatures parameterized feature methods]. 
+The `where` block is further explained in [ParameterizedFeatures parameterized feature methods]. 
 
 == Helper Methods ==
 
@@ -291,12 +297,75 @@ Specifications should be treated with the same care as production code. The intr
 
 TODO examples
 
-Tip: Too aggressive reuse of helper methods can lead to specifications that are hard to maintain, because feature methods can no longer evolve separately.
+Tip: Too aggressive code reuse can lead to specifications that are hard to maintain, because feature methods can no longer evolve separately.
 
 == Specifications as Documentation ==
 
-== Directives ==
+Well-written specifications are a valuable source of information. Especially for higher-level specifications targeting a wider audience than just developers (architects, domain experts, customers, etc.), it makes sense to provide more information in natural language than just the names of specifications and features. Therefore, Spock provides a way to attach textual descriptions to blocks:
 
-== Example Specifications ==
+{{{
+setup: "open a database connection"
+// code goes here
+}}}
+
+Individual parts of a block can be described with `and:`:
+
+{{{
+setup: "open a database connection"
+// code goes here
+
+and: "seed the customer table"
+// code goes here
+
+and: "seed the product table"
+// code goes here
+}}}
+
+An `and:` label followed by a description can be inserted at any (top-level) position of a feature method, without altering the method's semantics.
+
+In Behavior Driven Development, customer-facing features (called _stories_) are described in a given-when-then format. Spock directly supports this style of specification with the `given:` label:
+
+{{{
+given: "an empty bank account"
+// ...
+
+when: "the account is credited $10"
+// ...
+
+then: "the account's balance is $10"
+// ...
+}}}
+
+As noted before, `given:` is just an alias for `setup:`.
+
+Block descriptions are not only present in source code, but are also available to the Spock runtime. Planned usages of block descriptions are enhanced diagnostic messages, and textual reports that are equally understood by all stakeholders.
+
+== Extensions ==
+
+As we have seen, Spock offers lots of functionality for writing specifications. However, there always comes a time when something else is needed. Therefore, Spock provides an interception-based extension mechanism. Extensions are activated by annotations called _directives_. Currently, Spock ships with the following directives:
+
+ * `@Timeout`
+ Sets a timeout for execution of a feature or fixture method. If attached to a specification, the timeout is applied to each feature method individually.
+ * `@FailsWith`
+ Expects a feature method to complete abruptly. @FailsWith has two use cases: First, to document known bugs that cannot be resolved immediately. Second, to replace exception conditions in certain corner cases where the latter cannot be used (like specifying the behavior of exception conditions). In all other cases, exception conditions are preferable.
+ * `@Ignore`
+ Ignores a feature method. This is a built-in directive that is not implemented as an extension.
+   
+To learn how to implement your own directives and extensions, go to chapter [Extensions].
 
 == Comparison to JUnit ==
+
+Although Spock uses a different terminology, many of its concepts and features are inspired from JUnit. Here is a rough comparison:
+
+|| *Spock* || *JUnit* ||
+|| Specification || Test class ||
+|| `setup()` || `@Before` ||
+|| `cleanup()` || `@After` ||
+|| `setupSpeck()` || `@BeforeClass` ||
+|| `cleanupSpeck()` || `@AfterClass` ||
+|| Feature || Test ||
+|| Parameterized feature || Theory ||
+|| Condition || Assertion ||
+|| Exception condition || `@Test(expected=...)` ||
+|| `@FailsWith` || `@Test(expected=...)` ||
+|| Interaction  || Mock expectation (EasyMock, JMock, ...) ||

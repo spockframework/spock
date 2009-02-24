@@ -250,9 +250,9 @@ Tip: Leverage Groovy JDK methods like any() and every() to create more expressiv
 
 ==== Cleanup Blocks ====
 
-A cleanup block may only be followed by a where-block, and may not be repeated. Like a cleanup method, it is used to free any resources used by a feature method, and is run even if (a previous part of) the feature method has produced an exception. As a consequence, cleanup blocks must be coded defensively; at the extreme, they must gracefully handle the case where the first statement in a feature method throws an exception, and all local variables still have their default values.
+A cleanup block may only be followed by a where-block, and may not be repeated. Like a cleanup method, it is used to free any resources used by a feature method, and is run even if (a previous part of) the feature method has produced an exception. As a consequence, cleanup blocks must be coded defensively; in the worst case, they must gracefully handle the situation where the first statement in a feature method has thrown an exception, and all local variables still have their default values.
 
-Tip: Groovy's safe dereference operator (`foo?.bar()`) can simplify writing defensive code.
+Tip: Groovy's safe dereference operator (`foo?.bar()`) simplifies writing defensive code.
 
 Object-level specifications usually don't need a cleanup method, as the only resource they consume is memory, which is automatically reclaimed by the garbage collector. More coarse-grained specifications, however, might use a cleanup-block to release a network connection, clean up the file system, or shut down a service.
 
@@ -267,16 +267,22 @@ expect:
 Math.max(a, b) == c
 
 where:
-a << [ 5, 7, 4]
-b << [ 3, 9, 4]
-c << [ 5, 9, 4]
+a << [5, 7, 4]
+b << [1, 8, 4]
+c << [5, 8, 4]
 }}}
 
 Where blocks are further explained in [ParameterizedFeatures parameterized feature methods]. 
 
 == Helper Methods ==
 
-== Behavior Driven Development ==
+Specifications should be treated with the same care as production code. The introduction of helper methods can avoid code duplication and enhance readability of specifications. Good candidates for helper methods are setup/cleanup logic and complex conditions.
+
+TODO examples
+
+Tip: Too aggressive reuse of helper methods can lead to specifications that are hard to maintain, because feature methods can no longer evolve separately.
+
+== Specifications as Documentation ==
 
 == Directives ==
 

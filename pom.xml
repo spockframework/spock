@@ -5,7 +5,7 @@
   <artifactId>spock</artifactId>
   <packaging>pom</packaging>
   <version>0.1-SNAPSHOT</version>
-  <name>Spock Framework</name>
+  <name>The Spock Framework</name>
   <url>http://spockframework.org</url>
     
   <modules>

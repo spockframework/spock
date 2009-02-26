@@ -15,7 +15,7 @@
   <build>
     <plugins>
       <plugin>
-	   	  <groupId>org.codehaus.groovy.maven</groupId>
+        <groupId>org.codehaus.groovy.maven</groupId>
         <artifactId>gmaven-plugin</artifactId>
         <executions>
           <execution>
@@ -36,6 +36,12 @@
             </goals>
           </execution>
         </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-deploy-plugin</artifactId>
+        <configuration>
+          <skip>true</skip>
+        </configuration>
       </plugin>
     </plugins>
   </build>

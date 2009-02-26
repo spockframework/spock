@@ -54,6 +54,13 @@ Need help? Ask in our [http://groups.google.com/group/spockframework forums].
         <groupId>org.spockframework</groupId>
         <artifactId>spock-maven</artifactId>
         <version>0.1-SNAPSHOT</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>find-test-classes</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>

@@ -33,7 +33,6 @@ import static org.spockframework.dsl.Predef.*
 @Speck
 @RunWith (Sputnik)
 class SpeckRecognitionByTransforms {
-
   def "annotation w/ fully qualified name"() {
     when:
     def clazz = compile("""

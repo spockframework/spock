@@ -32,7 +32,7 @@
         <executions>
           <execution>
             <goals>
-              <goal>find-test-classes</goal>
+              <goal>find-specks</goal>
             </goals>
           </execution>
         </executions>

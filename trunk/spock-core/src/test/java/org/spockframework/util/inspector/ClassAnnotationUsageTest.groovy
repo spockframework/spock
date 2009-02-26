@@ -25,12 +25,12 @@ class ClassAnnotationUsageTest extends GroovyTestCase {
 import java.lang.annotation.Retention
 import java.lang.annotation.RetentionPolicy
 
-import org.spockframework.inspector.GroovyAnnotationWithSourceRetention
-import org.spockframework.inspector.GroovyAnnotationWithClassRetention
-import org.spockframework.inspector.GroovyAnnotationWithRuntimeRetention
-import org.spockframework.inspector.JavaAnnotationWithSourceRetention
-import org.spockframework.inspector.JavaAnnotationWithClassRetention
-import org.spockframework.inspector.JavaAnnotationWithRuntimeRetention
+import org.spockframework.util.inspector.GroovyAnnotationWithSourceRetention
+import org.spockframework.util.inspector.GroovyAnnotationWithClassRetention
+import org.spockframework.util.inspector.GroovyAnnotationWithRuntimeRetention
+import org.spockframework.util.inspector.JavaAnnotationWithSourceRetention
+import org.spockframework.util.inspector.JavaAnnotationWithClassRetention
+import org.spockframework.util.inspector.JavaAnnotationWithRuntimeRetention
 
 @GroovyAnnotationWithSourceRetention
 class GroovySource {}

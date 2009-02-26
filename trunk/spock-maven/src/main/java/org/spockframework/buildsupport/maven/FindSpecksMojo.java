@@ -29,14 +29,14 @@ import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.spockframework.buildsupport.JUnit4TestClassFinder;
 
 /**
- * Finds all test classes that are compatible with JUnit 4 (including but not
- * limited to Spock specifications), and configures Surefire to run them.
+ * Finds all test classes that can be run with JUnit 4 (including but not
+ * limited to Spock specifications), and configures Surefire accordingly.
  *
  * @author Peter Niederwieser
- * @goal find-test-classes
+ * @goal find-specks
  * @phase process-test-classes
  */
-public class FindTestClassesMojo extends AbstractMojo {
+public class FindSpecksMojo extends AbstractMojo {
   /**
    * @parameter expression="${project}"
    */
@@ -59,6 +59,11 @@ public class FindTestClassesMojo extends AbstractMojo {
     
     Plugin plugin = getSurefirePlugin();
     Xpp3Dom config = (Xpp3Dom)plugin.getConfiguration();
+    if (config == null) {
+      config = new Xpp3Dom("configuration");
+      plugin.setConfiguration(config);
+    }
+    
     Xpp3Dom includes = config.getChild("includes");
     if (includes == null) {
       includes = new Xpp3Dom("includes");

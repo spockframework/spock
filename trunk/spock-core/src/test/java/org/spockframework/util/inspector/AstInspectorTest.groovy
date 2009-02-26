@@ -29,7 +29,7 @@ class AstInspectorTest {
   @BeforeClass
   static void loadSource() {
     inspector.load("""
-import org.spockframework.inspector.Inspect
+import org.spockframework.util.inspector.Inspect
 
 scriptLoop:
 for (i in 1..5) println "hi!"

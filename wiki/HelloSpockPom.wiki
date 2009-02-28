@@ -1,0 +1,78 @@
+#summary Maven POM for HelloSpock project.
+
+{{{
+<?xml version="1.0"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+         
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>hello</groupId>
+  <artifactId>spock</artifactId>
+  <version>1.0</version>
+  <packaging>jar</packaging>
+  <name>Hello Spock</name>
+  
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.groovy.maven</groupId>
+        <artifactId>gmaven-plugin</artifactId>
+        <version>1.0-rc-5-SNAPSHOT</version>
+        <configuration>
+          <providerSelection>1.6</providerSelection>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>          
+              <goal>testCompile</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.spockframework</groupId>
+        <artifactId>spock-maven</artifactId>
+        <version>0.1-SNAPSHOT</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>find-test-classes</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.spockframework</groupId>
+      <artifactId>spock-core</artifactId>
+      <version>0.1-SNAPSHOT</version>
+      <scope>test</scope>
+    </dependency>    
+  </dependencies>
+  
+  <repositories>
+    <repository>
+      <id>Spock</id>
+      <url>http://m2repo.spockframework.org</url>
+    </repository>
+  </repositories>
+
+  <pluginRepositories>
+    <pluginRepository> <!-- for spock-maven -->
+      <id>Spock</id>
+      <url>http://m2repo.spockframework.org</url>
+    </pluginRepository>
+    <pluginRepository> <!-- for gmaven-plugin -->
+      <id>codehaus-snapshots</id>
+      <url>http://snapshots.repository.codehaus.org</url>
+      <releases> 
+        <enabled>false</enabled> 
+      </releases>
+    </pluginRepository>
+  </pluginRepositories>
+</project>
+}}}

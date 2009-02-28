@@ -44,13 +44,6 @@
         </plugin>
       </plugins>
     </pluginManagement>
-    <extensions>
-      <extension>
-        <groupId>org.jvnet.wagon-svn</groupId>
-        <artifactId>wagon-svn</artifactId>
-        <version>1.9</version>
-      </extension>
-    </extensions>
   </build>
 
   <dependencyManagement>
@@ -91,9 +84,8 @@
 
   <distributionManagement>
     <snapshotRepository>     
-      <id>spock</id>
-      <!-- for some reason, we can't use m2repo.spockframework.org here -->
-      <url>svn:https://spock.googlecode.com/svn/m2repo</url> 
+      <id>m2repo.spockframework.org</id>
+      <url>file:///var/www/m2repo</url> 
       <uniqueVersion>false</uniqueVersion>
     </snapshotRepository>
   </distributionManagement>

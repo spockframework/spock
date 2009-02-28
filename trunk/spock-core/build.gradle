@@ -5,7 +5,6 @@ targetCompatibility = 1.5
 project(":spock-core") {
   dependencies {
     addMavenRepo()
-    addMavenStyleRepo("codehaus", "http://repository.codehaus.org")
     
     compile "org.codehaus.groovy:groovy-all:1.6.0"
     compile "asm:asm:2.2.3"

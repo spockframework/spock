@@ -10,7 +10,6 @@ testCompile.options.fork = false
 project(":spock-specks") {
   dependencies {
     addMavenRepo()
-    addMavenStyleRepo("codehaus", "http://repository.codehaus.org")
     
     compile "org.codehaus.groovy:groovy-all:1.6.0"
     compile project(":spock-core")

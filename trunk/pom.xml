@@ -7,7 +7,8 @@
   <version>0.1-SNAPSHOT</version>
   <name>Spock Framework</name>
   <url>http://spockframework.org</url>
-    
+  <description>Spock is a developer testing and specification framework for Java and Groovy applications.</description>  
+
   <modules>
     <module>spock-core</module>
     <module>spock-specks</module>
@@ -31,7 +32,7 @@
           </configuration>
         </plugin>
 		<plugin>
-          <artifactId>maven-deploy-plugin</artifactId>
+      <artifactId>maven-deploy-plugin</artifactId>
 		  <version>2.4</version> <!-- 2.4 introduced skip property -->
         </plugin>
         <plugin>
@@ -83,6 +84,10 @@
   </dependencyManagement>
 
   <distributionManagement>
+    <repository>     
+      <id>m2repo.spockframework.org</id>
+      <url>file:///var/www/m2repo</url> 
+    </repository>
     <snapshotRepository>     
       <id>m2repo.spockframework.org</id>
       <url>file:///var/www/m2repo</url> 

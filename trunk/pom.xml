@@ -8,7 +8,17 @@
   <name>Spock Framework</name>
   <url>http://spockframework.org</url>
   <description>Spock is a developer testing and specification framework for Java and Groovy applications.</description>  
-
+  <licenses>
+    <license>
+      <name>The Apache Software License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+  <scm>
+    <url>http://svn.spockframework.org</url>
+  </scm>
+      
   <modules>
     <module>spock-core</module>
     <module>spock-specks</module>
@@ -94,14 +104,4 @@
       <uniqueVersion>false</uniqueVersion>
     </snapshotRepository>
   </distributionManagement>
-    
-  <pluginRepositories>   
-    <pluginRepository> <!-- for gmaven-plugin -->
-      <id>codehaus-snapshots</id> 
-      <url>http://snapshots.repository.codehaus.org</url>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-    </pluginRepository>
-  </pluginRepositories>
 </project>

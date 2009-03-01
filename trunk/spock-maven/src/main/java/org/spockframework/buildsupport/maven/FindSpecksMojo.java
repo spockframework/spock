@@ -52,7 +52,8 @@ public class FindSpecksMojo extends AbstractMojo {
     try {
       tests = new JUnit4TestClassFinder().findTestClasses(testOutputDirectory);
     } catch (IOException e) {
-      throw new MojoExecutionException("IO error while searching for test classes", e);
+      // chaining the exception would result in a cluttered error message
+      throw new MojoExecutionException(e.toString());
     }
 
     getLog().info(String.format("Found %d test classes", tests.size()));

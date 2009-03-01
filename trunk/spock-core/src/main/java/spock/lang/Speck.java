@@ -14,15 +14,19 @@
  * limitations under the License.
  */
 
-package org.spockframework.dsl;
+package spock.lang;
 
 import java.lang.annotation.*;
 
 /**
- * Indicates that a field is shared among all feature methods in a Speck.
+ * Indicates that a class is a "Speck" (shorthand for "Spock specification").
+ * Incidentally, "Speck" is also the German word for "bacon".
  * 
  * @author Peter Niederwieser
  */
-@Retention(RetentionPolicy.SOURCE)
-@Target(ElementType.FIELD)
-public @interface Shared {}
+
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
+public @interface Speck {
+  Class<?>[] value() default Void.class;
+}

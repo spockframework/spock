@@ -14,28 +14,28 @@
  * limitations under the License.
  */
 
-package org.spockframework.dsl;
+package spock.lang;
 
 import java.lang.annotation.*;
+import java.util.concurrent.TimeUnit;
 
 import org.spockframework.runtime.intercept.Directive;
-import org.spockframework.runtime.intercept.FailsWithProcessor;
+import org.spockframework.runtime.intercept.TimeoutProcessor;
 
 /**
- * States that a feature method fails with the given exception. Useful for
- * pinpointing erroneous behavior until it gets fixed. To specify an expected
- * exception, use exception conditions instead
- * (e.g. "when: foo; then: thrown(MyException)").
- * When applied to a class, applies to all feature methods that aren't already
- * annotated with @FailsWith.
+ * Times out a feature or fixture method after the specified duration. The
+ * default time unit is seconds. When applied to a feature method, the timeout
+ * is reset before each iteration, and does not include time spent in
+ * setup/cleanup methods. When applied to a class, applies to all feature methods
+ * that don't have an explicit @Timeout directive.
  *
  * @author Peter Niederwieser
  */
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD, ElementType.TYPE})
-@Directive(FailsWithProcessor.class)
-public @interface FailsWith {
-  Class<? extends Throwable> value();
-  String reason() default "unknown";
+@Directive(TimeoutProcessor.class)
+public @interface Timeout {
+  int value();
+  TimeUnit unit() default TimeUnit.SECONDS;
 }

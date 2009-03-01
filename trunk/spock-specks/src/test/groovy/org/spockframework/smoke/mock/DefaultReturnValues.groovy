@@ -17,8 +17,8 @@
 package org.spockframework.smoke.mock
 
 import org.junit.runner.RunWith
-import static org.spockframework.dsl.Predef.*
-import org.spockframework.dsl.*
+import static spock.lang.Predef.*
+import spock.lang.*
 
 @Speck
 @RunWith(Sputnik)

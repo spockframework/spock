@@ -5,7 +5,7 @@
   <artifactId>spock-parent</artifactId>
   <packaging>pom</packaging>
   <version>0.1-SNAPSHOT</version>
-  <name>Spock Framework</name>
+  <name>Spock Framework - Parent</name>
   <url>http://spockframework.org</url>
   <description>Spock is a developer testing and specification framework for Java and Groovy applications.</description>  
   

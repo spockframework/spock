@@ -18,8 +18,8 @@ package org.spockframework.smoke.mock
 
 import org.junit.runner.RunWith
 
-import org.spockframework.dsl.*
-import static org.spockframework.dsl.Predef.*
+import spock.lang.*
+import static spock.lang.Predef.*
 import org.spockframework.mock.InteractionNotSatisfiedError
 
 @Speck

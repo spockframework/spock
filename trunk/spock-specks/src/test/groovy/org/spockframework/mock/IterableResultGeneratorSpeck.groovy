@@ -18,7 +18,7 @@ package org.spockframework.mock
 
 import org.junit.runner.RunWith
 import org.spockframework.mock.IterableResultGenerator
-import org.spockframework.dsl.*
+import spock.lang.*
 
 @Speck
 @RunWith(Sputnik)

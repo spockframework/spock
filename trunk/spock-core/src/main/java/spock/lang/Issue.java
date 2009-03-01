@@ -14,20 +14,18 @@
  * limitations under the License.
  */
 
-package org.spockframework.dsl;
+package spock.lang;
 
 import java.lang.annotation.*;
 
 /**
- * Indicates that a feature method or Speck should be ignored.
- * Ignored elements are neither processed at compile time nor
- * at runtime. From the perspective of the runtime, these
- * elements don't even exist.
+ * Documents that a feature method or Speck relates to one or more issues in an
+ * external issue tracking system.
  *
  * @author Peter Niederwieser
  */
 @Retention(RetentionPolicy.SOURCE)
-@Target({ElementType.TYPE, ElementType.METHOD})
-public @interface Ignore {
-  String value();
+@Target(ElementType.FIELD)
+public @interface Issue {
+  String[] values();
 }

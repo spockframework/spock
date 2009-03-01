@@ -18,7 +18,8 @@ package org.spockframework.runtime.intercept;
 
 import java.lang.annotation.Annotation;
 
-import org.spockframework.dsl.*;
+import spock.lang.FailsWith;
+
 import org.spockframework.runtime.model.MethodInfo;
 import org.spockframework.runtime.model.SpeckInfo;
 

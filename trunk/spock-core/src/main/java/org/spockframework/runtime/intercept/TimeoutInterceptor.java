@@ -16,7 +16,8 @@
 
 package org.spockframework.runtime.intercept;
 
-import org.spockframework.dsl.*;
+import spock.lang.Timeout;
+
 import org.spockframework.runtime.SpeckAssertionError;
 
 /**

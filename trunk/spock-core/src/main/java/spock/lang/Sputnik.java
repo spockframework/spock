@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.spockframework.dsl;
+package spock.lang;
 
 import org.junit.runner.Description;
 import org.junit.runner.Runner;

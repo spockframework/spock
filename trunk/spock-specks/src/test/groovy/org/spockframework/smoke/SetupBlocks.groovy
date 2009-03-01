@@ -19,8 +19,8 @@ package org.spockframework.smoke
 import org.junit.runner.RunWith
 import org.codehaus.groovy.control.MultipleCompilationErrorsException
 import org.spockframework.util.SpockSyntaxException
-import org.spockframework.dsl.*
-import static org.spockframework.dsl.Predef.*
+import spock.lang.*
+import static spock.lang.Predef.*
 
 /**
  * A ...
@@ -67,7 +67,7 @@ class SetupBlocks {
   def "consecutive setup's"() {
     when:
       new GroovyClassLoader().parseClass("""
-@org.spockframework.dsl.Speck
+@spock.lang.Speck
 class Foo {
   def foo() {
     setup: a = 1
@@ -86,7 +86,7 @@ class Foo {
     def "multiple setup's"() {
     when:
       new GroovyClassLoader().parseClass("""
-@org.spockframework.dsl.Speck
+@spock.lang.Speck
 class Foo {
   def foo() {
     setup: a = 1

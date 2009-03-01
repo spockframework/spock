@@ -18,8 +18,8 @@ package org.spockframework.smoke.mock
 
 import org.junit.runner.RunWith
 
-import org.spockframework.dsl.*
-import static org.spockframework.dsl.Predef.*
+import spock.lang.*
+import static spock.lang.Predef.*
 import org.codehaus.groovy.runtime.typehandling.GroovyCastException
 import org.codehaus.groovy.control.MultipleCompilationErrorsException
 import org.spockframework.util.SpockSyntaxException
@@ -35,7 +35,7 @@ class InvalidMockCreation {
   def "field w/ missing type"() {
     when:
     new GroovyClassLoader().parseClass("""
-import org.spockframework.dsl.Speck
+import spock.lang.Speck
 @Speck
 class Foo {
   def list = Mock()
@@ -52,7 +52,7 @@ class Foo {
   def "local w/ missing type"() {
     when:
     new GroovyClassLoader().parseClass("""
-import org.spockframework.dsl.Speck
+import spock.lang.Speck
 @Speck
 class Foo {
   def foo() {
@@ -80,7 +80,7 @@ class Foo {
   def "expr w/ missing type"() {
     when:
     new GroovyClassLoader().parseClass("""
-import org.spockframework.dsl.Speck
+import spock.lang.Speck
 @Speck
 class Foo {
   def foo() {

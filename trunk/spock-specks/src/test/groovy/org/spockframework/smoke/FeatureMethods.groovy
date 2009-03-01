@@ -18,8 +18,8 @@ package org.spockframework.smoke
 
 import org.junit.runner.RunWith
 
-import org.spockframework.dsl.*
-import static org.spockframework.dsl.Predef.*
+import spock.lang.*
+import static spock.lang.Predef.*
 import org.spockframework.runtime.InvalidSpeckError
 
 /**

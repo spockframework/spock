@@ -22,15 +22,15 @@ import org.spockframework.util.SpockSyntaxException
 import org.spockframework.runtime.SpeckInfoBuilder
 
 import static org.spockframework.runtime.model.BlockKind.*
-import org.spockframework.dsl.*
-import static org.spockframework.dsl.Predef.*
+import spock.lang.*
+import static spock.lang.Predef.*
 
 @Speck
 @RunWith(Sputnik)
 class Blocks {
   def "labels and comments"() {
     def speckClass = new GroovyClassLoader().parseClass("""
-import org.spockframework.dsl.*
+import spock.lang.*
 
 @Speck
 class Foo {
@@ -82,7 +82,7 @@ class Foo {
   def "unknown label"() {
     when:
     new GroovyClassLoader().parseClass("""
-@org.spockframework.dsl.Speck
+@spock.lang.Speck
 class Foo {
   def foo() {
     setuppp: def a = 1

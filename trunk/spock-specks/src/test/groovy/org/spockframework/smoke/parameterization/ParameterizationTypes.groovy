@@ -17,8 +17,10 @@
 package org.spockframework.smoke.parameterization
 
 import org.junit.runner.RunWith
-import org.spockframework.dsl.*
+import spock.lang.*
 import org.spockframework.runtime.SpeckExecutionException
+import spock.lang.Sputnik
+import spock.lang.Speck
 
 /**
  * A ...

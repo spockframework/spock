@@ -18,8 +18,8 @@ package org.spockframework.smoke
 
 import org.junit.runner.RunWith
 
-import org.spockframework.dsl.*
-import static org.spockframework.dsl.Predef.*
+import spock.lang.*
+import static spock.lang.Predef.*
 import org.codehaus.groovy.control.MultipleCompilationErrorsException
 import org.spockframework.util.SpockSyntaxException
 
@@ -37,7 +37,7 @@ class MisspelledFixtureMethods {
   def "misspelled setup causes compile error"() {
     when:
     loader.parseClass("""
-import org.spockframework.dsl.*
+import spock.lang.*
 
 @Speck
 class ASpeck {
@@ -53,7 +53,7 @@ class ASpeck {
   def "misspelled cleanup causes compile error"() {
     when:
     loader.parseClass("""
-import org.spockframework.dsl.*
+import spock.lang.*
 
 @Speck
 class ASpeck {
@@ -69,7 +69,7 @@ class ASpeck {
   def "misspelled setupSpeck causes compile error"() {
     when:
     loader.parseClass("""
-import org.spockframework.dsl.*
+import spock.lang.*
 
 @Speck
 class ASpeck {
@@ -85,7 +85,7 @@ class ASpeck {
   def "misspelled cleanupSpeck causes compile error"() {
     when:
     loader.parseClass("""
-import org.spockframework.dsl.*
+import spock.lang.*
 
 @Speck
 class ASpeck {
@@ -101,7 +101,7 @@ class ASpeck {
   def "correctly spelled setup compiles successfully"() {
     when:
     loader.parseClass("""
-import org.spockframework.dsl.*
+import spock.lang.*
 
 @Speck
 class ASpeck {

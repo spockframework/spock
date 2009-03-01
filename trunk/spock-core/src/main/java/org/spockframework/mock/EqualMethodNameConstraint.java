@@ -16,8 +16,6 @@
 
 package org.spockframework.mock;
 
-import org.spockframework.dsl.*;
-
 /**
  * A ...
  *

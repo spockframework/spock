@@ -19,8 +19,8 @@ package org.spockframework.smoke.mock
 import org.junit.runner.RunWith
 import org.spockframework.sample.IOrderService
 import org.spockframework.sample.ShoppingCart
-import static org.spockframework.dsl.Predef.*
-import org.spockframework.dsl.*
+import static spock.lang.Predef.*
+import spock.lang.*
 
 /**
  * A ...

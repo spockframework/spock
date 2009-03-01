@@ -53,7 +53,7 @@ public class MainTransform implements ASTTransformation {
       List<ClassNode> classes =  (List<ClassNode>)module.getClasses();
 
       for (ClassNode clazz : classes) {
-        if (!AstUtil.hasAnnotation(clazz, org.spockframework.dsl.Speck.class)) continue;
+        if (!AstUtil.hasAnnotation(clazz, spock.lang.Speck.class)) continue;
         
         Speck speck = new SpeckParser().build(clazz);
         speck.accept(new SpeckRewriter(nodeCache, lookup));

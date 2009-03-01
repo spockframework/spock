@@ -19,7 +19,7 @@ package org.spockframework.runtime
 import org.junit.runner.RunWith
 import org.spockframework.runtime.ExpressionInfoBuilder
 import org.spockframework.runtime.ValueRecorder
-import org.spockframework.dsl.*
+import spock.lang.*
 import org.spockframework.runtime.model.TextPosition
 import org.spockframework.runtime.model.TextRegion
 import org.spockframework.runtime.ValueRecorder

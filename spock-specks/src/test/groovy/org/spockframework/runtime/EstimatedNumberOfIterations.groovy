@@ -17,7 +17,7 @@
 package org.spockframework.runtime
 
 import org.junit.runner.RunWith
-import org.spockframework.dsl.*
+import spock.lang.*
 
 @Speck
 @RunWith(Sputnik)

@@ -19,7 +19,7 @@ package org.spockframework.smoke
 import org.junit.runner.RunWith
 import org.junit.runners.Suite
 import org.junit.runners.Suite.SuiteClasses
-import org.spockframework.dsl.*
+import spock.lang.*
 
 @Speck
 @RunWith(Sputnik)

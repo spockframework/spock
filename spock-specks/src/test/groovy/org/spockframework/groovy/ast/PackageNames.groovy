@@ -18,7 +18,7 @@ package org.spockframework.groovy.ast
 
 import org.junit.runner.RunWith
 import org.spockframework.util.inspector.AstInspector
-import org.spockframework.dsl.*
+import spock.lang.*
 
 /**
  * A ...

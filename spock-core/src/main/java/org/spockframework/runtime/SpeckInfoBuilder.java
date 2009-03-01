@@ -21,7 +21,8 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.*;
 
-import org.spockframework.dsl.*;
+import spock.lang.Speck;
+
 import org.spockframework.runtime.intercept.Directive;
 import org.spockframework.runtime.intercept.IDirectiveProcessor;
 import org.spockframework.runtime.model.*;

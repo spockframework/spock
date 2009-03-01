@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.spockframework.dsl;
+package spock.lang;
 
 import groovy.lang.Closure;
 

@@ -21,9 +21,8 @@ import org.codehaus.groovy.control.MultipleCompilationErrorsException
 import org.junit.runner.RunWith
 
 import org.spockframework.runtime.model.SpeckMetadata
-import org.spockframework.dsl.*
-import static org.spockframework.dsl.Predef.*
-
+import spock.lang.*
+import static spock.lang.Predef.*
 
 /**
  * A ...
@@ -36,7 +35,7 @@ class SpeckRecognitionByTransforms {
   def "annotation w/ fully qualified name"() {
     when:
     def clazz = compile("""
-@org.spockframework.dsl.Speck
+@spock.lang.Speck
 class ASpeck {
   def foo() { _ }
 }
@@ -49,7 +48,7 @@ class ASpeck {
   def "annotation w/ simple name and class import"() {
     when:
     def clazz = compile("""
-import org.spockframework.dsl.Speck
+import spock.lang.Speck
 
 @Speck
 class ASpeck {
@@ -64,7 +63,7 @@ class ASpeck {
   def "annotation w/ simple name and package import"() {
     when:
     def clazz = compile("""
-import org.spockframework.dsl.*
+import spock.lang.*
 
 @Speck
 class ASpeck {
@@ -79,7 +78,7 @@ class ASpeck {
   def "annotation w/ simple name and same package"() {
     when:
     def clazz = compile("""
-package org.spockframework.dsl
+package spock.lang
 
 @Speck
 class ASpeck {
@@ -94,7 +93,7 @@ class ASpeck {
   def "annotation w/ import alias"() {
     when:
     def clazz = compile("""
-import org.spockframework.dsl.Speck as Test
+import spock.lang.Speck as Test
 
 @Test
 class ASpeck {
@@ -120,7 +119,7 @@ class ASpeck {}
   def "missing annotation"() {
     when:
     def clazz = compile("""
-import org.spockframework.dsl.Speck
+import spock.lang.Speck
 
 class ASpeck {}
     """)

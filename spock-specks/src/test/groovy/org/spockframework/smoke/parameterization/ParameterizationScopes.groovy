@@ -18,8 +18,9 @@ package org.spockframework.smoke.parameterization
 
 import org.spockframework.*
 import org.junit.runner.RunWith
-import org.spockframework.dsl.Sputnik
-import org.spockframework.dsl.Speck
+import spock.lang.Sputnik
+import spock.lang.Speck
+import spock.lang.Sputnik
 
 @Speck
 @RunWith(Sputnik)

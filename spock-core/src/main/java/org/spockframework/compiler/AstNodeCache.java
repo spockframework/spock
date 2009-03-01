@@ -20,7 +20,9 @@ import org.codehaus.groovy.ast.ClassHelper;
 import org.codehaus.groovy.ast.ClassNode;
 import org.codehaus.groovy.ast.FieldNode;
 
-import org.spockframework.dsl.*;
+import spock.lang.Speck;
+import spock.lang.Predef;
+
 import org.spockframework.mock.*;
 import org.spockframework.runtime.SpockRuntime;
 import org.spockframework.runtime.ValueRecorder;

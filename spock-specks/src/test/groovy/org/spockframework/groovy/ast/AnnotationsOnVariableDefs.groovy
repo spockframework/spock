@@ -17,8 +17,8 @@
 package org.spockframework.groovy.ast
 
 import org.junit.runner.RunWith
-import org.spockframework.dsl.*
-import static org.spockframework.dsl.Predef.*
+import spock.lang.*
+import static spock.lang.Predef.*
 
 /**
  * A ...

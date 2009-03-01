@@ -21,8 +21,9 @@ import java.util.List;
 
 import groovy.lang.Closure;
 
-import org.spockframework.dsl.*;
 import org.spockframework.util.SyntaxException;
+
+import spock.lang.Predef;
 
 /**
  * A ...

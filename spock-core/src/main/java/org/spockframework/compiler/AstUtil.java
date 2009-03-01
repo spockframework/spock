@@ -26,7 +26,8 @@ import org.codehaus.groovy.ast.stmt.Statement;
 import org.codehaus.groovy.syntax.Types;
 import org.objectweb.asm.Opcodes;
 
-import org.spockframework.dsl.*;
+import spock.lang.Predef;
+
 import org.spockframework.util.InternalSpockError;
 import org.spockframework.util.SyntaxException;
 import org.spockframework.util.Util;

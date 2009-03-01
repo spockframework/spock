@@ -16,7 +16,8 @@
 
 package org.spockframework.runtime.intercept;
 
-import org.spockframework.dsl.*;
+import spock.lang.FailsWith;
+
 import org.spockframework.runtime.FeatureNotSatisfiedError;
 
 /**

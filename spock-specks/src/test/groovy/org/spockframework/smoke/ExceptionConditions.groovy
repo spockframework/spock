@@ -19,8 +19,8 @@ package org.spockframework.smoke
 import org.junit.runner.RunWith
 import org.spockframework.util.SpockSyntaxException
 import org.codehaus.groovy.control.MultipleCompilationErrorsException
-import org.spockframework.dsl.*
-import static org.spockframework.dsl.Predef.*
+import spock.lang.*
+import static spock.lang.Predef.*
 
 /**
  * A ...
@@ -107,7 +107,7 @@ class ExceptionConditions {
   def "may only occur once in a then-block"() {
     when:
       new GroovyClassLoader().parseClass("""
-@org.spockframework.dsl.Speck
+@spock.lang.Speck
 class Ex {
   def ex() {
     when: throw new IOException()
@@ -128,7 +128,7 @@ class Ex {
   def "may only occur once in a group of then-blocks"() {
     when:
       new GroovyClassLoader().parseClass("""
-@org.spockframework.dsl.Speck
+@spock.lang.Speck
 class Ex {
   def ex() {
     when: throw new IOException()

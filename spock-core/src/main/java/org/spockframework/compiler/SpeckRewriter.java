@@ -25,9 +25,10 @@ import org.codehaus.groovy.syntax.Token;
 import org.codehaus.groovy.syntax.Types;
 import org.objectweb.asm.Opcodes;
 
+import spock.lang.Shared;
+
 import org.spockframework.compiler.model.*;
 import org.spockframework.compiler.model.Speck;
-import org.spockframework.dsl.*;
 import org.spockframework.mock.MockController;
 import org.spockframework.runtime.SpockRuntime;
 import org.spockframework.util.SyntaxException;

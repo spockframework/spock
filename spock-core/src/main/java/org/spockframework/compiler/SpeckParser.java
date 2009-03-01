@@ -22,10 +22,11 @@ import org.codehaus.groovy.ast.*;
 import org.codehaus.groovy.ast.expr.ConstantExpression;
 import org.codehaus.groovy.ast.stmt.Statement;
 
+import spock.lang.Ignore;
+
 import static org.spockframework.compiler.Constants.*;
 import org.spockframework.compiler.model.*;
 import org.spockframework.compiler.model.Speck;
-import org.spockframework.dsl.*;
 import org.spockframework.util.SyntaxException;
 
 /**

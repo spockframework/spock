@@ -17,7 +17,7 @@
 package org.spockframework.smoke.directive
 
 import org.junit.runner.RunWith
-import org.spockframework.dsl.*
+import spock.lang.*
 
 import org.spockframework.runtime.SpeckAssertionError
 import java.util.concurrent.TimeUnit

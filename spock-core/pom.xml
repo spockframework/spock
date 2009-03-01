@@ -1,16 +1,18 @@
 <?xml version="1.0"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.spockframework</groupId>
-    <artifactId>spock</artifactId>
+    <artifactId>spock-parent</artifactId>
     <version>0.1-SNAPSHOT</version>
   </parent>
+  
+  <modelVersion>4.0.0</modelVersion>
   <groupId>org.spockframework</groupId>
   <artifactId>spock-core</artifactId>
   <packaging>jar</packaging>
   <name>Spock Framework - Core</name>
   <url>http://spockframework.org</url>
+  
   <dependencies>
 <!-- compile dependencies -->
     <dependency>

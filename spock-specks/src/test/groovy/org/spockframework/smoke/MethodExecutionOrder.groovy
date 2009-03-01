@@ -18,7 +18,6 @@ package org.spockframework.smoke
 
 import org.junit.runner.RunWith
 import spock.lang.*
-import org.spockframework.runtime.ConditionNotSatisfiedError
 
 /**
  * A ...

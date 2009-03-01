@@ -95,12 +95,12 @@
 
   <distributionManagement>
     <repository>     
-      <id>m2repo.spockframework.org</id>
-      <url>file:///var/www/m2repo</url> 
+      <id>spock-releases</id>
+      <url>file:///var/www/m2repo/releases</url> 
     </repository>
     <snapshotRepository>     
-      <id>m2repo.spockframework.org</id>
-      <url>file:///var/www/m2repo</url> 
+      <id>spock-snapshots</id>
+      <url>file:///var/www/m2repo/snapshots</url> 
       <uniqueVersion>false</uniqueVersion>
     </snapshotRepository>
   </distributionManagement>

@@ -18,7 +18,7 @@
       <plugin>
         <groupId>org.codehaus.groovy.maven</groupId>
         <artifactId>gmaven-plugin</artifactId>
-        <version>1.0-rc-5-SNAPSHOT</version>
+        <version>1.0-rc-5</version>
         <configuration>
           <providerSelection>1.6</providerSelection>
         </configuration>
@@ -37,7 +37,7 @@
         <executions>
           <execution>
             <goals>
-              <goal>find-test-classes</goal>
+              <goal>find-specks</goal>
             </goals>
           </execution>
         </executions>
@@ -56,19 +56,18 @@
   
   <repositories>
     <repository>
-      <id>Spock</id>
-      <url>http://m2repo.spockframework.org</url>
+      <id>spock-snapshots</id>
+      <url>http://m2repo.spockframework.org/snapshots</url>
+      <releases> 
+        <enabled>false</enabled> 
+      </releases>
     </repository>
   </repositories>
 
   <pluginRepositories>
     <pluginRepository> <!-- for spock-maven -->
-      <id>Spock</id>
-      <url>http://m2repo.spockframework.org</url>
-    </pluginRepository>
-    <pluginRepository> <!-- for gmaven-plugin -->
-      <id>codehaus-snapshots</id>
-      <url>http://snapshots.repository.codehaus.org</url>
+      <id>spock-snapshots</id>
+      <url>http://m2repo.spockframework.org/snapshots</url>
       <releases> 
         <enabled>false</enabled> 
       </releases>

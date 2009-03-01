@@ -89,6 +89,6 @@ public class FindSpecksMojo extends AbstractMojo {
           && plugin.getArtifactId().equals("maven-surefire-plugin"))
         return plugin;
 
-    throw new MojoExecutionException("Surefire plugin not found");
+    throw new MojoExecutionException("Surefire plugin not found; make sure it is bound to a lifecycle phase");
   }
 }

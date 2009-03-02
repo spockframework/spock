@@ -65,7 +65,7 @@
   </repositories>
 
   <pluginRepositories>
-    <pluginRepository> <!-- for spock-maven -->
+    <pluginRepository>
       <id>spock-snapshots</id>
       <url>http://m2repo.spockframework.org/snapshots</url>
       <releases> 

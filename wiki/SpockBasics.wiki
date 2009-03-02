@@ -21,11 +21,11 @@ So much for the theory. The following sections walk you through the basic buildi
 
 {{{
 import org.junit.runner.RunWith
-import org.spockframework.dsl.*
-import static org.spockframework.dsl.Predef.*
+import spock.lang.*
+import static spock.lang.Predef.*
 }}}
 
-Package `org.spockframework.dsl` contains the most important classes for writing specifications. Class `Predef` contains predefined methods and constants for use within specifications. Although `Predef` members are automatically imported, adding an explicit import statement will make them known to your IDE.
+Package `spock.lang` contains the most important classes for writing specifications. Class `Predef` contains predefined methods and constants for use within specifications. Although `Predef` members are automatically imported, adding an explicit import statement will make them known to your IDE.
 
 == Specifications ==
 

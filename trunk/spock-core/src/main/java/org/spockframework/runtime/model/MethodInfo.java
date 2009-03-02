@@ -23,7 +23,6 @@ import java.util.List;
 import org.spockframework.runtime.intercept.IMethodInterceptor;
 
 /**
- * A ...
  *
  * @author Peter Niederwieser
  */

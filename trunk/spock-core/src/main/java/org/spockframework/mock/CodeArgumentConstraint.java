@@ -21,7 +21,6 @@ import org.codehaus.groovy.runtime.typehandling.DefaultTypeTransformation;
 import groovy.lang.Closure;
 
 /**
- * A ...
  *
  * @author Peter Niederwieser
  */

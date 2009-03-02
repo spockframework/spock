@@ -25,7 +25,6 @@ import spock.lang.*
 import static spock.lang.Predef.*
 
 /**
- * A ...
  *
  * @author Peter Niederwieser
  */

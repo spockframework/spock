@@ -20,7 +20,6 @@ import org.junit.runner.RunWith
 import spock.lang.*
 
 /**
- * A ...
  *
  * @author Peter Niederwieser
  */

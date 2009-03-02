@@ -22,7 +22,6 @@ import org.spockframework.runtime.model.BlockMetadata;
 import org.spockframework.runtime.model.*;
 
 /**
- * A ...
  *
  * @author Peter Niederwieser
  */

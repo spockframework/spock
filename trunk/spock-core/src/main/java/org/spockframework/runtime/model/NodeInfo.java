@@ -19,7 +19,6 @@ package org.spockframework.runtime.model;
 import java.lang.reflect.AnnotatedElement;
 
 /**
- * A ...
  *
  * @author Peter Niederwieser
  */

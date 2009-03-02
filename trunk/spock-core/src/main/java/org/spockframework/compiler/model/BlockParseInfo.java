@@ -19,7 +19,6 @@ package org.spockframework.compiler.model;
 import java.util.EnumSet;
 
 /**
- * A ...
  *
  * @author Peter Niederwieser
  */

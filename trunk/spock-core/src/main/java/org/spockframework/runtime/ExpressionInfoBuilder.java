@@ -31,7 +31,6 @@ import org.spockframework.util.Assert;
 import org.spockframework.util.TextUtil;
 
 /**
- * A ...
  *
  * @author Peter Niederwieser
  */

@@ -35,8 +35,7 @@ import net.sf.cglib.proxy.*;
 import org.spockframework.util.Util;
 
 /**
- * A ...
- * 
+ *
  * Some implementation details of this class are stolen from Spring, EasyMock
  * Class Extensions, and this thread:
  * http://www.nabble.com/Callbacks%2C-classes-and-instances-to4092596.html

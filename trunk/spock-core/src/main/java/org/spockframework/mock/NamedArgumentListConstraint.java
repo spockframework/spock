@@ -21,7 +21,6 @@ import java.util.*;
 import org.spockframework.util.Assert;
 
 /**
- * A ...
  *
  * @author Peter Niederwieser
  */

@@ -19,7 +19,6 @@ package org.spockframework.mock;
 import groovy.lang.Closure;
 
 /**
- * A ...
  *
  * @author Peter Niederwieser
  */

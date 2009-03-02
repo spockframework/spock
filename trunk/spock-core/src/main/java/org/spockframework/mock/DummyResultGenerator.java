@@ -21,7 +21,6 @@ import java.lang.reflect.*;
 import org.spockframework.util.Util;
 
 /**
- * A ...
  *
  * @author Peter Niederwieser
  */

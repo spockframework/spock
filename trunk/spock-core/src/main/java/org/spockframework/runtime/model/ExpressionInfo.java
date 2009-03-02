@@ -19,7 +19,6 @@ package org.spockframework.runtime.model;
 import java.util.*;
 
 /**
- * A ...
  *
  * @author Peter Niederwieser
  */

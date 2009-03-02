@@ -19,7 +19,6 @@ package org.spockframework.compiler.model;
 import org.codehaus.groovy.ast.MethodNode;
 
 /**
- * A ...
  *
  * @author Peter Niederwieser
  */

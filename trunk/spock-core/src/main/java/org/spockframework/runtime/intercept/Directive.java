@@ -19,7 +19,6 @@ package org.spockframework.runtime.intercept;
 import java.lang.annotation.*;
 
 /**
- * A ...
  *
  * @author Peter Niederwieser
  */

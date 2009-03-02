@@ -22,7 +22,6 @@ import org.spockframework.runtime.ConditionNotSatisfiedError
 import spock.lang.*
 
 /**
- * A ...
  *
  * @author Peter Niederwieser
  */

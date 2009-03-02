@@ -1,7 +1,6 @@
 package org.spockframework.sample;
 
 /**
- * A ...
  *
  * @author Peter Niederwieser
  */

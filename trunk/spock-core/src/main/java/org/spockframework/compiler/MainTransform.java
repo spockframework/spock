@@ -32,7 +32,6 @@ import org.spockframework.util.Assert;
 import org.spockframework.util.SyntaxException;
 
 /**
- * A ...
  *
  * @author Peter Niederwieser
  */

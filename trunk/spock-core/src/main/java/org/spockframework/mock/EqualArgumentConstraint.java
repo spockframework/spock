@@ -19,7 +19,6 @@ package org.spockframework.mock;
 import org.codehaus.groovy.runtime.typehandling.DefaultTypeTransformation;
 
 /**
- * A ...
  *
  * @author Peter Niederwieser
  */

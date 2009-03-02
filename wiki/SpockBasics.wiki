@@ -252,7 +252,7 @@ Math.max(1, 2) == 2
 
 Although both snippets are semantically equivalent, the second one is clearly preferable. As a guideline, use `when-then` to describe methods with side effects, and `expect` to describe purely functional methods.
 
-Tip: Leverage [Groovy JDK http://groovy.codehaus.org/groovy-jdk/] methods like `any()` and `every()` to create more expressive and succinct conditions.
+Tip: Leverage [http://groovy.codehaus.org/groovy-jdk/ Groovy JDK] methods like `any()` and `every()` to create more expressive and succinct conditions.
 
 ==== Cleanup Blocks ====
 

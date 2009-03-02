@@ -19,7 +19,6 @@ package org.spockframework.mock;
 import java.util.regex.Pattern;
 
 /**
- * A ...
  *
  * @author Peter Niederwieser
  */

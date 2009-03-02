@@ -17,7 +17,6 @@
 package org.spockframework.mock;
 
 /**
- * A ...
  *
  * @author Peter Niederwieser
  */

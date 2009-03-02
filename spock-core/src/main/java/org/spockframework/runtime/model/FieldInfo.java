@@ -19,7 +19,6 @@ package org.spockframework.runtime.model;
 import java.lang.reflect.Field;
 
 /**
- * A ...
  *
  * @author Peter Niederwieser
  */

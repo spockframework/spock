@@ -21,7 +21,6 @@ import java.util.Iterator;
 import org.spockframework.runtime.model.MethodInfo;
 
 /**
- * A ...
  *
  * @author Peter Niederwieser
  */

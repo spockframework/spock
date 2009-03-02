@@ -22,7 +22,6 @@ import static spock.lang.Predef.*
 import org.spockframework.mock.InteractionNotSatisfiedError
 
 /**
- * A ...
  *
  * @author Peter Niederwieser
  */

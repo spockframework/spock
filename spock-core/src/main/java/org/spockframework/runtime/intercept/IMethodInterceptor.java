@@ -17,7 +17,6 @@
 package org.spockframework.runtime.intercept;
 
 /**
- * A ...
  *
  * @author Peter Niederwieser
  */

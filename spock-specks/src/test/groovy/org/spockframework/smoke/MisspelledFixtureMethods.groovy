@@ -24,7 +24,6 @@ import org.codehaus.groovy.control.MultipleCompilationErrorsException
 import org.spockframework.util.SpockSyntaxException
 
 /**
- * A ...
  *
  * @author Peter Niederwieser
  */

@@ -25,7 +25,6 @@ import org.spockframework.util.InternalSpockError;
 import org.spockframework.util.Util;
 
 /**
- * A ...
  *
  * @author Peter Niederwieser
  */

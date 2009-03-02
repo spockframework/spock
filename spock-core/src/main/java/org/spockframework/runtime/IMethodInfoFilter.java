@@ -19,7 +19,6 @@ package org.spockframework.runtime;
 import org.spockframework.runtime.model.MethodInfo;
 
 /**
- * A ...
  *
  * @author Peter Niederwieser
  */

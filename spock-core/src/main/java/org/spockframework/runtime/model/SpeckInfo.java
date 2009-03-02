@@ -24,7 +24,6 @@ import org.spockframework.util.Util;
 import org.spockframework.util.IFunction;
 
 /**
- * A ...
  *
  * @author Peter Niederwieser
  */

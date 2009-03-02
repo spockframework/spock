@@ -3,7 +3,6 @@ package org.spockframework.sample;
 import java.util.List;
 
 /**
- * A ...
  *
  * @author Peter Niederwieser
  */

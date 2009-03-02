@@ -19,7 +19,6 @@ package org.spockframework.mock;
 import java.util.LinkedList;
 
 /**
- * A ...
  *
  * @author Peter Niederwieser
  */

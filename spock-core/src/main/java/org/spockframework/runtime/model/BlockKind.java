@@ -17,7 +17,6 @@
 package org.spockframework.runtime.model;
 
 /**
- * A ...
  *
  * @author Peter Niederwieser
  */

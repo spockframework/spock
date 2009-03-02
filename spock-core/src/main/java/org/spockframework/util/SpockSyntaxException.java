@@ -19,7 +19,6 @@ package org.spockframework.util;
 import org.codehaus.groovy.ast.ASTNode;
 
 /**
- * A ...
  *
  * @author Peter Niederwieser
  */

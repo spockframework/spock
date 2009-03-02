@@ -24,7 +24,6 @@ import java.util.concurrent.TimeUnit
 import org.spockframework.runtime.SpeckAssertionError
 
 /**
- * A ...
  *
  * @author Peter Niederwieser
  */

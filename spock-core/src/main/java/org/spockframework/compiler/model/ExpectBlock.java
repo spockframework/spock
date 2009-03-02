@@ -17,7 +17,6 @@
 package org.spockframework.compiler.model;
 
 /**
- * A ...
  *
  * @author Peter Niederwieser
  */

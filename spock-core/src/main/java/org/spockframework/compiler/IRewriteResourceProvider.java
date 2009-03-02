@@ -25,7 +25,6 @@ import org.codehaus.groovy.ast.stmt.Statement;
 import org.spockframework.compiler.model.Method;
 
 /**
- * A ...
  *
  * @author Peter Niederwieser
  */

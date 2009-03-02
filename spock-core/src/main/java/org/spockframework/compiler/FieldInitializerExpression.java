@@ -24,8 +24,7 @@ import org.codehaus.groovy.syntax.Token;
 import org.codehaus.groovy.syntax.Types;
 
 /**
- * A ...
- *
+ * 
  * @author Peter Niederwieser
  */
 public class FieldInitializerExpression extends BinaryExpression {

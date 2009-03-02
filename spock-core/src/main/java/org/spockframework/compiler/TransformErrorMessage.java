@@ -23,7 +23,6 @@ import org.codehaus.groovy.control.SourceUnit;
 import org.codehaus.groovy.control.messages.Message;
 
 /**
- * A ...
  *
  * @author Peter Niederwieser
  */

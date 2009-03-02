@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A ...
  *
  * @author Peter Niederwieser
  */

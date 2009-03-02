@@ -21,7 +21,6 @@ import spock.lang.FailsWith;
 import org.spockframework.runtime.FeatureNotSatisfiedError;
 
 /**
- * A ...
  *
  * @author Peter Niederwieser
  */

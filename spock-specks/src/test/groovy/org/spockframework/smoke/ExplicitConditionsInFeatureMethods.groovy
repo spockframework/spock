@@ -23,7 +23,6 @@ import static spock.lang.Predef.*
 import org.spockframework.runtime.ConditionNotSatisfiedError
 
 /**
- * A ...
  *
  * @author Peter Niederwieser
  */

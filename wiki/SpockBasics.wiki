@@ -347,7 +347,7 @@ As we have seen, Spock offers lots of functionality for writing specifications. 
  * `@Timeout`
  Sets a timeout for execution of a feature or fixture method. If attached to a specification, the timeout is applied to each feature method individually.
  * `@FailsWith`
- Expects a feature method to complete abruptly. @FailsWith has two use cases: First, to document known bugs that cannot be resolved immediately. Second, to replace exception conditions in certain corner cases where the latter cannot be used (like specifying the behavior of exception conditions). In all other cases, exception conditions are preferable.
+ Expects a feature method to complete abruptly. @!FailsWith has two use cases: First, to document known bugs that cannot be resolved immediately. Second, to replace exception conditions in certain corner cases where the latter cannot be used (like specifying the behavior of exception conditions). In all other cases, exception conditions are preferable.
  * `@Ignore`
  Ignores a feature method. This is a built-in directive that is not implemented as an extension.
    

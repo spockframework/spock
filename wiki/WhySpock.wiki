@@ -30,7 +30,7 @@
       where: msg << ["load", "save", "reset"]
     }
     }}}
-  # *Extensible by everyone*
+  # *Extensible for everyone*
     @Transaction? @!SpringBean? @!DeployApp? With Spock's interception-based extension mechanism, you can easily create your own extensions.
   # *Compatible with JUnit*
     Run specifications in your IDE, build tool, and continuous integration server. Leverage JUnit's reporting capabilities.

@@ -368,4 +368,4 @@ Although Spock uses a different terminology, many of its concepts and features a
 || Condition || Assertion ||
 || Exception condition || `@Test(expected=...)` ||
 || `@FailsWith` || `@Test(expected=...)` ||
-|| Interaction  || Mock expectation (EasyMock, JMock, ...) ||
+|| Interaction  || Mock expectation (!EasyMock, JMock, ...) ||

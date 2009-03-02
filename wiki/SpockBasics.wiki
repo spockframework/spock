@@ -289,7 +289,7 @@ b << [1, 8, 4]
 c << [5, 8, 4]
 }}}
 
-The `where` block is further explained in [ParameterizedFeatures parameterized feature methods]. 
+The `where` block is further explained in chapter [Parameterizations]. 
 
 == Helper Methods ==
 

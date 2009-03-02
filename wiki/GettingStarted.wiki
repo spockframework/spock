@@ -33,10 +33,11 @@ Need help? Ask in our [http://groups.google.com/group/spockframework forums].
  * Add a Groovy facet and point the "Groovy SDK" to your Groovy folder
  * In "Module settings", add a "Single-Entry Module Library" for junit-4.4.jar, and another one for spock-core-0.1.jar
  * In the src folder, create a Groovy class named !HelloSpock with the following content: [HelloSpock HelloSpock.groovy]
- * In the "Project" window, right-click on !HelloSpock and select "Run" ([http://svn.spockframework.org/wiki/GettingStartedIdea.png screenshot])
+ * In the "Project" window, right-click on !HelloSpock and select "Run" 
 
 Need help? Ask in our [http://groups.google.com/group/spockframework forums].
 
+[http://svn.spockframework.org/wiki/GettingStartedIdea.png]
 
 
 = Gradle =

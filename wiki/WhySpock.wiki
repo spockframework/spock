@@ -1,4 +1,5 @@
 #summary Ten reason why Spock is for you.
+#labels Featured
 
   # *Easy to learn*
     If you know Java and JUnit, you are almost ready to go. 

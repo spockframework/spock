@@ -1,3 +1,0 @@
-#summary Learn how to specify interactions between your objects.
-
-= Coming to you at the speed of light...=

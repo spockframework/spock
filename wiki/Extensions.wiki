@@ -1,0 +1,3 @@
+#summary Learn how to write your own Spock extensions.
+
+= Coming to you at the speed of light... =

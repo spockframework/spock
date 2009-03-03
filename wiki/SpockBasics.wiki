@@ -1,7 +1,7 @@
 #summary Anatomy of a Spock specification.
 #labels Featured
 
-This chapter assumes that you have a basic knowledge of Groovy and unit testing. If you know Java but haven't used Groovy yet, don't despair: One of Groovy's main goals is to be _the_ scripting language for Java developers, so it will feel very familiar to you! Just follow along and consult the [http://groovy.codehaus.org/Documentation Groovy documentation] whenever you feel like it.
+This chapter assumes that you have a basic knowledge of Groovy and unit testing. If you are a Java developer but haven't heard about Groovy, don't worry - Groovy will feel very familiar to you! In fact, one of Groovy's main design goals is to be _the_ scripting language alongside Java. So just follow along and consult the [http://groovy.codehaus.org/Documentation Groovy documentation] whenever you feel like it.
 
 The goal of this chapter is to
  * teach you enough about Spock to write real-world Spock specifications

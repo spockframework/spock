@@ -210,8 +210,35 @@ EmptyStackException e = thrown()
 e.cause == null
 }}}
 
-This syntax has two small advantages: First, the exception variable is strongly typed, making it easier for IDEs to offer code completion. Second, the condition reads a bit more like a sentence ("then an !EmptyStackException is thrown"). Note that you may omit the exception type passed to the `thrown()` method, in which case it is inferred from the variable type on the left-hand side.
+This syntax has two small advantages: First, the exception variable is strongly typed, making it easier for IDEs to offer code completion. Second, the condition reads a bit more like a sentence ("then an !EmptyStackException is thrown"). Note that if no exception type is passed to the `thrown()` method, it is inferred from the variable type on the left-hand side.
 
+Sometimes we need to convey that an exception should *not* be thrown. For example, let's try to express that a `HashMap` should accept a `null` key:
+
+{{{
+def "HashMap accepts null key"() {
+  setup:
+  def map = new HashMap()
+  map.put(null, "elem")
+}
+}}}
+
+This works but doesn't reveal the intention of the code. Did someone just leave the building before he had finished implementing this method? After all, where are the conditions? Fortunately, we can do better:
+
+{{{
+def "HashMap accepts null key"() {
+  setup:
+  def map = new HashMap()
+  
+  when:
+  map.put(null, "elem")
+  
+  then:
+  notThrown(NullPointerException)
+}
+}}}
+
+By using `notThrown()`, we make it clear that in particular a NullPointerException should not be thrown. (As per the contract of `Map.put()`, this would be the right thing to do for a map that doesn't support `null` keys.) However, the method will also fail if any other exception is thrown.
+  
 ===== Interactions =====
 
 Whereas conditions describe an object's state, interactions describe how objects communicate with each other. Interactions are devoted a whole [Interactions chapter], and so we only give a short example here. Suppose we want to describe the flow of events from a publisher to its subscribers. Here is the code:

@@ -13,7 +13,7 @@ To learn more about unit testing, go to http://en.wikipedia.org/wiki/Unit_testin
 
 == Terminology == 
 
-Let's start with a few definitions: Spock lets you write _specifications_ that describe expected _features_ (properties, aspects) exhibited by a system of interest. The system of interest could be anything between a single class and a whole application, and is also called the _system under specification (SUS)_. The description of a feature starts from a specific snapshot of the SUS and its collaborators; this snapshot is called the feature's _fixture_.
+Let's start with a few definitions: Spock lets you write _specifications_ that describe expected _features_ (properties, aspects) exhibited by a system of interest. The system of interest could be anything between a single class and a whole application, and is also called _system under specification (SUS)_. The description of a feature starts from a specific snapshot of the SUS and its collaborators; this snapshot is called the feature's _fixture_.
 
 The following sections walk you through all building blocks of which a Spock specification may be composed. A typical specification uses only a subset of them.
 
@@ -74,7 +74,7 @@ def setupSpeck() {}     // run before the first feature method
 def cleanupSpeck() {}   // run after the last feature method
 }}}
 
-Fixture methods are responsible for setting up and cleaning up the environment in which feature methods are run. Usually it's a good idea to use a separate fixture for every feature method, which is what the `setup()` and `cleanup()` methods are for. Occasionally it makes sense for feature methods to share a fixture, which is achieved by using shared fields together with the `setupSpeck()` and `cleanupSpeck()` methods. All fixture methods are optional. 
+Fixture methods are responsible for setting up and cleaning up the environment in which feature methods are run. Usually it's a good idea to use a fresh fixture for every feature method, which is what the `setup()` and `cleanup()` methods are for. Occasionally it makes sense for feature methods to share a fixture, which is achieved by using shared fields together with the `setupSpeck()` and `cleanupSpeck()` methods. All fixture methods are optional. 
 
 Note: The `setupSpeck()` and `cleanupSpeck()` methods may not reference instance fields.
 

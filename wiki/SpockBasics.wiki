@@ -40,7 +40,7 @@ class MyFirstSpecification {
 }
 }}}
 
-A specification is represented as a Groovy class annotated with `@Speck`, which is short-hand for _Spock specification_. (Incidentally, "Speck" is also the German word for "bacon".) The name of a specification usually relates to the system or system operation described by the specification. For example, `CustomerSpec`, `H264VideoPlayback`, and `ASpaceshipAttackedFromTwoSides` all sound like reasonable names for a specification. Execution of a specification is controlled by `Sputnik`, Spock's JUnit runner. Thanks to Sputnik, Spock specifications can be run by all modern IDEs and build tools. (So much for the theory. See [GettingStarted Getting started] for what already works now, and what can be expected from the near future.)
+A specification is represented as a Groovy class annotated with `@Speck`, which is short-hand for _Spock specification_. (Incidentally, "Speck" is also the German word for "bacon".) The name of a specification usually relates to the system or system operation described by the specification. For example, `CustomerSpec`, `H264VideoPlayback`, and `ASpaceshipAttackedFromTwoSides` all sound like reasonable names for a specification. Execution of a specification is controlled by `Sputnik`, Spock's JUnit runner. Thanks to Sputnik, Spock specifications can be run by all modern IDEs and build tools. (So much for the theory. See [GettingStarted Getting started] for what already works now, and what can be expected to work in the near future.)
 
 As you can see, a specification is not required to extend a class or implement an interface. As of Spock 0.1, the semantics of a specification that extends another specification are undefined.
 

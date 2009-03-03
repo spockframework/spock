@@ -27,7 +27,7 @@ import static spock.lang.Predef.*
 
 Package `spock.lang` contains the most important types for writing specifications. One of them is class `Predef`, which provides predefined methods and constants for use within specifications. Although `Predef` members are imported automatically, we recommend to add an explicit import statement to make them known to your IDE.
 
-== Specification Skeleton ==
+== Specification ==
 
 {{{
 @Speck

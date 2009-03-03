@@ -389,8 +389,8 @@ Condition not satisfied:
 
 assert pc.clockRate >= 2333
        |  |         |
-	   |  1666      false
-	   ...
+       |  1666      false
+       ...
 }}}
 
 A final advice: Although code reuse is generally a good thing, don't take it too far. This is especially true for specifications: The use of common fixture and helper methods increases the coupling between feature methods. If you reuse too much or the wrong code, you will end up with specifications that are fragile and hard to evolve.

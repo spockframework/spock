@@ -19,7 +19,10 @@ package spock.lang;
 import java.lang.annotation.*;
 
 /**
- * Indicates that a field is shared among all feature methods in a Speck.
+ * Indicates that a field is shared among all feature methods in a
+ * specification. Initializing a shared field at the point of declaration
+ * is encouraged; semantically, this is equivalent to initializing the field at
+ * the very beginning of the <tt>setupSpeck()</tt> method.
  * 
  * @author Peter Niederwieser
  */

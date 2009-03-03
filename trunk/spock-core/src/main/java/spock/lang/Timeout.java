@@ -23,11 +23,12 @@ import org.spockframework.runtime.intercept.Directive;
 import org.spockframework.runtime.intercept.TimeoutProcessor;
 
 /**
- * Times out a feature or fixture method after the specified duration. The
- * default time unit is seconds. When applied to a feature method, the timeout
- * is reset before each iteration, and does not include time spent in
- * setup/cleanup methods. When applied to a class, applies to all feature methods
- * that don't have an explicit @Timeout directive.
+ * Indicates that he execution of a feature or fixture method should time out
+ * after the given duration has elapsed. The default time unit is seconds.
+ * When applied to a feature method, the timeout is reset before each
+ * iteration and does not include time spent in fixture methods. Applying this
+ * directive to a specification has the same effect as applying it to all
+ * feature methods that don't have an explicit <tt>@Timeout</tt> directive.
  *
  * @author Peter Niederwieser
  */
@@ -36,6 +37,19 @@ import org.spockframework.runtime.intercept.TimeoutProcessor;
 @Target({ElementType.METHOD, ElementType.TYPE})
 @Directive(TimeoutProcessor.class)
 public @interface Timeout {
+  /**
+   * The duration after which the execution of the annotated feature or fixture
+   * method times out.
+   *
+   * @return the duration after which the execution of the annotated feature or
+   * fixture method times out
+   */
   int value();
+
+  /**
+   * The duration's time unit
+   *
+   * @return the duration's time unit
+   */
   TimeUnit unit() default TimeUnit.SECONDS;
 }

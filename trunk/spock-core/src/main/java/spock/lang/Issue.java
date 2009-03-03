@@ -19,13 +19,18 @@ package spock.lang;
 import java.lang.annotation.*;
 
 /**
- * Documents that a feature method or Speck relates to one or more issues in an
- * external issue tracking system.
+ * Indicates that a feature method or specification relates to one or more
+ * issues in an external issue tracking system.
  *
  * @author Peter Niederwieser
  */
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.FIELD)
 public @interface Issue {
+  /**
+   * The IDs of the issues that the annotated element relates to.
+   *
+   * @return the IDs of the issues that the annotated element relates to
+   */
   String[] values();
 }

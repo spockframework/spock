@@ -14,24 +14,8 @@
  * limitations under the License.
  */
 
-package spock.lang;
-
-import java.lang.annotation.*;
-
 /**
- * Indicates that a feature method or specification should be ignored. An
- * ignored element is neither processed at compile time nor at runtime.
- * From the perspective of the Spock runtime, such an element doesn't exist.
- *
- * @author Peter Niederwieser
+ * Provides fundamental types for writing Spock specifications. It is
+ * suggested to import the members of this package with a star import.
  */
-@Retention(RetentionPolicy.SOURCE)
-@Target({ElementType.TYPE, ElementType.METHOD})
-public @interface Ignore {
-  /**
-   * The reason for ignoring this element.
-   *
-   * @return the reason for ignoring this element
-   */
-  String value();
-}
+package spock.lang;

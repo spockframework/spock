@@ -19,7 +19,7 @@ package spock.lang;
 import java.lang.annotation.*;
 
 /**
- * Indicates that a class is a "Speck" (shorthand for "Spock specification").
+ * Marks a class as a "Spock specification", or "Speck" for short.
  * Incidentally, "Speck" is also the German word for "bacon".
  * 
  * @author Peter Niederwieser
@@ -28,5 +28,10 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface Speck {
+  /**
+   * The types whose behavior is described by this specification.
+   *
+   * @return the types whose behavior is described by this specification
+   */
   Class<?>[] value() default Void.class;
 }

@@ -25,8 +25,9 @@ import org.spockframework.runtime.*;
 import org.spockframework.runtime.model.SpeckInfo;
 
 /**
- * Allows a Speck annotated with @RunWith(Sputnik) to be run by JUnit. In case
- * you wondered, the name is a combination of the words "Spock" and "JUnit".
+ * A JUnit runner for Spock specifications. To run a specification with JUnit,
+ * annotate it with <tt>@org.junit.RunWith(Sputnik)</tt>. In case you wondered,
+ * Sputnik is a combination of the words "Spock" and "JUnit".
  *
  * @author Peter Niederwieser
  */

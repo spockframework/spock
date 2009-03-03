@@ -22,12 +22,13 @@ import org.spockframework.runtime.intercept.Directive;
 import org.spockframework.runtime.intercept.FailsWithProcessor;
 
 /**
- * States that a feature method fails with the given exception. Useful for
- * pinpointing erroneous behavior until it gets fixed. To specify an expected
- * exception, use exception conditions instead
- * (e.g. "when: foo; then: thrown(MyException)").
- * When applied to a class, applies to all feature methods that aren't already
- * annotated with @FailsWith.
+ * Indicates that a feature method is expected to fail with the given exception.
+ * Useful for pinpointing bugs until they get fixed, or as a replacement for
+ * exception conditions in certain corner cases where they cannot be used (like
+ * specifying the behavior of exception conditions). In all other cases,
+ * exception conditions are preferable.
+ * <p>Applying this directive to a specification has the same effect as applying it
+ * to all feature methods that aren't already annotated with <tt>@FailsWith</tt>.
  *
  * @author Peter Niederwieser
  */
@@ -36,6 +37,17 @@ import org.spockframework.runtime.intercept.FailsWithProcessor;
 @Target({ElementType.METHOD, ElementType.TYPE})
 @Directive(FailsWithProcessor.class)
 public @interface FailsWith {
+  /**
+   * The expected exception type.
+   *
+   * @return the expected exception type
+   */
   Class<? extends Throwable> value();
+
+  /**
+   * The reason for the failure.
+   *
+   * @return the reason for the failure
+   */
   String reason() default "unknown";
 }

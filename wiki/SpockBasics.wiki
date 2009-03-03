@@ -13,7 +13,7 @@ To learn more about unit testing, go to http://en.wikipedia.org/wiki/Unit_testin
 
 == Terminology == 
 
-Let's start with a few definitions: Spock lets you write _specifications_ that describe expected _features_ (properties, aspects) exhibited by a system of interest. The latter could be a single class, set of classes, component, or application, and is also called _system under specification_. The parts of the system under specification and surrounding environment (collaborators) that are relevant to a particular specification are called the specification's _fixture_.
+Let's start with a few definitions: Spock lets you write _specifications_ that describe expected _features_ (properties, aspects) exhibited by a system of interest. The system of interest could be anything between a single class and a whole application, and is also called the _system under specification (SUS)_. The description of a feature starts from a specific snapshot of the SUS and its collaborators; this snapshot is called the feature's _fixture_.
 
 The following sections walk you through all building blocks of which a Spock specification may be composed. A typical specification uses only a subset of them.
 

@@ -1,7 +1,7 @@
 #summary Anatomy of a Spock specification.
 #labels Featured
 
-This chapter assumes that you have a basic knowledge of Groovy and unit testing. If you know Java but haven't used Groovy yet, don't worry: Groovy was designed to be Java's companion, and will look very familiar to you! So just follow along and consult the Groovy documentation whenever you feel like it.
+This chapter assumes that you have a basic knowledge of Groovy and unit testing. If you know Java but haven't used Groovy yet, don't despair: One of the main design goals of Groovy is to be the scripting language of choice for Java developers, so it will be very easy to pick up for you! Just follow along and consult the [http://groovy.codehaus.org/Documentation Groovy documentation] whenever you feel like it.
 
 The goal of this chapter is to
  * teach you enough about Spock to write real-world Spock specifications
@@ -15,7 +15,7 @@ To learn more about unit testing, go to http://en.wikipedia.org/wiki/Unit_testin
 
 Let's start with a few definitions: Spock lets you write _specifications_ that describe expected _features_ (properties, aspects) exhibited by a system of interest. The latter could be a single class, set of classes, component, or application, and is also called _system under specification_. The parts of the system under specification and surrounding environment (collaborators) that are relevant to a particular specification are called the specification's _fixture_.
 
-So much for the theory. The following sections walk you through the basic building blocks of Spock specifications.
+The following sections walk you through all building blocks of which a Spock specification may be composed. A typical specification uses only a subset of them.
 
 == Imports ==
 
@@ -25,9 +25,9 @@ import spock.lang.*
 import static spock.lang.Predef.*
 }}}
 
-Package `spock.lang` contains the most important classes for writing specifications. Class `Predef` contains predefined methods and constants for use within specifications. Although `Predef` members are automatically imported, adding an explicit import statement will make them known to your IDE.
+Package `spock.lang` contains the most important types for writing specifications. One of them is class `Predef`, which provides predefined methods and constants for use within specifications. Although `Predef` members are imported automatically, we recommend to add an explicit import statement to make them known to your IDE.
 
-== Specifications ==
+== Specification Skeleton ==
 
 {{{
 @Speck
@@ -40,7 +40,9 @@ class MyFirstSpecification {
 }
 }}}
 
-A specification is represented as a Groovy class annotated with `@Speck`, which is short-hand for _Spock specification_. (Incidentally, Speck is also the German word for bacon.) Specifications are run by `Sputnik`, Spock's JUnit runner. Try to choose intention-revealing names for your specifications. If you intend to run your specifications as part of a Maven build, consider using Spock's Maven plugin. It allows you to name your specifications any way you like, and configures Surefire accordingly. For Gradle builds this functionality will be provided in the future. Until then, names must adhere to Gradle's naming conventions for JUnit tests (by default, any name ending in `Test(s)`).
+A specification is represented as a Groovy class annotated with `@Speck`, which is short-hand for _Spock specification_. (Incidentally, "Speck" is also the German word for "bacon".) The name of a specification usually relates to the system (operation) described by the specification. For example, `CustomerSpec`, `H264VideoPlayback`, and `ASpaceshipAttackedFromTwoSides` all sound like reasonable names. Execution of a specification is controlled by `Sputnik`, Spock's JUnit runner. Thanks to Sputnik, Spock specifications can be run by all modern IDEs and build tools. (So much for the theory. See [GettingStarted Getting started] for what already works now, and what can be expected from the near future.)
+
+As you can see, a specification is not required to extend a class or implement an interface. As of Spock 0.1, the semantics of a specification that extends another specification are undefined.
 
 == Fields ==
 
@@ -147,7 +149,7 @@ stack.size() == 1
 stack.peek() == elem
 }}}
 
-Tip: Try to keep the number of conditions per feature method to a minimum. One to five conditions is a good guideline. If you have more than that, ask yourself if you are specifying multiple unrelated features at once. If the answer is yes, break up the feature method in several smaller ones. If your conditions only differ in their values, consider using parameterized feature methods.
+Tip: Try to keep the number of conditions per feature method to a minimum. One to five conditions is a good guideline. If you have more than that, ask yourself if you are specifying multiple unrelated features at once. If the answer is yes, break up the feature method in several smaller ones. If your conditions only differ in their values, consider using [Parameterizations parameterized feature methods].
 
 What kind of feedback does Spock provide if a condition is violated? Let's try and change the second condition to 'stack.size() == 2'. Here is what we get:
 
@@ -160,7 +162,7 @@ stack.size() == 2
 [push me]
 }}}
 
-As you can see, Spock captures all values produced during evaluation of a condition, and presents them in an easily digestible form. Nice, isn't it?
+As you can see, Spock captures all values produced during the evaluation of a condition, and presents them in an easily digestible form. Nice, isn't it?
 
 ===== Implicit and explicit conditions =====
 
@@ -320,11 +322,78 @@ The `where` block is further explained in chapter [Parameterizations].
 
 == Helper Methods ==
 
-Specifications should be treated with the same care as production code. The introduction of helper methods can avoid code duplication and enhance readability of specifications. Good candidates for helper methods are setup/cleanup logic and complex conditions.
+Sometimes feature methods grow large and/or contain lots of duplicated code. In such cases it can make sense to introduce one or more helper methods. Two good candidates for helper methods are setup/cleanup logic and complex conditions. Factoring out the former is straightforward, so let's have a look at conditions:
 
-TODO examples
+{{{
+def "offered PC matches preferred configuration"() {
+  when:
+  def pc = shop.buyPc()
+  
+  then:
+  pc.vendor == "Sunny"
+  pc.clockRate >= 2333
+  pc.ram >= 4096
+  pc.os == "Linux"
+}
+}}}
 
-Tip: Too aggressive code reuse can lead to specifications that are hard to maintain, because feature methods can no longer evolve separately.
+If you happen to be a computer geek, your preferred PC configuration might be very detailed, or you might want to compare offers from many different shops. Therefore, let's factor out the conditions:
+
+{{{
+def "offered PC matches preferred configuration"() {
+  when:
+  def pc = shop.buyPc()
+  
+  then:
+  matchesPreferredConfiguration(pc)
+}
+
+def matchesPreferredConfiguration(pc) {
+  pc.vendor == "Sunny"
+  && pc.clockRate >= 2333
+  && pc.ram >= 4096
+  && pc.os == "Linux"
+}
+}}}
+
+The new helper method `matchesPreferredConfiguration()` consists of a single boolean expression whose result is returned. (Since Groovy 1.5, the `return` keyword may often be omitted.) This is fine except for the way that an inadequate offer is now presented:
+
+{{{
+Condition not satisfied:
+
+matchesPreferredConfiguration(pc)
+|                             |
+false                         ...
+}}}
+
+Not very helpful. Fortunately, we can do better:
+
+{{{
+def matchesPreferredConfiguration(pc) {
+  assert pc.vendor == "Sunny"
+  assert pc.clockRate >= 2333
+  assert pc.ram >= 4096
+  assert pc.os == "Linux"
+  true
+}
+}}}
+
+As you can see, two changes need to be made when factoring out conditions into a helper method: First, the conditions must be made explicit with the `assert` keyword. Second, because *every* method in Groovy has a return value, we need to make sure that `true` is returned if everything goes well. Otherwise, the "parent" condition (in our case `matchesPreferredConfiguration(pc)`) might fail even though all "child" conditions have passed.
+
+Note: Always add `true` as the last statement of a helper method containing explicit conditions. (Hopefully, future version of Spock will be able to overcome this pitfall.)
+
+As expected, the improved helper method tells us exactly what's wrong:
+
+{{{
+Condition not satisfied:
+
+assert pc.clockRate >= 2333
+       |  |         |
+	   |  1666      false
+	   ...
+}}}
+
+A final advice: Although code reuse is generally a good thing, don't take it too far. This is especially true for specifications: The use of common fixture and helper methods increases the coupling between feature methods. If you reuse too much or the wrong code, you will end up with specifications that are fragile and hard to evolve.
 
 == Specifications as Documentation ==
 

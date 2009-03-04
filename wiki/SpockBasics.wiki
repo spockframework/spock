@@ -356,7 +356,7 @@ def matchesPreferredConfiguration(pc) {
 }
 }}}
 
-The new helper method `matchesPreferredConfiguration()` consists of a single boolean expression whose result is returned. (Since Groovy 1.5, the `return` keyword may often be omitted.) This is fine except for the way that an inadequate offer is now presented:
+The new helper method `matchesPreferredConfiguration()` consists of a single boolean expression whose result is returned. (Since Groovy 1.5, the `return` keyword is no longer required here.) This is fine except for the way that an inadequate offer is now presented:
 
 {{{
 Condition not satisfied:

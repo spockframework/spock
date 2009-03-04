@@ -7,86 +7,90 @@
 Mocks can be created for interfaces, non-final Java classes, and non-final Groovy classes (experimental). Currently all mocks are lenient. If a method is called that does not match any specified interaction, no error occurs and the default value for the method's return type is returned.
 
 {{{
-def subscriber = Mock(Subscriber) // "dynamic" style
+def subscriber = Mock(Subscriber) // "dynamic" style (mock name inferred from variable name)
 
-Subscriber subscriber = Mock()    // "static" style"
+Subscriber subscriber = Mock()    // "static" style" (mock name/type inferred from variable name/type)
 }}}
 
-=== Optional (stubbed) global interaction ===
+=== Global vs. scoped interactions ===
 
-Optional interactions must not specify a cardinality, and must specify a return value.
+Interactions defined outside of a `then` block are called _global_. They are valid from the point of their definition to the end of the feature method.
 
 {{{
 setup:
 subscriber.isValid() >> true
 }}}
 
-=== Optional (stubbed) scoped interaction ===
+Interactions defined inside of a `then` block are called _scoped_. They are valid only within the preceding `when` block.
 
 {{{
-when: // ...
+when: publisher.send(msg)
+then: 1 * subscriber.receive(msg)
+}}}
+
+=== Optional vs. required interaction ===
+
+Optional interactions don't have a cardinality, and must have a return value.
+
+{{{
 then: subscriber.isValid() >> true
 }}}
 
-=== Required (mocked) global interaction ===
-
-Currently not supported.
-
-=== Required (mocked) scoped interaction ===
-
-Required interactions must specify a cardinality, and may specify a return value.
+Required interactions must have a cardinality, and may have a return value.
 
 {{{
-when: publisher.publish("msg")
-then: 1 * subscriber.receive("msg")
+then: 1 * subscriber.isValid() >> true
+
+then: n * subscriber.receive(msg)
 }}}
+
+Currently, optional interactions can be global or scoped, but required interactions must be scoped.
 
 === Cardinalities ===
 
 {{{
-then: n * subscriber.receive("msg")      // exactly n times
+n * subscriber.receive("msg")      // exactly n times
 
-then: (n.._) * subscriber.receive("msg") // at least n times
+(n.._) * subscriber.receive("msg") // at least n times
 
-then: (_..n) * subscriber.receive("msg") // at most n times 
+(_..n) * subscriber.receive("msg") // at most n times 
 }}}
 
 === Target constraints ===
 
 {{{
-then: _.receive(msg) // receive is called on any target (i.e. mock object)
+_.receive(msg) // receive is called on any target (i.e. mock object)
 }}}
 
 === Method constraints ===
 
 {{{
-then: subscriber./set.*/(_) // any setter is called on subscriber (any regular expression allowed)
+subscriber./set.*/(_) // any setter is called on subscriber (any regular expression allowed)
 }}}
 
 === Argument Constraints ===
 
 {{{
-then: subscriber.receive(_)                           // any argument
+subscriber.receive(_)                           // any argument
 
-then: subscriber.receive(!null)                       // any non-null argument
+subscriber.receive(!null)                       // any non-null argument
 
-then: subscriber.receive(msg)                         // any argument equal to msg
+subscriber.receive(msg)                         // any argument equal to msg
 
-then: subscriber.receive(!msg)                        // any argument not equal to msg
+subscriber.receive(!msg)                        // any argument not equal to msg
 
-then: subscriber.receive(_ as Message)                // any argument that is-a Message
+subscriber.receive(_ as Message)                // any argument that is-a Message
 
-then: subscriber.receive( { it.priority == "high" } ) // custom constraint
+subscriber.receive( { it.priority == "high" } ) // custom constraint
 }}}
 
 === Return Values ===
 
 {{{
-then: subscriber.isValid() >> true                     // single return value, repeated indefinitely
+subscriber.isValid() >> true                     // single return value, repeated indefinitely
 
-then: subscriber.isValid() >>> [true, false, true]     // multiple return values (anything that Groovy can iterate over), last one repeated indefinitely
+subscriber.isValid() >>> [true, false, true]     // multiple return values (anything that Groovy can iterate over), last one repeated indefinitely
 
 def random = new Random()
-// ...
-then: subscriber.isValid() >> { random.nextBoolean() } // custom return value
+subscriber.isValid() >> { random.nextBoolean() } // custom return value
 }}}

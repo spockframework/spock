@@ -1,7 +1,13 @@
 #summary Run your first Spock specification.
 #labels Featured
 
-= Command line =
+This chapter explains how to run [HelloSpock HelloSpock.groovy] in the following environments:
+
+<wiki:toc />
+
+Need help? Ask in our [http://groups.google.com/group/spockframework forums].
+  
+== Command line ==
 
  * Download and setup Java 5 or higher (JRE will do for our purposes)
  * Download and setup Groovy 1.6.x binary release ([http://groovy.codehaus.org/Download download page])
@@ -14,17 +20,33 @@ Detailed instructions for these two steps can be found in the [http://groovy.cod
  * Compile !HelloSpock with `groovyc HelloSpock.groovy --classpath path_to_junit.jar path_to_spock.jar`
  * Run !HelloSpock with `java org.junit.runner.JUnitCore HelloSpock -cp path_to_groovy-all.jar path_to_junit.jar path_to_spock.jar`
 
-Need help? Ask in our [http://groups.google.com/group/spockframework forums].
+== Ant ==
 
-= Maven =
+Tested with Ant 1.7.
 
- * Create a pom.xml with the following content: [HelloSpockPom pom.xml]
+ * Create file build.xml with the following content: [HelloSpockBuildXml build.xml]
+ * Create file src/!HelloSpock.groovy with the following content: [HelloSpock HelloSpock.groovy]
+ * Run !HelloSpock with `ant test`
+ 
+== Gradle ==
+
+This section will be updated as soon as Gradle adds support for Groovy 1.6. If you don't want to wait, have a look at Spock's own Gradle build, in particular the spock-specks project.
+
+== Maven ==
+
+Tested with Maven 2.0.9.
+
+ * Create file pom.xml with the following content: [HelloSpockPom pom.xml]
  * Create file src/test/groovy/!HelloSpock.groovy with the following content: [HelloSpock HelloSpock.groovy]
  * Run !HelloSpock with `mvn test`
 
-Need help? Ask in our [http://groups.google.com/group/spockframework forums].
+== Eclipse ==
 
-= IDEA 8.x =
+This section will be updated as soon as the Eclipse Groovy plugin adds support for Groovy 1.6. For general information about the Eclipse Groovy plugin, go to http://groovy.codehaus.org/Eclipse+Plugin.
+
+== IntelliJ IDEA ==
+
+Tested with IDEA 8.1.
 
  * Download and extract Groovy 1.6.x binary release ([http://groovy.codehaus.org/Download download page])
  * Download junit-4.4.jar or higher ([http://sourceforge.net/project/showfiles.php?group_id=15278&package_id=12472 download page]) 
@@ -35,19 +57,8 @@ Need help? Ask in our [http://groups.google.com/group/spockframework forums].
  * In the src folder, create a Groovy class named !HelloSpock with the following content: [HelloSpock HelloSpock.groovy]
  * In the "Project" window, right-click on !HelloSpock and select "Run" 
 
-Need help? Ask in our [http://groups.google.com/group/spockframework forums].
-
 [http://svn.spockframework.org/wiki/GettingStartedIdea.png]
 
-
-= Gradle =
-
-This section will be updated as soon as Gradle adds support for Groovy 1.6. If you don't want to wait, have a look at Spock's Gradle build (in particular the spock-specks project).
-
-= Eclipse  =
-
-This section will be updated as soon as the Eclipse Groovy plugin adds support for Groovy 1.6. For general information about the Eclipse Groovy plugin, go to http://groovy.codehaus.org/Eclipse+Plugin.
-
-= Netbeans  =
+== Netbeans ==
 
 This section will be updated as soon as the !NetBeans Groovy plugin adds support for Groovy 1.6. For general information about the !NetBeans Groovy plugin, go to http://groovy.codehaus.org/NetBeans+Plugin.

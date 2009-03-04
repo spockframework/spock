@@ -1,3 +1,94 @@
 #summary Learn how to specify interactions between your objects.
 
-= Coming to you at the speed of light... =
+*This article is a stub. You can help Spock by expanding it.*
+
+=== Creating Mocks ===
+
+Style 1:
+{{{
+def subscriber = Mock(Subscriber)
+}}}
+
+Style 2:
+{{{
+Subscriber subscriber = Mock()
+}}}
+
+=== Optional (stubbed) global interaction ===
+
+Optional interactions must not specify a cardinality, and must specify a return value.
+
+{{{
+setup:
+subscriber.isValid() >> true
+}}}
+
+=== Optional (stubbed) scoped interaction ===
+
+{{{
+when: // ...
+then: subscriber.isValid() >> true
+}}}
+
+=== Required (mocked) global interaction ===
+
+Currently not supported.
+
+=== Required (mocked) scoped interaction ===
+
+Required interactions must specify a cardinality, and may specify a return value.
+
+{{{
+when: publisher.publish("msg")
+then: 1 * subscriber.receive("msg")
+}}}
+
+=== Cardinalities ===
+
+{{{
+then: n * subscriber.receive("msg")      // exactly n times
+
+then: (n.._) * subscriber.receive("msg") // at least n times
+
+then: (_..n) * subscriber.receive("msg") // at most n times 
+}}}
+
+=== Target constraints ===
+
+{{{
+then: _.receive(msg) // receive is called on any target (i.e. mock object)
+}}}
+
+=== Method constraints ===
+
+{{{
+then: subscriber./set.*/(_) // any setter is called on subscriber (any regular expression allowed)
+}}}
+
+=== Argument Constraints ===
+
+{{{
+then: subscriber.receive(_)                           // any argument
+
+then: subscriber.receive(!null)                       // any non-null argument
+
+then: subscriber.receive(msg)                         // any argument equal to msg
+
+then: subscriber.receive(!msg)                        // any argument not equal to msg
+
+then: subscriber.receive(_ as Message)                // any argument that is-a Message
+
+then: subscriber.receive( { it.priority == "high" } ) // custom constraint
+}}}
+
+=== Return Values ===
+
+{{{
+then: subscriber.isValid() >> true                     // single return value, repeated indefinitely
+
+then: subscriber.isValid() >>> [true, false, true]     // multiple return values (anything that Groovy can iterate over), last one repeated indefinitely
+
+def random = new Random()
+// ...
+then: subscriber.isValid() >> { random.nextBoolean() } // custom return value
+}}}

@@ -71,15 +71,15 @@ subscriber./set.*/(_) // any setter is called on subscriber (any regular express
 === Argument Constraints ===
 
 {{{
-subscriber.receive(_)                           // any argument
+subscriber.receive(_)                      // any argument
 
-subscriber.receive(!null)                       // any non-null argument
+subscriber.receive(!null)                  // any non-null argument
 
-subscriber.receive(msg)                         // any argument equal to msg
+subscriber.receive(msg)                    // any argument equal to msg
 
-subscriber.receive(!msg)                        // any argument not equal to msg
+subscriber.receive(!msg)                   // any argument not equal to msg
 
-subscriber.receive(_ as Message)                // any argument that is-a Message
+subscriber.receive(_ as Message)           // any argument that is-a Message
 
 subscriber.receive( { it.priority >= 5 } ) // custom constraint
 }}}

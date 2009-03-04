@@ -4,14 +4,12 @@
 
 === Creating Mocks ===
 
-Style 1:
-{{{
-def subscriber = Mock(Subscriber)
-}}}
+Mocks can be created for interfaces, non-final Java classes, and non-final Groovy classes (experimental). Currently all mocks are lenient. If a method is called that does not match any specified interaction, no error occurs and the default value for the method's return type is returned.
 
-Style 2:
 {{{
-Subscriber subscriber = Mock()
+def subscriber = Mock(Subscriber) // "dynamic" style
+
+Subscriber subscriber = Mock()    // "static" style"
 }}}
 
 === Optional (stubbed) global interaction ===

@@ -378,7 +378,7 @@ def matchesPreferredConfiguration(pc) {
 }
 }}}
 
-As you can see, two changes need to be made when factoring out conditions into a helper method: First, the conditions must be made explicit with the `assert` keyword. Second, because _every_ method invocation in Groovy returns a value, we need to make sure that `true` is returned if everything goes well. Otherwise, the "parent" condition (in our case `matchesPreferredConfiguration(pc)`) might fail even though all "child" conditions have passed.
+As you can see, two changes need to be made when factoring out conditions into a helper method: First, the conditions must be made explicit with the `assert` keyword. Second, because _every_ method invocation in Groovy returns a value, we need to make sure that `true` is returned if everything goes well. Otherwise, the "parent" condition (`matchesPreferredConfiguration(pc)` in our case) might fail even though all "child" conditions have passed.
 
 Note: Always add `true` as the last statement of a helper method containing explicit conditions. (Hopefully, future version of Spock will be able to overcome this pitfall.)
 

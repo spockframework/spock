@@ -239,7 +239,7 @@ def "HashMap accepts null key"() {
 }
 }}}
 
-By using `notThrown()`, we make it clear that in particular a NullPointerException should not be thrown. (As per the contract of `Map.put()`, this would be the right thing to do for a map that doesn't support `null` keys.) However, the method will also fail if any other exception is thrown.
+By using `notThrown()`, we make it clear that in particular a !NullPointerException should not be thrown. (As per the contract of `Map.put()`, this would be the right thing to do for a map that doesn't support `null` keys.) However, the method will also fail if any other exception is thrown.
   
 ===== Interactions =====
 

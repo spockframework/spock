@@ -110,7 +110,7 @@ given:     // alias for "setup:"
 and:       // split a block into multiple parts
 }}}
 
-Spock has built-in support for implementing each of the conceptual phases of a feature method. To this end, feature methods are structured into so-called _blocks_. Blocks start with a label, and extend to the beginning of the next block, or the end of the method. There are six kinds of blocks: `setup`, `when`, `then`, `expect`, `cleanup`, and `where` blocks. Any statements between the beginning of the method and the first explicit block belong to an implicit `setup` block. The 'given:' and 'and:' labels are syntactic sugar to enhance the readability of a specification, and will be further explained in section Specifications as Documentation.
+Spock has built-in support for implementing each of the conceptual phases of a feature method. To this end, feature methods are structured into so-called _blocks_. Blocks start with a label, and extend to the beginning of the next block, or the end of the method. There are six kinds of blocks: `setup`, `when`, `then`, `expect`, `cleanup`, and `where` blocks. Any statements between the beginning of the method and the first explicit block belong to an implicit `setup` block. The `given:` and `and:` labels are syntactic sugar to enhance the readability of a specification, and will be further explained in section Specifications as Documentation.
 
 A feature method must have at least one explicit (i.e. labelled) block - in fact, the presence of an explicit block is what makes a method a feature method. Blocks divide a method into distinct sections, and cannot be nested.
 

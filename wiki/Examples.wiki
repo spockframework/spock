@@ -1,3 +1,4 @@
 #summary Example specifications.
+#labels Featured
 
  * [StackSpecification]

@@ -17,8 +17,7 @@ Detailed instructions for these two steps can be found in the [http://groovy.cod
  * Download junit-4.4.jar or higher ([http://sourceforge.net/project/showfiles.php?group_id=15278&package_id=12472 download page])
  * Download spock-core-0.1.jar or higher ([http://code.google.com/p/spock/downloads/list download page])
  * Create a file named !HelloSpock.groovy with the following content: [HelloSpock HelloSpock.groovy]
- * Compile !HelloSpock with `groovyc -cp "path_to_junit.jar:path_to_spock.jar" HelloSpock.groovy` (on Windows, replace `:` with `;`)
- * Run !HelloSpock with `java -cp ".:path_to_groovy-all.jar:path_to_junit.jar:path_to_spock.jar" org.junit.runner.JUnitCore HelloSpock` (on Windows, replace `:` with `;`)
+ * Run !HelloSpock with `groovy -cp "junit-4.4.jar:spock-core-0.1.jar" HelloSpock` (you may need to edit the Jar paths; on Windows, separate the paths with `;` instead of `:`)
 
 == Ant ==
 

@@ -49,11 +49,11 @@ Currently, optional interactions can be global or scoped, but required interacti
 === Cardinalities ===
 
 {{{
-n * subscriber.receive("msg")      // exactly n times
+n * subscriber.receive(msg)      // exactly n times
 
-(n.._) * subscriber.receive("msg") // at least n times
+(n.._) * subscriber.receive(msg) // at least n times
 
-(_..n) * subscriber.receive("msg") // at most n times 
+(_..n) * subscriber.receive(msg) // at most n times 
 }}}
 
 === Target constraints ===
@@ -81,7 +81,7 @@ subscriber.receive(!msg)                        // any argument not equal to msg
 
 subscriber.receive(_ as Message)                // any argument that is-a Message
 
-subscriber.receive( { it.priority == "high" } ) // custom constraint
+subscriber.receive( { it.priority >= 5 } ) // custom constraint
 }}}
 
 === Return Values ===

@@ -13,8 +13,8 @@
   <target name="bootstrap.maven.tasks" unless="maven.ant.tasks.jar.exists">
     <mkdir dir="${lib.dir}" />
     <get
-	  src="${maven.ant.tasks.url}"
-	  dest="${maven.ant.tasks.jar}" />
+      src="${maven.ant.tasks.url}"
+      dest="${maven.ant.tasks.jar}" />
   </target>
 
   <target name="init.maven.tasks" depends="bootstrap.maven.tasks">
@@ -25,46 +25,45 @@
   </target>
   
   <target name="resolve.dependencies" depends="init.maven.tasks">   
-	<artifact:dependencies pathId="classpath.spock">
-	  <dependency
-	    groupId="org.spockframework"
-	    artifactId="spock-core"
-	    version="0.1-SNAPSHOT" />
-     
-	  <remoteRepository
-	    id="maven-central"
-	    url="http://repo1.maven.org/maven2/" />
-	  <remoteRepository
-	    id="spock-snapshots"
-	    url="http://m2repo.spockframework.org/snapshots/" />
+    <artifact:dependencies pathId="classpath.spock">
+      <dependency
+        groupId="org.spockframework"
+        artifactId="spock-core"
+        version="0.1-SNAPSHOT" />    
+      <remoteRepository
+        id="maven-central"
+        url="http://repo1.maven.org/maven2/" />
+      <remoteRepository
+        id="spock-snapshots"
+        url="http://m2repo.spockframework.org/snapshots/" />
     </artifact:dependencies>
   </target>
   
   <target name="init.groovy.tasks" depends="resolve.dependencies">
     <taskdef
-    name="groovyc"
-    classname="org.codehaus.groovy.ant.Groovyc"
-    classpathref="classpath.spock" />  
+      name="groovyc"
+      classname="org.codehaus.groovy.ant.Groovyc"
+      classpathref="classpath.spock" />  
   </target>
 
   <target name="init" depends="init.groovy.tasks">
-	<tstamp />
+    <tstamp />
     <mkdir dir="${build.dir}" />  
   </target> 
 
   <target name="compile" depends="init">
     <groovyc
-	  srcdir="${src.dir}"
-	  destdir="${build.dir}"
-	  classpathref="classpath.spock" />
+      srcdir="${src.dir}"
+     destdir="${build.dir}"
+     classpathref="classpath.spock" />
   </target>
   
   <target name="test" depends="compile">
     <junit>
-	  <formatter type="plain" usefile="false" />
-	  <classpath path="${build.dir}" />
-	  <classpath refid="classpath.spock" />	  
-	  <test name="HelloSpock" />
+      <formatter type="plain" usefile="false" />
+      <classpath path="${build.dir}" />
+      <classpath refid="classpath.spock" />	  
+      <test name="HelloSpock" />
     </junit>
   </target>
 

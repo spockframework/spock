@@ -9,8 +9,6 @@
   <property name="maven.ant.tasks.url" value="http://www.apache.org/dist/maven/binaries/maven-ant-tasks-2.0.9.jar" />
   <property name="maven.ant.tasks.jar" value="${lib.dir}${file.separator}maven-ant-tasks-2.0.9.jar" />
   <available property="maven.ant.tasks.jar.exists" file="${maven.ant.tasks.jar}" />
- 
-  <setproxy proxyhost="proxy.nll.siemens.at" proxyport="81"/>
 	  
   <target name="bootstrap.maven.tasks" unless="maven.ant.tasks.jar.exists">
     <mkdir dir="${lib.dir}" />

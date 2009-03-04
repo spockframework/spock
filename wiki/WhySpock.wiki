@@ -27,7 +27,7 @@
     def "subscribers receive published messages at least once"() {
       when: publisher.send(msg)
       then: (1.._) * subscriber.receive(msg)
-      where: msg << ["load", "save", "reset"]
+      where: msg << ["start", "stop", "reset"]
     }
     }}}
   # *Extensible for everyone*

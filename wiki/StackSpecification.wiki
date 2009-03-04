@@ -1,4 +1,4 @@
-#summary The infamous Stack specification, Spock style.
+#summary The infamous Stack example, Spock style.
 
 {{{
 import org.junit.runner.RunWith

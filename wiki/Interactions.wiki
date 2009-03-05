@@ -75,9 +75,9 @@ subscriber.receive(_)                      // any argument
 
 subscriber.receive(!null)                  // any non-null argument
 
-subscriber.receive(event)                    // any argument equal to event
+subscriber.receive(event)                  // any argument equal to event
 
-subscriber.receive(!event)                   // any argument not equal to event
+subscriber.receive(!event)                 // any argument not equal to event
 
 subscriber.receive(_ as Message)           // any argument that is-a Message
 

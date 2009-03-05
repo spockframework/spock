@@ -29,7 +29,7 @@
       <dependency
         groupId="org.spockframework"
         artifactId="spock-core"
-        version="0.1-SNAPSHOT" />    
+        version="0.2-SNAPSHOT" />    
       <remoteRepository
         id="maven-central"
         url="http://repo1.maven.org/maven2/" />

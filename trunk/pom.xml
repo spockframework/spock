@@ -18,7 +18,9 @@
   </licenses>
   
   <scm>
-    <url>http://svn.spockframework.org</url>
+    <connection>scm:svn:http://spock.googlecode.com/svn</connection>
+    <developerConnection>scm:svn:https://spock.googlecode.com/svn</developerConnection>
+    <url>http://code.google.com/p/spock/source/browse</url>
   </scm>
       
   <modules>

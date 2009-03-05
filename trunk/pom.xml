@@ -4,7 +4,7 @@
   <groupId>org.spockframework</groupId>
   <artifactId>spock-parent</artifactId>
   <packaging>pom</packaging>
-  <version>0.1-SNAPSHOT</version>
+  <version>0.1</version>
   <name>Spock Framework - Parent</name>
   <url>http://spockframework.org</url>
   <description>Spock is a testing and specification framework for Java and Groovy developers.</description>  
@@ -18,9 +18,9 @@
   </licenses>
   
   <scm>
-    <connection>scm:svn:http://spock.googlecode.com/svn</connection>
-    <developerConnection>scm:svn:https://spock.googlecode.com/svn</developerConnection>
-    <url>http://code.google.com/p/spock/source/browse</url>
+    <connection>scm:svn:http://spock.googlecode.com/svn/tags/spock-0.1</connection>
+    <developerConnection>scm:svn:https://spock.googlecode.com/svn/tags/spock-0.1</developerConnection>
+    <url>http://code.google.com/p/spock/source/browse/tags/spock-0.1</url>
   </scm>
       
   <modules>

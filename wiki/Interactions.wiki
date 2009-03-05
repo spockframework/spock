@@ -18,14 +18,14 @@ Interactions defined outside of a `then` block are called _global_. They are val
 
 {{{
 setup:
-subscriber.isValid() >> true
+subscriber.isAlive() >> true
 }}}
 
 Interactions defined inside of a `then` block are called _scoped_. They are valid only within the preceding `when` block.
 
 {{{
-when: publisher.send(msg)
-then: 1 * subscriber.receive(msg)
+when: publisher.send(event)
+then: 1 * subscriber.receive(event)
 }}}
 
 === Optional vs. required interaction ===
@@ -33,15 +33,15 @@ then: 1 * subscriber.receive(msg)
 Optional interactions don't have a cardinality, and must have a return value.
 
 {{{
-then: subscriber.isValid() >> true
+then: subscriber.isAlive() >> true
 }}}
 
 Required interactions must have a cardinality, and may have a return value.
 
 {{{
-then: 1 * subscriber.isValid() >> true
+then: 1 * subscriber.isAlive() >> true
 
-then: n * subscriber.receive(msg)
+then: n * subscriber.receive(event)
 }}}
 
 Currently, optional interactions can be global or scoped, but required interactions must be scoped.
@@ -49,17 +49,17 @@ Currently, optional interactions can be global or scoped, but required interacti
 === Cardinalities ===
 
 {{{
-n * subscriber.receive(msg)      // exactly n times
+n * subscriber.receive(event)      // exactly n times
 
-(n.._) * subscriber.receive(msg) // at least n times
+(n.._) * subscriber.receive(event) // at least n times
 
-(_..n) * subscriber.receive(msg) // at most n times 
+(_..n) * subscriber.receive(event) // at most n times 
 }}}
 
 === Target constraints ===
 
 {{{
-_.receive(msg) // receive is called on any target (i.e. mock object)
+_.receive(event) // receive is called on any target (i.e. mock object)
 }}}
 
 === Method constraints ===
@@ -75,9 +75,9 @@ subscriber.receive(_)                      // any argument
 
 subscriber.receive(!null)                  // any non-null argument
 
-subscriber.receive(msg)                    // any argument equal to msg
+subscriber.receive(event)                    // any argument equal to event
 
-subscriber.receive(!msg)                   // any argument not equal to msg
+subscriber.receive(!event)                   // any argument not equal to event
 
 subscriber.receive(_ as Message)           // any argument that is-a Message
 
@@ -87,10 +87,10 @@ subscriber.receive( { it.priority >= 5 } ) // custom constraint
 === Return Values ===
 
 {{{
-subscriber.isValid() >> true                     // single return value, repeated indefinitely
+subscriber.isAlive() >> true                     // single return value, repeated indefinitely
 
-subscriber.isValid() >>> [true, false, true]     // multiple return values (anything that Groovy can iterate over), last one repeated indefinitely
+subscriber.isAlive() >>> [true, false, true]     // multiple return values (anything that Groovy can iterate over), last one repeated indefinitely
 
 def random = new Random()
-subscriber.isValid() >> { random.nextBoolean() } // custom return value
+subscriber.isAlive() >> { random.nextBoolean() } // custom return value
 }}}

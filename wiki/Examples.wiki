@@ -1,4 +1,7 @@
 #summary Example specifications.
 #labels Featured
 
+All examples are self-contained and runnable as-is.
+
  * [StackSpecification]
+ * [PublisherSubscriberSpecification]

@@ -24,10 +24,10 @@
   # *Beautiful language*
     Express your thoughts in a beautiful and highly expressive specification language.
     {{{
-    def "subscribers receive published messages at least once"() {
-      when: publisher.send(msg)
-      then: (1.._) * subscriber.receive(msg)
-      where: msg << ["start", "stop", "reset"]
+    def "subscribers receive published events at least once"() {
+      when: publisher.send(event)
+      then: (1.._) * subscriber.receive(event)
+      where: event << ["started", "paused", "stopped"]
     }
     }}}
   # *Extensible for everyone*

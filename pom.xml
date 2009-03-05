@@ -7,7 +7,7 @@
   <version>0.1-SNAPSHOT</version>
   <name>Spock Framework - Parent</name>
   <url>http://spockframework.org</url>
-  <description>Spock is a developer testing and specification framework for Java and Groovy applications.</description>  
+  <description>Spock is a testing and specification framework for Java and Groovy developers.</description>  
   
   <licenses>
     <license>

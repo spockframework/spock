@@ -44,7 +44,7 @@ public class InteractionNotSatisfiedError extends SpeckAssertionError {
   @Override
   public String toString() {
     StringBuilder builder = new StringBuilder();
-    builder.append("Unsatisfied interactions:\n");
+    builder.append("Interaction not satisfied:\n\n");
     for (IMockInteraction interaction : interactions) {
       int numAccepted = interaction.getAcceptedCount();
       builder.append(String.format("%s   (%d %s)\n",

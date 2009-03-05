@@ -57,7 +57,9 @@ class StaticField {
   }
 }
 
+/* TODO: can we do better than commenting this out?
 @org.junit.Ignore("fails, demonstrating that static fields have longer lifetime than shared fields")
 @RunWith(Suite)
 @SuiteClasses([StaticField, StaticField])
 class StaticFieldSuite {}
+*/

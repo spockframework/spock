@@ -104,7 +104,7 @@ Spock has built-in support for implementing each of the conceptual phases of a f
 
 A feature method must have at least one explicit (i.e. labelled) block - in fact, the presence of an explicit block is what makes a method a feature method. Blocks divide a method into distinct sections, and cannot be nested.
 
-The picture on the right shows how blocks map to the conceptual phases of a feature method. Apparently, the `where` block has a special role, which will be revealed shortly. Now, let's have a closer look at each kind of block.
+The picture on the right shows how blocks map to the conceptual phases of a feature method. Apparently, the `where` block has a special role, which will be revealed shortly. But first, let's have a closer look at the other blocks.
 
 ==== Setup Blocks ====
 

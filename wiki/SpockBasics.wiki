@@ -116,6 +116,8 @@ A feature method must have at least one explicit (i.e. labelled) block - in fact
 
 Now, how do blocks correspond to the conceptual phases of a feature method? Well, `setup` and `cleanup` are fairly obvious. A `when` block corresponds to the stimulus part, `then` to the response part, and `expect` combines both phases into one block. This leaves us with `where`, which, as we will see later, is used for parameterizing a feature method.
 
+Blocks2Phases.png
+
 ==== Setup Blocks ====
 
 {{{

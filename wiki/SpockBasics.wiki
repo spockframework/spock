@@ -98,25 +98,13 @@ Whereas the first and last phases are optional, the stimulus and response phases
  
 === Blocks ===
 
-{{{
-setup:     // do setup work
-when:      // provide a stimulus
-then:      // describe the expected response
-expect:    // describe expected conditions (combines stimulus & response)
-cleanup:   // do cleanup work
-where:     // parameterize a feature method
+<img src="http://svn.spockframework.org/wiki/Blocks2Phases.png" align="right"/>
 
-given:     // alias for "setup:"
-and:       // split a block into multiple parts
-}}}
-
-Spock has built-in support for implementing each of the conceptual phases of a feature method. To this end, feature methods are structured into so-called _blocks_. Blocks start with a label, and extend to the beginning of the next block, or the end of the method. There are six kinds of blocks: `setup`, `when`, `then`, `expect`, `cleanup`, and `where` blocks. Any statements between the beginning of the method and the first explicit block belong to an implicit `setup` block. The `given:` and `and:` labels are syntactic sugar to enhance the readability of a specification, and will be further explained in section Specifications as Documentation.
+Spock has built-in support for implementing each of the conceptual phases of a feature method. To this end, feature methods are structured into so-called _blocks_. Blocks start with a label, and extend to the beginning of the next block, or the end of the method. There are six kinds of blocks: `setup`, `when`, `then`, `expect`, `cleanup`, and `where` blocks. Any statements between the beginning of the method and the first explicit block belong to an implicit `setup` block.
 
 A feature method must have at least one explicit (i.e. labelled) block - in fact, the presence of an explicit block is what makes a method a feature method. Blocks divide a method into distinct sections, and cannot be nested.
 
-Now, how do blocks correspond to the conceptual phases of a feature method? Well, `setup` and `cleanup` are fairly obvious. A `when` block corresponds to the stimulus part, `then` to the response part, and `expect` combines both phases into one block. This leaves us with `where`, which, as we will see later, is used for parameterizing a feature method.
-
-Blocks2Phases.png
+The picture on the right shows how blocks map to the conceptual phases of a feature method. Apparently, the `where` block has a special role, which will be revealed shortly. Now, let's have a closer look at each kind of block.
 
 ==== Setup Blocks ====
 
@@ -126,7 +114,7 @@ def stack = new Stack()
 def elem = "push me"
 }}}
 
-The `setup` block is where you do any setup work for the feature that you are describing. It may not be preceded by other blocks, and may not be repeated. A `setup` block doesn't have any special semantics. The `setup:` label is optional and may be omitted, resulting in an _implicit_ `setup` block. The `given:` label is an alias for `setup:`, and sometimes leads to a more readable feature method description (see Specification as Documentation).
+The `setup` block is where you do any setup work for the feature that you are describing. It may not be preceded by other blocks, and may not be repeated. A `setup` block doesn't have any special semantics. The `setup:` label is optional and may be omitted, resulting in an _implicit_ `setup` block. The `given:` label is an alias for `setup:`, and sometimes leads to a more readable feature method description (see section Specification as Documentation).
  
 ==== When and Then Blocks ====
 
@@ -308,19 +296,23 @@ Tip: If a specification is designed in such a way that all its feature methods r
 
 ==== Where Blocks ====
 
-A `where` blocks always comes last in a method, and may not be repeated. It allows you to bind values to variables, effectively creating multiple concrete instantiations of an abstract feature method. To give you an idea how this is done, have a look at the following example:
+A `where` block always comes last in a method, and may not be repeated. It is used to write data-driven feature methods. To give you an idea how this is done, have a look at the following example:
 
 {{{
-expect:
-Math.max(a, b) == c
+def "computing the maximum of two numbers"() {
+  expect:
+  Math.max(a, b) == c
 
-where:
-a << [5, 7, 4]
-b << [1, 8, 4]
-c << [5, 8, 4]
+  where:
+  a << [5, 3]
+  b << [1, 9]
+  c << [5, 9]
+}
 }}}
 
-The `where` block is further explained in chapter [Parameterizations]. 
+This `where` block effectively creates two "versions" of the feature method: One where `a` is 5, `b` is 1, and `c` is 5, and another one where `a` is 3, `b` is 9, and `c` is 9.
+
+The `where` block will be further explained in chapter [Parameterizations]. 
 
 == Helper Methods ==
 
@@ -395,7 +387,7 @@ assert pc.clockRate >= 2333
        ...
 }}}
 
-A final advice: Although code reuse is generally a good thing, don't take it too far. This is especially true for specifications: The use of common fixture and helper methods increases the coupling between feature methods. If you reuse too much or the wrong code, you will end up with specifications that are fragile and hard to evolve.
+A final advice: Although code reuse is generally a good thing, don't take it too far. Be aware that the use of fixture and helper methods can increase the coupling between feature methods. If you reuse too much or the wrong code, you will end up with specifications that are fragile and hard to evolve.
 
 == Specifications as Documentation ==
 

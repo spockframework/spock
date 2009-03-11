@@ -19,7 +19,7 @@ package org.spockframework.compiler.model;
 import org.codehaus.groovy.ast.MethodNode;
 
 /**
- * AST node representing a fixture-method. In source code, a fixture-method
+ * AST node representing a fixture method. In source code, a fixture method
  * corresponds to an instance method named one of "setup", "cleanup",
  * "setupSpeck", "cleanupSpeck".
  * 

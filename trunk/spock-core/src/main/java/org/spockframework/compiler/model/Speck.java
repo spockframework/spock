@@ -23,7 +23,7 @@ import org.codehaus.groovy.ast.ClassNode;
 
 /**
  * AST node representing a Spock specification (abbreviated to "Speck"). In source
- * code, a Speck corresponds to one class definition marked with @speck.
+ * code, a Speck corresponds to one class definition marked with @Speck.
  *
  * @author Peter Niederwieser
  */

@@ -17,9 +17,7 @@
 package org.spockframework.compiler.model;
 
 /**
- * AST node representing a given-block in a feature-method. A given-block
- * is an unnamed block at the beginning of a feature method, containing zero or
- * more statements.
+ * AST node representing a setup-block in a feature method.
  *
  * @author Peter Niederwieser
  */

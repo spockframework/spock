@@ -17,17 +17,10 @@
 package org.spockframework.compiler.model;
 
 /**
- * AST node representing a when-block in a feature-method.
+ * AST node representing a when-block in a feature method.
  *
  * @author Peter Niederwieser
  */
-// IDEA: to support ordering of interactions, we could introduce the following syntax:
-// when: ...
-// then: ... // comes after preceding interactions
-// and:  ... // label not considered for ordering purposes (allows to vary structure/documentation w/o altering semantics)
-// then: ... // comes after preceding interactions
-//
-// IDEA: maybe we could also make it possible to specify "condition A holds; THEN interaction B takes place"
 public class WhenBlock extends Block {
   public WhenBlock(Method parent) {
     super(parent);

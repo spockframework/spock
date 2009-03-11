@@ -23,9 +23,9 @@ import org.junit.runner.notification.RunNotifier;
 import static org.spockframework.runtime.RunStatus.END_FEATURE;
 import static org.spockframework.runtime.RunStatus.END_SPECK;
 import org.spockframework.runtime.model.MethodInfo;
-import org.spockframework.runtime.model.MethodKind;
 import org.spockframework.runtime.model.SpeckInfo;
 
+// IDEA: represent setupSpeck()/afterSpeck() as JUnit test methods
 public class JUnitSupervisor implements IRunSupervisor {
   private final RunNotifier notifier;
   private SpeckInfo speck;
@@ -42,7 +42,7 @@ public class JUnitSupervisor implements IRunSupervisor {
 
   public void beforeFeature(MethodInfo feature) {
     this.feature = feature;
-    notifier.fireTestStarted(getFeatureDescription());
+    notifier.fireTestStarted(getDescription(feature));
   }
 
   public void beforeFirstIteration(int estimatedNumIterations) {
@@ -53,14 +53,10 @@ public class JUnitSupervisor implements IRunSupervisor {
     numIterations++;
   }
 
-  // TODO: think about handling JUnit's StoppedByUserException
-  // TODO: change SpeckInfoRunner so that we can also notify JUnit when
-  // beforeClass and afterClass are run
   public int error(MethodInfo method, Throwable throwable, int runStatus) {
-    // TODO: investigate use of the new method fireTestAssumptionFailed()
-    notifier.fireTestFailure(new Failure(getFeatureDescription(), throwable));
+    Description description = getFailureDescription(feature, method);
+    notifier.fireTestFailure(new Failure(description, throwable));
 
-    // TODO: what if java.lang.Error occurs? can we tell JUnit to abort, e.g. by throwing the Error?
     switch (method.getKind()) {
       case FEATURE:
       case DATA_PROVIDER:
@@ -75,18 +71,22 @@ public class JUnitSupervisor implements IRunSupervisor {
 
   public void afterLastIteration() {
     if (numIterations == 0)
-      notifier.fireTestFailure(new Failure(getFeatureDescription(),
+      notifier.fireTestFailure(new Failure(getDescription(feature),
           new SpeckExecutionException("Data provider has no data")));
   }
   
   public void afterFeature() {
-    notifier.fireTestFinished(getFeatureDescription());
+    notifier.fireTestFinished(getDescription(feature));
     feature = null;
   }
 
   public void afterSpeck() {}
 
-  private Description getFeatureDescription() {
-    return (Description)feature.getMetadata();
+  private Description getDescription(MethodInfo method) {
+    return (Description)method.getMetadata();
+  }
+
+  private Description getFailureDescription(MethodInfo currentFeature, MethodInfo failedMethod) {
+    return getDescription(currentFeature == null ? failedMethod : currentFeature);
   }
 }

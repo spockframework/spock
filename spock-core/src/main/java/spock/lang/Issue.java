@@ -32,5 +32,5 @@ public @interface Issue {
    *
    * @return the IDs of the issues that the annotated element relates to
    */
-  String[] values();
+  String[] value();
 }

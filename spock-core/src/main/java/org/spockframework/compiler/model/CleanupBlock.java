@@ -17,7 +17,7 @@
 package org.spockframework.compiler.model;
 
 /**
- * AST node representing a cleanup-block in a feature-method.
+ * AST node representing a cleanup-block in a feature method.
  *
  * @author Peter Niederwieser
  */

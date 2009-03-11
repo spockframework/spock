@@ -19,11 +19,6 @@ package org.spockframework.compiler.model;
 /**
  * @author Peter Niederwieser
  */
-// NOTE: might make sense to also visit abstract nodes
-// NOTE: could use return type to control visitation; e.g.,
-// returning false could mean "don't visit subnodes", or
-// "don't visit concrete nodes refining this abstract node"
-// NOTE: also visit fixture methods?  
 public interface ISpeckVisitor {
   void visitSpeck(Speck speck) throws Exception;
   void visitMethod(Method method) throws Exception;

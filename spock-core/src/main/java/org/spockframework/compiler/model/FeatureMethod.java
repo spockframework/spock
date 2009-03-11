@@ -19,7 +19,7 @@ package org.spockframework.compiler.model;
 import org.codehaus.groovy.ast.MethodNode;
 
 /**
- * AST node representing a feature-method.
+ * AST node representing a feature method.
  * 
  * @author Peter Niederwieser
  */

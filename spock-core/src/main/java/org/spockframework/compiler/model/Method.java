@@ -26,7 +26,7 @@ import org.codehaus.groovy.ast.stmt.Statement;
 import org.spockframework.compiler.AstUtil;
 
 /**
- * AST node representing a Speck method (one of fixture-method, feature-method, helper-method).
+ * AST node representing a Speck method (one of fixture method, feature method, helper method).
  * @author Peter Niederwieser
  */
 public abstract class Method extends Node<Speck, MethodNode> {

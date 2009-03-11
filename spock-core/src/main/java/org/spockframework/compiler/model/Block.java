@@ -22,7 +22,7 @@ import java.util.List;
 import org.codehaus.groovy.ast.stmt.Statement;
 
 /**
- * AST node representing a block within a feature-method. There are six kinds
+ * AST node representing a block in a feature method. There are six kinds
  * of blocks: setup-block, expect-block, when-block, then-block, cleanup-block,
  * and where-block. 
  * 

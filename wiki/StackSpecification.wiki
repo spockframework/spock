@@ -1,4 +1,4 @@
-#summary The classic Stack specification, Spock style.
+#summary The classic example, Spock style.
 
 {{{
 import org.junit.runner.RunWith

@@ -114,6 +114,17 @@ class DataProviders {
       d << (["d"] as String[])
       e << "YES".toLowerCase()[1]
   }
+
+  def "computed"() {
+    expect: a == b
+    where:
+    a << {
+      def x = 0
+      def y = 1
+      [x, y]
+    }()
+    b << [0, 1]
+  }
 }
 
 private class MyIterator implements Iterator {

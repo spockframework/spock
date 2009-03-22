@@ -4,7 +4,7 @@
 
 === Creating Mocks ===
 
-Mocks can be created for interfaces, non-final Java classes, and non-final Groovy classes (experimental). Currently all mocks are lenient. If a method is called that does not match any specified interaction, no error occurs and the default value for the method's return type is returned.
+Mocks can be created for interfaces, non-final Java classes, and non-final Groovy classes (experimental). Currently all mocks are lenient. In other words, if a method call does not match any interaction, the default value for the method's return type is returned.
 
 {{{
 def subscriber = Mock(Subscriber) // "dynamic" style (mock name inferred from variable name)
@@ -79,7 +79,7 @@ subscriber.receive(event)                  // any argument equal to event
 
 subscriber.receive(!event)                 // any argument not equal to event
 
-subscriber.receive(_ as Message)           // any argument that is-a Message
+subscriber.receive(_ as Message)           // any argument that is-a Message (null is not allowed)
 
 subscriber.receive( { it.priority >= 5 } ) // custom constraint
 }}}
@@ -93,4 +93,6 @@ subscriber.isAlive() >>> [true, false, true]     // multiple return values (anyt
 
 def random = new Random()
 subscriber.isAlive() >> { random.nextBoolean() } // custom return value
+
+subscriber.isAlive() >> { throw new TimeoutException() } // custom action
 }}}

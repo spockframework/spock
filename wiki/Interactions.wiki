@@ -59,7 +59,7 @@ n * subscriber.receive(event)      // exactly n times
 === Target constraints ===
 
 {{{
-_.receive(event) // receive is called on any target (i.e. mock object)
+_.receive(event) // receive is called on any target (i.e. any mock object)
 }}}
 
 === Method constraints ===

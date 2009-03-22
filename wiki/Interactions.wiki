@@ -96,3 +96,30 @@ subscriber.isAlive() >> { random.nextBoolean() } // custom return value
 
 subscriber.isAlive() >> { throw new TimeoutException() } // custom action
 }}}
+
+=== Explicit denotation of interactions ===
+If an interaction definition in a `then` block depends on other code in the same block, this has to be made explicit as follows:
+
+{{{
+then:
+interaction {
+  def count = 3
+  count * suscriber.receive(_)
+}
+}}}
+
+The same is true for an interaction defined in a helper method:
+
+{{{
+then:
+interaction {
+  subscriberReceivesThreeMessages()
+}
+
+...
+
+def subscriberReceivesThreeMessages() {
+  3 * subscriber.receive(_)
+  // you may define additional interactions here
+}
+}}}

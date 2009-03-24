@@ -73,9 +73,7 @@ where:
 [name, _, gender] = sql.execute("select name, age, sex from customer")
 }}}
 
-(Of course, in this particular example the preferred solution would be to adapt the SQL query.)
-
-
+(Of course, in this particular example the preferred solution would be to adapt the SQL query to only return `name` and `sex`.)
 
 
 

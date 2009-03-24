@@ -32,7 +32,7 @@ These parameterizations will trigger two iterations - one with binding `x=1, y=4
 
 Besides iterating over a data provider, Spock might invoke two other methods on a data provider: If a data provider offers a `size()` method, Spock will use the value returned by this method to calculate the estimated number of iterations for the feature method. If a data provider offers a `close()` method, Spock will call this method once the data provider is no longer needed.
 
-It is very easy to write a custom data provider. Just implement the methods 'next()' and 'hasNext()' (as defined in `java.lang.Iterable`) and optionally `size()` and `close()`, and you are ready to go!
+It is very easy to write a custom data provider. Just implement the methods `next()` and `hasNext()` (as defined in `java.lang.Iterable`) and optionally `size()` and `close()`, and you are ready to go!
 
 ===Derived parameterizations===
 
@@ -78,5 +78,3 @@ where:
 }}}
 
 (Of course, in this particular example the preferred solution would be to adapt the SQL query to only return `name` and `sex`.)
-
-

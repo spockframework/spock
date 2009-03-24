@@ -5,6 +5,7 @@
 ===Simple parameterizations===
 
 {{{
+where:
 x << dataProvider
 }}}
 
@@ -32,6 +33,7 @@ These parameterizations will trigger two iterations - one with binding `x=1, y=4
 ===Derived parameterizations===
 
 {{{
+where:
 x = expression
 }}}
 
@@ -72,8 +74,6 @@ where:
 }}}
 
 (Of course, in this particular example the preferred solution would be to adapt the SQL query.)
-
-
 
 
 

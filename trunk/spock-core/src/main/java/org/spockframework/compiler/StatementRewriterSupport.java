@@ -22,6 +22,7 @@ import java.util.ListIterator;
 import org.codehaus.groovy.ast.CodeVisitorSupport;
 import org.codehaus.groovy.ast.expr.Expression;
 import org.codehaus.groovy.ast.stmt.*;
+import org.spockframework.util.InternalSpockError;
 
 /**
  * Walks the statement and expression tree and allows for statements (but not
@@ -37,6 +38,9 @@ public class StatementRewriterSupport extends CodeVisitorSupport {
     if (stat instanceof EmptyStatement) return stat;
 
     stat.visit(this);
+    if (result == null)
+      throw new InternalSpockError("result not set");
+
     return result;
   }
 
@@ -46,11 +50,13 @@ public class StatementRewriterSupport extends CodeVisitorSupport {
   }
 
   @Override
-  public void visitBlockStatement(BlockStatement block) {
+  public void visitBlockStatement(BlockStatement stat) {
     @SuppressWarnings("unchecked")
-    ListIterator<Statement> iter = block.getStatements().listIterator();
+    ListIterator<Statement> iter = stat.getStatements().listIterator();
     while (iter.hasNext())
       iter.set(visit(iter.next()));
+
+    result = stat;
   }
 
   // missing: setLoopBlock

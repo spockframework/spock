@@ -26,9 +26,18 @@ import org.codehaus.groovy.ast.stmt.*;
 public abstract class AbstractExpressionConverter<T> implements GroovyCodeVisitor {
   protected T result;
 
+  // tries to detect all situations where a visitXXXExpression
+  // method doesn't set a result, as this would corrupt the
+  // conversion
   public T convert(Expression expr) {
+    result = null;
     expr.visit(this);
-    return result;
+    if (result == null)
+      Assert.fail("No result set for expression: " + expr);
+
+    T tmp = result;
+    result = null;
+    return tmp;
   }
 
   protected List<T> convertAll(List<Expression> expressions) {

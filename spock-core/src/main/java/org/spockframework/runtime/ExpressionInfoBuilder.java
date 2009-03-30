@@ -61,19 +61,21 @@ public class ExpressionInfoBuilder {
     Assert.that(stat instanceof ExpressionStatement);
     Expression expr = ((ExpressionStatement)stat).getExpression();
 
-    ExpressionInfo info = new ExpressionInfoConverter(lines).convert(expr);
+    ExpressionInfo exprInfo = new ExpressionInfoConverter(lines).convert(expr);
 
     // TODO: if possible, move rest of this method to ExpressionInfoConverter (but: might make EIC less testable)
     // TODO: also try to make ExpressionInfo immutable
     Iterator iter = values.iterator();
-    for (ExpressionInfo e : info.inPostfixOrder(false)) {
-      e.setText(findText(e.getRegion()));
-      e.setValue(iter.next());
+    for (ExpressionInfo info : exprInfo.inPostfixOrder(false)) {
+      info.setText(findText(info.getRegion()));
+      if (!iter.hasNext())
+        Assert.fail("Missing value for expression '%s' in condition '%s'", info.getText(), text);
+      info.setValue(iter.next());
       if (startPos.getLineIndex() > 0)
-        e.shiftVertically(startPos.getLineIndex());
+        info.shiftVertically(startPos.getLineIndex());
     }
 
-    return info;
+    return exprInfo;
   }
 
   private String findText(TextRegion region) {

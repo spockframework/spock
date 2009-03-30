@@ -28,19 +28,19 @@ public abstract class Assert {
     notNull(obj, "argument is null");
   }
 
-  public static void notNull(Object obj, String msg) {
-    if (obj == null) throw new InternalSpockError(msg);
+  public static void notNull(Object obj, String msg, Object... values) {
+    if (obj == null) throw new InternalSpockError(String.format(msg, values));
   }
 
   public static void that(boolean condition) {
     that(condition, "internal error");
   }
 
-  public static void that(boolean condition, String msg) {
-    if (!condition) throw new InternalSpockError(msg);
+  public static void that(boolean condition, String msg, Object... values) {
+    if (!condition) throw new InternalSpockError(String.format(msg, values));
   }
 
-  public static void fail(String msg) {
-    that(false, msg);
+  public static void fail(String msg, Object... values) {
+    that(false, msg, values);
   }
 }

@@ -89,7 +89,7 @@ class ExpressionInfoBuilderSpeck {
       expr != null
       expr.region == TextRegion.create(TextPosition.create(1, 1), TextPosition.create(1, 12))
       expr.anchor == TextPosition.create(1, 5)
-      expr.children.size() == 2
+      expr.children.size() == 3
       expr.text == "foo.bar(42)"
       expr.isRelevant()
   }

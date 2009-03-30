@@ -19,12 +19,16 @@ package org.spockframework.runtime;
 import org.spockframework.runtime.model.ExpressionInfo;
 import org.spockframework.runtime.model.TextPosition;
 
+import java.util.regex.Pattern;
+
 /**
  * Runtime representation of an evaluated condition.
  *
  * @author Peter Niederwieser
  */
 public class Condition {
+  private static final Pattern pattern = Pattern.compile("\\s*\n\\s*");
+
   private final String text;
   private final TextPosition position;
   private final Iterable<Object> values;
@@ -49,10 +53,10 @@ public class Condition {
 
   public String render() {
     ExpressionInfo exprInfo = new ExpressionInfoBuilder(flatten(text), TextPosition.create(1, 1), values).build();
-    return new ExpressionInfoPrinter(exprInfo).print();
+    return ExpressionInfoRenderer.render(exprInfo);
   }
 
   private static String flatten(String text) {
-    return text.replace('\n', ' ');
+    return pattern.matcher(text).replaceAll(" ");
   }
 }

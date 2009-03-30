@@ -39,8 +39,6 @@ import org.spockframework.util.InternalSpockError;
  */
 // TODO: "assert false" and "expect: false" are missing line number in stack trace,
 // but "assert true && false" does have line number ?!
-// IDEA: explicit syntax for specifying that no exception is thrown, e.g.:
-// NoException thrown
 // TODO: use of SourceLookup in both DeepStatementRewriter and SpeckRewriter might
 // slow down lookup considerably; check whether this is a problem
 // IDEA: disallow return statement in feature methods (might cause harm?)

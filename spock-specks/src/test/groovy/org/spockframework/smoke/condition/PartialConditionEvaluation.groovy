@@ -14,42 +14,21 @@
  * limitations under the License.
  */
 
-package org.spockframework.smoke
+package org.spockframework.smoke.condition
 
 import org.junit.runner.RunWith
-
 import spock.lang.*
-import static spock.lang.Predef.*
-import org.spockframework.runtime.ConditionNotSatisfiedError
 
 /**
+ * Tests whether we are able to handle the situation where some expressions
+ * are not evaluated and hence have no value recorded.
  *
  * @author Peter Niederwieser
  */
 @Speck
 @RunWith (Sputnik)
-class ExplicitConditionsInFixtureMethods {
-  @FailsWith(ConditionNotSatisfiedError)
-  def setupSpeck() {
-    assert false
-  }
-
-  @FailsWith(ConditionNotSatisfiedError)
-  def cleanupSpeck() {
-    assert false
-  }
-
-  @FailsWith(ConditionNotSatisfiedError)
-  def setup() {
-    assert false
-  }
-
-  @FailsWith(ConditionNotSatisfiedError)
-  def cleanup() {
-    assert false
-  }
-
-  def "dummy feature that triggers setup and cleanup"() {
-    setup: def x = 0
+class PartialConditionEvaluation {
+  def "test"() {
+    expect: ((false && true) ^ (true || bar(x, y, z)))
   }
 }

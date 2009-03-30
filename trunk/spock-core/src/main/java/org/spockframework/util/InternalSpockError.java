@@ -20,7 +20,6 @@ package org.spockframework.util;
  *
  * @author Peter Niederwieser
  */
-// TODO: error or runtime exception?
 public class InternalSpockError extends Error {
   private Object[] msgArgs;
 

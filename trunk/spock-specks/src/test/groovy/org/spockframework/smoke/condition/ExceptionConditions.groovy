@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.spockframework.smoke
+package org.spockframework.smoke.condition
 
 import org.junit.runner.RunWith
 import org.spockframework.util.SpockSyntaxException
@@ -24,7 +24,7 @@ import static spock.lang.Predef.*
 
 /**
  * A ...
- 
+
  * @author Peter Niederwieser
  */
 
@@ -49,12 +49,12 @@ class ExceptionConditions {
 
   def "when-block with var defs"() {
     when: "a when-block defines some vars and throws an exception"
-      def x = null
-      def ch = "".charAt(0)
+    def x = null
+    def ch = "".charAt(0)
     then: "the vars can be accessed from the then-block (provided the exception is caught)"
-      ch == null
-      thrown(IndexOutOfBoundsException)
-      ch == x
+    ch == null
+    thrown(IndexOutOfBoundsException)
+    ch == x
   }
 
   def "catch an Exception"() {
@@ -79,10 +79,10 @@ class ExceptionConditions {
 
   def "catch base type"() {
     when:
-      "".charAt(0)
+    "".charAt(0)
     then:
-      Throwable t = thrown()
-      t instanceof IndexOutOfBoundsException
+    Throwable t = thrown()
+    t instanceof IndexOutOfBoundsException
   }
 
   def "exception in first block of when-group"() {
@@ -106,7 +106,7 @@ class ExceptionConditions {
 
   def "may only occur once in a then-block"() {
     when:
-      new GroovyClassLoader().parseClass("""
+    new GroovyClassLoader().parseClass("""
 @spock.lang.Speck
 class Ex {
   def ex() {
@@ -119,15 +119,15 @@ class Ex {
       """)
 
     then:
-      MultipleCompilationErrorsException e = thrown()
-      def error = e.errorCollector.getSyntaxError(0)
-      error instanceof SpockSyntaxException
-      error.line == 8
+    MultipleCompilationErrorsException e = thrown()
+    def error = e.errorCollector.getSyntaxError(0)
+    error instanceof SpockSyntaxException
+    error.line == 8
   }
 
   def "may only occur once in a group of then-blocks"() {
     when:
-      new GroovyClassLoader().parseClass("""
+    new GroovyClassLoader().parseClass("""
 @spock.lang.Speck
 class Ex {
   def ex() {
@@ -139,9 +139,9 @@ class Ex {
       """)
 
     then:
-      MultipleCompilationErrorsException e = thrown()
-      def error = e.errorCollector.getSyntaxError(0)
-      error instanceof SpockSyntaxException
-      error.line == 7
+    MultipleCompilationErrorsException e = thrown()
+    def error = e.errorCollector.getSyntaxError(0)
+    error instanceof SpockSyntaxException
+    error.line == 7
   }
 }

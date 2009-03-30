@@ -31,12 +31,14 @@ public class ValueRecorder implements Iterable<Object> {
   private final ArrayList<Object> values = new ArrayList<Object>();
 
   public static final String RESET = "reset";
+
   public ValueRecorder reset() {
     values.clear();
     return this;
   }
 
   public static final String RECORD = "record";
+  
   /**
    * Records and returns the specified value. Hence an expression can be replaced
    * with record(expression) without impacting evaluation of the expression.

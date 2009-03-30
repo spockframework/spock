@@ -19,6 +19,7 @@ package org.spockframework.runtime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.ArrayList;
 
 import org.codehaus.groovy.ast.ASTNode;
 import org.codehaus.groovy.ast.expr.*;
@@ -45,13 +46,13 @@ public class ExpressionInfoConverter extends AbstractExpressionConverter<Express
   }
 
   public void visitMethodCallExpression(MethodCallExpression expr) {
-    TextPosition anchor;
-    @SuppressWarnings("unchecked")
-    List<ExpressionInfo> children = convertAll(((ArgumentListExpression)expr.getArguments()).getExpressions());
+    TextPosition anchor = TextPosition.startOf(expr.getMethod());
 
-    anchor = TextPosition.startOf(expr.getMethod());
+    List<ExpressionInfo> children = new ArrayList<ExpressionInfo>();
     if (!expr.isImplicitThis())
-      children.add(0, convert(expr.getObjectExpression()));
+      children.add(convert(expr.getObjectExpression()));
+    children.add(convert(expr.getMethod()));
+    children.add(convert(expr.getArguments()));
 
     result = new ExpressionInfo(
         TextRegion.of(expr),
@@ -64,8 +65,7 @@ public class ExpressionInfoConverter extends AbstractExpressionConverter<Express
   }
 
   public void visitStaticMethodCallExpression(StaticMethodCallExpression expr) {
-    unsupported(); // only used in later compiler phases
-    // TODO: not true! used if method is imported as static class member
+    unsupported(); // still a MethodCallExpression in phase conversion
   }
 
   @SuppressWarnings("unchecked")
@@ -73,11 +73,16 @@ public class ExpressionInfoConverter extends AbstractExpressionConverter<Express
     result = new ExpressionInfo(
         TextRegion.of(expr),
         TextPosition.startOf(expr),
-        convertAll(((ArgumentListExpression)expr.getArguments()).getExpressions()));
+        convert(expr.getArguments()));
   }
 
+  @SuppressWarnings("unchecked")
   public void visitArgumentlistExpression(ArgumentListExpression expr) {
-    unsupported();
+    result = new ExpressionInfo(
+        TextRegion.of(expr),
+        TextPosition.startOf(expr),
+        convertAll(expr.getExpressions())
+    ).setRelevant(false);
   }
 
   public void visitPropertyExpression(PropertyExpression expr) {
@@ -94,16 +99,16 @@ public class ExpressionInfoConverter extends AbstractExpressionConverter<Express
   }
 
   public void visitFieldExpression(FieldExpression expr) {
-    result = new ExpressionInfo(
-        TextRegion.of(expr),
-        TextPosition.startOf(expr));
+    unsupported(); // unused AST node
   }
 
   public void visitMethodPointerExpression(MethodPointerExpression expr) {
     result = new ExpressionInfo(
         TextRegion.of(expr),
         TextPosition.startOf(expr.getMethodName()),
-        convert(expr.getExpression()));
+        convert(expr.getExpression()),
+        convert(expr.getMethodName())
+    ).setRelevant(false);
   }
 
   public void visitVariableExpression(VariableExpression expr) {
@@ -119,7 +124,7 @@ public class ExpressionInfoConverter extends AbstractExpressionConverter<Express
   }
 
   public void visitRegexExpression(RegexExpression expr) {
-    unsupported(); // TODO
+    unsupported(); // unused AST node
   }
 
   public void visitConstantExpression(ConstantExpression expr) {
@@ -130,10 +135,7 @@ public class ExpressionInfoConverter extends AbstractExpressionConverter<Express
   }
 
   public void visitClassExpression(ClassExpression expr) {
-    result = new ExpressionInfo(
-        TextRegion.of(expr),
-        TextPosition.startOf(expr)
-    ).setValue(ExpressionInfo.VALUE_NOT_AVAILABLE);
+    unsupported(); // Not used in phase conversion?
   }
 
   public void visitBinaryExpression(BinaryExpression expr) {
@@ -142,9 +144,7 @@ public class ExpressionInfoConverter extends AbstractExpressionConverter<Express
         expr.getOperation().getType() == Types.LEFT_SQUARE_BRACKET ?
             startOf("[", expr.getRightExpression()) : // workaround for the fact that Token.startLine == 0 for token [
             TextPosition.startOf(expr.getOperation()),
-        convert(expr.getLeftExpression()).setValue(
-            Types.ofType(expr.getOperation().getType(), Types.ASSIGNMENT_OPERATOR) ?
-                ExpressionInfo.VALUE_NOT_AVAILABLE : null),
+        convert(expr.getLeftExpression()),
         convert(expr.getRightExpression())
     );
   }
@@ -210,7 +210,7 @@ public class ExpressionInfoConverter extends AbstractExpressionConverter<Express
         startOf(":", expr.getValueExpression()),
         convert(expr.getKeyExpression()),
         convert(expr.getValueExpression())
-    ).setValue(ExpressionInfo.VALUE_NOT_AVAILABLE);
+    );
   }
 
   @SuppressWarnings("unchecked")
@@ -225,7 +225,7 @@ public class ExpressionInfoConverter extends AbstractExpressionConverter<Express
   public void visitTernaryExpression(TernaryExpression expr) {
     result = new ExpressionInfo(
         TextRegion.of(expr),
-        startOf("?", expr.getTrueExpression()),
+        startOf("?", expr.getTrueExpression()), // TODO: necessary?
         convertAll(
             Arrays.asList(
                 expr.getBooleanExpression(),
@@ -237,8 +237,8 @@ public class ExpressionInfoConverter extends AbstractExpressionConverter<Express
   public void visitShortTernaryExpression(ElvisOperatorExpression expr) {
     result = new ExpressionInfo(
         TextRegion.of(expr),
-        startOf("?", expr.getFalseExpression()),
-        convert(expr.getBooleanExpression()),
+        startOf("?", expr.getFalseExpression()), // TODO: necessary?
+        convert(expr.getTrueExpression()),
         convert(expr.getFalseExpression())
     ).setRelevant(false);
   }
@@ -258,7 +258,11 @@ public class ExpressionInfoConverter extends AbstractExpressionConverter<Express
   }
 
   public void visitBooleanExpression(BooleanExpression expr) {
-    result = convert(expr.getExpression());
+    result = new ExpressionInfo(
+        TextRegion.of(expr),
+        TextPosition.startOf(expr),
+        convert(expr.getExpression())
+    ).setRelevant(false);
   }
 
   public void visitClosureExpression(ClosureExpression expr) {
@@ -286,24 +290,35 @@ public class ExpressionInfoConverter extends AbstractExpressionConverter<Express
   }
 
   public void visitClosureListExpression(ClosureListExpression expr) {
-    unsupported(); // TODO
+    unsupported(); // cannot occur in assertion
   }
 
   @SuppressWarnings("unchecked")
   public void visitArrayExpression(ArrayExpression expr) {
+    List<ExpressionInfo> children = convertAll(expr.getExpressions());
+    children.addAll(convertAll(expr.getSizeExpression()));
+
     result = new ExpressionInfo(
         TextRegion.of(expr),
         TextPosition.startOf(expr),
-        convertAll(expr.getExpressions())
+        children
     ).setRelevant(false);
   }
 
   public void visitSpreadExpression(SpreadExpression expr) {
-    result = convert(expr.getExpression());
+    result = new ExpressionInfo(
+        TextRegion.of(expr),
+        TextPosition.startOf(expr),
+        convert(expr.getExpression())
+    ).setRelevant(false);
+
   }
 
   public void visitSpreadMapExpression(SpreadMapExpression expr) {
-    result = convert(expr.getExpression());
+    result = new ExpressionInfo(
+        TextRegion.of(expr),
+        TextPosition.startOf(expr)
+    );
   }
 
   // searches for token backwards from beginning of node (exclusive)

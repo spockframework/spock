@@ -14,21 +14,32 @@
  * limitations under the License.
  */
 
-package org.spockframework.smoke
+package org.spockframework.smoke.condition
 
 import org.junit.runner.RunWith
+
 import spock.lang.*
+import static spock.lang.Predef.*
+import org.spockframework.runtime.ConditionNotSatisfiedError
 
 /**
- * Tests whether we are able to handle the situation where some expressions
- * are not evaluated and hence have no value recorded.
  *
  * @author Peter Niederwieser
  */
 @Speck
-@RunWith(Sputnik)
-class PartialConditionEvaluation {
-  def "test"() {
-    expect: ((false && true) ^ (true || bar(x, y, z)))
+@RunWith (Sputnik)
+class ExplicitConditionsInFields {
+  def instanceField = { assert false }
+  @Shared sharedField = { assert false }
+
+  @FailsWith(ConditionNotSatisfiedError)
+  def "explicit condition in instance field"() {
+    setup: instanceField()
+
+  }
+
+  @FailsWith(ConditionNotSatisfiedError)
+  def "explicit condition in shared field"() {
+    setup: sharedField()
   }
 }

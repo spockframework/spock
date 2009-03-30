@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.spockframework.smoke
+package org.spockframework.smoke.condition
 
 import org.junit.runner.RunWith
 
@@ -28,18 +28,28 @@ import org.spockframework.runtime.ConditionNotSatisfiedError
  */
 @Speck
 @RunWith (Sputnik)
-class ExplicitConditionsInFields {
-  def instanceField = { assert false }
-  @Shared sharedField = { assert false }
-
+class ExplicitConditionsInFixtureMethods {
   @FailsWith(ConditionNotSatisfiedError)
-  def "explicit condition in instance field"() {
-    setup: instanceField()
-
+  def setupSpeck() {
+    assert false
   }
 
   @FailsWith(ConditionNotSatisfiedError)
-  def "explicit condition in shared field"() {
-    setup: sharedField()
+  def cleanupSpeck() {
+    assert false
+  }
+
+  @FailsWith(ConditionNotSatisfiedError)
+  def setup() {
+    assert false
+  }
+
+  @FailsWith(ConditionNotSatisfiedError)
+  def cleanup() {
+    assert false
+  }
+
+  def "dummy feature that triggers setup and cleanup"() {
+    setup: def x = 0
   }
 }

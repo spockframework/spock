@@ -17,6 +17,8 @@
 package org.spockframework.compiler;
 
 import java.util.Arrays;
+import java.util.List;
+import java.util.ArrayList;
 
 import org.codehaus.groovy.ast.GroovyCodeVisitor;
 import org.codehaus.groovy.ast.expr.*;
@@ -30,6 +32,7 @@ import org.spockframework.runtime.SpockRuntime;
 import org.spockframework.runtime.ValueRecorder;
 import org.spockframework.util.AbstractExpressionConverter;
 import org.spockframework.util.Util;
+import org.spockframework.util.Assert;
 
 // IDEA: refactor to allow more succinct expression of the pattern: construct conversion,
 // set source position, return_(record())
@@ -78,7 +81,7 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> {
             expr.isImplicitThis() ?
                 expr.getObjectExpression() :
                 convert(expr.getObjectExpression()),
-            expr.getMethod(), // TODO: convert?
+            convert(expr.getMethod()),
             convert(expr.getArguments()));
 
     conversion.setSafe(expr.isSafe());
@@ -87,12 +90,12 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> {
     result = record(conversion);
   }
 
-  // only used for static method calls with implicit target
+  // only used for statically imported methods called by their simple name
   public void visitStaticMethodCallExpression(StaticMethodCallExpression expr) {
     StaticMethodCallExpression conversion =
         new StaticMethodCallExpression(
             expr.getOwnerType(),
-            expr.getMethod(),
+            recordNa(expr.getMethod()),
             convert(expr.getArguments()));
 
     conversion.setSourcePosition(expr);
@@ -111,7 +114,7 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> {
             convertAll(expr.getExpressions()));
 
     conversion.setSourcePosition(expr);
-    result = conversion;
+    result = recordNa(conversion);
   }
 
   public void visitPropertyExpression(PropertyExpression expr) {
@@ -147,14 +150,14 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> {
   }
 
   public void visitFieldExpression(FieldExpression expr) {
-    result = record(expr);
+    unsupported(); // unused AST node
   }
 
   public void visitMethodPointerExpression(MethodPointerExpression expr) {
     MethodPointerExpression conversion =
         new MethodPointerExpression(
             convert(expr.getExpression()),
-            expr.getMethodName()); // TODO: convert?
+            convert(expr.getMethodName()));
 
     conversion.setSourcePosition(expr);
     result = record(conversion);
@@ -169,15 +172,15 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> {
   }
 
   public void visitRegexExpression(RegexExpression expr) {
-    result = expr;
+    unsupported(); // unused AST node
   }
 
   public void visitBinaryExpression(BinaryExpression expr) {
     BinaryExpression conversion =
         new BinaryExpression(
-            // only convert LHS if not an assignment expr
             Types.ofType(expr.getOperation().getType(), Types.ASSIGNMENT_OPERATOR) ?
-                expr.getLeftExpression() :
+                // prevent lvalue from getting turned into record(lvalue), which can no longer be assigned to
+                convertAndRecordNa(expr.getLeftExpression()) :
                 convert(expr.getLeftExpression()),
             expr.getOperation(),
             convert(expr.getRightExpression()));
@@ -246,7 +249,7 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> {
   }
 
   public void visitClosureListExpression(ClosureListExpression expr) {
-    result = expr;
+    unsupported(); // cannot occur in assertion
   }
 
   public void visitNotExpression(NotExpression expr) {
@@ -296,7 +299,7 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> {
             convert(expr.getValueExpression()));
 
     conversion.setSourcePosition(expr);
-    result = conversion;
+    result = recordNa(conversion);
   }
 
   public void visitConstructorCallExpression(ConstructorCallExpression expr) {
@@ -327,7 +330,7 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> {
         new ArrayExpression(
             expr.getElementType(),
             convertAll(expr.getExpressions()),
-            expr.getSizeExpression()); // TODO: rewrite?
+            convertAll(expr.getSizeExpression()));
 
     conversion.setSourcePosition(expr);
     result = record(conversion);
@@ -339,23 +342,19 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> {
             convert(expr.getExpression()));
 
     conversion.setSourcePosition(expr);
-    result = conversion;
+    result = recordNa(conversion);
   }
 
   public void visitSpreadMapExpression(SpreadMapExpression expr) {
-    SpreadExpression conversion =
-        new SpreadExpression(
-            convert(expr.getExpression()));
-
-    conversion.setSourcePosition(expr);
-    result = conversion;
+    // to not record the underlying MapExpression twice, we do nothing here
+    // see http://jira.codehaus.org/browse/GROOVY-3421
+    result = recordNa(expr);
   }
 
   public void visitTernaryExpression(TernaryExpression expr) {
     TernaryExpression conversion =
         new TernaryExpression(
-            new BooleanExpression(
-                convert(expr.getBooleanExpression().getExpression())),
+            convertCompatibly(expr.getBooleanExpression()),
             convert(expr.getTrueExpression()),
             convert(expr.getFalseExpression()));
 
@@ -366,7 +365,7 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> {
   public void visitShortTernaryExpression(ElvisOperatorExpression expr) {
     ElvisOperatorExpression conversion =
         new ElvisOperatorExpression(
-            convert(expr.getBooleanExpression().getExpression()),
+            convert(expr.getTrueExpression()),
             convert(expr.getFalseExpression()));
 
     conversion.setSourcePosition(expr);
@@ -377,7 +376,7 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> {
     PrefixExpression conversion =
         new PrefixExpression(
             expr.getOperation(),
-            unrecord(convert(expr.getExpression())));
+            convertAndRecordNa(expr.getExpression()));
 
     conversion.setSourcePosition(expr);
     result = record(conversion);
@@ -386,7 +385,7 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> {
   public void visitPostfixExpression(PostfixExpression expr) {
     PostfixExpression conversion =
         new PostfixExpression(
-            unrecord(convert(expr.getExpression())),
+            convertAndRecordNa(expr.getExpression()),
             expr.getOperation());
 
     conversion.setSourcePosition(expr);
@@ -394,8 +393,13 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> {
   }
 
   public void visitBooleanExpression(BooleanExpression expr) {
-    // implicit conversion so don't record
-    result = convert(expr.getExpression());
+    BooleanExpression conversion =
+        new BooleanExpression(
+            convert(expr.getExpression())
+        );
+
+    conversion.setSourcePosition(expr);
+    result = recordNa(conversion);
   }
 
   public void visitClosureExpression(ClosureExpression expr) {
@@ -406,9 +410,12 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> {
 
   @SuppressWarnings("unchecked")
   public void visitTupleExpression(TupleExpression expr) {
+    // only use on LHS of multi-assignment
     TupleExpression conversion =
         new TupleExpression(
-            convertAll(expr.getExpressions()));
+            // prevent lvalues from getting turned into record(lvalue), 
+            // which can no longer be assigned to
+            convertAllAndRecordNa(expr.getExpressions()));
 
     conversion.setSourcePosition(expr);
     result = record(conversion);
@@ -421,8 +428,30 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> {
         new ArgumentListExpression(new ConstantExpression(recordCount++), expr));
   }
 
+  private <T> T recordNa(T expr) {
+    recordCount++;
+    return expr;
+  }
+
+  private Expression convertAndRecordNa(Expression expr) {
+    return unrecord(convert(expr));
+  }
+
+  private List<Expression> convertAllAndRecordNa(List<Expression> expressions) {
+    List<Expression> conversions = new ArrayList<Expression>(expressions.size());
+    for (Expression expr : expressions) conversions.add(convertAndRecordNa(expr));
+    return conversions;
+  }
+
+  @SuppressWarnings("unchecked")
+  private <T extends Expression> T convertCompatibly(T expr) {
+    Expression conversion = convert(expr);
+    Assert.that(expr.getClass().isInstance(conversion));
+    return (T)conversion;
+  }
+
   // does not change recordCount
-  private Expression unrecord(Expression expr) {
+  private static Expression unrecord(Expression expr) {
     if (!(expr instanceof MethodCallExpression)) return expr;
     MethodCallExpression methodExpr = (MethodCallExpression)expr;
     Expression targetExpr = methodExpr.getObjectExpression();

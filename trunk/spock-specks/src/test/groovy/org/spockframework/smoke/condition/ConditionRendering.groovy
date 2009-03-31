@@ -503,7 +503,7 @@ two(*a)
     isRendered """
 one(*:m)
 |     |
-0     {a=1, b=2}
+0     [a:1, b:2]
     """, {
       def m = [a: 1, b: 2]
       assert one(*:m)
@@ -513,7 +513,7 @@ one(*:m)
 [a:1, *:m] == null
         |  |
         |  false
-        {b=2, c=3}
+        [b:2, c:3]
     """, {
       def m = [b: 2, c: 3]
       assert [a:1, *:m] == null

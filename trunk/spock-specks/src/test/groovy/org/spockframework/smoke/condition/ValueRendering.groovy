@@ -108,6 +108,32 @@ x == null
     }
   }
 
+  def "list value"() {
+    expect:
+    isRendered """
+x == null
+| |
+| false
+[1, 2, 3]
+    """, {
+      def x = [1,2,3]
+      assert x == null
+    }
+  }
+
+  def "map value"() {
+    expect:
+    isRendered """
+x == null
+| |
+| false
+[a:1, b:2]
+    """, {
+      def x = [a: 1, b: 2]
+      assert x == null
+    }
+  }
+
   def "single-line toString"() {
     expect:
     isRendered """

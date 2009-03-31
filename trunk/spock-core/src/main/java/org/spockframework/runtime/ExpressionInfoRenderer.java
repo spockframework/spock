@@ -18,6 +18,7 @@ package org.spockframework.runtime;
 
 import org.spockframework.runtime.model.ExpressionInfo;
 import org.spockframework.runtime.model.TextPosition;
+import org.codehaus.groovy.runtime.DefaultGroovyMethods;
 
 import java.util.*;
 
@@ -128,17 +129,18 @@ public class ExpressionInfoRenderer {
     Object value = expr.getValue();
 
     if (value == null) return "null";
+    if (value.equals("")) return "\"\"";
 
     String str;
     String errorMsg = "";
     try {
-      str = value.getClass().isArray() ? arrayToString(value) : value.toString();
+      str = DefaultGroovyMethods.toString(value);
     } catch (Exception e) {
       str = null;
-      errorMsg = " (toString() threw " + e.getClass().getName() + ")";
+      errorMsg = " (DGM.toString() threw " + e.getClass().getName() + ")";
     }
 
-    // if the value has no string representation, produce something like Object.toString()
+    // if the value has no string representation, produce same output as Object.toString()
     if (str == null || str.equals("")) {
       String hash = Integer.toHexString(System.identityHashCode(value));
       return value.getClass().getName() + "@" + hash + errorMsg;
@@ -153,19 +155,5 @@ public class ExpressionInfoRenderer {
     }
 
     return str;
-  }
-
-  private static String arrayToString(Object array) {
-    Class<?> clazz = array.getClass();
-
-    if (clazz == byte[].class) return Arrays.toString((byte[]) array);
-    if (clazz == short[].class) return Arrays.toString((short[]) array);
-    if (clazz == int[].class) return Arrays.toString((int[]) array);
-    if (clazz == long[].class) return Arrays.toString((long[]) array);
-    if (clazz == char[].class) return Arrays.toString((char[]) array);
-    if (clazz == float[].class) return Arrays.toString((float[]) array);
-    if (clazz == double[].class) return Arrays.toString((double[]) array);
-    if (clazz == boolean[].class) return Arrays.toString((boolean[]) array);
-    return Arrays.deepToString((Object[]) array);
   }
 }

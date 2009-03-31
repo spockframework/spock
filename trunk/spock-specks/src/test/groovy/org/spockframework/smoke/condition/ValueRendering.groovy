@@ -69,6 +69,19 @@ foo
     }
   }
 
+  @Issue("17")
+  def "empty string value"() {
+    isRendered """
+x == null
+| |
+| false
+""
+    """, {
+      def x = ""
+      assert x == null
+    }
+  }
+
   def "primitive array value"() {
     expect:
     isRendered """
@@ -159,7 +172,7 @@ ${x.objectToString()}
 x == null
 | |
 | false
-${x.objectToString()} (toString() threw java.lang.UnsupportedOperationException)
+${x.objectToString()} (DGM.toString() threw java.lang.UnsupportedOperationException)
     """, {
       assert x == null
     }

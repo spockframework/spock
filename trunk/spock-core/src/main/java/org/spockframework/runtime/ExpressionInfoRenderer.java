@@ -105,10 +105,10 @@ public class ExpressionInfoRenderer {
   }
 
   private String linesToString() {
-    StringBuilder firstLine = lines.get(0);
-    for (int i = 1; i < lines.size(); i++)
-      firstLine.append('\n').append(lines.get(i).toString());
-    return firstLine.toString();
+    StringBuilder result = new StringBuilder();
+    for (StringBuilder line : lines)
+      result.append(line).append('\n');
+    return result.toString();
   }
 
   private static void placeString(StringBuilder line, String str, int column) {

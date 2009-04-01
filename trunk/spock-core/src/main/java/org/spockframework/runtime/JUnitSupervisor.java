@@ -32,12 +32,15 @@ public class JUnitSupervisor implements IRunSupervisor {
   private MethodInfo feature;
   private int numIterations;
 
+  private StackTraceFilter filter;
+
   public JUnitSupervisor(RunNotifier notifier) {
     this.notifier = notifier;
   }
 
   public void beforeSpeck(SpeckInfo speck) {
     this.speck = speck;
+    this.filter = new StackTraceFilter(speck);
   }
 
   public void beforeFeature(MethodInfo feature) {
@@ -54,6 +57,8 @@ public class JUnitSupervisor implements IRunSupervisor {
   }
 
   public int error(MethodInfo method, Throwable throwable, int runStatus) {
+    filter.filter(throwable);
+    
     Description description = getFailureDescription(feature, method);
     notifier.fireTestFailure(new Failure(description, throwable));
 

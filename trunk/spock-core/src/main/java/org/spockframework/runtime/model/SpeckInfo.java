@@ -20,6 +20,7 @@ import java.util.*;
 
 import org.spockframework.runtime.IMethodInfoFilter;
 import org.spockframework.runtime.IMethodInfoSortOrder;
+import org.spockframework.runtime.IMethodNameMapper;
 import org.spockframework.util.Util;
 import org.spockframework.util.IFunction;
 
@@ -27,7 +28,7 @@ import org.spockframework.util.IFunction;
  *
  * @author Peter Niederwieser
  */
-public class SpeckInfo extends NodeInfo<NodeInfo, Class<?>> {
+public class SpeckInfo extends NodeInfo<NodeInfo, Class<?>> implements IMethodNameMapper {
   private final List<FieldInfo> fields = new ArrayList<FieldInfo>();
   private MethodInfo setupMethod;
   private MethodInfo cleanupMethod;
@@ -94,5 +95,13 @@ public class SpeckInfo extends NodeInfo<NodeInfo, Class<?>> {
 
   public void sortFeatureMethods(final IMethodInfoSortOrder order) {
     Collections.sort(featureMethods, order);
+  }
+
+  public String map(String methodName) {
+    for (MethodInfo method : featureMethods) {
+      if (method.getReflection().getName().equals(methodName))
+        return method.getName();
+    }
+    return methodName;
   }
 }

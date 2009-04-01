@@ -68,7 +68,6 @@ public class ExpressionInfoConverter extends AbstractExpressionConverter<Express
     unsupported(); // still a MethodCallExpression in phase conversion
   }
 
-  @SuppressWarnings("unchecked")
   public void visitConstructorCallExpression(ConstructorCallExpression expr) {
     result = new ExpressionInfo(
         TextRegion.of(expr),

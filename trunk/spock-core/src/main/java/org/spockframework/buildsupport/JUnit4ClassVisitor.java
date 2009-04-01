@@ -3,8 +3,6 @@ package org.spockframework.buildsupport;
 import org.objectweb.asm.*;
 import org.objectweb.asm.commons.EmptyVisitor;
 
-import java.io.*;
-
 class JUnit4ClassVisitor extends EmptyVisitor {
   boolean isTestCase = false;
 

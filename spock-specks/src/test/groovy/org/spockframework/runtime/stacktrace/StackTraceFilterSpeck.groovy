@@ -32,7 +32,6 @@ import org.spockframework.runtime.IMethodNameMapper
 @Speck(StackTraceFilter)
 @RunWith(Sputnik)
 class StackTraceFilterSpeck {
-	@org.junit.Test
   def "filter trace"() {
     setup:
       def mapper = Mock(IMethodNameMapper)

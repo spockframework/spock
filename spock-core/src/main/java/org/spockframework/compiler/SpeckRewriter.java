@@ -148,8 +148,11 @@ public class SpeckRewriter extends AbstractSpeckVisitor implements IRewriteResou
   }
 
   private MethodNode copyMethod(MethodNode method, String newName) {
+    // we set return type to void because this helps for running
+    // individual feature methods in IDEA
+    // (see http://www.jetbrains.net/jira/browse/IDEA-22492)
     MethodNode newMethod = new MethodNode(newName, method.getModifiers(),
-        method.getReturnType(), method.getParameters(), method.getExceptions(), method.getCode());
+        ClassHelper.VOID_TYPE, method.getParameters(), method.getExceptions(), method.getCode());
     newMethod.addAnnotations(method.getAnnotations());
     newMethod.setSynthetic(method.isSynthetic());
     newMethod.setDeclaringClass(method.getDeclaringClass());

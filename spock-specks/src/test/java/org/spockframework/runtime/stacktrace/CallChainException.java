@@ -14,13 +14,9 @@
  * limitations under the License.
  */
 
-package org.spockframework.runtime;
-
-import java.util.Comparator;
-
-import org.spockframework.runtime.model.MethodInfo;
+package org.spockframework.runtime.stacktrace;
 
 /**
  * @author Peter Niederwieser
  */
-public interface IMethodInfoSortOrder extends Comparator<MethodInfo> {}
+public class CallChainException extends RuntimeException {}

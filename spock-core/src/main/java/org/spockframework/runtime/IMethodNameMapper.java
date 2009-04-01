@@ -16,11 +16,11 @@
 
 package org.spockframework.runtime;
 
-import java.util.Comparator;
-
-import org.spockframework.runtime.model.MethodInfo;
-
 /**
+ * Maps method names in bytecode to their logical names. Typically used for feature methods.
+ *
  * @author Peter Niederwieser
  */
-public interface IMethodInfoSortOrder extends Comparator<MethodInfo> {}
+public interface IMethodNameMapper {
+  String map(String methodName);
+}

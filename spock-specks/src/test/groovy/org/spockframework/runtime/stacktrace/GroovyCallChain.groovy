@@ -14,13 +14,24 @@
  * limitations under the License.
  */
 
-package org.spockframework.runtime;
-
-import java.util.Comparator;
-
-import org.spockframework.runtime.model.MethodInfo;
+package org.spockframework.runtime.stacktrace;
 
 /**
+ * Code copied over from JavaCallChain.
+ *
  * @author Peter Niederwieser
  */
-public interface IMethodInfoSortOrder extends Comparator<MethodInfo> {}
+public class GroovyCallChain {
+  public void a() {
+    b();
+  }
+
+  private int b() {
+    c("foo", "bar");
+    return 0;
+  }
+
+  static void c(String foo, String bar) {
+    throw new CallChainException();
+  }
+}

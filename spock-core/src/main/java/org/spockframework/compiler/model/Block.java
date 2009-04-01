@@ -33,7 +33,6 @@ public abstract class Block extends Node<Method, List<Statement>> {
   private Block prev;
   private Block next;
 
-  @SuppressWarnings("unchecked")
   public Block(Method parent) {
     super(parent, new ArrayList<Statement>());
   }

@@ -134,7 +134,11 @@ public class ExpressionInfoConverter extends AbstractExpressionConverter<Express
   }
 
   public void visitClassExpression(ClassExpression expr) {
-    unsupported(); // Not used in phase conversion?
+    // also used in phase conversion, e.g. in instanceof expression
+    result = new ExpressionInfo(
+        TextRegion.of(expr),
+        TextPosition.startOf(expr)
+    ).setRelevant(false);
   }
 
   public void visitBinaryExpression(BinaryExpression expr) {

@@ -40,14 +40,22 @@ public class StackTraceFilter {
       "callCurrent",
       "callStatic"
   );
-  
+
+  private static final boolean enabled;
+
   private final IMethodNameMapper mapper;
+
+  static {
+    enabled = !"false".equalsIgnoreCase(System.getProperty("spock.filterStackTrace"));
+  }
 
   public StackTraceFilter(IMethodNameMapper mapper) {
     this.mapper = mapper;
   }
 
   public void filter(Throwable throwable) {
+    if (!enabled) return;
+
     List<StackTraceElement> result = new ArrayList<StackTraceElement>();
 
     for (StackTraceElement elem : throwable.getStackTrace()) {

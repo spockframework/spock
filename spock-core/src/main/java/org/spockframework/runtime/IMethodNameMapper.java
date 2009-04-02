@@ -22,5 +22,5 @@ package org.spockframework.runtime;
  * @author Peter Niederwieser
  */
 public interface IMethodNameMapper {
-  String map(String methodName);
+  String map(String bytecodName);
 }

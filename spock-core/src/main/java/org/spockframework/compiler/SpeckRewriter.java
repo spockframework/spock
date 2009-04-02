@@ -343,7 +343,7 @@ public class SpeckRewriter extends AbstractSpeckVisitor implements IRewriteResou
     return method;
   }
 
-   public void defineValueRecorder(List<Statement> stats) {
+  public void defineValueRecorder(List<Statement> stats) {
     // recorder variable needs to be defined in outermost scope,
     // hence we insert it at the beginning of the block
     // NOTE: when the following two statements are combined into one,

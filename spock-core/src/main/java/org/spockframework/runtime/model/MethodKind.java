@@ -28,5 +28,5 @@ public enum MethodKind {
   CLEANUP_SPECK,
   FEATURE,
   DATA_PROVIDER,
-  DATA_PROCESSOR // IDEA: rename to Arg(ument)Provider
+  DATA_PROCESSOR // IDEA: rename to Arg(ument)Provider or ValueProvider
 }

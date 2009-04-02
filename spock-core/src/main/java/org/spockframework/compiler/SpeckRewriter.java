@@ -182,8 +182,11 @@ public class SpeckRewriter extends AbstractSpeckVisitor implements IRewriteResou
   // s.t. missing method parameters are added; these parameters
   // will then be used by DeepStatementRewriter.fixupVariableScope()
   private void rewriteWhereBlock(Method method) {
-    if (method.getLastBlock() instanceof WhereBlock)
-      WhereBlockRewriter.rewrite((WhereBlock)method.getLastBlock());
+    Block block = method.getLastBlock();
+    if (!(block instanceof WhereBlock)) return;
+
+    new DeepStatementRewriter(this).visitBlock(block);
+    WhereBlockRewriter.rewrite((WhereBlock)block);
   }
 
   public void visitMethodAgain(Method method) {

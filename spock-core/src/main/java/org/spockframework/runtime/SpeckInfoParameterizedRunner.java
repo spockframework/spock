@@ -53,8 +53,14 @@ public class SpeckInfoParameterizedRunner extends SpeckInfoBaseRunner {
     Object[] dataProviders = new Object[dataProviderMethods.size()];
 
     for (int i = 0; i < dataProviderMethods.size(); i++) {
-      dataProviders[i] = invokeRaw(dataProviderMethods.get(i), null);
-      if (runStatus != OK) break;
+      MethodInfo method = dataProviderMethods.get(i);
+      Object provider = invokeRaw(method, null);
+      if (runStatus != OK) return null;
+      if (provider == null) {
+        runStatus = supervisor.error(method, new SpeckExecutionException("Data provider is null"), runStatus);
+        return null;
+      }
+      dataProviders[i] = provider;
     }
 
     return dataProviders;
@@ -66,7 +72,13 @@ public class SpeckInfoParameterizedRunner extends SpeckInfoBaseRunner {
     Iterator[] iterators = new Iterator[dataProviders.length];
     for (int i = 0; i < dataProviders.length; i++)
       try {
-        iterators[i] = InvokerHelper.asIterator(dataProviders[i]);
+        Iterator iter = InvokerHelper.asIterator(dataProviders[i]);
+        if (iter == null) {
+          runStatus = supervisor.error(feature.getDataProviders().get(i),
+              new SpeckExecutionException("Data provider's iterator() method returned null"), runStatus);
+          return null;
+        }
+        iterators[i] = iter;
       } catch (Throwable t) {
         runStatus = supervisor.error(feature.getDataProviders().get(i), t, runStatus);
         return null;

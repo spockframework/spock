@@ -89,15 +89,16 @@ class ValidMockCreation {
     assert { it -> { it2 -> Mock(List) }() }() instanceof List
   }
 
-  @Ignore // can't be made to work as long as MockController is instance field
   def "creation in parameterization"() {
     expect:
     mock1 instanceof List
     mock2 instanceof List
+    mock3 instanceof List
 
     where:
     mock1 << [Mock(List)]
     mock2 = Mock(List)
+    mock3 << { List m = Mock(); [m] }()
   }
 
   private id(arg) { arg }

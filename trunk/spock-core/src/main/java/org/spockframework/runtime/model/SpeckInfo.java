@@ -25,7 +25,8 @@ import org.spockframework.util.Util;
 import org.spockframework.util.IFunction;
 
 /**
- *
+ * Runtime information about a Spock specification.
+ * 
  * @author Peter Niederwieser
  */
 public class SpeckInfo extends NodeInfo<NodeInfo, Class<?>> implements IMethodNameMapper {
@@ -97,11 +98,10 @@ public class SpeckInfo extends NodeInfo<NodeInfo, Class<?>> implements IMethodNa
     Collections.sort(featureMethods, order);
   }
 
-  public String map(String methodName) {
-    for (MethodInfo method : featureMethods) {
-      if (method.getReflection().getName().equals(methodName))
+  public String map(String bytecodeName) {
+    for (MethodInfo method : featureMethods)
+      if (method.isAssociatedWithBytecodeName(bytecodeName))
         return method.getName();
-    }
-    return methodName;
+    return bytecodeName;
   }
 }

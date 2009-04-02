@@ -17,10 +17,10 @@
 package org.spockframework.runtime.model;
 
 /**
- *
+ * The different kind of blocks that a <tt>BlockInfo</tt> instance can represent.
+ * 
  * @author Peter Niederwieser
  */
-// IDEA: should add GIVEN?
 public enum BlockKind {
   SETUP,
   EXPECT,

@@ -23,7 +23,8 @@ import java.util.List;
 import org.spockframework.runtime.intercept.IMethodInterceptor;
 
 /**
- *
+ * Runtime information about a method in a Spock specification.
+ * 
  * @author Peter Niederwieser
  */
 public class MethodInfo extends NodeInfo<SpeckInfo, Method> {

@@ -17,10 +17,10 @@
 package org.spockframework.runtime.model;
 
 /**
- * A ...
-*
-* @author Peter Niederwieser
-*/
+ * The different kinds of methods that a <tt>MethodInfo</tt> instance can represent.
+ *
+ * @author Peter Niederwieser
+ */
 public enum MethodKind {
   SETUP,
   CLEANUP,

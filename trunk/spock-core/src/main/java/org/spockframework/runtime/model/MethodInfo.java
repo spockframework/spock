@@ -90,19 +90,19 @@ public class MethodInfo extends NodeInfo<SpeckInfo, Method> {
    * Tells if this method, its data processor, or any of its data providers
    * has the specified name in bytecode.
    *
-   * @param bytecodeName a method name in bytecode
+   * @param name a method name in bytecode
    * @return <tt>true</tt iff this method, its data processor, or any of its
    * data providers has the specified name in bytecode
    */
-  public boolean isAssociatedWithBytecodeName(String bytecodeName) {
-    if (hasBytecodeName(this, bytecodeName)) return true;
-    if (hasBytecodeName(dataProcessor, bytecodeName)) return true;
+  public boolean isAssociatedWithBytecodeName(String name) {
+    if (hasBytecodeName(name)) return true;
+    if (dataProcessor != null && dataProcessor.hasBytecodeName(name)) return true;
     for (MethodInfo provider : dataProviders)
-      if (hasBytecodeName(provider, bytecodeName)) return true;
+      if (provider.hasBytecodeName(name)) return true;
     return false;
   }
 
-  private boolean hasBytecodeName(MethodInfo method, String bytecodeName) {
-    return method != null && method.getReflection().getName().equals(bytecodeName);
+  public boolean hasBytecodeName(String name) {
+    return getReflection().getName().equals(name);
   }
 }

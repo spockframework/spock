@@ -19,7 +19,7 @@ package org.spockframework.runtime.model;
 import java.util.List;
 
 /**
- * Describes a block in a Speck method.
+ * Runtime information about a block in a method of a Spock specification.
  *
  * @author Peter Niederwieser
  */

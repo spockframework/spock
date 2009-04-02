@@ -19,8 +19,8 @@ package org.spockframework.runtime.model;
 import java.lang.reflect.Field;
 
 /**
- *
+ * Runtime information about a field in a Spock specification.
+ * 
  * @author Peter Niederwieser
  */
-public class FieldInfo extends NodeInfo<SpeckInfo, Field> {
-}
+public class FieldInfo extends NodeInfo<SpeckInfo, Field> {}

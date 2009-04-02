@@ -19,7 +19,8 @@ package org.spockframework.runtime.model;
 import java.lang.reflect.AnnotatedElement;
 
 /**
- *
+ * Base class for runtime information about an element in a Spock specification.
+ * 
  * @author Peter Niederwieser
  */
 public abstract class NodeInfo<P extends NodeInfo, R extends AnnotatedElement> {

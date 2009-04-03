@@ -17,10 +17,11 @@
 package org.spockframework.mock;
 
 /**
- *
+ * Indicates that a required interaction has matched too many invocations.
+ * 
  * @author Peter Niederwieser
  */
-public class TooManyInvocationsError extends Error {
+public class TooManyInvocationsError extends InteractionNotSatisfiedError {
   private final IMockInteraction interaction;
   private final IMockInvocation invocation;
 
@@ -39,7 +40,11 @@ public class TooManyInvocationsError extends Error {
 
   @Override
   public String toString() {
-    return String.format("Interaction expected at most %d invocations, but got one more.\n" +
-        "Interaction: %s\nInvocation: %s", interaction.getAcceptedCount(), interaction, invocation);
+    StringBuilder builder = new StringBuilder();
+    builder.append("Too many invocations for:\n\n");
+    int numInvoked = interaction.getAcceptedCount() + 1;
+    builder.append(String.format("%s   (%d %s)\n",
+        interaction, numInvoked, numInvoked == 1 ? "invocation" : "invocations"));
+    return builder.toString();
   }
 }

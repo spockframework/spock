@@ -26,10 +26,14 @@ import java.util.ArrayList;
  *
  * @author Peter Niederwieser
  */
+// not yet filtered:
+// groovy.lang.MetaClassImpl, groovy.lang.MetaMethod
 public class StackTraceFilter {
   private static final List<String> FILTERED_PACKAGES = Arrays.asList(
       "org.spockframework.runtime",
+      "org.codehaus.groovy.runtime",
       "org.codehaus.groovy.runtime.callsite",
+      "org.codehaus.groovy.reflection",
       "java.lang.reflect",
       "sun.reflect"
   );
@@ -75,6 +79,7 @@ public class StackTraceFilter {
 
   private static String getPackageName(StackTraceElement elem) {
     int index = elem.getClassName().lastIndexOf('.');
+    if (index == -1) return "";
     return elem.getClassName().substring(0, index);
   }
 

@@ -16,44 +16,50 @@
 
 package org.spockframework.smoke.mock
 
-import org.junit.runner.RunWith
 import spock.lang.*
 import static spock.lang.Predef.*
-import org.spockframework.mock.InteractionNotSatisfiedError
+import org.junit.runner.RunWith
+import org.spockframework.mock.TooFewInvocationsError
 
 /**
- *
  * @author Peter Niederwieser
  */
 @Speck
 @RunWith(Sputnik)
-class GroovyClassBasedMocks {
-  MockMe mockMe = Mock()
-
-  def "mock declared method"() {
-    when:
-    mockMe.foo(42)
-    then:
-    1 * mockMe.foo(42)
+class GlobalInteractions {
+  def "optional interaction"() {
+    def m = Mock(List)
+    m.size() >> 1
+    expect: m.size() == 1
   }
 
-  @FailsWith(value=InteractionNotSatisfiedError, reason="TODO")
-  def "mock GDK method"() {
-    when:
-    mockMe.any()
-    then:
-    1 * mockMe.any()
+  @FailsWith(TooFewInvocationsError)
+  def "required interaction"() {
+    def m = Mock(List)
+    2 * m.get(_) >> "foo"
+    expect: m.get(3) == "foo"
   }
 
-  @FailsWith(value=MissingMethodException, reason="TODO")
-  def "mock dynamic method"() {
-    when:
-    mockMe.someMethod()
-    then:
-    1 * mockMe.someMethod()
+  def "optional interaction defined in helper method"() {
+    def m = optional()
+    expect: m.size() == 1
   }
-}
 
-private class MockMe {
-  def foo(int i) {}
+  @FailsWith(TooFewInvocationsError)
+  def "required interaction defined in helper method"() {
+    def m = required()
+    expect: m.get(3) == "foo"
+  }
+
+  def optional() {
+    def m = Mock(List)
+    m.size() >> 1
+    m
+  }
+
+  def required() {
+    def m = Mock(List)
+    2 * m.get(_) >> "foo"
+    m
+  }
 }

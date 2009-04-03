@@ -29,7 +29,7 @@ public class MockController implements IInvocationMatcher {
 
   public MockController(IMockFactory factory) {
     this.factory = factory;
-    scopes.addFirst(new GlobalInteractionScope());
+    scopes.addFirst(new InteractionScope());
   }
 
   public static final String ADD = "add";
@@ -50,7 +50,7 @@ public class MockController implements IInvocationMatcher {
   public static final String ENTER_SCOPE = "enterScope";
 
   public void enterScope() {
-    scopes.addFirst(new ThenBlockInteractionScope());
+    scopes.addFirst(new InteractionScope());
   }
 
   public static final String LEAVE_SCOPE = "leaveScope";

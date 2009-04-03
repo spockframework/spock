@@ -9,7 +9,7 @@ Mocks can be created for interfaces, non-final Java classes, and non-final Groov
 {{{
 def subscriber = Mock(Subscriber) // "dynamic" style (mock name inferred from variable name)
 
-Subscriber subscriber = Mock()    // "static" style" (mock name/type inferred from variable name/type)
+Subscriber subscriber = Mock()    // "static" style" (mock name and type inferred from variable name and type)
 }}}
 
 === Global vs. local interactions ===

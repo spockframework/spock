@@ -98,7 +98,7 @@ subscriber.isAlive() >> { throw new TimeoutException() } // custom action
 }}}
 
 === Explicit denotation of interactions ===
-If an interaction definition in a `then` block depends on other code in the same block, this has to be made explicit as follows:
+If an interaction definition in a `then` block depends on other code in the same block, this relationship has to be made explicit as follows:
 
 {{{
 then:

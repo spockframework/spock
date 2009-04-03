@@ -20,7 +20,7 @@ import org.junit.runner.RunWith
 
 import spock.lang.*
 import static spock.lang.Predef.*
-import org.spockframework.mock.InteractionNotSatisfiedError
+import org.spockframework.mock.TooFewInvocationsError
 
 @Speck
 @RunWith(Sputnik)
@@ -32,7 +32,7 @@ class MethodMatching {
     then: 1 * list.add(1)
   }
 
-  @FailsWith(InteractionNotSatisfiedError)
+  @FailsWith(TooFewInvocationsError)
   def "doesn't match unequal method name"() {
     when: list.add(1)
     then: 1 * list.remove(1)
@@ -48,7 +48,7 @@ class MethodMatching {
     then: 1 * list./a.\w/(1)
   }
 
-  @FailsWith(InteractionNotSatisfiedError)
+  @FailsWith(TooFewInvocationsError)
   def "doesn't match method name pattern"() {
     when: list.add(1)
     then: 1 * list./b.\w/(1)

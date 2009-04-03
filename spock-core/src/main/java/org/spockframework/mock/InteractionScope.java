@@ -20,12 +20,26 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A scope for interactions defined inside a then-block.
+ * A scope for interactions defined outside a then-block
  *
  * @author Peter Niederwieser
  */
-public class ThenBlockInteractionScope extends GlobalInteractionScope {
-  @Override
+public class InteractionScope implements IInteractionScope {
+  protected final List<IMockInteraction> interactions = new ArrayList<IMockInteraction>();
+
+  public void addInteraction(IMockInteraction interaction) {
+    interactions.add(interaction);
+  }
+
+  public IMockInteraction match(IMockInvocation invocation) {
+    for (IMockInteraction interaction : interactions) {
+      if (interaction.matches(invocation))
+        return interaction;
+    }
+
+    return null;
+  }
+
   public void verifyInteractions() {
     List<IMockInteraction> unsatisfieds = new ArrayList<IMockInteraction>();
 
@@ -33,6 +47,6 @@ public class ThenBlockInteractionScope extends GlobalInteractionScope {
       if (!i.isSatisfied()) unsatisfieds.add(i);
 
     if (!unsatisfieds.isEmpty())
-      throw new InteractionNotSatisfiedError(unsatisfieds);
+      throw new TooFewInvocationsError(unsatisfieds);
   }
 }

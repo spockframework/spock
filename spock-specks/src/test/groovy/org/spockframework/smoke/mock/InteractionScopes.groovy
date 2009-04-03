@@ -31,7 +31,7 @@ class InteractionScopes {
   List list = Mock()
   def obj1 = new Object()
 
-  def "interactions defined in a then-block are valid during execution of associated when-block"() {
+  def "local interactions are valid during execution of associated when-block"() {
     assert list.get(0) == null
     helper2()
 
@@ -63,7 +63,7 @@ class InteractionScopes {
     true
   }
 
-  def "interactions defined outside a then-block are valid from their definition to the end of the iteration"() {
+  def "global interactions are valid from the point of their definition to the end of the iteration"() {
     assert list.get(0) == null
     list.get(0) >> obj1
     assert list.get(0) == obj1

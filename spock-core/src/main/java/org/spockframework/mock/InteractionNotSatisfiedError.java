@@ -16,63 +16,12 @@
 
 package org.spockframework.mock;
 
-import java.util.List;
-
 import org.spockframework.runtime.SpeckAssertionError;
-import org.spockframework.util.Assert;
 
 /**
- * Indicates that one or more expected interactions have not been satisfied by actual invocations.
+ * Base class for exceptions indicating that one or more interactions
+ * have not been satisfied (i.e. have seen to few or too many invocations).
  *
  * @author Peter Niederwieser
  */
-// TODO: why no message set?
-public class InteractionNotSatisfiedError extends SpeckAssertionError {
-  private final List<IMockInteraction> interactions;
-
-  public InteractionNotSatisfiedError(List<IMockInteraction> interactions) {
-    Assert.notNull(interactions);
-    Assert.that(interactions.size() > 0);
-    this.interactions = interactions;
-    fixupStackTrace();
-  }
-
-  public List<IMockInteraction> getUnsatisfiedInteractions() {
-    return interactions;
-  }
-
-  @Override
-  public String toString() {
-    StringBuilder builder = new StringBuilder();
-    builder.append("Interaction not satisfied:\n\n");
-    for (IMockInteraction interaction : interactions) {
-      int numAccepted = interaction.getAcceptedCount();
-      builder.append(String.format("%s   (%d %s)\n",
-          interaction, numAccepted, numAccepted == 1 ? "match" : "matches"));
-    }
-    return builder.toString();
-  }
-
-  // To facilitate navigation to the unsatisfied interactions, the line number
-  // of the (synthetic) MockController.leaveScope() call is replaced by the line
-  // number of the first unsatisfied interaction
-  private void fixupStackTrace() {
-    StackTraceElement[] trace = getStackTrace();
-
-    for (int i = 0; i < trace.length; i++)
-      if (isVerifyCall(trace[i])) {
-        StackTraceElement elem = trace[i];
-        trace[i] = new StackTraceElement(elem.getClassName(), elem.getMethodName(), elem.getFileName(),
-          interactions.get(0).getLine());
-        setStackTrace(trace);
-        return;
-      }
-
-    Assert.fail("MockController.leaveScope() not found in stacktrace");
-  }
-
-  private boolean isVerifyCall(StackTraceElement elem) {
-    return elem.getClassName().equals(MockController.class.getName())
-      && elem.getMethodName().equals(MockController.LEAVE_SCOPE);
-  }
-}
+abstract public class InteractionNotSatisfiedError extends SpeckAssertionError {}

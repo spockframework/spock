@@ -52,7 +52,7 @@ public class SpeckRewriter extends AbstractSpeckVisitor implements IRewriteResou
   private VariableExpression thrownExceptionRef; // reference to speck.__thrown42
   private VariableExpression mockControllerRef; // reference to speck.__mockController42
 
-  private boolean methodHasCondition; // TODO: try to make this like for thrownField
+  private boolean methodHasCondition;
   private boolean movedStatsBackToMethod;
   private int featureMethodCount = 0;
 
@@ -196,6 +196,10 @@ public class SpeckRewriter extends AbstractSpeckVisitor implements IRewriteResou
     if (!movedStatsBackToMethod)
       for (Block b : method.getBlocks())
         method.getStatements().addAll(b.getAst());
+
+    if (method instanceof FeatureMethod)
+      // for global required interactions
+      method.getStatements().add(createMockControllerCall(MockController.LEAVE_SCOPE));
   }
 
   public void visitAnyBlock(Block block) {
@@ -219,9 +223,9 @@ public class SpeckRewriter extends AbstractSpeckVisitor implements IRewriteResou
       if (stat instanceof AssertStatement)
         iter.set(newStat);
       else if (isExceptionCondition(newStat)) {
-        // TODO (not allowed)
+        throw new SyntaxException(newStat, "Exception conditions are only allowed in 'then' blocks");
       } else if (statHasInteraction(newStat, deep)) {
-        // TODO (not allowed)
+        throw new SyntaxException(newStat, "Interactions are only allowed in 'then' blocks");
       } else if (isImplicitCondition(newStat)) {
         iter.set(rewriteImplicitCondition(newStat));
         methodHasCondition = true;
@@ -229,8 +233,6 @@ public class SpeckRewriter extends AbstractSpeckVisitor implements IRewriteResou
     }
   }
 
-  // TODO: should we allow sth. other than assert statements
-  // and expression statements as top-level statements in then-blocks?
   public void visitThenBlock(ThenBlock block) {
     ListIterator<Statement> iter = block.getAst().listIterator();
     boolean blockHasExceptionCondition = false;

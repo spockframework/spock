@@ -12,7 +12,7 @@ def subscriber = Mock(Subscriber) // "dynamic" style (mock name inferred from va
 Subscriber subscriber = Mock()    // "static" style" (mock name/type inferred from variable name/type)
 }}}
 
-=== Global vs. scoped interactions ===
+=== Global vs. local interactions ===
 
 Interactions defined outside of a `then` block are called _global_. They are valid from the point of their definition to the end of the feature method.
 
@@ -21,14 +21,14 @@ setup:
 subscriber.isAlive() >> true
 }}}
 
-Interactions defined inside of a `then` block are called _scoped_. They are valid only within the preceding `when` block.
+Interactions defined inside of a `then` block are called _local_. They are valid only within the preceding `when` block.
 
 {{{
 when: publisher.send(event)
 then: 1 * subscriber.receive(event)
 }}}
 
-=== Optional vs. required interaction ===
+=== Optional vs. required interactions ===
 
 Optional interactions don't have a cardinality, and must have a return value.
 
@@ -44,7 +44,7 @@ then: 1 * subscriber.isAlive() >> true
 then: n * subscriber.receive(event)
 }}}
 
-Currently, optional interactions can be global or scoped, but required interactions must be scoped.
+The most commonly used combinations are global+optional (stubbing as part of setup) and local+required (mocking as part of when-block), but the other two combinations are allowed as well.
 
 === Cardinalities ===
 

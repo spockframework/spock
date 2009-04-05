@@ -195,42 +195,44 @@ public abstract class AstUtil {
     return ((TupleExpression)expr.getArguments()).getExpressions();
   }
 
-  public static boolean isPredefDeclOrCall(Expression expr, String methodName, int maxArgs) {
+  public static boolean isPredefDeclOrCall(Expression expr, String methodName, int minArgs, int maxArgs) {
     return expr instanceof BinaryExpression
-        && isPredefDecl((BinaryExpression)expr, methodName, maxArgs)
+        && isPredefDecl((BinaryExpression)expr, methodName, minArgs, maxArgs)
         || expr instanceof MethodCallExpression
-        && isPredefCall((MethodCallExpression) expr, methodName, maxArgs)
+        && isPredefCall((MethodCallExpression) expr, methodName, minArgs, maxArgs)
         || expr instanceof StaticMethodCallExpression
-        && isPredefCall((StaticMethodCallExpression) expr, methodName, maxArgs);
+        && isPredefCall((StaticMethodCallExpression) expr, methodName, minArgs, maxArgs);
   }
 
-  public static boolean isPredefDecl(BinaryExpression expr, String methodName, int maxArgs){
+  public static boolean isPredefDecl(BinaryExpression expr, String methodName, int minArgs, int maxArgs){
     return (expr instanceof DeclarationExpression
         || expr instanceof FieldInitializerExpression)
-        && isPredefDeclOrCall(expr.getRightExpression(), methodName, maxArgs);
+        && isPredefDeclOrCall(expr.getRightExpression(), methodName, minArgs, maxArgs);
   }
 
-  public static boolean isPredefCall(Expression expr, String methodName, int maxArgs) {
+  public static boolean isPredefCall(Expression expr, String methodName, int minArgs, int maxArgs) {
     return expr instanceof MethodCallExpression
-        && isPredefCall((MethodCallExpression)expr, methodName, maxArgs)
+        && isPredefCall((MethodCallExpression)expr, methodName, minArgs, maxArgs)
         || expr instanceof StaticMethodCallExpression
-        && isPredefCall((StaticMethodCallExpression)expr, methodName, maxArgs);
+        && isPredefCall((StaticMethodCallExpression)expr, methodName, minArgs, maxArgs);
   }
   
   // call of the form "Predef.<methodName>(...)"
   // (although one wouldn't normally use this style, it is supposed to work nevertheless)
-  public static boolean isPredefCall(MethodCallExpression expr, String methodName, int maxArgs){
+  public static boolean isPredefCall(MethodCallExpression expr, String methodName, int minArgs, int maxArgs){
     Expression target = expr.getObjectExpression();
     return target instanceof ClassExpression
         && target.getType().getName().equals(Predef.class.getName())
         && methodName.equals(expr.getMethodAsString()) // getMethodAsString() may return null
+        && getArguments(expr).size() >= minArgs
         && getArguments(expr).size() <= maxArgs;
   }
 
   // call of the form "<methodName>(...)"
-  public static boolean isPredefCall(StaticMethodCallExpression expr, String methodName, int maxArgs) {
+  public static boolean isPredefCall(StaticMethodCallExpression expr, String methodName, int minArgs, int maxArgs) {
     return expr.getOwnerType().getName().equals(Predef.class.getName())
         && expr.getMethod().equals(methodName)
+        && getArguments(expr).size() >= minArgs
         && getArguments(expr).size() <= maxArgs;
   }
 

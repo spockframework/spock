@@ -48,6 +48,7 @@ public class SpeckRewriter extends AbstractSpeckVisitor implements IRewriteResou
 
   private Speck speck;
   private Method method;
+  private Block block;
 
   private VariableExpression thrownExceptionRef; // reference to speck.__thrown42
   private VariableExpression mockControllerRef; // reference to speck.__mockController42
@@ -55,6 +56,7 @@ public class SpeckRewriter extends AbstractSpeckVisitor implements IRewriteResou
   private boolean methodHasCondition;
   private boolean movedStatsBackToMethod;
   private int featureMethodCount = 0;
+  private int oldValueCount = 0;
 
   public SpeckRewriter(AstNodeCache nodeCache, SourceLookup lookup) {
     this.nodeCache = nodeCache;
@@ -190,6 +192,8 @@ public class SpeckRewriter extends AbstractSpeckVisitor implements IRewriteResou
   }
 
   public void visitMethodAgain(Method method) {
+    this.block = null;
+    
     if (methodHasCondition)
       defineValueRecorder(AstUtil.getStatements(method.getAst()));
 
@@ -203,6 +207,7 @@ public class SpeckRewriter extends AbstractSpeckVisitor implements IRewriteResou
   }
 
   public void visitAnyBlock(Block block) {
+    this.block = block;
     if (block instanceof ExpectBlock || block instanceof ThenBlock) return;
 
     DeepStatementRewriter deep = new DeepStatementRewriter(this);
@@ -273,12 +278,12 @@ public class SpeckRewriter extends AbstractSpeckVisitor implements IRewriteResou
 
   private boolean isExceptionCondition(Statement stat) {
     Expression expr = AstUtil.getExpression(stat, Expression.class);
-    return expr != null && AstUtil.isPredefDeclOrCall(expr, Constants.THROWN, 1);
+    return expr != null && AstUtil.isPredefDeclOrCall(expr, Constants.THROWN, 0, 1);
   }
 
   private void rewriteExceptionCondition(Statement stat, boolean hasExceptionCondition) {
     if (hasExceptionCondition)
-      throw new SyntaxException(stat, "a (group of) 'then' block(s) may only contain one exception condition");
+      throw new SyntaxException(stat, "a 'then' block may only contain one exception condition");
 
     Expression expr = AstUtil.getExpression(stat, Expression.class);
     assert expr != null;   
@@ -289,7 +294,7 @@ public class SpeckRewriter extends AbstractSpeckVisitor implements IRewriteResou
     if (deep.isInteractionFound()) return true;
 
     Expression expr = AstUtil.getExpression(stat, Expression.class);
-    return expr != null && AstUtil.isPredefCall(expr, Constants.INTERACTION, 1);
+    return expr != null && AstUtil.isPredefCall(expr, Constants.INTERACTION, 0, 1);
   }
 
   private void insertInteractions(List<Statement> interactions, WhenBlock whenBlock) {
@@ -313,7 +318,6 @@ public class SpeckRewriter extends AbstractSpeckVisitor implements IRewriteResou
             ArgumentListExpression.EMPTY_ARGUMENTS));
   }
 
-  // TODO: what should we do if cleanup-block throws an exception?
   public void visitCleanupBlock(CleanupBlock block) {
     for (Block b : method.getBlocks()) {
       if (b == block) break;
@@ -348,6 +352,10 @@ public class SpeckRewriter extends AbstractSpeckVisitor implements IRewriteResou
     return method;
   }
 
+  public Block getCurrentBlock() {
+    return block;
+  }
+
   public void defineValueRecorder(List<Statement> stats) {
     // recorder variable needs to be defined in outermost scope,
     // hence we insert it at the beginning of the block
@@ -368,6 +376,21 @@ public class SpeckRewriter extends AbstractSpeckVisitor implements IRewriteResou
                 new ConstructorCallExpression(
                     nodeCache.ValueRecorder,
                     ArgumentListExpression.EMPTY_ARGUMENTS))));
+  }
+
+  public VariableExpression captureOldValue(Expression oldValue) {
+    VariableExpression var = new OldValueExpression(oldValue, "__oldVal" + oldValueCount++);
+    DeclarationExpression decl = new DeclarationExpression(
+          var,
+          Token.newSymbol(Types.ASSIGN, -1, -1),
+          oldValue
+      );
+    decl.setSourcePosition(oldValue);
+
+    // add declaration at end of block immediately preceding when-block
+    // avoids any problems if when-block gets wrapped in try-statement
+    block.getPrevious().getPrevious().getAst().add(new ExpressionStatement(decl));
+    return var;
   }
 
   public VariableExpression getThrownExceptionRef() {

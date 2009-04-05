@@ -17,6 +17,7 @@
 package org.spockframework.compiler;
 
 import java.util.ListIterator;
+import java.util.List;
 
 import org.codehaus.groovy.ast.*;
 import org.codehaus.groovy.ast.expr.*;
@@ -28,7 +29,9 @@ import org.codehaus.groovy.control.SourceUnit;
 import org.spockframework.compiler.model.Block;
 import org.spockframework.compiler.model.FeatureMethod;
 import org.spockframework.compiler.model.Method;
+import org.spockframework.compiler.model.ThenBlock;
 import org.spockframework.util.InternalSpockError;
+import org.spockframework.util.SyntaxException;
 
 /**
  * Walks the statement and expression tree to rewrite explicit conditions,
@@ -37,16 +40,13 @@ import org.spockframework.util.InternalSpockError;
  *
  * @author Peter Niederwieser
  */
-// TODO: "assert false" and "expect: false" are missing line number in stack trace,
-// but "assert true && false" does have line number ?!
-// TODO: use of SourceLookup in both DeepStatementRewriter and SpeckRewriter might
-// slow down lookup considerably; check whether this is a problem
-// IDEA: disallow return statement in feature methods (might cause harm?)
 public class DeepStatementRewriter extends StatementRewriterSupport {
   private final IRewriteResourceProvider resourceProvider;
 
   private boolean conditionFound = false;
   private boolean interactionFound = false;
+  // scope for the current closure; null if not in a closure
+  private VariableScope closureScope;
 
   public DeepStatementRewriter(IRewriteResourceProvider resourceProvider) {
     this.resourceProvider = resourceProvider;
@@ -86,29 +86,31 @@ public class DeepStatementRewriter extends StatementRewriterSupport {
 
   @Override
   public void visitClosureExpression(ClosureExpression expr) {
-    fixupVariableScope(expr.getVariableScope());
-
     // because a closure might be executed asynchronously, its conditions
     // and interactions are handled independently from the conditions
     // and interactions of the closure's context
 
     boolean oldConditionFound = conditionFound;
     boolean oldInteractionFound = interactionFound;
-
+    VariableScope oldClosureScope = closureScope;
     conditionFound = false;
     interactionFound = false;
+    closureScope = expr.getVariableScope();
+
+    fixupClosureScope();
     super.visitClosureExpression(expr);
     if (conditionFound) defineValueRecorder(expr);
 
     conditionFound = oldConditionFound;
     interactionFound = oldInteractionFound;
+    closureScope = oldClosureScope;
   }
 
   private void defineValueRecorder(ClosureExpression expr) {
     resourceProvider.defineValueRecorder(AstUtil.getStatements(expr));
   }
 
-  private void fixupVariableScope(VariableScope scope) {
+  private void fixupClosureScope() {
     Method method = resourceProvider.getCurrentMethod();
     if (!(method instanceof FeatureMethod)) return;
 
@@ -117,10 +119,10 @@ public class DeepStatementRewriter extends StatementRewriterSupport {
     // (parameterization variables used to be free variables,
     // but have been changed to method parameters by WhereBlockRewriter)
     for (Parameter param : method.getAst().getParameters()) {
-      Variable var = scope.getReferencedClassVariable(param.getName());
+      Variable var = closureScope.getReferencedClassVariable(param.getName());
       if (var instanceof DynamicVariable) {
-        scope.removeReferencedClassVariable(param.getName());
-        scope.putReferencedLocalVariable(param);
+        closureScope.removeReferencedClassVariable(param.getName());
+        closureScope.putReferencedLocalVariable(param);
         param.setClosureSharedVariable(true);
       }
     }
@@ -133,7 +135,7 @@ public class DeepStatementRewriter extends StatementRewriterSupport {
 
   @Override
   public void visitBinaryExpression(BinaryExpression expr) {
-    if (AstUtil.isPredefDecl(expr, Constants.MOCK, 1))
+    if (AstUtil.isPredefDecl(expr, Constants.MOCK, 0, 1))
       AstUtil.expandPredefDecl(expr, resourceProvider.getMockControllerRef());
 
     // only descend after we have expanded Predef.Mock so that it's not
@@ -144,15 +146,33 @@ public class DeepStatementRewriter extends StatementRewriterSupport {
   @Override
   public void visitMethodCallExpression(MethodCallExpression expr) {
     super.visitMethodCallExpression(expr);
-    if (AstUtil.isPredefCall(expr, Constants.MOCK, 1))
-      AstUtil.expandPredefCall(expr, resourceProvider.getMockControllerRef());
+    handlePredefMockAndPredefOld(expr);
   }
 
   @Override
   public void visitStaticMethodCallExpression(StaticMethodCallExpression expr) {
     super.visitStaticMethodCallExpression(expr);
-    if (AstUtil.isPredefCall(expr, Constants.MOCK, 1))
+    handlePredefMockAndPredefOld(expr);
+  }
+
+  private void handlePredefMockAndPredefOld(Expression expr) {
+    if (AstUtil.isPredefCall(expr, Constants.MOCK, 0, 1))
       AstUtil.expandPredefCall(expr, resourceProvider.getMockControllerRef());
+    else if (AstUtil.isPredefCall(expr, Constants.OLD, 1, 1)) {
+      if (!(resourceProvider.getCurrentMethod() instanceof FeatureMethod
+          && resourceProvider.getCurrentBlock() instanceof ThenBlock))
+        throw new SyntaxException(expr, "Predef.old() may only be used in 'then' blocks");
+
+      List<Expression> args = AstUtil.getArguments(expr);
+      VariableExpression oldValue = resourceProvider.captureOldValue(args.get(0));
+      args.set(0, oldValue);
+      args.add(ConstantExpression.FALSE); // dummy arg
+
+      if (closureScope != null) {
+        oldValue.setClosureSharedVariable(true);
+        closureScope.putReferencedLocalVariable(oldValue);
+      }
+    }
   }
 
   protected SourceUnit getSourceUnit() {

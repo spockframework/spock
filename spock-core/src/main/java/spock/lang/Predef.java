@@ -30,6 +30,8 @@ import org.spockframework.util.SyntaxException;
  * @author Peter Niederwieser
  */
 // IDEA: move method implementations to SpockRuntime to avoid confusion for user
+// but: one advantage of keeping them here is that there is never a need to fix up
+// the stack trace
 public class Predef {
   /**
    * The wildcard symbol. Used in several places as a "don't care" value.
@@ -179,6 +181,21 @@ public class Predef {
     block.call();
   }
 
+  /**
+   * Used in a then-block to access an expression's value at the time just
+   * before the previous where-block was entered.
+   *
+   * @param expression an arbitrary expression, except that it may not
+   * reference variables defined in the then-block
+   * @param <T> the expression's type
+   * @return the expression's value at the time the previous where-block was
+   * entered
+   */
+  @SuppressWarnings("UnusedDeclaration")
+  public static <T> T old(T expression) {
+    throw new SyntaxException("Predef.old() can only be used in a 'then' block");  
+  }
+
   @SuppressWarnings("UnusedDeclaration")
   private static <T extends Throwable> T thrown(Class<T> type, String name, Throwable exception) {
     if (type.isInstance(exception)) return type.cast(exception);
@@ -191,6 +208,12 @@ public class Predef {
     if (type == null)
       throw new SyntaxException("Mock object type may not be 'null'");
     return type.cast(controller.create(name, type));
+  }
+
+  // dummy is just to create a new overload of old() with different implementation
+  @SuppressWarnings("UnusedDeclaration")
+  private static <T> T old(T expression, boolean dummy) {
+    return expression;
   }
 
   // non-anonymous class to facilitate debugging

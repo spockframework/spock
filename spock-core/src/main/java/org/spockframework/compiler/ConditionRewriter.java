@@ -34,9 +34,6 @@ import org.spockframework.util.AbstractExpressionConverter;
 import org.spockframework.util.Util;
 import org.spockframework.util.Assert;
 
-// IDEA: refactor to allow more succinct expression of the pattern: construct conversion,
-// set source position, return_(record())
-
 // NOTE: currently some conversions reference old expression objects rather than copying them;
 // this can potentially lead to aliasing problems (e.g. for Condition.originalExpression)
 // background: it was found that transformExpression() cannot be used to copy all expressions
@@ -46,6 +43,7 @@ import org.spockframework.util.Assert;
 // IDEA: record type literals as class objects (since we also record other literals)
 // but since a type literal cannot be evaluated, we would have to record class object
 // before/after evaluating next/previous expression
+
 /**
  * Rewrites explicit ("assert x > 3") and implicit ("x > 3") condition
  * statements. Replacing the original statement with the rewritten one is up
@@ -53,18 +51,17 @@ import org.spockframework.util.Assert;
  *
  * @author Peter Niederwieser
  */
-// TODO: can't we reuse existing expression instances and just mutate them?!
 public class ConditionRewriter extends AbstractExpressionConverter<Expression> {
   private final IRewriteResourceProvider resourceProvider;
   private final GroovyCodeVisitor closureRewriter;
   private int recordCount = 0;
+  private boolean doNotRecordNextConstant = false;
 
   private ConditionRewriter(IRewriteResourceProvider resourceProvider, GroovyCodeVisitor closureRewriter) {
     this.resourceProvider = resourceProvider;
     this.closureRewriter = closureRewriter;
   }
 
-  // TODO: make use of assertion message (if available)
   public static Statement rewriteExplicitCondition(AssertStatement stat,
       IRewriteResourceProvider resourceProvider, GroovyCodeVisitor closureRewriter) {
     return new ConditionRewriter(resourceProvider, closureRewriter).rewrite(stat, stat.getBooleanExpression());
@@ -164,6 +161,14 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> {
   }
 
   public void visitVariableExpression(VariableExpression expr) {
+    if (expr instanceof OldValueExpression) {
+      Expression originalExpr = ((OldValueExpression)expr).getOrginalExpression();
+      originalExpr.visit(this); // just to count up recordCount and produce the correct number of N/A values at runtime
+      doNotRecordNextConstant = true; // we know Predef.old() has been rewritten to include a dummy as second argument
+      result = expr;
+      return;
+    }
+
     result = record(expr);
   }
 
@@ -190,6 +195,12 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> {
   }
 
   public void visitConstantExpression(ConstantExpression expr) {
+    if (doNotRecordNextConstant) {
+      doNotRecordNextConstant = false;
+      result = expr;
+      return;
+    }
+
     result = record(expr);
   }
 
@@ -408,12 +419,12 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> {
     result = record(expr);
   }
 
+  // only called for LHS of multi-assignment
   @SuppressWarnings("unchecked")
   public void visitTupleExpression(TupleExpression expr) {
-    // only use on LHS of multi-assignment
     TupleExpression conversion =
         new TupleExpression(
-            // prevent lvalues from getting turned into record(lvalue), 
+            // prevent lvalue from getting turned into record(lvalue),
             // which can no longer be assigned to
             convertAllAndRecordNa(expr.getExpressions()));
 
@@ -450,7 +461,8 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> {
     return (T)conversion;
   }
 
-  // does not change recordCount
+  // unrecord(record(expr)) == expr
+  // does not change recordCount, resulting in one N/A value at runtime
   private static Expression unrecord(Expression expr) {
     if (!(expr instanceof MethodCallExpression)) return expr;
     MethodCallExpression methodExpr = (MethodCallExpression)expr;

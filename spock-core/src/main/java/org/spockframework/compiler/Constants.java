@@ -73,4 +73,6 @@ public abstract class Constants {
   public static final String THROWN = "thrown";
 
   public static final String INTERACTION = "interaction";
+
+  public static final String OLD = "old";
 }

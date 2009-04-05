@@ -16,26 +16,25 @@
 
 package org.spockframework.compiler;
 
-import java.util.List;
-
-import org.codehaus.groovy.ast.ASTNode;
 import org.codehaus.groovy.ast.expr.VariableExpression;
 import org.codehaus.groovy.ast.expr.Expression;
-import org.codehaus.groovy.ast.stmt.Statement;
-
-import org.spockframework.compiler.model.Method;
-import org.spockframework.compiler.model.Block;
 
 /**
- *
+ * Used to represent the argument to Predef.old() once it has been processed
+ * by IRewriteResourceProvider.captureOldValue(). The original expression is
+ * kept in case ConditionRewriter still needs it.
+ * 
  * @author Peter Niederwieser
  */
-public interface IRewriteResourceProvider {
-  Method getCurrentMethod();
-  Block getCurrentBlock();
-  void defineValueRecorder(List<Statement> stats);
-  VariableExpression captureOldValue(Expression oldValue);
-  VariableExpression getMockControllerRef();
-  AstNodeCache getAstNodeCache();
-  String getSourceText(ASTNode node);
+public class OldValueExpression extends VariableExpression {
+  private Expression originalExpression;
+
+  public OldValueExpression(Expression originalExpression, String substitutedVariable) {
+    super(substitutedVariable);
+    this.originalExpression = originalExpression;
+  }
+
+  public Expression getOrginalExpression() {
+    return originalExpression;
+  }
 }

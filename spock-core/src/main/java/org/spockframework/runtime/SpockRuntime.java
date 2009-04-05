@@ -21,20 +21,6 @@ import org.codehaus.groovy.runtime.typehandling.DefaultTypeTransformation;
 import org.spockframework.runtime.model.TextPosition;
 
 /**
- * IDEA:
- * Make SpockRuntime accessible via ThreadLocal
- * Potential benefits:
- * - Some functionality can be moved from compiler to runtime (mock creation,
- *   calls to MockController.verify(), etc.)
- * - Facilitates testing of Spock
- * - Extensions and Speck runner get access to context information like current
- *   feature method name, current block, etc.
- * - Context information is accessible from everywhere, w/o possessing a
- *   reference to the Speck instance
- * - Context information no longer coupled to Speck instantiation strategy
- * - Single entry-point for stateless (e.g. SpockRuntime.verifyCondition()) and
- *   stateful (e.g. MockController.enterScope()) runtime calls
- * 
  * @author Peter Niederwieser
  */
 public abstract class SpockRuntime {

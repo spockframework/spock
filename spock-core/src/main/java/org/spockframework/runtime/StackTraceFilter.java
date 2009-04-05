@@ -26,8 +26,6 @@ import java.util.ArrayList;
  *
  * @author Peter Niederwieser
  */
-// not yet filtered:
-// groovy.lang.MetaClassImpl, groovy.lang.MetaMethod
 public class StackTraceFilter {
   private static final List<String> FILTERED_PACKAGES = Arrays.asList(
       "org.spockframework.runtime",

@@ -42,9 +42,8 @@ public class AstNodeCache {
 
   // annotations and annotation elements
   public final ClassNode SpeckMetadata = ClassHelper.makeWithoutCaching(SpeckMetadata.class);
-  public final ClassNode MethodMetadata = ClassHelper.makeWithoutCaching(MethodMetadata.class);
+  public final ClassNode FeatureMetadata = ClassHelper.makeWithoutCaching(FeatureMetadata.class);
   public final ClassNode BlockMetadata = ClassHelper.makeWithoutCaching(BlockMetadata.class);
-  public final ClassNode MethodKind = ClassHelper.makeWithoutCaching(MethodKind.class);
   public final ClassNode BlockKind = ClassHelper.makeWithoutCaching(BlockKind.class);
 
   // mocking API

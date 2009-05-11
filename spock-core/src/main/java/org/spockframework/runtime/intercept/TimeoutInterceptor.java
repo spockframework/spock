@@ -33,7 +33,7 @@ public class TimeoutInterceptor implements IMethodInterceptor {
     this.timeout = timeout;
   }
 
-  public void invoke(final MethodInvocation invocation) throws Throwable {
+  public void invoke(final IMethodInvocation invocation) throws Throwable {
     final Throwable[] exception = new Throwable[1];
 
     Thread thread = new Thread() {

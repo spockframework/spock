@@ -1,8 +1,8 @@
 allprojects {
   group = "org.spockframework"
-  version = "0.1-SNAPSHOT"
+  version = "0.2-SNAPSHOT"
 }
 
-createTask("wrapper", type: Wrapper).configure { 
-  gradleVersion = "0.4" 
-}
+//createTask("wrapper", type: Wrapper).configure { 
+//  gradleVersion = "0.4" 
+//}

@@ -19,20 +19,21 @@ import org.junit.runner.manipulation.Filter;
 import org.junit.runner.Description;
 
 import org.spockframework.runtime.model.MethodInfo;
+import org.spockframework.runtime.model.FeatureInfo;
 
 /**
  * Adapts an org.junit.runner.manipulation.Filter to an IMethodInfoFilter.
  *
  * @author Peter Niederwieser
  */
-public class JUnitFilterAdapter implements IMethodInfoFilter {
+public class JUnitFilterAdapter implements IFeatureFilter {
   private final Filter filter;
 
   public JUnitFilterAdapter(Filter filter) {
     this.filter = filter;
   }
 
-  public boolean matches(MethodInfo method) {
+  public boolean matches(FeatureInfo method) {
     return filter.shouldRun((Description)method.getMetadata());
   }
 }

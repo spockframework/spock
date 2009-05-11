@@ -24,12 +24,13 @@ import static org.spockframework.runtime.RunStatus.END_FEATURE;
 import static org.spockframework.runtime.RunStatus.END_SPECK;
 import org.spockframework.runtime.model.MethodInfo;
 import org.spockframework.runtime.model.SpeckInfo;
+import org.spockframework.runtime.model.FeatureInfo;
 
 // IDEA: represent setupSpeck()/afterSpeck() as JUnit test methods
 public class JUnitSupervisor implements IRunSupervisor {
   private final RunNotifier notifier;
   private SpeckInfo speck;
-  private MethodInfo feature;
+  private MethodInfo featureMethod;
   private int numIterations;
 
   private StackTraceFilter filter;
@@ -43,9 +44,9 @@ public class JUnitSupervisor implements IRunSupervisor {
     this.filter = new StackTraceFilter(speck);
   }
 
-  public void beforeFeature(MethodInfo feature) {
-    this.feature = feature;
-    notifier.fireTestStarted(getDescription(feature));
+  public void beforeFeature(FeatureInfo feature) {
+    this.featureMethod = feature.getFeatureMethod();
+    notifier.fireTestStarted(getDescription(feature.getFeatureMethod()));
   }
 
   public void beforeFirstIteration(int estimatedNumIterations) {
@@ -58,11 +59,17 @@ public class JUnitSupervisor implements IRunSupervisor {
 
   public int error(MethodInfo method, Throwable throwable, int runStatus) {
     filter.filter(throwable);
+
+    Description description = getFailureDescription(featureMethod, method);
+    if (throwable instanceof FeatureSkippedException) {
+      notifier.fireTestIgnored(description);
+      return END_FEATURE;
+    }
     
-    Description description = getFailureDescription(feature, method);
     notifier.fireTestFailure(new Failure(description, throwable));
 
     switch (method.getKind()) {
+      case FEATURE_EXECUTION:
       case FEATURE:
       case DATA_PROVIDER:
       case DATA_PROCESSOR:
@@ -76,13 +83,13 @@ public class JUnitSupervisor implements IRunSupervisor {
 
   public void afterLastIteration() {
     if (numIterations == 0)
-      notifier.fireTestFailure(new Failure(getDescription(feature),
+      notifier.fireTestFailure(new Failure(getDescription(featureMethod),
           new SpeckExecutionException("Data provider has no data")));
   }
   
   public void afterFeature() {
-    notifier.fireTestFinished(getDescription(feature));
-    feature = null;
+    notifier.fireTestFinished(getDescription(featureMethod));
+    featureMethod = null;
   }
 
   public void afterSpeck() {}

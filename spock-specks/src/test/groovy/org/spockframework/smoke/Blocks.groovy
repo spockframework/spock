@@ -64,17 +64,17 @@ class Foo {
     def speckInfo = new SpeckInfoBuilder(speckClass).build()
 
     expect:
-    def m1 = speckInfo.featureMethods[0]
+    def m1 = speckInfo.features[0]
     m1.blocks*.kind == [SETUP,WHEN,THEN,WHERE]
     m1.blocks*.texts.flatten() == ["setup","setup2","when","when2","then","then2","where","where2"]
 
     and:
-    def m2 = speckInfo.featureMethods[1]
+    def m2 = speckInfo.features[1]
     m2.blocks*.kind == [EXPECT]
     m2.blocks*.texts.flatten() == ["expect","expect2"]
 
     and:
-    def m3 = speckInfo.featureMethods[2]
+    def m3 = speckInfo.features[2]
     m3.blocks*.kind == [SETUP,EXPECT,WHERE]
     m3.blocks*.texts.flatten() == ["given","and",""]
   }

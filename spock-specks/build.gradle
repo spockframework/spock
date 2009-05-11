@@ -8,10 +8,12 @@ compile.options.fork = false
 testCompile.options.fork = false
 
 project(":spock-specks") {
+  repositories {
+    mavenCentral()
+  }
+  
   dependencies {
-    addMavenRepo()
-    
-    compile "org.codehaus.groovy:groovy-all:1.6.0"
+    groovy "org.codehaus.groovy:groovy-all:1.6.1"
     compile project(":spock-core")
     compile "junit:junit:4.5"
     testRuntime "cglib:cglib-nodep:2.1_3"

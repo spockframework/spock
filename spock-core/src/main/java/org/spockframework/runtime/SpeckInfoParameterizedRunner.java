@@ -16,14 +16,14 @@
 
 package org.spockframework.runtime;
 
-import java.util.Iterator;
-import java.util.List;
-
 import org.codehaus.groovy.runtime.InvokerHelper;
-
 import static org.spockframework.runtime.RunStatus.*;
+import org.spockframework.runtime.model.FeatureInfo;
 import org.spockframework.runtime.model.MethodInfo;
 import org.spockframework.runtime.model.SpeckInfo;
+
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Adds the ability to run parameterized features.
@@ -36,7 +36,7 @@ public class SpeckInfoParameterizedRunner extends SpeckInfoBaseRunner {
   }
 
   @Override
-  protected void runParameterizedFeature(MethodInfo feature) {
+  protected void runParameterizedFeature(FeatureInfo feature) {
     if (runStatus != OK) return;
 
     Object[] dataProviders = createDataProviders(feature);
@@ -46,10 +46,10 @@ public class SpeckInfoParameterizedRunner extends SpeckInfoBaseRunner {
     closeDataProviders(dataProviders);
   }
 
-  private Object[] createDataProviders(MethodInfo feature) {
+  private Object[] createDataProviders(FeatureInfo feature) {
     if (runStatus != OK) return null;
 
-    List<MethodInfo> dataProviderMethods = feature.getDataProviders();
+    List<MethodInfo> dataProviderMethods = feature.getDataProviderMethods();
     Object[] dataProviders = new Object[dataProviderMethods.size()];
 
     for (int i = 0; i < dataProviderMethods.size(); i++) {
@@ -66,7 +66,7 @@ public class SpeckInfoParameterizedRunner extends SpeckInfoBaseRunner {
     return dataProviders;
   }
 
-  private Iterator[] createIterators(MethodInfo feature, Object[] dataProviders) {
+  private Iterator[] createIterators(FeatureInfo feature, Object[] dataProviders) {
     if (runStatus != OK) return null;
 
     Iterator[] iterators = new Iterator[dataProviders.length];
@@ -74,13 +74,13 @@ public class SpeckInfoParameterizedRunner extends SpeckInfoBaseRunner {
       try {
         Iterator iter = InvokerHelper.asIterator(dataProviders[i]);
         if (iter == null) {
-          runStatus = supervisor.error(feature.getDataProviders().get(i),
+          runStatus = supervisor.error(feature.getDataProviderMethods().get(i),
               new SpeckExecutionException("Data provider's iterator() method returned null"), runStatus);
           return null;
         }
         iterators[i] = iter;
       } catch (Throwable t) {
-        runStatus = supervisor.error(feature.getDataProviders().get(i), t, runStatus);
+        runStatus = supervisor.error(feature.getDataProviderMethods().get(i), t, runStatus);
         return null;
       }
 
@@ -109,7 +109,7 @@ public class SpeckInfoParameterizedRunner extends SpeckInfoBaseRunner {
     return result == Integer.MAX_VALUE ? -1 : result;
   }
 
-  private void runIterations(MethodInfo feature, Iterator[] iterators, int estimatedNumIterations) {
+  private void runIterations(FeatureInfo feature, Iterator[] iterators, int estimatedNumIterations) {
     if (runStatus != OK) return;
 
     supervisor.beforeFirstIteration(estimatedNumIterations);
@@ -139,25 +139,25 @@ public class SpeckInfoParameterizedRunner extends SpeckInfoBaseRunner {
     }
   }
 
-  private void runIteration(MethodInfo feature, Object[] args) {
+  private void runIteration(FeatureInfo feature, Object[] args) {
     if (runStatus != OK) return;
 
     supervisor.beforeIteration();
     invokeSetup();
-    invokeFeature(feature, args);
+    invokeFeatureMethod(feature.getFeatureMethod(), args);
     invokeCleanup();
     supervisor.afterIteration();
     resetStatus(ITERATION);
   }
 
-  private boolean haveNext(MethodInfo feature, Iterator[] iterators) {
+  private boolean haveNext(FeatureInfo feature, Iterator[] iterators) {
     if (runStatus != OK) return false;
 
     for (int i = 0; i < iterators.length; i++)
       try {
         if (!iterators[i].hasNext()) return false;
       } catch (Throwable t) {
-        runStatus = supervisor.error(feature.getDataProviders().get(i), t, runStatus);
+        runStatus = supervisor.error(feature.getDataProviderMethods().get(i), t, runStatus);
         return false;
       }
 
@@ -165,7 +165,7 @@ public class SpeckInfoParameterizedRunner extends SpeckInfoBaseRunner {
   }
 
   // advances iterators and computes args
-  private Object[] nextArgs(MethodInfo feature, Iterator[] iterators) {
+  private Object[] nextArgs(FeatureInfo feature, Iterator[] iterators) {
     if (runStatus != OK) return null;
 
     Object[] next = new Object[iterators.length];
@@ -173,14 +173,14 @@ public class SpeckInfoParameterizedRunner extends SpeckInfoBaseRunner {
       try {
         next[i] = iterators[i].next();
       } catch (Throwable t) {
-        runStatus = supervisor.error(feature.getDataProviders().get(i), t, runStatus);
+        runStatus = supervisor.error(feature.getDataProviderMethods().get(i), t, runStatus);
         return null;
       }
 
     try {
-      return (Object[])invokeRaw(feature.getDataProcessor(), next);
+      return (Object[])invokeRaw(feature.getDataProcessorMethod(), next);
     } catch (Throwable t) {
-      runStatus = supervisor.error(feature.getDataProcessor(), t, runStatus);
+      runStatus = supervisor.error(feature.getDataProcessorMethod(), t, runStatus);
       return null;
     }
   }

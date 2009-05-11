@@ -103,7 +103,7 @@ public class DefaultMockFactory implements IMockFactory {
       MethodInterceptor interceptor = new MethodInterceptor() {
         public Object intercept(Object mock, Method method, Object[] args, MethodProxy proxy) {
           if (isGroovyObject && method.getName().equals("getMetaClass"))
-            return metaClass;
+            return GroovySystem.getMetaClassRegistry().getMetaClass(mock.getClass());
           IMockInvocation invocation = new MockInvocation(mock, mockName, method, normalizeArgs(args));
           return dispatchAndComputeResult(dispatcher, invocation);
         }

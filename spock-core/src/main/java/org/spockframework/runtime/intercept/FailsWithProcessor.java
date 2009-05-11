@@ -22,6 +22,7 @@ import spock.lang.FailsWith;
 
 import org.spockframework.runtime.model.MethodInfo;
 import org.spockframework.runtime.model.SpeckInfo;
+import org.spockframework.runtime.model.FeatureInfo;
 
 /**
  *
@@ -29,9 +30,9 @@ import org.spockframework.runtime.model.SpeckInfo;
  */
 public class FailsWithProcessor extends AbstractDirectiveProcessor {
   public void visitSpeckDirective(Annotation directive, SpeckInfo speck) {
-    for (MethodInfo feature : speck.getFeatureMethods())
-      if (!feature.getReflection().isAnnotationPresent(FailsWith.class))
-        feature.addInterceptor(new FailsWithInterceptor((FailsWith)directive));
+    for (FeatureInfo feature : speck.getFeatures())
+      if (!feature.getFeatureMethod().getReflection().isAnnotationPresent(FailsWith.class))
+        feature.getFeatureMethod().addInterceptor(new FailsWithInterceptor((FailsWith)directive));
   }
 
   public void visitMethodDirective(Annotation directive, MethodInfo method) {

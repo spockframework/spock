@@ -17,32 +17,26 @@
 package org.spockframework.runtime.intercept;
 
 import java.util.Iterator;
+import java.lang.reflect.InvocationTargetException;
 
 import org.spockframework.runtime.model.MethodInfo;
+import org.spockframework.util.InternalSpockError;
 
 /**
  *
  * @author Peter Niederwieser
  */
-public class MethodInvocation {
+public class MethodInvocation implements IMethodInvocation {
   private final Object target;
   private final MethodInfo method;
   private final Object[] arguments;
   private final Iterator<IMethodInterceptor> interceptors;
-  private final IMethodInterceptor invoker;
 
-  public MethodInvocation(Object target, MethodInfo method, Object[] arguments,
-                          Iterator<IMethodInterceptor> interceptors,
-                          IMethodInterceptor invoker) {
+  public MethodInvocation(Object target, MethodInfo method, Object[] arguments) {
     this.target = target;
     this.method = method;
     this.arguments = arguments;
-    this.interceptors = interceptors; // TODO: why not get directly from MethodInfo?
-    this.invoker = invoker;
-  }
-
-  public Object getTarget() {
-    return target;
+    interceptors = method.getInterceptors().iterator();
   }
 
   public MethodInfo getMethod() {
@@ -53,10 +47,21 @@ public class MethodInvocation {
     return arguments;
   }
 
-  // IDEA: this method provides an opportunity to handle exceptions produced by interceptors
   public void proceed() throws Throwable {
     if (interceptors.hasNext())
       interceptors.next().invoke(this);
-    else invoker.invoke(this);
+    else invokeTargetMethod();
+  }
+
+  protected void invokeTargetMethod() throws Throwable {
+    if (method.isStub()) return;
+
+    try {
+      method.getReflection().invoke(target, arguments);
+    } catch (InvocationTargetException e) {
+      throw e.getCause();
+    } catch (Throwable t) {
+      throw new InternalSpockError("Failed to invoke method '%s'", t).withArgs(method.getReflection().getName());
+    }
   }
 }

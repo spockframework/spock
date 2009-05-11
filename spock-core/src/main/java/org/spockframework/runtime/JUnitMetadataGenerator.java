@@ -19,6 +19,7 @@ import org.junit.runner.Description;
 
 import org.spockframework.runtime.model.SpeckInfo;
 import org.spockframework.runtime.model.MethodInfo;
+import org.spockframework.runtime.model.FeatureInfo;
 
 /**
  * Generates and attaches JUnit Description's to a SpeckInfo's nodes.
@@ -35,8 +36,8 @@ public class JUnitMetadataGenerator {
   public void generate() {
     Description desc = Description.createSuiteDescription(speck.getName());
     speck.setMetadata(desc);
-    for (MethodInfo feature : speck.getFeatureMethods())
-      desc.addChild(describeMethod(feature));
+    for (FeatureInfo feature : speck.getFeatures())
+      desc.addChild(describeFeature(feature));
 
     describeMethod(speck.getSetupMethod());
     describeMethod(speck.getCleanupMethod());
@@ -44,15 +45,18 @@ public class JUnitMetadataGenerator {
     describeMethod(speck.getCleanupSpeckMethod());
   }
 
+  private Description describeFeature(FeatureInfo feature) {
+    Description desc = describeMethod(feature.getFeatureMethod());
+    if (feature.getDataProcessorMethod() != null)
+      feature.getDataProcessorMethod().setMetadata(desc);
+    for (MethodInfo prov : feature.getDataProviderMethods())
+      prov.setMetadata(desc);
+    return desc;
+  }
+
   private Description describeMethod(MethodInfo method) {
     Description desc = Description.createTestDescription(speck.getReflection(), method.getName());
-
     method.setMetadata(desc);
-    if (method.getDataProcessor() != null)
-      method.getDataProcessor().setMetadata(desc);
-    for (MethodInfo prov : method.getDataProviders())
-      prov.setMetadata(desc);
-
     return desc;
   }
 }

@@ -18,9 +18,10 @@ package org.spockframework.compiler;
 
 import org.codehaus.groovy.ast.AnnotationNode;
 import org.codehaus.groovy.ast.expr.*;
-
 import org.spockframework.compiler.model.*;
-import org.spockframework.runtime.model.*;
+import org.spockframework.runtime.model.BlockKind;
+import org.spockframework.runtime.model.BlockMetadata;
+import org.spockframework.runtime.model.FeatureMetadata;
 
 /**
  * Puts all speck information required at runtime into annotations
@@ -31,7 +32,7 @@ import org.spockframework.runtime.model.*;
 public class SpeckAnnotator extends AbstractSpeckVisitor {
   private final AstNodeCache nodeCache;
   private ListExpression blockAnnElems;
-  private int methodIndex = 0;
+  private int featureOrder = 0;
 
   public SpeckAnnotator(AstNodeCache nodeCache) {
     this.nodeCache = nodeCache;
@@ -40,7 +41,6 @@ public class SpeckAnnotator extends AbstractSpeckVisitor {
   @Override
   public void visitSpeck(Speck speck) throws Exception {
     addSpeckAnnotation(speck);
-    addFixtureMethodAnnotations(speck);
   }
 
   private void addSpeckAnnotation(Speck speck) {
@@ -48,28 +48,18 @@ public class SpeckAnnotator extends AbstractSpeckVisitor {
     speck.getAst().addAnnotation(ann2);
   }
 
-  private void addFixtureMethodAnnotations(Speck speck) {
-    addMethodAnnotation(speck.getSetup(), MethodKind.SETUP);
-    addMethodAnnotation(speck.getCleanup(), MethodKind.CLEANUP);
-    addMethodAnnotation(speck.getSetupSpeck(), MethodKind.SETUP_SPECK);
-    addMethodAnnotation(speck.getCleanupSpeck(), MethodKind.CLEANUP_SPECK);
-  }
-
-  private void addMethodAnnotation(Method method, MethodKind kind) {
-    if (method == null) return; // fixture methods may not be present
-    AnnotationNode ann = new AnnotationNode(nodeCache.MethodMetadata);
-    ann.setMember(MethodMetadata.INDEX, new ConstantExpression(methodIndex++));
-    ann.setMember(MethodMetadata.NAME, new ConstantExpression(method.getName()));
-    ann.setMember(MethodMetadata.KIND, new PropertyExpression(
-        new ClassExpression(nodeCache.MethodKind), kind.name()));
-    ann.setMember(MethodMetadata.BLOCKS, blockAnnElems = new ListExpression());
-    method.getAst().addAnnotation(ann);
-  }
-
   @Override
   public void visitMethod(Method method) throws Exception {
     if (method instanceof FeatureMethod)
-      addMethodAnnotation(method, MethodKind.FEATURE);
+      addFeatureAnnotation((FeatureMethod)method);
+  }
+
+  private void addFeatureAnnotation(FeatureMethod feature) {
+    AnnotationNode ann = new AnnotationNode(nodeCache.FeatureMetadata);
+    ann.setMember(FeatureMetadata.ORDER, new ConstantExpression(featureOrder++));
+    ann.setMember(FeatureMetadata.NAME, new ConstantExpression(feature.getName()));
+    ann.setMember(FeatureMetadata.BLOCKS, blockAnnElems = new ListExpression());
+    feature.getAst().addAnnotation(ann);
   }
 
   private void addBlockAnnotation(Block block, BlockKind kind) {

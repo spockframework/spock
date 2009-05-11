@@ -18,7 +18,7 @@ package org.spockframework.runtime.intercept;
 
 import spock.lang.FailsWith;
 
-import org.spockframework.runtime.FeatureNotSatisfiedError;
+import org.spockframework.runtime.SpeckAssertionError;
 
 /**
  *
@@ -32,19 +32,18 @@ public class FailsWithInterceptor implements IMethodInterceptor {
     this.failsWith = failsWith;
   }
 
-  public void invoke(MethodInvocation invocation) throws Throwable {
+  public void invoke(IMethodInvocation invocation) throws Throwable {
     try {
       invocation.proceed();
     } catch (Throwable t) {
       if (failsWith.value().isInstance(t)) return;
-      error("got: %s", t);
+      error("got: " + t);
     }
     error("no exception was thrown");
   }                                           
 
-  private void error(String msg, Object... args) {
-    throw new FeatureNotSatisfiedError(
-      String.format("expected exception %s, but %s",
-        failsWith.value().getName(), String.format(msg, args)));
+  private void error(String msg) {
+    throw new SpeckAssertionError("expected exception %s, but %s",
+        failsWith.value().getName(), msg);
   }
 }

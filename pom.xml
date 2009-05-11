@@ -7,8 +7,8 @@
   <version>0.2-SNAPSHOT</version>
   <name>Spock Framework - Parent</name>
   <url>http://spockframework.org</url>
-  <description>Spock is a testing and specification framework for Java and Groovy developers.</description>  
-  
+  <description>Spock is a testing and specification framework for Java and Groovy developers.</description>
+
   <licenses>
     <license>
       <name>The Apache Software License, Version 2.0</name>
@@ -16,13 +16,13 @@
       <distribution>repo</distribution>
     </license>
   </licenses>
-  
+
   <scm>
     <connection>scm:svn:http://spock.googlecode.com/svn</connection>
     <developerConnection>scm:svn:https://spock.googlecode.com/svn</developerConnection>
     <url>http://code.google.com/p/spock/source/browse</url>
   </scm>
-      
+
   <modules>
     <module>spock-core</module>
     <module>spock-specks</module>
@@ -69,7 +69,7 @@
       <dependency>
         <groupId>org.codehaus.groovy</groupId>
         <artifactId>groovy-all</artifactId>
-        <version>1.6.0</version>
+        <version>1.6.2</version>
       </dependency>
       <dependency>
         <groupId>junit</groupId>
@@ -84,7 +84,7 @@
       <dependency>
         <groupId>asm</groupId>
         <artifactId>asm-commons</artifactId>
-        <version>2.2.3</version>  
+        <version>2.2.3</version>
       </dependency>
       <dependency>
         <groupId>cglib</groupId>
@@ -105,17 +105,17 @@
   </dependencyManagement>
 
   <distributionManagement>
-    <repository>     
+    <repository>
       <id>spock-releases</id>
-      <url>file:///var/www/m2repo/releases</url> 
+      <url>file:///var/www/m2repo/releases</url>
     </repository>
-    <snapshotRepository>     
+    <snapshotRepository>
       <id>spock-snapshots</id>
-      <url>file:///var/www/m2repo/snapshots</url> 
+      <url>file:///var/www/m2repo/snapshots</url>
       <uniqueVersion>false</uniqueVersion>
     </snapshotRepository>
   </distributionManagement>
-  
+
   <profiles>
     <profile>
       <id>release</id>

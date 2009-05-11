@@ -16,22 +16,24 @@
 
 package spock.lang;
 
+import org.spockframework.runtime.intercept.Directive;
+import org.spockframework.runtime.intercept.IgnoreProcessor;
+
 import java.lang.annotation.*;
 
 /**
- * Indicates that a feature method or specification should be ignored. An
- * ignored element is neither processed at compile time nor at runtime.
- * From the perspective of the Spock runtime, such an element doesn't exist.
+ * Indicates that a specification or feature method should not be run.
  *
  * @author Peter Niederwieser
  */
-@Retention(RetentionPolicy.SOURCE)
+@Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE, ElementType.METHOD})
+@Directive(IgnoreProcessor.class)
 public @interface Ignore {
   /**
    * The reason for ignoring this element.
    *
    * @return the reason for ignoring this element
    */
-  String value();
+  String value() default "";
 }

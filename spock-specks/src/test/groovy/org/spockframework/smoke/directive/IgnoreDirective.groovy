@@ -14,21 +14,27 @@
  * limitations under the License.
  */
 
-package org.spockframework.runtime.model;
+package org.spockframework.smoke.directive
+
+import spock.lang.Ignore
+import spock.lang.Speck
+import org.junit.runner.RunWith
+import spock.lang.Sputnik
 
 /**
- * The different kinds of methods that a <tt>MethodInfo</tt> instance can represent.
  *
  * @author Peter Niederwieser
  */
-public enum MethodKind {
-  SETUP,
-  CLEANUP,
-  SETUP_SPECK,
-  CLEANUP_SPECK,
-  FEATURE,
-  DATA_PROVIDER,
-  DATA_PROCESSOR,
-  SPECK_EXECUTION,
-  FEATURE_EXECUTION 
+@Speck
+@RunWith(Sputnik)
+class IgnoreDirective {
+  @Ignore
+  def "foo"() {
+    expect: false
+  }
+
+  def bar() {
+    expect: true
+  }
+
 }

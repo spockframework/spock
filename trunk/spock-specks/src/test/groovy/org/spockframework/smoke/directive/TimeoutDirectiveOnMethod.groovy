@@ -34,9 +34,9 @@ class TimeoutDirectiveOnMethod {
   def "in time"() {
     setup: Thread.sleep(500)
   }
-  
-  @FailsWith(SpeckAssertionError)
-  @Timeout(1)  
+
+  @Timeout(2)
+  @FailsWith(InterruptedException)
   def "not in time"() {
     setup: Thread.sleep(1100)
   }
@@ -46,8 +46,8 @@ class TimeoutDirectiveOnMethod {
     setup: Thread.sleep(500)
   }
 
-  @FailsWith(SpeckAssertionError)
   @Timeout(value = 1000, unit = TimeUnit.MILLISECONDS)
+  @FailsWith(InterruptedException)
   def "not in time millis"() {
     setup: Thread.sleep(1100)
   }
@@ -59,11 +59,6 @@ class TimeoutDirectiveOnMethod {
 class TimeoutDirectiveOnSpeck {
   def "in time"() {
     setup: Thread.sleep(500)
-  }
-
-  @Timeout(value = 1500, unit = TimeUnit.MILLISECONDS)
-  def "overridden to be in time"() {
-    setup: Thread.sleep(1100)
   }
 }
 

@@ -16,14 +16,17 @@
 
 package org.spockframework.runtime;
 
-import java.lang.reflect.InvocationTargetException;
-
 import static org.spockframework.runtime.RunStatus.*;
 import org.spockframework.runtime.intercept.IMethodInterceptor;
 import org.spockframework.runtime.intercept.MethodInvocation;
+import org.spockframework.runtime.model.FeatureInfo;
 import org.spockframework.runtime.model.MethodInfo;
+import org.spockframework.runtime.model.MethodKind;
 import org.spockframework.runtime.model.SpeckInfo;
 import org.spockframework.util.InternalSpockError;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 /**
  * Executes a single Speck. Notifies its supervisor about overall execution
@@ -32,19 +35,11 @@ import org.spockframework.util.InternalSpockError;
  *
  * @author Peter Niederwieser
  */
-
-// IDEA: give Speck code access to SpeckInfo object model; would enable API-based extensions
-// IDEA: add ability to run iterations w/o recreating fixture in between (setup/cleanup)
-// NOTE: Intellij IDEA JUnit runner makes several assumptions about JUnit test classes that
-// become problematic once alternative test runners are involved:
-// - if a test method has parameters, IDEA can no longer navigate to it from the JUnit pane
-// - if the name of a test method contains parentheses (e.g. "foo (bar) foo",
-//   IDEA doesn't display the method in the JUnit pane; instead it displays a test suite with zero cases
-// - to jump to the line in a test where an assertion failure occurred, IDEA needs
-//   to parse the stack trace (we should do better)
-
 // TODO: check exception handling policy (i.e. exceptions thrown and caught)
 public class SpeckInfoBaseRunner {
+  private static final Method DO_RUN;
+  private static final Method DO_RUN_FEATURE;
+
   private final SpeckInfo speck;
   // This runner uses a single instance of the user-provided class for running
   // the whole Speck. It relies on the compiler to ensure that shared and
@@ -54,18 +49,14 @@ public class SpeckInfoBaseRunner {
   protected final IRunSupervisor supervisor;
   protected int runStatus = OK;
 
-  private final IMethodInterceptor invoker = new IMethodInterceptor() {
-    public void invoke(MethodInvocation invocation) throws Throwable {
-      MethodInfo method = invocation.getMethod();
-      if (method.isStub()) return;
-
-      try {
-        method.getReflection().invoke(invocation.getTarget(), invocation.getArguments());
-      } catch (InvocationTargetException e) {
-        throw e.getCause(); 
-      }
+  static {
+    try {
+      DO_RUN = SpeckInfoBaseRunner.class.getMethod("doRun");
+      DO_RUN_FEATURE = SpeckInfoBaseRunner.class.getMethod("doRunFeature", FeatureInfo.class);
+    } catch (NoSuchMethodException e) {
+      throw new InternalSpockError();
     }
-  };
+  }
 
   public SpeckInfoBaseRunner(SpeckInfo speck, IRunSupervisor supervisor) {
     this.speck = speck;
@@ -74,13 +65,31 @@ public class SpeckInfoBaseRunner {
 
   public int run() {
     supervisor.beforeSpeck(speck);
+    invoke(this, createDoRunMethodInfo());
+    supervisor.afterSpeck();
+
+    resetStatus(SPECK);
+    return runStatus;
+  }
+
+  private MethodInfo createDoRunMethodInfo() {
+    MethodInfo result = new MethodInfo();
+    result.setParent(speck);
+    result.setKind(MethodKind.SPECK_EXECUTION);
+    result.setReflection(DO_RUN);
+    for (IMethodInterceptor interceptor : speck.getInterceptors())
+      result.addInterceptor(interceptor);
+    return result;
+  }
+
+  /**
+   * Do not call directly.
+   */
+  public void doRun() {
     createSpeckInstance();
     invokeSetupSpeck();
     runFeatures();
     invokeCleanupSpeck();
-    supervisor.afterSpeck();
-    resetStatus(SPECK);
-    return runStatus;
   }
 
   private void createSpeckInstance() {
@@ -95,13 +104,13 @@ public class SpeckInfoBaseRunner {
 
   private void invokeSetupSpeck() {
     if (runStatus != OK) return;
-    invoke(speck.getSetupSpeckMethod(), null);
+    invoke(speck.getSetupSpeckMethod());
   }
 
   private void runFeatures() {
     if (runStatus != OK) return;
 
-    for (MethodInfo feature : speck.getFeatureMethods()) {
+    for (FeatureInfo feature : speck.getFeatures()) {
       runFeature(feature);
       if (runStatus != OK) return;
     }
@@ -109,26 +118,45 @@ public class SpeckInfoBaseRunner {
 
   private void invokeCleanupSpeck() {
     if (action(runStatus) == ABORT) return;
-    invoke(speck.getCleanupSpeckMethod(), null);
+    invoke(speck.getCleanupSpeckMethod());
   }
 
-  private void runFeature(MethodInfo feature) {
+  private void runFeature(FeatureInfo feature) {
     if (runStatus != OK) return;
 
     supervisor.beforeFeature(feature);
-    if (feature.isParameterized())
-      runParameterizedFeature(feature);
-    else runSimpleFeature(feature);
+    invoke(this, createDoRunFeature(feature), feature);
     supervisor.afterFeature();
-    
+
     resetStatus(FEATURE);
   }
 
-  private void runSimpleFeature(MethodInfo feature) {
+  private MethodInfo createDoRunFeature(FeatureInfo feature) {
+    MethodInfo result = new MethodInfo();
+    result.setParent(speck);
+    result.setKind(MethodKind.FEATURE_EXECUTION);
+    result.setReflection(DO_RUN_FEATURE);
+    for (IMethodInterceptor interceptor : feature.getInterceptors())
+      result.addInterceptor(interceptor);
+    return result;
+  }
+
+  /**
+   * Do not call directly.
+   *
+   * @param feature the feature method to be run
+   */
+  public void doRunFeature(FeatureInfo feature) {
+    if (feature.isParameterized())
+      runParameterizedFeature(feature);
+    else runSimpleFeature(feature);
+  }
+
+  private void runSimpleFeature(FeatureInfo feature) {
     if (runStatus != OK) return;
 
     invokeSetup();
-    invokeFeature(feature, null);
+    invokeFeatureMethod(feature.getFeatureMethod());
     invokeCleanup();
   }
 
@@ -136,35 +164,34 @@ public class SpeckInfoBaseRunner {
     if (scope(runStatus) <= scope) runStatus = OK;
   }
 
-  protected void runParameterizedFeature(MethodInfo feature) {
+  protected void runParameterizedFeature(FeatureInfo feature) {
     throw new UnsupportedOperationException("This runner cannot run parameterized features");
   }
 
   protected void invokeSetup() {
     if (runStatus != OK) return;
-    invoke(speck.getSetupMethod(), null);
+    invoke(speck.getSetupMethod());
   }
 
-  protected void invokeFeature(MethodInfo feature, Object[] args) {
+  protected void invokeFeatureMethod(MethodInfo feature, Object... args) {
     if (runStatus != OK) return;
     invoke(feature, args);
   }
 
   protected void invokeCleanup() {
     if (action(runStatus) == ABORT) return;
-    invoke(speck.getCleanupMethod(), null);
+    invoke(speck.getCleanupMethod());
   }
 
-  protected void invoke(MethodInfo method, Object[] arguments) {
+  protected void invoke(Object target, MethodInfo method, Object... arguments) {
     // fast lane
     if (method.getInterceptors().isEmpty()) {
-      invokeRaw(method, arguments);
+      invokeRaw(target, method, arguments);
       return;
     }
 
     // slow lane
-    MethodInvocation invocation = new MethodInvocation(instance, method, arguments,
-      method.getInterceptors().iterator(), invoker);
+    MethodInvocation invocation = new MethodInvocation(target, method, arguments);
     try {
       invocation.proceed();
     } catch (Throwable t) {
@@ -172,17 +199,28 @@ public class SpeckInfoBaseRunner {
     }
   }
 
-  protected Object invokeRaw(MethodInfo method, Object[] arguments) {
+  protected void invoke(MethodInfo method, Object... arguments) {
+    invoke(instance, method, arguments);
+  }
+
+  protected Object invokeRaw(Object target, MethodInfo method, Object... arguments) {
     if (method.isStub()) return null;
 
     try {
-      return method.getReflection().invoke(instance, arguments);
+      return method.getReflection().invoke(target, arguments);
     } catch (InvocationTargetException e) {
       runStatus = supervisor.error(method, e.getTargetException(), runStatus);
       return null;
-    } catch (Throwable t) { // TODO: why doesn't invoker do the same? why not throw InternalSpockError (if at all)?
-      throw new InternalSpockError("Failed to invoke method '%s'", t).withArgs(method.getReflection().getName());
+    } catch (Throwable t) {
+      Error internalError =
+          new InternalSpockError("Failed to invoke method '%s'", t).withArgs(method.getReflection().getName());
+      runStatus = supervisor.error(method, internalError, runStatus);
+      return null;
     }
+  }
+
+  protected Object invokeRaw(MethodInfo method, Object[] arguments) {
+    return invokeRaw(instance, method, arguments);
   }
 }
 

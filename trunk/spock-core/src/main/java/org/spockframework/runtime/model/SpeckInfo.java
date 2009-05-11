@@ -16,13 +16,16 @@
 
 package org.spockframework.runtime.model;
 
-import java.util.*;
-
-import org.spockframework.runtime.IMethodInfoFilter;
-import org.spockframework.runtime.IMethodInfoSortOrder;
+import org.spockframework.runtime.IFeatureFilter;
+import org.spockframework.runtime.IFeatureSortOrder;
 import org.spockframework.runtime.IMethodNameMapper;
-import org.spockframework.util.Util;
+import org.spockframework.runtime.intercept.IMethodInterceptor;
 import org.spockframework.util.IFunction;
+import org.spockframework.util.Util;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Runtime information about a Spock specification.
@@ -30,12 +33,45 @@ import org.spockframework.util.IFunction;
  * @author Peter Niederwieser
  */
 public class SpeckInfo extends NodeInfo<NodeInfo, Class<?>> implements IMethodNameMapper {
-  private final List<FieldInfo> fields = new ArrayList<FieldInfo>();
   private MethodInfo setupMethod;
   private MethodInfo cleanupMethod;
   private MethodInfo setupSpeckMethod;
   private MethodInfo cleanupSpeckMethod;
-  private List<MethodInfo> featureMethods = new ArrayList<MethodInfo>();
+  private final List<FieldInfo> fields = new ArrayList<FieldInfo>();
+  private List<FeatureInfo> features = new ArrayList<FeatureInfo>();
+  private final List<IMethodInterceptor> interceptors = new ArrayList<IMethodInterceptor>();
+
+  public MethodInfo getSetupMethod() {
+    return setupMethod;
+  }
+
+  public void setSetupMethod(MethodInfo setupMethod) {
+    this.setupMethod = setupMethod;
+  }
+
+  public MethodInfo getCleanupMethod() {
+    return cleanupMethod;
+  }
+
+  public void setCleanupMethod(MethodInfo cleanupMethod) {
+    this.cleanupMethod = cleanupMethod;
+  }
+
+  public MethodInfo getSetupSpeckMethod() {
+    return setupSpeckMethod;
+  }
+
+  public void setSetupSpeckMethod(MethodInfo setupSpeckMethod) {
+    this.setupSpeckMethod = setupSpeckMethod;
+  }
+
+  public MethodInfo getCleanupSpeckMethod() {
+    return cleanupSpeckMethod;
+  }
+
+  public void setCleanupSpeckMethod(MethodInfo cleanupSpeckMethod) {
+    this.cleanupSpeckMethod = cleanupSpeckMethod;
+  }
 
   public List<FieldInfo> getFields() {
     return fields;
@@ -45,63 +81,39 @@ public class SpeckInfo extends NodeInfo<NodeInfo, Class<?>> implements IMethodNa
     fields.add(field);
   }
 
-  public MethodInfo getSetupMethod() {
-    return setupMethod;
+  public List<FeatureInfo> getFeatures() {
+    return features;
   }
 
-  public MethodInfo getCleanupMethod() {
-    return cleanupMethod;
+  public void addFeature(FeatureInfo feature) {
+    features.add(feature);
   }
 
-  public MethodInfo getSetupSpeckMethod() {
-    return setupSpeckMethod;
+  public List<IMethodInterceptor> getInterceptors() {
+    return interceptors;
   }
 
-  public MethodInfo getCleanupSpeckMethod() {
-    return cleanupSpeckMethod;
+  public void addInterceptor(IMethodInterceptor interceptor) {
+    interceptors.add(interceptor);
   }
 
-  public List<MethodInfo> getFeatureMethods() {
-    return featureMethods;
-  }
-
-  public void addMethod(MethodInfo method) {
-    switch(method.getKind()) {
-      case SETUP:
-        setupMethod = method;
-        break;
-      case CLEANUP:
-        cleanupMethod = method;
-        break;
-      case SETUP_SPECK:
-        setupSpeckMethod = method;
-        break;
-      case CLEANUP_SPECK:
-        cleanupSpeckMethod = method;
-        break;
-      case FEATURE:
-        featureMethods.add(method);
-        break;
-    }
-  }
-
-  public void filterFeatureMethods(final IMethodInfoFilter filter) {
-    featureMethods = Util.filterMap(featureMethods,
-        new IFunction<MethodInfo,MethodInfo>() {
-          public MethodInfo apply(MethodInfo value) {
+  public void filterFeatures(final IFeatureFilter filter) {
+    features = Util.filterMap(features,
+        new IFunction<FeatureInfo,FeatureInfo>() {
+          public FeatureInfo apply(FeatureInfo value) {
             return filter.matches(value) ? value : null;
           }
         });
   }
 
-  public void sortFeatureMethods(final IMethodInfoSortOrder order) {
-    Collections.sort(featureMethods, order);
+  public void sortFeatures(final IFeatureSortOrder order) {
+    Collections.sort(features, order);
   }
 
   public String map(String bytecodeName) {
-    for (MethodInfo method : featureMethods)
-      if (method.isAssociatedWithBytecodeName(bytecodeName))
-        return method.getName();
+    for (FeatureInfo feature : features)
+      if (feature.hasBytecodeName(bytecodeName))
+        return feature.getName();
     return bytecodeName;
   }
 }

@@ -23,6 +23,10 @@ package org.spockframework.util;
 public class InternalSpockError extends Error {
   private Object[] msgArgs;
 
+  public InternalSpockError() {
+    super("internal error");
+  }
+  
   public InternalSpockError(String msg) {
     super(msg);
   }

@@ -26,5 +26,5 @@ package org.spockframework.runtime.intercept;
 // possibilities for separation: 1. wrap Speck exceptions 2. pass back Speck
 // exceptions as return value of invoke()
 public interface IMethodInterceptor {
-  void invoke(MethodInvocation invocation) throws Throwable;
+  void invoke(IMethodInvocation invocation) throws Throwable;
 }

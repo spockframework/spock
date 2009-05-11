@@ -28,20 +28,10 @@ import org.spockframework.runtime.intercept.IMethodInterceptor;
  * @author Peter Niederwieser
  */
 public class MethodInfo extends NodeInfo<SpeckInfo, Method> {
-  private int index;
   private MethodKind kind;
+  private FeatureInfo feature;
   private final List<BlockInfo> blocks = new ArrayList<BlockInfo>();
-  private MethodInfo dataProcessor;
-  private final List<MethodInfo> dataProviders = new ArrayList<MethodInfo>();
   private final List<IMethodInterceptor> interceptors = new ArrayList<IMethodInterceptor>();
-
-  public int getIndex() {
-    return index;
-  }
-
-  public void setIndex(int index) {
-    this.index = index;
-  }
 
   public MethodKind getKind() {
     return kind;
@@ -49,6 +39,14 @@ public class MethodInfo extends NodeInfo<SpeckInfo, Method> {
 
   public void setKind(MethodKind kind) {
     this.kind = kind;
+  }
+
+  public FeatureInfo getFeature() {
+    return feature;
+  }
+
+  public void setFeature(FeatureInfo feature) {
+    this.feature = feature;
   }
 
   public void addBlock(BlockInfo block) {
@@ -59,48 +57,12 @@ public class MethodInfo extends NodeInfo<SpeckInfo, Method> {
     return blocks;
   }
 
-  public boolean isParameterized() {
-    return dataProcessor != null;
-  }
-
-  public MethodInfo getDataProcessor() {
-    return dataProcessor;
-  }
-
-  public void setDataProcessor(MethodInfo dataProcessor) {
-    this.dataProcessor = dataProcessor;
-  }
-
-  public List<MethodInfo> getDataProviders() {
-    return dataProviders;
-  }
-
-  public void addDataProvider(MethodInfo provider) {
-    dataProviders.add(provider);
-  }
-
   public List<IMethodInterceptor> getInterceptors() {
     return interceptors;
   }
 
   public void addInterceptor(IMethodInterceptor interceptor) {
     interceptors.add(interceptor);
-  }
-
-  /**
-   * Tells if this method, its data processor, or any of its data providers
-   * has the specified name in bytecode.
-   *
-   * @param name a method name in bytecode
-   * @return <tt>true</tt iff this method, its data processor, or any of its
-   * data providers has the specified name in bytecode
-   */
-  public boolean isAssociatedWithBytecodeName(String name) {
-    if (hasBytecodeName(name)) return true;
-    if (dataProcessor != null && dataProcessor.hasBytecodeName(name)) return true;
-    for (MethodInfo provider : dataProviders)
-      if (provider.hasBytecodeName(name)) return true;
-    return false;
   }
 
   public boolean hasBytecodeName(String name) {

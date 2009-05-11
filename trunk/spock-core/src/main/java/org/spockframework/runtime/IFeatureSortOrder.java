@@ -14,21 +14,13 @@
  * limitations under the License.
  */
 
-package org.spockframework.runtime.model;
+package org.spockframework.runtime;
+
+import org.spockframework.runtime.model.FeatureInfo;
+
+import java.util.Comparator;
 
 /**
- * The different kinds of methods that a <tt>MethodInfo</tt> instance can represent.
- *
  * @author Peter Niederwieser
  */
-public enum MethodKind {
-  SETUP,
-  CLEANUP,
-  SETUP_SPECK,
-  CLEANUP_SPECK,
-  FEATURE,
-  DATA_PROVIDER,
-  DATA_PROCESSOR,
-  SPECK_EXECUTION,
-  FEATURE_EXECUTION 
-}
+public interface IFeatureSortOrder extends Comparator<FeatureInfo> {}

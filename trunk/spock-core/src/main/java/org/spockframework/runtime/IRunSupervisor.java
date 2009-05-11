@@ -18,6 +18,7 @@ package org.spockframework.runtime;
 
 import org.spockframework.runtime.model.MethodInfo;
 import org.spockframework.runtime.model.SpeckInfo;
+import org.spockframework.runtime.model.FeatureInfo;
 
 /**
  *
@@ -25,7 +26,7 @@ import org.spockframework.runtime.model.SpeckInfo;
  */
 public interface IRunSupervisor {
   void beforeSpeck(SpeckInfo speck);
-  void beforeFeature(MethodInfo feature);
+  void beforeFeature(FeatureInfo feature);
   /*
    * Called before the first iteration of a parameterized feature is
    * run. All data providers have been created successfully at this point.

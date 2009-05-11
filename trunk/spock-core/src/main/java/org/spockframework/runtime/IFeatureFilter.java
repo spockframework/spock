@@ -16,12 +16,12 @@
 
 package org.spockframework.runtime;
 
+import org.spockframework.runtime.model.FeatureInfo;
+
 /**
  *
  * @author Peter Niederwieser
  */
-public class FeatureNotSatisfiedError extends AssertionError {
-  public FeatureNotSatisfiedError(String msg) {
-    super(msg);
-  }
+public interface IFeatureFilter {
+  boolean matches(FeatureInfo feature);
 }

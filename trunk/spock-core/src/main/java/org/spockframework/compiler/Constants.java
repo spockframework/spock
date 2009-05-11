@@ -56,17 +56,21 @@ public abstract class Constants {
 
   public static final List<String> BLOCK_LABELS = Arrays.asList(SETUP, GIVEN, EXPECT, WHEN, THEN, CLEANUP, WHERE, AND);
 
+  public static final String SETUP_METHOD = "setup";
+
+  public static final String CLEANUP_METHOD = "cleanup";
+  
   /**
    * Method name identifying a fixture method that is executed before each speck.
    */
-  public static final String SETUP_SPECK = "setupSpeck";
+  public static final String SETUP_SPECK_METHOD = "setupSpeck";
 
   /**
    * Method name identifying a fixture method that is executed after each speck.
    */
-  public static final String CLEANUP_SPECK = "cleanupSpeck";
+  public static final String CLEANUP_SPECK_METHOD = "cleanupSpeck";
 
-  public static final List<String> FIXTURE_METHODS = Arrays.asList(SETUP, CLEANUP, SETUP_SPECK, CLEANUP_SPECK);
+  public static final List<String> FIXTURE_METHODS = Arrays.asList(SETUP, CLEANUP, SETUP_SPECK_METHOD, CLEANUP_SPECK_METHOD);
 
   public static final String MOCK = "Mock";
 

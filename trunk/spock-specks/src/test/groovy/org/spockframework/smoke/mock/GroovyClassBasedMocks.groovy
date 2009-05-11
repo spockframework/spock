@@ -19,7 +19,7 @@ package org.spockframework.smoke.mock
 import org.junit.runner.RunWith
 import spock.lang.*
 import static spock.lang.Predef.*
-import org.spockframework.mock.InteractionNotSatisfiedError
+import org.spockframework.mock.TooFewInvocationsError
 
 /**
  *
@@ -37,7 +37,7 @@ class GroovyClassBasedMocks {
     1 * mockMe.foo(42)
   }
 
-  @FailsWith(value=InteractionNotSatisfiedError, reason="TODO")
+  @FailsWith(value=TooFewInvocationsError, reason="TODO")
   def "mock GDK method"() {
     when:
     mockMe.any()
@@ -45,7 +45,7 @@ class GroovyClassBasedMocks {
     1 * mockMe.any()
   }
 
-  @FailsWith(value=MissingMethodException, reason="TODO")
+  @FailsWith(value=TooFewInvocationsError, reason="TODO")
   def "mock dynamic method"() {
     when:
     mockMe.someMethod()

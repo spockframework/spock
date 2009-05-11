@@ -16,12 +16,17 @@
 
 package org.spockframework.runtime;
 
-import org.spockframework.runtime.model.MethodInfo;
-
 /**
- *
  * @author Peter Niederwieser
  */
-public interface IMethodInfoFilter {
-  boolean matches(MethodInfo method);
+public class FeatureSkippedException extends RuntimeException {
+  private final String reason;
+
+  public FeatureSkippedException(String reason) {
+    this.reason = reason;
+  }
+
+  public String getReason() {
+    return reason;
+  }
 }

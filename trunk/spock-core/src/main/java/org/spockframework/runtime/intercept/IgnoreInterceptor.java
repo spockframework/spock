@@ -14,13 +14,24 @@
  * limitations under the License.
  */
 
-package org.spockframework.runtime;
+package org.spockframework.runtime.intercept;
 
-import java.util.Comparator;
+import spock.lang.Ignore;
 
-import org.spockframework.runtime.model.MethodInfo;
+import org.spockframework.runtime.FeatureSkippedException;
 
 /**
+ *
  * @author Peter Niederwieser
  */
-public interface IMethodInfoSortOrder extends Comparator<MethodInfo> {}
+public class IgnoreInterceptor implements IMethodInterceptor {
+  private final Ignore ignore;
+
+  public IgnoreInterceptor(Ignore ignore) {
+    this.ignore = ignore;
+  }
+
+  public void invoke(IMethodInvocation invocation) throws Throwable {
+    throw new FeatureSkippedException(ignore.value());
+  }                                           
+}

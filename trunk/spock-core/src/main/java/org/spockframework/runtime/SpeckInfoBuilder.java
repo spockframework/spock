@@ -16,18 +16,20 @@
 
 package org.spockframework.runtime;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.util.*;
-
-import spock.lang.Speck;
-
+import org.spockframework.compiler.Constants;
 import org.spockframework.runtime.intercept.Directive;
 import org.spockframework.runtime.intercept.IDirectiveProcessor;
 import org.spockframework.runtime.model.*;
 import org.spockframework.util.BinaryNames;
 import org.spockframework.util.InternalSpockError;
+import spock.lang.Speck;
+
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Builds a SpeckInfo from a Class instance.
@@ -48,7 +50,8 @@ public class SpeckInfoBuilder {
     checkIsSpeck();
     buildSpeck();
     buildFields();
-    buildMethods();
+    buildFeatures();
+    buildLifecycleMethods();
     processDirectives();
     return speck;
   }
@@ -84,84 +87,82 @@ public class SpeckInfoBuilder {
     }
   }
 
-  private void buildMethods() {
+  private void buildFeatures() {
     for (Method method : clazz.getDeclaredMethods()) {
-      MethodMetadata methodAnn = method.getAnnotation(MethodMetadata.class);
-      if (methodAnn == null) continue;
-      speck.addMethod(createMethodInfo(method, methodAnn));
+      FeatureMetadata metadata = method.getAnnotation(FeatureMetadata.class);
+      if (metadata == null) continue;
+      speck.addFeature(createFeature(method, metadata));
     }
 
-    speck.sortFeatureMethods(new IMethodInfoSortOrder() {
-      public int compare(MethodInfo m1, MethodInfo m2) {
-        return m1.getIndex() - m2.getIndex();
+    speck.sortFeatures(new IFeatureSortOrder() {
+      public int compare(FeatureInfo m1, FeatureInfo m2) {
+        return m1.getOrder() - m2.getOrder();
       }
     });
-
-    addStubIfMissing(speck.getSetupMethod(), MethodKind.SETUP);
-    addStubIfMissing(speck.getCleanupMethod(), MethodKind.CLEANUP);
-    addStubIfMissing(speck.getSetupSpeckMethod(), MethodKind.SETUP_SPECK);
-    addStubIfMissing(speck.getCleanupSpeckMethod(), MethodKind.CLEANUP_SPECK);
   }
 
-  private MethodInfo createMethodInfo(Method method, MethodMetadata methodAnn) {
-    MethodInfo methodInfo = new MethodInfo();
-    methodInfo.setIndex(methodAnn.index());
-    methodInfo.setName(methodAnn.name());
-    methodInfo.setKind(methodAnn.kind());
-    methodInfo.setParent(speck);
-    methodInfo.setReflection(method);
+  private FeatureInfo createFeature(Method method, FeatureMetadata featureMetadata) {
+    FeatureInfo feature = new FeatureInfo();
+    feature.setOrder(featureMetadata.order());
+    feature.setName(featureMetadata.name());
+    feature.setParent(speck);
 
-    if (methodInfo.getKind() == MethodKind.FEATURE) {
-      String processorName = BinaryNames.getDataProcessorName(method.getName());
-      MethodInfo dataProcessor = findMethod(processorName, MethodKind.DATA_PROCESSOR);
+    MethodInfo featureMethod = new MethodInfo();
+    featureMethod.setName(featureMetadata.name());
+    featureMethod.setParent(speck);
+    featureMethod.setFeature(feature);
+    featureMethod.setReflection(method);
+    featureMethod.setKind(MethodKind.FEATURE);
+    feature.setFeatureMethod(featureMethod);
 
-      if (dataProcessor != null) {
-        methodInfo.setDataProcessor(dataProcessor);
-        int providerCount = 0;
-        String providerName = BinaryNames.getDataProviderName(method.getName(), providerCount++);
-        MethodInfo provider = findMethod(providerName, MethodKind.DATA_PROVIDER);
-        while (provider != null) {
-          methodInfo.addDataProvider(provider);
-          providerName = BinaryNames.getDataProviderName(method.getName(), providerCount++);
-          provider = findMethod(providerName, MethodKind.DATA_PROVIDER);
-        }
+    String processorMethodName = BinaryNames.getDataProcessorName(method.getName());
+    MethodInfo dataProcessorMethod = createMethod(processorMethodName, MethodKind.DATA_PROCESSOR, false);
+
+    if (dataProcessorMethod != null) {
+      feature.setDataProcessorMethod(dataProcessorMethod);
+      int providerCount = 0;
+      String providerMethodName = BinaryNames.getDataProviderName(method.getName(), providerCount++);
+      MethodInfo providerMethod = createMethod(providerMethodName, MethodKind.DATA_PROVIDER, false);
+      while (providerMethod != null) {
+        feature.addDataProviderMethod(providerMethod);
+        providerMethodName = BinaryNames.getDataProviderName(method.getName(), providerCount++);
+        providerMethod = createMethod(providerMethodName, MethodKind.DATA_PROVIDER, false);
       }
     }
 
-    for (BlockMetadata blockAnn : methodAnn.blocks()) {
+    for (BlockMetadata blockMetadata : featureMetadata.blocks()) {
       BlockInfo block = new BlockInfo();
-      block.setKind(blockAnn.kind());
-      block.setTexts(Arrays.asList(blockAnn.texts()));
-      methodInfo.addBlock(block);
+      block.setKind(blockMetadata.kind());
+      block.setTexts(Arrays.asList(blockMetadata.texts()));
+      feature.addBlock(block);
     }
 
+    return feature;
+  }
+
+  private MethodInfo createMethod(String name, MethodKind kind, boolean allowStub) {
+    Method reflection = findMethod(name);
+    if (reflection == null && !allowStub) return null;
+
+    MethodInfo methodInfo = new MethodInfo();
+    methodInfo.setName(name);
+    methodInfo.setParent(speck);
+    methodInfo.setReflection(reflection);
+    methodInfo.setKind(kind);
     return methodInfo;
   }
 
-  private MethodInfo findMethod(String name, MethodKind kind) {
-    for (Method method : speck.getReflection().getDeclaredMethods()) {
-      if (!method.getName().equals(name)) continue;
-
-      MethodInfo methodInfo = new MethodInfo();
-      methodInfo.setName(name);
-      methodInfo.setParent(speck);
-      methodInfo.setReflection(method);
-      methodInfo.setIndex(-1);
-      methodInfo.setKind(kind);
-      return methodInfo;
-    }
-
+  private Method findMethod(String name) {
+    for (Method method : speck.getReflection().getDeclaredMethods())
+      if (method.getName().equals(name)) return method;
     return null;
   }
 
-  // adds stubs for missing fixture methods so that directive processors can add interceptors
-  private void addStubIfMissing(MethodInfo method, MethodKind kind) {
-    if (method != null) return;
-
-    method = new MethodInfo();
-    method.setKind(kind);
-    method.setParent(speck);
-    speck.addMethod(method);
+  private void buildLifecycleMethods() {
+    speck.setSetupMethod(createMethod(Constants.SETUP_METHOD, MethodKind.SETUP, true));
+    speck.setCleanupMethod(createMethod(Constants.CLEANUP_METHOD, MethodKind.CLEANUP, true));
+    speck.setSetupSpeckMethod(createMethod(Constants.SETUP_SPECK_METHOD, MethodKind.SETUP_SPECK, true));
+    speck.setCleanupSpeckMethod(createMethod(Constants.CLEANUP_SPECK_METHOD, MethodKind.CLEANUP_SPECK, true));
   }
 
   private void processDirectives() throws InstantiationException, IllegalAccessException {
@@ -172,8 +173,8 @@ public class SpeckInfoBuilder {
     processNodeDirective(speck.getSetupMethod());
     processNodeDirective(speck.getCleanupMethod());
     processNodeDirective(speck.getCleanupSpeckMethod());
-    for (MethodInfo method : speck.getFeatureMethods())
-      processNodeDirective(method);
+    for (FeatureInfo feature : speck.getFeatures())
+      processNodeDirective(feature.getFeatureMethod());
   }
 
   private void processNodeDirective(NodeInfo node) throws InstantiationException, IllegalAccessException {

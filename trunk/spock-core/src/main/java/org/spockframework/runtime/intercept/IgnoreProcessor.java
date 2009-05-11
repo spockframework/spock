@@ -18,28 +18,26 @@ package org.spockframework.runtime.intercept;
 
 import java.lang.annotation.Annotation;
 
-import spock.lang.Timeout;
+import spock.lang.Ignore;
 
 import org.spockframework.runtime.model.MethodInfo;
 import org.spockframework.runtime.model.SpeckInfo;
-import org.spockframework.runtime.model.FeatureInfo;
 import org.spockframework.runtime.model.MethodKind;
 
 /**
- * Processes @Timeout directives on Specks and Speck methods.
+ * Processes @Ignore directives on Specks and Speck methods.
  *
  * @author Peter Niederwieser
  */
-public class TimeoutProcessor extends AbstractDirectiveProcessor {
+public class IgnoreProcessor extends AbstractDirectiveProcessor {
   public void visitSpeckDirective(Annotation directive, SpeckInfo speck) {
-    speck.addInterceptor(new TimeoutInterceptor((Timeout)directive));
+    speck.addInterceptor(new IgnoreInterceptor((Ignore)directive));
   }
 
   public void visitMethodDirective(Annotation directive, MethodInfo method) {
-    IMethodInterceptor interceptor = new TimeoutInterceptor((Timeout)directive);
     if (method.getKind() == MethodKind.FEATURE)
-      method.getFeature().addInterceptor(interceptor);
+      method.getFeature().addInterceptor(new IgnoreInterceptor((Ignore)directive));
     else
-      method.addInterceptor(interceptor);
+      method.addInterceptor(new IgnoreInterceptor((Ignore)directive));
   }
 }

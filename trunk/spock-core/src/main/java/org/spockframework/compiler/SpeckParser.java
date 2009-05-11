@@ -22,8 +22,6 @@ import org.codehaus.groovy.ast.*;
 import org.codehaus.groovy.ast.expr.ConstantExpression;
 import org.codehaus.groovy.ast.stmt.Statement;
 
-import spock.lang.Ignore;
-
 import static org.spockframework.compiler.Constants.*;
 import org.spockframework.compiler.model.*;
 import org.spockframework.compiler.model.Speck;
@@ -35,16 +33,7 @@ import org.spockframework.util.SyntaxException;
  *
  * @author Peter Niederwieser
  */
-// IDEA: run SpeckParser in phase conversion s.t. all compiler code can share
-// the same model; model could be passed between phases by adding/removing
-// a special ASTNode (e.g. subclass of EmptyStatement) that holds the model
-// TODO: check that each named block has at least one statement (otherwise block labels get lost)
-// is this possible given the current Groovy implementation?
-// TODO: should we allow multiple setup/given blocks? generally bad style bad sometimes useful
-// TODO: disallow inheriting from other Specks (directly or indirectly) until we have agreed on the semantics
 // TODO: disallow static methods (e.g. conditions in static helper methods won't work)
-// TODO: semantics of interactions in setupSpeck()?
-// TODO: implement Ignore on Speck level
 public class SpeckParser implements GroovyClassVisitor {
   private Speck speck;
 
@@ -70,8 +59,7 @@ public class SpeckParser implements GroovyClassVisitor {
 
   private boolean isIgnoredMethod(MethodNode method) {
     return AstUtil.isSynthetic(method)
-        || !method.getDeclaringClass().equals(speck.getAst())
-        || AstUtil.getAnnotation(method, Ignore.class) != null;
+        || !method.getDeclaringClass().equals(speck.getAst());
   }
 
   // IDEA: check for misspellings other than wrong capitalization
@@ -104,7 +92,7 @@ public class SpeckParser implements GroovyClassVisitor {
     String name = method.getName();
     if (name.equals(SETUP)) speck.setSetup(fixtureMethod);
     else if (name.equals(CLEANUP)) speck.setCleanup(fixtureMethod);
-    else if (name.equals(SETUP_SPECK)) speck.setSetupSpeck(fixtureMethod);
+    else if (name.equals(SETUP_SPECK_METHOD)) speck.setSetupSpeck(fixtureMethod);
     else speck.setCleanupSpeck(fixtureMethod);
   }
 

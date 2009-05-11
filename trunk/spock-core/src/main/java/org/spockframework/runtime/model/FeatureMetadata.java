@@ -25,14 +25,12 @@ import java.lang.annotation.*;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-public @interface MethodMetadata {
-  String INDEX = "index";
+public @interface FeatureMetadata {
+  String ORDER = "order";
   String NAME = "name";
-  String KIND = "kind";
   String BLOCKS = "blocks";
 
-  int index();
+  int order();
   String name();
-  MethodKind kind();
   BlockMetadata[] blocks();
 }

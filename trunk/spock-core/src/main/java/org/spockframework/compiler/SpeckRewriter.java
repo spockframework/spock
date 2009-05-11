@@ -429,7 +429,7 @@ public class SpeckRewriter extends AbstractSpeckVisitor implements IRewriteResou
 
   private FixtureMethod getSetupSpeck() {
     if (speck.getSetupSpeck() == null) {
-      MethodNode gMethod = new MethodNode(Constants.SETUP_SPECK, Opcodes.ACC_PUBLIC,
+      MethodNode gMethod = new MethodNode(Constants.SETUP_SPECK_METHOD, Opcodes.ACC_PUBLIC,
           ClassHelper.VOID_TYPE, Parameter.EMPTY_ARRAY, ClassNode.EMPTY_ARRAY, new BlockStatement());
       speck.getAst().addMethod(gMethod);
       FixtureMethod setupSpeck = new FixtureMethod(speck, gMethod);

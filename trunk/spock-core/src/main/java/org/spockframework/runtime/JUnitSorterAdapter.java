@@ -19,19 +19,20 @@ import org.junit.runner.manipulation.Sorter;
 import org.junit.runner.Description;
 
 import org.spockframework.runtime.model.MethodInfo;
+import org.spockframework.runtime.model.FeatureInfo;
 
 /**
  * Adapts an org.junit.runner.manipulation.Sorter to a IMethodInfoSorter.
  * @author Peter Niederwieser
  */
-public class JUnitSorterAdapter implements IMethodInfoSortOrder {
+public class JUnitSorterAdapter implements IFeatureSortOrder {
   private final Sorter sorter;
 
   public JUnitSorterAdapter(Sorter sorter) {
     this.sorter = sorter;
   }
 
-  public int compare(MethodInfo m1, MethodInfo m2) {
+  public int compare(FeatureInfo m1, FeatureInfo m2) {
     return sorter.compare((Description) m1.getMetadata(), (Description) m2.getMetadata());
   }
 }

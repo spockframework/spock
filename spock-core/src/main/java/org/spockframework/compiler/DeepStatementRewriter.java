@@ -16,21 +16,14 @@
 
 package org.spockframework.compiler;
 
-import java.util.ListIterator;
 import java.util.List;
 
 import org.codehaus.groovy.ast.*;
 import org.codehaus.groovy.ast.expr.*;
 import org.codehaus.groovy.ast.stmt.AssertStatement;
 import org.codehaus.groovy.ast.stmt.ExpressionStatement;
-import org.codehaus.groovy.ast.stmt.Statement;
-import org.codehaus.groovy.control.SourceUnit;
 
-import org.spockframework.compiler.model.Block;
-import org.spockframework.compiler.model.FeatureMethod;
-import org.spockframework.compiler.model.Method;
-import org.spockframework.compiler.model.ThenBlock;
-import org.spockframework.util.InternalSpockError;
+import org.spockframework.compiler.model.*;
 import org.spockframework.util.SyntaxException;
 
 /**
@@ -40,7 +33,7 @@ import org.spockframework.util.SyntaxException;
  *
  * @author Peter Niederwieser
  */
-public class DeepStatementRewriter extends StatementRewriterSupport {
+public class DeepStatementRewriter extends StatementReplacingCodeVisitorSupport {
   private final IRewriteResourceProvider resourceProvider;
 
   private boolean conditionFound = false;
@@ -61,27 +54,24 @@ public class DeepStatementRewriter extends StatementRewriterSupport {
   }
 
   public void visitBlock(Block block) {
-    ListIterator<Statement> iter = block.getAst().listIterator();
-    while (iter.hasNext())
-      iter.set(visit(iter.next()));
+    replaceAll(block.getAst());
   }
   
   @Override
   public void visitAssertStatement(AssertStatement stat) {
     super.visitAssertStatement(stat);
-    assert result == stat;
     conditionFound = true;
-    result = ConditionRewriter.rewriteExplicitCondition(stat, resourceProvider, this);
+    replaceVisitedStatementWith(
+        ConditionRewriter.rewriteExplicitCondition(stat, resourceProvider, this));
   }
 
   @Override
   public void visitExpressionStatement(ExpressionStatement stat) {
     super.visitExpressionStatement(stat);
-    assert result == stat;
     if (!AstUtil.isInteraction(stat)) return;
 
     interactionFound = true;
-    result = InteractionRewriter.rewrite(stat, resourceProvider);
+    replaceVisitedStatementWith(InteractionRewriter.rewrite(stat, resourceProvider));
   }
 
   @Override
@@ -173,9 +163,5 @@ public class DeepStatementRewriter extends StatementRewriterSupport {
         closureScope.putReferencedLocalVariable(oldValue);
       }
     }
-  }
-
-  protected SourceUnit getSourceUnit() {
-    throw new InternalSpockError("Fascinating...you shouldn't be here");
   }
 }

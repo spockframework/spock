@@ -1,11 +1,9 @@
-import org.testfinder.*
-
-usePlugin("groovy") 
+usePlugin("groovy")
 sourceCompatibility = 1.5 
 targetCompatibility = 1.5
 
 compile.options.fork = false
-testCompile.options.fork = false
+compileTests.options.fork = false
 
 project(":spock-specks") {
   repositories {
@@ -13,9 +11,9 @@ project(":spock-specks") {
   }
   
   dependencies {
-    groovy "org.codehaus.groovy:groovy-all:1.6.1"
+    groovy "org.codehaus.groovy:groovy-all:1.6.3"
     compile project(":spock-core")
-    compile "junit:junit:4.5"
+    compile "junit:junit:4.6"
     testRuntime "cglib:cglib-nodep:2.1_3"
     testRuntime "org.objenesis:objenesis:1.1"
     testRuntime "com.h2database:h2:1.1.108"
@@ -31,7 +29,7 @@ project(":spock-specks") {
   }
 
   test.dependsOn findSpecks
-  findSpecks.dependsOn testCompile
+  findSpecks.dependsOn compileTests
 }
 
 def findSpecks(baseDir) {

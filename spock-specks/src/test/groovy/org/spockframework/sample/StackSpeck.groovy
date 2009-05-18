@@ -43,7 +43,7 @@ class EmptyStack {
     stack.push("elem")
 
     then:
-    stack.size() == 1
+    stack.size() == old(stack.size()) + 1
     stack.peek() == "elem"
   }
 }

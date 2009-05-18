@@ -23,7 +23,7 @@
               <goal>testCompile</goal>
             </goals>
           </execution>
-        </executions>
+        </executions>        
       </plugin>
       <plugin>
         <groupId>org.spockframework</groupId>

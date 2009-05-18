@@ -128,11 +128,9 @@ public class SpeckInfoParameterizedRunner extends SpeckInfoBaseRunner {
 
   private void closeDataProviders(Object[] dataProviders) {
     if (action(runStatus) == ABORT) return;
+    if (dataProviders == null) return; // there was an error creating the providers
 
     for (Object provider : dataProviders) {
-      // check whether provider has been created successfully
-      // if not, also subsequent providers haven't been created
-      if (provider == null) return;
       try {
         InvokerHelper.invokeMethod(provider, "close", null);
       } catch (Throwable ignored) {}

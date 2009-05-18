@@ -89,4 +89,15 @@ class Parameterizations {
       [b, _, c] << [[1, 9, 1], [2, 9, 2], [3, 9, 3]]
       d = a + b + c
   }
+
+  @Ignore // we should either solve this or allow it
+  def "simple parameterization whose value is accessed from closure within other parameterization"() {
+    expect:
+    a == 1
+    b == 1
+
+    where:
+    a << 1
+    b << {a}()
+  }
 }

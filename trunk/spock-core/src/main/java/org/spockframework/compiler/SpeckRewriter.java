@@ -222,7 +222,7 @@ public class SpeckRewriter extends AbstractSpeckVisitor implements IRewriteResou
       Statement stat = iter.next();
 
       DeepStatementRewriter deep = new DeepStatementRewriter(this);
-      Statement newStat = deep.visit(stat);
+      Statement newStat = deep.replace(stat);
       methodHasCondition |= deep.isConditionFound();
 
       if (stat instanceof AssertStatement)
@@ -246,7 +246,7 @@ public class SpeckRewriter extends AbstractSpeckVisitor implements IRewriteResou
     while(iter.hasNext()) {
       Statement stat = iter.next();
       DeepStatementRewriter deep = new DeepStatementRewriter(this);
-      Statement newStat = deep.visit(stat);
+      Statement newStat = deep.replace(stat);
       methodHasCondition |= deep.isConditionFound();
 
       if (stat instanceof AssertStatement)

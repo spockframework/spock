@@ -1,6 +1,6 @@
 include 'spock-core', 'spock-specks'
 
 // external dependencies for task "findSpecks" in project "spock-specks"
-//addMavenRepo()
+mavenCentral()
 dependencies "asm:asm:2.2.3"
 dependencies "asm:asm-commons:2.2.3"

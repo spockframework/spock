@@ -23,6 +23,7 @@ import org.codehaus.groovy.ast.GroovyCodeVisitor;
 import org.codehaus.groovy.ast.expr.Expression;
 import org.codehaus.groovy.ast.stmt.*;
 
+// IDEA: abstract method that provides default conversion if result not set
 public abstract class AbstractExpressionConverter<T> implements GroovyCodeVisitor {
   protected T result;
 
@@ -35,9 +36,9 @@ public abstract class AbstractExpressionConverter<T> implements GroovyCodeVisito
     if (result == null)
       Assert.fail("No result set for expression: " + expr);
 
-    T tmp = result;
+    T temp = result;
     result = null;
-    return tmp;
+    return temp;
   }
 
   protected List<T> convertAll(List<Expression> expressions) {

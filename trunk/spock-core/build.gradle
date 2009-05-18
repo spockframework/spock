@@ -8,10 +8,10 @@ project(":spock-core") {
   }
   
   dependencies {  
-    compile "org.codehaus.groovy:groovy-all:1.6.1"
+    compile "org.codehaus.groovy:groovy-all:1.6.3"
     compile "asm:asm:2.2.3"
     compile "asm:asm-commons:2.2.3"
-    compile "junit:junit:4.5"
+    compile "junit:junit:4.6"
     compile "cglib:cglib-nodep:2.1_3"
     compile "org.objenesis:objenesis:1.1"
   }

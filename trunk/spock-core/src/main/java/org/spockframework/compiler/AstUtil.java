@@ -20,17 +20,17 @@ import java.util.*;
 
 import org.codehaus.groovy.ast.*;
 import org.codehaus.groovy.ast.expr.*;
-import org.codehaus.groovy.ast.stmt.BlockStatement;
-import org.codehaus.groovy.ast.stmt.ExpressionStatement;
-import org.codehaus.groovy.ast.stmt.Statement;
+import org.codehaus.groovy.ast.stmt.*;
+import org.codehaus.groovy.classgen.BytecodeInstruction;
 import org.codehaus.groovy.syntax.Types;
+import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
+import static org.objectweb.asm.Opcodes.ALOAD;
+import static org.objectweb.asm.Opcodes.INVOKEVIRTUAL;
+
+import org.spockframework.util.*;
 
 import spock.lang.Predef;
-
-import org.spockframework.util.InternalSpockError;
-import org.spockframework.util.SyntaxException;
-import org.spockframework.util.Util;
 
 /**
  * Utility methods for AST processing.

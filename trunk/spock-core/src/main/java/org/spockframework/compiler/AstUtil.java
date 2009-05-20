@@ -16,21 +16,15 @@
 
 package org.spockframework.compiler;
 
-import java.util.*;
-
 import org.codehaus.groovy.ast.*;
 import org.codehaus.groovy.ast.expr.*;
 import org.codehaus.groovy.ast.stmt.*;
-import org.codehaus.groovy.classgen.BytecodeInstruction;
 import org.codehaus.groovy.syntax.Types;
-import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
-import static org.objectweb.asm.Opcodes.ALOAD;
-import static org.objectweb.asm.Opcodes.INVOKEVIRTUAL;
-
 import org.spockframework.util.*;
-
 import spock.lang.Predef;
+
+import java.util.*;
 
 /**
  * Utility methods for AST processing.
@@ -301,7 +295,6 @@ public abstract class AstUtil {
         ((StaticMethodCallExpression)methodCall).getArguments();
 
     if (args == ArgumentListExpression.EMPTY_ARGUMENTS)
-      // time to think about a different implementation
       throw new InternalSpockError("checkIsSafeToMutateArgs");
   }
 

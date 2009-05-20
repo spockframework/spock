@@ -3,6 +3,7 @@ allprojects {
   version = "0.2-SNAPSHOT"
 }
 
-//createTask("wrapper", type: Wrapper).configure { 
-//  gradleVersion = "0.4" 
-//}
+task wrapper(type: Wrapper) { 
+    gradleVersion = '0.6' 
+    jarPath = 'wrapper' 
+} 

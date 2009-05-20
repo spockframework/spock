@@ -16,30 +16,11 @@ project(":spock-specks") {
     compile "junit:junit:4.6"
     testRuntime "cglib:cglib-nodep:2.1_3"
     testRuntime "org.objenesis:objenesis:1.1"
-    testRuntime "com.h2database:h2:1.1.108"
+    testRuntime "com.h2database:h2:1.1.112"
   }
 
   test {  
     options.showOutput = true
     options.fork(forkMode: ForkMode.ONCE)    
   } 
-  
-  createTask("findSpecks") {
-    test.includes = findSpecks(testClassesDir)
-  }
-
-  test.dependsOn findSpecks
-  findSpecks.dependsOn compileTests
-}
-
-def findSpecks(baseDir) {
-  def loader = getClass().classLoader
-  assert loader instanceof URLClassLoader
-  
-  loader.addURL(new File("spock-core/build/classes/").absoluteFile.toURI().toURL())
-  def finder = loader.findClass("org.spockframework.buildsupport.JUnit4TestClassFinder").newInstance()
-  assert finder
-  
-	def prefixLength = baseDir.absolutePath.size() + 1
-  return finder.findTestClasses(baseDir).collect { it.absolutePath.substring(prefixLength) }	
 }

@@ -131,12 +131,11 @@ class ASpeck {}
     new GroovyClassLoader().parseClass(source)
   }
 
-  private bothTransformsRecognizeClassAsSpeck(Class clazz) {
+  private void bothTransformsRecognizeClassAsSpeck(Class clazz) {
     // if EarlyTransform has run, _ will resolve to Predef._
     // otherwise, compilation will fail
     notThrown(MultipleCompilationErrorsException)
     // if MainTransform has run, SpeckMetadata will be present
     assert clazz.isAnnotationPresent(SpeckMetadata)
-    true
   }
 }

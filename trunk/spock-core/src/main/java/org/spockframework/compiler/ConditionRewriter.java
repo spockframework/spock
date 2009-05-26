@@ -16,23 +16,16 @@
 
 package org.spockframework.compiler;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.ArrayList;
-
-import org.codehaus.groovy.ast.GroovyCodeVisitor;
 import org.codehaus.groovy.ast.expr.*;
-import org.codehaus.groovy.ast.stmt.AssertStatement;
-import org.codehaus.groovy.ast.stmt.ExpressionStatement;
-import org.codehaus.groovy.ast.stmt.Statement;
+import org.codehaus.groovy.ast.stmt.*;
+import org.codehaus.groovy.ast.ClassHelper;
 import org.codehaus.groovy.classgen.BytecodeExpression;
 import org.codehaus.groovy.syntax.Types;
-
 import org.spockframework.runtime.SpockRuntime;
 import org.spockframework.runtime.ValueRecorder;
-import org.spockframework.util.AbstractExpressionConverter;
-import org.spockframework.util.Util;
-import org.spockframework.util.Assert;
+import org.spockframework.util.*;
+
+import java.util.*;
 
 // NOTE: currently some conversions reference old expression objects rather than copying them;
 // this can potentially lead to aliasing problems (e.g. for Condition.originalExpression)
@@ -53,23 +46,21 @@ import org.spockframework.util.Assert;
  */
 public class ConditionRewriter extends AbstractExpressionConverter<Expression> {
   private final IRewriteResourceProvider resourceProvider;
-  private final GroovyCodeVisitor closureRewriter;
+
   private int recordCount = 0;
   private boolean doNotRecordNextConstant = false;
 
-  private ConditionRewriter(IRewriteResourceProvider resourceProvider, GroovyCodeVisitor closureRewriter) {
+  private ConditionRewriter(IRewriteResourceProvider resourceProvider) {
     this.resourceProvider = resourceProvider;
-    this.closureRewriter = closureRewriter;
   }
 
-  public static Statement rewriteExplicitCondition(AssertStatement stat,
-      IRewriteResourceProvider resourceProvider, GroovyCodeVisitor closureRewriter) {
-    return new ConditionRewriter(resourceProvider, closureRewriter).rewrite(stat, stat.getBooleanExpression());
+  public static Statement rewriteExplicitCondition(AssertStatement stat, IRewriteResourceProvider resourceProvider) {
+    return new ConditionRewriter(resourceProvider).rewrite(stat, stat.getBooleanExpression(), true);
   }
 
   public static Statement rewriteImplicitCondition(ExpressionStatement stat,
       IRewriteResourceProvider resourceProvider) {
-    return new ConditionRewriter(resourceProvider, null).rewrite(stat, stat.getExpression());
+    return new ConditionRewriter(resourceProvider).rewrite(stat, stat.getExpression(), false);
   }
 
   public void visitMethodCallExpression(MethodCallExpression expr) {
@@ -414,8 +405,6 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> {
   }
 
   public void visitClosureExpression(ClosureExpression expr) {
-    if (closureRewriter != null && expr.getCode() != null)
-      expr.getCode().visit(closureRewriter);
     result = record(expr);
   }
 
@@ -474,7 +463,7 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> {
     return ((ArgumentListExpression)methodExpr.getArguments()).getExpression(1);
   }
 
-  private Statement rewrite(Statement stat, Expression expr) {
+  private Statement rewrite(Statement stat, Expression expr, boolean explicitCondition) {
     Statement result =
         new ExpressionStatement(
             new MethodCallExpression(
@@ -486,14 +475,60 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> {
                             new VariableExpression("__valueRecorder42"),
                             ValueRecorder.RESET,
                             ArgumentListExpression.EMPTY_ARGUMENTS),
-                        convert(expr),
+                        convertCondition(expr, explicitCondition),
                         new ConstantExpression(resourceProvider.getSourceText(expr)),
                         new ConstantExpression(expr.getLineNumber()),
-                        new ConstantExpression(expr.getColumnNumber()))          )
-        )
-      );
+                        new ConstantExpression(expr.getColumnNumber())))));
 
     result.setSourcePosition(stat);
     return result;
+  }
+
+  private Expression convertCondition(Expression expr, boolean explicitCondition) {
+    if (explicitCondition || !AstUtil.isMethodInvocation(expr))
+      return convert(expr);
+
+    if (expr instanceof MethodCallExpression) {
+      MethodCallExpression call = (MethodCallExpression)expr;
+      if (call.isSpreadSafe()) return convert(call);
+      return convertConditionNullAware(call);
+    }
+
+    return convertConditionNullAware((StaticMethodCallExpression)expr);
+  }
+
+  // foo.bar(arg1, arg2) -> SpockRuntime.nullAwareInvokeMethod(foo, bar, arg1, arg2)
+  // (plus the usual condition rewriting, i.e. insertion of ValueRecorder.record(...))
+  private Expression convertConditionNullAware(MethodCallExpression expr) {
+    List<Expression> args = new ArrayList<Expression>();
+
+    Expression result = new MethodCallExpression(
+        new ClassExpression(resourceProvider.getAstNodeCache().SpockRuntime),
+        new ConstantExpression(
+            expr.isSafe() ? SpockRuntime.NULL_AWARE_INVOKE_METHOD_SAFE : SpockRuntime.NULL_AWARE_INVOKE_METHOD),
+        new ArgumentListExpression(args));
+
+    args.add(expr.isImplicitThis() ? expr.getObjectExpression() : convert(expr.getObjectExpression()));
+    args.add(convert(expr.getMethod()));
+    args.add(new ArrayExpression(ClassHelper.OBJECT_TYPE, AstUtil.getArguments(expr)));
+
+    result.setSourcePosition(expr);
+    return record(result);
+  }
+
+  private Expression convertConditionNullAware(StaticMethodCallExpression expr) {
+    List<Expression> args = new ArrayList<Expression>();
+
+    Expression result = new MethodCallExpression(
+        new ClassExpression(resourceProvider.getAstNodeCache().SpockRuntime),
+        new ConstantExpression(SpockRuntime.NULL_AWARE_INVOKE_METHOD),
+        new ArgumentListExpression(args));
+
+    args.add(new ClassExpression(expr.getOwnerType()));
+    args.add(recordNa(new ConstantExpression(expr.getMethod())));
+    args.add(new ArrayExpression(ClassHelper.OBJECT_TYPE, AstUtil.getArguments(expr)));
+
+    result.setSourcePosition(expr);
+    return record(result);
   }
 }

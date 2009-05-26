@@ -61,7 +61,7 @@ public class JUnitSupervisor implements IRunSupervisor {
     filter.filter(throwable);
 
     Description description = getFailureDescription(featureMethod, method);
-    if (throwable instanceof FeatureSkippedException) {
+    if (throwable instanceof SkipSpeckOrFeatureException) {
       notifier.fireTestIgnored(description);
       return END_FEATURE;
     }

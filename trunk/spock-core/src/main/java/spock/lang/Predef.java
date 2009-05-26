@@ -88,11 +88,13 @@ public class Predef {
   }
 
   @SuppressWarnings("UnusedDeclaration")
-  public static boolean notThrown(Class<? extends Throwable> type) {
+  public static void notThrown(Class<? extends Throwable> type) {
     // IDEA: provide an implementation that makes it possible to differentiate
     // between this exception being thrown, and any other exception being thrown
-    return true;
   }
+
+  @SuppressWarnings("UnusedDeclaration")
+  public static void noExceptionThrown() { /* nothing to do */ }
 
   /**
    * Creates a mock object whose name and type are inferred from the variable

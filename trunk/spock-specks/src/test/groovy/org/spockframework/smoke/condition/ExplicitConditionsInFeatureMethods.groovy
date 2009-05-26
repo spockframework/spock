@@ -30,76 +30,68 @@ import org.spockframework.runtime.ConditionNotSatisfiedError
 @RunWith (Sputnik)
 class ExplicitConditionsInFeatureMethods {
   @FailsWith(ConditionNotSatisfiedError)
-  def featureMethodAnonymousBlock() {
+  def "in anonymous block"() {
     assert false
     expect: true
   }
 
   @FailsWith(ConditionNotSatisfiedError)
-  def featureMethodAnonymousBlockNested() {
+  def "nested in anonymous block"() {
     if (true) assert false
     expect: true
   }
 
   @FailsWith(ConditionNotSatisfiedError)
-  def featureMethodAnonymousBlockNested2() {
-    if (true) { { it -> assert false }() }
-    expect: true
-  }
-
-
-
-  @FailsWith(ConditionNotSatisfiedError)
-  def featureMethodSetupBlock() {
+  def "in setup block"() {
     setup: assert false
   }
 
   @FailsWith(ConditionNotSatisfiedError)
-  def featureMethodSetupBlockNested() {
+  def "nested in setup block"() {
     setup: if (true) assert false
   }
 
   @FailsWith(ConditionNotSatisfiedError)
-  def featureMethodExpectBlock() {
+  def "in expect block"() {
     expect: assert false
   }
 
   @FailsWith(ConditionNotSatisfiedError)
-  def featureMethodExpectBlockNested() {
+  def "nested in expect block"() {
     expect: if (true) assert false
   }
 
   @FailsWith(ConditionNotSatisfiedError)
-  def featureMethodWhenBlock() {
+  def "in when block"() {
     when: assert false
     then: true
   }
 
   @FailsWith(ConditionNotSatisfiedError)
-  def featureMethodWhenBlockNested() {
+  def "nested in when block"() {
     when: if (true) assert false
     then: true
   }
 
   @FailsWith(ConditionNotSatisfiedError)
-  def featureMethodThenBlock() {
+  def "in then block"() {
     when: "nothing"
     then: assert false
   }
 
   @FailsWith(ConditionNotSatisfiedError)
-  def featureMethodThenBlockNested() {
+  def "nested in then block"() {
     when: "nothing"
     then: [1].each { assert false }
   }
 
   @FailsWith(ConditionNotSatisfiedError)
-  def featureMethodCleanupBlock() {
+  def "in cleanup block"() {
     cleanup: assert false
   }
 
   @FailsWith(ConditionNotSatisfiedError)
-  def featureMethodCleanupBlockNested() {
+  def "nested in cleanup block"() {
     cleanup: if (true) assert false
   }
 }

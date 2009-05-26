@@ -62,7 +62,7 @@ public class DeepStatementRewriter extends StatementReplacingCodeVisitorSupport 
     super.visitAssertStatement(stat);
     conditionFound = true;
     replaceVisitedStatementWith(
-        ConditionRewriter.rewriteExplicitCondition(stat, resourceProvider, this));
+        ConditionRewriter.rewriteExplicitCondition(stat, resourceProvider));
   }
 
   @Override

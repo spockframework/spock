@@ -26,24 +26,13 @@ import org.spockframework.runtime.model.MethodKind;
 import org.spockframework.runtime.InvalidSpeckError;
 
 /**
- * Processes @Ignore directives on Specks and Speck methods.
+ * Processes @IgnoreRest directives on Speck methods.
  *
  * @author Peter Niederwieser
  */
-public class IgnoreProcessor extends AbstractDirectiveProcessor {
-  public void visitSpeckDirective(Annotation directive, SpeckInfo speck) {
-    speck.addInterceptor(new IgnoreInterceptor(getReason(directive)));
-  }
-
+public class IgnoreRestProcessor extends AbstractDirectiveProcessor {
   public void visitMethodDirective(Annotation directive, MethodInfo method) {
-    if (method.getKind() == MethodKind.FEATURE)
-      method.getFeature().addInterceptor(new IgnoreInterceptor(getReason(directive)));
-    else
-      // must be a lifecycle methods as we don't currently have a runtime representation for helper methods
-      throw new InvalidSpeckError("@Ignore may not be applied to lifecycle methods");
-  }
-
-  private String getReason(Annotation directive) {
-    return ((Ignore)directive).value();
+    if (method.getKind() != MethodKind.FEATURE)
+      throw new InvalidSpeckError("@IgnoreRest may only be applied to Feature methods");
   }
 }

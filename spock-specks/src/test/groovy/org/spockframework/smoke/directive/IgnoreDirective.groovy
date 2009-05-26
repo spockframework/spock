@@ -16,25 +16,84 @@
 
 package org.spockframework.smoke.directive
 
-import spock.lang.Ignore
-import spock.lang.Speck
+import spock.lang.*
 import org.junit.runner.RunWith
-import spock.lang.Sputnik
+import org.junit.runner.JUnitCore
+import org.spockframework.runtime.InvalidSpeckError
 
 /**
  *
  * @author Peter Niederwieser
  */
+@Issue("12")
+@Ignore
 @Speck
 @RunWith(Sputnik)
-class IgnoreDirective {
-  @Ignore
-  def "foo"() {
+class IgnoreSpeck {
+  def "ignore 1"() {
     expect: false
   }
 
-  def bar() {
-    expect: true
+  def "ignore 2"() {
+    expect: false
+  }
+}
+
+@Speck
+@RunWith(Sputnik)
+class IgnoreFeatureMethods {
+  @Ignore
+  def "ignore 1"() {
+    expect: false
   }
 
+  @Ignore
+  def "ignore 2"() {
+    expect: false
+  }
+
+  def "not ignored"() {
+    expect: true
+  }
 }
+
+@Issue("20")
+@Speck
+@RunWith(Sputnik)
+class ReportIgnoredMethodsToJUnit {
+  def "check"() {
+    when:
+    def result = JUnitCore.runClasses(IgnoreFeatureMethods)
+
+    then:
+    result.runCount == 3
+    result.ignoreCount == 2
+  }
+}
+
+@Speck
+@RunWith(Sputnik)
+class IgnoreLifecycleMethod {
+  def "lifecycle methods cannot be ignored"() {
+    def speck = new GroovyClassLoader().parseClass("""
+import spock.lang.*
+import org.junit.runner.RunWith
+
+@Speck
+@RunWith(Sputnik)
+class Foo {
+  @Ignore
+  def setup() {}
+}
+    """)
+
+    when:
+    def result = JUnitCore.runClasses(speck)
+
+    then:
+    result.failures[0].exception instanceof InvalidSpeckError
+  }
+}
+
+
+

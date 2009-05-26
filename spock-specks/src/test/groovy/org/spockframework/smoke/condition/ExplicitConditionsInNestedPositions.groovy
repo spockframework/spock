@@ -27,34 +27,35 @@ import org.spockframework.runtime.ConditionNotSatisfiedError
  * @author Peter Niederwieser
  */
 @Speck
-@RunWith (Sputnik)
-class ExplicitConditionsInHelperMethods {
-  def topLevel() {
-    assert false
-  }
-
-  def nested() {
-    if (true) assert false
-  }
-
-  def deeplyNested() {
-    if (true) {
-      { it -> assert false }()
-    }
+@RunWith(Sputnik)
+class ExplicitConditionsInNestedPositions {
+  @FailsWith(ConditionNotSatisfiedError)
+  def "in for loop"() {
+    setup:
+    for (i in 1..3) assert false
   }
 
   @FailsWith(ConditionNotSatisfiedError)
-  def "at top level of helper method"() {
-    setup: topLevel()
+  def "in closure"() {
+    setup:
+    [1, 2, 3].each { assert false }
   }
 
   @FailsWith(ConditionNotSatisfiedError)
-  def "nested in helper method"() {
-    setup: nested()
+  def "in implicit condition"() {
+    expect:
+    [1, 2, 3].every { assert false }
   }
 
   @FailsWith(ConditionNotSatisfiedError)
-  def "deeply nested in helper method"() {
-    setup: deeplyNested()
+  def "in void method in expect block"() {
+    expect:
+    [1, 2, 3].each { assert false }
+  }
+
+  @FailsWith(ConditionNotSatisfiedError)
+  def "deeply nested"() {
+    expect:
+    [1, 2, 3].every { if (true) [1].any { assert false } }
   }
 }

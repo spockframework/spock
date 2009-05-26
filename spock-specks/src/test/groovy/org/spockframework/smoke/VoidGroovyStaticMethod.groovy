@@ -14,22 +14,12 @@
  * limitations under the License.
  */
 
-package org.spockframework.runtime.intercept;
-
-import org.spockframework.runtime.SkipSpeckOrFeatureException;
+package org.spockframework.smoke
 
 /**
- *
  * @author Peter Niederwieser
  */
-public class IgnoreInterceptor implements IMethodInterceptor {
-  private final String reason;
+class VoidGroovyStaticMethod {
+  static void foo() {}
 
-  public IgnoreInterceptor(String reason) {
-    this.reason = reason;
-  }
-
-  public void invoke(IMethodInvocation invocation) throws Throwable {
-    throw new SkipSpeckOrFeatureException(reason);
-  }                                           
 }

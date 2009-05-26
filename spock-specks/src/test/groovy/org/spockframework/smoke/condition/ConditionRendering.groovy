@@ -142,6 +142,21 @@ null
     }
   }
 
+  // checks that ConditionRewriter.convertConditionNullAware() records values correctly
+  def "top-level MethodCallExpression"() {
+    expect:
+    isRendered """
+a.get(b)
+| |   |
+| 0   0
+[0]
+    """, {
+      def a = [0]
+      def b = 0
+      assert a.get(b)
+    }
+  }
+
   def "StaticMethodCallExpression"() {
     expect:
     isRendered """
@@ -152,6 +167,20 @@ min(a,b) == null
       def a = 1
       def b = 2
       assert min(a,b) == null
+    }
+  }
+
+  // checks that ConditionRewriter.convertConditionNullAware() records values correctly
+  def "top-level StaticMethodCallExpression"() {
+    expect:
+    isRendered """
+min(a,b)
+|   | |
+0   0 0
+    """, {
+      def a = 0
+      def b = 0
+      assert min(a,b)
     }
   }
 

@@ -14,22 +14,14 @@
  * limitations under the License.
  */
 
-package org.spockframework.runtime.intercept;
-
-import org.spockframework.runtime.SkipSpeckOrFeatureException;
+package org.spockframework.runtime;
 
 /**
- *
  * @author Peter Niederwieser
  */
-public class IgnoreInterceptor implements IMethodInterceptor {
-  private final String reason;
-
-  public IgnoreInterceptor(String reason) {
-    this.reason = reason;
-  }
-
-  public void invoke(IMethodInvocation invocation) throws Throwable {
-    throw new SkipSpeckOrFeatureException(reason);
-  }                                           
+public class JavaMethods {
+  public void voidInstanceMethod() {}
+  public Object nonVoidInstanceMethod() { return null; }
+  public static void voidStaticMethod() {}
+  public static Object nonVoidStaticMethod() { return null; }
 }

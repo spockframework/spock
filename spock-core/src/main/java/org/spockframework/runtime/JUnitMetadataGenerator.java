@@ -34,8 +34,9 @@ public class JUnitMetadataGenerator {
   }
 
   public void generate() {
-    Description desc = Description.createSuiteDescription(speck.getName());
+    Description desc = Description.createSuiteDescription(speck.getReflection());
     speck.setMetadata(desc);
+    
     for (FeatureInfo feature : speck.getFeatures())
       desc.addChild(describeFeature(feature));
 

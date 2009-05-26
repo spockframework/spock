@@ -17,12 +17,15 @@
 package org.spockframework.runtime;
 
 /**
+ * Indicates that a Speck or Speck feature should be skipped. May only be
+ * thrown by an interceptor registered with SpeckInfo or FeatureInfo.
+ * 
  * @author Peter Niederwieser
  */
-public class FeatureSkippedException extends RuntimeException {
+public class SkipSpeckOrFeatureException extends RuntimeException {
   private final String reason;
 
-  public FeatureSkippedException(String reason) {
+  public SkipSpeckOrFeatureException(String reason) {
     this.reason = reason;
   }
 

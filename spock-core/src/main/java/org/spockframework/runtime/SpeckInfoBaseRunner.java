@@ -65,18 +65,19 @@ public class SpeckInfoBaseRunner {
 
   public int run() {
     supervisor.beforeSpeck(speck);
-    invoke(this, createDoRunMethodInfo());
+    invoke(this, createDoRunInfo());
     supervisor.afterSpeck();
 
     resetStatus(SPECK);
     return runStatus;
   }
 
-  private MethodInfo createDoRunMethodInfo() {
+  private MethodInfo createDoRunInfo() {
     MethodInfo result = new MethodInfo();
     result.setParent(speck);
     result.setKind(MethodKind.SPECK_EXECUTION);
     result.setReflection(DO_RUN);
+    result.setMetadata(speck.getMetadata());
     for (IMethodInterceptor interceptor : speck.getInterceptors())
       result.addInterceptor(interceptor);
     return result;
@@ -125,17 +126,18 @@ public class SpeckInfoBaseRunner {
     if (runStatus != OK) return;
 
     supervisor.beforeFeature(feature);
-    invoke(this, createDoRunFeature(feature), feature);
+    invoke(this, createDoRunFeatureInfo(feature), feature);
     supervisor.afterFeature();
 
     resetStatus(FEATURE);
   }
 
-  private MethodInfo createDoRunFeature(FeatureInfo feature) {
+  private MethodInfo createDoRunFeatureInfo(FeatureInfo feature) {
     MethodInfo result = new MethodInfo();
     result.setParent(speck);
     result.setKind(MethodKind.FEATURE_EXECUTION);
     result.setReflection(DO_RUN_FEATURE);
+    result.setMetadata(feature.getMetadata());
     for (IMethodInterceptor interceptor : feature.getInterceptors())
       result.addInterceptor(interceptor);
     return result;

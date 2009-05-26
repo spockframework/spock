@@ -21,7 +21,6 @@ import spock.lang.*
 
 import org.spockframework.runtime.SpeckAssertionError
 import java.util.concurrent.TimeUnit
-import org.spockframework.runtime.SpeckAssertionError
 
 /**
  *
@@ -35,8 +34,8 @@ class TimeoutDirectiveOnMethod {
     setup: Thread.sleep(500)
   }
 
-  @Timeout(2)
-  @FailsWith(InterruptedException)
+  @FailsWith(SpeckAssertionError)
+  @Timeout(1)
   def "not in time"() {
     setup: Thread.sleep(1100)
   }
@@ -46,28 +45,9 @@ class TimeoutDirectiveOnMethod {
     setup: Thread.sleep(500)
   }
 
+  @FailsWith(SpeckAssertionError)
   @Timeout(value = 1000, unit = TimeUnit.MILLISECONDS)
-  @FailsWith(InterruptedException)
   def "not in time millis"() {
-    setup: Thread.sleep(1100)
-  }
-}
-
-@Speck
-@RunWith(Sputnik)
-@Timeout(1)
-class TimeoutDirectiveOnSpeck {
-  def "in time"() {
-    setup: Thread.sleep(500)
-  }
-}
-
-@Speck
-@RunWith(Sputnik)
-@FailsWith(SpeckAssertionError) // need to declare FailsWith on speck level to ensure correct ordering
-@Timeout(1)
-class TimeoutDirectiveOnSpeck2 {
-  def "not in time"() {
     setup: Thread.sleep(1100)
   }
 }

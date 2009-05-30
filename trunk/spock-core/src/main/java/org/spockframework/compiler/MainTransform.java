@@ -43,8 +43,6 @@ public class MainTransform implements ASTTransformation {
     SourceLookup lookup = null;
 
     try {
-      Assert.that(nodes.length >= 1);
-      Assert.that(nodes[0] instanceof ModuleNode);
       ModuleNode module = (ModuleNode)nodes[0];
 
       lookup = new SourceLookup(sourceUnit, new Janitor());

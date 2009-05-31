@@ -1,14 +1,15 @@
-#summary Gradle build script for HelloSpock
+#summary Gradle build script for HelloSpock project.
 
 {{{
 project(":hello-spock") {
   repositories {
     mavenCentral()
+    mavenRepo urls: "http://m2repo.spockframework.org/snapshots"
   }
   
   dependencies {
     groovy "org.codehaus.groovy:groovy-all:1.6.3"
-    compile "org.spockframework:spock-core:0.1"   
+    compile "org.spockframework:spock-core:0.2-SNAPSHOT"   
   }
 }
 }}}

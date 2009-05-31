@@ -34,25 +34,29 @@ class ParameterizationScopes {
     def sum = 0
 
     when:
-      for (i in 1..3) {
-        sum += inc
-      }
+    for (i in 1..3) {
+      sum += inc
+    }
+
     then:
-      sum == 6
+    sum == 6
+
     where:
-      inc << 2
+    inc << 2
   }
 
   def "in closure scope"() {
     def sum = 0
 
     when:
-      (1..3).each {
-        sum += inc
-      }
+    (1..3).each {
+      sum += inc
+    }
+
     then:
-      sum == 6
+    sum == 6
+
     where:
-      inc << 2
+    inc << 2
   }
 }

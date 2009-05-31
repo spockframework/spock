@@ -21,7 +21,7 @@ Detailed instructions for these two steps can be found in the [http://groovy.cod
 
 == Ant ==
 
-Tested with Ant 1.7.
+Checked against Ant 1.7
 
  * Create file build.xml with the following content: [HelloSpockBuildXml build.xml]
  * Create file src/!HelloSpock.groovy with the following content: [HelloSpock HelloSpock.groovy]
@@ -29,11 +29,15 @@ Tested with Ant 1.7.
  
 == Gradle ==
 
-This section will be updated as soon as Gradle adds support for Groovy 1.6. If you don't want to wait, have a look at Spock's own Gradle build, in particular the spock-specks project.
+Checked against Gradle 0.6
+
+ * Create file build.gradle with the following content: [HelloSpockGradleScript build.gradle]
+ * Create file src/test/groovy/!HelloSpock.groovy with the following content: [HelloSpock HelloSpock.groovy]
+ * Run !HelloSpock with `gradle test`
 
 == Maven ==
 
-Tested with Maven 2.0.9.
+Checked against Maven 2.1
 
  * Create file pom.xml with the following content: [HelloSpockPom pom.xml]
  * Create file src/test/groovy/!HelloSpock.groovy with the following content: [HelloSpock HelloSpock.groovy]
@@ -41,11 +45,11 @@ Tested with Maven 2.0.9.
 
 == Eclipse ==
 
-This section will be updated as soon as the Eclipse Groovy plugin adds support for Groovy 1.6. For general information about the Eclipse Groovy plugin, go to http://groovy.codehaus.org/Eclipse+Plugin.
+This section will be updated as soon as the Eclipse Groovy plugin has proper support for running JUnit tests (and therefore Spock specifications). For general information about the Eclipse Groovy plugin, go to http://groovy.codehaus.org/Eclipse+Plugin.
 
 == IntelliJ IDEA ==
 
-Tested with IDEA 8.1.
+Checked against IDEA 8.1.2
 
  * Download and extract Groovy 1.6.x binary release ([http://groovy.codehaus.org/Download download page])
  * Download junit-4.4.jar or higher ([http://sourceforge.net/project/showfiles.php?group_id=15278&package_id=12472 download page]) 
@@ -60,4 +64,4 @@ Tested with IDEA 8.1.
 
 == Netbeans ==
 
-This section will be updated as soon as the !NetBeans Groovy plugin adds support for Groovy 1.6. For general information about the !NetBeans Groovy plugin, go to http://groovy.codehaus.org/NetBeans+Plugin.
+This section will be updated as soon as the !NetBeans Groovy plugin has proper support for running JUnit tests (and therefore Spock specifications). For general information about the !NetBeans Groovy plugin, go to http://groovy.codehaus.org/NetBeans+Plugin.

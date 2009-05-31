@@ -1,0 +1,14 @@
+#summary Gradle build script for HelloSpock
+
+{{{
+project(":hello-spock") {
+  repositories {
+    mavenCentral()
+  }
+  
+  dependencies {
+    groovy "org.codehaus.groovy:groovy-all:1.6.3"
+    compile "org.spockframework:spock-core:0.1"   
+  }
+}
+}}}

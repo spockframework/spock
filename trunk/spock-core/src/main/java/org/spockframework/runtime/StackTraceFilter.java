@@ -40,7 +40,7 @@ public class StackTraceFilter {
       "|groovy.lang.MetaMethod" +
       "|java.lang.reflect\\..*" +
       "|sun.reflect\\..*" +
-      "|org.spockframework.runtime\\.[^\\.]+" // exclude runtime subpackages
+      "|org.spockframework.runtime\\.[^\\.]+" // exclude subpackages
   );
 
   private static final Pattern CLOSURE_CLASS = Pattern.compile("(.+)$_(.+)_closure(\\d+)");

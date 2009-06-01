@@ -1,4 +1,4 @@
-#summary Software that you need to run Spock.
+#summary Software required to run Spock.
 
 = Mandatory dependencies =
  * Java 5 or higher

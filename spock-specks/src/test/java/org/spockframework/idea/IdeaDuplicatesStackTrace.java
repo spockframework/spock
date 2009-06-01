@@ -14,17 +14,21 @@
  * limitations under the License.
  */
 
-package org.spockframework.junit;
+package org.spockframework.idea;
 
-import org.junit.Ignore;
-import org.junit.Test;
-import static org.junit.Assert.fail;
+import org.junit.*;
 
-@Ignore
-public class JUnitIgnoreTest {
+/**
+ * http://www.jetbrains.net/jira/browse/IDEA-23105.
+ * 
+ * @author Peter Niederwieser
+ */
+public class IdeaDuplicatesStackTrace {
   @Test
-  public void test1() { fail(); }
-
-  @Test
-  public void test2() { fail(); }
+  @Ignore
+  public void test() {
+    RuntimeException e = new RuntimeException();
+    e.setStackTrace(new StackTraceElement[] { e.getStackTrace()[e.getStackTrace().length - 1] });
+    throw e;
+  }
 }

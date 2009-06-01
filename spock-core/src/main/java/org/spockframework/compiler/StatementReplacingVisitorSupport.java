@@ -19,8 +19,7 @@ package org.spockframework.compiler;
 import java.util.List;
 import java.util.ListIterator;
 
-import org.codehaus.groovy.ast.CodeVisitorSupport;
-import org.codehaus.groovy.ast.expr.Expression;
+import org.codehaus.groovy.ast.ClassCodeVisitorSupport;
 import org.codehaus.groovy.ast.stmt.*;
 import org.codehaus.groovy.control.SourceUnit;
 
@@ -33,10 +32,10 @@ import org.codehaus.groovy.control.SourceUnit;
 // for AST nodes that reference statements. For ClosureExpression we rely on
 // the assumption that it always references a BlockStatement and hence our
 // visitBlockStatement() method gets called.
-public abstract class StatementReplacingCodeVisitorSupport extends CodeVisitorSupport {
+public abstract class StatementReplacingVisitorSupport extends ClassCodeVisitorSupport {
   private Statement replacement;
 
-  /*
+  /**
    * Visits the specified statement. If the statement's visit method calls
    * replaceVisitedMethodWith(), the statement will be replaced.
    */
@@ -48,33 +47,25 @@ public abstract class StatementReplacingCodeVisitorSupport extends CodeVisitorSu
     return result;
   }
 
-  /*
+  /**
    * Visits the statements in the specified mutable list. If a statement's
    * visit method calls replaceVisitedMethodWith(), the statement will be
    * replaced.
    */
-  protected void replaceAll(List<Statement> stats) {
-    ListIterator<Statement> iter = stats.listIterator();
+  @SuppressWarnings("unchecked")
+  protected <T extends Statement> void replaceAll(List<T> stats) {
+    ListIterator<T> iter = stats.listIterator();
     while (iter.hasNext())
-      iter.set(replace(iter.next()));
+      iter.set((T) replace(iter.next()));
   }
 
-  /*
-   * Allows to visit an expression in-place (e.g. when constructing a new statement).
-   */
-  protected <T extends Expression> T visit(T expr) {
-    expr.visit(this);
-    return expr;
-  }
-
-  /*
+  /**
    * Replaces the currently visited statement with the specified statement.
    */
   protected void replaceVisitedStatementWith(Statement other) {
     replacement = other;
   }
 
-  @SuppressWarnings("unchecked")
   @Override
   public void visitBlockStatement(BlockStatement stat) {
     replaceAll(stat.getStatements());
@@ -82,30 +73,29 @@ public abstract class StatementReplacingCodeVisitorSupport extends CodeVisitorSu
 
   @Override
   public void visitForLoop(ForStatement stat) {
-    visit(stat.getCollectionExpression());
+    stat.getCollectionExpression().visit(this);
     stat.setLoopBlock(replace(stat.getLoopBlock()));
   }
 
   @Override
   public void visitWhileLoop(WhileStatement stat) {
-   visit(stat.getBooleanExpression());
-   stat.setLoopBlock(replace(stat.getLoopBlock()));
+    stat.getBooleanExpression().visit(this);
+    stat.setLoopBlock(replace(stat.getLoopBlock()));
   }
 
   @Override
   public void visitDoWhileLoop(DoWhileStatement stat) {
-    visit(stat.getBooleanExpression());
+    stat.getBooleanExpression().visit(this);
     stat.setLoopBlock(replace(stat.getLoopBlock()));
   }
 
   @Override
   public void visitIfElse(IfStatement stat) {
-    visit(stat.getBooleanExpression());
+    stat.getBooleanExpression().visit(this);
     stat.setIfBlock(replace(stat.getIfBlock()));
     stat.setElseBlock(replace(stat.getElseBlock()));
   }
 
-  @SuppressWarnings("unchecked")
   @Override
   public void visitTryCatchFinally(TryCatchStatement stat) {
     stat.setTryStatement(replace(stat.getTryStatement()));
@@ -113,23 +103,22 @@ public abstract class StatementReplacingCodeVisitorSupport extends CodeVisitorSu
     stat.setFinallyStatement(replace(stat.getFinallyStatement()));
   }
 
-  @SuppressWarnings("unchecked")  
   @Override
   public void visitSwitch(SwitchStatement stat) {
-    visit(stat.getExpression());
+    stat.getExpression().visit(this);
     replaceAll(stat.getCaseStatements());
     stat.setDefaultStatement(replace(stat.getDefaultStatement()));
   }
 
   @Override
   public void visitCaseStatement(CaseStatement stat) {
-    visit(stat.getExpression());
+    stat.getExpression().visit(this);
     stat.setCode(replace(stat.getCode()));
   }
 
   @Override
   public void visitSynchronizedStatement(SynchronizedStatement stat) {
-    visit(stat.getExpression());
+    stat.getExpression().visit(this);
     stat.setCode(replace(stat.getCode()));
   }
 
@@ -138,6 +127,7 @@ public abstract class StatementReplacingCodeVisitorSupport extends CodeVisitorSu
     stat.setCode(replace(stat.getCode()));
   }
 
+  @Override
   protected SourceUnit getSourceUnit() {
     throw new UnsupportedOperationException("getSourceUnit");
   }

@@ -14,23 +14,16 @@
  * limitations under the License.
  */
 
-package org.spockframework.util;
+package org.spockframework.runtime;
 
 /**
- * Encapsulates knowledge about Spock-generated method names.
- *
  * @author Peter Niederwieser
  */
-public class BinaryNames {
-  public static String getDataProcessorName(String featureName) {
-    return featureName + "proc";
-  }
+public class GlobalSettings {
+  public static final boolean filterStackTrace;
 
-  public static String getDataProviderName(String featureName, int providerIndex) {
-    return featureName + "prov" + providerIndex;
-  }
-
-  public static boolean isFeatureMethodName(String name) {
-    return name.startsWith("__feature");  
+  static {
+    String filterStackTraceValue = System.getProperty("spock.filterStackTrace", "true");
+    filterStackTrace = filterStackTraceValue.equals("true");
   }
 }

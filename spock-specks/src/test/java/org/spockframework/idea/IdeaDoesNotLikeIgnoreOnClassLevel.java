@@ -14,9 +14,22 @@
  * limitations under the License.
  */
 
-package org.spockframework.runtime.stacktrace;
+package org.spockframework.idea;
+
+import org.junit.Ignore;
+import org.junit.Test;
+import static org.junit.Assert.fail;
 
 /**
+ * See http://www.jetbrains.net/jira/browse/IDEA-23018.
+ *
  * @author Peter Niederwieser
  */
-public class CallChainException extends RuntimeException {}
+@Ignore
+public class IdeaDoesNotLikeIgnoreOnClassLevel {
+  @Test
+  public void test1() { fail(); }
+
+  @Test
+  public void test2() { fail(); }
+}

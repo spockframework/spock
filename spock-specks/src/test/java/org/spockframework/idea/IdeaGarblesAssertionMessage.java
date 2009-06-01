@@ -14,22 +14,19 @@
  * limitations under the License.
  */
 
-package org.spockframework.runtime.stacktrace;
+package org.spockframework.idea;
+
+import org.junit.*;
 
 /**
+ * See http://www.jetbrains.net/jira/browse/IDEADEV-36531.
+ * 
  * @author Peter Niederwieser
  */
-public class JavaCallChain {
-  public void a() {
-    b();
-  }
-
-  private int b() {
-    c("foo", "bar");
-    return 0;
-  }
-
-  static void c(String foo, String bar) {
-    throw new CallChainException();
+public class IdeaGarblesAssertionMessage {
+  @Test
+  @Ignore
+  public void test() {
+    throw new AssertionError("\n1\n2\n3\n[junit.textui.TestRunner.doRun(TestRunner.java:109)]"); // same for any other exception type
   }
 }

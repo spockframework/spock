@@ -14,24 +14,9 @@
  * limitations under the License.
  */
 
-package org.spockframework.runtime.stacktrace;
+package org.spockframework.smoke;
 
 /**
- * Code copied over from JavaCallChain.
- *
  * @author Peter Niederwieser
  */
-public class GroovyCallChain {
-  public void a() {
-    b();
-  }
-
-  private int b() {
-    c("foo", "bar");
-    return 0;
-  }
-
-  static void c(String foo, String bar) {
-    throw new CallChainException();
-  }
-}
+public class CallChainException extends RuntimeException {}

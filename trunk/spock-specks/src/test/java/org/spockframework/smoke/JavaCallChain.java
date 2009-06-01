@@ -14,23 +14,24 @@
  * limitations under the License.
  */
 
-package org.spockframework.util;
+package org.spockframework.smoke;
 
 /**
- * Encapsulates knowledge about Spock-generated method names.
+ * Important: This file needs to be exact copy of GroovyCallChain.groovy.
  *
  * @author Peter Niederwieser
  */
-public class BinaryNames {
-  public static String getDataProcessorName(String featureName) {
-    return featureName + "proc";
+public class JavaCallChain {
+  public void a() {
+    b();
   }
 
-  public static String getDataProviderName(String featureName, int providerIndex) {
-    return featureName + "prov" + providerIndex;
+  private int b() {
+    c("foo", "bar");
+    return 0;
   }
 
-  public static boolean isFeatureMethodName(String name) {
-    return name.startsWith("__feature");  
+  static void c(String foo, String bar) {
+    throw new CallChainException();
   }
 }

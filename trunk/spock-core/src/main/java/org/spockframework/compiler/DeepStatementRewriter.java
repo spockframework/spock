@@ -33,7 +33,7 @@ import org.spockframework.util.SyntaxException;
  *
  * @author Peter Niederwieser
  */
-public class DeepStatementRewriter extends StatementReplacingCodeVisitorSupport {
+public class DeepStatementRewriter extends StatementReplacingVisitorSupport {
   private final IRewriteResourceProvider resourceProvider;
 
   private boolean conditionFound = false;

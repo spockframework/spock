@@ -1,4 +1,4 @@
-#summary A peek at some of the novelties in Spock 0.2.
+#summary A peek at some of the upcoming novelties in Spock 0.2.
 
 == Accessing "Old" Values ==
 

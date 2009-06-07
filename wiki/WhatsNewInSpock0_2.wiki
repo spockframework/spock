@@ -75,3 +75,14 @@ Condition not satisfied:
 }}}
 
 As you can see, only two lines of the stack trace are displayed. By double-clicking on one of them, you can quickly jump to the corresponding source code line. To see the full stack trace (which is over 50 lines long in this example!), set the system property `-Dspock.filterStackTrace=false`.
+
+== Calling void methods from expect and then blocks ==
+
+It is now safe to call void methods from `expect` and `then` blocks, without them being treated as conditions. The following code snippet shows some use cases:
+
+{{{
+expect:
+println foo // print a message to see what's going on
+fooMatchesBar() // condition factored out into void (!) helper method
+deepEquals(foo, bar) // call to third-party assertion library
+}}}

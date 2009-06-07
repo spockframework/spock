@@ -83,6 +83,6 @@ It is now safe to call void methods from `expect` and `then` blocks, without the
 {{{
 expect:
 println foo // print a message to see what's going on
-fooMatchesBar() // condition factored out into void (!) helper method
+fooMatchesBar(foo, bar) // condition factored out into void (!) helper method
 deepEquals(foo, bar) // call to third-party assertion library
 }}}

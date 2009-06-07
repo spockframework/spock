@@ -73,4 +73,4 @@ Condition not satisfied:
   at StackTraceFilteringExample.my math is terrible(StackTraceFilteringExample.groovy:15)
 }}}
 
-As you can see, only two lines of the stack trace are displayed. By double-clicking on one of them in your IDE, you can quickly jump to the corresponding source code line. To see the full stack trace (which is over 50 lines long in this example!), set the system property `-Dspock.filterStackTrace=false`.
+As you can see, only two lines of the stack trace are displayed. By double-clicking on one of them, you can quickly jump to the corresponding source code line. To see the full stack trace (which is over 50 lines long in this example!), set the system property `-Dspock.filterStackTrace=false`.

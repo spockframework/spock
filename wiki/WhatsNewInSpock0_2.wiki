@@ -1,0 +1,76 @@
+#summary A peek at some of the novelties in Spock 0.2.
+
+== Accessing "Old" Values ==
+
+Inside a `then` block, `old(`_expr_`)` refers to the value of `expr` before the preceding `when` block was entered. Example:
+
+{{{
+def "pushing an element on the stack increases its size by one"() {
+  def stack = new Stack()
+  when: stack.push("element")
+  then: stack.size() == old(stack.size()) + 1
+}
+}}}
+
+== Unrolling Data-Driven Features ==
+
+Sometimes it would be nice if the iterations of a data-driven feature were listed separately in test reports and test runners. This is achieved with the `@Unroll` annotation. Example:
+
+{{{
+@Unroll
+def "name length"() {
+  expect:
+  name.size() == length
+
+  where:
+  name << ["Kirk", "Spock", "Scotty"]
+  length << [4, 5, 6]
+}
+}}}
+
+Let's have a look at Gradle's test report: TODO
+
+By default, the name of an iteration is the feature's name followed by a consecutive number. This can be changed by providing a naming pattern to `@Unroll`. A naming pattern looks just like a GString, except that it uses `#` instead of `$` to embed variables and expressions. Apart from data variables, a naming pattern may refer to two other variables: `featureName` holds the feature's name, and `iterationCount` the iteration's consecutive number. Example:
+
+{{{
+@Unroll("#featureName of #{iterationCount}.officer #{name.toUpperCase()}")
+def "name length"() {
+  expect:
+  name.size() == length
+
+  where:
+  name << ["Kirk", "Spock", "Scotty"]
+  length << [4, 5, 6]
+}
+}}}
+
+Here is how this feature is displayed in IntelliJ IDEA: TODO
+
+As we have seen, `@Unroll` affects the way a data-driven feature is represented in test reports and test runners. However, it is important to note that it does _not_ change its execution semantics.
+
+== Improved Stack Trace Filtering ==
+
+Spock now employs aggressive stack trace filtering to show you only what's relevant. In particular, internals of the test runner's and Groovy's implementation are no longer displayed. Example:
+
+{{{
+def "my math is terrible"() {
+  expect: oneAndOneMakesThree()
+}
+
+void oneAndOneMakesThree() {
+  assert 1 + 1 == 3
+}
+}}}
+
+{{{
+Condition not satisfied:
+
+1 + 1 == 3
+  |   |
+  2   false
+
+  at StackTraceFilteringExample.oneAndOneMakesThree(StackTraceFilteringExample.groovy:19)
+  at StackTraceFilteringExample.my math is terrible(StackTraceFilteringExample.groovy:15)
+}}}
+
+As you can see, only two lines of the stack trace are displayed. By double-clicking on one of them in your IDE, you can quickly jump to the corresponding source code line. To see the full stack trace (which is over 50 lines long in this example!), set the system property `-Dspock.filterStackTrace=false`.

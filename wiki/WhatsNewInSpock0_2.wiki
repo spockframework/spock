@@ -31,10 +31,10 @@ def "name length"() {
 
 Let's have a look at Gradle's test report: TODO
 
-By default, the name of an iteration is the feature's name followed by a consecutive number. This can be changed by providing a naming pattern to `@Unroll`. A naming pattern looks just like a GString, except that it uses `#` instead of `$` to embed variables and expressions. Apart from data variables, a naming pattern may refer to two other variables: `featureName` holds the feature's name, and `iterationCount` the iteration's consecutive number. Example:
+By default, the name of an iteration is the feature's name followed by a consecutive number. This can be changed by providing a naming pattern after `@Unroll`. A naming pattern may refer to data variables by prepending the variable's name with `%`. Example:
 
 {{{
-@Unroll("#featureName of #{iterationCount}.officer #{name.toUpperCase()}")
+@Unroll("%name should have length %length")
 def "name length"() {
   expect:
   name.size() == length

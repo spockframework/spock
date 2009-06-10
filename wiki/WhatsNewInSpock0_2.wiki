@@ -78,7 +78,7 @@ As you can see, only two lines of the stack trace are displayed. By double-click
 
 == Calling void methods from expect and then blocks ==
 
-It is now safe to call void methods from `expect` and `then` blocks, without them being treated as conditions. The following code snippet shows some use cases:
+It is now safe to call void methods from `expect` and `then` blocks, without them being treated as implicit conditions. The following code snippet shows some use cases:
 
 {{{
 expect:

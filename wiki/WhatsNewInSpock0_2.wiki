@@ -47,7 +47,7 @@ def "name length"() {
 
 Here is how this feature is displayed in IntelliJ IDEA: TODO
 
-As we have seen, `@Unroll` affects the way a data-driven feature is represented in test reports and test runners. However, it is important to note that it does _not_ change its execution semantics.
+As we have seen, `@Unroll` changes the way a data-driven feature is represented in test reports and test runners. However, it is important to note that it does _not_ affect its execution semantics.
 
 == Improved Stack Trace Filtering ==
 

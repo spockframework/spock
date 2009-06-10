@@ -31,7 +31,7 @@ def "name length"() {
 
 Let's have a look at Gradle's test report: TODO
 
-By default, the name of an iteration is the feature's name followed by a consecutive number. This can be changed by providing a naming pattern after `@Unroll`. A naming pattern may refer to a data variable by prepending its name with `%`. Example:
+By default, the name of an iteration is the feature's name followed by a consecutive number. This can be changed by providing a naming pattern after `@Unroll`. A naming pattern may refer to data variables by prepending their name with `%`. Example:
 
 {{{
 @Unroll("%name should have length %length")

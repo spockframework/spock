@@ -1,4 +1,4 @@
-#summary A peek at some of the upcoming novelties in Spock 0.2.
+#summary A look at some of the upcoming features in Spock 0.2.
 #labels Featured
 
 == Accessing "Old" Values ==

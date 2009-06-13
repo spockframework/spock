@@ -11,6 +11,7 @@ import java.lang.reflect.AnnotatedElement;
  */
 public class FeatureInfo extends NodeInfo<SpeckInfo, AnnotatedElement> {
   private int order;
+  private List<String> parameterNames = new ArrayList<String>();
   private final List<BlockInfo> blocks = new ArrayList<BlockInfo>();
   private final List<IMethodInterceptor> interceptors = new ArrayList<IMethodInterceptor>();
   
@@ -29,6 +30,14 @@ public class FeatureInfo extends NodeInfo<SpeckInfo, AnnotatedElement> {
 
   public void setOrder(int order) {
     this.order = order;
+  }
+
+  public List<String> getParameterNames() {
+    return parameterNames;
+  }
+
+  public void addParameterName(String parameterName) {
+    parameterNames.add(parameterName);
   }
 
   public List<BlockInfo> getBlocks() {

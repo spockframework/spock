@@ -66,6 +66,7 @@ public abstract class StatementReplacingVisitorSupport extends ClassCodeVisitorS
     replacement = other;
   }
 
+  @SuppressWarnings("unchecked")  
   @Override
   public void visitBlockStatement(BlockStatement stat) {
     replaceAll(stat.getStatements());
@@ -96,6 +97,7 @@ public abstract class StatementReplacingVisitorSupport extends ClassCodeVisitorS
     stat.setElseBlock(replace(stat.getElseBlock()));
   }
 
+  @SuppressWarnings("unchecked")
   @Override
   public void visitTryCatchFinally(TryCatchStatement stat) {
     stat.setTryStatement(replace(stat.getTryStatement()));
@@ -103,6 +105,7 @@ public abstract class StatementReplacingVisitorSupport extends ClassCodeVisitorS
     stat.setFinallyStatement(replace(stat.getFinallyStatement()));
   }
 
+  @SuppressWarnings("unchecked")
   @Override
   public void visitSwitch(SwitchStatement stat) {
     stat.getExpression().visit(this);

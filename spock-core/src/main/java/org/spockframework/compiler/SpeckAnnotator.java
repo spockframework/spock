@@ -16,7 +16,7 @@
 
 package org.spockframework.compiler;
 
-import org.codehaus.groovy.ast.AnnotationNode;
+import org.codehaus.groovy.ast.*;
 import org.codehaus.groovy.ast.expr.*;
 import org.spockframework.compiler.model.*;
 import org.spockframework.runtime.model.BlockKind;
@@ -59,6 +59,12 @@ public class SpeckAnnotator extends AbstractSpeckVisitor {
     ann.setMember(FeatureMetadata.ORDER, new ConstantExpression(featureOrder++));
     ann.setMember(FeatureMetadata.NAME, new ConstantExpression(feature.getName()));
     ann.setMember(FeatureMetadata.BLOCKS, blockAnnElems = new ListExpression());
+
+    ListExpression paramNames = new ListExpression();
+    for (Parameter param : feature.getAst().getParameters())
+      paramNames.addExpression(new ConstantExpression(param.getName()));
+    ann.setMember(FeatureMetadata.PARAMETER_NAMES, paramNames);
+
     feature.getAst().addAnnotation(ann);
   }
 

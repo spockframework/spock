@@ -38,7 +38,7 @@ public interface IRunSupervisor {
    * run. All parameterization values have been computed successfully
    * at this point. Not called for non-parameterized features.
    */
-  void beforeIteration();
+  void beforeIteration(Object[] args);
   void afterIteration();
   void afterLastIteration();
   void afterFeature();

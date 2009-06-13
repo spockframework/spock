@@ -34,7 +34,7 @@ public class ConditionNotSatisfiedError extends SpeckAssertionError {
   @Override
   public String toString() {
     if (condition.getText() == null)
-      return getMessage() + " (no detailed information available)";
+      return getMessage() + " (no detail information available)";
     
     return getMessage() + ":\n\n" + condition.render();
   }

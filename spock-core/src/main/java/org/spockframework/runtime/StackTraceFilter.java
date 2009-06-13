@@ -43,7 +43,7 @@ public class StackTraceFilter {
       "|org.spockframework.runtime\\.[^\\.]+" // exclude subpackages
   );
 
-  private static final Pattern CLOSURE_CLASS = Pattern.compile("(.+)$_(.+)_closure(\\d+)");
+  private static final Pattern CLOSURE_CLASS = Pattern.compile("(.+)\\$_(.+)_closure(\\d+)");
 
   private final IMethodNameMapper mapper;
 
@@ -92,12 +92,12 @@ public class StackTraceFilter {
   }
 
   private StackTraceElement prettyPrintClosureInvocation(StackTraceElement elem, Matcher matcher) {
-    String classContaingClosureDef = matcher.group(0);
-    String methodContainingClosureDef = matcher.group(1);
-    String consecutiveNumberOfClosureDef = matcher.group(2);
+    String classContaingClosureDef = matcher.group(1);
+    String methodContainingClosureDef = matcher.group(2);
+    String consecutiveNumberOfClosureDef = matcher.group(3);
 
-    String prettyClassName = classContaingClosureDef + "." + mapper.map(methodContainingClosureDef);
-    String prettyMethodName = "closure" + consecutiveNumberOfClosureDef;
+    String prettyClassName = classContaingClosureDef;
+    String prettyMethodName = mapper.map(methodContainingClosureDef) + "@closure" + consecutiveNumberOfClosureDef;
 
     return new StackTraceElement(prettyClassName, prettyMethodName, elem.getFileName(), elem.getLineNumber());
   }

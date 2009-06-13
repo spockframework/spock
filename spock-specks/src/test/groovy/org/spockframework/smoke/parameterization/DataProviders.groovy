@@ -19,31 +19,41 @@ package org.spockframework.smoke.parameterization
 import org.junit.runner.RunWith
 import spock.lang.*
 import org.spockframework.runtime.SpeckExecutionException
-import spock.lang.Sputnik
-import spock.lang.Speck
+import static spock.lang.Predef.*
+import static org.spockframework.smoke.EmbeddedSpeckRunner.*
 
 /**
- * A ...
- 
  * @author Peter Niederwieser
  */
 @Speck
 @RunWith(Sputnik)
 class DataProviders {
-//  def "null value"() {
-//    expect: false // should never be called
-//    where : x << null
-//  }
+  def "null value"() {
+    when:
+    runFeatureBody """
+expect: true
+where: x << null
+    """
+
+    then:
+    thrown(SpeckExecutionException)
+  }
 
   def "literal"() {
     expect: x == 1
     where : x << 1
   }
 
-//  def "empty list"() {
-//    expect: false // should never be called
-//    where : x << []
-//  }
+  def "empty list"() {
+    when:
+    runFeatureBody """
+expect: true
+where : x << []
+    """
+
+    then:
+    thrown(SpeckExecutionException)
+  }
 
   def "single-element list"() {
     expect: x == 1
@@ -103,6 +113,19 @@ class DataProviders {
   def "data providers with different number of elements"() {
     expect: x == y
     where : x << [1, 2, 3]; y << [1]
+  }
+
+  def "data providers one of which has no data"() {
+    when:
+    runFeatureBody """
+expect: true
+where:
+x << (1..3)
+y << []
+    """
+
+    then:
+    thrown(SpeckExecutionException)
   }
 
   def "different kinds of data providers used together"() {

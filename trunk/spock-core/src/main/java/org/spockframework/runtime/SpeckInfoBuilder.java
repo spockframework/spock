@@ -71,8 +71,8 @@ public class SpeckInfoBuilder {
 
   private void buildSpeck() {
     speck = new SpeckInfo();
-    speck.setName(clazz.getSimpleName());
     speck.setParent(null);
+    speck.setName(clazz.getSimpleName());
     speck.setReflection(clazz);
   }
 
@@ -80,8 +80,8 @@ public class SpeckInfoBuilder {
     for (Field field : clazz.getDeclaredFields()) {
       if (field.isSynthetic()) continue;
       FieldInfo fieldInfo = new FieldInfo();
-      fieldInfo.setName(field.getName());
       fieldInfo.setParent(speck);
+      fieldInfo.setName(field.getName());
       fieldInfo.setReflection(field);
       speck.addField(fieldInfo);
     }
@@ -103,13 +103,15 @@ public class SpeckInfoBuilder {
 
   private FeatureInfo createFeature(Method method, FeatureMetadata featureMetadata) {
     FeatureInfo feature = new FeatureInfo();
-    feature.setOrder(featureMetadata.order());
-    feature.setName(featureMetadata.name());
     feature.setParent(speck);
+    feature.setName(featureMetadata.name());
+    feature.setOrder(featureMetadata.order());
+    for (String name : featureMetadata.parameterNames())
+      feature.addParameterName(name);
 
     MethodInfo featureMethod = new MethodInfo();
-    featureMethod.setName(featureMetadata.name());
     featureMethod.setParent(speck);
+    featureMethod.setName(featureMetadata.name());
     featureMethod.setFeature(feature);
     featureMethod.setReflection(method);
     featureMethod.setKind(MethodKind.FEATURE);
@@ -145,8 +147,8 @@ public class SpeckInfoBuilder {
     if (reflection == null && !allowStub) return null;
 
     MethodInfo methodInfo = new MethodInfo();
-    methodInfo.setName(name);
     methodInfo.setParent(speck);
+    methodInfo.setName(name);
     methodInfo.setReflection(reflection);
     methodInfo.setKind(kind);
     return methodInfo;

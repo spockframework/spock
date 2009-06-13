@@ -28,9 +28,11 @@ import java.lang.annotation.*;
 public @interface FeatureMetadata {
   String ORDER = "order";
   String NAME = "name";
+  String PARAMETER_NAMES = "parameterNames";
   String BLOCKS = "blocks";
 
   int order();
   String name();
+  String[] parameterNames();
   BlockMetadata[] blocks();
 }

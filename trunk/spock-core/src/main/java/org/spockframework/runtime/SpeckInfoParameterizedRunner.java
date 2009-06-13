@@ -22,8 +22,7 @@ import org.spockframework.runtime.model.FeatureInfo;
 import org.spockframework.runtime.model.MethodInfo;
 import org.spockframework.runtime.model.SpeckInfo;
 
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 /**
  * Adds the ability to run parameterized features.
@@ -140,7 +139,7 @@ public class SpeckInfoParameterizedRunner extends SpeckInfoBaseRunner {
   private void runIteration(FeatureInfo feature, Object[] args) {
     if (runStatus != OK) return;
 
-    supervisor.beforeIteration();
+    supervisor.beforeIteration(args);
     invokeSetup();
     invokeFeatureMethod(feature.getFeatureMethod(), args);
     invokeCleanup();

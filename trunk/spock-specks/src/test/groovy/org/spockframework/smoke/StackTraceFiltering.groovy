@@ -16,13 +16,12 @@
 
 package org.spockframework.smoke
 
-import org.junit.runner.RunWith
-
+import org.spockframework.runtime.ConditionNotSatisfiedError
+import org.spockframework.smoke.CallChainException
+import org.junit.runner.*
 import spock.lang.*
 import static spock.lang.Predef.*
-import org.junit.runner.JUnitCore
-import org.junit.runner.Result
-import org.spockframework.runtime.ConditionNotSatisfiedError
+import static org.spockframework.smoke.EmbeddedSpeckRunner.*
 
 /**
  * @author Peter Niederwieser
@@ -31,71 +30,69 @@ import org.spockframework.runtime.ConditionNotSatisfiedError
 @RunWith(Sputnik)
 class StackTraceFiltering {
   def "unsatisfied implicit condition"() {
-    def exception = runAndCaptureException("""
-package abc
-
-import spock.lang.*
-import org.junit.runner.RunWith
-
-@Speck
-@RunWith(Sputnik)
-class Foo {
-  def "a feature method"() {
-    expect: false  
-  }
-}
-    """)
-
-    expect:
-    exception instanceof ConditionNotSatisfiedError
-    filteredTraceLooksLike(exception, """
-abc.Foo|a feature method|10
-    """)
-  }
-
-  def "exception in #{callChain}"() {
-    def exception = runAndCaptureException("""
-package abc
-
-import spock.lang.*
-import org.junit.runner.RunWith
-import org.spockframework.smoke.$callChain
-
-@Speck
-@RunWith(Sputnik)
-class Foo {
-  def "a feature method"() {
     when:
-    new $callChain().a()
+    runFeatureBody """
+expect: false
+    """
 
     then:
-    true
-  }
-}
+    ConditionNotSatisfiedError e = thrown()
+    stackTraceLooksLike(e, """
+apackage.ASpeck|a feature|1
     """)
+  }
 
-    expect:
-    exception instanceof CallChainException
-    filteredTraceLooksLike(exception, """
-org.spockframework.smoke.$callChain|c|35
-org.spockframework.smoke.$callChain|b|30
-org.spockframework.smoke.$callChain|a|26
-abc.Foo|a feature method|12
+  @Unroll("exception in %displayName")
+  def "exception in call chain"() {
+    when:
+    runFeatureBody """
+setup:
+new $chain().a()
+    """
+
+    then:
+    CallChainException e = thrown()
+    stackTraceLooksLike(e, """
+$chain|c|35
+$chain|b|30
+$chain|a|26
+apackage.ASpeck|a feature|2
     """)
 
     where:
-    callChain << ["GroovyCallChain", "JavaCallChain"]
+    chain << ["org.spockframework.smoke.GroovyCallChain", "org.spockframework.smoke.JavaCallChain"]
+    displayName << ["Groovy call chain", "Java call chain"]
   }
 
-  private Throwable runAndCaptureException(String speck) {
-    def clazz = new GroovyClassLoader().parseClass(speck.trim())
-    Result result = JUnitCore.runClasses(clazz)
+  def "exception in closure"() {
+    when:
+    runFeatureBody """
+setup:
+def x // need some statement between label and closure (otherwise Groovy would consider the following a block)
+{ -> assert false }()
+    """
 
-    assert result.failureCount == 1
-    return result.failures[0].exception
+    then:
+    ConditionNotSatisfiedError e = thrown()
+    stackTraceLooksLike e, """
+apackage.ASpeck|a feature@closure1|-
+apackage.ASpeck|a feature|3
+    """
   }
 
-  private void filteredTraceLooksLike(Throwable exception, String template) {
+  def "exception in closure in field initializer"() {
+    when:
+    runSpeckBody """
+def x = { assert false }()
+
+def foo() { expect: true }
+    """
+
+    then:
+    ConditionNotSatisfiedError e = thrown()
+  }
+
+  private void stackTraceLooksLike(Throwable exception, String template) {
     def trace = exception.stackTrace
     def lines = template.trim().split("\n")
     assert trace.size() == lines.size()
@@ -105,7 +102,7 @@ abc.Foo|a feature method|12
       def traceElem = trace[index]
       assert traceElem.className == parts[0]
       assert traceElem.methodName == parts[1]
-      assert traceElem.lineNumber == parts[2] as int
+      assert parts[2] == "-" || traceElem.lineNumber == parts[2] as int
     }
   }
 }

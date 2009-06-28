@@ -188,7 +188,7 @@ public class SpeckRewriter extends AbstractSpeckVisitor implements IRewriteResou
     if (!(block instanceof WhereBlock)) return;
 
     new DeepStatementRewriter(this).visitBlock(block);
-    WhereBlockRewriter.rewrite((WhereBlock)block);
+    WhereBlockRewriter.rewrite((WhereBlock)block, nodeCache);
   }
 
   public void visitMethodAgain(Method method) {

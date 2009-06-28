@@ -27,4 +27,8 @@ import java.lang.annotation.*;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface SpeckMetadata {}
+public @interface SpeckMetadata {
+  String FILENAME = "filename";
+  
+  String filename();
+}

@@ -18,31 +18,42 @@ package org.spockframework.smoke
 
 import org.junit.runner.Result
 import org.junit.runner.JUnitCore
+import org.junit.runner.Request
 
 /**
- * Utility methods for running embedded Specks.
+ * Utility class for running Specks from String source.
  *
  * @author Peter Niederwieser
  */
 class EmbeddedSpeckRunner {
-  static run(String source) {
-    def clazz = new GroovyClassLoader().parseClass(source)
-    Result result = JUnitCore.runClasses(clazz)
-    if (result.failureCount >= 1) throw result.failures[0].exception
+
+  private compiler = new EmbeddedSpeckCompiler()
+
+  boolean throwFailure = true
+
+  Result runRequest(Request request) {
+    def result = new JUnitCore().run(request)
+    if (throwFailure && result.failureCount > 0) throw result.failures[0].exception
+    result
   }
 
-  static runWithHeader(String source) {
-    // one-liner keeps line numbers intact
-    run "package apackage; import org.junit.runner.RunWith; import spock.lang.*; ${source.trim()}"
+  Result runClass(Class clazz) {
+    runRequest(Request.aClass(clazz))
   }
 
-  static runSpeckBody(String body) {
-    // one-liner keeps line numbers intact
-    runWithHeader "@Speck @RunWith(Sputnik) class ASpeck { ${body.trim()} }"
+  Result run(String source) {
+    runClass(compiler.compile(source))
   }
 
-  static runFeatureBody(String body) {
-    // one-liner keeps line numbers intact
-    runSpeckBody "def 'a feature'() { ${body.trim()} }"
+  Result runWithImports(String source) {
+    runClass(compiler.compileWithImports(source))
+  }
+
+  Result runSpeckBody(String source) {
+    runClass(compiler.compileSpeckBody(source))
+  }
+
+  Result runFeatureBody(String source) {
+    runClass(compiler.compileFeatureBody(source))
   }
 }

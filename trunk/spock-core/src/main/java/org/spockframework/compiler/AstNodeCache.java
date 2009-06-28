@@ -43,6 +43,7 @@ public class AstNodeCache {
   // annotations and annotation elements
   public final ClassNode SpeckMetadata = ClassHelper.makeWithoutCaching(SpeckMetadata.class);
   public final ClassNode FeatureMetadata = ClassHelper.makeWithoutCaching(FeatureMetadata.class);
+  public final ClassNode DataProviderMetadata = ClassHelper.makeWithoutCaching(DataProviderMetadata.class);
   public final ClassNode BlockMetadata = ClassHelper.makeWithoutCaching(BlockMetadata.class);
   public final ClassNode BlockKind = ClassHelper.makeWithoutCaching(BlockKind.class);
 

@@ -18,9 +18,7 @@ package org.spockframework.runtime;
 
 import org.codehaus.groovy.runtime.InvokerHelper;
 import static org.spockframework.runtime.RunStatus.*;
-import org.spockframework.runtime.model.FeatureInfo;
-import org.spockframework.runtime.model.MethodInfo;
-import org.spockframework.runtime.model.SpeckInfo;
+import org.spockframework.runtime.model.*;
 
 import java.util.*;
 
@@ -48,11 +46,11 @@ public class SpeckInfoParameterizedRunner extends SpeckInfoBaseRunner {
   private Object[] createDataProviders(FeatureInfo feature) {
     if (runStatus != OK) return null;
 
-    List<MethodInfo> dataProviderMethods = feature.getDataProviderMethods();
-    Object[] dataProviders = new Object[dataProviderMethods.size()];
+    List<DataProviderInfo> dataProviderInfos = feature.getDataProviders();
+    Object[] dataProviders = new Object[dataProviderInfos.size()];
 
-    for (int i = 0; i < dataProviderMethods.size(); i++) {
-      MethodInfo method = dataProviderMethods.get(i);
+    for (int i = 0; i < dataProviderInfos.size(); i++) {
+      MethodInfo method = dataProviderInfos.get(i).getDataProviderMethod();
       Object provider = invokeRaw(method, null);
       if (runStatus != OK) return null;
       if (provider == null) {
@@ -73,13 +71,13 @@ public class SpeckInfoParameterizedRunner extends SpeckInfoBaseRunner {
       try {
         Iterator iter = InvokerHelper.asIterator(dataProviders[i]);
         if (iter == null) {
-          runStatus = supervisor.error(feature.getDataProviderMethods().get(i),
+          runStatus = supervisor.error(feature.getDataProviders().get(i).getDataProviderMethod(),
               new SpeckExecutionException("Data provider's iterator() method returned null"), runStatus);
           return null;
         }
         iterators[i] = iter;
       } catch (Throwable t) {
-        runStatus = supervisor.error(feature.getDataProviderMethods().get(i), t, runStatus);
+        runStatus = supervisor.error(feature.getDataProviders().get(i).getDataProviderMethod(), t, runStatus);
         return null;
       }
 
@@ -97,7 +95,7 @@ public class SpeckInfoParameterizedRunner extends SpeckInfoBaseRunner {
     for (Object prov : dataProviders) {
       if (prov instanceof Iterator)
         // unbelievably, DGM provides a size() method for Iterators,
-        // although it is of course destructive (i.e. exhausts the Iterator)
+        // although it is of course destructive (i.e. it exhausts the Iterator)
         continue;
       try {
         int size = (Integer)InvokerHelper.invokeMethod(prov, "size", null);
@@ -150,15 +148,38 @@ public class SpeckInfoParameterizedRunner extends SpeckInfoBaseRunner {
   private boolean haveNext(FeatureInfo feature, Iterator[] iterators) {
     if (runStatus != OK) return false;
 
+    boolean haveNext = true;
+
     for (int i = 0; i < iterators.length; i++)
       try {
-        if (!iterators[i].hasNext()) return false;
+        boolean hasNext = iterators[i].hasNext();
+        if (i == 0) haveNext = hasNext;
+        else if (haveNext != hasNext) {
+          DataProviderInfo provider = feature.getDataProviders().get(i);
+          runStatus = supervisor.error(provider.getDataProviderMethod(),
+              createDifferentNumberOfDataValuesException(provider, hasNext), runStatus);
+          return false;
+        }
+
       } catch (Throwable t) {
-        runStatus = supervisor.error(feature.getDataProviderMethods().get(i), t, runStatus);
+        runStatus = supervisor.error(feature.getDataProviders().get(i).getDataProviderMethod(), t, runStatus);
         return false;
       }
 
-    return true;
+    return haveNext;
+  }
+
+  private SpeckExecutionException createDifferentNumberOfDataValuesException(DataProviderInfo provider,
+    boolean hasNext) {
+    String msg = String.format("Data provider for variable '%s' has %s values than previous data provider(s)",
+        provider.getDataVariables().get(0), hasNext ? "more" : "fewer");
+    SpeckExecutionException exception = new SpeckExecutionException(msg);
+    FeatureInfo feature = provider.getParent();
+    SpeckInfo speck = feature.getParent();
+    StackTraceElement elem = new StackTraceElement(speck.getReflection().getName(),
+        feature.getName(), speck.getFilename(), provider.getLine());
+    exception.setStackTrace(new StackTraceElement[] { elem });
+    return exception;
   }
 
   // advances iterators and computes args
@@ -170,7 +191,7 @@ public class SpeckInfoParameterizedRunner extends SpeckInfoBaseRunner {
       try {
         next[i] = iterators[i].next();
       } catch (Throwable t) {
-        runStatus = supervisor.error(feature.getDataProviderMethods().get(i), t, runStatus);
+        runStatus = supervisor.error(feature.getDataProviders().get(i).getDataProviderMethod(), t, runStatus);
         return null;
       }
 

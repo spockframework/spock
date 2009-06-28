@@ -27,7 +27,7 @@ import spock.lang.*;
  * @author Peter Niederwieser
  */
 public class UnrolledFeatureNameGenerator {
-  private static final Pattern VARIABLE_PATTERN = Pattern.compile("%([a-zA-Z_\\$][\\w\\$]*)");
+  private static final Pattern VARIABLE_PATTERN = Pattern.compile("#([a-zA-Z_\\$][\\w\\$]*)");
 
   private final FeatureInfo feature;
   private final Matcher variableMatcher;
@@ -47,17 +47,17 @@ public class UnrolledFeatureNameGenerator {
 
   public String nameFor(Object[] args) {
     StringBuffer result = new StringBuffer();
-    iterationCount++;
     variableMatcher.reset();
 
     while (variableMatcher.find()) {
       String variableName = variableMatcher.group(1);
       String value = getValue(variableName, args);
-      if (value == null) value = "%" + variableName; // don't replace
+      if (value == null) value = "#" + variableName; // don't replace
       variableMatcher.appendReplacement(result, value);
     }
 
     variableMatcher.appendTail(result);
+    iterationCount++;
     return result.toString();
   }
 

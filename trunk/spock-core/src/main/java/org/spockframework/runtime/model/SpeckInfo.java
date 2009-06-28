@@ -33,6 +33,7 @@ import java.util.List;
  * @author Peter Niederwieser
  */
 public class SpeckInfo extends NodeInfo<NodeInfo, Class<?>> implements IMethodNameMapper {
+  private String filename;
   private MethodInfo setupMethod;
   private MethodInfo cleanupMethod;
   private MethodInfo setupSpeckMethod;
@@ -40,6 +41,14 @@ public class SpeckInfo extends NodeInfo<NodeInfo, Class<?>> implements IMethodNa
   private final List<FieldInfo> fields = new ArrayList<FieldInfo>();
   private List<FeatureInfo> features = new ArrayList<FeatureInfo>();
   private final List<IMethodInterceptor> interceptors = new ArrayList<IMethodInterceptor>();
+
+  public String getFilename() {
+    return filename;
+  }
+
+  public void setFilename(String filename) {
+    this.filename = filename;
+  }
 
   public MethodInfo getSetupMethod() {
     return setupMethod;

@@ -21,17 +21,19 @@ import org.spockframework.smoke.CallChainException
 import org.junit.runner.*
 import spock.lang.*
 import static spock.lang.Predef.*
-import static org.spockframework.smoke.EmbeddedSpeckRunner.*
 
 /**
  * @author Peter Niederwieser
  */
+@Issue("21")
 @Speck
 @RunWith(Sputnik)
 class StackTraceFiltering {
+  def runner = new EmbeddedSpeckRunner()
+
   def "unsatisfied implicit condition"() {
     when:
-    runFeatureBody """
+    runner.runFeatureBody """
 expect: false
     """
 
@@ -42,10 +44,10 @@ apackage.ASpeck|a feature|1
     """)
   }
 
-  @Unroll("exception in %displayName")
+  @Unroll("exception in #displayName")
   def "exception in call chain"() {
     when:
-    runFeatureBody """
+    runner.runFeatureBody """
 setup:
 new $chain().a()
     """
@@ -66,7 +68,7 @@ apackage.ASpeck|a feature|2
 
   def "exception in closure"() {
     when:
-    runFeatureBody """
+    runner.runFeatureBody """
 setup:
 def x // need some statement between label and closure (otherwise Groovy would consider the following a block)
 { -> assert false }()
@@ -82,7 +84,7 @@ apackage.ASpeck|a feature|3
 
   def "exception in closure in field initializer"() {
     when:
-    runSpeckBody """
+    runner.runSpeckBody """
 def x = { assert false }()
 
 def foo() { expect: true }

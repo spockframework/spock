@@ -16,12 +16,12 @@
 
 package org.spockframework.compiler;
 
+import java.io.File;
+
 import org.codehaus.groovy.ast.*;
 import org.codehaus.groovy.ast.expr.*;
 import org.spockframework.compiler.model.*;
-import org.spockframework.runtime.model.BlockKind;
-import org.spockframework.runtime.model.BlockMetadata;
-import org.spockframework.runtime.model.FeatureMetadata;
+import org.spockframework.runtime.model.*;
 
 /**
  * Puts all speck information required at runtime into annotations
@@ -45,6 +45,9 @@ public class SpeckAnnotator extends AbstractSpeckVisitor {
 
   private void addSpeckAnnotation(Speck speck) {
     AnnotationNode ann2 = new AnnotationNode(nodeCache.SpeckMetadata);
+    String pathname = speck.getAst().getModule().getContext().getName();
+    String filename = new File(pathname).getName();
+    ann2.addMember(SpeckMetadata.FILENAME, new ConstantExpression(filename));
     speck.getAst().addAnnotation(ann2);
   }
 

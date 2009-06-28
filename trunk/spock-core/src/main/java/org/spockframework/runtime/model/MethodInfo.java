@@ -30,7 +30,6 @@ import org.spockframework.runtime.intercept.IMethodInterceptor;
 public class MethodInfo extends NodeInfo<SpeckInfo, Method> {
   private MethodKind kind;
   private FeatureInfo feature;
-  private final List<BlockInfo> blocks = new ArrayList<BlockInfo>();
   private final List<IMethodInterceptor> interceptors = new ArrayList<IMethodInterceptor>();
 
   public MethodKind getKind() {
@@ -47,14 +46,6 @@ public class MethodInfo extends NodeInfo<SpeckInfo, Method> {
 
   public void setFeature(FeatureInfo feature) {
     this.feature = feature;
-  }
-
-  public void addBlock(BlockInfo block) {
-    blocks.add(block);
-  }
-
-  public List<BlockInfo> getBlocks() {
-    return blocks;
   }
 
   public List<IMethodInterceptor> getInterceptors() {

@@ -20,7 +20,8 @@ import org.junit.runner.RunWith
 import spock.lang.*
 import org.spockframework.runtime.SpeckExecutionException
 import static spock.lang.Predef.*
-import static org.spockframework.smoke.EmbeddedSpeckRunner.*
+import org.spockframework.smoke.EmbeddedSpeckRunner
+import org.spockframework.smoke.EmbeddedSpeckRunner
 
 /**
  * @author Peter Niederwieser
@@ -28,9 +29,11 @@ import static org.spockframework.smoke.EmbeddedSpeckRunner.*
 @Speck
 @RunWith(Sputnik)
 class DataProviders {
+  def runner = new EmbeddedSpeckRunner()
+
   def "null value"() {
     when:
-    runFeatureBody """
+    runner.runFeatureBody """
 expect: true
 where: x << null
     """
@@ -46,7 +49,7 @@ where: x << null
 
   def "empty list"() {
     when:
-    runFeatureBody """
+    runner.runFeatureBody """
 expect: true
 where : x << []
     """
@@ -105,19 +108,33 @@ where : x << []
     where : x << new StringTokenizer("b c a")
   }
 
-  def "data providers with same number of elements"() {
+  def "data providers with same number of values"() {
     expect: x == y
     where : x << [1, 2, 3]; y << [1, 2, 3]
   }
 
-  def "data providers with different number of elements"() {
-    expect: x == y
-    where : x << [1, 2, 3]; y << [1]
+  def "data providers with different number of values"() {
+    when:
+    runner.runFeatureBody """
+expect: x == y
+where : $providers
+    """
+
+    then:
+    thrown(SpeckExecutionException)
+    
+    where:
+    providers << [
+        "x << [1, 2]; y << [1]",
+        "x << [1]; y << [1, 2]",
+        "x << [1]; y << [1, 2]; z << [1]",
+        "x << [1, 2]; y << [1]; z << [1, 2]"
+    ]
   }
 
-  def "data providers one of which has no data"() {
+  def "data providers one of which has no values"() {
     when:
-    runFeatureBody """
+    runner.runFeatureBody """
 expect: true
 where:
 x << (1..3)

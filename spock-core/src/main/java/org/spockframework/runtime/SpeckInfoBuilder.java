@@ -40,6 +40,7 @@ public class SpeckInfoBuilder {
   private final Class<?> clazz;
   private final Map<Class<? extends IDirectiveProcessor>, IDirectiveProcessor> processors =
     new HashMap<Class<? extends IDirectiveProcessor>, IDirectiveProcessor>();
+  private SpeckMetadata metadata;
   private SpeckInfo speck;
 
   public SpeckInfoBuilder(Class<?> clazz) {
@@ -47,7 +48,7 @@ public class SpeckInfoBuilder {
   }
 
   public SpeckInfo build() throws InstantiationException, IllegalAccessException {
-    checkIsSpeck();
+    getSpeckMetadata();
     buildSpeck();
     buildFields();
     buildFeatures();
@@ -56,13 +57,13 @@ public class SpeckInfoBuilder {
     return speck;
   }
 
-  private void checkIsSpeck() {
+  private void getSpeckMetadata() {
     Speck marker = clazz.getAnnotation(Speck.class);
     if (marker == null)
       throw new InvalidSpeckError(
           "Class '%s' is not a Speck (did you forget to add @Speck?)").withArgs(clazz.getName());
 
-    SpeckMetadata metadata = clazz.getAnnotation(SpeckMetadata.class);
+    metadata = clazz.getAnnotation(SpeckMetadata.class);
     if (metadata == null)
       // we know that Spock is on the compile classpath because @Speck is present
       // in the class file, but for some reason the Speck wasn't transformed
@@ -74,6 +75,7 @@ public class SpeckInfoBuilder {
     speck.setParent(null);
     speck.setName(clazz.getSimpleName());
     speck.setReflection(clazz);
+    speck.setFilename(metadata.filename());
   }
 
   private void buildFields() {
@@ -126,7 +128,7 @@ public class SpeckInfoBuilder {
       String providerMethodName = BinaryNames.getDataProviderName(method.getName(), providerCount++);
       MethodInfo providerMethod = createMethod(providerMethodName, MethodKind.DATA_PROVIDER, false);
       while (providerMethod != null) {
-        feature.addDataProviderMethod(providerMethod);
+        feature.addDataProvider(createDataProvider(feature, providerMethod));
         providerMethodName = BinaryNames.getDataProviderName(method.getName(), providerCount++);
         providerMethod = createMethod(providerMethodName, MethodKind.DATA_PROVIDER, false);
       }
@@ -140,6 +142,18 @@ public class SpeckInfoBuilder {
     }
 
     return feature;
+  }
+
+  private DataProviderInfo createDataProvider(FeatureInfo feature, MethodInfo method) {
+    DataProviderMetadata metadata = method.getReflection().getAnnotation(DataProviderMetadata.class);
+
+    DataProviderInfo provider = new DataProviderInfo();
+    provider.setParent(feature);
+    provider.setLine(metadata.line());
+    provider.setColumn(metadata.column());
+    provider.setDataVariables(Arrays.asList(metadata.dataVariables()));
+    provider.setDataProviderMethod(method);
+    return provider;
   }
 
   private MethodInfo createMethod(String name, MethodKind kind, boolean allowStub) {

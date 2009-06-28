@@ -17,7 +17,7 @@ public class FeatureInfo extends NodeInfo<SpeckInfo, AnnotatedElement> {
   
   private MethodInfo featureMethod;
   private MethodInfo dataProcessorMethod;
-  private final List<MethodInfo> dataProviderMethods = new ArrayList<MethodInfo>();
+  private final List<DataProviderInfo> dataProviders = new ArrayList<DataProviderInfo>();
 
   @Override
   public AnnotatedElement getReflection() {
@@ -72,12 +72,12 @@ public class FeatureInfo extends NodeInfo<SpeckInfo, AnnotatedElement> {
     this.dataProcessorMethod = method;
   }
 
-  public List<MethodInfo> getDataProviderMethods() {
-    return dataProviderMethods;
+  public List<DataProviderInfo> getDataProviders() {
+    return dataProviders;
   }
 
-  public void addDataProviderMethod(MethodInfo method) {
-    dataProviderMethods.add(method);
+  public void addDataProvider(DataProviderInfo dataProvider) {
+    dataProviders.add(dataProvider);
   }
 
   public boolean isParameterized() {
@@ -95,8 +95,8 @@ public class FeatureInfo extends NodeInfo<SpeckInfo, AnnotatedElement> {
   public boolean hasBytecodeName(String name) {
     if (featureMethod.hasBytecodeName(name)) return true;
     if (dataProcessorMethod != null && dataProcessorMethod.hasBytecodeName(name)) return true;
-    for (MethodInfo provider : dataProviderMethods)
-      if (provider.hasBytecodeName(name)) return true;
+    for (DataProviderInfo provider : dataProviders)
+      if (provider.getDataProviderMethod().hasBytecodeName(name)) return true;
     return false;
   }
 }

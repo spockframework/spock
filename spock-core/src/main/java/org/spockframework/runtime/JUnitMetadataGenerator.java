@@ -17,9 +17,7 @@ package org.spockframework.runtime;
 
 import org.junit.runner.Description;
 
-import org.spockframework.runtime.model.SpeckInfo;
-import org.spockframework.runtime.model.MethodInfo;
-import org.spockframework.runtime.model.FeatureInfo;
+import org.spockframework.runtime.model.*;
 
 /**
  * Generates and attaches JUnit Description's to a SpeckInfo's nodes.
@@ -48,10 +46,11 @@ public class JUnitMetadataGenerator {
 
   private Description describeFeature(FeatureInfo feature) {
     Description desc = describeMethod(feature.getFeatureMethod());
+    feature.setMetadata(desc);
     if (feature.getDataProcessorMethod() != null)
       feature.getDataProcessorMethod().setMetadata(desc);
-    for (MethodInfo prov : feature.getDataProviderMethods())
-      prov.setMetadata(desc);
+    for (DataProviderInfo prov : feature.getDataProviders())
+      prov.getDataProviderMethod().setMetadata(desc);
     return desc;
   }
 

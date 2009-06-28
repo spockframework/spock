@@ -16,9 +16,7 @@
 
 package org.spockframework.compiler;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 import org.codehaus.groovy.ast.*;
 import org.codehaus.groovy.ast.expr.*;
@@ -30,6 +28,7 @@ import org.objectweb.asm.Opcodes;
 import org.spockframework.compiler.model.WhereBlock;
 import org.spockframework.util.BinaryNames;
 import org.spockframework.util.SyntaxException;
+import org.spockframework.runtime.model.DataProviderMetadata;
 
 /**
  *
@@ -38,6 +37,8 @@ import org.spockframework.util.SyntaxException;
 public class WhereBlockRewriter {
   private final WhereBlock block;
 
+  private final AstNodeCache nodeCache;
+  
   private int dataProviderCount = 0;
   // parameters of the data processor method (one for each data provider)
   private final List<Parameter> dataProcessorParams = new ArrayList<Parameter>();
@@ -46,12 +47,13 @@ public class WhereBlockRewriter {
   // parameterization variables of the data processor method
   private final List<VariableExpression> dataProcessorVars = new ArrayList<VariableExpression>();
 
-  private WhereBlockRewriter(WhereBlock block) {
+  private WhereBlockRewriter(WhereBlock block, AstNodeCache nodeCache) {
     this.block = block;
+    this.nodeCache = nodeCache;
   }
 
-  public static void rewrite(WhereBlock block) {
-    new WhereBlockRewriter(block).rewrite();
+  public static void rewrite(WhereBlock block, AstNodeCache nodeCache) {
+    new WhereBlockRewriter(block, nodeCache).rewrite();
   }
 
   private void rewrite() {
@@ -63,7 +65,8 @@ public class WhereBlockRewriter {
 
       int type = binExpr.getOperation().getType();
       if (type == Types.LEFT_SHIFT) {
-        createDataProviderMethod(binExpr);
+        int nextDataVariableIndex = dataProcessorVars.size();
+
         Parameter parameter = createDataProcessorParameter();
         Expression leftExpr = binExpr.getLeftExpression();
         if (leftExpr instanceof VariableExpression)
@@ -71,6 +74,8 @@ public class WhereBlockRewriter {
         else if (leftExpr instanceof ListExpression)
           rewriteMultiParameterization((ListExpression)leftExpr, parameter, stat);
         else invalidParameterization(stat);
+
+        createDataProviderMethod(binExpr, nextDataVariableIndex);
       } else if (type == Types.ASSIGN)
         rewriteDerivedParameterization(binExpr, stat);
       else invalidParameterization(stat);
@@ -81,8 +86,10 @@ public class WhereBlockRewriter {
     createDataProcessorMethod();
   }
 
-  private void createDataProviderMethod(BinaryExpression binExpr) {
-    block.getParent().getParent().getAst().addMethod(
+  private void createDataProviderMethod(BinaryExpression binExpr, int nextDataVariableIndex) {
+    Expression dataProviderExpr = binExpr.getRightExpression();
+
+    MethodNode method =
         new MethodNode(
             BinaryNames.getDataProviderName(block.getParent().getAst().getName(), dataProviderCount++),
             Opcodes.ACC_PUBLIC | Opcodes.ACC_SYNTHETIC,
@@ -92,9 +99,19 @@ public class WhereBlockRewriter {
             new BlockStatement(
                 Arrays.asList(
                     new ReturnStatement(
-                    new ExpressionStatement(
-                        binExpr.getRightExpression()))),
-                new VariableScope())));
+                        new ExpressionStatement(dataProviderExpr))),
+                new VariableScope()));
+
+    block.getParent().getParent().getAst().addMethod(method);
+
+    AnnotationNode ann = new AnnotationNode(nodeCache.DataProviderMetadata);
+    ann.addMember(DataProviderMetadata.LINE, new ConstantExpression(dataProviderExpr.getLineNumber()));
+    ann.addMember(DataProviderMetadata.COLUMN, new ConstantExpression(dataProviderExpr.getColumnNumber()));
+    List<Expression> dataVariableNames = new ArrayList<Expression>();
+    for (int i = nextDataVariableIndex; i < dataProcessorVars.size(); i++)
+      dataVariableNames.add(new ConstantExpression(dataProcessorVars.get(i).getName()));
+    ann.addMember(DataProviderMetadata.DATA_VARIABLES, new ListExpression(dataVariableNames));
+    method.addAnnotation(ann);
   }
 
   private Parameter createDataProcessorParameter() {
@@ -117,7 +134,8 @@ public class WhereBlockRewriter {
   // generates:
   // arg0 = argMethodParam.getAt(0)
   // arg1 = argMethodParam.getAt(1)
-  private void rewriteMultiParameterization(ListExpression list, Parameter argComputerParameter, Statement enclosingStat) {
+  private void rewriteMultiParameterization(ListExpression list, Parameter argComputerParameter,
+      Statement enclosingStat) {
     @SuppressWarnings("unchecked")
     List<Expression> listElems = list.getExpressions();
     for (int i = 0; i < listElems.size(); i++) {

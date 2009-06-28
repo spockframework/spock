@@ -20,11 +20,11 @@ import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
 
-import static org.spockframework.runtime.RunStatus.END_FEATURE;
-import static org.spockframework.runtime.RunStatus.END_SPECK;
+import static org.spockframework.runtime.RunStatus.*;
 import org.spockframework.runtime.model.MethodInfo;
 import org.spockframework.runtime.model.SpeckInfo;
 import org.spockframework.runtime.model.FeatureInfo;
+import org.spockframework.util.InternalSpockError;
 import spock.lang.*;
 
 // IDEA: represent setupSpeck()/afterSpeck() as JUnit test methods
@@ -34,6 +34,7 @@ public class JUnitSupervisor implements IRunSupervisor {
   private StackTraceFilter filter;
 
   private FeatureInfo feature;
+  private boolean ignoredFeature;
   private boolean unrollFeature;
   private UnrolledFeatureNameGenerator unrolledNameGenerator;
 
@@ -51,6 +52,11 @@ public class JUnitSupervisor implements IRunSupervisor {
 
   public void beforeFeature(FeatureInfo feature) {
     this.feature = feature;
+
+    // make sure we don't call fireTestStarted/fireTestFinished for ignored features
+    ignoredFeature = feature.getFeatureMethod().getReflection().getAnnotation(Ignore.class) != null;
+    if (ignoredFeature) return;
+
     Unroll unroll = feature.getFeatureMethod().getReflection().getAnnotation(Unroll.class);
     unrollFeature = unroll != null;
     if (unrollFeature)
@@ -83,13 +89,21 @@ public class JUnitSupervisor implements IRunSupervisor {
     notifier.fireTestFailure(new Failure(description, throwable));
 
     switch (method.getKind()) {
-      case FEATURE_EXECUTION:
-      case FEATURE:
-      case DATA_PROVIDER:
       case DATA_PROCESSOR:
+        return END_ITERATION;
+      case SETUP:
+      case CLEANUP:     
+      case FEATURE:
+        return feature.isParameterized() ? END_ITERATION : END_FEATURE;
+      case FEATURE_EXECUTION:
+      case DATA_PROVIDER:
         return END_FEATURE;
-      default:
+      case SETUP_SPECK:
+      case CLEANUP_SPECK:
+      case SPECK_EXECUTION:
         return END_SPECK;
+      default:
+        throw new InternalSpockError(method.getKind().toString());
     }
   }
 
@@ -107,10 +121,11 @@ public class JUnitSupervisor implements IRunSupervisor {
   }
   
   public void afterFeature() {
-    if (!unrollFeature)
+    if (!(ignoredFeature || unrollFeature))
       notifier.fireTestFinished(getDescription(feature.getFeatureMethod()));
 
     feature = null;
+    ignoredFeature = false;
     unrollFeature = false;
     unrolledNameGenerator = null;
   }

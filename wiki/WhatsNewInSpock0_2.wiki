@@ -86,3 +86,10 @@ println foo // print a message to see what's going on
 fooMatchesBar(foo, bar) // condition factored out into void (!) helper method
 deepEquals(foo, bar) // call to third-party assertion library
 }}}
+
+== Other improvements in a nutshell ==
+ * Better JUnit integration
+ * Better error handling
+ * More user-friendly error messages
+ * More powerful extension mechanism
+ * Many smaller improvements and bug fixes

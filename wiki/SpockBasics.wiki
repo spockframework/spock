@@ -139,7 +139,7 @@ stack.size() == 1
 stack.peek() == elem
 }}}
 
-Tip: Try to keep the number of conditions per feature method to a minimum. One to five conditions is a good guideline. If you have more than that, ask yourself if you are specifying multiple unrelated features at once. If the answer is yes, break up the feature method in several smaller ones. If your conditions only differ in their values, consider using [Parameterizations parameterized feature methods].
+Tip: Try to keep the number of conditions per feature method small. One to five conditions is a good guideline. If you have more than that, ask yourself if you are specifying multiple unrelated features at once. If the answer is yes, break up the feature method in several smaller ones. If your conditions only differ in their values, consider using [Parameterizations parameterized feature methods].
 
 What kind of feedback does Spock provide if a condition is violated? Let's try and change the second condition to `stack.size() == 2`. Here is what we get:
 

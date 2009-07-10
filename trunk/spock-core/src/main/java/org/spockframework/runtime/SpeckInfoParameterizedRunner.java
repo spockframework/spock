@@ -142,6 +142,7 @@ public class SpeckInfoParameterizedRunner extends SpeckInfoBaseRunner {
     invokeFeatureMethod(feature.getFeatureMethod(), args);
     invokeCleanup();
     supervisor.afterIteration();
+
     resetStatus(ITERATION);
   }
 

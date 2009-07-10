@@ -208,7 +208,8 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> {
     // (e.g. "org.Type", "Type.class", "org.Type.class");
     // therefore we have to provide one N/A value for every part of the class name
     String text = resourceProvider.getSourceText(expr);
-    recordCount += Util.countOccurrences(text, '.') + 1;
+    // TODO: remove guessing (text == null) once Groovy bug (no source code available if source is string-based) is fixed
+    recordCount += text == null ? 1 : Util.countOccurrences(text, '.') + 1;
   }
 
   public void visitUnaryMinusExpression(UnaryMinusExpression expr) {
@@ -510,7 +511,7 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> {
 
     args.add(expr.isImplicitThis() ? expr.getObjectExpression() : convert(expr.getObjectExpression()));
     args.add(convert(expr.getMethod()));
-    args.add(new ArrayExpression(ClassHelper.OBJECT_TYPE, AstUtil.getArguments(expr)));
+    args.add(new ArrayExpression(ClassHelper.OBJECT_TYPE, recordNa(convertAll(AstUtil.getArguments(expr)))));
 
     result.setSourcePosition(expr);
     return record(result);
@@ -526,7 +527,7 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> {
 
     args.add(new ClassExpression(expr.getOwnerType()));
     args.add(recordNa(new ConstantExpression(expr.getMethod())));
-    args.add(new ArrayExpression(ClassHelper.OBJECT_TYPE, AstUtil.getArguments(expr)));
+    args.add(new ArrayExpression(ClassHelper.OBJECT_TYPE, recordNa(convertAll(AstUtil.getArguments(expr)))));
 
     result.setSourcePosition(expr);
     return record(result);

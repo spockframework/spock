@@ -17,7 +17,6 @@
 package org.spockframework.smoke.condition
 
 import org.spockframework.runtime.ConditionNotSatisfiedError
-import spock.lang.Speck
 
 /**
  * Utility methods for spec'ing conditions.
@@ -25,7 +24,6 @@ import spock.lang.Speck
  * @author Peter Niederwieser
  */
 
-@Speck
 abstract class ConditionSpeckUtil {
   static fails(Closure condition) {
     try {

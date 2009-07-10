@@ -56,7 +56,7 @@ class Foo {
     expect: def y
     and: "and"
     where: ""
-    and: def z
+    and: z << 1
   }
 }
     """)

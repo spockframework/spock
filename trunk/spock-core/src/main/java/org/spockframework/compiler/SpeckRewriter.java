@@ -126,9 +126,10 @@ public class SpeckRewriter extends AbstractSpeckVisitor implements IRewriteResou
     methodHasCondition = false;
     movedStatsBackToMethod = false;
 
+
     makeMethodPublic(method);
-    transplantFeatureMethod(method);
-    rewriteWhereBlock(method);
+    transplantMethod(method);
+    handleWhereBlock(method);
   }
 
   private void makeMethodPublic(Method method) {
@@ -139,7 +140,7 @@ public class SpeckRewriter extends AbstractSpeckVisitor implements IRewriteResou
     method.getAst().setModifiers(modifiers | Opcodes.ACC_PUBLIC);
   }
 
-  private void transplantFeatureMethod(Method method) {
+  private void transplantMethod(Method method) {
     if (!(method instanceof FeatureMethod)) return;
 
     MethodNode oldAst = method.getAst();
@@ -183,9 +184,16 @@ public class SpeckRewriter extends AbstractSpeckVisitor implements IRewriteResou
   // where block must be rewritten before all other blocks
   // s.t. missing method parameters are added; these parameters
   // will then be used by DeepStatementRewriter.fixupVariableScope()
-  private void rewriteWhereBlock(Method method) {
+  private void handleWhereBlock(Method method) {
+    if (!(method instanceof FeatureMethod)) return;
+    
     Block block = method.getLastBlock();
-    if (!(block instanceof WhereBlock)) return;
+    if (!(block instanceof WhereBlock)) {
+      Parameter[] params = method.getAst().getParameters();
+      if (params.length > 0)
+        throw new SyntaxException(params[0], "Feature methods without 'where' block may not declare parameters");
+      return;
+    }
 
     new DeepStatementRewriter(this).visitBlock(block);
     WhereBlockRewriter.rewrite((WhereBlock)block, nodeCache);
@@ -290,7 +298,7 @@ public class SpeckRewriter extends AbstractSpeckVisitor implements IRewriteResou
     AstUtil.expandPredefDeclOrCall(expr, getThrownExceptionRef());
   }
 
-  private static boolean statHasInteraction(Statement stat, DeepStatementRewriter deep) {
+  private boolean statHasInteraction(Statement stat, DeepStatementRewriter deep) {
     if (deep.isInteractionFound()) return true;
 
     Expression expr = AstUtil.getExpression(stat, Expression.class);
@@ -394,7 +402,7 @@ public class SpeckRewriter extends AbstractSpeckVisitor implements IRewriteResou
   }
 
   public VariableExpression getThrownExceptionRef() {
-    if (thrownExceptionRef == null)
+     if (thrownExceptionRef == null)
       thrownExceptionRef =
           new VariableExpression(
               speck.getAst().addField(

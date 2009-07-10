@@ -30,9 +30,14 @@ import org.spockframework.runtime.model.MethodKind;
  *
  * @author Peter Niederwieser
  */
-public class TimeoutProcessor extends AbstractDirectiveProcessor {
-  public void visitMethodDirective(Annotation directive, MethodInfo method) {
-    IMethodInterceptor interceptor = new TimeoutInterceptor((Timeout)directive);
-    method.addInterceptor(interceptor);
+public class TimeoutProcessor extends AbstractDirectiveProcessor<Timeout> {
+  @Override
+  public void visitFeatureDirective(Timeout directive, FeatureInfo feature) {
+    feature.getFeatureMethod().addInterceptor(new TimeoutInterceptor(directive));
+  }
+
+  @Override
+  public void visitFixtureDirective(Timeout directive, MethodInfo fixtureMethod) {
+    fixtureMethod.addInterceptor(new TimeoutInterceptor(directive));
   }
 }

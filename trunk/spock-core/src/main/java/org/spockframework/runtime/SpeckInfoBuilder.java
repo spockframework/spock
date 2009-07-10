@@ -16,20 +16,18 @@
 
 package org.spockframework.runtime;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.*;
+
 import org.spockframework.compiler.Constants;
 import org.spockframework.runtime.intercept.Directive;
 import org.spockframework.runtime.intercept.IDirectiveProcessor;
 import org.spockframework.runtime.model.*;
 import org.spockframework.util.BinaryNames;
 import org.spockframework.util.InternalSpockError;
-import spock.lang.Speck;
-
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import spock.lang.*;
 
 /**
  * Builds a SpeckInfo from a Class instance.
@@ -40,7 +38,6 @@ public class SpeckInfoBuilder {
   private final Class<?> clazz;
   private final Map<Class<? extends IDirectiveProcessor>, IDirectiveProcessor> processors =
     new HashMap<Class<? extends IDirectiveProcessor>, IDirectiveProcessor>();
-  private SpeckMetadata metadata;
   private SpeckInfo speck;
 
   public SpeckInfoBuilder(Class<?> clazz) {
@@ -48,26 +45,24 @@ public class SpeckInfoBuilder {
   }
 
   public SpeckInfo build() throws InstantiationException, IllegalAccessException {
+    checkIsSpeck();
     getSpeckMetadata();
     buildSpeck();
     buildFields();
     buildFeatures();
-    buildLifecycleMethods();
+    buildFixtureMethods();
     processDirectives();
     return speck;
   }
 
-  private void getSpeckMetadata() {
-    Speck marker = clazz.getAnnotation(Speck.class);
-    if (marker == null)
-      throw new InvalidSpeckError(
-          "Class '%s' is not a Speck (did you forget to add @Speck?)").withArgs(clazz.getName());
+  private void checkIsSpeck() {
+    if (clazz.isAnnotationPresent(Speck.class)
+        || Specification.class.isAssignableFrom(clazz))
+      return;
 
-    metadata = clazz.getAnnotation(SpeckMetadata.class);
-    if (metadata == null)
-      // we know that Spock is on the compile classpath because @Speck is present
-      // in the class file, but for some reason the Speck wasn't transformed
-      throw new InternalSpockError("Speck '%s' has not been compiled properly").withArgs(clazz.getName());
+    throw new InvalidSpeckError(
+        "Class '%s' is not a Speck (it should either be annotated with @Speck or extend from class Specification)")
+        .withArgs(clazz.getName());
   }
 
   private void buildSpeck() {
@@ -75,7 +70,17 @@ public class SpeckInfoBuilder {
     speck.setParent(null);
     speck.setName(clazz.getSimpleName());
     speck.setReflection(clazz);
-    speck.setFilename(metadata.filename());
+    speck.setFilename(getSpeckMetadata().filename());
+  }
+
+  private SpeckMetadata getSpeckMetadata() {
+    SpeckMetadata metadata = clazz.getAnnotation(SpeckMetadata.class);
+    if (metadata == null)
+      // we know that Spock is on the compile classpath because @Speck or Specification
+      // is present in the class file, but for some reason the Speck wasn't transformed
+      throw new InternalSpockError("Speck '%s' has not been compiled properly").withArgs(clazz.getName());
+
+    return metadata;
   }
 
   private void buildFields() {
@@ -174,7 +179,7 @@ public class SpeckInfoBuilder {
     return null;
   }
 
-  private void buildLifecycleMethods() {
+  private void buildFixtureMethods() {
     speck.setSetupMethod(createMethod(Constants.SETUP_METHOD, MethodKind.SETUP, true));
     speck.setCleanupMethod(createMethod(Constants.CLEANUP_METHOD, MethodKind.CLEANUP, true));
     speck.setSetupSpeckMethod(createMethod(Constants.SETUP_SPECK_METHOD, MethodKind.SETUP_SPECK, true));
@@ -191,8 +196,11 @@ public class SpeckInfoBuilder {
     processNodeDirective(speck.getCleanupSpeckMethod());
     for (FeatureInfo feature : speck.getFeatures())
       processNodeDirective(feature.getFeatureMethod());
+    for (IDirectiveProcessor processor : processors.values())
+      processor.afterVisits(speck);
   }
 
+  @SuppressWarnings("unchecked")
   private void processNodeDirective(NodeInfo node) throws InstantiationException, IllegalAccessException {
     if (node.isStub()) return;
 
@@ -202,9 +210,13 @@ public class SpeckInfoBuilder {
       IDirectiveProcessor processor = getOrCreateProcessor(directive.value());
       if (node instanceof SpeckInfo)
         processor.visitSpeckDirective(ann, (SpeckInfo)node);
-      else if (node instanceof MethodInfo)
-        processor.visitMethodDirective(ann, (MethodInfo)node);
-      else processor.visitFieldDirective(ann, (FieldInfo)node);
+      else if (node instanceof MethodInfo) {
+        MethodInfo method = (MethodInfo)node;
+        if (method.getKind() == MethodKind.FEATURE)
+          processor.visitFeatureDirective(ann, method.getFeature());
+        else
+          processor.visitFixtureDirective(ann, method);
+      } else processor.visitFieldDirective(ann, (FieldInfo)node);
     }
   }
 

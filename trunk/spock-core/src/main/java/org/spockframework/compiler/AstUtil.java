@@ -210,19 +210,23 @@ public abstract class AstUtil {
         || expr instanceof StaticMethodCallExpression
         && isPredefCall((StaticMethodCallExpression)expr, methodName, minArgs, maxArgs);
   }
-  
+
   // call of the form "Predef.<methodName>(...)"
   // (although one wouldn't normally use this style, it is supposed to work nevertheless)
   public static boolean isPredefCall(MethodCallExpression expr, String methodName, int minArgs, int maxArgs){
     Expression target = expr.getObjectExpression();
-    return target instanceof ClassExpression
-        && target.getType().getName().equals(Predef.class.getName())
+    return
+        referencesPredefClass(target)
         && methodName.equals(expr.getMethodAsString()) // getMethodAsString() may return null
         && getArguments(expr).size() >= minArgs
         && getArguments(expr).size() <= maxArgs;
   }
 
-  // call of the form "<methodName>(...)"
+  private static boolean referencesPredefClass(Expression target) {
+    return target instanceof ClassExpression && target.getType().getName().equals(Predef.class.getName());
+  }
+
+  // call of the form "<methodName>(...)" and method imported statically (import potentially added by EarlyTransform)
   public static boolean isPredefCall(StaticMethodCallExpression expr, String methodName, int minArgs, int maxArgs) {
     return expr.getOwnerType().getName().equals(Predef.class.getName())
         && expr.getMethod().equals(methodName)

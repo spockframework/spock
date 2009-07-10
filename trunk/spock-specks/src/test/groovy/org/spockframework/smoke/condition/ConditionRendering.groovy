@@ -23,6 +23,8 @@ import org.junit.runner.RunWith
 import static org.spockframework.smoke.condition.ConditionSpeckUtil.*
 
 import static java.lang.Math.min
+import org.spockframework.smoke.EmbeddedSpeckRunner
+import org.spockframework.runtime.ConditionNotSatisfiedError
 
 /**
  * Describes rendering of whole conditions.

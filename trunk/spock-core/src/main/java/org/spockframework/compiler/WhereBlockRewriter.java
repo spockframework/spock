@@ -26,8 +26,7 @@ import org.codehaus.groovy.syntax.Types;
 import org.objectweb.asm.Opcodes;
 
 import org.spockframework.compiler.model.WhereBlock;
-import org.spockframework.util.BinaryNames;
-import org.spockframework.util.SyntaxException;
+import org.spockframework.util.*;
 import org.spockframework.runtime.model.DataProviderMetadata;
 
 /**
@@ -61,28 +60,31 @@ public class WhereBlockRewriter {
 
     for (Statement stat : whereStats) {
       BinaryExpression binExpr = AstUtil.getExpression(stat, BinaryExpression.class);
-      if (binExpr == null) invalidParameterization(stat);
+      if (binExpr == null || binExpr.getClass() != BinaryExpression.class) // don't allow subclasses like DeclarationExpression
+        notAParameterization(stat);
 
+      @SuppressWarnings("ConstantConditions")
       int type = binExpr.getOperation().getType();
+
       if (type == Types.LEFT_SHIFT) {
         int nextDataVariableIndex = dataProcessorVars.size();
 
         Parameter parameter = createDataProcessorParameter();
         Expression leftExpr = binExpr.getLeftExpression();
         if (leftExpr instanceof VariableExpression)
-          rewriteSimpleParameterization((VariableExpression)leftExpr, parameter);
+          rewriteSimpleParameterization((VariableExpression)leftExpr, parameter, stat);
         else if (leftExpr instanceof ListExpression)
           rewriteMultiParameterization((ListExpression)leftExpr, parameter, stat);
-        else invalidParameterization(stat);
+        else notAParameterization(stat);
 
         createDataProviderMethod(binExpr, nextDataVariableIndex);
       } else if (type == Types.ASSIGN)
         rewriteDerivedParameterization(binExpr, stat);
-      else invalidParameterization(stat);
+      else notAParameterization(stat);
     }
 
     whereStats.clear();
-    addFeatureParameters();
+    handleFeatureParameters();
     createDataProcessorMethod();
   }
 
@@ -102,8 +104,11 @@ public class WhereBlockRewriter {
                         new ExpressionStatement(dataProviderExpr))),
                 new VariableScope()));
 
+    method.addAnnotation(createDataProviderAnnotation(dataProviderExpr, nextDataVariableIndex));
     block.getParent().getParent().getAst().addMethod(method);
+  }
 
+  private AnnotationNode createDataProviderAnnotation(Expression dataProviderExpr, int nextDataVariableIndex) {
     AnnotationNode ann = new AnnotationNode(nodeCache.DataProviderMetadata);
     ann.addMember(DataProviderMetadata.LINE, new ConstantExpression(dataProviderExpr.getLineNumber()));
     ann.addMember(DataProviderMetadata.COLUMN, new ConstantExpression(dataProviderExpr.getColumnNumber()));
@@ -111,7 +116,7 @@ public class WhereBlockRewriter {
     for (int i = nextDataVariableIndex; i < dataProcessorVars.size(); i++)
       dataVariableNames.add(new ConstantExpression(dataProcessorVars.get(i).getName()));
     ann.addMember(DataProviderMetadata.DATA_VARIABLES, new ListExpression(dataVariableNames));
-    method.addAnnotation(ann);
+    return ann;
   }
 
   private Parameter createDataProcessorParameter() {
@@ -121,58 +126,117 @@ public class WhereBlockRewriter {
   }
 
   // generates: arg = argMethodParam
-  private void rewriteSimpleParameterization(VariableExpression arg, Parameter argComputerParameter) {
-    dataProcessorVars.add(arg);
-    dataProcessorStats.add(
-        new ExpressionStatement(
-            new DeclarationExpression(
-                arg,
-                Token.newSymbol(Types.ASSIGN, -1, -1),
-                new VariableExpression(argComputerParameter))));
+  private void rewriteSimpleParameterization(VariableExpression arg, Parameter dataProcessorParameter,
+      Statement enclosingStat) {
+    VariableExpression dataVar = createDataProcessorVariable(arg, enclosingStat);
+    ExpressionStatement exprStat = new ExpressionStatement(
+        new DeclarationExpression(
+            dataVar,
+            Token.newSymbol(Types.ASSIGN, -1, -1),
+            new VariableExpression(dataProcessorParameter)));
+    exprStat.setSourcePosition(enclosingStat);
+    dataProcessorStats.add(exprStat);
   }
 
   // generates:
   // arg0 = argMethodParam.getAt(0)
   // arg1 = argMethodParam.getAt(1)
-  private void rewriteMultiParameterization(ListExpression list, Parameter argComputerParameter,
+  private void rewriteMultiParameterization(ListExpression list, Parameter dataProcessorParameter,
       Statement enclosingStat) {
     @SuppressWarnings("unchecked")
     List<Expression> listElems = list.getExpressions();
     for (int i = 0; i < listElems.size(); i++) {
       Expression listElem = listElems.get(i);
       if (AstUtil.isPlaceholderVariableRef(listElem)) continue;
-      if (!(listElem instanceof VariableExpression)) invalidParameterization(enclosingStat);
-      VariableExpression arg = (VariableExpression)listElem;
-      dataProcessorVars.add(arg);
-      dataProcessorStats.add(
+      VariableExpression dataVar = createDataProcessorVariable(listElem, enclosingStat);
+      ExpressionStatement exprStat =
           new ExpressionStatement(
               new DeclarationExpression(
-                  arg,
+                  dataVar,
                   Token.newSymbol(Types.ASSIGN, -1, -1),
                   new MethodCallExpression(
-                      new VariableExpression(argComputerParameter),
+                      new VariableExpression(dataProcessorParameter),
                       "getAt",
-                      new ConstantExpression(i)))));
+                      new ConstantExpression(i))));
+      exprStat.setSourcePosition(enclosingStat);
+      dataProcessorStats.add(exprStat);
     }
   }
 
   private void rewriteDerivedParameterization(BinaryExpression parameterization, Statement enclosingStat) {
-    Expression leftExpr = parameterization.getLeftExpression();
-    if (!(leftExpr instanceof VariableExpression)) invalidParameterization(enclosingStat);
-    VariableExpression arg = (VariableExpression)leftExpr;
-    dataProcessorVars.add(arg);
-    dataProcessorStats.add(
+    VariableExpression dataVar = createDataProcessorVariable(parameterization.getLeftExpression(), enclosingStat);
+
+    ExpressionStatement exprStat =
         new ExpressionStatement(
             new DeclarationExpression(
-                arg,
+                dataVar,
                 Token.newSymbol(Types.ASSIGN, -1, -1),
-                parameterization.getRightExpression())));
+                parameterization.getRightExpression()));
+
+    exprStat.setSourcePosition(enclosingStat);
+    dataProcessorStats.add(exprStat);
+  }
+
+  private VariableExpression createDataProcessorVariable(Expression varExpr, Statement enclosingStat) {
+    if (!(varExpr instanceof VariableExpression))
+      notAParameterization(enclosingStat);
+
+    VariableExpression typedVarExpr = (VariableExpression)varExpr;
+    verifyDataProcessorVariable(typedVarExpr);
+
+    VariableExpression result = new VariableExpression(typedVarExpr.getName(), typedVarExpr.getType());
+    dataProcessorVars.add(result);
+    return result;
+  }
+
+  private void verifyDataProcessorVariable(VariableExpression varExpr) {
+    Variable accessedVar = varExpr.getAccessedVariable();
+    if (!(accessedVar instanceof DynamicVariable || accessedVar instanceof Parameter))
+      throw new SyntaxException(varExpr, "A variable named '%s' already exists in this scope", varExpr.getName());
+
+    if (block.getParent().getAst().getParameters().length == 0) {
+      assert accessedVar instanceof DynamicVariable;
+      if (getDataProcessorVariable(varExpr.getName()) != null)
+        throw new SyntaxException(varExpr, "Duplicate declaration of data variable '%s'", varExpr.getName());
+    } else {
+      if (!(accessedVar instanceof Parameter))
+        throw new SyntaxException(varExpr,
+            "Data variable '%s' needs to be declared as method parameter",
+            varExpr.getName());
+    }
+  }
+
+  private VariableExpression getDataProcessorVariable(String name) {
+    for (VariableExpression var : dataProcessorVars)
+      if (var.getName().equals(name)) return var;
+
+    return null;
+  }
+
+  private void handleFeatureParameters() {
+    Parameter[] parameters = block.getParent().getAst().getParameters();
+    if (parameters.length == 0)
+      addFeatureParameters();
+    else
+      checkAllParametersAreDataVariables(parameters);
+  }
+
+  private void checkAllParametersAreDataVariables(Parameter[] parameters) {
+    if (parameters.length == dataProcessorVars.size()) return;
+
+    Parameter p = findFirstConflictingParameter(parameters);
+    throw new SyntaxException(p, "Parameter '%s' does not refer to a data variable", p.getName());
+  }
+
+  private Parameter findFirstConflictingParameter(Parameter[] parameters) {
+    for (Parameter param : parameters)
+      if (getDataProcessorVariable(param.getName()) == null)
+        return param;
+
+    throw new UnreachableCodeError();
   }
 
   private void addFeatureParameters() {
-    if (block.getParent().getAst().getParameters().length > 0)
-      return;
-
     Parameter[] parameters = new Parameter[dataProcessorVars.size()];
     for (int i = 0; i < dataProcessorVars.size(); i++)
       parameters[i] = new Parameter(ClassHelper.DYNAMIC_TYPE, dataProcessorVars.get(i).getName());
@@ -187,7 +251,7 @@ public class WhereBlockRewriter {
             new ArrayExpression(
                 ClassHelper.OBJECT_TYPE,
                 dataProcessorVars)));
-    
+
     block.getParent().getParent().getAst().addMethod(
       new MethodNode(
           BinaryNames.getDataProcessorName(block.getParent().getAst().getName()),
@@ -200,8 +264,8 @@ public class WhereBlockRewriter {
               new VariableScope())));
   }
 
-  private static void invalidParameterization(Statement stat) {
+  private static void notAParameterization(Statement stat) {
     throw new SyntaxException(stat,
-"where-blocks may only contain parameterizations (e.g. 'salary << [1000, 3000, 5000]; salaryk = salary / 1000')");
+"where-blocks may only contain parameterizations (e.g. 'salary << [1000, 5000, 9000]; salaryk = salary / 1000')");
   }
 }

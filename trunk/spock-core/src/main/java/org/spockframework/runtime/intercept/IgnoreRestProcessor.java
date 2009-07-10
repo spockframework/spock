@@ -16,23 +16,23 @@
 
 package org.spockframework.runtime.intercept;
 
-import java.lang.annotation.Annotation;
-
-import spock.lang.Ignore;
-
-import org.spockframework.runtime.model.MethodInfo;
+import org.spockframework.runtime.model.FeatureInfo;
 import org.spockframework.runtime.model.SpeckInfo;
-import org.spockframework.runtime.model.MethodKind;
-import org.spockframework.runtime.InvalidSpeckError;
+import spock.lang.*;
 
 /**
- * Processes @IgnoreRest directives on Speck methods.
+ * Processes @IgnoreRest directives.
  *
  * @author Peter Niederwieser
  */
-public class IgnoreRestProcessor extends AbstractDirectiveProcessor {
-  public void visitMethodDirective(Annotation directive, MethodInfo method) {
-    if (method.getKind() != MethodKind.FEATURE)
-      throw new InvalidSpeckError("@IgnoreRest may only be applied to Feature methods");
+public class IgnoreRestProcessor extends AbstractDirectiveProcessor<IgnoreRest> {
+  @Override
+  public void visitFeatureDirective(IgnoreRest directive, FeatureInfo feature) {} // do nothing
+
+  @Override
+  public void afterVisits(SpeckInfo speck) {
+    for (FeatureInfo feature : speck.getFeatures())
+      if (!feature.getFeatureMethod().getReflection().isAnnotationPresent(IgnoreRest.class))
+        feature.addInterceptor(new IgnoreInterceptor("@IgnoreRest"));
   }
 }

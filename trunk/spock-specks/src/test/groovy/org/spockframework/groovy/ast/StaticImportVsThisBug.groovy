@@ -14,14 +14,25 @@
  * limitations under the License.
  */
 
-package org.spockframework.util;
+package org.spockframework.groovy.ast
 
 /**
- *
  * @author Peter Niederwieser
  */
-public class UnreachableError extends InternalSpockError {
-  public UnreachableError() {
-    super("You shouldn't be here...fascinating");
-  }
-}
+//import static Evil.foo
+//
+//class StaticImportVsThisBug extends GroovyTestCase {
+//  void test() {
+//    this.foo()
+//  }
+//
+//  def foo() {
+//    assert true
+//  }
+//}
+//
+//class Evil {
+//  static foo() {
+//    assert false
+//  }
+//}

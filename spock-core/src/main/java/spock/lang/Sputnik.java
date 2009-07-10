@@ -49,6 +49,8 @@ public class Sputnik extends Runner implements Filterable, Sortable {
 
   public void filter(Filter filter) throws NoTestsRemainException {
     speck.filterFeatures(new JUnitFilterAdapter(filter));
+    if (speck.getFeatures().size() == 0)
+      throw new NoTestsRemainException();
   }
 
   public void sort(Sorter sorter) {

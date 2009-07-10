@@ -90,7 +90,7 @@ class Parameterizations {
       d = a + b + c
   }
 
-  @Ignore // we should either solve this or allow it
+  @Ignore("we should either solve this or allow it")
   def "simple parameterization whose value is accessed from closure within other parameterization"() {
     expect:
     a == 1

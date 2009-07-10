@@ -20,30 +20,22 @@ import java.lang.annotation.Annotation;
 
 import spock.lang.Ignore;
 
-import org.spockframework.runtime.model.MethodInfo;
-import org.spockframework.runtime.model.SpeckInfo;
-import org.spockframework.runtime.model.MethodKind;
+import org.spockframework.runtime.model.*;
 import org.spockframework.runtime.InvalidSpeckError;
 
 /**
- * Processes @Ignore directives on Specks and Speck methods.
+ * Processes @Ignore directives.
  *
  * @author Peter Niederwieser
  */
-public class IgnoreProcessor extends AbstractDirectiveProcessor {
-  public void visitSpeckDirective(Annotation directive, SpeckInfo speck) {
-    speck.addInterceptor(new IgnoreInterceptor(getReason(directive)));
+// we cannot easily support @Ignore on fixture methods because
+// setup() and setupSpeck() perform initialization of user-defined and internal fields
+public class IgnoreProcessor extends AbstractDirectiveProcessor<Ignore> {
+  public void visitSpeckDirective(Ignore directive, SpeckInfo speck) {
+    speck.addInterceptor(new IgnoreInterceptor(directive.value()));
   }
 
-  public void visitMethodDirective(Annotation directive, MethodInfo method) {
-    if (method.getKind() == MethodKind.FEATURE)
-      method.getFeature().addInterceptor(new IgnoreInterceptor(getReason(directive)));
-    else
-      // must be a lifecycle methods as we don't currently have a runtime representation for helper methods
-      throw new InvalidSpeckError("@Ignore may not be applied to lifecycle methods");
-  }
-
-  private String getReason(Annotation directive) {
-    return ((Ignore)directive).value();
+  public void visitFeatureDirective(Ignore directive, FeatureInfo feature) {
+    feature.addInterceptor(new IgnoreInterceptor(directive.value()));
   }
 }

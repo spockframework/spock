@@ -19,6 +19,7 @@ package org.spockframework.smoke
 import org.junit.runner.Result
 import org.junit.runner.JUnitCore
 import org.junit.runner.Request
+import org.junit.runner.notification.RunListener
 
 /**
  * Utility class for running Specks from String source.
@@ -26,14 +27,18 @@ import org.junit.runner.Request
  * @author Peter Niederwieser
  */
 class EmbeddedSpeckRunner {
-
   private compiler = new EmbeddedSpeckCompiler()
 
   boolean throwFailure = true
+  List<RunListener> listeners = []
 
   Result runRequest(Request request) {
-    def result = new JUnitCore().run(request)
+    def junitCore = new JUnitCore()
+    listeners.each { junitCore.addListener(it) }
+
+    def result = junitCore.run(request)
     if (throwFailure && result.failureCount > 0) throw result.failures[0].exception
+
     result
   }
 

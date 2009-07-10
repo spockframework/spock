@@ -14,20 +14,19 @@
  * limitations under the License.
  */
 
-package org.spockframework.runtime.intercept;
-
-import java.lang.annotation.Annotation;
-
-import org.spockframework.runtime.model.*;
+package org.spockframework.groovy.ast
 
 /**
- *
  * @author Peter Niederwieser
  */
-public interface IDirectiveProcessor<T extends Annotation> {
-  void visitSpeckDirective(T directive, SpeckInfo speck);
-  void visitFeatureDirective(T directive, FeatureInfo feature);
-  void visitFixtureDirective(T directive, MethodInfo fixtureMethod);
-  void visitFieldDirective(T directive, FieldInfo field);
-  void afterVisits(SpeckInfo speck);
-}
+//class PrivateStaticMethodBug extends TestCaseWithPrivateStaticMethod {
+//  void testInvokePrivateStaticInheritedMethod() {
+//    assert foo() == "foo"
+//  }
+//}
+//
+//class TestCaseWithPrivateStaticMethod extends GroovyTestCase {
+//  private static foo() {
+//    "foo"
+//  }
+//}

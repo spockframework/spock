@@ -28,8 +28,8 @@ import org.codehaus.groovy.transform.ASTTransformation;
 import org.codehaus.groovy.transform.GroovyASTTransformation;
 
 import org.spockframework.compiler.model.Speck;
-import org.spockframework.util.Assert;
 import org.spockframework.util.SyntaxException;
+import spock.lang.*;
 
 /**
  *
@@ -50,7 +50,7 @@ public class MainTransform implements ASTTransformation {
       List<ClassNode> classes =  (List<ClassNode>)module.getClasses();
 
       for (ClassNode clazz : classes) {
-        if (!AstUtil.hasAnnotation(clazz, spock.lang.Speck.class)) continue;
+        if (!isSpeck(clazz)) continue;
         
         Speck speck = new SpeckParser().build(clazz);
         speck.accept(new SpeckRewriter(nodeCache, lookup));
@@ -66,5 +66,21 @@ public class MainTransform implements ASTTransformation {
     } finally {
       if (lookup != null) lookup.close();
     }
+  }
+
+  private static boolean isSpeck(ClassNode clazz) {
+    return hasSpeckAnnotation(clazz) || isDerivedFromSpecification(clazz);
+  }
+
+  private static boolean hasSpeckAnnotation(ClassNode clazz) {
+    return AstUtil.hasAnnotation(clazz, spock.lang.Speck.class);
+  }
+
+  private static boolean isDerivedFromSpecification(ClassNode clazz) {
+    for (ClassNode node = clazz; node != null; node = node.getSuperClass())
+      if (node.getName().equals(Specification.class.getName()))
+        return true;
+
+    return false;
   }
 }

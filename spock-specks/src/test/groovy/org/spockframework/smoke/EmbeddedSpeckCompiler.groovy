@@ -22,11 +22,10 @@ package org.spockframework.smoke
  * @author Peter Niederwieser
  */
 class EmbeddedSpeckCompiler {
-
   def loader = new GroovyClassLoader()
 
   Class compile(String source) {
-    loader.parseClass(source)
+    loader.parseClass(source.trim())
   }
 
   Class compileWithImports(String source) {

@@ -54,7 +54,7 @@
         <plugin>
           <groupId>org.codehaus.groovy.maven</groupId>
           <artifactId>gmaven-plugin</artifactId>
-          <version>1.0-rc-5</version>
+          <version>1.0</version>
           <configuration>
             <providerSelection>1.6</providerSelection>
           </configuration>
@@ -62,7 +62,7 @@
           <dependency>
             <groupId>org.codehaus.groovy.maven.runtime</groupId>
             <artifactId>gmaven-runtime-1.6</artifactId>
-            <version>1.0-rc-5</version>
+            <version>1.0</version>
             <exclusions>
               <exclusion>
                 <groupId>org.codehaus.groovy</groupId>

@@ -24,8 +24,7 @@ import org.codehaus.groovy.control.SourceUnit;
 import org.codehaus.groovy.transform.ASTTransformation;
 import org.codehaus.groovy.transform.GroovyASTTransformation;
 
-import spock.lang.Predef;
-import spock.lang.Speck;
+import spock.lang.*;
 
 /**
  * A transformation for everything that needs to be done before the semantic
@@ -53,7 +52,7 @@ public class EarlyTransform implements ASTTransformation {
     List<ClassNode> classes = module.getClasses();
 
     for (ClassNode clazz : classes)
-      if (hasSpeckAnnotation(clazz))
+      if (hasSpeckAnnotation(clazz) || isDerivedFromSpecification(clazz))
         return true;
 
     return false;
@@ -70,6 +69,14 @@ public class EarlyTransform implements ASTTransformation {
         return true;
     }
     
+    return false;
+  }
+
+   private static boolean isDerivedFromSpecification(ClassNode clazz) {
+    for (ClassNode node = clazz; node != null; node = node.getSuperClass())
+      if (node.getName().equals(Specification.class.getName()))
+        return true;
+
     return false;
   }
 

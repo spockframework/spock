@@ -40,6 +40,7 @@ public class JUnitSupervisor implements IRunSupervisor {
 
   private int iterationCount;
   private Description unrolledDescription;
+  private boolean errorSinceLastReset;
 
   public JUnitSupervisor(RunNotifier notifier) {
     this.notifier = notifier;
@@ -67,6 +68,7 @@ public class JUnitSupervisor implements IRunSupervisor {
 
   public void beforeFirstIteration(int estimatedNumIterations) {
     iterationCount = 0;
+    errorSinceLastReset = false;
   }
 
   public void beforeIteration(Object[] args) {
@@ -78,12 +80,13 @@ public class JUnitSupervisor implements IRunSupervisor {
   }
 
   public int error(MethodInfo method, Throwable throwable, int runStatus) {
+    errorSinceLastReset = true;
     filter.filter(throwable);
 
     Description description = getFailedDescription(method);
     if (throwable instanceof SkipSpeckOrFeatureException) {
       notifier.fireTestIgnored(description);
-      return END_FEATURE;
+      return OK;
     }
     
     notifier.fireTestFailure(new Failure(description, throwable));
@@ -115,7 +118,7 @@ public class JUnitSupervisor implements IRunSupervisor {
   }
 
   public void afterLastIteration() {
-    if (iterationCount == 0)
+    if (iterationCount == 0 && !errorSinceLastReset)
       notifier.fireTestFailure(new Failure(getDescription(feature.getFeatureMethod()),
           new SpeckExecutionException("Data provider has no data")));
   }

@@ -16,26 +16,25 @@
 
 package org.spockframework.runtime.intercept;
 
-import java.lang.annotation.Annotation;
-
-import spock.lang.FailsWith;
-
-import org.spockframework.runtime.model.MethodInfo;
-import org.spockframework.runtime.model.SpeckInfo;
-import org.spockframework.runtime.model.FeatureInfo;
+import org.spockframework.runtime.model.*;
+import spock.lang.*;
 
 /**
  *
  * @author Peter Niederwieser
  */
-public class FailsWithProcessor extends AbstractDirectiveProcessor {
-  public void visitSpeckDirective(Annotation directive, SpeckInfo speck) {
+public class FailsWithProcessor extends AbstractDirectiveProcessor<FailsWith> {
+  public void visitSpeckDirective(FailsWith directive, SpeckInfo speck) {
     for (FeatureInfo feature : speck.getFeatures())
       if (!feature.getFeatureMethod().getReflection().isAnnotationPresent(FailsWith.class))
-        feature.getFeatureMethod().addInterceptor(new FailsWithInterceptor((FailsWith)directive));
+        feature.getFeatureMethod().addInterceptor(new FailsWithInterceptor(directive));
   }
 
-  public void visitMethodDirective(Annotation directive, MethodInfo method) {
-    method.addInterceptor(new FailsWithInterceptor((FailsWith)directive));
+  public void visitFeatureDirective(FailsWith directive, FeatureInfo feature) {
+    feature.getFeatureMethod().addInterceptor(new FailsWithInterceptor(directive));
+  }
+
+  public void visitFixtureDirective(FailsWith directive, MethodInfo fixtureMethod) {
+    fixtureMethod.addInterceptor(new FailsWithInterceptor(directive));
   }
 }

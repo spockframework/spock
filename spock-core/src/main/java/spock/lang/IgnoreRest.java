@@ -21,6 +21,12 @@ import java.lang.annotation.*;
 import org.spockframework.runtime.intercept.Directive;
 import org.spockframework.runtime.intercept.IgnoreRestProcessor;
 
+/**
+ * Indicates that all feature methods except the ones to which this annotation
+ * is applied should be ignored.
+ *
+ * @author Peter Niederwieser
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 @Directive(IgnoreRestProcessor.class)

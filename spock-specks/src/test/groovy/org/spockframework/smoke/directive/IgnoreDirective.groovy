@@ -62,8 +62,8 @@ class IgnoreFeatureMethods {
 
 @Speck
 @RunWith(Sputnik)
-class IgnoreLifecycleMethod {
-  def "lifecycle methods cannot be ignored"() {
+class IgnoreFixtureMethods {
+  def "fixture methods cannot be ignored"() {
     def runner = new EmbeddedSpeckRunner()
 
     when:

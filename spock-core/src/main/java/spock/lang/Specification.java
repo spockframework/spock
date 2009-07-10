@@ -14,20 +14,19 @@
  * limitations under the License.
  */
 
-package org.spockframework.runtime.intercept;
+package spock.lang;
 
-import java.lang.annotation.Annotation;
-
-import org.spockframework.runtime.model.*;
+import org.junit.runner.RunWith;
 
 /**
+ * Convenience base class for specifications. Avoids the need to annotate
+ * a specification with @Speck and @RunWith, and makes spock.lang.Predef
+ * members automatically known to the IDE.
+ * <p><em>Note:</em> This class is experimental and might be removed in
+ * a future version.
  *
  * @author Peter Niederwieser
  */
-public interface IDirectiveProcessor<T extends Annotation> {
-  void visitSpeckDirective(T directive, SpeckInfo speck);
-  void visitFeatureDirective(T directive, FeatureInfo feature);
-  void visitFixtureDirective(T directive, MethodInfo fixtureMethod);
-  void visitFieldDirective(T directive, FieldInfo field);
-  void afterVisits(SpeckInfo speck);
-}
+@Speck
+@RunWith(Sputnik.class)
+public class Specification extends Predef {}

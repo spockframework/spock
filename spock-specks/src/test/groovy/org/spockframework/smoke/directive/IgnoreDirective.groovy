@@ -17,11 +17,9 @@
 package org.spockframework.smoke.directive
 
 import spock.lang.*
+import static spock.lang.Predef.*
 import org.junit.runner.RunWith
-import org.junit.runner.JUnitCore
 import org.spockframework.runtime.InvalidSpeckError
-import org.spockframework.smoke.EmbeddedSpeckRunner
-import org.spockframework.smoke.EmbeddedSpeckRunner
 import org.spockframework.smoke.EmbeddedSpeckRunner
 
 /**
@@ -29,35 +27,60 @@ import org.spockframework.smoke.EmbeddedSpeckRunner
  * @author Peter Niederwieser
  */
 @Issue("12")
-@Ignore
 @Speck
 @RunWith(Sputnik)
 class IgnoreSpeck {
-  def "ignored 1"() {
+  def "ignored Speck is not run"() {
+    def runner = new EmbeddedSpeckRunner()
+
+    when:
+    runner.runWithImports """
+@Ignore
+@Speck
+@RunWith(Sputnik)
+class Foo {
+  def foo() {
     expect: false
   }
 
-  def "ignored 2"() {
+  def bar() {
     expect: false
+  }
+}
+    """
+
+    then:
+    noExceptionThrown()
   }
 }
 
 @Speck
 @RunWith(Sputnik)
 class IgnoreFeatureMethods {
-  @Ignore
-  def "ignored 1"() {
-    expect: false
+  def "ignored feature methods are not run"() {
+    def runner = new EmbeddedSpeckRunner()
+
+    when:
+    runner.runSpeckBody """
+@Ignore
+def "ignored"() {
+  expect: false
+}
+
+def "not ignored"() {
+  expect: true
+}
+
+@Ignore
+def "also ignored"() {
+  expect: false
+}
+    """
+
+    then:
+    noExceptionThrown()
   }
 
-  @Ignore
-  def "ignored 2"() {
-    expect: false
-  }
-
-  def "not ignored"() {
-    expect: true
-  }
 }
 
 @Speck

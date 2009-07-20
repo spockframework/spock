@@ -26,7 +26,7 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.model.Plugin;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 
-import org.spockframework.buildsupport.JUnit4TestClassFinder;
+import org.spockframework.buildsupport.SpeckClassFileFinder;
 
 /**
  * Finds all test classes that can be run with JUnit 4 (including but not
@@ -50,13 +50,13 @@ public class FindSpecksMojo extends AbstractMojo {
   public void execute() throws MojoExecutionException {
     List<File> tests;
     try {
-      tests = new JUnit4TestClassFinder().findTestClasses(testOutputDirectory);
+      tests = new SpeckClassFileFinder().findSpecks(testOutputDirectory);
     } catch (IOException e) {
       // chaining the exception would result in a cluttered error message
       throw new MojoExecutionException(e.toString());
     }
 
-    getLog().info(String.format("Found %d test classes", tests.size()));
+    getLog().info(String.format("Found %d Spock specifications", tests.size()));
     
     Plugin plugin = getSurefirePlugin();
     Xpp3Dom config = (Xpp3Dom)plugin.getConfiguration();

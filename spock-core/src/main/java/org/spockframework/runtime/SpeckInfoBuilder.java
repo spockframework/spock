@@ -26,8 +26,6 @@ import org.spockframework.runtime.intercept.Directive;
 import org.spockframework.runtime.intercept.IDirectiveProcessor;
 import org.spockframework.runtime.model.*;
 import org.spockframework.util.BinaryNames;
-import org.spockframework.util.InternalSpockError;
-import spock.lang.*;
 
 /**
  * Builds a SpeckInfo from a Class instance.
@@ -45,7 +43,6 @@ public class SpeckInfoBuilder {
   }
 
   public SpeckInfo build() throws InstantiationException, IllegalAccessException {
-    checkIsSpeck();
     getSpeckMetadata();
     buildSpeck();
     buildFields();
@@ -53,16 +50,6 @@ public class SpeckInfoBuilder {
     buildFixtureMethods();
     processDirectives();
     return speck;
-  }
-
-  private void checkIsSpeck() {
-    if (clazz.isAnnotationPresent(Speck.class)
-        || Specification.class.isAssignableFrom(clazz))
-      return;
-
-    throw new InvalidSpeckError(
-        "Class '%s' is not a Speck (it should either be annotated with @Speck or extend from class Specification)")
-        .withArgs(clazz.getName());
   }
 
   private void buildSpeck() {
@@ -76,9 +63,8 @@ public class SpeckInfoBuilder {
   private SpeckMetadata getSpeckMetadata() {
     SpeckMetadata metadata = clazz.getAnnotation(SpeckMetadata.class);
     if (metadata == null)
-      // we know that Spock is on the compile classpath because @Speck or Specification
-      // is present in the class file, but for some reason the Speck wasn't transformed
-      throw new InternalSpockError("Speck '%s' has not been compiled properly").withArgs(clazz.getName());
+      throw new InvalidSpeckError(
+          "Class '%s' is not a Speck, or has not been compiled properly").withArgs(clazz.getName());
 
     return metadata;
   }

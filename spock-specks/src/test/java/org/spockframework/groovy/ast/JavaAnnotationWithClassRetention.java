@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.spockframework.util.inspector;
+package org.spockframework.groovy.ast;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.spockframework.smoke
+package org.spockframework.smoke.parameterization
 
 import org.codehaus.groovy.control.MultipleCompilationErrorsException
 import org.codehaus.groovy.syntax.SyntaxException
@@ -24,13 +24,15 @@ import java.lang.*
 import spock.lang.*
 import static spock.lang.Predef.*
 import org.codehaus.groovy.runtime.typehandling.GroovyCastException
+import org.spockframework.smoke.EmbeddedSpeckCompiler
+import org.spockframework.smoke.EmbeddedSpeckRunner
 
 /**
  * @author Peter Niederwieser
  */
 @Speck
 @RunWith(Sputnik)
-class FeatureMethodParameters {
+class MethodParameters {
   @Shared EmbeddedSpeckCompiler compiler = new EmbeddedSpeckCompiler()
   @Shared EmbeddedSpeckRunner runner = new EmbeddedSpeckRunner()
 
@@ -54,9 +56,8 @@ def foo(int x, String y) {
     """
 
     then:
-    MultipleCompilationErrorsException e = thrown()
-    e.errorCollector.errorCount == 1
-    e.errorCollector.errors[0].cause instanceof SpockSyntaxException
+    Exception e = thrown()
+    containsSyntaxException(e)
   }
 
   def "typed parameters"(Integer x, Integer y) {
@@ -68,16 +69,14 @@ def foo(int x, String y) {
     y << [1, 2]
   }
 
-// Exception in thread "main" java.lang.VerifyError: (class: org/spockframework/smoke/FeatureMethodParameters, method:
-// __feature1proc signature: (Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;) Register 4 contains wrong type
-//  def "typed primitive parameters"(int x, int y) {
-//    expect:
-//    x == y
-//
-//    where:
-//    x << [1, 2]
-//    y << [1, 2]
-//  }
+  def "typed primitive parameters"(int x, int y) {
+    expect:
+    x == y
+
+    where:
+    x << [1, 2]
+    y << [1, 2]
+  }
 
   def "untyped parameters"(x, y) {
     expect:
@@ -120,7 +119,7 @@ def foo(x) {
     """
 
     then:
-    def e = thrown(Exception)
+    Exception e = thrown()
     containsSyntaxException(e)
   }
 
@@ -139,7 +138,7 @@ def foo(x, y, z) {
     """
 
     then:
-    def e = thrown(Exception)
+    Exception e = thrown()
     containsSyntaxException(e)
   }
 
@@ -157,7 +156,7 @@ def foo(x, a) {
     """
 
     then:
-    def e = thrown(Exception)
+    Exception e = thrown()
     containsSyntaxException(e)
   }
 
@@ -187,96 +186,9 @@ def foo(x, ClassLoader y) {
     thrown(GroovyCastException)
   }
 
-  def "data variable collides with local variable"() {
-    when:
-    compiler.compileFeatureBody """
-def x = 0
-
-expect:
-x == y
-
-where:
-x << [1, 2]
-y << [1, 2]
-    """
-
-    then:
-    def e = thrown(Exception)
-    containsSyntaxException(e)
-  }
-
-  def "data variable collides with instance field"() {
-    when:
-    compiler.compileSpeckBody """
-def instanceField
-
-def foo() {
-  expect:
-  true
-
-  where:
-  instanceField << 1
-}
-    """
-
-    then:
-    def e = thrown(Exception)
-    containsSyntaxException(e)
-  }
-
-  def "data variable collides with static field"() {
-    when:
-    compiler.compileSpeckBody """
-static String staticField = "foo"
-
-def foo() {
-  expect:
-  true
-
-  where:
-  staticField << 1
-}
-    """
-
-    then:
-    def e = thrown(Exception)
-    containsSyntaxException(e)
-  }
-
-  def "duplicate data variable"() {
-    when:
-    compiler.compileFeatureBody """
-expect:
-true
-
-where:
-x << 1
-x << 2
-    """
-
-    then:
-    def e = thrown(Exception)
-    containsSyntaxException(e)
-  }
-
-  def "duplicate data variable in multi-parameterization"() {
-    when:
-    compiler.compileFeatureBody """
-expect:
-true
-
-where:
-[x, x] << [[1, 1]]
-    """
-
-    then:
-    def e = thrown(Exception)
-    containsSyntaxException(e)
-  }
-
   void containsSyntaxException(e) {
     assert e instanceof MultipleCompilationErrorsException
     assert e.errorCollector.errorCount == 1
-    assert e.errorCollector.errors[0].cause instanceof SyntaxException
+    assert e.errorCollector.errors[0].cause instanceof SpockSyntaxException
   }
 }

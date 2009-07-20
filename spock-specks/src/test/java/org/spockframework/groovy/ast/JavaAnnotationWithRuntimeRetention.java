@@ -14,25 +14,14 @@
  * limitations under the License.
  */
 
-package org.spockframework.groovy.ast
+package org.spockframework.groovy.ast;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
 /**
- * @author Peter Niederwieser
+ * For testing purposes.
  */
-//import static Evil.foo
-//
-//class StaticImportVsThisBug extends GroovyTestCase {
-//  void test() {
-//    this.foo()
-//  }
-//
-//  def foo() {
-//    assert true
-//  }
-//}
-//
-//class Evil {
-//  static foo() {
-//    assert false
-//  }
-//}
+@Retention(RetentionPolicy.RUNTIME)
+public @interface JavaAnnotationWithRuntimeRetention {
+}

@@ -14,19 +14,22 @@
  * limitations under the License.
  */
 
-package org.spockframework.idea;
-
-import org.junit.*;
+package org.spockframework.groovy.ast
 
 /**
- * See http://www.jetbrains.net/jira/browse/IDEADEV-36531.
- * 
  * @author Peter Niederwieser
  */
-public class IdeaGarblesAssertionMessage {
-  @Test
-  @Ignore
-  public void test() {
-    throw new AssertionError("\n1\n2\n3\n[junit.textui.TestRunner.doRun(TestRunner.java:109)]"); // same for any other exception type
+class InheritedPrivateStaticMethodTest extends TestClassWithPrivateStaticMethod {
+  void test() {
+    // usually Groovy doesn't care about method visibility, but the following dispatch fails
+    shouldFail MissingMethodException, {
+      foo()
+    }
+  }
+}
+
+abstract class TestClassWithPrivateStaticMethod extends GroovyTestCase {
+  private static foo() {
+    "foo"
   }
 }

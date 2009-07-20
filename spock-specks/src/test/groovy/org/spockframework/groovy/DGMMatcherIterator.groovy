@@ -14,29 +14,33 @@
  * limitations under the License.
  */
 
-package org.spockframework.groovy.ast
+package org.spockframework.groovy
 
-import org.spockframework.util.inspector.AstInspector
-import org.codehaus.groovy.ast.stmt.ReturnStatement
+import org.junit.runner.RunWith
 
-class ReturnStatementSourcePosition extends GroovyTestCase {
-  void test() {
-    def inspector = new AstInspector()
+import spock.lang.*
+import static spock.lang.Predef.*
 
-    inspector.load("""
-class Foo {
-  def bar() {
-    return
-  }
-}
-    """)
+/**
+ *
+ * @author Peter Niederwieser
+ */
+@Speck
+@RunWith (Sputnik)
+class DGMMatcherIterator {
+  def "can cope with multiple hasNext calls"() {
+    def matcher = "a1a2a3" =~ /a./
+    def iter = matcher.iterator()
 
-    def method = inspector.getMethod("bar");
-    def stat = method.code.statements[0]
-    assert stat instanceof ReturnStatement
-    assert stat.lineNumber == 4
-    assert stat.columnNumber == 5
-    assert stat.lastLineNumber == 4
-    assert stat.lastColumnNumber == 11
+    when:
+    iter.hasNext()
+    iter.hasNext()
+    iter.hasNext()
+    iter.hasNext()
+    iter.hasNext()
+    iter.next()
+    
+    then:
+    notThrown(Exception)
   }
 }

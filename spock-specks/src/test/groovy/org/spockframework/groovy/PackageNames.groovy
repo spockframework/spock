@@ -14,33 +14,33 @@
  * limitations under the License.
  */
 
-package org.spockframework.groovy.ast
+package org.spockframework.groovy
 
 import org.junit.runner.RunWith
-
+import org.spockframework.util.inspector.AstInspector
 import spock.lang.*
-import static spock.lang.Predef.*
 
 /**
- *
+ * A ...
+
  * @author Peter Niederwieser
  */
 @Speck
-@RunWith (Sputnik)
-class DGMMatcherIterator {
-  def "can cope with multiple hasNext calls"() {
-    def matcher = "a1a2a3" =~ /a./
-    def iter = matcher.iterator()
+@RunWith(Sputnik)
+class PackageNames {
+  def inspector = new AstInspector()
 
-    when:
-    iter.hasNext()
-    iter.hasNext()
-    iter.hasNext()
-    iter.hasNext()
-    iter.hasNext()
-    iter.next()
-    
-    then:
-    notThrown(Exception)
+  def "package names and imports end in '.'"() {
+inspector.load("""
+package foo.bar
+
+import java.util.*
+""")
+
+    def m = inspector.module
+
+    expect:
+      m.packageName == "foo.bar."
+      m.importPackages[0] == "java.util."
   }
 }

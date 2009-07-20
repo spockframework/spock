@@ -13,6 +13,7 @@
   <name>Spock Framework - Maven</name>
 
   <dependencies>
+<!-- compile dependencies -->
     <dependency>
       <groupId>org.spockframework</groupId>
       <artifactId>spock-core</artifactId>
@@ -32,6 +33,13 @@
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-utils</artifactId>
       <version>1.5.7</version>
+    </dependency>
+    
+<!-- runtime dependencies -->
+    <dependency> <!-- required because org.spockframework.buildsupport is used -->
+      <groupId>asm</groupId>
+      <artifactId>asm</artifactId>
+      <scope>runtime</scope> 
     </dependency>
   </dependencies>
 </project>

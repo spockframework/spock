@@ -4,6 +4,6 @@ allprojects {
 }
 
 task wrapper(type: Wrapper) { 
-    gradleVersion = '0.6.1' 
+    gradleVersion = '0.7' 
     jarPath = 'wrapper' 
 } 

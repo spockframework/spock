@@ -14,45 +14,29 @@
  * limitations under the License.
  */
 
-package org.spockframework.groovy.ast
+package org.spockframework.groovy
 
-import org.junit.runner.RunWith
 import org.spockframework.util.inspector.AstInspector
-import org.codehaus.groovy.control.CompilePhase
-import spock.lang.*
+import org.codehaus.groovy.ast.stmt.ReturnStatement
 
+class ReturnStatementSourcePositionTest extends GroovyTestCase {
+  void test() {
+    def inspector = new AstInspector()
 
-/**
- * A ...
- 
- * @author Peter Niederwieser
- */
-@Speck
-@RunWith(Sputnik)
-class FieldInitializers {
-  def inspector = new AstInspector()
-
-  def setup() {
-    inspector.compilePhase = CompilePhase.SEMANTIC_ANALYSIS
-  }
-
-  def defaultInitializers() {
     inspector.load("""
 class Foo {
-  def x
-  int y
-  Integer z
-}
-""")
-
-    def x = inspector.getField("x")
-    def y = inspector.getField("y")
-    def z = inspector.getField("z")
-
-    expect:
-      x.initialExpression == null
-      y.initialExpression == null
-      z.initialExpression == null
+  def bar() {
+    return
   }
+}
+    """)
 
+    def method = inspector.getMethod("bar");
+    def stat = method.code.statements[0]
+    assert stat instanceof ReturnStatement
+    assert stat.lineNumber == 4
+    assert stat.columnNumber == 5
+    assert stat.lastLineNumber == 4
+    assert stat.lastColumnNumber == 11
+  }
 }

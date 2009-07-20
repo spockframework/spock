@@ -14,33 +14,45 @@
  * limitations under the License.
  */
 
-package org.spockframework.groovy.ast
+package org.spockframework.groovy
 
 import org.junit.runner.RunWith
 import org.spockframework.util.inspector.AstInspector
+import org.codehaus.groovy.control.CompilePhase
 import spock.lang.*
+
 
 /**
  * A ...
-
+ 
  * @author Peter Niederwieser
  */
 @Speck
 @RunWith(Sputnik)
-class PackageNames {
+class FieldInitializers {
   def inspector = new AstInspector()
 
-  def "package names and imports end in '.'"() {
-inspector.load("""
-package foo.bar
+  def setup() {
+    inspector.compilePhase = CompilePhase.SEMANTIC_ANALYSIS
+  }
 
-import java.util.*
+  def defaultInitializers() {
+    inspector.load("""
+class Foo {
+  def x
+  int y
+  Integer z
+}
 """)
 
-    def m = inspector.module
+    def x = inspector.getField("x")
+    def y = inspector.getField("y")
+    def z = inspector.getField("z")
 
     expect:
-      m.packageName == "foo.bar."
-      m.importPackages[0] == "java.util."
+      x.initialExpression == null
+      y.initialExpression == null
+      z.initialExpression == null
   }
+
 }

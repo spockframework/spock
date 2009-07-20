@@ -22,10 +22,7 @@
     <dependency>
       <groupId>asm</groupId>
       <artifactId>asm</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>asm</groupId>
-      <artifactId>asm-commons</artifactId>
+      <optional>true</optional> <!-- clients that want to use org.spockframework.buildsupport need to include this dependency -->
     </dependency>
     <dependency>
       <groupId>junit</groupId>
@@ -34,12 +31,12 @@
     <dependency>
       <groupId>cglib</groupId>
       <artifactId>cglib-nodep</artifactId>
-      <optional>true</optional>
+      <optional>true</optional> <!-- clients that want to mock classes (not only interfaces) need to include this dependency -->
     </dependency>
     <dependency>
       <groupId>org.objenesis</groupId>
       <artifactId>objenesis</artifactId>
-      <optional>true</optional>
+      <optional>true</optional> <!-- clients that want to mock classes without default constructor need to include this dependency -->
     </dependency>
   </dependencies>
 </project>

@@ -18,9 +18,4 @@ project(":spock-specks") {
     testRuntime "org.objenesis:objenesis:1.1"
     testRuntime "com.h2database:h2:1.1.112"
   }
-
-  test {  
-    options.showOutput = true
-    options.fork(forkMode: ForkMode.ONCE)    
-  } 
 }

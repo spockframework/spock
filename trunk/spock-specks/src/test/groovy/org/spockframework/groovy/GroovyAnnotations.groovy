@@ -16,17 +16,14 @@
 
 package org.spockframework.groovy.ast
 
-/**
- * @author Peter Niederwieser
- */
-//class PrivateStaticMethodBug extends TestCaseWithPrivateStaticMethod {
-//  void testInvokePrivateStaticInheritedMethod() {
-//    assert foo() == "foo"
-//  }
-//}
-//
-//class TestCaseWithPrivateStaticMethod extends GroovyTestCase {
-//  private static foo() {
-//    "foo"
-//  }
-//}
+import java.lang.annotation.Retention
+import java.lang.annotation.RetentionPolicy
+
+@Retention(RetentionPolicy.SOURCE)
+@interface GroovyAnnotationWithSourceRetention {}
+
+@Retention(RetentionPolicy.CLASS)
+@interface GroovyAnnotationWithClassRetention {}
+
+@Retention(RetentionPolicy.RUNTIME)
+@interface GroovyAnnotationWithRuntimeRetention {}

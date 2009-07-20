@@ -26,6 +26,15 @@
         </executions>        
       </plugin>
       <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <useFile>false</useFile>
+          <includes>
+            <include>**/*Test.java</include> <!-- for JUnit tests -->
+          </includes>
+        </configuration>
+      </plugin>
+      <plugin>
         <groupId>org.spockframework</groupId>
         <artifactId>spock-maven</artifactId>
         <version>${project.version}</version>
@@ -61,17 +70,17 @@
 	  <dependency>
       <groupId>cglib</groupId>
       <artifactId>cglib-nodep</artifactId>
-      <scope>runtime</scope>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.objenesis</groupId>
       <artifactId>objenesis</artifactId>
-      <scope>runtime</scope>
+      <scope>test</scope>
     </dependency>
     <dependency>
        <groupId>com.h2database</groupId>
        <artifactId>h2</artifactId>
-       <scope>runtime</scope>
+       <scope>test</scope>
     </dependency>
   </dependencies>
 </project>

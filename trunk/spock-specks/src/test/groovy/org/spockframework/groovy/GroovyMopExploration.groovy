@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.spockframework.groovy.ast
+package org.spockframework.groovy
 
 import org.codehaus.groovy.runtime.InvokerHelper
 import org.junit.runner.RunWith

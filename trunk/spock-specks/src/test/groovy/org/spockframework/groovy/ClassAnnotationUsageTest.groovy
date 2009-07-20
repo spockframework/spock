@@ -14,9 +14,18 @@
  * limitations under the License.
  */
 
-package org.spockframework.util.inspector
+package org.spockframework.groovy
 
 import org.codehaus.groovy.control.CompilePhase
+
+
+import org.spockframework.groovy.ast.JavaAnnotationWithClassRetention
+import org.spockframework.util.inspector.AstInspector
+import org.spockframework.groovy.ast.GroovyAnnotationWithSourceRetention
+import org.spockframework.groovy.ast.GroovyAnnotationWithClassRetention
+import org.spockframework.groovy.ast.GroovyAnnotationWithRuntimeRetention
+import org.spockframework.groovy.ast.JavaAnnotationWithSourceRetention
+import org.spockframework.groovy.ast.JavaAnnotationWithRuntimeRetention
 
 class ClassAnnotationUsageTest extends GroovyTestCase {
   static classes
@@ -25,12 +34,12 @@ class ClassAnnotationUsageTest extends GroovyTestCase {
 import java.lang.annotation.Retention
 import java.lang.annotation.RetentionPolicy
 
-import org.spockframework.util.inspector.GroovyAnnotationWithSourceRetention
-import org.spockframework.util.inspector.GroovyAnnotationWithClassRetention
-import org.spockframework.util.inspector.GroovyAnnotationWithRuntimeRetention
-import org.spockframework.util.inspector.JavaAnnotationWithSourceRetention
-import org.spockframework.util.inspector.JavaAnnotationWithClassRetention
-import org.spockframework.util.inspector.JavaAnnotationWithRuntimeRetention
+import org.spockframework.groovy.ast.GroovyAnnotationWithSourceRetention
+import org.spockframework.groovy.ast.GroovyAnnotationWithClassRetention
+import org.spockframework.groovy.ast.GroovyAnnotationWithRuntimeRetention
+import org.spockframework.groovy.ast.JavaAnnotationWithSourceRetention
+import org.spockframework.groovy.ast.JavaAnnotationWithClassRetention
+import org.spockframework.groovy.ast.JavaAnnotationWithRuntimeRetention
 
 @GroovyAnnotationWithSourceRetention
 class GroovySource {}

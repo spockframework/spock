@@ -28,7 +28,7 @@ import static spock.lang.Predef.thrown
  */
 @Speck
 @RunWith(Sputnik)
-class SpeckThatExtendsSpockLangSpecification {
+class SpeckThatExtendsSpecificationBaseClass {
   def runner = new EmbeddedSpeckRunner()
 
   def "is properly recognized"() {

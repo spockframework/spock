@@ -14,21 +14,14 @@
  * limitations under the License.
  */
 
-package org.spockframework.idea;
+package org.spockframework.groovy.ast;
 
-import org.junit.*;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
 /**
- * http://www.jetbrains.net/jira/browse/IDEA-23105.
- * 
- * @author Peter Niederwieser
+ * For testing purposes.
  */
-public class IdeaDuplicatesStackTrace {
-  @Test
-  @Ignore
-  public void test() {
-    RuntimeException e = new RuntimeException();
-    e.setStackTrace(new StackTraceElement[] { e.getStackTrace()[e.getStackTrace().length - 1] });
-    throw e;
-  }
+@Retention(RetentionPolicy.SOURCE)
+public @interface JavaAnnotationWithSourceRetention {
 }

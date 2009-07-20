@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-package org.spockframework.util.inspector
+package org.spockframework.groovy
+
+import org.spockframework.util.inspector.AstInspector
 
 class Groovy2767_PatchLineColumnInfoTest extends GroovyTestCase {
   def inspector = new AstInspector()

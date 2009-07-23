@@ -17,6 +17,7 @@
 package org.spockframework.smoke.condition
 
 import org.spockframework.runtime.ConditionNotSatisfiedError
+import spock.lang.Speck
 
 /**
  * Utility methods for spec'ing conditions.
@@ -24,23 +25,26 @@ import org.spockframework.runtime.ConditionNotSatisfiedError
  * @author Peter Niederwieser
  */
 
+@Speck // gives us nicer error messages
 abstract class ConditionSpeckUtil {
-  static fails(Closure condition) {
+  static void fails(Closure condition) {
     try {
       condition()
-      throw new AssertionError("condition should have failed but didn't")
     } catch (ConditionNotSatisfiedError expected) {
-      true
+      return
     }
+
+    assert false, "condition should have failed but didn't"
   }
 
-  static isRendered(String expectedRendering, Closure condition) {
+  static void isRendered(String expectedRendering, Closure condition) {
     try {
       condition()
-      throw new AssertionError("condition should have failed but didn't")
     } catch (ConditionNotSatisfiedError e) {
       assert expectedRendering.trim() == e.condition.render().trim()
-      true
+      return
     }
+
+    assert false, "condition should have failed but didn't"
   }
 }

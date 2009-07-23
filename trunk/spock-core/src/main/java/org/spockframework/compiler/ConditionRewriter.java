@@ -55,7 +55,32 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> {
   }
 
   public static Statement rewriteExplicitCondition(AssertStatement stat, IRewriteResourceProvider resourceProvider) {
+    if (AstUtil.hasAssertionMessage(stat))
+      return rewriteExplicitConditionWithMessage(stat, resourceProvider);
+
     return new ConditionRewriter(resourceProvider).rewrite(stat, stat.getBooleanExpression(), true);
+  }
+
+  private static Statement rewriteExplicitConditionWithMessage(AssertStatement stat,
+      IRewriteResourceProvider resourceProvider) {
+    Expression condition = stat.getBooleanExpression();
+    Expression message = stat.getMessageExpression();
+
+    Statement result =
+        new ExpressionStatement(
+            new MethodCallExpression(
+                new ClassExpression(resourceProvider.getAstNodeCache().SpockRuntime),
+                SpockRuntime.VERIFY_CONDITION_WITH_MESSAGE,
+                new ArgumentListExpression(
+                    Arrays.asList(
+                        message,
+                        condition,
+                        new ConstantExpression(resourceProvider.getSourceText(condition)),
+                        new ConstantExpression(condition.getLineNumber()),
+                        new ConstantExpression(condition.getColumnNumber())))));
+
+    result.setSourcePosition(stat);
+    return result;
   }
 
   public static Statement rewriteImplicitCondition(ExpressionStatement stat,

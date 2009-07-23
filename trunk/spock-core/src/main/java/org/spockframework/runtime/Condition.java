@@ -32,11 +32,13 @@ public class Condition {
   private final String text;
   private final TextPosition position;
   private final Iterable<Object> values;
+  private final String message;
 
-  public Condition(String text, TextPosition position, Iterable<Object> values) {
+  public Condition(String text, TextPosition position, Iterable<Object> values, String message) {
     this.text = text;
     this.position = position;
     this.values = values;
+    this.message = message;
   }
 
   public String getText() {
@@ -51,7 +53,14 @@ public class Condition {
     return values;
   }
 
+  public String getMessage() {
+    return message;
+  }
+
   public String render() {
+    if (message != null)
+      return String.format("%s\n\nMessage: %s\n", flatten(text), message);
+    
     ExpressionInfo exprInfo = new ExpressionInfoBuilder(flatten(text), TextPosition.create(1, 1), values).build();
     return ExpressionInfoRenderer.render(exprInfo);
   }

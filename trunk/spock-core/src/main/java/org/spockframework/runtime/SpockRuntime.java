@@ -18,6 +18,7 @@ package org.spockframework.runtime;
 
 import org.codehaus.groovy.runtime.typehandling.DefaultTypeTransformation;
 import org.codehaus.groovy.runtime.InvokerHelper;
+import org.codehaus.groovy.runtime.DefaultGroovyMethods;
 
 import org.spockframework.runtime.model.TextPosition;
 import groovy.lang.*;
@@ -38,7 +39,15 @@ public abstract class SpockRuntime {
     
     if (!DefaultTypeTransformation.castToBoolean(condition))
       throw new ConditionNotSatisfiedError(
-          new Condition(text, TextPosition.create(line, column), recorder));
+          new Condition(text, TextPosition.create(line, column), recorder, null));
+  }
+
+  public static final String VERIFY_CONDITION_WITH_MESSAGE = "verifyConditionWithMessage";
+
+  public static void verifyConditionWithMessage(Object message, Object condition, String text, int line, int column) {
+    if (!DefaultTypeTransformation.castToBoolean(condition))
+      throw new ConditionNotSatisfiedError(
+          new Condition(text, TextPosition.create(line, column), null, DefaultGroovyMethods.toString(message)));
   }
 
   public static final String FEATURE_METHOD_CALLED = "featureMethodCalled";

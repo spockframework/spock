@@ -307,5 +307,12 @@ public abstract class AstUtil {
       return new ConstantExpression(Util.getDefaultValue(clazz.getTypeClass()));
     return ConstantExpression.NULL;
   }
+
+  public static boolean hasAssertionMessage(AssertStatement stat) {
+    Expression msg = stat.getMessageExpression();
+    if (msg == null) return false; // should not happen
+    if (!(msg instanceof ConstantExpression)) return true;
+    return !((ConstantExpression)msg).isNullExpression();
+  }
 }
 

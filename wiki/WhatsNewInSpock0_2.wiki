@@ -87,6 +87,12 @@ fooMatchesBar(foo, bar) // condition factored out into void (!) helper method
 deepEquals(foo, bar) // call to third-party assertion library
 }}}
 
+== Filtering and sorting feature methods ==
+
+If supported by your JUnit runner, you can now control which and in what order feature methods are run, without editing any source code. For example,  Intellij IDEA 9 EAP lets you run single methods, or just the methods that failed last time.
+
+In case your JUnit runner doesn't offer a convenient way to run selected feature methods, there is another way to accomplish the same thing: Simply annotate the methods that should be run with @IgnoreRest, and all other methods will be ignored.
+
 == Other improvements in a nutshell ==
  * Better JUnit integration
  * Better error handling

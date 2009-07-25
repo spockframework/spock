@@ -118,7 +118,7 @@ def foo() {
     result.ignoreCount == 0
   }
 
-  def "unrolled feature with naming pattern"() {
+  def "naming pattern that refers to data variables"() {
     RunListener listener = Mock()
     runner.listeners << listener
 
@@ -141,7 +141,7 @@ def foo() {
     0 * listener.testStarted(_)
   }
 
-    def "unrolled feature with special variables in naming pattern"() {
+    def "naming pattern that refers to feature name and iteration count"() {
     RunListener listener = Mock()
     runner.listeners << listener
 

@@ -114,8 +114,8 @@ public class SpeckInfoParameterizedRunner extends SpeckInfoBaseRunner {
     while (haveNext(feature, iterators)) {
       Object[] args = nextArgs(feature, iterators);
       runIteration(feature, args);
-      
-      if (runStatus != OK) break;
+
+      if (resetStatus(ITERATION) != OK) break;
       // no iterators => no data providers => only derived parameterizations => limit to one iteration
       if(iterators.length == 0) break;
     }
@@ -142,8 +142,6 @@ public class SpeckInfoParameterizedRunner extends SpeckInfoBaseRunner {
     invokeFeatureMethod(feature.getFeatureMethod(), args);
     invokeCleanup();
     supervisor.afterIteration();
-
-    resetStatus(ITERATION);
   }
 
   private boolean haveNext(FeatureInfo feature, Iterator[] iterators) {

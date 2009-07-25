@@ -175,27 +175,26 @@ def feature3() { setup: log += "3" }
 
     when:
     def result = runner.runSpeckBody("""
-@Unroll
-def 'foo bar'() {
+def "foo"() {
   expect:
   a == b
 
   where:
   a << [1, 2, 3]
-  b << [1, 0, 3]
+  b << [2, 1, 3]
 }
     """)
 
     then:
     1 * listener.testRunStarted(_)
     1 * listener.testRunFinished(_)
-    3 * listener.testStarted({ it.displayName.startsWith "foo bar[" })
-    3 * listener.testFinished({ it.displayName.startsWith "foo bar[" })
-    1 * listener.testFailure({ it.description.displayName.startsWith "foo bar[1]"})
+    1 * listener.testStarted { it.methodName == "foo" }
+    1 * listener.testFinished { it.methodName == "foo" }
+    2 * listener.testFailure { it.description.methodName == "foo" }
     0 * listener._
 
-    result.runCount == 3
-    result.failureCount == 1
+    result.runCount == 1
+    result.failureCount == 2
     result.ignoreCount == 0
   }
 }

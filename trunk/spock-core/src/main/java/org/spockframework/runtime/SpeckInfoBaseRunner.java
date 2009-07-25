@@ -68,8 +68,7 @@ public class SpeckInfoBaseRunner {
     invoke(this, createDoRunInfo());
     supervisor.afterSpeck();
 
-    resetStatus(SPECK);
-    return runStatus;
+    return resetStatus(SPECK);
   }
 
   private MethodInfo createDoRunInfo() {
@@ -113,7 +112,7 @@ public class SpeckInfoBaseRunner {
 
     for (FeatureInfo feature : speck.getFeatures()) {
       runFeature(feature);
-      if (runStatus != OK) return;
+      if (resetStatus(FEATURE) != OK) return;
     }
   }
 
@@ -128,8 +127,6 @@ public class SpeckInfoBaseRunner {
     supervisor.beforeFeature(feature);
     invoke(this, createDoRunFeatureInfo(feature), feature);
     supervisor.afterFeature();
-
-    resetStatus(FEATURE);
   }
 
   private MethodInfo createDoRunFeatureInfo(FeatureInfo feature) {
@@ -162,8 +159,9 @@ public class SpeckInfoBaseRunner {
     invokeCleanup();
   }
 
-  protected void resetStatus(int scope) {
+  protected int resetStatus(int scope) {
     if (scope(runStatus) <= scope) runStatus = OK;
+    return runStatus;
   }
 
   protected void runParameterizedFeature(FeatureInfo feature) {

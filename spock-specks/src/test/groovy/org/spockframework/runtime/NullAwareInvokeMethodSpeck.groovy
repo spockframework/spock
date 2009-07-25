@@ -98,7 +98,7 @@ class NullAwareInvokeMethodSpeck {
 
   def "invoke void DGM method"() {
     expect:
-    SpockRuntime.nullAwareInvokeMethod(this, "println", ["abc"] as Object[]) == SpockRuntime.VOID_RETURN_VALUE
+    SpockRuntime.nullAwareInvokeMethod(this, "print", [""] as Object[]) == SpockRuntime.VOID_RETURN_VALUE
     SpockRuntime.nullAwareInvokeMethod(3, "times", [{}] as Object[]) == SpockRuntime.VOID_RETURN_VALUE
   }
 

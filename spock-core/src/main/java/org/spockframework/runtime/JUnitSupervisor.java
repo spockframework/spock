@@ -21,13 +21,10 @@ import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
 
 import static org.spockframework.runtime.RunStatus.*;
-import org.spockframework.runtime.model.MethodInfo;
-import org.spockframework.runtime.model.SpeckInfo;
-import org.spockframework.runtime.model.FeatureInfo;
+import org.spockframework.runtime.model.*;
 import org.spockframework.util.InternalSpockError;
 import spock.lang.*;
 
-// IDEA: represent setupSpeck()/afterSpeck() as JUnit test methods
 public class JUnitSupervisor implements IRunSupervisor {
   private final RunNotifier notifier;
   private SpeckInfo speck;

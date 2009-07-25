@@ -60,7 +60,7 @@ class VoidMethodCallsInThenBlocks {
   def "invocation of void default Groovy method"() {
     when: ""
     then:
-    println "debug msg"
+    print ""
   }
 
   def "invocation of void default Groovy static method"() {

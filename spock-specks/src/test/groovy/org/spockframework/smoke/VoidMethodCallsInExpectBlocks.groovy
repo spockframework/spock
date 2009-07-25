@@ -55,7 +55,7 @@ class VoidMethodCallsInExpectBlocks {
 
   def "invocation of void default Groovy method"() {
     expect:
-    println "debug msg"
+    print ""
   }
 
   def "invocation of void default Groovy static method"() {

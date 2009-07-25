@@ -29,7 +29,7 @@ import org.spockframework.runtime.SpeckExecutionException
  */
 @Speck
 @RunWith(Sputnik)
-class FeatureUnrolling {
+class UnrolledFeatureMethods {
   def runner = new EmbeddedSpeckRunner()
 
   def "iterations of an unrolled feature count as separate tests"() {
@@ -116,5 +116,51 @@ def foo() {
     result.runCount == 0
     result.failureCount == 1
     result.ignoreCount == 0
+  }
+
+  def "unrolled feature with naming pattern"() {
+    RunListener listener = Mock()
+    runner.listeners << listener
+
+    when:
+    def result = runner.runSpeckBody("""
+@Unroll("one #y two #x three")
+def foo() {
+  expect: true
+
+  where:
+  x << [1, 2, 3]
+  y << ["a", "b", "c"]
+}
+    """)
+
+    then:
+    1 * listener.testStarted { it.methodName == "one a two 1 three" }
+    1 * listener.testStarted { it.methodName == "one b two 2 three" }
+    1 * listener.testStarted { it.methodName == "one c two 3 three" }
+    0 * listener.testStarted(_)
+  }
+
+    def "unrolled feature with special variables in naming pattern"() {
+    RunListener listener = Mock()
+    runner.listeners << listener
+
+    when:
+    def result = runner.runSpeckBody("""
+@Unroll("one #featureName two #iterationCount three")
+def foo() {
+  expect: true
+
+  where:
+  x << [1, 2, 3]
+  y << ["a", "b", "c"]
+}
+    """)
+
+    then:
+    1 * listener.testStarted { it.methodName == "one foo two 0 three" }
+    1 * listener.testStarted { it.methodName == "one foo two 1 three" }
+    1 * listener.testStarted { it.methodName == "one foo two 2 three" }
+    0 * listener.testStarted(_)
   }
 }

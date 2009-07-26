@@ -154,13 +154,17 @@ public class InteractionRewriter {
       return InteractionBuilder.ADD_EQUAL_METHOD_NAME;
 
     String method = (String)((ConstantExpression)methodExpr).getValue();
-    // TODO: not safe; Groovy allows almost all characters in method names
+    // NOTE: we cannot tell from the AST if a method name is defined using
+    // slashy string syntax ("/somePattern/"); hence, we consider any name
+    // that isn't a valid Java identifier a pattern. While this isn't entirely
+    // safe (Groovy allows almost all characters in method names), it should
+    // work out well in practice because it's very unlikely that a
+    // collaborator has a method name that is not a valid Java identifier.
     return AstUtil.isJavaIdentifier(method) ?
         InteractionBuilder.ADD_EQUAL_METHOD_NAME :
         InteractionBuilder.ADD_REGEX_METHOD_NAME;
   }
 
-  // TODO: does groovy really allow mix of positional and named args?
   private void addArgs() {
     if (call instanceof PropertyExpression) return;
 

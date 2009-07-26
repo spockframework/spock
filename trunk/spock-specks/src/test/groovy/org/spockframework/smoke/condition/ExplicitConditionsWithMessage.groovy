@@ -26,7 +26,7 @@ import org.spockframework.runtime.ConditionNotSatisfiedError
 /**
  * @author Peter Niederwieser
  */
-@Issue("22")
+@Issue("http://issues.spockframework.org/detail?id=22")
 @Speck
 @RunWith (Sputnik)
 class ExplicitConditionsWithMessage {

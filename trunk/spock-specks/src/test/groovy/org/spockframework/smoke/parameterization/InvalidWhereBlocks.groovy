@@ -104,7 +104,7 @@ x << 2
     containsSyntaxException(e)
   }
 
-  @Issue("14")
+  @Issue("http://issues.spockframework.org/detail?id=14")
   def "duplicate data variable in multi-parameterization"() {
     when:
     compiler.compileFeatureBody """

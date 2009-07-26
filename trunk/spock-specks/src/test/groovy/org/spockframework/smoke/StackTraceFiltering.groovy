@@ -25,7 +25,7 @@ import static spock.lang.Predef.*
 /**
  * @author Peter Niederwieser
  */
-@Issue("21")
+@Issue("http://issues.spockframework.org/detail?id=21")
 @Speck
 @RunWith(Sputnik)
 class StackTraceFiltering {

@@ -93,6 +93,10 @@ If supported by your JUnit runner, you can now control which and in what order f
 
 In case your JUnit runner doesn't offer a convenient way to run selected feature methods, there is another way to accomplish the same thing: Simply annotate the methods that should be run with @IgnoreRest, and all other methods will be ignored.
 
+== Linking specifications to issues ==
+
+With the @Issue annotation, you can now link specifications and feature methods to issues in your issue tracker.
+
 == Other improvements in a nutshell ==
  * Better JUnit integration
  * Better error handling

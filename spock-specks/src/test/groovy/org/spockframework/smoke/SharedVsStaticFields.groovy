@@ -16,11 +16,18 @@
 
 package org.spockframework.smoke
 
-import org.junit.runner.RunWith
-import org.junit.runners.Suite
-import org.junit.runners.Suite.SuiteClasses
 import spock.lang.*
+import org.spockframework.runtime.ConditionNotSatisfiedError
+import org.junit.runner.RunWith
 
+@Speck
+@RunWith(Sputnik)
+class SharedVsStaticFields {
+  EmbeddedSpeckRunner runner = new EmbeddedSpeckRunner()
+
+  def "shared fields are not shared between subsequent runs"() {
+    setup:
+    runner.compiler.compileWithImports """
 @Speck
 @RunWith(Sputnik)
 class SharedField {
@@ -36,11 +43,27 @@ class SharedField {
     expect: x == 44
   }
 }
+    """
+
+    when:
+    runner.run """
+import org.junit.runner.RunWith
+import org.junit.runners.Suite
+import org.junit.runners.Suite.SuiteClasses
+import apackage.SharedField
 
 @RunWith(Suite)
 @SuiteClasses([SharedField, SharedField])
 class SharedFieldSuite {}
+    """
 
+    then:
+    noExceptionThrown()
+  }
+
+  def "static fields are shared between subsequent runs"() {
+    setup:
+    runner.compiler.compileWithImports """
 @Speck
 @RunWith(Sputnik)
 class StaticField {
@@ -56,10 +79,21 @@ class StaticField {
     expect: x == 44
   }
 }
+    """
 
-/* TODO: can we do better than commenting this out?
-@org.junit.Ignore("fails, demonstrating that static fields have longer lifetime than shared fields")
+    when:
+    runner.run """
+import org.junit.runner.RunWith
+import org.junit.runners.Suite
+import org.junit.runners.Suite.SuiteClasses
+import apackage.StaticField
+
 @RunWith(Suite)
 @SuiteClasses([StaticField, StaticField])
 class StaticFieldSuite {}
-*/
+    """
+
+    then:
+    thrown(ConditionNotSatisfiedError)
+  }
+}

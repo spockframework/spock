@@ -24,7 +24,6 @@ import org.spockframework.runtime.SpeckAssertionError;
  *
  * @author Peter Niederwieser
  */
-// TODO: manipulate stack trace s.t. it's clear which feature method is affected
 public class FailsWithInterceptor implements IMethodInterceptor {
   private final FailsWith failsWith;
 

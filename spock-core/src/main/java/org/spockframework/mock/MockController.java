@@ -22,7 +22,6 @@ import java.util.LinkedList;
  *
  * @author Peter Niederwieser
  */
-// TODO: MockController, IMockFactory's, and mocks need to be thread-safe
 public class MockController implements IInvocationMatcher {
   private final IMockFactory factory;
   private final LinkedList<IInteractionScope> scopes = new LinkedList<IInteractionScope>();

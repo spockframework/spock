@@ -53,7 +53,6 @@ public class MockInvocation implements IMockInvocation {
     return arguments;
   }
 
-  // TODO: also print arguments (or their types)?
   @Override
   public String toString() {
     return String.format("%s.%s(...)", mockObjectName, method.getName());

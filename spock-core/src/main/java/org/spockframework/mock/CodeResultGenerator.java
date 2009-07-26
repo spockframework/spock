@@ -30,7 +30,6 @@ public class CodeResultGenerator implements IResultGenerator {
     this.code = code;
   }
 
-  // TODO: pass an invocation object (e.g. offering args and invocation count) instead of args only
   public Object generate(IMockInvocation invocation) {
     return code.call(invocation.getArguments());
   }

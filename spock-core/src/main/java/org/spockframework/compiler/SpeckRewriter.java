@@ -94,8 +94,7 @@ public class SpeckRewriter extends AbstractSpeckVisitor implements IRewriteResou
   private void rewriteFields() {
     List<FieldNode> fields = speck.getAst().getFields();
     // iterate backwards so that moved initializers in fixture methods are in original order
-    // TODO: why do we get a ConcurrentModificationException unless we copy the list of fields?
-    ListIterator<FieldNode> iter = new ArrayList<FieldNode>(fields).listIterator(fields.size());
+    ListIterator<FieldNode> iter = fields.listIterator(fields.size());
     while (iter.hasPrevious()) {
       FieldNode field = iter.previous();
       // filter out fields internal to the Groovy implementation (e.g. $ownClass)

@@ -84,8 +84,6 @@ public class SpeckInfoParameterizedRunner extends SpeckInfoBaseRunner {
     return iterators;
   }
 
-  // TODO: check whether in Groovy, size() always returns result that is consistent with iterator()
-  // if not, handle divergent cases (File is probably already a counter example)
   // -1 => unknown
   private int estimateNumIterations(Object[] dataProviders) {
     if (runStatus != OK) return -1;

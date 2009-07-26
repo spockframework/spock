@@ -65,7 +65,7 @@ public class DefaultResultGenerator implements IResultGenerator {
     return Util.getDefaultValue(invocation.getMethod().getReturnType());
   }
 
-  // TODO: need to check accessibility?
+  // not 100% accurate (covariance, visibility), but good enough for our purpose
   private boolean overrides(Method m1, Method m2) {
     return m2.getDeclaringClass().isAssignableFrom(m1.getDeclaringClass())
       && m1.getName().equals(m2.getName())

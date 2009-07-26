@@ -228,7 +228,7 @@ public class ExpressionInfoConverter extends AbstractExpressionConverter<Express
   public void visitTernaryExpression(TernaryExpression expr) {
     result = new ExpressionInfo(
         TextRegion.of(expr),
-        startOf("?", expr.getTrueExpression()), // TODO: necessary?
+        startOf("?", expr.getTrueExpression()),
         convertAll(
             Arrays.asList(
                 expr.getBooleanExpression(),
@@ -240,7 +240,7 @@ public class ExpressionInfoConverter extends AbstractExpressionConverter<Express
   public void visitShortTernaryExpression(ElvisOperatorExpression expr) {
     result = new ExpressionInfo(
         TextRegion.of(expr),
-        startOf("?", expr.getFalseExpression()), // TODO: necessary?
+        startOf("?", expr.getFalseExpression()),
         convert(expr.getTrueExpression()),
         convert(expr.getFalseExpression())
     ).setRelevant(false);

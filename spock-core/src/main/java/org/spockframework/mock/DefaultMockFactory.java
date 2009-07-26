@@ -42,9 +42,6 @@ import org.spockframework.util.Util;
  * 
  * @author Peter Niederwieser
  */
-// TODO: provide default implementations for hashCode(), equals(), toString()
-// TODO: provide default implementations for GroovyObject methods
-// TODO: improve error messages
 // IDEA: IntelliMock ("intelligent" return values)
 // IDEA: DynaMock (based on GroovyInterceptable or groovy.lang.Interceptor)
 public class DefaultMockFactory implements IMockFactory {

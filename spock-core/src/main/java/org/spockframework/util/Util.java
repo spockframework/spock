@@ -49,7 +49,7 @@ public class Util {
     return result;
   }
 
-  // TODO:
+  // open points:
   // 1. behavior with closures (called from Groovy or Java)
   // 2. behavior with (overridden) operators
   // 2. what if MOP throws exception (e.g. method not found)? probably should only delete lines once target method call has been found

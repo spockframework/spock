@@ -25,7 +25,7 @@ import org.spockframework.util.Assert;
  * @author Peter Niederwieser
  */
 public class NamedArgumentListConstraint implements IInvocationConstraint {
-  // TODO: why not use List<String> here?
+  // NOTE: why not use List<String> here?
   private final List<Object> argNames; // name == "_" -> unnamed matcher (considered matching if it matches any arg)
   private final List<IArgumentConstraint> argConstraints;
 
@@ -39,7 +39,7 @@ public class NamedArgumentListConstraint implements IInvocationConstraint {
   public boolean isSatisfiedBy(IMockInvocation invocation) {
     List<Object> args = invocation.getArguments();
 
-    if (args.size() == 1 && args.get(0) instanceof Map) // NOTE: not sure what type params to use for map
+    if (args.size() == 1 && args.get(0) instanceof Map)
       return matchesArgMap(new HashMap((Map)args.get(0)));
 
     return matchesArgList(new ArrayList<Object>(args));

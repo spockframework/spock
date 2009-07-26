@@ -18,11 +18,12 @@ package org.spockframework.util;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.AnnotatedElement;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
 
 /**
+ * General collection of utility methods.
+ * 
  * @author Peter Niederwieser
  */
 public class Util {
@@ -31,7 +32,7 @@ public class Util {
     return obj1.equals(obj2);
   }
 
-  public static void closeSilently(Closeable closeable) {
+  public static void closeQuietly(Closeable closeable) {
     try {
       closeable.close();
     } catch (IOException ignored) {}
@@ -47,56 +48,6 @@ public class Util {
     }
 
     return result;
-  }
-
-  // open points:
-  // 1. behavior with closures (called from Groovy or Java)
-  // 2. behavior with (overridden) operators
-  // 2. what if MOP throws exception (e.g. method not found)? probably should only delete lines once target method call has been found
-  @Deprecated // not suitable for Groovy 1.6
-  public static void filterStackTrace(Throwable throwable) {
-    StackTraceElement[] oldTrace = throwable.getStackTrace();
-    List<StackTraceElement> newTrace = new ArrayList<StackTraceElement>();
-    ListIterator<StackTraceElement> iter = Arrays.asList(oldTrace).listIterator(oldTrace.length);
-
-    while (iter.hasPrevious()) {
-      findGroovyRuntimeCall(iter, newTrace);
-      findTargetMethodCall(iter);
-      skipTargetMethodCallInternals(iter);
-    }
-
-    Collections.reverse(newTrace);
-    throwable.setStackTrace((newTrace.toArray(new StackTraceElement[newTrace.size()])));
-  }
-
-  private static void findGroovyRuntimeCall(ListIterator<StackTraceElement> iterator, List<StackTraceElement> newTrace) {
-    while (iterator.hasPrevious()) {
-      StackTraceElement prev = iterator.previous();
-      if (prev.getClassName().equals("org.codehaus.groovy.runtime.ScriptBytecodeAdapter") &&
-        prev.getMethodName().startsWith("invoke"))
-          break;
-      else newTrace.add(prev);
-    }
-  }
-
-  private static void findTargetMethodCall(ListIterator<StackTraceElement> iterator) {
-    while (iterator.hasPrevious() && !iterator.previous().getClassName().startsWith("java.lang.reflect")) ;
-  }
-
-  private static void skipTargetMethodCallInternals(ListIterator<StackTraceElement> iterator) {
-    while (iterator.hasPrevious()) {
-      StackTraceElement prev = iterator.previous();
-      if (!prev.getClassName().startsWith("sun.reflect") && !prev.getMethodName().contains("$")) {
-        iterator.next(); // unconsume element
-        break;
-      }
-    }
-  }
-
-  public static <T extends Annotation> T getDeclaredAnnotation(AnnotatedElement elem, Class<T> annotationType) {
-    for (Annotation a : elem.getDeclaredAnnotations())
-      if (a.annotationType() == annotationType) return annotationType.cast(a);
-    return null;
   }
 
   public static boolean isClassAvailable(String className) {

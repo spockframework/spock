@@ -38,10 +38,6 @@ import org.spockframework.util.SyntaxException;
  * 
  * @author Peter Niederwieser
  */
-// IDEA: should we impose an order on statements in except and when blocks?
-// e.g. interactions/exception conditions/conditions
-// this order complies with verification order and makes it obvious which other
-// verifications have passed if one verification fails
 public class SpeckRewriter extends AbstractSpeckVisitor implements IRewriteResourceProvider {
   private final AstNodeCache nodeCache;
   private final SourceLookup lookup;
@@ -150,9 +146,7 @@ public class SpeckRewriter extends AbstractSpeckVisitor implements IRewriteResou
   }
 
   private MethodNode copyMethod(MethodNode method, String newName) {
-    // we set return type to void because this helps for running
-    // individual feature methods in IDEA
-    // (see http://www.jetbrains.net/jira/browse/IDEA-22492)
+    // can't hurt to set return type to void
     MethodNode newMethod = new MethodNode(newName, method.getModifiers(),
         ClassHelper.VOID_TYPE, method.getParameters(), method.getExceptions(), method.getCode());
     newMethod.addAnnotations(method.getAnnotations());
@@ -366,18 +360,9 @@ public class SpeckRewriter extends AbstractSpeckVisitor implements IRewriteResou
   public void defineValueRecorder(List<Statement> stats) {
     // recorder variable needs to be defined in outermost scope,
     // hence we insert it at the beginning of the block
-    // NOTE: when the following two statements are combined into one,
-    // a MissingPropertyException is thrown at runtime - why?
     stats.add(0,
         new ExpressionStatement(
             new DeclarationExpression(
-                new VariableExpression("__valueRecorder42"),
-                Token.newSymbol(Types.ASSIGN, -1, -1),
-                new ConstantExpression(null))));
-
-    stats.add(1,
-        new ExpressionStatement(
-            new BinaryExpression(
                 new VariableExpression("__valueRecorder42"),
                 Token.newSymbol(Types.ASSIGN, -1, -1),
                 new ConstructorCallExpression(

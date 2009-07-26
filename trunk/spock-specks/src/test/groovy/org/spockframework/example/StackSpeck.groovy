@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.spockframework.sample
+package org.spockframework.example
 
 import org.junit.runner.RunWith
 import spock.lang.*

@@ -1,9 +1,8 @@
-package org.spockframework.sample
+package org.spockframework.example
 
 import org.junit.runner.RunWith
 
 import spock.lang.*
-import static spock.lang.Predef.*
 
 /**
  * @author Peter Niederwieser

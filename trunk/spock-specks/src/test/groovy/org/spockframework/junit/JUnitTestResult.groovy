@@ -16,20 +16,12 @@
 
 package org.spockframework.junit
 
-import org.junit.runner.RunWith
-
-import spock.lang.*
-import static spock.lang.Predef.*
-import org.spockframework.smoke.EmbeddedSpeckRunner
+import org.spockframework.EmbeddedSpecification
 
 /**
  * @author Peter Niederwieser
  */
-@Speck
-@RunWith (Sputnik)
-class JUnitTestResult {
-  def runner = new EmbeddedSpeckRunner()
-
+class JUnitTestResult extends EmbeddedSpecification {
   def "failing beforeClass increases failureCount but not runCount"() {
     runner.throwFailure = false
 

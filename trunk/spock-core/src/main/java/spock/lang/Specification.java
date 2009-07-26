@@ -28,4 +28,12 @@ import org.junit.runner.RunWith;
  * @author Peter Niederwieser
  */
 @RunWith(Sputnik.class)
-public class Specification extends Predef {}
+public class Specification extends Predef {
+  public void setup() {}
+
+  public void cleanup() {}
+
+  public void setupSpeck() {}
+
+  public void cleanupSpeck() {}
+}

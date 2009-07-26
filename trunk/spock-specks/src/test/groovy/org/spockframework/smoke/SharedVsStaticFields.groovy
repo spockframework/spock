@@ -16,15 +16,10 @@
 
 package org.spockframework.smoke
 
-import spock.lang.*
+import org.spockframework.EmbeddedSpecification
 import org.spockframework.runtime.ConditionNotSatisfiedError
-import org.junit.runner.RunWith
 
-@Speck
-@RunWith(Sputnik)
-class SharedVsStaticFields {
-  EmbeddedSpeckRunner runner = new EmbeddedSpeckRunner()
-
+class SharedVsStaticFields extends EmbeddedSpecification {
   def "shared fields are not shared between subsequent runs"() {
     setup:
     runner.compiler.compileWithImports """

@@ -17,25 +17,19 @@
 package org.spockframework.smoke.parameterization
 
 import org.codehaus.groovy.control.MultipleCompilationErrorsException
-import org.codehaus.groovy.syntax.SyntaxException
-import org.junit.runner.RunWith
-import org.spockframework.util.SpockSyntaxException
-import java.lang.*
-import spock.lang.*
-import static spock.lang.Predef.*
 import org.codehaus.groovy.runtime.typehandling.GroovyCastException
-import org.spockframework.smoke.EmbeddedSpeckCompiler
-import org.spockframework.smoke.EmbeddedSpeckRunner
+import org.junit.runner.RunWith
+import org.spockframework.EmbeddedSpecification
+import org.spockframework.util.SpockSyntaxException
+import spock.lang.Speck
+import spock.lang.Sputnik
 
 /**
  * @author Peter Niederwieser
  */
 @Speck
 @RunWith(Sputnik)
-class MethodParameters {
-  @Shared EmbeddedSpeckCompiler compiler = new EmbeddedSpeckCompiler()
-  @Shared EmbeddedSpeckRunner runner = new EmbeddedSpeckRunner()
-
+class MethodParameters extends EmbeddedSpecification {
   def "no parameters"() {
     expect:
     x == y
@@ -46,8 +40,6 @@ class MethodParameters {
   }
 
   def "parameters but no where block"() {
-    def compiler = new EmbeddedSpeckCompiler()
-
     when:
     compiler.compileSpeckBody """
 def foo(int x, String y) {

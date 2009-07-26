@@ -61,8 +61,28 @@ public class SpeckRewriter extends AbstractSpeckVisitor implements IRewriteResou
 
   public void visitSpeck(Speck speck) {
     this.speck = speck;
-    rewriteFields();
+    moveFieldInitializersIntoFixtureMethods();
     addMockController();
+  }
+
+  public void visitSpeckAgain(Speck speck) throws Exception {
+    linkFixtureMethodsToParents();
+  }
+
+  private void linkFixtureMethodsToParents() {
+    if (!isSpeckDerivedFromSpecificationBaseClass()) return;
+    
+    for (FixtureMethod method : speck.getFixtureMethods())
+      method.getStatements().add(0,
+          new ExpressionStatement(
+              new MethodCallExpression(
+                  VariableExpression.SUPER_EXPRESSION,
+                  method.getAst().getName(),
+                  ArgumentListExpression.EMPTY_ARGUMENTS)));
+  }
+
+  private boolean isSpeckDerivedFromSpecificationBaseClass() {
+    return speck.getAst().isDerivedFrom(nodeCache.Specification);
   }
 
   // IDEA: we could omit creating mock controller if whole Speck doesn't
@@ -87,7 +107,7 @@ public class SpeckRewriter extends AbstractSpeckVisitor implements IRewriteResou
                     new FieldExpression(nodeCache.DefaultMockFactory_INSTANCE)))));
   }
 
-  private void rewriteFields() {
+  private void moveFieldInitializersIntoFixtureMethods() {
     List<FieldNode> fields = speck.getAst().getFields();
     // iterate backwards so that moved initializers in fixture methods are in original order
     ListIterator<FieldNode> iter = fields.listIterator(fields.size());

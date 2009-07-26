@@ -16,22 +16,14 @@
 
 package org.spockframework.smoke.parameterization
 
-import org.junit.runner.RunWith
-
-import spock.lang.*
-import static spock.lang.Predef.*
-import org.spockframework.smoke.EmbeddedSpeckRunner
 import org.junit.runner.notification.RunListener
+import org.spockframework.EmbeddedSpecification
 import org.spockframework.runtime.SpeckExecutionException
 
 /**
  * @author Peter Niederwieser
  */
-@Speck
-@RunWith(Sputnik)
-class UnrolledFeatureMethods {
-  def runner = new EmbeddedSpeckRunner()
-
+class UnrolledFeatureMethods extends EmbeddedSpecification {
   def "iterations of an unrolled feature count as separate tests"() {
     when:
     def result = runner.runSpeckBody("""

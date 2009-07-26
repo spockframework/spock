@@ -22,8 +22,8 @@ import org.spockframework.runtime.intercept.Directive;
 import org.spockframework.runtime.intercept.IgnoreRestProcessor;
 
 /**
- * Indicates that all feature methods except the ones to which this annotation
- * is applied should be ignored.
+ * Indicates that all feature methods except the ones carrying this annotation
+ * should be ignored.
  *
  * @author Peter Niederwieser
  */

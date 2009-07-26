@@ -17,16 +17,12 @@
 package org.spockframework.smoke
 
 import org.junit.runner.Request
-import org.junit.runner.RunWith
 import org.junit.runner.manipulation.Filter
-import spock.lang.*
 import org.junit.runner.notification.RunListener
+import org.spockframework.EmbeddedSpecification
+import spock.lang.Issue
 
-@Speck
-@RunWith(Sputnik)
-public class RunningSpecksWithSputnik {
-  def runner = new EmbeddedSpeckRunner()
-  
+public class RunningSpecksWithSputnik extends EmbeddedSpecification {
   @Issue("http://issues.spockframework.org/detail?id=13")
   def "failing setupSpeck method"() {
     runner.throwFailure = false

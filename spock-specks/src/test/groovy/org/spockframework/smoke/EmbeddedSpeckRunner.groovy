@@ -27,8 +27,7 @@ import org.junit.runner.notification.RunListener
  * @author Peter Niederwieser
  */
 class EmbeddedSpeckRunner {
-  private compiler = new EmbeddedSpeckCompiler()
-
+  EmbeddedSpeckCompiler compiler = new EmbeddedSpeckCompiler()
   boolean throwFailure = true
   List<RunListener> listeners = []
 

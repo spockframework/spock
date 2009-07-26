@@ -27,7 +27,7 @@ import static org.spockframework.smoke.VoidGroovyStaticMethod.*
 /**
  * @author Peter Niederwieser
  */
-@Issue("25")
+@Issue("http://issues.spockframework.org/detail?id=25")
 @Speck
 @RunWith (Sputnik)
 class VoidMethodCallsInThenBlocks {

@@ -69,7 +69,7 @@ foo
     }
   }
 
-  @Issue("17")
+  @Issue("http://issues.spockframework.org/detail?id=17")
   def "empty string value"() {
     isRendered """
 x == null

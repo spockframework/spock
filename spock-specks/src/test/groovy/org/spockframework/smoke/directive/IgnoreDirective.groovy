@@ -26,7 +26,7 @@ import org.spockframework.smoke.EmbeddedSpeckRunner
  *
  * @author Peter Niederwieser
  */
-@Issue("12")
+@Issue("http://issues.spockframework.org/detail?id=12")
 @Speck
 @RunWith(Sputnik)
 class IgnoreSpeck {

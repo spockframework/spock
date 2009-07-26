@@ -33,7 +33,6 @@ import org.spockframework.util.SyntaxException;
  *
  * @author Peter Niederwieser
  */
-// TODO: disallow static methods (e.g. conditions in static helper methods won't work)
 public class SpeckParser implements GroovyClassVisitor {
   private Speck speck;
 

@@ -27,7 +27,7 @@ import org.junit.runner.notification.RunListener
 public class RunningSpecksWithSputnik {
   def runner = new EmbeddedSpeckRunner()
   
-  @Issue("13")
+  @Issue("http://issues.spockframework.org/detail?id=13")
   def "failing setupSpeck method"() {
     runner.throwFailure = false
 
@@ -81,7 +81,7 @@ class Foo {
     result.ignoreCount == 1 // one Speck
   }
 
-  @Issue("20")
+  @Issue("http://issues.spockframework.org/detail?id=20")
   def "ignoring feature methods"() {
     def compiler = new EmbeddedSpeckCompiler()
     def clazz = compiler.compileSpeckBody("""

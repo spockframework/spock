@@ -102,4 +102,5 @@ With the @Issue annotation, you can now link specifications and feature methods 
  * Better error handling
  * More user-friendly error messages
  * More powerful extension mechanism
+ * Support for specification base classes (experimental)
  * Many smaller improvements and bug fixes

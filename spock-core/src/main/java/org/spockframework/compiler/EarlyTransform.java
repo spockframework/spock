@@ -38,21 +38,17 @@ public class EarlyTransform implements ASTTransformation {
 
   public void visit(ASTNode nodes[], SourceUnit sourceUnit) {
     ModuleNode module = (ModuleNode)nodes[0];
-    addPredefImportIfModuleContainsSpeck(module);
-  }
-
-  private void addPredefImportIfModuleContainsSpeck(ModuleNode module) {
-    if (moduleContainsSpeck(module))
+    if (moduleContainsClassWithSpeckAnnotation(module))
       // if this import is already present, it is simply overwritten
       module.addStaticImportClass(Predef.class.getName(), PREDEF);
   }
 
-  private boolean moduleContainsSpeck(ModuleNode module) {
+  private boolean moduleContainsClassWithSpeckAnnotation(ModuleNode module) {
     @SuppressWarnings("unchecked")
     List<ClassNode> classes = module.getClasses();
 
     for (ClassNode clazz : classes)
-      if (hasSpeckAnnotation(clazz) || isDerivedFromSpecification(clazz))
+      if (hasSpeckAnnotation(clazz))
         return true;
 
     return false;
@@ -64,30 +60,24 @@ public class EarlyTransform implements ASTTransformation {
 
     for (AnnotationNode ann : annotations) {
       String name = ann.getClassNode().getName();
-      if (name.equals(Speck.class.getName())
-          || resolvesToSpeckAnnotationType(name, clazz.getModule()))
+      if (nameResolvesToType(name, Speck.class, clazz.getModule()))
         return true;
     }
     
     return false;
   }
 
-   private static boolean isDerivedFromSpecification(ClassNode clazz) {
-    for (ClassNode node = clazz; node != null; node = node.getSuperClass())
-      if (node.getName().equals(Specification.class.getName()))
-        return true;
-
-    return false;
-  }
-
-  private static boolean resolvesToSpeckAnnotationType(String name, ModuleNode module) {
-    String speckPackage = Speck.class.getPackage().getName() + "."; // oddly, package names in ModuleNode end in "."
-    if (name.equals(Speck.class.getSimpleName())
-        && (speckPackage.equals(module.getPackageName())
-           || module.getImportPackages().contains(speckPackage)))
+  private static boolean nameResolvesToType(String name, Class<?> type, ModuleNode module) {
+    if (name.equals(type.getName())) return true;
+    
+    String typePackage = type.getPackage().getName() + "."; // oddly, package names in ModuleNode end in "."
+    if (name.equals(type.getSimpleName())
+        && (typePackage.equals(module.getPackageName()) // same package
+           || module.getImportPackages().contains(typePackage))) // package (star) import
       return true;
 
-    ClassNode importedClazz = module.getImport(name);
-    return importedClazz != null && Speck.class.getName().equals(importedClazz.getName());
+    // single class import (w/ or wo/ aliasing)
+    ClassNode importedType = module.getImport(name);
+    return importedType != null && type.getName().equals(importedType.getName());
   }
 }

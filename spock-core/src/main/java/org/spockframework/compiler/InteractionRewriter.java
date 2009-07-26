@@ -34,9 +34,6 @@ import org.spockframework.util.SyntaxException;
  *
  * @author Peter Niederwieser
  */
-// TODO: test interactions defined in different places, esp. within closures;
-// the latter might give problems due to FieldExpressionS (try replace with VariableExpressionS)
-// even better: represent field access as AttributeExpression
 public class InteractionRewriter {
   private final IRewriteResourceProvider resourceProvider;
 

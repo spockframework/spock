@@ -28,18 +28,53 @@ import static spock.lang.Predef.thrown
  */
 @Speck
 @RunWith(Sputnik)
-class SpeckThatExtendsSpecificationBaseClass {
+class SpeckDerivedFromSpecificationBaseClass {
   def runner = new EmbeddedSpeckRunner()
 
+  @Unroll
   def "is properly recognized"() {
     when:
     runner.run """
-class Foo extends spock.lang.Specification {
+$importStat
+
+class Foo extends $baseClass {
   def foo() {
     expect: false
   }
 }
     """
+
+    then:
+    thrown(SpeckAssertionError)
+
+    where:
+    [importStat                                     , baseClass                                      ] << [
+    ["import spock.lang.Specification"              , "Specification"                                ],
+    [""                                             , "spock.lang.Specification"                     ],
+    ["import org.spockframework.smoke.Intermediary1", "Intermediary1"                                ],
+    [""                                             , "org.spockframework.smoke.Intermediary2"       ],
+    [""                                             , "org.spockframework.smoke.AbstractIntermediary"]
+    ]
+  }
+
+  def "is properly recognized when inheriting from Specification base class through intermediary in same compilation unit"() {
+    def compiler = new EmbeddedSpeckCompiler()
+    compiler.compile """
+import spock.lang.Specification
+
+class MyCustomBaseClass extends Specification {}
+
+class Foo extends MyCustomBaseClass {
+  def foo() {
+    expect: false
+  }
+}
+    """
+
+    def fooClass = compiler.loader.loadedClasses.find { it.name == "Foo" }
+
+    when:
+    runner.runClass(fooClass)
 
     then:
     thrown(SpeckAssertionError)
@@ -117,24 +152,8 @@ class Foo extends spock.lang.Specification {
     collidingImport << ["", "import static spock.lang.Predef.Mock", "import static spock.lang.Predef.*"]
   }
 
-  def "can refer to Predef members by 'this.' (due to a Groovy bug)"() {
-    when:
-    runner.run """
-class Foo extends spock.lang.Specification {
-  def foo() {
-    def list = this.Mock(List)
-
-    expect:
-    list != null
-  }
-}
-    """
-
-    then:
-    noExceptionThrown()
-  }
-
-  def "cannot refer to Predef members by 'Foo.', or 'Specification.'"() {
+  @Unroll("cannot refer to Predef members by '#target'")
+  def "cannot refer to Predef members by other means"() {
     when:
     runner.run """
 class Foo extends spock.lang.Specification {
@@ -151,6 +170,12 @@ class Foo extends spock.lang.Specification {
     thrown(SyntaxException)
 
     where:
-    target << ["Foo", "spock.lang.Specification"]
+    target << ["this", "super", "Foo", "spock.lang.Specification"]
   }
 }
+
+class Intermediary1 extends Specification {}
+
+class Intermediary2 extends spock.lang.Specification {}
+
+abstract class AbstractIntermediary extends Specification {}

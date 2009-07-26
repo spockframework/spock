@@ -80,19 +80,9 @@ public abstract class AstUtil {
         blockStat.getStatements();
   }
 
-  public static boolean isInvocation(Expression expr) {
-    return isMethodInvocation(expr) || expr instanceof PropertyExpression;
-  }
-
   public static boolean isMethodInvocation(Expression expr) {
     return expr instanceof MethodCallExpression
         || expr instanceof StaticMethodCallExpression;
-  }
-
-  public static boolean isInvocationWithImplicitTarget(Expression expr) {
-    return expr instanceof MethodCallExpression && ((MethodCallExpression)expr).isImplicitThis()
-        || expr instanceof StaticMethodCallExpression // only used for static method calls with implicit target
-        || expr instanceof PropertyExpression && ((PropertyExpression)expr).isImplicitThis();
   }
 
   public static Expression getInvocationTarget(Expression expr) {
@@ -161,12 +151,6 @@ public abstract class AstUtil {
         && node.getColumnNumber() > 0 && node.getLastColumnNumber() > node.getColumnNumber();
   }
 
-  // just x = y, not x += y etc.
-  public static boolean isAssignment(Expression expr) {
-    return expr instanceof BinaryExpression
-        && ((BinaryExpression)expr).getOperation().getType() == Types.ASSIGN;
-  }
-  
   public static List<Expression> getArguments(Expression expr) {
     if (expr instanceof MethodCallExpression)
       return getArguments((MethodCallExpression)expr);
@@ -195,10 +179,10 @@ public abstract class AstUtil {
         || expr instanceof MethodCallExpression
         && isPredefCall((MethodCallExpression) expr, methodName, minArgs, maxArgs)
         || expr instanceof StaticMethodCallExpression
-        && isPredefCall((StaticMethodCallExpression) expr, methodName, minArgs, maxArgs);
+        && isPredefCall((StaticMethodCallExpression)expr, methodName, minArgs, maxArgs);
   }
 
-  public static boolean isPredefDecl(BinaryExpression expr, String methodName, int minArgs, int maxArgs){
+  public static boolean isPredefDecl(BinaryExpression expr, String methodName, int minArgs, int maxArgs) {
     return (expr instanceof DeclarationExpression
         || expr instanceof FieldInitializerExpression)
         && isPredefDeclOrCall(expr.getRightExpression(), methodName, minArgs, maxArgs);
@@ -211,18 +195,17 @@ public abstract class AstUtil {
         && isPredefCall((StaticMethodCallExpression)expr, methodName, minArgs, maxArgs);
   }
 
-  // call of the form "Predef.<methodName>(...)"
-  // (although one wouldn't normally use this style, it is supposed to work nevertheless)
-  public static boolean isPredefCall(MethodCallExpression expr, String methodName, int minArgs, int maxArgs){
+  // call of the form "Predef.<methodName>(...)" or "<methodName>(...)"
+  public static boolean isPredefCall(MethodCallExpression expr, String methodName, int minArgs, int maxArgs) {
     Expression target = expr.getObjectExpression();
     return
-        referencesPredefClass(target)
+        (isPredefClassExpression(target) || expr.isImplicitThis())
         && methodName.equals(expr.getMethodAsString()) // getMethodAsString() may return null
         && getArguments(expr).size() >= minArgs
         && getArguments(expr).size() <= maxArgs;
   }
 
-  private static boolean referencesPredefClass(Expression target) {
+  private static boolean isPredefClassExpression(Expression target) {
     return target instanceof ClassExpression && target.getType().getName().equals(Predef.class.getName());
   }
 

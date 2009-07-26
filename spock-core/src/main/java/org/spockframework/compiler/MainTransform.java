@@ -69,14 +69,14 @@ public class MainTransform implements ASTTransformation {
   }
 
   private static boolean isSpeck(ClassNode clazz) {
-    return hasSpeckAnnotation(clazz) || isDerivedFromSpecification(clazz);
+    return hasSpeckAnnotation(clazz) || isDerivedFromSpecificationBaseClass(clazz);
   }
 
   private static boolean hasSpeckAnnotation(ClassNode clazz) {
     return AstUtil.hasAnnotation(clazz, spock.lang.Speck.class);
   }
 
-  private static boolean isDerivedFromSpecification(ClassNode clazz) {
+  private static boolean isDerivedFromSpecificationBaseClass(ClassNode clazz) {
     for (ClassNode node = clazz; node != null; node = node.getSuperClass())
       if (node.getName().equals(Specification.class.getName()))
         return true;

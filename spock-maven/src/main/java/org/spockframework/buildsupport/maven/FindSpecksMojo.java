@@ -48,6 +48,11 @@ public class FindSpecksMojo extends AbstractMojo {
   File testOutputDirectory;
 
   public void execute() throws MojoExecutionException {
+    if (!testOutputDirectory.exists()) {
+      getLog().info(String.format("Found 0 Spock specifications"));
+      return;
+    }
+
     List<File> tests;
     try {
       tests = new SpeckClassFileFinder().findSpecks(testOutputDirectory);
@@ -78,6 +83,11 @@ public class FindSpecksMojo extends AbstractMojo {
       includeNode.setValue(relativePathJavaExt);
       includes.addChild(includeNode);
     }
+  }
+
+  private void checkTestOutputDirectoryExists() {
+
+
   }
 
   private Plugin getSurefirePlugin() throws MojoExecutionException {

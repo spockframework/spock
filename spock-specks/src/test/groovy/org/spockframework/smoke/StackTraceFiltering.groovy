@@ -16,21 +16,17 @@
 
 package org.spockframework.smoke
 
+import org.spockframework.EmbeddedSpecification
 import org.spockframework.runtime.ConditionNotSatisfiedError
 import org.spockframework.smoke.CallChainException
-import org.junit.runner.*
-import spock.lang.*
-import static spock.lang.Predef.*
+import spock.lang.Issue
+import spock.lang.Unroll
 
 /**
  * @author Peter Niederwieser
  */
 @Issue("http://issues.spockframework.org/detail?id=21")
-@Speck
-@RunWith(Sputnik)
-class StackTraceFiltering {
-  def runner = new EmbeddedSpeckRunner()
-
+class StackTraceFiltering extends EmbeddedSpecification {
   def "unsatisfied implicit condition"() {
     when:
     runner.runFeatureBody """

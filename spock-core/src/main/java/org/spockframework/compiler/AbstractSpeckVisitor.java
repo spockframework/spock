@@ -21,6 +21,7 @@ import org.spockframework.compiler.model.*;
 // IDEA: store context (SpeckInfo, method, etc.); e.g. by overriding new visitNode method and making it final
 public class AbstractSpeckVisitor implements ISpeckVisitor {
   public void visitSpeck(Speck speck) throws Exception {}
+  public void visitSpeckAgain(Speck speck) throws Exception {}
   public void visitMethod(Method method) throws Exception {}
   public void visitMethodAgain(Method method) throws Exception {}
   public void visitAnyBlock(Block block) throws Exception {}

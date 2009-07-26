@@ -16,17 +16,12 @@
 
 package org.spockframework.compiler;
 
-import org.codehaus.groovy.ast.ClassHelper;
-import org.codehaus.groovy.ast.ClassNode;
-import org.codehaus.groovy.ast.FieldNode;
-
-import spock.lang.Speck;
-import spock.lang.Predef;
-
+import org.codehaus.groovy.ast.*;
 import org.spockframework.mock.*;
 import org.spockframework.runtime.SpockRuntime;
 import org.spockframework.runtime.ValueRecorder;
 import org.spockframework.runtime.model.*;
+import spock.lang.*;
 
 /**
  * Provides access to frequently used AST nodes.
@@ -39,6 +34,7 @@ public class AstNodeCache {
   public final ClassNode ValueRecorder = ClassHelper.makeWithoutCaching(ValueRecorder.class);
   public final ClassNode Speck = ClassHelper.makeWithoutCaching(Speck.class);
   public final ClassNode Predef = ClassHelper.makeWithoutCaching(Predef.class);
+  public final ClassNode Specification = ClassHelper.makeWithoutCaching(Specification.class);
 
   // annotations and annotation elements
   public final ClassNode SpeckMetadata = ClassHelper.makeWithoutCaching(SpeckMetadata.class);

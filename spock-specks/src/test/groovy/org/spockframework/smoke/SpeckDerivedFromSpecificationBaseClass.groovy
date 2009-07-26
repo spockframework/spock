@@ -16,21 +16,16 @@
 
 package org.spockframework.smoke
 
-import org.junit.runner.RunWith
+import org.spockframework.EmbeddedSpecification
 import org.spockframework.runtime.SpeckAssertionError
 import org.spockframework.util.SyntaxException
-import spock.lang.*
-import static spock.lang.Predef.noExceptionThrown
-import static spock.lang.Predef.thrown
+import spock.lang.Specification
+import spock.lang.Unroll
 
 /**
  * @author Peter Niederwieser
  */
-@Speck
-@RunWith(Sputnik)
-class SpeckDerivedFromSpecificationBaseClass {
-  def runner = new EmbeddedSpeckRunner()
-
+class SpeckDerivedFromSpecificationBaseClass extends EmbeddedSpecification {
   @Unroll
   def "is properly recognized"() {
     when:

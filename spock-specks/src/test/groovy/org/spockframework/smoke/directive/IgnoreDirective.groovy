@@ -16,23 +16,16 @@
 
 package org.spockframework.smoke.directive
 
-import spock.lang.*
-import static spock.lang.Predef.*
-import org.junit.runner.RunWith
+import org.spockframework.EmbeddedSpecification
 import org.spockframework.runtime.InvalidSpeckError
-import org.spockframework.smoke.EmbeddedSpeckRunner
+import spock.lang.Issue
 
 /**
- *
  * @author Peter Niederwieser
  */
 @Issue("http://issues.spockframework.org/detail?id=12")
-@Speck
-@RunWith(Sputnik)
-class IgnoreSpeck {
+class IgnoreDirective extends EmbeddedSpecification {
   def "ignored Speck is not run"() {
-    def runner = new EmbeddedSpeckRunner()
-
     when:
     runner.runWithImports """
 @Ignore
@@ -52,14 +45,8 @@ class Foo {
     then:
     noExceptionThrown()
   }
-}
 
-@Speck
-@RunWith(Sputnik)
-class IgnoreFeatureMethods {
   def "ignored feature methods are not run"() {
-    def runner = new EmbeddedSpeckRunner()
-
     when:
     runner.runSpeckBody """
 @Ignore
@@ -81,14 +68,7 @@ def "also ignored"() {
     noExceptionThrown()
   }
 
-}
-
-@Speck
-@RunWith(Sputnik)
-class IgnoreFixtureMethods {
   def "fixture methods cannot be ignored"() {
-    def runner = new EmbeddedSpeckRunner()
-
     when:
     runner.runSpeckBody """
 @Ignore

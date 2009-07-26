@@ -16,21 +16,15 @@
 
 package org.spockframework.smoke.parameterization
 
-import org.junit.runner.RunWith
-import spock.lang.*
+import org.spockframework.EmbeddedSpecification
 import org.spockframework.runtime.SpeckExecutionException
-import static spock.lang.Predef.*
-import org.spockframework.smoke.EmbeddedSpeckRunner
-import org.spockframework.smoke.EmbeddedSpeckRunner
+
+import org.spockframework.smoke.parameterization.*
 
 /**
  * @author Peter Niederwieser
  */
-@Speck
-@RunWith(Sputnik)
-class DataProviders {
-  def runner = new EmbeddedSpeckRunner()
-
+class DataProviders extends EmbeddedSpecification {
   def "null value"() {
     when:
     runner.runFeatureBody """

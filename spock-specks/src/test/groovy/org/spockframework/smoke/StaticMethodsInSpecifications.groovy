@@ -22,8 +22,6 @@ import spock.lang.Issue
 
 class StaticMethodsInSpecifications extends EmbeddedSpecification {
   def "may contain conditions"() {
-    def runner = new EmbeddedSpeckRunner()
-
     when:
     runner.runSpeckBody """
 def foo() {
@@ -41,8 +39,6 @@ static void bar() {
 
   @Issue("http://issues.spockframework.org/detail?id=35")
   def "may not contain interactions"() {
-    def runner = new EmbeddedSpeckRunner()
-
     when:
     runner.runSpeckBody """
 def foo() {
@@ -68,8 +64,6 @@ static bar(list) {
 
   @Issue("http://issues.spockframework.org/detail?id=35")
   def "may not create mocks"() {
-    def runner = new EmbeddedSpeckRunner()
-
     when:
     runner.runSpeckBody """
 def foo() {

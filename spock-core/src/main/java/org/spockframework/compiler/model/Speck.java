@@ -29,6 +29,7 @@ import org.codehaus.groovy.ast.ClassNode;
  */
 public class Speck extends Node<Speck, ClassNode> {
   private final List<Method> methods = new ArrayList<Method>();
+  private final List<FixtureMethod> fixtureMethods = new ArrayList<FixtureMethod>();
   private FixtureMethod setup;
   private FixtureMethod cleanup;
   private FixtureMethod setupSpeck;
@@ -43,6 +44,10 @@ public class Speck extends Node<Speck, ClassNode> {
     return methods;
   }
 
+  public List<FixtureMethod> getFixtureMethods() {
+    return fixtureMethods;
+  }
+
   public FixtureMethod getSetup() {
     return setup;
   }
@@ -50,6 +55,7 @@ public class Speck extends Node<Speck, ClassNode> {
   public void setSetup(FixtureMethod setup) {
     this.setup = setup;
     methods.add(setup);
+    fixtureMethods.add(setup);
   }
 
   public FixtureMethod getCleanup() {
@@ -59,6 +65,7 @@ public class Speck extends Node<Speck, ClassNode> {
   public void setCleanup(FixtureMethod cleanup) {
     this.cleanup = cleanup;
     methods.add(cleanup);
+    fixtureMethods.add(cleanup);
 
   }
 
@@ -69,6 +76,7 @@ public class Speck extends Node<Speck, ClassNode> {
   public void setSetupSpeck(FixtureMethod setupSpeck) {
     this.setupSpeck = setupSpeck;
     methods.add(setupSpeck);
+    fixtureMethods.add(setupSpeck);
   }
 
   public FixtureMethod getCleanupSpeck() {
@@ -78,11 +86,13 @@ public class Speck extends Node<Speck, ClassNode> {
   public void setCleanupSpeck(FixtureMethod cleanupSpeck) {
     this.cleanupSpeck = cleanupSpeck;
     methods.add(cleanupSpeck);
+    fixtureMethods.add(cleanupSpeck);
   }
 
   @Override
   public void accept(ISpeckVisitor visitor) throws Exception {
     visitor.visitSpeck(this);
     for (Method m : methods) m.accept(visitor);
+    visitor.visitSpeckAgain(this);
   }
 }

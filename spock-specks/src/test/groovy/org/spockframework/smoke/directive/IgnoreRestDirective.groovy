@@ -16,16 +16,13 @@
 
 package org.spockframework.smoke.directive
 
-import org.spockframework.smoke.EmbeddedSpeckRunner
-import spock.lang.Specification
+import org.spockframework.EmbeddedSpecification
 import spock.lang.Unroll
 
 /**
  * @author Peter Niederwieser
  */
-class IgnoreRestDirective extends Specification {
-  EmbeddedSpeckRunner runner = new EmbeddedSpeckRunner()
-
+class IgnoreRestDirective extends EmbeddedSpecification {
   @Unroll("Ignore #ignored methods")
   def "ignore some methods"() {
     when:

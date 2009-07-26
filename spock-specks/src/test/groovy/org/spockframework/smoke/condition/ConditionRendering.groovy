@@ -16,15 +16,12 @@
 
 package org.spockframework.smoke.condition
 
-import spock.lang.*
-import static spock.lang.Predef.*
 import org.junit.runner.RunWith
-
-import static org.spockframework.smoke.condition.ConditionSpeckUtil.*
-
+import spock.lang.Speck
+import spock.lang.Sputnik
+import java.lang.*
 import static java.lang.Math.min
-import org.spockframework.smoke.EmbeddedSpeckRunner
-import org.spockframework.runtime.ConditionNotSatisfiedError
+import static org.spockframework.smoke.condition.ConditionSpeckUtil.isRendered
 
 /**
  * Describes rendering of whole conditions.

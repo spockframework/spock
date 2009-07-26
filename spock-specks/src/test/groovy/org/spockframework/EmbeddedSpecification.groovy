@@ -26,7 +26,7 @@ import org.spockframework.smoke.EmbeddedSpeckRunner
  *
  * @author Peter Niederwieser
  */
-abstract class EmbeddedSpecification extends Specification {
+class EmbeddedSpecification extends Specification {
   EmbeddedSpeckRunner runner = new EmbeddedSpeckRunner()
   EmbeddedSpeckCompiler compiler = runner.compiler
 }

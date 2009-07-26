@@ -63,8 +63,8 @@ public class ExpressionInfoBuilder {
 
     ExpressionInfo exprInfo = new ExpressionInfoConverter(lines).convert(expr);
 
-    // TODO: if possible, move rest of this method to ExpressionInfoConverter (but: might make EIC less testable)
-    // TODO: also try to make ExpressionInfo immutable
+    // IDEA: rest of this method could be moved to ExpressionInfoConverter (but: might make EIC less testable)
+    // IDEA: could make ExpressionInfo immutable
     Iterator iter = values.iterator();
     for (ExpressionInfo info : exprInfo.inPostfixOrder(false)) {
       info.setText(findText(info.getRegion()));

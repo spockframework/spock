@@ -35,7 +35,6 @@ import java.lang.reflect.Method;
  *
  * @author Peter Niederwieser
  */
-// TODO: check exception handling policy (i.e. exceptions thrown and caught)
 public class SpeckInfoBaseRunner {
   private static final Method DO_RUN;
   private static final Method DO_RUN_FEATURE;

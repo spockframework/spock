@@ -233,7 +233,7 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> {
     // (e.g. "org.Type", "Type.class", "org.Type.class");
     // therefore we have to provide one N/A value for every part of the class name
     String text = resourceProvider.getSourceText(expr);
-    // TODO: remove guessing (text == null) once Groovy bug (no source code available if source is string-based) is fixed
+    // NOTE: remove guessing (text == null) once http://jira.codehaus.org/browse/GROOVY-3552 is fixed
     recordCount += text == null ? 1 : Util.countOccurrences(text, '.') + 1;
   }
 

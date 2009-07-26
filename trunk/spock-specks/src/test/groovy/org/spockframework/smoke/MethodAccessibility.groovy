@@ -26,7 +26,6 @@ import spock.lang.*
  */
 @Speck
 @RunWith(Sputnik)
-// TODO: revisit this test once http://www.jetbrains.net/jira/browse/IDEA-12498 is fixed
 class MethodAccessibility {
   @Shared numCalls = 0
 
@@ -42,7 +41,7 @@ class MethodAccessibility {
     numCalls++
   }
 
-  public cleanupSpeck() {
+  def cleanupSpeck() {
     assert numCalls == 4
   }
 

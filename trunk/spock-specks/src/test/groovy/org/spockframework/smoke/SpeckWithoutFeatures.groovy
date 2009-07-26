@@ -23,13 +23,8 @@ import static spock.lang.Predef.*
 import org.spockframework.runtime.ConditionNotSatisfiedError
 
 /**
- *
  * @author Peter Niederwieser
  */
-// TODO: are we satisfied with this behavior?
-// alternatives:
-// - don't run setupSpeck()/cleanupSpeck()
-// - run setup()/cleanup() once (might help to check whether they work or throw an exception)
 @Speck
 @RunWith (Sputnik)
 class SpeckWithoutFeatures {
@@ -44,10 +39,10 @@ class SpeckWithoutFeatures {
   }
 
   def setup() {
-    assert false, "not executed"
+    assert false
   }
 
   def cleanup() {
-    assert false, "not executed"
+    assert false
   }
 }

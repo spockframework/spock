@@ -19,8 +19,6 @@ package org.spockframework.smoke.parameterization
 import org.spockframework.EmbeddedSpecification
 import org.spockframework.runtime.SpeckExecutionException
 
-import org.spockframework.smoke.parameterization.*
-
 /**
  * @author Peter Niederwieser
  */

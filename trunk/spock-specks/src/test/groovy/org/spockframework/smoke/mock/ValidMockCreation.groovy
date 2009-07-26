@@ -16,11 +16,9 @@
 
 package org.spockframework.smoke.mock
 
-import org.codehaus.groovy.runtime.typehandling.GroovyCastException
 import org.junit.runner.RunWith
 import spock.lang.*
 import static spock.lang.Predef.*
-import org.spockframework.util.SyntaxException
 
 @Speck
 @RunWith(Sputnik)

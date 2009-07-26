@@ -1,7 +1,7 @@
 #summary A look at some of the upcoming features in Spock 0.2.
 #labels Featured
 
-== Accessing "Old" Values ==
+== Accessing "old" values ==
 
 Inside a `then` block, `old(`_expr_`)` refers to the value of `expr` before the preceding `when` block was entered. Example:
 
@@ -13,7 +13,7 @@ def "pushing an element on the stack increases its size by one"() {
 }
 }}}
 
-== Unrolling Data-Driven Features ==
+== Unrolling data-driven features ==
 
 Sometimes it would be nice if the iterations of a data-driven feature were listed separately in test reports and test runners. This is achieved with the `@Unroll` annotation. Example:
 
@@ -49,7 +49,7 @@ Here is how this feature is displayed in IntelliJ IDEA: TODO
 
 As we have seen, `@Unroll` changes the way a data-driven feature is represented in test reports and test runners. However, it is important to note that it does _not_ affect its execution semantics.
 
-== Improved Stack Trace Filtering ==
+== Improved stack trace filtering ==
 
 Spock now employs aggressive stack trace filtering to show you only what's relevant. In particular, internals of the test runner's and Groovy's implementation are no longer displayed. Example:
 

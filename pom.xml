@@ -23,13 +23,6 @@
     <url>http://code.google.com/p/spock/source/browse</url>
   </scm>
 
-  <modules>
-    <module>spock-core</module>
-    <module>spock-specks</module>
-    <module>spock-maven</module>
-    <module>spock-example</module>
-  </modules>
-
   <build>
     <pluginManagement>
       <plugins>
@@ -131,6 +124,18 @@
   </distributionManagement>
 
   <profiles>
+    <profile>
+      <id>default</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <modules>
+        <module>spock-core</module>
+        <module>spock-specks</module>
+        <module>spock-maven</module>
+        <module>spock-example</module>
+      </modules>
+    </profile> 
     <profile>
       <id>release</id>
       <modules>

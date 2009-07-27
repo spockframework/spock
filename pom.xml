@@ -27,6 +27,7 @@
     <module>spock-core</module>
     <module>spock-specks</module>
     <module>spock-maven</module>
+    <module>spock-example</module>
   </modules>
 
   <build>

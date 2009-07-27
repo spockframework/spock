@@ -1,0 +1,38 @@
+Spock Framework Example Project
+===============================
+
+This project helps you getting started with Spock (http://spockframework.org). It includes example specifications and build scripts for Ant (http://ant.apache.org), Gradle (http://www.gradle.org), and Maven (http://maven.apache.org). If you don't have any of these build tools installed, just run the Gradle build as described below. Upon first execution, Gradle will be automatically downloaded to your home folder.
+
+Prerequisites
+-------------
+- JDK 5 or higher
+- Ant 1.7 or higher (for Ant build)
+- Maven 2.0 or higher (for Maven build)
+
+Building with Ant
+-----------------
+Type: ant clean test
+
+Building with Gradle
+--------------------
+Type: ./gradlew clean test (On Windows: gradlew clean test)
+
+Building with Maven
+-------------------
+Type: mvn clean test
+
+Further Resources
+-----------------
+Spock homepage: http://spockframework.org
+Main documentation: http://spockframework.org/wiki/SpockBasics
+Discussion group: http://groups.google.com/group/spockframework
+Issue tracker: http://issues.spockframework.org
+Build server: http://builds.spockframework.org
+Maven repository: http://m2repo.spockframework.org (releases are also available from Maven Central)
+
+If you have any comments or questions, please direct them to the Spock discussion group. All feedback is appreciated!
+
+Enjoy!
+Peter Niederwieser
+Creator, Spock Framework
+

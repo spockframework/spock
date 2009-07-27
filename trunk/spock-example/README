@@ -12,15 +12,15 @@ Prerequisites
 
 Building with Ant
 -----------------
-Type: ant clean test
+Type: ant test
 
 Building with Gradle
 --------------------
-Type: ./gradlew clean test (On Windows: gradlew clean test)
+Type: ./gradlew test (On Windows: gradlew test)
 
 Building with Maven
 -------------------
-Type: mvn clean test
+Type: mvn test
 
 Further Resources
 -----------------

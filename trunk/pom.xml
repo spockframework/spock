@@ -133,6 +133,10 @@
   <profiles>
     <profile>
       <id>release</id>
+      <modules>
+        <module>spock-core</module>
+        <module>spock-maven</module>
+      </modules>
       <build>
         <plugins>
           <plugin>

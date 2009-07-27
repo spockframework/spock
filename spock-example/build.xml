@@ -43,7 +43,7 @@
       <dependency
         groupId="com.h2database"
         artifactId="h2"
-        version="1.1.112" />   
+        version="1.1.116" />   
       <remoteRepository
         id="maven-central"
         url="http://repo1.maven.org/maven2/" />

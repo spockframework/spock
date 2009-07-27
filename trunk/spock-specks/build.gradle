@@ -16,6 +16,6 @@ project(":spock-specks") {
     compile "junit:junit:4.6"
     testRuntime "cglib:cglib-nodep:2.1_3"
     testRuntime "org.objenesis:objenesis:1.1"
-    testRuntime "com.h2database:h2:1.1.112"
+    testRuntime "com.h2database:h2:1.1.116"
   }
 }

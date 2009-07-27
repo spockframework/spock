@@ -11,7 +11,7 @@ import groovy.sql.Sql
 
 @Speck
 @RunWith(Sputnik)
-class SqlDataSource {
+class DatabaseDriven {
   @Shared sql = Sql.newInstance("jdbc:h2:mem:", "org.h2.Driver")
   
   // normally an external database would be used,

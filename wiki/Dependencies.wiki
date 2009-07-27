@@ -2,7 +2,7 @@
 
 = Mandatory dependencies =
  * Java 5 or higher
- * Groovy 1.6.1 or higher (latest 1.6.x release recommended)
+ * Groovy 1.6 or higher (latest 1.6.x release recommended)
  * JUnit 4.4 or higher
 
 *Note*: Groovy 1.7 pre-releases are _not_ yet supported (try at your own risk).

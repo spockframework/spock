@@ -90,12 +90,24 @@ public class Predef {
         "Exception conditions are only allowed in 'then' blocks, and may not be nested inside other elements");
   }
 
+  /**
+   * Specifies that in particular, no exception of the given type should be
+   * thrown. This method has only documentation purposes and does not affect
+   * the execution of the specification.
+   *
+   * @param type an exception type
+   */
   @SuppressWarnings("UnusedDeclaration")
   public static void notThrown(Class<? extends Throwable> type) {
     // IDEA: provide an implementation that makes it possible to differentiate
     // between this exception being thrown, and any other exception being thrown
   }
 
+  /**
+   * Specifies that no exception should be thrown. Equivalent to
+   * <tt>notThrown(Throwable)</tt>. This method has only documentation purposes
+   * and does not affect the execution of the specification.
+   */
   @SuppressWarnings("UnusedDeclaration")
   public static void noExceptionThrown() { /* nothing to do */ }
 
@@ -217,7 +229,7 @@ public class Predef {
     return type.cast(controller.create(name, type));
   }
 
-  // dummy is just to create a new overload of old() with different implementation
+  // dummy parameter exists just to create a new overload of old() with different implementation
   @SuppressWarnings("UnusedDeclaration")
   static <T> T old(T expression, boolean dummy) {
     return expression;

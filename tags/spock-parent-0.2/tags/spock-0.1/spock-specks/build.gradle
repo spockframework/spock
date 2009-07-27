@@ -1,0 +1,44 @@
+import org.testfinder.*
+
+usePlugin("groovy") 
+sourceCompatibility = 1.5 
+targetCompatibility = 1.5
+
+compile.options.fork = false
+testCompile.options.fork = false
+
+project(":spock-specks") {
+  dependencies {
+    addMavenRepo()
+    
+    compile "org.codehaus.groovy:groovy-all:1.6.0"
+    compile project(":spock-core")
+    compile "junit:junit:4.5"
+    testRuntime "cglib:cglib-nodep:2.1_3"
+    testRuntime "org.objenesis:objenesis:1.1"
+  }
+
+  test {  
+    options.showOutput = true
+    options.fork(forkMode: ForkMode.ONCE)    
+  } 
+  
+  createTask("findSpecks") {
+    test.includes = findSpecks(testClassesDir)
+  }
+
+  test.dependsOn findSpecks
+  findSpecks.dependsOn testCompile
+}
+
+def findSpecks(baseDir) {
+  def loader = getClass().classLoader
+  assert loader instanceof URLClassLoader
+  
+  loader.addURL(new File("spock-core/build/classes/").absoluteFile.toURI().toURL())
+  def finder = loader.findClass("org.spockframework.buildsupport.JUnit4TestClassFinder").newInstance()
+  assert finder
+  
+	def prefixLength = baseDir.absolutePath.size() + 1
+  return finder.findTestClasses(baseDir).collect { it.absolutePath.substring(prefixLength) }	
+}

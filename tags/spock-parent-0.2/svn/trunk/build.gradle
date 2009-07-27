@@ -1,0 +1,9 @@
+allprojects {
+  group = "org.spockframework"
+  version = "0.2-SNAPSHOT"
+}
+
+task wrapper(type: Wrapper) { 
+  gradleVersion = '0.7' 
+  jarPath = 'wrapper' 
+} 

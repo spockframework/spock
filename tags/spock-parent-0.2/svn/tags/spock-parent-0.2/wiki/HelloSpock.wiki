@@ -1,0 +1,19 @@
+#summary Your first Spock specification.
+
+{{{
+import org.junit.runner.RunWith
+import spock.lang.*
+
+@Speck
+@RunWith(Sputnik)
+class HelloSpock {
+  def "can you figure out what I'm up to?"() {
+    expect:
+    name.size() == size
+
+    where:
+    name << ["Kirk", "Spock", "Scotty"]
+    size << [4, 5, 6]
+  }
+}
+}}}

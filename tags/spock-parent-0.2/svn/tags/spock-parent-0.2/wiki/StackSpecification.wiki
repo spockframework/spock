@@ -1,0 +1,115 @@
+#summary The classic example, Spock style.
+
+{{{
+import org.junit.runner.RunWith
+import spock.lang.*
+
+@Speck(java.util.Stack)
+@RunWith(Sputnik)
+class EmptyStack {
+  def stack = new Stack()
+
+  def "size"() {
+    expect: stack.size() == 0
+  }
+
+  def "pop"() {
+    when: stack.pop()
+    then: thrown(EmptyStackException)
+  }
+
+  def "peek"() {
+    when: stack.peek()
+    then: thrown(EmptyStackException)
+  }
+
+  def "push"() {
+    when:
+    stack.push("elem")
+
+    then:
+    stack.size() == 1
+    stack.peek() == "elem"
+  }
+}
+
+@Speck(java.util.Stack)
+@RunWith(Sputnik)
+class StackWithOneElement {
+  def stack = new Stack()
+
+  def setup() {
+    stack.push("elem")
+  }
+
+  def "size"() {
+    expect: stack.size() == 1
+  }
+
+  def "pop"() {
+    when:
+    def x = stack.pop()
+
+    then:
+    x == "elem"
+    stack.size() == 0
+  }
+
+  def "peek"() {
+    when:
+    def x = stack.peek()
+
+    then:
+    x == "elem"
+    stack.size() == 1
+  }
+
+  def "push"() {
+    when:
+    stack.push("elem2")
+
+    then:
+    stack.size() == 2
+    stack.peek() == "elem2"
+  }
+}
+
+@Speck(java.util.Stack)
+@RunWith(Sputnik)
+class StackWithThreeElements {
+  def stack = new Stack()
+
+  def setup() {
+    ["elem1", "elem2", "elem3"].each { stack.push(it) }
+  }
+
+  def "size"() {
+    expect: stack.size() == 3
+  }
+
+  def "pop"() {
+    expect:
+    stack.pop() == "elem3"
+    stack.pop() == "elem2"
+    stack.pop() == "elem1"
+    stack.size() == 0
+  }
+
+  def "peek"() {
+    expect:
+    stack.peek() == "elem3"
+    stack.peek() == "elem3"
+    stack.peek() == "elem3"
+    stack.size() == 3
+  }
+
+  def "push"() {
+    when:
+    stack.push("elem4")
+
+    then:
+    stack.size() == 4
+    stack.peek() == "elem4"
+  }
+}
+}}}

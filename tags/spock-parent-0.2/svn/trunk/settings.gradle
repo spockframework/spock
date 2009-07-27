@@ -1,0 +1,2 @@
+include 'spock-core', 'spock-specks', 'spock-example'
+

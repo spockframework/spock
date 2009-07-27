@@ -6,8 +6,8 @@
   <property name="build.dir" location="build" />
   <property name="lib.dir" location="lib" />
   
-  <property name="maven.ant.tasks.url" value="http://www.apache.org/dist/maven/binaries/maven-ant-tasks-2.0.9.jar" />
-  <property name="maven.ant.tasks.jar" value="${lib.dir}${file.separator}maven-ant-tasks-2.0.9.jar" />
+  <property name="maven.ant.tasks.url" value="http://www.apache.org/dist/maven/binaries/maven-ant-tasks-2.0.10.jar" />
+  <property name="maven.ant.tasks.jar" value="${lib.dir}${file.separator}maven-ant-tasks-2.0.10.jar" />
   <available property="maven.ant.tasks.jar.exists" file="${maven.ant.tasks.jar}" />
 	  
   <target name="bootstrap.maven.tasks" unless="maven.ant.tasks.jar.exists">

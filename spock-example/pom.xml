@@ -30,7 +30,7 @@
         -->
         <groupId>org.spockframework</groupId>
         <artifactId>spock-maven</artifactId>
-        <version>0.2</version>
+        <version>0.3-SNAPSHOT</version>
         <executions>
           <execution>
             <goals>
@@ -47,7 +47,7 @@
     <dependency>
       <groupId>org.spockframework</groupId>
       <artifactId>spock-core</artifactId>
-      <version>0.2</version>
+      <version>0.3-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>    
 <!-- Optional dependencies for using Spock -->

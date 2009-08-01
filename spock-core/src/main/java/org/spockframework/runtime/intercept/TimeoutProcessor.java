@@ -16,14 +16,9 @@
 
 package org.spockframework.runtime.intercept;
 
-import java.lang.annotation.Annotation;
-
-import spock.lang.Timeout;
-
-import org.spockframework.runtime.model.MethodInfo;
-import org.spockframework.runtime.model.SpeckInfo;
 import org.spockframework.runtime.model.FeatureInfo;
-import org.spockframework.runtime.model.MethodKind;
+import org.spockframework.runtime.model.MethodInfo;
+import spock.lang.*;
 
 /**
  * Processes @Timeout directives on Specks and Speck methods.

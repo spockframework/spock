@@ -9,7 +9,7 @@ import groovy.sql.Sql
 class DatabaseDriven {
   @Shared sql = Sql.newInstance("jdbc:h2:mem:", "org.h2.Driver")
   
-  // usually we would have an external database with pre-loaded test data
+  // usually, the database would already contain the test data
   def setupSpeck() {
     sql.execute("create table maxdata (id int primary key, a int, b int, c int)")
     sql.execute("insert into maxdata values (1, 3, 7, 7), (2, 5, 4, 5), (3, 9, 9, 9)")

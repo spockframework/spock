@@ -46,8 +46,7 @@ public class MainTransform implements ASTTransformation {
       ModuleNode module = (ModuleNode)nodes[0];
 
       lookup = new SourceLookup(sourceUnit, new Janitor());
-      @SuppressWarnings("unchecked")
-      List<ClassNode> classes =  (List<ClassNode>)module.getClasses();
+      List<ClassNode> classes = module.getClasses();
 
       for (ClassNode clazz : classes) {
         if (!isSpeck(clazz)) continue;

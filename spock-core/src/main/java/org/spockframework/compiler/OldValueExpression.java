@@ -27,7 +27,7 @@ import org.codehaus.groovy.ast.expr.Expression;
  * @author Peter Niederwieser
  */
 public class OldValueExpression extends VariableExpression {
-  private Expression originalExpression;
+  private final Expression originalExpression;
 
   public OldValueExpression(Expression originalExpression, String substitutedVariable) {
     super(substitutedVariable);

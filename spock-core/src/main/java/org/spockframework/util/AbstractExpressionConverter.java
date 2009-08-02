@@ -41,7 +41,7 @@ public abstract class AbstractExpressionConverter<T> implements GroovyCodeVisito
     return temp;
   }
 
-  protected List<T> convertAll(List<Expression> expressions) {
+  protected List<T> convertAll(List<? extends Expression> expressions) {
     List<T> converted = new ArrayList<T>(expressions.size());
     for (Expression expr : expressions) converted.add(convert(expr));
     return converted;

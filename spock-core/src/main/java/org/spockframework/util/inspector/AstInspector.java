@@ -374,10 +374,10 @@ public class AstInspector {
   private void indexAstNodes() {
     visitor.visitBlockStatement(module.getStatementBlock());
 
-    for (MethodNode method : (List<MethodNode>) module.getMethods())
+    for (MethodNode method : module.getMethods())
       visitor.visitMethod(method);
 
-    for (ClassNode clazz : (List<ClassNode>) module.getClasses())
+    for (ClassNode clazz : module.getClasses())
       visitor.visitClass(clazz);
   }
 
@@ -408,7 +408,7 @@ public class AstInspector {
   @SuppressWarnings("unchecked")
   private static List<Statement> getStatements(BlockStatement blockStat) {
     return blockStat == null ?
-      Collections.emptyList() :
+      Collections.<Statement> emptyList() :
       blockStat.getStatements();
   }
 
@@ -443,7 +443,7 @@ public class AstInspector {
     @Override
     @SuppressWarnings("unchecked")
     public void visitAnnotations(AnnotatedNode node) {
-      for (AnnotationNode an : (List<AnnotationNode>)node.getAnnotations()) {
+      for (AnnotationNode an : node.getAnnotations()) {
         ClassNode cn = an.getClassNode();
 
         // this comparison should be good enough, and also works in phase conversion
@@ -519,7 +519,7 @@ public class AstInspector {
           ArgumentListExpression args = (ArgumentListExpression)node.getArguments();
           if (args != null && args.getExpressions().size() == 1)
             addNode(expressions, methodName.substring(EXPRESSION_MARKER_PREFIX.length()),
-              (Expression)args.getExpressions().get(0));
+              args.getExpressions().get(0));
         }
       }
       super.visitMethodCallExpression(node);

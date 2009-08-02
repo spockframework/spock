@@ -314,7 +314,7 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> {
   public void visitMapExpression(MapExpression expr) {
     MapExpression conversion =
         new MapExpression(
-            convertAll(expr.getMapEntryExpressions()));
+            (List)convertAll(expr.getMapEntryExpressions()));
 
     conversion.setSourcePosition(expr);
     result = record(conversion);

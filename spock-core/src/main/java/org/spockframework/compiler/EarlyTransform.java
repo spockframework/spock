@@ -40,7 +40,7 @@ public class EarlyTransform implements ASTTransformation {
     ModuleNode module = (ModuleNode)nodes[0];
     if (moduleContainsClassWithSpeckAnnotation(module))
       // if this import is already present, it is simply overwritten
-      module.addStaticImportClass(Predef.class.getName(), PREDEF);
+      module.addStaticStarImport(Predef.class.getName(), PREDEF);
   }
 
   private boolean moduleContainsClassWithSpeckAnnotation(ModuleNode module) {
@@ -73,11 +73,19 @@ public class EarlyTransform implements ASTTransformation {
     String typePackage = type.getPackage().getName() + "."; // oddly, package names in ModuleNode end in "."
     if (name.equals(type.getSimpleName())
         && (typePackage.equals(module.getPackageName()) // same package
-           || module.getImportPackages().contains(typePackage))) // package (star) import
+           || hasStarImport(module, typePackage)))
       return true;
 
     // single class import (w/ or wo/ aliasing)
-    ClassNode importedType = module.getImport(name);
-    return importedType != null && type.getName().equals(importedType.getName());
+    ImportNode anImport = module.getImport(name);
+    return anImport != null && type.getName().equals(anImport.getType().getName());
   }
+
+    private static boolean hasStarImport(ModuleNode module, String typePackage) {
+      for (ImportNode anImport : module.getStarImports())
+        if (anImport.getPackageName().equals(typePackage))
+          return true;
+
+      return false;
+    }
 }

@@ -76,7 +76,7 @@ public abstract class AstUtil {
   public static List<Statement> getStatements(ClosureExpression closure) {
     BlockStatement blockStat = (BlockStatement)closure.getCode();
     return blockStat == null ?
-        Collections.emptyList() : // it's not possible to add any statements to such a ClosureExpression, so immutable list is OK
+        Collections.<Statement> emptyList() : // it's not possible to add any statements to such a ClosureExpression, so immutable list is OK
         blockStat.getStatements();
   }
 

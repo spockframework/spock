@@ -484,7 +484,7 @@ public class SpeckRewriter extends AbstractSpeckVisitor implements IRewriteResou
         new CatchStatement(
             new Parameter(nodeCache.Throwable, "__e42"),
             new BlockStatement(
-                Arrays.asList(
+                Arrays.<Statement> asList(
                     new ExpressionStatement(
                     new BinaryExpression(
                         getThrownExceptionRef(),

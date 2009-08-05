@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package org.spockframework.runtime
+package org.spockframework.junit
 
-import org.junit.runner.Runner
-import org.junit.runners.BlockJUnit4ClassRunner
-import org.junit.runner.Description
+import org.junit.runner.notification.Failure
 import org.junit.runner.notification.RunNotifier
+import org.junit.runners.BlockJUnit4ClassRunner
+import org.junit.runner.*
 
 /**
  * A JUnit runner for observing the behavior of JUnit's default runner.
@@ -34,12 +34,12 @@ class ObservableRunner extends Runner {
     delegate = new BlockJUnit4ClassRunner(clazz)
   }
 
-  public Description getDescription() {
+  Description getDescription() {
     println "GET DESCRIPTION"
     return delegate.getDescription()
   }
 
-  public void run(RunNotifier notifier) {
+  void run(RunNotifier notifier) {
     println "RUN"
     delegate.run(new ObservableNotifier(delegate: notifier))
   }
@@ -48,17 +48,37 @@ class ObservableRunner extends Runner {
 class ObservableNotifier extends RunNotifier {
   RunNotifier delegate
 
-  public void fireTestStarted(Description description) {
+  void fireTestRunStarted(Description description) {
+    println "TEST RUN STARTED"
+    delegate.fireTestRunStarted(description)
+  }
+
+  void fireTestRunFinished(Result result) {
+    println "TEST RUN FINISHED"
+    delegate.fireTestRunFinished(result)
+  }
+
+  void fireTestFailure(Failure failure) {
+    println "TEST FAILURE"
+    delegate.fireTestFailure(failure);
+  }
+
+  void fireTestAssumptionFailed(Failure failure) {
+    println "TEST ASSUMPTION FAILED"
+    delegate.fireTestAssumptionFailed(failure);
+  }
+
+  void fireTestStarted(Description description) {
     println "STARTED"
     delegate.fireTestStarted(description)
   }
 
-  public void fireTestFinished(Description description) {
+  void fireTestFinished(Description description) {
     println "FINISHED"
     delegate.fireTestFinished(description);
   }
 
-  public void fireTestIgnored(Description description) {
+  void fireTestIgnored(Description description) {
     println "IGNORED"
     delegate.fireTestIgnored(description);
   }

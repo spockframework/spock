@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-import org.junit.runner.RunWith
-import spock.lang.*
-import static spock.lang.Predef.*
+import spock.lang.Specification
 
 class Publisher {
   def subscribers = []
@@ -30,9 +28,7 @@ interface Subscriber {
   def receive(event)
 }
 
-@Speck
-@RunWith(Sputnik)
-class PublisherSpeck {
+class PublisherSpeck extends Specification {
   def "events are published to all subscribers"() {
     def pub = new Publisher()
     def sub1 = Mock(Subscriber)

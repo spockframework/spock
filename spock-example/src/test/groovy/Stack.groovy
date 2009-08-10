@@ -14,12 +14,9 @@
  * limitations under the License.
  */
 
-import org.junit.runner.RunWith
-import spock.lang.*
+import spock.lang.Specification
 
-@Speck(Stack)
-@RunWith(Sputnik)
-class EmptyStack {
+class EmptyStack extends Specification {
   def stack = new Stack()
 
   def "size"() {
@@ -46,9 +43,7 @@ class EmptyStack {
   }
 }
 
-@Speck(Stack)
-@RunWith(Sputnik)
-class StackWithOneElement {
+class StackWithOneElement extends Specification {
   def stack = new Stack()
 
   def setup() {
@@ -87,9 +82,7 @@ class StackWithOneElement {
   }
 }
 
-@Speck(Stack)
-@RunWith(Sputnik)
-class StackWithThreeElements {
+class StackWithThreeElements extends Specification {
   def stack = new Stack()
 
   def setup() {

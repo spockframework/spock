@@ -21,8 +21,8 @@ import org.spockframework.smoke.EmbeddedSpeckCompiler
 import org.spockframework.smoke.EmbeddedSpeckRunner
 
 /**
- * Convenience base class for specifications that embed other
- * specifications within them.
+ * Convenience base class for specifications that need to compile
+ * and/or run other specifications.
  *
  * @author Peter Niederwieser
  */

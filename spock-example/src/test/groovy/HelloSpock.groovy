@@ -14,12 +14,9 @@
  * limitations under the License.
  */
 
-import org.junit.runner.RunWith
-import spock.lang.*
+import spock.lang.Specification
 
-@Speck
-@RunWith(Sputnik)
-class HelloSpock {
+class HelloSpock extends Specification {
   def "can you figure out what I'm up to?"() {
     expect:
     name.size() == length

@@ -1,12 +1,8 @@
-import org.junit.runner.RunWith
-import spock.lang.*
-import static spock.lang.Predef.*
-
 import groovy.sql.Sql
+import spock.lang.Shared
+import spock.lang.Specification
 
-@Speck
-@RunWith(Sputnik)
-class DatabaseDriven {
+class DatabaseDriven extends Specification {
   @Shared sql = Sql.newInstance("jdbc:h2:mem:", "org.h2.Driver")
   
   // usually, the test data would already be contained in the database

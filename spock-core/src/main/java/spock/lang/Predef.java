@@ -17,9 +17,8 @@
 package spock.lang;
 
 import groovy.lang.Closure;
-
 import org.spockframework.mock.MockController;
-import org.spockframework.runtime.SpeckAssertionError;
+import org.spockframework.runtime.WrongExceptionThrownError;
 import org.spockframework.util.SyntaxException;
 
 /**
@@ -216,10 +215,7 @@ public class Predef {
   @SuppressWarnings("UnusedDeclaration")
   static <T extends Throwable> T thrown(Class<T> type, String name, Throwable exception) {
     if (type.isInstance(exception)) return type.cast(exception);
-    Error result = new SpeckAssertionError("Expected exception %s, but %s", type.getName(),
-        exception == null ? "no exception was thrown" : ("got " + exception.getClass().getName()));
-    result.initCause(exception);
-    throw result;
+    throw new WrongExceptionThrownError(type, exception);
   }
 
   @SuppressWarnings("UnusedDeclaration")

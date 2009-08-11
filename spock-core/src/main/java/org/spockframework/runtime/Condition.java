@@ -58,6 +58,9 @@ public class Condition {
   }
 
   public String render() {
+    if (text == null)
+      return "Condition not satisfied (no detail information available)\n";
+    
     if (message != null)
       return String.format("%s\n\nMessage: %s\n", flatten(text), message);
     

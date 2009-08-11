@@ -18,7 +18,7 @@ package org.spockframework.runtime.intercept;
 
 import spock.lang.FailsWith;
 
-import org.spockframework.runtime.SpeckAssertionError;
+import org.spockframework.runtime.WrongExceptionThrownError;
 
 /**
  *
@@ -36,13 +36,9 @@ public class FailsWithInterceptor implements IMethodInterceptor {
       invocation.proceed();
     } catch (Throwable t) {
       if (failsWith.value().isInstance(t)) return;
-      error("got: " + t);
+      throw new WrongExceptionThrownError(failsWith.value(), t);
     }
-    error("no exception was thrown");
-  }                                           
-
-  private void error(String msg) {
-    throw new SpeckAssertionError("expected exception %s, but %s",
-        failsWith.value().getName(), msg);
+    
+    throw new WrongExceptionThrownError(failsWith.value(), null);
   }
 }

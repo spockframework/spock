@@ -5,7 +5,7 @@
   <artifactId>spock-example</artifactId>
   <version>0.3-groovy-1.7-SNAPSHOT</version>
   <packaging>jar</packaging>
-  <name>Spock Framework - Example Project</name>
+  <name>Spock Framework - Examples</name>
 
   <build>
 <!-- Mandatory plugins for using Spock -->

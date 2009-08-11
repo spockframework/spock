@@ -23,7 +23,6 @@ public class ConditionNotSatisfiedError extends SpeckAssertionError {
   private final Condition condition;
 
   public ConditionNotSatisfiedError(Condition condition) {
-    super("Condition not satisfied");
     this.condition = condition;
   }
 
@@ -33,9 +32,6 @@ public class ConditionNotSatisfiedError extends SpeckAssertionError {
 
   @Override
   public String toString() {
-    if (condition.getText() == null)
-      return getMessage() + " (no detail information available)";
-    
-    return getMessage() + ":\n\n" + condition.render();
+    return condition.render();
   }
 }

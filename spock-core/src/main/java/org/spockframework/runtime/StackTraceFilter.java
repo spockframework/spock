@@ -65,6 +65,8 @@ public class StackTraceFilter {
     }
 
     throwable.setStackTrace(filteredTrace.toArray(new StackTraceElement[filteredTrace.size()]));
+
+    if (throwable.getCause() != null) filter(throwable.getCause());
   }
 
   private static boolean isFilteredClass(StackTraceElement elem) {
@@ -97,7 +99,7 @@ public class StackTraceFilter {
     String consecutiveNumberOfClosureDef = matcher.group(3);
 
     String prettyClassName = classContaingClosureDef;
-    String prettyMethodName = mapper.map(methodContainingClosureDef) + "@closure" + consecutiveNumberOfClosureDef;
+    String prettyMethodName = mapper.map(methodContainingClosureDef) + "_closure" + consecutiveNumberOfClosureDef;
 
     return new StackTraceElement(prettyClassName, prettyMethodName, elem.getFileName(), elem.getLineNumber());
   }

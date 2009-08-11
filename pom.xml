@@ -140,7 +140,6 @@
       <id>release</id>
       <modules>
         <module>spock-core</module>
-        <module>spock-specks</module>
         <module>spock-maven</module>
       </modules>
       <build>

@@ -73,7 +73,7 @@ def x // need some statement between label and closure (otherwise Groovy would c
     then:
     ConditionNotSatisfiedError e = thrown()
     stackTraceLooksLike e, """
-apackage.ASpeck|a feature@closure1|-
+apackage.ASpeck|a feature_closure1|-
 apackage.ASpeck|a feature|3
     """
   }

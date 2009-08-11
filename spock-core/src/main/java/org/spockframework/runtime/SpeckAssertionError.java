@@ -23,6 +23,10 @@ package org.spockframework.runtime;
 public class SpeckAssertionError extends AssertionError {
   public SpeckAssertionError() {}
 
+  public SpeckAssertionError(Throwable throwable) {
+    super(throwable);
+  }
+  
   public SpeckAssertionError(String msg, Object... args) {
     super(String.format(msg, args));
   }

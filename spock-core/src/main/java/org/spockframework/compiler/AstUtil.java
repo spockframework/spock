@@ -211,8 +211,13 @@ public abstract class AstUtil {
 
   // call of the form "<methodName>(...)" and method imported statically (import potentially added by EarlyTransform)
   public static boolean isPredefCall(StaticMethodCallExpression expr, String methodName, int minArgs, int maxArgs) {
-    return expr.getOwnerType().getName().equals(Predef.class.getName())
-        && expr.getMethod().equals(methodName)
+    return
+        // we currently don't a requirement on owner type because Predef member
+        // that used to occur in a field initializer has the Speck class as owner type,
+        // but we don't know the Speck class name here; thus we might recognize a bit too much,
+        // but this shouldn't be a problem in practice
+        // expr.getOwnerType().getName().equals(Predef.class.getName())
+        expr.getMethod().equals(methodName)
         && getArguments(expr).size() >= minArgs
         && getArguments(expr).size() <= maxArgs;
   }

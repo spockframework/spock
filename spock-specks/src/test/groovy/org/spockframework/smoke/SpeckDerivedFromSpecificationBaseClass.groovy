@@ -21,6 +21,7 @@ import org.spockframework.runtime.SpeckAssertionError
 import org.spockframework.util.SyntaxException
 import spock.lang.Specification
 import spock.lang.Unroll
+import spock.lang.Issue
 
 /**
  * @author Peter Niederwieser
@@ -166,6 +167,21 @@ class Foo extends spock.lang.Specification {
 
     where:
     target << ["this", "super", "Foo", "spock.lang.Specification"]
+  }
+
+  @Issue("http://issues.spockframework.org/detail?id=43")
+  def "can use Predef members in field initializers"() {
+    when:
+    runner.run """
+class Foo extends spock.lang.Specification {
+  def list = Mock(List)
+
+  def foo() { expect: true }
+}
+    """
+
+    then:
+    notThrown(SyntaxException)
   }
 }
 

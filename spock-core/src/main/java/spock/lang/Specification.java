@@ -28,7 +28,7 @@ import org.junit.runner.RunWith;
  * @author Peter Niederwieser
  */
 @RunWith(Sputnik.class)
-public class Specification extends Predef {
+public abstract class Specification extends Predef {
   public Object setup() { return null; }
 
   public Object cleanup() { return null; }

@@ -20,7 +20,11 @@ class Publisher {
   def subscribers = []
 
   def send(event) {
-    subscribers.each { it.receive(event) }
+    subscribers.each {
+      try {
+        it.receive(event)
+      } catch (Exception e) {}
+    }
   }
 }
 
@@ -29,17 +33,32 @@ interface Subscriber {
 }
 
 class PublisherSpeck extends Specification {
-  def "events are published to all subscribers"() {
-    def pub = new Publisher()
-    def sub1 = Mock(Subscriber)
-    def sub2 = Mock(Subscriber)
-    pub.subscribers << sub1 << sub2
+  def pub = new Publisher()
+  def sub1 = Mock(Subscriber)
+  def sub2 = Mock(Subscriber)
 
+  def setup() {
+    pub.subscribers << sub1 << sub2
+  }
+
+  def "delivers events to all subscribers"() {
     when:
     pub.send("event")
 
     then:
     1 * sub1.receive("event")
     1 * sub2.receive("event")
+  }
+
+  def "can cope with misbehaving subscriber"() {
+    sub1.receive(_) >> { throw new Exception() }
+
+    when:
+    pub.send("event1")
+    pub.send("event2")
+
+    then:
+    1 * sub2.receive("event1")
+    1 * sub2.receive("event2")
   }
 }

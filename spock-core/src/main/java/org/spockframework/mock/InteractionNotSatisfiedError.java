@@ -24,4 +24,4 @@ import org.spockframework.runtime.SpeckAssertionError;
  *
  * @author Peter Niederwieser
  */
-abstract public class InteractionNotSatisfiedError extends SpeckAssertionError {}
+public abstract class InteractionNotSatisfiedError extends SpeckAssertionError {}

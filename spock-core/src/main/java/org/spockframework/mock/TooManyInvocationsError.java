@@ -41,6 +41,7 @@ public class TooManyInvocationsError extends InteractionNotSatisfiedError {
   @Override
   public String toString() {
     StringBuilder builder = new StringBuilder();
+    builder.append("Too many invocations for:\n\n");
     int numInvoked = interaction.getAcceptedCount() + 1;
     builder.append(String.format("%s   (%d %s)\n",
         interaction, numInvoked, numInvoked == 1 ? "invocation" : "invocations"));

@@ -50,7 +50,7 @@ class PublisherSpeck extends Specification {
     1 * sub2.receive("event")
   }
 
-  def "can cope with misbehaving subscriber"() {
+  def "can cope with misbehaving subscribers"() {
     sub1.receive(_) >> { throw new Exception() }
 
     when:

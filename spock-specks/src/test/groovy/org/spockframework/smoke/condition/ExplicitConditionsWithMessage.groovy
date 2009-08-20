@@ -19,7 +19,6 @@ package org.spockframework.smoke.condition
 import org.junit.runner.RunWith
 
 import spock.lang.*
-import static spock.lang.Predef.*
 import static org.spockframework.smoke.condition.ConditionSpeckUtil.*
 import org.spockframework.runtime.ConditionNotSatisfiedError
 
@@ -46,7 +45,7 @@ class ExplicitConditionsWithMessage {
     isRendered """
 1 + 2 == 2
 
-Message: need to brush up my math
+Your message: need to brush up my math
     """, {
       assert 1 + 2 == 2, "need to brush up my math"
     }
@@ -57,7 +56,7 @@ Message: need to brush up my math
     isRendered """
 a + b == 2
 
-Message: a: 1 b: 2
+Your message: a: 1 b: 2
     """, {
       def a = 1
       def b = 2
@@ -70,7 +69,7 @@ Message: a: 1 b: 2
     isRendered """
 map.a + map.b == 2
 
-Message: [a:1, b:2]
+Your message: [a:1, b:2]
     """, {
       def map = [a: 1, b: 2]
       assert map.a + map.b == 2, map
@@ -94,7 +93,7 @@ Message: [a:1, b:2]
     isRendered """
 1 + 2 == 2
 
-Message: null
+Your message: null
     """, {
       def x = null
       assert 1 + 2 == 2, x

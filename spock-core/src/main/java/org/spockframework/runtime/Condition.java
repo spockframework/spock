@@ -59,10 +59,10 @@ public class Condition {
 
   public String render() {
     if (text == null)
-      return "Condition not satisfied (no detail information available)\n";
+      return "(No detail information available)\n";
     
     if (message != null)
-      return String.format("%s\n\nMessage: %s\n", flatten(text), message);
+      return String.format("%s\n\nYour message: %s\n", flatten(text), message);
     
     ExpressionInfo exprInfo = new ExpressionInfoBuilder(flatten(text), TextPosition.create(1, 1), values).build();
     return ExpressionInfoRenderer.render(exprInfo);

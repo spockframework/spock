@@ -32,6 +32,6 @@ public class ConditionNotSatisfiedError extends SpeckAssertionError {
 
   @Override
   public String toString() {
-    return condition.render();
+    return "Condition not satisfied:\n\n" + condition.render();
   }
 }

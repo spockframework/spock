@@ -38,7 +38,7 @@
         groupId="org.objenesis"
         artifactId="objenesis"
         version="1.1" />
-      <!-- only required if Spock's Ant selector is used -->
+      <!-- only required if Spock's Ant selector is used, which finds specifications to be run regardless of their name -->
       <dependency
         groupId="asm"
         artifactId="asm"

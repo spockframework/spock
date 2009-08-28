@@ -1,4 +1,4 @@
-<project name="SpockExample" basedir="." xmlns:artifact="urn:maven-artifact-ant">
+<project name="SpockExample" basedir="." default="test" xmlns:artifact="urn:maven-artifact-ant">
   <property name="src.dir" location="src/test/groovy" />
   <property name="build.dir" location="ant/build" />
   <property name="lib.dir" location="ant/lib" />  
@@ -79,12 +79,13 @@
   
   <target name="test" depends="compile">
     <junit fork="true" forkmode="once" printsummary="withOutAndErr">
-      <formatter type="plain" usefile="false" />
       <classpath path="${build.dir}" />
       <classpath refid="classpath.spock" />       
       <batchtest>
         <fileset dir="${build.dir}">
-          <custom classname="org.spockframework.buildsupport.ant.SpeckClassFileSelector" />
+          <custom
+            classname="org.spockframework.buildsupport.ant.SpeckClassFileSelector"
+            classpathref="classpath.spock" />
         </fileset>
       </batchtest>
     </junit>

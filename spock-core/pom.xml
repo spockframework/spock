@@ -27,8 +27,8 @@
     <dependency> <!-- used by org.spockframework.buildsupport.ant -->
       <groupId>org.apache.ant</groupId>
       <artifactId>ant</artifactId>
-      <scope>provided</scope>
-    </dependency>   
+      <optional>true</optional>
+    </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>

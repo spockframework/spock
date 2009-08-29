@@ -19,24 +19,29 @@
       <groupId>org.codehaus.groovy</groupId>
       <artifactId>groovy-all</artifactId>
     </dependency>
-    <dependency>
+    <dependency> <!-- clients that want to use org.spockframework.buildsupport need to include this dependency -->
       <groupId>asm</groupId>
       <artifactId>asm</artifactId>
-      <optional>true</optional> <!-- clients that want to use org.spockframework.buildsupport need to include this dependency -->
+      <optional>true</optional>
+    </dependency>
+    <dependency> <!-- used by org.spockframework.buildsupport.ant -->
+      <groupId>org.apache.ant</groupId>
+      <artifactId>ant</artifactId>
+      <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
     </dependency>
-    <dependency>
+    <dependency> <!-- clients that want to mock classes (in addition to interfaces) need to include this dependency -->
       <groupId>cglib</groupId>
       <artifactId>cglib-nodep</artifactId>
-      <optional>true</optional> <!-- clients that want to mock classes (not only interfaces) need to include this dependency -->
+      <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>org.objenesis</groupId>
       <artifactId>objenesis</artifactId>
-      <optional>true</optional> <!-- clients that want to mock classes without default constructor need to include this dependency -->
-    </dependency>
+      <optional>true</optional>
+    </dependency>     
   </dependencies>
 </project>

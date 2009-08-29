@@ -43,12 +43,14 @@ public class SpeckClassFileFinder {
     for (File path: dir.listFiles())
       if (path.isDirectory())
         doFindSpecks(path, foundSpecks);
-      else if (path.getName().endsWith(".class")
-          && path.isFile() && isSpeck(path))
+      else if (isSpeck(path))
         foundSpecks.add(path);
   }
 
-  private boolean isSpeck(File file) throws IOException {
+  public boolean isSpeck(File file) throws IOException {
+    if (!(file.getName().endsWith(".class") && file.isFile()))
+      return false;
+    
     InputStream stream = new BufferedInputStream(new FileInputStream(file));
     try {
       ClassReader reader = new ClassReader(stream);

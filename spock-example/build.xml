@@ -1,8 +1,7 @@
-<project name="SpockExample" basedir="." xmlns:artifact="urn:maven-artifact-ant">
+<project name="SpockExample" basedir="." default="test" xmlns:artifact="urn:maven-artifact-ant">
   <property name="src.dir" location="src/test/groovy" />
   <property name="build.dir" location="ant/build" />
-  <property name="lib.dir" location="ant/lib" />
-  
+  <property name="lib.dir" location="ant/lib" />  
   <property name="maven.ant.tasks.url" value="http://www.apache.org/dist/maven/binaries/maven-ant-tasks-2.0.10.jar" />
   <property name="maven.ant.tasks.jar" value="${lib.dir}${file.separator}maven-ant-tasks-2.0.10.jar" />
   <available property="maven.ant.tasks.jar.exists" file="${maven.ant.tasks.jar}" />
@@ -39,6 +38,11 @@
         groupId="org.objenesis"
         artifactId="objenesis"
         version="1.1" />
+      <!-- only required if Spock's Ant selector is used, which finds specifications to be run regardless of their name -->
+      <dependency
+        groupId="asm"
+        artifactId="asm"
+        version="2.2.3" />
 <!-- Dependencies used by examples in this project (not required for using Spock) -->
       <dependency
         groupId="com.h2database"
@@ -74,16 +78,16 @@
   </target>
   
   <target name="test" depends="compile">
-    <junit>
-      <formatter type="plain" usefile="false" />
+    <junit fork="true" forkmode="once" printsummary="withOutAndErr">
       <classpath path="${build.dir}" />
       <classpath refid="classpath.spock" />       
-      <test name="HelloSpock" />
-      <test name="EmptyStack" />
-      <test name="StackWithOneElement" />
-      <test name="StackWithThreeElements" />
-      <test name="PublisherSpeck" />
-      <test name="DatabaseDriven" />
+      <batchtest>
+        <fileset dir="${build.dir}">
+          <custom
+            classname="org.spockframework.buildsupport.ant.SpeckClassFileSelector"
+            classpathref="classpath.spock" />
+        </fileset>
+      </batchtest>
     </junit>
   </target>
 

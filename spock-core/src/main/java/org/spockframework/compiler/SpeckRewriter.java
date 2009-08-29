@@ -180,7 +180,9 @@ public class SpeckRewriter extends AbstractSpeckVisitor implements IRewriteResou
     return newMethod;
   }
 
-  private void deactivateMethod(MethodNode method) {
+  // NOTE: alternatively, we could remove method with:
+  // speck.getAst().getMethods().remove(method)
+  private void deactivateMethod(MethodNode method) {   
     Statement stat = new ExpressionStatement(
         new MethodCallExpression(
             new ClassExpression(nodeCache.SpockRuntime),

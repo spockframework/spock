@@ -14,16 +14,10 @@
  * limitations under the License.
  */
 
-package org.spockframework.runtime.intercept;
+package org.spockframework.tapestry;
 
-import org.spockframework.runtime.model.MethodInfo;
-
-/**
- * @author Peter Niederwieser
- */
-public interface IMethodInvocation {
-  public Object getTarget();
-  public MethodInfo getMethod();
-  public Object[] getArguments();
-  public void proceed() throws Throwable;
+public class Service2 implements IService2 {
+  public String generateQuickBrownFox() {
+    return "The quick brown fox jumps over the lazy dog.";
+  }
 }

@@ -37,6 +37,10 @@ def feature() { expect: true }
     result.runCount == 0 // we don't currently call notifier.fireTestStarted()/fireTestFinished() for setupSpeck()
     result.failureCount == 1
     result.ignoreCount == 0
+
+    def desc = result.failures[0].description
+    desc.isSuite() // failure description is description of the test class
+    desc.className == "apackage.ASpeck"
   }
 
   def "failing cleanupSpeck method"() {

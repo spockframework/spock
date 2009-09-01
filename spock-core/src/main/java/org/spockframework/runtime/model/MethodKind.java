@@ -30,5 +30,25 @@ public enum MethodKind {
   DATA_PROVIDER,
   DATA_PROCESSOR,
   SPECK_EXECUTION,
-  FEATURE_EXECUTION 
+  FEATURE_EXECUTION;
+
+  public boolean isFixtureMethod() {
+    return isSetupMethod() || isCleanupMethod();
+  }
+  
+  public boolean isSetupMethod() {
+    return this == SETUP || this == SETUP_SPECK;
+  }
+
+  public boolean isCleanupMethod() {
+    return this == CLEANUP || this == CLEANUP_SPECK;
+  }
+
+  public boolean isFeatureScopedFixtureMethod() {
+    return this == SETUP || this == CLEANUP;
+  }
+
+  public boolean isSpeckScopedFixtureMethod() {
+    return this == SETUP_SPECK || this == CLEANUP_SPECK;
+  }
 }

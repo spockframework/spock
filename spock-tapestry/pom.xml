@@ -8,24 +8,16 @@
 
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.spockframework</groupId>
-  <artifactId>spock-specks</artifactId>
+  <artifactId>spock-tapestry</artifactId>
   <packaging>jar</packaging>
-  <name>Spock Framework - Specifications For Core</name>
+  <name>Spock Framework - Tapestry Support</name>
+  <url>http://spockframework.org</url>
 
   <build>
     <plugins>
       <plugin>
         <groupId>org.codehaus.groovy.maven</groupId>
-        <artifactId>gmaven-plugin</artifactId>     
-      </plugin>
-      <plugin>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <useFile>false</useFile>
-          <includes>
-            <include>**/*Test.java</include> <!-- for JUnit tests -->
-          </includes>
-        </configuration>
+        <artifactId>gmaven-plugin</artifactId>
       </plugin>
       <plugin>
         <groupId>org.spockframework</groupId>
@@ -39,41 +31,20 @@
           </execution>
         </executions>
       </plugin>
-      <plugin>
-        <artifactId>maven-deploy-plugin</artifactId>
-        <configuration>
-          <skip>true</skip>
-        </configuration>
-      </plugin>
     </plugins>
   </build>
 
   <dependencies>
+<!-- compile dependencies -->
     <dependency>
       <groupId>org.spockframework</groupId>
       <artifactId>spock-core</artifactId>
       <version>${project.version}</version>
-      <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <scope>test</scope>
-    </dependency>
-	  <dependency>
-      <groupId>cglib</groupId>
-      <artifactId>cglib-nodep</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.objenesis</groupId>
-      <artifactId>objenesis</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-       <groupId>com.h2database</groupId>
-       <artifactId>h2</artifactId>
-       <scope>test</scope>
+      <groupId>org.apache.tapestry</groupId>
+      <artifactId>tapestry-ioc</artifactId>
+      <version>5.1.0.5</version>
     </dependency>
   </dependencies>
 </project>

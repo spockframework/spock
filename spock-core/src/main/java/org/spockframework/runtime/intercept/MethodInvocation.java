@@ -16,8 +16,8 @@
 
 package org.spockframework.runtime.intercept;
 
-import java.util.Iterator;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Iterator;
 
 import org.spockframework.runtime.model.MethodInfo;
 import org.spockframework.util.InternalSpockError;
@@ -37,6 +37,10 @@ public class MethodInvocation implements IMethodInvocation {
     this.method = method;
     this.arguments = arguments;
     interceptors = method.getInterceptors().iterator();
+  }
+
+  public Object getTarget() {
+    return target;
   }
 
   public MethodInfo getMethod() {

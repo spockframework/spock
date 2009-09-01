@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package org.spockframework.runtime.intercept;
+package org.spockframework.tapestry;
 
-import org.spockframework.runtime.model.MethodInfo;
+public class Service1 implements IService1 {
+  private final IService2 service2;
 
-/**
- * @author Peter Niederwieser
- */
-public interface IMethodInvocation {
-  public Object getTarget();
-  public MethodInfo getMethod();
-  public Object[] getArguments();
-  public void proceed() throws Throwable;
+  public Service1(IService2 service2) {
+    this.service2 = service2;
+  }
+
+  public String generateString() {
+    return service2.generateQuickBrownFox();
+  }
 }

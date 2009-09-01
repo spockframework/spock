@@ -23,7 +23,9 @@ import org.junit.runner.notification.RunNotifier;
 import static org.spockframework.runtime.RunStatus.*;
 import org.spockframework.runtime.model.*;
 import org.spockframework.util.InternalSpockError;
-import spock.lang.*;
+
+import spock.lang.Ignore;
+import spock.lang.Unroll;
 
 public class JUnitSupervisor implements IRunSupervisor {
   private final RunNotifier notifier;
@@ -132,14 +134,17 @@ public class JUnitSupervisor implements IRunSupervisor {
 
   public void afterSpeck() {}
 
-  private Description getDescription(MethodInfo method) {
-    return (Description)method.getMetadata();
+  private Description getDescription(NodeInfo node) {
+    return (Description)node.getMetadata();
   }
 
   private Description getFailedDescription(MethodInfo failedMethod) {
     if (unrolledDescription != null) return unrolledDescription;
     if (feature != null) return getDescription(feature.getFeatureMethod());
-    return getDescription(failedMethod);
+    // attribute failure to Speck
+    // if we would attribute failure to a method that isn't part of the Speck's
+    // static Description, IDEs would fail to report it correctly
+    return getDescription(speck);
   }
 
   private Description getUnrolledDescription(Object[] args) {

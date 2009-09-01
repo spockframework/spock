@@ -14,16 +14,14 @@
  * limitations under the License.
  */
 
-package org.spockframework.runtime.intercept;
+package org.spockframework.tapestry;
 
-import org.spockframework.runtime.model.MethodInfo;
+import org.apache.tapestry5.ioc.ServiceBinder;
 
-/**
- * @author Peter Niederwieser
- */
-public interface IMethodInvocation {
-  public Object getTarget();
-  public MethodInfo getMethod();
-  public Object[] getArguments();
-  public void proceed() throws Throwable;
+// Tapestry module classes cannot currently be written in Groovy
+// See https://issues.apache.org/jira/browse/TAPESTRY-2746
+public class Module2 {
+  public static void bind(ServiceBinder binder) {
+    binder.bind(IService2.class, Service2.class);
+  }
 }

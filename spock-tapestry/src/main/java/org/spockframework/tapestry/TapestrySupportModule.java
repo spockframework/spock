@@ -14,38 +14,12 @@
  * limitations under the License.
  */
 
-package org.spockframework.example
+package org.spockframework.tapestry;
 
-import org.junit.runner.RunWith
-import spock.lang.*
-import static spock.lang.Predef.*
+import org.apache.tapestry5.ioc.ObjectLocator;
 
-class Publisher {
-  def subscribers = []
-
-  def send(event) {
-    subscribers.each { it.receive(event) }
-  }
-}
-
-interface Subscriber {
-  def receive(event)
-}
-
-@Speck
-@RunWith(Sputnik)
-class PublisherSubscriberSpeck {
-  def "events are received by all subscribers"() {
-    def pub = new Publisher()
-    def sub1 = Mock(Subscriber)
-    def sub2 = Mock(Subscriber)
-    pub.subscribers << sub1 << sub2
-
-    when:
-    pub.send("event")
-
-    then:
-    1 * sub1.receive("event")
-    1 * sub2.receive("event")
+public class TapestrySupportModule {
+  public static ObjectLocator build(ObjectLocator locator) {
+    return locator;
   }
 }

@@ -17,9 +17,10 @@
 package org.spockframework.tapestry
 
 import org.apache.tapestry5.ioc.ObjectLocator
+import org.apache.tapestry5.ioc.annotations.*
+
 import spock.lang.Specification
 import spock.tapestry.TapestrySupport
-import org.apache.tapestry5.ioc.annotations.*
 
 @TapestrySupport
 @SubModule(Module1)

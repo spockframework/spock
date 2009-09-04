@@ -20,8 +20,6 @@ import org.junit.runner.RunWith
 import spock.lang.*
 
 /**
- * A ...
- 
  * @author Peter Niederwieser
  */
 @Speck
@@ -30,11 +28,11 @@ class MethodExecutionOrder {
   @Shared order = []
 
   def cleanup() {
-    order << "a"
+    getOrder() << "c"
   }
 
   def cleanupSpeck() {
-    assert order == ["bs","b",3,"a","b",4,"a","b",5,"a","b",6,"a","b",7,"a","b",8,"a","b",9,"a","b",10,"a"]
+    assert getOrder() == ["ss","s",3,"c","s",4,"c","s",5,"c","s",6,"c","s",7,"c","s",8,"c","s",9,"c","s",10,"c"]
   }
 
   def "help, I need somebody"() {
@@ -47,45 +45,45 @@ class MethodExecutionOrder {
   }
 
   def secondFeatureWithStandardName() {
-    order << 4
+    getOrder() << 4
     expect: true
   }
 
   def "just helping out"() {
-    order << "h"
+    getOrder() << "h"
   }
 
   def "strangely named feature"() {
-    order << 5
+    getOrder() << 5
     expect: 1
   }
 
   def "very very long name but still nothing but a feature"() {
-    order << 6
+    getOrder() << 6
     expect: 1
   }
 
   def "short one"() {
-    order << 7
+    getOrder() << 7
     def x = "blah"
     when: x = x.reverse()
     then: x == "halb"
   }
 
   def setup() {
-    order << "b"
+    getOrder() << "s"
   }
 
   def "helpless"() {
-    order << "h"
+    getOrder() << "h"
   }
 
   def setupSpeck() {
-    order << "bs"
+    getOrder() << "ss"
   }
 
   def "parameterized feature"() {
-    order << x
+    getOrder() << x
     expect: 1
     where : x << [8, 9, 10]
   }

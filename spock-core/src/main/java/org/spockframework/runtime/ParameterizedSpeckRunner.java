@@ -27,8 +27,8 @@ import java.util.*;
  *
  * @author Peter Niederwieser
  */
-public class SpeckInfoParameterizedRunner extends SpeckInfoBaseRunner {
-  public SpeckInfoParameterizedRunner(SpeckInfo speck, IRunSupervisor supervisor) {
+public class ParameterizedSpeckRunner extends BaseSpeckRunner {
+  public ParameterizedSpeckRunner(SpeckInfo speck, IRunSupervisor supervisor) {
     super(speck, supervisor);
   }
 
@@ -51,7 +51,7 @@ public class SpeckInfoParameterizedRunner extends SpeckInfoBaseRunner {
 
     for (int i = 0; i < dataProviderInfos.size(); i++) {
       MethodInfo method = dataProviderInfos.get(i).getDataProviderMethod();
-      Object provider = invokeRaw(method, null);
+      Object provider = invokeRaw(sharedInstance, method, null);
       if (runStatus != OK) return null;
       if (provider == null) {
         runStatus = supervisor.error(method, new SpeckExecutionException("Data provider is null"), runStatus);
@@ -136,9 +136,10 @@ public class SpeckInfoParameterizedRunner extends SpeckInfoBaseRunner {
     if (runStatus != OK) return;
 
     supervisor.beforeIteration(args);
-    invokeSetup();
+    createSpeckInstance(false);
+    invokeSetup(speck);
     invokeFeatureMethod(feature.getFeatureMethod(), args);
-    invokeCleanup();
+    invokeCleanup(speck);
     supervisor.afterIteration();
   }
 
@@ -193,7 +194,7 @@ public class SpeckInfoParameterizedRunner extends SpeckInfoBaseRunner {
       }
 
     try {
-      return (Object[])invokeRaw(feature.getDataProcessorMethod(), next);
+      return (Object[])invokeRaw(sharedInstance, feature.getDataProcessorMethod(), next);
     } catch (Throwable t) {
       runStatus = supervisor.error(feature.getDataProcessorMethod(), t, runStatus);
       return null;

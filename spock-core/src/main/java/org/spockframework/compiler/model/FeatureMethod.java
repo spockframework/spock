@@ -24,7 +24,14 @@ import org.codehaus.groovy.ast.MethodNode;
  * @author Peter Niederwieser
  */
 public class FeatureMethod extends Method {
-  public FeatureMethod(Speck parent, MethodNode code) {
+  private final int ordinal;
+
+  public FeatureMethod(Speck parent, MethodNode code, int ordinal) {
     super(parent, code);
+    this.ordinal = ordinal;
+  }
+
+  public int getOrdinal() {
+    return ordinal;
   }
 }

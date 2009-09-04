@@ -21,11 +21,13 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.*;
 
-import org.spockframework.compiler.Constants;
+import org.spockframework.compiler.Identifiers;
 import org.spockframework.runtime.intercept.Directive;
 import org.spockframework.runtime.intercept.IDirectiveProcessor;
 import org.spockframework.runtime.model.*;
 import org.spockframework.util.BinaryNames;
+
+import spock.lang.Specification;
 
 /**
  * Builds a SpeckInfo from a Class instance.
@@ -36,28 +38,40 @@ public class SpeckInfoBuilder {
   private final Class<?> clazz;
   private final Map<Class<? extends IDirectiveProcessor>, IDirectiveProcessor> processors =
     new HashMap<Class<? extends IDirectiveProcessor>, IDirectiveProcessor>();
-  private SpeckInfo speck;
+  private final SpeckInfo speck = new SpeckInfo();
 
   public SpeckInfoBuilder(Class<?> clazz) {
     this.clazz = clazz;
   }
 
-  public SpeckInfo build() throws InstantiationException, IllegalAccessException {
-    getSpeckMetadata();
+  public static boolean isSpecification(Class<?> clazz) {
+    return clazz.isAnnotationPresent(SpeckMetadata.class);
+  }
+  
+  public SpeckInfo build() throws InstantiationException, IllegalAccessException, NoSuchFieldException {
+    buildSuperSpeck();
     buildSpeck();
     buildFields();
+    buildSharedInstanceField();
     buildFeatures();
     buildFixtureMethods();
     processDirectives();
     return speck;
   }
 
+  private void buildSuperSpeck() throws InstantiationException, IllegalAccessException, NoSuchFieldException {
+    Class<?> superClass = clazz.getSuperclass();
+    if (superClass == Object.class || superClass == Specification.class) return;
+
+    speck.setSuperSpeck(new SpeckInfoBuilder(superClass).build());  
+  }
+
   private void buildSpeck() {
-    speck = new SpeckInfo();
+    SpeckMetadata metadata = getSpeckMetadata();
     speck.setParent(null);
     speck.setName(clazz.getSimpleName());
     speck.setReflection(clazz);
-    speck.setFilename(getSpeckMetadata().filename());
+    speck.setFilename(metadata.filename());
   }
 
   private SpeckMetadata getSpeckMetadata() {
@@ -71,25 +85,45 @@ public class SpeckInfoBuilder {
 
   private void buildFields() {
     for (Field field : clazz.getDeclaredFields()) {
-      if (field.isSynthetic()) continue;
+      FieldMetadata metadata = field.getAnnotation(FieldMetadata.class);
+      if (metadata == null) continue;
+
       FieldInfo fieldInfo = new FieldInfo();
       fieldInfo.setParent(speck);
       fieldInfo.setName(field.getName());
       fieldInfo.setReflection(field);
+      fieldInfo.setOrdinal(metadata.ordinal());
       speck.addField(fieldInfo);
     }
+
+    Collections.sort(speck.getFields(), new Comparator<FieldInfo>() {
+      public int compare(FieldInfo f1, FieldInfo f2) {
+        return f1.getOrdinal() - f2.getOrdinal();
+      }
+    });
+  }
+
+  private void buildSharedInstanceField() throws NoSuchFieldException {
+    Field field = clazz.getField(Identifiers.SHARED_INSTANCE_NAME);
+
+    FieldInfo fieldInfo = new FieldInfo();
+    fieldInfo.setParent(speck);
+    fieldInfo.setName(field.getName());
+    fieldInfo.setReflection(field);
+    speck.setSharedInstanceField(fieldInfo);
   }
 
   private void buildFeatures() {
     for (Method method : clazz.getDeclaredMethods()) {
       FeatureMetadata metadata = method.getAnnotation(FeatureMetadata.class);
       if (metadata == null) continue;
+      method.setAccessible(true);
       speck.addFeature(createFeature(method, metadata));
     }
 
     speck.sortFeatures(new IFeatureSortOrder() {
       public int compare(FeatureInfo m1, FeatureInfo m2) {
-        return m1.getOrder() - m2.getOrder();
+        return m1.getOrdinal() - m2.getOrdinal();
       }
     });
   }
@@ -98,7 +132,7 @@ public class SpeckInfoBuilder {
     FeatureInfo feature = new FeatureInfo();
     feature.setParent(speck);
     feature.setName(featureMetadata.name());
-    feature.setOrder(featureMetadata.order());
+    feature.setOrdinal(featureMetadata.ordinal());
     for (String name : featureMetadata.parameterNames())
       feature.addParameterName(name);
 
@@ -161,15 +195,18 @@ public class SpeckInfoBuilder {
 
   private Method findMethod(String name) {
     for (Method method : speck.getReflection().getDeclaredMethods())
-      if (method.getName().equals(name)) return method;
+      if (method.getName().equals(name)) {
+        method.setAccessible(true);
+        return method;
+      }
     return null;
   }
 
   private void buildFixtureMethods() {
-    speck.setSetupMethod(createMethod(Constants.SETUP_METHOD, MethodKind.SETUP, true));
-    speck.setCleanupMethod(createMethod(Constants.CLEANUP_METHOD, MethodKind.CLEANUP, true));
-    speck.setSetupSpeckMethod(createMethod(Constants.SETUP_SPECK_METHOD, MethodKind.SETUP_SPECK, true));
-    speck.setCleanupSpeckMethod(createMethod(Constants.CLEANUP_SPECK_METHOD, MethodKind.CLEANUP_SPECK, true));
+    speck.setSetupMethod(createMethod(Identifiers.SETUP_METHOD, MethodKind.SETUP, true));
+    speck.setCleanupMethod(createMethod(Identifiers.CLEANUP_METHOD, MethodKind.CLEANUP, true));
+    speck.setSetupSpeckMethod(createMethod(Identifiers.SETUP_SPECK_METHOD, MethodKind.SETUP_SPECK, true));
+    speck.setCleanupSpeckMethod(createMethod(Identifiers.CLEANUP_SPECK_METHOD, MethodKind.CLEANUP_SPECK, true));
   }
 
   private void processDirectives() throws InstantiationException, IllegalAccessException {

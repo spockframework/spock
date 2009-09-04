@@ -18,17 +18,12 @@ package org.spockframework.smoke.parameterization
 
 import org.codehaus.groovy.control.MultipleCompilationErrorsException
 import org.codehaus.groovy.runtime.typehandling.GroovyCastException
-import org.junit.runner.RunWith
 import org.spockframework.EmbeddedSpecification
 import org.spockframework.util.SpockSyntaxException
-import spock.lang.Speck
-import spock.lang.Sputnik
 
 /**
  * @author Peter Niederwieser
  */
-@Speck
-@RunWith(Sputnik)
 class MethodParameters extends EmbeddedSpecification {
   def "no parameters"() {
     expect:

@@ -23,7 +23,8 @@ import org.codehaus.groovy.ast.ASTNode;
  *
  * @author Peter Niederwieser
  */
-// IDEA: add flag that tells whether compilation should proceed
+// TODO: throwing an exception causes compilation to end immediately;
+// should we be more graceful (i.e. use errorCollector.add...)?
 public class SyntaxException extends RuntimeException {
   private final int line;
   private final int column;

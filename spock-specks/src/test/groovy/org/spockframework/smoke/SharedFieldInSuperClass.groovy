@@ -12,28 +12,31 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ */ 
+ 
+package org.spockframework.smoke
 
-package org.spockframework.compiler;
+import spock.lang.Specification
 
-import java.util.List;
+class SharedFieldInSuperClass extends Specification {
+  EmbeddedSpeckRunner runner = new EmbeddedSpeckRunner()
 
-import org.codehaus.groovy.ast.ASTNode;
-import org.codehaus.groovy.ast.expr.*;
-import org.codehaus.groovy.ast.stmt.Statement;
+  def "invoke method on shared field in superclass"() {
+    when:
+    runner.runWithImports """
+class Foo extends Specification {
+  @Shared x = "abc"
+}
 
-import org.spockframework.compiler.model.*;
+class Bar extends Foo {
+  def bar() {
+    expect:
+    x.size() == 3
+  }
+}
+    """
 
-/**
- *
- * @author Peter Niederwieser
- */
-public interface IRewriteResourceProvider {
-  Method getCurrentMethod();
-  Block getCurrentBlock();
-  void defineValueRecorder(List<Statement> stats);
-  VariableExpression captureOldValue(Expression oldValue);
-  VariableExpression getMockControllerRef();
-  AstNodeCache getAstNodeCache();
-  String getSourceText(ASTNode node);
+    then:
+    noExceptionThrown()
+  }
 }

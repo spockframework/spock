@@ -22,6 +22,7 @@ package org.spockframework.compiler.model;
 public interface ISpeckVisitor {
   void visitSpeck(Speck speck) throws Exception;
   void visitSpeckAgain(Speck speck) throws Exception;
+  void visitField(Field field) throws Exception;
   void visitMethod(Method method) throws Exception;
   void visitMethodAgain(Method method) throws Exception;
   void visitAnyBlock(Block block) throws Exception;

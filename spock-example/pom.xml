@@ -5,7 +5,7 @@
   <artifactId>spock-example</artifactId>
   <version>0.3-SNAPSHOT</version>
   <packaging>jar</packaging>
-  <name>Spock Framework - Example Specifications</name>
+  <name>Spock Framework - Example Specs</name>
 
   <build>
 <!-- Mandatory plugins for using Spock -->

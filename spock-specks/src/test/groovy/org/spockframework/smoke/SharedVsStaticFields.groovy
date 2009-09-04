@@ -22,7 +22,10 @@ import org.spockframework.runtime.ConditionNotSatisfiedError
 class SharedVsStaticFields extends EmbeddedSpecification {
   def "shared fields are not shared between subsequent runs"() {
     setup:
-    runner.compiler.compileWithImports """
+    def clazzes = compiler.compileWithImports("""
+import org.junit.runners.Suite
+import org.junit.runners.Suite.SuiteClasses
+
 @Speck
 @RunWith(Sputnik)
 class SharedField {
@@ -38,19 +41,14 @@ class SharedField {
     expect: x == 44
   }
 }
-    """
-
-    when:
-    runner.run """
-import org.junit.runner.RunWith
-import org.junit.runners.Suite
-import org.junit.runners.Suite.SuiteClasses
-import apackage.SharedField
 
 @RunWith(Suite)
 @SuiteClasses([SharedField, SharedField])
 class SharedFieldSuite {}
-    """
+    """)
+
+    when:
+    runner.runClass(clazzes.find { it.name.endsWith("Suite") })
 
     then:
     noExceptionThrown()
@@ -58,7 +56,10 @@ class SharedFieldSuite {}
 
   def "static fields are shared between subsequent runs"() {
     setup:
-    runner.compiler.compileWithImports """
+    def clazzes = compiler.compileWithImports("""
+import org.junit.runners.Suite
+import org.junit.runners.Suite.SuiteClasses
+
 @Speck
 @RunWith(Sputnik)
 class StaticField {
@@ -74,19 +75,14 @@ class StaticField {
     expect: x == 44
   }
 }
-    """
-
-    when:
-    runner.run """
-import org.junit.runner.RunWith
-import org.junit.runners.Suite
-import org.junit.runners.Suite.SuiteClasses
-import apackage.StaticField
 
 @RunWith(Suite)
 @SuiteClasses([StaticField, StaticField])
 class StaticFieldSuite {}
-    """
+    """)
+
+    when:
+     runner.runClass(clazzes.find { it.name.endsWith("Suite") })
 
     then:
     thrown(ConditionNotSatisfiedError)

@@ -22,6 +22,7 @@ import org.spockframework.compiler.model.*;
 public class AbstractSpeckVisitor implements ISpeckVisitor {
   public void visitSpeck(Speck speck) throws Exception {}
   public void visitSpeckAgain(Speck speck) throws Exception {}
+  public void visitField(Field field) throws Exception {}
   public void visitMethod(Method method) throws Exception {}
   public void visitMethodAgain(Method method) throws Exception {}
   public void visitAnyBlock(Block block) throws Exception {}

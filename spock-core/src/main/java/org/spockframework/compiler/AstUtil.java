@@ -22,6 +22,8 @@ import org.codehaus.groovy.ast.stmt.*;
 import org.codehaus.groovy.syntax.Types;
 import org.objectweb.asm.Opcodes;
 import org.spockframework.util.*;
+import org.spockframework.compiler.model.Method;
+
 import spock.lang.Predef;
 
 import java.util.*;
@@ -184,7 +186,7 @@ public abstract class AstUtil {
 
   public static boolean isPredefDecl(BinaryExpression expr, String methodName, int minArgs, int maxArgs) {
     return (expr instanceof DeclarationExpression
-        || expr instanceof FieldInitializerExpression)
+        || expr instanceof FieldInitializationExpression)
         && isPredefDeclOrCall(expr.getRightExpression(), methodName, minArgs, maxArgs);
   }
 
@@ -290,17 +292,32 @@ public abstract class AstUtil {
       throw new InternalSpockError("checkIsSafeToMutateArgs");
   }
 
-  public static ConstantExpression getDefaultValue(ClassNode clazz) {
-    if (ClassHelper.isPrimitiveType(clazz))
-      return new ConstantExpression(Util.getDefaultValue(clazz.getTypeClass()));
-    return ConstantExpression.NULL;
-  }
-
   public static boolean hasAssertionMessage(AssertStatement stat) {
     Expression msg = stat.getMessageExpression();
     if (msg == null) return false; // should not happen
     if (!(msg instanceof ConstantExpression)) return true;
     return !((ConstantExpression)msg).isNullExpression();
+  }
+
+  public static boolean isThisExpression(Expression expr) {
+    return expr instanceof VariableExpression
+        && ((VariableExpression)expr).isThisExpression();
+  }
+
+  public static void setVisibility(MethodNode method, int visibility) {
+    int modifiers = method.getModifiers();
+    modifiers &= ~(Opcodes.ACC_PUBLIC | Opcodes.ACC_PROTECTED | Opcodes.ACC_PRIVATE);
+    method.setModifiers(modifiers | visibility);
+  }
+
+  public static int getVisibility(FieldNode field) {
+    return field.getModifiers() & (Opcodes.ACC_PUBLIC | Opcodes.ACC_PROTECTED | Opcodes.ACC_PRIVATE);  
+  }
+
+  public static void setVisibility(FieldNode field, int visibility) {
+    int modifiers = field.getModifiers();
+    modifiers &= ~(Opcodes.ACC_PUBLIC | Opcodes.ACC_PROTECTED | Opcodes.ACC_PRIVATE);
+    field.setModifiers(modifiers | visibility);
   }
 }
 

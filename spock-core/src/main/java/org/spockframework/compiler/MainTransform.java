@@ -29,7 +29,6 @@ import org.codehaus.groovy.transform.GroovyASTTransformation;
 
 import org.spockframework.compiler.model.Speck;
 import org.spockframework.util.SyntaxException;
-import spock.lang.*;
 
 /**
  *
@@ -68,19 +67,8 @@ public class MainTransform implements ASTTransformation {
     }
   }
 
-  private static boolean isSpeck(ClassNode clazz) {
-    return hasSpeckAnnotation(clazz) || isDerivedFromSpecificationBaseClass(clazz);
-  }
-
-  private static boolean hasSpeckAnnotation(ClassNode clazz) {
-    return AstUtil.hasAnnotation(clazz, spock.lang.Speck.class);
-  }
-
-  private static boolean isDerivedFromSpecificationBaseClass(ClassNode clazz) {
-    for (ClassNode node = clazz; node != null; node = node.getSuperClass())
-      if (node.getName().equals(Specification.class.getName()))
-        return true;
-
-    return false;
+  private boolean isSpeck(ClassNode clazz) {
+    return AstUtil.hasAnnotation(clazz, spock.lang.Speck.class)
+        || clazz.isDerivedFrom(nodeCache.Specification);
   }
 }

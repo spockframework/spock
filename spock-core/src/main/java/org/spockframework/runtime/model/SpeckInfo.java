@@ -33,14 +33,18 @@ import java.util.List;
  * @author Peter Niederwieser
  */
 public class SpeckInfo extends NodeInfo<NodeInfo, Class<?>> implements IMethodNameMapper {
+  private final List<FieldInfo> fields = new ArrayList<FieldInfo>();
+  private final List<IMethodInterceptor> interceptors = new ArrayList<IMethodInterceptor>();
+
   private String filename;
+  private SpeckInfo superSpeck;
+  private FieldInfo sharedInstanceField;
+
   private MethodInfo setupMethod;
   private MethodInfo cleanupMethod;
   private MethodInfo setupSpeckMethod;
   private MethodInfo cleanupSpeckMethod;
-  private final List<FieldInfo> fields = new ArrayList<FieldInfo>();
   private List<FeatureInfo> features = new ArrayList<FeatureInfo>();
-  private final List<IMethodInterceptor> interceptors = new ArrayList<IMethodInterceptor>();
 
   public String getFilename() {
     return filename;
@@ -48,6 +52,22 @@ public class SpeckInfo extends NodeInfo<NodeInfo, Class<?>> implements IMethodNa
 
   public void setFilename(String filename) {
     this.filename = filename;
+  }
+
+  public SpeckInfo getSuperSpeck() {
+    return superSpeck;
+  }
+
+  public void setSuperSpeck(SpeckInfo superSpeck) {
+    this.superSpeck = superSpeck;
+  }
+
+  public FieldInfo getSharedInstanceField() {
+    return sharedInstanceField;
+  }
+
+  public void setSharedInstanceField(FieldInfo sharedInstanceField) {
+    this.sharedInstanceField = sharedInstanceField;
   }
 
   public MethodInfo getSetupMethod() {

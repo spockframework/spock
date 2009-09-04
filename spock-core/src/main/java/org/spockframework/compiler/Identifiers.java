@@ -20,11 +20,11 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Constants used throughout the SpeckL implementation.
+ * Identifiers used throughout the compiler.
  * 
  * @author Peter Niederwieser
  */
-public abstract class Constants {
+public abstract class Identifiers {
   // Tokens -------------------------------------------------------------------
   
   public static final String SETUP = "setup";
@@ -79,4 +79,10 @@ public abstract class Constants {
   public static final String INTERACTION = "interaction";
 
   public static final String OLD = "old";
+
+  public static final String SHARED_INSTANCE_NAME = "__sharedInstance42";
+
+  public static String getInternalSharedFieldName(String baseName) {
+    return "__shared_" + baseName;
+  }
 }

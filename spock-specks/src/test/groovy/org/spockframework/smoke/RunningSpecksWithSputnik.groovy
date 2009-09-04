@@ -65,11 +65,11 @@ def feature() { expect: true }
 @RunWith(Sputnik)
 @Ignore
 class Foo {
-  static log = ""
+  static log = "" // needs to be static rather than @Shared s.t. we can access it from outside
   def feature1() { setup: log += "1" }
   def feature2() { setup: log += "2" }
 }
-    """)
+    """)[0]
 
     when:
     def result = runner.runClass(clazz)

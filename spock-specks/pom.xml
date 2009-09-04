@@ -10,7 +10,7 @@
   <groupId>org.spockframework</groupId>
   <artifactId>spock-specks</artifactId>
   <packaging>jar</packaging>
-  <name>Spock Framework - Specifications For Core</name>
+  <name>Spock Framework - Core Specs</name>
 
   <build>
     <plugins>

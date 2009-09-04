@@ -183,17 +183,18 @@ class DefaultValuesOfSharedFields {
   @Shared float f7
   @Shared double f8
 
-  @Shared Boolean F1
-  @Shared Character F2
-  @Shared Byte F3
-  @Shared Short F4
-  @Shared Integer F5
-  @Shared Long F6
-  @Shared Float F7
-  @Shared Double F8
+  // shared fields that differ only in their capitalization are not allowed, so we add another 'F'
+  @Shared Boolean FF1
+  @Shared Character FF2
+  @Shared Byte FF3
+  @Shared Short FF4
+  @Shared Integer FF5
+  @Shared Long FF6
+  @Shared Float FF7
+  @Shared Double FF8
 
-  @Shared def F9
-  @Shared Map F10
+  @Shared def FF9
+  @Shared Map FF10
 
   def "primitive types"() {
     expect:
@@ -209,19 +210,19 @@ class DefaultValuesOfSharedFields {
 
   def "wrapper types"() {
     expect:
-      F1 == null
-      F2 == null
-      F3 == null
-      F4 == null
-      F5 == null
-      F6 == null
-      F7 == null
-      F8 == null
+      FF1 == null
+      FF2 == null
+      FF3 == null
+      FF4 == null
+      FF5 == null
+      FF6 == null
+      FF7 == null
+      FF8 == null
   }
 
   def "reference types"() {
     expect:
-      F9 == null
-      F10 == null
+      FF9 == null
+      FF10 == null
   }
 }

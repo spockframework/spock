@@ -23,4 +23,14 @@ import java.lang.reflect.Field;
  * 
  * @author Peter Niederwieser
  */
-public class FieldInfo extends NodeInfo<SpeckInfo, Field> {}
+public class FieldInfo extends NodeInfo<SpeckInfo, Field> {
+  private int ordinal;
+
+  public int getOrdinal() {
+    return ordinal;
+  }
+
+  public void setOrdinal(int ordinal) {
+    this.ordinal = ordinal;
+  }
+}

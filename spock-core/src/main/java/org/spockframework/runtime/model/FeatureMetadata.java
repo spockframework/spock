@@ -26,12 +26,12 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface FeatureMetadata {
-  String ORDER = "order";
+  String ORDINAL = "ordinal";
   String NAME = "name";
   String PARAMETER_NAMES = "parameterNames";
   String BLOCKS = "blocks";
 
-  int order();
+  int ordinal();
   String name();
   String[] parameterNames();
   BlockMetadata[] blocks();

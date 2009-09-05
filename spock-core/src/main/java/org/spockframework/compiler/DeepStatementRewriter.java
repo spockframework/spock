@@ -125,7 +125,7 @@ public class DeepStatementRewriter extends StatementReplacingVisitorSupport {
 
   @Override
   public void visitBinaryExpression(BinaryExpression expr) {
-    if (AstUtil.isPredefDecl(expr, Constants.MOCK, 0, 1))
+    if (AstUtil.isPredefDecl(expr, Identifiers.MOCK, 0, 1))
       AstUtil.expandPredefDecl(expr, resourceProvider.getMockControllerRef());
 
     // only descend after we have expanded Predef.Mock so that it's not
@@ -146,22 +146,28 @@ public class DeepStatementRewriter extends StatementReplacingVisitorSupport {
   }
 
   private void handlePredefMockAndPredefOld(Expression expr) {
-    if (AstUtil.isPredefCall(expr, Constants.MOCK, 0, 1))
-      AstUtil.expandPredefCall(expr, resourceProvider.getMockControllerRef());
-    else if (AstUtil.isPredefCall(expr, Constants.OLD, 1, 1)) {
-      if (!(resourceProvider.getCurrentMethod() instanceof FeatureMethod
-          && resourceProvider.getCurrentBlock() instanceof ThenBlock))
-        throw new SyntaxException(expr, "Predef.old() may only be used in 'then' blocks");
+    if (AstUtil.isPredefCall(expr, Identifiers.MOCK, 0, 1))
+      handlePredefMock(expr);
+    else if (AstUtil.isPredefCall(expr, Identifiers.OLD, 1, 1))
+      handlePredefOld(expr);
+  }
 
-      List<Expression> args = AstUtil.getArguments(expr);
-      VariableExpression oldValue = resourceProvider.captureOldValue(args.get(0));
-      args.set(0, oldValue);
-      args.add(ConstantExpression.FALSE); // dummy arg
+  private void handlePredefMock(Expression expr) {
+    AstUtil.expandPredefCall(expr, resourceProvider.getMockControllerRef());
+  }
 
-      if (closureScope != null) {
-        oldValue.setClosureSharedVariable(true);
-        closureScope.putReferencedLocalVariable(oldValue);
-      }
+  private void handlePredefOld(Expression expr) {
+    if (!(resourceProvider.getCurrentBlock() instanceof ThenBlock))
+      throw new SyntaxException(expr, "Predef.old() may only be used in a 'then' block");
+
+    List<Expression> args = AstUtil.getArguments(expr);
+    VariableExpression oldValue = resourceProvider.captureOldValue(args.get(0));
+    args.set(0, oldValue);
+    args.add(ConstantExpression.FALSE); // dummy arg
+
+    if (closureScope != null) {
+      oldValue.setClosureSharedVariable(true);
+      closureScope.putReferencedLocalVariable(oldValue);
     }
   }
 }

@@ -21,14 +21,12 @@ import java.util.*;
 import org.codehaus.groovy.ast.*;
 import org.codehaus.groovy.ast.expr.*;
 import org.codehaus.groovy.ast.stmt.*;
+import org.codehaus.groovy.runtime.MetaClassHelper;
 import org.codehaus.groovy.syntax.Token;
 import org.codehaus.groovy.syntax.Types;
 import org.objectweb.asm.Opcodes;
 
-import spock.lang.Shared;
-
 import org.spockframework.compiler.model.*;
-import org.spockframework.compiler.model.Speck;
 import org.spockframework.mock.MockController;
 import org.spockframework.runtime.SpockRuntime;
 import org.spockframework.util.SyntaxException;
@@ -38,6 +36,8 @@ import org.spockframework.util.SyntaxException;
  * 
  * @author Peter Niederwieser
  */
+// TODO: all Spock internal fields should start with $ rather than __
+// TODO: mock controller / leaveScope calls should only be inserted when necessary (increases robustness)
 public class SpeckRewriter extends AbstractSpeckVisitor implements IRewriteResourceProvider {
   private final AstNodeCache nodeCache;
   private final SourceLookup lookup;
@@ -46,12 +46,14 @@ public class SpeckRewriter extends AbstractSpeckVisitor implements IRewriteResou
   private Method method;
   private Block block;
 
-  private VariableExpression thrownExceptionRef; // reference to speck.__thrown42
-  private VariableExpression mockControllerRef; // reference to speck.__mockController42
+  private VariableExpression thrownExceptionRef; // reference to field __thrown42; always accessed through getter
+  private VariableExpression mockControllerRef;  // reference to field __mockController42; always accessed through getter
+  private VariableExpression sharedInstanceRef;  // reference to field __sharedInstance42
 
   private boolean methodHasCondition;
   private boolean movedStatsBackToMethod;
-  private int featureMethodCount = 0;
+  private int fieldInitializerCount = 0;
+  private int sharedFieldInitializerCount = 0;
   private int oldValueCount = 0;
 
   public SpeckRewriter(AstNodeCache nodeCache, SourceLookup lookup) {
@@ -61,43 +63,65 @@ public class SpeckRewriter extends AbstractSpeckVisitor implements IRewriteResou
 
   public void visitSpeck(Speck speck) {
     this.speck = speck;
-    moveFieldInitializersIntoFixtureMethods();
-    addMockController();
+    createThrownExceptionFieldAndRef();
+    createMockControllerFieldAndRef();
+    createSharedInstanceFieldAndRef();
   }
 
   public void visitSpeckAgain(Speck speck) throws Exception {
-    linkFixtureMethodsToParents();
+    addMockControllerFieldInitialization();
   }
 
-  private void linkFixtureMethodsToParents() {
-    if (!isSpeckDerivedFromSpecificationBaseClass()) return;
+  private void createThrownExceptionFieldAndRef() {
+    Variable var;
+
+    if (isLowestSpecificationInInheritanceChain())
+      var = speck.getAst().addField(
+          "__thrown42",
+          Opcodes.ACC_PROTECTED | Opcodes.ACC_SYNTHETIC,
+          ClassHelper.DYNAMIC_TYPE,
+          null);
+    else
+      var = new DynamicVariable("__thrown42", false);
+
+    thrownExceptionRef = new VariableExpression(var);
+  }
+
+  private void createMockControllerFieldAndRef() {
+    Variable var;
+
+    if (isLowestSpecificationInInheritanceChain())
+      var = speck.getAst().addField(
+          "__mockController42",
+          Opcodes.ACC_PROTECTED | Opcodes.ACC_SYNTHETIC,
+          ClassHelper.DYNAMIC_TYPE,
+          null);
+    else
+      var = new DynamicVariable("__mockController42", false);
+
+    mockControllerRef = new VariableExpression(var);
+  }
+
+  private void createSharedInstanceFieldAndRef() {
+    Variable var;
+
+    if (isLowestSpecificationInInheritanceChain())
+      var = speck.getAst().addField(
+          Identifiers.SHARED_INSTANCE_NAME,
+          Opcodes.ACC_PUBLIC | Opcodes.ACC_SYNTHETIC, // public s.t. runner can easily set it
+          ClassHelper.DYNAMIC_TYPE,
+          null);
+      else
+        var = new DynamicVariable(Identifiers.SHARED_INSTANCE_NAME, false);
+
+    sharedInstanceRef = new VariableExpression(var);
+  }
+
+  private void addMockControllerFieldInitialization() {
+    if (!isLowestSpecificationInInheritanceChain()) return;
     
-    for (FixtureMethod method : speck.getFixtureMethods())
-      method.getStatements().add(0,
-          new ExpressionStatement(
-              new MethodCallExpression(
-                  VariableExpression.SUPER_EXPRESSION,
-                  method.getAst().getName(),
-                  ArgumentListExpression.EMPTY_ARGUMENTS)));
-  }
-
-  private boolean isSpeckDerivedFromSpecificationBaseClass() {
-    return speck.getAst().isDerivedFrom(nodeCache.Specification);
-  }
-
-  // IDEA: we could omit creating mock controller if whole Speck doesn't
-  // contain any interaction definition
-  private void addMockController() {
-    mockControllerRef =
-        new VariableExpression(
-            speck.getAst().addField(
-                "__mockController42",
-                Opcodes.ACC_PRIVATE | Opcodes.ACC_SYNTHETIC,
-                ClassHelper.DYNAMIC_TYPE,
-                null));
-
     // mock controller needs to be initialized before all other fields
-    getSetup().getFirstBlock().getAst().add(0,
+    getSetup().getStatements().add(0,
         new ExpressionStatement(
             new BinaryExpression(
                 mockControllerRef,
@@ -107,33 +131,154 @@ public class SpeckRewriter extends AbstractSpeckVisitor implements IRewriteResou
                     new FieldExpression(nodeCache.DefaultMockFactory_INSTANCE)))));
   }
 
-  private void moveFieldInitializersIntoFixtureMethods() {
-    List<FieldNode> fields = speck.getAst().getFields();
-    // iterate backwards so that moved initializers in fixture methods are in original order
-    ListIterator<FieldNode> iter = fields.listIterator(fields.size());
-    while (iter.hasPrevious()) {
-      FieldNode field = iter.previous();
-      // filter out fields internal to the Groovy implementation (e.g. $ownClass)
-      // since Groovy 1.6-beta-2, field.isSynthetic() can no longer be used for this purpose,
-      // because fields underlying simple property definitions are now also considered synthetic
-      if (field.getName().startsWith("$") || field.isStatic()) continue;
+  private boolean isLowestSpecificationInInheritanceChain() {
+    ClassNode superClass = speck.getAst().getSuperClass();
+    return superClass.equals(ClassHelper.OBJECT_TYPE)
+        || superClass.equals(nodeCache.Specification);
+  }
 
-      if (AstUtil.hasAnnotation(field, Shared.class))
-        moveInitializer(field, getSetupSpeck());
-      else
-        moveInitializer(field, getSetup());
-    }
+  public void visitField(Field field) {
+    if (field.isShared())
+      handleSharedField(field);
+    else
+      handleNonSharedField(field);
+  }
+
+  private void handleSharedField(Field field) {
+    changeSharedFieldInternalName(field);
+    createSharedFieldGetter(field);
+    createSharedFieldSetter(field);
+    moveSharedFieldInitializer(field);
+    makeSharedFieldProtectedAndVolatile(field);
+  }
+
+  // field.getAst().getName() changes, field.getName() remains the same
+  private void changeSharedFieldInternalName(Field field) {
+    field.getAst().rename(Identifiers.getInternalSharedFieldName(field.getName()));
+  }
+
+  // TODO: improve diagnostic message (conflict with explicit getter/setter, conflict with other shared field, etc.)
+  // TODO: not sure if all found getters are harmful (e.g. private getter in super class)
+  private void createSharedFieldGetter(Field field) {
+    String getterName = "get" + MetaClassHelper.capitalize(field.getName());
+    MethodNode getter = speck.getAst().getMethod(getterName, Parameter.EMPTY_ARRAY);
+    if (getter != null)
+      throw new SyntaxException(field.getAst(),
+          "@Shared field '%s' conflicts with method '%s'; please rename either of them",
+          field.getName(), getter.getName());
+
+    BlockStatement getterBlock = new BlockStatement();
+    int visibility = field.getOwner() == null ? AstUtil.getVisibility(field.getAst()) : Opcodes.ACC_PUBLIC;
+    getter = new MethodNode(getterName, visibility | Opcodes.ACC_SYNTHETIC,
+        ClassHelper.DYNAMIC_TYPE, Parameter.EMPTY_ARRAY, ClassNode.EMPTY_ARRAY, getterBlock);
+
+    getterBlock.addStatement(
+        new ReturnStatement(
+            new ExpressionStatement(
+                new AttributeExpression(
+                    sharedInstanceRef,
+                    // use internal name
+                    new ConstantExpression(field.getAst().getName())))));
+
+    getter.setSourcePosition(field.getAst());
+    speck.getAst().addMethod(getter);
+  }
+
+  private void createSharedFieldSetter(Field field) {
+    String setterName = "set" + MetaClassHelper.capitalize(field.getName());
+    Parameter[] params = new Parameter[] { new Parameter(field.getAst().getType(), "__value") };
+    MethodNode setter = speck.getAst().getMethod(setterName, params);
+    if (setter != null)
+      throw new SyntaxException(field.getAst(),
+          "@Shared field '%s' conflicts with method '%s'; please rename either of them",
+          field.getName(), setter.getName());
+
+    BlockStatement setterBlock = new BlockStatement();
+    int visibility = field.getOwner() == null ? AstUtil.getVisibility(field.getAst()) : Opcodes.ACC_PUBLIC;
+    setter = new MethodNode(setterName, visibility | Opcodes.ACC_SYNTHETIC,
+        ClassHelper.VOID_TYPE, params, ClassNode.EMPTY_ARRAY, setterBlock);
+
+    setterBlock.addStatement(
+        new ExpressionStatement(
+            new BinaryExpression(
+                new AttributeExpression(
+                    sharedInstanceRef,
+                    // use internal name
+                    new ConstantExpression(field.getAst().getName())),
+                Token.newSymbol(Types.ASSIGN, -1, -1),
+                new VariableExpression("__value"))));
+
+    setter.setSourcePosition(field.getAst());
+    speck.getAst().addMethod(setter);
+  }
+
+  private void moveSharedFieldInitializer(Field field) {
+    if (field.getAst().getInitialValueExpression() != null)
+      moveInitializer(field, getSetupSpeck(), sharedFieldInitializerCount++);
   }
 
   /*
-   * Moves initialization of the given field to the beginning of the first block of the given method.
-   */
-  private static void moveInitializer(FieldNode field, Method method) {
-    method.getFirstBlock().getAst().add(0,
-        new ExpressionStatement(
-            new FieldInitializerExpression(field)));
+     We would prefer to make shared fields private, but this doesn't work in the following case:
 
-    field.setInitialValueExpression(null);
+     class BaseSpec {
+       public sharedInstance
+       private sharedField = 5
+
+       def sharedFieldGetter() { sharedInstance.sharedField }
+     }
+
+     class DerivedSpec extends BaseSpec {}
+
+     // when DerivedSpec is run:
+     
+     def sharedInstance = new DerivedSpec()
+
+     def spec = new DerivedSpec()
+     spec.sharedInstance = sharedInstance
+
+     spec.sharedFieldGetter() // would normally occur within a specification
+
+     groovy.lang.MissingPropertyException: No such property: sharedField for class: DerivedSpec
+
+     Solutions:
+     1. Make sharedField protected
+     2. Route all accesses to sharedField through sharedInstance's (!) sharedFieldGetter()
+        (from there, sharedField can be accessed w/o qualification)
+
+     Reasons why we chose 1:
+     - A bit easier to implement
+     - We might at some point decide that we need to reroute some
+       VariableExpression/AttributeExpression/PropertyExpression that accesses
+       sharedField directly (but on the wrong instance). However, these kinds of
+       expressions cannot be replaced with a MethodCallExpression (calling
+       sharedFieldGetter/Setter). Instead, we would have to replace them with
+       an AttributeExpression/PropertyExpression of the form sharedInstance.sharedField,
+       which would again require as to make sharedField protected.
+
+     If we find that making shared fields protected can potentially cause name clashes within
+     an inheritance chain, we should make sure that shared field names are unique within
+     a chain. For example, this could be done by mixing in a number that measures
+     the distance between the declaring class and class Specification. (That's how it's done
+     in Groovy.)
+   */
+  private static void makeSharedFieldProtectedAndVolatile(Field field) {
+    AstUtil.setVisibility(field.getAst(), Opcodes.ACC_PROTECTED);
+    field.getAst().setModifiers(field.getAst().getModifiers() | Opcodes.ACC_VOLATILE);
+  }
+
+  private void handleNonSharedField(Field field) {
+    if (field.getAst().getInitialValueExpression() != null)
+      moveInitializer(field, getSetup(), fieldInitializerCount++);
+  }
+
+  /*
+   * Moves initialization of the given field to the given position of the first block of the given method.
+   */
+  private void moveInitializer(Field field, Method method, int position) {
+    method.getFirstBlock().getAst().add(position,
+        new ExpressionStatement(
+            new FieldInitializationExpression(field.getAst())));
+    field.getAst().setInitialValueExpression(null);
   }
 
   public void visitMethod(Method method) {
@@ -141,27 +286,21 @@ public class SpeckRewriter extends AbstractSpeckVisitor implements IRewriteResou
     methodHasCondition = false;
     movedStatsBackToMethod = false;
 
-
-    makeMethodPublic(method);
-    transplantMethod(method);
-    handleWhereBlock(method);
-  }
-
-  private void makeMethodPublic(Method method) {
-    if (method instanceof HelperMethod) return;
-
-    int modifiers = method.getAst().getModifiers();
-    modifiers &= ~(Opcodes.ACC_PRIVATE | Opcodes.ACC_PROTECTED);
-    method.getAst().setModifiers(modifiers | Opcodes.ACC_PUBLIC);
+    if (method instanceof FixtureMethod)
+      // de-virtualize method s.t. multiple fixture methods along hierarchy can be called independently
+     AstUtil.setVisibility(method.getAst(), Opcodes.ACC_PRIVATE);
+    else if (method instanceof FeatureMethod) {
+      transplantMethod(method);
+      handleWhereBlock(method);
+    }
   }
 
   private void transplantMethod(Method method) {
-    if (!(method instanceof FeatureMethod)) return;
-
-    MethodNode oldAst = method.getAst();
-    MethodNode newAst = copyMethod(oldAst, "__feature" + featureMethodCount++);
+    FeatureMethod feature = (FeatureMethod)method;
+    MethodNode oldAst = feature.getAst();
+    MethodNode newAst = copyMethod(oldAst, "__feature" + feature.getOrdinal());
     speck.getAst().addMethod(newAst);
-    method.setAst(newAst);
+    feature.setAst(newAst);
     deactivateMethod(oldAst);
   }
 
@@ -200,8 +339,6 @@ public class SpeckRewriter extends AbstractSpeckVisitor implements IRewriteResou
   // s.t. missing method parameters are added; these parameters
   // will then be used by DeepStatementRewriter.fixupVariableScope()
   private void handleWhereBlock(Method method) {
-    if (!(method instanceof FeatureMethod)) return;
-    
     Block block = method.getLastBlock();
     if (!(block instanceof WhereBlock)) {
       Parameter[] params = method.getAst().getParameters();
@@ -218,14 +355,14 @@ public class SpeckRewriter extends AbstractSpeckVisitor implements IRewriteResou
     this.block = null;
     
     if (methodHasCondition)
-      defineValueRecorder(AstUtil.getStatements(method.getAst()));
+      defineValueRecorder(method.getStatements());
 
     if (!movedStatsBackToMethod)
       for (Block b : method.getBlocks())
         method.getStatements().addAll(b.getAst());
 
+    // for global required interactions
     if (method instanceof FeatureMethod)
-      // for global required interactions
       method.getStatements().add(createMockControllerCall(MockController.LEAVE_SCOPE));
   }
 
@@ -301,7 +438,7 @@ public class SpeckRewriter extends AbstractSpeckVisitor implements IRewriteResou
 
   private boolean isExceptionCondition(Statement stat) {
     Expression expr = AstUtil.getExpression(stat, Expression.class);
-    return expr != null && AstUtil.isPredefDeclOrCall(expr, Constants.THROWN, 0, 1);
+    return expr != null && AstUtil.isPredefDeclOrCall(expr, Identifiers.THROWN, 0, 1);
   }
 
   private void rewriteExceptionCondition(Statement stat, boolean hasExceptionCondition) {
@@ -310,14 +447,14 @@ public class SpeckRewriter extends AbstractSpeckVisitor implements IRewriteResou
 
     Expression expr = AstUtil.getExpression(stat, Expression.class);
     assert expr != null;   
-    AstUtil.expandPredefDeclOrCall(expr, getThrownExceptionRef());
+    AstUtil.expandPredefDeclOrCall(expr, thrownExceptionRef);
   }
 
   private boolean statHasInteraction(Statement stat, DeepStatementRewriter deep) {
     if (deep.isInteractionFound()) return true;
 
     Expression expr = AstUtil.getExpression(stat, Expression.class);
-    return expr != null && AstUtil.isPredefCall(expr, Constants.INTERACTION, 0, 1);
+    return expr != null && AstUtil.isPredefCall(expr, Identifiers.INTERACTION, 0, 1);
   }
 
   private void insertInteractions(List<Statement> interactions, WhenBlock whenBlock) {
@@ -336,7 +473,7 @@ public class SpeckRewriter extends AbstractSpeckVisitor implements IRewriteResou
   private Statement createMockControllerCall(String methodName) {
     return new ExpressionStatement(
         new MethodCallExpression(
-            getMockControllerRef(),
+            mockControllerRef,
             methodName,
             ArgumentListExpression.EMPTY_ARGUMENTS));
   }
@@ -395,29 +532,15 @@ public class SpeckRewriter extends AbstractSpeckVisitor implements IRewriteResou
   public VariableExpression captureOldValue(Expression oldValue) {
     VariableExpression var = new OldValueExpression(oldValue, "__oldVal" + oldValueCount++);
     DeclarationExpression decl = new DeclarationExpression(
-          var,
-          Token.newSymbol(Types.ASSIGN, -1, -1),
-          oldValue
-      );
+        var,
+        Token.newSymbol(Types.ASSIGN, -1, -1),
+        oldValue);
     decl.setSourcePosition(oldValue);
 
     // add declaration at end of block immediately preceding when-block
     // avoids any problems if when-block gets wrapped in try-statement
     block.getPrevious().getPrevious().getAst().add(new ExpressionStatement(decl));
     return var;
-  }
-
-  public VariableExpression getThrownExceptionRef() {
-     if (thrownExceptionRef == null)
-      thrownExceptionRef =
-          new VariableExpression(
-              speck.getAst().addField(
-                  "__thrown42",
-                  Opcodes.ACC_PRIVATE | Opcodes.ACC_SYNTHETIC,
-                  ClassHelper.DYNAMIC_TYPE,
-                  null));
-
-    return thrownExceptionRef;
   }
 
   public VariableExpression getMockControllerRef() {
@@ -430,7 +553,8 @@ public class SpeckRewriter extends AbstractSpeckVisitor implements IRewriteResou
 
   private FixtureMethod getSetup() {
     if (speck.getSetup() == null) {
-      MethodNode gMethod = new MethodNode(Constants.SETUP, Opcodes.ACC_PUBLIC,
+      // method is private s.t. multiple setup methods along hierarchy can be called independently
+      MethodNode gMethod = new MethodNode(Identifiers.SETUP, Opcodes.ACC_PRIVATE | Opcodes.ACC_SYNTHETIC,
           ClassHelper.DYNAMIC_TYPE, Parameter.EMPTY_ARRAY, ClassNode.EMPTY_ARRAY, new BlockStatement());
       speck.getAst().addMethod(gMethod);
       FixtureMethod setup = new FixtureMethod(speck, gMethod);
@@ -443,7 +567,8 @@ public class SpeckRewriter extends AbstractSpeckVisitor implements IRewriteResou
 
   private FixtureMethod getSetupSpeck() {
     if (speck.getSetupSpeck() == null) {
-      MethodNode gMethod = new MethodNode(Constants.SETUP_SPECK_METHOD, Opcodes.ACC_PUBLIC,
+      // method is private s.t. multiple setupSpeck methods along hierarchy can be called independently
+      MethodNode gMethod = new MethodNode(Identifiers.SETUP_SPECK_METHOD, Opcodes.ACC_PRIVATE | Opcodes.ACC_SYNTHETIC,
           ClassHelper.DYNAMIC_TYPE, Parameter.EMPTY_ARRAY, ClassNode.EMPTY_ARRAY, new BlockStatement());
       speck.getAst().addMethod(gMethod);
       FixtureMethod setupSpeck = new FixtureMethod(speck, gMethod);
@@ -466,7 +591,7 @@ public class SpeckRewriter extends AbstractSpeckVisitor implements IRewriteResou
     blockStats.add(
         new ExpressionStatement(
             new BinaryExpression(
-                getThrownExceptionRef(),
+                thrownExceptionRef,
                 Token.newSymbol(Types.ASSIGN, -1, -1),
                 ConstantExpression.NULL)));
 
@@ -489,7 +614,7 @@ public class SpeckRewriter extends AbstractSpeckVisitor implements IRewriteResou
                 Arrays.<Statement> asList(
                     new ExpressionStatement(
                     new BinaryExpression(
-                        getThrownExceptionRef(),
+                        thrownExceptionRef,
                         Token.newSymbol(Types.ASSIGN, -1, -1),
                         new VariableExpression("__e42")))),
                 new VariableScope())));

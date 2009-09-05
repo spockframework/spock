@@ -119,7 +119,7 @@ public class Predef {
    * @return the new mock object
    */
   public static Object Mock() {
-    throw new SyntaxException("Mock objects can only be created inside a Speck");
+    throw new SyntaxException("Mock objects may only be created during the lifetime of a feature (iteration)");
   }
 
   /**
@@ -222,6 +222,11 @@ public class Predef {
   static <T> T Mock(Class<T> type, String name, MockController controller) {
     if (type == null)
       throw new SyntaxException("Mock object type may not be 'null'");
+    if (controller == null) {
+      // mock has been created in a context where no controller exists
+      Mock();
+      return null; // unreachable; just exists to avoid compiler warning
+    }
     return type.cast(controller.create(name, type));
   }
 

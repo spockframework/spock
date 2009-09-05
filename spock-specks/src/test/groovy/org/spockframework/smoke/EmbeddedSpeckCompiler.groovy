@@ -16,30 +16,46 @@
 
 package org.spockframework.smoke
 
+import org.spockframework.runtime.SpeckInfoBuilder
+import org.junit.runner.RunWith
+import org.junit.Test
+
 /**
- * Utility class for creating Specks from String source.
+ * Utility class for creating Specks from String source. <em>Not</em> thread-safe.
  * 
  * @author Peter Niederwieser
  */
 class EmbeddedSpeckCompiler {
-  def loader = new GroovyClassLoader()
+  GroovyClassLoader loader = new GroovyClassLoader()
 
-  Class compile(String source) {
+  /**
+   * Compiles the given source code, and returns all Spock specifications
+   * contained therein (but not other classes).
+   */
+  List compile(String source) {
+    loader.clearCache()
     loader.parseClass(source.trim())
+    loader.loadedClasses.findAll {
+      SpeckInfoBuilder.isSpecification(it) || isJUnitTest(it) // need JUnit tests sometimes
+    } as List
   }
 
-  Class compileWithImports(String source) {
+  List compileWithImports(String source) {
     // one-liner keeps line numbers intact
     compile "package apackage; import org.junit.runner.RunWith; import spock.lang.*; ${source.trim()}"
   }
 
   Class compileSpeckBody(String source) {
     // one-liner keeps line numbers intact
-    compileWithImports "@Speck @RunWith(Sputnik) class ASpeck { ${source.trim()} }"
+    compileWithImports("@Speck @RunWith(Sputnik) class ASpeck { ${source.trim()} }")[0]
   }
 
   Class compileFeatureBody(String source) {
     // one-liner keeps line numbers intact
     compileSpeckBody "def 'a feature'() { ${source.trim()} }"
+  }
+
+  private boolean isJUnitTest(Class clazz) {
+    clazz.isAnnotationPresent(RunWith) || clazz.methods.any { it.getAnnotation(Test) }
   }
 }

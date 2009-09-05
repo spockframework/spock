@@ -18,26 +18,20 @@ package org.spockframework.compiler;
 
 import org.codehaus.groovy.ast.FieldNode;
 import org.codehaus.groovy.ast.expr.BinaryExpression;
-import org.codehaus.groovy.ast.expr.Expression;
 import org.codehaus.groovy.ast.expr.FieldExpression;
 import org.codehaus.groovy.syntax.Token;
 import org.codehaus.groovy.syntax.Types;
 
 /**
+ * An assignment of the form "x = expr", where x is a field and expr is a field
+ * initializer expression. The purpose of this class is to make field
+ * initializations distinguishable from other assignments while traversing
+ * the AST.
  * 
  * @author Peter Niederwieser
  */
-public class FieldInitializerExpression extends BinaryExpression {
-  public FieldInitializerExpression(FieldNode field) {    
-    super(new FieldExpression(field), Token.newSymbol(Types.ASSIGN, -1, -1), getInitializer(field));
-  }
-
-  private static Expression getInitializer(FieldNode field) {
-    Expression initializer = field.getInitialValueExpression();
-    if (initializer == null)
-      // make sure that even fields w/o explicit initializer are reset
-      // every time setup() is called
-      initializer = AstUtil.getDefaultValue(field.getOriginType());
-    return initializer;
+public class FieldInitializationExpression extends BinaryExpression {
+  public FieldInitializationExpression(FieldNode field) {
+    super(new FieldExpression(field), Token.newSymbol(Types.ASSIGN, -1, -1), field.getInitialValueExpression());
   }
 }

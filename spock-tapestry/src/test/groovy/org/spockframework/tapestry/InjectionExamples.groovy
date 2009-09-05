@@ -17,9 +17,10 @@
 package org.spockframework.tapestry
 
 import org.apache.tapestry5.ioc.ObjectLocator
+import org.apache.tapestry5.ioc.annotations.*
+
 import spock.lang.Specification
 import spock.tapestry.TapestrySupport
-import org.apache.tapestry5.ioc.annotations.*
 
 @TapestrySupport
 @SubModule(Module1)
@@ -30,7 +31,7 @@ class ServiceInjection extends Specification {
   @Inject
   IService2 service2
 
-  def "use injected services"() {
+  def "injected services"() {
     expect:
     service1.generateString() == service2.generateQuickBrownFox()
   }
@@ -42,7 +43,7 @@ class ObjectLocatorInjection extends Specification {
   @Inject
   private ObjectLocator locator
 
-  def "use object locator"() {
+  def "injected object locator"() {
     expect:
     locator.getService(IService1).generateString() == locator.getService(IService2).generateQuickBrownFox()
   }
@@ -63,17 +64,17 @@ class SymbolInjection extends Specification {
   @Value("\${java.version} and \${configKey}")
   String computedValue
 
-  def "inject system property"() {
+  def "injected system property"() {
     expect:
     javaVersion == System.getProperty("java.version")
   }
 
-  def "inject application default"() {
+  def "injected application default"() {
     expect:
     configValue == "configValue"
   }
 
-  def "inject computed value"() {
+  def "injected computed value"() {
     expect:
     computedValue == "${System.getProperty("java.version")} and configValue"
   }

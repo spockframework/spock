@@ -10,7 +10,7 @@ import java.lang.reflect.AnnotatedElement;
  * @author Peter Niederwieser
  */
 public class FeatureInfo extends NodeInfo<SpeckInfo, AnnotatedElement> {
-  private int order;
+  private int ordinal;
   private List<String> parameterNames = new ArrayList<String>();
   private final List<BlockInfo> blocks = new ArrayList<BlockInfo>();
   private final List<IMethodInterceptor> interceptors = new ArrayList<IMethodInterceptor>();
@@ -24,12 +24,12 @@ public class FeatureInfo extends NodeInfo<SpeckInfo, AnnotatedElement> {
     throw new UnsupportedOperationException("getReflection");
   }
 
-  public int getOrder() {
-    return order;
+  public int getOrdinal() {
+    return ordinal;
   }
 
-  public void setOrder(int order) {
-    this.order = order;
+  public void setOrdinal(int ordinal) {
+    this.ordinal = ordinal;
   }
 
   public List<String> getParameterNames() {

@@ -27,7 +27,8 @@ import org.junit.runner.notification.RunListener
  * @author Peter Niederwieser
  */
 class EmbeddedSpeckRunner {
-  EmbeddedSpeckCompiler compiler = new EmbeddedSpeckCompiler()
+  private EmbeddedSpeckCompiler compiler = new EmbeddedSpeckCompiler()
+
   boolean throwFailure = true
   List<RunListener> listeners = []
 
@@ -41,16 +42,20 @@ class EmbeddedSpeckRunner {
     result
   }
 
+  Result runClasses(List classes) {
+    runRequest(Request.classes(classes as Class[]))
+  }
+
   Result runClass(Class clazz) {
     runRequest(Request.aClass(clazz))
   }
 
   Result run(String source) {
-    runClass(compiler.compile(source))
+    runClasses(compiler.compile(source))
   }
 
   Result runWithImports(String source) {
-    runClass(compiler.compileWithImports(source))
+    runClasses(compiler.compileWithImports(source))
   }
 
   Result runSpeckBody(String source) {

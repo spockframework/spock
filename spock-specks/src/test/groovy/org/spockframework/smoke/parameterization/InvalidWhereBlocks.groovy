@@ -16,22 +16,15 @@
 
 package org.spockframework.smoke.parameterization
 
-import org.junit.runner.RunWith
-
-import spock.lang.*
-import static spock.lang.Predef.*
 import org.codehaus.groovy.control.MultipleCompilationErrorsException
+import org.spockframework.EmbeddedSpecification
 import org.spockframework.util.SpockSyntaxException
-import org.spockframework.smoke.EmbeddedSpeckCompiler
+import spock.lang.Issue
 
 /**
  * @author Peter Niederwieser
  */
-@Speck
-@RunWith (Sputnik)
-class InvalidWhereBlocks {
-  @Shared EmbeddedSpeckCompiler compiler = new EmbeddedSpeckCompiler()
-
+class InvalidWhereBlocks extends EmbeddedSpecification {
   def "data variable collides with local variable"() {
     when:
     compiler.compileFeatureBody """

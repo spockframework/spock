@@ -32,7 +32,6 @@ import org.spockframework.runtime.model.*;
 public class SpeckAnnotator extends AbstractSpeckVisitor {
   private final AstNodeCache nodeCache;
   private ListExpression blockAnnElems;
-  private int featureOrder = 0;
 
   public SpeckAnnotator(AstNodeCache nodeCache) {
     this.nodeCache = nodeCache;
@@ -40,26 +39,37 @@ public class SpeckAnnotator extends AbstractSpeckVisitor {
 
   @Override
   public void visitSpeck(Speck speck) throws Exception {
-    addSpeckAnnotation(speck);
+    addSpeckMetadata(speck);
   }
 
-  private void addSpeckAnnotation(Speck speck) {
-    AnnotationNode ann2 = new AnnotationNode(nodeCache.SpeckMetadata);
+  private void addSpeckMetadata(Speck speck) {
+    AnnotationNode ann = new AnnotationNode(nodeCache.SpeckMetadata);
     String pathname = speck.getAst().getModule().getContext().getName();
     String filename = new File(pathname).getName();
-    ann2.addMember(SpeckMetadata.FILENAME, new ConstantExpression(filename));
-    speck.getAst().addAnnotation(ann2);
+    ann.addMember(SpeckMetadata.FILENAME, new ConstantExpression(filename));
+    speck.getAst().addAnnotation(ann);
+  }
+
+  @Override
+  public void visitField(Field field) throws Exception {
+    addFieldMetadata(field);
+  }
+
+  private void addFieldMetadata(Field field) {
+    AnnotationNode ann = new AnnotationNode(nodeCache.FieldMetadata);
+    ann.setMember(FieldMetadata.ORDINAL, new ConstantExpression(field.getOrdinal()));
+    field.getAst().addAnnotation(ann);
   }
 
   @Override
   public void visitMethod(Method method) throws Exception {
     if (method instanceof FeatureMethod)
-      addFeatureAnnotation((FeatureMethod)method);
+      addFeatureMetadata((FeatureMethod)method);
   }
 
-  private void addFeatureAnnotation(FeatureMethod feature) {
+  private void addFeatureMetadata(FeatureMethod feature) {
     AnnotationNode ann = new AnnotationNode(nodeCache.FeatureMetadata);
-    ann.setMember(FeatureMetadata.ORDER, new ConstantExpression(featureOrder++));
+    ann.setMember(FeatureMetadata.ORDINAL, new ConstantExpression(feature.getOrdinal()));
     ann.setMember(FeatureMetadata.NAME, new ConstantExpression(feature.getName()));
     ann.setMember(FeatureMetadata.BLOCKS, blockAnnElems = new ListExpression());
 
@@ -71,7 +81,7 @@ public class SpeckAnnotator extends AbstractSpeckVisitor {
     feature.getAst().addAnnotation(ann);
   }
 
-  private void addBlockAnnotation(Block block, BlockKind kind) {
+  private void addBlockMetadata(Block block, BlockKind kind) {
     AnnotationNode blockAnn = new AnnotationNode(nodeCache.BlockMetadata);
     blockAnn.setMember(BlockMetadata.KIND, new PropertyExpression(
         new ClassExpression(nodeCache.BlockKind), kind.name()));
@@ -84,31 +94,31 @@ public class SpeckAnnotator extends AbstractSpeckVisitor {
 
   @Override
   public void visitSetupBlock(SetupBlock block) throws Exception {
-    addBlockAnnotation(block, BlockKind.SETUP);
+    addBlockMetadata(block, BlockKind.SETUP);
   }
 
   @Override
   public void visitExpectBlock(ExpectBlock block) throws Exception {
-    addBlockAnnotation(block, BlockKind.EXPECT);
+    addBlockMetadata(block, BlockKind.EXPECT);
   }
 
   @Override
   public void visitWhenBlock(WhenBlock block) throws Exception {
-    addBlockAnnotation(block, BlockKind.WHEN);
+    addBlockMetadata(block, BlockKind.WHEN);
   }
 
   @Override
   public void visitThenBlock(ThenBlock block) throws Exception {
-    addBlockAnnotation(block, BlockKind.THEN);
+    addBlockMetadata(block, BlockKind.THEN);
   }
 
   @Override
   public void visitCleanupBlock(CleanupBlock block) throws Exception {
-    addBlockAnnotation(block, BlockKind.CLEANUP);
+    addBlockMetadata(block, BlockKind.CLEANUP);
   }
 
   @Override
   public void visitWhereBlock(WhereBlock block) throws Exception {
-    addBlockAnnotation(block, BlockKind.WHERE);
+    addBlockMetadata(block, BlockKind.WHERE);
   }
 }

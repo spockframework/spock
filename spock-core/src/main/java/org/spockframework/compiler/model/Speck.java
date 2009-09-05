@@ -28,8 +28,10 @@ import org.codehaus.groovy.ast.ClassNode;
  * @author Peter Niederwieser
  */
 public class Speck extends Node<Speck, ClassNode> {
+  private final List<Field> fields = new ArrayList<Field>();
   private final List<Method> methods = new ArrayList<Method>();
   private final List<FixtureMethod> fixtureMethods = new ArrayList<FixtureMethod>();
+
   private FixtureMethod setup;
   private FixtureMethod cleanup;
   private FixtureMethod setupSpeck;
@@ -40,6 +42,10 @@ public class Speck extends Node<Speck, ClassNode> {
     setName(code.getName());
   }
 
+  public List<Field> getFields() {
+    return fields;
+  }
+ 
   public List<Method> getMethods() {
     return methods;
   }
@@ -92,6 +98,7 @@ public class Speck extends Node<Speck, ClassNode> {
   @Override
   public void accept(ISpeckVisitor visitor) throws Exception {
     visitor.visitSpeck(this);
+    for (Field f : fields) f.accept(visitor);
     for (Method m : methods) m.accept(visitor);
     visitor.visitSpeckAgain(this);
   }

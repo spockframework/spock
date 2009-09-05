@@ -23,7 +23,7 @@ import static spock.lang.Predef.*
 @Speck
 @RunWith(Sputnik)
 class ClosingOfDataProviders {
-  def runner = new SpeckInfoParameterizedRunner(null, null)
+  def runner = new ParameterizedSpeckRunner(null, null)
 
   def "closeOneProviderWhichPotentiallyThrowsException"() {
     MyCloseable provider = Mock()

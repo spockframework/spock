@@ -34,7 +34,8 @@ import org.spockframework.runtime.model.SpeckInfo;
 public class Sputnik extends Runner implements Filterable, Sortable {
   private final SpeckInfo speck;
 
-  public Sputnik(Class<?> clazz) throws IllegalAccessException, InstantiationException {
+  // TODO: we probably shouldn't just throw these exceptions as-is
+  public Sputnik(Class<?> clazz) throws IllegalAccessException, InstantiationException, NoSuchFieldException {
     speck = new SpeckInfoBuilder(clazz).build();
     new JUnitMetadataGenerator(speck).generate();
   }
@@ -44,7 +45,7 @@ public class Sputnik extends Runner implements Filterable, Sortable {
   }
 
   public void run(RunNotifier notifier) {
-    new SpeckInfoParameterizedRunner(speck, new JUnitSupervisor(notifier)).run();
+    new ParameterizedSpeckRunner(speck, new JUnitSupervisor(notifier)).run();
   }
 
   public void filter(Filter filter) throws NoTestsRemainException {

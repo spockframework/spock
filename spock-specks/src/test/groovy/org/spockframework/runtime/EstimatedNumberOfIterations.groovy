@@ -22,7 +22,7 @@ import spock.lang.*
 @Speck
 @RunWith(Sputnik)
 class EstimatedNumberOfIterations {
-  def runner = new SpeckInfoParameterizedRunner(null, null)
+  def runner = new ParameterizedSpeckRunner(null, null)
 
   def "w/o data provider"() {
     expect: "estimation is 1"

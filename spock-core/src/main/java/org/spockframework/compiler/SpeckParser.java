@@ -22,10 +22,12 @@ import org.codehaus.groovy.ast.*;
 import org.codehaus.groovy.ast.expr.ConstantExpression;
 import org.codehaus.groovy.ast.stmt.Statement;
 
-import static org.spockframework.compiler.Constants.*;
+import static org.spockframework.compiler.Identifiers.*;
 import org.spockframework.compiler.model.*;
 import org.spockframework.compiler.model.Speck;
 import org.spockframework.util.SyntaxException;
+
+import spock.lang.Shared;
 
 /**
  * Given the abstract syntax tree of a Groovy class representing a Spock
@@ -35,6 +37,8 @@ import org.spockframework.util.SyntaxException;
  */
 public class SpeckParser implements GroovyClassVisitor {
   private Speck speck;
+  private int fieldCount = 0;
+  private int featureMethodCount = 0;
 
   public Speck build(ClassNode clazz) {
     speck = new Speck(clazz);
@@ -45,6 +49,27 @@ public class SpeckParser implements GroovyClassVisitor {
   public void visitClass(ClassNode clazz) {
    throw new UnsupportedOperationException("visitClass");
   }
+
+  public void visitField(FieldNode gField) {
+    PropertyNode owner = speck.getAst().getProperty(gField.getName());
+    // precaution against internal internal fields that aren't marked as synthetic
+    if (gField.getName().startsWith("$")) return;
+    if (gField.isStatic() || (gField.isSynthetic() && owner == null)) return;
+
+    Field field = new Field(speck, gField, fieldCount++);
+    field.setShared(AstUtil.hasAnnotation(gField, Shared.class));
+    field.setOwner(owner);
+    speck.getFields().add(field);
+  }
+
+  public void visitProperty(PropertyNode node) {}
+
+  public void visitConstructor(ConstructorNode constructor) {
+    if (AstUtil.isSynthetic(constructor)) return;
+
+    throw new SyntaxException(constructor,
+"Constructors are not allowed; instead, define a 'setup()' or 'setupSpeck()' method");
+   }
 
   public void visitMethod(MethodNode method) {
     if (isIgnoredMethod(method)) return;
@@ -57,8 +82,7 @@ public class SpeckParser implements GroovyClassVisitor {
   }
 
   private boolean isIgnoredMethod(MethodNode method) {
-    return AstUtil.isSynthetic(method)
-        || !method.getDeclaringClass().equals(speck.getAst());
+    return AstUtil.isSynthetic(method);
   }
 
   // IDEA: check for misspellings other than wrong capitalization
@@ -117,7 +141,7 @@ public class SpeckParser implements GroovyClassVisitor {
   }
 
   private void buildFeatureMethod(MethodNode method) {
-    Method feature = new FeatureMethod(speck, method);
+    Method feature = new FeatureMethod(speck, method, featureMethodCount++);
     speck.getMethods().add(feature);
     buildBlocks(feature);
   }
@@ -131,16 +155,6 @@ public class SpeckParser implements GroovyClassVisitor {
     block.getAst().addAll(stats);
     stats.clear();
   }
-
-  public void visitConstructor(ConstructorNode constructor) {
-    if (AstUtil.isSynthetic(constructor)) return;
-    throw new SyntaxException(constructor,
-"Constructors are not allowed; instead, define a 'setup()' or 'setupSpeck()' method");
-   }
-
-  public void visitProperty(PropertyNode node) {}
-
-  public void visitField(FieldNode field) {}
 
   private void buildBlocks(Method method) {
     List<Statement> stats = AstUtil.getStatements(method.getAst());

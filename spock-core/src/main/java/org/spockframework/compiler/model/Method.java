@@ -57,13 +57,6 @@ public abstract class Method extends Node<Speck, MethodNode> {
     return new BlockIterable(firstBlock);
   }
 
-  @Override
-  public void accept(ISpeckVisitor visitor) throws Exception {
-    visitor.visitMethod(this);
-    for (Block b: getBlocks()) b.accept(visitor);
-    visitor.visitMethodAgain(this);
-  }
-
   public Block addBlock(Block block) {
     if (firstBlock == null)
       firstBlock = lastBlock = block;
@@ -73,6 +66,13 @@ public abstract class Method extends Node<Speck, MethodNode> {
       lastBlock = block;
     }
     return block;
+  }
+
+  @Override
+  public void accept(ISpeckVisitor visitor) throws Exception {
+    visitor.visitMethod(this);
+    for (Block b: getBlocks()) b.accept(visitor);
+    visitor.visitMethodAgain(this);
   }
 }
 

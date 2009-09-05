@@ -14,26 +14,19 @@
  * limitations under the License.
  */
 
-package org.spockframework.compiler;
+package org.spockframework.runtime.model;
 
-import java.util.List;
-
-import org.codehaus.groovy.ast.ASTNode;
-import org.codehaus.groovy.ast.expr.*;
-import org.codehaus.groovy.ast.stmt.Statement;
-
-import org.spockframework.compiler.model.*;
+import java.lang.annotation.*;
 
 /**
+ * Internal metadata about a field, from which the runtime model is built.
  *
  * @author Peter Niederwieser
  */
-public interface IRewriteResourceProvider {
-  Method getCurrentMethod();
-  Block getCurrentBlock();
-  void defineValueRecorder(List<Statement> stats);
-  VariableExpression captureOldValue(Expression oldValue);
-  VariableExpression getMockControllerRef();
-  AstNodeCache getAstNodeCache();
-  String getSourceText(ASTNode node);
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.METHOD)
+public @interface FieldMetadata {
+  String ORDINAL = "ordinal";
+
+  public abstract int ordinal();
 }

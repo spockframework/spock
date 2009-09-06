@@ -14,12 +14,27 @@
  * limitations under the License.
  */
 
-package org.spockframework.tapestry;
+package org.spockframework.runtime.extension;
 
-import org.apache.tapestry5.ioc.ObjectLocator;
+public class SpockExtensionException extends RuntimeException {
+  private String message;
 
-public class TapestrySupportModule {
-  public static ObjectLocator build(ObjectLocator locator) {
-    return locator;
+  public SpockExtensionException(String message) {
+    this(message, null);
+  }
+
+  public SpockExtensionException(String message, Throwable cause) {
+    super(cause);
+    this.message = message;
+  }
+
+  public SpockExtensionException format(Object... args) {
+    message = String.format(message, args);
+    return this;
+  }
+
+  @Override
+  public String getMessage() {
+    return message;
   }
 }

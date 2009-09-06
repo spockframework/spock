@@ -20,9 +20,7 @@ import org.apache.tapestry5.ioc.ObjectLocator
 import org.apache.tapestry5.ioc.annotations.*
 
 import spock.lang.Specification
-import spock.tapestry.TapestrySupport
 
-@TapestrySupport
 @SubModule(Module1)
 class ServiceInjection extends Specification {
   @Inject
@@ -37,7 +35,6 @@ class ServiceInjection extends Specification {
   }
 }
 
-@TapestrySupport
 @SubModule(Module1)
 class ObjectLocatorInjection extends Specification {
   @Inject
@@ -49,7 +46,6 @@ class ObjectLocatorInjection extends Specification {
   }
 }
 
-@TapestrySupport
 @SubModule(Module1)
 class SymbolInjection extends Specification {
   @Inject
@@ -57,7 +53,7 @@ class SymbolInjection extends Specification {
   String javaVersion
 
   @Inject
-  @Symbol("configKey") // Groovy doesn't currently support the usage of constants in annotations
+  @Symbol("configKey") // Groovy doesn't yet support constants in annotations, so we use a literal
   String configValue
 
   @Inject

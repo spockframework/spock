@@ -42,13 +42,13 @@ public class TapestryInterceptor implements IMethodInterceptor {
   public void invoke(IMethodInvocation invocation) throws Throwable {
     switch(invocation.getMethod().getKind()) {
       case SETUP:
-        invocation.proceed();
         injectServices(invocation.getTarget(), false);
+        invocation.proceed();
         break;
       case SETUP_SPECK:
         startupRegistry();
-        invocation.proceed();
         injectServices(invocation.getTarget(), true);
+        invocation.proceed();
         break;
       case CLEANUP_SPECK:
         invocation.proceed();
@@ -62,7 +62,7 @@ public class TapestryInterceptor implements IMethodInterceptor {
 
   private void startupRegistry() {
     RegistryBuilder builder = new RegistryBuilder();
-    builder.add(TapestrySupportModule.class);
+    builder.add(ExtensionModule.class);
     for (Class<?> module : getSubModules(speck)) builder.add(module);
     registry = builder.build();
     registry.performRegistryStartup();

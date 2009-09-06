@@ -25,6 +25,8 @@ import org.spockframework.compiler.Identifiers;
 import org.spockframework.runtime.intercept.Directive;
 import org.spockframework.runtime.intercept.IDirectiveProcessor;
 import org.spockframework.runtime.model.*;
+import org.spockframework.runtime.extension.ISpockExtension;
+import org.spockframework.runtime.extension.ExtensionRegistry;
 import org.spockframework.util.BinaryNames;
 
 import spock.lang.Specification;
@@ -55,6 +57,7 @@ public class SpeckInfoBuilder {
     buildSharedInstanceField();
     buildFeatures();
     buildFixtureMethods();
+    notifyExtensions();
     processDirectives();
     return speck;
   }
@@ -78,7 +81,7 @@ public class SpeckInfoBuilder {
     SpeckMetadata metadata = clazz.getAnnotation(SpeckMetadata.class);
     if (metadata == null)
       throw new InvalidSpeckError(
-          "Class '%s' is not a Speck, or has not been compiled properly").withArgs(clazz.getName());
+          "Class '%s' is not a Speck, or has not been compiled properly").format(clazz.getName());
 
     return metadata;
   }
@@ -207,6 +210,11 @@ public class SpeckInfoBuilder {
     speck.setCleanupMethod(createMethod(Identifiers.CLEANUP_METHOD, MethodKind.CLEANUP, true));
     speck.setSetupSpeckMethod(createMethod(Identifiers.SETUP_SPECK_METHOD, MethodKind.SETUP_SPECK, true));
     speck.setCleanupSpeckMethod(createMethod(Identifiers.CLEANUP_SPECK_METHOD, MethodKind.CLEANUP_SPECK, true));
+  }
+
+  private void notifyExtensions() {
+    for (ISpockExtension extension : ExtensionRegistry.getInstance().getExtensions())
+      extension.visitSpeck(speck);
   }
 
   private void processDirectives() throws InstantiationException, IllegalAccessException {

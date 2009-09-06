@@ -14,20 +14,10 @@
  * limitations under the License.
  */
 
-package org.spockframework.tapestry;
+package org.spockframework.runtime.extension;
 
-import java.lang.annotation.Annotation;
-
-import org.spockframework.runtime.intercept.AbstractDirectiveProcessor;
-import org.spockframework.runtime.intercept.IMethodInterceptor;
 import org.spockframework.runtime.model.SpeckInfo;
 
-public class TapestryProcessor extends AbstractDirectiveProcessor {
-  @Override
-  public void visitSpeckDirective(Annotation directive, SpeckInfo speck) {
-    IMethodInterceptor interceptor = new TapestryInterceptor(speck);
-    speck.getSetupMethod().addInterceptor(interceptor);
-    speck.getSetupSpeckMethod().addInterceptor(interceptor);
-    speck.getCleanupSpeckMethod().addInterceptor(interceptor);
-  }
+public interface ISpockExtension {
+  void visitSpeck(SpeckInfo speck);
 }

@@ -14,33 +14,12 @@
  * limitations under the License.
  */
 
-package org.spockframework.runtime;
+package org.spockframework.tapestry;
 
-/**
- * Indicates that a Speck has done something it is not supposed to do. It is up
- * to the Speck author to correct the problem.
- *
- * @author Peter Niederwieser
- */
-public class InvalidSpeckError extends Error {
-  private String msg;
+import org.apache.tapestry5.ioc.ObjectLocator;
 
-  public InvalidSpeckError(String msg) {
-    this(msg, null);
-  }
-
-  public InvalidSpeckError(String msg, Throwable throwable) {
-    super(throwable);
-    this.msg = msg;
-  }
-
-  public InvalidSpeckError format(Object... args) {
-    msg = String.format(msg, args);
-    return this;
-  }
-
-  @Override
-  public String getMessage() {
-    return msg;
+public class ExtensionModule {
+  public static ObjectLocator build(ObjectLocator locator) {
+    return locator;
   }
 }

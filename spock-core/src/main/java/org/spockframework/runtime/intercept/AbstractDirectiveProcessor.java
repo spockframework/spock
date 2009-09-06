@@ -28,22 +28,22 @@ import org.spockframework.runtime.InvalidSpeckError;
 public class AbstractDirectiveProcessor<T extends Annotation> implements IDirectiveProcessor<T> {
   public void visitSpeckDirective(T directive, SpeckInfo speck) {
     throw new InvalidSpeckError("@%s may not be applied to Specks")
-        .withArgs(directive.annotationType().getSimpleName());
+        .format(directive.annotationType().getSimpleName());
   }
 
   public void visitFeatureDirective(T directive, FeatureInfo feature) {
     throw new InvalidSpeckError("@%s may not be applied to feature methods")
-        .withArgs(directive.annotationType().getSimpleName());
+        .format(directive.annotationType().getSimpleName());
   }
 
   public void visitFixtureDirective(T directive, MethodInfo fixtureMethod) {
     throw new InvalidSpeckError("@%s may not be applied to fixture methods")
-        .withArgs(directive.annotationType().getSimpleName());
+        .format(directive.annotationType().getSimpleName());
   }
 
   public void visitFieldDirective(T directive, FieldInfo field) {
     throw new InvalidSpeckError("@%s may not be applied to fields")
-        .withArgs(directive.annotationType().getSimpleName());
+        .format(directive.annotationType().getSimpleName());
   }
 
   public void afterVisits(SpeckInfo speck) {} // do nothing

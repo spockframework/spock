@@ -22,7 +22,6 @@ import java.lang.reflect.Field;
 import org.apache.tapestry5.ioc.*;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.SubModule;
-import org.apache.tapestry5.ioc.services.MasterObjectProvider;
 
 import org.spockframework.runtime.intercept.IMethodInterceptor;
 import org.spockframework.runtime.intercept.IMethodInvocation;
@@ -34,6 +33,7 @@ import spock.lang.Shared;
 public class TapestryInterceptor implements IMethodInterceptor {
   private final SpeckInfo speck;
   private Registry registry;
+  private IPerIterationManager perIterationManager;
 
   public TapestryInterceptor(SpeckInfo speck) {
     this.speck = speck;
@@ -41,18 +41,28 @@ public class TapestryInterceptor implements IMethodInterceptor {
 
   public void invoke(IMethodInvocation invocation) throws Throwable {
     switch(invocation.getMethod().getKind()) {
-      case SETUP:
-        injectServices(invocation.getTarget(), false);
-        invocation.proceed();
-        break;
       case SETUP_SPECK:
         startupRegistry();
         injectServices(invocation.getTarget(), true);
         invocation.proceed();
         break;
-      case CLEANUP_SPECK:
+      case SETUP:
+        injectServices(invocation.getTarget(), false);
         invocation.proceed();
-        shutdownRegistry();
+        break;
+      case CLEANUP:
+        try {
+          invocation.proceed();
+        } finally {
+          perIterationManager.cleanup();
+        }
+        break;
+      case CLEANUP_SPECK:
+        try {
+          invocation.proceed();
+        } finally {
+          shutdownRegistry();
+        }
         break;
       default:
         throw new UnreachableCodeError();
@@ -66,6 +76,7 @@ public class TapestryInterceptor implements IMethodInterceptor {
     for (Class<?> module : getSubModules(speck)) builder.add(module);
     registry = builder.build();
     registry.performRegistryStartup();
+    perIterationManager = registry.getService(IPerIterationManager.class);
   }
 
   private Class[] getSubModules(SpeckInfo speck) {
@@ -74,10 +85,10 @@ public class TapestryInterceptor implements IMethodInterceptor {
   }
 
   private void injectServices(Object target, boolean sharedFields) throws IllegalAccessException {
-    MasterObjectProvider provider = registry.getService(MasterObjectProvider.class);
     for (final Field field : speck.getReflection().getDeclaredFields())
-      if (field.isAnnotationPresent(Inject.class) && field.isAnnotationPresent(Shared.class) == sharedFields) {
-        Object value = provider.provide(field.getType(), createAnnotationProvider(field), registry, true);
+      if (field.isAnnotationPresent(Inject.class)
+          && field.isAnnotationPresent(Shared.class) == sharedFields) {
+        Object value = registry.getObject(field.getType(), createAnnotationProvider(field));
         field.setAccessible(true);
         field.set(target, value);
       }

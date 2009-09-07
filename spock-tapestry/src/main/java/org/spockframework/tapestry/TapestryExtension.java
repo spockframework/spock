@@ -87,8 +87,9 @@ public class TapestryExtension implements ISpockExtension {
     if (!speck.getReflection().isAnnotationPresent(SubModule.class)) return;
 
     IMethodInterceptor interceptor = new TapestryInterceptor(speck);
-    speck.getSetupMethod().addInterceptor(interceptor);
     speck.getSetupSpeckMethod().addInterceptor(interceptor);
+    speck.getSetupMethod().addInterceptor(interceptor);
+    speck.getCleanupMethod().addInterceptor(interceptor);
     speck.getCleanupSpeckMethod().addInterceptor(interceptor);
   }
 }

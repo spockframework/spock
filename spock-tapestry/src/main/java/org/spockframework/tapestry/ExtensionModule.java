@@ -16,9 +16,19 @@
 
 package org.spockframework.tapestry;
 
-import org.apache.tapestry5.ioc.ObjectLocator;
+import org.apache.tapestry5.ioc.*;
+
+import spock.tapestry.ScopeConstants;
 
 public class ExtensionModule {
+  public static void bind(ServiceBinder binder) {
+    binder.bind(IPerIterationManager.class, PerIterationManager.class);  
+  }
+
+  public static void contributeServiceLifecycleSource(MappedConfiguration<String, ServiceLifecycle> config) {
+    config.addInstance(ScopeConstants.PER_ITERATION, PerIterationServiceLifecycle.class);
+  }
+
   public static ObjectLocator build(ObjectLocator locator) {
     return locator;
   }

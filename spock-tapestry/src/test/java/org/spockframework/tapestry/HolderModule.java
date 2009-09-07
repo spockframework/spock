@@ -14,29 +14,15 @@
  * limitations under the License.
  */
 
-package org.spockframework.runtime.model;
+package org.spockframework.tapestry;
 
-import java.lang.reflect.Field;
+import org.apache.tapestry5.ioc.annotations.Scope;
 
-import spock.lang.Shared;
+import spock.tapestry.ScopeConstants;
 
-/**
- * Runtime information about a field in a Spock specification.
- * 
- * @author Peter Niederwieser
- */
-public class FieldInfo extends NodeInfo<SpeckInfo, Field> {
-  private int ordinal;
-
-  public int getOrdinal() {
-    return ordinal;
-  }
-
-  public void setOrdinal(int ordinal) {
-    this.ordinal = ordinal;
-  }
-
-  public boolean isShared() {
-    return getReflection().isAnnotationPresent(Shared.class);
+public class HolderModule {
+  @Scope(ScopeConstants.PER_ITERATION)
+  public static IHolder build() {
+    return new Holder();
   }
 }

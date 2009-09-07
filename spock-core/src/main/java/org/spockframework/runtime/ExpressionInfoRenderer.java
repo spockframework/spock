@@ -57,8 +57,6 @@ public class ExpressionInfoRenderer {
   private void renderText() {
     lines.add(new StringBuilder(expr.getText()));
     startColumns.add(0);
-    lines.add(new StringBuilder()); // empty line
-    startColumns.add(0);
   }
 
   private void renderValues() {
@@ -84,6 +82,12 @@ public class ExpressionInfoRenderer {
         expr.getAnchor().getColumn() + str.length() : // exclusive
         Integer.MAX_VALUE; // multi-line strings are always placed on new lines
 
+    if (lines.size() == 1) { // we have never placed a value yet
+      // let's add an empty line between text and values
+      lines.add(new StringBuilder());
+      startColumns.add(0);
+    }
+
     for (int i = 1; i < lines.size(); i++)
       if (endColumn < startColumns.get(i)) {
         placeString(lines.get(i), str, startColumn);
@@ -91,7 +95,7 @@ public class ExpressionInfoRenderer {
         return;
       } else {
         placeString(lines.get(i), "|", startColumn);
-        if (i > 1) // make sure that no values are ever placed on empty line
+        if (i > 1) // i == 1 is the empty line between text and values, which should stay empty
           startColumns.set(i, startColumn + 1); // + 1: no whitespace required between end of value and "|"
       }
 

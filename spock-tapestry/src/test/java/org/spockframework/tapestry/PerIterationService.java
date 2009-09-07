@@ -16,7 +16,14 @@
 
 package org.spockframework.tapestry;
 
-public interface IHolder {
-  public Object get();
-  public void set(Object value);
+public class PerIterationService implements IPerIterationService {
+  private Object value;
+
+  public Object get() {
+    return value;
+  }
+
+  public void set(Object value) {
+    this.value = value;
+  }
 }

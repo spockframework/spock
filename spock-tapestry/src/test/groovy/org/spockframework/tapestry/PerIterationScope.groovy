@@ -22,31 +22,31 @@ import org.apache.tapestry5.ioc.annotations.Scope
 
 import org.apache.tapestry5.ioc.annotations.Inject
 
-@SubModule(HolderModule)
+@SubModule(PerIterationModule)
 class PerIterationScope extends Specification {
   @Inject
   @Scope("perIteration")
-  IHolder holder
+  IPerIterationService service
 
   def "iteration 1"() {
     expect:
-    holder.get() == null
+    service.get() == null
 
-    holder.set(1)
+    service.set(1)
   }
 
   def "iteration 2"() {
     expect:
-    holder.get() == null
+    service.get() == null
 
-    holder.set(2)
+    service.set(2)
   }
 
   def "iteration 3 to 5"() {
     expect:
-    holder.get() == null
+    service.get() == null
     
-    holder.set(iteration)
+    service.set(iteration)
 
     where:
     iteration << (3..5)

@@ -20,9 +20,9 @@ import org.apache.tapestry5.ioc.annotations.Scope;
 
 import spock.tapestry.ScopeConstants;
 
-public class HolderModule {
+public class PerIterationModule {
   @Scope(ScopeConstants.PER_ITERATION)
-  public static IHolder build() {
-    return new Holder();
+  public static IPerIterationService build() {
+    return new PerIterationService();
   }
 }

@@ -175,6 +175,7 @@
         <module>spock-maven</module>
         <module>spock-example</module>
         <module>spock-tapestry</module>
+        <module>spock-guice</module>
       </modules>
     </profile> 
     <profile>
@@ -183,6 +184,7 @@
         <module>spock-core</module>
         <module>spock-maven</module>
         <module>spock-tapestry</module>
+        <module>spock-guice</module>
       </modules>
       <build>
         <plugins>

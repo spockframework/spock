@@ -1,0 +1,18 @@
+usePlugin("groovy")
+sourceCompatibility = 1.5
+targetCompatibility = 1.5
+
+compile.options.fork = false
+compileTests.options.fork = false
+
+project(":spock-guice") {
+  repositories {
+    mavenCentral()
+  }
+  
+  dependencies {  
+    groovy "org.codehaus.groovy:groovy-all:1.6.4"
+    compile project(":spock-core")
+    compile "com.google.inject:guice:2.0"
+  }
+}

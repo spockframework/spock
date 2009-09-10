@@ -30,6 +30,12 @@ import org.spockframework.util.UnreachableCodeError;
 
 import spock.lang.Shared;
 
+/**
+ * Controls startup and shutdown of the Tapestry container,
+ * and injects Tapestry-provided objects into specifications.
+ *
+ * @author Peter Niederwieser
+ */
 public class TapestryInterceptor implements IMethodInterceptor {
   private final SpeckInfo speck;
   private Registry registry;

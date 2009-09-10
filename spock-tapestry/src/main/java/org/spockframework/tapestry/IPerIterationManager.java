@@ -18,4 +18,10 @@ package org.spockframework.tapestry;
 
 import org.apache.tapestry5.ioc.services.PerthreadManager;
 
+/**
+ * Holds on to service instances with "perIteration" scope until
+ * they are released by <tt>TapestryInterceptor</tt>.
+ *
+ * @author Peter Niederwieser
+ */
 public interface IPerIterationManager extends PerthreadManager {}

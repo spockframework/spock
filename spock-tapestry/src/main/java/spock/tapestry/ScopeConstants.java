@@ -16,6 +16,14 @@
 
 package spock.tapestry;
 
+/**
+ * Custom service scopes for use within a specification's own Tapestry module.
+ *
+ * @author Peter Niederwiesers
+ */
 public class ScopeConstants {
+  /**
+   * Service scope that spans one feature (iteration).
+   */
   public static final String PER_ITERATION = "perIteration";
 }

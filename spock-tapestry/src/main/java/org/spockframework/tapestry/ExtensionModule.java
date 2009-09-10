@@ -20,6 +20,12 @@ import org.apache.tapestry5.ioc.*;
 
 import spock.tapestry.ScopeConstants;
 
+/**
+ * A Tapestry module that is started for every specification which uses Spock's
+ * Tapestry extension.
+ *
+ * @author Peter Niederwieser
+ */
 public class ExtensionModule {
   public static void bind(ServiceBinder binder) {
     binder.bind(IPerIterationManager.class, PerIterationManager.class);  

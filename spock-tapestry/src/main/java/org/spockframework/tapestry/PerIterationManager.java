@@ -19,6 +19,12 @@ package org.spockframework.tapestry;
 import org.apache.tapestry5.ioc.internal.services.PerthreadManagerImpl;
 import org.slf4j.Logger;
 
+/**
+ * Implementation of <tt>IPerIterationManager</tt> which is fully based on
+ * Tapestry's (internal) <tt>PerthreadManagerImpl</tt>.
+ *
+ * @author Peter Niederwiesers
+ */
 public class PerIterationManager extends PerthreadManagerImpl implements IPerIterationManager {
   public PerIterationManager(Logger logger) {
     super(logger);

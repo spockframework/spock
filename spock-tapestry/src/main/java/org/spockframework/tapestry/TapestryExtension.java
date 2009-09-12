@@ -54,13 +54,15 @@ import org.spockframework.runtime.intercept.IMethodInterceptor;
  * fields once per feature (iteration). However, this does <em>not</em> mean that each
  * feature will receive a fresh service instance; rather, it is left to the Tapestry
  * registry to control the lifecycle of a service. Most Tapestry services use the default
- * "singleton" scope, in which case the same service instance will be shared between all
+ * "singleton" scope, which results in the same service instance being shared between all
  * features.
  *
  * <p>Features that require their own service instance(s) should be moved into separate
- * specifications. To keep your code well organized, you may want to keep related
- * (micro-)specifications in the same source file. Another useful technique is to
- * factor out commonalities between related specifications into a base class.
+ * specifications. To avoid code fragmentation and duplication, you might want to put
+ * multiple (micro-)specifications into the same source file, and factor out their
+ * commonalities into a base class. Alternatively, a service definition in a
+ * specification's own module may use <tt>&#64;Scope("perIteration")</tt>. In this case,
+ * every feature (iteration) will receive a fresh service instance.
  *
  * <p><b>Usage example:</b>
  *
@@ -87,8 +89,9 @@ public class TapestryExtension implements ISpockExtension {
     if (!speck.getReflection().isAnnotationPresent(SubModule.class)) return;
 
     IMethodInterceptor interceptor = new TapestryInterceptor(speck);
-    speck.getSetupMethod().addInterceptor(interceptor);
     speck.getSetupSpeckMethod().addInterceptor(interceptor);
+    speck.getSetupMethod().addInterceptor(interceptor);
+    speck.getCleanupMethod().addInterceptor(interceptor);
     speck.getCleanupSpeckMethod().addInterceptor(interceptor);
   }
 }

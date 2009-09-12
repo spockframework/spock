@@ -57,7 +57,9 @@ public class SpeckAnnotator extends AbstractSpeckVisitor {
 
   private void addFieldMetadata(Field field) {
     AnnotationNode ann = new AnnotationNode(nodeCache.FieldMetadata);
+    ann.setMember(FieldMetadata.NAME, new ConstantExpression(field.getName()));
     ann.setMember(FieldMetadata.ORDINAL, new ConstantExpression(field.getOrdinal()));
+    ann.setMember(FieldMetadata.LINE, new ConstantExpression(field.getAst().getLineNumber()));
     field.getAst().addAnnotation(ann);
   }
 

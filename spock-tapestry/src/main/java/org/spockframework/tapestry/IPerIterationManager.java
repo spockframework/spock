@@ -12,21 +12,16 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */ 
+ */
 
-package org.spockframework
+package org.spockframework.tapestry;
 
-import spock.lang.*
-import org.spockframework.smoke.EmbeddedSpeckCompiler
-import org.spockframework.smoke.EmbeddedSpeckRunner
+import org.apache.tapestry5.ioc.services.PerthreadManager;
 
 /**
- * Convenience base class for specifications that need to compile
- * and/or run other specifications.
+ * Holds on to service instances with "perIteration" scope until
+ * they are released by <tt>TapestryInterceptor</tt>.
  *
  * @author Peter Niederwieser
  */
-class EmbeddedSpecification extends Specification {
-  EmbeddedSpeckRunner runner = new EmbeddedSpeckRunner()
-  EmbeddedSpeckCompiler compiler = new EmbeddedSpeckCompiler()
-}
+public interface IPerIterationManager extends PerthreadManager {}

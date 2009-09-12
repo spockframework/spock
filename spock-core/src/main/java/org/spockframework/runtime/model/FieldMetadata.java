@@ -26,7 +26,11 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface FieldMetadata {
+  String NAME = "name";
   String ORDINAL = "ordinal";
+  String LINE = "line";
 
-  public abstract int ordinal();
+  String name();
+  int ordinal();
+  int line();
 }

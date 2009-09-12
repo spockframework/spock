@@ -1,0 +1,51 @@
+Spock Framework README
+======================
+
+Spock is a testing and specification framework for Java and Groovy applications. To learn more about Spock, visit http://spockframework.org.
+
+Modules
+-------
+spock-core: Core framework.
+
+spock-specks: Specifications for spock-core, written with Spock. Not required for using the framework.
+
+spock-maven: Extended Maven support (optional).
+
+spock-example: Self-contained example project with Ant, Gradle, and Maven build. See spock-example/README for more information.
+
+Gradle Build
+------------
+Prerequisites: JDK 5 or higher
+
+Type: ./gradlew clean libs
+
+If not already present, build dependencies (including Gradle itself) will be downloaded automatically.
+
+Maven Build
+-----------
+Prerequisites: JDK5 or higher, Maven 2.x
+
+Type: mvn clean install
+
+If not already present, build dependencies will be downloaded automatically.
+
+Further Resources
+-----------------
+Spock homepage     http://spockframework.org
+Main documentation http://spockframework.org/wiki/SpockBasics
+Discussion group   http://groups.google.com/group/spockframework
+Issue tracker      http://issues.spockframework.org
+Build server       http://builds.spockframework.org
+Maven repository   http://m2repo.spockframework.org (releases are also available from Maven Central)
+Spock on Twitter   http://twitter.com/pniederw
+
+Ant homepage       http://ant.apache.org
+Gradle homepage    http://www.gradle.org
+Groovy homepage    http://groovy.codehaus.org
+Maven homepage     http://maven.apache.org
+
+If you have any comments or questions, please direct them to the Spock discussion group. All feedback is appreciated!
+
+Happy spec'ing!
+Peter Niederwieser
+Creator, Spock Framework

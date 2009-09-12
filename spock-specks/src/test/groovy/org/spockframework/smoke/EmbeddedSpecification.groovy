@@ -13,35 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */ 
- 
+
 package org.spockframework.smoke
 
-class RunningJUnitTestsWithDefaultRunner extends EmbeddedSpecification {
-  def "failing beforeClass method"() {
-    runner.throwFailure = false
+import spock.lang.*
+import org.spockframework.smoke.EmbeddedSpeckCompiler
+import org.spockframework.smoke.EmbeddedSpeckRunner
 
-    when:
-    def result = runner.run("""
-import org.junit.*
-
-class Foo {
-  @BeforeClass
-  static void beforeClass() {
-    throw new Error()
-  }
-
-  @Test
-  void test() {}
-}
-    """)
-
-    then:
-    result.runCount == 0
-    result.failureCount == 1
-    result.ignoreCount == 0
-
-    def desc = result.failures[0].description
-    desc.isSuite() // failure description is description of the test class
-    desc.className == "Foo"
-  }
+/**
+ * Convenience base class for specifications that need to compile
+ * and/or run other specifications.
+ *
+ * @author Peter Niederwieser
+ */
+class EmbeddedSpecification extends Specification {
+  EmbeddedSpeckRunner runner = new EmbeddedSpeckRunner()
+  EmbeddedSpeckCompiler compiler = new EmbeddedSpeckCompiler()
 }

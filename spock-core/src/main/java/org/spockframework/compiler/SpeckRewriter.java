@@ -308,6 +308,11 @@ public class SpeckRewriter extends AbstractSpeckVisitor implements IRewriteResou
     // can't hurt to set return type to void
     MethodNode newMethod = new MethodNode(newName, method.getModifiers(),
         ClassHelper.VOID_TYPE, method.getParameters(), method.getExceptions(), method.getCode());
+
+    // make method non-virtual s.t. feature methods in base and derived spec don't collide
+    // alternative would be to make method names unique across inheritance hierarchy
+    AstUtil.setVisibility(newMethod, Opcodes.ACC_PRIVATE);
+
     newMethod.addAnnotations(method.getAnnotations());
     newMethod.setSynthetic(method.isSynthetic());
     newMethod.setDeclaringClass(method.getDeclaringClass());

@@ -12,36 +12,17 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */ 
- 
-package org.spockframework.smoke
+ */
 
-class RunningJUnitTestsWithDefaultRunner extends EmbeddedSpecification {
-  def "failing beforeClass method"() {
-    runner.throwFailure = false
+package org.spockframework.tapestry;
 
-    when:
-    def result = runner.run("""
-import org.junit.*
+import org.apache.tapestry5.ioc.annotations.Scope;
 
-class Foo {
-  @BeforeClass
-  static void beforeClass() {
-    throw new Error()
-  }
+import spock.tapestry.ScopeConstants;
 
-  @Test
-  void test() {}
-}
-    """)
-
-    then:
-    result.runCount == 0
-    result.failureCount == 1
-    result.ignoreCount == 0
-
-    def desc = result.failures[0].description
-    desc.isSuite() // failure description is description of the test class
-    desc.className == "Foo"
+public class PerIterationModule {
+  @Scope(ScopeConstants.PER_ITERATION)
+  public static IPerIterationService build() {
+    return new PerIterationService();
   }
 }

@@ -14,35 +14,16 @@
  * limitations under the License.
  */
 
-package org.spockframework.junit
-
-import org.spockframework.smoke.EmbeddedSpecification
+package spock.tapestry;
 
 /**
- * @author Peter Niederwieser
+ * Custom service scopes for use within a specification's own Tapestry module.
+ *
+ * @author Peter Niederwiesers
  */
-class JUnitTestResult extends EmbeddedSpecification {
-  def "failing beforeClass increases failureCount but not runCount"() {
-    runner.throwFailure = false
-
-    when:
-    def result = runner.run("""
-import org.junit.*
-
-class Foo {
-  @BeforeClass
-  static void beforeClass() {
-    throw new Exception()
-  }
-
-  @Test
-  void foo() {}
-}
-    """)
-
-    then:
-    result.runCount == 0
-    result.failureCount == 1
-    result.ignoreCount == 0
-  }
+public class ScopeConstants {
+  /**
+   * Service scope that spans one feature (iteration).
+   */
+  public static final String PER_ITERATION = "perIteration";
 }

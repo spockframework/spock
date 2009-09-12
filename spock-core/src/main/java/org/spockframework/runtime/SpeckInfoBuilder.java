@@ -93,9 +93,10 @@ public class SpeckInfoBuilder {
 
       FieldInfo fieldInfo = new FieldInfo();
       fieldInfo.setParent(speck);
-      fieldInfo.setName(field.getName());
       fieldInfo.setReflection(field);
+      fieldInfo.setName(metadata.name());
       fieldInfo.setOrdinal(metadata.ordinal());
+      fieldInfo.setLine(metadata.line());
       speck.addField(fieldInfo);
     }
 

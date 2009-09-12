@@ -16,32 +16,22 @@
  
 package org.spockframework.smoke
 
-class RunningJUnitTestsWithDefaultRunner extends EmbeddedSpecification {
-  def "failing beforeClass method"() {
-    runner.throwFailure = false
+import spock.lang.Specification
+
+class MixingExpectAndWhenThenBlocks extends Specification {
+  def x = 0
+
+  def mix() {
+    expect:
+    x == 0
 
     when:
-    def result = runner.run("""
-import org.junit.*
-
-class Foo {
-  @BeforeClass
-  static void beforeClass() {
-    throw new Error()
-  }
-
-  @Test
-  void test() {}
-}
-    """)
+    x++
 
     then:
-    result.runCount == 0
-    result.failureCount == 1
-    result.ignoreCount == 0
+    x == old(x) + 1
 
-    def desc = result.failures[0].description
-    desc.isSuite() // failure description is description of the test class
-    desc.className == "Foo"
+    expect:
+    x == 1
   }
 }

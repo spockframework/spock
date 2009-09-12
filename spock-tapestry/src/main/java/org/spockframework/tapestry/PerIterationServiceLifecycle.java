@@ -12,36 +12,21 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */ 
- 
-package org.spockframework.smoke
+ */
 
-class RunningJUnitTestsWithDefaultRunner extends EmbeddedSpecification {
-  def "failing beforeClass method"() {
-    runner.throwFailure = false
+package org.spockframework.tapestry;
 
-    when:
-    def result = runner.run("""
-import org.junit.*
+import org.apache.tapestry5.ioc.internal.services.PerThreadServiceLifecycle;
+import org.apache.tapestry5.ioc.services.ClassFactory;
 
-class Foo {
-  @BeforeClass
-  static void beforeClass() {
-    throw new Error()
-  }
-
-  @Test
-  void test() {}
-}
-    """)
-
-    then:
-    result.runCount == 0
-    result.failureCount == 1
-    result.ignoreCount == 0
-
-    def desc = result.failures[0].description
-    desc.isSuite() // failure description is description of the test class
-    desc.className == "Foo"
+/**
+ * Allows a service to exist per feature iteration. Implementation is fully
+ * based on Tapestry's (internal) <tt>PerThreadServiceLifecycle</tt>.
+ *
+ * @author Peter Niederwieser
+ */
+public class PerIterationServiceLifecycle extends PerThreadServiceLifecycle {
+  public PerIterationServiceLifecycle(IPerIterationManager perIterationManager, ClassFactory classFactory) {
+    super(perIterationManager, classFactory);
   }
 }

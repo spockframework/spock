@@ -14,5 +14,7 @@ project(":spock-guice") {
     groovy "org.codehaus.groovy:groovy-all:1.6.4"
     compile project(":spock-core")
     compile "com.google.inject:guice:2.0"
+    // surfaces in the Guice API; groovyc complains if we don't add it
+    compile "aopalliance:aopalliance:1.0"
   }
 }

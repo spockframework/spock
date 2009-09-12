@@ -10,7 +10,7 @@
   <groupId>org.spockframework</groupId>
   <artifactId>spock-maven</artifactId>
   <packaging>maven-plugin</packaging>
-  <name>Spock Framework - Maven Support</name>
+  <name>Spock Framework - Maven Plugin</name>
 
   <dependencies>
 <!-- compile dependencies -->

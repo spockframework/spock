@@ -16,9 +16,8 @@
 
 package org.spockframework.smoke
 
-import org.spockframework.EmbeddedSpecification
 import org.spockframework.runtime.ConditionNotSatisfiedError
-import org.spockframework.smoke.CallChainException
+
 import spock.lang.Issue
 import spock.lang.Unroll
 

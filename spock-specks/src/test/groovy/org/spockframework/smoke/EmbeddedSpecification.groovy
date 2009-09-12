@@ -14,7 +14,7 @@
  * limitations under the License.
  */ 
 
-package org.spockframework
+package org.spockframework.smoke
 
 import spock.lang.*
 import org.spockframework.smoke.EmbeddedSpeckCompiler

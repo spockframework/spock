@@ -19,7 +19,7 @@ package org.spockframework.smoke
 import org.junit.runner.Request
 import org.junit.runner.manipulation.Filter
 import org.junit.runner.notification.RunListener
-import org.spockframework.EmbeddedSpecification
+
 import spock.lang.Issue
 
 public class RunningSpecksWithSputnik extends EmbeddedSpecification {

@@ -18,7 +18,7 @@ package org.spockframework.smoke.parameterization
 
 import org.codehaus.groovy.control.MultipleCompilationErrorsException
 import org.codehaus.groovy.runtime.typehandling.GroovyCastException
-import org.spockframework.EmbeddedSpecification
+import org.spockframework.smoke.EmbeddedSpecification
 import org.spockframework.util.SpockSyntaxException
 
 /**

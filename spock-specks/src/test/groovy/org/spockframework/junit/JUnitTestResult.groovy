@@ -16,7 +16,7 @@
 
 package org.spockframework.junit
 
-import org.spockframework.EmbeddedSpecification
+import org.spockframework.smoke.EmbeddedSpecification
 
 /**
  * @author Peter Niederwieser

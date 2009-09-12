@@ -27,6 +27,7 @@ import spock.lang.Shared;
  */
 public class FieldInfo extends NodeInfo<SpeckInfo, Field> {
   private int ordinal;
+  private int line;
 
   public int getOrdinal() {
     return ordinal;
@@ -38,5 +39,13 @@ public class FieldInfo extends NodeInfo<SpeckInfo, Field> {
 
   public boolean isShared() {
     return getReflection().isAnnotationPresent(Shared.class);
+  }
+
+  public int getLine() {
+    return line;
+  }
+  
+  public void setLine(int line) {
+    this.line = line;
   }
 }

@@ -16,7 +16,6 @@
 
 package org.spockframework.smoke
 
-import org.spockframework.EmbeddedSpecification
 import org.spockframework.runtime.SpeckAssertionError
 import org.spockframework.util.SyntaxException
 import spock.lang.Specification

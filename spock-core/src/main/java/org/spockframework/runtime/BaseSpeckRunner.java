@@ -84,7 +84,7 @@ public class BaseSpeckRunner {
   public void doRun() {
     createSpeckInstance(true);
     invokeSetupSpeck(speck);
-    runFeatures();
+    runFeatures(speck);
     invokeCleanupSpeck(speck);
   }
 
@@ -113,7 +113,9 @@ public class BaseSpeckRunner {
     invoke(sharedInstance, speck.getSetupSpeckMethod());
   }
 
-  private void runFeatures() {
+  private void runFeatures(SpeckInfo speck) {
+    if (speck == null) return;
+    runFeatures(speck.getSuperSpeck());
     if (runStatus != OK) return;
 
     for (FeatureInfo feature : speck.getFeatures()) {
@@ -124,9 +126,9 @@ public class BaseSpeckRunner {
 
   private void invokeCleanupSpeck(SpeckInfo speck) {
     if (speck == null) return;
-    invokeCleanupSpeck(speck.getSuperSpeck());
-    if (action(runStatus) == ABORT) return;
     invoke(sharedInstance, speck.getCleanupSpeckMethod());
+    if (action(runStatus) == ABORT) return;
+    invokeCleanupSpeck(speck.getSuperSpeck());
   }
 
   private void runFeature(FeatureInfo feature) {
@@ -139,7 +141,7 @@ public class BaseSpeckRunner {
 
   private MethodInfo createDoRunFeatureInfo(FeatureInfo feature) {
     MethodInfo result = new MethodInfo();
-    result.setParent(speck);
+    result.setParent(feature.getParent());
     result.setKind(MethodKind.FEATURE_EXECUTION);
     result.setReflection(DO_RUN_FEATURE);
     result.setMetadata(feature.getMetadata());
@@ -191,9 +193,9 @@ public class BaseSpeckRunner {
 
   protected void invokeCleanup(SpeckInfo speck) {
     if (speck == null) return;
-    invokeCleanup(speck.getSuperSpeck());
-    if (action(runStatus) == ABORT) return;
     invoke(speck.getCleanupMethod());
+    if (action(runStatus) == ABORT) return;
+    invokeCleanup(speck.getSuperSpeck());
   }
 
   protected void invoke(Object target, MethodInfo method, Object... arguments) {

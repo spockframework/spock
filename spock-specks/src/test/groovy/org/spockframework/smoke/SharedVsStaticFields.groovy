@@ -16,7 +16,6 @@
 
 package org.spockframework.smoke
 
-import org.spockframework.EmbeddedSpecification
 import org.spockframework.runtime.ConditionNotSatisfiedError
 
 class SharedVsStaticFields extends EmbeddedSpecification {

@@ -13,20 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+  
 package org.spockframework.guice
 
-import com.google.inject.AbstractModule
-import com.google.inject.name.Names
+import java.lang.annotation.Retention
+import java.lang.annotation.RetentionPolicy
 
-class Module extends AbstractModule {
-  protected void configure() {
-    bind(IService).to(Service)
+import com.google.inject.BindingAnnotation
 
-    bind(String).annotatedWith(Names.named("value1")).toInstance("named value 1")
-    bind(String).annotatedWith(Names.named("value2")).toInstance("named value 2")
-
-    bind(String).annotatedWith(BindingAnnotation1).toInstance("annotated value 1")
-    bind(String).annotatedWith(BindingAnnotation2).toInstance("annotated value 2")
-  }
-}
+@BindingAnnotation
+@Retention(RetentionPolicy.RUNTIME)
+@interface BindingAnnotation2 {}

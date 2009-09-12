@@ -17,11 +17,12 @@
 package org.spockframework.guice
 
 import com.google.inject.Inject
+import com.google.inject.Injector
 
 import spock.guice.UseModules
 import spock.lang.Shared
 import spock.lang.Specification
-import com.google.inject.Injector
+import com.google.inject.name.Named
 
 @UseModules(Module)  
 class InjectionExamples extends Specification {
@@ -32,6 +33,22 @@ class InjectionExamples extends Specification {
   @Shared
   IService sharedService
 
+  @Inject
+  @Named("value1")
+  String namedValue1
+
+  @Inject
+  @Named("value2")
+  String namedValue2
+
+  @Inject
+  BindingAnnotation1
+  String annotatedValue1
+
+  @Inject
+  BindingAnnotation2
+  String annotatedValue2
+  
   IService copiedService = service
 
   @Shared
@@ -39,7 +56,13 @@ class InjectionExamples extends Specification {
 
   @Inject
   Injector injector
-  
+
+  @Shared
+  List savedServices = []
+
+  @Shared
+  List savedSharedServices = []
+
   def setupSpeck() {
     assert sharedService instanceof Service
   }
@@ -51,6 +74,9 @@ class InjectionExamples extends Specification {
   def setup() {
     assert service instanceof Service
     assert sharedService instanceof Service
+
+    savedServices << service
+    savedSharedServices << sharedService
   }
 
   def cleanup() {
@@ -68,7 +94,19 @@ class InjectionExamples extends Specification {
     sharedService instanceof Service
   }
 
-  def "injected values can be accessed from field initializers"() {
+  def "using @Named"() {
+    expect:
+    namedValue1 == "named value 1"
+    namedValue2 == "named value 2"
+  }
+
+  def "using a binding annotation"() {
+    expect:
+    annotatedValue1 = "annotated value 1"
+    annotatedValue2 = "annotated value 2"
+  }
+
+  def "accessing injected values from field initializers"() {
     expect:
     copiedService == service
     copiedSharedService == sharedService
@@ -77,5 +115,15 @@ class InjectionExamples extends Specification {
   def "explicit use of injector (discouraged)"() {
     expect:
     injector.getInstance(IService) instanceof Service
+  }
+
+  def "instance fields are injected once per feature iteration"() {
+    expect:
+    (savedServices as Set).size() == savedServices.size()
+  }
+
+  def "shared fields are injected once per specification"() {
+    expect:
+    (savedSharedServices as Set).size() == 1
   }
 }

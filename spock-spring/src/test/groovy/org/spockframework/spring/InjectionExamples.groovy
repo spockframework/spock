@@ -16,11 +16,15 @@
   
 package org.spockframework.spring
 
+import javax.annotation.Resource
+
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.beans.factory.annotation.Autowired
 
 import spock.lang.*
-import javax.annotation.Resource
+
+import spock.util.EmbeddedSpeckRunner
+import org.springframework.context.ApplicationContext
 
 @ContextConfiguration(locations = "appcontext.xml")
 class InjectionExamples extends Specification {
@@ -31,8 +35,7 @@ class InjectionExamples extends Specification {
   IService myService
 
   @Autowired
-  @Shared
-  IService sharedService
+  ApplicationContext context
 
   def "injecting a field by type"() {
     expect:
@@ -44,8 +47,37 @@ class InjectionExamples extends Specification {
     myService instanceof Service
   }
 
-  def "shared fields are not injected"() {
+  def "direct usage of application context (discouraged)"() {
     expect:
-    sharedService == null
+    context != null
+    context.getBean("myService") instanceof Service
+  }
+
+  def "shared fields cannot be injected"() {
+    def runner = new EmbeddedSpeckRunner()
+
+    when:
+    runner.runWithImports """
+import org.spockframework.spring.IService
+import org.springframework.test.context.ContextConfiguration
+
+@ContextConfiguration
+class Foo extends Specification {
+  $ann
+  @Shared
+  IService sharedService
+
+  def foo() {
+    expect: true
+  }
+}
+    """
+
+    then:
+    thrown(SpringExtensionException)
+
+    where:
+    ann << ["@org.springframework.beans.factory.annotation.Autowired",
+            "@javax.annotation.Resource"]
   }
 }

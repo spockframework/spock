@@ -12,32 +12,18 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */ 
- 
-package org.spockframework.smoke
+ */
 
-import spock.lang.Specification
-import spock.util.EmbeddedSpeckRunner
+package org.spockframework.spring;
 
-class SharedFieldInSuperClass extends Specification {
-  EmbeddedSpeckRunner runner = new EmbeddedSpeckRunner()
+import org.spockframework.runtime.extension.SpockExtensionException;
 
-  def "invoke method on shared field in superclass"() {
-    when:
-    runner.runWithImports """
-class Foo extends Specification {
-  @Shared x = "abc"
-}
-
-class Bar extends Foo {
-  def bar() {
-    expect:
-    x.size() == 3
+public class SpringExtensionException extends SpockExtensionException {
+  public SpringExtensionException(String message) {
+    super(message);
   }
-}
-    """
 
-    then:
-    noExceptionThrown()
+  public SpringExtensionException(String message, Throwable cause) {
+    super(message, cause); 
   }
 }

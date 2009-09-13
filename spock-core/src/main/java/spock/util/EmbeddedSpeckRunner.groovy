@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.spockframework.smoke
+package spock.util
 
 import org.junit.runner.Result
 import org.junit.runner.JUnitCore

@@ -16,16 +16,24 @@
 
 package org.spockframework.spring;
 
+import java.lang.reflect.Field;
+
+import javax.annotation.Resource;
+
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestContextManager;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import org.spockframework.runtime.extension.ISpockExtension;
-import org.spockframework.runtime.model.FeatureInfo;
-import org.spockframework.runtime.model.SpeckInfo;
+import org.spockframework.runtime.model.*;
+
+import spock.lang.Shared;
 
 public class SpringExtension implements ISpockExtension {
   public void visitSpeck(SpeckInfo speck) {
     if (!speck.getReflection().isAnnotationPresent(ContextConfiguration.class)) return;
+
+    checkNoSharedFieldInjected(speck);
 
     TestContextManager manager = new TestContextManager(speck.getReflection());
     SpringInterceptor interceptor = new SpringInterceptor(manager);
@@ -34,5 +42,16 @@ public class SpringExtension implements ISpockExtension {
     speck.getCleanupMethod().addInterceptor(interceptor);
     for (FeatureInfo feature : speck.getFeatures())
       feature.addInterceptor(interceptor);
+  }
+
+  private void checkNoSharedFieldInjected(SpeckInfo speck) {
+    for (FieldInfo field : speck.getFields()) {
+      Field reflection = field.getReflection();
+      if (reflection.isAnnotationPresent(Shared.class)
+          && (reflection.isAnnotationPresent(Autowired.class)
+          || reflection.isAnnotationPresent(Resource.class)))
+        throw new SpringExtensionException(
+            "@Shared field '%s' cannot be injected; use an instance field instead").format(field.getName());
+    }
   }
 }

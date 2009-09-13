@@ -16,6 +16,8 @@
  
 package org.spockframework.smoke
 
+import spock.util.EmbeddedSpecification
+
 class RunningJUnitTestsWithDefaultRunner extends EmbeddedSpecification {
   def "failing beforeClass method"() {
     runner.throwFailure = false

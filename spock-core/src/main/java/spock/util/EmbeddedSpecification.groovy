@@ -14,11 +14,9 @@
  * limitations under the License.
  */ 
 
-package org.spockframework.smoke
+package spock.util
 
 import spock.lang.*
-import org.spockframework.smoke.EmbeddedSpeckCompiler
-import org.spockframework.smoke.EmbeddedSpeckRunner
 
 /**
  * Convenience base class for specifications that need to compile

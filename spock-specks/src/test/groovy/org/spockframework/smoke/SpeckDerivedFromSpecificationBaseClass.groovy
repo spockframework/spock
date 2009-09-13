@@ -21,6 +21,8 @@ import org.spockframework.util.SyntaxException
 import spock.lang.Specification
 import spock.lang.Unroll
 import spock.lang.Issue
+import spock.util.EmbeddedSpecification
+import spock.util.EmbeddedSpeckCompiler
 
 /**
  * @author Peter Niederwieser

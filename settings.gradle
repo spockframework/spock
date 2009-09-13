@@ -1,2 +1,2 @@
-include 'spock-core', 'spock-specks', 'spock-example', 'spock-tapestry', 'spock-guice'
+include 'spock-core', 'spock-specks', 'spock-example', 'spock-tapestry', 'spock-guice', 'spock-spring'
 

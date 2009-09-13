@@ -18,6 +18,7 @@ package org.spockframework.smoke
 
 import org.spockframework.runtime.ConditionNotSatisfiedError
 import spock.lang.Issue
+import org.spockframework.EmbeddedSpecification
 
 class StaticMethodsInSpecifications extends EmbeddedSpecification {
   def "may contain conditions"() {

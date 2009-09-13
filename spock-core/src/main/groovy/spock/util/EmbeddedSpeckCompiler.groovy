@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.spockframework.smoke
+package spock.util
 
 import org.spockframework.runtime.SpeckInfoBuilder
 import org.junit.runner.RunWith

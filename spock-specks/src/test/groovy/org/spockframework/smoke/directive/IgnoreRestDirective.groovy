@@ -16,7 +16,7 @@
 
 package org.spockframework.smoke.directive
 
-import org.spockframework.smoke.EmbeddedSpecification
+import org.spockframework.EmbeddedSpecification
 import spock.lang.Unroll
 
 /**

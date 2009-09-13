@@ -17,6 +17,7 @@
 package org.spockframework.smoke
 
 import spock.lang.Specification
+import spock.util.EmbeddedSpeckRunner
 
 class SharedFieldInSuperClass extends Specification {
   EmbeddedSpeckRunner runner = new EmbeddedSpeckRunner()

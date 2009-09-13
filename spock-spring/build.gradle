@@ -1,0 +1,22 @@
+usePlugin("groovy")
+sourceCompatibility = 1.5
+targetCompatibility = 1.5
+
+compile.options.fork = false
+compileTests.options.fork = false
+
+project(":spock-spring") {
+  repositories {
+    mavenCentral()
+  }
+  
+  dependencies {  
+    groovy "org.codehaus.groovy:groovy-all:1.7-beta-1"
+    compile project(":spock-core")
+    compile "org.springframework:spring-test:2.5.6.SEC01"
+    compile "org.springframework:spring-beans:2.5.6.SEC01"
+    testCompile "org.springframework:spring-context:2.5.6.SEC01"
+    // not used directly at compile-time, but needed by groovyc
+    testCompile "org.springframework:spring-core:2.5.6.SEC01"
+  }
+}

@@ -17,7 +17,7 @@
 package org.spockframework.smoke.parameterization
 
 import org.junit.runner.notification.RunListener
-import org.spockframework.smoke.EmbeddedSpecification
+import org.spockframework.EmbeddedSpecification
 import org.spockframework.runtime.SpeckExecutionException
 
 /**

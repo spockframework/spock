@@ -13,6 +13,15 @@
   <name>Spock Framework - Core</name>
   <url>http://spockframework.org</url>
 
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.groovy.maven</groupId>
+        <artifactId>gmaven-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </build>
+  
   <dependencies>
 <!-- compile dependencies -->
     <dependency>

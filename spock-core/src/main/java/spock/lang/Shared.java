@@ -26,6 +26,6 @@ import java.lang.annotation.*;
  * 
  * @author Peter Niederwieser
  */
-@Retention(RetentionPolicy.SOURCE)
+@Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 public @interface Shared {}

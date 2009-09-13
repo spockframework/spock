@@ -10,7 +10,7 @@
   <groupId>org.spockframework</groupId>
   <artifactId>spock-tapestry</artifactId>
   <packaging>jar</packaging>
-  <name>Spock Framework - Tapestry Support</name>
+  <name>Spock Framework - Tapestry Extension</name>
   <url>http://spockframework.org</url>
 
   <build>
@@ -45,6 +45,7 @@
       <groupId>org.apache.tapestry</groupId>
       <artifactId>tapestry-ioc</artifactId>
       <version>5.1.0.5</version>
+      <scope>provided</scope>
     </dependency>
   </dependencies>
 </project>

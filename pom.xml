@@ -176,15 +176,18 @@
         <module>spock-example</module>
         <module>spock-tapestry</module>
         <module>spock-guice</module>
+        <module>spock-spring</module>
       </modules>
     </profile> 
     <profile>
       <id>release</id>
+      <!-- all the modules listed here will be deployed -->
       <modules>
         <module>spock-core</module>
         <module>spock-maven</module>
         <module>spock-tapestry</module>
         <module>spock-guice</module>
+        <module>spock-spring</module>
       </modules>
       <build>
         <plugins>

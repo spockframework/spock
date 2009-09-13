@@ -1,6 +1,8 @@
 allprojects {
   group = "org.spockframework"
   version = "0.3-SNAPSHOT"
+
+  groovyArtifact = "org.codehaus.groovy:groovy-all:1.6.4"
 }
 
 task wrapper(type: Wrapper) { 

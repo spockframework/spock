@@ -14,7 +14,7 @@ project(":spock-tapestry") {
   }
   
   dependencies {  
-    groovy "org.codehaus.groovy:groovy-all:1.6.4"
+    groovy groovyArtifact
     compile project(":spock-core")
     compile "org.apache.tapestry:tapestry-ioc:5.1.0.5"
     compile "org.apache.tapestry:tapestry5-annotations:5.1.0.5"

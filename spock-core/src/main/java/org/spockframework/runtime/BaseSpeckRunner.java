@@ -144,6 +144,7 @@ public class BaseSpeckRunner {
     result.setParent(feature.getParent());
     result.setKind(MethodKind.FEATURE_EXECUTION);
     result.setReflection(DO_RUN_FEATURE);
+    result.setFeature(feature);
     result.setMetadata(feature.getMetadata());
     for (IMethodInterceptor interceptor : feature.getInterceptors())
       result.addInterceptor(interceptor);

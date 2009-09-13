@@ -45,6 +45,7 @@
       <groupId>org.apache.tapestry</groupId>
       <artifactId>tapestry-ioc</artifactId>
       <version>5.1.0.5</version>
+      <scope>provided</scope>
     </dependency>
   </dependencies>
 </project>

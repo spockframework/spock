@@ -22,7 +22,7 @@ import org.junit.runner.notification.RunListener
 
 import spock.lang.Issue
 import spock.util.EmbeddedSpeckCompiler
-import spock.util.EmbeddedSpecification
+import org.spockframework.EmbeddedSpecification
 
 public class RunningSpecksWithSputnik extends EmbeddedSpecification {
   @Issue("http://issues.spockframework.org/detail?id=13")

@@ -14,9 +14,9 @@ project(":spock-spring") {
     groovy "org.codehaus.groovy:groovy-all:1.6.4"
     compile project(":spock-core")
     compile "org.springframework:spring-test:2.5.6.SEC01"
-    testCompile "org.springframework:spring-beans:2.5.6.SEC01"
-    // runtime dependencies of spring-test
-    testRuntime "org.springframework:spring-core:2.5.6.SEC01"
-    testRuntime "org.springframework:spring-context:2.5.6.SEC01"
+    compile "org.springframework:spring-beans:2.5.6.SEC01"
+    testCompile "org.springframework:spring-context:2.5.6.SEC01"
+    // not used directly at compile-time, but needed by groovyc
+    testCompile "org.springframework:spring-core:2.5.6.SEC01"
   }
 }

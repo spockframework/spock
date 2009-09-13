@@ -14,9 +14,11 @@
  * limitations under the License.
  */ 
 
-package spock.util
+package org.spockframework
 
 import spock.lang.*
+import spock.util.EmbeddedSpeckRunner
+import spock.util.EmbeddedSpeckCompiler
 
 /**
  * Convenience base class for specifications that need to compile
@@ -24,7 +26,7 @@ import spock.lang.*
  *
  * @author Peter Niederwieser
  */
-class EmbeddedSpecification extends Specification {
+abstract class EmbeddedSpecification extends Specification {
   EmbeddedSpeckRunner runner = new EmbeddedSpeckRunner()
   EmbeddedSpeckCompiler compiler = new EmbeddedSpeckCompiler()
 }

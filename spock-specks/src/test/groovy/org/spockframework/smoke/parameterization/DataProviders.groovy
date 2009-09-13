@@ -16,7 +16,7 @@
 
 package org.spockframework.smoke.parameterization
 
-import spock.util.EmbeddedSpecification
+import org.spockframework.EmbeddedSpecification
 import org.spockframework.runtime.SpeckExecutionException
 
 /**

@@ -20,7 +20,7 @@ import org.spockframework.runtime.ConditionNotSatisfiedError
 
 import spock.lang.Issue
 import spock.lang.Unroll
-import spock.util.EmbeddedSpecification
+import org.spockframework.EmbeddedSpecification
 
 /**
  * @author Peter Niederwieser

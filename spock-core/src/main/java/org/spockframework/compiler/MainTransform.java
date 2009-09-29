@@ -31,12 +31,19 @@ import org.spockframework.compiler.model.Speck;
 import org.spockframework.util.SyntaxException;
 
 /**
+ * AST transformation performing most of the work of rewriting Spock
+ * specifications. In contrast to EarlyTransform, this transform
+ * runs in phase SEMANTIC_ANALYSIS, which provides a more meaningful
+ * AST that is also decorated with reflection information. On the
+ * flip side, because types and variables have already been resolved,
+ * program elements like import statements and variable definitions
+ * can no longer be manipulated at will.
  *
  * @author Peter Niederwieser
  */
 @GroovyASTTransformation(phase = CompilePhase.SEMANTIC_ANALYSIS)
 public class MainTransform implements ASTTransformation {
-  private final AstNodeCache nodeCache = new AstNodeCache();
+  private static final AstNodeCache nodeCache = new AstNodeCache();
 
   public void visit(ASTNode[] nodes, SourceUnit sourceUnit) {
     SourceLookup lookup = null;

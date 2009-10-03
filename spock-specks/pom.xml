@@ -22,6 +22,7 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
           <useFile>false</useFile>
+          <enableAssertions>false</enableAssertions> <!-- workaround for http://jira.codehaus.org/browse/GROOVY-3806 -->
           <includes>
             <include>**/*Test.java</include> <!-- for JUnit tests -->
           </includes>

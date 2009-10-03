@@ -24,7 +24,7 @@ import org.spockframework.runtime.intercept.Directive;
 import org.spockframework.guice.GuiceProcessor;
 
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.FIELD)
+@Target(ElementType.TYPE)
 @Directive(GuiceProcessor.class)
 public @interface UseModules {
   Class<? extends Module>[] value();

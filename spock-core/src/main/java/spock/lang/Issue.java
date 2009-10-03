@@ -25,7 +25,7 @@ import java.lang.annotation.*;
  * @author Peter Niederwieser
  */
 @Retention(RetentionPolicy.SOURCE)
-@Target(ElementType.FIELD)
+@Target({ElementType.TYPE, ElementType.METHOD})
 public @interface Issue {
   /**
    * The IDs of the issues that the annotated element relates to.

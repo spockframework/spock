@@ -2,8 +2,8 @@ usePlugin("groovy")
 sourceCompatibility = 1.5 
 targetCompatibility = 1.5 
 
-compile.options.fork = false
-compileTests.options.fork = false
+compileGroovy.options.fork = false
+compileTestGroovy.options.fork = false
 
 project(":spock-core") {
   repositories {

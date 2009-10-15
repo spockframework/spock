@@ -14,16 +14,18 @@
  * limitations under the License.
  */
 
-package org.spockframework.runtime;
+package org.spockframework;
 
-/**
- * @author Peter Niederwieser
- */
-public class GlobalSettings {
-  public static final boolean filterStackTrace;
+public class Version {
+  private static final Version INSTANCE = new Version();
 
-  static {
-    String filterStackTraceValue = System.getProperty("spock.filterStackTrace", "true");
-    filterStackTrace = filterStackTraceValue.equals("true");
+  private Version() {}
+
+  public static Version getInstance() {
+    return INSTANCE;
+  }
+
+  public String toString() {
+    return "0.3-SNAPSHOT";
   }
 }

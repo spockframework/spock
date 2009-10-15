@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
+import org.spockframework.Settings;
 import org.spockframework.util.BinaryNames;
 
 /**
@@ -52,7 +53,7 @@ public class StackTraceFilter {
   }
 
   public void filter(Throwable throwable) {
-    if (!GlobalSettings.filterStackTrace) return;
+    if (!Settings.filterStackTrace) return;
 
     List<StackTraceElement> filteredTrace = new ArrayList<StackTraceElement>();
 

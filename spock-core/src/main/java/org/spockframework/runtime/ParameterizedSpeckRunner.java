@@ -38,7 +38,7 @@ public class ParameterizedSpeckRunner extends BaseSpeckRunner {
 
     Object[] dataProviders = createDataProviders(feature);
     int numIterations = estimateNumIterations(dataProviders);
-    Iterator[] iterators = createIterators(feature, dataProviders);
+    Iterator<?>[] iterators = createIterators(feature, dataProviders);
     runIterations(feature, iterators, numIterations);
     closeDataProviders(dataProviders);
   }
@@ -63,13 +63,13 @@ public class ParameterizedSpeckRunner extends BaseSpeckRunner {
     return dataProviders;
   }
 
-  private Iterator[] createIterators(FeatureInfo feature, Object[] dataProviders) {
+  private Iterator<?>[] createIterators(FeatureInfo feature, Object[] dataProviders) {
     if (runStatus != OK) return null;
 
-    Iterator[] iterators = new Iterator[dataProviders.length];
+    Iterator<?>[] iterators = new Iterator<?>[dataProviders.length];
     for (int i = 0; i < dataProviders.length; i++)
       try {
-        Iterator iter = InvokerHelper.asIterator(dataProviders[i]);
+        Iterator<?> iter = InvokerHelper.asIterator(dataProviders[i]);
         if (iter == null) {
           runStatus = supervisor.error(feature.getDataProviders().get(i).getDataProviderMethod(),
               new SpeckExecutionException("Data provider's iterator() method returned null"), runStatus);
@@ -91,7 +91,7 @@ public class ParameterizedSpeckRunner extends BaseSpeckRunner {
 
     int result = Integer.MAX_VALUE;
     for (Object prov : dataProviders) {
-      if (prov instanceof Iterator)
+      if (prov instanceof Iterator<?>)
         // unbelievably, DGM provides a size() method for Iterators,
         // although it is of course destructive (i.e. it exhausts the Iterator)
         continue;
@@ -104,7 +104,7 @@ public class ParameterizedSpeckRunner extends BaseSpeckRunner {
     return result == Integer.MAX_VALUE ? -1 : result;
   }
 
-  private void runIterations(FeatureInfo feature, Iterator[] iterators, int estimatedNumIterations) {
+  private void runIterations(FeatureInfo feature, Iterator<?>[] iterators, int estimatedNumIterations) {
     if (runStatus != OK) return;
 
     supervisor.beforeFirstIteration(estimatedNumIterations);
@@ -143,7 +143,7 @@ public class ParameterizedSpeckRunner extends BaseSpeckRunner {
     supervisor.afterIteration();
   }
 
-  private boolean haveNext(FeatureInfo feature, Iterator[] iterators) {
+  private boolean haveNext(FeatureInfo feature, Iterator<?>[] iterators) {
     if (runStatus != OK) return false;
 
     boolean haveNext = true;
@@ -181,7 +181,7 @@ public class ParameterizedSpeckRunner extends BaseSpeckRunner {
   }
 
   // advances iterators and computes args
-  private Object[] nextArgs(FeatureInfo feature, Iterator[] iterators) {
+  private Object[] nextArgs(FeatureInfo feature, Iterator<?>[] iterators) {
     if (runStatus != OK) return null;
 
     Object[] next = new Object[iterators.length];

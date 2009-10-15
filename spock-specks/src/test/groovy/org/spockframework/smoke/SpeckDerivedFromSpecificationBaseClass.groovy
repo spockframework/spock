@@ -149,8 +149,29 @@ class Foo extends spock.lang.Specification {
     collidingImport << ["", "import static spock.lang.Predef.Mock", "import static spock.lang.Predef.*"]
   }
 
+  @Unroll("can refer to Predef members by '#target'")
+  def "can refer to Predef members by these means"() {
+    when:
+    runner.run """
+class Foo extends spock.lang.Specification {
+  def foo() {
+    def list = ${target}.Mock(List)
+
+    expect:
+    list != null
+  }
+}
+    """
+
+    then:
+    noExceptionThrown()
+
+    where:
+    target << ["this", "super"]
+  }
+
   @Unroll("cannot refer to Predef members by '#target'")
-  def "cannot refer to Predef members by other means"() {
+  def "cannot refer to Predef members by these means"() {
     when:
     runner.run """
 class Foo extends spock.lang.Specification {
@@ -167,7 +188,7 @@ class Foo extends spock.lang.Specification {
     thrown(SyntaxException)
 
     where:
-    target << ["this", "super", "Foo", "spock.lang.Specification"]
+    target << ["Foo", "spock.lang.Specification"]
   }
 
   @Issue("http://issues.spockframework.org/detail?id=43")

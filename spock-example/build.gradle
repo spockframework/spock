@@ -8,7 +8,7 @@ repositories {
 
 dependencies {
   // mandatory dependencies for using Spock
-  groovy "org.codehaus.groovy:groovy-all:1.7-beta-1"
+  groovy "org.codehaus.groovy:groovy-all:1.7-beta-2"
   testCompile "org.spockframework:spock-core:0.3-groovy-1.7-SNAPSHOT"
   testCompile "junit:junit:4.7"
   
@@ -22,7 +22,7 @@ dependencies {
 
 // creates bootstrap files (gradlew etc.) for Gradle build (not required for using Spock)
 task wrapper(type: Wrapper) { 
-  gradleVersion = '0.7' 
+  gradleVersion = '0.8'
   jarPath = 'wrapper' 
 }
 

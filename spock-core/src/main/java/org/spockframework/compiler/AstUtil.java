@@ -22,7 +22,6 @@ import org.codehaus.groovy.ast.stmt.*;
 import org.codehaus.groovy.syntax.Types;
 import org.objectweb.asm.Opcodes;
 import org.spockframework.util.*;
-import org.spockframework.compiler.model.Method;
 
 import spock.lang.Predef;
 

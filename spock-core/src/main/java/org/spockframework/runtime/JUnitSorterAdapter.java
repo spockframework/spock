@@ -18,7 +18,6 @@ package org.spockframework.runtime;
 import org.junit.runner.manipulation.Sorter;
 import org.junit.runner.Description;
 
-import org.spockframework.runtime.model.MethodInfo;
 import org.spockframework.runtime.model.FeatureInfo;
 
 /**

@@ -14,14 +14,50 @@
         <groupId>org.codehaus.groovy.maven</groupId>
         <artifactId>gmaven-plugin</artifactId>
         <version>1.0</version>
+        <configuration>
+          <providerSelection>1.6</providerSelection>
+        </configuration>
         <executions>
           <execution>
             <goals>
+              <goal>compile</goal>
               <goal>testCompile</goal>
             </goals>
           </execution>
-        </executions>  
-      </plugin>         
+        </executions>
+        <dependencies>
+          <dependency>
+            <groupId>org.codehaus.groovy.maven.runtime</groupId>
+            <artifactId>gmaven-runtime-1.6</artifactId>
+            <version>1.0</version>
+            <exclusions>
+              <exclusion>
+                <groupId>org.codehaus.groovy</groupId>
+                <artifactId>groovy-all</artifactId>
+              </exclusion>
+            </exclusions>
+          </dependency>
+          <dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy-all</artifactId>
+            <version>1.7-beta-2</version>
+            <exclusions> <!-- for some reason, the following dependencies aren't marked as optional in groovy-all POM -->
+              <exclusion>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>org.apache.ant</groupId>
+                <artifactId>ant</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>org.apache.ant</groupId>
+                <artifactId>ant-launcher</artifactId>
+              </exclusion>
+            </exclusions>
+          </dependency>
+        </dependencies>
+      </plugin>
 <!-- Optional plugins for using Spock --> 
       <plugin>
         <!-- 
@@ -38,6 +74,14 @@
             </goals>
           </execution>
         </executions>
+      </plugin>
+<!-- Only required if default Surefire configuration is not satisfactory -->
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.4.3</version>
+        <configuration>
+          <useFile>false</useFile>
+        </configuration>
       </plugin>
     </plugins>
   </build>

@@ -16,12 +16,9 @@
 
 package org.spockframework.runtime.intercept;
 
-import java.lang.annotation.Annotation;
-
 import spock.lang.Ignore;
 
 import org.spockframework.runtime.model.*;
-import org.spockframework.runtime.InvalidSpeckError;
 
 /**
  * Processes @Ignore directives.

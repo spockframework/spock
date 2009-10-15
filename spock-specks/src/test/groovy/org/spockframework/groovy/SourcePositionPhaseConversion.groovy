@@ -16,20 +16,12 @@
 
 package org.spockframework.groovy
 
-import org.junit.runner.RunWith
-import org.spockframework.util.inspector.AstInspector
-import spock.lang.*
 import org.codehaus.groovy.ast.ASTNode
 import org.codehaus.groovy.ast.expr.PropertyExpression
+import org.spockframework.util.inspector.AstInspector
+import spock.lang.Specification
 
-/**
- * A ...
-
- * @author Peter Niederwieser
- */
-@Speck
-@RunWith(Sputnik)
-class SourcePositionPhaseConversion {
+class SourcePositionPhaseConversion extends Specification {
   AstInspector inspector = new AstInspector()
 
   def "subscript operator"() {
@@ -38,7 +30,7 @@ foo[0]
     """)
 
     expect:
-      inspector.scriptExpressions[0].operation.startColumn == 1 // should be: 4
+      inspector.scriptExpressions[0].operation.startColumn == 4
   }
 
   def "PropertyExpression that will become ClassExpression"() {

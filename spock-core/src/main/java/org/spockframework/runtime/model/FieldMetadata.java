@@ -24,7 +24,7 @@ import java.lang.annotation.*;
  * @author Peter Niederwieser
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
+@Target(ElementType.FIELD)
 public @interface FieldMetadata {
   String NAME = "name";
   String ORDINAL = "ordinal";

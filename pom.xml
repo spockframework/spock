@@ -75,7 +75,7 @@
             <dependency>
               <groupId>org.codehaus.groovy</groupId>
               <artifactId>groovy-all</artifactId>
-              <version>1.7-beta-1</version>
+              <version>1.7-beta-2</version>
               <exclusions> <!-- for some reason, the following dependencies aren't marked as optional in groovy-all POM -->
                 <exclusion>
                   <groupId>junit</groupId>
@@ -103,7 +103,7 @@
       <dependency>
         <groupId>org.codehaus.groovy</groupId>
         <artifactId>groovy-all</artifactId>
-        <version>1.7-beta-1</version>
+        <version>1.7-beta-2</version>
         <exclusions> <!-- for some reason, the following dependencies aren't marked as optional in groovy-all POM -->
           <exclusion>
             <groupId>junit</groupId>

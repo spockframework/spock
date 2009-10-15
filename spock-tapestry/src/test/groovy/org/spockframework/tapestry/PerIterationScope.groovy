@@ -25,7 +25,6 @@ import org.apache.tapestry5.ioc.annotations.Inject
 @SubModule(PerIterationModule)
 class PerIterationScope extends Specification {
   @Inject
-  @Scope("perIteration")
   IPerIterationService service
 
   def "iteration 1"() {

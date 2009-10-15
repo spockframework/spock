@@ -128,17 +128,17 @@ class DefaultValuesOfUnsharedFields {
   float f7
   double f8
 
-  Boolean F1
-  Character F2
-  Byte F3
-  Short F4
-  Integer F5
-  Long F6
-  Float F7
-  Double F8
+  Boolean ff1
+  Character ff2
+  Byte ff3
+  Short ff4
+  Integer ff5
+  Long ff6
+  Float ff7
+  Double ff8
 
-  def F9
-  Map F10
+  def ff9
+  Map ff10
 
   def "primitive types"() {
     expect:
@@ -154,20 +154,20 @@ class DefaultValuesOfUnsharedFields {
 
   def "wrapper types"() {
     expect:
-      F1 == null
-      F2 == null
-      F3 == null
-      F4 == null
-      F5 == null
-      F6 == null
-      F7 == null
-      F8 == null
+      ff1 == null
+      ff2 == null
+      ff3 == null
+      ff4 == null
+      ff5 == null
+      ff6 == null
+      ff7 == null
+      ff8 == null
   }
 
   def "reference types"() {
     expect:
-      F9 == null
-      F10 == null
+      ff9 == null
+      ff10 == null
   }
 }
 

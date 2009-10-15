@@ -27,7 +27,7 @@ import org.codehaus.groovy.runtime.InvokerHelper;
  * @author Peter Niederwieser
  */
 public class IterableResultGenerator implements IResultGenerator {
-  private final Iterator iterator;
+  private final Iterator<?> iterator;
   private Object nextValue;
 
   public IterableResultGenerator(Object iterable) {

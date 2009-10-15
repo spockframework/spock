@@ -3,8 +3,6 @@ package org.spockframework.runtime.model;
 import java.util.List;
 import java.lang.reflect.AnnotatedElement;
 
-import org.spockframework.compiler.model.FeatureMethod;
-
 /**
  * Internal metadata about a data provider from which the runtime model is built.
  *

@@ -34,7 +34,7 @@ public class DefaultResultGenerator implements IResultGenerator {
   private final Method OBJECT_EQUALS;
   private final Method OBJECT_HASH_CODE;
   private final Method OBJECT_TO_STRING;
-  private final Method GROOVY_OBJECT_GET_PROPERTY;
+  //private final Method GROOVY_OBJECT_GET_PROPERTY;
   //private final Method GROOVY_OBJECT_SET_PROPERTY;
   //private final Method GROOVY_OBJECT_INVOKE_METHOD;
 
@@ -43,7 +43,7 @@ public class DefaultResultGenerator implements IResultGenerator {
       OBJECT_EQUALS = Object.class.getMethod("equals", Object.class);
       OBJECT_HASH_CODE = Object.class.getMethod("hashCode");
       OBJECT_TO_STRING = Object.class.getMethod("toString");
-      GROOVY_OBJECT_GET_PROPERTY = GroovyObject.class.getMethod("getProperty", String.class);
+      //GROOVY_OBJECT_GET_PROPERTY = GroovyObject.class.getMethod("getProperty", String.class);
     } catch (NoSuchMethodException e) {
       throw new InternalSpockError("Fascinating...", e);
     }

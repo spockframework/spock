@@ -22,8 +22,8 @@ import org.spockframework.runtime.model.MethodInfo;
  * @author Peter Niederwieser
  */
 public interface IMethodInvocation {
-  public Object getTarget();
-  public MethodInfo getMethod();
-  public Object[] getArguments();
-  public void proceed() throws Throwable;
+  Object getTarget();
+  MethodInfo getMethod();
+  Object[] getArguments();
+  void proceed() throws Throwable;
 }

@@ -26,7 +26,7 @@ import org.junit.Test
  * @author Peter Niederwieser
  */
 class EmbeddedSpeckCompiler {
-  GroovyClassLoader loader = new GroovyClassLoader()
+  final GroovyClassLoader loader = new GroovyClassLoader()
 
   /**
    * Compiles the given source code, and returns all Spock specifications

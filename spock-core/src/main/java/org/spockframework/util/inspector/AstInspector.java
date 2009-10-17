@@ -531,5 +531,5 @@ public class AstInspector {
     }
   }
 
-  private class AstSuccessfullyCaptured extends Error {}
+  private static class AstSuccessfullyCaptured extends Error {}
 }

@@ -61,7 +61,6 @@ public class TooFewInvocationsError extends InteractionNotSatisfiedError {
 
     for (int i = 0; i < trace.length; i++)
       if (isLeaveScopeCall(trace[i])) {
-        StackTraceElement[] newTrace = new StackTraceElement[trace.length - i];
         StackTraceElement elem = trace[i];
         trace[i] = new StackTraceElement(elem.getClassName(), elem.getMethodName(), elem.getFileName(),
           interactions.get(0).getLine());

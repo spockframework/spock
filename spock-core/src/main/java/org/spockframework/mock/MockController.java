@@ -59,7 +59,7 @@ public class MockController implements IInvocationMatcher {
     scope.verifyInteractions();
   }
 
-  public static String CREATE = "create";
+  public static final String CREATE = "create";
 
   public Object create(String mockName, Class<?> mockType) {
     return factory.create(mockName, mockType, this);

@@ -1,0 +1,5 @@
+class SimpleService {
+
+    def name
+
+}

@@ -4,7 +4,9 @@ class SpockGrailsPlugin {
     def grailsVersion = "1.2-M3 > *"
     def dependsOn = [:]
     def pluginExcludes = [
-            "grails-app/views/error.gsp"
+        "grails-app/views/error.gsp",
+        "grails-app/domain/**",
+        "grails-app/services/**"
     ]
 
     def author = "Luke Daley"

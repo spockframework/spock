@@ -1,5 +1,4 @@
-import grails.plugin.spock.build.GrailsSpeckHelper
-import grails.plugin.spock.build.GrailsSpeckRunner
+includeTargets << grailsScript("_GrailsCompile")
 
 binding.'unit-speckTests' = ['unit']
 
@@ -22,12 +21,21 @@ eventTestSuiteStart = { String type ->
 }
 
 binding.'unit-speckTestsPreparation' = {
+    
+    // Force a compile to make our classes available
+    compile()
+    
     previousTestRunner = testRunner
-    testRunner = new GrailsSpeckRunner(testReportsDir, reportFormats)
-    new GrailsSpeckHelper(grailsSettings, classLoader, resolveResources)
+    testRunner = loadSpockClass('GrailsSpeckRunner').newInstance(testReportsDir, reportFormats)
+    
+    loadSpockClass('GrailsSpeckHelper').newInstance(grailsSettings, classLoader, resolveResources)
 }
 
 binding.'unit-speckTestsCleanUp' = {
     testRunner = previousTestRunner
+}
+
+loadSpockClass = {
+    this.class.classLoader.loadClass("grails.plugin.spock.build.$it")
 }
 

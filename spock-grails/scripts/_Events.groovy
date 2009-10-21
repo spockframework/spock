@@ -1,7 +1,5 @@
 includeTargets << grailsScript("_GrailsCompile")
 
-binding.'unit-speckTests' = ['unit']
-
 eventTestPhasesStart = { phases ->
     if (!argsMap["unit"] && "unit" in phases) { // running all tests
         if (argsMap["unit-speck"]) {
@@ -12,6 +10,8 @@ eventTestPhasesStart = { phases ->
         }
     }
 }
+
+binding.'unit-speckTests' = ['unit']
 
 binding.'unit-speckTestsPreparation' = {
     

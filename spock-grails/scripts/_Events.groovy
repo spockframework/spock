@@ -1,13 +1,8 @@
 includeTargets << grailsScript("_GrailsCompile")
 
 eventTestPhasesStart = { phases ->
-    if (!argsMap["unit"] && "unit" in phases) { // running all tests
-        if (argsMap["unit-speck"]) {
-            phases.clear()
-            phases << 'unit-speck'
-        } else {
-            phases.add(phases.indexOf('unit') + 1, 'unit-speck')
-        }
+    if ("unit" in phases) {
+        phases.add(phases.indexOf('unit') + 1, 'unit-speck')
     }
 }
 

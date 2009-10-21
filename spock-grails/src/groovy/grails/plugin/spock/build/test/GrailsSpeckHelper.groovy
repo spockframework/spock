@@ -1,4 +1,4 @@
-package grails.plugin.spock.build
+package grails.plugin.spock.build.test
 
 import grails.util.BuildSettings
 import org.spockframework.buildsupport.SpeckClassFileFinder

@@ -24,6 +24,6 @@ binding.'unit-speckTestsCleanUp' = {
 }
 
 loadSpockClass = {
-    this.class.classLoader.loadClass("grails.plugin.spock.build.$it")
+    this.class.classLoader.loadClass("grails.plugin.spock.build.test.$it")
 }
 

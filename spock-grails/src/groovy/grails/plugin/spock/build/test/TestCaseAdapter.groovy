@@ -1,4 +1,4 @@
-package grails.plugin.spock.build
+package grails.plugin.spock.build.test
 
 import junit.framework.TestCase
 import org.junit.runner.Description

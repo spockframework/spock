@@ -13,13 +13,6 @@ eventTestPhasesStart = { phases ->
     }
 }
 
-eventTestSuiteStart = { String type ->
-    if (type == "functional") {
-        testingBaseURL = argsMap["baseUrl"] ?: "http://localhost:$serverPort$serverContextPath"
-        System.setProperty("grails.functional.test.baseURL", testingBaseURL)
-    }
-}
-
 binding.'unit-speckTestsPreparation' = {
     
     // Force a compile to make our classes available

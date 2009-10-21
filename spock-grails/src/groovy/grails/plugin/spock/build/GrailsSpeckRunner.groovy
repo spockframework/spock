@@ -12,7 +12,7 @@ import org.apache.tools.ant.taskdefs.optional.junit.JUnitTest
 class GrailsSpeckRunner {
     
     protected savedOut
-    protected savedErr;
+    protected savedErr
     protected out
     protected err
     protected formattedOutputs

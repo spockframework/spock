@@ -20,11 +20,21 @@ class GrailsSpeckRunListener extends RunListener {
     GrailsSpeckRunListener(OutputStream out) {
         this.out = out
     }
-    
-    void testAssumptionFailure(Failure failure)  {
 
+    void testRunStarted(Description description) {
+        failureCount = 0
+        out.print("Running test ${speck.name}...")
     }
 
+    void testStarted(Description description) {
+        System.out.println("--Output from ${description.methodName}--")
+        System.err.println("--Output from ${description.methodName}--")
+        
+         speckFormattedOutputs.each {
+            it.formatter.startTest(new TestCaseAdapter(description))
+         }
+    }
+    
     void testFailure(Failure failure)  {
         if (++failureCount == 1) out.println()
         out.println("                    ${failure.description.methodName}...FAILED")
@@ -47,25 +57,10 @@ class GrailsSpeckRunListener extends RunListener {
         }
     }
 
-    void testIgnored(Description description) {
- 
-    }
-
     void testRunFinished(Result result) {
         if (failureCount == 0) out.println("PASSED")
     }
-
-    void testRunStarted(Description description) {
-        failureCount = 0
-        out.print("Running test ${speck.name}...")
-    }
-
-    void testStarted(Description description) {
-        System.out.println("--Output from ${description.methodName}--")
-        System.err.println("--Output from ${description.methodName}--")
-        
-         speckFormattedOutputs.each {
-            it.formatter.startTest(new TestCaseAdapter(description))
-         }
-    }
+    
+    void testAssumptionFailure(Failure failure) {}
+    void testIgnored(Description description) {}
 }

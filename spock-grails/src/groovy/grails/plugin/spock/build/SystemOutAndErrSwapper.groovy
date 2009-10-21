@@ -21,27 +21,29 @@ class SystemOutAndErrSwapper {
         
         def streams = [this.swappedInOut, this.swappedInErr]
         
-        switch(swappedFor.maximumNumberOfParameters) {
-            case 0:
-                swappedFor()
-            break
-            case 1:
-                swappedFor(streams)
-            break
-            default:
-                swappedFor(*streams)
-            break
-        }
-        
-        System.out = this.swappedOutOut
-        System.err = this.swappedOutErr
-        
-        this.swappedOutOut = null
-        this.swappedOutErr = null
+        try {
+            switch(swappedFor.maximumNumberOfParameters) {
+                case 0:
+                    swappedFor()
+                break
+                case 1:
+                    swappedFor(streams)
+                break
+                default:
+                    swappedFor(*streams)
+                break
+            }
+        } finally {
+            System.out = this.swappedOutOut
+            System.err = this.swappedOutErr
 
-        this.swappedInOut = null
-        this.swappedInErr = null
-        
+            this.swappedOutOut = null
+            this.swappedOutErr = null
+
+            this.swappedInOut = null
+            this.swappedInErr = null
+        }
+
         streams
     }
 }

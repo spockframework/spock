@@ -34,16 +34,16 @@ class GrailsSpeckRunListener extends RunListener {
         
         speckFormattedOutputs.each {
             if (exception instanceof AssertionFailedError) {
-                it.formatter.addFailure(new FakeTestCase(description.methodName), exception)
+                it.formatter.addFailure(new TestCaseAdapter(description), exception)
             } else {
-                it.formatter.addError(new FakeTestCase(description.methodName), exception)
+                it.formatter.addError(new TestCaseAdapter(description), exception)
             }
         }
     }
 
     void testFinished(Description description) {
         speckFormattedOutputs.each {
-           it.formatter.endTest(new FakeTestCase(description.methodName))
+           it.formatter.endTest(new TestCaseAdapter(description))
         }
     }
 
@@ -65,7 +65,7 @@ class GrailsSpeckRunListener extends RunListener {
         System.err.println("--Output from ${description.methodName}--")
         
          speckFormattedOutputs.each {
-            it.formatter.startTest(new FakeTestCase(description.methodName))
+            it.formatter.startTest(new TestCaseAdapter(description))
          }
     }
 }

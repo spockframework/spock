@@ -14,13 +14,21 @@ class GrailsSpeckRunListener extends RunListener {
     final protected out
     final protected failureCount
 
-    Class speck
-    List<FormattedOutput> speckFormattedOutputs
+    final protected speck
+    final protected formattedOutputs
     
     GrailsSpeckRunListener(OutputStream out) {
         this.out = out
     }
 
+    void setSpeck(Class speck, List<FormattedOutput> formattedOutputs, Closure duration) {
+        this.speck = speck
+        this.formattedOutputs = formattedOutputs
+        duration()
+        this.speck = null
+        this.formattedOutputs = null
+    }
+    
     void testRunStarted(Description description) {
         failureCount = 0
         out.print("Running test ${speck.name}...")
@@ -30,7 +38,7 @@ class GrailsSpeckRunListener extends RunListener {
         System.out.println("--Output from ${description.methodName}--")
         System.err.println("--Output from ${description.methodName}--")
         
-         speckFormattedOutputs.each {
+         formattedOutputs.each {
             it.formatter.startTest(new TestCaseAdapter(description))
          }
     }
@@ -42,7 +50,7 @@ class GrailsSpeckRunListener extends RunListener {
         def description = failure.description
         def exception = failure.exception
         
-        speckFormattedOutputs.each {
+        formattedOutputs.each {
             if (exception instanceof AssertionFailedError) {
                 it.formatter.addFailure(new TestCaseAdapter(description), exception)
             } else {
@@ -52,7 +60,7 @@ class GrailsSpeckRunListener extends RunListener {
     }
 
     void testFinished(Description description) {
-        speckFormattedOutputs.each {
+        formattedOutputs.each {
            it.formatter.endTest(new TestCaseAdapter(description))
         }
     }

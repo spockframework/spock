@@ -40,15 +40,14 @@ class GrailsSpeckRunner {
                 prepareReports(speck)
                 formattedOutputs.each { it.start(junitTest) }
 
-                listener.speck = speck
-                listener.speckFormattedOutputs = formattedOutputs
-                
-                def start = System.currentTimeMillis()
-                def result = junit.run(speck)
-                junitTest.runTime = System.currentTimeMillis() - start
-                junitTest.setCounts(result.runCount, result.failureCount, 0)
-                
-                results << result
+                listener.setSpeck(speck, formattedOutputs) {
+                    def start = System.currentTimeMillis()
+                    def result = junit.run(speck)
+                    junitTest.runTime = System.currentTimeMillis() - start
+                    junitTest.setCounts(result.runCount, result.failureCount, 0)
+
+                    results << result
+                }
             } catch (Throwable t) {
                 t.printStackTrace()
             } finally {

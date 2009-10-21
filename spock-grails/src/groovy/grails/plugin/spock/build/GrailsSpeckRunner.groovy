@@ -3,22 +3,15 @@ package grails.plugin.spock.build
 import spock.lang.Sputnik
 import org.junit.runner.JUnitCore
 
-import org.codehaus.groovy.grails.test.FormattedOutput
-import org.codehaus.groovy.grails.test.XMLFormatter
-import org.codehaus.groovy.grails.test.PlainFormatter
 
 import org.apache.tools.ant.taskdefs.optional.junit.JUnitTest
 
 class GrailsSpeckRunner {
     
-    protected formattedOutputs
-
-    protected reportsDir
-    protected formats
+    protected reportFactory
 
     GrailsSpeckRunner(File reportsDir, List<String> formats) {
-        this.reportsDir = reportsDir
-        this.formats = formats
+        reportFactory = new ReportFactory(reportsDir, formats)
     }
     
     def runTests(suite) {
@@ -32,12 +25,13 @@ class GrailsSpeckRunner {
         suite.specks.each { speck ->
             
             def junitTest = new JUnitTest(speck.name)
+            def reports = reportFactory.createReports(speck.name)
+            
+            
             outAndErrSwapper.swap { out, err ->
                 try {
-                    prepareReports(speck)
-                    formattedOutputs.each { it.start(junitTest) }
-
-                    listener.setSpeck(speck, formattedOutputs) {
+                    reports*.start(junitTest)
+                    listener.setSpeck(speck, reports) {
                         def start = System.currentTimeMillis()
                         def result = junit.run(speck)
                         junitTest.runTime = System.currentTimeMillis() - start
@@ -46,9 +40,7 @@ class GrailsSpeckRunner {
                         results << result
                     }
                 } finally {
-                    formattedOutputs.each { output ->
-                        output.end(junitTest, out.toString(), err.toString())
-                    }
+                    reports*.end(junitTest, out.toString(), err.toString())
                 }    
             }
         }
@@ -56,24 +48,5 @@ class GrailsSpeckRunner {
         results
     }
     
-    protected void prepareReports(Class speck) {
-        formattedOutputs = formats.collect { createFormatter(it, speck) }
-    }
-
-    protected FormattedOutput createFormatter(String type, Class speck) {
-        if (type.equals("xml")) {
-            new FormattedOutput(
-                new File(reportsDir, "TEST-${speck.name}.xml"),
-                new XMLFormatter()
-            )
-        } else if (type.equals("plain")) {
-            new FormattedOutput(
-                new File(reportsDir, "plain/TEST-${speck.name}.txt"),
-                new PlainFormatter()
-            )
-        } else {
-            throw new RuntimeException("Unknown formatter type: $type")
-        }
-    }
 
 }

@@ -9,18 +9,18 @@ import grails.plugin.spock.build.test.report.ReportFactory
 import grails.plugin.spock.build.test.adapter.ResultsAdapter
 import grails.plugin.spock.build.test.io.SystemOutAndErrSwapper
 
-class GrailsSpeckRunner {
+class SpeckRunner {
     
     protected reportFactory
 
-    GrailsSpeckRunner(File reportsDir, List<String> formats) {
+    SpeckRunner(File reportsDir, List<String> formats) {
         reportFactory = new ReportFactory(reportsDir, formats)
     }
     
     def runTests(suite) {
         def outAndErrSwapper = new SystemOutAndErrSwapper()
         def results = new ResultsAdapter()
-        def listener = new GrailsSpeckRunListener(System.out)
+        def listener = new SpeckRunListener(System.out)
         def junit = new JUnitCore()
         junit.addListener(listener)
 

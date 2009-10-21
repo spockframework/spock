@@ -11,7 +11,7 @@ import junit.framework.AssertionFailedError
 
 import grails.plugin.spock.build.test.adapter.TestCaseAdapter
 
-class GrailsSpeckRunListener extends RunListener {
+class SpeckRunListener extends RunListener {
 
     final protected out
     final protected failureCount
@@ -19,7 +19,7 @@ class GrailsSpeckRunListener extends RunListener {
     final protected speck
     final protected formattedOutputs
     
-    GrailsSpeckRunListener(OutputStream out) {
+    SpeckRunListener(OutputStream out) {
         this.out = out
     }
 

@@ -5,7 +5,7 @@ import org.spockframework.buildsupport.SpeckClassFileFinder
 
 import grails.plugin.spock.build.test.adapter.SuiteAdapter
 
-class GrailsSpeckHelper {
+class SpeckRunHelper {
 
     protected final baseDir
     protected final testClassesDir
@@ -14,7 +14,7 @@ class GrailsSpeckHelper {
     protected final resourceResolver
     protected final speckFinder = new SpeckClassFileFinder()
             
-    GrailsSpeckHelper(BuildSettings settings, ClassLoader classLoader, Closure resourceResolver) {
+    SpeckRunHelper(BuildSettings settings, ClassLoader classLoader, Closure resourceResolver) {
         this.baseDir = settings.baseDir
         this.testClassesDir = settings.testClassesDir
         this.parentLoader = classLoader

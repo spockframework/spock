@@ -14,9 +14,9 @@ binding.'unit-speckTestsPreparation' = {
     compile()
     
     previousTestRunner = testRunner
-    testRunner = loadSpockClass('GrailsSpeckRunner').newInstance(testReportsDir, reportFormats)
+    testRunner = loadSpockClass('SpeckRunner').newInstance(testReportsDir, reportFormats)
     
-    loadSpockClass('GrailsSpeckHelper').newInstance(grailsSettings, classLoader, resolveResources)
+    loadSpockClass('SpeckRunHelper').newInstance(grailsSettings, classLoader, resolveResources)
 }
 
 binding.'unit-speckTestsCleanUp' = {

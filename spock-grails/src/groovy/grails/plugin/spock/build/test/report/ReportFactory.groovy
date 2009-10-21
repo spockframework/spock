@@ -1,4 +1,4 @@
-package grails.plugin.spock.build.test
+package grails.plugin.spock.build.test.report
 
 import org.codehaus.groovy.grails.test.FormattedOutput
 import org.codehaus.groovy.grails.test.XMLFormatter

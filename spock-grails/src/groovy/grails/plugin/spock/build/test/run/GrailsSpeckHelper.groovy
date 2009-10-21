@@ -1,7 +1,9 @@
-package grails.plugin.spock.build.test
+package grails.plugin.spock.build.test.run
 
 import grails.util.BuildSettings
 import org.spockframework.buildsupport.SpeckClassFileFinder
+
+import grails.plugin.spock.build.test.adapter.SuiteAdapter
 
 class GrailsSpeckHelper {
 
@@ -22,7 +24,7 @@ class GrailsSpeckHelper {
     def createTests(List<String> testNames, String type) {
         def testTypeClassesDir = "${testClassesDir.absolutePath}/$type"
         def testTypeClassesDirFile = new File(testTypeClassesDir)
-        def suite = new GrailsSpeckSuite()
+        def suite = new SuiteAdapter()
         
         currentClassLoader = createClassLoader(type)
         

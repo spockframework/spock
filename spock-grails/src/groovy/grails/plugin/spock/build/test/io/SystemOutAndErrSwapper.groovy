@@ -1,4 +1,4 @@
-package grails.plugin.spock.build.test
+package grails.plugin.spock.build.test.io
 
 // TODO this class needs a better name and method name
 class SystemOutAndErrSwapper {

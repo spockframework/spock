@@ -1,4 +1,4 @@
-package grails.plugin.spock.build.test
+package grails.plugin.spock.build.test.adapter
 
 import junit.framework.TestCase
 import org.junit.runner.Description

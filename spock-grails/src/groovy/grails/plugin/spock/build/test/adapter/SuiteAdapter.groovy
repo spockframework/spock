@@ -1,8 +1,8 @@
-package grails.plugin.spock.build.test
+package grails.plugin.spock.build.test.adapter
 
 import spock.lang.Sputnik
 
-class GrailsSpeckSuite {
+class SuiteAdapter {
 
     final specks = []
     

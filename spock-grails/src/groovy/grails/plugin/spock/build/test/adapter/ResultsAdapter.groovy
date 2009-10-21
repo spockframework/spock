@@ -1,8 +1,8 @@
-package grails.plugin.spock.build.test
+package grails.plugin.spock.build.test.adapter
 
 import org.junit.runner.Result
 
-class JUnitResultsWrapper {
+class ResultsAdapter {
 
     final protected results = []
     

@@ -1,4 +1,4 @@
-package grails.plugin.spock.build.test
+package grails.plugin.spock.build.test.run
 
 import org.codehaus.groovy.grails.test.FormattedOutput
 
@@ -8,6 +8,8 @@ import org.junit.runner.notification.Failure
 import org.junit.runner.notification.RunListener
 
 import junit.framework.AssertionFailedError
+
+import grails.plugin.spock.build.test.adapter.TestCaseAdapter
 
 class GrailsSpeckRunListener extends RunListener {
 

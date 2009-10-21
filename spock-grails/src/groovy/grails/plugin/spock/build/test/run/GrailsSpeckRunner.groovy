@@ -1,10 +1,13 @@
-package grails.plugin.spock.build.test
+package grails.plugin.spock.build.test.run
 
 import spock.lang.Sputnik
 import org.junit.runner.JUnitCore
 
-
 import org.apache.tools.ant.taskdefs.optional.junit.JUnitTest
+
+import grails.plugin.spock.build.test.report.ReportFactory
+import grails.plugin.spock.build.test.adapter.ResultsAdapter
+import grails.plugin.spock.build.test.io.SystemOutAndErrSwapper
 
 class GrailsSpeckRunner {
     
@@ -15,9 +18,8 @@ class GrailsSpeckRunner {
     }
     
     def runTests(suite) {
-        
         def outAndErrSwapper = new SystemOutAndErrSwapper()
-        def results = new JUnitResultsWrapper()
+        def results = new ResultsAdapter()
         def listener = new GrailsSpeckRunListener(System.out)
         def junit = new JUnitCore()
         junit.addListener(listener)
@@ -47,6 +49,5 @@ class GrailsSpeckRunner {
 
         results
     }
-    
 
 }

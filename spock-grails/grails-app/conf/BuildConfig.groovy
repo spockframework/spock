@@ -28,7 +28,10 @@ grails.project.dependency.resolution = {
     // from public Maven repositories
     //mavenLocal()
     mavenCentral()
-    mavenRepo "http://m2repo.spockframework.org" // for Spock snapshot versions
+
+    mavenRepo "http://m2repo.spockframework.org/snapshots"
+    mavenRepo "http://m2repo.spockframework.org/releases"
+
     //mavenRepo "http://snapshots.repository.codehaus.org"
     //mavenRepo "http://repository.codehaus.org"
     //mavenRepo "http://download.java.net/maven/2/"

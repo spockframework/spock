@@ -24,9 +24,7 @@ grails.project.dependency.resolution = {
   repositories {
     grailsHome()
 
-    // uncomment the below to enable remote dependency resolution
-    // from public Maven repositories
-    //mavenLocal()
+    mavenLocal() // prefer local, so we pick up spock snapshot as part of whole build
     mavenCentral()
 
     mavenRepo "http://m2repo.spockframework.org/snapshots"

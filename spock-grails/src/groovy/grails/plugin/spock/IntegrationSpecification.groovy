@@ -33,9 +33,7 @@ class IntegrationSpecification extends Specification {
   private transactionManager
   private transactionStatus
 
-  void setupSpeck() {}
-
-  void setup() {
+  def setup() {
     def applicationContext = ApplicationHolder.application.mainContext
     assert applicationContext != null
 
@@ -67,10 +65,8 @@ class IntegrationSpecification extends Specification {
     }
   }
 
-  void cleanup() {
+  def cleanup() {
     transactionManager?.rollback(transactionStatus)
     RequestContextHolder.requestAttributes = null
   }
-
-  void cleanupSpeck() {}
 }

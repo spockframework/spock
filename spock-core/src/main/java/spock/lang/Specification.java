@@ -22,18 +22,8 @@ import org.junit.runner.RunWith;
  * Convenience base class for specifications. Avoids the need to annotate
  * a specification with @Speck and @RunWith, and makes spock.lang.Predef
  * members automatically known to the IDE.
- * <p><em>Note:</em> This class is experimental and might be removed
- * in the future.
  *
  * @author Peter Niederwieser
  */
 @RunWith(Sputnik.class)
-public abstract class Specification extends Predef {
-  public Object setup() { return null; }
-
-  public Object cleanup() { return null; }
-
-  public Object setupSpeck() { return null; }
-
-  public Object cleanupSpeck() { return null; }
-}
+public abstract class Specification extends Predef {}

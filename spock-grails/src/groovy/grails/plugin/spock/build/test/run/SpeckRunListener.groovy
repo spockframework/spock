@@ -63,7 +63,7 @@ class SpeckRunListener extends RunListener {
 
   void testFailure(Failure failure) {
     if (++failureCount == 1) out.println()
-    out.println("${failure.description.methodName}...FAILED")
+    out.println("                    ${failure.description.methodName}...FAILED")
 
     def testCase = new TestCaseAdapter(failure.description)
     def exception = failure.exception

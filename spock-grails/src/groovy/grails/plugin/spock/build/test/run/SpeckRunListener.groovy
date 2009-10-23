@@ -42,8 +42,8 @@ class SpeckRunListener extends RunListener {
     this.speck = speck
     this.formattedOutputs = formattedOutputs
     duration()
-    this.speck = null
     this.formattedOutputs = null
+    this.speck = null
   }
 
   void testRunStarted(Description description) {

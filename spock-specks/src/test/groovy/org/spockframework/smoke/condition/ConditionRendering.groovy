@@ -19,7 +19,6 @@ package org.spockframework.smoke.condition
 import org.junit.runner.RunWith
 import spock.lang.Speck
 import spock.lang.Sputnik
-import java.lang.*
 import static java.lang.Math.min
 import static org.spockframework.smoke.condition.ConditionSpeckUtil.isRendered
 
@@ -156,6 +155,34 @@ a.get(b)
     }
   }
 
+  def "MethodCallExpression with named arguments"() {
+    expect:
+    isRendered """
+person.eat(what: steak, where: tokyo)
+|      |         |             |
+p      null      steak         tokyo
+    """, {
+      def person = new Person2()
+      def steak = "steak"
+      def tokyo = "tokyo"
+      assert person.eat(what: steak, where: tokyo)
+    }
+  }
+
+  def "MethodCallExpression with named arguments passed as map"() {
+    expect:
+    isRendered """
+person.eat([what: steak, where: tokyo])
+|      |          |             |
+p      null       steak         tokyo
+    """, {
+      def person = new Person2()
+      def steak = "steak"
+      def tokyo = "tokyo"
+      assert person.eat([what: steak, where: tokyo])
+    }
+  }
+
   def "StaticMethodCallExpression"() {
     expect:
     isRendered """
@@ -193,7 +220,32 @@ new ArrayList(a) == null
       def a = 1
       assert new ArrayList(a) == null
     }
+  }
 
+  def "ConstructorCallExpression with named arguments"() {
+    expect:
+    isRendered """
+new Person2(name: fred, age: fredsAge) == null
+|                 |          |         |
+p                 fred       25        false
+    """, {
+      def fred = "fred"
+      def fredsAge = 25
+      assert new Person2(name: fred, age: fredsAge) == null
+    }
+  }
+
+  def "ConstructorCallExpression with named arguments passed as map"() {
+    expect:
+    isRendered """
+new Person2([name: fred, age: fredsAge]) == null
+|                  |          |          |
+p                  fred       25         false
+    """, {
+      def fred = "fred"
+      def fredsAge = 25
+      assert new Person2([name: fred, age: fredsAge]) == null
+    }
   }
 
   def "TernaryExpression"() {
@@ -670,4 +722,13 @@ private class Holder {
   def getX() { 9 }
 
   String toString() {"h"}
+}
+
+private class Person2 {
+  def name
+  def age
+
+  def eat(args) { null }
+
+  String toString() { "p" }
 }

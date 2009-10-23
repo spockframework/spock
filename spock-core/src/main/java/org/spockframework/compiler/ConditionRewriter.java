@@ -313,8 +313,11 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> {
   @SuppressWarnings("unchecked")
   public void visitMapExpression(MapExpression expr) {
     MapExpression conversion =
-        new MapExpression(
-            convertAll(expr.getMapEntryExpressions()));
+        expr instanceof NamedArgumentListExpression ?
+            new NamedArgumentListExpression(
+                convertAll(expr.getMapEntryExpressions())) :
+            new MapExpression(
+                convertAll(expr.getMapEntryExpressions()));
 
     conversion.setSourcePosition(expr);
     result = record(conversion);
@@ -434,17 +437,19 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> {
     result = record(expr);
   }
 
-  // only called for LHS of multi-assignment
+  // used in the following places:
+  // - LHS of multi-assignment
+  // - wraps NamedArgumentListExpression in constructor call with named args (strange but true)
   @SuppressWarnings("unchecked")
   public void visitTupleExpression(TupleExpression expr) {
     TupleExpression conversion =
         new TupleExpression(
-            // prevent lvalue from getting turned into record(lvalue),
-            // which can no longer be assigned to
+            // prevent each lvalue from getting turned into record(lvalue),
+            // which no longer is an lvalue
             convertAllAndRecordNa(expr.getExpressions()));
 
     conversion.setSourcePosition(expr);
-    result = record(conversion);
+    result = recordNa(conversion);
   }
 
   private Expression record(Expression expr) {

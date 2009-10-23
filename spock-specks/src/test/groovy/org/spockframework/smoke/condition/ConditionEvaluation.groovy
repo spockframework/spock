@@ -71,6 +71,16 @@ class ConditionEvaluation {
     a?.foo() == null
   }
 
+  def "MethodCallExpression with named arguments"() {
+    expect:
+    new Person().eat(what: "steak", where: "tokyo") == [what: "steak", where: "tokyo"]
+  }
+
+  def "MethodCallExpression with named arguments passed as map"() {
+    expect:
+    new Person().eat([what: "steak", where: "tokyo"]) == [what: "steak", where: "tokyo"]
+  }
+  
   def "StaticMethodCallExpression"() {
     expect:
     max(1, 2) == 2
@@ -82,6 +92,18 @@ class ConditionEvaluation {
     new ArrayList().empty
     new String("abc") == "abc"
     new String(new String("abc")) == "abc"
+  }
+
+  def "ConstructorCallExpression with named arguments"() {
+    expect:
+    new Person(name: "fred", age: 25).name == "fred"
+    new Person(name: "fred", age: 25).age == 25
+  }
+
+  def "ConstructorCallExpression with named arguments passed as map"() {
+    expect:
+    new Person([name: "fred", age: 25]).name == "fred"
+    new Person([name: "fred", age: 25]).age == 25
   }
 
   def "TernaryExpression"() {
@@ -331,4 +353,11 @@ private class Attributes {
 
 private class MethodPointers {
   def inc(x) { x + 1 }
+}
+
+private class Person {
+  def name
+  def age
+
+  def eat(args) { args }
 }

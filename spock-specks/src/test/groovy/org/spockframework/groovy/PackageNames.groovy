@@ -21,13 +21,9 @@ import org.spockframework.util.inspector.AstInspector
 import spock.lang.*
 
 /**
- * A ...
-
  * @author Peter Niederwieser
  */
-@Speck
-@RunWith(Sputnik)
-class PackageNames {
+class PackageNames extends Specification {
   def inspector = new AstInspector()
 
   def "package names and imports end in '.'"() {

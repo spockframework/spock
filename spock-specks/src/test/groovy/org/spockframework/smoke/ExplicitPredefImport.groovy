@@ -21,9 +21,7 @@ import org.junit.runner.RunWith
 import static spock.lang.Predef.*
 import spock.lang.*
 
-@Speck
-@RunWith(Sputnik)
-class ExplicitPredefImport {
+class ExplicitPredefImport extends Specification {
   def "access Predef members"() {
     expect: _.toString() == "_"
   }

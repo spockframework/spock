@@ -19,9 +19,7 @@ package org.spockframework.smoke
 import org.junit.runner.RunWith
 import spock.lang.*
 
-@Speck
-@RunWith(Sputnik)
-class ImplicitPredefImport {
+class ImplicitPredefImport extends Specification {
   def "access Predef members"() {
     expect: _.toString() == "_"
   }

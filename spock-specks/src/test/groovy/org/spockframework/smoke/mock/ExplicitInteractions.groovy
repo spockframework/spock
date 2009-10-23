@@ -25,9 +25,7 @@ import static spock.lang.Predef.*
  *
  * @author Peter Niederwieser
  */
-@Speck
-@RunWith (Sputnik)
-class ExplicitInteractions {
+class ExplicitInteractions extends Specification {
   List list = Mock()
 
   def "basic usage"() {

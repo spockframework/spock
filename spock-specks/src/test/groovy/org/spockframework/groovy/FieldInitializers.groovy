@@ -27,9 +27,7 @@ import spock.lang.*
  
  * @author Peter Niederwieser
  */
-@Speck
-@RunWith(Sputnik)
-class FieldInitializers {
+class FieldInitializers extends Specification {
   def inspector = new AstInspector()
 
   def setup() {

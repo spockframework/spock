@@ -19,9 +19,7 @@ package org.spockframework.smoke
 import org.junit.runner.RunWith
 import spock.lang.*
 
-@Speck
-@RunWith(Sputnik)
-class CleanupBlocks {
+class CleanupBlocks extends Specification {
   def "basic usage"() {
     def x
     setup: x = 1

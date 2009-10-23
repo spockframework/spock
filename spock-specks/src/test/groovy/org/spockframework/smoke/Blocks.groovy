@@ -25,15 +25,12 @@ import static org.spockframework.runtime.model.BlockKind.*
 import spock.lang.*
 import static spock.lang.Predef.*
 
-@Speck
-@RunWith(Sputnik)
-class Blocks {
+class Blocks extends Specification {
   def "labels and comments"() {
     def speckClass = new GroovyClassLoader().parseClass("""
 import spock.lang.*
 
-@Speck
-class Foo {
+class Foo extends Specification {
   def m1() {
     setup: "setup"
     and: "setup2"

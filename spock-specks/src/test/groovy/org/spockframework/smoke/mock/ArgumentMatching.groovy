@@ -20,9 +20,7 @@ import org.junit.runner.RunWith
 import spock.lang.*
 import static spock.lang.Predef.*
 
-@Speck
-@RunWith(Sputnik)
-class ArgumentMatching {
+class ArgumentMatching extends Specification {
 //  def "match equal argument - identical"() {
 //    List list = Mock()
 //

@@ -27,9 +27,7 @@ import org.spockframework.util.SpockSyntaxException
  * @author Peter Niederwieser
  */
 
-@Speck
-@RunWith(Sputnik)
-class ExpectBlocks {
+class ExpectBlocks extends Specification {
   def "may not contain exception conditions"() {
     when:
     new GroovyClassLoader().parseClass("""

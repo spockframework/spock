@@ -28,9 +28,7 @@ import static org.spockframework.smoke.VoidGroovyStaticMethod.*
  * @author Peter Niederwieser
  */
 @Issue("http://issues.spockframework.org/detail?id=25")
-@Speck
-@RunWith (Sputnik)
-class VoidMethodCallsInExpectBlocks {
+class VoidMethodCallsInExpectBlocks extends Specification {
   def "invocation of void Groovy instance method"() {
     expect:
     voidGroovyInstanceMethod()

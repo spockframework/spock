@@ -20,9 +20,7 @@ import org.junit.runner.RunWith
 import org.spockframework.mock.IterableResultGenerator
 import spock.lang.*
 
-@Speck
-@RunWith(Sputnik)
-class IterableResultGeneratorSpeck {
+class IterableResultGeneratorSpeck extends Specification {
   def "generate results from non-empty list" () {
     def gen = new IterableResultGenerator([1,2,3])
 

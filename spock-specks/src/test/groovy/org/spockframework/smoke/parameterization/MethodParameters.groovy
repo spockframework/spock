@@ -43,8 +43,7 @@ def foo(int x, String y) {
     """
 
     then:
-    Exception e = thrown()
-    containsSyntaxException(e)
+    thrown(SpockSyntaxException)
   }
 
   def "typed parameters"(Integer x, Integer y) {
@@ -106,8 +105,7 @@ def foo(x) {
     """
 
     then:
-    Exception e = thrown()
-    containsSyntaxException(e)
+    thrown(SpockSyntaxException)
   }
 
 
@@ -125,8 +123,7 @@ def foo(x, y, z) {
     """
 
     then:
-    Exception e = thrown()
-    containsSyntaxException(e)
+    thrown(SpockSyntaxException)
   }
 
   def "parameter names do not match data variable names"() {
@@ -143,8 +140,7 @@ def foo(x, a) {
     """
 
     then:
-    Exception e = thrown()
-    containsSyntaxException(e)
+    thrown(SpockSyntaxException)
   }
 
   def "data value type can be coerced to parameter type"(x, String y) {
@@ -171,11 +167,5 @@ def foo(x, ClassLoader y) {
 
     then:
     thrown(GroovyCastException)
-  }
-
-  void containsSyntaxException(e) {
-    assert e instanceof MultipleCompilationErrorsException
-    assert e.errorCollector.errorCount == 1
-    assert e.errorCollector.errors[0].cause instanceof SpockSyntaxException
   }
 }

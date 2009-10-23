@@ -26,9 +26,7 @@ import static spock.lang.Predef.*
  *
  * @author Peter Niederwieser
  */
-@Speck
-@RunWith(Sputnik)
-class SetupBlocks {
+class SetupBlocks extends Specification {
   def "implicit"() {
     def a = 1
   }

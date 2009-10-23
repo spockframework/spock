@@ -23,9 +23,7 @@ import spock.lang.Sputnik
 import spock.lang.FailsWith
 import spock.lang.Ignore
 
-@Speck
-@RunWith(Sputnik)
-class Parameterizations {
+class Parameterizations extends Specification {
   def "multi-parameterization"() {
     expect: a == b
     where :

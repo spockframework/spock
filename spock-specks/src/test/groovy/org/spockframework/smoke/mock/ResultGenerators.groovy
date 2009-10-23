@@ -20,9 +20,7 @@ import org.junit.runner.RunWith
 import spock.lang.*
 import static spock.lang.Predef.*
 
-@Speck
-@RunWith(Sputnik)
-class ResultGenerators {
+class ResultGenerators extends Specification {
   def "return simple result"() {
     List list = Mock()
 

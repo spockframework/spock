@@ -20,9 +20,7 @@ import org.junit.runner.RunWith
 import spock.lang.*
 import static spock.lang.Predef.*
 
-@Speck
-@RunWith(Sputnik)
-class DefaultMockFactorySpeck {
+class DefaultMockFactorySpeck extends Specification {
   IMockFactory factory = new DefaultMockFactory()
   IInvocationMatcher dummy = Mock() // useful if test fails and toString() is delegated to dispatcher
 

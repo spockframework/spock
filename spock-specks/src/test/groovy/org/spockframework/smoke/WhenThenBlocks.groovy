@@ -23,9 +23,7 @@ import spock.lang.*
  *
  * @author Peter Niederwieser
  */
-@Speck
-@RunWith(Sputnik)
-class WhenThenBlocks {
+class WhenThenBlocks extends Specification {
   def "basic usage"() {
     def x
     when: x = 1

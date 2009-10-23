@@ -25,9 +25,7 @@ import org.spockframework.mock.TooFewInvocationsError
  *
  * @author Peter Niederwieser
  */
-@Speck
-@RunWith(Sputnik)
-class GroovyClassBasedMocks {
+class GroovyClassBasedMocks extends Specification {
   MockMe mockMe = Mock()
 
   def "mock declared method"() {

@@ -24,9 +24,7 @@ import spock.lang.*
  
  * @author Peter Niederwieser
  */
-@Speck
-@RunWith(Sputnik)
-class MethodAccessibility {
+class MethodAccessibility extends Specification {
   @Shared numCalls = 0
 
   private setup() {

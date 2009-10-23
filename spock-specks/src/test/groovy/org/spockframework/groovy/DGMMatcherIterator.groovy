@@ -25,9 +25,7 @@ import static spock.lang.Predef.*
  *
  * @author Peter Niederwieser
  */
-@Speck
-@RunWith (Sputnik)
-class DGMMatcherIterator {
+class DGMMatcherIterator extends Specification {
   def "can cope with multiple hasNext calls"() {
     def matcher = "a1a2a3" =~ /a./
     def iter = matcher.iterator()

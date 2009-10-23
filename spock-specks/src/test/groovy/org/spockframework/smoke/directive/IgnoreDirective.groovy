@@ -29,9 +29,7 @@ class IgnoreDirective extends EmbeddedSpecification {
     when:
     runner.runWithImports """
 @Ignore
-@Speck
-@RunWith(Sputnik)
-class Foo {
+class Foo extends Specification {
   def foo() {
     expect: false
   }

@@ -23,9 +23,7 @@ import spock.lang.*
 /**
  * @author Peter Niederwieser
  */
-@Speck
-@RunWith(Sputnik)
-class FeatureUnrolling {
+class FeatureUnrolling extends Specification {
   def "without unrolling"() {
     expect:
     name.size() == length

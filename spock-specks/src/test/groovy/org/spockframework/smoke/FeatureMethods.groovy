@@ -26,9 +26,7 @@ import org.spockframework.runtime.InvalidSpeckError
  *
  * @author Peter Niederwieser
  */
-@Speck
-@RunWith (Sputnik)
-class FeatureMethods {
+class FeatureMethods extends Specification {
   def cannotBeCalledFromUserCode() {
     when:
     cannotBeCalledFromUserCode()

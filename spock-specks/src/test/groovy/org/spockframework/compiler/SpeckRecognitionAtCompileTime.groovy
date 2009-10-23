@@ -18,20 +18,14 @@ package org.spockframework.compiler
 
 import org.codehaus.groovy.control.MultipleCompilationErrorsException
 
-import org.junit.runner.RunWith
-
 import org.spockframework.runtime.model.SpeckMetadata
-import spock.lang.*
-import static spock.lang.Predef.*
+import spock.lang.Specification
 
 /**
- *
  * @author Peter Niederwieser
  */
-@Speck
-@RunWith (Sputnik)
-class SpeckRecognitionByTransforms {
-  def "annotation w/ fully qualified name"() {
+class SpeckRecognitionAtCompileTime extends Specification {
+  def "annotation with fully qualified name"() {
     when:
     def clazz = compile("""
 @spock.lang.Speck
@@ -41,10 +35,10 @@ class ASpeck {
     """)
 
     then:
-    bothTransformsRecognizeClassAsSpeck(clazz)
+    wasRecognizedAsSpeck(clazz)
   }
 
-  def "annotation w/ simple name and class import"() {
+  def "annotation with simple name and class import"() {
     when:
     def clazz = compile("""
 import spock.lang.Speck
@@ -56,10 +50,10 @@ class ASpeck {
     """)
 
     then:
-    bothTransformsRecognizeClassAsSpeck(clazz)
+    wasRecognizedAsSpeck(clazz)
   }
 
-  def "annotation w/ simple name and package import"() {
+  def "annotation with simple name and package import"() {
     when:
     def clazz = compile("""
 import spock.lang.*
@@ -71,10 +65,10 @@ class ASpeck {
     """)
 
     then:
-    bothTransformsRecognizeClassAsSpeck(clazz)
+    wasRecognizedAsSpeck(clazz)
   }
 
-  def "annotation w/ simple name and same package"() {
+  def "annotation with simple name and same package"() {
     when:
     def clazz = compile("""
 package spock.lang
@@ -86,10 +80,10 @@ class ASpeck {
     """)
 
     then:
-    bothTransformsRecognizeClassAsSpeck(clazz)
+    wasRecognizedAsSpeck(clazz)
   }
 
-  def "annotation w/ import alias"() {
+  def "annotation with import alias"() {
     when:
     def clazz = compile("""
 import spock.lang.Speck as Test
@@ -101,10 +95,28 @@ class ASpeck {
     """)
 
     then:
-    bothTransformsRecognizeClassAsSpeck(clazz)
+    wasRecognizedAsSpeck(clazz)
   }
 
-  def "annotation w/o import"() {
+  def "extending class Specification or a subclass thereof"() {
+    when:
+    def clazz = compile("""
+import spock.lang.Specification
+
+class ASpeck extends $baseClass {
+  def foo() { _ }
+}
+    """)
+
+    then:
+    wasRecognizedAsSpeck(clazz)
+
+    where:
+    baseClass << ["Specification", "spock.lang.Specification",
+        "org.spockframework.compiler.MySpecification", "org.spockframework.compiler.MyMySpecification"]
+  }
+
+  def "annotation without import"() {
     when:
     compile("""
 @Speck
@@ -127,11 +139,13 @@ class ASpeck {}
     !clazz.isAnnotationPresent(SpeckMetadata)
   }
 
+  // we intentionally don't use EmbeddedSpeckCompiler
+  // to avoid confusing matters
   private compile(String source) {
     new GroovyClassLoader().parseClass(source)
   }
 
-  private void bothTransformsRecognizeClassAsSpeck(Class clazz) {
+  private void wasRecognizedAsSpeck(Class clazz) {
     // if EarlyTransform has run, _ will resolve to Predef._
     // otherwise, compilation will fail
     notThrown(MultipleCompilationErrorsException)
@@ -139,3 +153,7 @@ class ASpeck {}
     assert clazz.isAnnotationPresent(SpeckMetadata)
   }
 }
+
+class MySpecification extends Specification {}
+
+class MyMySpecification extends MySpecification {}

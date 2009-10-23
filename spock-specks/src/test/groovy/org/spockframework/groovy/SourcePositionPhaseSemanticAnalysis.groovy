@@ -29,9 +29,7 @@ import org.codehaus.groovy.ast.expr.ClassExpression
 
  * @author Peter Niederwieser
  */
-@Speck
-@RunWith(Sputnik)
-class SourcePositionPhaseSemanticAnalysis {
+class SourcePositionPhaseSemanticAnalysis extends Specification {
   AstInspector inspector = new AstInspector(CompilePhase.SEMANTIC_ANALYSIS)
 
   // ConditionRewriter.visitClassExpression() relies on this

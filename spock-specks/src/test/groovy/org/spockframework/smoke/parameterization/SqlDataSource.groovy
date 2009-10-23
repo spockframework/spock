@@ -22,9 +22,7 @@ import static spock.lang.Predef.*
 
 import groovy.sql.Sql
 
-@Speck
-@RunWith(Sputnik)
-class SqlDataSource {
+class SqlDataSource extends Specification {
    @Shared Sql sql = Sql.newInstance("jdbc:h2:mem:", "org.h2.Driver")
 
   def setupSpeck() {

@@ -20,9 +20,7 @@ import org.junit.runner.RunWith
 import spock.lang.*
 import static spock.lang.Predef.*
 
-@Speck
-@RunWith(Sputnik)
-class ValidMockCreation {
+class ValidMockCreation extends Specification {
   List list1 = Mock()
 
   def "field typed w/ mock untyped"() {

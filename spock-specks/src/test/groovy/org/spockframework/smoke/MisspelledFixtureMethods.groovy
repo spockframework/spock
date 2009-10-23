@@ -27,9 +27,7 @@ import org.spockframework.util.SpockSyntaxException
  *
  * @author Peter Niederwieser
  */
-@Speck
-@RunWith (Sputnik)
-class MisspelledFixtureMethods {
+class MisspelledFixtureMethods extends Specification {
 
   GroovyClassLoader loader = new GroovyClassLoader()
 
@@ -38,8 +36,7 @@ class MisspelledFixtureMethods {
     loader.parseClass("""
 import spock.lang.*
 
-@Speck
-class ASpeck {
+class ASpeck extends Specification {
   def setUp() {}
 }
     """)
@@ -54,8 +51,7 @@ class ASpeck {
     loader.parseClass("""
 import spock.lang.*
 
-@Speck
-class ASpeck {
+class ASpeck extends Specification {
   def cLeanup() {}
 }
     """)
@@ -70,8 +66,7 @@ class ASpeck {
     loader.parseClass("""
 import spock.lang.*
 
-@Speck
-class ASpeck {
+class ASpeck extends Specification {
   def setupspeck() {}
 }
     """)
@@ -86,8 +81,7 @@ class ASpeck {
     loader.parseClass("""
 import spock.lang.*
 
-@Speck
-class ASpeck {
+class ASpeck extends Specification {
   def CleanupSpeck() {}
 }
     """)
@@ -102,8 +96,7 @@ class ASpeck {
     loader.parseClass("""
 import spock.lang.*
 
-@Speck
-class ASpeck {
+class ASpeck extends Specification {
   def setup() {}
 }
     """)

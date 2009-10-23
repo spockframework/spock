@@ -19,9 +19,7 @@ package org.spockframework.runtime
 import org.junit.runner.RunWith
 import spock.lang.*
 
-@Speck
-@RunWith(Sputnik)
-class EstimatedNumberOfIterations {
+class EstimatedNumberOfIterations extends Specification {
   def runner = new ParameterizedSpeckRunner(null, null)
 
   def "w/o data provider"() {

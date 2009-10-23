@@ -20,9 +20,7 @@ import org.codehaus.groovy.runtime.InvokerHelper
 import org.junit.runner.RunWith
 import spock.lang.*
 
-@Speck
-@RunWith(Sputnik)
-class GroovyMopExploration {
+class GroovyMopExploration extends Specification {
   def "call method that takes a String with GString through InvokerHelper"() {
     def target = new GroovyMopExploration()
     def arg = "one ${"t" + "w" + "o"} three"

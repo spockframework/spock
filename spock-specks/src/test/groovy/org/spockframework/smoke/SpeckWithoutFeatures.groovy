@@ -25,9 +25,7 @@ import org.spockframework.runtime.ConditionNotSatisfiedError
 /**
  * @author Peter Niederwieser
  */
-@Speck
-@RunWith (Sputnik)
-class SpeckWithoutFeatures {
+class SpeckWithoutFeatures extends Specification {
   @FailsWith(ConditionNotSatisfiedError)
   def setupSpeck() {
     assert false

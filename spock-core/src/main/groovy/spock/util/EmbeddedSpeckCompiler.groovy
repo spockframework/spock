@@ -19,6 +19,8 @@ package spock.util
 import org.spockframework.runtime.SpeckInfoBuilder
 import org.junit.runner.RunWith
 import org.junit.Test
+import org.codehaus.groovy.control.MultipleCompilationErrorsException
+import org.codehaus.groovy.control.messages.ExceptionMessage
 
 /**
  * Utility class for creating Specks from String source. <em>Not</em> thread-safe.
@@ -28,13 +30,24 @@ import org.junit.Test
 class EmbeddedSpeckCompiler {
   final GroovyClassLoader loader = new GroovyClassLoader()
 
+  boolean unwrapCompileException = true
+
   /**
    * Compiles the given source code, and returns all Spock specifications
    * contained therein (but not other classes).
    */
   List compile(String source) {
     loader.clearCache()
+
+    try {
     loader.parseClass(source.trim())
+    } catch (MultipleCompilationErrorsException e) {
+      def errors = e.errorCollector.errors
+      if (unwrapCompileException && errors.size() == 1 && errors[0].hasProperty("cause"))
+        throw errors[0].cause
+      throw e
+    }
+    
     loader.loadedClasses.findAll {
       SpeckInfoBuilder.isSpecification(it) || isJUnitTest(it) // need JUnit tests sometimes
     } as List
@@ -42,12 +55,12 @@ class EmbeddedSpeckCompiler {
 
   List compileWithImports(String source) {
     // one-liner keeps line numbers intact
-    compile "package apackage; import org.junit.runner.RunWith; import spock.lang.*; ${source.trim()}"
+    compile "package apackage; import spock.lang.*; ${source.trim()}"
   }
 
   Class compileSpeckBody(String source) {
     // one-liner keeps line numbers intact
-    compileWithImports("@Speck @RunWith(Sputnik) class ASpeck { ${source.trim()} }")[0]
+    compileWithImports("class ASpeck extends Specification { ${source.trim()} }")[0]
   }
 
   Class compileFeatureBody(String source) {

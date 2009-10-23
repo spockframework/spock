@@ -63,10 +63,8 @@ def feature() { expect: true }
   def "ignoring a Speck"() {
     def compiler = new EmbeddedSpeckCompiler()
     def clazz = compiler.compileWithImports("""
-@Speck
-@RunWith(Sputnik)
 @Ignore
-class Foo {
+class Foo extends Specification {
   static log = "" // needs to be static rather than @Shared s.t. we can access it from outside
   def feature1() { setup: log += "1" }
   def feature2() { setup: log += "2" }

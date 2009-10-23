@@ -27,9 +27,7 @@ import org.codehaus.groovy.ast.expr.PropertyExpression
 
  * @author Peter Niederwieser
  */
-@Speck
-@RunWith(Sputnik)
-class SourcePositionPhaseConversion {
+class SourcePositionPhaseConversion extends Specification {
   AstInspector inspector = new AstInspector()
 
   def "subscript operator"() {

@@ -20,9 +20,7 @@ import org.junit.runner.RunWith
 import spock.lang.*
 import static spock.lang.Predef.*
 
-@Speck
-@RunWith(Sputnik)
-class ClosingOfDataProviders {
+class ClosingOfDataProviders extends Specification {
   def runner = new ParameterizedSpeckRunner(null, null)
 
   def "closeOneProviderWhichPotentiallyThrowsException"() {

@@ -28,22 +28,26 @@ import org.codehaus.groovy.control.messages.Message;
  */
 public class TransformErrorMessage extends Message {
   private final SourceUnit sourceUnit;
-  private final Throwable throwable;
+  private final Throwable cause;
   private final boolean printStackTrace;
 
-  public TransformErrorMessage(SourceUnit sourceUnit, Throwable throwable,
+  public TransformErrorMessage(SourceUnit sourceUnit, Throwable cause,
                                boolean printStackTrace) {
     this.sourceUnit = sourceUnit;
-    this.throwable = throwable;
+    this.cause = cause;
     this.printStackTrace = printStackTrace;
   }
 
   public void write(PrintWriter writer, Janitor janitor) {
     writer.print(sourceUnit.getName());
-    if (throwable != null) {
-      writer.println(throwable.getMessage());
+    if (cause != null) {
+      writer.println(cause.getMessage());
       if (printStackTrace)
-        throwable.printStackTrace(writer);
+        cause.printStackTrace(writer);
     }
+  }
+
+  public Throwable getCause() {
+    return cause;
   }
 }

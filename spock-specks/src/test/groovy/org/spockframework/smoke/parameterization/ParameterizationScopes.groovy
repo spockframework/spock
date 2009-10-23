@@ -21,10 +21,9 @@ import org.junit.runner.RunWith
 import spock.lang.Sputnik
 import spock.lang.Speck
 import spock.lang.Sputnik
+import spock.lang.Specification
 
-@Speck
-@RunWith(Sputnik)
-class ParameterizationScopes {
+class ParameterizationScopes extends Specification {
   def "in outer scope"() {
     expect: x == 1
     where: x << 1

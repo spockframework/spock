@@ -24,9 +24,7 @@ import org.spockframework.mock.TooFewInvocationsError
 /**
  * @author Peter Niederwieser
  */
-@Speck
-@RunWith(Sputnik)
-class GlobalInteractions {
+class GlobalInteractions extends Specification {
   def "optional interaction"() {
     def m = Mock(List)
     m.size() >> 1

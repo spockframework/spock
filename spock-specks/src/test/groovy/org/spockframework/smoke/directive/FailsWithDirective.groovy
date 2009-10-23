@@ -23,9 +23,7 @@ import spock.lang.*
  *
  * @author Peter Niederwieser
  */
-@Speck
-@RunWith(Sputnik)
-class FailsWithDirectiveOnMethod {
+class FailsWithDirectiveOnMethod extends Specification {
   @FailsWith(IndexOutOfBoundsException)
   def ex1() {
     given:
@@ -45,10 +43,8 @@ class FailsWithDirectiveOnMethod {
   }
 }
 
-@Speck
-@RunWith(Sputnik)
 @FailsWith(IndexOutOfBoundsException)
-class FailsWithDirectiveOnSpeck {
+class FailsWithDirectiveOnSpeck extends Specification {
   def ex1() {
     given:
     def foo = []

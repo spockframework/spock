@@ -22,9 +22,7 @@ import org.junit.runner.RunWith
 import org.spockframework.util.SpockSyntaxException
 import org.codehaus.groovy.control.MultipleCompilationErrorsException
 
-@Speck
-@RunWith(Sputnik)
-class PredefOld {
+class PredefOld extends Specification {
   def "basic usage"() {
     def list = [1,2,3]
 

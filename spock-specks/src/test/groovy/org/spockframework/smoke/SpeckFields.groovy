@@ -24,9 +24,7 @@ import spock.lang.*
  
  * @author Peter Niederwieser
  */
-@Speck
-@RunWith(Sputnik)
-class InitializationOfUnsharedFields {
+class InitializationOfUnsharedFields extends Specification {
   def a
   def b = 1
   int c
@@ -71,9 +69,7 @@ class InitializationOfUnsharedFields {
   }
 }
 
-@Speck
-@RunWith(Sputnik)
-class InitializationOfSharedFields {
+class InitializationOfSharedFields extends Specification {
   @Shared def a
   @Shared def b = 1
   @Shared int c
@@ -116,9 +112,7 @@ class InitializationOfSharedFields {
   }
 }
 
-@Speck
-@RunWith(Sputnik)
-class DefaultValuesOfUnsharedFields {
+class DefaultValuesOfUnsharedFields extends Specification {
   boolean f1
   char f2
   byte f3
@@ -171,9 +165,7 @@ class DefaultValuesOfUnsharedFields {
   }
 }
 
-@Speck
-@RunWith(Sputnik)
-class DefaultValuesOfSharedFields {
+class DefaultValuesOfSharedFields extends Specification {
   @Shared boolean f1
   @Shared char f2
   @Shared byte f3

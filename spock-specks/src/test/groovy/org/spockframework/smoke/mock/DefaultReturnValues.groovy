@@ -20,9 +20,7 @@ import org.junit.runner.RunWith
 import static spock.lang.Predef.*
 import spock.lang.*
 
-@Speck
-@RunWith(Sputnik)
-class DefaultReturnValues {
+class DefaultReturnValues extends Specification {
   IMockable imock = Mock()
   Mockable cmock = Mock()
 

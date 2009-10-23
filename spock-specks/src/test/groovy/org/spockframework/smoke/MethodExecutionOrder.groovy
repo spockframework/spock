@@ -22,9 +22,7 @@ import spock.lang.*
 /**
  * @author Peter Niederwieser
  */
-@Speck
-@RunWith(Sputnik)
-class MethodExecutionOrder {
+class MethodExecutionOrder extends Specification {
   @Shared order = []
 
   def cleanup() {

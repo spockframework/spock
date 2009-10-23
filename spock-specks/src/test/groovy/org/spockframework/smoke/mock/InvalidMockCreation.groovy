@@ -23,47 +23,34 @@ import static spock.lang.Predef.*
 import org.codehaus.groovy.runtime.typehandling.GroovyCastException
 import org.codehaus.groovy.control.MultipleCompilationErrorsException
 import org.spockframework.util.SpockSyntaxException
+import org.spockframework.EmbeddedSpecification
 
 /**
  *
  * @author Peter Niederwieser
  */
-@Speck
-@RunWith (Sputnik)
-class InvalidMockCreation {
+class InvalidMockCreation extends EmbeddedSpecification {
   def "field w/ missing type"() {
     when:
-    new GroovyClassLoader().parseClass("""
-import spock.lang.Speck
-@Speck
-class Foo {
-  def list = Mock()
-}
+    compiler.compileSpeckBody("""
+def list = Mock()
     """)
 
     then:
-    MultipleCompilationErrorsException e = thrown()
-    e.errorCollector.errors[0].cause instanceof SpockSyntaxException
+    thrown(SpockSyntaxException)
   }
 
   // for "field w/ incompatible type" and "field w/ wrong argument" see Specks below
 
   def "local w/ missing type"() {
     when:
-    new GroovyClassLoader().parseClass("""
-import spock.lang.Speck
-@Speck
-class Foo {
-  def foo() {
-    setup:
-    def list = Mock()
-  }
-}
+    compiler.compileFeatureBody("""
+setup:
+def list = Mock()
     """)
 
     then:
-    MultipleCompilationErrorsException e = thrown()
-    e.errorCollector.errors[0].cause instanceof SpockSyntaxException
+    thrown(SpockSyntaxException)
   }
 
   def "local w/ incompatible type"() {
@@ -78,19 +65,12 @@ class Foo {
 
   def "expr w/ missing type"() {
     when:
-    new GroovyClassLoader().parseClass("""
-import spock.lang.Speck
-@Speck
-class Foo {
-  def foo() {
-    setup: Mock()
-  }
-}
+    compiler.compileFeatureBody("""
+setup: Mock()
     """)
 
     then:
-    MultipleCompilationErrorsException e = thrown()
-    e.errorCollector.errors[0].cause instanceof SpockSyntaxException
+    thrown(SpockSyntaxException)
   }
 
   def "expr w/ wrong argument"() {
@@ -99,9 +79,7 @@ class Foo {
   }
 }
 
-@Speck
-@RunWith (Sputnik)
-class InvalidMockCreation2 {
+class InvalidMockCreation2 extends Specification {
   List list = Mock(Map)
 
   @FailsWith(GroovyCastException)
@@ -112,9 +90,7 @@ class InvalidMockCreation2 {
   }
 }
 
-@Speck
-@RunWith (Sputnik)
-class InvalidMockCreation3 {
+class InvalidMockCreation3 extends Specification {
   def list = Mock(1)
 
   @FailsWith(MissingMethodException)

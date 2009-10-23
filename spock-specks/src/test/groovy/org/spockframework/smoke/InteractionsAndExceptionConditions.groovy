@@ -25,9 +25,7 @@ import static spock.lang.Predef.*
  *
  * @author Peter Niederwieser
  */
-@Speck
-@RunWith (Sputnik)
-class InteractionsAndExceptionConditions {
+class InteractionsAndExceptionConditions extends Specification {
   def "interaction followed by exception condition"() {
     List list = Mock()
 

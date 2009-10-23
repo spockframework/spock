@@ -26,9 +26,7 @@ import java.util.concurrent.TimeUnit
  *
  * @author Peter Niederwieser
  */
-@Speck
-@RunWith(Sputnik)
-class TimeoutDirectiveOnMethod {
+class TimeoutDirectiveOnMethod extends Specification {
   @Timeout(1)
   def "in time"() {
     setup: Thread.sleep(500)

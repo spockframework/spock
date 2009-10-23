@@ -25,9 +25,7 @@ import static spock.lang.Predef.*
  *
  * @author Peter Niederwieser
  */
-@Speck
-@RunWith (Sputnik)
-class InteractionScopes {
+class InteractionScopes extends Specification {
   List list = Mock()
   def obj1 = new Object()
 

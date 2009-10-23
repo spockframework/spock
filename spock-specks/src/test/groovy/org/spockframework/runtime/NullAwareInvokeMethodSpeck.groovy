@@ -20,9 +20,7 @@ import spock.lang.*
 import static spock.lang.Predef.*
 import org.junit.runner.RunWith
 
-@Speck
-@RunWith(Sputnik)
-class NullAwareInvokeMethodSpeck {
+class NullAwareInvokeMethodSpeck extends Specification {
   def "invoke void Java instance method"() {
     expect:
     SpockRuntime.nullAwareInvokeMethod(new JavaMethods(), "voidInstanceMethod", null) == SpockRuntime.VOID_RETURN_VALUE

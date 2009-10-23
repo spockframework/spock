@@ -39,8 +39,7 @@ y << [1, 2]
     """
 
     then:
-    Exception e = thrown()
-    containsSyntaxException(e)
+    thrown(SpockSyntaxException)
   }
 
   def "data variable collides with instance field"() {
@@ -58,8 +57,7 @@ def foo() {
     """
 
     then:
-    Exception e = thrown()
-    containsSyntaxException(e)
+    thrown(SpockSyntaxException)
   }
 
   def "data variable collides with static field"() {
@@ -77,8 +75,7 @@ def foo() {
     """
 
     then:
-    Exception e = thrown()
-    containsSyntaxException(e)
+    thrown(SpockSyntaxException)
   }
 
   def "duplicate data variable"() {
@@ -93,8 +90,7 @@ x << 2
     """
 
     then:
-    Exception e = thrown()
-    containsSyntaxException(e)
+    thrown(SpockSyntaxException)
   }
 
   @Issue("http://issues.spockframework.org/detail?id=14")
@@ -109,13 +105,6 @@ where:
     """
 
     then:
-    Exception e = thrown()
-    containsSyntaxException(e)
-  }
-
-  void containsSyntaxException(e) {
-    assert e instanceof MultipleCompilationErrorsException
-    assert e.errorCollector.errorCount == 1
-    assert e.errorCollector.errors[0].cause instanceof SpockSyntaxException
+    thrown(SpockSyntaxException)
   }
 }

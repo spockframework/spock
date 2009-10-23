@@ -20,9 +20,7 @@ import org.junit.runner.RunWith
 import spock.lang.*
 import static spock.lang.Predef.*
 
-@Speck
-@RunWith(Sputnik)
-class TargetMatching {
+class TargetMatching extends Specification {
   Runnable runner1 = Mock()
   Runnable runner2 = Mock()
 

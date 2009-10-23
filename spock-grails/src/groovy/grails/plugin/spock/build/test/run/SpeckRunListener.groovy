@@ -25,13 +25,13 @@ import grails.plugin.spock.build.test.report.ReportFactory
 
 class SpeckRunListener extends RunListener {
 
-  final protected out
+  final protected statusOut
   final protected reportFactory
   
   final protected currentSpeckRun
 
-  SpeckRunListener(File reportsDir, List<String> formats, PrintStream out) {
-    this.out = out
+  SpeckRunListener(File reportsDir, List<String> formats, PrintStream statusOut) {
+    this.statusOut = statusOut
     this.reportFactory = new ReportFactory(reportsDir, formats)
   }
 
@@ -41,7 +41,7 @@ class SpeckRunListener extends RunListener {
     if (currentSpeckRun?.name != description.className) {
       currentSpeckRun?.finish()
 
-      currentSpeckRun = new SpeckRunListenerSpeckRun(description.className, reportFactory, out)
+      currentSpeckRun = new SpeckRunListenerSpeckRun(description.className, reportFactory, statusOut)
       currentSpeckRun.start()
     }
 

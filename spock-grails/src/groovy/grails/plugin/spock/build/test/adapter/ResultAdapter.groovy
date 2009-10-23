@@ -18,11 +18,12 @@ package grails.plugin.spock.build.test.adapter
 
 import org.junit.runner.Result
 
-class ResultsAdapter {
-  final protected results = []
+class ResultAdapter {
 
-  def leftShift(Result result) {
-    results << result
+  final protected result
+  
+  ResultAdapter(Result result) {
+    this.result = result
   }
 
   int errorCount() {
@@ -30,10 +31,10 @@ class ResultsAdapter {
   }
 
   int failureCount() {
-    results.sum(0) { it.failureCount }
+    result.failureCount
   }
 
   int runCount() {
-    results.sum(0) { it.runCount }
+    result.runCount
   }
 }

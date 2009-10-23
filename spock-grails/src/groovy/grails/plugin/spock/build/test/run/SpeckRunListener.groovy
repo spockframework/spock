@@ -16,79 +16,52 @@
 
 package grails.plugin.spock.build.test.run
 
-import org.codehaus.groovy.grails.test.FormattedOutput
-
 import org.junit.runner.Result
 import org.junit.runner.Description
 import org.junit.runner.notification.Failure
 import org.junit.runner.notification.RunListener
 
-import junit.framework.AssertionFailedError
-
-import grails.plugin.spock.build.test.adapter.TestCaseAdapter
+import grails.plugin.spock.build.test.report.ReportFactory
 
 class SpeckRunListener extends RunListener {
+
   final protected out
-  final protected failureCount
+  final protected reportFactory
+  
+  final protected currentSpeckRun
 
-  final protected speck
-  final protected formattedOutputs
-
-  SpeckRunListener(OutputStream out) {
+  SpeckRunListener(File reportsDir, List<String> formats, PrintStream out) {
     this.out = out
+    this.reportFactory = new ReportFactory(reportsDir, formats)
   }
 
-  void setSpeck(Class speck, List<FormattedOutput> formattedOutputs, Closure duration) {
-    this.speck = speck
-    this.formattedOutputs = formattedOutputs
-    duration()
-    this.formattedOutputs = null
-    this.speck = null
-  }
-
-  void testRunStarted(Description description) {
-    failureCount = 0
-    out.print("Running test ${speck.name}...")
-  }
+  void testRunStarted(Description description) {}
 
   void testStarted(Description description) {
-    System.out.println("--Output from ${description.methodName}--")
-    System.err.println("--Output from ${description.methodName}--")
+    if (currentSpeckRun?.name != description.className) {
+      currentSpeckRun?.finish()
 
-    def testCase = new TestCaseAdapter(description)
-    formattedOutputs.each {
-      it.formatter.startTest(testCase)
+      currentSpeckRun = new SpeckRunListenerSpeckRun(description.className, reportFactory, out)
+      currentSpeckRun.start()
     }
+
+    currentSpeckRun.testStarted(description)
   }
 
   void testFailure(Failure failure) {
-    if (++failureCount == 1) out.println()
-    out.println("                    ${failure.description.methodName}...FAILED")
-
-    def testCase = new TestCaseAdapter(failure.description)
-    def exception = failure.exception
-
-    formattedOutputs.each {
-      if (exception instanceof AssertionFailedError) {
-        it.formatter.addFailure(testCase, exception)
-      } else {
-        it.formatter.addError(testCase, exception)
-      }
-    }
+    currentSpeckRun.testFailure(failure)
   }
 
   void testFinished(Description description) {
-    def testCase = new TestCaseAdapter(description)
-    formattedOutputs.each {
-      it.formatter.endTest(testCase)
-    }
+    currentSpeckRun.testFinished(description)
   }
 
   void testRunFinished(Result result) {
-    if (failureCount == 0) out.println("PASSED")
+    currentSpeckRun.finish()
   }
 
   void testAssumptionFailure(Failure failure) {}
 
   void testIgnored(Description description) {}
 }
+

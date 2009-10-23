@@ -16,17 +16,14 @@
 
 package org.spockframework.runtime;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
 import static org.spockframework.runtime.RunStatus.*;
 import org.spockframework.runtime.intercept.IMethodInterceptor;
 import org.spockframework.runtime.intercept.MethodInvocation;
-import org.spockframework.runtime.model.FeatureInfo;
-import org.spockframework.runtime.model.MethodInfo;
-import org.spockframework.runtime.model.MethodKind;
-import org.spockframework.runtime.model.SpeckInfo;
+import org.spockframework.runtime.model.*;
 import org.spockframework.util.InternalSpockError;
-
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 
 /**
  * Executes a single Speck. Notifies its supervisor about overall execution

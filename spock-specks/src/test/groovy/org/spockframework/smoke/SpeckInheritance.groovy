@@ -16,7 +16,7 @@
  
 package org.spockframework.smoke
 
-import org.spockframework.EmbeddedSpecification;
+import org.spockframework.EmbeddedSpecification
 
 class SpeckInheritance extends EmbeddedSpecification {
   def "fixture methods are run in correct order"() {

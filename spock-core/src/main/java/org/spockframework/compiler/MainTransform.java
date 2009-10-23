@@ -18,12 +18,8 @@ package org.spockframework.compiler;
 
 import java.util.List;
 
-import org.codehaus.groovy.ast.ASTNode;
-import org.codehaus.groovy.ast.ClassNode;
-import org.codehaus.groovy.ast.ModuleNode;
-import org.codehaus.groovy.control.CompilePhase;
-import org.codehaus.groovy.control.Janitor;
-import org.codehaus.groovy.control.SourceUnit;
+import org.codehaus.groovy.ast.*;
+import org.codehaus.groovy.control.*;
 import org.codehaus.groovy.transform.ASTTransformation;
 import org.codehaus.groovy.transform.GroovyASTTransformation;
 

@@ -16,11 +16,12 @@
 
 package org.spockframework.runtime;
 
-import org.spockframework.runtime.model.ExpressionInfo;
-import org.spockframework.runtime.model.TextPosition;
+import java.util.*;
+
 import org.codehaus.groovy.runtime.DefaultGroovyMethods;
 
-import java.util.*;
+import org.spockframework.runtime.model.ExpressionInfo;
+import org.spockframework.runtime.model.TextPosition;
 
 /**
  * Creates a string representation of an assertion and its recorded values.

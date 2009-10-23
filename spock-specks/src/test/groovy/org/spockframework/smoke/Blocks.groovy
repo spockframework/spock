@@ -16,14 +16,11 @@
 
 package org.spockframework.smoke
 
-import org.junit.runner.RunWith
 import org.codehaus.groovy.control.MultipleCompilationErrorsException
-import org.spockframework.util.SpockSyntaxException
 import org.spockframework.runtime.SpeckInfoBuilder
-
+import org.spockframework.util.SpockSyntaxException
+import spock.lang.Specification
 import static org.spockframework.runtime.model.BlockKind.*
-import spock.lang.*
-import static spock.lang.Predef.*
 
 class Blocks extends Specification {
   def "labels and comments"() {

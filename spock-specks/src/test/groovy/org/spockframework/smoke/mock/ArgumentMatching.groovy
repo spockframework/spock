@@ -16,9 +16,7 @@
 
 package org.spockframework.smoke.mock
 
-import org.junit.runner.RunWith
-import spock.lang.*
-import static spock.lang.Predef.*
+import spock.lang.Specification
 
 class ArgumentMatching extends Specification {
 //  def "match equal argument - identical"() {

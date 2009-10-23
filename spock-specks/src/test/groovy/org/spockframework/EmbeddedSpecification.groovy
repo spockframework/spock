@@ -16,9 +16,9 @@
 
 package org.spockframework
 
-import spock.lang.*
-import spock.util.EmbeddedSpeckRunner
+import spock.lang.Specification
 import spock.util.EmbeddedSpeckCompiler
+import spock.util.EmbeddedSpeckRunner
 
 /**
  * Convenience base class for specifications that need to compile

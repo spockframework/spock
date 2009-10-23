@@ -16,13 +16,10 @@
 
 package org.spockframework.smoke
 
-import org.junit.runner.RunWith
-
-import spock.lang.*
-import static spock.lang.Predef.*
-
+import spock.lang.Issue
+import spock.lang.Specification
 import static java.util.Collections.reverse
-import static org.spockframework.smoke.VoidGroovyStaticMethod.*
+import static org.spockframework.smoke.VoidGroovyStaticMethod.foo
 
 /**
  * @author Peter Niederwieser

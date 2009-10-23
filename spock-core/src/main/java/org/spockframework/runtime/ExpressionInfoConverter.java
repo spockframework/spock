@@ -16,19 +16,14 @@
 
 package org.spockframework.runtime;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.ArrayList;
+import java.util.*;
 
 import org.codehaus.groovy.ast.ASTNode;
 import org.codehaus.groovy.ast.expr.*;
 import org.codehaus.groovy.classgen.BytecodeExpression;
 import org.codehaus.groovy.syntax.Types;
 
-import org.spockframework.runtime.model.ExpressionInfo;
-import org.spockframework.runtime.model.TextPosition;
-import org.spockframework.runtime.model.TextRegion;
+import org.spockframework.runtime.model.*;
 import org.spockframework.util.AbstractExpressionConverter;
 
 // NOTE: expressions which don't produce a value are handled as follows:

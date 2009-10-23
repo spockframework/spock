@@ -17,9 +17,7 @@
 package org.spockframework.buildsupport;
 
 import java.io.*;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.*;
 
 import org.objectweb.asm.ClassReader;
 

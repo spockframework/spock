@@ -16,11 +16,9 @@
 
 package org.spockframework.smoke.parameterization
 
-import org.junit.runner.RunWith
-import spock.lang.*
-import static spock.lang.Predef.*
-
 import groovy.sql.Sql
+import spock.lang.Shared
+import spock.lang.Specification
 
 class SqlDataSource extends Specification {
    @Shared Sql sql = Sql.newInstance("jdbc:h2:mem:", "org.h2.Driver")

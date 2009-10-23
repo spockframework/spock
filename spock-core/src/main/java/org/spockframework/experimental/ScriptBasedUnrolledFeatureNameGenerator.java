@@ -1,14 +1,17 @@
 package org.spockframework.experimental;
 
-import java.util.regex.Pattern;
-import java.util.regex.Matcher;
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.codehaus.groovy.control.CompilationFailedException;
+
+import groovy.lang.*;
 
 import org.spockframework.runtime.model.FeatureInfo;
-import org.codehaus.groovy.control.CompilationFailedException;
-import spock.lang.*;
-import groovy.lang.*;
+
+import spock.lang.Unroll;
 
 /**
  * @author Peter Niederwieser

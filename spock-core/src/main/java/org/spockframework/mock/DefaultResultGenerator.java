@@ -19,8 +19,6 @@ package org.spockframework.mock;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 
-import groovy.lang.GroovyObject;
-
 import org.spockframework.util.InternalSpockError;
 import org.spockframework.util.Util;
 

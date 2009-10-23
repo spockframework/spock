@@ -16,12 +16,14 @@
 
 package org.spockframework.experimental;
 
-import java.util.regex.Pattern;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import groovy.lang.*;
 
 import org.spockframework.runtime.model.FeatureInfo;
-import spock.lang.*;
-import groovy.lang.*;
+
+import spock.lang.Unroll;
 
 /**
  * @author Peter Niederwieser

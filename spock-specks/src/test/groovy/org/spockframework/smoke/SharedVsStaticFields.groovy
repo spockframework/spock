@@ -16,8 +16,8 @@
 
 package org.spockframework.smoke
 
-import org.spockframework.runtime.ConditionNotSatisfiedError
 import org.spockframework.EmbeddedSpecification
+import org.spockframework.runtime.ConditionNotSatisfiedError
 
 class SharedVsStaticFields extends EmbeddedSpecification {
   def "shared fields are not shared between subsequent runs"() {

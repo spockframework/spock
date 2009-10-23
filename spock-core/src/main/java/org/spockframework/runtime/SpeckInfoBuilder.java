@@ -22,11 +22,11 @@ import java.lang.reflect.Method;
 import java.util.*;
 
 import org.spockframework.compiler.Identifiers;
+import org.spockframework.runtime.extension.ExtensionRegistry;
+import org.spockframework.runtime.extension.ISpockExtension;
 import org.spockframework.runtime.intercept.Directive;
 import org.spockframework.runtime.intercept.IDirectiveProcessor;
 import org.spockframework.runtime.model.*;
-import org.spockframework.runtime.extension.ISpockExtension;
-import org.spockframework.runtime.extension.ExtensionRegistry;
 import org.spockframework.util.BinaryNames;
 
 import spock.lang.Specification;

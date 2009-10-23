@@ -16,8 +16,8 @@
 
 package org.spockframework.smoke
 
-import org.junit.runner.RunWith
-import spock.lang.*
+import spock.lang.Shared
+import spock.lang.Specification
 
 /**
  * @author Peter Niederwieser

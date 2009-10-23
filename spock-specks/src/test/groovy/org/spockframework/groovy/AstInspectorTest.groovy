@@ -19,12 +19,10 @@ package org.spockframework.groovy
 import org.codehaus.groovy.ast.expr.BinaryExpression
 import org.codehaus.groovy.ast.stmt.ForStatement
 import org.codehaus.groovy.control.CompilePhase
-import static org.junit.Assert.*
 import org.junit.BeforeClass
 import org.junit.Test
-import org.spockframework.util.inspector.AstInspector
-import org.spockframework.util.inspector.Inspect
-import org.spockframework.util.inspector.AstInspectorException
+import static org.junit.Assert.*
+import org.spockframework.util.inspector.*
 
 class AstInspectorTest {
   static AstInspector inspector = new AstInspector(CompilePhase.SEMANTIC_ANALYSIS)

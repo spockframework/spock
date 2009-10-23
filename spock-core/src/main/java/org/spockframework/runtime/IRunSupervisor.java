@@ -16,9 +16,7 @@
 
 package org.spockframework.runtime;
 
-import org.spockframework.runtime.model.MethodInfo;
-import org.spockframework.runtime.model.SpeckInfo;
-import org.spockframework.runtime.model.FeatureInfo;
+import org.spockframework.runtime.model.*;
 
 /**
  *

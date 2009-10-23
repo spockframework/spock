@@ -16,12 +16,14 @@
 
 package org.spockframework.runtime;
 
-import java.util.regex.Pattern;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Matcher;
-import java.util.*;
+import java.util.regex.Pattern;
 
 import org.spockframework.runtime.model.FeatureInfo;
-import spock.lang.*;
+
+import spock.lang.Unroll;
 
 /**
  * @author Peter Niederwieser

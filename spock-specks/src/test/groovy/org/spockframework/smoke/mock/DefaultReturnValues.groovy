@@ -16,9 +16,7 @@
 
 package org.spockframework.smoke.mock
 
-import org.junit.runner.RunWith
-import static spock.lang.Predef.*
-import spock.lang.*
+import spock.lang.Specification
 
 class DefaultReturnValues extends Specification {
   IMockable imock = Mock()

@@ -16,11 +16,9 @@
  
 package org.spockframework.tapestry
 
-import spock.lang.Specification
-import org.apache.tapestry5.ioc.annotations.SubModule
-import org.apache.tapestry5.ioc.annotations.Scope
-
 import org.apache.tapestry5.ioc.annotations.Inject
+import org.apache.tapestry5.ioc.annotations.SubModule
+import spock.lang.Specification
 
 @SubModule(PerIterationModule)
 class PerIterationScope extends Specification {

@@ -16,11 +16,9 @@
 
 package org.spockframework.smoke
 
-import org.junit.runner.RunWith
-
-import spock.lang.*
-import static spock.lang.Predef.*
 import org.spockframework.runtime.ConditionNotSatisfiedError
+import spock.lang.FailsWith
+import spock.lang.Specification
 
 /**
  * @author Peter Niederwieser

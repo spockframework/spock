@@ -17,7 +17,8 @@
 package org.spockframework.runtime.intercept;
 
 import org.spockframework.runtime.model.*;
-import spock.lang.*;
+
+import spock.lang.FailsWith;
 
 /**
  *

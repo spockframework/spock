@@ -16,11 +16,13 @@
 
 package org.spockframework.runtime;
 
+import java.util.Iterator;
+import java.util.List;
+
 import org.codehaus.groovy.runtime.InvokerHelper;
+
 import static org.spockframework.runtime.RunStatus.*;
 import org.spockframework.runtime.model.*;
-
-import java.util.*;
 
 /**
  * Adds the ability to run parameterized features.

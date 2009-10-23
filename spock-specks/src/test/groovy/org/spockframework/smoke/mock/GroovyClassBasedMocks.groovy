@@ -16,10 +16,9 @@
 
 package org.spockframework.smoke.mock
 
-import org.junit.runner.RunWith
-import spock.lang.*
-import static spock.lang.Predef.*
 import org.spockframework.mock.TooFewInvocationsError
+import spock.lang.FailsWith
+import spock.lang.Specification
 
 /**
  *

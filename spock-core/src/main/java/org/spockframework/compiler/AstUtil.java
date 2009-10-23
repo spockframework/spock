@@ -16,16 +16,18 @@
 
 package org.spockframework.compiler;
 
+import java.util.*;
+
 import org.codehaus.groovy.ast.*;
 import org.codehaus.groovy.ast.expr.*;
 import org.codehaus.groovy.ast.stmt.*;
 import org.codehaus.groovy.syntax.Types;
 import org.objectweb.asm.Opcodes;
-import org.spockframework.util.*;
+
+import org.spockframework.util.InternalSpockError;
+import org.spockframework.util.SyntaxException;
 
 import spock.lang.Predef;
-
-import java.util.*;
 
 /**
  * Utility methods for AST processing.

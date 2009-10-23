@@ -16,13 +16,11 @@
 
 package org.spockframework.smoke
 
+import org.spockframework.EmbeddedSpecification
 import org.spockframework.runtime.SpeckAssertionError
 import org.spockframework.util.SyntaxException
-import spock.lang.Specification
-import spock.lang.Unroll
-import spock.lang.Issue
-import org.spockframework.EmbeddedSpecification
 import spock.util.EmbeddedSpeckCompiler
+import spock.lang.*
 
 /**
  * @author Peter Niederwieser

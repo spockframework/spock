@@ -16,9 +16,9 @@
 
 package org.spockframework.runtime;
 
-import org.spockframework.runtime.model.FeatureInfo;
-
 import java.util.Comparator;
+
+import org.spockframework.runtime.model.FeatureInfo;
 
 /**
  * @author Peter Niederwieser

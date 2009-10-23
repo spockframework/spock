@@ -17,8 +17,8 @@
 package org.spockframework.groovy
 
 import org.codehaus.groovy.runtime.InvokerHelper
-import org.junit.runner.RunWith
-import spock.lang.*
+import spock.lang.FailsWith
+import spock.lang.Specification
 
 class GroovyMopExploration extends Specification {
   def "call method that takes a String with GString through InvokerHelper"() {

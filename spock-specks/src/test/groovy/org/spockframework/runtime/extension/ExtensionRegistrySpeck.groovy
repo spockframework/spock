@@ -16,8 +16,8 @@
 
 package org.spockframework.runtime.extension
 
-import spock.lang.Specification
 import org.spockframework.runtime.model.SpeckInfo
+import spock.lang.Specification
 
 class ExtensionRegistrySpeck extends Specification {
   def "registry provides all available extensions"() {

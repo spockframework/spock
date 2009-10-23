@@ -16,10 +16,7 @@
 
 package org.spockframework.smoke
 
-import org.junit.runner.RunWith
-
-import static spock.lang.Predef.*
-import spock.lang.*
+import spock.lang.Specification
 
 class ExplicitPredefImport extends Specification {
   def "access Predef members"() {

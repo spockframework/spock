@@ -16,11 +16,6 @@
 
 package org.spockframework.smoke.parameterization
 
-import org.spockframework.*
-import org.junit.runner.RunWith
-import spock.lang.Sputnik
-import spock.lang.Speck
-import spock.lang.Sputnik
 import spock.lang.Specification
 
 class ParameterizationScopes extends Specification {

@@ -16,9 +16,8 @@
 
 package org.spockframework.groovy
 
-import org.junit.runner.RunWith
 import org.spockframework.util.inspector.AstInspector
-import spock.lang.*
+import spock.lang.Specification
 
 /**
  * @author Peter Niederwieser

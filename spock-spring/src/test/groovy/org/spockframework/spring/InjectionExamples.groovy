@@ -17,14 +17,11 @@
 package org.spockframework.spring
 
 import javax.annotation.Resource
-
-import org.springframework.test.context.ContextConfiguration
 import org.springframework.beans.factory.annotation.Autowired
-
-import spock.lang.*
-
-import spock.util.EmbeddedSpeckRunner
 import org.springframework.context.ApplicationContext
+import org.springframework.test.context.ContextConfiguration
+import spock.lang.Specification
+import spock.util.EmbeddedSpeckRunner
 
 @ContextConfiguration(locations = "appcontext.xml")
 class InjectionExamples extends Specification {

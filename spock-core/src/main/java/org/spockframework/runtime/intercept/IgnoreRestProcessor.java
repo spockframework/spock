@@ -18,7 +18,8 @@ package org.spockframework.runtime.intercept;
 
 import org.spockframework.runtime.model.FeatureInfo;
 import org.spockframework.runtime.model.SpeckInfo;
-import spock.lang.*;
+
+import spock.lang.IgnoreRest;
 
 /**
  * Processes @IgnoreRest directives.

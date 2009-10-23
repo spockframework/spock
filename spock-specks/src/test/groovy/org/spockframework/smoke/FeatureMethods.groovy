@@ -16,11 +16,8 @@
 
 package org.spockframework.smoke
 
-import org.junit.runner.RunWith
-
-import spock.lang.*
-import static spock.lang.Predef.*
 import org.spockframework.runtime.InvalidSpeckError
+import spock.lang.Specification
 
 /**
  *

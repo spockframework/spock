@@ -16,7 +16,6 @@
 
 package org.spockframework.smoke.parameterization
 
-import org.codehaus.groovy.control.MultipleCompilationErrorsException
 import org.spockframework.EmbeddedSpecification
 import org.spockframework.util.SpockSyntaxException
 import spock.lang.Issue

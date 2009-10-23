@@ -16,12 +16,7 @@
 
 package org.spockframework.smoke.parameterization
 
-import org.junit.runner.RunWith
 import spock.lang.*
-import spock.lang.Speck
-import spock.lang.Sputnik
-import spock.lang.FailsWith
-import spock.lang.Ignore
 
 class Parameterizations extends Specification {
   def "multi-parameterization"() {

@@ -17,10 +17,12 @@
 package org.spockframework.compiler;
 
 import org.codehaus.groovy.ast.*;
+
 import org.spockframework.mock.*;
 import org.spockframework.runtime.SpockRuntime;
 import org.spockframework.runtime.ValueRecorder;
 import org.spockframework.runtime.model.*;
+
 import spock.lang.*;
 
 /**

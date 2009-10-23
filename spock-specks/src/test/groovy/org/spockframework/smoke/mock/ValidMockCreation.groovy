@@ -16,9 +16,8 @@
 
 package org.spockframework.smoke.mock
 
-import org.junit.runner.RunWith
-import spock.lang.*
-import static spock.lang.Predef.*
+import spock.lang.Predef
+import spock.lang.Specification
 
 class ValidMockCreation extends Specification {
   List list1 = Mock()

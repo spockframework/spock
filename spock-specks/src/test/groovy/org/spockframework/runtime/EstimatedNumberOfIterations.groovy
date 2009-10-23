@@ -16,8 +16,7 @@
 
 package org.spockframework.runtime
 
-import org.junit.runner.RunWith
-import spock.lang.*
+import spock.lang.Specification
 
 class EstimatedNumberOfIterations extends Specification {
   def runner = new ParameterizedSpeckRunner(null, null)

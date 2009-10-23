@@ -16,9 +16,7 @@
 
 package org.spockframework.mock
 
-import org.junit.runner.RunWith
-import spock.lang.*
-import static spock.lang.Predef.*
+import spock.lang.Specification
 
 class DefaultMockFactorySpeck extends Specification {
   IMockFactory factory = new DefaultMockFactory()

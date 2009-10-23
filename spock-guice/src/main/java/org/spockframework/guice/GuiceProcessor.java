@@ -16,10 +16,10 @@
 
 package org.spockframework.guice;
 
-import spock.guice.UseModules;
-
 import org.spockframework.runtime.intercept.AbstractDirectiveProcessor;
 import org.spockframework.runtime.model.SpeckInfo;
+
+import spock.guice.UseModules;
 
 public class GuiceProcessor extends AbstractDirectiveProcessor<UseModules> {
   @Override

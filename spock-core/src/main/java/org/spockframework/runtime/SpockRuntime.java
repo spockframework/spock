@@ -16,12 +16,14 @@
 
 package org.spockframework.runtime;
 
-import org.codehaus.groovy.runtime.typehandling.DefaultTypeTransformation;
-import org.codehaus.groovy.runtime.InvokerHelper;
 import org.codehaus.groovy.runtime.DefaultGroovyMethods;
+import org.codehaus.groovy.runtime.InvokerHelper;
+import org.codehaus.groovy.runtime.typehandling.DefaultTypeTransformation;
+
+import groovy.lang.MetaClass;
+import groovy.lang.MetaMethod;
 
 import org.spockframework.runtime.model.TextPosition;
-import groovy.lang.*;
 
 /**
  * @author Peter Niederwieser

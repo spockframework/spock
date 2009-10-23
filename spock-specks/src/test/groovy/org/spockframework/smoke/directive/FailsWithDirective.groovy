@@ -16,8 +16,8 @@
 
 package org.spockframework.smoke.directive
 
-import org.junit.runner.RunWith
-import spock.lang.*
+import spock.lang.FailsWith
+import spock.lang.Specification
 
 /**
  *

@@ -19,10 +19,9 @@ package org.spockframework.smoke
 import org.junit.runner.Request
 import org.junit.runner.manipulation.Filter
 import org.junit.runner.notification.RunListener
-
+import org.spockframework.EmbeddedSpecification
 import spock.lang.Issue
 import spock.util.EmbeddedSpeckCompiler
-import org.spockframework.EmbeddedSpecification
 
 public class RunningSpecksWithSputnik extends EmbeddedSpecification {
   @Issue("http://issues.spockframework.org/detail?id=13")

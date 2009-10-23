@@ -16,9 +16,7 @@
 
 package org.spockframework.mock
 
-import org.junit.runner.RunWith
-import org.spockframework.mock.IterableResultGenerator
-import spock.lang.*
+import spock.lang.Specification
 
 class IterableResultGeneratorSpeck extends Specification {
   def "generate results from non-empty list" () {

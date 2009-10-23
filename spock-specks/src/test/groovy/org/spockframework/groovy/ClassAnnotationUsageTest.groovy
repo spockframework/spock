@@ -17,15 +17,8 @@
 package org.spockframework.groovy
 
 import org.codehaus.groovy.control.CompilePhase
-
-
-import org.spockframework.groovy.ast.JavaAnnotationWithClassRetention
 import org.spockframework.util.inspector.AstInspector
-import org.spockframework.groovy.ast.GroovyAnnotationWithSourceRetention
-import org.spockframework.groovy.ast.GroovyAnnotationWithClassRetention
-import org.spockframework.groovy.ast.GroovyAnnotationWithRuntimeRetention
-import org.spockframework.groovy.ast.JavaAnnotationWithSourceRetention
-import org.spockframework.groovy.ast.JavaAnnotationWithRuntimeRetention
+import org.spockframework.groovy.ast.*
 
 class ClassAnnotationUsageTest extends GroovyTestCase {
   static classes

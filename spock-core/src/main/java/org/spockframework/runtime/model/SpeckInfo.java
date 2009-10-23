@@ -16,16 +16,12 @@
 
 package org.spockframework.runtime.model;
 
-import org.spockframework.runtime.IFeatureFilter;
-import org.spockframework.runtime.IFeatureSortOrder;
-import org.spockframework.runtime.IMethodNameMapper;
+import java.util.*;
+
+import org.spockframework.runtime.*;
 import org.spockframework.runtime.intercept.IMethodInterceptor;
 import org.spockframework.util.IFunction;
 import org.spockframework.util.Util;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * Runtime information about a Spock specification.

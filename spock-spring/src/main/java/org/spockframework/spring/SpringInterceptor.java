@@ -16,15 +16,15 @@
 
 package org.spockframework.spring;
 
-import org.springframework.test.context.TestContextManager;
 import org.springframework.test.annotation.ProfileValueUtils;
+import org.springframework.test.context.TestContextManager;
 
+import org.spockframework.runtime.SkipSpeckOrFeatureException;
 import org.spockframework.runtime.intercept.IMethodInterceptor;
 import org.spockframework.runtime.intercept.IMethodInvocation;
-import org.spockframework.runtime.SkipSpeckOrFeatureException;
 import org.spockframework.runtime.model.FeatureInfo;
-import org.spockframework.util.UnreachableCodeError;
 import org.spockframework.util.Assert;
+import org.spockframework.util.UnreachableCodeError;
 
 public class SpringInterceptor implements IMethodInterceptor {
   private final TestContextManager manager;

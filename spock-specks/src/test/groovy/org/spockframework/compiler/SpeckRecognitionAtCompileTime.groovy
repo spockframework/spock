@@ -17,7 +17,6 @@
 package org.spockframework.compiler
 
 import org.codehaus.groovy.control.MultipleCompilationErrorsException
-
 import org.spockframework.runtime.model.SpeckMetadata
 import spock.lang.Specification
 

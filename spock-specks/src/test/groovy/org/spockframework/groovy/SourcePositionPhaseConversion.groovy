@@ -16,11 +16,10 @@
 
 package org.spockframework.groovy
 
-import org.junit.runner.RunWith
-import org.spockframework.util.inspector.AstInspector
-import spock.lang.*
 import org.codehaus.groovy.ast.ASTNode
 import org.codehaus.groovy.ast.expr.PropertyExpression
+import org.spockframework.util.inspector.AstInspector
+import spock.lang.Specification
 
 /**
  * A ...

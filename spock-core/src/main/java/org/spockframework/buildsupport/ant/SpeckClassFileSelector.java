@@ -19,8 +19,9 @@ package org.spockframework.buildsupport.ant;
 import java.io.File;
 import java.io.IOException;
 
-import org.apache.tools.ant.types.selectors.BaseExtendSelector;
 import org.apache.tools.ant.Project;
+import org.apache.tools.ant.types.selectors.BaseExtendSelector;
+
 import org.spockframework.buildsupport.SpeckClassFileFinder;
 
 /**

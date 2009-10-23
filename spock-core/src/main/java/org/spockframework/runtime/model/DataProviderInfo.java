@@ -1,7 +1,7 @@
 package org.spockframework.runtime.model;
 
-import java.util.List;
 import java.lang.reflect.AnnotatedElement;
+import java.util.List;
 
 /**
  * Internal metadata about a data provider from which the runtime model is built.

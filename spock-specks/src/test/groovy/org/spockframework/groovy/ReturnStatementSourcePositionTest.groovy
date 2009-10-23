@@ -16,8 +16,8 @@
 
 package org.spockframework.groovy
 
-import org.spockframework.util.inspector.AstInspector
 import org.codehaus.groovy.ast.stmt.ReturnStatement
+import org.spockframework.util.inspector.AstInspector
 
 class ReturnStatementSourcePositionTest extends GroovyTestCase {
   void test() {

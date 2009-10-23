@@ -16,11 +16,10 @@
 
 package spock.util
 
-import org.spockframework.runtime.SpeckInfoBuilder
-import org.junit.runner.RunWith
-import org.junit.Test
 import org.codehaus.groovy.control.MultipleCompilationErrorsException
-import org.codehaus.groovy.control.messages.ExceptionMessage
+import org.junit.Test
+import org.junit.runner.RunWith
+import org.spockframework.runtime.SpeckInfoBuilder
 
 /**
  * Utility class for creating Specks from String source. <em>Not</em> thread-safe.

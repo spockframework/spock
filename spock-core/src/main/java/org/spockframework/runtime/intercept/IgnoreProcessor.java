@@ -16,9 +16,10 @@
 
 package org.spockframework.runtime.intercept;
 
-import spock.lang.Ignore;
+import org.spockframework.runtime.model.FeatureInfo;
+import org.spockframework.runtime.model.SpeckInfo;
 
-import org.spockframework.runtime.model.*;
+import spock.lang.Ignore;
 
 /**
  * Processes @Ignore directives.

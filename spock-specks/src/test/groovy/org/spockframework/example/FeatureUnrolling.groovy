@@ -16,9 +16,8 @@
 
 package org.spockframework.example
 
-import org.junit.runner.RunWith
-
-import spock.lang.*
+import spock.lang.Specification
+import spock.lang.Unroll
 
 /**
  * @author Peter Niederwieser

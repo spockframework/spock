@@ -16,12 +16,9 @@
 
 package org.spockframework.smoke
 
-import org.junit.runner.RunWith
-
-import spock.lang.*
-import static spock.lang.Predef.*
 import org.codehaus.groovy.control.MultipleCompilationErrorsException
 import org.spockframework.util.SpockSyntaxException
+import spock.lang.Specification
 
 /**
  *

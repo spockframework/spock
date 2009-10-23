@@ -1,10 +1,10 @@
 package org.spockframework.runtime.model;
 
-import org.spockframework.runtime.intercept.IMethodInterceptor;
-
+import java.lang.reflect.AnnotatedElement;
 import java.util.ArrayList;
 import java.util.List;
-import java.lang.reflect.AnnotatedElement;
+
+import org.spockframework.runtime.intercept.IMethodInterceptor;
 
 /**
  * @author Peter Niederwieser

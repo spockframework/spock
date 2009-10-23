@@ -19,8 +19,8 @@ package org.spockframework.tapestry;
 import org.apache.tapestry5.ioc.annotations.SubModule;
 
 import org.spockframework.runtime.extension.ISpockExtension;
-import org.spockframework.runtime.model.SpeckInfo;
 import org.spockframework.runtime.intercept.IMethodInterceptor;
+import org.spockframework.runtime.model.SpeckInfo;
 
 /**
  * Facilitates the creation of integration-level specifications for applications based

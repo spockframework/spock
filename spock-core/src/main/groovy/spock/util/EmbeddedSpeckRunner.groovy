@@ -16,10 +16,8 @@
 
 package spock.util
 
-import org.junit.runner.Result
-import org.junit.runner.JUnitCore
-import org.junit.runner.Request
 import org.junit.runner.notification.RunListener
+import org.junit.runner.*
 
 /**
  * Utility class for running Specks from String source.

@@ -16,14 +16,11 @@
 
 package org.spockframework.smoke.mock
 
-import org.junit.runner.RunWith
-
-import spock.lang.*
-import static spock.lang.Predef.*
 import org.codehaus.groovy.runtime.typehandling.GroovyCastException
-import org.codehaus.groovy.control.MultipleCompilationErrorsException
-import org.spockframework.util.SpockSyntaxException
 import org.spockframework.EmbeddedSpecification
+import org.spockframework.util.SpockSyntaxException
+import spock.lang.FailsWith
+import spock.lang.Specification
 
 /**
  *

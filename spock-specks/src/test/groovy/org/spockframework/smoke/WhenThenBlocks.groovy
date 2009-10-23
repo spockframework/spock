@@ -16,8 +16,7 @@
 
 package org.spockframework.smoke
 
-import org.junit.runner.RunWith
-import spock.lang.*
+import spock.lang.Specification
 
 /**
  *

@@ -18,13 +18,12 @@ package org.spockframework.guice
 
 import com.google.inject.Inject
 import com.google.inject.Injector
-
+import com.google.inject.name.Named
 import spock.guice.UseModules
 import spock.lang.Shared
 import spock.lang.Specification
-import com.google.inject.name.Named
 
-@UseModules(Module)  
+@UseModules(Module)
 class InjectionExamples extends Specification {
   @Inject
   IService service

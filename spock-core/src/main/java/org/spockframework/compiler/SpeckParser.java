@@ -24,7 +24,6 @@ import org.codehaus.groovy.ast.stmt.Statement;
 
 import static org.spockframework.compiler.Identifiers.*;
 import org.spockframework.compiler.model.*;
-import org.spockframework.compiler.model.Speck;
 import org.spockframework.util.SyntaxException;
 
 import spock.lang.Shared;

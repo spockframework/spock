@@ -16,7 +16,7 @@
 
 package org.spockframework.smoke.mock
 
-import spock.lang.*
+import spock.lang.Specification
 
 class InteractionsAccessingFieldsAndProperties extends Specification {
   private aField = 1

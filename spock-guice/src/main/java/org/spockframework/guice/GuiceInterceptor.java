@@ -22,13 +22,12 @@ import java.util.*;
 import com.google.inject.*;
 import com.google.inject.spi.InjectionPoint;
 
-import spock.guice.UseModules;
-
 import org.spockframework.runtime.intercept.IMethodInterceptor;
 import org.spockframework.runtime.intercept.IMethodInvocation;
 import org.spockframework.runtime.model.SpeckInfo;
 import org.spockframework.util.UnreachableCodeError;
 
+import spock.guice.UseModules;
 import spock.lang.Shared;
 
 /**

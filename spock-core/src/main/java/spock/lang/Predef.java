@@ -17,6 +17,7 @@
 package spock.lang;
 
 import groovy.lang.Closure;
+
 import org.spockframework.mock.MockController;
 import org.spockframework.runtime.WrongExceptionThrownError;
 import org.spockframework.util.SyntaxException;

@@ -16,9 +16,9 @@
 
 package org.spockframework.runtime.intercept;
 
-import spock.lang.Timeout;
-
 import org.spockframework.runtime.SpeckAssertionError;
+
+import spock.lang.Timeout;
 
 /**
  * Implementation of @Timeout.

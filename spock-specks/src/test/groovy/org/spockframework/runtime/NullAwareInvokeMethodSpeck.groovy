@@ -16,9 +16,7 @@
 
 package org.spockframework.runtime
 
-import spock.lang.*
-import static spock.lang.Predef.*
-import org.junit.runner.RunWith
+import spock.lang.Specification
 
 class NullAwareInvokeMethodSpeck extends Specification {
   def "invoke void Java instance method"() {

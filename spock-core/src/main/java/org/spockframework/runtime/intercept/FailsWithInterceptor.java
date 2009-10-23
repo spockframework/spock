@@ -16,9 +16,9 @@
 
 package org.spockframework.runtime.intercept;
 
-import spock.lang.FailsWith;
-
 import org.spockframework.runtime.WrongExceptionThrownError;
+
+import spock.lang.FailsWith;
 
 /**
  *

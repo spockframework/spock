@@ -18,8 +18,10 @@ package org.spockframework.compiler;
 
 import java.io.File;
 
-import org.codehaus.groovy.ast.*;
+import org.codehaus.groovy.ast.AnnotationNode;
+import org.codehaus.groovy.ast.Parameter;
 import org.codehaus.groovy.ast.expr.*;
+
 import org.spockframework.compiler.model.*;
 import org.spockframework.runtime.model.*;
 

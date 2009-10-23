@@ -24,7 +24,8 @@ import org.codehaus.groovy.control.SourceUnit;
 import org.codehaus.groovy.transform.ASTTransformation;
 import org.codehaus.groovy.transform.GroovyASTTransformation;
 
-import spock.lang.*;
+import spock.lang.Predef;
+import spock.lang.Speck;
 
 /**
  * A transformation for everything that needs to be done before the semantic

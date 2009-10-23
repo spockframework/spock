@@ -16,11 +16,9 @@
 
 package org.spockframework.groovy
 
-import org.junit.runner.RunWith
-import org.spockframework.util.inspector.AstInspector
 import org.codehaus.groovy.control.CompilePhase
-import spock.lang.*
-
+import org.spockframework.util.inspector.AstInspector
+import spock.lang.Specification
 
 /**
  * A ...

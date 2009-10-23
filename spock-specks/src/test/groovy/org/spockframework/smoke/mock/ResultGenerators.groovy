@@ -16,9 +16,7 @@
 
 package org.spockframework.smoke.mock
 
-import org.junit.runner.RunWith
-import spock.lang.*
-import static spock.lang.Predef.*
+import spock.lang.Specification
 
 class ResultGenerators extends Specification {
   def "return simple result"() {

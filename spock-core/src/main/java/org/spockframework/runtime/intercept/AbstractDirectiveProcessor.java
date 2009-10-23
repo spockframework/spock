@@ -18,8 +18,8 @@ package org.spockframework.runtime.intercept;
 
 import java.lang.annotation.Annotation;
 
-import org.spockframework.runtime.model.*;
 import org.spockframework.runtime.InvalidSpeckError;
+import org.spockframework.runtime.model.*;
 
 /**
  *

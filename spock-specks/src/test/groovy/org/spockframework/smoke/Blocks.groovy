@@ -16,42 +16,37 @@
 
 package org.spockframework.smoke
 
-import org.codehaus.groovy.control.MultipleCompilationErrorsException
+import org.spockframework.EmbeddedSpecification
 import org.spockframework.runtime.SpeckInfoBuilder
 import org.spockframework.util.SpockSyntaxException
-import spock.lang.Specification
 import static org.spockframework.runtime.model.BlockKind.*
 
-class Blocks extends Specification {
+class Blocks extends EmbeddedSpecification {
   def "labels and comments"() {
-    def speckClass = new GroovyClassLoader().parseClass("""
-import spock.lang.*
+    def speckClass = compiler.compileSpeckBody("""
+def m1() {
+  setup: "setup"
+  and: "setup2"
+  when: "when"
+  and: "when2"
+  then: "then"
+  and: "then2"
+  where: "where"
+  and: "where2"
+}
 
-class Foo extends Specification {
-  def m1() {
-    setup: "setup"
-    and: "setup2"
-    when: "when"
-    and: "when2"
-    then: "then"
-    and: "then2"
-    where: "where"
-    and: "where2"
-  }
+def m2() {
+  expect: "expect"
+  and: "expect2"
+}
 
-  def m2() {
-    expect: "expect"
-    and: "expect2"
-  }
-
-  def m3() {
-    given: "given"
-    and: def x
-    expect: def y
-    and: "and"
-    where: ""
-    and: z << 1
-  }
+def m3() {
+  given: "given"
+  and: def x
+  expect: def y
+  and: "and"
+  where: ""
+  and: z << 1
 }
     """)
 
@@ -75,19 +70,12 @@ class Foo extends Specification {
 
   def "unknown label"() {
     when:
-    new GroovyClassLoader().parseClass("""
-@spock.lang.Speck
-class Foo {
-  def foo() {
-    setuppp: def a = 1
-  }
-}
+    compiler.compileFeatureBody("""
+setuppp: def a = 1
     """)
 
     then:
-    MultipleCompilationErrorsException e = thrown()
-    def error = e.errorCollector.getSyntaxError(0)
-    error instanceof SpockSyntaxException
-    error.line == 5
+    SpockSyntaxException e = thrown()
+    e.line == 1
   }
 }

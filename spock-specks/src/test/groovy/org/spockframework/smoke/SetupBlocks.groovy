@@ -16,15 +16,14 @@
 
 package org.spockframework.smoke
 
-import org.codehaus.groovy.control.MultipleCompilationErrorsException
+import org.spockframework.EmbeddedSpecification
 import org.spockframework.util.SpockSyntaxException
-import spock.lang.Specification
 
 /**
  *
  * @author Peter Niederwieser
  */
-class SetupBlocks extends Specification {
+class SetupBlocks extends EmbeddedSpecification {
   def "implicit"() {
     def a = 1
   }
@@ -40,7 +39,7 @@ class SetupBlocks extends Specification {
 
   def "named"() {
     setup: "an a"
-      def a = 1
+    def a = 1
   }
 
   def "and-ed"() {
@@ -52,57 +51,41 @@ class SetupBlocks extends Specification {
     def a = 1
     def b = 2
     setup: "c"
-      def c = 3
+    def c = 3
     and: "d"
-      def d = 4
+    def d = 4
     and: def e = 5
   }
 
 
   def "consecutive setup's"() {
     when:
-      new GroovyClassLoader().parseClass("""
-@spock.lang.Speck
-class Foo {
-  def foo() {
-    setup: a = 1
-    setup: b = 2
-  }
-}
-      """)
+    compiler.compileFeatureBody """
+setup: a = 1
+setup: b = 2
+    """
 
     then:
-      MultipleCompilationErrorsException e = thrown()
-      def error = e.errorCollector.getSyntaxError(0)
-      error instanceof SpockSyntaxException
-      error.line == 6
+    SpockSyntaxException e = thrown()
+    e.line == 2
   }
 
-    def "multiple setup's"() {
+  def "multiple setup's"() {
     when:
-      new GroovyClassLoader().parseClass("""
-@spock.lang.Speck
-class Foo {
-  def foo() {
-    setup: a = 1
-    expect: true
-    setup: b = 2
-  }
-}
-      """)
+    compiler.compileFeatureBody """
+setup: a = 1
+expect: true
+setup: b = 2
+      """
 
     then:
-      MultipleCompilationErrorsException e = thrown()
-      def error = e.errorCollector.getSyntaxError(0)
-      error instanceof SpockSyntaxException
-      error.line == 7
+    thrown(SpockSyntaxException)
   }
 
   def "blocks are executed"() {
     def a = 1
     setup: a += 1
-    and: "blah"
-      a += 2
+    and: "blah"; a += 2
     expect: a == 4
   }
 

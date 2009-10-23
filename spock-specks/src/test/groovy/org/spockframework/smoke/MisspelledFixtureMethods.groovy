@@ -16,96 +16,60 @@
 
 package org.spockframework.smoke
 
-import org.codehaus.groovy.control.MultipleCompilationErrorsException
+import org.spockframework.EmbeddedSpecification
 import org.spockframework.util.SpockSyntaxException
-import spock.lang.Specification
 
 /**
- *
  * @author Peter Niederwieser
  */
-class MisspelledFixtureMethods extends Specification {
-
-  GroovyClassLoader loader = new GroovyClassLoader()
-
+class MisspelledFixtureMethods extends EmbeddedSpecification {
   def "misspelled setup causes compile error"() {
     when:
-    loader.parseClass("""
-import spock.lang.*
-
-class ASpeck extends Specification {
-  def setUp() {}
-}
+    compiler.compileSpeckBody("""
+def setUp() {}
     """)
 
     then:
-    MultipleCompilationErrorsException e = thrown()
-    compilationFailedDueToMisspelling(e)
+    thrown(SpockSyntaxException)
   }
 
   def "misspelled cleanup causes compile error"() {
     when:
-    loader.parseClass("""
-import spock.lang.*
-
-class ASpeck extends Specification {
-  def cLeanup() {}
-}
+    compiler.compileSpeckBody("""
+def cLeanup() {}
     """)
 
     then:
-    MultipleCompilationErrorsException e = thrown()
-    compilationFailedDueToMisspelling(e)
+    thrown(SpockSyntaxException)
   }
 
   def "misspelled setupSpeck causes compile error"() {
     when:
-    loader.parseClass("""
-import spock.lang.*
-
-class ASpeck extends Specification {
-  def setupspeck() {}
-}
+    compiler.compileSpeckBody("""
+def setupspeck() {}
     """)
 
     then:
-    MultipleCompilationErrorsException e = thrown()
-    compilationFailedDueToMisspelling(e)
+    thrown(SpockSyntaxException)
   }
 
   def "misspelled cleanupSpeck causes compile error"() {
     when:
-    loader.parseClass("""
-import spock.lang.*
-
-class ASpeck extends Specification {
-  def CleanupSpeck() {}
-}
+    compiler.compileSpeckBody("""
+def CleanupSpeck() {}
     """)
 
     then:
-    MultipleCompilationErrorsException e = thrown()
-    compilationFailedDueToMisspelling(e)
+    thrown(SpockSyntaxException)
   }
 
   def "correctly spelled setup compiles successfully"() {
     when:
-    loader.parseClass("""
-import spock.lang.*
-
-class ASpeck extends Specification {
+    compiler.compileSpeckBody("""
   def setup() {}
-}
     """)
 
     then:
-    notThrown(MultipleCompilationErrorsException)
-  }
-
-  private compilationFailedDueToMisspelling(MultipleCompilationErrorsException e) {
-    def errors = e.errorCollector.errors
-    assert errors.size() == 1
-    assert errors[0].cause instanceof SpockSyntaxException
-    true
+    noExceptionThrown()
   }
 }

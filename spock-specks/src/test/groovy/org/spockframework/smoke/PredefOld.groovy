@@ -16,11 +16,10 @@
 
 package org.spockframework.smoke
 
-import org.codehaus.groovy.control.MultipleCompilationErrorsException
+import org.spockframework.EmbeddedSpecification
 import org.spockframework.util.SpockSyntaxException
-import spock.lang.Specification
 
-class PredefOld extends Specification {
+class PredefOld extends EmbeddedSpecification {
   def "basic usage"() {
     def list = [1,2,3]
 
@@ -104,22 +103,15 @@ class PredefOld extends Specification {
 
   def "may only occur in a then-block"() {
     when:
-    new GroovyClassLoader().parseClass """
-@spock.lang.Speck
-class Foo {
-  def foo() {
+    compiler.compileFeatureBody """
     def list = [1,2,3]
     when: old(list.size()) == 3
     then: true
-  }
-}
     """
 
     then:
-    MultipleCompilationErrorsException e = thrown()
-    def error = e.errorCollector.getSyntaxError(0)
-    error instanceof SpockSyntaxException
-    error.line == 6
+    SpockSyntaxException e = thrown()
+    e.line == 2
   }
 
   def "may occur outside of a condition"() {

@@ -138,8 +138,7 @@ class ASpeck {}
     !clazz.isAnnotationPresent(SpeckMetadata)
   }
 
-  // we intentionally don't use EmbeddedSpeckCompiler
-  // to avoid confusing matters
+  // we intentionally don't use EmbeddedSpeckCompiler here to avoid confusing matters
   private compile(String source) {
     new GroovyClassLoader().parseClass(source)
   }

@@ -16,50 +16,33 @@
 
 package org.spockframework.smoke
 
-import org.codehaus.groovy.control.MultipleCompilationErrorsException
+import org.spockframework.EmbeddedSpecification
 import org.spockframework.util.SpockSyntaxException
-import spock.lang.Specification
 
 /**
- *
  * @author Peter Niederwieser
  */
 
-class ExpectBlocks extends Specification {
+class ExpectBlocks extends EmbeddedSpecification {
   def "may not contain exception conditions"() {
     when:
-    new GroovyClassLoader().parseClass("""
-@spock.lang.Speck
-class Foo {
-  def foo() {
-    expect: thrown(RuntimeException)
-  }
-}
+    compiler.compileFeatureBody("""
+expect: thrown(RuntimeException)
     """)
 
     then:
-    MultipleCompilationErrorsException e = thrown()
-    def error = e.errorCollector.getSyntaxError(0)
-    error instanceof SpockSyntaxException
-    error.line == 5
+    thrown(SpockSyntaxException)
   }
 
   def "may not contain interactions"() {
     when:
-    new GroovyClassLoader().parseClass("""
-@spock.lang.Speck
-class Foo {
-  def foo() {
-    def l = Mock(List)
-    expect: l.size() >> 5
-  }
-}
+    compiler.compileFeatureBody("""
+def l = Mock(List)
+expect: l.size() >> 5
     """)
 
     then:
-    MultipleCompilationErrorsException e = thrown()
-    def error = e.errorCollector.getSyntaxError(0)
-    error instanceof SpockSyntaxException
-    error.line == 6
+    SpockSyntaxException e = thrown()
+    e.line == 2
   }
 }

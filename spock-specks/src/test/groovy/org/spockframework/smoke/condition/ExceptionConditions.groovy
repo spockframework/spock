@@ -16,15 +16,14 @@
 
 package org.spockframework.smoke.condition
 
-import org.codehaus.groovy.control.MultipleCompilationErrorsException
+import org.spockframework.EmbeddedSpecification
 import org.spockframework.util.SpockSyntaxException
-import spock.lang.Specification
 
 /**
  * @author Peter Niederwieser
  */
 
-class ExceptionConditions extends Specification {
+class ExceptionConditions extends EmbeddedSpecification {
   def "basic usage"() {
     when: "".charAt(0)
     then: thrown(IndexOutOfBoundsException)
@@ -100,42 +99,30 @@ class ExceptionConditions extends Specification {
 
   def "may only occur once in a then-block"() {
     when:
-    new GroovyClassLoader().parseClass("""
-@spock.lang.Speck
-class Ex {
-  def ex() {
-    when: throw new IOException()
-    then:
-      thrown(IOException)
-      thrown(Exception)
-  }
-}
-      """)
+    compiler.compileFeatureBody """
+when:
+throw new IOException()
+
+then:
+thrown(IOException)
+thrown(Exception)
+    """
 
     then:
-    MultipleCompilationErrorsException e = thrown()
-    def error = e.errorCollector.getSyntaxError(0)
-    error instanceof SpockSyntaxException
-    error.line == 8
+    SpockSyntaxException e = thrown()
+    e.line == 6
   }
 
   def "may only occur once in a group of then-blocks"() {
     when:
-    new GroovyClassLoader().parseClass("""
-@spock.lang.Speck
-class Ex {
-  def ex() {
-    when: throw new IOException()
-    then: thrown(IOException)
-    and : thrown(Exception)
-  }
-}
-      """)
+    compiler.compileFeatureBody """
+when: throw new IOException()
+then: thrown(IOException)
+and : thrown(Exception)
+    """
 
     then:
-    MultipleCompilationErrorsException e = thrown()
-    def error = e.errorCollector.getSyntaxError(0)
-    error instanceof SpockSyntaxException
-    error.line == 7
+    SpockSyntaxException e = thrown()
+    e.line == 3
   }
 }

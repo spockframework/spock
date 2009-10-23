@@ -29,14 +29,17 @@ import org.junit.runner.notification.Failure
 class SpeckRunListenerSpeckRun {
     
     final name
+    final protected reports
+    final protected statusOut
+    
+    final protected junitTest
+    final protected startTime
+
     final runCount
     final failureCount
-    final protected reports
-    final protected junitTest
-    final protected statusOut
-    final protected startTime
+
     final protected outAndErrSwapper
-    
+        
     SpeckRunListenerSpeckRun(name, reportFactory, statusOut) {
       this.name = name
       this.reports = reportFactory.createReports(name)

@@ -55,8 +55,9 @@ class SpeckRunListener extends RunListener {
     System.out.println("--Output from ${description.methodName}--")
     System.err.println("--Output from ${description.methodName}--")
 
+    def testCase = new TestCaseAdapter(description)
     formattedOutputs.each {
-      it.formatter.startTest(new TestCaseAdapter(description))
+      it.formatter.startTest(testCase)
     }
   }
 
@@ -64,21 +65,22 @@ class SpeckRunListener extends RunListener {
     if (++failureCount == 1) out.println()
     out.println("${failure.description.methodName}...FAILED")
 
-    def description = failure.description
+    def testCase = new TestCaseAdapter(failure.description)
     def exception = failure.exception
 
     formattedOutputs.each {
       if (exception instanceof AssertionFailedError) {
-        it.formatter.addFailure(new TestCaseAdapter(description), exception)
+        it.formatter.addFailure(testCase, exception)
       } else {
-        it.formatter.addError(new TestCaseAdapter(description), exception)
+        it.formatter.addError(testCase, exception)
       }
     }
   }
 
   void testFinished(Description description) {
+    def testCase = new TestCaseAdapter(description)
     formattedOutputs.each {
-      it.formatter.endTest(new TestCaseAdapter(description))
+      it.formatter.endTest(testCase)
     }
   }
 

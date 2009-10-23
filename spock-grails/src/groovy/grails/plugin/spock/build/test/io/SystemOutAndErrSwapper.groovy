@@ -24,7 +24,11 @@ class SystemOutAndErrSwapper {
   protected swappedInOut
   protected swappedInErr
 
-  def swap(Closure swappedFor) {
+  protected swapped = false
+  
+  List<OutputStream> swapIn() {
+    if (swapped) throw new IllegalStateException("swapIn() called during a swap")
+    
     swappedOutOut = System.out
     swappedOutErr = System.err
 
@@ -33,9 +37,33 @@ class SystemOutAndErrSwapper {
 
     System.setOut(new PrintStream(swappedInOut))
     System.setErr(new PrintStream(swappedInErr))
+    
+    swapped = true
+
+    [this.swappedInOut, this.swappedInErr]
+  }
+  
+  List<OutputStream> swapOut() {
+    if (!swapped) throw new IllegalStateException("swapOut() called while not during a swap")
+    
+    System.out = this.swappedOutOut
+    System.err = this.swappedOutErr
+
+    swappedOutOut = null
+    swappedOutErr = null
 
     def streams = [this.swappedInOut, this.swappedInErr]
-
+    swappedInOut = null
+    swappedInErr = null
+    
+    swapped = false
+    
+    streams
+  }
+  
+  def swap(Closure swappedFor) {
+    def streams = swapIn()
+    
     try {
       switch (swappedFor.maximumNumberOfParameters) {
         case 0:
@@ -45,18 +73,11 @@ class SystemOutAndErrSwapper {
           swappedFor(streams)
           break
         default:
-          swappedFor(* streams)
+          swappedFor(*streams)
           break
       }
     } finally {
-      System.out = this.swappedOutOut
-      System.err = this.swappedOutErr
-
-      swappedOutOut = null
-      swappedOutErr = null
-
-      swappedInOut = null
-      swappedInErr = null
+      swapOut()
     }
 
     streams

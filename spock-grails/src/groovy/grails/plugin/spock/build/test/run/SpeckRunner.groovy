@@ -38,13 +38,13 @@ class SpeckRunner {
     def junit = new JUnitCore()
     junit.addListener(listener)
 
-    suite.specks.each {speck ->
+    suite.specks.each { speck ->
 
       def junitTest = new JUnitTest(speck.name)
       def reports = reportFactory.createReports(speck.name)
 
 
-      outAndErrSwapper.swap {out, err ->
+      outAndErrSwapper.swap { out, err ->
         try {
           reports*.start(junitTest)
           listener.setSpeck(speck, reports) {

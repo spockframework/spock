@@ -35,20 +35,18 @@ class SpeckRunListenerSpeckRun {
     final protected junitTest
     final protected startTime
 
-    final runCount
-    final failureCount
+    final runCount = 0
+    final errorCount = 0
+    final failureCount = 0
 
-    final protected outAndErrSwapper
+    final protected outAndErrSwapper = new SystemOutAndErrSwapper()
         
     SpeckRunListenerSpeckRun(name, reportFactory, statusOut) {
       this.name = name
       this.reports = reportFactory.createReports(name)
       this.statusOut = statusOut
       
-      this.runCount = 0
-      this.failureCount = 0
       this.junitTest = new JUnitTest(name)
-      this.outAndErrSwapper = new SystemOutAndErrSwapper()
     }
     
     void start() {

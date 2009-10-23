@@ -16,21 +16,14 @@
 
 package org.spockframework.smoke.condition
 
-import org.junit.runner.RunWith
-import spock.lang.Speck
-import spock.lang.Sputnik
 import static java.lang.Math.min
-import static org.spockframework.smoke.condition.ConditionSpeckUtil.isRendered
 
 /**
  * Describes rendering of whole conditions.
  *
  * @author Peter Niederwieser
  */
-
-@Speck
-@RunWith (Sputnik)
-class ConditionRendering {
+class ConditionRendering extends ConditionSpecification {
   def "simple condition"() {
     expect:
     isRendered """
@@ -727,7 +720,8 @@ private class Holder {
 private class Person2 {
   def name
   def age
-
+  def height
+  
   def eat(args) { null }
 
   String toString() { "p" }

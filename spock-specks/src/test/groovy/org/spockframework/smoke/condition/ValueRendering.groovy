@@ -16,12 +16,8 @@
 
 package org.spockframework.smoke.condition
 
-import spock.lang.*
-import static spock.lang.Predef.*
-import org.junit.runner.RunWith
-
-import static org.spockframework.smoke.condition.ConditionSpeckUtil.*
-import static java.lang.Thread.State.*
+import spock.lang.Issue
+import static java.lang.Thread.State.NEW
 
 /**
  * Describes rendering of individual values.
@@ -29,9 +25,7 @@ import static java.lang.Thread.State.*
  * @author Peter Niederwieser
  */
 
-@Speck
-@RunWith (Sputnik)
-class ValueRendering {
+class ValueRendering extends ConditionSpecification {
   def "null value"() {
     expect:
     isRendered """

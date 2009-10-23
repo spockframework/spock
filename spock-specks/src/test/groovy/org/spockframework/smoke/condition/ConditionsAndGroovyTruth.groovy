@@ -16,18 +16,14 @@
 
 package org.spockframework.smoke.condition
 
-import org.junit.runner.RunWith
-
 import org.spockframework.runtime.ConditionNotSatisfiedError
-import spock.lang.*
+import spock.lang.FailsWith
+import spock.lang.Specification
 
 /**
- *
  * @author Peter Niederwieser
  */
-@Speck
-@RunWith(Sputnik)
-class SatisfiedConditions {
+class SatisfiedConditions extends Specification {
   def "boolean"() {
     expect: true
   }
@@ -59,10 +55,8 @@ class SatisfiedConditions {
   }
 }
 
-@Speck
-@RunWith(Sputnik)
 @FailsWith(ConditionNotSatisfiedError)
-class UnsatisfiedConditions {
+class UnsatisfiedConditions extends Specification {
   def "boolean"() {
     expect: false
   }

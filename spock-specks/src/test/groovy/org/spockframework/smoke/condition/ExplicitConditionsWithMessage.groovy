@@ -16,19 +16,15 @@
 
 package org.spockframework.smoke.condition
 
-import org.junit.runner.RunWith
-
-import spock.lang.*
-import static org.spockframework.smoke.condition.ConditionSpeckUtil.*
 import org.spockframework.runtime.ConditionNotSatisfiedError
+import spock.lang.FailsWith
+import spock.lang.Issue
 
 /**
  * @author Peter Niederwieser
  */
 @Issue("http://issues.spockframework.org/detail?id=22")
-@Speck
-@RunWith (Sputnik)
-class ExplicitConditionsWithMessage {
+class ExplicitConditionsWithMessage extends ConditionSpecification {
   def "evaluation of satisfied condition"() {
     expect:
     assert 1 + 2 == 3, "need to brush up my math"

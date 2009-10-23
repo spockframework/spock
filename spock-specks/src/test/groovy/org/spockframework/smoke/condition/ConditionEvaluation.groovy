@@ -16,12 +16,6 @@
 
 package org.spockframework.smoke.condition
 
-import spock.lang.*
-import static spock.lang.Predef.*
-import org.junit.runner.RunWith
-
-import static org.spockframework.smoke.condition.ConditionSpeckUtil.*
-
 import static java.lang.Math.max
 import static java.lang.Math.min
 
@@ -34,9 +28,7 @@ import static java.lang.Math.min
  * @author Peter Niederwieser
  */
 
-@Speck
-@RunWith (Sputnik)
-class ConditionEvaluation {
+class ConditionEvaluation extends ConditionSpecification {
   def "multi-line conditions"() {
     expect:
     2 *
@@ -358,6 +350,7 @@ private class MethodPointers {
 private class Person {
   def name
   def age
-
+  def height
+  
   def eat(args) { args }
 }

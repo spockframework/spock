@@ -16,19 +16,13 @@
 
 package org.spockframework.smoke.condition
 
-import org.junit.runner.RunWith
-
-import spock.lang.*
-import static spock.lang.Predef.*
 import org.spockframework.runtime.ConditionNotSatisfiedError
+import spock.lang.*
 
 /**
- *
  * @author Peter Niederwieser
  */
-@Speck
-@RunWith (Sputnik)
-class ExplicitConditionsInFields {
+class ExplicitConditionsInFields extends Specification {
   def instanceField = { assert false }
   @Shared sharedField = { assert false }
 

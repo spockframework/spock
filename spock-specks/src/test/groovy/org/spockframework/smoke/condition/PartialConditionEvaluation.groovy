@@ -16,8 +16,7 @@
 
 package org.spockframework.smoke.condition
 
-import org.junit.runner.RunWith
-import spock.lang.*
+import spock.lang.Specification
 
 /**
  * Tests whether we are able to handle the situation where some expressions
@@ -25,9 +24,7 @@ import spock.lang.*
  *
  * @author Peter Niederwieser
  */
-@Speck
-@RunWith (Sputnik)
-class PartialConditionEvaluation {
+class PartialConditionEvaluation extends Specification {
   def "test"() {
     expect: ((false && true) ^ (true || bar(x, y, z)))
   }

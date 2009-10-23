@@ -16,21 +16,15 @@
 
 package org.spockframework.smoke.condition
 
-import org.junit.runner.RunWith
-import org.spockframework.util.SpockSyntaxException
 import org.codehaus.groovy.control.MultipleCompilationErrorsException
-import spock.lang.*
-import static spock.lang.Predef.*
+import org.spockframework.util.SpockSyntaxException
+import spock.lang.Specification
 
 /**
- * A ...
-
  * @author Peter Niederwieser
  */
 
-@Speck
-@RunWith(Sputnik)
-class ExceptionConditions {
+class ExceptionConditions extends Specification {
   def "basic usage"() {
     when: "".charAt(0)
     then: thrown(IndexOutOfBoundsException)

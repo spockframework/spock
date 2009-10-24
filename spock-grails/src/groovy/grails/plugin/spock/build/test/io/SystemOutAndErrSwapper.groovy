@@ -16,70 +16,58 @@
 
 package grails.plugin.spock.build.test.io
 
-// TODO this class needs a better name and method name
 class SystemOutAndErrSwapper {
-  protected swappedOutOut
-  protected swappedOutErr
+    
+  protected PrintStream swappedOutOut
+  protected PrintStream swappedOutErr
 
-  protected swappedInOut
-  protected swappedInErr
+  protected PrintStream swappedInOut
+  protected PrintStream swappedInErr
 
-  protected swapped = false
+  protected ByteArrayOutputStream swappedInOutByteStream
+  protected ByteArrayOutputStream swappedInErrByteStream
   
-  List<OutputStream> swapIn() {
+  protected boolean swapped = false
+  
+  List<ByteArrayOutputStream> swapIn() {
     if (swapped) throw new IllegalStateException("swapIn() called during a swap")
     
     swappedOutOut = System.out
     swappedOutErr = System.err
 
-    swappedInOut = new ByteArrayOutputStream()
-    swappedInErr = new ByteArrayOutputStream()
-
-    System.setOut(new PrintStream(swappedInOut))
-    System.setErr(new PrintStream(swappedInErr))
+    swappedInOutByteStream = new ByteArrayOutputStream()
+    swappedInErrByteStream = new ByteArrayOutputStream()
+    
+    swappedInOut = new PrintStream(swappedInOutByteStream)
+    swappedInErr = new PrintStream(swappedInErrByteStream)
+    
+    System.out = swappedInOut
+    System.err = swappedInErr
     
     swapped = true
 
-    [this.swappedInOut, this.swappedInErr]
+    [swappedInOutByteStream, swappedInErrByteStream]
   }
   
-  List<OutputStream> swapOut() {
+  List<ByteArrayOutputStream> swapOut() {
     if (!swapped) throw new IllegalStateException("swapOut() called while not during a swap")
     
-    System.out = this.swappedOutOut
-    System.err = this.swappedOutErr
+    System.out = swappedOutOut
+    System.err = swappedOutErr
 
     swappedOutOut = null
     swappedOutErr = null
 
-    def streams = [this.swappedInOut, this.swappedInErr]
     swappedInOut = null
     swappedInErr = null
+
+    def byteStreams = [swappedInOutByteStream, swappedInErrByteStream]
+    swappedInOutByteStream = null
+    swappedInErrByteStream = null
     
     swapped = false
     
-    streams
+    byteStreams
   }
   
-  def swap(Closure swappedFor) {
-    def streams = swapIn()
-    
-    try {
-      switch (swappedFor.maximumNumberOfParameters) {
-        case 0:
-          swappedFor()
-          break
-        case 1:
-          swappedFor(streams)
-          break
-        default:
-          swappedFor(*streams)
-          break
-      }
-    } finally {
-      swapOut()
-    }
-
-    streams
-  }
 }

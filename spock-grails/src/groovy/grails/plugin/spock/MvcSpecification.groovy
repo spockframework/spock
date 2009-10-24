@@ -55,7 +55,7 @@ abstract class MvcSpecification extends UnitSpecification {
   protected webRequest
 
   abstract provideMvcClassUnderTest() 
-  abstract initialiseMvcMocking(Class classUnderTest)
+  abstract initializeMvcMocking(Class classUnderTest)
   
   def setupSpeck() {
     classUnderTest = provideMvcClassUnderTest()
@@ -81,7 +81,7 @@ abstract class MvcSpecification extends UnitSpecification {
   def getMockFlash() { instanceUnderTest.flash }
 
   def setup() {
-    initialiseMvcMocking(classUnderTest)
+    initializeMvcMocking(classUnderTest)
     instanceUnderTest = classUnderTest.newInstance()
 
     MockApplicationContext ctx = new MockApplicationContext()

@@ -20,7 +20,7 @@ class TagLibSpecification extends MvcSpecification {
     findClassUnderTestConventiallyBySuffix('TagLib')
   }
   
-  def initialiseMvcMocking(Class classUnderTest) {
+  def initializeMvcMocking(Class classUnderTest) {
     mockTagLib(classUnderTest)
   }
 

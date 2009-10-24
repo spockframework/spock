@@ -57,7 +57,7 @@ class ControllerSpecification extends MvcSpecification {
       findClassUnderTestConventiallyBySuffix('Controller')
     }
     
-    def initialiseMvcMocking(Class classUnderTest) {
+    def initializeMvcMocking(Class classUnderTest) {
       mockController(classUnderTest)
     }
         

@@ -24,32 +24,32 @@ class SystemOutAndErrSwapper {
   protected PrintStream swappedInOut
   protected PrintStream swappedInErr
 
-  protected ByteArrayOutputStream swappedInOutByteStream
-  protected ByteArrayOutputStream swappedInErrByteStream
+  protected OutputStream swappedInOutStream
+  protected OutputStream swappedInErrStream
   
   protected boolean swapped = false
   
-  List<ByteArrayOutputStream> swapIn() {
+  List<OutputStream> swapIn(outStream = new ByteArrayOutputStream(), errStream = new ByteArrayOutputStream()) {
     if (swapped) throw new IllegalStateException("swapIn() called during a swap")
     
     swappedOutOut = System.out
     swappedOutErr = System.err
 
-    swappedInOutByteStream = new ByteArrayOutputStream()
-    swappedInErrByteStream = new ByteArrayOutputStream()
+    swappedInOutStream = outStream
+    swappedInErrStream = errStream
     
-    swappedInOut = new PrintStream(swappedInOutByteStream)
-    swappedInErr = new PrintStream(swappedInErrByteStream)
+    swappedInOut = new PrintStream(swappedInOutStream)
+    swappedInErr = new PrintStream(swappedInErrStream)
     
     System.out = swappedInOut
     System.err = swappedInErr
     
     swapped = true
 
-    [swappedInOutByteStream, swappedInErrByteStream]
+    [swappedInOutStream, swappedInErrStream]
   }
   
-  List<ByteArrayOutputStream> swapOut() {
+  List<OutputStream> swapOut() {
     if (!swapped) throw new IllegalStateException("swapOut() called while not during a swap")
     
     System.out = swappedOutOut
@@ -61,13 +61,13 @@ class SystemOutAndErrSwapper {
     swappedInOut = null
     swappedInErr = null
 
-    def byteStreams = [swappedInOutByteStream, swappedInErrByteStream]
-    swappedInOutByteStream = null
-    swappedInErrByteStream = null
+    def streams = [swappedInOutStream, swappedInErrStream]
+    swappedInOutStream = null
+    swappedInErrStream = null
     
     swapped = false
     
-    byteStreams
+    streams
   }
   
 }

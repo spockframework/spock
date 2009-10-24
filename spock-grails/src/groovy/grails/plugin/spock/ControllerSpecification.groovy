@@ -47,97 +47,62 @@ import spock.lang.*
  * @author Graeme Rocher
  * @author Peter Ledbrook
  */
-class ControllerSpecification extends UnitSpecification {
-
-    @Shared controllerClass
-    final controller
-    
-    private webRequest
-    
-    def setupSpeck() {
-      def m = getClass().name =~ /^([\w\.]*?[A-Z]\w*?Controller)\w+/
-      if (m) {
-          controllerClass = Thread.currentThread().contextClassLoader.loadClass(m[0][1])
-      } else {
-          throw new RuntimeException("Cannot find matching class for this test.")
-      }
-    }
-    
-
-    def getMockRequest() { controller.request }
-    def getMockResponse() { controller.response }
-    def getMockSession() { controller.session }
-
-    def getForwardArgs() { controller.forwardArgs }
-    def getRedirectArgs() { controller.redirectArgs }
-    def getRenderArgs() { controller.renderArgs }
-    def getChainArgs() { controller.chainArgs }
-    
-    def getMockParams() { controller.params }
-    def getMockFlash() { controller.flash }
+class ControllerSpecification extends MvcSpecification {
 
     def setup() {
-        super.setup()
-        
-        mockController(controllerClass)
-  
-        controller = controllerClass.newInstance()
-
-        MockApplicationContext ctx = new MockApplicationContext()
-        ctx.registerMockBean(GroovyPagesUriService.BEAN_ID, new DefaultGroovyPagesUriService())
-        mockRequest.servletContext.setAttribute(ApplicationAttributes.APPLICATION_CONTEXT, ctx)
-        
-        webRequest = new GrailsWebRequest(
-            mockRequest,
-            mockResponse,
-            mockRequest.servletContext
-       )
-       
-        mockRequest.setAttribute(GrailsApplicationAttributes.WEB_REQUEST, webRequest)
-        RequestContextHolder.setRequestAttributes(webRequest)
-        
-        webRequest.controllerName = GrailsNameUtils.getLogicalPropertyName(controllerClass.name, "Controller")
-    }
-
-    protected void reset() {
-        mockRequest.clearAttributes()
-        mockRequest.removeAllParameters()
-        mockResponse.committed = false
-        mockSession.clearAttributes()
-        mockSession.setNew(true)
-
-        forwardArgs.clear()
-        redirectArgs.clear()
-        renderArgs.clear()
-        mockParams.clear()
-        mockFlash.clear()
+      webRequest.controllerName = GrailsNameUtils.getLogicalPropertyName(controllerClass.name, "Controller")
     }
     
-    /**
-     * Mocks a command object class, providing a "validate()" method
-     * and access to the "errors" property.
-     */
+    def provideMvcClassUnderTest() {
+      findClassUnderTestConventiallyBySuffix('Controller')
+    }
+    
+    def initialiseMvcMocking(Class classUnderTest) {
+      mockController(classUnderTest)
+    }
+        
+    def getControllerClass() {
+      classUnderTest
+    }
+    
+    def getController() {
+      instanceUnderTest
+    }
+    
+    def getForwardArgs() { instanceUnderTest.forwardArgs }
+    def getRedirectArgs() { instanceUnderTest.redirectArgs }
+    
+    def getChainArgs() { instanceUnderTest.chainArgs }
+
+    void reset() {
+      super.reset()
+      redirectArgs.clear()
+      forwardArgs.clear()
+      chainArgs.clear()
+    }
+    
     protected mockCommandObject(Class clazz) {
-        registerMetaClass(clazz)
-        MockUtils.mockCommandObject(clazz, errorsMap)
+      registerMetaClass(clazz)
+      MockUtils.mockCommandObject(clazz, errorsMap)
     }
 
     protected void setXmlRequestContent(content) {
-        setXmlRequestContent("UTF-8", content)
+      setXmlRequestContent("UTF-8", content)
     }
 
     protected void setXmlRequestContent(String encoding, content) {
-        mockRequest.contentType = "application/xml; charset=$encoding"
-        
-        if (content instanceof Closure) {
-          def xml = new StreamingMarkupBuilder(encoding: encoding).bind(content)
-          def out = new ByteArrayOutputStream()
-          out << xml
+      mockRequest.contentType = "application/xml; charset=$encoding"
 
-          mockRequest.contentType = "application/xml; charset=$encoding"
-          mockRequest.content = out.toByteArray()
-        } else {
-          mockRequest.content = content.getBytes(encoding)
-        }
+      if (content instanceof Closure) {
+        def xml = new StreamingMarkupBuilder(encoding: encoding).bind(content)
+        def out = new ByteArrayOutputStream()
+        out << xml
+
+        mockRequest.contentType = "application/xml; charset=$encoding"
+        mockRequest.content = out.toByteArray()
+      } else {
+        mockRequest.content = content.getBytes(encoding)
+      }
     }
+    
 }

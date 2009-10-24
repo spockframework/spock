@@ -21,7 +21,7 @@ import org.spockframework.EmbeddedSpecification
 class SpeckInheritance extends EmbeddedSpecification {
   def "fixture methods are run in correct order"() {
     def classes = compiler.compileWithImports("""
-class BaseFixtureSpec extends Specification {
+class BaseSpec extends Specification {
   static log = []
 
   def setupSpeck() {
@@ -41,7 +41,7 @@ class BaseFixtureSpec extends Specification {
   }
 }
 
-class DerivedFixtureSpec extends BaseFixtureSpec {
+class DerivedSpec extends BaseSpec {
   def setupSpeck() {
     log << "ss2"
   }
@@ -64,7 +64,7 @@ class DerivedFixtureSpec extends BaseFixtureSpec {
 }
     """)
 
-    def derived = classes.find { it.name.endsWith("DerivedFixtureSpec") }
+    def derived = classes.find { it.name.endsWith("DerivedSpec") }
 
     when:
     runner.runClass(derived)
@@ -75,7 +75,7 @@ class DerivedFixtureSpec extends BaseFixtureSpec {
 
   def "feature methods are run in correct order"() {
     def classes = compiler.compileWithImports("""
-class BaseFeatureSpec extends Specification {
+class BaseSpec extends Specification {
   static log = []
 
   def "feature 1"() {
@@ -89,7 +89,7 @@ class BaseFeatureSpec extends Specification {
   }
 }
 
-class DerivedFeatureSpec extends BaseFeatureSpec {
+class DerivedSpec extends BaseSpec {
   def "feature 1"() {
     log << "d1"
     expect: true
@@ -102,7 +102,7 @@ class DerivedFeatureSpec extends BaseFeatureSpec {
 }
     """)
 
-   def derived = classes.find { it.name.endsWith("DerivedFeatureSpec") }
+    def derived = classes.find { it.name.endsWith("DerivedSpec") }
 
     when:
     runner.runClass(derived)
@@ -110,7 +110,30 @@ class DerivedFeatureSpec extends BaseFeatureSpec {
     then:
     derived.log == ["b1", "b2", "d1", "d2"]
   }
+
+  def "exception in base class fixture method causes failure"() {
+    def classes = compiler.compileWithImports("""
+class BaseSpec extends Specification {
+  def ${fixtureMethod}() { throw new IOException() }
 }
 
+class DerivedSpec extends BaseSpec {
+  def ${fixtureMethod}() {}
 
+  def feature() { expect: true }
+}
+    """)
+
+    def derived = classes.find { it.name.endsWith("DerivedSpec") }
+
+    when:
+    runner.runClass(derived)
+
+    then:
+    thrown(IOException)
+
+    where:
+    fixtureMethod << ["setup", "cleanup", "setupSpeck", "cleanupSpeck"]
+  }
+}
 

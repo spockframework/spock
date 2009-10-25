@@ -304,6 +304,20 @@ class WebSessionSpecification extends Specification {
     value << ['v1']
   }
   
+  def 'get meta'() {
+    setup:
+    server.get = { req, res ->
+      res.outputStream << "<html><head><meta name='m1' content='m1Value' /></head></html>"
+    }
+    
+    when:
+    get("/")
+    
+    then:
+    getMeta('m1') == 'm1Value'
+    getMeta('doesntexist') == null
+  }
+  
   def cleanupSpeck() {
     server.stop()
   }

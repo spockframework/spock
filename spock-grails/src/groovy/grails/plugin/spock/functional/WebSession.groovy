@@ -185,6 +185,13 @@ class WebSession {
   }
   
   /**
+   * @return the content value for the meta item
+   */
+  String getMeta(String name) {
+    page.getElementsByTagName('meta')?.find { it.attributes?.getNamedItem('name')?.nodeValue == name }?.contentAttribute
+  }
+  
+  /**
    * Should the client automatically follow redirects?
    * 
    * @see WebClient#setRedirectEnabled()

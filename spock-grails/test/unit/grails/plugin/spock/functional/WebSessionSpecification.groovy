@@ -100,7 +100,7 @@ class WebSessionSpecification extends Specification {
     didReceiveRedirect
     redirectURL.endsWith("/second")
     when: 
-    followRedirect()
+    followRedirect() != null
     then:
     response.contentAsString == "yes"
     didReceiveRedirect == false
@@ -110,6 +110,7 @@ class WebSessionSpecification extends Specification {
     get("/first")
     then:
     response.contentAsString == "yes"
+    followRedirect() == null
   }
   
   def cleanupSpeck() {

@@ -28,22 +28,7 @@ class WebSession {
     this.setBase(base)
     configureWebClient(client)
   }
-  
-  protected void configureWebClient(WebClient client) {
-    client.with {
-      redirectEnabled = false // we need to do this ourselves
-      throwExceptionOnFailingStatusCode = false
-    }
-  }
-  
-  void setRedirectEnabled(boolean flag) {
-    client.redirectEnabled = flag
-  }
-  
-  boolean isRedirectEnabled() {
-    client.redirectEnabled
-  }
-  
+      
   void setBase(String base) {
     if (base) this.base = URLUtils.forceTrailingSlash(base)
   }
@@ -84,6 +69,37 @@ class WebSession {
     requestSettings.url
   }
   
+  void setRedirectEnabled(boolean flag) {
+    client.redirectEnabled = flag
+  }
+  
+  boolean isRedirectEnabled() {
+    client.redirectEnabled
+  }
+  
+  boolean isDidReceiveRedirect() {
+    (page) ? isRedirectStatus(response.statusCode) : false
+  }
+  
+  Page followRedirect() {
+    if (redirectEnabled || didReceiveRedirect == false) {
+      null
+    } else {
+      doFollowRedirect()
+    }
+  }
+  
+  String getRedirectURL() {
+    (didReceiveRedirect) ? response.getResponseHeaderValue('Location') : null
+  }
+  
+  protected void configureWebClient(WebClient client) {
+    client.with {
+      redirectEnabled = false // we need to do this ourselves
+      throwExceptionOnFailingStatusCode = false
+    }
+  }
+  
   protected makeRequest(url, HttpMethod method, Closure requestConfiguration) {
       def reqURL = makeRequestURL(url)
           
@@ -103,23 +119,7 @@ class WebSession {
         requestPage
       }
   }
-  
-  boolean isDidReceiveRedirect() {
-    (page) ? isRedirectStatus(response.statusCode) : false
-  }
-  
-  Page followRedirect() {
-    if (redirectEnabled || didReceiveRedirect == false) {
-      null
-    } else {
-      doFollowRedirect()
-    }
-  }
-  
-  String getRedirectURL() {
-    (didReceiveRedirect) ? response.getResponseHeaderValue('Location') : null
-  }
-  
+    
   protected doFollowRedirect() {
     get(redirectURL)
   }

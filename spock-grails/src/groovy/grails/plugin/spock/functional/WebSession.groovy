@@ -121,7 +121,7 @@ class WebSession {
     get(redirectURL)
   }
   
-  public makeRequestURL(targetURL, Page relativePage = null) {
+  protected makeRequestURL(targetURL, Page relativePage = null) {
     targetURL = targetURL as String
 
     try {

@@ -16,10 +16,9 @@ import com.gargoylesoftware.htmlunit.html.ClickableElement
 import java.net.MalformedURLException
 
 import grails.plugin.spock.functional.util.URLUtils
-
 import grails.plugin.spock.functional.htmlunit.configurer.WebRequestSettingsConfigurer
-
 import grails.plugin.spock.functional.htmlunit.form.FormWrapper
+
 /**
  * A Groovier wrapper for HTMLUnit's WebClient that provides an API
  * suited for a series of sequenced requests.

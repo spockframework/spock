@@ -284,6 +284,26 @@ class WebSessionSpecification extends Specification {
     response.contentAsString == 'somewhereelse'
   }
   
+  def 'get header'() {
+    setup:
+    server.get = { req, res ->
+      if (req.requestURI == "/") {
+        res.setHeader(header, value)
+        res.outputStream << "something"
+      }
+    }
+    
+    when:
+    get("/")
+    
+    then:
+    getHeader(header) == value
+    
+    where:
+    header << ['h1']
+    value << ['v1']
+  }
+  
   def cleanupSpeck() {
     server.stop()
   }

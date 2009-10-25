@@ -177,6 +177,14 @@ class WebSession {
   }
   
   /**
+   * @return the value for the header of the current response
+   * @see WebResponse#getResponseHeaderValue(String)
+   */
+  String getHeader(String header) {
+    response.getResponseHeaderValue(header)
+  }
+  
+  /**
    * Should the client automatically follow redirects?
    * 
    * @see WebClient#setRedirectEnabled()
@@ -221,6 +229,18 @@ class WebSession {
     }
   }
 
+  /**
+   * If did receive a redirect, the url of the redirect request.
+   * 
+   * This is obtained by getting the 'Location' header of the response.
+   * 
+   * @see isDidReceiveRedirect()
+   * @return the url if did receive a redirect, otherwise {@code null}
+   */
+  String getRedirectURL() {
+    (didReceiveRedirect) ? getHeader('Location') : null
+  }
+  
   /**
    * @return a FormWrapper for the first form on the page
    * @throws IllegalArgumentException if the form cannot be found
@@ -296,19 +316,7 @@ class WebSession {
     }
     wrapper
   }
-    
-  /**
-   * If did receive a redirect, the url of the redirect request.
-   * 
-   * This is obtained by getting the 'Location' header of the response.
-   * 
-   * @see isDidReceiveRedirect()
-   * @return the url if did receive a redirect, otherwise {@code null}
-   */
-  String getRedirectURL() {
-    (didReceiveRedirect) ? response.getResponseHeaderValue('Location') : null
-  }
-
+  
   /**
    * @return a list of elements matching the expression if multiple, the lone element if only one was matched, otherwise null
    */

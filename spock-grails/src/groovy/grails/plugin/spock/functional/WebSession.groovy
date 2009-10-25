@@ -162,7 +162,6 @@ class WebSession {
   
   protected void configureWebClient(WebClient client) {
     client.with {
-      redirectEnabled = false // we need to do this ourselves
       throwExceptionOnFailingStatusCode = false
     }
   }

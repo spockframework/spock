@@ -8,6 +8,14 @@ class WebSessionSpecification extends Specification {
 
   @Shared server
   @Shared session
+
+  @Shared simpleRedirect = { req, res -> 
+    if (req.requestURI == "/first") {
+      res.sendRedirect("/second") 
+    } else {
+      res.outputStream << "yes"
+    }
+  }
   
   def setupSpeck() {
     server = new TestHttpServer()
@@ -83,13 +91,7 @@ class WebSessionSpecification extends Specification {
   
   def "test don't follow redirect"() {
     setup:
-    server.get = { req, res -> 
-      if (req.requestURI == "/first") {
-        res.sendRedirect("/second") 
-      } else {
-        res.outputStream << "yes"
-      }
-    }
+    server.get = simpleRedirect
     when:
     redirectEnabled = false
     then:
@@ -111,6 +113,15 @@ class WebSessionSpecification extends Specification {
     then:
     response.contentAsString == "yes"
     followRedirect() == null
+  }
+  
+  def "redirects are followed by default"() {
+    setup:
+    server.get = simpleRedirect
+    when:
+    get("/first")
+    then:
+    response.contentAsString == "yes"
   }
   
   def "page return"() {

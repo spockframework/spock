@@ -29,10 +29,17 @@ grails.project.dependency.resolution = {
 
     mavenRepo "http://m2repo.spockframework.org/snapshots"
     mavenRepo "http://m2repo.spockframework.org/releases"
+    mavenRepo "http://oss.sonatype.org/content/groups/jetty"
   }
   dependencies {
     build 'org.spockframework:spock-core:0.3-SNAPSHOT'
     build 'asm:asm:2.2.3'
     build 'junit:junit:4.7'
+    
+    test ('net.sourceforge.htmlunit:htmlunit:2.6') {
+      excludes 'xml-apis' // GROOVY-3356
+    }
+    
+    test 'org.mortbay.jetty:jetty:6.1.21'
   }
 }

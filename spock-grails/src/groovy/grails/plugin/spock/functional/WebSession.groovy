@@ -7,6 +7,8 @@ import com.gargoylesoftware.htmlunit.Page
 import com.gargoylesoftware.htmlunit.HttpMethod
 import com.gargoylesoftware.htmlunit.WebWindow
 import com.gargoylesoftware.htmlunit.WebRequestSettings
+import com.gargoylesoftware.htmlunit.CookieManager
+import org.apache.commons.httpclient.Cookie
 
 import java.net.MalformedURLException
 
@@ -153,6 +155,27 @@ class WebSession {
   URL getRequestURL() {
     requestSettings.url
   }
+  
+  /**
+   * @return The cookie manager of the client
+   * @see WebClient#getCookieManager()
+   */
+  CookieManager getCookieManager() {
+    client.cookieManager
+  }
+
+  /**
+   * @return The cookies of the cookie manager
+   * @see CookieManager#getCookies()
+   */
+  Set<Cookie> getCookies() {
+    cookieManager.cookies
+  }
+  
+  /**
+   * @return The cookies of the cookie manager
+   * @see CookieManager#getCookies()
+   */
   
   /**
    * Should the client automatically follow redirects?

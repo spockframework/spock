@@ -131,6 +131,24 @@ class WebSessionSpecification extends Specification {
     get("/").webResponse.contentAsString == "abc"
   }
   
+  def "cookie tests"() {
+    setup:
+    server.get = { req, res -> 
+      res.addCookie(new javax.servlet.http.Cookie(cookieName, cookieValue))
+    }
+    when:
+    get("/")
+    then:
+    cookies.find { it.name == cookieName}.value == cookieValue
+    when:
+    cookieManager.clearCookies()
+    then:
+    cookies.size() == 0
+    where:
+    cookieName << ["name"]
+    cookieValue << ["value"]
+  }
+  
   def cleanupSpeck() {
     server.stop()
   }

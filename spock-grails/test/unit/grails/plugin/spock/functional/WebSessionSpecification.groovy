@@ -259,6 +259,31 @@ class WebSessionSpecification extends Specification {
     byName('radio1').size() == 2
   }
   
+  def clicking() {
+    setup:
+    server.get = { req, res ->
+      if (req.requestURI == "/") {
+        res.outputStream << "<html><body><a id='a1' href='/somewhereelse'>a1Content</a></body></html>"
+      } else {
+        res.outputStream << 'somewhereelse'
+      }
+    }
+    
+    when:
+    get("/")
+    click 'a1'
+    
+    then:
+    response.contentAsString == 'somewhereelse'
+    
+    when:
+    get("/")
+    click 'a1Content'
+    
+    then:
+    response.contentAsString == 'somewhereelse'
+  }
+  
   def cleanupSpeck() {
     server.stop()
   }

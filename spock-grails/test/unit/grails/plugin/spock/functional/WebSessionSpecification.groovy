@@ -99,14 +99,14 @@ class WebSessionSpecification extends Specification {
     then:
     didReceiveRedirect
     redirectURL.endsWith("/second")
-    when: 
     followRedirect() != null
-    then:
     response.contentAsString == "yes"
     didReceiveRedirect == false
     when:
     redirectEnabled = true
+    then:
     redirectEnabled == true
+    when:
     get("/first")
     then:
     response.contentAsString == "yes"

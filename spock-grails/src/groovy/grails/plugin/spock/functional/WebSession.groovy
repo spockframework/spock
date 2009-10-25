@@ -309,6 +309,56 @@ class WebSession {
   }
 
   /**
+   * @return a list of elements matching the expression if multiple, the lone element if only one was matched, otherwise null
+   */
+  def byXPath(expr) {
+    try {
+      def results = page.getByXPath(expr as String)
+      (results.size() > 1) ? results : results[0]
+    } catch (ElementNotFoundException e) {
+      null
+    }
+  }
+  
+  /**
+   * @return the first element that has the id, otherwise null
+   */  
+  def byId(id) {
+    try {
+      page.getHtmlElementById(id as String)
+    } catch (ElementNotFoundException e) {
+      null
+    }
+  }
+
+  /**
+   * @return a list of elements with the class if multiple, the lone element if only one was found, otherwise null
+   */
+  def byClass(cssClass) {
+    try {
+      def results = page.getByXPath("//*[@class]").findAll {
+        it.attributes?.getNamedItem('class')?.value?.split().any { it == cssClass }
+      }
+
+      (results.size() > 1) ? results : results[0]
+    } catch (ElementNotFoundException e) {
+      null
+    }
+  }
+
+  /**
+   * @return a list of elements with the name if multiple, the lone element if only one was found, otherwise null
+   */
+  def byName(name) {
+    def elems = page.getElementsByName(name.toString())
+    if (elems) {
+      (elems.size() > 1) ? elems : elems[0]
+    } else {
+      null
+    }
+  }
+  
+  /**
    * Make a new get request to the redirect URL.
    * 
    * Note: this should _only_ be called when isDidReceiveRedirect() returns true. This

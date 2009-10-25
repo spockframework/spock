@@ -1,6 +1,7 @@
 package grails.plugin.spock.functional
 
 import grails.plugin.spock.functional.test.TestHttpServer
+import com.gargoylesoftware.htmlunit.html.HtmlForm
 
 import spock.lang.*
 
@@ -218,6 +219,44 @@ class WebSessionSpecification extends Specification {
     }
     then:
     response.contentAsString == 'textInputValueChanged:textareaValueChanged:group1Value1:group2Value1:option1Value'
+  }
+  
+  def "'by' getters"() {
+    setup:
+    server.get = { req, res ->
+      res.outputStream << """
+      <html>
+      <body>
+        <p id="p1">p1Content</p>
+        <p id="p2">p2Content</p>
+        <span class="c1">c1t1Content</span>
+        <span class="c1">c1t2Content</span>
+        <span class="c2">c2t1Content</span>
+        <form name="form1">
+          <input type="radio" name="radio1" />
+          <input type="radio" name="radio1" />
+        </form>
+      </body>
+      </html>"""
+    } 
+
+    when:
+    get("/")
+    
+    then:
+    byId('p1').textContent == 'p1Content'
+    byId('doesntexist') == null
+    
+    byXPath("//p[@id='p1']").textContent == 'p1Content'
+    byXPath("//p")*.textContent == ['p1Content', 'p2Content']
+    byXPath("//p[@id='doesntexist']") == null
+    
+    byClass('c1')*.textContent == ['c1t1Content', 'c1t2Content']
+    byClass('c2').textContent == 'c2t1Content'
+    byClass('doesntexist') == null
+    
+    byName('form1') instanceof HtmlForm
+    byName('radio1').size() == 2
   }
   
   def cleanupSpeck() {

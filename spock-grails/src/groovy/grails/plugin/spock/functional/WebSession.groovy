@@ -171,12 +171,7 @@ class WebSession {
   Set<Cookie> getCookies() {
     cookieManager.cookies
   }
-  
-  /**
-   * @return The cookies of the cookie manager
-   * @see CookieManager#getCookies()
-   */
-  
+    
   /**
    * Should the client automatically follow redirects?
    * 

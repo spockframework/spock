@@ -107,12 +107,12 @@ class WebSession {
           requestConfiguration.call()
       }
 
-      def requestPage = client.getPage(requestSettings)
+      client.getPage(requestSettings)
       
       if (redirectEnabled && didReceiveRedirect) {
         doFollowRedirect()
       } else {
-        requestPage
+        page
       }
   }
   

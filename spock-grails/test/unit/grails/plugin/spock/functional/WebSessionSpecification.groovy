@@ -113,6 +113,13 @@ class WebSessionSpecification extends Specification {
     followRedirect() == null
   }
   
+  def "page return"() {
+    setup:
+    server.get = { req, res -> res.outputStream << "abc" }
+    expect:
+    get("/").webResponse.contentAsString == "abc"
+  }
+  
   def cleanupSpeck() {
     server.stop()
   }

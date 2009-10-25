@@ -33,22 +33,42 @@ class WebSession {
     if (base) this.base = URLUtils.forceTrailingSlash(base)
   }
   
-  def get(url, Closure paramSetup = null) {
-    makeRequest(url, HttpMethod.GET, paramSetup)
+  Page get(url, Closure requestConfiguration = null) {
+    request(HttpMethod.GET, url, requestConfiguration)
   }
 
-  def post(url, Closure paramSetup = null) {
-    makeRequest(url, HttpMethod.POST, paramSetup)
+  Page post(url, Closure requestConfiguration = null) {
+    request(HttpMethod.POST, url, requestConfiguration)
   }
   
-  def delete(url, Closure paramSetup = null) {
-    makeRequest(url, HttpMethod.DELETE, paramSetup)
+  Page delete(url, Closure requestConfiguration = null) {
+    request(HttpMethod.DELETE, url, requestConfiguration)
   }
   
-  def put(url, Closure paramSetup = null) {
-    makeRequest(url, HttpMethod.PUT, paramSetup)
+  Page put(url, Closure requestConfiguration = null) {
+    request(HttpMethod.PUT, url, requestConfiguration)
   }
 
+  Page request(HttpMethod method, url, Closure requestConfiguration = null) {
+      def reqURL = makeRequestURL(url)
+          
+      def requestSettings = new WebRequestSettings(reqURL, method)
+      
+      if (requestConfiguration) {
+          requestConfiguration.delegate = new WebRequestSettingsConfigurer(requestSettings)
+          requestConfiguration.resolveStrategy = Closure.DELEGATE_FIRST
+          requestConfiguration.call()
+      }
+
+      def requestPage = client.getPage(requestSettings)
+      
+      if (redirectEnabled && didReceiveRedirect) {
+        doFollowRedirect()
+      } else {
+        requestPage
+      }
+  }
+  
   WebWindow getCurrentWindow() {
     client.currentWindow
   }
@@ -99,27 +119,7 @@ class WebSession {
       throwExceptionOnFailingStatusCode = false
     }
   }
-  
-  protected makeRequest(url, HttpMethod method, Closure requestConfiguration) {
-      def reqURL = makeRequestURL(url)
-          
-      def requestSettings = new WebRequestSettings(reqURL, method)
       
-      if (requestConfiguration) {
-          requestConfiguration.delegate = new WebRequestSettingsConfigurer(requestSettings)
-          requestConfiguration.resolveStrategy = Closure.DELEGATE_FIRST
-          requestConfiguration.call()
-      }
-
-      def requestPage = client.getPage(requestSettings)
-      
-      if (redirectEnabled && didReceiveRedirect) {
-        doFollowRedirect()
-      } else {
-        requestPage
-      }
-  }
-    
   protected doFollowRedirect() {
     get(redirectURL)
   }

@@ -220,14 +220,32 @@ class WebSession {
     }
   }
 
+  /**
+   * @return a FormWrapper for the first form on the page
+   * @throws IllegalArgumentException if the form cannot be found
+   */
   FormWrapper form() {
     form(0, null)
   }
   
+  /**
+   * Creates a FormWrapper for the first form on the page, and
+   * passes the processor to {@link FormWrapper#call(Closure)} 
+   *
+   * @return a FormWrapper for the first form on the page
+   * @throws IllegalArgumentException if the form cannot be found
+   */
   FormWrapper form(Closure processor) {
     form(0, processor)
   }
-  
+
+  /**
+   * Creates a FormWrapper for the form at the given index on the page, and
+   * passes the processor to {@link FormWrapper#call(Closure)} if provided 
+   *
+   * @return a FormWrapper for form
+   * @throws IllegalArgumentException if the form cannot be found
+   */  
   FormWrapper form(Integer formIndex, Closure processor = null) {
     def formElement = page.forms?.getAt(formIndex)
     if (!formElement) {
@@ -236,7 +254,14 @@ class WebSession {
 
     form(formElement, processor)
   }
-  
+
+  /**
+   * Creates a FormWrapper for the form with the given id or name, and
+   * passes the processor to {@link FormWrapper#call(Closure)} if provided
+   *
+   * @return a FormWrapper for form
+   * @throws IllegalArgumentException if the form cannot be found
+   */ 
   FormWrapper form(String idOrName, Closure processor = null) {
     def formElement
 
@@ -257,6 +282,12 @@ class WebSession {
     this.form(formElement, processor)
   }
   
+  /**
+   * Creates a FormWrapper for the form , and
+   * passes the processor to {@link FormWrapper#call(Closure)} if provided
+   *
+   * @return a FormWrapper for form
+   */  
   FormWrapper form(HtmlForm form, Closure processor = null) {
     def wrapper = new FormWrapper(form)
     if (processor) {

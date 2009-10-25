@@ -81,6 +81,37 @@ class WebSessionSpecification extends Specification {
     response.contentAsString == "yes"
   }
   
+  def "test don't follow redirect"() {
+    setup:
+    server.get = { req, res -> 
+      if (req.requestURI == "/first") {
+        res.sendRedirect("/second") 
+      } else {
+        res.outputStream << "yes"
+      }
+    }
+    when:
+    redirectEnabled = false
+    then:
+    redirectEnabled == false
+    when:
+    get("/first")
+    then:
+    didReceiveRedirect
+    redirectURL.endsWith("/second")
+    when: 
+    followRedirect()
+    then:
+    response.contentAsString == "yes"
+    didReceiveRedirect == false
+    when:
+    redirectEnabled = true
+    redirectEnabled == true
+    get("/first")
+    then:
+    response.contentAsString == "yes"
+  }
+  
   def cleanupSpeck() {
     server.stop()
   }

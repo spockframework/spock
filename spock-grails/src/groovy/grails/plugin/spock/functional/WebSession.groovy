@@ -30,7 +30,10 @@ class WebSession {
   }
   
   protected void configureWebClient(WebClient client) {
-    client.redirectEnabled = false // we need to do this ourselves
+    client.with {
+      redirectEnabled = false // we need to do this ourselves
+      throwExceptionOnFailingStatusCode = false
+    }
   }
   
   void setRedirectEnabled(boolean flag) {

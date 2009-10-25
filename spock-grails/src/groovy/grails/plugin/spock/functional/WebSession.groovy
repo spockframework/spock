@@ -14,41 +14,88 @@ import grails.plugin.spock.functional.util.URLUtils
 
 import grails.plugin.spock.functional.htmlunit.configurer.WebRequestSettingsConfigurer
 
+/**
+ * A Groovier wrapper for HTMLUnit's WebClient that provides an API
+ * suited for a series of sequenced requests.
+ */
 class WebSession {
 
+  /**
+   * The underlying client used.
+   */
   final WebClient client
+  
+  /**
+   * The optional base for all requests made to URL paths
+   */
   String base
   
+  /**
+   * Creates session with a default client, and base if provided.
+   */
   WebSession(String base = null) {
     this(new WebClient(), base)
   }
-  
+
+  /**
+   * Creates a session with the given client, and base if provided.
+   */  
   WebSession(WebClient client, String base = null) {
     this.client = client
     this.setBase(base)
     configureWebClient(client)
   }
-      
+  
   void setBase(String base) {
     if (base) this.base = URLUtils.forceTrailingSlash(base)
   }
-  
+
+  /**
+   * Makes a HTTP GET request
+   * 
+   * @see #request(HttpMethod, Object, Closure)
+   */  
   Page get(url, Closure requestConfiguration = null) {
     request(HttpMethod.GET, url, requestConfiguration)
   }
 
+  /**
+   * Makes a HTTP POST request
+   * 
+   * @see #request(HttpMethod, Object, Closure)
+   */
   Page post(url, Closure requestConfiguration = null) {
     request(HttpMethod.POST, url, requestConfiguration)
   }
-  
+
+  /**
+   * Makes a HTTP DELETE request
+   * 
+   * @see #request(HttpMethod, Object, Closure)
+   */  
   Page delete(url, Closure requestConfiguration = null) {
     request(HttpMethod.DELETE, url, requestConfiguration)
   }
-  
+
+  /**
+   * Makes a HTTP PUT request
+   * 
+   * @see #request(HttpMethod, Object, Closure)
+   */  
   Page put(url, Closure requestConfiguration = null) {
     request(HttpMethod.PUT, url, requestConfiguration)
   }
-
+  
+  /**
+   * Makes a request of type {@code method} to {@code url} after optionally configuring the 
+   * request settings.
+   * 
+   * @param method the HTTP method of the request
+   * @param url a psuedo url to be converted to a real URL by {@link #makeRequestURL(Object)}
+   * @param requestConfiguration if provided, will be evaluated against a {@link WebRequestSettingsConfigurer} 
+   *        with the request settings
+   * @return The page object created by the request
+   */
   Page request(HttpMethod method, url, Closure requestConfiguration = null) {
       def reqURL = makeRequestURL(url)
           

@@ -50,7 +50,7 @@ class SpeckRunHelper {
       if (pos != -1) {
         filePattern = filePattern.substring(0, pos)
       }
-      resources += resourceResolver("file:${testTypeClassesDir}/**/${filePattern}.class") as List
+      resources += resourceResolver("file:${testTypeClassesDir}/**/${filePattern}*.class") as List
     }
 
     def speckFiles = testResources*.file.findAll { speckFinder.isSpeck(it) }

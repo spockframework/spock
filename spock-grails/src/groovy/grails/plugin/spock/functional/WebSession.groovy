@@ -9,6 +9,8 @@ import com.gargoylesoftware.htmlunit.WebWindow
 import com.gargoylesoftware.htmlunit.WebRequestSettings
 import com.gargoylesoftware.htmlunit.CookieManager
 import org.apache.commons.httpclient.Cookie
+import com.gargoylesoftware.htmlunit.html.HtmlForm
+import com.gargoylesoftware.htmlunit.ElementNotFoundException
 
 import java.net.MalformedURLException
 
@@ -16,6 +18,7 @@ import grails.plugin.spock.functional.util.URLUtils
 
 import grails.plugin.spock.functional.htmlunit.configurer.WebRequestSettingsConfigurer
 
+import grails.plugin.spock.functional.htmlunit.form.FormWrapper
 /**
  * A Groovier wrapper for HTMLUnit's WebClient that provides an API
  * suited for a series of sequenced requests.
@@ -171,7 +174,7 @@ class WebSession {
   Set<Cookie> getCookies() {
     cookieManager.cookies
   }
-    
+  
   /**
    * Should the client automatically follow redirects?
    * 
@@ -216,7 +219,52 @@ class WebSession {
       doFollowRedirect()
     }
   }
+
+  FormWrapper form() {
+    form(0, null)
+  }
   
+  FormWrapper form(Closure processor) {
+    form(0, processor)
+  }
+  
+  FormWrapper form(Integer formIndex, Closure processor = null) {
+    def formElement = page.forms?.getAt(formIndex)
+    if (!formElement) {
+      throw new IllegalArgumentException("There are no forms in the current response")
+    }
+
+    form(formElement, processor)
+  }
+  
+  FormWrapper form(String idOrName, Closure processor = null) {
+    def formElement
+
+    try {
+      formElement = page.getHtmlElementById(idOrName.toString())
+    } catch (ElementNotFoundException e) {}
+    
+    if (!formElement) {
+      try {
+        formElement = page.getFormByName(idOrName)
+      } catch (ElementNotFoundException e) {}
+    
+      if (!formElement) {
+        throw new IllegalArgumentException("There is no form with id/name [$idOrName]")
+      }
+    }
+    
+    this.form(formElement, processor)
+  }
+  
+  FormWrapper form(HtmlForm form, Closure processor = null) {
+    def wrapper = new FormWrapper(form)
+    if (processor) {
+      wrapper.call(processor)
+    }
+    wrapper
+  }
+    
   /**
    * If did receive a redirect, the url of the redirect request.
    * 

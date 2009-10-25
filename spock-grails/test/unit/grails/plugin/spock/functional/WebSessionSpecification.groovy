@@ -149,6 +149,77 @@ class WebSessionSpecification extends Specification {
     cookieValue << ["value"]
   }
   
+  def "form tests"() {
+    setup:
+    server.get = { req, res ->
+      if (req.requestURI == "/") {
+        res.outputStream << """
+        <html>
+        <body>
+        	<form name="form" action="/somewhereelse">
+        		<input type="text" name="textInput" value="textInputValue" />
+
+        		<textarea name="textarea" rows="8" cols="40">textareaValue</textarea>
+
+        		<input type="radio" name="group1" value="group1Value1"/>
+        		<input type="radio" name="group1" value="group1Value2" checked/>
+
+        		<input type="radio" name="group2" value="group2Value1"/>
+        		<input type="radio" name="group2" value="group2Value2" checked/>
+
+        		<select name="select">
+        			<option value="option1Value">option1Display</option>
+        			<option value="option2Value" selected>option2Display</option>
+        		</select>
+
+        		<input type="submit" name="submitInput" value="submitInputValue" />
+        	</form>
+        </body>
+        </html>"""
+      } else {
+        res.outputStream << ['textInput', 'textarea', 'group1', 'group2', 'select'].collect { req.getParameter(it)}.join(':')
+
+      }
+    }
+    when:
+    get("/")
+    
+    then:
+    form() != null
+    form {} != null
+    form(0) {} != null
+    form('form') != null
+    form('form') {} != null
+    when:
+    def f = form()
+    then:
+    f.textInput == "textInputValue"
+    f.textarea == "textareaValue"
+    f.group1 == "group1Value2"
+    f.group2 == "group2Value2"
+    f.select == ["option2Value"]
+    
+    form().with { // have to use with here, spock barfs otherwise
+      textInput = "textInputValueChanged"
+      textarea = "textareaValueChanged"
+      group1 = "group1Value1"
+      group2 = "group2Value1"
+      select = "option1Value"
+    }
+    
+    f.textInput == "textInputValueChanged"
+    f.textarea == "textareaValueChanged"
+    f.group1 == "group1Value1"
+    f.group2 == "group2Value1"
+    f.select == ["option1Value"]
+    when:
+    form {
+      click 'submitInput'
+    }
+    then:
+    response.contentAsString == 'textInputValueChanged:textareaValueChanged:group1Value1:group2Value1:option1Value'
+  }
+  
   def cleanupSpeck() {
     server.stop()
   }

@@ -97,23 +97,21 @@ class WebSession {
    * @return The page object created by the request
    */
   Page request(HttpMethod method, url, Closure requestConfiguration = null) {
-      def reqURL = makeRequestURL(url)
-          
-      def requestSettings = new WebRequestSettings(reqURL, method)
-      
-      if (requestConfiguration) {
-          requestConfiguration.delegate = new WebRequestSettingsConfigurer(requestSettings)
-          requestConfiguration.resolveStrategy = Closure.DELEGATE_FIRST
-          requestConfiguration.call()
-      }
+    def requestSettings = new WebRequestSettings(makeRequestURL(url), method)
+    
+    if (requestConfiguration) {
+      requestConfiguration.delegate = new WebRequestSettingsConfigurer(requestSettings)
+      requestConfiguration.resolveStrategy = Closure.DELEGATE_FIRST
+      requestConfiguration.call()
+    }
 
-      client.getPage(requestSettings)
-      
-      if (redirectEnabled && didReceiveRedirect) {
-        doFollowRedirect()
-      } else {
-        page
-      }
+    client.getPage(requestSettings)
+    
+    if (redirectEnabled && didReceiveRedirect) {
+      doFollowRedirect()
+    } else {
+      page
+    }
   }
   
   WebWindow getCurrentWindow() {

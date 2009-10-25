@@ -37,6 +37,7 @@ class SpeckRunHelper {
   }
 
   def createTests(List<String> testNames, String type) {
+    println "looking for $testNames of $type"
     def testTypeClassesDir = "${testClassesDir.absolutePath}/$type"
     def testTypeClassesDirFile = new File(testTypeClassesDir)
     def suite = new SuiteAdapter()

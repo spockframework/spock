@@ -21,7 +21,9 @@ class SpockGrailsPlugin {
   def pluginExcludes = [
       "grails-app/views/error.gsp",
       "grails-app/domain/**",
-      "grails-app/services/**"
+      "grails-app/services/**",
+      "grails-app/controllers/**",
+      "grails-app/i18n/**"
   ]
 
   def author = "Luke Daley"

@@ -12,7 +12,7 @@
   <artifactId>spock-grails</artifactId>
   <packaging>war</packaging>
   <name>Spock Framework - Grails Plugin</name>
-  <url>http://spockframework.org</url>
+  <url>http://grails.org/plugin/spock</url>
 
   <dependencies>
     <dependency>
@@ -37,12 +37,40 @@
     <dependency>
       <groupId>org.grails</groupId>
       <artifactId>grails-crud</artifactId>
-      <version>1.2-M3</version>
+      <version>1.2-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.grails</groupId>
       <artifactId>grails-gorm</artifactId>
-      <version>1.2-M3</version>
+      <version>1.2-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>org.grails</groupId>
+      <artifactId>grails-test</artifactId>
+      <version>1.2-SNAPSHOT</version>
+    </dependency>
+
+    <dependency>
+      <groupId>net.sourceforge.htmlunit</groupId>
+      <artifactId>htmlunit</artifactId>
+      <version>2.6</version>
+      <exclusions>
+        <exclusion> <!-- see GROOVY-3356; xml-apis and JDK 1.6 ship with different versions of the same classes -->
+          <groupId>xml-apis</groupId>
+          <artifactId>xml-apis</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.mortbay.jetty</groupId>
+      <artifactId>jetty</artifactId>
+      <version>6.1.21</version>
+    </dependency>
+    <dependency>
+      <groupId>javassist</groupId>
+      <artifactId>javassist</artifactId>
+      <version>3.4.GA</version>
+      <optional>true</optional>
     </dependency>
 
     <!-- Grails defaults to OSCache for the second-level Hibernate cache. -->
@@ -93,19 +121,6 @@
       <version>1.2.3.5521</version>
       <scope>runtime</scope>
     </dependency>
-
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>org.springframework.spring-library</artifactId>
-      <type>libd</type>
-      <version>3.0.0.RC1</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>spring-instrument-classloading</artifactId>
-          <groupId>org.springframework</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
   </dependencies>
 
   <repositories>
@@ -130,24 +145,6 @@
     <repository>
       <id>springsource maven repo</id>
       <url>http://maven.springframework.org/milestone</url>
-    </repository>
-
-    <repository>
-      <id>SpringSource Enterprise Bundle Repository – External Bundle Milestones</id>
-      <url>http://repository.springsource.com/maven/bundles/milestone</url>
-    </repository>
-    <repository>
-      <id>SpringSource Enterprise Bundle Repository – SpringSource Bundle Releases</id>
-      <url>http://repository.springsource.com/maven/bundles/release</url>
-    </repository>
-    <repository>
-      <id>SpringSource Enterprise Bundle Repository – External Bundle Releases</id>
-      <url>http://repository.springsource.com/maven/bundles/external</url>
-    </repository>
-
-    <repository>
-      <id>SpringSource Enterprise Bundle Repository – Library Milestones</id>
-      <url>http://repository.springsource.com/maven/libraries/milestone</url>
     </repository>
   </repositories>
 
@@ -175,14 +172,17 @@
         <executions>
           <execution>
             <goals>
+<!-- grails-maven-plugin only works with my patches, so we don't run these goals at the moment
               <goal>init</goal>
               <goal>maven-clean</goal>
               <goal>validate</goal>
               <goal>config-directories</goal>
               <goal>maven-compile</goal>
-              <goal>maven-test</goal>
               <goal>maven-war</goal>
+
+              <goal>maven-test</goal>             
               <goal>maven-functional-test</goal>
+-->
             </goals>
           </execution>
         </executions>
@@ -195,12 +195,12 @@
           <dependency>
             <groupId>org.grails</groupId>
             <artifactId>grails-scripts</artifactId>
-            <version>1.2-M3</version>
+            <version>1.2-SNAPSHOT</version>
           </dependency>
           <dependency>
             <groupId>org.grails</groupId>
             <artifactId>grails-bootstrap</artifactId>
-            <version>1.2-M3</version>
+            <version>1.2-SNAPSHOT</version>
           </dependency>
         </dependencies>
       </plugin>

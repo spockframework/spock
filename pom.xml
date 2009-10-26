@@ -178,6 +178,7 @@
         <module>spock-tapestry</module>
         <module>spock-guice</module>
         <module>spock-spring</module>
+        <module>spock-grails</module>
       </modules>
     </profile> 
     <profile>
@@ -190,6 +191,7 @@
         <module>spock-tapestry</module>
         <module>spock-guice</module>
         <module>spock-spring</module>
+        <module>spock-grails</module>
       </modules>
       <properties>
         <sonar.jdbc.url>jdbc:mysql://localhost:3306/sonar?useUnicode=true&amp;characterEncoding=utf8</sonar.jdbc.url>
@@ -202,7 +204,7 @@
     </profile>
     <profile>
       <id>release</id>
-      <!-- all the modules listed here will be deployed -->
+      <!-- all modules listed here will be deployed to Spock's Maven repository / Maven Central -->
       <modules>
         <module>spock-core</module>
         <module>spock-maven</module>

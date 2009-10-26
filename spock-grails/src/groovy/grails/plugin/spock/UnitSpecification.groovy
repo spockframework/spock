@@ -15,19 +15,15 @@
 
 package grails.plugin.spock
 
-import spock.lang.*
-
-import org.codehaus.groovy.grails.commons.DefaultArtefactInfo
-import org.codehaus.groovy.grails.commons.DefaultGrailsCodecClass
-import org.codehaus.groovy.grails.commons.GrailsDomainConfigurationUtil
+import grails.test.GrailsMock
+import grails.test.MockUtils
+import grails.util.GrailsNameUtils
 import org.codehaus.groovy.grails.support.MockApplicationContext
 import org.codehaus.groovy.grails.web.converters.ConverterUtil
 import org.codehaus.groovy.grails.web.converters.configuration.ConvertersConfigurationInitializer
 import org.springframework.validation.Errors
-import grails.util.GrailsNameUtils
-import org.codehaus.groovy.grails.commons.ConfigurationHolder
-
-import grails.test.*
+import spock.lang.Specification
+import org.codehaus.groovy.grails.commons.*
 
 /**
  * Support class for writing unit tests in Grails. It mainly provides

@@ -15,24 +15,13 @@
 
 package grails.plugin.spock.functional
 
-import com.gargoylesoftware.htmlunit.WebClient
-import com.gargoylesoftware.htmlunit.BrowserVersion
-import com.gargoylesoftware.htmlunit.WebResponse
-import com.gargoylesoftware.htmlunit.Page
-import com.gargoylesoftware.htmlunit.HttpMethod
-import com.gargoylesoftware.htmlunit.WebWindow
-import com.gargoylesoftware.htmlunit.WebRequestSettings
-import com.gargoylesoftware.htmlunit.CookieManager
-import org.apache.commons.httpclient.Cookie
-import com.gargoylesoftware.htmlunit.html.HtmlForm
-import com.gargoylesoftware.htmlunit.ElementNotFoundException
 import com.gargoylesoftware.htmlunit.html.ClickableElement
-
-import java.net.MalformedURLException
-
-import grails.plugin.spock.functional.util.URLUtils
+import com.gargoylesoftware.htmlunit.html.HtmlForm
 import grails.plugin.spock.functional.htmlunit.configurer.WebRequestSettingsConfigurer
 import grails.plugin.spock.functional.htmlunit.form.FormWrapper
+import grails.plugin.spock.functional.util.URLUtils
+import org.apache.commons.httpclient.Cookie
+import com.gargoylesoftware.htmlunit.*
 
 /**
  * A Groovier wrapper for HTMLUnit's WebClient that provides an API

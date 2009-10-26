@@ -15,28 +15,14 @@
 
 package grails.plugin.spock
 
-import grails.util.GrailsNameUtils
-import grails.util.GrailsWebUtil
-import groovy.xml.StreamingMarkupBuilder
-
 import org.codehaus.groovy.grails.commons.ApplicationAttributes
-
-import org.codehaus.groovy.grails.plugins.testing.GrailsMockHttpServletRequest
-import org.codehaus.groovy.grails.plugins.testing.GrailsMockHttpServletResponse
-
 import org.codehaus.groovy.grails.support.MockApplicationContext
-
-import org.codehaus.groovy.grails.web.pages.GroovyPagesUriService
-import org.codehaus.groovy.grails.web.servlet.mvc.GrailsWebRequest
-import org.codehaus.groovy.grails.web.servlet.GrailsApplicationAttributes
 import org.codehaus.groovy.grails.web.pages.DefaultGroovyPagesUriService
-
-import org.springframework.mock.web.MockHttpSession
-import org.springframework.mock.web.MockServletContext
+import org.codehaus.groovy.grails.web.pages.GroovyPagesUriService
+import org.codehaus.groovy.grails.web.servlet.GrailsApplicationAttributes
+import org.codehaus.groovy.grails.web.servlet.mvc.GrailsWebRequest
 import org.springframework.web.context.request.RequestContextHolder
-
-import grails.test.*
-import spock.lang.*
+import spock.lang.Shared
 
 /**
  * Support class for writing unit tests for controllers. Its main job

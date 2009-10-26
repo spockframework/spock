@@ -15,8 +15,8 @@
 
 package grails.plugin.spock
 
-import spock.lang.*
 import grails.plugin.spock.functional.WebSession
+import spock.lang.Shared
 
 class FunctionalSpecification extends IntegrationSpecification {
   static baseUrl // set by the build infrastructure

@@ -15,9 +15,6 @@
 
 package grails.plugin.spock.functional.test
 
-import java.io.IOException
-
-import javax.servlet.Servlet
 import org.mortbay.jetty.Server
 import org.mortbay.jetty.servlet.Context
 import org.mortbay.jetty.servlet.ServletHolder

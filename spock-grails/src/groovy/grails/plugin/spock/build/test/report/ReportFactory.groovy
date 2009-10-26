@@ -16,9 +16,7 @@
 
 package grails.plugin.spock.build.test.report
 
-import org.codehaus.groovy.grails.test.FormattedOutput
-import org.codehaus.groovy.grails.test.XMLFormatter
-import org.codehaus.groovy.grails.test.PlainFormatter
+import org.codehaus.groovy.grails.test.*
 
 class ReportFactory {
   final protected formatters = [

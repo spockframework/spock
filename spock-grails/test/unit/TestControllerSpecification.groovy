@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-import grails.plugin.spock.*
+import grails.plugin.spock.ControllerSpecification
 
 class TestControllerSpecification extends ControllerSpecification {
   def 'text action'() {

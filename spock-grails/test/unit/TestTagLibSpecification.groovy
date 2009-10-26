@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-import grails.plugin.spock.*
+import grails.plugin.spock.TagLibSpecification
 
 class TestTagLibSpecification extends TagLibSpecification {
   def 'bar tag'() {

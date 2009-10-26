@@ -16,10 +16,9 @@
 
 package grails.plugin.spock.build.test.run
 
+import grails.plugin.spock.build.test.adapter.SuiteAdapter
 import grails.util.BuildSettings
 import org.spockframework.buildsupport.SpeckClassFileFinder
-
-import grails.plugin.spock.build.test.adapter.SuiteAdapter
 
 class SpeckRunHelper {
   protected final baseDir

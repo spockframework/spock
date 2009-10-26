@@ -16,13 +16,10 @@
 
 package grails.plugin.spock.build.test.run
 
-import junit.framework.AssertionFailedError
-
 import grails.plugin.spock.build.test.adapter.TestCaseAdapter
 import grails.plugin.spock.build.test.io.SystemOutAndErrSwapper
-
+import junit.framework.AssertionFailedError
 import org.apache.tools.ant.taskdefs.optional.junit.JUnitTest
-
 import org.junit.runner.Description
 import org.junit.runner.notification.Failure
 

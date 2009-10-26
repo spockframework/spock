@@ -16,12 +16,11 @@
 
 package grails.plugin.spock.build.test.run
 
-import org.junit.runner.Result
+import grails.plugin.spock.build.test.report.ReportFactory
 import org.junit.runner.Description
+import org.junit.runner.Result
 import org.junit.runner.notification.Failure
 import org.junit.runner.notification.RunListener
-
-import grails.plugin.spock.build.test.report.ReportFactory
 
 class SpeckRunListener extends RunListener {
   final protected statusOut

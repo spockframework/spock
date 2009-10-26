@@ -13,8 +13,7 @@
  * limitations under the License.
  */
 
-import grails.plugin.spock.*
-
+import grails.plugin.spock.UnitSpecification
 import grails.plugin.spock.build.test.io.SystemOutAndErrSwapper
 
 class UnitSpecificationSpecification extends UnitSpecification {

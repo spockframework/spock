@@ -15,10 +15,10 @@
 
 package grails.plugin.spock.functional
 
-import grails.plugin.spock.functional.test.TestHttpServer
 import com.gargoylesoftware.htmlunit.html.HtmlForm
-
-import spock.lang.*
+import grails.plugin.spock.functional.test.TestHttpServer
+import spock.lang.Shared
+import spock.lang.Specification
 
 class WebSessionSpecification extends Specification {
   @Shared server

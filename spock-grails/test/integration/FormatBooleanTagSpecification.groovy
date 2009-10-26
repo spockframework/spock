@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import grails.plugin.spock.*
+import grails.plugin.spock.GroovyPagesSpecification
 
 class FormatBooleanTagSpecification extends GroovyPagesSpecification {
   def "simple format boolean usage"() {

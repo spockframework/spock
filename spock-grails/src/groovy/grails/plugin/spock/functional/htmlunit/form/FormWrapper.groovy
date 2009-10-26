@@ -19,21 +19,8 @@
 
 package grails.plugin.spock.functional.htmlunit.form
 
-import com.gargoylesoftware.htmlunit.html.ClickableElement
-import com.gargoylesoftware.htmlunit.html.HtmlSelect
-import com.gargoylesoftware.htmlunit.html.HtmlRadioButtonInput
-import com.gargoylesoftware.htmlunit.html.HtmlCheckBoxInput
-import com.gargoylesoftware.htmlunit.html.HtmlInput
-import com.gargoylesoftware.htmlunit.html.HtmlTextArea
-import com.gargoylesoftware.htmlunit.html.HtmlButton
-import com.gargoylesoftware.htmlunit.html.HtmlButtonInput
-import com.gargoylesoftware.htmlunit.html.HtmlResetInput
-import com.gargoylesoftware.htmlunit.html.HtmlSubmitInput
-import com.gargoylesoftware.htmlunit.html.HtmlFileInput
-import com.gargoylesoftware.htmlunit.html.HtmlImageInput
-import com.gargoylesoftware.htmlunit.html.HtmlForm
-
 import com.gargoylesoftware.htmlunit.ElementNotFoundException
+import com.gargoylesoftware.htmlunit.html.*
 
 class FormWrapper {
   final HtmlForm form

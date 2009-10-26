@@ -16,8 +16,8 @@
 package grails.plugin.spock
 
 import org.codehaus.groovy.grails.web.pages.GroovyPagesTemplateEngine
-import org.springframework.web.context.request.RequestContextHolder
 import org.codehaus.groovy.grails.web.util.GrailsPrintWriter
+import org.springframework.web.context.request.RequestContextHolder
 
 class GroovyPagesSpecification extends IntegrationSpecification {
   GroovyPagesTemplateEngine groovyPagesTemplateEngine // autowired

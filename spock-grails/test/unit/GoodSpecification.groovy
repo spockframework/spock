@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import spock.lang.*
+import spock.lang.Specification
 
 class GoodSpecification extends Specification {
   def "can you figure out what I'm up to?"() {

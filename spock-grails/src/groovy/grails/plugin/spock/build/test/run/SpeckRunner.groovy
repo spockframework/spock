@@ -16,8 +16,8 @@
 
 package grails.plugin.spock.build.test.run
 
-import org.junit.runner.JUnitCore
 import grails.plugin.spock.build.test.adapter.ResultAdapter
+import org.junit.runner.JUnitCore
 
 class SpeckRunner {
   protected final listener

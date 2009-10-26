@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import spock.lang.*
+import spock.lang.Specification
 
 class BadSpecification extends Specification {
   def "intentionally failing"() {

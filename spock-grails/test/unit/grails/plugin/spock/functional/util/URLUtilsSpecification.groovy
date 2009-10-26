@@ -15,7 +15,7 @@
 
 package grails.plugin.spock.functional.util
 
-import spock.lang.*
+import spock.lang.Specification
 
 class URLUtilsSpecification extends Specification {
   def relativize() {

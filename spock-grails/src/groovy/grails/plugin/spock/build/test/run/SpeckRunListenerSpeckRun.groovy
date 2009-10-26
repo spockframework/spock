@@ -18,7 +18,6 @@ package grails.plugin.spock.build.test.run
 
 import grails.plugin.spock.build.test.adapter.TestCaseAdapter
 import grails.plugin.spock.build.test.io.SystemOutAndErrSwapper
-import junit.framework.AssertionFailedError
 import org.apache.tools.ant.taskdefs.optional.junit.JUnitTest
 import org.junit.runner.Description
 import org.junit.runner.notification.Failure
@@ -77,7 +76,7 @@ class SpeckRunListenerSpeckRun {
       def testCase = new TestCaseAdapter(failure.description)
       def exception = failure.exception
 
-      def formatterMethod = (exception instanceof AssertionFailedError) ? 'addFailure' : 'addError'
+      def formatterMethod = (exception instanceof AssertionError) ? 'addFailure' : 'addError'
       reports*.formatter*."$formatterMethod"(testCase, exception)
     }
     

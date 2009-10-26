@@ -22,7 +22,6 @@ package grails.plugin.spock.functional.htmlunit.form
 import com.gargoylesoftware.htmlunit.html.HtmlRadioButtonInput
 
 class RadioGroup {
-
   final String fieldName
   final List<HtmlRadioButtonInput> radioButtons
   

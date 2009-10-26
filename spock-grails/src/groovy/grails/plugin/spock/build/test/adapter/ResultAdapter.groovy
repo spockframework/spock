@@ -19,7 +19,6 @@ package grails.plugin.spock.build.test.adapter
 import org.junit.runner.Result
 
 class ResultAdapter {
-
   final protected result
   
   ResultAdapter(Result result) {

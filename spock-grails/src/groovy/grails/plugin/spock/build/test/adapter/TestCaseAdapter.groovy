@@ -27,5 +27,4 @@ class TestCaseAdapter extends TestCase {
   TestCaseAdapter(Description description) {
     super(description.methodName)
   }
-
 }

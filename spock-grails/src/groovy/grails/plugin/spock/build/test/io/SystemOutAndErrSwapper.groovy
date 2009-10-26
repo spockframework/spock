@@ -16,8 +16,7 @@
 
 package grails.plugin.spock.build.test.io
 
-class SystemOutAndErrSwapper {
-    
+class SystemOutAndErrSwapper {    
   protected PrintStream swappedOutOut
   protected PrintStream swappedOutErr
 
@@ -69,5 +68,4 @@ class SystemOutAndErrSwapper {
     
     streams
   }
-  
 }

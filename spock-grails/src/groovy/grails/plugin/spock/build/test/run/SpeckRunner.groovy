@@ -20,7 +20,6 @@ import org.junit.runner.JUnitCore
 import grails.plugin.spock.build.test.adapter.ResultAdapter
 
 class SpeckRunner {
-  
   protected final listener
   protected final junit
 
@@ -33,5 +32,4 @@ class SpeckRunner {
   def runTests(suite) {
     new ResultAdapter(junit.run(suite.specks as Class[]))
   }
-
 }

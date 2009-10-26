@@ -27,7 +27,6 @@ import org.junit.runner.Description
 import org.junit.runner.notification.Failure
 
 class SpeckRunListenerSpeckRun {
-    
     final name
     final protected reports
     final protected statusOut

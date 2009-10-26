@@ -1,3 +1,18 @@
+/* Copyright 2009 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package grails.plugin.spock.functional
 
 import com.gargoylesoftware.htmlunit.WebClient
@@ -24,7 +39,6 @@ import grails.plugin.spock.functional.htmlunit.form.FormWrapper
  * suited for a series of sequenced requests.
  */
 class WebSession {
-
   /**
    * The underlying client used.
    */
@@ -153,7 +167,7 @@ class WebSession {
 
   /**
    * @return the URL of the current request
-   * @see WebRequestSettings#getURL()
+   * @see WebRequestSettings#getUrl()
    */
   URL getRequestURL() {
     requestSettings.url
@@ -211,7 +225,7 @@ class WebSession {
   /**
    * Is the current response a redirect?
    * 
-   * @see isRedirectStatus(int)
+   * @see #isRedirectStatus(int)
    * @return true, if the response was a redirect, false if it wasn't or no request has been made
    */
   boolean isDidReceiveRedirect() {
@@ -223,12 +237,12 @@ class WebSession {
    * 
    * Noop if the client is automatically following redirects.
    * 
-   * @see isDidReceiveRedirect()
-   * @see doFollowRedirect()
+   * @see #isDidReceiveRedirect()
+   * @see #doFollowRedirect()
    * @return the page redirected to, or {@code null} if not in a position to redirect
    */
   Page followRedirect() {
-    if (redirectEnabled || didReceiveRedirect == false) {
+    if (redirectEnabled || !didReceiveRedirect) {
       null
     } else {
       doFollowRedirect()
@@ -240,7 +254,7 @@ class WebSession {
    * 
    * This is obtained by getting the 'Location' header of the response.
    * 
-   * @see isDidReceiveRedirect()
+   * @see #isDidReceiveRedirect()
    * @return the url if did receive a redirect, otherwise {@code null}
    */
   String getRedirectURL() {
@@ -403,8 +417,8 @@ class WebSession {
    * Note: this should _only_ be called when isDidReceiveRedirect() returns true. This
    * method does not check. Behaviour is unspecified if getRedirectURL() returns {@code null}.
    * 
-   * @see getRedirectURL()
-   * @see get(Object, Closure)
+   * @see #getRedirectURL()
+   * @see #get(Object, Closure)
    */
   protected doFollowRedirect() {
     get(redirectURL)
@@ -485,5 +499,4 @@ class WebSession {
   protected boolean isRedirectStatus(int code) {
     code in [300, 301, 302, 303, 307]
   }
-  
 }

@@ -17,7 +17,6 @@
 import grails.plugin.spock.*
 
 class FormatBooleanTagSpecification extends GroovyPagesSpecification {
-
   def "simple format boolean usage"() {
     when:
     template = '<g:formatBoolean boolean="${flag}" true="T" false="F" />'
@@ -30,5 +29,4 @@ class FormatBooleanTagSpecification extends GroovyPagesSpecification {
     flag << [true, false]
     letter << ['T', 'F']
   }
-
 }

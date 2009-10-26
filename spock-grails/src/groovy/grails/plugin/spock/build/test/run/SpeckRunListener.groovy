@@ -24,7 +24,6 @@ import org.junit.runner.notification.RunListener
 import grails.plugin.spock.build.test.report.ReportFactory
 
 class SpeckRunListener extends RunListener {
-
   final protected statusOut
   final protected reportFactory
   

@@ -36,7 +36,6 @@ import com.gargoylesoftware.htmlunit.html.HtmlForm
 import com.gargoylesoftware.htmlunit.ElementNotFoundException
 
 class FormWrapper {
-
   final HtmlForm form
   
   FormWrapper(HtmlForm form) {
@@ -203,5 +202,4 @@ class FormWrapper {
   void propertyMissing(String name, value) {
     setValue(name, value)
   }
-  
 }

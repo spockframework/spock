@@ -1,4 +1,4 @@
-/* Copyright 2008 the original author or authors.
+/* Copyright 2009 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package grails.plugin.spock
 
 import org.codehaus.groovy.grails.web.pages.GroovyPagesTemplateEngine
@@ -19,7 +20,6 @@ import org.springframework.web.context.request.RequestContextHolder
 import org.codehaus.groovy.grails.web.util.GrailsPrintWriter
 
 class GroovyPagesSpecification extends IntegrationSpecification {
-
   GroovyPagesTemplateEngine groovyPagesTemplateEngine // autowired
   
   String template = ''

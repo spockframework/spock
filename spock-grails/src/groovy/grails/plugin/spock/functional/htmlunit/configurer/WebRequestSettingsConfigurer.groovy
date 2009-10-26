@@ -23,7 +23,6 @@ import com.gargoylesoftware.htmlunit.WebRequestSettings
 import org.apache.commons.httpclient.NameValuePair
 
 class WebRequestSettingsConfigurer {
-  
   final WebRequestSettings settings 
     
   WebRequestSettingsConfigurer(WebRequestSettings settings) {
@@ -51,7 +50,6 @@ class WebRequestSettingsConfigurer {
       throw NoSuchMethodException("No such method $name - you can only invoke methods with a single argument to set request parameters")
     }
   }
-    
 }
 
 class WebRequestSettingsConfigurerHeadingsConfigurer {

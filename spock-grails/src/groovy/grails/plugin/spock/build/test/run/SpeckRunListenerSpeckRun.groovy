@@ -26,16 +26,14 @@ class SpeckRunListenerSpeckRun {
     final name
     final protected reports
     final protected statusOut
-    
     final protected junitTest
-    final protected startTime
-
-    final runCount = 0
-    final errorCount = 0
-    final failureCount = 0
-
     final protected outAndErrSwapper = new SystemOutAndErrSwapper()
-        
+
+    protected startTime
+    def runCount = 0
+    def failureCount = 0
+    def errorCount = 0
+
     SpeckRunListenerSpeckRun(name, reportFactory, statusOut) {
       this.name = name
       this.reports = reportFactory.createReports(name)
@@ -53,16 +51,16 @@ class SpeckRunListenerSpeckRun {
     }
     
     void finish() {
-      if (failureCount == 0) statusOut.println("PASSED")
+      if (failureCount + errorCount == 0) statusOut.println("PASSED")
       
       def (out,err) = outAndErrSwapper.swapOut()*.toString()
       junitTest.runTime = System.currentTimeMillis() - startTime
-      junitTest.setCounts(runCount, failureCount, 0)
+      junitTest.setCounts(runCount, failureCount, errorCount)
       reports*.end(junitTest, out, err)
     }
     
     void testStarted(Description description) {
-      ++runCount
+      runCount++
       [System.out, System.err]*.println("--Output from ${description.methodName}--")
 
       def testCase = new TestCaseAdapter(description)
@@ -70,14 +68,19 @@ class SpeckRunListenerSpeckRun {
     }
     
     void testFailure(Failure failure) {
-      if (++failureCount == 1) statusOut.println()
+      if (failureCount + errorCount == 0) statusOut.println()
       statusOut.println("                    ${failure.description.methodName}...FAILED")
 
       def testCase = new TestCaseAdapter(failure.description)
       def exception = failure.exception
 
-      def formatterMethod = (exception instanceof AssertionError) ? 'addFailure' : 'addError'
-      reports*.formatter*."$formatterMethod"(testCase, exception)
+      if (exception instanceof AssertionError) {
+        failureCount++
+        reports*.formatter*.addFailure(testCase, exception)
+      } else {
+        errorCount++
+        reports*.formatter*.addError(testCase, exception)
+      }
     }
     
     void testFinished(Description description) {

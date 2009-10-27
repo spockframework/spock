@@ -36,7 +36,7 @@ import spock.lang.Shared
  */
 abstract class MvcSpecification extends UnitSpecification {
   @Shared classUnderTest
-  final instanceUnderTest
+  def instanceUnderTest
   
   protected webRequest
 

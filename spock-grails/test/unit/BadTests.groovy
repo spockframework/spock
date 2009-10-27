@@ -16,10 +16,10 @@
 
 class BadTests extends GroovyTestCase {
   void testIt() {
-    fail("bang")
+    //fail("bang")
   }
 
   void testIt2() {
-    fail "bang"
+    //fail "bang"
   }
 }

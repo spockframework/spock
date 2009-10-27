@@ -24,9 +24,10 @@ class SpeckRunHelper {
   protected final baseDir
   protected final testClassesDir
   protected final parentLoader
-  protected final currentClassLoader
   protected final resourceResolver
   protected final speckFinder = new SpeckClassFileFinder()
+
+  protected currentClassLoader
 
   SpeckRunHelper(BuildSettings settings, ClassLoader classLoader, Closure resourceResolver) {
     this.baseDir = settings.baseDir

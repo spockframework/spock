@@ -10,6 +10,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.spockframework</groupId>
   <artifactId>spock-grails</artifactId>
+  <version>0.3-SNAPSHOT</version> <!-- grails-maven-plugin seem to require this -->
   <packaging>pom</packaging>
   <name>Spock Framework - Grails Plugin</name>
   <url>http://grails.org/plugin/spock</url>

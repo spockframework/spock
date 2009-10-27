@@ -15,8 +15,10 @@
  */
 
 import spock.lang.Specification
+import spock.lang.Ignore
 
 class BadSpecification extends Specification {
+  @Ignore
   def "intentionally failing"() {
     expect:
     name.size() == size
@@ -26,6 +28,7 @@ class BadSpecification extends Specification {
     size << [4, 5, 6]
   }
 
+  @Ignore
   def "intentionally failing2"() {
     expect:
     name.size() == size

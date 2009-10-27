@@ -26,7 +26,7 @@ class SpeckRunListener extends RunListener {
   final protected statusOut
   final protected reportFactory
   
-  final protected currentSpeckRun
+  protected currentSpeckRun
 
   SpeckRunListener(File reportsDir, List<String> formats, PrintStream statusOut) {
     this.statusOut = statusOut
@@ -50,6 +50,12 @@ class SpeckRunListener extends RunListener {
     currentSpeckRun.testFailure(failure)
   }
 
+  void testAssumptionFailure(Failure failure) {
+    // assumptions (and AssumptionViolatedException) are specific to JUnit,
+    // so we treat this as a failure
+    currentSpeckRun.testFailure(failure)
+  }
+
   void testFinished(Description description) {
     currentSpeckRun.testFinished(description)
   }
@@ -57,8 +63,6 @@ class SpeckRunListener extends RunListener {
   void testRunFinished(Result result) {
     currentSpeckRun.finish()
   }
-
-  void testAssumptionFailure(Failure failure) {}
 
   void testIgnored(Description description) {}
 }

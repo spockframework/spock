@@ -36,7 +36,7 @@ grails.project.dependency.resolution = {
     build 'asm:asm:2.2.3'
     build 'junit:junit:4.7'
     
-    test ('net.sourceforge.htmlunit:htmlunit:2.6') {
+    test('net.sourceforge.htmlunit:htmlunit:2.6') {
       excludes 'xml-apis' // GROOVY-3356
     }
     

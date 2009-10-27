@@ -37,6 +37,7 @@ class FormWrapper {
     processor.delegate = this
     processor.resolveStrategy = Closure.DELEGATE_FIRST
     processor.call()
+    this
   }
     
   protected void handleFormClick(String idOrNameOrValue) {

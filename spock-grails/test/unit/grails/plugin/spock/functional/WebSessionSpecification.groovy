@@ -213,15 +213,15 @@ class WebSessionSpecification extends Specification {
     f.group1 == "group1Value2"
     f.group2 == "group2Value2"
     f.select == ["option2Value"]
-    
-    form().with { // have to use with here, spock barfs otherwise
+    when:
+    form() {
       textInput = "textInputValueChanged"
       textarea = "textareaValueChanged"
       group1 = "group1Value1"
       group2 = "group2Value1"
       select = "option1Value"
     }
-    
+    then:
     f.textInput == "textInputValueChanged"
     f.textarea == "textareaValueChanged"
     f.group1 == "group1Value1"

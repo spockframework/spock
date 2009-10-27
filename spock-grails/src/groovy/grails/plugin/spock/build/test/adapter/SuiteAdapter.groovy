@@ -16,7 +16,7 @@
 
 package grails.plugin.spock.build.test.adapter
 
-import spock.lang.Sputnik
+import org.spockframework.runtime.SpecUtil
 
 class SuiteAdapter {
   final specks = []
@@ -26,9 +26,7 @@ class SuiteAdapter {
   }
 
   int countTestCases() {
-    specks.sum(0) {
-      new Sputnik(it).description.testCount()
-    }
+    specks.sum { SpecUtil.getFeatureCount(it) }
   }
 
   int testCount() {

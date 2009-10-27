@@ -19,7 +19,7 @@ package spock.util
 import org.codehaus.groovy.control.MultipleCompilationErrorsException
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.spockframework.runtime.SpeckInfoBuilder
+import org.spockframework.runtime.SpecUtil
 
 /**
  * Utility class for creating Specks from String source. <em>Not</em> thread-safe.
@@ -48,7 +48,7 @@ class EmbeddedSpeckCompiler {
     }
     
     loader.loadedClasses.findAll {
-      SpeckInfoBuilder.isSpecification(it) || isJUnitTest(it) // need JUnit tests sometimes
+      SpecUtil.isSpec(it) || isJUnitTest(it) // need JUnit tests sometimes
     } as List
   }
 

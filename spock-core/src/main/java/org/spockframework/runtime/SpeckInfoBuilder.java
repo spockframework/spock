@@ -45,10 +45,6 @@ public class SpeckInfoBuilder {
   public SpeckInfoBuilder(Class<?> clazz) {
     this.clazz = clazz;
   }
-
-  public static boolean isSpecification(Class<?> clazz) {
-    return clazz.isAnnotationPresent(SpeckMetadata.class);
-  }
   
   public SpeckInfo build() throws InstantiationException, IllegalAccessException, NoSuchFieldException {
     buildSuperSpeck();

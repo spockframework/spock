@@ -32,7 +32,7 @@ interface Subscriber {
   def receive(event)
 }
 
-class PublisherSpeck extends Specification {
+class PublisherSpec extends Specification {
   def pub = new Publisher()
   def sub1 = Mock(Subscriber)
   def sub2 = Mock(Subscriber)

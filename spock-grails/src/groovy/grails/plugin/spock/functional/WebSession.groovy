@@ -19,7 +19,7 @@ import com.gargoylesoftware.htmlunit.html.ClickableElement
 import com.gargoylesoftware.htmlunit.html.HtmlForm
 import grails.plugin.spock.functional.htmlunit.configurer.WebRequestSettingsConfigurer
 import grails.plugin.spock.functional.htmlunit.form.FormWrapper
-import grails.plugin.spock.functional.util.URLUtils
+import grails.plugin.spock.functional.util.UrlUtils
 import org.apache.commons.httpclient.Cookie
 import com.gargoylesoftware.htmlunit.*
 
@@ -55,7 +55,7 @@ class WebSession {
   }
   
   void setBase(String base) {
-    if (base) this.base = URLUtils.forceTrailingSlash(base)
+    if (base) this.base = UrlUtils.forceTrailingSlash(base)
   }
 
   /**
@@ -438,9 +438,9 @@ class WebSession {
     try {
       new URL(targetURL)
     } catch (MalformedURLException e) {
-      def requestURLPath = URLUtils.relativize(targetURL)
+      def requestURLPath = UrlUtils.relativize(targetURL)
       
-      if (URLUtils.isAbsolutePath(targetURL)) {
+      if (UrlUtils.isAbsolutePath(targetURL)) {
         makeRequestURLRelativeToBase(requestURLPath)
       } else {
         if (relativePage) {

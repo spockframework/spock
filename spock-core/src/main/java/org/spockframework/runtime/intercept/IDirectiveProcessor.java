@@ -25,9 +25,9 @@ import org.spockframework.runtime.model.*;
  * @author Peter Niederwieser
  */
 public interface IDirectiveProcessor<T extends Annotation> {
-  void visitSpeckDirective(T directive, SpeckInfo speck);
+  void visitSpecDirective(T directive, SpecInfo spec);
   void visitFeatureDirective(T directive, FeatureInfo feature);
   void visitFixtureDirective(T directive, MethodInfo fixtureMethod);
   void visitFieldDirective(T directive, FieldInfo field);
-  void afterVisits(SpeckInfo speck);
+  void afterVisits(SpecInfo spec);
 }

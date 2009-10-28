@@ -30,22 +30,22 @@ import org.spockframework.runtime.model.*;
 import spock.lang.Shared;
 
 public class SpringExtension implements ISpockExtension {
-  public void visitSpeck(SpeckInfo speck) {
-    if (!speck.getReflection().isAnnotationPresent(ContextConfiguration.class)) return;
+  public void visitSpec(SpecInfo spec) {
+    if (!spec.getReflection().isAnnotationPresent(ContextConfiguration.class)) return;
 
-    checkNoSharedFieldInjected(speck);
+    checkNoSharedFieldInjected(spec);
 
-    TestContextManager manager = new TestContextManager(speck.getReflection());
+    TestContextManager manager = new TestContextManager(spec.getReflection());
     SpringInterceptor interceptor = new SpringInterceptor(manager);
-    speck.addInterceptor(interceptor);
-    speck.getSetupMethod().addInterceptor(interceptor);
-    speck.getCleanupMethod().addInterceptor(interceptor);
-    for (FeatureInfo feature : speck.getFeatures())
+    spec.addInterceptor(interceptor);
+    spec.getSetupMethod().addInterceptor(interceptor);
+    spec.getCleanupMethod().addInterceptor(interceptor);
+    for (FeatureInfo feature : spec.getFeatures())
       feature.addInterceptor(interceptor);
   }
 
-  private void checkNoSharedFieldInjected(SpeckInfo speck) {
-    for (FieldInfo field : speck.getFields()) {
+  private void checkNoSharedFieldInjected(SpecInfo spec) {
+    for (FieldInfo field : spec.getFields()) {
       Field reflection = field.getReflection();
       if (reflection.isAnnotationPresent(Shared.class)
           && (reflection.isAnnotationPresent(Autowired.class)

@@ -15,7 +15,7 @@
 
 package grails.plugin.spock.functional.util
 
-class URLUtils {
+class UrlUtils {
   static boolean isAbsolutePath(urlPath) {
     urlPath.startsWith('/')
   }

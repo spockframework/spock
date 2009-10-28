@@ -33,7 +33,7 @@ import org.spockframework.util.SyntaxException;
 // but: one advantage of keeping them here is that there is never a need to fix up
 // the stack trace
 // NOTE: if method implementations are declared private instead of package private,
-// they are no longer visible to Specks that extend spock.lang.Specification
+// they are no longer visible to Specs that extend spock.lang.Specification
 // (runtime dispatch fails)
 public class Predef {
   /**
@@ -136,7 +136,7 @@ public class Predef {
    */
   @SuppressWarnings("UnusedDeclaration")
   public static <T> T Mock(Class<T> type) {
-    throw new SyntaxException("Mock objects can only be created inside a Speck");
+    throw new SyntaxException("Mock objects can only be created inside a Spec");
   }
 
   /**

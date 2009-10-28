@@ -17,7 +17,7 @@
 package org.spockframework.runtime.intercept;
 
 import org.spockframework.runtime.model.FeatureInfo;
-import org.spockframework.runtime.model.SpeckInfo;
+import org.spockframework.runtime.model.SpecInfo;
 
 import spock.lang.Ignore;
 
@@ -27,10 +27,10 @@ import spock.lang.Ignore;
  * @author Peter Niederwieser
  */
 // we cannot easily support @Ignore on fixture methods because
-// setup() and setupSpeck() perform initialization of user-defined and internal fields
+// setup() and setupSpec() perform initialization of user-defined and internal fields
 public class IgnoreProcessor extends AbstractDirectiveProcessor<Ignore> {
-  public void visitSpeckDirective(Ignore directive, SpeckInfo speck) {
-    speck.addInterceptor(new IgnoreInterceptor(directive.value()));
+  public void visitSpecDirective(Ignore directive, SpecInfo spec) {
+    spec.addInterceptor(new IgnoreInterceptor(directive.value()));
   }
 
   public void visitFeatureDirective(Ignore directive, FeatureInfo feature) {

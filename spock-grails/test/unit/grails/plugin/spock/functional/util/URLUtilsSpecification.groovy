@@ -17,10 +17,10 @@ package grails.plugin.spock.functional.util
 
 import spock.lang.Specification
 
-class URLUtilsSpecification extends Specification {
+class UrlUtilsSpecification extends Specification {
   def relativize() {
     expect:
-    URLUtils.relativize(input) == output
+    UrlUtils.relativize(input) == output
     
     where:
     input << ["abc", "/abc", "/", ""]
@@ -29,7 +29,7 @@ class URLUtilsSpecification extends Specification {
   
   def forceTrailingSlash() {
     expect:
-    URLUtils.forceTrailingSlash(input) == output
+    UrlUtils.forceTrailingSlash(input) == output
     
     where:
     input << ["abc", "abc/", "/", ""]
@@ -38,7 +38,7 @@ class URLUtilsSpecification extends Specification {
   
   def isAbsolutePath() {
     expect:
-    URLUtils.isAbsolutePath(input) == output
+    UrlUtils.isAbsolutePath(input) == output
     
     where:
     input << ["abc", "/abc", "/", ""]

@@ -84,7 +84,7 @@
       <batchtest>
         <fileset dir="${build.dir}">
           <custom
-            classname="org.spockframework.buildsupport.ant.SpeckClassFileSelector"
+            classname="org.spockframework.buildsupport.ant.SpecClassFileSelector"
             classpathref="classpath.spock" />
         </fileset>
       </batchtest>

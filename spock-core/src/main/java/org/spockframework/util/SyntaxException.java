@@ -19,7 +19,7 @@ package org.spockframework.util;
 import org.codehaus.groovy.ast.ASTNode;
 
 /**
- * Indicates a syntax error in a Speck. Used by both compiler and runtime.
+ * Indicates a syntax error in a Spec. Used by both compiler and runtime.
  *
  * @author Peter Niederwieser
  */

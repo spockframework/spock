@@ -16,7 +16,7 @@
 
 package org.spockframework.runtime.intercept;
 
-import org.spockframework.runtime.SpeckAssertionError;
+import org.spockframework.runtime.SpockAssertionError;
 
 import spock.lang.Timeout;
 
@@ -52,7 +52,7 @@ public class TimeoutInterceptor implements IMethodInterceptor {
       // IDEA: Isn't thread.stop() more likey to succeed (considering it throws
       // an Error instead of an Exception)? Are its risks tolerable here?
       thread.interrupt();
-      throw new SpeckAssertionError("method timed out after %s %s", timeout.value(),
+      throw new SpockAssertionError("method timed out after %s %s", timeout.value(),
         timeout.unit().toString().toLowerCase());
     }
 

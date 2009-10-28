@@ -16,7 +16,7 @@
 
 package org.spockframework.mock;
 
-import org.spockframework.runtime.SpeckAssertionError;
+import org.spockframework.runtime.SpockAssertionError;
 
 /**
  * Base class for exceptions indicating that one or more interactions
@@ -24,4 +24,4 @@ import org.spockframework.runtime.SpeckAssertionError;
  *
  * @author Peter Niederwieser
  */
-public abstract class InteractionNotSatisfiedError extends SpeckAssertionError {}
+public abstract class InteractionNotSatisfiedError extends SpockAssertionError {}

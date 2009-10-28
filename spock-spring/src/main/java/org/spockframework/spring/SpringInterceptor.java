@@ -19,7 +19,7 @@ package org.spockframework.spring;
 import org.springframework.test.annotation.ProfileValueUtils;
 import org.springframework.test.context.TestContextManager;
 
-import org.spockframework.runtime.SkipSpeckOrFeatureException;
+import org.spockframework.runtime.SkipSpecOrFeatureException;
 import org.spockframework.runtime.intercept.IMethodInterceptor;
 import org.spockframework.runtime.intercept.IMethodInvocation;
 import org.spockframework.runtime.model.FeatureInfo;
@@ -37,18 +37,18 @@ public class SpringInterceptor implements IMethodInterceptor {
 
   public void invoke(IMethodInvocation invocation) throws Throwable {
     switch(invocation.getMethod().getKind()) {
-      case SPECK_EXECUTION:
+      case SPEC_EXECUTION:
         Assert.notNull(invocation.getMethod().getReflection());
         
         if (!ProfileValueUtils.isTestEnabledInThisEnvironment(invocation.getTarget().getClass()))
-          throw new SkipSpeckOrFeatureException("Specification not enabled in this environment");
+          throw new SkipSpecOrFeatureException("Specification not enabled in this environment");
         invocation.proceed();
         break;
       case FEATURE_EXECUTION:
         currentFeature = invocation.getMethod().getFeature();
         try {
         if (!ProfileValueUtils.isTestEnabledInThisEnvironment(invocation.getTarget().getClass()))
-          throw new SkipSpeckOrFeatureException("Feature not enabled in this environment");
+          throw new SkipSpecOrFeatureException("Feature not enabled in this environment");
         invocation.proceed();
         } finally {
           currentFeature = null;

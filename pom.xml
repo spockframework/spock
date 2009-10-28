@@ -177,7 +177,7 @@
       </activation>
       <modules>
         <module>spock-core</module>
-        <module>spock-specks</module>
+        <module>spock-specs</module>
         <module>spock-maven</module>
         <module>spock-example</module>
         <module>spock-tapestry</module>
@@ -190,7 +190,7 @@
       <id>sonar</id>
       <modules>
         <module>spock-core</module>
-        <module>spock-specks</module>
+        <module>spock-specs</module>
         <module>spock-maven</module>
         <module>spock-example</module>
         <module>spock-tapestry</module>

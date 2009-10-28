@@ -46,7 +46,7 @@ public class ExpressionInfoBuilder {
   }
 
   public ExpressionInfo build() {
-    SourceUnit unit = SourceUnit.create("Speck expression", adjustedText);
+    SourceUnit unit = SourceUnit.create("Spec expression", adjustedText);
     unit.parse();
     unit.completePhase();
     unit.convert();

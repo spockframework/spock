@@ -61,16 +61,16 @@ public abstract class Identifiers {
   public static final String CLEANUP_METHOD = "cleanup";
   
   /**
-   * Method name identifying a fixture method that is executed before each speck.
+   * Method name identifying a fixture method that is executed before each spec.
    */
-  public static final String SETUP_SPECK_METHOD = "setupSpeck";
+  public static final String SETUP_SPEC_METHOD = "setupSpeck";
 
   /**
-   * Method name identifying a fixture method that is executed after each speck.
+   * Method name identifying a fixture method that is executed after each spec.
    */
-  public static final String CLEANUP_SPECK_METHOD = "cleanupSpeck";
+  public static final String CLEANUP_SPEC_METHOD = "cleanupSpeck";
 
-  public static final List<String> FIXTURE_METHODS = Arrays.asList(SETUP, CLEANUP, SETUP_SPECK_METHOD, CLEANUP_SPECK_METHOD);
+  public static final List<String> FIXTURE_METHODS = Arrays.asList(SETUP, CLEANUP, SETUP_SPEC_METHOD, CLEANUP_SPEC_METHOD);
 
   public static final String MOCK = "Mock";
 

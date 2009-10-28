@@ -7,7 +7,7 @@ Modules
 -------
 spock-core: Core framework.
 
-spock-specks: Specifications for spock-core, written with Spock. Not required for using the framework.
+spock-specs: Specifications for spock-core, written with Spock. Not required for using the framework.
 
 spock-maven: Extended Maven support (optional).
 

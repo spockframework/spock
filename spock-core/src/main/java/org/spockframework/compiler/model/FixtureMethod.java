@@ -26,7 +26,7 @@ import org.codehaus.groovy.ast.MethodNode;
  * @author Peter Niederwieser
  */
 public class FixtureMethod extends Method {
-  public FixtureMethod(Speck parent, MethodNode code) {
+  public FixtureMethod(Spec parent, MethodNode code) {
     super(parent, code);
   }
 }

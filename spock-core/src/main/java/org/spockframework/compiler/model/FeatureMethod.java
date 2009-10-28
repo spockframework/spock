@@ -26,7 +26,7 @@ import org.codehaus.groovy.ast.MethodNode;
 public class FeatureMethod extends Method {
   private final int ordinal;
 
-  public FeatureMethod(Speck parent, MethodNode code, int ordinal) {
+  public FeatureMethod(Spec parent, MethodNode code, int ordinal) {
     super(parent, code);
     this.ordinal = ordinal;
   }

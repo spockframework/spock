@@ -186,13 +186,12 @@
           <execution>
             <goals>
 <!-- grails-maven-plugin only works with my patches, so we don't run these goals at the moment
+              <goal>maven-war</goal>
               <goal>init</goal>
               <goal>maven-clean</goal>
               <goal>validate</goal>
               <goal>config-directories</goal>
               <goal>maven-compile</goal>
-              <goal>maven-war</goal>
-
               <goal>maven-test</goal>             
               <goal>maven-functional-test</goal>
 -->

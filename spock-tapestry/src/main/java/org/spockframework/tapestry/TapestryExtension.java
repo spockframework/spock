@@ -20,7 +20,7 @@ import org.apache.tapestry5.ioc.annotations.SubModule;
 
 import org.spockframework.runtime.extension.ISpockExtension;
 import org.spockframework.runtime.intercept.IMethodInterceptor;
-import org.spockframework.runtime.model.SpeckInfo;
+import org.spockframework.runtime.model.SpecInfo;
 
 /**
  * Facilitates the creation of integration-level specifications for applications based
@@ -85,13 +85,13 @@ import org.spockframework.runtime.model.SpeckInfo;
  * @author Peter Niederwieser
  */
 public class TapestryExtension implements ISpockExtension {
-  public void visitSpeck(SpeckInfo speck) {
-    if (!speck.getReflection().isAnnotationPresent(SubModule.class)) return;
+  public void visitSpec(SpecInfo spec) {
+    if (!spec.getReflection().isAnnotationPresent(SubModule.class)) return;
 
-    IMethodInterceptor interceptor = new TapestryInterceptor(speck);
-    speck.getSetupSpeckMethod().addInterceptor(interceptor);
-    speck.getSetupMethod().addInterceptor(interceptor);
-    speck.getCleanupMethod().addInterceptor(interceptor);
-    speck.getCleanupSpeckMethod().addInterceptor(interceptor);
+    IMethodInterceptor interceptor = new TapestryInterceptor(spec);
+    spec.getSetupSpecMethod().addInterceptor(interceptor);
+    spec.getSetupMethod().addInterceptor(interceptor);
+    spec.getCleanupMethod().addInterceptor(interceptor);
+    spec.getCleanupSpecMethod().addInterceptor(interceptor);
   }
 }

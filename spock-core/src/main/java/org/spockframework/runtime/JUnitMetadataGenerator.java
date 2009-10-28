@@ -20,28 +20,28 @@ import org.junit.runner.Description;
 import org.spockframework.runtime.model.*;
 
 /**
- * Generates and attaches JUnit Description's to a SpeckInfo's nodes.
+ * Generates and attaches JUnit Description's to a SpecInfo's nodes.
  *
  * @author Peter Niederwieser
  */
 public class JUnitMetadataGenerator {
-  private final SpeckInfo speck;
+  private final SpecInfo spec;
 
-  public JUnitMetadataGenerator(SpeckInfo speck) {
-    this.speck = speck;
+  public JUnitMetadataGenerator(SpecInfo spec) {
+    this.spec = spec;
   }
 
   public void generate() {
-    Description desc = Description.createSuiteDescription(speck.getReflection());
-    speck.setMetadata(desc);
+    Description desc = Description.createSuiteDescription(spec.getReflection());
+    spec.setMetadata(desc);
     
-    for (FeatureInfo feature : speck.getFeatures())
+    for (FeatureInfo feature : spec.getFeatures())
       desc.addChild(describeFeature(feature));
 
-    describeMethod(speck.getSetupMethod());
-    describeMethod(speck.getCleanupMethod());
-    describeMethod(speck.getSetupSpeckMethod());
-    describeMethod(speck.getCleanupSpeckMethod());
+    describeMethod(spec.getSetupMethod());
+    describeMethod(spec.getCleanupMethod());
+    describeMethod(spec.getSetupSpecMethod());
+    describeMethod(spec.getCleanupSpecMethod());
   }
 
   private Description describeFeature(FeatureInfo feature) {
@@ -55,7 +55,7 @@ public class JUnitMetadataGenerator {
   }
 
   private Description describeMethod(MethodInfo method) {
-    Description desc = Description.createTestDescription(speck.getReflection(), method.getName());
+    Description desc = Description.createTestDescription(spec.getReflection(), method.getName());
     method.setMetadata(desc);
     return desc;
   }

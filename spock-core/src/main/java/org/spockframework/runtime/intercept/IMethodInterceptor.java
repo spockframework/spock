@@ -20,10 +20,10 @@ package org.spockframework.runtime.intercept;
  *
  * @author Peter Niederwieser
  */
-// IDEA: could separate exceptions thrown by Speck code from exceptions thrown
-// by an interceptor (although an interceptor might again call into Speck code,
-// or at least act on behalf of the Speck code, e.g. by connecting to a database)
-// possibilities for separation: 1. wrap Speck exceptions 2. pass back Speck
+// IDEA: could separate exceptions thrown by Spec code from exceptions thrown
+// by an interceptor (although an interceptor might again call into Spec code,
+// or at least act on behalf of the Spec code, e.g. by connecting to a database)
+// possibilities for separation: 1. wrap Spec exceptions 2. pass back Spec
 // exceptions as return value of invoke()
 public interface IMethodInterceptor {
   void invoke(IMethodInvocation invocation) throws Throwable;

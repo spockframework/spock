@@ -55,7 +55,7 @@ public abstract class SpockRuntime {
   public static final String FEATURE_METHOD_CALLED = "featureMethodCalled";
   
   public static void featureMethodCalled() {
-    throw new InvalidSpeckError("Feature methods cannot be called from user code");
+    throw new InvalidSpecError("Feature methods cannot be called from user code");
   }
 
   public static final String NULL_AWARE_INVOKE_METHOD = "nullAwareInvokeMethod";
@@ -83,7 +83,7 @@ public abstract class SpockRuntime {
     // been changed since the first dispatch; to eliminate this chance we would have to
     // first find the MetaMethod and then invoke it, but the problem is that calling
     // MetaMethod.invoke doesn't have the exact same semantics as calling
-    // InvokerHelper.invokeMethod, even if the same method is chosen (see Speck GroovyMopExploration)
+    // InvokerHelper.invokeMethod, even if the same method is chosen (see Spec GroovyMopExploration)
 
     if (args == null) args = EMPTY_OBJECT_ARRAY;
     Class[] argClasses = new Class[args.length];
@@ -96,7 +96,7 @@ public abstract class SpockRuntime {
     // also we will choose a static method like Foo.getName() over the equally
     // named method on java.lang.Class, but this is consistent with current Groovy semantics
     // (see http://jira.codehaus.org/browse/GROOVY-3548)
-    // in the end it's probably best to rely on NullAwareInvokeMethodSpeck to tell us if
+    // in the end it's probably best to rely on NullAwareInvokeMethodSpec to tell us if
     // everything is OK
     MetaClass metaClass = target instanceof Class ?
         InvokerHelper.getMetaClass((Class)target) : InvokerHelper.getMetaClass(target);

@@ -16,7 +16,7 @@
 
 package org.spockframework.runtime;
 
-public class WrongExceptionThrownError extends SpeckAssertionError {
+public class WrongExceptionThrownError extends SpockAssertionError {
   private final Class<? extends Throwable> expected;
   private final Throwable actual;
 

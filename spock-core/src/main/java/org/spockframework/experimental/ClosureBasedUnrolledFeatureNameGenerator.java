@@ -40,7 +40,7 @@ public class ClosureBasedUnrolledFeatureNameGenerator {
     String nameTemplate = convertToGString(unroll.value());
 
     // Note: shell.evaluate is quite slow (about 0.2 seconds on my machine)
-    // doing this during speck compilation would probably be much faster
+    // doing this during spec compilation would probably be much faster
     nameGenerator = (Closure)shell.evaluate("return {\"" + nameTemplate + "\"}");
 
     nameGenerator.setResolveStrategy(Closure.DELEGATE_ONLY);

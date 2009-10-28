@@ -19,9 +19,8 @@ package spock.lang;
 import java.lang.annotation.*;
 
 /**
- * Marks a class as a "Spock specification", or "Speck" for short.
- * Incidentally, "Speck" is also the German word for "bacon".
- * 
+ * Marks a class as a Spock specification.
+ *
  * @author Peter Niederwieser
  */
 

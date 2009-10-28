@@ -23,9 +23,9 @@ eventTestPhasesStart = {phases ->
         // due to a 1.2-M3 bug, we have to evict the functional phase
         def i = phases.indexOf(phase)
         phases.remove(i)
-        phases.add(i, "$phase-speck")
+        phases.add(i, "$phase-spec")
       } else {
-        phases.add(phases.indexOf(phase) + 1, "$phase-speck")
+        phases.add(phases.indexOf(phase) + 1, "$phase-spec")
       }
     }
   }
@@ -35,44 +35,44 @@ eventTestPhasesStart = {phases ->
   }
 }
 
-binding.'unit-speckTests' = ['unit']
+binding.'unit-specTests' = ['unit']
 
-binding.'unit-speckTestsPreparation' = {
+binding.'unit-specTestsPreparation' = {
 
   // Force a compile to make our classes available
   compile()
 
   previousTestRunner = testRunner
-  testRunner = loadSpockClass('SpeckRunner').newInstance(testReportsDir, reportFormats)
+  testRunner = loadSpockClass('SpecRunner').newInstance(testReportsDir, reportFormats)
 
-  loadSpockClass('SpeckRunHelper').newInstance(grailsSettings, classLoader, resolveResources)
+  loadSpockClass('SpecRunHelper').newInstance(grailsSettings, classLoader, resolveResources)
 }
 
-binding.'unit-speckTestsCleanUp' = {
+binding.'unit-specTestsCleanUp' = {
   testRunner = previousTestRunner
 }
 
-binding.'integration-speckTests' = ['integration']
+binding.'integration-specTests' = ['integration']
 
-binding.'integration-speckTestsPreparation' = {
+binding.'integration-specTestsPreparation' = {
   integrationTestsPreparation()
   // Force a compile to make our classes available
   compile()
 
   previousTestRunner = testRunner
-  testRunner = loadSpockClass('SpeckRunner').newInstance(testReportsDir, reportFormats)
+  testRunner = loadSpockClass('SpecRunner').newInstance(testReportsDir, reportFormats)
 
-  loadSpockClass('SpeckRunHelper').newInstance(grailsSettings, classLoader, resolveResources)
+  loadSpockClass('SpecRunHelper').newInstance(grailsSettings, classLoader, resolveResources)
 }
 
-binding.'integration-speckTestsCleanUp' = {
+binding.'integration-specTestsCleanUp' = {
   integrationTestsCleanUp()
   testRunner = previousTestRunner
 }
 
-binding.'functional-speckTests' = ['functional']
+binding.'functional-specTests' = ['functional']
 
-binding.'functional-speckTestsPreparation' = {
+binding.'functional-specTestsPreparation' = {
   functionalTestsPreparation()
   // Force a compile to make our classes available
   compile()
@@ -81,12 +81,12 @@ binding.'functional-speckTestsPreparation' = {
   functionalSpecificationClass.baseUrl = argsMap["baseUrl"] ?: "http://localhost:$serverPort$serverContextPath"
 
   previousTestRunner = testRunner
-  testRunner = loadSpockClass('SpeckRunner').newInstance(testReportsDir, reportFormats)
+  testRunner = loadSpockClass('SpecRunner').newInstance(testReportsDir, reportFormats)
 
-  loadSpockClass('SpeckRunHelper').newInstance(grailsSettings, classLoader, resolveResources)
+  loadSpockClass('SpecRunHelper').newInstance(grailsSettings, classLoader, resolveResources)
 }
 
-binding.'functional-speckTestsCleanUp' = {
+binding.'functional-specTestsCleanUp' = {
   functionalTestsCleanUp()
   testRunner = previousTestRunner
 }

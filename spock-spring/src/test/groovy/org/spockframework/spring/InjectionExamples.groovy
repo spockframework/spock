@@ -21,7 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.ApplicationContext
 import org.springframework.test.context.ContextConfiguration
 import spock.lang.Specification
-import spock.util.EmbeddedSpeckRunner
+import spock.util.EmbeddedSpecRunner
 
 @ContextConfiguration(locations = "appcontext.xml")
 class InjectionExamples extends Specification {
@@ -51,7 +51,7 @@ class InjectionExamples extends Specification {
   }
 
   def "shared fields cannot be injected"() {
-    def runner = new EmbeddedSpeckRunner()
+    def runner = new EmbeddedSpecRunner()
 
     when:
     runner.runWithImports """

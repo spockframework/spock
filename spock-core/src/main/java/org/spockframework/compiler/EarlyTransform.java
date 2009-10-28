@@ -39,23 +39,23 @@ public class EarlyTransform implements ASTTransformation {
 
   public void visit(ASTNode nodes[], SourceUnit sourceUnit) {
     ModuleNode module = (ModuleNode)nodes[0];
-    if (moduleContainsClassWithSpeckAnnotation(module))
+    if (moduleContainsClassWithSpecAnnotation(module))
       // if this import is already present, it is simply overwritten
       module.addStaticImportClass(Predef.class.getName(), PREDEF);
   }
 
-  private boolean moduleContainsClassWithSpeckAnnotation(ModuleNode module) {
+  private boolean moduleContainsClassWithSpecAnnotation(ModuleNode module) {
     @SuppressWarnings("unchecked")
     List<ClassNode> classes = module.getClasses();
 
     for (ClassNode clazz : classes)
-      if (hasSpeckAnnotation(clazz))
+      if (hasSpecAnnotation(clazz))
         return true;
 
     return false;
   }
 
-  private static boolean hasSpeckAnnotation(ClassNode clazz) {
+  private static boolean hasSpecAnnotation(ClassNode clazz) {
     @SuppressWarnings("unchecked")
     List<AnnotationNode> annotations = clazz.getAnnotations();
 

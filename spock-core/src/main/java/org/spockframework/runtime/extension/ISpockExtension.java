@@ -16,8 +16,8 @@
 
 package org.spockframework.runtime.extension;
 
-import org.spockframework.runtime.model.SpeckInfo;
+import org.spockframework.runtime.model.SpecInfo;
 
 public interface ISpockExtension {
-  void visitSpeck(SpeckInfo speck);
+  void visitSpec(SpecInfo spec);
 }

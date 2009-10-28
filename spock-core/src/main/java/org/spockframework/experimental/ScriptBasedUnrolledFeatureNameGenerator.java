@@ -40,7 +40,7 @@ public class ScriptBasedUnrolledFeatureNameGenerator {
       return nameGenerator.run().toString();
     } catch (Throwable t) {
       // at the moment we can't throw an exception from here, because
-      // this would terminate the speck execution 
+      // this would terminate the spec execution
       return unroll.value();
     }
   }
@@ -50,12 +50,12 @@ public class ScriptBasedUnrolledFeatureNameGenerator {
 
     try {
       // Note: the following GroovyShell invocation is quite slow
-      // compiling the template during speck compilation might be faster,
+      // compiling the template during spec compilation might be faster,
       // e.g. because the compiler classes are already loaded and initialized
       return shell.parse("return \"" + nameTemplate + "\"");
     } catch (CompilationFailedException e) {
       // at the moment we can't throw an exception from here, because
-      // this would terminate the speck execution
+      // this would terminate the spec execution
       return null;
     }
   }

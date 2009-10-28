@@ -19,17 +19,17 @@ package grails.plugin.spock.build.test.adapter
 import org.spockframework.runtime.SpecUtil
 
 class SuiteAdapter {
-  final specks = []
+  final specs = []
 
-  def leftShift(Class speck) {
-    specks << speck
+  def leftShift(Class spec) {
+    specs << spec
   }
 
   int countTestCases() {
-    specks.sum { SpecUtil.getFeatureCount(it) }
+    specs.sum { SpecUtil.getFeatureCount(it) }
   }
 
   int testCount() {
-    specks.size()
+    specs.size()
   }
 }

@@ -17,7 +17,7 @@ package org.spockframework.runtime;
 import java.lang.reflect.Method;
 
 import org.spockframework.runtime.model.FeatureMetadata;
-import org.spockframework.runtime.model.SpeckMetadata;
+import org.spockframework.runtime.model.SpecMetadata;
 
 /**
  * Utility methods related to specifications. Particularly useful when
@@ -32,7 +32,7 @@ public final class SpecUtil {
    * Tells if the given class is a Spock specification.
    */
   public static boolean isSpec(Class<?> clazz) {
-    return clazz.isAnnotationPresent(SpeckMetadata.class);
+    return clazz.isAnnotationPresent(SpecMetadata.class);
   }
 
   /**

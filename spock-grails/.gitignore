@@ -1,5 +1,5 @@
+web-app/WEB-INF/tld
 plugin.xml
 stacktrace.log
 target
-web-app
 .DS_Store

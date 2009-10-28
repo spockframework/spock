@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.spockframework.smoke;
+package org.spockframework.smoke
 
 import org.spockframework.EmbeddedSpecification
 

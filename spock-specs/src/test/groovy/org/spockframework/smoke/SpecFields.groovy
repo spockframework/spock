@@ -30,7 +30,7 @@ class InitializationOfUnsharedFields extends Specification {
   int c
   int d = 1
 
-  def setupSpeck() {
+  def setupSpec() {
     assert a == null
     assert b == null
     assert c == 0
@@ -75,7 +75,7 @@ class InitializationOfSharedFields extends Specification {
   @Shared int c
   @Shared int d = 1
 
-  def setupSpeck() {
+  def setupSpec() {
     assert a == null
     assert b == 1
     assert c == 0

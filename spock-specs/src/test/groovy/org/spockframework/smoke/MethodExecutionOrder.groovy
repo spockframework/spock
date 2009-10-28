@@ -24,12 +24,12 @@ import spock.lang.Specification
  */
 class MethodExecutionOrder extends Specification {
   @Shared order = []
-
+	
   def cleanup() {
     getOrder() << "c"
   }
 
-  def cleanupSpeck() {
+  def cleanupSpec() {
     assert getOrder() == ["ss","s",3,"c","s",4,"c","s",5,"c","s",6,"c","s",7,"c","s",8,"c","s",9,"c","s",10,"c"]
   }
 
@@ -76,7 +76,7 @@ class MethodExecutionOrder extends Specification {
     getOrder() << "h"
   }
 
-  def setupSpeck() {
+  def setupSpec() {
     getOrder() << "ss"
   }
 

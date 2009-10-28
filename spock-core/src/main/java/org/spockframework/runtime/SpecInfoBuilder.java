@@ -205,8 +205,14 @@ public class SpecInfoBuilder {
   private void buildFixtureMethods() {
     spec.setSetupMethod(createMethod(Identifiers.SETUP_METHOD, MethodKind.SETUP, true));
     spec.setCleanupMethod(createMethod(Identifiers.CLEANUP_METHOD, MethodKind.CLEANUP, true));
-    spec.setSetupSpecMethod(createMethod(Identifiers.SETUP_SPEC_METHOD, MethodKind.SETUP_SPEC, true));
-    spec.setCleanupSpecMethod(createMethod(Identifiers.CLEANUP_SPEC_METHOD, MethodKind.CLEANUP_SPEC, true));
+
+    spec.setSetupSpecMethod(createMethod(Identifiers.SETUP_SPEC_METHOD, MethodKind.SETUP_SPEC, false));
+    if (spec.getSetupSpecMethod() == null)
+      spec.setSetupSpecMethod(createMethod(Identifiers.DEPRECATED_SETUP_SPEC_METHOD, MethodKind.SETUP_SPEC, true));
+
+    spec.setCleanupSpecMethod(createMethod(Identifiers.CLEANUP_SPEC_METHOD, MethodKind.CLEANUP_SPEC, false));
+    if (spec.getCleanupSpecMethod() == null)
+      spec.setCleanupSpecMethod(createMethod(Identifiers.DEPRECATED_CLEANUP_SPEC_METHOD, MethodKind.CLEANUP_SPEC, true));
   }
 
   private void notifyExtensions() {

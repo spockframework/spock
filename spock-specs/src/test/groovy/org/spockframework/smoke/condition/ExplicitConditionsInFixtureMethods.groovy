@@ -25,12 +25,12 @@ import spock.lang.Specification
  */
 class ExplicitConditionsInFixtureMethods extends Specification {
   @FailsWith(ConditionNotSatisfiedError)
-  def setupSpeck() {
+  def setupSpec() {
     assert false
   }
 
   @FailsWith(ConditionNotSatisfiedError)
-  def cleanupSpeck() {
+  def cleanupSpec() {
     assert false
   }
 

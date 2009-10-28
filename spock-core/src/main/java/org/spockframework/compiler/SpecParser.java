@@ -67,7 +67,7 @@ public class SpecParser implements GroovyClassVisitor {
     if (AstUtil.isSynthetic(constructor)) return;
 
     throw new SyntaxException(constructor,
-"Constructors are not allowed; instead, define a 'setup()' or 'setupSpeck()' method");
+"Constructors are not allowed; instead, define a 'setup()' or 'setupSpec()' method");
    }
 
   public void visitMethod(MethodNode method) {
@@ -114,7 +114,8 @@ public class SpecParser implements GroovyClassVisitor {
     String name = method.getName();
     if (name.equals(SETUP)) spec.setSetup(fixtureMethod);
     else if (name.equals(CLEANUP)) spec.setCleanup(fixtureMethod);
-    else if (name.equals(SETUP_SPEC_METHOD)) spec.setSetupSpec(fixtureMethod);
+    else if (name.equals(SETUP_SPEC_METHOD) || name.equals(DEPRECATED_SETUP_SPEC_METHOD))
+      spec.setSetupSpec(fixtureMethod);
     else spec.setCleanupSpec(fixtureMethod);
   }
 

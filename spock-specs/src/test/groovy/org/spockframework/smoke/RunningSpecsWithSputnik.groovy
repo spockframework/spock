@@ -30,7 +30,7 @@ public class RunningSpecsWithSputnik extends EmbeddedSpecification {
 
     when:
     def result = runner.runSpecBody("""
-def setupSpeck() { throw new Exception() }
+def setupSpec() { throw new Exception() }
 def feature() { expect: true }
     """)
 
@@ -49,7 +49,7 @@ def feature() { expect: true }
 
     when:
     def result = runner.runSpecBody("""
-def cleanupSpeck() { throw new Exception() }
+def cleanupSpec() { throw new Exception() }
 def feature() { expect: true }
     """)
 

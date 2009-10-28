@@ -35,11 +35,11 @@ class MethodAccessibility extends Specification {
     numCalls++
   }
 
-  private setupSpeck() {
+  private setupSpec() {
     numCalls++
   }
 
-  def cleanupSpeck() {
+  def cleanupSpec() {
     assert numCalls == 4
   }
 

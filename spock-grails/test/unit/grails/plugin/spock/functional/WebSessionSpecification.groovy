@@ -32,7 +32,7 @@ class WebSessionSpecification extends Specification {
     }
   }
   
-  def setupSpeck() {
+  def setupSpec() {
     server = new TestHttpServer()
     server.start()
     session = new WebSession(server.baseUrl)
@@ -332,7 +332,7 @@ class WebSessionSpecification extends Specification {
     getMeta('doesntexist') == null
   }
   
-  def cleanupSpeck() {
+  def cleanupSpec() {
     server.stop()
   }
   

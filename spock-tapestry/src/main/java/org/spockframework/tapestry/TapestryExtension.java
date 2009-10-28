@@ -47,7 +47,7 @@ import org.spockframework.runtime.model.SpecInfo;
  *
  * <p>For every specification annotated with <tt>&#64;SubModule</tt>, the Tapestry
  * registry will be started up (and subsequently shut down) once. Because fields are injected
- * <em>before</em> field initializers and the <tt>setup()</tt>/<tt>setupSpeck()</tt>
+ * <em>before</em> field initializers and the <tt>setup()</tt>/<tt>setupSpec()</tt>
  * methods are run, they can be safely accessed from these places.
  *
  * <p>Fields marked as <tt>&#64;Shared</tt> are injected once per specification; regular 

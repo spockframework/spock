@@ -63,14 +63,19 @@ public abstract class Identifiers {
   /**
    * Method name identifying a fixture method that is executed before each spec.
    */
-  public static final String SETUP_SPEC_METHOD = "setupSpeck";
+  public static final String SETUP_SPEC_METHOD = "setupSpec";
+
+  public static final String DEPRECATED_SETUP_SPEC_METHOD = "setupSpeck";
 
   /**
    * Method name identifying a fixture method that is executed after each spec.
    */
-  public static final String CLEANUP_SPEC_METHOD = "cleanupSpeck";
+  public static final String CLEANUP_SPEC_METHOD = "cleanupSpec";
 
-  public static final List<String> FIXTURE_METHODS = Arrays.asList(SETUP, CLEANUP, SETUP_SPEC_METHOD, CLEANUP_SPEC_METHOD);
+  public static final String DEPRECATED_CLEANUP_SPEC_METHOD = "cleanupSpeck";
+
+  public static final List<String> FIXTURE_METHODS = Arrays.asList(SETUP_METHOD, CLEANUP_METHOD, 
+		  SETUP_SPEC_METHOD, CLEANUP_SPEC_METHOD, DEPRECATED_SETUP_SPEC_METHOD, DEPRECATED_CLEANUP_SPEC_METHOD);
 
   public static final String MOCK = "Mock";
 

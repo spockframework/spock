@@ -24,7 +24,7 @@ class SpecInheritance extends EmbeddedSpecification {
 class BaseSpec extends Specification {
   static log = []
 
-  def setupSpeck() {
+  def setupSpec() {
     log << "ss1"
   }
 
@@ -36,13 +36,13 @@ class BaseSpec extends Specification {
     log << "c1"
   }
 
-  def cleanupSpeck() {
+  def cleanupSpec() {
     log << "cs1"
   }
 }
 
 class DerivedSpec extends BaseSpec {
-  def setupSpeck() {
+  def setupSpec() {
     log << "ss2"
   }
 
@@ -54,7 +54,7 @@ class DerivedSpec extends BaseSpec {
     log << "c2"
   }
 
-  def cleanupSpeck() {
+  def cleanupSpec() {
     log << "cs2"
   }
 
@@ -133,7 +133,7 @@ class DerivedSpec extends BaseSpec {
     thrown(IOException)
 
     where:
-    fixtureMethod << ["setup", "cleanup", "setupSpeck", "cleanupSpeck"]
+    fixtureMethod << ["setup", "cleanup", "setupSpec", "cleanupSpec"]
   }
 }
 

@@ -62,11 +62,11 @@ class InjectionExamples extends Specification {
   @Shared
   List savedSharedServices = []
 
-  def setupSpeck() {
+  def setupSpec() {
     assert sharedService instanceof Service
   }
 
-  def cleanupSpeck() {
+  def cleanupSpec() {
     assert sharedService instanceof Service
   }
 

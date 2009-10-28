@@ -23,7 +23,7 @@ import spock.lang.Specification
 class SqlDataSource extends Specification {
    @Shared Sql sql = Sql.newInstance("jdbc:h2:mem:", "org.h2.Driver")
 
-  def setupSpeck() {
+  def setupSpec() {
     sql.execute("create table data (id int primary key, a int, c int, b int)") // intentionally use "strange" order
     sql.execute("insert into data values (1, 3, 7, 7), (2, 5, 5, 4), (3, 9, 9, 9)")
   }

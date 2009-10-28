@@ -43,7 +43,7 @@ abstract class MvcSpecification extends UnitSpecification {
   abstract provideMvcClassUnderTest() 
   abstract initializeMvcMocking(Class classUnderTest)
   
-  def setupSpeck() {
+  def setupSpec() {
     classUnderTest = provideMvcClassUnderTest()
   }
   

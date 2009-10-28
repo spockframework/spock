@@ -23,7 +23,7 @@ class FunctionalSpecification extends IntegrationSpecification {
   
   @Shared session
   
-  def setupSpeck() {
+  def setupSpec() {
     session = new WebSession(baseUrl)
   }
 

@@ -19,10 +19,9 @@ package spock.lang;
 import org.junit.runner.RunWith;
 
 /**
- * Convenience base class for specifications. Avoids the need to annotate
- * a specification with @Speck and @RunWith, and makes spock.lang.Predef
- * members automatically known to the IDE.
- *
+ * Base class for Spock specifications. All specifications must inherit from
+ * this class, either directly or indirectly.
+ * 
  * @author Peter Niederwieser
  */
 @RunWith(Sputnik.class)

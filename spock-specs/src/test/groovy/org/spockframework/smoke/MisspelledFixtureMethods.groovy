@@ -46,7 +46,7 @@ def cLeanup() {}
   def "misspelled setupSpec causes compile error"() {
     when:
     compiler.compileSpecBody("""
-def setupspeck() {}
+def setupspec() {}
     """)
 
     then:
@@ -56,7 +56,7 @@ def setupspeck() {}
   def "misspelled cleanupSpec causes compile error"() {
     when:
     compiler.compileSpecBody("""
-def CleanupSpeck() {}
+def CleanupSpec() {}
     """)
 
     then:

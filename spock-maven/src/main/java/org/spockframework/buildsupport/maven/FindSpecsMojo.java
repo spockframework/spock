@@ -33,7 +33,7 @@ import org.spockframework.buildsupport.SpecClassFileFinder;
  * limited to Spock specifications), and configures Surefire accordingly.
  *
  * @author Peter Niederwieser
- * @goal find-specks
+ * @goal find-specs
  * @phase process-test-classes
  */
 public class FindSpecsMojo extends AbstractMojo {

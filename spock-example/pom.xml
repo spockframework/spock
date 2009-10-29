@@ -70,7 +70,7 @@
         <executions>
           <execution>
             <goals>
-              <goal>find-specks</goal>
+              <goal>find-specs</goal>
             </goals>
           </execution>
         </executions>

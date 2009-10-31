@@ -22,8 +22,6 @@ import org.spockframework.util.inspector.AstInspector
 import spock.lang.Specification
 
 /**
- * A ...
-
  * @author Peter Niederwieser
  */
 class SourcePositionPhaseConversion extends Specification {
@@ -52,5 +50,4 @@ List.class
     expr.lastLineNumber == 2
     expr.lastColumnNumber == 11
   }
-
 }

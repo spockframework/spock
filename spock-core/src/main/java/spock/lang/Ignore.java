@@ -16,10 +16,10 @@
 
 package spock.lang;
 
+import java.lang.annotation.*;
+
 import org.spockframework.runtime.intercept.Directive;
 import org.spockframework.runtime.intercept.IgnoreProcessor;
-
-import java.lang.annotation.*;
 
 /**
  * Indicates that a specification or feature method should not be run.

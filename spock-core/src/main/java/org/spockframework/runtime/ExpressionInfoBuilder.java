@@ -19,14 +19,10 @@ package org.spockframework.runtime;
 import java.util.Iterator;
 
 import org.codehaus.groovy.ast.expr.Expression;
-import org.codehaus.groovy.ast.stmt.BlockStatement;
-import org.codehaus.groovy.ast.stmt.ExpressionStatement;
-import org.codehaus.groovy.ast.stmt.Statement;
+import org.codehaus.groovy.ast.stmt.*;
 import org.codehaus.groovy.control.SourceUnit;
 
-import org.spockframework.runtime.model.ExpressionInfo;
-import org.spockframework.runtime.model.TextPosition;
-import org.spockframework.runtime.model.TextRegion;
+import org.spockframework.runtime.model.*;
 import org.spockframework.util.Assert;
 import org.spockframework.util.TextUtil;
 
@@ -50,7 +46,7 @@ public class ExpressionInfoBuilder {
   }
 
   public ExpressionInfo build() {
-    SourceUnit unit = SourceUnit.create("Speck expression", adjustedText);
+    SourceUnit unit = SourceUnit.create("Spec expression", adjustedText);
     unit.parse();
     unit.completePhase();
     unit.convert();

@@ -19,7 +19,7 @@ package org.spockframework.runtime;
 /**
  * @author Peter Niederwieser
  */
-public class ConditionNotSatisfiedError extends SpeckAssertionError {
+public class ConditionNotSatisfiedError extends SpockAssertionError {
   private final Condition condition;
 
   public ConditionNotSatisfiedError(Condition condition) {

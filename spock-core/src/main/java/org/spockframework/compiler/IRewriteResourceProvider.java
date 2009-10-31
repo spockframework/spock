@@ -19,10 +19,12 @@ package org.spockframework.compiler;
 import java.util.List;
 
 import org.codehaus.groovy.ast.ASTNode;
-import org.codehaus.groovy.ast.expr.*;
+import org.codehaus.groovy.ast.expr.Expression;
+import org.codehaus.groovy.ast.expr.VariableExpression;
 import org.codehaus.groovy.ast.stmt.Statement;
 
-import org.spockframework.compiler.model.*;
+import org.spockframework.compiler.model.Block;
+import org.spockframework.compiler.model.Method;
 
 /**
  *

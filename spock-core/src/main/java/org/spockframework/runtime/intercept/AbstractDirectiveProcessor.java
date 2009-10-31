@@ -18,33 +18,33 @@ package org.spockframework.runtime.intercept;
 
 import java.lang.annotation.Annotation;
 
+import org.spockframework.runtime.InvalidSpecError;
 import org.spockframework.runtime.model.*;
-import org.spockframework.runtime.InvalidSpeckError;
 
 /**
  *
  * @author Peter Niederwieser
  */
 public class AbstractDirectiveProcessor<T extends Annotation> implements IDirectiveProcessor<T> {
-  public void visitSpeckDirective(T directive, SpeckInfo speck) {
-    throw new InvalidSpeckError("@%s may not be applied to Specks")
+  public void visitSpecDirective(T directive, SpecInfo spec) {
+    throw new InvalidSpecError("@%s may not be applied to Specs")
         .format(directive.annotationType().getSimpleName());
   }
 
   public void visitFeatureDirective(T directive, FeatureInfo feature) {
-    throw new InvalidSpeckError("@%s may not be applied to feature methods")
+    throw new InvalidSpecError("@%s may not be applied to feature methods")
         .format(directive.annotationType().getSimpleName());
   }
 
   public void visitFixtureDirective(T directive, MethodInfo fixtureMethod) {
-    throw new InvalidSpeckError("@%s may not be applied to fixture methods")
+    throw new InvalidSpecError("@%s may not be applied to fixture methods")
         .format(directive.annotationType().getSimpleName());
   }
 
   public void visitFieldDirective(T directive, FieldInfo field) {
-    throw new InvalidSpeckError("@%s may not be applied to fields")
+    throw new InvalidSpecError("@%s may not be applied to fields")
         .format(directive.annotationType().getSimpleName());
   }
 
-  public void afterVisits(SpeckInfo speck) {} // do nothing
+  public void afterVisits(SpecInfo spec) {} // do nothing
 }

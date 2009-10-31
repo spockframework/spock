@@ -16,7 +16,7 @@
 
 package org.spockframework.runtime.intercept;
 
-import org.spockframework.runtime.SkipSpeckOrFeatureException;
+import org.spockframework.runtime.SkipSpecOrFeatureException;
 
 /**
  *
@@ -30,6 +30,6 @@ public class IgnoreInterceptor implements IMethodInterceptor {
   }
 
   public void invoke(IMethodInvocation invocation) throws Throwable {
-    throw new SkipSpeckOrFeatureException(reason);
+    throw new SkipSpecOrFeatureException(reason);
   }                                           
 }

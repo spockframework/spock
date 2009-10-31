@@ -16,8 +16,8 @@
 
 package org.spockframework.compiler;
 
-import org.codehaus.groovy.ast.expr.VariableExpression;
 import org.codehaus.groovy.ast.expr.Expression;
+import org.codehaus.groovy.ast.expr.VariableExpression;
 
 /**
  * Used to represent the argument to Predef.old() once it has been processed

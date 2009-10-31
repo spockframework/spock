@@ -26,8 +26,8 @@ import org.codehaus.groovy.syntax.Types;
 import org.objectweb.asm.Opcodes;
 
 import org.spockframework.compiler.model.WhereBlock;
-import org.spockframework.util.*;
 import org.spockframework.runtime.model.DataProviderMetadata;
+import org.spockframework.util.*;
 
 /**
  *

@@ -1,15 +1,15 @@
 package org.spockframework.runtime.model;
 
-import org.spockframework.runtime.intercept.IMethodInterceptor;
-
+import java.lang.reflect.AnnotatedElement;
 import java.util.ArrayList;
 import java.util.List;
-import java.lang.reflect.AnnotatedElement;
+
+import org.spockframework.runtime.intercept.IMethodInterceptor;
 
 /**
  * @author Peter Niederwieser
  */
-public class FeatureInfo extends NodeInfo<SpeckInfo, AnnotatedElement> {
+public class FeatureInfo extends NodeInfo<SpecInfo, AnnotatedElement> {
   private int ordinal;
   private List<String> parameterNames = new ArrayList<String>();
   private final List<BlockInfo> blocks = new ArrayList<BlockInfo>();

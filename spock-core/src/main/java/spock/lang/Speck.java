@@ -19,12 +19,14 @@ package spock.lang;
 import java.lang.annotation.*;
 
 /**
- * Marks a class as a "Spock specification", or "Speck" for short.
- * Incidentally, "Speck" is also the German word for "bacon".
- * 
+ * Marks a class as a Spock specification.
+ *
+ * @deprecated Extend from spock.lang.Specification instead. This class will
+ * be removed in Spock 0.4.
  * @author Peter Niederwieser
  */
 
+@Deprecated
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface Speck {

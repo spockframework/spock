@@ -22,7 +22,7 @@ import org.junit.runner.manipulation.*;
 import org.junit.runner.notification.RunNotifier;
 
 import org.spockframework.runtime.*;
-import org.spockframework.runtime.model.SpeckInfo;
+import org.spockframework.runtime.model.SpecInfo;
 
 /**
  * A JUnit runner for Spock specifications. To run a specification with JUnit,
@@ -32,29 +32,29 @@ import org.spockframework.runtime.model.SpeckInfo;
  * @author Peter Niederwieser
  */
 public class Sputnik extends Runner implements Filterable, Sortable {
-  private final SpeckInfo speck;
+  private final SpecInfo spec;
 
   // TODO: we probably shouldn't just throw these exceptions as-is
   public Sputnik(Class<?> clazz) throws IllegalAccessException, InstantiationException, NoSuchFieldException {
-    speck = new SpeckInfoBuilder(clazz).build();
-    new JUnitMetadataGenerator(speck).generate();
+    spec = new SpecInfoBuilder(clazz).build();
+    new JUnitMetadataGenerator(spec).generate();
   }
 
   public Description getDescription() {
-    return (Description)speck.getMetadata();
+    return (Description) spec.getMetadata();
   }
 
   public void run(RunNotifier notifier) {
-    new ParameterizedSpeckRunner(speck, new JUnitSupervisor(notifier)).run();
+    new ParameterizedSpecRunner(spec, new JUnitSupervisor(notifier)).run();
   }
 
   public void filter(Filter filter) throws NoTestsRemainException {
-    speck.filterFeatures(new JUnitFilterAdapter(filter));
-    if (speck.getFeatures().size() == 0)
+    spec.filterFeatures(new JUnitFilterAdapter(filter));
+    if (spec.getFeatures().size() == 0)
       throw new NoTestsRemainException();
   }
 
   public void sort(Sorter sorter) {
-    speck.sortFeatures(new JUnitSorterAdapter(sorter));
+    spec.sortFeatures(new JUnitSorterAdapter(sorter));
   }
 }

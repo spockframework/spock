@@ -5,7 +5,7 @@
   <artifactId>spock-example</artifactId>
   <version>0.3-groovy-1.7-SNAPSHOT</version>
   <packaging>jar</packaging>
-  <name>Spock Framework - Example Specs</name>
+  <name>Spock Framework - Example Project</name>
 
   <build>
 <!-- Mandatory plugins for using Spock -->
@@ -70,7 +70,7 @@
         <executions>
           <execution>
             <goals>
-              <goal>find-specks</goal>
+              <goal>find-specs</goal>
             </goals>
           </execution>
         </executions>

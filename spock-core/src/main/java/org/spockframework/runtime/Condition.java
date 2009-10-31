@@ -16,10 +16,10 @@
 
 package org.spockframework.runtime;
 
+import java.util.regex.Pattern;
+
 import org.spockframework.runtime.model.ExpressionInfo;
 import org.spockframework.runtime.model.TextPosition;
-
-import java.util.regex.Pattern;
 
 /**
  * Runtime representation of an evaluated condition.

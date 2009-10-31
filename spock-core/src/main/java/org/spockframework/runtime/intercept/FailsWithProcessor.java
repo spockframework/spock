@@ -17,15 +17,16 @@
 package org.spockframework.runtime.intercept;
 
 import org.spockframework.runtime.model.*;
-import spock.lang.*;
+
+import spock.lang.FailsWith;
 
 /**
  *
  * @author Peter Niederwieser
  */
 public class FailsWithProcessor extends AbstractDirectiveProcessor<FailsWith> {
-  public void visitSpeckDirective(FailsWith directive, SpeckInfo speck) {
-    for (FeatureInfo feature : speck.getFeatures())
+  public void visitSpecDirective(FailsWith directive, SpecInfo spec) {
+    for (FeatureInfo feature : spec.getFeatures())
       if (!feature.getFeatureMethod().getReflection().isAnnotationPresent(FailsWith.class))
         feature.getFeatureMethod().addInterceptor(new FailsWithInterceptor(directive));
   }

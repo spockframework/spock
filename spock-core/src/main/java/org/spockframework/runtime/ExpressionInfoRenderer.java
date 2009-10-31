@@ -16,11 +16,14 @@
 
 package org.spockframework.runtime;
 
-import org.spockframework.runtime.model.ExpressionInfo;
-import org.spockframework.runtime.model.TextPosition;
+import java.util.*;
+
 import org.codehaus.groovy.runtime.DefaultGroovyMethods;
 
-import java.util.*;
+import org.spockframework.runtime.model.ExpressionInfo;
+import org.spockframework.runtime.model.TextPosition;
+import org.spockframework.runtime.condition.EditDistance;
+import org.spockframework.util.Tuple2;
 
 /**
  * Creates a string representation of an assertion and its recorded values.
@@ -136,18 +139,17 @@ public class ExpressionInfoRenderer {
     if (value.equals("")) return "\"\"";
 
     String str;
-    String errorMsg = "";
+     
     try {
-      str = DefaultGroovyMethods.toString(value);
+      str = customToString(expr);
+      if (str == null) str = DefaultGroovyMethods.toString(value);
     } catch (Exception e) {
-      str = null;
-      errorMsg = " (DGM.toString() threw " + e.getClass().getName() + ")";
+      return String.format("%s (renderer threw %s)",
+          javaLangObjectToString(value), e.getClass().getSimpleName());
     }
 
-    // if the value has no string representation, produce same output as Object.toString()
     if (str == null || str.equals("")) {
-      String hash = Integer.toHexString(System.identityHashCode(value));
-      return value.getClass().getName() + "@" + hash + errorMsg;
+      return javaLangObjectToString(value);
     }
 
     // only print enum values that add valuable information
@@ -159,5 +161,25 @@ public class ExpressionInfoRenderer {
     }
 
     return str;
+  }
+
+  private static String javaLangObjectToString(Object value) {
+    String hash = Integer.toHexString(System.identityHashCode(value));
+    return value.getClass().getName() + "@" + hash;
+  }
+
+  private static String customToString(ExpressionInfo expr) {
+    if ("==".equals(expr.getOperation())
+        && expr.getValue() instanceof Boolean
+        && !(Boolean)expr.getValue()
+        && expr.getChildren().size() == 2) {
+      Object op1 = expr.getChildren().get(0).getValue();
+      Object op2 = expr.getChildren().get(1).getValue();
+      if (op1 instanceof String && op2 instanceof String) {
+        Tuple2<String, String> diffs = new EditDistance((String)op1, (String)op2).showDistance();
+        return String.format("false\n%s\n%s", diffs.get0(), diffs.get1());  
+      }
+    }
+    return null;
   }
 }

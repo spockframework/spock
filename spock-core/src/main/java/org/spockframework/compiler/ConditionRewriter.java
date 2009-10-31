@@ -16,16 +16,17 @@
 
 package org.spockframework.compiler;
 
+import java.util.*;
+
+import org.codehaus.groovy.ast.ClassHelper;
 import org.codehaus.groovy.ast.expr.*;
 import org.codehaus.groovy.ast.stmt.*;
-import org.codehaus.groovy.ast.ClassHelper;
 import org.codehaus.groovy.classgen.BytecodeExpression;
 import org.codehaus.groovy.syntax.Types;
+
 import org.spockframework.runtime.SpockRuntime;
 import org.spockframework.runtime.ValueRecorder;
 import org.spockframework.util.*;
-
-import java.util.*;
 
 // NOTE: currently some conversions reference old expression objects rather than copying them;
 // this can potentially lead to aliasing problems (e.g. for Condition.originalExpression)
@@ -313,8 +314,11 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> {
   @SuppressWarnings("unchecked")
   public void visitMapExpression(MapExpression expr) {
     MapExpression conversion =
-        new MapExpression(
-            (List)convertAll(expr.getMapEntryExpressions()));
+        expr instanceof NamedArgumentListExpression ?
+            new NamedArgumentListExpression(
+                (List) convertAll(expr.getMapEntryExpressions())) :
+            new MapExpression(
+                (List) convertAll(expr.getMapEntryExpressions()));
 
     conversion.setSourcePosition(expr);
     result = record(conversion);
@@ -434,17 +438,19 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> {
     result = record(expr);
   }
 
-  // only called for LHS of multi-assignment
+  // used in the following places:
+  // - LHS of multi-assignment
+  // - wraps NamedArgumentListExpression in constructor call with named args (strange but true)
   @SuppressWarnings("unchecked")
   public void visitTupleExpression(TupleExpression expr) {
     TupleExpression conversion =
         new TupleExpression(
-            // prevent lvalue from getting turned into record(lvalue),
-            // which can no longer be assigned to
+            // prevent each lvalue from getting turned into record(lvalue),
+            // which no longer is an lvalue
             convertAllAndRecordNa(expr.getExpressions()));
 
     conversion.setSourcePosition(expr);
-    result = record(conversion);
+    result = recordNa(conversion);
   }
 
   private Expression record(Expression expr) {

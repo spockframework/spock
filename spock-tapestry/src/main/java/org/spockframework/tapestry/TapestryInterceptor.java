@@ -25,7 +25,7 @@ import org.apache.tapestry5.ioc.annotations.SubModule;
 
 import org.spockframework.runtime.intercept.IMethodInterceptor;
 import org.spockframework.runtime.intercept.IMethodInvocation;
-import org.spockframework.runtime.model.SpeckInfo;
+import org.spockframework.runtime.model.SpecInfo;
 import org.spockframework.util.UnreachableCodeError;
 
 import spock.lang.Shared;
@@ -37,17 +37,17 @@ import spock.lang.Shared;
  * @author Peter Niederwieser
  */
 public class TapestryInterceptor implements IMethodInterceptor {
-  private final SpeckInfo speck;
+  private final SpecInfo spec;
   private Registry registry;
   private IPerIterationManager perIterationManager;
 
-  public TapestryInterceptor(SpeckInfo speck) {
-    this.speck = speck;
+  public TapestryInterceptor(SpecInfo spec) {
+    this.spec = spec;
   }
 
   public void invoke(IMethodInvocation invocation) throws Throwable {
     switch(invocation.getMethod().getKind()) {
-      case SETUP_SPECK:
+      case SETUP_SPEC:
         startupRegistry();
         injectServices(invocation.getTarget(), true);
         invocation.proceed();
@@ -63,7 +63,7 @@ public class TapestryInterceptor implements IMethodInterceptor {
           perIterationManager.cleanup();
         }
         break;
-      case CLEANUP_SPECK:
+      case CLEANUP_SPEC:
         try {
           invocation.proceed();
         } finally {
@@ -79,19 +79,19 @@ public class TapestryInterceptor implements IMethodInterceptor {
   private void startupRegistry() {
     RegistryBuilder builder = new RegistryBuilder();
     builder.add(ExtensionModule.class);
-    for (Class<?> module : getSubModules(speck)) builder.add(module);
+    for (Class<?> module : getSubModules(spec)) builder.add(module);
     registry = builder.build();
     registry.performRegistryStartup();
     perIterationManager = registry.getService(IPerIterationManager.class);
   }
 
-  private Class[] getSubModules(SpeckInfo speck) {
-    SubModule modules = speck.getReflection().getAnnotation(SubModule.class);
+  private Class[] getSubModules(SpecInfo spec) {
+    SubModule modules = spec.getReflection().getAnnotation(SubModule.class);
     return modules == null ? new Class[0] : modules.value();
   }
 
   private void injectServices(Object target, boolean sharedFields) throws IllegalAccessException {
-    for (final Field field : speck.getReflection().getDeclaredFields())
+    for (final Field field : spec.getReflection().getDeclaredFields())
       if (field.isAnnotationPresent(Inject.class)
           && field.isAnnotationPresent(Shared.class) == sharedFields) {
         Object value = registry.getObject(field.getType(), createAnnotationProvider(field));

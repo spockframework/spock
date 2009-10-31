@@ -29,7 +29,7 @@ import spock.lang.Unroll;
 
 public class JUnitSupervisor implements IRunSupervisor {
   private final RunNotifier notifier;
-  private SpeckInfo speck;
+  private SpecInfo spec;
   private StackTraceFilter filter;
 
   private FeatureInfo feature;
@@ -45,9 +45,9 @@ public class JUnitSupervisor implements IRunSupervisor {
     this.notifier = notifier;
   }
 
-  public void beforeSpeck(SpeckInfo speck) {
-    this.speck = speck;
-    this.filter = new StackTraceFilter(speck);
+  public void beforeSpec(SpecInfo spec) {
+    this.spec = spec;
+    this.filter = new StackTraceFilter(spec);
   }
 
   public void beforeFeature(FeatureInfo feature) {
@@ -83,7 +83,7 @@ public class JUnitSupervisor implements IRunSupervisor {
     filter.filter(throwable);
 
     Description description = getFailedDescription(method);
-    if (throwable instanceof SkipSpeckOrFeatureException) {
+    if (throwable instanceof SkipSpecOrFeatureException) {
       notifier.fireTestIgnored(description);
       return OK;
     }
@@ -100,10 +100,10 @@ public class JUnitSupervisor implements IRunSupervisor {
       case FEATURE_EXECUTION:
       case DATA_PROVIDER:
         return END_FEATURE;
-      case SETUP_SPECK:
-      case CLEANUP_SPECK:
-      case SPECK_EXECUTION:
-        return END_SPECK;
+      case SETUP_SPEC:
+      case CLEANUP_SPEC:
+      case SPEC_EXECUTION:
+        return END_SPEC;
       default:
         throw new InternalSpockError(method.getKind().toString());
     }
@@ -119,7 +119,7 @@ public class JUnitSupervisor implements IRunSupervisor {
   public void afterLastIteration() {
     if (iterationCount == 0 && !errorSinceLastReset)
       notifier.fireTestFailure(new Failure(getDescription(feature.getFeatureMethod()),
-          new SpeckExecutionException("Data provider has no data")));
+          new SpockExecutionException("Data provider has no data")));
   }
   
   public void afterFeature() {
@@ -132,7 +132,7 @@ public class JUnitSupervisor implements IRunSupervisor {
     unrolledNameGenerator = null;
   }
 
-  public void afterSpeck() {}
+  public void afterSpec() {}
 
   private Description getDescription(NodeInfo node) {
     return (Description)node.getMetadata();
@@ -141,13 +141,13 @@ public class JUnitSupervisor implements IRunSupervisor {
   private Description getFailedDescription(MethodInfo failedMethod) {
     if (unrolledDescription != null) return unrolledDescription;
     if (feature != null) return getDescription(feature.getFeatureMethod());
-    // attribute failure to Speck
-    // if we would attribute failure to a method that isn't part of the Speck's
+    // attribute failure to Spec
+    // if we would attribute failure to a method that isn't part of the Spec's
     // static Description, IDEs would fail to report it correctly
-    return getDescription(speck);
+    return getDescription(spec);
   }
 
   private Description getUnrolledDescription(Object[] args) {
-    return Description.createTestDescription(speck.getReflection(), unrolledNameGenerator.nameFor(args));
+    return Description.createTestDescription(spec.getReflection(), unrolledNameGenerator.nameFor(args));
   }
 }

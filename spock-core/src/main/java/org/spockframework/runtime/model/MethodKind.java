@@ -24,12 +24,12 @@ package org.spockframework.runtime.model;
 public enum MethodKind {
   SETUP,
   CLEANUP,
-  SETUP_SPECK,
-  CLEANUP_SPECK,
+  SETUP_SPEC,
+  CLEANUP_SPEC,
   FEATURE,
   DATA_PROVIDER,
   DATA_PROCESSOR,
-  SPECK_EXECUTION,
+  SPEC_EXECUTION,
   FEATURE_EXECUTION;
 
   public boolean isFixtureMethod() {
@@ -37,18 +37,18 @@ public enum MethodKind {
   }
   
   public boolean isSetupMethod() {
-    return this == SETUP || this == SETUP_SPECK;
+    return this == SETUP || this == SETUP_SPEC;
   }
 
   public boolean isCleanupMethod() {
-    return this == CLEANUP || this == CLEANUP_SPECK;
+    return this == CLEANUP || this == CLEANUP_SPEC;
   }
 
   public boolean isFeatureScopedFixtureMethod() {
     return this == SETUP || this == CLEANUP;
   }
 
-  public boolean isSpeckScopedFixtureMethod() {
-    return this == SETUP_SPECK || this == CLEANUP_SPECK;
+  public boolean isSpecScopedFixtureMethod() {
+    return this == SETUP_SPEC || this == CLEANUP_SPEC;
   }
 }

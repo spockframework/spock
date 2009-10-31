@@ -26,12 +26,12 @@ public enum RunStatus2 {
 
   END_ITERATION(Action.END, Scope.ITERATION),
   END_FEATURE(Action.END, Scope.FEATURE),
-  END_SPECK(Action.END, Scope.SPECK),
+  END_SPEC(Action.END, Scope.SPEC),
   END_ALL(Action.END, Scope.ALL),
 
   ABORT_ITERATION(Action.ABORT, Scope.ITERATION),
   ABORT_FEATURE(Action.ABORT, Scope.FEATURE),
-  ABORT_SPECK(Action.ABORT, Scope.SPECK),
+  ABORT_SPEC(Action.ABORT, Scope.SPEC),
   ABORT_ALL(Action.ABORT, Scope.ALL);
 
   public enum Action {
@@ -42,7 +42,7 @@ public enum RunStatus2 {
   public enum Scope {
     ITERATION,
     FEATURE,
-    SPECK,
+    SPEC,
     ALL
   }
 

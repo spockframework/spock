@@ -17,10 +17,12 @@
 package org.spockframework.compiler;
 
 import org.codehaus.groovy.ast.*;
+
 import org.spockframework.mock.*;
 import org.spockframework.runtime.SpockRuntime;
 import org.spockframework.runtime.ValueRecorder;
 import org.spockframework.runtime.model.*;
+
 import spock.lang.*;
 
 /**
@@ -37,7 +39,7 @@ public class AstNodeCache {
   public final ClassNode Specification = ClassHelper.makeWithoutCaching(Specification.class);
 
   // annotations and annotation elements
-  public final ClassNode SpeckMetadata = ClassHelper.makeWithoutCaching(SpeckMetadata.class);
+  public final ClassNode SpecMetadata = ClassHelper.makeWithoutCaching(SpecMetadata.class);
   public final ClassNode FieldMetadata = ClassHelper.makeWithoutCaching(FieldMetadata.class);
   public final ClassNode FeatureMetadata = ClassHelper.makeWithoutCaching(FeatureMetadata.class);
   public final ClassNode DataProviderMetadata = ClassHelper.makeWithoutCaching(DataProviderMetadata.class);

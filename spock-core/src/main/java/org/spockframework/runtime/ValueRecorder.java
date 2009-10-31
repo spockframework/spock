@@ -16,9 +16,7 @@
 
 package org.spockframework.runtime;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
+import java.util.*;
 
 import org.spockframework.runtime.model.ExpressionInfo;
 

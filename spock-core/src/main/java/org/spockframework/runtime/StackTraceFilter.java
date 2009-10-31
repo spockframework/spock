@@ -16,10 +16,10 @@
 
 package org.spockframework.runtime;
 
-import java.util.List;
 import java.util.ArrayList;
-import java.util.regex.Pattern;
+import java.util.List;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.spockframework.Settings;
 import org.spockframework.util.BinaryNames;

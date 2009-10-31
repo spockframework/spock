@@ -23,6 +23,11 @@
     <url>http://code.google.com/p/spock/source/browse</url>
   </scm>
 
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+  </properties>
+
   <build>
     <pluginManagement>
       <plugins>
@@ -172,7 +177,7 @@
       </activation>
       <modules>
         <module>spock-core</module>
-        <module>spock-specks</module>
+        <module>spock-specs</module>
         <module>spock-maven</module>
         <module>spock-example</module>
         <module>spock-tapestry</module>
@@ -181,8 +186,28 @@
       </modules>
     </profile> 
     <profile>
+      <id>sonar</id>
+      <modules>
+        <module>spock-core</module>
+        <module>spock-specs</module>
+        <module>spock-maven</module>
+        <module>spock-example</module>
+        <module>spock-tapestry</module>
+        <module>spock-guice</module>
+        <module>spock-spring</module>
+      </modules>
+      <properties>
+        <sonar.jdbc.url>jdbc:mysql://localhost:3306/sonar?useUnicode=true&amp;characterEncoding=utf8</sonar.jdbc.url>
+        <sonar.jdbc.driver>com.mysql.jdbc.Driver</sonar.jdbc.driver>
+        <sonar.jdbc.username>sonar</sonar.jdbc.username>
+        <sonar.jdbc.password>sonar</sonar.jdbc.password>
+        <sonar.host.url>http://localhost:9123</sonar.host.url>
+        <maven.test.failure.ignore>true</maven.test.failure.ignore>
+      </properties>
+    </profile>
+    <profile>
       <id>release</id>
-      <!-- all the modules listed here will be deployed -->
+      <!-- all modules listed here will be deployed to Spock's Maven repository / Maven Central -->
       <modules>
         <module>spock-core</module>
         <module>spock-maven</module>

@@ -25,12 +25,12 @@ import org.codehaus.groovy.ast.PropertyNode;
  *
  * @author Peter Niederwieser
  */
-public class Field extends Node<Speck, FieldNode> {
+public class Field extends Node<Spec, FieldNode> {
   private final int ordinal;
   private boolean isShared;
   private PropertyNode owner;
 
-  public Field(Speck parent, FieldNode ast, int ordinal) {
+  public Field(Spec parent, FieldNode ast, int ordinal) {
     super(parent, ast);
     setName(ast.getName());
     this.ordinal = ordinal;
@@ -58,7 +58,7 @@ public class Field extends Node<Speck, FieldNode> {
   }
 
   @Override
-  public void accept(ISpeckVisitor visitor) throws Exception {
+  public void accept(ISpecVisitor visitor) throws Exception {
     visitor.visitField(this);
   }
 }

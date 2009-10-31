@@ -19,18 +19,13 @@ package org.spockframework.mock;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.*;
 import java.lang.reflect.Proxy;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
-import org.objenesis.Objenesis;
-import org.objenesis.ObjenesisException;
-import org.objenesis.ObjenesisStd;
+import org.objenesis.*;
 
-import groovy.lang.GroovyObject;
-import groovy.lang.GroovySystem;
-import groovy.lang.MetaClass;
 import net.sf.cglib.proxy.*;
+
+import groovy.lang.*;
 
 import org.spockframework.util.Util;
 

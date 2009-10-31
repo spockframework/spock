@@ -20,8 +20,8 @@ import java.lang.annotation.*;
 
 import com.google.inject.Module;
 
-import org.spockframework.runtime.intercept.Directive;
 import org.spockframework.guice.GuiceProcessor;
+import org.spockframework.runtime.intercept.Directive;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)

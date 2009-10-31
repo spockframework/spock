@@ -17,8 +17,9 @@
 package org.spockframework.runtime.intercept;
 
 import org.spockframework.runtime.model.FeatureInfo;
-import org.spockframework.runtime.model.SpeckInfo;
-import spock.lang.*;
+import org.spockframework.runtime.model.SpecInfo;
+
+import spock.lang.IgnoreRest;
 
 /**
  * Processes @IgnoreRest directives.
@@ -30,8 +31,8 @@ public class IgnoreRestProcessor extends AbstractDirectiveProcessor<IgnoreRest> 
   public void visitFeatureDirective(IgnoreRest directive, FeatureInfo feature) {} // do nothing
 
   @Override
-  public void afterVisits(SpeckInfo speck) {
-    for (FeatureInfo feature : speck.getFeatures())
+  public void afterVisits(SpecInfo spec) {
+    for (FeatureInfo feature : spec.getFeatures())
       if (!feature.getFeatureMethod().getReflection().isAnnotationPresent(IgnoreRest.class))
         feature.addInterceptor(new IgnoreInterceptor("@IgnoreRest"));
   }

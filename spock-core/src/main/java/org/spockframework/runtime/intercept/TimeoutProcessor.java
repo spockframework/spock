@@ -18,10 +18,11 @@ package org.spockframework.runtime.intercept;
 
 import org.spockframework.runtime.model.FeatureInfo;
 import org.spockframework.runtime.model.MethodInfo;
-import spock.lang.*;
+
+import spock.lang.Timeout;
 
 /**
- * Processes @Timeout directives on Specks and Speck methods.
+ * Processes @Timeout directives on Specs and Spec methods.
  *
  * @author Peter Niederwieser
  */

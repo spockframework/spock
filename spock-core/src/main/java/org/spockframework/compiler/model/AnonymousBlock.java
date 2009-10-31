@@ -28,7 +28,7 @@ public class AnonymousBlock extends Block {
   }
 
   @Override
-  public void accept(ISpeckVisitor visitor) throws Exception {
+  public void accept(ISpecVisitor visitor) throws Exception {
     visitor.visitAnyBlock(this);
     visitor.visitAnonymousBlock(this);
   }

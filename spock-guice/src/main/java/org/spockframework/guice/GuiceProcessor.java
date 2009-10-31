@@ -16,16 +16,16 @@
 
 package org.spockframework.guice;
 
-import spock.guice.UseModules;
-
 import org.spockframework.runtime.intercept.AbstractDirectiveProcessor;
-import org.spockframework.runtime.model.SpeckInfo;
+import org.spockframework.runtime.model.SpecInfo;
+
+import spock.guice.UseModules;
 
 public class GuiceProcessor extends AbstractDirectiveProcessor<UseModules> {
   @Override
-  public void visitSpeckDirective(UseModules directive, SpeckInfo speck) {
-    GuiceInterceptor interceptor = new GuiceInterceptor(speck, directive);
-    speck.getSetupSpeckMethod().addInterceptor(interceptor);
-    speck.getSetupMethod().addInterceptor(interceptor);
+  public void visitSpecDirective(UseModules directive, SpecInfo spec) {
+    GuiceInterceptor interceptor = new GuiceInterceptor(spec, directive);
+    spec.getSetupSpecMethod().addInterceptor(interceptor);
+    spec.getSetupMethod().addInterceptor(interceptor);
   }
 }

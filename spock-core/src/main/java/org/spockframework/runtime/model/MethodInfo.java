@@ -27,7 +27,7 @@ import org.spockframework.runtime.intercept.IMethodInterceptor;
  * 
  * @author Peter Niederwieser
  */
-public class MethodInfo extends NodeInfo<SpeckInfo, Method> {
+public class MethodInfo extends NodeInfo<SpecInfo, Method> {
   private MethodKind kind;
   private FeatureInfo feature;
   private final List<IMethodInterceptor> interceptors = new ArrayList<IMethodInterceptor>();

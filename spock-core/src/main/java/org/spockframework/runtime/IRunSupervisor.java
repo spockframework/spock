@@ -16,16 +16,14 @@
 
 package org.spockframework.runtime;
 
-import org.spockframework.runtime.model.MethodInfo;
-import org.spockframework.runtime.model.SpeckInfo;
-import org.spockframework.runtime.model.FeatureInfo;
+import org.spockframework.runtime.model.*;
 
 /**
  *
  * @author Peter Niederwieser
  */
 public interface IRunSupervisor {
-  void beforeSpeck(SpeckInfo speck);
+  void beforeSpec(SpecInfo spec);
   void beforeFeature(FeatureInfo feature);
   /*
    * Called before the first iteration of a parameterized feature is
@@ -42,7 +40,7 @@ public interface IRunSupervisor {
   void afterIteration();
   void afterLastIteration();
   void afterFeature();
-  void afterSpeck();
+  void afterSpec();
 
   int error(MethodInfo method, Throwable error, int runStatus);
 }

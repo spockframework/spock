@@ -16,9 +16,7 @@
 
 package org.spockframework.compiler.model;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 import org.codehaus.groovy.ast.MethodNode;
 import org.codehaus.groovy.ast.stmt.Statement;
@@ -26,15 +24,15 @@ import org.codehaus.groovy.ast.stmt.Statement;
 import org.spockframework.compiler.AstUtil;
 
 /**
- * AST node representing a Speck method (one of fixture method, feature method, helper method).
+ * AST node representing a Spec method (one of fixture method, feature method, helper method).
  * 
  * @author Peter Niederwieser
  */
-public abstract class Method extends Node<Speck, MethodNode> {
+public abstract class Method extends Node<Spec, MethodNode> {
   private Block firstBlock;
   private Block lastBlock;
 
-  public Method(Speck parent, MethodNode code) {
+  public Method(Spec parent, MethodNode code) {
     super(parent, code);
     setName(code.getName());
   }
@@ -69,7 +67,7 @@ public abstract class Method extends Node<Speck, MethodNode> {
   }
 
   @Override
-  public void accept(ISpeckVisitor visitor) throws Exception {
+  public void accept(ISpecVisitor visitor) throws Exception {
     visitor.visitMethod(this);
     for (Block b: getBlocks()) b.accept(visitor);
     visitor.visitMethodAgain(this);

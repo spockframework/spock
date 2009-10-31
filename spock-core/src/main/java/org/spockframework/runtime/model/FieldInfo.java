@@ -25,7 +25,7 @@ import spock.lang.Shared;
  * 
  * @author Peter Niederwieser
  */
-public class FieldInfo extends NodeInfo<SpeckInfo, Field> {
+public class FieldInfo extends NodeInfo<SpecInfo, Field> {
   private int ordinal;
   private int line;
 

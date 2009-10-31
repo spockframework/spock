@@ -22,13 +22,12 @@ import java.util.*;
 import com.google.inject.*;
 import com.google.inject.spi.InjectionPoint;
 
-import spock.guice.UseModules;
-
 import org.spockframework.runtime.intercept.IMethodInterceptor;
 import org.spockframework.runtime.intercept.IMethodInvocation;
-import org.spockframework.runtime.model.SpeckInfo;
+import org.spockframework.runtime.model.SpecInfo;
 import org.spockframework.util.UnreachableCodeError;
 
+import spock.guice.UseModules;
 import spock.lang.Shared;
 
 /**
@@ -42,14 +41,14 @@ public class GuiceInterceptor implements IMethodInterceptor {
 
   private Injector injector;
 
-  public GuiceInterceptor(SpeckInfo speck, UseModules useModules) {
+  public GuiceInterceptor(SpecInfo spec, UseModules useModules) {
     this.useModules = useModules;
-    injectionPoints = InjectionPoint.forInstanceMethodsAndFields(speck.getReflection());
+    injectionPoints = InjectionPoint.forInstanceMethodsAndFields(spec.getReflection());
   }
 
   public void invoke(IMethodInvocation invocation) throws Throwable {
     switch(invocation.getMethod().getKind()) {
-      case SETUP_SPECK:
+      case SETUP_SPEC:
         createInjector();
         injectValues(invocation.getTarget(), true);
         invocation.proceed();

@@ -16,17 +16,13 @@
 
 package org.spockframework.util.inspector;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.security.CodeSource;
 import java.util.*;
 
 import org.codehaus.groovy.ast.*;
 import org.codehaus.groovy.ast.expr.*;
-import org.codehaus.groovy.ast.stmt.BlockStatement;
-import org.codehaus.groovy.ast.stmt.ExpressionStatement;
-import org.codehaus.groovy.ast.stmt.Statement;
+import org.codehaus.groovy.ast.stmt.*;
 import org.codehaus.groovy.control.*;
 
 import groovy.lang.GroovyClassLoader;
@@ -531,5 +527,5 @@ public class AstInspector {
     }
   }
 
-  private class AstSuccessfullyCaptured extends Error {}
+  private static class AstSuccessfullyCaptured extends Error {}
 }

@@ -192,7 +192,7 @@ ${x.objectToString()}
 x == null
 | |
 | false
-${x.objectToString()} (DGM.toString() threw java.lang.UnsupportedOperationException)
+${x.objectToString()} (renderer threw UnsupportedOperationException)
     """, {
       assert x == null
     }
@@ -242,6 +242,38 @@ NEW
     """, {
       def x = NEW
       assert x == null
+    }
+  }
+
+  def "string comparison"() {
+    expect:
+    isRendered """
+"the quick" == "the quirk"
+            |
+            false
+            the qui(c)k
+            the qui(r)k
+    """, {
+      assert "the quick" == "the quirk"  
+    }
+  }
+
+  def "string comparison where one string is null"() {
+    expect:
+    isRendered """
+"foo" == null
+      |
+      false
+    """, {
+      assert "foo" == null
+    }
+
+    isRendered """
+null == "foo"
+     |
+     false
+    """, {
+      assert null == "foo"
     }
   }
 }

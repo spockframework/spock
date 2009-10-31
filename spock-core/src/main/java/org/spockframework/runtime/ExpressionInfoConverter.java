@@ -52,6 +52,7 @@ public class ExpressionInfoConverter extends AbstractExpressionConverter<Express
     result = new ExpressionInfo(
         TextRegion.of(expr),
         anchor,
+        expr.getMethodAsString(),
         children);
   }
 
@@ -67,6 +68,7 @@ public class ExpressionInfoConverter extends AbstractExpressionConverter<Express
     result = new ExpressionInfo(
         TextRegion.of(expr),
         TextPosition.startOf(expr),
+        "<init>",
         convert(expr.getArguments()));
   }
 
@@ -75,6 +77,7 @@ public class ExpressionInfoConverter extends AbstractExpressionConverter<Express
     result = new ExpressionInfo(
         TextRegion.of(expr),
         TextPosition.startOf(expr),
+        null,
         convertAll(expr.getExpressions())
     ).setRelevant(false);
   }
@@ -83,6 +86,7 @@ public class ExpressionInfoConverter extends AbstractExpressionConverter<Express
     result = new ExpressionInfo(
         TextRegion.of(expr),
         TextPosition.startOf(expr.getProperty()),
+        expr.getPropertyAsString(),
         expr.isImplicitThis() ?
             Collections.<ExpressionInfo>emptyList() :
             Collections.singletonList(convert(expr.getObjectExpression())));
@@ -100,6 +104,7 @@ public class ExpressionInfoConverter extends AbstractExpressionConverter<Express
     result = new ExpressionInfo(
         TextRegion.of(expr),
         TextPosition.startOf(expr.getMethodName()),
+        expr.getMethodName().getText(),
         convert(expr.getExpression()),
         convert(expr.getMethodName())
     ).setRelevant(false);
@@ -108,7 +113,8 @@ public class ExpressionInfoConverter extends AbstractExpressionConverter<Express
   public void visitVariableExpression(VariableExpression expr) {
     result = new ExpressionInfo(
         TextRegion.of(expr),
-        TextPosition.startOf(expr)
+        TextPosition.startOf(expr),
+        expr.getName()
     ).setRelevant(expr != VariableExpression.THIS_EXPRESSION
         && expr != VariableExpression.SUPER_EXPRESSION);
   }
@@ -124,7 +130,8 @@ public class ExpressionInfoConverter extends AbstractExpressionConverter<Express
   public void visitConstantExpression(ConstantExpression expr) {
     result = new ExpressionInfo(
         TextRegion.of(expr),
-        TextPosition.startOf(expr)
+        TextPosition.startOf(expr),
+        expr.getConstantName()
     ).setRelevant(false);
   }
 
@@ -132,7 +139,8 @@ public class ExpressionInfoConverter extends AbstractExpressionConverter<Express
     // also used in phase conversion, e.g. in instanceof expression
     result = new ExpressionInfo(
         TextRegion.of(expr),
-        TextPosition.startOf(expr)
+        TextPosition.startOf(expr),
+        null
     ).setRelevant(false);
   }
 
@@ -142,6 +150,7 @@ public class ExpressionInfoConverter extends AbstractExpressionConverter<Express
         expr.getOperation().getType() == Types.LEFT_SQUARE_BRACKET ?
             startOf("[", expr.getRightExpression()) : // workaround for the fact that Token.startLine == 0 for token [
             TextPosition.startOf(expr.getOperation()),
+        expr.getOperation().getText(),
         convert(expr.getLeftExpression()),
         convert(expr.getRightExpression())
     );
@@ -151,6 +160,7 @@ public class ExpressionInfoConverter extends AbstractExpressionConverter<Express
     result = new ExpressionInfo(
         TextRegion.of(expr),
         TextPosition.startOf(expr),
+        "-",
         convert(expr.getExpression()));
   }
 
@@ -158,6 +168,7 @@ public class ExpressionInfoConverter extends AbstractExpressionConverter<Express
     result = new ExpressionInfo(
         TextRegion.of(expr),
         TextPosition.startOf(expr),
+        "+",
         convert(expr.getExpression()));
   }
 
@@ -165,6 +176,7 @@ public class ExpressionInfoConverter extends AbstractExpressionConverter<Express
     result = new ExpressionInfo(
         TextRegion.of(expr),
         TextPosition.startOf(expr),
+        "!",
         convert(expr.getExpression()));
   }
 
@@ -172,6 +184,7 @@ public class ExpressionInfoConverter extends AbstractExpressionConverter<Express
     result = new ExpressionInfo(
         TextRegion.of(expr),
         TextPosition.startOf(expr),
+        "^",
         convert(expr.getExpression()));
   }
 
@@ -180,6 +193,7 @@ public class ExpressionInfoConverter extends AbstractExpressionConverter<Express
     result = new ExpressionInfo(
         TextRegion.of(expr),
         TextPosition.startOf(expr),
+        "[]",
         convertAll(expr.getExpressions())
     ).setRelevant(false);
   }
@@ -188,6 +202,7 @@ public class ExpressionInfoConverter extends AbstractExpressionConverter<Express
     result = new ExpressionInfo(
         TextRegion.of(expr),
         startOf("..", expr.getTo()),
+        "..",
         convert(expr.getFrom()),
         convert(expr.getTo())
     ).setRelevant(false);
@@ -198,6 +213,7 @@ public class ExpressionInfoConverter extends AbstractExpressionConverter<Express
     result = new ExpressionInfo(
         TextRegion.of(expr),
         TextPosition.startOf(expr),
+        "[:]",
         convertAll(expr.getMapEntryExpressions())
     ).setRelevant(false);
   }
@@ -206,6 +222,7 @@ public class ExpressionInfoConverter extends AbstractExpressionConverter<Express
     result = new ExpressionInfo(
         TextRegion.of(expr),
         startOf(":", expr.getValueExpression()),
+        null,
         convert(expr.getKeyExpression()),
         convert(expr.getValueExpression())
     );
@@ -216,6 +233,7 @@ public class ExpressionInfoConverter extends AbstractExpressionConverter<Express
     result = new ExpressionInfo(
         TextRegion.of(expr),
         TextPosition.startOf(expr),
+        "\"\"",
         convertAll(expr.getValues())
     ).setRelevant(false);
   }
@@ -224,6 +242,7 @@ public class ExpressionInfoConverter extends AbstractExpressionConverter<Express
     result = new ExpressionInfo(
         TextRegion.of(expr),
         startOf("?", expr.getTrueExpression()),
+        "?:",
         convertAll(
             Arrays.asList(
                 expr.getBooleanExpression(),
@@ -236,6 +255,7 @@ public class ExpressionInfoConverter extends AbstractExpressionConverter<Express
     result = new ExpressionInfo(
         TextRegion.of(expr),
         startOf("?", expr.getFalseExpression()),
+        "?:",
         convert(expr.getTrueExpression()),
         convert(expr.getFalseExpression())
     ).setRelevant(false);
@@ -245,6 +265,7 @@ public class ExpressionInfoConverter extends AbstractExpressionConverter<Express
     result = new ExpressionInfo(
         TextRegion.of(expr),
         TextPosition.startOf(expr),
+        expr.getOperation().getText(),
         convert(expr.getExpression()));
   }
 
@@ -252,6 +273,7 @@ public class ExpressionInfoConverter extends AbstractExpressionConverter<Express
     result = new ExpressionInfo(
         TextRegion.of(expr),
         TextPosition.startOf(expr),
+        expr.getOperation().getText(),
         convert(expr.getExpression()));
   }
 
@@ -259,6 +281,7 @@ public class ExpressionInfoConverter extends AbstractExpressionConverter<Express
     result = new ExpressionInfo(
         TextRegion.of(expr),
         TextPosition.startOf(expr),
+        null,
         convert(expr.getExpression())
     ).setRelevant(false);
   }
@@ -266,7 +289,8 @@ public class ExpressionInfoConverter extends AbstractExpressionConverter<Express
   public void visitClosureExpression(ClosureExpression expr) {
     result = new ExpressionInfo(
         TextRegion.of(expr),
-        TextPosition.startOf(expr)
+        TextPosition.startOf(expr),
+        "{->}"
     ).setRelevant(false);
   }
 
@@ -275,6 +299,7 @@ public class ExpressionInfoConverter extends AbstractExpressionConverter<Express
     result = new ExpressionInfo(
         TextRegion.of(expr),
         TextPosition.startOf(expr),
+        null,
         convertAll(expr.getExpressions())
     ).setRelevant(false);
   }
@@ -283,6 +308,7 @@ public class ExpressionInfoConverter extends AbstractExpressionConverter<Express
     result = new ExpressionInfo(
         TextRegion.of(expr),
         TextPosition.startOf(expr),
+        "as",
         convert(expr.getExpression())
     ).setRelevant(false);
   }
@@ -299,6 +325,7 @@ public class ExpressionInfoConverter extends AbstractExpressionConverter<Express
     result = new ExpressionInfo(
         TextRegion.of(expr),
         TextPosition.startOf(expr),
+        null,
         children
     ).setRelevant(false);
   }
@@ -307,6 +334,7 @@ public class ExpressionInfoConverter extends AbstractExpressionConverter<Express
     result = new ExpressionInfo(
         TextRegion.of(expr),
         TextPosition.startOf(expr),
+        "*",
         convert(expr.getExpression())
     ).setRelevant(false);
 
@@ -315,7 +343,8 @@ public class ExpressionInfoConverter extends AbstractExpressionConverter<Express
   public void visitSpreadMapExpression(SpreadMapExpression expr) {
     result = new ExpressionInfo(
         TextRegion.of(expr),
-        TextPosition.startOf(expr)
+        TextPosition.startOf(expr),
+        "*:"
     );
   }
 

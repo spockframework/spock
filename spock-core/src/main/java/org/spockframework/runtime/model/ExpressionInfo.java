@@ -19,7 +19,6 @@ package org.spockframework.runtime.model;
 import java.util.*;
 
 /**
- *
  * @author Peter Niederwieser
  */
 // IDEA: Add some information about an expression's operation (e.g. method/property/operator name).
@@ -27,7 +26,7 @@ import java.util.*;
 // about why a condition failed. Example: Given the condition "abc" == "axc",
 // the difference between the string literals could be highlighted.
 public class ExpressionInfo implements Iterable<ExpressionInfo> {
-  public static final String TEXT_NOT_AVAILABLE = "(n/a)";
+  public static final String TEXT_NOT_AVAILABLE = new String("(n/a)");
   /**
    * Indicates that an expression's value is not available, either because the
    * expression has no value (e.g. def foo = 42), or because it wasn't evaluated
@@ -42,19 +41,21 @@ public class ExpressionInfo implements Iterable<ExpressionInfo> {
 
   private TextRegion region;
   private TextPosition anchor;
+  private final String operation;
   private final List<ExpressionInfo> children;
   private String text;
   private Object value;
   private boolean relevant = true;
 
-  public ExpressionInfo(TextRegion region, TextPosition anchor, List<ExpressionInfo> children) {
+  public ExpressionInfo(TextRegion region, TextPosition anchor, String operation, List<ExpressionInfo> children) {
     this.region = region;
     this.anchor = anchor;
+    this.operation = operation;
     this.children = children;
   }
 
-  public ExpressionInfo(TextRegion region, TextPosition anchor, ExpressionInfo... children) {
-    this(region, anchor, Arrays.asList(children));
+  public ExpressionInfo(TextRegion region, TextPosition anchor, String operation, ExpressionInfo... children) {
+    this(region, anchor, operation, Arrays.asList(children));
   }
 
   public TextRegion getRegion() {
@@ -63,6 +64,10 @@ public class ExpressionInfo implements Iterable<ExpressionInfo> {
 
   public TextPosition getAnchor() {
     return anchor;
+  }
+
+  public String getOperation() {
+    return operation;
   }
 
   public List<ExpressionInfo> getChildren() {

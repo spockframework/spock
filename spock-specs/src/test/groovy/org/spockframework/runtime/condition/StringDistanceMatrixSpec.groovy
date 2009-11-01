@@ -16,12 +16,42 @@
 
 package org.spockframework.runtime.condition
 
-import spock.lang.Specification
-import spock.lang.Shared
+import spock.lang.*
 
 class StringDistanceMatrixSpec extends Specification {
   @Shared Random random = new Random()
   @Shared chars = ('a'..'z') + ('A'..'Z') + ('0'..'9') + [' '] * 10
+
+  @See("http://en.wikipedia.org/wiki/Levenshtein_distance")
+  def "matrix for 'sitting' and 'kitten'"() {
+    def matrix = new StringDistanceMatrix("sitting", "kitten").matrix
+
+    expect:
+    matrix.size() == 8
+    matrix[0] == [0, 1, 2, 3, 4, 5, 6]
+    matrix[1] == [1, 1, 2, 3, 4, 5, 6]
+    matrix[2] == [2, 2, 1, 2, 3, 4, 5]
+    matrix[3] == [3, 3, 2, 1, 2, 3, 4]
+    matrix[4] == [4, 4, 3, 2, 1, 2, 3]
+    matrix[5] == [5, 5, 4, 3, 2, 2, 3]
+    matrix[6] == [6, 6, 5, 4, 3, 3, 2]
+    matrix[7] == [7, 7, 6, 5, 4, 4, 3]
+  }
+
+  @See("http://en.wikipedia.org/wiki/Levenshtein_distance")
+  def "matrix for 'Sunday' and 'Saturday'"() {
+    def matrix = new StringDistanceMatrix("Sunday", "Saturday").matrix
+
+    expect:
+    matrix.size() == 7
+    matrix[0] == [0, 1, 2, 3, 4, 5, 6, 7, 8]
+    matrix[1] == [1, 0, 1, 2, 3, 4, 5, 6, 7]
+    matrix[2] == [2, 1, 1, 2, 2, 3, 4, 5, 6]
+    matrix[3] == [3, 2, 2, 2, 3, 3, 4, 5, 6]
+    matrix[4] == [4, 3, 3, 3, 3, 4, 3, 4, 5]
+    matrix[5] == [5, 4, 3, 4, 4, 4, 4, 3, 4]
+    matrix[6] == [6, 5, 4, 4, 5, 5, 5, 4, 3]
+  }
 
   def "compute distance"() {
     def matrix = new StringDistanceMatrix("asdf", str)

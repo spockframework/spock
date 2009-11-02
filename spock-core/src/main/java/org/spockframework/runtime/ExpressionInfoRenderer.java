@@ -20,10 +20,9 @@ import java.util.*;
 
 import org.codehaus.groovy.runtime.DefaultGroovyMethods;
 
+import org.spockframework.runtime.condition.*;
 import org.spockframework.runtime.model.ExpressionInfo;
 import org.spockframework.runtime.model.TextPosition;
-import org.spockframework.runtime.condition.EditDistance;
-import org.spockframework.util.Tuple2;
 
 /**
  * Creates a string representation of an assertion and its recorded values.
@@ -176,8 +175,12 @@ public class ExpressionInfoRenderer {
       Object op1 = expr.getChildren().get(0).getValue();
       Object op2 = expr.getChildren().get(1).getValue();
       if (op1 instanceof String && op2 instanceof String) {
-        Tuple2<String, String> diffs = new EditDistance((String)op1, (String)op2).showDistance();
-        return String.format("false\n%s\n%s", diffs.get0(), diffs.get1());  
+        String str1 = (String)op1;
+        String str2 = (String)op2;
+        StringDistanceMatrix matrix = new StringDistanceMatrix(str1, str2);
+        return String.format("false\n%d difference%s (%d%% similarity)\n%s",
+            matrix.getDistance(), matrix.getDistance() == 1 ? "" : "s", matrix.getSimilarityInPercent(),
+            new StringDifferenceRenderer().render(str1, str2, matrix.computePath()));
       }
     }
     return null;

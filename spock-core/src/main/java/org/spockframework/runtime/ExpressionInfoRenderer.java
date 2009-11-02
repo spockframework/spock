@@ -178,8 +178,8 @@ public class ExpressionInfoRenderer {
         String str1 = (String)op1;
         String str2 = (String)op2;
         StringDistanceMatrix matrix = new StringDistanceMatrix(str1, str2);
-        return String.format("false\n%d difference(s) (%d%% similarity)\n%s",
-            matrix.getDistance(), matrix.getSimilarityInPercent(),
+        return String.format("false\n%d difference%s (%d%% similarity)\n%s",
+            matrix.getDistance(), matrix.getDistance() == 1 ? "" : "s", matrix.getSimilarityInPercent(),
             new StringDifferenceRenderer().render(str1, str2, matrix.computePath()));
       }
     }

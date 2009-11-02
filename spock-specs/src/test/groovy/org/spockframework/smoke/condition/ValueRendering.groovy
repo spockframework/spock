@@ -251,7 +251,7 @@ NEW
 "the quick" == "the quirk"
             |
             false
-            1 difference(s) (88% similarity)
+            1 difference (88% similarity)
             the qui(c)k
             the qui(r)k
     """, {
@@ -265,7 +265,7 @@ NEW
 "the (qu)ick" == "the (qu)irk"
               |
               false
-              1 difference(s) (90% similarity)
+              1 difference (90% similarity)
               the (qu)i(c)k
               the (qu)i(r)k
     """, {

@@ -36,4 +36,24 @@ public class EditOperation {
   public void incLength(int amount) {
     length += amount;
   }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+
+    EditOperation that = (EditOperation) o;
+
+    if (length != that.length) return false;
+    if (kind != that.kind) return false;
+
+    return true;
+  }
+
+  @Override
+  public int hashCode() {
+    int result = kind != null ? kind.hashCode() : 0;
+    result = 31 * result + length;
+    return result;
+  }
 }

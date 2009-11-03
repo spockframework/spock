@@ -1,11 +1,10 @@
-/*
- * Copyright 2009 the original author or authors.
+/* Copyright 2009 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,17 +13,17 @@
  * limitations under the License.
  */
 
-package grails.plugin.spock.build.test.adapter
+package junit.framework
 
-import junit.framework.TestCase
 import org.junit.runner.Description
 
 /**
- * Only used to adapt the JUnit 4 RunListener interface
- * to the JUnit 3 TestListener interface.
+ * {@code JUnit4TestCaseFacade}'s constructor is package scoped. This just exposes it.
+ * 
+ * I have NO idea what the JUnit guys were smoking when they decided that.
  */
-class TestCaseAdapter extends TestCase {
-  TestCaseAdapter(Description description) {
-    super(description.methodName)
-  }
+class JUnit4TestCaseFacadeFactory {
+  static JUnit4TestCaseFacade createFacade(Description description) {
+    new JUnit4TestCaseFacade(description)
+  }  
 }

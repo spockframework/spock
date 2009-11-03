@@ -16,11 +16,13 @@
 
 package grails.plugin.spock.build.test.run
 
-import grails.plugin.spock.build.test.adapter.TestCaseAdapter
 import grails.plugin.spock.build.test.io.SystemOutAndErrSwapper
 import org.apache.tools.ant.taskdefs.optional.junit.JUnitTest
 import org.junit.runner.Description
 import org.junit.runner.notification.Failure
+
+import junit.framework.Test 
+import junit.framework.JUnit4TestCaseFacadeFactory
 
 class SpecRunListenerSpecRun {
     final name
@@ -63,7 +65,7 @@ class SpecRunListenerSpecRun {
       runCount++
       [System.out, System.err]*.println("--Output from ${description.methodName}--")
 
-      def testCase = new TestCaseAdapter(description)
+      def testCase = JUnit4TestCaseFacadeFactory.createFacade(description)
       reports*.formatter*.startTest(testCase)
     }
     
@@ -71,7 +73,7 @@ class SpecRunListenerSpecRun {
       if (failureCount + errorCount == 0) statusOut.println()
       statusOut.println("                    ${failure.description.methodName}...FAILED")
 
-      def testCase = new TestCaseAdapter(failure.description)
+      def testCase = JUnit4TestCaseFacadeFactory.createFacade(failure.description)
       def exception = failure.exception
 
       if (exception instanceof AssertionError) {
@@ -84,7 +86,7 @@ class SpecRunListenerSpecRun {
     }
     
     void testFinished(Description description) {
-      def testCase = new TestCaseAdapter(description)
+      def testCase = JUnit4TestCaseFacadeFactory.createFacade(description)
       reports*.formatter*.endTest(testCase)
     }
 }

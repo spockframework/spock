@@ -14,16 +14,16 @@
  * limitations under the License.
  */
   
-
-
 package org.spockframework.runtime.condition;
+
 import spock.lang.*
 
 class StringDifferenceRendererSpec extends Specification {
+  def renderer = new StringDifferenceRenderer()
+
   def "examples"() {
     def str1 = "the quick"
     def matrix = new StringDistanceMatrix(str1, str2)
-    def renderer = new StringDifferenceRenderer()
 
     expect:
     renderer.render(str1, str2, matrix.computePath()) == "$out1\n$out2"

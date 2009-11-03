@@ -16,12 +16,10 @@ package org.spockframework.runtime.condition;
 
 import java.util.List;
 
-import org.spockframework.util.TextUtil;
-
-import static org.spockframework.runtime.condition.EditOperation.Kind.*;
+import static org.spockframework.runtime.condition.EditOperation.Kind.SKIP;
 
 public class StringDifferenceRenderer {
-  public String render(String str1, String str2, List<EditOperation> ops) {
+  public String render(CharSequence seq1, CharSequence seq2, List<EditOperation> ops) {
     int index1 = 0;
     int index2 = 0;
 
@@ -32,28 +30,36 @@ public class StringDifferenceRenderer {
 
     for (EditOperation op : ops) {
       if (prevKind == SKIP ^ op.getKind() == SKIP) {
-        String separator = prevKind == SKIP ? "(" : ")";
-        line1.append(separator);
-        line2.append(separator);
+        String delimiter = prevKind == SKIP ? "(" : ")";
+        line1.append(delimiter);
+        line2.append(delimiter);
       }
 
       switch (op.getKind()) {
         case DELETE:
-          line1.append(str1.substring(index1, index1 + op.getLength()));
-          line2.append(TextUtil.repeatChar('-', op.getLength()));
-          index1 += op.getLength();
+          for (int i = 0; i < op.getLength(); i++) {
+            String part = expand(seq1.charAt(index1++));
+            line1.append(part);
+            line2.append(part.length() == 1 ? "-" : "~~");
+          }
           break;
         case INSERT:
-          line1.append(TextUtil.repeatChar('-', op.getLength()));
-          line2.append(str2.substring(index2, index2 + op.getLength()));
-          index2 += op.getLength();
+          for (int i = 0; i < op.getLength(); i++) {
+            String part = expand(seq2.charAt(index2++));
+            line1.append(part.length() == 1 ? "-" : "~~");
+            line2.append(part);
+          }
           break;
         case SKIP:
         case SUBSTITUTE:
-          line1.append(str1.substring(index1, index1 + op.getLength()));
-          line2.append(str2.substring(index2, index2 + op.getLength()));
-          index1 += op.getLength();
-          index2 += op.getLength();
+          for (int i = 0; i < op.getLength(); i++) {
+            String part1 = expand(seq1.charAt(index1++));
+            String part2 = expand(seq2.charAt(index2++));
+            line1.append(part1);
+            line2.append(part2);
+            if (part1.length() < part2.length()) line1.append('~'); 
+            else if (part2.length() < part1.length()) line2.append('~');
+          }
           break;
       }
       prevKind = op.getKind();
@@ -65,5 +71,14 @@ public class StringDifferenceRenderer {
     }
 
     return line1.toString() + "\n" + line2.toString();
+  }
+
+  private String expand(char ch) {
+    if (ch == '\t') return "\\t";
+    else if (ch == '\n') return "\\n";
+    else if (ch == '\b') return "\\b";
+    else if (ch == '\r') return "\\r";
+    else if (ch == '\f') return "\\f";
+    else return String.valueOf(ch);
   }
 }

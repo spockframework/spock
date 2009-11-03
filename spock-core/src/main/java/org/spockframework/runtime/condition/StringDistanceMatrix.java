@@ -26,12 +26,12 @@ import static org.spockframework.runtime.condition.EditOperation.Kind.*;
  * @author Peter Niederwieser
  */
 public class StringDistanceMatrix {
-  private final String str1;
-  private final String str2;
+  private final CharSequence str1;
+  private final CharSequence str2;
 
   private final int[][] matrix;
 
-  public StringDistanceMatrix(String str1, String str2) {
+  public StringDistanceMatrix(CharSequence str1, CharSequence str2) {
     this.str1 = str1;
     this.str2 = str2;
     matrix = new int[str1.length() + 1][];

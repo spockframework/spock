@@ -76,6 +76,22 @@ x == null
     }
   }
 
+  def "multi-line string value"() {
+    expect:
+    isRendered """
+null == x
+     |  |
+     |  one
+     |  two
+     |  three
+     |  four
+     false
+    """, {
+      def x = "one\ntwo\rthree\r\nfour"
+      assert null == x
+    }
+  }
+
   def "primitive array value"() {
     expect:
     isRendered """
@@ -256,20 +272,6 @@ NEW
             the qui(r)k
     """, {
       assert "the quick" == "the quirk"  
-    }
-  }
-
-  def "string comparison with separators"() {
-    expect:
-    isRendered """
-"the (qu)ick" == "the (qu)irk"
-              |
-              false
-              1 difference (90% similarity)
-              the (qu)i(c)k
-              the (qu)i(r)k
-    """, {
-      assert "the (qu)ick" == "the (qu)irk"
     }
   }
 

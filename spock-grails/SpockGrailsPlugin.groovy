@@ -19,7 +19,8 @@ class SpockGrailsPlugin {
   def grailsVersion = "1.2-M3 > *"
   def dependsOn = [:]
   def pluginExcludes = [
-      "grails-app/**"
+      "grails-app/**",
+      "web-app"
   ]
 
   def author = "Luke Daley"

@@ -17,6 +17,7 @@
 package org.spockframework.runtime.condition;
 
 import spock.lang.*
+import java.nio.CharBuffer
 
 class StringDifferenceRendererSpec extends Specification {
   def renderer = new StringDifferenceRenderer()
@@ -34,7 +35,7 @@ class StringDifferenceRendererSpec extends Specification {
     out2 << ["the qui(r)k", "(----)quick", "(--)e qui(--)", "(and now for s)th(. compl)e(tely) (d-)i(fferent)"]
   }
 
-  def "special characters in original strings"() {
+  def "compared strings contain special characters"() {
     def matrix = new StringDistanceMatrix(str1, str2)
 
     expect:
@@ -47,7 +48,7 @@ class StringDifferenceRendererSpec extends Specification {
     out2 = "one(~~)two(\\n)three(~~)four\\rfive(\\t)six"
   }
 
-  def "delimiters in original strings"() {
+  def "compared strings contain same delimiters as used by diff renderer"() {
     def matrix = new StringDistanceMatrix(str1, str2)
 
     expect:
@@ -58,5 +59,18 @@ class StringDifferenceRendererSpec extends Specification {
     str2 = "q(u)i(r)k)"
     out1 = "q(u)i((c))k(()"
     out2 = "q(u)i((r))k())"
+  }
+
+  def "compare String with other CharSequence"() {
+    def matrix = new StringDistanceMatrix(str, seq)
+
+    expect:
+    renderer.render(str, seq, matrix.computePath()) == "$out1\n$out2"
+
+    where:
+    str = "the quick brown"
+    seq << ["${"the"} quark ${"burn"}", new StringBuilder("the quark burn"), CharBuffer.wrap("the quark burn".toCharArray())]
+    out1 = "the qu(ic)k b(-)r(ow)n"
+    out2 = "the qu(ar)k b(u)r(--)n"
   }
 }

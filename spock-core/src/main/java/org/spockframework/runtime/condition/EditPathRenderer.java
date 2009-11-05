@@ -18,7 +18,7 @@ import java.util.List;
 
 import static org.spockframework.runtime.condition.EditOperation.Kind.SKIP;
 
-public class StringDifferenceRenderer {
+public class EditPathRenderer {
   public String render(CharSequence seq1, CharSequence seq2, List<EditOperation> ops) {
     int index1 = 0;
     int index2 = 0;

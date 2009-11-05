@@ -19,27 +19,27 @@ package org.spockframework.runtime.condition;
 import spock.lang.*
 import java.nio.CharBuffer
 
-class StringDifferenceRendererSpec extends Specification {
-  def renderer = new StringDifferenceRenderer()
+class EditPathRendererSpec extends Specification {
+  def renderer = new EditPathRenderer()
 
   def "examples"() {
-    def matrix = new StringDistanceMatrix(str1, str2)
+    def dist = new EditDistance(str1, str2)
 
     expect:
-    renderer.render(str1, str2, matrix.computePath()) == "$out1\n$out2"
+    renderer.render(str1, str2, dist.calculatePath()) == "$out1\n$out2"
 
     where:
     str1 = "the quick"
     str2 << ["the quirk"  , "quick"      , "e qui"        , "and now for sth. completely different"]
-    out1 << ["the qui(c)k", "(the )quick", "(th)e qui(ck)", "(-------------)th(-------)e(----) (qu)i(ck-----)"]
-    out2 << ["the qui(r)k", "(----)quick", "(--)e qui(--)", "(and now for s)th(. compl)e(tely) (d-)i(fferent)"]
+    out1 << ["the qui(c)k", "(the )quick", "(th)e qui(ck)", "(-------------)th(e) (qu----------)i(ck-----)"]
+    out2 << ["the qui(r)k", "(----)quick", "(--)e qui(--)", "(and now for s)th(.) (completely d)i(fferent)"]
   }
 
   def "compared strings contain special characters"() {
-    def matrix = new StringDistanceMatrix(str1, str2)
+    def dist = new EditDistance(str1, str2)
 
     expect:
-    renderer.render(str1, str2, matrix.computePath()) == "$out1\n$out2"
+    renderer.render(str1, str2, dist.calculatePath()) == "$out1\n$out2"
     
     where:
     str1 = "one\ttwothree\bfour\rfive\fsix"
@@ -49,10 +49,10 @@ class StringDifferenceRendererSpec extends Specification {
   }
 
   def "compared strings contain same delimiters as used by diff renderer"() {
-    def matrix = new StringDistanceMatrix(str1, str2)
+    def dist = new EditDistance(str1, str2)
 
     expect:
-    renderer.render(str1, str2, matrix.computePath()) == "$out1\n$out2"
+    renderer.render(str1, str2, dist.calculatePath()) == "$out1\n$out2"
 
     where:
     str1 = "q(u)i(c)k("
@@ -62,10 +62,10 @@ class StringDifferenceRendererSpec extends Specification {
   }
 
   def "compare String with other CharSequence"() {
-    def matrix = new StringDistanceMatrix(str, seq)
+    def dist = new EditDistance(str, seq)
 
     expect:
-    renderer.render(str, seq, matrix.computePath()) == "$out1\n$out2"
+    renderer.render(str, seq, dist.calculatePath()) == "$out1\n$out2"
 
     where:
     str = "the quick brown"

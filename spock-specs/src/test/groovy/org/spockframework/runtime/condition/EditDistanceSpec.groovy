@@ -21,12 +21,12 @@ import spock.lang.*
 import static org.spockframework.runtime.condition.EditOperation.Kind.*
 
 @See(["http://en.wikipedia.org/wiki/Levenshtein_distance", "http://www.levenshtein.net/"])
-class StringDistanceMatrixSpec extends Specification {
+class EditDistanceSpec extends Specification {
   @Shared Random random = new Random()
   @Shared chars = ('a'..'z') + ('A'..'Z') + ('0'..'9') + [' '] * 10
 
   def "matrix for 'sitting' and 'kitten'"() {
-    def matrix = new StringDistanceMatrix("sitting", "kitten").matrix
+    def matrix = new EditDistance("sitting", "kitten").matrix
 
     expect:
     matrix.size() == 8
@@ -41,7 +41,7 @@ class StringDistanceMatrixSpec extends Specification {
   }
 
   def "matrix for 'Sunday' and 'Saturday'"() {
-    def matrix = new StringDistanceMatrix("Sunday", "Saturday").matrix
+    def matrix = new EditDistance("Sunday", "Saturday").matrix
 
     expect:
     matrix.size() == 7
@@ -55,7 +55,7 @@ class StringDistanceMatrixSpec extends Specification {
   }
 
   def "matrix for 'levenshtein' and 'meilenstein'"() {
-    def matrix = new StringDistanceMatrix("levenshtein", "meilenstein").matrix
+    def matrix = new EditDistance("levenshtein", "meilenstein").matrix
 
     expect:
     matrix.size() == 12
@@ -74,7 +74,7 @@ class StringDistanceMatrixSpec extends Specification {
   }
 
   def "path from 'sitting' to 'kitten'"() {
-    def path = new StringDistanceMatrix("sitting", "kitten").computePath()
+    def path = new EditDistance("sitting", "kitten").calculatePath()
 
     expect:
     path.size() == 5
@@ -86,7 +86,7 @@ class StringDistanceMatrixSpec extends Specification {
   }
 
   def "path from 'Sunday' to 'Saturday'"() {
-    def path = new StringDistanceMatrix("Sunday", "Saturday").computePath()
+    def path = new EditDistance("Sunday", "Saturday").calculatePath()
 
     expect:
     path.size() == 5
@@ -98,7 +98,7 @@ class StringDistanceMatrixSpec extends Specification {
   }
 
   def "path from 'levenshtein' to 'meilenstein'"() {
-    def path = new StringDistanceMatrix("levenshtein", "meilenstein").computePath()
+    def path = new EditDistance("levenshtein", "meilenstein").calculatePath()
 
     expect:
     path.size() == 7
@@ -112,10 +112,10 @@ class StringDistanceMatrixSpec extends Specification {
   }
 
   def "compute distance"() {
-    def matrix = new StringDistanceMatrix("asdf", str)
+    def dist = new EditDistance("asdf", str)
 
     expect:
-    matrix.getDistance() == d
+    dist.getDistance() == d
 
     where:
     str << ["xsdf", "axdf", "asxf", "asdx", "", "a", "as", "asd", "asdf", "xasdf", "asdfx", "xasdfx"]
@@ -123,10 +123,10 @@ class StringDistanceMatrixSpec extends Specification {
   }
 
   def "computed path has correct distance"() {
-    def matrix = new StringDistanceMatrix(str1, str2)
+    def dist = new EditDistance(str1, str2)
     
     expect:
-    computeDistance(matrix.computePath()) == matrix.getDistance()
+    computeDistance(dist.calculatePath()) == dist.getDistance()
 
     where:
     num << (0..99)

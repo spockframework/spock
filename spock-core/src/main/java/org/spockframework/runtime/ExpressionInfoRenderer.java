@@ -177,10 +177,10 @@ public class ExpressionInfoRenderer {
       if (op1 instanceof CharSequence && op2 instanceof CharSequence) {
         CharSequence seq1 = (CharSequence)op1;
         CharSequence seq2 = (CharSequence)op2;
-        StringDistanceMatrix matrix = new StringDistanceMatrix(seq1, seq2);
+        EditDistance dist = new EditDistance(seq1, seq2);
         return String.format("false\n%d difference%s (%d%% similarity)\n%s",
-            matrix.getDistance(), matrix.getDistance() == 1 ? "" : "s", matrix.getSimilarityInPercent(),
-            new StringDifferenceRenderer().render(seq1, seq2, matrix.computePath()));
+            dist.getDistance(), dist.getDistance() == 1 ? "" : "s", dist.getSimilarityInPercent(),
+            new EditPathRenderer().render(seq1, seq2, dist.calculatePath()));
       }
     }
     return null;

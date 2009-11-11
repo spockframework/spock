@@ -204,41 +204,7 @@
         <version>${grails.version}</version>
         <extensions>true</extensions>
         <executions>
-          <execution>
-            <id>build</id>
-            <goals>
-              <goal>init</goal>
-              <goal>maven-clean</goal>
-              <goal>validate</goal>
-              <goal>config-directories</goal>
-              <goal>maven-compile</goal>
-              <goal>maven-test</goal>
-              <goal>maven-functional-test</goal>
-            </goals>
-          </execution>
-          <execution>
-            <id>package-plugin</id>
-            <phase>package</phase>
-            <goals>
-              <goal>exec</goal>
-            </goals>
-            <configuration>
-              <command>package-plugin</command>
-            </configuration>
-          </execution>
-          <execution>
-            <id>release-plugin</id>
-            <phase>deploy</phase>
-            <goals>
-              <goal>exec</goal>
-            </goals>
-            <configuration>
-              <command>release-plugin</command>
-              <args>--zipOnly --username=${grails.plugin.repo.user} --password=${grails.plugin.repo.password}
-                --message="nightly build"
-              </args>
-            </configuration>
-          </execution>
+
         </executions>
       </plugin>
     </plugins>

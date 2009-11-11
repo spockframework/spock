@@ -10,13 +10,14 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.spockframework</groupId>
   <artifactId>spock-grails</artifactId>
-  <version>0.3-SNAPSHOT</version> <!-- grails-maven-plugin seem to require this -->
+  <version>0.3-SNAPSHOT</version>
+  <!-- grails-maven-plugin seem to require this -->
   <packaging>pom</packaging>
   <name>Spock Framework - Grails Plugin</name>
   <url>http://grails.org/plugin/spock</url>
 
   <properties>
-	<grails.version>1.2-SNAPSHOT</grails.version>
+    <grails.version>1.2-SNAPSHOT</grails.version>
   </properties>
   <dependencies>
     <dependency>
@@ -150,6 +151,22 @@
       <id>springsource maven repo</id>
       <url>http://maven.springframework.org/milestone</url>
     </repository>
+    <repository>
+      <id>SpringSource Enterprise Bundle Repository – External Bundle Milestones</id>
+      <url>http://repository.springsource.com/maven/bundles/milestone</url>
+    </repository>
+    <repository>
+      <id>SpringSource Enterprise Bundle Repository – SpringSource Bundle Releases</id>
+      <url>http://repository.springsource.com/maven/bundles/release</url>
+    </repository>
+    <repository>
+      <id>SpringSource Enterprise Bundle Repository – External Bundle Releases</id>
+      <url>http://repository.springsource.com/maven/bundles/external</url>
+    </repository>
+    <repository>
+      <id>SpringSource Enterprise Bundle Repository – Library Milestones</id>
+      <url>http://repository.springsource.com/maven/libraries/milestone</url>
+    </repository>
   </repositories>
 
   <pluginRepositories>
@@ -173,7 +190,7 @@
         <plugin>
           <artifactId>maven-deploy-plugin</artifactId>
           <configuration>
-          <skip>true</skip>
+            <skip>true</skip>
           </configuration>
         </plugin>
       </plugins>
@@ -193,7 +210,7 @@
               <goal>validate</goal>
               <goal>config-directories</goal>
               <goal>maven-compile</goal>
-              <goal>maven-test</goal>             
+              <goal>maven-test</goal>
               <goal>maven-functional-test</goal>
             </goals>
           </execution>
@@ -215,7 +232,9 @@
             </goals>
             <configuration>
               <command>release-plugin</command>
-              <args>--zipOnly --username=${grails.plugin.repo.user} --password=${grails.plugin.repo.password} --message="nightly build"</args>
+              <args>--zipOnly --username=${grails.plugin.repo.user} --password=${grails.plugin.repo.password}
+                --message="nightly build"
+              </args>
             </configuration>
           </execution>
         </executions>

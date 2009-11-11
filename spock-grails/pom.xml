@@ -147,27 +147,43 @@
       </releases>
     </repository>
     <!-- Spring 3.0.0.RC1 JAR Repositories -->
-    <repository>
-      <id>springsource maven repo</id>
-      <url>http://maven.springframework.org/milestone</url>
-    </repository>
-    <repository>
-      <id>SpringSource Enterprise Bundle Repository – External Bundle Milestones</id>
-      <url>http://repository.springsource.com/maven/bundles/milestone</url>
-    </repository>
-    <repository>
-      <id>SpringSource Enterprise Bundle Repository – SpringSource Bundle Releases</id>
-      <url>http://repository.springsource.com/maven/bundles/release</url>
-    </repository>
-    <repository>
-      <id>SpringSource Enterprise Bundle Repository – External Bundle Releases</id>
-      <url>http://repository.springsource.com/maven/bundles/external</url>
-    </repository>
-    <repository>
-      <id>SpringSource Enterprise Bundle Repository – Library Milestones</id>
-      <url>http://repository.springsource.com/maven/libraries/milestone</url>
-    </repository>
+	<repository>
+		<id>springsource maven repo</id>
+		<url>http://maven.springframework.org/milestone</url>
+	</repository>
+	
+	<repository>
+		<id>SpringSource Enterprise Bundle Repository – External Bundle Milestones</id>
+		<url>http://repository.springsource.com/maven/bundles/milestone</url>
+	</repository>
+	<repository>
+		<id>SpringSource Enterprise Bundle Repository – SpringSource Bundle Releases</id>
+		<url>http://repository.springsource.com/maven/bundles/release</url>
+	</repository>
+	<repository>
+		<id>SpringSource Enterprise Bundle Repository – External Bundle Releases</id>
+		<url>http://repository.springsource.com/maven/bundles/external</url>
+	</repository>
+	
+	<repository>
+		<id>SpringSource Enterprise Bundle Repository – Library Milestones</id>
+		<url>http://repository.springsource.com/maven/libraries/milestone</url>
+	</repository>
   </repositories>
+
+  <pluginRepositories>
+    <pluginRepository>
+      <id>Codehaus Snapshots</id>
+      <url>http://snapshots.repository.codehaus.org</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+    </pluginRepository>
+  </pluginRepositories>
+
 
   <pluginRepositories>
     <pluginRepository>

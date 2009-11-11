@@ -184,20 +184,6 @@
     </pluginRepository>
   </pluginRepositories>
 
-
-  <pluginRepositories>
-    <pluginRepository>
-      <id>Codehaus Snapshots</id>
-      <url>http://snapshots.repository.codehaus.org</url>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-    </pluginRepository>
-  </pluginRepositories>
-
   <build>
     <sourceDirectory>src/groovy</sourceDirectory>
     <testSourceDirectory>test</testSourceDirectory>

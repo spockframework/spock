@@ -21,7 +21,7 @@ import org.spockframework.EmbeddedSpecification
 class SpecInheritance extends EmbeddedSpecification {
   def "fixture methods are run in correct order"() {
     def classes = compiler.compileWithImports("""
-class BaseSpec extends Specification {
+class Base extends Specification {
   static log = []
 
   def setupSpec() {
@@ -41,7 +41,7 @@ class BaseSpec extends Specification {
   }
 }
 
-class DerivedSpec extends BaseSpec {
+class Derived extends Base {
   def setupSpec() {
     log << "ss2"
   }
@@ -64,7 +64,7 @@ class DerivedSpec extends BaseSpec {
 }
     """)
 
-    def derived = classes.find { it.name.endsWith("DerivedSpec") }
+    def derived = classes.find { it.name.endsWith("Derived") }
 
     when:
     runner.runClass(derived)
@@ -75,40 +75,40 @@ class DerivedSpec extends BaseSpec {
 
   def "feature methods are run in correct order"() {
     def classes = compiler.compileWithImports("""
-class BaseSpec extends Specification {
+class Base extends Specification {
   static log = []
 
-  def "feature 1"() {
-    log << "b1"
+  def "1"() {
+    log << "1"
     expect: true
   }
 
-  def "feature 2"() {
-    log << "b2"
+  def "2"() {
+    log << "2"
     expect: true
   }
 }
 
-class DerivedSpec extends BaseSpec {
-  def "feature 1"() {
-    log << "d1"
+class Derived extends Base {
+  def "3"() {
+    log << "3"
     expect: true
   }
 
-  def "feature 2"() {
-    log << "d2"
+  def "4"() {
+    log << "4"
     expect: true
   }
 }
     """)
 
-    def derived = classes.find { it.name.endsWith("DerivedSpec") }
+    def derived = classes.find { it.name.endsWith("Derived") }
 
     when:
-    runner.runClass(derived)
+    def result = runner.runClass(derived)
 
     then:
-    derived.log == ["b1", "b2", "d1", "d2"]
+    derived.log == ["1", "2", "3", "4"]
   }
 
   def "exception in base class fixture method causes failure"() {
@@ -134,6 +134,46 @@ class DerivedSpec extends BaseSpec {
 
     where:
     fixtureMethod << ["setup", "cleanup", "setupSpec", "cleanupSpec"]
+  }
+
+  def "junit reports correct run/failure/ignore counts"() {
+    def classes = compiler.compileWithImports("""
+class Base extends Specification {
+  def "1"() {
+    expect: true
+  }
+
+  def "2"() {
+    expect: false
+  }
+
+  @Ignore
+  def "3"() {
+    expect: false
+  }
+}
+
+class Derived extends Base {
+  def "4"() {
+    expect: false
+  }
+
+  def "5"() {
+    expect: true
+  }
+}
+    """)
+
+    def derived = classes.find { it.name.endsWith("Derived") }
+    runner.throwFailure = false
+    
+    when:
+    def result = runner.runClass(derived)
+
+    then:
+    result.runCount == 4
+    result.failureCount == 2
+    result.ignoreCount == 1
   }
 }
 

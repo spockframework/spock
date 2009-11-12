@@ -24,17 +24,24 @@ import org.spockframework.runtime.model.*;
  *
  * @author Peter Niederwieser
  */
-public class JUnitMetadataGenerator {
+public class JUnitDescriptionGenerator {
   private final SpecInfo spec;
 
-  public JUnitMetadataGenerator(SpecInfo spec) {
+  public JUnitDescriptionGenerator(SpecInfo spec) {
     this.spec = spec;
   }
 
   public void generate() {
     Description desc = Description.createSuiteDescription(spec.getReflection());
     spec.setMetadata(desc);
-    
+
+    SpecInfo superSpec = spec.getSuperSpec();
+    if (superSpec != null) {
+      new JUnitDescriptionGenerator(superSpec).generate();
+      for (FeatureInfo feature : superSpec.getFeatures())
+        desc.addChild((Description) feature.getMetadata());
+    }
+
     for (FeatureInfo feature : spec.getFeatures())
       desc.addChild(describeFeature(feature));
 

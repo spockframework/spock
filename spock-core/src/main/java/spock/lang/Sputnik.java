@@ -37,7 +37,7 @@ public class Sputnik extends Runner implements Filterable, Sortable {
   // TODO: we probably shouldn't just throw these exceptions as-is
   public Sputnik(Class<?> clazz) throws IllegalAccessException, InstantiationException, NoSuchFieldException {
     spec = new SpecInfoBuilder(clazz).build();
-    new JUnitMetadataGenerator(spec).generate();
+    new JUnitDescriptionGenerator(spec).generate();
   }
 
   public Description getDescription() {

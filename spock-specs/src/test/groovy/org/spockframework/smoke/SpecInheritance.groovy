@@ -105,7 +105,7 @@ class Derived extends Base {
     def derived = classes.find { it.name.endsWith("Derived") }
 
     when:
-    def result = runner.runClass(derived)
+    runner.runClass(derived)
 
     then:
     derived.log == ["1", "2", "3", "4"]

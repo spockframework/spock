@@ -34,8 +34,7 @@ import org.spockframework.runtime.model.SpecInfo;
 public class Sputnik extends Runner implements Filterable, Sortable {
   private final SpecInfo spec;
 
-  // TODO: we probably shouldn't just throw these exceptions as-is
-  public Sputnik(Class<?> clazz) throws IllegalAccessException, InstantiationException, NoSuchFieldException {
+  public Sputnik(Class<?> clazz) {
     spec = new SpecInfoBuilder(clazz).build();
     new JUnitDescriptionGenerator(spec).generate();
   }

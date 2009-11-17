@@ -14,23 +14,25 @@
  * limitations under the License.
  */
 
-package org.spockframework.util;
+import spock.lang.*
 
-/**
- * Encapsulates knowledge about Spock-generated method names.
- *
- * @author Peter Niederwieser
- */
-public class BinaryNames {
-  public static String getDataProcessorName(String featureName) {
-    return featureName + "proc";
+class DataDriven extends Specification {
+  def "maximum of two numbers"() {
+    expect:
+    Math.max(a, b) == c
+
+    where:
+    a << [3, 5, 9]
+    b << [7, 4, 9]
+    c << [7, 5, 9]
   }
 
-  public static String getDataProviderName(String featureName, int providerIndex) {
-    return featureName + "prov" + providerIndex;
-  }
+  @Unroll("minimum of #a and #b is #c")
+  def "minimum of two numbers"() {
+    expect:
+    Math.min(a, b) == c
 
-  public static boolean isFeatureMethodName(String name) {
-    return name.startsWith("$spock_feature");  
+    where:
+    [a, b, c] << [[3, 7, 3], [5, 4, 4], [9, 9, 9]]
   }
 }

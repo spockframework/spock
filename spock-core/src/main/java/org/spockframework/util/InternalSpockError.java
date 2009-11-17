@@ -24,7 +24,11 @@ public class InternalSpockError extends Error {
   private Object[] msgArgs;
 
   public InternalSpockError() {
-    super("internal error");
+    super("unexpected error");
+  }
+
+  public InternalSpockError(Throwable throwable) {
+    super("unexpected error", throwable);
   }
   
   public InternalSpockError(String msg) {

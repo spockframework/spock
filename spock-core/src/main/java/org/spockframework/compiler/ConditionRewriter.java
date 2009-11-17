@@ -455,7 +455,7 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> {
 
   private Expression record(Expression expr) {
     return new MethodCallExpression(
-        new VariableExpression("__valueRecorder42"),
+        new VariableExpression("$spock_valueRecorder"),
         ValueRecorder.RECORD,
         new ArgumentListExpression(new ConstantExpression(recordCount++), expr));
   }
@@ -490,7 +490,7 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> {
     Expression targetExpr = methodExpr.getObjectExpression();
     if (!(targetExpr instanceof VariableExpression)) return expr;
     VariableExpression var = (VariableExpression)targetExpr;
-    if (!var.getName().equals("__valueRecorder42")) return expr;
+    if (!var.getName().equals("$spock_valueRecorder")) return expr;
     if(!methodExpr.getMethodAsString().equals(ValueRecorder.RECORD)) return expr;
     return ((ArgumentListExpression)methodExpr.getArguments()).getExpression(1);
   }
@@ -504,7 +504,7 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> {
                 new ArgumentListExpression(
                     Arrays.asList(
                         new MethodCallExpression(
-                            new VariableExpression("__valueRecorder42"),
+                            new VariableExpression("$spock_valueRecorder"),
                             ValueRecorder.RESET,
                             ArgumentListExpression.EMPTY_ARGUMENTS),
                         convertCondition(expr, explicitCondition),

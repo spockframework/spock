@@ -47,7 +47,7 @@ public class BaseSpecRunner {
       DO_RUN = BaseSpecRunner.class.getMethod("doRun");
       DO_RUN_FEATURE = BaseSpecRunner.class.getMethod("doRunFeature", FeatureInfo.class);
     } catch (NoSuchMethodException e) {
-      throw new InternalSpockError();
+      throw new InternalSpockError(e);
     }
   }
 
@@ -76,7 +76,7 @@ public class BaseSpecRunner {
   }
 
   /**
-   * Do not call directly.
+   * Only called via reflection.
    */
   public void doRun() {
     createSpecInstance(true);
@@ -99,7 +99,7 @@ public class BaseSpecRunner {
         spec.getSharedInstanceField().getReflection().set(currentInstance, sharedInstance);
       }
     } catch (Throwable t) {
-      throw new InternalSpockError("Failed to instantiate Spec '%s'", t).withArgs(spec.getName());
+      throw new InternalSpockError("Failed to instantiate spec '%s'", t).withArgs(spec.getName());
     }
   }
 
@@ -149,7 +149,7 @@ public class BaseSpecRunner {
   }
 
   /**
-   * Do not call directly.
+   * Only called via reflection.
    *
    * @param feature the feature method to be run
    */

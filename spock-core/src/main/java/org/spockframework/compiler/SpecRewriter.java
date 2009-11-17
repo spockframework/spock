@@ -36,8 +36,7 @@ import org.spockframework.util.SyntaxException;
  * 
  * @author Peter Niederwieser
  */
-// TODO: all Spock internal fields should start with $ rather than __
-// TODO: mock controller / leaveScope calls should only be inserted when necessary (increases robustness)
+// IDEA: mock controller / leaveScope calls should only be inserted when necessary (increases robustness)
 public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourceProvider {
   private final AstNodeCache nodeCache;
   private final SourceLookup lookup;
@@ -46,9 +45,9 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
   private Method method;
   private Block block;
 
-  private VariableExpression thrownExceptionRef; // reference to field __thrown42; always accessed through getter
-  private VariableExpression mockControllerRef;  // reference to field __mockController42; always accessed through getter
-  private VariableExpression sharedInstanceRef;  // reference to field __sharedInstance42
+  private VariableExpression thrownExceptionRef; // reference to field $spock_thrown; always accessed through getter
+  private VariableExpression mockControllerRef;  // reference to field $spock_mockController; always accessed through getter
+  private VariableExpression sharedInstanceRef;  // reference to field $spock_sharedInstance
 
   private boolean methodHasCondition;
   private boolean movedStatsBackToMethod;
@@ -77,12 +76,12 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
 
     if (isLowestSpecificationInInheritanceChain())
       var = spec.getAst().addField(
-          "__thrown42",
+          "$spock_thrown",
           Opcodes.ACC_PROTECTED | Opcodes.ACC_SYNTHETIC,
           ClassHelper.DYNAMIC_TYPE,
           null);
     else
-      var = new DynamicVariable("__thrown42", false);
+      var = new DynamicVariable("$spock_thrown", false);
 
     thrownExceptionRef = new VariableExpression(var);
   }
@@ -92,12 +91,12 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
 
     if (isLowestSpecificationInInheritanceChain())
       var = spec.getAst().addField(
-          "__mockController42",
+          "$spock_mockController",
           Opcodes.ACC_PROTECTED | Opcodes.ACC_SYNTHETIC,
           ClassHelper.DYNAMIC_TYPE,
           null);
     else
-      var = new DynamicVariable("__mockController42", false);
+      var = new DynamicVariable("$spock_mockController", false);
 
     mockControllerRef = new VariableExpression(var);
   }
@@ -157,8 +156,6 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
     field.getAst().rename(Identifiers.getInternalSharedFieldName(field.getName()));
   }
 
-  // TODO: improve diagnostic message (conflict with explicit getter/setter, conflict with other shared field, etc.)
-  // TODO: not sure if all found getters are harmful (e.g. private getter in super class)
   private void createSharedFieldGetter(Field field) {
     String getterName = "get" + MetaClassHelper.capitalize(field.getName());
     MethodNode getter = spec.getAst().getMethod(getterName, Parameter.EMPTY_ARRAY);
@@ -186,7 +183,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
 
   private void createSharedFieldSetter(Field field) {
     String setterName = "set" + MetaClassHelper.capitalize(field.getName());
-    Parameter[] params = new Parameter[] { new Parameter(field.getAst().getType(), "__value") };
+    Parameter[] params = new Parameter[] { new Parameter(field.getAst().getType(), "$spock_value") };
     MethodNode setter = spec.getAst().getMethod(setterName, params);
     if (setter != null)
       throw new SyntaxException(field.getAst(),
@@ -206,7 +203,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
                     // use internal name
                     new ConstantExpression(field.getAst().getName())),
                 Token.newSymbol(Types.ASSIGN, -1, -1),
-                new VariableExpression("__value"))));
+                new VariableExpression("$spock_value"))));
 
     setter.setSourcePosition(field.getAst());
     spec.getAst().addMethod(setter);
@@ -298,7 +295,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
   private void transplantMethod(Method method) {
     FeatureMethod feature = (FeatureMethod)method;
     MethodNode oldAst = feature.getAst();
-    MethodNode newAst = copyMethod(oldAst, "__feature" + feature.getOrdinal());
+    MethodNode newAst = copyMethod(oldAst, "$spock_feature" + feature.getOrdinal());
     spec.getAst().addMethod(newAst);
     feature.setAst(newAst);
     deactivateMethod(oldAst);
@@ -527,7 +524,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
     stats.add(0,
         new ExpressionStatement(
             new DeclarationExpression(
-                new VariableExpression("__valueRecorder42"),
+                new VariableExpression("$spock_valueRecorder"),
                 Token.newSymbol(Types.ASSIGN, -1, -1),
                 new ConstructorCallExpression(
                     nodeCache.ValueRecorder,
@@ -535,7 +532,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
   }
 
   public VariableExpression captureOldValue(Expression oldValue) {
-    VariableExpression var = new OldValueExpression(oldValue, "__oldVal" + oldValueCount++);
+    VariableExpression var = new OldValueExpression(oldValue, "$spock_oldValue" + oldValueCount++);
     DeclarationExpression decl = new DeclarationExpression(
         var,
         Token.newSymbol(Types.ASSIGN, -1, -1),
@@ -614,14 +611,14 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
 
     tryCatchStat.addCatch(
         new CatchStatement(
-            new Parameter(nodeCache.Throwable, "__e42"),
+            new Parameter(nodeCache.Throwable, "$spock_ex"),
             new BlockStatement(
                 Arrays.asList(
                     new ExpressionStatement(
                     new BinaryExpression(
                         thrownExceptionRef,
                         Token.newSymbol(Types.ASSIGN, -1, -1),
-                        new VariableExpression("__e42")))),
+                        new VariableExpression("$spock_ex")))),
                 new VariableScope())));
   }
 

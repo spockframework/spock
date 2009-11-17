@@ -23,7 +23,7 @@ import org.codehaus.groovy.ast.ASTNode;
  *
  * @author Peter Niederwieser
  */
-// TODO: throwing an exception causes compilation to end immediately;
+// IDEA: throwing this exception causes compilation to end immediately;
 // should we be more graceful (i.e. use errorCollector.add...)?
 public class SyntaxException extends RuntimeException {
   private final int line;

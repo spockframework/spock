@@ -27,7 +27,7 @@ import org.spockframework.runtime.extension.ISpockExtension;
 import org.spockframework.runtime.intercept.Directive;
 import org.spockframework.runtime.intercept.IDirectiveProcessor;
 import org.spockframework.runtime.model.*;
-import org.spockframework.util.BinaryNames;
+import org.spockframework.util.*;
 
 import spock.lang.Specification;
 
@@ -46,16 +46,30 @@ public class SpecInfoBuilder {
     this.clazz = clazz;
   }
 
-  public SpecInfo build() throws InstantiationException, IllegalAccessException, NoSuchFieldException {
-    buildSuperSpec();
-    buildSpec();
-    buildFields();
-    buildSharedInstanceField();
-    buildFeatures();
-    buildFixtureMethods();
-    notifyExtensions();
-    processDirectives();
+  public SpecInfo build() {
+    try {
+      buildSuperSpec();
+      buildSpec();
+      buildFields();
+      buildSharedInstanceField();
+      buildFeatures();
+      buildFixtureMethods();
+      notifyExtensions();
+      processDirectives();
+    } catch (InstantiationException e) {
+      internalError(e, clazz);
+    } catch (IllegalAccessException e) {
+      internalError(e, clazz);
+    } catch (NoSuchFieldException e) {
+      internalError(e, clazz);
+    }
+
     return spec;
+  }
+
+  private void internalError(Exception e, Class<?> clazz) {
+    throw new InternalSpockError("Unexpected error while preparing execution of spec '%s'", e)
+        .withArgs(clazz.getSimpleName());
   }
 
   private void buildSuperSpec() throws InstantiationException, IllegalAccessException, NoSuchFieldException {

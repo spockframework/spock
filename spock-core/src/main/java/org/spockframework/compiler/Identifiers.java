@@ -85,9 +85,9 @@ public abstract class Identifiers {
 
   public static final String OLD = "old";
 
-  public static final String SHARED_INSTANCE_NAME = "__sharedInstance42";
+  public static final String SHARED_INSTANCE_NAME = "$spock_sharedInstance";
 
   public static String getInternalSharedFieldName(String baseName) {
-    return "__shared_" + baseName;
+    return "$spock_sharedField_" + baseName;
   }
 }

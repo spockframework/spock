@@ -14,23 +14,23 @@
  * limitations under the License.
  */
 
-package org.spockframework.util;
+package org.spockframework.junit;
+
+import org.junit.ComparisonFailure;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 /**
- * Encapsulates knowledge about Spock-generated method names.
- *
- * @author Peter Niederwieser
+ * Conclusions:
+ * 1. JUnit's string diffing is pretty simplistic (in the test below,
+ * JUnit doesn't find any similarities between the two strings)
+ * 2. As soon as at least one string contains a line break,
+ * IDEA offers to compare strings in diff dialog.
  */
-public class BinaryNames {
-  public static String getDataProcessorName(String featureName) {
-    return featureName + "proc";
-  }
-
-  public static String getDataProviderName(String featureName, int providerIndex) {
-    return featureName + "prov" + providerIndex;
-  }
-
-  public static boolean isFeatureMethodName(String name) {
-    return name.startsWith("$spock_feature");  
+public class StringComparison {
+  @Test(expected = ComparisonFailure.class)
+  public void testCompareStrings() {
+    assertEquals("1aaaaaaaa2", "2aaaaaaaa1");
   }
 }

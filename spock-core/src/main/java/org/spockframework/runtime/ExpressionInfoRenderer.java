@@ -79,7 +79,7 @@ public class ExpressionInfoRenderer {
     int startColumn = expr.getAnchor().getColumn();
     if (startColumn < 1) return; // node with invalid source position
 
-    String[] strs = str.split("\n");
+    String[] strs = str.split("\r\n|\r|\n");
     int endColumn = strs.length == 1 ?
         expr.getAnchor().getColumn() + str.length() : // exclusive
         Integer.MAX_VALUE; // multi-line strings are always placed on new lines
@@ -174,13 +174,13 @@ public class ExpressionInfoRenderer {
         && expr.getChildren().size() == 2) {
       Object op1 = expr.getChildren().get(0).getValue();
       Object op2 = expr.getChildren().get(1).getValue();
-      if (op1 instanceof String && op2 instanceof String) {
-        String str1 = (String)op1;
-        String str2 = (String)op2;
-        StringDistanceMatrix matrix = new StringDistanceMatrix(str1, str2);
+      if (op1 instanceof CharSequence && op2 instanceof CharSequence) {
+        CharSequence seq1 = (CharSequence)op1;
+        CharSequence seq2 = (CharSequence)op2;
+        EditDistance dist = new EditDistance(seq1, seq2);
         return String.format("false\n%d difference%s (%d%% similarity)\n%s",
-            matrix.getDistance(), matrix.getDistance() == 1 ? "" : "s", matrix.getSimilarityInPercent(),
-            new StringDifferenceRenderer().render(str1, str2, matrix.computePath()));
+            dist.getDistance(), dist.getDistance() == 1 ? "" : "s", dist.getSimilarityInPercent(),
+            new EditPathRenderer().render(seq1, seq2, dist.calculatePath()));
       }
     }
     return null;

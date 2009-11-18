@@ -34,7 +34,7 @@ class GroovyClassBasedMocks extends Specification {
     1 * mockMe.foo(42)
   }
 
-  @FailsWith(value=TooFewInvocationsError, reason="TODO")
+  @FailsWith(value=TooFewInvocationsError, reason="not yet implemented")
   def "mock GDK method"() {
     when:
     mockMe.any()
@@ -42,7 +42,7 @@ class GroovyClassBasedMocks extends Specification {
     1 * mockMe.any()
   }
 
-  @FailsWith(value=TooFewInvocationsError, reason="TODO")
+  @FailsWith(value=TooFewInvocationsError, reason="not yet implemented")
   def "mock dynamic method"() {
     when:
     mockMe.someMethod()

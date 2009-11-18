@@ -13,24 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-  
 
-
-package org.spockframework.runtime.condition;
 import spock.lang.*
 
-class StringDifferenceRendererSpec extends Specification {
-  def "examples"() {
-    def str1 = "the quick"
-    def matrix = new StringDistanceMatrix(str1, str2)
-    def renderer = new StringDifferenceRenderer()
-
+class DataDriven extends Specification {
+  def "maximum of two numbers"() {
     expect:
-    renderer.render(str1, str2, matrix.computePath()) == "$out1\n$out2"
+    Math.max(a, b) == c
 
     where:
-    str2 << ["the quirk"  , "quick"      , "e qui"        , "and now for sth. completely different"]
-    out1 << ["the qui(c)k", "(the )quick", "(th)e qui(ck)", "(-------------)th(-------)e(----) (qu)i(ck-----)"]
-    out2 << ["the qui(r)k", "(----)quick", "(--)e qui(--)", "(and now for s)th(. compl)e(tely) (d-)i(fferent)"]
+    a << [3, 5, 9]
+    b << [7, 4, 9]
+    c << [7, 5, 9]
+  }
+
+  @Unroll("minimum of #a and #b is #c")
+  def "minimum of two numbers"() {
+    expect:
+    Math.min(a, b) == c
+
+    where:
+    [a, b, c] << [[3, 7, 3], [5, 4, 4], [9, 9, 9]]
   }
 }

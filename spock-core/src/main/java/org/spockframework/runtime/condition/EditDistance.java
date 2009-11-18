@@ -20,34 +20,38 @@ import java.util.List;
 import static org.spockframework.runtime.condition.EditOperation.Kind.*;
 
 /**
- * Computes Levenshtein distance and edit path between two strings.
+ * Calculates Levenshtein distance and corresponding edit path between two character sequences.
  * Inspired from: http://etorreborre.blogspot.com/2008/06/edit-distance-in-scala_245.html
  *
+ * Ideas for improvements:
+ * - Favor fewer EditOperationS when calculating distance and/or path
+ * - Use algorithm with lower time and/or space complexity
+ * 
  * @author Peter Niederwieser
  */
-public class StringDistanceMatrix {
-  private final String str1;
-  private final String str2;
+public class EditDistance {
+  private final CharSequence seq1;
+  private final CharSequence seq2;
 
   private final int[][] matrix;
 
-  public StringDistanceMatrix(String str1, String str2) {
-    this.str1 = str1;
-    this.str2 = str2;
-    matrix = new int[str1.length() + 1][];
-    computeMatrix();
+  public EditDistance(CharSequence seq1, CharSequence seq2) {
+    this.seq1 = seq1;
+    this.seq2 = seq2;
+    matrix = new int[seq1.length() + 1][];
+    calculateMatrix();
   }
 
-  private void computeMatrix() {
-    for (int i = 0; i < str1.length() + 1; i++) {
-      matrix[i] = new int[str2.length() + 1];
-      for (int j = 0; j < str2.length() + 1; j++) {
-        if (i == 0) matrix[i][j] = j; // j insertions
+  private void calculateMatrix() {
+    for (int i = 0; i < seq1.length() + 1; i++) {
+      matrix[i] = new int[seq2.length() + 1];
+      for (int j = 0; j < seq2.length() + 1; j++) {
+        if (i == 0) matrix[i][j] = j;      // j insertions
         else if (j == 0) matrix[i][j] = i; // i deletions
         else matrix[i][j] = min(
+              matrix[i][j - 1] + 1, // insertion
               matrix[i - 1][j] + 1, // deletion
-              matrix[i - 1][j - 1] + (str1.charAt(i - 1) == str2.charAt(j - 1) ? 0 : 1), // substitution
-              matrix[i][j - 1] + 1);  // insertion
+              matrix[i - 1][j - 1] + (seq1.charAt(i - 1) == seq2.charAt(j - 1) ? 0 : 1)); // substitution
       }
     }
   }
@@ -57,45 +61,36 @@ public class StringDistanceMatrix {
   }
   
   public int getDistance() {
-    return matrix[str1.length()][str2.length()];
+    return matrix[seq1.length()][seq2.length()];
   }
 
   public int getSimilarityInPercent() {
-    int maxDistance = Math.max(str1.length(), str2.length());
+    int maxDistance = Math.max(seq1.length(), seq2.length());
     return (maxDistance - getDistance()) * 100 / maxDistance;
   }
 
-  // ideas for improvements:
-  // a. favor fewer EditOperationS
-  // b. not sure if we can get the following while computing the path (assumption: diagonal is skip):
-  // 4 3
-  // 3 4
-  // if yes, should we favor skip over ins/del?
-  public List<EditOperation> computePath() {
+  public List<EditOperation> calculatePath() {
     LinkedList<EditOperation> ops = new LinkedList<EditOperation>();
-    int i = str1.length();
-    int j = str2.length();
+    int i = seq1.length();
+    int j = seq2.length();
     int dist = matrix[i][j];
 
     while (i > 0 && j > 0 && dist > 0) {
       int ins = matrix[i][j - 1];
       int del = matrix[i - 1][j];
       int sub = matrix[i - 1][j - 1];
-      int min = min(ins, del, sub);
 
-      if (min == sub && sub == dist) {
-        addOrUpdate(ops, SKIP, 1);
-        i--; j--;
-      } else if (min == del) {
-        addOrUpdate(ops, DELETE, 1);
-        i--;
-      } else if (min == ins) {
+      if (dist == ins + 1) {
         addOrUpdate(ops, INSERT, 1);
         j--;
-      } else if (min == sub) {
-        addOrUpdate(ops, SUBSTITUTE, 1);
+      } else if (dist == del + 1) {
+        addOrUpdate(ops, DELETE, 1);
+        i--;
+      } else {
+        if (dist == sub) addOrUpdate(ops, SKIP, 1);
+        else addOrUpdate(ops, SUBSTITUTE, 1);
         i--; j--;
-      } 
+      }
       
       dist = matrix[i][j];
     }

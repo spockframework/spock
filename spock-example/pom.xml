@@ -66,7 +66,7 @@
         -->
         <groupId>org.spockframework</groupId>
         <artifactId>spock-maven</artifactId>
-        <version>0.3-SNAPSHOT</version>
+        <version>${project.version}</version> <!-- you should specify a concrete version number here -->
         <executions>
           <execution>
             <goals>
@@ -92,7 +92,7 @@
     <dependency>
       <groupId>org.spockframework</groupId>
       <artifactId>spock-core</artifactId>
-      <version>0.3-SNAPSHOT</version>
+      <version>${project.version}</version> <!-- you should specify a concrete version number here -->
       <scope>test</scope>
     </dependency>    
 <!-- Optional dependencies for using Spock -->
@@ -105,14 +105,14 @@
     <dependency> <!-- enables mocking of classes without default constructor (together with CGLIB) -->
       <groupId>org.objenesis</groupId>
       <artifactId>objenesis</artifactId>
-      <version>1.1</version>
+      <version>1.2</version>
       <scope>test</scope>
     </dependency>    
 <!-- Dependencies used by examples in this project (not required for using Spock) -->
     <dependency>
       <groupId>com.h2database</groupId>
       <artifactId>h2</artifactId>
-      <version>1.1.118</version>
+      <version>1.2.123</version>
     </dependency>
   </dependencies>
 

@@ -10,8 +10,6 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.spockframework</groupId>
   <artifactId>spock-grails</artifactId>
-  <version>0.3-SNAPSHOT</version>
-  <!-- grails-maven-plugin seem to require this -->
   <packaging>pom</packaging>
   <name>Spock Framework - Grails Plugin</name>
   <url>http://grails.org/plugin/spock</url>
@@ -147,28 +145,28 @@
       </releases>
     </repository>
     <!-- Spring 3.0.0.RC1 JAR Repositories -->
-	<repository>
-		<id>springsource maven repo</id>
-		<url>http://maven.springframework.org/milestone</url>
-	</repository>
-	
-	<repository>
-		<id>SpringSource Enterprise Bundle Repository – External Bundle Milestones</id>
-		<url>http://repository.springsource.com/maven/bundles/milestone</url>
-	</repository>
-	<repository>
-		<id>SpringSource Enterprise Bundle Repository – SpringSource Bundle Releases</id>
-		<url>http://repository.springsource.com/maven/bundles/release</url>
-	</repository>
-	<repository>
-		<id>SpringSource Enterprise Bundle Repository – External Bundle Releases</id>
-		<url>http://repository.springsource.com/maven/bundles/external</url>
-	</repository>
-	
-	<repository>
-		<id>SpringSource Enterprise Bundle Repository – Library Milestones</id>
-		<url>http://repository.springsource.com/maven/libraries/milestone</url>
-	</repository>
+    <repository>
+      <id>springsource maven repo</id>
+      <url>http://maven.springframework.org/milestone</url>
+    </repository>
+
+    <repository>
+      <id>SpringSource Enterprise Bundle Repository – External Bundle Milestones</id>
+      <url>http://repository.springsource.com/maven/bundles/milestone</url>
+    </repository>
+    <repository>
+      <id>SpringSource Enterprise Bundle Repository – SpringSource Bundle Releases</id>
+      <url>http://repository.springsource.com/maven/bundles/release</url>
+    </repository>
+    <repository>
+      <id>SpringSource Enterprise Bundle Repository – External Bundle Releases</id>
+      <url>http://repository.springsource.com/maven/bundles/external</url>
+    </repository>
+
+    <repository>
+      <id>SpringSource Enterprise Bundle Repository – Library Milestones</id>
+      <url>http://repository.springsource.com/maven/libraries/milestone</url>
+    </repository>
   </repositories>
 
   <pluginRepositories>
@@ -204,7 +202,41 @@
         <version>${grails.version}</version>
         <extensions>true</extensions>
         <executions>
-
+          <execution>
+            <id>build</id>
+            <goals>
+              <goal>init</goal>
+              <goal>maven-clean</goal>
+              <goal>validate</goal>
+              <goal>config-directories</goal>
+              <goal>maven-compile</goal>
+              <goal>maven-test</goal>
+              <goal>maven-functional-test</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>package-plugin</id>
+            <phase>package</phase>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <configuration>
+              <command>package-plugin</command>
+            </configuration>
+          </execution>
+          <execution>
+            <id>release-plugin</id>
+            <phase>deploy</phase>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <configuration>
+              <command>release-plugin</command>
+              <args>--zipOnly --username=${grails.plugin.repo.user} --password=${grails.plugin.repo.password}
+                --message="nightly build"
+              </args>
+            </configuration>
+          </execution>
         </executions>
       </plugin>
     </plugins>

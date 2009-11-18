@@ -23,7 +23,7 @@ import org.springframework.test.context.ContextConfiguration
 import spock.lang.Specification
 import spock.util.EmbeddedSpecRunner
 
-@ContextConfiguration(locations = "appcontext.xml")
+@ContextConfiguration(locations = "InjectionExamples-context.xml")
 class InjectionExamples extends Specification {
   @Autowired
   IService service

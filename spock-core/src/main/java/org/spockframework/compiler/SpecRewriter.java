@@ -42,6 +42,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
   private final SourceLookup lookup;
 
   private Spec spec;
+  private int specDepth;
   private Method method;
   private Block block;
 
@@ -62,9 +63,15 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
 
   public void visitSpec(Spec spec) {
     this.spec = spec;
+    specDepth = computeDepth(spec.getAst());
     createThrownExceptionFieldAndRef();
     createMockControllerFieldAndRef();
     createSharedInstanceFieldAndRef();
+  }
+
+  private int computeDepth(ClassNode node) {
+    if (node.equals(ClassHelper.OBJECT_TYPE) || node.equals(nodeCache.Specification)) return -1;
+    return computeDepth(node.getSuperClass()) + 1;
   }
 
   public void visitSpecAgain(Spec spec) throws Exception {
@@ -295,20 +302,20 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
   private void transplantMethod(Method method) {
     FeatureMethod feature = (FeatureMethod)method;
     MethodNode oldAst = feature.getAst();
-    MethodNode newAst = copyMethod(oldAst, "$spock_feature" + feature.getOrdinal());
+    MethodNode newAst = copyMethod(oldAst, createInternalName(feature));
     spec.getAst().addMethod(newAst);
     feature.setAst(newAst);
     deactivateMethod(oldAst);
+  }
+
+  private String createInternalName(FeatureMethod feature) {
+    return String.format("$spock_feature_%d_%d", specDepth, feature.getOrdinal());
   }
 
   private MethodNode copyMethod(MethodNode method, String newName) {
     // can't hurt to set return type to void
     MethodNode newMethod = new MethodNode(newName, method.getModifiers(),
         ClassHelper.VOID_TYPE, method.getParameters(), method.getExceptions(), method.getCode());
-
-    // make method non-virtual s.t. feature methods in base and derived spec don't collide
-    // alternative would be to make method names unique across inheritance hierarchy
-    AstUtil.setVisibility(newMethod, Opcodes.ACC_PRIVATE);
 
     newMethod.addAnnotations(method.getAnnotations());
     newMethod.setSynthetic(method.isSynthetic());

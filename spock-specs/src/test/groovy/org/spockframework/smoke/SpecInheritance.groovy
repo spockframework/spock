@@ -18,6 +18,8 @@ package org.spockframework.smoke
 
 import org.spockframework.EmbeddedSpecification
 
+import spock.lang.*
+
 class SpecInheritance extends EmbeddedSpecification {
   def "fixture methods are run in correct order"() {
     def classes = compiler.compileWithImports("""
@@ -79,24 +81,24 @@ class Base extends Specification {
   static log = []
 
   def "1"() {
-    log << "1"
+    log << 1
     expect: true
   }
 
   def "2"() {
-    log << "2"
+    log << 2
     expect: true
   }
 }
 
 class Derived extends Base {
   def "3"() {
-    log << "3"
+    log << 3
     expect: true
   }
 
   def "4"() {
-    log << "4"
+    log << 4
     expect: true
   }
 }
@@ -108,7 +110,7 @@ class Derived extends Base {
     runner.runClass(derived)
 
     then:
-    derived.log == ["1", "2", "3", "4"]
+    derived.log == [1, 2, 3, 4]
   }
 
   def "exception in base class fixture method causes failure"() {
@@ -174,6 +176,61 @@ class Derived extends Base {
     result.runCount == 4
     result.failureCount == 2
     result.ignoreCount == 1
+  }
+
+  @Issue("http://code.google.com/p/spock/issues/detail?id=53")
+  def "feature methods cannot be overridden"() {
+    def classes = compiler.compileWithImports("""
+class Base extends Specification {
+  static log = []
+
+  def "foo"() {
+    setup: log << 1
+  }
+}
+
+class Derived extends Base {
+  def "foo"() {
+    setup: log << 2
+  }
+}
+    """)
+
+    def derived = classes.find { it.name.endsWith("Derived") }
+
+    when:
+    def result = runner.runClass(derived)
+
+    then:
+    derived.log == [1, 2]
+    result.runCount == 2
+  }
+
+  def "private feature methods with same name can coexist peacefully in inheritance chain"() {
+    def classes = compiler.compileWithImports("""
+class Base extends Specification {
+  static log = []
+
+  private "foo"() {
+    setup: log << 1
+  }
+}
+
+class Derived extends Base {
+  private "foo"() {
+    setup: log << 2
+  }
+}
+    """)
+
+    def derived = classes.find { it.name.endsWith("Derived") }
+
+    when:
+    def result = runner.runClass(derived)
+
+    then:
+    derived.log == [1, 2]
+    result.runCount == 2
   }
 }
 

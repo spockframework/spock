@@ -84,7 +84,7 @@
           <enableAssertions>false</enableAssertions> <!-- workaround for http://jira.codehaus.org/browse/GROOVY-3806 -->
         </configuration>
       </plugin>
-<!-- Don't deploy spock-example Jar -->
+<!-- Only required for spock-example build -->
       <plugin>
         <artifactId>maven-deploy-plugin</artifactId>
         <configuration>
@@ -143,6 +143,17 @@
         <enabled>true</enabled>
       </snapshots>
     </pluginRepository>
-
   </pluginRepositories>
+
+<!-- Only required by Spock build -->  
+  <distributionManagement>
+    <repository>
+      <id>foo</id>
+      <url>file:///foo</url>
+    </repository>
+    <snapshotRepository>
+      <id>bar</id>
+      <url>file:///bar</url>
+    </snapshotRepository>
+  </distributionManagement>
 </project>

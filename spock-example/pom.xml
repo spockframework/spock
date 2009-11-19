@@ -84,6 +84,13 @@
           <enableAssertions>false</enableAssertions> <!-- workaround for http://jira.codehaus.org/browse/GROOVY-3806 -->
         </configuration>
       </plugin>
+<!-- Don't deploy spock-example Jar -->
+      <plugin>
+        <artifactId>maven-deploy-plugin</artifactId>
+        <configuration>
+          <skip>true</skip>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
 

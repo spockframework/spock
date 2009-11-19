@@ -206,10 +206,11 @@
     </profile>
     <profile>
       <id>release</id>
-      <!-- all modules listed here will be deployed to Spock's Maven repository / Maven Central -->
       <modules>
         <module>spock-core</module>
+        <module>spock-specs</module>
         <module>spock-maven</module>
+        <module>spock-example</module>
         <module>spock-tapestry</module>
         <module>spock-guice</module>
         <module>spock-spring</module>

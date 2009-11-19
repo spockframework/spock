@@ -1,6 +1,6 @@
 allprojects {
   group = "org.spockframework"
-  version = "0.3-groovy-1.7-SNAPSHOT"
+  version = "0.3-groovy-1.7"
 
   groovyArtifact = "org.codehaus.groovy:groovy-all:1.7-beta-2"
 }

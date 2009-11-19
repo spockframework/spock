@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.spockframework</groupId>
   <artifactId>spock-example</artifactId>
-  <version>0.3-groovy-1.7-SNAPSHOT</version>
+  <version>0.3-groovy-1.7</version>
   <packaging>jar</packaging>
   <name>Spock Framework - Example Project</name>
 
@@ -83,6 +83,13 @@
           <useFile>false</useFile>
         </configuration>
       </plugin>
+<!-- Only required for spock-example build -->
+      <plugin>
+        <artifactId>maven-deploy-plugin</artifactId>
+        <configuration>
+          <skip>true</skip>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
 
@@ -135,6 +142,17 @@
         <enabled>true</enabled>
       </snapshots>
     </pluginRepository>
-
   </pluginRepositories>
+
+<!-- Only required by Spock build -->  
+  <distributionManagement>
+    <repository>
+      <id>foo</id>
+      <url>file:///foo</url>
+    </repository>
+    <snapshotRepository>
+      <id>bar</id>
+      <url>file:///bar</url>
+    </snapshotRepository>
+  </distributionManagement>
 </project>

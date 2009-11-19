@@ -26,6 +26,6 @@ public class Version {
   }
 
   public String toString() {
-    return "0.3-groovy-1.7";
+    return "0.4-groovy-1.7-SNAPSHOT";
   }
 }

@@ -1,0 +1,20 @@
+usePlugin("groovy")
+sourceCompatibility = 1.5
+targetCompatibility = 1.5
+
+compileGroovy.options.fork = false
+compileTestGroovy.options.fork = false
+
+project(":spock-guice") {
+  repositories {
+    mavenCentral()
+  }
+  
+  dependencies {  
+    groovy groovyArtifact
+    compile project(":spock-core")
+    compile "com.google.inject:guice:2.0"
+    // surfaces in the Guice API; groovyc complains if we don't add it
+    compile "aopalliance:aopalliance:1.0"
+  }
+}

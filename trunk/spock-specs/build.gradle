@@ -1,0 +1,21 @@
+usePlugin("groovy")
+sourceCompatibility = 1.5 
+targetCompatibility = 1.5
+
+compileGroovy.options.fork = false
+compileTestGroovy.options.fork = false
+
+project(":spock-specs") {
+  repositories {
+    mavenCentral()
+  }
+  
+  dependencies {
+    groovy groovyArtifact
+    compile project(":spock-core")
+    compile "junit:junit:4.7"
+    testRuntime "cglib:cglib-nodep:2.1_3"
+    testRuntime "org.objenesis:objenesis:1.2"
+    testRuntime "com.h2database:h2:1.2.123"
+  }
+}

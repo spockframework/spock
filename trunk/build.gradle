@@ -1,0 +1,11 @@
+allprojects {
+  group = "org.spockframework"
+  version = "0.3"
+
+  groovyArtifact = "org.codehaus.groovy:groovy-all:1.6.5"
+}
+
+task wrapper(type: Wrapper) { 
+  gradleVersion = '0.8' 
+  jarPath = 'wrapper' 
+} 

@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <parent>
+    <groupId>org.spockframework</groupId>
+    <artifactId>spock-parent</artifactId>
+    <version>0.3</version>
+  </parent>
+
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.spockframework</groupId>
+  <artifactId>spock-core</artifactId>
+  <packaging>jar</packaging>
+  <name>Spock Framework - Core</name>
+  <url>http://spockframework.org</url>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.groovy.maven</groupId>
+        <artifactId>gmaven-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </build>
+  
+  <dependencies>
+<!-- compile dependencies -->
+    <dependency>
+      <groupId>org.codehaus.groovy</groupId>
+      <artifactId>groovy-all</artifactId>
+    </dependency>
+    <dependency> <!-- clients that want to use org.spockframework.buildsupport need to include this dependency -->
+      <groupId>asm</groupId>
+      <artifactId>asm</artifactId>
+      <optional>true</optional>
+    </dependency>
+    <dependency> <!-- used by org.spockframework.buildsupport.ant -->
+      <groupId>org.apache.ant</groupId>
+      <artifactId>ant</artifactId>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+    </dependency>
+    <dependency> <!-- clients that want to mock classes (in addition to interfaces) need to include this dependency -->
+      <groupId>cglib</groupId>
+      <artifactId>cglib-nodep</artifactId>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>org.objenesis</groupId>
+      <artifactId>objenesis</artifactId>
+      <optional>true</optional>
+    </dependency>     
+  </dependencies>
+</project>

@@ -1,0 +1,2 @@
+include 'spock-core', 'spock-specs', 'spock-example', 'spock-tapestry', 'spock-guice', 'spock-spring'
+

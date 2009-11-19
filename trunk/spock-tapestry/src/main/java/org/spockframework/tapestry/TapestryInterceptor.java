@@ -1,0 +1,114 @@
+/*
+ * Copyright 2009 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.spockframework.tapestry;
+
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
+
+import org.apache.tapestry5.ioc.*;
+import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.annotations.SubModule;
+
+import org.spockframework.runtime.intercept.IMethodInterceptor;
+import org.spockframework.runtime.intercept.IMethodInvocation;
+import org.spockframework.runtime.model.SpecInfo;
+import org.spockframework.util.UnreachableCodeError;
+
+import spock.lang.Shared;
+
+/**
+ * Controls startup and shutdown of the Tapestry container,
+ * and injects Tapestry-provided objects into specifications.
+ *
+ * @author Peter Niederwieser
+ */
+public class TapestryInterceptor implements IMethodInterceptor {
+  private final SpecInfo spec;
+  private Registry registry;
+  private IPerIterationManager perIterationManager;
+
+  public TapestryInterceptor(SpecInfo spec) {
+    this.spec = spec;
+  }
+
+  public void invoke(IMethodInvocation invocation) throws Throwable {
+    switch(invocation.getMethod().getKind()) {
+      case SETUP_SPEC:
+        startupRegistry();
+        injectServices(invocation.getTarget(), true);
+        invocation.proceed();
+        break;
+      case SETUP:
+        injectServices(invocation.getTarget(), false);
+        invocation.proceed();
+        break;
+      case CLEANUP:
+        try {
+          invocation.proceed();
+        } finally {
+          perIterationManager.cleanup();
+        }
+        break;
+      case CLEANUP_SPEC:
+        try {
+          invocation.proceed();
+        } finally {
+          shutdownRegistry();
+        }
+        break;
+      default:
+        throw new UnreachableCodeError();
+    }
+    
+  }
+
+  private void startupRegistry() {
+    RegistryBuilder builder = new RegistryBuilder();
+    builder.add(ExtensionModule.class);
+    for (Class<?> module : getSubModules(spec)) builder.add(module);
+    registry = builder.build();
+    registry.performRegistryStartup();
+    perIterationManager = registry.getService(IPerIterationManager.class);
+  }
+
+  private Class[] getSubModules(SpecInfo spec) {
+    SubModule modules = spec.getReflection().getAnnotation(SubModule.class);
+    return modules == null ? new Class[0] : modules.value();
+  }
+
+  private void injectServices(Object target, boolean sharedFields) throws IllegalAccessException {
+    for (final Field field : spec.getReflection().getDeclaredFields())
+      if (field.isAnnotationPresent(Inject.class)
+          && field.isAnnotationPresent(Shared.class) == sharedFields) {
+        Object value = registry.getObject(field.getType(), createAnnotationProvider(field));
+        field.setAccessible(true);
+        field.set(target, value);
+      }
+  }
+
+  private AnnotationProvider createAnnotationProvider(final Field field) {
+    return new AnnotationProvider() {
+      public <T extends Annotation> T getAnnotation(Class<T> annotationClass) {
+        return field.getAnnotation(annotationClass);
+      }
+    };
+  }
+
+  private void shutdownRegistry() {
+    if (registry != null) registry.shutdown();
+  }
+}

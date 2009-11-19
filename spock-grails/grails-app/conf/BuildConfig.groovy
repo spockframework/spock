@@ -32,7 +32,7 @@ grails.project.dependency.resolution = {
     mavenRepo "http://oss.sonatype.org/content/groups/jetty"
   }
   dependencies {
-    build 'org.spockframework:spock-core:0.3'
+    build 'org.spockframework:spock-core:0.4-SNAPSHOT'
     build 'asm:asm:2.2.3'
     build 'junit:junit:4.7'
     

@@ -141,26 +141,26 @@ class DerivedSpec extends BaseSpec {
   def "junit reports correct run/failure/ignore counts"() {
     def classes = compiler.compileWithImports("""
 class Base extends Specification {
-  def "1"() {
+  def f1() {
     expect: true
   }
 
-  def "2"() {
+  def f2() {
     expect: false
   }
 
   @Ignore
-  def "3"() {
+  def f3() {
     expect: false
   }
 }
 
 class Derived extends Base {
-  def "4"() {
+  def f4() {
     expect: false
   }
 
-  def "5"() {
+  def f5() {
     expect: true
   }
 }
@@ -184,13 +184,13 @@ class Derived extends Base {
 class Base extends Specification {
   static log = []
 
-  def "foo"() {
+  def foo() {
     setup: log << 1
   }
 }
 
 class Derived extends Base {
-  def "foo"() {
+  def foo() {
     setup: log << 2
   }
 }
@@ -211,13 +211,13 @@ class Derived extends Base {
 class Base extends Specification {
   static log = []
 
-  private "foo"() {
+  private foo() {
     setup: log << 1
   }
 }
 
 class Derived extends Base {
-  private "foo"() {
+  private foo() {
     setup: log << 2
   }
 }

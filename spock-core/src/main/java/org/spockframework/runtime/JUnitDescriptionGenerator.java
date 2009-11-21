@@ -26,9 +26,15 @@ import org.spockframework.runtime.model.*;
  */
 public class JUnitDescriptionGenerator {
   private final SpecInfo spec;
+  private final SpecInfo initialRequestor;
 
   public JUnitDescriptionGenerator(SpecInfo spec) {
+    this(spec, spec);
+  }
+
+  private JUnitDescriptionGenerator(SpecInfo spec, SpecInfo initialRequestor) {
     this.spec = spec;
+    this.initialRequestor = initialRequestor;
   }
 
   public void generate() {
@@ -37,7 +43,7 @@ public class JUnitDescriptionGenerator {
 
     SpecInfo superSpec = spec.getSuperSpec();
     if (superSpec != null) {
-      new JUnitDescriptionGenerator(superSpec).generate();
+      new JUnitDescriptionGenerator(superSpec, initialRequestor).generate();
       for (FeatureInfo feature : superSpec.getFeatures())
         desc.addChild((Description) feature.getMetadata());
     }
@@ -62,7 +68,7 @@ public class JUnitDescriptionGenerator {
   }
 
   private Description describeMethod(MethodInfo method) {
-    Description desc = Description.createTestDescription(spec.getReflection(), method.getName());
+    Description desc = Description.createTestDescription(initialRequestor.getReflection(), method.getName());
     method.setMetadata(desc);
     return desc;
   }

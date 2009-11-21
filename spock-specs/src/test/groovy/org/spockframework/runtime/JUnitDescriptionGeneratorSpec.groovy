@@ -17,9 +17,11 @@
 package org.spockframework.runtime
 
 import org.spockframework.EmbeddedSpecification
+import spock.lang.Issue
 
 class JUnitDescriptionGeneratorSpec extends EmbeddedSpecification {
-  def "description of derived spec covers features of both base and derived spec"() {
+  @Issue("http://code.google.com/p/spock/issues/detail?id=54")
+  def "derived spec has correct Description"() {
     def derived = compiler.compileWithImports("""
 class Base extends Specification {
   def f1() {
@@ -29,7 +31,7 @@ class Base extends Specification {
 
 class Derived extends Base {
   def f2() {
-    expect: false
+    expect: true
   }
 }
     """).find { it.name.endsWith("Derived") }
@@ -40,7 +42,10 @@ class Derived extends Base {
     new JUnitDescriptionGenerator(specInfo).generate()
 
     then:
-    specInfo.metadata.children.size == 2
-    specInfo.metadata.children.collect { it.methodName } == ["f1", "f2"]
+    def desc = specInfo.metadata
+    desc.displayName == "apackage.Derived"
+    desc.children.size == 2
+    desc.children.collect { it.methodName } == ["f1", "f2"]
+    desc.children.collect { it.className } == ["apackage.Derived", "apackage.Derived"]
   }
 }

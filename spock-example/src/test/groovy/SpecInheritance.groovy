@@ -16,7 +16,7 @@
 
 import spock.lang.*
 
-abstract class Base extends Specification {
+abstract class BaseSpec extends Specification {
   def x = { println 'base field initializer' }()
 
   def setupSpec() { println 'base setupSpec()' }
@@ -28,7 +28,7 @@ abstract class Base extends Specification {
   def baseSpecMethod() { setup: println 'base spec method' }
 }
 
-class Derived extends Base {
+class DerivedSpec extends BaseSpec {
   def y = { println 'derived field initializer' }()
 
   def setupSpec() { println 'derived setupSpec()' }

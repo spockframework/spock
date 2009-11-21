@@ -196,4 +196,46 @@ def "foo"() {
     result.failureCount == 2
     result.ignoreCount == 0
   }
+
+  def "testStarted/testFinished not called for @Ignore'd spec method"() {
+    RunListener listener = Mock()
+    runner.listeners << listener
+
+    when:
+    runner.runSpecBody """
+@Ignore
+def foo() {
+  expect: true
+}
+    """
+
+    then:
+    1 * listener.testIgnored(_)
+    0 * listener.testStarted(_)
+    0 * listener.testFinished(_)
+  }
+
+  def "testStarted/testFinished not called for spec methods of @Ignore'd spec"() {
+    RunListener listener = Mock()
+    runner.listeners << listener
+
+    when:
+    runner.runWithImports """
+@Ignore
+class Foo extends Specification {
+  def foo() {
+    expect: true
+  }
+
+  def bar() {
+    expect: true
+  }
+}
+    """
+
+    then:
+    1 * listener.testIgnored(_)
+    0 * listener.testStarted(_)
+    0 * listener.testFinished(_)
+  }
 }

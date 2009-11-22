@@ -54,6 +54,8 @@ public class JUnitSupervisor implements IRunSupervisor {
     this.feature = feature;
 
     // make sure we don't call fireTestStarted/fireTestFinished for ignored features
+    // a bit of a hack; for example, what will happen if exception is thrown before
+    // IgnoreInterceptor gets to throw its SkipSpecOrFeatureException?
     ignoredFeature = feature.getFeatureMethod().getReflection().getAnnotation(Ignore.class) != null;
     if (ignoredFeature) return;
 

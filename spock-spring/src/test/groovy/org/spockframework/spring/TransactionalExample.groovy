@@ -25,7 +25,7 @@ import org.springframework.transaction.annotation.Transactional
 import spock.lang.*
 
 /**
- * Note that due to the way Spring's TestContext framework is designed,
+ * Note: Due to the way Spring's TestContext framework is designed,
  * @Shared fields cannot currently be injected. This also means that
  * setupSpec() and cleanupSpec() cannot get access to Spring beans.
  */

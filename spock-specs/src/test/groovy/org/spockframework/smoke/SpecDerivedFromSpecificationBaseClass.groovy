@@ -25,6 +25,7 @@ import spock.lang.*
 /**
  * @author Peter Niederwieser
  */
+// TODO: find suitable name, maybe split into two specs
 class SpecDerivedFromSpecificationBaseClass extends EmbeddedSpecification {
   @Unroll
   def "is properly recognized"() {
@@ -54,7 +55,7 @@ class Foo extends $baseClass {
 
   def "is properly recognized when inheriting from Specification base class through intermediary in same compilation unit"() {
     def compiler = new EmbeddedSpecCompiler()
-    compiler.compile """
+    def classes = compiler.compile("""
 import spock.lang.Specification
 
 class MyCustomBaseClass extends Specification {}
@@ -64,9 +65,9 @@ class Foo extends MyCustomBaseClass {
     expect: false
   }
 }
-    """
+    """)
 
-    def fooClass = compiler.loader.loadedClasses.find { it.name == "Foo" }
+    def fooClass = classes.find { it.name == "Foo" }
 
     when:
     runner.runClass(fooClass)
@@ -75,11 +76,9 @@ class Foo extends MyCustomBaseClass {
     thrown(SpockAssertionError)
   }
 
-  def "can refer to Predef members by simple name"() {
+  def "can refer to Specification members by simple name"() {
     when:
     runner.run """
-$collidingImport
-
 class Foo extends spock.lang.Specification {
   def foo() {
     when:
@@ -93,62 +92,10 @@ class Foo extends spock.lang.Specification {
 
     then:
     noExceptionThrown()
-
-    where:
-    collidingImport << ["", "import static spock.lang.Predef.thrown", "import static spock.lang.Predef.*"]
   }
 
-  def "can refer to Predef members by 'Predef.'"() {
-    when:
-    runner.run """
-$collidingImport
-import spock.lang.Predef
-
-class Foo extends spock.lang.Specification {
-  def foo() {
-    def list = []
-
-    when:
-    list.add("elem")
-
-    then:
-    list.size() == Predef.old(list.size()) + 1
-  }
-}
-    """
-
-    then:
-    noExceptionThrown()
-
-    where:
-    collidingImport << ["", "import static spock.lang.Predef.old", "import static spock.lang.Predef.*"]
-  }
-
-
-  def "can refer to Predef members by 'spock.lang.Predef.'"() {
-    when:
-    runner.run """
-$collidingImport
-
-class Foo extends spock.lang.Specification {
-  def foo() {
-    def list = spock.lang.Predef.Mock(List)
-
-    expect:
-    list != null
-  }
-}
-    """
-
-    then:
-    noExceptionThrown()
-
-    where:
-    collidingImport << ["", "import static spock.lang.Predef.Mock", "import static spock.lang.Predef.*"]
-  }
-
-  @Unroll("can refer to Predef members by '#target'")
-  def "can refer to Predef members by these means"() {
+  @FailsWith(value = SyntaxException, reason = "TODO")
+  def "can refer to Specification members by 'this' and 'super'"() {
     when:
     runner.run """
 class Foo extends spock.lang.Specification {
@@ -168,29 +115,8 @@ class Foo extends spock.lang.Specification {
     target << ["this", "super"]
   }
 
-  @Unroll("cannot refer to Predef members by '#target'")
-  def "cannot refer to Predef members by these means"() {
-    when:
-    runner.run """
-class Foo extends spock.lang.Specification {
-  def foo() {
-    def list = ${target}.Mock(List)
-
-    expect:
-    list != null
-  }
-}
-    """
-
-    then:
-    thrown(SyntaxException)
-
-    where:
-    target << ["Foo", "spock.lang.Specification"]
-  }
-
   @Issue("http://issues.spockframework.org/detail?id=43")
-  def "can use Predef members in field initializers"() {
+  def "can use Specification members in field initializers"() {
     when:
     runner.run """
 class Foo extends spock.lang.Specification {

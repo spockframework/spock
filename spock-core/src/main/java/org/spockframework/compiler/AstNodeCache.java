@@ -34,7 +34,6 @@ import spock.lang.*;
 public class AstNodeCache {
   public final ClassNode SpockRuntime = ClassHelper.makeWithoutCaching(SpockRuntime.class);
   public final ClassNode ValueRecorder = ClassHelper.makeWithoutCaching(ValueRecorder.class);
-  public final ClassNode Predef = ClassHelper.makeWithoutCaching(Predef.class);
   public final ClassNode Specification = ClassHelper.makeWithoutCaching(Specification.class);
 
   // annotations and annotation elements

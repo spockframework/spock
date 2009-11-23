@@ -16,7 +16,6 @@
 
 package org.spockframework.smoke.mock
 
-import spock.lang.Predef
 import spock.lang.Specification
 
 class ValidMockCreation extends Specification {
@@ -38,12 +37,6 @@ class ValidMockCreation extends Specification {
     expect: list3 instanceof List
   }
 
-  def list4 = Predef.Mock(List)
-
-  def "field w/ mock qualified"() {
-    expect: list4 instanceof List
-  }
-
   def "local typed w/ mock untyped"() {
     List list = Mock()
     expect: list instanceof List
@@ -59,17 +52,8 @@ class ValidMockCreation extends Specification {
     expect: list instanceof List
   }
 
-  def "local w/ mock qualified"() {
-    List list = Predef.Mock()
-    expect: list instanceof List
-  }
-
   def "expr typed"() {
     expect: Mock(List) instanceof List
-  }
-
-  def "expr qualified"() {
-    expect: Predef.Mock(List) instanceof List
   }
 
   def "creation in nested expr"() {

@@ -28,7 +28,7 @@ import org.spockframework.util.SyntaxException;
 
 /**
  * Walks the statement and expression tree to rewrite explicit conditions,
- * interactions, and Predef members. Also records whether conditions and
+ * interactions, and Specification members. Also records whether conditions and
  * interactions were found.
  *
  * @author Peter Niederwieser
@@ -128,7 +128,7 @@ public class DeepStatementRewriter extends StatementReplacingVisitorSupport {
     if (AstUtil.isPredefDecl(expr, Identifiers.MOCK, 0, 1))
       AstUtil.expandPredefDecl(expr, resourceProvider.getMockControllerRef());
 
-    // only descend after we have expanded Predef.Mock so that it's not
+    // only descend after we have expanded Specification.Mock so that it's not
     // expanded by visit(Static)MethodCallExpression instead
     super.visitBinaryExpression(expr);
   }
@@ -158,7 +158,7 @@ public class DeepStatementRewriter extends StatementReplacingVisitorSupport {
 
   private void handlePredefOld(Expression expr) {
     if (!(resourceProvider.getCurrentBlock() instanceof ThenBlock))
-      throw new SyntaxException(expr, "Predef.old() may only be used in a 'then' block");
+      throw new SyntaxException(expr, "old() may only be used in a 'then' block");
 
     List<Expression> args = AstUtil.getArguments(expr);
     VariableExpression oldValue = resourceProvider.captureOldValue(args.get(0));

@@ -27,7 +27,7 @@ import org.objectweb.asm.Opcodes;
 import org.spockframework.util.InternalSpockError;
 import org.spockframework.util.SyntaxException;
 
-import spock.lang.Predef;
+import spock.lang.Specification;
 
 /**
  * Utility methods for AST processing.
@@ -106,8 +106,8 @@ public abstract class AstUtil {
     if (!(propExpr.getObjectExpression() instanceof ClassExpression)) return false;
 
     ClassExpression classExpr = (ClassExpression)propExpr.getObjectExpression();
-    return Predef.class.getName().equals(classExpr.getType().getName())
-        && Predef._.toString().equals(propExpr.getPropertyAsString());
+    return Specification.class.getName().equals(classExpr.getType().getName())
+        && Specification._.toString().equals(propExpr.getPropertyAsString());
   }
 
   public static boolean isInteraction(Statement stat) {
@@ -198,28 +198,28 @@ public abstract class AstUtil {
         && isPredefCall((StaticMethodCallExpression)expr, methodName, minArgs, maxArgs);
   }
 
-  // call of the form "Predef.<methodName>(...)" or "<methodName>(...)"
+  // call of the form "Specification.<methodName>(...)" or "<methodName>(...)"
   public static boolean isPredefCall(MethodCallExpression expr, String methodName, int minArgs, int maxArgs) {
     Expression target = expr.getObjectExpression();
     return
-        (isPredefClassExpression(target) || expr.isImplicitThis())
+        (isSpecificationClassExpression(target) || expr.isImplicitThis())
         && methodName.equals(expr.getMethodAsString()) // getMethodAsString() may return null
         && getArguments(expr).size() >= minArgs
         && getArguments(expr).size() <= maxArgs;
   }
 
-  private static boolean isPredefClassExpression(Expression target) {
-    return target instanceof ClassExpression && target.getType().getName().equals(Predef.class.getName());
+  private static boolean isSpecificationClassExpression(Expression target) {
+    return target instanceof ClassExpression && target.getType().getName().equals(Specification.class.getName());
   }
 
   // call of the form "<methodName>(...)" and method imported statically (import potentially added by EarlyTransform)
   public static boolean isPredefCall(StaticMethodCallExpression expr, String methodName, int minArgs, int maxArgs) {
     return
-        // we currently don't a requirement on owner type because Predef member
+        // we currently don't a requirement on owner type because Specification member
         // that used to occur in a field initializer has the Spec class as owner type,
         // but we don't know the Spec class name here; thus we might recognize a bit too much,
         // but this shouldn't be a problem in practice
-        // expr.getOwnerType().getName().equals(Predef.class.getName())
+        // expr.getOwnerType().getName().equals(Specification.class.getName())
         expr.getMethod().equals(methodName)
         && getArguments(expr).size() >= minArgs
         && getArguments(expr).size() <= maxArgs;

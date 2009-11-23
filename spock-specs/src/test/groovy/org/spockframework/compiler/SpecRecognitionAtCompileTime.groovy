@@ -19,6 +19,7 @@ package org.spockframework.compiler
 import org.codehaus.groovy.control.MultipleCompilationErrorsException
 import org.spockframework.runtime.model.SpecMetadata
 import spock.lang.Specification
+import org.spockframework.runtime.SpecUtil
 
 /**
  * @author Peter Niederwieser
@@ -29,13 +30,11 @@ class SpecRecognitionAtCompileTime extends Specification {
     def clazz = compile("""
 import spock.lang.Specification
 
-class ASpec extends $baseClass {
-  def foo() { _ }
-}
+class ASpec extends $baseClass {}
     """)
 
     then:
-    wasRecognizedAsSpec(clazz)
+    SpecUtil.isSpec(clazz)
 
     where:
     baseClass << ["Specification", "spock.lang.Specification",
@@ -49,20 +48,12 @@ class ASpec {}
     """)
 
     then:
-    !clazz.isAnnotationPresent(SpecMetadata)
+    !SpecUtil.isSpec(clazz)
   }
 
   // we intentionally don't use EmbeddedSpecCompiler here to avoid confusing matters
   private compile(String source) {
     new GroovyClassLoader().parseClass(source)
-  }
-
-  private void wasRecognizedAsSpec(Class clazz) {
-    // if EarlyTransform has run, _ will resolve to Predef._
-    // otherwise, compilation will fail
-    notThrown(MultipleCompilationErrorsException)
-    // if SpockTransform has run, SpecMetadata will be present
-    assert clazz.isAnnotationPresent(SpecMetadata)
   }
 }
 

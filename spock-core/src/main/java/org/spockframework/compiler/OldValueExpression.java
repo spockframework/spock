@@ -20,7 +20,7 @@ import org.codehaus.groovy.ast.expr.Expression;
 import org.codehaus.groovy.ast.expr.VariableExpression;
 
 /**
- * Used to represent the argument to Predef.old() once it has been processed
+ * Used to represent the argument to Specification.old() once it has been processed
  * by IRewriteResourceProvider.captureOldValue(). The original expression is
  * kept in case ConditionRewriter still needs it.
  * 

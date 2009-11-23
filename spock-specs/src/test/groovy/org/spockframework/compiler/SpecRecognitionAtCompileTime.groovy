@@ -24,79 +24,6 @@ import spock.lang.Specification
  * @author Peter Niederwieser
  */
 class SpecRecognitionAtCompileTime extends Specification {
-  def "annotation with fully qualified name"() {
-    when:
-    def clazz = compile("""
-@spock.lang.Speck
-class ASpec {
-  def foo() { _ }
-}
-    """)
-
-    then:
-    wasRecognizedAsSpec(clazz)
-  }
-
-  def "annotation with simple name and class import"() {
-    when:
-    def clazz = compile("""
-import spock.lang.Speck
-
-@Speck
-class ASpec {
-  def foo() { _ }
-}
-    """)
-
-    then:
-    wasRecognizedAsSpec(clazz)
-  }
-
-  def "annotation with simple name and package import"() {
-    when:
-    def clazz = compile("""
-import spock.lang.*
-
-@Speck
-class ASpec {
-  def foo() { _ }
-}
-    """)
-
-    then:
-    wasRecognizedAsSpec(clazz)
-  }
-
-  def "annotation with simple name and same package"() {
-    when:
-    def clazz = compile("""
-package spock.lang
-
-@Speck
-class ASpec {
-  def foo() { _ }
-}
-    """)
-
-    then:
-    wasRecognizedAsSpec(clazz)
-  }
-
-  def "annotation with import alias"() {
-    when:
-    def clazz = compile("""
-import spock.lang.Speck as Test
-
-@Test
-class ASpec {
-  def foo() { _ }
-}
-    """)
-
-    then:
-    wasRecognizedAsSpec(clazz)
-  }
-
   def "extending class Specification or a subclass thereof"() {
     when:
     def clazz = compile("""
@@ -115,22 +42,9 @@ class ASpec extends $baseClass {
         "org.spockframework.compiler.MySpecification", "org.spockframework.compiler.MyMySpecification"]
   }
 
-  def "annotation without import"() {
-    when:
-    compile("""
-@Speck
-class ASpec {}
-    """)
-
-    then:
-    thrown(MultipleCompilationErrorsException)
-  }
-
-  def "missing annotation"() {
+  def "missing extends clause"() {
     when:
     def clazz = compile("""
-import spock.lang.Speck
-
 class ASpec {}
     """)
 
@@ -147,7 +61,7 @@ class ASpec {}
     // if EarlyTransform has run, _ will resolve to Predef._
     // otherwise, compilation will fail
     notThrown(MultipleCompilationErrorsException)
-    // if MainTransform has run, SpecMetadata will be present
+    // if SpockTransform has run, SpecMetadata will be present
     assert clazz.isAnnotationPresent(SpecMetadata)
   }
 }

@@ -70,18 +70,4 @@ class Derived extends Base {
     then:
     log == ["ss1", "ss2", "s1", "s2", "c2", "c1", "cs2", "cs1"]
   }
-
-  def "deprecated fixture methods still work"() {
-    when:
-    runner.runSpecBody """
-def getLog() { org.spockframework.smoke.FixtureMethods.log }
-
-def setupSpeck() { log << "ss" }
-def cleanupSpeck() { log << "cs" }
-def feature() { expect: true }
-    """
-
-    then:
-    log == ["ss", "cs"]
-  }
 }

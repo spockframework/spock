@@ -16,18 +16,43 @@
 
 package org.spockframework.smoke
 
-import org.spockframework.EmbeddedSpecification
+import org.spockframework.runtime.SpecUtil
 import org.spockframework.runtime.SpockAssertionError
-import org.spockframework.util.SyntaxException
-import spock.util.EmbeddedSpecCompiler
+
 import spock.lang.*
+import org.spockframework.EmbeddedSpecification
 
 /**
  * @author Peter Niederwieser
  */
-// TODO: find suitable name, maybe split into two specs
-class SpecDerivedFromSpecificationBaseClass extends EmbeddedSpecification {
-  @Unroll
+class SpecRecognition extends EmbeddedSpecification {
+  def "extending class Specification or a subclass thereof"() {
+    when:
+    def clazz = compile("""
+import spock.lang.Specification
+
+class ASpec extends $baseClass {}
+    """)
+
+    then:
+    SpecUtil.isSpec(clazz)
+
+    where:
+    baseClass << ["Specification", "spock.lang.Specification",
+        "org.spockframework.smoke.MySpecification", "org.spockframework.smoke.MyMySpecification"]
+  }
+
+  def "missing extends clause"() {
+    when:
+    def clazz = compile("""
+class ASpec {}
+    """)
+
+    then:
+    !SpecUtil.isSpec(clazz)
+  }
+
+    @Unroll
   def "is properly recognized"() {
     when:
     runner.run """
@@ -54,7 +79,6 @@ class Foo extends $baseClass {
   }
 
   def "is properly recognized when inheriting from Specification base class through intermediary in same compilation unit"() {
-    def compiler = new EmbeddedSpecCompiler()
     def classes = compiler.compile("""
 import spock.lang.Specification
 
@@ -76,60 +100,15 @@ class Foo extends MyCustomBaseClass {
     thrown(SpockAssertionError)
   }
 
-  def "can refer to Specification members by simple name"() {
-    when:
-    runner.run """
-class Foo extends spock.lang.Specification {
-  def foo() {
-    when:
-    throw new Exception()
-
-    then:
-    thrown(Exception)
+  // we intentionally don't use EmbeddedSpecCompiler here to avoid confusing matters
+  private compile(String source) {
+    new GroovyClassLoader().parseClass(source)
   }
 }
-    """
 
-    then:
-    noExceptionThrown()
-  }
+class MySpecification extends Specification {}
 
-  @FailsWith(value = SyntaxException, reason = "TODO")
-  def "can refer to Specification members by 'this' and 'super'"() {
-    when:
-    runner.run """
-class Foo extends spock.lang.Specification {
-  def foo() {
-    def list = ${target}.Mock(List)
-
-    expect:
-    list != null
-  }
-}
-    """
-
-    then:
-    noExceptionThrown()
-
-    where:
-    target << ["this", "super"]
-  }
-
-  @Issue("http://issues.spockframework.org/detail?id=43")
-  def "can use Specification members in field initializers"() {
-    when:
-    runner.run """
-class Foo extends spock.lang.Specification {
-  def list = Mock(List)
-
-  def foo() { expect: true }
-}
-    """
-
-    then:
-    notThrown(SyntaxException)
-  }
-}
+class MyMySpecification extends MySpecification {}
 
 class Intermediary1 extends Specification {}
 

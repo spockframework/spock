@@ -125,8 +125,8 @@ public class DeepStatementRewriter extends StatementReplacingVisitorSupport {
 
   @Override
   public void visitBinaryExpression(BinaryExpression expr) {
-    if (AstUtil.isPredefDecl(expr, Identifiers.MOCK, 0, 1))
-      AstUtil.expandPredefDecl(expr, resourceProvider.getMockControllerRef());
+    if (AstUtil.isBuiltinMemberDecl(expr, Identifiers.MOCK, 0, 1))
+      AstUtil.expandBuiltinMemberDecl(expr, resourceProvider.getMockControllerRef());
 
     // only descend after we have expanded Specification.Mock so that it's not
     // expanded by visit(Static)MethodCallExpression instead
@@ -146,14 +146,14 @@ public class DeepStatementRewriter extends StatementReplacingVisitorSupport {
   }
 
   private void handlePredefMockAndPredefOld(Expression expr) {
-    if (AstUtil.isPredefCall(expr, Identifiers.MOCK, 0, 1))
+    if (AstUtil.isBuiltinMemberCall(expr, Identifiers.MOCK, 0, 1))
       handlePredefMock(expr);
-    else if (AstUtil.isPredefCall(expr, Identifiers.OLD, 1, 1))
+    else if (AstUtil.isBuiltinMemberCall(expr, Identifiers.OLD, 1, 1))
       handlePredefOld(expr);
   }
 
   private void handlePredefMock(Expression expr) {
-    AstUtil.expandPredefCall(expr, resourceProvider.getMockControllerRef());
+    AstUtil.expandBuiltinMemberCall(expr, resourceProvider.getMockControllerRef());
   }
 
   private void handlePredefOld(Expression expr) {

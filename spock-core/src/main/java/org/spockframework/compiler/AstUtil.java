@@ -138,8 +138,7 @@ public abstract class AstUtil {
   }
 
   public static boolean isSynthetic(MethodNode method) {
-    return method.isSynthetic()
-        || (method.getModifiers() & Opcodes.ACC_SYNTHETIC) != 0;
+    return method.isSynthetic() || (method.getModifiers() & Opcodes.ACC_SYNTHETIC) != 0;
   }
 
   /**
@@ -176,108 +175,85 @@ public abstract class AstUtil {
     return ((TupleExpression)expr.getArguments()).getExpressions();
   }
 
-  public static boolean isPredefDeclOrCall(Expression expr, String methodName, int minArgs, int maxArgs) {
+  public static boolean isBuiltinMemberDeclOrCall(Expression expr, String methodName, int minArgs, int maxArgs) {
     return expr instanceof BinaryExpression
-        && isPredefDecl((BinaryExpression)expr, methodName, minArgs, maxArgs)
+        && isBuiltinMemberDecl((BinaryExpression)expr, methodName, minArgs, maxArgs)
         || expr instanceof MethodCallExpression
-        && isPredefCall((MethodCallExpression) expr, methodName, minArgs, maxArgs)
-        || expr instanceof StaticMethodCallExpression
-        && isPredefCall((StaticMethodCallExpression)expr, methodName, minArgs, maxArgs);
+        && isBuiltinMemberCall((MethodCallExpression) expr, methodName, minArgs, maxArgs);
   }
 
-  public static boolean isPredefDecl(BinaryExpression expr, String methodName, int minArgs, int maxArgs) {
-    return (expr instanceof DeclarationExpression
-        || expr instanceof FieldInitializationExpression)
-        && isPredefDeclOrCall(expr.getRightExpression(), methodName, minArgs, maxArgs);
+  public static boolean isBuiltinMemberDecl(BinaryExpression expr, String methodName, int minArgs, int maxArgs) {
+    return (expr instanceof DeclarationExpression || expr instanceof FieldInitializationExpression)
+        && isBuiltinMemberDeclOrCall(expr.getRightExpression(), methodName, minArgs, maxArgs);
   }
 
-  public static boolean isPredefCall(Expression expr, String methodName, int minArgs, int maxArgs) {
+  public static boolean isBuiltinMemberCall(Expression expr, String methodName, int minArgs, int maxArgs) {
     return expr instanceof MethodCallExpression
-        && isPredefCall((MethodCallExpression)expr, methodName, minArgs, maxArgs)
-        || expr instanceof StaticMethodCallExpression
-        && isPredefCall((StaticMethodCallExpression)expr, methodName, minArgs, maxArgs);
+        && isBuiltinMemberCall((MethodCallExpression)expr, methodName, minArgs, maxArgs);
   }
 
-  // call of the form "Specification.<methodName>(...)" or "<methodName>(...)"
-  public static boolean isPredefCall(MethodCallExpression expr, String methodName, int minArgs, int maxArgs) {
-    Expression target = expr.getObjectExpression();
+  // call of the form "this.<methodName>(...)" or "<methodName>(...)"
+  public static boolean isBuiltinMemberCall(MethodCallExpression expr, String methodName, int minArgs, int maxArgs) {
     return
-        (isSpecificationClassExpression(target) || expr.isImplicitThis())
+        (isThisExpression(expr.getObjectExpression()) || isSuperExpression(expr.getObjectExpression()))
         && methodName.equals(expr.getMethodAsString()) // getMethodAsString() may return null
         && getArguments(expr).size() >= minArgs
         && getArguments(expr).size() <= maxArgs;
   }
 
-  private static boolean isSpecificationClassExpression(Expression target) {
-    return target instanceof ClassExpression && target.getType().getName().equals(Specification.class.getName());
-  }
-
-  // call of the form "<methodName>(...)" and method imported statically (import potentially added by EarlyTransform)
-  public static boolean isPredefCall(StaticMethodCallExpression expr, String methodName, int minArgs, int maxArgs) {
-    return
-        // we currently don't a requirement on owner type because Specification member
-        // that used to occur in a field initializer has the Spec class as owner type,
-        // but we don't know the Spec class name here; thus we might recognize a bit too much,
-        // but this shouldn't be a problem in practice
-        // expr.getOwnerType().getName().equals(Specification.class.getName())
-        expr.getMethod().equals(methodName)
-        && getArguments(expr).size() >= minArgs
-        && getArguments(expr).size() <= maxArgs;
-  }
-
-   public static void expandPredefDeclOrCall(Expression predefDeclOrCall, Expression... additionalArgs) {
-    if (predefDeclOrCall instanceof BinaryExpression)
-      expandPredefDecl((BinaryExpression)predefDeclOrCall, additionalArgs);
+  public static void expandBuiltinMemberDeclOrCall(Expression builtinMemberDeclOrCall, Expression... additionalArgs) {
+    if (builtinMemberDeclOrCall instanceof BinaryExpression)
+      expandBuiltinMemberDecl((BinaryExpression)builtinMemberDeclOrCall, additionalArgs);
     else
-      expandPredefCall(predefDeclOrCall, additionalArgs);
+      expandBuiltinMemberCall(builtinMemberDeclOrCall, additionalArgs);
   }
 
   /*
    * Expands a field or local variable declaration of the form
-   * "def x = predefMethodCall(...)". Assumes isPredefDecl(...).
+   * "def x = builtinMethodCall(...)". Assumes isBuiltinMemberDecl(...).
    */
-  public static void expandPredefDecl(BinaryExpression predefDecl, Expression... additionalArgs) {
-    Expression predefCall = predefDecl.getRightExpression();
-    String name = getInferredName(predefDecl);
-    Expression type = getType(predefCall, getInferredType(predefDecl));
+  public static void expandBuiltinMemberDecl(BinaryExpression builtinMemberDecl, Expression... additionalArgs) {
+    Expression builtinMemberCall = builtinMemberDecl.getRightExpression();
+    String name = getInferredName(builtinMemberDecl);
+    Expression type = getType(builtinMemberCall, getInferredType(builtinMemberDecl));
 
-    doExpandPredefCall(predefCall, name, type, additionalArgs);
+    doExpandBuiltinMemberCall(builtinMemberCall, name, type, additionalArgs);
   }
 
-  public static void expandPredefCall(Expression predefCall, Expression... additionalArgs) {
+  public static void expandBuiltinMemberCall(Expression builtinMemberCall, Expression... additionalArgs) {
     // IDEA: use line/column information as name
-    doExpandPredefCall(predefCall, "(unnamed)", getType(predefCall, null), additionalArgs);
+    doExpandBuiltinMemberCall(builtinMemberCall, "(unnamed)", getType(builtinMemberCall, null), additionalArgs);
   }
 
-  private static Expression getType(Expression predefCall, Expression inferredType) {
-    List<Expression> args = AstUtil.getArguments(predefCall);
+  private static Expression getType(Expression builtinMemberCall, Expression inferredType) {
+    List<Expression> args = AstUtil.getArguments(builtinMemberCall);
     assert args != null;
 
     if (args.isEmpty()) {
       if (inferredType == null)
-        throw new SyntaxException(predefCall, "Type cannot be inferred; please specify one explicitely");
+        throw new SyntaxException(builtinMemberCall, "Type cannot be inferred; please specify one explicitely");
       return inferredType;
     }
 
     return args.get(0);
   }
 
-  private static String getInferredName(BinaryExpression predefDecl) {
-    Expression left = predefDecl.getLeftExpression();
+  private static String getInferredName(BinaryExpression builtinMemberDecl) {
+    Expression left = builtinMemberDecl.getLeftExpression();
     return left instanceof Variable ? ((Variable)left).getName() : "(unknown)";
   }
 
-  private static ClassExpression getInferredType(BinaryExpression predefDecl) {
-    ClassNode type = predefDecl.getLeftExpression().getType();
+  private static ClassExpression getInferredType(BinaryExpression builtinMemberDecl) {
+    ClassNode type = builtinMemberDecl.getLeftExpression().getType();
     return type == null || type == ClassHelper.DYNAMIC_TYPE ?
         null : new ClassExpression(type);
   }
 
-  private static void doExpandPredefCall(Expression predefCall, String name,
+  private static void doExpandBuiltinMemberCall(Expression builtinMemberCall, String name,
       Expression type, Expression... additionalArgs) {
-    checkIsSafeToMutateArgs(predefCall);
+    checkIsSafeToMutateArgs(builtinMemberCall);
 
-    List<Expression> args = getArguments(predefCall);
+    List<Expression> args = getArguments(builtinMemberCall);
     args.clear();
     args.add(type);
     args.add(new ConstantExpression(name));
@@ -285,9 +261,7 @@ public abstract class AstUtil {
   }
 
   private static void checkIsSafeToMutateArgs(Expression methodCall) {
-    Expression args = methodCall instanceof MethodCallExpression ?
-        ((MethodCallExpression)methodCall).getArguments() :
-        ((StaticMethodCallExpression)methodCall).getArguments();
+    Expression args = ((MethodCallExpression)methodCall).getArguments();
 
     if (args == ArgumentListExpression.EMPTY_ARGUMENTS)
       throw new InternalSpockError("checkIsSafeToMutateArgs");
@@ -303,6 +277,11 @@ public abstract class AstUtil {
   public static boolean isThisExpression(Expression expr) {
     return expr instanceof VariableExpression
         && ((VariableExpression)expr).isThisExpression();
+  }
+
+  public static boolean isSuperExpression(Expression expr) {
+    return expr instanceof VariableExpression
+        && ((VariableExpression)expr).isSuperExpression();
   }
 
   public static void setVisibility(MethodNode method, int visibility) {
@@ -321,4 +300,3 @@ public abstract class AstUtil {
     field.setModifiers(modifiers | visibility);
   }
 }
-

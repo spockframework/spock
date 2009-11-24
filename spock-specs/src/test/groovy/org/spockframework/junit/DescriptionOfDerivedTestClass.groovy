@@ -16,37 +16,18 @@
 
 package org.spockframework.junit
 
-import spock.lang.*
+import org.junit.runner.notification.RunListener
+import org.junit.runners.JUnit4
 import org.spockframework.EmbeddedSpecification
 
-import org.junit.Test
-import org.junit.runners.JUnit4
-import org.junit.Before
-import org.junit.runner.notification.RunListener
-
 class DescriptionOfDerivedTestClass extends EmbeddedSpecification {
-  def "Description of inherited test method has class name of derived class"() {
-    def desc = new JUnit4(DerivedDescription).description
+  Class derivedClass
 
-    expect:
-    desc.children.size() == 2
-    desc.children*.getClassName() == [DerivedDescription.name] * 2
-  }
+  def setup() {
+    def classes = compiler.compile("""
+import org.junit.*
 
-  def "Description of inherited setup method has class name of derived class"() {
-    RunListener listener = Mock()
-    runner.listeners << listener
-    runner.throwFailure = false
-
-    when:
-    runner.runClass(DerivedDescription)
-
-    then:
-    2 * listener.testFailure( { it.description.className == DerivedDescription.name } )
-  }
-}
-
-class BaseDescription {
+class BaseTest {
   @Before
   void before() {
     throw new RuntimeException()
@@ -56,7 +37,34 @@ class BaseDescription {
   void foo() {}
 }
 
-class DerivedDescription extends BaseDescription {
+class DerivedTest extends BaseTest {
   @Test
   void bar() {}
 }
+    """)
+
+    derivedClass = classes.find { it.name == "DerivedTest" }
+  }
+
+  def "Description of inherited test method has class name of derived class"() {
+    def desc = new JUnit4(derivedClass).description
+
+    expect:
+    desc.children.size() == 2
+    desc.children*.getClassName() == [derivedClass.name] * 2
+  }
+
+  def "Description of inherited before method has class name of derived class"() {
+    RunListener listener = Mock()
+    runner.listeners << listener
+    runner.throwFailure = false
+
+    when:
+    runner.runClass(derivedClass)
+
+    then:
+    2 * listener.testFailure( { it.description.className == derivedClass.name } )
+  }
+}
+
+

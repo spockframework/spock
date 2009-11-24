@@ -28,7 +28,7 @@ import org.spockframework.util.SyntaxException;
 
 /**
  * Walks the statement and expression tree to rewrite explicit conditions,
- * interactions, and Predef members. Also records whether conditions and
+ * interactions, and Specification members. Also records whether conditions and
  * interactions were found.
  *
  * @author Peter Niederwieser
@@ -125,10 +125,10 @@ public class DeepStatementRewriter extends StatementReplacingVisitorSupport {
 
   @Override
   public void visitBinaryExpression(BinaryExpression expr) {
-    if (AstUtil.isPredefDecl(expr, Identifiers.MOCK, 0, 1))
-      AstUtil.expandPredefDecl(expr, resourceProvider.getMockControllerRef());
+    if (AstUtil.isBuiltinMemberDecl(expr, Identifiers.MOCK, 0, 1))
+      AstUtil.expandBuiltinMemberDecl(expr, resourceProvider.getMockControllerRef());
 
-    // only descend after we have expanded Predef.Mock so that it's not
+    // only descend after we have expanded Specification.Mock so that it's not
     // expanded by visit(Static)MethodCallExpression instead
     super.visitBinaryExpression(expr);
   }
@@ -146,19 +146,19 @@ public class DeepStatementRewriter extends StatementReplacingVisitorSupport {
   }
 
   private void handlePredefMockAndPredefOld(Expression expr) {
-    if (AstUtil.isPredefCall(expr, Identifiers.MOCK, 0, 1))
+    if (AstUtil.isBuiltinMemberCall(expr, Identifiers.MOCK, 0, 1))
       handlePredefMock(expr);
-    else if (AstUtil.isPredefCall(expr, Identifiers.OLD, 1, 1))
+    else if (AstUtil.isBuiltinMemberCall(expr, Identifiers.OLD, 1, 1))
       handlePredefOld(expr);
   }
 
   private void handlePredefMock(Expression expr) {
-    AstUtil.expandPredefCall(expr, resourceProvider.getMockControllerRef());
+    AstUtil.expandBuiltinMemberCall(expr, resourceProvider.getMockControllerRef());
   }
 
   private void handlePredefOld(Expression expr) {
     if (!(resourceProvider.getCurrentBlock() instanceof ThenBlock))
-      throw new SyntaxException(expr, "Predef.old() may only be used in a 'then' block");
+      throw new SyntaxException(expr, "old() may only be used in a 'then' block");
 
     List<Expression> args = AstUtil.getArguments(expr);
     VariableExpression oldValue = resourceProvider.captureOldValue(args.get(0));

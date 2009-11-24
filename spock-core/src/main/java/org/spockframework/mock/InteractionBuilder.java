@@ -23,7 +23,7 @@ import groovy.lang.Closure;
 
 import org.spockframework.util.SyntaxException;
 
-import spock.lang.Predef;
+import spock.lang.Specification;
 
 /**
  *
@@ -52,7 +52,7 @@ public class InteractionBuilder {
 
   public static final String SET_FIXED_COUNT = "setFixedCount";
   public InteractionBuilder setFixedCount(Object count) {
-    if (count == Predef._) {
+    if (count == Specification._) {
       minCount = 0;
       maxCount = Integer.MAX_VALUE;
     } else
@@ -63,8 +63,8 @@ public class InteractionBuilder {
 
   public static final String SET_RANGE_COUNT = "setRangeCount";
   public InteractionBuilder setRangeCount(Object minCount, Object maxCount, boolean inclusive) {
-    this.minCount = minCount == Predef._ ? 0 : convertCount(minCount, true);
-    this.maxCount = maxCount == Predef._ ? Integer.MAX_VALUE : convertCount(maxCount, inclusive);
+    this.minCount = minCount == Specification._ ? 0 : convertCount(minCount, true);
+    this.maxCount = maxCount == Specification._ ? Integer.MAX_VALUE : convertCount(maxCount, inclusive);
     if (this.minCount > this.maxCount)
       throw new SyntaxException("lower bound of invocation count must come before upper bound");
     return this;
@@ -72,13 +72,13 @@ public class InteractionBuilder {
 
   public static final String ADD_EQUAL_TARGET = "addEqualTarget";
   public InteractionBuilder addEqualTarget(Object target) {
-    if (target != Predef._) invConstraints.add(new IdenticalTargetConstraint(target));
+    if (target != Specification._) invConstraints.add(new IdenticalTargetConstraint(target));
     return this;
   }
 
   public static final String ADD_EQUAL_METHOD_NAME = "addEqualMethodName";
   public InteractionBuilder addEqualMethodName(String name) {
-    if (!name.equals(Predef._.toString()))
+    if (!name.equals(Specification._.toString()))
       invConstraints.add(new EqualMethodNameConstraint(name));
     return this;
   }
@@ -115,7 +115,7 @@ public class InteractionBuilder {
 
   public static final String ADD_EQUAL_ARG = "addEqualArg";
   public InteractionBuilder addEqualArg(Object arg) {
-    argConstraints.add(arg == Predef._ ?
+    argConstraints.add(arg == Specification._ ?
         AnyArgumentConstraint.INSTANCE : new EqualArgumentConstraint(arg));
     return this;
   }
@@ -142,7 +142,7 @@ public class InteractionBuilder {
 
   public static final String SET_CONSTANT_RESULT = "setConstantResult";
   public InteractionBuilder setConstantResult(Object constant) {
-    if (constant != Predef._)
+    if (constant != Specification._)
       resultGenerator = new ConstantResultGenerator(constant);
     return this;
   }

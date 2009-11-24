@@ -447,7 +447,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
 
   private boolean isExceptionCondition(Statement stat) {
     Expression expr = AstUtil.getExpression(stat, Expression.class);
-    return expr != null && AstUtil.isPredefDeclOrCall(expr, Identifiers.THROWN, 0, 1);
+    return expr != null && AstUtil.isBuiltinMemberDeclOrCall(expr, Identifiers.THROWN, 0, 1);
   }
 
   private void rewriteExceptionCondition(Statement stat, boolean hasExceptionCondition) {
@@ -456,14 +456,14 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
 
     Expression expr = AstUtil.getExpression(stat, Expression.class);
     assert expr != null;   
-    AstUtil.expandPredefDeclOrCall(expr, thrownExceptionRef);
+    AstUtil.expandBuiltinMemberDeclOrCall(expr, thrownExceptionRef);
   }
 
   private boolean statHasInteraction(Statement stat, DeepStatementRewriter deep) {
     if (deep.isInteractionFound()) return true;
 
     Expression expr = AstUtil.getExpression(stat, Expression.class);
-    return expr != null && AstUtil.isPredefCall(expr, Identifiers.INTERACTION, 0, 1);
+    return expr != null && AstUtil.isBuiltinMemberCall(expr, Identifiers.INTERACTION, 0, 1);
   }
 
   private void insertInteractions(List<Statement> interactions, WhenBlock whenBlock) {

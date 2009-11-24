@@ -19,7 +19,7 @@ package org.spockframework.smoke
 import org.spockframework.EmbeddedSpecification
 import org.spockframework.util.SpockSyntaxException
 
-class PredefOld extends EmbeddedSpecification {
+class AccessingOldValues extends EmbeddedSpecification {
   def "basic usage"() {
     def list = [1,2,3]
 

@@ -181,7 +181,7 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> {
     if (expr instanceof OldValueExpression) {
       Expression originalExpr = ((OldValueExpression)expr).getOrginalExpression();
       originalExpr.visit(this); // just to count up recordCount and produce the correct number of N/A values at runtime
-      doNotRecordNextConstant = true; // we know Predef.old() has been rewritten to include a dummy as second argument
+      doNotRecordNextConstant = true; // we know Specification.old() has been rewritten to include a dummy as second argument
       result = expr;
       return;
     }

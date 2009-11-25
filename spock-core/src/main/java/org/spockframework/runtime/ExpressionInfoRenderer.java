@@ -135,7 +135,7 @@ public class ExpressionInfoRenderer {
     Object value = expr.getValue();
 
     if (value == null) return "null";
-    if (value.equals("")) return "\"\"";
+    if ("".equals(value)) return "\"\""; // value.equals() might throw exception, so we use "".equals() instead
 
     String str;
      

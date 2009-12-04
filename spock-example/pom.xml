@@ -40,7 +40,7 @@
           <dependency>
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy-all</artifactId>
-            <version>1.6.6</version>
+            <version>1.6.7</version>
             <exclusions> <!-- for some reason, the following dependencies aren't marked as optional in groovy-all POM -->
               <exclusion>
                 <groupId>junit</groupId>

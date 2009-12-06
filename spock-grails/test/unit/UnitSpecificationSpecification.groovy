@@ -14,7 +14,7 @@
  */
 
 import grails.plugin.spock.UnitSpecification
-import grails.plugin.spock.build.test.io.SystemOutAndErrSwapper
+import org.codehaus.groovy.grails.test.io.SystemOutAndErrSwapper
 
 class UnitSpecificationSpecification extends UnitSpecification {
   def "domain mocking"() {

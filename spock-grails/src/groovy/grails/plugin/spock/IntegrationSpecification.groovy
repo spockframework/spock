@@ -27,31 +27,28 @@ import org.springframework.transaction.support.DefaultTransactionDefinition
 import org.springframework.web.context.request.RequestContextHolder
 import spock.lang.Specification
 
+import org.codehaus.groovy.grails.test.support.GrailsTestAutowirer
+import org.codehaus.groovy.grails.test.support.GrailsTestTransactionInterceptor
+import org.codehaus.groovy.grails.test.support.GrailsTestRequestEnvironmentInterceptor
+
 class IntegrationSpecification extends Specification {
   private transactionManager
   private transactionStatus
 
+  private applicationContext = ApplicationHolder.application.mainContext
+  private autowirer = new GrailsTestAutowirer(applicationContext)
+  private transactionInterceptor = new GrailsTestTransactionInterceptor(applicationContext)
+  private requestEnvironmentInterceptor = new GrailsTestRequestEnvironmentInterceptor(applicationContext)
+
   def setup() {
-    def applicationContext = ApplicationHolder.application.mainContext
-    assert applicationContext != null
-
-    applicationContext.autowireCapableBeanFactory.autowireBeanProperties(
-        this,
-        AutowireCapableBeanFactory.AUTOWIRE_BY_NAME,
-        false
-    )
-
-    if (this instanceof ApplicationContextAware) {
-      this.applicationContext = applicationContext
-    }
-
-
-    def webRequest = GrailsWebUtil.bindMockWebRequest(applicationContext);
+    autowirer.autowire(this)
+    
+    // Once GrailsTestRequestEnvironmentInterceptor supports init(), it should replace these two lines
+    def webRequest = GrailsWebUtil.bindMockWebRequest(applicationContext)
     webRequest.servletContext.setAttribute(GrailsApplicationAttributes.APPLICATION_CONTEXT, applicationContext)
 
-    GrailsConfigUtils.executeGrailsBootstraps(webRequest.attributes.grailsApplication, applicationContext, webRequest.servletContext)
-
-    if (GrailsClassUtils.getPropertyOrStaticPropertyOrFieldValue(this, "transactional")) {
+    if (transactionInterceptor.isTransactional(this)) {
+      // Once GrailsTestTransactionInterceptor supports init(), it should replace the next eight lines
       if (applicationContext.containsBean("transactionManager")) {
         transactionManager = applicationContext.getBean("transactionManager")
         transactionStatus = transactionManager.getTransaction(new DefaultTransactionDefinition())
@@ -64,7 +61,9 @@ class IntegrationSpecification extends Specification {
   }
 
   def cleanup() {
+    // Once GrailsTestTransactionInterceptor supports rollback(), it should replace the next line
     transactionManager?.rollback(transactionStatus)
+    // Once GrailsTestRequestEnvironmentInterceptor supports destroy(), it should replace the next line
     RequestContextHolder.requestAttributes = null
   }
 }

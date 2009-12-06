@@ -14,26 +14,26 @@
  * limitations under the License.
  */
 
-package grails.plugin.spock.build.test.adapter
+package grails.plugin.spock.test
+
+import org.codehaus.groovy.grails.test.GrailsTestTypeResult
 
 import org.junit.runner.Result
 
-class ResultAdapter {
-  final protected result
+class GrailsSpecTestTypeResult implements GrailsTestTypeResult {
+
+  final Result result
   
-  ResultAdapter(Result result) {
+  GrailsSpecTestTypeResult(Result result) {
     this.result = result
   }
 
-  int errorCount() {
-    0
+  int getPassCount() {
+    result.runCount - failCount
   }
-
-  int failureCount() {
+    
+  int getFailCount() {
     result.failureCount
   }
 
-  int runCount() {
-    result.runCount
-  }
 }

@@ -14,23 +14,31 @@
  * limitations under the License.
  */
 
-package grails.plugin.spock.build.test.run
+package grails.plugin.spock.test.listener
 
-import grails.plugin.spock.build.test.report.ReportFactory
+import org.codehaus.groovy.grails.test.io.SystemOutAndErrSwapper
+import org.codehaus.groovy.grails.test.event.GrailsTestEventPublisher
+import org.codehaus.groovy.grails.test.report.junit.JUnitReportsFactory
+
 import org.junit.runner.Description
 import org.junit.runner.Result
 import org.junit.runner.notification.Failure
 import org.junit.runner.notification.RunListener
 
+import org.codehaus.groovy.grails.test.report.junit.JUnitReportsFactory
+
 class SpecRunListener extends RunListener {
-  final protected statusOut
-  final protected reportFactory
-  
+
+  final protected GrailsTestEventPublisher eventPublisher
+  final protected JUnitReportsFactory reportsFactory
+  final protected SystemOutAndErrSwapper outAndErrSwapper
+
   protected currentSpecRun
 
-  SpecRunListener(File reportsDir, List<String> formats, PrintStream statusOut) {
-    this.statusOut = statusOut
-    this.reportFactory = new ReportFactory(reportsDir, formats)
+  SpecRunListener(GrailsTestEventPublisher eventPublisher, JUnitReportsFactory reportsFactory, SystemOutAndErrSwapper outAndErrSwapper) {
+    this.eventPublisher = eventPublisher
+    this.reportsFactory = reportsFactory
+    this.outAndErrSwapper = outAndErrSwapper
   }
 
   void testRunStarted(Description description) {}
@@ -39,7 +47,8 @@ class SpecRunListener extends RunListener {
     if (currentSpecRun?.name != description.className) {
       currentSpecRun?.finish()
 
-      currentSpecRun = new SpecRunListenerSpecRun(description.className, reportFactory, statusOut)
+      def specName = description.className
+      currentSpecRun = new SpecRunListenerSpecRun(specName, eventPublisher, reportsFactory.createReports(specName), outAndErrSwapper)
       currentSpecRun.start()
     }
 

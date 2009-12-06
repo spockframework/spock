@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-package grails.plugin.spock.build.test.run
+package grails.plugin.spock.test.listener
 
-import grails.plugin.spock.build.test.io.SystemOutAndErrSwapper
 import org.apache.tools.ant.taskdefs.optional.junit.JUnitTest
 import org.junit.runner.Description
 import org.junit.runner.notification.Failure
@@ -26,67 +25,67 @@ import junit.framework.JUnit4TestCaseFacadeFactory
 
 class SpecRunListenerSpecRun {
     final name
+    final protected eventPublisher
     final protected reports
-    final protected statusOut
+    final protected outAndErrSwapper
     final protected junitTest
-    final protected outAndErrSwapper = new SystemOutAndErrSwapper()
 
     protected startTime
     def runCount = 0
     def failureCount = 0
     def errorCount = 0
 
-    SpecRunListenerSpecRun(name, reportFactory, statusOut) {
+    SpecRunListenerSpecRun(name, eventPublisher, reports, outAndErrSwapper) {
       this.name = name
-      this.reports = reportFactory.createReports(name)
-      this.statusOut = statusOut
-      
+      this.eventPublisher = eventPublisher
+      this.reports = reports
+      this.outAndErrSwapper = outAndErrSwapper
       this.junitTest = new JUnitTest(name)
     }
 
   void start() {
+      eventPublisher.testCaseStart(name)
       outAndErrSwapper.swapIn()
-      reports*.start(junitTest)
-      
-      statusOut.print("Running test ${name}...")
+      reports.startTestSuite(junitTest)
       startTime = System.currentTimeMillis()
     }
     
     void finish() {
-      if (failureCount + errorCount == 0) statusOut.println("PASSED")
-      
-      def (out,err) = outAndErrSwapper.swapOut()*.toString()
       junitTest.runTime = System.currentTimeMillis() - startTime
       junitTest.setCounts(runCount, failureCount, errorCount)
-      reports*.end(junitTest, out, err)
+      def (out,err) = outAndErrSwapper.swapOut()*.toString()
+      reports.systemOutput = out
+      reports.systemError = err
+      reports.endTestSuite(junitTest)
+      eventPublisher.testCaseEnd(name)
     }
     
     void testStarted(Description description) {
+      def testName = description.methodName
+      eventPublisher.testStart(testName)
       runCount++
-      [System.out, System.err]*.println("--Output from ${description.methodName}--")
-
-      def testCase = JUnit4TestCaseFacadeFactory.createFacade(description)
-      reports*.formatter*.startTest(testCase)
+      [System.out, System.err]*.println("--Output from ${testName}--")
+      reports.startTest(JUnit4TestCaseFacadeFactory.createFacade(description))
     }
     
     void testFailure(Failure failure) {
-      if (failureCount + errorCount == 0) statusOut.println()
-      statusOut.println("                    ${failure.description.methodName}...FAILED")
-
+      def testName = failure.description.methodName
       def testCase = JUnit4TestCaseFacadeFactory.createFacade(failure.description)
       def exception = failure.exception
 
       if (exception instanceof AssertionError) {
+        eventPublisher.testFailure(testName, exception)
         failureCount++
-        reports*.formatter*.addFailure(testCase, exception)
+        reports.addFailure(testCase, exception)
       } else {
+        eventPublisher.testFailure(testName, exception, true)
         errorCount++
-        reports*.formatter*.addError(testCase, exception)
+        reports.addError(testCase, exception)
       }
     }
     
     void testFinished(Description description) {
-      def testCase = JUnit4TestCaseFacadeFactory.createFacade(description)
-      reports*.formatter*.endTest(testCase)
+      reports.endTest(JUnit4TestCaseFacadeFactory.createFacade(description))
+      eventPublisher.testEnd(description.methodName)
     }
 }

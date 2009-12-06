@@ -47,7 +47,7 @@ class SharedFieldSuite {}
     """)
 
     when:
-    runner.runClass(clazzes.find { it.name.endsWith("Suite") })
+    runner.runClass(clazzes.find { it.simpleName == "SharedFieldSuite" })
 
     then:
     noExceptionThrown()
@@ -80,7 +80,7 @@ class StaticFieldSuite {}
     """)
 
     when:
-     runner.runClass(clazzes.find { it.name.endsWith("Suite") })
+    runner.runClass(clazzes.find { it.simpleName == "StaticFieldSuite" })
 
     then:
     thrown(ConditionNotSatisfiedError)

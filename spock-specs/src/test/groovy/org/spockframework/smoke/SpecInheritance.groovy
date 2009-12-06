@@ -66,7 +66,7 @@ class Derived extends Base {
 }
     """)
 
-    def derived = classes.find { it.name.endsWith("Derived") }
+    def derived = classes.find { it.simpleName == "Derived" }
 
     when:
     runner.runClass(derived)
@@ -104,7 +104,7 @@ class Derived extends Base {
 }
     """)
 
-    def derived = classes.find { it.name.endsWith("Derived") }
+    def derived = classes.find { it.simpleName == "Derived" }
 
     when:
     runner.runClass(derived)
@@ -115,18 +115,18 @@ class Derived extends Base {
 
   def "exception in base class fixture method causes failure"() {
     def classes = compiler.compileWithImports("""
-class BaseSpec extends Specification {
+class Base extends Specification {
   def ${fixtureMethod}() { throw new IOException() }
 }
 
-class DerivedSpec extends BaseSpec {
+class Derived extends Base {
   def ${fixtureMethod}() {}
 
   def feature() { expect: true }
 }
     """)
 
-    def derived = classes.find { it.name.endsWith("DerivedSpec") }
+    def derived = classes.find { it.simpleName == "Derived" }
 
     when:
     runner.runClass(derived)
@@ -166,7 +166,7 @@ class Derived extends Base {
 }
     """)
 
-    def derived = classes.find { it.name.endsWith("Derived") }
+    def derived = classes.find { it.simpleName == "Derived" }
     runner.throwFailure = false
     
     when:
@@ -196,7 +196,7 @@ class Derived extends Base {
 }
     """)
 
-    def derived = classes.find { it.name.endsWith("Derived") }
+    def derived = classes.find { it.simpleName == "Derived" }
 
     when:
     def result = runner.runClass(derived)
@@ -223,7 +223,7 @@ class Derived extends Base {
 }
     """)
 
-    def derived = classes.find { it.name.endsWith("Derived") }
+    def derived = classes.find { it.simpleName == "Derived" }
 
     when:
     def result = runner.runClass(derived)
@@ -231,6 +231,34 @@ class Derived extends Base {
     then:
     derived.log == [1, 2]
     result.runCount == 2
+  }
+
+  def "can invoke super.helperMethod()"() {
+    def classes = compiler.compileWithImports("""
+class Base extends Specification {
+  def helperMethod() {
+    return "helper invoked"
+  }
+}
+
+class Derived extends Base {
+  def helperMethod() {
+    super.helperMethod()
+  }
+
+  def feature() {
+    expect: helperMethod() == "helper invoked"
+  }
+}
+    """)
+
+    def derived = classes.find { it.simpleName == "Derived" }
+
+    when:
+    runner.runClass(derived)
+
+    then:
+    noExceptionThrown()
   }
 }
 

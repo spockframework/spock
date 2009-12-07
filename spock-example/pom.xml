@@ -11,9 +11,9 @@
 <!-- Mandatory plugins for using Spock -->
     <plugins>
       <plugin>
-        <groupId>org.codehaus.groovy.maven</groupId>
+        <groupId>org.codehaus.gmaven</groupId>
         <artifactId>gmaven-plugin</artifactId>
-        <version>1.0</version>
+        <version>1.2</version>
         <configuration>
           <providerSelection>1.6</providerSelection>
         </configuration>
@@ -27,9 +27,9 @@
         </executions>
         <dependencies>
           <dependency>
-            <groupId>org.codehaus.groovy.maven.runtime</groupId>
+            <groupId>org.codehaus.gmaven.runtime</groupId>
             <artifactId>gmaven-runtime-1.6</artifactId>
-            <version>1.0</version>
+            <version>1.2</version>
             <exclusions>
               <exclusion>
                 <groupId>org.codehaus.groovy</groupId>

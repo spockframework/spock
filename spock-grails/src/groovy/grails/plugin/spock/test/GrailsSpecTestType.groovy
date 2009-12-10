@@ -45,26 +45,19 @@ class GrailsSpecTestType extends GrailsTestTypeSupport {
       ["Spec", "Specification"]
   }
   
-  File getClassFileForTestClass(Class clazz) {
-    new File(compiledClassesDir, clazz.name.replace(".", "/") + ".class")
-  }
-
   JUnitReportsFactory createJUnitReportsFactory() {
     JUnitReportsFactory.createFromBuildBinding(buildBinding)
   }
   
   protected int doPrepare() {
-    testTargetPatterns.each { testTargetPattern ->
-      findSource(testTargetPattern).each { sourceResource ->
-        def specSourceFile = sourceResource.file
-        def specClassName = sourceFileToClassName(specSourceFile)
-        def specClass = testClassLoader.loadClass(specClassName)
-        def specClassFile = getClassFileForTestClass(specClass)
-        if (specFinder.isSpec(specClassFile)) specClasses << specClass
+      eachSourceFile { testTargetPattern, specSourceFile ->
+          def specClassName = sourceFileToClassName(specSourceFile)
+          def specClassFile = sourceFileToClassFile(specSourceFile)
+          def specClass = sourceFileToClass(specSourceFile)
+          if (specFinder.isSpec(specClassFile)) specClasses << specClass
       }
-    }
     
-    specClasses.sum { SpecUtil.getFeatureCount(it) } ?: 0
+      specClasses.sum { SpecUtil.getFeatureCount(it) } ?: 0
   }
   
   GrailsTestTypeResult doRun(GrailsTestEventPublisher eventPublisher) {

@@ -42,28 +42,12 @@ class IntegrationSpecification extends Specification {
 
   def setup() {
     autowirer.autowire(this)
-    
-    // Once GrailsTestRequestEnvironmentInterceptor supports init(), it should replace these two lines
-    def webRequest = GrailsWebUtil.bindMockWebRequest(applicationContext)
-    webRequest.servletContext.setAttribute(GrailsApplicationAttributes.APPLICATION_CONTEXT, applicationContext)
-
-    if (transactionInterceptor.isTransactional(this)) {
-      // Once GrailsTestTransactionInterceptor supports init(), it should replace the next eight lines
-      if (applicationContext.containsBean("transactionManager")) {
-        transactionManager = applicationContext.getBean("transactionManager")
-        transactionStatus = transactionManager.getTransaction(new DefaultTransactionDefinition())
-      } else {
-        throw new RuntimeException("There is no test TransactionManager defined and integration test" +
-            "${this.class.name} does not set transactional = false"
-        )
-      }
-    }
+    requestEnvironmentInterceptor.init()
+    if (transactionInterceptor.isTransactional(this)) transactionInterceptor.init()
   }
 
   def cleanup() {
-    // Once GrailsTestTransactionInterceptor supports rollback(), it should replace the next line
-    transactionManager?.rollback(transactionStatus)
-    // Once GrailsTestRequestEnvironmentInterceptor supports destroy(), it should replace the next line
-    RequestContextHolder.requestAttributes = null
+    transactionInterceptor.destroy()
+    requestEnvironmentInterceptor.init()
   }
 }

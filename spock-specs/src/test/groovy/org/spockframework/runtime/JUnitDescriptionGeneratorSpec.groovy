@@ -34,7 +34,7 @@ class Derived extends Base {
     expect: true
   }
 }
-    """).find { it.name.endsWith("Derived") }
+    """).find { it.simpleName == "Derived" }
 
     def specInfo = new SpecInfoBuilder(derived).build()
 

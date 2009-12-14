@@ -51,11 +51,11 @@
           <version>2.4</version> <!-- 2.4 introduces skip property -->
         </plugin>
         <plugin>
-          <groupId>org.codehaus.groovy.maven</groupId>
+          <groupId>org.codehaus.gmaven</groupId>
           <artifactId>gmaven-plugin</artifactId>
-          <version>1.0</version>
+          <version>1.2</version>
           <configuration>
-            <providerSelection>1.6</providerSelection>
+            <providerSelection>1.7</providerSelection>
           </configuration>
           <executions>
             <execution>
@@ -67,9 +67,9 @@
           </executions>
           <dependencies>
             <dependency>
-              <groupId>org.codehaus.groovy.maven.runtime</groupId>
-              <artifactId>gmaven-runtime-1.6</artifactId>
-              <version>1.0</version>
+              <groupId>org.codehaus.gmaven.runtime</groupId>
+              <artifactId>gmaven-runtime-1.7</artifactId>
+              <version>1.2</version>
               <exclusions>
                 <exclusion>
                   <groupId>org.codehaus.groovy</groupId>

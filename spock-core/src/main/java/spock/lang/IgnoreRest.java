@@ -18,8 +18,8 @@ package spock.lang;
 
 import java.lang.annotation.*;
 
-import org.spockframework.runtime.intercept.Directive;
-import org.spockframework.runtime.intercept.IgnoreRestProcessor;
+import org.spockframework.runtime.extension.ExtensionAnnotation;
+import org.spockframework.runtime.extension.builtin.IgnoreRestExtension;
 
 /**
  * Indicates that all feature methods except the ones carrying this annotation
@@ -29,5 +29,5 @@ import org.spockframework.runtime.intercept.IgnoreRestProcessor;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-@Directive(IgnoreRestProcessor.class)
+@ExtensionAnnotation(IgnoreRestExtension.class)
 public @interface IgnoreRest {}

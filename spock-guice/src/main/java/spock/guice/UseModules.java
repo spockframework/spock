@@ -20,12 +20,12 @@ import java.lang.annotation.*;
 
 import com.google.inject.Module;
 
-import org.spockframework.guice.GuiceProcessor;
-import org.spockframework.runtime.intercept.Directive;
+import org.spockframework.guice.GuiceExtension;
+import org.spockframework.runtime.extension.ExtensionAnnotation;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-@Directive(GuiceProcessor.class)
+@ExtensionAnnotation(GuiceExtension.class)
 public @interface UseModules {
   Class<? extends Module>[] value();
 }

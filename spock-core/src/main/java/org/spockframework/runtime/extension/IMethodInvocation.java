@@ -14,14 +14,16 @@
  * limitations under the License.
  */
 
-package org.spockframework.groovy.ast;
+package org.spockframework.runtime.extension;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
+import org.spockframework.runtime.model.MethodInfo;
 
 /**
- * For testing purposes.
+ * @author Peter Niederwieser
  */
-@Retention(RetentionPolicy.SOURCE)
-public @interface JavaAnnotationWithSourceRetention {
+public interface IMethodInvocation {
+  Object getTarget();
+  MethodInfo getMethod();
+  Object[] getArguments();
+  void proceed() throws Throwable;
 }

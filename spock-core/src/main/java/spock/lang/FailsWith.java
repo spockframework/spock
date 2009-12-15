@@ -18,8 +18,8 @@ package spock.lang;
 
 import java.lang.annotation.*;
 
-import org.spockframework.runtime.intercept.Directive;
-import org.spockframework.runtime.intercept.FailsWithProcessor;
+import org.spockframework.runtime.extension.ExtensionAnnotation;
+import org.spockframework.runtime.extension.builtin.FailsWithExtension;
 
 /**
  * Indicates that a feature method is expected to fail with the given exception.
@@ -27,7 +27,7 @@ import org.spockframework.runtime.intercept.FailsWithProcessor;
  * exception conditions in certain corner cases where they cannot be used (like
  * specifying the behavior of exception conditions). In all other cases,
  * exception conditions are preferable.
- * <p>Applying this directive to a specification has the same effect as applying it
+ * <p>Applying this annotation to a specification has the same effect as applying it
  * to all feature methods that aren't already annotated with <tt>@FailsWith</tt>.
  *
  * @author Peter Niederwieser
@@ -35,7 +35,7 @@ import org.spockframework.runtime.intercept.FailsWithProcessor;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD, ElementType.TYPE})
-@Directive(FailsWithProcessor.class)
+@ExtensionAnnotation(FailsWithExtension.class)
 public @interface FailsWith {
   /**
    * The expected exception type.

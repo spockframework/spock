@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.spockframework.runtime.intercept;
+package org.spockframework.runtime.extension;
 
 import java.lang.annotation.Annotation;
 
@@ -25,26 +25,26 @@ import org.spockframework.runtime.model.*;
  *
  * @author Peter Niederwieser
  */
-public class AbstractDirectiveProcessor<T extends Annotation> implements IDirectiveProcessor<T> {
-  public void visitSpecDirective(T directive, SpecInfo spec) {
+public class AbstractAnnotationDrivenExtension<T extends Annotation> implements IAnnotationDrivenExtension<T> {
+  public void visitSpecAnnotation(T annotation, SpecInfo spec) {
     throw new InvalidSpecError("@%s may not be applied to Specs")
-        .format(directive.annotationType().getSimpleName());
+        .format(annotation.annotationType().getSimpleName());
   }
 
-  public void visitFeatureDirective(T directive, FeatureInfo feature) {
+  public void visitFeatureAnnotation(T annotation, FeatureInfo feature) {
     throw new InvalidSpecError("@%s may not be applied to feature methods")
-        .format(directive.annotationType().getSimpleName());
+        .format(annotation.annotationType().getSimpleName());
   }
 
-  public void visitFixtureDirective(T directive, MethodInfo fixtureMethod) {
+  public void visitFixtureAnnotation(T annotation, MethodInfo fixtureMethod) {
     throw new InvalidSpecError("@%s may not be applied to fixture methods")
-        .format(directive.annotationType().getSimpleName());
+        .format(annotation.annotationType().getSimpleName());
   }
 
-  public void visitFieldDirective(T directive, FieldInfo field) {
+  public void visitFieldAnnotation(T annotation, FieldInfo field) {
     throw new InvalidSpecError("@%s may not be applied to fields")
-        .format(directive.annotationType().getSimpleName());
+        .format(annotation.annotationType().getSimpleName());
   }
 
-  public void afterVisits(SpecInfo spec) {} // do nothing
+  public void visitSpec(SpecInfo spec) {} // do nothing
 }

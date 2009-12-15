@@ -16,9 +16,9 @@
 
 package org.spockframework.spring;
 
-import org.spockframework.runtime.extension.SpockExtensionException;
+import org.spockframework.runtime.extension.ExtensionException;
 
-public class SpringExtensionException extends SpockExtensionException {
+public class SpringExtensionException extends ExtensionException {
   public SpringExtensionException(String message) {
     super(message);
   }

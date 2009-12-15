@@ -14,22 +14,17 @@
  * limitations under the License.
  */
 
-package org.spockframework.runtime.intercept;
+package org.spockframework.runtime.extension;
 
-import org.spockframework.runtime.SkipSpecOrFeatureException;
+import java.lang.annotation.*;
 
 /**
  *
  * @author Peter Niederwieser
  */
-public class IgnoreInterceptor implements IMethodInterceptor {
-  private final String reason;
 
-  public IgnoreInterceptor(String reason) {
-    this.reason = reason;
-  }
-
-  public void invoke(IMethodInvocation invocation) throws Throwable {
-    throw new SkipSpecOrFeatureException(reason);
-  }                                           
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.ANNOTATION_TYPE)
+public @interface ExtensionAnnotation {
+  Class<? extends IAnnotationDrivenExtension> value();
 }

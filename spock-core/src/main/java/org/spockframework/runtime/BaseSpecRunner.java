@@ -20,8 +20,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import static org.spockframework.runtime.RunStatus.*;
-import org.spockframework.runtime.intercept.IMethodInterceptor;
-import org.spockframework.runtime.intercept.MethodInvocation;
+import org.spockframework.runtime.extension.IMethodInterceptor;
+import org.spockframework.runtime.extension.MethodInvocation;
 import org.spockframework.runtime.model.*;
 import org.spockframework.util.InternalSpockError;
 

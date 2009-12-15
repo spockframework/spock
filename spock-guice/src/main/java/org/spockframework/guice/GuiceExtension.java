@@ -14,20 +14,18 @@
  * limitations under the License.
  */
 
-package org.spockframework.runtime.intercept;
+package org.spockframework.guice;
 
-import java.lang.annotation.Annotation;
+import org.spockframework.runtime.extension.AbstractAnnotationDrivenExtension;
+import org.spockframework.runtime.model.SpecInfo;
 
-import org.spockframework.runtime.model.*;
+import spock.guice.UseModules;
 
-/**
- *
- * @author Peter Niederwieser
- */
-public interface IDirectiveProcessor<T extends Annotation> {
-  void visitSpecDirective(T directive, SpecInfo spec);
-  void visitFeatureDirective(T directive, FeatureInfo feature);
-  void visitFixtureDirective(T directive, MethodInfo fixtureMethod);
-  void visitFieldDirective(T directive, FieldInfo field);
-  void afterVisits(SpecInfo spec);
+public class GuiceExtension extends AbstractAnnotationDrivenExtension<UseModules> {
+  @Override
+  public void visitSpecAnnotation(UseModules useModules, SpecInfo spec) {
+    GuiceInterceptor interceptor = new GuiceInterceptor(spec, useModules);
+    spec.getSetupSpecMethod().addInterceptor(interceptor);
+    spec.getSetupMethod().addInterceptor(interceptor);
+  }
 }

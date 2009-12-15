@@ -14,24 +14,23 @@
  * limitations under the License.
  */
 
-package org.spockframework.runtime.intercept;
+package org.spockframework.runtime.extension.builtin;
 
+import org.spockframework.runtime.extension.AbstractAnnotationDrivenExtension;
 import org.spockframework.runtime.model.FeatureInfo;
 import org.spockframework.runtime.model.SpecInfo;
 
 import spock.lang.IgnoreRest;
 
 /**
- * Processes @IgnoreRest directives.
- *
  * @author Peter Niederwieser
  */
-public class IgnoreRestProcessor extends AbstractDirectiveProcessor<IgnoreRest> {
+public class IgnoreRestExtension extends AbstractAnnotationDrivenExtension<IgnoreRest> {
   @Override
-  public void visitFeatureDirective(IgnoreRest directive, FeatureInfo feature) {} // do nothing
+  public void visitFeatureAnnotation(IgnoreRest ignoreRest, FeatureInfo feature) {} // do nothing
 
   @Override
-  public void afterVisits(SpecInfo spec) {
+  public void visitSpec(SpecInfo spec) {
     for (FeatureInfo feature : spec.getFeatures())
       if (!feature.getFeatureMethod().getReflection().isAnnotationPresent(IgnoreRest.class))
         feature.addInterceptor(new IgnoreInterceptor("@IgnoreRest"));

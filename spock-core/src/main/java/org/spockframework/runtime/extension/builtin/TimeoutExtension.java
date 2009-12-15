@@ -14,26 +14,25 @@
  * limitations under the License.
  */
 
-package org.spockframework.runtime.intercept;
+package org.spockframework.runtime.extension.builtin;
 
+import org.spockframework.runtime.extension.AbstractAnnotationDrivenExtension;
 import org.spockframework.runtime.model.FeatureInfo;
-import org.spockframework.runtime.model.SpecInfo;
+import org.spockframework.runtime.model.MethodInfo;
 
-import spock.lang.Ignore;
+import spock.lang.Timeout;
 
 /**
- * Processes @Ignore directives.
- *
  * @author Peter Niederwieser
  */
-// we cannot easily support @Ignore on fixture methods because
-// setup() and setupSpec() perform initialization of user-defined and internal fields
-public class IgnoreProcessor extends AbstractDirectiveProcessor<Ignore> {
-  public void visitSpecDirective(Ignore directive, SpecInfo spec) {
-    spec.addInterceptor(new IgnoreInterceptor(directive.value()));
+public class TimeoutExtension extends AbstractAnnotationDrivenExtension<Timeout> {
+  @Override
+  public void visitFeatureAnnotation(Timeout timeout, FeatureInfo feature) {
+    feature.getFeatureMethod().addInterceptor(new TimeoutInterceptor(timeout));
   }
 
-  public void visitFeatureDirective(Ignore directive, FeatureInfo feature) {
-    feature.addInterceptor(new IgnoreInterceptor(directive.value()));
+  @Override
+  public void visitFixtureAnnotation(Timeout timeout, MethodInfo fixtureMethod) {
+    fixtureMethod.addInterceptor(new TimeoutInterceptor(timeout));
   }
 }

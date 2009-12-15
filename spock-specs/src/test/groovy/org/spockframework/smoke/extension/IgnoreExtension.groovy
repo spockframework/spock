@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.spockframework.smoke.directive
+package org.spockframework.smoke.extension
 
 import org.spockframework.EmbeddedSpecification
 import org.spockframework.runtime.InvalidSpecError
@@ -24,7 +24,7 @@ import spock.lang.Issue
  * @author Peter Niederwieser
  */
 @Issue("http://issues.spockframework.org/detail?id=12")
-class IgnoreDirective extends EmbeddedSpecification {
+class IgnoreExtension extends EmbeddedSpecification {
   def "ignored Spec is not run"() {
     when:
     runner.runWithImports """

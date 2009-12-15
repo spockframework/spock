@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.spockframework.groovy.ast
+package org.spockframework.groovy
 
 import java.lang.annotation.Retention
 import java.lang.annotation.RetentionPolicy

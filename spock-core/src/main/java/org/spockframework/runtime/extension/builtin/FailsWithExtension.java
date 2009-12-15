@@ -14,28 +14,28 @@
  * limitations under the License.
  */
 
-package org.spockframework.runtime.intercept;
+package org.spockframework.runtime.extension.builtin;
 
+import org.spockframework.runtime.extension.AbstractAnnotationDrivenExtension;
 import org.spockframework.runtime.model.*;
 
 import spock.lang.FailsWith;
 
 /**
- *
  * @author Peter Niederwieser
  */
-public class FailsWithProcessor extends AbstractDirectiveProcessor<FailsWith> {
-  public void visitSpecDirective(FailsWith directive, SpecInfo spec) {
+public class FailsWithExtension extends AbstractAnnotationDrivenExtension<FailsWith> {
+  public void visitSpecAnnotation(FailsWith failsWith, SpecInfo spec) {
     for (FeatureInfo feature : spec.getFeatures())
       if (!feature.getFeatureMethod().getReflection().isAnnotationPresent(FailsWith.class))
-        feature.getFeatureMethod().addInterceptor(new FailsWithInterceptor(directive));
+        feature.getFeatureMethod().addInterceptor(new FailsWithInterceptor(failsWith));
   }
 
-  public void visitFeatureDirective(FailsWith directive, FeatureInfo feature) {
-    feature.getFeatureMethod().addInterceptor(new FailsWithInterceptor(directive));
+  public void visitFeatureAnnotation(FailsWith failsWith, FeatureInfo feature) {
+    feature.getFeatureMethod().addInterceptor(new FailsWithInterceptor(failsWith));
   }
 
-  public void visitFixtureDirective(FailsWith directive, MethodInfo fixtureMethod) {
-    fixtureMethod.addInterceptor(new FailsWithInterceptor(directive));
+  public void visitFixtureAnnotation(FailsWith failsWith, MethodInfo fixtureMethod) {
+    fixtureMethod.addInterceptor(new FailsWithInterceptor(failsWith));
   }
 }

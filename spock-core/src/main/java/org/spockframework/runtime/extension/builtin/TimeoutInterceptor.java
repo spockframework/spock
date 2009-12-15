@@ -14,9 +14,11 @@
  * limitations under the License.
  */
 
-package org.spockframework.runtime.intercept;
+package org.spockframework.runtime.extension.builtin;
 
 import org.spockframework.runtime.SpockAssertionError;
+import org.spockframework.runtime.extension.IMethodInterceptor;
+import org.spockframework.runtime.extension.IMethodInvocation;
 
 import spock.lang.Timeout;
 
@@ -33,7 +35,7 @@ public class TimeoutInterceptor implements IMethodInterceptor {
     this.timeout = timeout;
   }
 
-  public void invoke(final IMethodInvocation invocation) throws Throwable {
+  public void intercept(final IMethodInvocation invocation) throws Throwable {
     final Throwable[] exception = new Throwable[1];
 
     Thread thread = new Thread() {

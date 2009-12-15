@@ -14,17 +14,14 @@
  * limitations under the License.
  */
 
-package org.spockframework.runtime.intercept;
+package org.spockframework.groovy;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
 /**
- *
- * @author Peter Niederwieser
+ * For testing purposes.
  */
-// IDEA: could separate exceptions thrown by Spec code from exceptions thrown
-// by an interceptor (although an interceptor might again call into Spec code,
-// or at least act on behalf of the Spec code, e.g. by connecting to a database)
-// possibilities for separation: 1. wrap Spec exceptions 2. pass back Spec
-// exceptions as return value of invoke()
-public interface IMethodInterceptor {
-  void invoke(IMethodInvocation invocation) throws Throwable;
+@Retention(RetentionPolicy.RUNTIME)
+public @interface JavaAnnotationWithRuntimeRetention {
 }

@@ -14,18 +14,17 @@
  * limitations under the License.
  */
 
-package org.spockframework.guice;
+package org.spockframework.runtime.extension;
 
-import org.spockframework.runtime.intercept.AbstractDirectiveProcessor;
-import org.spockframework.runtime.model.SpecInfo;
-
-import spock.guice.UseModules;
-
-public class GuiceProcessor extends AbstractDirectiveProcessor<UseModules> {
-  @Override
-  public void visitSpecDirective(UseModules directive, SpecInfo spec) {
-    GuiceInterceptor interceptor = new GuiceInterceptor(spec, directive);
-    spec.getSetupSpecMethod().addInterceptor(interceptor);
-    spec.getSetupMethod().addInterceptor(interceptor);
-  }
+/**
+ *
+ * @author Peter Niederwieser
+ */
+// IDEA: could separate exceptions thrown by Spec code from exceptions thrown
+// by an interceptor (although an interceptor might again call into Spec code,
+// or at least act on behalf of the Spec code, e.g. by connecting to a database)
+// possibilities for separation: 1. wrap Spec exceptions 2. pass back Spec
+// exceptions as return value of intercept()
+public interface IMethodInterceptor {
+  void intercept(IMethodInvocation invocation) throws Throwable;
 }

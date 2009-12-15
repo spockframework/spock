@@ -14,16 +14,36 @@
  * limitations under the License.
  */
 
-package org.spockframework.runtime.intercept;
+package org.spockframework.smoke.extension
 
-import org.spockframework.runtime.model.MethodInfo;
+import java.util.concurrent.TimeUnit
+import org.spockframework.runtime.SpockAssertionError
+import spock.lang.*
 
 /**
+ *
  * @author Peter Niederwieser
  */
-public interface IMethodInvocation {
-  Object getTarget();
-  MethodInfo getMethod();
-  Object[] getArguments();
-  void proceed() throws Throwable;
+class TimeoutExtension extends Specification {
+  @Timeout(1)
+  def "in time"() {
+    setup: Thread.sleep(500)
+  }
+
+  @FailsWith(SpockAssertionError)
+  @Timeout(1)
+  def "not in time"() {
+    setup: Thread.sleep(1100)
+  }
+
+  @Timeout(value = 1000, unit = TimeUnit.MILLISECONDS)
+  def "in time millis"() {
+    setup: Thread.sleep(500)
+  }
+
+  @FailsWith(SpockAssertionError)
+  @Timeout(value = 1000, unit = TimeUnit.MILLISECONDS)
+  def "not in time millis"() {
+    setup: Thread.sleep(1100)
+  }
 }

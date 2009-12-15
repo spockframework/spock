@@ -14,17 +14,14 @@
  * limitations under the License.
  */
 
-package org.spockframework.runtime.intercept;
+package org.spockframework.groovy;
 
-import java.lang.annotation.*;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
 /**
- *
- * @author Peter Niederwieser
+ * For testing purposes.
  */
-
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.ANNOTATION_TYPE)
-public @interface Directive {
-  Class<? extends IDirectiveProcessor> value();
+@Retention(RetentionPolicy.CLASS)
+public @interface JavaAnnotationWithClassRetention {
 }

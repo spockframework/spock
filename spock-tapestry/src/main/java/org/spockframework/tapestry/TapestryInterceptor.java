@@ -23,10 +23,8 @@ import org.apache.tapestry5.ioc.*;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.SubModule;
 
-import org.spockframework.runtime.intercept.IMethodInterceptor;
-import org.spockframework.runtime.intercept.IMethodInvocation;
+import org.spockframework.runtime.extension.*;
 import org.spockframework.runtime.model.SpecInfo;
-import org.spockframework.util.UnreachableCodeError;
 
 import spock.lang.Shared;
 
@@ -36,7 +34,7 @@ import spock.lang.Shared;
  *
  * @author Peter Niederwieser
  */
-public class TapestryInterceptor implements IMethodInterceptor {
+public class TapestryInterceptor extends AbstractMethodInterceptor {
   private final SpecInfo spec;
   private Registry registry;
   private IPerIterationManager perIterationManager;
@@ -45,35 +43,35 @@ public class TapestryInterceptor implements IMethodInterceptor {
     this.spec = spec;
   }
 
-  public void invoke(IMethodInvocation invocation) throws Throwable {
-    switch(invocation.getMethod().getKind()) {
-      case SETUP_SPEC:
-        startupRegistry();
-        injectServices(invocation.getTarget(), true);
-        invocation.proceed();
-        break;
-      case SETUP:
-        injectServices(invocation.getTarget(), false);
-        invocation.proceed();
-        break;
-      case CLEANUP:
-        try {
-          invocation.proceed();
-        } finally {
-          perIterationManager.cleanup();
-        }
-        break;
-      case CLEANUP_SPEC:
-        try {
-          invocation.proceed();
-        } finally {
-          shutdownRegistry();
-        }
-        break;
-      default:
-        throw new UnreachableCodeError();
+  @Override
+  public void interceptSetupSpecMethod(IMethodInvocation invocation) throws Throwable {
+    startupRegistry();
+    injectServices(invocation.getTarget(), true);
+    invocation.proceed();
+  }
+
+  @Override
+  public void interceptCleanupSpecMethod(IMethodInvocation invocation) throws Throwable {
+    try {
+      invocation.proceed();
+    } finally {
+      shutdownRegistry();
     }
-    
+  }
+
+  @Override
+  public void interceptSetupMethod(IMethodInvocation invocation) throws Throwable {
+    injectServices(invocation.getTarget(), false);
+    invocation.proceed();
+  }
+
+  @Override
+  public void interceptCleanupMethod(IMethodInvocation invocation) throws Throwable {
+    try {
+      invocation.proceed();
+    } finally {
+      perIterationManager.cleanup();
+    }
   }
 
   private void startupRegistry() {

@@ -14,14 +14,10 @@
  * limitations under the License.
  */
 
-package org.spockframework.groovy.ast;
+package org.spockframework.runtime.extension;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
+import org.spockframework.runtime.model.SpecInfo;
 
-/**
- * For testing purposes.
- */
-@Retention(RetentionPolicy.RUNTIME)
-public @interface JavaAnnotationWithRuntimeRetention {
+public interface IGlobalExtension {
+  void visitSpec(SpecInfo spec);
 }

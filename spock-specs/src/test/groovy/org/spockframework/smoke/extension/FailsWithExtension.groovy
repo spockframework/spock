@@ -14,36 +14,53 @@
  * limitations under the License.
  */
 
-package org.spockframework.smoke.directive
+package org.spockframework.smoke.extension
 
-import java.util.concurrent.TimeUnit
-import org.spockframework.runtime.SpockAssertionError
-import spock.lang.*
+import spock.lang.FailsWith
+import spock.lang.Specification
 
 /**
  *
  * @author Peter Niederwieser
  */
-class TimeoutDirectiveOnMethod extends Specification {
-  @Timeout(1)
-  def "in time"() {
-    setup: Thread.sleep(500)
+class FailsWithOnMethod extends Specification {
+  @FailsWith(IndexOutOfBoundsException)
+  def ex1() {
+    given:
+    def foo = []
+    foo.get(0)
   }
 
-  @FailsWith(SpockAssertionError)
-  @Timeout(1)
-  def "not in time"() {
-    setup: Thread.sleep(1100)
+  @FailsWith(Exception)
+  def ex2() {
+    given:
+    def foo = []
+    foo.get(0)
   }
 
-  @Timeout(value = 1000, unit = TimeUnit.MILLISECONDS)
-  def "in time millis"() {
-    setup: Thread.sleep(500)
-  }
-
-  @FailsWith(SpockAssertionError)
-  @Timeout(value = 1000, unit = TimeUnit.MILLISECONDS)
-  def "not in time millis"() {
-    setup: Thread.sleep(1100)
+  def ex3() {
+    expect: true
   }
 }
+
+@FailsWith(IndexOutOfBoundsException)
+class FailsWithOnSpec extends Specification {
+  def ex1() {
+    given:
+    def foo = []
+    foo.get(0)
+  }
+
+  def ex2() {
+    given:
+    def foo = []
+    foo.get(1)
+  }
+
+  @FailsWith(NullPointerException)
+  def ex3() {
+    given:
+    null.foo()
+  }
+}
+

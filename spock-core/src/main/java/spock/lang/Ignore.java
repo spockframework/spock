@@ -18,8 +18,8 @@ package spock.lang;
 
 import java.lang.annotation.*;
 
-import org.spockframework.runtime.intercept.Directive;
-import org.spockframework.runtime.intercept.IgnoreProcessor;
+import org.spockframework.runtime.extension.ExtensionAnnotation;
+import org.spockframework.runtime.extension.builtin.IgnoreExtension;
 
 /**
  * Indicates that a specification or feature method should not be run.
@@ -28,7 +28,7 @@ import org.spockframework.runtime.intercept.IgnoreProcessor;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE, ElementType.METHOD})
-@Directive(IgnoreProcessor.class)
+@ExtensionAnnotation(IgnoreExtension.class)
 public @interface Ignore {
   /**
    * The reason for ignoring this element.

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.spockframework.smoke.directive
+package org.spockframework.smoke.extension
 
 import org.spockframework.EmbeddedSpecification
 import spock.lang.Unroll
@@ -22,7 +22,7 @@ import spock.lang.Unroll
 /**
  * @author Peter Niederwieser
  */
-class IgnoreRestDirective extends EmbeddedSpecification {
+class IgnoreRestExtension extends EmbeddedSpecification {
   @Unroll("Ignore #ignored methods")
   def "ignore some methods"() {
     when:

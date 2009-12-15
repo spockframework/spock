@@ -20,13 +20,10 @@ import org.springframework.test.annotation.ProfileValueUtils;
 import org.springframework.test.context.TestContextManager;
 
 import org.spockframework.runtime.SkipSpecOrFeatureException;
-import org.spockframework.runtime.intercept.IMethodInterceptor;
-import org.spockframework.runtime.intercept.IMethodInvocation;
+import org.spockframework.runtime.extension.*;
 import org.spockframework.runtime.model.FeatureInfo;
-import org.spockframework.util.Assert;
-import org.spockframework.util.UnreachableCodeError;
 
-public class SpringInterceptor implements IMethodInterceptor {
+public class SpringInterceptor extends AbstractMethodInterceptor {
   private final TestContextManager manager;
 
   private FeatureInfo currentFeature;
@@ -35,50 +32,49 @@ public class SpringInterceptor implements IMethodInterceptor {
     this.manager = manager;
   }
 
-  public void invoke(IMethodInvocation invocation) throws Throwable {
-    switch(invocation.getMethod().getKind()) {
-      case SPEC_EXECUTION:
-        Assert.notNull(invocation.getMethod().getReflection());
-        
-        if (!ProfileValueUtils.isTestEnabledInThisEnvironment(invocation.getTarget().getClass()))
-          throw new SkipSpecOrFeatureException("Specification not enabled in this environment");
-        invocation.proceed();
-        break;
-      case FEATURE_EXECUTION:
-        currentFeature = invocation.getMethod().getFeature();
-        try {
-        if (!ProfileValueUtils.isTestEnabledInThisEnvironment(invocation.getTarget().getClass()))
-          throw new SkipSpecOrFeatureException("Feature not enabled in this environment");
-        invocation.proceed();
-        } finally {
-          currentFeature = null;
-        }
-        break;
-      case SETUP:
-        manager.prepareTestInstance(invocation.getTarget());
-        manager.beforeTestMethod(invocation.getTarget(), currentFeature.getFeatureMethod().getReflection());
-        invocation.proceed();
-        break;
-      case CLEANUP:
-        Throwable throwable = null;
-        try {
-          invocation.proceed();
-        } catch (Throwable t) {
-          throwable = t;
-        }
-        Throwable throwable2 = null;
-        try {
-          manager.afterTestMethod(invocation.getTarget(), currentFeature.getFeatureMethod().getReflection(), throwable);
-        } catch (Throwable t2) {
-          throwable2 = t2;
-        }
-        if (throwable != null)
-          throw throwable;
-        if (throwable2 != null)
-          throw throwable2;
-        break;
-      default:
-        throw new UnreachableCodeError();
+  @Override
+  public void interceptSpecExecution(IMethodInvocation invocation) throws Throwable {
+    if (!ProfileValueUtils.isTestEnabledInThisEnvironment(invocation.getTarget().getClass()))
+      throw new SkipSpecOrFeatureException("Specification not enabled in this environment");
+    invocation.proceed();
+  }
+
+  @Override
+  public void interceptFeatureExecution(IMethodInvocation invocation) throws Throwable {
+    currentFeature = invocation.getMethod().getFeature();
+    try {
+      if (!ProfileValueUtils.isTestEnabledInThisEnvironment(invocation.getTarget().getClass()))
+        throw new SkipSpecOrFeatureException("Feature not enabled in this environment");
+      invocation.proceed();
+    } finally {
+      currentFeature = null;
     }
+  }
+
+  @Override
+  public void interceptSetupMethod(IMethodInvocation invocation) throws Throwable {
+    manager.prepareTestInstance(invocation.getTarget());
+    manager.beforeTestMethod(invocation.getTarget(), currentFeature.getFeatureMethod().getReflection());
+    invocation.proceed();
+  }
+
+  @Override
+  public void interceptCleanupMethod(IMethodInvocation invocation) throws Throwable {
+    Throwable cleanupEx = null;
+    try {
+      invocation.proceed();
+    } catch (Throwable t) {
+      cleanupEx = t;
+    }
+
+    Throwable afterTestEx = null;
+    try {
+      manager.afterTestMethod(invocation.getTarget(), currentFeature.getFeatureMethod().getReflection(), cleanupEx);
+    } catch (Throwable t2) {
+      afterTestEx = t2;
+    }
+    
+    if (cleanupEx != null) throw cleanupEx;
+    if (afterTestEx != null) throw afterTestEx;
   }
 }

@@ -18,7 +18,6 @@ package org.spockframework.groovy
 
 import org.codehaus.groovy.control.CompilePhase
 import org.spockframework.util.inspector.AstInspector
-import org.spockframework.groovy.ast.*
 
 class ClassAnnotationUsageTest extends GroovyTestCase {
   static classes
@@ -27,12 +26,12 @@ class ClassAnnotationUsageTest extends GroovyTestCase {
 import java.lang.annotation.Retention
 import java.lang.annotation.RetentionPolicy
 
-import org.spockframework.groovy.ast.GroovyAnnotationWithSourceRetention
-import org.spockframework.groovy.ast.GroovyAnnotationWithClassRetention
-import org.spockframework.groovy.ast.GroovyAnnotationWithRuntimeRetention
-import org.spockframework.groovy.ast.JavaAnnotationWithSourceRetention
-import org.spockframework.groovy.ast.JavaAnnotationWithClassRetention
-import org.spockframework.groovy.ast.JavaAnnotationWithRuntimeRetention
+import org.spockframework.groovy.GroovyAnnotationWithSourceRetention
+import org.spockframework.groovy.GroovyAnnotationWithClassRetention
+import org.spockframework.groovy.GroovyAnnotationWithRuntimeRetention
+import org.spockframework.groovy.JavaAnnotationWithSourceRetention
+import org.spockframework.groovy.JavaAnnotationWithClassRetention
+import org.spockframework.groovy.JavaAnnotationWithRuntimeRetention
 
 @GroovyAnnotationWithSourceRetention
 class GroovySource {}

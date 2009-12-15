@@ -31,11 +31,11 @@ class ExtensionRegistrySpec extends Specification {
   }
 }
 
-class Extension1 implements ISpockExtension {
+class Extension1 implements IGlobalExtension {
   void visitSpec(SpecInfo spec) {}
 }
 
-class Extension2 implements ISpockExtension {
+class Extension2 implements IGlobalExtension {
   void visitSpec(SpecInfo spec) {}
 }
 

@@ -14,14 +14,27 @@
  * limitations under the License.
  */
 
-package org.spockframework.groovy.ast;
+package org.spockframework.runtime.extension;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
+public class ExtensionException extends RuntimeException {
+  private String message;
 
-/**
- * For testing purposes.
- */
-@Retention(RetentionPolicy.CLASS)
-public @interface JavaAnnotationWithClassRetention {
+  public ExtensionException(String message) {
+    this(message, null);
+  }
+
+  public ExtensionException(String message, Throwable cause) {
+    super(cause);
+    this.message = message;
+  }
+
+  public ExtensionException format(Object... args) {
+    message = String.format(message, args);
+    return this;
+  }
+
+  @Override
+  public String getMessage() {
+    return message;
+  }
 }

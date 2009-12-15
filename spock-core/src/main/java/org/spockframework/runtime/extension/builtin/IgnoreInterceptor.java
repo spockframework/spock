@@ -14,26 +14,24 @@
  * limitations under the License.
  */
 
-package org.spockframework.runtime.intercept;
+package org.spockframework.runtime.extension.builtin;
 
-import org.spockframework.runtime.model.FeatureInfo;
-import org.spockframework.runtime.model.MethodInfo;
-
-import spock.lang.Timeout;
+import org.spockframework.runtime.SkipSpecOrFeatureException;
+import org.spockframework.runtime.extension.IMethodInterceptor;
+import org.spockframework.runtime.extension.IMethodInvocation;
 
 /**
- * Processes @Timeout directives on Specs and Spec methods.
  *
  * @author Peter Niederwieser
  */
-public class TimeoutProcessor extends AbstractDirectiveProcessor<Timeout> {
-  @Override
-  public void visitFeatureDirective(Timeout directive, FeatureInfo feature) {
-    feature.getFeatureMethod().addInterceptor(new TimeoutInterceptor(directive));
+public class IgnoreInterceptor implements IMethodInterceptor {
+  private final String reason;
+
+  public IgnoreInterceptor(String reason) {
+    this.reason = reason;
   }
 
-  @Override
-  public void visitFixtureDirective(Timeout directive, MethodInfo fixtureMethod) {
-    fixtureMethod.addInterceptor(new TimeoutInterceptor(directive));
+  public void intercept(IMethodInvocation invocation) throws Throwable {
+    throw new SkipSpecOrFeatureException(reason);
   }
 }

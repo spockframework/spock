@@ -16,8 +16,18 @@
 
 package org.spockframework.runtime.extension;
 
-import org.spockframework.runtime.model.SpecInfo;
+import java.lang.annotation.Annotation;
 
-public interface ISpockExtension {
+import org.spockframework.runtime.model.*;
+
+/**
+ *
+ * @author Peter Niederwieser
+ */
+public interface IAnnotationDrivenExtension<T extends Annotation> {
+  void visitSpecAnnotation(T annotation, SpecInfo spec);
+  void visitFeatureAnnotation(T annotation, FeatureInfo feature);
+  void visitFixtureAnnotation(T annotation, MethodInfo fixtureMethod);
+  void visitFieldAnnotation(T annotation, FieldInfo field);
   void visitSpec(SpecInfo spec);
 }

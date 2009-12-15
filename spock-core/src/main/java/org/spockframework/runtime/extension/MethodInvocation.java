@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.spockframework.runtime.intercept;
+package org.spockframework.runtime.extension;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
@@ -53,7 +53,7 @@ public class MethodInvocation implements IMethodInvocation {
 
   public void proceed() throws Throwable {
     if (interceptors.hasNext())
-      interceptors.next().invoke(this);
+      interceptors.next().intercept(this);
     else invokeTargetMethod();
   }
 

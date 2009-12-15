@@ -20,12 +20,11 @@ import java.lang.reflect.Field;
 import java.util.*;
 
 import com.google.inject.*;
+import com.google.inject.Module; // needs to stay due to Eclipse bug
 import com.google.inject.spi.InjectionPoint;
 
-import org.spockframework.runtime.intercept.IMethodInterceptor;
-import org.spockframework.runtime.intercept.IMethodInvocation;
+import org.spockframework.runtime.extension.*;
 import org.spockframework.runtime.model.SpecInfo;
-import org.spockframework.util.UnreachableCodeError;
 
 import spock.guice.UseModules;
 import spock.lang.Shared;
@@ -35,7 +34,7 @@ import spock.lang.Shared;
  *
  * @author Peter Niederwieser
  */
-public class GuiceInterceptor implements IMethodInterceptor {
+public class GuiceInterceptor extends AbstractMethodInterceptor {
   private final UseModules useModules;
   private final Set<InjectionPoint> injectionPoints;
 
@@ -46,20 +45,17 @@ public class GuiceInterceptor implements IMethodInterceptor {
     injectionPoints = InjectionPoint.forInstanceMethodsAndFields(spec.getReflection());
   }
 
-  public void invoke(IMethodInvocation invocation) throws Throwable {
-    switch(invocation.getMethod().getKind()) {
-      case SETUP_SPEC:
-        createInjector();
-        injectValues(invocation.getTarget(), true);
-        invocation.proceed();
-        break;
-      case SETUP:
-        injectValues(invocation.getTarget(), false);
-        invocation.proceed();
-        break;
-      default:
-        throw new UnreachableCodeError();
-    }
+  @Override
+  public void interceptSetupSpecMethod(IMethodInvocation invocation) throws Throwable {
+    createInjector();
+    injectValues(invocation.getTarget(), true);
+    invocation.proceed();
+  }
+
+  @Override
+  public void interceptSetupMethod(IMethodInvocation invocation) throws Throwable {
+    injectValues(invocation.getTarget(), false);
+    invocation.proceed();
   }
 
   private void createInjector() {

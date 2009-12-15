@@ -14,9 +14,11 @@
  * limitations under the License.
  */
 
-package org.spockframework.runtime.intercept;
+package org.spockframework.runtime.extension.builtin;
 
 import org.spockframework.runtime.WrongExceptionThrownError;
+import org.spockframework.runtime.extension.IMethodInterceptor;
+import org.spockframework.runtime.extension.IMethodInvocation;
 
 import spock.lang.FailsWith;
 
@@ -31,7 +33,7 @@ public class FailsWithInterceptor implements IMethodInterceptor {
     this.failsWith = failsWith;
   }
 
-  public void invoke(IMethodInvocation invocation) throws Throwable {
+  public void intercept(IMethodInvocation invocation) throws Throwable {
     try {
       invocation.proceed();
     } catch (Throwable t) {

@@ -14,27 +14,14 @@
  * limitations under the License.
  */
 
-package org.spockframework.runtime.extension;
+package org.spockframework.groovy;
 
-public class SpockExtensionException extends RuntimeException {
-  private String message;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
-  public SpockExtensionException(String message) {
-    this(message, null);
-  }
-
-  public SpockExtensionException(String message, Throwable cause) {
-    super(cause);
-    this.message = message;
-  }
-
-  public SpockExtensionException format(Object... args) {
-    message = String.format(message, args);
-    return this;
-  }
-
-  @Override
-  public String getMessage() {
-    return message;
-  }
+/**
+ * For testing purposes.
+ */
+@Retention(RetentionPolicy.SOURCE)
+public @interface JavaAnnotationWithSourceRetention {
 }

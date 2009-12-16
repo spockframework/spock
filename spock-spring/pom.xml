@@ -10,7 +10,7 @@
   <groupId>org.spockframework</groupId>
   <artifactId>spock-spring</artifactId>
   <packaging>jar</packaging>
-  <name>Spock Framework - Spring Extension</name>
+  <name>Spock Framework - Spring Module</name>
   <url>http://spockframework.org</url>
 
   <build>

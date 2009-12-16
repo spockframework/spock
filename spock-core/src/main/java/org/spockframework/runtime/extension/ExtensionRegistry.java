@@ -27,11 +27,11 @@ import org.codehaus.groovy.runtime.DefaultGroovyMethods;
  * @author Peter Niederwieser
  */
 public class ExtensionRegistry {
-  static final String DESCRIPTOR_PATH = "META-INF/services/" + ISpockExtension.class.getName();
+  static final String DESCRIPTOR_PATH = "META-INF/services/" + IGlobalExtension.class.getName();
   
   private static final ExtensionRegistry instance = new ExtensionRegistry(ExtensionRegistry.class.getClassLoader());
 
-  private final List<ISpockExtension> extensions = new ArrayList<ISpockExtension>();
+  private final List<IGlobalExtension> extensions = new ArrayList<IGlobalExtension>();
   private final ClassLoader classLoader;
 
   ExtensionRegistry(ClassLoader classLoader) {
@@ -48,11 +48,11 @@ public class ExtensionRegistry {
     try {
       return Collections.list(classLoader.getResources(DESCRIPTOR_PATH));
     } catch (Exception e) {
-      throw new SpockExtensionException("Failed to locate extension descriptors", e);
+      throw new ExtensionException("Failed to locate extension descriptors", e);
     }
   }
 
-  private ISpockExtension loadExtension(URL url) {
+  private IGlobalExtension loadExtension(URL url) {
     return instantiateExtension(verifyExtensionClass(loadExtensionClass(readDescriptor(url))));
   }
 
@@ -60,7 +60,7 @@ public class ExtensionRegistry {
     try {
       return DefaultGroovyMethods.getText(url).trim();
     } catch (Exception e) {
-      throw new SpockExtensionException("Failed to read extension descriptor '%s'", e).format(url);
+      throw new ExtensionException("Failed to read extension descriptor '%s'", e).format(url);
     }
   }
 
@@ -68,23 +68,23 @@ public class ExtensionRegistry {
     try {
       return classLoader.loadClass(className);
     } catch (Exception e) {
-      throw new SpockExtensionException("Failed to load extension class '%s'", e).format(className);
+      throw new ExtensionException("Failed to load extension class '%s'", e).format(className);
     }
   }
 
   private Class<?> verifyExtensionClass(Class<?> clazz) {
-    if (!ISpockExtension.class.isAssignableFrom(clazz))
-      throw new SpockExtensionException(
+    if (!IGlobalExtension.class.isAssignableFrom(clazz))
+      throw new ExtensionException(
           "Class '%s' is not a valid extension because it is not derived from '%s'"
-      ).format(clazz.getName(), ISpockExtension.class.getName());
+      ).format(clazz.getName(), IGlobalExtension.class.getName());
     return clazz;
   }
 
-  private ISpockExtension instantiateExtension(Class<?> clazz) {
+  private IGlobalExtension instantiateExtension(Class<?> clazz) {
     try {
-      return (ISpockExtension)clazz.newInstance();
+      return (IGlobalExtension)clazz.newInstance();
     } catch (Exception e) {
-      throw new SpockExtensionException("Failed to instantiate extension '%s'", e).format(clazz.getName());
+      throw new ExtensionException("Failed to instantiate extension '%s'", e).format(clazz.getName());
     }
   }
 
@@ -92,7 +92,7 @@ public class ExtensionRegistry {
     return instance;
   }
 
-  public List<ISpockExtension> getExtensions() {
+  public List<IGlobalExtension> getExtensions() {
     return extensions;
   }
 }

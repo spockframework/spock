@@ -19,7 +19,7 @@ package org.spockframework.runtime.model;
 import java.util.*;
 
 import org.spockframework.runtime.*;
-import org.spockframework.runtime.intercept.IMethodInterceptor;
+import org.spockframework.runtime.extension.IMethodInterceptor;
 import org.spockframework.util.IFunction;
 import org.spockframework.util.Util;
 

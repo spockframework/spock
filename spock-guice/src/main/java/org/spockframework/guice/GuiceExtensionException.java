@@ -16,9 +16,9 @@
 
 package org.spockframework.guice;
 
-import org.spockframework.runtime.extension.SpockExtensionException;
+import org.spockframework.runtime.extension.ExtensionException;
 
-public class GuiceExtensionException extends SpockExtensionException {
+public class GuiceExtensionException extends ExtensionException {
   public GuiceExtensionException(String message) {
     super(message);
   }

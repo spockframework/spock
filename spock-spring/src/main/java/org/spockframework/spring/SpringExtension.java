@@ -24,12 +24,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestContextManager;
 
-import org.spockframework.runtime.extension.ISpockExtension;
+import org.spockframework.runtime.extension.IGlobalExtension;
 import org.spockframework.runtime.model.*;
+import org.spockframework.util.NotThreadSafe;
 
 import spock.lang.Shared;
 
-public class SpringExtension implements ISpockExtension {
+@NotThreadSafe
+public class SpringExtension implements IGlobalExtension {
   public void visitSpec(SpecInfo spec) {
     if (!spec.getReflection().isAnnotationPresent(ContextConfiguration.class)) return;
 

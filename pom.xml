@@ -98,6 +98,18 @@
             </dependency>
           </dependencies>
         </plugin>
+        <plugin>
+          <groupId>org.spockframework</groupId>
+          <artifactId>spock-maven</artifactId>
+          <version>${project.version}</version>
+          <executions>
+            <execution>
+              <goals>
+                <goal>find-specs</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
       </plugins>
     </pluginManagement>
   </build>
@@ -182,6 +194,7 @@
         <module>spock-tapestry</module>
         <module>spock-guice</module>
         <module>spock-spring</module>
+        <module>spock-unitils</module>
       </modules>
     </profile>
     <profile>
@@ -194,6 +207,7 @@
         <module>spock-tapestry</module>
         <module>spock-guice</module>
         <module>spock-spring</module>
+        <module>spock-unitils</module>
       </modules>
       <properties>
         <sonar.jdbc.url>jdbc:mysql://localhost:3306/sonar?useUnicode=true&amp;characterEncoding=utf8</sonar.jdbc.url>
@@ -214,6 +228,7 @@
         <module>spock-tapestry</module>
         <module>spock-guice</module>
         <module>spock-spring</module>
+        <module>spock-unitils</module>
       </modules>
       <build>
         <plugins>

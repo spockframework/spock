@@ -20,7 +20,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.spockframework.runtime.intercept.IMethodInterceptor;
+import org.spockframework.runtime.extension.IMethodInterceptor;
 
 /**
  * Runtime information about a method in a Spock specification.

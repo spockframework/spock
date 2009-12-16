@@ -4,7 +4,7 @@ import java.lang.reflect.AnnotatedElement;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.spockframework.runtime.intercept.IMethodInterceptor;
+import org.spockframework.runtime.extension.IMethodInterceptor;
 
 /**
  * @author Peter Niederwieser

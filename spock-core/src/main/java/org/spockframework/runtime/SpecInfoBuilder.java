@@ -22,10 +22,9 @@ import java.lang.reflect.Method;
 import java.util.*;
 
 import org.spockframework.compiler.Identifiers;
-import org.spockframework.runtime.extension.ExtensionRegistry;
-import org.spockframework.runtime.extension.ISpockExtension;
-import org.spockframework.runtime.intercept.Directive;
-import org.spockframework.runtime.intercept.IDirectiveProcessor;
+import org.spockframework.runtime.extension.*;
+import org.spockframework.runtime.extension.ExtensionAnnotation;
+import org.spockframework.runtime.extension.IAnnotationDrivenExtension;
 import org.spockframework.runtime.model.*;
 import org.spockframework.util.*;
 
@@ -38,8 +37,8 @@ import spock.lang.Specification;
  */
 public class SpecInfoBuilder {
   private final Class<?> clazz;
-  private final Map<Class<? extends IDirectiveProcessor>, IDirectiveProcessor> processors =
-    new HashMap<Class<? extends IDirectiveProcessor>, IDirectiveProcessor>();
+  private final Map<Class<? extends IAnnotationDrivenExtension>, IAnnotationDrivenExtension> processors =
+    new HashMap<Class<? extends IAnnotationDrivenExtension>, IAnnotationDrivenExtension>();
   private final SpecInfo spec = new SpecInfo();
 
   public SpecInfoBuilder(Class<?> clazz) {
@@ -54,8 +53,8 @@ public class SpecInfoBuilder {
       buildSharedInstanceField();
       buildFeatures();
       buildFixtureMethods();
-      notifyExtensions();
-      processDirectives();
+      notifyGlobalExtensions();
+      processAnnotationDrivenExtensions();
     } catch (InstantiationException e) {
       internalError(e, clazz);
     } catch (IllegalAccessException e) {
@@ -223,48 +222,48 @@ public class SpecInfoBuilder {
     spec.setCleanupSpecMethod(createMethod(Identifiers.CLEANUP_SPEC_METHOD, MethodKind.CLEANUP_SPEC, true));
   }
 
-  private void notifyExtensions() {
-    for (ISpockExtension extension : ExtensionRegistry.getInstance().getExtensions())
+  private void notifyGlobalExtensions() {
+    for (IGlobalExtension extension : ExtensionRegistry.getInstance().getExtensions())
       extension.visitSpec(spec);
   }
 
-  private void processDirectives() throws InstantiationException, IllegalAccessException {
-    processNodeDirective(spec);
+  private void processAnnotationDrivenExtensions() throws InstantiationException, IllegalAccessException {
+    processAnnotationDrivenExtensions(spec);
     for (FieldInfo field : spec.getFields())
-      processNodeDirective(field);
-    processNodeDirective(spec.getSetupSpecMethod());
-    processNodeDirective(spec.getSetupMethod());
-    processNodeDirective(spec.getCleanupMethod());
-    processNodeDirective(spec.getCleanupSpecMethod());
+      processAnnotationDrivenExtensions(field);
+    processAnnotationDrivenExtensions(spec.getSetupSpecMethod());
+    processAnnotationDrivenExtensions(spec.getSetupMethod());
+    processAnnotationDrivenExtensions(spec.getCleanupMethod());
+    processAnnotationDrivenExtensions(spec.getCleanupSpecMethod());
     for (FeatureInfo feature : spec.getFeatures())
-      processNodeDirective(feature.getFeatureMethod());
-    for (IDirectiveProcessor processor : processors.values())
-      processor.afterVisits(spec);
+      processAnnotationDrivenExtensions(feature.getFeatureMethod());
+    for (IAnnotationDrivenExtension processor : processors.values())
+      processor.visitSpec(spec);
   }
 
   @SuppressWarnings("unchecked")
-  private void processNodeDirective(NodeInfo node) throws InstantiationException, IllegalAccessException {
+  private void processAnnotationDrivenExtensions(NodeInfo node) throws InstantiationException, IllegalAccessException {
     if (node.isStub()) return;
 
     for (Annotation ann : node.getReflection().getDeclaredAnnotations()) {
-      Directive directive = ann.annotationType().getAnnotation(Directive.class);
-      if (directive == null) continue;
-      IDirectiveProcessor processor = getOrCreateProcessor(directive.value());
+      ExtensionAnnotation extAnn = ann.annotationType().getAnnotation(ExtensionAnnotation.class);
+      if (extAnn == null) continue;
+      IAnnotationDrivenExtension extension = getOrCreateExtension(extAnn.value());
       if (node instanceof SpecInfo)
-        processor.visitSpecDirective(ann, (SpecInfo)node);
+        extension.visitSpecAnnotation(ann, (SpecInfo)node);
       else if (node instanceof MethodInfo) {
         MethodInfo method = (MethodInfo)node;
         if (method.getKind() == MethodKind.FEATURE)
-          processor.visitFeatureDirective(ann, method.getFeature());
+          extension.visitFeatureAnnotation(ann, method.getFeature());
         else
-          processor.visitFixtureDirective(ann, method);
-      } else processor.visitFieldDirective(ann, (FieldInfo)node);
+          extension.visitFixtureAnnotation(ann, method);
+      } else extension.visitFieldAnnotation(ann, (FieldInfo)node);
     }
   }
 
-  private IDirectiveProcessor getOrCreateProcessor(Class<? extends IDirectiveProcessor> clazz)
+  private IAnnotationDrivenExtension getOrCreateExtension(Class<? extends IAnnotationDrivenExtension> clazz)
     throws InstantiationException, IllegalAccessException {
-    IDirectiveProcessor result = processors.get(clazz);
+    IAnnotationDrivenExtension result = processors.get(clazz);
     if (result == null) {
       result = clazz.newInstance();
       processors.put(clazz, result);

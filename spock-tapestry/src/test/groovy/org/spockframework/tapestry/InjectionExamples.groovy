@@ -52,7 +52,7 @@ class SymbolInjection extends Specification {
   String javaVersion
 
   @Inject
-  @Symbol("configKey") // Groovy doesn't yet support constants in annotations, so we use a literal
+  @Symbol("configKey") // Groovy doesn't yet support constants in annotations, so we have to use a literal
   String configValue
 
   @Inject

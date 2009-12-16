@@ -19,8 +19,8 @@ package spock.lang;
 import java.lang.annotation.*;
 import java.util.concurrent.TimeUnit;
 
-import org.spockframework.runtime.intercept.Directive;
-import org.spockframework.runtime.intercept.TimeoutProcessor;
+import org.spockframework.runtime.extension.ExtensionAnnotation;
+import org.spockframework.runtime.extension.builtin.TimeoutExtension;
 
 /**
  * Indicates that the execution of a feature or fixture method should time out
@@ -33,7 +33,7 @@ import org.spockframework.runtime.intercept.TimeoutProcessor;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD})
-@Directive(TimeoutProcessor.class)
+@ExtensionAnnotation(TimeoutExtension.class)
 public @interface Timeout {
   /**
    * The duration after which the execution of the annotated feature or fixture

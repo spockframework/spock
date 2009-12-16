@@ -31,14 +31,6 @@
       <plugin>
         <groupId>org.spockframework</groupId>
         <artifactId>spock-maven</artifactId>
-        <version>${project.version}</version>
-        <executions>
-          <execution>
-            <goals>
-              <goal>find-specs</goal>
-            </goals>
-          </execution>
-        </executions>
       </plugin>
       <plugin>
         <artifactId>maven-deploy-plugin</artifactId>

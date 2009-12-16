@@ -10,7 +10,7 @@
   <groupId>org.spockframework</groupId>
   <artifactId>spock-guice</artifactId>
   <packaging>jar</packaging>
-  <name>Spock Framework - Guice Extension</name>
+  <name>Spock Framework - Guice Module</name>
   <url>http://spockframework.org</url>
 
   <build>

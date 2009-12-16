@@ -10,7 +10,7 @@
   <groupId>org.spockframework</groupId>
   <artifactId>spock-core</artifactId>
   <packaging>jar</packaging>
-  <name>Spock Framework - Core</name>
+  <name>Spock Framework - Core Module</name>
   <url>http://spockframework.org</url>
 
   <build>

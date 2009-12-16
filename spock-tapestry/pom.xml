@@ -10,7 +10,7 @@
   <groupId>org.spockframework</groupId>
   <artifactId>spock-tapestry</artifactId>
   <packaging>jar</packaging>
-  <name>Spock Framework - Tapestry Extension</name>
+  <name>Spock Framework - Tapestry Module</name>
   <url>http://spockframework.org</url>
 
   <build>

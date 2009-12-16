@@ -26,9 +26,11 @@ import org.springframework.test.context.TestContextManager;
 
 import org.spockframework.runtime.extension.IGlobalExtension;
 import org.spockframework.runtime.model.*;
+import org.spockframework.util.NotThreadSafe;
 
 import spock.lang.Shared;
 
+@NotThreadSafe
 public class SpringExtension implements IGlobalExtension {
   public void visitSpec(SpecInfo spec) {
     if (!spec.getReflection().isAnnotationPresent(ContextConfiguration.class)) return;

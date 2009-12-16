@@ -1,0 +1,5 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dataset>
+  <user first_name="john" last_name="doe" age="16"/>
+  <user first_name="jack" last_name="smith" age="39"/>
+</dataset>

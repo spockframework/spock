@@ -22,7 +22,9 @@ import org.springframework.test.context.TestContextManager;
 import org.spockframework.runtime.SkipSpecOrFeatureException;
 import org.spockframework.runtime.extension.*;
 import org.spockframework.runtime.model.FeatureInfo;
+import org.spockframework.util.NotThreadSafe;
 
+@NotThreadSafe
 public class SpringInterceptor extends AbstractMethodInterceptor {
   private final TestContextManager manager;
 

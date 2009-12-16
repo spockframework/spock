@@ -4,9 +4,7 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
  *     http://www.apache.org/licenses/LICENSE-2.0
- *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -14,17 +12,15 @@
  * limitations under the License.
  */
 
-package org.spockframework.runtime.extension;
+package spock.unitils;
 
-import org.spockframework.runtime.model.MethodInfo;
+import java.lang.annotation.*;
 
-/**
- * @author Peter Niederwieser
- */
-// TODO: add some context, eg. getFeature() and getSpec()
-public interface IMethodInvocation {
-  Object getTarget();
-  MethodInfo getMethod();
-  Object[] getArguments();
-  void proceed() throws Throwable;
-}
+import org.spockframework.runtime.extension.ExtensionAnnotation;
+import org.spockframework.unitils.UnitilsExtension;
+
+@Inherited
+@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.RUNTIME)
+@ExtensionAnnotation(UnitilsExtension.class)
+public @interface UnitilsSupport {}

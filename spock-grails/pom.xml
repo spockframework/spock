@@ -15,7 +15,7 @@
   <url>http://grails.org/plugin/spock</url>
 
   <properties>
-    <grails.version>1.2-SNAPSHOT</grails.version>
+    <grails.version>1.2.0.RC2</grails.version>
   </properties>
   <dependencies>
     <dependency>
@@ -129,49 +129,24 @@
   <repositories>
     <!-- Required to get hold of JTA -->
     <repository>
-      <id>maven2-repository.dev.java.net</id>
-      <name>Java.net Repository for Maven</name>
+      <id>dev.java.net</id>
       <url>http://download.java.net/maven/2/</url>
       <layout>default</layout>
     </repository>
     <repository>
-      <id>Codehaus Snapshots</id>
-      <url>http://snapshots.repository.codehaus.org</url>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
+      <id>codehaus</id>
+      <url>http://repository.codehaus.org</url>
     </repository>
     <!-- Spring 3.0.0.RC1 JAR Repositories -->
     <repository>
-      <id>springsource maven repo</id>
-      <url>http://maven.springframework.org/milestone</url>
-    </repository>
-
-    <repository>
-      <id>SpringSource Enterprise Bundle Repository – External Bundle Milestones</id>
-      <url>http://repository.springsource.com/maven/bundles/milestone</url>
-    </repository>
-    <repository>
-      <id>SpringSource Enterprise Bundle Repository – SpringSource Bundle Releases</id>
-      <url>http://repository.springsource.com/maven/bundles/release</url>
-    </repository>
-    <repository>
-      <id>SpringSource Enterprise Bundle Repository – External Bundle Releases</id>
-      <url>http://repository.springsource.com/maven/bundles/external</url>
-    </repository>
-
-    <repository>
-      <id>SpringSource Enterprise Bundle Repository – Library Milestones</id>
-      <url>http://repository.springsource.com/maven/libraries/milestone</url>
+      <id>springsource</id>
+      <url>http://maven.springframework.org/release</url>
     </repository>
   </repositories>
 
   <pluginRepositories>
     <pluginRepository>
-      <id>Codehaus Snapshots</id>
+      <id>codehaus-snapshots</id>
       <url>http://snapshots.repository.codehaus.org</url>
       <snapshots>
         <enabled>true</enabled>
@@ -199,7 +174,7 @@
       <plugin>
         <groupId>org.grails</groupId>
         <artifactId>grails-maven-plugin</artifactId>
-        <version>${grails.version}</version>
+        <version>1.2-SNAPSHOT</version>
         <extensions>true</extensions>
         <executions>
           <execution>

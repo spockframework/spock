@@ -21,16 +21,15 @@ grails.project.test.reports.dir = "target/test-reports"
 grails.project.dependency.resolution = {
   inherits "global" // inherit Grails' default dependencies
   log "warn" // log level of Ivy resolver, either 'error', 'warn', 'info', 'debug' or 'verbose'
+
   repositories {
     grailsHome()
 
     mavenLocal() // prefer local, so we pick up spock snapshot as part of whole build
-    mavenCentral()
-
     mavenRepo "http://m2repo.spockframework.org/snapshots"
-    mavenRepo "http://m2repo.spockframework.org/releases"
-    mavenRepo "http://oss.sonatype.org/content/groups/jetty"
+    mavenCentral()
   }
+  
   dependencies {
     build 'org.spockframework:spock-core:0.4-SNAPSHOT'
     build 'asm:asm:2.2.3'

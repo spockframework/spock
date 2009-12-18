@@ -174,7 +174,7 @@
       <plugin>
         <groupId>org.grails</groupId>
         <artifactId>grails-maven-plugin</artifactId>
-        <version>1.2-SNAPSHOT</version>
+        <version>1.2.0.BUILD-SNAPSHOT</version>
         <extensions>true</extensions>
         <executions>
           <execution>

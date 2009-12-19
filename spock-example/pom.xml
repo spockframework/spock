@@ -7,6 +7,11 @@
   <packaging>jar</packaging>
   <name>Spock Framework - Example Project</name>
 
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+  </properties>
+  
   <build>
 <!-- Mandatory plugins for using Spock -->
     <plugins>

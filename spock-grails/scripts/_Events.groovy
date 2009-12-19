@@ -14,8 +14,19 @@
  * limitations under the License.
  */
 
+loadSpecTestTypeClass = { ->
+  def doLoad = { -> classLoader.loadClass('grails.plugin.spock.test.GrailsSpecTestType') }
+  try {
+    doLoad()
+  } catch (ClassNotFoundException e) {
+    includeTargets << grailsScript("_GrailsCompile") 
+    compile()
+    doLoad()
+  }  
+}
+
 eventAllTestsStart = {
-  def specTestTypeClass = classLoader.loadClass('grails.plugin.spock.test.GrailsSpecTestType')
+  def specTestTypeClass = loadSpecTestTypeClass()
   unitTests << specTestTypeClass.newInstance('spock', 'unit')
   integrationTests << specTestTypeClass.newInstance('spock', 'integration')
   functionalTests << specTestTypeClass.newInstance('spock', 'functional')

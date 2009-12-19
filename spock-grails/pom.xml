@@ -127,17 +127,15 @@
   </dependencies>
 
   <repositories>
-    <!-- Required to get hold of JTA -->
+<!-- Required to get hold of JTA -->
     <repository>
       <id>dev.java.net</id>
       <url>http://download.java.net/maven/2/</url>
-      <layout>default</layout>
     </repository>
     <repository>
       <id>codehaus</id>
       <url>http://repository.codehaus.org</url>
     </repository>
-    <!-- Spring 3.0.0.RC1 JAR Repositories -->
     <repository>
       <id>springsource</id>
       <url>http://maven.springframework.org/release</url>
@@ -213,6 +211,12 @@
             </configuration>
           </execution>
         </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-deploy-plugin</artifactId>
+        <configuration>
+          <skip>true</skip>
+        </configuration>
       </plugin>
     </plugins>
   </build>

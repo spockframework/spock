@@ -103,7 +103,7 @@
     <dependency>
       <groupId>org.spockframework</groupId>
       <artifactId>spock-core</artifactId>
-      <version>${project.version}</version> <!-- you must specify a concrete version number here -->
+      <version>${project.version}</version> <!-- you need to specify a concrete version number here -->
       <scope>test</scope>
     </dependency>    
 <!-- Optional dependencies for using Spock -->

@@ -7,6 +7,11 @@
   <packaging>jar</packaging>
   <name>Spock Framework - Example Project</name>
 
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+  </properties>
+  
   <build>
 <!-- Mandatory plugins for using Spock -->
     <plugins>
@@ -41,7 +46,7 @@
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy-all</artifactId>
             <version>1.7-rc-2</version>
-            <exclusions> <!-- for some reason, the following dependencies aren't marked as optional in groovy-all POM -->
+            <exclusions> <!-- exclude optional dependencies that aren't marked as such (fixed in Groovy 1.7) -->
               <exclusion>
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
@@ -98,7 +103,7 @@
     <dependency>
       <groupId>org.spockframework</groupId>
       <artifactId>spock-core</artifactId>
-      <version>${project.version}</version> <!-- you should specify a concrete version number here -->
+      <version>${project.version}</version> <!-- you need to specify a concrete version number here -->
       <scope>test</scope>
     </dependency>    
 <!-- Optional dependencies for using Spock -->
@@ -144,15 +149,15 @@
     </pluginRepository>
   </pluginRepositories>
 
-<!-- Only required by Spock build -->  
+<!-- Only required for spock-example build -->  
   <distributionManagement>
     <repository>
       <id>foo</id>
-      <url>file:///foo</url>
+      <url>file:///fake.repository.to.make.maven.happy</url>
     </repository>
     <snapshotRepository>
       <id>bar</id>
-      <url>file:///bar</url>
+      <url>file:///fake.repository.to.make.maven.happy</url>
     </snapshotRepository>
   </distributionManagement>
 </project>

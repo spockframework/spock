@@ -18,6 +18,8 @@ package org.spockframework.runtime.model;
 
 import java.lang.reflect.Field;
 
+import org.codehaus.groovy.runtime.InvokerHelper;
+
 import spock.lang.Shared;
 
 /**
@@ -47,5 +49,9 @@ public class FieldInfo extends NodeInfo<SpecInfo, Field> {
   
   public void setLine(int line) {
     this.line = line;
+  }
+
+  public Object readValue(Object target) {
+    return InvokerHelper.getProperty(target, getReflection().getName());
   }
 }

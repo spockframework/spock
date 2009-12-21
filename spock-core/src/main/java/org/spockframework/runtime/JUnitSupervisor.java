@@ -16,6 +16,7 @@
 
 package org.spockframework.runtime;
 
+import org.junit.internal.runners.model.MultipleFailureException;
 import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
@@ -81,6 +82,13 @@ public class JUnitSupervisor implements IRunSupervisor {
   }
 
   public int error(MethodInfo method, Throwable throwable, int runStatus) {
+    if (throwable instanceof MultipleFailureException) { // for better JUnit compatibility, e.g when a @Rule is used
+      MultipleFailureException multiFailure = (MultipleFailureException) throwable;
+      for (Throwable failure : multiFailure.getFailures())
+        runStatus = error(method, failure, runStatus);
+      return runStatus;
+    }
+
     errorSinceLastReset = true;
     filter.filter(throwable);
 

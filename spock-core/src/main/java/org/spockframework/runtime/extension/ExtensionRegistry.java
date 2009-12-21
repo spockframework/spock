@@ -26,6 +26,8 @@ import org.codehaus.groovy.runtime.DefaultGroovyMethods;
  *
  * @author Peter Niederwieser
  */
+// TODO: allow multiple extensions per descriptor
+// TODO: allow empty lines and comments in descriptor
 public class ExtensionRegistry {
   static final String DESCRIPTOR_PATH = "META-INF/services/" + IGlobalExtension.class.getName();
   

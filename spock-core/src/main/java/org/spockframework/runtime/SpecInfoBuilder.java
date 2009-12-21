@@ -37,7 +37,7 @@ import spock.lang.Specification;
  */
 public class SpecInfoBuilder {
   private final Class<?> clazz;
-  private final Map<Class<? extends IAnnotationDrivenExtension>, IAnnotationDrivenExtension> processors =
+  private final Map<Class<? extends IAnnotationDrivenExtension>, IAnnotationDrivenExtension> extensions =
     new HashMap<Class<? extends IAnnotationDrivenExtension>, IAnnotationDrivenExtension>();
   private final SpecInfo spec = new SpecInfo();
 
@@ -237,8 +237,8 @@ public class SpecInfoBuilder {
     processAnnotationDrivenExtensions(spec.getCleanupSpecMethod());
     for (FeatureInfo feature : spec.getFeatures())
       processAnnotationDrivenExtensions(feature.getFeatureMethod());
-    for (IAnnotationDrivenExtension processor : processors.values())
-      processor.visitSpec(spec);
+    for (IAnnotationDrivenExtension extension : extensions.values())
+      extension.visitSpec(spec);
   }
 
   @SuppressWarnings("unchecked")
@@ -263,10 +263,10 @@ public class SpecInfoBuilder {
 
   private IAnnotationDrivenExtension getOrCreateExtension(Class<? extends IAnnotationDrivenExtension> clazz)
     throws InstantiationException, IllegalAccessException {
-    IAnnotationDrivenExtension result = processors.get(clazz);
+    IAnnotationDrivenExtension result = extensions.get(clazz);
     if (result == null) {
       result = clazz.newInstance();
-      processors.put(clazz, result);
+      extensions.put(clazz, result);
     }
     return result;
   }

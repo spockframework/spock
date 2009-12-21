@@ -20,14 +20,13 @@ import org.spockframework.runtime.model.SpecInfo
 import spock.lang.Specification
 
 class ExtensionRegistrySpec extends Specification {
-  def "registry provides all available extensions"() {
+  def "registry loads extensions specified in descriptors"() {
     def loader = new ExtensionLoader(getClass().classLoader)
     def registry = new ExtensionRegistry(loader)
     
     expect:
-    registry.extensions.size() == 2
-    registry.extensions[0] instanceof Extension1
-    registry.extensions[1] instanceof Extension2
+    registry.extensions.any { it instanceof Extension1 }
+    registry.extensions.any { it instanceof Extension2 }
   }
 }
 

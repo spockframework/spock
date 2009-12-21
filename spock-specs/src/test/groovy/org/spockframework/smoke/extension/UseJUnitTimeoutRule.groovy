@@ -31,10 +31,10 @@ class UseJUnitTimeoutRule extends EmbeddedSpecification {
   }
 
   def "spec method that does not complete in time"() {
-    timeout = 500
+    timeout = 250
 
     when:
-    specMethodDelayedBy(501)
+    specMethodDelayedBy(500)
 
     then:
     Exception e = thrown()

@@ -19,13 +19,9 @@ import spock.lang.Specification
 class UsingJUnitRules extends Specification {
   @Rule name = new TestName()
 
-  def "one"() {
-    println "running method '$name.methodName'"
+  def "retrieve test name at runtime"() {
+    println "entering '$name.methodName'"
     expect: 1 + 1 == 2
-  }
-
-  def "two"() {
-    println "running method '$name.methodName'"
-    expect: 1 * 1 == 1
+    println "leaving '$name.methodName'"
   }
 }

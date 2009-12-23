@@ -15,7 +15,7 @@
   <url>http://grails.org/plugin/spock</url>
 
   <properties>
-    <grails.version>1.2.0.RC2</grails.version>
+    <grails.version>1.2.0</grails.version>
   </properties>
   <dependencies>
     <dependency>
@@ -144,14 +144,8 @@
 
   <pluginRepositories>
     <pluginRepository>
-      <id>codehaus-snapshots</id>
-      <url>http://snapshots.repository.codehaus.org</url>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
+	  <id>codehaus</id>
+	  <url>http://repository.codehaus.org</url>
     </pluginRepository>
   </pluginRepositories>
 
@@ -172,7 +166,7 @@
       <plugin>
         <groupId>org.grails</groupId>
         <artifactId>grails-maven-plugin</artifactId>
-        <version>1.2.0.BUILD-SNAPSHOT</version>
+        <version>1.2.0</version>
         <extensions>true</extensions>
         <executions>
           <execution>

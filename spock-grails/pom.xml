@@ -152,16 +152,6 @@
   <build>
     <sourceDirectory>src/groovy</sourceDirectory>
     <testSourceDirectory>test</testSourceDirectory>
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <artifactId>maven-deploy-plugin</artifactId>
-          <configuration>
-            <skip>true</skip>
-          </configuration>
-        </plugin>
-      </plugins>
-    </pluginManagement>
     <plugins>
       <plugin>
         <groupId>org.grails</groupId>

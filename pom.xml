@@ -209,6 +209,7 @@
         <module>spock-guice</module>
         <module>spock-spring</module>
         <module>spock-unitils</module>
+        <module>spock-grails</module>
       </modules>
       <properties>
         <sonar.jdbc.url>jdbc:mysql://localhost:3306/sonar?useUnicode=true&amp;characterEncoding=utf8</sonar.jdbc.url>
@@ -230,6 +231,7 @@
         <module>spock-guice</module>
         <module>spock-spring</module>
         <module>spock-unitils</module>
+        <module>spock-grails</module>
       </modules>
       <build>
         <plugins>

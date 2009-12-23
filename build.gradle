@@ -2,7 +2,7 @@ allprojects {
   group = "org.spockframework"
   version = "0.4-groovy-1.7-SNAPSHOT"
 
-  groovyArtifact = "org.codehaus.groovy:groovy-all:1.7-rc-2"
+  groovyArtifact = "org.codehaus.groovy:groovy-all:1.7.0"
 }
 
 task wrapper(type: Wrapper) { 

@@ -45,7 +45,7 @@
           <dependency>
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy-all</artifactId>
-            <version>1.7-rc-2</version>
+            <version>1.7.0</version>
             <exclusions> <!-- exclude optional dependencies that aren't marked as such (fixed in Groovy 1.7) -->
               <exclusion>
                 <groupId>junit</groupId>

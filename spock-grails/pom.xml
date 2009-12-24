@@ -181,19 +181,6 @@
               <command>package-plugin</command>
             </configuration>
           </execution>
-          <execution>
-            <id>release-plugin</id>
-            <phase>deploy</phase>
-            <goals>
-              <goal>exec</goal>
-            </goals>
-            <configuration>
-              <command>release-plugin</command>
-              <args>--zipOnly --username=${grails.plugin.repo.user} --password=${grails.plugin.repo.password}
-                --message="nightly build"
-              </args>
-            </configuration>
-          </execution>
         </executions>
       </plugin>
       <plugin>

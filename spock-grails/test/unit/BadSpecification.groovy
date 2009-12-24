@@ -18,7 +18,7 @@ import spock.lang.Specification
 import spock.lang.Ignore
 
 class BadSpecification extends Specification {
-  //@Ignore
+  @Ignore
   def "intentionally failing"() {
     expect:
     name.size() == size

@@ -16,7 +16,7 @@
 
 package grails.plugin.spock.test
 
-import grails.plugin.spock.test.listener.SpecRunListener
+import grails.plugin.spock.test.listener.OverallRunListener
 
 import org.spockframework.buildsupport.SpecClassFileFinder
 import org.spockframework.runtime.SpecUtil
@@ -29,9 +29,8 @@ import org.codehaus.groovy.grails.test.support.GrailsTestTypeSupport
 import org.codehaus.groovy.grails.test.report.junit.JUnitReportsFactory
 
 class GrailsSpecTestType extends GrailsTestTypeSupport {
-
-  protected final specFinder = new SpecClassFileFinder()
-  protected final List<Class> specClasses = []
+  private final specFinder = new SpecClassFileFinder()
+  private final List<Class> specClasses = []
   
   GrailsSpecTestType(String name, String relativeSourcePath) {
       super(name, relativeSourcePath)
@@ -51,19 +50,17 @@ class GrailsSpecTestType extends GrailsTestTypeSupport {
   
   protected int doPrepare() {
       eachSourceFile { testTargetPattern, specSourceFile ->
-          def specClassName = sourceFileToClassName(specSourceFile)
           def specClassFile = sourceFileToClassFile(specSourceFile)
           def specClass = sourceFileToClass(specSourceFile)
           if (specFinder.isSpec(specClassFile)) specClasses << specClass
       }
     
-      specClasses.sum { SpecUtil.getFeatureCount(it) } ?: 0
+      specClasses.sum 0, { SpecUtil.getFeatureCount(it) }
   }
   
   GrailsTestTypeResult doRun(GrailsTestEventPublisher eventPublisher) {
     def junit = new JUnitCore()
-    junit.addListener(new SpecRunListener(eventPublisher, createJUnitReportsFactory(), createSystemOutAndErrSwapper()))
+    junit.addListener(new OverallRunListener(eventPublisher, createJUnitReportsFactory(), createSystemOutAndErrSwapper()))
     new GrailsSpecTestTypeResult(junit.run(specClasses as Class[]))
   }
-  
 }

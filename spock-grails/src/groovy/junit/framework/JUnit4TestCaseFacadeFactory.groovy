@@ -19,8 +19,6 @@ import org.junit.runner.Description
 
 /**
  * {@code JUnit4TestCaseFacade}'s constructor is package scoped. This just exposes it.
- * 
- * I have NO idea what the JUnit guys were smoking when they decided that.
  */
 class JUnit4TestCaseFacadeFactory {
   static JUnit4TestCaseFacade createFacade(Description description) {

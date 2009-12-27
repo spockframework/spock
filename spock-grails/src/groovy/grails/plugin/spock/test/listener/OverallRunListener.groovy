@@ -25,54 +25,55 @@ import org.junit.runner.Result
 import org.junit.runner.notification.Failure
 import org.junit.runner.notification.RunListener
 
-import org.codehaus.groovy.grails.test.report.junit.JUnitReportsFactory
+class OverallRunListener extends RunListener {
+  private final GrailsTestEventPublisher eventPublisher
+  private final JUnitReportsFactory reportsFactory
+  private final SystemOutAndErrSwapper outAndErrSwapper
 
-class SpecRunListener extends RunListener {
+  private PerSpecRunListener perSpecListener
 
-  final protected GrailsTestEventPublisher eventPublisher
-  final protected JUnitReportsFactory reportsFactory
-  final protected SystemOutAndErrSwapper outAndErrSwapper
-
-  protected currentSpecRun
-
-  SpecRunListener(GrailsTestEventPublisher eventPublisher, JUnitReportsFactory reportsFactory, SystemOutAndErrSwapper outAndErrSwapper) {
+  OverallRunListener(GrailsTestEventPublisher eventPublisher, JUnitReportsFactory reportsFactory, SystemOutAndErrSwapper outAndErrSwapper) {
     this.eventPublisher = eventPublisher
     this.reportsFactory = reportsFactory
     this.outAndErrSwapper = outAndErrSwapper
   }
 
-  void testRunStarted(Description description) {}
+  void testRunStarted(Description description) {
+    // nothing to do
+  }
 
   void testStarted(Description description) {
-    if (currentSpecRun?.name != description.className) {
-      currentSpecRun?.finish()
+    if (perSpecListener?.name != description.className) {
+      perSpecListener?.finish()
 
       def specName = description.className
-      currentSpecRun = new SpecRunListenerSpecRun(specName, eventPublisher, reportsFactory.createReports(specName), outAndErrSwapper)
-      currentSpecRun.start()
+      perSpecListener = new PerSpecRunListener(specName, eventPublisher, reportsFactory.createReports(specName), outAndErrSwapper)
+      perSpecListener.start()
     }
 
-    currentSpecRun.testStarted(description)
+    perSpecListener.testStarted(description)
   }
 
   void testFailure(Failure failure) {
-    currentSpecRun.testFailure(failure)
+    perSpecListener.testFailure(failure)
   }
 
   void testAssumptionFailure(Failure failure) {
     // assumptions (and AssumptionViolatedException) are specific to JUnit,
-    // so we treat this as a failure
-    currentSpecRun.testFailure(failure)
+    // and are treated as ordinary failures
+    perSpecListener.testFailure(failure)
   }
 
   void testFinished(Description description) {
-    currentSpecRun.testFinished(description)
+    perSpecListener.testFinished(description)
   }
 
   void testRunFinished(Result result) {
-    currentSpecRun.finish()
+    perSpecListener.finish()
   }
 
-  void testIgnored(Description description) {}
+  void testIgnored(Description description) {
+    // nothing to do
+  }
 }
 

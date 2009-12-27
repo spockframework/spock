@@ -21,8 +21,7 @@ import org.codehaus.groovy.grails.test.GrailsTestTypeResult
 import org.junit.runner.Result
 
 class GrailsSpecTestTypeResult implements GrailsTestTypeResult {
-
-  final Result result
+  private final Result result
   
   GrailsSpecTestTypeResult(Result result) {
     this.result = result
@@ -35,5 +34,4 @@ class GrailsSpecTestTypeResult implements GrailsTestTypeResult {
   int getFailCount() {
     result.failureCount
   }
-
 }

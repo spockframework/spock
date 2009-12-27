@@ -25,64 +25,65 @@ import groovy.xml.StreamingMarkupBuilder
  * into controllers. By default it determines what controller to mock
  * based on the name of the test, but this can be overridden by one
  * of the constructors.
- * 
+ *
  * @author Graeme Rocher
  * @author Peter Ledbrook
  */
 class ControllerSpecification extends MvcSpecification {
-    def setup() {
-      webRequest.controllerName = GrailsNameUtils.getLogicalPropertyName(controllerClass.name, "Controller")
-    }
-    
-    def provideMvcClassUnderTest() {
-      findClassUnderTestConventiallyBySuffix('Controller')
-    }
-    
-    def initializeMvcMocking(Class classUnderTest) {
-      mockController(classUnderTest)
-    }
-        
-    def getControllerClass() {
-      classUnderTest
-    }
-    
-    def getController() {
-      instanceUnderTest
-    }
-    
-    def getForwardArgs() { instanceUnderTest.forwardArgs }
-    def getRedirectArgs() { instanceUnderTest.redirectArgs }
-    
-    def getChainArgs() { instanceUnderTest.chainArgs }
+  def setup() {
+    webRequest.controllerName = GrailsNameUtils.getLogicalPropertyName(controllerClass.name, "Controller")
+  }
 
-    void reset() {
-      super.reset()
-      redirectArgs.clear()
-      forwardArgs.clear()
-      chainArgs.clear()
-    }
-    
-    protected mockCommandObject(Class clazz) {
-      registerMetaClass(clazz)
-      MockUtils.mockCommandObject(clazz, errorsMap)
-    }
+  def provideMvcClassUnderTest() {
+    findClassUnderTestConventiallyBySuffix('Controller')
+  }
 
-    protected void setXmlRequestContent(content) {
-      setXmlRequestContent("UTF-8", content)
-    }
+  def initializeMvcMocking(Class classUnderTest) {
+    mockController(classUnderTest)
+  }
 
-    protected void setXmlRequestContent(String encoding, content) {
+  def getControllerClass() {
+    classUnderTest
+  }
+
+  def getController() {
+    instanceUnderTest
+  }
+
+  def getForwardArgs() { instanceUnderTest.forwardArgs }
+
+  def getRedirectArgs() { instanceUnderTest.redirectArgs }
+
+  def getChainArgs() { instanceUnderTest.chainArgs }
+
+  void reset() {
+    super.reset()
+    redirectArgs.clear()
+    forwardArgs.clear()
+    chainArgs.clear()
+  }
+
+  protected mockCommandObject(Class clazz) {
+    registerMetaClass(clazz)
+    MockUtils.mockCommandObject(clazz, errorsMap)
+  }
+
+  protected void setXmlRequestContent(content) {
+    setXmlRequestContent("UTF-8", content)
+  }
+
+  protected void setXmlRequestContent(String encoding, content) {
+    mockRequest.contentType = "application/xml; charset=$encoding"
+
+    if (content instanceof Closure) {
+      def xml = new StreamingMarkupBuilder(encoding: encoding).bind(content)
+      def out = new ByteArrayOutputStream()
+      out << xml
+
       mockRequest.contentType = "application/xml; charset=$encoding"
-
-      if (content instanceof Closure) {
-        def xml = new StreamingMarkupBuilder(encoding: encoding).bind(content)
-        def out = new ByteArrayOutputStream()
-        out << xml
-
-        mockRequest.contentType = "application/xml; charset=$encoding"
-        mockRequest.content = out.toByteArray()
-      } else {
-        mockRequest.content = content.getBytes(encoding)
-      }
+      mockRequest.content = out.toByteArray()
+    } else {
+      mockRequest.content = content.getBytes(encoding)
     }
+  }
 }

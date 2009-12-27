@@ -16,20 +16,12 @@
 
 package grails.plugin.spock
 
-import grails.util.GrailsWebUtil
 import org.codehaus.groovy.grails.commons.ApplicationHolder
-import org.codehaus.groovy.grails.commons.GrailsClassUtils
-import org.codehaus.groovy.grails.web.context.GrailsConfigUtils
-import org.codehaus.groovy.grails.web.servlet.GrailsApplicationAttributes
-import org.springframework.beans.factory.config.AutowireCapableBeanFactory
-import org.springframework.context.ApplicationContextAware
-import org.springframework.transaction.support.DefaultTransactionDefinition
-import org.springframework.web.context.request.RequestContextHolder
-import spock.lang.Specification
-
 import org.codehaus.groovy.grails.test.support.GrailsTestAutowirer
 import org.codehaus.groovy.grails.test.support.GrailsTestTransactionInterceptor
 import org.codehaus.groovy.grails.test.support.GrailsTestRequestEnvironmentInterceptor
+
+import spock.lang.Specification
 
 class IntegrationSpecification extends Specification {
   private transactionManager

@@ -18,7 +18,7 @@ package org.spockframework.smoke.mock
 
 import org.codehaus.groovy.runtime.typehandling.GroovyCastException
 import org.spockframework.EmbeddedSpecification
-import org.spockframework.util.SpockSyntaxException
+import org.spockframework.compiler.SpecCompileException
 import spock.lang.FailsWith
 import spock.lang.Specification
 
@@ -34,7 +34,7 @@ def list = Mock()
     """)
 
     then:
-    thrown(SpockSyntaxException)
+    thrown(SpecCompileException)
   }
 
   // for "field w/ incompatible type" and "field w/ wrong argument" see Specs below
@@ -47,7 +47,7 @@ def list = Mock()
     """)
 
     then:
-    thrown(SpockSyntaxException)
+    thrown(SpecCompileException)
   }
 
   def "local w/ incompatible type"() {
@@ -67,7 +67,7 @@ setup: Mock()
     """)
 
     then:
-    thrown(SpockSyntaxException)
+    thrown(SpecCompileException)
   }
 
   def "expr w/ wrong argument"() {

@@ -104,7 +104,7 @@ def foo() {
     1 * listener.testFailure { it.description.methodName == "foo" }
 
     // it's OK for runCount to be zero here; mental model: method "foo"
-    // would have been invisible if it had not failed (cf. Spec JUnitTestResult)
+    // would have been invisible if it had not failed (cf. Spec JUnitErrorBehavior)
     result.runCount == 0
     result.failureCount == 1
     result.ignoreCount == 0

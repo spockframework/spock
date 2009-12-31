@@ -19,8 +19,8 @@ package spock.lang;
 import org.junit.runner.RunWith;
 
 import org.spockframework.mock.MockController;
+import org.spockframework.runtime.InvalidSpecException;
 import org.spockframework.runtime.WrongExceptionThrownError;
-import org.spockframework.util.SyntaxException;
 
 import groovy.lang.Closure;
 
@@ -61,7 +61,7 @@ public abstract class Specification {
    * @return the thrown exception instance
    */
   public Throwable thrown() {
-    throw new SyntaxException(
+    throw new InvalidSpecException(
         "Exception conditions are only allowed in 'then' blocks, and may not be nested inside other elements");
   }
 
@@ -85,7 +85,7 @@ public abstract class Specification {
    */
   @SuppressWarnings("UnusedDeclaration")
   public <T extends Throwable> T thrown(Class<T> type) {
-    throw new SyntaxException(
+    throw new InvalidSpecException(
         "Exception conditions are only allowed in 'then' blocks, and may not be nested inside other elements");
   }
 
@@ -119,7 +119,7 @@ public abstract class Specification {
    * @return the new mock object
    */
   public Object Mock() {
-    throw new SyntaxException("Mock objects may only be created during the lifetime of a feature (iteration)");
+    throw new InvalidSpecException("Mock objects may only be created during the lifetime of a feature (iteration)");
   }
 
   /**
@@ -135,7 +135,7 @@ public abstract class Specification {
    */
   @SuppressWarnings("UnusedDeclaration")
   public <T> T Mock(Class<T> type) {
-    throw new SyntaxException("Mock objects can only be created inside a Spec");
+    throw new InvalidSpecException("Mock objects can only be created inside a Spec");
   }
 
   /**
@@ -209,7 +209,7 @@ public abstract class Specification {
    */
   @SuppressWarnings("UnusedDeclaration")
   public <T> T old(T expression) {
-    throw new SyntaxException("old() can only be used in a 'then' block");
+    throw new InvalidSpecException("old() can only be used in a 'then' block");
   }
 
   @SuppressWarnings("UnusedDeclaration")
@@ -221,7 +221,7 @@ public abstract class Specification {
   @SuppressWarnings("UnusedDeclaration")
   <T> T Mock(Class<T> type, String name, MockController controller) {
     if (type == null)
-      throw new SyntaxException("Mock object type may not be 'null'");
+      throw new InvalidSpecException("Mock object type may not be 'null'");
     if (controller == null) {
       // mock has been created in a context where no controller exists
       Mock();

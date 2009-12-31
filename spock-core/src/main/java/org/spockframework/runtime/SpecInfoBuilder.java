@@ -89,7 +89,7 @@ public class SpecInfoBuilder {
   private SpecMetadata getSpecMetadata() {
     SpecMetadata metadata = clazz.getAnnotation(SpecMetadata.class);
     if (metadata == null)
-      throw new InvalidSpecError(
+      throw new InvalidSpecException(
           "Class '%s' is not a Spock specification").format(clazz.getName());
 
     return metadata;

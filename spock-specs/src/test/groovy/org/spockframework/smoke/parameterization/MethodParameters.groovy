@@ -18,7 +18,7 @@ package org.spockframework.smoke.parameterization
 
 import org.codehaus.groovy.runtime.typehandling.GroovyCastException
 import org.spockframework.EmbeddedSpecification
-import org.spockframework.util.SpockSyntaxException
+import org.spockframework.compiler.SpecCompileException
 
 /**
  * @author Peter Niederwieser
@@ -42,7 +42,7 @@ def foo(int x, String y) {
     """
 
     then:
-    thrown(SpockSyntaxException)
+    thrown(SpecCompileException)
   }
 
   def "typed parameters"(Integer x, Integer y) {
@@ -104,7 +104,7 @@ def foo(x) {
     """
 
     then:
-    thrown(SpockSyntaxException)
+    thrown(SpecCompileException)
   }
 
 
@@ -122,24 +122,46 @@ def foo(x, y, z) {
     """
 
     then:
-    thrown(SpockSyntaxException)
+    thrown(SpecCompileException)
   }
 
-  def "parameter names do not match data variable names"() {
+  def "parameter that is not a data variable"() {
     when:
     compiler.compileSpecBody """
 def foo(x, a) {
   expect:
-  x == y
+  x == x
 
   where:
   x << [1, 2]
-  y << [1, 2]
 }
     """
 
     then:
-    thrown(SpockSyntaxException)
+    thrown(SpecCompileException)
+  }
+
+  def "data variable that is not a parameter"() {
+    when:
+    compiler.compileSpecBody """
+def foo(x) {
+  expect:
+  x == y
+
+  where:
+  $parameterizations
+}
+    """
+
+    then:
+    thrown(SpecCompileException)
+
+    where:
+    parameterizations << [
+        "x << [1,2]; y << [1, 2]",
+        "[x, y] << [[1, 2], [1, 2]]",
+        "x << [1, 2]; y = x"
+    ]
   }
 
   def "data value type can be coerced to parameter type"(x, String y) {

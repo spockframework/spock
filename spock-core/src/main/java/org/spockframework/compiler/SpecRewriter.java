@@ -29,7 +29,6 @@ import org.objectweb.asm.Opcodes;
 import org.spockframework.compiler.model.*;
 import org.spockframework.mock.MockController;
 import org.spockframework.runtime.SpockRuntime;
-import org.spockframework.util.SyntaxException;
 
 /**
  * A Spec visitor responsible for most of the rewriting of a Spec's AST.
@@ -40,6 +39,7 @@ import org.spockframework.util.SyntaxException;
 public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourceProvider {
   private final AstNodeCache nodeCache;
   private final SourceLookup lookup;
+  private final ErrorReporter errorReporter;
 
   private Spec spec;
   private int specDepth;
@@ -56,9 +56,10 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
   private int sharedFieldInitializerCount = 0;
   private int oldValueCount = 0;
 
-  public SpecRewriter(AstNodeCache nodeCache, SourceLookup lookup) {
+  public SpecRewriter(AstNodeCache nodeCache, SourceLookup lookup, ErrorReporter errorReporter) {
     this.nodeCache = nodeCache;
     this.lookup = lookup;
+    this.errorReporter = errorReporter;
   }
 
   public void visitSpec(Spec spec) {
@@ -166,10 +167,12 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
   private void createSharedFieldGetter(Field field) {
     String getterName = "get" + MetaClassHelper.capitalize(field.getName());
     MethodNode getter = spec.getAst().getMethod(getterName, Parameter.EMPTY_ARRAY);
-    if (getter != null)
-      throw new SyntaxException(field.getAst(),
+    if (getter != null) {
+      errorReporter.error(field.getAst(),
           "@Shared field '%s' conflicts with method '%s'; please rename either of them",
           field.getName(), getter.getName());
+      return;
+    }
 
     BlockStatement getterBlock = new BlockStatement();
     int visibility = field.getOwner() == null ? AstUtil.getVisibility(field.getAst()) : Opcodes.ACC_PUBLIC;
@@ -192,10 +195,12 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
     String setterName = "set" + MetaClassHelper.capitalize(field.getName());
     Parameter[] params = new Parameter[] { new Parameter(field.getAst().getType(), "$spock_value") };
     MethodNode setter = spec.getAst().getMethod(setterName, params);
-    if (setter != null)
-      throw new SyntaxException(field.getAst(),
-          "@Shared field '%s' conflicts with method '%s'; please rename either of them",
-          field.getName(), setter.getName());
+    if (setter != null) {
+      errorReporter.error(field.getAst(),
+                "@Shared field '%s' conflicts with method '%s'; please rename either of them",
+                field.getName(), setter.getName());
+      return;
+    }
 
     BlockStatement setterBlock = new BlockStatement();
     int visibility = field.getOwner() == null ? AstUtil.getVisibility(field.getAst()) : Opcodes.ACC_PUBLIC;
@@ -292,7 +297,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
 
     if (method instanceof FixtureMethod)
       // de-virtualize method s.t. multiple fixture methods along hierarchy can be called independently
-     AstUtil.setVisibility(method.getAst(), Opcodes.ACC_PRIVATE);
+      AstUtil.setVisibility(method.getAst(), Opcodes.ACC_PRIVATE);
     else if (method instanceof FeatureMethod) {
       transplantMethod(method);
       handleWhereBlock(method);
@@ -352,12 +357,12 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
     if (!(block instanceof WhereBlock)) {
       Parameter[] params = method.getAst().getParameters();
       if (params.length > 0)
-        throw new SyntaxException(params[0], "Feature methods without 'where' block may not declare parameters");
+        errorReporter.error(params[0], "Feature methods without 'where' block may not declare parameters");
       return;
     }
 
     new DeepStatementRewriter(this).visitBlock(block);
-    WhereBlockRewriter.rewrite((WhereBlock)block, nodeCache);
+    WhereBlockRewriter.rewrite((WhereBlock)block, nodeCache, errorReporter);
   }
 
   public void visitMethodAgain(Method method) {
@@ -397,10 +402,10 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
       if (stat instanceof AssertStatement)
         iter.set(newStat);
       else if (isExceptionCondition(newStat)) {
-        throw new SyntaxException(newStat, "Exception conditions are only allowed in 'then' blocks");
-      } else if (statHasInteraction(newStat, deep)) {
-        throw new SyntaxException(newStat, "Interactions are only allowed in 'then' blocks");
-      } else if (isImplicitCondition(newStat)) {
+        errorReporter.error(newStat, "Exception conditions are only allowed in 'then' blocks");
+      } else if (statHasInteraction(newStat, deep))
+        errorReporter.error(newStat, "Interactions are only allowed in 'then' blocks");
+      else if (isImplicitCondition(newStat)) {
         iter.set(rewriteImplicitCondition(newStat));
         methodHasCondition = true;
       }
@@ -451,12 +456,18 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
   }
 
   private void rewriteExceptionCondition(Statement stat, boolean hasExceptionCondition) {
-    if (hasExceptionCondition)
-      throw new SyntaxException(stat, "a 'then' block may only contain one exception condition");
+    if (hasExceptionCondition) {
+      errorReporter.error(stat, "a 'then' block may only contain one exception condition");
+      return;
+    }
 
     Expression expr = AstUtil.getExpression(stat, Expression.class);
-    assert expr != null;   
-    AstUtil.expandBuiltinMemberDeclOrCall(expr, thrownExceptionRef);
+    assert expr != null;
+    try {
+      AstUtil.expandBuiltinMemberDeclOrCall(expr, thrownExceptionRef);
+    } catch (SpecCompileException e) {
+      errorReporter.error(e);
+    }
   }
 
   private boolean statHasInteraction(Statement stat, DeepStatementRewriter deep) {
@@ -574,6 +585,14 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
     return spec.getSetup();
   }
 
+  public String getSourceText(ASTNode node) {
+    return lookup.lookup(node);
+  }
+
+  public ErrorReporter getErrorReporter() {
+    return errorReporter;
+  }
+
   private FixtureMethod getSetupSpec() {
     if (spec.getSetupSpec() == null) {
       // method is private s.t. multiple setupSpec methods along hierarchy can be called independently
@@ -586,10 +605,6 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
     }
 
     return spec.getSetupSpec();
-  }
-
-  public String getSourceText(ASTNode node) {
-    return lookup.lookup(node);
   }
 
   private void rewriteWhenBlockForExceptionCondition(WhenBlock block) {

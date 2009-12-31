@@ -24,7 +24,6 @@ import org.codehaus.groovy.ast.stmt.Statement;
 
 import static org.spockframework.compiler.Identifiers.*;
 import org.spockframework.compiler.model.*;
-import org.spockframework.util.SyntaxException;
 
 import spock.lang.Shared;
 
@@ -35,9 +34,15 @@ import spock.lang.Shared;
  * @author Peter Niederwieser
  */
 public class SpecParser implements GroovyClassVisitor {
+  private final ErrorReporter errorReporter;
+
   private Spec spec;
   private int fieldCount = 0;
   private int featureMethodCount = 0;
+
+  public SpecParser(ErrorReporter errorReporter) {
+    this.errorReporter = errorReporter;
+  }
 
   public Spec build(ClassNode clazz) {
     spec = new Spec(clazz);
@@ -51,7 +56,7 @@ public class SpecParser implements GroovyClassVisitor {
 
   public void visitField(FieldNode gField) {
     PropertyNode owner = spec.getAst().getProperty(gField.getName());
-    // precaution against internal internal fields that aren't marked as synthetic
+    // precaution against internal fields that aren't marked as synthetic
     if (gField.getName().startsWith("$")) return;
     if (gField.isStatic() || (gField.isSynthetic() && owner == null)) return;
 
@@ -66,7 +71,7 @@ public class SpecParser implements GroovyClassVisitor {
   public void visitConstructor(ConstructorNode constructor) {
     if (AstUtil.isSynthetic(constructor)) return;
 
-    throw new SyntaxException(constructor,
+    errorReporter.error(constructor,
 "Constructors are not allowed; instead, define a 'setup()' or 'setupSpec()' method");
    }
 
@@ -85,16 +90,18 @@ public class SpecParser implements GroovyClassVisitor {
   }
 
   // IDEA: check for misspellings other than wrong capitalization
-  private static boolean isFixtureMethod(MethodNode method) {
+  private boolean isFixtureMethod(MethodNode method) {
     String name = method.getName();
 
     for (String fmName : FIXTURE_METHODS) {
       if (!fmName.equalsIgnoreCase(name)) continue;
 
-      if (!fmName.equals(name))
-        throw new SyntaxException(method, "Misspelled '%s()' method (wrong capitalization)", fmName);
+      // assertion: is (meant to be) a fixture method, so we'll return true in the end
+      
       if (method.isStatic())
-        throw new SyntaxException(method, "Fixture methods must not be static");
+        errorReporter.error(method, "Fixture methods must not be static");
+      if (!fmName.equals(name))
+        errorReporter.error(method, "Misspelled '%s()' method (wrong capitalization)", fmName);
 
       return true;
     }
@@ -125,13 +132,14 @@ public class SpecParser implements GroovyClassVisitor {
   // - public visibility (and no fixture method)
   // - no visibility modifier (and no fixture method) (source lookup required?)
   // - method name given as string literal (requires source lookup)
-  private static boolean isFeatureMethod(MethodNode method) {
+  private boolean isFeatureMethod(MethodNode method) {
     for (Statement stat : AstUtil.getStatements(method)) {
       String label = stat.getStatementLabel();
       if (label == null) continue;
 
+      // assertion: is (meant to be) a feature method, so we'll return true in the end
       if (method.isStatic())
-        throw new SyntaxException(method, "Feature methods must not be static");
+        errorReporter.error(method, "Feature methods must not be static");
 
       return true;
     }
@@ -141,8 +149,13 @@ public class SpecParser implements GroovyClassVisitor {
 
   private void buildFeatureMethod(MethodNode method) {
     Method feature = new FeatureMethod(spec, method, featureMethodCount++);
+    try {
+      buildBlocks(feature);
+    } catch (SpecCompileException e) {
+      errorReporter.error(e);
+      return;
+    }
     spec.getMethods().add(feature);
-    buildBlocks(feature);
   }
 
   private void buildHelperMethod(MethodNode method) {  
@@ -155,7 +168,7 @@ public class SpecParser implements GroovyClassVisitor {
     stats.clear();
   }
 
-  private void buildBlocks(Method method) {
+  private void buildBlocks(Method method) throws SpecCompileException {
     List<Statement> stats = AstUtil.getStatements(method.getAst());
     Block currBlock = method.addBlock(new AnonymousBlock(method));
 
@@ -174,7 +187,7 @@ public class SpecParser implements GroovyClassVisitor {
     stats.clear();
   }
 
-  private Block addBlock(Method method, Statement stat) {
+  private Block addBlock(Method method, Statement stat) throws SpecCompileException {
     String label = stat.getStatementLabel();
 
     for (BlockParseInfo blockInfo: BlockParseInfo.values()) {
@@ -191,7 +204,7 @@ public class SpecParser implements GroovyClassVisitor {
       return block;
 		}
 
-		throw new SyntaxException(stat, "Unrecognized block label: " + label);
+		throw new SpecCompileException(stat, "Unrecognized block label: " + label);
   }
 
   private String getDescription(Statement stat) {
@@ -200,10 +213,11 @@ public class SpecParser implements GroovyClassVisitor {
         null : (String)constExpr.getValue();
   }
 
-  private void checkIsValidSuccessor(Method method, BlockParseInfo blockInfo, int line, int column) {
+  private void checkIsValidSuccessor(Method method, BlockParseInfo blockInfo, int line, int column)
+      throws SpecCompileException {
     BlockParseInfo oldBlockInfo = method.getLastBlock().getParseInfo();
     if (!oldBlockInfo.getSuccessors(method).contains(blockInfo))
-      throw new SyntaxException(line, column, "'%s' is not allowed here; instead, use one of: %s",
+      throw new SpecCompileException(line, column, "'%s' is not allowed here; instead, use one of: %s",
           blockInfo, oldBlockInfo.getSuccessors(method), method.getName(), oldBlockInfo, blockInfo);
   }
 }

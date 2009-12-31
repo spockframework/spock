@@ -17,7 +17,7 @@
 package org.spockframework.smoke
 
 import org.spockframework.EmbeddedSpecification
-import org.spockframework.util.SpockSyntaxException
+import org.spockframework.compiler.SpecCompileException
 
 class AccessingOldValues extends EmbeddedSpecification {
   def "basic usage"() {
@@ -110,7 +110,7 @@ class AccessingOldValues extends EmbeddedSpecification {
     """
 
     then:
-    SpockSyntaxException e = thrown()
+    SpecCompileException e = thrown()
     e.line == 2
   }
 

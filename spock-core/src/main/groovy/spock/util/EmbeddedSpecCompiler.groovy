@@ -20,12 +20,15 @@ import org.codehaus.groovy.control.MultipleCompilationErrorsException
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.spockframework.runtime.SpecUtil
+import org.spockframework.util.NotThreadSafe
 
 /**
- * Utility class for creating Specs from String source. <em>Not</em> thread-safe.
+ * Utility class for programmatically compiling specs.
+ * Mainly intended for testing purposes.
  * 
  * @author Peter Niederwieser
  */
+@NotThreadSafe
 class EmbeddedSpecCompiler {
   final GroovyClassLoader loader = new GroovyClassLoader()
 
@@ -58,13 +61,13 @@ class EmbeddedSpecCompiler {
   }
 
   Class compileSpecBody(String source) {
-    // one-liner keeps line numbers intact
-    compileWithImports("class ASpec extends Specification { ${source.trim()} }")[0]
+    // one-liner keeps line numbers intact; newline safeguards against source ending in a line comment
+    compileWithImports("class ASpec extends Specification { ${source.trim() + '\n'} }")[0]
   }
 
   Class compileFeatureBody(String source) {
-    // one-liner keeps line numbers intact
-    compileSpecBody "def 'a feature'() { ${source.trim()} }"
+    // one-liner keeps line numbers intact; newline safeguards against source ending in a line comment
+    compileSpecBody "def 'a feature'() { ${source.trim() + '\n'} }"
   }
 
   private boolean isJUnitTest(Class clazz) {

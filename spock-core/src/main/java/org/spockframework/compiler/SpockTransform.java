@@ -24,12 +24,11 @@ import org.codehaus.groovy.transform.ASTTransformation;
 import org.codehaus.groovy.transform.GroovyASTTransformation;
 
 import org.spockframework.compiler.model.Spec;
-import org.spockframework.util.SyntaxException;
 
 /**
- * AST transformation for rewriting Spock specifications. Runs in phase
- * SEMANTIC_ANALYSIS, which provides a semantically "correct" AST that
- * is also decorated with reflection information. On the flip side,
+ * AST transformation for rewriting Spock specifications. Runs after phase
+ * SEMANTIC_ANALYSIS, which means that the AST is semantically accurate
+ * and already decorated with reflection information. On the flip side,
  * because types and variables have already been resolved,
  * program elements like import statements and variable definitions
  * can no longer be manipulated at will.
@@ -41,35 +40,34 @@ public class SpockTransform implements ASTTransformation {
   private static final AstNodeCache nodeCache = new AstNodeCache();
 
   public void visit(ASTNode[] nodes, SourceUnit sourceUnit) {
-    SourceLookup lookup = null;
+    ErrorReporter errorReporter = new ErrorReporter(sourceUnit);
+    SourceLookup sourceLookup = new SourceLookup(sourceUnit, new Janitor());
 
     try {
       ModuleNode module = (ModuleNode)nodes[0];
-
-      lookup = new SourceLookup(sourceUnit, new Janitor());
       @SuppressWarnings("unchecked")
-      List<ClassNode> classes =  (List<ClassNode>)module.getClasses();
+      List<ClassNode> classes =  module.getClasses();
 
-      for (ClassNode clazz : classes) {
-        if (!isSpec(clazz)) continue;
-        
-        Spec spec = new SpecParser().build(clazz);
-        spec.accept(new SpecRewriter(nodeCache, lookup));
-        spec.accept(new SpecAnnotator(nodeCache));
-      }
-    } catch (SyntaxException e) {
-      sourceUnit.getErrorCollector().addError(e.toSpockSyntaxException(), sourceUnit);
-    } catch (Exception e) {
-      // NOTE: this produces an uninformative error message in IDEA
-      // ("an unknown error has occurred")
-      sourceUnit.getErrorCollector().addError(
-          new TransformErrorMessage(sourceUnit, e, true));
+      for (ClassNode clazz : classes)
+        if (isSpec(clazz)) processSpec(clazz, errorReporter, sourceLookup);     
     } finally {
-      if (lookup != null) lookup.close();
+      sourceLookup.close();
     }
   }
 
   private boolean isSpec(ClassNode clazz) {
     return clazz.isDerivedFrom(nodeCache.Specification);
+  }
+
+  private void processSpec(ClassNode clazz, ErrorReporter errorReporter, SourceLookup sourceLookup) {
+    try {
+      Spec spec = new SpecParser(errorReporter).build(clazz);
+      spec.accept(new SpecRewriter(nodeCache, sourceLookup, errorReporter));
+      spec.accept(new SpecAnnotator(nodeCache));
+    } catch (Exception e) {
+      errorReporter.error(
+"Unexpected error during compilation of specification '%s'. Maybe you have used invalid Spock syntax? Anyway, this should not happen. Please file a bug report at http://issues.spockframework.org.",
+          clazz.getName());
+    }
   }
 }

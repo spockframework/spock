@@ -18,12 +18,15 @@ package spock.util
 
 import org.junit.runner.notification.RunListener
 import org.junit.runner.*
+import org.spockframework.util.NotThreadSafe
 
 /**
- * Utility class for running Specs from String source.
+ * Utility class for programmatically running specs with JUnit.
+ * Mainly intended for testing purposes.
  *
  * @author Peter Niederwieser
  */
+@NotThreadSafe
 class EmbeddedSpecRunner {
   private final EmbeddedSpecCompiler compiler = new EmbeddedSpecCompiler(unwrapCompileException: false)
 

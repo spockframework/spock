@@ -75,6 +75,36 @@ class Derived extends Base {
     derived.log == ["ss1", "ss2", "s1", "s2", "c2", "c1", "cs2", "cs1"]
   }
 
+  @Ignore("TODO")
+  def "cannot call super.setup()"() {
+    def classes = compiler.compileWithImports("""
+class Base extends Specification {
+  def $method() {}
+}
+
+class Derived extends Base {
+  def $method() {
+    super.$method()
+  }
+
+  def feature() {
+    expect: true
+  }
+}
+    """)
+
+    def derived = classes.find { it.simpleName == "Derived" }
+
+    when:
+    runner.runClass(derived)
+
+    then:
+    thrown(Exception)
+
+    where:
+    method << ["setup", "cleanup", "setupSpec", "cleanupSpec"]
+  }
+
   def "feature methods are run in correct order"() {
     def classes = compiler.compileWithImports("""
 class Base extends Specification {

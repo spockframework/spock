@@ -24,7 +24,6 @@ import org.codehaus.groovy.ast.stmt.AssertStatement;
 import org.codehaus.groovy.ast.stmt.ExpressionStatement;
 
 import org.spockframework.compiler.model.*;
-import org.spockframework.util.SyntaxException;
 
 /**
  * Walks the statement and expression tree to rewrite explicit conditions,
@@ -126,7 +125,12 @@ public class DeepStatementRewriter extends StatementReplacingVisitorSupport {
   @Override
   public void visitBinaryExpression(BinaryExpression expr) {
     if (AstUtil.isBuiltinMemberDecl(expr, Identifiers.MOCK, 0, 1))
-      AstUtil.expandBuiltinMemberDecl(expr, resourceProvider.getMockControllerRef());
+      try {
+        AstUtil.expandBuiltinMemberDecl(expr, resourceProvider.getMockControllerRef());
+      } catch (SpecCompileException e) {
+        resourceProvider.getErrorReporter().error(e);
+        return;
+      }
 
     // only descend after we have expanded Specification.Mock so that it's not
     // expanded by visit(Static)MethodCallExpression instead
@@ -139,6 +143,7 @@ public class DeepStatementRewriter extends StatementReplacingVisitorSupport {
     handlePredefMockAndPredefOld(expr);
   }
 
+  // TODO: do we still need this now that everything extends Specification?
   @Override
   public void visitStaticMethodCallExpression(StaticMethodCallExpression expr) {
     super.visitStaticMethodCallExpression(expr);
@@ -153,12 +158,18 @@ public class DeepStatementRewriter extends StatementReplacingVisitorSupport {
   }
 
   private void handlePredefMock(Expression expr) {
-    AstUtil.expandBuiltinMemberCall(expr, resourceProvider.getMockControllerRef());
+    try {
+      AstUtil.expandBuiltinMemberCall(expr, resourceProvider.getMockControllerRef());
+    } catch (SpecCompileException e) {
+      resourceProvider.getErrorReporter().error(e);
+    }
   }
 
   private void handlePredefOld(Expression expr) {
-    if (!(resourceProvider.getCurrentBlock() instanceof ThenBlock))
-      throw new SyntaxException(expr, "old() may only be used in a 'then' block");
+    if (!(resourceProvider.getCurrentBlock() instanceof ThenBlock)) {
+      resourceProvider.getErrorReporter().error(expr, "old() may only be used in a 'then' block");
+      return;
+    }
 
     List<Expression> args = AstUtil.getArguments(expr);
     VariableExpression oldValue = resourceProvider.captureOldValue(args.get(0));

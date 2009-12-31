@@ -18,7 +18,7 @@ package org.spockframework.smoke
 
 import org.spockframework.EmbeddedSpecification
 import org.spockframework.runtime.SpecInfoBuilder
-import org.spockframework.util.SpockSyntaxException
+import org.spockframework.compiler.SpecCompileException
 import static org.spockframework.runtime.model.BlockKind.*
 
 class Blocks extends EmbeddedSpecification {
@@ -75,7 +75,7 @@ setuppp: def a = 1
     """)
 
     then:
-    SpockSyntaxException e = thrown()
+    SpecCompileException e = thrown()
     e.line == 1
   }
 }

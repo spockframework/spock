@@ -17,7 +17,7 @@
 package org.spockframework.smoke.parameterization
 
 import org.spockframework.EmbeddedSpecification
-import org.spockframework.util.SpockSyntaxException
+import org.spockframework.compiler.SpecCompileException
 import spock.lang.Issue
 
 /**
@@ -38,7 +38,7 @@ y << [1, 2]
     """
 
     then:
-    thrown(SpockSyntaxException)
+    thrown(SpecCompileException)
   }
 
   def "data variable collides with instance field"() {
@@ -56,7 +56,7 @@ def foo() {
     """
 
     then:
-    thrown(SpockSyntaxException)
+    thrown(SpecCompileException)
   }
 
   def "data variable collides with static field"() {
@@ -74,7 +74,7 @@ def foo() {
     """
 
     then:
-    thrown(SpockSyntaxException)
+    thrown(SpecCompileException)
   }
 
   def "duplicate data variable"() {
@@ -89,7 +89,7 @@ x << 2
     """
 
     then:
-    thrown(SpockSyntaxException)
+    thrown(SpecCompileException)
   }
 
   @Issue("http://issues.spockframework.org/detail?id=14")
@@ -104,6 +104,6 @@ where:
     """
 
     then:
-    thrown(SpockSyntaxException)
+    thrown(SpecCompileException)
   }
 }

@@ -38,4 +38,5 @@ public interface IRewriteResourceProvider {
   VariableExpression getMockControllerRef();
   AstNodeCache getAstNodeCache();
   String getSourceText(ASTNode node);
+  ErrorReporter getErrorReporter();
 }

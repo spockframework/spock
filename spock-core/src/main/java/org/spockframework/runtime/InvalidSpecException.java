@@ -14,20 +14,33 @@
  * limitations under the License.
  */
 
-package org.spockframework.util;
-
-import org.codehaus.groovy.ast.ASTNode;
+package org.spockframework.runtime;
 
 /**
+ * Indicates that a Spec has done something it is not supposed to do. It is up
+ * to the Spec author to correct the problem.
  *
  * @author Peter Niederwieser
  */
-public class SpockSyntaxException extends org.codehaus.groovy.syntax.SyntaxException {
-  public SpockSyntaxException(String msg, int line, int column) {
-    super(msg, line, column);
+public class InvalidSpecException extends RuntimeException {
+  private String msg;
+
+  public InvalidSpecException(String msg) {
+    this(msg, null);
   }
 
-  public SpockSyntaxException(String msg, ASTNode node) {
-    this(msg, node.getLineNumber(), node.getColumnNumber());
+  public InvalidSpecException(String msg, Throwable throwable) {
+    super(throwable);
+    this.msg = msg;
+  }
+
+  public InvalidSpecException format(Object... args) {
+    msg = String.format(msg, args);
+    return this;
+  }
+
+  @Override
+  public String getMessage() {
+    return msg;
   }
 }

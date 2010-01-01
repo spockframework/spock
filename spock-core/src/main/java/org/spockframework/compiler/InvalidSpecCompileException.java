@@ -20,10 +20,11 @@ import org.codehaus.groovy.ast.ASTNode;
 import org.codehaus.groovy.syntax.SyntaxException;
 
 /**
- * Indicates that a user error was found in a spec during compilation.
- * As such, InvalidSpecCompileException is the compile-time equivalent of InvalidSpecException.
- * Inherits from SyntaxException to be able to provide line information in all
- * environments (IDEs etc.).
+ * Indicates that a spec was found to contain a (syntactic or semantic)
+ * error during compilation. As such, this is the compile-time equivalent
+ * of InvalidSpecException.
+ * Inherits from SyntaxException so that line information can
+ * be exploited by integrators (IDEs etc.).
  *
  * Most of the time it is not necessary to use this class directly (see
  * documentation of class ErrorReporter).

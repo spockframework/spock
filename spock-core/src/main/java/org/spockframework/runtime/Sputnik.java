@@ -21,7 +21,6 @@ import org.junit.runner.Runner;
 import org.junit.runner.manipulation.*;
 import org.junit.runner.notification.RunNotifier;
 
-import org.spockframework.runtime.*;
 import org.spockframework.runtime.model.SpecInfo;
 
 /**

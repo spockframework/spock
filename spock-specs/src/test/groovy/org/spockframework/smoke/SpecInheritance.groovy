@@ -19,6 +19,7 @@ package org.spockframework.smoke
 import org.spockframework.EmbeddedSpecification
 
 import spock.lang.*
+import org.spockframework.compiler.SpecCompileException
 
 class SpecInheritance extends EmbeddedSpecification {
   def "fixture methods are run in correct order"() {
@@ -75,9 +76,9 @@ class Derived extends Base {
     derived.log == ["ss1", "ss2", "s1", "s2", "c2", "c1", "cs2", "cs1"]
   }
 
-  @Ignore("TODO")
-  def "cannot call super.setup()"() {
-    def classes = compiler.compileWithImports("""
+  def "cannot call super method from fixture method"() {
+    when:
+    compiler.compileWithImports("""
 class Base extends Specification {
   def $method() {}
 }
@@ -93,13 +94,8 @@ class Derived extends Base {
 }
     """)
 
-    def derived = classes.find { it.simpleName == "Derived" }
-
-    when:
-    runner.runClass(derived)
-
     then:
-    thrown(Exception)
+    thrown(SpecCompileException)
 
     where:
     method << ["setup", "cleanup", "setupSpec", "cleanupSpec"]

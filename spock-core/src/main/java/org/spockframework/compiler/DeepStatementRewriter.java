@@ -26,9 +26,13 @@ import org.codehaus.groovy.ast.stmt.ExpressionStatement;
 import org.spockframework.compiler.model.*;
 
 /**
- * Walks the statement and expression tree to rewrite explicit conditions,
- * interactions, and Specification members. Also records whether conditions and
- * interactions were found.
+ * Walks the statement and expression tree to:
+ * - rewrite explicit conditions,
+ * - rewrite interactions,
+ * - rewrite core language primitives (members of class Specification)
+ * - Forbid
+ * 
+ * Also records whether conditions and interactions were found.
  *
  * @author Peter Niederwieser
  */
@@ -140,14 +144,25 @@ public class DeepStatementRewriter extends StatementReplacingVisitorSupport {
   @Override
   public void visitMethodCallExpression(MethodCallExpression expr) {
     super.visitMethodCallExpression(expr);
+    forbidUseOfSuperInFixtureMethod(expr);
     handlePredefMockAndPredefOld(expr);
   }
 
-  // TODO: do we still need this now that everything extends Specification?
-  @Override
-  public void visitStaticMethodCallExpression(StaticMethodCallExpression expr) {
-    super.visitStaticMethodCallExpression(expr);
-    handlePredefMockAndPredefOld(expr);
+  // Flag the use of super.foo() in fixture method foo,
+  // because it is most likely a mistake (user thinks he is overriding
+  // the base method and doesn't know that it will be run automatically).
+  private void forbidUseOfSuperInFixtureMethod(MethodCallExpression expr) {
+    Method currMethod = resourceProvider.getCurrentMethod();
+    Expression target = expr.getObjectExpression();
+    
+    if (currMethod instanceof FixtureMethod
+        && target instanceof VariableExpression
+        && ((VariableExpression)target).isSuperExpression()
+        && currMethod.getName().equals(expr.getMethodAsString())) {
+      resourceProvider.getErrorReporter().error(expr,
+        "A base class fixture method should not be called explicitely " +
+        "because it is always run automatically by the framework");
+    }
   }
 
   private void handlePredefMockAndPredefOld(Expression expr) {

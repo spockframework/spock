@@ -19,8 +19,7 @@ package spock.lang;
 import org.junit.runner.RunWith;
 
 import org.spockframework.mock.MockController;
-import org.spockframework.runtime.InvalidSpecException;
-import org.spockframework.runtime.WrongExceptionThrownError;
+import org.spockframework.runtime.*;
 
 import groovy.lang.Closure;
 

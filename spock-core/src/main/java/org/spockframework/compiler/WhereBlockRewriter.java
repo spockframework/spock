@@ -60,7 +60,7 @@ public class WhereBlockRewriter {
     for (Statement stat : whereBlock.getAst())
       try {
         rewriteWhereStat(stat);
-      } catch (SpecCompileException e) {
+      } catch (InvalidSpecCompileException e) {
         errorReporter.error(e);
       }
 
@@ -69,7 +69,7 @@ public class WhereBlockRewriter {
     createDataProcessorMethod();
   }
 
-  private void rewriteWhereStat(Statement stat) throws SpecCompileException {
+  private void rewriteWhereStat(Statement stat) throws InvalidSpecCompileException {
     BinaryExpression binExpr = AstUtil.getExpression(stat, BinaryExpression.class);
     if (binExpr == null || binExpr.getClass() != BinaryExpression.class) // don't allow subclasses like DeclarationExpression
       notAParameterization(stat);
@@ -133,7 +133,7 @@ public class WhereBlockRewriter {
 
   // generates: arg = argMethodParam
   private void rewriteSimpleParameterization(VariableExpression arg, Parameter dataProcessorParameter,
-      Statement enclosingStat) throws SpecCompileException {
+      Statement enclosingStat) throws InvalidSpecCompileException {
     VariableExpression dataVar = createDataProcessorVariable(arg, enclosingStat);
     ExpressionStatement exprStat = new ExpressionStatement(
         new DeclarationExpression(
@@ -148,7 +148,7 @@ public class WhereBlockRewriter {
   // arg0 = argMethodParam.getAt(0)
   // arg1 = argMethodParam.getAt(1)
   private void rewriteMultiParameterization(ListExpression list, Parameter dataProcessorParameter,
-      Statement enclosingStat) throws SpecCompileException {
+      Statement enclosingStat) throws InvalidSpecCompileException {
     @SuppressWarnings("unchecked")
     List<Expression> listElems = list.getExpressions();
     for (int i = 0; i < listElems.size(); i++) {
@@ -170,7 +170,7 @@ public class WhereBlockRewriter {
   }
 
   private void rewriteDerivedParameterization(BinaryExpression parameterization, Statement enclosingStat)
-      throws SpecCompileException {
+      throws InvalidSpecCompileException {
     VariableExpression dataVar = createDataProcessorVariable(parameterization.getLeftExpression(), enclosingStat);
 
     ExpressionStatement exprStat =
@@ -185,7 +185,7 @@ public class WhereBlockRewriter {
   }
 
   private VariableExpression createDataProcessorVariable(Expression varExpr, Statement enclosingStat)
-      throws SpecCompileException {
+      throws InvalidSpecCompileException {
     if (!(varExpr instanceof VariableExpression))
       notAParameterization(enclosingStat);
 
@@ -265,8 +265,8 @@ public class WhereBlockRewriter {
               new VariableScope())));
   }
 
-  private static void notAParameterization(Statement stat) throws SpecCompileException {
-    throw new SpecCompileException(stat,
+  private static void notAParameterization(Statement stat) throws InvalidSpecCompileException {
+    throw new InvalidSpecCompileException(stat,
 "where-blocks may only contain parameterizations (e.g. 'salary << [1000, 5000, 9000]; salaryk = salary / 1000')");
   }
 }

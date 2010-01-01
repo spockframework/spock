@@ -19,7 +19,7 @@ package org.spockframework.smoke
 import org.spockframework.EmbeddedSpecification
 
 import spock.lang.*
-import org.spockframework.compiler.SpecCompileException
+import org.spockframework.compiler.InvalidSpecCompileException
 
 class SpecInheritance extends EmbeddedSpecification {
   def "fixture methods are run in correct order"() {
@@ -95,7 +95,7 @@ class Derived extends Base {
     """)
 
     then:
-    thrown(SpecCompileException)
+    thrown(InvalidSpecCompileException)
 
     where:
     method << ["setup", "cleanup", "setupSpec", "cleanupSpec"]

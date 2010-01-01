@@ -18,7 +18,7 @@ package org.spockframework.smoke.parameterization
 
 import org.codehaus.groovy.runtime.typehandling.GroovyCastException
 import org.spockframework.EmbeddedSpecification
-import org.spockframework.compiler.SpecCompileException
+import org.spockframework.compiler.InvalidSpecCompileException
 
 /**
  * @author Peter Niederwieser
@@ -42,7 +42,7 @@ def foo(int x, String y) {
     """
 
     then:
-    thrown(SpecCompileException)
+    thrown(InvalidSpecCompileException)
   }
 
   def "typed parameters"(Integer x, Integer y) {
@@ -104,7 +104,7 @@ def foo(x) {
     """
 
     then:
-    thrown(SpecCompileException)
+    thrown(InvalidSpecCompileException)
   }
 
 
@@ -122,7 +122,7 @@ def foo(x, y, z) {
     """
 
     then:
-    thrown(SpecCompileException)
+    thrown(InvalidSpecCompileException)
   }
 
   def "parameter that is not a data variable"() {
@@ -138,7 +138,7 @@ def foo(x, a) {
     """
 
     then:
-    thrown(SpecCompileException)
+    thrown(InvalidSpecCompileException)
   }
 
   def "data variable that is not a parameter"() {
@@ -154,7 +154,7 @@ def foo(x) {
     """
 
     then:
-    thrown(SpecCompileException)
+    thrown(InvalidSpecCompileException)
 
     where:
     parameterizations << [

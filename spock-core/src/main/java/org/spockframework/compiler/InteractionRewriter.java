@@ -60,7 +60,7 @@ public class InteractionRewriter {
 
     try {
       parse(stat);
-    } catch (SpecCompileException e) {
+    } catch (InvalidSpecCompileException e) {
       resourceProvider.getErrorReporter().error(e);
       return stat;
     }
@@ -74,7 +74,7 @@ public class InteractionRewriter {
     return register();
   }
 
-  private void parse(ExpressionStatement stat) throws SpecCompileException {
+  private void parse(ExpressionStatement stat) throws InvalidSpecCompileException {
     this.stat = stat;
     Expression expr = stat.getExpression();
 
@@ -94,7 +94,7 @@ public class InteractionRewriter {
       boolean leftIsInvocation = isPotentialMockInvocation(binExpr.getLeftExpression());
       boolean rightIsInvocation = isPotentialMockInvocation(binExpr.getRightExpression());
       if (leftIsInvocation && rightIsInvocation)
-        throw new SpecCompileException(binExpr,
+        throw new InvalidSpecCompileException(binExpr,
 "Ambiguous interaction definition: cannot tell count from call. Help me by introducing a variable for count.");
       if (leftIsInvocation) {
         expr = binExpr.getLeftExpression();
@@ -102,7 +102,7 @@ public class InteractionRewriter {
       } else if (rightIsInvocation) {
         expr = binExpr.getRightExpression();
         count = binExpr.getLeftExpression();
-      } else throw new SpecCompileException(binExpr,
+      } else throw new InvalidSpecCompileException(binExpr,
 "* indicates an interaction definition, but neither the left nor the right side looks like a method call to me");
     }
 

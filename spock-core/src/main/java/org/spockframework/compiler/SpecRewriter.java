@@ -465,7 +465,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
     assert expr != null;
     try {
       AstUtil.expandBuiltinMemberDeclOrCall(expr, thrownExceptionRef);
-    } catch (SpecCompileException e) {
+    } catch (InvalidSpecCompileException e) {
       errorReporter.error(e);
     }
   }

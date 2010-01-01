@@ -151,7 +151,7 @@ public class SpecParser implements GroovyClassVisitor {
     Method feature = new FeatureMethod(spec, method, featureMethodCount++);
     try {
       buildBlocks(feature);
-    } catch (SpecCompileException e) {
+    } catch (InvalidSpecCompileException e) {
       errorReporter.error(e);
       return;
     }
@@ -168,7 +168,7 @@ public class SpecParser implements GroovyClassVisitor {
     stats.clear();
   }
 
-  private void buildBlocks(Method method) throws SpecCompileException {
+  private void buildBlocks(Method method) throws InvalidSpecCompileException {
     List<Statement> stats = AstUtil.getStatements(method.getAst());
     Block currBlock = method.addBlock(new AnonymousBlock(method));
 
@@ -187,7 +187,7 @@ public class SpecParser implements GroovyClassVisitor {
     stats.clear();
   }
 
-  private Block addBlock(Method method, Statement stat) throws SpecCompileException {
+  private Block addBlock(Method method, Statement stat) throws InvalidSpecCompileException {
     String label = stat.getStatementLabel();
 
     for (BlockParseInfo blockInfo: BlockParseInfo.values()) {
@@ -204,7 +204,7 @@ public class SpecParser implements GroovyClassVisitor {
       return block;
 		}
 
-		throw new SpecCompileException(stat, "Unrecognized block label: " + label);
+		throw new InvalidSpecCompileException(stat, "Unrecognized block label: " + label);
   }
 
   private String getDescription(Statement stat) {
@@ -214,10 +214,10 @@ public class SpecParser implements GroovyClassVisitor {
   }
 
   private void checkIsValidSuccessor(Method method, BlockParseInfo blockInfo, int line, int column)
-      throws SpecCompileException {
+      throws InvalidSpecCompileException {
     BlockParseInfo oldBlockInfo = method.getLastBlock().getParseInfo();
     if (!oldBlockInfo.getSuccessors(method).contains(blockInfo))
-      throw new SpecCompileException(line, column, "'%s' is not allowed here; instead, use one of: %s",
+      throw new InvalidSpecCompileException(line, column, "'%s' is not allowed here; instead, use one of: %s",
           blockInfo, oldBlockInfo.getSuccessors(method), method.getName(), oldBlockInfo, blockInfo);
   }
 }

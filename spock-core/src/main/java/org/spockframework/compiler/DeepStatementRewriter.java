@@ -131,7 +131,7 @@ public class DeepStatementRewriter extends StatementReplacingVisitorSupport {
     if (AstUtil.isBuiltinMemberDecl(expr, Identifiers.MOCK, 0, 1))
       try {
         AstUtil.expandBuiltinMemberDecl(expr, resourceProvider.getMockControllerRef());
-      } catch (SpecCompileException e) {
+      } catch (InvalidSpecCompileException e) {
         resourceProvider.getErrorReporter().error(e);
         return;
       }
@@ -148,9 +148,9 @@ public class DeepStatementRewriter extends StatementReplacingVisitorSupport {
     handlePredefMockAndPredefOld(expr);
   }
 
-  // Flag the use of super.foo() in fixture method foo,
+  // Forbid the use of super.foo() in fixture method foo,
   // because it is most likely a mistake (user thinks he is overriding
-  // the base method and doesn't know that it will be run automatically).
+  // the base method and doesn't know that it will be run automatically)
   private void forbidUseOfSuperInFixtureMethod(MethodCallExpression expr) {
     Method currMethod = resourceProvider.getCurrentMethod();
     Expression target = expr.getObjectExpression();
@@ -175,7 +175,7 @@ public class DeepStatementRewriter extends StatementReplacingVisitorSupport {
   private void handlePredefMock(Expression expr) {
     try {
       AstUtil.expandBuiltinMemberCall(expr, resourceProvider.getMockControllerRef());
-    } catch (SpecCompileException e) {
+    } catch (InvalidSpecCompileException e) {
       resourceProvider.getErrorReporter().error(e);
     }
   }

@@ -22,9 +22,9 @@ import org.codehaus.groovy.control.messages.SyntaxErrorMessage;
 /**
  * Reporting facility for problems found during compilation.
  * In general, error(ASTNode) is the preferred method to use.
- * error(SpecCompileException) should only be used if compilation cannot
+ * error(InvalidSpecCompileException) should only be used if compilation cannot
  * continue in the same method where the error was found (because some
- * steps need to be skipped). In that case, a SpecCompileException should be
+ * steps need to be skipped). In that case, a InvalidSpecCompileException should be
  * thrown at the point where the error is detected, and an outer method
  * should catch the exception and pass it on to ErrorReporter.
  *
@@ -43,14 +43,14 @@ public class ErrorReporter {
   }
 
   public void error(ASTNode node, String msg, Object... args) {
-    error(new SpecCompileException(node, msg, args));
+    error(new InvalidSpecCompileException(node, msg, args));
   }
 
   public void error(int line, int column, String msg, Object... args) {
-    error(new SpecCompileException(line, column, msg, args));
+    error(new InvalidSpecCompileException(line, column, msg, args));
   }
 
-  public void error(SpecCompileException e) {
+  public void error(InvalidSpecCompileException e) {
     sourceUnit.getErrorCollector().addErrorAndContinue(new SyntaxErrorMessage(e, sourceUnit));
   }
 }

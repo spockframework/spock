@@ -17,7 +17,7 @@
 package org.spockframework.smoke
 
 import org.spockframework.EmbeddedSpecification
-import org.spockframework.compiler.SpecCompileException
+import org.spockframework.compiler.InvalidSpecCompileException
 
 /**
  * @author Peter Niederwieser
@@ -31,7 +31,7 @@ expect: thrown(RuntimeException)
     """)
 
     then:
-    thrown(SpecCompileException)
+    thrown(InvalidSpecCompileException)
   }
 
   def "may not contain interactions"() {
@@ -42,7 +42,7 @@ expect: l.size() >> 5
     """)
 
     then:
-    SpecCompileException e = thrown()
+    InvalidSpecCompileException e = thrown()
     e.line == 2
   }
 }

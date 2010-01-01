@@ -17,7 +17,7 @@
 package org.spockframework.smoke
 
 import org.spockframework.EmbeddedSpecification
-import org.spockframework.compiler.SpecCompileException
+import org.spockframework.compiler.InvalidSpecCompileException
 
 /**
  * @author Peter Niederwieser
@@ -30,7 +30,7 @@ def setUp() {}
     """)
 
     then:
-    thrown(SpecCompileException)
+    thrown(InvalidSpecCompileException)
   }
 
   def "misspelled cleanup causes compile error"() {
@@ -40,7 +40,7 @@ def cLeanup() {}
     """)
 
     then:
-    thrown(SpecCompileException)
+    thrown(InvalidSpecCompileException)
   }
 
   def "misspelled setupSpec causes compile error"() {
@@ -50,7 +50,7 @@ def setupspec() {}
     """)
 
     then:
-    thrown(SpecCompileException)
+    thrown(InvalidSpecCompileException)
   }
 
   def "misspelled cleanupSpec causes compile error"() {
@@ -60,7 +60,7 @@ def CleanupSpec() {}
     """)
 
     then:
-    thrown(SpecCompileException)
+    thrown(InvalidSpecCompileException)
   }
 
   def "correctly spelled setup compiles successfully"() {

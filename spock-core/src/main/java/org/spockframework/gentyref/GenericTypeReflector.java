@@ -332,6 +332,18 @@ public class GenericTypeReflector {
 		return result;
 	}
 
+  public static Type[] getExactParameterTypes(Method m, Type type) {
+    Type[] parameterTypes = m.getGenericParameterTypes();
+    Type exactDeclaringType = getExactSuperType(capture(type), m.getDeclaringClass());
+
+    Type[] result = new Type[parameterTypes.length];
+    for (int i = 0; i < parameterTypes.length; i++) {
+      result[i] = mapTypeParameters(parameterTypes[i], exactDeclaringType);
+    }
+
+    return result;
+  }
+  
 	/**
 	 * Returns the exact return type of the given method in the given type.
 	 * This may be different from <tt>m.getGenericReturnType()</tt> when the method was declared in a superclass,

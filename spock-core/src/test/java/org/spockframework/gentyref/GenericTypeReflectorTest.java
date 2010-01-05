@@ -28,4 +28,15 @@ public class GenericTypeReflectorTest extends AbstractGenericsReflectorTest {
 		assertEquals(Arrays.<Class<?>>asList(Number.class, Iterable.class),
 				GenericTypeReflector.getUpperBoundClassAndInterfaces(b));
 	}
+
+  public void testGetExactParameterTypes() throws Exception {
+    Method method = List.class.getMethod("set", int.class, Object.class);
+    assertArrayEquals(new Type[] {int.class, String.class},
+        GenericTypeReflector.getExactParameterTypes(method, LIST_OF_STRING.getType()));
+  }
+
+  public void testGetExactReturnType() throws Exception {
+    Method method = List.class.getMethod("set", int.class, Object.class);
+    assertEquals(String.class, GenericTypeReflector.getExactReturnType(method, LIST_OF_STRING.getType()));
+  }
 }

@@ -19,6 +19,8 @@ import java.lang.reflect.Method;
 import org.spockframework.runtime.model.FeatureMetadata;
 import org.spockframework.runtime.model.SpecMetadata;
 
+import spock.lang.Specification;
+
 /**
  * Utility methods related to specifications. Particularly useful when
  * integrating Spock with other environments (e.g. Grails).
@@ -29,20 +31,29 @@ public final class SpecUtil {
   private SpecUtil() {}
 
   /**
-   * Tells if the given class is a Spock specification.
+   * Tells if the given class is a Spock specification. Might return <tt>false</tt>
+   * even though the class implements <tt>spock.lang.Specification</tt>. This can
+   * happen if the class wasn't compiled properly (i.e. Spock's AST transform wasn't run).
    */
   public static boolean isSpec(Class<?> clazz) {
     return clazz.isAnnotationPresent(SpecMetadata.class);
   }
 
   /**
-   * Checks if the given class is a Spock specification, and throws an
-   * <tt>IllegalArgumentException</tt> if it is not.
+   * Checks if the given class is a Spock specification (according to <tt>isSpec()</tt>), 
+   * and throws an <tt>InvalidSpecException</tt> with a detailed explanation if it is not.
    */
   public static void checkIsSpec(Class<?> clazz) {
-    if (!isSpec(clazz))
-      throw new IllegalArgumentException(
-          String.format("class %s is not a Spock specification", clazz.getSimpleName()));
+    if (isSpec(clazz)) return;
+
+    if (Specification.class.isAssignableFrom(clazz))
+      throw new InvalidSpecException(
+"specification %s was not compiled properly (Spock AST transform was not run)"
+      ).format(clazz.getName());
+
+    throw new InvalidSpecException(
+"class %s is not a Spock specification (does not extend spock.lang.Specification or a subclass thereof)"
+    ).format(clazz.getName());
   }
 
   /**

@@ -28,10 +28,6 @@
       <artifactId>junit</artifactId>
     </dependency>
     <dependency>
-      <groupId>asm</groupId>
-      <artifactId>asm</artifactId>
-    </dependency>
-    <dependency>
       <groupId>org.apache.ant</groupId>
       <artifactId>ant-junit</artifactId>
       <version>1.7.1</version>

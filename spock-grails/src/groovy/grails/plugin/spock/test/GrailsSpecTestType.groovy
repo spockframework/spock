@@ -29,7 +29,6 @@ import org.codehaus.groovy.grails.test.support.GrailsTestTypeSupport
 import org.codehaus.groovy.grails.test.report.junit.JUnitReportsFactory
 
 class GrailsSpecTestType extends GrailsTestTypeSupport {
-  private final specFinder = new SpecClassFileFinder()
   private final List<Class> specClasses = []
   
   GrailsSpecTestType(String name, String relativeSourcePath) {
@@ -50,9 +49,8 @@ class GrailsSpecTestType extends GrailsTestTypeSupport {
   
   protected int doPrepare() {
       eachSourceFile { testTargetPattern, specSourceFile ->
-          def specClassFile = sourceFileToClassFile(specSourceFile)
           def specClass = sourceFileToClass(specSourceFile)
-          if (specFinder.isSpec(specClassFile)) specClasses << specClass
+          if (SpecUtil.isSpec(specClass)) specClasses << specClass
       }
     
       specClasses.sum 0, { SpecUtil.getFeatureCount(it) }

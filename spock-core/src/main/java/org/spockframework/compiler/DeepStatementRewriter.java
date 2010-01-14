@@ -20,8 +20,7 @@ import java.util.List;
 
 import org.codehaus.groovy.ast.*;
 import org.codehaus.groovy.ast.expr.*;
-import org.codehaus.groovy.ast.stmt.AssertStatement;
-import org.codehaus.groovy.ast.stmt.ExpressionStatement;
+import org.codehaus.groovy.ast.stmt.*;
 
 import org.spockframework.compiler.model.*;
 
@@ -90,7 +89,7 @@ public class DeepStatementRewriter extends StatementReplacingVisitorSupport {
     interactionFound = false;
     closureScope = expr.getVariableScope();
 
-    fixupClosureScope();
+    fixupParameters(closureScope, true);
     super.visitClosureExpression(expr);
     if (conditionFound) defineValueRecorder(expr);
 
@@ -103,7 +102,7 @@ public class DeepStatementRewriter extends StatementReplacingVisitorSupport {
     resourceProvider.defineValueRecorder(AstUtil.getStatements(expr));
   }
 
-  private void fixupClosureScope() {
+  private void fixupParameters(VariableScope scope, boolean isClosureScope) {
     Method method = resourceProvider.getCurrentMethod();
     if (!(method instanceof FeatureMethod)) return;
 
@@ -112,13 +111,20 @@ public class DeepStatementRewriter extends StatementReplacingVisitorSupport {
     // (parameterization variables used to be free variables,
     // but have been changed to method parameters by WhereBlockRewriter)
     for (Parameter param : method.getAst().getParameters()) {
-      Variable var = closureScope.getReferencedClassVariable(param.getName());
+      Variable var = scope.getReferencedClassVariable(param.getName());
       if (var instanceof DynamicVariable) {
-        closureScope.removeReferencedClassVariable(param.getName());
-        closureScope.putReferencedLocalVariable(param);
-        param.setClosureSharedVariable(true);
+        scope.removeReferencedClassVariable(param.getName());
+        scope.putReferencedLocalVariable(param);
+        if (isClosureScope)
+          param.setClosureSharedVariable(true);
       }
     }
+  }
+
+  @Override
+  public void visitBlockStatement(BlockStatement stat) {
+    super.visitBlockStatement(stat);
+    fixupParameters(stat.getVariableScope(), false);
   }
 
   @Override

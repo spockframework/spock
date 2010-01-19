@@ -13,17 +13,29 @@
  * limitations under the License.
  */
 
-import grails.plugin.spock.FunctionalSpecification
+package grails.plugin.spock
 
-class TestFunctionalSpecification extends FunctionalSpecification {
-  def simpleService
+import grails.plugin.spock.functional.WebSession
+import spock.lang.Shared
+
+class FunctionalSpec extends IntegrationSpec {
+  static baseUrl // set by the build infrastructure
   
-  def 'simple controller'() {
-    when:
-    simpleService.name = "something"
-    get("/simple")
-    
-    then:
-    response.contentAsString == 'something'
+  @Shared session
+  
+  def setupSpec() {
+    session = new WebSession(baseUrl)
+  }
+
+  def methodMissing(String name, args) {
+    session."$name"(*args)
+  }
+  
+  def propertyMissing(String name) {
+    session."$name"
+  }
+  
+  def propertyMissing(String name, value) {
+    session."$name" = value
   }
 }

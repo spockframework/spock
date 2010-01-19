@@ -13,9 +13,9 @@
  * limitations under the License.
  */
 
-import grails.plugin.spock.ControllerSpecification
+import grails.plugin.spock.ControllerSpec
 
-class TestControllerSpecification extends ControllerSpecification {
+class TestControllerSpec extends ControllerSpecification {
   def 'text action'() {
     when:
     controller.text()

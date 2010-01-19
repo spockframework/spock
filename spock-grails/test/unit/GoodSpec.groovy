@@ -14,23 +14,15 @@
  * limitations under the License.
  */
 
-import grails.plugin.spock.IntegrationSpecification
+import spock.lang.Specification
 
-class TestIntegrationSpecification extends IntegrationSpecification {
-  def simpleService
-
-  def "injected simpleService is present"() {
+class GoodSpec extends Specification {
+  def "can you figure out what I'm up to?"() {
     expect:
-    simpleService.name = input
-    simpleService.name == input
+    name.size() == size
 
     where:
-    input << ["bob"]
-  }
-
-  def "can write to database"() {
-    expect:
-    def p = new Person(name: 'n').save() != null
-    Person.findByName('n') != null
+    name << ["Kirk", "Spock", "Scotty"]
+    size << [4, 5, 6]
   }
 }

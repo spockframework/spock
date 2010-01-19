@@ -20,7 +20,7 @@ import grails.plugin.spock.functional.test.TestHttpServer
 import spock.lang.Shared
 import spock.lang.Specification
 
-class WebSessionSpecification extends Specification {
+class WebSessionSpec extends Specification {
   @Shared server
   @Shared session
 

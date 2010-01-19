@@ -13,9 +13,9 @@
  * limitations under the License.
  */
 
-import grails.plugin.spock.TagLibSpecification
+import grails.plugin.spock.TagLibSpec
 
-class TestTagLibSpecification extends TagLibSpecification {
+class TestTagLibSpec extends TagLibSpec {
   def 'bar tag'() {
     expect: 
     bar() == "<p>Hello World!</p>"

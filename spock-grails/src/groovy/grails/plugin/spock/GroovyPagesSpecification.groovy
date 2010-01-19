@@ -15,34 +15,4 @@
 
 package grails.plugin.spock
 
-import org.codehaus.groovy.grails.web.pages.GroovyPagesTemplateEngine
-import org.codehaus.groovy.grails.web.util.GrailsPrintWriter
-import org.springframework.web.context.request.RequestContextHolder
-
-class GroovyPagesSpecification extends IntegrationSpecification {
-  GroovyPagesTemplateEngine groovyPagesTemplateEngine // autowired
-  
-  String template = ''
-  Map params = [:]
-  Closure transform = { it.toString() }
-  
-  void setControllerName(String name) {
-    RequestContextHolder.currentRequestAttributes().controllerName = name
-  }
-  
-  def getOutput() {
-    assert groovyPagesTemplateEngine
-    
-    def webRequest = RequestContextHolder.currentRequestAttributes()
-    
-    def t = groovyPagesTemplateEngine.createTemplate(template, "test_"+ System.currentTimeMillis())
-    def w = t.make(params)
-
-    def sw = new StringWriter()
-    def out = new GrailsPrintWriter(sw)
-    webRequest.out = out
-    w.writeTo(out)
-
-    transform(sw)
-  }
-}
+class GroovyPagesSpecification extends GroovyPagesSpec {}

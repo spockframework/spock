@@ -13,10 +13,10 @@
  * limitations under the License.
  */
 
-import grails.plugin.spock.UnitSpecification
+import grails.plugin.spock.UnitSpec
 import org.codehaus.groovy.grails.test.io.SystemOutAndErrSwapper
 
-class UnitSpecificationSpecification extends UnitSpecification {
+class UnitSpecSpec extends UnitSpec {
   def "domain mocking"() {
     setup:
       mockDomain(Person)
@@ -48,8 +48,8 @@ class UnitSpecificationSpecification extends UnitSpecification {
 
   def "log mocking"() {
     setup:
-      mockLogging(UnitSpecificationSpecificationLoggingSubject)
-      def s = new UnitSpecificationSpecificationLoggingSubject()
+      mockLogging(UnitSpecSpecLoggingSubject)
+      def s = new UnitSpecSpecLoggingSubject()
       def out
       
     when:
@@ -66,7 +66,7 @@ class UnitSpecificationSpecification extends UnitSpecification {
   
 }
 
-class UnitSpecificationSpecificationLoggingSubject {
+class UnitSpecSpecLoggingSubject {
   void logIt(it) {
     log.info(it)
   }

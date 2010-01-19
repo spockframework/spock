@@ -17,7 +17,7 @@ package grails.plugin.spock.functional.util
 
 import spock.lang.Specification
 
-class UrlUtilsSpecification extends Specification {
+class UrlUtilsSpec extends Specification {
   def relativize() {
     expect:
     UrlUtils.relativize(input) == output

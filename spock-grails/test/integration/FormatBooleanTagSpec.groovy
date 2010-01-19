@@ -14,15 +14,19 @@
  * limitations under the License.
  */
 
-import spock.lang.Specification
+import grails.plugin.spock.GroovyPagesSpec
 
-class GoodSpecification extends Specification {
-  def "can you figure out what I'm up to?"() {
-    expect:
-    name.size() == size
-
+class FormatBooleanTagSpec extends GroovyPagesSpec {
+  def "simple format boolean usage"() {
+    when:
+    template = '<g:formatBoolean boolean="${flag}" true="T" false="F" />'
+    params = [flag: flag]
+    
+    then:
+    output == letter
+    
     where:
-    name << ["Kirk", "Spock", "Scotty"]
-    size << [4, 5, 6]
+    flag << [true, false]
+    letter << ['T', 'F']
   }
 }

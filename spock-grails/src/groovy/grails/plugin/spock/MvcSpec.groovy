@@ -34,7 +34,7 @@ import spock.lang.Shared
  * @author Graeme Rocher
  * @author Peter Ledbrook
  */
-abstract class MvcSpecification extends UnitSpecification {
+abstract class MvcSpec extends UnitSpec {
   @Shared classUnderTest
   def instanceUnderTest
   

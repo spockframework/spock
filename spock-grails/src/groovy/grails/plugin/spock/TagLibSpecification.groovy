@@ -15,37 +15,4 @@
 
 package grails.plugin.spock
 
-class TagLibSpecification extends MvcSpecification {
-  def provideMvcClassUnderTest() {
-    findClassUnderTestConventiallyBySuffix('TagLib')
-  }
-  
-  def initializeMvcMocking(Class classUnderTest) {
-    mockTagLib(classUnderTest)
-  }
-
-  def getTagLib() {
-    instanceUnderTest
-  }
-
-  Class getTagLibClass() {
-    classUnderTest
-  }
-  
-  void reset() {
-    super.reset()
-    tagLib.out.buffer.delete(0, tagLib.out.buffer.size())
-  }
-  
-  
-  def methodMissing(String name, args) {
-    if (args.size() > 2) throw new IllegalArgumentException("tags take a maximum of 2 arguments")
-    invokeTag(name, *args)
-  }
-  
-  def invokeTag(String name, Map params = null, Closure body = null) {
-    def out = tagLib."$name"(params, body).toString()
-    reset()
-    out
-  }
-}
+class TagLibSpecification extends TagLibSpec {}

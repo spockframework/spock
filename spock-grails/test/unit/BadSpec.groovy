@@ -17,7 +17,7 @@
 import spock.lang.Specification
 import spock.lang.Ignore
 
-class BadSpecification extends Specification {
+class BadSpec extends Specification {
   @Ignore
   def "intentionally failing"() {
     expect:

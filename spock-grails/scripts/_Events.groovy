@@ -41,7 +41,7 @@ eventTestPhaseStart = { phaseName ->
       configureServerContextPath()
     }
     
-    def functionalSpecificationClass = classLoader.loadClass("grails.plugin.spock.FunctionalSpecification")
-    functionalSpecificationClass.baseUrl = argsMap["baseUrl"] ?: "http://localhost:$serverPort$serverContextPath"
+    def functionalSpecClass = classLoader.loadClass("grails.plugin.spock.FunctionalSpec")
+    functionalSpecClass.baseUrl = argsMap["baseUrl"] ?: "http://localhost:$serverPort$serverContextPath"
   }
 }

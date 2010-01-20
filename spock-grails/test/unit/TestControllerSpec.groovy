@@ -15,7 +15,7 @@
 
 import grails.plugin.spock.ControllerSpec
 
-class TestControllerSpec extends ControllerSpecification {
+class TestControllerSpec extends ControllerSpec {
   def 'text action'() {
     when:
     controller.text()

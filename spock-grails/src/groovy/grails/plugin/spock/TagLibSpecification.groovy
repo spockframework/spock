@@ -15,4 +15,5 @@
 
 package grails.plugin.spock
 
+@Deprecated // renamed to TagLibSpec; this class will be removed in 0.5
 class TagLibSpecification extends TagLibSpec {}

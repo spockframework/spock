@@ -15,4 +15,5 @@
 
 package grails.plugin.spock
 
+@Deprecated // renamed to ControllerSpec; this class will be removed in 0.5
 class ControllerSpecification extends ControllerSpec {}

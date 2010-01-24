@@ -16,10 +16,8 @@
 
 package org.spockframework.util;
 
-import java.io.Closeable;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
+import java.io.*;
+import java.util.*;
 
 /**
  * General collection of utility methods.
@@ -27,12 +25,23 @@ import java.util.Collection;
  * @author Peter Niederwieser
  */
 public class Util {
- public static boolean equals(Object obj1, Object obj2) {
+  /**
+   * Null-aware equals() implementation.
+   */
+  public static boolean equals(Object obj1, Object obj2) {
     if (obj1 == null) return obj2 == null;
     return obj1.equals(obj2);
   }
 
+  /**
+   * Null-aware toString() implementation.
+   */
+  public static String toString(Object obj) {
+    return obj == null ? "null" : obj.toString();
+  }
+
   public static void closeQuietly(Closeable closeable) {
+    if (closeable == null) return;
     try {
       closeable.close();
     } catch (IOException ignored) {}
@@ -80,5 +89,31 @@ public class Util {
     }
 
     return null;
+  }
+
+  public static String getText(File path) throws IOException {
+    StringBuilder source = new StringBuilder();
+    BufferedReader reader = null;
+    try {
+      reader = new BufferedReader(new FileReader(path));
+      String line = reader.readLine();
+      while (line != null) {
+        source.append(line);
+        source.append('\n');
+        line = reader.readLine();
+      }
+    } finally {
+      Util.closeQuietly(reader);
+    }
+
+    return source.toString();
+  }
+
+  public static boolean isListOf(Class<?> type, List<?> list) {
+    for (Object elem : list)
+      if (!type.isInstance(elem))
+        return false;
+
+    return true;
   }
 }

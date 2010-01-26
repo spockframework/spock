@@ -19,6 +19,9 @@ package spock.util
 import org.junit.runner.notification.RunListener
 import org.junit.runner.*
 import org.spockframework.util.NotThreadSafe
+import org.spockframework.runtime.RunContext
+import org.spockframework.util.IFunction
+import org.spockframework.runtime.ConfigurationScriptLoader
 
 /**
  * Utility class for programmatically running specs with JUnit.
@@ -31,24 +34,36 @@ class EmbeddedSpecRunner {
   private final EmbeddedSpecCompiler compiler = new EmbeddedSpecCompiler(unwrapCompileException: false)
 
   boolean throwFailure = true
+
   List<RunListener> listeners = []
+  
+  Closure configurationScript = null
+  List<Class> extensionClasses = []
+  boolean inheritParentExtensions = true
+
+  void addImport(Package pkg) {
+    compiler.addImport(pkg)
+  }
 
   Result runRequest(Request request) {
-    def junitCore = new JUnitCore()
-    listeners.each { junitCore.addListener(it) }
-
-    def result = junitCore.run(request)
-    if (throwFailure && result.failureCount > 0) throw result.failures[0].exception
-
-    result
+    withNewContext {
+      doRunRequest(request)
+    }
   }
 
   Result runClasses(List classes) {
-    runRequest(Request.classes(classes as Class[]))
+    withNewContext {
+      doRunRequest(Request.classes(classes as Class[]))
+    }
   }
 
+  // it's very important to open a new context BEFORE Request.aClass/classes is invoked
+  // this is because Sputnik is already constructed by these methods, and has to pop
+  // the correct context from the stack
   Result runClass(Class clazz) {
-    runRequest(Request.aClass(clazz))
+    withNewContext {
+      doRunRequest(Request.aClass(clazz))
+    }
   }
 
   Result run(String source) {
@@ -65,5 +80,21 @@ class EmbeddedSpecRunner {
 
   Result runFeatureBody(String source) {
     runClass(compiler.compileFeatureBody(source))
+  }
+
+  private Result withNewContext(Closure block) {
+    def script = configurationScript ?
+        new ConfigurationScriptLoader().loadScript(configurationScript) : null
+    RunContext.withNewContext(script, extensionClasses, inheritParentExtensions, block as IFunction)
+  }
+
+  private Result doRunRequest(Request request) {
+    def junitCore = new JUnitCore()
+    listeners.each { junitCore.addListener(it) }
+
+    def result = junitCore.run(request)
+    if (throwFailure && result.failureCount > 0) throw result.failures[0].exception
+
+    result
   }
 }

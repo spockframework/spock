@@ -1,12 +1,10 @@
 /*
- * Copyright 2009 the original author or authors.
+ * Copyright 2010 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
  *     http://www.apache.org/licenses/LICENSE-2.0
- *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,25 +14,6 @@
 
 package org.spockframework.util;
 
-/**
- *
- * @author Peter Niederwieser
- */
-public class None<T> implements Option<T> {
-  private static final None instance = new None();
-
-  private None() {}
-
-  public boolean hasValue() {
-    return false;
-  }
-
-  public T getValue() {
-    throw new UnsupportedOperationException("getValue");
-  }
-
-  @SuppressWarnings("unchecked")
-  public static <T> None<T> value() {
-    return instance;
-  }
+public interface IMatcher<T> {
+  boolean matches(T node);
 }

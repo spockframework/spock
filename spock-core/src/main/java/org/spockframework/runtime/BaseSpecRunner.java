@@ -23,6 +23,7 @@ import static org.spockframework.runtime.RunStatus.*;
 import org.spockframework.runtime.extension.IMethodInterceptor;
 import org.spockframework.runtime.extension.MethodInvocation;
 import org.spockframework.runtime.model.*;
+import org.spockframework.util.Assert;
 import org.spockframework.util.InternalSpockError;
 
 /**
@@ -57,6 +58,12 @@ public class BaseSpecRunner {
   }
 
   public int run() {
+    Assert.that(!spec.isExcluded(), "tried to run excluded spec");
+    if (spec.isSkipped()) {
+      supervisor.specSkipped(spec);
+      return OK;
+    }
+
     supervisor.beforeSpec(spec);
     invoke(this, createDoRunInfo());
     supervisor.afterSpec();
@@ -130,6 +137,12 @@ public class BaseSpecRunner {
 
   private void runFeature(FeatureInfo feature) {
     if (runStatus != OK) return;
+
+    Assert.that(!feature.isExcluded(), "tried to run excluded feature");
+    if (feature.isSkipped()) {
+      supervisor.featureSkipped(feature);
+      return;
+    }
 
     supervisor.beforeFeature(feature);
     invoke(this, createDoRunFeatureInfo(feature), feature);

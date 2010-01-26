@@ -12,26 +12,14 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ */  
+package org.spockframework.smoke.extension
 
-package org.spockframework.runtime.extension.builtin;
+import java.lang.annotation.Target
+import java.lang.annotation.ElementType
+import java.lang.annotation.Retention
+import java.lang.annotation.RetentionPolicy
 
-import org.spockframework.runtime.SkipSpecOrFeatureException;
-import org.spockframework.runtime.extension.IMethodInterceptor;
-import org.spockframework.runtime.extension.IMethodInvocation;
-
-/**
- *
- * @author Peter Niederwieser
- */
-public class IgnoreInterceptor implements IMethodInterceptor {
-  private final String reason;
-
-  public IgnoreInterceptor(String reason) {
-    this.reason = reason;
-  }
-
-  public void intercept(IMethodInvocation invocation) throws Throwable {
-    throw new SkipSpecOrFeatureException(reason);
-  }
-}
+@Target([ElementType.TYPE, ElementType.METHOD])
+@Retention(RetentionPolicy.RUNTIME)
+public @interface Fast {}

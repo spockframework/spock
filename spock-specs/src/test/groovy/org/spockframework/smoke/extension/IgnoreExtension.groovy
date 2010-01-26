@@ -21,13 +21,15 @@ import org.spockframework.runtime.InvalidSpecException
 import spock.lang.Issue
 
 /**
+ * Spock's @Ignore semantics are the same as JUnit's.
+ * 
  * @author Peter Niederwieser
  */
 @Issue("http://issues.spockframework.org/detail?id=12")
 class IgnoreExtension extends EmbeddedSpecification {
-  def "ignored Spec is not run"() {
+  def "ignore spec"() {
     when:
-    runner.runWithImports """
+    def result = runner.runWithImports("""
 @Ignore
 class Foo extends Specification {
   def foo() {
@@ -38,15 +40,17 @@ class Foo extends Specification {
     expect: false
   }
 }
-    """
+    """)
 
     then:
-    noExceptionThrown()
+    result.runCount == 0
+    result.failureCount == 0
+    result.ignoreCount == 1
   }
 
-  def "ignored feature methods are not run"() {
+  def "ignored feature methods"() {
     when:
-    runner.runSpecBody """
+    def result = runner.runSpecBody("""
 @Ignore
 def "ignored"() {
   expect: false
@@ -60,10 +64,12 @@ def "not ignored"() {
 def "also ignored"() {
   expect: false
 }
-    """
+    """)
 
     then:
-    noExceptionThrown()
+    result.runCount == 1
+    result.failureCount == 0
+    result.ignoreCount == 2
   }
 
   def "fixture methods cannot be ignored"() {
@@ -75,6 +81,71 @@ def setup() {}
 
     then:
     thrown(InvalidSpecException)
+  }
+
+  def "ignore methods in base and derived class"() {
+    def classes = compiler.compileWithImports("""
+class Base extends Specification {
+  @Ignore
+  def feature1() {
+    expect: false
+  }
+
+  def feature2() {
+    expect: true
+  }
+}
+
+class Derived extends Base {
+  def feature3() {
+    expect: true
+  }
+
+  @Ignore
+  def feature4() {
+    expect: false
+  }
+}
+    """)
+
+    def derived = classes.find { it.simpleName == "Derived" }
+
+    when:
+    def result = runner.runClass(derived)
+
+
+    then:
+    result.runCount == 2
+    result.failureCount == 0
+    result.ignoreCount == 2
+  }
+
+  def "ignoring base class has no effect on running derived class"() {
+    def classes = compiler.compileWithImports("""
+@Ignore
+class Base extends Specification {
+  def feature1() {
+    expect: true
+  }
+}
+
+class Derived extends Base {
+  def feature2() {
+    expect: true
+  }
+}
+    """)
+
+    def derived = classes.find { it.simpleName == "Derived" }
+
+    when:
+    def result = runner.runClass(derived)
+
+
+    then:
+    result.runCount == 2
+    result.failureCount == 0
+    result.ignoreCount == 0
   }
 }
 

@@ -15,17 +15,22 @@
 package spock.config;
 
 import java.lang.annotation.Annotation;
+import java.util.ArrayList;
+import java.util.List;
 
-public class IncludeExcludeAnnotation {
-  public Class<? extends Annotation> clazz;
-  public boolean inherited = false;
-
-  public IncludeExcludeAnnotation(Class<? extends Annotation> clazz) {
-    this.clazz = clazz;
+public class IncludeExcludeCriteria {
+  public IncludeExcludeCriteria(Class<?>... criteria) {
+    for (Class<?> criterium : criteria)
+      if (criterium.isAnnotation())
+        annotations.add((Class<? extends Annotation>)criterium);
+      else
+        baseClasses.add(criterium);
   }
+  
+  public List<Class<? extends Annotation>> annotations = new ArrayList<Class<? extends Annotation>>();
+  public List<Class<?>> baseClasses = new ArrayList<Class<?>>();
 
-  public IncludeExcludeAnnotation(Class<? extends Annotation> clazz, boolean inherited) {
-    this.clazz = clazz;
-    this.inherited = inherited;
+  public boolean isEmpty() {
+    return annotations.isEmpty() && baseClasses.isEmpty();
   }
 }

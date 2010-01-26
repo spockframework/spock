@@ -24,6 +24,7 @@ import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.SubModule;
 
 import org.spockframework.runtime.extension.*;
+import org.spockframework.runtime.model.FieldInfo;
 import org.spockframework.runtime.model.SpecInfo;
 
 import spock.lang.Shared;
@@ -89,19 +90,20 @@ public class TapestryInterceptor extends AbstractMethodInterceptor {
   }
 
   private void injectServices(Object target, boolean sharedFields) throws IllegalAccessException {
-    for (final Field field : spec.getReflection().getDeclaredFields())
-      if (field.isAnnotationPresent(Inject.class)
-          && field.isAnnotationPresent(Shared.class) == sharedFields) {
-        Object value = registry.getObject(field.getType(), createAnnotationProvider(field));
-        field.setAccessible(true);
-        field.set(target, value);
+    for (final FieldInfo field : spec.getFields())
+      if (field.getReflection().isAnnotationPresent(Inject.class)
+          && field.getReflection().isAnnotationPresent(Shared.class) == sharedFields) {
+        Field rawField = field.getReflection();
+        Object value = registry.getObject(rawField.getType(), createAnnotationProvider(field));
+        rawField.setAccessible(true);
+        rawField.set(target, value);
       }
   }
 
-  private AnnotationProvider createAnnotationProvider(final Field field) {
+  private AnnotationProvider createAnnotationProvider(final FieldInfo field) {
     return new AnnotationProvider() {
       public <T extends Annotation> T getAnnotation(Class<T> annotationClass) {
-        return field.getAnnotation(annotationClass);
+        return field.getReflection().getAnnotation(annotationClass);
       }
     };
   }

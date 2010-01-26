@@ -27,10 +27,10 @@ import groovy.lang.Closure;
 public class PojoGestalt implements IGestalt {
   private final Object pojo;
   private final Type pojoType;
-  private final Closure blueprint;
+  private final IBlueprint blueprint;
   private final List<ISlotFactory> slotFactories;
 
-  public PojoGestalt(Object pojo, Type pojoType, Closure blueprint, List<ISlotFactory> slotFactories) {
+  public PojoGestalt(Object pojo, Type pojoType, IBlueprint blueprint, List<ISlotFactory> slotFactories) {
     this.pojo = pojo;
     this.pojoType = pojoType;
     this.blueprint = blueprint;
@@ -41,15 +41,15 @@ public class PojoGestalt implements IGestalt {
     return pojo;
   }
 
-  public Closure getBlueprint() {
+  public IBlueprint getBlueprint() {
     return blueprint;
   }
 
-  public Object getValue(String name) {
+  public Object getProperty(String name) {
     return InvokerHelper.getProperty(pojo, name);
   }
 
-  public void setValue(String name, Object value) {
+  public void setProperty(String name, Object value) {
     InvokerHelper.setProperty(pojo, name, value);
   }
 
@@ -60,11 +60,10 @@ public class PojoGestalt implements IGestalt {
   // current impl is dead stupid:
   // - named args not treated specially
   // - last arg is closure => treat as blueprint
-  public IGestalt subGestalt(String name, Object[] args) {
+  public IGestalt invokeMethod(String name, Object[] args) {
     ISlot slot = findSlot(name, args);
-    IGestalt gestalt = createGestalt(slot.getType(), args);
+    PojoGestalt gestalt = createGestalt(slot.getType(), args);
     slot.write(gestalt.getSubject());
-    new Sculpturer().$form(gestalt);
     return gestalt;
   }
 
@@ -76,15 +75,16 @@ public class PojoGestalt implements IGestalt {
     throw new RuntimeException(String.format("Cannot find a slot named '%s'", name));
   }
 
-  private IGestalt createGestalt(Type newType, Object[] args) {
-    Closure newBlueprint = null;
-    if (args != null && args[args.length - 1] instanceof Closure) {
-      newBlueprint = (Closure)args[args.length - 1];
+  private PojoGestalt createGestalt(Type newType, Object[] args) {
+    Closure closure = null;
+    if (args != null && args.length > 0 && args[args.length - 1] instanceof Closure) {
+      closure = (Closure)args[args.length - 1];
       args = Arrays.copyOfRange(args, 0, args.length - 1);
     }
 
     Class<?> newClazz = GenericTypeReflector.erase(newType); // TODO: check that this succeeds (Type could be a TypeVariable etc.)
     Object newPojo = BuilderHelper.createInstance(newClazz, args);
+    ClosureBlueprint newBlueprint = closure == null ? null : new ClosureBlueprint(closure, newPojo);
     return new PojoGestalt(newPojo, newType, newBlueprint, slotFactories);
   }
 }

@@ -1,0 +1,6 @@
+# some comment
+    org.spockframework.runtime.Extension1
+         #another comment
+
+         
+org.spockframework.runtime.Extension2

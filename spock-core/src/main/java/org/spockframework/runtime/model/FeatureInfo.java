@@ -19,6 +19,9 @@ public class FeatureInfo extends NodeInfo<SpecInfo, AnnotatedElement> {
   private MethodInfo dataProcessorMethod;
   private final List<DataProviderInfo> dataProviders = new ArrayList<DataProviderInfo>();
 
+  private boolean excluded = false;
+  private boolean skipped = false;
+
   @Override
   public AnnotatedElement getReflection() {
     throw new UnsupportedOperationException("getReflection");
@@ -82,6 +85,22 @@ public class FeatureInfo extends NodeInfo<SpecInfo, AnnotatedElement> {
 
   public boolean isParameterized() {
     return dataProcessorMethod != null;
+  }
+
+  public boolean isExcluded() {
+    return excluded;
+  }
+
+  public void setExcluded(boolean excluded) {
+    this.excluded = excluded;
+  }
+
+  public boolean isSkipped() {
+    return skipped;
+  }
+
+  public void setSkipped(boolean skipped) {
+    this.skipped = skipped;
   }
 
   /**

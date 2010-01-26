@@ -31,11 +31,18 @@ import org.spockframework.runtime.model.SpecInfo;
  *
  * @author Peter Niederwieser
  */
+// TODO:
+// - check if we should make use of JUnit's InitializationException
+// - check if StoppedByUserException thrown in Notifier.fireTestStarted() is handled correctly on our side
 public class Sputnik extends Runner implements Filterable, Sortable {
+  private final RunContext runContext;
   private final SpecInfo spec;
 
   public Sputnik(Class<?> clazz) {
-    spec = new SpecInfoBuilder(clazz).build();
+    runContext = RunContext.get();
+    SpecInfoBuilder builder = runContext.createSpecInfoBuilder(clazz);
+    spec = builder.build();
+    builder.runExtensions();
     new JUnitDescriptionGenerator(spec).generate();
   }
 
@@ -44,7 +51,14 @@ public class Sputnik extends Runner implements Filterable, Sortable {
   }
 
   public void run(RunNotifier notifier) {
-    new ParameterizedSpecRunner(spec, new JUnitSupervisor(notifier)).run();
+    if (spec.isExcluded()) {
+      // since we were already told by JUnit to run this spec,
+      // the best we can do is to treat it as ignored
+      notifier.fireTestIgnored((Description)spec.getMetadata());
+      return;
+    }
+    runContext.createSpecRunner(spec, notifier).run();
+
   }
 
   // IDEA: if we applied filter beforehand, we could save a lot of work

@@ -25,7 +25,6 @@ import org.codehaus.groovy.syntax.Types;
 import org.objectweb.asm.Opcodes;
 
 import org.spockframework.util.InternalSpockError;
-import org.spockframework.util.SyntaxException;
 
 import spock.lang.Specification;
 
@@ -201,7 +200,8 @@ public abstract class AstUtil {
         && getArguments(expr).size() <= maxArgs;
   }
 
-  public static void expandBuiltinMemberDeclOrCall(Expression builtinMemberDeclOrCall, Expression... additionalArgs) {
+  public static void expandBuiltinMemberDeclOrCall(Expression builtinMemberDeclOrCall, Expression... additionalArgs)
+      throws InvalidSpecCompileException {
     if (builtinMemberDeclOrCall instanceof BinaryExpression)
       expandBuiltinMemberDecl((BinaryExpression)builtinMemberDeclOrCall, additionalArgs);
     else
@@ -212,7 +212,8 @@ public abstract class AstUtil {
    * Expands a field or local variable declaration of the form
    * "def x = builtinMethodCall(...)". Assumes isBuiltinMemberDecl(...).
    */
-  public static void expandBuiltinMemberDecl(BinaryExpression builtinMemberDecl, Expression... additionalArgs) {
+  public static void expandBuiltinMemberDecl(BinaryExpression builtinMemberDecl, Expression... additionalArgs)
+      throws InvalidSpecCompileException {
     Expression builtinMemberCall = builtinMemberDecl.getRightExpression();
     String name = getInferredName(builtinMemberDecl);
     Expression type = getType(builtinMemberCall, getInferredType(builtinMemberDecl));
@@ -220,18 +221,20 @@ public abstract class AstUtil {
     doExpandBuiltinMemberCall(builtinMemberCall, name, type, additionalArgs);
   }
 
-  public static void expandBuiltinMemberCall(Expression builtinMemberCall, Expression... additionalArgs) {
+  public static void expandBuiltinMemberCall(Expression builtinMemberCall, Expression... additionalArgs)
+      throws InvalidSpecCompileException {
     // IDEA: use line/column information as name
     doExpandBuiltinMemberCall(builtinMemberCall, "(unnamed)", getType(builtinMemberCall, null), additionalArgs);
   }
 
-  private static Expression getType(Expression builtinMemberCall, Expression inferredType) {
+  private static Expression getType(Expression builtinMemberCall, Expression inferredType)
+      throws InvalidSpecCompileException {
     List<Expression> args = AstUtil.getArguments(builtinMemberCall);
     assert args != null;
 
     if (args.isEmpty()) {
       if (inferredType == null)
-        throw new SyntaxException(builtinMemberCall, "Type cannot be inferred; please specify one explicitely");
+        throw new InvalidSpecCompileException(builtinMemberCall, "Type cannot be inferred; please specify one explicitely");
       return inferredType;
     }
 

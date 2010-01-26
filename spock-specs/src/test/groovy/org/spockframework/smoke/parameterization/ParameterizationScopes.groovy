@@ -16,6 +16,7 @@
 
 package org.spockframework.smoke.parameterization
 
+import spock.lang.Issue
 import spock.lang.Specification
 
 class ParameterizationScopes extends Specification {
@@ -52,5 +53,18 @@ class ParameterizationScopes extends Specification {
 
     where:
     inc << 2
+  }
+
+  @Issue("http://issues.spockframework.org/detail?id=63")
+  def "in nested closure scope"() {
+    expect:
+    1.every {
+      1.every {
+        { -> val }() == 1
+      }
+    }
+
+    where:
+    val = 1
   }
 }

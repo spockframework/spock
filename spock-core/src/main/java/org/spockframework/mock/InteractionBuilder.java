@@ -21,7 +21,7 @@ import java.util.List;
 
 import groovy.lang.Closure;
 
-import org.spockframework.util.SyntaxException;
+import org.spockframework.runtime.InvalidSpecException;
 
 import spock.lang.Specification;
 
@@ -66,7 +66,7 @@ public class InteractionBuilder {
     this.minCount = minCount == Specification._ ? 0 : convertCount(minCount, true);
     this.maxCount = maxCount == Specification._ ? Integer.MAX_VALUE : convertCount(maxCount, inclusive);
     if (this.minCount > this.maxCount)
-      throw new SyntaxException("lower bound of invocation count must come before upper bound");
+      throw new InvalidSpecException("lower bound of invocation count must come before upper bound");
     return this;
   }
 
@@ -167,12 +167,12 @@ public class InteractionBuilder {
 
   private static int convertCount(Object count, boolean inclusive) {
     if (!(count instanceof Number))
-      throw new SyntaxException("invocation count must be a number");
+      throw new InvalidSpecException("invocation count must be a number");
 
     int intCount = ((Number)count).intValue();
     if (!inclusive) intCount--;
     if (intCount < 0)
-      throw new SyntaxException("invocation count must be >= 0");
+      throw new InvalidSpecException("invocation count must be >= 0");
     return intCount;
   }
 }

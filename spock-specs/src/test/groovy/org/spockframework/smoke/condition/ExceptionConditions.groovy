@@ -17,7 +17,7 @@
 package org.spockframework.smoke.condition
 
 import org.spockframework.EmbeddedSpecification
-import org.spockframework.util.SpockSyntaxException
+import org.spockframework.compiler.InvalidSpecCompileException
 
 /**
  * @author Peter Niederwieser
@@ -109,7 +109,7 @@ thrown(Exception)
     """
 
     then:
-    SpockSyntaxException e = thrown()
+    InvalidSpecCompileException e = thrown()
     e.line == 6
   }
 
@@ -122,7 +122,7 @@ and : thrown(Exception)
     """
 
     then:
-    SpockSyntaxException e = thrown()
+    InvalidSpecCompileException e = thrown()
     e.line == 3
   }
 }

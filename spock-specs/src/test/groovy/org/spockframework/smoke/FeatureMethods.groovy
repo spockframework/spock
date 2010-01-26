@@ -16,7 +16,7 @@
 
 package org.spockframework.smoke
 
-import org.spockframework.runtime.InvalidSpecError
+import org.spockframework.runtime.InvalidSpecException
 import spock.lang.Specification
 
 /**
@@ -29,7 +29,7 @@ class FeatureMethods extends Specification {
     cannotBeCalledFromUserCode()
 
     then:
-    thrown(InvalidSpecError)
+    thrown(InvalidSpecException)
   }
 
   def "by the way, Groovy can no longer call into methods with non-standard names"() {

@@ -19,6 +19,7 @@ package org.spockframework.smoke.parameterization
 import org.junit.runner.notification.RunListener
 import org.spockframework.EmbeddedSpecification
 import org.spockframework.runtime.SpockExecutionException
+import spock.lang.Issue
 
 /**
  * @author Peter Niederwieser
@@ -104,18 +105,18 @@ def foo() {
     1 * listener.testFailure { it.description.methodName == "foo" }
 
     // it's OK for runCount to be zero here; mental model: method "foo"
-    // would have been invisible if it had not failed (cf. Spec JUnitTestResult)
+    // would have been invisible if it had not failed (cf. Spec JUnitErrorBehavior)
     result.runCount == 0
     result.failureCount == 1
     result.ignoreCount == 0
   }
 
-  def "naming pattern that refers to data variables"() {
+  def "naming pattern may refer to data variables"() {
     RunListener listener = Mock()
     runner.listeners << listener
 
     when:
-    def result = runner.runSpecBody("""
+    runner.runSpecBody("""
 @Unroll("one #y two #x three")
 def foo() {
   expect: true
@@ -130,15 +131,14 @@ def foo() {
     1 * listener.testStarted { it.methodName == "one a two 1 three" }
     1 * listener.testStarted { it.methodName == "one b two 2 three" }
     1 * listener.testStarted { it.methodName == "one c two 3 three" }
-    0 * listener.testStarted(_)
   }
 
-    def "naming pattern that refers to feature name and iteration count"() {
+    def "naming pattern may refer to feature name and iteration count"() {
     RunListener listener = Mock()
     runner.listeners << listener
 
     when:
-    def result = runner.runSpecBody("""
+    runner.runSpecBody("""
 @Unroll("one #featureName two #iterationCount three")
 def foo() {
   expect: true
@@ -153,6 +153,64 @@ def foo() {
     1 * listener.testStarted { it.methodName == "one foo two 0 three" }
     1 * listener.testStarted { it.methodName == "one foo two 1 three" }
     1 * listener.testStarted { it.methodName == "one foo two 2 three" }
-    0 * listener.testStarted(_)
+  }
+
+  @Issue("http://issues.spockframework.org/detail?id=65")
+  def "variables in naming pattern whose value is null are replaced correctly"() {
+    RunListener listener = Mock()
+    runner.listeners << listener
+
+    when:
+    runner.runSpecBody("""
+@Unroll("one #x two #y three")
+def foo() {
+  expect: true
+
+  where:
+  x << [1]
+  y << [null]
+}
+    """)
+
+    then:
+    1 * listener.testStarted { it.methodName == "one 1 two null three" }
+  }
+
+  def "variables in naming pattern that don't exist are not replaced"() {
+    RunListener listener = Mock()
+    runner.listeners << listener
+
+    when:
+    runner.runSpecBody("""
+@Unroll("one #x two")
+def foo() {
+  expect: true
+
+  where:
+  y = 2
+}
+    """)
+
+    then:
+    1 * listener.testStarted { it.methodName == "one #x two" }
+  }
+
+  def "variables in naming pattern whose value cannot be converted to a string are not replaced"() {
+    RunListener listener = Mock()
+    runner.listeners << listener
+
+    when:
+    runner.runSpecBody("""
+@Unroll("one #x two")
+def foo() {
+  expect: true
+
+  where:
+  x = { def bad = new Expando(); bad.toString = { throw new RuntimeException() }; bad }()
+}
+    """)
+
+    then:
+    1 * listener.testStarted { it.methodName == "one #x two" }
   }
 }

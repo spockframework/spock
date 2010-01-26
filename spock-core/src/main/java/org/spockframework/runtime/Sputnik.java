@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-package spock.lang;
+package org.spockframework.runtime;
 
 import org.junit.runner.Description;
 import org.junit.runner.Runner;
 import org.junit.runner.manipulation.*;
 import org.junit.runner.notification.RunNotifier;
 
-import org.spockframework.runtime.*;
 import org.spockframework.runtime.model.SpecInfo;
 
 /**
- * A JUnit runner for Spock specifications. To run a specification with JUnit,
- * annotate it with <tt>@org.junit.RunWith(Sputnik)</tt>. In case you wondered,
- * Sputnik is a combination of the words "Spock" and "JUnit".
+ * A JUnit runner for Spock specifications. There is no need to put
+ * <tt>@RunWith(Sputnik)</tt> on a specification because the <tt>RunWith</tt>
+ * annotation is inherited from class <tt>spock.lang.Specification</tt>.
+ * In case you wondered, Sputnik is a combination of the words "Spock" and "JUnit".
  *
  * @author Peter Niederwieser
  */
@@ -47,6 +47,7 @@ public class Sputnik extends Runner implements Filterable, Sortable {
     new ParameterizedSpecRunner(spec, new JUnitSupervisor(notifier)).run();
   }
 
+  // IDEA: if we applied filter beforehand, we could save a lot of work
   public void filter(Filter filter) throws NoTestsRemainException {
     spec.filterFeatures(new JUnitFilterAdapter(filter));
     if (spec.getFeatures().size() == 0)

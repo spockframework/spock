@@ -55,7 +55,7 @@ public abstract class SpockRuntime {
   public static final String FEATURE_METHOD_CALLED = "featureMethodCalled";
   
   public static void featureMethodCalled() {
-    throw new InvalidSpecError("Feature methods cannot be called from user code");
+    throw new InvalidSpecException("Feature methods cannot be called from user code");
   }
 
   public static final String NULL_AWARE_INVOKE_METHOD = "nullAwareInvokeMethod";

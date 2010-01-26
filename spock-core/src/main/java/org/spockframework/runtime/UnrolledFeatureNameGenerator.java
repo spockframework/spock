@@ -22,6 +22,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.spockframework.runtime.model.FeatureInfo;
+import org.spockframework.util.Util;
 
 import spock.lang.Unroll;
 
@@ -33,18 +34,16 @@ public class UnrolledFeatureNameGenerator {
 
   private final FeatureInfo feature;
   private final Matcher variableMatcher;
-  private final Map<String, Integer> variableNameToParameterIndex = new HashMap<String, Integer>();
+  private final Map<String, Integer> parameterNameToPosition = new HashMap<String, Integer>();
   private int iterationCount;
 
   public UnrolledFeatureNameGenerator(FeatureInfo feature, Unroll unroll) {
     this.feature = feature;
     variableMatcher = VARIABLE_PATTERN.matcher(unroll.value());
 
-    int idx = 0;
-    for (String name : feature.getParameterNames()) {
-      variableNameToParameterIndex.put(name, idx);
-      idx++;
-    }
+    int pos = 0;
+    for (String name : feature.getParameterNames())
+      parameterNameToPosition.put(name, pos++);
   }
 
   public String nameFor(Object[] args) {
@@ -54,7 +53,6 @@ public class UnrolledFeatureNameGenerator {
     while (variableMatcher.find()) {
       String variableName = variableMatcher.group(1);
       String value = getValue(variableName, args);
-      if (value == null) value = "#" + variableName; // don't replace
       variableMatcher.appendReplacement(result, value);
     }
 
@@ -67,18 +65,18 @@ public class UnrolledFeatureNameGenerator {
     if (variableName.equals("featureName")) return feature.getName();
     if (variableName.equals("iterationCount")) return String.valueOf(iterationCount);
 
-    Integer idx = variableNameToParameterIndex.get(variableName);
-    if (idx == null) return null;
+    Integer pos = parameterNameToPosition.get(variableName);
+    if (pos == null) return "#" + variableName;
 
-    Object arg = args[idx];
+    Object arg = args[pos];
     try {
-      return arg.toString();
+      return Util.toString(arg);
     } catch (Throwable t) {
       // since arg is provided by user code, we must be ready for any exception
       // to occur; rethrowing an exception would currently be interpreted as a
       // Spock bug, because IRunSupervisor isn't supposed to throw exceptions;
       // therefore, we just don't replace this variable
-      return null;
+      return "#" + variableName;
     }
   }
 }

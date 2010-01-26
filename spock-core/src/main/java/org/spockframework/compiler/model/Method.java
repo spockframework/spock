@@ -37,8 +37,6 @@ public abstract class Method extends Node<Spec, MethodNode> {
     setName(code.getName());
   }
 
-  // Class members
-
   public Block getFirstBlock() {
     return firstBlock;
   }

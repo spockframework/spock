@@ -17,7 +17,7 @@
 package org.spockframework.smoke.extension
 
 import org.spockframework.EmbeddedSpecification
-import org.spockframework.runtime.InvalidSpecError
+import org.spockframework.runtime.InvalidSpecException
 import spock.lang.Issue
 
 /**
@@ -74,7 +74,7 @@ def setup() {}
     """
 
     then:
-    thrown(InvalidSpecError)
+    thrown(InvalidSpecException)
   }
 }
 

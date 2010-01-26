@@ -14,33 +14,29 @@
  * limitations under the License.
  */
 
-package org.spockframework.util;
+package org.spockframework.compiler;
 
 import org.codehaus.groovy.ast.ASTNode;
+import org.codehaus.groovy.syntax.SyntaxException;
 
 /**
- * Indicates a syntax error in a Spec. Used by both compiler and runtime.
+ * Indicates that a spec was found to contain a (syntactic or semantic)
+ * error during compilation. As such, this is the compile-time equivalent
+ * of InvalidSpecException.
+ * Inherits from SyntaxException so that line information can
+ * be exploited by integrators (IDEs etc.).
  *
+ * Most of the time it is not necessary to use this class directly (see
+ * documentation of class ErrorReporter).
+ * 
  * @author Peter Niederwieser
  */
-// IDEA: throwing this exception causes compilation to end immediately;
-// should we be more graceful (i.e. use errorCollector.add...)?
-public class SyntaxException extends RuntimeException {
-  private final int line;
-  private final int column;
-
-  public SyntaxException(int line, int column, String msg, Object... args) {
-    super(String.format(msg, args));
-    this.line = line;
-    this.column = column;
+public class InvalidSpecCompileException extends SyntaxException {
+  public InvalidSpecCompileException(int line, int column, String msg, Object... args) {
+    super(String.format(msg, args), line, column);
   }
 
-  // should only be used for SyntaxException's that are thrown at runtime
-  public SyntaxException(String msg, Object... args) {
-    this(-1, -1, msg, args);
-  }
-
-  public SyntaxException(ASTNode node, String msg, Object... args) {
+  public InvalidSpecCompileException(ASTNode node, String msg, Object... args) {
     this(getLine(node), getColumn(node), msg, args);
   }
 
@@ -50,9 +46,5 @@ public class SyntaxException extends RuntimeException {
 
   private static int getColumn(ASTNode node) {
     return node.getColumnNumber() > 0 ? node.getColumnNumber() : node.getLastColumnNumber();
-  }
-
-  public SpockSyntaxException toSpockSyntaxException() {
-    return new SpockSyntaxException(getMessage(), line, column);
   }
 }

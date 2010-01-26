@@ -20,16 +20,18 @@ import java.util.List;
 
 import org.codehaus.groovy.ast.*;
 import org.codehaus.groovy.ast.expr.*;
-import org.codehaus.groovy.ast.stmt.AssertStatement;
-import org.codehaus.groovy.ast.stmt.ExpressionStatement;
+import org.codehaus.groovy.ast.stmt.*;
 
 import org.spockframework.compiler.model.*;
-import org.spockframework.util.SyntaxException;
 
 /**
- * Walks the statement and expression tree to rewrite explicit conditions,
- * interactions, and Specification members. Also records whether conditions and
- * interactions were found.
+ * Walks the statement and expression tree to:
+ * - rewrite explicit conditions,
+ * - rewrite interactions,
+ * - rewrite core language primitives (members of class Specification)
+ * - Forbid
+ * 
+ * Also records whether conditions and interactions were found.
  *
  * @author Peter Niederwieser
  */
@@ -87,7 +89,7 @@ public class DeepStatementRewriter extends StatementReplacingVisitorSupport {
     interactionFound = false;
     closureScope = expr.getVariableScope();
 
-    fixupClosureScope();
+    fixupParameters(closureScope, true);
     super.visitClosureExpression(expr);
     if (conditionFound) defineValueRecorder(expr);
 
@@ -100,7 +102,7 @@ public class DeepStatementRewriter extends StatementReplacingVisitorSupport {
     resourceProvider.defineValueRecorder(AstUtil.getStatements(expr));
   }
 
-  private void fixupClosureScope() {
+  private void fixupParameters(VariableScope scope, boolean isClosureScope) {
     Method method = resourceProvider.getCurrentMethod();
     if (!(method instanceof FeatureMethod)) return;
 
@@ -109,13 +111,20 @@ public class DeepStatementRewriter extends StatementReplacingVisitorSupport {
     // (parameterization variables used to be free variables,
     // but have been changed to method parameters by WhereBlockRewriter)
     for (Parameter param : method.getAst().getParameters()) {
-      Variable var = closureScope.getReferencedClassVariable(param.getName());
+      Variable var = scope.getReferencedClassVariable(param.getName());
       if (var instanceof DynamicVariable) {
-        closureScope.removeReferencedClassVariable(param.getName());
-        closureScope.putReferencedLocalVariable(param);
-        param.setClosureSharedVariable(true);
+        scope.removeReferencedClassVariable(param.getName());
+        scope.putReferencedLocalVariable(param);
+        if (isClosureScope)
+          param.setClosureSharedVariable(true);
       }
     }
+  }
+
+  @Override
+  public void visitBlockStatement(BlockStatement stat) {
+    super.visitBlockStatement(stat);
+    fixupParameters(stat.getVariableScope(), false);
   }
 
   @Override
@@ -126,7 +135,12 @@ public class DeepStatementRewriter extends StatementReplacingVisitorSupport {
   @Override
   public void visitBinaryExpression(BinaryExpression expr) {
     if (AstUtil.isBuiltinMemberDecl(expr, Identifiers.MOCK, 0, 1))
-      AstUtil.expandBuiltinMemberDecl(expr, resourceProvider.getMockControllerRef());
+      try {
+        AstUtil.expandBuiltinMemberDecl(expr, resourceProvider.getMockControllerRef());
+      } catch (InvalidSpecCompileException e) {
+        resourceProvider.getErrorReporter().error(e);
+        return;
+      }
 
     // only descend after we have expanded Specification.Mock so that it's not
     // expanded by visit(Static)MethodCallExpression instead
@@ -136,13 +150,25 @@ public class DeepStatementRewriter extends StatementReplacingVisitorSupport {
   @Override
   public void visitMethodCallExpression(MethodCallExpression expr) {
     super.visitMethodCallExpression(expr);
+    forbidUseOfSuperInFixtureMethod(expr);
     handlePredefMockAndPredefOld(expr);
   }
 
-  @Override
-  public void visitStaticMethodCallExpression(StaticMethodCallExpression expr) {
-    super.visitStaticMethodCallExpression(expr);
-    handlePredefMockAndPredefOld(expr);
+  // Forbid the use of super.foo() in fixture method foo,
+  // because it is most likely a mistake (user thinks he is overriding
+  // the base method and doesn't know that it will be run automatically)
+  private void forbidUseOfSuperInFixtureMethod(MethodCallExpression expr) {
+    Method currMethod = resourceProvider.getCurrentMethod();
+    Expression target = expr.getObjectExpression();
+    
+    if (currMethod instanceof FixtureMethod
+        && target instanceof VariableExpression
+        && ((VariableExpression)target).isSuperExpression()
+        && currMethod.getName().equals(expr.getMethodAsString())) {
+      resourceProvider.getErrorReporter().error(expr,
+        "A base class fixture method should not be called explicitely " +
+        "because it is always run automatically by the framework");
+    }
   }
 
   private void handlePredefMockAndPredefOld(Expression expr) {
@@ -153,12 +179,18 @@ public class DeepStatementRewriter extends StatementReplacingVisitorSupport {
   }
 
   private void handlePredefMock(Expression expr) {
-    AstUtil.expandBuiltinMemberCall(expr, resourceProvider.getMockControllerRef());
+    try {
+      AstUtil.expandBuiltinMemberCall(expr, resourceProvider.getMockControllerRef());
+    } catch (InvalidSpecCompileException e) {
+      resourceProvider.getErrorReporter().error(e);
+    }
   }
 
   private void handlePredefOld(Expression expr) {
-    if (!(resourceProvider.getCurrentBlock() instanceof ThenBlock))
-      throw new SyntaxException(expr, "old() may only be used in a 'then' block");
+    if (!(resourceProvider.getCurrentBlock() instanceof ThenBlock)) {
+      resourceProvider.getErrorReporter().error(expr, "old() may only be used in a 'then' block");
+      return;
+    }
 
     List<Expression> args = AstUtil.getArguments(expr);
     VariableExpression oldValue = resourceProvider.captureOldValue(args.get(0));

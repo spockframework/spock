@@ -14,11 +14,11 @@
  * limitations under the License.
  */ 
  
-package org.spockframework.smoke
+package org.spockframework.junit
 
 import org.spockframework.EmbeddedSpecification
 
-class RunningJUnitTestsWithDefaultRunner extends EmbeddedSpecification {
+class JUnitErrorBehavior extends EmbeddedSpecification {
   def "failing beforeClass method"() {
     runner.throwFailure = false
 

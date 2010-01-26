@@ -14,35 +14,33 @@
  * limitations under the License.
  */
 
-package org.spockframework.junit
-
-import org.spockframework.EmbeddedSpecification
+package org.spockframework.runtime;
 
 /**
+ * Indicates that a Spec has done something it is not supposed to do. It is up
+ * to the Spec author to correct the problem.
+ *
  * @author Peter Niederwieser
  */
-class JUnitTestResult extends EmbeddedSpecification {
-  def "failing beforeClass increases failureCount but not runCount"() {
-    runner.throwFailure = false
+public class InvalidSpecException extends RuntimeException {
+  private String msg;
 
-    when:
-    def result = runner.run("""
-import org.junit.*
-
-class Foo {
-  @BeforeClass
-  static void beforeClass() {
-    throw new Exception()
+  public InvalidSpecException(String msg) {
+    this(msg, null);
   }
 
-  @Test
-  void foo() {}
-}
-    """)
+  public InvalidSpecException(String msg, Throwable throwable) {
+    super(throwable);
+    this.msg = msg;
+  }
 
-    then:
-    result.runCount == 0
-    result.failureCount == 1
-    result.ignoreCount == 0
+  public InvalidSpecException format(Object... args) {
+    msg = String.format(msg, args);
+    return this;
+  }
+
+  @Override
+  public String getMessage() {
+    return msg;
   }
 }

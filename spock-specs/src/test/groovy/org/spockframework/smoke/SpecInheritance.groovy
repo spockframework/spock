@@ -19,6 +19,7 @@ package org.spockframework.smoke
 import org.spockframework.EmbeddedSpecification
 
 import spock.lang.*
+import org.spockframework.compiler.InvalidSpecCompileException
 
 class SpecInheritance extends EmbeddedSpecification {
   def "fixture methods are run in correct order"() {
@@ -73,6 +74,31 @@ class Derived extends Base {
 
     then:
     derived.log == ["ss1", "ss2", "s1", "s2", "c2", "c1", "cs2", "cs1"]
+  }
+
+  def "cannot call super method from fixture method"() {
+    when:
+    compiler.compileWithImports("""
+class Base extends Specification {
+  def $method() {}
+}
+
+class Derived extends Base {
+  def $method() {
+    super.$method()
+  }
+
+  def feature() {
+    expect: true
+  }
+}
+    """)
+
+    then:
+    thrown(InvalidSpecCompileException)
+
+    where:
+    method << ["setup", "cleanup", "setupSpec", "cleanupSpec"]
   }
 
   def "feature methods are run in correct order"() {

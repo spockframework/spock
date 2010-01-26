@@ -17,7 +17,7 @@
 package org.spockframework.smoke
 
 import org.spockframework.EmbeddedSpecification
-import org.spockframework.util.SyntaxException
+import org.spockframework.runtime.InvalidSpecException
 
 import spock.lang.*
 
@@ -75,6 +75,6 @@ class Foo extends spock.lang.Specification {
     """
 
     then:
-    notThrown(SyntaxException)
+    notThrown(InvalidSpecException)
   }
 }

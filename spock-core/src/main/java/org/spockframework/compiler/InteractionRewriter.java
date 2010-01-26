@@ -27,7 +27,6 @@ import org.codehaus.groovy.syntax.Types;
 import org.spockframework.mock.InteractionBuilder;
 import org.spockframework.mock.MockController;
 import org.spockframework.util.Assert;
-import org.spockframework.util.SyntaxException;
 
 /**
  * Creates the AST representation of an InteractionBuilder build sequence.
@@ -59,7 +58,12 @@ public class InteractionRewriter {
   private Statement rewrite(ExpressionStatement stat) {
     assert AstUtil.isInteraction(stat);
 
-    parse(stat);
+    try {
+      parse(stat);
+    } catch (InvalidSpecCompileException e) {
+      resourceProvider.getErrorReporter().error(e);
+      return stat;
+    }
     createBuilder();
     setCount();
     setTarget();
@@ -70,7 +74,7 @@ public class InteractionRewriter {
     return register();
   }
 
-  private void parse(ExpressionStatement stat) {
+  private void parse(ExpressionStatement stat) throws InvalidSpecCompileException {
     this.stat = stat;
     Expression expr = stat.getExpression();
 
@@ -90,7 +94,7 @@ public class InteractionRewriter {
       boolean leftIsInvocation = isPotentialMockInvocation(binExpr.getLeftExpression());
       boolean rightIsInvocation = isPotentialMockInvocation(binExpr.getRightExpression());
       if (leftIsInvocation && rightIsInvocation)
-        throw new SyntaxException(binExpr,
+        throw new InvalidSpecCompileException(binExpr,
 "Ambiguous interaction definition: cannot tell count from call. Help me by introducing a variable for count.");
       if (leftIsInvocation) {
         expr = binExpr.getLeftExpression();
@@ -98,7 +102,7 @@ public class InteractionRewriter {
       } else if (rightIsInvocation) {
         expr = binExpr.getRightExpression();
         count = binExpr.getLeftExpression();
-      } else throw new SyntaxException(binExpr,
+      } else throw new InvalidSpecCompileException(binExpr,
 "* indicates an interaction definition, but neither the left nor the right side looks like a method call to me");
     }
 

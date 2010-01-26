@@ -24,4 +24,8 @@ public class UnreachableCodeError extends InternalSpockError {
   public UnreachableCodeError() {
     super("You shouldn't be here...fascinating");
   }
+
+  public UnreachableCodeError(Throwable t) {
+    super("You shouldn't be here...fascinating", t);
+  }
 }

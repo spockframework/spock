@@ -17,7 +17,7 @@
 package org.spockframework.smoke
 
 import org.spockframework.EmbeddedSpecification
-import org.spockframework.util.SpockSyntaxException
+import org.spockframework.compiler.InvalidSpecCompileException
 
 /**
  *
@@ -66,7 +66,7 @@ setup: b = 2
     """
 
     then:
-    SpockSyntaxException e = thrown()
+    InvalidSpecCompileException e = thrown()
     e.line == 2
   }
 
@@ -79,7 +79,7 @@ setup: b = 2
       """
 
     then:
-    thrown(SpockSyntaxException)
+    thrown(InvalidSpecCompileException)
   }
 
   def "blocks are executed"() {

@@ -30,7 +30,11 @@ public class PojoBuilder {
   private final List<ISlotFactory> slotFactories =
       Arrays.asList(new SetterSlotFactory(), new AddSlotFactory(), new CollectionSlotFactory());
 
-  public Object build(Object pojo, Closure blueprint) {
+  public Object build(Object pojo, Closure closure) {
+    return build(pojo, new ClosureBlueprint(closure, pojo));
+  }
+
+  public Object build(Object pojo, IBlueprint blueprint) {
     IGestalt gestalt = new PojoGestalt(pojo, pojo.getClass(), blueprint, slotFactories);
     gestaltBuilder.build(gestalt);
     return pojo;

@@ -42,6 +42,9 @@ public class SpecInfo extends NodeInfo<NodeInfo, Class<?>> implements IMethodNam
   private MethodInfo cleanupSpecMethod;
   private List<FeatureInfo> features = new ArrayList<FeatureInfo>();
 
+  private boolean excluded = false;
+  private boolean skipped = false;
+  
   public String getFilename() {
     return filename;
   }
@@ -110,6 +113,14 @@ public class SpecInfo extends NodeInfo<NodeInfo, Class<?>> implements IMethodNam
     return features;
   }
 
+  public List<FeatureInfo> getAllFeatures() {
+    if (superSpec == null) return features;
+    
+    List<FeatureInfo> result = new ArrayList<FeatureInfo>(superSpec.getAllFeatures());
+    result.addAll(features);
+    return result;
+  }
+
   public void addFeature(FeatureInfo feature) {
     features.add(feature);
   }
@@ -120,6 +131,22 @@ public class SpecInfo extends NodeInfo<NodeInfo, Class<?>> implements IMethodNam
 
   public void addInterceptor(IMethodInterceptor interceptor) {
     interceptors.add(interceptor);
+  }
+
+  public boolean isExcluded() {
+    return excluded;
+  }
+
+  public void setExcluded(boolean excluded) {
+    this.excluded = excluded;
+  }
+
+  public boolean isSkipped() {
+    return skipped;
+  }
+
+  public void setSkipped(boolean skipped) {
+    this.skipped = skipped;
   }
 
   public void filterFeatures(final IFeatureFilter filter) {

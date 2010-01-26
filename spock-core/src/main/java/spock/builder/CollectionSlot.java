@@ -53,6 +53,7 @@ public class CollectionSlot implements ISlot {
     throw new UnreachableCodeError();
   }
 
+  @SuppressWarnings("unchecked")
   public void write(Object value) {
     Collection collection = (Collection) property.getProperty(owner);
     if (collection == null) {

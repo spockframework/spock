@@ -12,6 +12,8 @@
  * limitations under the License.
  */
 
-package spock.config;
+package spock.builder;
 
-public class Exclude extends IncludeExclude {}
+public interface IConfigurationRegistry {
+  Object getConfiguration(String name);
+}

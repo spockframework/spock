@@ -18,4 +18,7 @@ public class ConfigurationException extends RuntimeException {
   public ConfigurationException(String msg, Object... args) {
     super(String.format(msg, args));
   }
+  public ConfigurationException(String msg, Throwable t, Object... args) {
+    super(String.format(msg, args), t);
+  }
 }

@@ -16,8 +16,6 @@
 
 package org.spockframework.spring;
 
-import java.lang.reflect.Field;
-
 import javax.annotation.Resource;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,10 +46,9 @@ public class SpringExtension implements IGlobalExtension {
 
   private void checkNoSharedFieldInjected(SpecInfo spec) {
     for (FieldInfo field : spec.getFields()) {
-      Field reflection = field.getReflection();
-      if (reflection.isAnnotationPresent(Shared.class)
-          && (reflection.isAnnotationPresent(Autowired.class)
-          || reflection.isAnnotationPresent(Resource.class)))
+      if (field.getReflection().isAnnotationPresent(Shared.class)
+          && (field.getReflection().isAnnotationPresent(Autowired.class)
+          || field.getReflection().isAnnotationPresent(Resource.class)))
         throw new SpringExtensionException(
             "@Shared field '%s' cannot be injected; use an instance field instead").format(field.getName());
     }

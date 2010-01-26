@@ -29,6 +29,8 @@ public class BuilderHelper {
       // int -> byte (at least if it fits), etc.
     }
 
+    // IDEA: could support creation of collection types here
+    
     if ((clazz.getModifiers() & Modifier.ABSTRACT) != 0) {
       String kind = clazz.isPrimitive() ? "primitive" : clazz.isInterface() ? "interface" : "abstract";
       throw new RuntimeException(String.format( "Cannot instantiate %s type %s", kind, clazz.getName()));

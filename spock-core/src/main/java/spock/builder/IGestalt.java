@@ -16,13 +16,10 @@ package spock.builder;
 
 import org.spockframework.util.Nullable;
 
-import groovy.lang.Closure;
-
 public interface IGestalt {
-  Object getSubject();
-  @Nullable Closure getBlueprint();
+  @Nullable IBlueprint getBlueprint();
 
-  Object getValue(String name);
-  void setValue(String name, Object value);
-  IGestalt subGestalt(String name, Object[] args);
+  Object getProperty(String name);
+  void setProperty(String name, Object value);
+  IGestalt invokeMethod(String name, Object[] args);
 }

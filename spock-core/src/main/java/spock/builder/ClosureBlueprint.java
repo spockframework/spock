@@ -18,9 +18,11 @@ import groovy.lang.Closure;
 
 public class ClosureBlueprint implements IBlueprint {
   private final Closure closure;
-
-  public ClosureBlueprint(Closure closure) {
+  private final Object subject;
+  
+  public ClosureBlueprint(Closure closure, Object subject) {
     this.closure = closure;
+    this.subject = subject;
     closure.setResolveStrategy(Closure.DELEGATE_FIRST);
   }
 
@@ -29,6 +31,6 @@ public class ClosureBlueprint implements IBlueprint {
   }
 
   public void evaluate() {
-    closure.call();
+    closure.call(subject);
   }
 }

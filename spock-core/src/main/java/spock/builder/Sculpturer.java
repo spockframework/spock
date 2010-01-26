@@ -25,25 +25,24 @@ public class Sculpturer extends GroovyObjectSupport {
   private IGestalt $gestalt;
 
   public void $form(IGestalt gestalt) {
-    Closure blueprint = gestalt.getBlueprint();
+    IBlueprint blueprint = gestalt.getBlueprint();
     if (blueprint == null) return;
 
     $gestalt = gestalt;
     blueprint.setDelegate(this);
-    blueprint.setResolveStrategy(Closure.DELEGATE_FIRST);
-    blueprint.call(gestalt.getSubject());
+    blueprint.evaluate();
   }
 
   public Object getProperty(String name) {
-    return $gestalt.getValue(name);
+    return $gestalt.getProperty(name);
   }
 
   public void setProperty(String name, Object value) {
-    $gestalt.setValue(name, value);
+    $gestalt.setProperty(name, value);
   }
 
   public Object invokeMethod(String name, Object args) {
-    IGestalt subGestalt = $gestalt.subGestalt(name, InvokerHelper.asArray(args));
+    IGestalt subGestalt = $gestalt.invokeMethod(name, InvokerHelper.asArray(args));
     new Sculpturer().$form(subGestalt);
     return null;
   }

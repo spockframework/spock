@@ -14,19 +14,22 @@
  * limitations under the License.
  */
 
-package org.spockframework.runtime.extension
+package org.spockframework.runtime
 
+import org.spockframework.runtime.extension.IGlobalExtension
 import org.spockframework.runtime.model.SpecInfo
+
 import spock.lang.Specification
 
 class ExtensionRegistrySpec extends Specification {
-  def "registry loads extensions specified in descriptors"() {
-    def loader = new ExtensionLoader(getClass().classLoader)
-    def registry = new ExtensionRegistry(loader)
+  def "registry can load extensions"() {
+    def registry = new ExtensionRegistry([Extension1, Extension2], [])
     
-    expect:
-    registry.extensions.any { it instanceof Extension1 }
-    registry.extensions.any { it instanceof Extension2 }
+    when:
+    registry.loadExtensions()
+
+    then:
+    registry.extensions*.getClass() == [Extension1, Extension2]
   }
 }
 
@@ -36,22 +39,4 @@ class Extension1 implements IGlobalExtension {
 
 class Extension2 implements IGlobalExtension {
   void visitSpec(SpecInfo spec) {}
-}
-
-class ExtensionLoader extends ClassLoader {
-  ExtensionLoader(parent) {
-    super(parent);
-  }
-
-  protected Enumeration<URL> findResources(String name) {
-    if (!name.equals(ExtensionRegistry.DESCRIPTOR_PATH))
-      return super.findResources(name)
-
-    URL url1 = getResource("org/spockframework/runtime/extension/descriptor1")
-    URL url2 = getResource("org/spockframework/runtime/extension/descriptor2")
-    assert url1 != null
-    assert url2 != null
-    
-    return Collections.enumeration(Arrays.asList(url1, url2));
-  }
 }

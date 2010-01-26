@@ -22,19 +22,18 @@ import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
 
 import static org.spockframework.runtime.RunStatus.*;
+
 import org.spockframework.runtime.model.*;
 import org.spockframework.util.InternalSpockError;
 
-import spock.lang.Ignore;
 import spock.lang.Unroll;
 
 public class JUnitSupervisor implements IRunSupervisor {
   private final RunNotifier notifier;
   private SpecInfo spec;
-  private StackTraceFilter filter;
+  private IStackTraceFilter filter;
 
   private FeatureInfo feature;
-  private boolean ignoredFeature;
   private boolean unrollFeature;
   private UnrolledFeatureNameGenerator unrolledNameGenerator;
 
@@ -42,23 +41,16 @@ public class JUnitSupervisor implements IRunSupervisor {
   private Description unrolledDescription;
   private boolean errorSinceLastReset;
 
-  public JUnitSupervisor(RunNotifier notifier) {
+  public JUnitSupervisor(SpecInfo spec, RunNotifier notifier, IStackTraceFilter filter) {
+    this.spec = spec;
     this.notifier = notifier;
+    this.filter = filter;
   }
 
-  public void beforeSpec(SpecInfo spec) {
-    this.spec = spec;
-    this.filter = new StackTraceFilter(spec);
-  }
+  public void beforeSpec(SpecInfo spec) {}
 
   public void beforeFeature(FeatureInfo feature) {
     this.feature = feature;
-
-    // make sure we don't call fireTestStarted/fireTestFinished for ignored features
-    // a bit of a hack; for example, what will happen if exception is thrown before
-    // IgnoreInterceptor gets to throw its SkipSpecOrFeatureException?
-    ignoredFeature = feature.getFeatureMethod().getReflection().getAnnotation(Ignore.class) != null;
-    if (ignoredFeature) return;
 
     Unroll unroll = feature.getFeatureMethod().getReflection().getAnnotation(Unroll.class);
     unrollFeature = unroll != null;
@@ -92,8 +84,10 @@ public class JUnitSupervisor implements IRunSupervisor {
     errorSinceLastReset = true;
     filter.filter(throwable);
 
-    Description description = getFailedDescription(method);
+    Description description = getCurrentDescription();
     if (throwable instanceof SkipSpecOrFeatureException) {
+      // will result in wrong JUnit counts because JUnit doesn't support
+      // ignoring a test after fireTestStarted() has been called
       notifier.fireTestIgnored(description);
       return OK;
     }
@@ -133,27 +127,31 @@ public class JUnitSupervisor implements IRunSupervisor {
   }
   
   public void afterFeature() {
-    if (!(ignoredFeature || unrollFeature))
+    if (!unrollFeature)
       notifier.fireTestFinished(getDescription(feature.getFeatureMethod()));
 
     feature = null;
-    ignoredFeature = false;
     unrollFeature = false;
     unrolledNameGenerator = null;
   }
 
   public void afterSpec() {}
 
+  public void specSkipped(SpecInfo spec) {
+    notifier.fireTestIgnored(getDescription(spec));
+  }
+
+  public void featureSkipped(FeatureInfo feature) {
+    notifier.fireTestIgnored(getDescription(feature));
+  }
+
   private Description getDescription(NodeInfo node) {
     return (Description)node.getMetadata();
   }
 
-  private Description getFailedDescription(MethodInfo failedMethod) {
+  private Description getCurrentDescription() {
     if (unrolledDescription != null) return unrolledDescription;
     if (feature != null) return getDescription(feature.getFeatureMethod());
-    // attribute failure to Spec
-    // if we would attribute failure to a method that isn't part of the Spec's
-    // static Description, IDEs would fail to report it correctly
     return getDescription(spec);
   }
 

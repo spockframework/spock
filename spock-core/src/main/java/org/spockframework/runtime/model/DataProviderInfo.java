@@ -14,6 +14,11 @@ public class DataProviderInfo extends NodeInfo<FeatureInfo, AnnotatedElement> {
   private List<String> dataVariables;
   private MethodInfo dataProviderMethod;
 
+  @Override
+  public AnnotatedElement getReflection() {
+    throw new UnsupportedOperationException("getReflection");
+  }
+
   public int getLine() {
     return line;
   }

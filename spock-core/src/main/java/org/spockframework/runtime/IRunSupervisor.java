@@ -43,4 +43,7 @@ public interface IRunSupervisor {
   void afterSpec();
 
   int error(MethodInfo method, Throwable error, int runStatus);
+
+  void specSkipped(SpecInfo spec);
+  void featureSkipped(FeatureInfo feature);
 }

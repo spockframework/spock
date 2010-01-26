@@ -37,62 +37,47 @@ import spock.lang.Specification;
  */
 public class SpecInfoBuilder {
   private final Class<?> clazz;
-  private final Map<Class<? extends IAnnotationDrivenExtension>, IAnnotationDrivenExtension> extensions =
+  private final List<IGlobalExtension> globalExtensions;
+  private final Map<Class<? extends IAnnotationDrivenExtension>, IAnnotationDrivenExtension> localExtensions =
     new HashMap<Class<? extends IAnnotationDrivenExtension>, IAnnotationDrivenExtension>();
   private final SpecInfo spec = new SpecInfo();
 
-  public SpecInfoBuilder(Class<?> clazz) {
+  public SpecInfoBuilder(Class<?> clazz, List<IGlobalExtension> globalExtensions) {
     this.clazz = clazz;
+    this.globalExtensions = globalExtensions;
   }
 
   public SpecInfo build() {
-    try {
-      buildSuperSpec();
-      buildSpec();
-      buildFields();
-      buildSharedInstanceField();
-      buildFeatures();
-      buildFixtureMethods();
-      notifyGlobalExtensions();
-      processAnnotationDrivenExtensions();
-    } catch (InstantiationException e) {
-      internalError(e, clazz);
-    } catch (IllegalAccessException e) {
-      internalError(e, clazz);
-    } catch (NoSuchFieldException e) {
-      internalError(e, clazz);
-    }
-
+    buildSuperSpec();
+    buildSpec();
+    buildFields();
+    buildSharedInstanceField();
+    buildFeatures();
+    buildFixtureMethods();
     return spec;
   }
 
-  private void internalError(Exception e, Class<?> clazz) {
-    throw new InternalSpockError("Unexpected error while preparing execution of spec '%s'", e)
-        .withArgs(clazz.getSimpleName());
+  // TODO: move this to a more appropriate location (class)
+  public void runExtensions() {
+    runGlobalExtensions();
+    runAnnotationDrivenExtensions();
+    // TODO: do this more often (e.g. after every extension)? stop once spec has been excluded?
+    removeExcludedFeatures(spec);
   }
 
-  private void buildSuperSpec() throws InstantiationException, IllegalAccessException, NoSuchFieldException {
+  private void buildSuperSpec() {
     Class<?> superClass = clazz.getSuperclass();
     if (superClass == Object.class || superClass == Specification.class) return;
 
-    spec.setSuperSpec(new SpecInfoBuilder(superClass).build());
+    spec.setSuperSpec(new SpecInfoBuilder(superClass, globalExtensions).build());
   }
 
   private void buildSpec() {
-    SpecMetadata metadata = getSpecMetadata();
+    SpecUtil.checkIsSpec(clazz);
     spec.setParent(null);
     spec.setName(clazz.getSimpleName());
     spec.setReflection(clazz);
-    spec.setFilename(metadata.filename());
-  }
-
-  private SpecMetadata getSpecMetadata() {
-    SpecMetadata metadata = clazz.getAnnotation(SpecMetadata.class);
-    if (metadata == null)
-      throw new InvalidSpecException(
-          "Class '%s' is not a Spock specification").format(clazz.getName());
-
-    return metadata;
+    spec.setFilename(clazz.getAnnotation(SpecMetadata.class).filename());
   }
 
   private void buildFields() {
@@ -116,14 +101,21 @@ public class SpecInfoBuilder {
     });
   }
 
-  private void buildSharedInstanceField() throws NoSuchFieldException {
-    Field field = clazz.getField(Identifiers.SHARED_INSTANCE_NAME);
-
+  private void buildSharedInstanceField() {
+    Field field = getSharedInstanceField();
     FieldInfo fieldInfo = new FieldInfo();
     fieldInfo.setParent(spec);
     fieldInfo.setName(field.getName());
     fieldInfo.setReflection(field);
     spec.setSharedInstanceField(fieldInfo);
+  }
+
+  private Field getSharedInstanceField() {
+    try {
+      return clazz.getField(Identifiers.SHARED_INSTANCE_NAME);
+    } catch (NoSuchFieldException e) {
+      throw new InternalSpockError("cannot find shared instance field");
+    }
   }
 
   private void buildFeatures() {
@@ -222,30 +214,41 @@ public class SpecInfoBuilder {
     spec.setCleanupSpecMethod(createMethod(Identifiers.CLEANUP_SPEC_METHOD, MethodKind.CLEANUP_SPEC, true));
   }
 
-  private void notifyGlobalExtensions() {
-    for (IGlobalExtension extension : ExtensionRegistry.getInstance().getExtensions())
+  private void runGlobalExtensions() {
+    for (IGlobalExtension extension : globalExtensions)
       extension.visitSpec(spec);
   }
 
-  private void processAnnotationDrivenExtensions() throws InstantiationException, IllegalAccessException {
-    processAnnotationDrivenExtensions(spec);
-    for (FieldInfo field : spec.getFields())
-      processAnnotationDrivenExtensions(field);
-    processAnnotationDrivenExtensions(spec.getSetupSpecMethod());
-    processAnnotationDrivenExtensions(spec.getSetupMethod());
-    processAnnotationDrivenExtensions(spec.getCleanupMethod());
-    processAnnotationDrivenExtensions(spec.getCleanupSpecMethod());
-    for (FeatureInfo feature : spec.getFeatures())
-      processAnnotationDrivenExtensions(feature.getFeatureMethod());
-    for (IAnnotationDrivenExtension extension : extensions.values())
+  public void runAnnotationDrivenExtensions() {
+    runAnnotationDrivenExtensions(spec);
+    
+    for (IAnnotationDrivenExtension extension : localExtensions.values())
       extension.visitSpec(spec);
+  }
+
+  public void runAnnotationDrivenExtensions(SpecInfo spec) {
+    if (spec == null) return;
+    runAnnotationDrivenExtensions(spec.getSuperSpec());
+
+    doRunAnnotationDrivenExtensions(spec);
+    
+    for (FieldInfo field : spec.getFields())
+      doRunAnnotationDrivenExtensions(field);
+
+    doRunAnnotationDrivenExtensions(spec.getSetupSpecMethod());
+    doRunAnnotationDrivenExtensions(spec.getSetupMethod());
+    doRunAnnotationDrivenExtensions(spec.getCleanupMethod());
+    doRunAnnotationDrivenExtensions(spec.getCleanupSpecMethod());
+
+    for (FeatureInfo feature : spec.getFeatures())
+      doRunAnnotationDrivenExtensions(feature.getFeatureMethod());
   }
 
   @SuppressWarnings("unchecked")
-  private void processAnnotationDrivenExtensions(NodeInfo node) throws InstantiationException, IllegalAccessException {
+  private void doRunAnnotationDrivenExtensions(NodeInfo<?, ?> node) {
     if (node.isStub()) return;
 
-    for (Annotation ann : node.getReflection().getDeclaredAnnotations()) {
+    for (Annotation ann : node.getReflection().getAnnotations()) {
       ExtensionAnnotation extAnn = ann.annotationType().getAnnotation(ExtensionAnnotation.class);
       if (extAnn == null) continue;
       IAnnotationDrivenExtension extension = getOrCreateExtension(extAnn.value());
@@ -261,13 +264,31 @@ public class SpecInfoBuilder {
     }
   }
 
-  private IAnnotationDrivenExtension getOrCreateExtension(Class<? extends IAnnotationDrivenExtension> clazz)
-    throws InstantiationException, IllegalAccessException {
-    IAnnotationDrivenExtension result = extensions.get(clazz);
+  private IAnnotationDrivenExtension getOrCreateExtension(Class<? extends IAnnotationDrivenExtension> clazz) {
+    IAnnotationDrivenExtension result = localExtensions.get(clazz);
     if (result == null) {
-      result = clazz.newInstance();
-      extensions.put(clazz, result);
+      try {
+        result = clazz.newInstance();
+      } catch (InstantiationException e) {
+        throw new ExtensionException("Failed to instantiate extension '%s'", e).format(clazz);
+      } catch (IllegalAccessException e) {
+        throw new ExtensionException("No-arg constructor of extension '%s' is not public", e).format(clazz);
+      }
+      localExtensions.put(clazz, result);
     }
     return result;
+  }
+
+  // can't simply remove skipped features because we need them for JUnit descriptions;
+  // could introduce two feature lists though
+  private void removeExcludedFeatures(SpecInfo spec) {
+    if (spec == null) return;
+    removeExcludedFeatures(spec.getSuperSpec());
+    
+    spec.filterFeatures(new IFeatureFilter() {
+      public boolean matches(FeatureInfo feature) {
+        return !feature.isExcluded();
+      }
+    });
   }
 }

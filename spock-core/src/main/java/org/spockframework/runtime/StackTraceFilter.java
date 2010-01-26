@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.spockframework.Settings;
 import org.spockframework.util.BinaryNames;
 
 /**
@@ -32,7 +31,7 @@ import org.spockframework.util.BinaryNames;
  * @author Peter Niederwieser
  */
 // IDEA: do not filter top-most stack element, unless it's a call to the Spock runtime
-public class StackTraceFilter {
+public class StackTraceFilter implements IStackTraceFilter {
   private static final Pattern FILTERED_CLASSES = Pattern.compile(
       "org.codehaus.groovy.runtime\\..*" + 
       "|org.codehaus.groovy.reflection\\..*" +
@@ -53,8 +52,6 @@ public class StackTraceFilter {
   }
 
   public void filter(Throwable throwable) {
-    if (!Settings.filterStackTrace) return;
-
     List<StackTraceElement> filteredTrace = new ArrayList<StackTraceElement>();
 
     for (StackTraceElement elem : throwable.getStackTrace()) {

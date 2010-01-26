@@ -44,13 +44,59 @@ def baz() {
     """)
 
     then:
-    result.runCount == 3
+    result.runCount == run
+    result.failureCount == 0
     result.ignoreCount == ignored
 
     where:
     first   << ["",            "@IgnoreRest", "@IgnoreRest"]
     second  << ["@IgnoreRest", "@IgnoreRest", "@IgnoreRest"]
     third   << [""           , ""           , "@IgnoreRest"]
-    ignored << [2            , 1            , 0]
+    run     << [1            , 2            , 3            ]
+    ignored << [2            , 1            , 0            ]
+  }
+
+  @Unroll
+  def "@IgnoreRest in base and/or derived class"() {
+    def classes = compiler.compileWithImports("""
+class Base extends Specification {
+  $first
+  def feature1() {
+    expect: "$first"
+  }
+
+  def feature2() {
+    expect: true
   }
 }
+
+class Derived extends Base {
+  def feature3() {
+    expect: true
+  }
+
+  $second
+  def feature4() {
+    expect: "$second"
+  }
+}
+    """)
+
+    def derived = classes.find { it.simpleName == "Derived" }
+
+    when:
+    def result = runner.runClass(derived)
+
+    then:
+    result.runCount == runCount
+    result.failureCount == 0
+    result.ignoreCount == ignoreCount
+
+    where:
+    first       << ["@IgnoreRest", ""           , "@IgnoreRest"]
+    second      << [""           , "@IgnoreRest", "@IgnoreRest"]
+    runCount    << [1            , 1            , 2            ]
+    ignoreCount << [3            , 3            , 2            ]
+  }
+}
+

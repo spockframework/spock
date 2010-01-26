@@ -29,10 +29,10 @@ import spock.lang.Ignore;
 // setup() and setupSpec() perform initialization of user-defined and internal fields
 public class IgnoreExtension extends AbstractAnnotationDrivenExtension<Ignore> {
   public void visitSpecAnnotation(Ignore ignore, SpecInfo spec) {
-    spec.addInterceptor(new IgnoreInterceptor(ignore.value()));
+    spec.setSkipped(true);
   }
 
   public void visitFeatureAnnotation(Ignore ignore, FeatureInfo feature) {
-    feature.addInterceptor(new IgnoreInterceptor(ignore.value()));
+    feature.setSkipped(true);
   }
 }

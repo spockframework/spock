@@ -15,7 +15,7 @@
   <url>http://grails.org/plugin/spock</url>
 
   <properties>
-    <grails.version>1.2.0</grails.version>
+    <grails.version>1.2.1</grails.version>
   </properties>
   <dependencies>
     <dependency>
@@ -166,6 +166,9 @@
               <goal>maven-test</goal>
               <goal>maven-functional-test</goal>
             </goals>
+            <configuration>
+              <nonInteractive>true</nonInteractive>
+            </configuration>
           </execution>
           <execution>
             <id>package-plugin</id>

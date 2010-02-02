@@ -43,6 +43,6 @@ grails.project.dependency.resolution = {
       excludes 'xml-apis' // GROOVY-3356
     }
     
-    test 'org.mortbay.jetty:jetty:6.1.21'
+    test 'org.mortbay.jetty:jetty:6.1.21' // for TestHttpServer
   }
 }

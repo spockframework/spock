@@ -40,6 +40,8 @@ import org.spockframework.util.Util;
 // IDEA: IntelliMock ("intelligent" return values)
 // IDEA: DynaMock (based on GroovyInterceptable or groovy.lang.Interceptor)
 public class DefaultMockFactory implements IMockFactory {
+  public static final String INSTANCE_FIELD = "INSTANCE";
+
   public static final DefaultMockFactory INSTANCE = new DefaultMockFactory();
   
   private static final boolean cglibAvailable = Util.isClassAvailable("net.sf.cglib.proxy.Enhancer");
@@ -58,7 +60,7 @@ public class DefaultMockFactory implements IMockFactory {
       "to allow mocking of classes, put cglib-nodep-2.1_3 or higher on the classpath.");
   }
 
-  public Object createDynamicProxyMock(final String mockName, Class<?> mockType, final IInvocationMatcher dispatcher) {
+  private Object createDynamicProxyMock(final String mockName, Class<?> mockType, final IInvocationMatcher dispatcher) {
     return Proxy.newProxyInstance(
       mockType.getClassLoader(),
       new Class<?>[] {mockType},
@@ -90,7 +92,6 @@ public class DefaultMockFactory implements IMockFactory {
       Enhancer enhancer = new Enhancer();
       enhancer.setSuperclass(mockType);
       final boolean isGroovyObject = GroovyObject.class.isAssignableFrom(mockType);
-      final MetaClass metaClass = GroovySystem.getMetaClassRegistry().getMetaClass(mockType);
 
       MethodInterceptor interceptor = new MethodInterceptor() {
         public Object intercept(Object mock, Method method, Object[] args, MethodProxy proxy) {

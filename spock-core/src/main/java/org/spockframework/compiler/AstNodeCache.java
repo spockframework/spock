@@ -46,7 +46,6 @@ public class AstNodeCache {
 
   // mocking API
   public final ClassNode MockController = ClassHelper.makeWithoutCaching(MockController.class);
-  public final ClassNode MockInteraction = ClassHelper.makeWithoutCaching(MockInteraction.class);
   public final ClassNode InteractionBuilder = ClassHelper.makeWithoutCaching(InteractionBuilder.class);
   public final FieldNode DefaultMockFactory_INSTANCE;
 
@@ -57,6 +56,6 @@ public class AstNodeCache {
     ClassNode factory = ClassHelper.makeWithoutCaching(DefaultMockFactory.class);
     // since ClassNode.getField(String) does not trigger class node initialization, we call getFields() first
     factory.getFields();
-    DefaultMockFactory_INSTANCE = factory.getField("INSTANCE");
+    DefaultMockFactory_INSTANCE = factory.getField(DefaultMockFactory.INSTANCE_FIELD);
   }
 }

@@ -223,8 +223,7 @@ public abstract class AstUtil {
 
   public static void expandBuiltinMemberCall(Expression builtinMemberCall, Expression... additionalArgs)
       throws InvalidSpecCompileException {
-    // IDEA: use line/column information as name
-    doExpandBuiltinMemberCall(builtinMemberCall, "(unnamed)", getType(builtinMemberCall, null), additionalArgs);
+    doExpandBuiltinMemberCall(builtinMemberCall, null, getType(builtinMemberCall, null), additionalArgs);
   }
 
   private static Expression getType(Expression builtinMemberCall, Expression inferredType)

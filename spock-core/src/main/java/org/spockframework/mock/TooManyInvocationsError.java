@@ -16,6 +16,13 @@
 
 package org.spockframework.mock;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.codehaus.groovy.runtime.DefaultGroovyMethods;
+
+import org.spockframework.util.TextUtil;
+
 /**
  * Indicates that a required interaction has matched too many invocations.
  * 
@@ -43,8 +50,16 @@ public class TooManyInvocationsError extends InteractionNotSatisfiedError {
     StringBuilder builder = new StringBuilder();
     builder.append("Too many invocations for:\n\n");
     int numInvoked = interaction.getAcceptedCount() + 1;
-    builder.append(String.format("%s   (%d %s)\n",
+    builder.append(String.format("%s   (%d %s)\n\n",
         interaction, numInvoked, numInvoked == 1 ? "invocation" : "invocations"));
+    builder.append(String.format("Last invocation: %s.%s(%s)\n", invocation.getMockObjectName(),
+        invocation.getMethod().getName(), TextUtil.concat(toString(invocation.getArguments()), ", ")));
     return builder.toString();
+  }
+
+  private List<String> toString(List<Object> objects) {
+    List<String> result = new ArrayList<String>();
+    for (Object obj : objects) result.add(DefaultGroovyMethods.inspect(obj));
+    return result;
   }
 }

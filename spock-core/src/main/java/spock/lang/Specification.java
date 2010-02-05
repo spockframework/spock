@@ -126,7 +126,8 @@ public abstract class Specification {
    * to initialize a new variable, the mock's name is inferred from the
    * variable's name. For example, <tt>def service = Mock(IOrderService)</tt>
    * will create a mock object named "service" and of type
-   * <tt>IOrderService</tt>.
+   * <tt>IOrderService</tt>. Otherwise, the mock will be named after
+   * its type (e.g. "IOrderService").
    *
    * @param type the type of the mock object to be created
    * @param <T> the type of the mock object to be created
@@ -221,11 +222,15 @@ public abstract class Specification {
   <T> T Mock(Class<T> type, String name, MockController controller) {
     if (type == null)
       throw new InvalidSpecException("Mock object type may not be 'null'");
+
     if (controller == null) {
       // mock has been created in a context where no controller exists
       Mock();
       return null; // unreachable; just exists to avoid compiler warning
     }
+
+    if (name == null) name = type.getSimpleName();
+
     return type.cast(controller.create(name, type));
   }
 

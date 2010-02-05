@@ -73,5 +73,15 @@ public class TextUtil {
    */
   public static int getTrailingWhitespace(String line) {
     return line.length() - line.trim().length() - getIndent(line);
-  }  
+  }
+
+  public static String concat(List<?> objects, String separator) {
+    StringBuilder builder = new StringBuilder();
+    for (int i = 0; i < objects.size(); i++) {
+      builder.append(objects.get(i));
+      if (i != objects.size() - 1)
+        builder.append(separator);
+    }
+    return builder.toString();
+  }
 }

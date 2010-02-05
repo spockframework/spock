@@ -46,20 +46,6 @@
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy-all</artifactId>
             <version>1.7.0</version>
-            <exclusions> <!-- exclude optional dependencies that aren't marked as such (fixed in Groovy 1.7) -->
-              <exclusion>
-                <groupId>junit</groupId>
-                <artifactId>junit</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.apache.ant</groupId>
-                <artifactId>ant</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.apache.ant</groupId>
-                <artifactId>ant-launcher</artifactId>
-              </exclusion>
-            </exclusions>
           </dependency>
         </dependencies>
       </plugin>

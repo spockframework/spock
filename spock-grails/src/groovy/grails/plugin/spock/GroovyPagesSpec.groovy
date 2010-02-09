@@ -27,9 +27,9 @@ class GroovyPagesSpec extends IntegrationSpec {
   Closure transform = { it.toString() }
   
   def getRequest() {
-		RequestContextHolder.currentRequestAttributes()
-	}
-	
+    RequestContextHolder.currentRequestAttributes()
+  }
+  
   void setControllerName(String name) {
     getRequest().controllerName = name
   }
@@ -46,7 +46,7 @@ class GroovyPagesSpec extends IntegrationSpec {
     def out = new GrailsPrintWriter(sw)
     webRequest.out = out
     w.writeTo(out)
-
+    
     transform(sw)
   }
 }

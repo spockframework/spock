@@ -24,7 +24,6 @@ class GroovyPagesSpec extends IntegrationSpec {
   
   String template = ''
   Map params = [:]
-  Closure transform = { it.toString() }
   
   def getRequest() {
     RequestContextHolder.currentRequestAttributes()
@@ -46,7 +45,6 @@ class GroovyPagesSpec extends IntegrationSpec {
     def out = new GrailsPrintWriter(sw)
     webRequest.out = out
     w.writeTo(out)
-    
-    transform(sw)
+    sw.toString()
   }
 }

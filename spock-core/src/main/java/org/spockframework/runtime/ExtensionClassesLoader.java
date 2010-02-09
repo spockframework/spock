@@ -57,7 +57,7 @@ public class ExtensionClassesLoader {
       String line = reader.readLine();
       while (line != null) {
         line = line.trim();
-        if (!line.isEmpty() && !line.startsWith("#"))
+        if (line.length() > 0 && !line.startsWith("#"))
           lines.add(line);
         line = reader.readLine();
       }

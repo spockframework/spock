@@ -26,14 +26,18 @@ class GroovyPagesSpec extends IntegrationSpec {
   Map params = [:]
   Closure transform = { it.toString() }
   
+  def getRequest() {
+		RequestContextHolder.currentRequestAttributes()
+	}
+	
   void setControllerName(String name) {
-    RequestContextHolder.currentRequestAttributes().controllerName = name
+    getRequest().controllerName = name
   }
   
   def getOutput() {
     assert groovyPagesTemplateEngine
     
-    def webRequest = RequestContextHolder.currentRequestAttributes()
+    def webRequest = getRequest()
     
     def t = groovyPagesTemplateEngine.createTemplate(template, "test_"+ System.currentTimeMillis())
     def w = t.make(params)

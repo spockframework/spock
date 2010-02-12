@@ -109,11 +109,12 @@ public class Util {
     return source.toString();
   }
 
-  public static boolean isListOf(Class<?> type, List<?> list) {
-    for (Object elem : list)
-      if (!type.isInstance(elem))
-        return false;
-
-    return true;
+  /**
+   * (Partial) replacement for Arrays.copyOfRange, which is only available in JDK6.
+   */
+  public static Object[] copyArray(Object[] array, int from, int to) {
+    Object[] result = new Object[to - from];
+    System.arraycopy(array, from, result, 0, to - from);
+    return result;
   }
 }

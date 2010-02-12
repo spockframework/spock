@@ -72,11 +72,11 @@ public class RunContext {
     
     RunContext context = new RunContext(configurationScript, allExtensionClasses);
     LinkedList<RunContext> contextStack = contextStacks.get();
-    contextStack.push(context);
+    contextStack.addFirst(context);
     try {
       return command.apply(context);
     } finally {
-      contextStack.pop();
+      contextStack.removeFirst();
     }
   }
 
@@ -85,7 +85,7 @@ public class RunContext {
     RunContext context = contextStack.peek();
     if (context == null) {
       context = createBottomContext();
-      contextStack.push(context);
+      contextStack.addFirst(context);
     }
     return context;
   }

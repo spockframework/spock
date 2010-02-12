@@ -29,14 +29,6 @@ public class AddWildcardParametersTest extends TestCase {
 		assertEquals(new TypeToken<Outer.Inner<?>>(){}.getType(), GenericTypeReflector.addWildcardParameters(Outer.Inner.class));
 	}
 	
-	public void testOuter() {
-		class Outer<T> {
-			class Inner {
-			}
-		}
-		assertEquals(new TypeToken<Outer<?>.Inner>(){}.getType(), GenericTypeReflector.addWildcardParameters(Outer.Inner.class));
-	}
-	
 	public void testNoParamArray() {
 		assertEquals(String[].class, GenericTypeReflector.addWildcardParameters(String[].class));
 		assertEquals(String[][].class, GenericTypeReflector.addWildcardParameters(String[][].class));

@@ -17,6 +17,7 @@
 package org.spockframework.util;
 
 import java.io.*;
+import java.lang.reflect.Method;
 import java.util.*;
 
 /**
@@ -116,5 +117,18 @@ public class Util {
     Object[] result = new Object[to - from];
     System.arraycopy(array, from, result, 0, to - from);
     return result;
+  }
+
+  /**
+   * Finds a public method with the given name declared in the given
+   * class/interface or one of its super classes/interfaces. If multiple such
+   * methods exists, it is undefined which one is returned.
+   */
+  public static @Nullable Method getMethod(Class<?> clazz, String name) {
+    for (Method method : clazz.getMethods())
+      if (method.getName().equals(name))
+        return method;
+
+    return null;
   }
 }

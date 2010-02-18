@@ -17,8 +17,9 @@
 package org.spockframework.tapestry
 
 import org.apache.tapestry5.ioc.ObjectLocator
-import spock.lang.Specification
 import org.apache.tapestry5.ioc.annotations.*
+
+import spock.lang.*
 
 @SubModule(Module1)
 class ServiceInjection extends Specification {

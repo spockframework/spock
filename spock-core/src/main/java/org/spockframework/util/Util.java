@@ -17,6 +17,7 @@
 package org.spockframework.util;
 
 import java.io.*;
+import java.lang.reflect.Method;
 import java.util.*;
 
 /**
@@ -109,11 +110,25 @@ public class Util {
     return source.toString();
   }
 
-  public static boolean isListOf(Class<?> type, List<?> list) {
-    for (Object elem : list)
-      if (!type.isInstance(elem))
-        return false;
+  /**
+   * (Partial) replacement for Arrays.copyOfRange, which is only available in JDK6.
+   */
+  public static Object[] copyArray(Object[] array, int from, int to) {
+    Object[] result = new Object[to - from];
+    System.arraycopy(array, from, result, 0, to - from);
+    return result;
+  }
 
-    return true;
+  /**
+   * Finds a public method with the given name declared in the given
+   * class/interface or one of its super classes/interfaces. If multiple such
+   * methods exists, it is undefined which one is returned.
+   */
+  public static @Nullable Method getMethod(Class<?> clazz, String name) {
+    for (Method method : clazz.getMethods())
+      if (method.getName().equals(name))
+        return method;
+
+    return null;
   }
 }

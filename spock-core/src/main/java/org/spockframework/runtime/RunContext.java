@@ -72,11 +72,11 @@ public class RunContext {
     
     RunContext context = new RunContext(configurationScript, allExtensionClasses);
     LinkedList<RunContext> contextStack = contextStacks.get();
-    contextStack.push(context);
+    contextStack.addFirst(context);
     try {
       return command.apply(context);
     } finally {
-      contextStack.pop();
+      contextStack.removeFirst();
     }
   }
 
@@ -85,7 +85,7 @@ public class RunContext {
     RunContext context = contextStack.peek();
     if (context == null) {
       context = createBottomContext();
-      contextStack.push(context);
+      contextStack.addFirst(context);
     }
     return context;
   }
@@ -97,9 +97,8 @@ public class RunContext {
   }
   
   // This context will stay around until the thread dies.
-  // But in a JUnit environment we have no other choice
-  // because the Runner SPI doesn't provide the ability
-  // to associate state with a test run.
+  // It would be more accurate to remove the context once the test run
+  // has finished, but the JUnit Runner SPI doesn't provide an adequate hook.
   private static RunContext createBottomContext() {
     DelegatingScript script = new ConfigurationScriptLoader().loadScriptFromConfiguredLocation();
     List<Class<?>> classes = new ExtensionClassesLoader().loadClassesFromDefaultLocation();

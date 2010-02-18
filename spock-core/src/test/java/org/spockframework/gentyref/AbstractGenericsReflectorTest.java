@@ -363,21 +363,6 @@ public abstract class AbstractGenericsReflectorTest extends TestCase {
 	public void testListOfListOfExtT_String() {
 		checkedTestExactSuperclass(COLLECTION_OF_LIST_OF_EXT_STRING, new TypeToken<ListOfListOfExtT<String>>(){});
 	}
-	
-	public void testUExtendsListOfExtT() {
-		class C<T, U extends List<? extends T>> implements WithF<U> {
-			@SuppressWarnings("unused")
-			public U f;
-		}
-		
-		// this doesn't compile in eclipse nor with sun compiler, so we hold the compilers hand by adding some steps in between
-		// TypeToken<? extends List<? extends String>> ft = getF(new TypeToken<C<? extends String, ?>>(){});
-		TypeToken<? extends C<? extends String, ?>> tt = new TypeToken<C<? extends String, ?>>(){};
-		TypeToken<? extends C<? extends String, ? extends List<? extends String>>> ttt = tt;
-		TypeToken<? extends List<? extends String>> ft = getF(ttt);
-
-		checkedTestInexactSupertype(COLLECTION_OF_EXT_STRING, ft);
-	}
 
 	public void testListOfExtT() {
 		class C<T> implements WithF<List<? extends T>> {

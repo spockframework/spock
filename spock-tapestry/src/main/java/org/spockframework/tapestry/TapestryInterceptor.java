@@ -17,38 +17,72 @@
 package org.spockframework.tapestry;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
+import java.lang.reflect.*;
 
 import org.apache.tapestry5.ioc.*;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.SubModule;
 
+import org.spockframework.runtime.SpockExecutionException;
 import org.spockframework.runtime.extension.*;
 import org.spockframework.runtime.model.FieldInfo;
 import org.spockframework.runtime.model.SpecInfo;
+import org.spockframework.util.InternalSpockError;
+import org.spockframework.util.Util;
 
 import spock.lang.Shared;
+import spock.lang.Specification;
 
 /**
- * Controls startup and shutdown of the Tapestry container,
- * and injects Tapestry-provided objects into specifications.
+ * Controls creation, startup and shutdown of the Tapestry container,
+ * and injects specifications with Tapestry-provided objects.
  *
  * @author Peter Niederwieser
  */
 public class TapestryInterceptor extends AbstractMethodInterceptor {
   private final SpecInfo spec;
+  private final Method beforeRegistryCreatedMethod;
+
   private Registry registry;
   private IPerIterationManager perIterationManager;
 
   public TapestryInterceptor(SpecInfo spec) {
     this.spec = spec;
+    beforeRegistryCreatedMethod = findbeforeRegistryCreatedMethod();
+  }
+
+  private Method findbeforeRegistryCreatedMethod() {
+    Method result = Util.getMethod(spec.getReflection(), "beforeRegistryCreated");
+    if (result != null) result.setAccessible(true);
+    return result;
   }
 
   @Override
   public void interceptSetupSpecMethod(IMethodInvocation invocation) throws Throwable {
-    startupRegistry();
+    runbeforeRegistryCreatedMethod((Specification) invocation.getTarget());
+    createAndStartupRegistry();
     injectServices(invocation.getTarget(), true);
     invocation.proceed();
+  }
+
+  private void runbeforeRegistryCreatedMethod(Specification spec) {
+    if (beforeRegistryCreatedMethod == null) return;
+    
+    Object methodReturnValue;
+
+    try {
+      methodReturnValue = beforeRegistryCreatedMethod.invoke(spec, null);
+    } catch (IllegalAccessException e) {
+      throw new InternalSpockError(e);
+    } catch (InvocationTargetException e) {
+      throw new SpockExecutionException("Error invoking beforeRegistryCreated()", e.getCause());
+    }
+
+    // return values of a type other than Registry are silently ignored
+    // this avoids problems if the method unintentionally returns a value
+    // (which is common due to Groovy's implicit return)
+    if (methodReturnValue instanceof Registry)
+      registry = (Registry) methodReturnValue;
   }
 
   @Override
@@ -71,11 +105,14 @@ public class TapestryInterceptor extends AbstractMethodInterceptor {
     try {
       invocation.proceed();
     } finally {
-      perIterationManager.cleanup();
+      if (perIterationManager != null)
+        perIterationManager.cleanup();
     }
   }
 
-  private void startupRegistry() {
+  private void createAndStartupRegistry() {
+    if (registry != null) return;
+
     RegistryBuilder builder = new RegistryBuilder();
     builder.add(ExtensionModule.class);
     for (Class<?> module : getSubModules(spec)) builder.add(module);

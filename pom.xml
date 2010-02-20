@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.spockframework</groupId>
   <artifactId>spock-parent</artifactId>
@@ -48,7 +49,8 @@
         </plugin>
         <plugin>
           <artifactId>maven-deploy-plugin</artifactId>
-          <version>2.4</version> <!-- 2.4 introduces skip property -->
+          <version>2.4</version>
+          <!-- 2.4 introduces skip property -->
         </plugin>
         <plugin>
           <groupId>org.codehaus.gmaven</groupId>
@@ -80,7 +82,13 @@
             <dependency>
               <groupId>org.codehaus.groovy</groupId>
               <artifactId>groovy-all</artifactId>
-              <version>1.7.0</version>
+              <version>1.7.1</version>
+              <exclusions>
+                <exclusion>
+                  <groupId>org.fusesource.jansi</groupId>
+                  <artifactId>jansi</artifactId>
+                </exclusion>
+              </exclusions>
             </dependency>
           </dependencies>
         </plugin>
@@ -105,7 +113,13 @@
       <dependency>
         <groupId>org.codehaus.groovy</groupId>
         <artifactId>groovy-all</artifactId>
-        <version>1.7.0</version>
+        <version>1.7.1</version>
+        <exclusions>
+          <exclusion>
+            <groupId>org.fusesource.jansi</groupId>
+            <artifactId>jansi</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
       <dependency>
         <groupId>junit</groupId>
@@ -228,15 +242,15 @@
           <plugin>
             <artifactId>maven-javadoc-plugin</artifactId>
             <version>2.5</version>
-              <configuration>
-                <links>
-                  <link>http://java.sun.com/j2se/1.5.0/docs/api</link>
-                  <link>http://groovy.codehaus.org/gapi</link>
-                  <link>http://static.springsource.org/spring/docs/2.5.x/api</link>
-                  <link>http://google-guice.googlecode.com/svn/trunk/javadoc</link>
-                  <link>http://tapestry.apache.org/tapestry5/apidocs</link>
-                </links>
-              </configuration>
+            <configuration>
+              <links>
+                <link>http://java.sun.com/j2se/1.5.0/docs/api</link>
+                <link>http://groovy.codehaus.org/gapi</link>
+                <link>http://static.springsource.org/spring/docs/2.5.x/api</link>
+                <link>http://google-guice.googlecode.com/svn/trunk/javadoc</link>
+                <link>http://tapestry.apache.org/tapestry5/apidocs</link>
+              </links>
+            </configuration>
             <executions>
               <execution>
                 <id>attach-javadocs</id>

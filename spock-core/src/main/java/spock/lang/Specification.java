@@ -35,7 +35,13 @@ import groovy.lang.Closure;
 @RunWith(Sputnik.class)
 public abstract class Specification {
   /**
-   * The wildcard symbol. Used in several places as a "don't care" value.
+   * The wildcard symbol. Used in several places as a <em>don't care</em> value:
+   * <ul>
+   * <li>Mock interactions</li>
+   * Example: <tt>1 * foo.bar(_)</tt>
+   * <li>Data parameterizations</li>
+   * Example: <tt>[foo, _] &lt;&lt; loadDataFromDb()</tt>
+   * </ul>
    */
   public static final Object _ = new Wildcard();
 

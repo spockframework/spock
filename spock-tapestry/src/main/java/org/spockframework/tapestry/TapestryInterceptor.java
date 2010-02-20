@@ -71,7 +71,7 @@ public class TapestryInterceptor extends AbstractMethodInterceptor {
     Object methodReturnValue;
 
     try {
-      methodReturnValue = beforeRegistryCreatedMethod.invoke(spec, null);
+      methodReturnValue = beforeRegistryCreatedMethod.invoke(spec, (Object[]) null);
     } catch (IllegalAccessException e) {
       throw new InternalSpockError(e);
     } catch (InvocationTargetException e) {

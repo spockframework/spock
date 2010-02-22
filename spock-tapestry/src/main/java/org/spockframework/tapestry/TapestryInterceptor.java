@@ -71,7 +71,7 @@ public class TapestryInterceptor extends AbstractMethodInterceptor {
     Object methodReturnValue;
 
     try {
-      methodReturnValue = beforeRegistryCreatedMethod.invoke(spec, null);
+      methodReturnValue = beforeRegistryCreatedMethod.invoke(spec, (Object[]) null);
     } catch (IllegalAccessException e) {
       throw new InternalSpockError(e);
     } catch (InvocationTargetException e) {
@@ -127,7 +127,7 @@ public class TapestryInterceptor extends AbstractMethodInterceptor {
   }
 
   private void injectServices(Object target, boolean sharedFields) throws IllegalAccessException {
-    for (final FieldInfo field : spec.getFields())
+    for (final FieldInfo field : spec.getAllFields())
       if (field.getReflection().isAnnotationPresent(Inject.class)
           && field.getReflection().isAnnotationPresent(Shared.class) == sharedFields) {
         Field rawField = field.getReflection();

@@ -127,7 +127,7 @@ public class TapestryInterceptor extends AbstractMethodInterceptor {
   }
 
   private void injectServices(Object target, boolean sharedFields) throws IllegalAccessException {
-    for (final FieldInfo field : spec.getFields())
+    for (final FieldInfo field : spec.getAllFields())
       if (field.getReflection().isAnnotationPresent(Inject.class)
           && field.getReflection().isAnnotationPresent(Shared.class) == sharedFields) {
         Field rawField = field.getReflection();

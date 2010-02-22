@@ -105,6 +105,14 @@ public class SpecInfo extends NodeInfo<NodeInfo, Class<?>> implements IMethodNam
     return fields;
   }
 
+  public List<FieldInfo> getAllFields() {
+    if (superSpec == null) return fields;
+
+    List<FieldInfo> result = new ArrayList<FieldInfo>(superSpec.getAllFields());
+    result.addAll(fields);
+    return result;
+  }
+
   public void addField(FieldInfo field) {
     fields.add(field);
   }

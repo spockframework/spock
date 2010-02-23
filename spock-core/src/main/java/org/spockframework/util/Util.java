@@ -131,4 +131,12 @@ public class Util {
 
     return null;
   }
+
+  public static @Nullable Method getDeclaredMethod(Class<?> clazz, String name) {
+    for (Method method : clazz.getDeclaredMethods())
+      if (method.getName().equals(name))
+        return method;
+
+    return null;
+  }
 }

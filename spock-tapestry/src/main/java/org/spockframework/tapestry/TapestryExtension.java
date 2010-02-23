@@ -16,6 +16,8 @@
 
 package org.spockframework.tapestry;
 
+import java.util.*;
+
 import org.apache.tapestry5.ioc.annotations.SubModule;
 
 import org.spockframework.runtime.extension.IGlobalExtension;
@@ -86,12 +88,32 @@ import org.spockframework.runtime.model.SpecInfo;
  */
 public class TapestryExtension implements IGlobalExtension {
   public void visitSpec(SpecInfo spec) {
-    if (!spec.getReflection().isAnnotationPresent(SubModule.class)) return;
+    List<Class<?>> modules = collectModules(spec);
+    if (modules == null) return;
 
-    IMethodInterceptor interceptor = new TapestryInterceptor(spec);
-    spec.getSetupSpecMethod().addInterceptor(interceptor);
-    spec.getSetupMethod().addInterceptor(interceptor);
-    spec.getCleanupMethod().addInterceptor(interceptor);
-    spec.getCleanupSpecMethod().addInterceptor(interceptor);
+    IMethodInterceptor interceptor = new TapestryInterceptor(spec, modules);
+    SpecInfo top = spec.getTopSpec();
+    top.getSetupSpecMethod().addInterceptor(interceptor);
+    top.getSetupMethod().addInterceptor(interceptor);
+    top.getCleanupMethod().addInterceptor(interceptor);
+    top.getCleanupSpecMethod().addInterceptor(interceptor);
+  }
+
+  // Returns null if no SubModule annotation was found.
+  // Returns an empty list if one or more SubModule annotations were found,
+  // but they didn't specify any modules. This distinction is important to
+  // allow activation of the extension w/o specifying any modules.
+  private List<Class<?>> collectModules(SpecInfo spec) {
+    List<Class<?>> modules = null;
+
+    for (SpecInfo curr : spec.getSpecsTopToBottom()) {
+      SubModule subModule = curr.getReflection().getAnnotation(SubModule.class);
+      if (subModule == null) continue;
+
+      if (modules == null) modules = new ArrayList<Class<?>>();
+      modules.addAll(Arrays.<Class<?>>asList(subModule.value()));
+    }
+
+    return modules;
   }
 }

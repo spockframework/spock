@@ -18,10 +18,10 @@ package org.spockframework.tapestry;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
+import java.util.*;
 
 import org.apache.tapestry5.ioc.*;
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.ioc.annotations.SubModule;
 
 import org.spockframework.runtime.SpockExecutionException;
 import org.spockframework.runtime.extension.*;
@@ -39,50 +39,26 @@ import spock.lang.Specification;
  *
  * @author Peter Niederwieser
  */
+// Important implementation detail: Only the fixture methods of
+// spec.getTopSpec() are intercepted (see TapestryExtension)
 public class TapestryInterceptor extends AbstractMethodInterceptor {
   private final SpecInfo spec;
-  private final Method beforeRegistryCreatedMethod;
+  private final List<Class<?>> modules;
 
   private Registry registry;
   private IPerIterationManager perIterationManager;
 
-  public TapestryInterceptor(SpecInfo spec) {
+  public TapestryInterceptor(SpecInfo spec, List<Class<?>> modules) {
     this.spec = spec;
-    beforeRegistryCreatedMethod = findbeforeRegistryCreatedMethod();
-  }
-
-  private Method findbeforeRegistryCreatedMethod() {
-    Method result = Util.getMethod(spec.getReflection(), "beforeRegistryCreated");
-    if (result != null) result.setAccessible(true);
-    return result;
+    this.modules = modules;
   }
 
   @Override
   public void interceptSetupSpecMethod(IMethodInvocation invocation) throws Throwable {
-    runbeforeRegistryCreatedMethod((Specification) invocation.getTarget());
+    runBeforeRegistryCreatedMethods((Specification) invocation.getTarget());
     createAndStartupRegistry();
     injectServices(invocation.getTarget(), true);
     invocation.proceed();
-  }
-
-  private void runbeforeRegistryCreatedMethod(Specification spec) {
-    if (beforeRegistryCreatedMethod == null) return;
-    
-    Object methodReturnValue;
-
-    try {
-      methodReturnValue = beforeRegistryCreatedMethod.invoke(spec, (Object[]) null);
-    } catch (IllegalAccessException e) {
-      throw new InternalSpockError(e);
-    } catch (InvocationTargetException e) {
-      throw new SpockExecutionException("Error invoking beforeRegistryCreated()", e.getCause());
-    }
-
-    // return values of a type other than Registry are silently ignored
-    // this avoids problems if the method unintentionally returns a value
-    // (which is common due to Groovy's implicit return)
-    if (methodReturnValue instanceof Registry)
-      registry = (Registry) methodReturnValue;
   }
 
   @Override
@@ -105,8 +81,27 @@ public class TapestryInterceptor extends AbstractMethodInterceptor {
     try {
       invocation.proceed();
     } finally {
-      if (perIterationManager != null)
-        perIterationManager.cleanup();
+      terminateIterationScope();
+    }
+  }
+
+  private void runBeforeRegistryCreatedMethods(Specification spec) {
+    Object returnValue;
+
+    for (Method method : findAllBeforeRegistryCreatedMethods()) {
+      try {
+        returnValue = method.invoke(spec, (Object[]) null);
+      } catch (IllegalAccessException e) {
+        throw new InternalSpockError(e);
+      } catch (InvocationTargetException e) {
+        throw new SpockExecutionException("Error invoking beforeRegistryCreated()", e.getCause());
+      }
+
+      // Return values of a type other than Registry are silently ignored.
+      // This avoids problems in case the method unintentionally returns a
+      // value (which is common due to Groovy's implicit return).
+      if (returnValue instanceof Registry)
+        registry = (Registry) returnValue;
     }
   }
 
@@ -115,15 +110,24 @@ public class TapestryInterceptor extends AbstractMethodInterceptor {
 
     RegistryBuilder builder = new RegistryBuilder();
     builder.add(ExtensionModule.class);
-    for (Class<?> module : getSubModules(spec)) builder.add(module);
+    for (Class<?> module : modules) builder.add(module);
     registry = builder.build();
     registry.performRegistryStartup();
     perIterationManager = registry.getService(IPerIterationManager.class);
   }
 
-  private Class[] getSubModules(SpecInfo spec) {
-    SubModule modules = spec.getReflection().getAnnotation(SubModule.class);
-    return modules == null ? new Class[0] : modules.value();
+  private List<Method> findAllBeforeRegistryCreatedMethods() {
+    List<Method> methods = new ArrayList<Method>();
+
+    for (SpecInfo curr : spec.getSpecsTopToBottom()) {
+      Method method = Util.getDeclaredMethod(curr.getReflection(), "beforeRegistryCreated");
+      if (method != null) {
+        method.setAccessible(true);
+        methods.add(method);
+      }
+    }
+
+    return methods;
   }
 
   private void injectServices(Object target, boolean sharedFields) throws IllegalAccessException {
@@ -146,6 +150,12 @@ public class TapestryInterceptor extends AbstractMethodInterceptor {
   }
 
   private void shutdownRegistry() {
-    if (registry != null) registry.shutdown();
+    if (registry != null)
+      registry.shutdown();
+  }
+
+  private void terminateIterationScope() {
+    if (perIterationManager != null)
+      perIterationManager.cleanup();
   }
 }

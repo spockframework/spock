@@ -35,20 +35,20 @@ public class ParameterizedSpecRunner extends BaseSpecRunner {
   }
 
   @Override
-  protected void runParameterizedFeature(FeatureInfo feature) {
+  protected void runParameterizedFeature() {
     if (runStatus != OK) return;
 
-    Object[] dataProviders = createDataProviders(feature);
+    Object[] dataProviders = createDataProviders();
     int numIterations = estimateNumIterations(dataProviders);
-    Iterator<?>[] iterators = createIterators(feature, dataProviders);
-    runIterations(feature, iterators, numIterations);
+    Iterator<?>[] iterators = createIterators(dataProviders);
+    runIterations(iterators, numIterations);
     closeDataProviders(dataProviders);
   }
 
-  private Object[] createDataProviders(FeatureInfo feature) {
+  private Object[] createDataProviders() {
     if (runStatus != OK) return null;
 
-    List<DataProviderInfo> dataProviderInfos = feature.getDataProviders();
+    List<DataProviderInfo> dataProviderInfos = currentFeature.getDataProviders();
     Object[] dataProviders = new Object[dataProviderInfos.size()];
 
     for (int i = 0; i < dataProviderInfos.size(); i++) {
@@ -65,7 +65,7 @@ public class ParameterizedSpecRunner extends BaseSpecRunner {
     return dataProviders;
   }
 
-  private Iterator<?>[] createIterators(FeatureInfo feature, Object[] dataProviders) {
+  private Iterator<?>[] createIterators(Object[] dataProviders) {
     if (runStatus != OK) return null;
 
     Iterator<?>[] iterators = new Iterator<?>[dataProviders.length];
@@ -73,13 +73,13 @@ public class ParameterizedSpecRunner extends BaseSpecRunner {
       try {
         Iterator<?> iter = InvokerHelper.asIterator(dataProviders[i]);
         if (iter == null) {
-          runStatus = supervisor.error(feature.getDataProviders().get(i).getDataProviderMethod(),
+          runStatus = supervisor.error(currentFeature.getDataProviders().get(i).getDataProviderMethod(),
               new SpockExecutionException("Data provider's iterator() method returned null"), runStatus);
           return null;
         }
         iterators[i] = iter;
       } catch (Throwable t) {
-        runStatus = supervisor.error(feature.getDataProviders().get(i).getDataProviderMethod(), t, runStatus);
+        runStatus = supervisor.error(currentFeature.getDataProviders().get(i).getDataProviderMethod(), t, runStatus);
         return null;
       }
 
@@ -106,14 +106,14 @@ public class ParameterizedSpecRunner extends BaseSpecRunner {
     return result == Integer.MAX_VALUE ? -1 : result;
   }
 
-  private void runIterations(FeatureInfo feature, Iterator<?>[] iterators, int estimatedNumIterations) {
+  private void runIterations(Iterator<?>[] iterators, int estimatedNumIterations) {
     if (runStatus != OK) return;
 
     supervisor.beforeFirstIteration(estimatedNumIterations);
 
-    while (haveNext(feature, iterators)) {
-      Object[] args = nextArgs(feature, iterators);
-      runIteration(feature, args);
+    while (haveNext(iterators)) {
+      Object[] args = nextArgs(iterators);
+      runIteration(args);
 
       if (resetStatus(ITERATION) != OK) break;
       // no iterators => no data providers => only derived parameterizations => limit to one iteration
@@ -134,18 +134,18 @@ public class ParameterizedSpecRunner extends BaseSpecRunner {
     }
   }
 
-  private void runIteration(FeatureInfo feature, Object[] args) {
+  private void runIteration(Object[] args) {
     if (runStatus != OK) return;
 
     supervisor.beforeIteration(args);
     createSpecInstance(false);
-    invokeSetup(spec);
-    invokeFeatureMethod(feature.getFeatureMethod(), args);
-    invokeCleanup(spec);
+    invokeSetup();
+    invokeFeatureMethod(args);
+    invokeCleanup();
     supervisor.afterIteration();
   }
 
-  private boolean haveNext(FeatureInfo feature, Iterator<?>[] iterators) {
+  private boolean haveNext(Iterator<?>[] iterators) {
     if (runStatus != OK) return false;
 
     boolean haveNext = true;
@@ -155,14 +155,14 @@ public class ParameterizedSpecRunner extends BaseSpecRunner {
         boolean hasNext = iterators[i].hasNext();
         if (i == 0) haveNext = hasNext;
         else if (haveNext != hasNext) {
-          DataProviderInfo provider = feature.getDataProviders().get(i);
+          DataProviderInfo provider = currentFeature.getDataProviders().get(i);
           runStatus = supervisor.error(provider.getDataProviderMethod(),
               createDifferentNumberOfDataValuesException(provider, hasNext), runStatus);
           return false;
         }
 
       } catch (Throwable t) {
-        runStatus = supervisor.error(feature.getDataProviders().get(i).getDataProviderMethod(), t, runStatus);
+        runStatus = supervisor.error(currentFeature.getDataProviders().get(i).getDataProviderMethod(), t, runStatus);
         return false;
       }
 
@@ -183,7 +183,7 @@ public class ParameterizedSpecRunner extends BaseSpecRunner {
   }
 
   // advances iterators and computes args
-  private Object[] nextArgs(FeatureInfo feature, Iterator<?>[] iterators) {
+  private Object[] nextArgs(Iterator<?>[] iterators) {
     if (runStatus != OK) return null;
 
     Object[] next = new Object[iterators.length];
@@ -191,14 +191,14 @@ public class ParameterizedSpecRunner extends BaseSpecRunner {
       try {
         next[i] = iterators[i].next();
       } catch (Throwable t) {
-        runStatus = supervisor.error(feature.getDataProviders().get(i).getDataProviderMethod(), t, runStatus);
+        runStatus = supervisor.error(currentFeature.getDataProviders().get(i).getDataProviderMethod(), t, runStatus);
         return null;
       }
 
     try {
-      return (Object[])invokeRaw(sharedInstance, feature.getDataProcessorMethod(), next);
+      return (Object[])invokeRaw(sharedInstance, currentFeature.getDataProcessorMethod(), next);
     } catch (Throwable t) {
-      runStatus = supervisor.error(feature.getDataProcessorMethod(), t, runStatus);
+      runStatus = supervisor.error(currentFeature.getDataProcessorMethod(), t, runStatus);
       return null;
     }
   }

@@ -34,6 +34,7 @@ public class SpecInfo extends NodeInfo<NodeInfo, Class<?>> implements IMethodNam
 
   private String filename;
   private SpecInfo superSpec;
+  private SpecInfo subSpec;
   private FieldInfo sharedInstanceField;
 
   private MethodInfo setupMethod;
@@ -59,6 +60,62 @@ public class SpecInfo extends NodeInfo<NodeInfo, Class<?>> implements IMethodNam
 
   public void setSuperSpec(SpecInfo superSpec) {
     this.superSpec = superSpec;
+  }
+
+  public SpecInfo getSubSpec() {
+    return subSpec;
+  }
+
+  public void setSubSpec(SpecInfo subSpec) {
+    this.subSpec = subSpec;
+  }
+
+  public SpecInfo getTopSpec() {
+    SpecInfo curr = this;
+    while (curr.getSuperSpec() != null)
+      curr = curr.getSuperSpec();
+    return curr;
+  }
+
+  public boolean isTopSpec() {
+    return superSpec == null;
+  }
+
+  public SpecInfo getBottomSpec() {
+    SpecInfo curr = this;
+    while (curr.getSubSpec() != null)
+      curr = curr.getSubSpec();
+    return curr;
+  }
+
+  public boolean isBottomSpec() {
+    return subSpec == null;
+  }
+
+  // TODO: may want to cache this rather than recreating it all the time
+  public List<SpecInfo> getSpecsTopToBottom() {
+    List<SpecInfo> specs = new ArrayList<SpecInfo>();
+
+    SpecInfo curr = getTopSpec();
+    while (curr != null) {
+      specs.add(curr);
+      curr = curr.getSubSpec();
+    }
+
+    return specs;
+  }
+
+  // TODO: may want to cache this rather than recreating it all the time
+  public List<SpecInfo> getSpecsBottomToTop() {
+    List<SpecInfo> specs = new ArrayList<SpecInfo>();
+
+    SpecInfo curr = getBottomSpec();
+    while (curr != null) {
+      specs.add(curr);
+      curr = curr.getSuperSpec();
+    }
+
+    return specs;
   }
 
   public FieldInfo getSharedInstanceField() {

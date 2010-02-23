@@ -19,24 +19,35 @@ package org.spockframework.runtime.extension;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
 
-import org.spockframework.runtime.model.MethodInfo;
+import org.spockframework.runtime.model.*;
 import org.spockframework.util.InternalSpockError;
+import org.spockframework.util.Nullable;
 
 /**
  *
  * @author Peter Niederwieser
  */
 public class MethodInvocation implements IMethodInvocation {
+  private final FeatureInfo feature;
   private final Object target;
   private final MethodInfo method;
   private final Object[] arguments;
   private final Iterator<IMethodInterceptor> interceptors;
 
-  public MethodInvocation(Object target, MethodInfo method, Object[] arguments) {
+  public MethodInvocation(FeatureInfo feature, Object target, MethodInfo method, Object[] arguments) {
+    this.feature = feature;
     this.target = target;
     this.method = method;
     this.arguments = arguments;
     interceptors = method.getInterceptors().iterator();
+  }
+
+  public SpecInfo getSpec() {
+    return method.getParent();
+  }
+
+  public @Nullable FeatureInfo getFeature() {
+    return feature;
   }
 
   public Object getTarget() {

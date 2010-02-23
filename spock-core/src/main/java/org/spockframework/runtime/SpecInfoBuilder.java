@@ -69,7 +69,9 @@ public class SpecInfoBuilder {
     Class<?> superClass = clazz.getSuperclass();
     if (superClass == Object.class || superClass == Specification.class) return;
 
-    spec.setSuperSpec(new SpecInfoBuilder(superClass, globalExtensions).build());
+    SpecInfo superSpec = new SpecInfoBuilder(superClass, globalExtensions).build();
+    spec.setSuperSpec(superSpec);
+    superSpec.setSubSpec(spec);
   }
 
   private void buildSpec() {

@@ -25,7 +25,7 @@ import org.spockframework.runtime.model.*;
  *
  * @author Peter Niederwieser
  */
-public class AbstractAnnotationDrivenExtension<T extends Annotation> implements IAnnotationDrivenExtension<T> {
+public abstract class AbstractAnnotationDrivenExtension<T extends Annotation> implements IAnnotationDrivenExtension<T> {
   public void visitSpecAnnotation(T annotation, SpecInfo spec) {
     throw new InvalidSpecException("@%s may not be applied to Specs")
         .format(annotation.annotationType().getSimpleName());

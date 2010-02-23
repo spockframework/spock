@@ -16,15 +16,58 @@
 
 package org.spockframework.runtime.extension;
 
-import org.spockframework.runtime.model.MethodInfo;
+import org.spockframework.runtime.model.*;
+import org.spockframework.util.Nullable;
 
 /**
  * @author Peter Niederwieser
  */
-// TODO: add some context, eg. getFeature() and getSpec()
 public interface IMethodInvocation {
+  /**
+   * Returns the specification which this method invocation belongs to.
+   * @return the specification which this method invocation belongs to
+   */
+  SpecInfo getSpec();
+
+  /**
+   * Returns the feature which this method invocation belongs to.
+   * Differs from <tt>MethodInfo.getFeature()</tt> in that it reflects the dynamic
+   * picture. For example, when a setup method is invoked, this method
+   * will return the corresponding feature, whereas <tt>MethodInfo.getFeature()</tt>
+   * will return <tt>null</tt>.
+   * @return the feature which this method invocation belongs to
+   */
+  @Nullable
+  FeatureInfo getFeature();
+
+  /**
+   * Returns the target (receiver) of this method invocation.
+   * In case of a static method call, a <tt>Class<tt> instance
+   * is returned.
+   *
+   * @return the target (receiver) of this method invocation
+   */
   Object getTarget();
+
+  /**
+   * Returns the method invoked by this method invocation.
+   *
+   * @return the method invoked by this method invocation
+   */
   MethodInfo getMethod();
+
+  /**
+   * Returns the arguments for this method invocation.
+   *
+   * @return the arguments for this method invocation
+   */
   Object[] getArguments();
+
+  /**
+   * Proceeds with the method call. Always call this method
+   * unless you want to suppress the method call.
+   *
+   * @throws Throwable any exception thrown by the method call
+   */
   void proceed() throws Throwable;
 }

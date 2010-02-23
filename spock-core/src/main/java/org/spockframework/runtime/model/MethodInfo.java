@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.spockframework.runtime.extension.IMethodInterceptor;
+import org.spockframework.util.Nullable;
 
 /**
  * Runtime information about a method in a Spock specification.
@@ -40,7 +41,7 @@ public class MethodInfo extends NodeInfo<SpecInfo, Method> {
     this.kind = kind;
   }
 
-  public FeatureInfo getFeature() {
+  public @Nullable FeatureInfo getFeature() {
     return feature;
   }
 

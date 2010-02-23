@@ -19,26 +19,54 @@ import org.apache.tapestry5.ioc.annotations.*
 import spock.lang.*
 
 @SubModule(Module1)
-class InjectingDerivedSpec extends BaseSpec {
-  @Inject
-  IService2 anotherService2
-
-  def "fields of base class are injected"() {
-    expect:
-    service1 instanceof IService1
-    service2 instanceof IService2
-  }
-
-  def "fields of derived class are injected"() {
-    expect:
-    anotherService2 instanceof IService2
-  }
-}
-
 abstract class BaseSpec extends Specification {
+  static beforeRegistryCreatedCount = 0
+
   @Inject
   IService1 service1
 
   @Inject
   IService2 service2
+
+  private beforeRegistryCreated() {
+    assert beforeRegistryCreatedCount == 0
+    beforeRegistryCreatedCount++
+  }
+
+  def setupSpec() {
+    assert beforeRegistryCreatedCount == 2
+  }
+
+  def setup() {
+    assert service1 instanceof IService1
+    assert service2 instanceof IService2
+  }
+}
+
+@SubModule(Module2)
+class TapestrySpecInheritance extends BaseSpec {
+  @Inject
+  IService2 anotherService2
+
+  def beforeRegistryCreated() {
+    assert beforeRegistryCreatedCount == 1
+    beforeRegistryCreatedCount++
+  }
+
+  def setup() {
+    assert service1 instanceof IService1
+    assert service2 instanceof IService2
+    assert anotherService2 instanceof IService2
+  }
+
+  def "fields of base class have been injected"() {
+    expect:
+    service1 instanceof IService1
+    service2 instanceof IService2
+  }
+
+  def "fields of derived class have been injected"() {
+    expect:
+    anotherService2 instanceof IService2
+  }
 }

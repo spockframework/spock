@@ -38,15 +38,18 @@ public class BaseSpecRunner {
   private static final Method DO_RUN_FEATURE;
 
   protected final SpecInfo spec;
+  protected final IRunSupervisor supervisor;
+
+  protected FeatureInfo currentFeature;
+
   protected Object sharedInstance;
   protected Object currentInstance;
-  protected final IRunSupervisor supervisor;
   protected int runStatus = OK;
 
   static {
     try {
       DO_RUN = BaseSpecRunner.class.getMethod("doRun");
-      DO_RUN_FEATURE = BaseSpecRunner.class.getMethod("doRunFeature", FeatureInfo.class);
+      DO_RUN_FEATURE = BaseSpecRunner.class.getMethod("doRunFeature");
     } catch (NoSuchMethodException e) {
       throw new InternalSpockError(e);
     }
@@ -87,9 +90,9 @@ public class BaseSpecRunner {
    */
   public void doRun() {
     createSpecInstance(true);
-    invokeSetupSpec(spec);
-    runFeatures(spec);
-    invokeCleanupSpec(spec);
+    invokeSetupSpec();
+    runFeatures();
+    invokeCleanupSpec();
   }
 
   protected void createSpecInstance(boolean shared) {
@@ -110,75 +113,71 @@ public class BaseSpecRunner {
     }
   }
 
-  private void invokeSetupSpec(SpecInfo spec) {
-    if (spec == null) return;
-    invokeSetupSpec(spec.getSuperSpec());
-    if (runStatus != OK) return;
-    invoke(sharedInstance, spec.getSetupSpecMethod());
-  }
-
-  private void runFeatures(SpecInfo spec) {
-    if (spec == null) return;
-    runFeatures(spec.getSuperSpec());
-    if (runStatus != OK) return;
-
-    for (FeatureInfo feature : spec.getFeatures()) {
-      runFeature(feature);
-      if (resetStatus(FEATURE) != OK) return;
+  private void invokeSetupSpec() {
+    for (SpecInfo curr : spec.getSpecsTopToBottom()) {
+      if (runStatus != OK) return;
+      invoke(sharedInstance, curr.getSetupSpecMethod());
     }
   }
 
-  private void invokeCleanupSpec(SpecInfo spec) {
-    if (spec == null) return;
-    invoke(sharedInstance, spec.getCleanupSpecMethod());
-    if (action(runStatus) == ABORT) return;
-    invokeCleanupSpec(spec.getSuperSpec());
+  private void runFeatures() {
+    for (FeatureInfo feature : spec.getAllFeatures()) {
+      if (resetStatus(FEATURE) != OK) return;
+      currentFeature = feature;
+      runFeature();
+      currentFeature = null;
+    }
   }
 
-  private void runFeature(FeatureInfo feature) {
+  private void invokeCleanupSpec() {
+    for (SpecInfo curr : spec.getSpecsBottomToTop()) {
+      if (action(runStatus) == ABORT) return;
+      invoke(sharedInstance, curr.getCleanupSpecMethod());
+    }
+  }
+
+  private void runFeature() {
     if (runStatus != OK) return;
 
-    Assert.that(!feature.isExcluded(), "tried to run excluded feature");
-    if (feature.isSkipped()) {
-      supervisor.featureSkipped(feature);
+    Assert.that(!currentFeature.isExcluded(), "tried to run excluded feature");
+    if (currentFeature.isSkipped()) {
+      supervisor.featureSkipped(currentFeature);
       return;
     }
 
-    supervisor.beforeFeature(feature);
-    invoke(this, createDoRunFeatureInfo(feature), feature);
+    supervisor.beforeFeature(currentFeature);
+    invoke(this, createDoRunFeatureInfo());
     supervisor.afterFeature();
   }
 
-  private MethodInfo createDoRunFeatureInfo(FeatureInfo feature) {
+  private MethodInfo createDoRunFeatureInfo() {
     MethodInfo result = new MethodInfo();
-    result.setParent(feature.getParent());
+    result.setParent(currentFeature.getParent());
     result.setKind(MethodKind.FEATURE_EXECUTION);
     result.setReflection(DO_RUN_FEATURE);
-    result.setFeature(feature);
-    result.setMetadata(feature.getMetadata());
-    for (IMethodInterceptor interceptor : feature.getInterceptors())
+    result.setFeature(currentFeature);
+    result.setMetadata(currentFeature.getMetadata());
+    for (IMethodInterceptor interceptor : currentFeature.getInterceptors())
       result.addInterceptor(interceptor);
     return result;
   }
 
   /**
    * Only called via reflection.
-   *
-   * @param feature the feature method to be run
    */
-  public void doRunFeature(FeatureInfo feature) {
-    if (feature.isParameterized())
-      runParameterizedFeature(feature);
-    else runSimpleFeature(feature);
+  public void doRunFeature() {
+    if (currentFeature.isParameterized())
+      runParameterizedFeature();
+    else runSimpleFeature();
   }
 
-  private void runSimpleFeature(FeatureInfo feature) {
+  private void runSimpleFeature() {
     if (runStatus != OK) return;
 
     createSpecInstance(false);
-    invokeSetup(spec);
-    invokeFeatureMethod(feature.getFeatureMethod());
-    invokeCleanup(spec);
+    invokeSetup();
+    invokeFeatureMethod();
+    invokeCleanup();
   }
 
   protected int resetStatus(int scope) {
@@ -186,27 +185,27 @@ public class BaseSpecRunner {
     return runStatus;
   }
 
-  protected void runParameterizedFeature(FeatureInfo feature) {
+  protected void runParameterizedFeature() {
     throw new UnsupportedOperationException("This runner cannot run parameterized features");
   }
 
-  protected void invokeSetup(SpecInfo spec) {
-    if (spec == null) return;
-    invokeSetup(spec.getSuperSpec());
-    if (runStatus != OK) return;
-    invoke(spec.getSetupMethod());
+  protected void invokeSetup() {
+    for (SpecInfo curr : spec.getSpecsTopToBottom()) {
+      if (runStatus != OK) return;
+      invoke(currentInstance, curr.getSetupMethod());
+    }
   }
 
-  protected void invokeFeatureMethod(MethodInfo feature, Object... args) {
+  protected void invokeFeatureMethod(Object... args) {
     if (runStatus != OK) return;
-    invoke(feature, args);
+    invoke(currentInstance, currentFeature.getFeatureMethod(), args);
   }
 
-  protected void invokeCleanup(SpecInfo spec) {
-    if (spec == null) return;
-    invoke(spec.getCleanupMethod());
-    if (action(runStatus) == ABORT) return;
-    invokeCleanup(spec.getSuperSpec());
+  protected void invokeCleanup() {
+    for (SpecInfo curr : spec.getSpecsBottomToTop()) {
+      if (action(runStatus) == ABORT) return;
+      invoke(currentInstance, curr.getCleanupMethod());
+    }
   }
 
   protected void invoke(Object target, MethodInfo method, Object... arguments) {
@@ -217,16 +216,12 @@ public class BaseSpecRunner {
     }
 
     // slow lane
-    MethodInvocation invocation = new MethodInvocation(target, method, arguments);
+    MethodInvocation invocation = new MethodInvocation(currentFeature, target, method, arguments);
     try {
       invocation.proceed();
     } catch (Throwable t) {
       runStatus = supervisor.error(method, t, runStatus);
     }
-  }
-
-  protected void invoke(MethodInfo method, Object... arguments) {
-    invoke(currentInstance, method, arguments);
   }
 
   protected Object invokeRaw(Object target, MethodInfo method, Object[] arguments) {
@@ -243,10 +238,6 @@ public class BaseSpecRunner {
       runStatus = supervisor.error(method, internalError, runStatus);
       return null;
     }
-  }
-
-  protected Object invokeRaw(MethodInfo method, Object[] arguments) {
-    return invokeRaw(currentInstance, method, arguments);
   }
 }
 

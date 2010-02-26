@@ -1,20 +1,11 @@
-usePlugin("groovy")
-sourceCompatibility = 1.5
-targetCompatibility = 1.5
-
-compileGroovy.options.fork = false
-compileTestGroovy.options.fork = false
-
 project(":spock-tapestry") {
   repositories {
-    mavenCentral()
     // need to explicitely add repository defined in tapestry-ioc POM
     // (workaround for http://jira.codehaus.org/browse/GRADLE-611)
     mavenRepo(urls: "http://repository.jboss.com/maven2")
   }
-  
-  dependencies {  
-    groovy groovyArtifact
+
+  dependencies {
     compile project(":spock-core")
     compile "org.apache.tapestry:tapestry-ioc:5.1.0.5"
     compile "org.apache.tapestry:tapestry5-annotations:5.1.0.5"

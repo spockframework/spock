@@ -1,17 +1,5 @@
-usePlugin("groovy")
-sourceCompatibility = 1.5 
-targetCompatibility = 1.5 
-
-compileGroovy.options.fork = false
-compileTestGroovy.options.fork = false
-
-project(":spock-core") {
-  repositories {
-    mavenCentral()
-  }
-  
-  dependencies {  
-    groovy groovyArtifact
+project(":spock-core") {  
+  dependencies {
     compile "asm:asm:2.2.3"
     compile "junit:junit:4.7"
     compile "cglib:cglib-nodep:2.1_3"
@@ -19,3 +7,4 @@ project(":spock-core") {
     compile "org.apache.ant:ant:1.7.1"
   }
 }
+

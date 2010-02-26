@@ -8,22 +8,25 @@ repositories {
 
 dependencies {
   // mandatory dependencies for using Spock
-  groovy "org.codehaus.groovy:groovy-all:1.6.7"
-  testCompile "org.spockframework:spock-core:0.4-SNAPSHOT"
+  groovy "org.codehaus.groovy:groovy-all:1.6.8"
+  testCompile """org.spockframework:spock-core:0.4-SNAPSHOT"""
   testCompile "junit:junit:4.7"
-  
+
   // optional dependencies for using Spock
   testRuntime "cglib:cglib-nodep:2.1_3"     // enables mocking of classes (in addition to interfaces)
   testRuntime "org.objenesis:objenesis:1.2" // enables mocking of classes without default constructor (together with CGLIB)
-  
+
   // dependencies used by examples in this project (not required for using Spock)
   testRuntime "com.h2database:h2:1.2.123"
 }
 
 // creates bootstrap files (gradlew etc.) for Gradle build (not required for using Spock)
-task wrapper(type: Wrapper) { 
+task wrapper(type: Wrapper) {
   gradleVersion = '0.8'
-  jarPath = 'wrapper' 
+  jarPath = 'wrapper'
 }
+
+
+
 
 

@@ -1,17 +1,5 @@
-usePlugin("groovy")
-sourceCompatibility = 1.5
-targetCompatibility = 1.5
-
-compileGroovy.options.fork = false
-compileTestGroovy.options.fork = false
-
 project(":spock-unitils") {
-  repositories {
-    mavenCentral()
-  }
-  
-  dependencies {  
-    groovy groovyArtifact
+  dependencies {
     compile project(":spock-core")
     compile "org.unitils:unitils-core:3.1"
 
@@ -21,9 +9,14 @@ project(":spock-unitils") {
     compile "commons-collections:commons-collections:3.2"
     compile "ognl:ognl:2.6.9"
 
-    testCompile "org.unitils:unitils-dbunit:3.1"
-    testCompile "org.unitils:unitils-database:3.1"
-    testRuntime "com.h2database:h2:1.2.123"
+    testCompile("org.unitils:unitils-dbunit:3.1") {
+      exclude module: "jta"
+    }
+    testCompile("org.unitils:unitils-database:3.1")  {
+      exclude module: "jta"
+    }
+    testCompile "junit:junit:3.8.2" // unitils seems to have a dependency on this somewhere
+    testRuntime("com.h2database:h2:1.2.123")
     testRuntime "log4j:log4j:1.2.14"
   }
 }

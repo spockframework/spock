@@ -1,17 +1,5 @@
-usePlugin("groovy")
-sourceCompatibility = 1.5
-targetCompatibility = 1.5
-
-compileGroovy.options.fork = false
-compileTestGroovy.options.fork = false
-
 project(":spock-spring") {
-  repositories {
-    mavenCentral()
-  }
-  
   dependencies {  
-    groovy groovyArtifact
     compile project(":spock-core")
     compile "org.springframework:spring-test:2.5.6.SEC01"
     compile "org.springframework:spring-beans:2.5.6.SEC01"

@@ -9,8 +9,8 @@ repositories {
 dependencies {
   // mandatory dependencies for using Spock
   groovy "org.codehaus.groovy:groovy-all:1.6.8"
-  testCompile """org.spockframework:spock-core:0.4-SNAPSHOT"""
-  testCompile "junit:junit:4.7"
+  testCompile "org.spockframework:spock-core:0.4-SNAPSHOT"
+  testCompile "junit:junit:4.8.1"
 
   // optional dependencies for using Spock
   testRuntime "cglib:cglib-nodep:2.1_3"     // enables mocking of classes (in addition to interfaces)

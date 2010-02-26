@@ -80,7 +80,7 @@
             <dependency>
               <groupId>org.codehaus.groovy</groupId>
               <artifactId>groovy-all</artifactId>
-              <version>1.6.7</version>
+              <version>1.6.8</version>
               <exclusions> <!-- for some reason, the following dependencies aren't marked as optional in groovy-all POM -->
                 <exclusion>
                   <groupId>junit</groupId>
@@ -119,7 +119,7 @@
       <dependency>
         <groupId>org.codehaus.groovy</groupId>
         <artifactId>groovy-all</artifactId>
-        <version>1.6.7</version>
+        <version>1.6.8</version>
         <exclusions> <!-- for some reason, the following dependencies aren't marked as optional in groovy-all POM -->
           <exclusion>
             <groupId>junit</groupId>
@@ -138,7 +138,7 @@
       <dependency>
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
-        <version>4.7</version>
+        <version>4.8.1</version>
       </dependency>
       <dependency>
         <groupId>asm</groupId>

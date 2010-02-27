@@ -20,6 +20,7 @@ import spock.lang.Shared
 
 class FunctionalSpec extends IntegrationSpec {
   static baseUrl // set by the build infrastructure
+  static transactional = false
   
   @Shared session
   

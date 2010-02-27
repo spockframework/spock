@@ -52,7 +52,7 @@
     <dependency>
       <groupId>net.sourceforge.htmlunit</groupId>
       <artifactId>htmlunit</artifactId>
-      <version>2.6</version>
+      <version>2.7</version>
       <exclusions>
         <exclusion> <!-- see GROOVY-3356; xml-apis and JDK 1.6 ship with different versions of the same classes -->
           <groupId>xml-apis</groupId>

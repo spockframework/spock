@@ -34,7 +34,7 @@ grails.project.dependency.resolution = {
     build 'org.spockframework:spock-core:0.4-SNAPSHOT'
     build 'junit:junit:4.8.1'
     
-    test('net.sourceforge.htmlunit:htmlunit:2.6') {
+    test('net.sourceforge.htmlunit:htmlunit:2.7') {
       excludes 'xalan' // IVY-1006 - use xalan 2.7.0 to avoid (see below)
       excludes 'xml-apis' // GROOVY-3356
     }

@@ -15,7 +15,6 @@
 
 package grails.plugin.spock.functional
 
-import com.gargoylesoftware.htmlunit.html.ClickableElement
 import com.gargoylesoftware.htmlunit.html.HtmlForm
 import grails.plugin.spock.functional.htmlunit.configurer.WebRequestSettingsConfigurer
 import grails.plugin.spock.functional.htmlunit.form.FormWrapper
@@ -393,11 +392,7 @@ class WebSession {
       throw new IllegalArgumentException("No such element for id or anchorIdentifier text [${anchorIdentifier}]")
     }
 	  
-    if (anchor instanceof ClickableElement) {
-      anchor.click()
-    } else {
-      throw new IllegalArgumentException("Found element for id or anchorIdentifier text [${anchorIdentifier}] but it is not clickable: ${anchor}")
-    }
+    anchor.click()
   }
   
   /**

@@ -20,7 +20,7 @@
 package grails.plugin.spock.functional.htmlunit.configurer
 
 import com.gargoylesoftware.htmlunit.WebRequestSettings
-import org.apache.commons.httpclient.NameValuePair
+import com.gargoylesoftware.htmlunit.util.NameValuePair
 
 class WebRequestSettingsConfigurer {
   final WebRequestSettings settings 

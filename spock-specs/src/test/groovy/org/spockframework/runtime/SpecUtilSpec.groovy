@@ -29,19 +29,19 @@ class SpecUtilSpec extends Specification {
     !SpecUtil.isRunnableSpec(Specification)
   }
 
-  def "abstract class extending Specification is a spec but isn't runnable"() {
+  def "an abstract class extending Specification is a spec but isn't runnable"() {
     expect:
     SpecUtil.isSpec(AbstractSpec)
     !SpecUtil.isRunnableSpec(AbstractSpec)
   }
 
-  def "concrete class directly extending Specification is a spec and is runnable"() {
+  def "a concrete class directly extending Specification is a spec and is runnable"() {
     expect:
     SpecUtil.isSpec(ConcreteSpec)
     SpecUtil.isRunnableSpec(ConcreteSpec)
   }
 
-  def "concrete class indirectly extending Specification is a spec and is runnable"() {
+  def "a concrete class indirectly extending Specification is a spec and is runnable"() {
     expect:
     SpecUtil.isSpec(DerivedSpec)
     SpecUtil.isRunnableSpec(DerivedSpec)

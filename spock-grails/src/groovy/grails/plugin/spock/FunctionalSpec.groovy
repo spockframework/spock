@@ -25,7 +25,7 @@ class FunctionalSpec extends IntegrationSpec {
   @Shared session
   
   def setupSpec() {
-    session = new WebSession(baseUrl)
+    createSession()
   }
 
   def methodMissing(String name, args) {
@@ -38,5 +38,9 @@ class FunctionalSpec extends IntegrationSpec {
   
   def propertyMissing(String name, value) {
     session."$name" = value
+  }
+
+  protected createSession() {
+    session = new WebSession(baseUrl)
   }
 }

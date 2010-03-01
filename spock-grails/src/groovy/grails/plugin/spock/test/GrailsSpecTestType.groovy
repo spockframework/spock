@@ -50,7 +50,7 @@ class GrailsSpecTestType extends GrailsTestTypeSupport {
   protected int doPrepare() {
       eachSourceFile { testTargetPattern, specSourceFile ->
           def specClass = sourceFileToClass(specSourceFile)
-          if (SpecUtil.isSpec(specClass)) specClasses << specClass
+          if (SpecUtil.isRunnableSpec(specClass)) specClasses << specClass
       }
     
       specClasses.sum 0, { SpecUtil.getFeatureCount(it) }

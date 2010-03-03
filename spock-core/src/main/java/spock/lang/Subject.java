@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 the original author or authors.
+ * Copyright 2010 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,17 +17,21 @@ package spock.lang;
 import java.lang.annotation.*;
 
 /**
- * One or more references to external information related to a specification or feature.
+ * Indicates which type(s) are the subject(s) of a spec. If applied to a field, the
+ * field's type is (part of) the SUS (subject under specification). If applied
+ * to a spec class, the annotation's values are (part of) the SUS.
+ * Currently, this annotation has only informational purposes.
  *
  * @author Peter Niederwieser
  */
-@Retention(RetentionPolicy.SOURCE)
-@Target({ElementType.TYPE, ElementType.METHOD})
-public @interface See {
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.TYPE, ElementType.FIELD})
+public @interface Subject {
   /**
-   * References to external information related to a specification or feature.
+   * The types that are (part of) the spec's SUS. Only relevant if the annotation
+   * is applied to a spec class.
    *
-   * @return references to external information related to a specification or feature
+   * @return the types that are (part of) the spec's SUS
    */
-  String[] value();
+  Class<?>[] value() default Void.class;
 }

@@ -21,17 +21,18 @@ import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
 
-import static org.spockframework.runtime.RunStatus.*;
-
 import org.spockframework.runtime.model.*;
 import org.spockframework.util.InternalSpockError;
 
 import spock.lang.Unroll;
 
+import static org.spockframework.runtime.RunStatus.*;
+
 public class JUnitSupervisor implements IRunSupervisor {
+  private final SpecInfo spec;
   private final RunNotifier notifier;
-  private SpecInfo spec;
-  private IStackTraceFilter filter;
+  private final IStackTraceFilter filter;
+  private final IRunListener masterListener;
 
   private FeatureInfo feature;
   private boolean unrollFeature;
@@ -45,11 +46,15 @@ public class JUnitSupervisor implements IRunSupervisor {
     this.spec = spec;
     this.notifier = notifier;
     this.filter = filter;
+    this.masterListener = new MasterRunListener(spec);
   }
 
-  public void beforeSpec(SpecInfo spec) {}
+  public void beforeSpec(SpecInfo spec) {
+    masterListener.beforeSpec(spec);
+  }
 
   public void beforeFeature(FeatureInfo feature) {
+    masterListener.beforeFeature(feature);
     this.feature = feature;
 
     Unroll unroll = feature.getFeatureMethod().getReflection().getAnnotation(Unroll.class);
@@ -58,43 +63,46 @@ public class JUnitSupervisor implements IRunSupervisor {
       unrolledNameGenerator = new UnrolledFeatureNameGenerator(feature, unroll);
     else
       notifier.fireTestStarted(getDescription(feature.getFeatureMethod()));
+
+    if (feature.isParameterized()) {
+      iterationCount = 0;
+      errorSinceLastReset = false;
+    }
   }
 
-  public void beforeFirstIteration(int estimatedNumIterations) {
-    iterationCount = 0;
-    errorSinceLastReset = false;
-  }
-
-  public void beforeIteration(Object[] args) {
+  public void beforeIteration(IterationInfo iteration) {
+    masterListener.beforeIteration(iteration);
     iterationCount++;
     if (!unrollFeature) return;
 
-    unrolledDescription = getUnrolledDescription(args);
+    unrolledDescription = getUnrolledDescription(iteration.getDataValues());
     notifier.fireTestStarted(unrolledDescription);
   }
 
-  public int error(MethodInfo method, Throwable throwable, int runStatus) {
-    if (throwable instanceof MultipleFailureException) { // for better JUnit compatibility, e.g when a @Rule is used
-      MultipleFailureException multiFailure = (MultipleFailureException) throwable;
+  public int error(ErrorInfo error) {
+    if (error.getException() instanceof MultipleFailureException) { // for better JUnit compatibility, e.g when a @Rule is used
+      MultipleFailureException multiFailure = (MultipleFailureException) error.getException();
+      int runStatus = error.getRunStatus();
       for (Throwable failure : multiFailure.getFailures())
-        runStatus = error(method, failure, runStatus);
+        runStatus = error(new ErrorInfo(error.getMethod(), failure, runStatus));
       return runStatus;
     }
 
+    masterListener.error(error);
     errorSinceLastReset = true;
-    filter.filter(throwable);
+    filter.filter(error.getException());
 
     Description description = getCurrentDescription();
-    if (throwable instanceof SkipSpecOrFeatureException) {
+    if (error.getException() instanceof SkipSpecOrFeatureException) {
       // will result in wrong JUnit counts because JUnit doesn't support
       // ignoring a test after fireTestStarted() has been called
       notifier.fireTestIgnored(description);
       return OK;
     }
     
-    notifier.fireTestFailure(new Failure(description, throwable));
+    notifier.fireTestFailure(new Failure(description, error.getException()));
 
-    switch (method.getKind()) {
+    switch (error.getMethod().getKind()) {
       case DATA_PROCESSOR:
         return END_ITERATION;
       case SETUP:
@@ -109,39 +117,45 @@ public class JUnitSupervisor implements IRunSupervisor {
       case SPEC_EXECUTION:
         return END_SPEC;
       default:
-        throw new InternalSpockError(method.getKind().toString());
+        throw new InternalSpockError("unknown method kind");
     }
   }
 
-  public void afterIteration() {
+  public void afterIteration(IterationInfo iteration) {
+    masterListener.afterIteration(iteration);
     if (!unrollFeature) return;
 
     notifier.fireTestFinished(unrolledDescription);
     unrolledDescription = null;
   }
 
-  public void afterLastIteration() {
-    if (iterationCount == 0 && !errorSinceLastReset)
-      notifier.fireTestFailure(new Failure(getDescription(feature.getFeatureMethod()),
-          new SpockExecutionException("Data provider has no data")));
-  }
-  
-  public void afterFeature() {
+  public void afterFeature(FeatureInfo feature) {
+    if (feature.isParameterized()) {
+      if (iterationCount == 0 && !errorSinceLastReset)
+        notifier.fireTestFailure(new Failure(getDescription(feature.getFeatureMethod()),
+            new SpockExecutionException("Data provider has no data")));
+    }
+
+    masterListener.afterFeature(feature);
     if (!unrollFeature)
       notifier.fireTestFinished(getDescription(feature.getFeatureMethod()));
 
-    feature = null;
+    this.feature = null;
     unrollFeature = false;
     unrolledNameGenerator = null;
   }
 
-  public void afterSpec() {}
+  public void afterSpec(SpecInfo spec) {
+    masterListener.afterSpec(spec);
+  }
 
   public void specSkipped(SpecInfo spec) {
+    masterListener.specSkipped(spec);
     notifier.fireTestIgnored(getDescription(spec));
   }
 
   public void featureSkipped(FeatureInfo feature) {
+    masterListener.featureSkipped(feature);
     notifier.fireTestIgnored(getDescription(feature));
   }
 

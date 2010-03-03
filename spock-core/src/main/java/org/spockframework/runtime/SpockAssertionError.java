@@ -21,13 +21,32 @@ package org.spockframework.runtime;
  * @author Peter Niederwieser
  */
 public class SpockAssertionError extends AssertionError {
-  public SpockAssertionError() {}
+  private volatile String msg;
 
-  public SpockAssertionError(Throwable throwable) {
-    super(throwable);
+  public SpockAssertionError() {
+    this(null, null);
+  }
+
+  public SpockAssertionError(String msg) {
+    this(msg, null);
   }
   
-  public SpockAssertionError(String msg, Object... args) {
-    super(String.format(msg, args));
+  public SpockAssertionError(Throwable cause) {
+    this(null, cause);
+  }
+
+  public SpockAssertionError(String msg, Throwable cause) {
+    this.msg = msg;
+    initCause(cause);
+  }
+
+  public SpockAssertionError withArgs(Object... args) {
+    msg = String.format(msg, args);
+    return this;
+  }
+
+  @Override
+  public String getMessage() {
+    return msg;
   }
 }

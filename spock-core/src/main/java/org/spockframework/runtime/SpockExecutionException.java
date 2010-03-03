@@ -22,23 +22,24 @@ package org.spockframework.runtime;
  * @author Peter Niederwieser
  */
 public class SpockExecutionException extends RuntimeException {
-  private Object[] args;
+  private volatile String msg;
 
   public SpockExecutionException(String msg) {
-    super(msg);
+    this(msg, null);
   }
 
   public SpockExecutionException(String msg, Throwable throwable) {
-    super(msg, throwable);
+    super(throwable);
+    this.msg = msg;
   }
 
   public SpockExecutionException withArgs(Object... args) {
-    this.args = args;
+    msg = String.format(msg, args);
     return this;
   }
 
   @Override
   public String getMessage() {
-    return String.format(super.getMessage(), args);
+    return msg;
   }
 }

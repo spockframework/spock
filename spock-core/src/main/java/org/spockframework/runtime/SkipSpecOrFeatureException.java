@@ -17,8 +17,12 @@
 package org.spockframework.runtime;
 
 /**
- * Indicates that a Spec or Spec feature should be skipped. May only be
- * thrown by an interceptor registered with SpecInfo or FeatureInfo.
+ * Indicates that a spec or feature should be skipped. May only be
+ * thrown by an interceptor around SpecInfo or FeatureInfo.
+ * 
+ * Note: Throwing this exception will lead to wrong JUnit run counts.
+ * If you can tell beforehand that a spec or feature should be skipped,
+ * use the "skipped" flag on SpecInfo/FeatureInfo instead.
  * 
  * @author Peter Niederwieser
  */

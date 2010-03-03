@@ -14,11 +14,13 @@
 
 package org.spockframework.runtime;
 
+import org.spockframework.runtime.extension.builtin.ScenarioExtension;
 import org.spockframework.runtime.model.*;
 
 /**
  * Listens to a spec run. Currently, only extensions can register listeners.
- * They do so by invoking <tt>SpecInfo.addListener()<tt>.
+ * They do so by invoking <tt>SpecInfo.addListener()<tt>. See
+ * {@link ScenarioExtension} for an example of how to use a listener.
  *
  * @author Peter Niederwieser
  */

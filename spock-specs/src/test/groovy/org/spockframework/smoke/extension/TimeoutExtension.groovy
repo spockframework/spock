@@ -17,7 +17,9 @@
 package org.spockframework.smoke.extension
 
 import java.util.concurrent.TimeUnit
-import org.spockframework.runtime.SpockAssertionError
+
+import org.spockframework.runtime.SpockTimeoutError
+
 import spock.lang.*
 
 /**
@@ -30,7 +32,7 @@ class TimeoutExtension extends Specification {
     setup: Thread.sleep(500)
   }
 
-  @FailsWith(SpockAssertionError)
+  @FailsWith(SpockTimeoutError)
   @Timeout(1)
   def "not in time"() {
     setup: Thread.sleep(1100)
@@ -41,7 +43,7 @@ class TimeoutExtension extends Specification {
     setup: Thread.sleep(500)
   }
 
-  @FailsWith(SpockAssertionError)
+  @FailsWith(SpockTimeoutError)
   @Timeout(value = 1000, unit = TimeUnit.MILLISECONDS)
   def "not in time millis"() {
     setup: Thread.sleep(1100)

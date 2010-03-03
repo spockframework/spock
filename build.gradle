@@ -23,7 +23,8 @@ subprojects {
   }
 }
 
-task wrapper(type: Wrapper) { 
-  gradleVersion = '0.8' 
-  jarPath = 'wrapper' 
-} 
+task wrapper(type: Wrapper) {
+  gradleVersion = '0.8'
+  jarPath = 'wrapper'
+}
+

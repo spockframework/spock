@@ -15,9 +15,11 @@
 package org.spockframework.runtime;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 
 import org.spockframework.runtime.model.FeatureMetadata;
 import org.spockframework.runtime.model.SpecMetadata;
+import org.spockframework.util.InternalSpockError;
 
 import spock.lang.Specification;
 
@@ -48,12 +50,24 @@ public final class SpecUtil {
 
     if (Specification.class.isAssignableFrom(clazz))
       throw new InvalidSpecException(
-"specification %s was not compiled properly (Spock AST transform was not run)"
+"Specification %s was not compiled properly (Spock AST transform was not run)"
       ).format(clazz.getName());
 
     throw new InvalidSpecException(
-"class %s is not a Spock specification (does not extend spock.lang.Specification or a subclass thereof)"
+"Class %s is not a Spock specification (does not extend spock.lang.Specification or a subclass thereof)"
     ).format(clazz.getName());
+  }
+
+  public static boolean isRunnableSpec(Class<?> clazz) {
+    return isSpec(clazz) && !Modifier.isAbstract(clazz.getModifiers());
+  }
+
+  public static void checkIsRunnableSpec(Class<?> clazz) {
+    checkIsSpec(clazz);
+
+    if (Modifier.isAbstract(clazz.getModifiers()))
+      throw new InvalidSpecException("Specification %s is not runnable because it is declared abstract")
+          .format(clazz.getName());
   }
 
   /**

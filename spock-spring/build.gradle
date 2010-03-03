@@ -1,5 +1,5 @@
 project(":spock-spring") {
-  dependencies {  
+  dependencies {
     compile project(":spock-core")
     compile "org.springframework:spring-test:2.5.6.SEC01"
     compile "org.springframework:spring-beans:2.5.6.SEC01"

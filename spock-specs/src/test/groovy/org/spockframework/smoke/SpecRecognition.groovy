@@ -16,7 +16,6 @@
 
 package org.spockframework.smoke
 
-import org.spockframework.runtime.SpecUtil
 import org.spockframework.runtime.SpockAssertionError
 
 import spock.lang.*
@@ -26,33 +25,7 @@ import org.spockframework.EmbeddedSpecification
  * @author Peter Niederwieser
  */
 class SpecRecognition extends EmbeddedSpecification {
-  def "extending class Specification or a subclass thereof"() {
-    when:
-    def clazz = compile("""
-import spock.lang.Specification
-
-class ASpec extends $baseClass {}
-    """)
-
-    then:
-    SpecUtil.isSpec(clazz)
-
-    where:
-    baseClass << ["Specification", "spock.lang.Specification",
-        "org.spockframework.smoke.MySpecification", "org.spockframework.smoke.MyMySpecification"]
-  }
-
-  def "missing extends clause"() {
-    when:
-    def clazz = compile("""
-class ASpec {}
-    """)
-
-    then:
-    !SpecUtil.isSpec(clazz)
-  }
-
-    @Unroll
+  @Unroll
   def "is properly recognized"() {
     when:
     runner.run """
@@ -91,18 +64,13 @@ class Foo extends MyCustomBaseClass {
 }
     """)
 
-    def fooClass = classes.find { it.name == "Foo" }
+    def clazz = classes.find { it.name == "Foo" }
 
     when:
-    runner.runClass(fooClass)
+    runner.runClass(clazz)
 
     then:
     thrown(SpockAssertionError)
-  }
-
-  // we intentionally don't use EmbeddedSpecCompiler here to avoid confusing matters
-  private compile(String source) {
-    new GroovyClassLoader().parseClass(source)
   }
 }
 

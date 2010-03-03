@@ -69,7 +69,7 @@ public class BaseSpecRunner {
 
     supervisor.beforeSpec(spec);
     invoke(this, createDoRunInfo());
-    supervisor.afterSpec();
+    supervisor.afterSpec(spec);
 
     return resetStatus(SPEC);
   }
@@ -147,7 +147,7 @@ public class BaseSpecRunner {
 
     supervisor.beforeFeature(currentFeature);
     invoke(this, createDoRunFeatureInfo());
-    supervisor.afterFeature();
+    supervisor.afterFeature(currentFeature);
   }
 
   private MethodInfo createDoRunFeatureInfo() {
@@ -220,7 +220,8 @@ public class BaseSpecRunner {
     try {
       invocation.proceed();
     } catch (Throwable t) {
-      runStatus = supervisor.error(method, t, runStatus);
+      ErrorInfo error = new ErrorInfo(method, t, runStatus);
+      runStatus = supervisor.error(error);
     }
   }
 
@@ -230,12 +231,12 @@ public class BaseSpecRunner {
     try {
       return method.getReflection().invoke(target, arguments);
     } catch (InvocationTargetException e) {
-      runStatus = supervisor.error(method, e.getTargetException(), runStatus);
+      runStatus = supervisor.error(new ErrorInfo(method, e.getTargetException(), runStatus));
       return null;
     } catch (Throwable t) {
       Error internalError =
           new InternalSpockError("Failed to invoke method '%s'", t).withArgs(method.getReflection().getName());
-      runStatus = supervisor.error(method, internalError, runStatus);
+      runStatus = supervisor.error(new ErrorInfo(method, internalError, runStatus));
       return null;
     }
   }

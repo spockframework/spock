@@ -25,24 +25,19 @@ import org.spockframework.runtime.model.*;
 public interface IRunSupervisor {
   void beforeSpec(SpecInfo spec);
   void beforeFeature(FeatureInfo feature);
-  /*
-   * Called before the first iteration of a parameterized feature is
-   * run. All data providers have been created successfully at this point.
-   * Not called for non-parameterized features.
-   */
-  void beforeFirstIteration(int estimatedNumIterations);
+
   /*
    * Called before the next iteration of a parameterized feature is
    * run. All parameterization values have been computed successfully
    * at this point. Not called for non-parameterized features.
    */
-  void beforeIteration(Object[] args);
-  void afterIteration();
-  void afterLastIteration();
-  void afterFeature();
-  void afterSpec();
+  void beforeIteration(IterationInfo iteration);
 
-  int error(MethodInfo method, Throwable error, int runStatus);
+  void afterIteration(IterationInfo iteration);
+  void afterFeature(FeatureInfo feature);
+  void afterSpec(SpecInfo spec);
+
+  int error(ErrorInfo error);
 
   void specSkipped(SpecInfo spec);
   void featureSkipped(FeatureInfo feature);

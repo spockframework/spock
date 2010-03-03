@@ -31,6 +31,7 @@ import org.spockframework.util.Util;
 public class SpecInfo extends NodeInfo<NodeInfo, Class<?>> implements IMethodNameMapper {
   private final List<FieldInfo> fields = new ArrayList<FieldInfo>();
   private final List<IMethodInterceptor> interceptors = new ArrayList<IMethodInterceptor>();
+  private final List<IRunListener> listeners = new ArrayList<IRunListener>();
 
   private String filename;
   private SpecInfo superSpec;
@@ -196,6 +197,14 @@ public class SpecInfo extends NodeInfo<NodeInfo, Class<?>> implements IMethodNam
 
   public void addInterceptor(IMethodInterceptor interceptor) {
     interceptors.add(interceptor);
+  }
+
+  public List<IRunListener> getListeners() {
+    return listeners;
+  }
+
+  public void addListener(IRunListener listener) {
+    listeners.add(listener);
   }
 
   public boolean isExcluded() {

@@ -20,8 +20,10 @@ import javax.annotation.Resource
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.ApplicationContext
 import org.springframework.test.context.ContextConfiguration
-import spock.lang.Specification
+
 import spock.util.EmbeddedSpecRunner
+
+import spock.lang.*
 
 @ContextConfiguration(locations = "InjectionExamples-context.xml")
 class InjectionExamples extends Specification {

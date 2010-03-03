@@ -60,10 +60,10 @@ class CleanupBlocks extends Specification {
     if (a == 0) throw new IllegalArgumentException()
   }
 
-  @FailsWith(Exception)
+  @FailsWith(IllegalArgumentException)
   def "if exception is thrown, code between occurrence of exception and cleanup-block is not executed"() {
     def a = 1
-    throw new Exception()
+    throw new IllegalArgumentException()
     a = 2
 
     cleanup:

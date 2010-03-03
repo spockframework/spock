@@ -17,12 +17,14 @@ package org.spockframework.runtime;
 import org.spockframework.runtime.model.*;
 
 /**
+ * Listens to a spec run. Currently, only extensions can register listeners.
+ * They do so by invoking <tt>SpecInfo.addListener()<tt>.
  *
  * @author Peter Niederwieser
  */
 public interface IRunListener {
   /**
-   * Called before each spec of a spec run.
+   * Called before a spec.
    */
   void beforeSpec(SpecInfo spec);
 
@@ -34,13 +36,16 @@ public interface IRunListener {
   /**
    * Called before each iteration of a data-driven feature.
    * All data values have been computed successfully
-   * at this point. Not called for non-data-driven features.
+   * at this point.
+   * Not called for features that aren't data-driven (i.e.
+   * don't have a where-block).
    */
   void beforeIteration(IterationInfo iteration);
 
   /**
    * Called after each iteration of a data-driven feature.
-   * Not called for non-data-driven features.
+   * Not called for features that aren't data-driven (i.e.
+   * don't have a where-block).
    */
   void afterIteration(IterationInfo iteration);
 
@@ -50,19 +55,20 @@ public interface IRunListener {
   void afterFeature(FeatureInfo feature);
 
   /**
-   * Called after each spec of a spec run.
+   * Called after a spec.
    */
   void afterSpec(SpecInfo spec);
 
   /**
    * Called for every error that occurs during a spec run.
    * May be called multiple times for the same method, for example if both
-   * an expect-block and a cleanup-block of a feature method fail.
+   * the expect-block and the cleanup-block of a feature method fail.
    */
   void error(ErrorInfo error);
 
   // IDEA: might be able to remove remaining two methods and
-  // call before/after instead, since skip should be set on SpecInfo/FeatureInfo anyway
+  // call before/after instead, since skip flag should be set on
+  // SpecInfo/FeatureInfo anyway
   
   /**
    * Called if a spec is skipped, for example because it is marked

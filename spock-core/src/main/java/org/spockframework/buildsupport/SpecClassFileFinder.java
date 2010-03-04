@@ -22,30 +22,30 @@ import java.util.*;
 import org.objectweb.asm.ClassReader;
 
 /**
- * Finds all class files below a base directory that contain a Spec.
+ * Finds all class files below a base directory that contain a runnable spec.
  *
  * @author Peter Niederwieser
  */
 public class SpecClassFileFinder {
-  public List<File> findSpecs(File baseDir) throws IOException {
+  public List<File> findRunnableSpecs(File baseDir) throws IOException {
     if (!baseDir.isDirectory())
       throw new FileNotFoundException(String.format("directory %s not found", baseDir));
 
     List<File> specs = new ArrayList<File>();
-    doFindSpecs(baseDir, specs);
+    doFindRunnableSpecs(baseDir, specs);
     Collections.sort(specs);
     return specs;
   }
 
-  private void doFindSpecs(File dir, List<File> foundSpecs) throws IOException {
+  private void doFindRunnableSpecs(File dir, List<File> foundSpecs) throws IOException {
     for (File path: dir.listFiles())
       if (path.isDirectory())
-        doFindSpecs(path, foundSpecs);
-      else if (isSpec(path))
+        doFindRunnableSpecs(path, foundSpecs);
+      else if (isRunnableSpec(path))
         foundSpecs.add(path);
   }
 
-  public boolean isSpec(File file) throws IOException {
+  public boolean isRunnableSpec(File file) throws IOException {
     if (!(file.getName().endsWith(".class") && file.isFile()))
       return false;
     
@@ -54,7 +54,7 @@ public class SpecClassFileFinder {
       ClassReader reader = new ClassReader(stream);
       SpecClassFileVisitor visitor = new SpecClassFileVisitor();
       reader.accept(visitor, true);
-      return visitor.isSpec;
+      return visitor.isRunnableSpec();
     } finally {
       stream.close();
     }

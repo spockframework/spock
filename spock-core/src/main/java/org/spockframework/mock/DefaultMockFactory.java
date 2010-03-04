@@ -57,7 +57,7 @@ public class DefaultMockFactory implements IMockFactory {
     if (cglibAvailable)
       return CglibMockFactory.create(mockName, mockType, dispatcher);
     throw new CannotCreateMockException(mockType, "by default, only mocking of interfaces is supported; " +
-      "to allow mocking of classes, put cglib-nodep-2.1_3 or higher on the classpath.");
+      "to allow mocking of classes, put cglib-nodep-2.2 or higher on the classpath.");
   }
 
   private Object createDynamicProxyMock(final String mockName, Class<?> mockType, final IInvocationMatcher dispatcher) {
@@ -114,7 +114,7 @@ public class DefaultMockFactory implements IMockFactory {
         return enhancer.create(); // throws what if no parameterless superclass constructor available?
       } catch (Exception e) {
         throw new CannotCreateMockException(mockType, "the latter has no parameterless constructor; " +
-          "to allow mocking of classes w/o parameterless constructor, put objenesis-1.1 or higher on the classpath.");
+          "to allow mocking of classes w/o parameterless constructor, put objenesis-1.2 or higher on the classpath.");
       }
     }
 

@@ -33,7 +33,7 @@ public class SpecClassFileSelector extends BaseExtendSelector {
   @Override
   public boolean isSelected(File baseDir, String filename, File file) {
     try {
-      return finder.isSpec(file);
+      return finder.isRunnableSpec(file);
     } catch (IOException e) {
       String msg = e.getMessage();
       log("Error reading class file '" + filename + (msg == null ? "'" : "': " + msg), Project.MSG_WARN);

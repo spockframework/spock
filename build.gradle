@@ -1,6 +1,16 @@
 allprojects {
   group = "org.spockframework"
   version = "0.4-SNAPSHOT"
+
+  antDep = "org.apache.ant:ant:1.7.1"
+  asm = "asm:asm:2.2.3"
+  cglib = "cglib:cglib-nodep:2.2"
+  h2database = "com.h2database:h2:1.2.130"
+  junit = "junit:junit:4.8.1"
+  // log4j 1.2.15 would require several excludes
+  // see http://wiki.octonary.com/2009/11/07/excluding-transitive-dependencies-with-gradle/
+  log4j = "log4j:log4j:1.2.14"
+  objenesis = "org.objenesis:objenesis:1.2"
 }
 
 subprojects {

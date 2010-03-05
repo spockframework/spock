@@ -1,12 +1,10 @@
 /*
- * Copyright 2009 the original author or authors.
+ * Copyright 2010 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
  *     http://www.apache.org/licenses/LICENSE-2.0
- *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -14,26 +12,22 @@
  * limitations under the License.
  */
 
-package org.spockframework.util;
+package org.spockframework.buildsupport;
 
-/**
- *
- * @author Peter Niederwieser
- */
-public class UnreachableCodeError extends InternalSpockError {
-  public UnreachableCodeError() {
-    this("You shouldn't be here...fascinating", null);
+import org.objectweb.asm.AnnotationVisitor;
+
+class EmptyAnnotationVisitor implements AnnotationVisitor {
+  public void visit(String s, Object o) {}
+
+  public void visitEnum(String s, String s1, String s2) {}
+
+  public AnnotationVisitor visitAnnotation(String s, String s1) {
+    return this;
   }
 
-  public UnreachableCodeError(String msg) {
-    this(msg, null);
+  public AnnotationVisitor visitArray(String s) {
+    return this;
   }
 
-  public UnreachableCodeError(Throwable t) {
-    this("You shouldn't be here...fascinating", t);
-  }
-
-  public UnreachableCodeError(String msg, Throwable cause) {
-    super(msg, cause);  
-  }
+  public void visitEnd() {}
 }

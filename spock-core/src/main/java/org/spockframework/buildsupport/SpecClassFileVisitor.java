@@ -61,18 +61,3 @@ class SpecClassFileVisitor implements ClassVisitor {
   public void visitEnd() {}
 }
 
-class EmptyAnnotationVisitor implements AnnotationVisitor {
-  public void visit(String s, Object o) {}
-
-  public void visitEnum(String s, String s1, String s2) {}
-
-  public AnnotationVisitor visitAnnotation(String s, String s1) {
-    return this;
-  }
-
-  public AnnotationVisitor visitArray(String s) {
-    return this;
-  }
-
-  public void visitEnd() {}
-}

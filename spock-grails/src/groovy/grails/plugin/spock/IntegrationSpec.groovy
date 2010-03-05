@@ -40,6 +40,6 @@ class IntegrationSpec extends Specification {
 
   def cleanup() {
     transactionInterceptor.destroy()
-    requestEnvironmentInterceptor.init()
+    requestEnvironmentInterceptor.destroy()
   }
 }

@@ -3,7 +3,7 @@ allprojects {
   version = "0.4-groovy-1.7-SNAPSHOT"
 
   antDep = "org.apache.ant:ant:1.7.1"
-  asm = "asm:asm:2.2.3"
+  asm = "asm:asm:3.2"
   cglib = "cglib:cglib-nodep:2.2"
   h2database = "com.h2database:h2:1.2.130"
   junit = "junit:junit:4.8.1"

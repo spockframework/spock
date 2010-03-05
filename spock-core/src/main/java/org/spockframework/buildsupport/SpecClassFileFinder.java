@@ -53,7 +53,7 @@ public class SpecClassFileFinder {
     try {
       ClassReader reader = new ClassReader(stream);
       SpecClassFileVisitor visitor = new SpecClassFileVisitor();
-      reader.accept(visitor, true);
+      reader.accept(visitor, ClassReader.SKIP_CODE | ClassReader.SKIP_DEBUG | ClassReader.SKIP_FRAMES);
       return visitor.isRunnableSpec();
     } finally {
       stream.close();

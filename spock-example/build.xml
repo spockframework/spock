@@ -42,7 +42,7 @@
       <dependency
         groupId="asm"
         artifactId="asm"
-        version="2.2.3" />
+        version="3.2" />
 <!-- Dependencies used by examples in this project (not required for using Spock) -->
       <dependency
         groupId="com.h2database"

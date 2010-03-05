@@ -2,6 +2,7 @@ project(":spock-specs") {
   dependencies {
     compile project(":spock-core")
     compile junit
+    testRuntime asm
     testRuntime cglib
     testRuntime objenesis
     testRuntime h2database

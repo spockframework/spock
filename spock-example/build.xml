@@ -32,12 +32,12 @@
       <dependency 
         groupId="cglib"
         artifactId="cglib-nodep"
-        version="2.1_3" />
+        version="2.2" />
       <!-- enables mocking of classes without default constructor (together with CGLIB) -->
       <dependency
         groupId="org.objenesis"
         artifactId="objenesis"
-        version="1.1" />
+        version="1.2" />
       <!-- only required if Spock's Ant selector is used, which finds specifications to be run regardless of their name -->
       <dependency
         groupId="asm"
@@ -47,7 +47,7 @@
       <dependency
         groupId="com.h2database"
         artifactId="h2"
-        version="1.1.116" />   
+        version="1.2.130" />
       <remoteRepository
         id="maven-central"
         url="http://repo1.maven.org/maven2/" />

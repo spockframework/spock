@@ -67,5 +67,10 @@
        <artifactId>h2</artifactId>
        <scope>test</scope>
     </dependency>
+    <dependency>
+       <groupId>asm</groupId>
+       <artifactId>asm</artifactId>
+       <scope>test</scope>
+    </dependency>
   </dependencies>
 </project>

@@ -15,8 +15,13 @@ project(":spock-unitils") {
     testCompile("org.unitils:unitils-database:3.1")  {
       exclude module: "jta"
     }
-    testCompile "junit:junit:3.8.2" // unitils seems to have a dependency on this somewhere
-    testRuntime("com.h2database:h2:1.2.123")
-    testRuntime "log4j:log4j:1.2.14"
+
+    // for some reason, groovyc needs junit dependency for compiling tests
+    // otherwise we'll get:
+    // java.lang.NoClassDefFoundError: junit/framework/AssertionFailedError	
+    testCompile junit
+
+    testRuntime h2database
+    testRuntime log4j
   }
 }

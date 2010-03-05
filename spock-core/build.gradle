@@ -1,10 +1,10 @@
 project(":spock-core") {  
   dependencies {  
-    compile "asm:asm:2.2.3"
-    compile "junit:junit:4.8.1"
-    compile "cglib:cglib-nodep:2.1_3"
-    compile "org.objenesis:objenesis:1.2"
-    compile "org.apache.ant:ant:1.7.1"
+    compile asm
+    compile junit
+    compile cglib
+    compile objenesis
+    compile antDep
   }
 }
 

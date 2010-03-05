@@ -1,9 +1,10 @@
 project(":spock-specs") {
   dependencies {
     compile project(":spock-core")
-    compile "junit:junit:4.8.1"
-    testRuntime "cglib:cglib-nodep:2.1_3"
-    testRuntime "org.objenesis:objenesis:1.2"
-    testRuntime "com.h2database:h2:1.2.123"
+    compile junit
+    testRuntime asm
+    testRuntime cglib
+    testRuntime objenesis
+    testRuntime h2database
   }
 }

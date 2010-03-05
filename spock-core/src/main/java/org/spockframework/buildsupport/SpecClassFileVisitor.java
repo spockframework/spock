@@ -20,14 +20,27 @@ import org.objectweb.asm.*;
 
 class SpecClassFileVisitor implements ClassVisitor {
   private final AnnotationVisitor annVisitor = new EmptyAnnotationVisitor();
-  public boolean isSpec = false;
+
+  private boolean hasSpecMetadataAnnotation = false;
+  private boolean isAbstract;
+
+  public boolean isSpec() {
+    return hasSpecMetadataAnnotation;
+  }
+  
+  public boolean isRunnableSpec() {
+    return isSpec() && !isAbstract;
+  }
 
   public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
-    if ("Lorg/spockframework/runtime/model/SpecMetadata;".equals(desc)) isSpec = true;
+    if ("Lorg/spockframework/runtime/model/SpecMetadata;".equals(desc))
+      hasSpecMetadataAnnotation = true;
     return annVisitor;
   }
 
-  public void visit(int i, int i1, String s, String s1, String s2, String[] strings) {}
+  public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
+    isAbstract = (access & Opcodes.ACC_ABSTRACT) != 0;
+  }
 
   public void visitSource(String s, String s1) {}
 

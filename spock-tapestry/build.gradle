@@ -10,5 +10,6 @@ project(":spock-tapestry") {
     compile "org.apache.tapestry:tapestry-ioc:5.1.0.5"
     compile "org.apache.tapestry:tapestry5-annotations:5.1.0.5"
     compile "org.slf4j:slf4j-api:1.5.2"
+    compile junit
   }
 }

@@ -17,10 +17,10 @@ package org.spockframework.runtime
 import spock.lang.*
 
 class SpecUtilSpec extends Specification {
-  def "a class that doesn't extend Specification is not a spec"() {
+  def "a regular class is not a spec"() {
     expect:
-    !SpecUtil.isSpec(NotExtendingSpecification)
-    !SpecUtil.isRunnableSpec(NotExtendingSpecification)
+    !SpecUtil.isSpec(RegularClass)
+    !SpecUtil.isRunnableSpec(RegularClass)
   }
 
   def "class Specification is not a spec"() {
@@ -48,10 +48,12 @@ class SpecUtilSpec extends Specification {
   }
 }
 
-private class NotExtendingSpecification extends ArrayList {}
+private class RegularClass extends ArrayList {}
 
 private abstract class AbstractSpec extends Specification {}
 
+@Ignore
 private class ConcreteSpec extends Specification {}
 
+@Ignore
 private class DerivedSpec extends ConcreteSpec {}

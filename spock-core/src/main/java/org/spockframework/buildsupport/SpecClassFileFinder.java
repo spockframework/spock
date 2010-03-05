@@ -19,8 +19,6 @@ package org.spockframework.buildsupport;
 import java.io.*;
 import java.util.*;
 
-import org.objectweb.asm.ClassReader;
-
 /**
  * Finds all class files below a base directory that contain a runnable spec.
  *
@@ -51,9 +49,9 @@ public class SpecClassFileFinder {
     
     InputStream stream = new BufferedInputStream(new FileInputStream(file));
     try {
-      ClassReader reader = new ClassReader(stream);
       SpecClassFileVisitor visitor = new SpecClassFileVisitor();
-      reader.accept(visitor, true);
+      AsmClassReader reader = new AsmClassReader(stream);
+      reader.accept(visitor);
       return visitor.isRunnableSpec();
     } finally {
       stream.close();

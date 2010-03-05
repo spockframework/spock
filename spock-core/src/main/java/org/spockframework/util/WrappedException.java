@@ -1,12 +1,10 @@
 /*
- * Copyright 2009 the original author or authors.
+ * Copyright 2010 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
  *     http://www.apache.org/licenses/LICENSE-2.0
- *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,23 +15,17 @@
 package org.spockframework.util;
 
 /**
+ * Wraps a checked exception s.t. it can be thrown from a method that doesn't
+ * declare to throw it.
  *
  * @author Peter Niederwieser
  */
-public class UnreachableCodeError extends InternalSpockError {
-  public UnreachableCodeError() {
-    this("You shouldn't be here...fascinating", null);
+public class WrappedException extends RuntimeException {
+  public WrappedException(Throwable cause) {
+    super(cause);
   }
 
-  public UnreachableCodeError(String msg) {
-    this(msg, null);
-  }
-
-  public UnreachableCodeError(Throwable t) {
-    this("You shouldn't be here...fascinating", t);
-  }
-
-  public UnreachableCodeError(String msg, Throwable cause) {
-    super(msg, cause);  
+  public WrappedException(String msg, Throwable cause) {
+    super(msg, cause);
   }
 }

@@ -220,7 +220,7 @@ public class BaseSpecRunner {
     try {
       invocation.proceed();
     } catch (Throwable t) {
-      ErrorInfo error = new ErrorInfo(method, t, runStatus);
+      ErrorInfo error = new ErrorInfo(method, t);
       runStatus = supervisor.error(error);
     }
   }
@@ -231,12 +231,12 @@ public class BaseSpecRunner {
     try {
       return method.getReflection().invoke(target, arguments);
     } catch (InvocationTargetException e) {
-      runStatus = supervisor.error(new ErrorInfo(method, e.getTargetException(), runStatus));
+      runStatus = supervisor.error(new ErrorInfo(method, e.getTargetException()));
       return null;
     } catch (Throwable t) {
       Error internalError =
           new InternalSpockError("Failed to invoke method '%s'", t).withArgs(method.getReflection().getName());
-      runStatus = supervisor.error(new ErrorInfo(method, internalError, runStatus));
+      runStatus = supervisor.error(new ErrorInfo(method, internalError));
       return null;
     }
   }

@@ -17,12 +17,10 @@ package org.spockframework.runtime.model;
 public class ErrorInfo {
   private final MethodInfo method;
   private final Throwable error;
-  private final int runStatus;
 
-  public ErrorInfo(MethodInfo method, Throwable error, int runStatus) {
+  public ErrorInfo(MethodInfo method, Throwable error) {
     this.method = method;
     this.error = error;
-    this.runStatus = runStatus;
   }
 
   public MethodInfo getMethod() {
@@ -31,9 +29,5 @@ public class ErrorInfo {
 
   public Throwable getException() {
     return error;
-  }
-
-  public int getRunStatus() {
-    return runStatus;
   }
 }

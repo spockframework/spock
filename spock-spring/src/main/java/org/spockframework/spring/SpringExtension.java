@@ -19,6 +19,7 @@ package org.spockframework.spring;
 import javax.annotation.Resource;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.ProfileValueUtils;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestContextManager;
 
@@ -28,6 +29,7 @@ import org.spockframework.util.NotThreadSafe;
 
 import spock.lang.Shared;
 
+// TOOD: full support for spec inheritance
 @NotThreadSafe
 public class SpringExtension implements IGlobalExtension {
   public void visitSpec(SpecInfo spec) {
@@ -35,12 +37,14 @@ public class SpringExtension implements IGlobalExtension {
 
     checkNoSharedFieldInjected(spec);
 
+    if (!handleProfileValues(spec)) return;
+
     TestContextManager manager = new TestContextManager(spec.getReflection());
     SpringInterceptor interceptor = new SpringInterceptor(manager);
     spec.addInterceptor(interceptor);
     spec.getSetupMethod().addInterceptor(interceptor);
     spec.getCleanupMethod().addInterceptor(interceptor);
-    for (FeatureInfo feature : spec.getFeatures())
+    for (FeatureInfo feature : spec.getAllFeatures())
       feature.addInterceptor(interceptor);
   }
 
@@ -52,5 +56,19 @@ public class SpringExtension implements IGlobalExtension {
         throw new SpringExtensionException(
             "@Shared field '%s' cannot be injected; use an instance field instead").format(field.getName());
     }
+  }
+
+  private boolean handleProfileValues(SpecInfo spec) {
+    if (!ProfileValueUtils.isTestEnabledInThisEnvironment(spec.getReflection())) {
+      spec.setExcluded(true);
+      return false;
+    }
+
+    for (FeatureInfo feature : spec.getAllFeatures())
+      if (!ProfileValueUtils.isTestEnabledInThisEnvironment(
+          feature.getFeatureMethod().getReflection(),spec.getReflection()))
+        feature.setExcluded(true);
+
+    return true;
   }
 }

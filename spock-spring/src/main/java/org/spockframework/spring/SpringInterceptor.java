@@ -16,47 +16,24 @@
 
 package org.spockframework.spring;
 
-import org.springframework.test.annotation.ProfileValueUtils;
 import org.springframework.test.context.TestContextManager;
 
-import org.spockframework.runtime.SkipSpecOrFeatureException;
 import org.spockframework.runtime.extension.*;
-import org.spockframework.runtime.model.FeatureInfo;
 import org.spockframework.util.NotThreadSafe;
 
 @NotThreadSafe
 public class SpringInterceptor extends AbstractMethodInterceptor {
   private final TestContextManager manager;
 
-  private FeatureInfo currentFeature;
-
   public SpringInterceptor(TestContextManager manager) {
     this.manager = manager;
   }
 
   @Override
-  public void interceptSpecExecution(IMethodInvocation invocation) throws Throwable {
-    if (!ProfileValueUtils.isTestEnabledInThisEnvironment(invocation.getTarget().getClass()))
-      throw new SkipSpecOrFeatureException("Specification not enabled in this environment");
-    invocation.proceed();
-  }
-
-  @Override
-  public void interceptFeatureExecution(IMethodInvocation invocation) throws Throwable {
-    currentFeature = invocation.getMethod().getFeature();
-    try {
-      if (!ProfileValueUtils.isTestEnabledInThisEnvironment(invocation.getTarget().getClass()))
-        throw new SkipSpecOrFeatureException("Feature not enabled in this environment");
-      invocation.proceed();
-    } finally {
-      currentFeature = null;
-    }
-  }
-
-  @Override
   public void interceptSetupMethod(IMethodInvocation invocation) throws Throwable {
     manager.prepareTestInstance(invocation.getTarget());
-    manager.beforeTestMethod(invocation.getTarget(), currentFeature.getFeatureMethod().getReflection());
+    manager.beforeTestMethod(invocation.getTarget(),
+        invocation.getFeature().getFeatureMethod().getReflection());
     invocation.proceed();
   }
 
@@ -71,7 +48,8 @@ public class SpringInterceptor extends AbstractMethodInterceptor {
 
     Throwable afterTestEx = null;
     try {
-      manager.afterTestMethod(invocation.getTarget(), currentFeature.getFeatureMethod().getReflection(), cleanupEx);
+      manager.afterTestMethod(invocation.getTarget(),
+          invocation.getFeature().getFeatureMethod().getReflection(), cleanupEx);
     } catch (Throwable t2) {
       afterTestEx = t2;
     }

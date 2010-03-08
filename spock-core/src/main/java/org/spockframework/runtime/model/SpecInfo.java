@@ -223,14 +223,13 @@ public class SpecInfo extends NodeInfo<NodeInfo, Class<?>> implements IMethodNam
   }
 
   public void filterFeatures(final IFeatureFilter filter) {
-    features = Util.filterMap(features,
-        new IFunction<FeatureInfo,FeatureInfo>() {
-          public FeatureInfo apply(FeatureInfo value) {
-            return filter.matches(value) ? value : null;
-          }
-        });
+    for (FeatureInfo feature: getAllFeatures()) {
+      if (!filter.matches(feature))
+        feature.setExcluded(true);
+    }
   }
 
+  // TODO: doesn't work in presence of spec inheritance
   public void sortFeatures(final IFeatureSortOrder order) {
     Collections.sort(features, order);
   }

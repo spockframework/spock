@@ -139,7 +139,8 @@ public class BaseSpecRunner {
   private void runFeature() {
     if (runStatus != OK) return;
 
-    Assert.that(!currentFeature.isExcluded(), "tried to run excluded feature");
+    if (currentFeature.isExcluded()) return;
+
     if (currentFeature.isSkipped()) {
       supervisor.featureSkipped(currentFeature);
       return;

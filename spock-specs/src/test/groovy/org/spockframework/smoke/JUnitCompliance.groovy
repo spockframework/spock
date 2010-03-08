@@ -17,7 +17,6 @@
 package org.spockframework.smoke
 
 import org.junit.runner.Request
-import org.junit.runner.manipulation.Filter
 import org.junit.runner.notification.RunListener
 import org.spockframework.EmbeddedSpecification
 import spock.lang.Issue
@@ -82,7 +81,6 @@ class Foo extends Specification {
 
   @Issue("http://issues.spockframework.org/detail?id=20")
   def "ignoring feature methods"() {
-    def compiler = new EmbeddedSpecCompiler()
     def clazz = compiler.compileSpecBody("""
 static log = ""
 @Ignore
@@ -104,7 +102,6 @@ def feature3() { setup: log += "3" }
   }
 
   def "sorting feature methods"() {
-    def compiler = new EmbeddedSpecCompiler()
     def clazz = compiler.compileSpecBody("""
 static log = ""
 def feature1() { setup: log += "1" }
@@ -123,48 +120,6 @@ def feature3() { setup: log += "3" }
     result.runCount == 3
     result.failureCount == 0
     result.ignoreCount == 0
-  }
-
-  def "filtering feature methods"() {
-    def compiler = new EmbeddedSpecCompiler()
-    def clazz = compiler.compileSpecBody("""
-static log = ""
-def feature1() { setup: log += "1" }
-def feature2() { setup: log += "2" }
-def feature3() { setup: log += "3" }
-    """)
-
-    def request = Request.aClass(clazz).filterWith(
-        [shouldRun: { desc -> desc.methodName == "feature2" }, describe: { "feature2" }] as Filter)
-
-    when:
-    def result = runner.runRequest(request)
-
-    then:
-    clazz.log == "2"
-    result.runCount == 1
-    result.failureCount == 0
-    result.ignoreCount == 0
-  }
-
-  def "filtering all feature methods"() {
-    def compiler = new EmbeddedSpecCompiler()
-    def clazz = compiler.compileSpecBody("""
-static log = ""
-def feature1() { setup: log += "1" }
-def feature2() { setup: log += "2" }
-def feature3() { setup: log += "3" }
-    """)
-
-    def request = Request.aClass(clazz).filterWith([shouldRun: { false }, describe: { "xxx" }] as Filter)
-
-    when:
-    runner.runRequest(request)
-
-    then:
-    Exception e = thrown()
-    e.message.contains "xxx"
-    clazz.log == ""
   }
 
   def "running a data-driven feature"() {

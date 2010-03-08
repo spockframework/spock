@@ -21,6 +21,7 @@ import org.junit.runner.Runner;
 import org.junit.runner.manipulation.*;
 import org.junit.runner.notification.RunNotifier;
 
+import org.spockframework.runtime.model.FeatureInfo;
 import org.spockframework.runtime.model.SpecInfo;
 
 /**
@@ -61,14 +62,23 @@ public class Sputnik extends Runner implements Filterable, Sortable {
 
   }
 
-  // IDEA: if we applied filter beforehand, we could save a lot of work
+  // TODO: this filtering should take place before extensions have run
+  // for example, @Scenario might want to reinclude dependencies of the
+  // features left after filtering
   public void filter(Filter filter) throws NoTestsRemainException {
     spec.filterFeatures(new JUnitFilterAdapter(filter));
-    if (spec.getFeatures().size() == 0)
+    if (allFeaturesExcluded())
       throw new NoTestsRemainException();
   }
 
   public void sort(Sorter sorter) {
     spec.sortFeatures(new JUnitSorterAdapter(sorter));
+  }
+
+  private boolean allFeaturesExcluded() {
+    for (FeatureInfo feature: spec.getAllFeatures())
+      if (!feature.isExcluded()) return false;
+
+    return true;
   }
 }

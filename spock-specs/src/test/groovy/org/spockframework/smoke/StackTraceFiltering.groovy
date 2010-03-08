@@ -20,10 +20,12 @@ import org.spockframework.EmbeddedSpecification
 import org.spockframework.runtime.ConditionNotSatisfiedError
 import spock.lang.Issue
 import spock.lang.Unroll
+import org.spockframework.util.Identifiers
 
 /**
  * @author Peter Niederwieser
  */
+// TODO: seems we don't have line numbers for explicit conditions
 @Issue("http://issues.spockframework.org/detail?id=21")
 class StackTraceFiltering extends EmbeddedSpecification {
   def "unsatisfied implicit condition"() {
@@ -87,6 +89,55 @@ def foo() { expect: true }
 
     then:
     ConditionNotSatisfiedError e = thrown()
+    // no idea why setup_closure1 appears twice
+    stackTraceLooksLike e, """
+apackage.ASpec|setup_closure1|-
+apackage.ASpec|setup_closure1|-
+apackage.ASpec|setup|1
+    """
+  }
+
+  @Issue("http://issues.spockframework.org/detail?id=80")
+  def "stack trace is truncated below invocation of fixture method"() {
+    when:
+    runner.runSpecBody """
+def ${fixtureMethod}() {
+  assert false
+}
+
+def feature() {
+  expect: true
+}
+    """
+
+    then:
+    ConditionNotSatisfiedError e = thrown()
+    stackTraceLooksLike e, """
+apackage.ASpec|$fixtureMethod|-
+    """
+
+    where:
+    fixtureMethod << Identifiers.FIXTURE_METHODS
+  }
+
+  @Issue("http://issues.spockframework.org/detail?id=75")
+  def "feature method names are also restored for base specs"() {
+    when:
+    runner.runWithImports """
+abstract class Base extends Specification {
+  def "let me fail"() {
+    expect: false
+  }
+}
+
+class Derived extends Base {}
+    """
+
+    then:
+    ConditionNotSatisfiedError e = thrown()
+    stackTraceLooksLike e, """
+apackage.Base|let me fail|3
+    """
   }
 
   private void stackTraceLooksLike(Throwable exception, String template) {

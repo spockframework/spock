@@ -20,8 +20,7 @@ import java.util.*;
 
 import org.spockframework.runtime.*;
 import org.spockframework.runtime.extension.IMethodInterceptor;
-import org.spockframework.util.IFunction;
-import org.spockframework.util.Util;
+import org.spockframework.util.*;
 
 /**
  * Runtime information about a Spock specification.
@@ -236,10 +235,21 @@ public class SpecInfo extends NodeInfo<NodeInfo, Class<?>> implements IMethodNam
     Collections.sort(features, order);
   }
 
-  public String map(String bytecodeName) {
-    for (FeatureInfo feature : features)
-      if (feature.hasBytecodeName(bytecodeName))
+  public boolean isFixtureMethod(String className, String methodName) {
+    if (!Identifiers.FIXTURE_METHODS.contains(methodName))
+      return false;
+
+    for (SpecInfo spec : getSpecsBottomToTop())
+      if (spec.getReflection().getName().equals(className))
+        return true;
+
+    return false;
+  }
+
+  public String toFeatureName(String methodName) {
+    for (FeatureInfo feature : getAllFeatures())
+      if (feature.hasBytecodeName(methodName))
         return feature.getName();
-    return bytecodeName;
+    return methodName;
   }
 }

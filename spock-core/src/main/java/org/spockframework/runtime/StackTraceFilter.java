@@ -26,11 +26,12 @@ import org.spockframework.util.InternalIdentifiers;
 /**
  * Filters an exception's stack trace. Removes internal Groovy and Spock methods, and
  * restores the original names of feature methods (as specified in source code).
- * Stack trace elements below a feature method invocation are truncated.
+ * Stack trace elements below a feature/fixture method invocation are truncated.
  *
  * @author Peter Niederwieser
  */
 // IDEA: do not filter top-most stack element, unless it's a call to the Spock runtime
+// IDEA: find entry points into user code by looking for BaseSpecRunner.invoke()/invokeRaw()
 public class StackTraceFilter implements IStackTraceFilter {
   private static final Pattern FILTERED_CLASSES = Pattern.compile(
       "org.codehaus.groovy.runtime\\..*" + 
@@ -55,7 +56,11 @@ public class StackTraceFilter implements IStackTraceFilter {
     List<StackTraceElement> filteredTrace = new ArrayList<StackTraceElement>();
 
     for (StackTraceElement elem : throwable.getStackTrace()) {
-      if (checkForAndAddPrettyPrintedFeatureMethod(elem, filteredTrace)) break; // filtered stack trace ends here
+      if (isFixtureMethod(elem)) {
+        filteredTrace.add(elem);
+        break;
+      }
+      if (checkForAndAddPrettyPrintedFeatureMethod(elem, filteredTrace)) break;
       if (isFilteredClass(elem)) continue;
       if (checkForAndAddPrettyPrintedClosureInvocation(elem, filteredTrace)) continue;
       if (isGeneratedMethod(elem)) continue;
@@ -65,6 +70,10 @@ public class StackTraceFilter implements IStackTraceFilter {
     throwable.setStackTrace(filteredTrace.toArray(new StackTraceElement[filteredTrace.size()]));
 
     if (throwable.getCause() != null) filter(throwable.getCause());
+  }
+
+  private boolean isFixtureMethod(StackTraceElement elem) {
+    return mapper.isFixtureMethod(elem.getClassName(), elem.getMethodName());
   }
 
   private static boolean isFilteredClass(StackTraceElement elem) {
@@ -79,7 +88,7 @@ public class StackTraceFilter implements IStackTraceFilter {
 
   private StackTraceElement prettyPrintFeatureMethod(StackTraceElement elem) {
     return new StackTraceElement(elem.getClassName(),
-        mapper.map(elem.getMethodName()), elem.getFileName(), elem.getLineNumber());
+        mapper.toFeatureName(elem.getMethodName()), elem.getFileName(), elem.getLineNumber());
   }
 
   private boolean checkForAndAddPrettyPrintedClosureInvocation(StackTraceElement elem, List<StackTraceElement> trace) {
@@ -97,7 +106,8 @@ public class StackTraceFilter implements IStackTraceFilter {
     String consecutiveNumberOfClosureDef = matcher.group(3);
 
     String prettyClassName = classContaingClosureDef;
-    String prettyMethodName = mapper.map(methodContainingClosureDef) + "_closure" + consecutiveNumberOfClosureDef;
+    String prettyMethodName =
+        mapper.toFeatureName(methodContainingClosureDef) + "_closure" + consecutiveNumberOfClosureDef;
 
     return new StackTraceElement(prettyClassName, prettyMethodName, elem.getFileName(), elem.getLineNumber());
   }

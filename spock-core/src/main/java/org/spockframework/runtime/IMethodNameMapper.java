@@ -22,5 +22,6 @@ package org.spockframework.runtime;
  * @author Peter Niederwieser
  */
 public interface IMethodNameMapper {
-  String map(String bytecodName);
+  boolean isFixtureMethod(String className, String methodName);
+  String toFeatureName(String methodName);
 }

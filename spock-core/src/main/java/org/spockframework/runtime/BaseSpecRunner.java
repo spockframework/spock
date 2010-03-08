@@ -139,7 +139,8 @@ public class BaseSpecRunner {
   private void runFeature() {
     if (runStatus != OK) return;
 
-    Assert.that(!currentFeature.isExcluded(), "tried to run excluded feature");
+    if (currentFeature.isExcluded()) return;
+
     if (currentFeature.isSkipped()) {
       supervisor.featureSkipped(currentFeature);
       return;
@@ -220,7 +221,7 @@ public class BaseSpecRunner {
     try {
       invocation.proceed();
     } catch (Throwable t) {
-      ErrorInfo error = new ErrorInfo(method, t, runStatus);
+      ErrorInfo error = new ErrorInfo(method, t);
       runStatus = supervisor.error(error);
     }
   }
@@ -231,12 +232,12 @@ public class BaseSpecRunner {
     try {
       return method.getReflection().invoke(target, arguments);
     } catch (InvocationTargetException e) {
-      runStatus = supervisor.error(new ErrorInfo(method, e.getTargetException(), runStatus));
+      runStatus = supervisor.error(new ErrorInfo(method, e.getTargetException()));
       return null;
     } catch (Throwable t) {
       Error internalError =
           new InternalSpockError("Failed to invoke method '%s'", t).withArgs(method.getReflection().getName());
-      runStatus = supervisor.error(new ErrorInfo(method, internalError, runStatus));
+      runStatus = supervisor.error(new ErrorInfo(method, internalError));
       return null;
     }
   }

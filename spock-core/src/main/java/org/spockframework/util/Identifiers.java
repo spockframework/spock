@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package org.spockframework.compiler;
+package org.spockframework.util;
 
 import java.util.Arrays;
 import java.util.List;
 
 /**
- * Identifiers used throughout the compiler.
+ * Identifiers used throughout the core.
  * 
  * @author Peter Niederwieser
  */
@@ -80,10 +80,4 @@ public abstract class Identifiers {
   public static final String INTERACTION = "interaction";
 
   public static final String OLD = "old";
-
-  public static final String SHARED_INSTANCE_NAME = "$spock_sharedInstance";
-
-  public static String getInternalSharedFieldName(String baseName) {
-    return "$spock_sharedField_" + baseName;
-  }
 }

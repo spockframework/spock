@@ -99,7 +99,7 @@ public class WhereBlockRewriter {
 
     MethodNode method =
         new MethodNode(
-            BinaryNames.getDataProviderName(whereBlock.getParent().getAst().getName(), dataProviderCount++),
+            InternalIdentifiers.getDataProviderName(whereBlock.getParent().getAst().getName(), dataProviderCount++),
             Opcodes.ACC_PUBLIC | Opcodes.ACC_SYNTHETIC,
             ClassHelper.OBJECT_TYPE,
             Parameter.EMPTY_ARRAY,
@@ -256,7 +256,7 @@ public class WhereBlockRewriter {
 
     whereBlock.getParent().getParent().getAst().addMethod(
       new MethodNode(
-          BinaryNames.getDataProcessorName(whereBlock.getParent().getAst().getName()),
+          InternalIdentifiers.getDataProcessorName(whereBlock.getParent().getAst().getName()),
           Opcodes.ACC_PUBLIC | Opcodes.ACC_SYNTHETIC,
           ClassHelper.OBJECT_TYPE,
           dataProcessorParams.toArray(new Parameter[dataProcessorParams.size()]),

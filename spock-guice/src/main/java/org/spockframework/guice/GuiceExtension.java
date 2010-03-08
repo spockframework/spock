@@ -21,6 +21,7 @@ import org.spockframework.runtime.model.SpecInfo;
 
 import spock.guice.UseModules;
 
+// TOOD: full support for spec inheritance
 public class GuiceExtension extends AbstractAnnotationDrivenExtension<UseModules> {
   @Override
   public void visitSpecAnnotation(UseModules useModules, SpecInfo spec) {

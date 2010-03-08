@@ -1,12 +1,10 @@
 /*
- * Copyright 2009 the original author or authors.
+ * Copyright 2010 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
  *     http://www.apache.org/licenses/LICENSE-2.0
- *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -80,27 +78,20 @@ public class JUnitSupervisor implements IRunSupervisor {
   }
 
   public int error(ErrorInfo error) {
-    if (error.getException() instanceof MultipleFailureException) { // for better JUnit compatibility, e.g when a @Rule is used
+    // for better JUnit compatibility, e.g when a @Rule is used
+    if (error.getException() instanceof MultipleFailureException) {
       MultipleFailureException multiFailure = (MultipleFailureException) error.getException();
-      int runStatus = error.getRunStatus();
+      int runStatus = OK;
       for (Throwable failure : multiFailure.getFailures())
-        runStatus = error(new ErrorInfo(error.getMethod(), failure, runStatus));
+        runStatus = error(new ErrorInfo(error.getMethod(), failure));
       return runStatus;
     }
 
+    filter.filter(error.getException());
     masterListener.error(error);
     errorSinceLastReset = true;
-    filter.filter(error.getException());
 
-    Description description = getCurrentDescription();
-    if (error.getException() instanceof SkipSpecOrFeatureException) {
-      // will result in wrong JUnit counts because JUnit doesn't support
-      // ignoring a test after fireTestStarted() has been called
-      notifier.fireTestIgnored(description);
-      return OK;
-    }
-    
-    notifier.fireTestFailure(new Failure(description, error.getException()));
+    notifier.fireTestFailure(new Failure(getCurrentDescription(), error.getException()));
 
     switch (error.getMethod().getKind()) {
       case DATA_PROCESSOR:

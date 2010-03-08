@@ -37,13 +37,13 @@ public class MasterRunListener implements IRunListener {
 
   public void beforeIteration(IterationInfo iteration) {
     for (IRunListener listener : spec.getListeners()) {
-      listener.beforeIteration(null);
+      listener.beforeIteration(iteration);
     }
   }
 
   public void afterIteration(IterationInfo iteration) {
     for (IRunListener listener : spec.getListeners()) {
-      listener.afterIteration(null);
+      listener.afterIteration(iteration);
     }
   }
 

@@ -16,67 +16,89 @@
 
 package org.spockframework.spring;
 
-import org.springframework.test.annotation.ProfileValueUtils;
 import org.springframework.test.context.TestContextManager;
 
-import org.spockframework.runtime.SkipSpecOrFeatureException;
 import org.spockframework.runtime.extension.*;
-import org.spockframework.runtime.model.FeatureInfo;
+import org.spockframework.runtime.model.ErrorInfo;
 import org.spockframework.util.NotThreadSafe;
 
 @NotThreadSafe
 public class SpringInterceptor extends AbstractMethodInterceptor {
   private final TestContextManager manager;
 
-  private FeatureInfo currentFeature;
+  private Throwable exception;
+  private boolean beforeTestMethodInvoked = false;
 
   public SpringInterceptor(TestContextManager manager) {
     this.manager = manager;
   }
 
   @Override
-  public void interceptSpecExecution(IMethodInvocation invocation) throws Throwable {
-    if (!ProfileValueUtils.isTestEnabledInThisEnvironment(invocation.getTarget().getClass()))
-      throw new SkipSpecOrFeatureException("Specification not enabled in this environment");
+  public void interceptSetupSpecMethod(IMethodInvocation invocation) throws Throwable {
+    manager.beforeTestClass();
     invocation.proceed();
-  }
-
-  @Override
-  public void interceptFeatureExecution(IMethodInvocation invocation) throws Throwable {
-    currentFeature = invocation.getMethod().getFeature();
-    try {
-      if (!ProfileValueUtils.isTestEnabledInThisEnvironment(invocation.getTarget().getClass()))
-        throw new SkipSpecOrFeatureException("Feature not enabled in this environment");
-      invocation.proceed();
-    } finally {
-      currentFeature = null;
-    }
   }
 
   @Override
   public void interceptSetupMethod(IMethodInvocation invocation) throws Throwable {
     manager.prepareTestInstance(invocation.getTarget());
-    manager.beforeTestMethod(invocation.getTarget(), currentFeature.getFeatureMethod().getReflection());
+    exception = null;
+    beforeTestMethodInvoked = true;
+    manager.beforeTestMethod(invocation.getTarget(),
+        invocation.getFeature().getFeatureMethod().getReflection());
     invocation.proceed();
   }
 
   @Override
   public void interceptCleanupMethod(IMethodInvocation invocation) throws Throwable {
+    if (!beforeTestMethodInvoked) {
+      invocation.proceed();
+      return;
+    }
+    beforeTestMethodInvoked = false;
+    
     Throwable cleanupEx = null;
     try {
       invocation.proceed();
     } catch (Throwable t) {
       cleanupEx = t;
+      if (exception == null) exception = t;
     }
 
-    Throwable afterTestEx = null;
+    Throwable afterTestMethodEx = null;
     try {
-      manager.afterTestMethod(invocation.getTarget(), currentFeature.getFeatureMethod().getReflection(), cleanupEx);
-    } catch (Throwable t2) {
-      afterTestEx = t2;
+      manager.afterTestMethod(invocation.getTarget(),
+          invocation.getFeature().getFeatureMethod().getReflection(), exception);
+    } catch (Throwable t) {
+      afterTestMethodEx = t;
     }
     
     if (cleanupEx != null) throw cleanupEx;
-    if (afterTestEx != null) throw afterTestEx;
+    if (afterTestMethodEx != null) throw afterTestMethodEx;
+  }
+
+  @Override
+  public void interceptCleanupSpecMethod(IMethodInvocation invocation) throws Throwable {
+    Throwable cleanupSpecEx = null;
+    try {
+      invocation.proceed();
+    } catch (Throwable t) {
+      cleanupSpecEx = t;
+    }
+
+    Throwable afterTestClassEx = null;
+    try {
+      manager.afterTestClass();
+    } catch (Throwable t) {
+      afterTestClassEx = t;
+    }
+
+    if (cleanupSpecEx != null) throw cleanupSpecEx;
+    if (afterTestClassEx != null) throw afterTestClassEx;
+  }
+
+  public void error(ErrorInfo error) {
+    if (exception == null)
+      exception = error.getException();
   }
 }

@@ -23,6 +23,7 @@ import org.springframework.test.annotation.ProfileValueUtils;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestContextManager;
 
+import org.spockframework.runtime.AbstractRunListener;
 import org.spockframework.runtime.extension.IGlobalExtension;
 import org.spockframework.runtime.model.*;
 import org.spockframework.util.NotThreadSafe;
@@ -35,20 +36,27 @@ public class SpringExtension implements IGlobalExtension {
   public void visitSpec(SpecInfo spec) {
     if (!spec.getReflection().isAnnotationPresent(ContextConfiguration.class)) return;
 
-    checkNoSharedFieldInjected(spec);
+    checkNoSharedFieldsInjected(spec);
 
     if (!handleProfileValues(spec)) return;
 
     TestContextManager manager = new TestContextManager(spec.getReflection());
-    SpringInterceptor interceptor = new SpringInterceptor(manager);
-    spec.addInterceptor(interceptor);
-    spec.getSetupMethod().addInterceptor(interceptor);
-    spec.getCleanupMethod().addInterceptor(interceptor);
-    for (FeatureInfo feature : spec.getAllFeatures())
-      feature.addInterceptor(interceptor);
+    final SpringInterceptor interceptor = new SpringInterceptor(manager);
+    
+    spec.addListener(new AbstractRunListener() {
+      public void error(ErrorInfo error) {
+        interceptor.error(error);
+      }
+    });
+
+    SpecInfo topSpec = spec.getTopSpec();
+    topSpec.getSetupSpecMethod().addInterceptor(interceptor);
+    topSpec.getSetupMethod().addInterceptor(interceptor);
+    topSpec.getCleanupMethod().addInterceptor(interceptor);
+    topSpec.getCleanupSpecMethod().addInterceptor(interceptor);
   }
 
-  private void checkNoSharedFieldInjected(SpecInfo spec) {
+  private void checkNoSharedFieldsInjected(SpecInfo spec) {
     for (FieldInfo field : spec.getFields()) {
       if (field.getReflection().isAnnotationPresent(Shared.class)
           && (field.getReflection().isAnnotationPresent(Autowired.class)
@@ -66,7 +74,7 @@ public class SpringExtension implements IGlobalExtension {
 
     for (FeatureInfo feature : spec.getAllFeatures())
       if (!ProfileValueUtils.isTestEnabledInThisEnvironment(
-          feature.getFeatureMethod().getReflection(),spec.getReflection()))
+          feature.getFeatureMethod().getReflection(), spec.getReflection()))
         feature.setExcluded(true);
 
     return true;

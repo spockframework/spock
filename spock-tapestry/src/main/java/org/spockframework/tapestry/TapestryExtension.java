@@ -92,11 +92,11 @@ public class TapestryExtension implements IGlobalExtension {
     if (modules == null) return;
 
     IMethodInterceptor interceptor = new TapestryInterceptor(spec, modules);
-    SpecInfo top = spec.getTopSpec();
-    top.getSetupSpecMethod().addInterceptor(interceptor);
-    top.getSetupMethod().addInterceptor(interceptor);
-    top.getCleanupMethod().addInterceptor(interceptor);
-    top.getCleanupSpecMethod().addInterceptor(interceptor);
+    SpecInfo topSpec = spec.getTopSpec();
+    topSpec.getSetupSpecMethod().addInterceptor(interceptor);
+    topSpec.getSetupMethod().addInterceptor(interceptor);
+    topSpec.getCleanupMethod().addInterceptor(interceptor);
+    topSpec.getCleanupSpecMethod().addInterceptor(interceptor);
   }
 
   // Returns null if no SubModule annotation was found.

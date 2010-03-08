@@ -28,6 +28,8 @@ import org.objectweb.asm.Opcodes;
 
 import org.spockframework.compiler.model.*;
 import org.spockframework.mock.MockController;
+import org.spockframework.util.InternalIdentifiers;
+import org.spockframework.util.Identifiers;
 import org.spockframework.runtime.SpockRuntime;
 
 /**
@@ -114,12 +116,12 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
 
     if (isLowestSpecificationInInheritanceChain())
       var = spec.getAst().addField(
-          Identifiers.SHARED_INSTANCE_NAME,
+          InternalIdentifiers.SHARED_INSTANCE_NAME,
           Opcodes.ACC_PUBLIC | Opcodes.ACC_SYNTHETIC, // public s.t. runner can easily set it
           ClassHelper.DYNAMIC_TYPE,
           null);
       else
-        var = new DynamicVariable(Identifiers.SHARED_INSTANCE_NAME, false);
+        var = new DynamicVariable(InternalIdentifiers.SHARED_INSTANCE_NAME, false);
 
     sharedInstanceRef = new VariableExpression(var);
   }
@@ -161,7 +163,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
 
   // field.getAst().getName() changes, field.getName() remains the same
   private void changeSharedFieldInternalName(Field field) {
-    field.getAst().rename(Identifiers.getInternalSharedFieldName(field.getName()));
+    field.getAst().rename(InternalIdentifiers.getSharedFieldName(field.getName()));
   }
 
   private void createSharedFieldGetter(Field field) {

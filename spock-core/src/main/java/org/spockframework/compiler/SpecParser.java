@@ -22,7 +22,7 @@ import org.codehaus.groovy.ast.*;
 import org.codehaus.groovy.ast.expr.ConstantExpression;
 import org.codehaus.groovy.ast.stmt.Statement;
 
-import static org.spockframework.compiler.Identifiers.*;
+import static org.spockframework.util.Identifiers.*;
 import org.spockframework.compiler.model.*;
 
 import spock.lang.Shared;

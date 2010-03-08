@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.spockframework.util.BinaryNames;
+import org.spockframework.util.InternalIdentifiers;
 
 /**
  * Filters an exception's stack trace. Removes internal Groovy and Spock methods, and
@@ -72,7 +72,7 @@ public class StackTraceFilter implements IStackTraceFilter {
   }
 
   private boolean checkForAndAddPrettyPrintedFeatureMethod(StackTraceElement elem, List<StackTraceElement> trace) {
-    if (!BinaryNames.isFeatureMethodName(elem.getMethodName())) return false;
+    if (!InternalIdentifiers.isFeatureMethodName(elem.getMethodName())) return false;
     trace.add(prettyPrintFeatureMethod(elem));
     return true;
   }

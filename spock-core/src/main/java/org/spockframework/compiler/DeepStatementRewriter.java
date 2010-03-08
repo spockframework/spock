@@ -23,6 +23,7 @@ import org.codehaus.groovy.ast.expr.*;
 import org.codehaus.groovy.ast.stmt.*;
 
 import org.spockframework.compiler.model.*;
+import org.spockframework.util.Identifiers;
 
 /**
  * Walks the statement and expression tree to:

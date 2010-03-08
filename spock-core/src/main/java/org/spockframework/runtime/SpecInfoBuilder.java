@@ -21,7 +21,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.*;
 
-import org.spockframework.compiler.Identifiers;
 import org.spockframework.runtime.extension.*;
 import org.spockframework.runtime.extension.ExtensionAnnotation;
 import org.spockframework.runtime.extension.IAnnotationDrivenExtension;
@@ -114,7 +113,7 @@ public class SpecInfoBuilder {
 
   private Field getSharedInstanceField() {
     try {
-      return clazz.getField(Identifiers.SHARED_INSTANCE_NAME);
+      return clazz.getField(InternalIdentifiers.SHARED_INSTANCE_NAME);
     } catch (NoSuchFieldException e) {
       throw new InternalSpockError("cannot find shared instance field");
     }
@@ -151,17 +150,17 @@ public class SpecInfoBuilder {
     featureMethod.setKind(MethodKind.FEATURE);
     feature.setFeatureMethod(featureMethod);
 
-    String processorMethodName = BinaryNames.getDataProcessorName(method.getName());
+    String processorMethodName = InternalIdentifiers.getDataProcessorName(method.getName());
     MethodInfo dataProcessorMethod = createMethod(processorMethodName, MethodKind.DATA_PROCESSOR, false);
 
     if (dataProcessorMethod != null) {
       feature.setDataProcessorMethod(dataProcessorMethod);
       int providerCount = 0;
-      String providerMethodName = BinaryNames.getDataProviderName(method.getName(), providerCount++);
+      String providerMethodName = InternalIdentifiers.getDataProviderName(method.getName(), providerCount++);
       MethodInfo providerMethod = createMethod(providerMethodName, MethodKind.DATA_PROVIDER, false);
       while (providerMethod != null) {
         feature.addDataProvider(createDataProvider(feature, providerMethod));
-        providerMethodName = BinaryNames.getDataProviderName(method.getName(), providerCount++);
+        providerMethodName = InternalIdentifiers.getDataProviderName(method.getName(), providerCount++);
         providerMethod = createMethod(providerMethodName, MethodKind.DATA_PROVIDER, false);
       }
     }

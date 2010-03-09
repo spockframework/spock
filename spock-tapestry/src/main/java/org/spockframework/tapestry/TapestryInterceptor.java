@@ -120,7 +120,7 @@ public class TapestryInterceptor extends AbstractMethodInterceptor {
     List<Method> methods = new ArrayList<Method>();
 
     for (SpecInfo curr : spec.getSpecsTopToBottom()) {
-      Method method = Util.getDeclaredMethod(curr.getReflection(), "beforeRegistryCreated");
+      Method method = Util.getDeclaredMethodByName(curr.getReflection(), "beforeRegistryCreated");
       if (method != null) {
         method.setAccessible(true);
         methods.add(method);

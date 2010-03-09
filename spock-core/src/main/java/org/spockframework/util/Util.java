@@ -17,6 +17,7 @@
 package org.spockframework.util;
 
 import java.io.*;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
 
@@ -124,7 +125,7 @@ public class Util {
    * class/interface or one of its super classes/interfaces. If multiple such
    * methods exists, it is undefined which one is returned.
    */
-  public static @Nullable Method getMethod(Class<?> clazz, String name) {
+  public static @Nullable Method getMethodByName(Class<?> clazz, String name) {
     for (Method method : clazz.getMethods())
       if (method.getName().equals(name))
         return method;
@@ -132,12 +133,28 @@ public class Util {
     return null;
   }
 
-  public static @Nullable Method getDeclaredMethod(Class<?> clazz, String name) {
+  public static @Nullable Method getDeclaredMethodByName(Class<?> clazz, String name) {
     for (Method method : clazz.getDeclaredMethods())
       if (method.getName().equals(name))
         return method;
 
     return null;
+  }
+
+  public static @Nullable Method getMethodBySignature(Class<?> clazz, String name, Class<?>... parameterTypes) {
+    try {
+      return clazz.getMethod(name, parameterTypes);
+    } catch (NoSuchMethodException e) {
+      return null;
+    }
+  }
+
+  public static @Nullable Method getDeclaredMethodBySignature(Class<?> clazz, String name, Class<?>... parameterTypes) {
+    try {
+      return clazz.getDeclaredMethod(name, parameterTypes);
+    } catch (NoSuchMethodException e) {
+      return null;
+    }
   }
 
   /**
@@ -149,5 +166,19 @@ public class Util {
     if (!dir.isDirectory()) return null; // class file might be contained in Jar
     File clazzFile = new File(dir, clazz.getName().replace('.', File.separatorChar) + ".class");
     return clazzFile.isFile() ? clazzFile : null;
+  }
+
+  public static @Nullable Object invokeMethodThatThrowsException(Object target, Method method, Object... args)
+      throws Exception {
+    try {
+      return method.invoke(target, args);
+    } catch (InvocationTargetException e) {
+      Throwable cause = e.getCause();
+      if (cause instanceof Error)
+        throw (Error) cause;
+      else if (cause instanceof Exception)
+        throw (Exception) cause;
+      else throw new UnreachableCodeError(cause);
+    }
   }
 }

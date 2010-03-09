@@ -16,20 +16,18 @@
 
 package org.spockframework.spring;
 
-import org.springframework.test.context.TestContextManager;
-
 import org.spockframework.runtime.extension.*;
 import org.spockframework.runtime.model.ErrorInfo;
 import org.spockframework.util.NotThreadSafe;
 
 @NotThreadSafe
 public class SpringInterceptor extends AbstractMethodInterceptor {
-  private final TestContextManager manager;
+  private final SpringTestContextManager manager;
 
   private Throwable exception;
   private boolean beforeTestMethodInvoked = false;
 
-  public SpringInterceptor(TestContextManager manager) {
+  public SpringInterceptor(SpringTestContextManager manager) {
     this.manager = manager;
   }
 

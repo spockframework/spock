@@ -41,6 +41,8 @@ public class JUnitDescriptionGenerator {
     Description desc = Description.createSuiteDescription(spec.getReflection());
     spec.setMetadata(desc);
 
+    if (spec == initialRequestor && spec.isSkipped()) return; // JUnit does it this way
+    
     SpecInfo superSpec = spec.getSuperSpec();
     if (superSpec != null) {
       new JUnitDescriptionGenerator(superSpec, initialRequestor).generate();

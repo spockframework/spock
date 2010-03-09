@@ -46,15 +46,15 @@ class DerivedTest extends BaseTest {
     derivedClass = classes.find { it.name == "DerivedTest" }
   }
 
-  def "Description of inherited test method has class name of derived class"() {
+  def "description of inherited test method has class name of derived class"() {
     def desc = new JUnit4(derivedClass).description
 
     expect:
     desc.children.size() == 2
-    desc.children*.getClassName() == [derivedClass.name] * 2
+    desc.children.every { it.className == derivedClass.name }
   }
 
-  def "Description of inherited before method has class name of derived class"() {
+  def "description of inherited before method has class name of derived class"() {
     RunListener listener = Mock()
     runner.listeners << listener
     runner.throwFailure = false

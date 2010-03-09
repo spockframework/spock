@@ -34,21 +34,17 @@ class AsmClassReader {
   private final ClassReader reader;
 
   static {
-    Method m;
-    Object arg;
+    Method m = Util.getMethodBySignature(ClassReader.class, "accept", ClassVisitor.class, boolean.class); // ASM 2.2.3
+    Object arg = true;
 
-    try {
-      m = ClassReader.class.getMethod("accept", ClassVisitor.class, boolean.class); // ASM 2.2.3
-      arg = true;
-    } catch (NoSuchMethodException e) {
-      try {
-        m = ClassReader.class.getMethod("accept", ClassVisitor.class, int.class); // ASM 3.0 and higher
-        arg = 1 | 2 | 4; // ClassReader.SKIP_CODE | ClassReader.SKIP_DEBUG | ClassReader.SKIP_FRAMES
-      } catch (NoSuchMethodException e1) {
-        throw new InternalSpockError(
-"failed to find method org.objectweb.asm.ClassReader.accept(); seems like an incompatible version of ASM is on the class path", e);
-      }
+    if (m == null) {
+      m = Util.getMethodBySignature(ClassReader.class, "accept", ClassVisitor.class, int.class); // ASM 3.0 and higher
+      arg = 1 | 2 | 4; // ClassReader.SKIP_CODE | ClassReader.SKIP_DEBUG | ClassReader.SKIP_FRAMES
     }
+
+    if (m == null)
+      throw new InternalSpockError(
+"failed to find method org.objectweb.asm.ClassReader.accept(); seems like an incompatible version of ASM is on the class path");
 
     acceptMethod = m;
     acceptMethodSecondArg = arg;

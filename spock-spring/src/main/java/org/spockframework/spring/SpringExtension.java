@@ -21,7 +21,6 @@ import javax.annotation.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.ProfileValueUtils;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestContextManager;
 
 import org.spockframework.runtime.AbstractRunListener;
 import org.spockframework.runtime.extension.IGlobalExtension;
@@ -30,7 +29,7 @@ import org.spockframework.util.NotThreadSafe;
 
 import spock.lang.Shared;
 
-// TOOD: full support for spec inheritance
+// TODO: spec for behavior in presence of inheritance
 @NotThreadSafe
 public class SpringExtension implements IGlobalExtension {
   public void visitSpec(SpecInfo spec) {
@@ -40,7 +39,7 @@ public class SpringExtension implements IGlobalExtension {
 
     if (!handleProfileValues(spec)) return;
 
-    TestContextManager manager = new TestContextManager(spec.getReflection());
+    SpringTestContextManager manager = new SpringTestContextManager(spec.getReflection());
     final SpringInterceptor interceptor = new SpringInterceptor(manager);
     
     spec.addListener(new AbstractRunListener() {
@@ -57,7 +56,7 @@ public class SpringExtension implements IGlobalExtension {
   }
 
   private void checkNoSharedFieldsInjected(SpecInfo spec) {
-    for (FieldInfo field : spec.getFields()) {
+    for (FieldInfo field : spec.getAllFields()) {
       if (field.getReflection().isAnnotationPresent(Shared.class)
           && (field.getReflection().isAnnotationPresent(Autowired.class)
           || field.getReflection().isAnnotationPresent(Resource.class)))

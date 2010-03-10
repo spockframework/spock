@@ -38,7 +38,7 @@ class JUnitComplianceIgnoredTestClass extends EmbeddedSpecification {
   }
 }
 
-class Foo extends GroovyTestCase {
+class Foo {
   @Test
   void m1() {}
 }

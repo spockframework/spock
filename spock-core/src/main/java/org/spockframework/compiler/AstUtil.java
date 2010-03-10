@@ -25,6 +25,7 @@ import org.codehaus.groovy.syntax.Types;
 import org.objectweb.asm.Opcodes;
 
 import org.spockframework.util.InternalSpockError;
+import org.spockframework.util.Nullable;
 
 import spock.lang.Specification;
 
@@ -132,6 +133,11 @@ public abstract class AstUtil {
   public static <T extends Expression> T getExpression(Statement stat, Class<T> type) {
     if (!(stat instanceof ExpressionStatement)) return null;
     Expression expr = ((ExpressionStatement)stat).getExpression();
+    if (!type.isInstance(expr)) return null;
+    return type.cast(expr);
+  }
+
+  public static @Nullable <T extends Expression> T asExpression(Expression expr, Class<T> type) {
     if (!type.isInstance(expr)) return null;
     return type.cast(expr);
   }

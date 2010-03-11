@@ -14,9 +14,10 @@
 
 package org.spockframework.smoke
 
-import spock.lang.*
+import org.junit.internal.runners.model.MultipleFailureException
+
 import org.spockframework.EmbeddedSpecification
-import org.codehaus.groovy.control.MultipleCompilationErrorsException
+import org.spockframework.compiler.InvalidSpecCompileException
 
 class CompileTimeErrorReporting extends EmbeddedSpecification {
   def "multiple method declaration errors"() {
@@ -32,8 +33,8 @@ def feature(arg) { // arg not allowed
     """
 
     then:
-    MultipleCompilationErrorsException e = thrown()
-    e.errorCollector.errorCount == 3
+    MultipleFailureException e = thrown()
+    e.failures*.class == [InvalidSpecCompileException] * 3
   }
 
   def "multiple errors within a method"() {
@@ -53,7 +54,7 @@ println "hi" // not a parameterization
     """
 
     then:
-    MultipleCompilationErrorsException e = thrown()
-    e.errorCollector.errorCount == 4
+    MultipleFailureException e = thrown()
+    e.failures*.class == [InvalidSpecCompileException] * 4
   }
 }

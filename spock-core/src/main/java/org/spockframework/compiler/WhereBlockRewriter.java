@@ -208,7 +208,7 @@ public class WhereBlockRewriter {
       List<Expression> row = new ArrayList<Expression>();
       splitRow(binExpr, row);
       if (rows.size() > 0 && rows.getLast().size() != row.size())
-        throw new InvalidSpecCompileException(stat, "Row in parameterization table has wrong number of elements");
+        throw new InvalidSpecCompileException(stat, "Row in data table has wrong number of elements");
       rows.add(row);
     }
 
@@ -235,7 +235,7 @@ public class WhereBlockRewriter {
     VariableExpression varExpr = AstUtil.asExpression(column.get(0), VariableExpression.class);
     if (varExpr == null)
       throw new InvalidSpecCompileException(column.get(0),
-          "First row of parameterization table may only contain data variables");
+          "Header of data table may only contain variable names");
 
     ListExpression listExpr = new ListExpression(column.subList(1, column.size()));
     BinaryExpression binExpr = new BinaryExpression(varExpr, Token.newSymbol(Types.LEFT_SHIFT, -1, -1), listExpr);

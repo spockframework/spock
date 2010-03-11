@@ -22,6 +22,8 @@ import org.junit.runner.RunWith
 import org.spockframework.runtime.SpecUtil
 import org.spockframework.util.NotThreadSafe
 import spock.lang.Specification
+import org.codehaus.groovy.control.ErrorCollector
+import org.junit.internal.runners.model.MultipleFailureException
 
 /**
  * Utility class for programmatically compiling specs.
@@ -40,7 +42,7 @@ class EmbeddedSpecCompiler {
   void addImport(Package pkg) {
     imports += "import ${pkg.name}.*;"
   }
-  
+
   /**
    * Compiles the given source code, and returns all Spock specifications
    * contained therein (but not other classes).
@@ -72,8 +74,12 @@ class EmbeddedSpecCompiler {
     loader.parseClass(source.trim())
     } catch (MultipleCompilationErrorsException e) {
       def errors = e.errorCollector.errors
-      if (unwrapCompileException && errors.size() == 1 && errors[0].hasProperty("cause"))
-        throw errors[0].cause
+      if (unwrapCompileException && errors.every { it.hasProperty("cause") })
+        if (errors.size() == 1)
+          throw errors[0].cause
+        else
+          throw new MultipleFailureException(errors.cause)
+      
       throw e
     }
 

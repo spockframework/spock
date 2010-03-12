@@ -16,7 +16,7 @@
 
 package org.spockframework.smoke.mock
 
-import spock.lang.Specification
+import spock.lang.*
 
 class ResultGenerators extends Specification {
   def "return simple result"() {
@@ -32,7 +32,7 @@ class ResultGenerators extends Specification {
     x1 == 42
   }
 
-  def "return_calculated_result"() {
+  def "return calculated result"() {
     List list = Mock()
 
     when:
@@ -45,7 +45,7 @@ class ResultGenerators extends Specification {
     x1 == 42
   }
 
-  def "return_closure"() {
+  def "return closure"() {
     List list = Mock()
 
     when:
@@ -72,4 +72,34 @@ class ResultGenerators extends Specification {
     x2 == 2
     x3 == 2
   }
+
+  @Issue("http://issues.spockframework.org/detail?id=83")
+  @FailsWith(value = ClassCastException, reason = "TODO")
+  def "return a GString where a String is expected (in plain Groovy this would be auto-coerced)"() {
+    def fred = "Fred"
+    def flintstone = "Flintstone"
+    def named = Mock(Named)
+    named.getName() >> "${fred} ${flintstone}"
+
+    expect:
+    named.getName() instanceof String
+  }
+
+  @Issue("http://issues.spockframework.org/detail?id=83")
+  @FailsWith(value = ClassCastException, reason = "TODO")
+  def "return an Integer where a BigDecimal is expected (in plain Groovy this would be auto-coerced)"() {
+    def calculator = Mock(Calculator)
+    calculator.calculate() >> 5
+
+    expect:
+    calculator.calculate() instanceof int
+  }
+}
+
+private interface Named {
+  String getName()
+}
+
+private interface Calculator {
+  BigDecimal calculate()
 }

@@ -20,6 +20,7 @@ import grails.plugin.spock.functional.htmlunit.configurer.WebRequestSettingsConf
 import grails.plugin.spock.functional.htmlunit.form.FormWrapper
 import grails.plugin.spock.functional.util.UrlUtils
 import org.apache.commons.httpclient.Cookie
+import com.gargoylesoftware.htmlunit.CookieManager
 import com.gargoylesoftware.htmlunit.*
 
 /**

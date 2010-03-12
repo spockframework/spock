@@ -16,7 +16,6 @@
   
 package org.spockframework.spring
 
-import javax.annotation.Resource
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.ApplicationContext
 import org.springframework.test.context.ContextConfiguration
@@ -24,14 +23,12 @@ import org.springframework.test.context.ContextConfiguration
 import spock.util.EmbeddedSpecRunner
 
 import spock.lang.*
+import org.spockframework.util.Util
 
 @ContextConfiguration(locations = "InjectionExamples-context.xml")
 class InjectionExamples extends Specification {
   @Autowired
   IService service
-
-  @Resource
-  IService myService
 
   @Autowired
   ApplicationContext context
@@ -41,9 +38,34 @@ class InjectionExamples extends Specification {
     service instanceof Service
   }
 
-  def "injecting a field by name"() {
+  def "injecting a field by name (@Resource is JDK 1.6 only)"() {
+    if (!Util.isClassAvailable("javax.annotation.Resource")) return
+
+    def runner = new EmbeddedSpecRunner()
+    
+    when:
+    runner.run """
+package org.spockframework.spring
+
+import javax.annotation.Resource
+import org.spockframework.spring.IService
+import org.springframework.test.context.ContextConfiguration
+import spock.lang.*
+
+@ContextConfiguration(locations = "InjectionExamples-context.xml")
+class Foo extends Specification {
+  @Resource
+  IService myService
+
+  def foo() {
     expect:
-    myService instanceof Service
+    myService instanceof IService
+  }
+}
+    """
+
+    then:
+    noExceptionThrown()
   }
 
   def "direct usage of application context (discouraged)"() {
@@ -53,6 +75,8 @@ class InjectionExamples extends Specification {
   }
 
   def "shared fields cannot be injected"() {
+    if (!Util.isClassAvailable(ann)) return
+
     def runner = new EmbeddedSpecRunner()
 
     when:
@@ -62,7 +86,7 @@ import org.springframework.test.context.ContextConfiguration
 
 @ContextConfiguration
 class Foo extends Specification {
-  $ann
+  @$ann
   @Shared
   IService sharedService
 
@@ -76,7 +100,7 @@ class Foo extends Specification {
     thrown(SpringExtensionException)
 
     where:
-    ann << ["@org.springframework.beans.factory.annotation.Autowired",
-            "@javax.annotation.Resource"]
+    ann << ["org.springframework.beans.factory.annotation.Autowired",
+            "javax.annotation.Resource"]
   }
 }

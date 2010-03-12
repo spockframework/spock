@@ -33,7 +33,7 @@ import org.junit.internal.runners.model.MultipleFailureException
  */
 @NotThreadSafe
 class EmbeddedSpecCompiler {
-  final GroovyClassLoader loader = new GroovyClassLoader()
+  final GroovyClassLoader loader = new GroovyClassLoader(getClass().classLoader)
 
   boolean unwrapCompileException = true
 

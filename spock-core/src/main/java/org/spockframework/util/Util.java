@@ -17,8 +17,8 @@
 package org.spockframework.util;
 
 import java.io.*;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.*;
 import java.util.*;
 
 /**
@@ -68,6 +68,14 @@ public class Util {
     } catch (ClassNotFoundException e) {
       return false;
     }
+  }
+
+  public static boolean isAnnotationPresent(AnnotatedElement element, String className) {
+    for (Annotation ann : element.getAnnotations())
+      if (ann.annotationType().getName().equals(className))
+        return true;
+
+    return false;
   }
 
   public static int countOccurrences(String text, char symbol) {

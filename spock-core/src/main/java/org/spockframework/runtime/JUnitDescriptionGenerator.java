@@ -13,7 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.spockframework.runtime;
+
+import java.lang.annotation.Annotation;
 
 import org.junit.runner.Description;
 
@@ -26,37 +29,35 @@ import org.spockframework.runtime.model.*;
  */
 public class JUnitDescriptionGenerator {
   private final SpecInfo spec;
-  private final SpecInfo initialRequestor;
 
   public JUnitDescriptionGenerator(SpecInfo spec) {
-    this(spec, spec);
-  }
-
-  private JUnitDescriptionGenerator(SpecInfo spec, SpecInfo initialRequestor) {
     this.spec = spec;
-    this.initialRequestor = initialRequestor;
   }
 
-  public void generate() {
+  public void attach() {
     Description desc = Description.createSuiteDescription(spec.getReflection());
     spec.setMetadata(desc);
-
-    if (spec == initialRequestor && spec.isSkipped()) return; // JUnit does it this way
     
-    SpecInfo superSpec = spec.getSuperSpec();
-    if (superSpec != null) {
-      new JUnitDescriptionGenerator(superSpec, initialRequestor).generate();
-      for (FeatureInfo feature : superSpec.getFeatures())
-        desc.addChild((Description) feature.getMetadata());
+    for (FeatureInfo feature : spec.getAllFeatures())
+      describeFeature(feature);
+
+    for (MethodInfo fixtureMethod : spec.getAllFixtureMethods())
+      describeMethod(fixtureMethod);
+  }
+
+  public Description aggregate() {
+    Description desc = (Description) spec.getMetadata();
+
+    // important for JUnit compatibility: Descriptions of specs that are reported
+    // as "ignored" to JUnit must not have any children
+    if (spec.isExcluded() || spec.isSkipped()) return desc;
+
+    for (FeatureInfo feature : spec.getAllFeaturesInExecutionOrder()) {
+      if (feature.isExcluded()) continue;
+      desc.addChild((Description) feature.getFeatureMethod().getMetadata());
     }
 
-    for (FeatureInfo feature : spec.getFeatures())
-      desc.addChild(describeFeature(feature));
-
-    describeMethod(spec.getSetupMethod());
-    describeMethod(spec.getCleanupMethod());
-    describeMethod(spec.getSetupSpecMethod());
-    describeMethod(spec.getCleanupSpecMethod());
+    return desc;
   }
 
   private Description describeFeature(FeatureInfo feature) {
@@ -70,7 +71,10 @@ public class JUnitDescriptionGenerator {
   }
 
   private Description describeMethod(MethodInfo method) {
-    Description desc = Description.createTestDescription(initialRequestor.getReflection(), method.getName());
+    Annotation[] anns = method.getReflection() == null ?
+        new Annotation[0] : method.getReflection().getAnnotations();
+    Description desc = Description.createTestDescription(spec.getReflection(),
+        method.getName(), anns);
     method.setMetadata(desc);
     return desc;
   }

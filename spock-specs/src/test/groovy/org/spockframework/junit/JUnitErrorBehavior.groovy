@@ -45,5 +45,6 @@ class Foo {
     def desc = result.failures[0].description
     desc.isSuite() // failure description is description of the test class
     desc.className == "Foo"
+    desc.children.size() == 1
   }
 }

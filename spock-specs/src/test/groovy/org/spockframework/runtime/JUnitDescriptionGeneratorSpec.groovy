@@ -37,14 +37,16 @@ class Derived extends Base {
     """).find { it.simpleName == "Derived" }
 
     def specInfo = RunContext.get().createSpecInfoBuilder(derived).build()
-
+    def generator = new JUnitDescriptionGenerator(specInfo)
+    
     when:
-    new JUnitDescriptionGenerator(specInfo).generate()
+    generator.attach()
+    generator.aggregate()
 
     then:
     def desc = specInfo.metadata
     desc.displayName == "apackage.Derived"
-    desc.children.size == 2
+    desc.children.size() == 2
     desc.children.collect { it.methodName } == ["f1", "f2"]
     desc.children.collect { it.className } == ["apackage.Derived", "apackage.Derived"]
   }

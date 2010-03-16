@@ -61,8 +61,10 @@ public class BaseSpecRunner {
   }
 
   public int run() {
-    Assert.that(!spec.isExcluded(), "tried to run excluded spec");
-    if (spec.isSkipped()) {
+    // Sometimes a spec run is requested even though the spec has been excluded
+    // (e.g. if JUnit is in control). In such a case, the best thing we can do
+    // is to treat the spec as skipped.
+    if (spec.isExcluded() || spec.isSkipped()) {
       supervisor.specSkipped(spec);
       return OK;
     }
@@ -121,7 +123,7 @@ public class BaseSpecRunner {
   }
 
   private void runFeatures() {
-    for (FeatureInfo feature : spec.getAllFeatures()) {
+    for (FeatureInfo feature : spec.getAllFeaturesInExecutionOrder()) {
       if (resetStatus(FEATURE) != OK) return;
       currentFeature = feature;
       runFeature();

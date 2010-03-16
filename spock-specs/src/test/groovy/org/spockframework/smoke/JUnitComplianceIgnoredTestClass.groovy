@@ -15,26 +15,25 @@
 
 package org.spockframework.smoke
 
-import org.spockframework.EmbeddedSpecification
 import org.junit.Test
-
 import org.junit.runner.Request
+
 import spock.lang.Specification
 import spock.lang.Issue
 
 @Issue("http://issues.spockframework.org/detail?id=77")
-class JUnitComplianceIgnoredTestClass extends EmbeddedSpecification {
+class JUnitComplianceIgnoredTestClass extends org.spockframework.EmbeddedSpecification {
   def "a priori description of ignored test class has no method descriptions"() {
-    Request request = Request.aClass(clazz)
+    Request request = Request.aClass(base)
     def desc = request.runner.description
 
     expect:
-    desc.className == clazz.name
-    desc.displayName == clazz.name
+    desc.className == base.name
+    desc.displayName == base.name
     desc.children.size() == 0
 
     where:
-    clazz << [Bar, BarSpec]
+    base << [Bar, BarSpec]
   }
 }
 

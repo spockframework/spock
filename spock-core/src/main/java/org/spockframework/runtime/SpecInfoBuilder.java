@@ -47,6 +47,16 @@ public class SpecInfoBuilder {
   }
 
   public SpecInfo build() {
+    doBuild();
+    int executionOrder = 0;
+    for (SpecInfo curr : spec.getSpecsTopToBottom())
+      for (FeatureInfo feature : curr.getFeatures())
+        feature.setExecutionOrder(executionOrder++);
+
+    return spec;
+  }
+
+  private SpecInfo doBuild() {
     buildSuperSpec();
     buildSpec();
     buildFields();
@@ -60,15 +70,13 @@ public class SpecInfoBuilder {
   public void runExtensions() {
     runGlobalExtensions();
     runAnnotationDrivenExtensions();
-    // TODO: do this more often (e.g. after every extension)? stop once spec has been excluded?
-    removeExcludedFeatures(spec);
   }
 
   private void buildSuperSpec() {
     Class<?> superClass = clazz.getSuperclass();
     if (superClass == Object.class || superClass == Specification.class) return;
 
-    SpecInfo superSpec = new SpecInfoBuilder(superClass, globalExtensions).build();
+    SpecInfo superSpec = new SpecInfoBuilder(superClass, globalExtensions).doBuild();
     spec.setSuperSpec(superSpec);
     superSpec.setSubSpec(spec);
   }
@@ -129,7 +137,7 @@ public class SpecInfoBuilder {
 
     spec.sortFeatures(new IFeatureSortOrder() {
       public int compare(FeatureInfo m1, FeatureInfo m2) {
-        return m1.getOrdinal() - m2.getOrdinal();
+        return m1.getDeclarationOrder() - m2.getDeclarationOrder();
       }
     });
   }
@@ -138,7 +146,7 @@ public class SpecInfoBuilder {
     FeatureInfo feature = new FeatureInfo();
     feature.setParent(spec);
     feature.setName(featureMetadata.name());
-    feature.setOrdinal(featureMetadata.ordinal());
+    feature.setDeclarationOrder(featureMetadata.ordinal());
     for (String name : featureMetadata.parameterNames())
       feature.addParameterName(name);
 
@@ -278,18 +286,5 @@ public class SpecInfoBuilder {
       localExtensions.put(clazz, result);
     }
     return result;
-  }
-
-  // can't simply remove skipped features because we need them for JUnit descriptions;
-  // could introduce two feature lists though
-  private void removeExcludedFeatures(SpecInfo spec) {
-    if (spec == null) return;
-    removeExcludedFeatures(spec.getSuperSpec());
-    
-    spec.filterFeatures(new IFeatureFilter() {
-      public boolean matches(FeatureInfo feature) {
-        return !feature.isExcluded();
-      }
-    });
   }
 }

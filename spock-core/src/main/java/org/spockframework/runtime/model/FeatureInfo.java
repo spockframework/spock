@@ -10,7 +10,9 @@ import org.spockframework.runtime.extension.IMethodInterceptor;
  * @author Peter Niederwieser
  */
 public class FeatureInfo extends NodeInfo<SpecInfo, AnnotatedElement> {
-  private int ordinal;
+  private int declarationOrder; // per spec class
+  private int executionOrder;   // per spec inheritance chain
+
   private List<String> parameterNames = new ArrayList<String>();
   private final List<BlockInfo> blocks = new ArrayList<BlockInfo>();
   private final List<IMethodInterceptor> interceptors = new ArrayList<IMethodInterceptor>();
@@ -27,12 +29,20 @@ public class FeatureInfo extends NodeInfo<SpecInfo, AnnotatedElement> {
     throw new UnsupportedOperationException("getReflection");
   }
 
-  public int getOrdinal() {
-    return ordinal;
+  public int getDeclarationOrder() {
+    return declarationOrder;
   }
 
-  public void setOrdinal(int ordinal) {
-    this.ordinal = ordinal;
+  public void setDeclarationOrder(int declarationOrder) {
+    this.declarationOrder = declarationOrder;
+  }
+
+  public int getExecutionOrder() {
+    return executionOrder;
+  }
+
+  public void setExecutionOrder(int executionOrder) {
+    this.executionOrder = executionOrder;
   }
 
   public List<String> getParameterNames() {

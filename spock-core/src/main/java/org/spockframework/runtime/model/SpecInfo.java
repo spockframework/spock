@@ -158,6 +158,18 @@ public class SpecInfo extends NodeInfo<NodeInfo, Class<?>> implements IMethodNam
     this.cleanupSpecMethod = cleanupSpecMethod;
   }
 
+  public List<MethodInfo> getFixtureMethods() {
+    return Arrays.asList(setupSpecMethod, setupMethod, cleanupMethod, cleanupSpecMethod);
+  }
+
+  public List<MethodInfo> getAllFixtureMethods() {
+    if (superSpec == null) return getFixtureMethods();
+
+    List<MethodInfo> result = new ArrayList<MethodInfo>(superSpec.getAllFixtureMethods());
+    result.addAll(getFixtureMethods());
+    return result;
+  }
+
   public List<FieldInfo> getFields() {
     return fields;
   }
@@ -183,6 +195,16 @@ public class SpecInfo extends NodeInfo<NodeInfo, Class<?>> implements IMethodNam
     
     List<FeatureInfo> result = new ArrayList<FeatureInfo>(superSpec.getAllFeatures());
     result.addAll(features);
+    return result;
+  }
+
+  public List<FeatureInfo> getAllFeaturesInExecutionOrder() {
+    List<FeatureInfo> result = getAllFeatures();
+    Collections.sort(result, new Comparator<FeatureInfo>() {
+      public int compare(FeatureInfo f1, FeatureInfo f2) {
+        return f1.getExecutionOrder() - f2.getExecutionOrder();
+      }
+    });
     return result;
   }
 
@@ -229,9 +251,11 @@ public class SpecInfo extends NodeInfo<NodeInfo, Class<?>> implements IMethodNam
     }
   }
 
-  // TODO: doesn't work in presence of spec inheritance
   public void sortFeatures(final IFeatureSortOrder order) {
+    List<FeatureInfo> features = getAllFeatures();
     Collections.sort(features, order);
+    for (int i = 0; i < features.size(); i++) 
+      features.get(i).setExecutionOrder(i);
   }
 
   public boolean isFixtureMethod(String className, String methodName) {

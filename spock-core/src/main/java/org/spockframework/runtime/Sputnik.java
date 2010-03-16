@@ -37,34 +37,30 @@ import org.spockframework.runtime.model.SpecInfo;
 // - check if StoppedByUserException thrown in Notifier.fireTestStarted() is handled correctly on our side
 public class Sputnik extends Runner implements Filterable, Sortable {
   private final RunContext runContext;
+  private final SpecInfoBuilder builder;
   private final SpecInfo spec;
+  private boolean extensionsRun = false;
+  private boolean descriptionAggregated = false;
 
   public Sputnik(Class<?> clazz) {
     runContext = RunContext.get();
-    SpecInfoBuilder builder = runContext.createSpecInfoBuilder(clazz);
+    builder = runContext.createSpecInfoBuilder(clazz);
     spec = builder.build();
-    builder.runExtensions();
-    new JUnitDescriptionGenerator(spec).generate();
+    new JUnitDescriptionGenerator(spec).attach();
   }
 
   public Description getDescription() {
+    runExtensionsIfNecessary();
+    aggregateDescriptionIfNecessary();
     return (Description) spec.getMetadata();
   }
 
   public void run(RunNotifier notifier) {
-    if (spec.isExcluded()) {
-      // since we were already told by JUnit to run this spec,
-      // the best we can do is to treat it as ignored
-      notifier.fireTestIgnored((Description)spec.getMetadata());
-      return;
-    }
+    runExtensionsIfNecessary();
+    aggregateDescriptionIfNecessary();
     runContext.createSpecRunner(spec, notifier).run();
-
   }
 
-  // TODO: this filtering should take place before extensions have run
-  // for example, @Scenario might want to reinclude dependencies of the
-  // features left after filtering
   public void filter(Filter filter) throws NoTestsRemainException {
     spec.filterFeatures(new JUnitFilterAdapter(filter));
     if (allFeaturesExcluded())
@@ -73,6 +69,18 @@ public class Sputnik extends Runner implements Filterable, Sortable {
 
   public void sort(Sorter sorter) {
     spec.sortFeatures(new JUnitSorterAdapter(sorter));
+  }
+
+  private void runExtensionsIfNecessary() {
+    if (extensionsRun) return;
+    builder.runExtensions();
+    extensionsRun = true;
+  }
+
+  private void aggregateDescriptionIfNecessary() {
+    if (descriptionAggregated) return;
+    new JUnitDescriptionGenerator(spec).aggregate();
+    descriptionAggregated = true;
   }
 
   private boolean allFeaturesExcluded() {

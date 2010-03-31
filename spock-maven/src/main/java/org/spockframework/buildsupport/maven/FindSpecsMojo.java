@@ -40,14 +40,21 @@ public class FindSpecsMojo extends AbstractMojo {
   /**
    * @parameter expression="${project}"
    */
-  MavenProject project;
+  private MavenProject project;
   
   /**
    * @parameter expression="${project.build.testOutputDirectory}"
    */
-  File testOutputDirectory;
+  private File testOutputDirectory;
+
+  /**
+   * @parameter default="false"
+   */
+  private boolean skip;
 
   public void execute() throws MojoExecutionException {
+    if (skip) return;
+    
     if (!testOutputDirectory.exists()) {
       getLog().info(String.format("Found 0 Spock specifications"));
       return;

@@ -21,6 +21,7 @@ import java.lang.reflect.*;
 import java.util.*;
 
 import org.apache.tapestry5.ioc.*;
+import org.apache.tapestry5.ioc.annotations.Autobuild;
 import org.apache.tapestry5.ioc.annotations.Inject;
 
 import org.spockframework.runtime.SpockExecutionException;
@@ -132,8 +133,9 @@ public class TapestryInterceptor extends AbstractMethodInterceptor {
 
   private void injectServices(Object target, boolean sharedFields) throws IllegalAccessException {
     for (final FieldInfo field : spec.getAllFields())
-      if (field.getReflection().isAnnotationPresent(Inject.class)
-          && field.getReflection().isAnnotationPresent(Shared.class) == sharedFields) {
+      if ((field.getReflection().isAnnotationPresent(Inject.class)
+          || field.getReflection().isAnnotationPresent(Autobuild.class))
+            && field.getReflection().isAnnotationPresent(Shared.class) == sharedFields) {
         Field rawField = field.getReflection();
         Object value = registry.getObject(rawField.getType(), createAnnotationProvider(field));
         rawField.setAccessible(true);

@@ -75,3 +75,14 @@ class SymbolInjection extends Specification {
     computedValue == "${System.getProperty("java.version")} and configValue"
   }
 }
+
+@SubModule(Module2)
+class AutobuildInjection extends Specification {
+  @Autobuild
+  Service1 service1
+
+  def "auto-built service"() {
+    expect:
+    service1 instanceof Service1
+  }
+}

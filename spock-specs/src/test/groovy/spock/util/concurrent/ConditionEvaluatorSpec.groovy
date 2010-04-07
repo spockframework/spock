@@ -19,13 +19,13 @@ import org.spockframework.runtime.SpockTimeoutError
 
 import spock.lang.*
 
-class AsyncConditionSpec extends Specification {
+class ConditionEvaluatorSpec extends Specification {
   def "passing example - check passes"() {
-    def cond = new AsyncCondition()
+    def cond = new ConditionEvaluator()
 
     when:
     Thread.start {
-      cond.check {
+      cond.evaluate {
         assert true
       }
     }
@@ -35,12 +35,12 @@ class AsyncConditionSpec extends Specification {
   }
 
   @FailsWith(SpockAssertionError)
-  def "failing example 1 - check fails"() {
-    def cond = new AsyncCondition()
+  def "failing example 1 - eval fails"() {
+    def cond = new ConditionEvaluator()
 
     when:
     Thread.start {
-      cond.check {
+      cond.evaluate {
         assert false
       }
     }
@@ -51,7 +51,7 @@ class AsyncConditionSpec extends Specification {
 
   @FailsWith(SpockTimeoutError)
   def "failing example 2 - check is missing"() {
-    def cond = new AsyncCondition()
+    def cond = new ConditionEvaluator()
 
     expect:
     cond.await()
@@ -59,26 +59,26 @@ class AsyncConditionSpec extends Specification {
 
   @FailsWith(SpockTimeoutError)
   def "one passing and one missing check"() {
-    def cond = new AsyncCondition(2)
+    def conds = new ConditionEvaluator(2)
 
     when:
     Thread.start {
-      cond.check {
+      conds.evaluate {
         assert true
       }
     }
 
     then:
-    cond.await()
+    conds.await()
   }
 
   @FailsWith(SpockAssertionError)
   def "one failing and one missing check"() {
-    def cond = new AsyncCondition(2)
+    def cond = new ConditionEvaluator(2)
 
     when:
     Thread.start {
-      cond.check {
+      cond.evaluate {
         assert false
       }
     }
@@ -88,22 +88,22 @@ class AsyncConditionSpec extends Specification {
   }
 
   def "multiple passing checks"() {
-    def cond = new AsyncCondition(3)
+    def cond = new ConditionEvaluator(3)
 
     when:
     Thread.start {
-      cond.check {
+      cond.evaluate {
         assert true
         assert true
       }
-      cond.check {
+      cond.evaluate {
         assert true
       }
     }
 
     and:
     Thread.start {
-      cond.check {
+      cond.evaluate {
         assert true
       }
     }

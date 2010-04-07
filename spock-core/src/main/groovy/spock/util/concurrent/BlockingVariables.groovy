@@ -16,15 +16,15 @@ package spock.util.concurrent
 
 import java.util.concurrent.TimeUnit
 
-class AsyncState {
-  private final AsyncStateImpl impl
+class BlockingVariables {
+  private final BlockingVariablesImpl impl
 
-  AsyncState() {
-    impl = new AsyncStateImpl()
+  BlockingVariables() {
+    impl = new BlockingVariablesImpl()
   }
 
-  AsyncState(int timeout, TimeUnit unit) {
-    impl = new AsyncStateImpl(timeout, unit)
+  BlockingVariables(int timeout, TimeUnit unit) {
+    impl = new BlockingVariablesImpl(timeout, unit)
   }
 
   void setProperty(String name, Object value) {

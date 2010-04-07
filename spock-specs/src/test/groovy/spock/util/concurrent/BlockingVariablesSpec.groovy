@@ -19,98 +19,98 @@ import org.spockframework.runtime.SpockTimeoutError
 
 import spock.lang.*
 
-class AsyncStateSpec extends Specification {
+class BlockingVariablesSpec extends Specification {
   def "passing example 1 - variable is read after it is written"() {
-    def state = new AsyncState()
+    def vars = new BlockingVariables()
 
     when:
     Thread.start {
-      state.someVar = 42
+      vars.foo = 42
     }
     Thread.sleep(500)
 
     then:
-    state.someVar == 42
+    vars.foo == 42
   }
 
   def "passing example 2 - variable is read before it is written"() {
-    def state = new AsyncState()
+    def vars = new BlockingVariables()
 
     when:
     Thread.start {
       Thread.sleep(500)
-      state.someVar = 42
+      vars.foo = 42
     }
 
     then:
-    state.someVar == 42
+    vars.foo == 42
   }
 
   @FailsWith(ConditionNotSatisfiedError)
   def "failing example 1 - variable has wrong value"() {
-    def state = new AsyncState()
+    def vars = new BlockingVariables()
 
     when:
     Thread.start {
-      state.someVar = 42
+      vars.foo = 42
     }
 
     then:
-    state.someVar == 21
+    vars.foo == 21
   }
 
   @FailsWith(SpockTimeoutError)
   def "failing example 2 - variable is read but not written"() {
-    def state = new AsyncState()
+    def vars = new BlockingVariables()
 
     when:
     Thread.start {
-      state.otherVar = 42
+      vars.foo = 42
     }
 
     then:
-    state.someVar == 42
+    vars.bar == 42
   }
 
-  def "state may consist of multiple variables"() {
-    def state = new AsyncState()
+  def "multiple variables"() {
+    def vars = new BlockingVariables()
 
     when:
     Thread.start {
-      state.var3 = 3
-      state.var2 = 2
+      vars.baz = 3
+      vars.bar = 2
     }
     Thread.start {
-      state.var1 = 1
+      vars.foo = 1
     }
 
     then:
-    state.var1 = 1
-    state.var2 = 2
-    state.var3 = 3
+    vars.foo = 1
+    vars.bar = 2
+    vars.baz = 3
   }
 
-  def "state variable may contain null value"() {
-    def state = new AsyncState()
+  def "variable may be null"() {
+    def vars = new BlockingVariables()
 
     when:
     Thread.start {
-      state.someVar = null
+      vars.foo = null
     }
 
     then:
-    state.someVar == null
+    vars.foo == null
   }
 
-  def "state can be used in single thread"() {
-    def state = new AsyncState()
+  def "vars can be used in single thread"() {
+    def vars = new BlockingVariables()
 
     when:
-    state.var2 = 2
-    state.var1 = 1
+    vars.bar = 2
+    vars.foo = 1
 
     then:
-    state.var1 == 1
-    state.var2 == 2
+    vars.foo == 1
+    vars.bar == 2
   }
 }

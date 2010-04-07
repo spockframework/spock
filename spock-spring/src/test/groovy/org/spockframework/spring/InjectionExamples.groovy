@@ -28,14 +28,14 @@ import org.spockframework.util.Util
 @ContextConfiguration(locations = "InjectionExamples-context.xml")
 class InjectionExamples extends Specification {
   @Autowired
-  IService service
+  IService1 service
 
   @Autowired
   ApplicationContext context
 
   def "injecting a field by type"() {
     expect:
-    service instanceof Service
+    service instanceof IService1
   }
 
   def "injecting a field by name (@Resource is JDK 1.6 only)"() {
@@ -55,11 +55,11 @@ import spock.lang.*
 @ContextConfiguration(locations = "InjectionExamples-context.xml")
 class Foo extends Specification {
   @Resource
-  IService myService
+  IService1 myService1
 
   def foo() {
     expect:
-    myService instanceof IService
+    myService1 instanceof IService1
   }
 }
     """
@@ -71,7 +71,7 @@ class Foo extends Specification {
   def "direct usage of application context (discouraged)"() {
     expect:
     context != null
-    context.getBean("myService") instanceof Service
+    context.getBean("myService1") instanceof IService1
   }
 
   def "shared fields cannot be injected"() {
@@ -81,14 +81,14 @@ class Foo extends Specification {
 
     when:
     runner.runWithImports """
-import org.spockframework.spring.IService
+import org.spockframework.spring.IService1
 import org.springframework.test.context.ContextConfiguration
 
 @ContextConfiguration
 class Foo extends Specification {
   @$ann
   @Shared
-  IService sharedService
+  IService1 sharedService
 
   def foo() {
     expect: true

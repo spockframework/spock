@@ -46,13 +46,7 @@
           <dependency>
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy-all</artifactId>
-            <version>1.7.1</version>
-            <exclusions>
-              <exclusion>
-                <groupId>org.fusesource.jansi</groupId>
-                <artifactId>jansi</artifactId>
-              </exclusion>
-            </exclusions>
+            <version>1.7.2</version>
           </dependency>
         </dependencies>
       </plugin>

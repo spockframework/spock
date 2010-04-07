@@ -99,9 +99,7 @@ class JavaRuntime {}
     def classNode = inspector.getClass(className)
 
     // annotation present?
-    // starting with groovy 1.7.1, groovy adds an internal
-    // annotation to every class, so size should now be 2 instead of 1
-    assertTrue(classNode.annotations.size() == 2)
+    assertTrue(classNode.annotations.size() == 1)
 
     // retention policy set correctly?
     def annNode = classNode.annotations[0]

@@ -8,7 +8,7 @@ repositories {
 
 dependencies {
   // mandatory dependencies for using Spock
-  groovy("org.codehaus.groovy:groovy-all:1.7.1") {
+  groovy("org.codehaus.groovy:groovy-all:1.7.2") {
     exclude module: "jansi"
   }
   testCompile "org.spockframework:spock-core:0.4-groovy-1.7-SNAPSHOT"

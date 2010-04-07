@@ -23,7 +23,7 @@ subprojects {
   compileTestGroovy.options.fork = false
 
   dependencies {
-    groovy("org.codehaus.groovy:groovy-all:1.7.1") {
+    groovy("org.codehaus.groovy:groovy-all:1.7.2") {
       exclude module: "jansi"
     }
   }

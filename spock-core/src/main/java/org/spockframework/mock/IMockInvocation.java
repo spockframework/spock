@@ -27,24 +27,24 @@ import java.util.List;
 // IDEA: add method "MockType mockType" that tells which interface or class was mocked,
 // the kind of mock involved (dynamic proxy, cglib, etc.), etc.
 public interface IMockInvocation {
-  /*
+  /**
    * The mock object that received the invocation.
    */
   Object getMockObject();
   
-  /*
+  /**
    * The name of the mock object that received the invocation.
    */
   String getMockObjectName();
 
-  /*
+  /**
    * The invoked method.
    */
   // IDEA: replace with our own Method abstraction so that we can also
   // represent dynamic Groovy calls
   Method getMethod();
 
-  /*
+  /**
    * The arguments for the invocation.
    */
   List<Object> getArguments();

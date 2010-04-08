@@ -48,7 +48,7 @@ class InjectionExamples extends Specification {
 package org.spockframework.spring
 
 import javax.annotation.Resource
-import org.spockframework.spring.IService
+import org.spockframework.spring.IService1
 import org.springframework.test.context.ContextConfiguration
 import spock.lang.*
 

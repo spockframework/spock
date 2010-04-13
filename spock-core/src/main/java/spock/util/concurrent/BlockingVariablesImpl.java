@@ -35,17 +35,17 @@ class BlockingVariablesImpl {
     BlockingVariable<Object> entry = new BlockingVariable<Object>(timeout, unit);
     BlockingVariable<Object> oldEntry = map.putIfAbsent(name, entry);
     if (oldEntry == null)
-      return entry.getValue();
+      return entry.get();
     else
-      return oldEntry.getValue();
+      return oldEntry.get();
   }
 
   public void put(String name, Object value) {
     BlockingVariable<Object> entry = new BlockingVariable<Object>(timeout, unit);
     BlockingVariable<Object> oldEntry = map.putIfAbsent(name, entry);
     if (oldEntry == null)
-      entry.setValue(value);
+      entry.set(value);
     else
-      oldEntry.setValue(value);
+      oldEntry.set(value);
   }
 }

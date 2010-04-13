@@ -58,7 +58,7 @@ class BlockingVariableSpec extends Specification {
     thrown(SpockTimeoutError)
   }
 
-  def "timeout can be configured"() {
+  def "timeout is configurable"() {
     def list = new BlockingVariable<String>(1, TimeUnit.MILLISECONDS)
 
     when:

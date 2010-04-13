@@ -16,7 +16,13 @@
 
 package org.spockframework.mock;
 
+import java.lang.reflect.Array;
+import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.List;
+
+import org.spockframework.util.Assert;
+import org.spockframework.util.Util;
 
 /**
  *
@@ -31,8 +37,42 @@ public class PositionalArgumentListConstraint implements IInvocationConstraint {
 
   public boolean isSatisfiedBy(IMockInvocation invocation) {
     List<Object> args = invocation.getArguments();
-    if (args.size() != argConstraints.size()) return false;
-    for (int i = 0; i < args.size(); i++)
+
+    if (args.size() == 0) return argConstraints.size() == 0;
+    
+    int sizeDiff = argConstraints.size() - args.size();
+
+    if (sizeDiff < -1) return false;
+
+    if (!areConstraintsSatisfied(argConstraints.subList(0, args.size() - 1), args)) return false;
+
+    if (sizeDiff == 0 && Util.getLastElement(argConstraints).isSatisfiedBy(Util.getLastElement(args))) return true;
+
+    if (!canBeCalledWithVarArgSyntax(invocation.getMethod())) return false;
+
+    int varArgSize = Array.getLength(Util.getLastElement(args));
+
+    if (argConstraints.size() != args.size() - 1 + varArgSize) return false;
+
+    return areConstraintsSatisfied(argConstraints.subList(args.size() - 1, argConstraints.size()),
+        Arrays.asList((Object[]) Util.getLastElement(args)));
+  }
+
+  /**
+   * Tells if the given method can be called with vararg syntax from Groovy(!).
+   * If yes, we also support vararg syntax in the interaction definition.
+   * @param method
+   * @return
+   */
+  private boolean canBeCalledWithVarArgSyntax(Method method) {
+    Class<?>[] paramTypes = method.getParameterTypes();
+    return paramTypes.length > 0 && paramTypes[paramTypes.length - 1].isArray();
+  }
+
+  private boolean areConstraintsSatisfied(List<IArgumentConstraint> argConstraints, List<Object> args) {
+    Assert.that(argConstraints.size() <= args.size());
+    
+    for (int i = 0; i < argConstraints.size(); i++)
       if (!argConstraints.get(i).isSatisfiedBy(args.get(i))) return false;
     return true;
   }

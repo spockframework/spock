@@ -21,26 +21,34 @@ import spock.lang.Specification
 class ClosingOfDataProviders extends Specification {
   def runner = new ParameterizedSpecRunner(null, null)
 
-  def "closeOneProviderWhichPotentiallyThrowsException"() {
+  def "close one provider which potentially throws an exception"() {
     MyCloseable provider = Mock()
 
-    when: runner.closeDataProviders([provider] as Object[])
-    then: 1 * provider.close() >> { action() }
+    when:
+    runner.closeDataProviders(provider)
+
+    then:
+    1 * provider.close() >> { action() }
+    noExceptionThrown()
+
     where:
-      action << [{}, { throw new Exception() }]
+    action << [{}, { throw new Exception() }]
   }
 
-  def "closeMultipleProvidersWhichPotentiallyThrowException"() {
+  def "close multiple providers which potentially throw an exception"() {
     MyCloseable provider1 = Mock()
     java.io.Closeable provider2 = Mock()
 
     when:
-      runner.closeDataProviders([provider1, provider2] as Object[])
+    runner.closeDataProviders(provider1, provider2)
+
     then:
-      1 * provider1.close() >> { action() }
-      1 * provider2.close()
+    1 * provider1.close() >> { action() }
+    1 * provider2.close()
+    noExceptionThrown()
+
     where:
-      action << [{}, { throw new Exception() }]
+    action << [{}, { throw new Exception() }]
   }
 }
 

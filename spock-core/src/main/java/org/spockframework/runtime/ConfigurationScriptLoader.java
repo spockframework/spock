@@ -65,7 +65,7 @@ public class ConfigurationScriptLoader {
 
   private File findConfigurationFile() {
     String path = System.getProperty("spock.configuration");
-    if (path == null) {
+    if (path == null || path.length() == 0) {
       path = DEFAULT_CONFIGURATION_PATH;
       if (!new File(path).isFile()) return null;
     } else {

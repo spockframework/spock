@@ -14,28 +14,16 @@
  * limitations under the License.
  */
 
-package org.spockframework.smoke.mock
+package org.spockframework.spring
 
-import spock.lang.Specification
+public class Service1 implements IService1 {
+  private IService2 service2
 
-class ArgumentMatching extends Specification {
-  def "match identical argument"() {
-    List list = Mock()
-
-    when: list.add(arg)
-    then: 1 * list.add(arg)
-
-    where: arg << [1, "foo", new Object()]
+  Service1(Service2 service2) {
+    this.service2 = service2
   }
 
-  def "match equal argument"() {
-    List list = Mock()
-
-    when: list.add(arg1)
-    then: 1 * list.add(arg2)
-
-    where:
-      arg1 << [1, [1,2,3] as Set, null]
-      arg2 << [1.0, [3,2,1] as Set, null]
+  String generateString() {
+    service2.generateQuickBrownFox()
   }
 }

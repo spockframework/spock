@@ -189,4 +189,14 @@ public class Util {
       else throw new UnreachableCodeError(cause);
     }
   }
+
+  public static @Nullable <T> T getFirstElement(List<T> list) {
+    Assert.that(list.size() > 0);
+    return list.get(0);
+  }
+
+  public static @Nullable <T> T getLastElement(List<T> list) {
+    Assert.that(list.size() > 0);
+    return list.get(list.size() - 1);
+  }
 }

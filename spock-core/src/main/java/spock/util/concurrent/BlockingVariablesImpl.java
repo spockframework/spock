@@ -16,25 +16,24 @@ package spock.util.concurrent;
 
 import java.util.concurrent.*;
 
-import org.spockframework.runtime.SpockTimeoutError;
-
-class AsyncStateImpl {
+class BlockingVariablesImpl {
   private final int timeout;
   private final TimeUnit unit;
-  private final ConcurrentHashMap<String, AsyncVariable> map = new ConcurrentHashMap<String, AsyncVariable>();
+  private final ConcurrentHashMap<String, BlockingVariable<Object>> map =
+      new ConcurrentHashMap<String, BlockingVariable<Object>>();
 
-  public AsyncStateImpl() {
+  public BlockingVariablesImpl() {
     this(1, TimeUnit.SECONDS);
   }
 
-  public AsyncStateImpl(int timeout, TimeUnit unit) {
+  public BlockingVariablesImpl(int timeout, TimeUnit unit) {
     this.timeout = timeout;
     this.unit = unit;
   }
   
   public Object get(String name) throws InterruptedException {
-    AsyncVariable entry = new AsyncVariable(name);
-    AsyncVariable oldEntry = map.putIfAbsent(name, entry);
+    BlockingVariable<Object> entry = new BlockingVariable<Object>(timeout, unit);
+    BlockingVariable<Object> oldEntry = map.putIfAbsent(name, entry);
     if (oldEntry == null)
       return entry.getValue();
     else
@@ -42,32 +41,11 @@ class AsyncStateImpl {
   }
 
   public void put(String name, Object value) {
-    AsyncVariable entry = new AsyncVariable(name);
-    AsyncVariable oldEntry = map.putIfAbsent(name, entry);
+    BlockingVariable<Object> entry = new BlockingVariable<Object>(timeout, unit);
+    BlockingVariable<Object> oldEntry = map.putIfAbsent(name, entry);
     if (oldEntry == null)
       entry.setValue(value);
     else
       oldEntry.setValue(value);
-  }
-
-  class AsyncVariable {
-    private final String name;
-    private Object value; // access guarded by valueReady
-    private final CountDownLatch valueReady = new CountDownLatch(1);
-
-    AsyncVariable(String name) {
-      this.name = name;
-    }
-
-    Object getValue() throws InterruptedException {
-      if (!valueReady.await(timeout, unit))
-        throw new SpockTimeoutError("Timed out waiting for variable '%s'").withArgs(name);
-      return value;
-    }
-
-    void setValue(Object value) {
-      this.value = value;
-      valueReady.countDown();
-    }
   }
 }

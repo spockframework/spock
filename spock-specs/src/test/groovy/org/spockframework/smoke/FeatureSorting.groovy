@@ -16,7 +16,6 @@
 package org.spockframework.smoke
 
 import org.junit.runner.Request
-import org.spockframework.EmbeddedSpecification
 import org.junit.runner.Description
 import spock.lang.Specification
 import spock.lang.Shared

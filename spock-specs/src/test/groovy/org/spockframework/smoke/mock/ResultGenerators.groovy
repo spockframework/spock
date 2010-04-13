@@ -94,6 +94,56 @@ class ResultGenerators extends Specification {
     expect:
     calculator.calculate() instanceof int
   }
+
+  def "access args with 'it' variable"() {
+    List list = Mock()
+
+    when:
+    list.subList(3, 5)
+
+    then:
+    1 * list.subList(_, _) >> { assert it[0] == 3; assert it[1] == 5 }
+  }
+
+  def "access args with named variable"() {
+    List list = Mock()
+
+    when:
+    list.subList(3, 5)
+
+    then:
+    1 * list.subList(_, _) >> { args -> assert args.size() == 2 }
+  }
+
+  def "access args with destructuring"() {
+    List list = Mock()
+
+    when:
+    list.subList(3, 5)
+
+    then:
+    1 * list.subList(_, _) >> { from, to -> assert from == 3; assert to == 5 }
+  }
+
+  def "access single arg without destructuring"() {
+    List list = Mock()
+
+    when:
+    list.remove(3)
+
+    then:
+    1 * list.remove(_) >> { foo -> assert foo == [3] }
+  }
+
+  def "access single arg with destructuring"() {
+    List list = Mock()
+
+    when:
+    list.remove(5)
+
+    then:
+    1 * list.remove(_) >> { int foo -> assert foo == 5 }
+  }
 }
 
 private interface Named {

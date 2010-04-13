@@ -14,28 +14,8 @@
  * limitations under the License.
  */
 
-package org.spockframework.smoke.mock
+package org.spockframework.spring
 
-import spock.lang.Specification
-
-class ArgumentMatching extends Specification {
-  def "match identical argument"() {
-    List list = Mock()
-
-    when: list.add(arg)
-    then: 1 * list.add(arg)
-
-    where: arg << [1, "foo", new Object()]
-  }
-
-  def "match equal argument"() {
-    List list = Mock()
-
-    when: list.add(arg1)
-    then: 1 * list.add(arg2)
-
-    where:
-      arg1 << [1, [1,2,3] as Set, null]
-      arg2 << [1.0, [3,2,1] as Set, null]
-  }
+interface IService1 {
+  String generateString()  
 }

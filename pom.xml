@@ -174,7 +174,8 @@
         <module>spock-tapestry</module>
         <module>spock-guice</module>
         <module>spock-spring</module>
-        <module>spock-unitils</module>
+        <module>spock-unitils</module>  
+		<module>spock-grails</module>
       </modules>
     </profile>
     <profile>

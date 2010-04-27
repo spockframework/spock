@@ -48,7 +48,19 @@
       <artifactId>grails-test</artifactId>
       <version>${grails.version}</version>
     </dependency>
-
+       <!-- no idea who depends on grails-bootstrap (besides grails-maven-plugin), but wo/ this exclusion
+        CI build fails -->
+    <dependency>
+      <groupId>org.grails</groupId>
+      <artifactId>grails-bootstrap</artifactId>
+      <version>${grails.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.jboss.netty</groupId>
+          <artifactId>netty</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
     <dependency>
       <groupId>net.sourceforge.htmlunit</groupId>
       <artifactId>htmlunit</artifactId>

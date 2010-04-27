@@ -48,19 +48,6 @@
       <artifactId>grails-test</artifactId>
       <version>${grails.version}</version>
     </dependency>
-       <!-- no idea who depends on grails-bootstrap (besides grails-maven-plugin), but wo/ this exclusion
-        CI build fails -->
-    <dependency>
-      <groupId>org.grails</groupId>
-      <artifactId>grails-bootstrap</artifactId>
-      <version>${grails.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>org.jboss.netty</groupId>
-          <artifactId>netty</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
     <dependency>
       <groupId>net.sourceforge.htmlunit</groupId>
       <artifactId>htmlunit</artifactId>
@@ -154,6 +141,12 @@
       <id>spock-snapshots</id>
       <url>http://m2repo.spockframework.org/snapshots</url>
     </repository>
+    <!-- necessary to compensate for the fact that GPars 0.9 POM mistakenly has non-optional
+     dependency on netty. Excludes don't work because grails-maven-plugin ignores them. -->
+    <repository>
+      <id>jboss</id>
+      <url>http://repository.jboss.com/maven2</url>
+    </repository>
   </repositories>
 
   <pluginRepositories>
@@ -177,17 +170,6 @@
             <groupId>org.aspectj</groupId>
             <artifactId>aspectjrt</artifactId>
             <version>1.6.6</version>
-          </dependency>
-          <dependency>
-            <groupId>org.grails</groupId>
-            <artifactId>grails-bootstrap</artifactId>
-            <version>1.2.2</version>
-            <exclusions>
-              <exclusion> <!-- exclude netty, which is mistakenly non-optional in GPars 0.9 POM (fixed in 0.10) -->
-                <groupId>org.jboss.netty</groupId>
-                <artifactId>netty</artifactId>
-              </exclusion>
-            </exclusions>
           </dependency>
         </dependencies>
         <executions>

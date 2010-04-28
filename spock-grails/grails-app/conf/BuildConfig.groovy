@@ -28,7 +28,7 @@ grails.project.dependency.resolution = {
 
     mavenLocal() // prefer local, so we pick up spock snapshot as part of whole build
     mavenRepo "http://m2repo.spockframework.org/snapshots"
-    mavenRepo "repository.jboss.org/maven2" // for javax.security:jaas and javax.security:jacc (required by Hibernate plugin)
+    mavenRepo "http://repository.jboss.org/maven2" // for javax.security:jaas and javax.security:jacc (required by Hibernate plugin)
     mavenCentral()
   }
   

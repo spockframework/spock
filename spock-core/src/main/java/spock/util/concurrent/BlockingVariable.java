@@ -35,14 +35,14 @@ public class BlockingVariable<T> {
     this.unit = unit;
   }
 
-  public T getValue() throws InterruptedException {
+  public T get() throws InterruptedException {
     if (!valueReady.await(timeout, unit))
       throw new SpockTimeoutError("BlockingVariable.getValue() timed out after %d %s")
           .withArgs(timeout, unit.toString().toLowerCase());
     return value;
   }
 
-  public void setValue(T value) {
+  public void set(T value) {
     this.value = value;
     valueReady.countDown();
   }

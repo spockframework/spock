@@ -16,7 +16,8 @@
 
   <properties>
     <grails.version>1.3.0.RC2</grails.version>
-  </properties>
+  </properties>   
+
   <dependencies>
     <dependency>
       <groupId>org.spockframework</groupId>
@@ -164,14 +165,14 @@
         <groupId>org.grails</groupId>
         <artifactId>grails-maven-plugin</artifactId>
         <version>1.2.2</version>
-        <extensions>true</extensions>
+        <extensions>true</extensions>   
         <dependencies>
-          <dependency> <!-- grails-maven-plugin POM is missing this dependency -->
-            <groupId>org.aspectj</groupId>
-            <artifactId>aspectjrt</artifactId>
-            <version>1.6.6</version>
-          </dependency>
-        </dependencies>
+	      <dependency> <!-- missing dependency -->
+		    <groupId>org.aspectj</groupId>
+		    <artifactId>aspectjrt</artifactId>
+		    <version>1.6.6</version>
+		  </dependency>
+		</dependencies>
         <executions>
           <execution>
             <id>build</id>
@@ -198,6 +199,21 @@
               <command>package-plugin</command>
             </configuration>
           </execution>
+<!--
+          <execution>
+            <id>release-plugin</id>
+            <phase>deploy</phase>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <configuration>
+              <command>release-plugin</command>
+              <args>- -non-interactive - -zipOnly - -username=${grails.plugin.repo.user}
+                - -password=${grails.plugin.repo.password} - -message=${grails.plugin.repo.commit.msg}
+              </args>
+            </configuration>
+          </execution>
+-->
         </executions>
       </plugin>
       <plugin>

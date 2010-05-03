@@ -15,7 +15,7 @@
   <url>http://grails.org/plugin/spock</url>
 
   <properties>
-    <grails.version>1.2.1</grails.version>
+    <grails.version>1.2.2</grails.version>
   </properties>
   <dependencies>
     <dependency>
@@ -152,8 +152,15 @@
       <plugin>
         <groupId>org.grails</groupId>
         <artifactId>grails-maven-plugin</artifactId>
-        <version>1.2.0</version>
-        <extensions>true</extensions>
+        <version>1.2.2</version>
+        <extensions>true</extensions>   
+        <dependencies>
+	      <dependency> <!-- missing dependency -->
+		    <groupId>org.aspectj</groupId>
+		    <artifactId>aspectjrt</artifactId>
+		    <version>1.6.6</version>
+		  </dependency>
+		</dependencies>
         <executions>
           <execution>
             <id>build</id>

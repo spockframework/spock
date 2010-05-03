@@ -21,6 +21,7 @@ import java.util.*;
 import org.codehaus.groovy.ast.*;
 import org.codehaus.groovy.ast.expr.*;
 import org.codehaus.groovy.ast.stmt.*;
+import org.codehaus.groovy.classgen.Verifier;
 import org.codehaus.groovy.syntax.Types;
 import org.objectweb.asm.Opcodes;
 
@@ -306,5 +307,12 @@ public abstract class AstUtil {
     int modifiers = field.getModifiers();
     modifiers &= ~(Opcodes.ACC_PUBLIC | Opcodes.ACC_PROTECTED | Opcodes.ACC_PRIVATE);
     field.setModifiers(modifiers | visibility);
+  }
+
+  // currently there is no supported way to get to this information, so we have to
+  // rely on the internals - in particular the fact that in case of stub compilation,
+  // Verifier runs before (!) phase SEMANTIC_ANALYSIS
+  public static boolean isJavaStub(ClassNode clazz) {
+    return clazz.getDeclaredField(Verifier.__TIMESTAMP) != null;
   }
 }

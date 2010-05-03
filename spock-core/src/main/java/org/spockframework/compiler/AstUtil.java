@@ -309,10 +309,7 @@ public abstract class AstUtil {
     field.setModifiers(modifiers | visibility);
   }
 
-  // currently there is no supported way to get to this information, so we have to
-  // rely on the internals - in particular the fact that in case of stub compilation,
-  // Verifier runs before (!) phase SEMANTIC_ANALYSIS
-  public static boolean isJavaStub(ClassNode clazz) {
-    return clazz.getDeclaredField(Verifier.__TIMESTAMP) != null;
+  public static boolean isJointCompiled(ClassNode clazz) {
+    return clazz.getModule().getUnit().getConfig().getJointCompilationOptions() != null;
   }
 }

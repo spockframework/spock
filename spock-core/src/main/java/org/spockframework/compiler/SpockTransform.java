@@ -56,7 +56,7 @@ public class SpockTransform implements ASTTransformation {
   }
 
   private boolean isSpec(ClassNode clazz) {
-    return clazz.isDerivedFrom(nodeCache.Specification) && !AstUtil.isJavaStub(clazz);
+    return clazz.isDerivedFrom(nodeCache.Specification);
   }
 
   private void processSpec(ClassNode clazz, ErrorReporter errorReporter, SourceLookup sourceLookup) {

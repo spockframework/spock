@@ -31,13 +31,6 @@ public class Util {
     } catch (IOException ignored) {}
   }
 
-  public static int countOccurrences(String text, char symbol) {
-    int result = 0;
-    for (char ch : text.toCharArray())
-      if (ch == symbol) result++;
-    return result;
-  }
-
   public static Object getDefaultValue(Class<?> type) {
     if (!type.isPrimitive()) return null;
 

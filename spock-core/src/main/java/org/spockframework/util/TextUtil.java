@@ -84,4 +84,11 @@ public abstract class TextUtil {
     }
     return builder.toString();
   }
+
+  public static int countOccurrences(String text, char symbol) {
+    int result = 0;
+    for (char ch : text.toCharArray())
+      if (ch == symbol) result++;
+    return result;
+  }
 }

@@ -16,12 +16,12 @@ package org.spockframework.util
 
 import spock.lang.*
 
-class UtilSpec extends Specification {
+class CollectionUtilSpec extends Specification {
   def "copyArray"() {
     def array = [1, 2, 3] as Object[]
 
     expect:
-    Util.copyArray(array, from, to) == result
+    CollectionUtil.copyArray(array, from, to) == result
 
     where:
     from   << [0, 1, 0, 3]

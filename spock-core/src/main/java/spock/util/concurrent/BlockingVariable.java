@@ -37,7 +37,7 @@ public class BlockingVariable<T> {
 
   public T get() throws InterruptedException {
     if (!valueReady.await(timeout, unit))
-      throw new SpockTimeoutError("BlockingVariable.getValue() timed out after %d %s")
+      throw new SpockTimeoutError("BlockingVariable.get() timed out after %d %s")
           .withArgs(timeout, unit.toString().toLowerCase());
     return value;
   }

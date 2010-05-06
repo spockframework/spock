@@ -24,7 +24,6 @@ grails.project.dependency.resolution = {
 
   repositories {
     grailsHome()
-    grailsCentral()
     
     mavenLocal() // prefer local, so we pick up spock snapshot as part of whole build
     mavenRepo "http://m2repo.spockframework.org/snapshots"

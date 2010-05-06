@@ -28,8 +28,7 @@ import org.spockframework.runtime.SpockExecutionException;
 import org.spockframework.runtime.extension.*;
 import org.spockframework.runtime.model.FieldInfo;
 import org.spockframework.runtime.model.SpecInfo;
-import org.spockframework.util.InternalSpockError;
-import org.spockframework.util.Util;
+import org.spockframework.util.*;
 
 import spock.lang.Shared;
 import spock.lang.Specification;
@@ -121,7 +120,7 @@ public class TapestryInterceptor extends AbstractMethodInterceptor {
     List<Method> methods = new ArrayList<Method>();
 
     for (SpecInfo curr : spec.getSpecsTopToBottom()) {
-      Method method = Util.getDeclaredMethodByName(curr.getReflection(), "beforeRegistryCreated");
+      Method method = ReflectionUtil.getDeclaredMethodByName(curr.getReflection(), "beforeRegistryCreated");
       if (method != null) {
         method.setAccessible(true);
         methods.add(method);

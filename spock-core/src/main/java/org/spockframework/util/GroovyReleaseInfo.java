@@ -37,11 +37,11 @@ class GroovyReleaseInfo {
   }
 
   private static boolean invokerHelperGetVersionExists() {
-    return Util.isMethodAvailable("org.codehaus.groovy.runtime.InvokerHelper", "getVersion");
+    return ReflectionUtil.isMethodAvailable("org.codehaus.groovy.runtime.InvokerHelper", "getVersion");
   }
 
   private static boolean releaseInfoGetVersionExists() {
-    return Util.isMethodAvailable("org.codehaus.groovy.util.ReleaseInfo", "getVersion");
+    return ReflectionUtil.isMethodAvailable("org.codehaus.groovy.util.ReleaseInfo", "getVersion");
   }
 
   private static class InvokerHelperAccessor {

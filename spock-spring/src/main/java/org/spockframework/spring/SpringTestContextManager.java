@@ -18,16 +18,16 @@ import java.lang.reflect.Method;
 
 import org.springframework.test.context.TestContextManager;
 
-import org.spockframework.util.Util;
+import org.spockframework.util.ReflectionUtil;
 
 /**
  * Wrapper around Spring's TestContextManager class that works with Spring 2.5 and Spring 3.
  */
 public class SpringTestContextManager {
   private static final Method beforeTestClassMethod =
-      Util.getMethodBySignature(TestContextManager.class, "beforeTestClass");
+      ReflectionUtil.getMethodBySignature(TestContextManager.class, "beforeTestClass");
   private static final Method afterTestClassMethod =
-      Util.getMethodBySignature(TestContextManager.class, "afterTestClass");
+      ReflectionUtil.getMethodBySignature(TestContextManager.class, "afterTestClass");
 
   private final TestContextManager delegate;
 
@@ -37,12 +37,12 @@ public class SpringTestContextManager {
 
   public void beforeTestClass() throws Exception {
     if (beforeTestClassMethod != null)
-      Util.invokeMethodThatThrowsException(delegate, beforeTestClassMethod);
+      ReflectionUtil.invokeMethodThatThrowsException(delegate, beforeTestClassMethod);
   }
 
   public void afterTestClass() throws Exception {
     if (afterTestClassMethod != null)
-      Util.invokeMethodThatThrowsException(delegate, afterTestClassMethod);
+      ReflectionUtil.invokeMethodThatThrowsException(delegate, afterTestClassMethod);
   }
 
   public void prepareTestInstance(Object testInstance) throws Exception {

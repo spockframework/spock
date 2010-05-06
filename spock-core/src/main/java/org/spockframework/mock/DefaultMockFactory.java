@@ -27,8 +27,7 @@ import net.sf.cglib.proxy.*;
 
 import groovy.lang.*;
 
-import org.spockframework.util.InternalSpockError;
-import org.spockframework.util.Util;
+import org.spockframework.util.*;
 
 /**
  *
@@ -45,8 +44,8 @@ public class DefaultMockFactory implements IMockFactory {
 
   public static final DefaultMockFactory INSTANCE = new DefaultMockFactory();
   
-  private static final boolean cglibAvailable = Util.isClassAvailable("net.sf.cglib.proxy.Enhancer");
-  private static final boolean objenesisAvailable = Util.isClassAvailable("org.objenesis.Objenesis");
+  private static final boolean cglibAvailable = ReflectionUtil.isClassAvailable("net.sf.cglib.proxy.Enhancer");
+  private static final boolean objenesisAvailable = ReflectionUtil.isClassAvailable("org.objenesis.Objenesis");
 
   public Object create(String mockName, Class<?> mockType, IInvocationMatcher dispatcher) {
     if (Modifier.isFinal(mockType.getModifiers()))

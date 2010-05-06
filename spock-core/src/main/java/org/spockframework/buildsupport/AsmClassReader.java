@@ -34,11 +34,11 @@ class AsmClassReader {
   private final ClassReader reader;
 
   static {
-    Method m = Util.getMethodBySignature(ClassReader.class, "accept", ClassVisitor.class, boolean.class); // ASM 2.2.3
+    Method m = ReflectionUtil.getMethodBySignature(ClassReader.class, "accept", ClassVisitor.class, boolean.class); // ASM 2.2.3
     Object arg = true;
 
     if (m == null) {
-      m = Util.getMethodBySignature(ClassReader.class, "accept", ClassVisitor.class, int.class); // ASM 3.0 and higher
+      m = ReflectionUtil.getMethodBySignature(ClassReader.class, "accept", ClassVisitor.class, int.class); // ASM 3.0 and higher
       arg = 1 | 2 | 4; // ClassReader.SKIP_CODE | ClassReader.SKIP_DEBUG | ClassReader.SKIP_FRAMES
     }
 

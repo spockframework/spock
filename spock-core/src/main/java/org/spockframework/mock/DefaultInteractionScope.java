@@ -1,12 +1,10 @@
 /*
- * Copyright 2009 the original author or authors.
+ * Copyright 2010 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
  *     http://www.apache.org/licenses/LICENSE-2.0
- *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,19 +14,18 @@
 
 package org.spockframework.mock;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-/**
- * A scope for interactions defined outside a then-block
- *
- * @author Peter Niederwieser
- */
-public class InteractionScope implements IInteractionScope {
-  protected final List<IMockInteraction> interactions = new ArrayList<IMockInteraction>();
+import org.spockframework.util.UnreachableCodeError;
 
+public class DefaultInteractionScope implements IInteractionScope {
+  private final List<DefaultInteraction> interactions = Arrays.asList(
+      new DefaultEqualsInteraction(), new DefaultHashCodeInteraction(),
+      new DefaultToStringInteraction(), new DefaultAnyInteraction());
+  
   public void addInteraction(IMockInteraction interaction) {
-    interactions.add(interaction);
+    throw new UnreachableCodeError("DefaultInteractionScope.addInteraction");
   }
 
   public IMockInteraction match(IMockInvocation invocation) {
@@ -40,12 +37,6 @@ public class InteractionScope implements IInteractionScope {
   }
 
   public void verifyInteractions() {
-    List<IMockInteraction> unsatisfieds = new ArrayList<IMockInteraction>();
-
-    for (IMockInteraction i : interactions)
-      if (!i.isSatisfied()) unsatisfieds.add(i);
-
-    if (!unsatisfieds.isEmpty())
-      throw new TooFewInvocationsError(unsatisfieds);
+    throw new UnreachableCodeError("DefaultInteractionScope.verifyInteractions");
   }
 }

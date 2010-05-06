@@ -27,6 +27,7 @@ import net.sf.cglib.proxy.*;
 
 import groovy.lang.*;
 
+import org.spockframework.util.InternalSpockError;
 import org.spockframework.util.Util;
 
 /**
@@ -56,8 +57,9 @@ public class DefaultMockFactory implements IMockFactory {
 
     if (cglibAvailable)
       return CglibMockFactory.create(mockName, mockType, dispatcher);
-    throw new CannotCreateMockException(mockType, "by default, only mocking of interfaces is supported; " +
-      "to allow mocking of classes, put cglib-nodep-2.2 or higher on the classpath.");
+    throw new CannotCreateMockException(mockType,
+"by default, only mocking of interfaces is supported; to allow mocking of classes, put cglib-nodep-2.2 or higher on the classpath."
+    );
   }
 
   private Object createDynamicProxyMock(final String mockName, Class<?> mockType, final IInvocationMatcher dispatcher) {
@@ -67,7 +69,7 @@ public class DefaultMockFactory implements IMockFactory {
       new InvocationHandler() {
         public Object invoke(Object mock, Method method, Object[] args) {
           IMockInvocation invocation = new MockInvocation(mock, mockName, method, normalizeArgs(args));
-          return dispatchAndComputeResult(dispatcher, invocation);
+          return dispatchInvocation(dispatcher, invocation);
         }
       }
     );
@@ -77,14 +79,12 @@ public class DefaultMockFactory implements IMockFactory {
     return args == null ? Collections.emptyList() : Arrays.asList(args);
   }
 
-  private static Object dispatchAndComputeResult(IInvocationMatcher dispatcher, IMockInvocation invocation) {
+  private static Object dispatchInvocation(IInvocationMatcher dispatcher, IMockInvocation invocation) {
     IMockInteraction interaction = dispatcher.match(invocation);
-    if (interaction == null)
-      return Util.getDefaultValue(invocation.getMethod().getReturnType());
-    Object result = interaction.accept(invocation);
-    if (result == IResultGenerator.NO_VALUE)
-      return Util.getDefaultValue(invocation.getMethod().getReturnType());
-    return result;
+    if (interaction == null) throw new InternalSpockError(
+"invocation %s wasn't matched by any interaction (not even catch-all invocation)"
+    ).withArgs(invocation);
+    return interaction.accept(invocation);
   }
 
   private static class CglibMockFactory {
@@ -98,7 +98,7 @@ public class DefaultMockFactory implements IMockFactory {
           if (isGroovyObject && method.getName().equals("getMetaClass"))
             return GroovySystem.getMetaClassRegistry().getMetaClass(mock.getClass());
           IMockInvocation invocation = new MockInvocation(mock, mockName, method, normalizeArgs(args));
-          return dispatchAndComputeResult(dispatcher, invocation);
+          return dispatchInvocation(dispatcher, invocation);
         }
       };
 
@@ -113,8 +113,9 @@ public class DefaultMockFactory implements IMockFactory {
         enhancer.setCallback(interceptor);
         return enhancer.create(); // throws what if no parameterless superclass constructor available?
       } catch (Exception e) {
-        throw new CannotCreateMockException(mockType, "the latter has no parameterless constructor; " +
-          "to allow mocking of classes w/o parameterless constructor, put objenesis-1.2 or higher on the classpath.");
+        throw new CannotCreateMockException(mockType,
+"the latter has no parameterless constructor; to allow mocking of classes w/o parameterless constructor, put objenesis-1.2 or higher on the classpath."
+        );
       }
     }
 

@@ -11,33 +11,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.spockframework.mock;
 
-import java.lang.reflect.Method;
-
-import org.spockframework.util.InternalSpockError;
-
 public class DefaultToStringInteraction extends DefaultInteraction {
-  private static final Method toStringMethod;
-
-  static {
-    try {
-      toStringMethod = Object.class.getMethod("toString");
-    } catch (NoSuchMethodException e) {
-      throw new InternalSpockError(e);
-    }
-  }
-
   public String getText() {
     return "default Object.toString() interaction";
   }
 
   public boolean matches(IMockInvocation invocation) {
-    return toStringMethod.equals(invocation.getMethod());
+    return invocation.getMethod().getName().equals("toString")
+        && invocation.getMethod().getParameterTypes().length == 0;
   }
 
   public Object accept(IMockInvocation invocation) {
     acceptedCount++;
-    return "Mock with id " + System.identityHashCode(invocation.getMockObject()); // TODO: improve 
+    // TODO: improve once IMockInvocation reveals mocked type
+    return invocation.getMockObjectName() == null ?
+        "Unnamed mock" :
+        "Mock named '" + invocation.getMockObjectName() + "'";
   }
 }

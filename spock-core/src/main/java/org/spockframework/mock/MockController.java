@@ -28,6 +28,7 @@ public class MockController implements IInvocationMatcher {
 
   public MockController(IMockFactory factory) {
     this.factory = factory;
+    scopes.addFirst(new DefaultInteractionScope());
     scopes.addFirst(new InteractionScope());
   }
 

@@ -15,25 +15,17 @@ package org.spockframework.mock;
 
 import java.lang.reflect.Method;
 
-import org.spockframework.util.InternalSpockError;
-
 public class DefaultEqualsInteraction extends DefaultInteraction {
-  private static final Method equalsMethod;
-
-  static {
-    try {
-      equalsMethod = Object.class.getMethod("equals", Object.class);
-    } catch (NoSuchMethodException e) {
-      throw new InternalSpockError(e);
-    }
-  }
-
   public String getText() {
     return "default Object.equals() interaction";
   }
 
   public boolean matches(IMockInvocation invocation) {
-    return equalsMethod.equals(invocation.getMethod());
+    Method method = invocation.getMethod();
+
+    return method.getName().equals("equals")
+        && method.getParameterTypes().length == 1
+        && method.getParameterTypes()[0] == Object.class;
   }
 
   public Object accept(IMockInvocation invocation) {

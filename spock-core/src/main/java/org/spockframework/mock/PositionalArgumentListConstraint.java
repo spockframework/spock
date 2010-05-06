@@ -61,8 +61,6 @@ public class PositionalArgumentListConstraint implements IInvocationConstraint {
   /**
    * Tells if the given method can be called with vararg syntax from Groovy(!).
    * If yes, we also support vararg syntax in the interaction definition.
-   * @param method
-   * @return
    */
   private boolean canBeCalledWithVarArgSyntax(Method method) {
     Class<?>[] paramTypes = method.getParameterTypes();

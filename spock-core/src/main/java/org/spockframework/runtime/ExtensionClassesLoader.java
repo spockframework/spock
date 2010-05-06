@@ -20,7 +20,7 @@ import java.util.*;
 
 import org.spockframework.runtime.extension.ExtensionException;
 import org.spockframework.runtime.extension.IGlobalExtension;
-import org.spockframework.util.Util;
+import org.spockframework.util.IoUtil;
 
 /**
  * Scans class path for extension descriptors and loads the extension classes specified therein.
@@ -65,7 +65,7 @@ public class ExtensionClassesLoader {
     } catch (IOException e) {
       throw new ExtensionException("Failed to read extension descriptor '%s'", e).format(url);
     } finally {
-      Util.closeQuietly(reader);
+      IoUtil.closeQuietly(reader);
     }
   }
 

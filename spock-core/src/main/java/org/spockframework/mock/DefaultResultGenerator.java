@@ -16,7 +16,7 @@
 
 package org.spockframework.mock;
 
-import org.spockframework.util.Util;
+import org.spockframework.util.ReflectionUtil;
 
 /**
  * Returns the default value for the invoked method's return type.
@@ -29,6 +29,6 @@ public class DefaultResultGenerator implements IResultGenerator {
   private DefaultResultGenerator() {}
 
   public Object generate(IMockInvocation invocation) {
-    return Util.getDefaultValue(invocation.getMethod().getReturnType());
+    return ReflectionUtil.getDefaultValue(invocation.getMethod().getReturnType());
   }
 }

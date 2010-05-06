@@ -14,7 +14,7 @@
 
 package org.spockframework.mock;
 
-import org.spockframework.util.Util;
+import org.spockframework.util.ReflectionUtil;
 
 public class DefaultAnyInteraction extends DefaultInteraction {
   public String getText() {
@@ -27,6 +27,6 @@ public class DefaultAnyInteraction extends DefaultInteraction {
 
   public Object accept(IMockInvocation invocation) {
     acceptedCount++;
-    return Util.getDefaultValue(invocation.getMethod().getReturnType());
+    return ReflectionUtil.getDefaultValue(invocation.getMethod().getReturnType());
   }
 }

@@ -21,7 +21,7 @@ import java.lang.reflect.*;
 public abstract class ReflectionUtil {
   public static boolean isClassAvailable(String className) {
     try {
-      Util.class.getClassLoader().loadClass(className);
+      ReflectionUtil.class.getClassLoader().loadClass(className);
       return true;
     } catch (ClassNotFoundException e) {
       return false;
@@ -30,7 +30,7 @@ public abstract class ReflectionUtil {
 
   public static boolean isMethodAvailable(String className, String methodName) {
     try {
-      Class clazz = Util.class.getClassLoader().loadClass(className);
+      Class clazz = ReflectionUtil.class.getClassLoader().loadClass(className);
       return getMethodByName(clazz, methodName) != null;
     } catch (ClassNotFoundException e) {
       return false;
@@ -105,5 +105,21 @@ public abstract class ReflectionUtil {
         throw (Exception) cause;
       else throw new UnreachableCodeError(cause);
     }
+  }
+
+  public static Object getDefaultValue(Class<?> type) {
+    if (!type.isPrimitive()) return null;
+
+    if (type == boolean.class) return false;
+    if (type == int.class) return 0;
+    if (type == long.class) return 0l;
+    if (type == float.class) return 0f;
+    if (type == double.class) return 0d;
+    if (type == char.class) return (char)0;
+    if (type == short.class) return (short)0;
+    if (type == byte.class) return (byte)0;
+
+    assert type == void.class;
+    return null;
   }
 }

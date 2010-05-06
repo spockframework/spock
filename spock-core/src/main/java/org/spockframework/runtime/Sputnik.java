@@ -23,6 +23,7 @@ import org.junit.runner.notification.RunNotifier;
 
 import org.spockframework.runtime.model.FeatureInfo;
 import org.spockframework.runtime.model.SpecInfo;
+import org.spockframework.util.VersionChecker;
 
 /**
  * A JUnit runner for Spock specifications. There is no need to put
@@ -43,6 +44,8 @@ public class Sputnik extends Runner implements Filterable, Sortable {
   private boolean descriptionAggregated = false;
 
   public Sputnik(Class<?> clazz) {
+    VersionChecker.checkSpockAndGroovyVersionsAreCompatible("spec runner");
+
     runContext = RunContext.get();
     builder = runContext.createSpecInfoBuilder(clazz);
     spec = builder.build();

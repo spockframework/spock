@@ -28,7 +28,7 @@ import java.util.*;
  */
 public class Util {
   /**
-   * Null-aware equals() implementation.
+   * Null-safe equals() implementation.
    */
   public static boolean equals(Object obj1, Object obj2) {
     if (obj1 == null) return obj2 == null;
@@ -36,10 +36,17 @@ public class Util {
   }
 
   /**
-   * Null-aware toString() implementation.
+   * Null-safe toString() implementation.
    */
   public static String toString(Object obj) {
     return obj == null ? "null" : obj.toString();
+  }
+
+  public static <T extends Comparable<T>> int compare(T c1, T c2) {
+    if (c1 == null && c2 == null) return 0;
+    if (c1 == null) return -1;
+    if (c2 == null) return 1;
+    return c1.compareTo(c2);
   }
 
   public static void closeQuietly(Closeable closeable) {
@@ -70,6 +77,15 @@ public class Util {
     }
   }
 
+  public static boolean isMethodAvailable(String className, String methodName) {
+    try {
+      Class clazz = Util.class.getClassLoader().loadClass(className);
+      return getMethodByName(clazz, methodName) != null;
+    } catch (ClassNotFoundException e) {
+      return false;
+    }
+  }
+
   public static boolean isAnnotationPresent(AnnotatedElement element, String className) {
     for (Annotation ann : element.getAnnotations())
       if (ann.annotationType().getName().equals(className))
@@ -86,18 +102,18 @@ public class Util {
   }
 
   public static Object getDefaultValue(Class<?> type) {
-    if (type.isPrimitive()) {
-      if (type == boolean.class) return false;
-      if (type == int.class) return 0;
-      if (type == long.class) return 0l;
-      if (type == float.class) return 0f;
-      if (type == double.class) return 0d;
-      if (type == char.class) return (char)0;
-      if (type == short.class) return (short)0;
-      if (type == byte.class) return (byte)0;
-      return null; // type == void.class
-    }
+    if (!type.isPrimitive()) return null;
 
+    if (type == boolean.class) return false;
+    if (type == int.class) return 0;
+    if (type == long.class) return 0l;
+    if (type == float.class) return 0f;
+    if (type == double.class) return 0d;
+    if (type == char.class) return (char)0;
+    if (type == short.class) return (short)0;
+    if (type == byte.class) return (byte)0;
+
+    assert type == void.class;
     return null;
   }
 

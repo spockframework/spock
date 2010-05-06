@@ -24,6 +24,7 @@ import org.codehaus.groovy.transform.ASTTransformation;
 import org.codehaus.groovy.transform.GroovyASTTransformation;
 
 import org.spockframework.compiler.model.Spec;
+import org.spockframework.util.VersionChecker;
 
 /**
  * AST transformation for rewriting Spock specifications. Runs after phase
@@ -37,37 +38,48 @@ import org.spockframework.compiler.model.Spec;
  */
 @GroovyASTTransformation(phase = CompilePhase.SEMANTIC_ANALYSIS)
 public class SpockTransform implements ASTTransformation {
-  private static final AstNodeCache nodeCache = new AstNodeCache();
+  public SpockTransform() {
+    VersionChecker.checkSpockAndGroovyVersionsAreCompatible("compiler plugin");
+  }
 
   public void visit(ASTNode[] nodes, SourceUnit sourceUnit) {
-    ErrorReporter errorReporter = new ErrorReporter(sourceUnit);
-    SourceLookup sourceLookup = new SourceLookup(sourceUnit, new Janitor());
+    new ActualTransform().visit(nodes, sourceUnit);
+  }
 
-    try {
-      ModuleNode module = (ModuleNode)nodes[0];
-      @SuppressWarnings("unchecked")
-      List<ClassNode> classes =  module.getClasses();
+  // use of nested class defers linking until after groovy version check
+  private static class ActualTransform {
+    final static AstNodeCache nodeCache = new AstNodeCache();
 
-      for (ClassNode clazz : classes)
-        if (isSpec(clazz)) processSpec(clazz, errorReporter, sourceLookup);     
-    } finally {
-      sourceLookup.close();
+    void visit(ASTNode[] nodes, SourceUnit sourceUnit) {
+      ErrorReporter errorReporter = new ErrorReporter(sourceUnit);
+      SourceLookup sourceLookup = new SourceLookup(sourceUnit, new Janitor());
+
+      try {
+        ModuleNode module = (ModuleNode) nodes[0];
+        @SuppressWarnings("unchecked")
+        List<ClassNode> classes = module.getClasses();
+
+        for (ClassNode clazz : classes)
+          if (isSpec(clazz)) processSpec(clazz, errorReporter, sourceLookup);
+      } finally {
+        sourceLookup.close();
+      }
     }
-  }
 
-  private boolean isSpec(ClassNode clazz) {
-    return clazz.isDerivedFrom(nodeCache.Specification);
-  }
+    boolean isSpec(ClassNode clazz) {
+      return clazz.isDerivedFrom(nodeCache.Specification);
+    }
 
-  private void processSpec(ClassNode clazz, ErrorReporter errorReporter, SourceLookup sourceLookup) {
-    try {
-      Spec spec = new SpecParser(errorReporter).build(clazz);
-      spec.accept(new SpecRewriter(nodeCache, sourceLookup, errorReporter));
-      spec.accept(new SpecAnnotator(nodeCache));
-    } catch (Exception e) {
-      errorReporter.error(
-"Unexpected error during compilation of specification '%s'. Maybe you have used invalid Spock syntax? Anyway, this should not happen. Please file a bug report at http://issues.spockframework.org.",
-          clazz.getName());
+    void processSpec(ClassNode clazz, ErrorReporter errorReporter, SourceLookup sourceLookup) {
+      try {
+        Spec spec = new SpecParser(errorReporter).build(clazz);
+        spec.accept(new SpecRewriter(nodeCache, sourceLookup, errorReporter));
+        spec.accept(new SpecAnnotator(nodeCache));
+      } catch (Exception e) {
+        errorReporter.error(
+            "Unexpected error during compilation of spec '%s'. Maybe you have used invalid Spock syntax? Anyway, please file a bug report at http://issues.spockframework.org.",
+            e, clazz.getName());
+      }
     }
   }
 }

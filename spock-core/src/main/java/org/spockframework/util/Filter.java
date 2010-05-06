@@ -40,6 +40,6 @@ public class Filter<T> {
   }
 
   public static <T> Filter<T> create(IMatcher<T> matcher) {
-    return new Filter(matcher);
+    return new Filter<T>(matcher);
   }
 }

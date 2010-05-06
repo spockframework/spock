@@ -20,10 +20,10 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.ApplicationContext
 import org.springframework.test.context.ContextConfiguration
 
-import spock.util.EmbeddedSpecRunner
+import org.spockframework.util.ReflectionUtil
 
+import spock.util.EmbeddedSpecRunner
 import spock.lang.*
-import org.spockframework.util.Util
 
 @ContextConfiguration(locations = "InjectionExamples-context.xml")
 class InjectionExamples extends Specification {
@@ -39,7 +39,7 @@ class InjectionExamples extends Specification {
   }
 
   def "injecting a field by name (@Resource is JDK 1.6 only)"() {
-    if (!Util.isClassAvailable("javax.annotation.Resource")) return
+    if (!ReflectionUtil.isClassAvailable("javax.annotation.Resource")) return
 
     def runner = new EmbeddedSpecRunner()
     
@@ -75,7 +75,7 @@ class Foo extends Specification {
   }
 
   def "shared fields cannot be injected"() {
-    if (!Util.isClassAvailable(ann)) return
+    if (!ReflectionUtil.isClassAvailable(ann)) return
 
     def runner = new EmbeddedSpecRunner()
 

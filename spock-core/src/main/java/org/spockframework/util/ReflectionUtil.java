@@ -18,7 +18,7 @@ import java.io.File;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
 
-public class ReflectionUtil {
+public abstract class ReflectionUtil {
   public static boolean isClassAvailable(String className) {
     try {
       Util.class.getClassLoader().loadClass(className);

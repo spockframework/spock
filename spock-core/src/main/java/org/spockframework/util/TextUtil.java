@@ -24,7 +24,7 @@ import java.util.List;
  *
  * @author Peter Niederwieser
  */
-public class TextUtil {
+public abstract class TextUtil {
   public static String repeatChar(char ch, int times) {
     char[] chars = new char[times];
     Arrays.fill(chars, ch);

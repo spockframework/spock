@@ -22,7 +22,7 @@ import org.codehaus.groovy.runtime.metaclass.*;
 
 import groovy.lang.*;
 
-public class MopUtil {
+public abstract class MopUtil {
   private static final Field ReflectionMetaMethod_method  = getDeclaredField(ReflectionMetaMethod.class, "method");
   private static final Field CachedField_field = getDeclaredField(CachedField.class, "field");
 

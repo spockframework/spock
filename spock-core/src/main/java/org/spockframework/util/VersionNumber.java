@@ -57,7 +57,7 @@ public final class VersionNumber implements Comparable<VersionNumber> {
 		if (major != other.major) return major - other.major;
 		if (minor != other.minor) return minor - other.minor;
 		if (micro != other.micro) return micro - other.micro;
-    return Util.compare(qualifier, other.qualifier);
+    return NullSafe.compare(qualifier, other.qualifier);
 	}
 
 	public boolean equals(Object other) {

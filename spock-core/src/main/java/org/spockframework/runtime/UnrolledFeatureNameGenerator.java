@@ -22,7 +22,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.spockframework.runtime.model.FeatureInfo;
-import org.spockframework.util.Util;
+import org.spockframework.util.NullSafe;
 
 import spock.lang.Unroll;
 
@@ -70,7 +70,7 @@ public class UnrolledFeatureNameGenerator {
 
     Object arg = args[pos];
     try {
-      return Util.toString(arg);
+      return NullSafe.toString(arg);
     } catch (Throwable t) {
       // since arg is provided by user code, we must be ready for any exception
       // to occur; rethrowing an exception would currently be interpreted as a

@@ -27,28 +27,6 @@ import java.util.*;
  * @author Peter Niederwieser
  */
 public class Util {
-  /**
-   * Null-safe equals() implementation.
-   */
-  public static boolean equals(Object obj1, Object obj2) {
-    if (obj1 == null) return obj2 == null;
-    return obj1.equals(obj2);
-  }
-
-  /**
-   * Null-safe toString() implementation.
-   */
-  public static String toString(Object obj) {
-    return obj == null ? "null" : obj.toString();
-  }
-
-  public static <T extends Comparable<T>> int compare(T c1, T c2) {
-    if (c1 == null && c2 == null) return 0;
-    if (c1 == null) return -1;
-    if (c2 == null) return 1;
-    return c1.compareTo(c2);
-  }
-
   public static void closeQuietly(Closeable closeable) {
     if (closeable == null) return;
     try {

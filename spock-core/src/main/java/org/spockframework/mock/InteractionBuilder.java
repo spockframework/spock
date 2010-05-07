@@ -30,9 +30,6 @@ import spock.lang.Specification;
  * @author Peter Niederwieser
  */
 public class InteractionBuilder {
-  private static final IResultGenerator NO_RESULT_GENERATOR =
-      new ConstantResultGenerator(IResultGenerator.NO_VALUE);
-
   private final int line;
   private final int column;
   private final String text;
@@ -42,7 +39,7 @@ public class InteractionBuilder {
   private List<IInvocationConstraint> invConstraints = new ArrayList<IInvocationConstraint>();
   private List<Object> argNames;
   private List<IArgumentConstraint> argConstraints;
-  private IResultGenerator resultGenerator = NO_RESULT_GENERATOR;
+  private IResultGenerator resultGenerator = DefaultResultGenerator.INSTANCE;
 
   public InteractionBuilder(int line, int column, String text) {
     this.line = line;
@@ -131,12 +128,6 @@ public class InteractionBuilder {
   public InteractionBuilder negateLastArg() {
     IArgumentConstraint last = argConstraints.get(argConstraints.size() - 1);
     argConstraints.set(argConstraints.size() - 1, new NegatingArgumentConstraint(last));
-    return this;
-  }
-
-  public static final String SET_DUMMY_RESULT = "setDummyResult";
-  public InteractionBuilder setDummyResult() {
-    resultGenerator = DummyResultGenerator.INSTANCE;
     return this;
   }
 

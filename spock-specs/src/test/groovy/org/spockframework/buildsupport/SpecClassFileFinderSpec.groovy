@@ -15,7 +15,7 @@
 
 package org.spockframework.buildsupport
 
-import org.spockframework.util.Util
+import org.spockframework.util.ReflectionUtil
 
 import spock.lang.*
 
@@ -24,17 +24,17 @@ class SpecClassFileFinderSpec extends Specification {
 
   def "class file of regular class isn't considered a runnable spec"() {
     expect:
-    !finder.isRunnableSpec(Util.getClassFile(RegularClass))
+    !finder.isRunnableSpec(ReflectionUtil.getClassFile(RegularClass))
   }
 
   def "class file of abstract spec isn't considered a runnable spec"() {
     expect:
-    !finder.isRunnableSpec(Util.getClassFile(AbstractSpec))
+    !finder.isRunnableSpec(ReflectionUtil.getClassFile(AbstractSpec))
   }
 
   def "class file of concrete spec is considered a runnable spec"() {
     expect:
-    finder.isRunnableSpec(Util.getClassFile(ConcreteSpec))
+    finder.isRunnableSpec(ReflectionUtil.getClassFile(ConcreteSpec))
   }
 }
 

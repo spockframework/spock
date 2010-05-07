@@ -24,7 +24,7 @@ import java.util.List;
  *
  * @author Peter Niederwieser
  */
-public class TextUtil {
+public abstract class TextUtil {
   public static String repeatChar(char ch, int times) {
     char[] chars = new char[times];
     Arrays.fill(chars, ch);
@@ -83,5 +83,12 @@ public class TextUtil {
         builder.append(separator);
     }
     return builder.toString();
+  }
+
+  public static int countOccurrences(String text, char symbol) {
+    int result = 0;
+    for (char ch : text.toCharArray())
+      if (ch == symbol) result++;
+    return result;
   }
 }

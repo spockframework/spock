@@ -23,8 +23,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.spockframework.runtime.AbstractRunListener;
 import org.spockframework.runtime.extension.IGlobalExtension;
 import org.spockframework.runtime.model.*;
-import org.spockframework.util.NotThreadSafe;
-import org.spockframework.util.Util;
+import org.spockframework.util.*;
 
 import spock.lang.Shared;
 
@@ -59,7 +58,7 @@ public class SpringExtension implements IGlobalExtension {
       if (field.getReflection().isAnnotationPresent(Shared.class)
           && (field.getReflection().isAnnotationPresent(Autowired.class)
           // avoid compile-time dependency on JDK 1.6 only class
-          || Util.isAnnotationPresent(field.getReflection(), "javax.annotation.Resource")))
+          || ReflectionUtil.isAnnotationPresent(field.getReflection(), "javax.annotation.Resource")))
         throw new SpringExtensionException(
             "@Shared field '%s' cannot be injected; use an instance field instead").format(field.getName());
     }

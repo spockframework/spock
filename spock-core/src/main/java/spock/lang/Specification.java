@@ -235,8 +235,6 @@ public abstract class Specification {
       return null; // unreachable; just exists to avoid compiler warning
     }
 
-    if (name == null) name = type.getSimpleName();
-
     return type.cast(controller.create(name, type));
   }
 

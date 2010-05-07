@@ -235,7 +235,7 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> {
     // therefore we have to provide one N/A value for every part of the class name
     String text = resourceProvider.getSourceText(expr);
     // NOTE: remove guessing (text == null) once underlying Groovy problem has been fixed
-    recordCount += text == null ? 1 : Util.countOccurrences(text, '.') + 1;
+    recordCount += text == null ? 1 : TextUtil.countOccurrences(text, '.') + 1;
   }
 
   public void visitUnaryMinusExpression(UnaryMinusExpression expr) {

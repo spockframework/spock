@@ -10,23 +10,27 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */  
+ */
 
-package org.spockframework.util
+package org.spockframework.util;
 
-import spock.lang.*
+/**
+ * Null-safe implementation of common methods.
+ */
+public abstract class NullSafe {
+  public static boolean equals(Object obj1, Object obj2) {
+    if (obj1 == null) return obj2 == null;
+    return obj1.equals(obj2);
+  }
 
-class UtilSpec extends Specification {
-  def "copyArray"() {
-    def array = [1, 2, 3] as Object[]
+  public static String toString(Object obj) {
+    return obj == null ? "null" : obj.toString();
+  }
 
-    expect:
-    Util.copyArray(array, from, to) == result
-
-    where:
-    from   << [0, 1, 0, 3]
-    to     << [3, 2, 0, 3]
-    res    << [[1, 2, 3], [2], [], []]
-    result = res as Object[]
+  public static <T extends Comparable<T>> int compare(T c1, T c2) {
+    if (c1 == null && c2 == null) return 0;
+    if (c1 == null) return -1;
+    if (c2 == null) return 1;
+    return c1.compareTo(c2);
   }
 }

@@ -20,7 +20,7 @@ import java.util.List;
 import org.codehaus.groovy.runtime.InvokerHelper;
 
 import org.spockframework.gentyref.GenericTypeReflector;
-import org.spockframework.util.Util;
+import org.spockframework.util.CollectionUtil;
 
 import groovy.lang.Closure;
 
@@ -79,7 +79,7 @@ public class PojoGestalt implements IGestalt {
     Closure closure = null;
     if (args != null && args.length > 0 && args[args.length - 1] instanceof Closure) {
       closure = (Closure)args[args.length - 1];
-      args = Util.copyArray(args, 0, args.length - 1);
+      args = CollectionUtil.copyArray(args, 0, args.length - 1);
     }
 
     Class<?> newClazz = GenericTypeReflector.erase(newType); // TODO: check that this succeeds (Type could be a TypeVariable etc.)

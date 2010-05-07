@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 the original author or authors.
+ * Copyright 2010 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -11,28 +11,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.spockframework.mock;
 
-public abstract class DefaultInteraction implements IMockInteraction {
-  protected int acceptedCount = 0;
+package org.spockframework.junit;
 
-  public int getLine() {
-    return -1;
+import org.junit.*;
+
+@Ignore
+public class Derived extends Base {
+  @Before
+  public void before() {
+    System.out.println("derived");
   }
 
-  public int getColumn() {
-    return -1;
-  }
-
-  public boolean isSatisfied() {
-    return true;
-  }
-
-  public boolean isExhausted() {
-    return false;
-  }
-
-  public int getAcceptedCount() {
-    return acceptedCount;
-  }
+  @Ignore
+  @Test
+  public void two() {}
 }

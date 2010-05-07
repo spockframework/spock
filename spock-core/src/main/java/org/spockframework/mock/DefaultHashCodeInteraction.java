@@ -18,22 +18,13 @@ import java.lang.reflect.Method;
 import org.spockframework.util.InternalSpockError;
 
 public class DefaultHashCodeInteraction extends DefaultInteraction {
-  private static final Method hashCodeMethod;
-
-  static {
-    try {
-      hashCodeMethod = Object.class.getMethod("hashCode");
-    } catch (NoSuchMethodException e) {
-      throw new InternalSpockError(e);
-    }
-  }
-
   public String getText() {
     return "default Object.hashCode() interaction";
   }
 
   public boolean matches(IMockInvocation invocation) {
-    return hashCodeMethod.equals(invocation.getMethod());
+    return invocation.getMethod().getName().equals("hashCode")
+        && invocation.getMethod().getParameterTypes().length == 0;
   }
 
   public Object accept(IMockInvocation invocation) {

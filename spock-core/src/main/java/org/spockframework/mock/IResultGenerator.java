@@ -22,11 +22,5 @@ package org.spockframework.mock;
  * @author Peter Niederwieser
  */
 public interface IResultGenerator {
-  /*
-   * Special value indicating that an IReturnValueGenerator has no return
-   * value for a particular invocation.
-   */
-  Object NO_VALUE = new Object();
-
   Object generate(IMockInvocation invocation);
 }

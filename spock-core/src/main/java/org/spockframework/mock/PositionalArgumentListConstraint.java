@@ -21,8 +21,7 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
 
-import org.spockframework.util.Assert;
-import org.spockframework.util.Util;
+import org.spockframework.util.*;
 
 /**
  *
@@ -46,23 +45,21 @@ public class PositionalArgumentListConstraint implements IInvocationConstraint {
 
     if (!areConstraintsSatisfied(argConstraints.subList(0, args.size() - 1), args)) return false;
 
-    if (sizeDiff == 0 && Util.getLastElement(argConstraints).isSatisfiedBy(Util.getLastElement(args))) return true;
+    if (sizeDiff == 0 && CollectionUtil.getLastElement(argConstraints).isSatisfiedBy(CollectionUtil.getLastElement(args))) return true;
 
     if (!canBeCalledWithVarArgSyntax(invocation.getMethod())) return false;
 
-    int varArgSize = Array.getLength(Util.getLastElement(args));
+    int varArgSize = Array.getLength(CollectionUtil.getLastElement(args));
 
     if (argConstraints.size() != args.size() - 1 + varArgSize) return false;
 
     return areConstraintsSatisfied(argConstraints.subList(args.size() - 1, argConstraints.size()),
-        Arrays.asList((Object[]) Util.getLastElement(args)));
+        Arrays.asList((Object[]) CollectionUtil.getLastElement(args)));
   }
 
   /**
    * Tells if the given method can be called with vararg syntax from Groovy(!).
    * If yes, we also support vararg syntax in the interaction definition.
-   * @param method
-   * @return
    */
   private boolean canBeCalledWithVarArgSyntax(Method method) {
     Class<?>[] paramTypes = method.getParameterTypes();

@@ -15,8 +15,9 @@
 
 package org.spockframework.groovy
 
+import org.spockframework.util.ReflectionUtil
+
 import spock.lang.*
-import org.spockframework.util.Util
 
 class VarArgsSpec extends Specification {
   def "Groovy supports vararg invocation style for vararg parameters"() {
@@ -34,9 +35,9 @@ class VarArgsSpec extends Specification {
 
   def "vararg reflection"() {
     expect:
-    Util.getMethodByName(JavaVarArgs, "varArgMethod").isVarArgs()
-    !Util.getMethodByName(JavaVarArgs, "arrayMethod").isVarArgs()
-    Util.getMethodByName(GroovyVarArgs, "varArgMethod").isVarArgs()
-    Util.getMethodByName(GroovyVarArgs, "arrayMethod").isVarArgs()
+    ReflectionUtil.getMethodByName(JavaVarArgs, "varArgMethod").isVarArgs()
+    !ReflectionUtil.getMethodByName(JavaVarArgs, "arrayMethod").isVarArgs()
+    ReflectionUtil.getMethodByName(GroovyVarArgs, "varArgMethod").isVarArgs()
+    ReflectionUtil.getMethodByName(GroovyVarArgs, "arrayMethod").isVarArgs()
   }
 }

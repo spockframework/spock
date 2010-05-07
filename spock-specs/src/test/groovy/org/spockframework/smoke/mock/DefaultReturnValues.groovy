@@ -87,14 +87,14 @@ private interface IMockable {
 }
 
 private class Mockable {
-  boolean getBoolean() {}
-  byte getByte() {}
-  short getShort() {}
-  int getInt() {}
-  long getLong() {}
-  float getFloat() {}
-  double getDouble() {}
-  Object getObject() {}
+  boolean getBoolean() { true }
+  byte getByte() { 42 as byte }
+  short getShort() { 42 as short }
+  int getInt() { 42 as int }
+  long getLong() { 42 as long }
+  float getFloat() { 42 as float }
+  double getDouble() { 42 as double }
+  Object getObject() { new Object() }
   void getVoid() {}
-  def getDynamic() {}
+  def getDynamic() { 42 }
 }

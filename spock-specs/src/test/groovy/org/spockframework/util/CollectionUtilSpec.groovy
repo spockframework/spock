@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 the original author or authors.
+ * Copyright 2010 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -10,29 +10,23 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
-package org.spockframework.mock;
+ */  
 
-public abstract class DefaultInteraction implements IMockInteraction {
-  protected int acceptedCount = 0;
+package org.spockframework.util
 
-  public int getLine() {
-    return -1;
-  }
+import spock.lang.*
 
-  public int getColumn() {
-    return -1;
-  }
+class CollectionUtilSpec extends Specification {
+  def "copyArray"() {
+    def array = [1, 2, 3] as Object[]
 
-  public boolean isSatisfied() {
-    return true;
-  }
+    expect:
+    CollectionUtil.copyArray(array, from, to) == result
 
-  public boolean isExhausted() {
-    return false;
-  }
-
-  public int getAcceptedCount() {
-    return acceptedCount;
+    where:
+    from   << [0, 1, 0, 3]
+    to     << [3, 2, 0, 3]
+    res    << [[1, 2, 3], [2], [], []]
+    result = res as Object[]
   }
 }

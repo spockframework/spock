@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
     <groupId>org.spockframework</groupId>
     <artifactId>spock-parent</artifactId>
@@ -16,7 +17,7 @@
     <plugins>
       <plugin>
         <groupId>org.codehaus.gmaven</groupId>
-        <artifactId>gmaven-plugin</artifactId>     
+        <artifactId>gmaven-plugin</artifactId>
       </plugin>
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
@@ -52,7 +53,7 @@
       <artifactId>junit</artifactId>
       <scope>test</scope>
     </dependency>
-	  <dependency>
+    <dependency>
       <groupId>cglib</groupId>
       <artifactId>cglib-nodep</artifactId>
       <scope>test</scope>
@@ -63,14 +64,32 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-       <groupId>com.h2database</groupId>
-       <artifactId>h2</artifactId>
-       <scope>test</scope>
+      <groupId>com.h2database</groupId>
+      <artifactId>h2</artifactId>
+      <scope>test</scope>
     </dependency>
     <dependency>
-       <groupId>asm</groupId>
-       <artifactId>asm</artifactId>
-       <scope>test</scope>
+      <groupId>asm</groupId>
+      <artifactId>asm</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jmock</groupId>
+      <artifactId>jmock-junit4</artifactId>
+      <version>2.5.1</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.easymock</groupId>
+      <artifactId>easymock</artifactId>
+      <version>2.5.2</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-all</artifactId>
+      <version>1.8.4</version>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 </project>

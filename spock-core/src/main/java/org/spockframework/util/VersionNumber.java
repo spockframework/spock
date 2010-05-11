@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
  */
 @Immutable
 public final class VersionNumber implements Comparable<VersionNumber> {
-	private static final Pattern versionPattern = Pattern.compile("(\\d+)(?:\\.(\\d+))?(?:\\.(\\d+))?(?:-(.+))?");
+	private static final Pattern versionPattern = Pattern.compile("(\\d+)(?:\\.(\\d+))?+(?:\\.(\\d+))?+(?:[-\\.](.+))?");
 	private static final String versionTemplate = "%d.%d.%d%s";
 
 	private final int major;

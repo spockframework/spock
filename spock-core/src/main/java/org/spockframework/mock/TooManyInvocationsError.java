@@ -30,36 +30,30 @@ import org.spockframework.util.TextUtil;
  */
 public class TooManyInvocationsError extends InteractionNotSatisfiedError {
   private final IMockInteraction interaction;
-  private final IMockInvocation invocation;
+  private final IMockInvocation lastInvocation;
 
-  public TooManyInvocationsError(IMockInteraction interaction, IMockInvocation invocation) {
+  public TooManyInvocationsError(IMockInteraction interaction, IMockInvocation lastInvocation) {
     this.interaction = interaction;
-    this.invocation = invocation;
+    this.lastInvocation = lastInvocation;
   }
 
   public IMockInteraction getInteraction() {
     return interaction;
   }
 
-  public IMockInvocation getInvocation() {
-    return invocation;
+  public IMockInvocation getLastInvocation() {
+    return lastInvocation;
   }
 
   @Override
   public String toString() {
     StringBuilder builder = new StringBuilder();
     builder.append("Too many invocations for:\n\n");
-    int numInvoked = interaction.getAcceptedCount() + 1;
-    builder.append(String.format("%s   (%d %s)\n\n",
-        interaction, numInvoked, numInvoked == 1 ? "invocation" : "invocations"));
-    builder.append(String.format("Last invocation: %s.%s(%s)\n", invocation.getMockObjectName(),
-        invocation.getMethod().getName(), TextUtil.concat(toString(invocation.getArguments()), ", ")));
+    builder.append(interaction);
+    builder.append("\n\n");
+    builder.append("Last invocation: ");
+    builder.append(lastInvocation);
+    builder.append("\n");
     return builder.toString();
-  }
-
-  private List<String> toString(List<Object> objects) {
-    List<String> result = new ArrayList<String>();
-    for (Object obj : objects) result.add(DefaultGroovyMethods.inspect(obj));
-    return result;
   }
 }

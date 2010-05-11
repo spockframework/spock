@@ -15,45 +15,16 @@
 package org.spockframework.util;
 
 import org.codehaus.groovy.runtime.InvokerHelper;
-import org.codehaus.groovy.util.ReleaseInfo;
 
 import groovy.lang.GroovyObject;
 
-class GroovyReleaseInfo {
-  private static VersionNumber version = VersionNumber.parse(determineVersion());
-
+public class GroovyReleaseInfo {
   public static VersionNumber getVersion() {
-    return version;
+    return VersionNumber.parse(InvokerHelper.getVersion());
   }
 
   public static String getArtifactPath() {
     return GroovyObject.class.getProtectionDomain().getCodeSource().getLocation().toString();
-  }
-
-  private static String determineVersion() {
-    if (invokerHelperGetVersionExists()) return InvokerHelperAccessor.getVersion();
-    if (releaseInfoGetVersionExists()) return ReleaseInfoAccessor.getVersion();
-    return "0";
-  }
-
-  private static boolean invokerHelperGetVersionExists() {
-    return ReflectionUtil.isMethodAvailable("org.codehaus.groovy.runtime.InvokerHelper", "getVersion");
-  }
-
-  private static boolean releaseInfoGetVersionExists() {
-    return ReflectionUtil.isMethodAvailable("org.codehaus.groovy.util.ReleaseInfo", "getVersion");
-  }
-
-  private static class InvokerHelperAccessor {
-    static String getVersion() {
-      return InvokerHelper.getVersion();
-    }
-  }
-
-  private static class ReleaseInfoAccessor {
-    static String getVersion() {
-      return ReleaseInfo.getVersion();
-    }
   }
 }
 

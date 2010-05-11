@@ -22,6 +22,8 @@ import java.util.regex.Pattern;
  */
 @Immutable
 public final class VersionNumber implements Comparable<VersionNumber> {
+  public static final VersionNumber UNKNOWN = new VersionNumber(0, 0, 0, null);
+
 	private static final Pattern versionPattern = Pattern.compile("(\\d+)(?:\\.(\\d+))?+(?:\\.(\\d+))?+(?:[-\\.](.+))?");
 	private static final String versionTemplate = "%d.%d.%d%s";
 
@@ -69,8 +71,9 @@ public final class VersionNumber implements Comparable<VersionNumber> {
 	}
 
 	public static VersionNumber parse(String versionString) {
+    if (versionString == null) return UNKNOWN;
 		Matcher m = versionPattern.matcher(versionString);
-		if (!m.matches()) return new VersionNumber(0, 0, 0, null);
+		if (!m.matches()) return UNKNOWN;
 
 		int major = Integer.valueOf(m.group(1));
 		String minorString = m.group(2);

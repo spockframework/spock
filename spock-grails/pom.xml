@@ -44,22 +44,16 @@
       <artifactId>grails-gorm</artifactId>
       <version>${grails.version}</version>
       <exclusions>
-        <exclusion>
+        <exclusion> <!-- grails-gorm POM requires version 3.4.0.ga of this dependency which doesn't exist -->
           <groupId>org.hibernate</groupId>
-          <artifactId>hibernate-commons-annotations</artifactId>
+          <artifactId>hibernate-commons-annotations</artifactId> 
         </exclusion>
       </exclusions>
     </dependency>
     <dependency>
       <groupId>org.hibernate</groupId>
-      <artifactId>hibernate-annotations</artifactId>
-      <version>3.4.0.GA</version>
-      <exclusions>
-        <exclusion> <!-- see GROOVY-3356; xml-apis and JDK 1.6 ship with different versions of the same classes -->
-          <groupId>xml-apis</groupId>
-          <artifactId>xml-apis</artifactId>
-        </exclusion>
-      </exclusions>
+      <artifactId>hibernate-commons-annotations</artifactId>
+      <version>3.1.0.GA</version>
     </dependency>
     <dependency>
       <groupId>org.grails</groupId>

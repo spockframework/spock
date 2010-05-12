@@ -34,10 +34,17 @@ class ExceptionConditions extends EmbeddedSpecification {
     then: true; thrown(IndexOutOfBoundsException)
   }
 
-  def "may occur in subsequent block"() {
+  def "may occur in and'ed block"() {
     when: "".charAt(0)
     then: true
     and : thrown(IndexOutOfBoundsException)
+  }
+
+  def "may occur in chained block"() {
+    when: "".charAt(0)
+    then: true
+    then: thrown(IndexOutOfBoundsException)
+
   }
 
   def "when-block with var defs"() {
@@ -113,12 +120,25 @@ thrown(Exception)
     e.line == 6
   }
 
-  def "may only occur once in a group of then-blocks"() {
+  def "may only occur once in and'ed then-blocks"() {
     when:
     compiler.compileFeatureBody """
 when: throw new IOException()
 then: thrown(IOException)
 and : thrown(Exception)
+    """
+
+    then:
+    InvalidSpecCompileException e = thrown()
+    e.line == 3
+  }
+
+    def "may only occur once in chained then-blocks"() {
+    when:
+    compiler.compileFeatureBody """
+when: throw new IOException()
+then: thrown(IOException)
+then: thrown(Exception)
     """
 
     then:

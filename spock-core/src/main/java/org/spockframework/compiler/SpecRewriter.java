@@ -54,6 +54,8 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
 
   private boolean methodHasCondition;
   private boolean movedStatsBackToMethod;
+  private boolean thenBlockHasExceptionCondition; // reset once per chain of then-blocks
+
   private int fieldInitializerCount = 0;
   private int sharedFieldInitializerCount = 0;
   private int oldValueCount = 0;
@@ -416,8 +418,8 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
 
   public void visitThenBlock(ThenBlock block) {
     ListIterator<Statement> iter = block.getAst().listIterator();
-    boolean blockHasExceptionCondition = false;
     List<Statement> interactions = new ArrayList<Statement>();
+    if (block.isFirstInChain()) thenBlockHasExceptionCondition = false;
 
     while(iter.hasNext()) {
       Statement stat = iter.next();
@@ -428,9 +430,11 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
       if (stat instanceof AssertStatement)
         iter.set(newStat);
       else if (isExceptionCondition(newStat)) {
-        rewriteExceptionCondition(newStat, blockHasExceptionCondition);
-        rewriteWhenBlockForExceptionCondition(block.getPrevious());
-        blockHasExceptionCondition = true;
+        rewriteExceptionCondition(newStat);
+        if (!thenBlockHasExceptionCondition) {
+          rewriteWhenBlockForExceptionCondition(block.getPrevious(WhenBlock.class));
+          thenBlockHasExceptionCondition = true;
+        }
       } else if (statHasInteraction(newStat, deep)) {
         interactions.add(newStat);
         iter.remove();
@@ -440,7 +444,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
       }
     }
     
-    insertInteractions(interactions, block.getPrevious());
+    insertInteractions(interactions, block);
   }
 
   private boolean isImplicitCondition(Statement stat) {
@@ -457,9 +461,9 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
     return expr != null && AstUtil.isBuiltinMemberDeclOrCall(expr, Identifiers.THROWN, 0, 1);
   }
 
-  private void rewriteExceptionCondition(Statement stat, boolean hasExceptionCondition) {
-    if (hasExceptionCondition) {
-      errorReporter.error(stat, "a 'then' block may only contain one exception condition");
+  private void rewriteExceptionCondition(Statement stat) {
+    if (thenBlockHasExceptionCondition) {
+      errorReporter.error(stat, "a 'then' block may only have one exception condition");
       return;
     }
 
@@ -479,17 +483,20 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
     return expr != null && AstUtil.isBuiltinMemberCall(expr, Identifiers.INTERACTION, 0, 1);
   }
 
-  private void insertInteractions(List<Statement> interactions, WhenBlock whenBlock) {
+  private void insertInteractions(List<Statement> interactions, ThenBlock block) {
     if (interactions.isEmpty()) return;
 
-    List<Statement> prevStats = whenBlock.getPrevious().getAst();
-    prevStats.add(createMockControllerCall(MockController.ENTER_SCOPE));
-    prevStats.addAll(interactions);
+    List<Statement> statsBeforeWhenBlock = block.getPrevious(WhenBlock.class).getPrevious().getAst();
 
-    // insert at beginning of then-block rather than end of when-block
-    // s.t. it's outside of try-block inserted for exception conditions
-    List<Statement> thenStats = whenBlock.getNext().getAst();
-    thenStats.add(0, createMockControllerCall(MockController.LEAVE_SCOPE));
+    statsBeforeWhenBlock.add(createMockControllerCall(
+        block.isFirstInChain() ? MockController.ENTER_SCOPE : MockController.ADD_BARRIER));
+
+    statsBeforeWhenBlock.addAll(interactions);
+
+    if (block.isFirstInChain())
+      // insert at beginning of then-block rather than end of when-block
+      // s.t. it's outside of try-block inserted for exception conditions
+      block.getAst().add(0, createMockControllerCall(MockController.LEAVE_SCOPE));
   }
 
   private Statement createMockControllerCall(String methodName) {

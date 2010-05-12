@@ -37,7 +37,7 @@ public enum BlockParseInfo {
       return method.addBlock(new AnonymousBlock(method));
     }
     public EnumSet<BlockParseInfo> getSuccessors(Method method) {
-      return ANONYMOUS_SUCC;
+      return EnumSet.of(SETUP, GIVEN, EXPECT, WHEN, CLEANUP, WHERE, METHOD_END);
     }
   },
 
@@ -46,7 +46,7 @@ public enum BlockParseInfo {
       return method.addBlock(new SetupBlock(method));
     }
     public EnumSet<BlockParseInfo> getSuccessors(Method method) {
-      return SETUP_SUCC;
+      return EnumSet.of(AND, EXPECT, WHEN, CLEANUP, WHERE, METHOD_END);
     }
   },
 
@@ -64,7 +64,7 @@ public enum BlockParseInfo {
       return method.addBlock(new ExpectBlock(method));
     }
     public EnumSet<BlockParseInfo> getSuccessors(Method method) {
-      return EXPECT_SUCC;
+      return EnumSet.of(AND, WHEN, CLEANUP, WHERE, METHOD_END);
     }
   },
 
@@ -73,7 +73,7 @@ public enum BlockParseInfo {
       return method.addBlock(new WhenBlock(method));
     }
     public EnumSet<BlockParseInfo> getSuccessors(Method method) {
-      return WHEN_SUCC;
+      return EnumSet.of(AND, THEN);
     }
   },
 
@@ -82,7 +82,7 @@ public enum BlockParseInfo {
       return method.addBlock(new ThenBlock(method));
     }
     public EnumSet<BlockParseInfo> getSuccessors(Method method) {
-      return THEN_SUCC;
+      return EnumSet.of(AND, EXPECT, WHEN, THEN, CLEANUP, WHERE, METHOD_END);
     }
   },
 
@@ -91,7 +91,7 @@ public enum BlockParseInfo {
       return method.addBlock(new CleanupBlock(method));
     }
     public EnumSet<BlockParseInfo> getSuccessors(Method method) {
-      return CLEANUP_SUCC;
+      return EnumSet.of(AND, WHERE, METHOD_END);
     }
   },
 
@@ -100,7 +100,7 @@ public enum BlockParseInfo {
       return method.addBlock(new WhereBlock(method));
     }
     public EnumSet<BlockParseInfo> getSuccessors(Method method) {
-      return WHERE_SUCC;
+      return EnumSet.of(AND, METHOD_END);
     }
   },
 
@@ -123,27 +123,4 @@ public enum BlockParseInfo {
   public abstract Block addNewBlock(Method method);
 
   public abstract EnumSet<BlockParseInfo> getSuccessors(Method method);
-
-  // because forward references to enum values are not allowed, we
-  // have to add an indirection step
-  private static final EnumSet<BlockParseInfo> ANONYMOUS_SUCC =
-    EnumSet.of(SETUP, GIVEN, EXPECT, WHEN, CLEANUP, WHERE, METHOD_END);
-
-  private static final EnumSet<BlockParseInfo> SETUP_SUCC =
-    EnumSet.of(AND, EXPECT, WHEN, CLEANUP, WHERE, METHOD_END);
-
-  private static final EnumSet<BlockParseInfo> EXPECT_SUCC =
-    EnumSet.of(AND, WHEN, CLEANUP, WHERE, METHOD_END);
-
-  private static final EnumSet<BlockParseInfo> WHEN_SUCC =
-    EnumSet.of(AND, THEN);
-
-  private static final EnumSet<BlockParseInfo> THEN_SUCC =
-    EnumSet.of(AND, EXPECT, WHEN, CLEANUP, WHERE, METHOD_END);
-
-  private static final EnumSet<BlockParseInfo> CLEANUP_SUCC =
-    EnumSet.of(AND, WHERE, METHOD_END);
-
-  private static final EnumSet<BlockParseInfo> WHERE_SUCC =
-    EnumSet.of(AND, METHOD_END);
 }

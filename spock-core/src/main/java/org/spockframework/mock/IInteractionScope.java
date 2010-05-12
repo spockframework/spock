@@ -17,13 +17,15 @@
 package org.spockframework.mock;
 
 /**
- * A scope for defining interactions. All interactions in a scope are verified
- * at the same time.
+ * An interaction scope holds a group of interactions that will be verified,
+ * and thereafter removed, at the same time.
  *
  * @author Peter Niederwieser
  */
 public interface IInteractionScope {
   void addInteraction(IMockInteraction interaction);
+
+  void addOrderingBarrier();
 
   IMockInteraction match(IMockInvocation invocation);
 

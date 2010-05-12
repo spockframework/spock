@@ -251,7 +251,7 @@ public class InteractionRewriter {
         new ExpressionStatement(
             new MethodCallExpression(
                 resourceProvider.getMockControllerRef(),
-                MockController.ADD,
+                MockController.ADD_INTERACTION,
                 new ArgumentListExpression(builderExpr)));
 
     result.setSourcePosition(stat);

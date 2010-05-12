@@ -52,10 +52,11 @@ public class MockInteraction implements IMockInteraction {
   }
 
   public Object accept(IMockInvocation invocation) {
-    if (isExhausted())
+    acceptedCount++;
+
+    if (acceptedCount > maxCount)
       throw new TooManyInvocationsError(this, invocation);
 
-    acceptedCount++;
     return resultGenerator.generate(invocation);
   }
 
@@ -64,7 +65,7 @@ public class MockInteraction implements IMockInteraction {
   }
 
   public boolean isExhausted() {
-    return acceptedCount == maxCount;
+    return acceptedCount >= maxCount;
   }
 
   public int getLine() {
@@ -84,7 +85,7 @@ public class MockInteraction implements IMockInteraction {
   }
 
   public String toString() {
-    return text;
+    return String.format("%s   (%d %s)", text, acceptedCount, acceptedCount == 1 ? "invocation" : "invocations");
   }
 }
 

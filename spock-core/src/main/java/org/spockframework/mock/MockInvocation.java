@@ -17,7 +17,12 @@
 package org.spockframework.mock;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.List;
+
+import org.codehaus.groovy.runtime.DefaultGroovyMethods;
+
+import org.spockframework.util.TextUtil;
 
 /**
  *
@@ -55,6 +60,12 @@ public class MockInvocation implements IMockInvocation {
 
   @Override
   public String toString() {
-    return String.format("%s.%s(...)", mockObjectName, method.getName());
+     return String.format("%s.%s(%s)", mockObjectName, method.getName(), TextUtil.join(render(arguments), ", "));
+  }
+
+  private List<String> render(List<Object> objects) {
+    List<String> result = new ArrayList<String>();
+    for (Object obj : objects) result.add(DefaultGroovyMethods.inspect(obj));
+    return result;
   }
 }

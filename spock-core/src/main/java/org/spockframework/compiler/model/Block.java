@@ -77,5 +77,9 @@ public abstract class Block extends Node<Method, List<Statement>> {
     return next == null;
   }
 
+  public boolean isFirstInChain() {
+    return isFirst() || getClass() != prev.getClass();
+  }
+
   public abstract BlockParseInfo getParseInfo();
 }

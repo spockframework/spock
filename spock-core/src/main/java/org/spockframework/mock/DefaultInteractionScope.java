@@ -25,7 +25,11 @@ public class DefaultInteractionScope implements IInteractionScope {
       new DefaultToStringInteraction(), new DefaultAnyInteraction());
   
   public void addInteraction(IMockInteraction interaction) {
-    throw new UnreachableCodeError("DefaultInteractionScope.addInteraction");
+    throw new UnreachableCodeError("addInteraction");
+  }
+
+  public void addOrderingBarrier() {
+    throw new UnreachableCodeError("addOrderingBarrier()");
   }
 
   public IMockInteraction match(IMockInvocation invocation) {
@@ -37,6 +41,6 @@ public class DefaultInteractionScope implements IInteractionScope {
   }
 
   public void verifyInteractions() {
-    throw new UnreachableCodeError("DefaultInteractionScope.verifyInteractions");
+    throw new UnreachableCodeError("verifyInteractions");
   }
 }

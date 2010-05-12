@@ -75,7 +75,7 @@ public abstract class TextUtil {
     return line.length() - line.trim().length() - getIndent(line);
   }
 
-  public static String concat(List<?> objects, String separator) {
+  public static String join(List<?> objects, String separator) {
     StringBuilder builder = new StringBuilder();
     for (int i = 0; i < objects.size(); i++) {
       builder.append(objects.get(i));

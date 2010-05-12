@@ -25,10 +25,27 @@ import java.util.List;
  * @author Peter Niederwieser
  */
 public class InteractionScope implements IInteractionScope {
-  protected final List<IMockInteraction> interactions = new ArrayList<IMockInteraction>();
+  private final List<IMockInteraction> interactions = new ArrayList<IMockInteraction>();
+  private int currentRegistrationZone = 0;
+  private int currentExecutionZone = 0;
 
   public void addInteraction(IMockInteraction interaction) {
-    interactions.add(interaction);
+    interactions.add(new MockInteractionDecorator(interaction) {
+      int registrationZone = currentRegistrationZone;
+
+      @Override
+      public Object accept(IMockInvocation invocation) {
+        Object result = super.accept(invocation);
+        if (currentExecutionZone > registrationZone)
+          throw new WrongInvocationOrderException(decorated, invocation);
+        currentExecutionZone = registrationZone;
+        return result;
+      }
+    });
+  }
+
+  public void addOrderingBarrier() {
+    currentRegistrationZone++;
   }
 
   public IMockInteraction match(IMockInvocation invocation) {

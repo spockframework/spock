@@ -32,11 +32,6 @@ public class ThenBlock extends Block {
     visitor.visitThenBlock(this);
   }
 
-  @Override
-  public WhenBlock getPrevious() {
-    return (WhenBlock)super.getPrevious();
-  }
-
   public BlockParseInfo getParseInfo() {
     return BlockParseInfo.THEN;
   }

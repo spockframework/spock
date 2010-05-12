@@ -103,7 +103,7 @@ public abstract class ReflectionUtil {
         throw (Error) cause;
       else if (cause instanceof Exception)
         throw (Exception) cause;
-      else throw new UnreachableCodeError(cause);
+      else throw new IllegalArgumentException("method '" + method + "' threw unexpected type of exception", cause);
     }
   }
 

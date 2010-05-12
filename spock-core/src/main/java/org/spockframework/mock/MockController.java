@@ -32,12 +32,6 @@ public class MockController implements IInvocationMatcher {
     scopes.addFirst(new InteractionScope());
   }
 
-  public static final String ADD = "add";
-
-  public void add(IMockInteraction interaction) {
-    scopes.getFirst().addInteraction(interaction);
-  }
-
   public IMockInteraction match(IMockInvocation invocation) {
     for (IInteractionScope scope : scopes) {
       IMockInteraction match = scope.match(invocation);
@@ -45,6 +39,18 @@ public class MockController implements IInvocationMatcher {
     }
 
     return null;
+  }
+
+  public static final String ADD_INTERACTION = "addInteraction";
+
+  public void addInteraction(IMockInteraction interaction) {
+    scopes.getFirst().addInteraction(interaction);
+  }
+
+  public static final String ADD_BARRIER = "addBarrier";
+
+  public void addBarrier() {
+    scopes.getFirst().addOrderingBarrier();  
   }
 
   public static final String ENTER_SCOPE = "enterScope";

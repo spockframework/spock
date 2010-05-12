@@ -19,7 +19,6 @@ package org.spockframework.smoke
 import spock.lang.Specification
 
 /**
- *
  * @author Peter Niederwieser
  */
 class WhenThenBlocks extends Specification {
@@ -42,7 +41,25 @@ class WhenThenBlocks extends Specification {
     when: x = 1
     and: y = 2
     then: x == 1
+    and: "y is 2"
+      y == 2
+  }
+
+  def "chained blocks"() {
+    def x, y
+    when: x = 1
+    and: y = 2
+    then: x == 1
+    then: "y is 2" 
+      y == 2
+  }
+
+  def "combination of and-ed and chained block"() {
+    def x, y, z
+    when: x = 1; y = 2; z = 3
+    then: x == 1
     and: y == 2
+    then: z == 3
   }
   
   def "multiple when-thens"() {

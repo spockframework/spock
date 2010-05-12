@@ -30,12 +30,23 @@ class VersionNumberSpec extends Specification {
     VersionNumber.parse("1-rc1-SNAPSHOT") == new VersionNumber(1, 0, 0, "rc1-SNAPSHOT")
     VersionNumber.parse("1.2-rc1-SNAPSHOT") == new VersionNumber(1, 2, 0, "rc1-SNAPSHOT")
     VersionNumber.parse("1.2.3-rc1-SNAPSHOT") == new VersionNumber(1, 2, 3, "rc1-SNAPSHOT")
+
+    VersionNumber.parse("1.rc1-SNAPSHOT") == new VersionNumber(1, 0, 0, "rc1-SNAPSHOT")
+    VersionNumber.parse("1.2.rc1-SNAPSHOT") == new VersionNumber(1, 2, 0, "rc1-SNAPSHOT")
+    VersionNumber.parse("1.2.3.rc1-SNAPSHOT") == new VersionNumber(1, 2, 3, "rc1-SNAPSHOT")
+
+    VersionNumber.parse("11.22.33.44") == new VersionNumber(11, 22, 33, "44")
+    VersionNumber.parse("11.44") == new VersionNumber(11, 44, 0, null)
+    VersionNumber.parse("11.fortyfour") == new VersionNumber(11, 0, 0, "fortyfour")
   }
 
-  def "unparseable version number amounts to 0.0.0"() {
+  def "unparseable version number is represented as UNKNOWN (0.0.0)"() {
     expect:
-    VersionNumber.parse("foo") == new VersionNumber(0, 0, 0, null)
-    VersionNumber.parse("1.2.3-") == new VersionNumber(0, 0, 0, null)
+    VersionNumber.parse(null) == VersionNumber.UNKNOWN
+    VersionNumber.parse("") == VersionNumber.UNKNOWN
+    VersionNumber.parse("foo") == VersionNumber.UNKNOWN
+    VersionNumber.parse("1.") == VersionNumber.UNKNOWN
+    VersionNumber.parse("1.2.3-") == VersionNumber.UNKNOWN
   }
 
   def "accessors"() {

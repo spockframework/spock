@@ -27,6 +27,9 @@ import org.codehaus.groovy.syntax.Types;
 import org.spockframework.mock.InteractionBuilder;
 import org.spockframework.mock.MockController;
 import org.spockframework.util.Assert;
+import org.spockframework.util.Nullable;
+
+import spock.lang.Specification;
 
 /**
  * Creates the AST representation of an InteractionBuilder build sequence.
@@ -40,6 +43,7 @@ public class InteractionRewriter {
   private ExpressionStatement stat;
   private Expression count;
   private Expression call;
+  private boolean wildcardCall;
   private Expression result;
   private boolean iterableResult;
 
@@ -47,68 +51,103 @@ public class InteractionRewriter {
   // "new InteractionBuilder(..).setCount(..).setTarget(..).setMethod(..).addArg(..).setResult(..).build()"
   private Expression builderExpr;
 
-  private InteractionRewriter(IRewriteResourceProvider resourceProvider) {
+  public InteractionRewriter(IRewriteResourceProvider resourceProvider) {
     this.resourceProvider = resourceProvider;
   }
 
-  public static Statement rewrite(ExpressionStatement stat, IRewriteResourceProvider resourceProvider) {
-    return new InteractionRewriter(resourceProvider).rewrite(stat);
-  }
-
-  private Statement rewrite(ExpressionStatement stat) {
-    assert AstUtil.isInteraction(stat);
-
+  /**
+   * If the given statement is a valid interaction definition, returns the rewritten statement.
+   * If the given statement is not an interaction definition, returns null.
+   * If the given statement is an invalid interaction definition, records a compile error
+   * and returns null.
+   */
+  public @Nullable Statement rewrite(ExpressionStatement stat) {
     try {
-      parse(stat);
+      if (!parse(stat)) return null;
+
+      createBuilder();
+      setCount();
+      setCall();
+      setResult();
+      build();
+      return register();
     } catch (InvalidSpecCompileException e) {
       resourceProvider.getErrorReporter().error(e);
-      return stat;
+      return null;
     }
-    createBuilder();
-    setCount();
-    setTarget();
-    setMethod();
-    addArgs();
-    setResult();
-    build();
-    return register();
   }
 
-  private void parse(ExpressionStatement stat) throws InvalidSpecCompileException {
+  private boolean parse(ExpressionStatement stat) throws InvalidSpecCompileException {
     this.stat = stat;
-    Expression expr = stat.getExpression();
 
-    // handle result generators (>> and >>>)
-    if (expr instanceof BinaryExpression) {
-      BinaryExpression binExpr = (BinaryExpression)expr;
-      int type = binExpr.getOperation().getType();
-      if (type == Types.RIGHT_SHIFT || type == Types.RIGHT_SHIFT_UNSIGNED) {
-        expr = binExpr.getLeftExpression();
-        result = binExpr.getRightExpression();
-        iterableResult = type == Types.RIGHT_SHIFT_UNSIGNED;
-      }
+    BinaryExpression binExpr = AstUtil.getExpression(stat, BinaryExpression.class);
+    if (binExpr == null) return false;
+
+    int type = binExpr.getOperation().getType();
+    if (type == Types.RIGHT_SHIFT || type == Types.RIGHT_SHIFT_UNSIGNED) {
+      result = binExpr.getRightExpression();
+      iterableResult = type == Types.RIGHT_SHIFT_UNSIGNED;
+      return parseCount(binExpr.getLeftExpression());
     }
 
-    if (expr instanceof BinaryExpression) { // explicit invocation count
-      BinaryExpression binExpr = (BinaryExpression)expr;
-      boolean leftIsInvocation = isPotentialMockInvocation(binExpr.getLeftExpression());
-      boolean rightIsInvocation = isPotentialMockInvocation(binExpr.getRightExpression());
-      if (leftIsInvocation && rightIsInvocation)
-        throw new InvalidSpecCompileException(binExpr,
-"Ambiguous interaction definition: cannot tell count from call. Help me by introducing a variable for count.");
-      if (leftIsInvocation) {
-        expr = binExpr.getLeftExpression();
-        count = binExpr.getRightExpression();
-      } else if (rightIsInvocation) {
-        expr = binExpr.getRightExpression();
-        count = binExpr.getLeftExpression();
-      } else throw new InvalidSpecCompileException(binExpr,
-"* indicates an interaction definition, but neither the left nor the right side looks like a method call to me");
+    return type == Types.MULTIPLY && parseCount(binExpr);
+  }
+
+  private boolean parseCount(Expression expr) throws InvalidSpecCompileException {
+    BinaryExpression binExpr = AstUtil.asInstance(expr, BinaryExpression.class);
+    if (binExpr == null) {
+      return parseCall(expr);
     }
 
-    assert result != null || count != null;
+    if (binExpr.getOperation().getType() != Types.MULTIPLY) return false;
 
+    count = binExpr.getLeftExpression();
+    return parseCall(binExpr.getRightExpression());
+  }
+
+  private boolean parseCall(Expression expr) throws InvalidSpecCompileException {
     call = expr;
+
+    if (AstUtil.isWildcardRef(expr)) {
+      wildcardCall = true;
+      return true;
+    }
+
+    if (expr instanceof PropertyExpression) {
+      PropertyExpression propExpr = (PropertyExpression)expr;
+      if (!Specification._.toString().equals(propExpr.getPropertyAsString()))
+        propertySyntaxNotAllowed(expr);
+      return true;
+    }
+
+    if (expr instanceof MethodCallExpression) {
+      MethodCallExpression mcExpr = (MethodCallExpression)expr;
+      if (mcExpr.isImplicitThis()) missingTarget(expr);
+      if (mcExpr.getObjectExpression() instanceof ClassExpression)
+        staticMethodsNotSupported(expr);
+      return true;
+    }
+
+    if (expr instanceof StaticMethodCallExpression)
+      // might be more helpful to issue missingTarget than staticMethodsNotSupported here
+      missingTarget(expr);
+
+    return false;
+  }
+
+  private void propertySyntaxNotAllowed(Expression expr) throws InvalidSpecCompileException {
+    throw new InvalidSpecCompileException(expr,
+          "Property syntax is not allowed in interaction definitions. Instead, use getter/setter syntax.");
+  }
+
+  private void staticMethodsNotSupported(Expression expr) throws InvalidSpecCompileException {
+    throw new InvalidSpecCompileException(expr,
+        "Stubbing/mocking of static methods is not supported.");
+  }
+
+  private void missingTarget(Expression expr) throws InvalidSpecCompileException {
+    throw new InvalidSpecCompileException(expr,
+        "Interaction definition is missing the expected target of the interaction");
   }
 
   private void createBuilder() {
@@ -141,23 +180,42 @@ public class InteractionRewriter {
     call(InteractionBuilder.SET_FIXED_COUNT, count);
   }
 
+  private void setCall() throws InvalidSpecCompileException {
+    if (wildcardCall)
+      call(InteractionBuilder.ADD_EQUAL_METHOD_NAME, new ConstantExpression(Specification._.toString()));
+    else if (call instanceof PropertyExpression)
+      setPropertyCall();
+    else
+      setMethodCall();
+  }
+
+  private void setPropertyCall() throws InvalidSpecCompileException {
+    setTarget();
+    PropertyExpression propExpr = (PropertyExpression)call;
+    Assert.that(Specification._.toString().equals(propExpr.getPropertyAsString())); // already checked in parseCall()
+    call(InteractionBuilder.ADD_EQUAL_METHOD_NAME, propExpr.getProperty());
+  }
+
+  private void setMethodCall() {
+    setTarget();
+    setMethodName();
+    addArgs();
+  }
+
   private void setTarget() {
-    // syntax already checked earlier
     call(InteractionBuilder.ADD_EQUAL_TARGET, AstUtil.getInvocationTarget(call));
   }
 
-  private void setMethod() {
-    if (call instanceof PropertyExpression) return; // must be _ (checked earlier)
-
-    Expression methodExpr = ((MethodCallExpression)call).getMethod();
-    call(chooseMethodMatcher(methodExpr), methodExpr);
+  private void setMethodName() {
+    Expression methodNameExpr = ((MethodCallExpression)call).getMethod();
+    call(chooseMethodNameConstraint(methodNameExpr), methodNameExpr);
   }
 
-  private String chooseMethodMatcher(Expression methodExpr) {
-    if (!(methodExpr instanceof ConstantExpression)) // dynamically generated method name
+  private String chooseMethodNameConstraint(Expression methodNameExpr) {
+    if (!(methodNameExpr instanceof ConstantExpression)) // dynamically generated method name
       return InteractionBuilder.ADD_EQUAL_METHOD_NAME;
 
-    String method = (String)((ConstantExpression)methodExpr).getValue();
+    String method = (String)((ConstantExpression)methodNameExpr).getValue();
     // NOTE: we cannot tell from the AST if a method name is defined using
     // slashy string syntax ("/somePattern/"); hence, we consider any name
     // that isn't a valid Java identifier a pattern. While this isn't entirely
@@ -263,19 +321,5 @@ public class InteractionRewriter {
         builderExpr,
         method,
         new ArgumentListExpression(args));
-  }
-
-  private static boolean isPotentialMockInvocation(Expression expr) {
-    if (expr instanceof PropertyExpression) {
-      PropertyExpression propExpr = (PropertyExpression)expr;
-      return !propExpr.isImplicitThis()
-          && !(propExpr.getObjectExpression() instanceof ClassExpression);
-    }
-    if (expr instanceof MethodCallExpression) {
-      MethodCallExpression mcExpr = (MethodCallExpression)expr;
-      return !mcExpr.isImplicitThis()
-          && !(mcExpr.getObjectExpression() instanceof ClassExpression);
-    }
-    return false;
   }
 }

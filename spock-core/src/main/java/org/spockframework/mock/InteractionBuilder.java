@@ -69,19 +69,22 @@ public class InteractionBuilder {
 
   public static final String ADD_EQUAL_TARGET = "addEqualTarget";
   public InteractionBuilder addEqualTarget(Object target) {
-    if (target != Specification._) invConstraints.add(new IdenticalTargetConstraint(target));
+    if (target != Specification._)
+      invConstraints.add(new IdenticalTargetConstraint(target));
     return this;
   }
 
   public static final String ADD_EQUAL_METHOD_NAME = "addEqualMethodName";
   public InteractionBuilder addEqualMethodName(String name) {
-    if (!name.equals(Specification._.toString()))
+    if (name.equals(Specification._.toString()))
+      invConstraints.add(new WildcardMethodNameConstraint());
+    else
       invConstraints.add(new EqualMethodNameConstraint(name));
     return this;
   }
 
-  public static final String ADD_REGEX_METHOD_NAME = "addRegexMethod";
-  public InteractionBuilder addRegexMethod(String regex) {
+  public static final String ADD_REGEX_METHOD_NAME = "addRegexMethodName";
+  public InteractionBuilder addRegexMethodName(String regex) {
     invConstraints.add(new RegexMethodNameConstraint(regex));
     return this;
   }

@@ -84,7 +84,7 @@ class InvocationOrder extends Specification {
   }
 }
 
-class RemainingBehaviorSameAsForOneThenBlock extends Specification {
+class RemainingBehaviorSameAsForSingleThenBlock extends Specification {
   @FailsWith(TooFewInvocationsError)
   def "too few invocations for one of the when-blocks"() {
     def list = Mock(List)

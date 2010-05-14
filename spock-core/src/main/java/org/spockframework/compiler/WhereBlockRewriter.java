@@ -162,7 +162,7 @@ public class WhereBlockRewriter {
     List<Expression> listElems = list.getExpressions();
     for (int i = 0; i < listElems.size(); i++) {
       Expression listElem = listElems.get(i);
-      if (AstUtil.isPlaceholderVariableRef(listElem)) continue;
+      if (AstUtil.isWildcardRef(listElem)) continue;
       VariableExpression dataVar = createDataProcessorVariable(listElem, enclosingStat);
       ExpressionStatement exprStat =
           new ExpressionStatement(
@@ -232,7 +232,7 @@ public class WhereBlockRewriter {
 
   // TODO: source positions of generated exprs
   private void turnIntoSimpleParameterization(List<Expression> column) throws InvalidSpecCompileException {
-    VariableExpression varExpr = AstUtil.asExpression(column.get(0), VariableExpression.class);
+    VariableExpression varExpr = AstUtil.asInstance(column.get(0), VariableExpression.class);
     if (varExpr == null)
       throw new InvalidSpecCompileException(column.get(0),
           "Header of data table may only contain variable names");
@@ -243,7 +243,7 @@ public class WhereBlockRewriter {
   }
 
   private void splitRow(Expression row, List<Expression> parts) {
-    BinaryExpression binExpr = AstUtil.asExpression(row, BinaryExpression.class);
+    BinaryExpression binExpr = AstUtil.asInstance(row, BinaryExpression.class);
     if (binExpr == null || binExpr.getOperation().getType() != Types.BITWISE_OR)
       parts.add(row);
     else {

@@ -21,8 +21,6 @@ import java.util.*;
 import org.codehaus.groovy.ast.*;
 import org.codehaus.groovy.ast.expr.*;
 import org.codehaus.groovy.ast.stmt.*;
-import org.codehaus.groovy.classgen.Verifier;
-import org.codehaus.groovy.syntax.Types;
 import org.objectweb.asm.Opcodes;
 
 import org.spockframework.util.InternalSpockError;
@@ -90,33 +88,22 @@ public abstract class AstUtil {
   }
 
   public static Expression getInvocationTarget(Expression expr) {
+    if (expr instanceof PropertyExpression)
+      return ((PropertyExpression)expr).getObjectExpression();
     if (expr instanceof MethodCallExpression)
       return ((MethodCallExpression)expr).getObjectExpression();
     if (expr instanceof StaticMethodCallExpression)
       return new ClassExpression(((StaticMethodCallExpression)expr).getOwnerType());
-    if (expr instanceof PropertyExpression)
-      return ((PropertyExpression)expr).getObjectExpression();
-    
+
     return null;
   }
 
-  public static boolean isPlaceholderVariableRef(Expression expr) {
-    if (!(expr instanceof PropertyExpression)) return false;
+  public static boolean isWildcardRef(Expression expr) {
+    VariableExpression varExpr = AstUtil.asInstance(expr, VariableExpression.class);
+    if (varExpr == null) return false;
 
-    PropertyExpression propExpr = (PropertyExpression)expr;
-    if (!(propExpr.getObjectExpression() instanceof ClassExpression)) return false;
-
-    ClassExpression classExpr = (ClassExpression)propExpr.getObjectExpression();
-    return Specification.class.getName().equals(classExpr.getType().getName())
-        && Specification._.toString().equals(propExpr.getPropertyAsString());
-  }
-
-  public static boolean isInteraction(Statement stat) {
-    BinaryExpression binExpr = AstUtil.getExpression(stat, BinaryExpression.class);
-    if (binExpr == null) return false;
-    int type = binExpr.getOperation().getType();
-    return type == Types.MULTIPLY || type == Types.RIGHT_SHIFT
-        || type == Types.RIGHT_SHIFT_UNSIGNED;
+    return Specification._.toString().equals(varExpr.getName())
+        && varExpr.getAccessedVariable() instanceof DynamicVariable; // this sorts out local variables named _
   }
 
   public static boolean isJavaIdentifier(String id) {
@@ -132,15 +119,14 @@ public abstract class AstUtil {
   }
 
   public static <T extends Expression> T getExpression(Statement stat, Class<T> type) {
-    if (!(stat instanceof ExpressionStatement)) return null;
-    Expression expr = ((ExpressionStatement)stat).getExpression();
-    if (!type.isInstance(expr)) return null;
-    return type.cast(expr);
+    ExpressionStatement exprStat = asInstance(stat, ExpressionStatement.class);
+    if (exprStat == null) return null;
+    return asInstance(exprStat.getExpression(), type);
   }
 
-  public static @Nullable <T extends Expression> T asExpression(Expression expr, Class<T> type) {
-    if (!type.isInstance(expr)) return null;
-    return type.cast(expr);
+  @SuppressWarnings("unchecked")
+  public static @Nullable <T> T asInstance(Object obj, Class<T> type) {
+    return type.isInstance(obj) ? (T) obj : null;
   }
 
   public static boolean isSynthetic(MethodNode method) {

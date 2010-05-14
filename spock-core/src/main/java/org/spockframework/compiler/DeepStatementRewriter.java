@@ -71,10 +71,12 @@ public class DeepStatementRewriter extends StatementReplacingVisitorSupport {
   @Override
   public void visitExpressionStatement(ExpressionStatement stat) {
     super.visitExpressionStatement(stat);
-    if (!AstUtil.isInteraction(stat)) return;
 
+    Statement rewritten = new InteractionRewriter(resourceProvider).rewrite(stat);
+    if (rewritten == null) return;
+    
     interactionFound = true;
-    replaceVisitedStatementWith(InteractionRewriter.rewrite(stat, resourceProvider));
+    replaceVisitedStatementWith(rewritten);
   }
 
   @Override

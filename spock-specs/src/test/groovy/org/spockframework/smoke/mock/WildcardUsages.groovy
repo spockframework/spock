@@ -81,7 +81,6 @@ class WildcardUsages extends Specification {
   }
 
   def "match any invocation on a mock object"() {
-
     when:
     Mock(XYZ).get(1)
     Mock(XYZ).get(2)
@@ -89,6 +88,29 @@ class WildcardUsages extends Specification {
 
     then:
     3 * _._
+  }
+
+  def "match any invocation on a mock object (short syntax)"() {
+    when:
+    Mock(XYZ).get(1)
+    Mock(XYZ).get(2)
+    Mock(XYZ).get(3)
+
+    then:
+    3 * _
+  }
+
+  def "usage in interaction doesn't interfer with usage in where-block"() {
+    def list = Mock(type)
+
+    when:
+    list.add(1)
+
+    then:
+    1 * _._(_)
+
+    where:
+    [_, type] << [[123, List]]
   }
 }
 

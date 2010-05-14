@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-import spock.lang.Specification
-
-class HelloSpock extends Specification {
-  def "can you figure out what I'm up to?"() {
+class HelloSpock extends spock.lang.Specification {
+  def "length of Spock's and his friends' names"() {
     expect:
     name.size() == length
 
     where:
-    name << ["Kirk", "Spock", "Scotty"]
-    length << [4, 5, 6]
+    name     | length
+    "Spock"  | 5
+    "Kirk"   | 4
+    "Scotty" | 6
   }
-}
+}  

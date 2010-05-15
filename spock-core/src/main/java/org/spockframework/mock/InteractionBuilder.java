@@ -67,10 +67,23 @@ public class InteractionBuilder {
     return this;
   }
 
+  // TODO: this should be called ADD_TARGET because on the syntax level we
+  // only have one way to define a target; decision which constraint to
+  // add should be made solely by this builder
+  // same for other methods in this class
   public static final String ADD_EQUAL_TARGET = "addEqualTarget";
   public InteractionBuilder addEqualTarget(Object target) {
     if (target != Specification._)
       invConstraints.add(new IdenticalTargetConstraint(target));
+    return this;
+  }
+
+  public static final String ADD_EQUAL_PROPERTY_NAME = "addEqualPropertyName";
+  public InteractionBuilder addEqualPropertyName(String name) {
+    if (name.equals(Specification._.toString()))
+      invConstraints.add(WildcardMethodNameConstraint.INSTANCE);
+    else
+      invConstraints.add(new EqualPropertyNameConstraint(name));
     return this;
   }
 

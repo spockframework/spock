@@ -14,6 +14,7 @@
 
 package org.spockframework.util;
 
+import java.beans.Introspector;
 import java.io.File;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
@@ -121,5 +122,36 @@ public abstract class ReflectionUtil {
 
     assert type == void.class;
     return null;
+  }
+
+  /**
+   * Checks if the given method is a getter method according
+   * to Groovy rules. If yes, the corresponding property name
+   * is returned. Otherwise, null is returned.
+   * This method differs from Groovy 1.6.8 in that the latter
+   * doesn't support the "is" prefix for static boolean properties;
+   * however, that seems more like a bug.
+   * See http://jira.codehaus.org/browse/GROOVY-4206
+   */
+  public static @Nullable String getPropertyNameForGetterMethod(Method method) {
+    if (method.getTypeParameters().length != 0) return null;
+    if (method.getReturnType() == void.class) return null; // Void.class is allowed
+
+    String methodName = method.getName();
+
+    if (methodName.startsWith("get"))
+      return getPropertyName(methodName, 3);
+
+    if (methodName.startsWith("is")
+        && method.getReturnType() == boolean.class) // Boolean.class is not allowed
+      return getPropertyName(methodName, 2);
+
+    return null;
+  }
+
+  private static String getPropertyName(String methodName, int prefixLength) {
+    String result = methodName.substring(prefixLength);
+    if (result.length() == 0) return null;
+    return Introspector.decapitalize(result);
   }
 }

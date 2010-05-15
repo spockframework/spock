@@ -100,6 +100,32 @@ class WildcardUsages extends Specification {
     3 * _
   }
 
+  def "wildcard method name doesn't match Object's equals(), hashCode(), and toString() methods"() {
+    def list = Mock(List)
+
+    when:
+    list.equals(new Object())
+    list.hashCode()
+    list.toString()
+
+    then:
+    0 * list._()
+    0 * list._
+    0 * _
+  }
+
+  def "wildcard method name matches overloaded equals(), hashCode(), and toString() methods"() {
+    def overloaded = Mock(Overloaded)
+
+    when:
+    overloaded.equals("me")
+    overloaded.hashCode([])
+    overloaded.toString(true)
+
+    then:
+    3 * overloaded._
+  }
+
   def "usage in interaction doesn't interfer with usage in where-block"() {
     def list = Mock(type)
 
@@ -116,4 +142,10 @@ class WildcardUsages extends Specification {
 
 interface XYZ {
  void get(int i)
-}                                   
+}
+
+interface Overloaded {
+  boolean equals(String str)
+  int hashCode(List list)
+  String toString(boolean verbose)
+}

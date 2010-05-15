@@ -115,39 +115,34 @@ public class InteractionRewriter {
 
     if (expr instanceof PropertyExpression) {
       PropertyExpression propExpr = (PropertyExpression)expr;
-      if (!Specification._.toString().equals(propExpr.getPropertyAsString()))
-        propertySyntaxNotAllowed(expr);
+
+      // isImplicitThis() and isStatic() always seem to return false for
+      // properties, but checking them can't hurt
+      if (propExpr.isImplicitThis()) return false;
+      if (propExpr.isStatic()) staticMembersNotSupported(expr);
+
+      if (propExpr.getObjectExpression() instanceof ClassExpression)
+        staticMembersNotSupported(expr);
       return true;
     }
 
     if (expr instanceof MethodCallExpression) {
       MethodCallExpression mcExpr = (MethodCallExpression)expr;
-      if (mcExpr.isImplicitThis()) missingTarget(expr);
+      if (mcExpr.isImplicitThis()) return false;
       if (mcExpr.getObjectExpression() instanceof ClassExpression)
-        staticMethodsNotSupported(expr);
+        staticMembersNotSupported(expr);
       return true;
     }
 
-    if (expr instanceof StaticMethodCallExpression)
-      // might be more helpful to issue missingTarget than staticMethodsNotSupported here
-      missingTarget(expr);
+    // StaticMethodCallExpression is only used for unqualified calls to static methods
+    if (expr instanceof StaticMethodCallExpression) return false;
 
     return false;
   }
 
-  private void propertySyntaxNotAllowed(Expression expr) throws InvalidSpecCompileException {
+  private void staticMembersNotSupported(Expression expr) throws InvalidSpecCompileException {
     throw new InvalidSpecCompileException(expr,
-          "Property syntax is not allowed in interaction definitions. Instead, use getter/setter syntax.");
-  }
-
-  private void staticMethodsNotSupported(Expression expr) throws InvalidSpecCompileException {
-    throw new InvalidSpecCompileException(expr,
-        "Stubbing/mocking of static methods is not supported.");
-  }
-
-  private void missingTarget(Expression expr) throws InvalidSpecCompileException {
-    throw new InvalidSpecCompileException(expr,
-        "Interaction definition is missing the expected target of the interaction");
+        "Stubbing/mocking of static methods and properties is not supported.");
   }
 
   private void createBuilder() {
@@ -180,7 +175,7 @@ public class InteractionRewriter {
     call(InteractionBuilder.SET_FIXED_COUNT, count);
   }
 
-  private void setCall() throws InvalidSpecCompileException {
+  private void setCall() {
     if (wildcardCall)
       call(InteractionBuilder.ADD_EQUAL_METHOD_NAME, new ConstantExpression(Specification._.toString()));
     else if (call instanceof PropertyExpression)
@@ -189,11 +184,13 @@ public class InteractionRewriter {
       setMethodCall();
   }
 
-  private void setPropertyCall() throws InvalidSpecCompileException {
+  private void setPropertyCall() {
     setTarget();
     PropertyExpression propExpr = (PropertyExpression)call;
-    Assert.that(Specification._.toString().equals(propExpr.getPropertyAsString())); // already checked in parseCall()
-    call(InteractionBuilder.ADD_EQUAL_METHOD_NAME, propExpr.getProperty());
+    call(InteractionBuilder.ADD_EQUAL_PROPERTY_NAME, propExpr.getProperty());
+    // TODO: should we support regex here too? shouldn't regex support be
+    // done in the builder anyway? (maybe we did it here s.t. we could
+    // tell apart constant and dynamically generated method names?)
   }
 
   private void setMethodCall() {

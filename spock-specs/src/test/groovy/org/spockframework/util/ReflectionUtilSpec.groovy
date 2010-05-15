@@ -25,24 +25,24 @@ class ReflectionUtilSpec extends Specification {
     ReflectionUtil.getPropertyNameForGetterMethod(method) == propertyName
 
     where:
-    methodName   | propertyName
-    "getLength"  | "length"
-    "isEmpty"    | "empty"
-    "getValid"   | "valid"
+    methodName  | propertyName
+    "getLength" | "length"
+    "isEmpty"   | "empty"
+    "getValid"  | "valid"
 
     "getLengthStatic" | "lengthStatic"
     "isEmptyStatic"   | "emptyStatic"
     "getValidStatic"  | "validStatic"
 
-    "getURL"     | "URL"
-    "getfoo"     | "foo"
-    "isfoo"      | "foo"
+    "getURL"    | "URL"
+    "getfoo"    | "foo"
+    "isfoo"     | "foo"
 
-    "get"        | null
-    "is"         | null
-    "foo"        | null
+    "get"       | null
+    "is"        | null
+    "foo"       | null
 
-    "setFoo"     | null
+    "setFoo"    | null
   }
 }
 

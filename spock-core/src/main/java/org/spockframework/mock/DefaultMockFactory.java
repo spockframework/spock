@@ -37,11 +37,8 @@ import org.spockframework.util.*;
  * 
  * @author Peter Niederwieser
  */
-// IDEA: IntelliMock ("intelligent" return values)
-// IDEA: DynaMock (based on GroovyInterceptable or groovy.lang.Interceptor)
 public class DefaultMockFactory implements IMockFactory {
   public static final String INSTANCE_FIELD = "INSTANCE";
-
   public static final DefaultMockFactory INSTANCE = new DefaultMockFactory();
   
   private static final boolean cglibAvailable = ReflectionUtil.isClassAvailable("net.sf.cglib.proxy.Enhancer");
@@ -81,7 +78,7 @@ public class DefaultMockFactory implements IMockFactory {
   private static Object dispatchInvocation(IInvocationMatcher dispatcher, IMockInvocation invocation) {
     IMockInteraction interaction = dispatcher.match(invocation);
     if (interaction == null) throw new InternalSpockError(
-"invocation %s wasn't matched by any interaction (not even catch-all invocation)"
+"invocation %s wasn't matched by any interaction (not even the catch-all interaction)"
     ).withArgs(invocation);
     return interaction.accept(invocation);
   }

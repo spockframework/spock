@@ -20,9 +20,11 @@ package org.spockframework.mock;
  *
  * @author Peter Niederwieser
  */
-public class AnyArgumentConstraint implements IArgumentConstraint {
-  public static final AnyArgumentConstraint INSTANCE = new AnyArgumentConstraint();
+public class WildcardArgumentConstraint implements IArgumentConstraint {
+  public static final WildcardArgumentConstraint INSTANCE = new WildcardArgumentConstraint();
 
+  private WildcardArgumentConstraint() {}
+  
   public boolean isSatisfiedBy(Object arg) {
     return true;
   }

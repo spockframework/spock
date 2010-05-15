@@ -14,11 +14,17 @@
 
 package org.spockframework.mock;
 
+import org.spockframework.util.Immutable;
 import org.spockframework.util.ReflectionUtil;
 
-public class DefaultAnyInteraction extends DefaultInteraction {
+@Immutable
+public class DefaultStubbedInteraction extends DefaultInteraction {
+  public static final DefaultStubbedInteraction INSTANCE = new DefaultStubbedInteraction();
+
+  private DefaultStubbedInteraction() {}
+
   public String getText() {
-    return "_._ >> defaultReturnValue";
+    return "default stubbed interaction";
   }
 
   public boolean matches(IMockInvocation invocation) {
@@ -26,7 +32,6 @@ public class DefaultAnyInteraction extends DefaultInteraction {
   }
 
   public Object accept(IMockInvocation invocation) {
-    acceptedCount++;
     return ReflectionUtil.getDefaultValue(invocation.getMethod().getReturnType());
   }
 }

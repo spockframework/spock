@@ -45,9 +45,8 @@ public class TooFewInvocationsError extends InteractionNotSatisfiedError {
     builder.append("Too few invocations for:\n\n");
 
     for (IMockInteraction interaction : interactions) {
-      int numAccepted = interaction.getAcceptedCount();
-      builder.append(String.format("%s   (%d %s)\n",
-          interaction, numAccepted, numAccepted == 1 ? "invocation" : "invocations"));
+      builder.append(interaction);
+      builder.append("\n");
     }
     
     return builder.toString();

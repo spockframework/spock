@@ -18,7 +18,14 @@ package org.spockframework.mock;
  * @author Peter Niederwieser
  */
 public class WildcardMethodNameConstraint implements IInvocationConstraint {
+  public static final WildcardMethodNameConstraint INSTANCE = new WildcardMethodNameConstraint();
+
+  private WildcardMethodNameConstraint() {}
+  
   public boolean isSatisfiedBy(IMockInvocation invocation) {
-    return true; // TODO: should NOT match invocations of Object.equals(), Object.hashCode(), Object.toString() (or overrides thereof)
+    if (DefaultEqualsInteraction.INSTANCE.matches(invocation)) return false;
+    if (DefaultHashCodeInteraction.INSTANCE.matches(invocation)) return false;
+    if (DefaultToStringInteraction.INSTANCE.matches(invocation)) return false;
+    return true; 
   }
 }

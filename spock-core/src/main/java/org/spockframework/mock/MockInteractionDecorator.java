@@ -49,10 +49,6 @@ public abstract class MockInteractionDecorator implements IMockInteraction {
     return decorated.isExhausted();
   }
 
-  public int getAcceptedCount() {
-    return decorated.getAcceptedCount();
-  }
-
   @Override
   public String toString() {
     return decorated.toString();

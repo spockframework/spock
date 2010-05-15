@@ -77,7 +77,7 @@ public class InteractionBuilder {
   public static final String ADD_EQUAL_METHOD_NAME = "addEqualMethodName";
   public InteractionBuilder addEqualMethodName(String name) {
     if (name.equals(Specification._.toString()))
-      invConstraints.add(new WildcardMethodNameConstraint());
+      invConstraints.add(WildcardMethodNameConstraint.INSTANCE);
     else
       invConstraints.add(new EqualMethodNameConstraint(name));
     return this;
@@ -116,7 +116,7 @@ public class InteractionBuilder {
   public static final String ADD_EQUAL_ARG = "addEqualArg";
   public InteractionBuilder addEqualArg(Object arg) {
     argConstraints.add(arg == Specification._ ?
-        AnyArgumentConstraint.INSTANCE : new EqualArgumentConstraint(arg));
+        WildcardArgumentConstraint.INSTANCE : new EqualArgumentConstraint(arg));
     return this;
   }
 

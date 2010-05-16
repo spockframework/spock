@@ -17,10 +17,8 @@ package org.spockframework.mock;
 import java.util.Arrays;
 import java.util.List;
 
-import org.spockframework.util.Immutable;
 import org.spockframework.util.UnreachableCodeError;
 
-@Immutable
 public class DefaultInteractionScope implements IInteractionScope {
   public static final DefaultInteractionScope INSTANCE = new DefaultInteractionScope();
 

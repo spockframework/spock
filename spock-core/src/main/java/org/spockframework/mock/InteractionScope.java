@@ -31,14 +31,14 @@ public class InteractionScope implements IInteractionScope {
 
   public void addInteraction(IMockInteraction interaction) {
     interactions.add(new MockInteractionDecorator(interaction) {
-      int registrationZone = currentRegistrationZone;
+      final int myRegistrationZone = currentRegistrationZone;
 
       @Override
       public Object accept(IMockInvocation invocation) {
         Object result = super.accept(invocation);
-        if (currentExecutionZone > registrationZone)
-          throw new WrongInvocationOrderException(decorated, invocation);
-        currentExecutionZone = registrationZone;
+        if (currentExecutionZone > myRegistrationZone)
+          throw new WrongInvocationOrderError(decorated, invocation);
+        currentExecutionZone = myRegistrationZone;
         return result;
       }
     });

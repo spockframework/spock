@@ -14,9 +14,6 @@
 
 package org.spockframework.mock;
 
-import org.spockframework.util.Immutable;
-
-@Immutable
 public class DefaultToStringInteraction extends DefaultInteraction {
   public static final DefaultToStringInteraction INSTANCE = new DefaultToStringInteraction();
   

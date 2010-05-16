@@ -80,10 +80,6 @@ public class MockInteraction implements IMockInteraction {
     return text;
   }
 
-  public int getAcceptedCount() {
-    return acceptedCount;
-  }
-
   public String toString() {
     return String.format("%s   (%d %s)", text, acceptedCount, acceptedCount == 1 ? "invocation" : "invocations");
   }

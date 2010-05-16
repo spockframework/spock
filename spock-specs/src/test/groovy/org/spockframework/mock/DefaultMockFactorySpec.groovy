@@ -20,7 +20,7 @@ import spock.lang.Specification
 
 class DefaultMockFactorySpec extends Specification {
   IMockFactory factory = new DefaultMockFactory()
-  IInvocationMatcher dummy = Mock() // useful if test fails and toString() is delegated to dispatcher
+  IInvocationDispatcher dummy = Mock() // useful if test fails and toString() is delegated to dispatcher
 
   def "can create mocks for interfaces"() {
     expect:

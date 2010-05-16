@@ -14,10 +14,8 @@
 
 package org.spockframework.mock;
 
-import org.spockframework.util.Immutable;
 import org.spockframework.util.ReflectionUtil;
 
-@Immutable
 public class DefaultStubbedInteraction extends DefaultInteraction {
   public static final DefaultStubbedInteraction INSTANCE = new DefaultStubbedInteraction();
 

@@ -44,7 +44,7 @@ public class DefaultMockFactory implements IMockFactory {
   private static final boolean cglibAvailable = ReflectionUtil.isClassAvailable("net.sf.cglib.proxy.Enhancer");
   private static final boolean objenesisAvailable = ReflectionUtil.isClassAvailable("org.objenesis.Objenesis");
 
-  public Object create(String mockName, Class<?> mockType, IInvocationMatcher dispatcher) {
+  public Object create(String mockName, Class<?> mockType, IInvocationDispatcher dispatcher) {
     if (Modifier.isFinal(mockType.getModifiers()))
       throw new CannotCreateMockException(mockType, "mocking final classes is not supported.");
 
@@ -58,14 +58,14 @@ public class DefaultMockFactory implements IMockFactory {
     );
   }
 
-  private Object createDynamicProxyMock(final String mockName, Class<?> mockType, final IInvocationMatcher dispatcher) {
+  private Object createDynamicProxyMock(final String mockName, Class<?> mockType, final IInvocationDispatcher dispatcher) {
     return Proxy.newProxyInstance(
       mockType.getClassLoader(),
       new Class<?>[] {mockType},
       new InvocationHandler() {
         public Object invoke(Object mock, Method method, Object[] args) {
           IMockInvocation invocation = new MockInvocation(mock, mockName, method, normalizeArgs(args));
-          return dispatchInvocation(dispatcher, invocation);
+          return dispatcher.dispatch(invocation);
         }
       }
     );
@@ -75,16 +75,8 @@ public class DefaultMockFactory implements IMockFactory {
     return args == null ? Collections.emptyList() : Arrays.asList(args);
   }
 
-  private static Object dispatchInvocation(IInvocationMatcher dispatcher, IMockInvocation invocation) {
-    IMockInteraction interaction = dispatcher.match(invocation);
-    if (interaction == null) throw new InternalSpockError(
-"invocation %s wasn't matched by any interaction (not even the catch-all interaction)"
-    ).withArgs(invocation);
-    return interaction.accept(invocation);
-  }
-
   private static class CglibMockFactory {
-    static Object create(final String mockName, Class<?> mockType, final IInvocationMatcher dispatcher) {
+    static Object create(final String mockName, Class<?> mockType, final IInvocationDispatcher dispatcher) {
       Enhancer enhancer = new Enhancer();
       enhancer.setSuperclass(mockType);
       final boolean isGroovyObject = GroovyObject.class.isAssignableFrom(mockType);
@@ -94,7 +86,7 @@ public class DefaultMockFactory implements IMockFactory {
           if (isGroovyObject && method.getName().equals("getMetaClass"))
             return GroovySystem.getMetaClassRegistry().getMetaClass(mock.getClass());
           IMockInvocation invocation = new MockInvocation(mock, mockName, method, normalizeArgs(args));
-          return dispatchInvocation(dispatcher, invocation);
+          return dispatcher.dispatch(invocation);
         }
       };
 

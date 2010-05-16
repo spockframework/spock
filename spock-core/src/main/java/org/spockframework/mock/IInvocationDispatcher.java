@@ -17,10 +17,9 @@
 package org.spockframework.mock;
 
 /**
- * Matches actual invocations to anticipated interactions.
  *
  * @author Peter Niederwieser
  */
-public interface IInvocationMatcher {
-  IMockInteraction match(IMockInvocation invocation);
+public interface IInvocationDispatcher {
+  Object dispatch(IMockInvocation invocation);
 }

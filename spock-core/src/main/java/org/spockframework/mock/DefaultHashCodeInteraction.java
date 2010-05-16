@@ -13,9 +13,6 @@
  */
 package org.spockframework.mock;
 
-import org.spockframework.util.Immutable;
-
-@Immutable
 public class DefaultHashCodeInteraction extends DefaultInteraction {
   public static final DefaultHashCodeInteraction INSTANCE = new DefaultHashCodeInteraction();
 

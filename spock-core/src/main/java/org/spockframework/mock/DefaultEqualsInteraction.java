@@ -15,9 +15,6 @@ package org.spockframework.mock;
 
 import java.lang.reflect.Method;
 
-import org.spockframework.util.Immutable;
-
-@Immutable
 public class DefaultEqualsInteraction extends DefaultInteraction {
   public static final DefaultEqualsInteraction INSTANCE = new DefaultEqualsInteraction();
 

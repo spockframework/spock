@@ -22,7 +22,6 @@ import groovy.lang.Closure;
  *
  * @author Peter Niederwieser
  */
-// IDEA: reify closure result generator?
 public class CodeResultGenerator implements IResultGenerator {
   private final Closure code;
 

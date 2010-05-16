@@ -28,7 +28,6 @@ import org.spockframework.util.TextUtil;
  *
  * @author Peter Niederwieser
  */
-// @Immutable
 public class MockInvocation implements IMockInvocation {
   private final Object mockObject;
   private final String mockObjectName;

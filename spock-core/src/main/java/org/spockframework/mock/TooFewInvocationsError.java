@@ -35,10 +35,6 @@ public class TooFewInvocationsError extends InteractionNotSatisfiedError {
     fixupStackTrace();
   }
 
-  public List<IMockInteraction> getUnsatisfiedInteractions() {
-    return interactions;
-  }
-
   @Override
   public String toString() {
     StringBuilder builder = new StringBuilder();
@@ -48,7 +44,7 @@ public class TooFewInvocationsError extends InteractionNotSatisfiedError {
       builder.append(interaction);
       builder.append("\n");
     }
-    
+
     return builder.toString();
   }
 

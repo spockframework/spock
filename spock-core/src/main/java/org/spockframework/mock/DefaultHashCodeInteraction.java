@@ -28,6 +28,6 @@ public class DefaultHashCodeInteraction extends DefaultInteraction {
   }
 
   public Object accept(IMockInvocation invocation) {
-    return System.identityHashCode(invocation.getMockObject());
+    return System.identityHashCode(invocation.getMockObject().getInstance());
   }
 }

@@ -44,12 +44,12 @@ class DefaultInteractions extends Specification {
     def myMock = Mock(Foo)
 
     expect:
-    myMock.toString() == "Mock named 'myMock'"
+    myMock.toString() == "Mock for type 'Foo' named 'myMock'"
   }
 
   def "default toString() output for unnamed mock"() {
     expect:
-    Mock(Foo).toString() == "Unnamed mock"
+    Mock(Foo).toString() == "Mock for type 'Foo'"
   }
 
   def "default equals() behavior can be overridden"() {

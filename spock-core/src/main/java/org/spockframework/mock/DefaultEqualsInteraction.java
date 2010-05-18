@@ -33,6 +33,6 @@ public class DefaultEqualsInteraction extends DefaultInteraction {
   }
 
   public Object accept(IMockInvocation invocation) {
-    return invocation.getMockObject() == invocation.getArguments().get(0);
+    return invocation.getMockObject().getInstance() == invocation.getArguments().get(0);
   }
 }

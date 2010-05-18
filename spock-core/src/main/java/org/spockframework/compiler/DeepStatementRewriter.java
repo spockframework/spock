@@ -137,9 +137,9 @@ public class DeepStatementRewriter extends StatementReplacingVisitorSupport {
 
   @Override
   public void visitBinaryExpression(BinaryExpression expr) {
-    if (AstUtil.isBuiltinMemberDecl(expr, Identifiers.MOCK, 0, 1))
+    if (AstUtil.isBuiltinMemberAssignment(expr, Identifiers.MOCK, 0, 1))
       try {
-        AstUtil.expandBuiltinMemberDecl(expr, resourceProvider.getMockControllerRef());
+        AstUtil.expandBuiltinMemberAssignment(expr, resourceProvider.getMockControllerRef());
       } catch (InvalidSpecCompileException e) {
         resourceProvider.getErrorReporter().error(e);
         return;
@@ -154,7 +154,7 @@ public class DeepStatementRewriter extends StatementReplacingVisitorSupport {
   public void visitMethodCallExpression(MethodCallExpression expr) {
     super.visitMethodCallExpression(expr);
     forbidUseOfSuperInFixtureMethod(expr);
-    handlePredefMockAndPredefOld(expr);
+    handleMockAndOldCalls(expr);
   }
 
   // Forbid the use of super.foo() in fixture method foo,
@@ -174,14 +174,14 @@ public class DeepStatementRewriter extends StatementReplacingVisitorSupport {
     }
   }
 
-  private void handlePredefMockAndPredefOld(Expression expr) {
+  private void handleMockAndOldCalls(Expression expr) {
     if (AstUtil.isBuiltinMemberCall(expr, Identifiers.MOCK, 0, 1))
-      handlePredefMock(expr);
+      handleMockCall(expr);
     else if (AstUtil.isBuiltinMemberCall(expr, Identifiers.OLD, 1, 1))
-      handlePredefOld(expr);
+      handleOldCall(expr);
   }
 
-  private void handlePredefMock(Expression expr) {
+  private void handleMockCall(Expression expr) {
     try {
       AstUtil.expandBuiltinMemberCall(expr, resourceProvider.getMockControllerRef());
     } catch (InvalidSpecCompileException e) {
@@ -189,7 +189,7 @@ public class DeepStatementRewriter extends StatementReplacingVisitorSupport {
     }
   }
 
-  private void handlePredefOld(Expression expr) {
+  private void handleOldCall(Expression expr) {
     if (!(resourceProvider.getCurrentBlock() instanceof ThenBlock)) {
       resourceProvider.getErrorReporter().error(expr, "old() may only be used in a 'then' block");
       return;

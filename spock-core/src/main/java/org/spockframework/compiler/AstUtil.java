@@ -21,6 +21,7 @@ import java.util.*;
 import org.codehaus.groovy.ast.*;
 import org.codehaus.groovy.ast.expr.*;
 import org.codehaus.groovy.ast.stmt.*;
+import org.codehaus.groovy.syntax.Types;
 import org.objectweb.asm.Opcodes;
 
 import org.spockframework.util.InternalSpockError;
@@ -167,16 +168,16 @@ public abstract class AstUtil {
     return ((TupleExpression)expr.getArguments()).getExpressions();
   }
 
-  public static boolean isBuiltinMemberDeclOrCall(Expression expr, String methodName, int minArgs, int maxArgs) {
+  public static boolean isBuiltinMemberAssignmentOrCall(Expression expr, String methodName, int minArgs, int maxArgs) {
     return expr instanceof BinaryExpression
-        && isBuiltinMemberDecl((BinaryExpression)expr, methodName, minArgs, maxArgs)
+        && isBuiltinMemberAssignment((BinaryExpression)expr, methodName, minArgs, maxArgs)
         || expr instanceof MethodCallExpression
         && isBuiltinMemberCall((MethodCallExpression) expr, methodName, minArgs, maxArgs);
   }
 
-  public static boolean isBuiltinMemberDecl(BinaryExpression expr, String methodName, int minArgs, int maxArgs) {
-    return (expr instanceof DeclarationExpression || expr instanceof FieldInitializationExpression)
-        && isBuiltinMemberDeclOrCall(expr.getRightExpression(), methodName, minArgs, maxArgs);
+  public static boolean isBuiltinMemberAssignment(BinaryExpression expr, String methodName, int minArgs, int maxArgs) {
+    return expr.getOperation().getType() == Types.ASSIGN
+        && isBuiltinMemberAssignmentOrCall(expr.getRightExpression(), methodName, minArgs, maxArgs);
   }
 
   public static boolean isBuiltinMemberCall(Expression expr, String methodName, int minArgs, int maxArgs) {
@@ -193,23 +194,23 @@ public abstract class AstUtil {
         && getArguments(expr).size() <= maxArgs;
   }
 
-  public static void expandBuiltinMemberDeclOrCall(Expression builtinMemberDeclOrCall, Expression... additionalArgs)
+  public static void expandBuiltinMemberAssignmentOrCall(Expression builtinMemberAssignmentOrCall, Expression... additionalArgs)
       throws InvalidSpecCompileException {
-    if (builtinMemberDeclOrCall instanceof BinaryExpression)
-      expandBuiltinMemberDecl((BinaryExpression)builtinMemberDeclOrCall, additionalArgs);
+    if (builtinMemberAssignmentOrCall instanceof BinaryExpression)
+      expandBuiltinMemberAssignment((BinaryExpression)builtinMemberAssignmentOrCall, additionalArgs);
     else
-      expandBuiltinMemberCall(builtinMemberDeclOrCall, additionalArgs);
+      expandBuiltinMemberCall(builtinMemberAssignmentOrCall, additionalArgs);
   }
 
   /*
-   * Expands a field or local variable declaration of the form
-   * "def x = builtinMethodCall(...)". Assumes isBuiltinMemberDecl(...).
+   * Expands an assignment of the form "(def) x = builtinMethodCall(...)", where x is a field or local variable.
+   * Assumes isBuiltinMemberAssignment(...).
    */
-  public static void expandBuiltinMemberDecl(BinaryExpression builtinMemberDecl, Expression... additionalArgs)
+  public static void expandBuiltinMemberAssignment(BinaryExpression builtinMemberAssignment, Expression... additionalArgs)
       throws InvalidSpecCompileException {
-    Expression builtinMemberCall = builtinMemberDecl.getRightExpression();
-    String name = getInferredName(builtinMemberDecl);
-    Expression type = getType(builtinMemberCall, getInferredType(builtinMemberDecl));
+    Expression builtinMemberCall = builtinMemberAssignment.getRightExpression();
+    String name = getInferredName(builtinMemberAssignment);
+    Expression type = getType(builtinMemberCall, getInferredType(builtinMemberAssignment));
 
     doExpandBuiltinMemberCall(builtinMemberCall, name, type, additionalArgs);
   }
@@ -233,13 +234,15 @@ public abstract class AstUtil {
     return args.get(0);
   }
 
-  private static String getInferredName(BinaryExpression builtinMemberDecl) {
-    Expression left = builtinMemberDecl.getLeftExpression();
-    return left instanceof Variable ? ((Variable)left).getName() : "(unknown)";
+  private static String getInferredName(BinaryExpression builtinMemberAssignment) {
+    Expression left = builtinMemberAssignment.getLeftExpression();
+    if (left instanceof Variable) return ((Variable)left).getName();
+    if (left instanceof FieldExpression) return ((FieldExpression)left).getFieldName();
+    return null;
   }
 
-  private static ClassExpression getInferredType(BinaryExpression builtinMemberDecl) {
-    ClassNode type = builtinMemberDecl.getLeftExpression().getType();
+  private static ClassExpression getInferredType(BinaryExpression builtinMemberAssignment) {
+    ClassNode type = builtinMemberAssignment.getLeftExpression().getType();
     return type == null || type == ClassHelper.DYNAMIC_TYPE ?
         null : new ClassExpression(type);
   }

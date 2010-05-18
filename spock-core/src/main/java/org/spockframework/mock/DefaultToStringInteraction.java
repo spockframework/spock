@@ -29,9 +29,18 @@ public class DefaultToStringInteraction extends DefaultInteraction {
   }
 
   public Object accept(IMockInvocation invocation) {
-    // TODO: improve once IMockInvocation reveals mocked type
-    return invocation.getMockObjectName() == null ?
-        "Unnamed mock" :
-        "Mock named '" + invocation.getMockObjectName() + "'";
+    StringBuilder builder = new StringBuilder();
+    builder.append("Mock for type '");
+    builder.append(invocation.getMockObject().getType().getSimpleName());
+    builder.append("'");
+
+    String name = invocation.getMockObject().getName();
+    if (name != null) {
+      builder.append(" named '");
+      builder.append(name);
+      builder.append("'");
+    }
+
+    return builder.toString();
   }
 }

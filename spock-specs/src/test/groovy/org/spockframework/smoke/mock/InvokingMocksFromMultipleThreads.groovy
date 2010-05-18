@@ -61,6 +61,8 @@ class InvokingMocksFromMultipleThreads extends Specification {
             if (threadId == 0 && count == 99) list.add(count)
             Thread.sleep(1)
           }
+        } catch(TooManyInvocationsError ignored) {
+          // catching this avoids irritating build output
         } finally {
           latch.countDown()
         }
@@ -84,6 +86,8 @@ class InvokingMocksFromMultipleThreads extends Specification {
             if (!(threadId == 0 && count == 99)) list.add(count)
             Thread.sleep(1)
           }
+        } catch(TooFewInvocationsError ignored) {
+          // catching this avoids irritating build output
         } finally {
           latch.countDown()
         }

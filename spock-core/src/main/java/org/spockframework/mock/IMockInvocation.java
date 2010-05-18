@@ -30,12 +30,7 @@ public interface IMockInvocation {
   /**
    * The mock object that received the invocation.
    */
-  Object getMockObject();
-  
-  /**
-   * The name of the mock object that received the invocation.
-   */
-  String getMockObjectName();
+  IMockObject getMockObject();
 
   /**
    * The invoked method.

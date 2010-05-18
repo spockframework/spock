@@ -17,8 +17,7 @@
 package org.spockframework.mock;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import org.codehaus.groovy.runtime.DefaultGroovyMethods;
 
@@ -29,24 +28,18 @@ import org.spockframework.util.TextUtil;
  * @author Peter Niederwieser
  */
 public class MockInvocation implements IMockInvocation {
-  private final Object mockObject;
-  private final String mockObjectName;
+  private final IMockObject mockObject;
   private final Method method;
   private final List<Object> arguments;
 
-  public MockInvocation(Object mockObject, String mockObjectName, Method method, List<Object> arguments) {
+  public MockInvocation(IMockObject mockObject, Method method, List<Object> arguments) {
     this.mockObject = mockObject;
-    this.mockObjectName = mockObjectName;
     this.method = method;
     this.arguments = arguments;
   }
 
-  public Object getMockObject() {
+  public IMockObject getMockObject() {
     return mockObject;
-  }
-
-  public String getMockObjectName() {
-    return mockObjectName;
   }
 
   public Method getMethod() {
@@ -59,12 +52,14 @@ public class MockInvocation implements IMockInvocation {
 
   @Override
   public String toString() {
-     return String.format("%s.%s(%s)", mockObjectName, method.getName(), TextUtil.join(render(arguments), ", "));
+    String mockName = mockObject.getName();
+    if (mockName == null) mockName = String.format("<%s>", mockObject.getType().getSimpleName());
+    return String.format("%s.%s(%s)", mockName, method.getName(), render(arguments));
   }
 
-  private List<String> render(List<Object> objects) {
-    List<String> result = new ArrayList<String>();
-    for (Object obj : objects) result.add(DefaultGroovyMethods.inspect(obj));
-    return result;
+  private String render(List<Object> arguments) {
+    List<String> strings = new ArrayList<String>();
+    for (Object arg : arguments) strings.add(DefaultGroovyMethods.inspect(arg));
+    return TextUtil.join(strings, ", ");
   }
 }

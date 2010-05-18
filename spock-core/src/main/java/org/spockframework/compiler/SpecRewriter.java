@@ -458,7 +458,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
 
   private boolean isExceptionCondition(Statement stat) {
     Expression expr = AstUtil.getExpression(stat, Expression.class);
-    return expr != null && AstUtil.isBuiltinMemberDeclOrCall(expr, Identifiers.THROWN, 0, 1);
+    return expr != null && AstUtil.isBuiltinMemberAssignmentOrCall(expr, Identifiers.THROWN, 0, 1);
   }
 
   private void rewriteExceptionCondition(Statement stat) {
@@ -470,7 +470,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
     Expression expr = AstUtil.getExpression(stat, Expression.class);
     assert expr != null;
     try {
-      AstUtil.expandBuiltinMemberDeclOrCall(expr, thrownExceptionRef);
+      AstUtil.expandBuiltinMemberAssignmentOrCall(expr, thrownExceptionRef);
     } catch (InvalidSpecCompileException e) {
       errorReporter.error(e);
     }

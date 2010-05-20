@@ -16,57 +16,71 @@
 
 package org.spockframework.mock;
 
-import java.util.LinkedList;
+import java.util.*;
+
+import org.spockframework.util.InternalSpockError;
 
 /**
- *
  * @author Peter Niederwieser
  */
-public class MockController implements IInvocationMatcher {
+public class MockController implements IInvocationDispatcher {
   private final IMockFactory factory;
   private final LinkedList<IInteractionScope> scopes = new LinkedList<IInteractionScope>();
+  private final List<InteractionNotSatisfiedError> errors = new ArrayList<InteractionNotSatisfiedError>();
 
   public MockController(IMockFactory factory) {
     this.factory = factory;
-    scopes.addFirst(new DefaultInteractionScope());
+    scopes.addFirst(DefaultInteractionScope.INSTANCE);
     scopes.addFirst(new InteractionScope());
   }
 
-  public IMockInteraction match(IMockInvocation invocation) {
+  public synchronized Object dispatch(IMockInvocation invocation) {
     for (IInteractionScope scope : scopes) {
-      IMockInteraction match = scope.match(invocation);
-      if (match != null) return match;
+      IMockInteraction interaction = scope.match(invocation);
+      if (interaction != null)
+        try {
+          return interaction.accept(invocation);
+        } catch (InteractionNotSatisfiedError e) {
+          errors.add(e);
+          throw e;
+        }
     }
 
-    return null;
+    throw new InternalSpockError("No interaction matched invocation: %s").withArgs(invocation);
   }
 
   public static final String ADD_INTERACTION = "addInteraction";
 
-  public void addInteraction(IMockInteraction interaction) {
+  public synchronized void addInteraction(IMockInteraction interaction) {
     scopes.getFirst().addInteraction(interaction);
   }
 
   public static final String ADD_BARRIER = "addBarrier";
 
-  public void addBarrier() {
-    scopes.getFirst().addOrderingBarrier();  
+  public synchronized void addBarrier() {
+    scopes.getFirst().addOrderingBarrier();
   }
 
   public static final String ENTER_SCOPE = "enterScope";
 
-  public void enterScope() {
+  public synchronized void enterScope() {
+    throwAnyPreviousError();
     scopes.addFirst(new InteractionScope());
   }
 
   public static final String LEAVE_SCOPE = "leaveScope";
 
-  public void leaveScope() {
+  public synchronized void leaveScope() {
+    throwAnyPreviousError();
     IInteractionScope scope = scopes.removeFirst();
     scope.verifyInteractions();
   }
 
-  public Object create(String mockName, Class<?> mockType) {
+  public synchronized Object create(String mockName, Class<?> mockType) {
     return factory.create(mockName, mockType, this);
+  }
+
+  private void throwAnyPreviousError() {
+    if (!errors.isEmpty()) throw errors.get(0);
   }
 }

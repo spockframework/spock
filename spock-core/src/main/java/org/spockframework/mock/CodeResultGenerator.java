@@ -22,15 +22,17 @@ import groovy.lang.Closure;
  *
  * @author Peter Niederwieser
  */
-// IDEA: reify closure result generator?
 public class CodeResultGenerator implements IResultGenerator {
   private final Closure code;
+  private final boolean provideExtendedInfo;
 
   public CodeResultGenerator(Closure code) {
     this.code = code;
+    Class<?>[] paramTypes = code.getParameterTypes();
+    provideExtendedInfo = paramTypes.length == 1 && paramTypes[0] == IMockInvocation.class;
   }
 
   public Object generate(IMockInvocation invocation) {
-    return code.call(invocation.getArguments());
+    return code.call(provideExtendedInfo ? invocation : invocation.getArguments());
   }
 }

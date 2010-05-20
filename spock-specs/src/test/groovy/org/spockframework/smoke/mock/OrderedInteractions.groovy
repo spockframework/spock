@@ -14,13 +14,13 @@
 
 package org.spockframework.smoke.mock
 
-import org.spockframework.mock.WrongInvocationOrderException
+import org.spockframework.mock.WrongInvocationOrderError
 
 import spock.lang.*
 import org.spockframework.mock.TooFewInvocationsError
 import org.spockframework.mock.TooManyInvocationsError
 
-class InvocationOrder extends Specification {
+class OrderedInteractions extends Specification {
   def "basic passing example"() {
     def list = Mock(List)
 
@@ -35,7 +35,7 @@ class InvocationOrder extends Specification {
     1 * list.add(2)
   }
 
-  @FailsWith(WrongInvocationOrderException)
+  @FailsWith(WrongInvocationOrderError)
   def "basic failing example"() {
     def list = Mock(List)
 
@@ -50,7 +50,7 @@ class InvocationOrder extends Specification {
     1 * list.add(1)
   }
 
-  def "interactions in same then-block can have any (invocation) order"() {
+  def "order of invocations belonging to interactions in same then-block is undefined"() {
     def list = Mock(List)
 
     when:
@@ -84,7 +84,7 @@ class InvocationOrder extends Specification {
   }
 }
 
-class RemainingBehaviorSameAsForOneThenBlock extends Specification {
+class RemainingBehaviorSameAsForUnorderedInteractions extends Specification {
   @FailsWith(TooFewInvocationsError)
   def "too few invocations for one of the when-blocks"() {
     def list = Mock(List)

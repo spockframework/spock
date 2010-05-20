@@ -13,13 +13,13 @@
  */
 package org.spockframework.mock;
 
-import java.lang.reflect.Method;
-
-import org.spockframework.util.InternalSpockError;
-
 public class DefaultHashCodeInteraction extends DefaultInteraction {
+  public static final DefaultHashCodeInteraction INSTANCE = new DefaultHashCodeInteraction();
+
+  private DefaultHashCodeInteraction() {}
+
   public String getText() {
-    return "default Object.hashCode() interaction";
+    return "default hashCode() interaction";
   }
 
   public boolean matches(IMockInvocation invocation) {
@@ -28,7 +28,6 @@ public class DefaultHashCodeInteraction extends DefaultInteraction {
   }
 
   public Object accept(IMockInvocation invocation) {
-    acceptedCount++;
-    return System.identityHashCode(invocation.getMockObject());
+    return System.identityHashCode(invocation.getMockObject().getInstance());
   }
 }

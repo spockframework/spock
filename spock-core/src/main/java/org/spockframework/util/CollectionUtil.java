@@ -38,13 +38,13 @@ public abstract class CollectionUtil {
     return result;
   }
 
-  public static @Nullable <T> T getFirstElement(List<T> list) {
-    Assert.that(list.size() > 0);
-    return list.get(0);
-  }
-
   public static @Nullable <T> T getLastElement(List<T> list) {
     Assert.that(list.size() > 0);
+    
     return list.get(list.size() - 1);
+  }
+
+  public static <T> void addLastElement(List<T> list, T element) {
+    list.add(list.size(), element);
   }
 }

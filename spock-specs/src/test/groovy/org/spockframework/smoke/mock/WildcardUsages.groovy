@@ -81,7 +81,6 @@ class WildcardUsages extends Specification {
   }
 
   def "match any invocation on a mock object"() {
-
     when:
     Mock(XYZ).get(1)
     Mock(XYZ).get(2)
@@ -90,8 +89,63 @@ class WildcardUsages extends Specification {
     then:
     3 * _._
   }
+
+  def "match any invocation on a mock object (short syntax)"() {
+    when:
+    Mock(XYZ).get(1)
+    Mock(XYZ).get(2)
+    Mock(XYZ).get(3)
+
+    then:
+    3 * _
+  }
+
+  def "wildcard method name doesn't match Object's equals(), hashCode(), and toString() methods"() {
+    def list = Mock(List)
+
+    when:
+    list.equals(new Object())
+    list.hashCode()
+    list.toString()
+
+    then:
+    0 * list._()
+    0 * list._
+    0 * _
+  }
+
+  def "wildcard method name matches overloaded equals(), hashCode(), and toString() methods"() {
+    def overloaded = Mock(Overloaded)
+
+    when:
+    overloaded.equals("me")
+    overloaded.hashCode([])
+    overloaded.toString(true)
+
+    then:
+    3 * overloaded._
+  }
+
+  def "usage in interaction doesn't interfer with usage in where-block"() {
+    def list = Mock(type)
+
+    when:
+    list.add(1)
+
+    then:
+    1 * _._(_)
+
+    where:
+    [_, type] << [[123, List]]
+  }
 }
 
 interface XYZ {
  void get(int i)
-}                                   
+}
+
+interface Overloaded {
+  boolean equals(String str)
+  int hashCode(List list)
+  String toString(boolean verbose)
+}

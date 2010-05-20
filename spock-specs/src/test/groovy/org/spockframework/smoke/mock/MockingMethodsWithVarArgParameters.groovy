@@ -19,7 +19,7 @@ import spock.lang.*
 import org.spockframework.mock.TooFewInvocationsError
 
 @Issue("http://issues.spockframework.org/detail?id=55")
-class MockingOfVarArgParameters extends Specification {
+class MockingMethodsWithVarArgParameters extends Specification {
   def "interactions of methods callable in vararg-style can be written in vararg-style"() {
     def mock = Mock(clazz)
 

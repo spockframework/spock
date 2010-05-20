@@ -14,8 +14,6 @@
 package org.spockframework.mock;
 
 public abstract class DefaultInteraction implements IMockInteraction {
-  protected int acceptedCount = 0;
-
   public int getLine() {
     return -1;
   }
@@ -30,9 +28,5 @@ public abstract class DefaultInteraction implements IMockInteraction {
 
   public boolean isExhausted() {
     return false;
-  }
-
-  public int getAcceptedCount() {
-    return acceptedCount;
   }
 }

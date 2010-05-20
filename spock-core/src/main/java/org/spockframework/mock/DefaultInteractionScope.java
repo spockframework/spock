@@ -20,9 +20,13 @@ import java.util.List;
 import org.spockframework.util.UnreachableCodeError;
 
 public class DefaultInteractionScope implements IInteractionScope {
+  public static final DefaultInteractionScope INSTANCE = new DefaultInteractionScope();
+
+  private DefaultInteractionScope() {}
+
   private final List<DefaultInteraction> interactions = Arrays.asList(
-      new DefaultEqualsInteraction(), new DefaultHashCodeInteraction(),
-      new DefaultToStringInteraction(), new DefaultAnyInteraction());
+      DefaultEqualsInteraction.INSTANCE, DefaultHashCodeInteraction.INSTANCE,
+      DefaultToStringInteraction.INSTANCE, DefaultStubbedInteraction.INSTANCE);
   
   public void addInteraction(IMockInteraction interaction) {
     throw new UnreachableCodeError("addInteraction");

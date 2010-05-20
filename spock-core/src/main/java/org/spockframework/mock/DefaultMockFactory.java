@@ -37,17 +37,14 @@ import org.spockframework.util.*;
  * 
  * @author Peter Niederwieser
  */
-// IDEA: IntelliMock ("intelligent" return values)
-// IDEA: DynaMock (based on GroovyInterceptable or groovy.lang.Interceptor)
 public class DefaultMockFactory implements IMockFactory {
   public static final String INSTANCE_FIELD = "INSTANCE";
-
   public static final DefaultMockFactory INSTANCE = new DefaultMockFactory();
   
   private static final boolean cglibAvailable = ReflectionUtil.isClassAvailable("net.sf.cglib.proxy.Enhancer");
   private static final boolean objenesisAvailable = ReflectionUtil.isClassAvailable("org.objenesis.Objenesis");
 
-  public Object create(String mockName, Class<?> mockType, IInvocationMatcher dispatcher) {
+  public Object create(String mockName, Class<?> mockType, IInvocationDispatcher dispatcher) {
     if (Modifier.isFinal(mockType.getModifiers()))
       throw new CannotCreateMockException(mockType, "mocking final classes is not supported.");
 
@@ -61,14 +58,16 @@ public class DefaultMockFactory implements IMockFactory {
     );
   }
 
-  private Object createDynamicProxyMock(final String mockName, Class<?> mockType, final IInvocationMatcher dispatcher) {
+  private Object createDynamicProxyMock(final String mockName,
+      final Class<?> mockType, final IInvocationDispatcher dispatcher) {
     return Proxy.newProxyInstance(
       mockType.getClassLoader(),
       new Class<?>[] {mockType},
       new InvocationHandler() {
-        public Object invoke(Object mock, Method method, Object[] args) {
-          IMockInvocation invocation = new MockInvocation(mock, mockName, method, normalizeArgs(args));
-          return dispatchInvocation(dispatcher, invocation);
+        public Object invoke(Object mockInstance, Method method, Object[] args) {
+          IMockObject mockObject = new MockObject(mockName, mockType, mockInstance);
+          IMockInvocation invocation = new MockInvocation(mockObject, method, normalizeArgs(args));
+          return dispatcher.dispatch(invocation);
         }
       }
     );
@@ -78,26 +77,19 @@ public class DefaultMockFactory implements IMockFactory {
     return args == null ? Collections.emptyList() : Arrays.asList(args);
   }
 
-  private static Object dispatchInvocation(IInvocationMatcher dispatcher, IMockInvocation invocation) {
-    IMockInteraction interaction = dispatcher.match(invocation);
-    if (interaction == null) throw new InternalSpockError(
-"invocation %s wasn't matched by any interaction (not even catch-all invocation)"
-    ).withArgs(invocation);
-    return interaction.accept(invocation);
-  }
-
   private static class CglibMockFactory {
-    static Object create(final String mockName, Class<?> mockType, final IInvocationMatcher dispatcher) {
+    static Object create(final String mockName, final Class<?> mockType, final IInvocationDispatcher dispatcher) {
       Enhancer enhancer = new Enhancer();
       enhancer.setSuperclass(mockType);
       final boolean isGroovyObject = GroovyObject.class.isAssignableFrom(mockType);
 
       MethodInterceptor interceptor = new MethodInterceptor() {
-        public Object intercept(Object mock, Method method, Object[] args, MethodProxy proxy) {
+        public Object intercept(Object mockInstance, Method method, Object[] args, MethodProxy proxy) {
           if (isGroovyObject && method.getName().equals("getMetaClass"))
-            return GroovySystem.getMetaClassRegistry().getMetaClass(mock.getClass());
-          IMockInvocation invocation = new MockInvocation(mock, mockName, method, normalizeArgs(args));
-          return dispatchInvocation(dispatcher, invocation);
+            return GroovySystem.getMetaClassRegistry().getMetaClass(mockInstance.getClass());
+          IMockObject mockObject = new MockObject(mockName, mockType, mockInstance);
+          IMockInvocation invocation = new MockInvocation(mockObject, method, normalizeArgs(args));
+          return dispatcher.dispatch(invocation);
         }
       };
 

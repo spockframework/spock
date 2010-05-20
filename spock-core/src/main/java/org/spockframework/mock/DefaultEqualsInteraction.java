@@ -16,8 +16,12 @@ package org.spockframework.mock;
 import java.lang.reflect.Method;
 
 public class DefaultEqualsInteraction extends DefaultInteraction {
+  public static final DefaultEqualsInteraction INSTANCE = new DefaultEqualsInteraction();
+
+  private DefaultEqualsInteraction() {}
+  
   public String getText() {
-    return "default Object.equals() interaction";
+    return "default equals() interaction";
   }
 
   public boolean matches(IMockInvocation invocation) {
@@ -29,7 +33,6 @@ public class DefaultEqualsInteraction extends DefaultInteraction {
   }
 
   public Object accept(IMockInvocation invocation) {
-    acceptedCount++;
-    return invocation.getMockObject() == invocation.getArguments().get(0);
+    return invocation.getMockObject().getInstance() == invocation.getArguments().get(0);
   }
 }

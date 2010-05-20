@@ -35,6 +35,4 @@ public interface IMockInteraction {
   boolean isSatisfied();
 
   boolean isExhausted();
-  
-  int getAcceptedCount();
 }

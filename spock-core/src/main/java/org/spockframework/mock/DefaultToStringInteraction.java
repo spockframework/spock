@@ -15,8 +15,12 @@
 package org.spockframework.mock;
 
 public class DefaultToStringInteraction extends DefaultInteraction {
+  public static final DefaultToStringInteraction INSTANCE = new DefaultToStringInteraction();
+  
+  private DefaultToStringInteraction() {}
+
   public String getText() {
-    return "default Object.toString() interaction";
+    return "default toString() interaction";
   }
 
   public boolean matches(IMockInvocation invocation) {
@@ -25,10 +29,18 @@ public class DefaultToStringInteraction extends DefaultInteraction {
   }
 
   public Object accept(IMockInvocation invocation) {
-    acceptedCount++;
-    // TODO: improve once IMockInvocation reveals mocked type
-    return invocation.getMockObjectName() == null ?
-        "Unnamed mock" :
-        "Mock named '" + invocation.getMockObjectName() + "'";
+    StringBuilder builder = new StringBuilder();
+    builder.append("Mock for type '");
+    builder.append(invocation.getMockObject().getType().getSimpleName());
+    builder.append("'");
+
+    String name = invocation.getMockObject().getName();
+    if (name != null) {
+      builder.append(" named '");
+      builder.append(name);
+      builder.append("'");
+    }
+
+    return builder.toString();
   }
 }

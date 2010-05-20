@@ -14,11 +14,11 @@
 
 package org.spockframework.mock;
 
-public class WrongInvocationOrderException extends InteractionNotSatisfiedError {
+public class WrongInvocationOrderError extends InteractionNotSatisfiedError {
   private final IMockInteraction interaction;
   private final IMockInvocation lastInvocation;
 
-  public WrongInvocationOrderException(IMockInteraction interaction, IMockInvocation lastInvocation) {
+  public WrongInvocationOrderError(IMockInteraction interaction, IMockInvocation lastInvocation) {
     this.interaction = interaction;
     this.lastInvocation = lastInvocation;
   }

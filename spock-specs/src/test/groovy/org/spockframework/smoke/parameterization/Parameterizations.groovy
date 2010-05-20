@@ -50,6 +50,16 @@ class Parameterizations extends Specification {
       [a, b, _] << [[1, 9, 1]]
   }
 
+  def "multi-parameterization with multiple placeholders"() {
+    expect:
+    a == b
+
+    where:
+    [_, a] << [["foo", 3]]
+    [b, _] << [[3, "bar"]]
+    [_, _] << [["baz", "baz"]]
+  }
+
   def "derived parameterization"() {
     expect: a == b.toUpperCase()
     where:

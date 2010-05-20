@@ -21,5 +21,5 @@ package org.spockframework.mock;
  * @author Peter Niederwieser
  */
 public interface IMockFactory {
-  Object create(String mockName, Class<?> mockType, IInvocationMatcher dispatcher) throws CannotCreateMockException;
+  Object create(String mockName, Class<?> mockType, IInvocationDispatcher dispatcher) throws CannotCreateMockException;
 }

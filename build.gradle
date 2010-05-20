@@ -10,7 +10,11 @@ allprojects {
   // log4j 1.2.15 would require several excludes
   // see http://wiki.octonary.com/2009/11/07/excluding-transitive-dependencies-with-gradle/
   log4j = "log4j:log4j:1.2.14"
-  objenesis = "org.objenesis:objenesis:1.2"
+  objenesis = "org.objenesis:objenesis:1.2"  
+  easymock = "org.easymock:easymock:2.5.2"
+  mockito = "org.mockito:mockito-all:1.8.4"
+  jmock_junit4 = "org.jmock:jmock-junit4:2.5.1"  
+  jmock = "org.jmock:jmock:2.5.1"
 }
 
 subprojects {

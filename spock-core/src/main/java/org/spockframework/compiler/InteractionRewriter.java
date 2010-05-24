@@ -186,11 +186,14 @@ public class InteractionRewriter {
 
   private void setPropertyCall() {
     setTarget();
-    PropertyExpression propExpr = (PropertyExpression)call;
-    call(InteractionBuilder.ADD_EQUAL_PROPERTY_NAME, propExpr.getProperty());
-    // TODO: should we support regex here too? shouldn't regex support be
-    // done in the builder anyway? (maybe we did it here s.t. we could
-    // tell apart constant and dynamically generated method names?)
+    setPropertyName();
+  }
+
+  private void setPropertyName() {
+    Expression propertyNameExpr = ((PropertyExpression)call).getProperty();
+    String constraint = selectNameConstraint(propertyNameExpr,
+        InteractionBuilder.ADD_EQUAL_PROPERTY_NAME, InteractionBuilder.ADD_REGEX_PROPERTY_NAME);
+    call(constraint, propertyNameExpr);
   }
 
   private void setMethodCall() {
@@ -205,23 +208,23 @@ public class InteractionRewriter {
 
   private void setMethodName() {
     Expression methodNameExpr = ((MethodCallExpression)call).getMethod();
-    call(chooseMethodNameConstraint(methodNameExpr), methodNameExpr);
+    String constraint = selectNameConstraint(methodNameExpr,
+        InteractionBuilder.ADD_EQUAL_METHOD_NAME, InteractionBuilder.ADD_REGEX_METHOD_NAME);
+    call(constraint, methodNameExpr);
   }
 
-  private String chooseMethodNameConstraint(Expression methodNameExpr) {
-    if (!(methodNameExpr instanceof ConstantExpression)) // dynamically generated method name
-      return InteractionBuilder.ADD_EQUAL_METHOD_NAME;
+  private String selectNameConstraint(Expression nameExpr, String constraint1, String constraint2) {
+    if (!(nameExpr instanceof ConstantExpression)) // dynamically generated name
+      return constraint1;
 
-    String method = (String)((ConstantExpression)methodNameExpr).getValue();
-    // NOTE: we cannot tell from the AST if a method name is defined using
+    String method = (String)((ConstantExpression)nameExpr).getValue();
+    // NOTE: we cannot tell from the AST if a method (or property) name is defined using
     // slashy string syntax ("/somePattern/"); hence, we consider any name
     // that isn't a valid Java identifier a pattern. While this isn't entirely
-    // safe (Groovy allows almost all characters in method names), it should
+    // safe (the JVM allows almost all characters in method names), it should
     // work out well in practice because it's very unlikely that a
     // collaborator has a method name that is not a valid Java identifier.
-    return AstUtil.isJavaIdentifier(method) ?
-        InteractionBuilder.ADD_EQUAL_METHOD_NAME :
-        InteractionBuilder.ADD_REGEX_METHOD_NAME;
+    return AstUtil.isJavaIdentifier(method) ? constraint1 : constraint2;
   }
 
   private void addArgs() {

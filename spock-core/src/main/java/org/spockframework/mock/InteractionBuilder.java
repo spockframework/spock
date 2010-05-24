@@ -87,6 +87,12 @@ public class InteractionBuilder {
     return this;
   }
 
+  public static final String ADD_REGEX_PROPERTY_NAME = "addRegexPropertyName";
+  public InteractionBuilder addRegexPropertyName(String regex) {
+    invConstraints.add(new RegexPropertyNameConstraint(regex));
+    return this;
+  }
+
   public static final String ADD_EQUAL_METHOD_NAME = "addEqualMethodName";
   public InteractionBuilder addEqualMethodName(String name) {
     if (name.equals(Specification._.toString()))

@@ -16,17 +16,30 @@
 
 package org.spockframework.guice;
 
+import java.util.*;
+
+import com.google.inject.Module;
+
 import org.spockframework.runtime.extension.AbstractAnnotationDrivenExtension;
 import org.spockframework.runtime.model.SpecInfo;
 
 import spock.guice.UseModules;
 
-// TOOD: full support for spec inheritance
 public class GuiceExtension extends AbstractAnnotationDrivenExtension<UseModules> {
+  private final Set<Class<? extends Module>> moduleClasses = new HashSet<Class<? extends Module>>();
+
   @Override
   public void visitSpecAnnotation(UseModules useModules, SpecInfo spec) {
-    GuiceInterceptor interceptor = new GuiceInterceptor(spec, useModules);
-    spec.getSetupSpecMethod().addInterceptor(interceptor);
-    spec.getSetupMethod().addInterceptor(interceptor);
+    moduleClasses.addAll(Arrays.asList(useModules.value()));
+  }
+
+  @Override
+  public void visitSpec(SpecInfo spec) {
+    if (moduleClasses.isEmpty()) return;
+    
+    GuiceInterceptor interceptor = new GuiceInterceptor(spec, moduleClasses);
+    SpecInfo topSpec = spec.getTopSpec();
+    topSpec.getSetupSpecMethod().addInterceptor(interceptor);
+    topSpec.getSetupMethod().addInterceptor(interceptor);
   }
 }

@@ -43,12 +43,12 @@ import spock.lang.Specification;
 // spec.getTopSpec() are intercepted (see TapestryExtension)
 public class TapestryInterceptor extends AbstractMethodInterceptor {
   private final SpecInfo spec;
-  private final List<Class<?>> modules;
+  private final Set<Class<?>> modules;
 
   private Registry registry;
   private IPerIterationManager perIterationManager;
 
-  public TapestryInterceptor(SpecInfo spec, List<Class<?>> modules) {
+  public TapestryInterceptor(SpecInfo spec, Set<Class<?>> modules) {
     this.spec = spec;
     this.modules = modules;
   }

@@ -88,7 +88,7 @@ import org.spockframework.runtime.model.SpecInfo;
  */
 public class TapestryExtension implements IGlobalExtension {
   public void visitSpec(SpecInfo spec) {
-    List<Class<?>> modules = collectModules(spec);
+    Set<Class<?>> modules = collectModules(spec);
     if (modules == null) return;
 
     IMethodInterceptor interceptor = new TapestryInterceptor(spec, modules);
@@ -103,14 +103,14 @@ public class TapestryExtension implements IGlobalExtension {
   // Returns an empty list if one or more SubModule annotations were found,
   // but they didn't specify any modules. This distinction is important to
   // allow activation of the extension w/o specifying any modules.
-  private List<Class<?>> collectModules(SpecInfo spec) {
-    List<Class<?>> modules = null;
+  private Set<Class<?>> collectModules(SpecInfo spec) {
+    Set<Class<?>> modules = null;
 
     for (SpecInfo curr : spec.getSpecsTopToBottom()) {
       SubModule subModule = curr.getReflection().getAnnotation(SubModule.class);
       if (subModule == null) continue;
 
-      if (modules == null) modules = new ArrayList<Class<?>>();
+      if (modules == null) modules = new HashSet<Class<?>>();
       modules.addAll(Arrays.<Class<?>>asList(subModule.value()));
     }
 

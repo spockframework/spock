@@ -26,7 +26,6 @@ import com.google.inject.spi.InjectionPoint;
 import org.spockframework.runtime.extension.*;
 import org.spockframework.runtime.model.SpecInfo;
 
-import spock.guice.UseModules;
 import spock.lang.Shared;
 
 /**
@@ -34,14 +33,16 @@ import spock.lang.Shared;
  *
  * @author Peter Niederwieser
  */
+// Important implementation detail: Only the fixture methods of
+// spec.getTopSpec() are intercepted (see GuiceExtension)
 public class GuiceInterceptor extends AbstractMethodInterceptor {
-  private final UseModules useModules;
+  private final Set<Class<? extends Module>> moduleClasses;
   private final Set<InjectionPoint> injectionPoints;
 
   private Injector injector;
 
-  public GuiceInterceptor(SpecInfo spec, UseModules useModules) {
-    this.useModules = useModules;
+  public GuiceInterceptor(SpecInfo spec, Set<Class<? extends Module>> moduleClasses) {
+    this.moduleClasses = moduleClasses;
     injectionPoints = InjectionPoint.forInstanceMethodsAndFields(spec.getReflection());
   }
 
@@ -64,7 +65,7 @@ public class GuiceInterceptor extends AbstractMethodInterceptor {
   
   private List<Module> createModules() {
     List<Module> modules = new ArrayList<Module>();
-    for (Class<? extends Module> clazz : useModules.value()) {
+    for (Class<? extends Module> clazz : moduleClasses) {
       try {
         modules.add(clazz.newInstance());
       } catch (InstantiationException e) {

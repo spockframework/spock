@@ -279,9 +279,9 @@ public class SpecInfoBuilder {
       try {
         result = clazz.newInstance();
       } catch (InstantiationException e) {
-        throw new ExtensionException("Failed to instantiate extension '%s'", e).format(clazz);
+        throw new ExtensionException("Failed to instantiate extension '%s'", e).withArgs(clazz);
       } catch (IllegalAccessException e) {
-        throw new ExtensionException("No-arg constructor of extension '%s' is not public", e).format(clazz);
+        throw new ExtensionException("No-arg constructor of extension '%s' is not public", e).withArgs(clazz);
       }
       localExtensions.put(clazz, result);
     }

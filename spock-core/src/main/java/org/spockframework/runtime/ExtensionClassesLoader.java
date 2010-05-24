@@ -63,7 +63,7 @@ public class ExtensionClassesLoader {
       }
       return lines;
     } catch (IOException e) {
-      throw new ExtensionException("Failed to read extension descriptor '%s'", e).format(url);
+      throw new ExtensionException("Failed to read extension descriptor '%s'", e).withArgs(url);
     } finally {
       IoUtil.closeQuietly(reader);
     }
@@ -73,7 +73,7 @@ public class ExtensionClassesLoader {
     try {
       return RunContext.class.getClassLoader().loadClass(className);
     } catch (Exception e) {
-      throw new ExtensionException("Failed to load extension class '%s'", e).format(className);
+      throw new ExtensionException("Failed to load extension class '%s'", e).withArgs(className);
     }
   }
 }

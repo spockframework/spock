@@ -28,7 +28,7 @@ public class ExtensionException extends RuntimeException {
     this.message = message;
   }
 
-  public ExtensionException format(Object... args) {
+  public ExtensionException withArgs(Object... args) {
     message = String.format(message, args);
     return this;
   }

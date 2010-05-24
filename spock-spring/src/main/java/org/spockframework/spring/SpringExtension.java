@@ -27,7 +27,6 @@ import org.spockframework.util.*;
 
 import spock.lang.Shared;
 
-// TODO: spec for behavior in presence of inheritance
 @NotThreadSafe
 public class SpringExtension implements IGlobalExtension {
   public void visitSpec(SpecInfo spec) {
@@ -60,7 +59,7 @@ public class SpringExtension implements IGlobalExtension {
           // avoid compile-time dependency on JDK 1.6 only class
           || ReflectionUtil.isAnnotationPresent(field.getReflection(), "javax.annotation.Resource")))
         throw new SpringExtensionException(
-            "@Shared field '%s' cannot be injected; use an instance field instead").format(field.getName());
+            "@Shared field '%s' cannot be injected; use an instance field instead").withArgs(field.getName());
     }
   }
 

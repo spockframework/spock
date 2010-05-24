@@ -1,7 +1,11 @@
 project(":spock-specs") {
   dependencies {
     compile project(":spock-core")
-    compile junit
+    compile junit 
+    testCompile easymock
+    testCompile jmock_junit4
+    testCompile jmock
+    testCompile mockito
     testRuntime asm
     testRuntime cglib
     testRuntime objenesis

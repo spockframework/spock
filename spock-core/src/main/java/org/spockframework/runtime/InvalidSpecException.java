@@ -34,7 +34,7 @@ public class InvalidSpecException extends RuntimeException {
     this.msg = msg;
   }
 
-  public InvalidSpecException format(Object... args) {
+  public InvalidSpecException withArgs(Object... args) {
     msg = String.format(msg, args);
     return this;
   }

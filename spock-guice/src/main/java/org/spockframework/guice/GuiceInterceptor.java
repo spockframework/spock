@@ -68,9 +68,9 @@ public class GuiceInterceptor extends AbstractMethodInterceptor {
       try {
         modules.add(clazz.newInstance());
       } catch (InstantiationException e) {
-        throw new GuiceExtensionException("Failed to instantiate module '%s'", e).format(clazz.getSimpleName());
+        throw new GuiceExtensionException("Failed to instantiate module '%s'", e).withArgs(clazz.getSimpleName());
       } catch (IllegalAccessException e) {
-        throw new GuiceExtensionException("Failed to instantiate module '%s'", e).format(clazz.getSimpleName());
+        throw new GuiceExtensionException("Failed to instantiate module '%s'", e).withArgs(clazz.getSimpleName());
       }
     }
     return modules;

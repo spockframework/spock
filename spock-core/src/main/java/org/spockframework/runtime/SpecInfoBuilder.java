@@ -16,14 +16,10 @@
 
 package org.spockframework.runtime;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.*;
 
-import org.spockframework.runtime.extension.*;
-import org.spockframework.runtime.extension.ExtensionAnnotation;
-import org.spockframework.runtime.extension.IAnnotationDrivenExtension;
 import org.spockframework.runtime.model.*;
 import org.spockframework.util.*;
 
@@ -36,14 +32,10 @@ import spock.lang.Specification;
  */
 public class SpecInfoBuilder {
   private final Class<?> clazz;
-  private final List<IGlobalExtension> globalExtensions;
-  private final Map<Class<? extends IAnnotationDrivenExtension>, IAnnotationDrivenExtension> localExtensions =
-    new HashMap<Class<? extends IAnnotationDrivenExtension>, IAnnotationDrivenExtension>();
   private final SpecInfo spec = new SpecInfo();
 
-  public SpecInfoBuilder(Class<?> clazz, List<IGlobalExtension> globalExtensions) {
+  public SpecInfoBuilder(Class<?> clazz) {
     this.clazz = clazz;
-    this.globalExtensions = globalExtensions;
   }
 
   public SpecInfo build() {
@@ -66,17 +58,11 @@ public class SpecInfoBuilder {
     return spec;
   }
 
-  // TODO: move this to a more appropriate location (class)
-  public void runExtensions() {
-    runGlobalExtensions();
-    runAnnotationDrivenExtensions();
-  }
-
   private void buildSuperSpec() {
     Class<?> superClass = clazz.getSuperclass();
     if (superClass == Object.class || superClass == Specification.class) return;
 
-    SpecInfo superSpec = new SpecInfoBuilder(superClass, globalExtensions).doBuild();
+    SpecInfo superSpec = new SpecInfoBuilder(superClass).doBuild();
     spec.setSuperSpec(superSpec);
     superSpec.setSubSpec(spec);
   }
@@ -221,70 +207,5 @@ public class SpecInfoBuilder {
     spec.setCleanupMethod(createMethod(Identifiers.CLEANUP_METHOD, MethodKind.CLEANUP, true));
     spec.setSetupSpecMethod(createMethod(Identifiers.SETUP_SPEC_METHOD, MethodKind.SETUP_SPEC, true));
     spec.setCleanupSpecMethod(createMethod(Identifiers.CLEANUP_SPEC_METHOD, MethodKind.CLEANUP_SPEC, true));
-  }
-
-  private void runGlobalExtensions() {
-    for (IGlobalExtension extension : globalExtensions)
-      extension.visitSpec(spec);
-  }
-
-  public void runAnnotationDrivenExtensions() {
-    runAnnotationDrivenExtensions(spec);
-    
-    for (IAnnotationDrivenExtension extension : localExtensions.values())
-      extension.visitSpec(spec);
-  }
-
-  public void runAnnotationDrivenExtensions(SpecInfo spec) {
-    if (spec == null) return;
-    runAnnotationDrivenExtensions(spec.getSuperSpec());
-
-    doRunAnnotationDrivenExtensions(spec);
-    
-    for (FieldInfo field : spec.getFields())
-      doRunAnnotationDrivenExtensions(field);
-
-    doRunAnnotationDrivenExtensions(spec.getSetupSpecMethod());
-    doRunAnnotationDrivenExtensions(spec.getSetupMethod());
-    doRunAnnotationDrivenExtensions(spec.getCleanupMethod());
-    doRunAnnotationDrivenExtensions(spec.getCleanupSpecMethod());
-
-    for (FeatureInfo feature : spec.getFeatures())
-      doRunAnnotationDrivenExtensions(feature.getFeatureMethod());
-  }
-
-  @SuppressWarnings("unchecked")
-  private void doRunAnnotationDrivenExtensions(NodeInfo<?, ?> node) {
-    if (node.isStub()) return;
-
-    for (Annotation ann : node.getReflection().getAnnotations()) {
-      ExtensionAnnotation extAnn = ann.annotationType().getAnnotation(ExtensionAnnotation.class);
-      if (extAnn == null) continue;
-      IAnnotationDrivenExtension extension = getOrCreateExtension(extAnn.value());
-      if (node instanceof SpecInfo)
-        extension.visitSpecAnnotation(ann, (SpecInfo)node);
-      else if (node instanceof MethodInfo) {
-        MethodInfo method = (MethodInfo)node;
-        if (method.getKind() == MethodKind.FEATURE)
-          extension.visitFeatureAnnotation(ann, method.getFeature());
-        else
-          extension.visitFixtureAnnotation(ann, method);
-      } else extension.visitFieldAnnotation(ann, (FieldInfo)node);
-    }
-  }
-
-  private IAnnotationDrivenExtension getOrCreateExtension(Class<? extends IAnnotationDrivenExtension> clazz) {
-    IAnnotationDrivenExtension result = localExtensions.get(clazz);
-    if (result == null) {
-      try {
-        result = clazz.newInstance();
-      } catch (InstantiationException e) {
-        throw new ExtensionException("Failed to instantiate extension '%s'", e).withArgs(clazz);
-      } catch (IllegalAccessException e) {
-        throw new ExtensionException("No-arg constructor of extension '%s' is not public", e).withArgs(clazz);
-      }
-      localExtensions.put(clazz, result);
-    }
-    return result;
   }
 }

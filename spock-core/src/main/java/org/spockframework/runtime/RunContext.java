@@ -52,8 +52,8 @@ public class RunContext {
     }
   }
 
-  public SpecInfoBuilder createSpecInfoBuilder(Class<?> clazz) {
-    return new SpecInfoBuilder(clazz, extensionRegistry.getExtensions());
+  public ExtensionRunner createExtensionRunner(SpecInfo spec) {
+    return new ExtensionRunner(spec, extensionRegistry.getExtensions());
   }
 
   public ParameterizedSpecRunner createSpecRunner(SpecInfo spec, RunNotifier notifier) {

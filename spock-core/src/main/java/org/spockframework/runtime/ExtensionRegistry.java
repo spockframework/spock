@@ -48,10 +48,6 @@ public class ExtensionRegistry {
     return extensions;
   }
 
-  public List<Object> getConfigurations() {
-    return configurations;
-  }
-
   private Class<?> verifyExtensionClass(Class<?> clazz) {
     if (!IGlobalExtension.class.isAssignableFrom(clazz))
       throw new ExtensionException(

@@ -25,7 +25,6 @@ import org.spockframework.util.Identifiers
 /**
  * @author Peter Niederwieser
  */
-// TODO: seems we don't have line numbers for explicit conditions
 @Issue("http://issues.spockframework.org/detail?id=21")
 class StackTraceFiltering extends EmbeddedSpecification {
   def "unsatisfied implicit condition"() {
@@ -40,6 +39,20 @@ expect: false
 apackage.ASpec|a feature|1
     """)
   }
+
+  def "unsatisfied explicit condition"() {
+    when:
+    runner.runFeatureBody """
+expect: assert false
+    """
+
+    then:
+    ConditionNotSatisfiedError e = thrown()
+    stackTraceLooksLike(e, """
+apackage.ASpec|a feature|1
+    """)
+  }
+
 
   @Unroll("exception in #displayName")
   def "exception in call chain"() {

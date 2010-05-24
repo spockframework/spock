@@ -36,7 +36,7 @@ class Derived extends Base {
 }
     """).find { it.simpleName == "Derived" }
 
-    def specInfo = RunContext.get().createSpecInfoBuilder(derived).build()
+    def specInfo = new SpecInfoBuilder(derived).build()
     def generator = new JUnitDescriptionGenerator(specInfo)
     
     when:

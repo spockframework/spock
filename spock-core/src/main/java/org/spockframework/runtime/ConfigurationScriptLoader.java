@@ -20,7 +20,8 @@ import java.io.IOException;
 import org.codehaus.groovy.control.CompilationFailedException;
 import org.codehaus.groovy.control.CompilerConfiguration;
 
-import spock.builder.DelegatingScript;
+import org.spockframework.builder.DelegatingScript;
+
 import spock.config.ConfigurationException;
 
 import groovy.lang.*;

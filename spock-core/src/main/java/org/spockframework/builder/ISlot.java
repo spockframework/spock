@@ -12,12 +12,11 @@
  * limitations under the License.
  */
 
-package spock.builder;
+package org.spockframework.builder;
 
 import java.lang.reflect.Type;
 
-import org.spockframework.util.Nullable;
-
-public interface ISlotFactory {
-  @Nullable ISlot create(Object owner, Type ownerType, String name);
+public interface ISlot {
+  Type getType();
+  void write(Object value);
 }

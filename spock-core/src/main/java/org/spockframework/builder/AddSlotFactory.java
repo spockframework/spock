@@ -12,11 +12,19 @@
  * limitations under the License.
  */
 
-package spock.builder;
+package org.spockframework.builder;
 
-public class GestaltBuilder {
-  public void build(IGestalt root) {
-    new Sculpturer().$form(root);
+import java.lang.reflect.Type;
+
+import org.codehaus.groovy.runtime.InvokerHelper;
+import org.codehaus.groovy.runtime.MetaClassHelper;
+
+import groovy.lang.MetaMethod;
+
+public class AddSlotFactory implements ISlotFactory {
+  public ISlot create(Object owner, Type ownerType, String name) {
+    String addName = "add" + MetaClassHelper.capitalize(name);
+    MetaMethod addMethod = InvokerHelper.getMetaClass(owner).pickMethod(addName, new Class[] {Object.class});
+    return addMethod != null ? new SetterLikeSlot(owner, ownerType, addMethod) : null;
   }
 }
-

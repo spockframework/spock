@@ -12,8 +12,25 @@
  * limitations under the License.
  */
 
-package spock.builder;
+package org.spockframework.builder;
 
-public interface IConfigurationRegistry {
-  Object getConfiguration(String name);
+import groovy.lang.Closure;
+
+public class ClosureBlueprint implements IBlueprint {
+  private final Closure closure;
+  private final Object subject;
+  
+  public ClosureBlueprint(Closure closure, Object subject) {
+    this.closure = closure;
+    this.subject = subject;
+    closure.setResolveStrategy(Closure.DELEGATE_FIRST);
+  }
+
+  public void setDelegate(Object delegate) {
+    closure.setDelegate(delegate);
+  }
+
+  public void evaluate() {
+    closure.call(subject);
+  }
 }

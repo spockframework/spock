@@ -18,10 +18,10 @@ import java.util.*;
 
 import org.junit.runner.notification.RunNotifier;
 
+import org.spockframework.builder.DelegatingScript;
 import org.spockframework.runtime.model.SpecInfo;
 import org.spockframework.util.*;
 
-import spock.builder.DelegatingScript;
 import spock.config.RunnerConfiguration;
 
 public class RunContext {

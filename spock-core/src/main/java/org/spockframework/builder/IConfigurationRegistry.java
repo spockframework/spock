@@ -12,14 +12,8 @@
  * limitations under the License.
  */
 
-package spock.builder;
+package org.spockframework.builder;
 
-import org.spockframework.util.Nullable;
-
-public interface IGestalt {
-  @Nullable IBlueprint getBlueprint();
-
-  Object getProperty(String name);
-  void setProperty(String name, Object value);
-  IGestalt invokeMethod(String name, Object[] args);
+public interface IConfigurationRegistry {
+  Object getConfiguration(String name);
 }

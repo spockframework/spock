@@ -12,20 +12,14 @@
  * limitations under the License.
  */
 
-package spock.builder;
+package org.spockframework.builder;
 
-public class DelegatingScriptBlueprint implements IBlueprint {
-  private final DelegatingScript script;
+import org.spockframework.util.Nullable;
 
-  public DelegatingScriptBlueprint(DelegatingScript script) {
-    this.script = script;
-  }
+public interface IGestalt {
+  @Nullable IBlueprint getBlueprint();
 
-  public void setDelegate(final Object delegate) {
-    script.$setDelegate(delegate);
-  }
-
-  public void evaluate() {
-    script.run();
-  }
+  Object getProperty(String name);
+  void setProperty(String name, Object value);
+  IGestalt invokeMethod(String name, Object[] args);
 }

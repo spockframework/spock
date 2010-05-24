@@ -12,9 +12,20 @@
  * limitations under the License.
  */
 
-package spock.builder;
+package org.spockframework.builder;
 
-public interface IBlueprint {
-  void setDelegate(Object delegate);
-  void evaluate();
+public class DelegatingScriptBlueprint implements IBlueprint {
+  private final DelegatingScript script;
+
+  public DelegatingScriptBlueprint(DelegatingScript script) {
+    this.script = script;
+  }
+
+  public void setDelegate(final Object delegate) {
+    script.$setDelegate(delegate);
+  }
+
+  public void evaluate() {
+    script.run();
+  }
 }

@@ -25,6 +25,7 @@ class SpockGrailsPlugin {
 
   def author = "Luke Daley"
   def authorEmail = "ld@ldaley.com"
-  def title = "Spock Integration - spockframework.org"
-  def description = 'Brings BDD to Grails via the Spock Framework'
+  def title = "Spock Plugin - spockframework.org"
+  def description = 'Test your Grails apps with Spock'
+  def documentation = 'http://grails.org/plugin/spock'
 }

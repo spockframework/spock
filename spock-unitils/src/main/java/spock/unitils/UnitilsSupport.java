@@ -19,6 +19,10 @@ import java.lang.annotation.*;
 import org.spockframework.runtime.extension.ExtensionAnnotation;
 import org.spockframework.unitils.UnitilsExtension;
 
+/**
+ * Activates Unitils support for a specification. All Unitils features are
+ * supported. For more information, see http://www.unitils.org.
+ */
 @Inherited
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)

@@ -16,13 +16,13 @@ package org.spockframework.smoke.extension
 
 import org.spockframework.EmbeddedSpecification
 
-class ScenarioExtension extends EmbeddedSpecification {
+class DependentExtension extends EmbeddedSpecification {
   def "basic usage"() {
     runner.throwFailure = false
 
     when:
     def result = runner.runWithImports("""
-@Scenario
+@Dependent
 class Foo extends Specification {
   def step1() { expect: true }
   def step2() { expect: false }

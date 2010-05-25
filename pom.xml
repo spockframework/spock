@@ -33,7 +33,7 @@
       <plugins>
         <plugin>
           <artifactId>maven-compiler-plugin</artifactId>
-          <version>2.0.2</version>
+          <version>2.3</version>
           <configuration>
             <source>1.5</source>
             <target>1.5</target>
@@ -41,14 +41,18 @@
         </plugin>
         <plugin>
           <artifactId>maven-surefire-plugin</artifactId>
-          <version>2.4.3</version>
+          <version>2.5</version>
           <configuration>
             <useFile>false</useFile>
           </configuration>
         </plugin>
         <plugin>
           <artifactId>maven-deploy-plugin</artifactId>
-          <version>2.4</version> <!-- 2.4 introduces skip property -->
+          <version>2.5</version> 
+        </plugin>
+        <plugin>
+          <artifactId>maven-release-plugin</artifactId>
+          <version>2.0</version>
         </plugin>
         <plugin>
           <groupId>org.codehaus.gmaven</groupId>
@@ -241,14 +245,14 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-release-plugin</artifactId>
-            <version>2.0-beta-9</version>
+            <version>2.0</version>
             <configuration>
               <remoteTagging>true</remoteTagging>
             </configuration>
           </plugin>
           <plugin>
             <artifactId>maven-source-plugin</artifactId>
-            <version>2.1.1</version>
+            <version>2.1.2</version>
             <executions>
               <execution>
                 <id>attach-sources</id>
@@ -260,7 +264,7 @@
           </plugin>
           <plugin>
             <artifactId>maven-javadoc-plugin</artifactId>
-            <version>2.5</version>
+            <version>2.7</version>
               <configuration>
                 <links>
                   <link>http://java.sun.com/j2se/1.5.0/docs/api</link>

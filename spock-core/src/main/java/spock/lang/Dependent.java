@@ -14,8 +14,18 @@
 
 package spock.lang;
 
-import groovy.lang.Closure;
+import java.lang.annotation.*;
 
-public @interface Require {
-  Class<? extends Closure> value();
-}
+import org.spockframework.runtime.extension.ExtensionAnnotation;
+import org.spockframework.runtime.extension.builtin.DependentExtension;
+
+/**
+ * Indicates that the methods of a spec depend on each other. As a consequence,
+ * the methods will always be run sequentially in their declared order (even if
+ * a parallel spec runner is used). Once a method fails, all remaining methods
+ * will be skipped.
+ */
+@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.RUNTIME)
+@ExtensionAnnotation(DependentExtension.class)
+public @interface Dependent {}

@@ -17,10 +17,11 @@ package spock.lang;
 import java.lang.annotation.*;
 
 /**
- * Indicates which type(s) are the subject(s) of a spec. If applied to a field, the
- * field's type is (part of) the SUS (subject under specification). If applied
- * to a spec class, the annotation's values are (part of) the SUS.
- * Currently, this annotation has only informational purposes.
+ * Indicates which objects/classes are the subjects of a specification. If applied
+ * to a field, indicates that the field holds the subject of the specification.
+ * If applied to a class, indicates that the classes listed as annotation
+ * arguments are the subjects of the specification. Currently, this annotation
+ * has only informational purposes.
  *
  * @author Peter Niederwieser
  */
@@ -28,10 +29,10 @@ import java.lang.annotation.*;
 @Target({ElementType.TYPE, ElementType.FIELD})
 public @interface Subject {
   /**
-   * The types that are (part of) the spec's SUS. Only relevant if the annotation
-   * is applied to a spec class.
+   * The classes which are the subjects of the specification. Irrelevant if the
+   * annotation is applied to a field.
    *
-   * @return the types that are (part of) the spec's SUS
+   * @return the classes which are the subjects of the specification
    */
   Class<?>[] value() default Void.class;
 }

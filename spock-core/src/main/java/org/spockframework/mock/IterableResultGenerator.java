@@ -19,6 +19,7 @@ package org.spockframework.mock;
 import java.util.Iterator;
 
 import org.codehaus.groovy.runtime.InvokerHelper;
+import org.codehaus.groovy.runtime.typehandling.DefaultTypeTransformation;
 
 /**
  * Generates result values from an iterable object. If the iterator has no more
@@ -35,8 +36,7 @@ public class IterableResultGenerator implements IResultGenerator {
   }
 
   public Object generate(IMockInvocation invocation) {
-    if (iterator.hasNext())
-      nextValue = iterator.next();
-    return nextValue;
+    if (iterator.hasNext()) nextValue = iterator.next();
+    return DefaultTypeTransformation.castToType(nextValue, invocation.getMethod().getReturnType());
   }
 }

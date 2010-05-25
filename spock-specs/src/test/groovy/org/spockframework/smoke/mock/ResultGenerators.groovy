@@ -74,8 +74,7 @@ class ResultGenerators extends Specification {
   }
 
   @Issue("http://issues.spockframework.org/detail?id=83")
-  @FailsWith(value = ClassCastException, reason = "TODO")
-  def "return a GString where a String is expected (in plain Groovy this would be auto-coerced)"() {
+  def "auto-coercion of GString return value to String (as in plain Groovy)"() {
     def fred = "Fred"
     def flintstone = "Flintstone"
     def named = Mock(Named)
@@ -86,13 +85,30 @@ class ResultGenerators extends Specification {
   }
 
   @Issue("http://issues.spockframework.org/detail?id=83")
-  @FailsWith(value = ClassCastException, reason = "TODO")
-  def "return an Integer where a BigDecimal is expected (in plain Groovy this would be auto-coerced)"() {
+  def "auto-coercion of Integer return value to BigDecimal (as in plain Groovy)"() {
     def calculator = Mock(Calculator)
     calculator.calculate() >> 5
 
     expect:
-    calculator.calculate() instanceof int
+    calculator.calculate() instanceof BigDecimal
+  }
+
+  def "auto-coercion for multi-results"() {
+    def calculator = Mock(Calculator)
+    calculator.calculate() >>> [1, 2, 3]
+
+    expect:
+    calculator.calculate() instanceof BigDecimal
+    calculator.calculate() instanceof BigDecimal
+    calculator.calculate() instanceof BigDecimal
+  }
+
+  def "auto-coercion for computed results"() {
+    def calculator = Mock(Calculator)
+    calculator.calculate() >> { 1 }
+
+    expect:
+    calculator.calculate() instanceof BigDecimal
   }
 
   def "access args with 'it' variable"() {

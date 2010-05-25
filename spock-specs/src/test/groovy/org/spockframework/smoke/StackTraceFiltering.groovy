@@ -153,6 +153,56 @@ apackage.Base|let me fail|3
     """
   }
 
+  @Issue("http://issues.spockframework.org/detail?id=33")
+  def "if creation of data provider fails, stack trace points to corresponding parameterization"() {
+    when:
+    runner.runSpecBody """
+def foo() {
+  expect:
+  true
+
+  where:
+  x << [1]
+  y << { throw new RuntimeException() }()
+  z << [1]
+}
+    """
+
+    then:
+    RuntimeException e = thrown()
+    stackTraceLooksLike e, """
+apackage.ASpec|foo_closure1|7
+apackage.ASpec|foo_closure1|-
+apackage.ASpec|foo|7
+
+    """
+  }
+
+  @Issue("http://issues.spockframework.org/detail?id=33")
+  def "if data processor fails, stack trace source position points to corresponding parameterization"() {
+    when:
+    runner.runSpecBody """
+def foo(int x, Class y, int z) {
+  expect:
+  true
+
+  where:
+  x << [1]
+  $parameterization
+  z << [1]
+}
+    """
+
+    then:
+    RuntimeException e = thrown()
+    stackTraceLooksLike e, """
+apackage.ASpec|foo|7
+    """
+
+    where:
+    parameterization << ["y << [1]", "y = 1", "[_, y, _] << [[1], [1], [1]]"]
+  }
+
   private void stackTraceLooksLike(Throwable exception, String template) {
     def trace = exception.stackTrace
     def lines = template.trim().split("\n")

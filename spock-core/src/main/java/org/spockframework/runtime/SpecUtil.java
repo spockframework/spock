@@ -50,11 +50,11 @@ public final class SpecUtil {
     if (Specification.class.isAssignableFrom(clazz))
       throw new InvalidSpecException(
 "Specification '%s' was not compiled properly (Spock AST transform was not run); try to do a clean build"
-      ).format(clazz.getName());
+      ).withArgs(clazz.getName());
 
     throw new InvalidSpecException(
 "Class '%s' is not a Spock specification (does not extend spock.lang.Specification or a subclass thereof)"
-    ).format(clazz.getName());
+    ).withArgs(clazz.getName());
   }
 
   public static boolean isRunnableSpec(Class<?> clazz) {
@@ -66,7 +66,7 @@ public final class SpecUtil {
 
     if (Modifier.isAbstract(clazz.getModifiers()))
       throw new InvalidSpecException("Specification '%s' is not runnable because it is declared abstract")
-          .format(clazz.getName());
+          .withArgs(clazz.getName());
   }
 
   /**

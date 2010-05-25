@@ -23,14 +23,14 @@ import spock.guice.UseModules
 import spock.lang.Shared
 import spock.lang.Specification
 
-@UseModules(Module)
+@UseModules(Module1)
 class InjectionExamples extends Specification {
   @Inject
-  IService service
+  IService1 service
 
   @Inject
   @Shared
-  IService sharedService
+  IService1 sharedService
 
   @Inject
   @Named("value1")
@@ -48,10 +48,10 @@ class InjectionExamples extends Specification {
   BindingAnnotation2
   String annotatedValue2
   
-  IService copiedService = service
+  IService1 copiedService = service
 
   @Shared
-  IService copiedSharedService = sharedService
+  IService1 copiedSharedService = sharedService
 
   @Inject
   Injector injector
@@ -63,34 +63,34 @@ class InjectionExamples extends Specification {
   List savedSharedServices = []
 
   def setupSpec() {
-    assert sharedService instanceof Service
+    assert sharedService instanceof Service1
   }
 
   def cleanupSpec() {
-    assert sharedService instanceof Service
+    assert sharedService instanceof Service1
   }
 
   def setup() {
-    assert service instanceof Service
-    assert sharedService instanceof Service
+    assert service instanceof Service1
+    assert sharedService instanceof Service1
 
     savedServices << service
     savedSharedServices << sharedService
   }
 
   def cleanup() {
-    assert service instanceof Service
-    assert sharedService instanceof Service
+    assert service instanceof Service1
+    assert sharedService instanceof Service1
   }
   
   def "injecting a field"() {
     expect:
-    service instanceof Service
+    service instanceof Service1
   }
 
   def "injecting a shared field"() {
     expect:
-    sharedService instanceof Service
+    sharedService instanceof Service1
   }
 
   def "using @Named"() {
@@ -113,7 +113,7 @@ class InjectionExamples extends Specification {
 
   def "explicit use of injector (discouraged)"() {
     expect:
-    injector.getInstance(IService) instanceof Service
+    injector.getInstance(IService1) instanceof Service1
   }
 
   def "instance fields are injected once per feature iteration"() {

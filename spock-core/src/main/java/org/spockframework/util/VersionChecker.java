@@ -20,7 +20,7 @@ public class VersionChecker {
 
   public static void checkSpockAndGroovyVersionsAreCompatible(String whoIsChecking) {
     if (!compatibleWithGroovy) throw new IncompatibleVersionsError(String.format(
-"The Spock %s refused to run because Spock %s is not compatible with Groovy %s. For more information, see http://versioncheck.spockframework.org\n" +
+"The Spock %s could not run because Spock %s is not compatible with Groovy %s. For more information, see http://versioninfo.spockframework.org\n" +
 "Spock location: %s\n" +
 "Groovy location: %s",
         whoIsChecking, SpockReleaseInfo.getVersion(), GroovyReleaseInfo.getVersion(),

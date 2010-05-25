@@ -67,10 +67,6 @@ public class InteractionBuilder {
     return this;
   }
 
-  // TODO: this should be called ADD_TARGET because on the syntax level we
-  // only have one way to define a target; decision which constraint to
-  // add should be made solely by this builder
-  // same for other methods in this class
   public static final String ADD_EQUAL_TARGET = "addEqualTarget";
   public InteractionBuilder addEqualTarget(Object target) {
     if (target != Specification._)
@@ -84,6 +80,12 @@ public class InteractionBuilder {
       invConstraints.add(WildcardMethodNameConstraint.INSTANCE);
     else
       invConstraints.add(new EqualPropertyNameConstraint(name));
+    return this;
+  }
+
+  public static final String ADD_REGEX_PROPERTY_NAME = "addRegexPropertyName";
+  public InteractionBuilder addRegexPropertyName(String regex) {
+    invConstraints.add(new RegexPropertyNameConstraint(regex));
     return this;
   }
 

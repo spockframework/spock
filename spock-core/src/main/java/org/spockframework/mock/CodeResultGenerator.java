@@ -16,6 +16,8 @@
 
 package org.spockframework.mock;
 
+import org.codehaus.groovy.runtime.typehandling.DefaultTypeTransformation;
+
 import groovy.lang.Closure;
 
 /**
@@ -33,6 +35,12 @@ public class CodeResultGenerator implements IResultGenerator {
   }
 
   public Object generate(IMockInvocation invocation) {
-    return code.call(provideExtendedInfo ? invocation : invocation.getArguments());
+    Object result = code.call(provideExtendedInfo ? invocation : invocation.getArguments());
+    Class<?> returnType = invocation.getMethod().getReturnType();
+    
+    // don't attempt cast for void methods (closure could be an action that accidentally returns a value)
+    if (returnType == void.class || returnType == Void.class) return null;
+
+    return DefaultTypeTransformation.castToType(result, invocation.getMethod().getReturnType());
   }
 }

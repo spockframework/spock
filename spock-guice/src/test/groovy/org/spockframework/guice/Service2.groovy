@@ -1,3 +1,4 @@
+
 /*
  * Copyright 2010 the original author or authors.
  *
@@ -12,9 +13,10 @@
  * limitations under the License.
  */
 
-package spock.builder;
+package org.spockframework.guice
 
-public interface IBlueprint {
-  void setDelegate(Object delegate);
-  void evaluate();
+public class Service2 implements IService2 {
+  public String generateQuickBrownFox() {
+    return "The quick brown fox jumps over the lazy dog.";
+  }
 }

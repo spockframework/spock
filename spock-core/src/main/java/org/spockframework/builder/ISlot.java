@@ -12,14 +12,11 @@
  * limitations under the License.
  */
 
-package spock.builder;
+package org.spockframework.builder;
 
-import org.spockframework.util.Nullable;
+import java.lang.reflect.Type;
 
-public interface IGestalt {
-  @Nullable IBlueprint getBlueprint();
-
-  Object getProperty(String name);
-  void setProperty(String name, Object value);
-  IGestalt invokeMethod(String name, Object[] args);
+public interface ISlot {
+  Type getType();
+  void write(Object value);
 }

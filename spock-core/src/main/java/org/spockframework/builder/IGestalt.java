@@ -12,19 +12,14 @@
  * limitations under the License.
  */
 
-package spock.builder;
+package org.spockframework.builder;
 
-import java.lang.reflect.Type;
+import org.spockframework.util.Nullable;
 
-import org.codehaus.groovy.runtime.InvokerHelper;
-import org.codehaus.groovy.runtime.MetaClassHelper;
+public interface IGestalt {
+  @Nullable IBlueprint getBlueprint();
 
-import groovy.lang.MetaMethod;
-
-public class AddSlotFactory implements ISlotFactory {
-  public ISlot create(Object owner, Type ownerType, String name) {
-    String addName = "add" + MetaClassHelper.capitalize(name);
-    MetaMethod addMethod = InvokerHelper.getMetaClass(owner).pickMethod(addName, new Class[] {Object.class});
-    return addMethod != null ? new SetterLikeSlot(owner, ownerType, addMethod) : null;
-  }
+  Object getProperty(String name);
+  void setProperty(String name, Object value);
+  IGestalt invokeMethod(String name, Object[] args);
 }

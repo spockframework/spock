@@ -1,12 +1,10 @@
 /*
- * Copyright 2009 the original author or authors.
+ * Copyright 2010 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
  *     http://www.apache.org/licenses/LICENSE-2.0
- *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -14,27 +12,19 @@
  * limitations under the License.
  */
 
-package org.spockframework.runtime.extension;
+package org.spockframework.builder;
 
-public class ExtensionException extends RuntimeException {
-  private String message;
+import java.lang.reflect.Type;
 
-  public ExtensionException(String message) {
-    this(message, null);
-  }
+import org.codehaus.groovy.runtime.InvokerHelper;
 
-  public ExtensionException(String message, Throwable cause) {
-    super(cause);
-    this.message = message;
-  }
+import org.spockframework.util.MopUtil;
 
-  public ExtensionException withArgs(Object... args) {
-    message = String.format(message, args);
-    return this;
-  }
+import groovy.lang.MetaProperty;
 
-  @Override
-  public String getMessage() {
-    return message;
+public class SetterSlotFactory implements ISlotFactory {
+  public ISlot create(Object owner, Type ownerType, String name) {
+    MetaProperty property = InvokerHelper.getMetaClass(owner).getMetaProperty(name);
+    return property != null && MopUtil.isWriteable(property) ? new PropertySlot(owner, ownerType, property) : null;
   }
 }

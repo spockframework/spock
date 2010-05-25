@@ -131,19 +131,19 @@ public class WhereBlockRewriter {
   }
 
   // generates: arg = argMethodParam
-  private void rewriteSimpleParameterization(BinaryExpression binExpr, ASTNode enclosingStat)
+  private void rewriteSimpleParameterization(BinaryExpression binExpr, ASTNode sourcePos)
       throws InvalidSpecCompileException {
     int nextDataVariableIndex = dataProcessorVars.size();
     Parameter dataProcessorParameter = createDataProcessorParameter();
     VariableExpression arg = (VariableExpression) binExpr.getLeftExpression();
 
-    VariableExpression dataVar = createDataProcessorVariable(arg, enclosingStat);
+    VariableExpression dataVar = createDataProcessorVariable(arg, sourcePos);
     ExpressionStatement exprStat = new ExpressionStatement(
         new DeclarationExpression(
             dataVar,
             Token.newSymbol(Types.ASSIGN, -1, -1),
             new VariableExpression(dataProcessorParameter)));
-    exprStat.setSourcePosition(enclosingStat);
+    exprStat.setSourcePosition(sourcePos);
     dataProcessorStats.add(exprStat);
 
     createDataProviderMethod(binExpr.getRightExpression(), nextDataVariableIndex);
@@ -230,7 +230,6 @@ public class WhereBlockRewriter {
     return columns;
   }
 
-  // TODO: source positions of generated exprs
   private void turnIntoSimpleParameterization(List<Expression> column) throws InvalidSpecCompileException {
     VariableExpression varExpr = AstUtil.asInstance(column.get(0), VariableExpression.class);
     if (varExpr == null)
@@ -239,7 +238,12 @@ public class WhereBlockRewriter {
 
     ListExpression listExpr = new ListExpression(column.subList(1, column.size()));
     BinaryExpression binExpr = new BinaryExpression(varExpr, Token.newSymbol(Types.LEFT_SHIFT, -1, -1), listExpr);
-    rewriteSimpleParameterization(binExpr, varExpr); // TODO: enclosingStat
+    // NOTE: varExpr may not be the "perfect" source position here, but as long as we rewrite data tables
+    // into simple parameterizations, it seems like the best approximation; also this source position is
+    // unlikely to make it into a compile error, because header variable has already been checked, and the
+    // assignment itself is unlikely to cause a compile error. (It's more likely that the rval causes a
+    // compile error, but the rval's source position is retained.)
+    rewriteSimpleParameterization(binExpr, varExpr);
   }
 
   private void splitRow(Expression row, List<Expression> parts) {
@@ -252,10 +256,10 @@ public class WhereBlockRewriter {
     }
   }
 
-  private VariableExpression createDataProcessorVariable(Expression varExpr, ASTNode enclosingStat)
+  private VariableExpression createDataProcessorVariable(Expression varExpr, ASTNode sourcePos)
       throws InvalidSpecCompileException {
     if (!(varExpr instanceof VariableExpression))
-      notAParameterization(enclosingStat);
+      notAParameterization(sourcePos);
 
     VariableExpression typedVarExpr = (VariableExpression)varExpr;
     verifyDataProcessorVariable(typedVarExpr);

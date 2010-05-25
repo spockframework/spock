@@ -18,10 +18,10 @@ import java.util.*;
 
 import org.junit.runner.notification.RunNotifier;
 
+import org.spockframework.builder.DelegatingScript;
 import org.spockframework.runtime.model.SpecInfo;
 import org.spockframework.util.*;
 
-import spock.builder.DelegatingScript;
 import spock.config.RunnerConfiguration;
 
 public class RunContext {
@@ -52,8 +52,8 @@ public class RunContext {
     }
   }
 
-  public SpecInfoBuilder createSpecInfoBuilder(Class<?> clazz) {
-    return new SpecInfoBuilder(clazz, extensionRegistry.getExtensions());
+  public ExtensionRunner createExtensionRunner(SpecInfo spec) {
+    return new ExtensionRunner(spec, extensionRegistry.getExtensions());
   }
 
   public ParameterizedSpecRunner createSpecRunner(SpecInfo spec, RunNotifier notifier) {

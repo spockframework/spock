@@ -12,19 +12,25 @@
  * limitations under the License.
  */
 
-package spock.builder;
+package org.spockframework.mock;
 
-import java.lang.reflect.Type;
+import java.util.regex.Pattern;
 
-import org.codehaus.groovy.runtime.InvokerHelper;
+import org.spockframework.util.ReflectionUtil;
 
-import org.spockframework.util.MopUtil;
+/**
+ *
+ * @author Peter Niederwieser
+ */
+public class RegexPropertyNameConstraint implements IInvocationConstraint {
+  private final Pattern pattern;
 
-import groovy.lang.MetaProperty;
+  public RegexPropertyNameConstraint(String regex) {
+    pattern = Pattern.compile(regex);
+  }
 
-public class SetterSlotFactory implements ISlotFactory {
-  public ISlot create(Object owner, Type ownerType, String name) {
-    MetaProperty property = InvokerHelper.getMetaClass(owner).getMetaProperty(name);
-    return property != null && MopUtil.isWriteable(property) ? new PropertySlot(owner, ownerType, property) : null;
+  public boolean isSatisfiedBy(IMockInvocation invocation) {
+    String propertyName = ReflectionUtil.getPropertyNameForGetterMethod(invocation.getMethod());
+    return propertyName != null && pattern.matcher(propertyName).matches();
   }
 }

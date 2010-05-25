@@ -17,7 +17,7 @@ package org.spockframework.runtime;
 import java.util.Arrays;
 import java.util.List;
 
-import spock.builder.*;
+import org.spockframework.builder.*;
 
 public class ConfigurationBuilder {
   private final GestaltBuilder gestaltBuilder = new GestaltBuilder();

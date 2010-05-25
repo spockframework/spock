@@ -70,6 +70,17 @@ class InteractionsWithPropertySyntax extends Specification {
     1 * props.setLength(10)
     0 * _
   }
+
+  def "property names patterns are supported"() {
+    def props = Mock(HasProperties)
+
+    when:
+    props.empty
+
+    then:
+    1 * props./length|empty/
+    0 * _
+  }
 }
 
 private interface HasProperties {

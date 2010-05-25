@@ -21,6 +21,7 @@ import org.spockframework.EmbeddedSpecification
 import org.spockframework.compiler.InvalidSpecCompileException
 import static org.spockframework.runtime.model.BlockKind.*
 import org.spockframework.runtime.RunContext
+import org.spockframework.runtime.SpecInfoBuilder
 
 class Blocks extends EmbeddedSpecification {
   def "labels and comments"() {
@@ -51,7 +52,7 @@ def m3() {
 }
     """)
 
-    def specInfo = RunContext.get().createSpecInfoBuilder(specClass).build()
+    def specInfo = new SpecInfoBuilder(specClass).build()
 
     expect:
     def m1 = specInfo.features[0]

@@ -60,7 +60,6 @@ public abstract class MopUtil {
     return null;
   }
 
-  // TODO: check/asks if MetaBeanProperty's field has anything to say
   public static Member memberFor(MetaProperty property) {
     if (property instanceof CachedField)
       try {

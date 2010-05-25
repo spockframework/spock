@@ -33,8 +33,6 @@ import org.spockframework.util.VersionChecker;
  *
  * @author Peter Niederwieser
  */
-// TODO:
-// - check if we should make use of JUnit's InitializationException
 // - check if StoppedByUserException thrown in Notifier.fireTestStarted() is handled correctly on our side
 public class Sputnik extends Runner implements Filterable, Sortable {
   private final RunContext runContext;
@@ -47,7 +45,7 @@ public class Sputnik extends Runner implements Filterable, Sortable {
     VersionChecker.checkSpockAndGroovyVersionsAreCompatible("spec runner");
 
     runContext = RunContext.get();
-    builder = runContext.createSpecInfoBuilder(clazz);
+    builder = new SpecInfoBuilder(clazz);
     spec = builder.build();
     new JUnitDescriptionGenerator(spec).attach();
   }
@@ -76,7 +74,7 @@ public class Sputnik extends Runner implements Filterable, Sortable {
 
   private void runExtensionsIfNecessary() {
     if (extensionsRun) return;
-    builder.runExtensions();
+    runContext.createExtensionRunner(spec).run();
     extensionsRun = true;
   }
 

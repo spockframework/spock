@@ -13,20 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+  
 package org.spockframework.guice
 
-import com.google.inject.AbstractModule
-import com.google.inject.name.Names
-
-class Module extends AbstractModule {
-  protected void configure() {
-    bind(IService).to(Service)
-
-    bind(String).annotatedWith(Names.named("value1")).toInstance("named value 1")
-    bind(String).annotatedWith(Names.named("value2")).toInstance("named value 2")
-
-    bind(String).annotatedWith(BindingAnnotation1).toInstance("annotated value 1")
-    bind(String).annotatedWith(BindingAnnotation2).toInstance("annotated value 2")
+class Service1 implements IService1 {
+  String generateString() {
+    "foo"
   }
 }

@@ -12,7 +12,7 @@
  * limitations under the License.
  */  
 
-package spock.builder
+package org.spockframework.builder
 
 import spock.lang.Specification
 

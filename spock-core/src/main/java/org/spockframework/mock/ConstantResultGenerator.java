@@ -16,6 +16,8 @@
 
 package org.spockframework.mock;
 
+import org.codehaus.groovy.runtime.typehandling.DefaultTypeTransformation;
+
 /**
  *
  * @author Peter Niederwieser
@@ -28,6 +30,6 @@ public class ConstantResultGenerator implements IResultGenerator {
   }
 
   public Object generate(IMockInvocation invocation) {
-    return constant;
+    return DefaultTypeTransformation.castToType(constant, invocation.getMethod().getReturnType());
   }
 }

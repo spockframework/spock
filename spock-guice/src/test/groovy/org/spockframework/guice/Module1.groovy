@@ -14,27 +14,19 @@
  * limitations under the License.
  */
 
-package org.spockframework.runtime.extension;
+package org.spockframework.guice
 
-public class ExtensionException extends RuntimeException {
-  private String message;
+import com.google.inject.AbstractModule
+import com.google.inject.name.Names
 
-  public ExtensionException(String message) {
-    this(message, null);
-  }
+class Module1 extends AbstractModule {
+  protected void configure() {
+    bind(IService1).to(Service1)
 
-  public ExtensionException(String message, Throwable cause) {
-    super(cause);
-    this.message = message;
-  }
+    bind(String).annotatedWith(Names.named("value1")).toInstance("named value 1")
+    bind(String).annotatedWith(Names.named("value2")).toInstance("named value 2")
 
-  public ExtensionException withArgs(Object... args) {
-    message = String.format(message, args);
-    return this;
-  }
-
-  @Override
-  public String getMessage() {
-    return message;
+    bind(String).annotatedWith(BindingAnnotation1).toInstance("annotated value 1")
+    bind(String).annotatedWith(BindingAnnotation2).toInstance("annotated value 2")
   }
 }

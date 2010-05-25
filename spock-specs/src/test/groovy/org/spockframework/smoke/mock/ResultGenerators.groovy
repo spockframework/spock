@@ -93,6 +93,7 @@ class ResultGenerators extends Specification {
     calculator.calculate() instanceof BigDecimal
   }
 
+  @Issue("http://issues.spockframework.org/detail?id=83")
   def "auto-coercion for multi-results"() {
     def calculator = Mock(Calculator)
     calculator.calculate() >>> [1, 2, 3]
@@ -103,6 +104,7 @@ class ResultGenerators extends Specification {
     calculator.calculate() instanceof BigDecimal
   }
 
+  @Issue("http://issues.spockframework.org/detail?id=83")
   def "auto-coercion for computed results"() {
     def calculator = Mock(Calculator)
     calculator.calculate() >> { 1 }

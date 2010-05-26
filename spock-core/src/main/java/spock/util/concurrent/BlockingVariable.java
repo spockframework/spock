@@ -18,7 +18,43 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import org.spockframework.runtime.SpockTimeoutError;
+import org.spockframework.util.ThreadSafe;
 
+/**
+ * A statically typed variable whose get() method will block until some other
+ * thread has set a value with the set() method, or a timeout expires. Useful
+ * for verifying state in an expect- or then-block that has been captured in
+ * some other thread.
+ *
+ * <p>Example:
+ * <pre>
+ * // create object under specification
+ * def machine = new Machine()
+ *
+ * def result = new BlockingVariable&lt;WorkResult&gt;
+ *
+ * // register async callback
+ * machine.workDone << { r ->
+ *  result.set(r)
+ * }
+ *
+ * when:
+ * machine.start()
+ *
+ * then:
+ * // blocks until workDone callback has set result, or a timeout expires
+ * result.get() == WorkResult.OK
+ *
+ * cleanup:
+ * // shut down all threads
+ * machine?.shutdown()
+ * </pre>
+ *
+ * @param <T> the variable's type
+ *
+ * @author Peter Niederwieser
+ */
+@ThreadSafe
 public class BlockingVariable<T> {
   private final int timeout;
   private final TimeUnit unit;
@@ -26,15 +62,32 @@ public class BlockingVariable<T> {
   private T value; // access guarded by valueReady
   private final CountDownLatch valueReady = new CountDownLatch(1);
 
+  /**
+   * Same as <tt>BlockingVariable(1, TimeUnit.SECONDS)</tt>.
+   */
   public BlockingVariable() {
     this(1, TimeUnit.SECONDS);
   }
 
+  /**
+   * Instantiates a <tt>BlockingVariable</tt> with the specified timeout.
+   *
+   * @param timeout the timeout for calls to <tt>get()</tt>.
+   *
+   * @param unit the time unit
+   */
   public BlockingVariable(int timeout, TimeUnit unit) {
     this.timeout = timeout;
     this.unit = unit;
   }
 
+  /**
+   * Blocks until a value has been set for this variable, or a timeout expires.
+   *
+   * @return the variable's value
+   *
+   * @throws InterruptedException if the calling thread is interrupted
+   */
   public T get() throws InterruptedException {
     if (!valueReady.await(timeout, unit))
       throw new SpockTimeoutError("BlockingVariable.get() timed out after %d %s")
@@ -42,6 +95,11 @@ public class BlockingVariable<T> {
     return value;
   }
 
+  /**
+   * Sets a value for this variable. Wakes up all threads blocked in <tt>get()</tt>.
+   *
+   * @param value the value to be set for this variable
+   */
   public void set(T value) {
     this.value = value;
     valueReady.countDown();

@@ -15,7 +15,6 @@
  */
 
 /**
- * Provides fundamental types for writing Spock specifications. It is
- * suggested to import the members of this package with a star import.
+ * Provides fundamental classes for writing Spock specifications.
  */
 package spock.lang;

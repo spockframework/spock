@@ -12,28 +12,7 @@
  * limitations under the License.
  */
 
-package spock.config;
-
 /**
- * Configuration settings for the spec runner.
- *
- * <p>Example:
- * <pre>
- * import some.pkg.Fast
- * import some.pkg.IntegrationSpec
- *
- * runner {
- *   include Fast // could be either an annotation or a (base) class
- *   exclude {
- *     annotation some.pkg.Slow
- *     baseClass IntegrationSpec
- *   }
- *   filterStackTrace true // this is the default
- * }
- * </pre>
+ * Provides utility classes useful for spec'ing concurrent code.
  */
-public class RunnerConfiguration {
-  public IncludeExcludeCriteria include = new IncludeExcludeCriteria();
-  public IncludeExcludeCriteria exclude = new IncludeExcludeCriteria();
-  public boolean filterStackTrace = true;
-}
+package spock.util.concurrent;

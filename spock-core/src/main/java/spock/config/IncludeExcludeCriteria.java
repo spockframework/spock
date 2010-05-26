@@ -18,6 +18,14 @@ import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Configuration indicating which specs and methods should be
+ * included/excluded from a spec run. Specs can be included/excluded
+ * based on their annotations and their (base) classes. Methods
+ * can be included/excluded based on their annotations.
+ *
+ * @author Peter Niederwieser
+ */
 public class IncludeExcludeCriteria {
   public IncludeExcludeCriteria(Class<?>... criteria) {
     for (Class<?> criterium : criteria)

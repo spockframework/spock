@@ -1,0 +1,5 @@
+runner {
+  exclude Slow
+}
+
+

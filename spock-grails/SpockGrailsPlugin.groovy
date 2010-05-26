@@ -15,7 +15,7 @@
  */
 
 class SpockGrailsPlugin {
-  def version = "0.4-groovy-1.6-SNAPSHOT"
+  def version = "0.4-groovy-1.6"
   def grailsVersion = "1.2.0 > 1.2.99"
   def dependsOn = [:]
   def pluginExcludes = [

@@ -27,6 +27,7 @@ import java.util.List;
  * @author Peter Niederwieser
  */
 public class IncludeExcludeCriteria {
+  @SuppressWarnings("unchecked")
   public IncludeExcludeCriteria(Class<?>... criteria) {
     for (Class<?> criterium : criteria)
       if (criterium.isAnnotation())

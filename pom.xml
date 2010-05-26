@@ -4,7 +4,7 @@
   <groupId>org.spockframework</groupId>
   <artifactId>spock-parent</artifactId>
   <packaging>pom</packaging>
-  <version>0.4-groovy-1.6-SNAPSHOT</version>
+  <version>0.4-groovy-1.6</version>
   <name>Spock Framework - Umbrella Project</name>
   <url>http://spockframework.org</url>
   <description>Spock is a testing and specification framework for Java and Groovy applications.</description>

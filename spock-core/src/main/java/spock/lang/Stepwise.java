@@ -17,9 +17,20 @@ package spock.lang;
 import java.lang.annotation.*;
 
 import org.spockframework.runtime.extension.ExtensionAnnotation;
-import org.spockframework.runtime.extension.builtin.ScenarioExtension;
+import org.spockframework.runtime.extension.builtin.StepwiseExtension;
 
+/**
+ * Indicates that the feature methods of a spec should be run sequentially
+ * in their declared order (even in the presence of a parallel spec runner),
+ * always starting from the first method. If a method fails, the remaining
+ * methods will be skipped. This is useful for higher-level specs with
+ * (logical) dependencies between methods. In particular, it helps to avoid
+ * consecutive errors after a method has failed, which makes it easier to
+ * understand what really went wrong.
+ *
+ * @author Peter Niederwieser
+ */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-@ExtensionAnnotation(ScenarioExtension.class)
-public @interface Scenario {}
+@ExtensionAnnotation(StepwiseExtension.class)
+public @interface Stepwise {}

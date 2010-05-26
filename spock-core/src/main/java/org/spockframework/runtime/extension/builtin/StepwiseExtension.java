@@ -15,21 +15,38 @@
 package org.spockframework.runtime.extension.builtin;
 
 import java.lang.annotation.Annotation;
+import java.util.*;
 
 import org.spockframework.runtime.AbstractRunListener;
 import org.spockframework.runtime.extension.AbstractAnnotationDrivenExtension;
 import org.spockframework.runtime.model.*;
 
-public class ScenarioExtension extends AbstractAnnotationDrivenExtension {
+public class StepwiseExtension extends AbstractAnnotationDrivenExtension {
   public void visitSpecAnnotation(Annotation annotation, final SpecInfo spec) {
+    includeAllFeaturesBeforeLastIncludedFeature(spec);
+    skipAllFeaturesAfterFirstFailingFeature(spec);
+  }
+
+  private void includeAllFeaturesBeforeLastIncludedFeature(SpecInfo spec) {
+    List<FeatureInfo> features = spec.getFeatures();
+    boolean includeRemaining = false;
+
+    for (int i = features.size() - 1; i >= 0; i--) {
+      FeatureInfo feature = features.get(i);
+      if (includeRemaining) feature.setExcluded(false);
+      else if (!feature.isExcluded()) includeRemaining = true;
+    }
+  }
+
+  private void skipAllFeaturesAfterFirstFailingFeature(final SpecInfo spec) {
     spec.getBottomSpec().addListener(new AbstractRunListener() {
       public void error(ErrorInfo error) {
-        // @Scenario only affects class that carries the annotation,
+        // @Dependent only affects class that carries the annotation,
         // but not sub- and super classes
         if (!error.getMethod().getParent().equals(spec)) return;
 
         // we can just set skip flag on all features, even though
-        // some of time might have already run
+        // some of them might already have run
         for (FeatureInfo feature : spec.getFeatures())
           feature.setSkipped(true);
       }

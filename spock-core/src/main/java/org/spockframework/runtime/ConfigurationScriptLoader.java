@@ -16,39 +16,57 @@ package org.spockframework.runtime;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 
 import org.codehaus.groovy.control.CompilationFailedException;
 import org.codehaus.groovy.control.CompilerConfiguration;
 
 import org.spockframework.builder.DelegatingScript;
+import org.spockframework.util.Nullable;
 
 import spock.config.ConfigurationException;
 
 import groovy.lang.*;
 
 public class ConfigurationScriptLoader {
-  private static final String DEFAULT_CONFIGURATION_PATH =
+  private static final String DEFAULT_CONFIG_PROPERTY_KEY = "spock.configuration";
+
+  private static final String DEFAULT_CLASS_PATH_LOCATION = "SpockConfig.groovy";
+
+  private static final String DEFAULT_FILE_SYSTEM_LOCATION =
       System.getProperty("user.home") + File.separator + ".spock" + File.separator + "SpockConfig.groovy";
 
-  public DelegatingScript loadScriptFromConfiguredLocation() {
-    File file = findConfigurationFile();
-    return file == null ? null : loadScript(file);
+  private final String configPropertyKey;
+  private final String classPathLocation;
+  private final String fileSystemLocation;
+
+  public ConfigurationScriptLoader() {
+    this(DEFAULT_CONFIG_PROPERTY_KEY, DEFAULT_CLASS_PATH_LOCATION, DEFAULT_FILE_SYSTEM_LOCATION);
   }
 
-  public DelegatingScript loadScript(File file) {
-    CompilerConfiguration compilerSettings = new CompilerConfiguration();
-    compilerSettings.setScriptBaseClass(DelegatingScript.class.getName());
-    GroovyShell shell = new GroovyShell(getClass().getClassLoader(), new Binding(), compilerSettings);
-    try {
-      return (DelegatingScript) shell.parse(file);
-    } catch (IOException e) {
-      throw new ConfigurationException("Error reading configuration file");  
-    } catch (CompilationFailedException e) {
-      throw new ConfigurationException("Error compiling configuration script", e);
-    }
+  /**
+   * For testing purposes. Do not use directly.
+   */
+  ConfigurationScriptLoader(String configPropertyKey, String classPathLocation, String fileSystemLocation) {
+    this.configPropertyKey = configPropertyKey;
+    this.classPathLocation = classPathLocation;
+    this.fileSystemLocation = fileSystemLocation;
   }
 
-  public DelegatingScript loadScript(final Closure closure) {
+  public @Nullable DelegatingScript loadAutoDetectedScript() {
+    DelegatingScript script = loadScriptFromSystemPropertyInducedLocation(configPropertyKey);
+    if (script != null) return script;
+
+    script = loadScriptFromClassPathLocation(classPathLocation);
+    if (script != null) return script;
+
+    script = loadScriptFromFileSystemLocation(fileSystemLocation);
+    if (script != null) return script;
+
+    return null;
+  }
+
+  public DelegatingScript loadClosureBasedScript(final Closure closure) {
     return new DelegatingScript() {
       @Override
       public Object run() {
@@ -64,16 +82,51 @@ public class ConfigurationScriptLoader {
     };
   }
 
-  private File findConfigurationFile() {
-    String path = System.getProperty("spock.configuration");
-    if (path == null || path.length() == 0) {
-      path = DEFAULT_CONFIGURATION_PATH;
-      if (!new File(path).isFile()) return null;
-    } else {
-      if (!new File(path).isFile())
-        throw new ConfigurationException("Cannot find configuration file '%s'", path);
+  private @Nullable DelegatingScript loadScriptFromSystemPropertyInducedLocation(String propertyKey) {
+    String location = System.getProperty(propertyKey);
+    if (location == null || location.length() == 0) return null;
+
+    DelegatingScript script = loadScriptFromClassPathLocation(location);
+    if (script != null) return script;
+
+    script = loadScriptFromFileSystemLocation(location);
+    if (script != null) return script;
+
+    throw new ConfigurationException("Cannot find configuration script '%s'", location);
+  }
+
+  private @Nullable DelegatingScript loadScriptFromFileSystemLocation(String location) {
+    File file = new File(location);
+    if (!file.exists()) return null;
+
+    GroovyShell shell = createShell();
+    try {
+      return (DelegatingScript) shell.parse(file);
+      } catch (IOException e) {
+      throw new ConfigurationException("Error reading configuration script '%s'", location);
+    } catch (CompilationFailedException e) {
+      throw new ConfigurationException("Error compiling configuration script '%s'", location);
     }
-    return new File(path);
+  }
+
+  private @Nullable DelegatingScript loadScriptFromClassPathLocation(String location) {
+    URL url = this.getClass().getClassLoader().getResource(location);
+    if (url == null) return null;
+
+    GroovyShell shell = createShell();
+    try {
+      return (DelegatingScript) shell.parse(new GroovyCodeSource(url));
+    } catch (IOException e) {
+      throw new ConfigurationException("Error reading configuration script '%s'", location);
+    } catch (CompilationFailedException e) {
+      throw new ConfigurationException("Error compiling configuration script '%s'", location);
+    }
+  }
+
+  private GroovyShell createShell() {
+    CompilerConfiguration compilerSettings = new CompilerConfiguration();
+    compilerSettings.setScriptBaseClass(DelegatingScript.class.getName());
+    return new GroovyShell(getClass().getClassLoader(), new Binding(), compilerSettings);
   }
 }
 

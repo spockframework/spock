@@ -23,6 +23,10 @@ public abstract class NullSafe {
     return obj1.equals(obj2);
   }
 
+  public static int hashCode(Object obj) {
+    return obj == null ? 0 : obj.hashCode();
+  }
+
   public static String toString(Object obj) {
     return obj == null ? "null" : obj.toString();
   }

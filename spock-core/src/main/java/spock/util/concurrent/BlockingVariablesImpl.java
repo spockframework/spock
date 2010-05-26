@@ -16,15 +16,20 @@ package spock.util.concurrent;
 
 import java.util.concurrent.*;
 
+import org.spockframework.util.ThreadSafe;
+
+/**
+ * Implementation underlying class <tt>BlockingVariables</tt>. Should not be
+ * used directly.
+ *
+ * @author Peter Niederwieser
+ */
+@ThreadSafe
 class BlockingVariablesImpl {
   private final int timeout;
   private final TimeUnit unit;
   private final ConcurrentHashMap<String, BlockingVariable<Object>> map =
       new ConcurrentHashMap<String, BlockingVariable<Object>>();
-
-  public BlockingVariablesImpl() {
-    this(1, TimeUnit.SECONDS);
-  }
 
   public BlockingVariablesImpl(int timeout, TimeUnit unit) {
     this.timeout = timeout;

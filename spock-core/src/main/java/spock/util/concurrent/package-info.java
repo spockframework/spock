@@ -12,10 +12,7 @@
  * limitations under the License.
  */
 
-package spock.lang;
-
-import groovy.lang.Closure;
-
-public @interface Require {
-  Class<? extends Closure> value();
-}
+/**
+ * Provides utility classes useful for spec'ing concurrent code.
+ */
+package spock.util.concurrent;

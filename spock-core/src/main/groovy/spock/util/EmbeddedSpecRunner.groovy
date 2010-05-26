@@ -18,14 +18,15 @@ package spock.util
 
 import org.junit.runner.notification.RunListener
 import org.junit.runner.*
+
 import org.spockframework.util.NotThreadSafe
 import org.spockframework.runtime.RunContext
 import org.spockframework.util.IFunction
 import org.spockframework.runtime.ConfigurationScriptLoader
 
 /**
- * Utility class for programmatically running specs with JUnit.
- * Mainly intended for testing purposes.
+ * Utility class that allows to run (fragments of) specs programmatically.
+ * Mainly intended for spec'ing Spock itself.
  *
  * @author Peter Niederwieser
  */
@@ -84,7 +85,7 @@ class EmbeddedSpecRunner {
 
   private Result withNewContext(Closure block) {
     def script = configurationScript ?
-        new ConfigurationScriptLoader().loadScript(configurationScript) : null
+        new ConfigurationScriptLoader().loadClosureBasedScript(configurationScript) : null
     RunContext.withNewContext(script, extensionClasses, inheritParentExtensions, block as IFunction)
   }
 

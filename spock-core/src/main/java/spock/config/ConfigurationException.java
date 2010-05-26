@@ -14,6 +14,11 @@
 
 package spock.config;
 
+/**
+ * Thrown to indicate that there is a problem with Spock's configuration (file).
+ *
+ * @author Peter Niederwieser
+ */
 public class ConfigurationException extends RuntimeException {
   public ConfigurationException(String msg, Object... args) {
     super(String.format(msg, args));

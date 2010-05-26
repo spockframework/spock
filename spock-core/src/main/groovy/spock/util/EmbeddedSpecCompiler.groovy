@@ -18,16 +18,17 @@ package spock.util
 
 import org.codehaus.groovy.control.MultipleCompilationErrorsException
 import org.junit.Test
+import org.junit.internal.runners.model.MultipleFailureException
 import org.junit.runner.RunWith
+
 import org.spockframework.runtime.SpecUtil
 import org.spockframework.util.NotThreadSafe
+
 import spock.lang.Specification
-import org.codehaus.groovy.control.ErrorCollector
-import org.junit.internal.runners.model.MultipleFailureException
 
 /**
- * Utility class for programmatically compiling specs.
- * Mainly intended for testing purposes.
+ * Utility class that allows to compile (fragments of) specs programmatically.
+ * Mainly intended for spec'ing Spock itself.
  * 
  * @author Peter Niederwieser
  */

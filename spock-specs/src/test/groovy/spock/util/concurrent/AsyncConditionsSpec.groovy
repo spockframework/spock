@@ -19,47 +19,9 @@ import org.spockframework.runtime.SpockTimeoutError
 
 import spock.lang.*
 
-class ConditionEvaluatorSpec extends Specification {
+class AsyncConditionsSpec extends Specification {
   def "passing example - check passes"() {
-    def cond = new ConditionEvaluator()
-
-    when:
-    Thread.start {
-      cond.evaluate {
-        assert true
-      }
-    }
-
-    then:
-    cond.await()
-  }
-
-  @FailsWith(SpockAssertionError)
-  def "failing example 1 - eval fails"() {
-    def cond = new ConditionEvaluator()
-
-    when:
-    Thread.start {
-      cond.evaluate {
-        assert false
-      }
-    }
-
-    then:
-    cond.await()
-  }
-
-  @FailsWith(SpockTimeoutError)
-  def "failing example 2 - check is missing"() {
-    def cond = new ConditionEvaluator()
-
-    expect:
-    cond.await()
-  }
-
-  @FailsWith(SpockTimeoutError)
-  def "one passing and one missing check"() {
-    def conds = new ConditionEvaluator(2)
+    def conds = new AsyncConditions()
 
     when:
     Thread.start {
@@ -73,42 +35,80 @@ class ConditionEvaluatorSpec extends Specification {
   }
 
   @FailsWith(SpockAssertionError)
-  def "one failing and one missing check"() {
-    def cond = new ConditionEvaluator(2)
+  def "failing example 1 - eval fails"() {
+    def conds = new AsyncConditions()
 
     when:
     Thread.start {
-      cond.evaluate {
+      conds.evaluate {
         assert false
       }
     }
 
     then:
-    cond.await()
+    conds.await()
   }
 
-  def "multiple passing checks"() {
-    def cond = new ConditionEvaluator(3)
+  @FailsWith(SpockTimeoutError)
+  def "failing example 2 - eval is missing"() {
+    def conds = new AsyncConditions()
+
+    expect:
+    conds.await()
+  }
+
+  @FailsWith(SpockTimeoutError)
+  def "one passing and one missing eval"() {
+    def conds = new AsyncConditions(2)
 
     when:
     Thread.start {
-      cond.evaluate {
+      conds.evaluate {
+        assert true
+      }
+    }
+
+    then:
+    conds.await()
+  }
+
+  @FailsWith(SpockAssertionError)
+  def "one failing and one missing eval"() {
+    def conds = new AsyncConditions(2)
+
+    when:
+    Thread.start {
+      conds.evaluate {
+        assert false
+      }
+    }
+
+    then:
+    conds.await()
+  }
+
+  def "multiple passing evals"() {
+    def conds = new AsyncConditions(3)
+
+    when:
+    Thread.start {
+      conds.evaluate {
         assert true
         assert true
       }
-      cond.evaluate {
+      conds.evaluate {
         assert true
       }
     }
 
     and:
     Thread.start {
-      cond.evaluate {
+      conds.evaluate {
         assert true
       }
     }
 
     then:
-    cond.await()
+    conds.await()
   }
 }

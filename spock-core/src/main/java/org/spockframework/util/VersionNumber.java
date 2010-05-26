@@ -66,7 +66,15 @@ public final class VersionNumber implements Comparable<VersionNumber> {
 		return other instanceof VersionNumber && compareTo((VersionNumber)other) == 0;
 	}
 
-	public String toString() {
+  public int hashCode() {
+    int result = major;
+    result = 31 * result + minor;
+    result = 31 * result + micro;
+    result = 31 * result + NullSafe.hashCode(qualifier);
+    return result;
+  }
+
+  public String toString() {
 		return String.format(versionTemplate, major, minor, micro, qualifier == null ? "" : "-" + qualifier);
 	}
 

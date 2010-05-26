@@ -41,5 +41,5 @@ class OrderedInteractions extends Specification {
 }
 
 interface Collaborator {
-  def collaborate() {}
+  def collaborate()
 }

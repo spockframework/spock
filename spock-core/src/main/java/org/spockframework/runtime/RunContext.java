@@ -99,7 +99,7 @@ public class RunContext {
   // It would be more accurate to remove the context once the test run
   // has finished, but the JUnit Runner SPI doesn't provide an adequate hook.
   private static RunContext createBottomContext() {
-    DelegatingScript script = new ConfigurationScriptLoader().loadScriptFromConfiguredLocation();
+    DelegatingScript script = new ConfigurationScriptLoader().loadAutoDetectedScript();
     List<Class<?>> classes = new ExtensionClassesLoader().loadClassesFromDefaultLocation();
     return new RunContext(script, classes);
   }

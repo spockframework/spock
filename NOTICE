@@ -1,0 +1,17 @@
+=========================================================================
+==  NOTICE file corresponding to the section 4 d of                    ==
+==  the Apache License, Version 2.0,                                   ==
+==  in this case for the Spock distribution.                           ==
+=========================================================================
+
+This product includes software developed by
+The Apache Software Foundation (http://www.apache.org/).
+
+It includes the following other software:
+
+gentyref (http://code.google.com/p/gentyref/)
+
+For licenses see the LICENSE file.
+
+If any software distributed with Spock does not have an Apache 2 License, its license is explicitly listed in the
+LICENSE file.

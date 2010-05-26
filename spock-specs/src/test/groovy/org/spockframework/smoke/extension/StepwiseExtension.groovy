@@ -14,15 +14,17 @@
 
 package org.spockframework.smoke.extension
 
+import org.junit.runner.Request
+
 import org.spockframework.EmbeddedSpecification
 
-class DependentExtension extends EmbeddedSpecification {
+class StepwiseExtension extends EmbeddedSpecification {
   def "basic usage"() {
     runner.throwFailure = false
 
     when:
     def result = runner.runWithImports("""
-@Dependent
+@Stepwise
 class Foo extends Specification {
   def step1() { expect: true }
   def step2() { expect: false }
@@ -35,4 +37,24 @@ class Foo extends Specification {
     result.failureCount == 1
     result.ignoreCount == 1
   }
+
+  def "automatically runs excluded methods that lead up to an included method"() {
+    def clazz = compiler.compileWithImports("""
+@Stepwise
+class Foo extends Specification {
+  def step1() { expect: true }
+  def step2() { expect: true }
+  def step3() { expect: true }
 }
+    """)[0]
+
+    when:
+    def result = runner.runRequest(Request.method(clazz, "step3"))
+
+    then:
+    result.runCount == 3
+    result.failureCount == 0
+    result.ignoreCount == 0
+  }
+}
+

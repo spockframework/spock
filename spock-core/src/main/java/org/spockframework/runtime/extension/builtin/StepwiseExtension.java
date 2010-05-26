@@ -15,13 +15,30 @@
 package org.spockframework.runtime.extension.builtin;
 
 import java.lang.annotation.Annotation;
+import java.util.*;
 
 import org.spockframework.runtime.AbstractRunListener;
 import org.spockframework.runtime.extension.AbstractAnnotationDrivenExtension;
 import org.spockframework.runtime.model.*;
 
-public class DependentExtension extends AbstractAnnotationDrivenExtension {
+public class StepwiseExtension extends AbstractAnnotationDrivenExtension {
   public void visitSpecAnnotation(Annotation annotation, final SpecInfo spec) {
+    includeAllFeaturesBeforeLastIncludedFeature(spec);
+    skipAllFeaturesAfterFirstFailingFeature(spec);
+  }
+
+  private void includeAllFeaturesBeforeLastIncludedFeature(SpecInfo spec) {
+    List<FeatureInfo> features = spec.getFeatures();
+    boolean includeRemaining = false;
+
+    for (int i = features.size() - 1; i >= 0; i--) {
+      FeatureInfo feature = features.get(i);
+      if (includeRemaining) feature.setExcluded(false);
+      else if (!feature.isExcluded()) includeRemaining = true;
+    }
+  }
+
+  private void skipAllFeaturesAfterFirstFailingFeature(final SpecInfo spec) {
     spec.getBottomSpec().addListener(new AbstractRunListener() {
       public void error(ErrorInfo error) {
         // @Dependent only affects class that carries the annotation,

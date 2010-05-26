@@ -17,15 +17,20 @@ package spock.lang;
 import java.lang.annotation.*;
 
 import org.spockframework.runtime.extension.ExtensionAnnotation;
-import org.spockframework.runtime.extension.builtin.DependentExtension;
+import org.spockframework.runtime.extension.builtin.StepwiseExtension;
 
 /**
- * Indicates that the methods of a spec depend on each other. As a consequence,
- * the methods will always be run sequentially in their declared order (even if
- * a parallel spec runner is used). Once a method fails, all remaining methods
- * will be skipped.
+ * Indicates that the feature methods of a spec should be run sequentially
+ * in their declared order (even in the presence of a parallel spec runner),
+ * always starting from the first method. If a method fails, the remaining
+ * methods will be skipped. This is useful for higher-level specs with
+ * (logical) dependencies between methods. In particular, it helps to avoid
+ * consecutive errors after a method has failed, which makes it easier to
+ * understand what really went wrong.
+ *
+ * @author Peter Niederwieser
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-@ExtensionAnnotation(DependentExtension.class)
-public @interface Dependent {}
+@ExtensionAnnotation(StepwiseExtension.class)
+public @interface Stepwise {}

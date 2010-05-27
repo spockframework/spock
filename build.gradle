@@ -1,6 +1,6 @@
 allprojects {
   group = "org.spockframework"
-  version = "0.4-groovy-1.7"
+  version = "0.5-groovy-1.7-SNAPSHOT"
 
   antDep = "org.apache.ant:ant:1.7.1"
   asm = "asm:asm:3.2"

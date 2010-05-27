@@ -2,8 +2,8 @@
   <property name="src.dir" location="src/test/groovy" />
   <property name="build.dir" location="ant/build" />
   <property name="lib.dir" location="ant/lib" />  
-  <property name="maven.ant.tasks.url" value="http://www.apache.org/dist/maven/binaries/maven-ant-tasks-2.0.10.jar" />
-  <property name="maven.ant.tasks.jar" value="${lib.dir}${file.separator}maven-ant-tasks-2.0.10.jar" />
+  <property name="maven.ant.tasks.url" value="http://www.apache.org/dist/maven/binaries/maven-ant-tasks-2.1.0.jar" />
+  <property name="maven.ant.tasks.jar" value="${lib.dir}${file.separator}maven-ant-tasks-2.1.0.jar" />
   <available property="maven.ant.tasks.jar.exists" file="${maven.ant.tasks.jar}" />
           
   <target name="bootstrap.maven.tasks" unless="maven.ant.tasks.jar.exists">
@@ -26,7 +26,7 @@
       <dependency
         groupId="org.spockframework"
         artifactId="spock-core"
-        version="0.4-groovy-1.7" />
+        version="0.5-groovy-1.7-SNAPSHOT" />
 <!-- Optional dependencies for using Spock -->
       <!-- enables mocking of classes (in addition to interfaces) -->
       <dependency 

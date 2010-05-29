@@ -334,6 +334,6 @@ private class ThrowingToString {
 }
 
 private enum EnumWithToString {
-  VALUE
+  VALUE;
   String toString() { "I'm a value" }
 }

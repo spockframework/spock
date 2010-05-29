@@ -5,7 +5,7 @@
   <groupId>org.spockframework</groupId>
   <artifactId>spock-parent</artifactId>
   <packaging>pom</packaging>
-  <version>0.5-groovy-1.7-SNAPSHOT</version>
+  <version>0.5-groovy-1.8-SNAPSHOT</version>
   <name>Spock Framework - Umbrella Project</name>
   <url>http://spockframework.org</url>
   <description>Spock is a testing and specification framework for Java and Groovy applications.</description>
@@ -85,7 +85,7 @@
             <dependency>
               <groupId>org.codehaus.groovy</groupId>
               <artifactId>groovy-all</artifactId>
-              <version>1.7.2</version>
+              <version>1.8.0-beta-1-SNAPSHOT</version>
             </dependency>
           </dependencies>
         </plugin>
@@ -110,7 +110,7 @@
       <dependency>
         <groupId>org.codehaus.groovy</groupId>
         <artifactId>groovy-all</artifactId>
-        <version>1.7.2</version>
+        <version>1.8.0-beta-1-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>junit</groupId>
@@ -150,6 +150,19 @@
       </dependency>
     </dependencies>
   </dependencyManagement>
+                
+  <repositories>
+	<repository> <!-- for Groovy snapshots -->
+	  <id>codehaus-snapshots</id>
+	  <url>http://snapshots.repository.codehaus.org</url>    
+	  <releases> 
+		<enabled>false</enabled>
+	  </releases>
+	  <snapshots>
+	  	<enabled>true</enabled>
+	  </snapshots>
+	</repository>
+  </repositories>
 
   <distributionManagement>
     <repository>
@@ -178,7 +191,6 @@
         <module>spock-guice</module>
         <module>spock-spring</module>
         <module>spock-unitils</module>  
-		<module>spock-grails</module>
       </modules>
     </profile>
     <profile>

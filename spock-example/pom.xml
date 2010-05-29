@@ -4,11 +4,11 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.spockframework</groupId>
   <artifactId>spock-example</artifactId>
-  <version>0.5-groovy-1.7-SNAPSHOT</version>
+  <version>0.5-groovy-1.8-SNAPSHOT</version>
   <packaging>jar</packaging>
   <name>Spock Framework - Example Project</name>
 
-  <properties>
+  <properties>                   
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
   </properties>
@@ -46,7 +46,7 @@
           <dependency>
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy-all</artifactId>
-            <version>1.7.2</version>
+            <version>1.8.0-beta-1-SNAPSHOT</version>
           </dependency>
         </dependencies>
       </plugin>
@@ -115,23 +115,38 @@
       <version>1.2.130</version>
     </dependency>
   </dependencies>
-
-  <!-- Only required if a snapshot version of Spock is used -->
+ 
   <repositories>
-    <repository>
+    <repository> <!-- Only required if a snapshot version of Spock is used -->  
       <id>spock-snapshots</id>
-      <url>http://m2repo.spockframework.org/snapshots</url>
+      <url>http://m2repo.spockframework.org/snapshots</url>  
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>  
+    <repository> <!-- Only required if a snapshot version of Groovy is used --> 
+      <id>codehaus-snapshots</id>
+      <url>http://snapshots.repository.codehaus.org</url>   
+      <releases>
+        <enabled>false</enabled>
+      </releases>
       <snapshots>
         <enabled>true</enabled>
       </snapshots>
     </repository>
-  </repositories>
+  </repositories>  
 
   <!-- Only required if a snapshot version of Spock's Maven plugin is used -->
   <pluginRepositories>
     <pluginRepository>
       <id>spock-snapshots</id>
-      <url>http://m2repo.spockframework.org/snapshots</url>
+      <url>http://m2repo.spockframework.org/snapshots</url>  
+      <releases>
+        <enabled>false</enabled>
+      </releases>
       <snapshots>
         <enabled>true</enabled>
       </snapshots>

@@ -17,9 +17,9 @@
 package org.spockframework.util;
 
 public class SpockReleaseInfo {
-  private static final VersionNumber spockVersion = VersionNumber.parse("0.5-groovy-1.7-SNAPSHOT");
-  private static final VersionNumber minGroovyVersion = VersionNumber.parse("1.7.0");
-  private static final VersionNumber maxGroovyVersion = VersionNumber.parse("1.7.99");
+  private static final VersionNumber spockVersion = VersionNumber.parse("0.5-groovy-1.8-SNAPSHOT");
+  private static final VersionNumber minGroovyVersion = VersionNumber.parse("1.8.0");
+  private static final VersionNumber maxGroovyVersion = VersionNumber.parse("1.8.99");
 
   public static VersionNumber getVersion() {
     return spockVersion;

@@ -25,7 +25,7 @@ import org.spockframework.runtime.model.*;
 public class RuleExtension implements IGlobalExtension {
   public void visitSpec(SpecInfo spec) {
     List<FieldInfo> ruleFields = new ArrayList<FieldInfo>();
-    for (FieldInfo field : spec.getFields())
+    for (FieldInfo field : spec.getAllFields())
       if (field.getReflection().isAnnotationPresent(Rule.class))
         ruleFields.add(field);
 

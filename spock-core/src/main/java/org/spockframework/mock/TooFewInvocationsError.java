@@ -36,7 +36,7 @@ public class TooFewInvocationsError extends InteractionNotSatisfiedError {
   }
 
   @Override
-  public String toString() {
+  public String getMessage() {
     StringBuilder builder = new StringBuilder();
     builder.append("Too few invocations for:\n\n");
 

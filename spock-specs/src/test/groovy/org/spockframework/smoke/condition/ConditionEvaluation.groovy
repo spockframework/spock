@@ -21,9 +21,9 @@ import static java.lang.Math.min
 
 /**
  * Checks that:
- * - condition transformation succeeds w/o compilation error (checked implicitely)
- * - condition evaluation succeeds w/o runtime error (checked explicitely)
- * - condition evaluation has the expected result (checked explicitely)
+ * - condition transformation succeeds w/o compilation error (checked implicitly)
+ * - condition evaluation succeeds w/o runtime error (checked explicitly)
+ * - condition evaluation has the expected result (checked explicitly)
  *
  * @author Peter Niederwieser
  */

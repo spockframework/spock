@@ -54,8 +54,8 @@ public class TimeoutInterceptor implements IMethodInterceptor {
       // IDEA: Isn't thread.stop() more likey to succeed (considering it throws
       // an Error instead of an Exception)? Are its risks tolerable here?
       thread.interrupt();
-      throw new SpockTimeoutError("method timed out after %s %s")
-          .withArgs(timeout.value(), timeout.unit().toString().toLowerCase());
+      throw new SpockTimeoutError("method timed out after %s %s",
+          timeout.value(), timeout.unit().toString().toLowerCase());
     }
 
     if (exception[0] != null)

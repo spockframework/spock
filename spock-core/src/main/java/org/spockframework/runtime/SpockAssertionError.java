@@ -21,32 +21,20 @@ package org.spockframework.runtime;
  * @author Peter Niederwieser
  */
 public class SpockAssertionError extends AssertionError {
-  private volatile String msg;
-
-  public SpockAssertionError() {
-    this(null, null);
-  }
+  public SpockAssertionError() {}
 
   public SpockAssertionError(String msg) {
-    this(msg, null);
-  }
-  
-  public SpockAssertionError(Throwable cause) {
-    this(null, cause);
+    super(msg);
   }
 
-  public SpockAssertionError(String msg, Throwable cause) {
-    this.msg = msg;
+  public SpockAssertionError(Throwable cause) {
     initCause(cause);
   }
 
-  public SpockAssertionError withArgs(Object... args) {
-    msg = String.format(msg, args);
-    return this;
-  }
-
+  // We don't want to have the class name printed out for assertion errors, so
+  // we just delegate to getMessage().
   @Override
-  public String getMessage() {
-    return msg;
+  public String toString() {
+    return getMessage();
   }
 }

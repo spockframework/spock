@@ -1,3 +1,4 @@
+
 /*
  * Copyright 2010 the original author or authors.
  *
@@ -12,10 +13,28 @@
  * limitations under the License.
  */
 
-package org.spockframework.runtime;
+package org.spockframework.smoke
 
-public class SpockTimeoutError extends SpockAssertionError {
-  public SpockTimeoutError(String formatString, Object... args) {
-    super(String.format(formatString, args));
+import org.spockframework.runtime.SpockAssertionError
+
+import spock.lang.*
+
+@Issue("http://issues.spockframework.org/detail?id=95")
+class AssertionErrorMessages extends Specification {
+  def "assertion error returns (same) message for getMessage() and toString()"() {
+    def e = createSpockAssertionError()
+
+    expect:
+    e.message
+    e.message.contains("1 == 2")
+    e.message == e.toString()
+  }
+
+  def createSpockAssertionError() {
+    try {
+      assert 1 == 2
+    } catch (SpockAssertionError e) {
+      return e
+    }
   }
 }

@@ -227,6 +227,7 @@ public abstract class AstUtil {
 
     if (args.isEmpty()) {
       if (inferredType == null)
+        // TODO: improve error message (not clear that it originates from Mock() or thrown())
         throw new InvalidSpecCompileException(builtinMemberCall, "Type cannot be inferred; please specify one explicitely");
       return inferredType;
     }

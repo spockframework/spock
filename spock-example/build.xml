@@ -26,7 +26,7 @@
       <dependency
         groupId="org.spockframework"
         artifactId="spock-core"
-        version="0.5-groovy-1.7-SNAPSHOT" />
+        version="0.5-groovy-1.8-SNAPSHOT" />
 <!-- Optional dependencies for using Spock -->
       <!-- enables mocking of classes (in addition to interfaces) -->
       <dependency 
@@ -54,7 +54,11 @@
 <!-- Only required if a snapshot version of Spock is used -->
       <remoteRepository
         id="spock-snapshots"
-        url="http://m2repo.spockframework.org/snapshots/" />
+        url="http://m2repo.spockframework.org/snapshots/" />  
+<!-- Only required if a snapshot version of Groovy is used -->
+      <remoteRepository
+        id="groovy-snapshots"
+        url="http://snapshots.repository.codehaus.org/" />
     </artifact:dependencies>
   </target>
   

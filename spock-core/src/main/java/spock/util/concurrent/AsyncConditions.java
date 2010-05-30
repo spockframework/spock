@@ -136,7 +136,8 @@ public class AsyncConditions {
     
     long pendingEvalBlocks = latch.getCount();
     if (pendingEvalBlocks > 0)
-      throw new SpockTimeoutError("Async conditions timed out after %d %s; %d out of %d evaluate blocks did not complete in time")
-        .withArgs(timeout, unit.toString().toLowerCase(), pendingEvalBlocks, numEvalBlocks);
+      throw new SpockTimeoutError(
+          "Async conditions timed out after %d %s; %d out of %d evaluate blocks did not complete in time",
+          timeout, unit.toString().toLowerCase(), pendingEvalBlocks, numEvalBlocks);
   }
 }

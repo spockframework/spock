@@ -32,7 +32,7 @@ public class WrongInvocationOrderError extends InteractionNotSatisfiedError {
   }
 
   @Override
-  public String toString() {
+  public String getMessage() {
     StringBuilder builder = new StringBuilder();
     builder.append("Wrong invocation order for:\n\n");
     builder.append(interaction);

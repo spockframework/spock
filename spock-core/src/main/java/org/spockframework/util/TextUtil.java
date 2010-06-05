@@ -75,7 +75,7 @@ public abstract class TextUtil {
     return line.length() - line.trim().length() - getIndent(line);
   }
 
-  public static String join(List<?> objects, String separator) {
+  public static String join(String separator, List<?> objects) {
     StringBuilder builder = new StringBuilder();
     for (int i = 0; i < objects.size(); i++) {
       builder.append(objects.get(i));
@@ -83,6 +83,10 @@ public abstract class TextUtil {
         builder.append(separator);
     }
     return builder.toString();
+  }
+
+  public static String join(String separator, Object... objects) {
+    return join(separator, Arrays.asList(objects));
   }
 
   public static int countOccurrences(String text, char symbol) {

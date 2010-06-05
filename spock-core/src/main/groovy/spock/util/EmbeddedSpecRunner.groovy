@@ -83,7 +83,7 @@ class EmbeddedSpecRunner {
     runClass(compiler.compileFeatureBody(source))
   }
 
-  private Result withNewContext(Closure block) {
+  def withNewContext(Closure block) {
     def script = configurationScript ?
         new ConfigurationScriptLoader().loadClosureBasedScript(configurationScript) : null
     RunContext.withNewContext(script, extensionClasses, inheritParentExtensions, block as IFunction)

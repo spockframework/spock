@@ -23,11 +23,17 @@ import org.spockframework.runtime.model.*;
 
 public class StepwiseExtension extends AbstractAnnotationDrivenExtension {
   public void visitSpecAnnotation(Annotation annotation, final SpecInfo spec) {
-    includeAllFeaturesBeforeLastIncludedFeature(spec);
-    skipAllFeaturesAfterFirstFailingFeature(spec);
+    sortFeaturesInDeclarationOrder(spec);
+    includeFeaturesBeforeLastIncludedFeature(spec);
+    skipFeaturesAfterFirstFailingFeature(spec);
   }
 
-  private void includeAllFeaturesBeforeLastIncludedFeature(SpecInfo spec) {
+  private void sortFeaturesInDeclarationOrder(SpecInfo spec) {
+    for (FeatureInfo feature : spec.getFeatures())
+      feature.setExecutionOrder(feature.getDeclarationOrder());
+  }
+
+  private void includeFeaturesBeforeLastIncludedFeature(SpecInfo spec) {
     List<FeatureInfo> features = spec.getFeatures();
     boolean includeRemaining = false;
 
@@ -38,7 +44,7 @@ public class StepwiseExtension extends AbstractAnnotationDrivenExtension {
     }
   }
 
-  private void skipAllFeaturesAfterFirstFailingFeature(final SpecInfo spec) {
+  private void skipFeaturesAfterFirstFailingFeature(final SpecInfo spec) {
     spec.getBottomSpec().addListener(new AbstractRunListener() {
       public void error(ErrorInfo error) {
         // @Dependent only affects class that carries the annotation,

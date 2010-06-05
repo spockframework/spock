@@ -98,6 +98,8 @@ public class RunContext {
   // This context will stay around until the thread dies.
   // It would be more accurate to remove the context once the test run
   // has finished, but the JUnit Runner SPI doesn't provide an adequate hook.
+  // That said, since most environments fork a new JVM for each test run,
+  // this shouldn't be much of a problem in practice.
   private static RunContext createBottomContext() {
     DelegatingScript script = new ConfigurationScriptLoader().loadAutoDetectedScript();
     List<Class<?>> classes = new ExtensionClassesLoader().loadClassesFromDefaultLocation();

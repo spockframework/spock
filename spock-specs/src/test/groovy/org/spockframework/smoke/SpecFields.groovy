@@ -18,6 +18,7 @@ package org.spockframework.smoke
 
 import spock.lang.Shared
 import spock.lang.Specification
+import spock.lang.Stepwise
 
 /**
  * A ...
@@ -69,6 +70,7 @@ class InitializationOfUnsharedFields extends Specification {
   }
 }
 
+@Stepwise
 class InitializationOfSharedFields extends Specification {
   @Shared def a
   @Shared def b = 1

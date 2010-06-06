@@ -36,4 +36,5 @@ public class RunnerConfiguration {
   public IncludeExcludeCriteria include = new IncludeExcludeCriteria();
   public IncludeExcludeCriteria exclude = new IncludeExcludeCriteria();
   public boolean filterStackTrace = true;
+  public boolean optimizeRunOrder = false;
 }

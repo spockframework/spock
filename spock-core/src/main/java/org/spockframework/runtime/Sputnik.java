@@ -33,59 +33,62 @@ import org.spockframework.util.VersionChecker;
  *
  * @author Peter Niederwieser
  */
-// - check if StoppedByUserException thrown in Notifier.fireTestStarted() is handled correctly on our side
+// TODO: check if StoppedByUserException thrown in Notifier.fireTestStarted() is handled correctly on our side
 public class Sputnik extends Runner implements Filterable, Sortable {
-  private final RunContext runContext;
-  private final SpecInfoBuilder builder;
-  private final SpecInfo spec;
+  private final Class<?> clazz;
+  private SpecInfo spec;
   private boolean extensionsRun = false;
   private boolean descriptionAggregated = false;
 
   public Sputnik(Class<?> clazz) {
     VersionChecker.checkSpockAndGroovyVersionsAreCompatible("spec runner");
-
-    runContext = RunContext.get();
-    builder = new SpecInfoBuilder(clazz);
-    spec = builder.build();
-    new JUnitDescriptionGenerator(spec).attach();
+    this.clazz = clazz;
   }
 
   public Description getDescription() {
     runExtensionsIfNecessary();
     aggregateDescriptionIfNecessary();
-    return (Description) spec.getMetadata();
+    return (Description) getSpec().getMetadata();
   }
 
   public void run(RunNotifier notifier) {
     runExtensionsIfNecessary();
     aggregateDescriptionIfNecessary();
-    runContext.createSpecRunner(spec, notifier).run();
+    RunContext.get().createSpecRunner(getSpec(), notifier).run();
   }
 
   public void filter(Filter filter) throws NoTestsRemainException {
-    spec.filterFeatures(new JUnitFilterAdapter(filter));
+    getSpec().filterFeatures(new JUnitFilterAdapter(filter));
     if (allFeaturesExcluded())
       throw new NoTestsRemainException();
   }
 
   public void sort(Sorter sorter) {
-    spec.sortFeatures(new JUnitSorterAdapter(sorter));
+    getSpec().sortFeatures(new JUnitSorterAdapter(sorter));
+  }
+
+  private SpecInfo getSpec() {
+    if (spec == null) {
+      spec = new SpecInfoBuilder(clazz).build();
+      new JUnitDescriptionGenerator(spec).attach();
+    }
+    return spec;
   }
 
   private void runExtensionsIfNecessary() {
     if (extensionsRun) return;
-    runContext.createExtensionRunner(spec).run();
+    RunContext.get().createExtensionRunner(getSpec()).run();
     extensionsRun = true;
   }
 
   private void aggregateDescriptionIfNecessary() {
     if (descriptionAggregated) return;
-    new JUnitDescriptionGenerator(spec).aggregate();
+    new JUnitDescriptionGenerator(getSpec()).aggregate();
     descriptionAggregated = true;
   }
 
   private boolean allFeaturesExcluded() {
-    for (FeatureInfo feature: spec.getAllFeatures())
+    for (FeatureInfo feature: getSpec().getAllFeatures())
       if (!feature.isExcluded()) return false;
 
     return true;

@@ -14,8 +14,10 @@
 
 package org.spockframework.runtime;
 
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.*;
 
 import org.spockframework.runtime.model.FeatureMetadata;
 import org.spockframework.runtime.model.SpecMetadata;
@@ -87,5 +89,32 @@ public final class SpecUtil {
     } while (spec != null && isSpec(spec));
 
     return count;
+  }
+
+  public static List<String> optimizeRunOrder(List<String> specNames) {
+    List<SpecRunHistory> histories = loadHistories(specNames);
+    Collections.sort(histories);
+    return extractNames(histories);
+  }
+
+  private static List<SpecRunHistory> loadHistories(List<String> specNames) {
+    List<SpecRunHistory> histories = new ArrayList<SpecRunHistory>(specNames.size());
+
+    for (String name : specNames) {
+      SpecRunHistory history = new SpecRunHistory(name);
+      try {
+        history.loadFromDisk();
+      } catch (IOException ignored) {} // history stays empty, so spec will be run early on
+      histories.add(history);
+    }
+
+    return histories;
+  }
+
+  private static List<String> extractNames(List<SpecRunHistory> histories) {
+    List<String> specNames = new ArrayList<String>(histories.size());
+    for (SpecRunHistory history : histories)
+      specNames.add(history.getSpecName());
+    return specNames;
   }
 }

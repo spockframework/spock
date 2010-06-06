@@ -23,7 +23,7 @@ public class FeatureInfo extends NodeInfo<SpecInfo, AnnotatedElement> {
 
   private boolean excluded = false;
   private boolean skipped = false;
-
+  
   @Override
   public AnnotatedElement getReflection() {
     throw new UnsupportedOperationException("getReflection");

@@ -40,10 +40,13 @@ public class SpecInfoBuilder {
 
   public SpecInfo build() {
     doBuild();
-    int executionOrder = 0;
+    int order = 0;
     for (SpecInfo curr : spec.getSpecsTopToBottom())
-      for (FeatureInfo feature : curr.getFeatures())
-        feature.setExecutionOrder(executionOrder++);
+      for (FeatureInfo feature : curr.getFeatures()) {
+        feature.setDeclarationOrder(order); // lift declaration order to spec hierarchy
+        feature.setExecutionOrder(order);
+        order++;
+      }
 
     return spec;
   }

@@ -60,6 +60,6 @@ public class MockInvocation implements IMockInvocation {
   private String render(List<Object> arguments) {
     List<String> strings = new ArrayList<String>();
     for (Object arg : arguments) strings.add(DefaultGroovyMethods.inspect(arg));
-    return TextUtil.join(strings, ", ");
+    return TextUtil.join(", ", strings);
   }
 }

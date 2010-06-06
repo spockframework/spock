@@ -1,4 +1,3 @@
-
 /*
  * Copyright 2010 the original author or authors.
  *
@@ -17,14 +16,12 @@ package org.spockframework.smoke
 
 import org.junit.runner.Request
 import org.junit.runner.Description
-import spock.lang.Specification
-import spock.lang.Shared
-import spock.util.EmbeddedSpecCompiler
 
-class FeatureSorting extends Specification {
-  @Shared
-  EmbeddedSpecCompiler compiler = new EmbeddedSpecCompiler()
+import org.spockframework.EmbeddedSpecification
 
+import spock.lang.*
+
+class FeatureSorting extends EmbeddedSpecification {
   @Shared
   List clazzes = compiler.compileWithImports("""
 class Base extends Specification {
@@ -48,7 +45,10 @@ class Derived extends Base {
 
   def "features are initially sorted in declaration order"() {
     when:
-    def description = Request.aClass(clazz).runner.description
+    // need to open new context to guard against reordering from outside (OptimizeRunOrderExtension etc.)
+    def description = runner.withNewContext {
+      Request.aClass(clazz).runner.description
+    }
 
     then:
     description.children*.methodName == methodOrder
@@ -61,10 +61,12 @@ class Derived extends Base {
 
   def "sort in lexicographical order"() {
     when:
-    def request = Request.aClass(clazz).sortWith(new LexicographicalComparator())
+    def description = runner.withNewContext {
+      Request.aClass(clazz).sortWith(new LexicographicalComparator()).runner.description
+    }
 
     then:
-    request.runner.description.children*.methodName == methodOrder
+    description.children*.methodName == methodOrder
 
     where:
     clazz   | methodOrder
@@ -74,12 +76,14 @@ class Derived extends Base {
 
   def "sort in reverse lexicographical order"() {
     when:
-    def request = Request.aClass(clazz).sortWith(new ReverseLexicographicalComparator())
+    def description = runner.withNewContext {
+      Request.aClass(clazz).sortWith(new ReverseLexicographicalComparator()).runner.description
+    }
 
     then:
-    request.runner.description.children*.methodName == methodOrder
+    description.children*.methodName == methodOrder
 
-	where:
+	  where:
     clazz   | methodOrder
     base    | ["ccc", "bbb", "aaa"]
     derived | ["cde", "ccc", "bcd", "bbb", "abc", "aaa"]

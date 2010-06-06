@@ -16,12 +16,12 @@
 
 package org.spockframework.smoke
 
-import spock.lang.Shared
-import spock.lang.Specification
+import spock.lang.*
 
 /**
  * @author Peter Niederwieser
  */
+@Stepwise
 class MethodExecutionOrder extends Specification {
   @Shared order = []
 	

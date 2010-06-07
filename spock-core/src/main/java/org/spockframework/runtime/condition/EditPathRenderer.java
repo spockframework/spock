@@ -16,6 +16,8 @@ package org.spockframework.runtime.condition;
 
 import java.util.List;
 
+import org.spockframework.util.TextUtil;
+
 import static org.spockframework.runtime.condition.EditOperation.Kind.SKIP;
 
 public class EditPathRenderer {
@@ -38,23 +40,23 @@ public class EditPathRenderer {
       switch (op.getKind()) {
         case DELETE:
           for (int i = 0; i < op.getLength(); i++) {
-            String part = expand(seq1.charAt(index1++));
+            String part = TextUtil.escape(seq1.charAt(index1++));
             line1.append(part);
-            line2.append(part.length() == 1 ? "-" : "~~");
+            line2.append(part.length() == 1 ? "-" : "-~");
           }
           break;
         case INSERT:
           for (int i = 0; i < op.getLength(); i++) {
-            String part = expand(seq2.charAt(index2++));
-            line1.append(part.length() == 1 ? "-" : "~~");
+            String part = TextUtil.escape(seq2.charAt(index2++));
+            line1.append(part.length() == 1 ? "-" : "-~");
             line2.append(part);
           }
           break;
         case SKIP:
         case SUBSTITUTE:
           for (int i = 0; i < op.getLength(); i++) {
-            String part1 = expand(seq1.charAt(index1++));
-            String part2 = expand(seq2.charAt(index2++));
+            String part1 = TextUtil.escape(seq1.charAt(index1++));
+            String part2 = TextUtil.escape(seq2.charAt(index2++));
             line1.append(part1);
             line2.append(part2);
             if (part1.length() < part2.length()) line1.append('~'); 
@@ -71,14 +73,5 @@ public class EditPathRenderer {
     }
 
     return line1.toString() + "\n" + line2.toString();
-  }
-
-  private String expand(char ch) {
-    if (ch == '\t') return "\\t";
-    else if (ch == '\n') return "\\n";
-    else if (ch == '\b') return "\\b";
-    else if (ch == '\r') return "\\r";
-    else if (ch == '\f') return "\\f";
-    else return String.valueOf(ch);
   }
 }

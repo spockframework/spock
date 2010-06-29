@@ -85,7 +85,7 @@
             <dependency>
               <groupId>org.codehaus.groovy</groupId>
               <artifactId>groovy-all</artifactId>
-              <version>1.7.2</version>
+              <version>1.7.3</version>
             </dependency>
           </dependencies>
         </plugin>
@@ -110,7 +110,7 @@
       <dependency>
         <groupId>org.codehaus.groovy</groupId>
         <artifactId>groovy-all</artifactId>
-        <version>1.7.2</version>
+        <version>1.7.3</version>
       </dependency>
       <dependency>
         <groupId>junit</groupId>

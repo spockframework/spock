@@ -16,7 +16,7 @@
 
 package org.spockframework.mock;
 
-import org.codehaus.groovy.runtime.typehandling.DefaultTypeTransformation;
+import org.spockframework.util.GroovyRuntimeUtil;
 
 /**
  *
@@ -30,6 +30,6 @@ public class EqualArgumentConstraint implements IArgumentConstraint {
   }
 
   public boolean isSatisfiedBy(Object arg) {
-    return DefaultTypeTransformation.compareEqual(this.arg, arg);
+    return GroovyRuntimeUtil.equals(this.arg, arg);
   }
 }

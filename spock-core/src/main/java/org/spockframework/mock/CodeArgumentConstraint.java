@@ -16,7 +16,7 @@
 
 package org.spockframework.mock;
 
-import org.codehaus.groovy.runtime.typehandling.DefaultTypeTransformation;
+import org.spockframework.util.GroovyRuntimeUtil;
 
 import groovy.lang.Closure;
 
@@ -33,6 +33,6 @@ public class CodeArgumentConstraint implements IArgumentConstraint {
   }
 
   public boolean isSatisfiedBy(Object argument) {
-    return DefaultTypeTransformation.castToBoolean(code.call(argument));
+    return GroovyRuntimeUtil.isTruthy(code.call(argument));
   }
 }

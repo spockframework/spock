@@ -46,7 +46,7 @@ public class SpockConfigurationGestalt implements IGestalt {
     throw new MissingPropertyException("configurations cannot be set directly");
   }
 
-  public Object invokeMethod(String name, Object[] args) {
+  public IGestalt invokeMethod(String name, Object[] args) {
     if (args.length != 1 || !(args[0] instanceof Closure))
       throw new MissingMethodException(name, this.getClass(), args);
 
@@ -54,12 +54,10 @@ public class SpockConfigurationGestalt implements IGestalt {
     if (config == null) throw new MissingMethodException(name, this.getClass(), args);
 
     ClosureBlueprint blueprint = new ClosureBlueprint((Closure)args[0], config);
-    IGestalt gestalt = new PojoGestalt(config, config.getClass(), blueprint, slotFactories);
-    new Sculpturer().$form(gestalt);
-    return null;
+    return new PojoGestalt(config, config.getClass(), blueprint, slotFactories);
   }
 
-  private Object getConfiguration(String name) {
+   private Object getConfiguration(String name) {
     for (Object config : configurations) {
       String configName = getConfigurationName(config);
       if (configName.equalsIgnoreCase(name)) return config;

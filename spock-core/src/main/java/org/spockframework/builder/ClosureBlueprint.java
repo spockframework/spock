@@ -23,7 +23,7 @@ public class ClosureBlueprint implements IBlueprint {
   public ClosureBlueprint(Closure closure, Object subject) {
     this.closure = closure;
     this.subject = subject;
-    closure.setResolveStrategy(Closure.DELEGATE_ONLY);
+    closure.setResolveStrategy(Closure.DELEGATE_FIRST);
   }
 
   public void setDelegate(Object delegate) {

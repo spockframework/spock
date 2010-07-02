@@ -14,7 +14,6 @@
 
 package org.spockframework.runtime;
 
-import org.junit.ComparisonFailure;
 import org.junit.internal.runners.model.MultipleFailureException;
 import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
@@ -24,8 +23,6 @@ import org.spockframework.runtime.model.*;
 import org.spockframework.util.InternalSpockError;
 
 import spock.lang.Unroll;
-
-import groovy.lang.GString;
 
 import static org.spockframework.runtime.RunStatus.*;
 
@@ -81,35 +78,20 @@ public class JUnitSupervisor implements IRunSupervisor {
   }
 
   public int error(ErrorInfo error) {
-    Throwable exception = error.getException();
-
     // for better JUnit compatibility, e.g when a @Rule is used
-    if (exception instanceof MultipleFailureException) {
-      MultipleFailureException multiFailure = (MultipleFailureException) exception;
+    if (error.getException() instanceof MultipleFailureException) {
+      MultipleFailureException multiFailure = (MultipleFailureException) error.getException();
       int runStatus = OK;
       for (Throwable failure : multiFailure.getFailures())
         runStatus = error(new ErrorInfo(error.getMethod(), failure));
       return runStatus;
     }
 
-    // translate failed string comparisons to org.junit.ComparisonFailure
-    // to enable IDE diff dialogs
-    if (exception instanceof ConditionNotSatisfiedError) {
-      Condition condition = ((ConditionNotSatisfiedError) exception).getCondition();
-      ExpressionInfo expr = condition.getExpression();
-      if (expr != null && expr.isEqualityComparison(String.class, GString.class)) {
-        ComparisonFailure failure = new ComparisonFailure(exception.getMessage(),
-            expr.getChildren().get(0).getValue().toString(), expr.getChildren().get(1).getValue().toString());
-        failure.setStackTrace(exception.getStackTrace());
-        exception = failure;
-      }
-    }
-
-    filter.filter(exception);
+    filter.filter(error.getException());
     masterListener.error(error);
     errorSinceLastReset = true;
 
-    notifier.fireTestFailure(new Failure(getCurrentDescription(), exception));
+    notifier.fireTestFailure(new Failure(getCurrentDescription(), error.getException()));
 
     switch (error.getMethod().getKind()) {
       case DATA_PROCESSOR:

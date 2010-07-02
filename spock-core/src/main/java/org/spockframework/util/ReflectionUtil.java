@@ -149,13 +149,6 @@ public abstract class ReflectionUtil {
     return null;
   }
 
-  public static boolean hasAnyOfTypes(Object value, Class<?>... types) {
-    for (Class<?> type : types) 
-      if (type.isInstance(value)) return true;
-
-    return false;
-  }
-
   private static String getPropertyName(String methodName, int prefixLength) {
     String result = methodName.substring(prefixLength);
     if (result.length() == 0) return null;

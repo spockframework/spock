@@ -60,12 +60,11 @@ public class PojoGestalt implements IGestalt {
   // current impl is dead stupid:
   // - named args not treated specially
   // - last arg is closure => treat as blueprint
-  public Object invokeMethod(String name, Object[] args) {
+  public IGestalt invokeMethod(String name, Object[] args) {
     ISlot slot = findSlot(name, args);
     PojoGestalt gestalt = createGestalt(slot.getType(), args);
-    new Sculpturer().$form(gestalt);
     slot.write(gestalt.getSubject());
-    return gestalt.getSubject();
+    return gestalt;
   }
 
   private ISlot findSlot(String name, Object[] args) {

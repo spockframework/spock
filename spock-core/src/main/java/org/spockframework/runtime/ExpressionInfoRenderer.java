@@ -24,8 +24,6 @@ import org.spockframework.runtime.condition.*;
 import org.spockframework.runtime.model.ExpressionInfo;
 import org.spockframework.runtime.model.TextPosition;
 
-import groovy.lang.GString;
-
 /**
  * Creates a string representation of an assertion and its recorded values.
  *
@@ -170,15 +168,21 @@ public class ExpressionInfoRenderer {
   }
 
   private static String customToString(ExpressionInfo expr) {
-    if (expr.isEqualityComparison(String.class, GString.class)) {
-      String str1 = expr.getChildren().get(0).getValue().toString();
-      String str2 = expr.getChildren().get(1).getValue().toString();
-      EditDistance dist = new EditDistance(str1, str2);
-      return String.format("false\n%d difference%s (%d%% similarity)\n%s",
-          dist.getDistance(), dist.getDistance() == 1 ? "" : "s", dist.getSimilarityInPercent(),
-          new EditPathRenderer().render(str1, str2, dist.calculatePath()));
+    if ("==".equals(expr.getOperation())
+        && expr.getValue() instanceof Boolean
+        && !(Boolean)expr.getValue()
+        && expr.getChildren().size() == 2) {
+      Object op1 = expr.getChildren().get(0).getValue();
+      Object op2 = expr.getChildren().get(1).getValue();
+      if (op1 instanceof CharSequence && op2 instanceof CharSequence) {
+        CharSequence seq1 = (CharSequence)op1;
+        CharSequence seq2 = (CharSequence)op2;
+        EditDistance dist = new EditDistance(seq1, seq2);
+        return String.format("false\n%d difference%s (%d%% similarity)\n%s",
+            dist.getDistance(), dist.getDistance() == 1 ? "" : "s", dist.getSimilarityInPercent(),
+            new EditPathRenderer().render(seq1, seq2, dist.calculatePath()));
+      }
     }
-    
     return null;
   }
 }

@@ -95,4 +95,21 @@ public abstract class TextUtil {
       if (ch == symbol) result++;
     return result;
   }
+
+  public static String escape(char ch) {
+    if (ch == '\\') return "\\\\";
+    if (ch == '\t') return "\\t";
+    if (ch == '\n') return "\\n";
+    if (ch == '\b') return "\\b";
+    if (ch == '\r') return "\\r";
+    if (ch == '\f') return "\\f";
+    return String.valueOf(ch);
+  }
+
+  public static String escape(CharSequence seq) {
+    StringBuilder builder = new StringBuilder(seq.length() * 3 / 2);
+    for (int i = 0; i < seq.length(); i++)
+      builder.append(escape(seq.charAt(i)));
+    return builder.toString();
+  }
 }

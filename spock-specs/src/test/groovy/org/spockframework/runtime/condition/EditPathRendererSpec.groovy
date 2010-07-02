@@ -35,7 +35,7 @@ class EditPathRendererSpec extends Specification {
     out2 << ["the qui(r)k", "(----)quick", "(--)e qui(--)", "(and now for s)th(.) (completely d)i(fferent)"]
   }
 
-  def "compared strings contain special characters"() {
+  def "compared strings contain control characters"() {
     def dist = new EditDistance(str1, str2)
 
     expect:
@@ -44,8 +44,8 @@ class EditPathRendererSpec extends Specification {
     where:
     str1 = "one\ttwothree\bfour\rfive\fsix"
     str2 = "onetwo\nthreefour\rfive\tsix"
-    out1 = "one(\\t)two(~~)three(\\b)four\\rfive(\\f)six"
-    out2 = "one(~~)two(\\n)three(~~)four\\rfive(\\t)six"
+    out1 = "one(\\t)two(-~)three(\\b)four\\rfive(\\f)six"
+    out2 = "one(-~)two(\\n)three(-~)four\\rfive(\\t)six"
   }
 
   def "compared strings contain same delimiters as used by diff renderer"() {

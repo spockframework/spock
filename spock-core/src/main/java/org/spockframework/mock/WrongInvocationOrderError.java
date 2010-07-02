@@ -14,6 +14,31 @@
 
 package org.spockframework.mock;
 
+/**
+ * Thrown if an invocation on a mock object occurs too late. Example:
+ *
+ * <pre>
+ * when:
+ * ...
+ *
+ * then:
+ * 1 * foo.me()
+ * 1 * bar.me()
+ *
+ * then: // indicates that subsequent interactions must take place after previous interactions
+ * 1 * baz.me()
+ * </pre>
+ *
+ * Assuming the following invocation order:
+ *
+ * <ol>
+ * <li>bar.me()</li>
+ * <li>baz.me()</li>
+ * <li>foo.me()</li>
+ * </ol>
+ *
+ * A <tt>WrongInvocationOrderError</tt> will be thrown on the third call.
+ */
 public class WrongInvocationOrderError extends InteractionNotSatisfiedError {
   private final IMockInteraction interaction;
   private final IMockInvocation lastInvocation;

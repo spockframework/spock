@@ -23,6 +23,7 @@ import org.codehaus.groovy.runtime.InvokerHelper;
 
 import static org.spockframework.runtime.RunStatus.*;
 import org.spockframework.runtime.model.*;
+import org.spockframework.util.GroovyRuntimeUtil;
 
 /**
  * Adds the ability to run parameterized features.
@@ -101,7 +102,7 @@ public class ParameterizedSpecRunner extends BaseSpecRunner {
         // although it is of course destructive (i.e. it exhausts the Iterator)
         continue;
       try {
-        int size = (Integer)InvokerHelper.invokeMethod(prov, "size", null);
+        int size = (Integer) GroovyRuntimeUtil.invokeMethod(prov, "size", null);
         if (size >= 0 && size < result) result = size;
       } catch (Throwable ignored) {}
     }
@@ -128,7 +129,7 @@ public class ParameterizedSpecRunner extends BaseSpecRunner {
 
     for (Object provider : dataProviders) {
       try {
-        InvokerHelper.invokeMethod(provider, "close", null);
+        GroovyRuntimeUtil.invokeMethod(provider, "close", null);
       } catch (Throwable ignored) {}
     }
   }

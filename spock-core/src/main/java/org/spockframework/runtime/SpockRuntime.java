@@ -16,14 +16,13 @@
 
 package org.spockframework.runtime;
 
-import org.codehaus.groovy.runtime.DefaultGroovyMethods;
 import org.codehaus.groovy.runtime.InvokerHelper;
-import org.codehaus.groovy.runtime.typehandling.DefaultTypeTransformation;
 
 import groovy.lang.MetaClass;
 import groovy.lang.MetaMethod;
 
 import org.spockframework.runtime.model.TextPosition;
+import org.spockframework.util.GroovyRuntimeUtil;
 
 /**
  * @author Peter Niederwieser
@@ -39,7 +38,7 @@ public abstract class SpockRuntime {
     // void methods are not considered implicit conditions, but we can detect them only at runtime
     if (condition == VOID_RETURN_VALUE) return;
     
-    if (!DefaultTypeTransformation.castToBoolean(condition))
+    if (!GroovyRuntimeUtil.isTruthy(condition))
       throw new ConditionNotSatisfiedError(
           new Condition(text, TextPosition.create(line, column), recorder, null));
   }
@@ -47,9 +46,9 @@ public abstract class SpockRuntime {
   public static final String VERIFY_CONDITION_WITH_MESSAGE = "verifyConditionWithMessage";
 
   public static void verifyConditionWithMessage(Object message, Object condition, String text, int line, int column) {
-    if (!DefaultTypeTransformation.castToBoolean(condition))
+    if (!GroovyRuntimeUtil.isTruthy(condition))
       throw new ConditionNotSatisfiedError(
-          new Condition(text, TextPosition.create(line, column), null, DefaultGroovyMethods.toString(message)));
+          new Condition(text, TextPosition.create(line, column), null, GroovyRuntimeUtil.toString(message)));
   }
 
   public static final String FEATURE_METHOD_CALLED = "featureMethodCalled";
@@ -74,7 +73,7 @@ public abstract class SpockRuntime {
    */
   // we don't use varargs for arguments due to http://jira.codehaus.org/browse/GROOVY-3547
   public static Object nullAwareInvokeMethod(Object target, String method, Object[] args) {
-    Object returnValue = InvokerHelper.invokeMethod(target, method,  args);
+    Object returnValue = GroovyRuntimeUtil.invokeMethod(target, method, args);
     if (returnValue != null) return returnValue;
 
     // let's try to find the method that was invoked and see if it has return type void

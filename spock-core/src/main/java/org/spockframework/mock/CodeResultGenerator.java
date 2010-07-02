@@ -16,7 +16,7 @@
 
 package org.spockframework.mock;
 
-import org.codehaus.groovy.runtime.typehandling.DefaultTypeTransformation;
+import org.spockframework.util.GroovyRuntimeUtil;
 
 import groovy.lang.Closure;
 
@@ -41,6 +41,6 @@ public class CodeResultGenerator implements IResultGenerator {
     // don't attempt cast for void methods (closure could be an action that accidentally returns a value)
     if (returnType == void.class || returnType == Void.class) return null;
 
-    return DefaultTypeTransformation.castToType(result, invocation.getMethod().getReturnType());
+    return GroovyRuntimeUtil.coerce(result, invocation.getMethod().getReturnType());
   }
 }

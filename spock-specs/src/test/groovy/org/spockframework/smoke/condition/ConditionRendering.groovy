@@ -682,6 +682,33 @@ three(a, b,c)
     }
   }
 
+  def "leading and trailing newlines are escaped"() {
+    expect:
+    isRendered """
+a == null
+| |
+| false
+"\\nfoo
+bar\\n"
+    """, {
+      def a = "\nfoo\nbar\n"
+      assert a == null
+    }
+  }
+
+  def "control characters other than newlines are escaped"() {
+    expect:
+    isRendered """
+a == null
+| |
+| false
+"\\b\\tfoo\\r\\f"
+    """, {
+      def a = "\b\tfoo\r\f"
+      assert a == null
+    }
+  }
+
   /*
   def "MapEntryExpression"() {
       // tested as part of testMapExpression

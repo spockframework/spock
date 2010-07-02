@@ -20,6 +20,7 @@ import java.util.regex.Pattern;
 
 import org.spockframework.runtime.model.ExpressionInfo;
 import org.spockframework.runtime.model.TextPosition;
+import org.spockframework.util.Nullable;
 
 /**
  * Runtime representation of an evaluated condition.
@@ -33,14 +34,19 @@ public class Condition {
   private final TextPosition position;
   private final Iterable<Object> values;
   private final String message;
+  private final ExpressionInfo expression;
 
   public Condition(String text, TextPosition position, Iterable<Object> values, String message) {
     this.text = text;
     this.position = position;
     this.values = values;
     this.message = message;
+
+    expression = text == null || values == null ? null :
+        new ExpressionInfoBuilder(flatten(text), TextPosition.create(1, 1), values).build();
   }
 
+  @Nullable
   public String getText() {
     return text;
   }
@@ -53,19 +59,25 @@ public class Condition {
     return values;
   }
 
+  @Nullable
+  public ExpressionInfo getExpression() {
+    return expression;
+  }
+
+  @Nullable
   public String getMessage() {
     return message;
   }
 
+  // TODO: rethink what to display when
   public String render() {
     if (text == null)
       return "(No detail information available)\n";
-    
+
     if (message != null)
       return String.format("%s\n\nYour message: %s\n", flatten(text), message);
-    
-    ExpressionInfo exprInfo = new ExpressionInfoBuilder(flatten(text), TextPosition.create(1, 1), values).build();
-    return ExpressionInfoRenderer.render(exprInfo);
+
+    return ExpressionInfoRenderer.render(expression);
   }
 
   private static String flatten(String text) {

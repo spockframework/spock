@@ -51,6 +51,13 @@
       <groupId>org.objenesis</groupId>
       <artifactId>objenesis</artifactId>
       <optional>true</optional>
-    </dependency>     
+    </dependency>
+    <dependency>
+      <groupId>net.sf.json-lib</groupId>
+      <artifactId>json-lib</artifactId>
+      <version>2.3</version>
+      <classifier>jdk15</classifier>
+      <optional>true</optional>
+    </dependency>
   </dependencies>
 </project>

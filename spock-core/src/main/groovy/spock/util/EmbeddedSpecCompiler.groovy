@@ -72,7 +72,7 @@ class EmbeddedSpecCompiler {
     loader.clearCache()
 
     try {
-    loader.parseClass(source.trim())
+      loader.parseClass(source.trim())
     } catch (MultipleCompilationErrorsException e) {
       def errors = e.errorCollector.errors
       if (unwrapCompileException && errors.every { it.hasProperty("cause") })

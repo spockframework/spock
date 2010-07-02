@@ -12,26 +12,20 @@
  * limitations under the License.
  */
 
-package org.spockframework.smoke
+package org.spockframework.builder.json;
 
-import org.junit.runners.Suite.SuiteClasses
-import org.junit.runners.Suite
-import org.junit.runner.RunWith
+import net.sf.json.JSON;
 
-import spock.lang.*
+import org.spockframework.builder.ClosureBlueprint;
+import org.spockframework.builder.Sculpturer;
 
-@RunWith(Suite)
-@SuiteClasses([MySpec1, MySpec2])
-class RunningSpecsWithJUnitSuite {}
+import groovy.lang.Closure;
 
-class MySpec1 extends Specification {
-  def foo() {
-    expect: true
-  }
-}
-
-class MySpec2 extends Specification {
-  def foo() {
-    expect: true
+public class JsonBuilder {
+  // TODO: also support arbitrary values before block (like for nested elements)
+  public JSON call(Closure block) {
+    JsonGestalt gestalt = new JsonGestalt(null, new ClosureBlueprint(block, null), block.getThisObject());
+    new Sculpturer().$form(gestalt);
+    return gestalt.getSubject();
   }
 }

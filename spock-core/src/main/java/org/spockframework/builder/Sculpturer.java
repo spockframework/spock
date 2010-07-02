@@ -16,6 +16,8 @@ package org.spockframework.builder;
 
 import org.codehaus.groovy.runtime.InvokerHelper;
 
+import org.spockframework.util.Assert;
+
 import groovy.lang.*;
 
 /**
@@ -42,8 +44,6 @@ public class Sculpturer extends GroovyObjectSupport {
   }
 
   public Object invokeMethod(String name, Object args) {
-    IGestalt subGestalt = $gestalt.invokeMethod(name, InvokerHelper.asArray(args));
-    new Sculpturer().$form(subGestalt);
-    return null;
+    return $gestalt.invokeMethod(name, InvokerHelper.asArray(args));
   }
 }

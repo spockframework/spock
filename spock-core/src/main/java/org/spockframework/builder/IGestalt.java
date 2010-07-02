@@ -21,5 +21,5 @@ public interface IGestalt {
 
   Object getProperty(String name);
   void setProperty(String name, Object value);
-  IGestalt invokeMethod(String name, Object[] args);
+  Object invokeMethod(String name, Object[] args);
 }

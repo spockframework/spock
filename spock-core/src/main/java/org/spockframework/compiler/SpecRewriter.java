@@ -351,6 +351,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
     method.setCode(block);
     method.setReturnType(ClassHelper.VOID_TYPE);
     method.setVariableScope(new VariableScope());
+    method.getAnnotations().clear(); // important to avoid problem with annotation closures
   }
 
   // where block must be rewritten before all other blocks

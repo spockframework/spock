@@ -29,7 +29,7 @@ Gradle Build
 ------------
 Prerequisites: JDK 5 or higher
 
-Type: ./gradlew clean libs
+Type: ./gradlew clean build
 
 If not already present, build dependencies (including Gradle itself) will be downloaded automatically.
 

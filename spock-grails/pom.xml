@@ -15,7 +15,7 @@
   <url>http://grails.org/plugin/spock</url>
 
   <properties>
-    <grails.version>1.3.2</grails.version>
+    <grails.version>1.3.3</grails.version>
   </properties>   
 
   <dependencies>

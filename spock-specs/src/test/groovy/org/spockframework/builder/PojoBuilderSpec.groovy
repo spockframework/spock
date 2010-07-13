@@ -120,7 +120,34 @@ class PojoBuilderSpec extends Specification {
     pr.aChar == "a" as char
     pr.aBoolean == true
   }
- 
+
+  def "access local variable"() {
+    def contextVar = "flamingo rd."
+
+    when:
+    builder.build(person) {
+      address {
+        street contextVar
+      }
+    }
+
+    then:
+    person.address.street == contextVar
+  }
+
+  def aField = "pancorn av."
+
+  def "access field"() {
+    when:
+    builder.build(person) {
+      address {
+        street aField
+      }
+    }
+
+    then:
+    person.address.street == aField
+  }
 }
 
 class Person {

@@ -14,7 +14,13 @@
 
 package org.spockframework.builder;
 
+import org.spockframework.util.Nullable;
+
 public interface IBlueprint {
+  @Nullable
+  Object getThisObject();
+
   void setDelegate(Object delegate);
+  
   void evaluate();
 }

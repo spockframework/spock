@@ -31,7 +31,7 @@ grails.project.dependency.resolution = {
   }
   
   dependencies {
-    build 'org.spockframework:spock-core:0.4-SNAPSHOT'
+    build 'org.spockframework:spock-core:0.5-SNAPSHOT'
     build 'junit:junit:4.8.1'
     
     test('net.sourceforge.htmlunit:htmlunit:2.7') {

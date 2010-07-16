@@ -26,7 +26,7 @@ import java.lang.annotation.*;
  * @author Peter Niederwieser
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.TYPE, ElementType.FIELD})
+@Target({ElementType.TYPE, ElementType.FIELD, ElementType.LOCAL_VARIABLE})
 public @interface Subject {
   /**
    * The classes which are the subjects of the specification. Irrelevant if the

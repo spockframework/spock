@@ -113,6 +113,14 @@ class ResultGenerators extends Specification {
     calculator.calculate() instanceof BigDecimal
   }
 
+  def "auto-coercion from List to Set"() {
+    def producer = Mock(SetProducer)
+    producer.produce() >> [1,2,3]
+
+    expect:
+    producer.produce() instanceof Set
+  }
+
   def "access args with 'it' variable"() {
     List list = Mock()
 
@@ -170,4 +178,8 @@ private interface Named {
 
 private interface Calculator {
   BigDecimal calculate()
+}
+
+private interface SetProducer {
+  Set produce()
 }

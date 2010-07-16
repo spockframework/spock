@@ -16,8 +16,12 @@
 
 package org.spockframework.smoke.condition
 
+import spock.lang.Issue
+
 import static java.lang.Math.max
 import static java.lang.Math.min
+import static java.lang.Integer.MAX_VALUE
+import static java.lang.Thread.State.BLOCKED
 
 /**
  * Checks that:
@@ -305,29 +309,38 @@ class ConditionEvaluation extends ConditionSpecification {
     Arrays.asList(1, 2, 3) == [1, 2, 3]
   }
 
+  // as of Groovy 1.7.3, represented as FieldExpression
+  @Issue("http://issues.spockframework.org/detail?id=106")
+  def "statically imported field"() {
+    expect:
+    MAX_VALUE == 2147483647
+  }
+
+  // as of Groovy 1.7.3, represented as PropertyExpression
+  def "statically imported enum value"() {
+    expect:
+    BLOCKED instanceof Thread.State
+  }
+
   /*
   def "MapEntryExpression"() {
       // tested as part of testMapExpression
   }
 
-  def "FieldExpression"() {
-      // doesn't seem to be used
-  }
-
   def "DeclarationExpression"() {
-      // cannot occur in an assertion statement
+      // cannot occur in condition
   }
 
   def "RegexExpression"() {
-      // doesn't seem to be used
+      // unused AST node
   }
 
   def "ClosureListExpression"() {
-      // cannot occur in an assertion statement
+      // cannot occur in condition
   }
 
   def "BytecodeExpression"() {
-      // cannot occur in an assertion statement
+      // cannot occur in condition
   }
   */
 }

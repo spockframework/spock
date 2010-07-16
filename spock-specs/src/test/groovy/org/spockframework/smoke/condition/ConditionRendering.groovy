@@ -16,7 +16,11 @@
 
 package org.spockframework.smoke.condition
 
+import spock.lang.Issue
+
 import static java.lang.Math.min
+import static java.lang.Integer.MAX_VALUE
+import static java.lang.Thread.State.BLOCKED
 
 /**
  * Describes rendering of whole conditions.
@@ -682,29 +686,51 @@ three(a, b,c)
     }
   }
 
+  // as of Groovy 1.7.3, represented as FieldExpression
+  @Issue("http://issues.spockframework.org/detail?id=106")
+  def "statically imported field"() {
+    expect:
+    isRendered """
+MAX_VALUE == 0
+|         |
+|         false
+2147483647
+    """, {
+      assert MAX_VALUE == 0
+    }
+  }
+
+  // as of Groovy 1.7.3, represented as PropertyExpression
+  def "statically imported enum value"() {
+    expect:
+    isRendered """
+BLOCKED == 0
+        |
+        false
+    """, {
+      assert BLOCKED == 0
+    }
+  }
+
   /*
   def "MapEntryExpression"() {
       // tested as part of testMapExpression
   }
 
-  def "FieldExpression"() {
-      // doesn't seem to be used
-  }
-
   def "DeclarationExpression"() {
-      // cannot occur in an assertion statement
+      // cannot occur in condition
   }
 
   def "RegexExpression"() {
-      // doesn't seem to be used
+      // unused AST node
   }
 
   def "ClosureListExpression"() {
-      // cannot occur in an assertion statement
+      // cannot occur in condition
   }
 
   def "BytecodeExpression"() {
-      // cannot occur in an assertion statement
+      // cannot occur in condition
   }
   */
 }

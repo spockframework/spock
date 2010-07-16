@@ -29,19 +29,4 @@ eventAllTestsStart = {
   def specTestTypeClass = loadSpecTestTypeClass()
   unitTests << specTestTypeClass.newInstance('spock', 'unit')
   integrationTests << specTestTypeClass.newInstance('spock', 'integration')
-  functionalTests << specTestTypeClass.newInstance('spock', 'functional')
-}
-
-eventTestPhaseStart = { phaseName ->
-  if (phaseName == 'functional') {
-    
-    // This is required when building with maven, to workaround a bug in grails-maven
-    if (!binding.hasProperty('serverContextPath')) {
-      includeTargets << grailsScript("_GrailsPackage") 
-      configureServerContextPath()
-    }
-    
-    def functionalSpecClass = classLoader.loadClass("grails.plugin.spock.FunctionalSpec")
-    functionalSpecClass.baseUrl = argsMap["baseUrl"] ?: "http://localhost:$serverPort$serverContextPath"
-  }
 }

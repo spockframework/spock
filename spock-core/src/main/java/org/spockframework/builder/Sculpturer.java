@@ -34,16 +34,33 @@ public class Sculpturer extends GroovyObjectSupport {
   }
 
   public Object getProperty(String name) {
+    Object thisObject = $gestalt.getBlueprint().getThisObject();
+    if (thisObject != null) {
+      try {
+        return InvokerHelper.getProperty(thisObject, name);
+      } catch (MissingPropertyException ignored) {}
+    }
     return $gestalt.getProperty(name);
   }
 
   public void setProperty(String name, Object value) {
+    Object thisObject = $gestalt.getBlueprint().getThisObject();
+    if (thisObject != null) {
+      try {
+        InvokerHelper.setProperty(thisObject, name, value);
+        return;
+      } catch (MissingPropertyException ignored) {}
+    }
     $gestalt.setProperty(name, value);
   }
 
   public Object invokeMethod(String name, Object args) {
-    IGestalt subGestalt = $gestalt.invokeMethod(name, InvokerHelper.asArray(args));
-    new Sculpturer().$form(subGestalt);
-    return null;
+    Object thisObject = $gestalt.getBlueprint().getThisObject();
+    if (thisObject != null) {
+      try {
+        return InvokerHelper.invokeMethod(thisObject, name, args);
+      } catch (MissingMethodException ignored) {}
+    }
+    return $gestalt.invokeMethod(name, InvokerHelper.asArray(args));
   }
 }

@@ -21,6 +21,10 @@ public class DelegatingScriptBlueprint implements IBlueprint {
     this.script = script;
   }
 
+  public Object getThisObject() {
+    return null;
+  }
+
   public void setDelegate(final Object delegate) {
     script.$setDelegate(delegate);
   }

@@ -16,12 +16,18 @@
 
 package org.spockframework.runtime.extension.builtin;
 
+import java.math.BigDecimal;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import groovy.lang.Closure;
 
 import org.spockframework.runtime.extension.AbstractAnnotationDrivenExtension;
 import org.spockframework.runtime.extension.ExtensionException;
 import org.spockframework.runtime.model.*;
 import org.spockframework.util.GroovyRuntimeUtil;
+import org.spockframework.util.InternalSpockError;
 
 import spock.lang.IgnoreIf;
 
@@ -29,6 +35,25 @@ import spock.lang.IgnoreIf;
  * @author Peter Niederwieser
  */
 public class IgnoreIfExtension extends AbstractAnnotationDrivenExtension<IgnoreIf> {
+  private static final Pattern JAVA_VERSION = Pattern.compile("(\\d+\\.\\d+).*");
+
+  private static final Object DELEGATE = new Object() {
+    public Map<String, String> getEnv() {
+      return System.getenv();
+    }
+
+    public Properties getProperties() {
+      return System.getProperties();
+    }
+
+    public BigDecimal getJavaVersion() {
+      String versionString = System.getProperty("java.version");
+      Matcher matcher = JAVA_VERSION.matcher(versionString);
+      if (matcher.matches()) return new BigDecimal(matcher.group(1));
+      throw new InternalSpockError(versionString);
+    }
+  };
+
 	@Override
 	public void visitSpecAnnotation(IgnoreIf annotation, SpecInfo spec) {
     doVisit(annotation, spec);
@@ -54,6 +79,9 @@ public class IgnoreIfExtension extends AbstractAnnotationDrivenExtension<IgnoreI
   }
 
   private Object evaluateCondition(Closure condition) {
+    condition.setDelegate(DELEGATE);
+    condition.setResolveStrategy(Closure.DELEGATE_ONLY);
+    
     try {
       return condition.call();
     } catch (Exception e) {

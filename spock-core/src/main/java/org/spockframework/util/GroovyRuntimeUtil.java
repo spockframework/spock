@@ -30,8 +30,8 @@ public abstract class GroovyRuntimeUtil {
     return DefaultTypeTransformation.castToBoolean(obj);
   }
 
-  public static Object coerce(Object obj, Class<?> type) {
-    return DefaultTypeTransformation.castToType(obj, type);
+  public static <T> T coerce(Object obj, Class<T> type) {
+    return type.cast(DefaultTypeTransformation.castToType(obj, type));
   }
 
   public static boolean equals(Object obj, Object other) {

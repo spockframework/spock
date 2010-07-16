@@ -23,29 +23,47 @@ class ConditionallyIgnoreFeature extends Specification {
 
   @IgnoreIf({ 1 < 2 })
   def "should be ignored"() {
-    log << "ignored"
+    log << 1
     expect: false
   }
 
   @IgnoreIf({ 1 > 2 })
   def "should be run"() {
-    log << "run"
+    log << 2
     expect: true
   }
 
   @IgnoreIf({ [1,2,3] })
   def "should be ignored according to Groovy truth"() {
-    log << "ignored"
+    log << 3
     expect: false
   }
 
   @IgnoreIf({ [] })
   def "should be run according to Groovy truth"() {
-    log << "run"
+    log << 4
+    expect: true
+  }
+
+  @IgnoreIf({ javaVersion < 1.5 })
+  def "provides convenient access to Java version"() {
+    log << 5
+    expect: true
+  }
+
+  @IgnoreIf({ env."PATH" != env["PATH"] })
+  def "provides convenient access to environment variables"() {
+    log << 6
+    expect: true
+  }
+
+  @IgnoreIf({ properties."os.name" != properties["os.name"] })
+  def "provides convenient access to system properties"() {
+    log << 7
     expect: true
   }
 
   def cleanupSpec() {
-    assert log == ["run", "run"]
+    assert log as Set == [2, 4, 5, 6, 7] as Set
   }
 }

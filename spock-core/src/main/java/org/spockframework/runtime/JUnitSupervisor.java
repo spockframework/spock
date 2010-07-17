@@ -161,6 +161,7 @@ public class JUnitSupervisor implements IRunSupervisor {
   }
 
   private Description getUnrolledDescription(Object[] args) {
+    // TODO: fail iteration if unrolledNameGenerator.nameFor() throws an exception
     return Description.createTestDescription(spec.getReflection(), unrolledNameGenerator.nameFor(args));
   }
 }

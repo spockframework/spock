@@ -1,5 +1,7 @@
 package spock.lang;
 
+import groovy.lang.Closure;
+
 import java.lang.annotation.*;
 
 /**
@@ -7,10 +9,11 @@ import java.lang.annotation.*;
  * as separate features to the outside world (IDEs, reports, etc.). By default,
  * the name of an iteration is the feature's name followed by a consecutive number.
  * This can be changed by providing a naming pattern after @Unroll. A naming pattern
- * may refer to data variables by prepending their names with #. Example:
+ * is a closure returning a GString. Data variables may be referenced with the
+ * usual GString '$' notation. Example:
  *
  * <pre>
- * &#64;Unroll("#name should have length #length")
+ * &#64;Unroll({ "$name should have length $length" })
  * def "name length"() {
  *   expect:
  *   name.size() == length
@@ -28,5 +31,5 @@ import java.lang.annotation.*;
 public @interface Unroll {
   // to ensure best possible tool support, we use the same default naming
   // scheme as Junit's @Parameterized
-  String value() default "#featureName[#iterationCount]";
+  Class<? extends Closure> value() default Closure.class;
 }

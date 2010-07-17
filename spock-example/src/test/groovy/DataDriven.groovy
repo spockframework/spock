@@ -27,7 +27,7 @@ class DataDriven extends Specification {
     c << [7, 5, 9]
   }
 
-  @Unroll("minimum of #a and #b is #c")
+  @Unroll({"minimum of $a and $b is $c"})
   def "minimum of two numbers"() {
     expect:
     Math.min(a, b) == c

@@ -17,8 +17,11 @@
 package org.spockframework.smoke.parameterization
 
 import org.junit.runner.notification.RunListener
+
 import org.spockframework.EmbeddedSpecification
 import org.spockframework.runtime.SpockExecutionException
+import org.spockframework.runtime.extension.ExtensionException
+
 import spock.lang.Issue
 
 /**
@@ -116,8 +119,8 @@ def foo() {
     runner.listeners << listener
 
     when:
-    runner.runSpecBody("""
-@Unroll("one #y two #x three")
+    runner.runSpecBody('''
+@Unroll({"one $y two $x three"})
 def foo() {
   expect: true
 
@@ -125,7 +128,7 @@ def foo() {
   x << [1, 2, 3]
   y << ["a", "b", "c"]
 }
-    """)
+    ''')
 
     then:
     1 * listener.testStarted { it.methodName == "one a two 1 three" }
@@ -138,8 +141,8 @@ def foo() {
     runner.listeners << listener
 
     when:
-    runner.runSpecBody("""
-@Unroll("one #featureName two #iterationCount three")
+    runner.runSpecBody('''
+@Unroll({"one $featureName two $iterationCount three"})
 def foo() {
   expect: true
 
@@ -147,7 +150,7 @@ def foo() {
   x << [1, 2, 3]
   y << ["a", "b", "c"]
 }
-    """)
+    ''')
 
     then:
     1 * listener.testStarted { it.methodName == "one foo two 0 three" }
@@ -161,8 +164,8 @@ def foo() {
     runner.listeners << listener
 
     when:
-    runner.runSpecBody("""
-@Unroll("one #x two #y three")
+    runner.runSpecBody('''
+@Unroll({"one $x two $y three"})
 def foo() {
   expect: true
 
@@ -170,47 +173,42 @@ def foo() {
   x << [1]
   y << [null]
 }
-    """)
+    ''')
 
     then:
     1 * listener.testStarted { it.methodName == "one 1 two null three" }
   }
 
-  def "variables in naming pattern that don't exist are not replaced"() {
-    RunListener listener = Mock()
-    runner.listeners << listener
-
+  def "@Unroll fails if variable in naming pattern can't be resolved"() {
     when:
-    runner.runSpecBody("""
-@Unroll("one #x two")
+    runner.runSpecBody('''
+@Unroll({"one $x two"})
 def foo() {
   expect: true
 
   where:
   y = 2
 }
-    """)
+    ''')
 
     then:
-    1 * listener.testStarted { it.methodName == "one #x two" }
+    thrown(ExtensionException)
   }
 
-  def "variables in naming pattern whose value cannot be converted to a string are not replaced"() {
-    RunListener listener = Mock()
-    runner.listeners << listener
-
+  def "@Unroll fails if evaluation of naming pattern throws an exception"() {
     when:
     runner.runSpecBody("""
-@Unroll("one #x two")
+@Unroll({ throw new RuntimeException() })
 def foo() {
   expect: true
 
   where:
-  x = { def bad = new Expando(); bad.toString = { throw new RuntimeException() }; bad }()
+  x = 1
 }
     """)
 
     then:
-    1 * listener.testStarted { it.methodName == "one #x two" }
+    ExtensionException e = thrown()
+    e.cause instanceof RuntimeException
   }
 }

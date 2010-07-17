@@ -20,10 +20,11 @@ import org.junit.runner.Description
 import org.spockframework.EmbeddedSpecification
 
 import spock.lang.*
+import spock.util.EmbeddedSpecCompiler
 
 class FeatureSorting extends EmbeddedSpecification {
   @Shared
-  List clazzes = compiler.compileWithImports("""
+  List clazzes = new EmbeddedSpecCompiler().compileWithImports("""
 class Base extends Specification {
   def aaa() { expect: true }
   def bbb() { expect: true }

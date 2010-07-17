@@ -16,7 +16,6 @@
 
 package org.spockframework
 
-import spock.lang.Shared
 import spock.lang.Specification
 import spock.util.EmbeddedSpecCompiler
 import spock.util.EmbeddedSpecRunner
@@ -28,6 +27,6 @@ import spock.util.EmbeddedSpecRunner
  * @author Peter Niederwieser
  */
 abstract class EmbeddedSpecification extends Specification {
-  @Shared EmbeddedSpecRunner runner = new EmbeddedSpecRunner()
-  @Shared EmbeddedSpecCompiler compiler = new EmbeddedSpecCompiler()
+  EmbeddedSpecRunner runner = new EmbeddedSpecRunner()
+  EmbeddedSpecCompiler compiler = new EmbeddedSpecCompiler()
 }

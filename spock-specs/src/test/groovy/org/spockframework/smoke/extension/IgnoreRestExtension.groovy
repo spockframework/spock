@@ -23,7 +23,7 @@ import spock.lang.Unroll
  * @author Peter Niederwieser
  */
 class IgnoreRestExtension extends EmbeddedSpecification {
-  @Unroll("Ignore #ignored methods")
+  @Unroll({"Ignore $ignored methods"})
   def "ignore some methods"() {
     when:
     def result = runner.runSpecBody("""

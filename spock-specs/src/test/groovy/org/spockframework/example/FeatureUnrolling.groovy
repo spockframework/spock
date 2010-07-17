@@ -42,7 +42,7 @@ class FeatureUnrolling extends Specification {
     length << [4, 5, 6]
   }
 
-  @Unroll("length of '#name' should be #length")
+  @Unroll({"length of '$name' should be $length"})
   def "with unrolling and custom naming pattern"() {
     expect:
     name.size() == length

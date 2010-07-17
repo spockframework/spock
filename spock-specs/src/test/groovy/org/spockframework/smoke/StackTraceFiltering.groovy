@@ -54,7 +54,7 @@ apackage.ASpec|a feature|1
   }
 
 
-  @Unroll("exception in #displayName")
+  @Unroll({"exception in $displayName"})
   def "exception in call chain"() {
     when:
     runner.runFeatureBody """

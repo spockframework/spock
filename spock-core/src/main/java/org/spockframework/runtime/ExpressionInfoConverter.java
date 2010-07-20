@@ -97,7 +97,11 @@ public class ExpressionInfoConverter extends AbstractExpressionConverter<Express
   }
 
   public void visitFieldExpression(FieldExpression expr) {
-    unsupported(); // unused AST node
+    result = new ExpressionInfo(
+        TextRegion.of(expr),
+        TextPosition.startOf(expr),
+        expr.getFieldName()
+    );
   }
 
   public void visitMethodPointerExpression(MethodPointerExpression expr) {

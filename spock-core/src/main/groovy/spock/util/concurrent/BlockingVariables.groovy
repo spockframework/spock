@@ -63,6 +63,15 @@ class BlockingVariables {
   }
 
   /**
+   * Instantiates a <tt>BlockingVariable</tt> with the specified timeout in seconds.
+   *
+   * @param timeout timeout (seconds) for reading a variable's value.
+   */
+  BlockingVariables(int timeout) {
+    this(timeout, TimeUnit.SECONDS)
+  }
+
+  /**
    * Instantiates a <tt>BlockingVariables</tt> instance with the specified
    * timeout.
    *

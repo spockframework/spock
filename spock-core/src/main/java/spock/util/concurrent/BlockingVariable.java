@@ -70,6 +70,15 @@ public class BlockingVariable<T> {
   }
 
   /**
+   * Instantiates a <tt>BlockingVariable</tt> with the specified timeout in seconds.
+   *
+   * @param timeout the timeout (seconds) for calls to <tt>get()</tt>.
+   */
+  public BlockingVariable(int timeout) {
+    this(timeout, TimeUnit.SECONDS);
+  }
+
+  /**
    * Instantiates a <tt>BlockingVariable</tt> with the specified timeout.
    *
    * @param timeout the timeout for calls to <tt>get()</tt>.

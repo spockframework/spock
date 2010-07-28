@@ -30,6 +30,8 @@ public abstract class GroovyRuntimeUtil {
     return DefaultTypeTransformation.castToBoolean(obj);
   }
 
+  // can't generify return type because DefaultTypeTransformation
+  // returns a wrapper if 'type' refers to a primitive type
   public static Object coerce(Object obj, Class<?> type) {
     return DefaultTypeTransformation.castToType(obj, type);
   }

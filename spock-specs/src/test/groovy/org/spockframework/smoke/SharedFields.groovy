@@ -16,13 +16,11 @@
  
 package org.spockframework.smoke
 
-import spock.lang.Specification
-import spock.util.EmbeddedSpecRunner
+import org.spockframework.EmbeddedSpecification
+import spock.lang.Issue
 
-class SharedFieldInSuperClass extends Specification {
-  EmbeddedSpecRunner runner = new EmbeddedSpecRunner()
-
-  def "invoke method on shared field in superclass"() {
+class SharedFields extends EmbeddedSpecification {
+  def "can be accessed from subclass"() {
     when:
     runner.runWithImports """
 class Foo extends Specification {
@@ -36,6 +34,29 @@ class Bar extends Foo {
   }
 }
     """
+
+    then:
+    noExceptionThrown()
+  }
+
+  @Issue("http://issues.spockframework.org/detail?id=112")
+  def 'can have name that starts with $'() {
+    when:
+    runner.runWithImports '''
+class Foo extends Specification {
+  def $unshared = 0
+  @Shared $shared = 0
+
+  def test() {
+    expect:
+    ++$unshared == 1
+    ++$shared == count
+
+    where:
+    count << [1,2,3]
+  }
+}
+    '''
 
     then:
     noExceptionThrown()

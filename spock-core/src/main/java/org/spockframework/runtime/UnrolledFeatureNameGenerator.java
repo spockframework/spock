@@ -22,9 +22,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.spockframework.runtime.model.FeatureInfo;
-import org.spockframework.util.NullSafe;
-
-import spock.lang.Unroll;
+import org.spockframework.util.GroovyRuntimeUtil;
 
 /**
  * @author Peter Niederwieser
@@ -37,9 +35,9 @@ public class UnrolledFeatureNameGenerator {
   private final Map<String, Integer> parameterNameToPosition = new HashMap<String, Integer>();
   private int iterationCount;
 
-  public UnrolledFeatureNameGenerator(FeatureInfo feature, Unroll unroll) {
+  public UnrolledFeatureNameGenerator(FeatureInfo feature, String namePattern) {
     this.feature = feature;
-    variableMatcher = VARIABLE_PATTERN.matcher(unroll.value());
+    variableMatcher = VARIABLE_PATTERN.matcher(namePattern);
 
     int pos = 0;
     for (String name : feature.getParameterNames())
@@ -53,7 +51,7 @@ public class UnrolledFeatureNameGenerator {
     while (variableMatcher.find()) {
       String variableName = variableMatcher.group(1);
       String value = getValue(variableName, args);
-      variableMatcher.appendReplacement(result, value);
+      variableMatcher.appendReplacement(result, Matcher.quoteReplacement(value));
     }
 
     variableMatcher.appendTail(result);
@@ -70,7 +68,7 @@ public class UnrolledFeatureNameGenerator {
 
     Object arg = args[pos];
     try {
-      return NullSafe.toString(arg);
+      return GroovyRuntimeUtil.toString(arg);
     } catch (Throwable t) {
       // since arg is provided by user code, we must be ready for any exception
       // to occur; rethrowing an exception would currently be interpreted as a

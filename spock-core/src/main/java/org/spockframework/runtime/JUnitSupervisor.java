@@ -58,7 +58,7 @@ public class JUnitSupervisor implements IRunSupervisor {
     Unroll unroll = feature.getFeatureMethod().getReflection().getAnnotation(Unroll.class);
     unrollFeature = unroll != null;
     if (unrollFeature)
-      unrolledNameGenerator = new UnrolledFeatureNameGenerator(feature, unroll);
+      unrolledNameGenerator = new UnrolledFeatureNameGenerator(feature, unroll.value());
     else
       notifier.fireTestStarted(getDescription(feature.getFeatureMethod()));
 
@@ -97,7 +97,7 @@ public class JUnitSupervisor implements IRunSupervisor {
       case DATA_PROCESSOR:
         return END_ITERATION;
       case SETUP:
-      case CLEANUP:     
+      case CLEANUP:
       case FEATURE:
         return feature.isParameterized() ? END_ITERATION : END_FEATURE;
       case FEATURE_EXECUTION:
@@ -151,7 +151,7 @@ public class JUnitSupervisor implements IRunSupervisor {
   }
 
   private Description getDescription(NodeInfo node) {
-    return (Description)node.getMetadata();
+    return (Description) node.getMetadata();
   }
 
   private Description getCurrentDescription() {

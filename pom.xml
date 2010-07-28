@@ -63,10 +63,23 @@
           </configuration>
           <executions>
             <execution>
+              <id>compile-groovy</id>
               <goals>
                 <goal>compile</goal>
                 <goal>testCompile</goal>
               </goals>
+            </execution>
+            <execution>
+              <id>init-groovy</id>
+              <phase>initialize</phase>
+              <goals>
+                <goal>execute</goal>
+              </goals>
+              <configuration>
+                <source>
+                  project.addCompileSourceRoot("src/main/groovy")
+                </source>
+              </configuration>
             </execution>
           </executions>
           <dependencies>
@@ -89,14 +102,6 @@
                 <exclusion>
                   <groupId>junit</groupId>
                   <artifactId>junit</artifactId>
-                </exclusion>
-                <exclusion>
-                  <groupId>org.apache.ant</groupId>
-                  <artifactId>ant</artifactId>
-                </exclusion>
-                <exclusion>
-                  <groupId>org.apache.ant</groupId>
-                  <artifactId>ant-launcher</artifactId>
                 </exclusion>
               </exclusions>
             </dependency>

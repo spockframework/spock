@@ -181,7 +181,6 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> {
     result = record(conversion);
   }
 
-  // IDEA checkin test
   public void visitVariableExpression(VariableExpression expr) {
     if (expr instanceof OldValueExpression) {
       Expression originalExpr = ((OldValueExpression)expr).getOrginalExpression();

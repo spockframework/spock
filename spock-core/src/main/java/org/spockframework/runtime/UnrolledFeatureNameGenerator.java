@@ -27,21 +27,19 @@ import org.spockframework.runtime.extension.ExtensionException;
 import org.spockframework.runtime.model.FeatureInfo;
 import org.spockframework.util.NullSafe;
 
-import spock.lang.Unroll;
-
 /**
  * @author Peter Niederwieser
  */
 public class UnrolledFeatureNameGenerator {
   private final FeatureInfo feature;
-  private final Unroll unroll;
+  private final Class<? extends Closure> nameGeneratorClass;
   private final Map<String, Integer> parameterNameToPosition = new HashMap<String, Integer>();
 
   private int iterationCount = -1;
 
-  public UnrolledFeatureNameGenerator(FeatureInfo feature, Unroll unroll) {
+  public UnrolledFeatureNameGenerator(FeatureInfo feature, Class<? extends Closure> nameGeneratorClass) {
     this.feature = feature;
-    this.unroll = unroll;
+    this.nameGeneratorClass = nameGeneratorClass;
 
     int pos = 0;
     for (String name : feature.getParameterNames())
@@ -51,12 +49,12 @@ public class UnrolledFeatureNameGenerator {
   public String nameFor(final Object[] args) {
     iterationCount++;
 
-    if (unroll.value() == Closure.class)
+    if (nameGeneratorClass == Closure.class)
       return String.format("%s[%d]", feature.getName(), iterationCount);
 
     Closure nameGenerator;
     try {
-      nameGenerator = unroll.value().getConstructor(Object.class, Object.class).newInstance(null, null);
+      nameGenerator = nameGeneratorClass.getConstructor(Object.class, Object.class).newInstance(null, null);
     } catch (Exception e) {
       throw new ExtensionException("Failed to instantiate @Unroll naming pattern", e);
     }
@@ -71,7 +69,7 @@ public class UnrolledFeatureNameGenerator {
         if (pos == null) throw new MissingPropertyException(
             String.format("Cannot resolve data variable '%s'", property));
 
-        return NullSafe.toString(args[pos]);
+        return args[pos];
       }
     };
 

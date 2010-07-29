@@ -80,7 +80,7 @@
                 <source>
                   // the purpose of this script is to make sure that
                   // maven-source-plugin includes Groovy sources in source Jar
-                  project.addCompileSourceRoot("src/main/groovy")
+                  project.addCompileSourceRoot("$project.basedir/src/main/groovy")
                 </source>
               </configuration>
             </execution>

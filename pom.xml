@@ -64,10 +64,25 @@
           </configuration>
           <executions>
             <execution>
+              <id>compile-groovy</id>
               <goals>
                 <goal>compile</goal>
                 <goal>testCompile</goal>
               </goals>
+            </execution>
+            <execution>
+              <id>init-groovy</id>
+              <phase>initialize</phase>
+              <goals>
+                <goal>execute</goal>
+              </goals>
+              <configuration>
+                <source>
+                  // the purpose of this script is to make sure that
+                  // maven-source-plugin includes Groovy sources in source Jar
+                  project.addCompileSourceRoot("src/main/groovy")
+                </source>
+              </configuration>
             </execution>
           </executions>
           <dependencies>
@@ -86,7 +101,17 @@
               <groupId>org.codehaus.groovy</groupId>
               <artifactId>groovy-all</artifactId>
               <version>1.8.0-beta-1-SNAPSHOT</version>
-            </dependency>
+            </dependency> 
+            <dependency> <!-- required by GMaven's execute goal -->
+               <groupId>org.apache.ant</groupId>
+               <artifactId>ant</artifactId>    
+               <version>1.7.1</version>
+             </dependency>
+             <dependency> <!-- required by GMaven's execute goal -->
+               <groupId>org.apache.ant</groupId>
+               <artifactId>ant-launcher</artifactId>     
+               <version>1.7.1</version>
+             </dependency>
           </dependencies>
         </plugin>
         <plugin>

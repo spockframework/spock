@@ -32,15 +32,15 @@ class GrailsSpecTestType extends GrailsTestTypeSupport {
   private final List<Class> specClasses = []
   
   GrailsSpecTestType(String name, String relativeSourcePath) {
-      super(name, relativeSourcePath)
+    super(name, relativeSourcePath)
   }
   
   protected List<String> getTestExtensions() {
-      ["groovy"]
+    ["groovy"]
   }
 
   protected List<String> getTestSuffixes() { 
-      ["Spec", "Specification"]
+    ["Spec", "Specification"]
   }
   
   JUnitReportsFactory createJUnitReportsFactory() {
@@ -48,12 +48,12 @@ class GrailsSpecTestType extends GrailsTestTypeSupport {
   }
   
   protected int doPrepare() {
-      eachSourceFile { testTargetPattern, specSourceFile ->
-          def specClass = sourceFileToClass(specSourceFile)
-          if (SpecUtil.isRunnableSpec(specClass)) specClasses << specClass
-      }
+    eachSourceFile { testTargetPattern, specSourceFile ->
+      def specClass = sourceFileToClass(specSourceFile)
+      if (SpecUtil.isRunnableSpec(specClass)) specClasses << specClass
+    }
     
-      specClasses.sum 0, { SpecUtil.getFeatureCount(it) }
+    specClasses.sum 0, { SpecUtil.getFeatureCount(it) }
   }
   
   GrailsTestTypeResult doRun(GrailsTestEventPublisher eventPublisher) {

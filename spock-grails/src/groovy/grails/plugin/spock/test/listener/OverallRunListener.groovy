@@ -43,37 +43,44 @@ class OverallRunListener extends RunListener {
   }
 
   void testStarted(Description description) {
-    if (perSpecListener?.name != description.className) {
+    getPerSpecRunListener(description).testStarted(description)
+  }
+
+  void testFailure(Failure failure) {
+    println failure.description.methodName
+    getPerSpecRunListener(failure.description).testFailure(failure)
+  }
+
+  void testAssumptionFailure(Failure failure) {
+    // assumptions (and AssumptionViolatedException) are specific to JUnit,
+    // and are treated as ordinary failures
+    getPerSpecRunListener(failure.description).testFailure(failure)
+  }
+
+  void testFinished(Description description) {
+    getPerSpecRunListener(description).testFinished(description)
+  }
+
+  void testRunFinished(Result result) {
+    // I can't think of a situation where this would be called without
+    // a perSpecListener being available, even if it does happen
+    // our handling options are very limited at this point in execution.
+    getPerSpecRunListener()?.finish()
+  }
+
+  void testIgnored(Description description) {
+    // nothing to do
+  }
+  
+  private getPerSpecRunListener(description = null) {
+    if (description && perSpecListener?.name != description.className) {
       perSpecListener?.finish()
 
       def specName = description.className
       perSpecListener = new PerSpecRunListener(specName, eventPublisher, reportsFactory.createReports(specName), outAndErrSwapper)
       perSpecListener.start()
     }
-
-    perSpecListener.testStarted(description)
-  }
-
-  void testFailure(Failure failure) {
-    perSpecListener.testFailure(failure)
-  }
-
-  void testAssumptionFailure(Failure failure) {
-    // assumptions (and AssumptionViolatedException) are specific to JUnit,
-    // and are treated as ordinary failures
-    perSpecListener.testFailure(failure)
-  }
-
-  void testFinished(Description description) {
-    perSpecListener.testFinished(description)
-  }
-
-  void testRunFinished(Result result) {
-    perSpecListener.finish()
-  }
-
-  void testIgnored(Description description) {
-    // nothing to do
+    perSpecListener
   }
 }
 

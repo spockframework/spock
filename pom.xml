@@ -99,7 +99,7 @@
             <dependency>
               <groupId>org.codehaus.groovy</groupId>
               <artifactId>groovy-all</artifactId>
-              <version>1.7.3</version>
+              <version>1.7.4</version>
             </dependency>   
             <dependency> <!-- required by GMaven's execute goal -->
               <groupId>org.apache.ant</groupId>
@@ -134,7 +134,7 @@
       <dependency>
         <groupId>org.codehaus.groovy</groupId>
         <artifactId>groovy-all</artifactId>
-        <version>1.7.3</version>
+        <version>1.7.4</version>
       </dependency>
       <dependency>
         <groupId>junit</groupId>

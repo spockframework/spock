@@ -27,7 +27,7 @@ import static java.lang.Thread.State.BLOCKED
  *
  * @author Peter Niederwieser
  */
-class ConditionRendering extends ConditionSpecification {
+class ConditionRendering extends ConditionSpec {
   def "simple condition"() {
     expect:
     isRendered """
@@ -711,6 +711,20 @@ BLOCKED == 0
       assert BLOCKED == 0
     }
   }
+
+  // for implicit closure calls see ImplicitClosureCallRendering
+  void "explicit closure call"() {
+    def func = { it }
+
+    isRendered """
+func.call(42) == null
+|    |        |
+|    42       false
+${func.toString()}
+    """, {
+      assert func.call(42) == null
+    }
+}
 
   /*
   def "MapEntryExpression"() {

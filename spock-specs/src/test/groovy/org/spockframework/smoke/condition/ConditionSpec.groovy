@@ -25,7 +25,7 @@ import spock.lang.Specification
  * @author Peter Niederwieser
  */
 
-abstract class ConditionSpecification extends Specification {
+abstract class ConditionSpec extends Specification {
   void fails(Closure condition) {
     try {
       condition()

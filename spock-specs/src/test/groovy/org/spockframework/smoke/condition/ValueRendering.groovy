@@ -25,7 +25,7 @@ import static java.lang.Thread.State.NEW
  * @author Peter Niederwieser
  */
 
-class ValueRendering extends ConditionSpecification {
+class ValueRendering extends ConditionSpec {
   def "null value"() {
     expect:
     isRendered """

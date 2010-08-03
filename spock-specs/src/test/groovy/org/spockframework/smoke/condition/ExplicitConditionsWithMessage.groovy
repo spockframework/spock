@@ -24,7 +24,7 @@ import spock.lang.Issue
  * @author Peter Niederwieser
  */
 @Issue("http://issues.spockframework.org/detail?id=22")
-class ExplicitConditionsWithMessage extends ConditionSpecification {
+class ExplicitConditionsWithMessage extends ConditionSpec {
   def "evaluation of satisfied condition"() {
     expect:
     assert 1 + 2 == 3, "need to brush up my math"

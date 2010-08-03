@@ -32,7 +32,7 @@ import static java.lang.Thread.State.BLOCKED
  * @author Peter Niederwieser
  */
 
-class ConditionEvaluation extends ConditionSpecification {
+class ConditionEvaluation extends ConditionSpec {
   def "multi-line conditions"() {
     expect:
     2 *

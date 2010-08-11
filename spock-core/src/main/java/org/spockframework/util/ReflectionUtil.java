@@ -100,11 +100,9 @@ public abstract class ReflectionUtil {
       return method.invoke(target, args);
     } catch (InvocationTargetException e) {
       Throwable cause = e.getCause();
-      if (cause instanceof Error)
-        throw (Error) cause;
-      else if (cause instanceof Exception)
-        throw (Exception) cause;
-      else throw new IllegalArgumentException("method '" + method + "' threw unexpected type of exception", cause);
+      if (cause instanceof Error) throw (Error) cause;
+      if (cause instanceof Exception) throw (Exception) cause;
+      throw new Error(cause);
     }
   }
 
@@ -147,6 +145,22 @@ public abstract class ReflectionUtil {
       return getPropertyName(methodName, 2);
 
     return null;
+  }
+
+  public static boolean hasAnyOfTypes(Object value, Class<?>... types) {
+    for (Class<?> type : types) 
+      if (type.isInstance(value)) return true;
+
+    return false;
+  }
+
+  public static Class[] getTypes(Object... objects) {
+    if (objects == null) return new Class[0];
+    
+    Class[] classes = new Class[objects.length];
+    for (int i = 0; i < objects.length; i++)
+      classes[i] = objects[i].getClass();
+    return classes;
   }
 
   private static String getPropertyName(String methodName, int prefixLength) {

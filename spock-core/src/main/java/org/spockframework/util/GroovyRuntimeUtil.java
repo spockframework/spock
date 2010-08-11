@@ -14,8 +14,7 @@
 
 package org.spockframework.util;
 
-import org.codehaus.groovy.runtime.DefaultGroovyMethods;
-import org.codehaus.groovy.runtime.InvokerHelper;
+import org.codehaus.groovy.runtime.*;
 import org.codehaus.groovy.runtime.typehandling.DefaultTypeTransformation;
 
 /**
@@ -44,7 +43,22 @@ public abstract class GroovyRuntimeUtil {
     return DefaultGroovyMethods.toString(obj);
   }
 
-  public static Object invokeMethod(Object target, String method, Object[] args) {
-    return InvokerHelper.invokeMethod(target, method, args);  
+  public static Object invokeMethodSafe(Object target, String method, Object... args) {
+    try {
+      return InvokerHelper.invokeMethod(target, method, args);
+    } catch (Throwable ignored) {
+      return null;
+    }
+  }
+
+  public static Object invokeMethod(Object target, String method, Object... args) throws Exception {
+    try {
+      return InvokerHelper.invokeMethod(target, method, args);
+    } catch (InvokerInvocationException e) {
+      Throwable cause = e.getCause();
+      if (cause instanceof Exception) throw (Exception) cause;
+      if (cause instanceof Error) throw (Error) cause;
+      throw new Error(cause);
+    }
   }
 }

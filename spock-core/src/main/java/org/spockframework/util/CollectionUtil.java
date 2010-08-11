@@ -47,4 +47,26 @@ public abstract class CollectionUtil {
   public static <T> void addLastElement(List<T> list, T element) {
     list.add(list.size(), element);
   }
+
+  public static <T> Iterable<T> reverse(final List<T> list) {
+    return new Iterable<T>() {
+      public Iterator<T> iterator() {
+        final ListIterator<T> listIterator = list.listIterator();
+
+        return new Iterator<T>() {
+          public boolean hasNext() {
+            return listIterator.hasPrevious();
+          }
+
+          public T next() {
+            return listIterator.previous();
+          }
+
+          public void remove() {
+            listIterator.remove();
+          }
+        };
+      }
+    };
+  }
 }

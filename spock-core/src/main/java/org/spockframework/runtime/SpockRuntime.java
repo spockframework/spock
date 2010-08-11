@@ -73,7 +73,7 @@ public abstract class SpockRuntime {
    */
   // we don't use varargs for arguments due to http://jira.codehaus.org/browse/GROOVY-3547
   public static Object nullAwareInvokeMethod(Object target, String method, Object[] args) {
-    Object returnValue = GroovyRuntimeUtil.invokeMethod(target, method, args);
+    Object returnValue = InvokerHelper.invokeMethod(target, method, args);
     if (returnValue != null) return returnValue;
 
     // let's try to find the method that was invoked and see if it has return type void

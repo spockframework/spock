@@ -65,7 +65,7 @@ public abstract class Specification {
    *
    * @return the thrown exception instance
    */
-  public Throwable thrown() {
+  public <T extends Throwable> T thrown() {
     throw new InvalidSpecException(
         "Exception conditions are only allowed in 'then' blocks, and may not be nested inside other elements");
   }

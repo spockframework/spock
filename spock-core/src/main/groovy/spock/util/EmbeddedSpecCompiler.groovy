@@ -48,11 +48,11 @@ class EmbeddedSpecCompiler {
    * Compiles the given source code, and returns all Spock specifications
    * contained therein (but not other classes).
    */
-  List compile(String source) {
+  List<Class> compile(String source) {
     doCompile(imports + source)
   }
 
-  List compileWithImports(String source) {
+  List<Class> compileWithImports(String source) {
     addImport(Specification.package )
     // one-liner keeps line numbers intact
     doCompile "package apackage; $imports ${source.trim()}"
@@ -68,7 +68,7 @@ class EmbeddedSpecCompiler {
     compileSpecBody "def 'a feature'() { ${source.trim() + '\n'} }"
   }
 
-  private List doCompile(String source) {
+  private List<Class> doCompile(String source) {
     loader.clearCache()
 
     try {

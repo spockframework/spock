@@ -52,6 +52,8 @@ import org.spockframework.runtime.extension.builtin.AutoCleanupExtension;
  * <pre>
  * &#64;AutoCleanup(quiet = true) // don't report exceptions
  * </pre
+ *
+ * @author Peter Niederwieser
  */
 @ExtensionAnnotation(AutoCleanupExtension.class)
 @Target({ElementType.FIELD})

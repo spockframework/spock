@@ -21,7 +21,7 @@ import org.spockframework.runtime.model.SpecInfo;
 import spock.lang.AutoCleanup;
 
 /**
- *
+ * @author Peter Niederwieser
  */
 public class AutoCleanupExtension extends AbstractAnnotationDrivenExtension<AutoCleanup> {
   private final AutoCleanupInterceptor sharedFieldInterceptor = new AutoCleanupInterceptor();

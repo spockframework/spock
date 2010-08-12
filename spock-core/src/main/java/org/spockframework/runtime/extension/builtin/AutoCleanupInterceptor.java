@@ -23,6 +23,9 @@ import org.spockframework.util.GroovyRuntimeUtil;
 
 import spock.lang.AutoCleanup;
 
+/**
+ * @author Peter Niederwieser
+ */
 public class AutoCleanupInterceptor implements IMethodInterceptor {
   private final List<FieldInfo> fields = new ArrayList<FieldInfo>();
 

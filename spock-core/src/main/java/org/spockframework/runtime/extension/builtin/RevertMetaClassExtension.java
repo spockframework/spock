@@ -21,23 +21,23 @@ import org.spockframework.runtime.model.SpecInfo;
 import org.spockframework.runtime.model.FeatureInfo;
 import java.util.*;
 
-import spock.lang.RestoreMetaClass;
+import spock.lang.RevertMetaClass;
 
 /**
  * @author Luke Daley
  */
-public class RestoreMetaClassExtension extends AbstractAnnotationDrivenExtension<RestoreMetaClass> {
+public class RevertMetaClassExtension extends AbstractAnnotationDrivenExtension<RevertMetaClass> {
 
   private final Set<Class> specRestorations = createInitialClassSet();
   private final Map<String, Set<Class>> methodRestorations = new HashMap<String, Set<Class>>();
 
   @Override
-  public void visitSpecAnnotation(RestoreMetaClass annotation, SpecInfo spec) {
+  public void visitSpecAnnotation(RevertMetaClass annotation, SpecInfo spec) {
     extractClassesTo(annotation, specRestorations);
   }
   
   @Override
-  public void visitFeatureAnnotation(RestoreMetaClass annotation, FeatureInfo feature) {
+  public void visitFeatureAnnotation(RevertMetaClass annotation, FeatureInfo feature) {
     methodRestorations.put(
       feature.getFeatureMethod().getReflection().getName(),
       extractClassesTo(annotation, createInitialClassSet())
@@ -46,10 +46,10 @@ public class RestoreMetaClassExtension extends AbstractAnnotationDrivenExtension
   
   @Override
   public void visitSpec(SpecInfo spec) {
-    spec.addListener(new RestoreMetaClassRunListener(specRestorations, methodRestorations));
+    spec.addListener(new RevertMetaClassRunListener(specRestorations, methodRestorations));
   }
   
-  private Set<Class> extractClassesTo(RestoreMetaClass annotation, Set to) {
+  private Set<Class> extractClassesTo(RevertMetaClass annotation, Set to) {
     Class[] value = annotation.value();
     if (value.length == 0 || (value.length == 1 && value[0] == Void.class)) {
       return to;

@@ -19,11 +19,11 @@ package spock.lang;
 import java.lang.annotation.*;
 
 import org.spockframework.runtime.extension.ExtensionAnnotation;
-import org.spockframework.runtime.extension.builtin.RestoreMetaClassExtension;
+import org.spockframework.runtime.extension.builtin.RevertMetaClassExtension;
 
 /**
  * Causes Spock to revert the meta class of the given classes to the state
- * they were in before execution of the construct annotated with @RestoreMetaClass.
+ * they were in before execution of the construct annotated with @RevertMetaClass.
  * 
  * <p>If a spec class is annotated, the meta class(es) are reverted to as they were before
  * any methods were executed (including setupSpec()), after all methods are executed
@@ -36,8 +36,8 @@ import org.spockframework.runtime.extension.builtin.RestoreMetaClassExtension;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE, ElementType.METHOD})
-@ExtensionAnnotation(RestoreMetaClassExtension.class)
-public @interface RestoreMetaClass {
+@ExtensionAnnotation(RevertMetaClassExtension.class)
+public @interface RevertMetaClass {
   /**
    * The classes to restore the meta classes of.
    */

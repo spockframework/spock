@@ -28,7 +28,7 @@ import java.util.Map.Entry;
 // 
 //       Also, this implementation does not restore meta classes after each iteration of a parameterised
 //       feature. It will only do so at the end. It's not clear if this is the correct behaviour here yet.
-public class RestoreMetaClassRunListener extends AbstractRunListener {
+public class RevertMetaClassRunListener extends AbstractRunListener {
   
   private final Map<Class, MetaClass> specLevelSavedMetaClasses = new HashMap<Class, MetaClass>();
   private final Map<Class, MetaClass> methodLevelSavedMetaClasses = new HashMap<Class, MetaClass>();
@@ -36,7 +36,7 @@ public class RestoreMetaClassRunListener extends AbstractRunListener {
   private final Set<Class> specRestorations;
   private final Map<String, Set<Class>> methodRestorations;
   
-  public RestoreMetaClassRunListener(Set<Class> specRestorations, Map<String, Set<Class>> methodRestorations) {
+  public RevertMetaClassRunListener(Set<Class> specRestorations, Map<String, Set<Class>> methodRestorations) {
     this.specRestorations = specRestorations;
     this.methodRestorations = methodRestorations;
   }
@@ -59,12 +59,12 @@ public class RestoreMetaClassRunListener extends AbstractRunListener {
     if (methodLevelSavedMetaClasses.isEmpty()) return;
     
     String methodName = feature.getFeatureMethod().getReflection().getName();
-    restoreMetaClassesFromAndClear(methodLevelSavedMetaClasses);
+    RevertMetaClassesFromAndClear(methodLevelSavedMetaClasses);
   }
   
   public void afterSpec(SpecInfo spec) {
     if (specRestorations.isEmpty()) return;
-    restoreMetaClassesFromAndClear(specLevelSavedMetaClasses);
+    RevertMetaClassesFromAndClear(specLevelSavedMetaClasses);
   }
   
   private void saveMetaClassesInto(Set<Class> toSave, Map<Class, MetaClass> into) {
@@ -78,7 +78,7 @@ public class RestoreMetaClassRunListener extends AbstractRunListener {
     }
   }
   
-  private void restoreMetaClassesFromAndClear(Map<Class, MetaClass> savedMetaClasses) {
+  private void RevertMetaClassesFromAndClear(Map<Class, MetaClass> savedMetaClasses) {
     MetaClassRegistry registry = GroovySystem.getMetaClassRegistry();
 
     for (Entry<Class, MetaClass> entry : savedMetaClasses.entrySet()) {

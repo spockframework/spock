@@ -22,7 +22,7 @@ import org.spockframework.EmbeddedSpecification
  * @author Luke Daley
  */
 @Stepwise
-class RestoreMetaClassExtension extends EmbeddedSpecification {
+class RevertMetaClassExtension extends EmbeddedSpecification {
   
   def setupSpec() {
     newValue = 1
@@ -38,7 +38,7 @@ class RestoreMetaClassExtension extends EmbeddedSpecification {
     expect: value == 2
   }
   
-  @RestoreMetaClass(String)
+  @RevertMetaClass(String)
   def "change it again, but with restore annotation"() {
     expect: value == 2
     when: newValue = 3
@@ -49,12 +49,12 @@ class RestoreMetaClassExtension extends EmbeddedSpecification {
     expect: value == 2
   }
   
-  @RestoreMetaClass([String, String])
+  @RevertMetaClass([String, String])
   def "ensure duplicate classes in restore list don't cause errors"() {
     expect: true
   }
 
-  @RestoreMetaClass([String, Integer])
+  @RevertMetaClass([String, Integer])
   def "change more than one type"() {
     expect: 
     value == 2
@@ -84,12 +84,12 @@ class RestoreMetaClassExtension extends EmbeddedSpecification {
       @Stepwise
       class Spec1 extends Specification {
         def feature1() {
-          expect: RestoreMetaClassExtension.getValue() == 2
-          when: RestoreMetaClassExtension.setNewValue(3)
-          then: RestoreMetaClassExtension.getValue() == 3
+          expect: RevertMetaClassExtension.getValue() == 2
+          when: RevertMetaClassExtension.setNewValue(3)
+          then: RevertMetaClassExtension.getValue() == 3
         }
         def feature2() {
-          expect: RestoreMetaClassExtension.getValue() == 3
+          expect: RevertMetaClassExtension.getValue() == 3
         }
       }
     """)
@@ -101,10 +101,10 @@ class RestoreMetaClassExtension extends EmbeddedSpecification {
     where:
     annotation                  | afterValue
     ""                          | 3
-    "@RestoreMetaClass(String)" | 2
+    "@RevertMetaClass(String)" | 2
   }
   
-  @RestoreMetaClass(String)
+  @RevertMetaClass(String)
   def "meta classes are restored after not restored after each iteration"() {
     expect:
     value == i
@@ -121,7 +121,7 @@ class RestoreMetaClassExtension extends EmbeddedSpecification {
     value == 2
   }
   
-  @RestoreMetaClass([])
+  @RevertMetaClass([])
   def "annotation with empty list/array value doesn't cause an error"(){
     expect: true
   }
@@ -133,10 +133,10 @@ class RestoreMetaClassExtension extends EmbeddedSpecification {
   }
   
   static setNewValue(value, type = String) {
-    type.metaClass.getRestoreMetaClassExtensionValue = { -> value }
+    type.metaClass.getRevertMetaClassExtensionValue = { -> value }
   }
   
   static getValue(seed = "") {
-    seed.getRestoreMetaClassExtensionValue()
+    seed.getRevertMetaClassExtensionValue()
   }
 }

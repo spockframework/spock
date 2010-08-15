@@ -105,7 +105,7 @@ class RevertMetaClassExtension extends EmbeddedSpecification {
   }
   
   @RevertMetaClass(String)
-  def "meta classes are restored after not restored after each iteration"() {
+  def "meta classes are restored after each iteration"() {
     expect:
     value == i
     when:
@@ -113,7 +113,7 @@ class RevertMetaClassExtension extends EmbeddedSpecification {
     then:
     value == i + 1
     where:
-    i << [2,3]
+    i << [2,2]
   }
   
   def "meta class was restored after parameterised"() {

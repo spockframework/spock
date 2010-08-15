@@ -47,6 +47,7 @@ public class RevertMetaClassRunListener extends AbstractRunListener {
   }
   
   public void beforeFeature(FeatureInfo feature) {
+    if (feature.isParameterized()) return;
     if (methodRestorations.isEmpty()) return;
     
     String methodName = feature.getFeatureMethod().getReflection().getName();
@@ -55,16 +56,35 @@ public class RevertMetaClassRunListener extends AbstractRunListener {
     saveMetaClassesInto(methodRestorations.get(methodName), methodLevelSavedMetaClasses);
   }
   
+  public void beforeIteration(IterationInfo iteration) {
+    if (!iteration.getParent().isParameterized()) return;
+    if (methodRestorations.isEmpty()) return;
+    
+    String methodName = iteration.getParent().getFeatureMethod().getReflection().getName();
+    if (!methodRestorations.containsKey(methodName)) return;
+    
+    saveMetaClassesInto(methodRestorations.get(methodName), methodLevelSavedMetaClasses);
+  }
+  
+  public void afterIteration(IterationInfo iteration) {
+    if (!iteration.getParent().isParameterized()) return;
+    if (methodLevelSavedMetaClasses.isEmpty()) return;
+    
+    String methodName = iteration.getParent().getFeatureMethod().getReflection().getName();
+    revertMetaClassesFromAndClear(methodLevelSavedMetaClasses);
+  }
+  
   public void afterFeature(FeatureInfo feature) {
+    if (feature.isParameterized()) return;
     if (methodLevelSavedMetaClasses.isEmpty()) return;
     
     String methodName = feature.getFeatureMethod().getReflection().getName();
-    RevertMetaClassesFromAndClear(methodLevelSavedMetaClasses);
+    revertMetaClassesFromAndClear(methodLevelSavedMetaClasses);
   }
   
   public void afterSpec(SpecInfo spec) {
     if (specRestorations.isEmpty()) return;
-    RevertMetaClassesFromAndClear(specLevelSavedMetaClasses);
+    revertMetaClassesFromAndClear(specLevelSavedMetaClasses);
   }
   
   private void saveMetaClassesInto(Set<Class> toSave, Map<Class, MetaClass> into) {
@@ -78,7 +98,7 @@ public class RevertMetaClassRunListener extends AbstractRunListener {
     }
   }
   
-  private void RevertMetaClassesFromAndClear(Map<Class, MetaClass> savedMetaClasses) {
+  private void revertMetaClassesFromAndClear(Map<Class, MetaClass> savedMetaClasses) {
     MetaClassRegistry registry = GroovySystem.getMetaClassRegistry();
 
     for (Entry<Class, MetaClass> entry : savedMetaClasses.entrySet()) {

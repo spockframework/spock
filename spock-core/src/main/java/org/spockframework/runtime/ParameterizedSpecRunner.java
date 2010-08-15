@@ -119,6 +119,7 @@ public class ParameterizedSpecRunner extends BaseSpecRunner {
 
     while (haveNext(iterators)) {
       IterationInfo iteration = new IterationInfo(nextArgs(iterators), estimatedNumIterations);
+      iteration.setParent(currentFeature);
       runIteration(iteration);
 
       if (resetStatus(ITERATION) != OK) break;

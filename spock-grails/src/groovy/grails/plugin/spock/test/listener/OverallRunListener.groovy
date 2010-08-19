@@ -47,7 +47,6 @@ class OverallRunListener extends RunListener {
   }
 
   void testFailure(Failure failure) {
-    println failure.description.methodName
     getPerSpecRunListener(failure.description).testFailure(failure)
   }
 

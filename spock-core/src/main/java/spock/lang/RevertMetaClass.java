@@ -30,7 +30,8 @@ import org.spockframework.runtime.extension.builtin.RevertMetaClassExtension;
  * (i.e. after cleanupSpec()).
  * 
  * <p>If a feature method is annotated, the meta class(es) are reverted to as they were before
- * the feature was executed, after the feature executes.
+ * the feature was executed, after the feature executes. For a data-driven feature method,
+ * meta classes are reverted after each iteration.
  * 
  * @author Luke Daley
  */
@@ -41,5 +42,5 @@ public @interface RevertMetaClass {
   /**
    * The classes to restore the meta classes of.
    */
-  Class[] value() default Void.class;
+  Class[] value();
 }

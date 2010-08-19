@@ -14,29 +14,27 @@
 
 package org.spockframework.runtime.extension.builtin;
 
-import org.spockframework.runtime.AbstractRunListener;
-import org.spockframework.runtime.model.*;
-import groovy.lang.*;
 import java.util.*;
 import java.util.Map.Entry;
+
+import org.spockframework.runtime.AbstractRunListener;
+import org.spockframework.runtime.model.*;
+import org.spockframework.util.NotThreadSafe;
+
+import groovy.lang.*;
 
 /**
  * @author Luke Daley
  */
-// NOTE: this implementation is not thread safe in that it expects beforeFeature and afterFeature to
-//       be called in matching pairs. This needs to be addressed.
-// 
-//       Also, this implementation does not restore meta classes after each iteration of a parameterised
-//       feature. It will only do so at the end. It's not clear if this is the correct behaviour here yet.
+@NotThreadSafe // expects beforeFeature and afterFeature to be called in matching pairs
 public class RevertMetaClassRunListener extends AbstractRunListener {
+  private final Map<Class<?>, MetaClass> specLevelSavedMetaClasses = new HashMap<Class<?>, MetaClass>();
+  private final Map<Class<?>, MetaClass> methodLevelSavedMetaClasses = new HashMap<Class<?>, MetaClass>();
   
-  private final Map<Class, MetaClass> specLevelSavedMetaClasses = new HashMap<Class, MetaClass>();
-  private final Map<Class, MetaClass> methodLevelSavedMetaClasses = new HashMap<Class, MetaClass>();
+  private final Set<Class<?>> specRestorations;
+  private final Map<String, Set<Class<?>>> methodRestorations;
   
-  private final Set<Class> specRestorations;
-  private final Map<String, Set<Class>> methodRestorations;
-  
-  public RevertMetaClassRunListener(Set<Class> specRestorations, Map<String, Set<Class>> methodRestorations) {
+  public RevertMetaClassRunListener(Set<Class<?>> specRestorations, Map<String, Set<Class<?>>> methodRestorations) {
     this.specRestorations = specRestorations;
     this.methodRestorations = methodRestorations;
   }
@@ -70,7 +68,6 @@ public class RevertMetaClassRunListener extends AbstractRunListener {
     if (!iteration.getParent().isParameterized()) return;
     if (methodLevelSavedMetaClasses.isEmpty()) return;
     
-    String methodName = iteration.getParent().getFeatureMethod().getReflection().getName();
     revertMetaClassesFromAndClear(methodLevelSavedMetaClasses);
   }
   
@@ -78,7 +75,6 @@ public class RevertMetaClassRunListener extends AbstractRunListener {
     if (feature.isParameterized()) return;
     if (methodLevelSavedMetaClasses.isEmpty()) return;
     
-    String methodName = feature.getFeatureMethod().getReflection().getName();
     revertMetaClassesFromAndClear(methodLevelSavedMetaClasses);
   }
   
@@ -87,10 +83,10 @@ public class RevertMetaClassRunListener extends AbstractRunListener {
     revertMetaClassesFromAndClear(specLevelSavedMetaClasses);
   }
   
-  private void saveMetaClassesInto(Set<Class> toSave, Map<Class, MetaClass> into) {
+  private void saveMetaClassesInto(Set<Class<?>> toSave, Map<Class<?>, MetaClass> into) {
     MetaClassRegistry registry = GroovySystem.getMetaClassRegistry();
 
-    for (Class clazz : toSave) {
+    for (Class<?> clazz : toSave) {
       into.put(clazz, registry.getMetaClass(clazz));
       MetaClass newMetaClass = new ExpandoMetaClass(clazz, true, true);
       newMetaClass.initialize();
@@ -98,11 +94,11 @@ public class RevertMetaClassRunListener extends AbstractRunListener {
     }
   }
   
-  private void revertMetaClassesFromAndClear(Map<Class, MetaClass> savedMetaClasses) {
+  private void revertMetaClassesFromAndClear(Map<Class<?>, MetaClass> savedMetaClasses) {
     MetaClassRegistry registry = GroovySystem.getMetaClassRegistry();
 
-    for (Entry<Class, MetaClass> entry : savedMetaClasses.entrySet()) {
-      Class clazz = entry.getKey();
+    for (Entry<Class<?>, MetaClass> entry : savedMetaClasses.entrySet()) {
+      Class<?> clazz = entry.getKey();
       MetaClass originalMetaClass = entry.getValue();
       
       registry.removeMetaClass(clazz);
@@ -110,5 +106,4 @@ public class RevertMetaClassRunListener extends AbstractRunListener {
     }
     savedMetaClasses.clear();
   }
-
 }

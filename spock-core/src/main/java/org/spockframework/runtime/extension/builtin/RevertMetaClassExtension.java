@@ -16,10 +16,11 @@
 
 package org.spockframework.runtime.extension.builtin;
 
-import org.spockframework.runtime.extension.AbstractAnnotationDrivenExtension;
-import org.spockframework.runtime.model.SpecInfo;
-import org.spockframework.runtime.model.FeatureInfo;
 import java.util.*;
+
+import org.spockframework.runtime.extension.AbstractAnnotationDrivenExtension;
+import org.spockframework.runtime.model.FeatureInfo;
+import org.spockframework.runtime.model.SpecInfo;
 
 import spock.lang.RevertMetaClass;
 
@@ -27,9 +28,8 @@ import spock.lang.RevertMetaClass;
  * @author Luke Daley
  */
 public class RevertMetaClassExtension extends AbstractAnnotationDrivenExtension<RevertMetaClass> {
-
-  private final Set<Class> specRestorations = createInitialClassSet();
-  private final Map<String, Set<Class>> methodRestorations = new HashMap<String, Set<Class>>();
+  private final Set<Class<?>> specRestorations = createInitialClassSet();
+  private final Map<String, Set<Class<?>>> methodRestorations = new HashMap<String, Set<Class<?>>>();
 
   @Override
   public void visitSpecAnnotation(RevertMetaClass annotation, SpecInfo spec) {
@@ -49,19 +49,13 @@ public class RevertMetaClassExtension extends AbstractAnnotationDrivenExtension<
     spec.addListener(new RevertMetaClassRunListener(specRestorations, methodRestorations));
   }
   
-  private Set<Class> extractClassesTo(RevertMetaClass annotation, Set to) {
-    Class[] value = annotation.value();
-    if (value.length == 0 || (value.length == 1 && value[0] == Void.class)) {
-      return to;
-    }
-    
-    for (Class clazz : value) {
-      to.add(clazz);
-    }
+  private Set<Class<?>> extractClassesTo(RevertMetaClass annotation, Set<Class<?>> to) {
+    Class<?>[] value = annotation.value();
+    to.addAll(Arrays.asList(value));
     return to;
   }
-  
-  static private Set createInitialClassSet() {
-    return new HashSet<Class>();
+
+  private Set<Class<?>> createInitialClassSet() {
+    return new HashSet<Class<?>>();
   }
 }

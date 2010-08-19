@@ -20,6 +20,8 @@ import org.codehaus.groovy.grails.support.MockApplicationContext
 import org.codehaus.groovy.grails.web.converters.ConverterUtil
 import org.codehaus.groovy.grails.web.converters.configuration.ConvertersConfigurationInitializer
 import org.springframework.validation.Errors
+import org.codehaus.groovy.grails.plugins.GrailsPluginManager
+import org.codehaus.groovy.grails.plugins.PluginManagerHolder
 
 import grails.test.GrailsMock
 import grails.test.MockUtils
@@ -45,6 +47,10 @@ class UnitSpec extends Specification {
    */
   DefaultArtefactInfo domainClassesInfo
 
+  def setupSpec() {
+    PluginManagerHolder.pluginManager = [hasGrailsPlugin: { String name -> true }] as GrailsPluginManager
+  }
+
   def setup() {
     loadedCodecs = [] as Set
     applicationContext = new MockApplicationContext()
@@ -66,6 +72,10 @@ class UnitSpec extends Specification {
       GroovySystem.metaClassRegistry.removeMetaClass(clazz)
       GroovySystem.metaClassRegistry.setMetaClass(clazz, metaClass)
     }
+  }
+
+  def cleanupSpec() {
+    PluginManagerHolder.pluginManager = null
   }
 
   /**

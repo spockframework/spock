@@ -31,17 +31,18 @@ class TestTagLibSpec extends TagLibSpec {
     expect: 
     bodyTag(name: 'a') { "Foo" } == "<a>Foo</a>"
     bodyTag(name: 'b') { "Bar" } == "<b>Bar</b>"
+    bodyTag() == "<null></null>"
   }
 }
 
 class TestTagLib {
-  def bar = { attrs, body ->
+  def bar = { attrs ->
     out << "<p>Hello World!</p>"
   }
 
   def bodyTag = { attrs, body ->
     out << "<${attrs.name}>"
-    out << body()
+    if (body) out << body()
     out << "</${attrs.name}>"
   }
 }

@@ -43,8 +43,9 @@ class TagLibSpec extends MvcSpec {
     invokeTag(name, *args)
   }
   
-  def invokeTag(String name, Map params = null, Closure body = null) {
-    def out = tagLib."$name"(params, body).toString()
+  def invokeTag(String name, Map params = [:], Closure body = null) {
+    def tag = tagLib."$name"
+    def out = (tag.maximumNumberOfParameters == 1 ? tag(params) : tag(params, body)).toString()
     reset()
     out
   }

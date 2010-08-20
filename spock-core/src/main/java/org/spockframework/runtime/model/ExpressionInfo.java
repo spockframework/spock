@@ -18,13 +18,12 @@ package org.spockframework.runtime.model;
 
 import java.util.*;
 
+import org.spockframework.util.Nullable;
+import org.spockframework.util.ReflectionUtil;
+
 /**
  * @author Peter Niederwieser
  */
-// IDEA: Add some information about an expression's operation (e.g. method/property/operator name).
-// This would pave the way for extensions that give the user additional information
-// about why a condition failed. Example: Given the condition "abc" == "axc",
-// the difference between the string literals could be highlighted.
 public class ExpressionInfo implements Iterable<ExpressionInfo> {
   public static final String TEXT_NOT_AVAILABLE = new String("(n/a)");
   /**
@@ -41,20 +40,28 @@ public class ExpressionInfo implements Iterable<ExpressionInfo> {
 
   private TextRegion region;
   private TextPosition anchor;
+  /**
+   * Examples where operation is null:
+   * - GString method name: foo."$bar"()
+   * - Argument list (has children but no operation)
+   */
+  @Nullable
   private final String operation;
   private final List<ExpressionInfo> children;
   private String text;
   private Object value;
   private boolean relevant = true;
 
-  public ExpressionInfo(TextRegion region, TextPosition anchor, String operation, List<ExpressionInfo> children) {
+  public ExpressionInfo(TextRegion region, TextPosition anchor, @Nullable String operation,
+      List<ExpressionInfo> children) {
     this.region = region;
     this.anchor = anchor;
     this.operation = operation;
     this.children = children;
   }
 
-  public ExpressionInfo(TextRegion region, TextPosition anchor, String operation, ExpressionInfo... children) {
+  public ExpressionInfo(TextRegion region, TextPosition anchor, @Nullable String operation,
+      ExpressionInfo... children) {
     this(region, anchor, operation, Arrays.asList(children));
   }
 
@@ -136,6 +143,14 @@ public class ExpressionInfo implements Iterable<ExpressionInfo> {
     collectPrefix(list, skipIrrelevant);
     Collections.sort(list, comparator);
     return list;
+  }
+
+  public boolean isEqualityComparison(Class<?>... types) {
+    if (!"==".equals(operation)) return false;
+    if (children.size() != 2) return false;
+    if (!ReflectionUtil.hasAnyOfTypes(children.get(0).getValue(), types)) return false;
+    if (!ReflectionUtil.hasAnyOfTypes(children.get(1).getValue(), types)) return false;
+    return true;
   }
 
   private void collectPrefix(List<ExpressionInfo> collector, boolean skipIrrelevant) {

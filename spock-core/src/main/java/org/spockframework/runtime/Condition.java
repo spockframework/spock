@@ -20,6 +20,7 @@ import java.util.regex.Pattern;
 
 import org.spockframework.runtime.model.ExpressionInfo;
 import org.spockframework.runtime.model.TextPosition;
+import org.spockframework.util.Nullable;
 
 /**
  * Runtime representation of an evaluated condition.
@@ -34,6 +35,8 @@ public class Condition {
   private final Iterable<Object> values;
   private final String message;
 
+  private ExpressionInfo expression;
+
   public Condition(String text, TextPosition position, Iterable<Object> values, String message) {
     this.text = text;
     this.position = position;
@@ -41,6 +44,7 @@ public class Condition {
     this.message = message;
   }
 
+  @Nullable
   public String getText() {
     return text;
   }
@@ -53,19 +57,40 @@ public class Condition {
     return values;
   }
 
+  @Nullable
+  public ExpressionInfo getExpression() {
+    if (text == null || values == null) return null;
+
+    if (expression == null)
+      expression = new ExpressionInfoBuilder(flatten(text), TextPosition.create(1, 1), values).build();
+
+    return expression;
+  }
+
+  @Nullable
   public String getMessage() {
     return message;
   }
 
   public String render() {
-    if (text == null)
-      return "(No detail information available)\n";
-    
-    if (message != null)
-      return String.format("%s\n\nYour message: %s\n", flatten(text), message);
-    
-    ExpressionInfo exprInfo = new ExpressionInfoBuilder(flatten(text), TextPosition.create(1, 1), values).build();
-    return ExpressionInfoRenderer.render(exprInfo);
+    StringBuilder builder = new StringBuilder();
+
+    if (getExpression() != null) {
+      builder.append(ExpressionInfoRenderer.render(getExpression()));
+    } else if (text != null) {
+      builder.append(flatten(text));
+      builder.append("\n");
+    } else {
+      builder.append("(Source code not available)\n");
+    }
+
+    if (message != null) {
+      builder.append("\n");
+      builder.append(message);
+      builder.append("\n");
+    }
+
+    return builder.toString();
   }
 
   private static String flatten(String text) {

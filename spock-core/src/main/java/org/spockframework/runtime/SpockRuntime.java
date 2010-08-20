@@ -16,105 +16,148 @@
 
 package org.spockframework.runtime;
 
+import java.util.*;
+
 import org.codehaus.groovy.runtime.InvokerHelper;
 
-import groovy.lang.MetaClass;
-import groovy.lang.MetaMethod;
-
+import org.spockframework.runtime.model.ExpressionInfo;
 import org.spockframework.runtime.model.TextPosition;
-import org.spockframework.util.GroovyRuntimeUtil;
+import org.spockframework.util.*;
+
+import spock.lang.Specification;
 
 /**
  * @author Peter Niederwieser
  */
 public abstract class SpockRuntime {
-  private static final Object[] EMPTY_OBJECT_ARRAY = new Object[0];
-
-  static final Object VOID_RETURN_VALUE = new Object();
-
   public static final String VERIFY_CONDITION = "verifyCondition";
 
-  public static void verifyCondition(ValueRecorder recorder, Object condition, String text, int line, int column) {
-    // void methods are not considered implicit conditions, but we can detect them only at runtime
-    if (condition == VOID_RETURN_VALUE) return;
-    
+  public static void verifyCondition(ValueRecorder recorder, String text, int line, int column, Object condition) {
     if (!GroovyRuntimeUtil.isTruthy(condition))
       throw new ConditionNotSatisfiedError(
           new Condition(text, TextPosition.create(line, column), recorder, null));
   }
 
-  public static final String VERIFY_CONDITION_WITH_MESSAGE = "verifyConditionWithMessage";
+  public static final String VERIFY_MESSAGE_CONDITION = "verifyMessageCondition";
 
-  public static void verifyConditionWithMessage(Object message, Object condition, String text, int line, int column) {
+  public static void verifyMessageCondition(ValueRecorder recorder, String text, int line, int column,
+      Object condition, Object message) {
     if (!GroovyRuntimeUtil.isTruthy(condition))
       throw new ConditionNotSatisfiedError(
           new Condition(text, TextPosition.create(line, column), null, GroovyRuntimeUtil.toString(message)));
   }
 
+  public static final String VERIFY_METHOD_CONDITION = "verifyMethodCondition";
+
+  // method calls with spread-dot operator are not rewritten, hence this method doesn't have to care about spread-dot
+  public static void verifyMethodCondition(ValueRecorder recorder, String text, int line, int column,
+      Object target, String method, Object[] args, boolean safe, boolean explicit) {
+    MatcherCondition matcherCondition = MatcherCondition.parse(target, method, args, safe);
+    if (matcherCondition != null) {
+      matcherCondition.verify(recorder, text, line, column);
+      return;
+    }
+
+    Object result = safe ? InvokerHelper.invokeMethodSafe(target, method, args)
+        : InvokerHelper.invokeMethod(target, method, args);
+
+    recorder.replaceLastValue(result);
+    
+    if (!explicit && result == null && GroovyRuntimeUtil.isVoidMethod(target, method, args)) return;
+
+    if (!GroovyRuntimeUtil.isTruthy(result))
+      throw new ConditionNotSatisfiedError(
+          new Condition(text, TextPosition.create(line, column), recorder, null));
+  }
+
+  public static final String ARGS_TO_ARRAY = "argsToArray";
+
+  /**
+   * Dummy method that causes groovyc to turn an argument list into an array
+   * for us, which can then safely be passed to verifyMethodCondition().
+   * (The challenge is to construct an Object array from spreaded argument lists
+   * like foo(1, *args, 2). Better let groovyc do it.)
+   */
+  public static Object[] argsToArray(Object[] args) {
+    if (args.getClass().getComponentType() == Object.class) return args;
+
+    // MOP needs an Object[] (b/c it is sometimes modified in place), but
+    // we don't always get one (e.g. we may get a Long[]). In that case,
+    // convert to Object[].
+    // Might be related to http://jira.codehaus.org/browse/GROOVY-3547
+    Object[] result = new Object[args.length];
+    System.arraycopy(args, 0, result, 0, args.length);
+    return result;
+  }
+
   public static final String FEATURE_METHOD_CALLED = "featureMethodCalled";
-  
+
   public static void featureMethodCalled() {
     throw new InvalidSpecException("Feature methods cannot be called from user code");
   }
 
-  public static final String NULL_AWARE_INVOKE_METHOD = "nullAwareInvokeMethod";
-
-  /*
-   * Same as InvokerHelper.invokeMethod(), except that VOID_RETURN_VALUE is
-   * returned instead of null if it can be determined that the invoked method
-   * has return type void. This is done on a best effort basis.
-   *
-   * @param target the object or class (in the case of a static method) that is
-   * the target of the method call.
-   *
-   * @param method the method to be invoked
-   * 
-   * @param args the method arguments
+  /**
+   * A condition of the form "foo equalTo(bar)" or "that(foo, equalTo(bar)",
+   * where 'equalTo' returns a Hamcrest matcher.
    */
-  // we don't use varargs for arguments due to http://jira.codehaus.org/browse/GROOVY-3547
-  public static Object nullAwareInvokeMethod(Object target, String method, Object[] args) {
-    Object returnValue = GroovyRuntimeUtil.invokeMethod(target, method, args);
-    if (returnValue != null) return returnValue;
+  private static class MatcherCondition {
+    final Object actual;
+    final Object matcher;
+    final boolean implicit; // true iff the short "foo equalTo(bar)" syntax is used
 
-    // let's try to find the method that was invoked and see if it has return type void
-    // since we now do another method dispatch (w/o actually invoking the method),
-    // there is a small chance that we get an incorrect result because a MetaClass has
-    // been changed since the first dispatch; to eliminate this chance we would have to
-    // first find the MetaMethod and then invoke it, but the problem is that calling
-    // MetaMethod.invoke doesn't have the exact same semantics as calling
-    // InvokerHelper.invokeMethod, even if the same method is chosen (see Spec GroovyMopExploration)
+    MatcherCondition(Object actual, Object matcher, boolean implicit) {
+      this.actual = actual;
+      this.matcher = matcher;
+      this.implicit = implicit;
+    }
 
-    if (args == null) args = EMPTY_OBJECT_ARRAY;
-    Class[] argClasses = new Class[args.length];
-    for (int i = 0; i < args.length; i++)
-      argClasses[i] = args[i] == null ? null : args[i].getClass();
+    void verify(ValueRecorder recorder, String text, int line, int column) {
+      if (HamcrestSupport.matches(matcher, actual)) return;
 
-    // the way we choose metaClass, we won't find methods on java.lang.Class
-    // but since java.lang.Class has no void methods other than the ones inherited
-    // from java.lang.Object, and since we operate on a best effort basis, that's OK
-    // also we will choose a static method like Foo.getName() over the equally
-    // named method on java.lang.Class, but this is consistent with current Groovy semantics
-    // (see http://jira.codehaus.org/browse/GROOVY-3548)
-    // in the end it's probably best to rely on NullAwareInvokeMethodSpec to tell us if
-    // everything is OK
-    MetaClass metaClass = target instanceof Class ?
-        InvokerHelper.getMetaClass((Class)target) : InvokerHelper.getMetaClass(target);
+      recorder.replaceLastValue(implicit ? actual : false);
+      replaceMatcherValues(recorder);
 
-    // seems to find more methods than getMetaMethod()
-    MetaMethod metaMethod = metaClass.pickMethod(method, argClasses);
-    if (metaMethod == null) return null; // we were unable to figure out which method was called
+      String description = HamcrestSupport.getFailureDescription(matcher, actual);
+      Condition condition = new Condition(text, TextPosition.create(line, column), recorder, description);
+      throw new ConditionNotSatisfiedError(condition);
+    }
 
-    Class returnType = metaMethod.getReturnType();
-    // although Void.class will occur rarely, it makes sense to handle
-    // it in the same way as void.class
-    if (returnType == void.class || returnType == Void.class) return VOID_RETURN_VALUE;
+    void replaceMatcherValues(ValueRecorder recorder) {
+      boolean firstOccurrence = true;
+      List<Object> values = recorder.getRecordedValues();
+      ListIterator<Object> iter = values.listIterator(values.size());
 
-    return null;
-  }
+      while (iter.hasPrevious()) {
+        Object value = iter.previous();
+        if (!HamcrestSupport.isMatcher(value)) continue;
 
-  public static final String NULL_AWARE_INVOKE_METHOD_SAFE = "nullAwareInvokeMethodSafe";
+        if (firstOccurrence) {
+          // indicate mismatch in condition output
+          iter.set(implicit ? false : ExpressionInfo.VALUE_NOT_AVAILABLE);
+          firstOccurrence = false;
+        } else {
+          // don't show in condition output
+          iter.set(ExpressionInfo.VALUE_NOT_AVAILABLE);
+        }
+      }
+    }
 
-  public static Object nullAwareInvokeMethodSafe(Object target, String method, Object[] args) {
-    return target == null ? null : nullAwareInvokeMethod(target, method, args);
+    @Nullable
+    static MatcherCondition parse(Object target, String method, Object[] args, boolean safe) {
+      if (safe) return null;
+
+      if (method.equals("call")) {
+        if (args.length != 1 || !HamcrestSupport.isMatcher(args[0])) return null;
+        return new MatcherCondition(target, args[0], true);
+      }
+
+      if (method.equals("that")) {
+        if (!(target instanceof Specification)) return null;
+        if (args.length != 2 || !HamcrestSupport.isMatcher(args[1])) return null;
+        return new MatcherCondition(args[0], args[1], false);
+      }
+
+      return null;
+    }
   }
 }

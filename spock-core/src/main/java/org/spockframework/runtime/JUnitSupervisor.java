@@ -14,6 +14,7 @@
 
 package org.spockframework.runtime;
 
+import org.junit.ComparisonFailure;
 import org.junit.internal.runners.model.MultipleFailureException;
 import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
@@ -23,6 +24,8 @@ import org.spockframework.runtime.model.*;
 import org.spockframework.util.InternalSpockError;
 
 import spock.lang.Unroll;
+
+import groovy.lang.GString;
 
 import static org.spockframework.runtime.RunStatus.*;
 
@@ -78,21 +81,46 @@ public class JUnitSupervisor implements IRunSupervisor {
   }
 
   public int error(ErrorInfo error) {
-    // for better JUnit compatibility, e.g when a @Rule is used
-    if (error.getException() instanceof MultipleFailureException) {
-      MultipleFailureException multiFailure = (MultipleFailureException) error.getException();
-      int runStatus = OK;
-      for (Throwable failure : multiFailure.getFailures())
-        runStatus = error(new ErrorInfo(error.getMethod(), failure));
-      return runStatus;
-    }
+    Throwable exception = error.getException();
 
-    filter.filter(error.getException());
+    if (exception instanceof MultipleFailureException)
+      return handleMultipleFailures(error);
+
+    exception = convertToJUnitComparisonFailureIfAppropriate(exception);
+    filter.filter(exception);
+
     masterListener.error(error);
+    notifier.fireTestFailure(new Failure(getCurrentDescription(), exception));
+
     errorSinceLastReset = true;
+    return statusFor(error);
+  }
 
-    notifier.fireTestFailure(new Failure(getCurrentDescription(), error.getException()));
+  // for better JUnit compatibility, e.g when a @Rule is used
+  private int handleMultipleFailures(ErrorInfo error) {
+    MultipleFailureException multiFailure = (MultipleFailureException) error.getException();
+    int runStatus = OK;
+    for (Throwable failure : multiFailure.getFailures())
+      runStatus = error(new ErrorInfo(error.getMethod(), failure));
+    return runStatus;
+  }
 
+  // convert failed (G)String comparisons to org.junit.ComparisonFailure
+  // to benefit from IDE support (diff dialog)
+  private Throwable convertToJUnitComparisonFailureIfAppropriate(Throwable exception) {
+    if (!(exception instanceof ConditionNotSatisfiedError)) return exception;
+
+    Condition condition = ((ConditionNotSatisfiedError) exception).getCondition();
+    ExpressionInfo expr = condition.getExpression();
+    if (expr == null || !expr.isEqualityComparison(String.class, GString.class)) return exception;
+
+    ComparisonFailure failure = new ComparisonFailure(exception.getMessage(),
+        expr.getChildren().get(0).getValue().toString(), expr.getChildren().get(1).getValue().toString());
+    failure.setStackTrace(exception.getStackTrace());
+    return failure;
+  }
+
+  private int statusFor(ErrorInfo error) {
     switch (error.getMethod().getKind()) {
       case DATA_PROCESSOR:
         return END_ITERATION;

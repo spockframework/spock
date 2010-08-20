@@ -94,17 +94,32 @@ public abstract class ReflectionUtil {
     return clazzFile.isFile() ? clazzFile : null;
   }
 
+  // IDEA: replace with MethodInvoker(Builder)
+  public static @Nullable <T> T invokeMethod(Object target, Method method, Class<T> returnType, Object... args) {
+    try {
+      Object result = method.invoke(target, args);
+      if (result != null && !returnType.isInstance(result))
+        throw new InternalSpockError("unexpected return type: %s").withArgs(result.getClass());
+      return returnType.cast(result);
+    } catch (InvocationTargetException e) {
+      Throwable cause = e.getCause();
+      if (cause instanceof Error) throw (Error) cause;
+      throw new Error(cause);
+    } catch (Exception e) {
+      throw new InternalSpockError("unexpected exception", e);
+    }
+  }
+
+  // IDEA: replace with MethodInvoker(Builder)
   public static @Nullable Object invokeMethodThatThrowsException(Object target, Method method, Object... args)
       throws Exception {
     try {
       return method.invoke(target, args);
     } catch (InvocationTargetException e) {
       Throwable cause = e.getCause();
-      if (cause instanceof Error)
-        throw (Error) cause;
-      else if (cause instanceof Exception)
-        throw (Exception) cause;
-      else throw new IllegalArgumentException("method '" + method + "' threw unexpected type of exception", cause);
+      if (cause instanceof Error) throw (Error) cause;
+      if (cause instanceof Exception) throw (Exception) cause;
+      throw new InternalSpockError("unexpected exception", cause);
     }
   }
 
@@ -147,6 +162,20 @@ public abstract class ReflectionUtil {
       return getPropertyName(methodName, 2);
 
     return null;
+  }
+
+  public static boolean hasAnyOfTypes(Object value, Class<?>... types) {
+    for (Class<?> type : types) 
+      if (type.isInstance(value)) return true;
+
+    return false;
+  }
+
+  public static Class[] getTypes(Object... objects) {
+    Class[] classes = new Class[objects.length];
+    for (int i = 0; i < objects.length; i++)
+      classes[i] = NullSafe.getClass(objects[i]);
+    return classes;
   }
 
   private static String getPropertyName(String methodName, int prefixLength) {

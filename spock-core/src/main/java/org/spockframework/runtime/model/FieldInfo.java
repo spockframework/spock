@@ -16,6 +16,7 @@
 
 package org.spockframework.runtime.model;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 
 import org.codehaus.groovy.runtime.InvokerHelper;
@@ -49,6 +50,10 @@ public class FieldInfo extends NodeInfo<SpecInfo, Field> {
   
   public void setLine(int line) {
     this.line = line;
+  }
+
+  public <T extends Annotation> T getAnnotation(Class<T> clazz) {
+    return getReflection().getAnnotation(clazz);
   }
 
   public Object readValue(Object target) {

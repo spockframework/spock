@@ -31,6 +31,10 @@ public abstract class NullSafe {
     return obj == null ? "null" : obj.toString();
   }
 
+  public static Class<?> getClass(Object obj) {
+    return obj == null ? null : obj.getClass();
+  }
+
   public static <T extends Comparable<T>> int compare(T c1, T c2) {
     if (c1 == null && c2 == null) return 0;
     if (c1 == null) return -1;

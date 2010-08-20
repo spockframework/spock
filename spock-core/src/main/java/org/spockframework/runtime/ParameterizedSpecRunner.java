@@ -41,7 +41,7 @@ public class ParameterizedSpecRunner extends BaseSpecRunner {
 
     Object[] dataProviders = createDataProviders();
     int numIterations = estimateNumIterations(dataProviders);
-    Iterator<?>[] iterators = createIterators(dataProviders);
+    Iterator[] iterators = createIterators(dataProviders);
     runIterations(iterators, numIterations);
     closeDataProviders(dataProviders);
   }
@@ -67,10 +67,10 @@ public class ParameterizedSpecRunner extends BaseSpecRunner {
     return dataProviders;
   }
 
-  private Iterator<?>[] createIterators(Object[] dataProviders) {
+  private Iterator[] createIterators(Object[] dataProviders) {
     if (runStatus != OK) return null;
 
-    Iterator<?>[] iterators = new Iterator<?>[dataProviders.length];
+    Iterator[] iterators = new Iterator<?>[dataProviders.length];
     for (int i = 0; i < dataProviders.length; i++)
       try {
         Iterator<?> iter = InvokerHelper.asIterator(dataProviders[i]);
@@ -97,24 +97,29 @@ public class ParameterizedSpecRunner extends BaseSpecRunner {
 
     int result = Integer.MAX_VALUE;
     for (Object prov : dataProviders) {
-      if (prov instanceof Iterator<?>)
+      if (prov instanceof Iterator)
         // unbelievably, DGM provides a size() method for Iterators,
         // although it is of course destructive (i.e. it exhausts the Iterator)
         continue;
-      try {
-        int size = (Integer) GroovyRuntimeUtil.invokeMethod(prov, "size", null);
-        if (size >= 0 && size < result) result = size;
-      } catch (Throwable ignored) {}
+
+      Object rawSize = GroovyRuntimeUtil.invokeMethodSafe(prov, "size");
+      if (!(rawSize instanceof Number)) continue;
+
+      int size = ((Number) rawSize).intValue();
+      if (size < 0 || size >= result) continue;
+
+      result = size;
     }
 
     return result == Integer.MAX_VALUE ? -1 : result;
   }
 
-  private void runIterations(Iterator<?>[] iterators, int estimatedNumIterations) {
+  private void runIterations(Iterator[] iterators, int estimatedNumIterations) {
     if (runStatus != OK) return;
 
     while (haveNext(iterators)) {
       IterationInfo iteration = new IterationInfo(nextArgs(iterators), estimatedNumIterations);
+      iteration.setParent(currentFeature);
       runIteration(iteration);
 
       if (resetStatus(ITERATION) != OK) break;
@@ -128,9 +133,7 @@ public class ParameterizedSpecRunner extends BaseSpecRunner {
     if (dataProviders == null) return; // there was an error creating the providers
 
     for (Object provider : dataProviders) {
-      try {
-        GroovyRuntimeUtil.invokeMethod(provider, "close", null);
-      } catch (Throwable ignored) {}
+      GroovyRuntimeUtil.invokeMethodSafe(provider, "close");
     }
   }
 
@@ -145,7 +148,7 @@ public class ParameterizedSpecRunner extends BaseSpecRunner {
     supervisor.afterIteration(iteration);
   }
 
-  private boolean haveNext(Iterator<?>[] iterators) {
+  private boolean haveNext(Iterator[] iterators) {
     if (runStatus != OK) return false;
 
     boolean haveNext = true;
@@ -184,7 +187,7 @@ public class ParameterizedSpecRunner extends BaseSpecRunner {
   }
 
   // advances iterators and computes args
-  private Object[] nextArgs(Iterator<?>[] iterators) {
+  private Object[] nextArgs(Iterator[] iterators) {
     if (runStatus != OK) return null;
 
     Object[] next = new Object[iterators.length];

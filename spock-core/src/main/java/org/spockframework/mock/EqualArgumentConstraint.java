@@ -16,6 +16,7 @@
 
 package org.spockframework.mock;
 
+import org.spockframework.runtime.HamcrestSupport;
 import org.spockframework.util.GroovyRuntimeUtil;
 
 /**
@@ -23,13 +24,17 @@ import org.spockframework.util.GroovyRuntimeUtil;
  * @author Peter Niederwieser
  */
 public class EqualArgumentConstraint implements IArgumentConstraint {
-  private final Object arg;
+  private final Object expected;
 
-  public EqualArgumentConstraint(Object arg) {
-    this.arg = arg;
+  public EqualArgumentConstraint(Object expected) {
+    this.expected = expected;
   }
 
   public boolean isSatisfiedBy(Object arg) {
-    return GroovyRuntimeUtil.equals(this.arg, arg);
+    if (HamcrestSupport.isMatcher(expected)) {
+      return HamcrestSupport.matches(expected, arg);
+    }
+    
+    return GroovyRuntimeUtil.equals(arg, expected);
   }
 }

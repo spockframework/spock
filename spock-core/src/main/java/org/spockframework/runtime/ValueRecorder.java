@@ -19,6 +19,7 @@ package org.spockframework.runtime;
 import java.util.*;
 
 import org.spockframework.runtime.model.ExpressionInfo;
+import org.spockframework.util.CollectionUtil;
 
 /**
  * Records the values in a condition.
@@ -40,23 +41,43 @@ public class ValueRecorder implements Iterable<Object> {
   /**
    * Records and returns the specified value. Hence an expression can be replaced
    * with record(expression) without impacting evaluation of the expression.
-   *
-   * @param value the value to be recorded
-   * @param index index of this record call within the condition
-   * @return the recorded value
    */
   public Object record(int index, Object value) {
-    for (int i = values.size(); i < index; i++)
-      values.add(ExpressionInfo.VALUE_NOT_AVAILABLE);
+    realizeNas(index, null);
     values.add(value);
     return value;
   }
 
+  public static final String REALIZE_NAS = "realizeNas";
+
   /**
-   * Returns an unmodifiable iterator over the recorded values.
-   * @return an unmodifiable iterator over the recorded values
+   * Materializes N/A values without recording a new value.
+   */
+  public Object realizeNas(int index, Object value) {
+    for (int i = values.size(); i < index; i++)
+      values.add(ExpressionInfo.VALUE_NOT_AVAILABLE);
+    return value;
+  }
+
+  /**
+   * Returns an iterator over the recorded values.
+   * @return an iterator over the recorded values
    */
   public Iterator<Object> iterator() {
-    return Collections.unmodifiableList(values).iterator();
+    return values.iterator();
+  }
+
+  /**
+   * Useful for manipulating the last recorded value.
+   */
+  public void replaceLastValue(Object newValue) {
+    CollectionUtil.setLastElement(values, newValue);
+  }
+
+  /**
+   * Useful for manipulating values after they have been recorded.
+   */
+  public List<Object> getRecordedValues() {
+    return values;
   }
 }

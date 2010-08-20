@@ -146,6 +146,9 @@ public abstract class AstUtil {
         && node.getColumnNumber() > 0 && node.getLastColumnNumber() > node.getColumnNumber();
   }
 
+  // be careful with this b/c expressions representing spreads
+  // in argument lists cannot simply be used somewhere else
+  // e.g. foo(1, *args, 2) 
   public static List<Expression> getArguments(Expression expr) {
     if (expr instanceof MethodCallExpression)
       return getArguments((MethodCallExpression)expr);
@@ -156,15 +159,24 @@ public abstract class AstUtil {
   
   @SuppressWarnings("unchecked")
   public static List<Expression> getArguments(MethodCallExpression expr) {
-    // seems getArguments() could either return a TupleExpression or an ArgumentListExpression
-    // we cast to the supertype to (hopefully) be on the safe side
-    return ((TupleExpression)expr.getArguments()).getExpressions();
+    // MethodCallExpression.getArguments() may return an ArgumentListExpression,
+    // a TupleExpression that wraps a NamedArgumentListExpression,
+    // or (at least in 1.6) a NamedArgumentListExpression
+
+    if (expr.getArguments() instanceof NamedArgumentListExpression)
+      // return same result as for NamedArgumentListExpression wrapped in TupleExpression
+      return Collections.singletonList(expr.getArguments());
+    
+    return ((TupleExpression) expr.getArguments()).getExpressions();
   }
 
   @SuppressWarnings("unchecked")
   public static List<Expression> getArguments(StaticMethodCallExpression expr) {
-    // it seems that getArguments() could either return a TupleExpression or
-    // an ArgumentListExpression; we cast to the supertype to be on the safe side
+    // see comments in getArguments(MethodCallExpression)
+
+    if (expr.getArguments() instanceof NamedArgumentListExpression)
+      return Collections.singletonList(expr.getArguments());
+
     return ((TupleExpression)expr.getArguments()).getExpressions();
   }
 
@@ -266,11 +278,12 @@ public abstract class AstUtil {
       throw new InternalSpockError("checkIsSafeToMutateArgs");
   }
 
-  public static boolean hasAssertionMessage(AssertStatement stat) {
+  @Nullable
+  public static Expression getAssertionMessage(AssertStatement stat) {
     Expression msg = stat.getMessageExpression();
-    if (msg == null) return false; // should not happen
-    if (!(msg instanceof ConstantExpression)) return true;
-    return !((ConstantExpression)msg).isNullExpression();
+    if (msg == null) return null; // should not happen
+    if (!(msg instanceof ConstantExpression)) return msg;
+    return ((ConstantExpression) msg).isNullExpression() ? null : msg;
   }
 
   public static boolean isThisExpression(Expression expr) {

@@ -17,6 +17,9 @@ package org.spockframework.util;
 import org.codehaus.groovy.runtime.*;
 import org.codehaus.groovy.runtime.typehandling.DefaultTypeTransformation;
 
+import groovy.lang.MetaClass;
+import groovy.lang.MetaMethod;
+
 /**
  * Provides convenient access to some Groovy language/runtime features.
  * Only contains functionality that can be fully abstracted from Groovy APIs.
@@ -60,5 +63,37 @@ public abstract class GroovyRuntimeUtil {
       if (cause instanceof Error) throw (Error) cause;
       throw new Error(cause);
     }
+  }
+
+  // let's try to find the method that was invoked and see if it has return type void
+  // since we now do another method dispatch (w/o actually invoking the method),
+  // there is a small chance that we get an incorrect result because a MetaClass has
+  // been changed since the first dispatch; to eliminate this chance we would have to
+  // first find the MetaMethod and then invoke it, but the problem is that calling
+  // MetaMethod.invoke doesn't have the exact same semantics as calling
+  // InvokerHelper.invokeMethod, even if the same method is chosen (see Spec GroovyMopExploration)
+
+  public static boolean isVoidMethod(Object target, String method, Object... args) {
+    Class[] argTypes = ReflectionUtil.getTypes(args);
+
+    // the way we choose metaClass, we won't find methods on java.lang.Class
+    // but since java.lang.Class has no void methods other than the ones inherited
+    // from java.lang.Object, and since we operate on a best effort basis, that's OK
+    // also we will choose a static method like Foo.getName() over the equally
+    // named method on java.lang.Class, but this is consistent with current Groovy semantics
+    // (see http://jira.codehaus.org/browse/GROOVY-3548)
+    // in the end it's probably best to rely on NullAwareInvokeMethodSpec to tell us if
+    // everything is OK
+    MetaClass metaClass = target instanceof Class ?
+        InvokerHelper.getMetaClass((Class) target) : InvokerHelper.getMetaClass(target);
+
+    // seems to find more methods than getMetaMethod()
+    MetaMethod metaMethod = metaClass.pickMethod(method, argTypes);
+    if (metaMethod == null) return false; // we were unable to figure out which method was called
+
+    Class returnType = metaMethod.getReturnType();
+    // although Void.class will occur rarely, it makes sense to handle
+    // it in the same way as void.class
+    return returnType == void.class || returnType == Void.class;
   }
 }

@@ -41,7 +41,7 @@ class ExplicitConditionsWithMessage extends ConditionSpec {
     isRendered """
 1 + 2 == 2
 
-Your message: need to brush up my math
+need to brush up my math
     """, {
       assert 1 + 2 == 2, "need to brush up my math"
     }
@@ -52,7 +52,7 @@ Your message: need to brush up my math
     isRendered """
 a + b == 2
 
-Your message: a: 1 b: 2
+a: 1 b: 2
     """, {
       def a = 1
       def b = 2
@@ -65,7 +65,7 @@ Your message: a: 1 b: 2
     isRendered """
 map.a + map.b == 2
 
-Your message: [a:1, b:2]
+[a:1, b:2]
     """, {
       def map = [a: 1, b: 2]
       assert map.a + map.b == 2, map
@@ -89,7 +89,7 @@ Your message: [a:1, b:2]
     isRendered """
 1 + 2 == 2
 
-Your message: null
+null
     """, {
       def x = null
       assert 1 + 2 == 2, x

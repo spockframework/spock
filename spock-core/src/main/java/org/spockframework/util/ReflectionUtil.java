@@ -94,6 +94,23 @@ public abstract class ReflectionUtil {
     return clazzFile.isFile() ? clazzFile : null;
   }
 
+  // IDEA: replace with MethodInvoker(Builder)
+  public static @Nullable <T> T invokeMethod(Object target, Method method, Class<T> returnType, Object... args) {
+    try {
+      Object result = method.invoke(target, args);
+      if (result != null && !returnType.isInstance(result))
+        throw new InternalSpockError("unexpected return type: %s").withArgs(result.getClass());
+      return returnType.cast(result);
+    } catch (InvocationTargetException e) {
+      Throwable cause = e.getCause();
+      if (cause instanceof Error) throw (Error) cause;
+      throw new Error(cause);
+    } catch (Exception e) {
+      throw new InternalSpockError("unexpected exception", e);
+    }
+  }
+
+  // IDEA: replace with MethodInvoker(Builder)
   public static @Nullable Object invokeMethodThatThrowsException(Object target, Method method, Object... args)
       throws Exception {
     try {
@@ -102,7 +119,7 @@ public abstract class ReflectionUtil {
       Throwable cause = e.getCause();
       if (cause instanceof Error) throw (Error) cause;
       if (cause instanceof Exception) throw (Exception) cause;
-      throw new Error(cause);
+      throw new InternalSpockError("unexpected exception", cause);
     }
   }
 
@@ -155,11 +172,9 @@ public abstract class ReflectionUtil {
   }
 
   public static Class[] getTypes(Object... objects) {
-    if (objects == null) return new Class[0];
-    
     Class[] classes = new Class[objects.length];
     for (int i = 0; i < objects.length; i++)
-      classes[i] = objects[i].getClass();
+      classes[i] = NullSafe.getClass(objects[i]);
     return classes;
   }
 

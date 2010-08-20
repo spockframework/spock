@@ -75,9 +75,19 @@
     </dependency>
     <dependency>
       <groupId>org.jmock</groupId>
-      <artifactId>jmock-junit4</artifactId>
+      <artifactId>jmock</artifactId>
       <version>2.5.1</version>
       <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.hamcrest</groupId>
+          <artifactId>hamcrest-core</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.hamcrest</groupId>
+          <artifactId>hamcrest-library</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.easymock</groupId>
@@ -87,9 +97,34 @@
     </dependency>
     <dependency>
       <groupId>org.mockito</groupId>
-      <artifactId>mockito-all</artifactId>
-      <version>1.8.4</version>
+      <artifactId>mockito-core</artifactId>
+      <version>1.8.5</version>
       <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.hamcrest</groupId>
+          <artifactId>hamcrest-core</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.objenesis</groupId>
+          <artifactId>objenesis</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
   </dependencies>
+
+  <repositories>
+    <!-- for experimenting with libs that aren't in Central
+    (new JUnit versions, Hamcrest 1.2, etc.) -->
+    <repository>
+      <id>spock-ext</id>
+      <url>http://m2repo.spockframework.org/ext</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
 </project>

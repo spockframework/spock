@@ -574,6 +574,4 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> {
     result.setSourcePosition(condition);
     return result;
   }
-
-
 }

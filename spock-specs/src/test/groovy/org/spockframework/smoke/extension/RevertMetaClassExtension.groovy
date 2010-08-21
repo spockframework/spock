@@ -1,4 +1,3 @@
-
 /*
  * Copyright 2010 the original author or authors.
  *
@@ -15,8 +14,9 @@
 
 package org.spockframework.smoke.extension
 
-import spock.lang.*
 import org.spockframework.EmbeddedSpecification
+
+import spock.lang.*
 
 /**
  * @author Luke Daley
@@ -58,9 +58,11 @@ class RevertMetaClassExtension extends EmbeddedSpecification {
   def "change more than one type"() {
     expect: 
     value == 2
+
     when:
     setNewValue(3, String)
     setNewValue(3, Integer)
+
     then:
     getValue("") == 3
     getValue(1) == 3
@@ -69,8 +71,10 @@ class RevertMetaClassExtension extends EmbeddedSpecification {
   def "changes are reverted on both"() {
     expect:
     getValue("") == 2
+
     when:
     getValue(1)
+
     then:
     thrown(MissingMethodException)
   }
@@ -93,23 +97,28 @@ class RevertMetaClassExtension extends EmbeddedSpecification {
         }
       }
     """)
+
     when:
     def failureCount = runner.runClasses(specs).failureCount
+
     then:
     failureCount == 0
     value == afterValue
+
     where:
     annotation                  | afterValue
     ""                          | 3
-    "@RevertMetaClass(String)" | 2
+    "@RevertMetaClass(String)"  | 2
   }
   
   @RevertMetaClass(String)
   def "meta classes are restored after each iteration"() {
     expect:
     value == i
+
     when:
     newValue = i + 1
+
     then:
     value == i + 1
     where:

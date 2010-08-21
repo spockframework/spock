@@ -190,7 +190,7 @@ public abstract class AstUtil {
   public static Expression toArgumentArray(List<Expression> argList, IRewriteResourceProvider resourceProvider) {
     List<Expression> normalArgs = new ArrayList<Expression>();
     List<Expression> spreadArgs = new ArrayList<Expression>();
-    List<ConstantExpression> spreadPositions = new ArrayList<ConstantExpression>();
+    List<Expression> spreadPositions = new ArrayList<Expression>();
 
     for (int i = 0; i < argList.size(); i++) {
       Expression arg = argList.get(i);

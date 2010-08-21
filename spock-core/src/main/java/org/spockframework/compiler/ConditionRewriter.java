@@ -528,9 +528,9 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> {
     List<Expression> args = new ArrayList<Expression>();
     args.add(rewritten.getObjectExpression());
     args.add(rewritten.getMethod());
+    args.add(AstUtil.toArgumentArray(AstUtil.getArguments(rewritten), resourceProvider));
     // rewriting has produced N/A's that haven't been realized yet, so do that now
-    args.add(realizeNas(argsToArray(rewritten.getArguments())));
-    args.add(new ConstantExpression(rewritten.isSafe()));
+    args.add(realizeNas(new ConstantExpression(rewritten.isSafe())));
     args.add(new ConstantExpression(explicit));
 
     return rewriteToSpockRuntimeCall(SpockRuntime.VERIFY_METHOD_CONDITION, rewritten, args);
@@ -542,9 +542,9 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> {
     List<Expression> args = new ArrayList<Expression>();
     args.add(new ClassExpression(rewritten.getOwnerType()));
     args.add(new ConstantExpression(rewritten.getMethod()));
+    args.add(AstUtil.toArgumentArray(AstUtil.getArguments(rewritten), resourceProvider));
     // rewriting has produced N/A's that haven't been realized yet, so do that now
-    args.add(realizeNas(argsToArray(rewritten.getArguments())));
-    args.add(ConstantExpression.FALSE);
+    args.add(realizeNas(ConstantExpression.FALSE));
     args.add(new ConstantExpression(explicit));
 
     return rewriteToSpockRuntimeCall(SpockRuntime.VERIFY_METHOD_CONDITION, rewritten, args);
@@ -575,11 +575,5 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> {
     return result;
   }
 
-  private Expression argsToArray(Expression argumentList) {
-    return new MethodCallExpression(
-        new ClassExpression(resourceProvider.getAstNodeCache().SpockRuntime),
-        new ConstantExpression(SpockRuntime.ARGS_TO_ARRAY),
-        argumentList
-    );
-  }
+
 }

@@ -24,6 +24,7 @@ import org.codehaus.groovy.ast.stmt.*;
 import org.codehaus.groovy.syntax.Types;
 import org.objectweb.asm.Opcodes;
 
+import org.spockframework.runtime.SpockRuntime;
 import org.spockframework.util.InternalSpockError;
 import org.spockframework.util.Nullable;
 
@@ -146,9 +147,10 @@ public abstract class AstUtil {
         && node.getColumnNumber() > 0 && node.getLastColumnNumber() > node.getColumnNumber();
   }
 
-  // be careful with this b/c expressions representing spreads
-  // in argument lists cannot simply be used somewhere else
-  // e.g. foo(1, *args, 2) 
+  // Note: The returned list may contain SpreadExpression's,
+  // which can't be used outside an ArgumentListExpression.
+  // To pass an argument list to the Groovy or Spock runtime,
+  // use this method together with AstUtil.toArgumentArray().
   public static List<Expression> getArguments(Expression expr) {
     if (expr instanceof MethodCallExpression)
       return getArguments((MethodCallExpression)expr);
@@ -178,6 +180,39 @@ public abstract class AstUtil {
       return Collections.singletonList(expr.getArguments());
 
     return ((TupleExpression)expr.getArguments()).getExpressions();
+  }
+
+  /**
+   * Turns an argument list obtained from AstUtil.getArguments() into an Object[] array
+   * suitable to be passed to InvokerHelper or SpockRuntime. The main challenge is
+   * to handle SpreadExpression's correctly.
+   */
+  public static Expression toArgumentArray(List<Expression> argList, IRewriteResourceProvider resourceProvider) {
+    List<Expression> normalArgs = new ArrayList<Expression>();
+    List<Expression> spreadArgs = new ArrayList<Expression>();
+    List<ConstantExpression> spreadPositions = new ArrayList<ConstantExpression>();
+
+    for (int i = 0; i < argList.size(); i++) {
+      Expression arg = argList.get(i);
+      if (arg instanceof SpreadExpression) {
+        spreadArgs.add(((SpreadExpression) arg).getExpression());
+        spreadPositions.add(new ConstantExpression(i));
+      } else {
+        normalArgs.add(arg);
+      }
+    }
+
+    if (spreadArgs.isEmpty())
+      return new ArrayExpression(ClassHelper.OBJECT_TYPE, argList);
+
+    return new MethodCallExpression(
+        new ClassExpression(resourceProvider.getAstNodeCache().SpockRuntime),
+        new ConstantExpression(SpockRuntime.DESPREAD_LIST),
+        new ArgumentListExpression(
+            new ArrayExpression(ClassHelper.OBJECT_TYPE, normalArgs),
+            new ArrayExpression(ClassHelper.OBJECT_TYPE, spreadArgs),
+            new ArrayExpression(ClassHelper.int_TYPE, spreadPositions)
+        ));
   }
 
   public static boolean isBuiltinMemberAssignmentOrCall(Expression expr, String methodName, int minArgs, int maxArgs) {

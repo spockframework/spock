@@ -19,6 +19,7 @@ package org.spockframework.runtime;
 import java.util.*;
 
 import org.codehaus.groovy.runtime.InvokerHelper;
+import org.codehaus.groovy.runtime.ScriptBytecodeAdapter;
 
 import org.spockframework.runtime.model.ExpressionInfo;
 import org.spockframework.runtime.model.TextPosition;
@@ -70,24 +71,14 @@ public abstract class SpockRuntime {
           new Condition(text, TextPosition.create(line, column), recorder, null));
   }
 
-  public static final String ARGS_TO_ARRAY = "argsToArray";
+  public static final String DESPREAD_LIST = "despreadList";
 
   /**
-   * Dummy method that causes groovyc to turn an argument list into an array
-   * for us, which can then safely be passed to verifyMethodCondition().
-   * (The challenge is to construct an Object array from spreaded argument lists
-   * like foo(1, *args, 2). Better let groovyc do it.)
+   * Wrapper around ScriptBytecodeAdapter.despreadList() to avoid a direct
+   * dependency on the latter.
    */
-  public static Object[] argsToArray(Object[] args) {
-    if (args.getClass().getComponentType() == Object.class) return args;
-
-    // MOP needs an Object[] (b/c it is sometimes modified in place), but
-    // we don't always get one (e.g. we may get a Long[]). In that case,
-    // convert to Object[].
-    // Might be related to http://jira.codehaus.org/browse/GROOVY-3547
-    Object[] result = new Object[args.length];
-    System.arraycopy(args, 0, result, 0, args.length);
-    return result;
+  public static Object[] despreadList(Object[] args, Object[] spreads, int[] positions) {
+    return ScriptBytecodeAdapter.despreadList(args, spreads, positions);
   }
 
   public static final String FEATURE_METHOD_CALLED = "featureMethodCalled";

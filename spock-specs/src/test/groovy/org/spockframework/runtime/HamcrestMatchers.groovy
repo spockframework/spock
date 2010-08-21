@@ -50,6 +50,14 @@ class HamcrestMatchers extends EmbeddedSpecification {
     assert that(x, equalTo(42))
   }
 
+  @FailsWith(InvalidSpecException) // TODO
+  def "can be used with custom message"() {
+    def x = 42
+
+    expect:
+    assert that(x, equalTo(42)), "a custom message"
+  }
+
   def "can have custom implementations"() {
     def x = "otto"
     

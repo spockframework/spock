@@ -27,7 +27,7 @@ public class ObjectRendererService implements IObjectRendererService {
 
   @SuppressWarnings("unchecked")
   public String render(Object object) {
-    // cast required although IDEA think it's superfluous
+    // cast required although IDEA thinks it's superfluous
     Set<Class<?>> types = Collections.<Class<?>>singleton(object.getClass());
 
     while (!types.isEmpty()) {

@@ -96,4 +96,8 @@ public abstract class GroovyRuntimeUtil {
     // it in the same way as void.class
     return returnType == void.class || returnType == Void.class;
   }
+
+  public static Object readField(Object target, String name) {
+    return InvokerHelper.getAttribute(target, name);
+  }
 }

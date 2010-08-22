@@ -12,14 +12,18 @@
  * limitations under the License.
  */
 
-package org.spockframework.runtime
+package org.spockframework.smoke.condition
 
 import spock.lang.*
 
-import static org.hamcrest.CoreMatchers.*
 import org.hamcrest.BaseMatcher
 import org.hamcrest.Description
 import org.spockframework.EmbeddedSpecification
+import org.spockframework.runtime.InvalidSpecException
+import org.spockframework.runtime.ConditionNotSatisfiedError
+
+import static org.hamcrest.CoreMatchers.*
+import static spock.util.matcher.MatcherSupport.that
 
 class HamcrestMatchers extends EmbeddedSpecification {
   def "can be used in expect-blocks"() {

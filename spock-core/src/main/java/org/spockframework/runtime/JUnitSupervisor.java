@@ -20,6 +20,7 @@ import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
 
+import org.spockframework.runtime.condition.IObjectRenderer;
 import org.spockframework.runtime.model.*;
 import org.spockframework.util.InternalSpockError;
 
@@ -34,6 +35,7 @@ public class JUnitSupervisor implements IRunSupervisor {
   private final RunNotifier notifier;
   private final IStackTraceFilter filter;
   private final IRunListener masterListener;
+  private final IObjectRenderer<Object> diffedObjectRenderer;
 
   private FeatureInfo feature;
   private boolean unrollFeature;
@@ -43,11 +45,13 @@ public class JUnitSupervisor implements IRunSupervisor {
   private Description unrolledDescription;
   private boolean errorSinceLastReset;
 
-  public JUnitSupervisor(SpecInfo spec, RunNotifier notifier, IStackTraceFilter filter) {
+  public JUnitSupervisor(SpecInfo spec, RunNotifier notifier, IStackTraceFilter filter,
+      IObjectRenderer<Object> diffedObjectRenderer) {
     this.spec = spec;
     this.notifier = notifier;
     this.filter = filter;
     this.masterListener = new MasterRunListener(spec);
+    this.diffedObjectRenderer = diffedObjectRenderer;
   }
 
   public void beforeSpec(SpecInfo spec) {
@@ -112,10 +116,11 @@ public class JUnitSupervisor implements IRunSupervisor {
 
     Condition condition = ((ConditionNotSatisfiedError) exception).getCondition();
     ExpressionInfo expr = condition.getExpression();
-    if (expr == null || !expr.isEqualityComparison(String.class, GString.class)) return exception;
+    if (expr == null || !expr.isEqualityComparison(Object.class)) return exception;
 
-    ComparisonFailure failure = new ComparisonFailure(exception.getMessage(),
-        expr.getChildren().get(0).getValue().toString(), expr.getChildren().get(1).getValue().toString());
+    String expected = diffedObjectRenderer.render(expr.getChildren().get(0).getValue());
+    String actual = diffedObjectRenderer.render(expr.getChildren().get(1).getValue());
+    ComparisonFailure failure = new ComparisonFailure(exception.getMessage(), expected, actual);
     failure.setStackTrace(exception.getStackTrace());
     return failure;
   }

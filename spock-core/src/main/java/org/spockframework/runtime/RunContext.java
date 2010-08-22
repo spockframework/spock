@@ -19,6 +19,7 @@ import java.util.*;
 import org.junit.runner.notification.RunNotifier;
 
 import org.spockframework.builder.DelegatingScript;
+import org.spockframework.runtime.condition.*;
 import org.spockframework.runtime.model.SpecInfo;
 import org.spockframework.util.*;
 
@@ -34,8 +35,10 @@ public class RunContext {
 
   private final List<Class<?>> extensionClasses;
   
-  private ExtensionRegistry extensionRegistry;
-  private RunnerConfiguration runnerConfiguration = new RunnerConfiguration();
+  private final ExtensionRegistry extensionRegistry;
+  private final RunnerConfiguration runnerConfiguration = new RunnerConfiguration();
+
+  private final IObjectRenderer<Object> diffedObjectRenderer = createDiffedObjectRenderer();
 
   private RunContext(@Nullable DelegatingScript configurationScript, List<Class<?>> extensionClasses) {
     this.extensionClasses = extensionClasses;
@@ -57,11 +60,23 @@ public class RunContext {
   }
 
   public ParameterizedSpecRunner createSpecRunner(SpecInfo spec, RunNotifier notifier) {
-    return new ParameterizedSpecRunner(spec, new JUnitSupervisor(spec, notifier, createStackTraceFilter(spec)));
+    return new ParameterizedSpecRunner(spec,
+        new JUnitSupervisor(spec, notifier, createStackTraceFilter(spec), diffedObjectRenderer));
   }
 
   private IStackTraceFilter createStackTraceFilter(SpecInfo spec) {
     return runnerConfiguration.filterStackTrace ? new StackTraceFilter(spec) : new DummyStackTraceFilter();
+  }
+
+  private IObjectRenderer<Object> createDiffedObjectRenderer() {
+    IObjectRendererService service = new ObjectRendererService();
+    service.addRenderer(Object.class, new DiffedObjectRenderer());
+    service.addRenderer(Collection.class, new DiffedCollectionRenderer());
+    service.addRenderer(Set.class, new DiffedSetRenderer(true));
+    service.addRenderer(SortedSet.class, new DiffedSetRenderer(false));
+    service.addRenderer(Map.class, new DiffedMapRenderer(true));
+    service.addRenderer(SortedMap.class, new DiffedMapRenderer(false));
+    return service;
   }
 
   public static <T> T withNewContext(@Nullable DelegatingScript configurationScript,

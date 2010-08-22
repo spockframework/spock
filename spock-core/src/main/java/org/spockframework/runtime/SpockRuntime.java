@@ -25,7 +25,7 @@ import org.spockframework.runtime.model.ExpressionInfo;
 import org.spockframework.runtime.model.TextPosition;
 import org.spockframework.util.*;
 
-import spock.lang.Specification;
+import spock.util.matcher.MatcherSupport;
 
 /**
  * @author Peter Niederwieser
@@ -143,7 +143,7 @@ public abstract class SpockRuntime {
       }
 
       if (method.equals("that")) {
-        if (!(target instanceof Specification)) return null;
+        if (target != MatcherSupport.class) return null;
         if (args.length != 2 || !HamcrestSupport.isMatcher(args[1])) return null;
         return new MatcherCondition(args[0], args[1], false);
       }

@@ -70,12 +70,32 @@ public class RunContext {
 
   private IObjectRenderer<Object> createDiffedObjectRenderer() {
     IObjectRendererService service = new ObjectRendererService();
-    service.addRenderer(Object.class, new DiffedObjectRenderer());
+
+    service.addRenderer(Object.class, new DiffedObjectAsBeanRenderer());
+
+    DiffedObjectAsStringRenderer asStringRenderer = new DiffedObjectAsStringRenderer();
+    service.addRenderer(CharSequence.class, asStringRenderer);
+    service.addRenderer(Number.class, asStringRenderer);
+    service.addRenderer(Character.class, asStringRenderer);
+    service.addRenderer(Boolean.class, asStringRenderer);
+
     service.addRenderer(Collection.class, new DiffedCollectionRenderer());
     service.addRenderer(Set.class, new DiffedSetRenderer(true));
     service.addRenderer(SortedSet.class, new DiffedSetRenderer(false));
     service.addRenderer(Map.class, new DiffedMapRenderer(true));
     service.addRenderer(SortedMap.class, new DiffedMapRenderer(false));
+
+    DiffedArrayRenderer arrayRenderer = new DiffedArrayRenderer();
+    service.addRenderer(Object[].class, arrayRenderer);
+    service.addRenderer(byte[].class, arrayRenderer);
+    service.addRenderer(short[].class, arrayRenderer);
+    service.addRenderer(int[].class, arrayRenderer);
+    service.addRenderer(long[].class, arrayRenderer);
+    service.addRenderer(float[].class, arrayRenderer);
+    service.addRenderer(double[].class, arrayRenderer);
+    service.addRenderer(char[].class, arrayRenderer);
+    service.addRenderer(boolean[].class, arrayRenderer);
+
     return service;
   }
 

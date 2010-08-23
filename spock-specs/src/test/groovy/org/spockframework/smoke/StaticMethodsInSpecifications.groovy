@@ -16,8 +16,10 @@
 
 package org.spockframework.smoke
 
+import org.junit.ComparisonFailure
+
 import org.spockframework.EmbeddedSpecification
-import org.spockframework.runtime.ConditionNotSatisfiedError
+
 import spock.lang.Issue
 
 class StaticMethodsInSpecifications extends EmbeddedSpecification {
@@ -34,7 +36,7 @@ static void bar() {
     """
 
     then:
-    thrown(ConditionNotSatisfiedError)
+    thrown(ComparisonFailure)
   }
 
   @Issue("http://issues.spockframework.org/detail?id=35")

@@ -14,24 +14,17 @@
 
 package org.spockframework.runtime.condition;
 
-import java.lang.reflect.Field;
+import java.lang.reflect.Array;
 
-import org.spockframework.util.GroovyRuntimeUtil;
-
-public class DiffedObjectRenderer implements IObjectRenderer<Object> {
-  public String render(Object object) {
+public class DiffedArrayRenderer implements IObjectRenderer<Object> {
+  public String render(Object array) {
     LineBuilder builder = new LineBuilder();
 
-    for (Class<?> clazz = object.getClass(); clazz != null; clazz = clazz.getSuperclass()) {
-      for (Field field : clazz.getDeclaredFields()) {
-        if (field.isSynthetic()) continue;
-        String value = GroovyRuntimeUtil.toString(GroovyRuntimeUtil.readField(object, field.getName()));
-        builder.addLine(field.getName() + ": " + value);
-      }
+    for (int i = 0; i < Array.getLength(array); i++) {
+      builder.addLine(Array.get(array, i));
     }
 
-    builder.sort();
     return builder.toString();
-
   }
 }
+

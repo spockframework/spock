@@ -16,8 +16,9 @@
 
 package org.spockframework.smoke
 
+import org.junit.ComparisonFailure
+
 import org.spockframework.EmbeddedSpecification
-import org.spockframework.runtime.ConditionNotSatisfiedError
 
 class SharedVsStaticFields extends EmbeddedSpecification {
   def "shared fields are not shared between subsequent runs"() {
@@ -83,6 +84,6 @@ class StaticFieldSuite {}
     runner.runClass(clazzes.find { it.simpleName == "StaticFieldSuite" })
 
     then:
-    thrown(ConditionNotSatisfiedError)
+    thrown(ComparisonFailure)
   }
 }

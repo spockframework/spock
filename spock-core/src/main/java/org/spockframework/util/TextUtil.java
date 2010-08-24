@@ -16,6 +16,8 @@
 
 package org.spockframework.util;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.List;
 
@@ -111,5 +113,11 @@ public abstract class TextUtil {
     for (int i = 0; i < seq.length(); i++)
       builder.append(escape(seq.charAt(i)));
     return builder.toString();
+  }
+
+  public static String printStackTrace(Throwable throwable) {
+    StringWriter writer = new StringWriter();
+    throwable.printStackTrace(new PrintWriter(writer));
+    return writer.toString();
   }
 }

@@ -23,10 +23,9 @@ import org.junit.runner.notification.RunNotifier;
 import org.spockframework.runtime.condition.IObjectRenderer;
 import org.spockframework.runtime.model.*;
 import org.spockframework.util.InternalSpockError;
+import org.spockframework.util.TextUtil;
 
 import spock.lang.Unroll;
-
-import groovy.lang.GString;
 
 import static org.spockframework.runtime.RunStatus.*;
 
@@ -90,7 +89,9 @@ public class JUnitSupervisor implements IRunSupervisor {
     if (exception instanceof MultipleFailureException)
       return handleMultipleFailures(error);
 
-    exception = convertToJUnitComparisonFailureIfAppropriate(exception);
+    if (isCausedByFailedEqualityComparison(exception))
+      exception = convertToComparisonFailure(exception);
+
     filter.filter(exception);
 
     masterListener.error(error);
@@ -109,20 +110,35 @@ public class JUnitSupervisor implements IRunSupervisor {
     return runStatus;
   }
 
-  // convert failed (G)String comparisons to org.junit.ComparisonFailure
-  // to benefit from IDE support (diff dialog)
-  private Throwable convertToJUnitComparisonFailureIfAppropriate(Throwable exception) {
-    if (!(exception instanceof ConditionNotSatisfiedError)) return exception;
+  private boolean isCausedByFailedEqualityComparison(Throwable exception) {
+    if (!(exception instanceof ConditionNotSatisfiedError)) return false;
 
     Condition condition = ((ConditionNotSatisfiedError) exception).getCondition();
     ExpressionInfo expr = condition.getExpression();
-    if (expr == null || !expr.isEqualityComparison(Object.class)) return exception;
+    return expr != null && expr.isEqualityComparison();
+  }
 
-    String expected = diffedObjectRenderer.render(expr.getChildren().get(0).getValue());
-    String actual = diffedObjectRenderer.render(expr.getChildren().get(1).getValue());
-    ComparisonFailure failure = new ComparisonFailure(exception.getMessage(), expected, actual);
+  // enables IDE support (diff dialog)
+  private Throwable convertToComparisonFailure(Throwable exception) {
+    assert isCausedByFailedEqualityComparison(exception);
+
+    Condition condition = ((ConditionNotSatisfiedError) exception).getCondition();
+    ExpressionInfo expr = condition.getExpression();
+
+    String actual = renderValue(expr.getChildren().get(0).getValue());
+    String expected = renderValue(expr.getChildren().get(1).getValue());
+    ComparisonFailure failure = new SpockComparisonFailure(condition, expected, actual);
     failure.setStackTrace(exception.getStackTrace());
+
     return failure;
+  }
+
+  private String renderValue(Object value) {
+    try {
+      return diffedObjectRenderer.render(value);
+    } catch (Throwable t) {
+      return "Failed to render value due to:\n\n" + TextUtil.printStackTrace(t);
+    }
   }
 
   private int statusFor(ErrorInfo error) {

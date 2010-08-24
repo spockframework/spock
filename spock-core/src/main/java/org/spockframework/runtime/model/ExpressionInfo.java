@@ -145,9 +145,12 @@ public class ExpressionInfo implements Iterable<ExpressionInfo> {
     return list;
   }
 
+  public boolean isEqualityComparison() {
+    return "==".equals(operation) && children.size() == 2;
+  }
+
   public boolean isEqualityComparison(Class<?>... types) {
-    if (!"==".equals(operation)) return false;
-    if (children.size() != 2) return false;
+    if (!isEqualityComparison()) return false;
     if (!ReflectionUtil.hasAnyOfTypes(children.get(0).getValue(), types)) return false;
     if (!ReflectionUtil.hasAnyOfTypes(children.get(1).getValue(), types)) return false;
     return true;

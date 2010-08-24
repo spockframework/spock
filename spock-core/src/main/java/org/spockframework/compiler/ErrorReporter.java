@@ -21,6 +21,8 @@ import org.codehaus.groovy.ast.ASTNode;
 import org.codehaus.groovy.control.*;
 import org.codehaus.groovy.control.messages.*;
 
+import org.spockframework.util.TextUtil;
+
 /**
  * Reporting facility for problems found during compilation.
  * In general, error(ASTNode) is the preferred method to use.
@@ -45,12 +47,8 @@ public class ErrorReporter {
   }
 
   public void error(String msg, Throwable cause, Object... args) {
-    StringWriter stringWriter = new StringWriter();
-    PrintWriter printWriter = new PrintWriter(stringWriter);
-    cause.printStackTrace(printWriter);
-
     sourceUnit.getErrorCollector().addErrorAndContinue(
-        new SimpleMessage(String.format(msg, args) + "\n\n" + stringWriter.toString(), sourceUnit));
+        new SimpleMessage(String.format(msg, args) + "\n\n" + TextUtil.printStackTrace(cause), sourceUnit));
   }
 
   public void error(ASTNode node, String msg, Object... args) {

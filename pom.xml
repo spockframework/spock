@@ -27,6 +27,7 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <grails.version>1.3.3</grails.version>
   </properties>
 
   <build>
@@ -201,8 +202,9 @@
         <module>spock-tapestry</module>
         <module>spock-guice</module>
         <module>spock-spring</module>
-        <module>spock-unitils</module>  
-		<module>spock-grails</module>
+        <module>spock-unitils</module>
+        <module>spock-grails-support</module>
+        <module>spock-grails</module>
       </modules>
     </profile>
     <profile>
@@ -216,6 +218,7 @@
         <module>spock-guice</module>
         <module>spock-spring</module>
         <module>spock-unitils</module>
+        <module>spock-grails-support</module>
       </modules>
       <properties>
         <sonar.jdbc.url>jdbc:mysql://localhost:3306/sonar?useUnicode=true&amp;characterEncoding=utf8</sonar.jdbc.url>
@@ -237,6 +240,7 @@
         <module>spock-guice</module>
         <module>spock-spring</module>
         <module>spock-unitils</module>
+        <module>spock-grails-support</module>
       </modules>
       <build>
         <plugins>

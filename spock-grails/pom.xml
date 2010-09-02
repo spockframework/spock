@@ -14,14 +14,10 @@
   <name>Spock Framework - Grails Plugin</name>
   <url>http://grails.org/plugin/spock</url>
 
-  <properties>
-    <grails.version>1.3.3</grails.version>
-  </properties>   
-
   <dependencies>
     <dependency>
       <groupId>org.spockframework</groupId>
-      <artifactId>spock-core</artifactId>
+      <artifactId>spock-grails-support</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

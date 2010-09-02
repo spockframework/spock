@@ -33,7 +33,7 @@ grails.project.dependency.resolution = {
   }
   
   dependencies {
-    build 'org.spockframework:spock-core:0.5-groovy-1.7-SNAPSHOT'
-    build 'junit:junit:4.8.1'
+    test 'org.spockframework:spock-grails-support:0.5-groovy-1.7-SNAPSHOT'
+    test 'junit:junit:4.8.1'
   }
 }

@@ -107,7 +107,7 @@
   </dependencies>
 
   <repositories>
-<!-- Required to get hold of JTA -->
+    <!-- Required to get hold of JTA -->
     <repository>
       <id>dev.java.net</id>
       <url>http://download.java.net/maven/2/</url>
@@ -124,8 +124,8 @@
 
   <pluginRepositories>
     <pluginRepository>
-	  <id>codehaus</id>
-	  <url>http://repository.codehaus.org</url>
+    <id>codehaus</id>
+    <url>http://repository.codehaus.org</url>
     </pluginRepository>
   </pluginRepositories>
 
@@ -139,12 +139,12 @@
         <version>1.2.2</version>
         <extensions>true</extensions>   
         <dependencies>
-	      <dependency> <!-- missing dependency -->
-		    <groupId>org.aspectj</groupId>
-		    <artifactId>aspectjrt</artifactId>
-		    <version>1.6.6</version>
-		  </dependency>
-		</dependencies>
+        <dependency> <!-- missing dependency -->
+        <groupId>org.aspectj</groupId>
+        <artifactId>aspectjrt</artifactId>
+        <version>1.6.6</version>
+      </dependency>
+    </dependencies>
         <executions>
           <execution>
             <id>build</id>

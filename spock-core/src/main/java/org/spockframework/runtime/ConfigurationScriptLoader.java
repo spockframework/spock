@@ -17,6 +17,7 @@ package org.spockframework.runtime;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.security.AccessControlException;
 
 import org.codehaus.groovy.control.CompilationFailedException;
 import org.codehaus.groovy.control.CompilerConfiguration;
@@ -97,12 +98,20 @@ public class ConfigurationScriptLoader {
 
   private @Nullable DelegatingScript loadScriptFromFileSystemLocation(String location) {
     File file = new File(location);
-    if (!file.exists()) return null;
+
+    try {
+      if (!file.exists()) return null;
+    } catch (AccessControlException e) {
+      // no permission to check for existence of file (e.g. on Spock Web Console),
+      // so let's just assume it's not there and continue
+      return null;
+    }
 
     GroovyShell shell = createShell();
+
     try {
       return (DelegatingScript) shell.parse(file);
-      } catch (IOException e) {
+    } catch (IOException e) {
       throw new ConfigurationException("Error reading configuration script '%s'", location);
     } catch (CompilationFailedException e) {
       throw new ConfigurationException("Error compiling configuration script '%s'", location);

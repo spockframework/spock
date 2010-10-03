@@ -31,7 +31,8 @@ grails.project.dependency.resolution = {
   }
   
   dependencies {
-    test 'org.spockframework:spock-grails-support:0.5-groovy-1.6-SNAPSHOT'
-    test 'junit:junit:4.8.1'
+    test('org.spockframework:spock-grails-support:0.5-groovy-1.6-SNAPSHOT') {
+      exclude "groovy-all"
+    }
   }
 }

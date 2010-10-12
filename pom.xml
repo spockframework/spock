@@ -26,6 +26,7 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <!-- can't switch to later versions until http://jira.codehaus.org/browse/GRAILS-6819 is fixed -->
     <grails.version>1.2.3</grails.version>
   </properties>
 

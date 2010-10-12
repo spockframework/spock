@@ -39,43 +39,12 @@
       <groupId>org.grails</groupId>
       <artifactId>grails-gorm</artifactId>
       <version>${grails.version}</version>
-      <exclusions>
-        <exclusion> <!-- grails-gorm POM requires version 3.4.0.ga of this dependency which doesn't exist -->
-          <groupId>org.hibernate</groupId>
-          <artifactId>hibernate-commons-annotations</artifactId> 
-        </exclusion>
-        <exclusion> <!-- grails-gorm POM requires version 3.4.0.ga of this dependency but it's 3.4.0.GA -->
-          <groupId>org.hibernate</groupId>
-          <artifactId>hibernate-annotations</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
-    <dependency>
-      <groupId>org.hibernate</groupId>
-      <artifactId>hibernate-commons-annotations</artifactId>
-      <version>3.1.0.GA</version>
-    </dependency>
-    <dependency>
-      <groupId>org.hibernate</groupId>
-      <artifactId>hibernate-annotations</artifactId>
-      <version>3.4.0.GA</version>
-      <exclusions>
-        <exclusion>
-          <groupId>xml-apis</groupId>
-          <artifactId>xml-apis</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
+
     <dependency>
       <groupId>org.grails</groupId>
       <artifactId>grails-test</artifactId>
       <version>${grails.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>javassist</groupId>
-      <artifactId>javassist</artifactId>
-      <version>3.4.GA</version>
-      <optional>true</optional>
     </dependency>
 
     <!-- Grails defaults to OSCache for the second-level Hibernate cache. -->
@@ -126,6 +95,13 @@
       <version>1.3.1</version>
       <scope>runtime</scope>
     </dependency>
+
+    <!-- missing from multiple Grails POMs (no longer just from grails-maven-plugin POM) -->
+    <dependency>
+      <groupId>org.aspectj</groupId>
+      <artifactId>aspectjrt</artifactId>
+      <version>1.6.8</version>
+    </dependency>
   </dependencies>
 
   <repositories>
@@ -142,14 +118,8 @@
       <id>springsource</id>
       <url>http://maven.springframework.org/release</url>
     </repository>
-    <!-- necessary to compensate for the fact that org.grails:grails:1.3.0.RC2:pom
-    is missing from public Maven repos -->
-    <repository>
-      <id>spock-snapshots</id>
-      <url>http://m2repo.spockframework.org/snapshots</url>
-    </repository>
-    <!-- necessary to compensate for the fact that GPars 0.9 POM mistakenly has non-optional
-     dependency on netty. Excludes don't work because grails-maven-plugin ignores them. -->
+
+    <!-- Required to get hold of netty and javassist versions which don't exist in Central -->
     <repository>
       <id>jboss</id>
       <url>http://repository.jboss.com/maven2</url>
@@ -170,15 +140,9 @@
       <plugin>
         <groupId>org.grails</groupId>
         <artifactId>grails-maven-plugin</artifactId>
-        <version>1.3.2</version>
-        <extensions>true</extensions>   
-        <dependencies>
-        <dependency> <!-- missing dependency -->
-        <groupId>org.aspectj</groupId>
-        <artifactId>aspectjrt</artifactId>
-        <version>1.6.6</version>
-      </dependency>
-    </dependencies>
+        <!-- can't switch to later versions until http://jira.codehaus.org/browse/GRAILS-6819 is fixed -->
+        <version>1.3.4</version>
+        <extensions>true</extensions>
         <executions>
           <execution>
             <id>build</id>

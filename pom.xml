@@ -27,7 +27,7 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <grails.version>1.3.3</grails.version>
+    <grails.version>1.3.4</grails.version>
   </properties>
 
   <build>
@@ -100,7 +100,7 @@
             <dependency>
               <groupId>org.codehaus.groovy</groupId>
               <artifactId>groovy-all</artifactId>
-              <version>1.7.4</version>
+              <version>1.7.5</version>
             </dependency>   
             <dependency> <!-- required by GMaven's execute goal -->
               <groupId>org.apache.ant</groupId>
@@ -135,7 +135,7 @@
       <dependency>
         <groupId>org.codehaus.groovy</groupId>
         <artifactId>groovy-all</artifactId>
-        <version>1.7.4</version>
+        <version>1.7.5</version>
       </dependency>
       <dependency>
         <groupId>junit</groupId>

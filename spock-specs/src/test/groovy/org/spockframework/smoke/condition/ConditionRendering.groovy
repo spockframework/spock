@@ -735,10 +735,6 @@ ${func.toString()}
       // cannot occur in condition
   }
 
-  def "RegexExpression"() {
-      // unused AST node
-  }
-
   def "ClosureListExpression"() {
       // cannot occur in condition
   }

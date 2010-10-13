@@ -127,10 +127,6 @@ public class ExpressionInfoConverter extends AbstractExpressionConverter<Express
     unsupported();
   }
 
-  public void visitRegexExpression(RegexExpression expr) {
-    unsupported(); // unused AST node
-  }
-
   public void visitConstantExpression(ConstantExpression expr) {
     result = new ExpressionInfo(
         TextRegion.of(expr),

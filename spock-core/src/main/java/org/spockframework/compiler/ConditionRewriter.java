@@ -187,10 +187,6 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> {
     unsupported(); // cannot occur in condition
   }
 
-  public void visitRegexExpression(RegexExpression expr) {
-    unsupported(); // unused AST node
-  }
-
   public void visitBinaryExpression(BinaryExpression expr) {
     BinaryExpression conversion =
         new BinaryExpression(

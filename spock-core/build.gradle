@@ -5,6 +5,7 @@ project(":spock-core") {
     compile cglib
     compile objenesis
     compile antDep
+    compile hamcrest_core
   }
 }
 

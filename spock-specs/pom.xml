@@ -50,7 +50,12 @@
     </dependency>
     <dependency>
       <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
+      <artifactId>junit-dep</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.hamcrest</groupId>
+      <artifactId>hamcrest-core</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -115,7 +120,7 @@
 
   <repositories>
     <!-- for experimenting with libs that aren't in Central
-    (new JUnit versions, Hamcrest 1.2, etc.) -->
+    (e.g. new JUnit versions) -->
     <repository>
       <id>spock-ext</id>
       <url>http://m2repo.spockframework.org/ext</url>

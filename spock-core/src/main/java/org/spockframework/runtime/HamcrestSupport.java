@@ -33,18 +33,18 @@ public abstract class HamcrestSupport {
   private static final boolean hamcrestAvailable = ReflectionUtil.isClassAvailable("org.hamcrest.Matcher");
 
   public static boolean isMatcher(Object obj) {
-    return hamcrestAvailable && ActualHamcrestSupport.isMatcher(obj);
+    return hamcrestAvailable && HamcrestSupportImpl.isMatcher(obj);
   }
 
   public static boolean matches(Object matcher, Object value) {
-    return ActualHamcrestSupport.matches(matcher, value);
+    return HamcrestSupportImpl.matches(matcher, value);
   }
 
   public static String getFailureDescription(Object matcher, Object value) {
-    return ActualHamcrestSupport.getFailureDescription(matcher, value);
+    return HamcrestSupportImpl.getFailureDescription(matcher, value);
   }
 
-  private static abstract class ActualHamcrestSupport {
+  private static abstract class HamcrestSupportImpl {
     private static final Method describeMismatchMethod =
         ReflectionUtil.getMethodByName(Matcher.class, "describeMismatch");
 

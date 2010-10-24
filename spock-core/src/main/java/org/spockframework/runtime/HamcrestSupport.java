@@ -30,36 +30,47 @@ import org.spockframework.util.ReflectionUtil;
  * @author Peter Niederwieser
  */
 public abstract class HamcrestSupport {
-  private static final boolean hamcrestAvailable;
-  private static final Method describeMismatchMethod;
-
-  static {
-    hamcrestAvailable = ReflectionUtil.isClassAvailable("org.hamcrest.Matcher");
-    describeMismatchMethod = hamcrestAvailable ? ReflectionUtil.getMethodByName(Matcher.class, "describeMismatch") : null;
-  }
+  private static final boolean hamcrestAvailable = ReflectionUtil.isClassAvailable("org.hamcrest.Matcher");
 
   public static boolean isMatcher(Object obj) {
-    return hamcrestAvailable && obj instanceof Matcher;
+    return hamcrestAvailable && ActualHamcrestSupport.isMatcher(obj);
   }
 
   public static boolean matches(Object matcher, Object value) {
-    return ((Matcher) matcher).matches(value);
+    return ActualHamcrestSupport.matches(matcher, value);
   }
 
   public static String getFailureDescription(Object matcher, Object value) {
-    Description description = new StringDescription();
-    description.appendText("Expected: ")
-        .appendDescriptionOf((Matcher) matcher);
+    return ActualHamcrestSupport.getFailureDescription(matcher, value);
+  }
 
-    if (describeMismatchMethod == null) { // 1.1
-      description.appendText("\n     got: ")
-          .appendValue(value);
-    } else { // 1.2
-      description.appendText("\n     but: ");
-      ReflectionUtil.invokeMethod(matcher, describeMismatchMethod, void.class, value, description);
+  private static abstract class ActualHamcrestSupport {
+    private static final Method describeMismatchMethod =
+        ReflectionUtil.getMethodByName(Matcher.class, "describeMismatch");
+
+    public static boolean isMatcher(Object obj) {
+      return obj instanceof Matcher;
     }
 
-    return description.toString();
+    public static boolean matches(Object matcher, Object value) {
+      return ((Matcher) matcher).matches(value);
+    }
+
+    public static String getFailureDescription(Object matcher, Object value) {
+      Description description = new StringDescription();
+      description.appendText("Expected: ")
+          .appendDescriptionOf((Matcher) matcher);
+
+      if (describeMismatchMethod == null) { // 1.1
+        description.appendText("\n     got: ")
+            .appendValue(value);
+      } else { // 1.2
+        description.appendText("\n     but: ");
+        ReflectionUtil.invokeMethod(matcher, describeMismatchMethod, void.class, value, description);
+      }
+
+      return description.toString();
+    }
   }
 }
 

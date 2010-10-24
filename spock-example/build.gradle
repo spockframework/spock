@@ -1,4 +1,4 @@
-usePlugin("groovy")
+apply plugin: "groovy"
 
 repositories {
   mavenCentral()
@@ -8,9 +8,7 @@ repositories {
 
 dependencies {
   // mandatory dependencies for using Spock
-  groovy("org.codehaus.groovy:groovy-all:1.7.3") {
-    exclude module: "jansi"
-  }
+  groovy("org.codehaus.groovy:groovy-all:1.7.5")
   testCompile "org.spockframework:spock-core:0.5-groovy-1.7-SNAPSHOT"
   testCompile "junit:junit-dep:4.8.2"
   testCompile "org.hamcrest:hamcrest-core:1.2"

@@ -88,6 +88,7 @@
             classpathref="classpath.spock" />
         </fileset>
       </batchtest>
+      <formatter type="brief" usefile="false" />
     </junit>
   </target>
 

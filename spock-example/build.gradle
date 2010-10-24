@@ -1,4 +1,4 @@
-usePlugin("groovy")
+apply plugin: "groovy"
 
 repositories {
   mavenCentral()
@@ -12,7 +12,7 @@ dependencies {
   // mandatory dependencies for using Spock
   groovy "org.codehaus.groovy:groovy-all:1.8.0-beta-3-SNAPSHOT"
   testCompile "org.spockframework:spock-core:0.5-groovy-1.8-SNAPSHOT"
-  testCompile "junit:junit:4.8.1"
+  testCompile "junit:junit-dep:4.8.2"
 
   // optional dependencies for using Spock
   testRuntime "cglib:cglib-nodep:2.2"     // enables mocking of classes (in addition to interfaces)
@@ -24,7 +24,7 @@ dependencies {
 
 // creates bootstrap files (gradlew etc.) for Gradle build (not required for using Spock)
 task wrapper(type: Wrapper) {
-  gradleVersion = '0.8'
+  gradleVersion = '0.9-rc-1'
   jarPath = 'wrapper'
 }
 

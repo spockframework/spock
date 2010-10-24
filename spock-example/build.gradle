@@ -1,4 +1,4 @@
-usePlugin("groovy")
+apply plugin: "groovy"
 
 repositories {
   mavenCentral()

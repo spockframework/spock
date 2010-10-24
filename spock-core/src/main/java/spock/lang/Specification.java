@@ -16,7 +16,6 @@
 
 package spock.lang;
 
-import org.hamcrest.Matcher;
 import org.junit.runner.RunWith;
 
 import org.spockframework.mock.MockController;

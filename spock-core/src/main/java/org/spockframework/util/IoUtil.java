@@ -29,23 +29,41 @@ public class IoUtil {
     }
   }
 
-  public static String getText(File path) throws IOException {
-    StringBuilder source = new StringBuilder();
-    BufferedReader reader = null;
-
+  /**
+   * Returns the text read from the given reader as a String.
+   * Closes the given reader upon return.
+   */
+  public static String getText(Reader reader) throws IOException {
     try {
-      reader = new BufferedReader(new FileReader(path));
-      String line = reader.readLine();
+      StringBuilder source = new StringBuilder();
+      BufferedReader buffered = new BufferedReader(reader);
+      String line = buffered.readLine();
+
       while (line != null) {
         source.append(line);
         source.append('\n');
-        line = reader.readLine();
+        line = buffered.readLine();
       }
+
+      return source.toString();
     } finally {
       closeQuietly(reader);
     }
+  }
 
-    return source.toString();
+  /**
+   * Returns the text read from the given file as a String.
+   */
+  public static String getText(File path) throws IOException {
+    return getText(new FileReader(path));
+  }
+
+  /**
+   * Returns the text read from the given stream as a String.
+   * Closes the given stream upon return.
+   */
+  public static String getText(InputStream stream) throws IOException {
+    return getText(new InputStreamReader(stream));
   }
 
   public static void createDirectory(File dir) throws IOException {

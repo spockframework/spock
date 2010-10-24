@@ -16,6 +16,8 @@ package org.spockframework.util;
 
 import java.beans.Introspector;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
 
@@ -92,6 +94,16 @@ public abstract class ReflectionUtil {
     if (!dir.isDirectory()) return null; // class file might be contained in Jar
     File clazzFile = new File(dir, clazz.getName().replace('.', File.separatorChar) + ".class");
     return clazzFile.isFile() ? clazzFile : null;
+  }
+
+  /**
+   * Returns the contents of the file in which the given class is declared,
+   * or null if the file cannot be found;
+   */
+  public static String getSourceCode(String packageName, String filename) throws IOException {
+    String resourceName = packageName.replace('.', '/') + "/" + filename;
+    InputStream stream = ReflectionUtil.class.getClassLoader().getResourceAsStream(resourceName);
+    return stream == null ? null : IoUtil.getText(stream);
   }
 
   // IDEA: replace with MethodInvoker(Builder)

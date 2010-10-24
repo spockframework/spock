@@ -28,6 +28,11 @@
       <groupId>org.codehaus.groovy</groupId>
       <artifactId>groovy-all</artifactId>
     </dependency>
+    <dependency> <!-- Hamcrest support -->
+      <groupId>org.hamcrest</groupId>
+      <artifactId>hamcrest-core</artifactId>
+      <scope>provided</scope>
+    </dependency>
     <dependency> <!-- clients that want to use org.spockframework.buildsupport need to include this dependency -->
       <groupId>asm</groupId>
       <artifactId>asm</artifactId>
@@ -40,7 +45,7 @@
     </dependency>
     <dependency>
       <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
+      <artifactId>junit-dep</artifactId>
     </dependency>
     <dependency> <!-- clients that want to mock classes (in addition to interfaces) need to include this dependency -->
       <groupId>cglib</groupId>
@@ -51,6 +56,6 @@
       <groupId>org.objenesis</groupId>
       <artifactId>objenesis</artifactId>
       <optional>true</optional>
-    </dependency>     
+    </dependency>
   </dependencies>
 </project>

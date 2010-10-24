@@ -43,6 +43,16 @@
         groupId="asm"
         artifactId="asm"
         version="3.2" />
+      <!-- only necessary if Hamcrest matchers are used -->
+      <dependency
+          groupId="org.hamcrest"
+          artifactId="hamcrest-core"
+          version="1.2" />
+      <!-- only necessary if Hamcrest matchers are used -->
+      <dependency
+          groupId="org.hamcrest"
+          artifactId="hamcrest-core"
+          version="1.2" />
 <!-- Dependencies used by examples in this project (not required for using Spock) -->
       <dependency
         groupId="com.h2database"

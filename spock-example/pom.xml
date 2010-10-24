@@ -108,6 +108,12 @@
       <version>1.2</version>
       <scope>test</scope>
     </dependency>
+    <dependency> <!-- only necessary if Hamcrest matchers are used -->
+      <groupId>org.hamcrest</groupId>
+      <artifactId>hamcrest-core</artifactId>
+      <version>1.2</version>
+      <scope>test</scope>
+    </dependency>
     <!-- Dependencies used by examples in this project (not required for using Spock) -->
     <dependency>
       <groupId>com.h2database</groupId>

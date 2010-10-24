@@ -30,6 +30,10 @@ public class SpockReleaseInfo {
   }
 
   public static boolean isCompatibleWithGroovyVersion(VersionNumber groovyVersion) {
+    // be graceful if Groovy version cannot be determined
+    // see http://groups.google.com/group/spockframework/browse_thread/thread/ad3a4da300d357fc
+    if (groovyVersion == VersionNumber.UNKNOWN) return true;
+
     return minGroovyVersion.compareTo(groovyVersion) <= 0
         && maxGroovyVersion.compareTo(groovyVersion) >= 0;
   }

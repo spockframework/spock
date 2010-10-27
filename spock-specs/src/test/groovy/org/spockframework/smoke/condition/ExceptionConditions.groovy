@@ -18,6 +18,8 @@ package org.spockframework.smoke.condition
 
 import org.spockframework.EmbeddedSpecification
 import org.spockframework.compiler.InvalidSpecCompileException
+import org.spockframework.runtime.InvalidSpecException
+import spock.lang.FailsWith
 
 /**
  * @author Peter Niederwieser
@@ -144,5 +146,23 @@ then: thrown(Exception)
     then:
     InvalidSpecCompileException e = thrown()
     e.line == 3
+  }
+
+  @FailsWith(InvalidSpecException)
+  def "(Java-style) exception condition must specify a type that is-a java.lang.Throwable"() {
+    when:
+    println()
+
+    then:
+    String str = thrown()
+  }
+
+  @FailsWith(InvalidSpecException)
+  def "(Groovy-style) exception condition must specify a type that is-a java.lang.Throwable"() {
+    when:
+    println()
+
+    then:
+    thrown(String)
   }
 }

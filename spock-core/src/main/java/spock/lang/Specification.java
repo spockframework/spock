@@ -220,7 +220,13 @@ public abstract class Specification {
 
   @SuppressWarnings("UnusedDeclaration")
   <T extends Throwable> T thrown(Class<T> type, String name, Throwable exception) {
+    if (!Throwable.class.isAssignableFrom(type))
+      throw new InvalidSpecException(
+"Invalid exception condition: '%s' is not a (subclass of) java.lang.Throwable"
+      ).withArgs(type.getSimpleName());
+
     if (type.isInstance(exception)) return type.cast(exception);
+
     throw new WrongExceptionThrownError(type, exception);
   }
 

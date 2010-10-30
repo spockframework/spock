@@ -20,17 +20,19 @@ class TestIntegrationSpec extends IntegrationSpec {
   def simpleService
 
   def "injected simpleService is present"() {
-    expect:
+    when:
     simpleService.name = input
+
+    then:
     simpleService.name == input
 
     where:
-    input << ["bob"]
+    input = "bob"
   }
 
   def "can write to database"() {
     expect:
-    def p = new Person(name: 'n').save() != null
-    Person.findByName('n') != null
+    new Person(name: 'fred').save() != null
+    Person.findByName('fred') != null
   }
 }

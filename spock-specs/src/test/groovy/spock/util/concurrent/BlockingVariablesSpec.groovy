@@ -85,9 +85,9 @@ class BlockingVariablesSpec extends Specification {
     }
 
     then:
-    vars.foo = 1
-    vars.bar = 2
-    vars.baz = 3
+    vars.foo == 1
+    vars.bar == 2
+    vars.baz == 3
   }
 
   def "variable may be null"() {

@@ -57,6 +57,7 @@ class InitializationOfUnsharedFields extends Specification {
     c == 0
     d == 1
 
+    cleanup:
     // should have no effect on subsequent execution
     a = b = c = d = 11111
   }
@@ -102,6 +103,7 @@ class InitializationOfSharedFields extends Specification {
     c == 2
     d == 1
 
+    cleanup:
     d = 2
   }
 

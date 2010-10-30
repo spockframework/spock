@@ -411,6 +411,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
       } else if (statHasInteraction(newStat, deep))
         errorReporter.error(newStat, "Interactions are only allowed in 'then' blocks");
       else if (isImplicitCondition(newStat)) {
+        checkIsValidCondition(newStat);
         iter.set(rewriteImplicitCondition(newStat));
         methodHasCondition = true;
       }
@@ -440,6 +441,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
         interactions.add(newStat);
         iter.remove();
       } else if (isImplicitCondition(newStat)) {
+        checkIsValidCondition(newStat);
         iter.set(rewriteImplicitCondition(newStat));
         methodHasCondition = true;
       }
@@ -453,6 +455,15 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
         && !(((ExpressionStatement)stat).getExpression() instanceof DeclarationExpression);
   }
 
+  private void checkIsValidCondition(Statement stat) {
+    BinaryExpression binExpr = AstUtil.getExpression(stat, BinaryExpression.class);
+    if (binExpr == null) return;
+
+    if (Types.ofType(binExpr.getOperation().getType(), Types.ASSIGNMENT_OPERATOR)) {
+      errorReporter.error(stat, "Expected a condition, but found an assignment. Did you intend to write '==' ?");
+    }
+  }
+
   private Statement rewriteImplicitCondition(Statement stat) {
     return ConditionRewriter.rewriteImplicitCondition((ExpressionStatement)stat, this);
   }
@@ -464,7 +475,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
 
   private void rewriteExceptionCondition(Statement stat) {
     if (thenBlockHasExceptionCondition) {
-      errorReporter.error(stat, "a 'then' block may only have one exception condition");
+      errorReporter.error(stat, "A 'then' block may only have one exception condition");
       return;
     }
 

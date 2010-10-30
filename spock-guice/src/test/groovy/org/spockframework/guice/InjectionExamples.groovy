@@ -41,11 +41,11 @@ class InjectionExamples extends Specification {
   String namedValue2
 
   @Inject
-  BindingAnnotation1
+  @BindingAnnotation1
   String annotatedValue1
 
   @Inject
-  BindingAnnotation2
+  @BindingAnnotation2
   String annotatedValue2
   
   IService1 copiedService = service
@@ -101,8 +101,8 @@ class InjectionExamples extends Specification {
 
   def "using a binding annotation"() {
     expect:
-    annotatedValue1 = "annotated value 1"
-    annotatedValue2 = "annotated value 2"
+    annotatedValue1 == "annotated value 1"
+    annotatedValue2 == "annotated value 2"
   }
 
   def "accessing injected values from field initializers"() {

@@ -153,8 +153,8 @@ a | a
 
   def "cells can reference shared and static fields"() {
     expect:
-    a = 42
-    b = 42
+    a == 42
+    b == 42
 
     where:
     a           | b

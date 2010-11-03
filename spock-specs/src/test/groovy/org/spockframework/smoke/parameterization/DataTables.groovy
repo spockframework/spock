@@ -1,4 +1,3 @@
-
 /*
  * Copyright 2010 the original author or authors.
  *
@@ -56,6 +55,16 @@ a
     then:
     MultipleFailureException e = thrown()
     e.failures*.class == [InvalidSpecCompileException] * 2
+  }
+
+  def "can use wildcards to effectively turn one-column table into two-column"() {
+    expect:
+    a == 1
+    _ == _ // won't use this in practice
+
+    where:
+    a | _
+    1 | _
   }
 
   def "table with just a header are not allowed"() {
@@ -161,14 +170,25 @@ a | a
     staticField | sharedField
   }
 
-  def "cells cannot reference instance fields (will appear to have their type's default value)"() {
-    expect:
-    a == null
-    b == 1
+  @Issue("http://issues.spockframework.org/detail?id=139")
+  def "cells cannot reference instance fields (only @Shared and static fields)"() {
+    when:
+    compiler.compileSpecBody """
+def instanceField
 
-    where:
-    a             | b
-    instanceField | 1
+def foo() {
+  expect:
+  true
+
+  where:
+  a             | b
+  instanceField | 1
+}
+    """
+
+    then:
+    InvalidSpecCompileException e = thrown()
+    e.message.contains("@Shared")
   }
 
   def "cells cannot reference local variables (won't be found)"() {

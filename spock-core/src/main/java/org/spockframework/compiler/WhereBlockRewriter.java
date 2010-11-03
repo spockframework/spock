@@ -35,8 +35,8 @@ import org.spockframework.util.*;
  */
 public class WhereBlockRewriter {
   private final WhereBlock whereBlock;
-  private final AstNodeCache nodeCache;
-  private final ErrorReporter errorReporter;
+  private final IRewriteResourceProvider resources;
+  private final InstanceFieldAccessChecker instanceFieldAccessChecker;
 
   private int dataProviderCount = 0;
   // parameters of the data processor method (one for each data provider)
@@ -46,14 +46,14 @@ public class WhereBlockRewriter {
   // parameterization variables of the data processor method
   private final List<VariableExpression> dataProcessorVars = new ArrayList<VariableExpression>();
 
-  private WhereBlockRewriter(WhereBlock whereBlock, AstNodeCache nodeCache, ErrorReporter errorReporter) {
+  private WhereBlockRewriter(WhereBlock whereBlock, IRewriteResourceProvider resources) {
     this.whereBlock = whereBlock;
-    this.nodeCache = nodeCache;
-    this.errorReporter = errorReporter;
+    this.resources = resources;
+    instanceFieldAccessChecker = new InstanceFieldAccessChecker(resources);
   }
 
-  public static void rewrite(WhereBlock block, AstNodeCache nodeCache, ErrorReporter errorReporter) {
-    new WhereBlockRewriter(block, nodeCache, errorReporter).rewrite();
+  public static void rewrite(WhereBlock block, IRewriteResourceProvider resources) {
+    new WhereBlockRewriter(block, resources).rewrite();
   }
 
   private void rewrite() {
@@ -62,7 +62,7 @@ public class WhereBlockRewriter {
       try {
         rewriteWhereStat(stats);
       } catch (InvalidSpecCompileException e) {
-        errorReporter.error(e);
+        resources.getErrorReporter().error(e);
       }
 
     whereBlock.getAst().clear();
@@ -96,6 +96,8 @@ public class WhereBlockRewriter {
   }
 
   private void createDataProviderMethod(Expression dataProviderExpr, int nextDataVariableIndex) {
+    instanceFieldAccessChecker.check(dataProviderExpr);
+
     MethodNode method =
         new MethodNode(
             InternalIdentifiers.getDataProviderName(whereBlock.getParent().getAst().getName(), dataProviderCount++),
@@ -114,7 +116,7 @@ public class WhereBlockRewriter {
   }
 
   private AnnotationNode createDataProviderAnnotation(Expression dataProviderExpr, int nextDataVariableIndex) {
-    AnnotationNode ann = new AnnotationNode(nodeCache.DataProviderMetadata);
+    AnnotationNode ann = new AnnotationNode(resources.getAstNodeCache().DataProviderMetadata);
     ann.addMember(DataProviderMetadata.LINE, new ConstantExpression(dataProviderExpr.getLineNumber()));
     ann.addMember(DataProviderMetadata.COLUMN, new ConstantExpression(dataProviderExpr.getColumnNumber()));
     List<Expression> dataVariableNames = new ArrayList<Expression>();
@@ -272,17 +274,17 @@ public class WhereBlockRewriter {
   private void verifyDataProcessorVariable(VariableExpression varExpr) {
     Variable accessedVar = varExpr.getAccessedVariable();
     if (!(accessedVar instanceof DynamicVariable || accessedVar instanceof Parameter)) {
-      errorReporter.error(varExpr, "A variable named '%s' already exists in this scope", varExpr.getName());
+      resources.getErrorReporter().error(varExpr, "A variable named '%s' already exists in this scope", varExpr.getName());
       return;
     }
 
     if (whereBlock.getParent().getAst().getParameters().length == 0) {
       assert accessedVar instanceof DynamicVariable;
       if (getDataProcessorVariable(varExpr.getName()) != null)
-        errorReporter.error(varExpr, "Duplicate declaration of data variable '%s'", varExpr.getName());
+        resources.getErrorReporter().error(varExpr, "Duplicate declaration of data variable '%s'", varExpr.getName());
     } else {
       if (!(accessedVar instanceof Parameter))
-        errorReporter.error(varExpr,
+        resources.getErrorReporter().error(varExpr,
             "Data variable '%s' needs to be declared as method parameter",
             varExpr.getName());
     }
@@ -306,7 +308,7 @@ public class WhereBlockRewriter {
   private void checkAllParametersAreDataVariables(Parameter[] parameters) {
     for (Parameter param : parameters)
       if (getDataProcessorVariable(param.getName()) == null)
-        errorReporter.error(param, "Parameter '%s' does not refer to a data variable", param.getName());
+        resources.getErrorReporter().error(param, "Parameter '%s' does not refer to a data variable", param.getName());
   }
 
   private void addFeatureParameters() {

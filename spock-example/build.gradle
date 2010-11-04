@@ -1,4 +1,8 @@
+import org.gradle.api.tasks.wrapper.Wrapper.PathBase
+
 apply plugin: "groovy"
+apply plugin: "idea"
+apply plugin: "eclipse"
 
 repositories {
   mavenCentral()
@@ -22,8 +26,10 @@ dependencies {
 
 // creates bootstrap files (gradlew etc.) for Gradle build (not required for using Spock)
 task wrapper(type: Wrapper) {
-  gradleVersion = '0.9-rc-1'
-  jarPath = 'wrapper'
+  gradleVersion = "0.9-rc-2"
+  jarPath = "wrapper"
+  archiveBase = PathBase.PROJECT
+  distributionBase = PathBase.PROJECT
 }
 
 

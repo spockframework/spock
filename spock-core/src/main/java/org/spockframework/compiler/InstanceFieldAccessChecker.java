@@ -36,9 +36,9 @@ import spock.lang.Shared;
 // it's not as clear how this should be done (for example,
 // 'x' could refer to a property)
 public class InstanceFieldAccessChecker extends ClassCodeVisitorSupport {
-  private final IRewriteResourceProvider resources;
+  private final IRewriteResources resources;
 
-  public InstanceFieldAccessChecker(IRewriteResourceProvider resources) {
+  public InstanceFieldAccessChecker(IRewriteResources resources) {
     this.resources = resources;
   }
 

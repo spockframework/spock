@@ -37,7 +37,7 @@ import spock.lang.Specification;
  * @author Peter Niederwieser
  */
 public class InteractionRewriter {
-  private final IRewriteResourceProvider resourceProvider;
+  private final IRewriteResources resources;
 
   // information about the interaction; filled in by parse()
   private ExpressionStatement stat;
@@ -51,8 +51,8 @@ public class InteractionRewriter {
   // "new InteractionBuilder(..).setCount(..).setTarget(..).setMethod(..).addArg(..).setResult(..).build()"
   private Expression builderExpr;
 
-  public InteractionRewriter(IRewriteResourceProvider resourceProvider) {
-    this.resourceProvider = resourceProvider;
+  public InteractionRewriter(IRewriteResources resources) {
+    this.resources = resources;
   }
 
   /**
@@ -72,7 +72,7 @@ public class InteractionRewriter {
       build();
       return register();
     } catch (InvalidSpecCompileException e) {
-      resourceProvider.getErrorReporter().error(e);
+      resources.getErrorReporter().error(e);
       return null;
     }
   }
@@ -151,12 +151,12 @@ public class InteractionRewriter {
     Expression expr = stat.getExpression();
 
     builderExpr = new ConstructorCallExpression(
-        resourceProvider.getAstNodeCache().InteractionBuilder,
+        resources.getAstNodeCache().InteractionBuilder,
         new ArgumentListExpression(
             Arrays.asList(
                 new ConstantExpression(expr.getLineNumber()),
                 new ConstantExpression(expr.getColumnNumber()),
-                new ConstantExpression(resourceProvider.getSourceText(expr)))));
+                new ConstantExpression(resources.getSourceText(expr)))));
   }
 
   private void setCount() {
@@ -308,7 +308,7 @@ public class InteractionRewriter {
     Statement result =
         new ExpressionStatement(
             new MethodCallExpression(
-                resourceProvider.getMockControllerRef(),
+                resources.getMockControllerRef(),
                 MockController.ADD_INTERACTION,
                 new ArgumentListExpression(builderExpr)));
 

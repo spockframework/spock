@@ -35,7 +35,7 @@ import org.spockframework.util.*;
  */
 public class WhereBlockRewriter {
   private final WhereBlock whereBlock;
-  private final IRewriteResourceProvider resources;
+  private final IRewriteResources resources;
   private final InstanceFieldAccessChecker instanceFieldAccessChecker;
 
   private int dataProviderCount = 0;
@@ -46,13 +46,13 @@ public class WhereBlockRewriter {
   // parameterization variables of the data processor method
   private final List<VariableExpression> dataProcessorVars = new ArrayList<VariableExpression>();
 
-  private WhereBlockRewriter(WhereBlock whereBlock, IRewriteResourceProvider resources) {
+  private WhereBlockRewriter(WhereBlock whereBlock, IRewriteResources resources) {
     this.whereBlock = whereBlock;
     this.resources = resources;
     instanceFieldAccessChecker = new InstanceFieldAccessChecker(resources);
   }
 
-  public static void rewrite(WhereBlock block, IRewriteResourceProvider resources) {
+  public static void rewrite(WhereBlock block, IRewriteResources resources) {
     new WhereBlockRewriter(block, resources).rewrite();
   }
 

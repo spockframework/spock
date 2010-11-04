@@ -38,7 +38,7 @@ import org.spockframework.runtime.SpockRuntime;
  * @author Peter Niederwieser
  */
 // IDEA: mock controller / leaveScope calls should only be inserted when necessary (increases robustness)
-public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourceProvider {
+public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResources {
   private final AstNodeCache nodeCache;
   private final SourceLookup lookup;
   private final ErrorReporter errorReporter;
@@ -554,7 +554,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
     movedStatsBackToMethod = true;
   }
 
-  // IRewriteResourceProvider members
+  // IRewriteResources members
 
   public Spec getCurrentSpec() {
     return spec;

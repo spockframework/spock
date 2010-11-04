@@ -38,7 +38,7 @@ import org.spockframework.runtime.SpockRuntime;
  * @author Peter Niederwieser
  */
 // IDEA: mock controller / leaveScope calls should only be inserted when necessary (increases robustness)
-public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourceProvider {
+public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResources {
   private final AstNodeCache nodeCache;
   private final SourceLookup lookup;
   private final ErrorReporter errorReporter;
@@ -299,13 +299,20 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
     methodHasCondition = false;
     movedStatsBackToMethod = false;
 
-    if (method instanceof FixtureMethod)
+    if (method instanceof FixtureMethod) {
+      checkFieldAccessInFixtureMethod(method);
       // de-virtualize method s.t. multiple fixture methods along hierarchy can be called independently
       AstUtil.setVisibility(method.getAst(), Opcodes.ACC_PRIVATE);
-    else if (method instanceof FeatureMethod) {
+    } else if (method instanceof FeatureMethod) {
       transplantMethod(method);
       handleWhereBlock(method);
     }
+  }
+
+  private void checkFieldAccessInFixtureMethod(Method method) {
+    if (!(method == spec.getSetupSpec() || method == spec.getCleanupSpec())) return;
+
+    new InstanceFieldAccessChecker(this).check(method);
   }
 
   private void transplantMethod(Method method) {
@@ -367,7 +374,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
     }
 
     new DeepStatementRewriter(this).visitBlock(block);
-    WhereBlockRewriter.rewrite((WhereBlock)block, nodeCache, errorReporter);
+    WhereBlockRewriter.rewrite((WhereBlock) block, this);
   }
 
   public void visitMethodAgain(Method method) {
@@ -547,7 +554,11 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
     movedStatsBackToMethod = true;
   }
 
-  // IRewriteResourceProvider members
+  // IRewriteResources members
+
+  public Spec getCurrentSpec() {
+    return spec;
+  }
 
   public Method getCurrentMethod() {
     return method;

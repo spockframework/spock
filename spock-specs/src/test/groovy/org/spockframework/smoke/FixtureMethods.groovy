@@ -17,6 +17,9 @@
 package org.spockframework.smoke
 
 import org.spockframework.EmbeddedSpecification
+import org.spockframework.compiler.InvalidSpecCompileException
+
+import spock.lang.Issue
 
 class FixtureMethods extends EmbeddedSpecification {
   static log
@@ -69,5 +72,37 @@ class Derived extends Base {
 
     then:
     log == ["ss1", "ss2", "s1", "s2", "c2", "c1", "cs2", "cs1"]
+  }
+
+  @Issue("http://issues.spockframework.org/detail?id=139")
+  def "setupSpec() may not access instance fields (only @Shared and static fields)"() {
+    when:
+    compiler.compileSpecBody """
+def x = 42
+
+def setupSpec() {
+  println x
+}
+    """
+
+    then:
+    InvalidSpecCompileException e = thrown()
+    e.message.contains("@Shared")
+  }
+
+  @Issue("http://issues.spockframework.org/detail?id=139")
+  def "cleanupSpec() may not access instance fields (only @Shared and static fields)"() {
+    when:
+    compiler.compileSpecBody """
+def x = 42
+
+def cleanupSpec() {
+  3.times { x = 0 }
+}
+    """
+
+    then:
+    InvalidSpecCompileException e = thrown()
+    e.message.contains("@Shared")
   }
 }

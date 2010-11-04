@@ -37,15 +37,15 @@ import org.spockframework.util.Identifiers;
  * @author Peter Niederwieser
  */
 public class DeepStatementRewriter extends StatementReplacingVisitorSupport {
-  private final IRewriteResourceProvider resourceProvider;
+  private final IRewriteResources resources;
 
   private boolean conditionFound = false;
   private boolean interactionFound = false;
   // scope for the current closure; null if not in a closure
   private VariableScope closureScope;
 
-  public DeepStatementRewriter(IRewriteResourceProvider resourceProvider) {
-    this.resourceProvider = resourceProvider;
+  public DeepStatementRewriter(IRewriteResources resources) {
+    this.resources = resources;
   }
   
   public boolean isConditionFound() {
@@ -65,14 +65,14 @@ public class DeepStatementRewriter extends StatementReplacingVisitorSupport {
     super.visitAssertStatement(stat);
     conditionFound = true;
     replaceVisitedStatementWith(
-        ConditionRewriter.rewriteExplicitCondition(stat, resourceProvider));
+        ConditionRewriter.rewriteExplicitCondition(stat, resources));
   }
 
   @Override
   public void visitExpressionStatement(ExpressionStatement stat) {
     super.visitExpressionStatement(stat);
 
-    Statement rewritten = new InteractionRewriter(resourceProvider).rewrite(stat);
+    Statement rewritten = new InteractionRewriter(resources).rewrite(stat);
     if (rewritten == null) return;
     
     interactionFound = true;
@@ -102,11 +102,11 @@ public class DeepStatementRewriter extends StatementReplacingVisitorSupport {
   }
 
   private void defineValueRecorder(ClosureExpression expr) {
-    resourceProvider.defineValueRecorder(AstUtil.getStatements(expr));
+    resources.defineValueRecorder(AstUtil.getStatements(expr));
   }
 
   private void fixupParameters(VariableScope scope, boolean isClosureScope) {
-    Method method = resourceProvider.getCurrentMethod();
+    Method method = resources.getCurrentMethod();
     if (!(method instanceof FeatureMethod)) return;
 
     // if this is a parameterized feature method w/o explicit parameter list,
@@ -139,9 +139,9 @@ public class DeepStatementRewriter extends StatementReplacingVisitorSupport {
   public void visitBinaryExpression(BinaryExpression expr) {
     if (AstUtil.isBuiltinMemberAssignment(expr, Identifiers.MOCK, 0, 1))
       try {
-        AstUtil.expandBuiltinMemberAssignment(expr, resourceProvider.getMockControllerRef());
+        AstUtil.expandBuiltinMemberAssignment(expr, resources.getMockControllerRef());
       } catch (InvalidSpecCompileException e) {
-        resourceProvider.getErrorReporter().error(e);
+        resources.getErrorReporter().error(e);
         return;
       }
 
@@ -161,14 +161,14 @@ public class DeepStatementRewriter extends StatementReplacingVisitorSupport {
   // because it is most likely a mistake (user thinks he is overriding
   // the base method and doesn't know that it will be run automatically)
   private void forbidUseOfSuperInFixtureMethod(MethodCallExpression expr) {
-    Method currMethod = resourceProvider.getCurrentMethod();
+    Method currMethod = resources.getCurrentMethod();
     Expression target = expr.getObjectExpression();
     
     if (currMethod instanceof FixtureMethod
         && target instanceof VariableExpression
         && ((VariableExpression)target).isSuperExpression()
         && currMethod.getName().equals(expr.getMethodAsString())) {
-      resourceProvider.getErrorReporter().error(expr,
+      resources.getErrorReporter().error(expr,
         "A base class fixture method should not be called explicitely " +
         "because it is always run automatically by the framework");
     }
@@ -183,20 +183,20 @@ public class DeepStatementRewriter extends StatementReplacingVisitorSupport {
 
   private void handleMockCall(Expression expr) {
     try {
-      AstUtil.expandBuiltinMemberCall(expr, resourceProvider.getMockControllerRef());
+      AstUtil.expandBuiltinMemberCall(expr, resources.getMockControllerRef());
     } catch (InvalidSpecCompileException e) {
-      resourceProvider.getErrorReporter().error(e);
+      resources.getErrorReporter().error(e);
     }
   }
 
   private void handleOldCall(Expression expr) {
-    if (!(resourceProvider.getCurrentBlock() instanceof ThenBlock)) {
-      resourceProvider.getErrorReporter().error(expr, "old() may only be used in a 'then' block");
+    if (!(resources.getCurrentBlock() instanceof ThenBlock)) {
+      resources.getErrorReporter().error(expr, "old() may only be used in a 'then' block");
       return;
     }
 
     List<Expression> args = AstUtil.getArguments(expr);
-    VariableExpression oldValue = resourceProvider.captureOldValue(args.get(0));
+    VariableExpression oldValue = resources.captureOldValue(args.get(0));
     args.set(0, oldValue);
     args.add(ConstantExpression.FALSE); // dummy arg
 

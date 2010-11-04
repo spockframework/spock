@@ -2,6 +2,9 @@ allprojects {
   group = "org.spockframework"
   version = "0.5-groovy-1.6-SNAPSHOT"
 
+  apply plugin: "idea"
+  apply plugin: "eclipse"
+
   antDep = "org.apache.ant:ant:1.7.1"
   asm = "asm:asm:2.2.3"
   cglib = "cglib:cglib-nodep:2.2"
@@ -37,7 +40,7 @@ subprojects {
 }
 
 task wrapper(type: Wrapper) {
-  gradleVersion = '0.9-rc-1'
+  gradleVersion = '0.9-rc-2'
   jarPath = 'wrapper'
 }
 

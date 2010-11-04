@@ -187,7 +187,7 @@ public abstract class AstUtil {
    * suitable to be passed to InvokerHelper or SpockRuntime. The main challenge is
    * to handle SpreadExpression's correctly.
    */
-  public static Expression toArgumentArray(List<Expression> argList, IRewriteResourceProvider resourceProvider) {
+  public static Expression toArgumentArray(List<Expression> argList, IRewriteResources resources) {
     List<Expression> normalArgs = new ArrayList<Expression>();
     List<Expression> spreadArgs = new ArrayList<Expression>();
     List<Expression> spreadPositions = new ArrayList<Expression>();
@@ -206,7 +206,7 @@ public abstract class AstUtil {
       return new ArrayExpression(ClassHelper.OBJECT_TYPE, argList);
 
     return new MethodCallExpression(
-        new ClassExpression(resourceProvider.getAstNodeCache().SpockRuntime),
+        new ClassExpression(resources.getAstNodeCache().SpockRuntime),
         new ConstantExpression(SpockRuntime.DESPREAD_LIST),
         new ArgumentListExpression(
             new ArrayExpression(ClassHelper.OBJECT_TYPE, normalArgs),

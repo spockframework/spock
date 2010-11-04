@@ -25,17 +25,21 @@ import org.codehaus.groovy.ast.stmt.Statement;
 
 import org.spockframework.compiler.model.Block;
 import org.spockframework.compiler.model.Method;
+import org.spockframework.compiler.model.Spec;
 
 /**
  *
  * @author Peter Niederwieser
  */
-public interface IRewriteResourceProvider {
+public interface IRewriteResources {
+  Spec getCurrentSpec();
   Method getCurrentMethod();
   Block getCurrentBlock();
+
   void defineValueRecorder(List<Statement> stats);
   VariableExpression captureOldValue(Expression oldValue);
   VariableExpression getMockControllerRef();
+
   AstNodeCache getAstNodeCache();
   String getSourceText(ASTNode node);
   ErrorReporter getErrorReporter();

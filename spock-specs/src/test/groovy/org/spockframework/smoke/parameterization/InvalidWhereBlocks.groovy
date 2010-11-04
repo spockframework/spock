@@ -106,4 +106,30 @@ where:
     then:
     thrown(InvalidSpecCompileException)
   }
+
+  @Issue("http://issues.spockframework.org/detail?id=139")
+  def "right-hand side of parameterization may not reference instance fields (only @Shared and static fields)"() {
+    when:
+    compiler.compileSpecBody """
+def instanceField
+
+def foo() {
+  expect:
+  x == 1
+
+  where:
+  x << $rhs
+}
+    """
+
+    then:
+    InvalidSpecCompileException e = thrown()
+    e.message.contains("@Shared")
+
+    where:
+    rhs |_
+    "[1, instanceField, 2]" |_
+    "{ -> { -> [instanceField] }() }()" |_
+  }
+
 }

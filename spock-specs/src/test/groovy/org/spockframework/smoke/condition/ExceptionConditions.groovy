@@ -20,6 +20,7 @@ import org.spockframework.EmbeddedSpecification
 import org.spockframework.compiler.InvalidSpecCompileException
 import org.spockframework.runtime.InvalidSpecException
 import spock.lang.FailsWith
+import spock.lang.Issue
 
 /**
  * @author Peter Niederwieser
@@ -148,6 +149,7 @@ then: thrown(Exception)
     e.line == 3
   }
 
+  @Issue("http://issues.spockframework.org/detail?id=138")
   @FailsWith(InvalidSpecException)
   def "(Java-style) exception condition must specify a type that is-a java.lang.Throwable"() {
     when:
@@ -157,6 +159,7 @@ then: thrown(Exception)
     String str = thrown()
   }
 
+  @Issue("http://issues.spockframework.org/detail?id=138")
   @FailsWith(InvalidSpecException)
   def "(Groovy-style) exception condition must specify a type that is-a java.lang.Throwable"() {
     when:

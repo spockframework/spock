@@ -21,8 +21,6 @@ import spock.lang.Specification
 import spock.lang.Stepwise
 
 /**
- * A ...
- 
  * @author Peter Niederwieser
  */
 class InitializationOfUnsharedFields extends Specification {
@@ -30,16 +28,6 @@ class InitializationOfUnsharedFields extends Specification {
   def b = 1
   int c
   int d = 1
-
-  def setupSpec() {
-    assert a == null
-    assert b == null
-    assert c == 0
-    assert d == 0
-
-    // should have no effect on subsequent execution
-    a = b = c = d = 99999
-  }
 
   def setup() {
     assert a == null

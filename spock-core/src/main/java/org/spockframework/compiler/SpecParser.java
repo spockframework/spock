@@ -21,7 +21,6 @@ import java.util.List;
 import org.codehaus.groovy.ast.*;
 import org.codehaus.groovy.ast.expr.ConstantExpression;
 import org.codehaus.groovy.ast.stmt.Statement;
-import org.objectweb.asm.Opcodes;
 
 import static org.spockframework.util.Identifiers.*;
 import org.spockframework.compiler.model.*;
@@ -61,7 +60,7 @@ public class SpecParser implements GroovyClassVisitor {
   // although it IS related to a user-provided definition
   public void visitField(FieldNode gField) {
     PropertyNode owner = spec.getAst().getProperty(gField.getName());
-    if (gField.isStatic() || (gField.getModifiers() & Opcodes.ACC_STATIC) != 0) return;
+    if (gField.isStatic()) return;
 
     Field field = new Field(spec, gField, fieldCount++);
     field.setShared(AstUtil.hasAnnotation(gField, Shared.class));

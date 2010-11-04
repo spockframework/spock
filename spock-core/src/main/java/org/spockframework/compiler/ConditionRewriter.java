@@ -45,23 +45,23 @@ import org.spockframework.util.*;
  * @author Peter Niederwieser
  */
 public class ConditionRewriter extends AbstractExpressionConverter<Expression> {
-  private final IRewriteResourceProvider resourceProvider;
+  private final IRewriteResources resources;
 
   private int recordCount = 0;
   private boolean doNotRecordNextConstant = false;
 
-  private ConditionRewriter(IRewriteResourceProvider resourceProvider) {
-    this.resourceProvider = resourceProvider;
+  private ConditionRewriter(IRewriteResources resources) {
+    this.resources = resources;
   }
 
-  public static Statement rewriteExplicitCondition(AssertStatement stat, IRewriteResourceProvider resourceProvider) {
-    ConditionRewriter rewriter = new ConditionRewriter(resourceProvider);
+  public static Statement rewriteExplicitCondition(AssertStatement stat, IRewriteResources resources) {
+    ConditionRewriter rewriter = new ConditionRewriter(resources);
     Expression message = AstUtil.getAssertionMessage(stat);
     return rewriter.rewriteCondition(stat, stat.getBooleanExpression().getExpression(), true, message);
   }
 
-  public static Statement rewriteImplicitCondition(ExpressionStatement stat, IRewriteResourceProvider resourceProvider) {
-    ConditionRewriter rewriter = new ConditionRewriter(resourceProvider);
+  public static Statement rewriteImplicitCondition(ExpressionStatement stat, IRewriteResources resources) {
+    ConditionRewriter rewriter = new ConditionRewriter(resources);
     return rewriter.rewriteCondition(stat, stat.getExpression(), false, null);
   }
 
@@ -227,7 +227,7 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> {
     // (e.g. "Type"), or a VariableExpression nested within one or more PropertyExpressions
     // (e.g. "org.Type", "Type.class", "org.Type.class");
     // therefore we have to provide one N/A value for every part of the class name
-    String text = resourceProvider.getSourceText(expr);
+    String text = resources.getSourceText(expr);
     // NOTE: remove guessing (text == null) once underlying Groovy problem has been fixed
     recordCount += text == null ? 1 : TextUtil.countOccurrences(text, '.') + 1;
   }
@@ -528,7 +528,7 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> {
     List<Expression> args = new ArrayList<Expression>();
     args.add(rewritten.getObjectExpression());
     args.add(rewritten.getMethod());
-    args.add(AstUtil.toArgumentArray(AstUtil.getArguments(rewritten), resourceProvider));
+    args.add(AstUtil.toArgumentArray(AstUtil.getArguments(rewritten), resources));
     // rewriting has produced N/A's that haven't been realized yet, so do that now
     args.add(realizeNas(new ConstantExpression(rewritten.isSafe())));
     args.add(new ConstantExpression(explicit));
@@ -542,7 +542,7 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> {
     List<Expression> args = new ArrayList<Expression>();
     args.add(new ClassExpression(rewritten.getOwnerType()));
     args.add(new ConstantExpression(rewritten.getMethod()));
-    args.add(AstUtil.toArgumentArray(AstUtil.getArguments(rewritten), resourceProvider));
+    args.add(AstUtil.toArgumentArray(AstUtil.getArguments(rewritten), resources));
     // rewriting has produced N/A's that haven't been realized yet, so do that now
     args.add(realizeNas(ConstantExpression.FALSE));
     args.add(new ConstantExpression(explicit));
@@ -558,7 +558,7 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> {
     List<Expression> args = new ArrayList<Expression>();
 
     Expression result = new MethodCallExpression(
-        new ClassExpression(resourceProvider.getAstNodeCache().SpockRuntime),
+        new ClassExpression(resources.getAstNodeCache().SpockRuntime),
         new ConstantExpression(method),
         new ArgumentListExpression(args));
 
@@ -566,7 +566,7 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> {
         new VariableExpression("$spock_valueRecorder"),
         ValueRecorder.RESET,
         ArgumentListExpression.EMPTY_ARGUMENTS));
-    args.add(new ConstantExpression(resourceProvider.getSourceText(condition)));
+    args.add(new ConstantExpression(resources.getSourceText(condition)));
     args.add(new ConstantExpression(condition.getLineNumber()));
     args.add(new ConstantExpression(condition.getColumnNumber()));
     args.addAll(additionalArgs);

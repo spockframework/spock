@@ -1,8 +1,8 @@
 Spock Framework Example Project
 ===============================
 
-This project helps you getting started with Spock. It includes several example specifications and build scripts for Ant, Gradle, and Maven.
-No matter which build you choose, it will first download the required dependencies (including Spock itself), then compile the project, and finally run all Spock specifications. The Gradle build goes one step further by removing the need to have a build tool installed. When run for the first time, it will download the Gradle distribution to your home folder, and then kick off the real build. Getting started with Spock can't get much easier than that!
+The purpose of this project is to help you get started with Spock. The project includes several example specifications and build scripts for Ant, Gradle, and Maven. It also makes it easy to create an Eclipse or IDEA project, allowing you to run the example specs from within your IDE.
+All three builds (Ant, Gradle, Maven) will download all required dependencies (including Spock itself), compile the project, and finally run the example specs. The Gradle build goes one step further by bootstrapping itself, alleviating the need to have a build tool preinstalled. (When bootstrapping, Gradle will install itself into the "wrapper/dists" subdirectory of this project.)
 
 Prerequisites
 -------------
@@ -12,15 +12,33 @@ Prerequisites
 
 Building with Ant
 -----------------
-Type: ant test
+Type: ant clean test
 
 Building with Gradle
 --------------------
-Type: ./gradlew test (On Windows: gradlew test)
+The following assumes that you are using a *nix. On Windows, always type "gradlew" instead of "./gradlew".
+
+Type: ./gradlew clean test
 
 Building with Maven
 -------------------
-Type: mvn test
+Type: mvn clean test
+
+Creating an Eclipse project
+---------------------------
+The following assumes that you are using a *nix. On Windows, always type "gradlew" instead of "./gradlew".
+
+Type: ./gradlew cleanEclipse eclipse
+
+Make sure you have a recent version of the Groovy Eclipse plugin installed. After importing the generated project into a workspace, go to Preferences->Java->Build Path->Classpath Variables and add a variable named GRADLE_CACHE with value "<user_home>/.gradle/cache". (If you are already a Gradle user and have an environment variable GRADLE_USER_HOME set, the correct value is "<GRADLE_USER_HOME>/cache".) You should now be able to build the project, and to run the specs like you would run a JUnit test. See http://wiki.spockframework.org/GettingStarted#Eclipse for more information on how to get started with Spock and Eclipse.
+
+Creating an IDEA project
+---------------------------
+The following assumes that you are using a *nix. On Windows, always type "gradlew" instead of "./gradlew".
+
+Type: ./gradlew cleanIdea idea
+
+Open the generated project in IDEA. You should now be able to build the project, and to run the specs like you would run a JUnit test.
 
 Further Resources
 -----------------

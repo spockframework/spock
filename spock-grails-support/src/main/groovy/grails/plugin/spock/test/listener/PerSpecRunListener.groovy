@@ -21,33 +21,39 @@ import grails.plugin.spock.test.GrailsSpecTestTypeResult
 import org.apache.tools.ant.taskdefs.optional.junit.JUnitTest
 import org.junit.runner.Description
 import org.junit.runner.notification.Failure
+import org.codehaus.groovy.grails.test.event.GrailsTestEventPublisher
+import org.codehaus.groovy.grails.test.report.junit.JUnitReports
+import org.codehaus.groovy.grails.test.io.SystemOutAndErrSwapper
 
 import junit.framework.AssertionFailedError
 import junit.framework.JUnit4TestCaseFacadeFactory
+import junit.framework.JUnit4TestCaseFacade
 
 class PerSpecRunListener {
-  final name
+  final String name
   
-  private final eventPublisher
-  private final reports
-  private final outAndErrSwapper
-  private final result
-  private final testSuite
+  private final GrailsTestEventPublisher eventPublisher
+  private final JUnitReports reports
+  private final SystemOutAndErrSwapper outAndErrSwapper
+  private final GrailsSpecTestTypeResult result
+  private final JUnitTest testSuite
 
-  private startTime
-  private runCount = 0
-  private failureCount = 0
-  private errorCount = 0
+  private long startTime
+  private int runCount = 0
+  private int failureCount = 0
+  private int errorCount = 0
 
-  private testsByDescription = [:]
+  private final Map<Description, JUnit4TestCaseFacade> testsByDescription = [:]
 
-  PerSpecRunListener(name, eventPublisher, reports, outAndErrSwapper, result) {
+  PerSpecRunListener(String name, GrailsTestEventPublisher eventPublisher, JUnitReports reports,
+      SystemOutAndErrSwapper outAndErrSwapper, GrailsSpecTestTypeResult result) {
     this.name = name
     this.eventPublisher = eventPublisher
     this.reports = reports
     this.outAndErrSwapper = outAndErrSwapper
     this.result = result
-    this.testSuite = new JUnitTest(name)
+
+    testSuite = new JUnitTest(name)
   }
 
   void start() {

@@ -73,19 +73,19 @@ class PerSpecRunListener {
 
   void testFailure(Failure failure) {
     try {
-	    def testName = failure.description.methodName
-	    def testCase = getTest(failure.description)
-	    def exception = failure.exception
+      def testName = failure.description.methodName
+      def testCase = getTest(failure.description)
+      def exception = failure.exception
 
-	    if (exception instanceof AssertionError) {
-	      eventPublisher.testFailure(testName, exception)
-	      failureCount++
-	      reports.addFailure(testCase, toAssertionFailedError(exception))
-	    } else {
-	      eventPublisher.testFailure(testName, exception, true)
-	      errorCount++
-	      reports.addError(testCase, exception)
-	    }
+      if (exception instanceof AssertionError) {
+        eventPublisher.testFailure(testName, exception)
+        failureCount++
+        reports.addFailure(testCase, toAssertionFailedError(exception))
+      } else {
+        eventPublisher.testFailure(testName, exception, true)
+        errorCount++
+        reports.addError(testCase, exception)
+      }
     }
     catch ( Exception e) { 
       e.printStackTrace();

@@ -89,6 +89,7 @@ class PerSpecRunListener {
       // we are guaranteed to have at least one test run/failed
       // if this failure did come from cleanupSpec
       testName = noTestsHaveRun ? "setupSpec" : "cleanupSpec"
+      ++runCount
     }
     
     def testCase = getTest(failure.description)

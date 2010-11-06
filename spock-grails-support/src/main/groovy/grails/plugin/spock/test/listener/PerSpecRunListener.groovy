@@ -16,6 +16,8 @@
 
 package grails.plugin.spock.test.listener
 
+import grails.plugin.spock.test.GrailsSpecTestTypeResult
+
 import org.apache.tools.ant.taskdefs.optional.junit.JUnitTest
 import org.junit.runner.Description
 import org.junit.runner.notification.Failure
@@ -29,6 +31,7 @@ class PerSpecRunListener {
   private final eventPublisher
   private final reports
   private final outAndErrSwapper
+  private final result
   private final testSuite
 
   private startTime
@@ -38,11 +41,12 @@ class PerSpecRunListener {
 
   private testsByDescription = [:]
 
-  PerSpecRunListener(name, eventPublisher, reports, outAndErrSwapper) {
+  PerSpecRunListener(name, eventPublisher, reports, outAndErrSwapper, result) {
     this.name = name
     this.eventPublisher = eventPublisher
     this.reports = reports
     this.outAndErrSwapper = outAndErrSwapper
+    this.result = result
     this.testSuite = new JUnitTest(name)
   }
 
@@ -54,6 +58,9 @@ class PerSpecRunListener {
   }
 
   void finish() {
+    result.runCount += runCount
+    result.failCount += failureCount + errorCount
+    
     testSuite.runTime = System.currentTimeMillis() - startTime
     testSuite.setCounts(runCount, failureCount, errorCount)
     def (out, err) = outAndErrSwapper.swapOut()*.toString()

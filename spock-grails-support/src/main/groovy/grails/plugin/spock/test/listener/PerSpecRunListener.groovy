@@ -73,6 +73,17 @@ class PerSpecRunListener {
 
   void testFailure(Failure failure) {
     def testName = failure.description.methodName
+    
+    // If the failure is in setupSpec or cleanupSpec the description
+    // is for the class object, with no associated methodName.
+    // So we interpret this especially.
+    if (testName == null) {
+      // Spock will not run a spec with no features, therefore
+      // we are guaranteed to have at least one test run/failed
+      // if this failure did come from cleanupSpec
+      testName = noTestsHaveRun ? "setupSpec" : "cleanupSpec"
+    }
+    
     def testCase = getTest(failure.description)
     def exception = failure.exception
 
@@ -108,5 +119,9 @@ class PerSpecRunListener {
     def result = new AssertionFailedError(assertionError.toString())
     result.stackTrace = assertionError.stackTrace
     result
+  }
+  
+  private boolean isNoTestsHaveRun() {
+    runCount == 0 && failureCount == 0 && errorCount == 0
   }
 }

@@ -16,6 +16,8 @@
 
 package grails.plugin.spock.test.listener
 
+import grails.plugin.spock.test.GrailsSpecTestTypeResult
+
 import org.codehaus.groovy.grails.test.io.SystemOutAndErrSwapper
 import org.codehaus.groovy.grails.test.event.GrailsTestEventPublisher
 import org.codehaus.groovy.grails.test.report.junit.JUnitReportsFactory
@@ -29,13 +31,15 @@ class OverallRunListener extends RunListener {
   private final GrailsTestEventPublisher eventPublisher
   private final JUnitReportsFactory reportsFactory
   private final SystemOutAndErrSwapper outAndErrSwapper
-
+  private final GrailsSpecTestTypeResult result
+  
   private PerSpecRunListener perSpecListener
 
-  OverallRunListener(GrailsTestEventPublisher eventPublisher, JUnitReportsFactory reportsFactory, SystemOutAndErrSwapper outAndErrSwapper) {
+  OverallRunListener(GrailsTestEventPublisher eventPublisher, JUnitReportsFactory reportsFactory, SystemOutAndErrSwapper outAndErrSwapper, GrailsSpecTestTypeResult result) {
     this.eventPublisher = eventPublisher
     this.reportsFactory = reportsFactory
     this.outAndErrSwapper = outAndErrSwapper
+    this.result = result
   }
 
   void testRunStarted(Description description) {
@@ -76,9 +80,12 @@ class OverallRunListener extends RunListener {
       perSpecListener?.finish()
 
       def specName = description.className
-      perSpecListener = new PerSpecRunListener(specName, eventPublisher, reportsFactory.createReports(specName), outAndErrSwapper)
+      perSpecListener = new PerSpecRunListener(specName, eventPublisher,
+          reportsFactory.createReports(specName), outAndErrSwapper, result)
+
       perSpecListener.start()
     }
+
     perSpecListener
   }
 }

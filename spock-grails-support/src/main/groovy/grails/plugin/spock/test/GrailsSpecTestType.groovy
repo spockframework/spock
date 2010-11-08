@@ -58,9 +58,7 @@ class GrailsSpecTestType extends GrailsTestTypeSupport {
   
   GrailsTestTypeResult doRun(GrailsTestEventPublisher eventPublisher) {
     def junit = new JUnitCore()
-    def result = new GrailsSpecTestTypeResult()
-    junit.addListener(new OverallRunListener(eventPublisher, createJUnitReportsFactory(), createSystemOutAndErrSwapper(), result))
-    junit.run(specClasses as Class[])
-    result
+    junit.addListener(new OverallRunListener(eventPublisher, createJUnitReportsFactory(), createSystemOutAndErrSwapper()))
+    new GrailsSpecTestTypeResult(junit.run(specClasses as Class[]))
   }
 }

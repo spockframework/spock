@@ -19,12 +19,10 @@ package grails.plugin.spock.test
 import org.codehaus.groovy.grails.test.GrailsTestTypeResult
 
 class GrailsSpecTestTypeResult implements GrailsTestTypeResult {
-
-  int failCount = 0
   int runCount = 0
+  int failCount = 0
   
   int getPassCount() {
     runCount - failCount
   }
-  
 }

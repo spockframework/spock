@@ -80,9 +80,12 @@ class OverallRunListener extends RunListener {
       perSpecListener?.finish()
 
       def specName = description.className
-      perSpecListener = new PerSpecRunListener(specName, eventPublisher, reportsFactory.createReports(specName), outAndErrSwapper, result)
+      perSpecListener = new PerSpecRunListener(specName, eventPublisher,
+          reportsFactory.createReports(specName), outAndErrSwapper, result)
+
       perSpecListener.start()
     }
+
     perSpecListener
   }
 }

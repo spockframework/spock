@@ -39,9 +39,25 @@ class PerSpecRunListener {
   private final JUnitTest testSuite
 
   private long startTime
+
+  // number of tests that have run
   private int runCount = 0
+
+  // number of tests that have failed; note that number of failures reported to
+  // eventPublisher/reports may be higher, for example when both feature method
+  // and cleanup method fail
   private int failureCount = 0
+
+  // number of tests that have erred; note that number of errors reported to
+  // eventPublisher/reports may be higher, for example when both feature method
+  // and cleanup method erred
   private int errorCount = 0
+
+  // tells whether testFailure() has been called for the current test
+  private boolean testFailed = false
+
+  // tells whether the setupSpec() method has failed
+  private boolean setupSpecFailed = false
 
   private final Map<Description, JUnit4TestCaseFacade> testsByDescription = [:]
 
@@ -58,8 +74,9 @@ class PerSpecRunListener {
 
   void start() {
     eventPublisher.testCaseStart(name)
-    outAndErrSwapper.swapIn()
     reports.startTestSuite(testSuite)
+
+    outAndErrSwapper.swapIn()
     startTime = System.currentTimeMillis()
   }
 
@@ -69,52 +86,62 @@ class PerSpecRunListener {
     
     testSuite.runTime = System.currentTimeMillis() - startTime
     testSuite.setCounts(runCount, failureCount, errorCount)
+
     def (out, err) = outAndErrSwapper.swapOut()*.toString()
     reports.systemOutput = out
     reports.systemError = err
-    reports.endTestSuite(testSuite)
+
     eventPublisher.testCaseEnd(name)
+    reports.endTestSuite(testSuite)
   }
 
   void testStarted(Description description) {
     def testName = description.methodName
+
     eventPublisher.testStart(testName)
-    runCount++
-    [System.out, System.err]*.println("--Output from ${testName}--")
     reports.startTest(getTest(description))
+
+    [System.out, System.err]*.println("--Output from ${testName}--")
+    testFailed = false
+    runCount++
   }
 
   void testFailure(Failure failure) {
     def testName = failure.description.methodName
-    
-    // If the failure is in setupSpec or cleanupSpec the description
-    // is for the class object, with no associated methodName.
-    // So we interpret this especially.
+
     if (testName == null) {
-      // Spock will not run a spec with no features, therefore
-      // we are guaranteed to have at least one test run/failed
-      // if this failure did come from cleanupSpec
-      testName = noTestsHaveRun ? "setupSpec" : "cleanupSpec"
-      ++runCount
+      // in the following we assume that setupSpec() can only fail once
+      if (runCount == 0 && !setupSpecFailed) {
+        testName = "setupSpec"
+        setupSpecFailed = true
+      } else {
+        testName = "cleanupSpec"
+      }
+
+      // prevent increase of failureCount/errorCount because the error doesn't stem from a "test"
+      testFailed = true
     }
-    
+
     def testCase = getTest(failure.description)
     def exception = failure.exception
 
     if (exception instanceof AssertionError) {
       eventPublisher.testFailure(testName, exception)
-      failureCount++
       reports.addFailure(testCase, toAssertionFailedError(exception))
+      if (!testFailed) failureCount++
     } else {
       eventPublisher.testFailure(testName, exception, true)
-      errorCount++
       reports.addError(testCase, exception)
+      if (!testFailed) errorCount++
     }
+
+    testFailed = true
   }
 
   void testFinished(Description description) {
     reports.endTest(getTest(description))
     eventPublisher.testEnd(description.methodName)
+    testFailed = false
   }
 
   // JUnitReports requires us to always pass the same Test instance
@@ -133,9 +160,5 @@ class PerSpecRunListener {
     def result = new AssertionFailedError(assertionError.toString())
     result.stackTrace = assertionError.stackTrace
     result
-  }
-  
-  private boolean isNoTestsHaveRun() {
-    runCount == 0 && failureCount == 0 && errorCount == 0
   }
 }

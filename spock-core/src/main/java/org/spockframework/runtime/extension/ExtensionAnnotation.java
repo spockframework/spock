@@ -19,10 +19,8 @@ package org.spockframework.runtime.extension;
 import java.lang.annotation.*;
 
 /**
- *
  * @author Peter Niederwieser
  */
-
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.ANNOTATION_TYPE)
 public @interface ExtensionAnnotation {

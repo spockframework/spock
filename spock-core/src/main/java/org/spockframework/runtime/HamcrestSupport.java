@@ -18,6 +18,7 @@ import java.lang.reflect.Method;
 
 import org.hamcrest.*;
 
+import org.spockframework.util.Nullable;
 import org.spockframework.util.ReflectionUtil;
 
 /**
@@ -40,24 +41,30 @@ public abstract class HamcrestSupport {
     return HamcrestSupportImpl.matches(matcher, value);
   }
 
-  public static String getFailureDescription(Object matcher, Object value) {
-    return HamcrestSupportImpl.getFailureDescription(matcher, value);
+  public static String getFailureDescription(Object matcher, Object value, @Nullable String message) {
+    return HamcrestSupportImpl.getFailureDescription(matcher, value, message);
   }
 
   private static abstract class HamcrestSupportImpl {
-    private static final Method describeMismatchMethod =
+    static final Method describeMismatchMethod =
         ReflectionUtil.getMethodByName(Matcher.class, "describeMismatch");
 
-    public static boolean isMatcher(Object obj) {
+    static boolean isMatcher(Object obj) {
       return obj instanceof Matcher;
     }
 
-    public static boolean matches(Object matcher, Object value) {
+    static boolean matches(Object matcher, Object value) {
       return ((Matcher) matcher).matches(value);
     }
 
-    public static String getFailureDescription(Object matcher, Object value) {
+    static String getFailureDescription(Object matcher, Object value, @Nullable String message) {
       Description description = new StringDescription();
+
+      if (message != null) {
+        description.appendText(message);
+        description.appendText("\n\n");
+      }
+
       description.appendText("Expected: ")
           .appendDescriptionOf((Matcher) matcher);
 

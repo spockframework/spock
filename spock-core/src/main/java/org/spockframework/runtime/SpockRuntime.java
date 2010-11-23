@@ -33,29 +33,22 @@ import spock.util.matcher.MatcherSupport;
 public abstract class SpockRuntime {
   public static final String VERIFY_CONDITION = "verifyCondition";
 
-  public static void verifyCondition(ValueRecorder recorder, String text, int line, int column, Object condition) {
+  // condition can be null too, but not in the sense of "not available"
+  public static void verifyCondition(@Nullable ValueRecorder recorder,
+      @Nullable String text, int line, int column, @Nullable Object message, Object condition) {
     if (!GroovyRuntimeUtil.isTruthy(condition))
       throw new ConditionNotSatisfiedError(
-          new Condition(text, TextPosition.create(line, column), recorder, null));
-  }
-
-  public static final String VERIFY_MESSAGE_CONDITION = "verifyMessageCondition";
-
-  public static void verifyMessageCondition(ValueRecorder recorder, String text, int line, int column,
-      Object condition, Object message) {
-    if (!GroovyRuntimeUtil.isTruthy(condition))
-      throw new ConditionNotSatisfiedError(
-          new Condition(text, TextPosition.create(line, column), null, GroovyRuntimeUtil.toString(message)));
+          new Condition(recorder, text, TextPosition.create(line, column), messageToString(message)));
   }
 
   public static final String VERIFY_METHOD_CONDITION = "verifyMethodCondition";
 
   // method calls with spread-dot operator are not rewritten, hence this method doesn't have to care about spread-dot
-  public static void verifyMethodCondition(ValueRecorder recorder, String text, int line, int column,
-      Object target, String method, Object[] args, boolean safe, boolean explicit) {
+  public static void verifyMethodCondition(@Nullable ValueRecorder recorder, @Nullable String text, int line, int column,
+      @Nullable Object message, Object target, String method, Object[] args, boolean safe, boolean explicit) {
     MatcherCondition matcherCondition = MatcherCondition.parse(target, method, args, safe);
     if (matcherCondition != null) {
-      matcherCondition.verify(recorder, text, line, column);
+      matcherCondition.verify(recorder, text, line, column, messageToString(message));
       return;
     }
 
@@ -68,7 +61,7 @@ public abstract class SpockRuntime {
 
     if (!GroovyRuntimeUtil.isTruthy(result))
       throw new ConditionNotSatisfiedError(
-          new Condition(text, TextPosition.create(line, column), recorder, null));
+          new Condition(recorder, text, TextPosition.create(line, column), messageToString(message)));
   }
 
   public static final String DESPREAD_LIST = "despreadList";
@@ -87,6 +80,11 @@ public abstract class SpockRuntime {
     throw new InvalidSpecException("Feature methods cannot be called from user code");
   }
 
+  private static String messageToString(Object message) {
+    if (message == null) return null; // treat as "not available"
+
+    return GroovyRuntimeUtil.toString(message);
+  }
   /**
    * A condition of the form "foo equalTo(bar)" or "that(foo, equalTo(bar)",
    * where 'equalTo' returns a Hamcrest matcher.
@@ -94,22 +92,26 @@ public abstract class SpockRuntime {
   private static class MatcherCondition {
     final Object actual;
     final Object matcher;
-    final boolean implicit; // true iff the short "foo equalTo(bar)" syntax is used
+    // true if the "foo equalTo(bar)" syntax is used,
+    // false if the "that(foo, equalTo(bar)" syntax is used
+    final boolean shortSyntax;
 
-    MatcherCondition(Object actual, Object matcher, boolean implicit) {
+    MatcherCondition(Object actual, Object matcher, boolean shortSyntax) {
       this.actual = actual;
       this.matcher = matcher;
-      this.implicit = implicit;
+      this.shortSyntax = shortSyntax;
     }
 
-    void verify(ValueRecorder recorder, String text, int line, int column) {
+    void verify(@Nullable ValueRecorder recorder, @Nullable String text, int line, int column, @Nullable String message) {
       if (HamcrestSupport.matches(matcher, actual)) return;
 
-      recorder.replaceLastValue(implicit ? actual : false);
-      replaceMatcherValues(recorder);
+      if (recorder != null) {
+        recorder.replaceLastValue(shortSyntax ? actual : false);
+        replaceMatcherValues(recorder);
+      }
 
-      String description = HamcrestSupport.getFailureDescription(matcher, actual);
-      Condition condition = new Condition(text, TextPosition.create(line, column), recorder, description);
+      String description = HamcrestSupport.getFailureDescription(matcher, actual, message);
+      Condition condition = new Condition(recorder, text, TextPosition.create(line, column), description);
       throw new ConditionNotSatisfiedError(condition);
     }
 
@@ -124,7 +126,7 @@ public abstract class SpockRuntime {
 
         if (firstOccurrence) {
           // indicate mismatch in condition output
-          iter.set(implicit ? false : ExpressionInfo.VALUE_NOT_AVAILABLE);
+          iter.set(shortSyntax ? false : ExpressionInfo.VALUE_NOT_AVAILABLE);
           firstOccurrence = false;
         } else {
           // don't show in condition output

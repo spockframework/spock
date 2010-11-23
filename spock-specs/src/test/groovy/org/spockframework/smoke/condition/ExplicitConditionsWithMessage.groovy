@@ -84,12 +84,11 @@ map.a + map.b == 2
     }
   }
 
+  // null message and no message currently have same representation (null) in SpockRuntime
   def "rendering of indirect null message"() {
     expect:
     isRendered """
 1 + 2 == 2
-
-null
     """, {
       def x = null
       assert 1 + 2 == 2, x

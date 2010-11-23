@@ -30,18 +30,24 @@ import org.spockframework.util.Nullable;
 public class Condition {
   private static final Pattern pattern = Pattern.compile("\\s*\n\\s*");
 
+  private final Iterable<Object> values;
   private final String text;
   private final TextPosition position;
-  private final Iterable<Object> values;
   private final String message;
 
   private ExpressionInfo expression;
 
-  public Condition(String text, TextPosition position, Iterable<Object> values, String message) {
+  public Condition(@Nullable Iterable<Object> values, @Nullable String text, TextPosition position,
+      @Nullable String message) {
     this.text = text;
     this.position = position;
     this.values = values;
     this.message = message;
+  }
+
+  @Nullable
+  public Iterable<Object> getValues() {
+    return values;
   }
 
   @Nullable
@@ -51,10 +57,6 @@ public class Condition {
 
   public TextPosition getPosition() {
     return position;
-  }
-
-  public Iterable<Object> getValues() {
-    return values;
   }
 
   @Nullable

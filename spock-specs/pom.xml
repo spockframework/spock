@@ -23,9 +23,6 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
           <useFile>false</useFile>
-          <includes>
-            <include>**/*Test.java</include> <!-- for JUnit tests -->
-          </includes>
         </configuration>
       </plugin>
       <plugin>

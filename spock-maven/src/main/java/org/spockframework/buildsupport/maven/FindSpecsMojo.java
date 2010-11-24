@@ -20,24 +20,33 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.maven.model.ConfigurationContainer;
 import org.apache.maven.model.Plugin;
+import org.apache.maven.model.PluginExecution;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
-
 import org.spockframework.buildsupport.SpecClassFileFinder;
 import org.spockframework.runtime.OptimizeRunOrderSuite;
 import org.spockframework.util.IoUtil;
 import org.spockframework.util.TextUtil;
 
 /**
- * Finds all Spock specifications in a Maven project, and adds them as
- * &lt;include&gt;'s to Surefire's configuration. Any other explicit &lt;include&gt;'s
- * remain intact; however, Surefire's default includes
- * (&#42;&#42;/Test&#42;.java &#42;&#42;/&#42;Test.java &#42;&#42;/&#42;TestCase.java)
- * will no longer take effect (add them manually if required).
+ * Plugin that auto-detects and runs all Spock specs in a Maven project.
+ * Specs are run by adding them as &lt;include&gt;'s to Surefire's
+ * configuration. Unless <tt>overrideSurefireIncludes</tt> is set to <tt>true</tt>,
+ * Surefire's default includes or any explicit &lt;include&gt;'s overriding
+ * those defaults will remain intact. This means that Spock specs will get run
+ * together with all other JUnit-based tests that would get run without this
+ * plugin being present.
  *
+ * <p><strong>Note:</strong>This plugin is <em>not</em> required for using Spock
+ * together with Maven; it merely adds some advanced capabilities like auto-
+ * detection of specs. If you decide not to use this plugin, make sure that your
+ * spec classes conform to Surefire's naming conventions. By default, these are
+ * &#42;&#42;/Test&#42;.java, &#42;&#42;/&#42;Test.java, and &#42;&#42;/&#42;TestCase.java.
+ * 
  * @author Peter Niederwieser
  * @goal find-specs
  * @phase process-test-classes
@@ -54,23 +63,52 @@ public class FindSpecsMojo extends AbstractMojo {
   private File testOutputDirectory;
 
   /**
+   * If <tt>true</tt>, the execution of this plugin will be skipped.
+   *
    * @parameter default="false"
    */
   private boolean skip;
 
   /**
+   * If <tt>true</tt>, any existing Surefire &lt;include&gt;'s will
+   * be overridden to make sure that only Spock specs will get run.
+   *
+   * @parameter default="false"
+   */
+  private boolean overrideSurefireIncludes;
+
+  /**
+   * If non-null, &lt;include&gt;'s for Spock specs will be added to the
+   * configuration of the specified Surefire execution. Otherwise, they
+   * will be added to the global Surefire configuration.
+   *
+   * @parameter default="null"
+   */
+  private String surefireExecutionId;
+
+  /**
+   * If <tt>true</tt> the run order of spec <em>classes</em> will be
+   * optimized such that frequently failing specs are run first. Note
+   * that this requires all specs to be wrapped with a dynamically
+   * generated JUnit suite, which may have a negative impact on test
+   * reporting.
+   *
    * @parameter default="false"
    */
   private boolean optimizeRunOrder;
 
   public void execute() throws MojoExecutionException {
     if (!shouldRun()) return;
+
     List<String> specNames = findSpecs();
-    addToSurefireConfiguration(specNames);
+    configureSurefire(specNames);
   }
 
   private boolean shouldRun() {
-    if (skip) return false;
+    if (skip) {
+      getLog().info(String.format("Skipping goal 'find-specs'"));
+      return false;
+    }
 
     if (!testOutputDirectory.exists()) {
       getLog().info(String.format("Found 0 Spock specifications"));
@@ -101,48 +139,65 @@ public class FindSpecsMojo extends AbstractMojo {
     return specNames;
   }
 
-  private void addToSurefireConfiguration(List<String> specNames) throws MojoExecutionException {
-    Plugin plugin = getSurefirePlugin();
+  private void configureSurefire(List<String> specNames) throws MojoExecutionException {
+    ConfigurationContainer container = getSurefireConfigurationContainer();
 
-    Xpp3Dom config = (Xpp3Dom) plugin.getConfiguration();
+    Xpp3Dom config = (Xpp3Dom) container.getConfiguration();
     if (config == null) {
       config = new Xpp3Dom("configuration");
-      plugin.setConfiguration(config);
+      container.setConfiguration(config);
     }
 
-    Xpp3Dom includes = config.getChild("includes");
-    if (includes == null) {
-      includes = new Xpp3Dom("includes");
-      config.addChild(includes);
-    }
-
-    Xpp3Dom systemProperties = config.getChild("systemPropertyVariables");
-    if (systemProperties == null) {
-      systemProperties = new Xpp3Dom("systemPropertyVariables");
-      config.addChild(systemProperties);
+    Xpp3Dom includes = getOrAddChild(config, "includes");
+    if (overrideSurefireIncludes) {
+      removeChildren(includes);
+    } else if (includes.getChildCount() == 0) {
+      addDefaultSurefireIncludes(includes);
     }
 
     if (optimizeRunOrder) {
-      getLog().info(String.format("Optimizing spec run order"));
-      copySuiteClassToTestOutputDirectory();
-      addSystemProperty(systemProperties, OptimizeRunOrderSuite.CLASSES_TO_RUN_KEY, TextUtil.join(",", specNames));
-      addInclude(includes, OptimizeRunOrderSuite.class.getName());
+      optimizeRunOrder(config, includes, specNames);
     } else {
-      for (String name : specNames)
-        addInclude(includes, name);
+      for (String name : specNames) addInclude(includes, name);
     }
   }
 
-  private Plugin getSurefirePlugin() throws MojoExecutionException {
+  private ConfigurationContainer getSurefireConfigurationContainer() throws MojoExecutionException {
     @SuppressWarnings("unchecked")
     List<Plugin> plugins = project.getBuildPlugins();
 
-    for (Plugin plugin : plugins)
-      if (plugin.getGroupId().equals("org.apache.maven.plugins")
-          && plugin.getArtifactId().equals("maven-surefire-plugin"))
-        return plugin;
+    for (Plugin plugin : plugins) {
+      if (!plugin.getGroupId().equals("org.apache.maven.plugins")) continue;
+      if (!plugin.getArtifactId().equals("maven-surefire-plugin")) continue;
+
+      if (surefireExecutionId == null) return plugin;
+
+      PluginExecution execution = (PluginExecution) plugin.getExecutionsAsMap().get(surefireExecutionId);
+      if (execution == null) throw new MojoExecutionException(
+          String.format("Cannot find Surefire execution with ID '%s'", surefireExecutionId));
+
+      return execution;
+    }
 
     throw new MojoExecutionException("Surefire plugin not found; make sure it is bound to a lifecycle phase");
+  }
+
+  private void optimizeRunOrder(Xpp3Dom config, Xpp3Dom includes, List<String> specNames) throws MojoExecutionException {
+    getLog().info(String.format("Optimizing spec run order"));
+    copySuiteClassToTestOutputDirectory();
+    addInclude(includes, OptimizeRunOrderSuite.class.getName());
+    Xpp3Dom systemProperties = getOrAddChild(config, "systemPropertyVariables");
+    addChild(systemProperties, OptimizeRunOrderSuite.CLASSES_TO_RUN_KEY, TextUtil.join(",", specNames));
+  }
+
+  private void addInclude(Xpp3Dom includes, String value) {
+    addChild(includes, "include", value.replace('.', '/') + ".java");
+  }
+
+  private void addDefaultSurefireIncludes(Xpp3Dom includes) {
+    addInclude(includes, "**/Test*");
+    addInclude(includes, "**/*Test");
+    addInclude(includes, "**/*TestCase");
   }
 
   private void copySuiteClassToTestOutputDirectory() throws MojoExecutionException {
@@ -159,15 +214,24 @@ public class FindSpecsMojo extends AbstractMojo {
     }
   }
 
-  private void addSystemProperty(Xpp3Dom systemProperties, String key, String value) {
-    Xpp3Dom propertyNode = new Xpp3Dom(key);
-    propertyNode.setValue(value);
-    systemProperties.addChild(propertyNode);
+  private Xpp3Dom addChild(Xpp3Dom parent, String name) {
+    return addChild(parent, name, null);
   }
 
-  private void addInclude(Xpp3Dom includes, String name) {
-    Xpp3Dom includeNode = new Xpp3Dom("include");
-    includeNode.setValue(name.replace('.', '/') + ".java");
-    includes.addChild(includeNode);
+  private Xpp3Dom addChild(Xpp3Dom parent, String name, String value) {
+    Xpp3Dom child = new Xpp3Dom(name);
+    child.setValue(value);
+    parent.addChild(child);
+    return child;
+  }
+
+  private Xpp3Dom getOrAddChild(Xpp3Dom parent, String name) {
+    Xpp3Dom child = parent.getChild(name);
+    if (child == null) child = addChild(parent, name);
+    return child;
+  }
+
+  private void removeChildren(Xpp3Dom parent) {
+    for (int i = parent.getChildCount() - 1; i >= 0; i--) parent.removeChild(i);
   }
 }

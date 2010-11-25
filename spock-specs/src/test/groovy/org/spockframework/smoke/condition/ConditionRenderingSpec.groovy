@@ -17,30 +17,25 @@
 package org.spockframework.smoke.condition
 
 import org.spockframework.runtime.ConditionNotSatisfiedError
+import org.spockframework.runtime.Condition
+
 import spock.lang.Specification
 
 /**
- * Base class for spec'ing conditions.
+ * Convenience base class for specs that describe rendering of conditions.
  *
  * @author Peter Niederwieser
  */
-
-abstract class ConditionSpec extends Specification {
-  void fails(Closure condition) {
-    try {
-      condition()
-    } catch (ConditionNotSatisfiedError expected) {
-      return
-    }
-
-    assert false, "condition should have failed but didn't"
+abstract class ConditionRenderingSpec extends Specification {
+  void isRendered(String expectedRendering, Condition condition) {
+    assert expectedRendering.trim() == condition.render().trim()
   }
 
   void isRendered(String expectedRendering, Closure condition) {
     try {
       condition()
     } catch (ConditionNotSatisfiedError e) {
-      assert expectedRendering.trim() == e.condition.render().trim()
+      isRendered(expectedRendering, e.condition)
       return
     }
 

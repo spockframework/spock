@@ -25,15 +25,15 @@ import org.spockframework.runtime.ConditionNotSatisfiedError
 import static org.hamcrest.CoreMatchers.*
 import static spock.util.matcher.MatcherSupport.that
 
-class HamcrestMatchers extends EmbeddedSpecification {
-  def "can be used in expect-blocks"() {
+class MatcherConditions extends EmbeddedSpecification {
+  def "work in expect-blocks"() {
     def x = 42
 
     expect:
     x equalTo(42)
   }
 
-  def "can be used in then-blocks"() {
+  def "work in then-blocks"() {
     when:
     def x = 42
 
@@ -41,27 +41,27 @@ class HamcrestMatchers extends EmbeddedSpecification {
     x equalTo(42)
   }
 
-  def "can be used with alternative 'that' syntax"() {
+  def "have an alternative 'that' syntax"() {
     def x = 42
 
     expect:
     that x, equalTo(42)
   }
 
-  def "can be used in explicit conditions (but only with 'that' syntax)"() {
+  def "can be explicit conditions (but only with 'that' syntax)"() {
     setup:
     def x = 42
     assert that(x, equalTo(42))
   }
 
-  def "can be used with custom message"() {
+  def "can provide a custom message"() {
     def x = 42
 
     expect:
     assert that(x, equalTo(42)), "a custom message"
   }
 
-  def "can have custom implementations"() {
+  def "work with custom matcher implementations"() {
     def x = "otto"
     
     expect:
@@ -69,7 +69,7 @@ class HamcrestMatchers extends EmbeddedSpecification {
   }
 
   @FailsWith(ConditionNotSatisfiedError)
-  def "cause a failure when they don't match (1)"() {
+  def "fail when matcher doesn't match (1)"() {
     def x = 21
 
     expect:
@@ -77,7 +77,7 @@ class HamcrestMatchers extends EmbeddedSpecification {
   }
 
   @FailsWith(ConditionNotSatisfiedError)
-  def "cause a failure when they don't match (2)"() {
+  def "fail when matcher doesn't match (2)"() {
     when:
     def x = 21
 
@@ -86,7 +86,7 @@ class HamcrestMatchers extends EmbeddedSpecification {
   }
 
   @FailsWith(ConditionNotSatisfiedError)
-  def "cause a failure when they don't match (3)"() {
+  def "fail when matcher doesn't match (3)"() {
     def x = 21
 
     expect:
@@ -94,7 +94,7 @@ class HamcrestMatchers extends EmbeddedSpecification {
   }
 
   @FailsWith(ConditionNotSatisfiedError)
-  def "cause a failure when they don't match (4)"() {
+  def "fail when matcher doesn't match (4)"() {
     setup:
     def x = 21
     assert that(x, equalTo(42))
@@ -114,7 +114,7 @@ class HamcrestMatchers extends EmbeddedSpecification {
     that x, equalTo(42)
   }
 
-  def "can be matched to numeric literals"() {
+  def "can have an actual that is a numeric literal"() {
     def x = 42
 
     expect:
@@ -122,21 +122,21 @@ class HamcrestMatchers extends EmbeddedSpecification {
   }
 
   @FailsWith(MissingMethodException)
-  def "cannot be matched to string literals (because a string literal in this place is parsed as a method call)"() {
+  def "cannot have an actual that is a string literal (because Groovy parses the string literal as a method call)"() {
     def x = "fred"
 
     expect:
     "fred" equalTo(x)
   }
 
-  def "can be matched to string literals with alternative 'that' syntax"() {
+  def "can have an actual that is a string literal if alternative 'that' syntax is used"() {
     def x = "fred"
 
     expect:
     that "fred", equalTo(x)    
   }
 
-  def "can be used as argument contraints in interactions"() {
+  def "hamcrest matchers are also supported as contraints in interactions"() {
     def list = Mock(List)
 
     when:

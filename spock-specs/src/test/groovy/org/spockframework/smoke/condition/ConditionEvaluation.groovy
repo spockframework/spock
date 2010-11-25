@@ -16,7 +16,11 @@
 
 package org.spockframework.smoke.condition
 
+import org.spockframework.runtime.ConditionNotSatisfiedError
+
 import spock.lang.Issue
+import spock.lang.FailsWith
+import spock.lang.Specification
 
 import static java.lang.Math.max
 import static java.lang.Math.min
@@ -32,20 +36,22 @@ import static java.lang.Thread.State.BLOCKED
  * @author Peter Niederwieser
  */
 
-class ConditionEvaluation extends ConditionSpec {
-  def "multi-line conditions"() {
+class ConditionEvaluation extends Specification {
+  def "multi-line condition"() {
     expect:
     2 *
         3 ==
 
         6
+  }
 
-    fails {
-      assert 2 *
-          3 ==
+  @FailsWith(ConditionNotSatisfiedError)
+  def "failing multi-line condition"() {
+    expect:
+    2 *
+        3 ==
 
-          7
-    }
+        7
   }
 
   def "MethodCallExpression"() {

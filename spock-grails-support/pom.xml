@@ -11,7 +11,7 @@
   <groupId>org.spockframework</groupId>
   <artifactId>spock-grails-support</artifactId>
   <packaging>jar</packaging>
-  <name>Spock Framework - Grails Plugin (support classes)</name>
+  <name>Spock Framework - Grails Plugin Support Classes</name>
   <url>http://grails.org/plugin/spock</url>
   
   <build>

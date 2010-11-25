@@ -21,7 +21,7 @@ package org.spockframework.smoke.condition
  *
  * @author Peter Niederwieser
  */
-class ImplicitClosureCallRendering extends ConditionSpec {
+class ImplicitClosureCallRendering extends ConditionRenderingSpec {
   def "with local variable"() {
     expect:
     isRendered """

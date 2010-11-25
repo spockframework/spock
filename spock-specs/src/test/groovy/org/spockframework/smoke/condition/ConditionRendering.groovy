@@ -27,7 +27,7 @@ import static java.lang.Thread.State.BLOCKED
  *
  * @author Peter Niederwieser
  */
-class ConditionRendering extends ConditionSpec {
+class ConditionRendering extends ConditionRenderingSpec {
   def "simple condition"() {
     expect:
     isRendered """

@@ -17,6 +17,7 @@
 package org.spockframework.smoke.condition
 
 import org.spockframework.runtime.ConditionNotSatisfiedError
+
 import spock.lang.FailsWith
 import spock.lang.Issue
 
@@ -24,7 +25,7 @@ import spock.lang.Issue
  * @author Peter Niederwieser
  */
 @Issue("http://issues.spockframework.org/detail?id=22")
-class ExplicitConditionsWithMessage extends ConditionSpec {
+class ExplicitConditionsWithMessage extends ConditionRenderingSpec {
   def "evaluation of satisfied condition"() {
     expect:
     assert 1 + 2 == 3, "need to brush up my math"

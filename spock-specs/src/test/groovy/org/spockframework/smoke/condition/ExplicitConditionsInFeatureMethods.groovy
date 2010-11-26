@@ -19,6 +19,7 @@ package org.spockframework.smoke.condition
 import org.spockframework.runtime.ConditionNotSatisfiedError
 import spock.lang.FailsWith
 import spock.lang.Specification
+import spock.lang.Issue
 
 /**
  * @author Peter Niederwieser
@@ -89,4 +90,11 @@ class ExplicitConditionsInFeatureMethods extends Specification {
   def "nested in cleanup block"() {
     cleanup: if (true) assert false
   }
+
+  // This may need a more suitable home
+  @Issue("http://code.google.com/p/spock/issues/detail?id=148")
+  def "assert expression contains method call"() {
+    expect: assert "test".toString() : "dummy text"
+  }
+
 }

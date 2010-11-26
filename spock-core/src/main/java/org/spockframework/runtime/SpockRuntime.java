@@ -55,7 +55,9 @@ public abstract class SpockRuntime {
     Object result = safe ? InvokerHelper.invokeMethodSafe(target, method, args)
         : InvokerHelper.invokeMethod(target, method, args);
 
-    recorder.replaceLastValue(result);
+    if (recorder != null) {
+      recorder.replaceLastValue(result);
+    }
     
     if (!explicit && result == null && GroovyRuntimeUtil.isVoidMethod(target, method, args)) return;
 

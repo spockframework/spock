@@ -25,8 +25,20 @@ loadSpecTestTypeClass = { ->
   }  
 }
 
-eventAllTestsStart = {
+loadSpockTestTypes = {
+  if (!binding.variables.containsKey("unitTests")) return
   def specTestTypeClass = loadSpecTestTypeClass()
-  unitTests << specTestTypeClass.newInstance('spock', 'unit')
-  integrationTests << specTestTypeClass.newInstance('spock', 'integration')
+  [unit: unitTests, integration: integrationTests].each { name, types ->
+    if (!types.any { it.class == specTestTypeClass }) {
+      types << specTestTypeClass.newInstance('spock', name)
+    }
+  }
+}
+
+eventAllTestsStart = {
+  loadSpockTestTypes()
+}
+
+eventPackagePluginsEnd = {
+  loadSpockTestTypes()
 }

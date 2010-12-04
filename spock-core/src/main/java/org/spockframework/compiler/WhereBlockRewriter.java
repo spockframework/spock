@@ -127,7 +127,7 @@ public class WhereBlockRewriter {
   }
 
   private Parameter createDataProcessorParameter() {
-    Parameter p = new Parameter(ClassHelper.DYNAMIC_TYPE, "p" + dataProcessorParams.size());
+    Parameter p = new Parameter(ClassHelper.DYNAMIC_TYPE, "$spock_p" + dataProcessorParams.size());
     dataProcessorParams.add(p);
     return p;
   }

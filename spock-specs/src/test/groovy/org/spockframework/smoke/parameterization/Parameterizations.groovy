@@ -93,7 +93,7 @@ class Parameterizations extends Specification {
       d = a + b + c
   }
 
-  @Ignore("we should either solve this or allow it")
+  @Ignore("we should either support this or disallow it")
   def "simple parameterization whose value is accessed from closure within other parameterization"() {
     expect:
     a == 1
@@ -102,5 +102,26 @@ class Parameterizations extends Specification {
     where:
     a << 1
     b << {a}()
+  }
+
+  @Issue("http://code.google.com/p/spock/issues/detail?id=149")
+  def "can use data variables named p0, p1, etc."() {
+    expect:
+    p1 == p0 * 2
+
+    where:
+    p0 | p1
+    1  | 2
+    2  | 4
+    3  | 6
+  }
+
+  def "can use data variables named like special @Unroll variables"() {
+    expect:
+    iterationCount == featureName * 2
+
+    where:
+    featureName << [1, 2, 3]
+    iterationCount << [2, 4, 6]
   }
 }

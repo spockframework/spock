@@ -1,5 +1,6 @@
 <project name="SpockExample" basedir="." default="test" xmlns:artifact="urn:maven-artifact-ant">
   <property name="src.dir" location="src/test/groovy" />
+  <property name="resource.dir" location="src/test/resources" />
   <property name="build.dir" location="ant/build" />
   <property name="lib.dir" location="ant/lib" />  
   <property name="maven.ant.tasks.url" value="http://www.apache.org/dist/maven/binaries/maven-ant-tasks-2.1.1.jar" />
@@ -84,7 +85,13 @@
     <mkdir dir="${build.dir}" /> 
   </target> 
 
-  <target name="compile" depends="init">
+  <target name="copy.resources" depends="init">
+    <copy todir="${build.dir}">
+      <fileset dir="${resource.dir}" />
+    </copy>
+  </target>
+
+  <target name="compile" depends="copy.resources">
     <groovyc
       srcdir="${src.dir}"
      destdir="${build.dir}"

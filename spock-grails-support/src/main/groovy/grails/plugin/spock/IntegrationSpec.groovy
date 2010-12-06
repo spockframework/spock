@@ -23,28 +23,62 @@ import org.codehaus.groovy.grails.test.support.GrailsTestRequestEnvironmentInter
 
 import spock.lang.Specification
 import spock.lang.Shared
+import spock.lang.Stepwise
 
 class IntegrationSpec extends Specification {
   
   static private applicationContext = ApplicationHolder.application.mainContext
   static private autowirer = new GrailsTestAutowirer(applicationContext)
   
-  private transactionInterceptor = new GrailsTestTransactionInterceptor(applicationContext)
-  private requestEnvironmentInterceptor = new GrailsTestRequestEnvironmentInterceptor(applicationContext)
+  private perMethodTransactionInterceptor = null
+  static private perSpecTransactionInterceptor
+  
+  private perMethodRequestEnvironmentInterceptor = null
+  static private perSpecRequestEnvironmentInterceptor
 
   def setupSpec() {
+    if (isSpecIsStepwise()) {
+      perSpecTransactionInterceptor = initTransaction()
+      perSpecRequestEnvironmentInterceptor = initRequestEnv()
+    }
+    
     autowirer.autowire(this)
   }
   
   def setup() {
-    autowirer.autowire(this)
+    if (!isSpecIsStepwise()) {
+      perMethodTransactionInterceptor = initTransaction()
+      perMethodRequestEnvironmentInterceptor = initRequestEnv()
+    }
     
-    requestEnvironmentInterceptor.init()
-    if (transactionInterceptor.isTransactional(this)) transactionInterceptor.init()
+    autowirer.autowire(this)
   }
 
   def cleanup() {
-    transactionInterceptor.destroy()
-    requestEnvironmentInterceptor.destroy()
+    perMethodRequestEnvironmentInterceptor?.destroy()
+    perMethodTransactionInterceptor?.destroy()
+  }
+  
+  def cleanupSpec() {
+    perSpecRequestEnvironmentInterceptor?.destroy()
+    perSpecTransactionInterceptor?.destroy()
+  }
+  
+  private boolean isSpecIsStepwise() {
+    this.class.isAnnotationPresent(Stepwise)
+  }
+
+  private initTransaction() {
+    def interceptor = new GrailsTestTransactionInterceptor(applicationContext)
+    if (interceptor.isTransactional(this)) {
+      interceptor.init()
+    }
+    interceptor
+  }
+  
+  private initRequestEnv() {
+    def interceptor = new GrailsTestRequestEnvironmentInterceptor(applicationContext)
+    interceptor.init()
+    interceptor
   }
 }

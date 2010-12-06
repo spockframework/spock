@@ -14,34 +14,6 @@
  * limitations under the License.
  */
 
-import grails.plugin.spock.IntegrationSpec
-
-import spock.lang.*
-
-class TestIntegrationSpec extends IntegrationSpec {
-  
-  @Shared anotherService
-  
-  def simpleService
-
-  def setupSpec() {
-    assert anotherService != null
-  }
-  
-  def "injected simpleService is present"() {
-    when:
-    simpleService.name = input
-
-    then:
-    simpleService.name == input
-
-    where:
-    input = "bob"
-  }
-
-  def "can write to database"() {
-    expect:
-    new Person(name: 'fred').save() != null
-    Person.findByName('fred') != null
-  }
+class AnotherService {
+  def name
 }

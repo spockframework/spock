@@ -22,18 +22,23 @@ import org.codehaus.groovy.grails.test.support.GrailsTestTransactionInterceptor
 import org.codehaus.groovy.grails.test.support.GrailsTestRequestEnvironmentInterceptor
 
 import spock.lang.Specification
+import spock.lang.Shared
 
 class IntegrationSpec extends Specification {
-  private transactionManager
-  private transactionStatus
-
-  private applicationContext = ApplicationHolder.application.mainContext
-  private autowirer = new GrailsTestAutowirer(applicationContext)
+  
+  static private applicationContext = ApplicationHolder.application.mainContext
+  static private autowirer = new GrailsTestAutowirer(applicationContext)
+  
   private transactionInterceptor = new GrailsTestTransactionInterceptor(applicationContext)
   private requestEnvironmentInterceptor = new GrailsTestRequestEnvironmentInterceptor(applicationContext)
 
+  def setupSpec() {
+    autowirer.autowire(this)
+  }
+  
   def setup() {
     autowirer.autowire(this)
+    
     requestEnvironmentInterceptor.init()
     if (transactionInterceptor.isTransactional(this)) transactionInterceptor.init()
   }

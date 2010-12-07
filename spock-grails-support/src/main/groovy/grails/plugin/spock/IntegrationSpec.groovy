@@ -29,18 +29,17 @@ import spock.lang.Shared
 import spock.lang.Stepwise
 
 class IntegrationSpec extends Specification {
-  
   @Shared private applicationContext = ApplicationHolder.application.mainContext
   @Shared private autowirer = new GrailsTestAutowirer(applicationContext)
   
-  private perMethodTransactionInterceptor = null
   @Shared private perSpecTransactionInterceptor
-  
-  private perMethodRequestEnvironmentInterceptor = null
   @Shared private perSpecRequestEnvironmentInterceptor
+  
+  private perMethodTransactionInterceptor = null
+  private perMethodRequestEnvironmentInterceptor = null
 
   def setupSpec() {
-    if (isSpecIsStepwise()) {
+    if (isStepwiseSpec()) {
       perSpecTransactionInterceptor = initTransaction()
       perSpecRequestEnvironmentInterceptor = initRequestEnv()
     }
@@ -49,7 +48,7 @@ class IntegrationSpec extends Specification {
   }
   
   def setup() {
-    if (!isSpecIsStepwise()) {
+    if (!isStepwiseSpec()) {
       perMethodTransactionInterceptor = initTransaction()
       perMethodRequestEnvironmentInterceptor = initRequestEnv()
     }
@@ -67,22 +66,21 @@ class IntegrationSpec extends Specification {
     perSpecTransactionInterceptor?.destroy()
   }
   
-  private boolean isSpecIsStepwise() {
-    this.class.isAnnotationPresent(Stepwise)
+  private boolean isStepwiseSpec() {
+    getClass().isAnnotationPresent(Stepwise)
   }
 
   private initTransaction() {
     def interceptor = new GrailsTestTransactionInterceptor(applicationContext)
-    if (interceptor.isTransactional(this)) {
-      interceptor.init()
-    }
+    if (interceptor.isTransactional(this)) interceptor.init()
     interceptor
   }
   
   private initRequestEnv() {
     def interceptor = new GrailsTestRequestEnvironmentInterceptor(applicationContext)
-    def controllerName = ControllerNameExtractor.extractControllerNameFromTestClassName(this.class.name, GrailsSpecTestType.TEST_SUFFIXES as String[])
-    interceptor.init(controllerName ?: interceptor.DEFAULT_CONTROLLER_NAME)
+    def controllerName = ControllerNameExtractor.extractControllerNameFromTestClassName(
+        this.class.name, GrailsSpecTestType.TEST_SUFFIXES as String[])
+    interceptor.init(controllerName ?: GrailsTestRequestEnvironmentInterceptor.DEFAULT_CONTROLLER_NAME)
     interceptor
   }
 }

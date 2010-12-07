@@ -29,6 +29,9 @@ import org.codehaus.groovy.grails.test.support.GrailsTestTypeSupport
 import org.codehaus.groovy.grails.test.report.junit.JUnitReportsFactory
 
 class GrailsSpecTestType extends GrailsTestTypeSupport {
+  
+  static public final TEST_SUFFIXES = ["Spec", "Specification"].asImmutable()
+  
   private final List<Class> specClasses = []
   
   GrailsSpecTestType(String name, String relativeSourcePath) {
@@ -40,7 +43,7 @@ class GrailsSpecTestType extends GrailsTestTypeSupport {
   }
 
   protected List<String> getTestSuffixes() { 
-    ["Spec", "Specification"]
+    TEST_SUFFIXES
   }
   
   JUnitReportsFactory createJUnitReportsFactory() {

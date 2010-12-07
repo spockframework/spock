@@ -20,6 +20,9 @@ import org.codehaus.groovy.grails.commons.ApplicationHolder
 import org.codehaus.groovy.grails.test.support.GrailsTestAutowirer
 import org.codehaus.groovy.grails.test.support.GrailsTestTransactionInterceptor
 import org.codehaus.groovy.grails.test.support.GrailsTestRequestEnvironmentInterceptor
+import org.codehaus.groovy.grails.test.support.ControllerNameExtractor
+
+import grails.plugin.spock.test.GrailsSpecTestType
 
 import spock.lang.Specification
 import spock.lang.Shared
@@ -78,7 +81,8 @@ class IntegrationSpec extends Specification {
   
   private initRequestEnv() {
     def interceptor = new GrailsTestRequestEnvironmentInterceptor(applicationContext)
-    interceptor.init()
+    def controllerName = ControllerNameExtractor.extractControllerNameFromTestClassName(this.class.name, GrailsSpecTestType.TEST_SUFFIXES as String[])
+    interceptor.init(controllerName ?: interceptor.DEFAULT_CONTROLLER_NAME)
     interceptor
   }
 }

@@ -30,14 +30,14 @@ import spock.lang.Stepwise
 
 class IntegrationSpec extends Specification {
   
-  static private applicationContext = ApplicationHolder.application.mainContext
-  static private autowirer = new GrailsTestAutowirer(applicationContext)
+  @Shared private applicationContext = ApplicationHolder.application.mainContext
+  @Shared private autowirer = new GrailsTestAutowirer(applicationContext)
   
   private perMethodTransactionInterceptor = null
-  static private perSpecTransactionInterceptor
+  @Shared private perSpecTransactionInterceptor
   
   private perMethodRequestEnvironmentInterceptor = null
-  static private perSpecRequestEnvironmentInterceptor
+  @Shared private perSpecRequestEnvironmentInterceptor
 
   def setupSpec() {
     if (isSpecIsStepwise()) {

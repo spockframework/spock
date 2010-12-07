@@ -16,9 +16,18 @@
 
 import grails.plugin.spock.IntegrationSpec
 
+import spock.lang.*
+
 class TestIntegrationSpec extends IntegrationSpec {
+  
+  @Shared anotherService
+  
   def simpleService
 
+  def setupSpec() {
+    assert anotherService != null
+  }
+  
   def "injected simpleService is present"() {
     when:
     simpleService.name = input

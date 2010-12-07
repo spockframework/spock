@@ -179,8 +179,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
     }
 
     BlockStatement getterBlock = new BlockStatement();
-    int visibility = field.getOwner() == null ? AstUtil.getVisibility(field.getAst()) : Opcodes.ACC_PUBLIC;
-    getter = new MethodNode(getterName, visibility | Opcodes.ACC_SYNTHETIC,
+    getter = new MethodNode(getterName, determineVisibilityForSharedFieldAccessor(field) | Opcodes.ACC_SYNTHETIC,
         ClassHelper.DYNAMIC_TYPE, Parameter.EMPTY_ARRAY, ClassNode.EMPTY_ARRAY, getterBlock);
 
     getterBlock.addStatement(
@@ -207,8 +206,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
     }
 
     BlockStatement setterBlock = new BlockStatement();
-    int visibility = field.getOwner() == null ? AstUtil.getVisibility(field.getAst()) : Opcodes.ACC_PUBLIC;
-    setter = new MethodNode(setterName, visibility | Opcodes.ACC_SYNTHETIC,
+    setter = new MethodNode(setterName, determineVisibilityForSharedFieldAccessor(field) | Opcodes.ACC_SYNTHETIC,
         ClassHelper.VOID_TYPE, params, ClassNode.EMPTY_ARRAY, setterBlock);
 
     setterBlock.addStatement(
@@ -223,6 +221,18 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
 
     setter.setSourcePosition(field.getAst());
     spec.getAst().addMethod(setter);
+  }
+
+  // we try to use the visibility of the original field, but change
+  // private to protected to solve http://issues.spockframework.org/detail?id=151
+  private int determineVisibilityForSharedFieldAccessor(Field field) {
+    if (field.getOwner() == null) { // true field
+      int visibility = AstUtil.getVisibility(field.getAst());
+      if (visibility == Opcodes.ACC_PRIVATE) visibility = Opcodes.ACC_PROTECTED;
+      return visibility;
+    } else { // property
+      return Opcodes.ACC_PUBLIC;
+    }
   }
 
   private void moveSharedFieldInitializer(Field field) {

@@ -20,26 +20,67 @@ import org.codehaus.groovy.grails.commons.ApplicationHolder
 import org.codehaus.groovy.grails.test.support.GrailsTestAutowirer
 import org.codehaus.groovy.grails.test.support.GrailsTestTransactionInterceptor
 import org.codehaus.groovy.grails.test.support.GrailsTestRequestEnvironmentInterceptor
+import org.codehaus.groovy.grails.test.support.ControllerNameExtractor
+
+import grails.plugin.spock.test.GrailsSpecTestType
 
 import spock.lang.Specification
+import spock.lang.Shared
+import spock.lang.Stepwise
 
 class IntegrationSpec extends Specification {
-  private transactionManager
-  private transactionStatus
+  @Shared private applicationContext = ApplicationHolder.application.mainContext
+  @Shared private autowirer = new GrailsTestAutowirer(applicationContext)
+  
+  @Shared private perSpecTransactionInterceptor
+  @Shared private perSpecRequestEnvironmentInterceptor
+  
+  private perMethodTransactionInterceptor = null
+  private perMethodRequestEnvironmentInterceptor = null
 
-  private applicationContext = ApplicationHolder.application.mainContext
-  private autowirer = new GrailsTestAutowirer(applicationContext)
-  private transactionInterceptor = new GrailsTestTransactionInterceptor(applicationContext)
-  private requestEnvironmentInterceptor = new GrailsTestRequestEnvironmentInterceptor(applicationContext)
-
-  def setup() {
+  def setupSpec() {
+    if (isStepwiseSpec()) {
+      perSpecTransactionInterceptor = initTransaction()
+      perSpecRequestEnvironmentInterceptor = initRequestEnv()
+    }
+    
     autowirer.autowire(this)
-    requestEnvironmentInterceptor.init()
-    if (transactionInterceptor.isTransactional(this)) transactionInterceptor.init()
+  }
+  
+  def setup() {
+    if (!isStepwiseSpec()) {
+      perMethodTransactionInterceptor = initTransaction()
+      perMethodRequestEnvironmentInterceptor = initRequestEnv()
+    }
+    
+    autowirer.autowire(this)
   }
 
   def cleanup() {
-    transactionInterceptor.destroy()
-    requestEnvironmentInterceptor.destroy()
+    perMethodRequestEnvironmentInterceptor?.destroy()
+    perMethodTransactionInterceptor?.destroy()
+  }
+  
+  def cleanupSpec() {
+    perSpecRequestEnvironmentInterceptor?.destroy()
+    perSpecTransactionInterceptor?.destroy()
+  }
+  
+  private boolean isStepwiseSpec() {
+    getClass().isAnnotationPresent(Stepwise)
+  }
+
+  private initTransaction() {
+    def interceptor = new GrailsTestTransactionInterceptor(applicationContext)
+    if (interceptor.isTransactional(this)) interceptor.init()
+    interceptor
+  }
+  
+  private initRequestEnv() {
+    def interceptor = new GrailsTestRequestEnvironmentInterceptor(applicationContext)
+    def controllerName = ControllerNameExtractor.extractControllerNameFromTestClassName(
+        this.class.name, GrailsSpecTestType.TEST_SUFFIXES as String[])
+    interceptor.init(controllerName ?: GrailsTestRequestEnvironmentInterceptor.DEFAULT_CONTROLLER_NAME)
+    interceptor
   }
 }

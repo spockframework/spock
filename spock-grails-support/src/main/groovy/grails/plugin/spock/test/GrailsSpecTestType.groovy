@@ -18,19 +18,18 @@ package grails.plugin.spock.test
 
 import grails.plugin.spock.test.listener.OverallRunListener
 
-import org.spockframework.buildsupport.SpecClassFileFinder
-import org.spockframework.runtime.SpecUtil
-
 import org.junit.runner.JUnitCore
-
 import org.codehaus.groovy.grails.test.GrailsTestTypeResult
 import org.codehaus.groovy.grails.test.event.GrailsTestEventPublisher
 import org.codehaus.groovy.grails.test.support.GrailsTestTypeSupport
 import org.codehaus.groovy.grails.test.report.junit.JUnitReportsFactory
 
+import org.spockframework.runtime.SpecUtil
+
+import spock.config.RunnerConfiguration
+
 class GrailsSpecTestType extends GrailsTestTypeSupport {
-  
-  static public final TEST_SUFFIXES = ["Spec", "Specification"].asImmutable()
+  public static final TEST_SUFFIXES = ["Spec", "Specification"].asImmutable()
   
   private final List<Class> specClasses = []
   
@@ -55,15 +54,28 @@ class GrailsSpecTestType extends GrailsTestTypeSupport {
       def specClass = sourceFileToClass(specSourceFile)
       if (SpecUtil.isRunnableSpec(specClass)) specClasses << specClass
     }
-    
+
+    optimizeSpecRunOrderIfEnabled()
+
     specClasses.sum 0, { SpecUtil.getFeatureCount(it) }
   }
-  
-  GrailsTestTypeResult doRun(GrailsTestEventPublisher eventPublisher) {
+
+  protected GrailsTestTypeResult doRun(GrailsTestEventPublisher eventPublisher) {
     def junit = new JUnitCore()
     def result = new GrailsSpecTestTypeResult()
-    junit.addListener(new OverallRunListener(eventPublisher, createJUnitReportsFactory(), createSystemOutAndErrSwapper(), result))
+    junit.addListener(new OverallRunListener(eventPublisher,
+        createJUnitReportsFactory(), createSystemOutAndErrSwapper(), result))
     junit.run(specClasses as Class[])
     result
+  }
+
+  private void optimizeSpecRunOrderIfEnabled() {
+    if (!SpecUtil.getConfiguration(RunnerConfiguration).optimizeRunOrder) return
+
+    def specNames = specClasses.collect { it.name }
+    def reordered = SpecUtil.optimizeRunOrder(specNames)
+    def reordedPositions = [:]
+    reordered.eachWithIndex { name, idx -> reordedPositions[name] = idx }
+    specClasses.sort { reordedPositions[it.name] }
   }
 }

@@ -97,6 +97,10 @@ public final class SpecUtil {
     return extractNames(histories);
   }
 
+  public static <T> T getConfiguration(Class<T> type) {
+    return RunContext.get().getConfiguration(type);
+  }
+
   private static List<SpecRunHistory> loadHistories(List<String> specNames) {
     List<SpecRunHistory> histories = new ArrayList<SpecRunHistory>(specNames.size());
 

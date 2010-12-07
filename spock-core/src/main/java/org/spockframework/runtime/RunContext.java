@@ -34,8 +34,9 @@ public class RunContext {
       };
 
   private final List<Class<?>> extensionClasses;
-  
   private final ExtensionRegistry extensionRegistry;
+
+  private final List<Object> configurations = new ArrayList<Object>();
   private final RunnerConfiguration runnerConfiguration = new RunnerConfiguration();
 
   private final IObjectRenderer<Object> diffedObjectRenderer = createDiffedObjectRenderer();
@@ -43,7 +44,6 @@ public class RunContext {
   private RunContext(@Nullable DelegatingScript configurationScript, List<Class<?>> extensionClasses) {
     this.extensionClasses = extensionClasses;
 
-    List<Object> configurations = new ArrayList<Object>();
     configurations.add(runnerConfiguration);
 
     extensionRegistry = new ExtensionRegistry(extensionClasses, configurations);
@@ -62,6 +62,14 @@ public class RunContext {
   public ParameterizedSpecRunner createSpecRunner(SpecInfo spec, RunNotifier notifier) {
     return new ParameterizedSpecRunner(spec,
         new JUnitSupervisor(spec, notifier, createStackTraceFilter(spec), diffedObjectRenderer));
+  }
+
+  @Nullable
+  public <T> T getConfiguration(Class<T> type) {
+    for (Object config : configurations)
+      if (config.getClass() == type) return type.cast(config);
+
+    return null;
   }
 
   private IStackTraceFilter createStackTraceFilter(SpecInfo spec) {

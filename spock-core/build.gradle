@@ -2,6 +2,7 @@ project(":spock-core") {
   dependencies {  
     compile asm
     compile junit
+    compile hamcrest_core // until https://github.com/KentBeck/junit/issues/issue/165 gets fixed
     compile cglib
     compile objenesis
     compile antDep

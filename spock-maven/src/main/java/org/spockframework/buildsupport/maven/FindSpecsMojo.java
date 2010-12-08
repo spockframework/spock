@@ -20,6 +20,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.maven.execution.RuntimeInformation;
 import org.apache.maven.model.ConfigurationContainer;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.model.PluginExecution;
@@ -53,6 +54,11 @@ import org.spockframework.util.TextUtil;
  */
 public class FindSpecsMojo extends AbstractMojo {
   /**
+   * @component
+   */
+  private RuntimeInformation runtimeInformation;
+
+  /**
    * @parameter expression="${project}"
    */
   private MavenProject project;
@@ -65,7 +71,7 @@ public class FindSpecsMojo extends AbstractMojo {
   /**
    * If <tt>true</tt>, the execution of this plugin will be skipped.
    *
-   * @parameter default="false"
+   * @parameter expression="${findspecs.skip}" default="false"
    */
   private boolean skip;
 
@@ -73,7 +79,7 @@ public class FindSpecsMojo extends AbstractMojo {
    * If <tt>true</tt>, any existing Surefire &lt;include&gt;'s will
    * be overridden to make sure that only Spock specs will get run.
    *
-   * @parameter default="false"
+   * @parameter expression="${findspecs.overrideSurefireIncludes}" default="false"
    */
   private boolean overrideSurefireIncludes;
 
@@ -82,7 +88,7 @@ public class FindSpecsMojo extends AbstractMojo {
    * configuration of the specified Surefire execution. Otherwise, they
    * will be added to the global Surefire configuration.
    *
-   * @parameter default="null"
+   * @parameter expression="${findspecs.surefireExecutionId}" default="null"
    */
   private String surefireExecutionId;
 
@@ -93,15 +99,25 @@ public class FindSpecsMojo extends AbstractMojo {
    * generated JUnit suite, which may have a negative impact on test
    * reporting.
    *
-   * @parameter default="false"
+   * @parameter expression="${findspecs.optimizeRunOrder}" default="false"
    */
   private boolean optimizeRunOrder;
 
   public void execute() throws MojoExecutionException {
+    checkMavenVersion();
+
     if (!shouldRun()) return;
 
     List<String> specNames = findSpecs();
     configureSurefire(specNames);
+  }
+
+  private void checkMavenVersion() throws MojoExecutionException {
+    if (runtimeInformation.getApplicationVersion().getMajorVersion() == 3) {
+      throw new MojoExecutionException("The Spock Maven plugin is not compatible with Maven 3. To use Spock with " +
+          "Maven 3, remove this plugin and make sure that your spec classes adhere to Surefire's naming conventions " +
+          "(e.g. '*Test'). You can also configure Surefire to support other naming conventions (e.g. '*Spec').");
+    }
   }
 
   private boolean shouldRun() {

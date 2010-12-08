@@ -105,7 +105,7 @@ public class DefaultMockFactory implements IMockFactory {
         return enhancer.create(); // throws what if no parameterless superclass constructor available?
       } catch (Exception e) {
         throw new CannotCreateMockException(mockType,
-"the latter has no parameterless constructor; to allow mocking of classes w/o parameterless constructor, put objenesis-1.2 or higher on the classpath."
+"the latter has no parameterless constructor; to allow mocking of classes without parameterless constructor, put objenesis-1.2 or higher on the classpath."
         );
       }
     }

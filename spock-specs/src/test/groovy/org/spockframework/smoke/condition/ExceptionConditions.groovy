@@ -190,7 +190,7 @@ then: thrown(Exception)
   }
 
   @Issue("http://issues.spockframework.org/detail?id=96")
-  @FailsWith(value = "WrongExceptionThrownError", reason = "known limitation, not relevant in practice")
+  @FailsWith(value = WrongExceptionThrownError, reason = "known limitation, not relevant in practice")
   def "are not able to observe a failing interaction"() {
     def list = Mock(List)
     1 * list.remove(1)

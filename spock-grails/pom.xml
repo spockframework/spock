@@ -44,6 +44,12 @@
       <groupId>org.grails</groupId>
       <artifactId>grails-test</artifactId>
       <version>${grails.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>junit</groupId>
+          <artifactId>junit</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>

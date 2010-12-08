@@ -14,7 +14,7 @@
   <url>http://spockframework.org</url>
 
   <properties>
-    <spring.version>2.5.6.SEC01</spring.version>
+    <spring.version>2.5.6.SEC02</spring.version>
   </properties>
   
   <build>

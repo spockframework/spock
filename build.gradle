@@ -5,18 +5,18 @@ allprojects {
   apply plugin: "idea"
   apply plugin: "eclipse"
 
-  antDep = "org.apache.ant:ant:1.7.1"
-  asm = "asm:asm:2.2.3"
+  antDep = "org.apache.ant:ant:1.7.1" // use same version as Groovy 1.6
+  asm = "asm:asm:2.2.3" // use same version as Groovy 1.6
   cglib = "cglib:cglib-nodep:2.2"
-  h2database = "com.h2database:h2:1.2.130"
+  h2database = "com.h2database:h2:1.2.147"
   junit = "junit:junit-dep:4.8.2"
   hamcrest_core = "org.hamcrest:hamcrest-core:1.2"
   // log4j 1.2.15 would require several excludes
   // see http://wiki.octonary.com/2009/11/07/excluding-transitive-dependencies-with-gradle/
-  log4j = "log4j:log4j:1.2.14"
+  log4j = "log4j:log4j:1.2.16"
   objenesis = "org.objenesis:objenesis:1.2" 
-  easymock = "org.easymock:easymock:2.5.2"
-  mockito = "org.mockito:mockito-all:1.8.4"
+  easymock = "org.easymock:easymock:3.0"
+  mockito = "org.mockito:mockito-all:1.8.5"
   jmock_junit4 = "org.jmock:jmock-junit4:2.5.1"  
   jmock = "org.jmock:jmock:2.5.1"
 }

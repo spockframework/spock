@@ -44,12 +44,7 @@
         groupId="asm"
         artifactId="asm"
         version="3.2" />
-      <!-- only necessary if Hamcrest matchers are used -->
-      <dependency
-          groupId="org.hamcrest"
-          artifactId="hamcrest-core"
-          version="1.2" />
-      <!-- only necessary if Hamcrest matchers are used -->
+      <!-- only required if Hamcrest matchers are used -->
       <dependency
           groupId="org.hamcrest"
           artifactId="hamcrest-core"
@@ -58,7 +53,7 @@
       <dependency
         groupId="com.h2database"
         artifactId="h2"
-        version="1.2.130" />
+        version="1.2.147" />
       <remoteRepository
         id="maven-central"
         url="http://repo1.maven.org/maven2/" />

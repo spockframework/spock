@@ -14,7 +14,7 @@
   <url>http://spockframework.org</url>
 
   <properties>
-    <spring.version>3.0.1.RELEASE</spring.version>
+    <spring.version>3.0.5.RELEASE</spring.version>
   </properties>
   
   <build>
@@ -82,11 +82,6 @@
     <dependency>
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency> <!-- no idea why this is needed, but get NoClassDefFoundError for org.hamcrest.SelfDescribing otherwise -->
-      <groupId>org.hamcrest</groupId>
-      <artifactId>hamcrest-core</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>

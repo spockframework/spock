@@ -21,7 +21,7 @@ dependencies {
   testRuntime "org.objenesis:objenesis:1.2" // enables mocking of classes without default constructor (together with CGLIB)
 
   // dependencies used by examples in this project (not required for using Spock)
-  testRuntime "com.h2database:h2:1.2.130"
+  testRuntime "com.h2database:h2:1.2.147"
 }
 
 // creates bootstrap files (gradlew etc.) for Gradle build (not required for using Spock)

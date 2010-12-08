@@ -71,7 +71,7 @@
       <!-- Only required if default Surefire configuration is not satisfactory -->
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>2.5</version>
+        <version>2.6</version>
         <configuration>
           <useFile>false</useFile>
         </configuration>
@@ -79,6 +79,7 @@
       <!-- Only required for spock-example build -->
       <plugin>
         <artifactId>maven-deploy-plugin</artifactId>
+        <version>2.5</version>
         <configuration>
           <skip>true</skip>
         </configuration>
@@ -118,7 +119,7 @@
     <dependency>
       <groupId>com.h2database</groupId>
       <artifactId>h2</artifactId>
-      <version>1.2.130</version>
+      <version>1.2.147</version>
     </dependency>
   </dependencies>
 

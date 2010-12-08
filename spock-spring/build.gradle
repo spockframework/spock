@@ -1,5 +1,5 @@
 project(":spock-spring") {
-  def springVersion = "3.0.1.RELEASE"
+  def springVersion = "3.0.5.RELEASE"
 
   dependencies {
     compile project(":spock-core")
@@ -12,6 +12,5 @@ project(":spock-spring") {
     testCompile "org.springframework:spring-tx:$springVersion"
     testRuntime h2database
     testRuntime log4j
-    testRuntime hamcrest_core // no idea why this is needed, but get NoClassDefFoundError for org.hamcrest.SelfDescribing otherwise
   }
 }

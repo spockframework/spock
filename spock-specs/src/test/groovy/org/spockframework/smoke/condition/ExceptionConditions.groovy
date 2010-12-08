@@ -19,13 +19,15 @@ package org.spockframework.smoke.condition
 import org.spockframework.EmbeddedSpecification
 import org.spockframework.compiler.InvalidSpecCompileException
 import org.spockframework.runtime.InvalidSpecException
-import spock.lang.FailsWith
-import spock.lang.Issue
+import org.spockframework.runtime.ConditionNotSatisfiedError
+import org.spockframework.runtime.WrongExceptionThrownError
+import org.spockframework.mock.InteractionNotSatisfiedError
+
+import spock.lang.*
 
 /**
  * @author Peter Niederwieser
  */
-
 class ExceptionConditions extends EmbeddedSpecification {
   def "basic usage"() {
     when: "".charAt(0)
@@ -47,7 +49,6 @@ class ExceptionConditions extends EmbeddedSpecification {
     when: "".charAt(0)
     then: true
     then: thrown(IndexOutOfBoundsException)
-
   }
 
   def "when-block with var defs"() {
@@ -167,5 +168,37 @@ then: thrown(Exception)
 
     then:
     thrown(String)
+  }
+
+  @Issue("http://issues.spockframework.org/detail?id=96")
+  def "are able to observe a failing explicit condition"() {
+    when:
+    assert 1 * 2 == 3
+
+    then:
+    thrown(ConditionNotSatisfiedError)
+  }
+
+  @Issue("http://issues.spockframework.org/detail?id=96")
+  @FailsWith(WrongExceptionThrownError)
+  def "are able to observe a failing explicit condition (variation)"() {
+    when:
+    assert 1 * 2 == 3
+
+    then:
+    thrown(IOException)
+  }
+
+  @Issue("http://issues.spockframework.org/detail?id=96")
+  @FailsWith(value = WrongExceptionThrownError, reason = "known limitation, not relevant in practice")
+  def "are not able to observe a failing interaction"() {
+    def list = Mock(List)
+    1 * list.remove(1)
+
+    when:
+    list.add(1)
+
+    then:
+    thrown(InteractionNotSatisfiedError)
   }
 }

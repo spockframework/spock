@@ -53,7 +53,6 @@ apackage.ASpec|a feature|1
     """)
   }
 
-
   @Unroll("exception in #displayName")
   def "exception in call chain"() {
     when:
@@ -154,7 +153,7 @@ apackage.Base|let me fail|3
   }
 
   @Issue("http://issues.spockframework.org/detail?id=33")
-  def "if creation of data provider fails, stack trace points to corresponding parameterization"() {
+  def "when creation of data provider fails, stack trace points to corresponding parameterization"() {
     when:
     runner.runSpecBody """
 def foo() {
@@ -179,7 +178,7 @@ apackage.ASpec|foo|7
   }
 
   @Issue("http://issues.spockframework.org/detail?id=33")
-  def "if data processor fails, stack trace source position points to corresponding parameterization"() {
+  def "when data processor fails, stack trace source position points to corresponding parameterization"() {
     when:
     runner.runSpecBody """
 def foo(int x, Class y, int z) {
@@ -203,6 +202,36 @@ apackage.ASpec|foo|7
     parameterization << ["y << [1]", "y = 1", "[_, y, _] << [[1], [1], [1]]"]
   }
 
+  @Issue("http://issues.spockframework.org/detail?id=90")
+  def "stack trace for explicit condition in setup block has line number"() {
+    when:
+    runner.runSpecBody """
+def setup() {
+  assert 1 * 2 == 3
+}
+
+def foo() { expect: true }
+    """
+
+    then:
+    ConditionNotSatisfiedError e = thrown()
+    e.stackTrace[0].lineNumber == 2
+  }
+
+  @Issue("http://issues.spockframework.org/detail?id=90")
+  def "stack trace for nested explicit condition has line number"() {
+    when:
+    runner.runFeatureBody """
+setup:
+1.times { assert 1 * 2 == 3 }
+    """
+
+    then:
+    ConditionNotSatisfiedError e = thrown()
+    e.stackTrace[0].lineNumber == 2
+  }
+
+
   private void stackTraceLooksLike(Throwable exception, String template) {
     def trace = exception.stackTrace
     def lines = template.trim().split("\n")
@@ -211,9 +240,9 @@ apackage.ASpec|foo|7
     lines.eachWithIndex { line, index ->
       def parts = line.split("\\|")
       def traceElem = trace[index]
-      assert traceElem.className == parts[0]
-      assert traceElem.methodName == parts[1]
-      assert parts[2] == "-" || traceElem.lineNumber == parts[2] as int
+      assert parts[0] == "-" || parts[0] == traceElem.className
+      assert parts[1] == "-" || parts[1] == traceElem.methodName
+      assert parts[2] == "-" || parts[2] as int == traceElem.lineNumber
     }
   }
 }

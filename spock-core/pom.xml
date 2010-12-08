@@ -28,30 +28,35 @@
       <groupId>org.codehaus.groovy</groupId>
       <artifactId>groovy-all</artifactId>
     </dependency>
-    <dependency> <!-- Hamcrest support -->
-      <groupId>org.hamcrest</groupId>
-      <artifactId>hamcrest-core</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency> <!-- clients that want to use org.spockframework.buildsupport need to include this dependency -->
-      <groupId>asm</groupId>
-      <artifactId>asm</artifactId>
-      <optional>true</optional>
-    </dependency>
-    <dependency> <!-- used by org.spockframework.buildsupport.ant -->
-      <groupId>org.apache.ant</groupId>
-      <artifactId>ant</artifactId>
-      <optional>true</optional>
-    </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit-dep</artifactId>
     </dependency>
-    <dependency> <!-- clients that want to mock classes (in addition to interfaces) need to include this dependency -->
+    <!-- Hamcrest support; non-optional until junit-dep fixes unintentional dependency on hamcrest-core
+         See https://github.com/KentBeck/junit/issues/issue/165 -->
+    <dependency>
+      <groupId>org.hamcrest</groupId>
+      <artifactId>hamcrest-core</artifactId>
+    </dependency>
+    <!-- used by org.spockframework.buildsupport.ant -->
+    <dependency>
+      <groupId>org.apache.ant</groupId>
+      <artifactId>ant</artifactId>
+      <optional>true</optional>
+    </dependency>
+    <!-- clients using org.spockframework.buildsupport must include this dependency -->
+    <dependency>
+      <groupId>asm</groupId>
+      <artifactId>asm</artifactId>
+      <optional>true</optional>
+    </dependency>
+    <!-- clients in need of mocking classes (and not just interfaces) must include this dependency -->
+    <dependency>
       <groupId>cglib</groupId>
       <artifactId>cglib-nodep</artifactId>
       <optional>true</optional>
     </dependency>
+    <!-- clients in need of mocking classes without parameterless constructor must include this dependency -->
     <dependency>
       <groupId>org.objenesis</groupId>
       <artifactId>objenesis</artifactId>

@@ -11,8 +11,6 @@ allprojects {
   h2database = "com.h2database:h2:1.2.147"
   junit = "junit:junit-dep:4.8.2"
   hamcrest_core = "org.hamcrest:hamcrest-core:1.2"
-  // log4j 1.2.15 would require several excludes
-  // see http://wiki.octonary.com/2009/11/07/excluding-transitive-dependencies-with-gradle/
   log4j = "log4j:log4j:1.2.16"
   objenesis = "org.objenesis:objenesis:1.2" 
   easymock = "org.easymock:easymock:3.0"

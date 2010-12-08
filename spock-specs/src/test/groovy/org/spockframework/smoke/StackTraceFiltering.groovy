@@ -207,7 +207,7 @@ apackage.ASpec|foo|7
     when:
     runner.runSpecBody """
 def setup() {
-  assert 1 * 2 == 3
+  assert 1 > 2
 }
 
 def foo() { expect: true }
@@ -223,7 +223,7 @@ def foo() { expect: true }
     when:
     runner.runFeatureBody """
 setup:
-1.times { assert 1 * 2 == 3 }
+1.times { assert 1 > 2 }
     """
 
     then:

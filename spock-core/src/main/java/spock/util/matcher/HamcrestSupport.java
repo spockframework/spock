@@ -18,7 +18,7 @@ import org.hamcrest.Matcher;
 
 import org.spockframework.runtime.InvalidSpecException;
 
-public class MatcherSupport {
+public class HamcrestSupport {
   /**
    * Used to match a value against a (Hamcrest) matcher.
    * Only allowed in places where a condition is expected
@@ -27,7 +27,7 @@ public class MatcherSupport {
    * <p>Basic example:
    *
    * <pre>
-   * import static spock.util.matcher.MatcherSupport.that
+   * import static spock.util.matcher.HamcrestSupport.that
    * import static org.hamcrest.CoreMatchers.equalTo // ships with JUnit
    *
    * def foo = 42

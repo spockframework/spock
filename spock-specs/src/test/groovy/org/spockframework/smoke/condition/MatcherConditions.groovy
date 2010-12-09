@@ -23,7 +23,7 @@ import org.spockframework.runtime.InvalidSpecException
 import org.spockframework.runtime.ConditionNotSatisfiedError
 
 import static org.hamcrest.CoreMatchers.*
-import static spock.util.matcher.MatcherSupport.that
+import static spock.util.matcher.HamcrestSupport.that
 
 class MatcherConditions extends EmbeddedSpecification {
   def "work in expect-blocks"() {

@@ -1,7 +1,7 @@
 package org.spockframework.smoke.condition
 
 import static org.hamcrest.CoreMatchers.equalTo
-import static spock.util.matcher.MatcherSupport.that
+import static spock.util.matcher.HamcrestSupport.that
 
 class MatcherConditionRendering extends ConditionRenderingSpec {
   @IsRendered("""

@@ -34,17 +34,17 @@
         groupId="cglib"
         artifactId="cglib-nodep"
         version="2.2" />
-      <!-- enables mocking of classes without default constructor (together with CGLIB) -->
+      <!-- enables mocking of classes without parameterless constructor (together with CGLIB) -->
       <dependency
         groupId="org.objenesis"
         artifactId="objenesis"
         version="1.2" />
-      <!-- only required if Spock's Ant selector is used, which finds specifications to be run regardless of their name -->
+      <!-- only required if Spock's Ant selector is used, which finds spec classes regardless of their name -->
       <dependency
         groupId="asm"
         artifactId="asm"
         version="2.2.3" />
-      <!-- only necessary if Hamcrest matchers are used -->
+      <!-- only required if Hamcrest matchers are used -->
       <dependency
           groupId="org.hamcrest"
           artifactId="hamcrest-core"
@@ -90,7 +90,7 @@
   </target>
   
   <target name="test" depends="compile">
-    <junit fork="true" forkmode="once" printsummary="withOutAndErr">
+    <junit fork="true" forkmode="once">
       <classpath path="${build.dir}" />
       <classpath refid="classpath.spock" />       
       <batchtest>

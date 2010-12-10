@@ -30,7 +30,7 @@ import org.spockframework.runtime.extension.builtin.ConfineMetaClassChangesExten
  *
  * <p>If a spec class is annotated, the meta classes are restored to as they
  * were before <tt>setupSpec()</tt> was executed, after <tt>cleanupSpec</tt>
- * has been executed.
+ * was executed.
  *
  * <p>If a feature method is annotated, the meta classes are restored to as they
  * were after <tt>setup()</tt> was executed, before <tt>cleanup() is executed.

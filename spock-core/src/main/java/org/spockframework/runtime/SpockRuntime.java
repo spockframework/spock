@@ -25,8 +25,6 @@ import org.spockframework.runtime.model.ExpressionInfo;
 import org.spockframework.runtime.model.TextPosition;
 import org.spockframework.util.*;
 
-import spock.util.matcher.MatcherSupport;
-
 /**
  * @author Peter Niederwieser
  */
@@ -105,14 +103,14 @@ public abstract class SpockRuntime {
     }
 
     void verify(@Nullable ValueRecorder recorder, @Nullable String text, int line, int column, @Nullable String message) {
-      if (HamcrestSupport.matches(matcher, actual)) return;
+      if (HamcrestFacade.matches(matcher, actual)) return;
 
       if (recorder != null) {
         recorder.replaceLastValue(shortSyntax ? actual : false);
         replaceMatcherValues(recorder);
       }
 
-      String description = HamcrestSupport.getFailureDescription(matcher, actual, message);
+      String description = HamcrestFacade.getFailureDescription(matcher, actual, message);
       Condition condition = new Condition(recorder, text, TextPosition.create(line, column), description);
       throw new ConditionNotSatisfiedError(condition);
     }
@@ -124,7 +122,7 @@ public abstract class SpockRuntime {
 
       while (iter.hasPrevious()) {
         Object value = iter.previous();
-        if (!HamcrestSupport.isMatcher(value)) continue;
+        if (!HamcrestFacade.isMatcher(value)) continue;
 
         if (firstOccurrence) {
           // indicate mismatch in condition output
@@ -142,13 +140,13 @@ public abstract class SpockRuntime {
       if (safe) return null;
 
       if (method.equals("call")) {
-        if (args.length != 1 || !HamcrestSupport.isMatcher(args[0])) return null;
+        if (args.length != 1 || !HamcrestFacade.isMatcher(args[0])) return null;
         return new MatcherCondition(target, args[0], true);
       }
 
       if (method.equals("that")) {
-        if (target != MatcherSupport.class) return null;
-        if (args.length != 2 || !HamcrestSupport.isMatcher(args[1])) return null;
+        if (target != spock.util.matcher.HamcrestSupport.class) return null;
+        if (args.length != 2 || !HamcrestFacade.isMatcher(args[1])) return null;
         return new MatcherCondition(args[0], args[1], false);
       }
 

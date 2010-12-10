@@ -27,7 +27,7 @@ import org.spockframework.util.*;
  * 
  * @author Peter Niederwieser
  */
-public class SpecInfo extends NodeInfo<NodeInfo, Class<?>> implements IMethodNameMapper, ISkippable, IExcludable {
+public class SpecInfo extends NodeInfo<NodeInfo, Class<?>> implements IMethodNameMapper, ISkippable, IExcludable, IInterceptable {
   private final List<FieldInfo> fields = new ArrayList<FieldInfo>();
   private final List<IMethodInterceptor> interceptors = new ArrayList<IMethodInterceptor>();
   private final List<IRunListener> listeners = new ArrayList<IRunListener>();

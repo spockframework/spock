@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package spock.lang;
+package spock.util.mop;
 
 import java.lang.annotation.*;
 
 import org.spockframework.runtime.extension.ExtensionAnnotation;
-import org.spockframework.runtime.extension.builtin.RevertMetaClassExtension;
+import org.spockframework.runtime.extension.builtin.ConfineMetaClassChangesExtension;
 
 /**
  * Causes Spock to revert the meta class of the given classes to the state
- * they were in before execution of the construct annotated with @RevertMetaClass.
+ * they were in before execution of the construct annotated with @ConfineMetaClassChanges.
  * 
  * <p>If a spec class is annotated, the meta class(es) are reverted to as they were before
  * any methods were executed (including setupSpec()), after all methods are executed
@@ -37,10 +37,10 @@ import org.spockframework.runtime.extension.builtin.RevertMetaClassExtension;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE, ElementType.METHOD})
-@ExtensionAnnotation(RevertMetaClassExtension.class)
-public @interface RevertMetaClass {
+@ExtensionAnnotation(ConfineMetaClassChangesExtension.class)
+public @interface ConfineMetaClassChanges {
   /**
    * The classes to restore the meta classes of.
    */
-  Class[] value();
+  Class<?>[] value();
 }

@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-package org.spockframework.smoke.extension
+package spock.util.mop
 
 import org.spockframework.EmbeddedSpecification
 
@@ -22,7 +22,7 @@ import spock.lang.*
  * @author Luke Daley
  */
 @Stepwise
-class RevertMetaClassExtension extends EmbeddedSpecification {
+class ConfineMetaClassChangesSpec extends EmbeddedSpecification {
   
   def setupSpec() {
     newValue = 1
@@ -38,7 +38,7 @@ class RevertMetaClassExtension extends EmbeddedSpecification {
     expect: value == 2
   }
   
-  @RevertMetaClass(String)
+  @ConfineMetaClassChanges(String)
   def "change it again, but with restore annotation"() {
     expect: value == 2
     when: newValue = 3
@@ -48,13 +48,13 @@ class RevertMetaClassExtension extends EmbeddedSpecification {
   def "changes have been reverted"() {
     expect: value == 2
   }
-  
-  @RevertMetaClass([String, String])
+
+  @ConfineMetaClassChanges([String, String])
   def "ensure duplicate classes in restore list don't cause errors"() {
     expect: true
   }
 
-  @RevertMetaClass([String, Integer])
+  @ConfineMetaClassChanges([String, Integer])
   def "change more than one type"() {
     expect: 
     value == 2
@@ -84,16 +84,18 @@ class RevertMetaClassExtension extends EmbeddedSpecification {
     newValue = 2
     compiler.addImport(getClass().package)
     def specs = compiler.compileWithImports("""
+      import spock.util.mop.ConfineMetaClassChanges
+
       $annotation
       @Stepwise
       class Spec1 extends Specification {
         def feature1() {
-          expect: RevertMetaClassExtension.getValue() == 2
-          when: RevertMetaClassExtension.setNewValue(3)
-          then: RevertMetaClassExtension.getValue() == 3
+          expect: ConfineMetaClassChangesSpec.getValue() == 2
+          when: ConfineMetaClassChangesSpec.setNewValue(3)
+          then: ConfineMetaClassChangesSpec.getValue() == 3
         }
         def feature2() {
-          expect: RevertMetaClassExtension.getValue() == 3
+          expect: ConfineMetaClassChangesSpec.getValue() == 3
         }
       }
     """)
@@ -108,10 +110,10 @@ class RevertMetaClassExtension extends EmbeddedSpecification {
     where:
     annotation                  | afterValue
     ""                          | 3
-    "@RevertMetaClass(String)"  | 2
+    "@ConfineMetaClassChanges(String)" | 2
   }
   
-  @RevertMetaClass(String)
+  @ConfineMetaClassChanges(String)
   def "meta classes are restored after each iteration"() {
     expect:
     value == i
@@ -130,7 +132,7 @@ class RevertMetaClassExtension extends EmbeddedSpecification {
     value == 2
   }
   
-  @RevertMetaClass([])
+  @ConfineMetaClassChanges([])
   def "annotation with empty list/array value doesn't cause an error"(){
     expect: true
   }
@@ -142,10 +144,10 @@ class RevertMetaClassExtension extends EmbeddedSpecification {
   }
   
   static setNewValue(value, type = String) {
-    type.metaClass.getRevertMetaClassExtensionValue = { -> value }
+    type.metaClass.getIsolateMetaClassExtensionValue = { -> value }
   }
   
   static getValue(seed = "") {
-    seed.getRevertMetaClassExtensionValue()
+    seed.getIsolateMetaClassExtensionValue()
   }
 }

@@ -75,4 +75,8 @@ public abstract class CollectionUtil {
       }
     };
   }
+
+  public static <T> Set<T> asSet(T[] values) {
+    return new HashSet<T>(Arrays.asList(values));
+  }
 }

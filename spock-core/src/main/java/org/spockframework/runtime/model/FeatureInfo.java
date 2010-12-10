@@ -9,7 +9,7 @@ import org.spockframework.runtime.extension.IMethodInterceptor;
 /**
  * @author Peter Niederwieser
  */
-public class FeatureInfo extends NodeInfo<SpecInfo, AnnotatedElement> implements ISkippable, IExcludable {
+public class FeatureInfo extends NodeInfo<SpecInfo, AnnotatedElement> implements ISkippable, IExcludable, IInterceptable {
   private int declarationOrder; // per spec class
   private int executionOrder;   // per spec inheritance chain
 

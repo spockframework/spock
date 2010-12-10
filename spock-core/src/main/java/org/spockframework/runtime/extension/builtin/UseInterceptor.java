@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 the original author or authors.
+ * Copyright 2010 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 package org.spockframework.runtime.extension.builtin;
 
-import java.util.Arrays;
+import java.util.List;
 
 import org.codehaus.groovy.runtime.DefaultGroovyMethods;
 
@@ -25,20 +25,18 @@ import org.spockframework.runtime.extension.IMethodInvocation;
 
 import groovy.lang.Closure;
 
-import spock.lang.Use;
-
 /**
  * @author Peter Niederwieser
  */
 public class UseInterceptor implements IMethodInterceptor {
-  private final Use use;
+  private final List<Class> categories;
 
-  public UseInterceptor(Use use) {
-    this.use = use;
+  public UseInterceptor(List<Class> categories) {
+    this.categories = categories;
   }
 
   public void intercept(final IMethodInvocation invocation) throws Throwable {
-    DefaultGroovyMethods.use(null, Arrays.asList(use.value()),
+    DefaultGroovyMethods.use(null, categories,
         new Closure(invocation.getTarget(), invocation.getTarget()) {
           public Object doCall(Object[] args) throws Throwable {
             invocation.proceed();

@@ -24,28 +24,28 @@ import org.spockframework.util.ReflectionUtil;
 /**
  * Facade around Hamcrest API that works both with Hamcrest 1.1 and 1.2,
  * providing better failure descriptions if the latter is available.
- * HamcrestSupport.isMatcher() can safely be called no matter if Hamcrest
+ * HamcrestFacade.isMatcher() can safely be called no matter if Hamcrest
  * classes are available on the class path. The remaining methods assume
  * that Hamcrest classes are available.
  *
  * @author Peter Niederwieser
  */
-public abstract class HamcrestSupport {
+public abstract class HamcrestFacade {
   private static final boolean hamcrestAvailable = ReflectionUtil.isClassAvailable("org.hamcrest.Matcher");
 
   public static boolean isMatcher(Object obj) {
-    return hamcrestAvailable && HamcrestSupportImpl.isMatcher(obj);
+    return hamcrestAvailable && HamcrestFacadeImpl.isMatcher(obj);
   }
 
   public static boolean matches(Object matcher, Object value) {
-    return HamcrestSupportImpl.matches(matcher, value);
+    return HamcrestFacadeImpl.matches(matcher, value);
   }
 
   public static String getFailureDescription(Object matcher, Object value, @Nullable String message) {
-    return HamcrestSupportImpl.getFailureDescription(matcher, value, message);
+    return HamcrestFacadeImpl.getFailureDescription(matcher, value, message);
   }
 
-  private static abstract class HamcrestSupportImpl {
+  private static abstract class HamcrestFacadeImpl {
     static final Method describeMismatchMethod =
         ReflectionUtil.getMethodByName(Matcher.class, "describeMismatch");
 

@@ -19,28 +19,27 @@ package org.spockframework.runtime.extension.builtin;
 import org.spockframework.runtime.extension.AbstractAnnotationDrivenExtension;
 import org.spockframework.runtime.model.FeatureInfo;
 import org.spockframework.runtime.model.IInterceptable;
-import org.spockframework.runtime.model.MethodInfo;
 import org.spockframework.runtime.model.SpecInfo;
+import org.spockframework.util.CollectionUtil;
 
-import spock.util.mop.Use;
+import spock.util.mop.ConfineMetaClassChanges;
 
-import java.util.Arrays;
-
-public class UseExtension extends AbstractAnnotationDrivenExtension<Use> {
-  public void visitSpecAnnotation(Use annotation, SpecInfo spec) {
+/**
+ * @author Luke Daley
+ * @author Peter Niederwieser
+ */
+public class ConfineMetaClassChangesExtension extends AbstractAnnotationDrivenExtension<ConfineMetaClassChanges> {
+  @Override
+  public void visitSpecAnnotation(ConfineMetaClassChanges annotation, SpecInfo spec) {
     addInterceptor(annotation, spec.getBottomSpec());
   }
-
-  public void visitFeatureAnnotation(Use annotation, FeatureInfo feature) {
+  
+  @Override
+  public void visitFeatureAnnotation(ConfineMetaClassChanges annotation, FeatureInfo feature) {
     addInterceptor(annotation, feature.getFeatureMethod());
   }
 
-  @Override
-  public void visitFixtureAnnotation(Use annotation, MethodInfo fixtureMethod) {
-    addInterceptor(annotation, fixtureMethod);
-  }
-
-  private void addInterceptor(Use annotation, IInterceptable interceptable) {
-    interceptable.addInterceptor(new UseInterceptor(Arrays.asList(annotation.value())));
+  private void addInterceptor(ConfineMetaClassChanges annotation, IInterceptable interceptable) {
+    interceptable.addInterceptor(new ConfineMetaClassChangesInterceptor(CollectionUtil.asSet(annotation.value())));
   }
 }

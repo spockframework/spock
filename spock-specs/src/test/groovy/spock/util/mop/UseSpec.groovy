@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 the original author or authors.
+ * Copyright 2010 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,25 +14,24 @@
  * limitations under the License.
  */
 
-package org.spockframework.smoke.extension
+package spock.util.mop
 
 import spock.lang.Specification
-import spock.lang.Use
 
-class UseExtensionOnMethods extends Specification {
+class UseOnMethods extends Specification {
   // can be applied to a fixture method
-  @Use(StringCategory)
+  @Use(StringExtensions)
   def setupSpec() {
     assert "foo".duplicate() == "foofoo"
   }
 
-  @Use(StringCategory)
+  @Use(StringExtensions)
   def "can be applied to a feature method"() {
     expect:
     "foo".duplicate() == "foofoo"
   }
 
-  @Use([StringCategory, IntCategory])
+  @Use([StringExtensions, IntegerExtensions])
   def "can use multiple categories"() {
     expect:
     3.mul(4) == 12
@@ -47,7 +46,7 @@ class UseExtensionOnMethods extends Specification {
     thrown(MissingMethodException)
   }
 
-  @Use(StringCategory)
+  @Use(StringExtensions)
   def helper() {
     "foo".duplicate()
   }
@@ -69,8 +68,8 @@ class UseExtensionOnMethods extends Specification {
   }
 }
 
-@Use(StringCategory)
-class UseExtensionOnClasses extends Specification {
+@Use(StringExtensions)
+class UseOnClasses extends Specification {
   // affects fixture methods
   def setupSpec() {
     assert "foo".duplicate() == "foofoo"
@@ -93,7 +92,7 @@ class UseExtensionOnClasses extends Specification {
     assert "foo".duplicate() == "foofoo"
   }
 
-  @Use(IntCategory)
+  @Use(IntegerExtensions)
   def "can be combined with method-level category"() {
     expect:
     3.mul(4) == 12
@@ -101,10 +100,10 @@ class UseExtensionOnClasses extends Specification {
   }
 }
 
-class StringCategory {
+class StringExtensions {
   static String duplicate(String str) { str * 2 }
 }
 
-class IntCategory {
+class IntegerExtensions {
   static mul(Integer n, Integer m) { n * m }
 }

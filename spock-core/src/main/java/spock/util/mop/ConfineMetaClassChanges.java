@@ -22,16 +22,19 @@ import org.spockframework.runtime.extension.ExtensionAnnotation;
 import org.spockframework.runtime.extension.builtin.ConfineMetaClassChangesExtension;
 
 /**
- * Causes Spock to revert the meta class of the given classes to the state
- * they were in before execution of the construct annotated with @ConfineMetaClassChanges.
- * 
- * <p>If a spec class is annotated, the meta class(es) are reverted to as they were before
- * any methods were executed (including setupSpec()), after all methods are executed
- * (i.e. after cleanupSpec()).
- * 
- * <p>If a feature method is annotated, the meta class(es) are reverted to as they were before
- * the feature was executed, after the feature executes. For a data-driven feature method,
- * meta classes are reverted after each iteration.
+ * Confines any changes made to the meta classes of the specified classes to the
+ * annotated scope. This is done by installing new meta classes when the scope is
+ * entered, and restoring the previously installed meta classes when the scope is
+ * left. Note that this only works reliably as long as spec execution is
+ * single-threaded.
+ *
+ * <p>If a spec class is annotated, the meta classes are restored to as they
+ * were before <tt>setupSpec()</tt> was executed, after <tt>cleanupSpec</tt>
+ * has been executed.
+ *
+ * <p>If a feature method is annotated, the meta classes are restored to as they
+ * were after <tt>setup()</tt> was executed, before <tt>cleanup() is executed.
+ * For a data-driven feature method, meta classes are restored after each iteration.
  * 
  * @author Luke Daley
  */
@@ -40,7 +43,7 @@ import org.spockframework.runtime.extension.builtin.ConfineMetaClassChangesExten
 @ExtensionAnnotation(ConfineMetaClassChangesExtension.class)
 public @interface ConfineMetaClassChanges {
   /**
-   * The classes to restore the meta classes of.
+   * The classes whose meta class changes are to be confined.
    */
   Class<?>[] value();
 }

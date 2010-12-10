@@ -3,6 +3,7 @@ apply plugin: "idea"
 apply plugin: "eclipse"
 
 repositories {
+  // Spock release versions are available from Maven Central
   mavenCentral()
   // only required if a snapshot version of Spock is used
   mavenRepo urls: "http://m2repo.spockframework.org/snapshots"
@@ -22,12 +23,17 @@ dependencies {
   testRuntime "com.h2database:h2:1.2.147"
 }
 
+// copies all (test) runtime dependencies of this project into build/output/lib (not required for using Spock)
+task copyToLib(type: Copy) {
+    into "$buildDir/output/lib"
+    from configurations.testRuntime
+}
+
 // creates bootstrap files (gradlew etc.) for Gradle build (not required for using Spock)
 task wrapper(type: Wrapper) {
   gradleVersion = "0.9-rc-3"
   jarPath = "wrapper"
 }
-
 
 
 

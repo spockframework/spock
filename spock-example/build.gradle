@@ -28,8 +28,8 @@ dependencies {
   testRuntime "com.h2database:h2:1.2.147"
 }
 
-// copies all (test) runtime dependencies of this project into build/output/lib (not required for using Spock)
-task copyToLib(type: Copy) {
+// copies all Jars used in this project into build/output/lib (not required for using Spock)
+task collectJars(type: Copy) {
     into "$buildDir/output/lib"
     from configurations.testRuntime
 }

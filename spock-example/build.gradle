@@ -6,11 +6,17 @@ repositories {
   mavenCentral()
   // only required if a snapshot version of Spock is used
   mavenRepo urls: "http://m2repo.spockframework.org/snapshots"
+  mavenRepo urls: "http://m2repo.spockframework.org/releases"
 }
 
 dependencies {
   // mandatory dependencies for using Spock
-  groovy "org.codehaus.groovy:groovy-all:1.6.9"
+  groovy("org.codehaus.groovy:groovy-all:1.6.9") {
+    // the following dependencies are accidentally not marked as optional in the Groovy 1.6 POM (fixed in 1.7)
+    exclude module: 'junit'
+    exclude module: "ant"
+    exclude module: "ant-launcher"
+  }
   testCompile "org.spockframework:spock-core:0.5-groovy-1.6"
 
   // optional dependencies for using Spock
@@ -22,12 +28,17 @@ dependencies {
   testRuntime "com.h2database:h2:1.2.147"
 }
 
+// copies all (test) runtime dependencies of this project into build/output/lib (not required for using Spock)
+task copyToLib(type: Copy) {
+    into "$buildDir/output/lib"
+    from configurations.testRuntime
+}
+
 // creates bootstrap files (gradlew etc.) for Gradle build (not required for using Spock)
 task wrapper(type: Wrapper) {
   gradleVersion = "0.9-rc-3"
   jarPath = "wrapper"
 }
-
 
 
 

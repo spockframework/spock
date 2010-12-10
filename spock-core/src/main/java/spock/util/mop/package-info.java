@@ -15,6 +15,6 @@
  */
 
 /**
- * Classes comprising Spock's core specification language.
+ * Utility classes related to meta programming.
  */
-package spock.lang;
+package spock.util.mop;

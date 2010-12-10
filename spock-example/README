@@ -8,7 +8,7 @@ Prerequisites
 -------------
 - JDK 5 or higher
 - Ant 1.7 or higher (for Ant build)
-- Maven 2.0 or higher (for Maven build)
+- Maven 2.x (for Maven build)
 
 Building with Ant
 -----------------

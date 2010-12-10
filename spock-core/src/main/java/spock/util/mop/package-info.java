@@ -14,18 +14,7 @@
  * limitations under the License.
  */
 
-class SpockGrailsPlugin {
-  def version = "0.5-groovy-1.7"
-  def grailsVersion = "1.3.0 > *"
-  def dependsOn = [:]
-  def pluginExcludes = [
-      "grails-app/**",
-      "web-app"
-  ]
-
-  def author = "Luke Daley"
-  def authorEmail = "ld@ldaley.com"
-  def title = "Spock Plugin - spockframework.org"
-  def description = 'Test your Grails apps with Spock'
-  def documentation = 'http://grails.org/plugin/spock'
-}
+/**
+ * Utility classes related to meta programming.
+ */
+package spock.util.mop;

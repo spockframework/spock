@@ -15,6 +15,6 @@
  */
 
 /**
- * Provides fundamental classes for writing Spock specifications.
+ * Classes comprising Spock's core specification language.
  */
 package spock.lang;

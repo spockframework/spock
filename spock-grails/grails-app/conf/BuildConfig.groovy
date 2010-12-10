@@ -33,7 +33,7 @@ grails.project.dependency.resolution = {
   }
   
   dependencies {
-    test('org.spockframework:spock-grails-support:0.5-groovy-1.7-SNAPSHOT') {
+    test('org.spockframework:spock-grails-support:0.5-groovy-1.7') {
       exclude "groovy-all"
     }
   }

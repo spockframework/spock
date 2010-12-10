@@ -15,6 +15,6 @@
  */
 
 /**
- * Classes comprising Spock's core specification language.
+ * Utility classes for working with (Hamcrest) matchers.
  */
-package spock.lang;
+package spock.util.matcher;

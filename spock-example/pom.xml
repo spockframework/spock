@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.spockframework</groupId>
   <artifactId>spock-example</artifactId>
-  <version>0.5-groovy-1.8-SNAPSHOT</version>
+  <version>0.5-groovy-1.8</version>
   <packaging>jar</packaging>
   <name>Spock Framework - Example Project</name>
 

@@ -24,14 +24,12 @@ grails.project.dependency.resolution = {
 
   repositories {
     grailsHome()
-    
-    mavenLocal() // prefer local, so we pick up spock snapshot as part of whole build
-    mavenRepo "http://m2repo.spockframework.org/snapshots"
+    mavenLocal()
     mavenCentral()
   }
   
   dependencies {
-    test('org.spockframework:spock-grails-support:0.5') {
+    test('org.spockframework:spock-grails-support:0.5-groovy-1.6') {
       exclude "groovy-all"
     }
   }

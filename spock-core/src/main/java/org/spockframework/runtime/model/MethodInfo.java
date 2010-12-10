@@ -28,7 +28,7 @@ import org.spockframework.util.Nullable;
  * 
  * @author Peter Niederwieser
  */
-public class MethodInfo extends NodeInfo<SpecInfo, Method> {
+public class MethodInfo extends NodeInfo<SpecInfo, Method> implements IInterceptable {
   private MethodKind kind;
   private FeatureInfo feature;
   private final List<IMethodInterceptor> interceptors = new ArrayList<IMethodInterceptor>();

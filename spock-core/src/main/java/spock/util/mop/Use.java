@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 the original author or authors.
+ * Copyright 2010 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package spock.lang;
+package spock.util.mop;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -25,21 +25,20 @@ import org.spockframework.runtime.extension.ExtensionAnnotation;
 import org.spockframework.runtime.extension.builtin.UseExtension;
 
 /**
- * Activates one or more Groovy categories while the annotated method or
- * specification executes. In other words, <tt>&#64;Use(MyCategory)</tt>
+ * Activates one or more Groovy categories while the annotated spec method
+ * or class executes. In other words, <tt>&#64;Use(SomeCategory)</tt>
  * has the same effect as wrapping the execution of the annotated method or
- * specification with <tt>use(MyCategory) { ... }</tt>.
+ * class with <tt>use(SomeCategory) { ... }</tt>.
  *
  * <p>Basic example:
  *
  * <pre>
- * class MyCategory {
- *   // add avg() method on lists
+ * class ListExtensions {
  *   static avg(List list) { list.sum() / list.size() }
  * }
  *
  * class MySpec extends Specification {
- *   &#64;Use(MyCategory)
+ *   &#64;Use(ListExtensions)
  *   def "can use avg() method"() {
  *     expect:
  *     [1, 2, 3].avg() == 2
@@ -51,7 +50,7 @@ import org.spockframework.runtime.extension.builtin.UseExtension;
  * are usually provided by the runtime environment (e.g. Grails).
  *
  * <p>Note: <tt>&#64;Use</tt> has no effect when applied to a helper method.
- * However, when applied to a specification it will also affect its helper methods.
+ * However, when applied to a spec class it will also affect its helper methods.
  *
  * @author Peter Niederwieser
  */

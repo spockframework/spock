@@ -35,7 +35,7 @@ public class AutoCleanupExtension extends AbstractAnnotationDrivenExtension<Auto
 
   @Override
   public void visitSpec(SpecInfo spec) {
-    sharedFieldInterceptor.install(spec.getTopSpec().getCleanupSpecMethod());
-    instanceFieldInterceptor.install(spec.getTopSpec().getCleanupMethod());
+    sharedFieldInterceptor.install(spec.getBottomSpec().getCleanupSpecMethod());
+    instanceFieldInterceptor.install(spec.getBottomSpec().getCleanupMethod());
   }
 }

@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.spockframework</groupId>
     <artifactId>spock-parent</artifactId>
-    <version>0.5-groovy-1.8</version>
+    <version>0.6-groovy-1.8-SNAPSHOT</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>

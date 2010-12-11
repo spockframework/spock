@@ -1,6 +1,6 @@
 allprojects {
   group = "org.spockframework"
-  version = "0.5-groovy-1.7"
+  version = "0.6-groovy-1.7-SNAPSHOT"
 
   apply plugin: "idea"
   apply plugin: "eclipse"

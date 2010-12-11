@@ -17,7 +17,7 @@ dependencies {
     exclude module: "ant"
     exclude module: "ant-launcher"
   }
-  testCompile "org.spockframework:spock-core:0.5-groovy-1.6"
+  testCompile "org.spockframework:spock-core:0.6-groovy-1.6-SNAPSHOT"
 
   // optional dependencies for using Spock
   testCompile "org.hamcrest:hamcrest-core:1.2" // only necessary if Hamcrest matchers are used

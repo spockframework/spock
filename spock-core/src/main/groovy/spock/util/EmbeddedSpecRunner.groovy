@@ -20,8 +20,8 @@ import org.junit.runner.notification.RunListener
 import org.junit.runner.*
 
 import org.spockframework.util.NotThreadSafe
+import org.spockframework.util.IThrowableFunction
 import org.spockframework.runtime.RunContext
-import org.spockframework.util.IFunction
 import org.spockframework.runtime.ConfigurationScriptLoader
 
 /**
@@ -86,7 +86,7 @@ class EmbeddedSpecRunner {
   def withNewContext(Closure block) {
     def script = configurationScript ?
         new ConfigurationScriptLoader().loadClosureBasedScript(configurationScript) : null
-    RunContext.withNewContext(script, extensionClasses, inheritParentExtensions, block as IFunction)
+    RunContext.withNewContext(script, extensionClasses, inheritParentExtensions, block as IThrowableFunction)
   }
 
   private Result doRunRequest(Request request) {

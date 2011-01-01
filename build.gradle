@@ -29,7 +29,7 @@ subprojects {
   compileTestGroovy.options.fork = false
 
   dependencies {
-    groovy("org.codehaus.groovy:groovy-all:1.7.5")
+    groovy("org.codehaus.groovy:groovy-all:1.7.6")
   }
 
   repositories {

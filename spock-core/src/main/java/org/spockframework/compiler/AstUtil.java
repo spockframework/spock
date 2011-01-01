@@ -102,10 +102,17 @@ public abstract class AstUtil {
 
   public static boolean isWildcardRef(Expression expr) {
     VariableExpression varExpr = AstUtil.asInstance(expr, VariableExpression.class);
-    if (varExpr == null) return false;
+    if (varExpr == null || !varExpr.getName().equals(Specification._.toString())) return false;
 
-    return Specification._.toString().equals(varExpr.getName())
-        && varExpr.getAccessedVariable() instanceof DynamicVariable; // this sorts out local variables named _
+    Variable accessedVar = varExpr.getAccessedVariable();
+    if (accessedVar instanceof FieldNode) // Groovy 1.7.6 and higher
+      return ((FieldNode) accessedVar).getOwner().getName().equals(Specification.class.getName());
+
+    if (accessedVar instanceof DynamicVariable) // Groovy 1.7.5 and below
+      // nothing more we can check, so just assume it is a reference to Specification._
+      return true;
+
+    return false;
   }
 
   public static boolean isJavaIdentifier(String id) {

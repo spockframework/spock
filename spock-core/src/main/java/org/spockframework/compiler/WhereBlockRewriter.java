@@ -273,20 +273,21 @@ public class WhereBlockRewriter {
 
   private void verifyDataProcessorVariable(VariableExpression varExpr) {
     Variable accessedVar = varExpr.getAccessedVariable();
-    if (!(accessedVar instanceof DynamicVariable || accessedVar instanceof Parameter)) {
+
+    if (accessedVar instanceof VariableExpression) { // local variable
       resources.getErrorReporter().error(varExpr, "A variable named '%s' already exists in this scope", varExpr.getName());
       return;
     }
 
-    if (whereBlock.getParent().getAst().getParameters().length == 0) {
-      assert accessedVar instanceof DynamicVariable;
-      if (getDataProcessorVariable(varExpr.getName()) != null)
-        resources.getErrorReporter().error(varExpr, "Duplicate declaration of data variable '%s'", varExpr.getName());
-    } else {
-      if (!(accessedVar instanceof Parameter))
-        resources.getErrorReporter().error(varExpr,
-            "Data variable '%s' needs to be declared as method parameter",
-            varExpr.getName());
+    if (getDataProcessorVariable(varExpr.getName()) != null) {
+      resources.getErrorReporter().error(varExpr, "Duplicate declaration of data variable '%s'", varExpr.getName());
+      return;
+    }
+
+    if (whereBlock.getParent().getAst().getParameters().length > 0 && !(accessedVar instanceof Parameter)) {
+      resources.getErrorReporter().error(varExpr,
+          "Data variable '%s' needs to be declared as method parameter",
+          varExpr.getName());
     }
   }
 

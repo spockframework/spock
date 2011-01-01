@@ -41,40 +41,40 @@ y << [1, 2]
     thrown(InvalidSpecCompileException)
   }
 
-  def "data variable collides with instance field"() {
+  def "data variable hides (but doesn't collide with) instance field"() {
     when:
     compiler.compileSpecBody """
-def instanceField
+def x = 1
 
 def foo() {
   expect:
-  true
+  x == 2
 
   where:
-  instanceField << 1
+  x << 2
 }
     """
 
     then:
-    thrown(InvalidSpecCompileException)
+    noExceptionThrown()
   }
 
-  def "data variable collides with static field"() {
+  def "data variable hides (but doesn't collide with) static field"() {
     when:
     compiler.compileSpecBody """
-static String staticField = "foo"
+static String x = 1
 
 def foo() {
   expect:
-  true
+  x == 2
 
   where:
-  staticField << 1
+  x << 2
 }
     """
 
     then:
-    thrown(InvalidSpecCompileException)
+    noExceptionThrown()
   }
 
   def "duplicate data variable"() {
@@ -86,6 +86,24 @@ true
 where:
 x << 1
 x << 2
+    """
+
+    then:
+    thrown(InvalidSpecCompileException)
+  }
+
+  @Issue("http://issues.spockframework.org/detail?id=163")
+  def "duplicate explicit data variable"() {
+    when:
+    compiler.compileSpecBody """
+def foo(x) {
+  expect:
+  true
+
+  where:
+  x << 1
+  x << 2
+}
     """
 
     then:
@@ -131,5 +149,4 @@ def foo() {
     "[1, instanceField, 2]" |_
     "{ -> { -> [instanceField] }() }()" |_
   }
-
 }

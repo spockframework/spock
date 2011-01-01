@@ -102,10 +102,12 @@ public abstract class AstUtil {
 
   public static boolean isWildcardRef(Expression expr) {
     VariableExpression varExpr = AstUtil.asInstance(expr, VariableExpression.class);
-    if (varExpr == null) return false;
+    if (varExpr == null || !varExpr.getName().equals(Specification._.toString())) return false;
 
-    return Specification._.toString().equals(varExpr.getName())
-        && varExpr.getAccessedVariable() instanceof DynamicVariable; // this sorts out local variables named _
+    Variable accessedVar = varExpr.getAccessedVariable();
+    if (!(accessedVar instanceof FieldNode)) return false;
+
+    return ((FieldNode) accessedVar).getOwner().getName().equals(Specification.class.getName());
   }
 
   public static boolean isJavaIdentifier(String id) {

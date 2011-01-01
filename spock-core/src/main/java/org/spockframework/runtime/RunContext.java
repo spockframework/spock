@@ -107,8 +107,9 @@ public class RunContext {
     return service;
   }
 
-  public static <T> T withNewContext(@Nullable DelegatingScript configurationScript,
-      List<Class<?>> extensionClasses, boolean inheritParentExtensions, IFunction<RunContext, T> command) {
+  public static <T, U extends Throwable> T withNewContext(@Nullable DelegatingScript configurationScript,
+      List<Class<?>> extensionClasses, boolean inheritParentExtensions,
+      IThrowableFunction<RunContext, T, U> command) throws U {
     List<Class<?>> allExtensionClasses = new ArrayList<Class<?>>(extensionClasses);
     if (inheritParentExtensions) allExtensionClasses.addAll(getCurrentExtensions());
     

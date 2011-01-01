@@ -17,10 +17,10 @@
 package org.spockframework.util;
 
 /**
- * A function from domain D to co-domain C.
+ * A function from domain D to co-domain C that may throw a checked exception.
  * 
  * @author Peter Niederwieser
  */
-public interface IFunction<D, C> extends IThrowableFunction<D, C, Throwable> {
-  C apply(D value);
+public interface IThrowableFunction<D, C, T extends Throwable> {
+  C apply(D value) throws T;
 }

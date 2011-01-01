@@ -1,2 +1,9 @@
-include 'spock-core', 'spock-specs', 'spock-tapestry', 'spock-guice', 'spock-spring', 'spock-unitils'
+rootProject.name = "spock-groovy-1.8"
+
+include 'spock-core'
+include 'spock-guice'
+include 'spock-specs'
+include 'spock-spring'
+include 'spock-tapestry'
+include 'spock-unitils'
 

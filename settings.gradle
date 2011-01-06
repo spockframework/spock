@@ -1,4 +1,4 @@
-rootProject.name = "spock-groovy-1.8"
+rootProject.name = "spock-parent"
 
 include 'spock-core'
 include 'spock-guice'

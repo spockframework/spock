@@ -1,16 +1,16 @@
-project(":spock-spring") {
-  def springVersion = "3.0.5.RELEASE"
+applyReleaseProfile(project)
 
-  dependencies {
-    compile project(":spock-core")
-    compile "org.springframework:spring-test:$springVersion"
-    compile "org.springframework:spring-beans:$springVersion"
-    testCompile "org.springframework:spring-context:$springVersion"
-    // not used directly at compile-time, but needed by groovyc
-    testCompile "org.springframework:spring-core:$springVersion"
-    testCompile "org.springframework:spring-jdbc:$springVersion"
-    testCompile "org.springframework:spring-tx:$springVersion"
-    testRuntime h2database
-    testRuntime log4j
-  }
+def springVersion = "3.0.5.RELEASE"
+
+dependencies {
+  compile project(":spock-core")
+  compile "org.springframework:spring-test:$springVersion"
+  compile "org.springframework:spring-beans:$springVersion"
+  testCompile "org.springframework:spring-context:$springVersion"
+  // not used directly at compile-time, but needed by groovyc
+  testCompile "org.springframework:spring-core:$springVersion"
+  testCompile "org.springframework:spring-jdbc:$springVersion"
+  testCompile "org.springframework:spring-tx:$springVersion"
+  testRuntime h2database
+  testRuntime log4j
 }

@@ -1,15 +1,16 @@
-project(":spock-tapestry") {
-  repositories {
-    // need to explicitely add repository defined in tapestry-ioc POM
-    // (workaround for http://jira.codehaus.org/browse/GRADLE-611)
-    mavenRepo(urls: "http://repository.jboss.com/maven2")
-  }
-  
-  dependencies {  
-    compile project(":spock-core")
-    compile "org.apache.tapestry:tapestry-ioc:5.2.4"
-    compile "org.apache.tapestry:tapestry5-annotations:5.2.4"
-    compile "org.slf4j:slf4j-api:1.6.1"
-    compile junit
-  }
+applyReleaseProfile(project)
+
+repositories {
+  // need to explicitely add repository defined in tapestry-ioc POM
+  // (workaround for http://jira.codehaus.org/browse/GRADLE-611)
+  mavenRepo(urls: "http://repository.jboss.com/maven2")
 }
+
+dependencies {
+  compile project(":spock-core")
+  compile "org.apache.tapestry:tapestry-ioc:5.2.4"
+  compile "org.apache.tapestry:tapestry5-annotations:5.2.4"
+  compile "org.slf4j:slf4j-api:1.6.1"
+  compile junit
+}
+

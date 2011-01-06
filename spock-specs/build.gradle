@@ -1,14 +1,13 @@
-project(":spock-specs") {
-  dependencies {
-    testCompile project(":spock-core")
-    testCompile junit
-    testCompile easymock
-    testCompile jmock_junit4
-    testCompile jmock
-    testCompile mockito
-    testRuntime asm
-    testRuntime cglib
-    testRuntime objenesis
-    testRuntime h2database  
-  }
+dependencies {
+  testCompile project(":spock-core")
+  testCompile junit
+  testCompile easymock
+  testCompile jmock_junit4
+  testCompile jmock
+  testCompile mockito
+  testRuntime asm
+  testRuntime cglib
+  testRuntime objenesis
+  testRuntime h2database
 }
+

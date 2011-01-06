@@ -19,9 +19,9 @@
   </licenses>
 
   <scm>
-    <connection>scm:svn:http://spock.googlecode.com/svn</connection>
-    <developerConnection>scm:svn:https://spock.googlecode.com/svn</developerConnection>
-    <url>http://code.google.com/p/spock/source/browse</url>
+    <connection>scm:git:git://github.com/spockframework/spock.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com/spockframework/spock.git</developerConnection>
+    <url>https://github.com/spockframework/spock</url>
   </scm>
 
   <properties>

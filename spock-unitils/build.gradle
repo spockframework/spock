@@ -1,27 +1,28 @@
-project(":spock-unitils") {
-  dependencies {
-    compile project(":spock-core")
-    compile "org.unitils:unitils-core:3.1"
+applyReleaseProfile(project)
 
-    // the following are transitive deps of unitils-core with scope compile
-    // nevertheless, if we don't specify them explicitely, groovyc crashes with
-    // NoClassDefFoundError at org.codehaus.groovy.vmplugin.v5.Java5.configureClassNode(Java5.java:285)
-    compile "commons-collections:commons-collections:3.2"
-    compile "ognl:ognl:2.6.9"
+dependencies {
+  compile project(":spock-core")
+  compile "org.unitils:unitils-core:3.1"
 
-    testCompile("org.unitils:unitils-dbunit:3.1") {
-      exclude module: "jta"
-    }
-    testCompile("org.unitils:unitils-database:3.1")  {
-      exclude module: "jta"
-    }
+  // the following are transitive deps of unitils-core with scope compile
+  // nevertheless, if we don't specify them explicitely, groovyc crashes with
+  // NoClassDefFoundError at org.codehaus.groovy.vmplugin.v5.Java5.configureClassNode(Java5.java:285)
+  compile "commons-collections:commons-collections:3.2"
+  compile "ognl:ognl:2.6.9"
 
-    // for some reason, groovyc needs junit dependency for compiling tests
-    // otherwise we'll get:
-    // java.lang.NoClassDefFoundError: junit/framework/AssertionFailedError	
-    testCompile junit
-
-    testRuntime h2database
-    testRuntime log4j
+  testCompile("org.unitils:unitils-dbunit:3.1") {
+    exclude module: "jta"
   }
+  testCompile("org.unitils:unitils-database:3.1")  {
+    exclude module: "jta"
+  }
+
+  // for some reason, groovyc needs junit dependency for compiling tests
+  // otherwise we'll get:
+  // java.lang.NoClassDefFoundError: junit/framework/AssertionFailedError
+  testCompile junit
+
+  testRuntime h2database
+  testRuntime log4j
 }
+

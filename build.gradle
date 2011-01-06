@@ -1,28 +1,25 @@
+antDep = "org.apache.ant:ant:1.8.1" // use same version as Groovy 1.8
+asm = "asm:asm:3.2" // use same version as Groovy 1.8
+cglib = "cglib:cglib-nodep:2.2"
+easymock = "org.easymock:easymock:3.0"
+groovy = "org.codehaus.groovy:groovy-all:1.7.6"
+h2database = "com.h2database:h2:1.2.147"
+hamcrest_core = "org.hamcrest:hamcrest-core:1.2"
+jmock = "org.jmock:jmock:2.5.1"
+jmock_junit4 = "org.jmock:jmock-junit4:2.5.1"
+junit = "junit:junit-dep:4.8.2"
+log4j = "log4j:log4j:1.2.16"
+mockito = "org.mockito:mockito-all:1.8.5"
+objenesis = "org.objenesis:objenesis:1.2"
+
 allprojects {
   group = "org.spockframework"
   version = "0.6-groovy-1.7-SNAPSHOT"
 
   apply plugin: "idea"
   apply plugin: "eclipse"
-
-  antDep = "org.apache.ant:ant:1.8.1" // use same version as Groovy 1.7
-  asm = "asm:asm:3.2" // use same version as Groovy 1.7
-  cglib = "cglib:cglib-nodep:2.2"
-  easymock = "org.easymock:easymock:3.0"
-  groovy = "org.codehaus.groovy:groovy-all:1.7.6"
-  h2database = "com.h2database:h2:1.2.147"
-  hamcrest_core = "org.hamcrest:hamcrest-core:1.2"
-  jmock = "org.jmock:jmock:2.5.1"
-  jmock_junit4 = "org.jmock:jmock-junit4:2.5.1"
-  junit = "junit:junit-dep:4.8.2"
-  log4j = "log4j:log4j:1.2.16"
-  mockito = "org.mockito:mockito-all:1.8.5"
-  objenesis = "org.objenesis:objenesis:1.2"
-}
-
-subprojects {
   apply plugin: "groovy"
-  
+
   sourceCompatibility = 1.5
   targetCompatibility = 1.5
 
@@ -35,10 +32,73 @@ subprojects {
 
   repositories {
     mavenCentral()
+    if (isSnapshotVersion(project)) {
+      mavenRepo(urls: "http://snapshots.repository.codehaus.org")
+    }
+  }
+}
+
+applyReleaseProfile(project)
+
+install {
+  repositories.mavenInstaller {
+    pom {
+      name = "Spock Framework - Umbrella Project"
+      url = "http://spockframework.org"
+      packaging = "pom" // TODO: has no effect, need to find a workaround
+
+      project {
+        description "Spock is a testing and specification framework for Java and Groovy applications."
+
+        licenses {
+          license {
+            name "The Apache Software License, Version 2.0"
+            url "http://www.apache.org/licenses/LICENSE-2.0.txt"
+            distribution "repo"
+          }
+        }
+
+        scm {
+          connection "scm:git:git://github.com/spockframework/spock.git"
+          developerConnection "scm:git:ssh://git@github.com/spockframework/spock.git"
+          url "http://code.google.com/p/spock/source/browse"
+        }
+
+        developers {
+          developer {
+            id "pniederw"
+            name "Peter Niederwieser"
+            email "pniederw@gmail.com"
+          }
+
+          developer {
+            id "ldaley"
+            name "Luke Daley"
+            email "ld@ldaley.com"
+          }
+        }
+      }
+    }
   }
 }
 
 task wrapper(type: Wrapper) {
-  gradleVersion = "0.9"
+  gradleVersion = "0.9.1"
+}
+
+void applyReleaseProfile(project) {
+  configure(project) {
+    apply plugin: "maven"
+
+    uploadArchives {
+      repositories.mavenDeployer {
+        repository(url: isSnapshotVersion(project) ? "file:///var/www/m2repo/snapshots" : "file:///var/www/m2repo/release")
+      }
+    }
+  }
+}
+
+boolean isSnapshotVersion(project) {
+  project.version.endsWith("-SNAPSHOT")
 }
 

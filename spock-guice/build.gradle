@@ -1,8 +1,8 @@
-project(":spock-guice") {
-  dependencies {  
-    compile project(":spock-core")
-    compile "com.google.inject:guice:2.0"
-    // surfaces in the Guice API; groovyc complains if we don't add it
-    compile "aopalliance:aopalliance:1.0"
-  }
+applyReleaseProfile(project)
+
+dependencies {
+  compile project(":spock-core")
+  compile "com.google.inject:guice:2.0"
+  // surfaces in the Guice API; groovyc complains if we don't add it
+  compile "aopalliance:aopalliance:1.0"
 }

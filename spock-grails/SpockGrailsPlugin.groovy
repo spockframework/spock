@@ -23,8 +23,8 @@ class SpockGrailsPlugin {
       "web-app"
   ]
 
-  def author = "Luke Daley"
-  def authorEmail = "ld@ldaley.com"
+  def author = "Spock Framework"
+  def authorEmail = "user@forum.spockframework.org"
   def title = "Spock Plugin - spockframework.org"
   def description = 'Test your Grails apps with Spock'
   def documentation = 'http://grails.org/plugin/spock'

@@ -1,13 +1,13 @@
 applyReleaseProfile(project)
 
 dependencies {
-  compile asm
-  compile junit
-  compile hamcrest_core // until https://github.com/KentBeck/junit/issues/issue/165 gets fixed
-  compile cglib
-  compile objenesis
-  compile antDep
-  compile hamcrest_core
+  compile libs.asm
+  compile libs.junit
+  compile libs.hamcrest_core // until https://github.com/KentBeck/junit/issues/issue/165 gets fixed
+  compile libs.cglib
+  compile libs.objenesis
+  compile libs.ant
+  compile libs.hamcrest_core
 }
 
 

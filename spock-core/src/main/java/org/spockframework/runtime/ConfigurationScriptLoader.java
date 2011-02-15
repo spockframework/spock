@@ -23,6 +23,7 @@ import org.codehaus.groovy.control.CompilationFailedException;
 import org.codehaus.groovy.control.CompilerConfiguration;
 
 import org.spockframework.builder.DelegatingScript;
+import org.spockframework.util.GroovyRuntimeUtil;
 import org.spockframework.util.Nullable;
 
 import spock.config.ConfigurationException;
@@ -71,7 +72,7 @@ public class ConfigurationScriptLoader {
     return new DelegatingScript() {
       @Override
       public Object run() {
-        closure.call();
+        GroovyRuntimeUtil.callClosure(closure);
         return null;
       }
 

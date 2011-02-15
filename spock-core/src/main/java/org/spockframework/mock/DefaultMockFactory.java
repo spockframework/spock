@@ -85,8 +85,10 @@ public class DefaultMockFactory implements IMockFactory {
 
       MethodInterceptor interceptor = new MethodInterceptor() {
         public Object intercept(Object mockInstance, Method method, Object[] args, MethodProxy proxy) {
-          if (isGroovyObject && method.getName().equals("getMetaClass"))
-            return GroovySystem.getMetaClassRegistry().getMetaClass(mockInstance.getClass());
+          if (isGroovyObject) {
+            if (isMethod(method, "getMetaClass", 0))
+              return GroovySystem.getMetaClassRegistry().getMetaClass(mockInstance.getClass());
+          }
           IMockObject mockObject = new MockObject(mockName, mockType, mockInstance);
           IMockInvocation invocation = new MockInvocation(mockObject, method, normalizeArgs(args));
           return dispatcher.dispatch(invocation);
@@ -108,6 +110,10 @@ public class DefaultMockFactory implements IMockFactory {
 "the latter has no parameterless constructor; to allow mocking of classes without parameterless constructor, put objenesis-1.2 or higher on the classpath."
         );
       }
+    }
+
+    private static boolean isMethod(Method method, String name, int parameterCount) {
+      return method.getName().equals(name) && method.getParameterTypes().length == parameterCount;
     }
 
     private static class ObjenesisInstantiator {

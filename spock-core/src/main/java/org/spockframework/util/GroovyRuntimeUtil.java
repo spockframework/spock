@@ -14,16 +14,17 @@
 
 package org.spockframework.util;
 
-import org.codehaus.groovy.runtime.*;
-import org.codehaus.groovy.runtime.typehandling.DefaultTypeTransformation;
-
+import groovy.lang.Closure;
 import groovy.lang.MetaClass;
 import groovy.lang.MetaMethod;
 
+import org.codehaus.groovy.runtime.*;
+import org.codehaus.groovy.runtime.typehandling.DefaultTypeTransformation;
+
 /**
- * Provides convenient access to some Groovy language/runtime features.
- * Only contains functionality that can be fully abstracted from Groovy APIs.
- * If you need more than that (e.g. metaclass handling), use the Groovy APIs directly.
+ * Provides convenient access to Groovy language and runtime features.
+ * Only contains methods that can be fully abstracted from Groovy types.
+ * Where this isn't possible (e.g. for metaclass handling), use the Groovy APIs directly.
  *
  * @author Peter Niederwieser
  */
@@ -46,6 +47,19 @@ public abstract class GroovyRuntimeUtil {
     return DefaultGroovyMethods.toString(obj);
   }
 
+  /**
+   * Note: This method may throw checked exceptions although it doesn't say so.
+   */
+  @SuppressWarnings("unchecked")
+  public static Object invokeMethod(Object target, String method, Object... args) {
+    try {
+      return InvokerHelper.invokeMethod(target, method, args);
+    } catch (InvokerInvocationException e) {
+      ExceptionUtil.sneakyThrow(e.getCause());
+      return null; // never reached
+    }
+  }
+
   public static Object invokeMethodSafe(Object target, String method, Object... args) {
     try {
       return InvokerHelper.invokeMethod(target, method, args);
@@ -54,14 +68,16 @@ public abstract class GroovyRuntimeUtil {
     }
   }
 
-  public static Object invokeMethod(Object target, String method, Object... args) throws Exception {
+  /**
+   * Note: This method may throw checked exceptions although it doesn't say so.
+   */
+  @SuppressWarnings("unchecked")
+  public static Object callClosure(Closure closure, Object... args) {
     try {
-      return InvokerHelper.invokeMethod(target, method, args);
+      return closure.call(args);
     } catch (InvokerInvocationException e) {
-      Throwable cause = e.getCause();
-      if (cause instanceof Exception) throw (Exception) cause;
-      if (cause instanceof Error) throw (Error) cause;
-      throw new Error(cause);
+      ExceptionUtil.sneakyThrow(e.getCause());
+      return null; // never reached
     }
   }
 
@@ -72,7 +88,6 @@ public abstract class GroovyRuntimeUtil {
   // first find the MetaMethod and then invoke it, but the problem is that calling
   // MetaMethod.invoke doesn't have the exact same semantics as calling
   // InvokerHelper.invokeMethod, even if the same method is chosen (see Spec GroovyMopExploration)
-
   public static boolean isVoidMethod(Object target, String method, Object... args) {
     Class[] argTypes = ReflectionUtil.getTypes(args);
 

@@ -16,12 +16,11 @@
 
 package org.spockframework.runtime.extension;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
 
 import org.spockframework.runtime.model.*;
-import org.spockframework.util.InternalSpockError;
 import org.spockframework.util.Nullable;
+import org.spockframework.util.ReflectionUtil;
 
 /**
  *
@@ -71,12 +70,6 @@ public class MethodInvocation implements IMethodInvocation {
   protected void invokeTargetMethod() throws Throwable {
     if (method.isStub()) return;
 
-    try {
-      method.getReflection().invoke(target, arguments);
-    } catch (InvocationTargetException e) {
-      throw e.getCause();
-    } catch (Throwable t) {
-      throw new InternalSpockError("Failed to invoke method '%s'", t).withArgs(method.getReflection().getName());
-    }
+    ReflectionUtil.invokeMethod(target, method.getReflection(), arguments);
   }
 }

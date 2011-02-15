@@ -20,7 +20,6 @@ import java.util.List;
 import org.junit.internal.runners.model.MultipleFailureException;
 
 public class ExtensionUtil {
-  // TODO: throw our own multi-exception type
   public static void throwAll(List<? extends Throwable> exceptions) throws Throwable {
     if (exceptions.isEmpty()) return;
     if (exceptions.size() == 1) throw exceptions.get(0);

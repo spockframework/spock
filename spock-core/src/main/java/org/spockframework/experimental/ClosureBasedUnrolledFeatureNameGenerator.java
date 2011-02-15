@@ -22,6 +22,7 @@ import java.util.regex.Pattern;
 import groovy.lang.*;
 
 import org.spockframework.runtime.model.FeatureInfo;
+import org.spockframework.util.GroovyRuntimeUtil;
 
 import spock.lang.Unroll;
 
@@ -49,7 +50,7 @@ public class ClosureBasedUnrolledFeatureNameGenerator {
   public String nameFor(Object[] args) {
     consecutiveNumber++;
     nameGenerator.setDelegate(new NameGeneratorValues(args));
-    return nameGenerator.call().toString();
+    return GroovyRuntimeUtil.callClosure(nameGenerator).toString();
   }
 
   private String convertToGString(String template) {

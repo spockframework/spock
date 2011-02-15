@@ -26,13 +26,13 @@ import spock.lang.Specification
 class FeatureMethods extends Specification {
   def "cannot be called from user code"() {
     when:
-    someFeatureMethod()
+    featureMethod()
 
     then:
     thrown(InvalidSpecException)
   }
 
-  def someFeatureMethod() {
+  def featureMethod() {
     expect: true
   }
 }

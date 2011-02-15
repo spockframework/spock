@@ -20,6 +20,7 @@ import org.junit.runner.RunWith;
 
 import org.spockframework.mock.MockController;
 import org.spockframework.runtime.*;
+import org.spockframework.util.GroovyRuntimeUtil;
 
 import groovy.lang.Closure;
 
@@ -200,7 +201,7 @@ public abstract class Specification {
    * @param block a block of code containing one or more interaction definitions
    */
   public void interaction(Closure block) {
-    block.call();
+    GroovyRuntimeUtil.callClosure(block);
   }
 
   /**

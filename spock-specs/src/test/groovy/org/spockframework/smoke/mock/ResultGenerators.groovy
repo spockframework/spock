@@ -16,6 +16,8 @@
 
 package org.spockframework.smoke.mock
 
+import java.util.concurrent.Callable
+
 import spock.lang.*
 
 class ResultGenerators extends Specification {
@@ -170,6 +172,24 @@ class ResultGenerators extends Specification {
     then:
     1 * list.remove(_) >> { int foo -> assert foo == 5 }
   }
+
+  @Issue("http://issues.spockframework.org/detail?id=166")
+  def "exceptions thrown from code result generators aren't wrapped"() {
+    def callable = Mock(Callable)
+    callable.call() >> { throw exception }
+
+    when:
+    def caughtException = caller.call(callable)
+
+    then:
+    caughtException.is(exception)
+
+    where:
+    [caller, exception] << [
+        [new JavaCaller(), new GroovyCaller()],
+        [new RuntimeException(), new IOException()]
+    ].combinations()
+  }
 }
 
 private interface Named {
@@ -182,4 +202,15 @@ private interface Calculator {
 
 private interface SetProducer {
   Set produce()
+}
+
+private class GroovyCaller {
+  Throwable call(Callable callable) {
+    try {
+      callable.call()
+      return null
+    } catch (Throwable t) {
+      return t
+    }
+  }
 }

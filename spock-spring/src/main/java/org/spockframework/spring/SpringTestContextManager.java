@@ -37,12 +37,12 @@ public class SpringTestContextManager {
 
   public void beforeTestClass() throws Exception {
     if (beforeTestClassMethod != null)
-      ReflectionUtil.invokeMethodThatThrowsException(delegate, beforeTestClassMethod);
+      ReflectionUtil.invokeMethod(delegate, beforeTestClassMethod);
   }
 
   public void afterTestClass() throws Exception {
     if (afterTestClassMethod != null)
-      ReflectionUtil.invokeMethodThatThrowsException(delegate, afterTestClassMethod);
+      ReflectionUtil.invokeMethod(delegate, afterTestClassMethod);
   }
 
   public void prepareTestInstance(Object testInstance) throws Exception {

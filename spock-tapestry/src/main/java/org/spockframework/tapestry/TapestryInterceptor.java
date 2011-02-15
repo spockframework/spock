@@ -24,7 +24,6 @@ import org.apache.tapestry5.ioc.*;
 import org.apache.tapestry5.ioc.annotations.Autobuild;
 import org.apache.tapestry5.ioc.annotations.Inject;
 
-import org.spockframework.runtime.SpockExecutionException;
 import org.spockframework.runtime.extension.*;
 import org.spockframework.runtime.model.FieldInfo;
 import org.spockframework.runtime.model.SpecInfo;
@@ -89,13 +88,7 @@ public class TapestryInterceptor extends AbstractMethodInterceptor {
     Object returnValue;
 
     for (Method method : findAllBeforeRegistryCreatedMethods()) {
-      try {
-        returnValue = method.invoke(spec, (Object[]) null);
-      } catch (IllegalAccessException e) {
-        throw new InternalSpockError(e);
-      } catch (InvocationTargetException e) {
-        throw new SpockExecutionException("Error invoking beforeRegistryCreated()", e.getCause());
-      }
+      returnValue = ReflectionUtil.invokeMethod(spec, method);
 
       // Return values of a type other than Registry are silently ignored.
       // This avoids problems in case the method unintentionally returns a

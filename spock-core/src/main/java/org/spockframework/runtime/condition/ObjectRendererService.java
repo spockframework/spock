@@ -27,7 +27,9 @@ public class ObjectRendererService implements IObjectRendererService {
 
   @SuppressWarnings("unchecked")
   public String render(Object object) {
-    // cast required although IDEA thinks it's unnecessary
+    if (object == null) return "null\n";
+
+    // explicit parameterization required although IDEA thinks it's redundant
     Set<Class<?>> types = Collections.<Class<?>>singleton(object.getClass());
 
     while (!types.isEmpty()) {
@@ -38,10 +40,11 @@ public class ObjectRendererService implements IObjectRendererService {
       types = getParents(types);
     }
 
+    // only fall back to renderer for type Object once all other options have been exhausted
     IObjectRenderer renderer = renderers.get(Object.class);
     if (renderer != null) return renderer.render(object);
 
-    throw new InternalSpockError("should always have renderer for class Object");
+    throw new InternalSpockError("no renderer for type Object found");
   }
 
   private Set<Class<?>> getParents(Set<Class<?>> types) {
@@ -53,7 +56,7 @@ public class ObjectRendererService implements IObjectRendererService {
         parents.add(superclass);
       }
       // cast required to compile with JDK 5
-      parents.addAll(Arrays.asList((Class<?>[])type.getInterfaces()));
+      parents.addAll(Arrays.asList((Class<?>[]) type.getInterfaces()));
     }
 
     return parents;

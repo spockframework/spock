@@ -31,12 +31,16 @@ grails.project.dependency.resolution = {
   }
   
   dependencies {
-    def groovyVersion = "1.7"
-    if (grailsVersion.startsWith("1.4")) {
-      groovyVersion = "1.8"
+    def spockVersion = "0.6"
+    def groovyVersion = grailsVersion.startsWith("1.3") ? "1.7" : "1.8"
+    def isSnapshot = true
+    
+    def effectiveSpockVersion = "${spockVersion}-groovy-${groovyVersion}"
+    if (isSnapshot) {
+      effectiveSpockVersion += "-SNAPSHOT"
     }
     
-    test("org.spockframework:spock-grails-support:0.6-groovy-${groovyVersion}-SNAPSHOT") {
+    test("org.spockframework:spock-grails-support:${effectiveSpockVersion}") {
       exclude "groovy-all"
     }
   }

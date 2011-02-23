@@ -20,9 +20,9 @@ dependencies {
   // for some reason, groovyc needs junit dependency for compiling tests
   // otherwise we'll get:
   // java.lang.NoClassDefFoundError: junit/framework/AssertionFailedError
-  testCompile junit
+  testCompile libs.junit
 
-  testRuntime h2database
-  testRuntime log4j
+  testRuntime libs.h2database
+  testRuntime libs.log4j
 }
 

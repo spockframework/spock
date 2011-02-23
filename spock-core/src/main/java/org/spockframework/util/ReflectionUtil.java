@@ -106,35 +106,6 @@ public abstract class ReflectionUtil {
     return stream == null ? null : IoUtil.getText(stream);
   }
 
-  // IDEA: replace with MethodInvoker(Builder)
-  public static @Nullable <T> T invokeMethod(Object target, Method method, Class<T> returnType, Object... args) {
-    try {
-      Object result = method.invoke(target, args);
-      if (result != null && !returnType.isInstance(result))
-        throw new InternalSpockError("unexpected return type: %s").withArgs(result.getClass());
-      return returnType.cast(result);
-    } catch (InvocationTargetException e) {
-      Throwable cause = e.getCause();
-      if (cause instanceof Error) throw (Error) cause;
-      throw new Error(cause);
-    } catch (Exception e) {
-      throw new InternalSpockError("unexpected exception", e);
-    }
-  }
-
-  // IDEA: replace with MethodInvoker(Builder)
-  public static @Nullable Object invokeMethodThatThrowsException(Object target, Method method, Object... args)
-      throws Exception {
-    try {
-      return method.invoke(target, args);
-    } catch (InvocationTargetException e) {
-      Throwable cause = e.getCause();
-      if (cause instanceof Error) throw (Error) cause;
-      if (cause instanceof Exception) throw (Exception) cause;
-      throw new InternalSpockError("unexpected exception", cause);
-    }
-  }
-
   public static Object getDefaultValue(Class<?> type) {
     if (!type.isPrimitive()) return null;
 
@@ -194,5 +165,18 @@ public abstract class ReflectionUtil {
     String result = methodName.substring(prefixLength);
     if (result.length() == 0) return null;
     return Introspector.decapitalize(result);
+  }
+
+  @Nullable
+  public static Object invokeMethod(@Nullable Object target, Method method, @Nullable Object... args) {
+    try {
+      return method.invoke(target, args);
+    } catch (IllegalAccessException e) {
+      ExceptionUtil.sneakyThrow(e);
+      return null; // never reached
+    } catch (InvocationTargetException e) {
+      ExceptionUtil.sneakyThrow(e.getCause());
+      return null; // never reached
+    }
   }
 }

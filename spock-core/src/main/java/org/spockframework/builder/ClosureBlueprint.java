@@ -16,6 +16,8 @@ package org.spockframework.builder;
 
 import groovy.lang.Closure;
 
+import org.spockframework.util.GroovyRuntimeUtil;
+
 public class ClosureBlueprint implements IBlueprint {
   private final Closure closure;
   private final Object subject;
@@ -35,6 +37,6 @@ public class ClosureBlueprint implements IBlueprint {
   }
 
   public void evaluate() {
-    closure.call(subject);
+    GroovyRuntimeUtil.callClosure(closure, subject);
   }
 }

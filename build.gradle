@@ -1,16 +1,18 @@
-antDep = "org.apache.ant:ant:1.8.1" // use same version as Groovy 1.7
-asm = "asm:asm:3.2" // use same version as Groovy 1.7
-cglib = "cglib:cglib-nodep:2.2"
-easymock = "org.easymock:easymock:3.0"
-groovy = "org.codehaus.groovy:groovy-all:1.7.6"
-h2database = "com.h2database:h2:1.2.147"
-hamcrest_core = "org.hamcrest:hamcrest-core:1.2"
-jmock = "org.jmock:jmock:2.5.1"
-jmock_junit4 = "org.jmock:jmock-junit4:2.5.1"
-junit = "junit:junit-dep:4.8.2"
-log4j = "log4j:log4j:1.2.16"
-mockito = "org.mockito:mockito-all:1.8.5"
-objenesis = "org.objenesis:objenesis:1.2"
+libs = [
+  ant: "org.apache.ant:ant:1.8.1", // use same version as Groovy 1.7
+  asm: "asm:asm:3.2", // use same version as Groovy 1.7
+  cglib: "cglib:cglib-nodep:2.2",
+  easymock: "org.easymock:easymock:3.0",
+  groovy: "org.codehaus.groovy:groovy-all:1.7.8",
+  h2database: "com.h2database:h2:1.2.147",
+  hamcrest_core: "org.hamcrest:hamcrest-core:1.2",
+  jmock: "org.jmock:jmock:2.5.1",
+  jmock_junit4: "org.jmock:jmock-junit4:2.5.1",
+  junit: "junit:junit-dep:4.8.2",
+  log4j: "log4j:log4j:1.2.16",
+  mockito: "org.mockito:mockito-all:1.8.5",
+  objenesis: "org.objenesis:objenesis:1.2"
+]
 
 allprojects {
   group = "org.spockframework"
@@ -26,15 +28,19 @@ allprojects {
   compileGroovy.options.fork = false
   compileTestGroovy.options.fork = false
 
-  dependencies {
-    groovy groovy
-  }
-
   repositories {
     mavenCentral()
     if (isSnapshotVersion(project)) {
       mavenRepo(urls: "http://snapshots.repository.codehaus.org")
     }
+  }
+
+  configurations {
+    all*.exclude module: "junit"
+  }
+
+  dependencies {
+    groovy libs.groovy
   }
 }
 
@@ -83,7 +89,7 @@ install {
 }
 
 task wrapper(type: Wrapper) {
-  gradleVersion = "0.9.1"
+  gradleVersion = "0.9.2"
 }
 
 void applyReleaseProfile(project) {

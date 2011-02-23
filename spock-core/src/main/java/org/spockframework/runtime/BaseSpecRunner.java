@@ -16,15 +16,14 @@
 
 package org.spockframework.runtime;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import static org.spockframework.runtime.RunStatus.*;
 import org.spockframework.runtime.extension.IMethodInterceptor;
 import org.spockframework.runtime.extension.MethodInvocation;
 import org.spockframework.runtime.model.*;
-import org.spockframework.util.Assert;
 import org.spockframework.util.InternalSpockError;
+import org.spockframework.util.ReflectionUtil;
 
 /**
  * Executes a single Spec. Notifies its supervisor about overall execution
@@ -232,14 +231,9 @@ public class BaseSpecRunner {
     if (method.isStub()) return null;
 
     try {
-      return method.getReflection().invoke(target, arguments);
-    } catch (InvocationTargetException e) {
-      runStatus = supervisor.error(new ErrorInfo(method, e.getTargetException()));
-      return null;
+      return ReflectionUtil.invokeMethod(target, method.getReflection(), arguments);
     } catch (Throwable t) {
-      Error internalError =
-          new InternalSpockError("Failed to invoke method '%s'", t).withArgs(method.getReflection().getName());
-      runStatus = supervisor.error(new ErrorInfo(method, internalError));
+      runStatus = supervisor.error(new ErrorInfo(method, t));
       return null;
     }
   }

@@ -26,10 +26,14 @@ import spock.lang.Specification
 class FeatureMethods extends Specification {
   def cannotBeCalledFromUserCode() {
     when:
-    cannotBeCalledFromUserCode()
+    featureMethod()
 
     then:
     thrown(InvalidSpecException)
+  }
+
+  def featureMethod() {
+    expect: true
   }
 
   def "by the way, Groovy can no longer call into methods with non-standard names"() {

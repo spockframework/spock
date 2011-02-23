@@ -73,7 +73,7 @@ public abstract class HamcrestFacade {
             .appendValue(value);
       } else { // 1.2
         description.appendText("\n     but: ");
-        ReflectionUtil.invokeMethod(matcher, describeMismatchMethod, void.class, value, description);
+        ReflectionUtil.invokeMethod(matcher, describeMismatchMethod, value, description);
       }
 
       return description.toString();

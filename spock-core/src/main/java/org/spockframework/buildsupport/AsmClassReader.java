@@ -16,7 +16,6 @@ package org.spockframework.buildsupport;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import org.objectweb.asm.ClassReader;
@@ -55,12 +54,6 @@ class AsmClassReader {
   }
 
   void accept(SpecClassFileVisitor visitor) {
-    try {
-      acceptMethod.invoke(reader, visitor, acceptMethodSecondArg);
-    } catch(IllegalAccessException e) {
-      throw new UnreachableCodeError("can't access public method", e);
-    } catch (InvocationTargetException e) {
-      throw new WrappedException(e.getCause());
-    }
+    ReflectionUtil.invokeMethod(reader, acceptMethod, visitor, acceptMethodSecondArg);
   }
 }

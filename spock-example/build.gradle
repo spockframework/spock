@@ -2,6 +2,8 @@ apply plugin: "groovy"
 apply plugin: "idea"
 apply plugin: "eclipse"
 
+description = "Spock Framework - Example Project"
+
 repositories {
   // Spock release versions are available from Maven Central
   mavenCentral()

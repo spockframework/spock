@@ -1,8 +1,20 @@
+# Maven
 target
-stacktrace.log
-build
+
+# Gradle
 .gradle
+build
+
+# IDEA
 .idea
 *.iml
 *.ipr
 *.iws
+out
+
+# Eclipse
+.project
+.classpath
+.settings
+bin
+

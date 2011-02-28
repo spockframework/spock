@@ -1,0 +1,77 @@
+apply plugin: "maven"
+
+if (isRootProject) {
+  basePom = {
+    withXml { // workaround for http://jira.codehaus.org/browse/GRADLE-1200
+      def project = it.asNode()
+      project.version[0] + {
+        packaging "pom"
+      }
+    }
+
+    project {
+      name project.description
+      url "http://spockframework.org"
+      description "Spock is a testing and specification framework for Java and Groovy applications."
+
+      licenses {
+        license {
+          name "The Apache Software License, Version 2.0"
+          url "http://www.apache.org/licenses/LICENSE-2.0.txt"
+          distribution "repo"
+        }
+      }
+
+      scm {
+        connection "scm:git:git://github.com/spockframework/spock.git"
+        developerConnection "scm:git:ssh://git@github.com/spockframework/spock.git"
+        url "http://code.google.com/p/spock/source/browse"
+      }
+
+      developers {
+        developer {
+          id "pniederw"
+          name "Peter Niederwieser"
+          email "pniederw@gmail.com"
+        }
+
+        developer {
+          id "ldaley"
+          name "Luke Daley"
+          email "ld@ldaley.com"
+        }
+      }
+    }
+  }
+} else {
+  basePom = {
+    project {
+      name project.description
+
+      parent {
+        groupId project.rootProject.group
+        artifactId project.rootProject.name
+        version project.rootProject.version
+      }
+    }
+  }
+}
+
+install.doFirst {
+  repositories.mavenInstaller {
+    pom basePom
+  }
+}
+
+uploadArchives.doFirst {
+  repositories.mavenDeployer {
+    pom basePom
+    if (isSnapshotVersion) {
+      snapshotRepository(url: "file:///var/www/m2repo/snapshots")
+    } else {
+      repository(url: "file:///var/www/m2repo/release")
+    }
+  }
+}
+
+

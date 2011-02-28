@@ -1,4 +1,6 @@
-applyReleaseProfile(project)
+apply from: profile("publishMaven")
+
+description = "Spock Framework - Spring Module"
 
 def springVersion = "3.0.5.RELEASE"
 

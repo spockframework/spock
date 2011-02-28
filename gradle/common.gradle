@@ -1,0 +1,2 @@
+isSnapshotVersion = project.version.endsWith("-SNAPSHOT")
+isRootProject = project == project.rootProject

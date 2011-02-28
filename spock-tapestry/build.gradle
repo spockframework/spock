@@ -1,4 +1,6 @@
-applyReleaseProfile(project)
+apply from: profile("publishMaven")
+
+description = "Spock Framework - Tapestry Module"
 
 repositories {
   // need to explicitely add repository defined in tapestry-ioc POM

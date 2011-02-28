@@ -1,4 +1,6 @@
-applyReleaseProfile(project)
+apply from: profile("publishMaven")
+
+description = "Spock Framework - Guice Module"
 
 dependencies {
   compile project(":spock-core")

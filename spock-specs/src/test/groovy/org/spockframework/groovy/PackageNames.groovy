@@ -29,13 +29,14 @@ class PackageNames extends Specification {
 inspector.load("""
 package foo.bar
 
+import java.lang.Class
 import java.util.*
 """)
 
     def m = inspector.module
 
     expect:
-      m.packageName == "foo.bar."
-      m.importPackages[0] == "java.util."
+    m.packageName == "foo.bar."
+    m.starImports[0].packageName == "java.util."
   }
 }

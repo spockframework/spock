@@ -14,13 +14,12 @@
 
 package org.spockframework.util;
 
-import org.codehaus.groovy.runtime.InvokerHelper;
-
 import groovy.lang.GroovyObject;
+import org.codehaus.groovy.util.ReleaseInfo;
 
 public class GroovyReleaseInfo {
   public static VersionNumber getVersion() {
-    return VersionNumber.parse(InvokerHelper.getVersion());
+    return VersionNumber.parse(ReleaseInfo.getVersion());
   }
 
   public static String getArtifactPath() {

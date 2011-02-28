@@ -1,4 +1,6 @@
-applyReleaseProfile(project)
+apply from: profile("publishMaven")
+
+description = "Spock Framework - Core Module"
 
 dependencies {
   compile libs.asm

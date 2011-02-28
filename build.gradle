@@ -1,3 +1,5 @@
+description = "Spock Framework - Umbrella Project"
+
 libs = [
   ant: "org.apache.ant:ant:1.8.1", // use same version as Groovy 1.7
   asm: "asm:asm:3.2", // use same version as Groovy 1.7
@@ -21,6 +23,7 @@ allprojects {
   apply plugin: "idea"
   apply plugin: "eclipse"
   apply plugin: "groovy"
+  apply from: profile("common")
 
   sourceCompatibility = 1.5
   targetCompatibility = 1.5
@@ -30,13 +33,13 @@ allprojects {
 
   repositories {
     mavenCentral()
-    if (isSnapshotVersion(project)) {
+    if (isSnapshotVersion) {
       mavenRepo(urls: "http://snapshots.repository.codehaus.org")
     }
   }
 
   configurations {
-    all*.exclude module: "junit"
+    all*.exclude module: "junit" // we use junit-dep instead
   }
 
   dependencies {
@@ -44,67 +47,12 @@ allprojects {
   }
 }
 
-applyReleaseProfile(project)
+apply from: profile("publishMaven")
 
-install {
-  repositories.mavenInstaller {
-    pom {
-      name = "Spock Framework - Umbrella Project"
-      url = "http://spockframework.org"
-      packaging = "pom" // TODO: has no effect, need to find a workaround
-
-      project {
-        description "Spock is a testing and specification framework for Java and Groovy applications."
-
-        licenses {
-          license {
-            name "The Apache Software License, Version 2.0"
-            url "http://www.apache.org/licenses/LICENSE-2.0.txt"
-            distribution "repo"
-          }
-        }
-
-        scm {
-          connection "scm:git:git://github.com/spockframework/spock.git"
-          developerConnection "scm:git:ssh://git@github.com/spockframework/spock.git"
-          url "http://code.google.com/p/spock/source/browse"
-        }
-
-        developers {
-          developer {
-            id "pniederw"
-            name "Peter Niederwieser"
-            email "pniederw@gmail.com"
-          }
-
-          developer {
-            id "ldaley"
-            name "Luke Daley"
-            email "ld@ldaley.com"
-          }
-        }
-      }
-    }
-  }
+File profile(String name) {
+  project.file("gradle/${name}.gradle")
 }
 
 task wrapper(type: Wrapper) {
-  gradleVersion = "0.9.2"
+  gradleVersion = "1.0-milestone-1"
 }
-
-void applyReleaseProfile(project) {
-  configure(project) {
-    apply plugin: "maven"
-
-    uploadArchives {
-      repositories.mavenDeployer {
-        repository(url: isSnapshotVersion(project) ? "file:///var/www/m2repo/snapshots" : "file:///var/www/m2repo/release")
-      }
-    }
-  }
-}
-
-boolean isSnapshotVersion(project) {
-  project.version.endsWith("-SNAPSHOT")
-}
-

@@ -1,3 +1,7 @@
+apply from: profile("publishMaven")
+
+description = "Spock Framework - Specs for Core Module"
+
 dependencies {
   testCompile project(":spock-core")
   testCompile libs.junit

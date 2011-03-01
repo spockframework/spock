@@ -1,5 +1,3 @@
-rootProject.name = "spock-parent"
-
 include 'spock-core'
 include 'spock-guice'
 include 'spock-specs'

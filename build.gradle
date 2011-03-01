@@ -1,4 +1,4 @@
-description = "Spock Framework - Umbrella Project"
+description = "Spock Framework"
 
 libs = [
   ant: "org.apache.ant:ant:1.8.1", // use same version as Groovy 1.8
@@ -28,8 +28,13 @@ allprojects {
   sourceCompatibility = 1.5
   targetCompatibility = 1.5
 
-  compileGroovy.options.fork = false
-  compileTestGroovy.options.fork = false
+  configurations {
+    all*.exclude module: "junit" // we use junit-dep instead
+  }
+
+  dependencies {
+    groovy libs.groovy
+  }
 
   repositories {
     mavenCentral()
@@ -38,16 +43,29 @@ allprojects {
     }
   }
 
-  configurations {
-    all*.exclude module: "junit" // we use junit-dep instead
+  compileGroovy.options.fork = false
+  compileTestGroovy.options.fork = false
+
+  javadoc {
+    include "spock/**"
+    configure(options) {
+      links "http://java.sun.com/j2se/1.5.0/docs/api"
+      links "http://groovy.codehaus.org/gapi"
+      links "http://kentbeck.github.com/junit/javadoc/4.8"
+      links "http://www.jarvana.com/jarvana/inspect/org/hamcrest/hamcrest-core/1.2/hamcrest-core-1.2-javadoc.jar"
+    }
   }
 
-  dependencies {
-    groovy libs.groovy
+  task sourcesJar(type: Jar) {
+    classifier = "sources"
+    from sourceSets.main.allSource
+  }
+
+  task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = "javadoc"
+    from javadoc.destinationDir
   }
 }
-
-apply from: profile("publishMaven")
 
 File profile(String name) {
   project.file("gradle/${name}.gradle")

@@ -1,0 +1,6 @@
+[submodule "buildSrc/grails-plugin"]
+	path = buildSrc/grails-plugin
+	url = git://github.com/alkemist/grails-gradle-plugin.git
+[submodule "buildSrc/huxi-gradle-plugins"]
+	path = buildSrc/huxi-gradle-plugins
+	url = git://github.com/geb/huxi-gradle-plugins.git

@@ -19,30 +19,31 @@ grails.project.test.class.dir = "target/test-classes"
 grails.project.test.reports.dir = "target/test-reports"
 
 grails.project.dependency.resolution = {
+  
+  // NOTE - needs to kept in sync with version in Gradle build
+  def spockVersion = "0.6"
+  def isSnapshot = true
+  
+  def groovyVersion = grailsVersion.startsWith("1.3") ? "1.7" : "1.8"
+  def effectiveSpockVersion = "${spockVersion}-groovy-${groovyVersion}"
+  if (isSnapshot) effectiveSpockVersion += "-SNAPSHOT"
+  
+  
   inherits "global" // inherit Grails' default dependencies
   log "warn" // log level of Ivy resolver, either 'error', 'warn', 'info', 'debug' or 'verbose'
 
   repositories {
     grailsHome()
-    grailsCentral()
-    mavenLocal() // prefer local, so we pick up spock snapshot as part of whole build
-    mavenRepo "http://m2repo.spockframework.org/snapshots"
     mavenCentral()
+    if (isSnapshot) {
+      mavenRepo "http://m2repo.spockframework.org/snapshots"
+    }
   }
   
   dependencies {
     // If we are running as part of spock build, don't try and pull in
     // as gradle sets up the deps for us. This prop is set in the gradle build.
     if (System.getProperty("spock.building") == null) {
-      def spockVersion = "0.6"
-      def groovyVersion = grailsVersion.startsWith("1.3") ? "1.7" : "1.8"
-      def isSnapshot = true
-
-      def effectiveSpockVersion = "${spockVersion}-groovy-${groovyVersion}"
-      if (isSnapshot) {
-        effectiveSpockVersion += "-SNAPSHOT"
-      }
-
       test("org.spockframework:spock-grails-support:${effectiveSpockVersion}") {
         exclude "groovy-all"
       }

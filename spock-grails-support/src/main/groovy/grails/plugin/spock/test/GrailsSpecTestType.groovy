@@ -78,4 +78,10 @@ class GrailsSpecTestType extends GrailsTestTypeSupport {
     reordered.eachWithIndex { name, idx -> reordedPositions[name] = idx }
     specClasses.sort { reordedPositions[it.name] }
   }
+  
+  // Override to workaround GRAILS-7296
+  protected File getSourceDir() {
+    new File(buildBinding.grailsSettings.testSourceDir, relativeSourcePath)
+  }
+  
 }

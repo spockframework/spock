@@ -1,0 +1,39 @@
+apply plugin: "grails"
+
+dependsOn ":spock-grails-support"
+
+configurations {
+  compile.exclude module: "commons-logging"
+  compile.exclude module: 'xml-apis'
+}
+
+dependencies {
+  logging libs.slf4j
+
+  compile \
+    project(':spock-grails-support'),
+    "org.grails:grails-crud:${grailsVersion}",
+    "org.grails:grails-gorm:${grailsVersion}",
+    "hsqldb:hsqldb:1.8.0.5"
+
+  runtime \
+    "net.sf.ehcache:ehcache-core:1.7.1",
+    "org.aspectj:aspectjrt:1.6.6"
+}
+
+
+// Used in BuildConfig to selectively list specify dependencies 
+System.setProperty("spock.building", "true") 
+
+task uploadArchives << {
+  if (project.hasProperty('codehausUsername') && project.hasProperty('codehausPassword')) {
+    def args = "-zipOnly -username=${codehausUsername} -password=${codehausPassword} "
+    if (project.version.endsWith("-SNAPSHOT")) {
+      args += "-message='snapshot release for “${project.version}”' -snapshot"
+    } else {
+      args += "-message='Release “${project.version}”'"
+    }
+
+    grailsTask("release-plugin", args)
+  }
+}

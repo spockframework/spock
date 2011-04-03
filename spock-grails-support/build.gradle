@@ -1,0 +1,21 @@
+apply from: profile("publishMaven")
+
+description = "Spock Framework - Grails Plugin Support"
+
+repositories {
+	mavenRepo name: "java.net", urls: 'http://download.java.net/maven/2'
+}
+
+dependencies {
+  compile \
+    "org.grails:grails-core:${grailsVersion}",
+    "org.grails:grails-test:${grailsVersion}",
+    "org.grails:grails-web:${grailsVersion}",
+    "org.apache.ant:ant-junit:1.7.1",
+    "org.apache.tomcat:servlet-api:6.0.29",
+    libs.slf4j
+
+  compile(project(":spock-core")) {
+    exclude module: "ant"
+  }
+}

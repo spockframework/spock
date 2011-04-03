@@ -31,17 +31,27 @@ grails.project.dependency.resolution = {
   }
   
   dependencies {
-    def spockVersion = "0.6"
-    def groovyVersion = grailsVersion.startsWith("1.3") ? "1.7" : "1.8"
-    def isSnapshot = true
-    
-    def effectiveSpockVersion = "${spockVersion}-groovy-${groovyVersion}"
-    if (isSnapshot) {
-      effectiveSpockVersion += "-SNAPSHOT"
+    // If we are running as part of spock build, don't try and pull in
+    // as gradle sets up the deps for us. This prop is set in the gradle build.
+    if (System.getProperty("spock.building") == null) {
+      def spockVersion = "0.6"
+      def groovyVersion = grailsVersion.startsWith("1.3") ? "1.7" : "1.8"
+      def isSnapshot = true
+
+      def effectiveSpockVersion = "${spockVersion}-groovy-${groovyVersion}"
+      if (isSnapshot) {
+        effectiveSpockVersion += "-SNAPSHOT"
+      }
+
+      test("org.spockframework:spock-grails-support:${effectiveSpockVersion}") {
+        exclude "groovy-all"
+      }
     }
-    
-    test("org.spockframework:spock-grails-support:${effectiveSpockVersion}") {
-      exclude "groovy-all"
+  }
+  
+  plugins {
+    compile (":tomcat:$grailsVersion", ":hibernate:$grailsVersion") {
+      export = false
     }
   }
 }

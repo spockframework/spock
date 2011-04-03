@@ -13,57 +13,61 @@ libs = [
   junit: "junit:junit-dep:4.8.2",
   log4j: "log4j:log4j:1.2.16",
   mockito: "org.mockito:mockito-all:1.8.5",
-  objenesis: "org.objenesis:objenesis:1.2"
+  objenesis: "org.objenesis:objenesis:1.2",
+  slf4j: "org.slf4j:slf4j-log4j12:1.5.5"
 ]
 
 allprojects {
   group = "org.spockframework"
   version = "0.6-groovy-1.7-SNAPSHOT"
 
-  apply plugin: "idea"
-  apply plugin: "eclipse"
-  apply plugin: "groovy"
   apply from: profile("common")
-
-  sourceCompatibility = 1.5
-  targetCompatibility = 1.5
-
-  configurations {
-    all*.exclude module: "junit" // we use junit-dep instead
-  }
-
-  dependencies {
-    groovy libs.groovy
-  }
-
+  
   repositories {
     mavenCentral()
     if (isSnapshotVersion) {
       mavenRepo(urls: "http://snapshots.repository.codehaus.org")
     }
   }
+  
+  if (!isGrailsPlugin) {
+    apply plugin: "idea"
+    apply plugin: "eclipse"
+    apply plugin: "groovy"
+    
+    sourceCompatibility = 1.5
+    targetCompatibility = 1.5
 
-  compileGroovy.options.fork = false
-  compileTestGroovy.options.fork = false
-
-  javadoc {
-    include "spock/**"
-    configure(options) {
-      links "http://java.sun.com/j2se/1.5.0/docs/api"
-      links "http://groovy.codehaus.org/gapi"
-      links "http://kentbeck.github.com/junit/javadoc/4.8"
-      links "http://www.jarvana.com/jarvana/inspect/org/hamcrest/hamcrest-core/1.2/hamcrest-core-1.2-javadoc.jar"
+    configurations {
+      all*.exclude module: "junit" // we use junit-dep instead
     }
-  }
 
-  task sourcesJar(type: Jar) {
-    classifier = "sources"
-    from sourceSets.main.allSource
-  }
+    dependencies {
+      groovy libs.groovy
+    }
 
-  task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier = "javadoc"
-    from javadoc.destinationDir
+    compileGroovy.options.fork = false
+    compileTestGroovy.options.fork = false
+
+    javadoc {
+      include "spock/**"
+      configure(options) {
+        links "http://java.sun.com/j2se/1.5.0/docs/api"
+        links "http://groovy.codehaus.org/gapi"
+        links "http://kentbeck.github.com/junit/javadoc/4.8"
+        links "http://www.jarvana.com/jarvana/inspect/org/hamcrest/hamcrest-core/1.2/hamcrest-core-1.2-javadoc.jar"
+      }
+    }
+
+    task sourcesJar(type: Jar) {
+      classifier = "sources"
+      from sourceSets.main.allSource
+    }
+
+    task javadocJar(type: Jar, dependsOn: javadoc) {
+      classifier = "javadoc"
+      from javadoc.destinationDir
+    }
   }
 }
 

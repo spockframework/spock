@@ -37,3 +37,9 @@ task uploadArchives << {
     grailsTask("release-plugin", args)
   }
 }
+
+task jar << {
+  grailsTask("package-plugin")
+}
+
+task build(dependsOn: [test, jar]) << {}

@@ -64,3 +64,17 @@ eventDefaultStart = {
         createArtifact name: args["name"], suffix: "${args['suffix']}Spec", type: "Spec", path: "test/integration", superClass: "IntegrationSpec"
     }
 }
+
+// Just upgrade plugins without user input when building this plugin
+// Has no effect for clients of this plugin
+if (grailsAppName == 'spock-grails') {
+  def resolveDependenciesWasInteractive = false
+  eventResolveDependenciesStart = {
+      resolveDependenciesWasInteractive = isInteractive
+      isInteractive = false
+  }
+
+  eventResolveDependenciesEnd = {
+      isInteractive = resolveDependenciesWasInteractive
+  }
+}

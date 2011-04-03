@@ -10,17 +10,14 @@ configurations {
 dependencies {
   logging libs.slf4j
 
-  compile \
-    project(':spock-grails-support'),
-    "org.grails:grails-crud:${grailsVersion}",
-    "org.grails:grails-gorm:${grailsVersion}",
-    "hsqldb:hsqldb:1.8.0.5"
+  compile project(':spock-grails-support')
+  compile "org.grails:grails-crud:${grailsVersion}"
+  compile "org.grails:grails-gorm:${grailsVersion}"
+  compile "hsqldb:hsqldb:1.8.0.5"
 
-  runtime \
-    "net.sf.ehcache:ehcache-core:1.7.1",
-    "org.aspectj:aspectjrt:1.6.6"
+  runtime "net.sf.ehcache:ehcache-core:1.7.1"
+  runtime "org.aspectj:aspectjrt:1.6.6"
 }
-
 
 // Used in BuildConfig to selectively list specify dependencies 
 System.setProperty("spock.building", "true") 

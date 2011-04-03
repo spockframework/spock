@@ -7,15 +7,14 @@ repositories {
 }
 
 dependencies {
-  compile \
-    "org.grails:grails-core:${grailsVersion}",
-    "org.grails:grails-test:${grailsVersion}",
-    "org.grails:grails-web:${grailsVersion}",
-    "org.apache.ant:ant-junit:1.7.1",
-    "org.apache.tomcat:servlet-api:6.0.29",
-    libs.slf4j
+  compile "org.grails:grails-core:${grailsVersion}"
+  compile "org.grails:grails-test:${grailsVersion}"
+  compile "org.grails:grails-web:${grailsVersion}"
+  compile "org.apache.ant:ant-junit:1.7.1"
+  compile "org.apache.tomcat:servlet-api:6.0.29"
+  compile libs.slf4j
 
   compile(project(":spock-core")) {
-    exclude module: "ant"
+    exclude module: "ant" // Grails build uses different Ant version (1.7.1)
   }
 }

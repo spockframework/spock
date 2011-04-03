@@ -119,7 +119,7 @@
     <!-- Required to get hold of JTA -->
     <repository>
       <id>dev.java.net</id>
-      <url>http://download.java.net/maven/2/</url>
+      <url>http://download.java.net/maven/2</url>
     </repository>
     <repository>
       <id>codehaus</id>

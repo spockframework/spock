@@ -19,6 +19,9 @@ libs = [
 
 allprojects {
   group = "org.spockframework"
+  
+  // Whenever this is changed, also need to change the version information in 
+  // SpockGrailsPlugin.groovy and BuildConfig.groovy in the Grails plugin to stay in sync.
   version = "0.6-groovy-1.7-SNAPSHOT"
 
   apply from: profile("common")

@@ -34,6 +34,7 @@ grails.project.dependency.resolution = {
 
   repositories {
     grailsHome()
+    grailsCentral()
     mavenCentral()
     if (isSnapshot) {
       mavenRepo "http://m2repo.spockframework.org/snapshots"

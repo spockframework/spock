@@ -1,0 +1,241 @@
+artifactMapping = [
+'pgp-gradle-plugin':                 'de.huxhorn.gradle.pgp-plugin'
+]
+
+buildscript {
+	apply from: 'dependencyDefinitions.gradle'
+	version = '0.0.4'
+	if(!System.properties.'release')
+	{
+		version = version + '-SNAPSHOT'
+	}
+	localReleaseRepoFile = new File("${System.properties.'user.home'}/local-gradle-repository/release")
+	localSnapshotRepoFile = new File("${System.properties.'user.home'}/local-gradle-repository/snapshot")
+	localReleaseRepo = localReleaseRepoFile.toURL().toString()
+	localSnapshotRepo = localSnapshotRepoFile.toURL().toString()
+	repositories {
+		mavenCentral()
+		mavenRepo urls: localReleaseRepo
+		mavenRepo urls: localSnapshotRepo
+	}
+	if(System.properties.'sign')
+	{
+		dependencies {
+			classpath "de.huxhorn.gradle:de.huxhorn.gradle.pgp-plugin:${version}",
+			"org.apache.maven.wagon:wagon-webdav-jackrabbit:1.0-beta-6"
+		}
+	}
+	else
+	{
+		dependencies {
+			classpath "org.apache.maven.wagon:wagon-webdav-jackrabbit:1.0-beta-6"
+		}
+	}
+}
+
+dependsOnChildren()
+
+allprojects {
+	defaultTasks 'clean', 'build', 'uploadArchives'
+	group = 'de.huxhorn.gradle'
+	version = '0.0.4'
+	if(!System.properties.'release')
+	{
+		version = version + '-SNAPSHOT'
+	}
+
+	task syncStaging << {
+		if (project.hasProperty('remoteUsername') && project.hasProperty('remoteUsername')) {
+			def stagingRepos = new org.apache.maven.wagon.repository.Repository('staging', 'https://oss.sonatype.org/service/local/staging/deploy/maven2')
+			def auth = new org.apache.maven.wagon.authentication.AuthenticationInfo()
+			auth.userName = remoteUsername
+			auth.password = remotePassword
+			def wagon = new org.apache.maven.wagon.providers.webdav.WebDavWagon()
+
+			wagon.connect(stagingRepos, auth)
+			localReleaseRepoFile.eachFile {
+				if (it.directory) {
+					wagon.putDirectory(it, it.name)
+				} else {
+					wagon.put(it, it.name)
+				}
+			}
+		} else {
+			println "Can't upload site as credentials aren't set. Set with -PremoteUsername=user -PremotePassword=password."
+		}
+	}
+
+	task syncSnapshot << {
+		if (project.hasProperty('remoteUsername') && project.hasProperty('remoteUsername')) {
+			def snapshotRepos = new org.apache.maven.wagon.repository.Repository('snapshot', 'https://oss.sonatype.org/content/repositories/snapshots')
+			def auth = new org.apache.maven.wagon.authentication.AuthenticationInfo()
+			auth.userName = remoteUsername
+			auth.password = remotePassword
+			def wagon = new org.apache.maven.wagon.providers.webdav.WebDavWagon()
+
+			wagon.connect(snapshotRepos, auth)
+			localSnapshotRepoFile.eachFile {
+				if (it.directory) {
+					wagon.putDirectory(it, it.name)
+				} else {
+					wagon.put(it, it.name)
+				}
+			}
+		} else {
+			println "Can't upload site as credentials aren't set. Set with -PremoteUsername=user -PremotePassword=password."
+		}
+	}
+}
+
+subprojects {
+
+	apply plugin: 'groovy'
+    apply plugin: 'maven'
+    
+	if(System.properties.'sign')
+	{
+		//apply plugin: 'sign'
+		apply plugin: de.huxhorn.gradle.pgp.PgpPlugin
+		
+		pgp {
+			secretKeyRingFile = new File("${System.properties['user.home']}/.gnupg/secring.gpg")
+			keyId = '740A1840'
+		}
+	}
+
+	task sourceJar(type: Jar) { from sourceSets.main.allSource; classifier = 'sources' }
+	task javadocJar(type: Jar) { from javadoc.outputs.files; classifier = 'javadoc' }
+	
+	artifacts { archives sourceJar, javadocJar }
+
+    repositories {
+       mavenCentral()
+       mavenRepo urls: localReleaseRepo
+       mavenRepo urls: localSnapshotRepo
+    }
+    
+    mapped=artifactMapping[project.name];
+    if(!mapped)
+    {
+    	throw new IllegalStateException("${project.name} does not have an entry in artifactMapping!");
+    }
+    archivesBaseName=mapped
+
+	configurations {
+		all*.exclude group: 'commons-logging', module: 'commons-logging'
+	}
+	
+    dependencies {
+		compile gradleApi()
+		groovy localGroovy()
+        testCompile libraries.junit
+        testCompile libraries.'slf4j-api'
+        testRuntime libraries.'logback-classic'
+    }
+
+    defaultProject = {
+    	url 'http://gradle.huxhorn.de'
+    	
+    	name 'gradle-pgp-plugin'
+    	description 'Plugin providing the ability to sign artifacts and pom before uploading to a repository.'
+    	inceptionYear '2010'
+    	packaging 'jar' // does not work, fixed below
+    	// See http://jira.codehaus.org/browse/GRADLE-1200
+
+    	scm {
+    		connection 'scm:git:git://github.com/huxi/huxi-gradle-plugins.git'
+    		developerConnection 'scm:git:ssh://git@github.com:huxi/huxi-gradle-plugins.git'
+    		url 'http://github.com/huxi/huxi-gradle-plugins/'
+    	}
+    	
+		licenses {
+			license {
+				name 'GNU Lesser General Public License v3 (LGPL)'
+				url 'http://www.gnu.org/copyleft/lesser.html'
+				distribution 'repo'
+			}
+			
+			license {
+				name 'The Apache Software License, Version 2.0'
+				url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+				distribution 'repo'
+			}
+		}
+		
+		developers {
+			developer {
+				id 'huxhorn'
+				email 'huxhorn@users.sourceforge.net'
+				name 'Joern Huxhorn'
+				organization = 'Joern Huxhorn' // = is workaround for http://jira.codehaus.org/browse/GRADLE-1200
+				organizationUrl 'http://lilith.huxhorn.de'
+				roles {
+					role 'Developer'
+				}
+			}
+		}
+		
+		properties {
+			'project.build.sourceEncoding' 'UTF-8'
+			'project.reporting.outputEncoding' 'UTF-8'
+		}
+	}
+
+	def deployer = null	
+
+	// the following is a workaround for http://jira.codehaus.org/browse/GRADLE-443
+	uploadArchives {
+		deployer = repositories.mavenDeployer {
+			repository(url: localReleaseRepo)
+			snapshotRepository(url: localSnapshotRepo)
+			pom.whenConfigured { pom ->
+				// dep is a native Maven dependency object (With properties artifactId, groupId, ...)
+				for(dep in pom.dependencies) {
+					//println(dep.artifactId)
+					mapping=artifactMapping[dep.artifactId];
+					if(mapping) {
+						println("Mapping ${dep.artifactId} to ${mapping}...")
+						dep.artifactId=mapping
+					}
+				}
+			}
+		}
+	}
+
+	installer = install.repositories.mavenInstaller
+
+	installer.pom.project defaultProject
+
+	deployer.pom.project defaultProject
+
+	// The following fixes the broken packaging
+	// See http://jira.codehaus.org/browse/GRADLE-1200
+	// Thanks xlson
+	installer.pom.withXml { XmlProvider xmlProvider ->
+		def xml = xmlProvider.asString()
+		def pomXml = new XmlParser().parseText(xml.toString())
+
+		pomXml.version[0] + { packaging('jar') }
+
+		def newXml = new StringWriter()
+		def printer = new XmlNodePrinter(new PrintWriter(newXml))
+		printer.preserveWhitespace = true
+		printer.print(pomXml)
+		xml.setLength(0)
+		xml.append(newXml.toString())
+	}
+	deployer.pom.withXml { XmlProvider xmlProvider ->
+		def xml = xmlProvider.asString()
+		def pomXml = new XmlParser().parseText(xml.toString())
+
+		pomXml.version[0] + { packaging('jar') }
+
+		def newXml = new StringWriter()
+		def printer = new XmlNodePrinter(new PrintWriter(newXml))
+		printer.preserveWhitespace = true
+		printer.print(pomXml)
+		xml.setLength(0)
+		xml.append(newXml.toString())
+	}
+}
+

@@ -18,3 +18,5 @@ out
 .settings
 bin
 
+# Grails
+stacktrace.log

@@ -5,7 +5,7 @@ libs = [
   asm: "asm:asm:3.2", // use same version as Groovy 1.8
   cglib: "cglib:cglib-nodep:2.2",
   easymock: "org.easymock:easymock:3.0",
-  groovy: "org.codehaus.groovy:groovy-all:1.8.0-rc-2-SNAPSHOT",
+  groovy: "org.codehaus.groovy:groovy-all:1.8.0-rc-4",
   h2database: "com.h2database:h2:1.2.147",
   hamcrest_core: "org.hamcrest:hamcrest-core:1.2",
   jmock: "org.jmock:jmock:2.5.1",

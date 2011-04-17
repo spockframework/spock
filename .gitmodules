@@ -1,6 +1,0 @@
-[submodule "buildSrc/grails-plugin"]
-	path = buildSrc/grails-plugin
-	url = git://github.com/spockframework/grails-gradle-plugin.git
-[submodule "buildSrc/huxi-gradle-plugins"]
-	path = buildSrc/huxi-gradle-plugins
-	url = git://github.com/spockframework/huxi-gradle-plugins.git

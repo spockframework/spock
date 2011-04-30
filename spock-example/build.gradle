@@ -35,8 +35,7 @@ task collectJars(type: Copy) {
 
 // creates bootstrap files (gradlew etc.) for Gradle build (not required for using Spock)
 task wrapper(type: Wrapper) {
-  gradleVersion = "0.9-rc-3"
-  jarPath = "wrapper"
+  gradleVersion = "1.0-milestone-3"
 }
 
 

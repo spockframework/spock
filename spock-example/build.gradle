@@ -13,8 +13,8 @@ repositories {
 
 dependencies {
   // mandatory dependencies for using Spock
-  groovy("org.codehaus.groovy:groovy-all:1.7.5")
-  testCompile "org.spockframework:spock-core:0.6-groovy-1.7"
+  groovy("org.codehaus.groovy:groovy-all:1.7.10")
+  testCompile "org.spockframework:spock-core:0.6-groovy-1.7-SNAPSHOT"
 
   // optional dependencies for using Spock
   testCompile "org.hamcrest:hamcrest-core:1.2" // only necessary if Hamcrest matchers are used

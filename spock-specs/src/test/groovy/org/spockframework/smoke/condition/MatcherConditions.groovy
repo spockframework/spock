@@ -114,7 +114,7 @@ class MatcherConditions extends EmbeddedSpecification {
     that x, equalTo(42)
   }
 
-  def "can have an actual that is a numeric literal"() {
+  def "can have a numeric literal as actual"() {
     def x = 42
 
     expect:
@@ -122,18 +122,53 @@ class MatcherConditions extends EmbeddedSpecification {
   }
 
   @FailsWith(MissingMethodException)
-  def "cannot have an actual that is a string literal (because Groovy parses the string literal as a method call)"() {
+  def "cannot have a string literal as actual (because matcher expression gets parsed as a method call)"() {
     def x = "fred"
 
     expect:
     "fred" equalTo(x)
   }
 
-  def "can have an actual that is a string literal if alternative 'that' syntax is used"() {
+  def "can have a string literal as actual if 'that' syntax is used"() {
     def x = "fred"
 
     expect:
     that "fred", equalTo(x)    
+  }
+
+  class Foo {
+    String method() { "method" }
+    String property = "property"
+  }
+
+  @FailsWith(MissingMethodException)
+  def "cannot have a method expression as actual in Groovy 1.8 (because matcher expression gets parsed as a chained method call)"() {
+    def foo = new Foo()
+
+    expect:
+    foo.method() equalTo("method")
+  }
+
+  def "can have a method expression as actual if 'that' syntax is used"() {
+    def foo = new Foo()
+
+    expect:
+    that foo.method(), equalTo("method")
+  }
+
+  @FailsWith(MissingMethodException)
+  def "cannot have a property expression as actual (because matcher expression gets parsed as a method call)"() {
+    def foo = new Foo()
+
+    expect:
+    foo.property equalTo("property")
+  }
+
+  def "can have a property expression as actual if 'that' syntax is used"() {
+    def foo = new Foo()
+
+    expect:
+    that foo.property, equalTo("property")
   }
 
   def "hamcrest matchers are also supported as contraints in interactions"() {

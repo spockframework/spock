@@ -82,7 +82,11 @@ public class JUnitFixtureMethodsExtension implements IGlobalExtension {
       this.executeBeforeSpecMethod = executeBeforeSpecMethod;
     }
     
-    public MethodInfo getInterceptedMethod(SpecInfo specInfo) {
+    public void addInterceptor(SpecInfo specInfo, Collection<Method> fixtureMethods) {
+      getInterceptedMethod(specInfo).addInterceptor(new FixtureMethodInterceptor(fixtureMethods));
+    }
+    
+    private MethodInfo getInterceptedMethod(SpecInfo specInfo) {
       for (MethodInfo methodInfo : specInfo.getFixtureMethods()) {
         if (methodInfo.getKind().equals(interceptedMethodKind)) return methodInfo;
       }
@@ -113,26 +117,24 @@ public class JUnitFixtureMethodsExtension implements IGlobalExtension {
       }
       return map;
     }
-  }
-  
-  private static class FixtureMethodInterceptor implements IMethodInterceptor {
-    private final FixtureType fixtureType;
-    private final Collection<Method> methods;
     
-    public FixtureMethodInterceptor(FixtureType fixtureType, Collection<Method> methods) {
-      this.fixtureType = fixtureType;
-      this.methods = methods;
-    }
-    
-    public void intercept(IMethodInvocation invocation) throws Throwable {
-      if (!fixtureType.executeBeforeSpecMethod) invocation.proceed();
-      
-      // TODO - handle invocation errors in a more user friendly way?
-      for (Method method : methods) {
-        method.invoke(invocation.getTarget());
+    private class FixtureMethodInterceptor implements IMethodInterceptor {
+      private final Collection<Method> methods;
+
+      public FixtureMethodInterceptor(Collection<Method> methods) {
+        this.methods = methods;
       }
-      
-      if (fixtureType.executeBeforeSpecMethod) invocation.proceed();
+
+      public void intercept(IMethodInvocation invocation) throws Throwable {
+        if (!executeBeforeSpecMethod) invocation.proceed();
+
+        // TODO - handle invocation errors in a more user friendly way?
+        for (Method method : methods) {
+          method.invoke(invocation.getTarget());
+        }
+
+        if (executeBeforeSpecMethod) invocation.proceed();
+      }
     }
   }
   
@@ -167,7 +169,7 @@ public class JUnitFixtureMethodsExtension implements IGlobalExtension {
         List<Method> fixtureMethodsForType = fixtureTypeEntry.getValue();
         
         if (!fixtureMethodsForType.isEmpty()) {
-          fixtureType.getInterceptedMethod(currentSpec).addInterceptor(new FixtureMethodInterceptor(fixtureType, fixtureMethodsForType));
+          fixtureType.addInterceptor(currentSpec, fixtureMethodsForType);
         }
       } 
     }

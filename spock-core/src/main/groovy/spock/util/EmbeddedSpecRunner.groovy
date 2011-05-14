@@ -24,6 +24,8 @@ import org.spockframework.util.IThrowableFunction
 import org.spockframework.runtime.RunContext
 import org.spockframework.runtime.ConfigurationScriptLoader
 
+import java.lang.reflect.Modifier
+
 /**
  * Utility class that allows to run (fragments of) specs programmatically.
  * Mainly intended for spec'ing Spock itself.
@@ -54,7 +56,7 @@ class EmbeddedSpecRunner {
 
   Result runClasses(List classes) {
     withNewContext {
-      doRunRequest(Request.classes(classes as Class[]))
+      doRunRequest(Request.classes(classes.findAll { !Modifier.isAbstract(it.modifiers) } as Class[]))
     }
   }
 

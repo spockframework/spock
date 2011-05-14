@@ -22,7 +22,7 @@ import org.hamcrest.Description
 /**
  * Generalization of <tt>org.hamcrest.number.IsCloseTo</tt> to arbitrary
  * <tt>Number</tt>s (in particular <tt>BigDecimal</tt>s). Otherwise almost
- * a 1:1 copy of that class.
+ * identical to that class.
  */
 public class IsCloseTo extends TypeSafeMatcher<Number> {
     private final Number delta

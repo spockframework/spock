@@ -2,10 +2,6 @@ apply from: profile("publishMaven")
 
 description = "Spock Framework - Grails Plugin Support"
 
-repositories {
-	mavenRepo name: "java.net", urls: 'http://download.java.net/maven/2'
-}
-
 dependencies {
   compile "org.grails:grails-core:${grailsVersion}"
   compile "org.grails:grails-test:${grailsVersion}"

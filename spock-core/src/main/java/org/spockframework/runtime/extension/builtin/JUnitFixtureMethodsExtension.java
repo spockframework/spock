@@ -82,7 +82,18 @@ public class JUnitFixtureMethodsExtension implements IGlobalExtension {
       this.executeBeforeSpecMethod = executeBeforeSpecMethod;
     }
     
-    public MethodInfo getInterceptedMethod(SpecInfo specInfo) {
+    private void addInterceptor(SpecInfo specInfo, Collection<Method> potentialMethods) {
+      List<Method> fixtureMethods = new LinkedList<Method>();
+      for (Method method : potentialMethods) {
+        if (isMethod(method)) fixtureMethods.add(method);
+      }
+      
+      if (!fixtureMethods.isEmpty()) {
+        getInterceptedMethod(specInfo).addInterceptor(new FixtureMethodInterceptor(fixtureMethods));
+      }
+    }
+    
+    private MethodInfo getInterceptedMethod(SpecInfo specInfo) {
       for (MethodInfo methodInfo : specInfo.getFixtureMethods()) {
         if (methodInfo.getKind().equals(interceptedMethodKind)) return methodInfo;
       }
@@ -90,9 +101,9 @@ public class JUnitFixtureMethodsExtension implements IGlobalExtension {
       throw new UnreachableCodeError("failed to find fixture method of kind " + interceptedMethodKind);
     }
     
-    public boolean isMethod(Method method) {
-      boolean isMethod = isPotentialMethod(method) 
-          && method.getAnnotation(annotationType) != null
+    // NOTE - method is assumed to have passed isPotentialMethod
+    private boolean isMethod(Method method) {
+      boolean isMethod = method.getAnnotation(annotationType) != null
           && Modifier.isStatic(method.getModifiers()) == isStatic;
           
       return isMethod;
@@ -106,71 +117,45 @@ public class JUnitFixtureMethodsExtension implements IGlobalExtension {
       return isPotential;
     }
     
-    static public <T> Map<FixtureType, List<T>> asMapOfListsOf(Class<T> elementType) {
-      Map<FixtureType, List<T>> map = new HashMap<FixtureType, List<T>>(4);
-      for (FixtureType type : FixtureType.values()) {
-        map.put(type, new LinkedList<T>());
-      }
-      return map;
-    }
-  }
-  
-  private static class FixtureMethodInterceptor implements IMethodInterceptor {
-    private final FixtureType fixtureType;
-    private final Collection<Method> methods;
-    
-    public FixtureMethodInterceptor(FixtureType fixtureType, Collection<Method> methods) {
-      this.fixtureType = fixtureType;
-      this.methods = methods;
-    }
-    
-    public void intercept(IMethodInvocation invocation) throws Throwable {
-      if (!fixtureType.executeBeforeSpecMethod) invocation.proceed();
-      
-      // TODO - handle invocation errors in a more user friendly way?
-      for (Method method : methods) {
-        method.invoke(invocation.getTarget());
-      }
-      
-      if (fixtureType.executeBeforeSpecMethod) invocation.proceed();
-    }
-  }
-  
-  private Map<FixtureType, List<Method>> createFixtureMethodsMap(Class<?> clazz) {
-    Map<FixtureType, List<Method>> map = FixtureType.asMapOfListsOf(Method.class);
-    
-    for (Method method : clazz.getDeclaredMethods()) {
-      for (Map.Entry<FixtureType, List<Method>> mapEntry : map.entrySet()) {
-        
-        // TODO - the following works but is rather wasteful because we retrieve the same information reflectively 
-        // for the same method each time. For example, we call isPotentialMethod() on each method 4 times (once for each fixture kind).
-        // 
-        // One simple optimisation would be to prefilter all potential methods (i.e. return void and zero-arg) and move that check
-        // out of isMethod(), but this does introduce some fragility.
-        // 
-        // Another potential optimisation would be to retrieve all the annotations on a method at once and then loop through,
-        // instead of call getAnnotation() for each annotation type. It's not clear whether this would be any more efficient though.
-        
-        if (mapEntry.getKey().isMethod(method)) mapEntry.getValue().add(method);
-      }
-    }
-  
-    return map;
-  }    
-
-  public void visitSpec(SpecInfo spec) {
-    for (SpecInfo currentSpec : spec.getSpecsBottomToTop()) {
-      Map<FixtureType, List<Method>> fixtureMethods = createFixtureMethodsMap(currentSpec.getReflection());
-      
-      for (Map.Entry<FixtureType, List<Method>> fixtureTypeEntry : fixtureMethods.entrySet()) {
-        FixtureType fixtureType = fixtureTypeEntry.getKey();
-        List<Method> fixtureMethodsForType = fixtureTypeEntry.getValue();
-        
-        if (!fixtureMethodsForType.isEmpty()) {
-          fixtureType.getInterceptedMethod(currentSpec).addInterceptor(new FixtureMethodInterceptor(fixtureType, fixtureMethodsForType));
+    static public void addInterceptors(SpecInfo spec) {
+      for (SpecInfo currentSpec : spec.getSpecsBottomToTop()) {
+        List<Method> potentialMethods = new LinkedList<Method>();
+        for (Method method : currentSpec.getReflection().getDeclaredMethods()) {
+          if (isPotentialMethod(method)) {
+            potentialMethods.add(method);
+          }
         }
-      } 
+
+        if (!potentialMethods.isEmpty()) {
+          for (FixtureType fixtureType : FixtureType.values()) {
+            fixtureType.addInterceptor(currentSpec, potentialMethods);
+          }
+        }
+      }
     }
+    
+    private class FixtureMethodInterceptor implements IMethodInterceptor {
+      private final Collection<Method> methods;
+
+      public FixtureMethodInterceptor(Collection<Method> methods) {
+        this.methods = methods;
+      }
+
+      public void intercept(IMethodInvocation invocation) throws Throwable {
+        if (!executeBeforeSpecMethod) invocation.proceed();
+
+        // TODO - handle invocation errors in a more user friendly way?
+        for (Method method : methods) {
+          method.invoke(invocation.getTarget());
+        }
+
+        if (executeBeforeSpecMethod) invocation.proceed();
+      }
+    }
+  }
+  
+  public void visitSpec(SpecInfo spec) {
+    FixtureType.addInterceptors(spec);
   }
   
 }

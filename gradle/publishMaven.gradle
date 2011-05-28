@@ -36,21 +36,26 @@ basePom = {
   }
 }
 
-install.doFirst {
-  repositories.mavenInstaller {
+project.poms = []
+install {
+  project.poms << repositories.mavenInstaller {
     pom basePom
-  }
+  }.pom
 }
 
-uploadArchives.doFirst {
-  repositories.mavenDeployer {
+uploadArchives {
+  project.poms << repositories.mavenDeployer {
     pom basePom
     if (isSnapshotVersion) {
       snapshotRepository(url: "file:///var/www/m2repo/snapshots")
     } else {
       repository(url: "file:///var/www/m2repo/release")
     }
-  }
+  }.pom
 }
 
-
+modifyPom = { Closure modification ->
+  project.poms.each { 
+    it.whenConfigured(modification) 
+  }
+}

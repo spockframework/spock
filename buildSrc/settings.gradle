@@ -1,4 +1,3 @@
 include \
-  "grails-plugin",
   "huxi-gradle-plugins",
   "huxi-gradle-plugins:pgp-gradle-plugin"

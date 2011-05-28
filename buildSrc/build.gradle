@@ -4,7 +4,6 @@ repositories {
   mavenCentral()
 }
 
-dependsOn(":grails-plugin", true)
 dependsOn(":huxi-gradle-plugins", true)
 
 dependencies { 

@@ -1,0 +1,8 @@
+web-app/WEB-INF/tld
+plugin.xml
+stacktrace.log
+target
+.DS_Store
+*.zip
+docs
+plugins

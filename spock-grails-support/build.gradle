@@ -1,0 +1,34 @@
+apply from: profile("publishMaven")
+
+description = "Spock Framework - Grails Plugin Support"
+grailsVersion = "1.4.0.M1"
+
+repositories {
+  mavenRepo name: "Grails Repo", urls: "http://repo.grails.org/grails/libs-releases-local"
+}
+
+dependencies {
+  compile project(":spock-core")
+  
+  ["core", "bootstrap", "web", "test", "plugin-testing", "plugin-converters"].each { module ->
+    compile("org.grails:grails-$module:$grailsVersion") {
+      transitive = false
+    }
+  }
+  
+  ["core", "context", "context-support", "beans", "webmvc", "web"].each { module ->
+    compile("org.springframework:spring-$module:3.0.5.RELEASE") {
+      transitive = false
+    }
+  }
+  
+  compile("org.apache.ant:ant-junit:1.8.2") {
+    transitive = false
+  }
+  
+  compile("javax.servlet:servlet-api:2.5")
+}
+
+modifyPom {
+  it.dependencies.findAll { it.groupId != "org.spockframework" }*.scope = "provided"
+}

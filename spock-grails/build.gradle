@@ -1,0 +1,69 @@
+import org.grails.gradle.plugin.GrailsTask
+
+buildscript {
+  repositories {
+    mavenRepo name: "Grails Repo", urls: "http://repo.grails.org/grails/repo"
+  }
+  dependencies {
+    classpath "org.grails:grails-gradle-plugin:1.1-SNAPSHOT"
+  }
+}
+
+evaluationDependsOn ":spock-grails-support"
+grailsVersion = project(":spock-grails-support").grailsVersion
+apply plugin: "grails"
+
+grailsHome = "/usr/local/grails/1.4.0.M1"
+test.args = "-Dgrails.full.stacktrace=true"
+
+repositories {
+  mavenRepo name: "Grails Repo", urls: "http://repo.grails.org/grails/repo"
+}
+
+configurations {
+  compile.exclude module: "commons-logging"
+  compile.exclude module: 'xml-apis'
+  compile.exclude module: "groovy"
+  compile.exclude module: 'org.springframework.uaa.client'
+  compile.exclude module: "slf4j-simple"
+  bootstrap.exclude module: "org.springframework.uaa.client"
+  bootstrap.exclude module: "xml-apis"
+}
+
+dependencies {
+  compile project(':spock-grails-support')
+  compile "hsqldb:hsqldb:1.8.0.5"
+    
+  runtime "net.sf.ehcache:ehcache-core:1.7.1"
+  
+  def grailsPlugins = { String[] plugins -> plugins.collect { "org.grails:grails-plugin-$it:$grailsVersion" } }
+  test grailsPlugins("tomcat", "i18n", "datasource")
+  test "org.grails:grails-hibernate:$grailsVersion"
+}
+
+// Used in BuildConfig to selectively list specify dependencies 
+System.setProperty("spock.building", "true") 
+
+task uploadArchives(type: GrailsTask) {
+  if (project.hasProperty('codehausUsername') && project.hasProperty('codehausPassword')) {
+    command "publish-plugin"
+    configuration "compile"
+    useRuntimeClasspathForBootstrap true
+    
+    args "--noScm"
+    if (project.version.endsWith("-SNAPSHOT")) args += " -snapshot"
+    
+    doFirst {
+      project.dependencies {
+        compile "org.apache.maven:maven-ant-tasks:2.1.0",
+                "org.codehaus.groovy.modules.http-builder:http-builder:0.5.0"
+                
+        compile "org.tmatesoft.svnkit:svnkit:1.3.5", {
+          exclude module: "jna"
+          exclude module: "trilead-ssh2"
+          exclude module: "sqljet"
+        }
+      }
+    }
+  }
+}

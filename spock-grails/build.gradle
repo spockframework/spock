@@ -13,7 +13,7 @@ evaluationDependsOn ":spock-grails-support"
 grailsVersion = project(":spock-grails-support").grailsVersion
 apply plugin: "grails"
 
-grailsHome = "/usr/local/grails/1.4.0.M1"
+grailsHome = file("grails-home").absolutePath
 test.args = "-Dgrails.full.stacktrace=true"
 
 repositories {

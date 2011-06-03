@@ -1,0 +1,6 @@
+#!/bin/sh
+
+DIRNAME=`dirname "$0"`
+. "$DIRNAME/startGrails"
+
+startGrails org.codehaus.groovy.grails.cli.GrailsScriptRunner "$@"

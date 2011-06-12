@@ -1,3 +1,0 @@
-include \
-  "huxi-gradle-plugins",
-  "huxi-gradle-plugins:pgp-gradle-plugin"

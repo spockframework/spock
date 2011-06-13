@@ -28,6 +28,8 @@ configurations {
   compile.exclude module: "slf4j-simple"
   bootstrap.exclude module: "org.springframework.uaa.client"
   bootstrap.exclude module: "xml-apis"
+  bootstrap.exclude module: "grails-hibernate"
+  bootstrap.exclude module: "spring-datastore-core"
 }
 
 dependencies {
@@ -38,7 +40,17 @@ dependencies {
   
   def grailsPlugins = { String[] plugins -> plugins.collect { "org.grails:grails-plugin-$it:$grailsVersion" } }
   test grailsPlugins("tomcat", "i18n", "datasource")
-  test "org.grails:grails-hibernate:$grailsVersion"
+  test("org.grails:grails-hibernate:$grailsVersion") {
+    exclude module: "spring-datastore-core"
+  }
+  compile("org.springframework:spring-datastore-core:1.0.0.M6") {
+    exclude group: "org.springframework"
+    exclude group: "org.grails"
+  }
+  compile("org.grails:grails-datastore-gorm:1.0.0.M6") {
+    exclude group: "org.springframework"
+    exclude group: "org.grails"
+  }
 }
 
 // Used in BuildConfig to selectively list specify dependencies 

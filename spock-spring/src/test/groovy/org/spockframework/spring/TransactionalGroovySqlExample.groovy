@@ -40,7 +40,7 @@ import spock.lang.Specification
  * @Shared fields cannot be injected. This also means that
  * setupSpec() and cleanupSpec() cannot get access to Spring beans.
  */
-@ContextConfiguration(locations = "TransactionalExample-context.xml")
+@ContextConfiguration(locations = "TransactionalGroovySqlExample-context.xml")
 class TransactionalGroovySqlExample extends Specification {
   @Shared
   boolean tableCreated = false

@@ -30,7 +30,7 @@ import spock.lang.Specification
 
 /*
  * Shows how to leverage the Spring TestContext framework's transaction
- * support, using groovy.sql.Sql class for interacting with the database.
+ * support, using groovy.sql.Sql for interacting with the database.
  *
  * To learn more about transaction management in the Spring TestContext
  * framework, see:

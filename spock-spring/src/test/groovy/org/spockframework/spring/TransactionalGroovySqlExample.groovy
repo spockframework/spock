@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 the original author or authors.
+ * Copyright 2011 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,17 +16,21 @@
 
 package org.spockframework.spring
 
+import javax.sql.DataSource
+
+import groovy.sql.Sql
+
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.transaction.BeforeTransaction
 import org.springframework.transaction.annotation.Transactional
 
-import spock.lang.*
+import spock.lang.Shared
+import spock.lang.Specification
 
 /*
  * Shows how to leverage the Spring TestContext framework's transaction
- * support, using JdbcTemplate for interacting with the database.
+ * support, using groovy.sql.Sql class for interacting with the database.
  *
  * To learn more about transaction management in the Spring TestContext
  * framework, see:
@@ -37,12 +41,15 @@ import spock.lang.*
  * setupSpec() and cleanupSpec() cannot get access to Spring beans.
  */
 @ContextConfiguration(locations = "TransactionalExample-context.xml")
-class TransactionalExample extends Specification {
+class TransactionalGroovySqlExample extends Specification {
   @Shared
   boolean tableCreated = false
 
+  @Shared
+  Sql sql
+
   @Autowired
-  JdbcTemplate template
+  DataSource dataSource
 
   /*
    * Populates the database. To prevent automatic rollback, we use a
@@ -52,20 +59,21 @@ class TransactionalExample extends Specification {
   @BeforeTransaction
   def createTable() {
     if (tableCreated) return
-    template.execute("create table data (id int, name varchar(25))")
-    template.update("insert into data (id, name) values (?, ?), (?, ?)", [1, "fred", 2, "tom"] as Object[])
+    sql = new Sql(dataSource)
+    sql.execute("create table data (id int, name varchar(25))")
+    sql.executeUpdate("insert into data (id, name) values (?, ?), (?, ?)", [1, "fred", 2, "tom"])
     tableCreated = true
   }
 
   @Transactional
   def "delete rows from table"() {
     setup:
-    template.update("delete from data")
+    sql.execute("delete from data")
   }
 
   @Transactional
   def "table is back to initial state"() {
     expect:
-    template.queryForList("select * from data order by id") == [[ID: 1, NAME: "fred"], [ID: 2, NAME: "tom"]]
+    sql.rows("select * from data order by id") == [[ID: 1, NAME: "fred"], [ID: 2, NAME: "tom"]]
   }
 }

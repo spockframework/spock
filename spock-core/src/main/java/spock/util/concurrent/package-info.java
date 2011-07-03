@@ -13,6 +13,6 @@
  */
 
 /**
- * Utility classes for working with concurrent code.
+ * Utilities for working with concurrent code.
  */
 package spock.util.concurrent;

@@ -30,7 +30,7 @@ import spock.lang.Specification
 
 /*
  * Shows how to leverage the Spring TestContext framework's transaction
- * support, using groovy.sql.Sql class for interacting with the database.
+ * support, using groovy.sql.Sql for interacting with the database.
  *
  * To learn more about transaction management in the Spring TestContext
  * framework, see:
@@ -40,7 +40,7 @@ import spock.lang.Specification
  * @Shared fields cannot be injected. This also means that
  * setupSpec() and cleanupSpec() cannot get access to Spring beans.
  */
-@ContextConfiguration(locations = "TransactionalExample-context.xml")
+@ContextConfiguration(locations = "TransactionalGroovySqlExample-context.xml")
 class TransactionalGroovySqlExample extends Specification {
   @Shared
   boolean tableCreated = false

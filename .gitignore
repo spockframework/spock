@@ -20,3 +20,6 @@ bin
 
 # Grails
 stacktrace.log
+
+# Other
+.DS_Store

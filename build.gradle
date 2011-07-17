@@ -25,7 +25,13 @@ allprojects {
   version = "0.6-groovy-1.7-SNAPSHOT"
 
   apply from: profile("common")
-  
+
+  idea {
+    project {
+      javaVersion = 1.6
+    }
+  }
+
   repositories {
     mavenCentral()
     if (isSnapshotVersion) {

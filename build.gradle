@@ -26,12 +26,6 @@ allprojects {
 
   apply from: profile("common")
 
-  idea {
-    project {
-      javaVersion = 1.6
-    }
-  }
-
   repositories {
     mavenCentral()
     if (isSnapshotVersion) {
@@ -46,6 +40,12 @@ allprojects {
     
     sourceCompatibility = 1.5
     targetCompatibility = 1.5
+    
+    idea {
+      project {
+        javaVersion = 1.6
+      }
+    }
 
     configurations {
       all*.exclude module: "junit" // we use junit-dep instead
@@ -85,5 +85,5 @@ File profile(String name) {
 }
 
 task wrapper(type: Wrapper) {
-  gradleVersion = "1.0-milestone-3"
+  gradleVersion = "1.0-milestone-4"
 }

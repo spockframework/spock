@@ -20,21 +20,7 @@ allprojects {
   group = "org.spockframework"
   version = "0.6-groovy-1.8-SNAPSHOT"
 
-  apply plugin: "idea"
-  apply plugin: "eclipse"
-  apply plugin: "groovy"
   apply from: profile("common")
-
-  sourceCompatibility = 1.5
-  targetCompatibility = 1.5
-
-  configurations {
-    all*.exclude module: "junit" // we use junit-dep instead
-  }
-
-  dependencies {
-    groovy libs.groovy
-  }
 
   repositories {
     mavenCentral()
@@ -42,28 +28,51 @@ allprojects {
       mavenRepo(urls: "http://snapshots.repository.codehaus.org")
     }
   }
-
-  compileGroovy.options.fork = false
-  compileTestGroovy.options.fork = false
-
-  javadoc {
-    include "spock/**"
-    configure(options) {
-      links "http://java.sun.com/j2se/1.5.0/docs/api"
-      links "http://groovy.codehaus.org/gapi"
-      links "http://kentbeck.github.com/junit/javadoc/4.8"
-      links "http://www.jarvana.com/jarvana/inspect/org/hamcrest/hamcrest-core/1.2/hamcrest-core-1.2-javadoc.jar"
+  
+  if (!isGrailsPlugin) {
+    apply plugin: "idea"
+    apply plugin: "eclipse"
+    apply plugin: "groovy"
+    
+    sourceCompatibility = 1.5
+    targetCompatibility = 1.5
+    
+    idea {
+      project {
+        javaVersion = 1.6
+      }
     }
-  }
 
-  task sourcesJar(type: Jar) {
-    classifier = "sources"
-    from sourceSets.main.allSource
-  }
+    configurations {
+      all*.exclude module: "junit" // we use junit-dep instead
+    }
 
-  task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier = "javadoc"
-    from javadoc.destinationDir
+    dependencies {
+      groovy libs.groovy
+    }
+
+    compileGroovy.options.fork = false
+    compileTestGroovy.options.fork = false
+
+    javadoc {
+      include "spock/**"
+      configure(options) {
+        links "http://java.sun.com/j2se/1.5.0/docs/api"
+        links "http://groovy.codehaus.org/gapi"
+        links "http://kentbeck.github.com/junit/javadoc/4.8"
+        links "http://www.jarvana.com/jarvana/inspect/org/hamcrest/hamcrest-core/1.2/hamcrest-core-1.2-javadoc.jar"
+      }
+    }
+
+    task sourcesJar(type: Jar) {
+      classifier = "sources"
+      from sourceSets.main.allSource
+    }
+
+    task javadocJar(type: Jar, dependsOn: javadoc) {
+      classifier = "javadoc"
+      from javadoc.destinationDir
+    }
   }
 }
 
@@ -72,5 +81,5 @@ File profile(String name) {
 }
 
 task wrapper(type: Wrapper) {
-  gradleVersion = "1.0-milestone-3"
+  gradleVersion = "1.0-milestone-4"
 }

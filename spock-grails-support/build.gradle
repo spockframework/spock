@@ -1,9 +1,10 @@
 apply from: profile("publishMaven")
 
 description = "Spock Framework - Grails Plugin Support"
-grailsVersion = "1.4.0.M1"
+grailsVersion = "1.4.0.BUILD-SNAPSHOT"
 
 repositories {
+  mavenLocal()
   mavenRepo name: "Grails Repo", urls: "http://repo.grails.org/grails/libs-releases-local"
 }
 

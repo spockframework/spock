@@ -2,6 +2,7 @@ import org.grails.gradle.plugin.GrailsTask
 
 buildscript {
   repositories {
+    mavenLocal()
     mavenRepo name: "Grails Repo", urls: "http://repo.grails.org/grails/repo"
   }
   dependencies {
@@ -17,6 +18,7 @@ grailsHome = file("grails-home").absolutePath
 test.args = "-Dgrails.full.stacktrace=true"
 
 repositories {
+  mavenLocal()
   mavenRepo name: "Grails Repo", urls: "http://repo.grails.org/grails/repo"
 }
 
@@ -25,32 +27,22 @@ configurations {
   compile.exclude module: 'xml-apis'
   compile.exclude module: "groovy"
   compile.exclude module: 'org.springframework.uaa.client'
-  compile.exclude module: "slf4j-simple"
   bootstrap.exclude module: "org.springframework.uaa.client"
   bootstrap.exclude module: "xml-apis"
-  bootstrap.exclude module: "grails-hibernate"
-  bootstrap.exclude module: "spring-datastore-core"
+  bootstrap.exclude group: "org.slf4j"
+  compile.exclude group: "org.slf4j"
 }
 
 dependencies {
+  logging "commons-logging:commons-logging:1.1.1", "org.slf4j:jcl-over-slf4j:1.6.1"
   compile project(':spock-grails-support')
-  compile "hsqldb:hsqldb:1.8.0.5"
+  runtime "hsqldb:hsqldb:1.8.0.5"
     
   runtime "net.sf.ehcache:ehcache-core:1.7.1"
   
   def grailsPlugins = { String[] plugins -> plugins.collect { "org.grails:grails-plugin-$it:$grailsVersion" } }
-  test grailsPlugins("tomcat", "i18n", "datasource")
-  test("org.grails:grails-hibernate:$grailsVersion") {
-    exclude module: "spring-datastore-core"
-  }
-  compile("org.springframework:spring-datastore-core:1.0.0.M6") {
-    exclude group: "org.springframework"
-    exclude group: "org.grails"
-  }
-  compile("org.grails:grails-datastore-gorm:1.0.0.M6") {
-    exclude group: "org.springframework"
-    exclude group: "org.grails"
-  }
+  test grailsPlugins("tomcat", "i18n", "datasource", "services")
+  test("org.grails:grails-hibernate:$grailsVersion")
 }
 
 // Used in BuildConfig to selectively list specify dependencies 

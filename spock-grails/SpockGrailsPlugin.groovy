@@ -31,6 +31,4 @@ class SpockGrailsPlugin {
   def title = "Spock Plugin - spockframework.org"
   def description = 'Test your Grails apps with Spock'
   def documentation = 'http://grails.org/plugin/spock'
-  
-  def groupId = "org.spockframework"
 }

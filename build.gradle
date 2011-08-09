@@ -39,7 +39,8 @@ allprojects {
     
     idea {
       project {
-        javaVersion = 1.6
+          jdkName = "1.6"
+          languageLevel = "1.5"
       }
     }
 

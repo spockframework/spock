@@ -17,7 +17,7 @@ basePom = {
     scm {
       connection "scm:git:git://github.com/spockframework/spock.git"
       developerConnection "scm:git:ssh://git@github.com/spockframework/spock.git"
-      url "http://code.google.com/p/spock/source/browse"
+      url "http://github.spockframework.org"
     }
 
     developers {
@@ -57,5 +57,15 @@ uploadArchives {
 modifyPom = { Closure modification ->
   project.poms.each { 
     it.whenConfigured(modification) 
+  }
+}
+
+def optionalDeps = []
+
+optional = { optionalDeps << it }
+
+modifyPom { pom ->
+  optionalDeps.each { dep ->
+    pom.dependencies.find { it.artifactId == dep.name }.optional = true
   }
 }

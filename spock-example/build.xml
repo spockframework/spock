@@ -69,6 +69,7 @@
   </target>
   
   <target name="init.groovy.tasks" depends="resolve.dependencies">
+    <!-- Using the Groovy compiler from classpath.spock is a simple and safe setup -->
     <taskdef
       name="groovyc"
       classname="org.codehaus.groovy.ant.Groovyc"
@@ -89,8 +90,8 @@
   <target name="compile" depends="copy.resources">
     <groovyc
       srcdir="${src.dir}"
-     destdir="${build.dir}"
-     classpathref="classpath.spock" />
+      destdir="${build.dir}"
+      classpathref="classpath.spock" />
   </target>
   
   <target name="test" depends="compile">

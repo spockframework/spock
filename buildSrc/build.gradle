@@ -1,0 +1,11 @@
+apply plugin: "java"
+
+repositories {
+  mavenCentral()
+}
+
+dependsOn(":grails-plugin", true)
+
+dependencies { 
+  runtime subprojects.findAll { it.getTasksByName("jar", false) }
+}

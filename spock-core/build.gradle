@@ -3,13 +3,13 @@ apply from: profile("publishMaven")
 description = "Spock Framework - Core Module"
 
 dependencies {
-  compile libs.asm
+  compile libs.groovy // simplest way to add Groovy dependency to POM
   compile libs.junit
   compile libs.hamcrest_core // until https://github.com/KentBeck/junit/issues/issue/165 gets fixed
-  compile libs.cglib
-  compile libs.objenesis
-  compile libs.ant
-  compile libs.hamcrest_core
-}
 
+  compile(libs.ant, optional)
+  compile(libs.asm, optional)
+  compile(libs.cglib, optional)
+  compile(libs.objenesis, optional)
+}
 

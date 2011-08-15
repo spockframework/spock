@@ -1,0 +1,97 @@
+// Build that demonstrates how to use the plugin with a minimal Java build.
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    
+    dependencies {
+        classpath 'de.huxhorn.gradle:de.huxhorn.gradle.pgp-plugin:0.0.3'
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'maven'
+apply plugin: de.huxhorn.gradle.pgp.PgpPlugin
+
+version = '0.1-SNAPSHOT'
+group = 'com.domain.yourproject'
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    from 'build/docs/javadoc'
+    classifier = 'javadoc'
+}
+
+task sourcesJar(type: Jar) {
+    from sourceSets.main.allSource
+    classifier = 'sources'
+}
+
+artifacts {
+    archives javadocJar
+    archives sourcesJar
+}
+
+def deployer = null
+def installer = install.repositories.mavenInstaller
+
+uploadArchives {
+    // Config that will work with a local Sonatype Repo with default settings
+    repositories {
+        deployer = mavenDeployer {
+            configureAuth = {
+                authentication(userName: 'admin', password: 'admin123')
+            }
+
+            snapshotRepository(url: "http://localhost:8081/nexus/content/repositories/snapshots/", configureAuth) 
+            repository(url: "http://localhost:8081/nexus/content/repositories/releases/", configureAuth)
+        }
+    }
+}
+
+[installer, deployer]*.pom*.whenConfigured {pom ->
+    pom.project {
+        name 'Project name'
+        packaging 'jar' // not working, see workaround below
+        description 'My nifty project'
+        url 'http://homepage.com'
+        inceptionYear '2010'
+            
+        scm {
+            url 'scm:url'
+            connection 'http://code.browsing.url'
+        }
+            
+        licenses {
+            license {
+                name 'The Apache Software License, Version 2.0'
+                url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                distribution 'repo'
+            }
+        }
+            
+        developers {
+            developer {
+                id 'nickname'
+                name 'John Doe'
+                email 'john.doe@gmail.com'
+                url 'http://john-doe.com/'
+                timezone '+5'
+            }
+        }
+    }
+
+    pom.withXml { XmlProvider xmlProvider ->
+        def xml = xmlProvider.asString()
+        def pomXml = new XmlParser().parseText(xml.toString())
+
+        pomXml.version[0] + { packaging('jar') }
+
+        def newXml = new StringWriter()
+        def printer = new XmlNodePrinter(new PrintWriter(newXml))
+        printer.preserveWhitespace = true
+        printer.print(pomXml)
+        xml.setLength(0)
+        xml.append(newXml.toString())
+    }
+}

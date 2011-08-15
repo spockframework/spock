@@ -5,7 +5,6 @@ repositories {
 }
 
 dependsOn(":grails-plugin", true)
-dependsOn(":huxi-gradle-plugins", true)
 
 dependencies { 
   runtime subprojects.findAll { it.getTasksByName("jar", false) }

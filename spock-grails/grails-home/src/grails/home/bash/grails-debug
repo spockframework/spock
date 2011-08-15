@@ -1,7 +1,0 @@
-#!/bin/bash
-
-DIRNAME=`dirname "$0"`
-. "$DIRNAME/startGrails"
-
-JAVA_OPTS="$JAVA_OPTS -Xdebug -Xnoagent -Dgrails.full.stacktrace=true -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005"
-startGrails org.codehaus.groovy.grails.cli.GrailsScriptRunner "$@"

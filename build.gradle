@@ -28,49 +28,47 @@ allprojects {
       mavenRepo(urls: "http://snapshots.repository.codehaus.org")
     }
   }
-  
-  if (!isGrailsPlugin) {
-    apply plugin: "idea"
-    apply plugin: "eclipse"
-    apply plugin: "groovy"
-    
-    sourceCompatibility = 1.5
-    targetCompatibility = 1.5
-    
-    idea {
-      project {
-          jdkName = "1.6"
-          languageLevel = "1.5"
-      }
-    }
 
-    configurations {
-      all*.exclude module: "junit" // we use junit-dep instead
-    }
+  apply plugin: "idea"
+  apply plugin: "eclipse"
+  apply plugin: "groovy"
 
-    dependencies {
-      groovy libs.groovy
-    }
+  sourceCompatibility = 1.5
+  targetCompatibility = 1.5
 
-    javadoc {
-      include "spock/**"
-      configure(options) {
-        links "http://download.oracle.com/javase/1.5.0/docs/api/"
-        links "http://groovy.codehaus.org/gapi"
-        links "http://kentbeck.github.com/junit/javadoc/4.8"
-        links "http://www.jarvana.com/jarvana/inspect/org/hamcrest/hamcrest-core/1.2/hamcrest-core-1.2-javadoc.jar"
-      }
+  idea {
+    project {
+        jdkName = "1.6"
+        languageLevel = "1.5"
     }
+  }
 
-    task sourcesJar(type: Jar) {
-      classifier = "sources"
-      from sourceSets.main.allSource
-    }
+  configurations {
+    all*.exclude module: "junit" // we use junit-dep instead
+  }
 
-    task javadocJar(type: Jar, dependsOn: javadoc) {
-      classifier = "javadoc"
-      from javadoc.destinationDir
+  dependencies {
+    groovy libs.groovy
+  }
+
+  javadoc {
+    include "spock/**"
+    configure(options) {
+      links "http://download.oracle.com/javase/1.5.0/docs/api/"
+      links "http://groovy.codehaus.org/gapi"
+      links "http://kentbeck.github.com/junit/javadoc/4.8"
+      links "http://www.jarvana.com/jarvana/inspect/org/hamcrest/hamcrest-core/1.2/hamcrest-core-1.2-javadoc.jar"
     }
+  }
+
+  task sourcesJar(type: Jar) {
+    classifier = "sources"
+    from sourceSets.main.allSource
+  }
+
+  task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = "javadoc"
+    from javadoc.destinationDir
   }
 }
 

@@ -1,3 +1,2 @@
 isSnapshotVersion = project.version.endsWith("-SNAPSHOT")
 isRootProject = project == project.rootProject
-isGrailsPlugin = project.path == ":spock-grails"

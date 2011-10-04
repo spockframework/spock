@@ -54,7 +54,11 @@ public class UnrolledFeatureNameGenerator {
 
     Closure nameGenerator;
     try {
-      nameGenerator = nameGeneratorClass.getConstructor(Object.class, Object.class).newInstance(null, null);
+      try {
+        nameGenerator = nameGeneratorClass.getConstructor(Object.class, Object.class).newInstance(null, null);
+      } catch (NoSuchMethodException e) { // workaround for GROOVY-5040
+        nameGenerator = nameGeneratorClass.getConstructor(Object.class, Object.class, groovy.lang.Reference.class).newInstance(null, null, null);
+      }
     } catch (Exception e) {
       throw new ExtensionException("Failed to instantiate @Unroll naming pattern", e);
     }

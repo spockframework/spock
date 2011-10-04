@@ -200,7 +200,8 @@ def foo() {
     runner.runSpecBody("""
 @Unroll({ throw new RuntimeException() })
 def foo() {
-  expect: true
+  expect:
+  true
 
   where:
   x = 1
@@ -210,5 +211,47 @@ def foo() {
     then:
     ExtensionException e = thrown()
     e.cause instanceof RuntimeException
+  }
+
+  @Issue("http://issues.spockframework.org/detail?id=200")
+  def "data variable named 'value' can be referred to in naming pattern"() {
+    RunListener listener = Mock()
+    runner.listeners << listener
+
+    when:
+    runner.runSpecBody('''
+@Unroll({"my $value"})
+def foo() {
+  expect:
+  value
+
+  where:
+  value << [1]
+}
+    ''')
+
+    then:
+    1 * listener.testStarted { it.methodName == "my 1" }
+  }
+
+  @Issue("http://issues.spockframework.org/detail?id=201")
+  def "data variable can appear both in naming pattern and as method parameter"() {
+    RunListener listener = Mock()
+    runner.listeners << listener
+
+    when:
+    runner.runSpecBody('''
+@Unroll({ value })
+def foo(int value) {
+  expect:
+  value
+
+  where:
+  value << [1]
+}
+    ''')
+
+    then:
+    1 * listener.testStarted { println it.methodName; true }
   }
 }

@@ -17,7 +17,7 @@
 package org.spockframework.groovy
 
 import org.codehaus.groovy.runtime.InvokerHelper
-import spock.lang.FailsWith
+
 import spock.lang.Specification
 
 class GroovyMopExploration extends Specification {
@@ -29,7 +29,6 @@ class GroovyMopExploration extends Specification {
     InvokerHelper.invokeMethod(target, "foo", [arg] as Object[]) == "one two three"
   }
 
-  @FailsWith(value = IllegalArgumentException, reason = "seems like MetaMethod.invoke() does not do GString to String coercion")
   def "call method that takes a String with GString through MetaMethod"() {
     def target = new GroovyMopExploration()
     def arg = "one ${"t" + "w" + "o"} three"

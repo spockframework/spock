@@ -4,6 +4,7 @@ description = "Spock Framework - Specs for Core Module"
 
 dependencies {
   testCompile project(":spock-core")
+  testCompile libs.hamcrest_core
   testCompile libs.junit
   testCompile libs.easymock
   testCompile libs.jmock_junit4

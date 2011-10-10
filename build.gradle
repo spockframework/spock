@@ -29,7 +29,7 @@ allprojects {
   repositories {
     mavenCentral()
     if (isSnapshotVersion) {
-      mavenRepo(urls: "http://snapshots.repository.codehaus.org")
+      mavenRepo(url: "http://snapshots.repository.codehaus.org")
     }
   }
   
@@ -43,7 +43,7 @@ allprojects {
 
     idea {
       project {
-        javaVersion = 1.6
+        jdkName = "1.6"
       }
     }
 

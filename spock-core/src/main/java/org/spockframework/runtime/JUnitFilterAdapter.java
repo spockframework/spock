@@ -33,6 +33,6 @@ public class JUnitFilterAdapter implements IFeatureFilter {
   }
 
   public boolean matches(FeatureInfo method) {
-    return filter.shouldRun((Description)method.getMetadata());
+    return filter.shouldRun(method.getDescription());
   }
 }

@@ -16,6 +16,8 @@
 
 package org.spockframework.runtime.model;
 
+import org.junit.runner.Description;
+
 import java.lang.reflect.AnnotatedElement;
 
 /**
@@ -28,6 +30,7 @@ public abstract class NodeInfo<P extends NodeInfo, R extends AnnotatedElement> {
   private P parent;
   private R reflection;
   private Object metadata;
+  private Description description;
 
   public String getName() {
     return name;
@@ -59,6 +62,14 @@ public abstract class NodeInfo<P extends NodeInfo, R extends AnnotatedElement> {
 
   public void setMetadata(Object metadata) {
     this.metadata = metadata;
+  }
+
+  public Description getDescription() {
+    return description;
+  }
+
+  public void setDescription(Description description) {
+    this.description = description;
   }
 
   public boolean isStub() {

@@ -48,7 +48,7 @@ public class Sputnik extends Runner implements Filterable, Sortable {
   public Description getDescription() {
     runExtensionsIfNecessary();
     aggregateDescriptionIfNecessary();
-    return (Description) getSpec().getMetadata();
+    return getSpec().getDescription();
   }
 
   public void run(RunNotifier notifier) {

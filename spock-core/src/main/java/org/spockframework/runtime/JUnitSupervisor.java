@@ -200,7 +200,7 @@ public class JUnitSupervisor implements IRunSupervisor {
   }
 
   private Description getDescription(NodeInfo node) {
-    return (Description) node.getMetadata();
+    return node.getDescription();
   }
 
   private Description getCurrentDescription() {

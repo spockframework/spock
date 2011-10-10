@@ -44,7 +44,7 @@ class Derived extends Base {
     generator.aggregate()
 
     then:
-    def desc = specInfo.metadata
+    def desc = specInfo.description
     desc.displayName == "apackage.Derived"
     desc.children.size() == 2
     desc.children.collect { it.methodName } == ["f1", "f2"]

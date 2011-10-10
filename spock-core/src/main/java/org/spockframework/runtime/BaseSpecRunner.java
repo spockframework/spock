@@ -80,7 +80,7 @@ public class BaseSpecRunner {
     result.setParent(spec);
     result.setKind(MethodKind.SPEC_EXECUTION);
     result.setReflection(DO_RUN);
-    result.setMetadata(spec.getMetadata());
+    result.setDescription(spec.getDescription());
     for (IMethodInterceptor interceptor : spec.getInterceptors())
       result.addInterceptor(interceptor);
     return result;
@@ -158,7 +158,7 @@ public class BaseSpecRunner {
     result.setKind(MethodKind.FEATURE_EXECUTION);
     result.setReflection(DO_RUN_FEATURE);
     result.setFeature(currentFeature);
-    result.setMetadata(currentFeature.getMetadata());
+    result.setDescription(currentFeature.getDescription());
     for (IMethodInterceptor interceptor : currentFeature.getInterceptors())
       result.addInterceptor(interceptor);
     return result;

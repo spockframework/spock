@@ -118,9 +118,7 @@ public class ParameterizedSpecRunner extends BaseSpecRunner {
     if (runStatus != OK) return;
 
     while (haveNext(iterators)) {
-      IterationInfo iteration = new IterationInfo(nextArgs(iterators), estimatedNumIterations);
-      iteration.setParent(currentFeature);
-      runIteration(iteration);
+      runIteration(nextArgs(iterators), estimatedNumIterations);
 
       if (resetStatus(ITERATION) != OK) break;
       // no iterators => no data providers => only derived parameterizations => limit to one iteration
@@ -135,17 +133,6 @@ public class ParameterizedSpecRunner extends BaseSpecRunner {
     for (Object provider : dataProviders) {
       GroovyRuntimeUtil.invokeMethodSafe(provider, "close");
     }
-  }
-
-  private void runIteration(IterationInfo iteration) {
-    if (runStatus != OK) return;
-
-    supervisor.beforeIteration(iteration);
-    createSpecInstance(false);
-    invokeSetup();
-    invokeFeatureMethod(iteration.getDataValues());
-    invokeCleanup();
-    supervisor.afterIteration(iteration);
   }
 
   private boolean haveNext(Iterator[] iterators) {

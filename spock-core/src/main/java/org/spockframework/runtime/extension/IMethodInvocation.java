@@ -30,7 +30,7 @@ public interface IMethodInvocation {
   SpecInfo getSpec();
 
   /**
-   * Returns the feature which this method invocation belongs to.
+   * Returns the feature which this method invocation belongs to (if any).
    * Differs from <tt>MethodInfo.getFeature()</tt> in that it reflects the dynamic
    * picture. For example, when a setup method is invoked, this method
    * will return the corresponding feature, whereas <tt>MethodInfo.getFeature()</tt>
@@ -41,9 +41,22 @@ public interface IMethodInvocation {
   FeatureInfo getFeature();
 
   /**
+   * Return the iteration which this method invocation belongs to (if any).
+   * Executing a feature results in at least one but possibly more iterations
+   * (e.g. for a data-driven feature).
+   *
+   * @return the iteration which this method invocation belongs to
+   */
+  @Nullable
+  IterationInfo getIteration();
+
+  /**
    * Returns the target (receiver) of this method invocation.
    * In case of a static method call, a <tt>Class<tt> instance
    * is returned.
+   *
+   * Note that the target isn't always the <tt>Specification</tt> instance.
+   * A better way to get to the latter is <tt>getIteration().getInstance()</tt>.
    *
    * @return the target (receiver) of this method invocation
    */

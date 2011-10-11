@@ -16,9 +16,11 @@
 
 package org.spockframework.runtime.model;
 
+import java.lang.reflect.AnnotatedElement;
+
 import org.junit.runner.Description;
 
-import java.lang.reflect.AnnotatedElement;
+import org.spockframework.util.Nullable;
 
 /**
  * Base class for runtime information about an element in a Spock specification.
@@ -56,6 +58,7 @@ public abstract class NodeInfo<P extends NodeInfo, R extends AnnotatedElement> {
     this.reflection = reflection;
   }
 
+  @Nullable
   public Object getMetadata() {
     return metadata;
   }
@@ -64,6 +67,7 @@ public abstract class NodeInfo<P extends NodeInfo, R extends AnnotatedElement> {
     this.metadata = metadata;
   }
 
+  @Nullable
   public Description getDescription() {
     return description;
   }

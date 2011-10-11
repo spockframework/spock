@@ -16,7 +16,8 @@ public class FeatureInfo extends NodeInfo<SpecInfo, AnnotatedElement> implements
   private List<String> parameterNames = new ArrayList<String>();
   private final List<BlockInfo> blocks = new ArrayList<BlockInfo>();
   private final List<IMethodInterceptor> interceptors = new ArrayList<IMethodInterceptor>();
-  
+  private final List<IMethodInterceptor> iterationInterceptors = new ArrayList<IMethodInterceptor>();
+
   private MethodInfo featureMethod;
   private MethodInfo dataProcessorMethod;
   private final List<DataProviderInfo> dataProviders = new ArrayList<DataProviderInfo>();
@@ -67,6 +68,14 @@ public class FeatureInfo extends NodeInfo<SpecInfo, AnnotatedElement> implements
 
   public void addInterceptor(IMethodInterceptor interceptor) {
     interceptors.add(interceptor);
+  }
+
+  public List<IMethodInterceptor> getIterationInterceptors() {
+    return iterationInterceptors;
+  }
+
+  public void addIterationInterceptor(IMethodInterceptor interceptor) {
+    iterationInterceptors.add(interceptor);
   }
 
   public MethodInfo getFeatureMethod() {

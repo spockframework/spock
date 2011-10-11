@@ -30,7 +30,8 @@ public enum MethodKind {
   DATA_PROVIDER,
   DATA_PROCESSOR,
   SPEC_EXECUTION,
-  FEATURE_EXECUTION;
+  FEATURE_EXECUTION,
+  ITERATION_EXECUTION;
 
   public boolean isFixtureMethod() {
     return isSetupMethod() || isCleanupMethod();

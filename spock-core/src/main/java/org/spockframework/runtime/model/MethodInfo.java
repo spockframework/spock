@@ -41,7 +41,8 @@ public class MethodInfo extends NodeInfo<SpecInfo, Method> implements IIntercept
     this.kind = kind;
   }
 
-  public @Nullable FeatureInfo getFeature() {
+  @Nullable
+  public FeatureInfo getFeature() {
     return feature;
   }
 

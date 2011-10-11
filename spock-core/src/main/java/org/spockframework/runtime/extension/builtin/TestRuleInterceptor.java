@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 the original author or authors.
+ * Copyright 2011 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,33 +16,34 @@ package org.spockframework.runtime.extension.builtin;
 
 import java.util.List;
 
-import org.junit.rules.MethodRule;
-import org.junit.runners.model.FrameworkMethod;
+import org.junit.rules.TestRule;
 import org.junit.runners.model.Statement;
 
-import org.spockframework.runtime.extension.*;
+import org.spockframework.runtime.extension.IMethodInterceptor;
+import org.spockframework.runtime.extension.IMethodInvocation;
 import org.spockframework.runtime.model.FieldInfo;
 
-public class RuleInterceptor implements IMethodInterceptor {
-  private List<FieldInfo> ruleFields;
+public class TestRuleInterceptor implements IMethodInterceptor {
+  private final List<FieldInfo> ruleFields;
 
-  public RuleInterceptor(List<FieldInfo> ruleFields) {
+  public TestRuleInterceptor(List<FieldInfo> ruleFields) {
     this.ruleFields = ruleFields;
   }
 
   public void intercept(final IMethodInvocation invocation) throws Throwable {
-    Statement stat = createStatement(invocation);
-    FrameworkMethod method = createFrameworkMethod(invocation);
+    Statement stat = createBaseStatement(invocation);
 
     for (FieldInfo field : ruleFields) {
-      MethodRule rule = (MethodRule) field.readValue(invocation.getTarget());
-      stat = rule.apply(stat, method, invocation.getTarget());
+      Object rule = field.readValue(invocation.getIteration().getInstance());
+      if (!(rule instanceof TestRule)) continue;
+
+      stat = ((TestRule) rule).apply(stat, invocation.getFeature().getDescription());
     }
 
     stat.evaluate();
   }
 
-  private Statement createStatement(final IMethodInvocation invocation) {
+  private Statement createBaseStatement(final IMethodInvocation invocation) {
     return new Statement() {
       @Override
       public void evaluate() throws Throwable {
@@ -50,14 +51,4 @@ public class RuleInterceptor implements IMethodInterceptor {
       }
     };
   }
-
-  private FrameworkMethod createFrameworkMethod(final IMethodInvocation invocation) {
-    return new FrameworkMethod(invocation.getMethod().getReflection()) {
-      @Override
-      public String getName() {
-        return invocation.getMethod().getName();
-      }
-    };
-  }
-
 }

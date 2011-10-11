@@ -33,13 +33,17 @@ import org.spockframework.util.ReflectionUtil;
  * @author Peter Niederwieser
  */
 public class BaseSpecRunner {
-  private static final Method DO_RUN;
+  private static final Method DO_RUN_SPEC;
   private static final Method DO_RUN_FEATURE;
+  private static final Method DO_RUN_ITERATION;
+
+  private static final Object[] EMPTY_ARGS = new Object[0];
 
   protected final SpecInfo spec;
   protected final IRunSupervisor supervisor;
 
   protected FeatureInfo currentFeature;
+  protected IterationInfo currentIteration;
 
   protected Object sharedInstance;
   protected Object currentInstance;
@@ -47,8 +51,9 @@ public class BaseSpecRunner {
 
   static {
     try {
-      DO_RUN = BaseSpecRunner.class.getMethod("doRun");
+      DO_RUN_SPEC = BaseSpecRunner.class.getMethod("doRunSpec");
       DO_RUN_FEATURE = BaseSpecRunner.class.getMethod("doRunFeature");
+      DO_RUN_ITERATION = BaseSpecRunner.class.getMethod("doRunIteration");
     } catch (NoSuchMethodException e) {
       throw new InternalSpockError(e);
     }
@@ -69,17 +74,17 @@ public class BaseSpecRunner {
     }
 
     supervisor.beforeSpec(spec);
-    invoke(this, createDoRunInfo());
+    invoke(this, createDoRunSpecInfo());
     supervisor.afterSpec(spec);
 
     return resetStatus(SPEC);
   }
 
-  private MethodInfo createDoRunInfo() {
+  private MethodInfo createDoRunSpecInfo() {
     MethodInfo result = new MethodInfo();
     result.setParent(spec);
     result.setKind(MethodKind.SPEC_EXECUTION);
-    result.setReflection(DO_RUN);
+    result.setReflection(DO_RUN_SPEC);
     result.setDescription(spec.getDescription());
     for (IMethodInterceptor interceptor : spec.getInterceptors())
       result.addInterceptor(interceptor);
@@ -89,7 +94,8 @@ public class BaseSpecRunner {
   /**
    * Only called via reflection.
    */
-  public void doRun() {
+  @SuppressWarnings("unused")
+  public void doRunSpec() {
     createSpecInstance(true);
     invokeSetupSpec();
     runFeatures();
@@ -167,6 +173,7 @@ public class BaseSpecRunner {
   /**
    * Only called via reflection.
    */
+  @SuppressWarnings("unused")
   public void doRunFeature() {
     if (currentFeature.isParameterized())
       runParameterizedFeature();
@@ -176,7 +183,39 @@ public class BaseSpecRunner {
   private void runSimpleFeature() {
     if (runStatus != OK) return;
 
+    runIteration(EMPTY_ARGS, 1);
+  }
+
+  protected void runIteration(Object[] dataValues, int estimatedNumIterations) {
+    if (runStatus != OK) return;
+
     createSpecInstance(false);
+    currentIteration = new IterationInfo(currentFeature, currentInstance, dataValues, estimatedNumIterations);
+
+    supervisor.beforeIteration(currentIteration);
+    invoke(this, createDoRunIterationInfo());
+    supervisor.afterIteration(currentIteration);
+
+    currentIteration = null;
+  }
+
+  private MethodInfo createDoRunIterationInfo() {
+    MethodInfo result = new MethodInfo();
+    result.setParent(currentFeature.getParent());
+    result.setKind(MethodKind.ITERATION_EXECUTION);
+    result.setReflection(DO_RUN_ITERATION);
+    result.setFeature(currentFeature);
+    result.setDescription(currentFeature.getDescription());
+    for (IMethodInterceptor interceptor : currentFeature.getIterationInterceptors())
+      result.addInterceptor(interceptor);
+    return result;
+  }
+
+  /**
+   * Only called via reflection.
+   */
+  @SuppressWarnings("unused")
+  public void doRunIteration() {
     invokeSetup();
     invokeFeatureMethod();
     invokeCleanup();
@@ -198,9 +237,9 @@ public class BaseSpecRunner {
     }
   }
 
-  protected void invokeFeatureMethod(Object... args) {
+  protected void invokeFeatureMethod() {
     if (runStatus != OK) return;
-    invoke(currentInstance, currentFeature.getFeatureMethod(), args);
+    invoke(currentInstance, currentFeature.getFeatureMethod(), currentIteration.getDataValues());
   }
 
   protected void invokeCleanup() {
@@ -218,7 +257,7 @@ public class BaseSpecRunner {
     }
 
     // slow lane
-    MethodInvocation invocation = new MethodInvocation(currentFeature, target, method, arguments);
+    MethodInvocation invocation = new MethodInvocation(currentFeature, currentIteration, target, method, arguments);
     try {
       invocation.proceed();
     } catch (Throwable t) {

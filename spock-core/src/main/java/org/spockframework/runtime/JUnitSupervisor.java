@@ -144,11 +144,11 @@ public class JUnitSupervisor implements IRunSupervisor {
   private int statusFor(ErrorInfo error) {
     switch (error.getMethod().getKind()) {
       case DATA_PROCESSOR:
-        return END_ITERATION;
+      case ITERATION_EXECUTION:
       case SETUP:
       case CLEANUP:
       case FEATURE:
-        return feature.isParameterized() ? END_ITERATION : END_FEATURE;
+        return END_ITERATION;
       case FEATURE_EXECUTION:
       case DATA_PROVIDER:
         return END_FEATURE;

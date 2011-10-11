@@ -132,7 +132,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
     if (!isLowestSpecificationInInheritanceChain()) return;
     
     // mock controller needs to be initialized before all other fields
-    getSetup().getStatements().add(0,
+    getSetupMethod().getStatements().add(0,
         new ExpressionStatement(
             new BinaryExpression(
                 mockControllerRef,
@@ -237,7 +237,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
 
   private void moveSharedFieldInitializer(Field field) {
     if (field.getAst().getInitialValueExpression() != null)
-      moveInitializer(field, getSetupSpec(), sharedFieldInitializerCount++);
+      moveInitializer(field, getSetupSpecMethod(), sharedFieldInitializerCount++);
   }
 
   /*
@@ -291,7 +291,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
 
   private void handleNonSharedField(Field field) {
     if (field.getAst().getInitialValueExpression() != null)
-      moveInitializer(field, getSetup(), fieldInitializerCount++);
+      moveInitializer(field, getSetupMethod(), fieldInitializerCount++);
   }
 
   /*
@@ -320,7 +320,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
   }
 
   private void checkFieldAccessInFixtureMethod(Method method) {
-    if (!(method == spec.getSetupSpec() || method == spec.getCleanupSpec())) return;
+    if (!(spec.getSetupSpecMethods().contains(spec) || spec.getCleanupSpecMethods().contains(spec))) return;
 
     new InstanceFieldAccessChecker(this).check(method);
   }
@@ -613,18 +613,18 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
     return nodeCache;
   }
 
-  private FixtureMethod getSetup() {
-    if (spec.getSetup() == null) {
+  private FixtureMethod getSetupMethod() {
+    if (spec.getSetupMethods().isEmpty()) {
       // method is private s.t. multiple setup methods along hierarchy can be called independently
       MethodNode gMethod = new MethodNode(Identifiers.SETUP, Opcodes.ACC_PRIVATE | Opcodes.ACC_SYNTHETIC,
           ClassHelper.DYNAMIC_TYPE, Parameter.EMPTY_ARRAY, ClassNode.EMPTY_ARRAY, new BlockStatement());
       spec.getAst().addMethod(gMethod);
       FixtureMethod setup = new FixtureMethod(spec, gMethod);
       setup.addBlock(new AnonymousBlock(setup));
-      spec.setSetup(setup);
+      spec.addSetupMethod(setup);
     }
 
-    return spec.getSetup();
+    return spec.getSetupMethods().get(0);
   }
 
   public String getSourceText(ASTNode node) {
@@ -635,18 +635,18 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
     return errorReporter;
   }
 
-  private FixtureMethod getSetupSpec() {
-    if (spec.getSetupSpec() == null) {
+  private FixtureMethod getSetupSpecMethod() {
+    if (spec.getSetupSpecMethods().isEmpty()) {
       // method is private s.t. multiple setupSpec methods along hierarchy can be called independently
       MethodNode gMethod = new MethodNode(Identifiers.SETUP_SPEC_METHOD, Opcodes.ACC_PRIVATE | Opcodes.ACC_SYNTHETIC,
           ClassHelper.DYNAMIC_TYPE, Parameter.EMPTY_ARRAY, ClassNode.EMPTY_ARRAY, new BlockStatement());
       spec.getAst().addMethod(gMethod);
       FixtureMethod setupSpec = new FixtureMethod(spec, gMethod);
       setupSpec.addBlock(new AnonymousBlock(setupSpec));
-      spec.setSetupSpec(setupSpec);
+      spec.addSetupSpecMethod(setupSpec);
     }
 
-    return spec.getSetupSpec();
+    return spec.getSetupSpecMethods().get(0);
   }
 
   private void rewriteWhenBlockForExceptionCondition(WhenBlock block) {

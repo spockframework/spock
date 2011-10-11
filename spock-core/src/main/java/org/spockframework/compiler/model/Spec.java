@@ -32,10 +32,10 @@ public class Spec extends Node<Spec, ClassNode> {
   private final List<Method> methods = new ArrayList<Method>();
   private final List<FixtureMethod> fixtureMethods = new ArrayList<FixtureMethod>();
 
-  private FixtureMethod setup;
-  private FixtureMethod cleanup;
-  private FixtureMethod setupSpec;
-  private FixtureMethod cleanupSpec;
+  private List<FixtureMethod> setupMethods = new ArrayList<FixtureMethod>();
+  private List<FixtureMethod> cleanupMethods = new ArrayList<FixtureMethod>();
+  private List<FixtureMethod> setupSpecMethods = new ArrayList<FixtureMethod>();
+  private List<FixtureMethod> cleanupSpecMethods = new ArrayList<FixtureMethod>();
 
   public Spec(ClassNode code) {
     super(null, code);
@@ -54,45 +54,44 @@ public class Spec extends Node<Spec, ClassNode> {
     return fixtureMethods;
   }
 
-  public FixtureMethod getSetup() {
-    return setup;
+  public List<FixtureMethod> getSetupMethods() {
+    return setupMethods;
   }
 
-  public void setSetup(FixtureMethod setup) {
-    this.setup = setup;
-    methods.add(setup);
-    fixtureMethods.add(setup);
+  public void addSetupMethod(FixtureMethod method) {
+    setupMethods.add(method);
+    fixtureMethods.add(method);
+    methods.add(method);
   }
 
-  public FixtureMethod getCleanup() {
-    return cleanup;
+  public List<FixtureMethod> getCleanupMethods() {
+    return cleanupMethods;
   }
 
-  public void setCleanup(FixtureMethod cleanup) {
-    this.cleanup = cleanup;
-    methods.add(cleanup);
-    fixtureMethods.add(cleanup);
-
+  public void addCleanupMethod(FixtureMethod method) {
+    cleanupMethods.add(method);
+    fixtureMethods.add(method);
+    methods.add(method);
   }
 
-  public FixtureMethod getSetupSpec() {
-    return setupSpec;
+  public List<FixtureMethod> getSetupSpecMethods() {
+    return setupSpecMethods;
   }
 
-  public void setSetupSpec(FixtureMethod setupSpec) {
-    this.setupSpec = setupSpec;
-    methods.add(setupSpec);
-    fixtureMethods.add(setupSpec);
+  public void addSetupSpecMethod(FixtureMethod method) {
+    setupSpecMethods.add(method);
+    fixtureMethods.add(method);
+    methods.add(method);
   }
 
-  public FixtureMethod getCleanupSpec() {
-    return cleanupSpec;
+  public List<FixtureMethod> getCleanupSpecMethods() {
+    return cleanupSpecMethods;
   }
 
-  public void setCleanupSpec(FixtureMethod cleanupSpec) {
-    this.cleanupSpec = cleanupSpec;
-    methods.add(cleanupSpec);
-    fixtureMethods.add(cleanupSpec);
+  public void addCleanupSpecMethod(FixtureMethod method) {
+    cleanupSpecMethods.add(method);
+    fixtureMethods.add(method);
+    methods.add(method);
   }
 
   @Override

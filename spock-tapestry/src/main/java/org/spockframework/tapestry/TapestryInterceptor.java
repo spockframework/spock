@@ -53,7 +53,7 @@ public class TapestryInterceptor extends AbstractMethodInterceptor {
   }
 
   @Override
-  public void interceptSetupSpecMethod(IMethodInvocation invocation) throws Throwable {
+  public void interceptSharedInitializerMethod(IMethodInvocation invocation) throws Throwable {
     runBeforeRegistryCreatedMethods((Specification) invocation.getTarget());
     createAndStartupRegistry();
     injectServices(invocation.getTarget(), true);
@@ -70,7 +70,7 @@ public class TapestryInterceptor extends AbstractMethodInterceptor {
   }
 
   @Override
-  public void interceptSetupMethod(IMethodInvocation invocation) throws Throwable {
+  public void interceptInitializerMethod(IMethodInvocation invocation) throws Throwable {
     injectServices(invocation.getTarget(), false);
     invocation.proceed();
   }

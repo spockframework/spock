@@ -16,12 +16,6 @@
 
 package org.spockframework.runtime.extension.builtin;
 
-import org.spockframework.runtime.extension.*;
-import org.spockframework.runtime.model.*;
-import org.spockframework.util.UnreachableCodeError;
-
-import java.util.Map;
-import java.util.HashMap;
 import java.util.List;
 import java.util.LinkedList;
 import java.util.Collection;
@@ -29,10 +23,11 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.annotation.Annotation;
 
-import groovy.lang.Closure;
-import org.codehaus.groovy.runtime.DefaultGroovyMethods;
-
 import org.junit.*;
+
+import org.spockframework.runtime.extension.*;
+import org.spockframework.runtime.model.*;
+import org.spockframework.util.UnreachableCodeError;
 
 /**
  * Adapts the JUnit {@link Before}, {@link After}, {@link BeforeClass} and {@link AfterClass} fixture mechanism to Spock.

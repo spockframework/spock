@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.spockframework</groupId>
   <artifactId>spock-example</artifactId>
-  <version>0.6-groovy-1.8-SNAPSHOT</version>
+  <version>0.6-groovy-1.9-SNAPSHOT</version>
   <packaging>jar</packaging>
   <name>Spock Framework - Example Project</name>
 
@@ -46,7 +46,7 @@
           <dependency>
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy-all</artifactId>
-            <version>1.8.0</version>
+            <version>1.9.0-beta-5-SNAPSHOT</version>
           </dependency>
         </dependencies>
       </plugin>

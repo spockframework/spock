@@ -20,13 +20,11 @@ import java.lang.reflect.AnnotatedElement;
  * Runtime information about an iteration of a feature method.
  */
 public class IterationInfo extends NodeInfo<FeatureInfo, AnnotatedElement> {
-  private final Object instance;
   private final Object[] dataValues;
   private final int estimatedNumIterations;
 
-  public IterationInfo(FeatureInfo feature, Object instance, Object[] dataValues, int estimatedNumIterations) {
+  public IterationInfo(FeatureInfo feature, Object[] dataValues, int estimatedNumIterations) {
     setParent(feature);
-    this.instance = instance;
     this.dataValues = dataValues;
     this.estimatedNumIterations = estimatedNumIterations;
   }
@@ -34,15 +32,6 @@ public class IterationInfo extends NodeInfo<FeatureInfo, AnnotatedElement> {
   @Override
   public AnnotatedElement getReflection() {
     throw new UnsupportedOperationException("getReflection");
-  }
-
-  /**
-   * Returns the <tt>Specification</tt> instance for this iteration.
-   *
-   * @return the <tt>Specification</tt> instance for this iteration
-   */
-  public Object getInstance() {
-    return instance;
   }
 
   /**

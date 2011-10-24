@@ -51,12 +51,23 @@ public interface IMethodInvocation {
   IterationInfo getIteration();
 
   /**
+   * Returns the <tt>Specification</tt> instance for @Shared fields.
+   *
+   * @return the <tt>Specification</tt> instance for @Shared fields
+   */
+  Object getSharedInstance();
+
+  /**
+   * Returns the <tt>Specification</tt> instance for the current iteration.
+   *
+   * @return the <tt>Specification</tt> instance for the current iteration
+   */
+  Object getInstance();
+
+  /**
    * Returns the target (receiver) of this method invocation.
    * In case of a static method call, a <tt>Class<tt> instance
    * is returned.
-   *
-   * Note that the target isn't always the <tt>Specification</tt> instance.
-   * A better way to get to the latter is <tt>getIteration().getInstance()</tt>.
    *
    * @return the target (receiver) of this method invocation
    */

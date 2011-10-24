@@ -73,10 +73,13 @@ public class SpecInfoBuilder {
 
   private void buildSpec() {
     SpecUtil.checkIsSpec(clazz);
+
+    SpecMetadata metadata = clazz.getAnnotation(SpecMetadata.class);
     spec.setParent(null);
     spec.setName(clazz.getSimpleName());
+    spec.setLine(metadata.line());
     spec.setReflection(clazz);
-    spec.setFilename(clazz.getAnnotation(SpecMetadata.class).filename());
+    spec.setFilename(metadata.filename());
   }
 
   private void buildFields() {
@@ -136,6 +139,7 @@ public class SpecInfoBuilder {
     FeatureInfo feature = new FeatureInfo();
     feature.setParent(spec);
     feature.setName(featureMetadata.name());
+    feature.setLine(featureMetadata.line());
     feature.setDeclarationOrder(featureMetadata.ordinal());
     for (String name : featureMetadata.parameterNames())
       feature.addParameterName(name);
@@ -143,6 +147,7 @@ public class SpecInfoBuilder {
     MethodInfo featureMethod = new MethodInfo();
     featureMethod.setParent(spec);
     featureMethod.setName(featureMetadata.name());
+    featureMethod.setLine(featureMetadata.line());
     featureMethod.setFeature(feature);
     featureMethod.setReflection(method);
     featureMethod.setKind(MethodKind.FEATURE);
@@ -179,7 +184,6 @@ public class SpecInfoBuilder {
     DataProviderInfo provider = new DataProviderInfo();
     provider.setParent(feature);
     provider.setLine(metadata.line());
-    provider.setColumn(metadata.column());
     provider.setDataVariables(Arrays.asList(metadata.dataVariables()));
     provider.setDataProviderMethod(method);
     return provider;

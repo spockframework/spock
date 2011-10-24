@@ -19,6 +19,7 @@ import java.util.List;
 
 import org.junit.Rule;
 
+import org.spockframework.runtime.InvalidSpecException;
 import org.spockframework.runtime.extension.IGlobalExtension;
 import org.spockframework.runtime.extension.IMethodInterceptor;
 import org.spockframework.runtime.model.*;
@@ -37,13 +38,13 @@ public class RuleExtension implements IGlobalExtension {
 
     if (methodRuleClassAvailable) {
       IMethodInterceptor interceptor = MethodRuleInterceptorFactory.create(ruleFields);
-      for (FeatureInfo feature : spec.getFeatures())
+      for (FeatureInfo feature : spec.getAllFeatures())
         feature.getFeatureMethod().addInterceptor(interceptor);
     }
 
     if (testRuleClassAvailable) {
       IMethodInterceptor interceptor = TestRuleInterceptorFactory.create(ruleFields);
-      for (FeatureInfo feature : spec.getFeatures())
+      for (FeatureInfo feature : spec.getAllFeatures())
         feature.addIterationInterceptor(interceptor);
     }
   }
@@ -52,9 +53,17 @@ public class RuleExtension implements IGlobalExtension {
     static List<FieldInfo> collectFields(SpecInfo spec) {
       List<FieldInfo> fields = new ArrayList<FieldInfo>();
       for (FieldInfo field : spec.getAllFields())
-        if (field.getReflection().isAnnotationPresent(Rule.class))
+        if (field.getReflection().isAnnotationPresent(Rule.class)) {
+          checkIsInstanceField(field);
           fields.add(field);
+        }
       return fields;
+    }
+
+    private static void checkIsInstanceField(FieldInfo field) {
+      if (field.isShared() || field.isStatic()) {
+        throw new InvalidSpecException("@Rule field '%s' has to be an instance field").withArgs(field.getName());
+      }
     }
   }
 

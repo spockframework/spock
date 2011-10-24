@@ -23,6 +23,7 @@ import spock.lang.AutoCleanup;
 /**
  * @author Peter Niederwieser
  */
+// TODO: adapt to changes regarding field initialization
 public class AutoCleanupExtension extends AbstractAnnotationDrivenExtension<AutoCleanup> {
   private final AutoCleanupInterceptor sharedFieldInterceptor = new AutoCleanupInterceptor();
   private final AutoCleanupInterceptor instanceFieldInterceptor = new AutoCleanupInterceptor();

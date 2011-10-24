@@ -15,6 +15,7 @@
 package org.spockframework.runtime.extension.builtin;
 
 import org.junit.ClassRule;
+import org.spockframework.runtime.InvalidSpecException;
 import org.spockframework.runtime.extension.IGlobalExtension;
 import org.spockframework.runtime.extension.IMethodInterceptor;
 import org.spockframework.runtime.model.FieldInfo;
@@ -42,9 +43,17 @@ public class ClassRuleExtension implements IGlobalExtension {
     static List<FieldInfo> collectFields(SpecInfo spec) {
       List<FieldInfo> fields = new ArrayList<FieldInfo>();
       for (FieldInfo field : spec.getAllFields())
-        if (field.getReflection().isAnnotationPresent(ClassRule.class))
+        if (field.getReflection().isAnnotationPresent(ClassRule.class)) {
+          checkIsStaticOrSharedField(field);
           fields.add(field);
+        }
       return fields;
+    }
+
+    private static void checkIsStaticOrSharedField(FieldInfo field) {
+      if (!field.isShared() && !field.isStatic()) {
+        throw new InvalidSpecException("@ClassRule field '%s' has to be a @Shared or static field").withArgs(field.getName());
+      }
     }
   }
 

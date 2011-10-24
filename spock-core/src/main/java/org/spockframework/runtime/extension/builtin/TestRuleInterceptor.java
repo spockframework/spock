@@ -24,7 +24,6 @@ import org.spockframework.runtime.extension.IMethodInterceptor;
 import org.spockframework.runtime.extension.IMethodInvocation;
 import org.spockframework.runtime.model.FieldInfo;
 
-// TODO: @ClassRule should only allow static/shared field, @Rule only instance field
 public class TestRuleInterceptor implements IMethodInterceptor {
   private final List<FieldInfo> ruleFields;
 

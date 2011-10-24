@@ -9,30 +9,12 @@ import java.util.List;
  * @author Peter Niederwieser
  */
 public class DataProviderInfo extends NodeInfo<FeatureInfo, AnnotatedElement> {
-  private int line;
-  private int column;
   private List<String> dataVariables;
   private MethodInfo dataProviderMethod;
 
   @Override
   public AnnotatedElement getReflection() {
     throw new UnsupportedOperationException("getReflection");
-  }
-
-  public int getLine() {
-    return line;
-  }
-
-  public void setLine(int line) {
-    this.line = line;
-  }
-
-  public int getColumn() {
-    return column;
-  }
-
-  public void setColumn(int column) {
-    this.column = column;
   }
 
   public List<String> getDataVariables() {

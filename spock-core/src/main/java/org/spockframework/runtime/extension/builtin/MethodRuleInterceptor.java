@@ -14,6 +14,7 @@
 
 package org.spockframework.runtime.extension.builtin;
 
+import org.junit.rules.MethodRule;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
 import org.spockframework.runtime.extension.IMethodInterceptor;
@@ -35,9 +36,9 @@ public class MethodRuleInterceptor implements IMethodInterceptor {
 
     for (FieldInfo field : ruleFields) {
       Object rule = field.readValue(invocation.getTarget());
-      if (!(rule instanceof org.junit.rules.MethodRule)) continue;
+      if (!(rule instanceof MethodRule)) continue;
 
-      statement = ((org.junit.rules.MethodRule) rule).apply(statement, method, invocation.getTarget());
+      statement = ((MethodRule) rule).apply(statement, method, invocation.getTarget());
     }
 
     statement.evaluate();

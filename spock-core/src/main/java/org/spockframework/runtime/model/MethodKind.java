@@ -22,6 +22,8 @@ package org.spockframework.runtime.model;
  * @author Peter Niederwieser
  */
 public enum MethodKind {
+  INITIALIZER,
+  SHARED_INITIALIZER,
   SETUP,
   CLEANUP,
   SETUP_SPEC,

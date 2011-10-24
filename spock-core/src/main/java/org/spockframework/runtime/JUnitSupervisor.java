@@ -144,6 +144,7 @@ public class JUnitSupervisor implements IRunSupervisor {
   private int statusFor(ErrorInfo error) {
     switch (error.getMethod().getKind()) {
       case DATA_PROCESSOR:
+      case INITIALIZER:
       case ITERATION_EXECUTION:
       case SETUP:
       case CLEANUP:
@@ -152,6 +153,7 @@ public class JUnitSupervisor implements IRunSupervisor {
       case FEATURE_EXECUTION:
       case DATA_PROVIDER:
         return END_FEATURE;
+      case SHARED_INITIALIZER:
       case SETUP_SPEC:
       case CLEANUP_SPEC:
       case SPEC_EXECUTION:

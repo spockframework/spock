@@ -22,6 +22,6 @@ package org.spockframework.runtime;
  * @author Peter Niederwieser
  */
 public interface IMethodNameMapper {
-  boolean isFixtureMethod(String className, String methodName);
+  boolean isInitializerOrFixtureMethod(String className, String methodName);
   String toFeatureName(String methodName);
 }

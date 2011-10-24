@@ -20,19 +20,55 @@ import java.util.List;
 import org.junit.Rule;
 
 import org.spockframework.runtime.extension.IGlobalExtension;
+import org.spockframework.runtime.extension.IMethodInterceptor;
 import org.spockframework.runtime.model.*;
+import org.spockframework.util.ReflectionUtil;
 
 public class RuleExtension implements IGlobalExtension {
-  public void visitSpec(SpecInfo spec) {
-    List<FieldInfo> ruleFields = new ArrayList<FieldInfo>();
-    for (FieldInfo field : spec.getAllFields())
-      if (field.getReflection().isAnnotationPresent(Rule.class))
-        ruleFields.add(field);
+  private static boolean ruleClassAvailable = ReflectionUtil.isClassAvailable("org.junit.Rule");
+  private static boolean methodRuleClassAvailable = ReflectionUtil.isClassAvailable("org.junit.rules.MethodRule");
+  private static boolean testRuleClassAvailable = ReflectionUtil.isClassAvailable("org.junit.rules.TestRule");
 
+  public void visitSpec(SpecInfo spec) {
+    if (!ruleClassAvailable) return;
+
+    List<FieldInfo> ruleFields = RuleCollector.collectFields(spec);
     if (ruleFields.isEmpty()) return;
 
-    RuleInterceptor interceptor = new RuleInterceptor(ruleFields);
-    for (FeatureInfo feature : spec.getFeatures())
-      feature.getFeatureMethod().addInterceptor(interceptor);
-  } 
+    if (methodRuleClassAvailable) {
+      IMethodInterceptor interceptor = MethodRuleInterceptorFactory.create(ruleFields);
+      for (FeatureInfo feature : spec.getFeatures())
+        feature.getFeatureMethod().addInterceptor(interceptor);
+    }
+
+    if (testRuleClassAvailable) {
+      IMethodInterceptor interceptor = TestRuleInterceptorFactory.create(ruleFields);
+      for (FeatureInfo feature : spec.getFeatures())
+        feature.addIterationInterceptor(interceptor);
+    }
+  }
+
+  private static class RuleCollector {
+    static List<FieldInfo> collectFields(SpecInfo spec) {
+      List<FieldInfo> fields = new ArrayList<FieldInfo>();
+      for (FieldInfo field : spec.getAllFields())
+        if (field.getReflection().isAnnotationPresent(Rule.class))
+          fields.add(field);
+      return fields;
+    }
+  }
+
+  // defer loading of class MethodRule
+  private static class MethodRuleInterceptorFactory {
+    static IMethodInterceptor create(List<FieldInfo> ruleFields) {
+      return new MethodRuleInterceptor(ruleFields);
+    }
+  }
+
+  // defer loading of class TestRule
+  private static class TestRuleInterceptorFactory {
+    static IMethodInterceptor create(List<FieldInfo> ruleFields) {
+      return new TestRuleInterceptor(ruleFields);
+    }
+  }
 }

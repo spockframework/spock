@@ -133,10 +133,10 @@ public class SpecParser implements GroovyClassVisitor {
     stats.clear();
 
     String name = method.getName();
-    if (name.equals(SETUP)) spec.setSetup(fixtureMethod);
-    else if (name.equals(CLEANUP)) spec.setCleanup(fixtureMethod);
-    else if (name.equals(SETUP_SPEC_METHOD)) spec.setSetupSpec(fixtureMethod);
-    else spec.setCleanupSpec(fixtureMethod);
+    if (name.equals(SETUP)) spec.setSetupMethod(fixtureMethod);
+    else if (name.equals(CLEANUP)) spec.setCleanupMethod(fixtureMethod);
+    else if (name.equals(SETUP_SPEC_METHOD)) spec.setSetupSpecMethod(fixtureMethod);
+    else spec.setCleanupSpecMethod(fixtureMethod);
   }
 
   // IDEA: recognize feature methods by looking at signature only

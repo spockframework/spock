@@ -56,7 +56,7 @@ public class StackTraceFilter implements IStackTraceFilter {
     List<StackTraceElement> filteredTrace = new ArrayList<StackTraceElement>();
 
     for (StackTraceElement elem : throwable.getStackTrace()) {
-      if (isFixtureMethod(elem)) {
+      if (isInitializerOrFixtureMethod(elem)) {
         filteredTrace.add(elem);
         break;
       }
@@ -72,8 +72,8 @@ public class StackTraceFilter implements IStackTraceFilter {
     if (throwable.getCause() != null) filter(throwable.getCause());
   }
 
-  private boolean isFixtureMethod(StackTraceElement elem) {
-    return mapper.isFixtureMethod(elem.getClassName(), elem.getMethodName());
+  private boolean isInitializerOrFixtureMethod(StackTraceElement elem) {
+    return mapper.isInitializerOrFixtureMethod(elem.getClassName(), elem.getMethodName());
   }
 
   private static boolean isFilteredClass(StackTraceElement elem) {

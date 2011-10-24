@@ -39,7 +39,7 @@ public class GuiceExtension extends AbstractAnnotationDrivenExtension<UseModules
     
     GuiceInterceptor interceptor = new GuiceInterceptor(spec, moduleClasses);
     SpecInfo topSpec = spec.getTopSpec();
-    topSpec.getSetupSpecMethod().addInterceptor(interceptor);
-    topSpec.getSetupMethod().addInterceptor(interceptor);
+    topSpec.getSharedInitializerMethod().addInterceptor(interceptor);
+    topSpec.getInitializerMethod().addInterceptor(interceptor);
   }
 }

@@ -19,7 +19,6 @@ package org.spockframework.runtime.extension;
 import java.util.Iterator;
 
 import org.spockframework.runtime.model.*;
-import org.spockframework.util.Nullable;
 import org.spockframework.util.ReflectionUtil;
 
 /**
@@ -28,13 +27,20 @@ import org.spockframework.util.ReflectionUtil;
  */
 public class MethodInvocation implements IMethodInvocation {
   private final FeatureInfo feature;
+  private final IterationInfo iteration;
+  private final Object sharedInstance;
+  private final Object instance;
   private final Object target;
   private final MethodInfo method;
   private final Object[] arguments;
   private final Iterator<IMethodInterceptor> interceptors;
 
-  public MethodInvocation(FeatureInfo feature, Object target, MethodInfo method, Object[] arguments) {
+  public MethodInvocation(FeatureInfo feature, IterationInfo iteration, Object sharedInstance,
+      Object instance, Object target, MethodInfo method, Object[] arguments) {
     this.feature = feature;
+    this.iteration = iteration;
+    this.sharedInstance = sharedInstance;
+    this.instance = instance;
     this.target = target;
     this.method = method;
     this.arguments = arguments;
@@ -45,8 +51,20 @@ public class MethodInvocation implements IMethodInvocation {
     return method.getParent();
   }
 
-  public @Nullable FeatureInfo getFeature() {
+  public FeatureInfo getFeature() {
     return feature;
+  }
+
+  public IterationInfo getIteration() {
+    return iteration;
+  }
+
+  public Object getSharedInstance() {
+    return sharedInstance;
+  }
+
+  public Object getInstance() {
+    return instance;
   }
 
   public Object getTarget() {

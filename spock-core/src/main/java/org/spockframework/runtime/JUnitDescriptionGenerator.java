@@ -36,7 +36,7 @@ public class JUnitDescriptionGenerator {
 
   public void attach() {
     Description desc = Description.createSuiteDescription(spec.getReflection());
-    spec.setMetadata(desc);
+    spec.setDescription(desc);
     
     for (FeatureInfo feature : spec.getAllFeatures())
       describeFeature(feature);
@@ -46,7 +46,7 @@ public class JUnitDescriptionGenerator {
   }
 
   public Description aggregate() {
-    Description desc = (Description) spec.getMetadata();
+    Description desc = spec.getDescription();
 
     // important for JUnit compatibility: Descriptions of specs that are reported
     // as "ignored" to JUnit must not have any children
@@ -54,7 +54,7 @@ public class JUnitDescriptionGenerator {
 
     for (FeatureInfo feature : spec.getAllFeaturesInExecutionOrder()) {
       if (feature.isExcluded()) continue;
-      desc.addChild((Description) feature.getFeatureMethod().getMetadata());
+      desc.addChild(feature.getFeatureMethod().getDescription());
     }
 
     return desc;
@@ -62,11 +62,11 @@ public class JUnitDescriptionGenerator {
 
   private Description describeFeature(FeatureInfo feature) {
     Description desc = describeMethod(feature.getFeatureMethod());
-    feature.setMetadata(desc);
+    feature.setDescription(desc);
     if (feature.getDataProcessorMethod() != null)
-      feature.getDataProcessorMethod().setMetadata(desc);
+      feature.getDataProcessorMethod().setDescription(desc);
     for (DataProviderInfo prov : feature.getDataProviders())
-      prov.getDataProviderMethod().setMetadata(desc);
+      prov.getDataProviderMethod().setDescription(desc);
     return desc;
   }
 
@@ -75,7 +75,7 @@ public class JUnitDescriptionGenerator {
         new Annotation[0] : method.getReflection().getAnnotations();
     Description desc = Description.createTestDescription(spec.getReflection(),
         method.getName(), anns);
-    method.setMetadata(desc);
+    method.setDescription(desc);
     return desc;
   }
 }

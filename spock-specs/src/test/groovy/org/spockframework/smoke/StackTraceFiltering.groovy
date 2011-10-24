@@ -103,9 +103,9 @@ def foo() { expect: true }
     ConditionNotSatisfiedError e = thrown()
     // no idea why setup_closure1 appears twice
     stackTraceLooksLike e, """
-apackage.ASpec|setup_closure1|-
-apackage.ASpec|setup_closure1|-
-apackage.ASpec|setup|1
+apackage.ASpec|\$spock_initializer_closure1|-
+apackage.ASpec|\$spock_initializer_closure1|-
+apackage.ASpec|\$spock_initializer|1
     """
   }
 

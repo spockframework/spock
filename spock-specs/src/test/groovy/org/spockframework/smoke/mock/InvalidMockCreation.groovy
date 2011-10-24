@@ -76,24 +76,30 @@ setup: Mock()
   }
 }
 
-class InvalidMockCreation2 extends Specification {
-  List list = Mock(Map)
-
-  @FailsWith(GroovyCastException)
-  def setup() {}
-
+class InvalidMockCreation2 extends EmbeddedSpecification {
   def "field w/ incompatible type"() {
-    expect: true // triggers setup()
+    when:
+    runner.runSpecBody("""
+List list = Mock(Map)
+
+def foo() { expect: true }
+    """)
+
+    then:
+    thrown(GroovyCastException)
   }
 }
 
-class InvalidMockCreation3 extends Specification {
-  def list = Mock(1)
-
-  @FailsWith(MissingMethodException)
-  def setup() {}
-
+class InvalidMockCreation3 extends EmbeddedSpecification {
   def "field w/ wrong argument"() {
-    expect: true // triggers setup()
+    when:
+    runner.runSpecBody("""
+List list = Mock(1)
+
+def foo() { expect: true }
+    """)
+
+    then:
+    thrown(MissingMethodException)
   }
 }

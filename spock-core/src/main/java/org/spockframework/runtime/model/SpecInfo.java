@@ -39,6 +39,9 @@ public class SpecInfo extends NodeInfo<NodeInfo, Class<?>> implements IMethodNam
   private List<SpecInfo> specsBottomToTop;
   private FieldInfo sharedInstanceField;
 
+  private MethodInfo initializerMethod;
+  private MethodInfo sharedInitializerMethod;
+
   private MethodInfo setupMethod;
   private MethodInfo cleanupMethod;
   private MethodInfo setupSpecMethod;
@@ -126,6 +129,22 @@ public class SpecInfo extends NodeInfo<NodeInfo, Class<?>> implements IMethodNam
 
   public void setSharedInstanceField(FieldInfo sharedInstanceField) {
     this.sharedInstanceField = sharedInstanceField;
+  }
+
+  public MethodInfo getInitializerMethod() {
+    return initializerMethod;
+  }
+
+  public void setInitializerMethod(MethodInfo initializerMethod) {
+    this.initializerMethod = initializerMethod;
+  }
+
+  public MethodInfo getSharedInitializerMethod() {
+    return sharedInitializerMethod;
+  }
+
+  public void setSharedInitializerMethod(MethodInfo sharedInitializerMethod) {
+    this.sharedInitializerMethod = sharedInitializerMethod;
   }
 
   public MethodInfo getSetupMethod() {
@@ -260,8 +279,8 @@ public class SpecInfo extends NodeInfo<NodeInfo, Class<?>> implements IMethodNam
       features.get(i).setExecutionOrder(i);
   }
 
-  public boolean isFixtureMethod(String className, String methodName) {
-    if (!Identifiers.FIXTURE_METHODS.contains(methodName))
+  public boolean isInitializerOrFixtureMethod(String className, String methodName) {
+    if (!InternalIdentifiers.INITIALIZER_AND_FIXTURE_METHODS.contains(methodName))
       return false;
 
     for (SpecInfo spec : getSpecsBottomToTop())

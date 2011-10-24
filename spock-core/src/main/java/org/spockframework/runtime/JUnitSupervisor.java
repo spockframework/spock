@@ -144,14 +144,16 @@ public class JUnitSupervisor implements IRunSupervisor {
   private int statusFor(ErrorInfo error) {
     switch (error.getMethod().getKind()) {
       case DATA_PROCESSOR:
-        return END_ITERATION;
+      case INITIALIZER:
+      case ITERATION_EXECUTION:
       case SETUP:
       case CLEANUP:
       case FEATURE:
-        return feature.isParameterized() ? END_ITERATION : END_FEATURE;
+        return END_ITERATION;
       case FEATURE_EXECUTION:
       case DATA_PROVIDER:
         return END_FEATURE;
+      case SHARED_INITIALIZER:
       case SETUP_SPEC:
       case CLEANUP_SPEC:
       case SPEC_EXECUTION:
@@ -200,7 +202,7 @@ public class JUnitSupervisor implements IRunSupervisor {
   }
 
   private Description getDescription(NodeInfo node) {
-    return (Description) node.getMetadata();
+    return node.getDescription();
   }
 
   private Description getCurrentDescription() {

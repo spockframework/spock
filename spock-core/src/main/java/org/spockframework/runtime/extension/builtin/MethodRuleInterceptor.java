@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 the original author or authors.
+ * Copyright 2011 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,35 +14,36 @@
 
 package org.spockframework.runtime.extension.builtin;
 
-import java.util.List;
-
-import org.junit.rules.MethodRule;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
-
-import org.spockframework.runtime.extension.*;
+import org.spockframework.runtime.extension.IMethodInterceptor;
+import org.spockframework.runtime.extension.IMethodInvocation;
 import org.spockframework.runtime.model.FieldInfo;
 
-public class RuleInterceptor implements IMethodInterceptor {
-  private List<FieldInfo> ruleFields;
+import java.util.List;
 
-  public RuleInterceptor(List<FieldInfo> ruleFields) {
+public class MethodRuleInterceptor implements IMethodInterceptor {
+  private final List<FieldInfo> ruleFields;
+
+  MethodRuleInterceptor(List<FieldInfo> ruleFields) {
     this.ruleFields = ruleFields;
   }
 
   public void intercept(final IMethodInvocation invocation) throws Throwable {
-    Statement stat = createStatement(invocation);
+    Statement statement = createBaseStatement(invocation);
     FrameworkMethod method = createFrameworkMethod(invocation);
 
     for (FieldInfo field : ruleFields) {
-      MethodRule rule = (MethodRule) field.readValue(invocation.getTarget());
-      stat = rule.apply(stat, method, invocation.getTarget());
+      Object rule = field.readValue(invocation.getTarget());
+      if (!(rule instanceof org.junit.rules.MethodRule)) continue;
+
+      statement = ((org.junit.rules.MethodRule) rule).apply(statement, method, invocation.getTarget());
     }
 
-    stat.evaluate();
+    statement.evaluate();
   }
 
-  private Statement createStatement(final IMethodInvocation invocation) {
+  private Statement createBaseStatement(final IMethodInvocation invocation) {
     return new Statement() {
       @Override
       public void evaluate() throws Throwable {
@@ -59,5 +60,5 @@ public class RuleInterceptor implements IMethodInterceptor {
       }
     };
   }
-
 }
+

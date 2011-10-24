@@ -32,6 +32,6 @@ public class JUnitSorterAdapter implements IFeatureSortOrder {
   }
 
   public int compare(FeatureInfo m1, FeatureInfo m2) {
-    return sorter.compare((Description) m1.getMetadata(), (Description) m2.getMetadata());
+    return sorter.compare(m1.getDescription(), m2.getDescription());
   }
 }

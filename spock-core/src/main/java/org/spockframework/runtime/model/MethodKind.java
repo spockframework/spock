@@ -22,6 +22,8 @@ package org.spockframework.runtime.model;
  * @author Peter Niederwieser
  */
 public enum MethodKind {
+  INITIALIZER,
+  SHARED_INITIALIZER,
   SETUP,
   CLEANUP,
   SETUP_SPEC,
@@ -30,7 +32,8 @@ public enum MethodKind {
   DATA_PROVIDER,
   DATA_PROCESSOR,
   SPEC_EXECUTION,
-  FEATURE_EXECUTION;
+  FEATURE_EXECUTION,
+  ITERATION_EXECUTION;
 
   public boolean isFixtureMethod() {
     return isSetupMethod() || isCleanupMethod();

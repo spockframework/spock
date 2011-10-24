@@ -17,13 +17,14 @@ package org.spockframework.runtime.model;
 import java.lang.reflect.AnnotatedElement;
 
 /**
- * Runtime information about an iteration of a data-driven feature method.
+ * Runtime information about an iteration of a feature method.
  */
 public class IterationInfo extends NodeInfo<FeatureInfo, AnnotatedElement> {
   private final Object[] dataValues;
   private final int estimatedNumIterations;
 
-  public IterationInfo(Object[] dataValues, int estimatedNumIterations) {
+  public IterationInfo(FeatureInfo feature, Object[] dataValues, int estimatedNumIterations) {
+    setParent(feature);
     this.dataValues = dataValues;
     this.estimatedNumIterations = estimatedNumIterations;
   }

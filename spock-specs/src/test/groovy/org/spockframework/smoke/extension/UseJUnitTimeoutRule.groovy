@@ -20,28 +20,28 @@ import org.junit.runner.Result
 class UseJUnitTimeoutRule extends EmbeddedSpecification {
   def timeout
 
-  def "spec method that completes in time"() {
+  def "feature method that completes in time"() {
     timeout = 500
 
     when:
-    specMethodDelayedBy(0)
+    runFeatureMethodThatSleeps(0)
 
     then:
     noExceptionThrown()
   }
 
-  def "spec method that does not complete in time"() {
+  def "feature method that does not complete in time"() {
     timeout = 250
 
     when:
-    specMethodDelayedBy(500)
+    runFeatureMethodThatSleeps(500)
 
     then:
     Exception e = thrown()
     e.message.contains "timed out"
   }
 
-  private Result specMethodDelayedBy(delay) {
+  private Result runFeatureMethodThatSleeps(delay) {
     runner.runSpecBody """
 @org.junit.Rule
 org.junit.rules.Timeout timeout = new org.junit.rules.Timeout($timeout)

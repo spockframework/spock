@@ -18,6 +18,7 @@ package org.spockframework.runtime.model;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 
 import org.codehaus.groovy.runtime.InvokerHelper;
 
@@ -38,6 +39,10 @@ public class FieldInfo extends NodeInfo<SpecInfo, Field> {
 
   public void setOrdinal(int ordinal) {
     this.ordinal = ordinal;
+  }
+
+  public boolean isStatic() {
+    return Modifier.isStatic(getReflection().getModifiers());
   }
 
   public boolean isShared() {

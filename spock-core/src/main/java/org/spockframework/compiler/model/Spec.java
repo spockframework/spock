@@ -30,12 +30,14 @@ import org.codehaus.groovy.ast.ClassNode;
 public class Spec extends Node<Spec, ClassNode> {
   private final List<Field> fields = new ArrayList<Field>();
   private final List<Method> methods = new ArrayList<Method>();
-  private final List<FixtureMethod> fixtureMethods = new ArrayList<FixtureMethod>();
 
-  private FixtureMethod setup;
-  private FixtureMethod cleanup;
-  private FixtureMethod setupSpec;
-  private FixtureMethod cleanupSpec;
+  private FixtureMethod initializerMethod;
+  private FixtureMethod sharedInitializerMethod;
+
+  private FixtureMethod setupMethod;
+  private FixtureMethod cleanupMethod;
+  private FixtureMethod setupSpecMethod;
+  private FixtureMethod cleanupSpecMethod;
 
   public Spec(ClassNode code) {
     super(null, code);
@@ -50,49 +52,58 @@ public class Spec extends Node<Spec, ClassNode> {
     return methods;
   }
 
-  public List<FixtureMethod> getFixtureMethods() {
-    return fixtureMethods;
+  public FixtureMethod getInitializerMethod() {
+    return initializerMethod;
   }
 
-  public FixtureMethod getSetup() {
-    return setup;
+  public void setInitializerMethod(FixtureMethod method) {
+    initializerMethod = method;
+    methods.add(method);
   }
 
-  public void setSetup(FixtureMethod setup) {
-    this.setup = setup;
-    methods.add(setup);
-    fixtureMethods.add(setup);
+  public FixtureMethod getSharedInitializerMethod() {
+    return sharedInitializerMethod;
   }
 
-  public FixtureMethod getCleanup() {
-    return cleanup;
+  public void setSharedInitializerMethod(FixtureMethod method) {
+    sharedInitializerMethod = method;
+    methods.add(method);
   }
 
-  public void setCleanup(FixtureMethod cleanup) {
-    this.cleanup = cleanup;
-    methods.add(cleanup);
-    fixtureMethods.add(cleanup);
-
+  public FixtureMethod getSetupMethod() {
+    return setupMethod;
   }
 
-  public FixtureMethod getSetupSpec() {
-    return setupSpec;
+  public void setSetupMethod(FixtureMethod method) {
+    setupMethod = method;
+    methods.add(method);
   }
 
-  public void setSetupSpec(FixtureMethod setupSpec) {
-    this.setupSpec = setupSpec;
-    methods.add(setupSpec);
-    fixtureMethods.add(setupSpec);
+  public FixtureMethod getCleanupMethod() {
+    return cleanupMethod;
   }
 
-  public FixtureMethod getCleanupSpec() {
-    return cleanupSpec;
+  public void setCleanupMethod(FixtureMethod method) {
+    cleanupMethod = method;
+    methods.add(method);
   }
 
-  public void setCleanupSpec(FixtureMethod cleanupSpec) {
-    this.cleanupSpec = cleanupSpec;
-    methods.add(cleanupSpec);
-    fixtureMethods.add(cleanupSpec);
+  public FixtureMethod getSetupSpecMethod() {
+    return setupSpecMethod;
+  }
+
+  public void setSetupSpecMethod(FixtureMethod method) {
+    setupSpecMethod = method;
+    methods.add(method);
+  }
+
+  public FixtureMethod getCleanupSpecMethod() {
+    return cleanupSpecMethod;
+  }
+
+  public void setCleanupSpecMethod(FixtureMethod method) {
+    cleanupSpecMethod = method;
+    methods.add(method);
   }
 
   @Override

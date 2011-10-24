@@ -57,6 +57,7 @@ public class SpecInfoBuilder {
     buildFields();
     buildSharedInstanceField();
     buildFeatures();
+    buildInitializerMethods();
     buildFixtureMethods();
     return spec;
   }
@@ -203,6 +204,11 @@ public class SpecInfoBuilder {
         return method;
       }
     return null;
+  }
+
+  private void buildInitializerMethods() {
+    spec.setInitializerMethod(createMethod(InternalIdentifiers.INITIALIZER_METHOD, MethodKind.INITIALIZER, true));
+    spec.setSharedInitializerMethod(createMethod(InternalIdentifiers.SHARED_INITIALIZER_METHOD, MethodKind.SHARED_INITIALIZER, true));
   }
 
   private void buildFixtureMethods() {

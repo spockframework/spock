@@ -17,12 +17,14 @@ package org.spockframework.runtime.extension.builtin;
 import java.util.List;
 
 import org.junit.rules.TestRule;
+import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 
 import org.spockframework.runtime.extension.IMethodInterceptor;
 import org.spockframework.runtime.extension.IMethodInvocation;
 import org.spockframework.runtime.model.FieldInfo;
 
+// TODO: @ClassRule should only allow static/shared field, @Rule only instance field
 public class TestRuleInterceptor implements IMethodInterceptor {
   private final List<FieldInfo> ruleFields;
 
@@ -34,10 +36,16 @@ public class TestRuleInterceptor implements IMethodInterceptor {
     Statement stat = createBaseStatement(invocation);
 
     for (FieldInfo field : ruleFields) {
-      Object rule = field.readValue(invocation.getIteration().getInstance());
+      Object target = field.isStatic() ? null :
+          field.isShared() ? invocation.getSharedInstance() :
+              invocation.getInstance();
+
+      Object rule = field.readValue(target);
       if (!(rule instanceof TestRule)) continue;
 
-      stat = ((TestRule) rule).apply(stat, invocation.getFeature().getDescription());
+      Description description = field.isStatic() || field.isShared() ?
+          invocation.getSpec().getDescription() : invocation.getFeature().getDescription();
+      stat = ((TestRule) rule).apply(stat, description);
     }
 
     stat.evaluate();

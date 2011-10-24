@@ -25,15 +25,14 @@ import org.spockframework.runtime.model.*;
 import org.spockframework.util.ReflectionUtil;
 
 public class RuleExtension implements IGlobalExtension {
+  private static boolean ruleClassAvailable = ReflectionUtil.isClassAvailable("org.junit.Rule");
   private static boolean methodRuleClassAvailable = ReflectionUtil.isClassAvailable("org.junit.rules.MethodRule");
   private static boolean testRuleClassAvailable = ReflectionUtil.isClassAvailable("org.junit.rules.TestRule");
 
   public void visitSpec(SpecInfo spec) {
-    List<FieldInfo> ruleFields = new ArrayList<FieldInfo>();
-    for (FieldInfo field : spec.getAllFields())
-      if (field.getReflection().isAnnotationPresent(Rule.class))
-        ruleFields.add(field);
+    if (!ruleClassAvailable) return;
 
+    List<FieldInfo> ruleFields = RuleCollector.collectFields(spec);
     if (ruleFields.isEmpty()) return;
 
     if (methodRuleClassAvailable) {
@@ -49,14 +48,24 @@ public class RuleExtension implements IGlobalExtension {
     }
   }
 
-  // defers loading of class MethodRuleInterceptor and therefore class MethodRule
+  private static class RuleCollector {
+    static List<FieldInfo> collectFields(SpecInfo spec) {
+      List<FieldInfo> fields = new ArrayList<FieldInfo>();
+      for (FieldInfo field : spec.getAllFields())
+        if (field.getReflection().isAnnotationPresent(Rule.class))
+          fields.add(field);
+      return fields;
+    }
+  }
+
+  // defer loading of class MethodRule
   private static class MethodRuleInterceptorFactory {
     static IMethodInterceptor create(List<FieldInfo> ruleFields) {
       return new MethodRuleInterceptor(ruleFields);
     }
   }
 
-  // defers loading of class TestRuleInterceptor and therefore class TestRule
+  // defer loading of class TestRule
   private static class TestRuleInterceptorFactory {
     static IMethodInterceptor create(List<FieldInfo> ruleFields) {
       return new TestRuleInterceptor(ruleFields);

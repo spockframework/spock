@@ -132,7 +132,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
     if (!isLowestSpecificationInInheritanceChain()) return;
     
     // mock controller needs to be initialized before all other fields
-    getSetupMethod().getStatements().add(0,
+    getInitializerMethod().getStatements().add(0,
         new ExpressionStatement(
             new BinaryExpression(
                 mockControllerRef,
@@ -237,7 +237,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
 
   private void moveSharedFieldInitializer(Field field) {
     if (field.getAst().getInitialValueExpression() != null)
-      moveInitializer(field, getSetupSpecMethod(), sharedFieldInitializerCount++);
+      moveInitializer(field, getSharedInitializerMethod(), sharedFieldInitializerCount++);
   }
 
   /*
@@ -291,7 +291,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
 
   private void handleNonSharedField(Field field) {
     if (field.getAst().getInitialValueExpression() != null)
-      moveInitializer(field, getSetupMethod(), fieldInitializerCount++);
+      moveInitializer(field, getInitializerMethod(), fieldInitializerCount++);
   }
 
   /*
@@ -320,7 +320,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
   }
 
   private void checkFieldAccessInFixtureMethod(Method method) {
-    if (!(spec.getSetupSpecMethods().contains(spec) || spec.getCleanupSpecMethods().contains(spec))) return;
+    if (method != spec.getSetupSpecMethod() && method != spec.getCleanupSpecMethod()) return;
 
     new InstanceFieldAccessChecker(this).check(method);
   }
@@ -613,18 +613,18 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
     return nodeCache;
   }
 
-  private FixtureMethod getSetupMethod() {
-    if (spec.getSetupMethods().isEmpty()) {
-      // method is private s.t. multiple setup methods along hierarchy can be called independently
-      MethodNode gMethod = new MethodNode(Identifiers.SETUP, Opcodes.ACC_PRIVATE | Opcodes.ACC_SYNTHETIC,
+  private FixtureMethod getInitializerMethod() {
+    if (spec.getInitializerMethod() == null) {
+      // method is private s.t. multiple initializer methods along hierarchy can be called independently
+      MethodNode gMethod = new MethodNode(InternalIdentifiers.INITIALIZER_METHOD, Opcodes.ACC_PRIVATE | Opcodes.ACC_SYNTHETIC,
           ClassHelper.DYNAMIC_TYPE, Parameter.EMPTY_ARRAY, ClassNode.EMPTY_ARRAY, new BlockStatement());
       spec.getAst().addMethod(gMethod);
-      FixtureMethod setup = new FixtureMethod(spec, gMethod);
-      setup.addBlock(new AnonymousBlock(setup));
-      spec.addSetupMethod(setup);
+      FixtureMethod method = new FixtureMethod(spec, gMethod);
+      method.addBlock(new AnonymousBlock(method));
+      spec.setInitializerMethod(method);
     }
 
-    return spec.getSetupMethods().get(0);
+    return spec.getInitializerMethod();
   }
 
   public String getSourceText(ASTNode node) {
@@ -635,18 +635,18 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
     return errorReporter;
   }
 
-  private FixtureMethod getSetupSpecMethod() {
-    if (spec.getSetupSpecMethods().isEmpty()) {
-      // method is private s.t. multiple setupSpec methods along hierarchy can be called independently
-      MethodNode gMethod = new MethodNode(Identifiers.SETUP_SPEC_METHOD, Opcodes.ACC_PRIVATE | Opcodes.ACC_SYNTHETIC,
+  private FixtureMethod getSharedInitializerMethod() {
+    if (spec.getSharedInitializerMethod() == null) {
+      // method is private s.t. multiple initializer methods along hierarchy can be called independently
+      MethodNode gMethod = new MethodNode(InternalIdentifiers.SHARED_INITIALIZER_METHOD, Opcodes.ACC_PRIVATE | Opcodes.ACC_SYNTHETIC,
           ClassHelper.DYNAMIC_TYPE, Parameter.EMPTY_ARRAY, ClassNode.EMPTY_ARRAY, new BlockStatement());
       spec.getAst().addMethod(gMethod);
-      FixtureMethod setupSpec = new FixtureMethod(spec, gMethod);
-      setupSpec.addBlock(new AnonymousBlock(setupSpec));
-      spec.addSetupSpecMethod(setupSpec);
+      FixtureMethod method = new FixtureMethod(spec, gMethod);
+      method.addBlock(new AnonymousBlock(method));
+      spec.setSharedInitializerMethod(method);
     }
 
-    return spec.getSetupSpecMethods().get(0);
+    return spec.getSharedInitializerMethod();
   }
 
   private void rewriteWhenBlockForExceptionCondition(WhenBlock block) {

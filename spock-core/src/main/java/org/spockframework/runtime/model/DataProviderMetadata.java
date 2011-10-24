@@ -9,10 +9,8 @@ import java.lang.annotation.*;
 @Target(ElementType.METHOD)
 public @interface DataProviderMetadata {
   String LINE = "line";
-  String COLUMN = "column";
   String DATA_VARIABLES = "dataVariables";
   
   int line();
-  int column();
   String[] dataVariables();
 }

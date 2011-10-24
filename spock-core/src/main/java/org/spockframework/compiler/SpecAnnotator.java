@@ -48,7 +48,8 @@ public class SpecAnnotator extends AbstractSpecVisitor {
     AnnotationNode ann = new AnnotationNode(nodeCache.SpecMetadata);
     String pathname = spec.getAst().getModule().getContext().getName();
     String filename = new File(pathname).getName();
-    ann.addMember(SpecMetadata.FILENAME, new ConstantExpression(filename));
+    ann.setMember(SpecMetadata.FILENAME, new ConstantExpression(filename));
+    ann.setMember(SpecMetadata.LINE, new ConstantExpression(spec.getAst().getLineNumber()));
     spec.getAst().addAnnotation(ann);
   }
 
@@ -73,8 +74,9 @@ public class SpecAnnotator extends AbstractSpecVisitor {
 
   private void addFeatureMetadata(FeatureMethod feature) {
     AnnotationNode ann = new AnnotationNode(nodeCache.FeatureMetadata);
-    ann.setMember(FeatureMetadata.ORDINAL, new ConstantExpression(feature.getOrdinal()));
     ann.setMember(FeatureMetadata.NAME, new ConstantExpression(feature.getName()));
+    ann.setMember(FeatureMetadata.ORDINAL, new ConstantExpression(feature.getOrdinal()));
+    ann.setMember(FeatureMetadata.LINE, new ConstantExpression(feature.getAst().getLineNumber()));
     ann.setMember(FeatureMetadata.BLOCKS, blockAnnElems = new ListExpression());
 
     ListExpression paramNames = new ListExpression();

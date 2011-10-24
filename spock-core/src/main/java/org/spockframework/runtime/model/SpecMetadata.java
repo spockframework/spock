@@ -29,6 +29,8 @@ import java.lang.annotation.*;
 @Target(ElementType.TYPE)
 public @interface SpecMetadata {
   String FILENAME = "filename";
-  
+  String LINE = "line";
+
   String filename();
+  int line();
 }

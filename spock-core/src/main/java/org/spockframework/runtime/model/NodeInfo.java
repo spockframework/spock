@@ -29,6 +29,7 @@ import org.spockframework.util.Nullable;
  */
 public abstract class NodeInfo<P extends NodeInfo, R extends AnnotatedElement> {
   private String name;
+  private int line = -1;
   private P parent;
   private R reflection;
   private Object metadata;
@@ -40,6 +41,14 @@ public abstract class NodeInfo<P extends NodeInfo, R extends AnnotatedElement> {
 
   public void setName(String name) {
     this.name = name;
+  }
+
+  public int getLine() {
+    return line;
+  }
+
+  public void setLine(int line) {
+    this.line = line;
   }
 
   public P getParent() {

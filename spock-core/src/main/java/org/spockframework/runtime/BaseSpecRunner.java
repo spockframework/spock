@@ -206,6 +206,7 @@ public class BaseSpecRunner {
 
     createSpecInstance(false);
     invokeInitializer();
+    // TODO: must not invoke cleanup() methods if initializer fails
     runIteration(dataValues, estimatedNumIterations);
   }
 

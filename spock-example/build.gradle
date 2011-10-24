@@ -8,7 +8,7 @@ repositories {
   // Spock release versions are available from Maven Central
   mavenCentral()
   // only required if a snapshot version of Spock is used
-  mavenRepo urls: "http://m2repo.spockframework.org/snapshots"
+  mavenRepo url: "http://m2repo.spockframework.org/snapshots"
 }
 
 dependencies {

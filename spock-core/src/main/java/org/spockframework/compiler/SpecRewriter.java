@@ -80,13 +80,13 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
   }
 
   public void visitSpecAgain(Spec spec) throws Exception {
-    addMockControllerFieldInitialization();
+    addMockControllerFieldInitializer();
   }
 
   private void createThrownExceptionFieldAndRef() {
     Variable var;
 
-    if (isLowestSpecificationInInheritanceChain())
+    if (isDirectlyExtendingSpecification())
       var = spec.getAst().addField(
           "$spock_thrown",
           Opcodes.ACC_PROTECTED | Opcodes.ACC_SYNTHETIC,
@@ -101,7 +101,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
   private void createMockControllerFieldAndRef() {
     Variable var;
 
-    if (isLowestSpecificationInInheritanceChain())
+    if (isDirectlyExtendingSpecification())
       var = spec.getAst().addField(
           "$spock_mockController",
           Opcodes.ACC_PROTECTED | Opcodes.ACC_SYNTHETIC,
@@ -116,7 +116,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
   private void createSharedInstanceFieldAndRef() {
     Variable var;
 
-    if (isLowestSpecificationInInheritanceChain())
+    if (isDirectlyExtendingSpecification())
       var = spec.getAst().addField(
           InternalIdentifiers.SHARED_INSTANCE_NAME,
           Opcodes.ACC_PUBLIC | Opcodes.ACC_SYNTHETIC, // public s.t. runner can easily set it
@@ -128,8 +128,8 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
     sharedInstanceRef = new VariableExpression(var);
   }
 
-  private void addMockControllerFieldInitialization() {
-    if (!isLowestSpecificationInInheritanceChain()) return;
+  private void addMockControllerFieldInitializer() {
+    if (!isDirectlyExtendingSpecification()) return;
     
     // mock controller needs to be initialized before all other fields
     getInitializerMethod().getStatements().add(0,
@@ -142,7 +142,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
                     new FieldExpression(nodeCache.DefaultMockFactory_INSTANCE)))));
   }
 
-  private boolean isLowestSpecificationInInheritanceChain() {
+  private boolean isDirectlyExtendingSpecification() {
     ClassNode superClass = spec.getAst().getSuperClass();
     return superClass.equals(ClassHelper.OBJECT_TYPE)
         || superClass.equals(nodeCache.Specification);

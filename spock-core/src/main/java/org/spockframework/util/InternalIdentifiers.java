@@ -28,8 +28,8 @@ import java.util.List;
 public class InternalIdentifiers {
   public static final String SHARED_INSTANCE_NAME = "$spock_sharedInstance";
 
-  public static final String INITIALIZER_METHOD = "$spock_initializer";
-  public static final String SHARED_INITIALIZER_METHOD = "$spock_sharedInitializer";
+  public static final String INITIALIZER_METHOD = "$spock_initializeFields";
+  public static final String SHARED_INITIALIZER_METHOD = "$spock_initializeSharedFields";
 
   public static final List<String> INITIALIZER_METHODS = Arrays.asList(INITIALIZER_METHOD, SHARED_INITIALIZER_METHOD);
 

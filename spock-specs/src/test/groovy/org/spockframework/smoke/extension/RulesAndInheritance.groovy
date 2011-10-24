@@ -20,7 +20,7 @@ import org.junit.rules.TestName
 import spock.lang.*
 
 @Issue("http://issues.spockframework.org/detail?id=98")
-class RulesAndInheritance extends JUnitRuleBaseSpec {
+class RulesAndInheritance extends RulesAndInheritanceBase {
   @Rule
   TestName name2 = new TestName()
 
@@ -40,7 +40,7 @@ class RulesAndInheritance extends JUnitRuleBaseSpec {
   }
 }
 
-abstract class JUnitRuleBaseSpec extends Specification {
+abstract class RulesAndInheritanceBase extends Specification {
   @Rule
   TestName name = new TestName()
 

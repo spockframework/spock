@@ -25,8 +25,6 @@ import org.spockframework.runtime.model.*;
 import org.spockframework.util.InternalSpockError;
 import org.spockframework.util.TextUtil;
 
-import spock.lang.Unroll;
-
 import static org.spockframework.runtime.RunStatus.*;
 
 public class JUnitSupervisor implements IRunSupervisor {
@@ -37,7 +35,6 @@ public class JUnitSupervisor implements IRunSupervisor {
   private final IObjectRenderer<Object> diffedObjectRenderer;
 
   private FeatureInfo feature;
-  private boolean unrollFeature;
   private UnrolledFeatureNameGenerator unrolledNameGenerator;
 
   private int iterationCount;
@@ -61,10 +58,8 @@ public class JUnitSupervisor implements IRunSupervisor {
     masterListener.beforeFeature(feature);
     this.feature = feature;
 
-    Unroll unroll = feature.getFeatureMethod().getReflection().getAnnotation(Unroll.class);
-    unrollFeature = unroll != null;
-    if (unrollFeature)
-      unrolledNameGenerator = new UnrolledFeatureNameGenerator(feature, unroll.value());
+    if (feature.isUnrolled())
+      unrolledNameGenerator = new UnrolledFeatureNameGenerator(feature, feature.getUnroll().value());
     else
       notifier.fireTestStarted(getDescription(feature.getFeatureMethod()));
 
@@ -77,7 +72,7 @@ public class JUnitSupervisor implements IRunSupervisor {
   public void beforeIteration(IterationInfo iteration) {
     masterListener.beforeIteration(iteration);
     iterationCount++;
-    if (!unrollFeature) return;
+    if (!feature.isUnrolled()) return;
 
     unrolledDescription = getUnrolledDescription(iteration.getDataValues());
     notifier.fireTestStarted(unrolledDescription);
@@ -165,7 +160,7 @@ public class JUnitSupervisor implements IRunSupervisor {
 
   public void afterIteration(IterationInfo iteration) {
     masterListener.afterIteration(iteration);
-    if (!unrollFeature) return;
+    if (!feature.isUnrolled()) return;
 
     notifier.fireTestFinished(unrolledDescription);
     unrolledDescription = null;
@@ -179,11 +174,10 @@ public class JUnitSupervisor implements IRunSupervisor {
     }
 
     masterListener.afterFeature(feature);
-    if (!unrollFeature)
+    if (!feature.isUnrolled())
       notifier.fireTestFinished(getDescription(feature.getFeatureMethod()));
 
     this.feature = null;
-    unrollFeature = false;
     unrolledNameGenerator = null;
   }
 

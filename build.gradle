@@ -10,7 +10,7 @@ libs = [
   hamcrest_core: "org.hamcrest:hamcrest-core:1.2",
   jmock: "org.jmock:jmock:2.5.1",
   jmock_junit4: "org.jmock:jmock-junit4:2.5.1",
-  junit: "junit:junit-dep:4.10",
+  junit: "junit:junit-dep:4.9",
   log4j: "log4j:log4j:1.2.16",
   mockito: "org.mockito:mockito-all:1.8.5",
   objenesis: "org.objenesis:objenesis:1.2",

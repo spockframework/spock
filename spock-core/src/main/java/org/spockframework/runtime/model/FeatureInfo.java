@@ -6,6 +6,8 @@ import java.util.List;
 
 import org.spockframework.runtime.extension.IMethodInterceptor;
 
+import spock.lang.Unroll;
+
 /**
  * @author Peter Niederwieser
  */
@@ -104,6 +106,14 @@ public class FeatureInfo extends NodeInfo<SpecInfo, AnnotatedElement> implements
 
   public boolean isParameterized() {
     return dataProcessorMethod != null;
+  }
+
+  public boolean isUnrolled() {
+    return isParameterized() && getReflection().isAnnotationPresent(Unroll.class);
+  }
+
+  public Unroll getUnroll() {
+    return getReflection().getAnnotation(Unroll.class);
   }
 
   public boolean isExcluded() {

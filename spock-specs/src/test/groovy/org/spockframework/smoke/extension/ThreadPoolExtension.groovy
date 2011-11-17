@@ -21,6 +21,8 @@ class ThreadPoolExtension extends Specification {
     def "execute with 5 threads"(){
         //should print 'hello world' 5 times, once for each thread
         setup: println "hello world!"
+        
+        println Thread.currentThread().getName() + " has completed!"
     }
 
 }

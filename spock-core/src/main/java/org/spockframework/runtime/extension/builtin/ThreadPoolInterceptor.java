@@ -4,6 +4,14 @@ import org.spockframework.runtime.extension.IMethodInterceptor;
 import org.spockframework.runtime.extension.IMethodInvocation;
 import spock.lang.ThreadPool;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+import java.util.concurrent.CyclicBarrier;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+
 /**
  * Implementation of @ThreadPool
  *
@@ -24,20 +32,35 @@ class ThreadPoolInterceptor implements IMethodInterceptor {
 
         int numOfThreads = threadPool.value();
 
-        //IDEA: Use blocking barrier to make sure all threads
-        //get kicked off at the same time
+        List<Thread> threads = new ArrayList<Thread>();
+
+        ExecutorService executor = Executors.newFixedThreadPool(numOfThreads);
+        final CyclicBarrier barrier = new CyclicBarrier(numOfThreads);
+        
         for(int i=0; i<numOfThreads; i++){
-            new Thread(){
-                public void run(){
-                    try{
+            Thread t = new Thread() {
+                public void run() {
+                    try {
+                        barrier.await();
                         invocation.proceed();
-                    } catch(Throwable t){
+                    } catch (Throwable t) {
                         exception[0] = t;
                     }
                 }
 
-            }.start();
+            };
+            threads.add(t);
         }
+
+        
+
+        for (Thread thread : threads) {
+            executor.execute(thread);
+        }
+
+        executor.shutdown();
+        //FIXME: find a way to get rid of this
+        executor.awaitTermination(1, TimeUnit.MINUTES);
 
     }
 }

@@ -8,9 +8,9 @@ repositories {
   // Spock release versions are available from Maven Central
   mavenCentral()
   // only required if a snapshot version of Spock is used
-  mavenRepo url: "http://m2repo.spockframework.org/snapshots" 
-  // only required if a snapshot version of Groovy is used
-  mavenRepo url: "http://snapshots.repository.codehaus.org"
+  maven {
+    url "http://m2repo.spockframework.org/snapshots"
+  }
 }
 
 dependencies {
@@ -35,7 +35,7 @@ task collectJars(type: Copy) {
 
 // creates bootstrap files (gradlew etc.) for Gradle build (not required for using Spock)
 task wrapper(type: Wrapper) {
-  gradleVersion = "1.0-milestone-5"
+  gradleVersion = "1.0-milestone-6"
 }
 
 

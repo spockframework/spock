@@ -29,4 +29,25 @@ class CollectionUtilSpec extends Specification {
     res    << [[1, 2, 3], [2], [], []]
     result = res as Object[]
   }
+
+  def "reverse an empty list"() {
+    when:
+    def reversed = CollectionUtil.reverse([])
+    
+    then:
+    toList(reversed) == []
+
+  }
+  
+  def "reverse a non-empty list"() {
+    when:
+    def reversed = CollectionUtil.reverse([1, 2, 3])
+
+    then:
+    toList(reversed) == [3, 2, 1]
+  }
+  
+  def toList(iterable) {
+    iterable.collect { it }
+  }
 }

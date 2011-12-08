@@ -171,7 +171,7 @@ a | a
   }
 
   @Issue("http://issues.spockframework.org/detail?id=139")
-  def "cells cannot reference instance fields (only @Shared and static fields)"() {
+  def "cells cannot reference instance fields"() {
     when:
     compiler.compileSpecBody """
 def instanceField
@@ -237,6 +237,26 @@ a | b | c
 
     then:
     thrown(InvalidSpecCompileException)
+  }
+
+  def "cells can be separated with single or double pipe operator"() {
+    expect:
+    a + b == c
+
+    where:
+    a | b || c
+    1 | 2 || 3
+    4 | 5 || 9
+  }
+
+  def "consistent use of cell separators is not enforced"() {
+    expect:
+    a + b == c
+
+    where:
+    a | b || c
+    1 | 2 || 3
+    4 || 5 | 9
   }
 }
 

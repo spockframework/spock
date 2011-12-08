@@ -88,7 +88,7 @@ public class WhereBlockRewriter {
       else notAParameterization(stat);
     } else if (type == Types.ASSIGN)
       rewriteDerivedParameterization(binExpr, stat);
-    else if (type == Types.BITWISE_OR) {
+    else if (getOrExpression(binExpr) != null) {
       stats.previous();
       rewriteTableLikeParameterization(stats);
     }
@@ -201,15 +201,16 @@ public class WhereBlockRewriter {
 
     while (stats.hasNext()) {
       Statement stat = stats.next();
-      BinaryExpression binExpr = AstUtil.getExpression(stat, BinaryExpression.class);
-      if (binExpr == null || binExpr.getOperation().getType() != Types.BITWISE_OR) {
+      BinaryExpression orExpr = getOrExpression(stat);
+      if (orExpr == null) {
         stats.previous();
         break;
       }
+
       List<Expression> row = new ArrayList<Expression>();
-      splitRow(binExpr, row);
+      splitRow(orExpr, row);
       if (rows.size() > 0 && rows.getLast().size() != row.size())
-        throw new InvalidSpecCompileException(stat, "Row in data table has wrong number of elements");
+        throw new InvalidSpecCompileException(stat, String.format("Row in data table has wrong number of elements (%s instead of %s)", row.size(), rows.getLast().size()));
       rows.add(row);
     }
 
@@ -248,13 +249,28 @@ public class WhereBlockRewriter {
   }
 
   private void splitRow(Expression row, List<Expression> parts) {
-    BinaryExpression binExpr = AstUtil.asInstance(row, BinaryExpression.class);
-    if (binExpr == null || binExpr.getOperation().getType() != Types.BITWISE_OR)
+    BinaryExpression orExpr = getOrExpression(row);
+    if (orExpr == null)
       parts.add(row);
     else {
-      splitRow(binExpr.getLeftExpression(), parts);
-      parts.add(binExpr.getRightExpression());
+      splitRow(orExpr.getLeftExpression(), parts);
+      splitRow(orExpr.getRightExpression(), parts);
     }
+  }
+  
+  private BinaryExpression getOrExpression(Statement stat) {
+    Expression expr = AstUtil.getExpression(stat, Expression.class);
+    return getOrExpression(expr);
+  }
+  
+  private BinaryExpression getOrExpression(Expression expr) {
+    BinaryExpression binExpr = AstUtil.asInstance(expr, BinaryExpression.class);  
+    if (binExpr == null) return null;
+    
+    int binExprType = binExpr.getOperation().getType();
+    if (binExprType == Types.BITWISE_OR || binExprType == Types.LOGICAL_OR) return binExpr;
+    
+    return null;
   }
 
   private VariableExpression createDataProcessorVariable(Expression varExpr, ASTNode sourcePos)

@@ -57,7 +57,7 @@ public abstract class CollectionUtil {
   public static <T> Iterable<T> reverse(final List<T> list) {
     return new Iterable<T>() {
       public Iterator<T> iterator() {
-        final ListIterator<T> listIterator = list.listIterator();
+        final ListIterator<T> listIterator = list.listIterator(list.size());
 
         return new Iterator<T>() {
           public boolean hasNext() {

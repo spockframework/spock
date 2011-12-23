@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 the original author or authors.
+ * Copyright 2009, 2011 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,11 @@
 
 package org.spockframework.tapestry;
 
-import org.apache.tapestry5.ioc.*;
-
+import org.apache.tapestry5.ioc.MappedConfiguration;
+import org.apache.tapestry5.ioc.ObjectLocator;
+import org.apache.tapestry5.ioc.ServiceBinder;
+import org.apache.tapestry5.ioc.ServiceLifecycle;
+import org.apache.tapestry5.ioc.annotations.Marker;
 import spock.tapestry.ScopeConstants;
 
 /**
@@ -26,16 +29,17 @@ import spock.tapestry.ScopeConstants;
  *
  * @author Peter Niederwieser
  */
+@Marker(SpockTapestry.class)
 public class ExtensionModule {
-  public static void bind(ServiceBinder binder) {
-    binder.bind(IPerIterationManager.class, PerIterationManager.class);  
-  }
+    public static void bind(ServiceBinder binder) {
+        binder.bind(IPerIterationManager.class, PerIterationManager.class);
+    }
 
-  public static void contributeServiceLifecycleSource(MappedConfiguration<String, ServiceLifecycle> config) {
-    config.addInstance(ScopeConstants.PER_ITERATION, PerIterationServiceLifecycle.class);
-  }
+    public static void contributeServiceLifecycleSource(MappedConfiguration<String, ServiceLifecycle> config) {
+        config.addInstance(ScopeConstants.PER_ITERATION, PerIterationServiceLifecycle.class);
+    }
 
-  public static ObjectLocator build(ObjectLocator locator) {
-    return locator;
-  }
+    public static ObjectLocator build(ObjectLocator locator) {
+        return locator;
+    }
 }

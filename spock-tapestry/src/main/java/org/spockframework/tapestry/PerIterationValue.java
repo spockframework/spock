@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2011 the original author or authors.
+ * Copyright 2011 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,20 +17,19 @@
 package org.spockframework.tapestry;
 
 /**
- * Holds on to service instances with "perIteration" scope until
- * they are released by <tt>TapestryInterceptor</tt>.
+ *  Stores a per-iteration value (with a lifecycle that may be longer than the span of a single thread).
  *
+ *  @see IPerIterationManager
  */
-public interface IPerIterationManager {
+public interface PerIterationValue<T> {
 
     /**
-     * Creates a value is stored in the per-iteration map.  The value is initially non-existent.
+     * Reads the current per-thread value, or returns null if no value has been stored.
      */
-    <T> PerIterationValue<T> createValue();
+    T get();
 
     /**
-     * Discards all stored values. The {@link PerIterationValue} is still valid, but the underlying stored
-     * value will no longer exist.
+     * Sets the current per-thread value, then returns that value.
      */
-    void cleanup();
+    T set(T newValue);
 }

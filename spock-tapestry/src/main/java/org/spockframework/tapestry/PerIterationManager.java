@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 the original author or authors.
+ * Copyright 2009, 2011 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,17 +16,64 @@
 
 package org.spockframework.tapestry;
 
-import org.apache.tapestry5.ioc.internal.services.PerthreadManagerImpl;
-import org.slf4j.Logger;
+import java.lang.ref.WeakReference;
+import java.util.Iterator;
+import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
- * Implementation of <tt>IPerIterationManager</tt> which is fully based on
- * Tapestry's (internal) <tt>PerthreadManagerImpl</tt>.
- *
- * @author Peter Niederwiesers
+ * Manages a collection of {@link PerIterationValue}s as a thread-safe set of weak references.
  */
-public class PerIterationManager extends PerthreadManagerImpl implements IPerIterationManager {
-  public PerIterationManager(Logger logger) {
-    super(logger);
-  }
+public class PerIterationManager implements IPerIterationManager {
+
+    private class PerIterationValueImpl<T> implements PerIterationValue<T> {
+
+        final AtomicReference<T> ref = new AtomicReference<T>();
+
+        @Override
+        public T get() {
+            return ref.get();
+        }
+
+        @Override
+        public T set(T newValue) {
+
+            ref.set(newValue);
+
+            return newValue;
+        }
+
+        void cleanup() {
+            ref.set(null);
+        }
+    }
+
+    private final Set<WeakReference<PerIterationValueImpl>> values = new CopyOnWriteArraySet<WeakReference<PerIterationValueImpl>>();
+
+    @Override
+    public <T> PerIterationValue<T> createValue() {
+
+        PerIterationValueImpl<T> result = new PerIterationValueImpl<T>();
+
+        values.add(new WeakReference<PerIterationValueImpl>(result));
+
+        return result;
+    }
+
+    @Override
+    public void cleanup() {
+        Iterator<WeakReference<PerIterationValueImpl>> iterator = values.iterator();
+
+        while (iterator.hasNext()) {
+            WeakReference<PerIterationValueImpl> ref = iterator.next();
+            PerIterationValueImpl value = ref.get();
+
+            if (value == null) {
+                iterator.remove();
+            } else {
+                value.cleanup();
+            }
+        }
+    }
 }

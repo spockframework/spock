@@ -3,7 +3,7 @@ apply from: profile("publishMaven")
 description = "Spock Framework - Tapestry Module"
 
 repositories {
-  // need to explicitely add repository defined in tapestry-ioc POM
+  // need to explicitly add repository defined in tapestry-ioc POM
   // (workaround for http://jira.codehaus.org/browse/GRADLE-611)
   mavenRepo(url: "http://repository.jboss.com/maven2")
 }

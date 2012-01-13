@@ -45,7 +45,6 @@ public class TapestryInterceptor extends AbstractMethodInterceptor {
   private final Set<Class<?>> modules;
 
   private Registry registry;
-  private IPerIterationManager perIterationManager;
 
   public TapestryInterceptor(SpecInfo spec, Set<Class<?>> modules) {
     this.spec = spec;
@@ -75,15 +74,6 @@ public class TapestryInterceptor extends AbstractMethodInterceptor {
     invocation.proceed();
   }
 
-  @Override
-  public void interceptCleanupMethod(IMethodInvocation invocation) throws Throwable {
-    try {
-      invocation.proceed();
-    } finally {
-      terminateIterationScope();
-    }
-  }
-
   private void runBeforeRegistryCreatedMethods(Specification spec) {
     Object returnValue;
 
@@ -106,7 +96,6 @@ public class TapestryInterceptor extends AbstractMethodInterceptor {
     for (Class<?> module : modules) builder.add(module);
     registry = builder.build();
     registry.performRegistryStartup();
-    perIterationManager = registry.getService(IPerIterationManager.class);
   }
 
   private List<Method> findAllBeforeRegistryCreatedMethods() {
@@ -146,10 +135,5 @@ public class TapestryInterceptor extends AbstractMethodInterceptor {
   private void shutdownRegistry() {
     if (registry != null)
       registry.shutdown();
-  }
-
-  private void terminateIterationScope() {
-    if (perIterationManager != null)
-      perIterationManager.cleanup();
   }
 }

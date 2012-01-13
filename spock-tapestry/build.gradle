@@ -10,8 +10,8 @@ repositories {
 
 dependencies {
   compile project(":spock-core")
-  compile "org.apache.tapestry:tapestry-ioc:5.3.1"
-  compile "org.apache.tapestry:tapestry5-annotations:5.3.1"
+  compile "org.apache.tapestry:tapestry-ioc:5.2.6"
+  compile "org.apache.tapestry:tapestry5-annotations:5.2.6"
   compile "org.slf4j:slf4j-api:1.6.1"
   compile libs.junit
 }

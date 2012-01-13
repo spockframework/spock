@@ -30,11 +30,6 @@ class SpockPropertiesConfigurationSpec extends Specification {
     spock.person.balances == [3.0, 5.0, 8.9]
   }
 
-  def "test groovy"() {
-    expect:
-    "33".asType(BigDecimal)
-  }
-  
   private static class SpockConfiguration {
     Person person = new Person()
   }

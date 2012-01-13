@@ -20,6 +20,7 @@ import java.util.*;
 import groovy.util.XmlParser;
 import groovy.util.XmlSlurper;
 import org.spockframework.builder.*;
+import org.spockframework.util.GroovyRuntimeUtil;
 
 public class SpockConfigurationBuilder {
   private final ITypeCoercer coercer = createCoercer();
@@ -71,9 +72,12 @@ public class SpockConfigurationBuilder {
   }
   
   public SpockConfigurationBuilder fromXml(String xml) throws Exception {
-    // apparently XmlSlurper can't parse text nodes
+    // XmlSlurper can't parse text nodes, hence we use XmlParser
     XmlParser parser = new XmlParser();
-    sources.add(new XmlConfigurationSource(parser.parseText(xml)));
+    // don't want no joint compilation
+    Class<?> clazz = getClass().getClassLoader().loadClass("org.spockframework.builder.XmlConfigurationSource");
+    IConfigurationSource source = (IConfigurationSource) GroovyRuntimeUtil.invokeConstructor(clazz, parser.parseText(xml));
+    sources.add(source);
     return this;
   }
   
@@ -96,6 +100,8 @@ public class SpockConfigurationBuilder {
   private ITypeCoercer createCoercer() {
     CoercerChain chain = new CoercerChain();
     chain.add(new StringCoercer(chain));
+    chain.add(new ServiceProvidingCoercer(createSlotFinder(), ISlotFinder.class));
+    chain.add(new PojoConfigurationTargetCoercer(chain));
     chain.add(new ClosureConfigurationSourceCoercer());
     chain.add(new GroovyCoercer());
     return chain;

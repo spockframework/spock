@@ -23,14 +23,20 @@ import org.spockframework.util.UnreachableCodeError;
 import groovy.lang.MetaProperty;
 
 public class PropertySlot implements ISlot {
+  private final String name;
   private final Object owner;
   private final Type ownerType;
   private final MetaProperty property;
 
-  PropertySlot(Object owner, Type ownerType, MetaProperty property) {
+  PropertySlot(String name, Object owner, Type ownerType, MetaProperty property) {
+    this.name = name;
     this.owner = owner;
     this.ownerType = ownerType;
     this.property = property;
+  }
+
+  public String getName() {
+    return name;
   }
 
   public Type getType() {
@@ -45,7 +51,23 @@ public class PropertySlot implements ISlot {
     throw new UnreachableCodeError();
   }
 
+  public boolean isReadable() {
+    return MopUtil.isReadable(property);
+  }
+
+  public boolean isWriteable() {
+    return MopUtil.isWriteable(property);
+  }
+
+  public Object read() {
+    return property.getProperty(owner);
+  }
+
   public void write(Object value) {
     property.setProperty(owner, value);
+  }
+
+  public void configure(Object value) {
+    write(value);
   }
 }

@@ -14,24 +14,16 @@
 
 package org.spockframework.builder;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.List;
-
-import org.spockframework.RecordingConfigurationTarget;
-import org.spockframework.gentyref.GenericTypeReflector;
-import org.spockframework.util.Nullable;
-import org.spockframework.util.ReflectionUtil;
 
 public class PojoConfigurationTarget implements IConfigurationTarget {
   private final Object value;
   private final Type pojoType;
   private final ITypeCoercer coercer;
   private final ISlotFinder slotFinder;
-  private final RecordingConfigurationTarget recordingTarget = new RecordingConfigurationTarget();
 
-  public PojoConfigurationTarget(@Nullable Object value, Type pojoType, ITypeCoercer coercer, ISlotFinder slotFinder) {
+  public PojoConfigurationTarget(Object value, Type pojoType, ITypeCoercer coercer, ISlotFinder slotFinder) {
     this.value = value;
     this.pojoType = pojoType;
     this.coercer = coercer;
@@ -39,15 +31,6 @@ public class PojoConfigurationTarget implements IConfigurationTarget {
   }
   
   public Object getSubject() {
-    if (value == null) {
-      Constructor<?> constructor = getConstructor(pojoType, constructorArguments);
-      Type[] parameterTypes = constructor.getGenericParameterTypes();
-      List<Object> coercedConstructorArguments = new ArrayList<Object>();
-      for (int i = 0; i < constructorArguments.size(); i++) {
-        coercedConstructorArguments.add(coercer.coerce(constructorArguments.get(i), parameterTypes[i]));
-      }
-      ReflectionUtil.invokeConstructor(constructor, coercedConstructorArguments.toArray());
-    }
     return value;
   }
 
@@ -59,11 +42,6 @@ public class PojoConfigurationTarget implements IConfigurationTarget {
   }
 
   public void writeSlot(String name, Object value) {
-    if (name.startsWith("_")) {
-      recordingTarget.writeSlot(name, value);
-      return;
-    }
-
     ISlot slot = findSlot(name);
     slot.write(coerceValue(value, slot));
   }
@@ -74,11 +52,6 @@ public class PojoConfigurationTarget implements IConfigurationTarget {
   // current impl is dead stupid:
   // - named args not treated specially
   public void configureSlot(String name, List<Object> values, IConfigurationSource source) {
-    if (name.startsWith("_")) {
-      recordingTarget.configureSlot(name, values, source);
-      return;
-    }
-
     ISlot slot = findSlot(name);
     configureSlot(slot, values, source);
   }
@@ -99,12 +72,8 @@ public class PojoConfigurationTarget implements IConfigurationTarget {
     if (values.isEmpty() && slot.isReadable()) {
       slotValue = slot.read();
     }
-    if (slotValue == null && values.isEmpty() && source != null) {
-      Class<?> clazz = GenericTypeReflector.erase(slot.getType());
-      if (ReflectionUtil.getConstructorBySignature(clazz) == null)
-    }
     if (slotValue == null && values.size() == 1) {
-      slotValue = coerceValue(values.get(0), slot);
+      slotValue = coercer.coerce(values.get(0), slot.getType());
     }
     if (slotValue == null) {
       slotValue = coerceValue(values, slot);
@@ -120,7 +89,7 @@ public class PojoConfigurationTarget implements IConfigurationTarget {
   private Object coerceValue(Object value, ISlot slot) {
     Object result = coercer.coerce(value, slot.getType());
     if (result == null) {
-      throw new NotCoerceableException("value %s cannot be coerced to type %s expected by slot %s")
+      throw new NotCoerceableException("value '%s' cannot be coerced to type '%s' expected by slot '%s'")
           .withArgs(value, slot.getType(), slot.getName());
     }
     return result;

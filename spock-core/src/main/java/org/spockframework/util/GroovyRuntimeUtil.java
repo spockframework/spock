@@ -21,6 +21,11 @@ import groovy.lang.MetaMethod;
 import org.codehaus.groovy.runtime.*;
 import org.codehaus.groovy.runtime.typehandling.DefaultTypeTransformation;
 
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 /**
  * Provides convenient access to Groovy language and runtime features.
  * Only contains methods that can be fully abstracted from Groovy types.
@@ -50,13 +55,47 @@ public abstract class GroovyRuntimeUtil {
   /**
    * Note: This method may throw checked exceptions although it doesn't say so.
    */
+  public static Object getProperty(Object object, String property) {
+    try {
+      return InvokerHelper.getProperty(object, property);
+    } catch (InvokerInvocationException e) {
+      ExceptionUtil.sneakyThrow(e.getCause());
+      return null; // unreachable
+    }
+  }
+  
+  public static void setProperty(Object object, String property, Object value) {
+    try {
+      InvokerHelper.setProperty(object, property, value);
+    } catch (InvokerInvocationException e) {
+      ExceptionUtil.sneakyThrow(e.getCause());
+      return; // unreachable
+    }
+  }
+
+  /**
+   * Note: This method may throw checked exceptions although it doesn't say so.
+   */
+  @SuppressWarnings("unchecked")
+  public static <T> T invokeConstructor(Class<T> type, Object... args) {
+    try {
+      return (T) InvokerHelper.invokeConstructorOf(type, args);
+    } catch (InvokerInvocationException e) {
+      ExceptionUtil.sneakyThrow(e.getCause());
+      return null; // unreachable
+    }
+  }
+
+  /**
+   * Note: This method may throw checked exceptions although it doesn't say so.
+   */
   @SuppressWarnings("unchecked")
   public static Object invokeMethod(Object target, String method, Object... args) {
     try {
       return InvokerHelper.invokeMethod(target, method, args);
     } catch (InvokerInvocationException e) {
       ExceptionUtil.sneakyThrow(e.getCause());
-      return null; // never reached
+      return null; // unreachable
     }
   }
 

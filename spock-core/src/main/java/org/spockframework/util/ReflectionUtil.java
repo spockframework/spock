@@ -84,6 +84,14 @@ public abstract class ReflectionUtil {
       return null;
     }
   }
+  
+  public static @Nullable <T> Constructor<T> getConstructorBySignature(Class<T> clazz, Class<?>... parameterTypes) {
+    try {
+      return clazz.getConstructor(parameterTypes);
+    } catch (NoSuchMethodException  e) {
+      return null;
+    }
+  }
 
   /**
    * Returns the class file for the given class (which has been verified to exist in the returned location),
@@ -171,6 +179,21 @@ public abstract class ReflectionUtil {
   public static Object invokeMethod(@Nullable Object target, Method method, @Nullable Object... args) {
     try {
       return method.invoke(target, args);
+    } catch (IllegalAccessException e) {
+      ExceptionUtil.sneakyThrow(e);
+      return null; // never reached
+    } catch (InvocationTargetException e) {
+      ExceptionUtil.sneakyThrow(e.getCause());
+      return null; // never reached
+    }
+  }
+  
+  public static <T> T invokeConstructor(Constructor<T> constructor, @Nullable Object... args) {
+    try {
+      return constructor.newInstance(args);
+    } catch (InstantiationException e) {
+      ExceptionUtil.sneakyThrow(e);
+      return null; // never reached
     } catch (IllegalAccessException e) {
       ExceptionUtil.sneakyThrow(e);
       return null; // never reached

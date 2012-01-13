@@ -79,4 +79,8 @@ public abstract class CollectionUtil {
   public static <T> Set<T> asSet(T[] values) {
     return new HashSet<T>(Arrays.asList(values));
   }
+  
+  public static <T> Pair<List<T>, List<T>> split(List<T> list, int index) {
+    return Pair.of(list.subList(0, index), list.subList(index, list.size()));
+  }
 }

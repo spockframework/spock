@@ -25,24 +25,44 @@ class SpockXmlConfigurationSpec extends Specification {
 
   def "configure object slot"() {
     builder.fromXml """
-<spock>
+<config>
+  <person>
     <mother>
       <name>anna</name>
       <age>40</age>
     </mother>
-</spock>
+  </person>
+</config>
     """
+
+    def person = new Person()
+    builder.build([person])
+
+    expect:
+    person.mother.name == "anna"
+    person.mother.age == 40
   }
   
   def "configure collection slot"() {
     builder.fromXml """
-<spock>
-  <friend>
-    <name>tom</name>
-    <age>20</age>
-  <friend>
-</spock>
+<config>
+  <person>
+    <friend>
+      <name>tom</name>
+      <age>20</age>
+    </friend>
+  </person>
+</config>
     """
+
+    def person = new Person()
+    builder.build([person])
+
+    expect:
+    person.friends.size() == 1
+    def friend = person.friends[0]
+    friend.name == "tom"
+    friend.age == 20
   }
   
   private static class Person {
@@ -50,6 +70,6 @@ class SpockXmlConfigurationSpec extends Specification {
     int age
     Person father
     Person mother
-    List<Person> friends = []
+    List<Person> friends
   }
 }

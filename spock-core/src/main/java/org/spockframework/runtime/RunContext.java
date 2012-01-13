@@ -50,8 +50,9 @@ public class RunContext {
     extensionRegistry.loadExtensions();
 
     if (configurationScript != null) {
-      ConfigurationBuilder builder = new ConfigurationBuilder();
-      builder.build(configurations, configurationScript);
+      SpockConfigurationBuilder builder = new SpockConfigurationBuilder();
+      builder.fromGroovyScript(configurationScript);
+      builder.build(configurations);
     }
   }
 

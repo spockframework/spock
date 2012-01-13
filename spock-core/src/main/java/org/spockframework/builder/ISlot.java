@@ -17,6 +17,11 @@ package org.spockframework.builder;
 import java.lang.reflect.Type;
 
 public interface ISlot {
+  String getName();
   Type getType();
+  boolean isReadable();
+  boolean isWriteable();
+  Object read();
   void write(Object value);
+  void configure(Object value);
 }

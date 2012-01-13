@@ -43,7 +43,7 @@ public class SpockConfigurationTarget implements IConfigurationTarget {
     Object config = getConfiguration(name);
     if (config == null) throw new InvalidConfigurationException("No configuration block named '%s' is registered").withArgs(name);
 
-    if (args.size() != 1) throw new InvalidConfigurationException("Invalid syntax for configuring configuration block '%s'").withArgs(name);
+    if (!args.isEmpty()) throw new InvalidConfigurationException("Invalid syntax for configuring configuration block '%s'").withArgs(name);
     
     if (source == null) throw new InvalidConfigurationException("Invalid syntax for configuring configuration block '%s'").withArgs(name); 
     

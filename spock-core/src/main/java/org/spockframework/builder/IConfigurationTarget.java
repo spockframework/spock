@@ -14,6 +14,8 @@
 
 package org.spockframework.builder;
 
+import org.spockframework.util.Nullable;
+
 import java.util.List;
 
 // IDEA: provide getID() for generic error reporting; could be the path to the target
@@ -23,5 +25,5 @@ public interface IConfigurationTarget {
   void writeSlot(String name, Object value);
   // TODO: support return value (e.g. to save off created object in a variable)?
   // TODO: should be List<?>, otherwise caller get problems
-  void configureSlot(String name, List<Object> values, IConfigurationSource source);
+  void configureSlot(String name, List<Object> values, @Nullable IConfigurationSource source);
 }

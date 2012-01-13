@@ -29,11 +29,11 @@ import java.util.List;
 public class IncludeExcludeCriteria {
   @SuppressWarnings("unchecked")
   public IncludeExcludeCriteria(Class<?>... criteria) {
-    for (Class<?> criterium : criteria)
-      if (criterium.isAnnotation())
-        annotations.add((Class<? extends Annotation>)criterium);
+    for (Class<?> criterion : criteria)
+      if (criterion.isAnnotation())
+        annotations.add((Class<? extends Annotation>)criterion);
       else
-        baseClasses.add(criterium);
+        baseClasses.add(criterion);
   }
   
   public List<Class<? extends Annotation>> annotations = new ArrayList<Class<? extends Annotation>>();

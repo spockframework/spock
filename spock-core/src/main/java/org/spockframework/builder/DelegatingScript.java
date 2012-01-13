@@ -18,7 +18,8 @@ import org.codehaus.groovy.runtime.InvokerHelper;
 
 import groovy.lang.*;
 
-public abstract class DelegatingScript extends Script {
+// TODO: what about script variables and @Field's of the script? (latter is less important)
+public abstract class DelegatingScript extends Script implements GroovyInterceptable {
   private volatile Object $delegate;
 
   public void $setDelegate(Object delegate) {

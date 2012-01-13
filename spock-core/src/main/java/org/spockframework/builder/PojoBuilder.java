@@ -15,7 +15,6 @@
 package org.spockframework.builder;
 
 import java.util.Arrays;
-import java.util.List;
 
 import groovy.lang.Closure;
 
@@ -26,17 +25,37 @@ import groovy.lang.Closure;
 // IDEA: helpful coercions (esp. for configuration): List -> Set (enables the use of list literals for sets), potentially String -> Enum
 // TODO: provide a way to set visibility of methods/properties to look for
 public class PojoBuilder {
-  private final GestaltBuilder gestaltBuilder = new GestaltBuilder();
-  private final List<ISlotFactory> slotFactories =
-      Arrays.asList(new SetterSlotFactory(), new AddSlotFactory(), new CollectionSlotFactory());
+  private final ITypeCoercer coercer;
 
-  public Object build(Object pojo, Closure closure) {
-    return build(pojo, new ClosureBlueprint(closure, pojo));
+  public PojoBuilder(ITypeCoercer coercer) {
+    this.coercer = coercer;
+  }
+  
+  public PojoBuilder() {
+      this(getDefaultCoercer());
   }
 
-  public Object build(Object pojo, IBlueprint blueprint) {
-    IGestalt gestalt = new PojoGestalt(pojo, pojo.getClass(), blueprint, slotFactories);
-    gestaltBuilder.build(gestalt);
+  public Object build(Object pojo, Closure closure) {
+    return build(pojo, new ClosureConfigurationSource(closure));
+  }
+
+  public Object build(Object pojo, IConfigurationSource source) {
+    IConfigurationValue value = new ConfigurationValue(pojo, pojo.getClass());
+    IConfigurationTarget target = (IConfigurationTarget) coercer.coerce(value, IConfigurationTarget.class);
+    source.configure(target);
     return pojo;
+  }
+  
+  private static ITypeCoercer getDefaultCoercer() {
+    CoercerChain chain = new CoercerChain();
+    chain.add(new ServiceProvidingCoercer(getDefaultSlotFinder(), ISlotFinder.class));
+    chain.add(new PojoConfigurationTargetCoercer(chain));
+    chain.add(new ClosureConfigurationSourceCoercer());
+    chain.add(new GroovyCoercer());
+    return chain;
+  }
+  
+  private static ISlotFinder getDefaultSlotFinder() {
+    return new SlotFinderChain(Arrays.asList(new PropertySlotFinder(), new AddSlotFinder(), new CollectionSlotFinder()));
   }
 }

@@ -28,9 +28,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  *
  * @see ExtensionModule
  */
-@Target(
-        {PARAMETER, FIELD, METHOD})
+@Target({PARAMETER, FIELD, METHOD})
 @Retention(RUNTIME)
 @Documented
-public @interface SpockTapestry {
-}
+public @interface SpockTapestry {}

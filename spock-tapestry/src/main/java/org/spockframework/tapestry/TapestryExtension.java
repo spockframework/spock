@@ -62,9 +62,7 @@ import org.spockframework.runtime.model.SpecInfo;
  * <p>Features that require their own service instance(s) should be moved into separate
  * specifications. To avoid code fragmentation and duplication, you might want to put
  * multiple (micro-)specifications into the same source file, and factor out their
- * commonalities into a base class. Alternatively, a service definition in a
- * specification's own module may use <tt>&#64;Scope("perIteration")</tt>. In this case,
- * every feature (iteration) will receive a fresh service instance.
+ * commonalities into a base class.
  *
  * <p><b>Usage example:</b>
  *

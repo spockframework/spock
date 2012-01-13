@@ -16,12 +16,8 @@
 
 package org.spockframework.tapestry;
 
-import org.apache.tapestry5.ioc.MappedConfiguration;
 import org.apache.tapestry5.ioc.ObjectLocator;
-import org.apache.tapestry5.ioc.ServiceBinder;
-import org.apache.tapestry5.ioc.ServiceLifecycle;
 import org.apache.tapestry5.ioc.annotations.Marker;
-import spock.tapestry.ScopeConstants;
 
 /**
  * A Tapestry module that is started for every specification which uses Spock's
@@ -31,15 +27,7 @@ import spock.tapestry.ScopeConstants;
  */
 @Marker(SpockTapestry.class)
 public class ExtensionModule {
-    public static void bind(ServiceBinder binder) {
-        binder.bind(IPerIterationManager.class, PerIterationManager.class);
-    }
-
-    public static void contributeServiceLifecycleSource(MappedConfiguration<String, ServiceLifecycle> config) {
-        config.addInstance(ScopeConstants.PER_ITERATION, PerIterationServiceLifecycle.class);
-    }
-
-    public static ObjectLocator build(ObjectLocator locator) {
-        return locator;
-    }
+  public static ObjectLocator build(ObjectLocator locator) {
+    return locator;
+  }
 }

@@ -14,35 +14,21 @@
  * limitations under the License.
  */
 
-package org.spockframework.smoke.mock
+package org.spockframework.mock;
 
-import spock.lang.Specification
+import org.spockframework.lang.SpreadWildcard;
+import org.spockframework.runtime.InvalidSpecException;
 
-class ArgumentMatching extends Specification {
-  def "match identical argument"() {
-    List list = Mock()
+/**
+ *
+ * @author Peter Niederwieser
+ */
+public class SpreadWildcardArgumentConstraint implements IArgumentConstraint {
+  public static final SpreadWildcardArgumentConstraint INSTANCE = new SpreadWildcardArgumentConstraint();
 
-    when: list.add(arg)
-    then: 1 * list.add(arg)
+  private SpreadWildcardArgumentConstraint() {}
 
-    where: arg << [1, "foo", new Object()]
-  }
-
-  def "match equal argument"() {
-    List list = Mock()
-
-    when: list.add(arg1)
-    then: 1 * list.add(arg2)
-
-    where:
-      arg1 << [1, [1,2,3] as Set, null]
-      arg2 << [1.0, [3,2,1] as Set, null]
-  }
-  
-  def "match empty argument list"() {
-    List list = Mock()
-    
-    when: list.size()
-    then: 1 * list.size()
+  public boolean isSatisfiedBy(Object arg) {
+    throw new InvalidSpecException("*_ may only appear at the end of an argument list");
   }
 }

@@ -16,8 +16,8 @@
 
 package org.spockframework.mock;
 
-import java.lang.reflect.Array;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -37,24 +37,9 @@ public class PositionalArgumentListConstraint implements IInvocationConstraint {
   public boolean isSatisfiedBy(IMockInvocation invocation) {
     List<Object> args = invocation.getArguments();
 
-    if (args.size() == 0) return argConstraints.size() == 0;
-    
-    int sizeDiff = argConstraints.size() - args.size();
-
-    if (sizeDiff < -1) return false;
-
-    if (!areConstraintsSatisfied(argConstraints.subList(0, args.size() - 1), args)) return false;
-
-    if (sizeDiff == 0 && CollectionUtil.getLastElement(argConstraints).isSatisfiedBy(CollectionUtil.getLastElement(args))) return true;
-
+    if (areConstraintsSatisfiedBy(args)) return true;
     if (!canBeCalledWithVarArgSyntax(invocation.getMethod())) return false;
-
-    int varArgSize = Array.getLength(CollectionUtil.getLastElement(args));
-
-    if (argConstraints.size() != args.size() - 1 + varArgSize) return false;
-
-    return areConstraintsSatisfied(argConstraints.subList(args.size() - 1, argConstraints.size()),
-        Arrays.asList((Object[]) CollectionUtil.getLastElement(args)));
+    return areConstraintsSatisfiedBy(expandVarArgs(args));
   }
 
   /**
@@ -66,11 +51,23 @@ public class PositionalArgumentListConstraint implements IInvocationConstraint {
     return paramTypes.length > 0 && paramTypes[paramTypes.length - 1].isArray();
   }
 
-  private boolean areConstraintsSatisfied(List<IArgumentConstraint> argConstraints, List<Object> args) {
-    Assert.that(argConstraints.size() <= args.size());
+  private List<Object> expandVarArgs(List<Object> args) {
+    List<Object> expanded = new ArrayList<Object>();
+    expanded.addAll(args.subList(0, args.size() - 1));
+    expanded.addAll(Arrays.asList((Object[]) CollectionUtil.getLastElement(args)));
+    return expanded;
+  }
+
+  private boolean areConstraintsSatisfiedBy(List<Object> args) {
+    if (argConstraints.isEmpty() && args.isEmpty()) return true;
+    if (argConstraints.size() - args.size() > 1) return false;
     
-    for (int i = 0; i < argConstraints.size(); i++)
+    for (int i = 0; i < argConstraints.size() - 1; i++) {
       if (!argConstraints.get(i).isSatisfiedBy(args.get(i))) return false;
-    return true;
+    }
+    
+    IArgumentConstraint lastConstraint = CollectionUtil.getLastElement(argConstraints);
+    if (lastConstraint instanceof SpreadWildcardArgumentConstraint) return true;
+    return argConstraints.size() == args.size() && lastConstraint.isSatisfiedBy(CollectionUtil.getLastElement(args));
   }
 }

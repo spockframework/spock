@@ -24,6 +24,7 @@ import org.codehaus.groovy.ast.stmt.*;
 import org.codehaus.groovy.syntax.Types;
 import org.objectweb.asm.Opcodes;
 
+import org.spockframework.lang.Wildcard;
 import org.spockframework.runtime.SpockRuntime;
 import org.spockframework.util.InternalSpockError;
 import org.spockframework.util.Nullable;
@@ -102,7 +103,7 @@ public abstract class AstUtil {
 
   public static boolean isWildcardRef(Expression expr) {
     VariableExpression varExpr = AstUtil.asInstance(expr, VariableExpression.class);
-    if (varExpr == null || !varExpr.getName().equals(Specification._.toString())) return false;
+    if (varExpr == null || !varExpr.getName().equals(Wildcard.INSTANCE.toString())) return false;
 
     Variable accessedVar = varExpr.getAccessedVariable();
     if (accessedVar instanceof FieldNode) // Groovy 1.7.6 and higher

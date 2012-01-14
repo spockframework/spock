@@ -18,11 +18,16 @@ package spock.lang;
 
 import org.junit.runner.RunWith;
 
+import org.spockframework.lang.Wildcard;
 import org.spockframework.mock.MockController;
+import org.spockframework.mock.SpreadWildcardArgumentConstraint;
 import org.spockframework.runtime.*;
 import org.spockframework.util.GroovyRuntimeUtil;
 
 import groovy.lang.Closure;
+
+import java.util.Collections;
+import java.util.Iterator;
 
 /**
  * Base class for Spock specifications. All specifications must inherit from
@@ -44,7 +49,7 @@ public abstract class Specification {
    * Example: <tt>[foo, _] &lt;&lt; loadDataFromDb()</tt>
    * </ul>
    */
-  public static final Object _ = new Wildcard();
+  public static final Object _ = Wildcard.INSTANCE;
 
   /**
    * Specifies that the preceding <tt>when</tt> block should throw an exception.
@@ -249,13 +254,5 @@ public abstract class Specification {
   @SuppressWarnings("UnusedDeclaration")
   <T> T old(T expression, boolean dummy) {
     return expression;
-  }
-
-  // non-anonymous class to facilitate debugging
-  private static class Wildcard {
-    @Override
-    public String toString() {
-      return "_"; // both compiler and runtime sometimes need String representation
-    }
   }
 }

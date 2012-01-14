@@ -17,19 +17,17 @@
 package org.spockframework.compiler;
 
 import java.util.Arrays;
-import java.util.List;
 
 import org.codehaus.groovy.ast.expr.*;
 import org.codehaus.groovy.ast.stmt.ExpressionStatement;
 import org.codehaus.groovy.ast.stmt.Statement;
 import org.codehaus.groovy.syntax.Types;
 
+import org.spockframework.lang.Wildcard;
 import org.spockframework.mock.InteractionBuilder;
 import org.spockframework.mock.MockController;
 import org.spockframework.util.Assert;
 import org.spockframework.util.Nullable;
-
-import spock.lang.Specification;
 
 /**
  * Creates the AST representation of an InteractionBuilder build sequence.
@@ -177,7 +175,7 @@ public class InteractionRewriter {
 
   private void setCall() {
     if (wildcardCall)
-      call(InteractionBuilder.ADD_EQUAL_METHOD_NAME, new ConstantExpression(Specification._.toString()));
+      call(InteractionBuilder.ADD_EQUAL_METHOD_NAME, new ConstantExpression(Wildcard.INSTANCE.toString()));
     else if (call instanceof PropertyExpression)
       setPropertyCall();
     else

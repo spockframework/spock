@@ -21,9 +21,9 @@ import java.util.List;
 
 import groovy.lang.Closure;
 
+import org.spockframework.lang.SpreadWildcard;
+import org.spockframework.lang.Wildcard;
 import org.spockframework.runtime.InvalidSpecException;
-
-import spock.lang.Specification;
 
 /**
  *
@@ -49,7 +49,7 @@ public class InteractionBuilder {
 
   public static final String SET_FIXED_COUNT = "setFixedCount";
   public InteractionBuilder setFixedCount(Object count) {
-    if (count == Specification._) {
+    if (count instanceof Wildcard) {
       minCount = 0;
       maxCount = Integer.MAX_VALUE;
     } else
@@ -60,8 +60,8 @@ public class InteractionBuilder {
 
   public static final String SET_RANGE_COUNT = "setRangeCount";
   public InteractionBuilder setRangeCount(Object minCount, Object maxCount, boolean inclusive) {
-    this.minCount = minCount == Specification._ ? 0 : convertCount(minCount, true);
-    this.maxCount = maxCount == Specification._ ? Integer.MAX_VALUE : convertCount(maxCount, inclusive);
+    this.minCount = minCount instanceof Wildcard ? 0 : convertCount(minCount, true);
+    this.maxCount = maxCount instanceof Wildcard ? Integer.MAX_VALUE : convertCount(maxCount, inclusive);
     if (this.minCount > this.maxCount)
       throw new InvalidSpecException("lower bound of invocation count must come before upper bound");
     return this;
@@ -69,14 +69,14 @@ public class InteractionBuilder {
 
   public static final String ADD_EQUAL_TARGET = "addEqualTarget";
   public InteractionBuilder addEqualTarget(Object target) {
-    if (target != Specification._)
+    if (!(target instanceof Wildcard))
       invConstraints.add(new IdenticalTargetConstraint(target));
     return this;
   }
 
   public static final String ADD_EQUAL_PROPERTY_NAME = "addEqualPropertyName";
   public InteractionBuilder addEqualPropertyName(String name) {
-    if (name.equals(Specification._.toString()))
+    if (name.equals(Wildcard.INSTANCE.toString()))
       invConstraints.add(WildcardMethodNameConstraint.INSTANCE);
     else
       invConstraints.add(new EqualPropertyNameConstraint(name));
@@ -91,7 +91,7 @@ public class InteractionBuilder {
 
   public static final String ADD_EQUAL_METHOD_NAME = "addEqualMethodName";
   public InteractionBuilder addEqualMethodName(String name) {
-    if (name.equals(Specification._.toString()))
+    if (name.equals(Wildcard.INSTANCE.toString()))
       invConstraints.add(WildcardMethodNameConstraint.INSTANCE);
     else
       invConstraints.add(new EqualMethodNameConstraint(name));
@@ -130,8 +130,9 @@ public class InteractionBuilder {
 
   public static final String ADD_EQUAL_ARG = "addEqualArg";
   public InteractionBuilder addEqualArg(Object arg) {
-    argConstraints.add(arg == Specification._ ?
-        WildcardArgumentConstraint.INSTANCE : new EqualArgumentConstraint(arg));
+    argConstraints.add(arg instanceof Wildcard ? WildcardArgumentConstraint.INSTANCE :
+        arg instanceof SpreadWildcard ? SpreadWildcardArgumentConstraint.INSTANCE :
+            new EqualArgumentConstraint(arg));
     return this;
   }
 
@@ -151,7 +152,7 @@ public class InteractionBuilder {
 
   public static final String SET_CONSTANT_RESULT = "setConstantResult";
   public InteractionBuilder setConstantResult(Object constant) {
-    if (constant != Specification._)
+    if (!(constant instanceof Wildcard))
       resultGenerator = new ConstantResultGenerator(constant);
     return this;
   }

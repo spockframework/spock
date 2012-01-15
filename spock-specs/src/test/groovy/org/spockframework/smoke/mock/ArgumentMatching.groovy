@@ -17,6 +17,8 @@
 package org.spockframework.smoke.mock
 
 import spock.lang.Specification
+import spock.lang.FailsWith
+import org.spockframework.mock.TooFewInvocationsError
 
 class ArgumentMatching extends Specification {
   def "match identical argument"() {
@@ -45,4 +47,58 @@ class ArgumentMatching extends Specification {
     when: list.size()
     then: 1 * list.size()
   }
+  
+  @FailsWith(TooFewInvocationsError)
+  def "expect fewer arguments than are provided"() {
+    Overloads overloads = Mock()
+    
+    when:
+    overloads.m("one")
+    
+    then:
+    1 * overloads.m()
+  }
+
+  @FailsWith(TooFewInvocationsError)
+  def "expect more arguments than are provided"() {
+    Overloads overloads = Mock()
+
+    when:
+    overloads.m()
+
+    then:
+    1 * overloads.m("one")
+  }
+
+  @FailsWith(TooFewInvocationsError)
+  def "expect fewer arguments than are provided (w/ varargs)"() {
+    Varargs2 varargs = Mock()
+
+    when:
+    varargs.m("one")
+
+    then:
+    1 * varargs.m()
+  }
+
+  @FailsWith(TooFewInvocationsError)
+  def "expect more arguments than are provided (w/ varargs)"() {
+    Varargs2 varargs = Mock()
+
+    when:
+    varargs.m()
+
+    then:
+    1 * varargs.m("one")
+  }
+}
+
+// can't be nested interfaces due to Groovy 1.7 bug
+private interface Overloads {
+  void m()
+  void m(String one)
+}
+
+private interface Varargs2 {
+  void m(String... strings)
 }

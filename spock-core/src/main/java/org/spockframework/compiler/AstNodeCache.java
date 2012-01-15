@@ -35,6 +35,21 @@ public class AstNodeCache {
   public final ClassNode SpockRuntime = ClassHelper.makeWithoutCaching(SpockRuntime.class);
   public final ClassNode ValueRecorder = ClassHelper.makeWithoutCaching(ValueRecorder.class);
   public final ClassNode Specification = ClassHelper.makeWithoutCaching(Specification.class);
+  
+  public final MethodNode SpockRuntime_VerifyCondition =
+      SpockRuntime.getDeclaredMethods(org.spockframework.runtime.SpockRuntime.VERIFY_CONDITION).get(0);
+
+  public final MethodNode SpockRuntime_VerifyMethodCondition =
+      SpockRuntime.getDeclaredMethods(org.spockframework.runtime.SpockRuntime.VERIFY_METHOD_CONDITION).get(0);
+
+  public final MethodNode ValueRecorder_Reset =
+      ValueRecorder.getDeclaredMethods(org.spockframework.runtime.ValueRecorder.RESET).get(0);
+
+  public final MethodNode ValueRecorder_Record =
+      ValueRecorder.getDeclaredMethods(org.spockframework.runtime.ValueRecorder.RECORD).get(0);
+
+  public final MethodNode ValueRecorder_RealizeNas =
+      ValueRecorder.getDeclaredMethods(org.spockframework.runtime.ValueRecorder.REALIZE_NAS).get(0);
 
   // annotations and annotation elements
   public final ClassNode SpecMetadata = ClassHelper.makeWithoutCaching(SpecMetadata.class);

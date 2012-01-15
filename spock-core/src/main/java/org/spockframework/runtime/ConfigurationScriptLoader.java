@@ -72,7 +72,7 @@ public class ConfigurationScriptLoader {
     return new DelegatingScript() {
       @Override
       public Object run() {
-        GroovyRuntimeUtil.callClosure(closure);
+        GroovyRuntimeUtil.invokeClosure(closure);
         return null;
       }
 

@@ -18,8 +18,6 @@ package org.spockframework.mock;
 
 import java.util.Iterator;
 
-import org.codehaus.groovy.runtime.InvokerHelper;
-
 import org.spockframework.util.GroovyRuntimeUtil;
 
 /**
@@ -33,7 +31,7 @@ public class IterableResultGenerator implements IResultGenerator {
   private Object nextValue;
 
   public IterableResultGenerator(Object iterable) {
-    iterator = InvokerHelper.asIterator(iterable);
+    iterator = GroovyRuntimeUtil.asIterator(iterable);
   }
 
   public Object generate(IMockInvocation invocation) {

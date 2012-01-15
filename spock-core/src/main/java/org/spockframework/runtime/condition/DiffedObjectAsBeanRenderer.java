@@ -25,7 +25,7 @@ public class DiffedObjectAsBeanRenderer implements IObjectRenderer<Object> {
     for (Class<?> clazz = object.getClass(); clazz != null; clazz = clazz.getSuperclass()) {
       for (Field field : clazz.getDeclaredFields()) {
         if (field.isSynthetic()) continue;
-        String value = GroovyRuntimeUtil.toString(GroovyRuntimeUtil.readField(object, field.getName()));
+        String value = GroovyRuntimeUtil.toString(GroovyRuntimeUtil.getAttribute(object, field.getName()));
         builder.addLine(field.getName() + ": " + value);
       }
     }

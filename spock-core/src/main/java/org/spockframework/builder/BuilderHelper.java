@@ -16,8 +16,8 @@ package org.spockframework.builder;
 
 import java.lang.reflect.Modifier;
 
-import org.codehaus.groovy.runtime.InvokerHelper;
 import org.codehaus.groovy.runtime.MetaClassHelper;
+import org.spockframework.util.GroovyRuntimeUtil;
 
 public class BuilderHelper {
   public static Object createInstance(Class clazz, Object... args) {
@@ -37,6 +37,6 @@ public class BuilderHelper {
     }
 
     // TODO: need exception handling for better error messages?
-    return InvokerHelper.invokeConstructorOf(clazz, args);
+    return GroovyRuntimeUtil.invokeConstructor(clazz, args);
   }
 }

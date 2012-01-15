@@ -50,7 +50,7 @@ public class ClosureBasedUnrolledFeatureNameGenerator {
   public String nameFor(Object[] args) {
     consecutiveNumber++;
     nameGenerator.setDelegate(new NameGeneratorValues(args));
-    return GroovyRuntimeUtil.callClosure(nameGenerator).toString();
+    return GroovyRuntimeUtil.invokeClosure(nameGenerator).toString();
   }
 
   private String convertToGString(String template) {

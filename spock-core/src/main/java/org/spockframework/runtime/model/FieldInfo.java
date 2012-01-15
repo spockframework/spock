@@ -20,8 +20,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 
-import org.codehaus.groovy.runtime.InvokerHelper;
-
+import org.spockframework.util.GroovyRuntimeUtil;
 import spock.lang.Shared;
 
 /**
@@ -53,6 +52,6 @@ public class FieldInfo extends NodeInfo<SpecInfo, Field> {
   }
 
   public Object readValue(Object target) {
-    return InvokerHelper.getProperty(target, getReflection().getName());
+    return GroovyRuntimeUtil.getProperty(target, getReflection().getName());
   }
 }

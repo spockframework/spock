@@ -19,8 +19,6 @@ package org.spockframework.runtime;
 import java.util.Iterator;
 import java.util.List;
 
-import org.codehaus.groovy.runtime.InvokerHelper;
-
 import static org.spockframework.runtime.RunStatus.*;
 import org.spockframework.runtime.model.*;
 import org.spockframework.util.GroovyRuntimeUtil;
@@ -73,7 +71,7 @@ public class ParameterizedSpecRunner extends BaseSpecRunner {
     Iterator[] iterators = new Iterator<?>[dataProviders.length];
     for (int i = 0; i < dataProviders.length; i++)
       try {
-        Iterator<?> iter = InvokerHelper.asIterator(dataProviders[i]);
+        Iterator<?> iter = GroovyRuntimeUtil.asIterator(dataProviders[i]);
         if (iter == null) {
           runStatus = supervisor.error(
               new ErrorInfo(currentFeature.getDataProviders().get(i).getDataProviderMethod(),
@@ -102,7 +100,7 @@ public class ParameterizedSpecRunner extends BaseSpecRunner {
         // although it is of course destructive (i.e. it exhausts the Iterator)
         continue;
 
-      Object rawSize = GroovyRuntimeUtil.invokeMethodSafe(prov, "size");
+      Object rawSize = GroovyRuntimeUtil.invokeMethodQuietly(prov, "size");
       if (!(rawSize instanceof Number)) continue;
 
       int size = ((Number) rawSize).intValue();
@@ -131,7 +129,7 @@ public class ParameterizedSpecRunner extends BaseSpecRunner {
     if (dataProviders == null) return; // there was an error creating the providers
 
     for (Object provider : dataProviders) {
-      GroovyRuntimeUtil.invokeMethodSafe(provider, "close");
+      GroovyRuntimeUtil.invokeMethodQuietly(provider, "close");
     }
   }
 

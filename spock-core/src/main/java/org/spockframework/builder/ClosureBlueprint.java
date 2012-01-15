@@ -37,6 +37,6 @@ public class ClosureBlueprint implements IBlueprint {
   }
 
   public void evaluate() {
-    GroovyRuntimeUtil.callClosure(closure, subject);
+    GroovyRuntimeUtil.invokeClosure(closure, subject);
   }
 }

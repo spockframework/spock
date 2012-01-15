@@ -14,9 +14,8 @@
 
 package org.spockframework.builder;
 
-import org.codehaus.groovy.runtime.InvokerHelper;
-
 import groovy.lang.*;
+import org.spockframework.util.GroovyRuntimeUtil;
 
 /**
  * Forms a gestalt from its blueprint.
@@ -37,7 +36,7 @@ public class Sculpturer extends GroovyObjectSupport {
     Object thisObject = $gestalt.getBlueprint().getThisObject();
     if (thisObject != null) {
       try {
-        return InvokerHelper.getProperty(thisObject, name);
+        return GroovyRuntimeUtil.getProperty(thisObject, name);
       } catch (MissingPropertyException ignored) {}
     }
     return $gestalt.getProperty(name);
@@ -47,7 +46,7 @@ public class Sculpturer extends GroovyObjectSupport {
     Object thisObject = $gestalt.getBlueprint().getThisObject();
     if (thisObject != null) {
       try {
-        InvokerHelper.setProperty(thisObject, name, value);
+        GroovyRuntimeUtil.setProperty(thisObject, name, value);
         return;
       } catch (MissingPropertyException ignored) {}
     }
@@ -58,9 +57,9 @@ public class Sculpturer extends GroovyObjectSupport {
     Object thisObject = $gestalt.getBlueprint().getThisObject();
     if (thisObject != null) {
       try {
-        return InvokerHelper.invokeMethod(thisObject, name, args);
+        return GroovyRuntimeUtil.invokeMethod(thisObject, name, GroovyRuntimeUtil.asArray(args));
       } catch (MissingMethodException ignored) {}
     }
-    return $gestalt.invokeMethod(name, InvokerHelper.asArray(args));
+    return $gestalt.invokeMethod(name, GroovyRuntimeUtil.asArray(args));
   }
 }

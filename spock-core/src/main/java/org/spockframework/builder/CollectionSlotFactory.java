@@ -18,8 +18,7 @@ import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.regex.Pattern;
 
-import org.codehaus.groovy.runtime.InvokerHelper;
-
+import org.spockframework.util.GroovyRuntimeUtil;
 import org.spockframework.util.MopUtil;
 
 import groovy.lang.MetaProperty;
@@ -29,7 +28,7 @@ public class CollectionSlotFactory implements ISlotFactory {
 
   public ISlot create(Object owner, Type ownerType, String name) {
     String plural = toPluralForm(name);
-    MetaProperty property = InvokerHelper.getMetaClass(owner).getMetaProperty(plural);
+    MetaProperty property = GroovyRuntimeUtil.getMetaClass(owner).getMetaProperty(plural);
     return property != null && Collection.class.isAssignableFrom(property.getType()) && MopUtil.isReadable(property) ?
       new CollectionSlot(plural, owner, ownerType, property) : null;
   }

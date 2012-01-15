@@ -59,7 +59,7 @@ public class PositionalArgumentListConstraint implements IInvocationConstraint {
   }
 
   private boolean areConstraintsSatisfiedBy(List<Object> args) {
-    if (argConstraints.isEmpty() && args.isEmpty()) return true;
+    if (argConstraints.isEmpty()) return args.isEmpty();
     if (argConstraints.size() - args.size() > 1) return false;
     
     for (int i = 0; i < argConstraints.size() - 1; i++) {

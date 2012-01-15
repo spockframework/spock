@@ -17,9 +17,8 @@ package org.spockframework.builder;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 
-import org.codehaus.groovy.runtime.InvokerHelper;
-
 import org.spockframework.gentyref.GenericTypeReflector;
+import org.spockframework.util.GroovyRuntimeUtil;
 import org.spockframework.util.MopUtil;
 
 import groovy.lang.MetaMethod;
@@ -42,6 +41,6 @@ public class SetterLikeSlot implements ISlot {
   }
 
   public void write(Object value) {
-    setterLikeMethod.doMethodInvoke(owner, InvokerHelper.asArray(value));
+    setterLikeMethod.doMethodInvoke(owner, GroovyRuntimeUtil.asArray(value));
   }
 }

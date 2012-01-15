@@ -14,9 +14,8 @@
 
 package org.spockframework.builder;
 
-import org.codehaus.groovy.runtime.InvokerHelper;
-
 import groovy.lang.*;
+import org.spockframework.util.GroovyRuntimeUtil;
 
 public abstract class DelegatingScript extends Script {
   private volatile Object $delegate;
@@ -28,7 +27,7 @@ public abstract class DelegatingScript extends Script {
   @Override
   public Object getProperty(String property) {
     try {
-      return InvokerHelper.getProperty($delegate, property);
+      return GroovyRuntimeUtil.getProperty($delegate, property);
     } catch (MissingPropertyException e) {
       return super.getProperty(property);   
     }
@@ -37,7 +36,7 @@ public abstract class DelegatingScript extends Script {
   @Override
   public void setProperty(String property, Object newValue) {
     try {
-      InvokerHelper.setProperty($delegate, property, newValue);
+      GroovyRuntimeUtil.setProperty($delegate, property, newValue);
     } catch (MissingPropertyException e) {
       super.setProperty(property, newValue);
     }
@@ -46,7 +45,7 @@ public abstract class DelegatingScript extends Script {
   @Override
   public Object invokeMethod(String name, Object args) {
     try {
-      return InvokerHelper.invokeMethod($delegate, name, args);
+      return GroovyRuntimeUtil.invokeMethod($delegate, name, GroovyRuntimeUtil.asArray(args));
     } catch (MissingMethodException e) {
       return super.invokeMethod(name, args);
     }

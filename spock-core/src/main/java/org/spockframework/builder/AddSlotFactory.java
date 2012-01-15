@@ -16,15 +16,13 @@ package org.spockframework.builder;
 
 import java.lang.reflect.Type;
 
-import org.codehaus.groovy.runtime.InvokerHelper;
-import org.codehaus.groovy.runtime.MetaClassHelper;
-
 import groovy.lang.MetaMethod;
+import org.spockframework.util.GroovyRuntimeUtil;
 
 public class AddSlotFactory implements ISlotFactory {
   public ISlot create(Object owner, Type ownerType, String name) {
-    String addName = "add" + MetaClassHelper.capitalize(name);
-    MetaMethod addMethod = InvokerHelper.getMetaClass(owner).pickMethod(addName, new Class[] {Object.class});
+    String addMethodName = GroovyRuntimeUtil.propertyToMethodName("add", name);
+    MetaMethod addMethod = GroovyRuntimeUtil.getMetaClass(owner).pickMethod(addMethodName, new Class[]{Object.class});
     return addMethod != null ? new SetterLikeSlot(owner, ownerType, addMethod) : null;
   }
 }

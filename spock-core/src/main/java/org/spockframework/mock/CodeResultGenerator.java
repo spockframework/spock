@@ -35,7 +35,7 @@ public class CodeResultGenerator implements IResultGenerator {
   }
 
   public Object generate(IMockInvocation invocation) {
-    Object result = GroovyRuntimeUtil.callClosure(code, provideExtendedInfo ? invocation : invocation.getArguments());
+    Object result = GroovyRuntimeUtil.invokeClosure(code, provideExtendedInfo ? invocation : invocation.getArguments());
     Class<?> returnType = invocation.getMethod().getReturnType();
     
     // don't attempt cast for void methods (closure could be an action that accidentally returns a value)

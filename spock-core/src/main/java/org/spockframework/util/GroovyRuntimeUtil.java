@@ -14,7 +14,6 @@
 
 package org.spockframework.util;
 
-import com.sun.org.apache.xml.internal.utils.ObjectPool;
 import groovy.lang.Closure;
 import groovy.lang.MetaClass;
 import groovy.lang.MetaMethod;

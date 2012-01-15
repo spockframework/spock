@@ -18,12 +18,12 @@ package org.spockframework.compiler;
 
 import java.util.*;
 
+import org.codehaus.groovy.ast.MethodNode;
 import org.codehaus.groovy.ast.expr.*;
 import org.codehaus.groovy.ast.stmt.*;
 import org.codehaus.groovy.classgen.BytecodeExpression;
 import org.codehaus.groovy.syntax.Types;
 
-import org.spockframework.runtime.SpockRuntime;
 import org.spockframework.runtime.ValueRecorder;
 import org.spockframework.util.*;
 
@@ -446,16 +446,16 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> {
   }
 
   private Expression record(Expression expr) {
-    return new MethodCallExpression(
+    return AstUtil.createDirectMethodCall(
         new VariableExpression("$spock_valueRecorder"),
-        ValueRecorder.RECORD,
+        resources.getAstNodeCache().ValueRecorder_Record,
         new ArgumentListExpression(new ConstantExpression(recordCount++), expr));
   }
 
   private Expression realizeNas(Expression expr) {
-    return new MethodCallExpression(
+    return AstUtil.createDirectMethodCall(
         new VariableExpression("$spock_valueRecorder"),
-        ValueRecorder.REALIZE_NAS,
+        resources.getAstNodeCache().ValueRecorder_RealizeNas,
         new ArgumentListExpression(new ConstantExpression(recordCount), expr));
   }
 
@@ -523,7 +523,7 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> {
     args.add(realizeNas(new ConstantExpression(rewritten.isSafe())));
     args.add(new ConstantExpression(explicit));
 
-    return rewriteToSpockRuntimeCall(SpockRuntime.VERIFY_METHOD_CONDITION, condition, message, args);
+    return rewriteToSpockRuntimeCall(resources.getAstNodeCache().SpockRuntime_VerifyMethodCondition, condition, message, args);
   }
 
   private Expression rewriteStaticMethodCondition(StaticMethodCallExpression condition, Expression message,
@@ -539,30 +539,29 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> {
     args.add(realizeNas(ConstantExpression.FALSE));
     args.add(new ConstantExpression(explicit));
 
-    return rewriteToSpockRuntimeCall(SpockRuntime.VERIFY_METHOD_CONDITION, condition, message, args);
+    return rewriteToSpockRuntimeCall(resources.getAstNodeCache().SpockRuntime_VerifyMethodCondition, condition, message, args);
   }
 
   private Expression rewriteOtherCondition(Expression condition, Expression message) {
     Expression rewritten = message == null ? convert(condition) : condition;
 
-    return rewriteToSpockRuntimeCall(SpockRuntime.VERIFY_CONDITION,
+    return rewriteToSpockRuntimeCall(resources.getAstNodeCache().SpockRuntime_VerifyCondition,
         condition, message, Collections.singletonList(rewritten));
   }
 
-  private Expression rewriteToSpockRuntimeCall(String method, Expression condition, Expression message,
+  private Expression rewriteToSpockRuntimeCall(MethodNode method, Expression condition, Expression message,
       List<Expression> additionalArgs) {
     List<Expression> args = new ArrayList<Expression>();
 
-    Expression result = new MethodCallExpression(
-        new ClassExpression(resources.getAstNodeCache().SpockRuntime),
-        new ConstantExpression(method),
+    MethodCallExpression result = AstUtil.createDirectMethodCall(
+        new ClassExpression(resources.getAstNodeCache().SpockRuntime), method,
         new ArgumentListExpression(args));
 
     args.add(message == null ?
-        new MethodCallExpression(
-          new VariableExpression("$spock_valueRecorder"),
-          ValueRecorder.RESET,
-          ArgumentListExpression.EMPTY_ARGUMENTS) :
+        AstUtil.createDirectMethodCall(
+            new VariableExpression("$spock_valueRecorder"),
+            resources.getAstNodeCache().ValueRecorder_Reset,
+            ArgumentListExpression.EMPTY_ARGUMENTS) :
         new ConstantExpression(null));
     args.add(new ConstantExpression(resources.getSourceText(condition)));
     args.add(new ConstantExpression(condition.getLineNumber()));

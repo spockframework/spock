@@ -20,14 +20,10 @@ import org.junit.runner.RunWith;
 
 import org.spockframework.lang.Wildcard;
 import org.spockframework.mock.MockController;
-import org.spockframework.mock.SpreadWildcardArgumentConstraint;
 import org.spockframework.runtime.*;
 import org.spockframework.util.GroovyRuntimeUtil;
 
 import groovy.lang.Closure;
-
-import java.util.Collections;
-import java.util.Iterator;
 
 /**
  * Base class for Spock specifications. All specifications must inherit from
@@ -206,7 +202,7 @@ public abstract class Specification {
    * @param block a block of code containing one or more interaction definitions
    */
   public void interaction(Closure block) {
-    GroovyRuntimeUtil.callClosure(block);
+    GroovyRuntimeUtil.invokeClosure(block);
   }
 
   /**

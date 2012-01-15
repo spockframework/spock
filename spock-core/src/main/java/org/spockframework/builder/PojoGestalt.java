@@ -17,12 +17,11 @@ package org.spockframework.builder;
 import java.lang.reflect.Type;
 import java.util.List;
 
-import org.codehaus.groovy.runtime.InvokerHelper;
-
 import org.spockframework.gentyref.GenericTypeReflector;
 import org.spockframework.util.CollectionUtil;
 
 import groovy.lang.Closure;
+import org.spockframework.util.GroovyRuntimeUtil;
 
 public class PojoGestalt implements IGestalt {
   private final Object pojo;
@@ -46,11 +45,11 @@ public class PojoGestalt implements IGestalt {
   }
 
   public Object getProperty(String name) {
-    return InvokerHelper.getProperty(pojo, name);
+    return GroovyRuntimeUtil.getProperty(pojo, name);
   }
 
   public void setProperty(String name, Object value) {
-    InvokerHelper.setProperty(pojo, name, value);
+    GroovyRuntimeUtil.setProperty(pojo, name, value);
   }
 
   // foo([a:1],b) and foo(a:1,b) are currently not distinguishable in Groovy

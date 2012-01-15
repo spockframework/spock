@@ -18,9 +18,6 @@ package org.spockframework.runtime;
 
 import java.util.*;
 
-import org.codehaus.groovy.runtime.InvokerHelper;
-import org.codehaus.groovy.runtime.ScriptBytecodeAdapter;
-
 import org.spockframework.runtime.model.ExpressionInfo;
 import org.spockframework.runtime.model.TextPosition;
 import org.spockframework.util.*;
@@ -50,8 +47,8 @@ public abstract class SpockRuntime {
       return;
     }
 
-    Object result = safe ? InvokerHelper.invokeMethodSafe(target, method, args)
-        : InvokerHelper.invokeMethod(target, method, args);
+    Object result = safe ? GroovyRuntimeUtil.invokeMethodNullSafe(target, method, args) :
+        GroovyRuntimeUtil.invokeMethod(target, method, args);
 
     if (recorder != null) {
       recorder.replaceLastValue(result);
@@ -66,12 +63,8 @@ public abstract class SpockRuntime {
 
   public static final String DESPREAD_LIST = "despreadList";
 
-  /**
-   * Wrapper around ScriptBytecodeAdapter.despreadList() to avoid a direct
-   * dependency on the latter.
-   */
   public static Object[] despreadList(Object[] args, Object[] spreads, int[] positions) {
-    return ScriptBytecodeAdapter.despreadList(args, spreads, positions);
+    return GroovyRuntimeUtil.despreadList(args, spreads, positions);
   }
 
   public static final String FEATURE_METHOD_CALLED = "featureMethodCalled";

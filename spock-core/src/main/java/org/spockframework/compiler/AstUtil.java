@@ -353,4 +353,10 @@ public abstract class AstUtil {
   public static boolean isJointCompiled(ClassNode clazz) {
     return clazz.getModule().getUnit().getConfig().getJointCompilationOptions() != null;
   }
+  
+  public static MethodCallExpression createDirectMethodCall(Expression target, MethodNode method, Expression arguments) {
+    MethodCallExpression result = new MethodCallExpression(target, method.getName(), arguments);
+    result.setMethodTarget(method);
+    return result;
+  }
 }

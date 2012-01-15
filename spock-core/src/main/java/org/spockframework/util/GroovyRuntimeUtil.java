@@ -21,10 +21,12 @@ import groovy.lang.MetaMethod;
 import org.codehaus.groovy.runtime.*;
 import org.codehaus.groovy.runtime.typehandling.DefaultTypeTransformation;
 
+import java.util.Iterator;
+
 /**
  * Provides convenient access to Groovy language and runtime features.
- * Only contains methods that can be fully abstracted from Groovy types.
- * Where this isn't possible (e.g. for metaclass handling), use the Groovy APIs directly.
+ * By convention, all usages of Groovy's InvokerHelper and
+ * ScriptBytecodeAdapter go through this class.
  *
  * @author Peter Niederwieser
  */
@@ -47,10 +49,52 @@ public abstract class GroovyRuntimeUtil {
     return DefaultGroovyMethods.toString(obj);
   }
 
+  public static MetaClass getMetaClass(Object object) {
+    return InvokerHelper.getMetaClass(object);
+  }
+  
+  public static String propertyToMethodName(String prefix, String propertyName) {
+    return prefix + MetaClassHelper.capitalize(propertyName);
+  }
+  
   /**
    * Note: This method may throw checked exceptions although it doesn't say so.
    */
-  @SuppressWarnings("unchecked")
+  public static Object getProperty(Object target, String property) {
+    try {
+      return InvokerHelper.getProperty(target, property);
+    } catch (InvokerInvocationException e) {
+      ExceptionUtil.sneakyThrow(e.getCause());
+      return null; // never reached
+    }
+  }
+
+  /**
+   * Note: This method may throw checked exceptions although it doesn't say so.
+   */
+  public static void setProperty(Object target, String property, Object value) {
+    try {
+      InvokerHelper.setProperty(target, property, value);
+    } catch (InvokerInvocationException e) {
+      ExceptionUtil.sneakyThrow(e.getCause());
+    }
+  }
+
+  /**
+   * Note: This method may throw checked exceptions although it doesn't say so.
+   */
+  public static Object invokeConstructor(Class<?> clazz, Object... args) {
+    try {
+      return InvokerHelper.invokeConstructorOf(clazz, args);
+    } catch (InvokerInvocationException e) {
+      ExceptionUtil.sneakyThrow(e.getCause());
+      return null; // never reached
+    }
+  }
+
+  /**
+   * Note: This method may throw checked exceptions although it doesn't say so.
+   */
   public static Object invokeMethod(Object target, String method, Object... args) {
     try {
       return InvokerHelper.invokeMethod(target, method, args);
@@ -60,7 +104,16 @@ public abstract class GroovyRuntimeUtil {
     }
   }
 
-  public static Object invokeMethodSafe(Object target, String method, Object... args) {
+  public static Object invokeMethodNullSafe(Object target, String method, Object... args) {
+    try {
+      return InvokerHelper.invokeMethodSafe(target, method, args);
+    } catch (InvokerInvocationException e) {
+      ExceptionUtil.sneakyThrow(e.getCause());
+      return null; // never reached
+    }
+  }
+
+  public static Object invokeMethodQuietly(Object target, String method, Object... args) {
     try {
       return InvokerHelper.invokeMethod(target, method, args);
     } catch (Throwable ignored) {
@@ -72,13 +125,33 @@ public abstract class GroovyRuntimeUtil {
    * Note: This method may throw checked exceptions although it doesn't say so.
    */
   @SuppressWarnings("unchecked")
-  public static Object callClosure(Closure closure, Object... args) {
+  public static Object invokeClosure(Closure closure, Object... args) {
     try {
       return closure.call(args);
     } catch (InvokerInvocationException e) {
       ExceptionUtil.sneakyThrow(e.getCause());
       return null; // never reached
     }
+  }
+
+  /**
+   * Note: This method may throw checked exceptions although it doesn't say so.
+   */
+  public static Iterator<Object> asIterator(Object object) {
+    try {
+      return InvokerHelper.asIterator(object);
+    } catch (InvokerInvocationException e) {
+      ExceptionUtil.sneakyThrow(e.getCause());
+      return null; // never reached
+    }
+  }
+  
+  public static Object[] asArray(Object args) {
+    return InvokerHelper.asArray(args);
+  }
+  
+  public static Object[] despreadList(Object[] args, Object[] spreads, int[] positions) {
+    return ScriptBytecodeAdapter.despreadList(args, spreads, positions);
   }
 
   // let's try to find the method that was invoked and see if it has return type void
@@ -112,7 +185,15 @@ public abstract class GroovyRuntimeUtil {
     return returnType == void.class || returnType == Void.class;
   }
 
-  public static Object readField(Object target, String name) {
-    return InvokerHelper.getAttribute(target, name);
+  /**
+   * Note: This method may throw checked exceptions although it doesn't say so.
+   */
+  public static Object getAttribute(Object target, String name) {
+    try {
+      return InvokerHelper.getAttribute(target, name);
+    } catch (InvokerInvocationException e) {
+      ExceptionUtil.sneakyThrow(e.getCause());
+      return null; // never reached
+    }
   }
 }

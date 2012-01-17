@@ -1,8 +1,9 @@
-include 'spock-core'
-include 'spock-guice'
-include 'spock-specs'
-include 'spock-spring'
-include 'spock-tapestry'
-include 'spock-unitils'
-include 'spock-grails'
-include 'spock-grails-support'
+include "spock-core"
+include "spock-grails"
+include "spock-grails-support"
+include "spock-guice"
+include "spock-maven"
+include "spock-specs"
+include "spock-spring"
+include "spock-tapestry"
+include "spock-unitils"

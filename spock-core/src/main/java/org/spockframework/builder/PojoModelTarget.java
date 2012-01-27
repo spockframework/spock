@@ -17,13 +17,13 @@ package org.spockframework.builder;
 import java.lang.reflect.Type;
 import java.util.List;
 
-public class PojoConfigurationTarget implements IConfigurationTarget {
+public class PojoModelTarget implements IModelTarget {
   private final Object value;
   private final Type pojoType;
   private final ITypeCoercer coercer;
   private final ISlotFinder slotFinder;
 
-  public PojoConfigurationTarget(Object value, Type pojoType, ITypeCoercer coercer, ISlotFinder slotFinder) {
+  public PojoModelTarget(Object value, Type pojoType, ITypeCoercer coercer, ISlotFinder slotFinder) {
     this.value = value;
     this.pojoType = pojoType;
     this.coercer = coercer;
@@ -35,10 +35,10 @@ public class PojoConfigurationTarget implements IConfigurationTarget {
   }
 
   // IDEA: maybe readSlot() and writeSlot() should be just getProperty/setProperty, w/o any magic
-  public IConfigurationTarget readSlot(String name) {
+  public IModelTarget readSlot(String name) {
     ISlot slot = findSlot(name);
-    return (IConfigurationTarget) coercer.coerce(
-        new ConfigurationValue(slot.read(), slot.getType()), IConfigurationTarget.class);
+    return (IModelTarget) coercer.coerce(
+        new ConfigurationValue(slot.read(), slot.getType()), IModelTarget.class);
   }
 
   public void writeSlot(String name, Object value) {
@@ -51,7 +51,7 @@ public class PojoConfigurationTarget implements IConfigurationTarget {
   // so we should probably add some heuristics to tell them apart (look at subject's method signatures)
   // current impl is dead stupid:
   // - named args not treated specially
-  public void configureSlot(String name, List<Object> values, IConfigurationSource source) {
+  public void configureSlot(String name, List<Object> values, IModelSource source) {
     ISlot slot = findSlot(name);
     configureSlot(slot, values, source);
   }
@@ -67,7 +67,7 @@ public class PojoConfigurationTarget implements IConfigurationTarget {
 
   // IDEA: empty values, source != null, no zero-arg ctor: treat source as list target for ctor args
   // (nice way to build immutable models)
-  private void configureSlot(ISlot slot, List<Object> values, IConfigurationSource source) {
+  private void configureSlot(ISlot slot, List<Object> values, IModelSource source) {
     Object slotValue = null;
     if (values.isEmpty() && slot.isReadable()) {
       slotValue = slot.read();
@@ -79,8 +79,8 @@ public class PojoConfigurationTarget implements IConfigurationTarget {
       slotValue = coerceValue(values, slot);
     }
     if (source != null) {
-      IConfigurationTarget slotTarget = (IConfigurationTarget) coercer.coerce(
-          new ConfigurationValue(slotValue, slot.getType()), IConfigurationTarget.class);
+      IModelTarget slotTarget = (IModelTarget) coercer.coerce(
+          new ConfigurationValue(slotValue, slot.getType()), IModelTarget.class);
       source.configure(slotTarget);
     }
     slot.configure(slotValue);

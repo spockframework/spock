@@ -22,10 +22,10 @@ import org.spockframework.util.CollectionUtil;
 import org.spockframework.util.Nullable;
 
 public class ConfigurationTargetMopAdapter extends GroovyObjectSupport implements GroovyInterceptable {
-  private final IConfigurationTarget $target;
+  private final IModelTarget $target;
   private final Object thisObject;
   
-  public ConfigurationTargetMopAdapter(IConfigurationTarget target, @Nullable Object thisObject) {
+  public ConfigurationTargetMopAdapter(IModelTarget target, @Nullable Object thisObject) {
     this.$target = target;
     this.thisObject = thisObject;
   }
@@ -79,7 +79,7 @@ public class ConfigurationTargetMopAdapter extends GroovyObjectSupport implement
       }
     }
 
-    $target.configureSlot(name, Arrays.asList(argsArray), block != null ? new ClosureConfigurationSource(block) : null);
+    $target.configureSlot(name, Arrays.asList(argsArray), block != null ? new ClosureModelSource(block) : null);
     return null;
   }
 }

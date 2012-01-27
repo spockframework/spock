@@ -14,16 +14,16 @@
 
 package org.spockframework.builder
 
-class XmlConfigurationSource implements IConfigurationSource {
+class XmlModelSource implements IModelSource {
   private final Node xml
 
-  XmlConfigurationSource(Node xml) {
+  XmlModelSource(Node xml) {
     this.xml = xml
   }
 
-  void configure(IConfigurationTarget target) {
+  void configure(IModelTarget target) {
     getNonTextChildren(xml).each { node ->
-      target.configureSlot(node.name().toString(), getValues(node), new XmlConfigurationSource(node))
+      target.configureSlot(node.name().toString(), getValues(node), new XmlModelSource(node))
     }
   }
   

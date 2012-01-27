@@ -14,16 +14,20 @@
 
 package org.spockframework.builder;
 
-import org.spockframework.util.Nullable;
+import groovy.lang.Closure;
 
-import java.util.List;
+import org.spockframework.util.GroovyRuntimeUtil;
 
-// IDEA: provide getID() for generic error reporting; could be the path to the target
-public interface IConfigurationTarget {
-  Object getSubject();
-  IConfigurationTarget readSlot(String name);
-  void writeSlot(String name, Object value);
-  // TODO: support return value (e.g. to save off created object in a variable)?
-  // TODO: should be List<?>, otherwise caller get problems
-  void configureSlot(String name, List<Object> values, @Nullable IConfigurationSource source);
+public class ClosureModelSource implements IModelSource {
+  private final Closure closure;
+  
+  public ClosureModelSource(Closure closure) {
+    this.closure = closure;
+    closure.setResolveStrategy(Closure.DELEGATE_ONLY);
+  }
+
+  public void configure(final IModelTarget target) {
+    closure.setDelegate(new ConfigurationTargetMopAdapter(target, closure.getThisObject()));
+    GroovyRuntimeUtil.callClosure(closure, target.getSubject());
+  }
 }

@@ -14,20 +14,20 @@
 
 package org.spockframework;
 
-import org.spockframework.builder.IConfigurationSource;
-import org.spockframework.builder.IConfigurationTarget;
+import org.spockframework.builder.IModelSource;
+import org.spockframework.builder.IModelTarget;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class RecordingConfigurationTarget implements IConfigurationTarget {
+public class RecordingModelTarget implements IModelTarget {
   List<ISlotOperation> operations = new ArrayList<ISlotOperation>();
   
   public Object getSubject() {
     throw new UnsupportedOperationException("getSubject");
   }
 
-  public IConfigurationTarget readSlot(String name) {
+  public IModelTarget readSlot(String name) {
     throw new UnsupportedOperationException("readSlot");
   }
 
@@ -35,18 +35,18 @@ public class RecordingConfigurationTarget implements IConfigurationTarget {
     operations.add(new WriteSlotOperation(name, value));
   }
 
-  public void configureSlot(String name, List<Object> values, IConfigurationSource source) {
+  public void configureSlot(String name, List<Object> values, IModelSource source) {
     operations.add(new ConfigureSlotOperation(name, values, source));
   }
   
-  public void playback(IConfigurationTarget target) {
+  public void playback(IModelTarget target) {
     for (ISlotOperation operation: operations) {
       operation.playback(target);  
     }
   }
   
   private interface ISlotOperation {
-    void playback(IConfigurationTarget target);
+    void playback(IModelTarget target);
   }
   
   private static class WriteSlotOperation implements ISlotOperation {
@@ -58,7 +58,7 @@ public class RecordingConfigurationTarget implements IConfigurationTarget {
       this.value = value;
     }
 
-    public void playback(IConfigurationTarget target) {
+    public void playback(IModelTarget target) {
       target.writeSlot(name, value);
     }
   }
@@ -66,15 +66,15 @@ public class RecordingConfigurationTarget implements IConfigurationTarget {
   private static class ConfigureSlotOperation implements ISlotOperation {
     final String name;
     final List<Object> values;
-    final IConfigurationSource source;
+    final IModelSource source;
 
-    private ConfigureSlotOperation(String name, List<Object> values, IConfigurationSource source) {
+    private ConfigureSlotOperation(String name, List<Object> values, IModelSource source) {
       this.name = name;
       this.values = values;
       this.source = source;
     }
 
-    public void playback(IConfigurationTarget target) {
+    public void playback(IModelTarget target) {
       target.configureSlot(name, values, source);
     }
   }

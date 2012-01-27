@@ -4,11 +4,11 @@ import org.spockframework.util.GroovyRuntimeUtil;
 
 import java.util.List;
 
-public class DynamicObjectConfigurationTarget implements IConfigurationTarget {
+public class DynamicObjectModelTarget implements IModelTarget {
   private final Object object;
   private final ITypeCoercer coercer;
 
-  public DynamicObjectConfigurationTarget(Object object, ITypeCoercer coercer) {
+  public DynamicObjectModelTarget(Object object, ITypeCoercer coercer) {
     this.object = object;
     this.coercer = coercer;
   }
@@ -17,19 +17,19 @@ public class DynamicObjectConfigurationTarget implements IConfigurationTarget {
     return object;
   }
 
-  public IConfigurationTarget readSlot(String name) {
+  public IModelTarget readSlot(String name) {
     Object value = GroovyRuntimeUtil.getProperty(object, name);
     IConfigurationValue configurationValue = new ConfigurationValue(value, value.getClass());
-    return (IConfigurationTarget) coercer.coerce(configurationValue, IConfigurationTarget.class);
+    return (IModelTarget) coercer.coerce(configurationValue, IModelTarget.class);
   }
 
   public void writeSlot(String name, Object value) {
     GroovyRuntimeUtil.setProperty(object, name, value);
   }
 
-  public void configureSlot(String name, List<Object> values, IConfigurationSource source) {
+  public void configureSlot(String name, List<Object> values, IModelSource source) {
     if (source != null) {
-      IConfigurationTarget target = (IConfigurationTarget) coercer.coerce(values.get(0), IConfigurationTarget.class);
+      IModelTarget target = (IModelTarget) coercer.coerce(values.get(0), IModelTarget.class);
       source.configure(target);
     }
     GroovyRuntimeUtil.invokeMethod(object, name, values.toArray());

@@ -18,13 +18,15 @@ package org.spockframework.builder
 
 import org.spockframework.runtime.SpockConfigurationBuilder
 import spock.lang.Specification
+import org.spockframework.runtime.ModelSourceFactory
 
 class SpockPropertiesConfigurationSpec extends Specification {
+  def sourceFactory = new ModelSourceFactory()
   def builder = new SpockConfigurationBuilder()
 
   def "configure simple slots"() {
     when:
-    builder.fromProperties(["spock.person.name": "fred", "spock.person.age": 30])
+    builder.fromSource(sourceFactory.fromProperties(["spock.person.name": "fred", "spock.person.age": 30]))
     def spock = new SpockConfiguration()
     builder.build([spock])
 
@@ -36,7 +38,7 @@ class SpockPropertiesConfigurationSpec extends Specification {
 
   def "configure list slot"() {
     when:
-    builder.fromProperties(["spock.person.balances": "3, 5, 8.9"])
+    builder.fromSource(sourceFactory.fromProperties(["spock.person.balances": "3, 5, 8.9"]))
     def spock = new SpockConfiguration()
     builder.build([spock])
 

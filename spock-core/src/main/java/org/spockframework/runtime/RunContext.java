@@ -19,6 +19,7 @@ import java.util.*;
 import org.junit.runner.notification.RunNotifier;
 
 import org.spockframework.builder.DelegatingScript;
+import org.spockframework.builder.IModelSource;
 import org.spockframework.runtime.condition.*;
 import org.spockframework.runtime.model.SpecInfo;
 import org.spockframework.util.*;
@@ -50,9 +51,8 @@ public class RunContext {
     extensionRegistry.loadExtensions();
 
     if (configurationScript != null) {
-      SpockConfigurationBuilder builder = new SpockConfigurationBuilder();
-      builder.fromGroovyScript(configurationScript);
-      builder.build(configurations);
+      IModelSource source = new ModelSourceFactory().fromGroovyScript(configurationScript);
+      new SpockConfigurationBuilder().fromSource(source).build(configurations);
     }
   }
 

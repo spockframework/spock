@@ -14,100 +14,38 @@
 
 package org.spockframework.runtime;
 
-import java.io.*;
 import java.util.*;
 
-import groovy.util.XmlParser;
-import groovy.util.XmlSlurper;
 import org.spockframework.builder.*;
-import org.spockframework.util.GroovyRuntimeUtil;
 
 public class SpockConfigurationBuilder {
-  private final ITypeCoercer coercer = createCoercer();
   private final ISlotFinder slotFinder = createSlotFinder();
-  private final List<IConfigurationSource> sources = new ArrayList<IConfigurationSource>();
+  private final ITypeCoercer coercer = createCoercer();
+  private final List<IModelSource> sources = new ArrayList<IModelSource>();
 
-  public SpockConfigurationBuilder fromGroovyScript(DelegatingScript script) {
-    sources.add(new DelegatingScriptConfigurationSource(script));
-    return this;
-  }
-  
-  public SpockConfigurationBuilder fromGroovyScript(String script) {
-    return this; // TODO
-  }
-
-  public SpockConfigurationBuilder fromGroovyScript(File script) {
-    return this; // TODO
-  }
-
-  public SpockConfigurationBuilder fromGroovyScript(InputStream script) {
-    return this; // TODO
-  }
-  
-  public SpockConfigurationBuilder fromProperties(Map<String, ?> properties) {
-    sources.add(new PropertiesConfigurationSource(properties));
-    return this;
-  }
-
-  @SuppressWarnings("unchecked")
-  public SpockConfigurationBuilder fromProperties(File properties) throws IOException {
-    Properties props = new Properties();
-    props.load(new InputStreamReader(new FileInputStream(properties), "utf-8"));
-    return fromProperties((Map) props);
-  }
-
-  public SpockConfigurationBuilder fromSystemProperties() {
-    Map<String, String> properties = new HashMap<String, String>();
-    
-    @SuppressWarnings("unchecked")
-    Map<String, String> systemProperties = (Map) System.getProperties();
-
-    for (Map.Entry<String, String> systemProperty: systemProperties.entrySet()) {
-      if (systemProperty.getKey().startsWith("spock.")) {
-        properties.put(systemProperty.getKey().substring(6), systemProperty.getValue());
-      }
-    }
-
-    return fromProperties(properties);
-  }
-  
-  public SpockConfigurationBuilder fromXml(String xml) throws Exception {
-    // XmlSlurper can't parse text nodes, hence we use XmlParser
-    XmlParser parser = new XmlParser();
-    // don't want no joint compilation
-    Class<?> clazz = getClass().getClassLoader().loadClass("org.spockframework.builder.XmlConfigurationSource");
-    IConfigurationSource source = (IConfigurationSource) GroovyRuntimeUtil.invokeConstructor(clazz, parser.parseText(xml));
+  public SpockConfigurationBuilder fromSource(IModelSource source) {
     sources.add(source);
     return this;
   }
-  
-  public SpockConfigurationBuilder fromXml(File xml) {
-    return this; // TODO
-  }
-  
-  public SpockConfigurationBuilder fromXml(InputStream xml) {
-    return this; // TODO
-  }
 
-  // IDEA: move this into a SpockConfiguration class s.t. SpockConfigurationBuilder becomes a "real" builder
   public void build(List<Object> configurationBlocks) {
-    IConfigurationTarget target = new SpockConfigurationTarget(configurationBlocks, coercer);
-    for (IConfigurationSource source: sources) {
+    IModelTarget target = new SpockConfigurationModelTarget(configurationBlocks, coercer);
+    for (IModelSource source: sources) {
       source.configure(target);
     }
   }
 
+  private ISlotFinder createSlotFinder() {
+    return new SlotFinderChain(Arrays.asList(new PropertySlotFinder(), new AddSlotFinder(), new CollectionSlotFinder()));
+  }
+
   private ITypeCoercer createCoercer() {
     CoercerChain chain = new CoercerChain();
+    chain.add(new ServiceProvidingCoercer(slotFinder, ISlotFinder.class));
     chain.add(new StringCoercer(chain));
-    chain.add(new ServiceProvidingCoercer(createSlotFinder(), ISlotFinder.class));
     chain.add(new PojoConfigurationTargetCoercer(chain));
     chain.add(new ClosureConfigurationSourceCoercer());
     chain.add(new GroovyCoercer());
     return chain;
-  }
-
-  private ISlotFinder createSlotFinder() {
-    return new SlotFinderChain(Arrays.asList(new PropertySlotFinder(), new AddSlotFinder(), new CollectionSlotFinder()));
   }
 }

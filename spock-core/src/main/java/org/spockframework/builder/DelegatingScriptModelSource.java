@@ -14,20 +14,15 @@
 
 package org.spockframework.builder;
 
-import groovy.lang.Closure;
+public class DelegatingScriptModelSource implements IModelSource {
+  private final DelegatingScript script;
 
-import org.spockframework.util.GroovyRuntimeUtil;
-
-public class ClosureConfigurationSource implements IConfigurationSource {
-  private final Closure closure;
-  
-  public ClosureConfigurationSource(Closure closure) {
-    this.closure = closure;
-    closure.setResolveStrategy(Closure.DELEGATE_ONLY);
+  public DelegatingScriptModelSource(DelegatingScript script) {
+    this.script = script;
   }
 
-  public void configure(final IConfigurationTarget target) {
-    closure.setDelegate(new ConfigurationTargetMopAdapter(target, closure.getThisObject()));
-    GroovyRuntimeUtil.callClosure(closure, target.getSubject());
+  public void configure(IModelTarget target) {
+    script.$setDelegate(new ConfigurationTargetMopAdapter(target, null));
+    script.run();
   }
 }

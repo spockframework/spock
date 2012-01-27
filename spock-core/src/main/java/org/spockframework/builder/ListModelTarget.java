@@ -7,12 +7,12 @@ import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.List;
 
-public class ListConfigurationTarget implements IConfigurationTarget {
+public class ListModelTarget implements IModelTarget {
   private final List<Object> list;
   private final Type elementType;
   private final ITypeCoercer coercer;
 
-  public ListConfigurationTarget(List list, Type listType, ITypeCoercer coercer) {
+  public ListModelTarget(List list, Type listType, ITypeCoercer coercer) {
     this.list = list;
     this.elementType = GenericTypeReflector.getTypeParameter(listType, Collection.class.getTypeParameters()[0]);
     this.coercer = coercer;
@@ -22,12 +22,12 @@ public class ListConfigurationTarget implements IConfigurationTarget {
     return list;
   }
 
-  public IConfigurationTarget readSlot(String name) {
+  public IModelTarget readSlot(String name) {
     Integer index = (Integer) coercer.coerce(name, Integer.class);
     if (index == null) throw new MissingPropertyException(name, list.getClass());
     
     Object element = list.get(index);
-    return (IConfigurationTarget) coercer.coerce(new ConfigurationValue(element, elementType), IConfigurationTarget.class);
+    return (IModelTarget) coercer.coerce(new ConfigurationValue(element, elementType), IModelTarget.class);
   }
 
   public void writeSlot(String name, Object value) {
@@ -38,12 +38,12 @@ public class ListConfigurationTarget implements IConfigurationTarget {
     list.add(index, element);
   }
 
-  public void configureSlot(String name, List<Object> values, IConfigurationSource source) {
+  public void configureSlot(String name, List<Object> values, IModelSource source) {
     Integer index = (Integer) coercer.coerce(name, Integer.class);
     Object element = coercer.coerce(values, elementType);
     if (source != null) {
-      IConfigurationTarget target = (IConfigurationTarget) coercer.coerce(
-          new ConfigurationValue(element, elementType), IConfigurationTarget.class);
+      IModelTarget target = (IModelTarget) coercer.coerce(
+          new ConfigurationValue(element, elementType), IModelTarget.class);
       source.configure(target);
     }
     if (index != null) {

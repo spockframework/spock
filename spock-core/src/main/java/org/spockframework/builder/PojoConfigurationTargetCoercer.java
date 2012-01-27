@@ -17,6 +17,6 @@ public class PojoConfigurationTargetCoercer implements ITypeCoercer {
     if (slotFinder == null) {
       throw new RuntimeException("PojoConfigurationTarget requires an ISlotFinder, but coercer doesn't provide one");
     }
-    return new PojoConfigurationTarget(configurationValue.getValue(), configurationValue.getType(), coercer, slotFinder);
+    return new PojoModelTarget(configurationValue.getValue(), configurationValue.getType(), coercer, slotFinder);
   }
 }

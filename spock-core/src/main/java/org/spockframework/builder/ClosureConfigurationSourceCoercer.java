@@ -7,8 +7,8 @@ import java.lang.reflect.Type;
 
 public class ClosureConfigurationSourceCoercer implements ITypeCoercer {
   public Object coerce(Object value, Type type) {
-    if (value instanceof Closure && GenericTypeReflector.erase(type).isAssignableFrom(ClosureConfigurationSource.class)) {
-      return new ClosureConfigurationSource((Closure) value);
+    if (value instanceof Closure && GenericTypeReflector.erase(type).isAssignableFrom(ClosureModelSource.class)) {
+      return new ClosureModelSource((Closure) value);
     }
     return null;
   }

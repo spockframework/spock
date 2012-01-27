@@ -36,12 +36,12 @@ public class PojoBuilder {
   }
 
   public Object build(Object pojo, Closure closure) {
-    return build(pojo, new ClosureConfigurationSource(closure));
+    return build(pojo, new ClosureModelSource(closure));
   }
 
-  public Object build(Object pojo, IConfigurationSource source) {
+  public Object build(Object pojo, IModelSource source) {
     IConfigurationValue value = new ConfigurationValue(pojo, pojo.getClass());
-    IConfigurationTarget target = (IConfigurationTarget) coercer.coerce(value, IConfigurationTarget.class);
+    IModelTarget target = (IModelTarget) coercer.coerce(value, IModelTarget.class);
     source.configure(target);
     return pojo;
   }

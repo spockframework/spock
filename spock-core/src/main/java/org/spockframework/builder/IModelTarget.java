@@ -14,15 +14,16 @@
 
 package org.spockframework.builder;
 
-public class DelegatingScriptConfigurationSource implements IConfigurationSource {
-  private final DelegatingScript script;
+import org.spockframework.util.Nullable;
 
-  public DelegatingScriptConfigurationSource(DelegatingScript script) {
-    this.script = script;
-  }
+import java.util.List;
 
-  public void configure(IConfigurationTarget target) {
-    script.$setDelegate(new ConfigurationTargetMopAdapter(target, null));
-    script.run();
-  }
+// IDEA: provide getID() for generic error reporting; could be the path to the target
+public interface IModelTarget {
+  Object getSubject();
+  IModelTarget readSlot(String name);
+  void writeSlot(String name, Object value);
+  // TODO: support return value (e.g. to save off created object in a variable)?
+  // TODO: should be List<?>, otherwise caller get problems
+  void configureSlot(String name, List<Object> values, @Nullable IModelSource source);
 }

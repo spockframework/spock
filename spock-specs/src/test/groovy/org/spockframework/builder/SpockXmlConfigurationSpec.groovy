@@ -18,19 +18,21 @@ package org.spockframework.builder
 
 import spock.lang.Specification
 import org.spockframework.runtime.SpockConfigurationBuilder
+import org.spockframework.runtime.ModelSourceFactory
 
 class SpockXmlConfigurationSpec extends Specification {
+  def sourceFactory = new ModelSourceFactory()
   def builder = new SpockConfigurationBuilder()
 
   def "configure simple slots"() {
-    builder.fromXml """
+    builder.fromSource(sourceFactory.fromXml("""
 <config>
   <person>
     <name>fred</name>
     <age>30</age>
   </person>
 </config>
-    """ 
+    """))
     def person = new Person()
     builder.build([person])
 
@@ -40,7 +42,7 @@ class SpockXmlConfigurationSpec extends Specification {
   }
 
   def "configure object slot"() {
-    builder.fromXml """
+    builder.fromSource(sourceFactory.fromXml("""
 <config>
   <person>
     <mother>
@@ -49,7 +51,7 @@ class SpockXmlConfigurationSpec extends Specification {
     </mother>
   </person>
 </config>
-    """
+    """))
 
     def person = new Person()
     builder.build([person])
@@ -60,7 +62,7 @@ class SpockXmlConfigurationSpec extends Specification {
   }
   
   def "configure collection slot"() {
-    builder.fromXml """
+    builder.fromSource(sourceFactory.fromXml("""
 <config>
   <person>
     <friend>
@@ -69,7 +71,7 @@ class SpockXmlConfigurationSpec extends Specification {
     </friend>
   </person>
 </config>
-    """
+    """))
 
     def person = new Person()
     builder.build([person])

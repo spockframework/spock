@@ -16,11 +16,11 @@ package org.spockframework.builder;
 
 import java.util.List;
 
-public class SpockConfigurationTarget implements IConfigurationTarget {
+public class SpockConfigurationModelTarget implements IModelTarget {
   private final List<Object> configurationBlocks;
   private final ITypeCoercer coercer;
 
-  public SpockConfigurationTarget(List<Object> configurationBlocks, ITypeCoercer coercer) {
+  public SpockConfigurationModelTarget(List<Object> configurationBlocks, ITypeCoercer coercer) {
     this.configurationBlocks = configurationBlocks;
     this.coercer = coercer;
   }
@@ -29,25 +29,25 @@ public class SpockConfigurationTarget implements IConfigurationTarget {
     return configurationBlocks;
   }
 
-  public IConfigurationTarget readSlot(String name) {
+  public IModelTarget readSlot(String name) {
     Object config = getConfiguration(name);
     if (config == null) throw new InvalidConfigurationException("No configuration block named '%s' is registered").withArgs(name);
-    return (IConfigurationTarget) coercer.coerce(new ConfigurationValue(config), IConfigurationTarget.class);
+    return (IModelTarget) coercer.coerce(new ConfigurationValue(config), IModelTarget.class);
   }
 
   public void writeSlot(String name, Object value) {
     throw new InvalidConfigurationException("Configuration block '%s' cannot be set directly").withArgs(name);
   }
 
-  public void configureSlot(String name, List<Object> args, IConfigurationSource source) {
+  public void configureSlot(String name, List<Object> args, IModelSource source) {
     Object config = getConfiguration(name);
-    if (config == null) throw new InvalidConfigurationException("No configuration block named '%s' is registered").withArgs(name);
+    if (config == null) return; // handle gracefully because some configuration blocks might not be available or of interest right now
 
     if (!args.isEmpty()) throw new InvalidConfigurationException("Invalid syntax for configuring configuration block '%s'").withArgs(name);
     
     if (source == null) throw new InvalidConfigurationException("Invalid syntax for configuring configuration block '%s'").withArgs(name); 
     
-    IConfigurationTarget target = (IConfigurationTarget) coercer.coerce(new ConfigurationValue(config), IConfigurationTarget.class);
+    IModelTarget target = (IModelTarget) coercer.coerce(new ConfigurationValue(config), IModelTarget.class);
     source.configure(target);
   }
 

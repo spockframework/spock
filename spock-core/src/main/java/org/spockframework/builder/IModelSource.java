@@ -14,6 +14,6 @@
 
 package org.spockframework.builder;
 
-public interface IConfigurationSource {
-  void configure(IConfigurationTarget target);
+public interface IModelSource {
+  void configure(IModelTarget target);
 }

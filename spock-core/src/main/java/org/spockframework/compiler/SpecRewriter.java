@@ -31,6 +31,7 @@ import org.spockframework.mock.MockController;
 import org.spockframework.util.InternalIdentifiers;
 import org.spockframework.util.Identifiers;
 import org.spockframework.runtime.SpockRuntime;
+import org.spockframework.util.Jvm;
 
 /**
  * A Spec visitor responsible for most of the rewriting of a Spec's AST.
@@ -354,9 +355,14 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
     return newMethod;
   }
 
-  // NOTE: alternatively, we could remove method with:
-  // spec.getAst().getMethods().remove(method)
-  private void deactivateMethod(MethodNode method) {   
+  private void deactivateMethod(MethodNode method) {
+    if (Jvm.getCurrent().isIbmJvm()) {
+      // see http://issues.spockframework.org/detail?id=225
+      // solves the problem if spec is compiled with IBM JDK
+      spec.getAst().getMethods().remove(method);
+      return;
+    }
+    
     Statement stat = new ExpressionStatement(
         new MethodCallExpression(
             new ClassExpression(nodeCache.SpockRuntime),

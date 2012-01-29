@@ -1,19 +1,16 @@
 apply from: profile("publishMaven")
 
-sourceSets {
-  main {
-    java {
-      // don't build the Mojo for now
-      exclude "org/spockframework/buildsupport/maven/FindSpecsMojo.java"
-    }
-  }
-}
-
 dependencies {
   compile project(":spock-core")
-  compile("org.apache.maven.surefire:surefire-junit47:2.11") {
-    exclude group: "junit"
-  }
+
+  // Surefire provider
+  compile "org.apache.maven.surefire:surefire-junit47:2.11"
+
+  // Mojo
+  compile "org.apache.maven:maven-plugin-api:2.0"
+  compile "org.apache.maven:maven-project:2.0"
+  compile "org.apache.maven:maven-core:2.0"
+  compile "org.codehaus.plexus:plexus-utils:1.5.7"
   runtime libs.asm
 }
 

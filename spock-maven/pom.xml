@@ -1,16 +1,26 @@
 <?xml version="1.0"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <parent>
-    <groupId>org.spockframework</groupId>
-    <artifactId>spock-parent</artifactId>
-    <version>0.6-groovy-1.8-SNAPSHOT</version>
-  </parent>
-
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.spockframework</groupId>
   <artifactId>spock-maven</artifactId>
+  <version>0.6-groovy-1.8-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
   <name>Spock Framework - Maven Module</name>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>2.3.2</version>
+          <configuration>
+            <source>1.5</source>
+            <target>1.5</target>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
 
   <dependencies>
 <!-- compile dependencies -->
@@ -45,11 +55,23 @@
       <artifactId>plexus-utils</artifactId>
       <version>1.5.7</version>
     </dependency>
+    <dependency>
+      <groupId>org.apache.maven.surefire</groupId>
+      <artifactId>surefire-junit47</artifactId>
+      <version>2.11</version>
+      <exclusions>
+        <exclusion>
+          <groupId>junit</groupId>
+          <artifactId>junit</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
     
 <!-- runtime dependencies -->
     <dependency> <!-- required because org.spockframework.buildsupport is used -->
       <groupId>asm</groupId>
       <artifactId>asm</artifactId>
+      <version>3.2</version>
       <scope>runtime</scope> 
     </dependency>
   </dependencies>

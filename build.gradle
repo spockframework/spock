@@ -1,7 +1,7 @@
 description = "Spock Framework"
 
 libs = [
-  ant: "org.apache.ant:ant:1.8.1", // use same version as Groovy 1.8
+  ant: "org.apache.ant:ant:1.8.2", // use same version as Groovy 1.8
   asm: "asm:asm:3.2", // use same version as Groovy 1.8
   cglib: "cglib:cglib-nodep:2.2",
   easymock: "org.easymock:easymock:3.0",

@@ -124,7 +124,7 @@ will be added to the global Surefire configuration.</description>
       <groupId>org.codehaus.groovy</groupId>
       <artifactId>groovy-all</artifactId>
       <type>jar</type>
-      <version>1.8.4</version>
+      <version>1.7.10</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>

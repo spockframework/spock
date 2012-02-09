@@ -36,23 +36,25 @@ basePom = {
   }
 }
 
-project.poms = []
+project.deployers = []
 install {
-  project.poms << repositories.mavenInstaller {
+  project.deployers << repositories.mavenInstaller {
     pom basePom
-  }.pom
+  }
 }
 
 uploadArchives {
-  project.poms << repositories.mavenDeployer {
+  project.deployers << repositories.mavenDeployer {
     pom basePom
     if (isSnapshotVersion) {
       snapshotRepository(url: "file:///var/www/m2repo/snapshots")
     } else {
       repository(url: "file:///var/www/m2repo/release")
     }
-  }.pom
+  }
 }
+
+project.poms = project.deployers*.pom
 
 modifyPom = { Closure modification ->
   project.poms.each { 
@@ -67,5 +69,12 @@ optional = { optionalDeps << it }
 modifyPom { pom ->
   optionalDeps.each { dep ->
     pom.dependencies.find { it.artifactId == dep.name }.optional = true
+  }
+}
+
+// workaround GRADLE-2093 - can remove with gradle 1.0-milestone-8
+signing {
+  if (signatory && !required) {
+    deployers*.beforeDeployment { signPom(it) }
   }
 }

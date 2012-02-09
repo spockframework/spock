@@ -37,9 +37,18 @@ allprojects {
     apply plugin: "idea"
     apply plugin: "eclipse"
     apply plugin: "groovy"
+    apply plugin: "signing"
     
     sourceCompatibility = 1.5
     targetCompatibility = 1.5
+
+    signing {
+      sign configurations.archives
+      required = !isSnapshotVersion
+    
+      // workaround GRADLE-2091 (can remove for gradle 1.0-milestone-8)
+      tasks.withType(org.gradle.plugins.signing.Sign) { it.required !isSnapshotVersion }
+    }
 
     idea {
       project {

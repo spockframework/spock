@@ -33,60 +33,58 @@ allprojects {
     }
   }
   
-  if (!isGrailsPlugin) {
-    apply plugin: "idea"
-    apply plugin: "eclipse"
-    apply plugin: "groovy"
-    apply plugin: "signing"
-    
-    sourceCompatibility = 1.5
-    targetCompatibility = 1.5
-
-    signing {
-      sign configurations.archives
-      required = !isSnapshotVersion
-    
-      // workaround GRADLE-2091 (can remove for gradle 1.0-milestone-8)
-      tasks.withType(org.gradle.plugins.signing.Sign) { it.required !isSnapshotVersion }
-    }
-
-    idea {
-      project {
-        jdkName = "1.6"
-      }
-    }
-
-    configurations {
-      all*.exclude module: "junit" // we use junit-dep instead
-    }
-
-    dependencies {
-      groovy libs.groovy
-    }
-
-    javadoc {
-      include "spock/**"
-      configure(options) {
-        links "http://download.oracle.com/javase/1.5.0/docs/api/"
-        links "http://groovy.codehaus.org/gapi"
-        links "http://kentbeck.github.com/junit/javadoc/4.9"
-        links "http://www.jarvana.com/jarvana/inspect/org/hamcrest/hamcrest-core/1.2/hamcrest-core-1.2-javadoc.jar"
-      }
-    }
-
-    task sourcesJar(type: Jar) {
-      classifier "sources"
-      from sourceSets.main.allSource
-    }
-
-    task javadocJar(type: Jar) {
-      classifier "javadoc"
-      from javadoc
-    }
+  apply plugin: "idea"
+  apply plugin: "eclipse"
+  apply plugin: "groovy"
+  apply plugin: "signing"
   
-    artifacts {
-      archives sourcesJar, javadocJar
+  sourceCompatibility = 1.5
+  targetCompatibility = 1.5
+
+  signing {
+    sign configurations.archives
+    required = !isSnapshotVersion
+  
+    // workaround GRADLE-2091 (can remove for gradle 1.0-milestone-8)
+    tasks.withType(org.gradle.plugins.signing.Sign) { it.required !isSnapshotVersion }
+  }
+
+  idea {
+    project {
+      jdkName = "1.6"
     }
+  }
+
+  configurations {
+    all*.exclude module: "junit" // we use junit-dep instead
+  }
+
+  dependencies {
+    groovy libs.groovy
+  }
+
+  javadoc {
+    include "spock/**"
+    configure(options) {
+      links "http://download.oracle.com/javase/1.5.0/docs/api/"
+      links "http://groovy.codehaus.org/gapi"
+      links "http://kentbeck.github.com/junit/javadoc/4.9"
+      links "http://www.jarvana.com/jarvana/inspect/org/hamcrest/hamcrest-core/1.2/hamcrest-core-1.2-javadoc.jar"
+    }
+  }
+
+  task sourcesJar(type: Jar) {
+    classifier "sources"
+    from sourceSets.main.allSource
+  }
+
+  task javadocJar(type: Jar) {
+    classifier "javadoc"
+    from javadoc
+  }
+
+  artifacts {
+    archives sourcesJar, javadocJar
   }
 }
 

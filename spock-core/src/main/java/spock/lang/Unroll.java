@@ -27,6 +27,6 @@ import java.lang.annotation.*;
 @Target(ElementType.METHOD)
 public @interface Unroll {
   // to ensure best possible tool support, we use the same default naming
-  // scheme as Junit's @Parameterized
-  String value() default "#featureName[#iterationCount]";
+  // scheme as JUnit's @Parameterized
+  String value() default "";
 }

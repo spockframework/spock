@@ -67,12 +67,6 @@ public abstract class SpockRuntime {
     return GroovyRuntimeUtil.despreadList(args, spreads, positions);
   }
 
-  public static final String FEATURE_METHOD_CALLED = "featureMethodCalled";
-
-  public static void featureMethodCalled() {
-    throw new InvalidSpecException("Feature methods cannot be called from user code");
-  }
-
   private static String messageToString(Object message) {
     if (message == null) return null; // treat as "not available"
 

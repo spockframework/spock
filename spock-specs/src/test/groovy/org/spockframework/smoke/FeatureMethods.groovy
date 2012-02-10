@@ -16,8 +16,11 @@
 
 package org.spockframework.smoke
 
-import org.spockframework.runtime.InvalidSpecException
+import org.junit.runner.notification.RunListener
+
 import spock.lang.Specification
+import spock.util.EmbeddedSpecRunner
+import spock.lang.Issue
 
 /**
  *
@@ -29,7 +32,47 @@ class FeatureMethods extends Specification {
     featureMethod()
 
     then:
-    thrown(InvalidSpecException)
+    thrown(NoSuchMethodError) // Groovy 1.7 throws MissingMethodException here (which is nicer)
+  }
+
+  @Issue("http://issues.spockframework.org/detail?id=229")
+  def "don't make it into the class file with their original name"() {
+    expect:
+    !getClass().getDeclaredMethods().any { it.name == "featureMethod" }
+  }
+  
+  def "are nevertheless reported with their original name"() {
+    def runner = new EmbeddedSpecRunner()
+    RunListener listener = Mock()
+    runner.listeners << listener
+    
+    when:
+    runner.runSpecBody("""
+def "original name"() { expect: true }
+    """)
+
+    then:
+    1 * listener.testStarted({it.methodName == "original name"})
+    1 * listener.testFinished({it.methodName == "original name"})
+  }
+
+  def "can.have?names#con/tain!ing~any`char(act \\ers?!"() {
+    expect: true
+  }
+
+  def "can have names containing any characters in embedded specs"() {
+    def runner = new EmbeddedSpecRunner()
+    RunListener listener = Mock()
+    runner.listeners << listener
+
+    when:
+    runner.runSpecBody("""
+def "can.have?names#con/tain!ing~any`char(act \\\\ers?!"() { expect: true }
+    """)
+
+    then:
+    1 * listener.testStarted({it.methodName == "can.have?names#con/tain!ing~any`char(act \\ers?!"})
+    1 * listener.testFinished({it.methodName == "can.have?names#con/tain!ing~any`char(act \\ers?!"})
   }
 
   def featureMethod() {

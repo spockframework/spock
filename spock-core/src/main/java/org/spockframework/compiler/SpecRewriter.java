@@ -30,8 +30,6 @@ import org.spockframework.compiler.model.*;
 import org.spockframework.mock.MockController;
 import org.spockframework.util.InternalIdentifiers;
 import org.spockframework.util.Identifiers;
-import org.spockframework.runtime.SpockRuntime;
-import org.spockframework.util.Jvm;
 
 /**
  * A Spec visitor responsible for most of the rewriting of a Spec's AST.
@@ -332,7 +330,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
     MethodNode newAst = copyMethod(oldAst, createInternalName(feature));
     spec.getAst().addMethod(newAst);
     feature.setAst(newAst);
-    deactivateMethod(oldAst);
+    deleteMethod(oldAst);
   }
 
   private String createInternalName(FeatureMethod feature) {
@@ -355,26 +353,8 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
     return newMethod;
   }
 
-  private void deactivateMethod(MethodNode method) {
-    if (Jvm.getCurrent().isIbmJvm()) {
-      // see http://issues.spockframework.org/detail?id=225
-      // solves the problem if spec is compiled with IBM JDK
+  private void deleteMethod(MethodNode method) {
       spec.getAst().getMethods().remove(method);
-      return;
-    }
-    
-    Statement stat = new ExpressionStatement(
-        new MethodCallExpression(
-            new ClassExpression(nodeCache.SpockRuntime),
-            new ConstantExpression(SpockRuntime.FEATURE_METHOD_CALLED),
-            ArgumentListExpression.EMPTY_ARGUMENTS));
-
-    BlockStatement block = new BlockStatement();
-    block.addStatement(stat);
-    method.setCode(block);
-    method.setReturnType(ClassHelper.VOID_TYPE);
-    method.setVariableScope(new VariableScope());
-    method.getAnnotations().clear(); // prevents problem with exotic method names and annotation closures
   }
 
   // where block must be rewritten before all other blocks

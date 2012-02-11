@@ -49,12 +49,6 @@ allprojects {
     tasks.withType(org.gradle.plugins.signing.Sign) { it.required !isSnapshotVersion }
   }
 
-  idea {
-    project {
-      jdkName = "1.6"
-    }
-  }
-
   configurations {
     all*.exclude module: "junit" // we use junit-dep instead
   }
@@ -85,6 +79,17 @@ allprojects {
 
   artifacts {
     archives sourcesJar, javadocJar
+  }
+}
+
+idea {
+  project {
+    jdkName "1.6"
+    ipr {
+      withXml { provider ->
+        provider.asNode().component.find { it.'@name' == 'VcsDirectoryMappings' }?.mapping[0].'@vcs' = 'Git'
+      }
+    }
   }
 }
 

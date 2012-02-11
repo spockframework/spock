@@ -65,6 +65,8 @@ new $chain().a()
     CallChainException e = thrown()
     stackTraceLooksLike(e, """
 $chain|c|35
+$chain\$StaticInner|staticInner|46
+$chain\$Inner|inner|40
 $chain|b|30
 $chain|a|26
 apackage.ASpec|a feature|2

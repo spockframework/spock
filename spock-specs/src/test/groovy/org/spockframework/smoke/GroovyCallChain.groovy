@@ -27,11 +27,23 @@ public class GroovyCallChain {
   }
 
   private int b() {
-    c("foo", "bar");
+    new Inner().inner()
     return 0;
   }
 
   static void c(String foo, String bar) {
     throw new CallChainException();
+  }
+    
+  class Inner {
+      def inner() {
+        new StaticInner().staticInner()
+      }
+  }
+    
+  static class StaticInner {
+      def staticInner() {
+        c("foo", "bar")
+      }
   }
 }

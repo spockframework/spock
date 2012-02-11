@@ -27,11 +27,23 @@ public class JavaCallChain {
   }
 
   private int b() {
-    c("foo", "bar");
+    new Inner().inner();
     return 0;
   }
 
   static void c(String foo, String bar) {
     throw new CallChainException();
   }
+    
+  class Inner {
+      public void inner() {
+          new StaticInner().staticInner();
+      }
+  }
+    
+  static class StaticInner {
+        public void staticInner() {
+            c("foo", "bar");
+        }
+    }
 }

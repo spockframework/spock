@@ -113,6 +113,6 @@ public class StackTraceFilter implements IStackTraceFilter {
   }
 
   private boolean isGeneratedMethod(StackTraceElement elem) {
-    return elem.getClassName().contains("$") || elem.getMethodName().contains("$");
+    return elem.getLineNumber() < 0;
   }
 }

@@ -16,3 +16,6 @@ dependencies {
   testRuntime libs.h2database
 }
 
+tasks.withType(Test) {
+    maxParallelForks Math.max(2, (int) (Runtime.runtime.availableProcessors() / 2))
+}

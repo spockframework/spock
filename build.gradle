@@ -40,16 +40,9 @@ allprojects {
   signing {
     sign configurations.archives
     required = !isSnapshotVersion
-  
+
     // workaround GRADLE-2091 (can remove for gradle 1.0-milestone-8)
     tasks.withType(org.gradle.plugins.signing.Sign) { it.required !isSnapshotVersion }
-  }
-  
-  idea {
-    project {
-        jdkName = "1.6"
-        languageLevel = "1.5"
-    }
   }
 
   configurations {
@@ -82,6 +75,19 @@ allprojects {
 
   artifacts {
     archives sourcesJar, javadocJar
+  }
+}
+
+idea {
+  project {
+    jdkName "1.6"
+    ipr {
+      withXml { provider ->
+        def node = provider.asNode()
+        node.component.find { it.'@name' == 'VcsDirectoryMappings' }?.mapping[0].'@vcs' = 'Git'
+        node.append(new XmlParser().parse(file("ideaCodeStyle.xml")))
+      }
+    }
   }
 }
 

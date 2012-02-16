@@ -84,8 +84,10 @@ class DefaultInteractions extends Specification {
     expect:
     foo.toString() == "mock around the clock"
   }
+
+  interface Foo {}
+
+  interface Bar {}
 }
 
-private interface Foo {}
 
-private interface Bar {}

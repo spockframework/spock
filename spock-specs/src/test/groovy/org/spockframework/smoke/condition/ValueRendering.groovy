@@ -293,47 +293,48 @@ null == "foo"
       assert null == "foo"
     }
   }
-}
 
-private class SingleLineToString {
-  String toString() {
-    "single line"
+  static class SingleLineToString {
+    String toString() {
+      "single line"
+    }
+  }
+
+  static class MultiLineToString {
+    String toString() {
+      "mul\ntiple\n   lines"
+    }
+  }
+
+  static class NullToString {
+    String objectToString() {
+      super.toString()
+    }
+
+    String toString() { null }
+  }
+
+  static class EmptyToString {
+    String objectToString() {
+      super.toString()
+    }
+
+    String toString() { "" }
+  }
+
+  static class ThrowingToString {
+    String objectToString() {
+      super.toString()
+    }
+
+    String toString() {
+      throw new UnsupportedOperationException()
+    }
+  }
+
+  enum EnumWithToString {
+    VALUE;
+    String toString() { "I'm a value" }
   }
 }
 
-private class MultiLineToString {
-  String toString() {
-    "mul\ntiple\n   lines"
-  }
-}
-
-private class NullToString {
-  String objectToString() {
-    super.toString()
-  }
-
-  String toString() { null }
-}
-
-private class EmptyToString {
-  String objectToString() {
-    super.toString()
-  }
-
-  String toString() { "" }
-}
-
-private class ThrowingToString {
-  String objectToString() {
-    super.toString()
-  }
-
-  String toString() {
-    throw new UnsupportedOperationException()
-  }
-}
-
-private enum EnumWithToString {
-  VALUE;
-  String toString() { "I'm a value" }
-}

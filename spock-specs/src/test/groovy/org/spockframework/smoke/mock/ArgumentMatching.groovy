@@ -91,14 +91,14 @@ class ArgumentMatching extends Specification {
     then:
     1 * varargs.m("one")
   }
+
+  interface Overloads {
+    void m()
+    void m(String one)
+  }
+
+  interface Varargs2 {
+    void m(String... strings)
+  }
 }
 
-// can't be nested interfaces due to Groovy 1.7 bug
-private interface Overloads {
-  void m()
-  void m(String one)
-}
-
-private interface Varargs2 {
-  void m(String... strings)
-}

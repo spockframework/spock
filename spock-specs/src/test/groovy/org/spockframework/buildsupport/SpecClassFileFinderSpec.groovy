@@ -36,11 +36,14 @@ class SpecClassFileFinderSpec extends Specification {
     expect:
     finder.isRunnableSpec(ReflectionUtil.getClassFile(ConcreteSpec))
   }
+
+  static class RegularClass {}
 }
 
-private class RegularClass {}
-
-private abstract class AbstractSpec extends Specification {}
+abstract class AbstractSpec extends Specification {}
 
 @Ignore
-private class ConcreteSpec extends Specification {}
+class ConcreteSpec extends Specification {}
+
+
+

@@ -81,12 +81,14 @@ class InteractionsWithPropertySyntax extends Specification {
     1 * props./length|empty/
     0 * _
   }
+
+  interface HasProperties {
+    int getLength()
+    void setLength(int length)
+
+    boolean isEmpty()
+    boolean getFull()
+  }
 }
 
-private interface HasProperties {
-  int getLength()
-  void setLength(int length)
 
-  boolean isEmpty()
-  boolean getFull()
-}

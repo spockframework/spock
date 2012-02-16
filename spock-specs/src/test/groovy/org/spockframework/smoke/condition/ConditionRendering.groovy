@@ -743,22 +743,23 @@ ${func.toString()}
       // cannot occur in condition
   }
   */
+
+  static class Holder {
+    public x = 0
+
+    def getX() { 9 }
+
+    String toString() {"h"}
+  }
+
+  static class Person2 {
+    def name
+    def age
+    def height
+
+    def eat(args) { null }
+
+    String toString() { "p" }
+  }
 }
 
-private class Holder {
-  public x = 0
-
-  def getX() { 9 }
-
-  String toString() {"h"}
-}
-
-private class Person2 {
-  def name
-  def age
-  def height
-  
-  def eat(args) { null }
-
-  String toString() { "p" }
-}

@@ -185,14 +185,14 @@ class MatcherConditions extends EmbeddedSpecification {
   private static palindrome() {
     new IsPalindrome()
   }
-}
 
-private class IsPalindrome extends BaseMatcher<String> {
-  boolean matches(Object value) {
-    value instanceof String && value.reverse() == value
-  }
+  static class IsPalindrome extends BaseMatcher<String> {
+    boolean matches(Object value) {
+      value instanceof String && value.reverse() == value
+    }
 
-  void describeTo(Description description) {
-    description.appendText("a palindrome")
+    void describeTo(Description description) {
+      description.appendText("a palindrome")
+    }
   }
 }

@@ -96,10 +96,11 @@ class SpreadWildcardUsage extends Specification {
     def m(String one, String two)
     def m(String one, String two, String three)
   }
+
+  interface Varargs {
+    def m(String one, String... remaining)
+  }
 }
 
-// class format error when moved inside the spec (Groovy bug?)
-private interface Varargs {
-  def m(String one, String... remaining)
-}
+
 

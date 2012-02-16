@@ -49,8 +49,9 @@ class GroovyClassBasedMocks extends Specification {
     then:
     1 * mockMe.someMethod()
   }
+
+  static class MockMe {
+    def foo(int i) {}
+  }
 }
 
-private class MockMe {
-  def foo(int i) {}
-}

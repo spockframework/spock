@@ -349,27 +349,28 @@ class ConditionEvaluation extends Specification {
       // cannot occur in condition
   }
   */
+
+  static class Properties {
+    def getNext() { this }
+
+    def x
+  }
+
+  static class Attributes {
+    def x
+    def y
+  }
+
+  static class MethodPointers {
+    def inc(x) { x + 1 }
+  }
+
+  static class Person {
+    def name
+    def age
+    def height
+
+    def eat(args) { args }
+  }
 }
 
-private class Properties {
-  def getNext() { this }
-
-  def x
-}
-
-private class Attributes {
-  def x
-  def y
-}
-
-private class MethodPointers {
-  def inc(x) { x + 1 }
-}
-
-private class Person {
-  def name
-  def age
-  def height
-  
-  def eat(args) { args }
-}

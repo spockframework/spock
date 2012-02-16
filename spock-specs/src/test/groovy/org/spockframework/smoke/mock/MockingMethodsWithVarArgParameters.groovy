@@ -143,17 +143,18 @@ class MockingMethodsWithVarArgParameters extends Specification {
     then:
     1 * mock.foo(2, "one", "two")  
   }
+
+  interface GroovyVarArgParameter {
+    def foo(int i, String... strings)
+  }
+
+  interface GroovyArrayParameter {
+    def foo(int i, String[] strings)
+  }
+
+  interface NoVarArgParameter {
+    def foo(int i, strings)
+  }
 }
 
-private interface GroovyVarArgParameter {
-  def foo(int i, String... strings)
-}
-
-private interface GroovyArrayParameter {
-  def foo(int i, String[] strings)
-}
-
-private interface NoVarArgParameter {
-  def foo(int i, strings)
-}
 

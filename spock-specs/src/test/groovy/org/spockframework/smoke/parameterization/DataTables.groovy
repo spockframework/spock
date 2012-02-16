@@ -258,8 +258,9 @@ a | b | c
     1 | 2 || 3
     4 || 5 | 9
   }
+
+  static class Person {
+    def age
+  }
 }
 
-private class Person {
-  def age
-}

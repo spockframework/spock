@@ -46,14 +46,17 @@ class SpecUtilSpec extends Specification {
     SpecUtil.isSpec(DerivedSpec)
     SpecUtil.isRunnableSpec(DerivedSpec)
   }
+
+  static class RegularClass extends ArrayList {}
 }
 
-private class RegularClass extends ArrayList {}
-
-private abstract class AbstractSpec extends Specification {}
+abstract class AbstractSpec extends Specification {}
 
 @Ignore
-private class ConcreteSpec extends Specification {}
+class ConcreteSpec extends Specification {}
 
 @Ignore
-private class DerivedSpec extends ConcreteSpec {}
+class DerivedSpec extends ConcreteSpec {}
+
+
+

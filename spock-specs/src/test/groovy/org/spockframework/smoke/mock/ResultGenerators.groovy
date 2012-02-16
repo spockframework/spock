@@ -190,27 +190,28 @@ class ResultGenerators extends Specification {
         [new RuntimeException(), new IOException()]
     ].combinations()
   }
-}
 
-private interface Named {
-  String getName()
-}
+  interface Named {
+    String getName()
+  }
 
-private interface Calculator {
-  BigDecimal calculate()
-}
+  interface Calculator {
+    BigDecimal calculate()
+  }
 
-private interface SetProducer {
-  Set produce()
-}
+  interface SetProducer {
+    Set produce()
+  }
 
-private class GroovyCaller {
-  Throwable call(Callable callable) {
-    try {
-      callable.call()
-      return null
-    } catch (Throwable t) {
-      return t
+  static class GroovyCaller {
+    Throwable call(Callable callable) {
+      try {
+        callable.call()
+        return null
+      } catch (Throwable t) {
+        return t
+      }
     }
   }
 }
+

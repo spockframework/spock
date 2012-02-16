@@ -53,21 +53,23 @@ class ErrorReporting extends Specification {
     then:
     1 * collaborator.welcome()
   }
-}
 
-private class Swallower {
-  Collaborator collaborator
+  static class Swallower {
+    Collaborator collaborator
 
-  def swallow() {
-    try {
-      collaborator.welcome()
-      collaborator.work()
-      collaborator.work()
-    } catch (Throwable swallowed) {}
+    def swallow() {
+      try {
+        collaborator.welcome()
+        collaborator.work()
+        collaborator.work()
+      } catch (Throwable swallowed) {}
+    }
+  }
+
+  interface Collaborator {
+    def welcome()
+    def work()
   }
 }
 
-private interface Collaborator {
-  def welcome()
-  def work()
-}
+

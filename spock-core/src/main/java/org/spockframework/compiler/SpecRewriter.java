@@ -325,12 +325,12 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
   }
 
   private void transplantMethod(Method method) {
-    FeatureMethod feature = (FeatureMethod)method;
+    FeatureMethod feature = (FeatureMethod) method;
     MethodNode oldAst = feature.getAst();
     MethodNode newAst = copyMethod(oldAst, createInternalName(feature));
     spec.getAst().addMethod(newAst);
     feature.setAst(newAst);
-    deleteMethod(oldAst);
+    AstUtil.deleteMethod(spec.getAst(), oldAst);
   }
 
   private String createInternalName(FeatureMethod feature) {
@@ -351,10 +351,6 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
     newMethod.setAnnotationDefault(method.hasAnnotationDefault());
 
     return newMethod;
-  }
-
-  private void deleteMethod(MethodNode method) {
-      spec.getAst().getMethods().remove(method);
   }
 
   // where block must be rewritten before all other blocks

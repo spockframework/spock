@@ -32,7 +32,7 @@ class FeatureMethods extends Specification {
     featureMethod()
 
     then:
-    thrown(NoSuchMethodError) // Groovy 1.7 throws MissingMethodException here (which is nicer)
+    thrown(MissingMethodException)
   }
 
   @Issue("http://issues.spockframework.org/detail?id=229")

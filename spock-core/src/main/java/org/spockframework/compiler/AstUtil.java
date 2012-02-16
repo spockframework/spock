@@ -358,4 +358,10 @@ public abstract class AstUtil {
   public static boolean isJointCompiled(ClassNode clazz) {
     return clazz.getModule().getUnit().getConfig().getJointCompilationOptions() != null;
   }
+
+  public static void deleteMethod(ClassNode clazz, MethodNode method) {
+    // as of 1.8.6, this is the best possible implementation
+    clazz.getMethods().remove(method);
+    clazz.getDeclaredMethods(method.getName()).remove(method);
+  }
 }

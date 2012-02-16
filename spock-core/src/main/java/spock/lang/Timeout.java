@@ -39,6 +39,9 @@ public @interface Timeout {
    * The duration after which the execution of the annotated feature or fixture
    * method times out.
    *
+   * The stack trace of the failure exception will be the execution stack of the test when the
+   * timeout is reached.
+   *
    * @return the duration after which the execution of the annotated feature or
    * fixture method times out
    */

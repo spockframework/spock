@@ -21,12 +21,14 @@ import java.util.concurrent.TimeUnit
 import org.spockframework.runtime.SpockTimeoutError
 
 import spock.lang.*
+import org.spockframework.EmbeddedSpecification
+import org.junit.runner.Result
 
 /**
  *
  * @author Peter Niederwieser
  */
-class TimeoutExtension extends Specification {
+class TimeoutExtension extends EmbeddedSpecification {
   @Timeout(1)
   def "in time"() {
     setup: Thread.sleep(500)
@@ -47,5 +49,25 @@ class TimeoutExtension extends Specification {
   @Timeout(value = 1000, unit = TimeUnit.MILLISECONDS)
   def "not in time millis"() {
     setup: Thread.sleep(1100)
+  }
+
+  @Issue("http://code.google.com/p/spock/issues/detail?id=230")
+  def "stacktrace of error is the stack of the hung thread"() {
+    when:
+    Result result = runner.runSpecBody("""
+      @Timeout(1)
+      def "not in time"() {
+        setup:
+        Thread.sleep(1100)
+      }
+    """)
+
+    then:
+    def e = thrown(SpockTimeoutError)
+    def frames = e.stackTrace.toList()
+    frames.size() == 1
+    def topFrame = frames.first()
+    topFrame.className == "apackage.ASpec"
+    topFrame.methodName == "not in time"
   }
 }

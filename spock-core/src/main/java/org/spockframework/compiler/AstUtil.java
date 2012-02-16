@@ -359,4 +359,10 @@ public abstract class AstUtil {
     result.setMethodTarget(method);
     return result;
   }
+
+  public static void deleteMethod(ClassNode clazz, MethodNode method) {
+    // as of 1.8.6, this is the best possible implementation
+    clazz.getMethods().remove(method);
+    clazz.getDeclaredMethods(method.getName()).remove(method);
+  }
 }

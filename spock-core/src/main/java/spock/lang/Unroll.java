@@ -24,7 +24,7 @@ import java.lang.annotation.*;
  * @author Peter Niederwieser
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
+@Target({ElementType.TYPE, ElementType.METHOD})
 public @interface Unroll {
   String value() default "";
 }

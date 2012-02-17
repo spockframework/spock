@@ -214,6 +214,7 @@ def foo() {
     1 * listener.testStarted { it.methodName == "one #x two" }
   }
 
+  @Issue("http://issues.spockframework.org/detail?id=231")
   def "naming pattern supports property expressions"() {
     RunListener listener = Mock()
     runner.listeners << listener
@@ -234,6 +235,7 @@ def foo() {
     1 * listener.testStarted { it.methodName == "one fred two" }
   }
 
+  @Issue("http://issues.spockframework.org/detail?id=231")
   def "naming pattern supports zero-arg method calls"() {
     RunListener listener = Mock()
     runner.listeners << listener
@@ -254,6 +256,7 @@ def foo() {
     1 * listener.testStarted { it.methodName == "one 4 two" }
   }
 
+  @Issue("http://issues.spockframework.org/detail?id=231")
   def "method name can act as naming pattern"() {
     RunListener listener = Mock()
     runner.listeners << listener
@@ -274,6 +277,7 @@ def "one #actor.details.name.size() two"() {
     1 * listener.testStarted { it.methodName == "one 4 two" }
   }
 
+  @Issue("http://issues.spockframework.org/detail?id=231")
   def "naming pattern in @Unroll annotation wins over naming pattern in method name"() {
     RunListener listener = Mock()
     runner.listeners << listener
@@ -281,8 +285,8 @@ def "one #actor.details.name.size() two"() {
 
     when:
     runner.runSpecBody("""
-@Unroll("one #actor.details.name two")
-def "three #actor.details.name four"() {
+@Unroll("#actor.details.name")
+def "#actor.details.age"() {
   expect: true
 
   where:
@@ -291,11 +295,71 @@ def "three #actor.details.name four"() {
     """)
 
     then:
-    1 * listener.testStarted { it.methodName == "one fred two" }
+    1 * listener.testStarted { it.methodName == "fred" }
 
+  }
+
+  @Issue("http://issues.spockframework.org/detail?id=232")
+  def "can unroll a whole class at once"() {
+    RunListener listener = Mock()
+    runner.listeners << listener
+    runner.addImport(Actor.package)
+
+    when:
+    runner.runWithImports("""
+@Unroll
+class Foo extends Specification {
+  def "#actor.details.name"() {
+    expect: true
+
+    where:
+    actor = new Actor()
+  }
+
+  def "not data-driven"() {
+    expect: true
+  }
+
+  def "#actor.details.age"() {
+    expect: true
+
+    where:
+    actor = new Actor()
+  }
+}
+    """)
+
+    then:
+    1 * listener.testStarted { it.methodName == "fred" }
+    1 * listener.testStarted { it.methodName == "not data-driven" }
+    1 * listener.testStarted { it.methodName == "30" }
+  }
+
+  @Issue("http://issues.spockframework.org/detail?id=232")
+  def "method-level unroll annotation wins over class-level annotation"() {
+    RunListener listener = Mock()
+    runner.listeners << listener
+    runner.addImport(Actor.package)
+
+    when:
+    runner.runWithImports("""
+@Unroll
+class Foo extends Specification {
+  @Unroll("#actor.details.name")
+  def method() {
+    expect: true
+
+    where:
+    actor = new Actor()
+  }
+}
+    """)
+
+    then:
+    1 * listener.testStarted { it.methodName == "fred" }
   }
 }
 
 private class Actor {
-  Map details = [name: "fred"]
+  Map details = [name: "fred", age: 30]
 }

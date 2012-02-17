@@ -28,16 +28,18 @@ import org.spockframework.util.GroovyRuntimeUtil;
  * @author Peter Niederwieser
  */
 public class UnrolledFeatureNameGenerator {
-  private static final Pattern VARIABLE_PATTERN = Pattern.compile("#([a-zA-Z_\\$][\\w\\$]*)");
+  private static final Pattern EXPRESSION_PATTERN = Pattern.compile("#([a-zA-Z_\\$][\\w\\$\\.\\(\\)]*)");
 
   private final FeatureInfo feature;
-  private final Matcher variableMatcher;
+  private final Matcher expressionMatcher;
   private final Map<String, Integer> parameterNameToPosition = new HashMap<String, Integer>();
   private int iterationCount;
 
-  public UnrolledFeatureNameGenerator(FeatureInfo feature, String namePattern) {
+  public UnrolledFeatureNameGenerator(FeatureInfo feature, String unrollPattern) {
     this.feature = feature;
-    variableMatcher = VARIABLE_PATTERN.matcher(namePattern);
+
+    String namePattern = chooseNamePattern(feature, unrollPattern);
+    expressionMatcher = EXPRESSION_PATTERN.matcher(namePattern);
 
     int pos = 0;
     for (String name : feature.getParameterNames())
@@ -46,35 +48,59 @@ public class UnrolledFeatureNameGenerator {
 
   public String nameFor(Object[] args) {
     StringBuffer result = new StringBuffer();
-    variableMatcher.reset();
+    expressionMatcher.reset();
 
-    while (variableMatcher.find()) {
-      String variableName = variableMatcher.group(1);
-      String value = getValue(variableName, args);
-      variableMatcher.appendReplacement(result, Matcher.quoteReplacement(value));
+    while (expressionMatcher.find()) {
+      String expr = expressionMatcher.group(1);
+      String value = evaluateExpression(expr, args);
+      expressionMatcher.appendReplacement(result, Matcher.quoteReplacement(value));
     }
 
-    variableMatcher.appendTail(result);
+    expressionMatcher.appendTail(result);
     iterationCount++;
     return result.toString();
   }
 
-  private String getValue(String variableName, Object[] args) {
-    if (variableName.equals("featureName")) return feature.getName();
-    if (variableName.equals("iterationCount")) return String.valueOf(iterationCount);
+  private String chooseNamePattern(FeatureInfo feature, String unrollPattern) {
+    if (unrollPattern.length() > 0) {
+      return unrollPattern;
+    }
+    if (feature.getName().contains("#")) {
+      return feature.getName();
+    }
+    // default to same naming scheme as JUnit's @Parameterized (helps with tool support)
+    return "#featureName[#iterationCount]";
+  }
 
-    Integer pos = parameterNameToPosition.get(variableName);
-    if (pos == null) return "#" + variableName;
+  private String evaluateExpression(String expr, Object[] args) {
+    String[] exprParts = expr.split("\\.");
+    String firstPart = exprParts[0];
+    Object result;
+    
+    if (firstPart.equals("featureName")) {
+      result = feature.getName();
+    } else if (firstPart.equals("iterationCount")) {
+      result = String.valueOf(iterationCount);
+    } else {
+      Integer pos = parameterNameToPosition.get(firstPart);
+      if (pos == null) return "#" + expr;
+      result = args[pos];
+    }
 
-    Object arg = args[pos];
     try {
-      return GroovyRuntimeUtil.toString(arg);
+      for (int i = 1; i < exprParts.length; i++) {
+        String currPart = exprParts[i];
+        if (currPart.endsWith("()")) {
+          result = GroovyRuntimeUtil.invokeMethod(result, currPart.substring(0, currPart.length() - 2));
+        } else {
+          result = GroovyRuntimeUtil.getProperty(result, currPart);
+        }
+      }
+      return GroovyRuntimeUtil.toString(result);
     } catch (Throwable t) {
-      // since arg is provided by user code, we must be ready for any exception
-      // to occur; rethrowing an exception would currently be interpreted as a
-      // Spock bug, because IRunSupervisor isn't supposed to throw exceptions;
-      // therefore, we just don't replace this variable
-      return "#" + variableName;
+      // can't (re)throw exceptions here because IRunSupervisor isn't supposed
+      // to throw exceptions; therefore, we just don't replace this expression
+      return "#" + expr;
     }
   }
 }

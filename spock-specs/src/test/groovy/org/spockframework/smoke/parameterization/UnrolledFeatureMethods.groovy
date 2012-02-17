@@ -213,4 +213,89 @@ def foo() {
     then:
     1 * listener.testStarted { it.methodName == "one #x two" }
   }
+
+  def "naming pattern supports property expressions"() {
+    RunListener listener = Mock()
+    runner.listeners << listener
+    runner.addImport(Actor.package)
+
+    when:
+    runner.runSpecBody("""
+@Unroll("one #actor.details.name two")
+def foo() {
+  expect: true
+
+  where:
+  actor = new Actor()
+}
+    """)
+
+    then:
+    1 * listener.testStarted { it.methodName == "one fred two" }
+  }
+
+  def "naming pattern supports zero-arg method calls"() {
+    RunListener listener = Mock()
+    runner.listeners << listener
+    runner.addImport(Actor.package)
+
+    when:
+    runner.runSpecBody("""
+@Unroll("one #actor.details.name.size() two")
+def foo() {
+  expect: true
+
+  where:
+  actor = new Actor()
+}
+    """)
+
+    then:
+    1 * listener.testStarted { it.methodName == "one 4 two" }
+  }
+
+  def "method name can act as naming pattern"() {
+    RunListener listener = Mock()
+    runner.listeners << listener
+    runner.addImport(Actor.package)
+
+    when:
+    runner.runSpecBody("""
+@Unroll
+def "one #actor.details.name.size() two"() {
+  expect: true
+
+  where:
+  actor = new Actor()
+}
+    """)
+
+    then:
+    1 * listener.testStarted { it.methodName == "one 4 two" }
+  }
+
+  def "naming pattern in @Unroll annotation wins over naming pattern in method name"() {
+    RunListener listener = Mock()
+    runner.listeners << listener
+    runner.addImport(Actor.package)
+
+    when:
+    runner.runSpecBody("""
+@Unroll("one #actor.details.name two")
+def "three #actor.details.name four"() {
+  expect: true
+
+  where:
+  actor = new Actor()
+}
+    """)
+
+    then:
+    1 * listener.testStarted { it.methodName == "one fred two" }
+
+  }
+}
+
+private class Actor {
+  Map details = [name: "fred"]
 }

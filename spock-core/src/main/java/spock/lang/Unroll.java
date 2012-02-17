@@ -26,7 +26,5 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface Unroll {
-  // to ensure best possible tool support, we use the same default naming
-  // scheme as JUnit's @Parameterized
-  String value() default "#featureName[#iterationCount]";
+  String value() default "";
 }

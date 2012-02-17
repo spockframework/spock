@@ -16,6 +16,7 @@
 
 import spock.lang.*
 
+@Unroll
 class DataDriven extends Specification {
   def "maximum of two numbers"() {
     expect:
@@ -27,12 +28,31 @@ class DataDriven extends Specification {
     c << [7, 5, 9]
   }
 
-  @Unroll("minimum of #a and #b is #c")
-  def "minimum of two numbers"() {
+  def "minimum of #a and #b is #c"() {
     expect:
     Math.min(a, b) == c
 
     where:
-    [a, b, c] << [[3, 7, 3], [5, 4, 4], [9, 9, 9]]
+    a | b || c
+    3 | 7 || 3
+    5 | 4 || 4
+    9 | 9 || 9
+  }
+
+  def "#person.name is a #sex.toLowerCase() person"() {
+    expect:
+    person.getSex() == sex
+
+    where:
+    person                    || sex
+    new Person(name: "Fred")  || "Male"
+    new Person(name: "Wilma") || "Female"
+  }
+}
+
+private class Person {
+  String name
+  String getSex() {
+    name == "Fred" ? "Male" : "Female"
   }
 }

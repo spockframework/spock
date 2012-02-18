@@ -157,7 +157,7 @@ public abstract class ReflectionUtil {
   public static Class[] getTypes(Object... objects) {
     Class[] classes = new Class[objects.length];
     for (int i = 0; i < objects.length; i++)
-      classes[i] = NullSafe.getClass(objects[i]);
+      classes[i] = Objects.getClass(objects[i]);
     return classes;
   }
 

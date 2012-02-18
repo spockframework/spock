@@ -26,7 +26,7 @@ class IsRenderedExtension extends AbstractAnnotationDrivenExtension<IsRendered> 
         assert "@IsRendered only works for failing conditions (but no condition failed)"
       } catch (ConditionNotSatisfiedError e) {
         def expected = annotation.value().trim()
-        def actual = e.condition.render().trim()
+        def actual = e.condition.rendering.trim()
         if (expected != actual) throw new ComparisonFailure("Condition rendered incorrectly", expected, actual)
       }
     } as IMethodInterceptor)

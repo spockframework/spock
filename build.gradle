@@ -67,6 +67,10 @@ allprojects {
     }
   }
 
+  tasks.withType(Compile) { task ->
+    options.useAnt = false
+  }
+
   task sourcesJar(type: Jar) {
     classifier "sources"
     from sourceSets.main.allSource

@@ -14,16 +14,42 @@
 
 package org.spockframework.util;
 
+/**
+ * Utility methods applicable to (almost) any object. Includes null-safe variants of methods on class Object.
+ */
 public abstract class ObjectUtil {
-  // copied from:
-  // http://stackoverflow.com/questions/1660501/what-is-a-good-64bit-hash-function-in-java-for-textual-strings
-  public static long longHashCode(String string) {
-    long h = 1125899906842597L;
-    int len = string.length();
+  public static boolean equals(Object obj1, Object obj2) {
+    if (obj1 == null) return obj2 == null;
+    return obj1.equals(obj2);
+  }
 
-    for (int i = 0; i < len; i++) {
-      h = 31 * h + string.charAt(i);
+  public static int hashCode(Object obj) {
+    return obj == null ? 0 : obj.hashCode();
+  }
+
+  public static String toString(Object obj) {
+    return obj == null ? "null" : obj.toString();
+  }
+
+  public static Class<?> getClass(Object obj) {
+    return obj == null ? null : obj.getClass();
+  }
+
+  public static Class<?> voidAwareGetClass(Object obj) {
+    return obj == null ? void.class : obj.getClass();
+  }
+  
+  public static boolean eitherNull(Object... objs) {
+    for (Object obj: objs) {
+      if (obj == null) return true;
     }
-    return h;
-  } 
+    return false;
+  }
+
+  public static <T extends Comparable<T>> int compare(T c1, T c2) {
+    if (c1 == null && c2 == null) return 0;
+    if (c1 == null) return -1;
+    if (c2 == null) return 1;
+    return c1.compareTo(c2);
+  }
 }

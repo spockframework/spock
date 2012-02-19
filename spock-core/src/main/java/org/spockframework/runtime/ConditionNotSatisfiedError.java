@@ -32,6 +32,6 @@ public class ConditionNotSatisfiedError extends SpockAssertionError {
 
   @Override
   public String getMessage() {
-    return "Condition not satisfied:\n\n" + condition.render();
+    return "Condition not satisfied:\n\n" + condition.getRendering();
   }
 }

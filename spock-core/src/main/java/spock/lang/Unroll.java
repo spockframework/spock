@@ -27,7 +27,7 @@ import java.lang.annotation.*;
  * @author Peter Niederwieser
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
+@Target({ElementType.TYPE, ElementType.METHOD})
 public @interface Unroll {
   // to ensure best possible tool support, we use the same default naming
   // scheme as Junit's @Parameterized

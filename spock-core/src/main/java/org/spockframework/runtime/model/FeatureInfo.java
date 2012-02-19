@@ -109,11 +109,15 @@ public class FeatureInfo extends NodeInfo<SpecInfo, AnnotatedElement> implements
   }
 
   public boolean isUnrolled() {
-    return isParameterized() && getFeatureMethod().getReflection().isAnnotationPresent(Unroll.class);
+    return isParameterized() && getUnroll() != null;
   }
 
   public Unroll getUnroll() {
-    return getFeatureMethod().getReflection().getAnnotation(Unroll.class);
+    Unroll result = getFeatureMethod().getReflection().getAnnotation(Unroll.class);
+    if (result == null) {
+      result = getParent().getReflection().getAnnotation(Unroll.class);
+    }
+    return result;
   }
 
   public boolean isExcluded() {

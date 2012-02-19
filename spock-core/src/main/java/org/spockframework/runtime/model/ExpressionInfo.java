@@ -50,6 +50,7 @@ public class ExpressionInfo implements Iterable<ExpressionInfo> {
   private final List<ExpressionInfo> children;
   private String text;
   private Object value;
+  private String renderedValue;
   private boolean relevant = true;
 
   public ExpressionInfo(TextRegion region, TextPosition anchor, @Nullable String operation,
@@ -96,6 +97,18 @@ public class ExpressionInfo implements Iterable<ExpressionInfo> {
   public ExpressionInfo setValue(Object value) {
     this.value = value;
     return this;
+  }
+
+  public String getRenderedValue() {
+    return renderedValue;
+  }
+
+  public void setRenderedValue(String renderedValue) {
+    this.renderedValue = renderedValue;
+  }
+  
+  public String getEffectiveRenderedValue() {
+    return renderedValue != null ? renderedValue : text;
   }
 
   public boolean isRelevant() {

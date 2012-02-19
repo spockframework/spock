@@ -38,7 +38,7 @@ public class SpockComparisonFailure extends ComparisonFailure {
 
   @Override
   public String getMessage() {
-    return "Condition not satisfied:\n\n" + condition.render();
+    return "Condition not satisfied:\n\n" + condition.getRendering();
   }
 
   @Override

@@ -254,4 +254,65 @@ def foo(int value) {
     then:
     1 * listener.testStarted { println it.methodName; true }
   }
+
+  @Issue("http://issues.spockframework.org/detail?id=232")
+  def "can unroll a whole class at once"() {
+    RunListener listener = Mock()
+    runner.listeners << listener
+
+    when:
+    runner.runWithImports("""
+@Unroll
+class Foo extends Specification {
+  def "one"() {
+    expect: true
+
+    where:
+    n << (1..2)
+  }
+
+  def "not data-driven"() {
+    expect: true
+  }
+
+  def "two"() {
+    expect: true
+
+    where:
+    n << (1..2)
+  }
+}
+    """)
+
+    then:
+    1 * listener.testStarted { it.methodName == "one[0]" }
+    1 * listener.testStarted { it.methodName == "one[1]" }
+    1 * listener.testStarted { it.methodName == "not data-driven" }
+    1 * listener.testStarted { it.methodName == "two[0]" }
+    1 * listener.testStarted { it.methodName == "two[1]" }
+  }
+
+  @Issue("http://issues.spockframework.org/detail?id=232")
+  def "method-level unroll annotation wins over class-level annotation"() {
+    RunListener listener = Mock()
+    runner.listeners << listener
+
+    when:
+    runner.runWithImports("""
+@Unroll
+class Foo extends Specification {
+  @Unroll({"other\$n"})
+  def method() {
+    expect: true
+
+    where:
+    n << (1..2)
+  }
+}
+    """)
+
+    then:
+    1 * listener.testStarted { it.methodName == "other1" }
+    1 * listener.testStarted { it.methodName == "other2" }
+  }
 }

@@ -19,7 +19,7 @@ import org.spockframework.runtime.condition.EditDistance;
 import org.spockframework.runtime.condition.EditPathRenderer;
 import org.spockframework.runtime.model.ExpressionInfo;
 import org.spockframework.util.GroovyRuntimeUtil;
-import org.spockframework.util.Objects;
+import org.spockframework.util.ObjectUtil;
 import org.spockframework.util.Nullable;
 
 public class ExpressionInfoValueRenderer {
@@ -122,7 +122,7 @@ public class ExpressionInfoValueRenderer {
   private void addTypeHint(ExpressionInfo expr) {
     if (expr.getRenderedValue() == null) return;
 
-    Class<?> exprType = Objects.voidAwareGetClass(expr.getValue());
+    Class<?> exprType = ObjectUtil.voidAwareGetClass(expr.getValue());
     expr.setRenderedValue(expr.getRenderedValue() + " (" + exprType.getName() + ")");
   }
 }

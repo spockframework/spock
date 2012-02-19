@@ -59,7 +59,7 @@ public final class VersionNumber implements Comparable<VersionNumber> {
 		if (major != other.major) return major - other.major;
 		if (minor != other.minor) return minor - other.minor;
 		if (micro != other.micro) return micro - other.micro;
-    return Objects.compare(qualifier, other.qualifier);
+    return ObjectUtil.compare(qualifier, other.qualifier);
 	}
 
 	public boolean equals(Object other) {
@@ -70,7 +70,7 @@ public final class VersionNumber implements Comparable<VersionNumber> {
     int result = major;
     result = 31 * result + minor;
     result = 31 * result + micro;
-    result = 31 * result + Objects.hashCode(qualifier);
+    result = 31 * result + ObjectUtil.hashCode(qualifier);
     return result;
   }
 

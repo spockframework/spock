@@ -16,55 +16,55 @@ package org.spockframework.util
 
 import spock.lang.Specification
 
-class ObjectsSpec extends Specification {
+class ObjectUtilSpec extends Specification {
   def equals() {
     expect:
-    Objects.equals(null, null)
-    !Objects.equals(null, "foo")
-    !Objects.equals("foo", null) 
-    Objects.equals("foo", "foo")
-    !Objects.equals("foo", "bar")
+    ObjectUtil.equals(null, null)
+    !ObjectUtil.equals(null, "foo")
+    !ObjectUtil.equals("foo", null)
+    ObjectUtil.equals("foo", "foo")
+    !ObjectUtil.equals("foo", "bar")
   }
   
   def hashCode() {
     expect:
-    Objects.hashCode(null) == 0
-    Objects.hashCode("foo") == "foo".hashCode()
+    ObjectUtil.hashCode(null) == 0
+    ObjectUtil.hashCode("foo") == "foo".hashCode()
   }
   
   def toString() {
     expect:
-    Objects.toString(null) == "null"
-    Objects.toString("foo") == "foo"
+    ObjectUtil.toString(null) == "null"
+    ObjectUtil.toString("foo") == "foo"
   }
   
   def getClass() {
     expect:
-    Objects.getClass(null) == null
-    Objects.getClass("foo") == String
+    ObjectUtil.getClass(null) == null
+    ObjectUtil.getClass("foo") == String
   }
   
   def voidAwareGetClass() {
     expect:
-    Objects.voidAwareGetClass(null) == void
-    Objects.voidAwareGetClass("foo") == String
+    ObjectUtil.voidAwareGetClass(null) == void
+    ObjectUtil.voidAwareGetClass("foo") == String
   }
   
   def eitherNull() {
     expect:
-    Objects.eitherNull(null, null)
-    Objects.eitherNull("foo", null)
-    Objects.eitherNull(null, "bar")
-    !Objects.eitherNull("foo", "bar")
+    ObjectUtil.eitherNull(null, null)
+    ObjectUtil.eitherNull("foo", null)
+    ObjectUtil.eitherNull(null, "bar")
+    !ObjectUtil.eitherNull("foo", "bar")
   }
   
   def compare() {
     expect:
-    Objects.compare(null, null) == 0
-    Objects.compare(null, 3) < 0
-    Objects.compare(3, null) > 0
-    Objects.compare(3, 3) == 0
-    Objects.compare(3, 4) < 0
-    Objects.compare(4, 3) > 0
+    ObjectUtil.compare(null, null) == 0
+    ObjectUtil.compare(null, 3) < 0
+    ObjectUtil.compare(3, null) > 0
+    ObjectUtil.compare(3, 3) == 0
+    ObjectUtil.compare(3, 4) < 0
+    ObjectUtil.compare(4, 3) > 0
   }
 }

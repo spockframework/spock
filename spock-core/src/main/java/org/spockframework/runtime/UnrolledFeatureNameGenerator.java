@@ -25,7 +25,7 @@ import groovy.lang.MissingPropertyException;
 
 import org.spockframework.runtime.extension.ExtensionException;
 import org.spockframework.runtime.model.FeatureInfo;
-import org.spockframework.util.NullSafe;
+import org.spockframework.util.ObjectUtil;
 
 /**
  * @author Peter Niederwieser
@@ -82,7 +82,7 @@ public class UnrolledFeatureNameGenerator {
 
     String name;
     try {
-      name = NullSafe.toString(nameGenerator.call());
+      name = ObjectUtil.toString(nameGenerator.call());
     } catch (Exception e) {
       throw new ExtensionException("Failed to evaluate @Unroll naming pattern", e);
     }

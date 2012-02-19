@@ -30,7 +30,7 @@ public abstract class SpockRuntime {
 
   // condition can be null too, but not in the sense of "not available"
   public static void verifyCondition(@Nullable ValueRecorder recorder,
-      @Nullable String text, int line, int column, @Nullable Object message, Object condition) {
+      @Nullable String text, int line, int column, @Nullable Object message, @Nullable Object condition) {
     if (!GroovyRuntimeUtil.isTruthy(condition))
       throw new ConditionNotSatisfiedError(
           new Condition(recorder, text, TextPosition.create(line, column), messageToString(message)));

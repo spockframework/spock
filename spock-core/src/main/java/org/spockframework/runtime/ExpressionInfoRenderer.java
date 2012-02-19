@@ -18,13 +18,8 @@ package org.spockframework.runtime;
 
 import java.util.*;
 
-import org.codehaus.groovy.runtime.DefaultGroovyMethods;
-
-import org.spockframework.runtime.condition.*;
 import org.spockframework.runtime.model.ExpressionInfo;
 import org.spockframework.runtime.model.TextPosition;
-
-import groovy.lang.GString;
 
 /**
  * Creates a string representation of an assertion and its recorded values.
@@ -53,17 +48,17 @@ public class ExpressionInfoRenderer {
   }
 
   private String render() {
-    renderText();
-    renderValues();
+    placeText();
+    placeValues();
     return linesToString();
   }
 
-  private void renderText() {
+  private void placeText() {
     lines.add(new StringBuilder(expr.getText()));
     startColumns.add(0);
   }
 
-  private void renderValues() {
+  private void placeValues() {
     Comparator<ExpressionInfo> comparator = new Comparator<ExpressionInfo>() {
       public int compare(ExpressionInfo expr1, ExpressionInfo expr2) {
         return expr2.getAnchor().getColumn() - expr1.getAnchor().getColumn();
@@ -71,11 +66,11 @@ public class ExpressionInfoRenderer {
     };
 
     for (ExpressionInfo expr : this.expr.inCustomOrder(true, comparator))
-      renderValue(expr);
+      placeValue(expr);
   }
 
-  private void renderValue(ExpressionInfo expr) {
-    String str = valueToString(expr);
+  private void placeValue(ExpressionInfo expr) {
+    String str = expr.getRenderedValue();
     if (str == null) return;
 
     int startColumn = expr.getAnchor().getColumn();
@@ -123,62 +118,5 @@ public class ExpressionInfoRenderer {
     while (line.length() < column)
       line.append(' ');
     line.replace(column - 1, column - 1 + str.length(), str);
-  }
-
-  /**
-   * Returns a string representation of a value, or <tt>null</tt> if
-   * the value should not be rendered (because it does not add any valuable
-   * information).
-   *
-   * @param expr the expression whose value is to be rendered
-   * @return a string representation of the value
-   */
-  private static String valueToString(ExpressionInfo expr) {
-    Object value = expr.getValue();
-
-    if (value == null) return "null";
-    if ("".equals(value)) return "\"\""; // value.equals() might throw exception, so we use "".equals() instead
-
-    String str;
-     
-    try {
-      str = customToString(expr);
-      if (str == null) str = DefaultGroovyMethods.toString(value);
-    } catch (Exception e) {
-      return String.format("%s (renderer threw %s)",
-          javaLangObjectToString(value), e.getClass().getSimpleName());
-    }
-
-    if (str == null || str.equals("")) {
-      return javaLangObjectToString(value);
-    }
-
-    // only print enum values that add valuable information
-    if (value instanceof Enum) {
-      String text = expr.getText().trim();
-      int index = text.lastIndexOf('.');
-      String potentialEnumConstantNameInText = text.substring(index + 1);
-      if (str.equals(potentialEnumConstantNameInText)) return null;
-    }
-
-    return str;
-  }
-
-  private static String javaLangObjectToString(Object value) {
-    String hash = Integer.toHexString(System.identityHashCode(value));
-    return value.getClass().getName() + "@" + hash;
-  }
-
-  private static String customToString(ExpressionInfo expr) {
-    if (expr.isEqualityComparison(String.class, GString.class)) {
-      String str1 = expr.getChildren().get(0).getValue().toString();
-      String str2 = expr.getChildren().get(1).getValue().toString();
-      EditDistance dist = new EditDistance(str1, str2);
-      return String.format("false\n%d difference%s (%d%% similarity)\n%s",
-          dist.getDistance(), dist.getDistance() == 1 ? "" : "s", dist.getSimilarityInPercent(),
-          new EditPathRenderer().render(str1, str2, dist.calculatePath()));
-    }
-    
-    return null;
   }
 }

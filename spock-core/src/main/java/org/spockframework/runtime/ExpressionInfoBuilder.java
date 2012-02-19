@@ -53,7 +53,7 @@ public class ExpressionInfoBuilder {
 
     BlockStatement blockStat = unit.getAST().getStatementBlock();
     Assert.that(blockStat != null && blockStat.getStatements().size() == 1);
-    Statement stat = (Statement)blockStat.getStatements().get(0);
+    Statement stat = blockStat.getStatements().get(0);
     Assert.that(stat instanceof ExpressionStatement);
     Expression expr = ((ExpressionStatement)stat).getExpression();
 

@@ -35,7 +35,8 @@ public class Condition {
   private final TextPosition position;
   private final String message;
 
-  private ExpressionInfo expression;
+  private volatile ExpressionInfo expression;
+  private volatile String rendering;
 
   public Condition(@Nullable Iterable<Object> values, @Nullable String text, TextPosition position,
       @Nullable String message) {
@@ -60,25 +61,38 @@ public class Condition {
   }
 
   @Nullable
-  public ExpressionInfo getExpression() {
-    if (text == null || values == null) return null;
-
-    if (expression == null)
-      expression = new ExpressionInfoBuilder(flatten(text), TextPosition.create(1, 1), values).build();
-
-    return expression;
-  }
-
-  @Nullable
   public String getMessage() {
     return message;
   }
 
-  public String render() {
+  @Nullable
+  public ExpressionInfo getExpression() {
+    if (expression == null) {
+      createExpression();
+    }
+
+    return expression;
+  }
+
+  public String getRendering() {
+    if (rendering == null) {
+      createRendering();
+    }
+
+    return rendering;
+  }
+
+  private void createExpression() {
+    if (text == null || values == null) return;
+    expression = new ExpressionInfoBuilder(flatten(text), TextPosition.create(1, 1), values).build();
+  }
+
+  private void createRendering() {
     StringBuilder builder = new StringBuilder();
 
     if (getExpression() != null) {
-      builder.append(ExpressionInfoRenderer.render(getExpression()));
+      ExpressionInfoValueRenderer.render(expression);
+      builder.append(ExpressionInfoRenderer.render(expression));
     } else if (text != null) {
       builder.append(flatten(text));
       builder.append("\n");
@@ -92,10 +106,10 @@ public class Condition {
       builder.append("\n");
     }
 
-    return builder.toString();
+    rendering = builder.toString();
   }
 
-  private static String flatten(String text) {
+  private String flatten(String text) {
     return pattern.matcher(text).replaceAll(" ");
   }
 }

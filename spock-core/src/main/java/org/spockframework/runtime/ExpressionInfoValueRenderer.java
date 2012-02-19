@@ -88,44 +88,49 @@ public class ExpressionInfoValueRenderer {
     String result = renderAsStringComparison(expr);
     if (result != null) return result;
     
-    result = renderAsTypeHintedComparison(expr);
+    result = renderAsEqualityComparison(expr);
     if (result != null) return result;
     
     return GroovyRuntimeUtil.toString(expr.getValue());
   }
   
   private String renderAsStringComparison(ExpressionInfo expr) {
-    if (expr.isEqualityComparison(String.class, GString.class)) {
-      // here values can't be null
-      String str1 = expr.getChildren().get(0).getValue().toString();
-      String str2 = expr.getChildren().get(1).getValue().toString();
-      EditDistance dist = new EditDistance(str1, str2);
-      return String.format("false\n%d difference%s (%d%% similarity)\n%s",
-          dist.getDistance(), dist.getDistance() == 1 ? "" : "s", dist.getSimilarityInPercent(),
-          new EditPathRenderer().render(str1, str2, dist.calculatePath()));
-    }
-
-    return null;
+    if (!expr.isEqualityComparison(String.class, GString.class)) return null;
+    
+    // values can't be null here
+    String str1 = expr.getChildren().get(0).getValue().toString();
+    String str2 = expr.getChildren().get(1).getValue().toString();
+    EditDistance dist = new EditDistance(str1, str2);
+    return String.format("false\n%d difference%s (%d%% similarity)\n%s",
+        dist.getDistance(), dist.getDistance() == 1 ? "" : "s", dist.getSimilarityInPercent(),
+        new EditPathRenderer().render(str1, str2, dist.calculatePath()));
   }
   
-  private String renderAsTypeHintedComparison(ExpressionInfo expr) {
-    if (expr.isEqualityComparison()) {
-      ExpressionInfo expr1 = expr.getChildren().get(0);
-      ExpressionInfo expr2 = expr.getChildren().get(1);
-      if (Objects.eitherNull(expr1.getRenderedValue(), expr2.getRenderedValue())) {
-        // at least one of the values should not be rendered; hence don't add type hint
-        return null;
-      }
-      Class<?> expr1Type = Objects.voidAwareGetClass(expr1.getValue());
-      Class<?> expr2Type = Objects.voidAwareGetClass(expr2.getValue());
-      if (expr1Type != expr2Type
-          && expr1.getRenderedValue().equals(expr2.getRenderedValue())) {
-        expr1.setRenderedValue(expr1.getRenderedValue() + " (" + expr1Type.getName() + ")");
-        expr2.setRenderedValue(expr2.getRenderedValue() + " (" + expr2Type.getName() + ")");
-        return "false";
-      }
+  private String renderAsEqualityComparison(ExpressionInfo expr) {
+    if (!expr.isEqualityComparison()) return null;
+    
+    ExpressionInfo expr1 = expr.getChildren().get(0);
+    ExpressionInfo expr2 = expr.getChildren().get(1);
+    String text1 = getTextRepresentation(expr1);
+    String text2 = getTextRepresentation(expr2);
+    if (text1.equals(text2)) {
+      addTypeHint(expr1);
+      addTypeHint(expr2);
     }
 
-    return null;
+    return "false";
+  }
+  
+  private String getTextRepresentation(ExpressionInfo expr) {
+    String result = expr.getRenderedValue();
+    if (result == null) result = expr.getText();
+    return result;
+  }
+  
+  private void addTypeHint(ExpressionInfo expr) {
+    if (expr.getRenderedValue() == null) return;
+
+    Class<?> exprType = Objects.voidAwareGetClass(expr.getValue());
+    expr.setRenderedValue(expr.getRenderedValue() + " (" + exprType.getName() + ")");
   }
 }

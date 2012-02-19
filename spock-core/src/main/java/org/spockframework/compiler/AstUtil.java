@@ -356,7 +356,9 @@ public abstract class AstUtil {
   
   public static MethodCallExpression createDirectMethodCall(Expression target, MethodNode method, Expression arguments) {
     MethodCallExpression result = new MethodCallExpression(target, method.getName(), arguments);
-    result.setMethodTarget(method);
+    // don't generate direct method calls for the moment, due to:
+    // http://groovy.329449.n5.nabble.com/Problem-with-latest-2-0-beta-3-snapshot-and-Spock-td5496353.html
+    //result.setMethodTarget(method);
     return result;
   }
 

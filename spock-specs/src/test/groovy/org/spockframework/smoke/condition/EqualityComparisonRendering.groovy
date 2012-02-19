@@ -30,21 +30,6 @@ x == y
     }
   }
 
-  def "values with same representations and different types"() {
-    expect:
-    isRendered """
-x == y
-| |  |
-| |  1 (java.lang.String)
-| false
-1 (java.lang.Integer)
-    """, {
-      def x = 1
-      def y = "1"
-      assert x == y
-    }
-  }
-
   def "values with same representations and same types"() {
     expect:
     isRendered """
@@ -56,6 +41,21 @@ Fred (org.spockframework.smoke.condition.Person3)
     """, {
       def x = new Person3(name: "Fred")
       def y = new Person3(name: "Fred")
+      assert x == y
+    }
+  }
+
+  def "values with same representations and different types"() {
+    expect:
+    isRendered """
+x == y
+| |  |
+| |  1 (java.lang.String)
+| false
+1 (java.lang.Integer)
+    """, {
+      def x = 1
+      def y = "1"
       assert x == y
     }
   }
@@ -88,7 +88,7 @@ null (void)
     }
   }
 
-  def "type hints are also added for nested expressions"() {
+  def "type hints are also added for nested equality comparisons"() {
     expect:
     isRendered """
 (x == y) instanceof String
@@ -104,7 +104,7 @@ null (void)
     }
   }
 
-  def "no type hints are added for equals method"() {
+  def "type hints are not added when equals method is used (only when equality operator is used)"() {
     expect:
     isRendered """
 x.equals(y)

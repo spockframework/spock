@@ -106,6 +106,10 @@ public class ExpressionInfo implements Iterable<ExpressionInfo> {
   public void setRenderedValue(String renderedValue) {
     this.renderedValue = renderedValue;
   }
+  
+  public String getEffectiveRenderedValue() {
+    return renderedValue != null ? renderedValue : text;
+  }
 
   public boolean isRelevant() {
     return relevant && value != VALUE_NOT_AVAILABLE;

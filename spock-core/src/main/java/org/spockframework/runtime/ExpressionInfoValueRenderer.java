@@ -111,20 +111,12 @@ public class ExpressionInfoValueRenderer {
     
     ExpressionInfo expr1 = expr.getChildren().get(0);
     ExpressionInfo expr2 = expr.getChildren().get(1);
-    String text1 = getTextRepresentation(expr1);
-    String text2 = getTextRepresentation(expr2);
-    if (text1.equals(text2)) {
+    if (expr1.getEffectiveRenderedValue().equals(expr2.getEffectiveRenderedValue())) {
       addTypeHint(expr1);
       addTypeHint(expr2);
     }
 
     return "false";
-  }
-  
-  private String getTextRepresentation(ExpressionInfo expr) {
-    String result = expr.getRenderedValue();
-    if (result == null) result = expr.getText();
-    return result;
   }
   
   private void addTypeHint(ExpressionInfo expr) {

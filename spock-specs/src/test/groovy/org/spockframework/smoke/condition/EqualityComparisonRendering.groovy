@@ -35,12 +35,12 @@ x == y
     isRendered """
 x == y
 | |  |
-| |  Fred (org.spockframework.smoke.condition.Person3)
+| |  Fred (org.spockframework.smoke.condition.EqualityComparisonRendering\$Person)
 | false
-Fred (org.spockframework.smoke.condition.Person3)
+Fred (org.spockframework.smoke.condition.EqualityComparisonRendering\$Person)
     """, {
-      def x = new Person3(name: "Fred")
-      def y = new Person3(name: "Fred")
+      def x = new Person(name: "Fred")
+      def y = new Person(name: "Fred")
       assert x == y
     }
   }
@@ -115,11 +115,12 @@ x.equals(y)
       def y = "1"
       assert x.equals(y)
     }
-  }    
+  }
+
+  static class Person {
+    String name
+    String toString() { name }
+    boolean equals(other) { false }
+  }
 }
 
-private class Person3 {
-  String name
-  String toString() { name }
-  boolean equals(other) { false }
-}

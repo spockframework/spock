@@ -14,45 +14,43 @@
  * limitations under the License.
  */
 
-package org.spockframework.runtime;
+package org.spockframework.runtime.extension.builtin;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.spockframework.runtime.model.FeatureInfo;
+import org.spockframework.runtime.model.IterationInfo;
+import org.spockframework.runtime.model.NameProvider;
 import org.spockframework.util.GroovyRuntimeUtil;
 
 /**
  * @author Peter Niederwieser
  */
-public class UnrolledFeatureNameGenerator {
+public class UnrollNameProvider implements NameProvider<IterationInfo> {
   private static final Pattern EXPRESSION_PATTERN = Pattern.compile("#([a-zA-Z_\\$][\\w\\$\\.\\(\\)]*)");
 
   private final FeatureInfo feature;
   private final Matcher expressionMatcher;
-  private final Map<String, Integer> parameterNameToPosition = new HashMap<String, Integer>();
   private int iterationCount;
 
-  public UnrolledFeatureNameGenerator(FeatureInfo feature, String unrollPattern) {
+  public UnrollNameProvider(FeatureInfo feature, String namePattern) {
     this.feature = feature;
-
-    String namePattern = chooseNamePattern(feature, unrollPattern);
     expressionMatcher = EXPRESSION_PATTERN.matcher(namePattern);
-
-    int pos = 0;
-    for (String name : feature.getParameterNames())
-      parameterNameToPosition.put(name, pos++);
   }
 
-  public String nameFor(Object[] args) {
+  // always returns a name
+  public String getName(IterationInfo iterationInfo) {
+    return nameFor(iterationInfo.getDataValues());
+  }
+
+  String nameFor(Object... dataValues) {
     StringBuffer result = new StringBuffer();
     expressionMatcher.reset();
 
     while (expressionMatcher.find()) {
       String expr = expressionMatcher.group(1);
-      String value = evaluateExpression(expr, args);
+      String value = evaluateExpression(expr, dataValues);
       expressionMatcher.appendReplacement(result, Matcher.quoteReplacement(value));
     }
 
@@ -61,30 +59,19 @@ public class UnrolledFeatureNameGenerator {
     return result.toString();
   }
 
-  private String chooseNamePattern(FeatureInfo feature, String unrollPattern) {
-    if (unrollPattern.length() > 0) {
-      return unrollPattern;
-    }
-    if (feature.getName().contains("#")) {
-      return feature.getName();
-    }
-    // default to same naming scheme as JUnit's @Parameterized (helps with tool support)
-    return "#featureName[#iterationCount]";
-  }
-
-  private String evaluateExpression(String expr, Object[] args) {
+  private String evaluateExpression(String expr, Object[] dataValues) {
     String[] exprParts = expr.split("\\.");
     String firstPart = exprParts[0];
     Object result;
-    
+
     if (firstPart.equals("featureName")) {
       result = feature.getName();
     } else if (firstPart.equals("iterationCount")) {
       result = String.valueOf(iterationCount);
     } else {
-      Integer pos = parameterNameToPosition.get(firstPart);
-      if (pos == null) return "#" + expr;
-      result = args[pos];
+      int index = feature.getDataVariables().indexOf(firstPart);
+      if (index < 0) return "#" + expr;
+      result = dataValues[index];
     }
 
     try {
@@ -98,8 +85,6 @@ public class UnrolledFeatureNameGenerator {
       }
       return GroovyRuntimeUtil.toString(result);
     } catch (Throwable t) {
-      // can't (re)throw exceptions here because IRunSupervisor isn't supposed
-      // to throw exceptions; therefore, we just don't replace this expression
       return "#" + expr;
     }
   }

@@ -1,5 +1,8 @@
 package spock.lang;
 
+import org.spockframework.runtime.extension.ExtensionAnnotation;
+import org.spockframework.runtime.extension.builtin.UnrollExtension;
+
 import java.lang.annotation.*;
 
 /**
@@ -25,6 +28,7 @@ import java.lang.annotation.*;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE, ElementType.METHOD})
+@ExtensionAnnotation(UnrollExtension.class)
 public @interface Unroll {
   String value() default "";
 }

@@ -12,17 +12,18 @@
  * limitations under the License.
  */
 
-package org.spockframework.runtime
+package org.spockframework.runtime.extension.builtin
 
-import spock.lang.*
 import org.spockframework.runtime.model.FeatureInfo
 
-class UnrolledFeatureNameGeneratorSpec extends Specification {
+import spock.lang.*
+
+class UnrollNameProviderSpec extends Specification {
   @Issue("http://issues.spockframework.org/detail?id=115")
   def "regex-like data values are substituted correctly (i.e. literally)"() {
     def feature = new FeatureInfo()
     feature.addParameterName("dataVar")
-    def nameGenerator = new UnrolledFeatureNameGenerator(feature, "foo #dataVar bar")
+    def nameGenerator = new UnrollNameProvider(feature, "foo #dataVar bar")
 
     expect:
     nameGenerator.nameFor(value) == name
@@ -36,7 +37,7 @@ class UnrolledFeatureNameGeneratorSpec extends Specification {
   def "data values are converted to strings in Groovy style"() {
     def feature = new FeatureInfo()
     feature.addParameterName("dataVar")
-    def nameGenerator = new UnrolledFeatureNameGenerator(feature, "foo #dataVar bar")
+    def nameGenerator = new UnrollNameProvider(feature, "foo #dataVar bar")
 
     expect:
     nameGenerator.nameFor(value) == name

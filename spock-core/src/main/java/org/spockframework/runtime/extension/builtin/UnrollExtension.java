@@ -49,6 +49,6 @@ public class UnrollExtension extends AbstractAnnotationDrivenExtension<Unroll> {
     if (feature.getName().contains("#")) {
       return new UnrollNameProvider(feature, feature.getName());
     }
-    return new UnrollNameProvider(feature, "#featureName[#iterationCount]");
+    return null;
   }
 }

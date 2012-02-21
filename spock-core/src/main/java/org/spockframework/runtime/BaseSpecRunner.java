@@ -192,6 +192,7 @@ public class BaseSpecRunner {
    */
   @SuppressWarnings("unused")
   public void doRunFeature() {
+    currentFeature.setIterationNameProvider(new SafeIterationNameProvider(currentFeature.getIterationNameProvider()));
     if (currentFeature.isParameterized())
       runParameterizedFeature();
     else runSimpleFeature();
@@ -225,8 +226,7 @@ public class BaseSpecRunner {
 
   private IterationInfo createIterationInfo(Object[] dataValues, int estimatedNumIterations) {
     currentIteration = new IterationInfo(currentFeature, dataValues, estimatedNumIterations);
-    SafeIterationNameProvider nameProvider = new SafeIterationNameProvider(currentFeature.getIterationNameProvider());
-    String iterationName = nameProvider.getName(currentIteration);
+    String iterationName = currentFeature.getIterationNameProvider().getName(currentIteration);
     currentIteration.setName(iterationName);
     Description description = Description.createTestDescription(spec.getReflection(),
         iterationName, currentFeature.getFeatureMethod().getReflection().getAnnotations());

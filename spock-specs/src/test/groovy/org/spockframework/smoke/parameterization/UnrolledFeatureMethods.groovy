@@ -151,9 +151,9 @@ def foo() {
     ''')
 
     then:
+    1 * listener.testStarted { it.methodName == "one foo two 0 three" }
     1 * listener.testStarted { it.methodName == "one foo two 1 three" }
     1 * listener.testStarted { it.methodName == "one foo two 2 three" }
-    1 * listener.testStarted { it.methodName == "one foo two 3 three" }
   }
 
   @Issue("http://issues.spockframework.org/detail?id=65")

@@ -25,7 +25,7 @@ import org.spockframework.util.ObjectUtil;
 public class ClosureBasedUnrollNameProvider implements NameProvider<IterationInfo> {
   private final FeatureInfo feature;
   private final Class<? extends Closure> closureClass;
-  private int iterationCount;
+  private int iterationCount = -1;
 
   public ClosureBasedUnrollNameProvider(FeatureInfo feature, Class<? extends Closure> nameGeneratorType) {
     this.feature = feature;

@@ -34,11 +34,10 @@ public class JUnitSupervisor implements IRunSupervisor {
   private final IRunListener masterListener;
   private final IObjectRenderer<Object> diffedObjectRenderer;
 
-  private FeatureInfo feature;
-  private UnrolledFeatureNameGenerator unrolledNameGenerator;
+  private FeatureInfo currentFeature;
+  private IterationInfo currentIteration;
 
   private int iterationCount;
-  private Description unrolledDescription;
   private boolean errorSinceLastReset;
 
   public JUnitSupervisor(SpecInfo spec, RunNotifier notifier, IStackTraceFilter filter,
@@ -56,12 +55,10 @@ public class JUnitSupervisor implements IRunSupervisor {
 
   public void beforeFeature(FeatureInfo feature) {
     masterListener.beforeFeature(feature);
-    this.feature = feature;
+    currentFeature = feature;
 
-    if (feature.isUnrolled())
-      unrolledNameGenerator = new UnrolledFeatureNameGenerator(feature, feature.getUnroll().value());
-    else
-      notifier.fireTestStarted(getDescription(feature.getFeatureMethod()));
+    if (!feature.isReportIterations())
+      notifier.fireTestStarted(feature.getDescription());
 
     if (feature.isParameterized()) {
       iterationCount = 0;
@@ -71,11 +68,11 @@ public class JUnitSupervisor implements IRunSupervisor {
 
   public void beforeIteration(IterationInfo iteration) {
     masterListener.beforeIteration(iteration);
+    currentIteration = iteration;
+    
     iterationCount++;
-    if (!feature.isUnrolled()) return;
-
-    unrolledDescription = getUnrolledDescription(iteration.getDataValues());
-    notifier.fireTestStarted(unrolledDescription);
+    if (currentFeature.isReportIterations())
+      notifier.fireTestStarted(iteration.getDescription());
   }
 
   public int error(ErrorInfo error) {
@@ -160,25 +157,24 @@ public class JUnitSupervisor implements IRunSupervisor {
 
   public void afterIteration(IterationInfo iteration) {
     masterListener.afterIteration(iteration);
-    if (!feature.isUnrolled()) return;
-
-    notifier.fireTestFinished(unrolledDescription);
-    unrolledDescription = null;
+    if (currentFeature.isReportIterations())
+      notifier.fireTestFinished(iteration.getDescription());
+    
+    currentIteration = null;
   }
 
   public void afterFeature(FeatureInfo feature) {
     if (feature.isParameterized()) {
       if (iterationCount == 0 && !errorSinceLastReset)
-        notifier.fireTestFailure(new Failure(getDescription(feature.getFeatureMethod()),
+        notifier.fireTestFailure(new Failure(feature.getDescription(),
             new SpockExecutionException("Data provider has no data")));
     }
 
     masterListener.afterFeature(feature);
-    if (!feature.isUnrolled())
-      notifier.fireTestFinished(getDescription(feature.getFeatureMethod()));
+    if (!feature.isReportIterations())
+      notifier.fireTestFinished(feature.getDescription());
 
-    this.feature = null;
-    unrolledNameGenerator = null;
+    currentFeature = null;
   }
 
   public void afterSpec(SpecInfo spec) {
@@ -187,26 +183,19 @@ public class JUnitSupervisor implements IRunSupervisor {
 
   public void specSkipped(SpecInfo spec) {
     masterListener.specSkipped(spec);
-    notifier.fireTestIgnored(getDescription(spec));
+    notifier.fireTestIgnored(spec.getDescription());
   }
 
   public void featureSkipped(FeatureInfo feature) {
     masterListener.featureSkipped(feature);
-    notifier.fireTestIgnored(getDescription(feature));
-  }
-
-  private Description getDescription(NodeInfo node) {
-    return node.getDescription();
+    notifier.fireTestIgnored(feature.getDescription());
   }
 
   private Description getCurrentDescription() {
-    if (unrolledDescription != null) return unrolledDescription;
-    if (feature != null) return getDescription(feature.getFeatureMethod());
-    return getDescription(spec);
-  }
-
-  private Description getUnrolledDescription(Object[] args) {
-    // TODO: fail iteration if unrolledNameGenerator.nameFor() throws an exception
-    return Description.createTestDescription(spec.getReflection(), unrolledNameGenerator.nameFor(args));
+    if (currentIteration != null && currentFeature.isReportIterations())
+      return currentIteration.getDescription();
+    if (currentFeature != null) 
+      return currentFeature.getDescription();
+    return spec.getDescription();
   }
 }

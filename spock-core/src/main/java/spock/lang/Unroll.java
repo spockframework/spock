@@ -1,8 +1,11 @@
 package spock.lang;
 
+import java.lang.annotation.*;
+
 import groovy.lang.Closure;
 
-import java.lang.annotation.*;
+import org.spockframework.runtime.extension.ExtensionAnnotation;
+import org.spockframework.runtime.extension.builtin.UnrollExtension;
 
 /**
  * Indicates that iterations of a data-driven feature should be made visible
@@ -28,8 +31,7 @@ import java.lang.annotation.*;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE, ElementType.METHOD})
+@ExtensionAnnotation(UnrollExtension.class)
 public @interface Unroll {
-  // to ensure best possible tool support, we use the same default naming
-  // scheme as Junit's @Parameterized
   Class<? extends Closure> value() default Closure.class;
 }

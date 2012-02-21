@@ -18,12 +18,15 @@ package org.spockframework.runtime;
 
 import java.lang.reflect.Method;
 
-import static org.spockframework.runtime.RunStatus.*;
+import org.junit.runner.Description;
+
 import org.spockframework.runtime.extension.IMethodInterceptor;
 import org.spockframework.runtime.extension.MethodInvocation;
 import org.spockframework.runtime.model.*;
 import org.spockframework.util.InternalSpockError;
 import org.spockframework.util.ReflectionUtil;
+
+import static org.spockframework.runtime.RunStatus.*;
 
 /**
  * Executes a single Spec. Notifies its supervisor about overall execution
@@ -84,11 +87,11 @@ public class BaseSpecRunner {
     if (runStatus != OK) return;
 
     supervisor.beforeSpec(spec);
-    invoke(this, createDoRunSpecInfo());
+    invoke(this, createMethodInfoForDoRunSpec());
     supervisor.afterSpec(spec);
   }
 
-  private MethodInfo createDoRunSpecInfo() {
+  private MethodInfo createMethodInfoForDoRunSpec() {
     MethodInfo result = new MethodInfo();
     result.setParent(spec);
     result.setKind(MethodKind.SPEC_EXECUTION);
@@ -168,11 +171,11 @@ public class BaseSpecRunner {
     }
 
     supervisor.beforeFeature(currentFeature);
-    invoke(this, createDoRunFeatureInfo());
+    invoke(this, createMethodInfoForDoRunFeature());
     supervisor.afterFeature(currentFeature);
   }
 
-  private MethodInfo createDoRunFeatureInfo() {
+  private MethodInfo createMethodInfoForDoRunFeature() {
     MethodInfo result = new MethodInfo();
     result.setParent(currentFeature.getParent());
     result.setKind(MethodKind.FEATURE_EXECUTION);
@@ -189,6 +192,7 @@ public class BaseSpecRunner {
    */
   @SuppressWarnings("unused")
   public void doRunFeature() {
+    currentFeature.setIterationNameProvider(new SafeIterationNameProvider(currentFeature.getIterationNameProvider()));
     if (currentFeature.isParameterized())
       runParameterizedFeature();
     else runSimpleFeature();
@@ -213,14 +217,24 @@ public class BaseSpecRunner {
   private void runIteration(Object[] dataValues, int estimatedNumIterations) {
     if (runStatus != OK) return;
 
-    currentIteration = new IterationInfo(currentFeature, dataValues, estimatedNumIterations);
+    currentIteration = createIterationInfo(dataValues, estimatedNumIterations);
     supervisor.beforeIteration(currentIteration);
-    invoke(this, createDoRunIterationInfo());
+    invoke(this, createMethodInfoForDoRunIteration());
     supervisor.afterIteration(currentIteration);
     currentIteration = null;
   }
 
-  private MethodInfo createDoRunIterationInfo() {
+  private IterationInfo createIterationInfo(Object[] dataValues, int estimatedNumIterations) {
+    currentIteration = new IterationInfo(currentFeature, dataValues, estimatedNumIterations);
+    String iterationName = currentFeature.getIterationNameProvider().getName(currentIteration);
+    currentIteration.setName(iterationName);
+    Description description = Description.createTestDescription(spec.getReflection(),
+        iterationName, currentFeature.getFeatureMethod().getReflection().getAnnotations());
+    currentIteration.setDescription(description);
+    return currentIteration;
+  }
+
+  private MethodInfo createMethodInfoForDoRunIteration() {
     MethodInfo result = new MethodInfo();
     result.setParent(currentFeature.getParent());
     result.setKind(MethodKind.ITERATION_EXECUTION);

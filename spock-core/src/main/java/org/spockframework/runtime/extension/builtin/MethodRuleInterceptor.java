@@ -57,7 +57,7 @@ public class MethodRuleInterceptor implements IMethodInterceptor {
     return new FrameworkMethod(invocation.getMethod().getReflection()) {
       @Override
       public String getName() {
-        return invocation.getMethod().getName();
+        return invocation.getIteration().getDescription().getMethodName();
       }
     };
   }

@@ -21,6 +21,7 @@ import org.spockframework.runtime.ConditionNotSatisfiedError
 import spock.lang.Issue
 import spock.lang.Unroll
 import org.spockframework.util.Identifiers
+import org.spockframework.runtime.WrongExceptionThrownError
 
 /**
  * @author Peter Niederwieser
@@ -231,6 +232,30 @@ setup:
     then:
     ConditionNotSatisfiedError e = thrown()
     e.stackTrace[0].lineNumber == 2
+  }
+  
+  @Issue("http://issues.spockframework.org/detail?id=156")
+  def "causes get filtered as well"() {
+    when:
+    runner.runFeatureBody """
+when:
+throw new IOException()
+
+then:
+thrown(RuntimeException)
+    """   
+    
+    then:
+    WrongExceptionThrownError e = thrown()
+
+    stackTraceLooksLike e, """
+spock.lang.Specification|thrown|-
+apackage.ASpec|a feature|5
+    """
+    
+    stackTraceLooksLike e.cause, """
+apackage.ASpec|a feature|2
+    """
   }
 
 

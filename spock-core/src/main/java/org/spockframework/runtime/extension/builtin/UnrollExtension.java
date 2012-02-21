@@ -16,6 +16,8 @@ package org.spockframework.runtime.extension.builtin;
 
 import org.spockframework.runtime.extension.AbstractAnnotationDrivenExtension;
 import org.spockframework.runtime.model.FeatureInfo;
+import org.spockframework.runtime.model.IterationInfo;
+import org.spockframework.runtime.model.NameProvider;
 import org.spockframework.runtime.model.SpecInfo;
 
 import spock.lang.Unroll;
@@ -35,17 +37,16 @@ public class UnrollExtension extends AbstractAnnotationDrivenExtension<Unroll> {
     if (!feature.isParameterized()) return; // could also throw exception
 
     feature.setReportIterations(true);
-    String namePattern = chooseNamePattern(unroll, feature);
-    feature.setIterationNameProvider(new UnrollNameProvider(feature, namePattern));
+    feature.setIterationNameProvider(chooseNameProvider(unroll, feature));
   }
 
-  private String chooseNamePattern(Unroll unroll, FeatureInfo feature) {
+  private NameProvider<IterationInfo> chooseNameProvider(Unroll unroll, FeatureInfo feature) {
     if (unroll.value().length() > 0) {
-      return unroll.value();
+      return new UnrollNameProvider(feature, unroll.value());
     }
     if (feature.getName().contains("#")) {
-      return feature.getName();
+      return new UnrollNameProvider(feature, feature.getName());
     }
-    return "#featureName[#iterationCount]";
+    return null;
   }
 }

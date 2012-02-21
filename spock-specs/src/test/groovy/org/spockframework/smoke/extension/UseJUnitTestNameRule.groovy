@@ -18,17 +18,39 @@ import spock.lang.*
 import org.junit.Rule
 import org.junit.rules.TestName
 
+@Issue("http://issues.spockframework.org/detail?id=108")
 class UseJUnitTestNameRule extends Specification {
   @Rule
   TestName name = new TestName()
 
-  def "a method name"() {
+  def "not data-driven"() {
     expect:
-    name.methodName == "a method name"
+    name.methodName == "not data-driven"
   }
 
-  def "some other method name"() {
+  def "data-driven, not unrolled"() {
     expect:
-    name.methodName == "some other method name"  
+    name.methodName == "data-driven, not unrolled"
+    
+    where:
+    i << (1..3)
+  }
+
+  @Unroll
+  def "data-driven, unrolled w/o name pattern"() {
+    expect:
+    name.methodName == "data-driven, unrolled w/o name pattern[${i-1}]"
+
+    where:
+    i << (1..3)
+  }
+
+  @Unroll
+  def "data-driven, unrolled w/ name pattern #pattern"() {
+    expect:
+    name.methodName == "data-driven, unrolled w/ name pattern $pattern"
+
+    where:
+    pattern << ["foo", "bar", "baz"]
   }
 }

@@ -178,44 +178,6 @@ def foo() {
     1 * listener.testStarted { it.methodName == "one 1 two null three" }
   }
 
-  def "variables in naming pattern that don't exist are not replaced"() {
-    RunListener listener = Mock()
-    runner.listeners << listener
-
-    when:
-    runner.runSpecBody("""
-@Unroll("one #x two")
-def foo() {
-  expect: true
-
-  where:
-  y = 2
-}
-    """)
-
-    then:
-    1 * listener.testStarted { it.methodName == "one #x two" }
-  }
-
-  def "variables in naming pattern whose value cannot be converted to a string are not replaced"() {
-    RunListener listener = Mock()
-    runner.listeners << listener
-
-    when:
-    runner.runSpecBody("""
-@Unroll("one #x two")
-def foo() {
-  expect: true
-
-  where:
-  x = { def bad = new Expando(); bad.toString = { throw new RuntimeException() }; bad }()
-}
-    """)
-
-    then:
-    1 * listener.testStarted { it.methodName == "one #x two" }
-  }
-
   @Issue("http://issues.spockframework.org/detail?id=231")
   def "naming pattern supports property expressions"() {
     RunListener listener = Mock()
@@ -258,6 +220,25 @@ def foo() {
     1 * listener.testStarted { it.methodName == "one 4 two" }
   }
 
+  def "expressions in naming pattern that can't be evaluated are prefixed with 'Error:'"() {
+    RunListener listener = Mock()
+    runner.listeners << listener
+
+    when:
+    runner.runSpecBody("""
+@Unroll("#obj #obj.ok() #obj.bang() #obj.missing() #missing")
+def foo() {
+  expect: true
+
+  where:
+  obj = { def obj = new Expando(); obj.ok = { "ok" }; obj.toString = { throw new RuntimeException() }; obj.bang = { throw new NullPointerException() }; obj }()
+}
+    """)
+
+    then:
+    1 * listener.testStarted { it.methodName == "#Error:obj ok #Error:obj.bang() #Error:obj.missing() #Error:missing" }
+  }
+
   @Issue("http://issues.spockframework.org/detail?id=231")
   def "method name can act as naming pattern"() {
     RunListener listener = Mock()
@@ -278,6 +259,7 @@ def "one #actor.details.name.size() two"() {
     then:
     1 * listener.testStarted { it.methodName == "one 4 two" }
   }
+
 
   @Issue("http://issues.spockframework.org/detail?id=231")
   def "naming pattern in @Unroll annotation wins over naming pattern in method name"() {

@@ -70,7 +70,7 @@ public class UnrollNameProvider implements NameProvider<IterationInfo> {
       result = String.valueOf(iterationCount);
     } else {
       int index = feature.getDataVariables().indexOf(firstPart);
-      if (index < 0) return "#" + expr;
+      if (index < 0) return "#Error:" + expr;
       result = dataValues[index];
     }
 
@@ -84,8 +84,8 @@ public class UnrollNameProvider implements NameProvider<IterationInfo> {
         }
       }
       return GroovyRuntimeUtil.toString(result);
-    } catch (Throwable t) {
-      return "#" + expr;
+    } catch (Exception e) {
+      return "#Error:" + expr;
     }
   }
 }

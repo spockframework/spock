@@ -14,31 +14,29 @@
 
 package org.spockframework.runtime;
 
+import org.spockframework.runtime.model.IterationInfo;
 import org.spockframework.runtime.model.NameProvider;
-import org.spockframework.util.Nullable;
 
-public class SafeNameProvider<T> implements NameProvider<T> {
-  private final NameProvider<T> delegate;
-  private final String defaultName;
+public class SafeIterationNameProvider implements NameProvider<IterationInfo> {
+  private final NameProvider<IterationInfo> delegate;
+  private int iterationCount;
   
-  private SafeNameProvider(@Nullable NameProvider<T> delegate, String defaultName) {
+  public SafeIterationNameProvider(NameProvider<IterationInfo> delegate) {
     this.delegate = delegate;
-    this.defaultName = defaultName;
   }
   
-  public String getName(T t) {
-    if (delegate == null) return defaultName;
-
+  public String getName(IterationInfo iteration) {
+    String safeName = iteration.getParent().isReportIterations() ? 
+        String.format("%s[%d]", iteration.getParent().getName(), iterationCount++) : iteration.getParent().getName();
+    
+    if (delegate == null) return safeName;
+    
     try {
-      String name = delegate.getName(t);
+      String name = delegate.getName(iteration);
       if (name != null) return name;
-      return defaultName;
+      return safeName;
     } catch (Exception e) {
-      return defaultName;
+      return safeName;
     }
-  }
-  
-  public static <T> NameProvider<T> create(NameProvider<T> delegate, String defaultName) {
-    return new SafeNameProvider<T>(delegate, defaultName);
   }
 }

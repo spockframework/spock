@@ -225,7 +225,7 @@ public class BaseSpecRunner {
 
   private IterationInfo createIterationInfo(Object[] dataValues, int estimatedNumIterations) {
     currentIteration = new IterationInfo(currentFeature, dataValues, estimatedNumIterations);
-    NameProvider<IterationInfo> nameProvider = SafeNameProvider.create(currentFeature.getIterationNameProvider(), currentFeature.getName());
+    SafeIterationNameProvider nameProvider = new SafeIterationNameProvider(currentFeature.getIterationNameProvider());
     String iterationName = nameProvider.getName(currentIteration);
     currentIteration.setName(iterationName);
     currentIteration.setDescription(Description.createTestDescription(spec.getReflection(),

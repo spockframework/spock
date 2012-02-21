@@ -228,7 +228,7 @@ public class BaseSpecRunner {
     NameProvider<IterationInfo> nameProvider = SafeNameProvider.create(currentFeature.getIterationNameProvider(), currentFeature.getName());
     String iterationName = nameProvider.getName(currentIteration);
     currentIteration.setName(iterationName);
-    currentIteration.setDescription(Description.createTestDescription(spec.getClass(),
+    currentIteration.setDescription(Description.createTestDescription(spec.getReflection(),
         iterationName, currentFeature.getFeatureMethod().getReflection().getAnnotations()));
     return currentIteration;
   }

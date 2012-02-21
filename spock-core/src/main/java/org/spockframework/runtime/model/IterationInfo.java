@@ -35,9 +35,21 @@ public class IterationInfo extends NodeInfo<FeatureInfo, AnnotatedElement> {
   }
 
   /**
+   * Returns the name of this iteration. No strong guarantees are provided for this name,
+   * except that it is non-null. For example, it may be the same as the feature name,
+   * and it may not be unique among iterations of the same feature execution.
+   * Nevertheless, this is generally the name that should be presented to the user (if any).
+   *
+   * @return the name of this iteration
+   */
+  public String getName() {
+    return super.getName();
+  }
+
+  /**
    * Return this iteration's data values for the ongoing execution of the
-   * owning feature method. Information about the feature's data variables
-   * is available through {@link FeatureInfo#getDataProviders}.
+   * owning feature method. The names of the data values (in the same order)
+   * are available through {@link FeatureInfo#getDataVariables}.
    * 
    * @return this iteration's data values for the ongoing execution of the
    * owning feature method

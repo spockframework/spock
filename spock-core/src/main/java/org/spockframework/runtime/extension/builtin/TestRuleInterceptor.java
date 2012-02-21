@@ -42,8 +42,8 @@ public class TestRuleInterceptor implements IMethodInterceptor {
       Object rule = field.readValue(target);
       if (!(rule instanceof TestRule)) continue;
 
-      Description description = field.isStatic() || field.isShared() ?
-          invocation.getSpec().getDescription() : invocation.getFeature().getDescription();
+      Description description = invocation.getIteration() != null ?
+          invocation.getIteration().getDescription() : invocation.getSpec().getDescription();
       stat = ((TestRule) rule).apply(stat, description);
     }
 

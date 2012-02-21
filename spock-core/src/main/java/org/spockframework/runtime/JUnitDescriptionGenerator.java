@@ -54,7 +54,7 @@ public class JUnitDescriptionGenerator {
 
     for (FeatureInfo feature : spec.getAllFeaturesInExecutionOrder()) {
       if (feature.isExcluded()) continue;
-      if (feature.isUnrolled()) continue; // don't report up-front because IDEs don't handle this well
+      if (feature.isReportIterations()) continue; // don't report up-front because IDEs don't handle this well
       desc.addChild(feature.getFeatureMethod().getDescription());
     }
 

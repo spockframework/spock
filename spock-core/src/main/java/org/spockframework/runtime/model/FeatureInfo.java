@@ -5,8 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.spockframework.runtime.extension.IMethodInterceptor;
-
-import spock.lang.Unroll;
+import org.spockframework.util.Nullable;
 
 /**
  * @author Peter Niederwieser
@@ -22,11 +21,13 @@ public class FeatureInfo extends NodeInfo<SpecInfo, AnnotatedElement> implements
 
   private MethodInfo featureMethod;
   private MethodInfo dataProcessorMethod;
+  private NameProvider<IterationInfo> iterationNameProvider;
   private final List<DataProviderInfo> dataProviders = new ArrayList<DataProviderInfo>();
 
   private boolean excluded = false;
   private boolean skipped = false;
-  
+  private boolean reportIterations = false;
+
   @Override
   public AnnotatedElement getReflection() {
     throw new UnsupportedOperationException("getReflection");
@@ -54,6 +55,10 @@ public class FeatureInfo extends NodeInfo<SpecInfo, AnnotatedElement> implements
 
   public void addParameterName(String parameterName) {
     parameterNames.add(parameterName);
+  }
+  
+  public List<String> getDataVariables() {
+    return parameterNames; // currently the same
   }
 
   public List<BlockInfo> getBlocks() {
@@ -108,16 +113,21 @@ public class FeatureInfo extends NodeInfo<SpecInfo, AnnotatedElement> implements
     return dataProcessorMethod != null;
   }
 
-  public boolean isUnrolled() {
-    return isParameterized() && getUnroll() != null;
+  public boolean isReportIterations() {
+    return reportIterations;
+  }
+  
+  public void setReportIterations(boolean flag) {
+    reportIterations = flag;
   }
 
-  public Unroll getUnroll() {
-    Unroll result = getFeatureMethod().getReflection().getAnnotation(Unroll.class);
-    if (result == null) {
-      result = getParent().getReflection().getAnnotation(Unroll.class);
-    }
-    return result;
+  @Nullable
+  public NameProvider<IterationInfo> getIterationNameProvider() {
+    return iterationNameProvider;
+  }
+  
+  public void setIterationNameProvider(NameProvider<IterationInfo> provider) {
+    iterationNameProvider = provider;
   }
 
   public boolean isExcluded() {

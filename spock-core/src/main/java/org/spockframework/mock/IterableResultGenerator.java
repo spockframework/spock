@@ -34,6 +34,10 @@ public class IterableResultGenerator implements IResultGenerator {
     iterator = GroovyRuntimeUtil.asIterator(iterable);
   }
 
+  public boolean isExhausted() {
+    return !iterator.hasNext();
+  }
+
   public Object generate(IMockInvocation invocation) {
     if (iterator.hasNext()) nextValue = iterator.next();
     return GroovyRuntimeUtil.coerce(nextValue, invocation.getMethod().getReturnType());

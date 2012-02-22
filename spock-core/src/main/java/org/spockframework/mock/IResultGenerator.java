@@ -22,5 +22,6 @@ package org.spockframework.mock;
  * @author Peter Niederwieser
  */
 public interface IResultGenerator {
+  boolean isExhausted();
   Object generate(IMockInvocation invocation);
 }

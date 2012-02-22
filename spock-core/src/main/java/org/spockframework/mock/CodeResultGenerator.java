@@ -24,7 +24,7 @@ import groovy.lang.Closure;
  *
  * @author Peter Niederwieser
  */
-public class CodeResultGenerator implements IResultGenerator {
+public class CodeResultGenerator extends SingleResultGenerator {
   private final Closure code;
   private final boolean provideExtendedInfo;
 
@@ -34,7 +34,7 @@ public class CodeResultGenerator implements IResultGenerator {
     provideExtendedInfo = paramTypes.length == 1 && paramTypes[0] == IMockInvocation.class;
   }
 
-  public Object generate(IMockInvocation invocation) {
+  public Object generateSingle(IMockInvocation invocation) {
     Object result = GroovyRuntimeUtil.invokeClosure(code, provideExtendedInfo ? invocation : invocation.getArguments());
     Class<?> returnType = invocation.getMethod().getReturnType();
     

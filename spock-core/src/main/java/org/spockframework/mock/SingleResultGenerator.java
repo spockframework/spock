@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 the original author or authors.
+ * Copyright 2012 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,15 +16,17 @@
 
 package org.spockframework.mock;
 
-import org.spockframework.util.ReflectionUtil;
+public abstract class SingleResultGenerator implements IResultGenerator {
+  private boolean exhausted = false;
 
-/**
- * Returns the default value for the invoked method's return type.
- * 
- * @author Peter Niederwieser
- */
-public class DefaultResultGenerator extends SingleResultGenerator {
-  public Object generateSingle(IMockInvocation invocation) {
-    return ReflectionUtil.getDefaultValue(invocation.getMethod().getReturnType());
+  public boolean isExhausted() {
+    return exhausted;
   }
+
+  public final Object generate(IMockInvocation invocation) {
+    exhausted = true;
+    return generateSingle(invocation);
+  }
+  
+  public abstract Object generateSingle(IMockInvocation invocation);
 }

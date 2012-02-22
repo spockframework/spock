@@ -39,7 +39,7 @@ public class InteractionBuilder {
   private List<IInvocationConstraint> invConstraints = new ArrayList<IInvocationConstraint>();
   private List<Object> argNames;
   private List<IArgumentConstraint> argConstraints;
-  private IResultGenerator resultGenerator = DefaultResultGenerator.INSTANCE;
+  private ResultGeneratorChain resultGenerators = new ResultGeneratorChain();
 
   public InteractionBuilder(int line, int column, String text) {
     this.line = line;
@@ -150,29 +150,31 @@ public class InteractionBuilder {
     return this;
   }
 
-  public static final String SET_CONSTANT_RESULT = "setConstantResult";
+  public static final String ADD_CONSTANT_RESULT = "setConstantResult";
   public InteractionBuilder setConstantResult(Object constant) {
-    if (!(constant instanceof Wildcard))
-      resultGenerator = new ConstantResultGenerator(constant);
+    resultGenerators.addFirst(constant instanceof Wildcard ? new DefaultResultGenerator() : new ConstantResultGenerator(constant));
     return this;
   }
 
-  public static final String SET_CODE_RESULT = "setCodeResult";
+  public static final String ADD_CODE_RESULT = "setCodeResult";
   public InteractionBuilder setCodeResult(Closure closure) {
-    resultGenerator = new CodeResultGenerator(closure);
+    resultGenerators.addFirst(new CodeResultGenerator(closure));
     return this;
   }
 
-  public static final String SET_ITERABLE_RESULT = "setIterableResult";
+  public static final String ADD_ITERABLE_RESULT = "setIterableResult";
   public InteractionBuilder setIterableResult(Object iterable) {
-    resultGenerator = new IterableResultGenerator(iterable);
+    resultGenerators.addFirst(new IterableResultGenerator(iterable));
     return this;
   }
 
   public static final String BUILD = "build";
   public IMockInteraction build() {
+    if (resultGenerators.isEmpty())
+      resultGenerators.addFirst(new DefaultResultGenerator());
+
     return new MockInteraction(line, column, text,
-        minCount, maxCount, invConstraints, resultGenerator);
+        minCount, maxCount, invConstraints, resultGenerators);
   }
 
   private static int convertCount(Object count, boolean inclusive) {

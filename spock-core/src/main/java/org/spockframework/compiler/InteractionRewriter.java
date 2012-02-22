@@ -16,7 +16,9 @@
 
 package org.spockframework.compiler;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.codehaus.groovy.ast.expr.*;
 import org.codehaus.groovy.ast.stmt.ExpressionStatement;
@@ -42,11 +44,10 @@ public class InteractionRewriter {
   private Expression count;
   private Expression call;
   private boolean wildcardCall;
-  private Expression result;
-  private boolean iterableResult;
+  private List<InteractionResult> results = new ArrayList<InteractionResult>();
 
   // holds the incrementally constructed expression, which looks roughly as follows:
-  // "new InteractionBuilder(..).setCount(..).setTarget(..).setMethod(..).addArg(..).setResult(..).build()"
+  // "new InteractionBuilder(..).setCount(..).setTarget(..).setMethod(..).addArg(..).addResult(..).build()"
   private Expression builderExpr;
 
   public InteractionRewriter(IRewriteResources resources) {
@@ -66,7 +67,7 @@ public class InteractionRewriter {
       createBuilder();
       setCount();
       setCall();
-      setResult();
+      addResults();
       build();
       return register();
     } catch (InvalidSpecCompileException e) {
@@ -77,30 +78,27 @@ public class InteractionRewriter {
 
   private boolean parse(ExpressionStatement stat) throws InvalidSpecCompileException {
     this.stat = stat;
-
-    BinaryExpression binExpr = AstUtil.getExpression(stat, BinaryExpression.class);
-    if (binExpr == null) return false;
-
-    int type = binExpr.getOperation().getType();
-    if (type == Types.RIGHT_SHIFT || type == Types.RIGHT_SHIFT_UNSIGNED) {
-      result = binExpr.getRightExpression();
-      iterableResult = type == Types.RIGHT_SHIFT_UNSIGNED;
-      return parseCount(binExpr.getLeftExpression());
-    }
-
-    return type == Types.MULTIPLY && parseCount(binExpr);
+    
+    Expression expr = parseCount(parseResults(stat.getExpression()));
+    return (count != null || !results.isEmpty()) && parseCall(expr);
   }
-
-  private boolean parseCount(Expression expr) throws InvalidSpecCompileException {
-    BinaryExpression binExpr = AstUtil.asInstance(expr, BinaryExpression.class);
-    if (binExpr == null) {
-      return parseCall(expr);
+  
+  private Expression parseResults(Expression expr) {
+    while (expr instanceof BinaryExpression) {
+      BinaryExpression binExpr = (BinaryExpression) expr;
+      int type = binExpr.getOperation().getType();
+      if (type != Types.RIGHT_SHIFT && type != Types.RIGHT_SHIFT_UNSIGNED) break;
+      results.add(new InteractionResult(binExpr.getRightExpression(), type == Types.RIGHT_SHIFT_UNSIGNED));
+      expr = binExpr.getLeftExpression();
     }
-
-    if (binExpr.getOperation().getType() != Types.MULTIPLY) return false;
-
+    return expr;
+  }
+  
+  private Expression parseCount(Expression expr) {
+    BinaryExpression binExpr = AstUtil.asInstance(expr, BinaryExpression.class);
+    if (binExpr == null || binExpr.getOperation().getType() != Types.MULTIPLY) return expr;
     count = binExpr.getLeftExpression();
-    return parseCall(binExpr.getRightExpression());
+    return binExpr.getRightExpression();
   }
 
   private boolean parseCall(Expression expr) throws InvalidSpecCompileException {
@@ -282,20 +280,16 @@ public class InteractionRewriter {
     call(InteractionBuilder.ADD_EQUAL_ARG, arg);
   }
 
-  private void setResult() {
-    if (result == null) return;
-
-    if (iterableResult) {
-      call(InteractionBuilder.SET_ITERABLE_RESULT, result);
-      return;
+  private void addResults() {
+    for (InteractionResult result : results) {
+      if (result.iterable) {
+        call(InteractionBuilder.ADD_ITERABLE_RESULT, result.expr);
+      } else if (result.expr instanceof ClosureExpression) {
+        call(InteractionBuilder.ADD_CODE_RESULT, result.expr);
+      } else {
+        call(InteractionBuilder.ADD_CONSTANT_RESULT, result.expr);
+      }
     }
-
-    if (result instanceof ClosureExpression) {
-      call(InteractionBuilder.SET_CODE_RESULT, result);
-      return;
-    }
-
-    call(InteractionBuilder.SET_CONSTANT_RESULT, result);
   }
 
   private void build() {
@@ -319,5 +313,15 @@ public class InteractionRewriter {
         builderExpr,
         method,
         new ArgumentListExpression(args));
+  }
+  
+  private static class InteractionResult {
+    final Expression expr;
+    final boolean iterable;
+
+    private InteractionResult(Expression expr, boolean iterable) {
+      this.expr = expr;
+      this.iterable = iterable;
+    }
   }
 }

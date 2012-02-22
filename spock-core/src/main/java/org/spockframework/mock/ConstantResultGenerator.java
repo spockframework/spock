@@ -22,14 +22,14 @@ import org.spockframework.util.GroovyRuntimeUtil;
  *
  * @author Peter Niederwieser
  */
-public class ConstantResultGenerator implements IResultGenerator {
+public class ConstantResultGenerator extends SingleResultGenerator {
   private final Object constant;
 
   public ConstantResultGenerator(Object constant) {
     this.constant = constant;
   }
 
-  public Object generate(IMockInvocation invocation) {
+  public Object generateSingle(IMockInvocation invocation) {
     return GroovyRuntimeUtil.coerce(constant, invocation.getMethod().getReturnType());
   }
 }

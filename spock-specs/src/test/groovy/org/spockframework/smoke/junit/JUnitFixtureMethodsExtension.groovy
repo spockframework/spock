@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-package org.spockframework.smoke.extension
+package org.spockframework.smoke.junit
 
 import spock.lang.*
 import org.spockframework.EmbeddedSpecification

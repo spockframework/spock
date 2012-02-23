@@ -1,5 +1,4 @@
 include "spock-core"
-include "spock-grails-support"
 include "spock-guice"
 include "spock-maven"
 include "spock-specs"

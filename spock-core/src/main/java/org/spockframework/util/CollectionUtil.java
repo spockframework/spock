@@ -79,4 +79,43 @@ public abstract class CollectionUtil {
   public static <T> Set<T> asSet(T[] values) {
     return new HashSet<T>(Arrays.asList(values));
   }
+
+  public static <T> Iterable<T> concat(Iterable<? extends T>... iterables) {
+    return concat(Arrays.asList(iterables));
+  }
+
+  public static <T> Iterable<T> concat(final List<Iterable<? extends T>> iterables) {
+    return new Iterable<T>() {
+      public Iterator<T> iterator() {
+        return new Iterator<T>() {
+          Iterator<? extends T> iter;
+          int pos = 0;
+
+          public boolean hasNext() {
+            while (pos < iterables.size()) {
+              if (iter == null) iter = iterables.get(pos).iterator();
+              if (iter.hasNext()) return true;
+              iter = null;
+              pos++;
+            }
+            return false;
+          }
+
+          public T next() {
+            while (pos < iterables.size()) {
+              if (iter == null) iter = iterables.get(pos).iterator();
+              if (iter.hasNext()) return iter.next();
+              iter = null;
+              pos++;
+            }
+            throw new NoSuchElementException();
+          }
+
+          public void remove() {
+            throw new UnsupportedOperationException("remove");
+          }
+        };
+      }
+    };
+  }
 }

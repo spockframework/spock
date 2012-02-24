@@ -46,7 +46,23 @@ class CollectionUtilSpec extends Specification {
     then:
     toList(reversed) == [3, 2, 1]
   }
-  
+
+  def "concatenate zero iterables"() {
+    when:
+    def iterable = CollectionUtil.concat()
+
+    then:
+    toList(iterable) == []
+  }
+
+  def "concatenate multiple iterables"() {
+    when:
+    def iterable = CollectionUtil.concat([1, 2, 3], [], [4])
+
+    then:
+    toList(iterable) == [1, 2, 3, 4]
+  }
+
   def toList(iterable) {
     iterable.collect { it }
   }

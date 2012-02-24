@@ -19,7 +19,7 @@ package org.spockframework.smoke.extension
 import spock.lang.*
 
 @IgnoreIf({ 1 < 2 })
-class ConditionallyIgnoreSpec extends Specification {
+class IgnoreIfExtension extends Specification {
   def "should be ignored"() {
     expect: false
   }

@@ -44,8 +44,28 @@ class EmbeddedSpecRunner {
   List<Class> extensionClasses = []
   boolean inheritParentExtensions = true
 
+  void addImport(String pkg) {
+    compiler.addImport(pkg)
+  }
+
   void addImport(Package pkg) {
     compiler.addImport(pkg)
+  }
+
+  void addClassImport(String className) {
+    compiler.addClassImport(className)
+  }
+
+  void addClassImport(Class<?> clazz) {
+    compiler.addClassImport(clazz)
+  }
+
+  void addClassMemberImport(String className) {
+    compiler.addClassMemberImport(className)
+  }
+
+  void addClassMemberImport(Class<?> clazz) {
+    compiler.addClassMemberImport(clazz)
   }
 
   Result runRequest(Request request) {

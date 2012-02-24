@@ -40,8 +40,28 @@ class EmbeddedSpecCompiler {
 
   String imports = ""
 
+  void addImport(String pkg) {
+    imports += "import $pkg.*;"
+  }
+
   void addImport(Package pkg) {
-    imports += "import ${pkg.name}.*;"
+    addImport(pkg.name)
+  }
+
+  void addClassImport(String className) {
+    imports += "import $className"
+  }
+
+  void addClassImport(Class<?> clazz) {
+    addClassImport(clazz.name)
+  }
+
+  void addClassMemberImport(String className) {
+    imports += "import static $className.*;"
+  }
+
+  void addClassMemberImport(Class<?> clazz) {
+    addClassMemberImport(clazz.name)
   }
 
   /**

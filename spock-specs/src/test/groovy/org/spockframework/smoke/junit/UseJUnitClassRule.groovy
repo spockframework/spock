@@ -1,4 +1,4 @@
-package org.spockframework.smoke.extension
+package org.spockframework.smoke.junit
 
 import org.junit.rules.TemporaryFolder
 

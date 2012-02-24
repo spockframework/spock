@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-package org.spockframework.smoke
+package org.spockframework.smoke.junit
 
 import org.junit.Test
 import org.junit.runner.Request

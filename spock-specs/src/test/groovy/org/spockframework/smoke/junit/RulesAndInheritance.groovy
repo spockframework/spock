@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-package org.spockframework.smoke.extension
+package org.spockframework.smoke.junit
 
 import org.junit.Rule
 import org.junit.rules.TestName

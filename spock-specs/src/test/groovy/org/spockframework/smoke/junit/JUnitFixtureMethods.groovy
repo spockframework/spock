@@ -19,10 +19,10 @@ import org.spockframework.EmbeddedSpecification
 
 import org.junit.*
 
-class JUnitFixtureMethodsExtension extends EmbeddedSpecification {
+class JUnitFixtureMethods extends EmbeddedSpecification {
 
   static invocations = []
-  static RECORD_INVOCATION_METHOD = "static record(methodName) { JUnitFixtureMethodsExtension.invocations << methodName }"
+  static RECORD_INVOCATION_METHOD = "static record(methodName) { JUnitFixtureMethods.invocations << methodName }"
   
   def setup() {
     invocations.clear()
@@ -128,6 +128,33 @@ class JUnitFixtureMethodsExtension extends EmbeddedSpecification {
     
     then:
     invocations == ["beforeClass", "before", "after", "afterClass"]
+  }
+
+  def "exceptions thrown by fixture methods are handled correctly"() {
+    runner.throwFailure = false
+
+    when:
+    def result = runSpecBody("""
+      $declaration void $name() { throw new RuntimeException("$name") }
+
+      def foo() { expect: !$failFeature }
+    """)
+
+    then:
+    def e = result.failures[exceptionPos].exception
+    e instanceof RuntimeException
+    e.message == name
+
+    where:
+    name          | declaration           | failFeature | exceptionPos
+    "beforeClass" | "@BeforeClass static" | true        | 0
+    "beforeClass" | "@BeforeClass static" | false       | 0
+    "before"      | "@Before"             | true        | 0
+    "before"      | "@Before"             | false       | 0
+    "after"       | "@After"              | true        | 1
+    "after"       | "@After"              | false       | 0
+    "afterClass"  | "@AfterClass static"  | true        | 1
+    "afterClass"  | "@AfterClass static"  | false       | 0
   }
   
   protected beforeClass(name = "beforeClass") { "@BeforeClass static void $name() { record('$name') }" }

@@ -27,6 +27,7 @@ import org.junit.*;
 
 import org.spockframework.runtime.extension.*;
 import org.spockframework.runtime.model.*;
+import org.spockframework.util.ReflectionUtil;
 import org.spockframework.util.UnreachableCodeError;
 
 /**
@@ -139,9 +140,8 @@ public class JUnitFixtureMethodsExtension implements IGlobalExtension {
       public void intercept(IMethodInvocation invocation) throws Throwable {
         if (!executeBeforeSpecMethod) invocation.proceed();
 
-        // TODO - handle invocation errors in a more user friendly way?
         for (Method method : methods) {
-          method.invoke(invocation.getTarget());
+          ReflectionUtil.invokeMethod(invocation.getTarget(), method);
         }
 
         if (executeBeforeSpecMethod) invocation.proceed();

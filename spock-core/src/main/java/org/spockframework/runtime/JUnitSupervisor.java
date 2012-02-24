@@ -15,6 +15,7 @@
 package org.spockframework.runtime;
 
 import org.junit.ComparisonFailure;
+import org.junit.internal.AssumptionViolatedException;
 import org.junit.internal.runners.model.MultipleFailureException;
 import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
@@ -81,13 +82,23 @@ public class JUnitSupervisor implements IRunSupervisor {
     if (exception instanceof MultipleFailureException)
       return handleMultipleFailures(error);
 
-    if (isCausedByFailedEqualityComparison(exception))
+    if (isFailedEqualityComparison(exception))
       exception = convertToComparisonFailure(exception);
 
     filter.filter(exception);
 
-    masterListener.error(error);
-    notifier.fireTestFailure(new Failure(getCurrentDescription(), exception));
+    Failure failure = new Failure(getCurrentDescription(), exception);
+
+    if (exception instanceof AssumptionViolatedException) {
+      // Spock has no concept of "violated assumption", so we don't notify Spock listeners
+      // do notify JUnit listeners unless it's a data-driven iteration that's reported as one feature
+      if (currentIteration == null || !currentFeature.isParameterized() || currentFeature.isReportIterations()) {
+        notifier.fireTestAssumptionFailed(failure);
+      }
+    } else {
+      masterListener.error(error);
+      notifier.fireTestFailure(failure);
+    }
 
     errorSinceLastReset = true;
     return statusFor(error);
@@ -102,7 +113,7 @@ public class JUnitSupervisor implements IRunSupervisor {
     return runStatus;
   }
 
-  private boolean isCausedByFailedEqualityComparison(Throwable exception) {
+  private boolean isFailedEqualityComparison(Throwable exception) {
     if (!(exception instanceof ConditionNotSatisfiedError)) return false;
 
     Condition condition = ((ConditionNotSatisfiedError) exception).getCondition();
@@ -112,7 +123,7 @@ public class JUnitSupervisor implements IRunSupervisor {
 
   // enables IDE support (diff dialog)
   private Throwable convertToComparisonFailure(Throwable exception) {
-    assert isCausedByFailedEqualityComparison(exception);
+    assert isFailedEqualityComparison(exception);
 
     Condition condition = ((ConditionNotSatisfiedError) exception).getCondition();
     ExpressionInfo expr = condition.getExpression();

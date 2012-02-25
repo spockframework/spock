@@ -49,7 +49,7 @@ class EmbeddedSpecCompiler {
   }
 
   void addClassImport(String className) {
-    imports += "import $className"
+    imports += "import $className;"
   }
 
   void addClassImport(Class<?> clazz) {

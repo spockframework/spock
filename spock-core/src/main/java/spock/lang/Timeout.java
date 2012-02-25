@@ -25,14 +25,17 @@ import org.spockframework.runtime.extension.builtin.TimeoutExtension;
 /**
  * Indicates that the execution of a feature or fixture method should time out
  * after the given duration has elapsed. The default time unit is seconds.
- * When applied to a feature method, the timeout is reset before each
- * iteration and does not include time spent in fixture methods.
+ * When applied to a feature method, the timeout is per
+ * execution of one iteration, and does not include time spent in fixture methods.
+ * When applied to a fixture method, the timeout is per execution of the fixture method.
+ * Applying this annotation to a spec class is the same as applying it
+ * to all feature methods which don't already have a timeout annotation.
  *
  * @author Peter Niederwieser
  */
 
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.METHOD})
+@Target({ElementType.TYPE, ElementType.METHOD})
 @ExtensionAnnotation(TimeoutExtension.class)
 public @interface Timeout {
   /**

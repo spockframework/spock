@@ -14,8 +14,23 @@
 
 package org.spockframework.runtime;
 
+import java.util.concurrent.TimeUnit;
+
 public class SpockTimeoutError extends SpockAssertionError {
-  public SpockTimeoutError(String formatString, Object... args) {
+  private final int timeoutValue;
+  private final TimeUnit timeoutUnit;
+
+  public SpockTimeoutError(int timeoutValue, TimeUnit timeoutUnit, String formatString, Object... args) {
     super(String.format(formatString, args));
+    this.timeoutValue = timeoutValue;
+    this.timeoutUnit = timeoutUnit;
+  }
+
+  public int getTimeoutValue() {
+    return timeoutValue;
+  }
+
+  public TimeUnit getTimeoutUnit() {
+    return timeoutUnit;
   }
 }

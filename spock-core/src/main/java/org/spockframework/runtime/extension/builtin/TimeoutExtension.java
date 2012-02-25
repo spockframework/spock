@@ -19,6 +19,7 @@ package org.spockframework.runtime.extension.builtin;
 import org.spockframework.runtime.extension.AbstractAnnotationDrivenExtension;
 import org.spockframework.runtime.model.FeatureInfo;
 import org.spockframework.runtime.model.MethodInfo;
+import org.spockframework.runtime.model.SpecInfo;
 
 import spock.lang.Timeout;
 
@@ -26,6 +27,15 @@ import spock.lang.Timeout;
  * @author Peter Niederwieser
  */
 public class TimeoutExtension extends AbstractAnnotationDrivenExtension<Timeout> {
+  @Override
+  public void visitSpecAnnotation(Timeout timeout, SpecInfo spec) {
+    for (FeatureInfo feature : spec.getFeatures()) {
+      if (!feature.getFeatureMethod().getReflection().isAnnotationPresent(Timeout.class)) {
+        visitFeatureAnnotation(timeout, feature);
+      }
+    }
+  }
+
   @Override
   public void visitFeatureAnnotation(Timeout timeout, FeatureInfo feature) {
     feature.getFeatureMethod().addInterceptor(new TimeoutInterceptor(timeout));

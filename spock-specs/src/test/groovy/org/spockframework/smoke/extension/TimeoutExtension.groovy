@@ -30,31 +30,31 @@ import org.junit.runner.Result
  */
 class TimeoutExtension extends EmbeddedSpecification {
   @Timeout(1)
-  def "in time"() {
+  def "method that completes in time"() {
     setup: Thread.sleep(500)
   }
 
   @FailsWith(SpockTimeoutError)
   @Timeout(1)
-  def "not in time"() {
+  def "method that doesn't complete in time"() {
     setup: Thread.sleep(1100)
   }
 
-  @Timeout(value = 1000, unit = TimeUnit.MILLISECONDS)
-  def "in time millis"() {
-    setup: Thread.sleep(500)
+  @Timeout(value = 500, unit = TimeUnit.MILLISECONDS)
+  def "method that completes in time (millis)"() {
+    setup: Thread.sleep(250)
   }
 
   @FailsWith(SpockTimeoutError)
-  @Timeout(value = 1000, unit = TimeUnit.MILLISECONDS)
-  def "not in time millis"() {
-    setup: Thread.sleep(1100)
+  @Timeout(value = 250, unit = TimeUnit.MILLISECONDS)
+  def "method that doesn't complete in time (millis)"() {
+    setup: Thread.sleep(300)
   }
 
-  @Issue("http://code.google.com/p/spock/issues/detail?id=230")
-  def "stacktrace of error is the stack of the hung thread"() {
+  @Issue("http://issues.spockframework.org/detail?id=230")
+  def "stack trace of error is the stack of the hung thread"() {
     when:
-    Result result = runner.runSpecBody("""
+    runner.runSpecBody("""
       @Timeout(1)
       def "not in time"() {
         setup:
@@ -69,5 +69,40 @@ class TimeoutExtension extends EmbeddedSpecification {
     def topFrame = frames.first()
     topFrame.className == "apackage.ASpec"
     topFrame.methodName == "not in time"
+  }
+
+  def "timeout on spec"() {
+    runner.addClassImport(TimeUnit)
+    runner.throwFailure = false
+
+    when:
+    def result = runner.runWithImports("""
+      @Timeout(value = 250, unit = TimeUnit.MILLISECONDS)
+      class Foo extends Specification {
+        def "in time"() {
+          expect: true
+        }
+        def "not in time"() {
+          setup:
+          Thread.sleep(300)
+        }
+        @Timeout(value = 100, unit = TimeUnit.MILLISECONDS)
+        def "not in time - overridden timeout"() {
+          setup:
+          Thread.sleep(150)
+        }
+      }
+    """)
+
+    then:
+    result.failures.size() == 2
+
+    def e1 = result.failures[0].exception
+    e1 instanceof SpockTimeoutError
+    e1.timeoutValue == 250
+
+    def e2 = result.failures[1].exception
+    e2 instanceof SpockTimeoutError
+    e2.timeoutValue == 100
   }
 }

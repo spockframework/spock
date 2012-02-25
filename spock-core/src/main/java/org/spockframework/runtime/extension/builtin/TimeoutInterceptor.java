@@ -53,11 +53,11 @@ public class TimeoutInterceptor implements IMethodInterceptor {
     if (thread.isAlive()) {
       StackTraceElement[] stack = thread.getStackTrace();
 
-      // IDEA: Isn't thread.stop() more likey to succeed (considering it throws
+      // IDEA: Isn't thread.stop() more likely to succeed (considering it throws
       // an Error instead of an Exception)? Are its risks tolerable here?
       thread.interrupt();
-      SpockTimeoutError error = new SpockTimeoutError("method timed out after %s %s",
-          timeout.value(), timeout.unit().toString().toLowerCase());
+      SpockTimeoutError error = new SpockTimeoutError(timeout.value(), timeout.unit(),
+          "method timed out after %d %s", timeout.value(), timeout.unit().toString().toLowerCase());
       error.setStackTrace(stack);
       throw error;
     }

@@ -257,19 +257,4 @@ apackage.ASpec|a feature|5
 apackage.ASpec|a feature|2
     """
   }
-
-
-  private void stackTraceLooksLike(Throwable exception, String template) {
-    def trace = exception.stackTrace
-    def lines = template.trim().split("\n")
-    assert trace.size() == lines.size()
-
-    lines.eachWithIndex { line, index ->
-      def parts = line.split("\\|")
-      def traceElem = trace[index]
-      assert parts[0] == "-" || parts[0] == traceElem.className
-      assert parts[1] == "-" || parts[1] == traceElem.methodName
-      assert parts[2] == "-" || parts[2] as int == traceElem.lineNumber
-    }
-  }
 }

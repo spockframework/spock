@@ -82,7 +82,7 @@ class ConfineMetaClassChangesSpec extends EmbeddedSpecification {
   def "exercise a spec level restore"() {
     setup:
     newValue = 2
-    compiler.addImport(getClass().package)
+    compiler.addPackageImport(getClass().package)
     def specs = compiler.compileWithImports("""
       import spock.util.mop.ConfineMetaClassChanges
 

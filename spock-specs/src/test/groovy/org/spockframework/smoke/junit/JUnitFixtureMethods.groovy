@@ -14,13 +14,11 @@
 
 package org.spockframework.smoke.junit
 
-import spock.lang.*
 import org.spockframework.EmbeddedSpecification
 
-import org.junit.*
+import spock.lang.*
 
 class JUnitFixtureMethods extends EmbeddedSpecification {
-
   static invocations = []
   static RECORD_INVOCATION_METHOD = "static record(methodName) { JUnitFixtureMethods.invocations << methodName }"
   
@@ -163,8 +161,8 @@ class JUnitFixtureMethods extends EmbeddedSpecification {
   protected afterClass(name = "afterClass") { "@AfterClass static void $name() { record('$name') } "}
   
   protected addImports() {
-    runner.addImport(getClass().package)
-    runner.addImport(org.junit.Before.package)
+    runner.addPackageImport(getClass().package)
+    runner.addPackageImport(org.junit.Before.package)
   }
   
   protected runSpecBody(String specBody) {

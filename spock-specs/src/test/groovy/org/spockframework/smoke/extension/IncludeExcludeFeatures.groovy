@@ -20,7 +20,7 @@ class IncludeExcludeFeatures extends EmbeddedSpecification {
   Class spec
 
   def setup() {
-    compiler.addImport(getClass().package)
+    compiler.addPackageImport(getClass().package)
 
     spec = compiler.compileSpecBody("""
 @Slow

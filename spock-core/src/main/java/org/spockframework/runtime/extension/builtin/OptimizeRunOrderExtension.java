@@ -26,6 +26,7 @@ import spock.config.RunnerConfiguration;
 /**
  * Inspired from JUnit's MaxCore.
  */
+@SuppressWarnings("UnusedDeclaration")
 public class OptimizeRunOrderExtension implements IGlobalExtension {
   private RunnerConfiguration configuration;
 

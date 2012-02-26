@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 the original author or authors.
+ * Copyright 2012 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,8 +14,7 @@
 
 package org.spockframework.runtime.extension.builtin;
 
-import org.junit.rules.MethodRule;
-import org.junit.runners.model.FrameworkMethod;
+import org.junit.rules.TestRule;
 import org.junit.runners.model.Statement;
 
 import org.spockframework.runtime.extension.IMethodInvocation;
@@ -23,30 +22,19 @@ import org.spockframework.runtime.model.FieldInfo;
 
 import java.util.List;
 
-public class MethodRuleInterceptor extends AbstractRuleInterceptor {
-  MethodRuleInterceptor(List<FieldInfo> ruleFields) {
+public class ClassRuleInterceptor extends AbstractRuleInterceptor {
+  public ClassRuleInterceptor(List<FieldInfo> ruleFields) {
     super(ruleFields);
   }
 
   public void intercept(final IMethodInvocation invocation) throws Throwable {
-    Statement statement = createBaseStatement(invocation);
-    FrameworkMethod method = createFrameworkMethod(invocation);
+    Statement stat = createBaseStatement(invocation);
 
     for (FieldInfo field : ruleFields) {
-      MethodRule rule = (MethodRule) getRuleInstance(field, invocation.getTarget());
-      statement = rule.apply(statement, method, invocation.getTarget());
+      TestRule rule = (TestRule) getRuleInstance(field, field.isShared() ? invocation.getSharedInstance() : invocation.getInstance());
+      stat = rule.apply(stat, invocation.getSpec().getDescription());
     }
 
-    statement.evaluate();
-  }
-
-  private FrameworkMethod createFrameworkMethod(final IMethodInvocation invocation) {
-    return new FrameworkMethod(invocation.getMethod().getReflection()) {
-      @Override
-      public String getName() {
-        return invocation.getIteration().getDescription().getMethodName();
-      }
-    };
+    stat.evaluate();
   }
 }
-

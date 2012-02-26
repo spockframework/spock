@@ -13,14 +13,14 @@
  */
 package org.spockframework.smoke.junit
 
-import org.junit.Rule
+import org.junit.rules.MethodRule
 import org.junit.runners.model.Statement
-import org.junit.rules.TestRule
-import org.junit.runner.Description
+import org.junit.runners.model.FrameworkMethod
+import org.junit.Rule
 
 import spock.lang.Specification
 
-class JUnitTestRules extends Specification {
+class JUnitMethodRuleOrder extends Specification {
   List log = []
   @Rule LoggingRule rule1 = new LoggingRule(log: log, msg: "rule1")
   @Rule LoggingRule rule2 = new LoggingRule(log: log, msg: "rule2")
@@ -30,11 +30,12 @@ class JUnitTestRules extends Specification {
     log == ["rule2", "rule1"]
   }
 
-  static class LoggingRule implements TestRule {
+  @SuppressWarnings("deprecation")
+  static class LoggingRule implements MethodRule {
     List log
     String msg
 
-    Statement apply(Statement base, Description description) {
+    Statement apply(Statement base, FrameworkMethod method, Object target) {
       new Statement() {
         @Override
         void evaluate() {
@@ -45,4 +46,5 @@ class JUnitTestRules extends Specification {
     }
   }
 }
+
 

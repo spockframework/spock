@@ -40,12 +40,12 @@ class EmbeddedSpecCompiler {
 
   String imports = ""
 
-  void addImport(String pkg) {
+  void addPackageImport(String pkg) {
     imports += "import $pkg.*;"
   }
 
-  void addImport(Package pkg) {
-    addImport(pkg.name)
+  void addPackageImport(Package pkg) {
+    addPackageImport(pkg.name)
   }
 
   void addClassImport(String className) {
@@ -73,7 +73,7 @@ class EmbeddedSpecCompiler {
   }
 
   List<Class> compileWithImports(String source) {
-    addImport(Specification.package )
+    addPackageImport(Specification.package )
     // one-liner keeps line numbers intact
     doCompile "package apackage; $imports ${source.trim()}"
   }

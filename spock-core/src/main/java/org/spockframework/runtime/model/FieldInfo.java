@@ -39,6 +39,10 @@ public class FieldInfo extends NodeInfo<SpecInfo, Field> {
     this.ordinal = ordinal;
   }
 
+  public Class<?> getType() {
+    return getReflection().getType();
+  }
+
   public boolean isStatic() {
     return Modifier.isStatic(getReflection().getModifiers());
   }
@@ -51,7 +55,15 @@ public class FieldInfo extends NodeInfo<SpecInfo, Field> {
     return getReflection().getAnnotation(clazz);
   }
 
+  public boolean isAnnotationPresent(Class<? extends Annotation> clazz) {
+    return getReflection().isAnnotationPresent(clazz);
+  }
+
   public Object readValue(Object target) {
     return GroovyRuntimeUtil.getProperty(target, getReflection().getName());
+  }
+
+  public void writeValue(Object target, Object value) {
+    GroovyRuntimeUtil.setProperty(target, getReflection().getName(), value);
   }
 }

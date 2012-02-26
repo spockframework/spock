@@ -58,6 +58,7 @@ import org.spockframework.util.UnreachableCodeError;
  * 
  * @author Luke Daley
  */
+@SuppressWarnings("UnusedDeclaration")
 public class JUnitFixtureMethodsExtension implements IGlobalExtension {
   
   private static enum FixtureType {

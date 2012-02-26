@@ -29,4 +29,21 @@ import spock.util.EmbeddedSpecRunner
 abstract class EmbeddedSpecification extends Specification {
   EmbeddedSpecRunner runner = new EmbeddedSpecRunner()
   EmbeddedSpecCompiler compiler = new EmbeddedSpecCompiler()
+
+  void stackTraceLooksLike(Throwable exception, String template) {
+    def trace = exception.stackTrace
+    def lines = template.trim().split("\n")
+    assert trace.size() == lines.size()
+
+    lines.eachWithIndex { line, index ->
+      def traceElem = trace[index]
+      def parts = line.split("\\|")
+      def className = parts[0].trim()
+      def methodName = parts[1].trim()
+      def lineNumber = parts[2].trim()
+      assert className == "-" || className == traceElem.className
+      assert methodName == "-" || methodName == traceElem.methodName
+      assert lineNumber == "-" || lineNumber as int == traceElem.lineNumber
+    }
+  }
 }

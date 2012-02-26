@@ -19,77 +19,84 @@ package org.spockframework.smoke.extension
 import java.util.concurrent.TimeUnit
 
 import org.spockframework.runtime.SpockTimeoutError
+import org.spockframework.EmbeddedSpecification
 
 import spock.lang.*
-import org.spockframework.EmbeddedSpecification
-import org.junit.runner.Result
+
+import static java.util.concurrent.TimeUnit.*
 
 /**
- *
  * @author Peter Niederwieser
  */
 class TimeoutExtension extends EmbeddedSpecification {
+  @Shared Thread testFrameworkThread = Thread.currentThread()
+
+  def setup() {
+    runner.addClassMemberImport TimeUnit
+  }
+
   @Timeout(1)
   def "method that completes in time"() {
-    setup: Thread.sleep(500)
+    setup: Thread.sleep 500
   }
 
   @FailsWith(SpockTimeoutError)
   @Timeout(1)
   def "method that doesn't complete in time"() {
-    setup: Thread.sleep(1100)
+    setup: Thread.sleep 1100
   }
 
-  @Timeout(value = 500, unit = TimeUnit.MILLISECONDS)
+  @Timeout(value = 500, unit = MILLISECONDS)
   def "method that completes in time (millis)"() {
-    setup: Thread.sleep(250)
+    setup: Thread.sleep 250
   }
 
   @FailsWith(SpockTimeoutError)
-  @Timeout(value = 250, unit = TimeUnit.MILLISECONDS)
+  @Timeout(value = 250, unit = MILLISECONDS)
   def "method that doesn't complete in time (millis)"() {
-    setup: Thread.sleep(300)
+    setup: Thread.sleep 300
   }
 
   @Issue("http://issues.spockframework.org/detail?id=230")
-  def "stack trace of error is the stack of the hung thread"() {
+  def "stack trace shows where thread is hung"() {
     when:
-    runner.runSpecBody("""
-      @Timeout(1)
-      def "not in time"() {
-        setup:
-        Thread.sleep(1100)
+    runner.runSpecBody """
+      @Timeout(value = 100, unit = MILLISECONDS)
+      def foo() {
+        setup: helper()
       }
-    """)
+
+      def helper() {
+        Thread.sleep 150
+      }
+    """
 
     then:
-    def e = thrown(SpockTimeoutError)
-    def frames = e.stackTrace.toList()
-    frames.size() == 1
-    def topFrame = frames.first()
-    topFrame.className == "apackage.ASpec"
-    topFrame.methodName == "not in time"
+    SpockTimeoutError e = thrown()
+    stackTraceLooksLike e, """
+      apackage.ASpec|helper|7
+      apackage.ASpec|foo|3
+    """
   }
 
-  def "timeout on spec"() {
-    runner.addClassImport(TimeUnit)
+  def "annotating spec class has same effect as annotating every feature method not already annotated with @Timeout"() {
     runner.throwFailure = false
 
     when:
     def result = runner.runWithImports("""
-      @Timeout(value = 250, unit = TimeUnit.MILLISECONDS)
+      @Timeout(value = 250, unit = MILLISECONDS)
       class Foo extends Specification {
-        def "in time"() {
+        def foo() {
           expect: true
         }
-        def "not in time"() {
+        def bar() {
           setup:
-          Thread.sleep(300)
+          Thread.sleep 300
         }
-        @Timeout(value = 100, unit = TimeUnit.MILLISECONDS)
-        def "not in time - overridden timeout"() {
+        @Timeout(value = 100, unit = MILLISECONDS)
+        def baz() {
           setup:
-          Thread.sleep(150)
+          Thread.sleep 150
         }
       }
     """)
@@ -104,5 +111,57 @@ class TimeoutExtension extends EmbeddedSpecification {
     def e2 = result.failures[1].exception
     e2 instanceof SpockTimeoutError
     e2.timeoutValue == 100
+  }
+
+  @Issue("issues.spockframework.org/detail?id=181")
+  @Timeout(1)
+  def "method invocation occurs on regular test framework thread"() {
+    expect:
+    Thread.currentThread() == testFrameworkThread
+  }
+
+  def "SpockTimeoutError indicates timeout settings"() {
+    when:
+    runner.runSpecBody """
+      @Timeout(value = 100, unit = MILLISECONDS)
+      def foo() {
+        setup: Thread.sleep 150
+      }
+    """
+
+    then:
+    SpockTimeoutError e = thrown()
+    e.timeoutValue == 100
+    e.timeoutUnit == MILLISECONDS
+  }
+
+  def "repeatedly interrupts timed out method until it returns"() {
+    when:
+    runner.runSpecBody """
+      @Timeout(value = 100, unit = MILLISECONDS)
+      def foo() {
+        when: Thread.sleep 99999999999
+        then: thrown InterruptedException
+
+        when: Thread.sleep 99999999999
+        then: thrown InterruptedException
+
+        when: Thread.sleep 99999999999
+        then: thrown InterruptedException
+      }
+    """
+
+    then:
+    thrown SpockTimeoutError
+  }
+
+  @Timeout(1)
+  def "watcher thread has descriptive name"() {
+    def group = Thread.currentThread().threadGroup
+    def threads = new Thread[group.activeCount()]
+    group.enumerate(threads)
+
+    expect:
+    threads.find { it.name == "[spock.lang.Timeout] Watcher for method 'watcher thread has descriptive name'" }
   }
 }

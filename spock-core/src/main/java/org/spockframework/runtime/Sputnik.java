@@ -20,9 +20,11 @@ import org.junit.runner.Description;
 import org.junit.runner.Runner;
 import org.junit.runner.manipulation.*;
 import org.junit.runner.notification.RunNotifier;
+import org.junit.runners.model.InitializationError;
 
 import org.spockframework.runtime.model.FeatureInfo;
 import org.spockframework.runtime.model.SpecInfo;
+import org.spockframework.util.IncompatibleGroovyVersionException;
 import org.spockframework.util.VersionChecker;
 
 /**
@@ -40,8 +42,12 @@ public class Sputnik extends Runner implements Filterable, Sortable {
   private boolean extensionsRun = false;
   private boolean descriptionAggregated = false;
 
-  public Sputnik(Class<?> clazz) {
-    VersionChecker.checkSpockAndGroovyVersionsAreCompatible("spec runner");
+  public Sputnik(Class<?> clazz) throws InitializationError {
+    try {
+      VersionChecker.checkGroovyVersion("JUnit runner");
+    } catch (IncompatibleGroovyVersionException e) {
+      throw new InitializationError(e);
+    }
     this.clazz = clazz;
   }
 

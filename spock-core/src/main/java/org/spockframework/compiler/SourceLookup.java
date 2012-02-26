@@ -22,11 +22,10 @@ import org.codehaus.groovy.control.SourceUnit;
 
 public class SourceLookup {
   private final SourceUnit sourceUnit;
-  private final Janitor janitor;
+  private final Janitor janitor = new Janitor();
 
-  public SourceLookup(SourceUnit sourceUnit, Janitor janitor) {
+  public SourceLookup(SourceUnit sourceUnit) {
     this.sourceUnit = sourceUnit;
-    this.janitor = janitor;
   }
 
   public String lookup(ASTNode node) {

@@ -36,23 +36,24 @@ import org.spockframework.util.VersionChecker;
  *
  * @author Peter Niederwieser
  */
+@SuppressWarnings("UnusedDeclaration")
 @GroovyASTTransformation(phase = CompilePhase.SEMANTIC_ANALYSIS)
 public class SpockTransform implements ASTTransformation {
   public SpockTransform() {
-    VersionChecker.checkSpockAndGroovyVersionsAreCompatible("compiler plugin");
+    VersionChecker.checkGroovyVersion("compiler plugin");
   }
 
   public void visit(ASTNode[] nodes, SourceUnit sourceUnit) {
-    new ActualTransform().visit(nodes, sourceUnit);
+    new Impl().visit(nodes, sourceUnit);
   }
 
   // use of nested class defers linking until after groovy version check
-  private static class ActualTransform {
+  private static class Impl {
     final static AstNodeCache nodeCache = new AstNodeCache();
 
     void visit(ASTNode[] nodes, SourceUnit sourceUnit) {
       ErrorReporter errorReporter = new ErrorReporter(sourceUnit);
-      SourceLookup sourceLookup = new SourceLookup(sourceUnit, new Janitor());
+      SourceLookup sourceLookup = new SourceLookup(sourceUnit);
 
       try {
         ModuleNode module = (ModuleNode) nodes[0];

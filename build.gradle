@@ -39,10 +39,7 @@ allprojects {
 
   signing {
     sign configurations.archives
-    required = !isSnapshotVersion
-
-    // workaround GRADLE-2091 (can remove for gradle 1.0-milestone-8)
-    tasks.withType(org.gradle.plugins.signing.Sign) { it.required !isSnapshotVersion }
+    required { !isSnapshotVersion && gradle.taskGraph.hasTask(uploadArchives) }
   }
 
   configurations {

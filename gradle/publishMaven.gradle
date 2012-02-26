@@ -84,9 +84,4 @@ modifyPom { pom ->
   }
 }
 
-// workaround GRADLE-2093 - can remove with gradle 1.0-milestone-8
-signing {
-  if (signatory && !required) {
-    deployers*.beforeDeployment { signPom(it) }
-  }
-}
+deployers*.beforeDeployment { signing.signPom(it) }

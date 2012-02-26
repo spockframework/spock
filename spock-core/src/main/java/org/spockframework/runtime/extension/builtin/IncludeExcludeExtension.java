@@ -23,6 +23,7 @@ import org.spockframework.runtime.model.*;
 import spock.config.IncludeExcludeCriteria;
 import spock.config.RunnerConfiguration;
 
+@SuppressWarnings("UnusedDeclaration")
 public class IncludeExcludeExtension implements IGlobalExtension {
   private RunnerConfiguration config;
 

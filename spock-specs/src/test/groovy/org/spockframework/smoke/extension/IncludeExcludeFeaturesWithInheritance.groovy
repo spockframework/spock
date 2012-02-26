@@ -20,7 +20,7 @@ class IncludeExcludeFeaturesWithInheritance extends EmbeddedSpecification {
   List specs
 
   def setup() {
-    compiler.addImport(getClass().package)
+    compiler.addPackageImport(getClass().package)
 
     specs = compiler.compileWithImports("""
 class Spec1 extends Specification {

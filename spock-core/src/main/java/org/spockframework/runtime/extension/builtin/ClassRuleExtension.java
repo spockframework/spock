@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 the original author or authors.
+ * Copyright 2011 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,53 +14,36 @@
 
 package org.spockframework.runtime.extension.builtin;
 
-import org.junit.ClassRule;
-import org.spockframework.runtime.InvalidSpecException;
-import org.spockframework.runtime.extension.IGlobalExtension;
-import org.spockframework.runtime.extension.IMethodInterceptor;
-import org.spockframework.runtime.model.FieldInfo;
-import org.spockframework.runtime.model.SpecInfo;
-import org.spockframework.util.ReflectionUtil;
-
 import java.util.ArrayList;
 import java.util.List;
 
-public class ClassRuleExtension implements IGlobalExtension {
-  private static boolean classRuleClassAvailable = ReflectionUtil.isClassAvailable("org.junit.ClassRule");
+import org.spockframework.runtime.model.FieldInfo;
+import org.spockframework.runtime.model.SpecInfo;
 
+@SuppressWarnings("UnusedDeclaration")
+public class ClassRuleExtension extends AbstractRuleExtension {
   public void visitSpec(SpecInfo spec) {
-    if (!classRuleClassAvailable) return;
+    if (classRuleClass == null) return;
 
-    List<FieldInfo> ruleFields = ClassRuleCollector.collectFields(spec);
-    if (ruleFields.isEmpty()) return;
+    List<FieldInfo> ruleFields = new ArrayList<FieldInfo>();
 
-    IMethodInterceptor interceptor = TestRuleInterceptorFactory.create(ruleFields);
-    spec.addInterceptor(interceptor);
-  }
+    for (FieldInfo field : spec.getAllFields()) {
+      if (!field.isAnnotationPresent(classRuleClass)) continue;
 
-  // defer loading of class ClassRule
-  private static class ClassRuleCollector {
-    static List<FieldInfo> collectFields(SpecInfo spec) {
-      List<FieldInfo> fields = new ArrayList<FieldInfo>();
-      for (FieldInfo field : spec.getAllFields())
-        if (field.getReflection().isAnnotationPresent(ClassRule.class)) {
-          checkIsStaticOrSharedField(field);
-          fields.add(field);
-        }
-      return fields;
-    }
-
-    private static void checkIsStaticOrSharedField(FieldInfo field) {
-      if (!field.isShared() && !field.isStatic()) {
-        throw new InvalidSpecException("@ClassRule field '%s' has to be a @Shared or static field").withArgs(field.getName());
+      checkIsSharedField(field);
+      if (hasFieldType(field, testRuleClass)) {
+        ruleFields.add(field);
+      } else {
+        invalidFieldType(field);
       }
     }
+
+    if (!ruleFields.isEmpty()) ClassRuleInterceptorInstaller.install(spec, ruleFields);
   }
 
-  // defer loading of class class TestRule
-  private static class TestRuleInterceptorFactory {
-    static IMethodInterceptor create(List<FieldInfo> ruleFields) {
-      return new TestRuleInterceptor(ruleFields);
+  private static class ClassRuleInterceptorInstaller {
+    static void install(SpecInfo spec, List<FieldInfo> ruleFields) {
+      spec.addInterceptor(new ClassRuleInterceptor(ruleFields));
     }
   }
 }

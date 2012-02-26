@@ -181,7 +181,7 @@ def foo() {
   def "naming pattern supports property expressions"() {
     RunListener listener = Mock()
     runner.listeners << listener
-    runner.addImport(Actor.package)
+    runner.addClassImport(Actor)
 
     when:
     runner.runSpecBody('''
@@ -202,7 +202,7 @@ def foo() {
   def "naming pattern supports zero-arg method calls"() {
     RunListener listener = Mock()
     runner.listeners << listener
-    runner.addImport(Actor.package)
+    runner.addClassImport(Actor)
 
     when:
     runner.runSpecBody('''
@@ -261,7 +261,7 @@ def foo() {
   def "method name can act as naming pattern"() {
     RunListener listener = Mock()
     runner.listeners << listener
-    runner.addImport(Actor.package)
+    runner.addClassImport(Actor)
 
     when:
     runner.runSpecBody('''
@@ -283,7 +283,7 @@ def "one #actor.details.name.size() two"() {
   def "naming pattern in @Unroll annotation wins over naming pattern in method name"() {
     RunListener listener = Mock()
     runner.listeners << listener
-    runner.addImport(Actor.package)
+    runner.addClassImport(Actor)
 
     when:
     runner.runSpecBody('''
@@ -305,7 +305,7 @@ def "#actor.details.age"() {
   def "can unroll a whole class at once"() {
     RunListener listener = Mock()
     runner.listeners << listener
-    runner.addImport(Actor.package)
+    runner.addClassImport(Actor)
 
     when:
     runner.runWithImports("""
@@ -341,7 +341,7 @@ class Foo extends Specification {
   def "method-level unroll annotation wins over class-level annotation"() {
     RunListener listener = Mock()
     runner.listeners << listener
-    runner.addImport(Actor.package)
+    runner.addClassImport(Actor)
 
     when:
     runner.runWithImports('''

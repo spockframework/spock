@@ -22,13 +22,16 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
 
 public abstract class ReflectionUtil {
-  public static boolean isClassAvailable(String className) {
+  public static Class<?> loadClassIfAvailable(String className) {
     try {
-      ReflectionUtil.class.getClassLoader().loadClass(className);
-      return true;
+      return ReflectionUtil.class.getClassLoader().loadClass(className);
     } catch (ClassNotFoundException e) {
-      return false;
+      return null;
     }
+  }
+
+  public static boolean isClassAvailable(String className) {
+    return loadClassIfAvailable(className) != null;
   }
 
   public static boolean isMethodAvailable(String className, String methodName) {

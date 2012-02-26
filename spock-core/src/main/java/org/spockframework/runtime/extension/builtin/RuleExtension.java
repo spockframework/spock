@@ -17,67 +17,52 @@ package org.spockframework.runtime.extension.builtin;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Rule;
+import org.spockframework.runtime.model.FeatureInfo;
+import org.spockframework.runtime.model.FieldInfo;
+import org.spockframework.runtime.model.SpecInfo;
 
-import org.spockframework.runtime.InvalidSpecException;
-import org.spockframework.runtime.extension.IGlobalExtension;
-import org.spockframework.runtime.extension.IMethodInterceptor;
-import org.spockframework.runtime.model.*;
-import org.spockframework.util.ReflectionUtil;
-
-public class RuleExtension implements IGlobalExtension {
-  private static boolean ruleClassAvailable = ReflectionUtil.isClassAvailable("org.junit.Rule");
-  private static boolean methodRuleClassAvailable = ReflectionUtil.isClassAvailable("org.junit.rules.MethodRule");
-  private static boolean testRuleClassAvailable = ReflectionUtil.isClassAvailable("org.junit.rules.TestRule");
-
+// This extension supports different JUnit versions with different rule capabilities/implementations.
+// Implementation makes use of reflection and nested classes to make sure that no ClassNotFoundErrorS will occur.
+@SuppressWarnings("UnusedDeclaration")
+public class RuleExtension extends AbstractRuleExtension {
   public void visitSpec(SpecInfo spec) {
-    if (!ruleClassAvailable) return;
+    if (ruleClass == null) return;
 
-    List<FieldInfo> ruleFields = RuleCollector.collectFields(spec);
-    if (ruleFields.isEmpty()) return;
+    List<FieldInfo> methodRuleFields = new ArrayList<FieldInfo>();
+    List<FieldInfo> testRuleFields = new ArrayList<FieldInfo>();
 
-    if (methodRuleClassAvailable) {
-      IMethodInterceptor interceptor = MethodRuleInterceptorFactory.create(ruleFields);
-      for (FeatureInfo feature : spec.getAllFeatures())
-        feature.getFeatureMethod().addInterceptor(interceptor);
+    for (FieldInfo field : spec.getAllFields()) {
+      if (!field.isAnnotationPresent(ruleClass)) continue;
+      checkIsInstanceField(field);
+
+      if (hasFieldType(field, methodRuleClass)) {
+        methodRuleFields.add(field);
+      } else if (hasFieldType(field, testRuleClass)) {
+        testRuleFields.add(field);
+      } else {
+        invalidFieldType(field);
+      }
     }
 
-    if (testRuleClassAvailable) {
-      IMethodInterceptor interceptor = TestRuleInterceptorFactory.create(ruleFields);
-      for (FeatureInfo feature : spec.getAllFeatures())
-        feature.addIterationInterceptor(interceptor);
-    }
+    if (!methodRuleFields.isEmpty()) MethodRuleInterceptorInstaller.install(spec, methodRuleFields);
+    if (!testRuleFields.isEmpty()) TestRuleInterceptorInstaller.install(spec, testRuleFields);
   }
 
-  private static class RuleCollector {
-    static List<FieldInfo> collectFields(SpecInfo spec) {
-      List<FieldInfo> fields = new ArrayList<FieldInfo>();
-      for (FieldInfo field : spec.getAllFields())
-        if (field.getReflection().isAnnotationPresent(Rule.class)) {
-          checkIsInstanceField(field);
-          fields.add(field);
-        }
-      return fields;
-    }
-
-    private static void checkIsInstanceField(FieldInfo field) {
-      if (field.isShared() || field.isStatic()) {
-        throw new InvalidSpecException("@Rule field '%s' has to be an instance field").withArgs(field.getName());
+  private static class MethodRuleInterceptorInstaller {
+    static void install(SpecInfo spec, List<FieldInfo> ruleFields) {
+      MethodRuleInterceptor interceptor = new MethodRuleInterceptor(ruleFields);
+      for (FeatureInfo feature : spec.getAllFeatures()) {
+        feature.getFeatureMethod().addInterceptor(interceptor);
       }
     }
   }
 
-  // defer loading of class MethodRule
-  private static class MethodRuleInterceptorFactory {
-    static IMethodInterceptor create(List<FieldInfo> ruleFields) {
-      return new MethodRuleInterceptor(ruleFields);
-    }
-  }
-
-  // defer loading of class TestRule
-  private static class TestRuleInterceptorFactory {
-    static IMethodInterceptor create(List<FieldInfo> ruleFields) {
-      return new TestRuleInterceptor(ruleFields);
+  private static class TestRuleInterceptorInstaller {
+    static void install(SpecInfo spec, List<FieldInfo> ruleFields) {
+      TestRuleInterceptor interceptor = new TestRuleInterceptor(ruleFields);
+      for (FeatureInfo feature : spec.getAllFeatures()) {
+        feature.addIterationInterceptor(interceptor);
+      }
     }
   }
 }

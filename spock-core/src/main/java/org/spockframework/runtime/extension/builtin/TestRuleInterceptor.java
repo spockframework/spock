@@ -17,45 +17,24 @@ package org.spockframework.runtime.extension.builtin;
 import java.util.List;
 
 import org.junit.rules.TestRule;
-import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 
-import org.spockframework.runtime.extension.IMethodInterceptor;
 import org.spockframework.runtime.extension.IMethodInvocation;
 import org.spockframework.runtime.model.FieldInfo;
 
-public class TestRuleInterceptor implements IMethodInterceptor {
-  private final List<FieldInfo> ruleFields;
-
+public class TestRuleInterceptor extends AbstractRuleInterceptor {
   public TestRuleInterceptor(List<FieldInfo> ruleFields) {
-    this.ruleFields = ruleFields;
+    super(ruleFields);
   }
 
   public void intercept(final IMethodInvocation invocation) throws Throwable {
     Statement stat = createBaseStatement(invocation);
 
     for (FieldInfo field : ruleFields) {
-      Object target = field.isStatic() ? null :
-          field.isShared() ? invocation.getSharedInstance() :
-              invocation.getInstance();
-
-      Object rule = field.readValue(target);
-      if (!(rule instanceof TestRule)) continue;
-
-      Description description = invocation.getIteration() != null ?
-          invocation.getIteration().getDescription() : invocation.getSpec().getDescription();
-      stat = ((TestRule) rule).apply(stat, description);
+      TestRule rule = (TestRule) getRuleInstance(field, invocation.getInstance());
+      stat = rule.apply(stat, invocation.getIteration().getDescription());
     }
 
     stat.evaluate();
-  }
-
-  private Statement createBaseStatement(final IMethodInvocation invocation) {
-    return new Statement() {
-      @Override
-      public void evaluate() throws Throwable {
-        invocation.proceed();
-      }
-    };
   }
 }

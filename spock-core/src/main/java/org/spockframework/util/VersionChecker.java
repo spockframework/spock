@@ -15,12 +15,12 @@
 package org.spockframework.util;
 
 public class VersionChecker {
-  private static final boolean compatibleWithGroovy =
-      SpockReleaseInfo.isCompatibleWithGroovyVersion(GroovyReleaseInfo.getVersion());
+  private static final boolean compatibleGroovyVersion =
+      SpockReleaseInfo.isCompatibleGroovyVersion(GroovyReleaseInfo.getVersion());
 
-  public static void checkSpockAndGroovyVersionsAreCompatible(String whoIsChecking) {
-    if (!compatibleWithGroovy) throw new IncompatibleVersionsError(String.format(
-"The Spock %s could not run because Spock %s is not compatible with Groovy %s. For more information, see http://versioninfo.spockframework.org\n" +
+  public static void checkGroovyVersion(String whoIsChecking) {
+    if (!compatibleGroovyVersion) throw new IncompatibleGroovyVersionException(String.format(
+"The Spock %s cannot execute because Spock %s is not compatible with Groovy %s. For more information, see http://versioninfo.spockframework.org\n" +
 "Spock location: %s\n" +
 "Groovy location: %s",
         whoIsChecking, SpockReleaseInfo.getVersion(), GroovyReleaseInfo.getVersion(),

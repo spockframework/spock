@@ -29,7 +29,7 @@ public class SpockReleaseInfo {
     return SpockReleaseInfo.class.getProtectionDomain().getCodeSource().getLocation().toString();
   }
 
-  public static boolean isCompatibleWithGroovyVersion(VersionNumber groovyVersion) {
+  public static boolean isCompatibleGroovyVersion(VersionNumber groovyVersion) {
     if (groovyVersion == VersionNumber.UNKNOWN) return true;
 
     return minGroovyVersion.compareTo(groovyVersion) <= 0

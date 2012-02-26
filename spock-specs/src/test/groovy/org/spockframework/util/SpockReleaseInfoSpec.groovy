@@ -20,6 +20,6 @@ class SpockReleaseInfoSpec extends Specification {
   @See("http://groups.google.com/group/spockframework/browse_thread/thread/ad3a4da300d357fc")
   def "missing Groovy version is handled gracefully"() {
     expect:
-    SpockReleaseInfo.isCompatibleWithGroovyVersion(VersionNumber.UNKNOWN)
+    SpockReleaseInfo.isCompatibleGroovyVersion(VersionNumber.UNKNOWN)
   }
 }

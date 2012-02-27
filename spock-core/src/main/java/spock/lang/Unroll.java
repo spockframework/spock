@@ -24,6 +24,20 @@ import java.lang.annotation.*;
  * }
  * </pre>
  *
+ * Alternatively, the naming pattern can also be embedded in the method name:
+ *
+ * <pre>
+ * &#64;Unroll
+ * def "#name should have length #length"() {
+ *   ...
+ * }
+ * </pre>
+ *
+ * The {@code Unroll} annotation can also be put on a spec class. This has the same
+ * effect as putting it on every data-driven feature method that is not already
+ * annotated with {@code Unroll}. By embedding the naming pattern in the method
+ * names, each method can still have its own pattern.
+ *
  * @author Peter Niederwieser
  */
 @Retention(RetentionPolicy.RUNTIME)

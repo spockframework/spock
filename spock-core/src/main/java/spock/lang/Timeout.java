@@ -23,13 +23,23 @@ import org.spockframework.runtime.extension.ExtensionAnnotation;
 import org.spockframework.runtime.extension.builtin.TimeoutExtension;
 
 /**
- * Indicates that the execution of a feature or fixture method should time out
+ * Indicates that the execution of a method should time out
  * after the given duration has elapsed. The default time unit is seconds.
- * When applied to a feature method, the timeout is per
- * execution of one iteration, and does not include time spent in fixture methods.
- * When applied to a fixture method, the timeout is per execution of the fixture method.
- * Applying this annotation to a spec class is the same as applying it
- * to all feature methods which don't already have a timeout annotation.
+ *
+ * <p>Timeouts can be applied to feature methods, fixture methods, and spec classes.
+ * When applied to a feature method, the timeout is per execution of one iteration,
+ * and does not include time spent in fixture methods. When applied to a fixture
+ * method, the timeout is per execution of the fixture method. Applying the timeout
+ * to a spec class has the same effect as applying it to each feature (but not fixture)
+ * method that isn't already annotated with {@code Timeout}.
+ *
+ * <p>Timed methods are invoked on the regular test framework thread. This can be
+ * important for integration tests that hold thread-local state. When a method
+ * times out, it will be interrupted repeatedly until it (hopefully) returns.
+ * Methods that continue to ignore interruption may run forever.
+ *
+ * <p>When a timeout is reported to the user, the stack trace shown reflects the
+ * execution stack of the test framework thread when the timeout was reached.
  *
  * @author Peter Niederwieser
  */
@@ -41,9 +51,6 @@ public @interface Timeout {
   /**
    * The duration after which the execution of the annotated feature or fixture
    * method times out.
-   *
-   * The stack trace of the failure exception will be the execution stack of the test when the
-   * timeout is reached.
    *
    * @return the duration after which the execution of the annotated feature or
    * fixture method times out

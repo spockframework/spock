@@ -32,7 +32,7 @@ import spock.lang.Specification
  * include the whole path).
  *
  * <p>What's not shown here is that filtering also works for classes.
- * Whereas mehods can only be filtered based on annotations, classes can
+ * Whereas methods can only be filtered based on annotations, classes can
  * also be filtered based on their base class.
  *
  * @since 0.4

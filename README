@@ -4,8 +4,8 @@ Spock Framework README
 Spock is a developer testing and specification framework for Java and Groovy applications. To learn more about Spock,
 visit http://spockframework.org. To run your first spec right away, visit http://meet.spockframework.org.
 
-Current release versions: 0.5-groovy-1.6, 0.5-groovy-1.7, 0.5-groovy-1.8 (released 2010-12-10)
-Current development versions: 0.6-groovy-1.7-SNAPSHOT, 0.6-groovy-1.8-SNAPSHOT, 0.6-groovy-1.9-SNAPSHOT
+Current release versions: 0.6-groovy-1.7, 0.6-groovy-1.8 (released 2012-02-27)
+Current development versions: 0.7-groovy-1.8-SNAPSHOT, 0.7-groovy-2.0-SNAPSHOT
 
 Modules
 -------
@@ -25,26 +25,20 @@ spock-guice: Integration with Guice 2.
 
 spock-unitils: Integration with Unitils (http://www.unitils.org/).
 
-Gradle Build
-------------
+spock-grails: The Grails plugin is now its own project hosted at https://github.com/spockframework/spock-grails.
+
+Building Spock yourself
+-----------------------
 Prerequisites: JDK 5 or higher
 
 Type: ./gradlew clean build
 
 If not already present, build dependencies (including Gradle itself) will be downloaded automatically.
 
-Maven Build
------------
-Prerequisites: JDK5 or higher, Maven 2.x
-
-Type: mvn clean install
-
-If not already present, build dependencies will be downloaded automatically.
-
 Further Resources
 -----------------
 Spock homepage        http://spockframework.org
-Spock web console     http://meet.spockframework.org
+Spock web console     http://webconsole.spockframework.org
 Main documentation    http://wiki.spockframework.org/SpockBasics
 User discussion group http://forum.spockframework.org
 Dev discussion group  http://dev.forum.spockframework.org

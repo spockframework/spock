@@ -1,6 +1,8 @@
 apply from: profile("publishMaven")
 
-description = "Spock Framework - Unitils Module"
+displayName = "Spock Framework - Unitils Module"
+
+description = "Spock's Unitils Module makes it possible to use Unitils together with Spock."
 
 dependencies {
   compile project(":spock-core")

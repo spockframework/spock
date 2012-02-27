@@ -1,6 +1,9 @@
 apply from: profile("publishMaven")
 
-description = "Spock Framework - Spring Module"
+displayName = "Spock Framework - Spring Module"
+
+description = "Spock's Spring Module makes it possible to use Spring's TestContext framework together with Spock. \
+Both Spring 2.5.x and 3.x are supported."
 
 def springVersion = "2.5.6.SEC02"
 

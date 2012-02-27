@@ -2,9 +2,9 @@ apply plugin: "maven"
 
 basePom = {
   project {
-    name project.description
+    name project.displayName
+    description project.description
     url "http://spockframework.org"
-    description "Spock is a testing and specification framework for Java and Groovy applications."
 
     licenses {
       license {
@@ -17,7 +17,7 @@ basePom = {
     scm {
       connection "scm:git:git://github.com/spockframework/spock.git"
       developerConnection "scm:git:ssh://git@github.com/spockframework/spock.git"
-      url "http://github.spockframework.org"
+      url "http://github.spockframework.org/spock"
     }
 
     developers {

@@ -1,6 +1,8 @@
 apply from: profile("publishMaven")
 
-description = "Spock Framework - Tapestry Module"
+displayName = "Spock Framework - Tapestry Module"
+
+description = "Spock's Tapestry Module provides support for testing Tapestry 5 based applications."
 
 repositories {
   // need to explicitly add repository defined in tapestry-ioc POM

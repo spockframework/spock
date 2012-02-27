@@ -15,6 +15,6 @@
  */
 
 /**
- * Utility classes related to meta programming.
+ * Utilities related to Groovy meta programming.
  */
 package spock.util.mop;

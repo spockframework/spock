@@ -22,24 +22,22 @@ allprojects {
 
   apply from: profile("common")
 
-  repositories {
-    mavenCentral()
-    if (isSnapshotVersion) {
-      mavenRepo(url: "http://snapshots.repository.codehaus.org")
-    }
-  }
-
   apply plugin: "idea"
   apply plugin: "eclipse"
+}
+
+subprojects {
   apply plugin: "groovy"
   apply plugin: "signing"
 
   sourceCompatibility = 1.5
   targetCompatibility = 1.5
 
-  signing {
-    sign configurations.archives
-    required { !isSnapshotVersion && gradle.taskGraph.hasTask(uploadArchives) }
+  repositories {
+    mavenCentral()
+    if (isSnapshotVersion) {
+      mavenRepo(url: "http://snapshots.repository.codehaus.org")
+    }
   }
 
   configurations {
@@ -50,19 +48,16 @@ allprojects {
     groovy libs.groovy
   }
 
-  javadoc {
-    include "spock/**"
-    configure(options) {
-      links "http://download.oracle.com/javase/1.5.0/docs/api/"
-      links "http://groovy.codehaus.org/gapi"
-      links "http://kentbeck.github.com/junit/javadoc/4.9"
-      links "http://www.jarvana.com/jarvana/inspect/org/hamcrest/hamcrest-core/1.2/hamcrest-core-1.2-javadoc.jar"
-    }
+  signing {
+    sign configurations.archives
+    required { !isSnapshotVersion && gradle.taskGraph.hasTask(uploadArchives) }
   }
 
   tasks.withType(Compile) { task ->
     options.useAnt = false
   }
+
+  configureJavadoc(javadoc)
 
   task sourcesJar(type: Jar) {
     classifier "sources"
@@ -92,10 +87,38 @@ idea {
   }
 }
 
-File profile(String name) {
-  project.file("gradle/${name}.gradle")
+task javadoc(type: Javadoc) {
+  title "Spock Framework API Documentation ($version)"
+  destinationDir file("build/javadoc")
+  source subprojects.javadoc.source
+  classpath = files(subprojects.javadoc.classpath)
+}
+
+configureJavadoc(javadoc)
+
+task publishJavadoc(type: Copy) {
+  from javadoc
+  into "file:///var/www/spock/javadoc/$version/"
 }
 
 task wrapper(type: Wrapper) {
   gradleVersion = "1.0-milestone-8a"
 }
+
+File profile(String name) {
+  project.file("gradle/${name}.gradle")
+}
+
+def configureJavadoc(task) {
+  configure(task) {
+    include "spock/**"
+    configure(options) {
+      links "http://download.oracle.com/javase/1.5.0/docs/api/"
+      links "http://groovy.codehaus.org/gapi"
+      links "http://kentbeck.github.com/junit/javadoc/4.9"
+      links "http://www.jarvana.com/jarvana/inspect/org/hamcrest/hamcrest-core/1.2/hamcrest-core-1.2-javadoc.jar"
+    }
+  }
+}
+
+

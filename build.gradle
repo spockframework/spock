@@ -97,7 +97,7 @@ task javadoc(type: Javadoc) {
 
 configureJavadoc(javadoc)
 
-task publishJavadoc(type: Copy) {
+task publishJavadoc(type: Sync) {
   from javadoc
   into "file:///var/www/spock/javadoc/$version/"
 }

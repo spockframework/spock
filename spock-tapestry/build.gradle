@@ -8,10 +8,13 @@ repositories {
   mavenRepo(url: "http://repository.jboss.com/maven2")
 }
 
+// 5.3.x seems to require Java 1.6 (evidence: org.apache.tapestry5.ioc.internal.util.InternalUtils makes direct use of @PostConstruct)
+tapestryVersion = System.getProperty("java.version").startsWith("1.5") ? "5.2.6" : "5.3.2"
+
 dependencies {
   compile project(":spock-core")
-  compile "org.apache.tapestry:tapestry-ioc:5.3.2"
-  compile "org.apache.tapestry:tapestry5-annotations:5.3.2"
+  compile "org.apache.tapestry:tapestry-ioc:$tapestryVersion"
+  compile "org.apache.tapestry:tapestry5-annotations:$tapestryVersion"
   compile "org.slf4j:slf4j-api:1.6.1"
   compile libs.junit
 }

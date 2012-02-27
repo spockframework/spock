@@ -2,7 +2,7 @@ apply from: profile("publishMaven")
 
 description = "Spock Framework - Spring Module"
 
-def springVersion = "3.0.5.RELEASE"
+def springVersion = "2.5.6.SEC02"
 
 dependencies {
   compile project(":spock-core")

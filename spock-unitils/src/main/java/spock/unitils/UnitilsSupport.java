@@ -20,8 +20,8 @@ import org.spockframework.runtime.extension.ExtensionAnnotation;
 import org.spockframework.unitils.UnitilsExtension;
 
 /**
- * Activates Unitils support for a specification. All Unitils features are
- * supported. For more information, see http://www.unitils.org.
+ * Activates <a href="http://www.unitils.org">Unitils</a> support for a specification.
+ * All Unitils features are supported.
  */
 @Inherited
 @Target(ElementType.TYPE)

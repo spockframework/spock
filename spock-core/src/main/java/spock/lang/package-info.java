@@ -15,6 +15,6 @@
  */
 
 /**
- * Classes comprising Spock's core specification language.
+ * The core specification language.
  */
 package spock.lang;

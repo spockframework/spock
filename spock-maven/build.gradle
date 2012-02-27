@@ -1,5 +1,10 @@
 apply from: profile("publishMaven")
 
+displayName = "Spock Framework - Maven Module"
+
+description = "Spock's Maven Module provides some advanced features when executing Spock specifications with Maven 2. \
+This module is purely optional; Maven 2/3 will execute Spock specifications just fine without it."
+
 dependencies {
   compile project(":spock-core")
 

@@ -1,6 +1,8 @@
 apply from: profile("publishMaven")
 
-description = "Spock Framework - Specs for Core Module"
+displayName = "Spock Framework - Specs for Core Module"
+
+description = "Spock specifications for the Core Module. Yes, we eat our own dog food."
 
 dependencies {
   testCompile project(":spock-core")

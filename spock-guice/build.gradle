@@ -1,6 +1,8 @@
 apply from: profile("publishMaven")
 
-description = "Spock Framework - Guice Module"
+displayName = "Spock Framework - Guice Module"
+
+description = "Spock's Guice Module provides support for testing Guice 2/3 based applications."
 
 dependencies {
   compile project(":spock-core")

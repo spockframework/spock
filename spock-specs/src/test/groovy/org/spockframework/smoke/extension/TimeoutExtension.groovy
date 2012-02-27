@@ -125,7 +125,7 @@ class TimeoutExtension extends EmbeddedSpecification {
     runner.runSpecBody """
       @Timeout(value = 100, unit = MILLISECONDS)
       def foo() {
-        setup: Thread.sleep 150
+        setup: Thread.sleep 250
       }
     """
 

@@ -13,6 +13,6 @@
  */
 
 /**
- * Classes related to Spock configuration files.
+ * Classes modeling Spock's configuration options.
  */
 package spock.config;

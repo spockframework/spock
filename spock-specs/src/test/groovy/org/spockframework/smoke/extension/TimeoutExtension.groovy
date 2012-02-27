@@ -61,13 +61,13 @@ class TimeoutExtension extends EmbeddedSpecification {
   def "stack trace shows where thread is hung"() {
     when:
     runner.runSpecBody """
-      @Timeout(value = 100, unit = MILLISECONDS)
+      @Timeout(value = 250, unit = MILLISECONDS)
       def foo() {
         setup: helper()
       }
 
       def helper() {
-        Thread.sleep 150
+        Thread.sleep 300
       }
     """
 

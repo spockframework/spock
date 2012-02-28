@@ -27,6 +27,13 @@ import spock.lang.Issue
  * @author Peter Niederwieser
  */
 class UnrolledFeatureMethods extends EmbeddedSpecification {
+  RunListener listener = Mock()
+
+  def setup() {
+    runner.listeners << listener
+    runner.addClassImport(Actor)
+  }
+
   def "iterations of an unrolled feature count as separate tests"() {
     when:
     def result = runner.runSpecBody("""
@@ -46,9 +53,6 @@ def foo() {
   }
 
   def "iterations of an unrolled feature foo are named foo[0], foo[1], etc."() {
-    RunListener listener = Mock()
-    runner.listeners << listener
-
     when:
     runner.runSpecBody """
 @Unroll
@@ -88,8 +92,6 @@ def foo() {
 
   def "if creation of a data provider fails, feature isn't unrolled"() {
     runner.throwFailure = false
-    RunListener listener = Mock()
-    runner.listeners << listener
 
     when:
     def result = runner.runSpecBody("""
@@ -114,12 +116,9 @@ def foo() {
   }
 
   def "naming pattern may refer to data variables"() {
-    RunListener listener = Mock()
-    runner.listeners << listener
-
     when:
-    runner.runSpecBody('''
-@Unroll({"one $y two $x three"})
+    runner.runSpecBody("""
+@Unroll("one #y two #x three")
 def foo() {
   expect: true
 
@@ -127,7 +126,7 @@ def foo() {
   x << [1, 2, 3]
   y << ["a", "b", "c"]
 }
-    ''')
+    """)
 
     then:
     1 * listener.testStarted { it.methodName == "one a two 1 three" }
@@ -135,20 +134,18 @@ def foo() {
     1 * listener.testStarted { it.methodName == "one c two 3 three" }
   }
 
-    def "naming pattern may refer to feature name and iteration count"() {
-    RunListener listener = Mock()
-    runner.listeners << listener
-
+  def "naming pattern may refer to feature name and iteration count"() {
     when:
-    runner.runSpecBody('''
-@Unroll({"one $featureName two $iterationCount three"})
+    runner.runSpecBody("""
+@Unroll("one #featureName two #iterationCount three")
 def foo() {
   expect: true
 
   where:
-  x << (1..3)
+  x << [1, 2, 3]
+  y << ["a", "b", "c"]
 }
-    ''')
+    """)
 
     then:
     1 * listener.testStarted { it.methodName == "one foo two 0 three" }
@@ -158,12 +155,9 @@ def foo() {
 
   @Issue("http://issues.spockframework.org/detail?id=65")
   def "variables in naming pattern whose value is null are replaced correctly"() {
-    RunListener listener = Mock()
-    runner.listeners << listener
-
     when:
-    runner.runSpecBody('''
-@Unroll({"one $x two $y three"})
+    runner.runSpecBody("""
+@Unroll("one #x two #y three")
 def foo() {
   expect: true
 
@@ -171,7 +165,7 @@ def foo() {
   x << [1]
   y << [null]
 }
-    ''')
+    """)
 
     then:
     1 * listener.testStarted { it.methodName == "one 1 two null three" }
@@ -179,20 +173,16 @@ def foo() {
 
   @Issue("http://issues.spockframework.org/detail?id=231")
   def "naming pattern supports property expressions"() {
-    RunListener listener = Mock()
-    runner.listeners << listener
-    runner.addClassImport(Actor)
-
     when:
-    runner.runSpecBody('''
-@Unroll({"one $actor.details.name two"})
+    runner.runSpecBody("""
+@Unroll("one #actor.details.name two")
 def foo() {
   expect: true
 
   where:
   actor = new Actor()
 }
-    ''')
+    """)
 
     then:
     1 * listener.testStarted { it.methodName == "one fred two" }
@@ -200,71 +190,41 @@ def foo() {
 
   @Issue("http://issues.spockframework.org/detail?id=231")
   def "naming pattern supports zero-arg method calls"() {
-    RunListener listener = Mock()
-    runner.listeners << listener
-    runner.addClassImport(Actor)
-
     when:
-    runner.runSpecBody('''
-@Unroll({"one ${actor.details.name.size()} two"})
+    runner.runSpecBody("""
+@Unroll("one #actor.details.name.size() two")
 def foo() {
   expect: true
 
   where:
   actor = new Actor()
 }
-    ''')
+    """)
 
     then:
     1 * listener.testStarted { it.methodName == "one 4 two" }
   }
 
-  def "variables in naming pattern that can't be evaluated are prefixed with 'Error:'"() {
-    RunListener listener = Mock()
-    runner.listeners << listener
-
+  def "expressions in naming pattern that can't be evaluated are prefixed with 'Error:'"() {
     when:
-    runner.runSpecBody('''
-@Unroll({"$missing"})
+    runner.runSpecBody("""
+@Unroll("#obj #obj.ok() #obj.bang() #obj.missing() #missing")
 def foo() {
   expect: true
 
   where:
-  x = 1
+  obj = { def obj = new Expando(); obj.ok = { "ok" }; obj.toString = { throw new RuntimeException() }; obj.bang = { throw new NullPointerException() }; obj }()
 }
-    ''')
+    """)
 
     then:
-    1 * listener.testStarted { it.methodName == "\$Error:missing" }
-  }
-
-  def "if naming pattern can't be evaluated, method name starts with 'Error:' and contains exception text"() {
-    RunListener listener = Mock()
-    runner.listeners << listener
-
-    when:
-    runner.runSpecBody('''
-@Unroll({"$foo.bar()"})
-def foo() {
-  expect: true
-
-  where:
-  x = 1
-}
-    ''')
-
-    then:
-    1 * listener.testStarted { it.methodName == "Error: groovy.lang.MissingPropertyException: No such property: bar for class: java.lang.String" }
+    1 * listener.testStarted { it.methodName == "#Error:obj ok #Error:obj.bang() #Error:obj.missing() #Error:missing" }
   }
 
   @Issue("http://issues.spockframework.org/detail?id=231")
   def "method name can act as naming pattern"() {
-    RunListener listener = Mock()
-    runner.listeners << listener
-    runner.addClassImport(Actor)
-
     when:
-    runner.runSpecBody('''
+    runner.runSpecBody("""
 @Unroll
 def "one #actor.details.name.size() two"() {
   expect: true
@@ -272,7 +232,7 @@ def "one #actor.details.name.size() two"() {
   where:
   actor = new Actor()
 }
-    ''')
+    """)
 
     then:
     1 * listener.testStarted { it.methodName == "one 4 two" }
@@ -281,20 +241,16 @@ def "one #actor.details.name.size() two"() {
 
   @Issue("http://issues.spockframework.org/detail?id=231")
   def "naming pattern in @Unroll annotation wins over naming pattern in method name"() {
-    RunListener listener = Mock()
-    runner.listeners << listener
-    runner.addClassImport(Actor)
-
     when:
-    runner.runSpecBody('''
-@Unroll({"$actor.details.name"})
+    runner.runSpecBody("""
+@Unroll("#actor.details.name")
 def "#actor.details.age"() {
   expect: true
 
   where:
   actor = new Actor()
 }
-    ''')
+    """)
 
     then:
     1 * listener.testStarted { it.methodName == "fred" }
@@ -303,10 +259,6 @@ def "#actor.details.age"() {
 
   @Issue("http://issues.spockframework.org/detail?id=232")
   def "can unroll a whole class at once"() {
-    RunListener listener = Mock()
-    runner.listeners << listener
-    runner.addClassImport(Actor)
-
     when:
     runner.runWithImports("""
 @Unroll
@@ -339,15 +291,11 @@ class Foo extends Specification {
 
   @Issue("http://issues.spockframework.org/detail?id=232")
   def "method-level unroll annotation wins over class-level annotation"() {
-    RunListener listener = Mock()
-    runner.listeners << listener
-    runner.addClassImport(Actor)
-
     when:
-    runner.runWithImports('''
+    runner.runWithImports("""
 @Unroll
 class Foo extends Specification {
-  @Unroll({"$actor.details.name"})
+  @Unroll("#actor.details.name")
   def method() {
     expect: true
 
@@ -355,13 +303,13 @@ class Foo extends Specification {
     actor = new Actor()
   }
 }
-    ''')
+    """)
 
     then:
     1 * listener.testStarted { it.methodName == "fred" }
   }
-}
 
-class Actor {
-  Map details = [name: "fred", age: 30]
+  private class Actor {
+    Map details = [name: "fred", age: 30]
+  }
 }

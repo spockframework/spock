@@ -5,3 +5,8 @@ include "spock-specs"
 include "spock-spring"
 include "spock-tapestry"
 include "spock-unitils"
+
+rootProject.name = "spock"
+rootProject.children.each {
+  it.buildFileName = it.name + ".gradle" - "spock-"
+}

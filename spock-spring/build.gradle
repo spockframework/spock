@@ -9,8 +9,9 @@ def springVersion = "2.5.6.SEC02"
 
 dependencies {
   compile project(":spock-core")
-  compile "org.springframework:spring-test:$springVersion"
-  compile "org.springframework:spring-beans:$springVersion"
+  compile "org.springframework:spring-test:$springVersion", provided
+  compile "org.springframework:spring-beans:$springVersion", provided
+
   testCompile "org.springframework:spring-context:$springVersion"
   // not used directly at compile-time, but needed by groovyc
   testCompile "org.springframework:spring-core:$springVersion"

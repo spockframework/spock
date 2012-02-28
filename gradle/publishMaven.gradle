@@ -37,10 +37,15 @@ basePom = {
 }
 
 project.deployers = []
-install {
-  project.deployers << repositories.mavenInstaller {
+
+project.afterEvaluate {
+  configure(project.deployers) {
     pom basePom
   }
+}
+
+install {
+  project.deployers << repositories.mavenInstaller
 }
 
 // This adds auth credentials to the repository, only if it's going to be needed.
@@ -55,11 +60,10 @@ addAuthentication = { task, repository ->
 
 uploadArchives { task ->
   project.deployers << repositories.mavenDeployer {
-    pom basePom
     if (isSnapshotVersion) {
       snapshotRepository(url: "file:///var/www/m2repo/snapshots")
     } else {
-      repository(url: 'https://oss.sonatype.org/service/local/staging/deploy/maven2/') {
+      repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
         addAuthentication(task, delegate)
       }
     }
@@ -75,13 +79,26 @@ modifyPom = { Closure modification ->
 }
 
 def optionalDeps = []
+optional = { optionalDeps << it; it }
 
-optional = { optionalDeps << it }
+def providedDeps = []
+provided = { providedDeps << it; it }
+
+def internalDeps = []
+internal = { internalDeps << it; it }
 
 modifyPom { pom ->
   optionalDeps.each { dep ->
     pom.dependencies.find { it.artifactId == dep.name }.optional = true
   }
+  providedDeps.each { dep ->
+    pom.dependencies.find { it.artifactId == dep.name }.scope = "provided"
+  }
+  internalDeps.each { dep ->
+    pom.dependencies.removeAll { it.artifactId == dep.name }
+  }
+  // no need to publish test dependencies
+  pom.dependencies.removeAll { it.scope == "test" }
 }
 
 deployers*.beforeDeployment { signing.signPom(it) }

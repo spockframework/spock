@@ -19,7 +19,7 @@ libs = [
 
 allprojects {
   group = "org.spockframework"
-  version = "0.6-groovy-1.7-SNAPSHOT"
+  version = "0.6-groovy-1.7-rc-1"
 
   apply from: profile("common")
 

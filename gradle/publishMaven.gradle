@@ -64,7 +64,7 @@ uploadArchives { task ->
       snapshotRepository(url: "file:///var/www/m2repo/snapshots")
     } else {
       repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
-        addAuthentication(task, delegate)
+        authentication(userName: project.sonatypeOssUsername, password: project.sonatypeOssPassword)
       }
     }
   }

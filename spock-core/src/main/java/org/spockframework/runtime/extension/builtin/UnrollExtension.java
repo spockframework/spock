@@ -14,7 +14,6 @@
 
 package org.spockframework.runtime.extension.builtin;
 
-import groovy.lang.Closure;
 import org.spockframework.runtime.extension.AbstractAnnotationDrivenExtension;
 import org.spockframework.runtime.model.FeatureInfo;
 import org.spockframework.runtime.model.IterationInfo;
@@ -38,13 +37,12 @@ public class UnrollExtension extends AbstractAnnotationDrivenExtension<Unroll> {
     if (!feature.isParameterized()) return; // could also throw exception
 
     feature.setReportIterations(true);
-    NameProvider<IterationInfo> nameProvider = chooseNameProvider(unroll, feature);
-    feature.setIterationNameProvider(nameProvider);
+    feature.setIterationNameProvider(chooseNameProvider(unroll, feature));
   }
 
   private NameProvider<IterationInfo> chooseNameProvider(Unroll unroll, FeatureInfo feature) {
-    if (unroll.value() != Closure.class) {
-      return new ClosureBasedUnrollNameProvider(feature, unroll.value());
+    if (unroll.value().length() > 0) {
+      return new UnrollNameProvider(feature, unroll.value());
     }
     if (feature.getName().contains("#")) {
       return new UnrollNameProvider(feature, feature.getName());

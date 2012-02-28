@@ -52,7 +52,7 @@ class JUnitFixtureMethods extends EmbeddedSpecification {
     ]
   }
   
-  @Unroll({ "multiple of $fixtureType" })
+  @Unroll("multiple of #fixtureType")
   def "multiple of same type"() {
     when:
     runSpecBody """
@@ -70,7 +70,7 @@ class JUnitFixtureMethods extends EmbeddedSpecification {
     fixtureType << ["beforeClass", "before", "after", "afterClass"]
   }
   
-  @Unroll({ "inheritance for $fixtureType" })
+  @Unroll("inheritance for #fixtureType")
   def "inheritance"() {
     when:
     run """
@@ -98,7 +98,7 @@ class JUnitFixtureMethods extends EmbeddedSpecification {
     "afterClass"  | ["child", "parent"]
   }
   
-  @Unroll({ "invalid signature ignored because - $invalidBecause" })
+  @Unroll("invalid signature ignored because - #invalidBecause")
   def "invalid signatures are ignored"() {
     when:
     run "$prefix method($params) { record('method') }"

@@ -53,7 +53,11 @@ class EmbeddedSpecCompiler {
   }
 
   void addClassImport(Class<?> clazz) {
-    addClassImport(clazz.name)
+    def importName = clazz.name
+    if (clazz.memberClass) {
+      importName = importName.reverse().replaceFirst(/\$/, ".").reverse()
+    }
+    addClassImport(importName)
   }
 
   void addClassMemberImport(String className) {

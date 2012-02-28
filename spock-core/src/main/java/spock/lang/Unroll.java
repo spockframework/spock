@@ -12,11 +12,10 @@ import org.spockframework.runtime.extension.builtin.UnrollExtension;
  * as separate features to the outside world (IDEs, reports, etc.). By default,
  * the name of an iteration is the feature's name followed by a consecutive number.
  * This can be changed by providing a naming pattern after @Unroll. A naming pattern
- * is a closure returning a GString. Data variables may be referenced with the
- * usual GString '$' notation. Example:
+ * may refer to data variables by prepending their names with #. Example:
  *
  * <pre>
- * &#64;Unroll({ "$name should have length $length" })
+ * &#64;Unroll("#name should have length #length")
  * def "name length"() {
  *   expect:
  *   name.size() == length
@@ -47,5 +46,5 @@ import org.spockframework.runtime.extension.builtin.UnrollExtension;
 @Target({ElementType.TYPE, ElementType.METHOD})
 @ExtensionAnnotation(UnrollExtension.class)
 public @interface Unroll {
-  Class<? extends Closure> value() default Closure.class;
+  String value() default "";
 }

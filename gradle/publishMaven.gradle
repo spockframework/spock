@@ -48,23 +48,15 @@ install {
   project.deployers << repositories.mavenInstaller
 }
 
-// This adds auth credentials to the repository, only if it's going to be needed.
-// Prevents the build failing for non releasers.
-addAuthentication = { task, repository ->
-  gradle.taskGraph.whenReady { taskGraph ->
-    if (taskGraph.hasTask(task)) {
-      repository.authentication(userName: sonatypeOssUsername, password: sonatypeOssPassword)
-    }
-  }
-}
-
 uploadArchives { task ->
   project.deployers << repositories.mavenDeployer {
     if (isSnapshotVersion) {
       snapshotRepository(url: "file:///var/www/m2repo/snapshots")
     } else {
-      repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") { repository ->
-        addAuthentication(task, repository)
+      repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+        if (project.hasProperty("sonatypeOssUsername") {
+          repository.authentication(userName: sonatypeOssUsername, password: sonatypeOssPassword)
+        }
       }
     }
   }

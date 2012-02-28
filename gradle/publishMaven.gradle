@@ -55,7 +55,7 @@ uploadArchives { task ->
     } else {
       repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
         if (project.hasProperty("sonatypeOssUsername")) {
-          repository.authentication(userName: sonatypeOssUsername, password: sonatypeOssPassword)
+          authentication(userName: sonatypeOssUsername, password: sonatypeOssPassword)
         }
       }
     }

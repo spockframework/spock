@@ -54,7 +54,7 @@ uploadArchives { task ->
       snapshotRepository(url: "file:///var/www/m2repo/snapshots")
     } else {
       repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
-        if (project.hasProperty("sonatypeOssUsername") {
+        if (project.hasProperty("sonatypeOssUsername")) {
           repository.authentication(userName: sonatypeOssUsername, password: sonatypeOssPassword)
         }
       }

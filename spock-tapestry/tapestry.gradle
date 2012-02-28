@@ -7,7 +7,7 @@ description = "Spock's Tapestry Module provides support for testing Tapestry 5 b
 repositories {
   // need to explicitly add repository defined in tapestry-ioc POM
   // (workaround for http://jira.codehaus.org/browse/GRADLE-611)
-  mavenRepo(url: "http://repository.jboss.com/maven2")
+  maven { url "http://repository.jboss.com/maven2" }
 }
 
 // 5.3.x seems to require Java 1.6 (evidence: org.apache.tapestry5.ioc.internal.util.InternalUtils makes direct use of @PostConstruct)
@@ -15,9 +15,7 @@ tapestryVersion = System.getProperty("java.version").startsWith("1.5") ? "5.2.6"
 
 dependencies {
   compile project(":spock-core")
-  compile "org.apache.tapestry:tapestry-ioc:$tapestryVersion"
-  compile "org.apache.tapestry:tapestry5-annotations:$tapestryVersion"
-  compile "org.slf4j:slf4j-api:1.6.1"
-  compile libs.junit
+  compile "org.apache.tapestry:tapestry-ioc:$tapestryVersion", provided
+  compile "org.apache.tapestry:tapestry5-annotations:$tapestryVersion", provided
 }
 

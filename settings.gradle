@@ -1,7 +1,13 @@
 include "spock-core"
 include "spock-guice"
 include "spock-maven"
-include 'spock-specs'
-include 'spock-spring'
-include 'spock-tapestry'
-include 'spock-unitils'
+include "spock-specs"
+include "spock-spring"
+include "spock-tapestry"
+include "spock-unitils"
+
+rootProject.name = "spock"
+rootProject.children.each {
+  it.buildFileName = it.name + ".gradle" - "spock-"
+}
+

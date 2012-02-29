@@ -21,5 +21,8 @@ bin
 # Grails
 stacktrace.log
 
+# Sphinx
+_build/
+
 # Other
 .DS_Store

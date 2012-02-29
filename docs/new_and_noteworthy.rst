@@ -55,7 +55,7 @@ Improved JUnit compatibility
 
 .. _improved-unroll-0.6:
 
-Improved``@Unroll``
+Improved ``@Unroll``
 -------------------
 
 The ``@Unroll`` naming pattern can now be provided in the method name, instead of as an argument to the annotation::

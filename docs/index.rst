@@ -17,7 +17,9 @@ Contents:
    anatomy_of_a_specification
    state_based_testing
    data_driven_testing
-   interaction_based_testing   
+   interaction_based_testing
+   new_and_noteworthy
+   migration_guide
 
 Indices and tables
 ==================

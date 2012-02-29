@@ -214,3 +214,7 @@ man_pages = [
     ('index', 'spockframework', u'Spock Framework Documentation',
      [u'Peter Niederwieser, Luke Daley'], 1)
 ]
+
+# -- Options added by us -------------------------------------------------------
+
+highlight_language = 'java'

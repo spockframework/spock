@@ -83,6 +83,8 @@ Improved ``@Timeout``
 The ``@Timeout`` annotation can now be applied to a spec class. In this case, the timeout applies to all feature methods (individually) that aren't already annotated with ``@Timeout``.
 Timed methods are now executed on the regular test framework thread. This can be important for tests that rely on thread-local state (like Grails integration tests). Also the interruption behavior has been improved, to increase the chance that a timeout can be enforced.
 
+The failure exception that is thrown when a timeout occurs now contains the stacktrace of test execution, allowing you to see where the test was “stuck” or how far it got in the allocated time.
+
 Improved data table syntax
 --------------------------
 

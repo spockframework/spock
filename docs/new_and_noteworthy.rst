@@ -21,12 +21,12 @@ Extended JUnit rules support
 In addition to rules implementing ``org.junit.rules.MethodRule`` (which has been deprecated in JUnit 4.9), Spock now also supports rules implementing the new ``org.junit.rules.TestRule`` interface. Also supported is the new ``@ClassRule`` annotation. Rule declarations are now verified and can leave off the initialization part. I that case Spock will automatically initialize the rule by calling the default constructor.
 The ``@TestName`` rule, and rules in general, now honor the ``@Unroll`` annotation and any defined naming pattern.
  
-See `Issue 240 <http://issues.spockframework.org/detail?id=240>`_ for a known limitation in Spock's TestRule support.
+See `Issue 240 <http://issues.spockframework.org/detail?id=240>`_ for a known limitation with Spock's TestRule support.
 
 Condition rendering improvements
 --------------------------------
 
-When two objects that are compared with the ``==`` operator are unequal but their string representations are the same, Spock will now print the objects' types::
+When two objects are compared with the ``==`` operator, they are unequal, but their string representations are the same, Spock will now print the objects' types::
 
     enteredNumber == 42
     |             |
@@ -56,7 +56,7 @@ Improved JUnit compatibility
 .. _improved-unroll-0.6:
 
 Improved ``@Unroll``
--------------------
+--------------------
 
 The ``@Unroll`` naming pattern can now be provided in the method name, instead of as an argument to the annotation::
 
@@ -104,10 +104,15 @@ Grails 2.0 support
 
 Spock's Grails plugin was split off into a separate project and now lives at http://github.spockframework.org/spock-grails. The plugin supports both Grails 1.3 and 2.0.
 
+IntelliJ IDEA integration
+-------------------------
+
+The folks from JetBrains have added a few handy features around data tables. Data tables will now be layed out automatically when reformatting code. Data variables are no longer shown as "unknown" and have their types inferred from the values in the table (!).
+
 GitHub repository
 -----------------
 
-All source code has moved to http://github.spockframework.org/. The `Grails Spock plugin <http://github.spockframework.org/spock-grails>`_, `Spock Example <http://github.spockframework.org/spock-example>`_ project, and `Spock Web Console <http://github.spockframework.org/spockwebconsole>`_ are now their own GitHub projects. Also available are slides and code for various Spock presentations (like `this one <http://github.spockframework.org/smarter-testing-with-spock>`_).
+All source code has moved to http://github.spockframework.org/. The `Grails Spock plugin <http://github.spockframework.org/spock-grails>`_, `Spock Example <http://github.spockframework.org/spock-example>`_ project, and `Spock Web Console <http://github.spockframework.org/spockwebconsole>`_ now have their own GitHub projects. Also available are slides and code for various Spock presentations (like `this one <http://github.spockframework.org/smarter-testing-with-spock>`_).
 
 Gradle build
 ------------

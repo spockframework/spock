@@ -107,7 +107,7 @@ Spock's Grails plugin was split off into a separate project and now lives at htt
 IntelliJ IDEA integration
 -------------------------
 
-The folks from JetBrains have added a few handy features around data tables. Data tables will now be layed out automatically when reformatting code. Data variables are no longer shown as "unknown" and have their types inferred from the values in the table (!).
+The folks from `JetBrains <http://www.jetbrains.com>`_ have added a few handy features around data tables. Data tables will now be layed out automatically when reformatting code. Data variables are no longer shown as "unknown" and have their types inferred from the values in the table (!).
 
 GitHub repository
 -----------------

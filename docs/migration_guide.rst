@@ -7,7 +7,7 @@ Breaking changes from 0.5
 Class initialization order
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    .. note:: The following is only relevant for spec classes that inherit from other spec classes.
+    .. note:: The following only affects spec classes that inherit from other spec classes.
 
 Previously, Spock executed field/property initializers just before executing the setup method in the same class. When inheriting from another spec, this meant that the base classes' setup method would get executed before the derived classes' field initializers. This caused problems when a setup method in a base class called an abstract method overridden in a derived class. In that case, the derived classes' fields were not yet initialized. In 0.6, Spock uses a more traditional model where first all fields are initialized (starting from the base class) and then all setup methods are executed (again starting from the base class). If you have a case where a field initializer in a derived class depends on the setup method of the base class, you can either move the derived classes' field initializer into the setup method, or move the relevant part of the base classes' setup method into a field initializer.
 

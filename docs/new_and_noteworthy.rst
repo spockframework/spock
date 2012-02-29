@@ -106,6 +106,8 @@ Grails 2.0 support
 
 Spock's Grails plugin was split off into a separate project and now lives at http://github.spockframework.org/spock-grails. The plugin supports both Grails 1.3 and 2.0.
 
+The Spock Grails plugin supports all of the new Grails 2.0 test mixins, effectively deprecating the existing unit testing classes (e.g. UnitSpec). For integration testing, IntegrationSpec must still be used.
+
 IntelliJ IDEA integration
 -------------------------
 

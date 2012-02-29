@@ -13,7 +13,7 @@ Multiple result declarations can be chained. The following causes method bar to 
 
     foo.bar() >> { throw new IOException() } >>> [1, 2, 3] >> { throw new RuntimeException() }
 
-It's now possible to match any argument list (including the empty list). The syntax for this is ``foo.bar(*_)``.
+It's now possible to match any argument list (including the empty list) with the syntax ``foo.bar(*_)``.
 
 Extended JUnit rules support
 ----------------------------
@@ -36,7 +36,7 @@ When two objects that are compared with the ``==`` operator are unequal but thei
 JUnit fixture annotations
 -------------------------
 
-Fixture methods can now be declared with ``@Before``, ``@After``, ``@BeforeClass``, and ``@AfterClass`` annotations, as an addition or alternative to Spock's own fixture methods. This was particularly needed for Grails 2.0 support.
+Fixture methods can now be declared with JUnit's ``@Before``, ``@After``, ``@BeforeClass``, and ``@AfterClass`` annotations, as an addition or alternative to Spock's own fixture methods. This was particularly needed for Grails 2.0 support.
 
 Tapestry 5.3 support
 --------------------

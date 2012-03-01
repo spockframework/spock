@@ -13,7 +13,7 @@ Multiple result declarations can be chained. The following causes method bar to 
 
     foo.bar() >> { throw new IOException() } >>> [1, 2, 3] >> { throw new RuntimeException() }
 
-It's now possible to match any argument list (including the empty list) with the syntax ``foo.bar(*_)``.
+It's now possible to match any argument list (including the empty list) with ``foo.bar(*_)``.
 
 Extended JUnit rules support
 ----------------------------

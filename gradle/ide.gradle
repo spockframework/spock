@@ -1,0 +1,27 @@
+allprojects {
+  apply plugin: "idea"
+  apply plugin: "eclipse"
+}
+
+def gitIgnore = file(".gitignore").readLines()
+def gitIgnoreDirs = gitIgnore*.trim().findAll { !it.startsWith("#") && it.endsWith("/") }
+def (topLevelDirs, allLevelDirs) = gitIgnoreDirs.split { it.startsWith("/") }
+topLevelDirs = topLevelDirs.collect { it.substring(1) }
+
+idea {
+  project {
+    jdkName "1.6"
+    languageLevel "1.5"
+    configure(modules) { module ->
+      def prj = module.project
+      excludeDirs = prj.files(allLevelDirs) as Set
+      if (prj == prj.rootProject) excludeDirs += (prj.files(topLevelDirs) as Set)
+    }
+    ipr {
+      withXml { provider ->
+        def node = provider.asNode()
+        node.component.find { it.'@name' == 'VcsDirectoryMappings' }?.mapping[0].'@vcs' = 'Git'
+      }
+    }
+  }
+}

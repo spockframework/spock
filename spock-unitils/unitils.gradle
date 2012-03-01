@@ -1,4 +1,4 @@
-apply from: profile("publishMaven")
+apply from: script("publishMaven")
 
 displayName = "Spock Framework - Unitils Module"
 

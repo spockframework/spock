@@ -13,7 +13,7 @@ Multiple result declarations can be chained. The following causes method bar to 
 
     foo.bar() >> { throw new IOException() } >>> [1, 2, 3] >> { throw new RuntimeException() }
 
-It's now possible to match any argument list (including the empty list) with the syntax ``foo.bar(*_)``.
+It's now possible to match any argument list (including the empty list) with ``foo.bar(*_)``.
 
 Extended JUnit rules support
 ----------------------------
@@ -83,6 +83,8 @@ Improved ``@Timeout``
 The ``@Timeout`` annotation can now be applied to a spec class. In this case, the timeout applies to all feature methods (individually) that aren't already annotated with ``@Timeout``.
 Timed methods are now executed on the regular test framework thread. This can be important for tests that rely on thread-local state (like Grails integration tests). Also the interruption behavior has been improved, to increase the chance that a timeout can be enforced.
 
+The failure exception that is thrown when a timeout occurs now contains the stacktrace of test execution, allowing you to see where the test was “stuck” or how far it got in the allocated time.
+
 Improved data table syntax
 --------------------------
 
@@ -103,6 +105,8 @@ Grails 2.0 support
 ------------------
 
 Spock's Grails plugin was split off into a separate project and now lives at http://github.spockframework.org/spock-grails. The plugin supports both Grails 1.3 and 2.0.
+
+The Spock Grails plugin supports all of the new Grails 2.0 test mixins, effectively deprecating the existing unit testing classes (e.g. UnitSpec). For integration testing, IntegrationSpec must still be used.
 
 IntelliJ IDEA integration
 -------------------------

@@ -1,28 +1,31 @@
-# Maven
-target
+# entries starting with and ending in / will be excluded from root IDEA module,
+# and entries ending in / from all IDEA modules (see ide.gradle)
 
 # Gradle
-.gradle
-build
+.gradle/
+build/
+
+# Maven
+target/
 
 # IDEA
-.idea
+.idea/
 *.iml
 *.ipr
 *.iws
-out
+out/
 
 # Eclipse
 .project
 .classpath
-.settings
-bin
+.settings/
+bin/
 
 # Grails
 stacktrace.log
 
 # Sphinx
-_build/
+/docs/_build/
 
 # Other
 .DS_Store

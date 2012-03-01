@@ -21,11 +21,10 @@ allprojects {
   group = "org.spockframework"
   version = "0.6-groovy-1.7-rc-1"
 
-  apply from: profile("common")
-
-  apply plugin: "idea"
-  apply plugin: "eclipse"
+  apply from: script("common")
 }
+
+apply from: script("ide")
 
 subprojects {
   apply plugin: "groovy"
@@ -37,7 +36,7 @@ subprojects {
   repositories {
     mavenCentral()
     if (isSnapshotVersion) {
-      mavenRepo(url: "http://snapshots.repository.codehaus.org")
+      maven { url "http://snapshots.repository.codehaus.org" }
     }
   }
 
@@ -75,19 +74,6 @@ subprojects {
   }
 }
 
-idea {
-  project {
-    jdkName "1.6"
-    ipr {
-      withXml { provider ->
-        def node = provider.asNode()
-        node.component.find { it.'@name' == 'VcsDirectoryMappings' }?.mapping[0].'@vcs' = 'Git'
-        node.append(new XmlParser().parse(file("config/ideaCodeStyle.xml")))
-      }
-    }
-  }
-}
-
 task javadoc(type: Javadoc) {
   title "Spock Framework API Documentation ($version)"
   destinationDir file("build/javadoc")
@@ -106,7 +92,7 @@ task wrapper(type: Wrapper) {
   gradleVersion = "1.0-milestone-8a"
 }
 
-File profile(String name) {
+File script(String name) {
   project.file("gradle/${name}.gradle")
 }
 

@@ -35,9 +35,6 @@ subprojects {
 
   repositories {
     mavenCentral()
-    if (isSnapshotVersion) {
-      maven { url "http://snapshots.repository.codehaus.org" }
-    }
   }
 
   configurations {

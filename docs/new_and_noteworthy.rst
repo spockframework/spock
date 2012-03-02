@@ -15,6 +15,14 @@ Multiple result declarations can be chained. The following causes method bar to 
 
 It's now possible to match any argument list (including the empty list) with ``foo.bar(*_)``.
 
+Method arguments can now be constrained with `Hamcrest <http://code.google.com/p/hamcrest/>`_ matchers::
+
+    import static spock.util.matcher.HamcrestMatchers.closeTo
+
+    ...
+
+    1 * foo.bar(closeTo(42, 0.001))
+
 Extended JUnit rules support
 ----------------------------
 
@@ -122,4 +130,9 @@ Gradle build
 ------------
 
 Spock is now exclusively built with Gradle. Building Spock yourself is as easy as cloning the `GitHub repo <http://github.spockframework.org/spock>`_ and executing ``gradlew build``. No build tool installation is required; the only prerequisite for building Spock is a JDK installation (1.5 or higher).
+
+Fixed Issues
+------------
+
+See the `issue tracker <http://issues.spockframework.org/list?can=1&q=label%3AMilestone-0.6>`_ for a list of fixed issues.
 

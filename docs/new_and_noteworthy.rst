@@ -1,8 +1,8 @@
 New and Noteworthy
 ==================
 
-Version 0.6
-~~~~~~~~~~~
+0.6
+~~~
 
 Mocking improvements
 --------------------

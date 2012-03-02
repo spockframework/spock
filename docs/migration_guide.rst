@@ -3,8 +3,8 @@ Migration Guide
 
 This page explains incompatible changes between successive versions and provides suggestions on how to deal with them.
 
-Version 0.6
------------
+0.6
+---
 
 Class initialization order
 ~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -171,7 +171,7 @@ class MatcherConditions extends EmbeddedSpecification {
     that foo.property, equalTo("property")
   }
 
-  def "hamcrest matchers are also supported as contraints in interactions"() {
+  def "hamcrest matchers are also supported as constraints in interactions"() {
     def list = Mock(List)
 
     when:

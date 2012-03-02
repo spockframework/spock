@@ -18,7 +18,7 @@ libs = [
 
 allprojects {
   group = "org.spockframework"
-  version = "0.6-groovy-1.8-rc-1"
+  version = "0.6-groovy-1.8"
 
   apply from: script("common")
 }

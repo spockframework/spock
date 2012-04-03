@@ -51,7 +51,11 @@ install {
 uploadArchives { task ->
   project.deployers << repositories.mavenDeployer {
     if (isSnapshotVersion) {
-      snapshotRepository(url: "file:///var/www/m2repo/snapshots")
+      snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+        if (project.hasProperty("sonatypeOssUsername")) {
+          authentication(userName: sonatypeOssUsername, password: sonatypeOssPassword)
+        }
+      }
     } else {
       repository(url: "file:///var/www/m2repo/releases")
     }

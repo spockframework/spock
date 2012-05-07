@@ -4,12 +4,10 @@ description = "Spock specifications for the Core Module. Yes, we eat our own dog
 
 dependencies {
   testCompile project(":spock-core")
-  testCompile libs.hamcrest_core
-  testCompile libs.junit
-  testCompile libs.easymock
-  testCompile libs.jmock_junit4
-  testCompile libs.jmock
-  testCompile libs.mockito
+  //testCompile libs.easymock
+  //testCompile libs.jmock_junit4
+  //testCompile libs.jmock
+  //testCompile libs.mockito
   testRuntime libs.asm
   testRuntime libs.cglib
   testRuntime libs.objenesis

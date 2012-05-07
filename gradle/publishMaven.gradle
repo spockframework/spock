@@ -1,6 +1,6 @@
 apply plugin: "maven"
 
-basePom = {
+def basePom = {
   project {
     name project.displayName
     description project.description
@@ -36,20 +36,20 @@ basePom = {
   }
 }
 
-project.deployers = []
+def deployers = []
 
 project.afterEvaluate {
-  configure(project.deployers) {
+  configure(deployers) {
     pom basePom
   }
 }
 
 install {
-  project.deployers << repositories.mavenInstaller
+  deployers << repositories.mavenInstaller
 }
 
-uploadArchives { task ->
-  project.deployers << repositories.mavenDeployer {
+uploadArchives {
+  deployers << repositories.mavenDeployer {
     if (isSnapshotVersion) {
       snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
         if (project.hasProperty("sonatypeOssUsername")) {
@@ -66,22 +66,21 @@ uploadArchives { task ->
   }
 }
 
-project.poms = project.deployers*.pom
-
-modifyPom = { Closure modification ->
-  project.poms.each { 
-    it.whenConfigured(modification) 
-  }
-}
-
+def poms = deployers*.pom
 def optionalDeps = []
-optional = { optionalDeps << it; it }
-
 def providedDeps = []
-provided = { providedDeps << it; it }
-
 def internalDeps = []
-internal = { internalDeps << it; it }
+
+ext {
+    modifyPom = { Closure modification ->
+      poms.each {
+        it.whenConfigured(modification)
+      }
+    }
+    optional = { optionalDeps << it; it }
+    provided = { providedDeps << it; it }
+    internal = { internalDeps << it; it }
+}
 
 modifyPom { pom ->
   optionalDeps.each { dep ->

@@ -6,17 +6,8 @@ dependencies {
   groovy libs.junit // necessary to make @NotYetImplemented transform work (transform that ships with Groovy and statically references third-party class junit.framwork.AssertionFailedError)
 
   testCompile project(":spock-core")
-  testCompile libs.hamcrest_core
-  testCompile libs.easymock
-  testCompile libs.jmock_junit4
-  testCompile libs.jmock
-  testCompile libs.mockito
   testRuntime libs.asm
   testRuntime libs.cglib
   testRuntime libs.objenesis
   testRuntime libs.h2database
 }
-
-//tasks.withType(Test) {
-//    maxParallelForks Math.max(2, (int) (Runtime.runtime.availableProcessors() / 2))
-//}

@@ -85,7 +85,7 @@ task publishJavadoc(type: Sync) {
 }
 
 task wrapper(type: Wrapper) {
-  gradleVersion = "1.0-milestone-8a"
+  gradleVersion = "1.0-rc-3"
 }
 
 File script(String name) {

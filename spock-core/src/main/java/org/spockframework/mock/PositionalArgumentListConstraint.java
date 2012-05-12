@@ -38,17 +38,19 @@ public class PositionalArgumentListConstraint implements IInvocationConstraint {
     List<Object> args = invocation.getArguments();
 
     if (areConstraintsSatisfiedBy(args)) return true;
-    if (!canBeCalledWithVarArgSyntax(invocation.getMethod())) return false;
+    if (!hasExpandableVarArgs(invocation.getMethod(), args)) return false;
     return areConstraintsSatisfiedBy(expandVarArgs(args));
   }
 
   /**
-   * Tells if the given method can be called with vararg syntax from Groovy(!).
-   * If yes, we also support vararg syntax in the interaction definition.
+   * Tells if the given method call has expandable varargs. Note that Groovy
+   * supports vararg syntax for all methods whose last parameter is of array type.
    */
-  private boolean canBeCalledWithVarArgSyntax(Method method) {
+  private boolean hasExpandableVarArgs(Method method, List<Object> args) {
     Class<?>[] paramTypes = method.getParameterTypes();
-    return paramTypes.length > 0 && paramTypes[paramTypes.length - 1].isArray();
+    return paramTypes.length > 0
+        && paramTypes[paramTypes.length - 1].isArray()
+        && CollectionUtil.getLastElement(args) != null;
   }
 
   private List<Object> expandVarArgs(List<Object> args) {

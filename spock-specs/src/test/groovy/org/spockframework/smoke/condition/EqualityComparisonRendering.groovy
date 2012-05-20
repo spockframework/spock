@@ -15,6 +15,8 @@
  */
 package org.spockframework.smoke.condition
 
+import spock.lang.Issue
+
 class EqualityComparisonRendering extends ConditionRenderingSpec {
   def "values with different representations"() {
     expect:
@@ -104,7 +106,22 @@ null (void)
     }
   }
 
-  def "type hints are not added when equals method is used (only when equality operator is used)"() {
+  @Issue("http://issues.spockframework.org/detail?id=252")
+  def "type hints are not added for nested equality comparisons if values are equal"() {
+    expect:
+    isRendered """
+(x == y) instanceof String
+ | |  |  |
+ 1 |  1  false
+   true
+    """, {
+      int x = 1
+      BigDecimal y = 1
+      assert (x == y) instanceof String
+    }
+  }
+
+  def "type hints are not added when equals method is used (but only when equality operator is used)"() {
     expect:
     isRendered """
 x.equals(y)

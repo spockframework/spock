@@ -73,6 +73,15 @@ class ConditionEvaluation extends Specification {
     a?.foo() == null
   }
 
+  @Issue("http://issues.spockframework.org/detail?id=253")
+  @FailsWith(ConditionNotSatisfiedError)
+  def "top-level MethodCallExpression with safe operator (method condition)"() {
+    def a = null
+
+    expect:
+    a?.foo()
+  }
+
   def "MethodCallExpression with named arguments"() {
     expect:
     new Person().eat(what: "steak", where: "tokyo") == [what: "steak", where: "tokyo"]

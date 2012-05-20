@@ -121,4 +121,9 @@ class GroovyRuntimeUtilIsVoidMethodSpec extends Specification {
     !isVoidMethod(new GroovyMethods(),
         "methodWithStringParam", ["one ${"t" + "w" + "o"} three"] as Object[])
   }
+
+  def "method with null target"() {
+    expect:
+    !isVoidMethod(null, "foo", 1)
+  }
 }

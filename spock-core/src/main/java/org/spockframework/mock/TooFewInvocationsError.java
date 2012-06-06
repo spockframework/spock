@@ -16,6 +16,7 @@
 
 package org.spockframework.mock;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.spockframework.util.Assert;
@@ -27,12 +28,25 @@ import org.spockframework.util.Assert;
  */
 public class TooFewInvocationsError extends InteractionNotSatisfiedError {
   private final List<IMockInteraction> interactions;
+  private final List<IMockInvocation> unmatchedInvocations = new ArrayList<IMockInvocation>();
 
   public TooFewInvocationsError(List<IMockInteraction> interactions) {
     Assert.notNull(interactions);
     Assert.that(interactions.size() > 0);
     this.interactions = interactions;
     fixupStackTrace();
+  }
+
+  public void addUnmatchedInvocations(List<IMockInvocation> invocations) {
+    unmatchedInvocations.addAll(invocations);
+  }
+
+  public List<IMockInteraction> getInteractions() {
+    return interactions;
+  }
+
+  public List<IMockInvocation> getUnmatchedInvocations() {
+    return unmatchedInvocations;
   }
 
   @Override
@@ -43,6 +57,14 @@ public class TooFewInvocationsError extends InteractionNotSatisfiedError {
     for (IMockInteraction interaction : interactions) {
       builder.append(interaction);
       builder.append("\n");
+    }
+
+    if (!unmatchedInvocations.isEmpty()) {
+      builder.append("\nUnmatched invocations:\n\n");
+      for (IMockInvocation invocation : unmatchedInvocations) {
+        builder.append(invocation);
+        builder.append("\n");
+      }
     }
 
     return builder.toString();

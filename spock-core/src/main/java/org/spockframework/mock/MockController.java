@@ -27,10 +27,11 @@ public class MockController implements IInvocationDispatcher {
   private final IMockFactory factory;
   private final LinkedList<IInteractionScope> scopes = new LinkedList<IInteractionScope>();
   private final List<InteractionNotSatisfiedError> errors = new ArrayList<InteractionNotSatisfiedError>();
+  private final DefaultInteractionScope defaultInteractionScope = new DefaultInteractionScope();
 
   public MockController(IMockFactory factory) {
     this.factory = factory;
-    scopes.addFirst(DefaultInteractionScope.INSTANCE);
+    scopes.addFirst(defaultInteractionScope);
     scopes.addFirst(new InteractionScope());
   }
 
@@ -73,7 +74,12 @@ public class MockController implements IInvocationDispatcher {
   public synchronized void leaveScope() {
     throwAnyPreviousError();
     IInteractionScope scope = scopes.removeFirst();
-    scope.verifyInteractions();
+    try {
+      scope.verifyInteractions();
+    } catch (TooFewInvocationsError e) {
+      e.addUnmatchedInvocations(defaultInteractionScope.getUnmatchedInvocations());
+      throw e;
+    }
   }
 
   public synchronized Object create(String mockName, Class<?> mockType) {

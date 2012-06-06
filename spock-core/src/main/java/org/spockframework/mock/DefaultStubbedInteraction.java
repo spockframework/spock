@@ -16,10 +16,11 @@ package org.spockframework.mock;
 
 import org.spockframework.util.ReflectionUtil;
 
-public class DefaultStubbedInteraction extends DefaultInteraction {
-  public static final DefaultStubbedInteraction INSTANCE = new DefaultStubbedInteraction();
+import java.util.ArrayList;
+import java.util.List;
 
-  private DefaultStubbedInteraction() {}
+public class DefaultStubbedInteraction extends DefaultInteraction {
+  private List<IMockInvocation> invocations = new ArrayList<IMockInvocation>();
 
   public String getText() {
     return "default stubbed interaction";
@@ -30,6 +31,11 @@ public class DefaultStubbedInteraction extends DefaultInteraction {
   }
 
   public Object accept(IMockInvocation invocation) {
+    invocations.add(invocation);
     return ReflectionUtil.getDefaultValue(invocation.getMethod().getReturnType());
+  }
+
+  public List<IMockInvocation> getInvocations() {
+    return invocations;
   }
 }

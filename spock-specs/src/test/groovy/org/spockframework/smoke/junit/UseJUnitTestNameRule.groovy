@@ -53,4 +53,13 @@ class UseJUnitTestNameRule extends Specification {
     where:
     pattern << ["foo", "bar", "baz"]
   }
+
+  @Unroll("data-driven, unrolled w/ closure pattern #pattern")
+  def foo() {
+    expect:
+    name.methodName == "data-driven, unrolled w/ closure pattern $pattern"
+
+    where:
+    pattern << ["foo", "bar", "baz"]
+  }
 }

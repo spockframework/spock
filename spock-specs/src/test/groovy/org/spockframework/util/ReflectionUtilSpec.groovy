@@ -44,24 +44,26 @@ class ReflectionUtilSpec extends Specification {
 
     "setFoo"    | null
   }
+
+  static class HasProperties {
+    int getLength() {}
+    boolean isEmpty() {}
+    boolean getValid() {}
+
+    static int getLengthStatic() {}
+    static boolean isEmptyStatic() {}
+    static boolean getValidStatic() {}
+
+    URL getURL() {}
+    boolean getfoo() {}
+    boolean isfoo() {}
+
+    String get() {}
+    String is() {}
+    String foo() {}
+
+    void setFoo(String foo) {}
+  }
+
 }
 
-private class HasProperties {
-  int getLength() {}
-  boolean isEmpty() {}
-  boolean getValid() {}
-
-  static int getLengthStatic() {}
-  static boolean isEmptyStatic() {}
-  static boolean getValidStatic() {}
-
-  URL getURL() {}
-  boolean getfoo() {}
-  boolean isfoo() {}
-
-  String get() {}
-  String is() {}
-  String foo() {}
-
-  void setFoo(String foo) {}
-}

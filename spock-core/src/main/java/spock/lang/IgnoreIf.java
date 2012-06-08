@@ -14,29 +14,24 @@
  * limitations under the License.
  */
 
-package org.spockframework.groovy
+package spock.lang;
 
-import org.spockframework.util.inspector.AstInspector
-import spock.lang.Specification
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+import org.spockframework.runtime.extension.ExtensionAnnotation;
+import org.spockframework.runtime.extension.builtin.IgnoreIfExtension;
+
+import groovy.lang.Closure;
 
 /**
- * @author Peter Niederwieser
+ * Ignores the annotated spec/feature if the given condition holds.
  */
-class PackageNames extends Specification {
-  def inspector = new AstInspector()
-
-  def "package names and imports end in '.'"() {
-inspector.load("""
-package foo.bar
-
-import java.lang.Class
-import java.util.*
-""")
-
-    def m = inspector.module
-
-    expect:
-    m.packageName == "foo.bar."
-    m.starImports[0].packageName == "java.util."
-  }
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.TYPE, ElementType.METHOD})
+@ExtensionAnnotation(IgnoreIfExtension.class)
+public @interface IgnoreIf {
+	Class<? extends Closure> value();
 }

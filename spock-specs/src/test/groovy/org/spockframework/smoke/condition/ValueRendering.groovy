@@ -261,79 +261,47 @@ NEW
     }
   }
 
-  def "string comparison"() {
-    expect:
-    isRendered """
-"the quick" == "the quirk"
-            |
-            false
-            1 difference (88% similarity)
-            the qui(c)k
-            the qui(r)k
-    """, {
-      assert "the quick" == "the quirk"  
+  static class SingleLineToString {
+    String toString() {
+      "single line"
     }
   }
 
-  def "string comparison where one string is null"() {
-    expect:
-    isRendered """
-"foo" == null
-      |
-      false
-    """, {
-      assert "foo" == null
-    }
-
-    isRendered """
-null == "foo"
-     |
-     false
-    """, {
-      assert null == "foo"
+  static class MultiLineToString {
+    String toString() {
+      "mul\ntiple\n   lines"
     }
   }
-}
 
-private class SingleLineToString {
-  String toString() {
-    "single line"
+  static class NullToString {
+    String objectToString() {
+      super.toString()
+    }
+
+    String toString() { null }
+  }
+
+  static class EmptyToString {
+    String objectToString() {
+      super.toString()
+    }
+
+    String toString() { "" }
+  }
+
+  static class ThrowingToString {
+    String objectToString() {
+      super.toString()
+    }
+
+    String toString() {
+      throw new UnsupportedOperationException()
+    }
+  }
+
+  enum EnumWithToString {
+    VALUE;
+    String toString() { "I'm a value" }
   }
 }
 
-private class MultiLineToString {
-  String toString() {
-    "mul\ntiple\n   lines"
-  }
-}
-
-private class NullToString {
-  String objectToString() {
-    super.toString()
-  }
-
-  String toString() { null }
-}
-
-private class EmptyToString {
-  String objectToString() {
-    super.toString()
-  }
-
-  String toString() { "" }
-}
-
-private class ThrowingToString {
-  String objectToString() {
-    super.toString()
-  }
-
-  String toString() {
-    throw new UnsupportedOperationException()
-  }
-}
-
-private enum EnumWithToString {
-  VALUE;
-  String toString() { "I'm a value" }
-}

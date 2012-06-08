@@ -228,8 +228,9 @@ public class BaseSpecRunner {
     currentIteration = new IterationInfo(currentFeature, dataValues, estimatedNumIterations);
     String iterationName = currentFeature.getIterationNameProvider().getName(currentIteration);
     currentIteration.setName(iterationName);
-    currentIteration.setDescription(Description.createTestDescription(spec.getReflection(),
-        iterationName, currentFeature.getFeatureMethod().getReflection().getAnnotations()));
+    Description description = Description.createTestDescription(spec.getReflection(),
+        iterationName, currentFeature.getFeatureMethod().getReflection().getAnnotations());
+    currentIteration.setDescription(description);
     return currentIteration;
   }
 

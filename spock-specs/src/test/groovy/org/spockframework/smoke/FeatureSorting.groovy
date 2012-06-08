@@ -89,16 +89,17 @@ class Derived extends Base {
     base    | ["ccc", "bbb", "aaa"]
     derived | ["cde", "ccc", "bcd", "bbb", "abc", "aaa"]
   }
-}
 
-private class LexicographicalComparator implements Comparator<Description> {
-  int compare(Description d1, Description d2) {
-    d1.methodName <=> d2.methodName
+  static class LexicographicalComparator implements Comparator<Description> {
+    int compare(Description d1, Description d2) {
+      d1.methodName <=> d2.methodName
+    }
+  }
+
+  static class ReverseLexicographicalComparator implements Comparator<Description> {
+    int compare(Description d1, Description d2) {
+      d2.methodName <=> d1.methodName
+    }
   }
 }
 
-private class ReverseLexicographicalComparator implements Comparator<Description> {
-  int compare(Description d1, Description d2) {
-    d2.methodName <=> d1.methodName
-  }
-}

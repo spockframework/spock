@@ -15,6 +15,8 @@
  */
 package org.spockframework.smoke.condition
 
+import spock.lang.Issue
+
 class EqualityComparisonRendering extends ConditionRenderingSpec {
   def "values with different representations"() {
     expect:
@@ -35,12 +37,12 @@ x == y
     isRendered """
 x == y
 | |  |
-| |  Fred (org.spockframework.smoke.condition.Person3)
+| |  Fred (org.spockframework.smoke.condition.EqualityComparisonRendering\$Person)
 | false
-Fred (org.spockframework.smoke.condition.Person3)
+Fred (org.spockframework.smoke.condition.EqualityComparisonRendering\$Person)
     """, {
-      def x = new Person3(name: "Fred")
-      def y = new Person3(name: "Fred")
+      def x = new Person(name: "Fred")
+      def y = new Person(name: "Fred")
       assert x == y
     }
   }
@@ -104,7 +106,22 @@ null (void)
     }
   }
 
-  def "type hints are not added when equals method is used (only when equality operator is used)"() {
+  @Issue("http://issues.spockframework.org/detail?id=252")
+  def "type hints are not added for nested equality comparisons if values are equal"() {
+    expect:
+    isRendered """
+(x == y) instanceof String
+ | |  |  |
+ 1 |  1  false
+   true
+    """, {
+      int x = 1
+      BigDecimal y = 1
+      assert (x == y) instanceof String
+    }
+  }
+
+  def "type hints are not added when equals method is used (but only when equality operator is used)"() {
     expect:
     isRendered """
 x.equals(y)
@@ -115,11 +132,12 @@ x.equals(y)
       def y = "1"
       assert x.equals(y)
     }
-  }    
+  }
+
+  static class Person {
+    String name
+    String toString() { name }
+    boolean equals(other) { false }
+  }
 }
 
-private class Person3 {
-  String name
-  String toString() { name }
-  boolean equals(other) { false }
-}

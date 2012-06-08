@@ -96,7 +96,7 @@ def feature() {
     when:
     runner.runSpecBody("""
 @AutoCleanup
-boom = new org.spockframework.smoke.extension.Boom()
+boom = new org.spockframework.smoke.extension.AutoCleanupExtension.Boom()
 
 def feature() {
   expect: true
@@ -111,7 +111,7 @@ def feature() {
     when:
     runner.runSpecBody("""
 @AutoCleanup(quiet = true)
-boom = new org.spockframework.smoke.extension.Boom()
+boom = new org.spockframework.smoke.extension.AutoCleanupExtension.Boom()
 
 def feature() {
   expect: true
@@ -146,23 +146,24 @@ def feature() {
     result.failures[0].exception instanceof BoomException
     result.failures[1].exception instanceof BoomException
   }
+
+  static class MyClosable {
+    def called = false
+    def close() { called = true }
+  }
+
+  static class MyDisposable {
+    def called = false
+    def dispose() { called = true }
+  }
+
+  static class Boom {
+    def called = false
+    def close() { called = true; throw new BoomException() }
+  }
+
+  static class BoomException extends Exception {}
 }
 
-private class MyClosable {
-  def called = false
-  def close() { called = true }
-}
-
-private class MyDisposable {
-  def called = false
-  def dispose() { called = true }
-}
-
-private class Boom {
-  def called = false
-  def close() { called = true; throw new BoomException() }
-}
-
-private class BoomException extends Exception {}
 
 

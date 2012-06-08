@@ -1,9 +1,11 @@
 package spock.lang;
 
+import java.lang.annotation.*;
+
+import groovy.lang.Closure;
+
 import org.spockframework.runtime.extension.ExtensionAnnotation;
 import org.spockframework.runtime.extension.builtin.UnrollExtension;
-
-import java.lang.annotation.*;
 
 /**
  * Indicates that iterations of a data-driven feature should be made visible

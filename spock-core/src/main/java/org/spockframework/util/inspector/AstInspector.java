@@ -169,27 +169,6 @@ public class AstInspector {
 
     throw new AstInspectorException("internal error");
   }
-
-  /**
-   * Compiles the source text in the specified stream up to the
-   * configured compile phase and stores the resulting AST for subsequent
-   * inspection.
-   *
-   * @param sourceStream the stream containing the source text to compile
-   * @throws CompilationFailedException if an error occurs during compilation
-   */
-  public void load(InputStream sourceStream) throws CompilationFailedException {
-    reset();
-
-    try {
-      classLoader.parseClass(sourceStream);
-    } catch (AstSuccessfullyCaptured e) {
-      indexAstNodes();
-      return;
-    }
-
-    throw new AstInspectorException("internal error");
-  }
   
   /**
    * Returns the root of the inspected AST.

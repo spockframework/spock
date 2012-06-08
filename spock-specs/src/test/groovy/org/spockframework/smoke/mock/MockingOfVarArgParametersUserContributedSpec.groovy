@@ -44,10 +44,12 @@ class MockingOfVarArgParametersUserContributedSpec extends Specification {
 		then:
 		methodWasCalled
 	}
+
+  interface TargetClass {
+    void oneOrGreater(String first, String... rest)
+    void zeroOrGreater(String... all)
+  }
 }
 
-private interface TargetClass {
-	void oneOrGreater(String first, String... rest)
-	void zeroOrGreater(String... all)
-}
+
 

@@ -85,18 +85,19 @@ public class ExpressionInfoValueRenderer {
   }
 
   private String doRenderValue(ExpressionInfo expr) {
-    String result = renderAsStringComparison(expr);
+    String result = renderAsFailedStringComparison(expr);
     if (result != null) return result;
     
-    result = renderAsEqualityComparison(expr);
+    result = renderAsFailedEqualityComparison(expr);
     if (result != null) return result;
     
     return GroovyRuntimeUtil.toString(expr.getValue());
   }
   
-  private String renderAsStringComparison(ExpressionInfo expr) {
+  private String renderAsFailedStringComparison(ExpressionInfo expr) {
+    if (!(Boolean.FALSE.equals(expr.getValue()))) return null;
     if (!expr.isEqualityComparison(String.class, GString.class)) return null;
-    
+
     // values can't be null here
     String str1 = expr.getChildren().get(0).getValue().toString();
     String str2 = expr.getChildren().get(1).getValue().toString();
@@ -106,9 +107,10 @@ public class ExpressionInfoValueRenderer {
         new EditPathRenderer().render(str1, str2, dist.calculatePath()));
   }
   
-  private String renderAsEqualityComparison(ExpressionInfo expr) {
+  private String renderAsFailedEqualityComparison(ExpressionInfo expr) {
+    if (!(Boolean.FALSE.equals(expr.getValue()))) return null;
     if (!expr.isEqualityComparison()) return null;
-    
+
     ExpressionInfo expr1 = expr.getChildren().get(0);
     ExpressionInfo expr2 = expr.getChildren().get(1);
     if (expr1.getEffectiveRenderedValue().equals(expr2.getEffectiveRenderedValue())) {

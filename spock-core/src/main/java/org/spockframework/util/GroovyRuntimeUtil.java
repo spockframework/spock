@@ -161,7 +161,9 @@ public abstract class GroovyRuntimeUtil {
   // first find the MetaMethod and then invoke it, but the problem is that calling
   // MetaMethod.invoke doesn't have the exact same semantics as calling
   // InvokerHelper.invokeMethod, even if the same method is chosen (see Spec GroovyMopExploration)
-  public static boolean isVoidMethod(Object target, String method, Object... args) {
+  public static boolean isVoidMethod(@Nullable Object target, String method, Object... args) {
+    if (target == null) return false; // no way to tell
+
     Class[] argTypes = ReflectionUtil.getTypes(args);
 
     // the way we choose metaClass, we won't find methods on java.lang.Class

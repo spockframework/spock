@@ -141,11 +141,19 @@ class MatcherConditions extends EmbeddedSpecification {
     String property = "property"
   }
 
-  def "can have a method expression as actual"() {
+  @FailsWith(MissingMethodException)
+  def "cannot have a method expression as actual in Groovy 1.8 (because matcher expression gets parsed as a chained method call)"() {
     def foo = new Foo()
 
     expect:
     foo.method() equalTo("method")
+  }
+
+  def "can have a method expression as actual if 'that' syntax is used"() {
+    def foo = new Foo()
+
+    expect:
+    that foo.method(), equalTo("method")
   }
 
   @FailsWith(MissingMethodException)
@@ -177,14 +185,14 @@ class MatcherConditions extends EmbeddedSpecification {
   private static palindrome() {
     new IsPalindrome()
   }
-}
 
-private class IsPalindrome extends BaseMatcher<String> {
-  boolean matches(Object value) {
-    value instanceof String && value.reverse() == value
-  }
+  static class IsPalindrome extends BaseMatcher<String> {
+    boolean matches(Object value) {
+      value instanceof String && value.reverse() == value
+    }
 
-  void describeTo(Description description) {
-    description.appendText("a palindrome")
+    void describeTo(Description description) {
+      description.appendText("a palindrome")
+    }
   }
 }

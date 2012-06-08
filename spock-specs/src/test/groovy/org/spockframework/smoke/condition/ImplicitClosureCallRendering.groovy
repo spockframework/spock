@@ -121,8 +121,10 @@ ${holder.toString()}
       assert holder.getFunc()(42) == null
     }
   }
+
+  static class FuncHolder {
+    def func = { it }
+  }
+
 }
 
-private class FuncHolder {
-  def func = { it }
-}

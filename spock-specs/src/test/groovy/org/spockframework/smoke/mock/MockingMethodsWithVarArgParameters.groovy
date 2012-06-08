@@ -143,17 +143,59 @@ class MockingMethodsWithVarArgParameters extends Specification {
     then:
     1 * mock.foo(2, "one", "two")  
   }
+
+  def "vararg value can be null"() {
+    def mock = Mock(GroovyVarArgParameter)
+
+    when:
+    mock.foo(1, null)
+
+    then:
+    1 * mock.foo(1, null)
+  }
+
+  @Issue("http://issues.spockframework.org/detail?id=245")
+  def "handles case where vararg value is null and interaction does not match"() {
+    def mock = Mock(GroovyVarArgParameter)
+
+    when:
+    mock.foo(1, null)
+
+    then:
+    0 * mock.foo(2, null)
+  }
+
+  def "vararg value that is omitted in invocation can be omitted in interaction"() {
+    def mock = Mock(GroovyVarArgParameter)
+
+    when:
+    mock.foo(1)
+
+    then:
+    1 * mock.foo(1)
+  }
+
+  def "vararg value that is omitted in invocation can be specified as empty array in interaction"() {
+    def mock = Mock(GroovyVarArgParameter)
+
+    when:
+    mock.foo(1)
+
+    then:
+    1 * mock.foo(1, new Object[0])
+  }
+
+  interface GroovyVarArgParameter {
+    def foo(int i, String... strings)
+  }
+
+  interface GroovyArrayParameter {
+    def foo(int i, String[] strings)
+  }
+
+  interface NoVarArgParameter {
+    def foo(int i, strings)
+  }
 }
 
-private interface GroovyVarArgParameter {
-  def foo(int i, String... strings)
-}
-
-private interface GroovyArrayParameter {
-  def foo(int i, String[] strings)
-}
-
-private interface NoVarArgParameter {
-  def foo(int i, strings)
-}
 

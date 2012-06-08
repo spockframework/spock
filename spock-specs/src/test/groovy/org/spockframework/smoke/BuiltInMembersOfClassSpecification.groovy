@@ -43,12 +43,12 @@ class Foo extends spock.lang.Specification {
     noExceptionThrown()
   }
 
-  def "can be referred to by 'this' and 'super'"() {
+  def "can be referred to by 'this'"() {
     when:
     runner.run """
 class Foo extends spock.lang.Specification {
   def foo() {
-    def list = ${target}.Mock(List)
+    def list = this.Mock(List)
 
     expect:
     list != null
@@ -58,9 +58,23 @@ class Foo extends spock.lang.Specification {
 
     then:
     noExceptionThrown()
+  }
 
-    where:
-    target << ["this", "super"]
+  def "cannot be referred to by 'super' (since Groovy 1.8.1)"() {
+    when:
+    runner.run """
+class Foo extends spock.lang.Specification {
+  def foo() {
+    def list = super.Mock(List)
+
+    expect:
+    list != null
+  }
+}
+    """
+
+    then:
+    thrown(IllegalAccessError)
   }
 
   @Issue("http://issues.spockframework.org/detail?id=43")

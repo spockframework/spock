@@ -356,16 +356,6 @@ public class ExpressionReplacingVisitorSupport extends StatementReplacingVisitor
   }
 
   @Override
-  public void visitRegexExpression(RegexExpression expr) {
-    RegexExpression result = new RegexExpression(
-        replaceExpr(expr.getRegex())
-    );
-    result.setType(expr.getType());
-    result.setSourcePosition(expr);
-    replaceVisitedExpressionWith(result);
-  }
-
-  @Override
   @SuppressWarnings("unchecked")
   public void visitGStringExpression(GStringExpression expr) {
     replaceAllExprs(expr.getStrings());

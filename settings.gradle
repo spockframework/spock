@@ -10,3 +10,4 @@ rootProject.name = "spock"
 rootProject.children.each {
   it.buildFileName = it.name + ".gradle" - "spock-"
 }
+

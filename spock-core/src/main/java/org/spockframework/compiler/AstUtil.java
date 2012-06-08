@@ -106,14 +106,9 @@ public abstract class AstUtil {
     if (varExpr == null || !varExpr.getName().equals(Wildcard.INSTANCE.toString())) return false;
 
     Variable accessedVar = varExpr.getAccessedVariable();
-    if (accessedVar instanceof FieldNode) // Groovy 1.7.6 and higher
-      return ((FieldNode) accessedVar).getOwner().getName().equals(Specification.class.getName());
+    if (!(accessedVar instanceof FieldNode)) return false;
 
-    if (accessedVar instanceof DynamicVariable) // Groovy 1.7.5 and below
-      // nothing more we can check, so just assume it is a reference to Specification._
-      return true;
-
-    return false;
+    return ((FieldNode) accessedVar).getOwner().getName().equals(Specification.class.getName());
   }
 
   public static boolean isJavaIdentifier(String id) {
@@ -357,6 +352,13 @@ public abstract class AstUtil {
 
   public static boolean isJointCompiled(ClassNode clazz) {
     return clazz.getModule().getUnit().getConfig().getJointCompilationOptions() != null;
+  }
+
+  public static MethodCallExpression createDirectMethodCall(Expression target, MethodNode method, Expression arguments) {
+    MethodCallExpression result = new MethodCallExpression(target, method.getName(), arguments);
+    result.setMethodTarget(method);
+    result.setImplicitThis(false); // see http://groovy.329449.n5.nabble.com/Problem-with-latest-2-0-beta-3-snapshot-and-Spock-td5496353.html
+    return result;
   }
 
   public static void deleteMethod(ClassNode clazz, MethodNode method) {

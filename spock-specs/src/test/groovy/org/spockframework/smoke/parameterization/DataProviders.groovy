@@ -157,31 +157,32 @@ y << []
     }()
     b << [0, 1]
   }
-}
 
-private class MyIterator implements Iterator {
-  def elems = [1, 2, 3]
+  static class MyIterator implements Iterator {
+    def elems = [1, 2, 3]
 
-  boolean hasNext() {
-    elems.size() > 0
+    boolean hasNext() {
+      elems.size() > 0
+    }
+
+    Object next() {
+      elems.pop()
+    }
+
+    void remove() {}
   }
 
-  Object next() {
-    elems.pop()
+  static class MyIterable implements Iterable {
+    Iterator iterator() {
+      [3, 2, 1].iterator()
+    }
   }
-
-  void remove() {}
-}
-
-private class MyIterable implements Iterable {
-  Iterator iterator() {
-    [3, 2, 1].iterator()
-  }
-}
 
 // doesn't implement Iterable
-private class MyDisguisedIterable {
-  Iterator iterator() {
-    [3, 2, 1].iterator()
+  static class MyDisguisedIterable {
+    Iterator iterator() {
+      [3, 2, 1].iterator()
+    }
   }
 }
+

@@ -37,8 +37,8 @@ public class UseInterceptor implements IMethodInterceptor {
 
   public void intercept(final IMethodInvocation invocation) throws Throwable {
     DefaultGroovyMethods.use(null, categories,
-        new Closure(invocation.getTarget(), invocation.getTarget()) {
-          public Object doCall(Object[] args) throws Throwable {
+        new Closure<Void>(invocation.getTarget(), invocation.getTarget()) {
+          public Void doCall(Object[] args) throws Throwable {
             invocation.proceed();
             return null;
           }

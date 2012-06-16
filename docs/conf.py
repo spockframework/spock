@@ -41,7 +41,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'Spock Framework'
-copyright = u'2011, Peter Niederwieser, Luke Daley'
+copyright = u'2012, Peter Niederwieser'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -103,7 +103,7 @@ html_theme = 'default'
 
 # The name for this set of Sphinx documents.  If None, it defaults to
 # "<project> v<release> documentation".
-#html_title = None
+html_title = '<project> <release> Documentation'
 
 # A shorter title for the navigation bar.  Default is the same as html_title.
 #html_short_title = None
@@ -138,10 +138,10 @@ html_static_path = ['_static']
 #html_additional_pages = {}
 
 # If false, no module index is generated.
-#html_domain_indices = True
+html_domain_indices = False
 
 # If false, no index is generated.
-#html_use_index = True
+html_use_index = False
 
 # If true, the index is split into individual pages for each letter.
 #html_split_index = False
@@ -179,7 +179,7 @@ htmlhelp_basename = 'SpockFrameworkdoc'
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
   ('index', 'SpockFramework.tex', u'Spock Framework Documentation',
-   u'Peter Niederwieser, Luke Daley', 'manual'),
+   u'Peter Niederwieser', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -203,7 +203,7 @@ latex_documents = [
 #latex_appendices = []
 
 # If false, no module index is generated.
-#latex_domain_indices = True
+latex_domain_indices = False
 
 
 # -- Options for manual page output --------------------------------------------
@@ -212,7 +212,7 @@ latex_documents = [
 # (source start file, name, description, authors, manual section).
 man_pages = [
     ('index', 'spockframework', u'Spock Framework Documentation',
-     [u'Peter Niederwieser, Luke Daley'], 1)
+     [u'Peter Niederwieser'], 1)
 ]
 
 # -- Options added by us -------------------------------------------------------

@@ -176,9 +176,9 @@ and ``c``. In the output, the placeholders will be replaced with concrete values
     maximum of 0 and 0 is 0   PASSED
 
 Now we can tell at a glance that the ``max`` method failed for inputs ``7`` and ``0``. See `More on unrolled method names`_
-for further details.
+for further details on this topic.
 
-The ``@Unroll` annotation can also be placed on a spec. This has the same effect as placing it on each data-driven
+The ``@Unroll`` annotation can also be placed on a spec. This has the same effect as placing it on each data-driven
 feature method of the spec.
 
 Data pipes
@@ -195,7 +195,7 @@ one or more *data pipes*::
 
 A data pipe, indicated by the left-shift (``<<``) operator, connects a data variable to a *data provider*. The data
 provider holds all values for the variable, one per iteration. Any object that Groovy knows how to iterate over can be
-used as a data provider. This includes ``Collection``s, ``String``s, ``Iterable``s, and objects implementing the
+used as a data provider. This includes objects of type ``Collection``, ``String``, ``Iterable``, and objects implementing the
 ``Iterable`` contract. Data providers don't necessarily have to *be* the data (as in the case of a ``Collection``);
 they can fetch data from external sources like text files, databases and spreadsheets, or generate data randomly.
 Data providers are queried for their next value only when needed (before the next iteration).
@@ -215,7 +215,7 @@ but uses brackets instead of parentheses on the left-hand side::
         [a, b, c] << sql.rows("select a, b, c from maxdata")
     }
 
-Data values that aren't of interest can be ignored with an underscore (``_``):
+Data values that aren't of interest can be ignored with an underscore (``_``)::
 
     ...
     where:
@@ -276,7 +276,7 @@ such a method.
 More on unrolled method names
 -----------------------------
 
-Unrolled method names are similar to Groovy ``GString``s, except for the following differences:
+An unrolled method name is similar to a Groovy ``GString``, except for the following differences:
 
 * Expressions are denoted with ``#`` instead of ``$`` [#noDollar]_, and there is no equivalent for the ``${...}`` syntax
 * Expressions only support property access and zero-arg method calls
@@ -294,7 +294,7 @@ The following are invalid method names::
     def "#person.name.split(' ')[1]" { ... } // cannot have method arguments
     def "#person.age / 2" { ... } // cannot use operators
 
-If necessary, more complex expressions can be implemented with additional data variables::
+If necessary, additional data variables can be introduced to hold more complex expression::
 
     def "#lastName"() {
         ...

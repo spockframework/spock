@@ -28,7 +28,7 @@ Although this approach is fine in simple cases like this one, it has some potent
 * Exercising the same code multiple times does not benefit from the same isolation as executing separate methods does
 
 Spock's data-driven testing support tries to address these concerns. To get started, let's refactor above code into a
-data-driven feature method. First, we introduce three method parameters (called _data variables_) that replace the
+data-driven feature method. First, we introduce three method parameters (called *data variables*) that replace the
 hard-coded integer values::
 
     class MathSpec extends Specification {
@@ -41,7 +41,7 @@ hard-coded integer values::
     }
 
 We have finished the test logic, but still need to supply the data values to be used. This is done in a ``where`` block,
-which always comes at the end of the method. In the simplest (and most common) case, the ``where`` block holds a _data table_.
+which always comes at the end of the method. In the simplest (and most common) case, the ``where`` block holds a *data table*.
 
 Data tables
 -----------
@@ -61,9 +61,9 @@ Data tables are a convenient way to exercise a feature method with a fixed set o
         }
     }
 
-The first line of the table, called the _table header_, declares the data variables. The subsequent lines, called
-_table rows_, hold the corresponding values. For each row, the feature method will get executed once; we call this an
-_iteration_ of the method. If an iteration fails, the remaining iterations will nevertheless be executed. All
+The first line of the table, called the *table header*, declares the data variables. The subsequent lines, called
+*table rows*, hold the corresponding values. For each row, the feature method will get executed once; we call this an
+*iteration* of the method. If an iteration fails, the remaining iterations will nevertheless be executed. All
 failures will be reported.
 
 Data tables must have at least two columns. A single-column table can be written as::
@@ -185,7 +185,7 @@ Data pipes
 ----------
 
 Data tables aren't the only way to supply values to data variables. In fact, a data table is just syntactic sugar for
-one or more _data pipes_::
+one or more *data pipes*::
 
     ...
     where:
@@ -193,10 +193,10 @@ one or more _data pipes_::
     b << [5, 0, 0]
     c << [5, 7, 0]
 
-A data pipe, indicated by the left-shift (``<<``) operator, connects a data variable to a _data provider_. The data
+A data pipe, indicated by the left-shift (``<<``) operator, connects a data variable to a *data provider*. The data
 provider holds all values for the variable, one per iteration. Any object that Groovy knows how to iterate over can be
 used as a data provider. This includes ``Collection``s, ``String``s, ``Iterable``s, and objects implementing the
-``Iterable`` contract. Data providers don't necessarily have to _be_ the data (as in the case of a ``Collection``);
+``Iterable`` contract. Data providers don't necessarily have to *be* the data (as in the case of a ``Collection``);
 they can fetch data from external sources like text files, databases and spreadsheets, or generate data randomly.
 Data providers are queried for their next value only when needed (before the next iteration).
 

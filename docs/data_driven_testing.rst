@@ -305,8 +305,7 @@ If necessary, more complex expressions can be implemented with additional data v
 
 .. rubric:: Footnotes
 
-.. [#methodParameters] The idea behind allowing method parameters is to enable better IDE support. However, recent
-versions of IntelliJ IDEA recognize data variables automatically, and even infer their types from the values in the data table.
+.. [#methodParameters] The idea behind allowing method parameters is to enable better IDE support. However, recent versions of IntelliJ IDEA recognize data variables automatically, and even infer their types from the values in the data table.
 
 .. [#impossible] For example, a feature method could use data variables in its ``setup`` block, but not in any conditions.
 

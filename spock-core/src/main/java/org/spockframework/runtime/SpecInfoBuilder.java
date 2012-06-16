@@ -43,7 +43,7 @@ public class SpecInfoBuilder {
     int order = 0;
     for (SpecInfo curr : spec.getSpecsTopToBottom())
       for (FeatureInfo feature : curr.getFeatures()) {
-        feature.setDeclarationOrder(order); // lift declaration order to spec hierarchy
+        feature.setDeclarationOrder(order); // turn into "global" order that considers whole inheritance chain
         feature.setExecutionOrder(order);
         order++;
       }
@@ -128,7 +128,7 @@ public class SpecInfoBuilder {
       spec.addFeature(createFeature(method, metadata));
     }
 
-    spec.sortFeatures(new IFeatureSortOrder() {
+    Collections.sort(spec.getFeatures(), new IFeatureSortOrder() {
       public int compare(FeatureInfo m1, FeatureInfo m2) {
         return m1.getDeclarationOrder() - m2.getDeclarationOrder();
       }

@@ -3,11 +3,8 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Spock Framework
-===============
-
-Reference Documentation
------------------------
+Spock Framework Reference Documentation
+---------------------------------------
 
 Authors: Peter Niederwieser
 

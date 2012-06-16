@@ -19,16 +19,17 @@ package org.spockframework.groovy
 import org.codehaus.groovy.ast.expr.BinaryExpression
 import org.codehaus.groovy.ast.stmt.ForStatement
 import org.codehaus.groovy.control.CompilePhase
-import org.junit.BeforeClass
-import org.junit.Test
-import static org.junit.Assert.*
 import org.spockframework.util.inspector.*
+import org.junit.Test
+import org.junit.Before
+
+import static org.junit.Assert.*
 
 class AstInspectorTest {
-  static AstInspector inspector = new AstInspector(CompilePhase.SEMANTIC_ANALYSIS)
+  AstInspector inspector = new AstInspector(CompilePhase.SEMANTIC_ANALYSIS)
 
-  @BeforeClass
-  static void loadSource() {
+  @Before
+  void loadSource() {
     inspector.load("""
 import org.spockframework.util.inspector.Inspect
 
@@ -132,8 +133,7 @@ class Foo {
     assertSame(varDef.variableExpression, varRef.accessedVariable)
 
     def method = inspector.getMarkedNode("bar2")
-    // we're hooked to the same classloader (hopefully)
-    assertSame(Inspect.class, method.annotations[0].classNode.typeClass)
+    assertEquals(Inspect.name, method.annotations[0].classNode.name)
   }
 
   @Test(expected=AstInspectorException.class)

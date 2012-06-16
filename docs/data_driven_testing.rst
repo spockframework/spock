@@ -43,7 +43,7 @@ hard-coded integer values::
 We have finished the test logic, but still need to supply the data values to be used. This is done in a ``where`` block,
 which always comes at the end of the method. In the simplest (and most common) case, the ``where`` block holds a *data table*.
 
-Data tables
+Data Tables
 -----------
 
 Data tables are a convenient way to exercise a feature method with a fixed set of data values::
@@ -74,14 +74,14 @@ Data tables must have at least two columns. A single-column table can be written
     7 | _
     0 | _
 
-Isolated execution of iterations
+Isolated Execution of Iterations
 --------------------------------
 
 Iterations are isolated from each other in the same way as separate feature methods. Each iteration gets its own instance
 of the specification class, and the ``setup`` and ``cleanup`` methods will be called before and after each iteration,
 respectively.
 
-Sharing of objects between iterations
+Sharing of Objects between Iterations
 -------------------------------------
 
 In order to share an object between iterations, it has to be kept in a ``@Shared`` or static field.
@@ -92,7 +92,7 @@ Note that such objects will also be shared with other methods. There is currentl
 just between iterations of the same method. If you consider this a problem, consider putting each method into a separate
 spec, all of which can be kept in the same file. This achieves better isolation at the cost of some boilerplate code.
 
-Syntactic variations
+Syntactic Variations
 --------------------
 
 The previous code can be tweaked in a few ways. First, since the ``where`` block already declares all data variables, the
@@ -112,7 +112,7 @@ double pipe symbol (``||``) to visually set them apart. With this, the code beco
           }
       }
 
-Reporting of failures
+Reporting of Failures
 ---------------------
 
 Let's assume that our implementation of the ``max`` method has a flaw, and one of the iterations fails::
@@ -131,7 +131,7 @@ out that it's the second iteration that failed. At other times this can be more 
 In any case, it would be nice if Spock made it loud and clear which iteration failed, rather than just reporting the
 failure. This is the purpose of the ``@Unroll`` annotation.
 
-Method unrolling
+Method Unrolling
 ----------------
 
     @Unroll
@@ -175,13 +175,13 @@ and ``c``. In the output, the placeholders will be replaced with concrete values
 
     maximum of 0 and 0 is 0   PASSED
 
-Now we can tell at a glance that the ``max`` method failed for inputs ``7`` and ``0``. See `More on unrolled method names`_
+Now we can tell at a glance that the ``max`` method failed for inputs ``7`` and ``0``. See `More on Unrolled Method Names`_
 for further details on this topic.
 
 The ``@Unroll`` annotation can also be placed on a spec. This has the same effect as placing it on each data-driven
 feature method of the spec.
 
-Data pipes
+Data Pipes
 ----------
 
 Data tables aren't the only way to supply values to data variables. In fact, a data table is just syntactic sugar for
@@ -200,7 +200,7 @@ used as a data provider. This includes objects of type ``Collection``, ``String`
 they can fetch data from external sources like text files, databases and spreadsheets, or generate data randomly.
 Data providers are queried for their next value only when needed (before the next iteration).
 
-Multi-variable data pipes
+Multi-Variable Data Pipes
 -------------------------
 
 If a data provider returns multiple values per iteration (as an object that Groovy knows how to iterate over),
@@ -221,7 +221,7 @@ Data values that aren't of interest can be ignored with an underscore (``_``)::
     where:
     [a, b, _, c] << sql.rows("select * from maxdata")
 
-Data variable assignment
+Data Variable Assignment
 ------------------------
 
 A data variable can be directly assigned a value::
@@ -243,7 +243,7 @@ to other data variables::
     b = row.b
     c = row.c
 
-Combining data tables, data pipes, and variable assignments
+Combining Data Tables, Data Pipes, and Variable Assignments
 -----------------------------------------------------------
 
 Data tables, data pipes, and variable assignments can be combined as needed::
@@ -259,7 +259,7 @@ Data tables, data pipes, and variable assignments can be combined as needed::
 
     c = a > b ? a : b
 
-Number of iterations
+Number of Iterations
 --------------------
 
 The number of iterations depends on how much data is available. Successive executions of the same method can
@@ -267,13 +267,13 @@ yield different numbers of iterations. If a data provider runs out of values soo
 Variable assignments don't affect the number of iterations. A ``where`` block that only contains assignments yields
 exactly one iteration.
 
-Closing of data providers
+Closing of Data Providers
 -------------------------
 
 After all iterations have completed, the zero-argument ``close`` method is called on all data providers that have
 such a method.
 
-More on unrolled method names
+More on Unrolled Method Names
 -----------------------------
 
 An unrolled method name is similar to a Groovy ``GString``, except for the following differences:

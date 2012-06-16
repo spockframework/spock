@@ -134,8 +134,16 @@ failure. This is the purpose of the ``@Unroll`` annotation.
 Method Unrolling
 ----------------
 
+.. code-block::
+
     @Unroll
     def "maximum of two numbers"() { ... }
+
+.. sidebar:: Why isn't ``@Unroll`` the default?
+
+    One reason why ``@Unroll`` isn't the default is that some execution environments (in particular IDEs) expect to be
+    told the number of test methods in advance, and have certain problems if the actual number varies. Another reason
+    is that ``@Unroll`` can drastically change the number of reported tests, which may not always be desirable.
 
 A method annotated with ``@Unroll`` will have its iterations reported independently. Note that unrolling has no
 effect on the execution itself - it is only an alternation in reporting. Depending on the execution environment, the
@@ -150,12 +158,6 @@ output will look something like::
         42         false
 
     maximum of two numbers[2]   PASSED
-
-.. sidebar:: Why isn't ``@Unroll`` the default?
-
-    One reason why ``@Unroll`` isn't the default is that some execution environments (in particular IDEs) expect to be
-    told the number of test methods in advance, and have certain problems if the actual number varies. Another reason
-    is that ``@Unroll`` can drastically change the number of reported tests, which may not always be desirable.
 
 This tells us that the second iteration (with index 1) failed. With a bit of effort, we can do even better::
 

@@ -212,7 +212,7 @@ latex_domain_indices = False
 # (source start file, name, description, authors, manual section).
 man_pages = [
     ('index', 'spockframework', u'Spock Framework Documentation',
-     [u'Peter Niederwieser, Luke Daley'], 1)
+     [u'Peter Niederwieser'], 1)
 ]
 
 # -- Options added by us -------------------------------------------------------

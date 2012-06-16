@@ -6,9 +6,12 @@
 Spock Framework 0.7 Documentation
 =================================
 
-    .. note:: Spock 0.7 has not been released yet.
+    .. note:: Spock 0.7 is still under development and has not been released yet.
 
-Spock is a testing and specification framework for Java and Groovy applications. What makes it stand out from the crowd is its beautiful and highly expressive specification language. Thanks to its JUnit runner, Spock is compatible with most IDEs, build tools, and continuous integration servers. Spock is inspired from JUnit, jMock, RSpec, Groovy, Scala, Vulcans, and other fascinating life forms.
+Spock is a testing and specification framework for Java and Groovy applications. What makes it stand out from the crowd
+is its beautiful and highly expressive specification language. Thanks to its JUnit runner, Spock is compatible with most
+IDEs, build tools, and continuous integration servers. Spock is inspired from JUnit, jMock, RSpec, Groovy, Scala, Vulcans,
+and other fascinating life forms.
 
 Contents:
 

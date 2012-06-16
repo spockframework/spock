@@ -8,10 +8,12 @@ Spock Framework - Reference Documentation
 
 Authors: Peter Niederwieser
 
-Version: 0.7-SNAPSHOT
+Version: 0.7
 
-Contents
---------
+.. note:: This version is still under active development and has not yet been released.
+
+Table of Contents
+-----------------
 
 .. toctree::
    :maxdepth: 2

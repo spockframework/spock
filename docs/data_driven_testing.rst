@@ -151,7 +151,7 @@ output will look something like::
 
     maximum of two numbers[2]   PASSED
 
-..sidebar:: Why isn't ``@Unroll`` the default?
+.. sidebar:: Why isn't ``@Unroll`` the default?
 
     One reason why ``@Unroll`` isn't the default is that some execution environments (in particular IDEs) expect to be
     told the number of test methods in advance, and have certain problems if the actual number varies. Another reason

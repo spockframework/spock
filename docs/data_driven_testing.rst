@@ -153,9 +153,9 @@ output will look something like::
 
 ..sidebar:: Why isn't ``@Unroll`` the default?
 
-One reason why ``@Unroll`` isn't the default is that some execution environments (in particular IDEs) expect to be told the
-number of test methods in advance, and have certain problems if the actual number varies. Another reason is that ``@Unroll``
-can drastically change the number of reported tests, which may not always be desirable.
+    One reason why ``@Unroll`` isn't the default is that some execution environments (in particular IDEs) expect to be
+    told the number of test methods in advance, and have certain problems if the actual number varies. Another reason
+    is that ``@Unroll`` can drastically change the number of reported tests, which may not always be desirable.
 
 This tells us that the second iteration (with index 1) failed. With a bit of effort, we can do even better::
 

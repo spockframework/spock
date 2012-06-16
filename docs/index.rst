@@ -21,11 +21,3 @@ Contents
    data_driven_testing
    new_and_noteworthy
    migration_guide
-
-Indices and Tables
-------------------
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
-

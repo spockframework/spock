@@ -3,17 +3,22 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Spock Framework 0.7 Documentation
-=================================
+Spock Framework
+===============
 
-    .. note:: Spock 0.7 is still under development and has not been released yet.
+Reference Documentation
+-----------------------
+
+0.7-SNAPSHOT
+~~~~~~~~~~~~
 
 Spock is a testing and specification framework for Java and Groovy applications. What makes it stand out from the crowd
 is its beautiful and highly expressive specification language. Thanks to its JUnit runner, Spock is compatible with most
 IDEs, build tools, and continuous integration servers. Spock is inspired from JUnit, jMock, RSpec, Groovy, Scala, Vulcans,
 and other fascinating life forms.
 
-Contents:
+Contents
+~~~~~~~~
 
 .. toctree::
    :maxdepth: 2
@@ -27,7 +32,7 @@ Contents:
    migration_guide
 
 Indices and tables
-==================
+~~~~~~~~~~~~~~~~~~
 
 * :ref:`genindex`
 * :ref:`modindex`

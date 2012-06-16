@@ -7,6 +7,7 @@ Spock Framework - Reference Documentation
 =========================================
 
 Authors: Peter Niederwieser
+
 Version: 0.7-SNAPSHOT
 
 Contents

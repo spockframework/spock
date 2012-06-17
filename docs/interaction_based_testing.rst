@@ -125,7 +125,7 @@ Interactions
     zero, one, or multiple invocations.
 
 Let's take a closer look at the ``then`` block. It contains two *interactions*, each of which consists of four
-parts: a *cardinality*, a *target constraint*, a *method constraint*, and an *argument list constraint*::
+parts: a *cardinality*, a *target constraint*, a *method constraint*, and one ore more *argument constraints*::
 
     1 * subscriber1.receive("hello")
     |   |           |       |
@@ -160,12 +160,12 @@ The method constraint of an interaction tells which method is expected to be cal
 
     1 * subscriber1.receive("hello") // a method named 'receive'
     1 * subscriber1./r.*e/("hello")  // a method whose name matches the given regular expression
-                                     // (starts with 'r', ends in 'e')
+                                     // (here: method name starts with 'r', ends in 'e')
 
-Argument List Constraint
-~~~~~~~~~~~~~~~~~~~~~~~~
+Argument Constraints
+~~~~~~~~~~~~~~~~~~~~
 
-The argument list constraint of an interaction tells which method arguments are expected::
+The argument constraints of an interaction tell which method arguments are expected::
 
     1 * subscriber1.receive("hello")     // an argument that is equal[#equality]_ to the String "hello"
     1 * subscriber1.receive(!"hello")    // an argument that is unequal[#equality]_ to the String "hello"
@@ -173,20 +173,31 @@ The argument list constraint of an interaction tells which method arguments are 
     1 * subscriber1.receive(!null)       // any non-null argument
     1 * subscriber1.receive(_ as String) // any non-null argument that is-a String
     1 * subscriber1.receive(*_)          // any argument list (including the empty argument list)
+    1 * subscriber1.receive({ it.size() > 3 }) // an argument that satisfies the given predicate
+                                               // (here: message length is greater than 3)
 
-Mocking Outcomes
-~~~~~~~~~~~~~~~~
+Argument constraints work as expected for methods with multiple arguments and/or varargs::
+
+    1 * process.invoke("ls", "-a", _, !null, { ["abcdefghiklmnopqrstuwx1"].contains(it) })
+
+.. admonition:: Spock Deep Dive
+
+    Groovy allows any method whose last parameter has an array type to be called in vararg style. Consequently,
+    vararg syntax is also allowed in interactions describing invocations of such methods.
+
+Verification of Interactions
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 There a two main ways in which a mock-based test can fail: An interaction can match more invocations than
-allowed, or it can match fewer invocations than required. The former case is detected right when the invocations
+allowed, or it can match fewer invocations than required. The former case is detected right when the invocation
 happens, and results in a ``TooManyInvocationsError``::
 
     Too many invocations for:
 
     1 * subscriber.receive("hello") (2 invocations)
 
-The second case, too few matching invocations, can only be detected once execution of the ``when`` block has completed.
-(Until then, further matching invocations could occur.) It results in a ``TooFewInvocationsError``::
+The second case (fewer invocations than required) can only be detected once execution of the ``when`` block has completed.
+(Until then, further invocations may occur.) It results in a ``TooFewInvocationsError``::
 
     Too few invocations for:
 
@@ -195,10 +206,10 @@ The second case, too few matching invocations, can only be detected once executi
 Note that it doesn't matter whether the method was not called at all, called on another mock object, or called with
 a different argument; in either case, the same error will occur.
 
-.. admonition:: New in O.7: Show Unmatched Invocations
+.. admonition:: New in 0.7: Show Unmatched Invocations
 
-    To facilitate the understanding of what happened "instead" of a missing invocation, Spock will show all
-    invocations that didn't match any interaction. This is particularly helpful when a method invocation had the "wrong"
+    To make it easier to diagnose what happened "instead" of a missing invocation, Spock will show all
+    invocations that didn't match any interaction. This is particularly helpful when a method invocation has the "wrong"
     arguments::
 
         Unmatched invocations:
@@ -208,9 +219,29 @@ a different argument; in either case, the same error will occur.
 Invocation Order
 ~~~~~~~~~~~~~~~~
 
+Mocking Classes
+~~~~~~~~~~~~~~~
+
 Stubbing
 --------
 
+Further Reading
+---------------
+
+To learn more about interaction-based testing, we recommend the following resources:
+
+* `Endo-Testing: Unit Testing with Mock Objects<http://connextra.com/aboutUs/mockobjects.pdf>`
+  Paper from the XP2000 conference that introduces the concept of mock objects.
+
+* `Mock Roles, not Objects<http://www.jmock.org/oopsla2004.pdf>`
+  Paper from the OOPSLA2004 conference that explains how to do mocking *right*.
+
+* `Mocks Aren't Stubs<http://martinfowler.com/articles/mocksArentStubs.html>`
+  Martin Fowler's take on mocking.
+
+* `Growing Object-Oriented Software Guided by Tests<http://www.growing-object-oriented-software.com/>`
+  TDD pioneers Steve Freeman and Nat Pryce explain how test-driven development and mocking works in the real world.
+
 .. rubric:: Footnotes
 
-.. [#equality] Arguments are compared according to Groovy equality, which is based on but more relaxed than Java equality (in particular for numbers).
+.. [#equality] Arguments are compared according to Groovy equality, which is based on, but more relaxed than, Java equality (in particular for numbers).

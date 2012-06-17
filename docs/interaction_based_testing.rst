@@ -230,16 +230,16 @@ Further Reading
 
 To learn more about interaction-based testing, we recommend the following resources:
 
-* `Endo-Testing: Unit Testing with Mock Objects<http://connextra.com/aboutUs/mockobjects.pdf>`
+* `Endo-Testing: Unit Testing with Mock Objects <http://connextra.com/aboutUs/mockobjects.pdf>`_
   Paper from the XP2000 conference that introduces the concept of mock objects.
 
-* `Mock Roles, not Objects<http://www.jmock.org/oopsla2004.pdf>`
+* `Mock Roles, not Objects <http://www.jmock.org/oopsla2004.pdf>`_
   Paper from the OOPSLA2004 conference that explains how to do mocking *right*.
 
-* `Mocks Aren't Stubs<http://martinfowler.com/articles/mocksArentStubs.html>`
+* `Mocks Aren't Stubs <http://martinfowler.com/articles/mocksArentStubs.html>`_
   Martin Fowler's take on mocking.
 
-* `Growing Object-Oriented Software Guided by Tests<http://www.growing-object-oriented-software.com/>`
+* `Growing Object-Oriented Software Guided by Tests <http://www.growing-object-oriented-software.com/>`_
   TDD pioneers Steve Freeman and Nat Pryce explain how test-driven development and mocking works in the real world.
 
 .. rubric:: Footnotes

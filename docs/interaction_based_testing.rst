@@ -206,7 +206,7 @@ The second case (fewer invocations than required) can only be detected once exec
 Note that it doesn't matter whether the method was not called at all, called on another mock object, or called with
 a different argument; in either case, the same error will occur.
 
-.. admonition:: New in 0.7: Show Unmatched Invocations
+.. admonition:: New in Spock 0.7: Show Unmatched Invocations
 
     To make it easier to diagnose what happened "instead" of a missing invocation, Spock will show all
     invocations that didn't match any interaction. This is particularly helpful when a method invocation has the "wrong"
@@ -244,7 +244,7 @@ To learn more about interaction-based testing, we recommend the following resour
 
 * `Growing Object-Oriented Software Guided by Tests <http://www.growing-object-oriented-software.com/>`_
 
-  TDD pioneers Steve Freeman and Nat Pryce explain how test-driven development and mocking work in the real world.
+  TDD pioneers Steve Freeman and Nat Pryce explain in detail how test-driven development and mocking work in the real world.
 
 .. rubric:: Footnotes
 

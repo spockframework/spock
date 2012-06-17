@@ -107,7 +107,7 @@ Mocking is the act of describing expected interactions, and failing the test if 
         1 * subscriber2.receive("hello")
     }
 
-Read out aloud: "When the publisher sends a 'hello' message, then both subscribers should receive the message exactly once."
+Read out aloud: "When the publisher sends a 'hello' message, then both subscribers should receive that message exactly once."
 
 When this test gets run, Spock watches all invocations on mock objects that happen during the execution of the
 ``when`` block and compares them to the expected interactions described in the corresponding ``then`` block. In case of
@@ -116,9 +116,6 @@ a mismatch, a (subclass of) ``InteractionNotSatisfiedError`` is thrown.
 Interactions
 ~~~~~~~~~~~~
 
-Let's take a closer look at the ``then`` block. It contains two *interactions*, each of which consists of four
-parts: a *cardinality*, a *target constraint*, a *method constraint*, and an *argument list constraint*:
-
 .. sidebar:: Is an interaction just a regular method invocation?
 
     Not quite. While an interaction looks similar to a regular method invocation, it is simply a way to express which
@@ -126,7 +123,8 @@ parts: a *cardinality*, a *target constraint*, a *method constraint*, and an *ar
     that is matched against all invocations on mock objects. Depending on the circumstances, the interaction may match
     zero, one, or multiple invocations.
 
-.. code-block::
+Let's take a closer look at the ``then`` block. It contains two *interactions*, each of which consists of four
+parts: a *cardinality*, a *target constraint*, a *method constraint*, and an *argument list constraint*::
 
     1 * subscriber1.receive("hello")
     |   |           |       |

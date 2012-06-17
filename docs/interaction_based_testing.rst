@@ -178,4 +178,4 @@ Stubbing
 
 .. rubric:: Footnotes
 
-.. [#equality] Arguments are compared according to Groovy equality, which is somewhat more relaxed than Java equality (in particular for numbers).
+.. [#equality] Arguments are compared according to Groovy equality, which is based on but more relaxed than Java equality (in particular for numbers).

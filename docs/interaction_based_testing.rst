@@ -177,16 +177,16 @@ The argument list constraint of an interaction tells which method arguments are 
 Mocking Outcomes
 ~~~~~~~~~~~~~~~~
 
-There a two fundamental ways in which a mock-based test can fail: An interaction can match more invocations than
-allowed, or it can match fewer invocations than required. The former case is detected right at the time that the
-invocations happens, and results in a ``TooManyInvocationsError``::
+There a two main ways in which a mock-based test can fail: An interaction can match more invocations than
+allowed, or it can match fewer invocations than required. The former case is detected right when the invocations
+happens, and results in a ``TooManyInvocationsError``::
 
     Too many invocations for:
 
     1 * subscriber.receive("hello") (2 invocations)
 
 The second case, too few matching invocations, can only be detected once execution of the ``when`` block has completed.
-(Until then, further matching invocations could occur.) It is reported as a ``TooFewInvocationsError``::
+(Until then, further matching invocations could occur.) It results in a ``TooFewInvocationsError``::
 
     Too few invocations for:
 
@@ -195,9 +195,9 @@ The second case, too few matching invocations, can only be detected once executi
 Note that it doesn't matter whether the method was not called at all, called on another mock object, or called with
 a different argument; in either case, the same error will occur.
 
-.. hint:: New in O.7: Show unmatched invocations
+.. admonition:: New in O.7: Show Unmatched Invocations
 
-    To facilitate the understanding of what happened "instead" of the missing invocations, Spock will show all
+    To facilitate the understanding of what happened "instead" of a missing invocation, Spock will show all
     invocations that didn't match any interaction. This is particularly helpful when a method invocation had the "wrong"
     arguments::
 

@@ -96,7 +96,7 @@ Now we are ready to describe the expected interactions between the two parties.
 Mocking
 -------
 
-Mocking is the act of describing expected interactions, and failing the test if they don't happen. Let's see an example::
+Mocking is the act of describing expected interactions. Let's see an example::
 
     def "should send messages to all subscribers"() {
         when:

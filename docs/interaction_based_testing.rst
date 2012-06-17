@@ -36,7 +36,7 @@ Although any of these frameworks can be used together with Spock, we didn’t st
 its own mocking framework that leverages the power of Groovy to make interaction-based tests easier to write,
 more readable, and ultimately more fun.
 
-    .. note:: All features of Spock's mocking framework can be used to, and work the same for, testing both Java and Groovy code.
+.. note:: All features of Spock's mocking framework can be used to, and work the same for, testing both Java and Groovy code.
 
 Creating Mock Objects
 ---------------------

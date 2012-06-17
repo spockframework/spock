@@ -61,6 +61,7 @@ Default Behavior of Mock Objects
 --------------------------------
 
 .. sidebar:: Lenient vs. strict mocking frameworks
+
     Like Mockito, we firmly believe that a mocking framework should be lenient by default. This means that unexpected
     method calls on mock objects (or, in other words, interactions that aren't relevant for the test at hand) are allowed
     and will simply return a default value. Conversely, mocking frameworks like EasyMock and JMock are strict by default;

@@ -159,15 +159,16 @@ Method Constraint
 The method constraint of an interaction tells which method is expected to be called::
 
     1 * subscriber1.receive("hello") // a method named 'receive'
-    1 * subscriber1./rec.*/("hello") // a method whose name matches the given regular expression
+    1 * subscriber1./r.*e/("hello")  // a method whose name matches the given regular expression
+                                     // (starts with 'r', ends in 'e')
 
 Argument List Constraint
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
 The argument list constraint of an interaction tells which method arguments are expected::
 
-    1 * subscriber1.receive("hello")     // an argument that is equal (according to Groovy semantics) to the String "hello"
-    1 * subscriber1.receive(!"hello")    // an argument that is unequal (according to Groovy semantics) to the String "hello"
+    1 * subscriber1.receive("hello")     // an argument that is equal[#equality]_ to the String "hello"
+    1 * subscriber1.receive(!"hello")    // an argument that is unequal[#equality]_ to the String "hello"
     1 * subscriber1.receive(_)           // any single argument (including null)
     1 * subscriber1.receive(!null)       // any non-null argument
     1 * subscriber1.receive(_ as String) // any non-null argument that is-a String
@@ -176,3 +177,6 @@ The argument list constraint of an interaction tells which method arguments are 
 Stubbing
 --------
 
+.. rubric:: Footnotes
+
+.. [#equality] Arguments are compared according to Groovy equality, which is somewhat more relaxed than Java equality.

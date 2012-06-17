@@ -115,8 +115,8 @@ a mismatch, a (subclass of) ``InteractionNotSatisfiedError`` is thrown.
 Interactions
 ~~~~~~~~~~~~
 
-Let's take a closer look at the ``then`` block. It contains two _interactions_, each of which consists of four
-parts: a _cardinality_, a _target constraint_, a _method constraint_, and an _argument list constraint_:
+Let's take a closer look at the ``then`` block. It contains two *interactions*, each of which consists of four
+parts: a *cardinality*, a *target constraint*, a *method constraint*, and an *argument list constraint*:
 
     .. sidebar:: Is an interaction just a regular method invocation?
 
@@ -125,7 +125,7 @@ parts: a _cardinality_, a _target constraint_, a _method constraint_, and an _ar
     that is matched against all invocations on mock objects. Depending on the circumstances, the interaction may match
     one or more such invocations.
 
-    .. code-block:
+    .. code-block::
 
     1 * subscriber1.receive("hello")
     |   |           |       |

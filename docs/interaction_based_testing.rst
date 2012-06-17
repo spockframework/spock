@@ -123,7 +123,7 @@ parts: a *cardinality*, a *target constraint*, a *method constraint*, and an *ar
     Not quite. While an interaction looks similar to a regular method invocation, it is simply a way to express which
     method invocations are expected to happen. A good way to think of an interaction is as a regular expression
     that is matched against all invocations on mock objects. Depending on the circumstances, the interaction may match
-    one or more such invocations.
+    zero, one, or multiple invocations.
 
 .. code-block::
 

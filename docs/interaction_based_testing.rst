@@ -54,7 +54,7 @@ Alternatively, the following Java-like syntax is supported, which typically resu
     .. note:: If the type of the mock is given on the left-hand side, it does not have to be repeated on the right-hand side.
 
 Mock objects literally implement (or, in the case of a class, extend) the type they stand in for. (In other words, in
-our example ``subscriber1`` *is-a* Subscriber.) Hence they can be passed to statically typed (Java) code that expects
+our example ``subscriber1`` *is-a* ``Subscriber``.) Hence they can be passed to statically typed (Java) code that expects
 such a type.
 
 Default Behavior of Mock Objects

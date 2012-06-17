@@ -118,14 +118,14 @@ Interactions
 Let's take a closer look at the ``then`` block. It contains two *interactions*, each of which consists of four
 parts: a *cardinality*, a *target constraint*, a *method constraint*, and an *argument list constraint*:
 
-    .. sidebar:: Is an interaction just a regular method invocation?
+.. sidebar:: Is an interaction just a regular method invocation?
 
     Not quite. While an interaction looks similar to a regular method invocation, it is simply a way to express which
     method invocations are expected to happen. A good way to think of an interaction is as a regular expression
     that is matched against all invocations on mock objects. Depending on the circumstances, the interaction may match
     one or more such invocations.
 
-    .. code-block::
+.. code-block::
 
     1 * subscriber1.receive("hello")
     |   |           |       |

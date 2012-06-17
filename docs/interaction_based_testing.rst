@@ -96,7 +96,7 @@ Now we are ready to describe the expected interactions between the two parties.
 Mocking
 -------
 
-Mocking is the act of describing expected interactions. Let's see an example::
+Mocking is the act of describing expected interactions and verifying them against actual invocations. Let's see an example::
 
     def "should send messages to all subscribers"() {
         when:
@@ -109,9 +109,10 @@ Mocking is the act of describing expected interactions. Let's see an example::
 
 Read out aloud: "When the publisher sends a 'hello' message, then both subscribers should receive that message exactly once."
 
-When this test gets run, Spock watches all invocations on mock objects that happen during the execution of the
+When this test gets run, Spock watches all invocations on mock objects that occur during the execution of the
 ``when`` block and compares them to the expected interactions described in the corresponding ``then`` block. In case of
-a mismatch, a (subclass of) ``InteractionNotSatisfiedError`` is thrown.
+a mismatch, a (subclass of) ``InteractionNotSatisfiedError`` is thrown. This verification happens automatically and
+does not require any boilerplate code as often seen with other mocking frameworks.
 
 Interactions
 ~~~~~~~~~~~~

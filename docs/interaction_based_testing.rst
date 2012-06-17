@@ -31,8 +31,8 @@ can get unpleasant as the number of methods and complexity of interactions incre
 come in. They allow to succinctly describe the expected interactions between the object under test and its
 collaborators. Mock implementations are synthesized on the fly based on this description.
 
-The Java world has no shortage of popular and mature mocking frameworks: `JMock <www.jmock.org/>`_,
-`EasyMock <www.easymock.org/>`_, `Mockito <code.google.com/p/mockito/>`_, to name just a few.
+The Java world has no shortage of popular and mature mocking frameworks: `JMock <http://www.jmock.org/>`_,
+`EasyMock <http://www.easymock.org/>`_, `Mockito <http://code.google.com/p/mockito/>`_, to name just a few.
 Although each of these frameworks can be used together with Spock, we didn’t stop here. Instead, Spock comes with
 its own mocking framework that leverages the power of Groovy to make interaction-based tests easier to write,
 more readable, and ultimately more fun.

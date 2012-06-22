@@ -15,13 +15,16 @@
 package org.spockframework.util;
 
 import groovy.lang.Closure;
+import groovy.lang.GroovySystem;
 import groovy.lang.MetaClass;
 import groovy.lang.MetaMethod;
 
 import org.codehaus.groovy.runtime.*;
 import org.codehaus.groovy.runtime.typehandling.DefaultTypeTransformation;
 
+import java.beans.Introspector;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * Provides convenient access to Groovy language and runtime features.
@@ -52,9 +55,43 @@ public abstract class GroovyRuntimeUtil {
   public static MetaClass getMetaClass(Object object) {
     return InvokerHelper.getMetaClass(object);
   }
+
+  public static MetaClass getMetaClass(Class<?> clazz) {
+    return GroovySystem.getMetaClassRegistry().getMetaClass(clazz);
+  }
   
   public static String propertyToMethodName(String prefix, String propertyName) {
     return prefix + MetaClassHelper.capitalize(propertyName);
+  }
+
+  /**
+   * Checks if the given method is a getter method according
+   * to Groovy rules. If yes, the corresponding property name
+   * is returned. Otherwise, null is returned.
+   * This method differs from Groovy 1.6.8 in that the latter
+   * doesn't support the "is" prefix for static boolean properties;
+   * however, that seems more like a bug.
+   * See http://jira.codehaus.org/browse/GROOVY-4206
+   */
+  @Nullable
+  public static String getterMethodToPropertyName(String methodName, List<Class<?>> parameterTypes, Class<?> returnType) {
+    if (!parameterTypes.isEmpty()) return null;
+    if (returnType == void.class) return null; // Void.class is allowed
+
+    if (methodName.startsWith("get"))
+      return getPropertyName(methodName, 3);
+
+    if (methodName.startsWith("is")
+        && returnType == boolean.class) // Boolean.class is not allowed
+      return getPropertyName(methodName, 2);
+
+    return null;
+  }
+
+  private static String getPropertyName(String methodName, int prefixLength) {
+    String result = methodName.substring(prefixLength);
+    if (result.length() == 0) return null;
+    return Introspector.decapitalize(result);
   }
   
   /**

@@ -16,7 +16,6 @@
 
 package org.spockframework.mock;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -46,10 +45,10 @@ public class PositionalArgumentListConstraint implements IInvocationConstraint {
    * Tells if the given method call has expandable varargs. Note that Groovy
    * supports vararg syntax for all methods whose last parameter is of array type.
    */
-  private boolean hasExpandableVarArgs(Method method, List<Object> args) {
-    Class<?>[] paramTypes = method.getParameterTypes();
-    return paramTypes.length > 0
-        && paramTypes[paramTypes.length - 1].isArray()
+  private boolean hasExpandableVarArgs(IMockMethod method, List<Object> args) {
+    List<Class<?>> paramTypes = method.getParameterTypes();
+    return !paramTypes.isEmpty()
+        && CollectionUtil.getLastElement(paramTypes).isArray()
         && CollectionUtil.getLastElement(args) != null;
   }
 

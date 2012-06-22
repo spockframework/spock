@@ -17,8 +17,10 @@
 package org.spockframework.smoke.mock
 
 import org.spockframework.mock.TooFewInvocationsError
+
 import spock.lang.FailsWith
 import spock.lang.Specification
+import spock.lang.Issue
 
 /**
  *
@@ -32,6 +34,82 @@ class GroovyClassBasedMocks extends Specification {
     mockMe.foo(42)
     then:
     1 * mockMe.foo(42)
+  }
+
+  def "mock declared property that is read with property syntax"() {
+    when:
+    mockMe.bar
+    then:
+    1 * mockMe.bar
+  }
+
+  @Issue("http://issues.spockframework.org/detail?id=258")
+  def "mock declared property that is written with property syntax"() {
+    when:
+    mockMe.bar = "bar"
+    then:
+    1 * mockMe.setBar("bar")
+  }
+
+  def "mock declared property that is read with method syntax"() {
+    when:
+    mockMe.getBar()
+    then:
+    1 * mockMe.bar
+  }
+
+  def "mock declared property that is written with method syntax"() {
+    when:
+    mockMe.setBar("bar")
+    then:
+    1 * mockMe.setBar("bar")
+  }
+
+  def "mock call to GroovyObject.getProperty"() {
+    when:
+    mockMe.getProperty("foo")
+
+    then:
+    1 * mockMe.getProperty("foo")
+  }
+
+  def "mock call to GroovyObject.setProperty"() {
+    when:
+    mockMe.setProperty("foo", 42)
+
+    then:
+    1 * mockMe.setProperty("foo", 42)
+  }
+
+  def "mock call to GroovyObject.invokeMethod"() {
+    when:
+    mockMe.invokeMethod("foo", [1] as Object[])
+
+    then:
+    1 * mockMe.invokeMethod("foo", [1] as Object[])
+  }
+
+  def "mock call to GroovyObject.setMetaClass"() {
+    def metaClass = new ExpandoMetaClass(String)
+
+    when:
+    mockMe.setMetaClass(metaClass)
+
+    then:
+    1 * mockMe.setMetaClass(metaClass)
+  }
+
+  def "call to GroovyObject.getMetaClass returns meta class for Mock class"() {
+    expect:
+    mockMe.getMetaClass() == GroovySystem.metaClassRegistry.getMetaClass(mockMe.getClass())
+  }
+
+  def "cannot mock call to GroovyObject.getMetaClass"() {
+    when:
+    mockMe.getMetaClass()
+
+    then:
+    0 * mockMe.getMetaClass()
   }
 
   @FailsWith(value=TooFewInvocationsError, reason="not yet implemented")
@@ -52,6 +130,7 @@ class GroovyClassBasedMocks extends Specification {
 
   static class MockMe {
     def foo(int i) {}
+    String bar
   }
 }
 

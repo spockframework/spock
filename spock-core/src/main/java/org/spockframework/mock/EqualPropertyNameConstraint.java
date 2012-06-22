@@ -14,7 +14,7 @@
 
 package org.spockframework.mock;
 
-import org.spockframework.util.ReflectionUtil;
+import org.spockframework.util.GroovyRuntimeUtil;
 
 /**
  *
@@ -28,6 +28,8 @@ public class EqualPropertyNameConstraint implements IInvocationConstraint {
   }
 
   public boolean isSatisfiedBy(IMockInvocation invocation) {
-    return propertyName.equals(ReflectionUtil.getPropertyNameForGetterMethod(invocation.getMethod()));
+    IMockMethod method = invocation.getMethod();
+    return propertyName.equals(GroovyRuntimeUtil.getterMethodToPropertyName(
+        method.getName(), method.getParameterTypes(), method.getReturnType()));
   }
 }

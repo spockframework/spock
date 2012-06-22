@@ -86,7 +86,7 @@ Sharing of Objects between Iterations
 
 In order to share an object between iterations, it has to be kept in a ``@Shared`` or static field.
 
-    ..info:: Only ``@Shared`` and static variables can be accessed from within a ``where`` block.
+    .. note:: Only ``@Shared`` and static variables can be accessed from within a ``where`` block.
 
 Note that such objects will also be shared with other methods. There is currently no good way to share an object
 just between iterations of the same method. If you consider this a problem, consider putting each method into a separate

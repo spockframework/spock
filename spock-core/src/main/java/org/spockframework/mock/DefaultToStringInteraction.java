@@ -25,7 +25,7 @@ public class DefaultToStringInteraction extends DefaultInteraction {
 
   public boolean matches(IMockInvocation invocation) {
     return invocation.getMethod().getName().equals("toString")
-        && invocation.getMethod().getParameterTypes().length == 0;
+        && invocation.getMethod().getParameterTypes().isEmpty();
   }
 
   public Object accept(IMockInvocation invocation) {

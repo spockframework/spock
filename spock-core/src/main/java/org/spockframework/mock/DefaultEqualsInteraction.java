@@ -25,11 +25,11 @@ public class DefaultEqualsInteraction extends DefaultInteraction {
   }
 
   public boolean matches(IMockInvocation invocation) {
-    Method method = invocation.getMethod();
+    IMockMethod method = invocation.getMethod();
 
     return method.getName().equals("equals")
-        && method.getParameterTypes().length == 1
-        && method.getParameterTypes()[0] == Object.class;
+        && method.getParameterTypes().size() == 1
+        && method.getParameterTypes().get(0) == Object.class;
   }
 
   public Object accept(IMockInvocation invocation) {

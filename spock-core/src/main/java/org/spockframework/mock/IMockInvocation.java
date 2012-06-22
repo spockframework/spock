@@ -35,9 +35,7 @@ public interface IMockInvocation {
   /**
    * The invoked method.
    */
-  // IDEA: replace with our own Method abstraction so that we can also
-  // represent dynamic Groovy calls
-  Method getMethod();
+  IMockMethod getMethod();
 
   /**
    * The arguments for the invocation.

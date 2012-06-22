@@ -24,7 +24,7 @@ public class DefaultHashCodeInteraction extends DefaultInteraction {
 
   public boolean matches(IMockInvocation invocation) {
     return invocation.getMethod().getName().equals("hashCode")
-        && invocation.getMethod().getParameterTypes().length == 0;
+        && invocation.getMethod().getParameterTypes().isEmpty();
   }
 
   public Object accept(IMockInvocation invocation) {

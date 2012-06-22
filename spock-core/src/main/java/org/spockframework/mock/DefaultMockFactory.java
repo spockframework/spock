@@ -22,25 +22,25 @@ import java.lang.reflect.Proxy;
 import java.util.*;
 
 import org.objenesis.*;
+import org.spockframework.util.*;
 
 import net.sf.cglib.proxy.*;
 
 import groovy.lang.*;
 
-import org.spockframework.util.*;
 
 /**
  *
  * Some implementation details of this class are stolen from Spring, EasyMock
  * Class Extensions, and this thread:
  * http://www.nabble.com/Callbacks%2C-classes-and-instances-to4092596.html
- * 
+ *
  * @author Peter Niederwieser
  */
 public class DefaultMockFactory implements IMockFactory {
   public static final String INSTANCE_FIELD = "INSTANCE";
   public static final DefaultMockFactory INSTANCE = new DefaultMockFactory();
-  
+
   private static final boolean cglibAvailable = ReflectionUtil.isClassAvailable("net.sf.cglib.proxy.Enhancer");
   private static final boolean objenesisAvailable = ReflectionUtil.isClassAvailable("org.objenesis.Objenesis");
 
@@ -61,15 +61,16 @@ public class DefaultMockFactory implements IMockFactory {
   private Object createDynamicProxyMock(final String mockName,
       final Class<?> mockType, final IInvocationDispatcher dispatcher) {
     return Proxy.newProxyInstance(
-      mockType.getClassLoader(),
-      new Class<?>[] {mockType},
-      new InvocationHandler() {
-        public Object invoke(Object mockInstance, Method method, Object[] args) {
-          IMockObject mockObject = new MockObject(mockName, mockType, mockInstance);
-          IMockInvocation invocation = new MockInvocation(mockObject, method, normalizeArgs(args));
-          return dispatcher.dispatch(invocation);
+        mockType.getClassLoader(),
+        new Class<?>[] {mockType},
+        new InvocationHandler() {
+          public Object invoke(Object mockInstance, Method method, Object[] args) {
+            IMockObject mockObject = new MockObject(mockName, mockType, mockInstance);
+            IMockMethod mockMethod = new StaticMockMethod(method);
+            IMockInvocation invocation = new MockInvocation(mockObject, mockMethod, normalizeArgs(args));
+            return dispatcher.dispatch(invocation);
+          }
         }
-      }
     );
   }
 
@@ -86,11 +87,23 @@ public class DefaultMockFactory implements IMockFactory {
       MethodInterceptor interceptor = new MethodInterceptor() {
         public Object intercept(Object mockInstance, Method method, Object[] args, MethodProxy proxy) {
           if (isGroovyObject) {
-            if (isMethod(method, "getMetaClass", 0))
-              return GroovySystem.getMetaClassRegistry().getMetaClass(mockInstance.getClass());
+            if (isMethod(method, "getMetaClass")) {
+              return GroovyRuntimeUtil.getMetaClass(mockInstance.getClass());
+            }
+            if (isMethod(method, "setProperty", String.class, Object.class)) {
+              Throwable throwable = new Throwable();
+              StackTraceElement mockCaller = throwable.getStackTrace()[2];
+              if (mockCaller.getClassName().equals("org.codehaus.groovy.runtime.ScriptBytecodeAdapter")) {
+                // for some reason, runtime dispatches direct property access on mock classes via ScriptBytecodeAdapter
+                // delegate to the corresponding setter method
+                String methodName = GroovyRuntimeUtil.propertyToMethodName("set", (String) args[0]);
+                return GroovyRuntimeUtil.invokeMethod(mockInstance, methodName, args[1]);
+              }
+            }
           }
           IMockObject mockObject = new MockObject(mockName, mockType, mockInstance);
-          IMockInvocation invocation = new MockInvocation(mockObject, method, normalizeArgs(args));
+          IMockMethod mockMethod = new StaticMockMethod(method);
+          IMockInvocation invocation = new MockInvocation(mockObject, mockMethod, normalizeArgs(args));
           return dispatcher.dispatch(invocation);
         }
       };
@@ -112,8 +125,8 @@ public class DefaultMockFactory implements IMockFactory {
       }
     }
 
-    private static boolean isMethod(Method method, String name, int parameterCount) {
-      return method.getName().equals(name) && method.getParameterTypes().length == parameterCount;
+    private static boolean isMethod(Method method, String name, Class<?>... parameterTypes) {
+      return method.getName().equals(name) && Arrays.equals(method.getParameterTypes(), parameterTypes);
     }
 
     private static class ObjenesisInstantiator {

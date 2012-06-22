@@ -16,7 +16,6 @@
 
 package org.spockframework.mock;
 
-import java.lang.reflect.Method;
 import java.util.*;
 
 import org.codehaus.groovy.runtime.DefaultGroovyMethods;
@@ -29,10 +28,10 @@ import org.spockframework.util.TextUtil;
  */
 public class MockInvocation implements IMockInvocation {
   private final IMockObject mockObject;
-  private final Method method;
+  private final IMockMethod method;
   private final List<Object> arguments;
 
-  public MockInvocation(IMockObject mockObject, Method method, List<Object> arguments) {
+  public MockInvocation(IMockObject mockObject, IMockMethod method, List<Object> arguments) {
     this.mockObject = mockObject;
     this.method = method;
     this.arguments = arguments;
@@ -42,7 +41,7 @@ public class MockInvocation implements IMockInvocation {
     return mockObject;
   }
 
-  public Method getMethod() {
+  public IMockMethod getMethod() {
     return method;
   }
 

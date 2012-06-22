@@ -26,7 +26,7 @@ class IterableResultGeneratorSpec extends Specification {
   def "generate results from non-empty list" () {
     def gen = new IterableResultGenerator([1,2,3])
     def method = ReflectionUtil.getMethodByName(Object, "hashCode")
-    inv.getMethod() >> method
+    inv.getMethod() >> new StaticMockMethod(method)
 
     expect:
     gen.generate(inv) == 1
@@ -38,7 +38,7 @@ class IterableResultGeneratorSpec extends Specification {
   def "generate results from empty list"() {
     def gen = new IterableResultGenerator([])
     def method = ReflectionUtil.getMethodByName(Object, "hashCode")
-    inv.getMethod() >> method
+    inv.getMethod() >> new StaticMockMethod(method)
 
     expect:
     gen.generate(inv) == null
@@ -48,7 +48,7 @@ class IterableResultGeneratorSpec extends Specification {
   def "generate results from string"() {
     def gen = new IterableResultGenerator("abc")
     def method = ReflectionUtil.getMethodByName(Object, "toString")
-    inv.getMethod() >> method
+    inv.getMethod() >> new StaticMockMethod(method)
 
     expect:
     gen.generate(inv) == "a"

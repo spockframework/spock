@@ -25,33 +25,33 @@ class DefaultMockFactorySpec extends Specification {
 
   def "can create mocks for interfaces"() {
     expect:
-    factory.create("foo", List, dummy) instanceof List
+    factory.create(new MockSpec("foo", List, "Mock"), dummy) instanceof List
   }
 
   @Issue("http://issues.spockframework.org/detail?id=227")
   def "can create mocks for interfaces containing nested classes"() {
     expect:
-    factory.create("foo", InterfaceWithNestedClass, dummy) instanceof InterfaceWithNestedClass
+    factory.create(new MockSpec("foo", InterfaceWithNestedClass, "Mock"), dummy) instanceof InterfaceWithNestedClass
   }
 
   def "can create mocks for classes w/ parameterless constructor"() {
     expect:
-    factory.create("foo", ArrayList, dummy) instanceof ArrayList
+    factory.create(new MockSpec("foo", ArrayList, "Mock"), dummy) instanceof ArrayList
   }
 
   def "can create mocks for classes wo/ parameterless constructor"() {
     expect:
-    factory.create("foo", Node, dummy) instanceof Node
+    factory.create(new MockSpec("foo", Node, "Mock"), dummy) instanceof Node
   }
 
   def "can create mocks for interfaces defined in Groovy"() {
     expect:
-    factory.create("foo", IMockMe, dummy) instanceof IMockMe
+    factory.create(new MockSpec("foo", IMockMe, "Mock"), dummy) instanceof IMockMe
   }
 
   def "can create mocks for classes defined in Groovy"() {
     expect:
-    factory.create("foo", MockMe, dummy) instanceof MockMe
+    factory.create(new MockSpec("foo", MockMe, "Mock"), dummy) instanceof MockMe
   }
 }
 

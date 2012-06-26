@@ -45,7 +45,7 @@ public abstract class DelegatingScript extends Script {
   @Override
   public Object invokeMethod(String name, Object args) {
     try {
-      return GroovyRuntimeUtil.invokeMethod($delegate, name, GroovyRuntimeUtil.asArray(args));
+      return GroovyRuntimeUtil.invokeMethod($delegate, name, GroovyRuntimeUtil.asArgumentArray(args));
     } catch (MissingMethodException e) {
       return super.invokeMethod(name, args);
     }

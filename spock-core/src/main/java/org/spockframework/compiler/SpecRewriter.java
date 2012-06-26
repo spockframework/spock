@@ -28,8 +28,8 @@ import org.objectweb.asm.Opcodes;
 
 import org.spockframework.compiler.model.*;
 import org.spockframework.mock.MockController;
-import org.spockframework.util.InternalIdentifiers;
 import org.spockframework.util.Identifiers;
+import org.spockframework.util.InternalIdentifiers;
 
 /**
  * A Spec visitor responsible for most of the rewriting of a Spec's AST.
@@ -138,7 +138,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
                 Token.newSymbol(Types.ASSIGN, -1, -1),
                 new ConstructorCallExpression(
                     nodeCache.MockController,
-                    new FieldExpression(nodeCache.DefaultMockFactory_INSTANCE)))));
+                    new FieldExpression(nodeCache.CompositeMockFactory_INSTANCE)))));
   }
 
   private boolean isDirectlyExtendingSpecification() {
@@ -408,7 +408,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
       else if (isExceptionCondition(newStat)) {
         errorReporter.error(newStat, "Exception conditions are only allowed in 'then' blocks");
       } else if (statHasInteraction(newStat, deep))
-        errorReporter.error(newStat, "Interactions are only allowed in 'then' blocks");
+        errorReporter.error(newStat, "Interactions are not allowed in 'expect' blocks. Put them before the 'expect' block or into a 'then' block.");
       else if (isImplicitCondition(newStat)) {
         checkIsValidCondition(newStat);
         iter.set(rewriteImplicitCondition(newStat));
@@ -469,7 +469,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
 
   private boolean isExceptionCondition(Statement stat) {
     Expression expr = AstUtil.getExpression(stat, Expression.class);
-    return expr != null && AstUtil.isBuiltinMemberAssignmentOrCall(expr, Identifiers.THROWN, 0, 1);
+    return expr != null && AstUtil.isBuiltInMethodAssignmentOrInvocation(expr, Identifiers.THROWN, 0, 1);
   }
 
   private void rewriteExceptionCondition(Statement stat) {
@@ -480,18 +480,14 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
 
     Expression expr = AstUtil.getExpression(stat, Expression.class);
     assert expr != null;
-    try {
-      AstUtil.expandBuiltinMemberAssignmentOrCall(expr, thrownExceptionRef);
-    } catch (InvalidSpecCompileException e) {
-      errorReporter.error(e);
-    }
+    AstUtil.expandBuiltInMethodAssignmentOrInvocation(expr, thrownExceptionRef);
   }
 
   private boolean statHasInteraction(Statement stat, DeepStatementRewriter deep) {
     if (deep.isInteractionFound()) return true;
 
     Expression expr = AstUtil.getExpression(stat, Expression.class);
-    return expr != null && AstUtil.isBuiltinMemberCall(expr, Identifiers.INTERACTION, 0, 1);
+    return expr != null && AstUtil.isBuiltInMethodInvocation(expr, Identifiers.INTERACTION, 1, 1);
   }
 
   private void insertInteractions(List<Statement> interactions, ThenBlock block) {

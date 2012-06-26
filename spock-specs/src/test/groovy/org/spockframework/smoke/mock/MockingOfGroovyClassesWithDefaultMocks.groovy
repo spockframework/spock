@@ -16,77 +16,91 @@
 
 package org.spockframework.smoke.mock
 
-import org.spockframework.mock.TooFewInvocationsError
-
-import spock.lang.FailsWith
 import spock.lang.Specification
 import spock.lang.Issue
+import spock.lang.FailsWith
 
 /**
- *
  * @author Peter Niederwieser
  */
-class GroovyClassBasedMocks extends Specification {
+class MockingOfGroovyClassesWithDefaultMocks extends Specification {
   MockMe mockMe = Mock()
 
   def "mock declared method"() {
     when:
-    mockMe.foo(42)
+    def result = mockMe.foo(42)
+
     then:
-    1 * mockMe.foo(42)
+    1 * mockMe.foo(42) >> "result"
+    result == "result"
   }
 
   def "mock declared property that is read with property syntax"() {
     when:
-    mockMe.bar
+    def value = mockMe.bar
+
     then:
-    1 * mockMe.bar
+    1 * mockMe.bar >> "value"
+    value == "value"
   }
 
   @Issue("http://issues.spockframework.org/detail?id=258")
   def "mock declared property that is written with property syntax"() {
     when:
-    mockMe.bar = "bar"
+    mockMe.bar = "value"
+
     then:
-    1 * mockMe.setBar("bar")
+    1 * mockMe.setBar("value")
   }
 
   def "mock declared property that is read with method syntax"() {
     when:
-    mockMe.getBar()
+    def value = mockMe.getBar()
+
     then:
-    1 * mockMe.bar
+    1 * mockMe.bar >> "value"
+    value == "value"
   }
 
   def "mock declared property that is written with method syntax"() {
     when:
-    mockMe.setBar("bar")
+    mockMe.setBar("value")
+
     then:
-    1 * mockMe.setBar("bar")
+    1 * mockMe.setBar("value")
   }
 
   def "mock call to GroovyObject.getProperty"() {
     when:
-    mockMe.getProperty("foo")
+    def value = mockMe.getProperty("bar")
 
     then:
-    1 * mockMe.getProperty("foo")
+    1 * mockMe.getProperty("bar") >> "value"
+    value == "value"
+
+    when:
+    def value2 = mockMe.getProperty("bar")
+
+    then:
+    1 * mockMe.getProperty("bar") >> "value2"
+    value2 == "value2"
   }
 
   def "mock call to GroovyObject.setProperty"() {
     when:
-    mockMe.setProperty("foo", 42)
+    mockMe.setProperty("bar", "value")
 
     then:
-    1 * mockMe.setProperty("foo", 42)
+    1 * mockMe.setProperty("bar", "value")
   }
 
   def "mock call to GroovyObject.invokeMethod"() {
     when:
-    mockMe.invokeMethod("foo", [1] as Object[])
+    def result = mockMe.invokeMethod("foo", [1] as Object[])
 
     then:
-    1 * mockMe.invokeMethod("foo", [1] as Object[])
+    1 * mockMe.invokeMethod("foo", [1] as Object[]) >> "result"
+    result == "result"
   }
 
   def "mock call to GroovyObject.setMetaClass"() {
@@ -99,9 +113,9 @@ class GroovyClassBasedMocks extends Specification {
     1 * mockMe.setMetaClass(metaClass)
   }
 
-  def "call to GroovyObject.getMetaClass returns meta class for Mock class"() {
+  def "call to GroovyObject.getMetaClass returns meta class for mocked type"() {
     expect:
-    mockMe.getMetaClass() == GroovySystem.metaClassRegistry.getMetaClass(mockMe.getClass())
+    mockMe.getMetaClass() == GroovySystem.metaClassRegistry.getMetaClass(MockMe)
   }
 
   def "cannot mock call to GroovyObject.getMetaClass"() {
@@ -112,25 +126,45 @@ class GroovyClassBasedMocks extends Specification {
     0 * mockMe.getMetaClass()
   }
 
-  @FailsWith(value=TooFewInvocationsError, reason="not yet implemented")
-  def "mock GDK method"() {
+  def "cannot mock GDK method"() {
     when:
     mockMe.any()
+
     then:
-    1 * mockMe.any()
+    0 * mockMe.any()
   }
 
-  @FailsWith(value=TooFewInvocationsError, reason="not yet implemented")
-  def "mock dynamic method"() {
+  // TODO: swallowed when mocking static inner class because the latter implements methodMissing/propertyMissing
+  @FailsWith(MissingMethodException)
+  def "dynamic methods are considered to not exist"() {
     when:
     mockMe.someMethod()
+
     then:
     1 * mockMe.someMethod()
   }
 
-  static class MockMe {
-    def foo(int i) {}
-    String bar
+  def "cannot mock GDK property"() {
+    when:
+    mockMe.properties
+
+    then:
+    0 * mockMe.properties
   }
+
+  // TODO: swallowed when mocking static inner class because the latter implements methodMissing/propertyMissing
+  @FailsWith(MissingPropertyException)
+  def "dynamic properties are considered to not exist"() {
+    when:
+    mockMe.someProperty
+
+    then:
+    1 * mockMe.someProperty
+  }
+}
+
+class MockMe {
+  String foo(int i) {}
+  String bar
 }
 

@@ -562,13 +562,13 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> {
             new VariableExpression("$spock_valueRecorder"),
             resources.getAstNodeCache().ValueRecorder_Reset,
             ArgumentListExpression.EMPTY_ARGUMENTS) :
-        new ConstantExpression(null));
+        ConstantExpression.NULL);
     args.add(new ConstantExpression(resources.getSourceText(condition)));
     args.add(new ConstantExpression(condition.getLineNumber()));
     args.add(new ConstantExpression(condition.getColumnNumber()));
     // the following means that "assert x, exprEvaluatingToNull" will be
     // treated the same as "assert x"; but probably it doesn't matter too much
-    args.add(message == null ? new ConstantExpression(null) : message);
+    args.add(message == null ? ConstantExpression.NULL : message);
     args.addAll(additionalArgs);
 
     result.setSourcePosition(condition);

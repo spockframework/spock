@@ -6,12 +6,14 @@ import java.util.List;
 
 public class DynamicMockMethod implements IMockMethod {
   private final String methodName;
-  private List<Class<?>> parameterTypes;
+  private final List<Class<?>> parameterTypes;
+  private final boolean isStatic;
 
   @SuppressWarnings("unchecked")
-  public DynamicMockMethod(String methodName, List<Object> arguments) {
+  public DynamicMockMethod(String methodName, int parameterCount, boolean isStatic) {
     this.methodName = methodName;
-    parameterTypes = (List) Collections.nCopies(arguments.size(), Object.class);
+    parameterTypes = (List) Collections.nCopies(parameterCount, Object.class);
+    this.isStatic = isStatic;
   }
 
   public String getName() {
@@ -24,6 +26,10 @@ public class DynamicMockMethod implements IMockMethod {
 
   public Class<?> getReturnType() {
     return Object.class;
+  }
+
+  public boolean isStatic() {
+    return isStatic;
   }
 
   public Method getTargetMethod() {

@@ -26,9 +26,9 @@ import org.objectweb.asm.Opcodes;
 
 import org.spockframework.lang.Wildcard;
 import org.spockframework.runtime.SpockRuntime;
-import org.spockframework.util.InternalSpockError;
 import org.spockframework.util.Nullable;
 
+import org.spockframework.util.ObjectUtil;
 import spock.lang.Specification;
 
 /**
@@ -102,7 +102,7 @@ public abstract class AstUtil {
   }
 
   public static boolean isWildcardRef(Expression expr) {
-    VariableExpression varExpr = AstUtil.asInstance(expr, VariableExpression.class);
+    VariableExpression varExpr = ObjectUtil.asInstance(expr, VariableExpression.class);
     if (varExpr == null || !varExpr.getName().equals(Wildcard.INSTANCE.toString())) return false;
 
     Variable accessedVar = varExpr.getAccessedVariable();
@@ -124,14 +124,9 @@ public abstract class AstUtil {
   }
 
   public static <T extends Expression> T getExpression(Statement stat, Class<T> type) {
-    ExpressionStatement exprStat = asInstance(stat, ExpressionStatement.class);
+    ExpressionStatement exprStat = ObjectUtil.asInstance(stat, ExpressionStatement.class);
     if (exprStat == null) return null;
-    return asInstance(exprStat.getExpression(), type);
-  }
-
-  @SuppressWarnings("unchecked")
-  public static @Nullable <T> T asInstance(Object obj, Class<T> type) {
-    return type.isInstance(obj) ? (T) obj : null;
+    return ObjectUtil.asInstance(exprStat.getExpression(), type);
   }
 
   public static boolean isSynthetic(MethodNode method) {
@@ -218,25 +213,25 @@ public abstract class AstUtil {
         ));
   }
 
-  public static boolean isBuiltinMemberAssignmentOrCall(Expression expr, String methodName, int minArgs, int maxArgs) {
+  public static boolean isBuiltInMethodAssignmentOrInvocation(Expression expr, String methodName, int minArgs, int maxArgs) {
     return expr instanceof BinaryExpression
-        && isBuiltinMemberAssignment((BinaryExpression)expr, methodName, minArgs, maxArgs)
+        && isBuiltInMethodAssignment((BinaryExpression) expr, methodName, minArgs, maxArgs)
         || expr instanceof MethodCallExpression
-        && isBuiltinMemberCall((MethodCallExpression) expr, methodName, minArgs, maxArgs);
+        && isBuiltInMethodInvocation((MethodCallExpression) expr, methodName, minArgs, maxArgs);
   }
 
-  public static boolean isBuiltinMemberAssignment(BinaryExpression expr, String methodName, int minArgs, int maxArgs) {
+  public static boolean isBuiltInMethodAssignment(BinaryExpression expr, String methodName, int minArgs, int maxArgs) {
     return expr.getOperation().getType() == Types.ASSIGN
-        && isBuiltinMemberAssignmentOrCall(expr.getRightExpression(), methodName, minArgs, maxArgs);
+        && isBuiltInMethodAssignmentOrInvocation(expr.getRightExpression(), methodName, minArgs, maxArgs);
   }
 
-  public static boolean isBuiltinMemberCall(Expression expr, String methodName, int minArgs, int maxArgs) {
+  public static boolean isBuiltInMethodInvocation(Expression expr, String methodName, int minArgs, int maxArgs) {
     return expr instanceof MethodCallExpression
-        && isBuiltinMemberCall((MethodCallExpression)expr, methodName, minArgs, maxArgs);
+        && isBuiltInMethodInvocation((MethodCallExpression) expr, methodName, minArgs, maxArgs);
   }
 
   // call of the form "this.<methodName>(...)" or "<methodName>(...)"
-  public static boolean isBuiltinMemberCall(MethodCallExpression expr, String methodName, int minArgs, int maxArgs) {
+  public static boolean isBuiltInMethodInvocation(MethodCallExpression expr, String methodName, int minArgs, int maxArgs) {
     return
         (isThisExpression(expr.getObjectExpression()) || isSuperExpression(expr.getObjectExpression()))
         && methodName.equals(expr.getMethodAsString()) // getMethodAsString() may return null
@@ -244,76 +239,59 @@ public abstract class AstUtil {
         && getArguments(expr).size() <= maxArgs;
   }
 
-  public static void expandBuiltinMemberAssignmentOrCall(Expression builtinMemberAssignmentOrCall, Expression... additionalArgs)
-      throws InvalidSpecCompileException {
-    if (builtinMemberAssignmentOrCall instanceof BinaryExpression)
-      expandBuiltinMemberAssignment((BinaryExpression)builtinMemberAssignmentOrCall, additionalArgs);
+  public static void expandBuiltInMethodAssignmentOrInvocation(Expression assignmentOrInvocation, Expression... additionalArgs) {
+    if (assignmentOrInvocation instanceof BinaryExpression)
+      expandBuiltInMethodAssignment((BinaryExpression) assignmentOrInvocation, additionalArgs);
     else
-      expandBuiltinMemberCall(builtinMemberAssignmentOrCall, additionalArgs);
+      expandBuiltInMethodInvocation(assignmentOrInvocation, additionalArgs);
   }
 
   /*
    * Expands an assignment of the form "(def) x = builtinMethodCall(...)", where x is a field or local variable.
    * Assumes isBuiltinMemberAssignment(...).
    */
-  public static void expandBuiltinMemberAssignment(BinaryExpression builtinMemberAssignment, Expression... additionalArgs)
-      throws InvalidSpecCompileException {
-    Expression builtinMemberCall = builtinMemberAssignment.getRightExpression();
-    String name = getInferredName(builtinMemberAssignment);
-    Expression type = getType(builtinMemberCall, getInferredType(builtinMemberAssignment));
-
-    doExpandBuiltinMemberCall(builtinMemberCall, name, type, additionalArgs);
+  public static void expandBuiltInMethodAssignment(BinaryExpression assignment, Expression... additionalArgs) {
+    MethodCallExpression builtinMemberCall = (MethodCallExpression) assignment.getRightExpression();
+    Expression name = getVariableName(assignment);
+    Expression type = getVariableType(assignment);
+    doExpandSpecMethodInvocation(builtinMemberCall, name, type, additionalArgs);
   }
 
-  public static void expandBuiltinMemberCall(Expression builtinMemberCall, Expression... additionalArgs)
-      throws InvalidSpecCompileException {
-    doExpandBuiltinMemberCall(builtinMemberCall, null, getType(builtinMemberCall, null), additionalArgs);
+  public static void expandBuiltInMethodInvocation(Expression invocation, Expression... additionalArgs) {
+    doExpandSpecMethodInvocation((MethodCallExpression) invocation, ConstantExpression.NULL, ConstantExpression.NULL, additionalArgs);
   }
 
-  private static Expression getType(Expression builtinMemberCall, Expression inferredType)
-      throws InvalidSpecCompileException {
-    List<Expression> args = AstUtil.getArguments(builtinMemberCall);
-    assert args != null;
-
-    if (args.isEmpty()) {
-      if (inferredType == null)
-        // TODO: improve error message (not clear that it originates from Mock() or thrown())
-        throw new InvalidSpecCompileException(builtinMemberCall, "Type cannot be inferred; please specify one explicitely");
-      return inferredType;
-    }
-
-    return args.get(0);
+  private static Expression getVariableName(BinaryExpression assignment) {
+    Expression left = assignment.getLeftExpression();
+    if (left instanceof Variable) return new ConstantExpression(((Variable) left).getName());
+    if (left instanceof FieldExpression) return new ConstantExpression(((FieldExpression) left).getFieldName());
+    return ConstantExpression.NULL;
   }
 
-  private static String getInferredName(BinaryExpression builtinMemberAssignment) {
-    Expression left = builtinMemberAssignment.getLeftExpression();
-    if (left instanceof Variable) return ((Variable)left).getName();
-    if (left instanceof FieldExpression) return ((FieldExpression)left).getFieldName();
-    return null;
-  }
-
-  private static ClassExpression getInferredType(BinaryExpression builtinMemberAssignment) {
-    ClassNode type = builtinMemberAssignment.getLeftExpression().getType();
+  private static Expression getVariableType(BinaryExpression assignment) {
+    ClassNode type = assignment.getLeftExpression().getType();
     return type == null || type == ClassHelper.DYNAMIC_TYPE ?
-        null : new ClassExpression(type);
+        ConstantExpression.NULL : new ClassExpression(type);
   }
 
-  private static void doExpandBuiltinMemberCall(Expression builtinMemberCall, String name,
-      Expression type, Expression... additionalArgs) {
-    checkIsSafeToMutateArgs(builtinMemberCall);
-
-    List<Expression> args = getArguments(builtinMemberCall);
-    args.clear();
-    args.add(type);
-    args.add(new ConstantExpression(name));
+  private static void doExpandSpecMethodInvocation(MethodCallExpression invocation, Expression inferredName,
+      Expression inferredType, Expression... additionalArgs) {
+    List<Expression> args = new ArrayList<Expression>();
+    args.add(inferredName);
+    args.add(inferredType);
     args.addAll(Arrays.asList(additionalArgs));
+    args.addAll(getArguments(invocation));
+
+    ArgumentListExpression argsExpr = new ArgumentListExpression(args);
+    copySourcePosition(invocation.getArguments(), argsExpr);
+    invocation.setArguments(argsExpr);
   }
 
-  private static void checkIsSafeToMutateArgs(Expression methodCall) {
-    Expression args = ((MethodCallExpression)methodCall).getArguments();
-
-    if (args == ArgumentListExpression.EMPTY_ARGUMENTS)
-      throw new InternalSpockError("checkIsSafeToMutateArgs");
+  public static void copySourcePosition(ASTNode from, ASTNode to) {
+    to.setLineNumber(from.getLineNumber());
+    to.setLastLineNumber(from.getLastLineNumber());
+    to.setColumnNumber(from.getColumnNumber());
+    to.setLastColumnNumber(from.getLastColumnNumber());
   }
 
   @Nullable

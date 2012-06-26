@@ -13,8 +13,6 @@
  */
 package org.spockframework.mock;
 
-import java.lang.reflect.Method;
-
 public class DefaultEqualsInteraction extends DefaultInteraction {
   public static final DefaultEqualsInteraction INSTANCE = new DefaultEqualsInteraction();
 

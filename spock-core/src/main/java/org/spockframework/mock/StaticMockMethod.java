@@ -1,6 +1,7 @@
 package org.spockframework.mock;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.List;
 
@@ -21,6 +22,10 @@ public class StaticMockMethod implements IMockMethod {
 
   public Class<?> getReturnType() {
     return method.getReturnType();
+  }
+
+  public boolean isStatic() {
+    return Modifier.isStatic(method.getModifiers());
   }
 
   public Method getTargetMethod() {

@@ -18,6 +18,7 @@ package org.spockframework.mock;
 
 import java.util.*;
 
+import org.spockframework.lang.GroovyMockOptions;
 import org.spockframework.util.InternalSpockError;
 
 /**
@@ -76,8 +77,8 @@ public class MockController implements IInvocationDispatcher {
     scope.verifyInteractions();
   }
 
-  public synchronized Object create(String mockName, Class<?> mockType) {
-    return factory.create(mockName, mockType, this);
+  public synchronized Object create(MockSpec spec) {
+    return factory.create(spec, this);
   }
 
   private void throwAnyPreviousError() {

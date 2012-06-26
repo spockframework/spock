@@ -14,6 +14,8 @@
 
 package org.spockframework.mock;
 
+import org.spockframework.util.Nullable;
+
 public class MockObject implements IMockObject {
   private final String name;
   private final Class<?> type;
@@ -29,6 +31,7 @@ public class MockObject implements IMockObject {
     return name;
   }
 
+  @Nullable
   public Class<?> getType() {
     return type;
   }

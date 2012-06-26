@@ -57,9 +57,9 @@ public class Sculpturer extends GroovyObjectSupport {
     Object thisObject = $gestalt.getBlueprint().getThisObject();
     if (thisObject != null) {
       try {
-        return GroovyRuntimeUtil.invokeMethod(thisObject, name, GroovyRuntimeUtil.asArray(args));
+        return GroovyRuntimeUtil.invokeMethod(thisObject, name, GroovyRuntimeUtil.asArgumentArray(args));
       } catch (MissingMethodException ignored) {}
     }
-    return $gestalt.invokeMethod(name, GroovyRuntimeUtil.asArray(args));
+    return $gestalt.invokeMethod(name, GroovyRuntimeUtil.asArgumentArray(args));
   }
 }

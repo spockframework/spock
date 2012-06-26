@@ -75,6 +75,8 @@ public abstract class Identifiers {
 
   public static final String MOCK = "Mock";
 
+  public static final String GROOVY_MOCK = "GroovyMock";
+
   public static final String THROWN = "thrown";
 
   public static final String INTERACTION = "interaction";

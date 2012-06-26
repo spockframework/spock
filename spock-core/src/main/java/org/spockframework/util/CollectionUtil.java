@@ -118,4 +118,13 @@ public abstract class CollectionUtil {
       }
     };
   }
+
+  public static boolean containsAny(Iterable<?> iterable, Object... elements) {
+    for (Object curr: iterable) {
+      for (Object elem: elements) {
+        if (ObjectUtil.equals(curr, elem)) return true;
+      }
+    }
+    return false;
+  }
 }

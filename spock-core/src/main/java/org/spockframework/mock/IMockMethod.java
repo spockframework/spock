@@ -32,6 +32,8 @@ public interface IMockMethod {
    */
   Class<?> getReturnType();
 
+  boolean isStatic();
+
   /**
    * Returns the physical method corresponding to the mocked method. Returns {@code null} if a dynamic
    * method is mocked, or if the target method isn't known because the invocation is intercepted before

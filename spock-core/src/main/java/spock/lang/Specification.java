@@ -20,10 +20,15 @@ import org.junit.runner.RunWith;
 
 import org.spockframework.lang.Wildcard;
 import org.spockframework.mock.MockController;
+import org.spockframework.mock.MockSpec;
 import org.spockframework.runtime.*;
 import org.spockframework.util.GroovyRuntimeUtil;
 
 import groovy.lang.Closure;
+import org.spockframework.util.Nullable;
+
+import java.util.Collections;
+import java.util.Map;
 
 /**
  * Base class for Spock specifications. All specifications must inherit from
@@ -123,9 +128,10 @@ public abstract class Specification {
    * <tt>IOrderService service = Mock()</tt> will create a mock object named
    * "service" and of type <tt>IOrderService</tt>.
    *
-   * @return the new mock object
+   * @param options options that determine the behavior of the mock to be created
+   * @return the newly created mock object
    */
-  public Object Mock() {
+  public Object Mock(Map<String, Object> options) {
     throw new InvalidSpecException("Mock objects may only be created during the lifetime of a feature (iteration)");
   }
 
@@ -137,12 +143,21 @@ public abstract class Specification {
    * <tt>IOrderService</tt>. Otherwise, the mock will be named after
    * its type (e.g. "IOrderService").
    *
+   * @param options options that determine the behavior of the mock to be created
    * @param type the type of the mock object to be created
    * @param <T> the type of the mock object to be created
-   * @return the new mock object
+   * @return the newly created mock object
    */
   @SuppressWarnings("UnusedDeclaration")
-  public <T> T Mock(Class<T> type) {
+  public <T> T Mock(Map<String, Object> options, Class<T> type) {
+    throw new InvalidSpecException("Mock objects can only be created inside a Spec");
+  }
+
+  public Object GroovyMock(Map<String, Object> options) {
+    throw new InvalidSpecException("Mock objects may only be created during the lifetime of a feature (iteration)");
+  }
+
+  public <T> T GroovyMock(Map<String, Object> options, Class<T> type) {
     throw new InvalidSpecException("Mock objects can only be created inside a Spec");
   }
 
@@ -221,29 +236,80 @@ public abstract class Specification {
   }
 
   @SuppressWarnings("UnusedDeclaration")
-  <T extends Throwable> T thrown(Class<T> type, String name, Throwable exception) {
-    if (!Throwable.class.isAssignableFrom(type))
+  Throwable thrown(@Nullable String inferredName, @Nullable Class<?> inferredType, Throwable exception) {
+    return thrown(inferredName, inferredType, exception, null);
+  }
+
+  Throwable thrown(@Nullable String inferredName, @Nullable Class<?> inferredType, Throwable exception, Class<?> specifiedType) {
+    if (specifiedType == null && inferredType == null) {
+      throw new InvalidSpecException("Thrown exception type cannot be inferred automatically. Please specify a type explicitly (e.g. 'thrown(MyException)').");
+    }
+
+    Class<?> effectiveType = specifiedType != null ? specifiedType : inferredType;
+
+    if (!Throwable.class.isAssignableFrom(effectiveType))
       throw new InvalidSpecException(
 "Invalid exception condition: '%s' is not a (subclass of) java.lang.Throwable"
-      ).withArgs(type.getSimpleName());
+      ).withArgs(effectiveType.getSimpleName());
 
-    if (type.isInstance(exception)) return type.cast(exception);
+    if (effectiveType.isInstance(exception)) return exception;
 
-    throw new WrongExceptionThrownError(type, exception);
+    throw new WrongExceptionThrownError((Class<? extends Throwable>) effectiveType, exception);
   }
 
   @SuppressWarnings("UnusedDeclaration")
-  <T> T Mock(Class<T> type, String name, MockController controller) {
-    if (type == null)
-      throw new InvalidSpecException("Mock object type may not be 'null'");
+  Object Mock(String inferredName, Class<?> inferredType, MockController controller) {
+    return createMock(inferredName, inferredType, controller, Collections.<String, Object>emptyMap(), null, "Mock");
+  }
+
+  @SuppressWarnings("UnusedDeclaration")
+  Object Mock(String inferredName, Class<?> inferredType, MockController controller , Map<String, Object> options) {
+    return createMock(inferredName, inferredType, controller, options, null, "Mock");
+  }
+
+  @SuppressWarnings("UnusedDeclaration")
+  Object Mock(String inferredName, Class<?> inferredType, MockController controller, Class<?> specifiedType) {
+    return createMock(inferredName, inferredType, controller, Collections.<String, Object>emptyMap(), specifiedType, "Mock");
+  }
+
+  @SuppressWarnings("UnusedDeclaration")
+  Object Mock(String inferredName, Class<?> inferredType, MockController controller, Map<String, Object> options, Class<?> specifiedType) {
+    return createMock(inferredName, inferredType, controller, options, specifiedType, "Mock");
+  }
+
+  @SuppressWarnings("UnusedDeclaration")
+  Object GroovyMock(String inferredName, Class<?> inferredType, MockController controller) {
+    return createMock(inferredName, inferredType, controller, Collections.<String, Object>emptyMap(), null, "GroovyMock");
+  }
+
+  @SuppressWarnings("UnusedDeclaration")
+  Object GroovyMock(String inferredName, Class<?> inferredType, MockController controller, Map<String, Object> options) {
+    return createMock(inferredName, inferredType, controller, options, null, "GroovyMock");
+  }
+
+  @SuppressWarnings("UnusedDeclaration")
+  Object GroovyMock(String inferredName, Class<?> inferredType, MockController controller, Class<?> specifiedType) {
+    return createMock(inferredName, inferredType, controller, Collections.<String, Object>emptyMap(), specifiedType, "GroovyMock");
+  }
+
+  @SuppressWarnings("UnusedDeclaration")
+  Object GroovyMock(String inferredName, Class<?> inferredType, MockController controller, Map<String, Object> options, Class<?> specifiedType) {
+    return createMock(inferredName, inferredType, controller, options, specifiedType, "GroovyMock");
+  }
+
+  private Object createMock(String inferredName, Class<?> inferredType, MockController controller, Map<String, Object> options, Class<?> specifiedType, String kind) {
+    if (specifiedType == null && inferredType == null) {
+      throw new InvalidSpecException("Mock object type cannot be inferred automatically. Please specify a type explicitly (e.g. 'Mock(Person)').");
+    }
 
     if (controller == null) {
       // mock has been created in a context where no controller exists
-      Mock();
-      return null; // unreachable; just exists to avoid compiler warning
+      Mock(options);
+      return null; // make compiler happy
     }
 
-    return type.cast(controller.create(name, type));
+    Class<?> effectiveType = specifiedType != null ? specifiedType : inferredType;
+    return controller.create(new MockSpec(inferredName, effectiveType, kind, options));
   }
 
   // dummy parameter exists just to create a new overload of old() with different implementation

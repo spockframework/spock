@@ -52,4 +52,9 @@ public abstract class ObjectUtil {
     if (c2 == null) return 1;
     return c1.compareTo(c2);
   }
+
+  @SuppressWarnings("unchecked")
+  public static @Nullable <T> T asInstance(Object obj, Class<T> type) {
+    return type.isInstance(obj) ? (T) obj : null;
+  }
 }

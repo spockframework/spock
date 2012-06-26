@@ -41,6 +41,6 @@ public class SetterLikeSlot implements ISlot {
   }
 
   public void write(Object value) {
-    setterLikeMethod.doMethodInvoke(owner, GroovyRuntimeUtil.asArray(value));
+    setterLikeMethod.doMethodInvoke(owner, GroovyRuntimeUtil.asArgumentArray(value));
   }
 }

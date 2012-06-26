@@ -18,65 +18,24 @@ package org.spockframework.smoke.mock
 
 import org.codehaus.groovy.runtime.typehandling.GroovyCastException
 import org.spockframework.EmbeddedSpecification
-import org.spockframework.compiler.InvalidSpecCompileException
-import spock.lang.FailsWith
-import spock.lang.Specification
+import org.spockframework.runtime.InvalidSpecException
 
 /**
- *
  * @author Peter Niederwieser
  */
 class InvalidMockCreation extends EmbeddedSpecification {
   def "field w/ missing type"() {
     when:
-    compiler.compileSpecBody("""
+    runner.runSpecBody("""
 def list = Mock()
+
+def foo() { expect: true }
     """)
 
     then:
-    thrown(InvalidSpecCompileException)
+    thrown(InvalidSpecException)
   }
 
-  // for "field w/ incompatible type" and "field w/ wrong argument" see Specs below
-
-  def "local w/ missing type"() {
-    when:
-    compiler.compileFeatureBody("""
-setup:
-def list = Mock()
-    """)
-
-    then:
-    thrown(InvalidSpecCompileException)
-  }
-
-  def "local w/ incompatible type"() {
-    when: List list = Mock(Map)
-    then: thrown(GroovyCastException)
-  }
-
-  def "local w/ wrong argument"() {
-    when: def list = Mock(1)
-    then: thrown(MissingMethodException)
-  }
-
-  def "expr w/ missing type"() {
-    when:
-    compiler.compileFeatureBody("""
-setup: Mock()
-    """)
-
-    then:
-    thrown(InvalidSpecCompileException)
-  }
-
-  def "expr w/ wrong argument"() {
-    when: Mock(1)
-    then: thrown(MissingMethodException)
-  }
-}
-
-class InvalidMockCreation2 extends EmbeddedSpecification {
   def "field w/ incompatible type"() {
     when:
     runner.runSpecBody("""
@@ -88,9 +47,7 @@ def foo() { expect: true }
     then:
     thrown(GroovyCastException)
   }
-}
 
-class InvalidMockCreation3 extends EmbeddedSpecification {
   def "field w/ wrong argument"() {
     when:
     runner.runSpecBody("""
@@ -98,6 +55,46 @@ List list = Mock(1)
 
 def foo() { expect: true }
     """)
+
+    then:
+    thrown(MissingMethodException)
+  }
+
+  def "local w/ missing type"() {
+    when:
+    def list = Mock()
+
+    then:
+    thrown(InvalidSpecException)
+  }
+
+  def "local w/ incompatible type"() {
+    when:
+    List list = Mock(Map)
+
+    then:
+    thrown(GroovyCastException)
+  }
+
+  def "local w/ wrong argument"() {
+    when:
+    def list = Mock(1)
+
+    then:
+    thrown(MissingMethodException)
+  }
+
+  def "expr w/ missing type"() {
+    when:
+    Mock()
+
+    then:
+    thrown(InvalidSpecException)
+  }
+
+  def "expr w/ wrong argument"() {
+    when:
+    Mock(1)
 
     then:
     thrown(MissingMethodException)

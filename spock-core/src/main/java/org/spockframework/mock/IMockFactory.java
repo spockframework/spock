@@ -16,10 +16,12 @@
 
 package org.spockframework.mock;
 
+import org.spockframework.util.Nullable;
+
 /**
- *
  * @author Peter Niederwieser
  */
 public interface IMockFactory {
-  Object create(String mockName, Class<?> mockType, IInvocationDispatcher dispatcher) throws CannotCreateMockException;
+  @Nullable
+  Object create(MockSpec mockSpec, IInvocationDispatcher dispatcher) throws CannotCreateMockException;
 }

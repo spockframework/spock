@@ -30,6 +30,7 @@ import org.spockframework.mock.InteractionBuilder;
 import org.spockframework.mock.MockController;
 import org.spockframework.util.Assert;
 import org.spockframework.util.Nullable;
+import org.spockframework.util.ObjectUtil;
 
 /**
  * Creates the AST representation of an InteractionBuilder build sequence.
@@ -95,7 +96,7 @@ public class InteractionRewriter {
   }
   
   private Expression parseCount(Expression expr) {
-    BinaryExpression binExpr = AstUtil.asInstance(expr, BinaryExpression.class);
+    BinaryExpression binExpr = ObjectUtil.asInstance(expr, BinaryExpression.class);
     if (binExpr == null || binExpr.getOperation().getType() != Types.MULTIPLY) return expr;
     count = binExpr.getLeftExpression();
     return binExpr.getRightExpression();

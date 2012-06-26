@@ -137,13 +137,10 @@ public class DeepStatementRewriter extends StatementReplacingVisitorSupport {
 
   @Override
   public void visitBinaryExpression(BinaryExpression expr) {
-    if (AstUtil.isBuiltinMemberAssignment(expr, Identifiers.MOCK, 0, 1))
-      try {
-        AstUtil.expandBuiltinMemberAssignment(expr, resources.getMockControllerRef());
-      } catch (InvalidSpecCompileException e) {
-        resources.getErrorReporter().error(e);
-        return;
-      }
+    if (AstUtil.isBuiltInMethodAssignment(expr, Identifiers.MOCK, 0, 2)
+        || AstUtil.isBuiltInMethodAssignment(expr, Identifiers.GROOVY_MOCK, 0, 2)) {
+      AstUtil.expandBuiltInMethodAssignment(expr, resources.getMockControllerRef());
+    }
 
     // only descend after we have expanded Specification.Mock so that it's not
     // expanded by visit(Static)MethodCallExpression instead
@@ -169,24 +166,21 @@ public class DeepStatementRewriter extends StatementReplacingVisitorSupport {
         && ((VariableExpression)target).isSuperExpression()
         && currMethod.getName().equals(expr.getMethodAsString())) {
       resources.getErrorReporter().error(expr,
-        "A base class fixture method should not be called explicitely " +
-        "because it is always run automatically by the framework");
+        "A base class fixture method should not be called explicitly " +
+        "because it is always invoked automatically by the framework");
     }
   }
 
   private void handleMockAndOldCalls(Expression expr) {
-    if (AstUtil.isBuiltinMemberCall(expr, Identifiers.MOCK, 0, 1))
+    if (AstUtil.isBuiltInMethodInvocation(expr, Identifiers.MOCK, 0, 2)
+        || AstUtil.isBuiltInMethodInvocation(expr, Identifiers.GROOVY_MOCK, 0, 2))
       handleMockCall(expr);
-    else if (AstUtil.isBuiltinMemberCall(expr, Identifiers.OLD, 1, 1))
+    else if (AstUtil.isBuiltInMethodInvocation(expr, Identifiers.OLD, 1, 1))
       handleOldCall(expr);
   }
 
   private void handleMockCall(Expression expr) {
-    try {
-      AstUtil.expandBuiltinMemberCall(expr, resources.getMockControllerRef());
-    } catch (InvalidSpecCompileException e) {
-      resources.getErrorReporter().error(e);
-    }
+    AstUtil.expandBuiltInMethodInvocation(expr, resources.getMockControllerRef());
   }
 
   private void handleOldCall(Expression expr) {

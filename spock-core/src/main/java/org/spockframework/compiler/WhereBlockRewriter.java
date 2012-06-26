@@ -233,7 +233,7 @@ public class WhereBlockRewriter {
   }
 
   private void turnIntoSimpleParameterization(List<Expression> column) throws InvalidSpecCompileException {
-    VariableExpression varExpr = AstUtil.asInstance(column.get(0), VariableExpression.class);
+    VariableExpression varExpr = ObjectUtil.asInstance(column.get(0), VariableExpression.class);
     if (varExpr == null)
       throw new InvalidSpecCompileException(column.get(0),
           "Header of data table may only contain variable names");
@@ -264,7 +264,7 @@ public class WhereBlockRewriter {
   }
   
   private BinaryExpression getOrExpression(Expression expr) {
-    BinaryExpression binExpr = AstUtil.asInstance(expr, BinaryExpression.class);  
+    BinaryExpression binExpr = ObjectUtil.asInstance(expr, BinaryExpression.class);
     if (binExpr == null) return null;
     
     int binExprType = binExpr.getOperation().getType();

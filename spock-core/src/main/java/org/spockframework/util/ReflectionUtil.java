@@ -14,7 +14,6 @@
 
 package org.spockframework.util;
 
-import java.beans.Introspector;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;

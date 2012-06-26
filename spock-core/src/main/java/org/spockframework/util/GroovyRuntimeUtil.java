@@ -14,17 +14,20 @@
 
 package org.spockframework.util;
 
+import java.beans.Introspector;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+
 import groovy.lang.Closure;
 import groovy.lang.GroovySystem;
 import groovy.lang.MetaClass;
 import groovy.lang.MetaMethod;
 
+import org.codehaus.groovy.reflection.CachedMethod;
 import org.codehaus.groovy.runtime.*;
+import org.codehaus.groovy.runtime.metaclass.MetaClassRegistryImpl;
 import org.codehaus.groovy.runtime.typehandling.DefaultTypeTransformation;
-
-import java.beans.Introspector;
-import java.util.Iterator;
-import java.util.List;
 
 /**
  * Provides convenient access to Groovy language and runtime features.
@@ -34,6 +37,8 @@ import java.util.List;
  * @author Peter Niederwieser
  */
 public abstract class GroovyRuntimeUtil {
+  public static Object[] EMPTY_ARGUMENTS = new Object[0];
+
   public static boolean isTruthy(Object obj) {
     return DefaultTypeTransformation.castToBoolean(obj);
   }
@@ -57,7 +62,15 @@ public abstract class GroovyRuntimeUtil {
   }
 
   public static MetaClass getMetaClass(Class<?> clazz) {
-    return GroovySystem.getMetaClassRegistry().getMetaClass(clazz);
+    return InvokerHelper.getMetaClass(clazz);
+  }
+
+  public static void setMetaClass(Object object, MetaClass metaClass) {
+    ((MetaClassRegistryImpl) GroovySystem.getMetaClassRegistry()).setMetaClass(object, metaClass);
+  }
+
+  public static void setMetaClass(Class<?> clazz, MetaClass metaClass) {
+    GroovySystem.getMetaClassRegistry().setMetaClass(clazz, metaClass);
   }
   
   public static String propertyToMethodName(String prefix, String propertyName) {
@@ -182,9 +195,22 @@ public abstract class GroovyRuntimeUtil {
       return null; // never reached
     }
   }
-  
-  public static Object[] asArray(Object args) {
+
+  public static Object[] asUnwrappedArgumentArray(Object args) {
+    return InvokerHelper.asUnwrappedArray(args);
+  }
+
+  /**
+   * Need to be careful because this converts null to an empty array.
+   * For single arguments, new Object[] {arg} should therefore be used.
+   */
+  public static Object[] asArgumentArray(Object args) {
     return InvokerHelper.asArray(args);
+  }
+
+  public static List<Object> asArgumentList(Object args) {
+    // there may be a better impl than this (maybe on some Groovy class)
+    return Arrays.asList(GroovyRuntimeUtil.asArgumentArray(args));
   }
   
   public static Object[] despreadList(Object[] args, Object[] spreads, int[] positions) {
@@ -234,5 +260,14 @@ public abstract class GroovyRuntimeUtil {
       ExceptionUtil.sneakyThrow(e.getCause());
       return null; // never reached
     }
+  }
+
+  /**
+   * Tells whether the specified method is declared (in byte code) in the specified target class
+   * or one of its superclasses.
+   */
+  public static boolean isPhysicalMethod(MetaMethod method, Class<?> targetClass) {
+    CachedMethod cachedMethod = ObjectUtil.asInstance(method, CachedMethod.class);
+    return cachedMethod != null && cachedMethod.getCachedMethod().getDeclaringClass().isAssignableFrom(targetClass);
   }
 }

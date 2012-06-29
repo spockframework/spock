@@ -119,7 +119,6 @@ public abstract class Specification {
    * <tt>notThrown(Throwable)</tt>. This method has only documentation purposes
    * and does not affect the execution of the specification.
    */
-  @SuppressWarnings("UnusedDeclaration")
   public void noExceptionThrown() { /* nothing to do */ }
 
   /**
@@ -131,6 +130,7 @@ public abstract class Specification {
    * @param options options that determine the behavior of the mock to be created
    * @return the newly created mock object
    */
+  @SuppressWarnings("UnusedDeclaration")
   public Object Mock(Map<String, Object> options) {
     throw new InvalidSpecException("Mock objects may only be created during the lifetime of a feature (iteration)");
   }
@@ -153,10 +153,14 @@ public abstract class Specification {
     throw new InvalidSpecException("Mock objects can only be created inside a Spec");
   }
 
+  @Beta
+  @SuppressWarnings("UnusedDeclaration")
   public Object GroovyMock(Map<String, Object> options) {
     throw new InvalidSpecException("Mock objects may only be created during the lifetime of a feature (iteration)");
   }
 
+  @Beta
+  @SuppressWarnings("UnusedDeclaration")
   public <T> T GroovyMock(Map<String, Object> options, Class<T> type) {
     throw new InvalidSpecException("Mock objects can only be created inside a Spec");
   }

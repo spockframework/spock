@@ -1,10 +1,9 @@
 package org.spockframework.mock;
 
+import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
-import net.sf.cglib.proxy.Enhancer;
-import net.sf.cglib.proxy.Factory;
-import net.sf.cglib.proxy.MethodInterceptor;
+import net.sf.cglib.proxy.*;
 import org.objenesis.Objenesis;
 import org.objenesis.ObjenesisException;
 import org.objenesis.ObjenesisStd;
@@ -57,17 +56,22 @@ public class ProxyBasedMockFactory implements IMockFactory {
     static Object createMock(MockSpec mockSpec, IProxyBasedMockInterceptor mockInterceptor) {
       Enhancer enhancer = new Enhancer();
       enhancer.setSuperclass(mockSpec.getType());
+      enhancer.setCallbackFilter(new CallbackFilter() {
+        public int accept(Method method) {
+          return method.isBridge() ? 1 : 0;
+        }
+      });
 
       MethodInterceptor cglibInterceptor = new CglibMockInterceptorAdapter(mockInterceptor);
 
       if (objenesisAvailable) {
-        enhancer.setCallbackType(cglibInterceptor.getClass());
+        enhancer.setCallbackTypes(new Class[] {cglibInterceptor.getClass(), NoOp.class});
         Object proxy = ObjenesisInstantiator.instantiate(mockSpec, enhancer.createClass());
-        ((Factory) proxy).setCallback(0, cglibInterceptor);
+        ((Factory) proxy).setCallbacks(new Callback[] {cglibInterceptor, NoOp.INSTANCE});
         return proxy;
       } else {
         try {
-          enhancer.setCallback(cglibInterceptor);
+          enhancer.setCallbacks(new Callback[] {cglibInterceptor, NoOp.INSTANCE});
           return enhancer.create(); // throws what if no parameterless superclass constructor available?
         } catch (Exception e) {
           throw new CannotCreateMockException(mockSpec,

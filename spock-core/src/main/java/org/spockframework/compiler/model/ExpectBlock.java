@@ -23,6 +23,7 @@ package org.spockframework.compiler.model;
 public class ExpectBlock extends Block {
   public ExpectBlock(Method parent) {
     super(parent);
+    setName("expect");
   }
 
   @Override

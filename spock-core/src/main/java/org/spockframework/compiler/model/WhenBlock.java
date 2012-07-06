@@ -24,6 +24,7 @@ package org.spockframework.compiler.model;
 public class WhenBlock extends Block {
   public WhenBlock(Method parent) {
     super(parent);
+    setName("when");
   }
 
   @Override

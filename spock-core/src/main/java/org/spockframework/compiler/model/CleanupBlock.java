@@ -24,6 +24,7 @@ package org.spockframework.compiler.model;
 public class CleanupBlock extends Block {
   public CleanupBlock(Method parent) {
     super(parent);
+    setName("cleanup");
   }
 
   @Override

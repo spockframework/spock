@@ -24,6 +24,7 @@ package org.spockframework.compiler.model;
 public class SetupBlock extends Block {
   public SetupBlock(Method parent) {
     super(parent);
+    setName("setup");
   }
 
   @Override

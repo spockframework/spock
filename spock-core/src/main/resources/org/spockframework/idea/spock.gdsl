@@ -1,0 +1,40 @@
+package org.spockframework.idea
+
+import com.intellij.psi.PsiVariable
+
+def ctx = context(ctype: "spock.lang.Specification", scope: closureScope(isArg: true))
+
+// Mock(Foo) { /* delegates to instance of type Foo */ }
+// Foo x = Mock { /* delegates to instance of type Foo */ }
+contributor(ctx, {
+  def call = enclosingCall("Mock")
+  if (call) {
+    def method = call.bind()
+    def clazz = method?.containingClass
+    if (clazz?.qualName == "spock.lang.MockingApi") {
+      def mockType = call.arguments.find { it.type.className == "Class" }
+      if (mockType) {
+        def typeParameter = mockType.parameters[0]
+        delegatesTo(typeParameter.resolve())
+        return
+      }
+      def callContext = call.context
+      if (callContext instanceof PsiVariable) {
+        delegatesTo(callContext.typeGroovy.resolve())
+      }
+    }
+  }
+})
+
+// with(foo) { /* delegates to foo */ }
+contributor(ctx, {
+  def call = enclosingCall("with")
+  if (call) {
+    def method = call.bind()
+    def clazz = method?.containingClass
+    if (clazz?.qualName == "spock.lang.Specification") {
+      delegatesTo(call.arguments[0])
+    }
+  }
+})
+

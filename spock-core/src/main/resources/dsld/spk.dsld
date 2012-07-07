@@ -1,0 +1,45 @@
+package dsld
+
+import org.codehaus.groovy.ast.expr.*
+
+//registerPointcut("spockMockCall", { node ->
+//  def inferredType = null
+//  if (node instanceof BinaryExpression && node.operation.type == org.codehaus.groovy.syntax.Types.ASSIGN) {
+//    inferredType = node.leftExpression.type
+//    node = node.rightExpression
+//  }
+//  if (node instanceof MethodCallExpression && node.methodAsString == "Mock") {
+//    def target = node.objectExpression
+//    if (target instanceof VariableExpression && (target.thisExpression || target.superExpression)) {
+//        def firstArg = node.arguments.expressions[0]
+//        if (firstArg instanceof ClassExpression) return firstArg
+//        if (inferredType != null) return inferredType
+//    }
+//  }
+//})
+//
+//contribute(bind(delegateType: spockMockCall())) {
+//  delegatesTo(delegateType)
+//}
+
+contribute(
+    enclosingClass(subType("spock.lang.Specification")) & 
+    enclosingCallDeclaringType("spock.lang.MockingApi") &
+    bind(theCalls: enclosingCall(name("Mock"))) & 
+	enclosingClosure()) {  
+  def args = theCalls.iterator().next().arguments.expressions
+  def mockType = args.find { it instanceof ClassExpression }
+  if (mockType) {
+    delegatesTo(mockType)
+  }
+}
+	
+contribute(
+	enclosingClass(subType("spock.lang.Specification")) &
+	enclosingCallDeclaringType("spock.lang.Specification") &
+	enclosingCall(
+		name("with") &
+		hasArgument(theTypes: type(subType()))) &
+	enclosingClosure()) {
+  delegatesTo(theTypes.iterator().next())
+}

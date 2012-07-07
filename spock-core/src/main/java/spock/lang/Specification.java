@@ -16,19 +16,13 @@
 
 package spock.lang;
 
-import org.junit.runner.RunWith;
-
-import org.spockframework.lang.Wildcard;
-import org.spockframework.mock.MockController;
-import org.spockframework.mock.MockSpec;
-import org.spockframework.runtime.*;
-import org.spockframework.util.GroovyRuntimeUtil;
-
 import groovy.lang.Closure;
-import org.spockframework.util.Nullable;
 
-import java.util.Collections;
-import java.util.Map;
+import org.junit.runner.RunWith;
+import org.spockframework.lang.Wildcard;
+import org.spockframework.util.ExceptionUtil;
+import org.spockframework.runtime.*;
+import org.spockframework.runtime.GroovyRuntimeUtil;
 
 /**
  * Base class for Spock specifications. All specifications must inherit from
@@ -40,7 +34,8 @@ import java.util.Map;
 // they are no longer visible to Specs that extend spock.lang.Specification
 // (runtime dispatch fails)
 @RunWith(Sputnik.class)
-public abstract class Specification {
+@SuppressWarnings("UnusedDeclaration")
+public abstract class Specification extends MockingApi {
   /**
    * The wildcard symbol. Used in several places as a <em>don't care</em> value:
    * <ul>
@@ -51,6 +46,11 @@ public abstract class Specification {
    * </ul>
    */
   public static final Object _ = Wildcard.INSTANCE;
+
+  @Beta
+  public ISpecificationContext getSpecificationContext() {
+    return specificationContext;
+  }
 
   /**
    * Specifies that the preceding <tt>when</tt> block should throw an exception.
@@ -95,133 +95,34 @@ public abstract class Specification {
    * @param <T> the expected exception type
    * @return the thrown exception instance
    */
-  @SuppressWarnings("UnusedDeclaration")
   public <T extends Throwable> T thrown(Class<T> type) {
     throw new InvalidSpecException(
         "Exception conditions are only allowed in 'then' blocks, and may not be nested inside other elements");
   }
 
   /**
-   * Specifies that in particular, no exception of the given type should be
-   * thrown. This method has only documentation purposes and does not affect
-   * the execution of the specification.
+   * Specifies that no exception of the given type should be
+   * thrown, failing with a {@link UnallowedExceptionThrownError} otherwise.
    *
-   * @param type an exception type
+   * @param type the exception type that should not be thrown
    */
-  @SuppressWarnings("UnusedDeclaration")
   public void notThrown(Class<? extends Throwable> type) {
-    // IDEA: provide an implementation that makes it possible to differentiate
-    // between this exception being thrown, and any other exception being thrown
+    Throwable thrown = specificationContext.getThrownException();
+    if (thrown == null) return;
+    if (type.isAssignableFrom(thrown.getClass())) {
+      throw new UnallowedExceptionThrownError(type, thrown);
+    }
+    ExceptionUtil.sneakyThrow(thrown);
   }
 
   /**
-   * Specifies that no exception should be thrown. Equivalent to
-   * <tt>notThrown(Throwable)</tt>. This method has only documentation purposes
-   * and does not affect the execution of the specification.
+   * Specifies that no exception should be thrown, failing with a
+   * {@link UnallowedExceptionThrownError} otherwise.
    */
-  public void noExceptionThrown() { /* nothing to do */ }
-
-  /**
-   * Creates a mock object whose name and type are inferred from the variable
-   * that the mock object is assigned to. For example,
-   * <tt>IOrderService service = Mock()</tt> will create a mock object named
-   * "service" and of type <tt>IOrderService</tt>.
-   *
-   * @param options options that determine the behavior of the mock to be created
-   * @return the newly created mock object
-   */
-  @SuppressWarnings("UnusedDeclaration")
-  public Object Mock(Map<String, Object> options) {
-    throw new InvalidSpecException("Mock objects may only be created during the lifetime of a feature (iteration)");
-  }
-
-  /**
-   * Creates a mock object of the given type. If this method is used
-   * to initialize a new variable, the mock's name is inferred from the
-   * variable's name. For example, <tt>def service = Mock(IOrderService)</tt>
-   * will create a mock object named "service" and of type
-   * <tt>IOrderService</tt>. Otherwise, the mock will be named after
-   * its type (e.g. "IOrderService").
-   *
-   * @param options options that determine the behavior of the mock to be created
-   * @param type the type of the mock object to be created
-   * @param <T> the type of the mock object to be created
-   * @return the newly created mock object
-   */
-  @SuppressWarnings("UnusedDeclaration")
-  public <T> T Mock(Map<String, Object> options, Class<T> type) {
-    throw new InvalidSpecException("Mock objects can only be created inside a Spec");
-  }
-
-  @Beta
-  @SuppressWarnings("UnusedDeclaration")
-  public Object GroovyMock(Map<String, Object> options) {
-    throw new InvalidSpecException("Mock objects may only be created during the lifetime of a feature (iteration)");
-  }
-
-  @Beta
-  @SuppressWarnings("UnusedDeclaration")
-  public <T> T GroovyMock(Map<String, Object> options, Class<T> type) {
-    throw new InvalidSpecException("Mock objects can only be created inside a Spec");
-  }
-
-  /**
-   * Encloses one or more interaction definitions in a <tt>then</tt> block.
-   * Required when an interaction definition uses a statement that doesn't
-   * match one of the following patterns, and therefore isn't automatically
-   * recognized as belonging to an interaction definition:
-   * <ul>
-   * <li><tt>num * target.method(args)</tt></li>
-   * <li><tt>target.method(args) >>(>) result(s)</tt></li>
-   * <li><tt>num * target.method(args) >>(>) result(s)</li>
-   * </ul>
-   *
-   * <p>Regular interaction definition:
-   * <pre>
-   * def "published messages are received at least once"() {
-   *   when:
-   *   publisher.send(msg)
-   *
-   *   then:
-   *   (1.._) * subscriber.receive(msg)
-   * }
-   * </pre>
-   *
-   * <p>Equivalent definition that uses a helper variable:
-   * <pre>
-   * def "published messages are received at least once"() {
-   *   when:
-   *   publisher.send(msg)
-   *
-   *   then:
-   *   interaction {
-   *     def num = (1.._)
-   *     num * subscriber.receive(msg)
-   *   }
-   * }
-   * </pre>
-   *
-   * <p>Equivalent definition that uses a helper method:
-   * <pre>
-   * def "published messages are received at least once"() {
-   *   when:
-   *   publisher.send(msg)
-   *
-   *   then:
-   *   interaction {
-   *     messageReceived(msg)
-   *   }
-   * }
-   *
-   * def messageReceived(msg) {
-   *   (1.._) * subscriber.receive(msg)
-   * }
-   * </pre>
-   *
-   * @param block a block of code containing one or more interaction definitions
-   */
-  public void interaction(Closure block) {
-    GroovyRuntimeUtil.invokeClosure(block);
+  public void noExceptionThrown() {
+    Throwable thrown = specificationContext.getThrownException();
+    if (thrown == null) return;
+    throw new UnallowedExceptionThrownError(null, thrown);
   }
 
   /**
@@ -234,91 +135,14 @@ public abstract class Specification {
    * @return the expression's value at the time the previous where-block was
    * entered
    */
-  @SuppressWarnings("UnusedDeclaration")
   public <T> T old(T expression) {
     throw new InvalidSpecException("old() can only be used in a 'then' block");
   }
 
-  @SuppressWarnings("UnusedDeclaration")
-  Throwable thrown(@Nullable String inferredName, @Nullable Class<?> inferredType, Throwable exception) {
-    return thrown(inferredName, inferredType, exception, null);
-  }
-
-  Throwable thrown(@Nullable String inferredName, @Nullable Class<?> inferredType, Throwable exception, Class<?> specifiedType) {
-    if (specifiedType == null && inferredType == null) {
-      throw new InvalidSpecException("Thrown exception type cannot be inferred automatically. Please specify a type explicitly (e.g. 'thrown(MyException)').");
-    }
-
-    Class<?> effectiveType = specifiedType != null ? specifiedType : inferredType;
-
-    if (!Throwable.class.isAssignableFrom(effectiveType))
-      throw new InvalidSpecException(
-"Invalid exception condition: '%s' is not a (subclass of) java.lang.Throwable"
-      ).withArgs(effectiveType.getSimpleName());
-
-    if (effectiveType.isInstance(exception)) return exception;
-
-    throw new WrongExceptionThrownError((Class<? extends Throwable>) effectiveType, exception);
-  }
-
-  @SuppressWarnings("UnusedDeclaration")
-  Object Mock(String inferredName, Class<?> inferredType, MockController controller) {
-    return createMock(inferredName, inferredType, controller, Collections.<String, Object>emptyMap(), null, "Mock");
-  }
-
-  @SuppressWarnings("UnusedDeclaration")
-  Object Mock(String inferredName, Class<?> inferredType, MockController controller , Map<String, Object> options) {
-    return createMock(inferredName, inferredType, controller, options, null, "Mock");
-  }
-
-  @SuppressWarnings("UnusedDeclaration")
-  Object Mock(String inferredName, Class<?> inferredType, MockController controller, Class<?> specifiedType) {
-    return createMock(inferredName, inferredType, controller, Collections.<String, Object>emptyMap(), specifiedType, "Mock");
-  }
-
-  @SuppressWarnings("UnusedDeclaration")
-  Object Mock(String inferredName, Class<?> inferredType, MockController controller, Map<String, Object> options, Class<?> specifiedType) {
-    return createMock(inferredName, inferredType, controller, options, specifiedType, "Mock");
-  }
-
-  @SuppressWarnings("UnusedDeclaration")
-  Object GroovyMock(String inferredName, Class<?> inferredType, MockController controller) {
-    return createMock(inferredName, inferredType, controller, Collections.<String, Object>emptyMap(), null, "GroovyMock");
-  }
-
-  @SuppressWarnings("UnusedDeclaration")
-  Object GroovyMock(String inferredName, Class<?> inferredType, MockController controller, Map<String, Object> options) {
-    return createMock(inferredName, inferredType, controller, options, null, "GroovyMock");
-  }
-
-  @SuppressWarnings("UnusedDeclaration")
-  Object GroovyMock(String inferredName, Class<?> inferredType, MockController controller, Class<?> specifiedType) {
-    return createMock(inferredName, inferredType, controller, Collections.<String, Object>emptyMap(), specifiedType, "GroovyMock");
-  }
-
-  @SuppressWarnings("UnusedDeclaration")
-  Object GroovyMock(String inferredName, Class<?> inferredType, MockController controller, Map<String, Object> options, Class<?> specifiedType) {
-    return createMock(inferredName, inferredType, controller, options, specifiedType, "GroovyMock");
-  }
-
-  private Object createMock(String inferredName, Class<?> inferredType, MockController controller, Map<String, Object> options, Class<?> specifiedType, String kind) {
-    if (specifiedType == null && inferredType == null) {
-      throw new InvalidSpecException("Mock object type cannot be inferred automatically. Please specify a type explicitly (e.g. 'Mock(Person)').");
-    }
-
-    if (controller == null) {
-      // mock has been created in a context where no controller exists
-      Mock(options);
-      return null; // make compiler happy
-    }
-
-    Class<?> effectiveType = specifiedType != null ? specifiedType : inferredType;
-    return controller.create(new MockSpec(inferredName, effectiveType, kind, options));
-  }
-
-  // dummy parameter exists just to create a new overload of old() with different implementation
-  @SuppressWarnings("UnusedDeclaration")
-  <T> T old(T expression, boolean dummy) {
-    return expression;
+  @Beta
+  public void with(Object object, Closure closure) {
+    closure.setDelegate(object); // for conditions
+    closure.setResolveStrategy(Closure.DELEGATE_FIRST);
+    GroovyRuntimeUtil.invokeClosure(closure, object);
   }
 }

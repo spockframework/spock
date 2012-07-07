@@ -17,7 +17,7 @@ package org.spockframework.builder;
 import java.lang.reflect.Modifier;
 
 import org.codehaus.groovy.runtime.MetaClassHelper;
-import org.spockframework.util.GroovyRuntimeUtil;
+import org.spockframework.runtime.GroovyRuntimeUtil;
 
 public class BuilderHelper {
   public static Object createInstance(Class clazz, Object... args) {

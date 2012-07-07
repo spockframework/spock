@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-package org.spockframework.util;
+package org.spockframework.runtime;
 
 import java.beans.Introspector;
 import java.util.Arrays;
@@ -28,6 +28,10 @@ import org.codehaus.groovy.reflection.CachedMethod;
 import org.codehaus.groovy.runtime.*;
 import org.codehaus.groovy.runtime.metaclass.MetaClassRegistryImpl;
 import org.codehaus.groovy.runtime.typehandling.DefaultTypeTransformation;
+import org.spockframework.util.ExceptionUtil;
+import org.spockframework.util.Nullable;
+import org.spockframework.util.ObjectUtil;
+import org.spockframework.util.ReflectionUtil;
 
 /**
  * Provides convenient access to Groovy language and runtime features.

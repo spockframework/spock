@@ -26,7 +26,7 @@ import groovy.lang.Closure;
 import org.spockframework.runtime.extension.AbstractAnnotationDrivenExtension;
 import org.spockframework.runtime.extension.ExtensionException;
 import org.spockframework.runtime.model.*;
-import org.spockframework.util.GroovyRuntimeUtil;
+import org.spockframework.runtime.GroovyRuntimeUtil;
 import org.spockframework.util.InternalSpockError;
 
 import spock.lang.IgnoreIf;

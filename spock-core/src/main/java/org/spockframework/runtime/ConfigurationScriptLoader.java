@@ -23,7 +23,7 @@ import org.codehaus.groovy.control.CompilationFailedException;
 import org.codehaus.groovy.control.CompilerConfiguration;
 
 import org.spockframework.builder.DelegatingScript;
-import org.spockframework.util.GroovyRuntimeUtil;
+import org.spockframework.runtime.GroovyRuntimeUtil;
 import org.spockframework.util.Nullable;
 
 import spock.config.ConfigurationException;

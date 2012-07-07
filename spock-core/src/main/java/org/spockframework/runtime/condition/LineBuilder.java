@@ -16,7 +16,7 @@ package org.spockframework.runtime.condition;
 
 import java.util.*;
 
-import org.spockframework.util.GroovyRuntimeUtil;
+import org.spockframework.runtime.GroovyRuntimeUtil;
 
 public class LineBuilder {
   private final List<String> lines = new ArrayList<String>();

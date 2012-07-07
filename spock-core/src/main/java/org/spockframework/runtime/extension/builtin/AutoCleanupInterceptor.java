@@ -19,7 +19,7 @@ import java.util.*;
 import org.spockframework.runtime.extension.*;
 import org.spockframework.runtime.model.FieldInfo;
 import org.spockframework.runtime.model.MethodInfo;
-import org.spockframework.util.GroovyRuntimeUtil;
+import org.spockframework.runtime.GroovyRuntimeUtil;
 
 import spock.lang.AutoCleanup;
 

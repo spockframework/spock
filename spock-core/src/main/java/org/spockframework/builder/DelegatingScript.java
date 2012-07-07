@@ -15,7 +15,7 @@
 package org.spockframework.builder;
 
 import groovy.lang.*;
-import org.spockframework.util.GroovyRuntimeUtil;
+import org.spockframework.runtime.GroovyRuntimeUtil;
 
 public abstract class DelegatingScript extends Script {
   private volatile Object $delegate;

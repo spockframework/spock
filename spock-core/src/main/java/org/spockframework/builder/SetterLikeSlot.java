@@ -18,7 +18,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 
 import org.spockframework.gentyref.GenericTypeReflector;
-import org.spockframework.util.GroovyRuntimeUtil;
+import org.spockframework.runtime.GroovyRuntimeUtil;
 import org.spockframework.util.MopUtil;
 
 import groovy.lang.MetaMethod;

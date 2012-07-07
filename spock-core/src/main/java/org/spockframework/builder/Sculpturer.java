@@ -15,7 +15,7 @@
 package org.spockframework.builder;
 
 import groovy.lang.*;
-import org.spockframework.util.GroovyRuntimeUtil;
+import org.spockframework.runtime.GroovyRuntimeUtil;
 
 /**
  * Forms a gestalt from its blueprint.

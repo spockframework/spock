@@ -21,7 +21,7 @@ import java.util.List;
 
 import static org.spockframework.runtime.RunStatus.*;
 import org.spockframework.runtime.model.*;
-import org.spockframework.util.GroovyRuntimeUtil;
+import org.spockframework.runtime.GroovyRuntimeUtil;
 
 /**
  * Adds the ability to run parameterized features.

@@ -16,7 +16,7 @@
 
 package org.spockframework.mock;
 
-import org.spockframework.util.GroovyRuntimeUtil;
+import org.spockframework.runtime.GroovyRuntimeUtil;
 
 /**
  *

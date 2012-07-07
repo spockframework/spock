@@ -41,4 +41,8 @@ public interface IMockInvocation {
    * The arguments for the invocation.
    */
   List<Object> getArguments();
+
+  Object callRealMethod();
+
+  Object callRealMethodWith(Object... arguments);
 }

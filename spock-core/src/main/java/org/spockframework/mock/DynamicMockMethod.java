@@ -7,12 +7,17 @@ import java.util.List;
 public class DynamicMockMethod implements IMockMethod {
   private final String methodName;
   private final List<Class<?>> parameterTypes;
+  Class<?> returnType;
   private final boolean isStatic;
 
-  @SuppressWarnings("unchecked")
-  public DynamicMockMethod(String methodName, int parameterCount, boolean isStatic) {
+  public DynamicMockMethod(String methodName, int argumentCount, boolean isStatic) {
+    this(methodName, Collections.<Class<?>>nCopies(argumentCount , Object.class), Object.class, isStatic);
+  }
+
+  public DynamicMockMethod(String methodName, List<Class<?>> parameterTypes, Class<?> returnType, boolean isStatic) {
     this.methodName = methodName;
-    parameterTypes = (List) Collections.nCopies(parameterCount, Object.class);
+    this.parameterTypes = parameterTypes;
+    this.returnType = returnType;
     this.isStatic = isStatic;
   }
 
@@ -25,7 +30,7 @@ public class DynamicMockMethod implements IMockMethod {
   }
 
   public Class<?> getReturnType() {
-    return Object.class;
+    return returnType;
   }
 
   public boolean isStatic() {

@@ -1,25 +1,51 @@
 package org.spockframework.mock;
 
+import java.lang.reflect.Modifier;
+import java.util.Collections;
+
 import groovy.lang.GroovyObject;
 import groovy.lang.MetaClass;
 
-import org.spockframework.util.GroovyRuntimeUtil;
+import org.spockframework.runtime.GroovyRuntimeUtil;
+
+import spock.lang.Specification;
+import spock.mock.MockConfiguration;
 
 public class GroovyMockFactory implements IMockFactory {
-  public Object create(MockSpec mockSpec, IInvocationDispatcher dispatcher) throws CannotCreateMockException {
-    if (!mockSpec.getKind().equals("GroovyMock")) return null;
+  public static GroovyMockFactory INSTANCE = new GroovyMockFactory();
 
-    GroovyMockOptions options = GroovyMockOptions.parse(mockSpec.getOptions());
-    MetaClass oldMetaClass = GroovyRuntimeUtil.getMetaClass(mockSpec.getType());
-    MetaClass newMetaClass = new MockMetaClass(oldMetaClass, mockSpec.getName(), mockSpec.getType(), dispatcher);
+  public Object create(MockConfiguration configuration, Specification specification) throws CannotCreateMockException {
+    final MetaClass oldMetaClass = GroovyRuntimeUtil.getMetaClass(configuration.getType());
+    GroovyMockMetaClass newMetaClass = new GroovyMockMetaClass(configuration, specification, oldMetaClass);
+    final Class<?> type = configuration.getType();
 
-    IProxyBasedMockInterceptor mockInterceptor = new GroovyMockInterceptor(mockSpec, newMetaClass, dispatcher);
-    Object proxy = new ProxyBasedMockFactory(mockInterceptor, options.isForceCglib()).create(mockSpec, dispatcher);
-
-    if (!GroovyObject.class.isAssignableFrom(mockSpec.getType())) {
-      GroovyRuntimeUtil.setMetaClass(proxy, newMetaClass);
+    if (configuration.isGlobal()) {
+      if (type.isInterface()) {
+        throw new CannotCreateMockException(type,
+            ". Global mocking is only possible for classes, but not for interfaces.");
+      }
+      GroovyRuntimeUtil.setMetaClass(type, newMetaClass);
+      specification.getSpecificationContext().getIterationInfo().addCleanup(new Runnable() {
+        public void run() {
+          GroovyRuntimeUtil.setMetaClass(type, oldMetaClass);
+        }
+      });
+      return MockInstantiator.instantiate(type, type);
     }
 
-    return proxy;
+    if (isFinalClass(type)) {
+      final Object instance = MockInstantiator.instantiate(type, type);
+      GroovyRuntimeUtil.setMetaClass(instance, newMetaClass);
+
+      return instance;
+    }
+
+    IProxyBasedMockInterceptor mockInterceptor = new GroovyMockInterceptor(configuration, specification, newMetaClass);
+    return ProxyBasedMockFactory.INSTANCE.create(type,
+        Collections.<Class<?>>singletonList(GroovyObject.class), mockInterceptor, specification);
+  }
+
+  private boolean isFinalClass(Class<?> type) {
+    return !type.isInterface() && Modifier.isFinal(type.getModifiers());
   }
 }

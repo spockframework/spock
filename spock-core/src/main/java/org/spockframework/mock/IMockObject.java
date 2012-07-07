@@ -15,7 +15,26 @@
 package org.spockframework.mock;
 
 public interface IMockObject {
+  /**
+   * Returns the name of the mock object.
+   *
+   * @return the name of the mock object
+   */
   String getName();
+
+  /**
+   * Returns the mocked type.
+   *
+   * @return the mocked type
+   */
   Class<?> getType();
+
   Object getInstance();
+
+  /**
+   * Tells whether this mock object represents all instances of the mocked type.
+   *
+   * @return whether this mock object represents all instances of the mocked type
+   */
+  boolean isGlobal();
 }

@@ -22,50 +22,104 @@ class ValidMockCreation extends Specification {
   List list1 = Mock()
 
   def "field typed w/ mock untyped"() {
-    expect: list1 instanceof List
+    expect:
+    list1 instanceof List
+  }
+
+  List list1a
+
+  def "field typed w/ mock untyped, separate assignment"() {
+    list1a = Mock()
+
+    expect:
+    list1a instanceof List
   }
 
   List list2 = Mock(ArrayList)
 
   def "field typed w/ mock typed"() {
-    expect: list2 instanceof ArrayList
+    expect:
+    list2 instanceof ArrayList
+  }
+
+  List list2a
+
+  def "field typed w/ mock typed, separate assignment"() {
+    list2a = Mock(ArrayList)
+
+    expect:
+    list2a instanceof ArrayList
   }
 
   def list3 = Mock(List)
 
   def "field untyped w/ mock typed"() {
-    expect: list3 instanceof List
+    expect:
+    list3 instanceof List
   }
 
   def "local typed w/ mock untyped"() {
     List list = Mock()
-    expect: list instanceof List
+
+    expect:
+    list instanceof List
+  }
+
+  def "local typed with w/ mock untyped, separate assignment"() {
+    List list
+    list = Mock()
+
+    expect:
+    list instanceof List
   }
 
   def "local typed w/ mock typed"() {
     List list = Mock(ArrayList)
-    expect: list instanceof ArrayList
+
+    expect:
+    list instanceof ArrayList
+  }
+
+  def "local typed w/ mock typed, separate assignment"() {
+    List list
+    list = Mock(ArrayList)
+
+    expect:
+    list instanceof ArrayList
   }
   
   def "local untyped w/ mock typed"() {
     def list = Mock(List)
-    expect: list instanceof List
+
+    expect:
+    list instanceof List
   }
 
   def "expr typed"() {
-    expect: Mock(List) instanceof List
+    expect:
+    Mock(List) instanceof List
   }
 
   def "creation in nested expr"() {
     def list = null
     if (1) list = id(id(Mock(List)))
-    expect: list instanceof List
+
+    expect:
+    list instanceof List
   }
 
   def "creation in closure"() {
     // a closure preceded by a label is parsed as block by Groovy,
     // so we use "assert" instead of "expect:" here
     assert { it -> { it2 -> Mock(List) }() }() instanceof List
+  }
+
+  def "creation in interaction result"() {
+    List list = Mock()
+    list.get(_) >> Mock(Map)
+
+    expect:
+    list.get(42) instanceof Map
   }
 
   private id(arg) { arg }

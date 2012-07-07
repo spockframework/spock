@@ -20,11 +20,13 @@ public class MockObject implements IMockObject {
   private final String name;
   private final Class<?> type;
   private final Object instance;
+  private final boolean global;
 
-  public MockObject(String name, Class<?> type, Object instance) {
+  public MockObject(String name, Class<?> type, Object instance, boolean global) {
     this.name = name;
     this.type = type;
     this.instance = instance;
+    this.global = global;
   }
 
   public String getName() {
@@ -38,5 +40,9 @@ public class MockObject implements IMockObject {
 
   public Object getInstance() {
     return instance;
+  }
+
+  public boolean isGlobal() {
+    return global;
   }
 }

@@ -41,6 +41,10 @@ public abstract class MockInteractionDecorator implements IMockInteraction {
     return decorated.accept(invocation);
   }
 
+  public boolean hasResults() {
+    return decorated.hasResults();
+  }
+
   public boolean isSatisfied() {
     return decorated.isSatisfied();
   }

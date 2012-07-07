@@ -16,6 +16,8 @@
 
 package org.spockframework.mock;
 
+import org.spockframework.util.Nullable;
+
 import java.util.List;
 
 /**
@@ -35,7 +37,7 @@ public class MockInteraction implements IMockInteraction {
 
   public MockInteraction(int line, int column, String text, int minCount,
       int maxCount, List<IInvocationConstraint> matchers,
-      IResultGenerator resultGenerator) {
+      @Nullable IResultGenerator resultGenerator) {
     this.line = line;
     this.column = column;
     this.text = text;
@@ -57,7 +59,11 @@ public class MockInteraction implements IMockInteraction {
     if (acceptedCount > maxCount)
       throw new TooManyInvocationsError(this, invocation);
 
-    return resultGenerator.generate(invocation);
+    return resultGenerator == null ? null : resultGenerator.generate(invocation);
+  }
+
+  public boolean hasResults() {
+    return resultGenerator != null;
   }
 
   public boolean isSatisfied() {

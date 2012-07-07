@@ -6,20 +6,31 @@ import java.util.Arrays;
 import groovy.lang.GroovyObject;
 import groovy.lang.MetaClass;
 
-import org.spockframework.util.GroovyRuntimeUtil;
+import org.spockframework.runtime.GroovyRuntimeUtil;
+import spock.lang.Specification;
+import spock.mock.MockConfiguration;
+import spock.mock.MockConfiguration;
+import spock.mock.MockConfiguration;
+import spock.mock.MockConfiguration;
 
-public class DefaultMockInterceptor implements IProxyBasedMockInterceptor {
-  private final MockSpec mockSpec;
+public class JavaMockInterceptor implements IProxyBasedMockInterceptor {
+  private final MockConfiguration mockConfiguration;
+  private final Specification specification;
   private final MetaClass mockMetaClass;
-  private final IInvocationDispatcher dispatcher;
 
-  public DefaultMockInterceptor(MockSpec mockSpec, MetaClass mockMetaClass, IInvocationDispatcher dispatcher) {
-    this.mockSpec = mockSpec;
+  public JavaMockInterceptor(MockConfiguration mockConfiguration, Specification specification, MetaClass mockMetaClass) {
+    this.mockConfiguration = mockConfiguration;
+    this.specification = specification;
     this.mockMetaClass = mockMetaClass;
-    this.dispatcher = dispatcher;
   }
 
   public Object intercept(Object target, Method method, Object[] args) {
+    IMockObject mockObject = new MockObject(mockConfiguration.getName(), mockConfiguration.getType(), target, false);
+
+    if (method.getDeclaringClass() == IMockObjectProvider.class) {
+      return mockObject;
+    }
+
     // sometimes we see an argument wrapped in PojoWrapper
     // example is when GroovyObject.invokeMethod is invoked directly
     Object[] normalizedArgs = GroovyRuntimeUtil.asUnwrappedArgumentArray(args);
@@ -40,10 +51,13 @@ public class DefaultMockInterceptor implements IProxyBasedMockInterceptor {
       }
     }
 
-    IMockObject mockObject = new MockObject(mockSpec.getName(), mockSpec.getType(), target);
     IMockMethod mockMethod = new StaticMockMethod(method);
     IMockInvocation invocation = new MockInvocation(mockObject, mockMethod, Arrays.asList(normalizedArgs));
-    return dispatcher.dispatch(invocation);
+    IMockInvocationMatcher invocationMatcher = specification.getSpecificationContext().getMockInvocationMatcher();
+
+    InvocationMatchResult result = invocationMatcher.match(invocation);
+    if (result.hasReturnValue()) return result.getReturnValue();
+    return DefaultStubInteractionScope.INSTANCE.match(invocation).accept(invocation);
   }
 
   private boolean isMethod(Method method, String name, Class<?>... parameterTypes) {

@@ -49,6 +49,14 @@ public class MockInvocation implements IMockInvocation {
     return arguments;
   }
 
+  public Object callRealMethod() {
+    throw new UnsupportedOperationException("Calling real method is only supported for global Groovy mocks");
+  }
+
+  public Object callRealMethodWith(Object... arguments) {
+    throw new UnsupportedOperationException("Calling real method is only supported for global Groovy mocks");
+  }
+
   @Override
   public String toString() {
     String mockName = mockObject.getName();

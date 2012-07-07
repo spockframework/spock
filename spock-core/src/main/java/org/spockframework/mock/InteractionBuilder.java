@@ -152,7 +152,8 @@ public class InteractionBuilder {
 
   public static final String ADD_CONSTANT_RESULT = "setConstantResult";
   public InteractionBuilder setConstantResult(Object constant) {
-    resultGenerators.addFirst(constant instanceof Wildcard ? new DefaultResultGenerator() : new ConstantResultGenerator(constant));
+    resultGenerators.addFirst(constant instanceof Wildcard ?
+        new ReturnTypeBasedResultGenerator() : new ConstantResultGenerator(constant));
     return this;
   }
 
@@ -170,11 +171,8 @@ public class InteractionBuilder {
 
   public static final String BUILD = "build";
   public IMockInteraction build() {
-    if (resultGenerators.isEmpty())
-      resultGenerators.addFirst(new DefaultResultGenerator());
-
-    return new MockInteraction(line, column, text,
-        minCount, maxCount, invConstraints, resultGenerators);
+    return new MockInteraction(line, column, text, minCount, maxCount,
+        invConstraints, resultGenerators.isEmpty() ? null : resultGenerators);
   }
 
   private static int convertCount(Object count, boolean inclusive) {

@@ -12,9 +12,10 @@
 * limitations under the License.
 */
 
-package org.spockframework.util
+package org.spockframework.runtime
 
 import spock.lang.*
+import org.spockframework.runtime.GroovyRuntimeUtil
 
 class GroovyRuntimeUtilSpec extends Specification {
   def "getterMethodToPropertyName"() {

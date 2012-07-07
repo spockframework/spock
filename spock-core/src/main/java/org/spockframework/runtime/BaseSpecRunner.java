@@ -25,6 +25,7 @@ import org.spockframework.runtime.extension.MethodInvocation;
 import org.spockframework.runtime.model.*;
 import org.spockframework.util.InternalSpockError;
 import org.spockframework.util.ReflectionUtil;
+import spock.lang.Specification;
 
 import static org.spockframework.runtime.RunStatus.*;
 
@@ -48,8 +49,8 @@ public class BaseSpecRunner {
   protected FeatureInfo currentFeature;
   protected IterationInfo currentIteration;
 
-  protected Object sharedInstance;
-  protected Object currentInstance;
+  protected Specification sharedInstance;
+  protected Specification currentInstance;
   protected int runStatus = OK;
 
   static {
@@ -117,13 +118,13 @@ public class BaseSpecRunner {
 
     try {
       if (shared) {
-        sharedInstance = spec.getReflection().newInstance();
+        sharedInstance = (Specification) spec.getReflection().newInstance();
         // make sure that x.getOrSetSomeSharedField() also works for x == sharedInstance
         // (important for setupSpec/cleanupSpec)
-        spec.getSharedInstanceField().getReflection().set(sharedInstance, sharedInstance);
+        getSpecificationContext(sharedInstance).setSharedInstance(sharedInstance);
       } else {
-        currentInstance = spec.getReflection().newInstance();
-        spec.getSharedInstanceField().getReflection().set(currentInstance, sharedInstance);
+        currentInstance = (Specification) spec.getReflection().newInstance();
+        getSpecificationContext(currentInstance).setSharedInstance(sharedInstance);
       }
     } catch (Throwable t) {
       throw new InternalSpockError("Failed to instantiate spec '%s'", t).withArgs(spec.getName());
@@ -218,6 +219,7 @@ public class BaseSpecRunner {
     if (runStatus != OK) return;
 
     currentIteration = createIterationInfo(dataValues, estimatedNumIterations);
+    getSpecificationContext(currentInstance).setIterationInfo(currentIteration);
     supervisor.beforeIteration(currentIteration);
     invoke(this, createMethodInfoForDoRunIteration());
     supervisor.afterIteration(currentIteration);
@@ -285,9 +287,22 @@ public class BaseSpecRunner {
   }
 
   private void invokeCleanup() {
+    invokeIterationCleanups();
     for (SpecInfo curr : spec.getSpecsBottomToTop()) {
       if (action(runStatus) == ABORT) return;
       invoke(currentInstance, curr.getCleanupMethod());
+    }
+  }
+
+  private void invokeIterationCleanups() {
+    for (Runnable cleanup : currentIteration.getCleanups()) {
+      if (action(runStatus) == ABORT) return;
+      try {
+        cleanup.run();
+      } catch (Throwable t) {
+        ErrorInfo error = new ErrorInfo(spec.getCleanupMethod(), t);
+        runStatus = supervisor.error(error);
+      }
     }
   }
 
@@ -318,6 +333,10 @@ public class BaseSpecRunner {
       runStatus = supervisor.error(new ErrorInfo(method, t));
       return null;
     }
+  }
+
+  protected SpecificationContext getSpecificationContext(Specification instance) {
+    return (SpecificationContext) instance.getSpecificationContext();
   }
 }
 

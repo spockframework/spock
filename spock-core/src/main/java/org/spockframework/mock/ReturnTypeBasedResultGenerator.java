@@ -23,7 +23,7 @@ import org.spockframework.util.ReflectionUtil;
  * 
  * @author Peter Niederwieser
  */
-public class DefaultResultGenerator extends SingleResultGenerator {
+public class ReturnTypeBasedResultGenerator extends SingleResultGenerator {
   public Object generateSingle(IMockInvocation invocation) {
     return ReflectionUtil.getDefaultValue(invocation.getMethod().getReturnType());
   }

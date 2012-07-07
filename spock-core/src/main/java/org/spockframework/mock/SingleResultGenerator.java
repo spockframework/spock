@@ -17,14 +17,14 @@
 package org.spockframework.mock;
 
 public abstract class SingleResultGenerator implements IResultGenerator {
-  private boolean exhausted = false;
+  private boolean endOfCycle = false;
 
-  public boolean isExhausted() {
-    return exhausted;
+  public boolean isAtEndOfCycle() {
+    return endOfCycle;
   }
 
   public final Object generate(IMockInvocation invocation) {
-    exhausted = true;
+    endOfCycle = true;
     return generateSingle(invocation);
   }
   

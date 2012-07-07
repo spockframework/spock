@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 the original author or authors.
+ * Copyright 2009 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -11,25 +11,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.spockframework.mock;
 
-import org.spockframework.util.ReflectionUtil;
+public class ObjectEqualsInteraction extends DefaultInteraction {
+  public static final ObjectEqualsInteraction INSTANCE = new ObjectEqualsInteraction();
 
-public class DefaultStubbedInteraction extends DefaultInteraction {
-  public static final DefaultStubbedInteraction INSTANCE = new DefaultStubbedInteraction();
-
-  private DefaultStubbedInteraction() {}
-
+  private ObjectEqualsInteraction() {}
+  
   public String getText() {
-    return "default stubbed interaction";
+    return "default equals() interaction";
   }
 
   public boolean matches(IMockInvocation invocation) {
-    return true;
+    IMockMethod method = invocation.getMethod();
+
+    return method.getName().equals("equals")
+        && method.getParameterTypes().size() == 1
+        && method.getParameterTypes().get(0) == Object.class;
   }
 
   public Object accept(IMockInvocation invocation) {
-    return ReflectionUtil.getDefaultValue(invocation.getMethod().getReturnType());
+    return invocation.getMockObject().getInstance() == invocation.getArguments().get(0);
   }
 }

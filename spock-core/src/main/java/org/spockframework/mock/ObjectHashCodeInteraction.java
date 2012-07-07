@@ -13,10 +13,10 @@
  */
 package org.spockframework.mock;
 
-public class DefaultHashCodeInteraction extends DefaultInteraction {
-  public static final DefaultHashCodeInteraction INSTANCE = new DefaultHashCodeInteraction();
+public class ObjectHashCodeInteraction extends DefaultInteraction {
+  public static final ObjectHashCodeInteraction INSTANCE = new ObjectHashCodeInteraction();
 
-  private DefaultHashCodeInteraction() {}
+  private ObjectHashCodeInteraction() {}
 
   public String getText() {
     return "default hashCode() interaction";

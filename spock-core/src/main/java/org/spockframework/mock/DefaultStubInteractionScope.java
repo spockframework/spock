@@ -17,16 +17,17 @@ package org.spockframework.mock;
 import java.util.Arrays;
 import java.util.List;
 
+import org.spockframework.util.InternalSpockError;
 import org.spockframework.util.UnreachableCodeError;
 
-public class DefaultInteractionScope implements IInteractionScope {
-  public static final DefaultInteractionScope INSTANCE = new DefaultInteractionScope();
+public class DefaultStubInteractionScope implements IInteractionScope {
+  public static final DefaultStubInteractionScope INSTANCE = new DefaultStubInteractionScope();
 
-  private DefaultInteractionScope() {}
+  private DefaultStubInteractionScope() {}
 
   private final List<DefaultInteraction> interactions = Arrays.asList(
-      DefaultEqualsInteraction.INSTANCE, DefaultHashCodeInteraction.INSTANCE,
-      DefaultToStringInteraction.INSTANCE, DefaultStubbedInteraction.INSTANCE);
+      ObjectEqualsInteraction.INSTANCE, ObjectHashCodeInteraction.INSTANCE,
+      ObjectToStringInteraction.INSTANCE, ReturnTypeBasedStubInteraction.INSTANCE);
   
   public void addInteraction(IMockInteraction interaction) {
     throw new UnreachableCodeError("addInteraction");
@@ -41,7 +42,7 @@ public class DefaultInteractionScope implements IInteractionScope {
       if (interaction.matches(invocation))
         return interaction;
 
-    return null;
+    throw new InternalSpockError("Invocation '%s' was not matched by any default interaction").withArgs(invocation);
   }
 
   public void verifyInteractions() {

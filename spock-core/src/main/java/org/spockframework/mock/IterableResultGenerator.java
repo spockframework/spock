@@ -18,7 +18,7 @@ package org.spockframework.mock;
 
 import java.util.Iterator;
 
-import org.spockframework.util.GroovyRuntimeUtil;
+import org.spockframework.runtime.GroovyRuntimeUtil;
 
 /**
  * Generates result values from an iterable object. If the iterator has no more
@@ -34,7 +34,7 @@ public class IterableResultGenerator implements IResultGenerator {
     iterator = GroovyRuntimeUtil.asIterator(iterable);
   }
 
-  public boolean isExhausted() {
+  public boolean isAtEndOfCycle() {
     return !iterator.hasNext();
   }
 

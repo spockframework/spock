@@ -14,10 +14,10 @@
 
 package org.spockframework.mock;
 
-public class DefaultToStringInteraction extends DefaultInteraction {
-  public static final DefaultToStringInteraction INSTANCE = new DefaultToStringInteraction();
+public class ObjectToStringInteraction extends DefaultInteraction {
+  public static final ObjectToStringInteraction INSTANCE = new ObjectToStringInteraction();
   
-  private DefaultToStringInteraction() {}
+  private ObjectToStringInteraction() {}
 
   public String getText() {
     return "default toString() interaction";

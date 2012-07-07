@@ -19,6 +19,6 @@ package org.spockframework.mock;
 /**
  * @author Peter Niederwieser
  */
-public interface IInvocationDispatcher {
-  Object dispatch(IMockInvocation invocation);
+public interface IMockInvocationMatcher {
+  InvocationMatchResult match(IMockInvocation invocation);
 }

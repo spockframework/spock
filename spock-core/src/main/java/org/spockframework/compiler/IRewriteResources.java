@@ -19,7 +19,9 @@ package org.spockframework.compiler;
 import java.util.List;
 
 import org.codehaus.groovy.ast.ASTNode;
+import org.codehaus.groovy.ast.expr.ClosureExpression;
 import org.codehaus.groovy.ast.expr.Expression;
+import org.codehaus.groovy.ast.expr.MethodCallExpression;
 import org.codehaus.groovy.ast.expr.VariableExpression;
 import org.codehaus.groovy.ast.stmt.Statement;
 
@@ -38,7 +40,7 @@ public interface IRewriteResources {
 
   void defineValueRecorder(List<Statement> stats);
   VariableExpression captureOldValue(Expression oldValue);
-  VariableExpression getMockControllerRef();
+  MethodCallExpression getMockInvocationMatcher();
 
   AstNodeCache getAstNodeCache();
   String getSourceText(ASTNode node);

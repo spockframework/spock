@@ -23,6 +23,7 @@ import org.spockframework.runtime.SpockRuntime;
 import org.spockframework.runtime.ValueRecorder;
 import org.spockframework.runtime.model.*;
 
+import org.spockframework.util.Identifiers;
 import spock.lang.*;
 
 /**
@@ -35,7 +36,10 @@ public class AstNodeCache {
   public final ClassNode SpockRuntime = ClassHelper.makeWithoutCaching(SpockRuntime.class);
   public final ClassNode ValueRecorder = ClassHelper.makeWithoutCaching(ValueRecorder.class);
   public final ClassNode Specification = ClassHelper.makeWithoutCaching(Specification.class);
-  
+
+  public final MethodNode Specification_GetSpecificationContext =
+      Specification.getDeclaredMethods(Identifiers.GET_SPECIFICATION_CONTEXT).get(0);
+
   public final MethodNode SpockRuntime_VerifyCondition =
       SpockRuntime.getDeclaredMethods(org.spockframework.runtime.SpockRuntime.VERIFY_CONDITION).get(0);
 
@@ -60,17 +64,8 @@ public class AstNodeCache {
   public final ClassNode BlockKind = ClassHelper.makeWithoutCaching(BlockKind.class);
 
   // mocking API
-  public final ClassNode MockController = ClassHelper.makeWithoutCaching(MockController.class);
   public final ClassNode InteractionBuilder = ClassHelper.makeWithoutCaching(InteractionBuilder.class);
-  public final FieldNode CompositeMockFactory_INSTANCE;
 
   // external types
   public final ClassNode Throwable = ClassHelper.makeWithoutCaching(Throwable.class);
-
-  public AstNodeCache() {
-    ClassNode factory = ClassHelper.makeWithoutCaching(CompositeMockFactory.class);
-    // since ClassNode.getField(String) does not trigger class node initialization, we call getFields() first
-    factory.getFields();
-    CompositeMockFactory_INSTANCE = factory.getField(CompositeMockFactory.INSTANCE_FIELD);
-  }
 }

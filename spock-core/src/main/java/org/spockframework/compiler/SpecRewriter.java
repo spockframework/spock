@@ -28,7 +28,7 @@ import org.objectweb.asm.Opcodes;
 
 import org.spockframework.compiler.model.*;
 import org.spockframework.mock.MockController;
-import org.spockframework.util.Identifiers;
+import org.spockframework.runtime.SpecificationContext;
 import org.spockframework.util.InternalIdentifiers;
 
 /**
@@ -47,13 +47,9 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
   private Method method;
   private Block block;
 
-  private VariableExpression thrownExceptionRef; // reference to field $spock_thrown; always accessed through getter
-  private VariableExpression mockControllerRef;  // reference to field $spock_mockController; always accessed through getter
-  private VariableExpression sharedInstanceRef;  // reference to field $spock_sharedInstance
-
   private boolean methodHasCondition;
   private boolean movedStatsBackToMethod;
-  private boolean thenBlockHasExceptionCondition; // reset once per chain of then-blocks
+  private boolean thenBlockChainHasExceptionCondition; // reset once per chain of then-blocks
 
   private int fieldInitializerCount = 0;
   private int sharedFieldInitializerCount = 0;
@@ -68,83 +64,11 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
   public void visitSpec(Spec spec) {
     this.spec = spec;
     specDepth = computeDepth(spec.getAst());
-    createThrownExceptionFieldAndRef();
-    createMockControllerFieldAndRef();
-    createSharedInstanceFieldAndRef();
   }
 
   private int computeDepth(ClassNode node) {
     if (node.equals(ClassHelper.OBJECT_TYPE) || node.equals(nodeCache.Specification)) return -1;
     return computeDepth(node.getSuperClass()) + 1;
-  }
-
-  public void visitSpecAgain(Spec spec) throws Exception {
-    addMockControllerFieldInitializer();
-  }
-
-  private void createThrownExceptionFieldAndRef() {
-    Variable var;
-
-    if (isDirectlyExtendingSpecification())
-      var = spec.getAst().addField(
-          "$spock_thrown",
-          Opcodes.ACC_PROTECTED | Opcodes.ACC_SYNTHETIC,
-          ClassHelper.DYNAMIC_TYPE,
-          null);
-    else
-      var = new DynamicVariable("$spock_thrown", false);
-
-    thrownExceptionRef = new VariableExpression(var);
-  }
-
-  private void createMockControllerFieldAndRef() {
-    Variable var;
-
-    if (isDirectlyExtendingSpecification())
-      var = spec.getAst().addField(
-          "$spock_mockController",
-          Opcodes.ACC_PROTECTED | Opcodes.ACC_SYNTHETIC,
-          ClassHelper.DYNAMIC_TYPE,
-          null);
-    else
-      var = new DynamicVariable("$spock_mockController", false);
-
-    mockControllerRef = new VariableExpression(var);
-  }
-
-  private void createSharedInstanceFieldAndRef() {
-    Variable var;
-
-    if (isDirectlyExtendingSpecification())
-      var = spec.getAst().addField(
-          InternalIdentifiers.SHARED_INSTANCE_NAME,
-          Opcodes.ACC_PUBLIC | Opcodes.ACC_SYNTHETIC, // public s.t. runner can easily set it
-          ClassHelper.DYNAMIC_TYPE,
-          null);
-      else
-        var = new DynamicVariable(InternalIdentifiers.SHARED_INSTANCE_NAME, false);
-
-    sharedInstanceRef = new VariableExpression(var);
-  }
-
-  private void addMockControllerFieldInitializer() {
-    if (!isDirectlyExtendingSpecification()) return;
-    
-    // mock controller needs to be initialized before all other fields
-    getInitializerMethod().getStatements().add(0,
-        new ExpressionStatement(
-            new BinaryExpression(
-                mockControllerRef,
-                Token.newSymbol(Types.ASSIGN, -1, -1),
-                new ConstructorCallExpression(
-                    nodeCache.MockController,
-                    new FieldExpression(nodeCache.CompositeMockFactory_INSTANCE)))));
-  }
-
-  private boolean isDirectlyExtendingSpecification() {
-    ClassNode superClass = spec.getAst().getSuperClass();
-    return superClass.equals(ClassHelper.OBJECT_TYPE)
-        || superClass.equals(nodeCache.Specification);
   }
 
   public void visitField(Field field) {
@@ -185,7 +109,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
         new ReturnStatement(
             new ExpressionStatement(
                 new AttributeExpression(
-                    sharedInstanceRef,
+                    getSharedInstance(),
                     // use internal name
                     new ConstantExpression(field.getAst().getName())))));
 
@@ -212,7 +136,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
         new ExpressionStatement(
             new BinaryExpression(
                 new AttributeExpression(
-                    sharedInstanceRef,
+                    getSharedInstance(),
                     // use internal name
                     new ConstantExpression(field.getAst().getName())),
                 Token.newSymbol(Types.ASSIGN, -1, -1),
@@ -365,13 +289,13 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
       return;
     }
 
-    new DeepStatementRewriter(this).visitBlock(block);
+    new DeepBlockRewriter(this).visit(block);
     WhereBlockRewriter.rewrite((WhereBlock) block, this);
   }
 
   public void visitMethodAgain(Method method) {
     this.block = null;
-    
+
     if (methodHasCondition)
       defineValueRecorder(method.getStatements());
 
@@ -386,112 +310,39 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
 
   public void visitAnyBlock(Block block) {
     this.block = block;
-    if (block instanceof ExpectBlock || block instanceof ThenBlock) return;
+    if (block instanceof ThenBlock) return;
 
-    DeepStatementRewriter deep = new DeepStatementRewriter(this);
-    deep.visitBlock(block);
+    DeepBlockRewriter deep = new DeepBlockRewriter(this);
+    deep.visit(block);
     methodHasCondition |= deep.isConditionFound();
   }
 
-  public void visitExpectBlock(ExpectBlock block) {
-    ListIterator<Statement> iter = block.getAst().listIterator();
-
-    while(iter.hasNext()) {
-      Statement stat = iter.next();
-
-      DeepStatementRewriter deep = new DeepStatementRewriter(this);
-      Statement newStat = deep.replace(stat);
-      methodHasCondition |= deep.isConditionFound();
-
-      if (stat instanceof AssertStatement)
-        iter.set(newStat);
-      else if (isExceptionCondition(newStat)) {
-        errorReporter.error(newStat, "Exception conditions are only allowed in 'then' blocks");
-      } else if (statHasInteraction(newStat, deep))
-        errorReporter.error(newStat, "Interactions are not allowed in 'expect' blocks. Put them before the 'expect' block or into a 'then' block.");
-      else if (isImplicitCondition(newStat)) {
-        checkIsValidCondition(newStat);
-        iter.set(rewriteImplicitCondition(newStat));
-        methodHasCondition = true;
-      }
-    }
-  }
-
   public void visitThenBlock(ThenBlock block) {
-    ListIterator<Statement> iter = block.getAst().listIterator();
-    List<Statement> interactions = new ArrayList<Statement>();
-    if (block.isFirstInChain()) thenBlockHasExceptionCondition = false;
+    if (block.isFirstInChain()) thenBlockChainHasExceptionCondition = false;
 
-    while(iter.hasNext()) {
-      Statement stat = iter.next();
-      DeepStatementRewriter deep = new DeepStatementRewriter(this);
-      Statement newStat = deep.replace(stat);
-      methodHasCondition |= deep.isConditionFound();
+    DeepBlockRewriter deep = new DeepBlockRewriter(this);
+    deep.visit(block);
+    methodHasCondition |= deep.isConditionFound();
 
-      if (stat instanceof AssertStatement)
-        iter.set(newStat);
-      else if (isExceptionCondition(newStat)) {
-        rewriteExceptionCondition(newStat);
-        if (!thenBlockHasExceptionCondition) {
-          rewriteWhenBlockForExceptionCondition(block.getPrevious(WhenBlock.class));
-          thenBlockHasExceptionCondition = true;
-        }
-      } else if (statHasInteraction(newStat, deep)) {
-        interactions.add(newStat);
-        iter.remove();
-      } else if (isImplicitCondition(newStat)) {
-        checkIsValidCondition(newStat);
-        iter.set(rewriteImplicitCondition(newStat));
-        methodHasCondition = true;
+    if (deep.isExceptionConditionFound()) {
+      if (thenBlockChainHasExceptionCondition) {
+        errorReporter.error(deep.getFoundExceptionCondition(), "A chain of 'then' blocks may only have a single exception condition");
       }
-    }
-    
-    insertInteractions(interactions, block);
-  }
-
-  private boolean isImplicitCondition(Statement stat) {
-    return stat instanceof ExpressionStatement
-        && !(((ExpressionStatement)stat).getExpression() instanceof DeclarationExpression);
-  }
-
-  private void checkIsValidCondition(Statement stat) {
-    BinaryExpression binExpr = AstUtil.getExpression(stat, BinaryExpression.class);
-    if (binExpr == null) return;
-
-    if (Types.ofType(binExpr.getOperation().getType(), Types.ASSIGNMENT_OPERATOR)) {
-      errorReporter.error(stat, "Expected a condition, but found an assignment. Did you intend to write '==' ?");
-    }
-  }
-
-  private Statement rewriteImplicitCondition(Statement stat) {
-    return ConditionRewriter.rewriteImplicitCondition((ExpressionStatement)stat, this);
-  }
-
-  private boolean isExceptionCondition(Statement stat) {
-    Expression expr = AstUtil.getExpression(stat, Expression.class);
-    return expr != null && AstUtil.isBuiltInMethodAssignmentOrInvocation(expr, Identifiers.THROWN, 0, 1);
-  }
-
-  private void rewriteExceptionCondition(Statement stat) {
-    if (thenBlockHasExceptionCondition) {
-      errorReporter.error(stat, "A 'then' block may only have one exception condition");
-      return;
+      rewriteWhenBlockForExceptionCondition(block.getPrevious(WhenBlock.class));
+      thenBlockChainHasExceptionCondition = true;
     }
 
-    Expression expr = AstUtil.getExpression(stat, Expression.class);
-    assert expr != null;
-    AstUtil.expandBuiltInMethodAssignmentOrInvocation(expr, thrownExceptionRef);
+    moveInteractions(deep.getThenBlockInteractionStats(), block);
   }
 
-  private boolean statHasInteraction(Statement stat, DeepStatementRewriter deep) {
-    if (deep.isInteractionFound()) return true;
-
-    Expression expr = AstUtil.getExpression(stat, Expression.class);
-    return expr != null && AstUtil.isBuiltInMethodInvocation(expr, Identifiers.INTERACTION, 1, 1);
-  }
-
-  private void insertInteractions(List<Statement> interactions, ThenBlock block) {
+  private void moveInteractions(List<Statement> interactions, ThenBlock block) {
     if (interactions.isEmpty()) return;
+
+    ListIterator<Statement> listIterator = block.getAst().listIterator();
+    while (listIterator.hasNext()) {
+      Statement next = listIterator.next();
+      if (interactions.contains(next)) listIterator.remove();
+    }
 
     List<Statement> statsBeforeWhenBlock = block.getPrevious(WhenBlock.class).getPrevious().getAst();
 
@@ -509,7 +360,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
   private Statement createMockControllerCall(String methodName) {
     return new ExpressionStatement(
         new MethodCallExpression(
-            mockControllerRef,
+            getMockInvocationMatcher(),
             methodName,
             ArgumentListExpression.EMPTY_ARGUMENTS));
   }
@@ -583,8 +434,24 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
     return var;
   }
 
-  public VariableExpression getMockControllerRef() {
-    return mockControllerRef;
+  public MethodCallExpression getSpecificationContext() {
+    return AstUtil.createDirectMethodCall(VariableExpression.THIS_EXPRESSION,
+        nodeCache.Specification_GetSpecificationContext, ArgumentListExpression.EMPTY_ARGUMENTS);
+  }
+
+  public MethodCallExpression getMockInvocationMatcher() {
+    return new MethodCallExpression(getSpecificationContext(),
+        SpecificationContext.GET_MOCK_INVOCATION_MATCHER, ArgumentListExpression.EMPTY_ARGUMENTS);
+  }
+
+  public MethodCallExpression setThrownException(Expression value) {
+    return new MethodCallExpression(getSpecificationContext(),
+        SpecificationContext.SET_THROWN_EXCEPTION, new ArgumentListExpression(value));
+  }
+
+  public MethodCallExpression getSharedInstance() {
+    return new MethodCallExpression(getSpecificationContext(),
+        SpecificationContext.GET_SHARED_INSTANCE, ArgumentListExpression.EMPTY_ARGUMENTS);
   }
 
   public AstNodeCache getAstNodeCache() {
@@ -634,10 +501,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
 
     blockStats.add(
         new ExpressionStatement(
-            new BinaryExpression(
-                thrownExceptionRef,
-                Token.newSymbol(Types.ASSIGN, -1, -1),
-                ConstantExpression.NULL)));
+            setThrownException(ConstantExpression.NULL)));
 
     // ensure variables remain in same scope
     // by moving variable defs to the very beginning of the method, they don't
@@ -657,10 +521,8 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
             new BlockStatement(
                 Arrays.<Statement> asList(
                     new ExpressionStatement(
-                    new BinaryExpression(
-                        thrownExceptionRef,
-                        Token.newSymbol(Types.ASSIGN, -1, -1),
-                        new VariableExpression("$spock_ex")))),
+                      setThrownException(
+                          new VariableExpression("$spock_ex")))),
                 new VariableScope())));
   }
 

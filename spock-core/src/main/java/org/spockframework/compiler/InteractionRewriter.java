@@ -22,7 +22,6 @@ import java.util.List;
 
 import org.codehaus.groovy.ast.expr.*;
 import org.codehaus.groovy.ast.stmt.ExpressionStatement;
-import org.codehaus.groovy.ast.stmt.Statement;
 import org.codehaus.groovy.syntax.Types;
 
 import org.spockframework.lang.Wildcard;
@@ -31,6 +30,7 @@ import org.spockframework.mock.MockController;
 import org.spockframework.util.Assert;
 import org.spockframework.util.Nullable;
 import org.spockframework.util.ObjectUtil;
+import org.spockframework.util.UnreachableCodeError;
 
 /**
  * Creates the AST representation of an InteractionBuilder build sequence.
@@ -39,20 +39,23 @@ import org.spockframework.util.ObjectUtil;
  */
 public class InteractionRewriter {
   private final IRewriteResources resources;
+  private final ClosureExpression activeWithOrMockClosure;
 
   // information about the interaction; filled in by parse()
   private ExpressionStatement stat;
   private Expression count;
   private Expression call;
   private boolean wildcardCall;
+  private boolean implicitTarget;
   private List<InteractionResult> results = new ArrayList<InteractionResult>();
 
   // holds the incrementally constructed expression, which looks roughly as follows:
   // "new InteractionBuilder(..).setCount(..).setTarget(..).setMethod(..).addArg(..).addResult(..).build()"
   private Expression builderExpr;
 
-  public InteractionRewriter(IRewriteResources resources) {
+  public InteractionRewriter(IRewriteResources resources, @Nullable ClosureExpression activeWithOrMockClosure) {
     this.resources = resources;
+    this.activeWithOrMockClosure = activeWithOrMockClosure;
   }
 
   /**
@@ -61,9 +64,10 @@ public class InteractionRewriter {
    * If the given statement is an invalid interaction definition, records a compile error
    * and returns null.
    */
-  public @Nullable Statement rewrite(ExpressionStatement stat) {
+  @Nullable
+  public ExpressionStatement rewrite(ExpressionStatement stat) {
     try {
-      if (!parse(stat)) return null;
+      if (!isInteraction(stat)) return null;
 
       createBuilder();
       setCount();
@@ -77,11 +81,15 @@ public class InteractionRewriter {
     }
   }
 
-  private boolean parse(ExpressionStatement stat) throws InvalidSpecCompileException {
+  private boolean isInteraction(ExpressionStatement stat) throws InvalidSpecCompileException {
     this.stat = stat;
     
     Expression expr = parseCount(parseResults(stat.getExpression()));
-    return (count != null || !results.isEmpty()) && parseCall(expr);
+    boolean interaction = (count != null || !results.isEmpty()) && parseCall(expr);
+    if (interaction && resources.getCurrentMethod().getAst().isStatic()) {
+      throw new InvalidSpecCompileException(stat, "Interactions cannot be declared in static scope");
+    }
+    return interaction;
   }
   
   private Expression parseResults(Expression expr) {
@@ -107,27 +115,20 @@ public class InteractionRewriter {
 
     if (AstUtil.isWildcardRef(expr)) {
       wildcardCall = true;
+      implicitTarget = activeWithOrMockClosure != null;
       return true;
     }
 
-    if (expr instanceof PropertyExpression) {
-      PropertyExpression propExpr = (PropertyExpression)expr;
+    if (expr instanceof PropertyExpression
+        || expr instanceof MethodCallExpression
+        || expr instanceof ConstructorCallExpression) {
+      if (AstUtil.isInvocationWithImplicitThis(expr)) {
+        if (activeWithOrMockClosure == null || !AstUtil.hasImplicitParameter(activeWithOrMockClosure)) {
+          throw new InvalidSpecCompileException(call, "Interaction is missing a target");
+        }
+        implicitTarget = true;
+      }
 
-      // isImplicitThis() and isStatic() always seem to return false for
-      // properties, but checking them can't hurt
-      if (propExpr.isImplicitThis()) return false;
-      if (propExpr.isStatic()) staticMembersNotSupported(expr);
-
-      if (propExpr.getObjectExpression() instanceof ClassExpression)
-        staticMembersNotSupported(expr);
-      return true;
-    }
-
-    if (expr instanceof MethodCallExpression) {
-      MethodCallExpression mcExpr = (MethodCallExpression)expr;
-      if (mcExpr.isImplicitThis()) return false;
-      if (mcExpr.getObjectExpression() instanceof ClassExpression)
-        staticMembersNotSupported(expr);
       return true;
     }
 
@@ -135,11 +136,6 @@ public class InteractionRewriter {
     if (expr instanceof StaticMethodCallExpression) return false;
 
     return false;
-  }
-
-  private void staticMembersNotSupported(Expression expr) throws InvalidSpecCompileException {
-    throw new InvalidSpecCompileException(expr,
-        "Stubbing/mocking of static methods and properties is not supported.");
   }
 
   private void createBuilder() {
@@ -173,12 +169,21 @@ public class InteractionRewriter {
   }
 
   private void setCall() {
-    if (wildcardCall)
+    if (wildcardCall) {
+      if (implicitTarget) {
+        call(InteractionBuilder.ADD_EQUAL_TARGET, AstUtil.getImplicitParameterRef(activeWithOrMockClosure));
+      }
+      // not same as leaving it out - doesn't match Object.toString() etc.
       call(InteractionBuilder.ADD_EQUAL_METHOD_NAME, new ConstantExpression(Wildcard.INSTANCE.toString()));
-    else if (call instanceof PropertyExpression)
+    } else if (call instanceof PropertyExpression) {
       setPropertyCall();
-    else
+    } else if (call instanceof MethodCallExpression) {
       setMethodCall();
+    } else if (call instanceof ConstructorCallExpression) {
+      setConstructorCall();
+    } else {
+      throw new UnreachableCodeError();
+    }
   }
 
   private void setPropertyCall() {
@@ -187,7 +192,7 @@ public class InteractionRewriter {
   }
 
   private void setPropertyName() {
-    Expression propertyNameExpr = ((PropertyExpression)call).getProperty();
+    Expression propertyNameExpr = ((PropertyExpression) call).getProperty();
     String constraint = selectNameConstraint(propertyNameExpr,
         InteractionBuilder.ADD_EQUAL_PROPERTY_NAME, InteractionBuilder.ADD_REGEX_PROPERTY_NAME);
     call(constraint, propertyNameExpr);
@@ -199,12 +204,22 @@ public class InteractionRewriter {
     addArgs();
   }
 
-  private void setTarget() {
-    call(InteractionBuilder.ADD_EQUAL_TARGET, AstUtil.getInvocationTarget(call));
+  private void setConstructorCall() {
+    setTarget();
+    call(InteractionBuilder.ADD_EQUAL_METHOD_NAME, new ConstantExpression("<init>"));
+    addArgs();
+  }
+
+  private void setTarget()  {
+    if (implicitTarget) {
+      call(InteractionBuilder.ADD_EQUAL_TARGET, AstUtil.getImplicitParameterRef(activeWithOrMockClosure));
+    } else {
+      call(InteractionBuilder.ADD_EQUAL_TARGET, AstUtil.getInvocationTarget(call));
+    }
   }
 
   private void setMethodName() {
-    Expression methodNameExpr = ((MethodCallExpression)call).getMethod();
+    Expression methodNameExpr = ((MethodCallExpression) call).getMethod();
     String constraint = selectNameConstraint(methodNameExpr,
         InteractionBuilder.ADD_EQUAL_METHOD_NAME, InteractionBuilder.ADD_REGEX_METHOD_NAME);
     call(constraint, methodNameExpr);
@@ -214,7 +229,7 @@ public class InteractionRewriter {
     if (!(nameExpr instanceof ConstantExpression)) // dynamically generated name
       return constraint1;
 
-    String method = (String)((ConstantExpression)nameExpr).getValue();
+    String method = (String)((ConstantExpression) nameExpr).getValue();
     // NOTE: we cannot tell from the AST if a method (or property) name is defined using
     // slashy string syntax ("/somePattern/"); hence, we consider any name
     // that isn't a valid Java identifier a pattern. While this isn't entirely
@@ -227,16 +242,16 @@ public class InteractionRewriter {
   private void addArgs() {
     if (call instanceof PropertyExpression) return;
 
-    Expression args = ((MethodCallExpression)call).getArguments();
+    Expression args = AstUtil.getArguments(call);
     if (args == ArgumentListExpression.EMPTY_ARGUMENTS) return; // fast lane
     
     call(InteractionBuilder.SET_ARG_LIST_KIND,
         new ConstantExpression(args instanceof ArgumentListExpression));
     
     if (args instanceof ArgumentListExpression)
-      addPositionalArgs((ArgumentListExpression)args);
+      addPositionalArgs((ArgumentListExpression) args);
     else if (args instanceof NamedArgumentListExpression)
-      addNamedArgs((NamedArgumentListExpression)args);
+      addNamedArgs((NamedArgumentListExpression) args);
     else Assert.that(false, "unknown kind of argument list: " + args);
   }
 
@@ -297,11 +312,11 @@ public class InteractionRewriter {
     call(InteractionBuilder.BUILD);
   }
 
-  private Statement register() {
-    Statement result =
+  private ExpressionStatement register() {
+    ExpressionStatement result =
         new ExpressionStatement(
             new MethodCallExpression(
-                resources.getMockControllerRef(),
+                resources.getMockInvocationMatcher(),
                 MockController.ADD_INTERACTION,
                 new ArgumentListExpression(builderExpr)));
 

@@ -16,6 +16,10 @@ package org.spockframework.util;
 
 import java.lang.annotation.*;
 
-@Target({ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER})
+/**
+ * Indicates that the annotated field, parameter, or return value of the
+ * annotated method is allowed to be null.
+ */
+@Target({ElementType.FIELD, ElementType.PARAMETER, ElementType.METHOD})
 @Retention(RetentionPolicy.SOURCE)
 public @interface Nullable {}

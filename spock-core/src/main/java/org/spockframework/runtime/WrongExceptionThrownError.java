@@ -16,11 +16,13 @@
 
 package org.spockframework.runtime;
 
+import org.spockframework.util.Nullable;
+
 public class WrongExceptionThrownError extends SpockAssertionError {
   private final Class<? extends Throwable> expected;
   private final Throwable actual;
 
-  public WrongExceptionThrownError(Class<? extends Throwable> expected, Throwable actual) {
+  public WrongExceptionThrownError(Class<? extends Throwable> expected, @Nullable Throwable actual) {
     super(actual);
     this.expected = expected;
     this.actual = actual;
@@ -36,7 +38,9 @@ public class WrongExceptionThrownError extends SpockAssertionError {
 
   @Override
   public String getMessage() {
-    return String.format("Expected exception %s, but %s", expected.getName(),
-        actual == null ? "no exception was thrown" : ("got " + actual.getClass().getName()));
+    if (actual == null) {
+      return String.format("Expected exception %s, but no exception was thrown", expected.getName());
+    }
+    return String.format("Expected exception %s, but got %s", expected.getName(), actual.getClass().getName());
   }
 }

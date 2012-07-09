@@ -23,9 +23,9 @@ public class WildcardMethodNameConstraint implements IInvocationConstraint {
   private WildcardMethodNameConstraint() {}
   
   public boolean isSatisfiedBy(IMockInvocation invocation) {
-    if (DefaultEqualsInteraction.INSTANCE.matches(invocation)) return false;
-    if (DefaultHashCodeInteraction.INSTANCE.matches(invocation)) return false;
-    if (DefaultToStringInteraction.INSTANCE.matches(invocation)) return false;
+    if (ObjectEqualsInteraction.INSTANCE.matches(invocation)) return false;
+    if (ObjectHashCodeInteraction.INSTANCE.matches(invocation)) return false;
+    if (ObjectToStringInteraction.INSTANCE.matches(invocation)) return false;
     return true; 
   }
 }

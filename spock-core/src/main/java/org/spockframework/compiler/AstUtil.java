@@ -21,7 +21,6 @@ import java.util.*;
 import org.codehaus.groovy.ast.*;
 import org.codehaus.groovy.ast.expr.*;
 import org.codehaus.groovy.ast.stmt.*;
-import org.codehaus.groovy.syntax.Types;
 import org.objectweb.asm.Opcodes;
 
 import org.spockframework.lang.Wildcard;
@@ -85,19 +84,36 @@ public abstract class AstUtil {
         blockStat.getStatements();
   }
 
-  public static boolean isMethodInvocation(Expression expr) {
-    return expr instanceof MethodCallExpression
-        || expr instanceof StaticMethodCallExpression;
+  public static boolean isInvocationWithImplicitThis(Expression invocation) {
+    if (invocation instanceof PropertyExpression) {
+      return ((PropertyExpression) invocation).isImplicitThis();
+    }
+    if (invocation instanceof MethodCallExpression) {
+      return ((MethodCallExpression) invocation).isImplicitThis();
+    }
+    return false;
+  }
+
+  public static boolean hasImplicitParameter(ClosureExpression expr) {
+    return expr.getParameters() != null && expr.getParameters().length == 0;
+  }
+
+  public static Expression getImplicitParameterRef(ClosureExpression expr) {
+    assert hasImplicitParameter(expr);
+
+    DynamicVariable var = new DynamicVariable("it", false);
+    return new VariableExpression(var);
   }
 
   public static Expression getInvocationTarget(Expression expr) {
     if (expr instanceof PropertyExpression)
-      return ((PropertyExpression)expr).getObjectExpression();
+      return ((PropertyExpression) expr).getObjectExpression();
     if (expr instanceof MethodCallExpression)
-      return ((MethodCallExpression)expr).getObjectExpression();
+      return ((MethodCallExpression) expr).getObjectExpression();
     if (expr instanceof StaticMethodCallExpression)
-      return new ClassExpression(((StaticMethodCallExpression)expr).getOwnerType());
-
+      return new ClassExpression(((StaticMethodCallExpression) expr).getOwnerType());
+    if (expr instanceof ConstructorCallExpression)
+      return new ClassExpression(((ConstructorCallExpression) expr).getType());
     return null;
   }
 
@@ -145,39 +161,34 @@ public abstract class AstUtil {
         && node.getColumnNumber() > 0 && node.getLastColumnNumber() > node.getColumnNumber();
   }
 
+  public static Expression getArguments(Expression invocation) {
+    if (invocation instanceof MethodCallExpression)
+      return ((MethodCallExpression) invocation).getArguments();
+    if (invocation instanceof StaticMethodCallExpression)
+      return ((StaticMethodCallExpression) invocation).getArguments();
+    if (invocation instanceof ConstructorCallExpression)
+      return ((ConstructorCallExpression) invocation).getArguments();
+    return null;
+  }
+
   // Note: The returned list may contain SpreadExpression's,
   // which can't be used outside an ArgumentListExpression.
   // To pass an argument list to the Groovy or Spock runtime,
   // use this method together with AstUtil.toArgumentArray().
-  public static List<Expression> getArguments(Expression expr) {
-    if (expr instanceof MethodCallExpression)
-      return getArguments((MethodCallExpression)expr);
-    else if (expr instanceof StaticMethodCallExpression)
-      return getArguments((StaticMethodCallExpression)expr);
-    else return null;
+  public static List<Expression> getArgumentList(Expression invocation) {
+    return asArgumentList(getArguments(invocation));
   }
-  
-  @SuppressWarnings("unchecked")
-  public static List<Expression> getArguments(MethodCallExpression expr) {
+
+  private static List<Expression> asArgumentList(Expression arguments) {
     // MethodCallExpression.getArguments() may return an ArgumentListExpression,
     // a TupleExpression that wraps a NamedArgumentListExpression,
     // or (at least in 1.6) a NamedArgumentListExpression
 
-    if (expr.getArguments() instanceof NamedArgumentListExpression)
+    if (arguments instanceof NamedArgumentListExpression)
       // return same result as for NamedArgumentListExpression wrapped in TupleExpression
-      return Collections.singletonList(expr.getArguments());
-    
-    return ((TupleExpression) expr.getArguments()).getExpressions();
-  }
+      return Collections.singletonList(arguments);
 
-  @SuppressWarnings("unchecked")
-  public static List<Expression> getArguments(StaticMethodCallExpression expr) {
-    // see comments in getArguments(MethodCallExpression)
-
-    if (expr.getArguments() instanceof NamedArgumentListExpression)
-      return Collections.singletonList(expr.getArguments());
-
-    return ((TupleExpression)expr.getArguments()).getExpressions();
+    return ((TupleExpression) arguments).getExpressions();
   }
 
   /**
@@ -213,80 +224,6 @@ public abstract class AstUtil {
         ));
   }
 
-  public static boolean isBuiltInMethodAssignmentOrInvocation(Expression expr, String methodName, int minArgs, int maxArgs) {
-    return expr instanceof BinaryExpression
-        && isBuiltInMethodAssignment((BinaryExpression) expr, methodName, minArgs, maxArgs)
-        || expr instanceof MethodCallExpression
-        && isBuiltInMethodInvocation((MethodCallExpression) expr, methodName, minArgs, maxArgs);
-  }
-
-  public static boolean isBuiltInMethodAssignment(BinaryExpression expr, String methodName, int minArgs, int maxArgs) {
-    return expr.getOperation().getType() == Types.ASSIGN
-        && isBuiltInMethodAssignmentOrInvocation(expr.getRightExpression(), methodName, minArgs, maxArgs);
-  }
-
-  public static boolean isBuiltInMethodInvocation(Expression expr, String methodName, int minArgs, int maxArgs) {
-    return expr instanceof MethodCallExpression
-        && isBuiltInMethodInvocation((MethodCallExpression) expr, methodName, minArgs, maxArgs);
-  }
-
-  // call of the form "this.<methodName>(...)" or "<methodName>(...)"
-  public static boolean isBuiltInMethodInvocation(MethodCallExpression expr, String methodName, int minArgs, int maxArgs) {
-    return
-        (isThisExpression(expr.getObjectExpression()) || isSuperExpression(expr.getObjectExpression()))
-        && methodName.equals(expr.getMethodAsString()) // getMethodAsString() may return null
-        && getArguments(expr).size() >= minArgs
-        && getArguments(expr).size() <= maxArgs;
-  }
-
-  public static void expandBuiltInMethodAssignmentOrInvocation(Expression assignmentOrInvocation, Expression... additionalArgs) {
-    if (assignmentOrInvocation instanceof BinaryExpression)
-      expandBuiltInMethodAssignment((BinaryExpression) assignmentOrInvocation, additionalArgs);
-    else
-      expandBuiltInMethodInvocation(assignmentOrInvocation, additionalArgs);
-  }
-
-  /*
-   * Expands an assignment of the form "(def) x = builtinMethodCall(...)", where x is a field or local variable.
-   * Assumes isBuiltinMemberAssignment(...).
-   */
-  public static void expandBuiltInMethodAssignment(BinaryExpression assignment, Expression... additionalArgs) {
-    MethodCallExpression builtinMemberCall = (MethodCallExpression) assignment.getRightExpression();
-    Expression name = getVariableName(assignment);
-    Expression type = getVariableType(assignment);
-    doExpandSpecMethodInvocation(builtinMemberCall, name, type, additionalArgs);
-  }
-
-  public static void expandBuiltInMethodInvocation(Expression invocation, Expression... additionalArgs) {
-    doExpandSpecMethodInvocation((MethodCallExpression) invocation, ConstantExpression.NULL, ConstantExpression.NULL, additionalArgs);
-  }
-
-  private static Expression getVariableName(BinaryExpression assignment) {
-    Expression left = assignment.getLeftExpression();
-    if (left instanceof Variable) return new ConstantExpression(((Variable) left).getName());
-    if (left instanceof FieldExpression) return new ConstantExpression(((FieldExpression) left).getFieldName());
-    return ConstantExpression.NULL;
-  }
-
-  private static Expression getVariableType(BinaryExpression assignment) {
-    ClassNode type = assignment.getLeftExpression().getType();
-    return type == null || type == ClassHelper.DYNAMIC_TYPE ?
-        ConstantExpression.NULL : new ClassExpression(type);
-  }
-
-  private static void doExpandSpecMethodInvocation(MethodCallExpression invocation, Expression inferredName,
-      Expression inferredType, Expression... additionalArgs) {
-    List<Expression> args = new ArrayList<Expression>();
-    args.add(inferredName);
-    args.add(inferredType);
-    args.addAll(Arrays.asList(additionalArgs));
-    args.addAll(getArguments(invocation));
-
-    ArgumentListExpression argsExpr = new ArgumentListExpression(args);
-    copySourcePosition(invocation.getArguments(), argsExpr);
-    invocation.setArguments(argsExpr);
-  }
-
   public static void copySourcePosition(ASTNode from, ASTNode to) {
     to.setLineNumber(from.getLineNumber());
     to.setLastLineNumber(from.getLastLineNumber());
@@ -304,12 +241,16 @@ public abstract class AstUtil {
 
   public static boolean isThisExpression(Expression expr) {
     return expr instanceof VariableExpression
-        && ((VariableExpression)expr).isThisExpression();
+        && ((VariableExpression) expr).isThisExpression();
   }
 
   public static boolean isSuperExpression(Expression expr) {
     return expr instanceof VariableExpression
-        && ((VariableExpression)expr).isSuperExpression();
+        && ((VariableExpression) expr).isSuperExpression();
+  }
+
+  public static boolean isThisOrSuperExpression(Expression expr) {
+    return isThisExpression(expr) || isSuperExpression(expr);
   }
 
   public static void setVisibility(MethodNode method, int visibility) {
@@ -343,5 +284,17 @@ public abstract class AstUtil {
     // as of 1.8.6, this is the best possible implementation
     clazz.getMethods().remove(method);
     clazz.getDeclaredMethods(method.getName()).remove(method);
+  }
+
+  public static Expression getVariableName(BinaryExpression assignment) {
+    Expression left = assignment.getLeftExpression();
+    if (left instanceof Variable) return new ConstantExpression(((Variable) left).getName());
+    if (left instanceof FieldExpression) return new ConstantExpression(((FieldExpression) left).getFieldName());
+    return ConstantExpression.NULL;
+  }
+
+  public static Expression getVariableType(BinaryExpression assignment) {
+    ClassNode type = assignment.getLeftExpression().getType();
+    return type == null || type == ClassHelper.DYNAMIC_TYPE ? ConstantExpression.NULL : new ClassExpression(type);
   }
 }

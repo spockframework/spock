@@ -24,6 +24,7 @@ package org.spockframework.compiler.model;
 public class ThenBlock extends Block {
   public ThenBlock(Method parent) {
     super(parent);
+    setName("then");
   }
 
   @Override

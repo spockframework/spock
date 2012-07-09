@@ -19,6 +19,7 @@ package org.spockframework.compiler.model;
 public class WhereBlock extends Block {
   public WhereBlock(Method parent) {
     super(parent);
+    setName("where");
   }
 
   @Override

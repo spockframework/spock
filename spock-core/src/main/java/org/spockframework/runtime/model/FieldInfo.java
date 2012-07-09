@@ -20,7 +20,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 
-import org.spockframework.util.GroovyRuntimeUtil;
+import org.spockframework.runtime.GroovyRuntimeUtil;
 import spock.lang.Shared;
 
 /**

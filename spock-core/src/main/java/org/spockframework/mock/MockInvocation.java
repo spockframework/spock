@@ -21,6 +21,7 @@ import java.util.*;
 import org.codehaus.groovy.runtime.DefaultGroovyMethods;
 
 import org.spockframework.util.TextUtil;
+import spock.mock.IMockInvocationResponder;
 
 /**
  *
@@ -30,11 +31,14 @@ public class MockInvocation implements IMockInvocation {
   private final IMockObject mockObject;
   private final IMockMethod method;
   private final List<Object> arguments;
+  private final IMockInvocationResponder realMethodInvoker;
 
-  public MockInvocation(IMockObject mockObject, IMockMethod method, List<Object> arguments) {
+  public MockInvocation(IMockObject mockObject, IMockMethod method, List<Object> arguments,
+      IMockInvocationResponder realMethodInvoker) {
     this.mockObject = mockObject;
     this.method = method;
     this.arguments = arguments;
+    this.realMethodInvoker = realMethodInvoker;
   }
 
   public IMockObject getMockObject() {
@@ -47,6 +51,19 @@ public class MockInvocation implements IMockInvocation {
 
   public List<Object> getArguments() {
     return arguments;
+  }
+
+  public Object callRealMethod() {
+    return realMethodInvoker.respond(this);
+  }
+
+  public Object callRealMethodWith(final Object... arguments) {
+      return realMethodInvoker.respond(new DelegatingMockInvocation(this) {
+        @Override
+        public List<Object> getArguments() {
+          return Arrays.asList(arguments);
+        }
+      });
   }
 
   @Override

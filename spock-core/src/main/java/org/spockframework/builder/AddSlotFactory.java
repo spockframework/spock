@@ -17,7 +17,7 @@ package org.spockframework.builder;
 import java.lang.reflect.Type;
 
 import groovy.lang.MetaMethod;
-import org.spockframework.util.GroovyRuntimeUtil;
+import org.spockframework.runtime.GroovyRuntimeUtil;
 
 public class AddSlotFactory implements ISlotFactory {
   public ISlot create(Object owner, Type ownerType, String name) {

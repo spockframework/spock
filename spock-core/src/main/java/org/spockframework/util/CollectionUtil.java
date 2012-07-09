@@ -80,6 +80,27 @@ public abstract class CollectionUtil {
     return new HashSet<T>(Arrays.asList(values));
   }
 
+  public static <K, V> Map<K, V> mapOf(K key, V value) {
+    Map<K, V> map = new HashMap<K, V>();
+    map.put(key, value);
+    return map;
+  }
+
+  public static <K, V> Map<K, V> mapOf(K key, V value, K key2, V value2) {
+    Map<K, V> map = new HashMap<K, V>();
+    map.put(key, value);
+    map.put(key2, value2);
+    return map;
+  }
+
+  public static <K, V> Map<K, V> mapOf(K key, V value, K key2, V value2, K key3, V value3) {
+    Map<K, V> map = new HashMap<K, V>();
+    map.put(key, value);
+    map.put(key2, value2);
+    map.put(key3, value3);
+    return map;
+  }
+
   public static <T> Iterable<T> concat(Iterable<? extends T>... iterables) {
     return concat(Arrays.asList(iterables));
   }

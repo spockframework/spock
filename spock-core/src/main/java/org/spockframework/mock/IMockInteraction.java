@@ -16,6 +16,8 @@
 
 package org.spockframework.mock;
 
+import org.spockframework.util.Nullable;
+
 /**
  * An anticipated interaction between the SUT and one or more mock objects.
  *
@@ -30,7 +32,10 @@ public interface IMockInteraction {
 
   boolean matches(IMockInvocation invocation);
 
+  @Nullable
   Object accept(IMockInvocation invocation);
+
+  boolean hasResults();
 
   boolean isSatisfied();
 

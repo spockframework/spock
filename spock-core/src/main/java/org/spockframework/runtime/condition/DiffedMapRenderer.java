@@ -17,7 +17,7 @@ package org.spockframework.runtime.condition;
 import java.util.Map;
 import java.util.Set;
 
-import org.spockframework.util.GroovyRuntimeUtil;
+import org.spockframework.runtime.GroovyRuntimeUtil;
 
 public class DiffedMapRenderer implements IObjectRenderer<Map> {
   private final boolean sort;

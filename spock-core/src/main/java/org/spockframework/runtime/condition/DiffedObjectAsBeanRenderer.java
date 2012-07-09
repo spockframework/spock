@@ -16,7 +16,7 @@ package org.spockframework.runtime.condition;
 
 import java.lang.reflect.Field;
 
-import org.spockframework.util.GroovyRuntimeUtil;
+import org.spockframework.runtime.GroovyRuntimeUtil;
 
 public class DiffedObjectAsBeanRenderer implements IObjectRenderer<Object> {
   public String render(Object object) {

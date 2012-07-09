@@ -16,38 +16,37 @@
 
 package org.spockframework.mock;
 
-import java.util.*;
+import org.spockframework.util.UnreachableCodeError;
 
-import org.spockframework.lang.GroovyMockOptions;
-import org.spockframework.util.InternalSpockError;
+import java.util.*;
 
 /**
  * @author Peter Niederwieser
  */
-public class MockController implements IInvocationDispatcher {
-  private final IMockFactory factory;
+public class MockController implements IMockController {
   private final LinkedList<IInteractionScope> scopes = new LinkedList<IInteractionScope>();
   private final List<InteractionNotSatisfiedError> errors = new ArrayList<InteractionNotSatisfiedError>();
 
-  public MockController(IMockFactory factory) {
-    this.factory = factory;
-    scopes.addFirst(DefaultInteractionScope.INSTANCE);
+  public MockController() {
+    scopes.addFirst(DefaultInteractions.INSTANCE);
     scopes.addFirst(new InteractionScope());
   }
 
-  public synchronized Object dispatch(IMockInvocation invocation) {
+  public synchronized Object handle(IMockInvocation invocation) {
     for (IInteractionScope scope : scopes) {
       IMockInteraction interaction = scope.match(invocation);
       if (interaction != null)
         try {
-          return interaction.accept(invocation);
+          Object result = interaction.accept(invocation);
+          if (interaction.hasResults()) return result;
+          return invocation.getMockObject().getDefaultResponse().respond(invocation);
         } catch (InteractionNotSatisfiedError e) {
           errors.add(e);
           throw e;
         }
     }
 
-    throw new InternalSpockError("No interaction matched invocation: %s").withArgs(invocation);
+    throw new UnreachableCodeError("invocation was not matched by DefaultInteractions");
   }
 
   public static final String ADD_INTERACTION = "addInteraction";
@@ -75,10 +74,6 @@ public class MockController implements IInvocationDispatcher {
     throwAnyPreviousError();
     IInteractionScope scope = scopes.removeFirst();
     scope.verifyInteractions();
-  }
-
-  public synchronized Object create(MockSpec spec) {
-    return factory.create(spec, this);
   }
 
   private void throwAnyPreviousError() {

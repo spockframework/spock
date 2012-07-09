@@ -17,10 +17,9 @@
 package org.spockframework.mock;
 
 /**
- *
  * @author Peter Niederwieser
  */
-// IDEA: check that target actually is a mock
+// IDEA: could delegate target matching to IMockObject
 public class IdenticalTargetConstraint implements IInvocationConstraint {
   private final Object target;
 
@@ -29,6 +28,10 @@ public class IdenticalTargetConstraint implements IInvocationConstraint {
   }
 
   public boolean isSatisfiedBy(IMockInvocation invocation) {
-    return invocation.getMockObject().getInstance() == target;
+    IMockObject mockObject = invocation.getMockObject();
+    if (mockObject.isGlobal()) {
+      return mockObject.getInstance().getClass() == target.getClass();
+    }
+    return mockObject.getInstance() == target;
   }
 }

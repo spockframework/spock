@@ -126,7 +126,7 @@ class WildcardUsages extends Specification {
     3 * overloaded._
   }
 
-  def "usage in interaction doesn't interfer with usage in where-block"() {
+  def "usage in interaction doesn't interfere with usage in where-block"() {
     def list = Mock(type)
 
     when:

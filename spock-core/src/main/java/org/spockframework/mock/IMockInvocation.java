@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 the original author or authors.
+ * Copyright 2012 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 
 package org.spockframework.mock;
 
-import java.lang.reflect.Method;
 import java.util.List;
 
 /**
@@ -41,4 +40,8 @@ public interface IMockInvocation {
    * The arguments for the invocation.
    */
   List<Object> getArguments();
+
+  Object callRealMethod();
+
+  Object callRealMethodWith(Object... arguments);
 }

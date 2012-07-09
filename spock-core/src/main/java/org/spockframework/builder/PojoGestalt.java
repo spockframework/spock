@@ -21,7 +21,7 @@ import org.spockframework.gentyref.GenericTypeReflector;
 import org.spockframework.util.CollectionUtil;
 
 import groovy.lang.Closure;
-import org.spockframework.util.GroovyRuntimeUtil;
+import org.spockframework.runtime.GroovyRuntimeUtil;
 
 public class PojoGestalt implements IGestalt {
   private final Object pojo;

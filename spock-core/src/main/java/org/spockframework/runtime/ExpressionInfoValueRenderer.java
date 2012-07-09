@@ -18,7 +18,7 @@ import groovy.lang.GString;
 import org.spockframework.runtime.condition.EditDistance;
 import org.spockframework.runtime.condition.EditPathRenderer;
 import org.spockframework.runtime.model.ExpressionInfo;
-import org.spockframework.util.GroovyRuntimeUtil;
+import org.spockframework.runtime.GroovyRuntimeUtil;
 import org.spockframework.util.ObjectUtil;
 import org.spockframework.util.Nullable;
 

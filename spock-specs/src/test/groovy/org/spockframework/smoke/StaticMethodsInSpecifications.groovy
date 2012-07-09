@@ -17,8 +17,8 @@
 package org.spockframework.smoke
 
 import org.junit.ComparisonFailure
-
 import org.spockframework.EmbeddedSpecification
+import org.spockframework.compiler.InvalidSpecCompileException
 
 import spock.lang.Issue
 
@@ -42,7 +42,7 @@ static void bar() {
   @Issue("http://issues.spockframework.org/detail?id=35")
   def "may not contain interactions"() {
     when:
-    runner.runSpecBody """
+    compiler.compileSpecBody """
 def foo() {
   List list = Mock()
 
@@ -55,19 +55,20 @@ def foo() {
   }
 }
 
-static bar(list) {
-  1 * list.add()
+ static elementAdded(list) {
+  1 * list.add(_)
 }
     """
 
     then:
-    thrown(VerifyError)
+    InvalidSpecCompileException e = thrown()
+    e.message.contains("Interactions cannot be declared in static scope")
   }
 
   @Issue("http://issues.spockframework.org/detail?id=35")
   def "may not create mocks"() {
     when:
-    runner.runSpecBody """
+    compiler.compileSpecBody """
 def foo() {
   setup:
   bar()
@@ -79,6 +80,7 @@ static bar() {
     """
 
     then:
-    thrown(VerifyError)
+    InvalidSpecCompileException e = thrown()
+    e.message.contains("Mocks cannot be created in static scope")
   }
 }

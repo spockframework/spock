@@ -16,15 +16,25 @@ package org.spockframework.mock;
 
 import org.spockframework.util.Nullable;
 
+import spock.mock.IMockInvocationResponder;
+
 public class MockObject implements IMockObject {
+  @Nullable
   private final String name;
   private final Class<?> type;
   private final Object instance;
+  private final boolean verified;
+  private final boolean global;
+  private final IMockInvocationResponder defaultResponse;
 
-  public MockObject(String name, Class<?> type, Object instance) {
+  public MockObject(@Nullable String name, Class<?> type, Object instance,
+      boolean verified, boolean global, IMockInvocationResponder defaultResponse) {
     this.name = name;
     this.type = type;
     this.instance = instance;
+    this.verified = verified;
+    this.global = global;
+    this.defaultResponse = defaultResponse;
   }
 
   public String getName() {
@@ -38,5 +48,17 @@ public class MockObject implements IMockObject {
 
   public Object getInstance() {
     return instance;
+  }
+
+  public boolean isVerified() {
+    return verified;
+  }
+
+  public boolean isGlobal() {
+    return global;
+  }
+
+  public IMockInvocationResponder getDefaultResponse() {
+    return defaultResponse;
   }
 }

@@ -55,7 +55,8 @@ public abstract class ReflectionUtil {
    * class/interface or one of its super classes/interfaces. If multiple such
    * methods exists, it is undefined which one is returned.
    */
-  public static @Nullable Method getMethodByName(Class<?> clazz, String name) {
+  @Nullable
+  public static Method getMethodByName(Class<?> clazz, String name) {
     for (Method method : clazz.getMethods())
       if (method.getName().equals(name))
         return method;
@@ -63,7 +64,8 @@ public abstract class ReflectionUtil {
     return null;
   }
 
-  public static @Nullable Method getDeclaredMethodByName(Class<?> clazz, String name) {
+  @Nullable
+  public static Method getDeclaredMethodByName(Class<?> clazz, String name) {
     for (Method method : clazz.getDeclaredMethods())
       if (method.getName().equals(name))
         return method;
@@ -71,7 +73,8 @@ public abstract class ReflectionUtil {
     return null;
   }
 
-  public static @Nullable Method getMethodBySignature(Class<?> clazz, String name, Class<?>... parameterTypes) {
+  @Nullable
+  public static Method getMethodBySignature(Class<?> clazz, String name, Class<?>... parameterTypes) {
     try {
       return clazz.getMethod(name, parameterTypes);
     } catch (NoSuchMethodException e) {
@@ -79,7 +82,8 @@ public abstract class ReflectionUtil {
     }
   }
 
-  public static @Nullable Method getDeclaredMethodBySignature(Class<?> clazz, String name, Class<?>... parameterTypes) {
+  @Nullable
+  public static Method getDeclaredMethodBySignature(Class<?> clazz, String name, Class<?>... parameterTypes) {
     try {
       return clazz.getDeclaredMethod(name, parameterTypes);
     } catch (NoSuchMethodException e) {
@@ -96,16 +100,6 @@ public abstract class ReflectionUtil {
     if (!dir.isDirectory()) return null; // class file might be contained in Jar
     File clazzFile = new File(dir, clazz.getName().replace('.', File.separatorChar) + ".class");
     return clazzFile.isFile() ? clazzFile : null;
-  }
-
-  /**
-   * Returns the contents of the file in which the given class is declared,
-   * or null if the file cannot be found;
-   */
-  public static String getSourceCode(String packageName, String filename) throws IOException {
-    String resourceName = packageName.replace('.', '/') + "/" + filename;
-    InputStream stream = ReflectionUtil.class.getClassLoader().getResourceAsStream(resourceName);
-    return stream == null ? null : IoUtil.getText(stream);
   }
 
   public static Object getDefaultValue(Class<?> type) {

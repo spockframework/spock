@@ -23,11 +23,15 @@ package org.spockframework.mock;
  */
 // IDEA: filter stack trace so that the top entry is the point of mock declaration
 public class CannotCreateMockException extends RuntimeException {
-  public CannotCreateMockException(MockSpec mockSpec, String msg) {
-    super(String.format("Cannot create mock for '%s'  because %s", mockSpec.getType().getName(), msg));
+  public CannotCreateMockException(Class<?> mockType, String message) {
+    this(mockType, message, null);
   }
 
-  public CannotCreateMockException(MockSpec mockSpec, Throwable cause) {
-    super(String.format("Cannot create mock for '%s' .", mockSpec.getType().getName()), cause);
+  public CannotCreateMockException(Class<?> mockType, Throwable cause) {
+    this(mockType, "", cause);
+  }
+
+  public CannotCreateMockException(Class<?> mockType, String message, Throwable cause) {
+    super(String.format("Cannot create mock for %s%s", mockType, message), cause);
   }
 }

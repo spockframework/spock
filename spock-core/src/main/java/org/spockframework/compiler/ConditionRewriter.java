@@ -518,7 +518,7 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> {
     List<Expression> args = new ArrayList<Expression>();
     args.add(rewritten.getObjectExpression());
     args.add(rewritten.getMethod());
-    args.add(AstUtil.toArgumentArray(AstUtil.getArguments(rewritten), resources));
+    args.add(AstUtil.toArgumentArray(AstUtil.getArgumentList(rewritten), resources));
     // rewriting has produced N/A's that haven't been realized yet, so do that now
     args.add(realizeNas(new ConstantExpression(rewritten.isSafe())));
     args.add(new ConstantExpression(explicit));
@@ -534,7 +534,7 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> {
     List<Expression> args = new ArrayList<Expression>();
     args.add(new ClassExpression(rewritten.getOwnerType()));
     args.add(new ConstantExpression(rewritten.getMethod()));
-    args.add(AstUtil.toArgumentArray(AstUtil.getArguments(rewritten), resources));
+    args.add(AstUtil.toArgumentArray(AstUtil.getArgumentList(rewritten), resources));
     // rewriting has produced N/A's that haven't been realized yet, so do that now
     args.add(realizeNas(ConstantExpression.FALSE));
     args.add(new ConstantExpression(explicit));

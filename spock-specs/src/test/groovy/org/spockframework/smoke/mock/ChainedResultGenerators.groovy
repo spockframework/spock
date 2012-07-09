@@ -63,16 +63,16 @@ class ChainedResultGenerators extends Specification {
   def "chaining code results"() {
     def count = 0
     queue.poll() >> { throw new UnsupportedOperationException() } >> { throw new IllegalArgumentException() } >> { count++ }
-    
+
     when:
     queue.poll()
-    
+
     then:
     thrown(UnsupportedOperationException)
-    
+
     when:
     queue.poll()
-    
+
     then:
     thrown(IllegalArgumentException)
 
@@ -80,7 +80,7 @@ class ChainedResultGenerators extends Specification {
     queue.poll() == 0
     queue.poll() == 1
   }
-  
+
   def "chaining different results"() {
     queue.poll() >> 1 >> _ >> { throw new UnsupportedOperationException() } >> [2, 3] >>> [4, 5]
 

@@ -33,14 +33,14 @@ public class ResultGeneratorChain implements IResultGenerator {
     return current == null;
   }
 
-  public boolean isExhausted() {
-    throw new InternalSpockError("isExhausted() isn't implemented for ResultGeneratorChain");
+  public boolean isAtEndOfCycle() {
+    throw new InternalSpockError("isAtEndOfCycle() isn't implemented for ResultGeneratorChain");
   }
 
   public Object generate(IMockInvocation invocation) {
     if (isEmpty()) throw new InternalSpockError("ResultGeneratorChain should never be empty");
     
-    while (current.isExhausted() && !remaining.isEmpty()) {
+    while (current.isAtEndOfCycle() && !remaining.isEmpty()) {
       current = remaining.removeFirst();
     }
     return current.generate(invocation);

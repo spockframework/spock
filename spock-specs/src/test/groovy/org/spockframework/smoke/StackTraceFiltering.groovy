@@ -249,7 +249,7 @@ thrown(RuntimeException)
     WrongExceptionThrownError e = thrown()
 
     stackTraceLooksLike e, """
-spock.lang.Specification|thrown|-
+spock.lang.SpecInternals|thrownImpl|-
 apackage.ASpec|a feature|5
     """
     

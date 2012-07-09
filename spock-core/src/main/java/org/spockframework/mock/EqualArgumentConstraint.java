@@ -17,7 +17,7 @@
 package org.spockframework.mock;
 
 import org.spockframework.runtime.HamcrestFacade;
-import org.spockframework.util.GroovyRuntimeUtil;
+import org.spockframework.runtime.GroovyRuntimeUtil;
 
 /**
  *

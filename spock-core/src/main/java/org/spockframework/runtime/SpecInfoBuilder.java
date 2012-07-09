@@ -55,7 +55,6 @@ public class SpecInfoBuilder {
     buildSuperSpec();
     buildSpec();
     buildFields();
-    buildSharedInstanceField();
     buildFeatures();
     buildInitializerMethods();
     buildFixtureMethods();
@@ -101,23 +100,6 @@ public class SpecInfoBuilder {
         return f1.getOrdinal() - f2.getOrdinal();
       }
     });
-  }
-
-  private void buildSharedInstanceField() {
-    Field field = getSharedInstanceField();
-    FieldInfo fieldInfo = new FieldInfo();
-    fieldInfo.setParent(spec);
-    fieldInfo.setName(field.getName());
-    fieldInfo.setReflection(field);
-    spec.setSharedInstanceField(fieldInfo);
-  }
-
-  private Field getSharedInstanceField() {
-    try {
-      return clazz.getField(InternalIdentifiers.SHARED_INSTANCE_NAME);
-    } catch (NoSuchFieldException e) {
-      throw new InternalSpockError("cannot find shared instance field");
-    }
   }
 
   private void buildFeatures() {

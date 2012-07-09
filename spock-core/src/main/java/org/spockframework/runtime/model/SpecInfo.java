@@ -37,7 +37,6 @@ public class SpecInfo extends NodeInfo<NodeInfo, Class<?>> implements IMethodNam
   private SpecInfo subSpec;
   private List<SpecInfo> specsTopToBottom;
   private List<SpecInfo> specsBottomToTop;
-  private FieldInfo sharedInstanceField;
 
   private MethodInfo initializerMethod;
   private MethodInfo sharedInitializerMethod;
@@ -121,14 +120,6 @@ public class SpecInfo extends NodeInfo<NodeInfo, Class<?>> implements IMethodNam
     }
     
     return specsBottomToTop;
-  }
-
-  public FieldInfo getSharedInstanceField() {
-    return sharedInstanceField;
-  }
-
-  public void setSharedInstanceField(FieldInfo sharedInstanceField) {
-    this.sharedInstanceField = sharedInstanceField;
   }
 
   public MethodInfo getInitializerMethod() {

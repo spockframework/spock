@@ -16,9 +16,12 @@
 
 package org.spockframework.mock;
 
-import org.spockframework.util.GroovyRuntimeUtil;
+import groovy.lang.GroovyObject;
+import groovy.lang.MetaClass;
+import org.spockframework.runtime.GroovyRuntimeUtil;
 
 import groovy.lang.Closure;
+import org.spockframework.util.ObjectUtil;
 
 /**
  *
@@ -26,21 +29,29 @@ import groovy.lang.Closure;
  */
 public class CodeResultGenerator extends SingleResultGenerator {
   private final Closure code;
-  private final boolean provideExtendedInfo;
 
   public CodeResultGenerator(Closure code) {
     this.code = code;
-    Class<?>[] paramTypes = code.getParameterTypes();
-    provideExtendedInfo = paramTypes.length == 1 && paramTypes[0] == IMockInvocation.class;
   }
 
   public Object generateSingle(IMockInvocation invocation) {
-    Object result = GroovyRuntimeUtil.invokeClosure(code, provideExtendedInfo ? invocation : invocation.getArguments());
+    Object result = invokeClosure(invocation);
     Class<?> returnType = invocation.getMethod().getReturnType();
     
     // don't attempt cast for void methods (closure could be an action that accidentally returns a value)
     if (returnType == void.class || returnType == Void.class) return null;
 
     return GroovyRuntimeUtil.coerce(result, invocation.getMethod().getReturnType());
+  }
+
+  private Object invokeClosure(IMockInvocation invocation) {
+    Class<?>[] paramTypes = code.getParameterTypes();
+    if (paramTypes.length == 1 && paramTypes[0] == IMockInvocation.class) {
+      return GroovyRuntimeUtil.invokeClosure(code, invocation);
+    }
+
+    code.setDelegate(invocation);
+    code.setResolveStrategy(Closure.DELEGATE_FIRST);
+    return GroovyRuntimeUtil.invokeClosure(code, invocation.getArguments());
   }
 }

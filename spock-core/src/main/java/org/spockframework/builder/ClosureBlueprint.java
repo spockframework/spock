@@ -16,7 +16,7 @@ package org.spockframework.builder;
 
 import groovy.lang.Closure;
 
-import org.spockframework.util.GroovyRuntimeUtil;
+import org.spockframework.runtime.GroovyRuntimeUtil;
 
 public class ClosureBlueprint implements IBlueprint {
   private final Closure closure;

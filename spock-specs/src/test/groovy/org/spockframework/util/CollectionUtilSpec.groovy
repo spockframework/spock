@@ -63,7 +63,14 @@ class CollectionUtilSpec extends Specification {
     toList(iterable) == [1, 2, 3, 4]
   }
 
-  def toList(iterable) {
+  def "create map literals"() {
+    expect:
+    CollectionUtil.mapOf("key", "value") == [key: "value"]
+    CollectionUtil.mapOf("key", "value", "key2", "value2") == [key: "value", key2: "value2"]
+    CollectionUtil.mapOf("key", "value", "key2", "value2", [], 42) == [key: "value", key2: "value2", []: 42]
+  }
+
+  private toList(iterable) {
     iterable.collect { it }
   }
 }

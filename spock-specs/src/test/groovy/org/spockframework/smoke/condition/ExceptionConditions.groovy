@@ -201,4 +201,40 @@ then: thrown(Exception)
     then:
     thrown(InteractionNotSatisfiedError)
   }
+
+  IOException ioException
+
+  @FailsWith(WrongExceptionThrownError)
+  def "can use field assignment rather than declaration (not encouraged)"() {
+    when:
+    throw new RuntimeException()
+
+    then:
+    ioException = thrown()
+  }
+
+  @FailsWith(WrongExceptionThrownError)
+  def "can use variable assignment rather than declaration (not encouraged)"() {
+    IOException ioException
+
+    when:
+    throw new RuntimeException()
+
+    then:
+    ioException = thrown()
+  }
+
+  def "can reuse exception variable declaration (not encouraged)"() {
+    when:
+    throw new RuntimeException()
+
+    then:
+    Exception e = thrown()
+
+    when:
+    throw new IOException()
+
+    then:
+    e = thrown()
+  }
 }

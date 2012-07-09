@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
 import org.spockframework.runtime.model.FeatureInfo;
 import org.spockframework.runtime.model.IterationInfo;
 import org.spockframework.runtime.model.NameProvider;
-import org.spockframework.util.GroovyRuntimeUtil;
+import org.spockframework.runtime.GroovyRuntimeUtil;
 
 /**
  * @author Peter Niederwieser

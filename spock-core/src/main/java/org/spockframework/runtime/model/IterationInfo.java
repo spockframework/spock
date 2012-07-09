@@ -15,6 +15,8 @@
 package org.spockframework.runtime.model;
 
 import java.lang.reflect.AnnotatedElement;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Runtime information about an iteration of a feature method.
@@ -22,6 +24,7 @@ import java.lang.reflect.AnnotatedElement;
 public class IterationInfo extends NodeInfo<FeatureInfo, AnnotatedElement> {
   private final Object[] dataValues;
   private final int estimatedNumIterations;
+  private final List<Runnable> cleanups = new ArrayList<Runnable>();
 
   public IterationInfo(FeatureInfo feature, Object[] dataValues, int estimatedNumIterations) {
     setParent(feature);
@@ -70,5 +73,13 @@ public class IterationInfo extends NodeInfo<FeatureInfo, AnnotatedElement> {
    */
   public int getEstimatedNumIterations() {
     return estimatedNumIterations;
+  }
+
+  public void addCleanup(Runnable cleanup) {
+    cleanups.add(cleanup);
+  }
+
+  public List<Runnable> getCleanups() {
+    return cleanups;
   }
 }

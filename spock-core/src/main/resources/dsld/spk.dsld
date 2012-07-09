@@ -1,0 +1,59 @@
+/*
+ * Copyright 2012 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package dsld
+
+import org.codehaus.groovy.ast.expr.*
+
+//registerPointcut("spockMockCall", { node ->
+//  def inferredType = null
+//  if (node instanceof BinaryExpression && node.operation.type == org.codehaus.groovy.syntax.Types.ASSIGN) {
+//    inferredType = node.leftExpression.type
+//    node = node.rightExpression
+//  }
+//  if (node instanceof MethodCallExpression && node.methodAsString == "Mock") {
+//    def target = node.objectExpression
+//    if (target instanceof VariableExpression && (target.thisExpression || target.superExpression)) {
+//        def firstArg = node.arguments.expressions[0]
+//        if (firstArg instanceof ClassExpression) return firstArg
+//        if (inferredType != null) return inferredType
+//    }
+//  }
+//})
+//
+//contribute(bind(delegateType: spockMockCall())) {
+//  delegatesTo(delegateType)
+//}
+
+contribute(
+    enclosingClass(subType("spock.lang.Specification")) & 
+    enclosingCallDeclaringType("spock.lang.MockingApi") &
+    bind(theCalls: enclosingCall(name("Mock"))) & 
+	enclosingClosure()) {  
+  def args = theCalls.iterator().next().arguments.expressions
+  def mockType = args.find { it instanceof ClassExpression }
+  if (mockType) {
+    delegatesTo(mockType)
+  }
+}
+	
+contribute(
+	enclosingClass(subType("spock.lang.Specification")) &
+	enclosingCallDeclaringType("spock.lang.Specification") &
+	enclosingCall(
+		name("with") &
+		hasArgument(theTypes: type(subType()))) &
+	enclosingClosure()) {
+  delegatesTo(theTypes.iterator().next())
+}

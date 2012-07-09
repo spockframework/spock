@@ -1,3 +1,17 @@
+/*
+ * Copyright 2012 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.spockframework.mock;
 
 import java.util.Arrays;
@@ -12,8 +26,6 @@ import org.spockframework.runtime.GroovyRuntimeUtil;
 import org.spockframework.util.ReflectionUtil;
 
 import spock.lang.Specification;
-import spock.mock.MockConfiguration;
-import spock.mock.MockConfiguration;
 import spock.mock.MockConfiguration;
 
 public class GroovyMockMetaClass extends DelegatingMetaClass {
@@ -69,25 +81,11 @@ public class GroovyMockMetaClass extends DelegatingMetaClass {
       return metaMethod.invoke(target, arguments);
     }
 
-    IMockInvocation invocation = createMockInvocation(metaMethod, target, method, arguments, isStatic, configuration.isGlobal());
-    IMockInvocationMatcher invocationMatcher = specification.getSpecificationContext().getMockInvocationMatcher();
+    IMockInvocation invocation = createMockInvocation(metaMethod, target, method, arguments, isStatic);
+    IMockController controller = specification.getSpecificationContext().getMockController();
 
     // TODO: if global, need to devirtualize (invokeMethod("foo") -> foo(), etc.)
-    InvocationMatchResult result = invocationMatcher.match(invocation);
-    if (result.hasReturnValue()) return result.getReturnValue();
-
-    if (configuration.isGlobal()) {
-      // invoke original method
-      if (isStatic && method.equals("<init>")) {
-        return super.invokeConstructor(arguments);
-      }
-      if (isStatic) {
-        return super.invokeStaticMethod(target, method, arguments);
-      }
-      return super.invokeMethod(target, method, arguments);
-    }
-
-    return DefaultStubInteractionScope.INSTANCE.match(invocation).accept(invocation);
+    return controller.handle(invocation);
   }
 
   private boolean isGetMetaClassCallOnGroovyObject(Object target, String method, Object[] arguments, boolean isStatic) {
@@ -95,8 +93,9 @@ public class GroovyMockMetaClass extends DelegatingMetaClass {
   }
 
   private IMockInvocation createMockInvocation(MetaMethod metaMethod, Object target,
-      String method, Object[] arguments, boolean isStatic, boolean isGlobal) {
-    IMockObject mockObject = new MockObject(configuration.getName(), configuration.getType(), target, configuration.isGlobal());
+      String method, Object[] arguments, boolean isStatic) {
+    IMockObject mockObject = new MockObject(configuration.getName(), configuration.getType(), target,
+        configuration.isVerified(), configuration.isGlobal(), configuration.getDefaultResponse());
     IMockMethod mockMethod;
     if (metaMethod != null) {
       List<Class<?>> parameterTypes = Arrays.<Class<?>>asList(metaMethod.getNativeParameterTypes());
@@ -104,9 +103,6 @@ public class GroovyMockMetaClass extends DelegatingMetaClass {
     } else {
       mockMethod = new DynamicMockMethod(method, arguments.length, isStatic);
     }
-    if (isGlobal) {
-      return new GlobalMockInvocation(mockObject, mockMethod, Arrays.asList(arguments));
-    }
-    return new MockInvocation(mockObject, mockMethod, Arrays.asList(arguments));
+    return new MockInvocation(mockObject, mockMethod, Arrays.asList(arguments), new GroovyRealMethodInvoker(getAdaptee()));
   }
 }

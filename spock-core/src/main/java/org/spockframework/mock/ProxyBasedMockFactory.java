@@ -20,8 +20,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.sf.cglib.proxy.*;
+
+import org.spockframework.runtime.InvalidSpecException;
+import org.spockframework.util.Nullable;
 import org.spockframework.util.ReflectionUtil;
-import spock.lang.Specification;
 
 /**
  * Some implementation details of this class are inspired from Spring, EasyMock
@@ -35,14 +37,14 @@ public class ProxyBasedMockFactory {
 
   public static ProxyBasedMockFactory INSTANCE = new ProxyBasedMockFactory();
 
-  public Object create(Class<?> mockType, List<Class<?>> additionalInterfaces,
-      IProxyBasedMockInterceptor mockInterceptor, Specification spec) throws CannotCreateMockException {
+  public Object create(Class<?> mockType, List<Class<?>> additionalInterfaces, @Nullable List<Object> constructorArgs,
+      IProxyBasedMockInterceptor mockInterceptor, ClassLoader classLoader) throws CannotCreateMockException {
     Object proxy;
 
     if (mockType.isInterface()) {
-      proxy = createDynamicProxyMock(mockType, additionalInterfaces, mockInterceptor, spec);
+      proxy = createDynamicProxyMock(mockType, additionalInterfaces, constructorArgs, mockInterceptor, classLoader);
     } else if (cglibAvailable) {
-      proxy = CglibMockFactory.createMock(mockType, additionalInterfaces, mockInterceptor, spec);
+      proxy = CglibMockFactory.createMock(mockType, additionalInterfaces, constructorArgs, mockInterceptor, classLoader);
     } else {
       throw new CannotCreateMockException(mockType,
           ". Mocking of non-interface types requires CGLIB. "
@@ -54,13 +56,16 @@ public class ProxyBasedMockFactory {
   }
 
   private Object createDynamicProxyMock(Class<?> mockType, List<Class<?>> additionalInterfaces,
-      IProxyBasedMockInterceptor mockInterceptor, Specification spec) {
+      List<Object> constructorArgs, IProxyBasedMockInterceptor mockInterceptor, ClassLoader classLoader) {
+    if (constructorArgs != null) {
+      throw new InvalidSpecException("Interface based mocks may not have constructor arguments");
+    }
     List<Class<?>> interfaces = new ArrayList<Class<?>>();
     interfaces.add(mockType);
     interfaces.addAll(additionalInterfaces);
     interfaces.add(IMockObjectProvider.class);
     return Proxy.newProxyInstance(
-        spec.getClass().getClassLoader(),
+        classLoader,
         interfaces.toArray(new Class<?>[interfaces.size()]),
         new DynamicProxyMockInterceptorAdapter(mockInterceptor)
     );
@@ -69,9 +74,9 @@ public class ProxyBasedMockFactory {
   // inner class to defer class loading
   private static class CglibMockFactory {
     static Object createMock(Class<?> type, List<Class<?>> additionalInterfaces,
-        IProxyBasedMockInterceptor interceptor, Specification spec) {
+        @Nullable List<Object> constructorArgs, IProxyBasedMockInterceptor interceptor, ClassLoader classLoader) {
       Enhancer enhancer = new ConstructorFriendlyEnhancer();
-      enhancer.setClassLoader(spec.getClass().getClassLoader());
+      enhancer.setClassLoader(classLoader);
       enhancer.setSuperclass(type);
       List<Class<?>> interfaces = new ArrayList<Class<?>>();
       interfaces.addAll(additionalInterfaces);
@@ -82,7 +87,7 @@ public class ProxyBasedMockFactory {
       enhancer.setCallbackTypes(new Class[] {cglibInterceptor.getClass(), NoOp.class});
 
       Class<?> enhancedType = enhancer.createClass();
-      Object proxy = MockInstantiator.instantiate(type, enhancedType);
+      Object proxy = MockInstantiator.instantiate(type, enhancedType, constructorArgs);
       ((Factory) proxy).setCallbacks(new Callback[] {cglibInterceptor, NoOp.INSTANCE});
       return proxy;
     }

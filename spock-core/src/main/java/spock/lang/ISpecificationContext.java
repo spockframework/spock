@@ -1,6 +1,6 @@
 package spock.lang;
 
-import org.spockframework.mock.IMockInvocationMatcher;
+import org.spockframework.mock.IMockController;
 import org.spockframework.runtime.model.IterationInfo;
 
 @Beta
@@ -9,5 +9,5 @@ public interface ISpecificationContext {
 
   Throwable getThrownException();
 
-  IMockInvocationMatcher getMockInvocationMatcher();
+  IMockController getMockController();
 }

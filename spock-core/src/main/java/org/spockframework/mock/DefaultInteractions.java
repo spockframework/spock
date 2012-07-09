@@ -17,17 +17,18 @@ package org.spockframework.mock;
 import java.util.Arrays;
 import java.util.List;
 
-import org.spockframework.util.InternalSpockError;
 import org.spockframework.util.UnreachableCodeError;
 
-public class DefaultStubInteractionScope implements IInteractionScope {
-  public static final DefaultStubInteractionScope INSTANCE = new DefaultStubInteractionScope();
+// TODO: Spy should probably call real equals/hashCode/toString, at least by default
+// may want to get rid of this class and move code into default responses
+public class DefaultInteractions implements IInteractionScope {
+  public static final DefaultInteractions INSTANCE = new DefaultInteractions();
 
-  private DefaultStubInteractionScope() {}
+  private DefaultInteractions() {}
 
   private final List<DefaultInteraction> interactions = Arrays.asList(
       ObjectEqualsInteraction.INSTANCE, ObjectHashCodeInteraction.INSTANCE,
-      ObjectToStringInteraction.INSTANCE, ReturnTypeBasedStubInteraction.INSTANCE);
+      ObjectToStringInteraction.INSTANCE, DefaultResponseInteraction.INSTANCE);
   
   public void addInteraction(IMockInteraction interaction) {
     throw new UnreachableCodeError("addInteraction");
@@ -42,7 +43,7 @@ public class DefaultStubInteractionScope implements IInteractionScope {
       if (interaction.matches(invocation))
         return interaction;
 
-    throw new InternalSpockError("Invocation '%s' was not matched by any default interaction").withArgs(invocation);
+    throw new UnreachableCodeError("invocation was not matched by DefaultResponseInteraction");
   }
 
   public void verifyInteractions() {

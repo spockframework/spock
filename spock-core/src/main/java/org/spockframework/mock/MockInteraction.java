@@ -16,6 +16,7 @@
 
 package org.spockframework.mock;
 
+import org.spockframework.runtime.InvalidSpecException;
 import org.spockframework.util.Nullable;
 
 import java.util.List;
@@ -48,8 +49,11 @@ public class MockInteraction implements IMockInteraction {
   }
 
   public boolean matches(IMockInvocation invocation) {
-    for (IInvocationConstraint matcher : matchers)
+    for (IInvocationConstraint matcher : matchers) {
       if (!matcher.isSatisfiedBy(invocation)) return false;
+    }
+
+    checkIsNotRequiredStubInteraction(invocation);
     return true;
   }
 
@@ -88,6 +92,19 @@ public class MockInteraction implements IMockInteraction {
 
   public String toString() {
     return String.format("%s   (%d %s)", text, acceptedCount, acceptedCount == 1 ? "invocation" : "invocations");
+  }
+
+  private void checkIsNotRequiredStubInteraction(IMockInvocation invocation) {
+    IMockObject mockObject = invocation.getMockObject();
+    if (!mockObject.isVerified() && hasCardinality()) {
+      String mockName = mockObject.getName() == null ? "unnamed" : mockObject.getName();
+      throw new InvalidSpecException("Stub '%s' matches the following required interaction:" +
+          "\n\n%s\n\nInvocation: %s\n\nChange the interaction, or turn the stub into a mock.").withArgs(mockName, this, invocation);
+    }
+  }
+
+  private boolean hasCardinality() {
+    return minCount != 0 || maxCount != Integer.MAX_VALUE;
   }
 }
 

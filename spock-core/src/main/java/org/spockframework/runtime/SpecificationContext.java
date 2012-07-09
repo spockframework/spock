@@ -1,6 +1,6 @@
 package org.spockframework.runtime;
 
-import org.spockframework.mock.IMockInvocationMatcher;
+import org.spockframework.mock.IMockController;
 import org.spockframework.mock.MockController;
 import org.spockframework.runtime.model.IterationInfo;
 
@@ -14,7 +14,7 @@ public class SpecificationContext implements ISpecificationContext {
 
   private volatile Throwable thrownException;
 
-  private final IMockInvocationMatcher invocationMatcher = new MockController();
+  private final IMockController mockController = new MockController();
 
   public static final String GET_SHARED_INSTANCE = "getSharedInstance";
   public Specification getSharedInstance() {
@@ -42,8 +42,8 @@ public class SpecificationContext implements ISpecificationContext {
     thrownException = exception;
   }
 
-  public static String GET_MOCK_INVOCATION_MATCHER = "getMockInvocationMatcher";
-  public IMockInvocationMatcher getMockInvocationMatcher() {
-    return invocationMatcher;
+  public static String GET_MOCK_CONTROLLER = "getMockController";
+  public IMockController getMockController() {
+    return mockController;
   }
 }

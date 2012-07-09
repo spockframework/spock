@@ -153,7 +153,7 @@ public class InteractionBuilder {
   public static final String ADD_CONSTANT_RESULT = "setConstantResult";
   public InteractionBuilder setConstantResult(Object constant) {
     resultGenerators.addFirst(constant instanceof Wildcard ?
-        new ReturnTypeBasedResultGenerator() : new ConstantResultGenerator(constant));
+        new WildcardResultGenerator() : new ConstantResultGenerator(constant));
     return this;
   }
 

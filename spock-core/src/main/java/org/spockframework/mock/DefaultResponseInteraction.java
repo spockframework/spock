@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 the original author or authors.
+ * Copyright 2012 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,13 @@
 
 package org.spockframework.mock;
 
-import org.spockframework.util.ReflectionUtil;
+public class DefaultResponseInteraction extends DefaultInteraction {
+  public static final DefaultResponseInteraction INSTANCE = new DefaultResponseInteraction();
 
-public class ReturnTypeBasedStubInteraction extends DefaultInteraction {
-  public static final ReturnTypeBasedStubInteraction INSTANCE = new ReturnTypeBasedStubInteraction();
-
-  private ReturnTypeBasedStubInteraction() {}
+  private DefaultResponseInteraction() {}
 
   public String getText() {
-    return "default stubbed interaction";
+    return "default mock object response";
   }
 
   public boolean matches(IMockInvocation invocation) {
@@ -30,6 +28,6 @@ public class ReturnTypeBasedStubInteraction extends DefaultInteraction {
   }
 
   public Object accept(IMockInvocation invocation) {
-    return ReflectionUtil.getDefaultValue(invocation.getMethod().getReturnType());
+    return invocation.getMockObject().getDefaultResponse().respond(invocation);
   }
 }

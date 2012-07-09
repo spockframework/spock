@@ -4,9 +4,7 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
  *     http://www.apache.org/licenses/LICENSE-2.0
- *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,30 +16,30 @@ package org.spockframework.mock;
 
 import java.util.List;
 
-/**
- * A method invocation on a mock object.
- *
- * @author Peter Niederwieser
- */
-// IDEA: add method "MockType mockType" that tells which interface or class was mocked,
-// the kind of mock involved (dynamic proxy, cglib, etc.), etc.
-public interface IMockInvocation {
-  /**
-   * The mock object that received the invocation.
-   */
-  IMockObject getMockObject();
+public class DelegatingMockInvocation implements IMockInvocation {
+  private final IMockInvocation delegate;
 
-  /**
-   * The invoked method.
-   */
-  IMockMethod getMethod();
+  public DelegatingMockInvocation(IMockInvocation delegate) {
+    this.delegate = delegate;
+  }
 
-  /**
-   * The arguments for the invocation.
-   */
-  List<Object> getArguments();
+  public IMockObject getMockObject() {
+    return delegate.getMockObject();
+  }
 
-  Object callRealMethod();
+  public IMockMethod getMethod() {
+    return delegate.getMethod();
+  }
 
-  Object callRealMethodWith(Object... arguments);
+  public List<Object> getArguments() {
+    return delegate.getArguments();
+  }
+
+  public Object callRealMethod() {
+    return delegate.callRealMethod();
+  }
+
+  public Object callRealMethodWith(Object... arguments) {
+    return delegate.callRealMethodWith(arguments);
+  }
 }

@@ -16,43 +16,44 @@
 
 package org.spockframework.mock
 
-import spock.mock.MockConfiguration
 import spock.lang.Specification
 import spock.lang.Issue
+import spock.mock.MockConfiguration
+import spock.mock.MockNature
+import spock.mock.MockImplementation
 
 class JavaMockFactorySpec extends Specification {
   JavaMockFactory factory = new JavaMockFactory()
-  IMockInvocationMatcher dummy = Mock() // needed if test fails and toString() is delegated to dispatcher
 
   def "can create mocks for interfaces"() {
     expect:
-    factory.create(new MockConfiguration("foo", List, "mock", "java", [:]), this) instanceof List
+    factory.create(new MockConfiguration("foo", List, MockNature.MOCK, MockImplementation.JAVA, [:]), this) instanceof List
   }
 
   @Issue("http://issues.spockframework.org/detail?id=227")
   def "can create mocks for interfaces containing nested classes"() {
     expect:
-    factory.create(new MockConfiguration("foo", InterfaceWithNestedClass, "mock", "java", [:]), this) instanceof InterfaceWithNestedClass
+    factory.create(new MockConfiguration("foo", InterfaceWithNestedClass, MockNature.MOCK, MockImplementation.JAVA, [:]), this) instanceof InterfaceWithNestedClass
   }
 
   def "can create mocks for classes w/ parameterless constructor"() {
     expect:
-    factory.create(new MockConfiguration("foo", ArrayList, "mock", "java", [:]), this) instanceof ArrayList
+    factory.create(new MockConfiguration("foo", ArrayList, MockNature.MOCK, MockImplementation.JAVA, [:]), this) instanceof ArrayList
   }
 
   def "can create mocks for classes wo/ parameterless constructor"() {
     expect:
-    factory.create(new MockConfiguration("foo", Node, "mock", "java", [:]), this) instanceof Node
+    factory.create(new MockConfiguration("foo", Node, MockNature.MOCK, MockImplementation.JAVA, [:]), this) instanceof Node
   }
 
   def "can create mocks for interfaces defined in Groovy"() {
     expect:
-    factory.create(new MockConfiguration("foo", IMockMe, "mock", "java", [:]), this) instanceof IMockMe
+    factory.create(new MockConfiguration("foo", IMockMe, MockNature.MOCK, MockImplementation.JAVA, [:]), this) instanceof IMockMe
   }
 
   def "can create mocks for classes defined in Groovy"() {
     expect:
-    factory.create(new MockConfiguration("foo", MockMe, "mock", "java", [:]), this) instanceof MockMe
+    factory.create(new MockConfiguration("foo", MockMe, MockNature.MOCK, MockImplementation.JAVA, [:]), this) instanceof MockMe
   }
 }
 

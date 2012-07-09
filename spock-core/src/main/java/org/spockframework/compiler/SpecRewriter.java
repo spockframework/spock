@@ -441,7 +441,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
 
   public MethodCallExpression getMockInvocationMatcher() {
     return new MethodCallExpression(getSpecificationContext(),
-        SpecificationContext.GET_MOCK_INVOCATION_MATCHER, ArgumentListExpression.EMPTY_ARGUMENTS);
+        SpecificationContext.GET_MOCK_CONTROLLER, ArgumentListExpression.EMPTY_ARGUMENTS);
   }
 
   public MethodCallExpression setThrownException(Expression value) {

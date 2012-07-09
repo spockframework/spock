@@ -19,7 +19,7 @@ public class ObjectHashCodeInteraction extends DefaultInteraction {
   private ObjectHashCodeInteraction() {}
 
   public String getText() {
-    return "default hashCode() interaction";
+    return "Object.hashCode() interaction";
   }
 
   public boolean matches(IMockInvocation invocation) {

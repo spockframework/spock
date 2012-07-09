@@ -20,7 +20,7 @@ public class ObjectToStringInteraction extends DefaultInteraction {
   private ObjectToStringInteraction() {}
 
   public String getText() {
-    return "default toString() interaction";
+    return "Object.toString() interaction";
   }
 
   public boolean matches(IMockInvocation invocation) {

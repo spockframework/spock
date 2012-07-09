@@ -14,10 +14,24 @@
 
 package org.spockframework.mock;
 
+import net.sf.cglib.proxy.MethodProxy;
+import org.spockframework.util.ExceptionUtil;
 import spock.mock.IMockInvocationResponder;
 
-import java.lang.reflect.Method;
+public class CglibRealMethodInvoker implements IMockInvocationResponder {
+  private final MethodProxy methodProxy;
 
-public interface IProxyBasedMockInterceptor {
-  Object intercept(Object target, Method method, Object[] arguments, IMockInvocationResponder realMethodInvoker);
+  public CglibRealMethodInvoker(MethodProxy methodProxy) {
+    this.methodProxy = methodProxy;
+  }
+
+  public Object respond(IMockInvocation invocation) {
+    try {
+      return methodProxy.invokeSuper(invocation.getMockObject().getInstance(), invocation.getArguments().toArray());
+    } catch (Throwable t) {
+      // MethodProxy doesn't wrap exceptions in InvocationTargetException, so no need to unwrap
+      ExceptionUtil.sneakyThrow(t);
+      return null; // unreachable
+    }
+  }
 }

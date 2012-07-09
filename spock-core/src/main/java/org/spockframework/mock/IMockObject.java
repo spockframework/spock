@@ -14,22 +14,38 @@
 
 package org.spockframework.mock;
 
+import org.spockframework.util.Nullable;
+import spock.mock.IMockInvocationResponder;
+
 public interface IMockObject {
   /**
-   * Returns the name of the mock object.
+   * Returns the name of the mock object, or {@code null} if it has no name.
    *
-   * @return the name of the mock object
+   * @return the name of the mock object, or {@code null} if it has no name
    */
+  @Nullable
   String getName();
 
   /**
-   * Returns the mocked type.
+   * Returns the declared type of the mock object.
    *
-   * @return the mocked type
+   * @return the declared type of the mock object
    */
   Class<?> getType();
 
+  /**
+   * Returns the instance of the mock object.
+   *
+   * @return the instance of the mock object
+   */
   Object getInstance();
+
+  /**
+   * Tells whether interactions with this mock object should be verified.
+   *
+   * @return whether interactions with this mock object should be verified
+   */
+  boolean isVerified();
 
   /**
    * Tells whether this mock object represents all instances of the mocked type.
@@ -37,4 +53,6 @@ public interface IMockObject {
    * @return whether this mock object represents all instances of the mocked type
    */
   boolean isGlobal();
+
+  IMockInvocationResponder getDefaultResponse();
 }

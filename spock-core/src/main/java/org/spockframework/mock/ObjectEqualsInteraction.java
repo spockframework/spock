@@ -19,7 +19,7 @@ public class ObjectEqualsInteraction extends DefaultInteraction {
   private ObjectEqualsInteraction() {}
   
   public String getText() {
-    return "default equals() interaction";
+    return "Object.equals() interaction";
   }
 
   public boolean matches(IMockInvocation invocation) {

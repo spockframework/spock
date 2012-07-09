@@ -26,7 +26,7 @@ public class CglibMockInterceptorAdapter implements MethodInterceptor {
     this.interceptor = interceptor;
   }
 
-  public Object intercept(Object obj, Method method, Object[] args, MethodProxy proxy) throws Throwable {
-    return interceptor.intercept(obj, method, args);
+  public Object intercept(Object target, Method method, Object[] arguments, MethodProxy methodProxy) throws Throwable {
+    return interceptor.intercept(target, method, arguments, new CglibRealMethodInvoker(methodProxy));
   }
 }

@@ -18,9 +18,12 @@ import java.util.List;
 
 import org.spockframework.runtime.GroovyRuntimeUtil;
 
+import spock.mock.IMockInvocationResponder;
+
 public class GlobalMockInvocation extends MockInvocation {
-  public GlobalMockInvocation(IMockObject mockObject, IMockMethod method, List<Object> arguments) {
-    super(mockObject, method, arguments);
+  public GlobalMockInvocation(IMockObject mockObject, IMockMethod method,
+      List<Object> arguments, IMockInvocationResponder realMethodInvoker) {
+    super(mockObject, method, arguments, realMethodInvoker);
   }
 
   public Object callRealMethod() {

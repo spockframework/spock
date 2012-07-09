@@ -17,10 +17,10 @@ package org.spockframework.smoke.mock
 import spock.lang.Specification
 import java.lang.reflect.Modifier
 
-class GlobalMockingWithGroovyMocks extends Specification {
+class GlobalGroovySpies extends Specification {
   def "mock instance method"() {
     def myList = new ArrayList()
-    def anyList = GroovyMock(ArrayList, global: true)
+    def anyList = GroovySpy(ArrayList, global: true)
 
     when:
     myList.add(1)
@@ -42,7 +42,7 @@ class GlobalMockingWithGroovyMocks extends Specification {
 
   def "calls real method if call isn't mocked"() {
     def myList = new ArrayList()
-    GroovyMock(ArrayList, global: true)
+    GroovySpy(ArrayList, global: true)
 
     when:
     myList.add(1)
@@ -54,7 +54,7 @@ class GlobalMockingWithGroovyMocks extends Specification {
 
   def "calls real method if mocked call provides no result"() {
     def myList = new ArrayList()
-    GroovyMock(ArrayList, global: true)
+    GroovySpy(ArrayList, global: true)
 
     when:
     myList.add(1)
@@ -67,7 +67,7 @@ class GlobalMockingWithGroovyMocks extends Specification {
 
   def "does not call real method if mocked call provides result"() {
     def myList = new ArrayList()
-    GroovyMock(ArrayList, global: true)
+    GroovySpy(ArrayList, global: true)
 
     when:
     myList.add(1)
@@ -80,7 +80,7 @@ class GlobalMockingWithGroovyMocks extends Specification {
 
   def "can call real method when providing result"() {
     def myList = new ArrayList()
-    GroovyMock(ArrayList, global: true)
+    GroovySpy(ArrayList, global: true)
 
     when:
     myList.add(1)
@@ -93,7 +93,7 @@ class GlobalMockingWithGroovyMocks extends Specification {
 
   def "can call real method with changed arguments"() {
     def myList = new ArrayList()
-    GroovyMock(ArrayList, global: true)
+    GroovySpy(ArrayList, global: true)
 
     when:
     myList.add(1)
@@ -106,7 +106,7 @@ class GlobalMockingWithGroovyMocks extends Specification {
   }
 
   def "mock dynamic instance method"() {
-    def anyList = GroovyMock(ArrayList, global: true)
+    def anyList = GroovySpy(ArrayList, global: true)
 
     when:
     new ArrayList().foo(42)
@@ -117,7 +117,7 @@ class GlobalMockingWithGroovyMocks extends Specification {
 
   // TODO: devirtualize
   def "mock dynamic instance method called via MOP"() {
-    def anyPerson = GroovyMock(Person, global: true)
+    def anyPerson = GroovySpy(Person, global: true)
 
     when:
     new Person().invokeMethod("foo", [42] as Object[])
@@ -130,7 +130,7 @@ class GlobalMockingWithGroovyMocks extends Specification {
   def "mock final instance method"() {
     assert Modifier.isFinal(Person.getMethod("performFinal", String).getModifiers())
 
-    def anyPerson = GroovyMock(Person, global: true)
+    def anyPerson = GroovySpy(Person, global: true)
 
     when:
     new Person().performFinal("work")
@@ -142,7 +142,7 @@ class GlobalMockingWithGroovyMocks extends Specification {
   def "mock final class"() {
     assert Modifier.isFinal(FinalPerson.getModifiers())
 
-    def anyPerson = GroovyMock(FinalPerson, global: true)
+    def anyPerson = GroovySpy(FinalPerson, global: true)
 
     when:
     new FinalPerson().perform("work")
@@ -152,7 +152,7 @@ class GlobalMockingWithGroovyMocks extends Specification {
   }
 
   def "mock static method"() {
-    GroovyMock(Collections, global: true)
+    GroovySpy(Collections, global: true)
 
     when:
     Collections.emptyList()
@@ -165,20 +165,20 @@ class GlobalMockingWithGroovyMocks extends Specification {
   }
 
   def "mock dynamic static method"() {
-    GroovyMock(Collections, global: true)
+    GroovySpy(Collections, global: true)
 
     when:
     Collections.foo()
     Collections.bar(42, "elem")
 
     then:
-    1 * Collections.foo() >> _
-    1 * Collections.bar(42, "elem") >> _
+    1 * Collections.foo() >> 0
+    1 * Collections.bar(42, "elem") >> 0
     0 * _
   }
 
   def "mock constructor"() {
-    GroovyMock(Person, global: true)
+    GroovySpy(Person, global: true)
 
     when:
     new Person("fred", 42)

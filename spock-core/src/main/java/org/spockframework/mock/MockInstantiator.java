@@ -15,29 +15,25 @@
 package org.spockframework.mock;
 
 import org.objenesis.ObjenesisHelper;
+import org.spockframework.runtime.GroovyRuntimeUtil;
+import org.spockframework.util.Nullable;
 import org.spockframework.util.ReflectionUtil;
 
 import java.lang.reflect.Constructor;
+import java.util.List;
 
 public class MockInstantiator {
   private static final boolean objenesisAvailable = ReflectionUtil.isClassAvailable("org.objenesis.Objenesis");
 
-  public static Object instantiate(Class<?> declaredType, Class<?> actualType) {
+  public static Object instantiate(Class<?> declaredType, Class<?> actualType, @Nullable List<Object> constructorArgs) {
     try {
-      if (objenesisAvailable) {
+      if (constructorArgs == null && objenesisAvailable) {
         return ObjenesisInstantiator.instantiate(actualType);
       }
-
-      Constructor<?> ctor = actualType.getDeclaredConstructor();
-      boolean accessible = ctor.isAccessible();
-      try {
-        ctor.setAccessible(true);
-        return ctor.newInstance();
-      } finally {
-        ctor.setAccessible(accessible);
-      }
+      Object[] ctorArgs = constructorArgs == null ? null : constructorArgs.toArray();
+      return GroovyRuntimeUtil.invokeConstructor(actualType, ctorArgs);
     } catch (Exception e) {
-      String msg = objenesisAvailable ? null : ". Putting Objenesis (1.2 or higher) on the class path will likely solve this problem.";
+      String msg = objenesisAvailable ? null : ". Putting Objenesis (1.2 or higher) on the class path may solve this problem.";
       throw new CannotCreateMockException(declaredType, msg, e);
     }
   }

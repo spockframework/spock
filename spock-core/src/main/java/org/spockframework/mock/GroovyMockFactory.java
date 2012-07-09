@@ -44,19 +44,19 @@ public class GroovyMockFactory implements IMockFactory {
           GroovyRuntimeUtil.setMetaClass(type, oldMetaClass);
         }
       });
-      return MockInstantiator.instantiate(type, type);
+      return MockInstantiator.instantiate(type, type, configuration.getConstructorArgs());
     }
 
     if (isFinalClass(type)) {
-      final Object instance = MockInstantiator.instantiate(type, type);
+      final Object instance = MockInstantiator.instantiate(type, type, configuration.getConstructorArgs());
       GroovyRuntimeUtil.setMetaClass(instance, newMetaClass);
 
       return instance;
     }
 
     IProxyBasedMockInterceptor mockInterceptor = new GroovyMockInterceptor(configuration, specification, newMetaClass);
-    return ProxyBasedMockFactory.INSTANCE.create(type,
-        Collections.<Class<?>>singletonList(GroovyObject.class), mockInterceptor, specification);
+    return ProxyBasedMockFactory.INSTANCE.create(type, Collections.<Class<?>>singletonList(GroovyObject.class),
+        configuration.getConstructorArgs(), mockInterceptor, specification.getClass().getClassLoader());
   }
 
   private boolean isFinalClass(Class<?> type) {

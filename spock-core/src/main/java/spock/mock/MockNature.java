@@ -12,12 +12,27 @@
  * limitations under the License.
  */
 
-package org.spockframework.mock;
+package spock.mock;
 
-import spock.mock.IMockInvocationResponder;
+public enum MockNature {
+  STUB(false, EmptyOrStubResponse.INSTANCE),
+  MOCK(true, ZeroOrNullResponse.INSTANCE),
+  SPY(true, CallRealMethodResponse.INSTANCE);
 
-import java.lang.reflect.Method;
+  private final boolean verified;
 
-public interface IProxyBasedMockInterceptor {
-  Object intercept(Object target, Method method, Object[] arguments, IMockInvocationResponder realMethodInvoker);
+  private final IMockInvocationResponder defaultResponse;
+
+  MockNature(boolean verified, IMockInvocationResponder defaultResponse) {
+    this.verified = verified;
+    this.defaultResponse = defaultResponse;
+  }
+
+  boolean isVerified() {
+    return verified;
+  }
+
+  IMockInvocationResponder getDefaultResponse() {
+    return defaultResponse;
+  }
 }

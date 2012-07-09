@@ -16,33 +16,37 @@
 
 package org.spockframework.mock;
 
+import org.spockframework.util.UnreachableCodeError;
+
 import java.util.*;
 
 /**
  * @author Peter Niederwieser
  */
-public class MockController implements IMockInvocationMatcher {
+public class MockController implements IMockController {
   private final LinkedList<IInteractionScope> scopes = new LinkedList<IInteractionScope>();
   private final List<InteractionNotSatisfiedError> errors = new ArrayList<InteractionNotSatisfiedError>();
 
   public MockController() {
+    scopes.addFirst(DefaultInteractions.INSTANCE);
     scopes.addFirst(new InteractionScope());
   }
 
-  public synchronized InvocationMatchResult match(IMockInvocation invocation) {
+  public synchronized Object handle(IMockInvocation invocation) {
     for (IInteractionScope scope : scopes) {
       IMockInteraction interaction = scope.match(invocation);
       if (interaction != null)
         try {
           Object result = interaction.accept(invocation);
-          return new InvocationMatchResult(true, interaction.hasResults(), result);
+          if (interaction.hasResults()) return result;
+          return invocation.getMockObject().getDefaultResponse().respond(invocation);
         } catch (InteractionNotSatisfiedError e) {
           errors.add(e);
           throw e;
         }
     }
 
-    return new InvocationMatchResult(false, false, null);
+    throw new UnreachableCodeError("invocation was not matched by DefaultInteractions");
   }
 
   public static final String ADD_INTERACTION = "addInteraction";

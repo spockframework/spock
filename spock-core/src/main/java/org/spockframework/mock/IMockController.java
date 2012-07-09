@@ -17,12 +17,8 @@
 package org.spockframework.mock;
 
 /**
- * Generates return values for invocations on mock objects.
- *
  * @author Peter Niederwieser
  */
-// TODO: could extend IMockInvocationResponder
-public interface IResultGenerator {
-  boolean isAtEndOfCycle();
-  Object generate(IMockInvocation invocation);
+public interface IMockController {
+  Object handle(IMockInvocation invocation);
 }

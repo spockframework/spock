@@ -14,13 +14,35 @@
 
 package org.spockframework.smoke.mock
 
-import org.spockframework.runtime.ConditionNotSatisfiedError
+import org.spockframework.mock.CannotCreateMockException
 
 import spock.lang.Specification
-import spock.lang.FailsWith
 
-// TODO: probably should enforce that constructor args are provided for spies
 class JavaSpies extends Specification {
+  def "construct spied-on object using default constructor when no constructor args given (even if Objenesis is available on class path)"() {
+    when:
+    Spy(Constructable)
+
+    then:
+    thrown(CannotCreateMockException)
+  }
+
+  def "construct spied-on object using provided constructor args"() {
+    def spy = Spy(Constructable, constructorArgs: ctorArgs)
+
+    expect:
+    spy.arg1 == arg1
+    spy.arg2 == arg2
+    spy.arg3 == arg3
+    spy.arg4 == arg4
+
+    where:
+    ctorArgs | arg1 | arg2 | arg3 | arg4
+    [1]      | 1    | 0    | 0    | null
+    [2, 3]   | 0    | 2    | 3    | null
+    ["hi"]   | 0    | 0    | 0    | "hi"
+  }
+
   def "call real methods by default"() {
     def person = Spy(Person, constructorArgs: ["fred", 42])
 
@@ -29,8 +51,24 @@ class JavaSpies extends Specification {
     person.age == 42
   }
 
-  @FailsWith(value = ConditionNotSatisfiedError, reason = "TODO")
-  def "call real Object methods by default"() {
+  def "call real equals method by default"() {
+    def fred1 = Spy(Person, constructorArgs: ["fred", 42])
+    def fred2 = Spy(Person, constructorArgs: ["fred", 21])
+    def barney = Spy(Person, constructorArgs: ["barney", 33])
+
+    expect:
+    fred1 == fred2
+    fred1 != barney
+  }
+
+  def "call real hashCode method by default"() {
+    def person = Spy(Person, constructorArgs: ["fred", 42])
+
+    expect:
+    person.hashCode() == "fred".hashCode()
+  }
+
+  def "call real toString method by default"() {
     def person = Spy(Person, constructorArgs: ["fred", 42])
 
     expect:
@@ -61,6 +99,26 @@ class JavaSpies extends Specification {
     person.work() == "singing"
   }
 
+  static class Constructable {
+    int arg1
+    int arg2
+    int arg3
+    String arg4
+
+    Constructable(int arg1) {
+      this.arg1 = arg1
+    }
+
+    Constructable(int arg2, int arg3) {
+      this.arg2 = arg2
+      this.arg3 = arg3
+    }
+
+    Constructable(String arg4) {
+      this.arg4 = arg4
+    }
+  }
+
   static class Person {
     String name
     int age
@@ -84,7 +142,16 @@ class JavaSpies extends Specification {
     }
 
     String toString() {
-      "Hi I'm $name"
+      "Hi, I'm $name"
+    }
+
+    boolean equals(Object other) {
+      other instanceof Person && name == other.name
+    }
+
+    int hashCode() {
+      name.hashCode()
     }
   }
 }
+

@@ -38,13 +38,14 @@ public class ProxyBasedMockFactory {
   public static ProxyBasedMockFactory INSTANCE = new ProxyBasedMockFactory();
 
   public Object create(Class<?> mockType, List<Class<?>> additionalInterfaces, @Nullable List<Object> constructorArgs,
-      IProxyBasedMockInterceptor mockInterceptor, ClassLoader classLoader) throws CannotCreateMockException {
+      IProxyBasedMockInterceptor mockInterceptor, ClassLoader classLoader, boolean useObjenesis) throws CannotCreateMockException {
     Object proxy;
 
     if (mockType.isInterface()) {
       proxy = createDynamicProxyMock(mockType, additionalInterfaces, constructorArgs, mockInterceptor, classLoader);
     } else if (cglibAvailable) {
-      proxy = CglibMockFactory.createMock(mockType, additionalInterfaces, constructorArgs, mockInterceptor, classLoader);
+      proxy = CglibMockFactory.createMock(mockType, additionalInterfaces,
+          constructorArgs, mockInterceptor, classLoader, useObjenesis);
     } else {
       throw new CannotCreateMockException(mockType,
           ". Mocking of non-interface types requires CGLIB. "
@@ -73,8 +74,8 @@ public class ProxyBasedMockFactory {
 
   // inner class to defer class loading
   private static class CglibMockFactory {
-    static Object createMock(Class<?> type, List<Class<?>> additionalInterfaces,
-        @Nullable List<Object> constructorArgs, IProxyBasedMockInterceptor interceptor, ClassLoader classLoader) {
+    static Object createMock(Class<?> type, List<Class<?>> additionalInterfaces, @Nullable List<Object> constructorArgs,
+        IProxyBasedMockInterceptor interceptor, ClassLoader classLoader, boolean useObjenesis) {
       Enhancer enhancer = new ConstructorFriendlyEnhancer();
       enhancer.setClassLoader(classLoader);
       enhancer.setSuperclass(type);
@@ -87,7 +88,7 @@ public class ProxyBasedMockFactory {
       enhancer.setCallbackTypes(new Class[] {cglibInterceptor.getClass(), NoOp.class});
 
       Class<?> enhancedType = enhancer.createClass();
-      Object proxy = MockInstantiator.instantiate(type, enhancedType, constructorArgs);
+      Object proxy = MockInstantiator.instantiate(type, enhancedType, constructorArgs, useObjenesis);
       ((Factory) proxy).setCallbacks(new Callback[] {cglibInterceptor, NoOp.INSTANCE});
       return proxy;
     }

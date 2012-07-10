@@ -14,6 +14,8 @@
 
 package spock.mock;
 
+import org.spockframework.mock.EqualsHashCodeToStringInteractions;
+import org.spockframework.mock.IMockInteraction;
 import org.spockframework.mock.IMockInvocation;
 import org.spockframework.util.ReflectionUtil;
 
@@ -23,6 +25,9 @@ public class ZeroOrNullResponse implements IMockInvocationResponder {
   private ZeroOrNullResponse() {}
 
   public Object respond(IMockInvocation invocation) {
+    IMockInteraction interaction = EqualsHashCodeToStringInteractions.INSTANCE.match(invocation);
+    if (interaction != null) return interaction.accept(invocation);
+
     Class<?> returnType = invocation.getMethod().getReturnType();
     return ReflectionUtil.getDefaultValue(returnType);
   }

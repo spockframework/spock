@@ -19,16 +19,13 @@ import java.util.List;
 
 import org.spockframework.util.UnreachableCodeError;
 
-// TODO: Spy should probably call real equals/hashCode/toString, at least by default
-// may want to get rid of this class and move code into default responses
-public class DefaultInteractions implements IInteractionScope {
-  public static final DefaultInteractions INSTANCE = new DefaultInteractions();
+public class EqualsHashCodeToStringInteractions implements IInteractionScope {
+  public static final EqualsHashCodeToStringInteractions INSTANCE = new EqualsHashCodeToStringInteractions();
 
-  private DefaultInteractions() {}
+  private EqualsHashCodeToStringInteractions() {}
 
   private final List<DefaultInteraction> interactions = Arrays.asList(
-      ObjectEqualsInteraction.INSTANCE, ObjectHashCodeInteraction.INSTANCE,
-      ObjectToStringInteraction.INSTANCE, DefaultResponseInteraction.INSTANCE);
+      ObjectEqualsInteraction.INSTANCE, ObjectHashCodeInteraction.INSTANCE, ObjectToStringInteraction.INSTANCE);
   
   public void addInteraction(IMockInteraction interaction) {
     throw new UnreachableCodeError("addInteraction");
@@ -39,11 +36,10 @@ public class DefaultInteractions implements IInteractionScope {
   }
 
   public IMockInteraction match(IMockInvocation invocation) {
-    for (IMockInteraction interaction : interactions)
-      if (interaction.matches(invocation))
-        return interaction;
-
-    throw new UnreachableCodeError("invocation was not matched by DefaultResponseInteraction");
+    for (IMockInteraction interaction : interactions) {
+      if (interaction.matches(invocation)) return interaction;
+    }
+    return null;
   }
 
   public void verifyInteractions() {

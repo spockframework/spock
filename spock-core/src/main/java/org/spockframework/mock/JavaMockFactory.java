@@ -38,7 +38,8 @@ public class JavaMockFactory implements IMockFactory {
     MetaClass mockMetaClass = GroovyRuntimeUtil.getMetaClass(configuration.getType());
     IProxyBasedMockInterceptor interceptor = new JavaMockInterceptor(configuration, specification, mockMetaClass);
     return ProxyBasedMockFactory.INSTANCE.create(configuration.getType(), Collections.<Class<?>>emptyList(),
-        configuration.getConstructorArgs(), interceptor, specification.getClass().getClassLoader());
+        configuration.getConstructorArgs(), interceptor, specification.getClass().getClassLoader(),
+        configuration.isUseObjenesis());
   }
 }
 

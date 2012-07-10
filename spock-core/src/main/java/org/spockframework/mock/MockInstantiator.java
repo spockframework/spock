@@ -19,15 +19,14 @@ import org.spockframework.runtime.GroovyRuntimeUtil;
 import org.spockframework.util.Nullable;
 import org.spockframework.util.ReflectionUtil;
 
-import java.lang.reflect.Constructor;
 import java.util.List;
 
 public class MockInstantiator {
   private static final boolean objenesisAvailable = ReflectionUtil.isClassAvailable("org.objenesis.Objenesis");
 
-  public static Object instantiate(Class<?> declaredType, Class<?> actualType, @Nullable List<Object> constructorArgs) {
+  public static Object instantiate(Class<?> declaredType, Class<?> actualType, @Nullable List<Object> constructorArgs, boolean useObjenesis) {
     try {
-      if (constructorArgs == null && objenesisAvailable) {
+      if (constructorArgs == null && useObjenesis && objenesisAvailable) {
         return ObjenesisInstantiator.instantiate(actualType);
       }
       Object[] ctorArgs = constructorArgs == null ? null : constructorArgs.toArray();

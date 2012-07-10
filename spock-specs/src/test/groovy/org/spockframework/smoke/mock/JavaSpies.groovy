@@ -14,10 +14,7 @@
 
 package org.spockframework.smoke.mock
 
-import org.spockframework.runtime.ConditionNotSatisfiedError
-
 import spock.lang.Specification
-import spock.lang.FailsWith
 
 // TODO: probably should enforce that constructor args are provided for spies
 class JavaSpies extends Specification {
@@ -29,8 +26,24 @@ class JavaSpies extends Specification {
     person.age == 42
   }
 
-  @FailsWith(value = ConditionNotSatisfiedError, reason = "TODO")
-  def "call real Object methods by default"() {
+  def "call real equals method by default"() {
+    def fred1 = Spy(Person, constructorArgs: ["fred", 42])
+    def fred2 = Spy(Person, constructorArgs: ["fred", 21])
+    def barney = Spy(Person, constructorArgs: ["barney", 33])
+
+    expect:
+    fred1 == fred2
+    fred1 != barney
+  }
+
+  def "call real hashCode method by default"() {
+    def person = Spy(Person, constructorArgs: ["fred", 42])
+
+    expect:
+    person.hashCode() == "fred".hashCode()
+  }
+
+  def "call real toString method by default"() {
     def person = Spy(Person, constructorArgs: ["fred", 42])
 
     expect:
@@ -84,7 +97,15 @@ class JavaSpies extends Specification {
     }
 
     String toString() {
-      "Hi I'm $name"
+      "Hi, I'm $name"
+    }
+
+    boolean equals(Object other) {
+      other instanceof Person && name == other.name
+    }
+
+    int hashCode() {
+      name.hashCode()
     }
   }
 }

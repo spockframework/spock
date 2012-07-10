@@ -24,6 +24,8 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import groovy.lang.GString;
 
+import org.spockframework.mock.EqualsHashCodeToStringInteractions;
+import org.spockframework.mock.IMockInteraction;
 import org.spockframework.mock.IMockInvocation;
 import org.spockframework.util.ReflectionUtil;
 
@@ -33,6 +35,9 @@ public class EmptyOrStubResponse implements IMockInvocationResponder {
   private EmptyOrStubResponse() {}
 
   public Object respond(IMockInvocation invocation) {
+    IMockInteraction interaction = EqualsHashCodeToStringInteractions.INSTANCE.match(invocation);
+    if (interaction != null) return interaction.accept(invocation);
+
     Class<?> returnType = invocation.getMethod().getReturnType();
 
     if (returnType == void.class || returnType == Void.class) {

@@ -35,9 +35,11 @@ public interface IMockInteraction {
   @Nullable
   Object accept(IMockInvocation invocation);
 
-  boolean hasResults();
-
   boolean isSatisfied();
 
   boolean isExhausted();
+
+  boolean hasResults();
+
+  boolean isRequired();
 }

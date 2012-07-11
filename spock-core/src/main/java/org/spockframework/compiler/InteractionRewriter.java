@@ -172,6 +172,10 @@ public class InteractionRewriter {
     if (wildcardCall) {
       if (implicitTarget) {
         call(InteractionBuilder.ADD_EQUAL_TARGET, AstUtil.getImplicitParameterRef(activeWithOrMockClosure));
+      } else {
+        // turn _ into _._
+        // gives better better behavior for stub with required interaction
+        call(InteractionBuilder.ADD_WILDCARD_TARGET);
       }
       // not same as leaving it out - doesn't match Object.toString() etc.
       call(InteractionBuilder.ADD_EQUAL_METHOD_NAME, new ConstantExpression(Wildcard.INSTANCE.toString()));

@@ -19,6 +19,7 @@ import org.spockframework.runtime.InvalidSpecException
 import spock.lang.Specification
 import spock.lang.FailsWith
 import spock.lang.Ignore
+import org.spockframework.mock.CannotCreateMockException
 
 class JavaStubs extends Specification {
   def person = Stub(IPerson)
@@ -37,8 +38,8 @@ class JavaStubs extends Specification {
     person.name == "fred"
   }
 
-  def "are commonly stubbed at creation time"() {
-    person = Stub(Person) {
+  def "like to be stubbed at creation time"() {
+    person = Stub(IPerson) {
       getName() >> "fred"
     }
 
@@ -54,13 +55,13 @@ class JavaStubs extends Specification {
     person.name == "fred"
   }
 
-  @Ignore("TODO what to do here?")
-  def "don't cause problems with wildcard mocking"() {
+  def "don't match wildcard target"() {
     when:
     person.getName()
 
     then:
-    //person.name >> "fred"
+    0 * _.getName()
+    0 * _._
     0 * _
   }
 
@@ -85,6 +86,32 @@ class JavaStubs extends Specification {
     person.getName() == "default"
   }
 
+  def "cannot stub final classes"() {
+    when:
+    Stub(FinalPerson)
+
+    then:
+    CannotCreateMockException e = thrown()
+    e.message.contains("final")
+  }
+
+  def "cannot stub final methods"() {
+    def person = Stub(FinalMethodPerson)
+    person.phoneNumber >> 6789
+
+    expect:
+    person.phoneNumber == "12345"
+  }
+
+  def "cannot stub globally"() {
+    when:
+    Stub(Person, global: true)
+
+    then:
+    CannotCreateMockException e = thrown()
+    e.message.contains("global")
+  }
+
   interface IPerson {
     String getName()
     int getAge()
@@ -95,5 +122,11 @@ class JavaStubs extends Specification {
     String name = "default"
     int age
     List<String> children
+  }
+
+  static final class FinalPerson extends Person {}
+
+  static class FinalMethodPerson extends Person {
+    final String getPhoneNumber() { "12345" }
   }
 }

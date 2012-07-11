@@ -19,19 +19,19 @@ package org.spockframework.mock;
 /**
  * @author Peter Niederwieser
  */
-// IDEA: could delegate target matching to IMockObject
-public class IdenticalTargetConstraint implements IInvocationConstraint {
+public class TargetConstraint implements IInvocationConstraint, IInteractionAware {
   private final Object target;
+  private IMockInteraction interaction;
 
-  public IdenticalTargetConstraint(Object target) {
+  public TargetConstraint(Object target) {
     this.target = target;
   }
 
   public boolean isSatisfiedBy(IMockInvocation invocation) {
-    IMockObject mockObject = invocation.getMockObject();
-    if (mockObject.isGlobal()) {
-      return mockObject.getInstance().getClass() == target.getClass();
-    }
-    return mockObject.getInstance() == target;
+    return invocation.getMockObject().matches(target, interaction);
+  }
+
+  public void setInteraction(IMockInteraction interaction) {
+    this.interaction = interaction;
   }
 }

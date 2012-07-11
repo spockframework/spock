@@ -69,17 +69,23 @@ public class InteractionBuilder {
 
   public static final String ADD_EQUAL_TARGET = "addEqualTarget";
   public InteractionBuilder addEqualTarget(Object target) {
-    if (!(target instanceof Wildcard))
-      invConstraints.add(new IdenticalTargetConstraint(target));
+    invConstraints.add(new TargetConstraint(target));
+    return this;
+  }
+
+  public static final String ADD_WILDCARD_TARGET = "addWildcardTarget";
+  public InteractionBuilder addWildcardTarget() {
+    invConstraints.add(new TargetConstraint(Wildcard.INSTANCE));
     return this;
   }
 
   public static final String ADD_EQUAL_PROPERTY_NAME = "addEqualPropertyName";
   public InteractionBuilder addEqualPropertyName(String name) {
-    if (name.equals(Wildcard.INSTANCE.toString()))
+    if (name.equals(Wildcard.INSTANCE.toString())) {
       invConstraints.add(WildcardMethodNameConstraint.INSTANCE);
-    else
+    } else {
       invConstraints.add(new EqualPropertyNameConstraint(name));
+    }
     return this;
   }
 
@@ -91,10 +97,11 @@ public class InteractionBuilder {
 
   public static final String ADD_EQUAL_METHOD_NAME = "addEqualMethodName";
   public InteractionBuilder addEqualMethodName(String name) {
-    if (name.equals(Wildcard.INSTANCE.toString()))
+    if (name.equals(Wildcard.INSTANCE.toString())) {
       invConstraints.add(WildcardMethodNameConstraint.INSTANCE);
-    else
+    } else {
       invConstraints.add(new EqualMethodNameConstraint(name));
+    }
     return this;
   }
 
@@ -107,9 +114,9 @@ public class InteractionBuilder {
   public static final String SET_ARG_LIST_KIND = "setArgListKind";
   public InteractionBuilder setArgListKind(boolean isPositional) {
     argConstraints = new ArrayList<IArgumentConstraint>();
-    if (isPositional)
+    if (isPositional) {
       invConstraints.add(new PositionalArgumentListConstraint(argConstraints));
-    else {
+    } else {
       argNames = new ArrayList<Object>();
       invConstraints.add(new NamedArgumentListConstraint(argNames, argConstraints));
     }

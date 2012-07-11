@@ -32,7 +32,11 @@ public class JavaMockFactory implements IMockFactory {
   public Object create(MockConfiguration configuration, Specification specification) {
     if (Modifier.isFinal(configuration.getType().getModifiers())) {
       throw new CannotCreateMockException(configuration.getType(),
-          " because 'Mock()' cannot mock final classes. If the code under test is written in Groovy, try 'GroovyMock()'.");
+          " because Java mocks cannot mock final classes. If the code under test is written in Groovy, use a Groovy mock.");
+    }
+    if (configuration.isGlobal()) {
+      throw new CannotCreateMockException(configuration.getType(),
+          " because Java mocks cannot mock globally. If the code under test is written in Groovy, use a Groovy mock.");
     }
 
     MetaClass mockMetaClass = GroovyRuntimeUtil.getMetaClass(configuration.getType());

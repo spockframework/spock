@@ -14,12 +14,13 @@
 
 package org.spockframework.mock;
 
+import org.spockframework.lang.Wildcard;
+import org.spockframework.runtime.InvalidSpecException;
 import org.spockframework.util.Nullable;
 
 import spock.mock.IMockInvocationResponder;
 
 public class MockObject implements IMockObject {
-  @Nullable
   private final String name;
   private final Class<?> type;
   private final Object instance;
@@ -37,6 +38,7 @@ public class MockObject implements IMockObject {
     this.defaultResponse = defaultResponse;
   }
 
+  @Nullable
   public String getName() {
     return name;
   }
@@ -50,15 +52,21 @@ public class MockObject implements IMockObject {
     return instance;
   }
 
-  public boolean isVerified() {
-    return verified;
-  }
-
-  public boolean isGlobal() {
-    return global;
-  }
-
   public IMockInvocationResponder getDefaultResponse() {
     return defaultResponse;
+  }
+
+  public boolean matches(Object target, IMockInteraction interaction) {
+    if (target instanceof Wildcard) return verified || !interaction.isRequired();
+    checkRequiredInteractionAllowed(interaction);
+    return global ? instance.getClass() == target.getClass() : instance == target;
+  }
+
+  private void checkRequiredInteractionAllowed(IMockInteraction interaction) {
+    if (!verified && interaction.isRequired()) {
+      String mockName = name != null ? name : "unnamed";
+      throw new InvalidSpecException("Stub '%s' matches the following required interaction:" +
+          "\n\n%s\n\nRemove the cardinality (e.g. '1 *'), or turn the stub into a mock.\n").withArgs(mockName, interaction);
+    }
   }
 }

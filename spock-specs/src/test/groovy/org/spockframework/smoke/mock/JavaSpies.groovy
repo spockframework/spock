@@ -99,6 +99,34 @@ class JavaSpies extends Specification {
     person.work() == "singing"
   }
 
+  def "cannot spy on final classes"() {
+    when:
+    Spy(FinalPerson)
+
+    then:
+    CannotCreateMockException e = thrown()
+    e.message.contains("final")
+  }
+
+  def "cannot spy on final methods"() {
+    def person = Spy(FinalMethodPerson)
+
+    when:
+    person.phoneNumber
+
+    then:
+    0 * person.phoneNumber
+  }
+
+  def "cannot spy globally"() {
+    when:
+    Spy(Person, global: true)
+
+    then:
+    CannotCreateMockException e = thrown()
+    e.message.contains("global")
+  }
+
   static class Constructable {
     int arg1
     int arg2
@@ -123,6 +151,10 @@ class JavaSpies extends Specification {
     String name
     int age
     List<String> children
+
+    Person() {
+      this("fred", 42)
+    }
 
     Person(String name, int age) {
       this.name = name
@@ -152,6 +184,12 @@ class JavaSpies extends Specification {
     int hashCode() {
       name.hashCode()
     }
+  }
+
+  static final class FinalPerson extends Person {}
+
+  static class FinalMethodPerson extends Person {
+    final String getPhoneNumber() { "12345" }
   }
 }
 

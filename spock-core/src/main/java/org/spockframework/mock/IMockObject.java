@@ -15,6 +15,7 @@
 package org.spockframework.mock;
 
 import org.spockframework.util.Nullable;
+
 import spock.mock.IMockInvocationResponder;
 
 public interface IMockObject {
@@ -40,19 +41,7 @@ public interface IMockObject {
    */
   Object getInstance();
 
-  /**
-   * Tells whether interactions with this mock object should be verified.
-   *
-   * @return whether interactions with this mock object should be verified
-   */
-  boolean isVerified();
-
-  /**
-   * Tells whether this mock object represents all instances of the mocked type.
-   *
-   * @return whether this mock object represents all instances of the mocked type
-   */
-  boolean isGlobal();
-
   IMockInvocationResponder getDefaultResponse();
+
+  boolean matches(Object target, IMockInteraction interaction);
 }

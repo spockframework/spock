@@ -16,7 +16,6 @@
 
 package org.spockframework.mock;
 
-import org.spockframework.runtime.InvalidSpecException;
 import org.spockframework.util.Nullable;
 
 import java.util.List;
@@ -32,28 +31,32 @@ public class MockInteraction implements IMockInteraction {
   private final String text;
   private final int minCount;
   private final int maxCount;
-  private final List<IInvocationConstraint> matchers;
+  private final List<IInvocationConstraint> constraints;
   private final IResultGenerator resultGenerator;
   private int acceptedCount;
 
   public MockInteraction(int line, int column, String text, int minCount,
-      int maxCount, List<IInvocationConstraint> matchers,
+      int maxCount, List<IInvocationConstraint> constraints,
       @Nullable IResultGenerator resultGenerator) {
     this.line = line;
     this.column = column;
     this.text = text;
     this.minCount = minCount;
     this.maxCount = maxCount;
-    this.matchers = matchers;
+    this.constraints = constraints;
     this.resultGenerator = resultGenerator;
+
+    for (IInvocationConstraint constraint : constraints) {
+      if (constraint instanceof IInteractionAware) {
+        ((IInteractionAware) constraint).setInteraction(this);
+      }
+    }
   }
 
   public boolean matches(IMockInvocation invocation) {
-    for (IInvocationConstraint matcher : matchers) {
-      if (!matcher.isSatisfiedBy(invocation)) return false;
+    for (IInvocationConstraint constraint : constraints) {
+      if (!constraint.isSatisfiedBy(invocation)) return false;
     }
-
-    checkIsNotRequiredStubInteraction(invocation);
     return true;
   }
 
@@ -66,16 +69,20 @@ public class MockInteraction implements IMockInteraction {
     return resultGenerator == null ? null : resultGenerator.generate(invocation);
   }
 
-  public boolean hasResults() {
-    return resultGenerator != null;
-  }
-
   public boolean isSatisfied() {
     return acceptedCount >= minCount;
   }
 
   public boolean isExhausted() {
     return acceptedCount >= maxCount;
+  }
+
+  public boolean hasResults() {
+    return resultGenerator != null;
+  }
+
+  public boolean isRequired() {
+    return minCount != 0 || maxCount != Integer.MAX_VALUE;
   }
 
   public int getLine() {
@@ -92,19 +99,6 @@ public class MockInteraction implements IMockInteraction {
 
   public String toString() {
     return String.format("%s   (%d %s)", text, acceptedCount, acceptedCount == 1 ? "invocation" : "invocations");
-  }
-
-  private void checkIsNotRequiredStubInteraction(IMockInvocation invocation) {
-    IMockObject mockObject = invocation.getMockObject();
-    if (!mockObject.isVerified() && hasCardinality()) {
-      String mockName = mockObject.getName() == null ? "unnamed" : mockObject.getName();
-      throw new InvalidSpecException("Stub '%s' matches the following required interaction:" +
-          "\n\n%s\n\nInvocation: %s\n\nChange the interaction, or turn the stub into a mock.").withArgs(mockName, this, invocation);
-    }
-  }
-
-  private boolean hasCardinality() {
-    return minCount != 0 || maxCount != Integer.MAX_VALUE;
   }
 }
 

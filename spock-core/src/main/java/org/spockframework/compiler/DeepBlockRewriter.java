@@ -100,7 +100,10 @@ public class DeepBlockRewriter extends AbstractDeepBlockRewriter {
     ExpressionStatement interaction = rewriter.rewrite(stat);
     if (interaction == null) return false;
 
-    if (block instanceof WhenBlock || block instanceof ExpectBlock) {
+    // would also want to enforce this for when-blocks, but unfortunately it's not that uncommon
+    // for projects to have interactions in when-blocks (Gradle, Tapestry). Before we enforce this,
+    // we should at least support multiple setup-blocks.
+    if (block instanceof ExpectBlock) {
       resources.getErrorReporter().error(stat, "Interactions are not allowed in '%s' blocks. " +
           "Put them before the '%s' block or into a 'then' block.", block.getName(), block.getName());
       return true;

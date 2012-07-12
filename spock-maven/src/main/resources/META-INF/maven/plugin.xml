@@ -112,7 +112,7 @@ will be added to the global Surefire configuration.</description>
       <groupId>junit</groupId>
       <artifactId>junit-dep</artifactId>
       <type>jar</type>
-      <version>4.9</version>
+      <version>4.10</version>
     </dependency>
     <dependency>
       <groupId>org.hamcrest</groupId>

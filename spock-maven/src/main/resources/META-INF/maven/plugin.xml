@@ -124,7 +124,7 @@ will be added to the global Surefire configuration.</description>
       <groupId>org.codehaus.groovy</groupId>
       <artifactId>groovy-all</artifactId>
       <type>jar</type>
-      <version>2.0.0-beta-3-SNAPSHOT</version>
+      <version>2.0.0</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
@@ -313,10 +313,10 @@ will be added to the global Surefire configuration.</description>
       <version>2.11</version>
     </dependency>
     <dependency>
-      <groupId>asm</groupId>
+      <groupId>org.ow2.asm</groupId>
       <artifactId>asm</artifactId>
       <type>jar</type>
-      <version>3.3.1</version>
+      <version>4.0</version>
     </dependency>
   </dependencies>
 </plugin>

@@ -51,29 +51,27 @@ public class GroovyMockInterceptor implements IProxyBasedMockInterceptor {
     // example is when GroovyObject.invokeMethod is invoked directly
     Object[] normalizedArgs = GroovyRuntimeUtil.asUnwrappedArgumentArray(arguments);
 
-    if (target instanceof GroovyObject) {
-      if (isMethod(method, "getMetaClass")) {
-        return mockMetaClass;
-      }
-      if (isMethod(method, "invokeMethod", String.class, Object.class)) {
-        return GroovyRuntimeUtil.invokeMethod(target,
-            (String) normalizedArgs[0], GroovyRuntimeUtil.asArgumentArray(normalizedArgs[1]));
-      }
-      if (isMethod(method, "getProperty", String.class)) {
-        String methodName = GroovyRuntimeUtil.propertyToMethodName("get", (String) normalizedArgs[0]);
-        return GroovyRuntimeUtil.invokeMethod(target, methodName);
-      }
-      if (isMethod(method, "setProperty", String.class, Object.class)) {
-        String methodName = GroovyRuntimeUtil.propertyToMethodName("set", (String) normalizedArgs[0]);
-        return GroovyRuntimeUtil.invokeMethod(target, methodName, normalizedArgs[1]);
-      }
-      if (isMethod(method, "methodMissing", String.class, Object.class)) {
-        throw new MissingMethodException((String) normalizedArgs[0],
-            mockConfiguration.getType(), new Object[] {normalizedArgs[1]}, false);
-      }
-      if (isMethod(method, "propertyMissing", String.class)) {
-        throw new MissingPropertyException((String) normalizedArgs[0], mockConfiguration.getType());
-      }
+    if (isMethod(method, "getMetaClass")) {
+      return mockMetaClass;
+    }
+    if (isMethod(method, "invokeMethod", String.class, Object.class)) {
+      return GroovyRuntimeUtil.invokeMethod(target,
+          (String) normalizedArgs[0], GroovyRuntimeUtil.asArgumentArray(normalizedArgs[1]));
+    }
+    if (isMethod(method, "getProperty", String.class)) {
+      String methodName = GroovyRuntimeUtil.propertyToMethodName("get", (String) normalizedArgs[0]);
+      return GroovyRuntimeUtil.invokeMethod(target, methodName);
+    }
+    if (isMethod(method, "setProperty", String.class, Object.class)) {
+      String methodName = GroovyRuntimeUtil.propertyToMethodName("set", (String) normalizedArgs[0]);
+      return GroovyRuntimeUtil.invokeMethod(target, methodName, normalizedArgs[1]);
+    }
+    if (isMethod(method, "methodMissing", String.class, Object.class)) {
+      throw new MissingMethodException((String) normalizedArgs[0],
+          mockConfiguration.getType(), new Object[] {normalizedArgs[1]}, false);
+    }
+    if (isMethod(method, "propertyMissing", String.class)) {
+      throw new MissingPropertyException((String) normalizedArgs[0], mockConfiguration.getType());
     }
 
     IMockMethod mockMethod = new StaticMockMethod(method);

@@ -17,10 +17,7 @@ package org.spockframework.mock;
 import java.util.Arrays;
 import java.util.List;
 
-import groovy.lang.DelegatingMetaClass;
-import groovy.lang.GroovyObject;
-import groovy.lang.MetaClass;
-import groovy.lang.MetaMethod;
+import groovy.lang.*;
 
 import org.spockframework.runtime.GroovyRuntimeUtil;
 import org.spockframework.util.ReflectionUtil;
@@ -66,6 +63,9 @@ public class GroovyMockMetaClass extends DelegatingMetaClass {
   }
 
   private Object doInvokeMethod(Object target, String method, Object[] arguments, boolean isStatic) {
+    // get rid of PojoWrapper's; not sure where they come from, but they sometimes appear
+    arguments = GroovyRuntimeUtil.asUnwrappedArgumentArray(arguments);
+
     if (isGetMetaClassCallOnGroovyObject(target, method, arguments, isStatic)) {
       // We handle this case explicitly because strangely enough, delegate.pickMethod()
       // selects DGM.getMetaClass() even for GroovyObject's. This would result in getMetaClass()
@@ -76,15 +76,31 @@ public class GroovyMockMetaClass extends DelegatingMetaClass {
     }
 
     MetaMethod metaMethod = delegate.pickMethod(method, ReflectionUtil.getTypes(arguments));
-    if (!isStatic && !configuration.isGlobal()
-        && GroovyRuntimeUtil.isPhysicalMethod(metaMethod, configuration.getType())) {
-      return metaMethod.invoke(target, arguments);
+    if (GroovyRuntimeUtil.isPhysicalMethod(metaMethod, configuration.getType())) {
+      if (!isStatic && !configuration.isGlobal()) {
+        return metaMethod.invoke(target, arguments);
+      }
+    }
+
+    // MetaMethod.getDeclaringClass apparently differs from java.reflect.Method.getDeclaringClass()
+    // in that the originally declaring class/interface is returned; we leverage this behavior
+    // to check if a GroovyObject method was called
+    if (metaMethod != null && metaMethod.getDeclaringClass().getTheClass() == GroovyObject.class) {
+      if (method.equals("invokeMethod")) {
+        return invokeMethod(target, (String) arguments[0], GroovyRuntimeUtil.asArgumentArray(arguments[1]));
+      }
+      if (method.equals("getProperty")) {
+        return getProperty(target, (String) arguments[0]);
+      }
+      if (method.equals("setProperty")) {
+        setProperty(target, (String) arguments[0], arguments[1]);
+        return null;
+      }
+      // getMetaClass was already handled earlier; setMetaClass isn't handled specially
     }
 
     IMockInvocation invocation = createMockInvocation(metaMethod, target, method, arguments, isStatic);
     IMockController controller = specification.getSpecificationContext().getMockController();
-
-    // TODO: if global, need to devirtualize (invokeMethod("foo") -> foo(), etc.)
     return controller.handle(invocation);
   }
 

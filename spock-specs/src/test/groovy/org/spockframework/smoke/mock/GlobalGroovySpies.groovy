@@ -115,7 +115,6 @@ class GlobalGroovySpies extends Specification {
     1 * anyList.foo(42) >> true
   }
 
-  // TODO: devirtualize
   def "mock dynamic instance method called via MOP"() {
     def anyPerson = GroovySpy(Person, global: true)
 
@@ -123,8 +122,27 @@ class GlobalGroovySpies extends Specification {
     new Person().invokeMethod("foo", [42] as Object[])
 
     then:
-    //1 * anyPerson.foo(42) >> "done"
-    1 * anyPerson.invokeMethod("foo", _) >> "done"
+    1 * anyPerson.foo(42) >> "done"
+  }
+
+  def "mock dynamic property getter called via MOP"() {
+    def anyPerson = GroovySpy(Person, global: true)
+
+    when:
+    new Person().getProperty("foo")
+
+    then:
+    1 * anyPerson.foo >> "done"
+  }
+
+  def "mock dynamic property setter called via MOP"() {
+    def anyPerson = GroovySpy(Person, global: true)
+
+    when:
+    new Person().setProperty("foo", 42)
+
+    then:
+    1 * anyPerson.setFoo(42) >> "done"
   }
 
   def "mock final instance method"() {

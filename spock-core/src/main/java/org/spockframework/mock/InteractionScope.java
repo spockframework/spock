@@ -49,11 +49,14 @@ public class InteractionScope implements IInteractionScope {
   }
 
   public IMockInteraction match(IMockInvocation invocation) {
+    IMockInteraction firstMatch = null;
     for (IMockInteraction interaction : interactions)
-      if (interaction.matches(invocation))
-        return interaction;
+      if (interaction.matches(invocation)) {
+        if (!interaction.isExhausted()) return interaction;
+        if (firstMatch == null) firstMatch = interaction;
+      }
 
-    return null;
+    return firstMatch;
   }
 
   public void verifyInteractions() {

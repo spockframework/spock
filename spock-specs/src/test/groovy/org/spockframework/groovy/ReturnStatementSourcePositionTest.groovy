@@ -18,8 +18,9 @@ package org.spockframework.groovy
 
 import org.codehaus.groovy.ast.stmt.ReturnStatement
 import org.spockframework.util.inspector.AstInspector
+import spock.lang.Specification
 
-class ReturnStatementSourcePositionTest extends GroovyTestCase {
+class ReturnStatementSourcePositionTest extends Specification {
   void test() {
     def inspector = new AstInspector()
 
@@ -33,10 +34,12 @@ class Foo {
 
     def method = inspector.getMethod("bar");
     def stat = method.code.statements[0]
-    assert stat instanceof ReturnStatement
-    assert stat.lineNumber == 4
-    assert stat.columnNumber == 5
-    assert stat.lastLineNumber == 4
-    assert stat.lastColumnNumber == 11
+
+    expect:
+    stat instanceof ReturnStatement
+    stat.lineNumber == 4
+    stat.columnNumber == 5
+    stat.lastLineNumber == 4
+    stat.lastColumnNumber == 11
   }
 }

@@ -16,8 +16,9 @@ package org.spockframework.groovy
 
 import org.spockframework.util.inspector.AstInspector
 import org.codehaus.groovy.ast.stmt.AssertStatement
+import spock.lang.Specification
 
-class AssertStatementSourcePositionTest extends GroovyTestCase {
+class AssertStatementSourcePositionTest extends Specification {
   void test() {
     def inspector = new AstInspector()
 
@@ -31,16 +32,18 @@ class Foo {
 
     def method = inspector.getMethod("bar");
     def stat = method.code.statements[0]
-    assert stat instanceof AssertStatement
-    assert stat.lineNumber == 4
-    assert stat.columnNumber == 5
-    assert stat.lastLineNumber == 4
-    assert stat.lastColumnNumber == 18
+
+    expect:
+    stat instanceof AssertStatement
+    stat.lineNumber == 4
+    stat.columnNumber == 5
+    stat.lastLineNumber == 4
+    stat.lastColumnNumber == 18
 
     def expr = stat.booleanExpression
-    assert expr.lineNumber == 4
-    assert expr.columnNumber == 12
-    assert expr.lastLineNumber == 4
-    assert expr.lastColumnNumber == 18
+    expr.lineNumber == 4
+    expr.columnNumber == 12
+    expr.lastLineNumber == 4
+    expr.lastColumnNumber == 18
   }
 }

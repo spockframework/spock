@@ -33,7 +33,7 @@ foo[0]
     """)
 
     expect:
-      inspector.scriptExpressions[0].operation.startColumn == 4
+    inspector.scriptExpressions[0].operation.startColumn == 4
   }
 
   def "PropertyExpression that will become ClassExpression"() {

@@ -23,7 +23,7 @@ import spock.lang.FailsWith
 /**
  * @author Peter Niederwieser
  */
-class MockingOfGroovyClassesWithDefaultMocks extends Specification {
+class JavaMocksForGroovyClasses extends Specification {
   MockMe mockMe = Mock()
 
   def "mock declared method"() {

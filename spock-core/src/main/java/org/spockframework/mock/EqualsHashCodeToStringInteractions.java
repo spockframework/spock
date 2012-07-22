@@ -26,13 +26,17 @@ public class EqualsHashCodeToStringInteractions implements IInteractionScope {
 
   private final List<DefaultInteraction> interactions = Arrays.asList(
       ObjectEqualsInteraction.INSTANCE, ObjectHashCodeInteraction.INSTANCE, ObjectToStringInteraction.INSTANCE);
-  
+
   public void addInteraction(IMockInteraction interaction) {
     throw new UnreachableCodeError("addInteraction");
   }
 
   public void addOrderingBarrier() {
     throw new UnreachableCodeError("addOrderingBarrier()");
+  }
+
+  public void addUnmatchedInvocation(IMockInvocation invocation) {
+    throw new UnreachableCodeError("addUnmatchedInvocation()");
   }
 
   public IMockInteraction match(IMockInvocation invocation) {

@@ -41,6 +41,8 @@ public interface IMockObject {
    */
   Object getInstance();
 
+  boolean isVerified();
+
   IMockInvocationResponder getDefaultResponse();
 
   boolean matches(Object target, IMockInteraction interaction);

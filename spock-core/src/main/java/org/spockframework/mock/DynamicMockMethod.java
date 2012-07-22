@@ -14,7 +14,6 @@
 
 package org.spockframework.mock;
 
-import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.List;
 
@@ -49,9 +48,5 @@ public class DynamicMockMethod implements IMockMethod {
 
   public boolean isStatic() {
     return isStatic;
-  }
-
-  public Method getTargetMethod() {
-    return null;
   }
 }

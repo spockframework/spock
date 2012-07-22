@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 the original author or authors.
+ * Copyright 2012 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,22 +14,10 @@
  * limitations under the License.
  */
 
-package org.spockframework.mock;
+package org.spockframework.util
 
-/**
- * An interaction scope holds a group of interactions that will be verified,
- * and thereafter removed, at the same time.
- *
- * @author Peter Niederwieser
- */
-public interface IInteractionScope {
-  void addInteraction(IMockInteraction interaction);
-
-  void addOrderingBarrier();
-
-  void addUnmatchedInvocation(IMockInvocation invocation);
-
-  IMockInteraction match(IMockInvocation invocation);
-
-  void verifyInteractions();
+class LinkedHashMultisetSpec extends AbstractMultisetSpec {
+  def setup() {
+    multiset = new LinkedHashMultiset<String>()
+  }
 }

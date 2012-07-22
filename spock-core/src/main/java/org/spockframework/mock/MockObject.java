@@ -52,14 +52,22 @@ public class MockObject implements IMockObject {
     return instance;
   }
 
+  public boolean isVerified() {
+    return verified;
+  }
+
   public IMockInvocationResponder getDefaultResponse() {
     return defaultResponse;
   }
 
   public boolean matches(Object target, IMockInteraction interaction) {
     if (target instanceof Wildcard) return verified || !interaction.isRequired();
-    checkRequiredInteractionAllowed(interaction);
-    return global ? instance.getClass() == target.getClass() : instance == target;
+
+    boolean match = global ? instance.getClass() == target.getClass() : instance == target;
+    if (match) {
+      checkRequiredInteractionAllowed(interaction);
+    }
+    return match;
   }
 
   private void checkRequiredInteractionAllowed(IMockInteraction interaction) {

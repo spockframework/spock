@@ -13,6 +13,10 @@
  */
 package org.spockframework.mock;
 
+import java.util.List;
+
+import org.spockframework.util.UnreachableCodeError;
+
 public abstract class DefaultInteraction implements IMockInteraction {
   public int getLine() {
     return -1;
@@ -20,6 +24,14 @@ public abstract class DefaultInteraction implements IMockInteraction {
 
   public int getColumn() {
     return -1;
+  }
+
+  public List<IMockInvocation> getAcceptedInvocations() {
+    throw new UnreachableCodeError("getAcceptedInvocations");
+  }
+
+  public int computeSimilarityScore(IMockInvocation invocation) {
+    throw new UnreachableCodeError("computeSimilarityScore");
   }
 
   public boolean isSatisfied() {

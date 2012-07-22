@@ -14,13 +14,10 @@
 
 package org.spockframework.mock;
 
-import org.spockframework.util.Nullable;
-
-import java.lang.reflect.Method;
 import java.util.List;
 
 /**
- * Represents a method that is to be mocked. May or may not correspond to a physical method in byte code.
+ * Represents a method that is to be mocked. May or may not correspond to a physical method of a class.
  */
 public interface IMockMethod {
   /**
@@ -47,14 +44,4 @@ public interface IMockMethod {
   Class<?> getReturnType();
 
   boolean isStatic();
-
-  /**
-   * Returns the physical method corresponding to the mocked method. Returns {@code null} if a dynamic
-   * method is mocked, or if the target method isn't known because the invocation is intercepted before
-   * a method has been selected.
-   *
-   * @return the physical method corresponding to the mocked method
-   */
-  @Nullable
-  Method getTargetMethod();
 }

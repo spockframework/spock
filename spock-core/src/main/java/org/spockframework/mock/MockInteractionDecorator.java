@@ -14,6 +14,8 @@
 
 package org.spockframework.mock;
 
+import java.util.List;
+
 public abstract class MockInteractionDecorator implements IMockInteraction {
   protected final IMockInteraction decorated;
 
@@ -39,6 +41,14 @@ public abstract class MockInteractionDecorator implements IMockInteraction {
 
   public Object accept(IMockInvocation invocation) {
     return decorated.accept(invocation);
+  }
+
+  public List<IMockInvocation> getAcceptedInvocations() {
+    return decorated.getAcceptedInvocations();
+  }
+
+  public int computeSimilarityScore(IMockInvocation invocation) {
+    return decorated.computeSimilarityScore(invocation);
   }
 
   public boolean isSatisfied() {

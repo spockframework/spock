@@ -16,6 +16,8 @@
 
 package org.spockframework.mock;
 
+import java.util.List;
+
 import org.spockframework.util.Nullable;
 
 /**
@@ -34,6 +36,10 @@ public interface IMockInteraction {
 
   @Nullable
   Object accept(IMockInvocation invocation);
+
+  List<IMockInvocation> getAcceptedInvocations();
+
+  int computeSimilarityScore(IMockInvocation invocation);
 
   boolean isSatisfied();
 

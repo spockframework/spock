@@ -43,6 +43,9 @@ public class MockController implements IMockController {
         }
       }
     }
+    for (IInteractionScope scope : scopes) {
+      scope.addUnmatchedInvocation(invocation);
+    }
     return invocation.getMockObject().getDefaultResponse().respond(invocation);
   }
 

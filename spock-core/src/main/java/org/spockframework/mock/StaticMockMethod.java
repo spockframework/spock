@@ -41,8 +41,4 @@ public class StaticMockMethod implements IMockMethod {
   public boolean isStatic() {
     return Modifier.isStatic(method.getModifiers());
   }
-
-  public Method getTargetMethod() {
-    return method;
-  }
 }

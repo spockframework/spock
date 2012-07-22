@@ -150,6 +150,24 @@ then: thrown(Exception)
     e.line == 3
   }
 
+  @Issue("http://issues.spockframework.org/detail?id=216")
+  def "must be top-level statements"() {
+    when:
+    compiler.compileFeatureBody("""
+def e = new Exception()
+
+when:
+throw e
+
+then:
+thrown() == e
+    """)
+
+    then:
+    InvalidSpecCompileException e = thrown()
+    e.message.startsWith("Exception conditions are only allowed as top-level statements")
+  }
+
   @Issue("http://issues.spockframework.org/detail?id=138")
   @FailsWith(InvalidSpecException)
   def "(Java-style) exception condition must specify a type that is-a java.lang.Throwable"() {

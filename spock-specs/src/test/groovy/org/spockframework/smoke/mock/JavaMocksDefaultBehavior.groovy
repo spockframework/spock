@@ -16,7 +16,7 @@ package org.spockframework.smoke.mock
 
 import spock.lang.*
 
-class DefaultInteractions extends Specification {
+class JavaMocksDefaultBehavior extends Specification {
   def "by default, a mock is only equal to itself"() {
     def mock = Mock(Foo)
     def anotherMockOfSameType = Mock(Foo)

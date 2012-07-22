@@ -1,43 +1,13 @@
-/*
- * Copyright 2012 the original author or authors.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package org.spockframework.util;
 
 import java.util.*;
 
-/**
- * Set-like data structure where each element has a cardinality. The cardinality
- * can be queried with count(). add() and remove() operations increase and decrease
- * the cardinality, respectively. Operations try to follow the java.util.Collection
- * contract.
- *
- * Note that iterator() and toArray() return each element just once, irrespective of
- * its cardinality. Cardinality-aware iteration is possible with entrySet().
- * Iteration order is not guaranteed.
- *
- * @param <E> the element type of the multiset
- */
-@NotThreadSafe
-public class Multiset<E> implements Collection<E> {
-  private final Map<E, Integer> elements = new HashMap<E, Integer>();
-
-  public Multiset() {}
-
-  public Multiset(Collection<? extends E> collection) {
-    addAll(collection);
+@SuppressWarnings("SuspiciousMethodCalls")
+public abstract class AbstractMultiset<E> implements IMultiset<E> {
+  private final Map<E, Integer> elements;
+  
+  public AbstractMultiset(Map<E, Integer> elements) {
+    this.elements = elements;
   }
 
   public int size() {
@@ -60,7 +30,7 @@ public class Multiset<E> implements Collection<E> {
     return elements.keySet().toArray();
   }
 
-  public <T> T[] toArray(T[] array) {
+  public <E> E[] toArray(E[] array) {
     return elements.keySet().toArray(array);
   }
 
@@ -74,6 +44,7 @@ public class Multiset<E> implements Collection<E> {
     return true;
   }
 
+  @SuppressWarnings("unchecked")
   public boolean remove(Object element) {
     Integer count = elements.get(element);
     if (count == null) {

@@ -18,8 +18,8 @@ package org.spockframework.util
 
 import spock.lang.Specification
 
-class MultisetSpec extends Specification {
-  def multiset = new Multiset<String>()
+abstract class AbstractMultisetSpec extends Specification {
+  def multiset
 
   def "initially empty"() {
     expect:
@@ -29,7 +29,7 @@ class MultisetSpec extends Specification {
   }
 
   def "create multiset with different elements"() {
-    multiset = new Multiset<String>(["foo", "bar"])
+    multiset = new HashMultiset<String>(["foo", "bar"])
 
     expect:
     multiset.size() == 2
@@ -40,7 +40,7 @@ class MultisetSpec extends Specification {
   }
 
   def "create multiset with same elements"() {
-    multiset = new Multiset<String>(["foo", "foo"])
+    multiset = new HashMultiset<String>(["foo", "foo"])
 
     expect:
     multiset.size() == 1
@@ -49,7 +49,7 @@ class MultisetSpec extends Specification {
   }
 
   def "iterate over elements"() {
-    multiset = new Multiset<String>(["foo", "bar", "foo"])
+    multiset = new HashMultiset<String>(["foo", "bar", "foo"])
     def iterator = multiset.iterator()
 
     expect:
@@ -62,7 +62,7 @@ class MultisetSpec extends Specification {
   }
 
   def "iterate over entry set"() {
-    multiset = new Multiset<String>(["foo", "bar", "foo"])
+    multiset = new HashMultiset<String>(["foo", "bar", "foo"])
     def entrySet = multiset.entrySet()
 
     expect:
@@ -93,7 +93,7 @@ class MultisetSpec extends Specification {
   }
 
   def "remove elements"() {
-    multiset = new Multiset<String>(["foo", "foo"])
+    multiset = new HashMultiset<String>(["foo", "foo"])
 
     expect:
     multiset.contains("foo")
@@ -130,7 +130,7 @@ class MultisetSpec extends Specification {
   }
 
   def "bulk remove different elements"() {
-    multiset = new Multiset<String>(["foo", "bar", "foo"])
+    multiset = new HashMultiset<String>(["foo", "bar", "foo"])
 
     when:
     def changed = multiset.removeAll("foo", "bar")
@@ -143,7 +143,7 @@ class MultisetSpec extends Specification {
   }
 
   def "bulk remove same element"() {
-    multiset = new Multiset<String>(["foo", "bar", "foo"])
+    multiset = new HashMultiset<String>(["foo", "bar", "foo"])
 
     when:
     def changed = multiset.removeAll("foo", "foo")
@@ -156,7 +156,7 @@ class MultisetSpec extends Specification {
   }
 
   def "retain different elements"() {
-    multiset = new Multiset<String>(["foo", "bar", "baz", "foo"])
+    multiset = new HashMultiset<String>(["foo", "bar", "baz", "foo"])
 
     when:
     def changed = multiset.retainAll("foo", "baz")
@@ -172,7 +172,7 @@ class MultisetSpec extends Specification {
   }
 
   def "retain same element"() {
-    multiset = new Multiset<String>(["foo", "bar", "baz", "foo"])
+    multiset = new HashMultiset<String>(["foo", "bar", "baz", "foo"])
 
     when:
     def changed = multiset.retainAll("bar", "bar")
@@ -187,7 +187,7 @@ class MultisetSpec extends Specification {
   }
 
   def "bulk contains"() {
-    multiset = new Multiset<String>(["foo", "bar", "baz", "foo"])
+    multiset = new HashMultiset<String>(["foo", "bar", "baz", "foo"])
 
     expect:
     multiset.containsAll("foo", "bar", "baz")
@@ -195,7 +195,7 @@ class MultisetSpec extends Specification {
   }
 
   def "clear"() {
-    multiset = new Multiset<String>(["foo", "bar", "foo"])
+    multiset = new HashMultiset<String>(["foo", "bar", "foo"])
 
     when:
     multiset.clear()
@@ -207,7 +207,7 @@ class MultisetSpec extends Specification {
   }
 
   def "convert to array"() {
-    multiset = new Multiset<String>(["foo", "bar", "foo"])
+    multiset = new HashMultiset<String>(["foo", "bar", "foo"])
 
     expect:
     multiset.toArray() == ["foo", "bar"] as Object[]

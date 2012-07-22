@@ -19,7 +19,8 @@ package org.spockframework.mock;
 import java.util.*;
 
 import org.spockframework.util.Assert;
-import org.spockframework.util.Multiset;
+import org.spockframework.util.HashMultiset;
+import org.spockframework.util.IMultiset;
 
 /**
  * Indicates that one or more required interactions have matched too few invocations.
@@ -42,7 +43,7 @@ public class TooFewInvocationsError extends InteractionNotSatisfiedError {
   public synchronized String getMessage() {
     if (message != null) return message;
 
-    Multiset<IMockInvocation> unmatchedMultiInvocations = new Multiset<IMockInvocation>(unmatchedInvocations);
+    IMultiset<IMockInvocation> unmatchedMultiInvocations = new HashMultiset<IMockInvocation>(unmatchedInvocations);
 
     StringBuilder builder = new StringBuilder();
 
@@ -67,7 +68,7 @@ public class TooFewInvocationsError extends InteractionNotSatisfiedError {
     return message;
   }
 
-  private List<ScoredInvocation> scoreInvocations(IMockInteraction interaction, Multiset<IMockInvocation> invocations) {
+  private List<ScoredInvocation> scoreInvocations(IMockInteraction interaction, IMultiset<IMockInvocation> invocations) {
     List<ScoredInvocation> result = new ArrayList<ScoredInvocation>();
     for (Map.Entry<IMockInvocation, Integer> entry : invocations.entrySet()) {
       result.add(new ScoredInvocation(entry.getKey(), entry.getValue(), interaction.computeSimilarityScore(entry.getKey())));

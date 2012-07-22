@@ -17,7 +17,24 @@
 package org.spockframework.util
 
 class LinkedHashMultisetSpec extends AbstractMultisetSpec {
-  def setup() {
-    multiset = new LinkedHashMultiset<String>()
+  def <T> IMultiset<T> createMultiset(List<T> elements) {
+    new LinkedHashMultiset<T>(elements)
+  }
+
+  def "iteration order follows order of first insertion of an element"() {
+    multiset = createMultiset(["a", "b", "a", "c" , "d", "c", "e"])
+
+    expect:
+    toList(multiset.iterator()) == ["a", "b", "c", "d", "e"]
+    multiset.toArray() == ["a", "b", "c", "d", "e"] as Object[]
+    toList(multiset.entrySet().collect { it.key }.iterator()) == ["a", "b", "c", "d", "e"]
+  }
+
+  private toList(Iterator iterator) {
+    def result = []
+    while (iterator.hasNext()) {
+      result << iterator.next()
+    }
+    result
   }
 }

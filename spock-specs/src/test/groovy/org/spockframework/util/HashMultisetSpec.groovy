@@ -17,7 +17,7 @@
 package org.spockframework.util
 
 class HashMultisetSpec extends AbstractMultisetSpec {
-  def setup() {
-    multiset = new HashMultiset<String>()
+  def <T> IMultiset<T> createMultiset(List<T> elements) {
+    new HashMultiset<T>(elements)
   }
 }

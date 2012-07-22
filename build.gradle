@@ -46,11 +46,10 @@ subprojects {
 
   signing {
     sign configurations.archives
-    required { gradle.taskGraph.hasTask(uploadArchives) }
   }
 
-  tasks.withType(Compile) { task ->
-    options.useAnt = false
+  signArchives {
+    onlyIf { gradle.taskGraph.hasTask(uploadArchives) }
   }
 
   configureJavadoc(javadoc)

@@ -73,6 +73,24 @@ public class MockInvocation implements IMockInvocation {
     return String.format("%s.%s(%s)", mockName, method.getName(), render(arguments));
   }
 
+  @Override
+  public boolean equals(Object other) {
+    if (other == this) return true;
+    if (!(other instanceof IMockInvocation)) return false;
+
+    IMockInvocation otherInv = (IMockInvocation) other;
+    return mockObject.getInstance() == otherInv.getMockObject().getInstance()
+        && method.getName().equals(otherInv.getMethod().getName())
+        && arguments.equals(otherInv.getArguments());
+  }
+
+  public int hashCode() {
+    int result = mockObject.getInstance().hashCode();
+    result = result * 31 + method.getName().hashCode();
+    result = result * 31 + arguments.hashCode();
+    return result;
+  }
+
   private String render(List<Object> arguments) {
     List<String> strings = new ArrayList<String>();
     for (Object arg : arguments) strings.add(DefaultGroovyMethods.inspect(arg));

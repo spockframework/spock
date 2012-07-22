@@ -35,6 +35,8 @@ public interface IMockInteraction {
   @Nullable
   Object accept(IMockInvocation invocation);
 
+  int computeSimilarityScore(IMockInvocation invocation);
+
   boolean isSatisfied();
 
   boolean isExhausted();

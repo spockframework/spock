@@ -27,6 +27,8 @@ public interface IInteractionScope {
 
   void addOrderingBarrier();
 
+  void addUnmatchedInvocation(IMockInvocation invocation);
+
   IMockInteraction match(IMockInvocation invocation);
 
   void verifyInteractions();

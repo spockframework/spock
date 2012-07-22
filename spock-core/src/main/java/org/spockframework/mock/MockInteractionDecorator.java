@@ -41,6 +41,10 @@ public abstract class MockInteractionDecorator implements IMockInteraction {
     return decorated.accept(invocation);
   }
 
+  public int computeSimilarityScore(IMockInvocation invocation) {
+    return decorated.computeSimilarityScore(invocation);
+  }
+
   public boolean isSatisfied() {
     return decorated.isSatisfied();
   }

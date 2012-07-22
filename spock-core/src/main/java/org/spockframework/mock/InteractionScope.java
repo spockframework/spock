@@ -26,6 +26,7 @@ import java.util.List;
  */
 public class InteractionScope implements IInteractionScope {
   private final List<IMockInteraction> interactions = new ArrayList<IMockInteraction>();
+  private final List<IMockInvocation> unmatchedInvocations = new ArrayList<IMockInvocation>();
   private int currentRegistrationZone = 0;
   private int currentExecutionZone = 0;
 
@@ -48,6 +49,12 @@ public class InteractionScope implements IInteractionScope {
     currentRegistrationZone++;
   }
 
+  public void addUnmatchedInvocation(IMockInvocation invocation) {
+    if (invocation.getMockObject().isVerified()) {
+      unmatchedInvocations.add(invocation);
+    }
+  }
+
   public IMockInteraction match(IMockInvocation invocation) {
     IMockInteraction firstMatch = null;
     for (IMockInteraction interaction : interactions)
@@ -60,12 +67,12 @@ public class InteractionScope implements IInteractionScope {
   }
 
   public void verifyInteractions() {
-    List<IMockInteraction> unsatisfieds = new ArrayList<IMockInteraction>();
+    List<IMockInteraction> unsatisfiedInteractions = new ArrayList<IMockInteraction>();
 
-    for (IMockInteraction i : interactions)
-      if (!i.isSatisfied()) unsatisfieds.add(i);
+    for (IMockInteraction interaction : interactions)
+      if (!interaction.isSatisfied()) unsatisfiedInteractions.add(interaction);
 
-    if (!unsatisfieds.isEmpty())
-      throw new TooFewInvocationsError(unsatisfieds);
+    if (!unsatisfiedInteractions.isEmpty())
+      throw new TooFewInvocationsError(unsatisfiedInteractions, unmatchedInvocations);
   }
 }

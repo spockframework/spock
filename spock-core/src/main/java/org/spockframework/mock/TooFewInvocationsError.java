@@ -16,9 +16,10 @@
 
 package org.spockframework.mock;
 
-import java.util.List;
+import java.util.*;
 
 import org.spockframework.util.Assert;
+import org.spockframework.util.Multiset;
 
 /**
  * Indicates that one or more required interactions have matched too few invocations.
@@ -27,47 +28,67 @@ import org.spockframework.util.Assert;
  */
 public class TooFewInvocationsError extends InteractionNotSatisfiedError {
   private final List<IMockInteraction> interactions;
+  private final List<IMockInvocation> unmatchedInvocations;
+  private String message;
 
-  public TooFewInvocationsError(List<IMockInteraction> interactions) {
+  public TooFewInvocationsError(List<IMockInteraction> interactions, List<IMockInvocation> unmatchedInvocations) {
     Assert.notNull(interactions);
     Assert.that(interactions.size() > 0);
     this.interactions = interactions;
-    fixupStackTrace();
+    this.unmatchedInvocations = unmatchedInvocations;
   }
 
   @Override
-  public String getMessage() {
+  public synchronized String getMessage() {
+    if (message != null) return message;
+
+    Multiset<IMockInvocation> unmatchedMultiInvocations = new Multiset<IMockInvocation>(unmatchedInvocations);
+
     StringBuilder builder = new StringBuilder();
-    builder.append("Too few invocations for:\n\n");
 
     for (IMockInteraction interaction : interactions) {
+      builder.append("Too few invocations for:\n\n");
       builder.append(interaction);
-      builder.append("\n");
+      builder.append("\n\n");
+      List<ScoredInvocation> scoredInvocations = scoreInvocations(interaction, unmatchedMultiInvocations);
+      if (!scoredInvocations.isEmpty()) {
+        builder.append("Unmatched invocations (ordered by similarity):\n\n");
+        for (ScoredInvocation invocation : scoredInvocations) {
+          builder.append(invocation.count);
+          builder.append(" * ");
+          builder.append(invocation.invocation);
+          builder.append('\n');
+        }
+        builder.append('\n');
+      }
     }
 
-    return builder.toString();
+    message = builder.toString();
+    return message;
   }
 
-  // To facilitate navigation to the unsatisfied interactions, the line number
-  // of the (synthetic) MockController.leaveScope() call is replaced by the line
-  // number of the first unsatisfied interaction
-  private void fixupStackTrace() {
-    StackTraceElement[] trace = getStackTrace();
-
-    for (int i = 0; i < trace.length; i++)
-      if (isLeaveScopeCall(trace[i])) {
-        StackTraceElement elem = trace[i];
-        trace[i] = new StackTraceElement(elem.getClassName(), elem.getMethodName(), elem.getFileName(),
-          interactions.get(0).getLine());
-        setStackTrace(trace);
-        return;
-      }
-
-    Assert.fail("MockController.leaveScope() not found in stacktrace");
+  private List<ScoredInvocation> scoreInvocations(IMockInteraction interaction, Multiset<IMockInvocation> invocations) {
+    List<ScoredInvocation> result = new ArrayList<ScoredInvocation>();
+    for (Map.Entry<IMockInvocation, Integer> entry : invocations.entrySet()) {
+      result.add(new ScoredInvocation(entry.getKey(), entry.getValue(), interaction.computeSimilarityScore(entry.getKey())));
+    }
+    Collections.sort(result);
+    return result;
   }
 
-  private boolean isLeaveScopeCall(StackTraceElement elem) {
-    return elem.getClassName().equals(MockController.class.getName())
-      && elem.getMethodName().equals(MockController.LEAVE_SCOPE);
+  private static class ScoredInvocation implements Comparable<ScoredInvocation> {
+    final IMockInvocation invocation;
+    final int count;
+    final int score;
+
+    private ScoredInvocation(IMockInvocation invocation, int count, int score) {
+      this.invocation = invocation;
+      this.count = count;
+      this.score = score;
+    }
+
+    public int compareTo(ScoredInvocation other) {
+      return score - other.score;
+    }
   }
 }

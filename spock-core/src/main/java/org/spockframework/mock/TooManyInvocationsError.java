@@ -16,6 +16,13 @@
 
 package org.spockframework.mock;
 
+import java.util.List;
+import java.util.Map;
+
+import org.spockframework.util.CollectionUtil;
+import org.spockframework.util.IMultiset;
+import org.spockframework.util.LinkedHashMultiset;
+
 /**
  * Indicates that a required interaction has matched too many invocations.
  * 
@@ -23,30 +30,50 @@ package org.spockframework.mock;
  */
 public class TooManyInvocationsError extends InteractionNotSatisfiedError {
   private final IMockInteraction interaction;
-  private final IMockInvocation lastInvocation;
+  private final List<IMockInvocation> acceptedInvocations;
+  private String message;
 
-  public TooManyInvocationsError(IMockInteraction interaction, IMockInvocation lastInvocation) {
+  public TooManyInvocationsError(IMockInteraction interaction, List<IMockInvocation> acceptedInvocations) {
     this.interaction = interaction;
-    this.lastInvocation = lastInvocation;
+    this.acceptedInvocations = acceptedInvocations;
   }
 
   public IMockInteraction getInteraction() {
     return interaction;
   }
 
-  public IMockInvocation getLastInvocation() {
-    return lastInvocation;
+  public List<IMockInvocation> getAcceptedInvocations() {
+    return acceptedInvocations;
   }
 
   @Override
-  public String getMessage() {
+  public synchronized String getMessage() {
+    if (message != null) return message;
+
+    IMultiset<IMockInvocation> uniqueInvocations = new LinkedHashMultiset<IMockInvocation>();
+    for (IMockInvocation invocation : CollectionUtil.reverse(acceptedInvocations)) {
+      uniqueInvocations.add(invocation);
+    }
+
     StringBuilder builder = new StringBuilder();
     builder.append("Too many invocations for:\n\n");
     builder.append(interaction);
     builder.append("\n\n");
-    builder.append("Last invocation: ");
-    builder.append(lastInvocation);
+    builder.append("Matching invocations (ordered by last occurrence):\n\n");
+
+    int count = 0;
+    for (Map.Entry<IMockInvocation, Integer> entry : uniqueInvocations.entrySet()) {
+      builder.append(entry.getValue());
+      builder.append(" * ");
+      builder.append(entry.getKey());
+      if (count++ == 0) {
+        builder.append("   <-- this triggered the error");
+      }
+      builder.append("\n");
+    }
     builder.append("\n");
-    return builder.toString();
+
+    message = builder.toString();
+    return message;
   }
 }

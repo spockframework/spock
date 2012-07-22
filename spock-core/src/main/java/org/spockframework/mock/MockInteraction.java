@@ -16,6 +16,7 @@
 
 package org.spockframework.mock;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.spockframework.util.Nullable;
@@ -33,7 +34,8 @@ public class MockInteraction implements IMockInteraction {
   private final int maxCount;
   private final List<IInvocationConstraint> constraints;
   private final IResultGenerator resultGenerator;
-  private int acceptedCount;
+
+  private final List<IMockInvocation> acceptedInvocations = new ArrayList<IMockInvocation>();
 
   public MockInteraction(int line, int column, String text, int minCount,
       int maxCount, List<IInvocationConstraint> constraints,
@@ -61,12 +63,16 @@ public class MockInteraction implements IMockInteraction {
   }
 
   public Object accept(IMockInvocation invocation) {
-    acceptedCount++;
-
-    if (acceptedCount > maxCount)
-      throw new TooManyInvocationsError(this, invocation);
+    acceptedInvocations.add(invocation);
+    if (acceptedInvocations.size() > maxCount) {
+      throw new TooManyInvocationsError(this, acceptedInvocations);
+    }
 
     return resultGenerator == null ? null : resultGenerator.generate(invocation);
+  }
+
+  public List<IMockInvocation> getAcceptedInvocations() {
+    return acceptedInvocations;
   }
 
   public int computeSimilarityScore(IMockInvocation invocation) {
@@ -82,11 +88,11 @@ public class MockInteraction implements IMockInteraction {
   }
 
   public boolean isSatisfied() {
-    return acceptedCount >= minCount;
+    return acceptedInvocations.size() >= minCount;
   }
 
   public boolean isExhausted() {
-    return acceptedCount >= maxCount;
+    return acceptedInvocations.size() >= maxCount;
   }
 
   public boolean hasResults() {
@@ -110,7 +116,7 @@ public class MockInteraction implements IMockInteraction {
   }
 
   public String toString() {
-    return String.format("%s   (%d %s)", text, acceptedCount, acceptedCount == 1 ? "invocation" : "invocations");
+    return String.format("%s   (%d %s)", text, acceptedInvocations.size(), acceptedInvocations.size() == 1 ? "invocation" : "invocations");
   }
 }
 

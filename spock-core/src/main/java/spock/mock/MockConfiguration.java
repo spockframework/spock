@@ -34,6 +34,7 @@ public class MockConfiguration {
   private final boolean useObjenesis;
 
   // TODO: should we lock down settings where stub and spy differ so that they can't be overwritten by options?
+  @SuppressWarnings("unchecked")
   public MockConfiguration(@Nullable String name, Class<?> type, MockNature nature,
       MockImplementation implementation, Map<String, Object> options) {
     this.name = name;
@@ -45,7 +46,7 @@ public class MockConfiguration {
     this.defaultResponse = options.containsKey("defaultResponse") ?
         (IMockInvocationResponder) options.get("defaultResponse") : nature.getDefaultResponse();
     this.global = options.containsKey("global") ? (Boolean) options.get("global") : false;
-    this.verified = options.containsKey("verified") ? (Boolean) options.get("verified") : nature != MockNature.STUB;
+    this.verified = options.containsKey("verified") ? (Boolean) options.get("verified") : nature.isVerified();
     this.useObjenesis = options.containsKey("useObjenesis") ? (Boolean) options.get("useObjenesis") : nature != MockNature.SPY;
   }
 

@@ -1,0 +1,5 @@
+script: ./gradlew clean build
+
+jdk:
+  - oraclejdk7
+  - openjdk6

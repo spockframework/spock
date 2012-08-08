@@ -47,7 +47,7 @@ public class MockConfiguration {
         (IMockInvocationResponder) options.get("defaultResponse") : nature.getDefaultResponse();
     this.global = options.containsKey("global") ? (Boolean) options.get("global") : false;
     this.verified = options.containsKey("verified") ? (Boolean) options.get("verified") : nature.isVerified();
-    this.useObjenesis = options.containsKey("useObjenesis") ? (Boolean) options.get("useObjenesis") : nature != MockNature.SPY;
+    this.useObjenesis = options.containsKey("useObjenesis") ? (Boolean) options.get("useObjenesis") : nature.isUseObjenesis();
   }
 
   @Nullable

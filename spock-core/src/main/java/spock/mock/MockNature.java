@@ -15,21 +15,27 @@
 package spock.mock;
 
 public enum MockNature {
-  STUB(false, EmptyOrStubResponse.INSTANCE),
-  MOCK(true, ZeroOrNullResponse.INSTANCE),
-  SPY(true, CallRealMethodResponse.INSTANCE);
+  STUB(false, true, EmptyOrStubResponse.INSTANCE),
+  MOCK(true, true, ZeroOrNullResponse.INSTANCE),
+  SPY(true, false, CallRealMethodResponse.INSTANCE);
 
   private final boolean verified;
+  private final boolean useObjenesis;
 
   private final IMockInvocationResponder defaultResponse;
 
-  MockNature(boolean verified, IMockInvocationResponder defaultResponse) {
+  MockNature(boolean verified, boolean useObjenesis, IMockInvocationResponder defaultResponse) {
     this.verified = verified;
+    this.useObjenesis = useObjenesis;
     this.defaultResponse = defaultResponse;
   }
 
   boolean isVerified() {
     return verified;
+  }
+
+  boolean isUseObjenesis() {
+    return useObjenesis;
   }
 
   IMockInvocationResponder getDefaultResponse() {

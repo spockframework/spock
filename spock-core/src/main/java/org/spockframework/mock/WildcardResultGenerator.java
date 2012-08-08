@@ -16,8 +16,6 @@
 
 package org.spockframework.mock;
 
-import org.spockframework.util.ReflectionUtil;
-
 /**
  * Returns the default value for the invoked method's return type.
  * 
@@ -25,6 +23,6 @@ import org.spockframework.util.ReflectionUtil;
  */
 public class WildcardResultGenerator extends SingleResultGenerator {
   public Object generateSingle(IMockInvocation invocation) {
-    return invocation.getMockObject().getDefaultResponse().respond(invocation);
+    return invocation.getMockObject().getResponder().respond(invocation);
   }
 }

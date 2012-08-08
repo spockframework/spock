@@ -36,7 +36,7 @@ public class MockController implements IMockController {
         try {
           Object result = interaction.accept(invocation);
           if (interaction.hasResults()) return result;
-          return invocation.getMockObject().getDefaultResponse().respond(invocation);
+          return invocation.getMockObject().getResponder().respond(invocation);
         } catch (InteractionNotSatisfiedError e) {
           errors.add(e);
           throw e;
@@ -46,7 +46,7 @@ public class MockController implements IMockController {
     for (IInteractionScope scope : scopes) {
       scope.addUnmatchedInvocation(invocation);
     }
-    return invocation.getMockObject().getDefaultResponse().respond(invocation);
+    return invocation.getMockObject().getResponder().respond(invocation);
   }
 
   public static final String ADD_INTERACTION = "addInteraction";

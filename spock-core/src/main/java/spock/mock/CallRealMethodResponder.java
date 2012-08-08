@@ -16,10 +16,10 @@ package spock.mock;
 
 import org.spockframework.mock.IMockInvocation;
 
-public class CallRealMethodResponse implements IMockInvocationResponder {
-  public static final CallRealMethodResponse INSTANCE = new CallRealMethodResponse();
+public class CallRealMethodResponder implements IMockInvocationResponder {
+  public static final CallRealMethodResponder INSTANCE = new CallRealMethodResponder();
 
-  private CallRealMethodResponse() {}
+  private CallRealMethodResponder() {}
 
   public Object respond(IMockInvocation invocation) {
     return invocation.callRealMethod();

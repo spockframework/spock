@@ -28,7 +28,7 @@ public class MockConfiguration {
   private final MockNature nature;
   private final MockImplementation implementation;
   private final List<Object> constructorArgs;
-  private final IMockInvocationResponder defaultResponse;
+  private final IMockInvocationResponder responder;
   private final boolean global;
   private final boolean verified;
   private final boolean useObjenesis;
@@ -43,8 +43,8 @@ public class MockConfiguration {
     this.implementation = implementation;
     this.constructorArgs = options.containsKey("constructorArgs") ?
         (List<Object>) options.get("constructorArgs") : null;
-    this.defaultResponse = options.containsKey("defaultResponse") ?
-        (IMockInvocationResponder) options.get("defaultResponse") : nature.getDefaultResponse();
+    this.responder = options.containsKey("responder") ?
+        (IMockInvocationResponder) options.get("responder") : nature.getResponder();
     this.global = options.containsKey("global") ? (Boolean) options.get("global") : false;
     this.verified = options.containsKey("verified") ? (Boolean) options.get("verified") : nature.isVerified();
     this.useObjenesis = options.containsKey("useObjenesis") ? (Boolean) options.get("useObjenesis") : nature.isUseObjenesis();
@@ -72,8 +72,8 @@ public class MockConfiguration {
     return constructorArgs;
   }
 
-  public IMockInvocationResponder getDefaultResponse() {
-    return defaultResponse;
+  public IMockInvocationResponder getResponder() {
+    return responder;
   }
 
   public boolean isGlobal() {

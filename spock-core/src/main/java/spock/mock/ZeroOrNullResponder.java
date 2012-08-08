@@ -19,10 +19,10 @@ import org.spockframework.mock.IMockInteraction;
 import org.spockframework.mock.IMockInvocation;
 import org.spockframework.util.ReflectionUtil;
 
-public class ZeroOrNullResponse implements IMockInvocationResponder {
-  public static final ZeroOrNullResponse INSTANCE = new ZeroOrNullResponse();
+public class ZeroOrNullResponder implements IMockInvocationResponder {
+  public static final ZeroOrNullResponder INSTANCE = new ZeroOrNullResponder();
 
-  private ZeroOrNullResponse() {}
+  private ZeroOrNullResponder() {}
 
   public Object respond(IMockInvocation invocation) {
     IMockInteraction interaction = EqualsHashCodeToStringInteractions.INSTANCE.match(invocation);

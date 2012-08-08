@@ -29,10 +29,10 @@ import org.spockframework.mock.IMockInteraction;
 import org.spockframework.mock.IMockInvocation;
 import org.spockframework.util.ReflectionUtil;
 
-public class EmptyOrStubResponse implements IMockInvocationResponder {
-  public static final EmptyOrStubResponse INSTANCE = new EmptyOrStubResponse();
+public class EmptyOrStubResponder implements IMockInvocationResponder {
+  public static final EmptyOrStubResponder INSTANCE = new EmptyOrStubResponder();
 
-  private EmptyOrStubResponse() {}
+  private EmptyOrStubResponder() {}
 
   public Object respond(IMockInvocation invocation) {
     IMockInteraction interaction = EqualsHashCodeToStringInteractions.INSTANCE.match(invocation);

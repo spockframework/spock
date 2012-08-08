@@ -17,7 +17,6 @@ package org.spockframework.mock;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 
-import groovy.lang.GroovyObject;
 import groovy.lang.MetaClass;
 import groovy.lang.MissingMethodException;
 import groovy.lang.MissingPropertyException;
@@ -41,7 +40,7 @@ public class GroovyMockInterceptor implements IProxyBasedMockInterceptor {
 
   public Object intercept(Object target, Method method, Object[] arguments, IMockInvocationResponder realMethodInvoker) {
     IMockObject mockObject = new MockObject(mockConfiguration.getName(), mockConfiguration.getType(),
-        target, mockConfiguration.isVerified(), mockConfiguration.isGlobal(), mockConfiguration.getDefaultResponse());
+        target, mockConfiguration.isVerified(), mockConfiguration.isGlobal(), mockConfiguration.getResponder());
 
     if (method.getDeclaringClass() == IMockObjectProvider.class) {
       return mockObject;

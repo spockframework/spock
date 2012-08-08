@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 the original author or authors.
+ * Copyright 2012 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,16 +21,16 @@ import spock.lang.Beta;
 
 @Beta
 public class MockDetector {
-  public static boolean isMockObject(Object object) {
+  public static boolean isMock(Object object) {
     return object instanceof IMockObjectProvider;
   }
 
-  public static IMockObject asMockObject(Object mock) {
-    if (!isMockObject(mock)) {
-      throw new IllegalArgumentException("Not a mock object: " + mock.toString());
+  public static IMockObject asMock(Object object) {
+    if (!isMock(object)) {
+      throw new IllegalArgumentException("Not a mock object: " + object.toString());
     }
 
-    IMockObjectProvider provider = (IMockObjectProvider) mock;
+    IMockObjectProvider provider = (IMockObjectProvider) object;
     return provider.$spock_get();
   }
 }

@@ -28,5 +28,6 @@ dependencies {
 
   testRuntime libs.h2database
   testRuntime libs.log4j
+  testRuntime 'commons-pool:commons-pool:1.6'
 }
 

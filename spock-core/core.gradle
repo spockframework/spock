@@ -10,7 +10,6 @@ Spock is inspired from JUnit, jMock, RSpec, Groovy, Scala, Vulcans, and other fa
 dependencies {
   compile libs.groovy // simplest way to add Groovy dependency to POM
   compile libs.junit
-  compile libs.hamcrest_core
 
   compile libs.ant, optional
   compile libs.asm, optional

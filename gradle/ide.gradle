@@ -10,7 +10,7 @@ topLevelDirs = topLevelDirs.collect { it.substring(1) }
 
 idea {
   project {
-    jdkName "1.6"
+    jdkName "1.7" // TODO: remove after upgrading to Gradle 1.1
     languageLevel "1.5"
     configure(modules) { module ->
       def prj = module.project

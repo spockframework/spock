@@ -4,7 +4,6 @@ description = "Spock specifications for the Core Module. Yes, we eat our own dog
 
 dependencies {
   testCompile project(":spock-core")
-  testCompile libs.hamcrest_core
   testCompile libs.junit
   testCompile libs.easymock
   testCompile libs.jmock_junit4
@@ -15,7 +14,3 @@ dependencies {
   testRuntime libs.objenesis
   testRuntime libs.h2database
 }
-
-//tasks.withType(Test) {
-//    maxParallelForks Math.max(2, (int) (Runtime.runtime.availableProcessors() / 2))
-//}

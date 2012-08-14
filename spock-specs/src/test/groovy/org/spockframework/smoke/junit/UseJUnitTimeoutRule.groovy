@@ -38,7 +38,7 @@ class UseJUnitTimeoutRule extends EmbeddedSpecification {
 
     then:
     Exception e = thrown()
-    e.message.contains "timed out"
+    e.message.contains "sleep interrupted"
   }
 
   private Result runFeatureMethodThatSleeps(delay) {

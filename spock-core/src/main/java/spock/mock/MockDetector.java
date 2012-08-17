@@ -17,9 +17,9 @@ package spock.mock;
 import org.spockframework.mock.IMockObject;
 import org.spockframework.mock.IMockObjectProvider;
 
-import spock.lang.Beta;
+import spock.lang.Experimental;
 
-@Beta
+@Experimental
 public class MockDetector {
   public static boolean isMock(Object object) {
     return object instanceof IMockObjectProvider;

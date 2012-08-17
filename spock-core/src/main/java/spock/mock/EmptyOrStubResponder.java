@@ -28,7 +28,9 @@ import org.spockframework.mock.EqualsHashCodeToStringInteractions;
 import org.spockframework.mock.IMockInteraction;
 import org.spockframework.mock.IMockInvocation;
 import org.spockframework.util.ReflectionUtil;
+import spock.lang.Experimental;
 
+@Experimental
 public class EmptyOrStubResponder implements IMockInvocationResponder {
   public static final EmptyOrStubResponder INSTANCE = new EmptyOrStubResponder();
 

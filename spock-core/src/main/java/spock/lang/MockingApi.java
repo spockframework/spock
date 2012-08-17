@@ -99,7 +99,7 @@ public class MockingApi extends SpecInternals {
    *
    * @return a stub whose type and name are inferred from the left-hand side of the enclosing assignment
    */
-  @Beta
+  @Experimental
   public Object Stub() {
     invalidMockCreation();
     return null;
@@ -120,7 +120,7 @@ public class MockingApi extends SpecInternals {
    * @return a stub with the specified options whose type and name are inferred from the left-hand side of the
    * enclosing variable assignment
    */
-  @Beta
+  @Experimental
   public Object Stub(Map<String, Object> options) {
     invalidMockCreation();
     return null;
@@ -140,7 +140,7 @@ public class MockingApi extends SpecInternals {
    *
    * @return a stub with the specified type
    */
-  @Beta
+  @Experimental
   public <T> T Stub(Class<T> type) {
     invalidMockCreation();
     return null;
@@ -161,7 +161,7 @@ public class MockingApi extends SpecInternals {
    *
    * @return a stub with the specified options and type
    */
-  @Beta
+  @Experimental
   public <T> T Stub(Map<String, Object> options, Class<T> type) {
     invalidMockCreation();
     return null;
@@ -186,7 +186,7 @@ public class MockingApi extends SpecInternals {
    * @return a stub with the specified interactions whose type and name are inferred
    * from the left-hand side of the enclosing assignment
    */
-  @Beta
+  @Experimental
   public Object Stub(Closure interactions) {
     invalidMockCreation();
     return null;
@@ -212,7 +212,7 @@ public class MockingApi extends SpecInternals {
    * @return a stub with the specified options and interactions whose type and name are inferred
    * from the left-hand side of the enclosing assignment
    */
-  @Beta
+  @Experimental
   public Object Stub(Map<String, Object> options, Closure interactions) {
     invalidMockCreation();
     return null;
@@ -237,7 +237,7 @@ public class MockingApi extends SpecInternals {
    *
    * @return a stub with the specified type and interactions
    */
-  @Beta
+  @Experimental
   public <T> T Stub(Class<T> type, Closure interactions) {
     invalidMockCreation();
     return null;
@@ -264,7 +264,7 @@ public class MockingApi extends SpecInternals {
    *
    * @return a stub with the specified options, type, and interactions
    */
-  @Beta
+  @Experimental
   public <T> T Stub(Map<String, Object> options, Class<T> type, Closure interactions) {
     invalidMockCreation();
     return null;
@@ -281,7 +281,6 @@ public class MockingApi extends SpecInternals {
    *
    * @return a mock whose type and name are inferred from the left-hand side of the enclosing assignment
    */
-  @Beta
   public Object Mock() {
     invalidMockCreation();
     return null;
@@ -302,7 +301,7 @@ public class MockingApi extends SpecInternals {
    * @return a mock with the specified options whose type and name are inferred from the left-hand side of the
    * enclosing variable assignment
    */
-  @Beta
+  @Experimental
   public Object Mock(Map<String, Object> options) {
     invalidMockCreation();
     return null;
@@ -322,7 +321,6 @@ public class MockingApi extends SpecInternals {
    *
    * @return a mock with the specified type
    */
-  @Beta
   public <T> T Mock(Class<T> type) {
     invalidMockCreation();
     return null;
@@ -343,7 +341,7 @@ public class MockingApi extends SpecInternals {
    *
    * @return a mock with the specified options and type
    */
-  @Beta
+  @Experimental
   public <T> T Mock(Map<String, Object> options, Class<T> type) {
     invalidMockCreation();
     return null;
@@ -368,7 +366,7 @@ public class MockingApi extends SpecInternals {
    * @return a mock with the specified interactions whose type and name are inferred
    * from the left-hand side of the enclosing assignment
    */
-  @Beta
+  @Experimental
   public Object Mock(Closure interactions) {
     invalidMockCreation();
     return null;
@@ -394,7 +392,7 @@ public class MockingApi extends SpecInternals {
    * @return a mock with the specified options and interactions whose type and name are inferred
    * from the left-hand side of the enclosing assignment
    */
-  @Beta
+  @Experimental
   public Object Mock(Map<String, Object> options, Closure interactions) {
     invalidMockCreation();
     return null;
@@ -419,7 +417,7 @@ public class MockingApi extends SpecInternals {
    *
    * @return a mock with the specified type and interactions
    */
-  @Beta
+  @Experimental
   public <T> T Mock(Class<T> type, Closure interactions) {
     invalidMockCreation();
     return null;
@@ -446,7 +444,7 @@ public class MockingApi extends SpecInternals {
    *
    * @return a mock with the specified options, type, and interactions
    */
-  @Beta
+  @Experimental
   public <T> T Mock(Map<String, Object> options, Class<T> type, Closure interactions) {
     invalidMockCreation();
     return null;
@@ -463,7 +461,7 @@ public class MockingApi extends SpecInternals {
    *
    * @return a spy whose type and name are inferred from the left-hand side of the enclosing assignment
    */
-  @Beta
+  @Experimental
   public Object Spy() {
     invalidMockCreation();
     return null;
@@ -484,7 +482,7 @@ public class MockingApi extends SpecInternals {
    * @return a spy with the specified options whose type and name are inferred from the left-hand side of the
    * enclosing variable assignment
    */
-  @Beta
+  @Experimental
   public Object Spy(Map<String, Object> options) {
     invalidMockCreation();
     return null;
@@ -504,7 +502,7 @@ public class MockingApi extends SpecInternals {
    *
    * @return a spy with the specified type
    */
-  @Beta
+  @Experimental
   public <T> T Spy(Class<T> type) {
     invalidMockCreation();
     return null;
@@ -525,7 +523,7 @@ public class MockingApi extends SpecInternals {
    *
    * @return a spy with the specified options and type
    */
-  @Beta
+  @Experimental
   public <T> T Spy(Map<String, Object> options, Class<T> type) {
     invalidMockCreation();
     return null;
@@ -549,7 +547,7 @@ public class MockingApi extends SpecInternals {
    * @return a spy with the specified interactions whose type and name are inferred
    * from the left-hand side of the enclosing assignment
    */
-  @Beta
+  @Experimental
   public Object Spy(Closure interactions) {
     invalidMockCreation();
     return null;
@@ -574,7 +572,7 @@ public class MockingApi extends SpecInternals {
    * @return a spy with the specified options and interactions whose type and name are inferred
    * from the left-hand side of the enclosing assignment
    */
-  @Beta
+  @Experimental
   public Object Spy(Map<String, Object> options, Closure interactions) {
     invalidMockCreation();
     return null;
@@ -599,7 +597,7 @@ public class MockingApi extends SpecInternals {
    *
    * @return a spy with the specified type and interactions
    */
-  @Beta
+  @Experimental
   public <T> T Spy(Class<T> type, Closure interactions) {
     invalidMockCreation();
     return null;
@@ -625,7 +623,7 @@ public class MockingApi extends SpecInternals {
    *
    * @return a spy with the specified options, type, and interactions
    */
-  @Beta
+  @Experimental
   public <T> T Spy(Map<String, Object> options, Class<T> type, Closure interactions) {
     invalidMockCreation();
     return null;
@@ -642,7 +640,7 @@ public class MockingApi extends SpecInternals {
    *
    * @return a Groovy stub whose type and name are inferred from the left-hand side of the enclosing assignment
    */
-  @Beta
+  @Experimental
   public Object GroovyStub() {
     invalidMockCreation();
     return null;
@@ -663,7 +661,7 @@ public class MockingApi extends SpecInternals {
    * @return a Groovy stub with the specified options whose type and name are inferred from the left-hand side of the
    * enclosing variable assignment
    */
-  @Beta
+  @Experimental
   public Object GroovyStub(Map<String, Object> options) {
     invalidMockCreation();
     return null;
@@ -683,7 +681,7 @@ public class MockingApi extends SpecInternals {
    *
    * @return a Groovy stub with the specified type
    */
-  @Beta
+  @Experimental
   public <T> T GroovyStub(Class<T> type) {
     invalidMockCreation();
     return null;
@@ -704,7 +702,7 @@ public class MockingApi extends SpecInternals {
    *
    * @return a Groovy stub with the specified options and type
    */
-  @Beta
+  @Experimental
   public <T> T GroovyStub(Map<String, Object> options, Class<T> type) {
     invalidMockCreation();
     return null;
@@ -729,7 +727,7 @@ public class MockingApi extends SpecInternals {
    * @return a Groovy stub with the specified interactions whose type and name are inferred
    * from the left-hand side of the enclosing assignment
    */
-  @Beta
+  @Experimental
   public Object GroovyStub(Closure interactions) {
     invalidMockCreation();
     return null;
@@ -755,7 +753,7 @@ public class MockingApi extends SpecInternals {
    * @return a Groovy stub with the specified options and interactions whose type and name are inferred
    * from the left-hand side of the enclosing assignment
    */
-  @Beta
+  @Experimental
   public Object GroovyStub(Map<String, Object> options, Closure interactions) {
     invalidMockCreation();
     return null;
@@ -780,7 +778,7 @@ public class MockingApi extends SpecInternals {
    *
    * @return a Groovy stub with the specified type and interactions
    */
-  @Beta
+  @Experimental
   public <T> T GroovyStub(Class<T> type, Closure interactions) {
     invalidMockCreation();
     return null;
@@ -807,7 +805,7 @@ public class MockingApi extends SpecInternals {
    *
    * @return a Groovy stub with the specified options, type, and interactions
    */
-  @Beta
+  @Experimental
   public <T> T GroovyStub(Map<String, Object> options, Class<T> type, Closure interactions) {
     invalidMockCreation();
     return null;
@@ -824,7 +822,7 @@ public class MockingApi extends SpecInternals {
    *
    * @return a Groovy mock whose type and name are inferred from the left-hand side of the enclosing assignment
    */
-  @Beta
+  @Experimental
   public Object GroovyMock() {
     invalidMockCreation();
     return null;
@@ -845,7 +843,7 @@ public class MockingApi extends SpecInternals {
    * @return a Groovy mock with the specified options whose type and name are inferred from the left-hand side of the
    * enclosing variable assignment
    */
-  @Beta
+  @Experimental
   public Object GroovyMock(Map<String, Object> options) {
     invalidMockCreation();
     return null;
@@ -865,7 +863,7 @@ public class MockingApi extends SpecInternals {
    *
    * @return a Groovy mock with the specified type
    */
-  @Beta
+  @Experimental
   public <T> T GroovyMock(Class<T> type) {
     invalidMockCreation();
     return null;
@@ -886,7 +884,7 @@ public class MockingApi extends SpecInternals {
    *
    * @return a Groovy mock with the specified options and type
    */
-  @Beta
+  @Experimental
   public <T> T GroovyMock(Map<String, Object> options, Class<T> type) {
     invalidMockCreation();
     return null;
@@ -911,7 +909,7 @@ public class MockingApi extends SpecInternals {
    * @return a Groovy mock with the specified interactions whose type and name are inferred
    * from the left-hand side of the enclosing assignment
    */
-  @Beta
+  @Experimental
   public Object GroovyMock(Closure interactions) {
     invalidMockCreation();
     return null;
@@ -937,7 +935,7 @@ public class MockingApi extends SpecInternals {
    * @return a Groovy mock with the specified options and interactions whose type and name are inferred
    * from the left-hand side of the enclosing assignment
    */
-  @Beta
+  @Experimental
   public Object GroovyMock(Map<String, Object> options, Closure interactions) {
     invalidMockCreation();
     return null;
@@ -962,7 +960,7 @@ public class MockingApi extends SpecInternals {
    *
    * @return a Groovy mock with the specified type and interactions
    */
-  @Beta
+  @Experimental
   public <T> T GroovyMock(Class<T> type, Closure interactions) {
     invalidMockCreation();
     return null;
@@ -989,7 +987,7 @@ public class MockingApi extends SpecInternals {
    *
    * @return a Groovy mock with the specified options, type, and interactions
    */
-  @Beta
+  @Experimental
   public <T> T GroovyMock(Map<String, Object> options, Class<T> type, Closure interactions) {
     invalidMockCreation();
     return null;
@@ -1006,7 +1004,7 @@ public class MockingApi extends SpecInternals {
    *
    * @return a Groovy spy whose type and name are inferred from the left-hand side of the enclosing assignment
    */
-  @Beta
+  @Experimental
   public Object GroovySpy() {
     invalidMockCreation();
     return null;
@@ -1027,7 +1025,7 @@ public class MockingApi extends SpecInternals {
    * @return a Groovy spy with the specified options whose type and name are inferred from the left-hand side of the
    * enclosing variable assignment
    */
-  @Beta
+  @Experimental
   public Object GroovySpy(Map<String, Object> options) {
     invalidMockCreation();
     return null;
@@ -1047,7 +1045,7 @@ public class MockingApi extends SpecInternals {
    *
    * @return a Groovy spy with the specified type
    */
-  @Beta
+  @Experimental
   public <T> T GroovySpy(Class<T> type) {
     invalidMockCreation();
     return null;
@@ -1068,7 +1066,7 @@ public class MockingApi extends SpecInternals {
    *
    * @return a Groovy spy with the specified options and type
    */
-  @Beta
+  @Experimental
   public <T> T GroovySpy(Map<String, Object> options, Class<T> type) {
     invalidMockCreation();
     return null;
@@ -1092,7 +1090,7 @@ public class MockingApi extends SpecInternals {
    * @return a Groovy spy with the specified interactions whose type and name are inferred
    * from the left-hand side of the enclosing assignment
    */
-  @Beta
+  @Experimental
   public Object GroovySpy(Closure interactions) {
     invalidMockCreation();
     return null;
@@ -1117,7 +1115,7 @@ public class MockingApi extends SpecInternals {
    * @return a Groovy spy with the specified options and interactions whose type and name are inferred
    * from the left-hand side of the enclosing assignment
    */
-  @Beta
+  @Experimental
   public Object GroovySpy(Map<String, Object> options, Closure interactions) {
     invalidMockCreation();
     return null;
@@ -1142,7 +1140,7 @@ public class MockingApi extends SpecInternals {
    *
    * @return a Groovy spy with the specified type and interactions
    */
-  @Beta
+  @Experimental
   public <T> T GroovySpy(Class<T> type, Closure interactions) {
     invalidMockCreation();
     return null;
@@ -1168,7 +1166,7 @@ public class MockingApi extends SpecInternals {
    *
    * @return a Groovy spy with the specified options, type, and interactions
    */
-  @Beta
+  @Experimental
   public <T> T GroovySpy(Map<String, Object> options, Class<T> type, Closure interactions) {
     invalidMockCreation();
     return null;

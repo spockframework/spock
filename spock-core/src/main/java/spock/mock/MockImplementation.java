@@ -14,11 +14,14 @@
 
 package spock.mock;
 
+import spock.lang.Experimental;
+
 /**
  * The <em>implementation</em> of a mock object determines how method calls are processed
  * and matched against interactions. It is chosen at construction time, typically by choosing the
  * appropriate {@link spock.lang.MockingApi} factory method.
  */
+@Experimental
 public enum MockImplementation {
   /**
    * A generic implementation targeting any callers. Used by the {@link spock.lang.MockingApi#Mock},

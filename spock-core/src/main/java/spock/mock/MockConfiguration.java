@@ -19,7 +19,7 @@ import java.util.Map;
 
 import org.spockframework.util.Nullable;
 
-import spock.lang.Beta;
+import spock.lang.Experimental;
 
 /**
  * Options for creating mock objects. {@link #getNature()} and {@link #getImplementation()} are mandatory
@@ -28,7 +28,7 @@ import spock.lang.Beta;
  * factory method or inferred from the left-hand side of the enclosing assignment. The remaining options are
  * optional and are typically passed to a {@code MockingApi} factory method as named parameters.
  */
-@Beta
+@Experimental
 public class MockConfiguration {
   private final String name;
   private final Class<?> type;

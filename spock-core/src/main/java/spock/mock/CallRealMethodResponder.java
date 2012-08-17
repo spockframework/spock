@@ -15,7 +15,9 @@
 package spock.mock;
 
 import org.spockframework.mock.IMockInvocation;
+import spock.lang.Experimental;
 
+@Experimental
 public class CallRealMethodResponder implements IMockInvocationResponder {
   public static final CallRealMethodResponder INSTANCE = new CallRealMethodResponder();
 

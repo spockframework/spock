@@ -14,7 +14,25 @@
 
 package spock.mock;
 
+import spock.lang.Experimental;
+
+/**
+ * The <em>implementation</em> of a mock object determines how method calls are processed
+ * and matched against interactions. It is chosen at construction time, typically by choosing the
+ * appropriate {@link spock.lang.MockingApi} factory method.
+ */
+@Experimental
 public enum MockImplementation {
+  /**
+   * A generic implementation targeting any callers. Used by the {@link spock.lang.MockingApi#Mock},
+   * {@link spock.lang.MockingApi#Stub}, and {@link spock.lang.MockingApi#Spy} factory methods.
+   */
   JAVA,
+  /**
+   * An implementation specifically targeting Groovy callers. Supports mocking of dynamic methods,
+   * constructors, static methods, and "magic" mocking of all objects of a particular type.
+   * Used by the {@link spock.lang.MockingApi#GroovyMock}, {@link spock.lang.MockingApi#GroovyStub},
+   * and {@link spock.lang.MockingApi#GroovySpy} factory methods.
+   */
   GROOVY
 }

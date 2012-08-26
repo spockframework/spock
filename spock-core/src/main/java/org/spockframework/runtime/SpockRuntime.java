@@ -25,15 +25,17 @@ import org.spockframework.util.*;
 /**
  * @author Peter Niederwieser
  */
+@SuppressWarnings("UnusedDeclaration")
 public abstract class SpockRuntime {
   public static final String VERIFY_CONDITION = "verifyCondition";
 
   // condition can be null too, but not in the sense of "not available"
   public static void verifyCondition(@Nullable ValueRecorder recorder,
       @Nullable String text, int line, int column, @Nullable Object message, @Nullable Object condition) {
-    if (!GroovyRuntimeUtil.isTruthy(condition))
+    if (!GroovyRuntimeUtil.isTruthy(condition)) {
       throw new ConditionNotSatisfiedError(
-          new Condition(recorder, text, TextPosition.create(line, column), messageToString(message)));
+          new Condition(getValues(recorder), text, TextPosition.create(line, column), messageToString(message)));
+    }
   }
 
   public static final String VERIFY_METHOD_CONDITION = "verifyMethodCondition";
@@ -43,28 +45,31 @@ public abstract class SpockRuntime {
       @Nullable Object message, Object target, String method, Object[] args, boolean safe, boolean explicit) {
     MatcherCondition matcherCondition = MatcherCondition.parse(target, method, args, safe);
     if (matcherCondition != null) {
-      matcherCondition.verify(recorder, text, line, column, messageToString(message));
+      matcherCondition.verify(getValues(recorder), text, line, column, messageToString(message));
       return;
     }
 
     Object result = safe ? GroovyRuntimeUtil.invokeMethodNullSafe(target, method, args) :
         GroovyRuntimeUtil.invokeMethod(target, method, args);
 
-    if (recorder != null) {
-      recorder.replaceLastValue(result);
-    }
-    
     if (!explicit && result == null && GroovyRuntimeUtil.isVoidMethod(target, method, args)) return;
 
-    if (!GroovyRuntimeUtil.isTruthy(result))
+    if (!GroovyRuntimeUtil.isTruthy(result)) {
+      List<Object> values = getValues(recorder);
+      if (values != null) CollectionUtil.setLastElement(values, result);
       throw new ConditionNotSatisfiedError(
-          new Condition(recorder, text, TextPosition.create(line, column), messageToString(message)));
+          new Condition(values, text, TextPosition.create(line, column), messageToString(message)));
+    }
   }
 
   public static final String DESPREAD_LIST = "despreadList";
 
   public static Object[] despreadList(Object[] args, Object[] spreads, int[] positions) {
     return GroovyRuntimeUtil.despreadList(args, spreads, positions);
+  }
+
+  private static List<Object> getValues(ValueRecorder recorder) {
+      return recorder == null ? null : recorder.getValues();
   }
 
   private static String messageToString(Object message) {
@@ -89,22 +94,21 @@ public abstract class SpockRuntime {
       this.shortSyntax = shortSyntax;
     }
 
-    void verify(@Nullable ValueRecorder recorder, @Nullable String text, int line, int column, @Nullable String message) {
+    void verify(@Nullable List<Object> values, @Nullable String text, int line, int column, @Nullable String message) {
       if (HamcrestFacade.matches(matcher, actual)) return;
 
-      if (recorder != null) {
-        recorder.replaceLastValue(shortSyntax ? actual : false);
-        replaceMatcherValues(recorder);
+      if (values != null) {
+        CollectionUtil.setLastElement(values, shortSyntax ? actual : false);
+        replaceMatcherValues(values);
       }
 
       String description = HamcrestFacade.getFailureDescription(matcher, actual, message);
-      Condition condition = new Condition(recorder, text, TextPosition.create(line, column), description);
+      Condition condition = new Condition(values, text, TextPosition.create(line, column), description);
       throw new ConditionNotSatisfiedError(condition);
     }
 
-    void replaceMatcherValues(ValueRecorder recorder) {
+    void replaceMatcherValues(List<Object> values) {
       boolean firstOccurrence = true;
-      List<Object> values = recorder.getRecordedValues();
       ListIterator<Object> iter = values.listIterator(values.size());
 
       while (iter.hasPrevious()) {

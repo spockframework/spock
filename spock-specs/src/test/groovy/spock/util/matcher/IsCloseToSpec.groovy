@@ -18,7 +18,9 @@ import org.spockframework.runtime.ConditionNotSatisfiedError
 
 import spock.lang.*
 
-import static spock.util.matcher.HamcrestMatchers.closeTo
+import static HamcrestMatchers.closeTo
+import static HamcrestSupport.that
+import static org.hamcrest.CoreMatchers.not
 
 class IsCloseToSpec extends Specification {
   def "compare Integers that are close enough"() {
@@ -51,5 +53,35 @@ class IsCloseToSpec extends Specification {
     expect:
     3.1415 closeTo(3, 0.15)
     3 closeTo(3.2, 1)
+  }
+
+  @Issue("http://issues.spockframework.org/detail?id=262")
+  def "compare infinity"() {
+    expect:
+    that Float.POSITIVE_INFINITY, closeTo(Float.POSITIVE_INFINITY, 0.1)
+    that Double.NEGATIVE_INFINITY, closeTo(Double.NEGATIVE_INFINITY, 0.0)
+    that Float.POSITIVE_INFINITY, closeTo(Double.POSITIVE_INFINITY, 0.0)
+    that Float.POSITIVE_INFINITY, not(closeTo(Float.NEGATIVE_INFINITY, 99999))
+  }
+
+  @Issue("http://issues.spockframework.org/detail?id=262")
+  def "compare NaN"() {
+    expect:
+    that Float.NaN, closeTo(Float.NaN, 0.1)
+    that Double.NaN, closeTo(Double.NaN, 0.0)
+    that Float.NaN, closeTo(Double.NaN, 0.0)
+    that Float.NaN, not(closeTo(9999.9f, 999999999))
+  }
+
+  def "error message uses correct values"() {
+    when:
+    assert that(2.2, closeTo(3.3, 0.5))
+
+    then:
+    ConditionNotSatisfiedError e = thrown()
+    e.toString().contains("""
+Expected: a numeric value within <0.5> of <3.3>
+     but: <2.2> differed by <1.1>
+    """.trim())
   }
 }

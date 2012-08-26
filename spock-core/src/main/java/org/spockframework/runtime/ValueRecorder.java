@@ -19,14 +19,13 @@ package org.spockframework.runtime;
 import java.util.*;
 
 import org.spockframework.runtime.model.ExpressionInfo;
-import org.spockframework.util.CollectionUtil;
 
 /**
  * Records the values in a condition.
  *
  * @author Peter Niederwieser
  */
-public class ValueRecorder implements Iterable<Object> {
+public class ValueRecorder {
   private final ArrayList<Object> values = new ArrayList<Object>();
 
   public static final String RESET = "reset";
@@ -59,25 +58,7 @@ public class ValueRecorder implements Iterable<Object> {
     return value;
   }
 
-  /**
-   * Returns an iterator over the recorded values.
-   * @return an iterator over the recorded values
-   */
-  public Iterator<Object> iterator() {
-    return values.iterator();
-  }
-
-  /**
-   * Useful for manipulating the last recorded value.
-   */
-  public void replaceLastValue(Object newValue) {
-    CollectionUtil.setLastElement(values, newValue);
-  }
-
-  /**
-   * Useful for manipulating values after they have been recorded.
-   */
-  public List<Object> getRecordedValues() {
-    return values;
+  public List<Object> getValues() {
+    return new ArrayList<Object>(values);
   }
 }

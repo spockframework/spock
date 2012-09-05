@@ -7,8 +7,8 @@ New and Noteworthy
 Improved mocking failure messages
 ---------------------------------
 
-The diagnostic message for "too many invocations" and "too few invocations" have been greatly improved. Here are two
-examples::
+The diagnostic messages accompanying "too many invocations" and "too few invocations" failures have been greatly
+improved. Here are two examples::
 
     Too many invocations for:
 
@@ -35,36 +35,36 @@ And::
 Stubs and spies
 ---------------
 
-There are two new kinds of mock objects: stubs and spys. Stubs are created with the ``MockingApi.Stub()`` factory method.
-(``MockingApi`` is a new superclass of ``spock.lang.Specification``.) They only provide behavior (typically by returning values)
+Stubs and spys are two new kinds of mock objects. Stubs are created with the ``MockingApi.Stub()`` factory method.
+(``MockingApi`` is the new superclass of ``spock.lang.Specification``.) They only provide behavior (typically by returning values)
 but no verification. Consequently, stub interactions cannot have a cardinality (like ``1 * ...``).
-By using a stub rather than a mock, the intention of the code becomes clearer.
+By using a stub rather than a mock when no verification is needed, the intention of the code becomes clearer.
 
 Spys are created with the ``MockingApi.Spy()`` method. Like mocks, they can provide behavior and verification.
 Unlike mocks, they default to delegating all invocations they receive to a real object of the same type. That object
 is constructed as part of creating the spy, which is why the ``Spy()`` factory method accepts a list of constructor arguments::
 
-    // underlying object is constructed with new Person("Fred", 33)
+    // underlying object is constructed as new Person("Fred", 33)
     def person = Spy(Person, constructorArgs: ["Fred", 33])
 
-Spies can only be constructed for class types, but not for interface types.
+Spies can only be created for class types, but not for interface types.
 
-Specifying interactions at construction time
---------------------------------------------
+Specifying interactions at mock creation time
+---------------------------------------------
 
-Interactions can now be specified at mock construction time::
+Interactions can now be specified at mock creation time::
 
     def person = Mock(Person) {
         person.sing() >> "tra-la-la
         3 * person.eat() // per day
     }
 
-This feature is supported for all kinds of mock objects, but is especially handy for stubs.
+This feature is supported for all kinds of mock objects, but is especially attractive for stubs.
 
 Groovy mocks
 ------------
 
-Spock now offers special mocking features for testing Groovy code. A Groovy mock is created with one of
+Spock now offers special mocking features for spec'ing Groovy code. A Groovy mock is created with one of
 the ``MockingApi.GroovyMock()``, ``MockingApi.GroovyStub()``, or ``MockingApi.GroovySpy()`` factory methods.
 It automatically implements the ``groovy.lang.GroovyObject`` interface, and supports mocking of dynamic methods
 using the same syntax as for declared methods::
@@ -72,10 +72,13 @@ using the same syntax as for declared methods::
     def list = GroovyStub(List)  // every time someone stubs a list, a kitten dies
     list.collect(_) >> [1, 2, 3] // stub Groovy's List.collect method
 
+The special features of Groovy mocks only take effect when *called* from Groovy code. In other words,
+the code under specification must be written in Groovy. When called from Java code, Groovy mocks behave like regular mock objects.
+
 Global mocks
 ------------
 
-A Groovy mock can be made _global_ by passing a ``global: true`` named
+A Groovy mock can be made *global* by passing a ``global: true`` named
 parameter to one of the aforementioned factory methods. With this option set, constructors and static methods can be mocked. For example::
 
     GroovySpy(Person, global: true) // no need to hold on to the mock object here
@@ -90,14 +93,16 @@ whose behavior can be observed and controlled via the global mock::
 
     def anyPerson = GroovySpy(Person, global: true) // mock object is only needed in interactions
     anyPerson.sing() >> "tra-la-la" // stubs sing() method for all instances of Person
+    3 * anyPerson.eat() // hopefully we don't have many persons to feed
 
-Global mocks can only be created for class types, but not for interface types.
+Global mocks can only be created for class types, but not for interface types. They only work as intended when *called*
+from Groovy code. In other words, the code under specification must be written in Groovy.
 
-Multiple conditions/interactions on the same target object
--------------------------------------------------------------
+Conditions or interactions involving the same target object
+-----------------------------------------------------------
 
-The ``Specification`` class now offers a ``with`` method. Similar in nature to Groovy's `Object.with()` method,
-it sets a common target for a series of conditions::
+Similar in nature to Groovy's `Object.with()` method, the ``Specification.with()`` method allows to specify a series
+of conditions for the same target object::
 
     def person = new Person(name: "Fred", age: 33)
 
@@ -108,7 +113,7 @@ it sets a common target for a series of conditions::
         sex == "male"
     }
 
-Likewise, the ``with`` method can be used for specifying _interactions_ on a common target::
+Likewise, the ``with`` method can be used for specifying a series of *interactions* with the same mock object::
 
     def service = Mock(Service)
 

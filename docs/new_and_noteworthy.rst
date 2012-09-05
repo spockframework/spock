@@ -36,9 +36,9 @@ Stubs and spies
 ---------------
 
 Stubs and spys are two new kinds of mock objects. Stubs are created with the ``MockingApi.Stub()`` factory method.
-(``MockingApi`` is the new superclass of ``spock.lang.Specification``.) They only provide behavior (typically by returning values)
+(``MockingApi`` is a new superclass of ``spock.lang.Specification``.) They only provide behavior (typically by returning values)
 but no verification. Consequently, stub interactions cannot have a cardinality (like ``1 * ...``).
-By using a stub rather than a mock when no verification is needed, the intention of the code becomes clearer.
+Limiting a collaborator to a stub is an effective way to communicate its role to readers of the specification.
 
 Spys are created with the ``MockingApi.Spy()`` method. Like mocks, they can provide behavior and verification.
 Unlike mocks, they default to delegating all invocations they receive to a real object of the same type. That object
@@ -113,7 +113,7 @@ of conditions for the same target object::
         sex == "male"
     }
 
-Likewise, the ``with`` method can be used for specifying a series of *interactions* with the same mock object::
+Likewise, the ``with`` method can be used for specifying a series of interactions with the same mock object::
 
     def service = Mock(Service)
 

@@ -4,11 +4,11 @@ New and Noteworthy
 0.7
 ~~~
 
-Improved mocking failure messages
----------------------------------
+Improved mocking failure message for "too many invocations"
+-----------------------------------------------------------
 
-The diagnostic messages accompanying "too many invocations" and "too few invocations" failures have been greatly
-improved. Here are two examples::
+The diagnostic message accompanying a "too many invocations" failure has been greatly improved.
+Here is an example::
 
     Too many invocations for:
 
@@ -20,7 +20,11 @@ improved. Here are two examples::
     1 * person.sing("re")
     1 * person.sing("mi")
 
-And::
+Improved mocking failure message for "too few invocations"
+----------------------------------------------------------
+
+The diagnostic message accompanying a "too few invocations" failure has been greatly improved.
+Here is an example::
 
     Too few invocations for:
 
@@ -32,16 +36,21 @@ And::
     1 * person.say("fa")
     1 * person2.shout("mi")
 
-Stubs and spies
----------------
+Stubs
+-----
 
-Stubs and spys are two new kinds of mock objects. Stubs are created with the ``MockingApi.Stub()`` factory method.
-(``MockingApi`` is a new superclass of ``spock.lang.Specification``.) They only provide behavior (typically by returning values)
-but no verification. Consequently, stub interactions cannot have a cardinality (like ``1 * ...``).
-Limiting a collaborator to a stub is an effective way to communicate its role to readers of the specification.
+Besides mocks, Spock now has explicit support for stubs. Stubs are created with the ``MockingApi.Stub()`` factory method.
+(``MockingApi`` is a new super class of ``spock.lang.Specification``.) Stub interactions specify the stub's behavior
+(like the values returned from its methods) but aren't mandatory. In practical terms, this means that stub interactions
+do not have a cardinality (like ``1 *``). Declaring a collaborator as a stub is an effective way to communicate its
+role to readers of the specification.
 
-Spys are created with the ``MockingApi.Spy()`` method. Like mocks, they can provide behavior and verification.
-Unlike mocks, they default to delegating all invocations they receive to a real object of the same type. That object
+Spies
+-----
+
+Besides mocks, Spock now has support for spies. Spies are created with the ``MockingApi.Spy()`` method. Like mocks, spy interactions
+can specify the spy's behavior (like the values returned from its methods) and are mandatory if they have a cardinality (like ``1 *``).
+Unlike mocks, spies default to delegating all invocations they receive to a real object of the same type. That object
 is constructed as part of creating the spy, which is why the ``Spy()`` factory method accepts a list of constructor arguments::
 
     // underlying object is constructed as new Person("Fred", 33)
@@ -98,8 +107,8 @@ whose behavior can be observed and controlled via the global mock::
 Global mocks can only be created for class types, but not for interface types. They only work as intended when *called*
 from Groovy code. In other words, the code under specification must be written in Groovy.
 
-Conditions or interactions involving the same target object
------------------------------------------------------------
+Conditions involving the same target object
+-------------------------------------------
 
 Similar in nature to Groovy's `Object.with()` method, the ``Specification.with()`` method allows to specify a series
 of conditions for the same target object::
@@ -113,7 +122,10 @@ of conditions for the same target object::
         sex == "male"
     }
 
-Likewise, the ``with`` method can be used for specifying a series of interactions with the same mock object::
+Interactions involving the same mock object
+-------------------------------------------
+
+The ``with`` method can also be used for specifying a series of interactions with the same mock object::
 
     def service = Mock(Service)
 

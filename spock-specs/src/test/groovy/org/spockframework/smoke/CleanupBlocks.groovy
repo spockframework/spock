@@ -31,9 +31,12 @@ class CleanupBlocks extends Specification {
   def "may access all previously defined local vars"() {
     def a
 
-    setup: def b
-    when: String c
-    then: List d
+    setup:
+    def b
+    when:
+    String c
+    then:
+    List d
 
     cleanup:
     a = 0
@@ -74,22 +77,18 @@ class CleanupBlocks extends Specification {
   @Issue("http://issues.spockframework.org/detail?id=266")
   def "variable with primitive type can be declared in presence of cleanup-block"() {
     int x = 1
-    float y = 2.0
 
     expect:
-    double z = 3.0
-    z == 3.0
-
-    when:
-    char ch = 'X'
-
-    then:
-    ch == 'X'
+    x == 1
 
     cleanup:
-    assert x == 1
-    assert y == 2.0
-    assert z == 3.0
-    assert ch == 'X'
+    []
+  }
+
+  def "variable with primitive type can be read in cleanup-block"() {
+    int x = 1
+
+    cleanup:
+    x
   }
 }

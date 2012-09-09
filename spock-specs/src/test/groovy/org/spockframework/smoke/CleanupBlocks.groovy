@@ -18,6 +18,7 @@ package org.spockframework.smoke
 
 import spock.lang.FailsWith
 import spock.lang.Specification
+import spock.lang.Issue
 
 class CleanupBlocks extends Specification {
   def "basic usage"() {
@@ -68,5 +69,27 @@ class CleanupBlocks extends Specification {
 
     cleanup:
     assert a == 1
+  }
+
+  @Issue("http://issues.spockframework.org/detail?id=266")
+  def "variable with primitive type can be declared in presence of cleanup-block"() {
+    int x = 1
+    float y = 2.0
+
+    expect:
+    double z = 3.0
+    z == 3.0
+
+    when:
+    char ch = 'X'
+
+    then:
+    ch == 'X'
+
+    cleanup:
+    assert x == 1
+    assert y == 2.0
+    assert z == 3.0
+    assert ch == 'X'
   }
 }

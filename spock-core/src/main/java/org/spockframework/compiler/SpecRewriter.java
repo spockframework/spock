@@ -532,18 +532,16 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
    */
   private static void moveVariableDeclarations(List<Statement> from, List<Statement> to) {
     for (Statement stat : from) {
-      if (!(stat instanceof ExpressionStatement)) continue;
-      ExpressionStatement exprStat = (ExpressionStatement)stat;
-      if (!(exprStat.getExpression() instanceof DeclarationExpression)) continue;
-      DeclarationExpression declExpr = (DeclarationExpression)exprStat.getExpression();
+      DeclarationExpression declExpr = AstUtil.getExpression(stat, DeclarationExpression.class);
+      if (declExpr == null) continue;
 
-      exprStat.setExpression(
+      ((ExpressionStatement) stat).setExpression(
           new BinaryExpression(
               new VariableExpression(declExpr.getVariableExpression().getName()),
               Token.newSymbol(Types.ASSIGN, -1, -1),
               declExpr.getRightExpression()));
 
-      declExpr.setRightExpression(ConstantExpression.NULL);
+      declExpr.setRightExpression(EmptyExpression.INSTANCE);
       to.add(new ExpressionStatement(declExpr));
     }
   }

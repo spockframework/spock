@@ -19,8 +19,10 @@ package org.spockframework.smoke
 import spock.lang.FailsWith
 import spock.lang.Specification
 import spock.lang.Issue
+import org.spockframework.EmbeddedSpecification
+import org.codehaus.groovy.runtime.typehandling.GroovyCastException
 
-class CleanupBlocks extends Specification {
+class CleanupBlocks extends EmbeddedSpecification {
   def "basic usage"() {
     def x
     setup: x = 1
@@ -85,12 +87,18 @@ class CleanupBlocks extends Specification {
     []
   }
 
-  // TODO: needs further inspection
-  // works with Groovy 1.8 but results in VerifyError with 2.0
-//  def "variable with primitive type can be read in cleanup-block"() {
-//    int x = 1
-//
-//    cleanup:
-//    x
-//  }
+  def "variable with primitive type can be read in cleanup-block"() {
+    int x = 1
+
+    cleanup:
+    x
+  }
+
+  @FailsWith(GroovyCastException)
+  def "declared type of variable is kept"() {
+    int x = "abc"
+
+    cleanup:
+    []
+  }
 }

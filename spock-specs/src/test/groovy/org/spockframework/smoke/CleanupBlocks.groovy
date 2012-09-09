@@ -19,8 +19,10 @@ package org.spockframework.smoke
 import spock.lang.FailsWith
 import spock.lang.Specification
 import spock.lang.Issue
+import org.spockframework.EmbeddedSpecification
+import org.codehaus.groovy.runtime.typehandling.GroovyCastException
 
-class CleanupBlocks extends Specification {
+class CleanupBlocks extends EmbeddedSpecification {
   def "basic usage"() {
     def x
     setup: x = 1
@@ -90,5 +92,13 @@ class CleanupBlocks extends Specification {
 
     cleanup:
     x
+  }
+
+  @FailsWith(GroovyCastException)
+  def "declared type of variable is kept"() {
+    int x = "abc"
+
+    cleanup:
+    []
   }
 }

@@ -220,8 +220,35 @@ a different argument; in either case, the same error will occur.
 Invocation Order
 ~~~~~~~~~~~~~~~~
 
+Often, the exact method invocation order isn't relevant and may change over time. To avoid over-specification,
+Spock defaults to allowing any invocation order, provided that the specified interactions are eventually satisfied::
+
+    then:
+    2 * foo.bar()
+    1 * foo.baz()
+
+Here, any of the invocation sequences ``foo.bar(); foo.bar(); foo.baz()``, ``foo.bar(); foo.baz();
+foo.bar()`` and ``foo.baz(); foo.bar(); foo.bar()`` will satisfy the specified interactions.
+
+In those cases where invocation order matters, you can impose an order by splitting up interactions into
+multiple then-blocks::
+
+    then:
+    1 * foo.baz()
+
+    then:
+    2 * foo.bar()
+
+Here, Spock will verify that the invocation of ``baz`` happen before any invocation of ``bar``.
+In other words, invocation order is enforced *between* then-blocks, but not *within* a then-block.
+
 Mocking Classes
 ~~~~~~~~~~~~~~~
+
+In addition to interfaces, Spock also supports mocking of classes. Mocking classes works
+just like mocking interfaces; the only additional requirement is to put ``cglib-nodep-2.2`` or higher
+and ``objenesis-1.2`` or higher on the class path. If either of these libraries is missing from
+the class path, Spock will gently let you know.
 
 Stubbing
 --------

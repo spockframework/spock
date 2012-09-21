@@ -270,7 +270,21 @@ happens, and results in a ``TooManyInvocationsError``::
 
     Too many invocations for:
 
-    1 * subscriber.receive("hello") (2 invocations)
+    2 * subscriber.receive(_) (3 invocations)
+
+.. admonition:: New in Spock 0.7: Show All Matching Invocations
+
+    To make it easier to diagnose why too many invocations matched, Spock will show all invocations matching
+    the interaction in question::
+
+        Matching invocations (ordered by last occurrence):
+
+        2 * subscriber.receive("hello")   <-- this triggered the error
+        1 * subscriber.receive("goodbye")
+
+    According to this output, one of the ``receive("hello")`` calls triggered the ``TooManyInvocationsError``.
+    Note that because "equal" calls like the two invocations of ``subscriber.receive("hello")`` are aggregated
+    into a single line of output, the first ``receive("hello")`` call may well have occurred before the ``receive("goodbye")`` call.
 
 The second case (fewer invocations than required) can only be detected once execution of the ``when`` block has completed.
 (Until then, further invocations may occur.) It results in a ``TooFewInvocationsError``::
@@ -285,12 +299,13 @@ a different argument; in either case, the same error will occur.
 .. admonition:: New in Spock 0.7: Show Unmatched Invocations
 
     To make it easier to diagnose what happened "instead" of a missing invocation, Spock will show all
-    invocations that didn't match any interaction. This is particularly helpful when a method invocation has the "wrong"
-    arguments::
+    invocations that didn't match any interaction, ordered by their similarity with the interaction in question.
+    In particular, invocations that match everything but the interaction's arguments will be shown first::
 
-        Unmatched invocations:
+        Unmatched invocations (ordered by similarity):
 
-        subscriber1.receive('olleh')
+        1 * subscriber1.receive("goodbye")
+        1 * subscriber2.receive("hello")
 
 Invocation Order
 ~~~~~~~~~~~~~~~~
@@ -299,22 +314,23 @@ Often, the exact method invocation order isn't relevant and may change over time
 Spock defaults to allowing any invocation order, provided that the specified interactions are eventually satisfied::
 
     then:
-    2 * foo.bar()
-    1 * foo.baz()
+    2 * subscriber.receive("hello")
+    1 * subscriber.receive("goodbye")
 
-Here, any of the invocation sequences ``foo.bar(); foo.bar(); foo.baz()``, ``foo.bar(); foo.baz();
-foo.bar()`` and ``foo.baz(); foo.bar(); foo.bar()`` will satisfy the specified interactions.
+Here, any of the invocation sequences ``subscriber.receive("hello"); subscriber.receive("hello"); subscriber.receive("goodbye")``,
+``subscriber.receive("hello"); subscriber.receive("goodbye"); subscriber.receive("hello")`` and
+``subscriber.receive("goodbye"); subscriber.receive("hello"); subscriber.receive("hello")`` will satisfy the specified interactions.
 
 In those cases where invocation order matters, you can impose an order by splitting up interactions into
 multiple then-blocks::
 
     then:
-    1 * foo.baz()
+    2 * subscriber.receive("hello")
 
     then:
-    2 * foo.bar()
+    1 * subscriber.receive("goodbye")
 
-Here, Spock will verify that the invocation of ``baz`` happen before any invocation of ``bar``.
+Here, Spock will verify that both ``"hello"``s are received before the ``"goodbye"``.
 In other words, invocation order is enforced *between* but not *within* then-blocks.
 
 Mocking Classes
@@ -332,8 +348,8 @@ Stubbing is the act of "programming" collaborators to exhibit a certain behavior
 a method, you don't care if and how many times the method is going to be called; you just want it to
 return some value (or perform some side effect) *whenever* it gets called.
 
-Let's modify the ``Subscriber``'s ``receive`` method to return a status code that tells if the subscriber
-was able to process the message::
+For the sake of demonstrating stubbing, let's modify the ``Subscriber``'s ``receive`` method
+to return a status code that tells if the subscriber was able to process the message::
 
     interface Subscriber {
         String receive(String message)

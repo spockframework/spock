@@ -283,11 +283,11 @@ happens, and results in a ``TooManyInvocationsError``::
         1 * subscriber.receive("goodbye")
 
     According to this output, one of the ``receive("hello")`` calls triggered the ``TooManyInvocationsError``.
-    Note that because "equal" calls like the two invocations of ``subscriber.receive("hello")`` are aggregated
-    into a single line of output, the first ``receive("hello")`` call may well have occurred before the ``receive("goodbye")`` call.
+    Note that because undistinguishable calls like the two invocations of ``subscriber.receive("hello")`` are aggregated
+    into a single line of output, the first ``receive("hello")`` may well have occurred before ``receive("goodbye")``.
 
 The second case (fewer invocations than required) can only be detected once execution of the ``when`` block has completed.
-(Until then, further invocations may occur.) It results in a ``TooFewInvocationsError``::
+(Until then, further invocations may still occur.) It results in a ``TooFewInvocationsError``::
 
     Too few invocations for:
 
@@ -317,9 +317,8 @@ Spock defaults to allowing any invocation order, provided that the specified int
     2 * subscriber.receive("hello")
     1 * subscriber.receive("goodbye")
 
-Here, any of the invocation sequences ``subscriber.receive("hello"); subscriber.receive("hello"); subscriber.receive("goodbye")``,
-``subscriber.receive("hello"); subscriber.receive("goodbye"); subscriber.receive("hello")`` and
-``subscriber.receive("goodbye"); subscriber.receive("hello"); subscriber.receive("hello")`` will satisfy the specified interactions.
+Here, any of the invocation sequences ``hello hello goodbye``, ``hello goodbye hello``, and
+``goodbye hello hello`` will satisfy the specified interactions.
 
 In those cases where invocation order matters, you can impose an order by splitting up interactions into
 multiple then-blocks::
@@ -330,7 +329,7 @@ multiple then-blocks::
     then:
     1 * subscriber.receive("goodbye")
 
-Here, Spock will verify that both ``"hello"``s are received before the ``"goodbye"``.
+Here, Spock will verify that both ``hello``s are received before the ``goodbye``.
 In other words, invocation order is enforced *between* but not *within* then-blocks.
 
 Mocking Classes

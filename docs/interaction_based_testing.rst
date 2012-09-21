@@ -284,7 +284,7 @@ happens, and results in a ``TooManyInvocationsError``::
 
     According to this output, one of the ``receive("hello")`` calls triggered the ``TooManyInvocationsError``.
     Note that because undistinguishable calls like the two invocations of ``subscriber.receive("hello")`` are aggregated
-    into a single line of output, the first ``receive("hello")`` may well have occurred before ``receive("goodbye")``.
+    into a single line of output, the first ``receive("hello")`` may well have occurred before the ``receive("goodbye")``.
 
 The second case (fewer invocations than required) can only be detected once execution of the ``when`` block has completed.
 (Until then, further invocations may still occur.) It results in a ``TooFewInvocationsError``::
@@ -293,8 +293,9 @@ The second case (fewer invocations than required) can only be detected once exec
 
     1 * subscriber1.receive("hello") (0 invocations)
 
-Note that it doesn't matter whether the method was not called at all, called on another mock object, or called with
-a different argument; in either case, the same error will occur.
+Note that it doesn't matter whether the method was not called at all, the same method was called with different arguments,
+the same method was called on a different mock object, or a different method was called "instead" of this one;
+in either case, the same ``TooFewInvocationsError`` error will occur.
 
 .. admonition:: New in Spock 0.7: Show Unmatched Invocations
 
@@ -329,8 +330,11 @@ multiple then-blocks::
     then:
     1 * subscriber.receive("goodbye")
 
-Here, Spock will verify that both ``hello``s are received before the ``goodbye``.
+Now Spock will verify that both ``hello``s are received before the ``goodbye``.
 In other words, invocation order is enforced *between* but not *within* then-blocks.
+
+.. note:: Splitting up a then-block with ``and:`` does not impose any ordering, as ``and:``
+          is only meant for documentation purposes and doesn't carry any semantics.
 
 Mocking Classes
 ~~~~~~~~~~~~~~~

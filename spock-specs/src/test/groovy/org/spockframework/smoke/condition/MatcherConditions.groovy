@@ -57,7 +57,7 @@ class MatcherConditions extends EmbeddedSpecification {
     expect x, equalTo(42)
   }
 
-  def "can be explicit conditions (but only with 'that' syntax)"() {
+  def "can be explicit conditions (but only with 'that' or 'expect' syntax)"() {
     setup:
     def x = 42
     assert that(x, equalTo(42))
@@ -138,7 +138,7 @@ class MatcherConditions extends EmbeddedSpecification {
     "fred" equalTo(x)
   }
 
-  def "can have a string literal as actual if 'that' syntax is used"() {
+  def "can have a string literal as actual if 'that' or 'expect' syntax is used"() {
     def x = "fred"
 
     expect:
@@ -158,7 +158,7 @@ class MatcherConditions extends EmbeddedSpecification {
     foo.method() equalTo("method")
   }
 
-  def "can have a method expression as actual if 'that' syntax is used"() {
+  def "can have a method expression as actual if 'that' or 'expect' syntax is used"() {
     def foo = new Foo()
 
     expect:
@@ -173,7 +173,7 @@ class MatcherConditions extends EmbeddedSpecification {
     foo.property equalTo("property")
   }
 
-  def "can have a property expression as actual if 'that' syntax is used"() {
+  def "can have a property expression as actual if 'that' or 'expect' syntax is used"() {
     def foo = new Foo()
 
     expect:

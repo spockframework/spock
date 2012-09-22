@@ -39,7 +39,7 @@ public class DelegatingMockInvocation implements IMockInvocation {
     return delegate.callRealMethod();
   }
 
-  public Object callRealMethodWithArguments(Object... arguments) {
-    return delegate.callRealMethodWithArguments(arguments);
+  public Object callRealMethodWithArgs(Object... arguments) {
+    return delegate.callRealMethodWithArgs(arguments);
   }
 }

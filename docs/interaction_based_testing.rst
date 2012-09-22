@@ -283,18 +283,19 @@ happens, and results in a ``TooManyInvocationsError``::
         1 * subscriber.receive("goodbye")
 
     According to this output, one of the ``receive("hello")`` calls triggered the ``TooManyInvocationsError``.
-    Note that because "equal" calls like the two invocations of ``subscriber.receive("hello")`` are aggregated
-    into a single line of output, the first ``receive("hello")`` call may well have occurred before the ``receive("goodbye")`` call.
+    Note that because undistinguishable calls like the two invocations of ``subscriber.receive("hello")`` are aggregated
+    into a single line of output, the first ``receive("hello")`` may well have occurred before the ``receive("goodbye")``.
 
 The second case (fewer invocations than required) can only be detected once execution of the ``when`` block has completed.
-(Until then, further invocations may occur.) It results in a ``TooFewInvocationsError``::
+(Until then, further invocations may still occur.) It results in a ``TooFewInvocationsError``::
 
     Too few invocations for:
 
     1 * subscriber1.receive("hello") (0 invocations)
 
-Note that it doesn't matter whether the method was not called at all, called on another mock object, or called with
-a different argument; in either case, the same error will occur.
+Note that it doesn't matter whether the method was not called at all, the same method was called with different arguments,
+the same method was called on a different mock object, or a different method was called "instead" of this one;
+in either case, the same ``TooFewInvocationsError`` error will occur.
 
 .. admonition:: New in Spock 0.7: Show Unmatched Invocations
 
@@ -317,9 +318,8 @@ Spock defaults to allowing any invocation order, provided that the specified int
     2 * subscriber.receive("hello")
     1 * subscriber.receive("goodbye")
 
-Here, any of the invocation sequences ``subscriber.receive("hello"); subscriber.receive("hello"); subscriber.receive("goodbye")``,
-``subscriber.receive("hello"); subscriber.receive("goodbye"); subscriber.receive("hello")`` and
-``subscriber.receive("goodbye"); subscriber.receive("hello"); subscriber.receive("hello")`` will satisfy the specified interactions.
+Here, any of the invocation sequences ``hello hello goodbye``, ``hello goodbye hello``, and
+``goodbye hello hello`` will satisfy the specified interactions.
 
 In those cases where invocation order matters, you can impose an order by splitting up interactions into
 multiple then-blocks::
@@ -330,8 +330,11 @@ multiple then-blocks::
     then:
     1 * subscriber.receive("goodbye")
 
-Here, Spock will verify that both ``"hello"``s are received before the ``"goodbye"``.
+Now Spock will verify that both ``hello``'s are received before the ``goodbye``.
 In other words, invocation order is enforced *between* but not *within* then-blocks.
+
+.. note:: Splitting up a then-block with ``and:`` does not impose any ordering, as ``and:``
+          is only meant for documentation purposes and doesn't carry any semantics.
 
 Mocking Classes
 ~~~~~~~~~~~~~~~
@@ -362,7 +365,7 @@ To return the same value every time ``receive`` gets called, use the right-shift
 
     subscriber1.receive(_) >> "ok"
 
-Here we use ``_`` to return ``"ok"`` no matter what message was passed as an argument. You can use any of the
+Here we use ``_`` to return ``"ok"`` no matter what message was passed as an argument. As usual, you can use any of the
 other method argument constraints to control which invocations the interaction is going to match::
 
     subscriber1.receive("message1") >> "ok"
@@ -479,12 +482,91 @@ A *spy* is created with the ``MockingApi.Spy`` factory method::
 
     def subscriber = Spy(SubscriberImpl, constructorArgs: ["Fred"])
 
-More to come.
+A spy is always based on a real object. Hence you must provide a class type rather
+than an interface type, along with any constructor arguments for the type.
+If no constructor arguments are provided, the type's default constructor will be used.
+
+Method calls on a spy are automatically delegated to the real object. Likewise, values
+returned from the real object's methods are passed back to the caller via the spy.
+
+After creating a spy, you can listen in on the conversation between the caller and the real object underlying the spy::
+
+    1 * subscriber.receive(_)
+
+Apart from making sure that ``receive`` gets called exactly once,
+the conversation between the publisher and the ``SubscriberImpl`` instance underlying the spy is unaltered.
+
+When stubbing a method on a spy, the real method no longer gets called::
+
+    subscriber.receive(_) >> "ok"
+
+Instead of calling ``SubscriberImpl.receive``, the ``receive`` method will now simply return ``"ok"``.
+
+Sometimes, it is desirable to both execute some code *and* delegate to the real method::
+
+    subscriber.receive(_) >> { String message -> callRealMethod(); message.size() > 3 ? "ok" : "fail" }
+
+Here we are using ``callRealMethod()`` to delegate the method invocation to the real object.
+Note that we don't have to pass the ``message`` argument along; this is taken care of automatically. `callRealMethod()``
+returns the real invocation's result, but in this example we opted to return our own result instead.
+If we had wanted to pass a different message to the real method, we could have used ``callRealMethodWithArguments("changed message")``.
 
 Groovy Mocks
 ------------
 
-More to come.
+So far, all the mocking features we have seen work the same no matter if the calling code is written in Java or Groovy.
+By leveraging Groovy's dynamic capabilities, Groovy mocks offer some additional features specifically for testing Groovy code.
+They are created with the ``MockingApi.GroovyMock()``, ``MockingApi.GroovyStub()``, and ``MockingApi.GroovySpy()`` factory methods.
+
+.. admonition:: When should I favor Groovy mocks over regular mocks?
+
+   Groovy mocks should be used when the code under specification is written in Groovy *and*
+   some of the unique Groovy mock features are needed. When called from Java code, Groovy mocks will behave like regular mocks. Note
+   that it isn't necessary to use a Groovy mock merely because the code under specification and/or mocked interface or class type is written in Groovy.
+   Unless you have a concrete reason to use a Groovy mock, prefer a regular mock.
+
+Mocking Dynamic Methods
+~~~~~~~~~~~~~~~~~~~~~~~
+
+All Groovy mocks implement the ``GroovyObject`` interface. They support the mocking and stubbing of
+dynamic methods as if they were physically declared methods::
+
+    def subscriber = GroovyMock(Subscriber)
+
+    1 * subscriber.boyWhatADynamicMethod("cheers")
+
+Mocking All Instances Of A Type
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Usually, Groovy mocks are injected into the code under specification just like regular mocks.
+However, when a Groovy mock is created as *global*, it automagically replaces all real instances of the mocked type for the duration of the feature method [#automagic]_::
+
+    def publisher = new Publisher()
+    publisher << new RealSubscriber() << new RealSubscriber()
+
+    def anySubscriber = GroovyMock(RealSubscriber, global: true)
+
+    when:
+    publisher.publish("message")
+
+    then:
+    2 * anySubscriber.receive("message")
+
+Here, we set up the publisher with two instances of a real subscriber implementation.
+Then we create a global mock of the *same* type. This reroutes all method calls on the
+real subscribers to the mock object. The mock object's instance isn't ever passed to the publisher;
+it is only used to describe the interaction.
+
+ .. note:: Global mocks can only be created for a class type. They effectively replace
+           all instances of that type for the duration of the feature method.
+
+When combined with ``GroovySpy``, ``global: true`` allows to listen in on and selectively
+change the behavior of a bunch of Groovy objects without ever touching them.
+
+
+
+Mocking Constructors and Static Methods
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Further Reading
 ---------------
@@ -512,3 +594,5 @@ To learn more about interaction-based testing, we recommend the following resour
 .. [#equality] Arguments are compared according to Groovy equality, which is based on, but more relaxed than, Java equality (in particular for numbers).
 
 .. [#creating] See [Other Kinds Of Mock Objects]_ for more on this.
+
+.. [#automagic] You may know this behavior from Groovy's ``MockFor()`` and ``StubFor()`` facilities.

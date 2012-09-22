@@ -24,6 +24,7 @@ import org.spockframework.runtime.ConditionNotSatisfiedError
 
 import static org.hamcrest.CoreMatchers.*
 import static spock.util.matcher.HamcrestSupport.that
+import static spock.util.matcher.HamcrestSupport.expect
 
 class MatcherConditions extends EmbeddedSpecification {
   def "work in expect-blocks"() {
@@ -46,6 +47,14 @@ class MatcherConditions extends EmbeddedSpecification {
 
     expect:
     that x, equalTo(42)
+  }
+
+  def "have an alternative 'expect' syntax"() {
+    when:
+    def x = 42
+
+    then:
+    expect x, equalTo(42)
   }
 
   def "can be explicit conditions (but only with 'that' syntax)"() {

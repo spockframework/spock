@@ -78,8 +78,8 @@ public abstract class SpockRuntime {
     return GroovyRuntimeUtil.toString(message);
   }
   /**
-   * A condition of the form "foo equalTo(bar)" or "that(foo, equalTo(bar)",
-   * where 'equalTo' returns a Hamcrest matcher.
+   * A condition of the form "foo equalTo(bar)" or "that(foo, equalTo(bar)"
+   * or "expect(foo, equalTo(bar)", where 'equalTo' returns a Hamcrest matcher.
    */
   private static class MatcherCondition {
     final Object actual;
@@ -135,7 +135,7 @@ public abstract class SpockRuntime {
         return new MatcherCondition(target, args[0], true);
       }
 
-      if (method.equals("that")) {
+      if (method.equals("that") || method.equals("expect")) {
         if (target != spock.util.matcher.HamcrestSupport.class) return null;
         if (args.length != 2 || !HamcrestFacade.isMatcher(args[1])) return null;
         return new MatcherCondition(args[0], args[1], false);

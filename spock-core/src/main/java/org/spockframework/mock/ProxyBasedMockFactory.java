@@ -48,8 +48,7 @@ public class ProxyBasedMockFactory {
           constructorArgs, mockInterceptor, classLoader, useObjenesis);
     } else {
       throw new CannotCreateMockException(mockType,
-          ". Mocking of non-interface types requires CGLIB. "
-              + "To solve this problem, put cglib-nodep-2.2 or higher on the class path."
+          ". Mocking of non-interface types requires the CGLIB library. Please put cglib-nodep-2.2 or higher on the class path."
       );
     }
 

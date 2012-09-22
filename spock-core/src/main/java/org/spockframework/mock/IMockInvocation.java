@@ -41,7 +41,22 @@ public interface IMockInvocation {
    */
   List<Object> getArguments();
 
+  /**
+   * Delegates this method invocation to the real object underlying this mock object,
+   * including any method arguments. If this mock object has no underlying real object, a
+   * {@link CannotInvokeRealMethodException} is thrown.
+   *
+   * @return the return value of the method to which this invocation was delegated
+   */
   Object callRealMethod();
 
-  Object callRealMethodWith(Object... arguments);
+  /**
+   * Delegates this method invocation to the real object underlying this mock object,
+   * replacing the original method arguments with the specified arguments.
+   * If this mock object has no underlying real object, a
+   * {@link CannotInvokeRealMethodException} is thrown.
+   *
+   * @return the return value of the method to which this invocation was delegated
+   */
+  Object callRealMethodWithArguments(Object... arguments);
 }

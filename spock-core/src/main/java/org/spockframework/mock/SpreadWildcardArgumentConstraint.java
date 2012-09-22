@@ -16,7 +16,6 @@
 
 package org.spockframework.mock;
 
-import org.spockframework.lang.SpreadWildcard;
 import org.spockframework.runtime.InvalidSpecException;
 
 /**

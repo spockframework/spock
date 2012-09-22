@@ -25,9 +25,14 @@ import org.spockframework.runtime.GroovyRuntimeUtil;
 
 import spock.lang.Specification;
 import spock.mock.MockConfiguration;
+import spock.mock.MockImplementation;
 
 public class JavaMockFactory implements IMockFactory {
   public static JavaMockFactory INSTANCE = new JavaMockFactory();
+
+  public boolean canCreate(MockConfiguration configuration) {
+    return configuration.getImplementation() == MockImplementation.JAVA;
+  }
 
   public Object create(MockConfiguration configuration, Specification specification) {
     if (Modifier.isFinal(configuration.getType().getModifiers())) {

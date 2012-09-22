@@ -14,30 +14,34 @@
 
 package org.spockframework.mock;
 
-import org.spockframework.util.CollectionUtil;
 import org.spockframework.util.InternalSpockError;
 import spock.lang.Specification;
 import spock.mock.MockConfiguration;
-import spock.mock.MockImplementation;
 
-import java.util.Map;
+import java.util.Arrays;
+import java.util.List;
 
 public class CompositeMockFactory implements IMockFactory {
   public static CompositeMockFactory INSTANCE =
-      new CompositeMockFactory(CollectionUtil.mapOf(MockImplementation.JAVA,
-          JavaMockFactory.INSTANCE, MockImplementation.GROOVY, GroovyMockFactory.INSTANCE));
+      new CompositeMockFactory(Arrays.asList(JavaMockFactory.INSTANCE, GroovyMockFactory.INSTANCE));
 
-  private final Map<MockImplementation, IMockFactory> mockFactories;
+  private final List<IMockFactory> mockFactories;
 
-  public CompositeMockFactory(Map<MockImplementation, IMockFactory> mockFactories) {
+  public CompositeMockFactory(List<IMockFactory> mockFactories) {
     this.mockFactories = mockFactories;
   }
 
+  public boolean canCreate(MockConfiguration configuration) {
+    throw new UnsupportedOperationException("canCreate");
+  }
+
   public Object create(MockConfiguration configuration, Specification specification) {
-    IMockFactory factory = mockFactories.get(configuration.getImplementation());
-    if (factory == null) {
-      throw new InternalSpockError("No mock factory for implementation '%s' registered").withArgs(configuration.getImplementation());
+    for (IMockFactory factory : mockFactories) {
+      if (factory.canCreate(configuration)) {
+        return factory.create(configuration, specification);
+      }
     }
-    return factory.create(configuration, specification);
+
+    throw new InternalSpockError("No matching mock factory found");
   }
 }

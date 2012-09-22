@@ -24,9 +24,14 @@ import org.spockframework.runtime.GroovyRuntimeUtil;
 
 import spock.lang.Specification;
 import spock.mock.MockConfiguration;
+import spock.mock.MockImplementation;
 
 public class GroovyMockFactory implements IMockFactory {
   public static GroovyMockFactory INSTANCE = new GroovyMockFactory();
+
+  public boolean canCreate(MockConfiguration configuration) {
+    return configuration.getImplementation() == MockImplementation.GROOVY;
+  }
 
   public Object create(MockConfiguration configuration, Specification specification) throws CannotCreateMockException {
     final MetaClass oldMetaClass = GroovyRuntimeUtil.getMetaClass(configuration.getType());

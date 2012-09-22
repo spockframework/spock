@@ -18,5 +18,6 @@ import spock.lang.Specification;
 import spock.mock.MockConfiguration;
 
 public interface IMockFactory {
+  public boolean canCreate(MockConfiguration configuration);
   public Object create(MockConfiguration configuration, Specification specification);
 }

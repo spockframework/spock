@@ -63,7 +63,7 @@ public class DeepBlockRewriter extends AbstractDeepBlockRewriter {
   protected void doVisitExpressionStatement(ExpressionStatement stat) {
     super.doVisitExpressionStatement(stat);
 
-    boolean handled = stat == lastBuiltInStat // built-in statement; don't process further
+    boolean handled = stat == lastSpecialMethodCallStat // don't process further
         || handleInteraction(stat)
         || handleImplicitCondition(stat);
   }
@@ -115,7 +115,11 @@ public class DeepBlockRewriter extends AbstractDeepBlockRewriter {
   }
 
   private boolean handleImplicitCondition(ExpressionStatement stat) {
-    if (!(stat == currTopLevelStat && isThenOrExpectBlock() || currBuiltInMethodCall.isWithCall())) return false;
+    if (!(stat == currTopLevelStat && isThenOrExpectBlock()
+        || currSpecialMethodCall.isWithCall()
+        || currSpecialMethodCall.isConditionBlock())) {
+      return false;
+    }
     if (!isImplicitCondition(stat)) return false;
 
     checkIsValidImplicitCondition(stat);
@@ -126,19 +130,19 @@ public class DeepBlockRewriter extends AbstractDeepBlockRewriter {
   }
 
   private boolean handleMockCall(MethodCallExpression expr) {
-    if (!currBuiltInMethodCall.isTestDouble(expr)) return false;
+    if (!currSpecialMethodCall.isTestDouble(expr)) return false;
 
     if (resources.getCurrentMethod().getAst().isStatic()) {
       resources.getErrorReporter().error(expr, "Mocks cannot be created in static scope");
       // expand nevertheless so that inner scope (if any) won't trip over this again
     }
 
-    currBuiltInMethodCall.expand();
+    currSpecialMethodCall.expand();
     return true;
   }
 
   private boolean handleThrownCall(MethodCallExpression expr) {
-    if (!currBuiltInMethodCall.isExceptionCondition(expr)) return false;
+    if (!currSpecialMethodCall.isExceptionCondition(expr)) return false;
 
     if (!(block instanceof ThenBlock)) {
       resources.getErrorReporter().error(expr, "Exception conditions are only allowed in 'then' blocks");
@@ -148,20 +152,20 @@ public class DeepBlockRewriter extends AbstractDeepBlockRewriter {
       resources.getErrorReporter().error(expr, "Only one exception condition is allowed per 'then' block");
       return true;
     }
-    if (!currBuiltInMethodCall.isMatch(currTopLevelStat)) {
+    if (!currSpecialMethodCall.isMatch(currTopLevelStat)) {
       resources.getErrorReporter().error(expr, "Exception conditions are only allowed as top-level statements");
       return true;
     }
 
     foundExceptionCondition = expr;
-    if (currBuiltInMethodCall.isThrownCall()) {
-      currBuiltInMethodCall.expand();
+    if (currSpecialMethodCall.isThrownCall()) {
+      currSpecialMethodCall.expand();
     }
     return true;
   }
 
   private boolean handleOldCall(MethodCallExpression expr) {
-    if (!currBuiltInMethodCall.isOldCall(expr)) return false;
+    if (!currSpecialMethodCall.isOldCall(expr)) return false;
 
     if (!(block instanceof ThenBlock)) {
       resources.getErrorReporter().error(expr, "old() is only allowed in 'then' blocks");
@@ -182,7 +186,7 @@ public class DeepBlockRewriter extends AbstractDeepBlockRewriter {
   }
 
   private boolean handleInteractionBlockCall(MethodCallExpression expr) {
-    if (!currBuiltInMethodCall.isInteractionCall(expr)) return false;
+    if (!currSpecialMethodCall.isInteractionCall(expr)) return false;
 
     interactionFound = true;
     return true;
@@ -233,8 +237,8 @@ public class DeepBlockRewriter extends AbstractDeepBlockRewriter {
 
   @Nullable
   private ClosureExpression getCurrentWithOrMockClosure() {
-    if (currBuiltInMethodCall.isWithCall() || currBuiltInMethodCall.isTestDouble()) {
-      return currBuiltInMethodCall.getClosureExpr();
+    if (currSpecialMethodCall.isWithCall() || currSpecialMethodCall.isTestDouble()) {
+      return currSpecialMethodCall.getClosureExpr();
     }
     return null;
   }

@@ -20,8 +20,8 @@ import org.codehaus.groovy.ast.expr.ClosureExpression;
 import org.codehaus.groovy.ast.expr.MethodCallExpression;
 import org.codehaus.groovy.ast.stmt.Statement;
 
-public class NullObjectMethodCall implements IBuiltInMethodCall {
-  public static final IBuiltInMethodCall INSTANCE = new NullObjectMethodCall();
+public class NoSpecialMethodCall implements ISpecialMethodCall {
+  public static final ISpecialMethodCall INSTANCE = new NoSpecialMethodCall();
 
   public boolean isMethodName(String name) {
     return false;
@@ -48,6 +48,10 @@ public class NullObjectMethodCall implements IBuiltInMethodCall {
   }
 
   public boolean isWithCall() {
+    return false;
+  }
+
+  public boolean isConditionBlock() {
     return false;
   }
 

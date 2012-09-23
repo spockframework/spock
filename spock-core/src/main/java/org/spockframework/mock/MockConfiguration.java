@@ -12,13 +12,13 @@
  * limitations under the License.
  */
 
-package spock.mock;
+package org.spockframework.mock;
 
 import java.util.List;
 import java.util.Map;
 
 import org.spockframework.util.Nullable;
-import spock.lang.Beta;
+import org.spockframework.util.Beta;
 
 /**
  * Options for creating mock objects. {@link #getNature()} and {@link #getImplementation()} are mandatory

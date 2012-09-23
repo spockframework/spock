@@ -12,13 +12,10 @@
  * limitations under the License.
  */
 
-package spock.mock;
+package org.spockframework.mock;
 
-import org.spockframework.mock.EqualsHashCodeToStringInteractions;
-import org.spockframework.mock.IMockInteraction;
-import org.spockframework.mock.IMockInvocation;
 import org.spockframework.util.ReflectionUtil;
-import spock.lang.Beta;
+import org.spockframework.util.Beta;
 
 @Beta
 public class ZeroOrNullResponder implements IMockInvocationResponder {

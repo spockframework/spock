@@ -12,9 +12,9 @@
  * limitations under the License.
  */
 
-package spock.mock;
+package org.spockframework.mock;
 
-import spock.lang.Beta;
+import org.spockframework.util.Beta;
 
 /**
  * The <em>nature</em> of a mock object determines its primary responsibility and characteristics.

@@ -16,8 +16,6 @@ package org.spockframework.mock;
 
 import org.spockframework.util.Nullable;
 
-import spock.mock.IMockInvocationResponder;
-
 public interface IMockObject {
   /**
    * Returns the name of this mock object, or {@code null} if it has no name.

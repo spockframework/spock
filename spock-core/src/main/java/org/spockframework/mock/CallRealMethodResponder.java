@@ -12,10 +12,9 @@
  * limitations under the License.
  */
 
-package spock.mock;
+package org.spockframework.mock;
 
-import org.spockframework.mock.IMockInvocation;
-import spock.lang.Beta;
+import org.spockframework.util.Beta;
 
 @Beta
 public class CallRealMethodResponder implements IMockInvocationResponder {

@@ -22,8 +22,6 @@ import groovy.lang.MetaClass;
 
 import org.spockframework.runtime.GroovyRuntimeUtil;
 import spock.lang.Specification;
-import spock.mock.*;
-import spock.mock.MockConfiguration;
 
 public class JavaMockInterceptor implements IProxyBasedMockInterceptor {
   private final MockConfiguration mockConfiguration;

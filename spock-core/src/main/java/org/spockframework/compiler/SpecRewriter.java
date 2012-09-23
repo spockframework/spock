@@ -436,7 +436,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
 
   public MethodCallExpression getSpecificationContext() {
     return AstUtil.createDirectMethodCall(VariableExpression.THIS_EXPRESSION,
-        nodeCache.Specification_GetSpecificationContext, ArgumentListExpression.EMPTY_ARGUMENTS);
+        nodeCache.SpecInternals_GetSpecificationContext, ArgumentListExpression.EMPTY_ARGUMENTS);
   }
 
   public MethodCallExpression getMockInvocationMatcher() {

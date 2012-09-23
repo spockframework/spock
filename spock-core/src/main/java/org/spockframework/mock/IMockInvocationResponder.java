@@ -12,24 +12,12 @@
  * limitations under the License.
  */
 
-package spock.mock;
+package org.spockframework.mock;
 
-import org.spockframework.mock.IMockObject;
-import org.spockframework.mock.IMockObjectProvider;
-import spock.lang.Beta;
+import org.spockframework.mock.IMockInvocation;
+import org.spockframework.util.Beta;
 
 @Beta
-public class MockDetector {
-  public static boolean isMock(Object object) {
-    return object instanceof IMockObjectProvider;
-  }
-
-  public static IMockObject asMock(Object object) {
-    if (!isMock(object)) {
-      throw new IllegalArgumentException("Not a mock object: " + object.toString());
-    }
-
-    IMockObjectProvider provider = (IMockObjectProvider) object;
-    return provider.$spock_get();
-  }
+public interface IMockInvocationResponder {
+  Object respond(IMockInvocation invocation);
 }

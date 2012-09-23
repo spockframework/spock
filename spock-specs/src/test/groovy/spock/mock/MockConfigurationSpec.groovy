@@ -14,6 +14,13 @@
 package spock.mock
 
 import spock.lang.Specification
+import org.spockframework.mock.MockNature
+import org.spockframework.mock.MockImplementation
+import org.spockframework.mock.MockConfiguration
+import org.spockframework.mock.EmptyOrStubResponder
+import org.spockframework.mock.IMockInvocationResponder
+import org.spockframework.mock.ZeroOrNullResponder
+import org.spockframework.mock.CallRealMethodResponder
 
 class MockConfigurationSpec extends Specification {
   def "defaults for Mock nature"() {

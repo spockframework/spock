@@ -1,4 +1,4 @@
-package spock.lang;
+package org.spockframework.util;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;

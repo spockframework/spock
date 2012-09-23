@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-package spock.mock;
+package org.spockframework.mock;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
@@ -24,11 +24,8 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import groovy.lang.GString;
 
-import org.spockframework.mock.EqualsHashCodeToStringInteractions;
-import org.spockframework.mock.IMockInteraction;
-import org.spockframework.mock.IMockInvocation;
 import org.spockframework.util.ReflectionUtil;
-import spock.lang.Beta;
+import org.spockframework.util.Beta;
 
 @Beta
 public class EmptyOrStubResponder implements IMockInvocationResponder {

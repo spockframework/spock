@@ -18,8 +18,6 @@ import org.spockframework.lang.Wildcard;
 import org.spockframework.runtime.InvalidSpecException;
 import org.spockframework.util.Nullable;
 
-import spock.mock.IMockInvocationResponder;
-
 public class MockObject implements IMockObject {
   private final String name;
   private final Class<?> type;

@@ -24,8 +24,6 @@ import groovy.lang.MissingPropertyException;
 import org.spockframework.runtime.GroovyRuntimeUtil;
 
 import spock.lang.Specification;
-import spock.mock.IMockInvocationResponder;
-import spock.mock.MockConfiguration;
 
 public class GroovyMockInterceptor implements IProxyBasedMockInterceptor {
   private final MockConfiguration mockConfiguration;

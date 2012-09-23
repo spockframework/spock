@@ -13,6 +13,8 @@
  */
 package spock.mock
 
+import org.spockframework.mock.MockDetector
+
 import spock.lang.Specification
 
 class MockDetectorSpec extends Specification {

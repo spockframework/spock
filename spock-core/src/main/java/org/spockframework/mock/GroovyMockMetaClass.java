@@ -23,7 +23,6 @@ import org.spockframework.runtime.GroovyRuntimeUtil;
 import org.spockframework.util.ReflectionUtil;
 
 import spock.lang.Specification;
-import spock.mock.MockConfiguration;
 
 public class GroovyMockMetaClass extends DelegatingMetaClass {
   private final MockConfiguration configuration;

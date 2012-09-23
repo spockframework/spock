@@ -24,8 +24,6 @@ import groovy.lang.*;
 import org.spockframework.runtime.GroovyRuntimeUtil;
 
 import spock.lang.Specification;
-import spock.mock.MockConfiguration;
-import spock.mock.MockImplementation;
 
 public class JavaMockFactory implements IMockFactory {
   public static JavaMockFactory INSTANCE = new JavaMockFactory();

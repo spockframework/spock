@@ -12,9 +12,9 @@
  * limitations under the License.
  */
 
-package spock.mock;
+package org.spockframework.mock;
 
-import spock.lang.Beta;
+import org.spockframework.util.Beta;
 
 /**
  * The <em>implementation</em> of a mock object determines how method calls are processed

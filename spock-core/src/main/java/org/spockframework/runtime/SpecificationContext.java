@@ -4,7 +4,7 @@ import org.spockframework.mock.IMockController;
 import org.spockframework.mock.MockController;
 import org.spockframework.runtime.model.IterationInfo;
 
-import spock.lang.ISpecificationContext;
+import org.spockframework.lang.ISpecificationContext;
 import spock.lang.Specification;
 
 public class SpecificationContext implements ISpecificationContext {

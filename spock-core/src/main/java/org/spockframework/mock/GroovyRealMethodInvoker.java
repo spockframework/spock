@@ -16,8 +16,6 @@ package org.spockframework.mock;
 
 import groovy.lang.MetaClass;
 
-import spock.mock.IMockInvocationResponder;
-
 public class GroovyRealMethodInvoker implements IMockInvocationResponder {
   private final MetaClass metaClass;
 

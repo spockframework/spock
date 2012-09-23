@@ -24,10 +24,24 @@ import org.spockframework.runtime.InvalidSpecException;
 import org.spockframework.runtime.GroovyRuntimeUtil;
 
 /**
- * Spock's mocking API primarily consists of factory methods for creating
- * different kinds of mock objects. A factory method exists for each combination
- * of {@link org.spockframework.mock.MockImplementation} and {@link org.spockframework.mock.MockNature}.
- * Each factory method provides multiple overloads for further configuration.
+ * Spock's mocking API. Primarily consists of the following factory methods:
+ *
+ * <dl>
+ *   <dt>Mock()</dt>
+ *   <dd>A general-purpose test double that supports both stubbing and mocking.</dd>
+ *   <dt>Stub()</dt>
+ *   <dd>A test double that supports stubbing but not mocking.</dd>
+ *   <dt>Spy()</dt>
+ *   <dd>A test double that, by default, delegates all calls to a real object. Supports both stubbing and mocking.</dd>
+ *   <dt>GroovyMock()</dt>
+ *   <dd>A Mock() with additional, Groovy-specific features.</dd>
+ *   <dt>GroovyStub()</dt>
+ *   <dd>A Stub() with additional, Groovy-specific features.</dd>
+ *   <dt>GroovySpy() </dt>
+ *   <dd>A Spy() with additional, Groovy-specific features.</dd>
+ * </dl>
+ *
+ * Each factory method has several overloads providing different degrees of configurability.
  */
 @SuppressWarnings("unused")
 public class MockingApi extends SpecInternals {

@@ -448,7 +448,7 @@ interaction will never get a chance to match an invocation.
 .. note:: Mocking and stubbing of the same method call has to happen in the same interaction.
 
 Other Kinds of Mock Objects
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+---------------------------
 
 So far, we have created mock objects with the ``MockingApi.Mock`` method. Aside from
 this method, the ``MockingApi`` class provides a couple of other factory methods for creating
@@ -494,7 +494,7 @@ After creating a spy, you can listen in on the conversation between the caller a
     1 * subscriber.receive(_)
 
 Apart from making sure that ``receive`` gets called exactly once,
-the conversation between the publisher and the ``SubscriberImpl`` instance underlying the spy is unaltered.
+the conversation between the publisher and the ``SubscriberImpl`` instance underlying the spy remains unaltered.
 
 When stubbing a method on a spy, the real method no longer gets called::
 
@@ -533,13 +533,14 @@ dynamic methods as if they were physically declared methods::
 
     def subscriber = GroovyMock(Subscriber)
 
-    1 * subscriber.boyWhatADynamicMethod("cheers")
+    1 * subscriber.someDynamicMethod("hello")
 
 Mocking All Instances Of A Type
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Usually, Groovy mocks are injected into the code under specification just like regular mocks.
-However, when a Groovy mock is created as *global*, it automagically replaces all real instances of the mocked type for the duration of the feature method [#automagic]_::
+However, when a Groovy mock is created as *global*, it automagically replaces all real instances
+of the mocked type for the duration of the feature method [#automagic]_::
 
     def publisher = new Publisher()
     publisher << new RealSubscriber() << new RealSubscriber()
@@ -560,13 +561,43 @@ it is only used to describe the interaction.
  .. note:: Global mocks can only be created for a class type. They effectively replace
            all instances of that type for the duration of the feature method.
 
-When combined with ``GroovySpy``, ``global: true`` allows to listen in on and selectively
-change the behavior of a bunch of Groovy objects without ever touching them.
+Since global mocks have a somewhat, well, global effect, it's often convenient
+to use them together with ``GroovySpy``. This leads to the real code getting
+executed *unless* an interaction matches, allowing you to selectively listen
+in on objects and change their behavior just where needed.
 
+Mocking Constructors
+~~~~~~~~~~~~~~~~~~~~
 
+Global mocks support mocking of constructors::
 
-Mocking Constructors and Static Methods
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    def anySubscriber = GroovySpy(RealSubscriber, global: true)
+
+    1 * new RealSubscriber("Fred")
+
+Since we are using a spy, the object returned from the constructor call remains unchanged.
+To change which object gets constructed, we can stub the constructor::
+
+    new RealSubscriber("Fred") >> new RealSubscriber("Barney")
+
+Now, whenever some code tries to construct a subscriber named Fred, we'll construct
+a subscriber named Barney instead.
+
+Mocking Static Methods
+~~~~~~~~~~~~~~~~~~~~~~
+
+Global mocks support mocking and stubbing of static methods::
+
+    def anySubscriber = GroovySpy(RealSubscriber, global: true)
+
+    1 * RealSubscriber.someStaticMethod("hello") >> 42
+
+The same works for dynamic static methods.
+
+When a global mock is used solely for mocking constructors and static methods,
+the mock's instance isn't really needed. In such a case it's OK to just write:
+
+    GroovySpy(RealSubscriber, global: true)
 
 Further Reading
 ---------------

@@ -14,32 +14,80 @@
 
 package spock.util.concurrent
 
-import spock.lang.Specification
+import org.spockframework.runtime.SpockTimeoutError
 
-import static java.util.concurrent.TimeUnit.*
+import spock.lang.Specification
+import spock.lang.FailsWith
+import java.util.concurrent.TimeUnit
 
 class PollingConditionsSpec extends Specification {
   PollingConditions conditions = new PollingConditions()
 
-  volatile int x = 0
-  volatile int y = 0
+  volatile int num = 0
+  volatile String str = null
 
-  def "basic usage"() {
-    setup:
+  def "succeeds if all conditions are eventually satisfied"() {
+    when:
+    num = 42
     Thread.start {
       sleep(500)
-      x = 21
-    }
-    Thread.start {
-      sleep(1500)
-      y = 42
+      str = "hello"
     }
 
-    expect:
+    then:
     conditions.eventually {
-      x == 21
-      y == 42
+      num == 42
+      str == "hello"
     }
+  }
+
+  @FailsWith(SpockTimeoutError)
+  def "fails if any condition isn't satisfied in time"() {
+    conditions.timeout = 1
+
+    when:
+    num = 42
+
+    then:
+    conditions.eventually {
+      num == 42
+      str == "hello"
+    }
+  }
+
+  @FailsWith(SpockTimeoutError)
+  def "can override timeout per invocation"() {
+    when:
+    Thread.start {
+      Thread.sleep(500)
+      num = 42
+    }
+
+    then:
+    conditions.within(0) {
+      num == 42
+    }
+  }
+
+  def "provides fine-grained control over polling rhythm"() {
+    conditions.setInitialDelay(250, TimeUnit.MILLISECONDS)
+    conditions.setDelay(500, TimeUnit.MILLISECONDS)
+    conditions.setFactor(2)
+
+    def count = 0
+    def stats = [System.currentTimeMillis()]
+
+    when:
+    conditions.eventually {
+      stats << System.currentTimeMillis()
+      if (++count < 3) assert false
+    }
+
+    then:
+    count == 3
+    def spans = (1..3).collect { stats[it] - stats[it - 1] }
+    spans[0] < spans[1]
+    spans[1] < spans[2]
   }
 }
 

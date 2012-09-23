@@ -23,16 +23,16 @@ package org.spockframework.runtime;
 public class SpockAssertionError extends AssertionError {
   public SpockAssertionError() {}
 
-  public SpockAssertionError(String msg) {
-    super(msg);
+  public SpockAssertionError(String message) {
+    super(message);
   }
 
   public SpockAssertionError(Throwable cause) {
     initCause(cause);
   }
 
-  public SpockAssertionError(String msg, Throwable cause) {
-    super(msg);
+  public SpockAssertionError(String message, Throwable cause) {
+    super(message);
     initCause(cause);
   }
 

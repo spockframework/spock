@@ -16,7 +16,6 @@
 
 package org.spockframework.runtime.extension.builtin;
 
-import java.text.DecimalFormat;
 import java.util.concurrent.*;
 
 import org.spockframework.runtime.SpockTimeoutError;
@@ -63,7 +62,8 @@ public class TimeoutInterceptor implements IMethodInterceptor {
               waitMillis = 250;
             } else {
               waitMillis *= 2;
-              System.out.printf("[spock.lang.Timeout] Method '%s' has not yet returned - interrupting. Next try in %1.2f seconds.\n", invocation.getMethod().getName(), waitMillis / 1000.);
+              System.out.printf("[spock.lang.Timeout] Method '%s' has not yet returned - interrupting. Next try in %1.2f seconds.\n",
+                  invocation.getMethod().getName(), waitMillis / 1000.);
             }
             mainThread.interrupt();
           }
@@ -96,10 +96,10 @@ public class TimeoutInterceptor implements IMethodInterceptor {
       // act accordingly. We gloss over the fact that some other thread might also have tried to
       // interrupt this thread. This shouldn't be a problem in practice, in particular because
       // throwing an InterruptedException wouldn't abort the whole test run anyway.
-      SpockTimeoutError timeoutError = new SpockTimeoutError(timeout.value(), timeout.unit(),
-          "Method timed out after %d %s", timeout.value(), timeout.unit().toString().toLowerCase());
-      timeoutError.setStackTrace(stackTrace);
-      throw timeoutError;
+      String msg = String.format("Method timed out after %d %s", timeout.value(), timeout.unit().toString().toLowerCase());
+      SpockTimeoutError error = new SpockTimeoutError(timeout.value(), timeout.unit(), msg);
+      error.setStackTrace(stackTrace);
+      throw error;
     }
     if (saved != null) {
       throw saved;

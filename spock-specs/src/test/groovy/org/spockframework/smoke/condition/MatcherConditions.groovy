@@ -24,6 +24,7 @@ import org.spockframework.runtime.ConditionNotSatisfiedError
 
 import static org.hamcrest.CoreMatchers.*
 import static spock.util.matcher.HamcrestSupport.that
+import static spock.util.matcher.HamcrestSupport.expect
 
 class MatcherConditions extends EmbeddedSpecification {
   def "work in expect-blocks"() {
@@ -48,7 +49,15 @@ class MatcherConditions extends EmbeddedSpecification {
     that x, equalTo(42)
   }
 
-  def "can be explicit conditions (but only with 'that' syntax)"() {
+  def "have an alternative 'expect' syntax"() {
+    when:
+    def x = 42
+
+    then:
+    expect x, equalTo(42)
+  }
+
+  def "can be explicit conditions (but only with 'that' or 'expect' syntax)"() {
     setup:
     def x = 42
     assert that(x, equalTo(42))
@@ -129,7 +138,7 @@ class MatcherConditions extends EmbeddedSpecification {
     "fred" equalTo(x)
   }
 
-  def "can have a string literal as actual if 'that' syntax is used"() {
+  def "can have a string literal as actual if 'that' or 'expect' syntax is used"() {
     def x = "fred"
 
     expect:
@@ -149,7 +158,7 @@ class MatcherConditions extends EmbeddedSpecification {
     foo.method() equalTo("method")
   }
 
-  def "can have a method expression as actual if 'that' syntax is used"() {
+  def "can have a method expression as actual if 'that' or 'expect' syntax is used"() {
     def foo = new Foo()
 
     expect:
@@ -164,7 +173,7 @@ class MatcherConditions extends EmbeddedSpecification {
     foo.property equalTo("property")
   }
 
-  def "can have a property expression as actual if 'that' syntax is used"() {
+  def "can have a property expression as actual if 'that' or 'expect' syntax is used"() {
     def foo = new Foo()
 
     expect:

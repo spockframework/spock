@@ -12,12 +12,34 @@
  * limitations under the License.
  */
 
-package org.spockframework.mock;
+package spock.util.concurrent
 
-import spock.lang.Specification;
-import spock.mock.MockConfiguration;
+import spock.lang.Specification
 
-public interface IMockFactory {
-  public boolean canCreate(MockConfiguration configuration);
-  public Object create(MockConfiguration configuration, Specification specification);
+import static java.util.concurrent.TimeUnit.*
+
+class PollingConditionsSpec extends Specification {
+  PollingConditions conditions = new PollingConditions()
+
+  volatile int x = 0
+  volatile int y = 0
+
+  def "basic usage"() {
+    setup:
+    Thread.start {
+      sleep(500)
+      x = 21
+    }
+    Thread.start {
+      sleep(1500)
+      y = 42
+    }
+
+    expect:
+    conditions.eventually {
+      x == 21
+      y == 42
+    }
+  }
 }
+

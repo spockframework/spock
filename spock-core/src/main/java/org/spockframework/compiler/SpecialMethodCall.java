@@ -18,16 +18,20 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.codehaus.groovy.ast.AnnotationNode;
+import org.codehaus.groovy.ast.ClassNode;
+import org.codehaus.groovy.ast.MethodNode;
 import org.codehaus.groovy.ast.expr.*;
 import org.codehaus.groovy.ast.stmt.ExpressionStatement;
 import org.codehaus.groovy.ast.stmt.Statement;
 import org.codehaus.groovy.syntax.Types;
+import org.spockframework.lang.ConditionBlock;
 import org.spockframework.util.CollectionUtil;
 import org.spockframework.util.Identifiers;
 import org.spockframework.util.Nullable;
 import org.spockframework.util.ObjectUtil;
 
-public class DefaultBuiltInMethodCall implements IBuiltInMethodCall {
+public class SpecialMethodCall implements ISpecialMethodCall {
   private final String methodName;
   private final Expression inferredName;
   private final Expression inferredType;
@@ -36,15 +40,18 @@ public class DefaultBuiltInMethodCall implements IBuiltInMethodCall {
   private final BinaryExpression binaryExpr;
   @Nullable
   private final ClosureExpression closureExpr;
+  private final boolean conditionBlock;
 
-  public DefaultBuiltInMethodCall(String methodName, Expression inferredName, Expression inferredType,
-      MethodCallExpression methodCallExpr, @Nullable BinaryExpression binaryExpr, @Nullable ClosureExpression closureExpr) {
+  public SpecialMethodCall(String methodName, Expression inferredName, Expression inferredType,
+      MethodCallExpression methodCallExpr, @Nullable BinaryExpression binaryExpr,
+      @Nullable ClosureExpression closureExpr, boolean conditionBlock) {
     this.methodName = methodName;
     this.inferredName = inferredName;
     this.inferredType = inferredType;
     this.binaryExpr = binaryExpr;
     this.methodCallExpr = methodCallExpr;
     this.closureExpr = closureExpr;
+    this.conditionBlock = conditionBlock;
   }
 
   public boolean isMethodName(String name) {
@@ -75,6 +82,10 @@ public class DefaultBuiltInMethodCall implements IBuiltInMethodCall {
     return isMethodName(Identifiers.WITH);
   }
 
+  public boolean isConditionBlock() {
+    return conditionBlock;
+  }
+
   public boolean isTestDouble() {
     return isOneOfMethodNames(Identifiers.TEST_DOUBLE_METHODS);
   }
@@ -97,6 +108,10 @@ public class DefaultBuiltInMethodCall implements IBuiltInMethodCall {
 
   public boolean isWithCall(MethodCallExpression expr) {
     return expr == methodCallExpr && isWithCall();
+  }
+
+  public boolean isConditionBlock(MethodCallExpression expr) {
+    return expr == methodCallExpr && isConditionBlock();
   }
 
   public boolean isTestDouble(MethodCallExpression expr) {
@@ -131,14 +146,16 @@ public class DefaultBuiltInMethodCall implements IBuiltInMethodCall {
     methodCallExpr.setMethod(new ConstantExpression(methodName + "Impl"));
   }
 
-  public static DefaultBuiltInMethodCall parse(MethodCallExpression methodCallExpr, @Nullable BinaryExpression binaryExpr) {
-    if (!AstUtil.isThisOrSuperExpression(methodCallExpr.getObjectExpression())) return null;
+  public static SpecialMethodCall parse(MethodCallExpression methodCallExpr, @Nullable BinaryExpression binaryExpr) {
+    boolean builtInCall = checkIsBuiltInMethodCall(methodCallExpr);
+    boolean conditionBlock = checkIsConditionBlock(methodCallExpr);
+
+    if (!(builtInCall || conditionBlock)) return null;
 
     String methodName = methodCallExpr.getMethodAsString();
-    if (!Identifiers.BUILT_IN_METHODS.contains(methodName)) return null;
-
     Expression inferredName;
     Expression inferredType;
+
     if (binaryExpr != null && binaryExpr.getOperation().getType() == Types.ASSIGN && binaryExpr.getRightExpression() == methodCallExpr) {
       inferredName = AstUtil.getVariableName(binaryExpr);
       inferredType = AstUtil.getVariableType(binaryExpr);
@@ -158,11 +175,30 @@ public class DefaultBuiltInMethodCall implements IBuiltInMethodCall {
       }
     }
 
-    return new DefaultBuiltInMethodCall(methodName, inferredName, inferredType, methodCallExpr, binaryExpr, closureExpr);
+    return new SpecialMethodCall(methodName, inferredName, inferredType, methodCallExpr, binaryExpr, closureExpr, conditionBlock);
   }
 
   public String toString() {
-    return String.format("method name: %s\ninferred name: %s\ninferred type: %s\nmethod call:%s\nclosure: %s\n",
-        methodName, inferredName, inferredType, methodCallExpr, closureExpr);
+    return String.format("method name: %s\ninferred name: %s\ninferred type: %s\nmethod call:%s\nclosure: %s\ncondition block: %s\n",
+        methodName, inferredName, inferredType, methodCallExpr, closureExpr, conditionBlock);
+  }
+
+  private static boolean checkIsBuiltInMethodCall(MethodCallExpression expr) {
+    if (!AstUtil.isThisOrSuperExpression(expr.getObjectExpression())) return false;
+    return Identifiers.BUILT_IN_METHODS.contains(expr.getMethodAsString());
+  }
+
+  private static boolean checkIsConditionBlock(MethodCallExpression methodCallExpr) {
+    ClassNode targetType = methodCallExpr.getObjectExpression().getType();
+    String methodName = methodCallExpr.getMethodAsString();
+
+    List<MethodNode> methods = targetType.getMethods(methodName);
+    for (MethodNode method : methods) {
+      for (AnnotationNode annotation : method.getAnnotations()) {
+        if (annotation.getClassNode().getName().equals(ConditionBlock.class.getName())) return true;
+      }
+    }
+
+    return false;
   }
 }

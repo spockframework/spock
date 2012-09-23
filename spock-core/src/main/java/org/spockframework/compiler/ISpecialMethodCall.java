@@ -15,13 +15,12 @@
 package org.spockframework.compiler;
 
 import org.codehaus.groovy.ast.expr.ClosureExpression;
-import org.codehaus.groovy.ast.expr.Expression;
 import org.codehaus.groovy.ast.expr.MethodCallExpression;
 import org.codehaus.groovy.ast.stmt.Statement;
 
 import java.util.Collection;
 
-public interface IBuiltInMethodCall {
+public interface ISpecialMethodCall {
   boolean isMethodName(String name);
 
   boolean isOneOfMethodNames(Collection<String> names);
@@ -35,6 +34,8 @@ public interface IBuiltInMethodCall {
   boolean isInteractionCall();
 
   boolean isWithCall();
+
+  boolean isConditionBlock();
 
   boolean isTestDouble();
 

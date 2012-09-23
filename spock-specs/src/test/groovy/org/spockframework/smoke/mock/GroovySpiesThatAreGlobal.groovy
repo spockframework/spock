@@ -100,7 +100,7 @@ class GroovySpiesThatAreGlobal extends Specification {
     myList.add(1)
 
     then:
-    2 * myList.add(1) >> { callRealMethodWithArguments(42) }
+    2 * myList.add(1) >> { callRealMethodWithArgs(42) }
     myList.size() == 2
     myList[1] == 42
   }

@@ -35,7 +35,7 @@ class HamcrestMatchers {
    * <pre>
    * expect:
    * myPi closeTo(3.1415, 0.01)
-   * <pre>
+   * </pre>
    *
    * @param operand the expected number
    * @param error the range of acceptable error

@@ -23,8 +23,6 @@ import java.util.List;
  *
  * @author Peter Niederwieser
  */
-// IDEA: add method "MockType mockType" that tells which interface or class was mocked,
-// the kind of mock involved (dynamic proxy, cglib, etc.), etc.
 public interface IMockInvocation {
   /**
    * The mock object that received the invocation.
@@ -58,5 +56,5 @@ public interface IMockInvocation {
    *
    * @return the return value of the method to which this invocation was delegated
    */
-  Object callRealMethodWithArguments(Object... arguments);
+  Object callRealMethodWithArgs(Object... arguments);
 }

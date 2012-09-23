@@ -31,6 +31,11 @@ public class SpockAssertionError extends AssertionError {
     initCause(cause);
   }
 
+  public SpockAssertionError(String msg, Throwable cause) {
+    super(msg);
+    initCause(cause);
+  }
+
   // We don't want to have the class name printed out for assertion errors, so
   // we just delegate to getMessage().
   @Override

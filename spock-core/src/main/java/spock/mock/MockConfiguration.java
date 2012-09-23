@@ -23,7 +23,7 @@ import spock.lang.Experimental;
 
 /**
  * Options for creating mock objects. {@link #getNature()} and {@link #getImplementation()} are mandatory
- * options that are typically set by choosing the appropriate {@link spock.lang.MockingApi}
+ * options that are typically determined by choosing the appropriate {@link spock.lang.MockingApi}
  * factory method. {@link #getType()} is a mandatory option that is typically passed directly to a {@code MockingApi}
  * factory method or inferred from the left-hand side of the enclosing assignment. The remaining options are
  * optional and are typically passed to a {@code MockingApi} factory method as named parameters.
@@ -42,19 +42,16 @@ public class MockConfiguration {
 
   @SuppressWarnings("unchecked")
   public MockConfiguration(@Nullable String name, Class<?> type, MockNature nature,
-                           MockImplementation implementation, Map<String, Object> options) {
-    this.name = options.containsKey("name") ? (String) options.get("name") : name;
-    this.type = options.containsKey("type") ? (Class) options.get("type") : type;
-    this.nature = options.containsKey("nature") ? (MockNature) options.get("nature") : nature;
-    this.implementation = options.containsKey("implementation") ?
-        (MockImplementation) options.get("implementation") : implementation;
-    this.constructorArgs = options.containsKey("constructorArgs") ?
-        (List<Object>) options.get("constructorArgs") : null;
-    this.responder = options.containsKey("responder") ?
-        (IMockInvocationResponder) options.get("responder") : this.nature.getResponder();
-    this.global = options.containsKey("global") ? (Boolean) options.get("global") : false;
-    this.verified = options.containsKey("verified") ? (Boolean) options.get("verified") : this.nature.isVerified();
-    this.useObjenesis = options.containsKey("useObjenesis") ? (Boolean) options.get("useObjenesis") : this.nature.isUseObjenesis();
+      MockImplementation implementation, Map<String, Object> options) {
+    this.name = getOption(options, "name", String.class, name);
+    this.type = getOption(options, "type", Class.class, type);
+    this.nature = getOption(options, "nature", MockNature.class, nature);
+    this.implementation = getOption(options, "implementation", MockImplementation.class, implementation);
+    this.constructorArgs = getOption(options, "constructorArgs", List.class, null);
+    this.responder = getOption(options, "responder", IMockInvocationResponder.class, this.nature.getResponder());
+    this.global = getOption(options, "global", Boolean.class, false);
+    this.verified = getOption(options, "verified", Boolean.class, this.nature.isVerified());
+    this.useObjenesis = getOption(options, "useObjenesis", Boolean.class, this.nature.isUseObjenesis());
   }
 
   /**
@@ -114,10 +111,10 @@ public class MockConfiguration {
   }
 
   /**
-   * Tells whether a mock object stands in for all objects of the same type, or just for itself.
-   * Only selected {@link MockImplementation}s provide support for global mocks.
+   * Tells whether a mock object stands in for all objects of the mocked type, or just for itself.
+   * This is an optional feature that may not be supported by a particular {@link MockImplementation}.
    *
-   * @return whether a mock object stands in for all objects of the same type, or just for itself
+   * @return whether a mock object stands in for all objects of the mocked type, or just for itself
    */
   public boolean isGlobal() {
     return global;
@@ -134,13 +131,16 @@ public class MockConfiguration {
   }
 
   /**
-   * Tells whether the Objenesis library should be used for constructing the mock object, rather than
-   * calling a constructor.
+   * Tells whether the Objenesis library, if available on the class path, should be used for constructing
+   * the mock object, rather than calling a constructor.
    *
-   * @return whether the Objenesis library should be used for constructing the mock object, rather than
-   * calling a constructor
+   * @return whether the Objenesis library should be used for constructing the mock object
    */
   public boolean isUseObjenesis() {
     return useObjenesis;
+  }
+
+  private <T> T getOption(Map<String, Object> options, String key, Class<T> type, T defaultValue) {
+    return options.containsKey(key) ? type.cast(options.get(key)) : defaultValue;
   }
 }

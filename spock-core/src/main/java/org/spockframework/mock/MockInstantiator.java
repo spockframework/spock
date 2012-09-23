@@ -29,10 +29,11 @@ public class MockInstantiator {
       if (constructorArgs == null && useObjenesis && objenesisAvailable) {
         return ObjenesisInstantiator.instantiate(actualType);
       }
-      Object[] ctorArgs = constructorArgs == null ? null : constructorArgs.toArray();
-      return GroovyRuntimeUtil.invokeConstructor(actualType, ctorArgs);
+      return GroovyRuntimeUtil.invokeConstructor(actualType, constructorArgs == null ? null : constructorArgs.toArray());
     } catch (Exception e) {
-      String msg = objenesisAvailable ? null : ". Putting Objenesis (1.2 or higher) on the class path may solve this problem.";
+      String msg = constructorArgs == null && useObjenesis && !objenesisAvailable ?
+          ". To solve this problem, put Objenesis 1.2 or higher on the class path (recommended), or supply " +
+              "constructor arguments (e.g. 'constructorArgs: [42]') that allow to construct an object of the mocked type." : null;
       throw new CannotCreateMockException(declaredType, msg, e);
     }
   }

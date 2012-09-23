@@ -65,12 +65,24 @@ public class HamcrestSupport {
    * 1.1 and 1.2 are supported. You can also write your own matchers,
    * building up a matcher library that's specific to the needs of your project.
    *
-   * @param value an actual value
-   * @param matcher a matcher describing the expected value(s)
-   * @param <T> the value's type
+   * @param value the actual value
+   * @param matcher a matcher describing the expected value
+   * @param <T> the actual value's type
    */
   @SuppressWarnings("UnusedDeclaration")
   public static <T> void that(T value, Matcher<? super T> matcher) {
     throw new InvalidSpecException("that() can only be used where a condition is expected");
+  }
+
+  /**
+   * Alias for {@link #that(Object, org.hamcrest.Matcher)} intended for use in then-blocks.
+   *
+   * @param value the actual value
+   * @param matcher a matcher describing the expected value
+   * @param <T> the actual value's type
+   */
+  @SuppressWarnings("UnusedDeclaration")
+  public static <T> void expect(T value, Matcher<? super T> matcher) {
+    that(value, matcher);
   }
 }

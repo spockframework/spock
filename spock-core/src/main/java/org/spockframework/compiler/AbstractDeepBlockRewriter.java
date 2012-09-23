@@ -33,8 +33,8 @@ public class AbstractDeepBlockRewriter extends StatementReplacingVisitorSupport 
   protected BinaryExpression currBinaryExpr;
   protected MethodCallExpression currMethodCallExpr;
   protected ClosureExpression currClosure;
-  protected IBuiltInMethodCall currBuiltInMethodCall = NullObjectMethodCall.INSTANCE;
-  protected Statement lastBuiltInStat;
+  protected ISpecialMethodCall currSpecialMethodCall = NoSpecialMethodCall.INSTANCE;
+  protected Statement lastSpecialMethodCallStat;
 
   // following fields are filled in by subclasses
   protected boolean conditionFound;
@@ -106,12 +106,12 @@ public class AbstractDeepBlockRewriter extends StatementReplacingVisitorSupport 
     MethodCallExpression oldMethodCallExpr = currMethodCallExpr;
     currMethodCallExpr = expr;
 
-    IBuiltInMethodCall oldBuiltInMethodCall = currBuiltInMethodCall;
-    IBuiltInMethodCall newBuiltInMethodCall = DefaultBuiltInMethodCall.parse(currMethodCallExpr, currBinaryExpr);
-    if (newBuiltInMethodCall != null) {
-      currBuiltInMethodCall = newBuiltInMethodCall;
-      if (newBuiltInMethodCall.isMatch(currExprStat)) {
-        lastBuiltInStat = currExprStat;
+    ISpecialMethodCall oldSpecialMethodCall = currSpecialMethodCall;
+    ISpecialMethodCall newSpecialMethodCall = SpecialMethodCall.parse(currMethodCallExpr, currBinaryExpr);
+    if (newSpecialMethodCall != null) {
+      currSpecialMethodCall = newSpecialMethodCall;
+      if (newSpecialMethodCall.isMatch(currExprStat)) {
+        lastSpecialMethodCallStat = currExprStat;
       }
     }
 
@@ -119,7 +119,7 @@ public class AbstractDeepBlockRewriter extends StatementReplacingVisitorSupport 
       doVisitMethodCallExpression(expr);
     } finally {
       currMethodCallExpr = oldMethodCallExpr;
-      currBuiltInMethodCall = oldBuiltInMethodCall;
+      currSpecialMethodCall = oldSpecialMethodCall;
     }
   }
 
@@ -129,16 +129,16 @@ public class AbstractDeepBlockRewriter extends StatementReplacingVisitorSupport 
     currClosure = expr;
     boolean oldConditionFound = conditionFound;
     conditionFound = false; // any closure terminates conditionFound scope
-    IBuiltInMethodCall oldBuiltInMethodCall = currBuiltInMethodCall;
-    if (!currBuiltInMethodCall.isMatch(expr)) {
-      currBuiltInMethodCall = NullObjectMethodCall.INSTANCE; // unrelated closure terminates currBuiltInMethodCall scope
+    ISpecialMethodCall oldSpecialMethodCall = currSpecialMethodCall;
+    if (!currSpecialMethodCall.isMatch(expr)) {
+      currSpecialMethodCall = NoSpecialMethodCall.INSTANCE; // unrelated closure terminates currSpecialMethodCall scope
     }
     try {
       doVisitClosureExpression(expr);
     } finally {
       currClosure = oldClosure;
       conditionFound = oldConditionFound;
-      currBuiltInMethodCall = oldBuiltInMethodCall;
+      currSpecialMethodCall = oldSpecialMethodCall;
     }
   }
 

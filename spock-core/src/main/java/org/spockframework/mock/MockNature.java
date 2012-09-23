@@ -27,7 +27,7 @@ public enum MockNature {
    * Returns "empty" values (zero, empty string, empty collection, object created from default constructor, etc.)
    * for unanticipated method calls, or {@code null} if an empty value cannot be constructed.
    */
-  STUB(false, true, EmptyOrStubResponder.INSTANCE),
+  STUB(false, true, EmptyOrDummyResponder.INSTANCE),
 
   /**
    * The most generic kind of mock object. Can be used both for stubbing (i.e.

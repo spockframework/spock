@@ -17,10 +17,11 @@ import spock.lang.Specification
 import org.spockframework.mock.MockNature
 import org.spockframework.mock.MockImplementation
 import org.spockframework.mock.MockConfiguration
-import org.spockframework.mock.EmptyOrStubResponder
+
 import org.spockframework.mock.IMockInvocationResponder
 import org.spockframework.mock.ZeroOrNullResponder
 import org.spockframework.mock.CallRealMethodResponder
+import org.spockframework.mock.EmptyOrDummyResponder
 
 class MockConfigurationSpec extends Specification {
   def "defaults for Mock nature"() {
@@ -42,7 +43,7 @@ class MockConfigurationSpec extends Specification {
     expect:
     with(options) {
       nature == MockNature.STUB
-      responder instanceof EmptyOrStubResponder
+      responder instanceof EmptyOrDummyResponder
       global == false
       verified == false
       useObjenesis == true

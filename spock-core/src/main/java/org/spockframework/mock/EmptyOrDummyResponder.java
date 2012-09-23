@@ -30,10 +30,10 @@ import org.spockframework.util.Beta;
 import spock.lang.Specification;
 
 @Beta
-public class EmptyOrStubResponder implements IMockInvocationResponder {
-  public static final EmptyOrStubResponder INSTANCE = new EmptyOrStubResponder();
+public class EmptyOrDummyResponder implements IMockInvocationResponder {
+  public static final EmptyOrDummyResponder INSTANCE = new EmptyOrDummyResponder();
 
-  private EmptyOrStubResponder() {}
+  private EmptyOrDummyResponder() {}
 
   public Object respond(IMockInvocation invocation) {
     IMockInteraction interaction = EqualsHashCodeToStringInteractions.INSTANCE.match(invocation);

@@ -98,9 +98,10 @@ public class BlockingVariable<T> {
    * @throws InterruptedException if the calling thread is interrupted
    */
   public T get() throws InterruptedException {
-    if (!valueReady.await(timeout, unit))
-      throw new SpockTimeoutError(timeout, unit, "BlockingVariable.get() timed out after %d %s",
-          timeout, unit.toString().toLowerCase());
+    if (!valueReady.await(timeout, unit)) {
+      String msg = String.format("BlockingVariable.get() timed out after %d %s", timeout, unit.toString().toLowerCase());
+      throw new SpockTimeoutError(timeout, unit, msg);
+    }
     return value;
   }
 

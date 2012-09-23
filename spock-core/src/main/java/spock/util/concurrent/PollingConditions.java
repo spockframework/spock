@@ -20,7 +20,7 @@ import groovy.lang.Closure;
 
 import org.spockframework.lang.ConditionBlock;
 import org.spockframework.runtime.GroovyRuntimeUtil;
-import org.spockframework.runtime.SpockAssertionError;
+import org.spockframework.runtime.SpockTimeoutError;
 
 /**
  * Repeatedly evaluates one or more conditions until they are satisfied or a timeout has elapsed.
@@ -37,8 +37,8 @@ import org.spockframework.runtime.SpockAssertionError;
  *
  * then:
  * conditions.eventually {
- *   machine.temperature >= 100
- *   machine.efficiency >= 0.9
+ *   assert machine.temperature >= 100
+ *   assert machine.efficiency >= 0.9
  * }
  * </pre>
  */
@@ -49,10 +49,7 @@ public class PollingConditions {
   private double factor = 1.0;
 
   /**
-   * Sets the timeout until which the conditions have to be satisfied.
-   * Defaults to five seconds.
-   *
-   * @param seconds the timeout until which the conditions have to be satisfied
+   * Same as {@code setTimeout(seconds, TimeUnit.SECONDS)}.
    */
   public void setTimeout(int seconds) {
     setTimeout(seconds, TimeUnit.SECONDS);
@@ -70,10 +67,7 @@ public class PollingConditions {
   }
 
   /**
-   * Sets the initial delay before first evaluating the conditions.
-   * Defaults to zero seconds.
-   *
-   * @param seconds the initial delay before first evaluating the conditions
+   * Same as {@code setInitialDelay(seconds, TimeUnit.SECONDS)}.
    */
   public void setInitialDelay(int seconds) {
     setInitialDelay(seconds, TimeUnit.SECONDS);
@@ -91,10 +85,7 @@ public class PollingConditions {
   }
 
   /**
-   * Sets the delay between successive evaluations of the conditions.
-   * Defaults to one second.
-   *
-   * @param seconds the delay between successive evaluations of the conditions.
+   * Same as {@code setDelay(seconds, TimeUnit.SECONDS)}.
    */
   public void setDelay(int seconds) {
     setDelay(seconds, TimeUnit.SECONDS);
@@ -134,11 +125,11 @@ public class PollingConditions {
   }
 
   /**
-   * Alias for {@link #eventually(groovy.lang.Closure)}.
+   * Same as {@code within(seconds, TimeUnit.SECONDS, conditions)}.
    */
   @ConditionBlock
-  public void call(Closure<?> conditions) throws InterruptedException {
-    eventually(conditions);
+  public void within(int seconds, Closure<?> conditions) throws InterruptedException {
+    within(seconds, TimeUnit.SECONDS, conditions);
   }
 
   /**
@@ -167,12 +158,29 @@ public class PollingConditions {
       } catch (AssertionError e) {
         long elapsedTime = lastAttempt - start;
         if (elapsedTime >= timeout) {
-          throw new SpockAssertionError(String.format("Condition not satisfied after %.2f seconds and %d attempts", elapsedTime / 1000d, attempts), e);
+          String msg = String.format("Condition not satisfied after %.2f seconds and %d attempts", elapsedTime / 1000d, attempts);
+          throw new SpockTimeoutError(timeout, TimeUnit.MILLISECONDS, msg);
         }
         Thread.sleep(Math.min(currDelay, start + timeout - System.currentTimeMillis()));
         currDelay *= factor;
       }
     }
+  }
+
+  /**
+   * Alias for {@link #eventually(groovy.lang.Closure)}.
+   */
+  @ConditionBlock
+  public void call(Closure<?> conditions) throws InterruptedException {
+    eventually(conditions);
+  }
+
+  /**
+   * Alias for {@link #within(int, groovy.lang.Closure)}.
+   */
+  @ConditionBlock
+  public void call(int seconds, Closure<?> conditions) throws InterruptedException {
+    within(seconds, conditions);
   }
 
   /**

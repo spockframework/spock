@@ -47,7 +47,7 @@ public abstract class Specification extends MockingApi {
    */
   public static final Object _ = Wildcard.INSTANCE;
 
-  @Experimental
+  @Beta
   public ISpecificationContext getSpecificationContext() {
     return specificationContext;
   }
@@ -139,7 +139,7 @@ public abstract class Specification extends MockingApi {
     throw new InvalidSpecException("old() can only be used in a 'then' block");
   }
 
-  @Experimental
+  @Beta
   public void with(Object object, Closure closure) {
     closure.setDelegate(object); // for conditions
     closure.setResolveStrategy(Closure.DELEGATE_FIRST);

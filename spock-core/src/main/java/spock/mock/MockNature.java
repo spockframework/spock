@@ -14,13 +14,13 @@
 
 package spock.mock;
 
-import spock.lang.Experimental;
+import spock.lang.Beta;
 
 /**
  * The <em>nature</em> of a mock object determines its primary responsibility and characteristics.
  * It is chosen at construction time, typically by choosing the appropriate {@link spock.lang.MockingApi} factory method.
  */
-@Experimental
+@Beta
 public enum MockNature {
   /**
    * A mock object whose specific and only purpose is stubbing (i.e. reacting to method calls).

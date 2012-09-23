@@ -13,4 +13,4 @@ import java.lang.annotation.RetentionPolicy;
  */
 @Documented
 @Retention(RetentionPolicy.SOURCE)
-public @interface Experimental {}
+public @interface Beta {}

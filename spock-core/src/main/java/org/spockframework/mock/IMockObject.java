@@ -15,6 +15,7 @@
 package org.spockframework.mock;
 
 import org.spockframework.util.Nullable;
+import spock.lang.Specification;
 
 public interface IMockObject {
   /**
@@ -52,6 +53,13 @@ public interface IMockObject {
    * @return the default responder for this mock object
    */
   IMockInvocationResponder getResponder();
+
+  /**
+   * Returns the specification that this mock object is attached to.
+   *
+   * @return the specification that this mock object is attached to
+   */
+  Specification getSpecification();
 
   /**
    * Tells whether this mock object matches the target of the specified interaction.

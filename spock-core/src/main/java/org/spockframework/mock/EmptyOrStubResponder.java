@@ -27,6 +27,8 @@ import groovy.lang.GString;
 import org.spockframework.util.ReflectionUtil;
 import org.spockframework.util.Beta;
 
+import spock.lang.Specification;
+
 @Beta
 public class EmptyOrStubResponder implements IMockInvocationResponder {
   public static final EmptyOrStubResponder INSTANCE = new EmptyOrStubResponder();
@@ -54,7 +56,7 @@ public class EmptyOrStubResponder implements IMockInvocationResponder {
       if (returnType == Queue.class) return new LinkedList();
       if (returnType == SortedSet.class) return new TreeSet();
       if (returnType == SortedMap.class) return new TreeMap();
-      return createStub(returnType);
+      return createDummy(invocation);
     }
 
     if (returnType.isArray()) {
@@ -80,7 +82,7 @@ public class EmptyOrStubResponder implements IMockInvocationResponder {
     Object emptyObject = createEmptyObject(returnType);
     if (emptyObject != null) return emptyObject;
 
-    return createStub(returnType);
+    return createDummy(invocation);
   }
 
   // also handles some numeric types which aren't primitive wrapper types
@@ -109,11 +111,10 @@ public class EmptyOrStubResponder implements IMockInvocationResponder {
     }
   }
 
-  // TODO: returning a stub needs some more thought
-  // where to get class loader/specification instance from?
-  // should calls on this stub get dispatched to mock controller at all? (probably)
-  // should this stub share some properties with its "owner" (groovy, global, etc.)?
-  private Object createStub(Class<?> type) {
-    return null;
+  private Object createDummy(IMockInvocation invocation) {
+    Class<?> type = invocation.getMethod().getReturnType();
+    Specification spec = invocation.getMockObject().getSpecification();
+    return spec.createMock("dummy", type, MockNature.STUB,
+        MockImplementation.JAVA, Collections.<String, Object>emptyMap(), null);
   }
 }

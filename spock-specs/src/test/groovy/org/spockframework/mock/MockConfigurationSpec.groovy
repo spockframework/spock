@@ -11,17 +11,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package spock.mock
+package org.spockframework.mock
 
 import spock.lang.Specification
-import org.spockframework.mock.MockNature
-import org.spockframework.mock.MockImplementation
-import org.spockframework.mock.MockConfiguration
-
-import org.spockframework.mock.IMockInvocationResponder
-import org.spockframework.mock.ZeroOrNullResponder
-import org.spockframework.mock.CallRealMethodResponder
-import org.spockframework.mock.EmptyOrDummyResponder
 
 class MockConfigurationSpec extends Specification {
   def "defaults for Mock nature"() {

@@ -11,9 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package spock.mock
-
-import org.spockframework.mock.MockDetector
+package org.spockframework.mock
 
 import spock.lang.Specification
 

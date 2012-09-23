@@ -5,9 +5,11 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 /**
- * Indicates that the annotated element, a member of Spock's public API, may change
- * incompatibly or even be removed in a future release. This allows us to collect
- * valuable feedback on a new feature before freezing its API.
+ * Indicates that the annotated element, a member of Spock's public API, is in a
+ * trial phase. Until the element is promoted by removing this annotation, it may still undergo
+ * incompatible changes. This allows us to incorporate valuable feedback from our users
+ * before freezing the API for a new feature. In the unlikely event that the element isn't deemed fit for
+ * purpose, it may be removed completely. Typically, elements are promoted within one or two releases.
  */
 @Documented
 @Retention(RetentionPolicy.SOURCE)

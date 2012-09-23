@@ -16,6 +16,7 @@ package spock.util.concurrent;
 
 import java.util.concurrent.*;
 
+import org.spockframework.lang.ConditionBlock;
 import org.spockframework.runtime.SpockTimeoutError;
 import org.spockframework.util.ThreadSafe;
 
@@ -93,8 +94,8 @@ public class AsyncConditions {
    * Any caught exception will be rethrown from <tt>await()</tt>.
    *
    * @param block the code block to evaluate
-   * @throws Throwable
    */
+  @ConditionBlock
   public void evaluate(Runnable block) {
     try {
       block.run();

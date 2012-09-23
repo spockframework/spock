@@ -21,6 +21,7 @@ import groovy.lang.Closure;
 import org.spockframework.lang.ConditionBlock;
 import org.spockframework.runtime.GroovyRuntimeUtil;
 import org.spockframework.runtime.SpockTimeoutError;
+import org.spockframework.util.Beta;
 
 /**
  * Repeatedly evaluates one or more conditions until they are satisfied or a timeout has elapsed.
@@ -42,6 +43,7 @@ import org.spockframework.runtime.SpockTimeoutError;
  * }
  * </pre>
  */
+@Beta
 public class PollingConditions {
   private long timeout = 5000;
   private long initialDelay = 0;

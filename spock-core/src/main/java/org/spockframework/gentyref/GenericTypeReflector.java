@@ -40,7 +40,6 @@ public class GenericTypeReflector {
 			GenericArrayType aType = (GenericArrayType) type;
 			return GenericArrayTypeImpl.createArrayType(erase(aType.getGenericComponentType()));
 		} else {
-			// TODO at least support CaptureType here
 			throw new RuntimeException("not supported: " + type.getClass());
 		}
 	}
@@ -174,7 +173,6 @@ public class GenericTypeReflector {
 			} else if (superType instanceof Class<?>) {
 				return true;
 			} else if (mappedSubType instanceof Class<?>) {
-				// TODO treat supertype by being raw type differently ("supertype, but with warnings")
 				return true; // class has no parameters, or it's a raw type
 			} else if (mappedSubType instanceof GenericArrayType) {
 				Type superComponentType = getArrayComponentType(superType);
@@ -270,7 +268,6 @@ public class GenericTypeReflector {
 			if (type instanceof ParameterizedType) {
 				clazz = (Class<?>)((ParameterizedType)type).getRawType();
 			} else {
-				// TODO primitive types?
 				clazz = (Class<?>)type;
 				if (clazz.isArray())
 					return getArrayExactDirectSuperTypes(clazz);
@@ -299,7 +296,6 @@ public class GenericTypeReflector {
 		} else if (type instanceof WildcardType) {
 			// This should be a rare case: normally this wildcard is already captured.
 			// But it does happen if the upper bound of a type variable contains a wildcard
-			// TODO shouldn't upper bound of type variable have been captured too? (making this case impossible?)
 			return ((WildcardType) type).getUpperBounds();
 		} else if (type instanceof CaptureType) {
 			return ((CaptureType)type).getUpperBounds();

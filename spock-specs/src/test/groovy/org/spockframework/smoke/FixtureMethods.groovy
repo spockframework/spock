@@ -22,7 +22,7 @@ import org.spockframework.compiler.InvalidSpecCompileException
 import spock.lang.Issue
 
 class FixtureMethods extends EmbeddedSpecification {
-  static log
+  static List log
 
   def setup() {
     log = []
@@ -104,5 +104,43 @@ def cleanupSpec() {
     then:
     InvalidSpecCompileException e = thrown()
     e.message.contains("@Shared")
+  }
+
+  def "cleanup() is run when setup() fails"() {
+    runner.addClassMemberImport(FixtureMethods)
+
+    when:
+    runner.runSpecBody("""
+def setup() { throw new RuntimeException() }
+def feature() { expect: true }
+def cleanup() { log << "cleanup" }
+    """)
+
+    then:
+    thrown(RuntimeException)
+    log == ["cleanup"]
+  }
+
+  def "cleanup() is not run when field initializer fails"() {
+    runner.addClassImport(BlowUp)
+    runner.addClassMemberImport(FixtureMethods)
+
+    when:
+    runner.runSpecBody("""
+def x = new BlowUp()
+
+def feature() { expect: true }
+def cleanup() { log << "cleanup" }
+    """)
+
+    then:
+    thrown(RuntimeException)
+    log.empty
+  }
+
+  static class BlowUp {
+    BlowUp() {
+      throw new RuntimeException()
+    }
   }
 }

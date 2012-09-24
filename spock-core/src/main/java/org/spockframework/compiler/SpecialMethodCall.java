@@ -160,12 +160,11 @@ public class SpecialMethodCall implements ISpecialMethodCall {
       inferredName = AstUtil.getVariableName(binaryExpr);
       inferredType = AstUtil.getVariableType(binaryExpr);
     } else {
-      binaryExpr = null; // not part of this built-in method call
+      binaryExpr = null; // not part of this special method call
       inferredName = ConstantExpression.NULL;
       inferredType = ConstantExpression.NULL;
     }
 
-    // TODO: check that no explicit closure parameter, think about changing parameter name from 'it' to sth. unique
     ClosureExpression closureExpr = null;
     List<Expression> arguments = AstUtil.getArgumentList(methodCallExpr);
     if (!arguments.isEmpty()) {

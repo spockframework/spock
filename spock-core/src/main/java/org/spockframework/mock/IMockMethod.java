@@ -17,31 +17,37 @@ package org.spockframework.mock;
 import java.util.List;
 
 /**
- * Represents a method that is to be mocked. May or may not correspond to a physical method of a class.
+ * Represents a method that can be mocked. Typically but not necessarily corresponds to a
+ * physically declared method in an interface or class.
  */
 public interface IMockMethod {
   /**
-   * The name of the mocked method.
+   * Returns the name of the method.
    *
-   * @return name of the mocked method
+   * @return the name of the method
    */
   String getName();
 
   /**
-   * The parameter types of the mocked method. In cases where no static type information is available,
+   * Returns the parameter types of the method. In cases where no static type information is available,
    * all arguments are assumed to have type {@code Object}.
    *
-   * @return the parameter types of the mocked method
+   * @return the parameter types of the method
    */
   List<Class<?>> getParameterTypes();
 
   /**
-   * The return type of the mocked method. In cases where no static type information is available,
+   * Returns the return type of the method. In cases where no static type information is available,
    * the return type is assumed to be {@code Object}.
    *
-   * @return the return type of the mocked method
+   * @return the return type of the method
    */
   Class<?> getReturnType();
 
+  /**
+   * Tells whether the method is static or an instance method.
+   *
+   * @return whether the method is static or an instance method
+   */
   boolean isStatic();
 }

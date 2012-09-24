@@ -24,7 +24,7 @@ How are we going to test ``Publisher``? With state-based testing, we can easily 
 manages its list of subscribers. The more interesting question, though, is whether a message sent by the publisher
 is received by all registered subscribers. To answer this question, we need a special implementation of
 ``Subscriber`` that listens in on the conversation between the publisher and its subscribers. Such an
-implementation is often called a ``mock object``.
+implementation is often called a *mock object*.
 
 While we could certainly create a mock implementation of ``Subscriber`` by hand, writing and maintaining this code
 can get unpleasant as the number of methods and complexity of interactions increases. This is where mocking frameworks

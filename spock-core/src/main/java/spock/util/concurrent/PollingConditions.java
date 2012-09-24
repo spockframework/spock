@@ -25,7 +25,7 @@ import org.spockframework.util.Beta;
 
 /**
  * Repeatedly evaluates one or more conditions until they are satisfied or a timeout has elapsed.
- * The timeout and delays between evaluations are configurable.
+ * The timeout and delays between evaluation attempts are configurable.
  *
  * <p>Usage example:</p>
  *

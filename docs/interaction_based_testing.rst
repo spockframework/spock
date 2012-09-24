@@ -595,7 +595,7 @@ Global mocks support mocking and stubbing of static methods::
 The same works for dynamic static methods.
 
 When a global mock is used solely for mocking constructors and static methods,
-the mock's instance isn't really needed. In such a case it's OK to just write:
+the mock's instance isn't really needed. In such a case it's OK to just write::
 
     GroovySpy(RealSubscriber, global: true)
 

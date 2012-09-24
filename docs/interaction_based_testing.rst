@@ -20,7 +20,7 @@ For example, suppose we have a ``Publisher`` that sends messages to its ``Subscr
         Publisher publisher = new Publisher()
     }
 
-How are we going to test ``Publisher``? With state-based testing we can easily verify that the publisher correctly
+How are we going to test ``Publisher``? With state-based testing, we can easily verify that the publisher correctly
 manages its list of subscribers. The more interesting question, though, is whether a message sent by the publisher
 is received by all registered subscribers. To answer this question, we need a special implementation of
 ``Subscriber`` that listens in on the conversation between the publisher and its subscribers. Such an
@@ -37,7 +37,7 @@ Although each of these frameworks can be used together with Spock, we didn’t s
 its own mocking framework that leverages the power of Groovy to make interaction-based tests easier to write,
 more readable, and ultimately more fun.
 
-.. note:: All features of Spock's mocking framework can be used to, and work the same for, testing both Java and Groovy code.
+.. note:: Except where indicated, all features of Spock's mocking framework work both for testing Java and Groovy code.
 
 Creating Mock Objects
 ---------------------
@@ -283,7 +283,7 @@ happens, and results in a ``TooManyInvocationsError``::
         1 * subscriber.receive("goodbye")
 
     According to this output, one of the ``receive("hello")`` calls triggered the ``TooManyInvocationsError``.
-    Note that because undistinguishable calls like the two invocations of ``subscriber.receive("hello")`` are aggregated
+    Note that because indistinguishable calls like the two invocations of ``subscriber.receive("hello")`` are aggregated
     into a single line of output, the first ``receive("hello")`` may well have occurred before the ``receive("goodbye")``.
 
 The second case (fewer invocations than required) can only be detected once execution of the ``when`` block has completed.
@@ -471,9 +471,9 @@ Like a mock, a stub allows unexpected invocations. However, the values returned 
 
  * For primitive types, the primitive type's default value is returned.
  * For non-primitive numerical values (like ``BigDecimal``), zero is returned.
- * For non-numerical values, an "empty" or "default" object is returned. This could mean
-   an empty String, an empty collection, the enum value with ordinal zero, and so on.
-   See class ``org.spockframework.mock.EmptyOrStubResponder`` for the details.
+ * For non-numerical values, an "empty" or "dummy" object is returned. This could mean an empty String, an empty collection,
+   an object constructed from its default constructor, or another stub which returns the same defaults.
+   See class ``org.spockframework.mock.EmptyOrDummyResponder`` for the details.
 
 Spies
 ~~~~~
@@ -595,7 +595,7 @@ Global mocks support mocking and stubbing of static methods::
 The same works for dynamic static methods.
 
 When a global mock is used solely for mocking constructors and static methods,
-the mock's instance isn't really needed. In such a case it's OK to just write:
+the mock's instance isn't really needed. In such a case it's OK to just write::
 
     GroovySpy(RealSubscriber, global: true)
 

@@ -14,9 +14,9 @@
 
 package spock.util.concurrent
 
-import org.spockframework.runtime.SpockTimeoutError
-
 import java.util.concurrent.TimeUnit
+
+import org.spockframework.runtime.SpockTimeoutError
 
 import spock.lang.Specification
 import spock.lang.FailsWith

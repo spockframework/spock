@@ -19,10 +19,9 @@ import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicLong;
 
 import groovy.lang.GString;
+import groovy.lang.GroovyObject;
 
 import org.spockframework.util.ReflectionUtil;
 import org.spockframework.util.Beta;
@@ -46,16 +45,19 @@ public class EmptyOrDummyResponder implements IMockInvocationResponder {
     }
 
     if (returnType.isPrimitive()) {
-      return returnType == boolean.class ? false : 0;
+      return ReflectionUtil.getDefaultValue(returnType);
     }
 
     if (returnType.isInterface()) {
+      if (returnType == Iterable.class) return new ArrayList();
+      if (returnType == Collection.class) return new ArrayList();
       if (returnType == List.class) return new ArrayList();
       if (returnType == Set.class) return new HashSet();
       if (returnType == Map.class) return new HashMap();
       if (returnType == Queue.class) return new LinkedList();
       if (returnType == SortedSet.class) return new TreeSet();
       if (returnType == SortedMap.class) return new TreeMap();
+      if (returnType == CharSequence.class) return "";
       return createDummy(invocation);
     }
 
@@ -94,12 +96,10 @@ public class EmptyOrDummyResponder implements IMockInvocationResponder {
       }
       if (type == BigInteger.class) return BigInteger.ZERO;
       if (type == BigDecimal.class) return BigDecimal.ZERO;
-      if (type == AtomicInteger.class) return new AtomicInteger(0);
-      if (type == AtomicLong.class) return new AtomicLong(0);
       return null;
     }
-    if (type == Boolean.class) return Boolean.FALSE;
-    if (type == Character.class) return ' '; // better return something else?
+    if (type == Boolean.class) return false;
+    if (type == Character.class) return (char) 0; // better return something else?
     return null;
   }
 
@@ -114,7 +114,7 @@ public class EmptyOrDummyResponder implements IMockInvocationResponder {
   private Object createDummy(IMockInvocation invocation) {
     Class<?> type = invocation.getMethod().getReturnType();
     Specification spec = invocation.getMockObject().getSpecification();
-    return spec.createMock("dummy", type, MockNature.STUB,
-        MockImplementation.JAVA, Collections.<String, Object>emptyMap(), null);
+    return spec.createMock("dummy", type, MockNature.STUB, GroovyObject.class.isAssignableFrom(type) ?
+        MockImplementation.GROOVY : MockImplementation.JAVA, Collections.<String, Object>emptyMap(), null);
   }
 }

@@ -16,7 +16,6 @@ package org.spockframework.mock;
 
 import net.sf.cglib.proxy.MethodProxy;
 import org.spockframework.util.ExceptionUtil;
-import spock.mock.IMockInvocationResponder;
 
 public class CglibRealMethodInvoker implements IMockInvocationResponder {
   private final MethodProxy methodProxy;

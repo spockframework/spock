@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package spock.mock
+package org.spockframework.mock
 
 import spock.lang.Specification
 
@@ -35,7 +35,7 @@ class MockConfigurationSpec extends Specification {
     expect:
     with(options) {
       nature == MockNature.STUB
-      responder instanceof EmptyOrStubResponder
+      responder instanceof EmptyOrDummyResponder
       global == false
       verified == false
       useObjenesis == true

@@ -12,12 +12,17 @@
  * limitations under the License.
  */
 
-package spock.mock;
+package org.spockframework.mock;
 
-import org.spockframework.mock.IMockInvocation;
-import spock.lang.Experimental;
+import org.spockframework.util.Beta;
 
-@Experimental
-public interface IMockInvocationResponder {
-  Object respond(IMockInvocation invocation);
+@Beta
+public class CallRealMethodResponder implements IMockInvocationResponder {
+  public static final CallRealMethodResponder INSTANCE = new CallRealMethodResponder();
+
+  private CallRealMethodResponder() {}
+
+  public Object respond(IMockInvocation invocation) {
+    return invocation.callRealMethod();
+  }
 }

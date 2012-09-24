@@ -12,22 +12,22 @@
  * limitations under the License.
  */
 
-package spock.mock;
+package org.spockframework.mock;
 
-import spock.lang.Experimental;
+import org.spockframework.util.Beta;
 
 /**
  * The <em>nature</em> of a mock object determines its primary responsibility and characteristics.
  * It is chosen at construction time, typically by choosing the appropriate {@link spock.lang.MockingApi} factory method.
  */
-@Experimental
+@Beta
 public enum MockNature {
   /**
    * A mock object whose specific and only purpose is stubbing (i.e. reacting to method calls).
    * Returns "empty" values (zero, empty string, empty collection, object created from default constructor, etc.)
    * for unanticipated method calls, or {@code null} if an empty value cannot be constructed.
    */
-  STUB(false, true, EmptyOrStubResponder.INSTANCE),
+  STUB(false, true, EmptyOrDummyResponder.INSTANCE),
 
   /**
    * The most generic kind of mock object. Can be used both for stubbing (i.e.

@@ -23,8 +23,6 @@ import groovy.lang.MetaClass;
 import org.spockframework.runtime.GroovyRuntimeUtil;
 
 import spock.lang.Specification;
-import spock.mock.MockConfiguration;
-import spock.mock.MockImplementation;
 
 public class GroovyMockFactory implements IMockFactory {
   public static GroovyMockFactory INSTANCE = new GroovyMockFactory();

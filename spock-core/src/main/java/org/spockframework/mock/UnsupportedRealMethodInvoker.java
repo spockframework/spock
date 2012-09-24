@@ -14,8 +14,6 @@
 
 package org.spockframework.mock;
 
-import spock.mock.IMockInvocationResponder;
-
 public class UnsupportedRealMethodInvoker implements IMockInvocationResponder {
   private final String message;
 

@@ -22,8 +22,6 @@ import groovy.lang.MetaClass;
 
 import org.spockframework.runtime.GroovyRuntimeUtil;
 import spock.lang.Specification;
-import spock.mock.*;
-import spock.mock.MockConfiguration;
 
 public class JavaMockInterceptor implements IProxyBasedMockInterceptor {
   private final MockConfiguration mockConfiguration;
@@ -38,7 +36,7 @@ public class JavaMockInterceptor implements IProxyBasedMockInterceptor {
 
   public Object intercept(Object target, Method method, Object[] arguments, IMockInvocationResponder realMethodInvoker) {
     IMockObject mockObject = new MockObject(mockConfiguration.getName(), mockConfiguration.getType(),
-        target, mockConfiguration.isVerified(), false, mockConfiguration.getResponder());
+        target, mockConfiguration.isVerified(), false, mockConfiguration.getResponder(), specification);
 
     if (method.getDeclaringClass() == IMockObjectProvider.class) {
       return mockObject;

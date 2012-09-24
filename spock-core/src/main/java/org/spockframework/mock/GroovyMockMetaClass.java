@@ -23,7 +23,6 @@ import org.spockframework.runtime.GroovyRuntimeUtil;
 import org.spockframework.util.ReflectionUtil;
 
 import spock.lang.Specification;
-import spock.mock.MockConfiguration;
 
 public class GroovyMockMetaClass extends DelegatingMetaClass {
   private final MockConfiguration configuration;
@@ -111,7 +110,7 @@ public class GroovyMockMetaClass extends DelegatingMetaClass {
   private IMockInvocation createMockInvocation(MetaMethod metaMethod, Object target,
       String method, Object[] arguments, boolean isStatic) {
     IMockObject mockObject = new MockObject(configuration.getName(), configuration.getType(), target,
-        configuration.isVerified(), configuration.isGlobal(), configuration.getResponder());
+        configuration.isVerified(), configuration.isGlobal(), configuration.getResponder(), specification);
     IMockMethod mockMethod;
     if (metaMethod != null) {
       List<Class<?>> parameterTypes = Arrays.<Class<?>>asList(metaMethod.getNativeParameterTypes());

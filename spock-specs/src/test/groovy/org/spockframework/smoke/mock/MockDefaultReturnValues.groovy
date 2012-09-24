@@ -18,7 +18,7 @@ package org.spockframework.smoke.mock
 
 import spock.lang.Specification
 
-class DefaultReturnValues extends Specification {
+class MockDefaultReturnValues extends Specification {
   IMockable imock = Mock()
   Mockable cmock = Mock()
 

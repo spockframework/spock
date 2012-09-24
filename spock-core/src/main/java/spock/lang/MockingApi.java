@@ -18,14 +18,30 @@ import java.util.Map;
 
 import groovy.lang.Closure;
 
+import org.spockframework.util.Beta;
+import org.spockframework.lang.SpecInternals;
 import org.spockframework.runtime.InvalidSpecException;
 import org.spockframework.runtime.GroovyRuntimeUtil;
 
 /**
- * Spock's mocking API primarily consists of factory methods for creating
- * different kinds of mock objects. A factory method exists for each combination
- * of {@link spock.mock.MockImplementation} and {@link spock.mock.MockNature}.
- * Each factory method provides multiple overloads for further configuration.
+ * Spock's mocking API. Primarily consists of the following factory methods:
+ *
+ * <dl>
+ *   <dt>Mock()</dt>
+ *   <dd>A general-purpose test double that supports both stubbing and mocking.</dd>
+ *   <dt>Stub()</dt>
+ *   <dd>A test double that supports stubbing but not mocking.</dd>
+ *   <dt>Spy()</dt>
+ *   <dd>A test double that, by default, delegates all calls to a real object. Supports both stubbing and mocking.</dd>
+ *   <dt>GroovyMock()</dt>
+ *   <dd>A Mock() with additional, Groovy-specific features.</dd>
+ *   <dt>GroovyStub()</dt>
+ *   <dd>A Stub() with additional, Groovy-specific features.</dd>
+ *   <dt>GroovySpy() </dt>
+ *   <dd>A Spy() with additional, Groovy-specific features.</dd>
+ * </dl>
+ *
+ * Each factory method has several overloads providing different degrees of configurability.
  */
 @SuppressWarnings("unused")
 public class MockingApi extends SpecInternals {
@@ -99,7 +115,7 @@ public class MockingApi extends SpecInternals {
    *
    * @return a stub whose type and name are inferred from the left-hand side of the enclosing assignment
    */
-  @Experimental
+  @Beta
   public Object Stub() {
     invalidMockCreation();
     return null;
@@ -120,7 +136,7 @@ public class MockingApi extends SpecInternals {
    * @return a stub with the specified options whose type and name are inferred from the left-hand side of the
    * enclosing variable assignment
    */
-  @Experimental
+  @Beta
   public Object Stub(Map<String, Object> options) {
     invalidMockCreation();
     return null;
@@ -140,7 +156,7 @@ public class MockingApi extends SpecInternals {
    *
    * @return a stub with the specified type
    */
-  @Experimental
+  @Beta
   public <T> T Stub(Class<T> type) {
     invalidMockCreation();
     return null;
@@ -161,7 +177,7 @@ public class MockingApi extends SpecInternals {
    *
    * @return a stub with the specified options and type
    */
-  @Experimental
+  @Beta
   public <T> T Stub(Map<String, Object> options, Class<T> type) {
     invalidMockCreation();
     return null;
@@ -186,7 +202,7 @@ public class MockingApi extends SpecInternals {
    * @return a stub with the specified interactions whose type and name are inferred
    * from the left-hand side of the enclosing assignment
    */
-  @Experimental
+  @Beta
   public Object Stub(Closure interactions) {
     invalidMockCreation();
     return null;
@@ -212,7 +228,7 @@ public class MockingApi extends SpecInternals {
    * @return a stub with the specified options and interactions whose type and name are inferred
    * from the left-hand side of the enclosing assignment
    */
-  @Experimental
+  @Beta
   public Object Stub(Map<String, Object> options, Closure interactions) {
     invalidMockCreation();
     return null;
@@ -237,7 +253,7 @@ public class MockingApi extends SpecInternals {
    *
    * @return a stub with the specified type and interactions
    */
-  @Experimental
+  @Beta
   public <T> T Stub(Class<T> type, Closure interactions) {
     invalidMockCreation();
     return null;
@@ -257,14 +273,14 @@ public class MockingApi extends SpecInternals {
    *   }
    * </pre>
    *
-   * @param options optional options for creating the stub (see {@link spock.mock.MockConfiguration for available options})
+   * @param options optional options for creating the stub (see {@link org.spockframework.mock.MockConfiguration for available options})
    * @param type the class or interface type of the stub
    * @param interactions a description of the stub's interactions
    * @param <T> the class or interface type of the stub
    *
    * @return a stub with the specified options, type, and interactions
    */
-  @Experimental
+  @Beta
   public <T> T Stub(Map<String, Object> options, Class<T> type, Closure interactions) {
     invalidMockCreation();
     return null;
@@ -301,7 +317,7 @@ public class MockingApi extends SpecInternals {
    * @return a mock with the specified options whose type and name are inferred from the left-hand side of the
    * enclosing variable assignment
    */
-  @Experimental
+  @Beta
   public Object Mock(Map<String, Object> options) {
     invalidMockCreation();
     return null;
@@ -341,7 +357,7 @@ public class MockingApi extends SpecInternals {
    *
    * @return a mock with the specified options and type
    */
-  @Experimental
+  @Beta
   public <T> T Mock(Map<String, Object> options, Class<T> type) {
     invalidMockCreation();
     return null;
@@ -366,7 +382,7 @@ public class MockingApi extends SpecInternals {
    * @return a mock with the specified interactions whose type and name are inferred
    * from the left-hand side of the enclosing assignment
    */
-  @Experimental
+  @Beta
   public Object Mock(Closure interactions) {
     invalidMockCreation();
     return null;
@@ -392,7 +408,7 @@ public class MockingApi extends SpecInternals {
    * @return a mock with the specified options and interactions whose type and name are inferred
    * from the left-hand side of the enclosing assignment
    */
-  @Experimental
+  @Beta
   public Object Mock(Map<String, Object> options, Closure interactions) {
     invalidMockCreation();
     return null;
@@ -417,7 +433,7 @@ public class MockingApi extends SpecInternals {
    *
    * @return a mock with the specified type and interactions
    */
-  @Experimental
+  @Beta
   public <T> T Mock(Class<T> type, Closure interactions) {
     invalidMockCreation();
     return null;
@@ -437,14 +453,14 @@ public class MockingApi extends SpecInternals {
    *   }
    * </pre>
    *
-   * @param options optional options for creating the mock (see {@link spock.mock.MockConfiguration for available options})
+   * @param options optional options for creating the mock (see {@link org.spockframework.mock.MockConfiguration for available options})
    * @param type the class or interface type of the mock
    * @param interactions a description of the mock's interactions
    * @param <T> the class or interface type of the mock
    *
    * @return a mock with the specified options, type, and interactions
    */
-  @Experimental
+  @Beta
   public <T> T Mock(Map<String, Object> options, Class<T> type, Closure interactions) {
     invalidMockCreation();
     return null;
@@ -461,7 +477,7 @@ public class MockingApi extends SpecInternals {
    *
    * @return a spy whose type and name are inferred from the left-hand side of the enclosing assignment
    */
-  @Experimental
+  @Beta
   public Object Spy() {
     invalidMockCreation();
     return null;
@@ -482,7 +498,7 @@ public class MockingApi extends SpecInternals {
    * @return a spy with the specified options whose type and name are inferred from the left-hand side of the
    * enclosing variable assignment
    */
-  @Experimental
+  @Beta
   public Object Spy(Map<String, Object> options) {
     invalidMockCreation();
     return null;
@@ -502,7 +518,7 @@ public class MockingApi extends SpecInternals {
    *
    * @return a spy with the specified type
    */
-  @Experimental
+  @Beta
   public <T> T Spy(Class<T> type) {
     invalidMockCreation();
     return null;
@@ -523,7 +539,7 @@ public class MockingApi extends SpecInternals {
    *
    * @return a spy with the specified options and type
    */
-  @Experimental
+  @Beta
   public <T> T Spy(Map<String, Object> options, Class<T> type) {
     invalidMockCreation();
     return null;
@@ -547,7 +563,7 @@ public class MockingApi extends SpecInternals {
    * @return a spy with the specified interactions whose type and name are inferred
    * from the left-hand side of the enclosing assignment
    */
-  @Experimental
+  @Beta
   public Object Spy(Closure interactions) {
     invalidMockCreation();
     return null;
@@ -572,7 +588,7 @@ public class MockingApi extends SpecInternals {
    * @return a spy with the specified options and interactions whose type and name are inferred
    * from the left-hand side of the enclosing assignment
    */
-  @Experimental
+  @Beta
   public Object Spy(Map<String, Object> options, Closure interactions) {
     invalidMockCreation();
     return null;
@@ -597,7 +613,7 @@ public class MockingApi extends SpecInternals {
    *
    * @return a spy with the specified type and interactions
    */
-  @Experimental
+  @Beta
   public <T> T Spy(Class<T> type, Closure interactions) {
     invalidMockCreation();
     return null;
@@ -616,14 +632,14 @@ public class MockingApi extends SpecInternals {
    *   }
    * </pre>
    *
-   * @param options optional options for creating the spy (see {@link spock.mock.MockConfiguration for available options})
+   * @param options optional options for creating the spy (see {@link org.spockframework.mock.MockConfiguration for available options})
    * @param type the class or interface type of the spy
    * @param interactions a description of the spy's interactions
    * @param <T> the class or interface type of the spy
    *
    * @return a spy with the specified options, type, and interactions
    */
-  @Experimental
+  @Beta
   public <T> T Spy(Map<String, Object> options, Class<T> type, Closure interactions) {
     invalidMockCreation();
     return null;
@@ -640,7 +656,7 @@ public class MockingApi extends SpecInternals {
    *
    * @return a Groovy stub whose type and name are inferred from the left-hand side of the enclosing assignment
    */
-  @Experimental
+  @Beta
   public Object GroovyStub() {
     invalidMockCreation();
     return null;
@@ -661,7 +677,7 @@ public class MockingApi extends SpecInternals {
    * @return a Groovy stub with the specified options whose type and name are inferred from the left-hand side of the
    * enclosing variable assignment
    */
-  @Experimental
+  @Beta
   public Object GroovyStub(Map<String, Object> options) {
     invalidMockCreation();
     return null;
@@ -681,7 +697,7 @@ public class MockingApi extends SpecInternals {
    *
    * @return a Groovy stub with the specified type
    */
-  @Experimental
+  @Beta
   public <T> T GroovyStub(Class<T> type) {
     invalidMockCreation();
     return null;
@@ -702,7 +718,7 @@ public class MockingApi extends SpecInternals {
    *
    * @return a Groovy stub with the specified options and type
    */
-  @Experimental
+  @Beta
   public <T> T GroovyStub(Map<String, Object> options, Class<T> type) {
     invalidMockCreation();
     return null;
@@ -727,7 +743,7 @@ public class MockingApi extends SpecInternals {
    * @return a Groovy stub with the specified interactions whose type and name are inferred
    * from the left-hand side of the enclosing assignment
    */
-  @Experimental
+  @Beta
   public Object GroovyStub(Closure interactions) {
     invalidMockCreation();
     return null;
@@ -753,7 +769,7 @@ public class MockingApi extends SpecInternals {
    * @return a Groovy stub with the specified options and interactions whose type and name are inferred
    * from the left-hand side of the enclosing assignment
    */
-  @Experimental
+  @Beta
   public Object GroovyStub(Map<String, Object> options, Closure interactions) {
     invalidMockCreation();
     return null;
@@ -778,7 +794,7 @@ public class MockingApi extends SpecInternals {
    *
    * @return a Groovy stub with the specified type and interactions
    */
-  @Experimental
+  @Beta
   public <T> T GroovyStub(Class<T> type, Closure interactions) {
     invalidMockCreation();
     return null;
@@ -798,14 +814,14 @@ public class MockingApi extends SpecInternals {
    *   }
    * </pre>
    *
-   * @param options optional options for creating the Groovy stub (see {@link spock.mock.MockConfiguration for available options})
+   * @param options optional options for creating the Groovy stub (see {@link org.spockframework.mock.MockConfiguration for available options})
    * @param type the class or interface type of the Groovy stub
    * @param interactions a description of the Groovy stub's interactions
    * @param <T> the class or interface type of the Groovy stub
    *
    * @return a Groovy stub with the specified options, type, and interactions
    */
-  @Experimental
+  @Beta
   public <T> T GroovyStub(Map<String, Object> options, Class<T> type, Closure interactions) {
     invalidMockCreation();
     return null;
@@ -822,7 +838,7 @@ public class MockingApi extends SpecInternals {
    *
    * @return a Groovy mock whose type and name are inferred from the left-hand side of the enclosing assignment
    */
-  @Experimental
+  @Beta
   public Object GroovyMock() {
     invalidMockCreation();
     return null;
@@ -843,7 +859,7 @@ public class MockingApi extends SpecInternals {
    * @return a Groovy mock with the specified options whose type and name are inferred from the left-hand side of the
    * enclosing variable assignment
    */
-  @Experimental
+  @Beta
   public Object GroovyMock(Map<String, Object> options) {
     invalidMockCreation();
     return null;
@@ -863,7 +879,7 @@ public class MockingApi extends SpecInternals {
    *
    * @return a Groovy mock with the specified type
    */
-  @Experimental
+  @Beta
   public <T> T GroovyMock(Class<T> type) {
     invalidMockCreation();
     return null;
@@ -884,7 +900,7 @@ public class MockingApi extends SpecInternals {
    *
    * @return a Groovy mock with the specified options and type
    */
-  @Experimental
+  @Beta
   public <T> T GroovyMock(Map<String, Object> options, Class<T> type) {
     invalidMockCreation();
     return null;
@@ -909,7 +925,7 @@ public class MockingApi extends SpecInternals {
    * @return a Groovy mock with the specified interactions whose type and name are inferred
    * from the left-hand side of the enclosing assignment
    */
-  @Experimental
+  @Beta
   public Object GroovyMock(Closure interactions) {
     invalidMockCreation();
     return null;
@@ -935,7 +951,7 @@ public class MockingApi extends SpecInternals {
    * @return a Groovy mock with the specified options and interactions whose type and name are inferred
    * from the left-hand side of the enclosing assignment
    */
-  @Experimental
+  @Beta
   public Object GroovyMock(Map<String, Object> options, Closure interactions) {
     invalidMockCreation();
     return null;
@@ -960,7 +976,7 @@ public class MockingApi extends SpecInternals {
    *
    * @return a Groovy mock with the specified type and interactions
    */
-  @Experimental
+  @Beta
   public <T> T GroovyMock(Class<T> type, Closure interactions) {
     invalidMockCreation();
     return null;
@@ -980,14 +996,14 @@ public class MockingApi extends SpecInternals {
    *   }
    * </pre>
    *
-   * @param options optional options for creating the Groovy mock (see {@link spock.mock.MockConfiguration for available options})
+   * @param options optional options for creating the Groovy mock (see {@link org.spockframework.mock.MockConfiguration for available options})
    * @param type the class or interface type of the mock
    * @param interactions a description of the Groovy mock's interactions
    * @param <T> the class or interface type of the Groovy mock
    *
    * @return a Groovy mock with the specified options, type, and interactions
    */
-  @Experimental
+  @Beta
   public <T> T GroovyMock(Map<String, Object> options, Class<T> type, Closure interactions) {
     invalidMockCreation();
     return null;
@@ -1004,7 +1020,7 @@ public class MockingApi extends SpecInternals {
    *
    * @return a Groovy spy whose type and name are inferred from the left-hand side of the enclosing assignment
    */
-  @Experimental
+  @Beta
   public Object GroovySpy() {
     invalidMockCreation();
     return null;
@@ -1025,7 +1041,7 @@ public class MockingApi extends SpecInternals {
    * @return a Groovy spy with the specified options whose type and name are inferred from the left-hand side of the
    * enclosing variable assignment
    */
-  @Experimental
+  @Beta
   public Object GroovySpy(Map<String, Object> options) {
     invalidMockCreation();
     return null;
@@ -1045,7 +1061,7 @@ public class MockingApi extends SpecInternals {
    *
    * @return a Groovy spy with the specified type
    */
-  @Experimental
+  @Beta
   public <T> T GroovySpy(Class<T> type) {
     invalidMockCreation();
     return null;
@@ -1066,7 +1082,7 @@ public class MockingApi extends SpecInternals {
    *
    * @return a Groovy spy with the specified options and type
    */
-  @Experimental
+  @Beta
   public <T> T GroovySpy(Map<String, Object> options, Class<T> type) {
     invalidMockCreation();
     return null;
@@ -1090,7 +1106,7 @@ public class MockingApi extends SpecInternals {
    * @return a Groovy spy with the specified interactions whose type and name are inferred
    * from the left-hand side of the enclosing assignment
    */
-  @Experimental
+  @Beta
   public Object GroovySpy(Closure interactions) {
     invalidMockCreation();
     return null;
@@ -1115,7 +1131,7 @@ public class MockingApi extends SpecInternals {
    * @return a Groovy spy with the specified options and interactions whose type and name are inferred
    * from the left-hand side of the enclosing assignment
    */
-  @Experimental
+  @Beta
   public Object GroovySpy(Map<String, Object> options, Closure interactions) {
     invalidMockCreation();
     return null;
@@ -1140,7 +1156,7 @@ public class MockingApi extends SpecInternals {
    *
    * @return a Groovy spy with the specified type and interactions
    */
-  @Experimental
+  @Beta
   public <T> T GroovySpy(Class<T> type, Closure interactions) {
     invalidMockCreation();
     return null;
@@ -1159,14 +1175,14 @@ public class MockingApi extends SpecInternals {
    *   }
    * </pre>
    *
-   * @param options optional options for creating the Groovy spy (see {@link spock.mock.MockConfiguration for available options})
+   * @param options optional options for creating the Groovy spy (see {@link org.spockframework.mock.MockConfiguration for available options})
    * @param type the class or interface type of the Groovy spy
    * @param interactions a description of the Groovy spy's interactions
    * @param <T> the class or interface type of the Groovy spy
    *
    * @return a Groovy spy with the specified options, type, and interactions
    */
-  @Experimental
+  @Beta
   public <T> T GroovySpy(Map<String, Object> options, Class<T> type, Closure interactions) {
     invalidMockCreation();
     return null;

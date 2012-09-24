@@ -12,14 +12,13 @@
  * limitations under the License.
  */
 
-package spock.mock;
+package org.spockframework.mock;
 
 import org.spockframework.mock.IMockObject;
 import org.spockframework.mock.IMockObjectProvider;
+import org.spockframework.util.Beta;
 
-import spock.lang.Experimental;
-
-@Experimental
+@Beta
 public class MockDetector {
   public static boolean isMock(Object object) {
     return object instanceof IMockObjectProvider;

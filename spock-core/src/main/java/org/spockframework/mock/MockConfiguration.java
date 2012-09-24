@@ -12,14 +12,13 @@
  * limitations under the License.
  */
 
-package spock.mock;
+package org.spockframework.mock;
 
 import java.util.List;
 import java.util.Map;
 
 import org.spockframework.util.Nullable;
-
-import spock.lang.Experimental;
+import org.spockframework.util.Beta;
 
 /**
  * Options for creating mock objects. {@link #getNature()} and {@link #getImplementation()} are mandatory
@@ -28,7 +27,7 @@ import spock.lang.Experimental;
  * factory method or inferred from the left-hand side of the enclosing assignment. The remaining options are
  * optional and are typically passed to a {@code MockingApi} factory method as named parameters.
  */
-@Experimental
+@Beta
 public class MockConfiguration {
   private final String name;
   private final Class<?> type;

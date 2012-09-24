@@ -17,8 +17,7 @@ package org.spockframework.mock;
 import org.spockframework.lang.Wildcard;
 import org.spockframework.runtime.InvalidSpecException;
 import org.spockframework.util.Nullable;
-
-import spock.mock.IMockInvocationResponder;
+import spock.lang.Specification;
 
 public class MockObject implements IMockObject {
   private final String name;
@@ -27,15 +26,17 @@ public class MockObject implements IMockObject {
   private final boolean verified;
   private final boolean global;
   private final IMockInvocationResponder responder;
+  private final Specification specification;
 
   public MockObject(@Nullable String name, Class<?> type, Object instance,
-      boolean verified, boolean global, IMockInvocationResponder responder) {
+      boolean verified, boolean global, IMockInvocationResponder responder, Specification specification) {
     this.name = name;
     this.type = type;
     this.instance = instance;
     this.verified = verified;
     this.global = global;
     this.responder = responder;
+    this.specification = specification;
   }
 
   @Nullable
@@ -58,6 +59,10 @@ public class MockObject implements IMockObject {
 
   public IMockInvocationResponder getResponder() {
     return responder;
+  }
+
+  public Specification getSpecification() {
+    return specification;
   }
 
   public boolean matches(Object target, IMockInteraction interaction) {

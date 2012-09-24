@@ -17,10 +17,8 @@
 package org.spockframework.mock
 
 import spock.lang.Specification
+
 import spock.lang.Issue
-import spock.mock.MockConfiguration
-import spock.mock.MockNature
-import spock.mock.MockImplementation
 
 class JavaMockFactorySpec extends Specification {
   JavaMockFactory factory = new JavaMockFactory()

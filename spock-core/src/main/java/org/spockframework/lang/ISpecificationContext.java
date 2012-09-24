@@ -1,9 +1,10 @@
-package spock.lang;
+package org.spockframework.lang;
 
+import org.spockframework.util.Beta;
 import org.spockframework.mock.IMockController;
 import org.spockframework.runtime.model.IterationInfo;
 
-@Experimental
+@Beta
 public interface ISpecificationContext {
   IterationInfo getIterationInfo();
 

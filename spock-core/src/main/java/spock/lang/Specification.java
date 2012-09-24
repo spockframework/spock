@@ -19,6 +19,7 @@ package spock.lang;
 import groovy.lang.Closure;
 
 import org.junit.runner.RunWith;
+import org.spockframework.util.Beta;
 import org.spockframework.lang.Wildcard;
 import org.spockframework.util.ExceptionUtil;
 import org.spockframework.runtime.*;
@@ -46,11 +47,6 @@ public abstract class Specification extends MockingApi {
    * </ul>
    */
   public static final Object _ = Wildcard.INSTANCE;
-
-  @Experimental
-  public ISpecificationContext getSpecificationContext() {
-    return specificationContext;
-  }
 
   /**
    * Specifies that the preceding <tt>when</tt> block should throw an exception.
@@ -107,7 +103,7 @@ public abstract class Specification extends MockingApi {
    * @param type the exception type that should not be thrown
    */
   public void notThrown(Class<? extends Throwable> type) {
-    Throwable thrown = specificationContext.getThrownException();
+    Throwable thrown = getSpecificationContext().getThrownException();
     if (thrown == null) return;
     if (type.isAssignableFrom(thrown.getClass())) {
       throw new UnallowedExceptionThrownError(type, thrown);
@@ -120,7 +116,7 @@ public abstract class Specification extends MockingApi {
    * {@link UnallowedExceptionThrownError} otherwise.
    */
   public void noExceptionThrown() {
-    Throwable thrown = specificationContext.getThrownException();
+    Throwable thrown = getSpecificationContext().getThrownException();
     if (thrown == null) return;
     throw new UnallowedExceptionThrownError(null, thrown);
   }
@@ -139,7 +135,7 @@ public abstract class Specification extends MockingApi {
     throw new InvalidSpecException("old() can only be used in a 'then' block");
   }
 
-  @Experimental
+  @Beta
   public void with(Object object, Closure closure) {
     closure.setDelegate(object); // for conditions
     closure.setResolveStrategy(Closure.DELEGATE_FIRST);

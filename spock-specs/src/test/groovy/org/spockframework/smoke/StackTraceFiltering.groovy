@@ -18,10 +18,11 @@ package org.spockframework.smoke
 
 import org.spockframework.EmbeddedSpecification
 import org.spockframework.runtime.ConditionNotSatisfiedError
+import org.spockframework.runtime.WrongExceptionThrownError
+import org.spockframework.util.Identifiers
+
 import spock.lang.Issue
 import spock.lang.Unroll
-import org.spockframework.util.Identifiers
-import org.spockframework.runtime.WrongExceptionThrownError
 
 /**
  * @author Peter Niederwieser
@@ -249,7 +250,7 @@ thrown(RuntimeException)
     WrongExceptionThrownError e = thrown()
 
     stackTraceLooksLike e, """
-spock.lang.SpecInternals|thrownImpl|-
+org.spockframework.lang.SpecInternals|thrownImpl|-
 apackage.ASpec|a feature|5
     """
     

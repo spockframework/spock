@@ -16,9 +16,10 @@ package spock.util.concurrent
 
 import org.spockframework.runtime.SpockTimeoutError
 
+import java.util.concurrent.TimeUnit
+
 import spock.lang.Specification
 import spock.lang.FailsWith
-import java.util.concurrent.TimeUnit
 
 class PollingConditionsSpec extends Specification {
   PollingConditions conditions = new PollingConditions()

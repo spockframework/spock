@@ -21,7 +21,6 @@ import java.util.*;
 import org.codehaus.groovy.runtime.DefaultGroovyMethods;
 
 import org.spockframework.util.TextUtil;
-import spock.mock.IMockInvocationResponder;
 
 /**
  *

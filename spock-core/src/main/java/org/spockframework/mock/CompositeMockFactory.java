@@ -16,7 +16,6 @@ package org.spockframework.mock;
 
 import org.spockframework.util.InternalSpockError;
 import spock.lang.Specification;
-import spock.mock.MockConfiguration;
 
 import java.util.Arrays;
 import java.util.List;

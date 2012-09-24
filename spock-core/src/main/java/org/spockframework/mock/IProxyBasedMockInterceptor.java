@@ -14,8 +14,6 @@
 
 package org.spockframework.mock;
 
-import spock.mock.IMockInvocationResponder;
-
 import java.lang.reflect.Method;
 
 public interface IProxyBasedMockInterceptor {

@@ -12,29 +12,27 @@
  * limitations under the License.
  */
 
-package spock.mock;
+package org.spockframework.mock;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicLong;
 
 import groovy.lang.GString;
+import groovy.lang.GroovyObject;
 
-import org.spockframework.mock.EqualsHashCodeToStringInteractions;
-import org.spockframework.mock.IMockInteraction;
-import org.spockframework.mock.IMockInvocation;
 import org.spockframework.util.ReflectionUtil;
-import spock.lang.Experimental;
+import org.spockframework.util.Beta;
 
-@Experimental
-public class EmptyOrStubResponder implements IMockInvocationResponder {
-  public static final EmptyOrStubResponder INSTANCE = new EmptyOrStubResponder();
+import spock.lang.Specification;
 
-  private EmptyOrStubResponder() {}
+@Beta
+public class EmptyOrDummyResponder implements IMockInvocationResponder {
+  public static final EmptyOrDummyResponder INSTANCE = new EmptyOrDummyResponder();
+
+  private EmptyOrDummyResponder() {}
 
   public Object respond(IMockInvocation invocation) {
     IMockInteraction interaction = EqualsHashCodeToStringInteractions.INSTANCE.match(invocation);
@@ -47,17 +45,20 @@ public class EmptyOrStubResponder implements IMockInvocationResponder {
     }
 
     if (returnType.isPrimitive()) {
-      return returnType == boolean.class ? false : 0;
+      return ReflectionUtil.getDefaultValue(returnType);
     }
 
     if (returnType.isInterface()) {
+      if (returnType == Iterable.class) return new ArrayList();
+      if (returnType == Collection.class) return new ArrayList();
       if (returnType == List.class) return new ArrayList();
       if (returnType == Set.class) return new HashSet();
       if (returnType == Map.class) return new HashMap();
       if (returnType == Queue.class) return new LinkedList();
       if (returnType == SortedSet.class) return new TreeSet();
       if (returnType == SortedMap.class) return new TreeMap();
-      return createStub(returnType);
+      if (returnType == CharSequence.class) return "";
+      return createDummy(invocation);
     }
 
     if (returnType.isArray()) {
@@ -83,7 +84,7 @@ public class EmptyOrStubResponder implements IMockInvocationResponder {
     Object emptyObject = createEmptyObject(returnType);
     if (emptyObject != null) return emptyObject;
 
-    return createStub(returnType);
+    return createDummy(invocation);
   }
 
   // also handles some numeric types which aren't primitive wrapper types
@@ -95,12 +96,10 @@ public class EmptyOrStubResponder implements IMockInvocationResponder {
       }
       if (type == BigInteger.class) return BigInteger.ZERO;
       if (type == BigDecimal.class) return BigDecimal.ZERO;
-      if (type == AtomicInteger.class) return new AtomicInteger(0);
-      if (type == AtomicLong.class) return new AtomicLong(0);
       return null;
     }
-    if (type == Boolean.class) return Boolean.FALSE;
-    if (type == Character.class) return ' '; // better return something else?
+    if (type == Boolean.class) return false;
+    if (type == Character.class) return (char) 0; // better return something else?
     return null;
   }
 
@@ -112,11 +111,10 @@ public class EmptyOrStubResponder implements IMockInvocationResponder {
     }
   }
 
-  // TODO: returning a stub needs some more thought
-  // where to get class loader/specification instance from?
-  // should calls on this stub get dispatched to mock controller at all? (probably)
-  // should this stub share some properties with its "owner" (groovy, global, etc.)?
-  private Object createStub(Class<?> type) {
-    return null;
+  private Object createDummy(IMockInvocation invocation) {
+    Class<?> type = invocation.getMethod().getReturnType();
+    Specification spec = invocation.getMockObject().getSpecification();
+    return spec.createMock("dummy", type, MockNature.STUB, GroovyObject.class.isAssignableFrom(type) ?
+        MockImplementation.GROOVY : MockImplementation.JAVA, Collections.<String, Object>emptyMap(), null);
   }
 }

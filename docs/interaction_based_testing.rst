@@ -402,7 +402,11 @@ or a single *typed* parameter, method parameters will be mapped one-by-one to cl
 
     subscriber1.receive(_) >> { String message -> message.size() > 3 ? "ok" : "fail" }
 
-This code is functionally equivalent to the previous one but more readable.
+This code is functionally equivalent to the previous one, but arguably more readable.
+
+If you find yourself in need of more information about a method invocation than its arguments, have a look at
+``org.spockframework.mock.IMockInvocation``. All methods declared in this interface are available inside the closure,
+without a need to prefix them. (In Groovy speak, the closure *delegates* to an instance of ``IMockInvocation``.)
 
 Performing Side Effects
 ~~~~~~~~~~~~~~~~~~~~~~~

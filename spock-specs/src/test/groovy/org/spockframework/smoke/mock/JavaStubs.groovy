@@ -15,11 +15,10 @@
 package org.spockframework.smoke.mock
 
 import org.spockframework.runtime.InvalidSpecException
+import org.spockframework.mock.CannotCreateMockException
 
 import spock.lang.Specification
 import spock.lang.FailsWith
-import spock.lang.Ignore
-import org.spockframework.mock.CannotCreateMockException
 
 class JavaStubs extends Specification {
   def person = Stub(IPerson)

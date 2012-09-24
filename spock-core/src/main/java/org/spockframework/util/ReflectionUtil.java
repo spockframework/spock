@@ -110,9 +110,9 @@ public abstract class ReflectionUtil {
     if (type == long.class) return 0l;
     if (type == float.class) return 0f;
     if (type == double.class) return 0d;
-    if (type == char.class) return (char)0;
-    if (type == short.class) return (short)0;
-    if (type == byte.class) return (byte)0;
+    if (type == char.class) return (char) 0;
+    if (type == short.class) return (short) 0;
+    if (type == byte.class) return (byte) 0;
 
     assert type == void.class;
     return null;

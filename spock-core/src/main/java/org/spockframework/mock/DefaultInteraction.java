@@ -15,9 +15,11 @@ package org.spockframework.mock;
 
 import java.util.List;
 
+import org.spockframework.mock.IMockInteraction;
+import org.spockframework.mock.IMockInvocation;
 import org.spockframework.util.UnreachableCodeError;
 
-public abstract class DefaultInteraction implements IMockInteraction {
+abstract class DefaultInteraction implements IMockInteraction {
   public int getLine() {
     return -1;
   }
@@ -40,10 +42,6 @@ public abstract class DefaultInteraction implements IMockInteraction {
 
   public boolean isExhausted() {
     return false;
-  }
-
-  public boolean hasResults() {
-    return true;
   }
 
   public boolean isRequired() {

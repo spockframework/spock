@@ -48,11 +48,11 @@ public interface IMockObject {
   boolean isVerified();
 
   /**
-   * Returns the default responder for this mock object.
+   * Returns the default response strategy for this mock object.
    *
-   * @return the default responder for this mock object
+   * @return the default response strategy for this mock object
    */
-  IMockInvocationResponder getResponder();
+  IDefaultResponse getDefaultResponse();
 
   /**
    * Returns the specification that this mock object is attached to.

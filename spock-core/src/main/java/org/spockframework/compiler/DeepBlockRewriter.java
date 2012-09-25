@@ -37,9 +37,6 @@ import org.spockframework.util.Nullable;
  *
  * @author Peter Niederwieser
  */
-// TODO: may want to make sure that with {} and interaction {} are only used in statement position
-// TODO: may only handle implicit conditions in with {} if directly contained in expect/then block
-// TODO: may want to make with {} return the configured element
 public class DeepBlockRewriter extends AbstractDeepBlockRewriter {
   private final IRewriteResources resources;
 

@@ -21,8 +21,8 @@ import groovy.lang.Closure;
 
 import org.spockframework.mock.MockImplementation;
 import org.spockframework.mock.MockNature;
-import org.spockframework.mock.CompositeMockFactory;
-import org.spockframework.mock.MockConfiguration;
+import org.spockframework.mock.runtime.CompositeMockFactory;
+import org.spockframework.mock.runtime.MockConfiguration;
 import org.spockframework.runtime.InvalidSpecException;
 import org.spockframework.runtime.SpecificationContext;
 import org.spockframework.runtime.WrongExceptionThrownError;

@@ -16,6 +16,8 @@
 
 package org.spockframework.mock;
 
+import org.spockframework.mock.IMockInvocation;
+
 /**
  *
  * @author Peter Niederwieser

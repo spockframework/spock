@@ -27,7 +27,7 @@ import org.codehaus.groovy.syntax.Types;
 import org.objectweb.asm.Opcodes;
 
 import org.spockframework.compiler.model.*;
-import org.spockframework.mock.MockController;
+import org.spockframework.mock.runtime.MockController;
 import org.spockframework.runtime.SpecificationContext;
 import org.spockframework.util.InternalIdentifiers;
 

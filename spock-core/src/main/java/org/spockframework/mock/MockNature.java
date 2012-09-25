@@ -27,7 +27,7 @@ public enum MockNature {
    * Returns "empty" values (zero, empty string, empty collection, object created from default constructor, etc.)
    * for unanticipated method calls, or {@code null} if an empty value cannot be constructed.
    */
-  STUB(false, true, EmptyOrDummyResponder.INSTANCE),
+  STUB(false, true, EmptyOrDummyResponse.INSTANCE),
 
   /**
    * The most generic kind of mock object. Can be used both for stubbing (i.e.
@@ -35,34 +35,34 @@ public enum MockNature {
    * Returns {@code 0}, {@code false}, or {@code null} for unanticipated method calls,
    * depending on the method's return type.
    */
-  MOCK(true, true, ZeroOrNullResponder.INSTANCE),
+  MOCK(true, true, ZeroOrNullResponse.INSTANCE),
 
   /**
    * A mock object that selectively stubs and/or mocks a real object. Can act as a partial mock.
    * Calls through to the real object for unanticipated method calls.
    */
-  SPY(true, false, CallRealMethodResponder.INSTANCE);
+  SPY(true, false, CallRealMethodResponse.INSTANCE);
 
   private final boolean verified;
   private final boolean useObjenesis;
 
-  private final IMockInvocationResponder responder;
+  private final IDefaultResponse defaultResponse;
 
-  MockNature(boolean verified, boolean useObjenesis, IMockInvocationResponder responder) {
+  MockNature(boolean verified, boolean useObjenesis, IDefaultResponse defaultResponse) {
     this.verified = verified;
     this.useObjenesis = useObjenesis;
-    this.responder = responder;
+    this.defaultResponse = defaultResponse;
   }
 
-  boolean isVerified() {
+  public boolean isVerified() {
     return verified;
   }
 
-  boolean isUseObjenesis() {
+  public boolean isUseObjenesis() {
     return useObjenesis;
   }
 
-  IMockInvocationResponder getResponder() {
-    return responder;
+  public IDefaultResponse getDefaultResponse() {
+    return defaultResponse;
   }
 }

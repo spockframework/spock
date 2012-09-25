@@ -477,7 +477,7 @@ Like a mock, a stub allows unexpected invocations. However, the values returned 
  * For non-primitive numerical values (like ``BigDecimal``), zero is returned.
  * For non-numerical values, an "empty" or "dummy" object is returned. This could mean an empty String, an empty collection,
    an object constructed from its default constructor, or another stub which returns the same defaults.
-   See class ``org.spockframework.mock.EmptyOrDummyResponder`` for the details.
+   See class ``org.spockframework.mock.EmptyOrDummyResponse`` for the details.
 
 Spies
 ~~~~~

@@ -25,8 +25,8 @@ import org.codehaus.groovy.ast.stmt.ExpressionStatement;
 import org.codehaus.groovy.syntax.Types;
 
 import org.spockframework.lang.Wildcard;
-import org.spockframework.mock.InteractionBuilder;
-import org.spockframework.mock.MockController;
+import org.spockframework.mock.runtime.InteractionBuilder;
+import org.spockframework.mock.runtime.MockController;
 import org.spockframework.util.Assert;
 import org.spockframework.util.Nullable;
 import org.spockframework.util.ObjectUtil;
@@ -47,7 +47,7 @@ public class InteractionRewriter {
   private Expression call;
   private boolean wildcardCall;
   private boolean implicitTarget;
-  private List<InteractionResult> results = new ArrayList<InteractionResult>();
+  private List<InteractionResponse> responses = new ArrayList<InteractionResponse>();
 
   // holds the incrementally constructed expression, which looks roughly as follows:
   // "new InteractionBuilder(..).setCount(..).setTarget(..).setMethod(..).addArg(..).addResult(..).build()"
@@ -72,7 +72,7 @@ public class InteractionRewriter {
       createBuilder();
       setCount();
       setCall();
-      addResults();
+      addResponses();
       build();
       return register();
     } catch (InvalidSpecCompileException e) {
@@ -85,7 +85,7 @@ public class InteractionRewriter {
     this.stat = stat;
     
     Expression expr = parseCount(parseResults(stat.getExpression()));
-    boolean interaction = (count != null || !results.isEmpty()) && parseCall(expr);
+    boolean interaction = (count != null || !responses.isEmpty()) && parseCall(expr);
     if (interaction && resources.getCurrentMethod().getAst().isStatic()) {
       throw new InvalidSpecCompileException(stat, "Interactions cannot be declared in static scope");
     }
@@ -97,7 +97,7 @@ public class InteractionRewriter {
       BinaryExpression binExpr = (BinaryExpression) expr;
       int type = binExpr.getOperation().getType();
       if (type != Types.RIGHT_SHIFT && type != Types.RIGHT_SHIFT_UNSIGNED) break;
-      results.add(new InteractionResult(binExpr.getRightExpression(), type == Types.RIGHT_SHIFT_UNSIGNED));
+      responses.add(new InteractionResponse(binExpr.getRightExpression(), type == Types.RIGHT_SHIFT_UNSIGNED));
       expr = binExpr.getLeftExpression();
     }
     return expr;
@@ -300,14 +300,14 @@ public class InteractionRewriter {
     call(InteractionBuilder.ADD_EQUAL_ARG, arg);
   }
 
-  private void addResults() {
-    for (InteractionResult result : results) {
-      if (result.iterable) {
-        call(InteractionBuilder.ADD_ITERABLE_RESULT, result.expr);
-      } else if (result.expr instanceof ClosureExpression) {
-        call(InteractionBuilder.ADD_CODE_RESULT, result.expr);
+  private void addResponses() {
+    for (InteractionResponse response : responses) {
+      if (response.iterable) {
+        call(InteractionBuilder.ADD_ITERABLE_RESPONSE, response.expr);
+      } else if (response.expr instanceof ClosureExpression) {
+        call(InteractionBuilder.ADD_CODE_RESPONSE, response.expr);
       } else {
-        call(InteractionBuilder.ADD_CONSTANT_RESULT, result.expr);
+        call(InteractionBuilder.ADD_CONSTANT_RESPONSE, response.expr);
       }
     }
   }
@@ -335,11 +335,11 @@ public class InteractionRewriter {
         new ArgumentListExpression(args));
   }
   
-  private static class InteractionResult {
+  private static class InteractionResponse {
     final Expression expr;
     final boolean iterable;
 
-    private InteractionResult(Expression expr, boolean iterable) {
+    private InteractionResponse(Expression expr, boolean iterable) {
       this.expr = expr;
       this.iterable = iterable;
     }

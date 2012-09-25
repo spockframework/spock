@@ -23,6 +23,6 @@ package org.spockframework.mock;
  */
 public class WildcardResultGenerator extends SingleResultGenerator {
   public Object generateSingle(IMockInvocation invocation) {
-    return invocation.getMockObject().getResponder().respond(invocation);
+    return invocation.getMockObject().getResponder().generate(invocation);
   }
 }

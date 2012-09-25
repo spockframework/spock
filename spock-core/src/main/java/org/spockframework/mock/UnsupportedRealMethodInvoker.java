@@ -14,14 +14,14 @@
 
 package org.spockframework.mock;
 
-public class UnsupportedRealMethodInvoker implements IMockInvocationResponder {
+public class UnsupportedRealMethodInvoker implements IMockResponse {
   private final String message;
 
   public UnsupportedRealMethodInvoker(String message) {
     this.message = message;
   }
 
-  public Object respond(IMockInvocation invocation) {
+  public Object generate(IMockInvocation invocation) {
     throw new CannotInvokeRealMethodException(message);
   }
 }

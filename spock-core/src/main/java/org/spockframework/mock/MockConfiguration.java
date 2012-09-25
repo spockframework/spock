@@ -34,7 +34,7 @@ public class MockConfiguration {
   private final MockNature nature;
   private final MockImplementation implementation;
   private final List<Object> constructorArgs;
-  private final IMockInvocationResponder responder;
+  private final IMockResponse defaultResponse;
   private final boolean global;
   private final boolean verified;
   private final boolean useObjenesis;
@@ -47,7 +47,7 @@ public class MockConfiguration {
     this.nature = getOption(options, "nature", MockNature.class, nature);
     this.implementation = getOption(options, "implementation", MockImplementation.class, implementation);
     this.constructorArgs = getOption(options, "constructorArgs", List.class, null);
-    this.responder = getOption(options, "responder", IMockInvocationResponder.class, this.nature.getResponder());
+    this.defaultResponse = getOption(options, "defaultResponse", IMockResponse.class, this.nature.getResponder());
     this.global = getOption(options, "global", Boolean.class, false);
     this.verified = getOption(options, "verified", Boolean.class, this.nature.isVerified());
     this.useObjenesis = getOption(options, "useObjenesis", Boolean.class, this.nature.isUseObjenesis());
@@ -101,12 +101,12 @@ public class MockConfiguration {
   }
 
   /**
-   * Returns the responder for generating return values in response to method calls on the mock object.
+   * Returns the default response for method calls on the mock object.
    *
-   * @return the responder for generating return values in response to method calls on the mock object
+   * @return the default response for method calls on the mock object
    */
-  public IMockInvocationResponder getResponder() {
-    return responder;
+  public IMockResponse getDefaultResponse() {
+    return defaultResponse;
   }
 
   /**

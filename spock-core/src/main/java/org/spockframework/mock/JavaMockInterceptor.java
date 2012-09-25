@@ -34,9 +34,9 @@ public class JavaMockInterceptor implements IProxyBasedMockInterceptor {
     this.mockMetaClass = mockMetaClass;
   }
 
-  public Object intercept(Object target, Method method, Object[] arguments, IMockInvocationResponder realMethodInvoker) {
+  public Object intercept(Object target, Method method, Object[] arguments, IMockResponse realMethodInvoker) {
     IMockObject mockObject = new MockObject(mockConfiguration.getName(), mockConfiguration.getType(),
-        target, mockConfiguration.isVerified(), false, mockConfiguration.getResponder(), specification);
+        target, mockConfiguration.isVerified(), false, mockConfiguration.getDefaultResponse(), specification);
 
     if (method.getDeclaringClass() == IMockObjectProvider.class) {
       return mockObject;

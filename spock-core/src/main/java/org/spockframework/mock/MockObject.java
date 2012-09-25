@@ -25,11 +25,11 @@ public class MockObject implements IMockObject {
   private final Object instance;
   private final boolean verified;
   private final boolean global;
-  private final IMockInvocationResponder responder;
+  private final IMockResponse responder;
   private final Specification specification;
 
   public MockObject(@Nullable String name, Class<?> type, Object instance,
-      boolean verified, boolean global, IMockInvocationResponder responder, Specification specification) {
+      boolean verified, boolean global, IMockResponse responder, Specification specification) {
     this.name = name;
     this.type = type;
     this.instance = instance;
@@ -57,7 +57,7 @@ public class MockObject implements IMockObject {
     return verified;
   }
 
-  public IMockInvocationResponder getResponder() {
+  public IMockResponse getResponder() {
     return responder;
   }
 

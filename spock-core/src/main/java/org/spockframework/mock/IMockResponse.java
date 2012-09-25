@@ -17,6 +17,6 @@ package org.spockframework.mock;
 import org.spockframework.util.Beta;
 
 @Beta
-public interface IMockInvocationResponder {
-  Object respond(IMockInvocation invocation);
+public interface IMockResponse {
+  Object generate(IMockInvocation invocation);
 }

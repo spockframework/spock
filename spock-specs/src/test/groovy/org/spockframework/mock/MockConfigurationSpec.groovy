@@ -22,7 +22,7 @@ class MockConfigurationSpec extends Specification {
     expect:
     with(options) {
       nature == MockNature.MOCK
-      responder instanceof ZeroOrNullResponder
+      defaultResponse instanceof ZeroOrNullResponse
       global == false
       verified == true
       useObjenesis == true
@@ -35,7 +35,7 @@ class MockConfigurationSpec extends Specification {
     expect:
     with(options) {
       nature == MockNature.STUB
-      responder instanceof EmptyOrDummyResponder
+      defaultResponse instanceof EmptyOrDummyResponse
       global == false
       verified == false
       useObjenesis == true
@@ -48,7 +48,7 @@ class MockConfigurationSpec extends Specification {
     expect:
     with(options) {
       nature == MockNature.SPY
-      responder instanceof CallRealMethodResponder
+      defaultResponse instanceof CallRealMethodResponse
       global == false
       verified == true
       useObjenesis == false
@@ -56,7 +56,7 @@ class MockConfigurationSpec extends Specification {
   }
 
   def "set options via map"() {
-    def responder = [:] as IMockInvocationResponder
+    def responder = [:] as IMockResponse
     def map = [name: "foo", type: List, nature: MockNature.SPY, implementation: MockImplementation.GROOVY,
       constructorArgs: ["foo", "bar"], responder: responder, global: true, verified: false, useObjenesis: true]
 

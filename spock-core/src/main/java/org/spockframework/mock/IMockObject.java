@@ -52,7 +52,7 @@ public interface IMockObject {
    *
    * @return the default responder for this mock object
    */
-  IMockInvocationResponder getResponder();
+  IMockResponse getResponder();
 
   /**
    * Returns the specification that this mock object is attached to.

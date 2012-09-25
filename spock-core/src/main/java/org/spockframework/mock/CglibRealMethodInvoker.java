@@ -17,14 +17,14 @@ package org.spockframework.mock;
 import net.sf.cglib.proxy.MethodProxy;
 import org.spockframework.util.ExceptionUtil;
 
-public class CglibRealMethodInvoker implements IMockInvocationResponder {
+public class CglibRealMethodInvoker implements IMockResponse {
   private final MethodProxy methodProxy;
 
   public CglibRealMethodInvoker(MethodProxy methodProxy) {
     this.methodProxy = methodProxy;
   }
 
-  public Object respond(IMockInvocation invocation) {
+  public Object generate(IMockInvocation invocation) {
     try {
       return methodProxy.invokeSuper(invocation.getMockObject().getInstance(), invocation.getArguments().toArray());
     } catch (Throwable t) {

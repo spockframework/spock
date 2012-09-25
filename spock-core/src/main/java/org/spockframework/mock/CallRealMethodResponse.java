@@ -14,20 +14,15 @@
 
 package org.spockframework.mock;
 
-import org.spockframework.util.ReflectionUtil;
 import org.spockframework.util.Beta;
 
 @Beta
-public class ZeroOrNullResponder implements IMockInvocationResponder {
-  public static final ZeroOrNullResponder INSTANCE = new ZeroOrNullResponder();
+public class CallRealMethodResponse implements IMockResponse {
+  public static final CallRealMethodResponse INSTANCE = new CallRealMethodResponse();
 
-  private ZeroOrNullResponder() {}
+  private CallRealMethodResponse() {}
 
-  public Object respond(IMockInvocation invocation) {
-    IMockInteraction interaction = EqualsHashCodeToStringInteractions.INSTANCE.match(invocation);
-    if (interaction != null) return interaction.accept(invocation);
-
-    Class<?> returnType = invocation.getMethod().getReturnType();
-    return ReflectionUtil.getDefaultValue(returnType);
+  public Object generate(IMockInvocation invocation) {
+    return invocation.callRealMethod();
   }
 }

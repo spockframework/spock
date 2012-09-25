@@ -14,7 +14,7 @@
 
 package org.spockframework.mock;
 
-public class DefaultToStringInteraction extends DefaultInteraction {
+class DefaultToStringInteraction extends DefaultInteraction {
   public static final DefaultToStringInteraction INSTANCE = new DefaultToStringInteraction();
   
   private DefaultToStringInteraction() {}

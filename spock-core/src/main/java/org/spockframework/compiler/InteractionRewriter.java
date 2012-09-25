@@ -25,8 +25,8 @@ import org.codehaus.groovy.ast.stmt.ExpressionStatement;
 import org.codehaus.groovy.syntax.Types;
 
 import org.spockframework.lang.Wildcard;
-import org.spockframework.mock.InteractionBuilder;
-import org.spockframework.mock.MockController;
+import org.spockframework.mock.runtime.InteractionBuilder;
+import org.spockframework.mock.runtime.MockController;
 import org.spockframework.util.Assert;
 import org.spockframework.util.Nullable;
 import org.spockframework.util.ObjectUtil;

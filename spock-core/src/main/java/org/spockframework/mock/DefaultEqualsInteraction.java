@@ -13,7 +13,7 @@
  */
 package org.spockframework.mock;
 
-public class DefaultEqualsInteraction extends DefaultInteraction {
+class DefaultEqualsInteraction extends DefaultInteraction {
   public static final DefaultEqualsInteraction INSTANCE = new DefaultEqualsInteraction();
 
   private DefaultEqualsInteraction() {}

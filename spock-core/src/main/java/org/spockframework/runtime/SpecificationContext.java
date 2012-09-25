@@ -1,7 +1,7 @@
 package org.spockframework.runtime;
 
 import org.spockframework.mock.IMockController;
-import org.spockframework.mock.MockController;
+import org.spockframework.mock.runtime.MockController;
 import org.spockframework.runtime.model.IterationInfo;
 
 import org.spockframework.lang.ISpecificationContext;

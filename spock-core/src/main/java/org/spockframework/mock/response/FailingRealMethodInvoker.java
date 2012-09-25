@@ -12,15 +12,20 @@
  * limitations under the License.
  */
 
-package org.spockframework.mock;
+package org.spockframework.mock.response;
 
+import org.spockframework.mock.CannotInvokeRealMethodException;
 import org.spockframework.mock.IMockInvocation;
-import org.spockframework.util.Beta;
+import org.spockframework.mock.IResponseGenerator;
 
-/**
- * Generates responses to mock invocations.
- */
-@Beta
-public interface IResponseGenerator {
-  Object respond(IMockInvocation invocation);
+public class FailingRealMethodInvoker implements IResponseGenerator {
+  private final String message;
+
+  public FailingRealMethodInvoker(String message) {
+    this.message = message;
+  }
+
+  public Object respond(IMockInvocation invocation) {
+    throw new CannotInvokeRealMethodException(message);
+  }
 }

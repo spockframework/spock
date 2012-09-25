@@ -14,14 +14,26 @@
  * limitations under the License.
  */
 
-package org.spockframework.mock;
+package org.spockframework.mock.constraint;
 
-import org.spockframework.mock.IMockInvocation;
+import groovy.lang.Closure;
+
+import org.spockframework.mock.IArgumentConstraint;
+import org.spockframework.runtime.GroovyRuntimeUtil;
 
 /**
  *
  * @author Peter Niederwieser
  */
-public interface IInvocationConstraint {
-  boolean isSatisfiedBy(IMockInvocation invocation);
+// IDEA: reify instead of separate matcher?
+public class CodeArgumentConstraint implements IArgumentConstraint {
+  private final Closure code;
+
+  public CodeArgumentConstraint(Closure code) {
+    this.code = code;
+  }
+
+  public boolean isSatisfiedBy(Object argument) {
+    return GroovyRuntimeUtil.isTruthy(GroovyRuntimeUtil.invokeClosure(code, argument));
+  }
 }

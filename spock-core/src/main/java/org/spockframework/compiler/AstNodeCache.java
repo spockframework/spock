@@ -18,7 +18,6 @@ package org.spockframework.compiler;
 
 import org.codehaus.groovy.ast.*;
 
-import org.spockframework.mock.*;
 import org.spockframework.runtime.SpockRuntime;
 import org.spockframework.runtime.ValueRecorder;
 import org.spockframework.runtime.model.*;
@@ -65,7 +64,7 @@ public class AstNodeCache {
   public final ClassNode BlockKind = ClassHelper.makeWithoutCaching(BlockKind.class);
 
   // mocking API
-  public final ClassNode InteractionBuilder = ClassHelper.makeWithoutCaching(InteractionBuilder.class);
+  public final ClassNode InteractionBuilder = ClassHelper.makeWithoutCaching(org.spockframework.mock.runtime.InteractionBuilder.class);
 
   // external types
   public final ClassNode Throwable = ClassHelper.makeWithoutCaching(Throwable.class);

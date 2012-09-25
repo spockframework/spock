@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 the original author or authors.
+ * Copyright 2010 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,15 +12,19 @@
  * limitations under the License.
  */
 
-package org.spockframework.mock;
+package org.spockframework.mock.constraint;
 
-import org.spockframework.mock.IMockInvocation;
-import org.spockframework.util.Beta;
+import org.spockframework.mock.*;
 
 /**
- * Generates responses to mock invocations.
+ * @author Peter Niederwieser
  */
-@Beta
-public interface IResponseGenerator {
-  Object respond(IMockInvocation invocation);
+public class WildcardMethodNameConstraint implements IInvocationConstraint {
+  public static final WildcardMethodNameConstraint INSTANCE = new WildcardMethodNameConstraint();
+
+  private WildcardMethodNameConstraint() {}
+  
+  public boolean isSatisfiedBy(IMockInvocation invocation) {
+    return DefaultEqualsHashCodeToStringInteractions.INSTANCE.match(invocation) == null;
+  }
 }

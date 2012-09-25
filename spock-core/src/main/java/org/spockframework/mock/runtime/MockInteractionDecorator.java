@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 the original author or authors.
+ * Copyright 2010 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -11,40 +11,63 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.spockframework.mock;
 
-import java.util.List;
+package org.spockframework.mock.runtime;
 
 import org.spockframework.mock.IMockInteraction;
 import org.spockframework.mock.IMockInvocation;
-import org.spockframework.util.UnreachableCodeError;
 
-abstract class DefaultInteraction implements IMockInteraction {
+import java.util.List;
+
+public abstract class MockInteractionDecorator implements IMockInteraction {
+  protected final IMockInteraction decorated;
+
+  public MockInteractionDecorator(IMockInteraction decorated) {
+    this.decorated = decorated;
+  }
+
   public int getLine() {
-    return -1;
+    return decorated.getLine();
   }
 
   public int getColumn() {
-    return -1;
+    return decorated.getColumn();
+  }
+
+  public String getText() {
+    return decorated.getText();
+  }
+
+  public boolean matches(IMockInvocation invocation) {
+    return decorated.matches(invocation);
+  }
+
+  public Object accept(IMockInvocation invocation) {
+    return decorated.accept(invocation);
   }
 
   public List<IMockInvocation> getAcceptedInvocations() {
-    throw new UnreachableCodeError("getAcceptedInvocations");
+    return decorated.getAcceptedInvocations();
   }
 
   public int computeSimilarityScore(IMockInvocation invocation) {
-    throw new UnreachableCodeError("computeSimilarityScore");
+    return decorated.computeSimilarityScore(invocation);
   }
 
   public boolean isSatisfied() {
-    return true;
+    return decorated.isSatisfied();
   }
 
   public boolean isExhausted() {
-    return false;
+    return decorated.isExhausted();
   }
 
   public boolean isRequired() {
-    return false;
+    return decorated.isRequired();
+  }
+
+  @Override
+  public String toString() {
+    return decorated.toString();
   }
 }

@@ -12,15 +12,12 @@
  * limitations under the License.
  */
 
-package org.spockframework.mock;
+package org.spockframework.mock.runtime;
 
-import org.spockframework.mock.IMockInvocation;
-import org.spockframework.util.Beta;
+import org.spockframework.mock.IResponseGenerator;
 
-/**
- * Generates responses to mock invocations.
- */
-@Beta
-public interface IResponseGenerator {
-  Object respond(IMockInvocation invocation);
+import java.lang.reflect.Method;
+
+public interface IProxyBasedMockInterceptor {
+  Object intercept(Object target, Method method, Object[] arguments, IResponseGenerator realMethodInvoker);
 }

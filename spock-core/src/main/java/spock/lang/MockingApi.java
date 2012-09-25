@@ -273,7 +273,7 @@ public class MockingApi extends SpecInternals {
    *   }
    * </pre>
    *
-   * @param options optional options for creating the stub (see {@link org.spockframework.mock.MockConfiguration for available options})
+   * @param options optional options for creating the stub (see {@link org.spockframework.mock.IMockConfiguration for available options})
    * @param type the class or interface type of the stub
    * @param interactions a description of the stub's interactions
    * @param <T> the class or interface type of the stub
@@ -453,7 +453,7 @@ public class MockingApi extends SpecInternals {
    *   }
    * </pre>
    *
-   * @param options optional options for creating the mock (see {@link org.spockframework.mock.MockConfiguration for available options})
+   * @param options optional options for creating the mock (see {@link org.spockframework.mock.IMockConfiguration for available options})
    * @param type the class or interface type of the mock
    * @param interactions a description of the mock's interactions
    * @param <T> the class or interface type of the mock
@@ -632,7 +632,7 @@ public class MockingApi extends SpecInternals {
    *   }
    * </pre>
    *
-   * @param options optional options for creating the spy (see {@link org.spockframework.mock.MockConfiguration for available options})
+   * @param options optional options for creating the spy (see {@link org.spockframework.mock.IMockConfiguration for available options})
    * @param type the class or interface type of the spy
    * @param interactions a description of the spy's interactions
    * @param <T> the class or interface type of the spy
@@ -814,7 +814,7 @@ public class MockingApi extends SpecInternals {
    *   }
    * </pre>
    *
-   * @param options optional options for creating the Groovy stub (see {@link org.spockframework.mock.MockConfiguration for available options})
+   * @param options optional options for creating the Groovy stub (see {@link org.spockframework.mock.IMockConfiguration for available options})
    * @param type the class or interface type of the Groovy stub
    * @param interactions a description of the Groovy stub's interactions
    * @param <T> the class or interface type of the Groovy stub
@@ -996,7 +996,7 @@ public class MockingApi extends SpecInternals {
    *   }
    * </pre>
    *
-   * @param options optional options for creating the Groovy mock (see {@link org.spockframework.mock.MockConfiguration for available options})
+   * @param options optional options for creating the Groovy mock (see {@link org.spockframework.mock.IMockConfiguration for available options})
    * @param type the class or interface type of the mock
    * @param interactions a description of the Groovy mock's interactions
    * @param <T> the class or interface type of the Groovy mock
@@ -1175,7 +1175,7 @@ public class MockingApi extends SpecInternals {
    *   }
    * </pre>
    *
-   * @param options optional options for creating the Groovy spy (see {@link org.spockframework.mock.MockConfiguration for available options})
+   * @param options optional options for creating the Groovy spy (see {@link org.spockframework.mock.IMockConfiguration for available options})
    * @param type the class or interface type of the Groovy spy
    * @param interactions a description of the Groovy spy's interactions
    * @param <T> the class or interface type of the Groovy spy

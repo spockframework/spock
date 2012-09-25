@@ -14,14 +14,24 @@
  * limitations under the License.
  */
 
-package org.spockframework.mock;
+package org.spockframework.mock.constraint;
 
-import org.spockframework.mock.IMockInvocation;
+import org.spockframework.mock.IArgumentConstraint;
 
 /**
  *
  * @author Peter Niederwieser
  */
-public interface IInvocationConstraint {
-  boolean isSatisfiedBy(IMockInvocation invocation);
+public class TypeArgumentConstraint implements IArgumentConstraint {
+  private final Class<?> type;
+  private final IArgumentConstraint constraint;
+
+  public TypeArgumentConstraint(Class<?> type, IArgumentConstraint constraint) {
+    this.type = type;
+    this.constraint = constraint;
+  }
+
+  public boolean isSatisfiedBy(Object argument) {
+    return type.isInstance(argument) && constraint.isSatisfiedBy(argument);
+  }
 }

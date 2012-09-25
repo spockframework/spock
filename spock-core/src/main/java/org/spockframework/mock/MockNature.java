@@ -54,15 +54,15 @@ public enum MockNature {
     this.defaultResponse = defaultResponse;
   }
 
-  boolean isVerified() {
+  public boolean isVerified() {
     return verified;
   }
 
-  boolean isUseObjenesis() {
+  public boolean isUseObjenesis() {
     return useObjenesis;
   }
 
-  IDefaultResponse getDefaultResponse() {
+  public IDefaultResponse getDefaultResponse() {
     return defaultResponse;
   }
 }

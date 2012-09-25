@@ -14,14 +14,28 @@
  * limitations under the License.
  */
 
-package org.spockframework.mock;
+package org.spockframework.mock.constraint;
 
-import org.spockframework.mock.IMockInvocation;
+import org.spockframework.mock.IArgumentConstraint;
+import org.spockframework.runtime.HamcrestFacade;
+import org.spockframework.runtime.GroovyRuntimeUtil;
 
 /**
  *
  * @author Peter Niederwieser
  */
-public interface IInvocationConstraint {
-  boolean isSatisfiedBy(IMockInvocation invocation);
+public class EqualArgumentConstraint implements IArgumentConstraint {
+  private final Object expected;
+
+  public EqualArgumentConstraint(Object expected) {
+    this.expected = expected;
+  }
+
+  public boolean isSatisfiedBy(Object arg) {
+    if (HamcrestFacade.isMatcher(expected)) {
+      return HamcrestFacade.matches(expected, arg);
+    }
+    
+    return GroovyRuntimeUtil.equals(arg, expected);
+  }
 }

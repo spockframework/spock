@@ -14,14 +14,29 @@
  * limitations under the License.
  */
 
-package org.spockframework.mock;
+package org.spockframework.mock.constraint;
 
+import org.spockframework.mock.IInteractionAware;
+import org.spockframework.mock.IMockInteraction;
 import org.spockframework.mock.IMockInvocation;
+import org.spockframework.mock.IInvocationConstraint;
 
 /**
- *
  * @author Peter Niederwieser
  */
-public interface IInvocationConstraint {
-  boolean isSatisfiedBy(IMockInvocation invocation);
+public class TargetConstraint implements IInvocationConstraint, IInteractionAware {
+  private final Object target;
+  private IMockInteraction interaction;
+
+  public TargetConstraint(Object target) {
+    this.target = target;
+  }
+
+  public boolean isSatisfiedBy(IMockInvocation invocation) {
+    return invocation.getMockObject().matches(target, interaction);
+  }
+
+  public void setInteraction(IMockInteraction interaction) {
+    this.interaction = interaction;
+  }
 }

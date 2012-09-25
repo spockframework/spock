@@ -14,14 +14,21 @@
  * limitations under the License.
  */
 
-package org.spockframework.mock;
+package org.spockframework.mock.constraint;
 
-import org.spockframework.mock.IMockInvocation;
+import org.spockframework.mock.IArgumentConstraint;
+import org.spockframework.runtime.InvalidSpecException;
 
 /**
  *
  * @author Peter Niederwieser
  */
-public interface IInvocationConstraint {
-  boolean isSatisfiedBy(IMockInvocation invocation);
+public class SpreadWildcardArgumentConstraint implements IArgumentConstraint {
+  public static final SpreadWildcardArgumentConstraint INSTANCE = new SpreadWildcardArgumentConstraint();
+
+  private SpreadWildcardArgumentConstraint() {}
+
+  public boolean isSatisfiedBy(Object arg) {
+    throw new InvalidSpecException("*_ may only appear at the end of an argument list");
+  }
 }

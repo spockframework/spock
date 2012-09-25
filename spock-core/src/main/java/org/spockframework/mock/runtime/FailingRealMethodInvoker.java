@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-package org.spockframework.mock.response;
+package org.spockframework.mock.runtime;
 
 import org.spockframework.mock.CannotInvokeRealMethodException;
 import org.spockframework.mock.IMockInvocation;

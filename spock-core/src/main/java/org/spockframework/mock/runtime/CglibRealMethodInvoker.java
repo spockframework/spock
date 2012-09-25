@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-package org.spockframework.mock.response;
+package org.spockframework.mock.runtime;
 
 import net.sf.cglib.proxy.MethodProxy;
 

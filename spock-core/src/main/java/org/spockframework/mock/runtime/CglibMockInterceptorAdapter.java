@@ -19,8 +19,6 @@ import java.lang.reflect.Method;
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
 
-import org.spockframework.mock.response.CglibRealMethodInvoker;
-
 public class CglibMockInterceptorAdapter implements MethodInterceptor {
   private final IProxyBasedMockInterceptor interceptor;
 

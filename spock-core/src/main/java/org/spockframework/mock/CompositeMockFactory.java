@@ -14,11 +14,13 @@
 
 package org.spockframework.mock;
 
-import org.spockframework.util.InternalSpockError;
-import spock.lang.Specification;
-
 import java.util.Arrays;
 import java.util.List;
+
+import org.spockframework.util.InternalSpockError;
+import org.spockframework.util.UnreachableCodeError;
+
+import spock.lang.Specification;
 
 public class CompositeMockFactory implements IMockFactory {
   public static CompositeMockFactory INSTANCE =
@@ -31,7 +33,7 @@ public class CompositeMockFactory implements IMockFactory {
   }
 
   public boolean canCreate(MockConfiguration configuration) {
-    throw new UnsupportedOperationException("canCreate");
+    throw new UnreachableCodeError("canCreate");
   }
 
   public Object create(MockConfiguration configuration, Specification specification) {

@@ -23,6 +23,7 @@ import groovy.lang.MetaClass;
 import org.spockframework.mock.*;
 import org.spockframework.mock.IResponseGenerator;
 import org.spockframework.runtime.GroovyRuntimeUtil;
+
 import spock.lang.Specification;
 
 public class JavaMockInterceptor implements IProxyBasedMockInterceptor {

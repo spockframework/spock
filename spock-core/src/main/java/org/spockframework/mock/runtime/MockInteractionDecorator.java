@@ -14,10 +14,10 @@
 
 package org.spockframework.mock.runtime;
 
+import java.util.List;
+
 import org.spockframework.mock.IMockInteraction;
 import org.spockframework.mock.IMockInvocation;
-
-import java.util.List;
 
 public abstract class MockInteractionDecorator implements IMockInteraction {
   protected final IMockInteraction decorated;

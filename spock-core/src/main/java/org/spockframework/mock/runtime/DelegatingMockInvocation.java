@@ -14,11 +14,11 @@
 
 package org.spockframework.mock.runtime;
 
+import java.util.List;
+
 import org.spockframework.mock.IMockInvocation;
 import org.spockframework.mock.IMockMethod;
 import org.spockframework.mock.IMockObject;
-
-import java.util.List;
 
 public class DelegatingMockInvocation implements IMockInvocation {
   private final IMockInvocation delegate;

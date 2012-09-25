@@ -14,13 +14,13 @@
 
 package org.spockframework.mock.runtime;
 
+import java.util.List;
+
 import org.objenesis.ObjenesisHelper;
 import org.spockframework.mock.CannotCreateMockException;
 import org.spockframework.runtime.GroovyRuntimeUtil;
 import org.spockframework.util.Nullable;
 import org.spockframework.util.ReflectionUtil;
-
-import java.util.List;
 
 public class MockInstantiator {
   private static final boolean objenesisAvailable = ReflectionUtil.isClassAvailable("org.objenesis.Objenesis");

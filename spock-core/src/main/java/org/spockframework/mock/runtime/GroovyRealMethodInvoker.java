@@ -15,6 +15,7 @@
 package org.spockframework.mock.runtime;
 
 import groovy.lang.MetaClass;
+
 import org.spockframework.mock.IMockInvocation;
 import org.spockframework.mock.IResponseGenerator;
 

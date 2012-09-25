@@ -16,10 +16,10 @@
 
 package org.spockframework.mock.runtime;
 
-import org.spockframework.mock.*;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import org.spockframework.mock.*;
 
 /**
  * A scope for interactions defined outside a then-block

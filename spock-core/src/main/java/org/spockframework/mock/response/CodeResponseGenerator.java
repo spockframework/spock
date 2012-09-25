@@ -16,10 +16,10 @@
 
 package org.spockframework.mock.response;
 
+import groovy.lang.Closure;
+
 import org.spockframework.mock.IMockInvocation;
 import org.spockframework.runtime.GroovyRuntimeUtil;
-
-import groovy.lang.Closure;
 
 /**
  *

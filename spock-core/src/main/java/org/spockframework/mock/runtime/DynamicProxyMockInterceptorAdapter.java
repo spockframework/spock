@@ -14,8 +14,6 @@
 
 package org.spockframework.mock.runtime;
 
-import org.spockframework.mock.response.FailingRealMethodInvoker;
-
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 

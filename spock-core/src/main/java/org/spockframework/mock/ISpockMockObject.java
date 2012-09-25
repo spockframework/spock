@@ -14,8 +14,6 @@
 
 package org.spockframework.mock;
 
-import org.spockframework.mock.IMockObject;
-
 public interface ISpockMockObject {
   IMockObject $spock_get();
 }

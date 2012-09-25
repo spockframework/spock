@@ -15,6 +15,7 @@
 package org.spockframework.mock;
 
 import org.spockframework.util.Nullable;
+
 import spock.lang.Specification;
 
 public interface IMockObject {

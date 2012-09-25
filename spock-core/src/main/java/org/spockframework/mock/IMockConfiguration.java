@@ -1,8 +1,8 @@
 package org.spockframework.mock;
 
-import org.spockframework.util.Nullable;
-
 import java.util.List;
+
+import org.spockframework.util.Nullable;
 
 public interface IMockConfiguration {
   @Nullable

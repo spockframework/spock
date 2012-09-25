@@ -20,6 +20,7 @@ import org.spockframework.mock.IMockObject;
 import org.spockframework.mock.IDefaultResponse;
 import org.spockframework.runtime.InvalidSpecException;
 import org.spockframework.util.Nullable;
+
 import spock.lang.Specification;
 
 public class MockObject implements IMockObject {

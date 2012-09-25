@@ -14,7 +14,6 @@
 
 package org.spockframework.mock;
 
-import org.spockframework.mock.IMockInvocation;
 import org.spockframework.util.Beta;
 
 /**

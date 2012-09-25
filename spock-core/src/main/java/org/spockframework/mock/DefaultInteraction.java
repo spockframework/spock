@@ -15,8 +15,6 @@ package org.spockframework.mock;
 
 import java.util.List;
 
-import org.spockframework.mock.IMockInteraction;
-import org.spockframework.mock.IMockInvocation;
 import org.spockframework.util.UnreachableCodeError;
 
 abstract class DefaultInteraction implements IMockInteraction {

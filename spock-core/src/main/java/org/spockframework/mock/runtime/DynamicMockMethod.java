@@ -14,10 +14,10 @@
 
 package org.spockframework.mock.runtime;
 
-import org.spockframework.mock.IMockMethod;
-
 import java.util.Collections;
 import java.util.List;
+
+import org.spockframework.mock.IMockMethod;
 
 public class DynamicMockMethod implements IMockMethod {
   private final String methodName;

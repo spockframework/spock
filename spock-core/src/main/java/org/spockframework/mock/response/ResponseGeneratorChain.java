@@ -16,12 +16,12 @@
 
 package org.spockframework.mock.response;
 
+import java.util.LinkedList;
+
 import org.spockframework.mock.IChainableResponseGenerator;
 import org.spockframework.mock.IMockInvocation;
 import org.spockframework.mock.IResponseGenerator;
 import org.spockframework.util.InternalSpockError;
-
-import java.util.LinkedList;
 
 public class ResponseGeneratorChain implements IResponseGenerator {
   private IChainableResponseGenerator current;

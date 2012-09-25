@@ -16,15 +16,15 @@
 
 package org.spockframework.mock.runtime;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.spockframework.mock.IInteractionAware;
 import org.spockframework.mock.IMockInteraction;
 import org.spockframework.mock.IMockInvocation;
 import org.spockframework.mock.TooManyInvocationsError;
 import org.spockframework.mock.IInvocationConstraint;
 import org.spockframework.mock.IResponseGenerator;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * An anticipated interaction between the SUT and one or more mock objects.

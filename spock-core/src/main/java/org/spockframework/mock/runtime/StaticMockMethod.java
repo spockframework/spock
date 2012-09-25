@@ -14,12 +14,12 @@
 
 package org.spockframework.mock.runtime;
 
-import org.spockframework.mock.IMockMethod;
-
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.List;
+
+import org.spockframework.mock.IMockMethod;
 
 public class StaticMockMethod implements IMockMethod {
   private final Method method;

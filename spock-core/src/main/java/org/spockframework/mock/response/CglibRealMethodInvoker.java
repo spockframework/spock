@@ -15,6 +15,7 @@
 package org.spockframework.mock.response;
 
 import net.sf.cglib.proxy.MethodProxy;
+
 import org.spockframework.mock.IMockInvocation;
 import org.spockframework.mock.IResponseGenerator;
 import org.spockframework.util.ExceptionUtil;

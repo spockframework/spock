@@ -32,12 +32,12 @@ import spock.lang.Specification;
  * Returns zero, an "empty" object, or a "dummy" object, depending on the method's declared return type.
  */
 @Beta
-public class EmptyOrDummyResponse implements IMockResponse {
+public class EmptyOrDummyResponse implements IDefaultResponse {
   public static final EmptyOrDummyResponse INSTANCE = new EmptyOrDummyResponse();
 
   private EmptyOrDummyResponse() {}
 
-  public Object generate(IMockInvocation invocation) {
+  public Object respond(IMockInvocation invocation) {
     IMockInteraction interaction = EqualsHashCodeToStringInteractions.INSTANCE.match(invocation);
     if (interaction != null) return interaction.accept(invocation);
 

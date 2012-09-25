@@ -19,7 +19,7 @@ import org.spockframework.util.Beta;
 @Beta
 public class MockDetector {
   public static boolean isMock(Object object) {
-    return object instanceof IMockObjectProvider;
+    return object instanceof ISpockMockObject;
   }
 
   public static IMockObject asMock(Object object) {
@@ -27,7 +27,7 @@ public class MockDetector {
       throw new IllegalArgumentException("Not a mock object: " + object.toString());
     }
 
-    IMockObjectProvider provider = (IMockObjectProvider) object;
-    return provider.$spock_get();
+    ISpockMockObject handle = (ISpockMockObject) object;
+    return handle.$spock_get();
   }
 }

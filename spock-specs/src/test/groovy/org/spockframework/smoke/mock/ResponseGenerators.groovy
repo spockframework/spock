@@ -20,8 +20,8 @@ import java.util.concurrent.Callable
 
 import spock.lang.*
 
-class ResultGenerators extends Specification {
-  def "return simple result"() {
+class ResponseGenerators extends Specification {
+  def "return simple response"() {
     List list = Mock()
 
     when:
@@ -34,7 +34,7 @@ class ResultGenerators extends Specification {
     x1 == 42
   }
 
-  def "return calculated result"() {
+  def "return code response"() {
     List list = Mock()
 
     when:
@@ -54,11 +54,11 @@ class ResultGenerators extends Specification {
     def x0 = list.get(0)
 
     then:
-    _ * list.get(0) >> (Closure){ if(true) 42; else 0 }
+    _ * list.get(0) >> (Closure) { if(true) 42; else 0 }
     x0 instanceof Closure
   }
 
-  def "return iterable result"() {
+  def "return iterable response"() {
     List list = Mock()
 
     when:
@@ -107,7 +107,7 @@ class ResultGenerators extends Specification {
   }
 
   @Issue("http://issues.spockframework.org/detail?id=83")
-  def "auto-coercion for computed results"() {
+  def "auto-coercion for code responses"() {
     def calculator = Mock(Calculator)
     calculator.calculate() >> { 1 }
 
@@ -174,7 +174,7 @@ class ResultGenerators extends Specification {
   }
 
   @Issue("http://issues.spockframework.org/detail?id=166")
-  def "exceptions thrown from code result generators aren't wrapped"() {
+  def "exceptions thrown from code response generators aren't wrapped"() {
     def callable = Mock(Callable)
     callable.call() >> { throw exception }
 

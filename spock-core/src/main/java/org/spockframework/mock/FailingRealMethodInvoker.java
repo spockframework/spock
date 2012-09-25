@@ -14,6 +14,14 @@
 
 package org.spockframework.mock;
 
-public interface IMockObjectProvider {
-  IMockObject $spock_get();
+public class FailingRealMethodInvoker implements IResponseGenerator {
+  private final String message;
+
+  public FailingRealMethodInvoker(String message) {
+    this.message = message;
+  }
+
+  public Object respond(IMockInvocation invocation) {
+    throw new CannotInvokeRealMethodException(message);
+  }
 }

@@ -19,8 +19,6 @@ package org.spockframework.mock;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.spockframework.util.Nullable;
-
 /**
  * An anticipated interaction between the SUT and one or more mock objects.
  *
@@ -33,20 +31,20 @@ public class MockInteraction implements IMockInteraction {
   private final int minCount;
   private final int maxCount;
   private final List<IInvocationConstraint> constraints;
-  private final IResultGenerator resultGenerator;
+  private final IResponseGenerator responseGenerator;
 
   private final List<IMockInvocation> acceptedInvocations = new ArrayList<IMockInvocation>();
 
   public MockInteraction(int line, int column, String text, int minCount,
       int maxCount, List<IInvocationConstraint> constraints,
-      @Nullable IResultGenerator resultGenerator) {
+      IResponseGenerator responseGenerator) {
     this.line = line;
     this.column = column;
     this.text = text;
     this.minCount = minCount;
     this.maxCount = maxCount;
     this.constraints = constraints;
-    this.resultGenerator = resultGenerator;
+    this.responseGenerator = responseGenerator;
 
     for (IInvocationConstraint constraint : constraints) {
       if (constraint instanceof IInteractionAware) {
@@ -68,7 +66,7 @@ public class MockInteraction implements IMockInteraction {
       throw new TooManyInvocationsError(this, acceptedInvocations);
     }
 
-    return resultGenerator == null ? null : resultGenerator.generate(invocation);
+    return responseGenerator == null ? null : responseGenerator.respond(invocation);
   }
 
   public List<IMockInvocation> getAcceptedInvocations() {
@@ -93,10 +91,6 @@ public class MockInteraction implements IMockInteraction {
 
   public boolean isExhausted() {
     return acceptedInvocations.size() >= maxCount;
-  }
-
-  public boolean hasResults() {
-    return resultGenerator != null;
   }
 
   public boolean isRequired() {

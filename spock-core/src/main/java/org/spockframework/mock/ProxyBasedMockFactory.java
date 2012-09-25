@@ -63,7 +63,7 @@ public class ProxyBasedMockFactory {
     List<Class<?>> interfaces = new ArrayList<Class<?>>();
     interfaces.add(mockType);
     interfaces.addAll(additionalInterfaces);
-    interfaces.add(IMockObjectProvider.class);
+    interfaces.add(ISpockMockObject.class);
     return Proxy.newProxyInstance(
         classLoader,
         interfaces.toArray(new Class<?>[interfaces.size()]),
@@ -80,7 +80,7 @@ public class ProxyBasedMockFactory {
       enhancer.setSuperclass(type);
       List<Class<?>> interfaces = new ArrayList<Class<?>>();
       interfaces.addAll(additionalInterfaces);
-      interfaces.add(IMockObjectProvider.class);
+      interfaces.add(ISpockMockObject.class);
       enhancer.setInterfaces(interfaces.toArray(new Class<?>[interfaces.size()]));
       enhancer.setCallbackFilter(BridgeMethodAwareCallbackFilter.INSTANCE);
       MethodInterceptor cglibInterceptor = new CglibMockInterceptorAdapter(interceptor);

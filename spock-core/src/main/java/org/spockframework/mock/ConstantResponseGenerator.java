@@ -16,13 +16,20 @@
 
 package org.spockframework.mock;
 
+import org.spockframework.runtime.GroovyRuntimeUtil;
+
 /**
- * Generates return values for invocations on mock objects.
  *
  * @author Peter Niederwieser
  */
-// TODO: could extend IMockInvocationResponder
-public interface IResultGenerator {
-  boolean isAtEndOfCycle();
-  Object generate(IMockInvocation invocation);
+public class ConstantResponseGenerator extends SingleResponseGenerator {
+  private final Object constant;
+
+  public ConstantResponseGenerator(Object constant) {
+    this.constant = constant;
+  }
+
+  public Object doRespond(IMockInvocation invocation) {
+    return GroovyRuntimeUtil.coerce(constant, invocation.getMethod().getReturnType());
+  }
 }

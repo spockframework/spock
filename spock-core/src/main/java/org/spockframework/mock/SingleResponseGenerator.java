@@ -16,17 +16,17 @@
 
 package org.spockframework.mock;
 
-public abstract class SingleResultGenerator implements IResultGenerator {
+public abstract class SingleResponseGenerator implements IChainableResponseGenerator {
   private boolean endOfCycle = false;
 
   public boolean isAtEndOfCycle() {
     return endOfCycle;
   }
 
-  public final Object generate(IMockInvocation invocation) {
+  public final Object respond(IMockInvocation invocation) {
     endOfCycle = true;
-    return generateSingle(invocation);
+    return doRespond(invocation);
   }
   
-  public abstract Object generateSingle(IMockInvocation invocation);
+  public abstract Object doRespond(IMockInvocation invocation);
 }

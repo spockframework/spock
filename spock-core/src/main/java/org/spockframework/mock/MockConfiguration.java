@@ -34,7 +34,7 @@ public class MockConfiguration {
   private final MockNature nature;
   private final MockImplementation implementation;
   private final List<Object> constructorArgs;
-  private final IMockResponse defaultResponse;
+  private final IDefaultResponse defaultResponse;
   private final boolean global;
   private final boolean verified;
   private final boolean useObjenesis;
@@ -47,7 +47,7 @@ public class MockConfiguration {
     this.nature = getOption(options, "nature", MockNature.class, nature);
     this.implementation = getOption(options, "implementation", MockImplementation.class, implementation);
     this.constructorArgs = getOption(options, "constructorArgs", List.class, null);
-    this.defaultResponse = getOption(options, "defaultResponse", IMockResponse.class, this.nature.getResponder());
+    this.defaultResponse = getOption(options, "defaultResponse", IDefaultResponse.class, this.nature.getDefaultResponse());
     this.global = getOption(options, "global", Boolean.class, false);
     this.verified = getOption(options, "verified", Boolean.class, this.nature.isVerified());
     this.useObjenesis = getOption(options, "useObjenesis", Boolean.class, this.nature.isUseObjenesis());
@@ -91,9 +91,9 @@ public class MockConfiguration {
   }
 
   /**
-   * Returns the constructor arguments to be used during construction of the mock object.
+   * Returns the constructor arguments to be used when creating the mock object.
    *
-   * @return the constructor arguments to be used during construction of the mock object
+   * @return the constructor arguments to be used when creating the mock object
    */
   @Nullable
   public List<Object> getConstructorArgs() {
@@ -101,11 +101,11 @@ public class MockConfiguration {
   }
 
   /**
-   * Returns the default response for method calls on the mock object.
+   * Returns the default response strategy for the mock object.
    *
-   * @return the default response for method calls on the mock object
+   * @return the default response strategy for the mock object
    */
-  public IMockResponse getDefaultResponse() {
+  public IDefaultResponse getDefaultResponse() {
     return defaultResponse;
   }
 

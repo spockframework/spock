@@ -17,12 +17,12 @@ package org.spockframework.mock;
 import org.spockframework.util.Beta;
 
 @Beta
-public class CallRealMethodResponse implements IMockResponse {
+public class CallRealMethodResponse implements IDefaultResponse {
   public static final CallRealMethodResponse INSTANCE = new CallRealMethodResponse();
 
   private CallRealMethodResponse() {}
 
-  public Object generate(IMockInvocation invocation) {
+  public Object respond(IMockInvocation invocation) {
     return invocation.callRealMethod();
   }
 }

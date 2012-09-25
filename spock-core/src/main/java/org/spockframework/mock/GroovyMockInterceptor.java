@@ -36,11 +36,11 @@ public class GroovyMockInterceptor implements IProxyBasedMockInterceptor {
     this.mockMetaClass = mockMetaClass;
   }
 
-  public Object intercept(Object target, Method method, Object[] arguments, IMockResponse realMethodInvoker) {
+  public Object intercept(Object target, Method method, Object[] arguments, IResponseGenerator realMethodInvoker) {
     IMockObject mockObject = new MockObject(mockConfiguration.getName(), mockConfiguration.getType(), target,
         mockConfiguration.isVerified(), mockConfiguration.isGlobal(), mockConfiguration.getDefaultResponse(), specification);
 
-    if (method.getDeclaringClass() == IMockObjectProvider.class) {
+    if (method.getDeclaringClass() == ISpockMockObject.class) {
       return mockObject;
     }
 

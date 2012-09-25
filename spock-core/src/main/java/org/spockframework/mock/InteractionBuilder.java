@@ -39,7 +39,7 @@ public class InteractionBuilder {
   private List<IInvocationConstraint> invConstraints = new ArrayList<IInvocationConstraint>();
   private List<Object> argNames;
   private List<IArgumentConstraint> argConstraints;
-  private ResultGeneratorChain resultGenerators = new ResultGeneratorChain();
+  private ResponseGeneratorChain responseGeneratorChain = new ResponseGeneratorChain();
 
   public InteractionBuilder(int line, int column, String text) {
     this.line = line;
@@ -157,29 +157,29 @@ public class InteractionBuilder {
     return this;
   }
 
-  public static final String ADD_CONSTANT_RESULT = "setConstantResult";
-  public InteractionBuilder setConstantResult(Object constant) {
-    resultGenerators.addFirst(constant instanceof Wildcard ?
-        new WildcardResultGenerator() : new ConstantResultGenerator(constant));
+  public static final String ADD_CONSTANT_RESPONSE = "addConstantResponse";
+  public InteractionBuilder addConstantResponse(Object constant) {
+    responseGeneratorChain.addFirst(constant instanceof Wildcard ?
+        new WildcardResponseGenerator() : new ConstantResponseGenerator(constant));
     return this;
   }
 
-  public static final String ADD_CODE_RESULT = "setCodeResult";
-  public InteractionBuilder setCodeResult(Closure closure) {
-    resultGenerators.addFirst(new CodeResultGenerator(closure));
+  public static final String ADD_CODE_RESPONSE = "addCodeResponse";
+  public InteractionBuilder addCodeResponse(Closure closure) {
+    responseGeneratorChain.addFirst(new CodeResponseGenerator(closure));
     return this;
   }
 
-  public static final String ADD_ITERABLE_RESULT = "setIterableResult";
-  public InteractionBuilder setIterableResult(Object iterable) {
-    resultGenerators.addFirst(new IterableResultGenerator(iterable));
+  public static final String ADD_ITERABLE_RESPONSE = "addIterableResponse";
+  public InteractionBuilder addIterableResponse(Object iterable) {
+    responseGeneratorChain.addFirst(new IterableResponseGenerator(iterable));
     return this;
   }
 
   public static final String BUILD = "build";
   public IMockInteraction build() {
-    return new MockInteraction(line, column, text, minCount, maxCount,
-        invConstraints, resultGenerators.isEmpty() ? null : resultGenerators);
+    return new MockInteraction(line, column, text, minCount, maxCount, invConstraints,
+        responseGeneratorChain.isEmpty() ? new DefaultResponseGenerator() : responseGeneratorChain);
   }
 
   private static int convertCount(Object count, boolean inclusive) {

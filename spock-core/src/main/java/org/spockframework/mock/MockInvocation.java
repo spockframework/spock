@@ -30,10 +30,10 @@ public class MockInvocation implements IMockInvocation {
   private final IMockObject mockObject;
   private final IMockMethod method;
   private final List<Object> arguments;
-  private final IMockResponse realMethodInvoker;
+  private final IResponseGenerator realMethodInvoker;
 
   public MockInvocation(IMockObject mockObject, IMockMethod method, List<Object> arguments,
-      IMockResponse realMethodInvoker) {
+      IResponseGenerator realMethodInvoker) {
     this.mockObject = mockObject;
     this.method = method;
     this.arguments = arguments;
@@ -53,11 +53,11 @@ public class MockInvocation implements IMockInvocation {
   }
 
   public Object callRealMethod() {
-    return realMethodInvoker.generate(this);
+    return realMethodInvoker.respond(this);
   }
 
   public Object callRealMethodWithArgs(final Object... arguments) {
-      return realMethodInvoker.generate(new DelegatingMockInvocation(this) {
+      return realMethodInvoker.respond(new DelegatingMockInvocation(this) {
         @Override
         public List<Object> getArguments() {
           return Arrays.asList(arguments);

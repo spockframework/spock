@@ -20,40 +20,40 @@ import org.spockframework.util.ReflectionUtil
 
 import spock.lang.Specification
 
-class IterableResultGeneratorSpec extends Specification {
+class IterableResponseGeneratorSpec extends Specification {
   IMockInvocation inv = Mock()
 
-  def "generate results from non-empty list" () {
-    def gen = new IterableResultGenerator([1,2,3])
+  def "iterate over non-empty list" () {
+    def gen = new IterableResponseGenerator([1,2,3])
     def method = ReflectionUtil.getMethodByName(Object, "hashCode")
     inv.getMethod() >> new StaticMockMethod(method)
 
     expect:
-    gen.generate(inv) == 1
-    gen.generate(inv) == 2
-    gen.generate(inv) == 3
-    gen.generate(inv) == 3
+    gen.respond(inv) == 1
+    gen.respond(inv) == 2
+    gen.respond(inv) == 3
+    gen.respond(inv) == 3
   }
 
-  def "generate results from empty list"() {
-    def gen = new IterableResultGenerator([])
+  def "iterate over empty list"() {
+    def gen = new IterableResponseGenerator([])
     def method = ReflectionUtil.getMethodByName(Object, "hashCode")
     inv.getMethod() >> new StaticMockMethod(method)
 
     expect:
-    gen.generate(inv) == null
-    gen.generate(inv) == null
+    gen.respond(inv) == null
+    gen.respond(inv) == null
   }
 
-  def "generate results from string"() {
-    def gen = new IterableResultGenerator("abc")
+  def "iterate over string"() {
+    def gen = new IterableResponseGenerator("abc")
     def method = ReflectionUtil.getMethodByName(Object, "toString")
     inv.getMethod() >> new StaticMockMethod(method)
 
     expect:
-    gen.generate(inv) == "a"
-    gen.generate(inv) == "b"
-    gen.generate(inv) == "c"
-    gen.generate(inv) == "c"
+    gen.respond(inv) == "a"
+    gen.respond(inv) == "b"
+    gen.respond(inv) == "c"
+    gen.respond(inv) == "c"
   }
 }

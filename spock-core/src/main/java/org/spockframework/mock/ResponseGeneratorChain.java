@@ -20,11 +20,11 @@ import org.spockframework.util.InternalSpockError;
 
 import java.util.LinkedList;
 
-public class ResultGeneratorChain implements IResultGenerator {
-  private IResultGenerator current;
-  private final LinkedList<IResultGenerator> remaining = new LinkedList<IResultGenerator>();
+public class ResponseGeneratorChain implements IResponseGenerator {
+  private IChainableResponseGenerator current;
+  private final LinkedList<IChainableResponseGenerator> remaining = new LinkedList<IChainableResponseGenerator>();
   
-  public void addFirst(IResultGenerator generator) {
+  public void addFirst(IChainableResponseGenerator generator) {
     if (current != null) remaining.addFirst(current);
     current = generator;
   }
@@ -33,16 +33,12 @@ public class ResultGeneratorChain implements IResultGenerator {
     return current == null;
   }
 
-  public boolean isAtEndOfCycle() {
-    throw new InternalSpockError("isAtEndOfCycle() isn't implemented for ResultGeneratorChain");
-  }
-
-  public Object generate(IMockInvocation invocation) {
+  public Object respond(IMockInvocation invocation) {
     if (isEmpty()) throw new InternalSpockError("ResultGeneratorChain should never be empty");
     
     while (current.isAtEndOfCycle() && !remaining.isEmpty()) {
       current = remaining.removeFirst();
     }
-    return current.generate(invocation);
+    return current.respond(invocation);
   }
 }

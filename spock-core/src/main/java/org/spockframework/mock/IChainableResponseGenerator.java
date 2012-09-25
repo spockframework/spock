@@ -17,12 +17,10 @@
 package org.spockframework.mock;
 
 /**
- * Returns the default value for the invoked method's return type.
- * 
+ * Generates return values for invocations on mock objects.
+ *
  * @author Peter Niederwieser
  */
-public class WildcardResultGenerator extends SingleResultGenerator {
-  public Object generateSingle(IMockInvocation invocation) {
-    return invocation.getMockObject().getResponder().generate(invocation);
-  }
+public interface IChainableResponseGenerator extends IResponseGenerator {
+  boolean isAtEndOfCycle();
 }

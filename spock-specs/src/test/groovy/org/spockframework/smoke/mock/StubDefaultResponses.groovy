@@ -20,7 +20,7 @@ import org.spockframework.mock.MockDetector
 
 import spock.lang.Specification
 
-class StubDefaultReturnValues extends Specification {
+class StubDefaultResponses extends Specification {
   def "returns false for boolean"() {
     def stub = Stub(Stubbable)
 

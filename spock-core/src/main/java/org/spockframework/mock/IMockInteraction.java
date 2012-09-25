@@ -45,7 +45,5 @@ public interface IMockInteraction {
 
   boolean isExhausted();
 
-  boolean hasResults();
-
   boolean isRequired();
 }

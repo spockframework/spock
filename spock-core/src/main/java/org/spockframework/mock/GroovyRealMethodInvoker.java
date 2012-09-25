@@ -16,14 +16,14 @@ package org.spockframework.mock;
 
 import groovy.lang.MetaClass;
 
-public class GroovyRealMethodInvoker implements IMockResponse {
+public class GroovyRealMethodInvoker implements IResponseGenerator {
   private final MetaClass metaClass;
 
   public GroovyRealMethodInvoker(MetaClass metaClass) {
     this.metaClass = metaClass;
   }
 
-  public Object generate(IMockInvocation invocation) {
+  public Object respond(IMockInvocation invocation) {
     Object instance = invocation.getMockObject().getInstance();
     Object[] arguments = invocation.getArguments().toArray();
     if (invocation.getMethod().isStatic()) {

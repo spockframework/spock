@@ -26,11 +26,11 @@ import org.spockframework.runtime.GroovyRuntimeUtil;
  *
  * @author Peter Niederwieser
  */
-public class IterableResultGenerator implements IResultGenerator {
+public class IterableResponseGenerator implements IChainableResponseGenerator {
   private final Iterator<?> iterator;
   private Object nextValue;
 
-  public IterableResultGenerator(Object iterable) {
+  public IterableResponseGenerator(Object iterable) {
     iterator = GroovyRuntimeUtil.asIterator(iterable);
   }
 
@@ -38,7 +38,7 @@ public class IterableResultGenerator implements IResultGenerator {
     return !iterator.hasNext();
   }
 
-  public Object generate(IMockInvocation invocation) {
+  public Object respond(IMockInvocation invocation) {
     if (iterator.hasNext()) nextValue = iterator.next();
     return GroovyRuntimeUtil.coerce(nextValue, invocation.getMethod().getReturnType());
   }

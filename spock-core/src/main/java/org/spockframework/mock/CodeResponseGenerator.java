@@ -16,25 +16,22 @@
 
 package org.spockframework.mock;
 
-import groovy.lang.GroovyObject;
-import groovy.lang.MetaClass;
 import org.spockframework.runtime.GroovyRuntimeUtil;
 
 import groovy.lang.Closure;
-import org.spockframework.util.ObjectUtil;
 
 /**
  *
  * @author Peter Niederwieser
  */
-public class CodeResultGenerator extends SingleResultGenerator {
+public class CodeResponseGenerator extends SingleResponseGenerator {
   private final Closure code;
 
-  public CodeResultGenerator(Closure code) {
+  public CodeResponseGenerator(Closure code) {
     this.code = code;
   }
 
-  public Object generateSingle(IMockInvocation invocation) {
+  public Object doRespond(IMockInvocation invocation) {
     Object result = invokeClosure(invocation);
     Class<?> returnType = invocation.getMethod().getReturnType();
     

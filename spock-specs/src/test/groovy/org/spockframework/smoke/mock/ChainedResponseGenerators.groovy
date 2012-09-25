@@ -20,16 +20,16 @@ import spock.lang.Specification
 import spock.lang.Issue
 
 @Issue("http://issues.spockframework.org/detail?id=235")
-class ChainedResultGenerators extends Specification {
+class ChainedResponseGenerators extends Specification {
   Queue queue = Mock()
   
-  def "implicit default result"() {
+  def "implicit default response"() {
     expect:
     queue.poll() == null
     queue.poll() == null
   }
   
-  def "explicit default result"() {
+  def "explicit default response"() {
     queue.poll() >> _ >> _
 
     expect:
@@ -38,7 +38,7 @@ class ChainedResultGenerators extends Specification {
     queue.poll() == null
   }
   
-  def "chaining constant results"() {
+  def "chaining constant responses"() {
     queue.poll() >> 1 >> 2 >> 3
 
     expect:
@@ -48,7 +48,7 @@ class ChainedResultGenerators extends Specification {
     queue.poll() == 3
   }
   
-  def "chaining iterable results"() {
+  def "chaining iterable responses"() {
     queue.poll() >>> [1, 2] >>> 3 >>> "45"
 
     expect:
@@ -60,7 +60,7 @@ class ChainedResultGenerators extends Specification {
     queue.poll() == "5"
   }
   
-  def "chaining code results"() {
+  def "chaining code responses"() {
     def count = 0
     queue.poll() >> { throw new UnsupportedOperationException() } >> { throw new IllegalArgumentException() } >> { count++ }
 
@@ -81,7 +81,7 @@ class ChainedResultGenerators extends Specification {
     queue.poll() == 1
   }
 
-  def "chaining different results"() {
+  def "chaining different responses"() {
     queue.poll() >> 1 >> _ >> { throw new UnsupportedOperationException() } >> [2, 3] >>> [4, 5]
 
     expect:

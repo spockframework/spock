@@ -59,10 +59,6 @@ public abstract class MockInteractionDecorator implements IMockInteraction {
     return decorated.isExhausted();
   }
 
-  public boolean hasResults() {
-    return decorated.hasResults();
-  }
-
   public boolean isRequired() {
     return decorated.isRequired();
   }

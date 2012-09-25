@@ -18,12 +18,12 @@ import org.spockframework.util.ReflectionUtil;
 import org.spockframework.util.Beta;
 
 @Beta
-public class ZeroOrNullResponse implements IMockResponse {
+public class ZeroOrNullResponse implements IDefaultResponse {
   public static final ZeroOrNullResponse INSTANCE = new ZeroOrNullResponse();
 
   private ZeroOrNullResponse() {}
 
-  public Object generate(IMockInvocation invocation) {
+  public Object respond(IMockInvocation invocation) {
     IMockInteraction interaction = EqualsHashCodeToStringInteractions.INSTANCE.match(invocation);
     if (interaction != null) return interaction.accept(invocation);
 

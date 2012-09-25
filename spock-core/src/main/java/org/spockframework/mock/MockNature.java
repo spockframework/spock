@@ -46,12 +46,12 @@ public enum MockNature {
   private final boolean verified;
   private final boolean useObjenesis;
 
-  private final IMockResponse responder;
+  private final IDefaultResponse defaultResponse;
 
-  MockNature(boolean verified, boolean useObjenesis, IMockResponse responder) {
+  MockNature(boolean verified, boolean useObjenesis, IDefaultResponse defaultResponse) {
     this.verified = verified;
     this.useObjenesis = useObjenesis;
-    this.responder = responder;
+    this.defaultResponse = defaultResponse;
   }
 
   boolean isVerified() {
@@ -62,7 +62,7 @@ public enum MockNature {
     return useObjenesis;
   }
 
-  IMockResponse getResponder() {
-    return responder;
+  IDefaultResponse getDefaultResponse() {
+    return defaultResponse;
   }
 }

@@ -56,9 +56,9 @@ class MockConfigurationSpec extends Specification {
   }
 
   def "set options via map"() {
-    def responder = [:] as IMockResponse
+    def defaultResponse = [:] as IDefaultResponse
     def map = [name: "foo", type: List, nature: MockNature.SPY, implementation: MockImplementation.GROOVY,
-      constructorArgs: ["foo", "bar"], responder: responder, global: true, verified: false, useObjenesis: true]
+      constructorArgs: ["foo", "bar"], defaultResponse: defaultResponse, global: true, verified: false, useObjenesis: true]
 
     def options = new MockConfiguration("bar", Map, MockNature.MOCK, MockImplementation.JAVA, map)
 
@@ -69,7 +69,7 @@ class MockConfigurationSpec extends Specification {
       nature == MockNature.SPY
       implementation == MockImplementation.GROOVY
       constructorArgs == ["foo", "bar"]
-      responder == responder
+      defaultResponse == defaultResponse
       global == true
       verified == false
       useObjenesis == true

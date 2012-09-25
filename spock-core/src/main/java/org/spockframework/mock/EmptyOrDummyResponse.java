@@ -38,7 +38,7 @@ public class EmptyOrDummyResponse implements IDefaultResponse {
   private EmptyOrDummyResponse() {}
 
   public Object respond(IMockInvocation invocation) {
-    IMockInteraction interaction = EqualsHashCodeToStringInteractions.INSTANCE.match(invocation);
+    IMockInteraction interaction = DefaultEqualsHashCodeToStringInteractions.INSTANCE.match(invocation);
     if (interaction != null) return interaction.accept(invocation);
 
     Class<?> returnType = invocation.getMethod().getReturnType();

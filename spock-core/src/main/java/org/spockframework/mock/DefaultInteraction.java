@@ -42,10 +42,6 @@ public abstract class DefaultInteraction implements IMockInteraction {
     return false;
   }
 
-  public boolean hasResults() {
-    return true;
-  }
-
   public boolean isRequired() {
     return false;
   }

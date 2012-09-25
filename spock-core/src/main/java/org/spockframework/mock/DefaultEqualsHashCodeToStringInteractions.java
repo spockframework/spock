@@ -19,13 +19,13 @@ import java.util.List;
 
 import org.spockframework.util.UnreachableCodeError;
 
-public class EqualsHashCodeToStringInteractions implements IInteractionScope {
-  public static final EqualsHashCodeToStringInteractions INSTANCE = new EqualsHashCodeToStringInteractions();
+public class DefaultEqualsHashCodeToStringInteractions implements IInteractionScope {
+  public static final DefaultEqualsHashCodeToStringInteractions INSTANCE = new DefaultEqualsHashCodeToStringInteractions();
 
-  private EqualsHashCodeToStringInteractions() {}
+  private DefaultEqualsHashCodeToStringInteractions() {}
 
   private final List<DefaultInteraction> interactions = Arrays.asList(
-      ObjectEqualsInteraction.INSTANCE, ObjectHashCodeInteraction.INSTANCE, ObjectToStringInteraction.INSTANCE);
+      DefaultEqualsInteraction.INSTANCE, DefaultHashCodeInteraction.INSTANCE, DefaultToStringInteraction.INSTANCE);
 
   public void addInteraction(IMockInteraction interaction) {
     throw new UnreachableCodeError("addInteraction");

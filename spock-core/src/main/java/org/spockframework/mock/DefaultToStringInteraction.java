@@ -11,23 +11,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.spockframework.mock;
 
-public class ObjectHashCodeInteraction extends DefaultInteraction {
-  public static final ObjectHashCodeInteraction INSTANCE = new ObjectHashCodeInteraction();
-
-  private ObjectHashCodeInteraction() {}
+public class DefaultToStringInteraction extends DefaultInteraction {
+  public static final DefaultToStringInteraction INSTANCE = new DefaultToStringInteraction();
+  
+  private DefaultToStringInteraction() {}
 
   public String getText() {
-    return "Object.hashCode() interaction";
+    return "Object.toString() interaction";
   }
 
   public boolean matches(IMockInvocation invocation) {
-    return invocation.getMethod().getName().equals("hashCode")
+    return invocation.getMethod().getName().equals("toString")
         && invocation.getMethod().getParameterTypes().isEmpty();
   }
 
   public Object accept(IMockInvocation invocation) {
-    return System.identityHashCode(invocation.getMockObject().getInstance());
+    StringBuilder builder = new StringBuilder();
+    builder.append("Mock for type '");
+    builder.append(invocation.getMockObject().getType().getSimpleName());
+    builder.append("'");
+
+    String name = invocation.getMockObject().getName();
+    if (name != null) {
+      builder.append(" named '");
+      builder.append(name);
+      builder.append("'");
+    }
+
+    return builder.toString();
   }
 }

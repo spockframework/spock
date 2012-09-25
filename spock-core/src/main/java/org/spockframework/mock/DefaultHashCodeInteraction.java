@@ -13,24 +13,21 @@
  */
 package org.spockframework.mock;
 
-public class ObjectEqualsInteraction extends DefaultInteraction {
-  public static final ObjectEqualsInteraction INSTANCE = new ObjectEqualsInteraction();
+public class DefaultHashCodeInteraction extends DefaultInteraction {
+  public static final DefaultHashCodeInteraction INSTANCE = new DefaultHashCodeInteraction();
 
-  private ObjectEqualsInteraction() {}
-  
+  private DefaultHashCodeInteraction() {}
+
   public String getText() {
-    return "Object.equals() interaction";
+    return "Object.hashCode() interaction";
   }
 
   public boolean matches(IMockInvocation invocation) {
-    IMockMethod method = invocation.getMethod();
-
-    return method.getName().equals("equals")
-        && method.getParameterTypes().size() == 1
-        && method.getParameterTypes().get(0) == Object.class;
+    return invocation.getMethod().getName().equals("hashCode")
+        && invocation.getMethod().getParameterTypes().isEmpty();
   }
 
   public Object accept(IMockInvocation invocation) {
-    return invocation.getMockObject().getInstance() == invocation.getArguments().get(0);
+    return System.identityHashCode(invocation.getMockObject().getInstance());
   }
 }

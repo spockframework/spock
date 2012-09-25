@@ -11,36 +11,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.spockframework.mock;
 
-public class ObjectToStringInteraction extends DefaultInteraction {
-  public static final ObjectToStringInteraction INSTANCE = new ObjectToStringInteraction();
-  
-  private ObjectToStringInteraction() {}
+public class DefaultEqualsInteraction extends DefaultInteraction {
+  public static final DefaultEqualsInteraction INSTANCE = new DefaultEqualsInteraction();
 
+  private DefaultEqualsInteraction() {}
+  
   public String getText() {
-    return "Object.toString() interaction";
+    return "Object.equals() interaction";
   }
 
   public boolean matches(IMockInvocation invocation) {
-    return invocation.getMethod().getName().equals("toString")
-        && invocation.getMethod().getParameterTypes().isEmpty();
+    IMockMethod method = invocation.getMethod();
+
+    return method.getName().equals("equals")
+        && method.getParameterTypes().size() == 1
+        && method.getParameterTypes().get(0) == Object.class;
   }
 
   public Object accept(IMockInvocation invocation) {
-    StringBuilder builder = new StringBuilder();
-    builder.append("Mock for type '");
-    builder.append(invocation.getMockObject().getType().getSimpleName());
-    builder.append("'");
-
-    String name = invocation.getMockObject().getName();
-    if (name != null) {
-      builder.append(" named '");
-      builder.append(name);
-      builder.append("'");
-    }
-
-    return builder.toString();
+    return invocation.getMockObject().getInstance() == invocation.getArguments().get(0);
   }
 }

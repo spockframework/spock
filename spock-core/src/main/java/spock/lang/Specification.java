@@ -31,9 +31,6 @@ import org.spockframework.runtime.GroovyRuntimeUtil;
  * 
  * @author Peter Niederwieser
  */
-// NOTE: if method implementations are declared private instead of package private,
-// they are no longer visible to Specs that extend spock.lang.Specification
-// (runtime dispatch fails)
 @RunWith(Sputnik.class)
 @SuppressWarnings("UnusedDeclaration")
 public abstract class Specification extends MockingApi {

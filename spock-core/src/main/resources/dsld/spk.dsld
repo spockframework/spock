@@ -47,13 +47,13 @@ contribute(
     delegatesTo(mockType)
   }
 }
-	
-contribute(
-	enclosingClass(subType("spock.lang.Specification")) &
-	enclosingCallDeclaringType("spock.lang.Specification") &
-	enclosingCall(
-		name("with") &
-		hasArgument(theTypes: type(subType()))) &
-	enclosingClosure()) {
-  delegatesTo(theTypes.iterator().next())
-}
+
+//contribute(
+//	enclosingClass(subType("spock.lang.Specification")) &
+//	enclosingCallDeclaringType("spock.lang.Specification") &
+//	enclosingCall(
+//		name("with") &
+//		hasArgument(theTypes: type(subType()))) &
+//	enclosingClosure()) {
+//  delegatesTo(theTypes.iterator().next())
+//}

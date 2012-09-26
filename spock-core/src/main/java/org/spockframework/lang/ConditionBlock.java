@@ -1,5 +1,7 @@
 package org.spockframework.lang;
 
+import org.spockframework.util.Beta;
+
 import java.lang.annotation.*;
 
 /**
@@ -13,6 +15,7 @@ import java.lang.annotation.*;
  * type of the method invocation referencing the annotated method. If the annotated
  * method is overloaded, the closure arguments of all overloads are considered code blocks.
  */
+@Beta
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ConditionBlock {}

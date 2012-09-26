@@ -39,7 +39,7 @@ import org.codehaus.groovy.ast.expr.*
 contribute(
     enclosingClass(subType("spock.lang.Specification")) & 
     enclosingCallDeclaringType("spock.lang.MockingApi") &
-    bind(theCalls: enclosingCall(name("Mock"))) & 
+    bind(theCalls: enclosingCall(name("Mock") | name("Stub") | name("Spy") | name("GroovyMock") | name("GroovyStub") | name("GroovySpy"))) &
 	enclosingClosure()) {  
   def args = theCalls.iterator().next().arguments.expressions
   def mockType = args.find { it instanceof ClassExpression }

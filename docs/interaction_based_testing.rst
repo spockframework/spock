@@ -458,6 +458,8 @@ So far, we have created mock objects with the ``MockingApi.Mock`` method. Aside 
 this method, the ``MockingApi`` class provides a couple of other factory methods for creating
 more specialized kinds of mock objects.
 
+.. _Stubs:
+
 Stubs
 ~~~~~
 
@@ -478,6 +480,8 @@ Like a mock, a stub allows unexpected invocations. However, the values returned 
  * For non-numerical values, an "empty" or "dummy" object is returned. This could mean an empty String, an empty collection,
    an object constructed from its default constructor, or another stub which returns the same defaults.
    See class ``org.spockframework.mock.EmptyOrDummyResponse`` for the details.
+
+.. _Spies:
 
 Spies
 ~~~~~
@@ -515,6 +519,8 @@ Note that we don't have to pass the ``message`` argument along; this is taken ca
 returns the real invocation's result, but in this example we opted to return our own result instead.
 If we had wanted to pass a different message to the real method, we could have used ``callRealMethodWithArguments("changed message")``.
 
+.. _GroovyMocks:
+
 Groovy Mocks
 ------------
 
@@ -538,6 +544,8 @@ dynamic methods as if they were physically declared methods::
     def subscriber = GroovyMock(Subscriber)
 
     1 * subscriber.someDynamicMethod("hello")
+
+.. _GlobalMocking:
 
 Mocking All Instances Of A Type
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

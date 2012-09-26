@@ -39,24 +39,28 @@ Here is an example::
 Stubs
 -----
 
-Besides mocks, Spock now has explicit support for stubs. Stubs are created with the ``MockingApi.Stub()`` factory method.
-(``MockingApi`` is a new super class of ``spock.lang.Specification``.) Stub interactions specify the stub's behavior
-(like the values returned from its methods) but aren't mandatory. In practical terms, this means that stub interactions
-do not have a cardinality (like ``1 *``). Declaring a collaborator as a stub is an effective way to communicate its
-role to readers of the specification.
+Besides mocks, Spock now has explicit support for stubs::
+
+    def stub = Stub(Person)
+
+A stub is a restricted form of mock object that responds to invocations without ever demanding them.
+Other than not having a cardinality, the syntax for stub interactions is exactly the same as for mock interactions.
+Using a stub over a mock is an effective way to communicate its role to readers of the specification.
+
+Read more in the :ref:`documentation <Stubs>`.
 
 Spies
 -----
 
-Besides mocks, Spock now has support for spies. Spies are created with the ``MockingApi.Spy()`` method. Like mocks, spy interactions
-can specify the spy's behavior (like the values returned from its methods) and are mandatory if they have a cardinality (like ``1 *``).
-Unlike mocks, spies default to delegating all invocations they receive to a real object of the same type. That object
-is constructed as part of creating the spy, which is why the ``Spy()`` factory method accepts a list of constructor arguments::
+Besides mocks, Spock now has support for spies::
 
-    // underlying object is constructed as new Person("Fred", 33)
-    def person = Spy(Person, constructorArgs: ["Fred", 33])
+    def spy = Spy(Person, constructorArgs: ["Fred"])
 
-Spies can only be created for class types, but not for interface types.
+A spy sits atop a real object, in this example an instance of class ``Person``. All invocations on the spy
+that don't match an interaction are delegated to that object. This allows to listen in on and selectively
+change the behavior of the real object. Furthermore, spies can be used as partial mocks.
+
+Read more in the :ref:`documentation <Spies>`.
 
 Specifying interactions at mock creation time
 ---------------------------------------------
@@ -65,53 +69,41 @@ Interactions can now be specified at mock creation time::
 
     def person = Mock(Person) {
         person.sing() >> "tra-la-la
-        3 * person.eat() // per day
+        3 * person.eat()
     }
-
-This feature is supported for all kinds of mock objects, but is especially attractive for stubs.
 
 Groovy mocks
 ------------
 
-Spock now offers special mocking features for spec'ing Groovy code. A Groovy mock is created with one of
-the ``MockingApi.GroovyMock()``, ``MockingApi.GroovyStub()``, or ``MockingApi.GroovySpy()`` factory methods.
-It automatically implements the ``groovy.lang.GroovyObject`` interface, and supports mocking of dynamic methods
-using the same syntax as for declared methods::
+Spock now offers specialized mock objects for spec'ing Groovy code::
 
-    def list = GroovyStub(List)  // every time someone stubs a list, a kitten dies
-    list.collect(_) >> [1, 2, 3] // stub Groovy's List.collect method
+    def mock = GroovyMock(Person)
+    def stub = GroovyStub(Person)
+    def spy = GroovySpy(Person)
 
-The special features of Groovy mocks only take effect when *called* from Groovy code. In other words,
-the code under specification must be written in Groovy. When called from Java code, Groovy mocks behave like regular mock objects.
+A Groovy mock automatically implements ``groovy.lang.GroovyObject``. It allows stubbing and mocking
+of dynamic methods just like for statically declared methods. When a Groovy mock is called from Java
+rather than Groovy code, it behaves like a regular mock.
+
+Read more in the :ref:`documentation <GroovyMocks>`.
 
 Global mocks
 ------------
 
-A Groovy mock can be made *global* by passing a ``global: true`` named
-parameter to one of the aforementioned factory methods. With this option set, constructors and static methods can be mocked. For example::
+A Groovy mock can be made *global*::
 
-    GroovySpy(Person, global: true) // no need to hold on to the mock object here
-    1 * new Person("Fred") // expect constructor to get called once with "Fred" argument
+    GroovySpy(Person, global: true)
 
-    GroovyMock(ServiceFactory, global: true) // no need to hold on to the mock object here
-    ServiceFactory.create() >> new FakeService() // return FakeService from static factory method
+A global mock effectively replaces all instances of its type and makes them amenable to stubbing and mocking.
+Furthermore, it allows mocking of the type's constructors and static methods.
 
-Apart from constructors and static methods, global mocks also intercept all invocations of instance methods on the mocked type.
-Unlike regular mocks, they don't have to be injected into the code under specification. Instead, the code continues to use real objects,
-whose behavior can be observed and controlled via the global mock::
+Read more in the :ref:`documentation <GlobalMocking>`.
 
-    def anyPerson = GroovySpy(Person, global: true) // mock object is only needed in interactions
-    anyPerson.sing() >> "tra-la-la" // stubs sing() method for all instances of Person
-    3 * anyPerson.eat() // hopefully we don't have many persons to feed
+Shortcut for conditions involving the same target object
+--------------------------------------------------------
 
-Global mocks can only be created for class types, but not for interface types. They only work as intended when *called*
-from Groovy code. In other words, the code under specification must be written in Groovy.
-
-Conditions involving the same target object
--------------------------------------------
-
-Similar in nature to Groovy's `Object.with()` method, the ``Specification.with()`` method allows to specify a series
-of conditions for the same target object::
+Similar in nature to Groovy's `Object.with()` method, the ``Specification.with()`` avoids the need to repeat
+the target object in a series of conditions::
 
     def person = new Person(name: "Fred", age: 33)
 
@@ -122,12 +114,13 @@ of conditions for the same target object::
         sex == "male"
     }
 
-Interactions involving the same mock object
--------------------------------------------
+Shortcut for interactions involving the same mock object
+--------------------------------------------------------
 
-The ``with`` method can also be used for specifying a series of interactions with the same mock object::
+The ``with`` method can also be used to set a common target for interactions::
 
     def service = Mock(Service)
+    app.service = service
 
     when:
     app.run()
@@ -138,6 +131,73 @@ The ``with`` method can also be used for specifying a series of interactions wit
         1 * act()
         1 * stop()
     }
+
+Polling conditions
+------------------
+
+``spock.util.concurrent.PollingConditions` joins `AsyncConditions` and `BlockingVariable(s)` as another utility for
+dealing with asynchronous events::
+
+    def person = new Person(name: "Fred", age: 22)
+    def conditions = new PollingConditions(timeout: 10)
+
+    when:
+    Thread.start {
+        sleep(1000)
+        person.age == 42
+        sleep(5000)
+        person.name == "Barney"
+    }
+
+    then:
+    conditions.within(3, SECONDS) {
+        assert person.age == 42
+    }
+
+    conditions.eventually {
+        assert person.name == "Fred"
+    }
+
+Splitting up class Specification
+--------------------------------
+
+Parts of class ``spock.lang.Specification`` were pulled up into two new super classes: ``spock.lang.MockingApi``
+now contains all mocking-related methods, and ``org.spockframework.lang.SpecInternals`` contains internal methods
+which aren't meant to be used directly.
+
+Improved failure messages for notThrown() and noExceptionThrown()
+-----------------------------------------------------------------
+
+Instead of just passing through exceptions, ``Specification.notThrown()`` and ``Specification.noExceptionThrown()``
+now fail with messages like::
+
+    Expected no exception to be thrown, but got 'java.io.FileNotFoundException'
+
+    Caused by: java.io.FileNotFoundException: ...
+
+HamcrestSupport.expect()
+------------------------
+
+Class ``spock.util.matcher.HamcrestSupport`` got an ``expect`` method that makes
+[Hamcrest](http://code.google.com/p/hamcrest/) assertions read better in then-blocks::
+
+    when:
+    def x = computeValue()
+
+    then:
+    expect x, closeTo(42, 0.01)
+
+@Beta
+-----
+
+Recently introduced classes and methods may be annotated with @Beta, as a sign that they may still undergo incompatible
+changes. This gives us a chance to incorporate valuable feedback from our users. (Yes, we need your feedback!) Typically,
+a @Beta annotation is removed within one or two releases.
+
+Fixed issues
+------------
+
+See the `issue tracker <http://issues.spockframework.org/list?can=1&q=label%3AMilestone-0.7>`_ for a list of fixed issues.
 
 0.6
 ~~~
@@ -269,7 +329,7 @@ Gradle build
 
 Spock is now exclusively built with Gradle. Building Spock yourself is as easy as cloning the `GitHub repo <http://github.spockframework.org/spock>`_ and executing ``gradlew build``. No build tool installation is required; the only prerequisite for building Spock is a JDK installation (1.5 or higher).
 
-Fixed Issues
+Fixed issues
 ------------
 
 See the `issue tracker <http://issues.spockframework.org/list?can=1&q=label%3AMilestone-0.6>`_ for a list of fixed issues.

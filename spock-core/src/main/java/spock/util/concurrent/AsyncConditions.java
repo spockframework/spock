@@ -19,6 +19,7 @@ import java.util.concurrent.*;
 import org.spockframework.lang.ConditionBlock;
 import org.spockframework.runtime.SpockTimeoutError;
 import org.spockframework.util.ThreadSafe;
+import org.spockframework.util.TimeUtil;
 
 /**
  * Alternative to class <tt>BlockingVariable(s)</tt> that allows to evaluate conditions
@@ -115,10 +116,33 @@ public class AsyncConditions {
   }
 
   /**
-   * Same as <tt>await(1, TimeUnit.SECONDS)</tt>.
+   * Same as {@code await(1)}.
    */
   public void await() throws InterruptedException, Throwable {
-    await(1, TimeUnit.SECONDS);
+    await(1);
+  }
+
+  /**
+   * Waits until all evaluate blocks have completed or the specified timeout
+   * (in seconds) expires. If one of the evaluate blocks throws an exception, it is rethrown
+   * from this method.
+   *
+   * @param seconds the timeout (in seconds)
+   * @throws InterruptedException if the calling thread is interrupted
+   * @throws Throwable the first exception thrown by an evaluate block
+   */
+  public void await(double seconds) throws InterruptedException, Throwable {
+    latch.await((long) (seconds * 1000), TimeUnit.MILLISECONDS);
+    if (!exceptions.isEmpty())
+      throw exceptions.poll();
+
+    long pendingEvalBlocks = latch.getCount();
+    if (pendingEvalBlocks > 0) {
+      String msg = String.format("Async conditions timed out " +
+          "after %1.2f seconds; %d out of %d evaluate blocks did not complete in time",
+          seconds, pendingEvalBlocks, numEvalBlocks);
+      throw new SpockTimeoutError(seconds, msg);
+    }
   }
 
   /**
@@ -129,18 +153,11 @@ public class AsyncConditions {
    * @throws InterruptedException if the calling thread is interrupted
    *
    * @throws Throwable the first exception thrown by an evaluate block
+   *
+   * @deprecated use {@link #await(double)} instead
    */
-  public void await(int timeout, TimeUnit unit) throws InterruptedException, Throwable {
-    latch.await(timeout, unit);
-    if (!exceptions.isEmpty())
-      throw exceptions.poll();
-    
-    long pendingEvalBlocks = latch.getCount();
-    if (pendingEvalBlocks > 0) {
-      String msg = String.format("Async conditions timed out " +
-          "after %d %s; %d out of %d evaluate blocks did not complete in time",
-          timeout, unit.toString().toLowerCase(), pendingEvalBlocks, numEvalBlocks);
-      throw new SpockTimeoutError(timeout, unit, msg);
-    }
+  @Deprecated
+  public void await(int value, TimeUnit unit) throws InterruptedException, Throwable {
+    await(TimeUtil.toSeconds(value, unit));
   }
 }

@@ -14,8 +14,6 @@
 
 package spock.util.concurrent
 
-import java.util.concurrent.TimeUnit
-
 import org.spockframework.runtime.SpockTimeoutError
 
 import spock.lang.Specification
@@ -26,6 +24,16 @@ class PollingConditionsSpec extends Specification {
 
   volatile int num = 0
   volatile String str = null
+
+  def "defaults"() {
+    expect:
+    with(conditions) {
+      timeout == 1
+      initialDelay == 0
+      delay == 0.1
+      factor == 1
+    }
+  }
 
   def "succeeds if all conditions are eventually satisfied"() {
     when:
@@ -44,8 +52,6 @@ class PollingConditionsSpec extends Specification {
 
   @FailsWith(SpockTimeoutError)
   def "fails if any condition isn't satisfied in time"() {
-    conditions.timeout = 1
-
     when:
     num = 42
 
@@ -60,7 +66,7 @@ class PollingConditionsSpec extends Specification {
   def "can override timeout per invocation"() {
     when:
     Thread.start {
-      Thread.sleep(500)
+      Thread.sleep(250)
       num = 42
     }
 
@@ -71,9 +77,9 @@ class PollingConditionsSpec extends Specification {
   }
 
   def "provides fine-grained control over polling rhythm"() {
-    conditions.setInitialDelay(250, TimeUnit.MILLISECONDS)
-    conditions.setDelay(500, TimeUnit.MILLISECONDS)
-    conditions.setFactor(2)
+    conditions.initialDelay = 0.1
+    conditions.delay = 0.2
+    conditions.factor = 2
 
     def count = 0
     def stats = [System.currentTimeMillis()]

@@ -17,6 +17,7 @@ package spock.util.concurrent
 import java.util.concurrent.TimeUnit
 
 import org.spockframework.util.ThreadSafe
+import org.spockframework.util.TimeUtil
 
 /**
  * Provides an unlimited number of dynamic variables. Reading the value of a
@@ -59,16 +60,16 @@ class BlockingVariables {
    * Same as <tt>BlockingVariables(1, TimeUnit.SECONDS)</tt>.
    */
   BlockingVariables() {
-    this(1, TimeUnit.SECONDS)
+    this(1)
   }
 
   /**
-   * Instantiates a <tt>BlockingVariable</tt> with the specified timeout in seconds.
+   * Instantiates a <tt>BlockingVariable</tt> with the specified timeout (in seconds).
    *
-   * @param timeout timeout (seconds) for reading a variable's value.
+   * @param timeout the timeout (in seconds) for reading a variable's value.
    */
-  BlockingVariables(int timeout) {
-    this(timeout, TimeUnit.SECONDS)
+  BlockingVariables(double timeout) {
+    impl = new BlockingVariablesImpl(timeout)
   }
 
   /**
@@ -76,11 +77,13 @@ class BlockingVariables {
    * timeout.
    *
    * @param timeout timeout for reading a variable's value
-   *
    * @param unit the timeout's time unit
+   *
+   * @deprecated use {@link #BlockingVariables(double)} instead
    */
+  @Deprecated
   BlockingVariables(int timeout, TimeUnit unit) {
-    impl = new BlockingVariablesImpl(timeout, unit)
+    this(TimeUtil.toSeconds(timeout, unit))
   }
 
   /**

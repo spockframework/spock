@@ -106,11 +106,11 @@ class TimeoutExtension extends EmbeddedSpecification {
 
     def e1 = result.failures[0].exception
     e1 instanceof SpockTimeoutError
-    e1.timeoutValue == 250
+    e1.timeout == 0.25
 
     def e2 = result.failures[1].exception
     e2 instanceof SpockTimeoutError
-    e2.timeoutValue == 100
+    e2.timeout == 0.1
   }
 
   @Issue("issues.spockframework.org/detail?id=181")
@@ -131,8 +131,7 @@ class TimeoutExtension extends EmbeddedSpecification {
 
     then:
     SpockTimeoutError e = thrown()
-    e.timeoutValue == 100
-    e.timeoutUnit == MILLISECONDS
+    e.timeout == 0.1
   }
 
   def "repeatedly interrupts timed out method until it returns"() {

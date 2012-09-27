@@ -19,6 +19,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.spockframework.runtime.SpockTimeoutError;
 import org.spockframework.util.ThreadSafe;
+import org.spockframework.util.TimeUtil;
 
 /**
  * A statically typed variable whose get() method will block until some other
@@ -56,38 +57,47 @@ import org.spockframework.util.ThreadSafe;
  */
 @ThreadSafe
 public class BlockingVariable<T> {
-  private final int timeout;
-  private final TimeUnit unit;
+  private final double timeout;
 
   private T value; // access guarded by valueReady
   private final CountDownLatch valueReady = new CountDownLatch(1);
 
   /**
-   * Same as <tt>BlockingVariable(1, TimeUnit.SECONDS)</tt>.
+   * Same as <tt>BlockingVariable(1)</tt>.
    */
   public BlockingVariable() {
-    this(1, TimeUnit.SECONDS);
+    this(1);
   }
 
   /**
    * Instantiates a <tt>BlockingVariable</tt> with the specified timeout in seconds.
    *
-   * @param timeout the timeout (seconds) for calls to <tt>get()</tt>.
+   * @param timeout the timeout (in seconds) for calls to <tt>get()</tt>.
    */
-  public BlockingVariable(int timeout) {
-    this(timeout, TimeUnit.SECONDS);
+  public BlockingVariable(double timeout) {
+    this.timeout = timeout;
   }
 
   /**
    * Instantiates a <tt>BlockingVariable</tt> with the specified timeout.
    *
    * @param timeout the timeout for calls to <tt>get()</tt>.
-   *
    * @param unit the time unit
+   *
+   * @deprecated use {@link #BlockingVariable(double)} instead
    */
+  @Deprecated
   public BlockingVariable(int timeout, TimeUnit unit) {
-    this.timeout = timeout;
-    this.unit = unit;
+    this(TimeUtil.toSeconds(timeout, unit));
+  }
+
+  /**
+   * Returns the timeout (in seconds).
+   *
+   * @return the timeout (in seconds)
+   */
+  public double getTimeout() {
+    return timeout;
   }
 
   /**
@@ -98,9 +108,9 @@ public class BlockingVariable<T> {
    * @throws InterruptedException if the calling thread is interrupted
    */
   public T get() throws InterruptedException {
-    if (!valueReady.await(timeout, unit)) {
-      String msg = String.format("BlockingVariable.get() timed out after %d %s", timeout, unit.toString().toLowerCase());
-      throw new SpockTimeoutError(timeout, unit, msg);
+    if (!valueReady.await((long) (timeout * 1000), TimeUnit.MILLISECONDS)) {
+      String msg = String.format("BlockingVariable.get() timed out after %1.2f seconds", timeout);
+      throw new SpockTimeoutError(timeout, msg);
     }
     return value;
   }

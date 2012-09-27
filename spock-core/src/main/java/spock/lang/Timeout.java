@@ -49,7 +49,7 @@ import org.spockframework.runtime.extension.builtin.TimeoutExtension;
 @ExtensionAnnotation(TimeoutExtension.class)
 public @interface Timeout {
   /**
-   * The duration after which the execution of the annotated feature or fixture
+   * Returns the duration after which the execution of the annotated feature or fixture
    * method times out.
    *
    * @return the duration after which the execution of the annotated feature or
@@ -58,7 +58,7 @@ public @interface Timeout {
   int value();
 
   /**
-   * The duration's time unit
+   * Returns the duration's time unit.
    *
    * @return the duration's time unit
    */

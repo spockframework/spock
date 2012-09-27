@@ -14,29 +14,27 @@
 
 package org.spockframework.runtime;
 
-import java.util.concurrent.TimeUnit;
-
+/**
+ * Indicates that an operation timed out.
+ */
 public class SpockTimeoutError extends SpockAssertionError {
-  private final long timeoutValue;
-  private final TimeUnit timeoutUnit;
+  private final double timeout;
 
-  public SpockTimeoutError(long timeoutValue, TimeUnit timeoutUnit, String message) {
-    super(message);
-    this.timeoutValue = timeoutValue;
-    this.timeoutUnit = timeoutUnit;
+  public SpockTimeoutError(double timeout, String message) {
+    this(timeout, message, null);
   }
 
-  public SpockTimeoutError(long timeoutValue, TimeUnit timeoutUnit, String message, Throwable cause) {
+  public SpockTimeoutError(double timeout, String message, Throwable cause) {
     super(message, cause);
-    this.timeoutValue = timeoutValue;
-    this.timeoutUnit = timeoutUnit;
+    this.timeout = timeout;
   }
 
-  public long getTimeoutValue() {
-    return timeoutValue;
-  }
-
-  public TimeUnit getTimeoutUnit() {
-    return timeoutUnit;
+  /**
+   * Returns the timeout (in seconds).
+   *
+   * @return the timeout (in seconds)
+   */
+  public double getTimeout() {
+    return timeout;
   }
 }

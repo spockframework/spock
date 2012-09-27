@@ -22,6 +22,7 @@ import org.spockframework.runtime.SpockTimeoutError;
 import org.spockframework.runtime.extension.IMethodInterceptor;
 import org.spockframework.runtime.extension.IMethodInvocation;
 
+import org.spockframework.util.TimeUtil;
 import spock.lang.Timeout;
 
 /**
@@ -96,8 +97,9 @@ public class TimeoutInterceptor implements IMethodInterceptor {
       // act accordingly. We gloss over the fact that some other thread might also have tried to
       // interrupt this thread. This shouldn't be a problem in practice, in particular because
       // throwing an InterruptedException wouldn't abort the whole test run anyway.
-      String msg = String.format("Method timed out after %d %s", timeout.value(), timeout.unit().toString().toLowerCase());
-      SpockTimeoutError error = new SpockTimeoutError(timeout.value(), timeout.unit(), msg);
+      double timeoutSeconds = TimeUtil.toSeconds(timeout.value(), timeout.unit());
+      String msg = String.format("Method timed out after %1.2f seconds", timeoutSeconds);
+      SpockTimeoutError error = new SpockTimeoutError(timeoutSeconds, msg);
       error.setStackTrace(stackTrace);
       throw error;
     }

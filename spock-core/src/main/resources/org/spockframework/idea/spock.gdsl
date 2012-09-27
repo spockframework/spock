@@ -16,6 +16,9 @@ package org.spockframework.idea
 
 import com.intellij.psi.PsiVariable
 
+// only tested with 11.1, so play it safe and bail out on earlier version
+if (!supportsVersion("11.1")) return
+
 def ctx = context(ctype: "spock.lang.Specification", scope: closureScope(isArg: true))
 
 // with(foo) { /* delegates to foo */ }

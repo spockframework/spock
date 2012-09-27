@@ -14,8 +14,6 @@
 
 package spock.util.concurrent;
 
-import java.util.concurrent.TimeUnit;
-
 import groovy.lang.Closure;
 
 import org.spockframework.lang.ConditionBlock;
@@ -25,12 +23,12 @@ import org.spockframework.util.Beta;
 
 /**
  * Repeatedly evaluates one or more conditions until they are satisfied or a timeout has elapsed.
- * The timeout and delays between evaluation attempts are configurable.
+ * The timeout and delays between evaluation attempts are configurable. All durations are in seconds.
  *
  * <p>Usage example:</p>
  *
  * <pre>
- * def conditions = new PollingConditions(timeout: 10, initialDelay: 1, factor: 1.25)
+ * def conditions = new PollingConditions(timeout: 10, initialDelay: 1.5, factor: 1.25)
  * def machine = new Machine()
  *
  * when:
@@ -45,63 +43,73 @@ import org.spockframework.util.Beta;
  */
 @Beta
 public class PollingConditions {
-  private long timeout = 5000;
-  private long initialDelay = 0;
-  private long delay = 1000;
+  private double timeout = 1;
+  private double initialDelay = 0;
+  private double delay = 0.1;
   private double factor = 1.0;
 
   /**
-   * Same as {@code setTimeout(seconds, TimeUnit.SECONDS)}.
-   */
-  public void setTimeout(int seconds) {
-    setTimeout(seconds, TimeUnit.SECONDS);
-  }
-
-  /**
-   * Sets the timeout until which the conditions have to be satisfied.
-   * Defaults to five seconds.
-   *
-   * @param value the timeout until which the conditions have to be satisfied
-   * @param unit the value's time unit
-   */
-  public void setTimeout(long value, TimeUnit unit) {
-    timeout = unit.toMillis(value);
-  }
-
-  /**
-   * Same as {@code setInitialDelay(seconds, TimeUnit.SECONDS)}.
-   */
-  public void setInitialDelay(int seconds) {
-    setInitialDelay(seconds, TimeUnit.SECONDS);
-  }
-
-  /**
-   * Sets the initial delay before first evaluating the conditions.
-   * Defaults to zero seconds.
-   *
-   * @param value the initial delay before first evaluating the conditions
-   * @param unit the value's time unit
-   */
-  public void setInitialDelay(long value, TimeUnit unit) {
-    initialDelay = unit.toMillis(value);
-  }
-
-  /**
-   * Same as {@code setDelay(seconds, TimeUnit.SECONDS)}.
-   */
-  public void setDelay(int seconds) {
-    setDelay(seconds, TimeUnit.SECONDS);
-  }
-
-  /**
-   * Sets the delay between successive evaluations of the conditions.
+   * Returns the timeout (in seconds) until which the conditions have to be satisfied.
    * Defaults to one second.
    *
-   * @param value the delay between successive evaluations of the conditions.
-   * @param unit the value's time unit
+   * @return the timeout (in seconds) until which the conditions have to be satisfied
    */
-  public void setDelay(long value, TimeUnit unit) {
-    delay = unit.toMillis(value);
+  public double getTimeout() {
+    return timeout;
+  }
+
+  /**
+   * Sets the timeout (in seconds) until which the conditions have to be satisfied.
+   * Defaults to one second.
+   *
+   * @param seconds the timeout (in seconds) until which the conditions have to be satisfied
+   */
+  public void setTimeout(double seconds) {
+    timeout = seconds;
+  }
+
+  /**
+   * Returns the initial delay (in seconds) before first evaluating the conditions.
+   * Defaults to zero seconds.
+   */
+  public double getInitialDelay() {
+    return initialDelay;
+  }
+
+  /**
+   * Sets the initial delay (in seconds) before first evaluating the conditions.
+   * Defaults to zero seconds.
+   *
+   * @param seconds the initial delay (in seconds) before first evaluating the conditions
+   */
+  public void setInitialDelay(double seconds) {
+    initialDelay = seconds;
+  }
+
+  /**
+   * Returns the delay (in seconds) between successive evaluations of the conditions.
+   * Defaults to 0.1 seconds.
+   */
+  public double getDelay() {
+    return delay;
+  }
+
+  /**
+   * Sets the delay (in seconds) between successive evaluations of the conditions.
+   * Defaults to 0.1 seconds.
+   *
+   * @param seconds the delay (in seconds) between successive evaluations of the conditions.
+   */
+  public void setDelay(double seconds) {
+    this.delay = seconds;
+  }
+
+  /**
+   * Returns the factor by which the delay grows (or shrinks) after each evaluation of the conditions.
+   * Defaults to 1.
+   */
+  public double getFactor() {
+    return factor;
   }
 
   /**
@@ -123,32 +131,24 @@ public class PollingConditions {
    */
   @ConditionBlock
   public void eventually(Closure<?> conditions) throws InterruptedException {
-    within(timeout, TimeUnit.MILLISECONDS, conditions);
+    within(timeout, conditions);
   }
 
   /**
-   * Same as {@code within(seconds, TimeUnit.SECONDS, conditions)}.
-   */
-  @ConditionBlock
-  public void within(int seconds, Closure<?> conditions) throws InterruptedException {
-    within(seconds, TimeUnit.SECONDS, conditions);
-  }
-
-  /**
-   * Repeatedly evaluates the specified conditions until they are satisfied or the specified timeout has elapsed.
+   * Repeatedly evaluates the specified conditions until they are satisfied or the specified timeout (in seconds) has elapsed.
    *
    * @param conditions the conditions to evaluate
    *
    * @throws InterruptedException if evaluation is interrupted
    */
   @ConditionBlock
-  public void within(long value, TimeUnit unit, Closure<?> conditions) throws InterruptedException  {
-    long timeout = unit.toMillis(value);
+  public void within(double seconds, Closure<?> conditions) throws InterruptedException  {
+    long timeoutMillis = toMillis(seconds);
     long start = System.currentTimeMillis();
     long lastAttempt = 0;
-    Thread.sleep(initialDelay);
+    Thread.sleep(toMillis(initialDelay));
 
-    long currDelay = delay;
+    long currDelay = toMillis(delay);
     int attempts = 0;
 
     while(true) {
@@ -159,11 +159,11 @@ public class PollingConditions {
         return;
       } catch (AssertionError e) {
         long elapsedTime = lastAttempt - start;
-        if (elapsedTime >= timeout) {
-          String msg = String.format("Condition not satisfied after %.2f seconds and %d attempts", elapsedTime / 1000d, attempts);
-          throw new SpockTimeoutError(timeout, TimeUnit.MILLISECONDS, msg);
+        if (elapsedTime >= timeoutMillis) {
+          String msg = String.format("Condition not satisfied after %1.2f seconds and %d attempts", elapsedTime / 1000d, attempts);
+          throw new SpockTimeoutError(seconds, msg);
         }
-        Thread.sleep(Math.min(currDelay, start + timeout - System.currentTimeMillis()));
+        Thread.sleep(Math.min(currDelay, start + timeoutMillis - System.currentTimeMillis()));
         currDelay *= factor;
       }
     }
@@ -178,18 +178,14 @@ public class PollingConditions {
   }
 
   /**
-   * Alias for {@link #within(int, groovy.lang.Closure)}.
+   * Alias for {@link #within(double, groovy.lang.Closure)}.
    */
   @ConditionBlock
-  public void call(int seconds, Closure<?> conditions) throws InterruptedException {
+  public void call(double seconds, Closure<?> conditions) throws InterruptedException {
     within(seconds, conditions);
   }
 
-  /**
-   * Alias for {@link #within(long, java.util.concurrent.TimeUnit, groovy.lang.Closure)}.
-   */
-  @ConditionBlock
-  public void call(long value, TimeUnit unit, Closure<?> conditions) throws InterruptedException {
-    within(value, unit, conditions);
+  private long toMillis(double seconds) {
+    return (long) (seconds * 1000);
   }
 }

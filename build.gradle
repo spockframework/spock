@@ -94,6 +94,7 @@ File script(String name) {
 def configureJavadoc(task) {
   configure(task) {
     include "spock/**"
+    include "org/spockframework/mock/*"
     configure(options) {
       links "http://download.oracle.com/javase/1.5.0/docs/api/"
       links "http://groovy.codehaus.org/gapi"

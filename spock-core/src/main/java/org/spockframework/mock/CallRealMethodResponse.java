@@ -16,6 +16,9 @@ package org.spockframework.mock;
 
 import org.spockframework.util.Beta;
 
+/**
+ * A response strategy that delegates method calls to the real object underlying the mock (if any).
+ */
 @Beta
 public class CallRealMethodResponse implements IDefaultResponse {
   public static final CallRealMethodResponse INSTANCE = new CallRealMethodResponse();

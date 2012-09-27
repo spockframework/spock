@@ -16,4 +16,8 @@
 
 package org.spockframework.mock;
 
+/**
+ * Strategy for responding to unanticipated method calls. Each
+ * mock object can have its own strategy.
+ */
 public interface IDefaultResponse extends IResponseGenerator {}

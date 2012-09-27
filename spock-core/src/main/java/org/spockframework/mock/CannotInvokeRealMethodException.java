@@ -14,6 +14,10 @@
 
 package org.spockframework.mock;
 
+/**
+ * Thrown to indicate that an attempt was made to delegate a method call to
+ * a real object underlying a mock, although no such underlying object exists.
+ */
 public class CannotInvokeRealMethodException extends RuntimeException {
   public CannotInvokeRealMethodException(String message) {
     super(message);

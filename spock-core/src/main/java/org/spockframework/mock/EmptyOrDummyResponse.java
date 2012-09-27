@@ -29,7 +29,8 @@ import org.spockframework.util.Beta;
 import spock.lang.Specification;
 
 /**
- * Returns zero, an "empty" object, or a "dummy" object, depending on the method's declared return type.
+ * A response strategy that returns zero, an "empty" object, or a "dummy" object,
+ * depending on the method's declared return type.
  */
 @Beta
 public class EmptyOrDummyResponse implements IDefaultResponse {

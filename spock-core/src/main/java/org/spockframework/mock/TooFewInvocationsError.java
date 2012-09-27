@@ -23,7 +23,7 @@ import org.spockframework.util.HashMultiset;
 import org.spockframework.util.IMultiset;
 
 /**
- * Indicates that one or more required interactions have matched too few invocations.
+ * Thrown to indicate that one or more mandatory interactions matched too few invocations.
  *
  * @author Peter Niederwieser
  */

@@ -18,7 +18,7 @@ import org.spockframework.util.Beta;
 
 /**
  * The <em>implementation</em> of a mock object determines how method calls are processed
- * and matched against interactions. It is chosen at construction time, typically by choosing the
+ * and matched against interactions. It is chosen at mock creation time, typically by choosing the
  * appropriate {@link spock.lang.MockingApi} factory method.
  */
 @Beta

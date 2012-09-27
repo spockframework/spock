@@ -17,7 +17,7 @@
 package org.spockframework.mock;
 
 /**
- * Thrown when an attempt to create a mock object fails.
+ * Thrown to indicate a problem when creating a mock object.
  *
  * @author Peter Niederwieser
  */

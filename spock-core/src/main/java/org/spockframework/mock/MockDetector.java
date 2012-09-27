@@ -16,12 +16,31 @@ package org.spockframework.mock;
 
 import org.spockframework.util.Beta;
 
+/**
+ * Detects mock objects and returns information on them.
+ */
 @Beta
 public class MockDetector {
+  /**
+   * Tells whether the given object is a mock object.
+   *
+   * @param object an arbitrary object
+   *
+   * @return whether the given object is a mock object
+   */
   public static boolean isMock(Object object) {
     return object instanceof ISpockMockObject;
   }
 
+  /**
+   * Returns information on a mock object.
+   *
+   * @param object a mock object
+   *
+   * @return information on the mock object
+   *
+   * @throws IllegalArgumentException if the given object is not a mock object
+   */
   public static IMockObject asMock(Object object) {
     if (!isMock(object)) {
       throw new IllegalArgumentException("Not a mock object: " + object.toString());

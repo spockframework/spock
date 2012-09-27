@@ -19,8 +19,8 @@ package org.spockframework.mock;
 import org.spockframework.runtime.SpockAssertionError;
 
 /**
- * Base class for exceptions indicating that one or more interactions
- * have not been satisfied (i.e. have seen to few or too many invocations).
+ * Base class for exceptions thrown to indicate that one or more interactions
+ * were not satisfied.
  *
  * @author Peter Niederwieser
  */

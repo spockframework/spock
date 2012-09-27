@@ -24,7 +24,7 @@ import org.spockframework.util.IMultiset;
 import org.spockframework.util.LinkedHashMultiset;
 
 /**
- * Indicates that a required interaction has matched too many invocations.
+ * Thrown to indicate that a mandatory interaction matched too many invocations.
  * 
  * @author Peter Niederwieser
  */

@@ -24,24 +24,47 @@ import org.spockframework.runtime.InvalidSpecException;
 import org.spockframework.runtime.GroovyRuntimeUtil;
 
 /**
- * Spock's mocking API. Primarily consists of the following factory methods:
+ * Spock's mocking API primarily consists of the following factory methods:
  *
  * <dl>
  *   <dt>Mock()</dt>
- *   <dd>A general-purpose test double that supports both stubbing and mocking.</dd>
+ *   <dd>Creates a general-purpose test double that supports both stubbing and mocking.</dd>
  *   <dt>Stub()</dt>
- *   <dd>A test double that supports stubbing but not mocking.</dd>
+ *   <dd>Creates a test double that supports stubbing but not mocking.</dd>
  *   <dt>Spy()</dt>
- *   <dd>A test double that, by default, delegates all calls to a real object. Supports both stubbing and mocking.</dd>
+ *   <dd>Creates a test double that, by default, delegates all calls to a real object. Supports both stubbing and mocking.</dd>
  *   <dt>GroovyMock()</dt>
- *   <dd>A Mock() with additional, Groovy-specific features.</dd>
+ *   <dd>Creates a Mock() with additional, Groovy-specific features.</dd>
  *   <dt>GroovyStub()</dt>
- *   <dd>A Stub() with additional, Groovy-specific features.</dd>
+ *   <dd>Creates a Stub() with additional, Groovy-specific features.</dd>
  *   <dt>GroovySpy() </dt>
- *   <dd>A Spy() with additional, Groovy-specific features.</dd>
+ *   <dd>Creates a Spy() with additional, Groovy-specific features.</dd>
  * </dl>
  *
- * Each factory method has several overloads providing different degrees of configurability.
+ * Each factory method accepts up to three parameters, each of which is optional (resulting in eight method overloads):
+ * <dl>
+ *   <dt>type</dt>
+ *   <dd>The interface or class type of the mock. If not present and the mock is created as part of
+ *   a variable assignment, the type is inferred from the variable's type (if possible).</dd>
+ *   <dt>options</dt>
+ *   <dd>Additional options for creating the mock. Typically passed as named arguments.
+ *   See {@link org.spockframework.mock.IMockConfiguration} for available options.</dd>
+ *   <dt>block</dt>
+ *   <dd>A code block that allows to specify interactions right when creating the mock.</dd>
+ * </dl>
+ *
+ * Some examples:
+ * <pre>
+ * def mock = Mock(Person)
+ * Person mock = Mock()
+ *
+ * def spy = Spy(Person, constructorArgs: ["Fred"])
+ *
+ * Person stub = Stub {
+ *   getName() >> "Fred"
+ *   sing() >> "Tra-la-la"
+ * }
+ * </pre>
  */
 @SuppressWarnings("unused")
 public class MockingApi extends SpecInternals {
@@ -105,7 +128,187 @@ public class MockingApi extends SpecInternals {
   }
 
   /**
-   * Creates a stub whose type and name are inferred from the left-hand side of the enclosing assignment.
+   * Creates a mock whose type and name are inferred from the left-hand side of the enclosing variable assignment.
+   *
+   * Example:
+   *
+   * <pre>
+   *   Person person = Mock() // type is Person.class, name is "person"
+   * </pre>
+   *
+   * @return a mock whose type and name are inferred from the left-hand side of the enclosing variable assignment
+   */
+  public Object Mock() {
+    invalidMockCreation();
+    return null;
+  }
+
+  /**
+   * Creates a mock with the specified options whose type and name are inferred from the left-hand side of the
+   * enclosing variable assignment.
+   *
+   * Example:
+   *
+   * <pre>
+   *   Person person = Mock(name: "myPerson") // type is Person.class, name is "myPerson"
+   * </pre>
+   *
+   * @param options optional options for creating the mock
+   *
+   * @return a mock with the specified options whose type and name are inferred from the left-hand side of the
+   * enclosing variable assignment
+   */
+  @Beta
+  public Object Mock(Map<String, Object> options) {
+    invalidMockCreation();
+    return null;
+  }
+
+  /**
+   * Creates a mock with the specified type. If enclosed in a variable assignment, the variable name will be
+   * used as the mock's name.
+   *
+   * Example:
+   *
+   * <pre>
+   *   def person = Mock(Person) // type is Person.class, name is "person"
+   * </pre>
+   *
+   * @param type the class or interface type of the mock
+   *
+   * @return a mock with the specified type
+   */
+  public <T> T Mock(Class<T> type) {
+    invalidMockCreation();
+    return null;
+  }
+
+  /**
+   * Creates a mock with the specified options and type. If enclosed in an variable assignment, the variable name
+   * will be used as the mock's name.
+   *
+   * Example:
+   *
+   * <pre>
+   *   def person = Mock(Person, name: "myPerson") // type is Person.class, name is "myPerson"
+   * </pre>
+   *
+   * @param options optional options for creating the mock
+   * @param type the class or interface type of the mock
+   *
+   * @return a mock with the specified options and type
+   */
+  @Beta
+  public <T> T Mock(Map<String, Object> options, Class<T> type) {
+    invalidMockCreation();
+    return null;
+  }
+
+  /**
+   * Creates a mock with the specified interactions whose type and name are inferred
+   * from the left-hand side of the enclosing assignment.
+   *
+   * Example:
+   *
+   * <pre>
+   *   // type is Person.class, name is "person", returns hard-coded value for {@code name}, expects one call to {@code sing()}
+   *   Person person = Mock {
+   *     name << "Fred"
+   *     1 * sing()
+   *   }
+   * </pre>
+   *
+   * @param interactions a description of the mock's interactions
+   *
+   * @return a mock with the specified interactions whose type and name are inferred
+   * from the left-hand side of the enclosing assignment
+   */
+  @Beta
+  public Object Mock(Closure interactions) {
+    invalidMockCreation();
+    return null;
+  }
+
+  /**
+   * Creates a mock with the specified options and interactions whose type and name are inferred
+   * from the left-hand side of the enclosing assignment.
+   *
+   * Example:
+   *
+   * <pre>
+   *   // type is Person.class, name is "myPerson", returns hard-coded value for {@code name}, expects one call to {@code sing()}
+   *   Person person = Mock(name: "myPerson") {
+   *     name << "Fred"
+   *     1 * sing()
+   *   }
+   * </pre>
+   *
+   * @param options optional options for creating the mock
+   * @param interactions a description of the mock's interactions
+   *
+   * @return a mock with the specified options and interactions whose type and name are inferred
+   * from the left-hand side of the enclosing assignment
+   */
+  @Beta
+  public Object Mock(Map<String, Object> options, Closure interactions) {
+    invalidMockCreation();
+    return null;
+  }
+
+  /**
+   * Creates a mock with the specified type and interactions. If enclosed in a variable assignment, the variable name will be
+   * used as the mock's name.
+   *
+   * Example:
+   *
+   * <pre>
+   *   // name is "person", type is Person.class, returns hard-code value {@code name}, expects one call to {@code sing()}
+   *   def person = Mock(Person) {
+   *     name << "Fred"
+   *     1 * sing()
+   *   }
+   * </pre>
+   *
+   * @param type the class or interface type of the mock
+   * @param interactions a description of the mock's interactions
+   *
+   * @return a mock with the specified type and interactions
+   */
+  @Beta
+  public <T> T Mock(Class<T> type, Closure interactions) {
+    invalidMockCreation();
+    return null;
+  }
+
+  /**
+   * Creates a mock with the specified options, type, and interactions. If enclosed in a variable assignment, the
+   * variable name will be used as the mock's name.
+   *
+   * Example:
+   *
+   * <pre>
+   *   // type is Person.class, name is "myPerson", returns hard-coded value {@code name}, expects one call to {@code sing()}
+   *   def person = Mock(Person, name: "myPerson") {
+   *     name << "Fred"
+   *     1 * sing()
+   *   }
+   * </pre>
+   *
+   * @param options optional options for creating the mock (see {@link org.spockframework.mock.IMockConfiguration for available options})
+   * @param type the class or interface type of the mock
+   * @param interactions a description of the mock's interactions
+   * @param <T> the class or interface type of the mock
+   *
+   * @return a mock with the specified options, type, and interactions
+   */
+  @Beta
+  public <T> T Mock(Map<String, Object> options, Class<T> type, Closure interactions) {
+    invalidMockCreation();
+    return null;
+  }
+
+  /**
+   * Creates a stub whose type and name are inferred from the left-hand side of the enclosing variable assignment.
    *
    * Example:
    *
@@ -113,7 +316,7 @@ public class MockingApi extends SpecInternals {
    *   Person person = Stub() // type is Person.class, name is "person"
    * </pre>
    *
-   * @return a stub whose type and name are inferred from the left-hand side of the enclosing assignment
+   * @return a stub whose type and name are inferred from the left-hand side of the enclosing variable assignment
    */
   @Beta
   public Object Stub() {
@@ -287,187 +490,7 @@ public class MockingApi extends SpecInternals {
   }
 
   /**
-   * Creates a mock whose type and name are inferred from the left-hand side of the enclosing assignment.
-   *
-   * Example:
-   *
-   * <pre>
-   *   Person person = Mock() // type is Person.class, name is "person"
-   * </pre>
-   *
-   * @return a mock whose type and name are inferred from the left-hand side of the enclosing assignment
-   */
-  public Object Mock() {
-    invalidMockCreation();
-    return null;
-  }
-
-  /**
-   * Creates a mock with the specified options whose type and name are inferred from the left-hand side of the
-   * enclosing variable assignment.
-   *
-   * Example:
-   *
-   * <pre>
-   *   Person person = Mock(name: "myPerson") // type is Person.class, name is "myPerson"
-   * </pre>
-   *
-   * @param options optional options for creating the mock
-   *
-   * @return a mock with the specified options whose type and name are inferred from the left-hand side of the
-   * enclosing variable assignment
-   */
-  @Beta
-  public Object Mock(Map<String, Object> options) {
-    invalidMockCreation();
-    return null;
-  }
-
-  /**
-   * Creates a mock with the specified type. If enclosed in a variable assignment, the variable name will be
-   * used as the mock's name.
-   *
-   * Example:
-   *
-   * <pre>
-   *   def person = Mock(Person) // type is Person.class, name is "person"
-   * </pre>
-   *
-   * @param type the class or interface type of the mock
-   *
-   * @return a mock with the specified type
-   */
-  public <T> T Mock(Class<T> type) {
-    invalidMockCreation();
-    return null;
-  }
-
-  /**
-   * Creates a mock with the specified options and type. If enclosed in an variable assignment, the variable name
-   * will be used as the mock's name.
-   *
-   * Example:
-   *
-   * <pre>
-   *   def person = Mock(Person, name: "myPerson") // type is Person.class, name is "myPerson"
-   * </pre>
-   *
-   * @param options optional options for creating the mock
-   * @param type the class or interface type of the mock
-   *
-   * @return a mock with the specified options and type
-   */
-  @Beta
-  public <T> T Mock(Map<String, Object> options, Class<T> type) {
-    invalidMockCreation();
-    return null;
-  }
-
-  /**
-   * Creates a mock with the specified interactions whose type and name are inferred
-   * from the left-hand side of the enclosing assignment.
-   *
-   * Example:
-   *
-   * <pre>
-   *   // type is Person.class, name is "person", returns hard-coded value for {@code name}, expects one call to {@code sing()}
-   *   Person person = Mock {
-   *     name << "Fred"
-   *     1 * sing()
-   *   }
-   * </pre>
-   *
-   * @param interactions a description of the mock's interactions
-   *
-   * @return a mock with the specified interactions whose type and name are inferred
-   * from the left-hand side of the enclosing assignment
-   */
-  @Beta
-  public Object Mock(Closure interactions) {
-    invalidMockCreation();
-    return null;
-  }
-
-  /**
-   * Creates a mock with the specified options and interactions whose type and name are inferred
-   * from the left-hand side of the enclosing assignment.
-   *
-   * Example:
-   *
-   * <pre>
-   *   // type is Person.class, name is "myPerson", returns hard-coded value for {@code name}, expects one call to {@code sing()}
-   *   Person person = Mock(name: "myPerson") {
-   *     name << "Fred"
-   *     1 * sing()
-   *   }
-   * </pre>
-   *
-   * @param options optional options for creating the mock
-   * @param interactions a description of the mock's interactions
-   *
-   * @return a mock with the specified options and interactions whose type and name are inferred
-   * from the left-hand side of the enclosing assignment
-   */
-  @Beta
-  public Object Mock(Map<String, Object> options, Closure interactions) {
-    invalidMockCreation();
-    return null;
-  }
-
-  /**
-   * Creates a mock with the specified type and interactions. If enclosed in a variable assignment, the variable name will be
-   * used as the mock's name.
-   *
-   * Example:
-   *
-   * <pre>
-   *   // name is "person", type is Person.class, returns hard-code value {@code name}, expects one call to {@code sing()}
-   *   def person = Mock(Person) {
-   *     name << "Fred"
-   *     1 * sing()
-   *   }
-   * </pre>
-   *
-   * @param type the class or interface type of the mock
-   * @param interactions a description of the mock's interactions
-   *
-   * @return a mock with the specified type and interactions
-   */
-  @Beta
-  public <T> T Mock(Class<T> type, Closure interactions) {
-    invalidMockCreation();
-    return null;
-  }
-
-  /**
-   * Creates a mock with the specified options, type, and interactions. If enclosed in a variable assignment, the
-   * variable name will be used as the mock's name.
-   *
-   * Example:
-   *
-   * <pre>
-   *   // type is Person.class, name is "myPerson", returns hard-coded value {@code name}, expects one call to {@code sing()}
-   *   def person = Mock(Person, name: "myPerson") {
-   *     name << "Fred"
-   *     1 * sing()
-   *   }
-   * </pre>
-   *
-   * @param options optional options for creating the mock (see {@link org.spockframework.mock.IMockConfiguration for available options})
-   * @param type the class or interface type of the mock
-   * @param interactions a description of the mock's interactions
-   * @param <T> the class or interface type of the mock
-   *
-   * @return a mock with the specified options, type, and interactions
-   */
-  @Beta
-  public <T> T Mock(Map<String, Object> options, Class<T> type, Closure interactions) {
-    invalidMockCreation();
-    return null;
-  }
-
-  /**
-   * Creates a spy whose type and name are inferred from the left-hand side of the enclosing assignment.
+   * Creates a spy whose type and name are inferred from the left-hand side of the enclosing variable assignment.
    *
    * Example:
    *
@@ -475,7 +498,7 @@ public class MockingApi extends SpecInternals {
    *   Person person = Spy() // type is Person.class, name is "person"
    * </pre>
    *
-   * @return a spy whose type and name are inferred from the left-hand side of the enclosing assignment
+   * @return a spy whose type and name are inferred from the left-hand side of the enclosing variable assignment
    */
   @Beta
   public Object Spy() {
@@ -646,189 +669,7 @@ public class MockingApi extends SpecInternals {
   }
 
   /**
-   * Creates a Groovy stub whose type and name are inferred from the left-hand side of the enclosing assignment.
-   *
-   * Example:
-   *
-   * <pre>
-   *   Person person = GroovyStub() // type is Person.class, name is "person"
-   * </pre>
-   *
-   * @return a Groovy stub whose type and name are inferred from the left-hand side of the enclosing assignment
-   */
-  @Beta
-  public Object GroovyStub() {
-    invalidMockCreation();
-    return null;
-  }
-
-  /**
-   * Creates a Groovy stub with the specified options whose type and name are inferred from the left-hand side of the
-   * enclosing variable assignment.
-   *
-   * Example:
-   *
-   * <pre>
-   *   Person person = GroovyStub(name: "myPerson") // type is Person.class, name is "myPerson"
-   * </pre>
-   *
-   * @param options optional options for creating the Groovy stub
-   *
-   * @return a Groovy stub with the specified options whose type and name are inferred from the left-hand side of the
-   * enclosing variable assignment
-   */
-  @Beta
-  public Object GroovyStub(Map<String, Object> options) {
-    invalidMockCreation();
-    return null;
-  }
-
-  /**
-   * Creates a Groovy stub with the specified type. If enclosed in a variable assignment, the variable name will be
-   * used as the stub's name.
-   *
-   * Example:
-   *
-   * <pre>
-   *   def person = GroovyStub(Person) // type is Person.class, name is "person"
-   * </pre>
-   *
-   * @param type the class or interface type of the Groovy stub
-   *
-   * @return a Groovy stub with the specified type
-   */
-  @Beta
-  public <T> T GroovyStub(Class<T> type) {
-    invalidMockCreation();
-    return null;
-  }
-
-  /**
-   * Creates a Groovy stub with the specified options and type. If enclosed in an variable assignment, the variable name
-   * will be used as the stub's name.
-   *
-   * Example:
-   *
-   * <pre>
-   *   def person = GroovyStub(Person, name: "myPerson") // type is Person.class, name is "myPerson"
-   * </pre>
-   *
-   * @param options optional options for creating the Groovy stub
-   * @param type the class or interface type of the Groovy stub
-   *
-   * @return a Groovy stub with the specified options and type
-   */
-  @Beta
-  public <T> T GroovyStub(Map<String, Object> options, Class<T> type) {
-    invalidMockCreation();
-    return null;
-  }
-
-  /**
-   * Creates a Groovy stub with the specified interactions whose type and name are inferred
-   * from the left-hand side of the enclosing assignment.
-   *
-   * Example:
-   *
-   * <pre>
-   *   // type is Person.class, name is "person", returns hard-coded values for property {@code name} and method {@code sing()}
-   *   Person person = GroovyStub {
-   *     name << "Fred"
-   *     sing() << "Tra-la-la"
-   *   }
-   * </pre>
-   *
-   * @param interactions a description of the Groovy stub's interactions
-   *
-   * @return a Groovy stub with the specified interactions whose type and name are inferred
-   * from the left-hand side of the enclosing assignment
-   */
-  @Beta
-  public Object GroovyStub(Closure interactions) {
-    invalidMockCreation();
-    return null;
-  }
-
-  /**
-   * Creates a Groovy stub with the specified options and interactions whose type and name are inferred
-   * from the left-hand side of the enclosing assignment.
-   *
-   * Example:
-   *
-   * <pre>
-   *   // type is Person.class, name is "myPerson", returns hard-coded values for property {@code name} and method {@code sing()}
-   *   Person person = GroovyStub(name: "myPerson") {
-   *     name << "Fred"
-   *     sing() << "Tra-la-la"
-   *   }
-   * </pre>
-   *
-   * @param options optional options for creating the Groovy stub
-   * @param interactions a description of the Groovy stub's interactions
-   *
-   * @return a Groovy stub with the specified options and interactions whose type and name are inferred
-   * from the left-hand side of the enclosing assignment
-   */
-  @Beta
-  public Object GroovyStub(Map<String, Object> options, Closure interactions) {
-    invalidMockCreation();
-    return null;
-  }
-
-  /**
-   * Creates a Groovy stub with the specified type and interactions. If enclosed in a variable assignment, the variable name will be
-   * used as the stub's name.
-   *
-   * Example:
-   *
-   * <pre>
-   *   // name is "person", type is Person.class, returns hard-coded values for property {@code name} and method {@code sing()}
-   *   def person = GroovyStub(Person) {
-   *     name << "Fred"
-   *     sing() << "Tra-la-la"
-   *   }
-   * </pre>
-   *
-   * @param type the class or interface type of the Groovy stub
-   * @param interactions a description of the Groovy stub's interactions
-   *
-   * @return a Groovy stub with the specified type and interactions
-   */
-  @Beta
-  public <T> T GroovyStub(Class<T> type, Closure interactions) {
-    invalidMockCreation();
-    return null;
-  }
-
-  /**
-   * Creates a Groovy stub with the specified options, type, and interactions. If enclosed in a variable assignment, the
-   * variable name will be used as the stub's name.
-   *
-   * Example:
-   *
-   * <pre>
-   *   // type is Person.class, name is "myPerson", returns hard-coded values for property {@code name} and method {@code sing()}
-   *   def person = GroovyStub(Person, name: "myPerson") {
-   *     name << "Fred"
-   *     sing() << "Tra-la-la"
-   *   }
-   * </pre>
-   *
-   * @param options optional options for creating the Groovy stub (see {@link org.spockframework.mock.IMockConfiguration for available options})
-   * @param type the class or interface type of the Groovy stub
-   * @param interactions a description of the Groovy stub's interactions
-   * @param <T> the class or interface type of the Groovy stub
-   *
-   * @return a Groovy stub with the specified options, type, and interactions
-   */
-  @Beta
-  public <T> T GroovyStub(Map<String, Object> options, Class<T> type, Closure interactions) {
-    invalidMockCreation();
-    return null;
-  }
-
-  /**
-   * Creates a Groovy mock whose type and name are inferred from the left-hand side of the enclosing assignment.
+   * Creates a Groovy mock whose type and name are inferred from the left-hand side of the enclosing variable assignment.
    *
    * Example:
    *
@@ -836,7 +677,7 @@ public class MockingApi extends SpecInternals {
    *   Person person = GroovyMock() // type is Person.class, name is "person"
    * </pre>
    *
-   * @return a Groovy mock whose type and name are inferred from the left-hand side of the enclosing assignment
+   * @return a Groovy mock whose type and name are inferred from the left-hand side of the enclosing variable assignment
    */
   @Beta
   public Object GroovyMock() {
@@ -1010,7 +851,189 @@ public class MockingApi extends SpecInternals {
   }
 
   /**
-   * Creates a Groovy spy whose type and name are inferred from the left-hand side of the enclosing assignment.
+   * Creates a Groovy stub whose type and name are inferred from the left-hand side of the enclosing variable assignment.
+   *
+   * Example:
+   *
+   * <pre>
+   *   Person person = GroovyStub() // type is Person.class, name is "person"
+   * </pre>
+   *
+   * @return a Groovy stub whose type and name are inferred from the left-hand side of the enclosing variable assignment
+   */
+  @Beta
+  public Object GroovyStub() {
+    invalidMockCreation();
+    return null;
+  }
+
+  /**
+   * Creates a Groovy stub with the specified options whose type and name are inferred from the left-hand side of the
+   * enclosing variable assignment.
+   *
+   * Example:
+   *
+   * <pre>
+   *   Person person = GroovyStub(name: "myPerson") // type is Person.class, name is "myPerson"
+   * </pre>
+   *
+   * @param options optional options for creating the Groovy stub
+   *
+   * @return a Groovy stub with the specified options whose type and name are inferred from the left-hand side of the
+   * enclosing variable assignment
+   */
+  @Beta
+  public Object GroovyStub(Map<String, Object> options) {
+    invalidMockCreation();
+    return null;
+  }
+
+  /**
+   * Creates a Groovy stub with the specified type. If enclosed in a variable assignment, the variable name will be
+   * used as the stub's name.
+   *
+   * Example:
+   *
+   * <pre>
+   *   def person = GroovyStub(Person) // type is Person.class, name is "person"
+   * </pre>
+   *
+   * @param type the class or interface type of the Groovy stub
+   *
+   * @return a Groovy stub with the specified type
+   */
+  @Beta
+  public <T> T GroovyStub(Class<T> type) {
+    invalidMockCreation();
+    return null;
+  }
+
+  /**
+   * Creates a Groovy stub with the specified options and type. If enclosed in an variable assignment, the variable name
+   * will be used as the stub's name.
+   *
+   * Example:
+   *
+   * <pre>
+   *   def person = GroovyStub(Person, name: "myPerson") // type is Person.class, name is "myPerson"
+   * </pre>
+   *
+   * @param options optional options for creating the Groovy stub
+   * @param type the class or interface type of the Groovy stub
+   *
+   * @return a Groovy stub with the specified options and type
+   */
+  @Beta
+  public <T> T GroovyStub(Map<String, Object> options, Class<T> type) {
+    invalidMockCreation();
+    return null;
+  }
+
+  /**
+   * Creates a Groovy stub with the specified interactions whose type and name are inferred
+   * from the left-hand side of the enclosing assignment.
+   *
+   * Example:
+   *
+   * <pre>
+   *   // type is Person.class, name is "person", returns hard-coded values for property {@code name} and method {@code sing()}
+   *   Person person = GroovyStub {
+   *     name << "Fred"
+   *     sing() << "Tra-la-la"
+   *   }
+   * </pre>
+   *
+   * @param interactions a description of the Groovy stub's interactions
+   *
+   * @return a Groovy stub with the specified interactions whose type and name are inferred
+   * from the left-hand side of the enclosing assignment
+   */
+  @Beta
+  public Object GroovyStub(Closure interactions) {
+    invalidMockCreation();
+    return null;
+  }
+
+  /**
+   * Creates a Groovy stub with the specified options and interactions whose type and name are inferred
+   * from the left-hand side of the enclosing assignment.
+   *
+   * Example:
+   *
+   * <pre>
+   *   // type is Person.class, name is "myPerson", returns hard-coded values for property {@code name} and method {@code sing()}
+   *   Person person = GroovyStub(name: "myPerson") {
+   *     name << "Fred"
+   *     sing() << "Tra-la-la"
+   *   }
+   * </pre>
+   *
+   * @param options optional options for creating the Groovy stub
+   * @param interactions a description of the Groovy stub's interactions
+   *
+   * @return a Groovy stub with the specified options and interactions whose type and name are inferred
+   * from the left-hand side of the enclosing assignment
+   */
+  @Beta
+  public Object GroovyStub(Map<String, Object> options, Closure interactions) {
+    invalidMockCreation();
+    return null;
+  }
+
+  /**
+   * Creates a Groovy stub with the specified type and interactions. If enclosed in a variable assignment, the variable name will be
+   * used as the stub's name.
+   *
+   * Example:
+   *
+   * <pre>
+   *   // name is "person", type is Person.class, returns hard-coded values for property {@code name} and method {@code sing()}
+   *   def person = GroovyStub(Person) {
+   *     name << "Fred"
+   *     sing() << "Tra-la-la"
+   *   }
+   * </pre>
+   *
+   * @param type the class or interface type of the Groovy stub
+   * @param interactions a description of the Groovy stub's interactions
+   *
+   * @return a Groovy stub with the specified type and interactions
+   */
+  @Beta
+  public <T> T GroovyStub(Class<T> type, Closure interactions) {
+    invalidMockCreation();
+    return null;
+  }
+
+  /**
+   * Creates a Groovy stub with the specified options, type, and interactions. If enclosed in a variable assignment, the
+   * variable name will be used as the stub's name.
+   *
+   * Example:
+   *
+   * <pre>
+   *   // type is Person.class, name is "myPerson", returns hard-coded values for property {@code name} and method {@code sing()}
+   *   def person = GroovyStub(Person, name: "myPerson") {
+   *     name << "Fred"
+   *     sing() << "Tra-la-la"
+   *   }
+   * </pre>
+   *
+   * @param options optional options for creating the Groovy stub (see {@link org.spockframework.mock.IMockConfiguration for available options})
+   * @param type the class or interface type of the Groovy stub
+   * @param interactions a description of the Groovy stub's interactions
+   * @param <T> the class or interface type of the Groovy stub
+   *
+   * @return a Groovy stub with the specified options, type, and interactions
+   */
+  @Beta
+  public <T> T GroovyStub(Map<String, Object> options, Class<T> type, Closure interactions) {
+    invalidMockCreation();
+    return null;
+  }
+
+  /**
+   * Creates a Groovy spy whose type and name are inferred from the left-hand side of the enclosing variable assignment.
    *
    * Example:
    *
@@ -1018,7 +1041,7 @@ public class MockingApi extends SpecInternals {
    *   Person person = GroovySpy() // type is Person.class, name is "person"
    * </pre>
    *
-   * @return a Groovy spy whose type and name are inferred from the left-hand side of the enclosing assignment
+   * @return a Groovy spy whose type and name are inferred from the left-hand side of the enclosing variable assignment
    */
   @Beta
   public Object GroovySpy() {

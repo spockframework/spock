@@ -47,7 +47,7 @@ import org.spockframework.util.Beta;
 public class PollingConditions {
   private long timeout = 5000;
   private long initialDelay = 0;
-  private long delay = 1000;
+  private long delay = 500;
   private double factor = 1.0;
 
   /**

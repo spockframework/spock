@@ -133,4 +133,19 @@ class ImplicitConditionsInWithBlocks extends Specification {
       get(1) == 2
     }
   }
+
+  def "can refer to properties of target object with property syntax"() {
+    def person = new Person()
+
+    expect:
+    with(person) {
+      name == "Fred"
+      age == 42
+    }
+  }
+
+  static class Person {
+    String name = "Fred"
+    int age = 42
+  }
 }

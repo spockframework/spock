@@ -42,7 +42,7 @@ more readable, and ultimately more fun.
 Creating Mock Objects
 ---------------------
 
-Mock objects are created with the ``MockingApi.Mock()`` method.[#creating]_ Let's create two mock subscribers::
+Mock objects are created with the ``MockingApi.Mock()`` method. [#creating]_ Let's create two mock subscribers::
 
     def subscriber1 = Mock(Subscriber)
     def subscriber2 = Mock(Subscriber)
@@ -571,7 +571,7 @@ Mocking All Instances Of A Type
 
 Usually, Groovy mocks are injected into the code under specification just like regular mocks.
 However, when a Groovy mock is created as *global*, it automagically replaces all real instances
-of the mocked type for the duration of the feature method [#automagic]_::
+of the mocked type for the duration of the feature method:: [#automagic]_
 
     def publisher = new Publisher()
     publisher << new RealSubscriber() << new RealSubscriber()

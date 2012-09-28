@@ -18,6 +18,8 @@ package org.spockframework.smoke.extension
 
 import spock.lang.FailsWith
 import spock.lang.Specification
+import org.spockframework.EmbeddedSpecification
+import org.spockframework.runtime.InvalidSpecException
 
 /**
  *
@@ -61,6 +63,38 @@ class FailsWithOnSpec extends Specification {
   def ex3() {
     given:
     null.foo()
+  }
+}
+
+class FailsWithMisuse extends EmbeddedSpecification {
+  def "@FailsWith on method can only refer to exception type"() {
+    when:
+    runner.runSpecBody """
+@FailsWith(List)
+def foo() {
+  expect: true
+}
+    """
+
+    then:
+    InvalidSpecException e = thrown()
+    e.message == "@FailsWith needs to refer to an exception type, but does refer to 'java.util.List'"
+  }
+
+  def "@FailsWith on class can only refer to exception type"() {
+    when:
+    runner.runWithImports """
+@FailsWith(List)
+class MySpec extends Specification {
+  def foo() {
+    expect: true
+  }
+}
+    """
+
+    then:
+    InvalidSpecException e = thrown()
+    e.message == "@FailsWith needs to refer to an exception type, but does refer to 'java.util.List'"
   }
 }
 

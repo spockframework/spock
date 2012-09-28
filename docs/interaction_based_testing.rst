@@ -386,7 +386,6 @@ This will return ``"ok"`` for the first invocation, ``"error"`` for the second a
 and ``"ok"`` for all remaining invocations. The right-hand side must be a value that Groovy knows how to iterate over;
 in this example, we've used a plain list.
 
-
 Computing Return Values
 ~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -519,6 +518,26 @@ Note that we don't have to pass the ``message`` argument along; this is taken ca
 returns the real invocation's result, but in this example we opted to return our own result instead.
 If we had wanted to pass a different message to the real method, we could have used ``callRealMethodWithArguments("changed message")``.
 
+Partial Mocks
+~~~~~~~~~~~~~
+
+Spies can also be used as partial mocks::
+
+    // this is now the subject under specification, not a collaborator
+    def persister = Spy(MessagePersister) {
+      // stub a call on the same object
+      isPersistable(_) >> true
+    }
+
+    when:
+    persister.receive("msg")
+
+    then:
+    // demand a call on the same object
+    1 * persister.persist("msg")
+
+Think twice before using this feature. It might be better to change the design of your code.
+
 .. _GroovyMocks:
 
 Groovy Mocks
@@ -578,6 +597,8 @@ to use them together with ``GroovySpy``. This leads to the real code getting
 executed *unless* an interaction matches, allowing you to selectively listen
 in on objects and change their behavior just where needed.
 
+Think twice before using this feature. It might be better to change the design of your code.
+
 Mocking Constructors
 ~~~~~~~~~~~~~~~~~~~~
 
@@ -595,6 +616,8 @@ To change which object gets constructed, we can stub the constructor::
 Now, whenever some code tries to construct a subscriber named Fred, we'll construct
 a subscriber named Barney instead.
 
+Think twice before using this feature. It might be better to change the design of your code.
+
 Mocking Static Methods
 ~~~~~~~~~~~~~~~~~~~~~~
 
@@ -610,6 +633,8 @@ When a global mock is used solely for mocking constructors and static methods,
 the mock's instance isn't really needed. In such a case it's OK to just write::
 
     GroovySpy(RealSubscriber, global: true)
+
+Think twice before using this feature. It might be better to change the design of your code.
 
 Further Reading
 ---------------

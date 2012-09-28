@@ -16,6 +16,7 @@
 
 package org.spockframework.runtime.extension.builtin;
 
+import org.spockframework.runtime.InvalidSpecException;
 import org.spockframework.runtime.extension.AbstractAnnotationDrivenExtension;
 import org.spockframework.runtime.model.*;
 
@@ -26,16 +27,29 @@ import spock.lang.FailsWith;
  */
 public class FailsWithExtension extends AbstractAnnotationDrivenExtension<FailsWith> {
   public void visitSpecAnnotation(FailsWith failsWith, SpecInfo spec) {
+    checkRefersToException(failsWith);
+
     for (FeatureInfo feature : spec.getFeatures())
       if (!feature.getFeatureMethod().getReflection().isAnnotationPresent(FailsWith.class))
         feature.getFeatureMethod().addInterceptor(new FailsWithInterceptor(failsWith));
   }
 
   public void visitFeatureAnnotation(FailsWith failsWith, FeatureInfo feature) {
+    checkRefersToException(failsWith);
+
     feature.getFeatureMethod().addInterceptor(new FailsWithInterceptor(failsWith));
   }
 
   public void visitFixtureAnnotation(FailsWith failsWith, MethodInfo fixtureMethod) {
+    checkRefersToException(failsWith);
+
     fixtureMethod.addInterceptor(new FailsWithInterceptor(failsWith));
+  }
+
+  private void checkRefersToException(FailsWith failsWith) {
+    if (Throwable.class.isAssignableFrom(failsWith.value())) return;
+
+    throw new InvalidSpecException("@FailsWith needs to refer to an exception type, " +
+        "but does refer to '%s'").withArgs(failsWith.value().getName());
   }
 }

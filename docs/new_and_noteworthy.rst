@@ -158,6 +158,54 @@ dealing with asynchronous events::
         assert person.name == "Fred"
     }
 
+Experimental DSL support for Eclipse
+------------------------------------
+
+Spock now ships with a DSL descriptor that lets Groovy Eclipse better
+understand certain parts of Spock's DSL. The descriptor is automatically
+detected and activated by the IDE. Here are two examples::
+
+    // currently need to type variable for the following to work
+    Person person = new Person(name: "Fred", age: 42)
+
+    expect:
+    with(person) {
+        name == "Fred" // editor understands and auto-completes 'name'
+        age == 42      // editor understands and auto-completes 'name'
+    }
+
+    ... second example ...
+
+    def person = Stub(Person) {
+        getName() >> "Fred" // editor understands and auto-completes 'getName()'
+    }
+
+DSL support is activated for Groovy Eclipse 2.7.1 and higher. Should you ever
+need to deactivate it, you can do so in the Groovy Eclipse preferences.
+
+Experimental DSL support for IntelliJ IDEA
+------------------------------------------
+
+Spock now ships with a DSL descriptor that lets Intellij IDEA better
+understand certain parts of Spock's DSL. The descriptor is automatically
+detected and activated by the IDE. Here are two examples::
+
+    def person = new Person(name: "Fred", age: 42)
+
+    expect:
+    with(person) {
+        name == "Fred" // editor understands and auto-completes 'name'
+        age == 42      // editor understands and auto-completes 'name'
+    }
+
+    ... second example ...
+
+    def person = Stub(Person) {
+        getName() >> "Fred" // editor understands and auto-completes 'getName()'
+    }
+
+DSL support is activated for IntelliJ IDEA 11.1 and higher.
+
 Splitting up class Specification
 --------------------------------
 

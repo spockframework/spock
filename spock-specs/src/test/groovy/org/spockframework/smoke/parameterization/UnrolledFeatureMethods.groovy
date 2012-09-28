@@ -32,6 +32,7 @@ class UnrolledFeatureMethods extends EmbeddedSpecification {
   def setup() {
     runner.listeners << listener
     runner.addClassImport(Actor)
+    runner.addClassImport(Actor2)
   }
 
   def "iterations of an unrolled feature count as separate tests"() {
@@ -254,7 +255,6 @@ def "#actor.details.age"() {
 
     then:
     1 * listener.testStarted { it.methodName == "fred" }
-
   }
 
   @Issue("http://issues.spockframework.org/detail?id=232")
@@ -309,7 +309,32 @@ class Foo extends Specification {
     1 * listener.testStarted { it.methodName == "fred" }
   }
 
-  private class Actor {
+  @Issue("http://issues.spockframework.org/detail?id=268")
+  def "method name can still contain parentheses"() {
+    when:
+    runner.runSpecBody("""
+@Unroll
+def "an actor (named #actor.getName()) age #actor.getAge()"() {
+  expect: true
+
+  where:
+  actor = new Actor2()
+}
+    """)
+
+    then:
+    1 * listener.testStarted { it.methodName == "an actor (named fred) age 30" }
+
+  }
+
+  static class Actor {
     Map details = [name: "fred", age: 30]
   }
+
+  static class Actor2 {
+    String name = "fred"
+    int age = 30
+  }
+
+
 }

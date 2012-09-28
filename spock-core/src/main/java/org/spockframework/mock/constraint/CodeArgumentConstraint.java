@@ -25,7 +25,6 @@ import org.spockframework.runtime.GroovyRuntimeUtil;
  *
  * @author Peter Niederwieser
  */
-// IDEA: reify instead of separate matcher?
 public class CodeArgumentConstraint implements IArgumentConstraint {
   private final Closure code;
 

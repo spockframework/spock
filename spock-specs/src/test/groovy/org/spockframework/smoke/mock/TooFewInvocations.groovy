@@ -129,4 +129,27 @@ then:
     TooFewInvocationsError e = thrown()
     !e.message.contains("list.add(1)")
   }
+
+  def "can compute similarity between an interaction and a completely different invocation (without blowing up)"() {
+    when:
+    runner.addClassImport(Person)
+    runner.runFeatureBody("""
+def fred = Mock(Person)
+def barney = Mock(Person)
+
+when:
+fred.age = 30
+
+then:
+1 * barney.setName { it.size() > 10 } // actual call passes an int, which has no size() method
+    """)
+
+    then:
+    TooFewInvocationsError e = thrown()
+    e.message.contains("barney.setName")
+  }
+
+  static class Person {}
+    String name
+    int age
 }

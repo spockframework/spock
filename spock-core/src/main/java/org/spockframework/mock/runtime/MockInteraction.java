@@ -84,7 +84,15 @@ public class MockInteraction implements IMockInteraction {
     int score = 0;
     int weight = constraints.size();
     for (IInvocationConstraint constraint : constraints) {
-      if (!constraint.isSatisfiedBy(invocation)) {
+      boolean satisfied;
+      try {
+        satisfied = constraint.isSatisfiedBy(invocation);
+      } catch (Exception e) {
+        // can happen because we evaluate (code) argument constraints
+        // even if target and/or method constraints aren't satisfied
+        satisfied = false;
+      }
+      if (!satisfied) {
         score += weight;
       }
       weight--;

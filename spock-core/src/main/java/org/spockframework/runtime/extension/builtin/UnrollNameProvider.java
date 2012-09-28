@@ -28,7 +28,7 @@ import org.spockframework.runtime.GroovyRuntimeUtil;
  * @author Peter Niederwieser
  */
 public class UnrollNameProvider implements NameProvider<IterationInfo> {
-  private static final Pattern EXPRESSION_PATTERN = Pattern.compile("#([a-zA-Z_\\$][\\w\\$\\.\\(\\)]*)");
+  private static final Pattern EXPRESSION_PATTERN = Pattern.compile("#([a-zA-Z_\\$]([\\w\\$\\.]|\\(\\))*)");
 
   private final FeatureInfo feature;
   private final Matcher expressionMatcher;

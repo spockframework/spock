@@ -28,8 +28,15 @@ implementation is often called a *mock object*.
 
 While we could certainly create a mock implementation of ``Subscriber`` by hand, writing and maintaining this code
 can get unpleasant as the number of methods and complexity of interactions increases. This is where mocking frameworks
-come in. They allow to succinctly describe the expected interactions between the object under test and its
-collaborators. Mock implementations are synthesized on the fly based on this description.
+come in: First, they allow to succinctly describe the expected interactions between an object under test and its
+collaborators. Second, they automatically generate conforming mock implementations.
+
+.. sidebar:: How are mock implementations generated?
+
+   Like most Java mocking frameworks, Spock uses `JDK dynamic proxies <http://docs.oracle.com/javase/7/docs/api/>`_
+   (when mocking interfaces) and `CGLIB <http://cglib.sourceforge.net>`_ proxies (when mocking classes)
+   to generate mock implementations at runtime. Compared to solutions based on Groovy meta-programming,
+   this has the advantage that it also works for testing Java code.
 
 The Java world has no shortage of popular and mature mocking frameworks: `JMock <http://www.jmock.org/>`_,
 `EasyMock <http://www.easymock.org/>`_, `Mockito <http://code.google.com/p/mockito/>`_, to name just a few.
@@ -535,6 +542,8 @@ Like a mock, a stub allows unexpected invocations. However, the values returned 
 Spies
 ~~~~~
 
+.. warning:: Think twice before using this feature. It might be better to change the design of your code.
+
 A *spy* is created with the ``MockingApi.Spy`` factory method::
 
     def subscriber = Spy(SubscriberImpl, constructorArgs: ["Fred"])
@@ -571,6 +580,8 @@ If we had wanted to pass a different message to the real method, we could have u
 Partial Mocks
 ~~~~~~~~~~~~~
 
+.. warning:: Think twice before using this feature. It might be better to change the design of your code.
+
 Spies can also be used as partial mocks::
 
     // this is now the subject under specification, not a collaborator
@@ -585,8 +596,6 @@ Spies can also be used as partial mocks::
     then:
     // demand a call on the same object
     1 * persister.persist("msg")
-
-Think twice before using this feature. It might be better to change the design of your code.
 
 .. _GroovyMocks:
 
@@ -619,6 +628,8 @@ dynamic methods as if they were physically declared methods::
 Mocking All Instances Of A Type
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+.. warning:: Think twice before using this feature. It might be better to change the design of your code.
+
 Usually, Groovy mocks are injected into the code under specification just like regular mocks.
 However, when a Groovy mock is created as *global*, it automagically replaces all real instances
 of the mocked type for the duration of the feature method [#automagic]_::
@@ -647,10 +658,17 @@ to use them together with ``GroovySpy``. This leads to the real code getting
 executed *unless* an interaction matches, allowing you to selectively listen
 in on objects and change their behavior just where needed.
 
-Think twice before using this feature. It might be better to change the design of your code.
+.. sidebar:: How are global Groovy mocks implemented?
+
+   Global Groovy mocks get their super powers from Groovy meta-programming. To be more precise,
+   every globally mocked type is assigned a custom meta class for the duration of the feature method.
+   Since a global Groovy mock is still based on a JDK dynamic proxy or CGLIB proxy, it will retain its
+   general mocking capabilities (but not its super powers) when invoked from Java code.
 
 Mocking Constructors
 ~~~~~~~~~~~~~~~~~~~~
+
+.. warning:: Think twice before using this feature. It might be better to change the design of your code.
 
 Global mocks support mocking of constructors::
 
@@ -666,10 +684,10 @@ To change which object gets constructed, we can stub the constructor::
 Now, whenever some code tries to construct a subscriber named Fred, we'll construct
 a subscriber named Barney instead.
 
-Think twice before using this feature. It might be better to change the design of your code.
-
 Mocking Static Methods
 ~~~~~~~~~~~~~~~~~~~~~~
+
+.. warning:: Think twice before using this feature. It might be better to change the design of your code.
 
 Global mocks support mocking and stubbing of static methods::
 
@@ -683,8 +701,6 @@ When a global mock is used solely for mocking constructors and static methods,
 the mock's instance isn't really needed. In such a case one can just write::
 
     GroovySpy(RealSubscriber, global: true)
-
-Think twice before using this feature. It might be better to change the design of your code.
 
 Further Reading
 ---------------

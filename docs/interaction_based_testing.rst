@@ -225,22 +225,21 @@ Strict Mocking
 ~~~~~~~~~~~~~~
 
 Now, when would matching any method call be useful? A good example is *strict mocking*,
-a style of mocking where only interactions that are explicitly declared are allowed, and
-any other interaction is supposed to fail the test::
+a style of mocking where no interactions other than those explicitly declared are allowed::
 
     when:
     publisher.publish("hello")
 
     then:
-    1 * subscriber.receive("hello") // allow a single 'receive' call on `subscriber`
+    1 * subscriber.receive("hello") // demand one 'receive' call on `subscriber`
     _ * auditing._                  // allow any interaction with 'auditing'
     0 * _                           // don't allow any other interaction
 
 ``0 *`` only makes sense as the last interaction of a ``then:`` block or method. Also note the
-use of ``_ *`` (any number of calls), which *allows* any interaction with the auditing component.
+use of ``_ *`` (any number of calls), which allows any interaction with the auditing component.
 
 .. note:: ``_ *`` is only meaningful in the context of strict mocking. In particular, it is never necessary
-   when :ref:`Stubbing <stubbing>`_ an invocation. For example, ``_ * auditing.record(_) >> "ok"`` can (and should!)
+   when `Stubbing`_ an invocation. For example, ``_ * auditing.record(_) >> "ok"`` can
    be simplified to ``auditing.record(_) >> "ok"``.
 
 Where to Declare Interactions
@@ -400,8 +399,6 @@ Besides interfaces, Spock also supports mocking of classes. Mocking classes work
 just like mocking interfaces; the only additional requirement is to put ``cglib-nodep-2.2`` or higher
 and ``objenesis-1.2`` or higher on the class path. If either of these libraries is missing from
 the class path, Spock will gently let you know.
-
-.. _stubbing:
 
 Stubbing
 --------

@@ -709,12 +709,10 @@ To learn more about interaction-based testing, we recommend the following resour
 
 .. rubric:: Footnotes
 
-.. [#zero-times] Interactions starting with ``_ *`` are only needed in rare special cases, such as when following up with ``0 * _``.
-   When `Stubbing`_ a method call, ``_ *`` is implicitly assumed. In other words, ``_ * foo.bar() >> baz`` can always be simplified to ``foo.bar() >> baz``.
 .. [#equality] Arguments are compared according to Groovy equality, which is based on, but more relaxed than, Java equality (in particular for numbers).
 
-.. [#creating] See `Other Kinds of Mock Objects`_ for more on this.
+.. [#creating] See `Other Kinds of Mock Objects`_ for other ways to create mock objects.
 
 .. [#automagic] You may know this behavior from Groovy's ``MockFor()`` and ``StubFor()`` facilities.
 
-.. [#closure-destructuring] The closure argument destructuring semantics come straight from Groovy.
+.. [#closure-destructuring] The destructuring semantics for closure arguments come straight from Groovy.

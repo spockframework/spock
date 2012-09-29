@@ -240,7 +240,7 @@ any other interaction is supposed to fail the test::
 use of ``_ *`` (any number of calls), which *allows* any interaction with the auditing component.
 
 .. note:: ``_ *`` is only meaningful in the context of strict mocking. In particular, it is never necessary
-   when `Stubbing`_ an invocation. For example, ``_ * auditing.record(_) >> "ok"`` can (and should!)
+   when `Stubbing<stubbing>`_ an invocation. For example, ``_ * auditing.record(_) >> "ok"`` can (and should!)
    be simplified to ``auditing.record(_) >> "ok"``.
 
 Where to Declare Interactions

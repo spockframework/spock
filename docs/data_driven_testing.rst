@@ -40,8 +40,8 @@ hard-coded integer values::
         }
     }
 
-We have finished the test logic, but still need to supply the data values to be used. This is done in a ``where`` block,
-which always comes at the end of the method. In the simplest (and most common) case, the ``where`` block holds a *data table*.
+We have finished the test logic, but still need to supply the data values to be used. This is done in a ``where:`` block,
+which always comes at the end of the method. In the simplest (and most common) case, the ``where:`` block holds a *data table*.
 
 Data Tables
 -----------
@@ -86,7 +86,7 @@ Sharing of Objects between Iterations
 
 In order to share an object between iterations, it has to be kept in a ``@Shared`` or static field.
 
-    .. note:: Only ``@Shared`` and static variables can be accessed from within a ``where`` block.
+    .. note:: Only ``@Shared`` and static variables can be accessed from within a ``where:`` block.
 
 Note that such objects will also be shared with other methods. There is currently no good way to share an object
 just between iterations of the same method. If you consider this a problem, consider putting each method into a separate
@@ -95,7 +95,7 @@ spec, all of which can be kept in the same file. This achieves better isolation 
 Syntactic Variations
 --------------------
 
-The previous code can be tweaked in a few ways. First, since the ``where`` block already declares all data variables, the
+The previous code can be tweaked in a few ways. First, since the ``where:`` block already declares all data variables, the
 method parameters can be omitted. [#methodParameters]_. Second, inputs and expected outputs can be separated with a
 double pipe symbol (``||``) to visually set them apart. With this, the code becomes::
 
@@ -266,7 +266,7 @@ Number of Iterations
 
 The number of iterations depends on how much data is available. Successive executions of the same method can
 yield different numbers of iterations. If a data provider runs out of values sooner than its peers, an exception will occur.
-Variable assignments don't affect the number of iterations. A ``where`` block that only contains assignments yields
+Variable assignments don't affect the number of iterations. A ``where:`` block that only contains assignments yields
 exactly one iteration.
 
 Closing of Data Providers
@@ -307,9 +307,11 @@ If necessary, additional data variables can be introduced to hold more complex e
 
 .. rubric:: Footnotes
 
-.. [#methodParameters] The idea behind allowing method parameters is to enable better IDE support. However, recent versions of IntelliJ IDEA recognize data variables automatically, and even infer their types from the values in the data table.
+.. [#methodParameters] The idea behind allowing method parameters is to enable better IDE support. However, recent
+   versions of IntelliJ IDEA recognize data variables automatically, and even infer their types from the values contained
+   in the data table.
 
-.. [#impossible] For example, a feature method could use data variables in its ``setup`` block, but not in any conditions.
+.. [#impossible] For example, a feature method could use data variables in its ``setup:`` block, but not in any conditions.
 
 .. [#noDollar] Groovy syntax does not allow dollar signs in method names.
 

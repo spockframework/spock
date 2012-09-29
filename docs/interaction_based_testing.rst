@@ -47,16 +47,19 @@ Mock objects are created with the ``MockingApi.Mock()`` method [#creating]_. Let
     def subscriber1 = Mock(Subscriber)
     def subscriber2 = Mock(Subscriber)
 
-Alternatively, the following Java-like syntax is supported, which typically results in better IDE support::
+Alternatively, the following Java-like syntax is supported, which may give better IDE support::
 
     Subscriber subscriber1 = Mock()
     Subscriber subscriber2 = Mock()
 
-.. note:: If the type of the mock is given on the left-hand side, it does not have to be repeated on the right-hand side.
+Here, the mock's type is inferred from the variable type on the left-hand side of the assignment.
 
-Mock objects literally implement (or, in the case of a class, extend) the type they stand in for. (In
-our example ``subscriber1`` *is-a* ``Subscriber``.) Hence they can be passed to statically typed (Java) code that expects
-such a type.
+.. note:: If the mock's type is given on the left-hand side of the assignment, it's permissible
+(though not required) to omit it on the right-hand side.
+
+Mock objects literally implement (or, in the case of a class, extend) the type they stand in for. In other
+words, in our example ``subscriber1`` *is-a* ``Subscriber``. Hence it can be passed to statically typed (Java)
+code that expects this type.
 
 Default Behavior of Mock Objects
 --------------------------------
@@ -66,7 +69,7 @@ Default Behavior of Mock Objects
     Like Mockito, we firmly believe that a mocking framework should be lenient by default. This means that unexpected
     method calls on mock objects (or, in other words, interactions that aren't relevant for the test at hand) are allowed
     and will simply return a default value. Conversely, mocking frameworks like EasyMock and JMock are strict by default;
-    they will throw an exception for every unexpected method call. While strictness enforces high rigor, it can also lead
+    they will throw an exception for every unexpected method call. While strictness enforces rigor, it can also lead
     to over-specification, resulting in brittle tests that fail with every other internal code change. Spock's mocking
     framework makes it easy to describe only what's relevant about an interaction, avoiding the over-specification trap.
 
@@ -74,12 +77,13 @@ Initially, mock objects have no behavior; calling their methods is allowed but w
 the default value for the method's return type (``false``, ``0``, or ``null``). An exception are the ``java.lang.Object``
 methods ``equals``, ``hashCode``, and ``toString``, which have the following default behavior: A mock object is only
 equal to itself, has a unique hash code, and a string representation that includes the name of the type it represents.
-This default behavior is overridable.
+This default behavior is overridable by declaring regular interactions, which we will learn about in the `Mocking`_
+and `Stubbing`_ sections.
 
 Registering Mock Objects with Object Under Test
 -----------------------------------------------
 
-After creating the publisher and subscribers, we need to register the latter with the former::
+After creating the publisher and its subscribers, we need to register the latter with the former::
 
     class PublisherSpec extends Specification {
         Publisher publisher = new Publisher()
@@ -87,7 +91,7 @@ After creating the publisher and subscribers, we need to register the latter wit
         Subscriber subscriber2 = Mock()
 
         def setup() {
-            publisher << subscriber1 // Groovy shorthand for List.add()
+            publisher << subscriber1 // << is a Groovy shorthand for List.add()
             publisher << subscriber2
         }
     }
@@ -97,7 +101,8 @@ Now we are ready to describe the expected interactions between the two parties.
 Mocking
 -------
 
-Mocking is the act of describing expected interactions and verifying them against actual invocations. Let's see an example::
+Mocking is the act of describing (mandatory) interactions between the object under specification and its collaborators.
+ Let's see an example::
 
     def "should send messages to all subscribers"() {
         when:
@@ -111,9 +116,9 @@ Mocking is the act of describing expected interactions and verifying them agains
 Read out aloud: "When the publisher sends a 'hello' message, then both subscribers should receive that message exactly once."
 
 When this test gets run, Spock watches all invocations on mock objects that occur during the execution of the
-``when`` block and compares them to the expected interactions described in the corresponding ``then`` block. In case of
-a mismatch, a (subclass of) ``InteractionNotSatisfiedError`` is thrown. This verification happens automatically and
-does not require any boilerplate code as often seen with other mocking frameworks.
+``when`` block and compares them to the interactions described in the corresponding ``then:`` block. In case of
+a mismatch, a (subclass of) ``InteractionNotSatisfiedError`` is thrown. This verification
+happens automatically and does not require any boilerplate code.
 
 Interactions
 ~~~~~~~~~~~~
@@ -122,10 +127,10 @@ Interactions
 
     Not quite. While an interaction looks similar to a regular method invocation, it is simply a way to express which
     method invocations are expected to happen. A good way to think of an interaction is as a regular expression
-    that is matched against all invocations on mock objects. Depending on the circumstances, the interaction may match
-    zero, one, or multiple invocations.
+    that all incoming invocations on mock objects are matched against. Depending on the circumstances, the interaction
+    may match zero, one, or multiple invocations.
 
-Let's take a closer look at the ``then`` block. It contains two *interactions*, each of which consists of four
+Let's take a closer look at the ``then:`` block. It contains two *interactions*, each of which consists of four
 parts: a *cardinality*, a *target constraint*, a *method constraint*, and one ore more *argument constraints*::
 
     1 * subscriber1.receive("hello")
@@ -144,8 +149,8 @@ a range::
     (1..3) * subscriber1.receive("hello") // between one and three calls (inclusive)
     (1.._) * subscriber1.receive("hello") // at least one call
     (_..3) * subscriber1.receive("hello") // at most three calls
-    _ * subscriber1.receive("hello")      // any number of calls, including zero (allowed but rarely needed)
-
+    _ * subscriber1.receive("hello")      // any number of calls, including zero
+                                          // (rarely needed; see `Strict Mocking`_)
 Target Constraint
 ~~~~~~~~~~~~~~~~~
 
@@ -161,7 +166,7 @@ The method constraint of an interaction tells which method is expected to be cal
 
     1 * subscriber1.receive("hello") // a method named 'receive'
     1 * subscriber1./r.*e/("hello")  // a method whose name matches the given regular expression
-                                     // (here: method name starts with 'r', ends in 'e')
+                                     // (here: method name starts with 'r' and ends in 'e')
 
 Argument Constraints
 ~~~~~~~~~~~~~~~~~~~~
@@ -170,10 +175,11 @@ The argument constraints of an interaction tell which method arguments are expec
 
     1 * subscriber1.receive("hello")     // an argument that is equal[#equality]_ to the String "hello"
     1 * subscriber1.receive(!"hello")    // an argument that is unequal[#equality]_ to the String "hello"
+    1 * subscriber1.receive()            // the empty argument list (would never match in our example)
     1 * subscriber1.receive(_)           // any single argument (including null)
+    1 * subscriber1.receive(*_)          // any argument list (including the empty argument list)
     1 * subscriber1.receive(!null)       // any non-null argument
     1 * subscriber1.receive(_ as String) // any non-null argument that is-a String
-    1 * subscriber1.receive(*_)          // any argument list (including the empty argument list)
     1 * subscriber1.receive({ it.size() > 3 }) // an argument that satisfies the given predicate
                                                // (here: message length is greater than 3)
 
@@ -186,25 +192,61 @@ Argument constraints work as expected for methods with multiple arguments and/or
     Groovy allows any method whose last parameter has an array type to be called in vararg style. Consequently,
     vararg syntax is also allowed in interactions describing invocations of such methods.
 
-Where to put my Interactions?
+Matching Any Method Call
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+Sometimes it can be useful to match "anything", in some sense of the word::
+
+    1 * subscriber1._(*_)     // any method on subscriber1, with any argument list
+    1 * subscriber1._         // shortcut for and preferred over the above
+
+    1 * _._                   // any method call on any mock object
+    1 * _                     // shortcut for and preferred over the above
+
+.. note:: Although ``(_.._) * _._(*_) >> _`` is a valid interaction declaration,
+   it is neither good style nor particularly useful (except for impressing your geek friends).
+
+Strict Mocking
+~~~~~~~~~~~~~~
+
+Now, when would matching any method call be useful? A good example is *strict mocking*,
+a style of mocking where only interactions that are explicitly declared are allowed, and
+any other interaction is supposed to fail the test::
+
+    when:
+    publisher.publish("hello")
+
+    then:
+    1 * subscriber.receive("hello") // allow a single 'receive' call on `subscriber`
+    _ * auditing._                  // allow any interaction with 'auditing'
+    0 * _                           // don't allow any other interaction
+
+``0 *`` only makes sense as the last interaction of a ``then:`` block or method. Also note the
+use of ``_ *`` (any number of calls), which *allows* any interaction with the auditing component.
+
+.. note:: ``_ *`` is only meaningful in the context of strict mocking. In particular, it is never necessary
+   when `Stubbing`_ an invocation. For example, ``_ * auditing.record(_) >> "ok"`` can (and should!)
+   be simplified to ``auditing.record(_) >> "ok"``.
+
+Where to Declare Interactions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-So far, we have put our interactions into a then-block. This often results in a spec that reads naturally.
-However, it is also permissible to put interactions anywhere *before* the when-block that is supposed to trigger
-them. In particular, this allows to put interactions into a ``setup`` method.
+So far, we have declared all our interactions in a ``then:`` block. This often results in a spec that reads naturally.
+However, it is also permissible to put interactions anywhere *before* the ``when:`` block that is supposed to satisfy
+them. In particular, this means that interactions can be declared in a ``setup`` method.
 
-When an invocation on a mock object occurs, it is matched against interactions in their declared order.
-Hence interactions declared earlier will win in case of an overlap. There is one exception to this rule:
-Interactions declared in a then-block are matched before any other interactions. This allows to override interactions
-declared in, say, a ``setup`` method with interactions declared in a then-block.
+When an invocation on a mock object occurs, it is matched against interactions in the order they were declared.
+If an invocation matches multiple interactions, the one declared earlier will win. There is one exception to this rule:
+Interactions declared in a ``then:`` block are matched against before any other interactions. This allows to override
+interactions declared in, say, a ``setup`` method with interactions declared in a ``then:`` block.
 
 Explicit Interaction Blocks
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Like most other mocking frameworks, Spock must have full information about expected interactions
-*before* they take place. So how is it possible for interactions to be declared in a then-block?
-The answer is that Spock internally moves interactions declared in a then-block to immediately
-before the preceding when-block.
+*before* they take place. So how is it possible for interactions to be declared in a ``then:`` block?
+The answer is that under the hood, Spock moves interactions declared in a ``then:`` block to immediately
+before the preceding ``when:`` block.
 
 Usually this works out just fine, but sometimes it can lead to problems::
 
@@ -220,7 +262,7 @@ invocation count.) However, Spock isn't smart enough (huh?) to tell that the int
 linked to the preceding variable declaration. Hence it will just move the interaction, which
 will blow up at runtime with a ``MissingPropertyException``.
 
-There are two ways to remedy this situation: Move both lines of code before the when-block yourself,
+There are two ways to remedy this situation: Move both lines of code before the ``when:`` block yourself,
 or be explicit about them belonging together::
 
     when:
@@ -233,12 +275,12 @@ or be explicit about them belonging together::
     }
 
 After giving it a hint by using the ``MockingApi.interaction`` method, Spock will do the right thing
-and move both lines of code to immediately before the when-block. Problem solved!
+and move both lines of code to immediately before the ``when:`` block. Problem solved!
 
 Scope of Interactions
 ~~~~~~~~~~~~~~~~~~~~~
 
-Interactions declared in a then-block are scoped to the preceding when-block::
+Interactions declared in a ``then:`` block are scoped to the preceding ``when:`` block::
 
     when:
     publisher.send("message1")
@@ -252,10 +294,10 @@ Interactions declared in a then-block are scoped to the preceding when-block::
     then:
     subscriber1.receive("message2")
 
-This makes sure that ``subscriber1`` receives ``"message1"`` during execution of the first when-block,
-and ``"message2"`` during execution of the second when-block.
+This makes sure that ``subscriber1`` receives ``"message1"`` during execution of the first ``when:`` block,
+and ``"message2"`` during execution of the second ``when:`` block.
 
-Interactions declared outside a then-block are valid from their declaration until the end of the
+Interactions declared outside a ``then:`` block are valid from their declaration until the end of the
 containing feature method.
 
 Interactions always occur in the context of a feature method. Hence they cannot be declared in a
@@ -266,7 +308,7 @@ Verification of Interactions
 
 There a two main ways in which a mock-based test can fail: An interaction can match more invocations than
 allowed, or it can match fewer invocations than required. The former case is detected right when the invocation
-happens, and results in a ``TooManyInvocationsError``::
+happens, and causes a ``TooManyInvocationsError``::
 
     Too many invocations for:
 
@@ -287,7 +329,7 @@ happens, and results in a ``TooManyInvocationsError``::
     into a single line of output, the first ``receive("hello")`` may well have occurred before the ``receive("goodbye")``.
 
 The second case (fewer invocations than required) can only be detected once execution of the ``when`` block has completed.
-(Until then, further invocations may still occur.) It results in a ``TooFewInvocationsError``::
+(Until then, further invocations may still occur.) It causes a ``TooFewInvocationsError``::
 
     Too few invocations for:
 
@@ -295,7 +337,7 @@ The second case (fewer invocations than required) can only be detected once exec
 
 Note that it doesn't matter whether the method was not called at all, the same method was called with different arguments,
 the same method was called on a different mock object, or a different method was called "instead" of this one;
-in either case, the same ``TooFewInvocationsError`` error will occur.
+in either case, a ``TooFewInvocationsError`` error will occur.
 
 .. admonition:: New in Spock 0.7: Show Unmatched Invocations
 
@@ -318,11 +360,11 @@ Spock defaults to allowing any invocation order, provided that the specified int
     2 * subscriber.receive("hello")
     1 * subscriber.receive("goodbye")
 
-Here, any of the invocation sequences ``hello hello goodbye``, ``hello goodbye hello``, and
-``goodbye hello hello`` will satisfy the specified interactions.
+Here, any of the invocation sequences ``"hello"`` ``"hello"`` ``"goodbye"``, ``"hello"`` ``"goodbye"`` ``"hello"``, and
+``"goodbye"`` ``"hello"`` ``"hello"`` will satisfy the specified interactions.
 
 In those cases where invocation order matters, you can impose an order by splitting up interactions into
-multiple then-blocks::
+multiple ``then:`` blocks::
 
     then:
     2 * subscriber.receive("hello")
@@ -330,10 +372,10 @@ multiple then-blocks::
     then:
     1 * subscriber.receive("goodbye")
 
-Now Spock will verify that both ``hello``'s are received before the ``goodbye``.
-In other words, invocation order is enforced *between* but not *within* then-blocks.
+Now Spock will verify that both ``"hello"``'s are received before the ``"goodbye"``.
+In other words, invocation order is enforced *between* but not *within* ``then:`` blocks.
 
-.. note:: Splitting up a then-block with ``and:`` does not impose any ordering, as ``and:``
+.. note:: Splitting up a ``then:`` block with ``and:`` does not impose any ordering, as ``and:``
           is only meant for documentation purposes and doesn't carry any semantics.
 
 Mocking Classes
@@ -363,16 +405,17 @@ Returning Fixed Values
 
 To return the same value every time ``receive`` gets called, use the right-shift (``>>``) operator::
 
-    subscriber1.receive(_) >> "ok"
+    subscriber.receive(_) >> "ok"
 
-Here we use ``_`` to return ``"ok"`` no matter what message was passed as an argument. As usual, you can use any of the
-other method argument constraints to control which invocations the interaction is going to match::
+Read out aloud: "*Whenever* the subscriber receives a message, *make* it respond with 'ok'."
 
-    subscriber1.receive("message1") >> "ok"
-    subscriber1.receive("message2") >> "fail"
+To return different values for different invocations, use multiple interactions::
+
+    subscriber.receive("message1") >> "ok"
+    subscriber.receive("message2") >> "fail"
 
 This will return ``"ok"`` whenever ``"message1"`` is received, and ``"fail"`` whenever
-``"message2"`` is received. There is no limit as to which types can be returned provided they are
+``"message2"`` is received. There is no limit as to which values can be returned, provided they are
 compatible with the method's declared return type.
 
 Returning Sequences of Values
@@ -380,7 +423,7 @@ Returning Sequences of Values
 
 To return different values on successive invocations, use the triple-right-shift (``>>>``) operator::
 
-    subscriber1.receive(_) >>> ["ok", "error", "error", "ok"]
+    subscriber.receive(_) >>> ["ok", "error", "error", "ok"]
 
 This will return ``"ok"`` for the first invocation, ``"error"`` for the second and third invocation,
 and ``"ok"`` for all remaining invocations. The right-hand side must be a value that Groovy knows how to iterate over;
@@ -392,20 +435,20 @@ Computing Return Values
 To compute a return value based on the method's argument, use the the right-shift (``>>``) operator together with a closure.
 If the closure declares a single untyped parameter, it gets passed the method's argument list::
 
-    subscriber1.receive(_) >> { args -> args[0].size() > 3 ? "ok" : "fail" }
+    subscriber.receive(_) >> { args -> args[0].size() > 3 ? "ok" : "fail" }
 
-Here we return ``"ok"`` if the message is more than three characters long, and ``"fail"`` otherwise.
+Here ``"ok"`` gets returned if the message is more than three characters long, and ``"fail"`` otherwise.
 
 Often it would be nicer to have direct access to the method's arguments. If the closure declares more than one parameter
-or a single *typed* parameter, method parameters will be mapped one-by-one to closure parameters::
+or a single *typed* parameter, method arguments will be mapped one-by-one to closure parameters [#closure-destructuring]_::
 
-    subscriber1.receive(_) >> { String message -> message.size() > 3 ? "ok" : "fail" }
+    subscriber.receive(_) >> { String message -> message.size() > 3 ? "ok" : "fail" }
 
 This code is functionally equivalent to the previous one, but arguably more readable.
 
 If you find yourself in need of more information about a method invocation than its arguments, have a look at
 ``org.spockframework.mock.IMockInvocation``. All methods declared in this interface are available inside the closure,
-without a need to prefix them. (In Groovy speak, the closure *delegates* to an instance of ``IMockInvocation``.)
+without a need to prefix them. (In Groovy terminology, the closure *delegates* to an instance of ``IMockInvocation``.)
 
 Performing Side Effects
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -413,7 +456,7 @@ Performing Side Effects
 Sometimes you may want to do more than just computing a return value. A typical example would be
 to throw an exception. Again, closures come to the rescue::
 
-    subscriber1.receive(_) >> { throw new InternalError("ouch") }
+    subscriber.receive(_) >> { throw new InternalError("ouch") }
 
 Of course, the closure can contain more code, for example a ``println`` statement. The code
 will get executed every time the interaction matches an invocation.
@@ -423,30 +466,37 @@ Chaining Method Responses
 
 Method responses can be chained::
 
-    subscriber1.receive(_) >>> ["ok", "fail", "ok"] >> { throw new InternalError() } >> "ok"
+    subscriber.receive(_) >>> ["ok", "fail", "ok"] >> { throw new InternalError() } >> "ok"
 
 This will return ``"ok", "fail", "ok"`` for the first three invocations, throw ``InternalError``
-for the fourth invocations, and return ``ok`` for any further invocations.
+for the fourth invocations, and return ``ok`` for any further invocation.
 
 Combining Mocking and Stubbing
 ------------------------------
 
 Mocking and stubbing go hand-in-hand::
 
-    1 * subscriber1.receive("message1") >> "ok"
-    1 * subscriber1.receive("message2") >> "fail"
+    1 * subscriber.receive("message1") >> "ok"
+    1 * subscriber.receive("message2") >> "fail"
 
-When mocking and stubbing the same method call, it is important to express the two in a single interaction.
-The following Mockito-style splitting of stubbing and mocking into two separate statements will *not* work::
+When mocking and stubbing the same method call, they have to happen in the same interaction.
+In particular, the following Mockito-style splitting of stubbing and mocking into two separate
+statements will *not* work::
 
-    subscriber1.receive("message1")
-    1 * subscriber1.receive("message1") >> "ok"
+    setup:
+    subscriber.receive("message1") >> "ok"
 
-Because interactions are matched to invocations in declaration order, any invocation of ``receive``
-with argument ``"message1"`` will match the first of the two interactions. Since that interaction
-doesn't specify a response, the default value for the method's return type (``null`` in this case)
-will be returned. (This is just another facet of Spock's lenient approach to mocking.) The second
-interaction will never get a chance to match an invocation.
+    when:
+    publisher.send("message1")
+
+    then:
+    1 * subscriber.receive("message1")
+
+As explained in `Where to Declare Interactions`_, the ``receive`` call will first get matched against
+the interaction in the ``then:`` block. Since that interaction doesn't specify a response, the default
+value for the method's return type (``null`` in this case) will be returned. (This is just another
+facet of Spock's lenient approach to mocking.). Hence, the interaction in the ``setup:`` block will never
+get a chance to match.
 
 .. note:: Mocking and stubbing of the same method call has to happen in the same interaction.
 
@@ -513,10 +563,10 @@ Sometimes, it is desirable to both execute some code *and* delegate to the real 
 
     subscriber.receive(_) >> { String message -> callRealMethod(); message.size() > 3 ? "ok" : "fail" }
 
-Here we are using ``callRealMethod()`` to delegate the method invocation to the real object.
+Here we use ``callRealMethod()`` to delegate the method invocation to the real object.
 Note that we don't have to pass the ``message`` argument along; this is taken care of automatically. `callRealMethod()``
 returns the real invocation's result, but in this example we opted to return our own result instead.
-If we had wanted to pass a different message to the real method, we could have used ``callRealMethodWithArguments("changed message")``.
+If we had wanted to pass a different message to the real method, we could have used ``callRealMethodWithArgs("changed message")``.
 
 Partial Mocks
 ~~~~~~~~~~~~~
@@ -630,7 +680,7 @@ Global mocks support mocking and stubbing of static methods::
 The same works for dynamic static methods.
 
 When a global mock is used solely for mocking constructors and static methods,
-the mock's instance isn't really needed. In such a case it's OK to just write::
+the mock's instance isn't really needed. In such a case one can just write::
 
     GroovySpy(RealSubscriber, global: true)
 
@@ -659,8 +709,12 @@ To learn more about interaction-based testing, we recommend the following resour
 
 .. rubric:: Footnotes
 
+.. [#zero-times] Interactions starting with ``_ *`` are only needed in rare special cases, such as when following up with ``0 * _``.
+   When `Stubbing`_ a method call, ``_ *`` is implicitly assumed. In other words, ``_ * foo.bar() >> baz`` can always be simplified to ``foo.bar() >> baz``.
 .. [#equality] Arguments are compared according to Groovy equality, which is based on, but more relaxed than, Java equality (in particular for numbers).
 
-.. [#creating] See [Other Kinds of Mock Objects]_ for more on this.
+.. [#creating] See `Other Kinds of Mock Objects`_ for more on this.
 
 .. [#automagic] You may know this behavior from Groovy's ``MockFor()`` and ``StubFor()`` facilities.
+
+.. [#closure-destructuring] The closure argument destructuring semantics come straight from Groovy.

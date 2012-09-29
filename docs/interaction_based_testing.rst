@@ -3,7 +3,7 @@ Interaction Based Testing
 
 Interaction-based testing is a testing and design technique that emerged in the Extreme Programming
 (XP) community in the early 2000's. Focusing on the behavior of objects rather than their state, it explores how
-the object(s) under test interact, by way of method calls, with their collaborators.
+the object(s) under specification interact, by way of method calls, with their collaborators.
 
 For example, suppose we have a ``Publisher`` that sends messages to its ``Subscriber``'s::
 
@@ -28,7 +28,7 @@ implementation is often called a *mock object*.
 
 While we could certainly create a mock implementation of ``Subscriber`` by hand, writing and maintaining this code
 can get unpleasant as the number of methods and complexity of interactions increases. This is where mocking frameworks
-come in: First, they allow to succinctly describe the expected interactions between an object under test and its
+come in: First, they allow to succinctly describe the expected interactions between an object under specification and its
 collaborators. Second, they automatically generate conforming mock implementations.
 
 .. sidebar:: How are mock implementations generated?
@@ -51,12 +51,12 @@ Creating Mock Objects
 
 Mock objects are created with the ``MockingApi.Mock()`` method [#creating]_. Let's create two mock subscribers::
 
-    def subscriber1 = Mock(Subscriber)
+    def subscriber = Mock(Subscriber)
     def subscriber2 = Mock(Subscriber)
 
 Alternatively, the following Java-like syntax is supported, which may give better IDE support::
 
-    Subscriber subscriber1 = Mock()
+    Subscriber subscriber = Mock()
     Subscriber subscriber2 = Mock()
 
 Here, the mock's type is inferred from the variable type on the left-hand side of the assignment.
@@ -65,7 +65,7 @@ Here, the mock's type is inferred from the variable type on the left-hand side o
 (though not required) to omit it on the right-hand side.
 
 Mock objects literally implement (or, in the case of a class, extend) the type they stand in for. In other
-words, in our example ``subscriber1`` *is-a* ``Subscriber``. Hence it can be passed to statically typed (Java)
+words, in our example ``subscriber`` *is-a* ``Subscriber``. Hence it can be passed to statically typed (Java)
 code that expects this type.
 
 Default Behavior of Mock Objects
@@ -85,20 +85,20 @@ the default value for the method's return type (``false``, ``0``, or ``null``). 
 methods ``equals``, ``hashCode``, and ``toString``, which have the following default behavior: A mock object is only
 equal to itself, has a unique hash code, and a string representation that includes the name of the type it represents.
 This default behavior is overridable by declaring regular interactions, which we will learn about in the `Mocking`_
-and `Stubbing`_ sections.
+and `Stubbing <stubbing>`_ sections.
 
-Registering Mock Objects with Object Under Test
------------------------------------------------
+Injecting Mock Objects Into Code Under Specification
+----------------------------------------------------
 
-After creating the publisher and its subscribers, we need to register the latter with the former::
+After creating the publisher and its subscribers, we need to make the latter known to the former::
 
     class PublisherSpec extends Specification {
         Publisher publisher = new Publisher()
-        Subscriber subscriber1 = Mock()
+        Subscriber subscriber = Mock()
         Subscriber subscriber2 = Mock()
 
         def setup() {
-            publisher << subscriber1 // << is a Groovy shorthand for List.add()
+            publisher << subscriber // << is a Groovy shorthand for List.add()
             publisher << subscriber2
         }
     }
@@ -109,23 +109,23 @@ Mocking
 -------
 
 Mocking is the act of describing (mandatory) interactions between the object under specification and its collaborators.
- Let's see an example::
+Here is an example::
 
     def "should send messages to all subscribers"() {
         when:
         publisher.send("hello")
 
         then:
-        1 * subscriber1.receive("hello")
+        1 * subscriber.receive("hello")
         1 * subscriber2.receive("hello")
     }
 
 Read out aloud: "When the publisher sends a 'hello' message, then both subscribers should receive that message exactly once."
 
-When this test gets run, Spock watches all invocations on mock objects that occur during the execution of the
-``when`` block and compares them to the interactions described in the corresponding ``then:`` block. In case of
-a mismatch, a (subclass of) ``InteractionNotSatisfiedError`` is thrown. This verification
-happens automatically and does not require any boilerplate code.
+When this method gets run, Spock compares all invocations on mock objects that occur during the execution of the
+``when`` block with the interactions described in the corresponding ``then:`` block. In case of a mismatch, 
+a (subclass of) ``InteractionNotSatisfiedError`` is thrown. This verification happens automatically and does not 
+require any boilerplate code.
 
 Interactions
 ~~~~~~~~~~~~
@@ -140,10 +140,10 @@ Interactions
 Let's take a closer look at the ``then:`` block. It contains two *interactions*, each of which consists of four
 parts: a *cardinality*, a *target constraint*, a *method constraint*, and one ore more *argument constraints*::
 
-    1 * subscriber1.receive("hello")
-    |   |           |       |
-    |   target c.   |       argument list constraint
-    cardinality     method constraint
+    1 * subscriber.receive("hello")
+    |   |          |       |
+    |   target c.  |       argument constraint
+    cardinality    method constraint
 
 Cardinality
 ~~~~~~~~~~~
@@ -151,19 +151,19 @@ Cardinality
 The cardinality of an interaction tells how often a method call is expected. It can either be a fixed number or
 a range::
 
-    1 * subscriber1.receive("hello")      // exactly one call
-    0 * subscriber1.receive("hello")      // zero calls
-    (1..3) * subscriber1.receive("hello") // between one and three calls (inclusive)
-    (1.._) * subscriber1.receive("hello") // at least one call
-    (_..3) * subscriber1.receive("hello") // at most three calls
-    _ * subscriber1.receive("hello")      // any number of calls, including zero
+    1 * subscriber.receive("hello")      // exactly one call
+    0 * subscriber.receive("hello")      // zero calls
+    (1..3) * subscriber.receive("hello") // between one and three calls (inclusive)
+    (1.._) * subscriber.receive("hello") // at least one call
+    (_..3) * subscriber.receive("hello") // at most three calls
+    _ * subscriber.receive("hello")      // any number of calls, including zero
                                           // (rarely needed; see `Strict Mocking`_)
 Target Constraint
 ~~~~~~~~~~~~~~~~~
 
 The target constraint of an interaction tells which mock object a call is expected on::
 
-  1 * subscriber1.receive("hello") // a call on 'subscriber1'
+  1 * subscriber.receive("hello") // a call on 'subscriber'
   1 * _.receive("hello")           // a call on any mock object
 
 Method Constraint
@@ -171,23 +171,31 @@ Method Constraint
 
 The method constraint of an interaction tells which method is expected to be called::
 
-    1 * subscriber1.receive("hello") // a method named 'receive'
-    1 * subscriber1./r.*e/("hello")  // a method whose name matches the given regular expression
-                                     // (here: method name starts with 'r' and ends in 'e')
+    1 * subscriber.receive("hello") // a method named 'receive'
+    1 * subscriber./r.*e/("hello")  // a method whose name matches the given regular expression
+                                    // (here: method name starts with 'r' and ends in 'e')
+
+When expecting a call to a getter method, Groovy property syntax *can* be used instead of method syntax::
+
+    1 * subscriber.status // same as: 1 * subscriber.getStatus()
+
+When expecting a call to a setter method, only method syntax can be used::
+
+    1 * subscriber.setStatus("ok") // NOT: 1 * subscriber.status = "ok"
 
 Argument Constraints
 ~~~~~~~~~~~~~~~~~~~~
 
 The argument constraints of an interaction tell which method arguments are expected::
 
-    1 * subscriber1.receive("hello")     // an argument that is equal[#equality]_ to the String "hello"
-    1 * subscriber1.receive(!"hello")    // an argument that is unequal[#equality]_ to the String "hello"
-    1 * subscriber1.receive()            // the empty argument list (would never match in our example)
-    1 * subscriber1.receive(_)           // any single argument (including null)
-    1 * subscriber1.receive(*_)          // any argument list (including the empty argument list)
-    1 * subscriber1.receive(!null)       // any non-null argument
-    1 * subscriber1.receive(_ as String) // any non-null argument that is-a String
-    1 * subscriber1.receive({ it.size() > 3 }) // an argument that satisfies the given predicate
+    1 * subscriber.receive("hello")     // an argument that is equal[#equality]_ to the String "hello"
+    1 * subscriber.receive(!"hello")    // an argument that is unequal[#equality]_ to the String "hello"
+    1 * subscriber.receive()            // the empty argument list (would never match in our example)
+    1 * subscriber.receive(_)           // any single argument (including null)
+    1 * subscriber.receive(*_)          // any argument list (including the empty argument list)
+    1 * subscriber.receive(!null)       // any non-null argument
+    1 * subscriber.receive(_ as String) // any non-null argument that is-a String
+    1 * subscriber.receive({ it.size() > 3 }) // an argument that satisfies the given predicate
                                                // (here: message length is greater than 3)
 
 Argument constraints work as expected for methods with multiple arguments and/or varargs::
@@ -204,8 +212,8 @@ Matching Any Method Call
 
 Sometimes it can be useful to match "anything", in some sense of the word::
 
-    1 * subscriber1._(*_)     // any method on subscriber1, with any argument list
-    1 * subscriber1._         // shortcut for and preferred over the above
+    1 * subscriber._(*_)     // any method on subscriber, with any argument list
+    1 * subscriber._         // shortcut for and preferred over the above
 
     1 * _._                   // any method call on any mock object
     1 * _                     // shortcut for and preferred over the above
@@ -293,15 +301,15 @@ Interactions declared in a ``then:`` block are scoped to the preceding ``when:``
     publisher.send("message1")
 
     then:
-    subscriber1.receive("message1")
+    subscriber.receive("message1")
 
     when:
     publisher.send("message2")
 
     then:
-    subscriber1.receive("message2")
+    subscriber.receive("message2")
 
-This makes sure that ``subscriber1`` receives ``"message1"`` during execution of the first ``when:`` block,
+This makes sure that ``subscriber`` receives ``"message1"`` during execution of the first ``when:`` block,
 and ``"message2"`` during execution of the second ``when:`` block.
 
 Interactions declared outside a ``then:`` block are valid from their declaration until the end of the
@@ -340,7 +348,7 @@ The second case (fewer invocations than required) can only be detected once exec
 
     Too few invocations for:
 
-    1 * subscriber1.receive("hello") (0 invocations)
+    1 * subscriber.receive("hello") (0 invocations)
 
 Note that it doesn't matter whether the method was not called at all, the same method was called with different arguments,
 the same method was called on a different mock object, or a different method was called "instead" of this one;
@@ -354,7 +362,7 @@ in either case, a ``TooFewInvocationsError`` error will occur.
 
         Unmatched invocations (ordered by similarity):
 
-        1 * subscriber1.receive("goodbye")
+        1 * subscriber.receive("goodbye")
         1 * subscriber2.receive("hello")
 
 Invocation Order
@@ -396,9 +404,9 @@ the class path, Spock will gently let you know.
 Stubbing
 --------
 
-Stubbing is the act of "programming" collaborators to exhibit a certain behavior. When stubbing
+Stubbing is the act of making collaborators respond to method calls in a certain way. When stubbing
 a method, you don't care if and how many times the method is going to be called; you just want it to
-return some value (or perform some side effect) *whenever* it gets called.
+return some value, or perform some side effect, *whenever* it gets called.
 
 For the sake of demonstrating stubbing, let's modify the ``Subscriber``'s ``receive`` method
 to return a status code that tells if the subscriber was able to process the message::
@@ -514,8 +522,6 @@ So far, we have created mock objects with the ``MockingApi.Mock`` method. Aside 
 this method, the ``MockingApi`` class provides a couple of other factory methods for creating
 more specialized kinds of mock objects.
 
-.. _Stubs:
-
 Stubs
 ~~~~~
 
@@ -584,7 +590,7 @@ Partial Mocks
 
 Spies can also be used as partial mocks::
 
-    // this is now the subject under specification, not a collaborator
+    // this is now the object under specification, not a collaborator
     def persister = Spy(MessagePersister) {
       // stub a call on the same object
       isPersistable(_) >> true
@@ -608,10 +614,10 @@ They are created with the ``MockingApi.GroovyMock()``, ``MockingApi.GroovyStub()
 
 .. admonition:: When should I favor Groovy mocks over regular mocks?
 
-   Groovy mocks should be used when the code under specification is written in Groovy *and*
-   some of the unique Groovy mock features are needed. When called from Java code, Groovy mocks will behave like regular mocks. Note
-   that it isn't necessary to use a Groovy mock merely because the code under specification and/or mocked interface or class type is written in Groovy.
-   Unless you have a concrete reason to use a Groovy mock, prefer a regular mock.
+   Groovy mocks should be used when the code under specification is written in Groovy *and* some of the unique Groovy 
+   mock features are needed. When called from Java code, Groovy mocks will behave like regular mocks. Note that it 
+   isn't necessary to use a Groovy mock merely because the code under specification and/or mocked interface or class 
+   type is written in Groovy. Unless you have a concrete reason to use a Groovy mock, prefer a regular mock.
 
 Mocking Dynamic Methods
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -630,7 +636,7 @@ Mocking All Instances Of A Type
 
 (Think twice before using this feature. It might be better to change the design of your code.)
 
-Usually, Groovy mocks are injected into the code under specification just like regular mocks.
+Usually, Groovy mocks need to be injected into the code under specification just like regular mocks.
 However, when a Groovy mock is created as *global*, it automagically replaces all real instances
 of the mocked type for the duration of the feature method [#automagic]_::
 
@@ -650,7 +656,7 @@ Then we create a global mock of the *same* type. This reroutes all method calls 
 real subscribers to the mock object. The mock object's instance isn't ever passed to the publisher;
 it is only used to describe the interaction.
 
- .. note:: Global mocks can only be created for a class type. They effectively replace
+ .. note:: A global mock can only be created for a class type. It effectively replaces
            all instances of that type for the duration of the feature method.
 
 Since global mocks have a somewhat, well, global effect, it's often convenient
@@ -662,8 +668,8 @@ in on objects and change their behavior just where needed.
 
    Global Groovy mocks get their super powers from Groovy meta-programming. To be more precise,
    every globally mocked type is assigned a custom meta class for the duration of the feature method.
-   Since a global Groovy mock is still based on a JDK dynamic proxy or CGLIB proxy, it will retain its
-   general mocking capabilities (but not its super powers) when invoked from Java code.
+   Since a global Groovy mock is still based on a CGLIB proxy, it will retain its general mocking capabilities 
+   (but not its super powers) when called from Java code.
 
 Mocking Constructors
 ~~~~~~~~~~~~~~~~~~~~

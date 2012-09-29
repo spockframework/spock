@@ -612,12 +612,12 @@ So far, all the mocking features we have seen work the same no matter if the cal
 By leveraging Groovy's dynamic capabilities, Groovy mocks offer some additional features specifically for testing Groovy code.
 They are created with the ``MockingApi.GroovyMock()``, ``MockingApi.GroovyStub()``, and ``MockingApi.GroovySpy()`` factory methods.
 
-.. admonition:: When should I favor Groovy mocks over regular mocks?
+.. admonition:: When should Groovy mocks be favored over regular mocks?
 
-   Groovy mocks should be used when the code under specification is written in Groovy *and* some of the unique Groovy 
+   Groovy mocks should be used when the code under specification is written in Groovy *and* some of the unique Groovy
    mock features are needed. When called from Java code, Groovy mocks will behave like regular mocks. Note that it 
-   isn't necessary to use a Groovy mock merely because the code under specification and/or mocked interface or class 
-   type is written in Groovy. Unless you have a concrete reason to use a Groovy mock, prefer a regular mock.
+   isn't necessary to use a Groovy mock merely because the code under specification and/or mocked type is written
+   in Groovy. Unless you have a concrete reason to use a Groovy mock, prefer a regular mock.
 
 Mocking Dynamic Methods
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -628,8 +628,6 @@ dynamic methods as if they were physically declared methods::
     def subscriber = GroovyMock(Subscriber)
 
     1 * subscriber.someDynamicMethod("hello")
-
-.. _GlobalMocking:
 
 Mocking All Instances Of A Type
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -542,7 +542,7 @@ Like a mock, a stub allows unexpected invocations. However, the values returned 
 Spies
 ~~~~~
 
-.. warning:: Think twice before using this feature. It might be better to change the design of your code.
+(Think twice before using this feature. It might be better to change the design of your code.)
 
 A *spy* is created with the ``MockingApi.Spy`` factory method::
 
@@ -580,7 +580,7 @@ If we had wanted to pass a different message to the real method, we could have u
 Partial Mocks
 ~~~~~~~~~~~~~
 
-.. warning:: Think twice before using this feature. It might be better to change the design of your code.
+(Think twice before using this feature. It might be better to change the design of your code.)
 
 Spies can also be used as partial mocks::
 
@@ -628,7 +628,7 @@ dynamic methods as if they were physically declared methods::
 Mocking All Instances Of A Type
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. warning:: Think twice before using this feature. It might be better to change the design of your code.
+(Think twice before using this feature. It might be better to change the design of your code.)
 
 Usually, Groovy mocks are injected into the code under specification just like regular mocks.
 However, when a Groovy mock is created as *global*, it automagically replaces all real instances
@@ -668,7 +668,7 @@ in on objects and change their behavior just where needed.
 Mocking Constructors
 ~~~~~~~~~~~~~~~~~~~~
 
-.. warning:: Think twice before using this feature. It might be better to change the design of your code.
+(Think twice before using this feature. It might be better to change the design of your code.)
 
 Global mocks support mocking of constructors::
 
@@ -687,7 +687,7 @@ a subscriber named Barney instead.
 Mocking Static Methods
 ~~~~~~~~~~~~~~~~~~~~~~
 
-.. warning:: Think twice before using this feature. It might be better to change the design of your code.
+(Think twice before using this feature. It might be better to change the design of your code.)
 
 Global mocks support mocking and stubbing of static methods::
 

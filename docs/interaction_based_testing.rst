@@ -85,7 +85,7 @@ the default value for the method's return type (``false``, ``0``, or ``null``). 
 methods ``equals``, ``hashCode``, and ``toString``, which have the following default behavior: A mock object is only
 equal to itself, has a unique hash code, and a string representation that includes the name of the type it represents.
 This default behavior is overridable by declaring regular interactions, which we will learn about in the `Mocking`_
-and `Stubbing <stubbing>`_ sections.
+and `Stubbing`_ sections.
 
 Injecting Mock Objects Into Code Under Specification
 ----------------------------------------------------
@@ -240,7 +240,7 @@ any other interaction is supposed to fail the test::
 use of ``_ *`` (any number of calls), which *allows* any interaction with the auditing component.
 
 .. note:: ``_ *`` is only meaningful in the context of strict mocking. In particular, it is never necessary
-   when `Stubbing<stubbing>`_ an invocation. For example, ``_ * auditing.record(_) >> "ok"`` can (and should!)
+   when :ref:`Stubbing <stubbing>`_ an invocation. For example, ``_ * auditing.record(_) >> "ok"`` can (and should!)
    be simplified to ``auditing.record(_) >> "ok"``.
 
 Where to Declare Interactions

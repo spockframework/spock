@@ -219,7 +219,7 @@ Sometimes it can be useful to match "anything", in some sense of the word::
     1 * _                     // shortcut for and preferred over the above
 
 .. note:: Although ``(_.._) * _._(*_) >> _`` is a valid interaction declaration,
-   it is neither good style nor particularly useful (except for impressing your geek friends).
+   it is neither good style nor particularly useful.
 
 Strict Mocking
 ~~~~~~~~~~~~~~
@@ -400,6 +400,8 @@ Besides interfaces, Spock also supports mocking of classes. Mocking classes work
 just like mocking interfaces; the only additional requirement is to put ``cglib-nodep-2.2`` or higher
 and ``objenesis-1.2`` or higher on the class path. If either of these libraries is missing from
 the class path, Spock will gently let you know.
+
+.. _stubbing:
 
 Stubbing
 --------

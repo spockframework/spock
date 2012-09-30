@@ -310,7 +310,7 @@ it unnecessary to repeat the target constraint::
         1 * receive("goodbye")
     }
 
-A ``with`` block can also be used for grouping :ref:`conditions with the same target <GroupingConditionsWithSameTarget>`_.
+A ``with`` block can also be used for grouping conditions with the same target.
 
 Mixing Interactions and Conditions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

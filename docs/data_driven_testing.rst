@@ -1,3 +1,5 @@
+.. _DataDrivenTesting:
+
 Data Driven Testing
 ===================
 

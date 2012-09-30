@@ -17,29 +17,26 @@ package org.spockframework.mock;
 import org.spockframework.util.Beta;
 
 /**
- * The <em>nature</em> of a mock object determines its responsibilities and characteristics.
- * It is chosen at mock creation time, typically by selecting the appropriate {@link spock.lang.MockingApi} factory method.
+ * A mock <em>nature</em> is a named set of defaults for a mock's configuration options. It is chosen at
+ * mock creation time, typically by selecting the appropriate {@link spock.lang.MockingApi} factory method.
  */
 @Beta
 public enum MockNature {
   /**
-   * The most generic mock object nature. Can be used both for stubbing (i.e.
-   * responding to method calls) and mocking (i.e. demanding certain method calls).
-   * Returns {@code 0}, {@code false}, or {@code null} for unanticipated method calls,
-   * depending on the method's return type.
+   * A mock object whose method calls are verified, which instantiates class-based mock objects with Objenesis,
+   * and whose strategy for responding to unexpected method calls is {@link ZeroOrNullResponse}.
    */
   MOCK(true, true, ZeroOrNullResponse.INSTANCE),
 
   /**
-   * A mock object whose purpose is to respond to method calls, without ever demanding them.
-   * Returns "empty" values (zero, empty string, empty collection, object created from default constructor, etc.)
-   * for unanticipated method calls.
+   * A mock object whose method calls are not verified, which instantiates class-based mock objects with Objenesis,
+   * and whose strategy for responding to unexpected method calls is {@link EmptyOrDummyResponse}.
    */
   STUB(false, true, EmptyOrDummyResponse.INSTANCE),
 
   /**
-   * A mock object that sits atop a real object of the same type. Method calls that aren't stubbed
-   * or mocked explicitly are delegated to the underlying object.
+   * A mock object whose method calls are verified, which instantiates class-based mock objects by calling a
+   * real constructor, and whose strategy for responding to unexpected method calls is {@link CallRealMethodResponse}.
    */
   SPY(true, false, CallRealMethodResponse.INSTANCE);
 
@@ -54,27 +51,29 @@ public enum MockNature {
   }
 
   /**
-   * Tells whether mock objects of this nature can verify method calls.
+   * Tells whether method calls should be verified.
    *
-   * @return whether mock objects of this nature can verify method calls
+   * @return whether method calls should be verified
    */
   public boolean isVerified() {
     return verified;
   }
 
   /**
-   * Tells whether the Objenesis library (if present) should be used to instantiate mock objects of this nature.
+   * Tells whether class-based mock objects should be instantiated with the Objenesis library (if available),
+   * or by calling a real constructor.
    *
-   * @return whether the Objenesis library (if present) should be used to instantiate mock objects of this nature
+   * @return whether class-based mock objects should be instantiated with the Objenesis library (if available),
+   * or by calling a real constructor
    */
   public boolean isUseObjenesis() {
     return useObjenesis;
   }
 
   /**
-   * Returns the default response strategy used by mocks of this nature.
+   * Returns the strategy for responding to unexpected method calls.
    *
-   * @return the default response strategy used by mocks of this nature
+   * @return the strategy for responding to unexpected method calls
    */
   public IDefaultResponse getDefaultResponse() {
     return defaultResponse;

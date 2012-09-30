@@ -109,7 +109,7 @@ class StubDefaultResponses extends Specification {
 
     expect:
     with(stub.getUnknownInterface()) {
-      MockDetector.isMock(it)
+      new MockDetector().isMock(it)
       name == ""
       age == 0
       children == []
@@ -121,7 +121,7 @@ class StubDefaultResponses extends Specification {
 
     expect:
     with(stub.getUnknownClassWithDefaultCtor()) {
-      !MockDetector.isMock(it)
+      !new MockDetector().isMock(it)
       name == "default"
       age == 0
       children == null
@@ -133,7 +133,7 @@ class StubDefaultResponses extends Specification {
 
     expect:
     with(stub.getUnknownClassWithoutDefaultCtor()) {
-      MockDetector.isMock(it)
+      new MockDetector().isMock(it)
       name == ""
       age == 0
       children == []

@@ -16,33 +16,35 @@ package org.spockframework.mock
 import spock.lang.Specification
 
 class MockDetectorSpec extends Specification {
+  def detector = new MockDetector()
+  
   def "detects interface based mocks"() {
     expect:
-    MockDetector.isMock(Mock(List))
-    !MockDetector.isMock([])
+    detector.isMock(Mock(List))
+    !detector.isMock([])
   }
 
   def "detects class based mocks"() {
     expect:
-    MockDetector.isMock(Mock(ArrayList))
-    !MockDetector.isMock(new ArrayList())
+    detector.isMock(Mock(ArrayList))
+    !detector.isMock(new ArrayList())
   }
 
   def "detects all natures of mock object"() {
     expect:
-    MockDetector.isMock(Mock(List))
-    MockDetector.isMock(Stub(List))
-    MockDetector.isMock(Spy(ArrayList))
-    MockDetector.isMock(GroovyMock(List))
-    MockDetector.isMock(GroovyStub(List))
-    MockDetector.isMock(GroovySpy(ArrayList))
+    detector.isMock(Mock(List))
+    detector.isMock(Stub(List))
+    detector.isMock(Spy(ArrayList))
+    detector.isMock(GroovyMock(List))
+    detector.isMock(GroovyStub(List))
+    detector.isMock(GroovySpy(ArrayList))
   }
 
   def "provides access to mock object information"() {
     def list = Mock(List)
 
     expect:
-    def mock = MockDetector.asMock(list)
+    def mock = detector.asMock(list)
     mock.name == "list"
     mock.type == List
     mock.instance == list
@@ -50,7 +52,7 @@ class MockDetectorSpec extends Specification {
 
   def "complains if information about non-mock is requested"() {
     when:
-    MockDetector.asMock([])
+    detector.asMock([])
 
     then:
     thrown(IllegalArgumentException)

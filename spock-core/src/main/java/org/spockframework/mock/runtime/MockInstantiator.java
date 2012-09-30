@@ -27,7 +27,7 @@ public class MockInstantiator {
 
   public static Object instantiate(Class<?> declaredType, Class<?> actualType, @Nullable List<Object> constructorArgs, boolean useObjenesis) {
     try {
-      if (constructorArgs == null && useObjenesis && objenesisAvailable) {
+      if (!declaredType.isInterface() && constructorArgs == null && useObjenesis && objenesisAvailable) {
         return ObjenesisInstantiator.instantiate(actualType);
       }
       return GroovyRuntimeUtil.invokeConstructor(actualType, constructorArgs == null ? null : constructorArgs.toArray());

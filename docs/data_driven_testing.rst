@@ -26,7 +26,7 @@ Although this approach is fine in simple cases like this one, it has some potent
 * Code and data are mixed and cannot easily be changed independently
 * Data cannot easily be auto-generated or fetched from external sources
 * In order to exercise the same code multiple times, it either has to be duplicated or extracted into a separate method
-* In case of a failure, it isn't immediately clear which inputs caused the failure
+* In case of a failure, it may not be immediately clear which inputs caused the failure
 * Exercising the same code multiple times does not benefit from the same isolation as executing separate methods does
 
 Spock's data-driven testing support tries to address these concerns. To get started, let's refactor above code into a

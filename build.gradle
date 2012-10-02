@@ -19,7 +19,7 @@ ext {
 
 allprojects {
   group = "org.spockframework"
-  version = theVersion
+  version = project.theVersion
 
   apply from: script("common")
 }

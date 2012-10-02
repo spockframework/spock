@@ -1,0 +1,116 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<project>
+  <actions/>
+  <description>Spock is a specification and testing framework for Java and Groovy applications.</description>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <com.coravy.hudson.plugins.github.GithubProjectProperty plugin="github@1.4">
+      <projectUrl>http://github.com/spockframework/spock/</projectUrl>
+    </com.coravy.hudson.plugins.github.GithubProjectProperty>
+  </properties>
+  <scm class="hudson.plugins.git.GitSCM" plugin="git@1.1.24">
+    <configVersion>2</configVersion>
+    <userRemoteConfigs>
+      <hudson.plugins.git.UserRemoteConfig>
+        <name></name>
+        <refspec></refspec>
+        <url>git://github.com/spockframework/spock.git</url>
+      </hudson.plugins.git.UserRemoteConfig>
+    </userRemoteConfigs>
+    <branches>
+      <hudson.plugins.git.BranchSpec>
+        <name>jenkins</name>
+      </hudson.plugins.git.BranchSpec>
+    </branches>
+    <disableSubmodules>false</disableSubmodules>
+    <recursiveSubmodules>false</recursiveSubmodules>
+    <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
+    <authorOrCommitter>false</authorOrCommitter>
+    <clean>false</clean>
+    <wipeOutWorkspace>false</wipeOutWorkspace>
+    <pruneBranches>false</pruneBranches>
+    <remotePoll>false</remotePoll>
+    <ignoreNotifyCommit>false</ignoreNotifyCommit>
+    <useShallowClone>false</useShallowClone>
+    <buildChooser class="hudson.plugins.git.util.DefaultBuildChooser"/>
+    <gitTool>Default</gitTool>
+    <submoduleCfg class="list"/>
+    <relativeTargetDir></relativeTargetDir>
+    <reference></reference>
+    <excludedRegions></excludedRegions>
+    <excludedUsers></excludedUsers>
+    <gitConfigName></gitConfigName>
+    <gitConfigEmail></gitConfigEmail>
+    <skipTag>false</skipTag>
+    <includedRegions></includedRegions>
+    <scmName></scmName>
+  </scm>
+  <canRoam>true</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers class="vector">
+    <com.cloudbees.jenkins.GitHubPushTrigger plugin="github@1.4">
+      <spec></spec>
+    </com.cloudbees.jenkins.GitHubPushTrigger>
+  </triggers>
+  <concurrentBuild>false</concurrentBuild>
+  <builders>
+    <hudson.plugins.gradle.Gradle plugin="gradle@1.20">
+      <description></description>
+      <switches></switches>
+      <tasks>build</tasks>
+      <rootBuildScriptDir></rootBuildScriptDir>
+      <buildFile></buildFile>
+      <useWrapper>true</useWrapper>
+      <makeExecutable>false</makeExecutable>
+    </hudson.plugins.gradle.Gradle>
+  </builders>
+  <publishers/>
+  <buildWrappers>
+    <org.jfrog.hudson.gradle.ArtifactoryGradleConfigurator plugin="artifactory@2.1.2">
+      <details>
+        <artifactoryName>http://localhost:8081/artifactory</artifactoryName>
+        <repositoryKey>libs-snapshot-local</repositoryKey>
+        <snapshotsRepositoryKey>libs-snapshot-local</snapshotsRepositoryKey>
+        <downloadRepositoryKey>spock</downloadRepositoryKey>
+        <stagingPlugin>
+          <pluginName>None</pluginName>
+        </stagingPlugin>
+      </details>
+      <deployArtifacts>true</deployArtifacts>
+      <deployMaven>true</deployMaven>
+      <deployIvy>false</deployIvy>
+      <deployBuildInfo>true</deployBuildInfo>
+      <includeEnvVars>false</includeEnvVars>
+      <runChecks>false</runChecks>
+      <violationRecipients></violationRecipients>
+      <includePublishArtifacts>false</includePublishArtifacts>
+      <scopes></scopes>
+      <licenseAutoDiscovery>true</licenseAutoDiscovery>
+      <disableLicenseAutoDiscovery>false</disableLicenseAutoDiscovery>
+      <ivyPattern>[organisation]/[module]/ivy-[revision].xml</ivyPattern>
+      <enableIssueTrackerIntegration>false</enableIssueTrackerIntegration>
+      <aggregateBuildIssues>false</aggregateBuildIssues>
+      <artifactPattern>[organisation]/[module]/[revision]/[artifact]-[revision](-[classifier]).[ext]</artifactPattern>
+      <notM2Compatible>false</notM2Compatible>
+      <artifactDeploymentPatterns>
+        <includePatterns></includePatterns>
+        <excludePatterns></excludePatterns>
+      </artifactDeploymentPatterns>
+      <discardOldBuilds>false</discardOldBuilds>
+      <passIdentifiedDownstream>false</passIdentifiedDownstream>
+      <releaseWrapper>
+        <tagPrefix>jenkins</tagPrefix>
+        <releaseBranchPrefix>REL-BRANCH-</releaseBranchPrefix>
+        <alternativeTasks></alternativeTasks>
+        <releasePropsKeys>version</releasePropsKeys>
+        <nextIntegPropsKeys>version</nextIntegPropsKeys>
+      </releaseWrapper>
+      <discardBuildArtifacts>true</discardBuildArtifacts>
+      <matrixParams></matrixParams>
+      <skipInjectInitScript>true</skipInjectInitScript>
+      <allowPromotionOfNonStagedBuilds>false</allowPromotionOfNonStagedBuilds>
+    </org.jfrog.hudson.gradle.ArtifactoryGradleConfigurator>
+  </buildWrappers>
+</project>

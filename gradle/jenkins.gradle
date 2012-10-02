@@ -1,15 +1,26 @@
+import groovyx.net.http.RESTClient
+import groovy.text.SimpleTemplateEngine
+import static groovyx.net.http.ContentType.XML
+
 buildscript {
-    
+    repositories {
+        maven {
+            url 'http://localhost:8081/artifactory/repo'
+        }
+    }
+    dependencies {
+        classpath('org.codehaus.groovy.modules.http-builder:http-builder:0.5.2') {
+          exclude module: "groovy"
+        }
+    }
 }
 
 task createJenkinsJob(type: CreateJenkinsJob) {
   jenkinsUrl = "http://localhost:8080"
-  jobName = "SPOCK_NEW"
-  templateFile = file("gradleArtifactoryGitHubJob.template")
+  jobName = "spock-generated"
+  templateFile = file("gradle/gradleArtifactoryGitHubJob.template")
   binding = [:]
 }
-
-
 
 class CreateJenkinsJob extends DefaultTask {  
   String jenkinsUrl
@@ -22,10 +33,11 @@ class CreateJenkinsJob extends DefaultTask {
   
   @TaskAction
   void createJob() {
-    def templateEngine = new XmlTemplateEngine()
+    def templateEngine = new SimpleTemplateEngine()
     def jenkinsJobConfig = templateEngine.createTemplate(templateFile).make(binding).toString()
+    println jenkinsJobConfig
     def restClient = new RESTClient(jenkinsUrl)
-    restClient.post(path: "/createitem/api", query: [name: jobName], body: jenkinsJobConfig)
-    assert restClient.resp.status == 200   
+    def response = restClient.post(path: "/createItem", query: [name: jobName], body: jenkinsJobConfig, requestContentType: XML)
+    assert response.status == 200   
   }
 }

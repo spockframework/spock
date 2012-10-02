@@ -1,3 +1,44 @@
+buildscript {
+    repositories {
+        maven {
+            url 'http://localhost:8081/artifactory/plugins-release'
+            credentials {
+                username = "${artifactory_user}"
+                password = "${artifactory_password}"
+            }
+        }
+    }
+    dependencies {
+        classpath 'org.jfrog.buildinfo:build-info-extractor-gradle:2.0.16'
+    }
+}
+
+allprojects {
+    apply plugin: 'artifactory'
+}
+
+artifactory {
+    contextUrl = "${artifactory_contextUrl}"
+    publish {
+        repository {
+            repoKey = 'libs-snapshot-local'
+            username = "${artifactory_user}"
+            password = "${artifactory_password}"
+            maven = true            
+        }
+    }
+    resolve {
+        repository {
+            repoKey = 'spock'
+            username = "${artifactory_user}"
+            password = "${artifactory_password}"
+            maven = true            
+        }
+    }
+}
+
+apply from: "gradle/jenkins.gradle"
+
 description = "Spock Framework"
 
 ext {

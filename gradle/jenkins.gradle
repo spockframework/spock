@@ -1,0 +1,31 @@
+buildscript {
+    
+}
+
+task createJenkinsJob(type: CreateJenkinsJob) {
+  jenkinsUrl = "http://localhost:8080"
+  jobName = "SPOCK_NEW"
+  templateFile = file("gradleArtifactoryGitHubJob.template")
+  binding = [:]
+}
+
+
+
+class CreateJenkinsJob extends DefaultTask {  
+  String jenkinsUrl
+  
+  String jobName
+  
+  File templateFile
+  
+  Map binding
+  
+  @TaskAction
+  void createJob() {
+    def templateEngine = new XmlTemplateEngine()
+    def jenkinsJobConfig = templateEngine.createTemplate(templateFile).make(binding).toString()
+    def restClient = new RESTClient(jenkinsUrl)
+    restClient.post(path: "/createitem/api", query: [name: jobName], body: jenkinsJobConfig)
+    assert restClient.resp.status == 200   
+  }
+}

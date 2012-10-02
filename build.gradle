@@ -19,7 +19,7 @@ ext {
 
 allprojects {
   group = "org.spockframework"
-  version = "0.7-groovy-1.8-SNAPSHOT"
+  version = theVersion
 
   apply from: script("common")
 }

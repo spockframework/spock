@@ -887,7 +887,7 @@ To learn more about interaction-based testing, we recommend the following resour
 .. rubric:: Footnotes
 
 .. [#creating] For additional ways to create mock objects, see :ref:`OtherKindsOfMockObjects`
-and :ref:`ALaCarteMocks`.
+   and :ref:`ALaCarteMocks`.
 
 .. [#targetContext] Also, it isn't technically possible to reference the ``subscriber`` variable from the closure,
    because it is being declared as part of the same statement.

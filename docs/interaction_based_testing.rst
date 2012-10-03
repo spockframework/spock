@@ -302,7 +302,7 @@ Grouping Interactions with Same Target (New in 0.7)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Interactions sharing the same target can be grouped in a ``Specification.with`` block. Similar to
-:ref:`declaring interactions at mock creation time <DeclaringInteractionsAtMockCreationTime>`_, this makes
+:ref:`declaring interactions at mock creation time <DeclaringInteractionsAtMockCreationTime>`, this makes
 it unnecessary to repeat the target constraint::
 
     with(subscriber) {
@@ -506,7 +506,7 @@ Compared to a mocked interaction, a stubbed interaction has no cardinality on th
     
 A stubbed interaction can be declared in the usual places: either inside a ``then:`` block, or anywhere before a
 ``when:`` block. (See :ref:`WhereToDeclareInteractions`_ for the details.) If a mock object is only used for stubbing,
-declaring interactions :ref:`at mock creation time <DeclaringInteractionsAtMockCreationTime>`_ or in a ``setup:``
+declaring interactions :ref:`at mock creation time <DeclaringInteractionsAtMockCreationTime>` or in a ``setup:``
 block is common.
 
 Returning Fixed Values
@@ -640,7 +640,7 @@ Like a mock, a stub allows unexpected invocations. However, the values returned 
    See class ``org.spockframework.mock.EmptyOrDummyResponse`` for the details.
 
 A stub often has a fixed set of interactions, which makes :ref:`declaring interactions at mock creation time
-<DeclaringInteractionsAtMockCreationTime>`_ particularly attractive::
+<DeclaringInteractionsAtMockCreationTime>` particularly attractive::
 
     def subscriber = Stub(Subscriber) {
         receive("message1") >> "ok"

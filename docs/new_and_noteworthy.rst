@@ -106,7 +106,7 @@ A global mock can only be created for a class type. It effectively replaces all 
 amenable to stubbing and mocking. (You may know this behavior from Groovy's ``MockFor`` and ``StubFor`` facilities.)
 Furthermore, a global mock allows mocking of the type's constructors and static methods.
 
-:ref:`Reference Documentation <GlobalMocking>`.
+:ref:`Reference Documentation <MockingAllInstancesOfAType>`.
 
 Grouping Conditions with Same Target Object
 -------------------------------------------
@@ -122,8 +122,6 @@ involving the same target object::
         age == 33
         sex == "male"
     }
-
-:ref:`Reference Documentation <GroupingConditionsWithSameTargetObject>`.
 
 Grouping Interactions with Same Target Object
 ---------------------------------------------
@@ -143,7 +141,7 @@ The ``with`` method can also be used for grouping interactions::
         1 * stop()
     }
 
-:ref:`Reference Documentation <GroupingInteractionsWithSameTargetObject>`.
+:ref:`Reference Documentation <GroupingInteractionsWithSameTarget>`.
 
 Polling Conditions
 ------------------

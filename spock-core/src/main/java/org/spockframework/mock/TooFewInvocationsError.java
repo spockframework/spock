@@ -52,16 +52,18 @@ public class TooFewInvocationsError extends InteractionNotSatisfiedError {
       builder.append(interaction);
       builder.append("\n\n");
       List<ScoredInvocation> scoredInvocations = scoreInvocations(interaction, unmatchedMultiInvocations);
-      if (!scoredInvocations.isEmpty()) {
-        builder.append("Unmatched invocations (ordered by similarity):\n\n");
+      builder.append("Unmatched invocations (ordered by similarity):\n\n");
+      if (scoredInvocations.isEmpty()) {
+        builder.append("None\n");
+      } else {
         for (ScoredInvocation invocation : scoredInvocations) {
           builder.append(invocation.count);
           builder.append(" * ");
           builder.append(invocation.invocation);
           builder.append('\n');
         }
-        builder.append('\n');
       }
+      builder.append('\n');
     }
 
     message = builder.toString();

@@ -4,6 +4,20 @@ New and Noteworthy
 0.7
 ~~~
 
+Snapshot Repository Moved
+-------------------------
+
+Spock snapshots are now available from http://oss.sonatype.org/content/repositories/snapshots/.
+
+New Reference Documentation
+---------------------------
+
+The new Spock reference documentation is available at http://docs.spockframework.org.
+It will gradually replace the documentation at http://wiki.spockframework.org.
+Each Spock version is documented separately (e.g. http://docs.spockframework.org/en/spock-0.7-groovy-1.8).
+Documentation for the latest Spock snapshot is at http://docs.spockframework.org/en/latest.
+As of Spock 0.7, the new documentation fully covers data-driven testing and interaction-based testing (aka mocking).
+
 Improved Mocking Failure Message for ``TooManyInvocationsError``
 ----------------------------------------------------------------
 

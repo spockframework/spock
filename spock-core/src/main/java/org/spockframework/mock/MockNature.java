@@ -17,7 +17,7 @@ package org.spockframework.mock;
 import org.spockframework.util.Beta;
 
 /**
- * A mock <em>nature</em> is a named set of defaults for a mock's configuration options. It is chosen at
+ * A named set of defaults for a mock's configuration options. A mock nature is chosen at
  * mock creation time, typically by selecting the appropriate {@link spock.lang.MockingApi} factory method.
  */
 @Beta

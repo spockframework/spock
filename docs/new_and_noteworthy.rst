@@ -4,6 +4,20 @@ New and Noteworthy
 0.7
 ~~~
 
+Snapshot Repository Moved
+-------------------------
+
+Spock snapshots are now available from http://oss.sonatype.org/content/repositories/snapshots/.
+
+New Reference Documentation
+---------------------------
+
+The new Spock reference documentation is available at http://docs.spockframework.org.
+It will gradually replace the documentation at http://wiki.spockframework.org.
+Each Spock version is documented separately (e.g. http://docs.spockframework.org/en/spock-0.7-groovy-1.8).
+Documentation for the latest Spock snapshot is at http://docs.spockframework.org/en/latest.
+As of Spock 0.7, the new documentation fully covers data-driven testing and interaction-based testing (aka mocking).
+
 Improved Mocking Failure Message for ``TooManyInvocationsError``
 ----------------------------------------------------------------
 
@@ -48,7 +62,7 @@ Besides mocks, Spock now has explicit support for stubs::
     def person = Stub(Person)
 
 A stub is a restricted form of mock object that responds to invocations without ever demanding them.
-Other than not having a cardinality, the syntax for a stub's interactions is exactly the same as for a mock's interactions.
+Other than not having a cardinality, a stub's interactions look just like a mock's interactions.
 Using a stub over a mock is an effective way to communicate its role to readers of the specification.
 
 :ref:`Reference Documentation <Stubs>`.
@@ -102,18 +116,19 @@ A Groovy mock can be made *global*::
 
     GroovySpy(Person, global: true)
 
-A global mock effectively replaces all instances of its type and makes them amenable to stubbing and mocking.
-Furthermore, it allows mocking of the type's constructors and static methods.
+A global mock can only be created for a class type. It effectively replaces all instances of that type and makes them
+amenable to stubbing and mocking. (You may know this behavior from Groovy's ``MockFor`` and ``StubFor`` facilities.)
+Furthermore, a global mock allows mocking of the type's constructors and static methods.
 
-:ref:`Reference Documentation <GlobalMocking>`.
+:ref:`Reference Documentation <MockingAllInstancesOfAType>`.
 
 Grouping Conditions with Same Target Object
 -------------------------------------------
 
-Similar in nature to Groovy's `Object.with()` method, the ``Specification.with()`` allows to group conditions
+Inspired from Groovy's ``Object.with`` method, the ``Specification.with`` method allows to group conditions
 involving the same target object::
 
-    def person = new Person(name: "Fred", age: 33)
+    def person = new Person(name: "Fred", age: 33, sex: "male")
 
     expect:
     with(person) {
@@ -121,8 +136,6 @@ involving the same target object::
         age == 33
         sex == "male"
     }
-
-:ref:`Reference Documentation <GroupingConditionsWithSameTargetObject>`.
 
 Grouping Interactions with Same Target Object
 ---------------------------------------------
@@ -142,13 +155,13 @@ The ``with`` method can also be used for grouping interactions::
         1 * stop()
     }
 
-:ref:`Reference Documentation <GroupingInteractionsWithSameTargetObject>`.
+:ref:`Reference Documentation <GroupingInteractionsWithSameTarget>`.
 
 Polling Conditions
 ------------------
 
-``spock.util.concurrent.PollingConditions` joins `AsyncConditions` and `BlockingVariable(s)` as another utility for
-dealing with asynchronous events::
+``spock.util.concurrent.PollingConditions`` joins ``AsyncConditions`` and ``BlockingVariable(s)`` as another utility for
+testing asynchronous code::
 
     def person = new Person(name: "Fred", age: 22)
     def conditions = new PollingConditions(timeout: 10)
@@ -162,7 +175,7 @@ dealing with asynchronous events::
     }
 
     then:
-    conditions.within(3, SECONDS) {
+    conditions.within(2) {
         assert person.age == 42
     }
 
@@ -175,7 +188,7 @@ Experimental DSL Support for Eclipse
 
 Spock now ships with a DSL descriptor that lets Groovy Eclipse better
 understand certain parts of Spock's DSL. The descriptor is automatically
-detected and activated by the IDE. Here are two examples::
+detected and activated by the IDE. Here is an example::
 
     // currently need to type variable for the following to work
     Person person = new Person(name: "Fred", age: 42)
@@ -183,37 +196,39 @@ detected and activated by the IDE. Here are two examples::
     expect:
     with(person) {
         name == "Fred" // editor understands and auto-completes 'name'
-        age == 42      // editor understands and auto-completes 'name'
+        age == 42      // editor understands and auto-completes 'age'
     }
 
-    ... second example ...
+Another example::
 
     def person = Stub(Person) {
         getName() >> "Fred" // editor understands and auto-completes 'getName()'
+        getAge() >> 42      // editor understands and auto-completes 'getAge()'
     }
 
-DSL support is activated for Groovy Eclipse 2.7.1 and higher. Should you ever
-need to deactivate it, you can do so in the Groovy Eclipse preferences.
+DSL support is activated for Groovy Eclipse 2.7.1 and higher. If necessary,
+it can be deactivated in the Groovy Eclipse preferences.
 
 Experimental DSL Support for IntelliJ IDEA
 ------------------------------------------
 
 Spock now ships with a DSL descriptor that lets Intellij IDEA better
 understand certain parts of Spock's DSL. The descriptor is automatically
-detected and activated by the IDE. Here are two examples::
+detected and activated by the IDE. Here is an example::
 
     def person = new Person(name: "Fred", age: 42)
 
     expect:
     with(person) {
         name == "Fred" // editor understands and auto-completes 'name'
-        age == 42      // editor understands and auto-completes 'name'
+        age == 42      // editor understands and auto-completes 'age'
     }
 
-    ... second example ...
+Another example::
 
     def person = Stub(Person) {
         getName() >> "Fred" // editor understands and auto-completes 'getName()'
+        getAge() >> 42      // editor understands and auto-completes 'getAge()'
     }
 
 DSL support is activated for IntelliJ IDEA 11.1 and higher.
@@ -228,7 +243,7 @@ which aren't meant to be used directly.
 Improved Failure Messages for ``notThrown`` and ``noExceptionThrown``
 ---------------------------------------------------------------------
 
-Instead of just passing through exceptions, ``Specification.notThrown()`` and ``Specification.noExceptionThrown()``
+Instead of just passing through exceptions, ``Specification.notThrown`` and ``Specification.noExceptionThrown``
 now fail with messages like::
 
     Expected no exception to be thrown, but got 'java.io.FileNotFoundException'
@@ -238,7 +253,7 @@ now fail with messages like::
 ``HamcrestSupport.expect``
 --------------------------
 
-Class ``spock.util.matcher.HamcrestSupport`` got an ``expect`` method that makes
+Class ``spock.util.matcher.HamcrestSupport`` has a new ``expect`` method that makes
 [Hamcrest](http://code.google.com/p/hamcrest/) assertions read better in then-blocks::
 
     when:

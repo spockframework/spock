@@ -47,7 +47,7 @@ public class StepwiseExtension extends AbstractAnnotationDrivenExtension {
   private void skipFeaturesAfterFirstFailingFeature(final SpecInfo spec) {
     spec.getBottomSpec().addListener(new AbstractRunListener() {
       public void error(ErrorInfo error) {
-        // @Dependent only affects class that carries the annotation,
+        // @Stepwise only affects class that carries the annotation,
         // but not sub- and super classes
         if (!error.getMethod().getParent().equals(spec)) return;
 

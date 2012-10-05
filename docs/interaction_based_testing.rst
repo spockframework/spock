@@ -302,7 +302,7 @@ Grouping Interactions with Same Target (New in 0.7)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Interactions sharing the same target can be grouped in a ``Specification.with`` block. Similar to
-:ref:`declaring interactions at mock creation time <DeclaringInteractionsAtMockCreationTime>`_, this makes
+:ref:`declaring interactions at mock creation time <DeclaringInteractionsAtMockCreationTime>`, this makes
 it unnecessary to repeat the target constraint::
 
     with(subscriber) {
@@ -349,7 +349,7 @@ linked to the variable declaration. Hence it will just move the interaction, whi
 ``MissingPropertyException`` at runtime.
 
 One way to solve this problem is to move (at least) the variable declaration to before the ``when:``
-block. (Fans of :ref:`DataDrivenTesting`_ could also move the variable into a ``where:`` block.) In our example,
+block. (Fans of :ref:`DataDrivenTesting` could also move the variable into a ``where:`` block.) In our example,
 this would have the added benefit that we could use the same variable for sending the message.
 
 Another solution is to be explicit about the fact that variable declaration and interaction belong together::
@@ -495,7 +495,7 @@ Now, let's make the ``receive`` method return ``"ok"`` on every invocation::
 Read out aloud: "*Whenever* the subscriber receives a message, *make* it respond with 'ok'."
 
 Compared to a mocked interaction, a stubbed interaction has no cardinality on the left end, but adds a 
-*response generator* on the right end:
+*response generator* on the right end::
 
     subscriber.receive(_) >> "ok"
     |          |       |     |
@@ -505,8 +505,8 @@ Compared to a mocked interaction, a stubbed interaction has no cardinality on th
     target constraint
     
 A stubbed interaction can be declared in the usual places: either inside a ``then:`` block, or anywhere before a
-``when:`` block. (See :ref:`WhereToDeclareInteractions`_ for the details.) If a mock object is only used for stubbing,
-declaring interactions :ref:`at mock creation time <DeclaringInteractionsAtMockCreationTime>`_ or in a ``setup:``
+``when:`` block. (See :ref:`WhereToDeclareInteractions` for the details.) If a mock object is only used for stubbing,
+declaring interactions :ref:`at mock creation time <DeclaringInteractionsAtMockCreationTime>` or in a ``setup:``
 block is common.
 
 Returning Fixed Values
@@ -599,7 +599,7 @@ statements will *not* work::
     then:
     1 * subscriber.receive("message1")
 
-As explained in :ref:`WhereToDeclareInteractions`_, the ``receive`` call will first get matched against
+As explained in :ref:`WhereToDeclareInteractions`, the ``receive`` call will first get matched against
 the interaction in the ``then:`` block. Since that interaction doesn't specify a response, the default
 value for the method's return type (``null`` in this case) will be returned. (This is just another
 facet of Spock's lenient approach to mocking.). Hence, the interaction in the ``setup:`` block will never
@@ -640,7 +640,7 @@ Like a mock, a stub allows unexpected invocations. However, the values returned 
    See class ``org.spockframework.mock.EmptyOrDummyResponse`` for the details.
 
 A stub often has a fixed set of interactions, which makes :ref:`declaring interactions at mock creation time
-<DeclaringInteractionsAtMockCreationTime>`_ particularly attractive::
+<DeclaringInteractionsAtMockCreationTime>` particularly attractive::
 
     def subscriber = Stub(Subscriber) {
         receive("message1") >> "ok"
@@ -886,8 +886,8 @@ To learn more about interaction-based testing, we recommend the following resour
 
 .. rubric:: Footnotes
 
-.. [#creating] For additional ways to create mock objects, see :ref:`OtherKindsOfMockObjects`_
-and :ref:`ALaCarteMocks`_.
+.. [#creating] For additional ways to create mock objects, see :ref:`OtherKindsOfMockObjects`
+   and :ref:`ALaCarteMocks`.
 
 .. [#targetContext] Also, it isn't technically possible to reference the ``subscriber`` variable from the closure,
    because it is being declared as part of the same statement.
@@ -895,7 +895,9 @@ and :ref:`ALaCarteMocks`_.
 .. [#equality] Arguments are compared according to Groovy equality, which is based on, but more relaxed than, Java 
    equality (in particular for numbers).
 
-.. [#automagic] You may know this behavior from Groovy's ``MockFor()`` and ``StubFor()`` facilities.
+.. [#automagic] You may know this behavior from Groovy's
+   `MockFor <http://groovy.codehaus.org/gapi/groovy/mock/interceptor/MockFor.html>`_ and
+   `StubFor <http://groovy.codehaus.org/gapi/groovy/mock/interceptor/StubFor.html>`_ facilities.
 
 .. [#closureDestructuring] The destructuring semantics for closure arguments come straight from Groovy.
 

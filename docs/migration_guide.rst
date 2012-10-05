@@ -3,6 +3,13 @@ Migration Guide
 
 This page explains incompatible changes between successive versions and provides suggestions on how to deal with them.
 
+0.7
+---
+
+Client code must be recompiled in order to work with Spock 0.7. This includes third-party Spock extensions and base classes.
+
+No known source incompatible changes.
+
 0.6
 ---
 

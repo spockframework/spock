@@ -54,6 +54,31 @@ Unmatched invocations (ordered by similarity):
     """.trim()
   }
 
+  def "makes it clear if no unmatched invocations exist"() {
+    when:
+    runner.runFeatureBody("""
+def list = Mock(List)
+
+when:
+def x = 1
+
+then:
+1 * list.add(_)
+    """)
+
+    then:
+    TooFewInvocationsError e = thrown()
+    e.message.trim() == """
+Too few invocations for:
+
+1 * list.add(_)   (0 invocations)
+
+Unmatched invocations (ordered by similarity):
+
+None
+    """.trim()
+  }
+
   def "shows all unsatisfied interactions"() {
     when:
     runner.runFeatureBody("""

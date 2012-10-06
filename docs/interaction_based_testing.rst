@@ -3,7 +3,7 @@
 Interaction Based Testing
 =========================
 
-Interaction-based testing is a testing and design technique that emerged in the Extreme Programming
+Interaction-based testing is design and testing technique that emerged in the Extreme Programming
 (XP) community in the early 2000's. Focusing on the behavior of objects rather than their state, it explores how
 the object(s) under specification interact, by way of method calls, with their collaborators.
 
@@ -22,16 +22,16 @@ For example, suppose we have a ``Publisher`` that sends messages to its ``Subscr
         Publisher publisher = new Publisher()
     }
 
-How are we going to test ``Publisher``? With state-based testing, we can easily verify that the publisher correctly
-manages its list of subscribers. The more interesting question, though, is whether a message sent by the publisher
-is received by all registered subscribers. To answer this question, we need a special implementation of
+How are we going to test ``Publisher``? With state-based testing, we can verify that the publisher keeps track of its
+subscribers. The more interesting question, though, is whether a message sent by the publisher
+is received by the subscribers. To answer this question, we need a special implementation of
 ``Subscriber`` that listens in on the conversation between the publisher and its subscribers. Such an
 implementation is often called a *mock object*.
 
 While we could certainly create a mock implementation of ``Subscriber`` by hand, writing and maintaining this code
 can get unpleasant as the number of methods and complexity of interactions increases. This is where mocking frameworks
-come in: First, they allow to succinctly describe the expected interactions between an object under specification and its
-collaborators. Second, they automatically generate conforming mock implementations.
+come in: They provide a way to describe the expected interactions between an object under specification and its
+collaborators, and can generate mock implementations of collaborators that verify these expectations.
 
 .. sidebar:: How Are Mock Implementations Generated?
 
@@ -78,17 +78,16 @@ Default Behavior of Mock Objects
 
     Like Mockito, we firmly believe that a mocking framework should be lenient by default. This means that unexpected
     method calls on mock objects (or, in other words, interactions that aren't relevant for the test at hand) are allowed
-    and will simply return a default value. Conversely, mocking frameworks like EasyMock and JMock are strict by default;
-    they will throw an exception for every unexpected method call. While strictness enforces rigor, it can also lead
+    and answered with a default response. Conversely, mocking frameworks like EasyMock and JMock are strict by default,
+    and throw an exception for every unexpected method call. While strictness enforces rigor, it can also lead
     to over-specification, resulting in brittle tests that fail with every other internal code change. Spock's mocking
     framework makes it easy to describe only what's relevant about an interaction, avoiding the over-specification trap.
 
-Initially, mock objects have no behavior; calling their methods is allowed but will have no effect other than returning
-the default value for the method's return type (``false``, ``0``, or ``null``). An exception are the ``java.lang.Object``
-methods ``equals``, ``hashCode``, and ``toString``, which have the following default behavior: A mock object is only
+Initially, mock objects have no behavior. Calling methods on them is allowed but has no effect other than returning
+the default value for the method's return type (``false``, ``0``, or ``null``). An exception are the ``Object.equals``,
+``Object.hashCode``, and ``Object.toString`` methods, which have the following default behavior: A mock object is only
 equal to itself, has a unique hash code, and a string representation that includes the name of the type it represents.
-This default behavior is overridable by declaring regular interactions, which we will learn about in the `Mocking`_
-and `Stubbing`_ sections.
+This default behavior is overridable by stubbing the methods, which we will learn about in the `Stubbing`_ section.
 
 Injecting Mock Objects into Code Under Specification
 ----------------------------------------------------
@@ -125,10 +124,10 @@ Here is an example::
 
 Read out aloud: "When the publisher sends a 'hello' message, then both subscribers should receive that message exactly once."
 
-When this method gets run, Spock compares all invocations on mock objects that occur during the execution of the
-``when`` block with the interactions described in the corresponding ``then:`` block. In case of a mismatch, 
-a (subclass of) ``InteractionNotSatisfiedError`` is thrown. This verification happens automatically and does not 
-require any boilerplate code.
+When this feature method gets run, all invocations on mock objects that occur while executing the
+``when`` block will be matched against the interactions described in the ``then:`` block. If one of the interactions isn't
+satisfied, a (subclass of) ``InteractionNotSatisfiedError`` will be thrown. This verification happens automatically
+and does not require any additional code.
 
 Interactions
 ~~~~~~~~~~~~
@@ -136,12 +135,12 @@ Interactions
 .. sidebar:: Is an Interaction Just a Regular Method Invocation?
 
     Not quite. While an interaction looks similar to a regular method invocation, it is simply a way to express which
-    method invocations are expected to happen. A good way to think of an interaction is as a regular expression
+    method invocations are expected to occur. A good way to think of an interaction is as a regular expression
     that all incoming invocations on mock objects are matched against. Depending on the circumstances, the interaction
     may match zero, one, or multiple invocations.
 
-Let's take a closer look at the ``then:`` block. It contains two *interactions*, each of which consists of four
-parts: a *cardinality*, a *target constraint*, a *method constraint*, and one ore more *argument constraints*::
+Let's take a closer look at the ``then:`` block. It contains two *interactions*, each of which has four distinct
+parts: a *cardinality*, a *target constraint*, a *method constraint*, and an *argument constraint*::
 
     1 * subscriber.receive("hello")
     |   |          |       |
@@ -153,7 +152,7 @@ parts: a *cardinality*, a *target constraint*, a *method constraint*, and one or
 Cardinality
 ~~~~~~~~~~~
 
-The cardinality of an interaction tells how often a method call is expected. It can either be a fixed number or
+The cardinality of an interaction describes how often a method call is expected. It can either be a fixed number or
 a range::
 
     1 * subscriber.receive("hello")      // exactly one call
@@ -162,19 +161,19 @@ a range::
     (1.._) * subscriber.receive("hello") // at least one call
     (_..3) * subscriber.receive("hello") // at most three calls
     _ * subscriber.receive("hello")      // any number of calls, including zero
-                                          // (rarely needed; see `Strict Mocking`_)
+                                         // (rarely needed; see 'Strict Mocking')
 Target Constraint
 ~~~~~~~~~~~~~~~~~
 
-The target constraint of an interaction tells which mock object a call is expected on::
+The target constraint of an interaction describes which mock object is expected to receive the method call::
 
-  1 * subscriber.receive("hello") // a call on 'subscriber'
-  1 * _.receive("hello")           // a call on any mock object
+  1 * subscriber.receive("hello") // a call to 'subscriber'
+  1 * _.receive("hello")          // a call to any mock object
 
 Method Constraint
 ~~~~~~~~~~~~~~~~~
 
-The method constraint of an interaction tells which method is expected to be called::
+The method constraint of an interaction describes which method is expected to be called::
 
     1 * subscriber.receive("hello") // a method named 'receive'
     1 * subscriber./r.*e/("hello")  // a method whose name matches the given regular expression
@@ -191,26 +190,36 @@ When expecting a call to a setter method, only method syntax can be used::
 Argument Constraints
 ~~~~~~~~~~~~~~~~~~~~
 
-The argument constraints of an interaction tell which method arguments are expected::
+The argument constraints of an interaction describe which method arguments are expected::
 
-    1 * subscriber.receive("hello")     // an argument that is equal[#equality]_ to the String "hello"
-    1 * subscriber.receive(!"hello")    // an argument that is unequal[#equality]_ to the String "hello"
+    1 * subscriber.receive("hello")     // an argument that is equal to the String "hello"
+    1 * subscriber.receive(!"hello")    // an argument that is unequal to the String "hello"
     1 * subscriber.receive()            // the empty argument list (would never match in our example)
     1 * subscriber.receive(_)           // any single argument (including null)
     1 * subscriber.receive(*_)          // any argument list (including the empty argument list)
     1 * subscriber.receive(!null)       // any non-null argument
     1 * subscriber.receive(_ as String) // any non-null argument that is-a String
     1 * subscriber.receive({ it.size() > 3 }) // an argument that satisfies the given predicate
-                                               // (here: message length is greater than 3)
+                                              // (here: message length is greater than 3)
 
-Argument constraints work as expected for methods with multiple arguments and/or varargs::
+Argument constraints work as expected for methods with multiple arguments::
 
     1 * process.invoke("ls", "-a", _, !null, { ["abcdefghiklmnopqrstuwx1"].contains(it) })
+
+When dealing with vararg methods, vararg syntax can also be used in the corresponding interactions::
+
+    interface VarArgSubscriber {
+        void receive(String... messages)
+    }
+
+    ...
+
+    subscriber.receive("hello", "goodbye")
 
 .. admonition:: Spock Deep Dive: Groovy Varargs
 
     Groovy allows any method whose last parameter has an array type to be called in vararg style. Consequently,
-    vararg syntax is also allowed in interactions describing invocations of such methods.
+    vararg syntax can also be used in interactions matching such methods.
 
 Matching Any Method Call
 ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -220,8 +229,8 @@ Sometimes it can be useful to match "anything", in some sense of the word::
     1 * subscriber._(*_)     // any method on subscriber, with any argument list
     1 * subscriber._         // shortcut for and preferred over the above
 
-    1 * _._                   // any method call on any mock object
-    1 * _                     // shortcut for and preferred over the above
+    1 * _._                  // any method call on any mock object
+    1 * _                    // shortcut for and preferred over the above
 
 .. note:: Although ``(_.._) * _._(*_) >> _`` is a valid interaction declaration,
    it is neither good style nor particularly useful.
@@ -240,27 +249,28 @@ a style of mocking where no interactions other than those explicitly declared ar
     _ * auditing._                  // allow any interaction with 'auditing'
     0 * _                           // don't allow any other interaction
 
-``0 *`` only makes sense as the last interaction of a ``then:`` block or method. Also note the
+``0 *`` only makes sense as the last interaction of a ``then:`` block or method. Note the
 use of ``_ *`` (any number of calls), which allows any interaction with the auditing component.
 
 .. note:: ``_ *`` is only meaningful in the context of strict mocking. In particular, it is never necessary
-   when `Stubbing`_ an invocation. For example, ``_ * auditing.record(_) >> "ok"`` can
-   be simplified to ``auditing.record(_) >> "ok"``.
+   when :ref:`stubbing <Stubbing>` an invocation. For example, ``_ * auditing.record(_) >> "ok"``
+   can (and should!) be simplified to ``auditing.record(_) >> "ok"``.
 
 .. _WhereToDeclareInteractions:
 
 Where to Declare Interactions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-So far, we have declared all our interactions in a ``then:`` block. This often results in a spec that reads naturally.
+So far, we declared all our interactions in a ``then:`` block. This often results in a spec that reads naturally.
 However, it is also permissible to put interactions anywhere *before* the ``when:`` block that is supposed to satisfy
-them. In particular, this means that interactions can be declared in a ``setup`` method. Interactions can also be moved
-into a helper method, as long as that method is an instance method of the same specification class.
+them. In particular, this means that interactions can be declared in a ``setup`` method. Interactions can also be
+declared in any "helper" instance method of the same specification class.
 
-When an invocation on a mock object occurs, it is matched against interactions in the order they were declared.
-If an invocation matches multiple interactions, the one declared earlier will win. There is one exception to this rule:
-Interactions declared in a ``then:`` block are matched against before any other interactions. This allows to override
-interactions declared in, say, a ``setup`` method with interactions declared in a ``then:`` block.
+When an invocation on a mock object occurs, it is matched against interactions in the interactions' declared order.
+If an invocation matches multiple interactions, the earliest declared interaction that hasn't reached its upper
+invocation limit will win. There is one exception to this rule: Interactions declared in a ``then:`` block are
+matched against before any other interactions. This allows to override interactions declared in, say, a ``setup``
+method with interactions declared in a ``then:`` block.
 
 .. admonition:: Spock Deep Dive: How Are Interactions Recognized?
 
@@ -284,10 +294,11 @@ If a mock has a set of "base" interactions that don't vary, they can be declared
        1 * receive("goodbye")
    }
 
-This feature is particularly attractive for `Stubbing`_ and when using dedicated `Stubs`_. Note that the interactions
-don't have a target constraint, because it's clear from the context which mock object they belong to. [#targetContext]_
+This feature is particularly attractive for :ref:`stubbing <Stubbing>` and with dedicated `Stubs`_. Note that the
+interactions don't (and cannot [#targetContext]_) have a target constraint; it's clear from the context which mock
+object they belong to.
 
-Declaring interactions at mock creation time also works when declaring and initializing an instance field::
+Interactions can also be declared when initializing an instance field with a mock::
 
     class MySpec extends Specification {
         Subscriber subscriber = Mock {
@@ -325,8 +336,8 @@ to declare interactions before conditions::
     1 * subscriber.receive("hello")
     publisher.messageCount == 1
 
-Read out aloud: "When the publisher sends a 'hello' message, then the subscriber receives the message exactly once, and
-the publisher's message count is one."
+Read out aloud: "When the publisher sends a 'hello' message, then the subscriber should receive the message exactly
+once, and the publisher's message count should be one."
 
 Explicit Interaction Blocks
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -349,8 +360,8 @@ linked to the variable declaration. Hence it will just move the interaction, whi
 ``MissingPropertyException`` at runtime.
 
 One way to solve this problem is to move (at least) the variable declaration to before the ``when:``
-block. (Fans of :ref:`DataDrivenTesting` could also move the variable into a ``where:`` block.) In our example,
-this would have the added benefit that we could use the same variable for sending the message.
+block. (Fans of :ref:`data-driven testing <DataDrivenTesting>` might move the variable into a ``where:`` block.)
+In our example, this would have the added benefit that we could use the same variable for sending the message.
 
 Another solution is to be explicit about the fact that variable declaration and interaction belong together::
 
@@ -385,11 +396,12 @@ Interactions declared in a ``then:`` block are scoped to the preceding ``when:``
 This makes sure that ``subscriber`` receives ``"message1"`` during execution of the first ``when:`` block,
 and ``"message2"`` during execution of the second ``when:`` block.
 
-Interactions declared outside a ``then:`` block are valid from their declaration until the end of the
+Interactions declared outside a ``then:`` block are active from their declaration until the end of the
 containing feature method.
 
-Interactions always occur in the context of a feature method. Hence they cannot be declared in a
-``setupSpec`` or ``cleanupSpec`` method. Likewise, mock objects cannot be ``@Shared``.
+Interactions are always scoped to a particular feature method. Hence they cannot be declared in a static method,
+``setupSpec`` method, or ``cleanupSpec`` method. Likewise, mock objects should not be stored in static or ``@Shared``
+fields.
 
 Verification of Interactions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -506,8 +518,8 @@ Compared to a mocked interaction, a stubbed interaction has no cardinality on th
     
 A stubbed interaction can be declared in the usual places: either inside a ``then:`` block, or anywhere before a
 ``when:`` block. (See :ref:`WhereToDeclareInteractions` for the details.) If a mock object is only used for stubbing,
-declaring interactions :ref:`at mock creation time <DeclaringInteractionsAtMockCreationTime>` or in a ``setup:``
-block is common.
+it's common to declare interactions :ref:`at mock creation time <DeclaringInteractionsAtMockCreationTime>` or in a
+``setup:`` block.
 
 Returning Fixed Values
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -546,12 +558,13 @@ If the closure declares a single untyped parameter, it gets passed the method's 
 
 Here ``"ok"`` gets returned if the message is more than three characters long, and ``"fail"`` otherwise.
 
-Often it would be nicer to have direct access to the method's arguments. If the closure declares more than one parameter
-or a single *typed* parameter, method arguments will be mapped one-by-one to closure parameters [#closureDestructuring]_::
+In most cases it would be more convenient to have direct access to the method's arguments. If the closure declares more
+than one parameter or a single *typed* parameter, method arguments will be mapped one-by-one to closure
+parameters [#closureDestructuring]_::
 
     subscriber.receive(_) >> { String message -> message.size() > 3 ? "ok" : "fail" }
 
-This code is functionally equivalent to the previous one, but arguably more readable.
+This response generator behaves the same as the previous one, but is arguably more readable.
 
 If you find yourself in need of more information about a method invocation than its arguments, have a look at
 ``org.spockframework.mock.IMockInvocation``. All methods declared in this interface are available inside the closure,
@@ -560,13 +573,13 @@ without a need to prefix them. (In Groovy terminology, the closure *delegates* t
 Performing Side Effects
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-Sometimes you may want to do more than just computing a return value. A typical example would be
-to throw an exception. Again, closures come to the rescue::
+Sometimes you may want to do more than just computing a return value. A typical example is
+throwing an exception. Again, closures come to the rescue::
 
     subscriber.receive(_) >> { throw new InternalError("ouch") }
 
-Of course, the closure can contain more code, for example a ``println`` statement. The code
-will get executed every time the interaction matches an invocation.
+Of course, the closure can contain more code, for example a ``println`` statement. It
+will get executed every time an incoming invocation matches the interaction.
 
 Chaining Method Responses
 ~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -628,7 +641,7 @@ A *stub* is created with the ``MockingApi.Stub`` factory method::
 Whereas a mock can be used both for stubbing and mocking, a stub can only be used for stubbing.
 Limiting a collaborator to a stub communicates its role to the readers of the specification.
 
-.. note:: If a stub invocation matches a mandatory interaction (that is, an interaction with a cardinality like ``1 *``),
+.. note:: If a stub invocation matches a *mandatory* interaction (like ``1 * foo.bar()``),
           an ``InvalidSpecException`` is thrown.
 
 Like a mock, a stub allows unexpected invocations. However, the values returned by a stub in such cases are more ambitious:
@@ -889,11 +902,8 @@ To learn more about interaction-based testing, we recommend the following resour
 .. [#creating] For additional ways to create mock objects, see :ref:`OtherKindsOfMockObjects`
    and :ref:`ALaCarteMocks`.
 
-.. [#targetContext] Also, it isn't technically possible to reference the ``subscriber`` variable from the closure,
-   because it is being declared as part of the same statement.
-   
-.. [#equality] Arguments are compared according to Groovy equality, which is based on, but more relaxed than, Java 
-   equality (in particular for numbers).
+.. [#targetContext] The ``subscriber`` variable cannot be referenced from the closure because it is being declared as
+   part of the same statement.
 
 .. [#automagic] You may know this behavior from Groovy's
    `MockFor <http://groovy.codehaus.org/gapi/groovy/mock/interceptor/MockFor.html>`_ and

@@ -16,7 +16,7 @@ The new Spock reference documentation is available at http://docs.spockframework
 It will gradually replace the documentation at http://wiki.spockframework.org.
 Each Spock version is documented separately (e.g. http://docs.spockframework.org/en/spock-0.7-groovy-1.8).
 Documentation for the latest Spock snapshot is at http://docs.spockframework.org/en/latest.
-As of Spock 0.7, the new documentation fully covers data-driven testing and interaction-based testing (aka mocking).
+As of Spock 0.7, the chapters on :ref:`DataDrivenTesting` and :ref:`InteractionBasedTesting` are complete.
 
 Improved Mocking Failure Message for ``TooManyInvocationsError``
 ----------------------------------------------------------------

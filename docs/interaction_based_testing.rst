@@ -3,7 +3,7 @@
 Interaction Based Testing
 =========================
 
-Interaction-based testing is design and testing technique that emerged in the Extreme Programming
+Interaction-based testing is a design and testing technique that emerged in the Extreme Programming
 (XP) community in the early 2000's. Focusing on the behavior of objects rather than their state, it explores how
 the object(s) under specification interact, by way of method calls, with their collaborators.
 

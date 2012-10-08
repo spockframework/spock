@@ -11,7 +11,7 @@ repositories {
 }
 
 // 5.3.x seems to require Java 1.6 (evidence: org.apache.tapestry5.ioc.internal.util.InternalUtils makes direct use of @PostConstruct)
-def tapestryVersion = System.getProperty("java.version").startsWith("1.5") ? "5.2.6" : "5.3.4"
+def tapestryVersion = System.getProperty("java.version").startsWith("1.5") ? "5.2.6" : "5.3.5"
 
 dependencies {
   compile project(":spock-core")

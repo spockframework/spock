@@ -2,7 +2,7 @@ description = "Spock Framework"
 
 ext {
   libs = [
-    ant: "org.apache.ant:ant:1.8.2", // use same version as Groovy 2.0
+    ant: "org.apache.ant:ant:1.8.4", // use same version as Groovy 2.0
     asm: "org.ow2.asm:asm:4.0", // use same version as Groovy 2.0
     cglib: "cglib:cglib-nodep:2.2.2",
     easymock: "org.easymock:easymock:3.0",
@@ -19,7 +19,7 @@ ext {
 
 allprojects {
   group = "org.spockframework"
-  version = "0.7-groovy-2.0-SNAPSHOT"
+  version = "0.7-groovy-2.0"
 
   apply from: script("common")
 }

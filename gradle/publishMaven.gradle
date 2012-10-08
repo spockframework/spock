@@ -57,7 +57,11 @@ uploadArchives {
         }
       }
     } else {
-      repository(url: "file:///var/www/m2repo/releases")
+      repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+        if (project.hasProperty("sonatypeOssUsername")) {
+          authentication(userName: sonatypeOssUsername, password: sonatypeOssPassword)
+        }
+      }
     }
   }
 }

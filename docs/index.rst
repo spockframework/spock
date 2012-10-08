@@ -8,7 +8,7 @@ Spock Framework Reference Documentation
 
 Authors: Peter Niederwieser
 
-Version: 0.7
+Version: 1.0-SNAPSHOT
 
 .. note:: This documentation effort is a work in progress. For the time being, we also recommend to check out the old documentation at http://wiki.spockframework.org.
 

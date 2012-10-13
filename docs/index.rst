@@ -22,5 +22,6 @@ Table of Contents
    getting_started
    data_driven_testing
    interaction_based_testing
+   extensions
    new_and_noteworthy
    migration_guide

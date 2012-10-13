@@ -4,7 +4,7 @@ Extensions
 ==========
 
 Spock comes with a powerful SPI that allows to hook into a spec's lifecycle and enrich or alter its behavior.
-In this chapter, we will first learn about Spock's built-in extensions, and then dive into writing our own extensions.
+In this chapter, we will first learn about Spock's built-in extensions, and then dive into writing custom extensions.
 
 Built-In Extensions
 -------------------

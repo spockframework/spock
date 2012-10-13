@@ -27,11 +27,13 @@ public class RestoreSystemPropertiesInterceptor implements IMethodInterceptor {
   private RestoreSystemPropertiesInterceptor() {}
 
   public void intercept(IMethodInvocation invocation) throws Throwable {
-    Properties oldProperties = System.getProperties();
+    Properties original = new Properties();
+    original.putAll(System.getProperties());
+
     try {
       invocation.proceed();
     } finally {
-      System.setProperties(oldProperties);
+      System.setProperties(original);
     }
   }
 }

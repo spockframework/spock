@@ -21,13 +21,14 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import groovy.lang.Closure;
+
 import org.spockframework.runtime.extension.ExtensionAnnotation;
 import org.spockframework.runtime.extension.builtin.IgnoreIfExtension;
 
-import groovy.lang.Closure;
-
 /**
- * Ignores the annotated spec/feature if the given condition holds.
+ * Ignores the annotated spec or feature if the given condition holds.
+ * Same as {@link Requires} except that the condition is inverted.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE, ElementType.METHOD})

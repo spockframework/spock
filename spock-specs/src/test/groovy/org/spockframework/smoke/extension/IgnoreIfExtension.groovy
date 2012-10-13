@@ -18,9 +18,29 @@ package org.spockframework.smoke.extension
 
 import spock.lang.*
 
-@IgnoreIf({ 1 < 2 })
 class IgnoreIfExtension extends Specification {
-  def "should be ignored"() {
+  @IgnoreIf({ 1 < 2 })
+  def "basic usage"() {
+    expect: false
+  }
+
+  @IgnoreIf({ os.windows || os.linux || os.macOs || os.solaris || os.other })
+  def "provides OS information"() {
+    expect: false
+  }
+
+  @IgnoreIf({ jvm.java5 || jvm.java6 || jvm.java7 || jvm.java8 || jvm.java9 })
+  def "provides JVM information"() {
+    expect: false
+  }
+
+  @IgnoreIf({ !env.containsKey("FOOBARBAZ") })
+  def "provides access to environment variables"() {
+    expect: false
+  }
+
+  @IgnoreIf({ !sys.contains("java.version") })
+  def "provides access to system properties"() {
     expect: false
   }
 }

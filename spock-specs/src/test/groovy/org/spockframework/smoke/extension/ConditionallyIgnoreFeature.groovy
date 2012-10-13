@@ -33,7 +33,7 @@ class ConditionallyIgnoreFeature extends Specification {
     expect: true
   }
 
-  @IgnoreIf({ [1,2,3] })
+  @IgnoreIf({ [1, 2, 3] })
   def "should be ignored according to Groovy truth"() {
     log << 3
     expect: false
@@ -57,7 +57,7 @@ class ConditionallyIgnoreFeature extends Specification {
     expect: true
   }
 
-  @IgnoreIf({ properties."os.name" != properties["os.name"] })
+  @IgnoreIf({ sys."os.name" != sys["os.name"] })
   def "provides convenient access to system properties"() {
     log << 7
     expect: true

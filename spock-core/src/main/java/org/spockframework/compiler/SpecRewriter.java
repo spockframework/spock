@@ -282,12 +282,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
   // will then be used by DeepStatementRewriter.fixupVariableScope()
   private void handleWhereBlock(Method method) {
     Block block = method.getLastBlock();
-    if (!(block instanceof WhereBlock)) {
-      Parameter[] params = method.getAst().getParameters();
-      if (params.length > 0)
-        errorReporter.error(params[0], "Feature methods without 'where' block may not declare parameters");
-      return;
-    }
+    if (!(block instanceof WhereBlock)) return;
 
     new DeepBlockRewriter(this).visit(block);
     WhereBlockRewriter.rewrite((WhereBlock) block, this);

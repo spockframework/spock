@@ -22,9 +22,14 @@ import org.spockframework.runtime.extension.ExtensionAnnotation;
 import org.spockframework.runtime.extension.builtin.RestoreSystemPropertiesExtension;
 
 /**
- * Saves system properties before the annotated feature method has been run, and restores them afterwards.
- * The system properties are saved before any setup method is run, and are restored after all cleanup methods
- * have run. Applying this annotation to a spec class has the same effect as applying it to all its feature methods.
+ * Saves system properties before the annotated feature method (including any setup and cleanup methods) gets run,
+ * and restores them afterwards.
+ *
+ * <p>Applying this annotation to a spec class has the same effect as applying it to all its feature methods.
+ *
+ * <p><strong>Note:</strong> Temporarily changing the values of system properties is only safe when specs are
+ * run in a single thread per JVM. Even though many execution environments do limit themselves to one thread
+ * per JVM, keep in mind that Spock cannot enforce this.
  */
 @Inherited
 @Retention(RetentionPolicy.RUNTIME)

@@ -15,11 +15,21 @@ package spock.util
 
 import spock.lang.Specification
 import spock.util.environment.OperatingSystem
-import spock.util.environment.RestoreSystemProperties;
+import spock.util.environment.RestoreSystemProperties
 
-@RestoreSystemProperties
 class OperatingSystemSpec extends Specification {
-  def "determines operating system family based on os.name system property"() {
+  def "determines name based on os.name system property"() {
+    expect:
+    OperatingSystem.current.name == System.getProperty("os.name")
+  }
+
+  def "determines version based on os.name system property"() {
+    expect:
+    OperatingSystem.current.version == System.getProperty("os.version")
+  }
+
+  @RestoreSystemProperties
+  def "determines family based on os.name system property"() {
     System.setProperty("os.name", osName)
 
     expect:
@@ -34,7 +44,8 @@ class OperatingSystemSpec extends Specification {
     "FreeBSD 9.0"          | OperatingSystem.Family.OTHER
   }
 
-  def "provides convenience methods to test for operating system family"() {
+  @RestoreSystemProperties
+  def "provides convenience methods to test for family"() {
     System.setProperty("os.name", osName)
     def os = OperatingSystem.current
 

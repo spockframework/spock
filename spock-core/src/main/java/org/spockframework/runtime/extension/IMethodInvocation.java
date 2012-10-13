@@ -88,6 +88,11 @@ public interface IMethodInvocation {
   Object[] getArguments();
 
   /**
+   * Sets the arguments for this method invocation.
+   */
+  void setArguments(Object[] arguments);
+
+  /**
    * Proceeds with the method call. Always call this method
    * unless you want to suppress the method call.
    *

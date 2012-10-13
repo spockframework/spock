@@ -33,18 +33,6 @@ class MethodParameters extends EmbeddedSpecification {
     y << [1, 2]
   }
 
-  def "parameters but no where block"() {
-    when:
-    compiler.compileSpecBody """
-def foo(int x, String y) {
-  expect: true
-}
-    """
-
-    then:
-    thrown(InvalidSpecCompileException)
-  }
-
   def "typed parameters"(Integer x, Integer y) {
     expect:
     x == y

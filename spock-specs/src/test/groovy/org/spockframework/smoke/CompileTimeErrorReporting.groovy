@@ -14,47 +14,70 @@
 
 package org.spockframework.smoke
 
-import org.junit.internal.runners.model.MultipleFailureException
-
 import org.spockframework.EmbeddedSpecification
 import org.spockframework.compiler.InvalidSpecCompileException
 
 class CompileTimeErrorReporting extends EmbeddedSpecification {
-  def "multiple method declaration errors"() {
+  def "constructor declaration"() {
     when:
     compiler.compileSpecBody """
-ASpec() {} // constructor not allowed
-
-def setUp() {} // wrong spelling
-
-def feature(arg) { // arg not allowed
-  expect: true
-}
+ASpec() {}
     """
 
     then:
-    MultipleFailureException e = thrown()
-    e.failures*.class == [InvalidSpecCompileException] * 3
+    thrown(InvalidSpecCompileException)
   }
 
-  def "multiple errors within a method"() {
+  def "wrong spelling of 'setup' method"() {
+    when:
+    compiler.compileSpecBody """
+def setUp() {}
+    """
+
+    then:
+    thrown(InvalidSpecCompileException)
+  }
+
+  def "'old' method used outside then-block"() {
+    when:
+    compiler.compileFeatureBody """
+when:
+def y = old(x)
+
+then:
+true
+    """
+
+    then:
+    thrown(InvalidSpecCompileException)
+  }
+
+  def "multiple thrown clauses"() {
     when:
     compiler.compileFeatureBody """
 when:
 def x = 42
-def y = old(x) // old used outside of then block
 
 then:
 thrown(IllegalArgumentException)
-thrown(IOException) // more than one thrown call
-thrown(AssertionError) // more than one thrown call
-
-where:
-println "hi" // not a parameterization
+thrown(IOException)
     """
 
     then:
-    MultipleFailureException e = thrown()
-    e.failures*.class == [InvalidSpecCompileException] * 4
+    thrown(InvalidSpecCompileException)
+  }
+
+  def "non-parameterization in where-block"() {
+    when:
+    compiler.compileFeatureBody """
+expect:
+true
+
+where:
+println "hi"
+    """
+
+    then:
+    thrown(InvalidSpecCompileException)
   }
 }

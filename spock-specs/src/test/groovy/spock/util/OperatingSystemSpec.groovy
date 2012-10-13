@@ -19,22 +19,22 @@ import spock.util.environment.RestoreSystemProperties;
 
 @RestoreSystemProperties
 class OperatingSystemSpec extends Specification {
-  def "recognizes current operating system based on os.name system property"() {
+  def "determines operating system family based on os.name system property"() {
     System.setProperty("os.name", osName)
 
     expect:
-    OperatingSystem.current == os
+    OperatingSystem.current.family == os
 
     where:
     osName                 | os
-    "Windows 7"            | OperatingSystem.WINDOWS
-    "Ubuntu Linux"         | OperatingSystem.LINUX
-    "Mac OS 10.8.2"        | OperatingSystem.MAC_OS
-    "Some SunOS version"   | OperatingSystem.SOLARIS
-    "FreeBSD 9.0"          | OperatingSystem.OTHER
+    "Windows 7"            | OperatingSystem.Family.WINDOWS
+    "Ubuntu Linux"         | OperatingSystem.Family.LINUX
+    "Mac OS 10.8.2"        | OperatingSystem.Family.MAC_OS
+    "Some SunOS version"   | OperatingSystem.Family.SOLARIS
+    "FreeBSD 9.0"          | OperatingSystem.Family.OTHER
   }
 
-  def "provides convenience methods to test for current operating system"() {
+  def "provides convenience methods to test for operating system family"() {
     System.setProperty("os.name", osName)
     def os = OperatingSystem.current
 

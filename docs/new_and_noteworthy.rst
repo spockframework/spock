@@ -169,9 +169,9 @@ testing asynchronous code::
     when:
     Thread.start {
         sleep(1000)
-        person.age == 42
+        person.age = 42
         sleep(5000)
-        person.name == "Barney"
+        person.name = "Barney"
     }
 
     then:
@@ -180,7 +180,7 @@ testing asynchronous code::
     }
 
     conditions.eventually {
-        assert person.name == "Fred"
+        assert person.name == "Barney"
     }
 
 Experimental DSL Support for Eclipse

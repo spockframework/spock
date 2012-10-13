@@ -31,7 +31,7 @@ class VerifyExecutionExtension extends AbstractAnnotationDrivenExtension<VerifyE
     def executionLog = new ExecutionLog()
     def verifyMethod = spec.getFeatures().find { it.name == "verifyExecution" }
     if (!verifyMethod) {
-      throw new ExtensionException("Spec is missing a `verifyExecution` method.")
+      throw new ExtensionException("Spec is missing a 'verifyExecution' method.")
     }
 
     spec.addListener(new AbstractRunListener() {

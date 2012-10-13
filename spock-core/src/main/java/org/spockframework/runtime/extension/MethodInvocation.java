@@ -32,7 +32,7 @@ public class MethodInvocation implements IMethodInvocation {
   private final Object instance;
   private final Object target;
   private final MethodInfo method;
-  private final Object[] arguments;
+  private Object[] arguments;
   private final Iterator<IMethodInterceptor> interceptors;
 
   public MethodInvocation(FeatureInfo feature, IterationInfo iteration, Object sharedInstance,
@@ -77,6 +77,10 @@ public class MethodInvocation implements IMethodInvocation {
 
   public Object[] getArguments() {
     return arguments;
+  }
+
+  public void setArguments(Object[] arguments) {
+    this.arguments = arguments;
   }
 
   public void proceed() throws Throwable {

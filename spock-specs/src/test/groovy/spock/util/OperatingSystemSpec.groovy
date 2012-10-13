@@ -15,7 +15,7 @@ package spock.util
 
 import spock.lang.Specification
 import spock.util.environment.OperatingSystem
-import spock.util.environment.RestoreSystemProperties;
+import spock.util.environment.RestoreSystemProperties
 
 @RestoreSystemProperties
 class OperatingSystemSpec extends Specification {

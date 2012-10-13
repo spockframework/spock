@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 the original author or authors.
+ * Copyright 2012 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,38 +18,40 @@ package org.spockframework.runtime.extension.builtin;
 
 import groovy.lang.Closure;
 
+import org.spockframework.runtime.GroovyRuntimeUtil;
 import org.spockframework.runtime.extension.AbstractAnnotationDrivenExtension;
 import org.spockframework.runtime.extension.ExtensionException;
-import org.spockframework.runtime.model.*;
-import org.spockframework.runtime.GroovyRuntimeUtil;
+import org.spockframework.runtime.model.FeatureInfo;
+import org.spockframework.runtime.model.ISkippable;
+import org.spockframework.runtime.model.SpecInfo;
 
-import spock.lang.IgnoreIf;
+import spock.lang.Requires;
 
 /**
  * @author Peter Niederwieser
  */
-public class IgnoreIfExtension extends AbstractAnnotationDrivenExtension<IgnoreIf> {
+public class RequiresExtension extends AbstractAnnotationDrivenExtension<Requires> {
 	@Override
-	public void visitSpecAnnotation(IgnoreIf annotation, SpecInfo spec) {
+	public void visitSpecAnnotation(Requires annotation, SpecInfo spec) {
     doVisit(annotation, spec);
   }
 
   @Override
-  public void visitFeatureAnnotation(IgnoreIf annotation, FeatureInfo feature) {
+  public void visitFeatureAnnotation(Requires annotation, FeatureInfo feature) {
     doVisit(annotation, feature);
   }
 
-  private void doVisit(IgnoreIf annotation, ISkippable skippable) {
+  private void doVisit(Requires annotation, ISkippable skippable) {
     Closure condition = createCondition(annotation.value());
     Object result = evaluateCondition(condition);
-    skippable.setSkipped(GroovyRuntimeUtil.isTruthy(result));
+    skippable.setSkipped(!GroovyRuntimeUtil.isTruthy(result));
   }
 
   private Closure createCondition(Class<? extends Closure> clazz) {
     try {
       return clazz.getConstructor(Object.class, Object.class).newInstance(null, null);
     } catch (Exception e) {
-      throw new ExtensionException("Failed to instantiate @IgnoreIf condition", e);
+      throw new ExtensionException("Failed to instantiate @Requires condition", e);
     }
   }
 
@@ -60,7 +62,7 @@ public class IgnoreIfExtension extends AbstractAnnotationDrivenExtension<IgnoreI
     try {
       return condition.call();
     } catch (Exception e) {
-      throw new ExtensionException("Failed to evaluate @IgnoreIf condition", e);
+      throw new ExtensionException("Failed to evaluate @Requires condition", e);
     }
   }
 }

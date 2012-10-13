@@ -486,6 +486,8 @@ just like mocking interfaces; the only additional requirement is to put ``cglib-
 and ``objenesis-1.2`` or higher on the class path. If either of these libraries is missing from
 the class path, Spock will gently let you know.
 
+.. _Stubbing:
+
 Stubbing
 --------
 

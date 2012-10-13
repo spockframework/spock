@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 the original author or authors.
+ * Copyright 2012 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,25 +14,20 @@
  * limitations under the License.
  */
 
-package spock.lang;
+package spock.util.environment;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
-import groovy.lang.Closure;
+import java.lang.annotation.*;
 
 import org.spockframework.runtime.extension.ExtensionAnnotation;
-import org.spockframework.runtime.extension.builtin.IgnoreIfExtension;
+import org.spockframework.runtime.extension.builtin.RestoreSystemPropertiesExtension;
 
 /**
- * Ignores the annotated spec or feature if the given condition holds.
- * Same as {@link Requires} except that the condition is inverted.
+ * Saves system properties before the annotated feature method has been run, and restores them afterwards.
+ * The system properties are saved before any setup method is run, and are restored after all cleanup methods
+ * have run. Applying this annotation to a spec class has the same effect as applying it to all its feature methods.
  */
+@Inherited
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE, ElementType.METHOD})
-@ExtensionAnnotation(IgnoreIfExtension.class)
-public @interface IgnoreIf {
-	Class<? extends Closure> value();
-}
+@ExtensionAnnotation(RestoreSystemPropertiesExtension.class)
+public @interface RestoreSystemProperties {}

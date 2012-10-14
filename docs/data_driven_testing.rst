@@ -136,7 +136,7 @@ failure. This is the purpose of the ``@Unroll`` annotation.
 Method Unrolling
 ----------------
 
-.. code-block::
+A method annotated with ``@Unroll`` will have its iterations reported independently::
 
     @Unroll
     def "maximum of two numbers"() { ... }
@@ -147,9 +147,8 @@ Method Unrolling
     told the number of test methods in advance, and have certain problems if the actual number varies. Another reason
     is that ``@Unroll`` can drastically change the number of reported tests, which may not always be desirable.
 
-A method annotated with ``@Unroll`` will have its iterations reported independently. Note that unrolling has no
-effect on the execution itself - it is only an alternation in reporting. Depending on the execution environment, the
-output will look something like::
+Note that unrolling has no effect on how the method gets executed; it is only an alternation in reporting.
+Depending on the execution environment, the output will look something like::
 
     maximum of two numbers[0]   PASSED
     maximum of two numbers[1]   FAILED

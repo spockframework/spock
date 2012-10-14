@@ -3,7 +3,7 @@
 Extensions
 ==========
 
-Spock comes with a powerful extension mechanism. Extensions can hook into a spec's lifecycle to enrich or alter its
+Spock comes with a powerful extension mechanism, which allows to hook into a spec's lifecycle to enrich or alter its
 behavior. In this chapter, we will first learn about Spock's built-in extensions, and then dive into writing custom
 extensions.
 
@@ -24,7 +24,7 @@ To temporarily prevent a feature method from getting executed, annotate it with 
 For documentation purposes, a reason can be provided::
 
     @Ignore(reason = "TODO")
-    def "some feature"() { ... }
+    def "my feature"() { ... }
 
 To ignore a whole specification, annotate its class::
 
@@ -56,7 +56,7 @@ followed by a predicate::
     @IgnoreIf({ System.getProperty("os.name").contains("windows") })
     def "I'll run everywhere but on Windows"() { ... }
 
-To make predicates easier to read and write, the following properties are available inside a predicate's code block::
+To make predicates easier to read and write, the following properties are available inside a predicate's code block:
 
  * ``sys`` A map of all system properties
  * ``env`` A map of all environment variables
@@ -77,8 +77,8 @@ followed by a predicate::
         @Requires({ os.windows })
         def "I'll only run on Windows"() { ... }
 
-``Requires`` works the same as ``IgnoreIf``, except that the predicate is inverted. Because it positively states the
-preconditions for a feature method to get executed, ``@Requires`` should, in general, be preferred over ``@IgnoreIf``.
+``Requires`` works the same as ``IgnoreIf``, except that the predicate is inverted, stating the preconditions
+for a feature method to get executed.
 
 TODO More to follow.
 

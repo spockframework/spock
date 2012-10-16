@@ -10,8 +10,9 @@ extensions.
 Built-In Extensions
 -------------------
 
-Most of Spock's built-in extensions are *annotation-driven*. This means that they are activated by annotating a spec
-or feature method with an extension-provided annotation.
+Most of Spock's built-in extensions are *annotation-driven*. In other words, they are triggered by annotating a
+spec class or method with a certain annotation. You can tell such an annotation by its ``@ExtensionAnnotation``
+meta-annotation.
 
 Ignore
 ~~~~~~
@@ -36,7 +37,7 @@ In most execution environments, ignored feature methods and specs will be report
 IgnoreRest
 ~~~~~~~~~~
 
-To ignore all but a (typically small) subset of methods, annotate the latter with ``spock.lang.IgnoreRest``::
+To ignore all but a (typically) small subset of methods, annotate the latter with ``spock.lang.IgnoreRest``::
 
     def "I'll be ignored"() { ... }
 
@@ -56,7 +57,7 @@ followed by a predicate::
     @IgnoreIf({ System.getProperty("os.name").contains("windows") })
     def "I'll run everywhere but on Windows"() { ... }
 
-To make predicates easier to read and write, the following properties are available inside a predicate's code block:
+To make predicates easier to read and write, the following properties are available inside the closure:
 
  * ``sys`` A map of all system properties
  * ``env`` A map of all environment variables
@@ -71,14 +72,14 @@ Using the ``os`` property, the previous example can be rewritten as::
 Requires
 ~~~~~~~~
 
-To execute a feature method only when certain conditions are met, annotate it with ``spock.lang.Requires``,
+To execute a feature method under certain conditions, annotate it with ``spock.lang.Requires``,
 followed by a predicate::
 
-        @Requires({ os.windows })
-        def "I'll only run on Windows"() { ... }
+    @Requires({ os.windows })
+    def "I'll only run on Windows"() { ... }
 
-``Requires`` works the same as ``IgnoreIf``, except that the predicate is inverted, stating the preconditions
-for a feature method to get executed.
+``Requires`` works exactly like ``IgnoreIf``, except that the predicate is inverted. In general, it is preferable
+to state the conditions under which a method gets executed, rather than the conditions under which it gets ignored.
 
 TODO More to follow.
 

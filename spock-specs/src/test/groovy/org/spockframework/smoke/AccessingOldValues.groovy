@@ -18,6 +18,8 @@ package org.spockframework.smoke
 
 import org.spockframework.EmbeddedSpecification
 import org.spockframework.compiler.InvalidSpecCompileException
+import spock.lang.FailsWith
+import org.spockframework.runtime.ConditionNotSatisfiedError
 
 class AccessingOldValues extends EmbeddedSpecification {
   def "basic usage"() {
@@ -123,5 +125,16 @@ class AccessingOldValues extends EmbeddedSpecification {
     then:
     def size = old(list.size())
     size == 3
+  }
+
+  @FailsWith(ConditionNotSatisfiedError)
+  def "behaves correctly when part of a failing condition"() {
+    def x = 1
+
+    when:
+    x = 2
+
+    then:
+    x == old(x) + 99
   }
 }

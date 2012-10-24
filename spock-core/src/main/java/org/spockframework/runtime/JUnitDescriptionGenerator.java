@@ -34,7 +34,7 @@ public class JUnitDescriptionGenerator {
     this.spec = spec;
   }
 
-  public void attach() {
+  public void describeSpecMethods() {
     Description desc = Description.createSuiteDescription(spec.getReflection());
     spec.setDescription(desc);
     
@@ -45,30 +45,28 @@ public class JUnitDescriptionGenerator {
       describeMethod(fixtureMethod);
   }
 
-  public Description aggregate() {
-    Description desc = spec.getDescription();
+  public void describeSpec() {
+    Description desc = Description.createSuiteDescription(spec.getReflection());
+    spec.setDescription(desc);
 
     // important for JUnit compatibility: Descriptions of specs that are reported
     // as "ignored" to JUnit must not have any children
-    if (spec.isExcluded() || spec.isSkipped()) return desc;
+    if (spec.isExcluded() || spec.isSkipped()) return;
 
     for (FeatureInfo feature : spec.getAllFeaturesInExecutionOrder()) {
       if (feature.isExcluded()) continue;
       if (feature.isReportIterations()) continue; // don't report up-front because IDEs don't handle this well
       desc.addChild(feature.getFeatureMethod().getDescription());
     }
-
-    return desc;
   }
 
-  private Description describeFeature(FeatureInfo feature) {
+  private void describeFeature(FeatureInfo feature) {
     Description desc = describeMethod(feature.getFeatureMethod());
     feature.setDescription(desc);
     if (feature.getDataProcessorMethod() != null)
       feature.getDataProcessorMethod().setDescription(desc);
     for (DataProviderInfo prov : feature.getDataProviders())
       prov.getDataProviderMethod().setDescription(desc);
-    return desc;
   }
 
   private Description describeMethod(MethodInfo method) {

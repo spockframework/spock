@@ -40,8 +40,8 @@ class Derived extends Base {
     def generator = new JUnitDescriptionGenerator(specInfo)
     
     when:
-    generator.attach()
-    generator.aggregate()
+    generator.describeSpecMethods()
+    generator.describeSpec()
 
     then:
     def desc = specInfo.description

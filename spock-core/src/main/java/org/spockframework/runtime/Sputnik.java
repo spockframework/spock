@@ -40,7 +40,7 @@ public class Sputnik extends Runner implements Filterable, Sortable {
   private final Class<?> clazz;
   private SpecInfo spec;
   private boolean extensionsRun = false;
-  private boolean descriptionAggregated = false;
+  private boolean descriptionGenerated = false;
 
   public Sputnik(Class<?> clazz) throws InitializationError {
     try {
@@ -53,30 +53,32 @@ public class Sputnik extends Runner implements Filterable, Sortable {
 
   public Description getDescription() {
     runExtensionsIfNecessary();
-    aggregateDescriptionIfNecessary();
+    generateSpecDescriptionIfNecessary();
     return getSpec().getDescription();
   }
 
   public void run(RunNotifier notifier) {
     runExtensionsIfNecessary();
-    aggregateDescriptionIfNecessary();
+    generateSpecDescriptionIfNecessary();
     RunContext.get().createSpecRunner(getSpec(), notifier).run();
   }
 
   public void filter(Filter filter) throws NoTestsRemainException {
+    invalidateSpecDescription();
     getSpec().filterFeatures(new JUnitFilterAdapter(filter));
     if (allFeaturesExcluded())
       throw new NoTestsRemainException();
   }
 
   public void sort(Sorter sorter) {
+    invalidateSpecDescription();
     getSpec().sortFeatures(new JUnitSorterAdapter(sorter));
   }
 
   private SpecInfo getSpec() {
     if (spec == null) {
       spec = new SpecInfoBuilder(clazz).build();
-      new JUnitDescriptionGenerator(spec).attach();
+      new JUnitDescriptionGenerator(spec).describeSpecMethods();
     }
     return spec;
   }
@@ -87,10 +89,14 @@ public class Sputnik extends Runner implements Filterable, Sortable {
     extensionsRun = true;
   }
 
-  private void aggregateDescriptionIfNecessary() {
-    if (descriptionAggregated) return;
-    new JUnitDescriptionGenerator(getSpec()).aggregate();
-    descriptionAggregated = true;
+  private void generateSpecDescriptionIfNecessary() {
+    if (descriptionGenerated) return;
+    new JUnitDescriptionGenerator(getSpec()).describeSpec();
+    descriptionGenerated = true;
+  }
+
+  private void invalidateSpecDescription() {
+    descriptionGenerated = false;
   }
 
   private boolean allFeaturesExcluded() {

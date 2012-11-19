@@ -16,9 +16,13 @@
 
 package org.spockframework.runtime.extension.builtin;
 
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.LinkedList;
 import java.util.Collection;
+import java.util.Map;
+import java.util.Set;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.annotation.Annotation;
@@ -115,6 +119,8 @@ public class JUnitFixtureMethodsExtension implements IGlobalExtension {
     }
     
     static public void addInterceptors(SpecInfo spec) {
+      Map<FixtureType, Set<String>> appliedMethods=new HashMap<JUnitFixtureMethodsExtension.FixtureType, Set<String>>();
+      
       for (SpecInfo currentSpec : spec.getSpecsBottomToTop()) {
         List<Method> potentialMethods = new LinkedList<Method>();
         for (Method method : currentSpec.getReflection().getDeclaredMethods()) {
@@ -125,7 +131,21 @@ public class JUnitFixtureMethodsExtension implements IGlobalExtension {
 
         if (!potentialMethods.isEmpty()) {
           for (FixtureType fixtureType : FixtureType.values()) {
-            fixtureType.addInterceptor(currentSpec, potentialMethods);
+            Set<String> appliedMethodsForFixtureType = appliedMethods.get(fixtureType);
+            if(appliedMethodsForFixtureType==null) {
+              appliedMethodsForFixtureType=new HashSet<String>();
+              appliedMethods.put(fixtureType, appliedMethodsForFixtureType);
+            }
+            List<Method> filteredMethods = new LinkedList<Method>();
+            for (Method method : potentialMethods) {
+              if(!appliedMethodsForFixtureType.contains(method.getName())) {
+                filteredMethods.add(method);
+                appliedMethodsForFixtureType.add(method.getName());                
+              }
+            }
+            if (!filteredMethods.isEmpty()) {
+              fixtureType.addInterceptor(currentSpec, filteredMethods);
+            }
           }
         }
       }

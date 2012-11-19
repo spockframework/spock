@@ -98,6 +98,30 @@ class JUnitFixtureMethods extends EmbeddedSpecification {
     "afterClass"  | ["child", "parent"]
   }
   
+  @Unroll("inheritance with shadowed methods for #fixtureType")
+  def "inheritance with shadowed methods"() {
+    when:
+    run """
+    abstract class Parent extends Specification {
+      $RECORD_INVOCATION_METHOD
+      
+      ${this."$fixtureType"("$fixtureType","${fixtureType}_parent")}
+    }
+    
+    class Child extends Parent {
+      ${this."$fixtureType"("$fixtureType","${fixtureType}_child")}
+      
+      def feature1() { expect: true }
+    }
+  """
+    
+    then:
+    invocations == [fixtureType + '_child']
+    
+    where:
+    fixtureType << ["beforeClass", "before", "after", "afterClass"]
+  }
+  
   @Unroll("invalid signature ignored because - #invalidBecause")
   def "invalid signatures are ignored"() {
     when:
@@ -155,10 +179,10 @@ class JUnitFixtureMethods extends EmbeddedSpecification {
     "afterClass"  | "@AfterClass static"  | false       | 0
   }
   
-  protected beforeClass(name = "beforeClass") { "@BeforeClass static void $name() { record('$name') }" }
-  protected before(name = "before") { "@Before void $name() { record('$name') }" }
-  protected after(name = "after") { "@After void $name() { record('$name') } "}
-  protected afterClass(name = "afterClass") { "@AfterClass static void $name() { record('$name') } "}
+  protected beforeClass(name = "beforeClass", recordName = null) { "@BeforeClass static void $name() { record('${recordName?:name}') }" }
+  protected before(name = "before", recordName = null) { "@Before void $name() { record('${recordName?:name}') }" }
+  protected after(name = "after", recordName = null) { "@After void $name() { record('${recordName?:name}') } "}
+  protected afterClass(name = "afterClass", recordName = null) { "@AfterClass static void $name() { record('${recordName?:name}') } "}
   
   protected addImports() {
     runner.addPackageImport(getClass().package)

@@ -17,6 +17,7 @@ package org.spockframework.runtime.extension.builtin;
 import org.spockframework.runtime.extension.AbstractAnnotationDrivenExtension;
 import org.spockframework.runtime.model.FieldInfo;
 import org.spockframework.runtime.model.SpecInfo;
+import org.spockframework.util.CollectionUtil;
 
 import spock.lang.AutoCleanup;
 
@@ -35,7 +36,7 @@ public class AutoCleanupExtension extends AbstractAnnotationDrivenExtension<Auto
 
   @Override
   public void visitSpec(SpecInfo spec) {
-    sharedFieldInterceptor.install(spec.getTopSpec().getCleanupSpecMethod());
-    instanceFieldInterceptor.install(spec.getTopSpec().getCleanupMethod());
+    sharedFieldInterceptor.install(CollectionUtil.getLastElement(spec.getTopSpec().getCleanupSpecMethods()));
+    instanceFieldInterceptor.install(CollectionUtil.getLastElement(spec.getTopSpec().getCleanupMethods()));
   }
 }

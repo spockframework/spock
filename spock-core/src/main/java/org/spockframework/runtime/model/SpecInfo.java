@@ -41,10 +41,10 @@ public class SpecInfo extends NodeInfo<NodeInfo, Class<?>> implements IMethodNam
   private MethodInfo initializerMethod;
   private MethodInfo sharedInitializerMethod;
 
-  private MethodInfo setupMethod;
-  private MethodInfo cleanupMethod;
-  private MethodInfo setupSpecMethod;
-  private MethodInfo cleanupSpecMethod;
+  private List<MethodInfo> setupMethods = new ArrayList<MethodInfo>();
+  private List<MethodInfo> cleanupMethods = new ArrayList<MethodInfo>();
+  private List<MethodInfo> setupSpecMethods = new ArrayList<MethodInfo>();
+  private List<MethodInfo> cleanupSpecMethods = new ArrayList<MethodInfo>();
   private List<FeatureInfo> features = new ArrayList<FeatureInfo>();
 
   private boolean excluded = false;
@@ -138,48 +138,46 @@ public class SpecInfo extends NodeInfo<NodeInfo, Class<?>> implements IMethodNam
     this.sharedInitializerMethod = sharedInitializerMethod;
   }
 
-  public MethodInfo getSetupMethod() {
-    return setupMethod;
+  public List<MethodInfo> getSetupMethods() {
+    return setupMethods;
   }
 
-  public void setSetupMethod(MethodInfo setupMethod) {
-    this.setupMethod = setupMethod;
+  public void addSetupMethod(MethodInfo setupMethod) {
+    setupMethods.add(setupMethod);
   }
 
-  public MethodInfo getCleanupMethod() {
-    return cleanupMethod;
+  public List<MethodInfo>  getCleanupMethods() {
+    return cleanupMethods;
   }
 
-  public void setCleanupMethod(MethodInfo cleanupMethod) {
-    this.cleanupMethod = cleanupMethod;
+  public void addCleanupMethod(MethodInfo cleanupMethod) {
+    cleanupMethods.add(cleanupMethod);
   }
 
-  public MethodInfo getSetupSpecMethod() {
-    return setupSpecMethod;
+  public List<MethodInfo> getSetupSpecMethods() {
+    return setupSpecMethods;
   }
 
-  public void setSetupSpecMethod(MethodInfo setupSpecMethod) {
-    this.setupSpecMethod = setupSpecMethod;
+  public void addSetupSpecMethod(MethodInfo setupSpecMethod) {
+    setupSpecMethods.add(setupSpecMethod);
   }
 
-  public MethodInfo getCleanupSpecMethod() {
-    return cleanupSpecMethod;
+  public List<MethodInfo> getCleanupSpecMethods() {
+    return cleanupSpecMethods;
   }
 
-  public void setCleanupSpecMethod(MethodInfo cleanupSpecMethod) {
-    this.cleanupSpecMethod = cleanupSpecMethod;
+  public void addCleanupSpecMethod(MethodInfo cleanupSpecMethod) {
+    cleanupSpecMethods.add(cleanupSpecMethod);
   }
 
-  public List<MethodInfo> getFixtureMethods() {
-    return Arrays.asList(setupSpecMethod, setupMethod, cleanupMethod, cleanupSpecMethod);
+  public Iterable<MethodInfo> getFixtureMethods() {
+    return CollectionUtil.concat(setupSpecMethods, setupMethods, cleanupMethods, cleanupSpecMethods);
   }
 
-  public List<MethodInfo> getAllFixtureMethods() {
+  public Iterable<MethodInfo> getAllFixtureMethods() {
     if (superSpec == null) return getFixtureMethods();
 
-    List<MethodInfo> result = new ArrayList<MethodInfo>(superSpec.getAllFixtureMethods());
-    result.addAll(getFixtureMethods());
-    return result;
+    return CollectionUtil.concat(superSpec.getAllFixtureMethods(), getFixtureMethods());
   }
 
   public List<FieldInfo> getFields() {

@@ -23,6 +23,7 @@ import org.junit.runner.Description;
 import org.spockframework.runtime.extension.IMethodInterceptor;
 import org.spockframework.runtime.extension.MethodInvocation;
 import org.spockframework.runtime.model.*;
+import org.spockframework.util.CollectionUtil;
 import org.spockframework.util.InternalSpockError;
 import org.spockframework.util.ReflectionUtil;
 import spock.lang.Specification;
@@ -140,8 +141,10 @@ public class BaseSpecRunner {
 
   private void invokeSetupSpec() {
     for (SpecInfo curr : spec.getSpecsTopToBottom()) {
-      if (runStatus != OK) return;
-      invoke(sharedInstance, curr.getSetupSpecMethod());
+      for (MethodInfo method : curr.getSetupSpecMethods()) {
+        if (runStatus != OK) return;
+        invoke(sharedInstance, method);
+      }
     }
   }
 
@@ -156,8 +159,10 @@ public class BaseSpecRunner {
 
   private void invokeCleanupSpec() {
     for (SpecInfo curr : spec.getSpecsBottomToTop()) {
-      if (action(runStatus) == ABORT) return;
-      invoke(sharedInstance, curr.getCleanupSpecMethod());
+      for (MethodInfo method : curr.getCleanupSpecMethods()) {
+        if (action(runStatus) == ABORT) return;
+        invoke(sharedInstance, method);
+      }
     }
   }
 
@@ -275,8 +280,10 @@ public class BaseSpecRunner {
 
   private void invokeSetup() {
     for (SpecInfo curr : spec.getSpecsTopToBottom()) {
-      if (runStatus != OK) return;
-      invoke(currentInstance, curr.getSetupMethod());
+      for (MethodInfo method : curr.getSetupMethods()) {
+        if (runStatus != OK) return;
+        invoke(currentInstance, method);
+      }
     }
   }
 
@@ -288,8 +295,10 @@ public class BaseSpecRunner {
   private void invokeCleanup() {
     invokeIterationCleanups();
     for (SpecInfo curr : spec.getSpecsBottomToTop()) {
-      if (action(runStatus) == ABORT) return;
-      invoke(currentInstance, curr.getCleanupMethod());
+      for (MethodInfo method : curr.getCleanupMethods()) {
+        if (action(runStatus) == ABORT) return;
+        invoke(currentInstance, method);
+      }
     }
   }
 
@@ -299,7 +308,7 @@ public class BaseSpecRunner {
       try {
         cleanup.run();
       } catch (Throwable t) {
-        ErrorInfo error = new ErrorInfo(spec.getCleanupMethod(), t);
+        ErrorInfo error = new ErrorInfo(CollectionUtil.getFirstElement(spec.getCleanupMethods()), t);
         runStatus = supervisor.error(error);
       }
     }

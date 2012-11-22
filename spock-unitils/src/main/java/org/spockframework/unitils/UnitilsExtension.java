@@ -16,6 +16,7 @@ package org.spockframework.unitils;
 
 import org.spockframework.runtime.extension.AbstractAnnotationDrivenExtension;
 import org.spockframework.runtime.model.*;
+import org.spockframework.util.CollectionUtil;
 import org.spockframework.util.NotThreadSafe;
 
 import spock.unitils.UnitilsSupport;
@@ -25,9 +26,10 @@ public class UnitilsExtension extends AbstractAnnotationDrivenExtension<UnitilsS
   @Override
   public void visitSpecAnnotation(UnitilsSupport unitilsSupport, SpecInfo spec) {
     UnitilsInterceptor interceptor = new UnitilsInterceptor();
-    spec.getSetupSpecMethod().addInterceptor(interceptor);
-    spec.getSetupMethod().addInterceptor(interceptor);
-    spec.getCleanupMethod().addInterceptor(interceptor);
+    SpecInfo topSpec = spec.getTopSpec();
+    topSpec.getSetupSpecMethods().get(0).addInterceptor(interceptor);
+    topSpec.getSetupMethods().get(0).addInterceptor(interceptor);
+    CollectionUtil.getLastElement(topSpec.getCleanupMethods()).addInterceptor(interceptor);
     for (FeatureInfo feature : spec.getFeatures()) {
       feature.addInterceptor(interceptor);
       feature.getFeatureMethod().addInterceptor(interceptor);

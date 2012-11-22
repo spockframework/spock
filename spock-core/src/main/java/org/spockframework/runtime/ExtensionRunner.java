@@ -60,13 +60,18 @@ public class ExtensionRunner {
     for (FieldInfo field : spec.getFields())
       doRunAnnotationDrivenExtensions(field);
 
-    doRunAnnotationDrivenExtensions(spec.getSetupSpecMethod());
-    doRunAnnotationDrivenExtensions(spec.getSetupMethod());
-    doRunAnnotationDrivenExtensions(spec.getCleanupMethod());
-    doRunAnnotationDrivenExtensions(spec.getCleanupSpecMethod());
+    doRunAnnotationDrivenExtensions(spec.getSetupSpecMethods());
+    doRunAnnotationDrivenExtensions(spec.getSetupMethods());
+    doRunAnnotationDrivenExtensions(spec.getCleanupMethods());
+    doRunAnnotationDrivenExtensions(spec.getCleanupSpecMethods());
 
     for (FeatureInfo feature : spec.getFeatures())
       doRunAnnotationDrivenExtensions(feature.getFeatureMethod());
+  }
+
+  private void doRunAnnotationDrivenExtensions(Iterable<MethodInfo> nodes) {
+    for (MethodInfo node : nodes) doRunAnnotationDrivenExtensions(node);
+
   }
 
   @SuppressWarnings("unchecked")

@@ -20,6 +20,10 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.*;
 
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
 import org.spockframework.runtime.model.*;
 import org.spockframework.util.*;
 
@@ -174,13 +178,20 @@ public class SpecInfoBuilder {
   private MethodInfo createMethod(String name, MethodKind kind, boolean allowStub) {
     Method reflection = findMethod(name);
     if (reflection == null && !allowStub) return null;
+    return createMethod(reflection, kind, name);
+  }
 
+  private MethodInfo createMethod(Method method, MethodKind kind, String name) {
     MethodInfo methodInfo = new MethodInfo();
     methodInfo.setParent(spec);
     methodInfo.setName(name);
-    methodInfo.setReflection(reflection);
+    methodInfo.setReflection(method);
     methodInfo.setKind(kind);
     return methodInfo;
+  }
+
+  private MethodInfo createMethod(Method method, MethodKind kind) {
+    return createMethod(method, kind, method.getName());
   }
 
   private Method findMethod(String name) {
@@ -198,9 +209,25 @@ public class SpecInfoBuilder {
   }
 
   private void buildFixtureMethods() {
-    spec.setSetupMethod(createMethod(Identifiers.SETUP_METHOD, MethodKind.SETUP, true));
-    spec.setCleanupMethod(createMethod(Identifiers.CLEANUP_METHOD, MethodKind.CLEANUP, true));
-    spec.setSetupSpecMethod(createMethod(Identifiers.SETUP_SPEC_METHOD, MethodKind.SETUP_SPEC, true));
-    spec.setCleanupSpecMethod(createMethod(Identifiers.CLEANUP_SPEC_METHOD, MethodKind.CLEANUP_SPEC, true));
+    spec.addCleanupMethod(createMethod(Identifiers.CLEANUP_METHOD, MethodKind.CLEANUP, true));
+    spec.addCleanupSpecMethod(createMethod(Identifiers.CLEANUP_SPEC_METHOD, MethodKind.CLEANUP_SPEC, true));
+
+    for (Method method : clazz.getDeclaredMethods()) {
+      if (method.isAnnotationPresent(Before.class)) {
+        spec.addSetupMethod(createMethod(method, MethodKind.SETUP));
+      }
+      if (method.isAnnotationPresent(After.class)) {
+        spec.addCleanupMethod(createMethod(method, MethodKind.CLEANUP));
+      }
+      if (method.isAnnotationPresent(BeforeClass.class)) {
+        spec.addSetupSpecMethod(createMethod(method, MethodKind.SETUP_SPEC));
+      }
+      if (method.isAnnotationPresent(AfterClass.class)) {
+        spec.addCleanupSpecMethod(createMethod(method, MethodKind.CLEANUP_SPEC));
+      }
+    }
+
+    spec.addSetupMethod(createMethod(Identifiers.SETUP_METHOD, MethodKind.SETUP, true));
+    spec.addSetupSpecMethod(createMethod(Identifiers.SETUP_SPEC_METHOD, MethodKind.SETUP_SPEC, true));
   }
 }

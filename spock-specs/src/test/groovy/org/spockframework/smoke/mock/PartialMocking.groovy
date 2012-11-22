@@ -54,12 +54,34 @@ class PartialMocking extends Specification {
     2 * persister.store("msg")
   }
 
+  def "cannot stub (or mock) private method"() {
+    def persister = Spy(PrivateMessagePersister) {
+      isStorable(_) >> false
+    }
+
+    when:
+    persister.receive("msg")
+
+    then:
+    1 * persister.store("msg")
+  }
+
   static class MessagePersister {
     void receive(String msg) {
       if (isStorable(msg)) store(msg)
     }
 
     boolean isStorable(msg) { true }
+
+    void store(String msg) {}
+  }
+
+  static class PrivateMessagePersister {
+    void receive(String msg) {
+      if (isStorable(msg)) store(msg)
+    }
+
+    private boolean isStorable(msg) { true }
 
     void store(String msg) {}
   }

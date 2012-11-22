@@ -38,6 +38,12 @@ public abstract class CollectionUtil {
     return result;
   }
 
+  public static @Nullable <T> T getFirstElement(Iterable<T> iterable) {
+    Iterator<T> iterator = iterable.iterator();
+    Assert.that(iterator.hasNext());
+    return iterator.next();
+  }
+
   public static @Nullable <T> T getLastElement(List<T> list) {
     Assert.that(list.size() > 0);
     

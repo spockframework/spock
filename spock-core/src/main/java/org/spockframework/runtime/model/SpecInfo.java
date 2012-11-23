@@ -34,26 +34,28 @@ public class SpecInfo extends NodeInfo<NodeInfo, Class<?>> implements IMethodNam
   private final List<IMethodInterceptor> cleanupInterceptors = new ArrayList<IMethodInterceptor>();
   private final List<IMethodInterceptor> setupSpecInterceptors = new ArrayList<IMethodInterceptor>();
   private final List<IMethodInterceptor> cleanupSpecInterceptors = new ArrayList<IMethodInterceptor>();
-  private final List<IRunListener> listeners = new ArrayList<IRunListener>();
+  private final List<IMethodInterceptor> sharedInitializerInterceptors = new ArrayList<IMethodInterceptor>();
+  private final List<IMethodInterceptor> initializerInterceptors = new ArrayList<IMethodInterceptor>();
 
+  private final List<IRunListener> listeners = new ArrayList<IRunListener>();
   private String filename;
   private SpecInfo superSpec;
   private SpecInfo subSpec;
   private List<SpecInfo> specsTopToBottom;
+
   private List<SpecInfo> specsBottomToTop;
-
   private MethodInfo initializerMethod;
+
   private MethodInfo sharedInitializerMethod;
+  private final List<MethodInfo> setupMethods = new ArrayList<MethodInfo>();
+  private final List<MethodInfo> cleanupMethods = new ArrayList<MethodInfo>();
+  private final List<MethodInfo> setupSpecMethods = new ArrayList<MethodInfo>();
+  private final List<MethodInfo> cleanupSpecMethods = new ArrayList<MethodInfo>();
 
-  private List<MethodInfo> setupMethods = new ArrayList<MethodInfo>();
-  private List<MethodInfo> cleanupMethods = new ArrayList<MethodInfo>();
-  private List<MethodInfo> setupSpecMethods = new ArrayList<MethodInfo>();
-  private List<MethodInfo> cleanupSpecMethods = new ArrayList<MethodInfo>();
-  private List<FeatureInfo> features = new ArrayList<FeatureInfo>();
-
+  private final List<FeatureInfo> features = new ArrayList<FeatureInfo>();
   private boolean excluded = false;
   private boolean skipped = false;
-  
+
   public String getFilename() {
     return filename;
   }
@@ -264,6 +266,22 @@ public class SpecInfo extends NodeInfo<NodeInfo, Class<?>> implements IMethodNam
 
   public void addCleanupSpecInterceptor(IMethodInterceptor interceptor) {
     cleanupSpecInterceptors.add(interceptor);
+  }
+
+  public List<IMethodInterceptor> getSharedInitializerInterceptors() {
+    return sharedInitializerInterceptors;
+  }
+
+  public void addSharedInitializerInterceptor(IMethodInterceptor interceptor) {
+    sharedInitializerInterceptors.add(interceptor);
+  }
+
+  public List<IMethodInterceptor> getInitializerInterceptors() {
+    return initializerInterceptors;
+  }
+
+  public void addInitializerInterceptor(IMethodInterceptor interceptor) {
+    initializerInterceptors.add(interceptor);
   }
 
   public List<IRunListener> getListeners() {

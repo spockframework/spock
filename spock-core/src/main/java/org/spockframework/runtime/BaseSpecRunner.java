@@ -46,6 +46,8 @@ public class BaseSpecRunner {
   private static final Method DO_RUN_CLEANUP;
   private static final Method DO_RUN_SETUP_SPEC;
   private static final Method DO_RUN_CLEANUP_SPEC;
+  private static final Method DO_RUN_SHARED_INITIALIZER;
+  private static final Method DO_RUN_INITIALIZER;
 
   protected static final Object[] EMPTY_ARGS = new Object[0];
 
@@ -68,6 +70,8 @@ public class BaseSpecRunner {
       DO_RUN_CLEANUP = BaseSpecRunner.class.getMethod("doRunCleanup");
       DO_RUN_SETUP_SPEC = BaseSpecRunner.class.getMethod("doRunSetupSpec");
       DO_RUN_CLEANUP_SPEC = BaseSpecRunner.class.getMethod("doRunCleanupSpec");
+      DO_RUN_SHARED_INITIALIZER = BaseSpecRunner.class.getMethod("doRunSharedInitializer");
+      DO_RUN_INITIALIZER = BaseSpecRunner.class.getMethod("doRunInitializer");
     } catch (NoSuchMethodException e) {
       throw new InternalSpockError(e);
     }
@@ -88,7 +92,7 @@ public class BaseSpecRunner {
     }
 
     createSpecInstance(true);
-    invokeSharedInitializer();
+    runSharedInitializer();
     runSpec();
 
     return resetStatus(SPEC);
@@ -141,7 +145,26 @@ public class BaseSpecRunner {
     }
   }
 
-  private void invokeSharedInitializer() {
+  private void runSharedInitializer() {
+    invoke(this, createMethodInfoForDoRunSharedInitializer());
+  }
+
+  private MethodInfo createMethodInfoForDoRunSharedInitializer() {
+    MethodInfo result = new MethodInfo();
+    result.setParent(spec);
+    result.setKind(MethodKind.SHARED_INITIALIZER);
+    result.setReflection(DO_RUN_SHARED_INITIALIZER);
+    result.setDescription(spec.getDescription());
+    for (IMethodInterceptor interceptor : spec.getSharedInitializerInterceptors())
+      result.addInterceptor(interceptor);
+    return result;
+  }
+
+  /**
+   * Only called via reflection.
+   */
+  @SuppressWarnings("unused")
+  public void doRunSharedInitializer() {
     for (SpecInfo curr : spec.getSpecsTopToBottom()) {
       if (runStatus != OK) return;
       invoke(sharedInstance, curr.getSharedInitializerMethod());
@@ -319,6 +342,26 @@ public class BaseSpecRunner {
   }
 
   private void runInitializer() {
+    invoke(this, createMethodInfoForDoRunInitializer());
+  }
+
+  private MethodInfo createMethodInfoForDoRunInitializer() {
+    MethodInfo result = new MethodInfo();
+    result.setParent(currentFeature.getParent());
+    result.setKind(MethodKind.INITIALIZER);
+    result.setReflection(DO_RUN_INITIALIZER);
+    result.setFeature(currentFeature);
+    result.setDescription(currentFeature.getDescription());
+    for (IMethodInterceptor interceptor : spec.getInitializerInterceptors())
+      result.addInterceptor(interceptor);
+    return result;
+  }
+
+  /**
+   * Only called via reflection.
+   */
+  @SuppressWarnings("unused")
+  public void doRunInitializer() {
     for (SpecInfo curr : spec.getSpecsTopToBottom()) {
       if (runStatus != OK) return;
       invoke(currentInstance, curr.getInitializerMethod());

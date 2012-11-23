@@ -176,10 +176,12 @@ public class SpecInfo extends NodeInfo<NodeInfo, Class<?>> implements IMethodNam
     cleanupSpecMethods.add(cleanupSpecMethod);
   }
 
+  @SuppressWarnings("unchecked")
   public Iterable<MethodInfo> getFixtureMethods() {
     return CollectionUtil.concat(setupSpecMethods, setupMethods, cleanupMethods, cleanupSpecMethods);
   }
 
+  @SuppressWarnings("unchecked")
   public Iterable<MethodInfo> getAllFixtureMethods() {
     if (superSpec == null) return getFixtureMethods();
 

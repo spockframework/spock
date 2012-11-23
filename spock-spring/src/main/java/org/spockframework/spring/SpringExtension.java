@@ -45,11 +45,10 @@ public class SpringExtension implements IGlobalExtension {
       }
     });
 
-    SpecInfo topSpec = spec.getTopSpec();
-    topSpec.getSetupSpecMethods().get(0).addInterceptor(interceptor);
-    topSpec.getSetupMethods().get(0).addInterceptor(interceptor);
-    CollectionUtil.getLastElement(topSpec.getCleanupMethods()).addInterceptor(interceptor);
-    CollectionUtil.getLastElement(topSpec.getCleanupSpecMethods()).addInterceptor(interceptor);
+    spec.addSetupSpecInterceptor(interceptor);
+    spec.addSetupInterceptor(interceptor);
+    spec.addCleanupInterceptor(interceptor);
+    spec.addCleanupSpecInterceptor(interceptor);
   }
 
   private void checkNoSharedFieldsInjected(SpecInfo spec) {

@@ -30,6 +30,10 @@ import org.spockframework.util.*;
 public class SpecInfo extends NodeInfo<NodeInfo, Class<?>> implements IMethodNameMapper, ISkippable, IExcludable, IInterceptable {
   private final List<FieldInfo> fields = new ArrayList<FieldInfo>();
   private final List<IMethodInterceptor> interceptors = new ArrayList<IMethodInterceptor>();
+  private final List<IMethodInterceptor> setupInterceptors = new ArrayList<IMethodInterceptor>();
+  private final List<IMethodInterceptor> cleanupInterceptors = new ArrayList<IMethodInterceptor>();
+  private final List<IMethodInterceptor> setupSpecInterceptors = new ArrayList<IMethodInterceptor>();
+  private final List<IMethodInterceptor> cleanupSpecInterceptors = new ArrayList<IMethodInterceptor>();
   private final List<IRunListener> listeners = new ArrayList<IRunListener>();
 
   private String filename;
@@ -228,6 +232,38 @@ public class SpecInfo extends NodeInfo<NodeInfo, Class<?>> implements IMethodNam
 
   public void addInterceptor(IMethodInterceptor interceptor) {
     interceptors.add(interceptor);
+  }
+
+  public List<IMethodInterceptor> getSetupInterceptors() {
+    return setupInterceptors;
+  }
+
+  public void addSetupInterceptor(IMethodInterceptor interceptor) {
+    setupInterceptors.add(interceptor);
+  }
+
+  public List<IMethodInterceptor> getCleanupInterceptors() {
+    return cleanupInterceptors;
+  }
+
+  public void addCleanupInterceptor(IMethodInterceptor interceptor) {
+    cleanupInterceptors.add(interceptor);
+  }
+
+  public List<IMethodInterceptor> getSetupSpecInterceptors() {
+    return setupSpecInterceptors;
+  }
+
+  public void addSetupSpecInterceptor(IMethodInterceptor interceptor) {
+    setupSpecInterceptors.add(interceptor);
+  }
+
+  public List<IMethodInterceptor> getCleanupSpecInterceptors() {
+    return cleanupSpecInterceptors;
+  }
+
+  public void addCleanupSpecInterceptor(IMethodInterceptor interceptor) {
+    cleanupSpecInterceptors.add(interceptor);
   }
 
   public List<IRunListener> getListeners() {

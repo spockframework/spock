@@ -29,28 +29,28 @@ public class UnitilsInterceptor extends AbstractMethodInterceptor {
 
   @Override
   public void interceptSetupSpecMethod(IMethodInvocation invocation) throws Throwable {
-    listener.beforeTestClass(invocation.getTarget().getClass());
+    listener.beforeTestClass(invocation.getSharedInstance().getClass());
     invocation.proceed();
   }
 
   @Override
   public void interceptSetupMethod(IMethodInvocation invocation) throws Throwable {
-    listener.afterCreateTestObject(invocation.getTarget());
-    listener.beforeTestSetUp(invocation.getTarget(), currentFeature.getFeatureMethod().getReflection());
+    listener.afterCreateTestObject(invocation.getInstance());
+    listener.beforeTestSetUp(invocation.getInstance(), currentFeature.getFeatureMethod().getReflection());
     invocation.proceed();
   }
 
   @Override
   public void interceptFeatureMethod(IMethodInvocation invocation) throws Throwable {
     Throwable throwable = null;
-    listener.beforeTestMethod(invocation.getTarget(), invocation.getMethod().getReflection());
+    listener.beforeTestMethod(invocation.getInstance(), invocation.getMethod().getReflection());
     try {
       invocation.proceed();
     } catch (Throwable t) {
       throwable = t;
       throw t;
     } finally {
-      listener.afterTestMethod(invocation.getTarget(), invocation.getMethod().getReflection(), throwable);
+      listener.afterTestMethod(invocation.getInstance(), invocation.getMethod().getReflection(), throwable);
     }
   }
 
@@ -59,7 +59,7 @@ public class UnitilsInterceptor extends AbstractMethodInterceptor {
     try {
       invocation.proceed();
     } finally {
-      listener.afterTestTearDown(invocation.getTarget(), currentFeature.getFeatureMethod().getReflection());
+      listener.afterTestTearDown(invocation.getInstance(), currentFeature.getFeatureMethod().getReflection());
     }
   }
 

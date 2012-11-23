@@ -42,6 +42,11 @@ public class BaseSpecRunner {
   private static final Method DO_RUN_FEATURE;
   private static final Method DO_RUN_ITERATION;
 
+  private static final Method DO_RUN_SETUP;
+  private static final Method DO_RUN_CLEANUP;
+  private static final Method DO_RUN_SETUP_SPEC;
+  private static final Method DO_RUN_CLEANUP_SPEC;
+
   protected static final Object[] EMPTY_ARGS = new Object[0];
 
   protected final SpecInfo spec;
@@ -59,6 +64,10 @@ public class BaseSpecRunner {
       DO_RUN_SPEC = BaseSpecRunner.class.getMethod("doRunSpec");
       DO_RUN_FEATURE = BaseSpecRunner.class.getMethod("doRunFeature");
       DO_RUN_ITERATION = BaseSpecRunner.class.getMethod("doRunIteration");
+      DO_RUN_SETUP = BaseSpecRunner.class.getMethod("doRunSetup");
+      DO_RUN_CLEANUP = BaseSpecRunner.class.getMethod("doRunCleanup");
+      DO_RUN_SETUP_SPEC = BaseSpecRunner.class.getMethod("doRunSetupSpec");
+      DO_RUN_CLEANUP_SPEC = BaseSpecRunner.class.getMethod("doRunCleanupSpec");
     } catch (NoSuchMethodException e) {
       throw new InternalSpockError(e);
     }
@@ -109,9 +118,9 @@ public class BaseSpecRunner {
    */
   @SuppressWarnings("unused")
   public void doRunSpec() {
-    invokeSetupSpec();
+    runSetupSpec();
     runFeatures();
-    invokeCleanupSpec();
+    runCleanupSpec();
   }
 
   private void createSpecInstance(boolean shared) {
@@ -139,7 +148,26 @@ public class BaseSpecRunner {
     }
   }
 
-  private void invokeSetupSpec() {
+  private void runSetupSpec() {
+    invoke(this, createMethodInfoForDoRunSetupSpec());
+  }
+
+  private MethodInfo createMethodInfoForDoRunSetupSpec() {
+    MethodInfo result = new MethodInfo();
+    result.setParent(spec);
+    result.setKind(MethodKind.SETUP_SPEC);
+    result.setReflection(DO_RUN_SETUP_SPEC);
+    result.setDescription(spec.getDescription());
+    for (IMethodInterceptor interceptor : spec.getSetupSpecInterceptors())
+      result.addInterceptor(interceptor);
+    return result;
+  }
+
+  /**
+   * Only called via reflection.
+   */
+  @SuppressWarnings("unused")
+  public void doRunSetupSpec() {
     for (SpecInfo curr : spec.getSpecsTopToBottom()) {
       for (MethodInfo method : curr.getSetupSpecMethods()) {
         if (runStatus != OK) return;
@@ -157,7 +185,26 @@ public class BaseSpecRunner {
     }
   }
 
-  private void invokeCleanupSpec() {
+  private void runCleanupSpec() {
+    invoke(this, createMethodForDoRunCleanupSpec());
+  }
+
+  private MethodInfo createMethodForDoRunCleanupSpec() {
+    MethodInfo result = new MethodInfo();
+    result.setParent(spec);
+    result.setKind(MethodKind.CLEANUP_SPEC);
+    result.setReflection(DO_RUN_CLEANUP_SPEC);
+    result.setDescription(spec.getDescription());
+    for (IMethodInterceptor interceptor : spec.getCleanupSpecInterceptors())
+      result.addInterceptor(interceptor);
+    return result;
+  }
+
+  /**
+   * Only called via reflection.
+   */
+  @SuppressWarnings("unused")
+  public void doRunCleanupSpec() {
     for (SpecInfo curr : spec.getSpecsBottomToTop()) {
       for (MethodInfo method : curr.getCleanupSpecMethods()) {
         if (action(runStatus) == ABORT) return;
@@ -215,7 +262,7 @@ public class BaseSpecRunner {
     if (runStatus != OK) return;
 
     createSpecInstance(false);
-    invokeInitializer();
+    runInitializer();
     runIteration(dataValues, estimatedNumIterations);
   }
 
@@ -257,9 +304,9 @@ public class BaseSpecRunner {
    */
   @SuppressWarnings("unused")
   public void doRunIteration() {
-    invokeSetup();
-    invokeFeatureMethod();
-    invokeCleanup();
+    runSetup();
+    runFeatureMethod();
+    runCleanup();
   }
 
   protected int resetStatus(int scope) {
@@ -271,14 +318,34 @@ public class BaseSpecRunner {
     throw new UnsupportedOperationException("This runner cannot run parameterized features");
   }
 
-  private void invokeInitializer() {
+  private void runInitializer() {
     for (SpecInfo curr : spec.getSpecsTopToBottom()) {
       if (runStatus != OK) return;
       invoke(currentInstance, curr.getInitializerMethod());
     }
   }
 
-  private void invokeSetup() {
+  private void runSetup() {
+    invoke(this, createMethodInfoForDoRunSetup());
+  }
+
+  private MethodInfo createMethodInfoForDoRunSetup() {
+    MethodInfo result = new MethodInfo();
+    result.setParent(currentFeature.getParent());
+    result.setKind(MethodKind.SETUP);
+    result.setReflection(DO_RUN_SETUP);
+    result.setFeature(currentFeature);
+    result.setDescription(currentFeature.getDescription());
+    for (IMethodInterceptor interceptor : spec.getSetupInterceptors())
+      result.addInterceptor(interceptor);
+    return result;
+  }
+
+  /**
+   * Only called via reflection.
+   */
+  @SuppressWarnings("unused")
+  public void doRunSetup() {
     for (SpecInfo curr : spec.getSpecsTopToBottom()) {
       for (MethodInfo method : curr.getSetupMethods()) {
         if (runStatus != OK) return;
@@ -287,13 +354,33 @@ public class BaseSpecRunner {
     }
   }
 
-  private void invokeFeatureMethod() {
+  private void runFeatureMethod() {
     if (runStatus != OK) return;
     invoke(currentInstance, currentFeature.getFeatureMethod(), currentIteration.getDataValues());
   }
 
-  private void invokeCleanup() {
-    invokeIterationCleanups();
+  private void runCleanup() {
+    invoke(this, createMethodInfoForDoRunCleanup());
+  }
+
+  private MethodInfo createMethodInfoForDoRunCleanup() {
+    MethodInfo result = new MethodInfo();
+    result.setParent(currentFeature.getParent());
+    result.setKind(MethodKind.CLEANUP);
+    result.setReflection(DO_RUN_CLEANUP);
+    result.setFeature(currentFeature);
+    result.setDescription(currentFeature.getDescription());
+    for (IMethodInterceptor interceptor : spec.getCleanupInterceptors())
+      result.addInterceptor(interceptor);
+    return result;
+  }
+
+  /**
+   * Only called via reflection.
+   */
+  @SuppressWarnings("unused")
+  public void doRunCleanup() {
+    runIterationCleanups();
     for (SpecInfo curr : spec.getSpecsBottomToTop()) {
       for (MethodInfo method : curr.getCleanupMethods()) {
         if (action(runStatus) == ABORT) return;
@@ -302,7 +389,7 @@ public class BaseSpecRunner {
     }
   }
 
-  private void invokeIterationCleanups() {
+  private void runIterationCleanups() {
     for (Runnable cleanup : currentIteration.getCleanups()) {
       if (action(runStatus) == ABORT) return;
       try {

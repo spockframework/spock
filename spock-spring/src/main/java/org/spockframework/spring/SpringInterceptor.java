@@ -39,10 +39,10 @@ public class SpringInterceptor extends AbstractMethodInterceptor {
 
   @Override
   public void interceptSetupMethod(IMethodInvocation invocation) throws Throwable {
-    manager.prepareTestInstance(invocation.getTarget());
+    manager.prepareTestInstance(invocation.getInstance());
     exception = null;
     beforeTestMethodInvoked = true;
-    manager.beforeTestMethod(invocation.getTarget(),
+    manager.beforeTestMethod(invocation.getInstance(),
         invocation.getFeature().getFeatureMethod().getReflection());
     invocation.proceed();
   }
@@ -65,7 +65,7 @@ public class SpringInterceptor extends AbstractMethodInterceptor {
 
     Throwable afterTestMethodEx = null;
     try {
-      manager.afterTestMethod(invocation.getTarget(),
+      manager.afterTestMethod(invocation.getInstance(),
           invocation.getFeature().getFeatureMethod().getReflection(), exception);
     } catch (Throwable t) {
       afterTestMethodEx = t;

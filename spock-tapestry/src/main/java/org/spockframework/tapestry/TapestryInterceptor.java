@@ -38,8 +38,6 @@ import spock.lang.Specification;
  *
  * @author Peter Niederwieser
  */
-// Important implementation detail: Only the fixture methods of
-// spec.getTopSpec() are intercepted (see TapestryExtension)
 public class TapestryInterceptor extends AbstractMethodInterceptor {
   private final SpecInfo spec;
   private final Set<Class<?>> modules;
@@ -53,9 +51,9 @@ public class TapestryInterceptor extends AbstractMethodInterceptor {
 
   @Override
   public void interceptSharedInitializerMethod(IMethodInvocation invocation) throws Throwable {
-    runBeforeRegistryCreatedMethods((Specification) invocation.getTarget());
+    runBeforeRegistryCreatedMethods((Specification) invocation.getSharedInstance());
     createAndStartupRegistry();
-    injectServices(invocation.getTarget(), true);
+    injectServices(invocation.getSharedInstance(), true);
     invocation.proceed();
   }
 
@@ -70,7 +68,7 @@ public class TapestryInterceptor extends AbstractMethodInterceptor {
 
   @Override
   public void interceptInitializerMethod(IMethodInvocation invocation) throws Throwable {
-    injectServices(invocation.getTarget(), false);
+    injectServices(invocation.getInstance(), false);
     invocation.proceed();
   }
 

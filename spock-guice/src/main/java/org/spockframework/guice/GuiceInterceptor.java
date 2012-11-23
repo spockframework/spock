@@ -49,13 +49,13 @@ public class GuiceInterceptor extends AbstractMethodInterceptor {
   @Override
   public void interceptSharedInitializerMethod(IMethodInvocation invocation) throws Throwable {
     createInjector();
-    injectValues(invocation.getTarget(), true);
+    injectValues(invocation.getSharedInstance(), true);
     invocation.proceed();
   }
 
   @Override
   public void interceptInitializerMethod(IMethodInvocation invocation) throws Throwable {
-    injectValues(invocation.getTarget(), false);
+    injectValues(invocation.getInstance(), false);
     invocation.proceed();
   }
 

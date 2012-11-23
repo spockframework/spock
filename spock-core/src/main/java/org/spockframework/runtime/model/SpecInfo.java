@@ -30,26 +30,32 @@ import org.spockframework.util.*;
 public class SpecInfo extends NodeInfo<NodeInfo, Class<?>> implements IMethodNameMapper, ISkippable, IExcludable, IInterceptable {
   private final List<FieldInfo> fields = new ArrayList<FieldInfo>();
   private final List<IMethodInterceptor> interceptors = new ArrayList<IMethodInterceptor>();
-  private final List<IRunListener> listeners = new ArrayList<IRunListener>();
+  private final List<IMethodInterceptor> setupInterceptors = new ArrayList<IMethodInterceptor>();
+  private final List<IMethodInterceptor> cleanupInterceptors = new ArrayList<IMethodInterceptor>();
+  private final List<IMethodInterceptor> setupSpecInterceptors = new ArrayList<IMethodInterceptor>();
+  private final List<IMethodInterceptor> cleanupSpecInterceptors = new ArrayList<IMethodInterceptor>();
+  private final List<IMethodInterceptor> sharedInitializerInterceptors = new ArrayList<IMethodInterceptor>();
+  private final List<IMethodInterceptor> initializerInterceptors = new ArrayList<IMethodInterceptor>();
 
+  private final List<IRunListener> listeners = new ArrayList<IRunListener>();
   private String filename;
   private SpecInfo superSpec;
   private SpecInfo subSpec;
   private List<SpecInfo> specsTopToBottom;
+
   private List<SpecInfo> specsBottomToTop;
-
   private MethodInfo initializerMethod;
+
   private MethodInfo sharedInitializerMethod;
+  private final List<MethodInfo> setupMethods = new ArrayList<MethodInfo>();
+  private final List<MethodInfo> cleanupMethods = new ArrayList<MethodInfo>();
+  private final List<MethodInfo> setupSpecMethods = new ArrayList<MethodInfo>();
+  private final List<MethodInfo> cleanupSpecMethods = new ArrayList<MethodInfo>();
 
-  private List<MethodInfo> setupMethods = new ArrayList<MethodInfo>();
-  private List<MethodInfo> cleanupMethods = new ArrayList<MethodInfo>();
-  private List<MethodInfo> setupSpecMethods = new ArrayList<MethodInfo>();
-  private List<MethodInfo> cleanupSpecMethods = new ArrayList<MethodInfo>();
-  private List<FeatureInfo> features = new ArrayList<FeatureInfo>();
-
+  private final List<FeatureInfo> features = new ArrayList<FeatureInfo>();
   private boolean excluded = false;
   private boolean skipped = false;
-  
+
   public String getFilename() {
     return filename;
   }
@@ -170,10 +176,12 @@ public class SpecInfo extends NodeInfo<NodeInfo, Class<?>> implements IMethodNam
     cleanupSpecMethods.add(cleanupSpecMethod);
   }
 
+  @SuppressWarnings("unchecked")
   public Iterable<MethodInfo> getFixtureMethods() {
     return CollectionUtil.concat(setupSpecMethods, setupMethods, cleanupMethods, cleanupSpecMethods);
   }
 
+  @SuppressWarnings("unchecked")
   public Iterable<MethodInfo> getAllFixtureMethods() {
     if (superSpec == null) return getFixtureMethods();
 
@@ -228,6 +236,54 @@ public class SpecInfo extends NodeInfo<NodeInfo, Class<?>> implements IMethodNam
 
   public void addInterceptor(IMethodInterceptor interceptor) {
     interceptors.add(interceptor);
+  }
+
+  public List<IMethodInterceptor> getSetupInterceptors() {
+    return setupInterceptors;
+  }
+
+  public void addSetupInterceptor(IMethodInterceptor interceptor) {
+    setupInterceptors.add(interceptor);
+  }
+
+  public List<IMethodInterceptor> getCleanupInterceptors() {
+    return cleanupInterceptors;
+  }
+
+  public void addCleanupInterceptor(IMethodInterceptor interceptor) {
+    cleanupInterceptors.add(interceptor);
+  }
+
+  public List<IMethodInterceptor> getSetupSpecInterceptors() {
+    return setupSpecInterceptors;
+  }
+
+  public void addSetupSpecInterceptor(IMethodInterceptor interceptor) {
+    setupSpecInterceptors.add(interceptor);
+  }
+
+  public List<IMethodInterceptor> getCleanupSpecInterceptors() {
+    return cleanupSpecInterceptors;
+  }
+
+  public void addCleanupSpecInterceptor(IMethodInterceptor interceptor) {
+    cleanupSpecInterceptors.add(interceptor);
+  }
+
+  public List<IMethodInterceptor> getSharedInitializerInterceptors() {
+    return sharedInitializerInterceptors;
+  }
+
+  public void addSharedInitializerInterceptor(IMethodInterceptor interceptor) {
+    sharedInitializerInterceptors.add(interceptor);
+  }
+
+  public List<IMethodInterceptor> getInitializerInterceptors() {
+    return initializerInterceptors;
+  }
+
+  public void addInitializerInterceptor(IMethodInterceptor interceptor) {
+    initializerInterceptors.add(interceptor);
   }
 
   public List<IRunListener> getListeners() {

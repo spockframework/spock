@@ -25,16 +25,18 @@ import org.spockframework.util.Nullable;
 public interface IMethodInvocation {
   /**
    * Returns the specification which this method invocation belongs to.
+   *
    * @return the specification which this method invocation belongs to
    */
   SpecInfo getSpec();
 
   /**
    * Returns the feature which this method invocation belongs to (if any).
-   * Differs from <tt>MethodInfo.getFeature()</tt> in that it reflects the dynamic
+   * Differs from {@code MethodInfo.getFeature()} in that it reflects the dynamic
    * picture. For example, when a setup method is invoked, this method
-   * will return the corresponding feature, whereas <tt>MethodInfo.getFeature()</tt>
-   * will return <tt>null</tt>.
+   * will return the corresponding feature, whereas {@code MethodInfo.getFeature()}
+   * will return {@code null}.
+   *
    * @return the feature which this method invocation belongs to
    */
   @Nullable
@@ -51,16 +53,21 @@ public interface IMethodInvocation {
   IterationInfo getIteration();
 
   /**
-   * Returns the <tt>Specification</tt> instance for @Shared fields.
+   * Returns the {@code Specification} instance for {@code @Shared} fields.
    *
-   * @return the <tt>Specification</tt> instance for @Shared fields
+   * <p>Note that in most cases, it's more appropriate to use the context-aware
+   * {@link #getInstance}.
+   *
+   * @return the {@code Specification} instance for {@code @Shared}fields
    */
   Object getSharedInstance();
 
   /**
-   * Returns the <tt>Specification</tt> instance for the current iteration.
+   * Returns the {@code Specification} instance for the current iteration.
+   * For methods that operate in a {@code @Shared} context (e.g. {@code setupSpec}),
+   * this method returns the same value as {@link #getSharedInstance}.
    *
-   * @return the <tt>Specification</tt> instance for the current iteration
+   * @return the {@code Specification} instance for the current iteration
    */
   Object getInstance();
 
@@ -68,6 +75,10 @@ public interface IMethodInvocation {
    * Returns the target (receiver) of this method invocation.
    * In case of a static method call, a <tt>Class<tt> instance
    * is returned.
+   *
+   * <p>Note that the target of the method invocation may not
+   * necessarily be the {@code Specification} instance. That's why in
+   * most cases, it's more appropriate to use {@code #getInstance}.
    *
    * @return the target (receiver) of this method invocation
    */

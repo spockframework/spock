@@ -16,8 +16,10 @@
 
 package org.spockframework.runtime;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.*;
 
 import org.junit.After;
@@ -36,10 +38,16 @@ import spock.lang.Specification;
  */
 public class SpecInfoBuilder {
   private final Class<?> clazz;
+  private final Class<?> effectiveClass;
   private final SpecInfo spec = new SpecInfo();
 
   public SpecInfoBuilder(Class<?> clazz) {
+    this(clazz, clazz);
+  }
+
+  private SpecInfoBuilder(Class<?> clazz, Class<?> effectiveClass) {
     this.clazz = clazz;
+    this.effectiveClass = effectiveClass;
   }
 
   public SpecInfo build() {
@@ -69,7 +77,7 @@ public class SpecInfoBuilder {
     Class<?> superClass = clazz.getSuperclass();
     if (superClass == Object.class || superClass == Specification.class) return;
 
-    SpecInfo superSpec = new SpecInfoBuilder(superClass).doBuild();
+    SpecInfo superSpec = new SpecInfoBuilder(superClass, clazz).doBuild();
     spec.setSuperSpec(superSpec);
     superSpec.setSubSpec(spec);
   }
@@ -140,17 +148,17 @@ public class SpecInfoBuilder {
     feature.setFeatureMethod(featureMethod);
 
     String processorMethodName = InternalIdentifiers.getDataProcessorName(method.getName());
-    MethodInfo dataProcessorMethod = createMethod(processorMethodName, MethodKind.DATA_PROCESSOR, false);
+    MethodInfo dataProcessorMethod = createMethod(processorMethodName, MethodKind.DATA_PROCESSOR);
 
     if (dataProcessorMethod != null) {
       feature.setDataProcessorMethod(dataProcessorMethod);
       int providerCount = 0;
       String providerMethodName = InternalIdentifiers.getDataProviderName(method.getName(), providerCount++);
-      MethodInfo providerMethod = createMethod(providerMethodName, MethodKind.DATA_PROVIDER, false);
+      MethodInfo providerMethod = createMethod(providerMethodName, MethodKind.DATA_PROVIDER);
       while (providerMethod != null) {
         feature.addDataProvider(createDataProvider(feature, providerMethod));
         providerMethodName = InternalIdentifiers.getDataProviderName(method.getName(), providerCount++);
-        providerMethod = createMethod(providerMethodName, MethodKind.DATA_PROVIDER, false);
+        providerMethod = createMethod(providerMethodName, MethodKind.DATA_PROVIDER);
       }
     }
 
@@ -175,9 +183,10 @@ public class SpecInfoBuilder {
     return provider;
   }
 
-  private MethodInfo createMethod(String name, MethodKind kind, boolean allowStub) {
+  @Nullable
+  private MethodInfo createMethod(String name, MethodKind kind) {
     Method reflection = findMethod(name);
-    if (reflection == null && !allowStub) return null;
+    if (reflection == null) return null;
     return createMethod(reflection, kind, name);
   }
 
@@ -190,8 +199,10 @@ public class SpecInfoBuilder {
     return methodInfo;
   }
 
-  private MethodInfo createMethod(Method method, MethodKind kind) {
-    return createMethod(method, kind, method.getName());
+  private MethodInfo createJUnitFixtureMethod(Method method, MethodKind kind, Class<? extends Annotation> annotation) {
+    MethodInfo methodInfo = createMethod(method, kind, method.getName());
+    methodInfo.setExcluded(isOverriddenJUnitFixtureMethod(method, annotation));
+    return methodInfo;
   }
 
   private Method findMethod(String name) {
@@ -204,30 +215,51 @@ public class SpecInfoBuilder {
   }
 
   private void buildInitializerMethods() {
-    spec.setInitializerMethod(createMethod(InternalIdentifiers.INITIALIZER_METHOD, MethodKind.INITIALIZER, true));
-    spec.setSharedInitializerMethod(createMethod(InternalIdentifiers.SHARED_INITIALIZER_METHOD, MethodKind.SHARED_INITIALIZER, true));
+    MethodInfo initializerMethod = createMethod(InternalIdentifiers.INITIALIZER_METHOD, MethodKind.INITIALIZER);
+    if (initializerMethod != null) spec.setInitializerMethod(initializerMethod);
+    MethodInfo sharedInitializerMethod = createMethod(InternalIdentifiers.SHARED_INITIALIZER_METHOD, MethodKind.SHARED_INITIALIZER);
+    if (sharedInitializerMethod != null) spec.setSharedInitializerMethod(sharedInitializerMethod);
   }
 
   private void buildFixtureMethods() {
-    spec.addCleanupMethod(createMethod(Identifiers.CLEANUP_METHOD, MethodKind.CLEANUP, true));
-    spec.addCleanupSpecMethod(createMethod(Identifiers.CLEANUP_SPEC_METHOD, MethodKind.CLEANUP_SPEC, true));
+    MethodInfo cleanupMethod = createMethod(Identifiers.CLEANUP_METHOD, MethodKind.CLEANUP);
+    if (cleanupMethod != null) spec.addCleanupMethod(cleanupMethod);
+    MethodInfo cleanupSpecMethod = createMethod(Identifiers.CLEANUP_SPEC_METHOD, MethodKind.CLEANUP_SPEC);
+    if (cleanupSpecMethod != null) spec.addCleanupSpecMethod(cleanupSpecMethod);
 
     for (Method method : clazz.getDeclaredMethods()) {
       if (method.isAnnotationPresent(Before.class)) {
-        spec.addSetupMethod(createMethod(method, MethodKind.SETUP));
+        spec.addSetupMethod(createJUnitFixtureMethod(method, MethodKind.SETUP, Before.class));
       }
       if (method.isAnnotationPresent(After.class)) {
-        spec.addCleanupMethod(createMethod(method, MethodKind.CLEANUP));
+        spec.addCleanupMethod(createJUnitFixtureMethod(method, MethodKind.CLEANUP, After.class));
       }
       if (method.isAnnotationPresent(BeforeClass.class)) {
-        spec.addSetupSpecMethod(createMethod(method, MethodKind.SETUP_SPEC));
+        spec.addSetupSpecMethod(createJUnitFixtureMethod(method, MethodKind.SETUP_SPEC, BeforeClass.class));
       }
       if (method.isAnnotationPresent(AfterClass.class)) {
-        spec.addCleanupSpecMethod(createMethod(method, MethodKind.CLEANUP_SPEC));
+        spec.addCleanupSpecMethod(createJUnitFixtureMethod(method, MethodKind.CLEANUP_SPEC, AfterClass.class));
       }
     }
 
-    spec.addSetupMethod(createMethod(Identifiers.SETUP_METHOD, MethodKind.SETUP, true));
-    spec.addSetupSpecMethod(createMethod(Identifiers.SETUP_SPEC_METHOD, MethodKind.SETUP_SPEC, true));
+    MethodInfo setupMethod = createMethod(Identifiers.SETUP_METHOD, MethodKind.SETUP);
+    if (setupMethod != null) spec.addSetupMethod(setupMethod);
+    MethodInfo setupSpecMethod = createMethod(Identifiers.SETUP_SPEC_METHOD, MethodKind.SETUP_SPEC);
+    if (setupSpecMethod != null) spec.addSetupSpecMethod(setupSpecMethod);
+  }
+
+  private boolean isOverriddenJUnitFixtureMethod(Method method, Class<? extends Annotation> annotation) {
+    if (Modifier.isPrivate(method.getModifiers())) return false;
+
+    for (Class<?> currClass = effectiveClass; currClass != clazz; currClass = currClass.getSuperclass()) {
+      for (Method currMethod : currClass.getDeclaredMethods()) {
+        if (!currMethod.isAnnotationPresent(annotation)) continue;
+        if (!currMethod.getName().equals(method.getName())) continue;
+        if (!Arrays.deepEquals(currMethod.getParameterTypes(), method.getParameterTypes())) continue;
+        return true;
+      }
+    }
+
+    return false;
   }
 }

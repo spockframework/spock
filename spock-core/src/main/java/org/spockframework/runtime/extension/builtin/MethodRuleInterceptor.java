@@ -33,8 +33,8 @@ public class MethodRuleInterceptor extends AbstractRuleInterceptor {
     FrameworkMethod method = createFrameworkMethod(invocation);
 
     for (FieldInfo field : ruleFields) {
-      MethodRule rule = (MethodRule) getRuleInstance(field, invocation.getTarget());
-      statement = rule.apply(statement, method, invocation.getTarget());
+      MethodRule rule = (MethodRule) getRuleInstance(field, invocation.getInstance());
+      statement = rule.apply(statement, method, invocation.getInstance());
     }
 
     statement.evaluate();

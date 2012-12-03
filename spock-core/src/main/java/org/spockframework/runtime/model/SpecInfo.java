@@ -53,7 +53,6 @@ public class SpecInfo extends NodeInfo<NodeInfo, Class<?>> implements IMethodNam
   private final List<MethodInfo> cleanupSpecMethods = new ArrayList<MethodInfo>();
 
   private final List<FeatureInfo> features = new ArrayList<FeatureInfo>();
-  private boolean excluded = false;
   private boolean skipped = false;
 
   public String getFilename() {
@@ -292,14 +291,6 @@ public class SpecInfo extends NodeInfo<NodeInfo, Class<?>> implements IMethodNam
 
   public void addListener(IRunListener listener) {
     listeners.add(listener);
-  }
-
-  public boolean isExcluded() {
-    return excluded;
-  }
-
-  public void setExcluded(boolean excluded) {
-    this.excluded = excluded;
   }
 
   public boolean isSkipped() {

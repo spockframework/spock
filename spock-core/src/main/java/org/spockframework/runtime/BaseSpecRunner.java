@@ -492,8 +492,6 @@ public class BaseSpecRunner {
   }
 
   protected Object invokeRaw(Object target, MethodInfo method, Object... arguments) {
-    if (method.isStub()) return null;
-
     try {
       return ReflectionUtil.invokeMethod(target, method.getReflection(), arguments);
     } catch (Throwable t) {

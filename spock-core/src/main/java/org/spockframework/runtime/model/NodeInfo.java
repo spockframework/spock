@@ -86,10 +86,6 @@ public abstract class NodeInfo<P extends NodeInfo, R extends AnnotatedElement> {
     this.description = description;
   }
 
-  public boolean isStub() {
-    return getReflection() == null;
-  }
-
   public boolean isExcluded() {
     return excluded;
   }

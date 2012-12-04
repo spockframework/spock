@@ -90,8 +90,6 @@ public class MethodInvocation implements IMethodInvocation {
   }
 
   protected void invokeTargetMethod() throws Throwable {
-    if (method.isStub()) return;
-
     ReflectionUtil.invokeMethod(target, method.getReflection(), arguments);
   }
 }

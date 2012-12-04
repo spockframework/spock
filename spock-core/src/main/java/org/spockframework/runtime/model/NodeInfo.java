@@ -60,6 +60,7 @@ public abstract class NodeInfo<P extends NodeInfo, R extends AnnotatedElement> {
     this.parent = parent;
   }
 
+  @Nullable
   public R getReflection() {
     return reflection;
   }

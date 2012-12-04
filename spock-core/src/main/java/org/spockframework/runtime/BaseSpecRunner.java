@@ -16,8 +16,6 @@
 
 package org.spockframework.runtime;
 
-import java.lang.reflect.Method;
-
 import org.junit.runner.Description;
 
 import org.spockframework.runtime.extension.IMethodInterceptor;
@@ -25,7 +23,7 @@ import org.spockframework.runtime.extension.MethodInvocation;
 import org.spockframework.runtime.model.*;
 import org.spockframework.util.CollectionUtil;
 import org.spockframework.util.InternalSpockError;
-import org.spockframework.util.ReflectionUtil;
+
 import spock.lang.Specification;
 
 import static org.spockframework.runtime.RunStatus.*;
@@ -38,17 +36,6 @@ import static org.spockframework.runtime.RunStatus.*;
  * @author Peter Niederwieser
  */
 public class BaseSpecRunner {
-  private static final Method DO_RUN_SPEC;
-  private static final Method DO_RUN_FEATURE;
-  private static final Method DO_RUN_ITERATION;
-
-  private static final Method DO_RUN_SETUP;
-  private static final Method DO_RUN_CLEANUP;
-  private static final Method DO_RUN_SETUP_SPEC;
-  private static final Method DO_RUN_CLEANUP_SPEC;
-  private static final Method DO_RUN_SHARED_INITIALIZER;
-  private static final Method DO_RUN_INITIALIZER;
-
   protected static final Object[] EMPTY_ARGS = new Object[0];
 
   protected final SpecInfo spec;
@@ -60,22 +47,6 @@ public class BaseSpecRunner {
   protected Specification sharedInstance;
   protected Specification currentInstance;
   protected int runStatus = OK;
-
-  static {
-    try {
-      DO_RUN_SPEC = BaseSpecRunner.class.getMethod("doRunSpec");
-      DO_RUN_FEATURE = BaseSpecRunner.class.getMethod("doRunFeature");
-      DO_RUN_ITERATION = BaseSpecRunner.class.getMethod("doRunIteration");
-      DO_RUN_SETUP = BaseSpecRunner.class.getMethod("doRunSetup", SpecInfo.class);
-      DO_RUN_CLEANUP = BaseSpecRunner.class.getMethod("doRunCleanup", SpecInfo.class);
-      DO_RUN_SETUP_SPEC = BaseSpecRunner.class.getMethod("doRunSetupSpec", SpecInfo.class);
-      DO_RUN_CLEANUP_SPEC = BaseSpecRunner.class.getMethod("doRunCleanupSpec", SpecInfo.class);
-      DO_RUN_SHARED_INITIALIZER = BaseSpecRunner.class.getMethod("doRunSharedInitializer", SpecInfo.class);
-      DO_RUN_INITIALIZER = BaseSpecRunner.class.getMethod("doRunInitializer", SpecInfo.class);
-    } catch (NoSuchMethodException e) {
-      throw new InternalSpockError(e);
-    }
-  }
 
   public BaseSpecRunner(SpecInfo spec, IRunSupervisor supervisor) {
     this.spec = spec;
@@ -107,20 +78,21 @@ public class BaseSpecRunner {
   }
 
   private MethodInfo createMethodInfoForDoRunSpec() {
-    MethodInfo result = new MethodInfo();
+    MethodInfo result = new MethodInfo() {
+      @Override
+      public Object invoke(Object target, Object... arguments) {
+        doRunSpec();
+        return null;
+      }
+    };
     result.setParent(spec);
     result.setKind(MethodKind.SPEC_EXECUTION);
-    result.setReflection(DO_RUN_SPEC);
     result.setDescription(spec.getDescription());
     for (IMethodInterceptor interceptor : spec.getInterceptors())
       result.addInterceptor(interceptor);
     return result;
   }
 
-  /**
-   * Only called via reflection.
-   */
-  @SuppressWarnings("unused")
   public void doRunSpec() {
     runSetupSpec();
     runFeatures();
@@ -153,21 +125,22 @@ public class BaseSpecRunner {
     invoke(this, createMethodInfoForDoRunSharedInitializer(spec), spec);
   }
 
-  private MethodInfo createMethodInfoForDoRunSharedInitializer(SpecInfo spec) {
-    MethodInfo result = new MethodInfo();
+  private MethodInfo createMethodInfoForDoRunSharedInitializer(final SpecInfo spec) {
+    MethodInfo result = new MethodInfo() {
+      @Override
+      public Object invoke(Object target, Object... arguments) {
+        doRunSharedInitializer(spec);
+        return null;
+      }
+    };
     result.setParent(spec);
     result.setKind(MethodKind.SHARED_INITIALIZER);
-    result.setReflection(DO_RUN_SHARED_INITIALIZER);
     result.setDescription(spec.getDescription());
     for (IMethodInterceptor interceptor : spec.getSharedInitializerInterceptors())
       result.addInterceptor(interceptor);
     return result;
   }
 
-  /**
-   * Only called via reflection.
-   */
-  @SuppressWarnings("unused")
   public void doRunSharedInitializer(SpecInfo spec) {
     runSharedInitializer(spec.getSuperSpec());
     if (runStatus != OK) return;
@@ -183,21 +156,22 @@ public class BaseSpecRunner {
     invoke(this, createMethodInfoForDoRunSetupSpec(spec), spec);
   }
 
-  private MethodInfo createMethodInfoForDoRunSetupSpec(SpecInfo spec) {
-    MethodInfo result = new MethodInfo();
+  private MethodInfo createMethodInfoForDoRunSetupSpec(final SpecInfo spec) {
+    MethodInfo result = new MethodInfo() {
+      @Override
+      public Object invoke(Object target, Object... arguments) {
+        doRunSetupSpec(spec);
+        return null;
+      }
+    };
     result.setParent(spec);
     result.setKind(MethodKind.SETUP_SPEC);
-    result.setReflection(DO_RUN_SETUP_SPEC);
     result.setDescription(spec.getDescription());
     for (IMethodInterceptor interceptor : spec.getSetupSpecInterceptors())
       result.addInterceptor(interceptor);
     return result;
   }
 
-  /**
-   * Only called via reflection.
-   */
-  @SuppressWarnings("unused")
   public void doRunSetupSpec(SpecInfo spec) {
     runSetupSpec(spec.getSuperSpec());
     for (MethodInfo method : spec.getSetupSpecMethods()) {
@@ -225,21 +199,22 @@ public class BaseSpecRunner {
     invoke(this, createMethodForDoRunCleanupSpec(spec), spec);
   }
 
-  private MethodInfo createMethodForDoRunCleanupSpec(SpecInfo spec) {
-    MethodInfo result = new MethodInfo();
+  private MethodInfo createMethodForDoRunCleanupSpec(final SpecInfo spec) {
+    MethodInfo result = new MethodInfo() {
+      @Override
+      public Object invoke(Object target, Object... arguments) {
+        doRunCleanupSpec(spec);
+        return null;
+      }
+    };
     result.setParent(spec);
     result.setKind(MethodKind.CLEANUP_SPEC);
-    result.setReflection(DO_RUN_CLEANUP_SPEC);
     result.setDescription(spec.getDescription());
     for (IMethodInterceptor interceptor : spec.getCleanupSpecInterceptors())
       result.addInterceptor(interceptor);
     return result;
   }
 
-  /**
-   * Only called via reflection.
-   */
-  @SuppressWarnings("unused")
   public void doRunCleanupSpec(SpecInfo spec) {
     for (MethodInfo method : spec.getCleanupSpecMethods()) {
       if (action(runStatus) == ABORT) return;
@@ -264,10 +239,15 @@ public class BaseSpecRunner {
   }
 
   private MethodInfo createMethodInfoForDoRunFeature() {
-    MethodInfo result = new MethodInfo();
+    MethodInfo result = new MethodInfo() {
+      @Override
+      public Object invoke(Object target, Object... arguments) {
+        doRunFeature();
+        return null;
+      }
+    };
     result.setParent(currentFeature.getParent());
     result.setKind(MethodKind.FEATURE_EXECUTION);
-    result.setReflection(DO_RUN_FEATURE);
     result.setFeature(currentFeature);
     result.setDescription(currentFeature.getDescription());
     for (IMethodInterceptor interceptor : currentFeature.getInterceptors())
@@ -275,10 +255,6 @@ public class BaseSpecRunner {
     return result;
   }
 
-  /**
-   * Only called via reflection.
-   */
-  @SuppressWarnings("unused")
   public void doRunFeature() {
     currentFeature.setIterationNameProvider(new SafeIterationNameProvider(currentFeature.getIterationNameProvider()));
     if (currentFeature.isParameterized())
@@ -323,10 +299,15 @@ public class BaseSpecRunner {
   }
 
   private MethodInfo createMethodInfoForDoRunIteration() {
-    MethodInfo result = new MethodInfo();
+    MethodInfo result = new MethodInfo() {
+      @Override
+      public Object invoke(Object target, Object... arguments) {
+        doRunIteration();
+        return null;
+      }
+    };
     result.setParent(currentFeature.getParent());
     result.setKind(MethodKind.ITERATION_EXECUTION);
-    result.setReflection(DO_RUN_ITERATION);
     result.setFeature(currentFeature);
     result.setDescription(currentFeature.getDescription());
     for (IMethodInterceptor interceptor : currentFeature.getIterationInterceptors())
@@ -334,10 +315,6 @@ public class BaseSpecRunner {
     return result;
   }
 
-  /**
-   * Only called via reflection.
-   */
-  @SuppressWarnings("unused")
   public void doRunIteration() {
     runSetup();
     runFeatureMethod();
@@ -362,11 +339,16 @@ public class BaseSpecRunner {
     invoke(this, createMethodInfoForDoRunInitializer(spec), spec);
   }
 
-  private MethodInfo createMethodInfoForDoRunInitializer(SpecInfo spec) {
-    MethodInfo result = new MethodInfo();
+  private MethodInfo createMethodInfoForDoRunInitializer(final SpecInfo spec) {
+    MethodInfo result = new MethodInfo() {
+      @Override
+      public Object invoke(Object target, Object... arguments) {
+        doRunInitializer(spec);
+        return null;
+      }
+    };
     result.setParent(currentFeature.getParent());
     result.setKind(MethodKind.INITIALIZER);
-    result.setReflection(DO_RUN_INITIALIZER);
     result.setFeature(currentFeature);
     result.setDescription(currentFeature.getDescription());
     for (IMethodInterceptor interceptor : spec.getInitializerInterceptors())
@@ -374,10 +356,6 @@ public class BaseSpecRunner {
     return result;
   }
 
-  /**
-   * Only called via reflection.
-   */
-  @SuppressWarnings("unused")
   public void doRunInitializer(SpecInfo spec) {
     runInitializer(spec.getSuperSpec());
     if (runStatus != OK) return;
@@ -393,11 +371,16 @@ public class BaseSpecRunner {
     invoke(this, createMethodInfoForDoRunSetup(spec), spec);
   }
 
-  private MethodInfo createMethodInfoForDoRunSetup(SpecInfo spec) {
-    MethodInfo result = new MethodInfo();
+  private MethodInfo createMethodInfoForDoRunSetup(final SpecInfo spec) {
+    MethodInfo result = new MethodInfo() {
+      @Override
+      public Object invoke(Object target, Object... arguments) {
+        doRunSetup(spec);
+        return null;
+      }
+    };
     result.setParent(currentFeature.getParent());
     result.setKind(MethodKind.SETUP);
-    result.setReflection(DO_RUN_SETUP);
     result.setFeature(currentFeature);
     result.setDescription(currentFeature.getDescription());
     for (IMethodInterceptor interceptor : spec.getSetupInterceptors())
@@ -405,10 +388,6 @@ public class BaseSpecRunner {
     return result;
   }
 
-  /**
-   * Only called via reflection.
-   */
-  @SuppressWarnings("unused")
   public void doRunSetup(SpecInfo spec) {
     runSetup(spec.getSuperSpec());
     for (MethodInfo method : spec.getSetupMethods()) {
@@ -431,11 +410,16 @@ public class BaseSpecRunner {
     invoke(this, createMethodInfoForDoRunCleanup(spec), spec);
   }
 
-  private MethodInfo createMethodInfoForDoRunCleanup(SpecInfo spec) {
-    MethodInfo result = new MethodInfo();
+  private MethodInfo createMethodInfoForDoRunCleanup(final SpecInfo spec) {
+    MethodInfo result = new MethodInfo() {
+      @Override
+      public Object invoke(Object target, Object... arguments) {
+        doRunCleanup(spec);
+        return null;
+      }
+    };
     result.setParent(currentFeature.getParent());
     result.setKind(MethodKind.CLEANUP);
-    result.setReflection(DO_RUN_CLEANUP);
     result.setFeature(currentFeature);
     result.setDescription(currentFeature.getDescription());
     for (IMethodInterceptor interceptor : spec.getCleanupInterceptors())
@@ -443,10 +427,6 @@ public class BaseSpecRunner {
     return result;
   }
 
-  /**
-   * Only called via reflection.
-   */
-  @SuppressWarnings("unused")
   public void doRunCleanup(SpecInfo spec) {
     if (spec.isBottomSpec()) {
       runIterationCleanups();
@@ -493,7 +473,7 @@ public class BaseSpecRunner {
 
   protected Object invokeRaw(Object target, MethodInfo method, Object... arguments) {
     try {
-      return ReflectionUtil.invokeMethod(target, method.getReflection(), arguments);
+      return method.invoke(target, arguments);
     } catch (Throwable t) {
       runStatus = supervisor.error(new ErrorInfo(method, t));
       return null;

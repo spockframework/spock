@@ -22,6 +22,7 @@ import java.util.List;
 
 import org.spockframework.runtime.extension.IMethodInterceptor;
 import org.spockframework.util.Nullable;
+import org.spockframework.util.ReflectionUtil;
 
 /**
  * Runtime information about a method in a Spock specification.
@@ -60,5 +61,9 @@ public class MethodInfo extends NodeInfo<SpecInfo, Method> implements IIntercept
 
   public boolean hasBytecodeName(String name) {
     return getReflection().getName().equals(name);
+  }
+
+  public Object invoke(Object target, Object... arguments) {
+    return ReflectionUtil.invokeMethod(target, getReflection(), arguments);
   }
 }

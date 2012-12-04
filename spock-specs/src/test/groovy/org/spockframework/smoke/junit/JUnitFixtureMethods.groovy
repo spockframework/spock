@@ -21,7 +21,7 @@ import spock.lang.*
 class JUnitFixtureMethods extends EmbeddedSpecification {
   static invocations = []
   static RECORD_INVOCATION_METHOD = "static record(methodName) { JUnitFixtureMethods.invocations << methodName }"
-  
+
   def setup() {
     invocations.clear()
   }
@@ -51,9 +51,9 @@ class JUnitFixtureMethods extends EmbeddedSpecification {
         "cleanupSpec", "afterClass"
     ]
   }
-  
-  @Unroll("multiple of #fixtureType")
-  def "multiple of same type"() {
+
+  @Unroll
+  def "multiple of #fixtureType"() {
     when:
     runSpecBody """
       ${this."$fixtureType"("m1")}
@@ -69,9 +69,9 @@ class JUnitFixtureMethods extends EmbeddedSpecification {
     where:
     fixtureType << ["beforeClass", "before", "after", "afterClass"]
   }
-  
-  @Unroll("inheritance for #fixtureType")
-  def "inheritance"() {
+
+  @Unroll
+  def "inheritance for #fixtureType"() {
     when:
     run """
       abstract class Parent extends Specification {
@@ -97,23 +97,35 @@ class JUnitFixtureMethods extends EmbeddedSpecification {
     "after"       | ["child", "parent"]
     "afterClass"  | ["child", "parent"]
   }
-  
-  @Unroll("invalid signature ignored because - #invalidBecause")
-  def "invalid signatures are ignored"() {
+
+  @Unroll
+  def "inheritance with overriding for #fixtureType"() {
     when:
-    run "$prefix method($params) { record('method') }"
-    
+    run """
+      abstract class Parent extends Specification {
+        $RECORD_INVOCATION_METHOD
+
+        ${this."$fixtureType"("parent")}
+      }
+
+      class Child extends Parent {
+        ${this."$fixtureType"("child")}
+
+        def feature1() { expect: true }
+      }
+    """
+
     then:
-    invocations.empty
-    
+    invocations == order
+
     where:
-    prefix                        | params | invalidBecause
-    "@BeforeClass void"           | ""     | "non static class method"
-    "@Before static void"         | ""     | "static non class method"
-    "@Before def"                 | ""     | "non void return"
-    "@Before void"                | "a"    | "non zero-arg"
+    fixtureType   | order
+    "beforeClass2" | ["child"]
+    "before2"      | ["child"]
+    "after2"       | ["child"]
+    "afterClass2"  | ["child"]
   }
-  
+
   def "same method with more than one fixture annotation"() {
     when:
     runSpecBody """
@@ -159,6 +171,11 @@ class JUnitFixtureMethods extends EmbeddedSpecification {
   protected before(name = "before") { "@Before void $name() { record('$name') }" }
   protected after(name = "after") { "@After void $name() { record('$name') } "}
   protected afterClass(name = "afterClass") { "@AfterClass static void $name() { record('$name') } "}
+
+  protected beforeClass2(log) { "@BeforeClass static void beforeClass() { record('$log') }" }
+  protected before2(log) { "@Before void before() { record('$log') }" }
+  protected after2(log) { "@After void after() { record('$log') } "}
+  protected afterClass2(log) { "@AfterClass static void afterClass() { record('$log') } "}
   
   protected addImports() {
     runner.addPackageImport(getClass().package)

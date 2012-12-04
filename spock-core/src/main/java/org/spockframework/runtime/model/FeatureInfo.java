@@ -24,7 +24,6 @@ public class FeatureInfo extends NodeInfo<SpecInfo, AnnotatedElement> implements
   private NameProvider<IterationInfo> iterationNameProvider;
   private final List<DataProviderInfo> dataProviders = new ArrayList<DataProviderInfo>();
 
-  private boolean excluded = false;
   private boolean skipped = false;
   private boolean reportIterations = false;
 
@@ -128,14 +127,6 @@ public class FeatureInfo extends NodeInfo<SpecInfo, AnnotatedElement> implements
   
   public void setIterationNameProvider(NameProvider<IterationInfo> provider) {
     iterationNameProvider = provider;
-  }
-
-  public boolean isExcluded() {
-    return excluded;
-  }
-
-  public void setExcluded(boolean excluded) {
-    this.excluded = excluded;
   }
 
   public boolean isSkipped() {

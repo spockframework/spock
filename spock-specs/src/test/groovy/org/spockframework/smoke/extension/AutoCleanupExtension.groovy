@@ -40,7 +40,7 @@ closable = AutoCleanupExtension.closable
 
 def feature() {
   expect: !closable.called
-  cleanup: !closable.called
+  cleanup: assert !closable.called
 }
 
 def cleanup() {
@@ -62,7 +62,7 @@ closable = AutoCleanupExtension.closable
 
 def feature() {
   expect: !closable.called
-  cleanup: !closable.called
+  cleanup: assert !closable.called
 }
 
 def cleanup() {

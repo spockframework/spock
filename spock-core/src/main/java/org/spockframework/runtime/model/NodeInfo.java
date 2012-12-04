@@ -60,6 +60,7 @@ public abstract class NodeInfo<P extends NodeInfo, R extends AnnotatedElement> {
     this.parent = parent;
   }
 
+  @Nullable
   public R getReflection() {
     return reflection;
   }
@@ -84,10 +85,6 @@ public abstract class NodeInfo<P extends NodeInfo, R extends AnnotatedElement> {
 
   public void setDescription(Description description) {
     this.description = description;
-  }
-
-  public boolean isStub() {
-    return getReflection() == null;
   }
 
   public boolean isExcluded() {

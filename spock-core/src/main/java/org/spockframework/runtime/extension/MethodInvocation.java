@@ -19,7 +19,6 @@ package org.spockframework.runtime.extension;
 import java.util.Iterator;
 
 import org.spockframework.runtime.model.*;
-import org.spockframework.util.ReflectionUtil;
 
 /**
  *
@@ -86,12 +85,6 @@ public class MethodInvocation implements IMethodInvocation {
   public void proceed() throws Throwable {
     if (interceptors.hasNext())
       interceptors.next().intercept(this);
-    else invokeTargetMethod();
-  }
-
-  protected void invokeTargetMethod() throws Throwable {
-    if (method.isStub()) return;
-
-    ReflectionUtil.invokeMethod(target, method.getReflection(), arguments);
+    else method.invoke(target, arguments);
   }
 }

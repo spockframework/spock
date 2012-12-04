@@ -63,7 +63,15 @@ public class MethodInfo extends NodeInfo<SpecInfo, Method> implements IIntercept
     return getReflection().getName().equals(name);
   }
 
-  public Object invoke(Object target, Object... arguments) {
+  /**
+   * Invokes this method on the specified target and with the specified arguments.
+   * Does <em>not</em> handle interceptors.
+   *
+   * @param target the target of the method call
+   * @param arguments the arguments for the method call
+   * @return the return value of the method call
+   */
+  public Object invoke(Object target, Object... arguments) throws Throwable {
     return ReflectionUtil.invokeMethod(target, getReflection(), arguments);
   }
 }

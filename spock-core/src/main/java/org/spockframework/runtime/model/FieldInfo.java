@@ -48,15 +48,7 @@ public class FieldInfo extends NodeInfo<SpecInfo, Field> {
   }
 
   public boolean isShared() {
-    return getReflection().isAnnotationPresent(Shared.class);
-  }
-
-  public <T extends Annotation> T getAnnotation(Class<T> clazz) {
-    return getReflection().getAnnotation(clazz);
-  }
-
-  public boolean isAnnotationPresent(Class<? extends Annotation> clazz) {
-    return getReflection().isAnnotationPresent(clazz);
+    return isAnnotationPresent(Shared.class);
   }
 
   public Object readValue(Object target) {

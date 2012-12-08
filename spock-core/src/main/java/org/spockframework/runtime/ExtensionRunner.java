@@ -76,7 +76,7 @@ public class ExtensionRunner {
 
   @SuppressWarnings("unchecked")
   private void doRunAnnotationDrivenExtensions(NodeInfo<?, ?> node) {
-    for (Annotation ann : node.getReflection().getAnnotations()) {
+    for (Annotation ann : node.getAnnotations()) {
       ExtensionAnnotation extAnn = ann.annotationType().getAnnotation(ExtensionAnnotation.class);
       if (extAnn == null) continue;
       IAnnotationDrivenExtension extension = getOrCreateExtension(extAnn.value());

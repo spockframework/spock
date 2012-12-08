@@ -16,6 +16,7 @@
 
 package org.spockframework.runtime.model;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
 
 import org.junit.runner.Description;
@@ -60,7 +61,6 @@ public abstract class NodeInfo<P extends NodeInfo, R extends AnnotatedElement> {
     this.parent = parent;
   }
 
-  @Nullable
   public R getReflection() {
     return reflection;
   }
@@ -93,5 +93,17 @@ public abstract class NodeInfo<P extends NodeInfo, R extends AnnotatedElement> {
 
   public void setExcluded(boolean excluded) {
     this.excluded = excluded;
+  }
+
+  public Annotation[] getAnnotations() {
+    return getReflection().getAnnotations();
+  }
+
+  public <T extends Annotation> T getAnnotation(Class<T> clazz) {
+    return getReflection().getAnnotation(clazz);
+  }
+
+  public boolean isAnnotationPresent(Class<? extends Annotation> clazz) {
+    return getReflection().isAnnotationPresent(clazz);
   }
 }

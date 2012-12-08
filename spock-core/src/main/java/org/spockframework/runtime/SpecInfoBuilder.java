@@ -173,7 +173,7 @@ public class SpecInfoBuilder {
   }
 
   private DataProviderInfo createDataProvider(FeatureInfo feature, MethodInfo method) {
-    DataProviderMetadata metadata = method.getReflection().getAnnotation(DataProviderMetadata.class);
+    DataProviderMetadata metadata = method.getAnnotation(DataProviderMetadata.class);
 
     DataProviderInfo provider = new DataProviderInfo();
     provider.setParent(feature);

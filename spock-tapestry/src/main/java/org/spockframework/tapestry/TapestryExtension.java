@@ -104,7 +104,7 @@ public class TapestryExtension implements IGlobalExtension {
     Set<Class<?>> modules = null;
 
     for (SpecInfo curr : spec.getSpecsTopToBottom()) {
-      SubModule subModule = curr.getReflection().getAnnotation(SubModule.class);
+      SubModule subModule = curr.getAnnotation(SubModule.class);
       if (subModule == null) continue;
 
       if (modules == null) modules = new HashSet<Class<?>>();

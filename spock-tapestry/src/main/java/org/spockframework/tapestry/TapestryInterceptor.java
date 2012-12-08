@@ -125,7 +125,7 @@ public class TapestryInterceptor extends AbstractMethodInterceptor {
   private AnnotationProvider createAnnotationProvider(final FieldInfo field) {
     return new AnnotationProvider() {
       public <T extends Annotation> T getAnnotation(Class<T> annotationClass) {
-        return field.getReflection().getAnnotation(annotationClass);
+        return field.getAnnotation(annotationClass);
       }
     };
   }

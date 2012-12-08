@@ -71,7 +71,7 @@ public class JUnitDescriptionGenerator {
 
   private Description describeMethod(MethodInfo method) {
     Annotation[] anns = method.getReflection() == null ?
-        new Annotation[0] : method.getReflection().getAnnotations();
+        new Annotation[0] : method.getAnnotations();
     Description desc = Description.createTestDescription(spec.getReflection(),
         method.getName(), anns);
     method.setDescription(desc);

@@ -26,8 +26,6 @@ stacktrace.log
 
 # Documentation
 /docs/_build/
-javadoc/
-groovydoc/
 
 # Other
 .DS_Store

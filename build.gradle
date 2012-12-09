@@ -106,6 +106,8 @@ task publishGroovydoc(type: Sync) {
   into "groovydoc/$docVersion/"
 }
 
+task publishApiDoc(dependsOn: ["publishJavadoc", "publishGroovydoc"])
+
 task wrapper(type: Wrapper) {
   gradleVersion = "1.3"
 }

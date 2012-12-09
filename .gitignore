@@ -24,7 +24,7 @@ bin/
 # Grails
 stacktrace.log
 
-# Sphinx
+# Documentation
 /docs/_build/
 
 # Other

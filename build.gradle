@@ -1,3 +1,5 @@
+apply plugin: "base"
+
 description = "Spock Framework"
 
 ext {
@@ -17,10 +19,15 @@ ext {
   ]
 }
 
-allprojects {
+allprojects {  
+  ext.baseVersion = "1.0"
+  ext.groovyVersion = "2.0"
+  ext.snapshotVersion = true
+  
   group = "org.spockframework"
-  version = "1.0-groovy-2.0-SNAPSHOT"
-
+  version = "$baseVersion-groovy-$groovyVersion" + (snapshotVersion ? "-SNAPSHOT" : "")
+  ext.groovyLessVersion = baseVersion + (snapshotVersion ? "-SNAPSHOT" : "")
+  
   apply from: script("common")
 }
 
@@ -54,6 +61,7 @@ subprojects {
   }
 
   configureJavadoc(javadoc)
+  configureGroovydoc(groovydoc)
 
   task sourcesJar(type: Jar) {
     classifier "sources"
@@ -71,18 +79,28 @@ subprojects {
 }
 
 task javadoc(type: Javadoc) {
-  title "Spock Framework API Documentation ($version)"
-  destinationDir file("build/javadoc")
+  title "Spock Framework API Documentation ($groovyLessVersion)"
+  def docPath = snapshotVersion ? "latest" : baseVersion
+  destinationDir file("build/javadoc/$docPath")
   source subprojects.javadoc.source
   classpath = files(subprojects.javadoc.classpath)
 }
 
 configureJavadoc(javadoc)
 
-task publishJavadoc(type: Sync) {
-  from javadoc
-  into "file:///var/www/spock/javadoc/$version/"
+task groovydoc(type: Groovydoc) {
+  docTitle "Spock Framework API Documentation ($groovyLessVersion)"
+  windowTitle "Spock Framework API Documentation ($groovyLessVersion)"
+  def docPath = snapshotVersion ? "latest" : baseVersion
+  destinationDir file("build/groovydoc/$docPath")
+  source subprojects.groovydoc.source
+  classpath = files(subprojects.groovydoc.classpath)
+  groovyClasspath = project(":spock-core").groovydoc.groovyClasspath
 }
+
+task apidoc(dependsOn: ["javadoc", "groovydoc"])
+
+configureGroovydoc(groovydoc)
 
 task wrapper(type: Wrapper) {
   gradleVersion = "1.3"
@@ -105,4 +123,10 @@ def configureJavadoc(task) {
   }
 }
 
+def configureGroovydoc(task) {
+  configure(task) {
+    include "spock/**"
+    include "org/spockframework/mock/*"
+  }
+}
 

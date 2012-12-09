@@ -50,7 +50,7 @@ install {
 
 uploadArchives {
   deployers << repositories.mavenDeployer {
-    if (isSnapshotVersion) {
+    if (snapshotVersion) {
       snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
         if (project.hasProperty("sonatypeOssUsername")) {
           authentication(userName: sonatypeOssUsername, password: sonatypeOssPassword)

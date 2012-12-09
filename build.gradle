@@ -10,7 +10,7 @@ ext {
     h2database: "com.h2database:h2:1.3.164",
     jmock: "org.jmock:jmock:2.5.1",
     jmock_junit4: "org.jmock:jmock-junit4:2.5.1",
-    junit: ["junit:junit-dep:4.10@jar", "org.hamcrest:hamcrest-core:1.3"],
+    junit: "junit:junit:4.11",
     log4j: "log4j:log4j:1.2.16",
     mockito: "org.mockito:mockito-all:1.9.0",
     objenesis: "org.objenesis:objenesis:1.2"
@@ -37,7 +37,7 @@ subprojects {
   }
 
   configurations {
-    all*.exclude module: "junit" // we use junit-dep instead
+    all*.exclude module: "junit-dep"
   }
 
   dependencies {
@@ -98,7 +98,7 @@ def configureJavadoc(task) {
     configure(options) {
       links "http://download.oracle.com/javase/1.5.0/docs/api/"
       links "http://groovy.codehaus.org/gapi"
-      links "http://kentbeck.github.com/junit/javadoc/4.10"
+      links "http://kentbeck.github.com/junit/javadoc/4.10" // missing for 4.11
       links "http://www.jarvana.com/jarvana/inspect/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3-javadoc.jar"
     }
   }

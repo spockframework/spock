@@ -79,7 +79,8 @@ subprojects {
 
 task javadoc(type: Javadoc) {
   title "Spock Framework API Documentation ($groovyLessVersion)"
-  destinationDir file("build/javadoc")
+  def docPath = snapshotVersion ? "latest" : baseVersion
+  destinationDir file("build/javadoc/$docPath")
   source subprojects.javadoc.source
   classpath = files(subprojects.javadoc.classpath)
 }
@@ -89,27 +90,16 @@ configureJavadoc(javadoc)
 task groovydoc(type: Groovydoc) {
   docTitle "Spock Framework API Documentation ($groovyLessVersion)"
   windowTitle "Spock Framework API Documentation ($groovyLessVersion)"
-  destinationDir file("build/groovydoc")
+  def docPath = snapshotVersion ? "latest" : baseVersion
+  destinationDir file("build/groovydoc/$docPath")
   source subprojects.groovydoc.source
   classpath = files(subprojects.groovydoc.classpath)
   groovyClasspath = project(":spock-core").groovydoc.groovyClasspath
 }
 
+task apidoc(dependsOn: ["javadoc", "groovydoc"])
+
 configureGroovydoc(groovydoc)
-
-task publishJavadoc(type: Sync) {
-  def docPath = snapshotVersion ? "latest" : baseVersion
-  from javadoc
-  into "javadoc/$docPath/"
-}
-
-task publishGroovydoc(type: Sync) {
-  def docPath = snapshotVersion ? "latest" : baseVersion
-  from groovydoc
-  into "groovydoc/$docPath/"
-}
-
-task publishApidoc(dependsOn: ["publishJavadoc", "publishGroovydoc"])
 
 task wrapper(type: Wrapper) {
   gradleVersion = "1.3"

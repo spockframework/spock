@@ -21,8 +21,12 @@ ext {
 
 allprojects {
   group = "org.spockframework"
-  version = "1.0-groovy-1.8-SNAPSHOT"
-
+  ext.baseVersion = "1.0"
+  ext.groovyVersion = "1.8"
+  ext.snapshotVersion = true
+  version = "$baseVersion-groovy-$groovyVersion" + snapshotVersion ? "-SNAPSHOT" : ""
+  ext.docVersion = snapshotVersion ? "latest" : baseVersion
+  
   apply from: script("common")
 }
 
@@ -73,7 +77,7 @@ subprojects {
 }
 
 task javadoc(type: Javadoc) {
-  title "Spock Framework API Documentation ($version)"
+  title "Spock Framework API Documentation ($docVersion)"
   destinationDir file("build/javadoc")
   source subprojects.javadoc.source
   classpath = files(subprojects.javadoc.classpath)
@@ -82,8 +86,8 @@ task javadoc(type: Javadoc) {
 configureJavadoc(javadoc)
 
 task groovydoc(type: Groovydoc) {
-  docTitle "Spock Framework API Documentation ($version)"
-  windowTitle "Spock Framework API Documentation ($version)"
+  docTitle "Spock Framework API Documentation ($docVersion)"
+  windowTitle "Spock Framework API Documentation ($docVersion)"
   destinationDir file("build/groovydoc")
   source subprojects.groovydoc.source
   classpath = files(subprojects.groovydoc.classpath)
@@ -94,15 +98,13 @@ configureGroovydoc(groovydoc)
 
 task publishJavadoc(type: Sync) {
   from javadoc
-  into "javadoc/${version.endsWith("SNAPSHOT") ? "latest" : version}/"
+  into "javadoc/$docVersion/"
 }
 
 task publishGroovydoc(type: Sync) {
   from groovydoc
-  into "groovydoc/${version.endsWith("SNAPSHOT") ? "latest" : version}/"
+  into "groovydoc/$docVersion/"
 }
-
-configureGroovydoc(groovydoc)
 
 task wrapper(type: Wrapper) {
   gradleVersion = "1.3"

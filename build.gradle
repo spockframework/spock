@@ -19,13 +19,14 @@ ext {
   ]
 }
 
-allprojects {
-  group = "org.spockframework"
+allprojects {  
   ext.baseVersion = "1.0"
   ext.groovyVersion = "1.8"
   ext.snapshotVersion = true
-  version = "$baseVersion-groovy-$groovyVersion" + snapshotVersion ? "-SNAPSHOT" : ""
-  ext.docVersion = snapshotVersion ? "latest" : baseVersion
+  
+  group = "org.spockframework"
+  version = "$baseVersion-groovy-$groovyVersion" + (snapshotVersion ? "-SNAPSHOT" : "")
+  ext.groovyLessVersion = baseVersion + (snapshotVersion ? "-SNAPSHOT" : "")
   
   apply from: script("common")
 }
@@ -77,7 +78,7 @@ subprojects {
 }
 
 task javadoc(type: Javadoc) {
-  title "Spock Framework API Documentation ($docVersion)"
+  title "Spock Framework API Documentation ($groovyLessVersion)"
   destinationDir file("build/javadoc")
   source subprojects.javadoc.source
   classpath = files(subprojects.javadoc.classpath)
@@ -86,8 +87,8 @@ task javadoc(type: Javadoc) {
 configureJavadoc(javadoc)
 
 task groovydoc(type: Groovydoc) {
-  docTitle "Spock Framework API Documentation ($docVersion)"
-  windowTitle "Spock Framework API Documentation ($docVersion)"
+  docTitle "Spock Framework API Documentation ($groovyLessVersion)"
+  windowTitle "Spock Framework API Documentation ($groovyLessVersion)"
   destinationDir file("build/groovydoc")
   source subprojects.groovydoc.source
   classpath = files(subprojects.groovydoc.classpath)
@@ -97,16 +98,18 @@ task groovydoc(type: Groovydoc) {
 configureGroovydoc(groovydoc)
 
 task publishJavadoc(type: Sync) {
+  def docPath = snapshotVersion ? "latest" : baseVersion
   from javadoc
-  into "javadoc/$docVersion/"
+  into "javadoc/$docPath/"
 }
 
 task publishGroovydoc(type: Sync) {
+  def docPath = snapshotVersion ? "latest" : baseVersion
   from groovydoc
-  into "groovydoc/$docVersion/"
+  into "groovydoc/$docPath/"
 }
 
-task publishApiDoc(dependsOn: ["publishJavadoc", "publishGroovydoc"])
+task publishApidoc(dependsOn: ["publishJavadoc", "publishGroovydoc"])
 
 task wrapper(type: Wrapper) {
   gradleVersion = "1.3"

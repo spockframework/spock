@@ -1,0 +1,15 @@
+task publishJavadoc(type: Copy) {
+  from "build/javadoc/"
+  into "javadoc"
+}
+
+task publishGroovydoc(type: Copy) {
+  from "build/groovydoc/"
+  into "groovydoc"
+}
+
+task publishApidoc(dependsOn: ["publishJavadoc", "publishGroovydoc"])
+
+task wrapper(type: Wrapper) {
+  gradleVersion = "1.3"
+}

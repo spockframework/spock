@@ -1,0 +1,31 @@
+# entries starting with and ending in / will be excluded from root IDEA module,
+# and entries ending in / from all IDEA modules (see ide.gradle)
+
+# Gradle
+.gradle/
+build/
+
+# Maven
+target/
+
+# IDEA
+.idea/
+*.iml
+*.ipr
+*.iws
+out/
+
+# Eclipse
+.project
+.classpath
+.settings/
+bin/
+
+# Grails
+stacktrace.log
+
+# Documentation
+/docs/_build/
+
+# Other
+.DS_Store

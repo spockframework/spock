@@ -53,6 +53,7 @@ subprojects {
   }
 
   configureJavadoc(javadoc)
+  configureGroovydoc(groovydoc)
 
   task sourcesJar(type: Jar) {
     classifier "sources"
@@ -78,10 +79,28 @@ task javadoc(type: Javadoc) {
 
 configureJavadoc(javadoc)
 
+task groovydoc(type: Groovydoc) {
+  docTitle "Spock Framework API Documentation ($version)"
+  windowTitle "Spock Framework API Documentation ($version)"
+  destinationDir file("build/groovydoc")
+  source subprojects.groovydoc.source
+  classpath = files(subprojects.groovydoc.classpath)
+  groovyClasspath = project(":spock-core").groovydoc.groovyClasspath
+}
+
+configureGroovydoc(groovydoc)
+
 task publishJavadoc(type: Sync) {
   from javadoc
-  into "file:///var/www/spock/javadoc/$version/"
+  into "javadoc/${version.endsWith("SNAPSHOT") ? "latest" : version}/"
 }
+
+task publishGroovydoc(type: Sync) {
+  from groovydoc
+  into "groovydoc/${version.endsWith("SNAPSHOT") ? "latest" : version}/"
+}
+
+configureGroovydoc(groovydoc)
 
 task wrapper(type: Wrapper) {
   gradleVersion = "1.3"
@@ -104,4 +123,10 @@ def configureJavadoc(task) {
   }
 }
 
+def configureGroovydoc(task) {
+  configure(task) {
+    include "spock/**"
+    include "org/spockframework/mock/*"
+  }
+}
 

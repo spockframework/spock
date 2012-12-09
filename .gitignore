@@ -24,8 +24,10 @@ bin/
 # Grails
 stacktrace.log
 
-# Sphinx
+# Documentation
 /docs/_build/
+javadoc/
+groovydoc/
 
 # Other
 .DS_Store

@@ -1,3 +1,5 @@
+apply plugin: "base"
+
 description = "Spock Framework"
 
 ext {

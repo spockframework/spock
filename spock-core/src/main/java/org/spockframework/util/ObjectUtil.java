@@ -46,15 +46,15 @@ public abstract class ObjectUtil {
     return false;
   }
 
-  public static <T extends Comparable<T>> int compare(T c1, T c2) {
-    if (c1 == null && c2 == null) return 0;
-    if (c1 == null) return -1;
-    if (c2 == null) return 1;
-    return c1.compareTo(c2);
-  }
-
   @SuppressWarnings("unchecked")
   public static @Nullable <T> T asInstance(Object obj, Class<T> type) {
     return type.isInstance(obj) ? (T) obj : null;
+  }
+
+  public static <T extends Comparable<T>> int compare(T comparable1, T comparable2) {
+    if (comparable1 == null && comparable2 == null) return 0;
+    if (comparable1 == null) return -1;
+    if (comparable2 == null) return 1;
+    return comparable1.compareTo(comparable2);
   }
 }

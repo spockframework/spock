@@ -179,7 +179,7 @@ public abstract class GroovyRuntimeUtil {
    * Note: This method may throw checked exceptions although it doesn't say so.
    */
   @SuppressWarnings("unchecked")
-  public static Object invokeClosure(Closure closure, Object... args) {
+  public static <T> T invokeClosure(Closure<T> closure, Object... args) {
     try {
       return closure.call(args);
     } catch (InvokerInvocationException e) {

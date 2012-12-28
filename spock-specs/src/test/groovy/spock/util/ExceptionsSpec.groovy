@@ -27,15 +27,15 @@ class ExceptionsSpec extends Specification {
 
   def "get root cause"() {
     expect:
-    exception.rootCause == cause2
-    cause.rootCause == cause2
-    cause2.rootCause == cause2
+    Exceptions.getRootCause(exception) == cause2
+    Exceptions.getRootCause(cause) == cause2
+    Exceptions.getRootCause(cause2) == cause2
   }
 
   def "get cause chain"() {
     expect:
-    exception.causeChain == [exception, cause, cause2]
-    cause.causeChain == [cause, cause2]
-    cause2.causeChain == [cause2]
+    Exceptions.getCauseChain(exception) == [exception, cause, cause2]
+    Exceptions.getCauseChain(cause) == [cause, cause2]
+    Exceptions.getCauseChain(cause2) == [cause2]
   }
 }

@@ -101,11 +101,11 @@ public class StackTraceFilter implements IStackTraceFilter {
   }
 
   private StackTraceElement prettyPrintClosureInvocation(StackTraceElement elem, Matcher matcher) {
-    String classContaingClosureDef = matcher.group(1);
+    String classContainingClosureDef = matcher.group(1);
     String methodContainingClosureDef = matcher.group(2);
     String consecutiveNumberOfClosureDef = matcher.group(3);
 
-    String prettyClassName = classContaingClosureDef;
+    String prettyClassName = classContainingClosureDef;
     String prettyMethodName =
         mapper.toFeatureName(methodContainingClosureDef) + "_closure" + consecutiveNumberOfClosureDef;
 

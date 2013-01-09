@@ -23,10 +23,7 @@ import org.spockframework.mock.MockImplementation;
 import org.spockframework.mock.MockNature;
 import org.spockframework.mock.runtime.CompositeMockFactory;
 import org.spockframework.mock.runtime.MockConfiguration;
-import org.spockframework.runtime.InvalidSpecException;
-import org.spockframework.runtime.SpecificationContext;
-import org.spockframework.runtime.WrongExceptionThrownError;
-import org.spockframework.runtime.GroovyRuntimeUtil;
+import org.spockframework.runtime.*;
 import org.spockframework.util.Beta;
 import org.spockframework.util.Nullable;
 
@@ -57,26 +54,28 @@ public abstract class SpecInternals {
   }
 
   Throwable thrownImpl(String inferredName, Class<? extends Throwable> inferredType) {
-    return thrownImpl(inferredName, inferredType, null);
-  }
-
-  Throwable thrownImpl(String inferredName, Class<? extends Throwable> inferredType, Class<? extends Throwable> specifiedType) {
-    if (specifiedType == null && inferredType == null) {
+    if (inferredType == null) {
       throw new InvalidSpecException("Thrown exception type cannot be inferred automatically. " +
           "Please specify a type explicitly (e.g. 'thrown(MyException)').");
     }
+    return checkExceptionThrown(inferredType);
+  }
 
-    Class<? extends Throwable> effectiveType = specifiedType != null ? specifiedType : inferredType;
+  Throwable thrownImpl(String inferredName, Class<? extends Throwable> inferredType, Class<? extends Throwable> specifiedType) {
+    return checkExceptionThrown(specifiedType);
+  }
 
-    if (!Throwable.class.isAssignableFrom(effectiveType))
-      throw new InvalidSpecException(
-          "Invalid exception condition: '%s' is not a (subclass of) java.lang.Throwable"
-      ).withArgs(effectiveType.getSimpleName());
+  Throwable checkExceptionThrown(Class<? extends Throwable> exceptionType) {
+      Throwable actual = specificationContext.getThrownException();
 
-    Throwable exception = specificationContext.getThrownException();
-    if (effectiveType.isInstance(exception)) return exception;
+      if (!Throwable.class.isAssignableFrom(exceptionType))
+          throw new InvalidSpecException(
+                  "Invalid exception condition: '%s' is not a (subclass of) java.lang.Throwable"
+          ).withArgs(exceptionType.getSimpleName());
 
-    throw new WrongExceptionThrownError(effectiveType, exception);
+      if (exceptionType.isInstance(actual)) return actual;
+
+      throw new WrongExceptionThrownError(exceptionType, actual);
   }
 
   Object MockImpl(String inferredName, Class<?> inferredType) {

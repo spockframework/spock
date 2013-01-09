@@ -3,7 +3,7 @@
   <description></description>
   <groupId>org.spockframework</groupId>
   <artifactId>spock-maven</artifactId>
-  <version>1.0-groovy-1.8-SNAPSHOT</version>
+  <version>1.0-groovy-2.0-SNAPSHOT</version>
   <goalPrefix>spock</goalPrefix>
   <isolatedRealm>false</isolatedRealm>
   <inheritedByDefault>true</inheritedByDefault>
@@ -106,7 +106,7 @@ will be added to the global Surefire configuration.</description>
       <groupId>org.spockframework</groupId>
       <artifactId>spock-core</artifactId>
       <type>jar</type>
-      <version>1.0-groovy-1.8-SNAPSHOT</version>
+      <version>1.0-groovy-2.0-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
@@ -124,7 +124,7 @@ will be added to the global Surefire configuration.</description>
       <groupId>org.codehaus.groovy</groupId>
       <artifactId>groovy-all</artifactId>
       <type>jar</type>
-      <version>1.8.8</version>
+      <version>2.0.5</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
@@ -313,10 +313,10 @@ will be added to the global Surefire configuration.</description>
       <version>2.11</version>
     </dependency>
     <dependency>
-      <groupId>asm</groupId>
+      <groupId>org.ow2.asm</groupId>
       <artifactId>asm</artifactId>
       <type>jar</type>
-      <version>3.2</version>
+      <version>4.0</version>
     </dependency>
   </dependencies>
 </plugin>

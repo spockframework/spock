@@ -3,6 +3,8 @@ displayName = "Spock Framework - Specs for Core Module"
 description = "Spock specifications for the Core Module. Yes, we eat our own dog food."
 
 dependencies {
+  groovy libs.junit // necessary to make @NotYetImplemented transform work (transform that ships with Groovy and statically references third-party class junit.framwork.AssertionFailedError)
+
   testCompile project(":spock-core")
   testRuntime libs.asm
   testRuntime libs.cglib

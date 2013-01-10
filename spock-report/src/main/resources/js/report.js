@@ -1,10 +1,31 @@
 $(document).ready(function() {
+  // expand/collapse tree elements
   $(".elementHeader").click(function() {
     toggleElements($(this).closest(".element"));
   });
+  
+  // expand/collapse narrative
   $(".narrative").click(function() {
     toggleNarratives($(this).closest(".element"));
   });
+  
+  // show/hide results
+  $("#showResults").click(function() {
+    $(".results").toggle();
+  });
+
+  // set initial collapsed state
+  collapseElements($(".element"));
+  collapseNarratives($(".specElement"));
+        
+  drawPieCharts();
+  
+  filterByState();
+
+  performExpansions();
+});
+
+function drawPieCharts() {
   $("h1 span.pie").peity("pie", {
     colours: ['#468847', '#B94A48', '#F89406'],
     diameter: 30
@@ -17,6 +38,9 @@ $(document).ready(function() {
     colours: ['#468847', '#B94A48', '#F89406'],
     diameter: 20
    });
+}
+
+function filterByState() {
   $("#state-all").click(function() {
     $(".specElement").show();
     $(".spec.passed .elementHeader .label").addClass("label-success");
@@ -38,7 +62,9 @@ $(document).ready(function() {
     $(".spec.passed .elementHeader .label").removeClass("label-success");
     $(".spec.failed .elementHeader .label").removeClass("label-important");
   });
+}
 
+function performExpansions() {
   $("#expansions-packages").click(function() {
     collapseElements($(".element"));
     collapseNarratives($(".specElement"));
@@ -73,47 +99,41 @@ $(document).ready(function() {
     expandElements($(".element"));
     expandNarratives($(".specElement"));
   });
+}
 
-  $("#showResults").click(function() {
-    $(".results").toggle();
+// TODO: do more work in CSS selectors
+function showSpecElementsContainingState(state) {
+  $(".specElement").each(function() {
+    $(this).toggle($(this).hasClass(state) || $(this).find(".specElement." + state).length > 0);
   });
+}
 
-  // TODO: do more work in CSS selectors
-  function showSpecElementsContainingState(state) {
-    $(".specElement").each(function() {
-      $(this).toggle($(this).hasClass(state) || $(this).find(".specElement." + state).length > 0);
-    });
-  }
+function expandElements(elements) {
+  elements.removeClass("collapsed");
+  elements.children(".elementBody").show();
+}
 
-  function expandElements(elements) {
-    elements.removeClass("collapsed");
-    elements.children(".elementBody").show();
-  }
+function collapseElements(elements) {
+  elements.addClass("collapsed");
+  elements.children(".elementBody").hide();
+}
 
-  function collapseElements(elements) {
-    elements.addClass("collapsed");
-    elements.children(".elementBody").hide();
-  }
+function toggleElements(elements) {
+  elements.toggleClass("collapsed");
+  elements.children(".elementBody").toggle();
+}
 
-  function toggleElements(elements) {
-    elements.toggleClass("collapsed");
-    elements.children(".elementBody").toggle();
-  }
+function expandNarratives(elements) {
+  elements.find("> .elementBody > .narrative:not(.collapsed)").show();
+  elements.find("> .elementBody > .narrative.collapsed").hide();
+}
 
-  function expandNarratives(elements) {
-    elements.find("> .elementBody > .narrative:not(.collapsed)").show();
-    elements.find("> .elementBody > .narrative.collapsed").hide();
-  }
+function collapseNarratives(elements) {
+  elements.find("> .elementBody > .narrative:not(.collapsed)").hide();
+  elements.find("> .elementBody > .narrative.collapsed").show();
+}
 
-  function collapseNarratives(elements) {
-    elements.find("> .elementBody > .narrative:not(.collapsed)").hide();
-    elements.find("> .elementBody > .narrative.collapsed").show();
-  }
+function toggleNarratives(elements) {
+  elements.find("> .elementBody > .narrative").toggle();
+}
 
-  function toggleNarratives(elements) {
-    elements.find("> .elementBody > .narrative").toggle();
-  }
-
-  collapseElements($(".element"));
-  collapseNarratives($(".specElement"));
-});

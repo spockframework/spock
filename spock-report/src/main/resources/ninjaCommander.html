@@ -48,7 +48,7 @@
     <span class="results">
       <span class="pie">220,40,10</span><br/>
       <small>
-        <span class="counts">(27 specs, 22 passed, 4 failed, 1 skipped)</span>
+        <span class="counts">(22/27 specs passed, 4 failed, 1 skipped)</span>
         <span class="duration">(17 mins 41 secs)</span>
       </small>
     </span>
@@ -60,7 +60,7 @@
           <span class="results">
             <span class="pie">60,20,10</span>
             <small>
-              <span class="counts">(9 specs, 6 passed, 2 failed, 1 skipped)</span>
+              <span class="counts">(6/9 specs passed, 2 failed, 1 skipped)</span>
               <span class="duration">(7 mins 25 secs)</span>
             </small>
           </span>
@@ -73,7 +73,7 @@
                 <span class="label label-important">Failed</span>
                 <span class="pie">1,1,1</span>
                 <small>
-                  <span class="counts">(3 requirements, 1 passed, 1 failed, 1 skipped)</span>
+                  <span class="counts">(1/3 requirements passed, 1 failed, 1 skipped)</span>
                   <span class="duration">(4 mins 53 secs)</span>
                 </small>
               </span>
@@ -236,127 +236,7 @@
   <script src="js/jquery.min.js"></script>
   <script src="js/bootstrap.min.js"></script>
   <script src="js/jquery.peity.js"></script>
-  <script>
-    $(document).ready(function() {
-      $(".elementHeader").click(function() {
-        toggleElements($(this).closest(".element"));
-      });
-      $(".narrative").click(function() {
-        toggleNarratives($(this).closest(".element"));
-      });
-      $("h1 span.pie").peity("pie", {
-        colours: ['#468847', '#B94A48', '#F89406'],
-        diameter: 30
-      });
-      $("h2 span.pie").peity("pie", {
-        colours: ['#468847', '#B94A48', '#F89406'],
-        diameter: 25
-      });
-      $("h3 span.pie").peity("pie", {
-        colours: ['#468847', '#B94A48', '#F89406'],
-        diameter: 20
-       });
-      $("#state-all").click(function() {
-        $(".specElement").show();
-        $(".spec.passed .elementHeader .label").addClass("label-success");
-        $(".spec.failed .elementHeader .label").addClass("label-important");
-        $(".spec.skipped .elementHeader .label").addClass("label-warning");
-      });
-      $("#state-passed").click(function() {
-        showSpecElementsContainingState("passed");
-        $(".spec.passed .elementHeader .label").addClass("label-success");
-        $(".spec.failed .elementHeader .label").removeClass("label-important");
-      });
-      $("#state-failed").click(function() {
-        showSpecElementsContainingState("failed");
-        $(".spec.passed .elementHeader .label").removeClass("label-success");
-        $(".spec.failed .elementHeader .label").addClass("label-important");
-      });
-      $("#state-skipped").click(function() {
-        showSpecElementsContainingState("skipped");
-        $(".spec.passed .elementHeader .label").removeClass("label-success");
-        $(".spec.failed .elementHeader .label").removeClass("label-important");
-      });
-
-      $("#expansions-packages").click(function() {
-        collapseElements($(".element"));
-        collapseNarratives($(".specElement"));
-      });
-
-      $("#expansions-specifications").click(function() {
-        expandElements($(".package"));
-        collapseElements($(".element:not(.package)"));
-        collapseNarratives($(".specElement"));
-      });
-
-      $("#expansions-requirements").click(function() {
-        expandElements($(".package, .spec"));
-        collapseElements($(".element:not(.package):not(.spec)"));
-        collapseNarratives($(".specElement"));
-      });
-
-      $("#expansions-exceptions").click(function() {
-        expandElements($(".specElement:has(.exceptions)"));
-        expandElements($(".element.exceptions"));
-        collapseElements($(".element:not(.exceptions):not(:has(.exceptions))"));
-        collapseNarratives($(".specElement"));
-      });
-
-      $("#expansions-narrative").click(function() {
-        expandElements($(".specElement:has(.narrative)"));
-        collapseElements($(".element:not(:has(.narrative))"));
-        expandNarratives($(".specElement"));
-      });
-
-      $("#expansions-full-details").click(function() {
-        expandElements($(".element"));
-        expandNarratives($(".specElement"));
-      });
-
-      $("#showResults").click(function() {
-        $(".results").toggle();
-      });
-
-      // TODO: do more work in CSS selectors
-      function showSpecElementsContainingState(state) {
-        $(".specElement").each(function() {
-          $(this).toggle($(this).hasClass(state) || $(this).find(".specElement." + state).length > 0);
-        });
-      }
-
-      function expandElements(elements) {
-        elements.removeClass("collapsed");
-        elements.children(".elementBody").show();
-      }
-
-      function collapseElements(elements) {
-        elements.addClass("collapsed");
-        elements.children(".elementBody").hide();
-      }
-
-      function toggleElements(elements) {
-        elements.toggleClass("collapsed");
-        elements.children(".elementBody").toggle();
-      }
-
-      function expandNarratives(elements) {
-        elements.find("> .elementBody > .narrative:not(.collapsed)").show();
-        elements.find("> .elementBody > .narrative.collapsed").hide();
-      }
-
-      function collapseNarratives(elements) {
-        elements.find("> .elementBody > .narrative:not(.collapsed)").hide();
-        elements.find("> .elementBody > .narrative.collapsed").show();
-      }
-
-      function toggleNarratives(elements) {
-        elements.find("> .elementBody > .narrative").toggle();
-      }
-
-      collapseElements($(".element"));
-      collapseNarratives($(".specElement"));
-    });
-  </script>
+  <script src="js/report.js"></script>
   </body>
 </html>
 

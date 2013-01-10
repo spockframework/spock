@@ -18,6 +18,8 @@ li.element.collapsed {
   list-style-image: url(../img/glyphicons_circle_plus_small.png);
 }
 
+/* ninjaCommander2 */
+
 .results.passed {
   float: left;
   width: 1em;
@@ -34,6 +36,13 @@ li.element.collapsed {
   float: left;
   width: 1em;
   color: #F89406;
+}
+
+/* ninjaCommander3 */
+
+.results.label {
+  width: 1em;
+  text-align: center;
 }
 
 

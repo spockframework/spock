@@ -26,15 +26,15 @@ $(document).ready(function() {
 });
 
 function drawPieCharts() {
-  $("h1 span.pie").peity("pie", {
+  $("h1 .pie").peity("pie", {
     colours: ['#468847', '#B94A48', '#F89406'],
     diameter: 30
   });
-  $("h2 span.pie").peity("pie", {
+  $("h2 .pie").peity("pie", {
     colours: ['#468847', '#B94A48', '#F89406'],
     diameter: 25
   });
-  $("h3 span.pie").peity("pie", {
+  $("h3 .pie").peity("pie", {
     colours: ['#468847', '#B94A48', '#F89406'],
     diameter: 20
    });

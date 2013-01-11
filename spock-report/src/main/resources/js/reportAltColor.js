@@ -6,6 +6,7 @@ $(document).ready(function() {
   drawPieCharts();
   computeInheritedTags();
   filterSpecElementsByTagsAndState(currentTags, currentState);
+  $(".results").toggle();;
 
   configureTreeElements();
   configureStateFiltering();

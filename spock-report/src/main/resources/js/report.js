@@ -6,6 +6,7 @@ $(document).ready(function() {
   drawPieCharts();
   computeInheritedTags();
   filterSpecElementsByTagsAndState(currentTags, currentState);
+  $(".stats").toggle();
 
   configureTreeElements();
   configureStateFiltering();
@@ -191,6 +192,9 @@ function configureOptions() {
         break;
       case "showResults":
         $(".results").toggle();
+        break;
+      case "showStatistics":
+        $(".stats").toggle();
         break;
       case "expandSearches":
         expandSearches = checked;

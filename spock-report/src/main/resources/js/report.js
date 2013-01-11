@@ -33,12 +33,27 @@ function computeInheritedTags() {
   $(".specElement").each(function() {
     var tags = parseTagsString($(this).data("tags"));
     $(this).data("defined-tags", tags);
-    $(this).data("inherited-tags", $.extend({}, $(this).parent().closest(".specElement").data("inherited-tags"), tags));
+    $(this).data("inherited-tags", _.extend({}, $(this).parent().closest(".specElement").data("inherited-tags"), tags));
   });
 }
 
+function parseTagsString(tagsString) {
+  var tags = {};
+  if (_.isUndefined(tagsString)) return tags;
+
+  _.each(tagsString.split(","), function(tagString) {
+    var keyValue = tagString.split("=");
+    var key = keyValue[0];
+    var value = keyValue[1];
+    if (!_.has(tags, key)) tags[key] = [];
+    tags[key].push(value);
+  });
+
+  return tags;
+}
+
 function filterSpecElementsByTagsAndState(tags, state) {
-  var tagCount = countProperties(tags);
+  var tagCount = _.size(tags);
 
   if (tagCount == 0 && state == "all") {
     $(".specElement").show();
@@ -65,23 +80,20 @@ function filterSpecElementsByTagsAndState(tags, state) {
   }
 }
 
+function specElementMatchesSearchTags(element, elementTags, searchTags) {
+  return _.every(searchTags, function(allowedValues, key) {
+    var actualValues = elementTags[key];
+    return !_.isEmpty(_.intersection(actualValues, allowedValues));
+  });
+}
+
 function expandSearchResults(tags, state, elementsToShow) {
   var elementsToExpandTo = elementsToShow.filter(function() {
     var element = $(this);
-    if (element.hasClass(state)) return true;
-
-    var expandTo = false;
-
-    $.each(tags, function(key, allowedValues) {
-      var tag = {};
-      tag[key] = allowedValues;
-      if (specElementMatchesSearchTags(element, element.data("defined-tags"), tag)) {
-        expandTo = true;
-        return true; // break
-      }
+    return element.hasClass(state) || _.some(tags, function(allowedValues, key) {
+      var tag = _.pick(tags, key);
+      return specElementMatchesSearchTags(element, element.data("defined-tags"), tag);
     });
-
-    return expandTo;
   });
 
   collapseElements($(".specElement"));
@@ -154,13 +166,12 @@ function configureTagFiltering() {
       var key = keyValue[0];
       var value = keyValue[1];
       if (checked) {
-        if (currentTags[key] == undefined) currentTags[key] = [];
+        if (!_.has(currentTags, key)) currentTags[key] = [];
         currentTags[key].push(value);
       } else {
-        var idx = currentTags[key].indexOf(value);
-        currentTags[key].splice(idx, 1);
-        if (currentTags[key].length == 0) {
-          delete currentTags[key];
+        currentTags[key] = _.without(currentTags[key], value);
+        if (_.isEmpty(currentTags[key])) {
+          currentTags = _.omit(currentTags, key);
         }
       }
       filterSpecElementsByTagsAndState(currentTags, currentState);
@@ -196,52 +207,6 @@ function configureOptions() {
 function expandToRequirements() {
   expandElements($(".package, .spec"));
   collapseElements($(".element:not(.package):not(.spec)"));
-}
-
-function specElementMatchesSearchTags(element, elementTags, searchTags) {
-  var match = true;
-
-  $.each(searchTags, function(key, allowedValues) {
-    var actualValues = elementTags[key];
-    var valueFound = false;
-    if (actualValues != undefined) {
-      $.each(actualValues, function(idx, actualValue) {
-        if ($.inArray(actualValue, allowedValues) > -1) {
-          valueFound = true;
-          return true; // break
-        }
-      });
-    }
-    if (!valueFound) {
-      match = false;
-      return true; // break
-    }
-  });
-
-  return match;
-}
-
-function parseTagsString(tagsString) {
-  var tags = {};
-  if (tagsString == undefined) return tags;
-
-  $.each(tagsString.split(","), function(idx, tagString) {
-    var keyValue = tagString.split("=");
-    var key = keyValue[0];
-    var value = keyValue[1];
-    if (tags[key] == undefined) tags[key] = [];
-    tags[key].push(value);
-  });
-
-  return tags;
-}
-
-function countProperties(hash) {
-  var count = 0;
-  $.each(hash, function() {
-    count++;
-  });
-  return count;
 }
 
 function expandElements(elements) {

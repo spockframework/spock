@@ -23,49 +23,48 @@ li.element.collapsed {
   text-align: center;
 }
 
-.requirement.passed, .requirement.passed > .elementHeader > .elementName, .requirement.passed h3 small, .requirement.passed h4 small {
+.requirement.passed, .requirement.passed > .elementHeader > .elementName, .requirement.passed a, .requirement.passed h3 small, .requirement.passed h4 small {
   color: #468847;
 }
 
-.requirement.failed, .requirement.failed > .elementHeader > .elementName, .requirement.failed h3 small, .requirement.failed h4 small {
+.requirement.failed, .requirement.failed > .elementHeader > .elementName, .requirement.failed a, .requirement.failed h3 small, .requirement.failed h4 small {
   color: #B94A48;
 }
 
-.requirement.skipped, .requirement.skipped > .elementHeader > .elementName, .requirement.skipped h3 small, .requirement.skipped h4 small {
+.requirement.skipped, .requirement.skipped > .elementHeader > .elementName, .requirement.skipped a, .requirement.skipped h3 small, .requirement.skipped h4 small {
   color: LightGray;
 }
 
-a {
-  color: Black;
+.spec.passed, .spec.passed > .elementHeader > .elementName, .spec.passed h2 small, .spec.passed h3 small {
+  color: #468847;
 }
 
-.requirement.passed > .elementHeader > .label {
+.spec.failed, .spec.failed > .elementHeader > .elementName, .spec.failed h2 small, .spec.failed h3 small {
+  color: #B94A48;
+}
+
+.spec.skipped, .spec.skipped > .elementHeader > .elementName, .spec.skipped h2 small, .spec.skipped h3 small {
+  color: LightGray;
+}
+
+.requirement.passed > .elementHeader > .label, .spec.passed > .elementHeader > .label {
   background-color: #468847;
 }
 
-.requirement.failed > .elementHeader > .label {
+.requirement.failed > .elementHeader > .label, .spec.failed > .elementHeader > .label {
   background-color: #B94A48;
 }
 
-.requirement.skipped > .elementHeader > .label {
+.requirement.skipped > .elementHeader > .label, .spec.skipped > .elementHeader > .label {
   background-color: LightGray;
 }
 
-.spec.passed > .elementHeader > .label {
-  background-color: Black;
-}
-
-.spec.failed > .elementHeader > .label {
-  background-color: Black;
-}
-
-.spec.skipped > .elementHeader > .label {
-  background-color: Black;
-}
-
-h1 small, h2 small, h3 small {
+a, h1 small {
   color: Black;
 }
+
+
+
 
 
 

@@ -6,7 +6,7 @@ body {
   vertical-align: middle;
 }
 
-li {
+li.element {
   list-style-image: none;
 }
 

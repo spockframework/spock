@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html"
+      xmlns="http://www.w3.org/1999/html">
+<head>
+  <meta charset="utf-8">
+  <title>Spock Report - Ninja Commander</title>
+  <link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
+  <link href="css/bootstrap-multiselect.css" rel="stylesheet" media="screen">
+  <link href="css/reportAltColor.css" rel="stylesheet" media="screen">
+</head>
+<body class="container-fluid">
+  <div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+      <div class="container-fluid">
+        <a class="brand" href="#">spock-report</a>
+        <div class="nav">
+          <div class="btn-group" data-toggle="buttons-radio">
+            <button id="state-all" type="button" class="btn btn-default active">All</button>
+            <button id="state-passed" type="button" class="btn">Passed</button>
+            <button id="state-failed" type="button" class="btn">Failed</button>
+            <button id="state-skipped" type="button" class="btn">Skipped</button>
+          </div>
+        </div>
+        <div class="nav">
+          <button class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+            Views
+            <span class="caret"></span>
+          </button>
+          <ul class="dropdown-menu" role="menu">
+            <li><a id="view-packages" tabindex="-1" href="#">Packages</a></li>
+            <li><a id="view-specifications" tabindex="-1" href="#">Specifications</a></li>
+            <li><a id="view-requirements" tabindex="-1" href="#">Requirements</a></li>
+            <li><a id="view-requirement-details" tabindex="-1" href="#">Requirements+</a></li>
+            <li><a id="view-exceptions" tabindex="-1" href="#">Exceptions</a></li>
+            <li><a id="view-full-details" tabindex="-1" href="#">Full Details</a></li>
+          </ul>
+          <select id="tags" multiple="multiple">
+            <option value="UI=true">UI</option>
+            <option value="Regression=true">Regression</option>
+            <option value="Sprint=1">Sprint-1</option>
+            <option value="Sprint=2">Sprint-2</option>
+          </select>
+          <select id="options" multiple="multiple">
+            <option value="showNarrative" selected>Show Narrative</option>
+            <option value="showResults" selected>Show Results</option>
+            <option value="expandSearches" selected>Expand Searches</option>
+          </select>
+        </div>
+        <form class="navbar-search">
+          <input type="text" class="search-query" placeholder="Search Terms (coming soon!)">
+        </form>
+      </div>
+    </div>
+  </div>
+  <h1 style="text-align: center;">
+    <span class="elementName">Ninja Commander</span>
+    <span class="results">
+      <small>
+        <span class="pie">220,40,10</span><br/>
+        <span class="counts">22/27 specs passed, 4 failed, 1 skipped</span>
+        <span class="duration">(17 mins 41 secs)</span>
+      </small>
+    </span>
+  </h1>
+  <ul class="packages">
+  <li class="specElement element package">
+  <h2 class="elementHeader">
+    <a class="elementName">com.ninja.ai</a>
+    <span class="results">
+      <span class="pie">0,2,0</span>
+      <small>
+        <span class="counts">2/2 specs failed</span>
+        <span class="duration">(7 mins 25 secs)</span>
+      </small>
+    </span>
+  </h2>
+  <ul class="elementBody specs">
+  <li class="specElement element spec failed" data-tags="UI=true,Sprint=1">
+    <h3 class="elementHeader">
+      <a class="elementName">Fight Or Flight (Story Style)</a>
+      <span class="results label label-important">✗</span>
+      <span class="label tag">UI</span>
+      <span class="label tag">Sprint-1</span>
+      <span class="results">
+        <span class="pie">1,1,1</span>
+        <small>
+          <span class="counts">1/3 requirements passed, 1 failed, 1 skipped</span>
+          <span class="duration">(4 mins 53 secs)</span>
+        </small>
+      </span>
+    </h3>
+    <div class="elementBody">
+      <blockquote class="narrative">
+        <p>
+          In order to increase the ninja survival rate<br/>
+          As a ninja commander<br/>
+          I want my ninjas to decide whether to take on an opponent based on their skill levels
+        </p>
+      </blockquote>
+      <ul class="requirements">
+        <li class="specElement element requirement passed" data-tags="Regression=true">
+          <h4 class="elementHeader">
+            <a class="elementName">Strong Opponent</a>
+            <span class="results label label-success">✓</span>
+            <span class="label tag">Regression</span>
+            <small>
+              <span class="results duration">(0.37 secs)</span>
+            </small>
+          </h4>
+          <div class="elementBody">
+            <blockquote class="narrative">
+              <p>
+                <strong>Given</strong> the ninja has a third level black-belt<br/>
+                <strong>When</strong> attacked by Chuck Norris<br/>
+                <strong>Then</strong> the ninja should run for his life
+              </p>
+            </blockquote>
+            <ul class="results">
+              <li class="result element">
+                <h5 class="elementHeader">
+                  <a class="elementName">Standard Output</a>
+                </h5>
+                <pre class="elementBody">
+      some standard
+      output    </pre>
+              </li>
+              <li class="result element">
+                <h5 class="elementHeader">
+                  <a class="elementName">Attachments</a>
+                </h5>
+                <ul class="elementBody">
+                  <li>
+                    <a href="screenshot.png">003-001-correct the email address by editing the input field-end.png</a>
+                  </li>
+                  <li>
+                    <a href="pagedump.html">003-001-correct the email address by editing the input field-end.html</a>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </li>
+        <li class="specElement element requirement skipped">
+          <h4 class="elementHeader">
+            <a class="elementName">Invisible Opponent</a>
+            <span class="results label label-warning">?</span>
+            <small>
+              <span class="results duration">(0.00 secs)</span>
+            </small>
+          </h4>
+          <div class="elementBody">
+            <blockquote class="narrative">
+              <p>
+                <strong>Given</strong> the ninja has a third level black-belt<br/>
+                <strong>When</strong> attacked by an invisible creature<br/>
+                <strong>Then</strong> the ninja should cast a "tee-mac-woo" spell<br/>
+                &emsp;<strong>And</strong> hope for the best
+              </p>
+            </blockquote>
+          </div>
+        </li>
+        <li class="specElement element requirement failed">
+          <h4 class="elementHeader">
+            <a class="elementName">Weak Opponent</a>
+            <span class="results label label-important">✗</span>
+            <small>
+              <span class="results duration">(4.16 secs)</span>
+            </small>
+          </h4>
+          <div class="elementBody">
+            <blockquote class="narrative">
+              <p>
+                <strong>Given</strong> the ninja has a third level black-belt<br/>
+                <strong>When</strong> attacked by a samurai<br/>
+                <strong>Then</strong> the ninja should engage the opponent
+              </p>
+            </blockquote>
+            <ul class="results">
+              <li class="result element exceptions">
+                <h5 class="elementHeader">
+                  <a class="elementName">Exceptions</a>
+                </h5>
+                <pre class="elementBody">
+      Condition not satisfied:
+
+      Math.max(1, 2) == 4
+           |         |
+           2         false
+
+      at FightOrFlight.WeakOpponent(FightOrFlight.groovy:37)</pre>
+              </li>
+              <li class="result element">
+                <h5 class="elementHeader">
+                  <a class="elementName">Standard Output</a>
+                </h5>
+                <pre class="elementBody">
+      some standard
+      output    </pre>
+              </li>
+              <li class="result element">
+                <h5 class="elementHeader">
+                  <a class="elementName">Error Output</a>
+                </h5>
+                <pre class="elementBody">
+      some error
+      output    </pre>
+              </li>
+              <li class="result element">
+                <h5 class="elementHeader">
+                  <a class="elementName">Attachments</a>
+                </h5>
+                <ul class="elementBody">
+                  <li>
+                    <a href="screenshot.png">003-001-correct the email address by editing the input field-end.png</a>
+                  </li>
+                  <li>
+                    <a href="pagedump.html">003-001-correct the email address by editing the input field-end.html</a>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </li>
+  <li class="specElement element spec failed" data-tags="UI=true,Sprint=2">
+    <h3 class="elementHeader">
+      <a class="elementName">Fight Or Flight (Spec Style)</a>
+      <span class="results label label-important">✗</span>
+      <span class="label tag">UI</span>
+      <span class="label tag">Sprint-2</span>
+      <span class="results">
+        <span class="pie">1,1,1</span>
+        <small>
+          <span class="counts">1/3 requirements passed, 1 failed, 1 skipped</span>
+          <span class="duration">(4 mins 53 secs)</span>
+        </small>
+      </span>
+    </h3>
+    <div class="elementBody">
+      <ul class="requirements">
+        <li class="specElement element requirement passed" data-tags="Regression=true">
+          <h4 class="elementHeader">
+            <a class="elementName">Ninja should flee when encountering a strong opponent</a>
+            <span class="results label label-success">✓</span>
+            <span class="label tag">Regression</span>
+            <small>
+              <span class="results duration">(0.37 secs)</span>
+            </small>
+          </h4>
+          <div class="elementBody">
+            <ul class="results">
+              <li class="result element">
+                <h5 class="elementHeader">
+                  <a class="elementName">Standard Output</a>
+                </h5>
+                <pre class="elementBody">
+      some standard
+      output    </pre>
+              </li>
+              <li class="result element">
+                <h5 class="elementHeader">
+                  <a class="elementName">Attachments</a>
+                </h5>
+                <ul class="elementBody">
+                  <li>
+                    <a href="screenshot.png">003-001-correct the email address by editing the input field-end.png</a>
+                  </li>
+                  <li>
+                    <a href="pagedump.html">003-001-correct the email address by editing the input field-end.html</a>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </li>
+        <li class="specElement element requirement skipped">
+          <h4 class="elementHeader">
+            <a class="elementName">Ninja should cast a tee-mac-woo spell when attacked by an invisible opponent (and hope for the best)</a>
+            <span class="results label label-warning">?</span>
+            <small>
+              <span class="results duration">(0.00 secs)</span>
+            </small>
+          </h4>
+          <div class="elementBody">
+          </div>
+        </li>
+        <li class="specElement element requirement failed">
+          <h4 class="elementHeader">
+            <a class="elementName">Ninja should engage a weak opponent</a>
+            <span class="results label label-important">✗</span>
+            <small>
+              <span class="results duration">(4.16 secs)</span>
+            </small>
+          </h4>
+          <div class="elementBody">
+            <ul class="results">
+              <li class="result element exceptions">
+                <h5 class="elementHeader">
+                  <a class="elementName">Exceptions</a>
+                </h5>
+                <pre class="elementBody">
+      Condition not satisfied:
+
+      Math.max(1, 2) == 4
+           |         |
+           2         false
+
+      at FightOrFlight.WeakOpponent(FightOrFlight.groovy:37) </pre>
+              </li>
+              <li class="result element">
+                <h5 class="elementHeader">
+                  <a class="elementName">Standard Output</a>
+                </h5>
+                <pre class="elementBody">
+      some standard
+      output    </pre>
+              </li>
+              <li class="result element">
+                <h5 class="elementHeader">
+                  <a class="elementName">Error Output</a>
+                </h5>
+                <pre class="elementBody">
+      some error
+      output    </pre>
+              </li>
+              <li class="result element">
+                <h5 class="elementHeader">
+                  <a class="elementName">Attachments</a>
+                </h5>
+                <ul class="elementBody">
+                  <li>
+                    <a href="screenshot.png">003-001-correct the email address by editing the input field-end.png</a>
+                  </li>
+                  <li>
+                    <a href="pagedump.html">003-001-correct the email address by editing the input field-end.html</a>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </li>
+  </ul>
+  </li>
+  </ul>
+  <script src="js/jquery.js"></script>
+  <script src="js/underscore.js"></script>
+  <script src="js/bootstrap.js"></script>
+  <script src="js/bootstrap-multiselect.js"></script>
+  <script src="js/jquery.peity.js"></script>
+  <script src="js/reportAltColor.js"></script>
+</body>
+</html>
+

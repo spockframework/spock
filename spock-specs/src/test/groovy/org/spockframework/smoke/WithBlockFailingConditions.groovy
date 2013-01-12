@@ -12,14 +12,14 @@
  * limitations under the License.
  */
 
-package org.spockframework.smoke.condition
+package org.spockframework.smoke
 
 import spock.lang.Specification
 import spock.lang.FailsWith
 
 import org.spockframework.runtime.ConditionNotSatisfiedError
 
-class ImplicitConditionsInWithBlocksFailing extends Specification {
+class WithBlockFailingConditions extends Specification {
   @FailsWith(ConditionNotSatisfiedError)
   def "basic usage"() {
     def list = [1, 2]

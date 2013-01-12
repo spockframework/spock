@@ -12,31 +12,33 @@
  * limitations under the License.
  */
 
-package org.spockframework.smoke.condition
+package org.spockframework.smoke
 
 import spock.lang.Specification
+import spock.lang.FailsWith
 
-class ImplicitConditionsInWithBlocks extends Specification {
+import org.spockframework.runtime.ConditionNotSatisfiedError
+
+class WithBlockFailingConditions extends Specification {
+  @FailsWith(ConditionNotSatisfiedError)
   def "basic usage"() {
     def list = [1, 2]
 
     expect:
     with(list) {
-      size() == 2
-      get(0) == 1
-      get(1) == 2
+      size() == 3
     }
   }
 
+  @FailsWith(ConditionNotSatisfiedError)
   def "inlining"() {
     expect:
     with([1, 2]) {
-      size() == 2
-      get(0) == 1
-      get(1) == 2
+      size() == 3
     }
   }
 
+  @FailsWith(ConditionNotSatisfiedError)
   def "nesting"() {
     def list = [1, 2]
 
@@ -47,26 +49,23 @@ class ImplicitConditionsInWithBlocks extends Specification {
 
       def map = [foo: "bar"]
       with(map) {
-        size() == 1
-        get("foo") == "bar"
+        size() == 2
       }
-
-      get(1) == 2
     }
   }
 
+  @FailsWith(ConditionNotSatisfiedError)
   def "in then-block"() {
     when:
     def list = [1, 2]
 
     then:
     with(list) {
-      size() == 2
-      get(0) == 1
-      get(1) == 2
+      size() == 3
     }
   }
 
+  @FailsWith(ConditionNotSatisfiedError)
   def "in nested position"() {
     when:
     def list = [1, 2]
@@ -75,14 +74,13 @@ class ImplicitConditionsInWithBlocks extends Specification {
     1.times {
       1.times {
         with(list) {
-          size() == 2
-          get(0) == 1
-          get(1) == 2
+          size() == 3
         }
       }
     }
   }
 
+  @FailsWith(ConditionNotSatisfiedError)
   def "executed several times"() {
     when:
     def list = [1, 2]
@@ -90,24 +88,22 @@ class ImplicitConditionsInWithBlocks extends Specification {
     then:
     3.times {
       with(list) {
-        size() == 2
-        get(0) == 1
-        get(1) == 2
+        size() == 3
       }
     }
   }
 
+  @FailsWith(ConditionNotSatisfiedError)
   def "in block other than then/expect"() {
     def list = [1, 2]
 
     setup:
     with(list) {
-      size() == 2
-      get(0) == 1
-      get(1) == 2
+      size() == 3
     }
   }
 
+  @FailsWith(ConditionNotSatisfiedError)
   def "in helper method"() {
     def list = [1, 2]
 
@@ -115,37 +111,9 @@ class ImplicitConditionsInWithBlocks extends Specification {
     helper(list)
   }
 
-  def "statements in nested blocks aren't turned into conditions"() {
-    def list = [1, 2]
-
-    expect:
-    with(list) {
-      list.any {
-        it == 2 // would fail if this was turned into a condition
-      }
-    }
-  }
-
   void helper(list) {
     with(list) {
-      size() == 2
-      get(0) == 1
-      get(1) == 2
+      size() == 3
     }
-  }
-
-  def "can refer to properties of target object with property syntax"() {
-    def person = new Person()
-
-    expect:
-    with(person) {
-      name == "Fred"
-      age == 42
-    }
-  }
-
-  static class Person {
-    String name = "Fred"
-    int age = 42
   }
 }

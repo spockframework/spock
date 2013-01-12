@@ -6,7 +6,7 @@ $(document).ready(function() {
   drawPieCharts();
   computeInheritedTags();
   filterSpecElementsByTagsAndState(currentTags, currentState);
-  $(".stats").toggle();
+  $(".results").toggle();;
 
   configureTreeElements();
   configureStateFiltering();
@@ -17,15 +17,15 @@ $(document).ready(function() {
 
 function drawPieCharts() {
   $("h1 .pie").peity("pie", {
-    colours: ['#468847', '#B94A48', '#F89406'],
+    colours: ['#468847', '#B94A48', 'LightGray'],
     diameter: 30
   });
   $("h2 .pie").peity("pie", {
-    colours: ['#468847', '#B94A48', '#F89406'],
+    colours: ['#468847', '#B94A48', 'LightGray'],
     diameter: 25
   });
   $("h3 .pie").peity("pie", {
-    colours: ['#468847', '#B94A48', '#F89406'],
+    colours: ['#468847', '#B94A48', 'LightGray'],
     diameter: 20
    });
 }
@@ -192,9 +192,6 @@ function configureOptions() {
         break;
       case "showResults":
         $(".results").toggle();
-        break;
-      case "showStatistics":
-        $(".stats").toggle();
         break;
       case "expandSearches":
         expandSearches = checked;

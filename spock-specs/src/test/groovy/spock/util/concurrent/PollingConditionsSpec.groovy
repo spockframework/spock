@@ -14,10 +14,10 @@
 
 package spock.util.concurrent
 
+import org.spockframework.runtime.ConditionNotSatisfiedError
 import org.spockframework.runtime.SpockTimeoutError
-
+import spock.lang.Issue
 import spock.lang.Specification
-import spock.lang.FailsWith
 
 class PollingConditionsSpec extends Specification {
   PollingConditions conditions = new PollingConditions()
@@ -36,44 +36,66 @@ class PollingConditionsSpec extends Specification {
   }
 
   def "succeeds if all conditions are eventually satisfied"() {
-    when:
     num = 42
     Thread.start {
       sleep(500)
       str = "hello"
     }
 
-    then:
+    when:
     conditions.eventually {
       num == 42
       str == "hello"
     }
+
+    then:
+    noExceptionThrown()
   }
 
-  @FailsWith(SpockTimeoutError)
   def "fails if any condition isn't satisfied in time"() {
-    when:
     num = 42
 
-    then:
+    when:
     conditions.eventually {
       num == 42
-      str == "hello"
+      str == "bye"
+    }
+
+    then:
+    thrown(SpockTimeoutError)
+  }
+
+  @Issue("http://issues.spockframework.org/detail?id=291")
+  def "reports failed condition of last failed attempt"() {
+    num = 42
+
+    when:
+    conditions.eventually {
+      num == 42
+      str == "bye"
+    }
+
+    then:
+    SpockTimeoutError e = thrown()
+    with(e.cause) {
+      it instanceof ConditionNotSatisfiedError
+      condition.text == 'str == "bye"'
     }
   }
 
-  @FailsWith(SpockTimeoutError)
   def "can override timeout per invocation"() {
-    when:
     Thread.start {
       Thread.sleep(250)
       num = 42
     }
 
-    then:
+    when:
     conditions.within(0) {
       num == 42
     }
+
+    then:
+    thrown(SpockTimeoutError)
   }
 
   def "provides fine-grained control over polling rhythm"() {

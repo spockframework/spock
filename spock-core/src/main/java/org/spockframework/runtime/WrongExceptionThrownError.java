@@ -39,8 +39,8 @@ public class WrongExceptionThrownError extends SpockAssertionError {
   @Override
   public String getMessage() {
     if (actual == null) {
-      return String.format("Expected exception %s, but no exception was thrown", expected.getName());
+      return String.format("Expected exception of type '%s', but no exception was thrown", expected.getName());
     }
-    return String.format("Expected exception %s, but got %s", expected.getName(), actual.getClass().getName());
+    return String.format("Expected exception of type '%s', but got '%s'", expected.getName(), actual.getClass().getName());
   }
 }

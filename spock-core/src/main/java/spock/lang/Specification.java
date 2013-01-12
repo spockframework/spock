@@ -132,10 +132,88 @@ public abstract class Specification extends MockingApi {
     throw new InvalidSpecException("old() can only be used in a 'then' block");
   }
 
+  /**
+   * Sets the specified object as the implicit target of the top-level conditions and/or
+   * interactions contained in the specified code block, thereby avoiding the need to repeat
+   * the same expression multiple times. Implicit conditions are supported. (In other words,
+   * the {@code assert} keyword may be omitted.) If the target is {@code null}, a
+   * {@code SpockAssertionError} is thrown.
+   *
+   * <p>A {@code with} block can be used anywhere in a spec, including nested positions
+   * and helper methods.
+   *
+   * <p>Condition example:
+   *
+   * <pre>
+   * def fred = new Person(name: "Fred", age: 42)
+   * def spaceship = new Spaceship(pilot: fred)
+   *
+   * expect:
+   * with(spaceship.pilot) {
+   *   name == "Fred" // shorthand for: spaceship.pilot.name == "Fred"
+   *   age == 42
+   * }
+   * </pre>
+   *
+   * <p> Interaction example:
+   *
+   * <pre>
+   * def service = Mock(Service) // has start(), stop(), and doWork() methods
+   * def app = new Application(service) // controls the lifecycle of the service
+   *
+   * when:
+   * app.run()
+   *
+   * then:
+   * with(service) {
+   *   1 * start() // shorthand for: 1 * service.start()
+   *   1 * doWork()
+   *   1 * stop()
+   * }
+   * </pre>
+   *
+   * @param target an implicit target for conditions and/or interactions
+   * @param closure a code block containing top-level conditions and/or interactions
+   */
   @Beta
-  public void with(Object object, Closure closure) {
-    closure.setDelegate(object); // for conditions
+  public void with(Object target, Closure<?> closure) {
+    if (target == null) {
+      throw new SpockAssertionError("Target of 'with' block must not be null");
+    }
+    closure.setDelegate(target); // for conditions
     closure.setResolveStrategy(Closure.DELEGATE_FIRST);
-    GroovyRuntimeUtil.invokeClosure(closure, object);
+    GroovyRuntimeUtil.invokeClosure(closure, target);
+  }
+
+  /**
+   * Same as {@link #with(Object, groovy.lang.Closure)}, except that it also states that
+   * the specified target has the specified type, throwing a {@code SpockAssertionError}
+   * otherwise. As a side effect, this may give better code completion in IDEs.
+   *
+   * <p>Example:
+   *
+   * <pre>
+   * def fred = new Employee(name: "Fred", age: 42, employer: "MarsTravelUnited")
+   * def spaceship = new Spaceship(pilot: fred)
+   *
+   * expect:
+   * with(spaceship.pilot, Employee) {
+   *   name == "Fred" // shorthand for: spaceship.pilot.name == "Fred"
+   *   age == 42
+   *   employer == "MarsTravelUnited"
+   * }
+   * </pre>
+   *
+   * @param target an implicit target for conditions and/or interactions
+   * @param type the expected type of the target
+   * @param closure a code block containing top-level conditions and/or interactions
+   */
+  @Beta
+  public void with(Object target, Class<?> type, Closure closure) {
+    if (target != null && !type.isInstance(target)) {
+      throw new SpockAssertionError(String.format("Expected target of 'with' block to have type '%s', but got '%s'",
+          type, target.getClass().getName()));
+    }
+    with(target, closure);
   }
 }

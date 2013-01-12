@@ -14,6 +14,7 @@
 
 package org.spockframework.smoke.condition
 
+import org.spockframework.runtime.SpockAssertionError
 import spock.lang.Specification
 
 class ImplicitConditionsInWithBlocks extends Specification {
@@ -144,8 +145,40 @@ class ImplicitConditionsInWithBlocks extends Specification {
     }
   }
 
+  def "can state the expected target type"() {
+    def fred = new Person(spouse: new Manager(name: "Wilma"))
+
+    expect:
+    with(fred.spouse, Employee) {
+      name == "Wilma"
+      employer == "MarsTravelUnited"
+    }
+  }
+
+  def "fails if expected target type isn't met"() {
+    def fred = new Person(spouse: new Person(name: "Wilma"))
+
+    when:
+    with(fred.spouse, Employee) {
+      name == "Wilma"
+      employer == "MarsTravelUnited"
+    }
+
+    then:
+    SpockAssertionError e = thrown()
+    e.message.contains("Employee")
+    e.message.contains("Person")
+  }
+
   static class Person {
     String name = "Fred"
     int age = 42
+    Person spouse
   }
+
+  static class Employee extends Person {
+    String employer = "MarsTravelUnited"
+  }
+
+  static class Manager extends Employee {}
 }

@@ -16,19 +16,24 @@ package dsld
 
 import org.codehaus.groovy.ast.expr.*
 
-// uses at least one fix made in 2.7.1 (see Groovy Eclipse mailing list), so play it safe
-assertVersion(groovyEclipse: "2.7.1")
+assertVersion(groovyEclipse: "2.7.2") // tested against this version
 
 // with(foo) { /* delegates to foo */ }
 // currently only works if foo is statically typed
+// with(foo, Bar) { /* delegates to instance of Bar */ }
 contribute(
-	enclosingClass(subType("spock.lang.Specification")) &
-	enclosingCallDeclaringType("spock.lang.Specification") &
-	enclosingCall(
-		name("with") &
-		hasArgument(theTypes: type())) &
-	enclosingClosure()) {
-  delegatesTo(theTypes.iterator().next())
+    enclosingClass(subType("spock.lang.Specification")) &
+    enclosingCallDeclaringType("spock.lang.Specification") &
+    bind(theCalls: enclosingCall(name("with"))) &
+    enclosingClosure()) {
+  def args = theCalls.iterator().next().arguments.expressions
+  if (args.size() == 2) {
+    delegatesTo(args[0].type)
+  } else if (args.size() == 3) {
+    if (args[1] instanceof ClassExpression) {
+        delegatesTo(args[1])
+    }
+  }
 }
 
 // Mock(Foo) { /* delegates to instance of type Foo /* }

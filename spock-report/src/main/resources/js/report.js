@@ -1,11 +1,25 @@
 var currentState = "all";
 var currentTags = {};
+var currentKeywords = [];
 var expandSearches = true;
+var stopWords = [
+  "the",
+  "you",
+  "she",
+  "has",
+  "have",
+  "can",
+  "may",
+  "might",
+  "shall",
+  "should",
+];
 
 $(document).ready(function() {
   drawPieCharts();
   computeInheritedTags();
-  filterSpecElementsByTagsAndState(currentTags, currentState);
+  computeKeywords();
+  filterSpecElementsByTagsAndStateAndKeywords(currentTags, currentState, currentKeywords);
   $(".stats").toggle();
 
   configureTreeElements();
@@ -13,6 +27,7 @@ $(document).ready(function() {
   configureViewSelection();
   configureTagFiltering();
   configureOptions();
+  configureSearch();
 });
 
 function drawPieCharts() {
@@ -32,10 +47,20 @@ function drawPieCharts() {
 
 function computeInheritedTags() {
   $(".specElement").each(function() {
-    var tags = parseTagsString($(this).data("tags"));
-    $(this).data("defined-tags", tags);
-    $(this).data("inherited-tags", _.extend({}, $(this).parent().closest(".specElement").data("inherited-tags"), tags));
+    var definedTags = parseTagsString($(this).data("tags"));
+    $(this).data("definedTags", definedTags);
+    $(this).data("inheritedTags", _.extend({}, $(this).parent().closest(".specElement").data("inheritedTags"), definedTags));
   });
+}
+
+function computeKeywords() {
+  $(".specElement").each(function() {
+    var definedKeywords = extractKeywords($(this).find(" > .elementHeader .elementName").text());
+    $(this).data("definedKeywords", definedKeywords);
+    var parentKeywords = $(this).parent().closest(".specElement").data("inherited-keywords");
+    if (_.isUndefined(parentKeywords)) parentKeywords = [];
+    $(this).data("inheritedKeywords", _.union(parentKeywords, definedKeywords));
+  })
 }
 
 function parseTagsString(tagsString) {
@@ -53,10 +78,11 @@ function parseTagsString(tagsString) {
   return tags;
 }
 
-function filterSpecElementsByTagsAndState(tags, state) {
+function filterSpecElementsByTagsAndStateAndKeywords(tags, state, keywords) {
   var tagCount = _.size(tags);
+  var keywordCount = _.size(keywords);
 
-  if (tagCount == 0 && state == "all") {
+  if (tagCount == 0 && keywordCount == 0 && state == "all") {
     $(".specElement").show();
     if (expandSearches) {
       expandToRequirements();
@@ -68,7 +94,13 @@ function filterSpecElementsByTagsAndState(tags, state) {
 
   if (tagCount > 0) {
     elementsToShow = elementsToShow.filter(function() {
-      return specElementMatchesSearchTags($(this), $(this).data("inherited-tags"), tags);
+      return specElementMatchesSearchTags($(this), $(this).data("inheritedTags"), tags);
+    });
+  }
+
+  if (keywordCount > 0) {
+    elementsToShow = elementsToShow.filter(function() {
+      return specElementMatchesSearchKeywords($(this), $(this).data("inheritedKeywords"), keywords);
     });
   }
 
@@ -77,7 +109,7 @@ function filterSpecElementsByTagsAndState(tags, state) {
   elementsToShow.parents(".specElement").show();
 
   if (expandSearches) {
-    expandSearchResults(tags, state, elementsToShow);
+    expandSearchResults(tags, state, keywords, elementsToShow);
   }
 }
 
@@ -88,12 +120,23 @@ function specElementMatchesSearchTags(element, elementTags, searchTags) {
   });
 }
 
-function expandSearchResults(tags, state, elementsToShow) {
+function specElementMatchesSearchKeywords(element, elementKeywords, searchKeywords) {
+  return _.every(searchKeywords, function(searchKeyword) {
+    return _.some(elementKeywords, function(elementKeyword) {
+      return elementKeyword.length >= searchKeyword.length
+          && elementKeyword.substr(0, searchKeyword.length) == searchKeyword;
+    });
+  });
+}
+
+function expandSearchResults(tags, state, keywords, elementsToShow) {
   var elementsToExpandTo = elementsToShow.filter(function() {
     var element = $(this);
     return element.hasClass(state) || _.some(tags, function(allowedValues, key) {
       var tag = _.pick(tags, key);
-      return specElementMatchesSearchTags(element, element.data("defined-tags"), tag);
+      return specElementMatchesSearchTags(element, element.data("definedTags"), tag);
+    }) || _.some(keywords, function(keyword) {
+      return specElementMatchesSearchKeywords(element, element.data("definedKeywords"), [keyword]);
     });
   });
 
@@ -110,19 +153,19 @@ function configureTreeElements() {
 function configureStateFiltering() {
   $("#state-all").click(function() {
     currentState = "all";
-    filterSpecElementsByTagsAndState(currentTags, currentState);
+    filterSpecElementsByTagsAndStateAndKeywords(currentTags, currentState, currentKeywords);
   });
   $("#state-passed").click(function() {
     currentState = "passed";
-    filterSpecElementsByTagsAndState(currentTags, currentState);
+    filterSpecElementsByTagsAndStateAndKeywords(currentTags, currentState, currentKeywords);
   });
   $("#state-failed").click(function() {
     currentState = "failed";
-    filterSpecElementsByTagsAndState(currentTags, currentState);
+    filterSpecElementsByTagsAndStateAndKeywords(currentTags, currentState, currentKeywords);
   });
   $("#state-skipped").click(function() {
     currentState = "skipped";
-    filterSpecElementsByTagsAndState(currentTags, currentState);
+    filterSpecElementsByTagsAndStateAndKeywords(currentTags, currentState, currentKeywords);
   });
 }
 
@@ -175,7 +218,7 @@ function configureTagFiltering() {
           currentTags = _.omit(currentTags, key);
         }
       }
-      filterSpecElementsByTagsAndState(currentTags, currentState);
+      filterSpecElementsByTagsAndStateAndKeywords(currentTags, currentState, currentKeywords);
     }
   });
 }
@@ -199,13 +242,30 @@ function configureOptions() {
       case "expandSearches":
         expandSearches = checked;
         if (checked) {
-          filterSpecElementsByTagAndState(currentTags, currentState);
+          filterSpecElementsByTagsAndStateAndKeywords(currentTags, currentState, currentKeywords);
         }
       default:
         console.log("unknown option: " + element.id);
       }
     }
   });
+}
+
+function configureSearch() {
+  $("#searchTerms").keyup(function() {
+    currentKeywords = extractKeywords($(this).val());
+    filterSpecElementsByTagsAndStateAndKeywords(currentTags, currentState, currentKeywords);
+  });
+}
+
+function extractKeywords(text) {
+  if (_.isUndefined(text)) return [];
+  var words = text.split(/\W+/);
+  return _.chain(words).map(function(word) {
+    return word.toLowerCase();
+  }).uniq().filter(function(word) {
+    return word.length > 2 && !_.contains(stopWords, word);
+  }).value();
 }
 
 function expandToRequirements() {

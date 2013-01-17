@@ -1,4 +1,4 @@
-apply from: script("publishMaven")
+//apply from: script("publishMaven")
 
 displayName = "Spock Framework - Report Module"
 

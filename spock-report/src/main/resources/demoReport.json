@@ -1,0 +1,104 @@
+{
+  "specs":
+    [
+      {
+        "package": "com.ninja.ai",
+        "name": "Fight Or Flight (Story Style)",
+        "narrative": "In order to increase the ninja survival rate\nAs a ninja commander\nI want my ninjas to decide whether to take on an opponent based on their skill levels",
+        "tags": {"UI": true, "Sprint": 1},
+        "requirements": 
+          [
+            { 
+              "name": "Strong Opponent",
+              "narrative": "Given the ninja has a third level black-belt\nwhen attacked by Chuck Norris\nThen the ninja should run for his life",
+              "tags": {"Regression": true},
+              "start": "2007-03-01T13:00:00Z",
+              "end": "2007-03-01T13:01:17Z",
+              "result": "passed",             
+              "output": "some\noutput",
+              "attachments":
+                [
+                  "003-001-correct the email address by editing the input field-end.png",
+                  "003-001-correct the email address by editing the input field-end.html"
+                ]
+            },
+            {
+              "name": "Invisible Opponent",
+              "narrative": "Given the ninja has a third level black-belt\nWhen attacked by an invisible creature\nThen the ninja should cast a \"tee-mac-woo\" spell\nAnd hope for the best",
+              "start": "2007-03-01T13:00:00Z",
+              "end": "2007-03-01T13:01:17Z",
+              "result": "skipped"
+            },
+            {
+              "name": "Weak Opponent",
+              "narrative": "Given the ninja has a third level black-belt\nWhen attacked by a samurai\nThen the ninja should engage the opponent",
+              "start": "2007-03-01T13:00:00Z",
+              "end": "2007-03-01T13:01:17Z",
+              "result": "failed",
+              "exceptions": 
+                [
+                  "Condition not satisfied:\n\nMath.max(1, 2) == 4\n     |         |\n2         false\n\nat FightOrFlight.WeakOpponent(FightOrFlight.groovy:37)"
+                ],
+              "output": "some\noutput",
+              "errorOutput": "some\nerror output",
+              "attachments":
+                [
+                  "003-001-correct the email address by editing the input field-end.png",
+                  "003-001-correct the email address by editing the input field-end.html"
+                ]
+              
+            }
+          ],
+        "start": "2007-03-01T13:00:00Z",
+        "end": "2007-03-01T13:01:18Z",
+        "result": "passed"
+      },
+      {
+        "package": "com.ninja.ai",
+        "name": "Fight Or Flight (Spec Style)",
+        "tags": {"UI": true, "Sprint": 2},
+        "requirements": 
+          [
+            { 
+              "name": "Ninja should flee when encountering a strong opponent",
+              "tags": {"Regression": true},
+              "start": "2007-03-01T13:00:00Z",
+              "end": "2007-03-01T13:01:17Z",
+              "result": "passed",             
+              "output": "some\noutput",
+              "attachments":
+                [
+                  "003-001-correct the email address by editing the input field-end.png",
+                  "003-001-correct the email address by editing the input field-end.html"
+                ]
+            },
+            {
+              "name": "Ninja should cast a tee-mac-woo spell when attacked by an invisible opponent (and hope for the best)",
+              "start": "2007-03-01T13:00:00Z",
+              "end": "2007-03-01T13:01:17Z",
+              "result": "skipped"
+            },
+            {
+              "name": "Ninja should engage a weak opponent",
+              "start": "2007-03-01T13:00:00Z",
+              "end": "2007-03-01T13:01:17Z",
+              "result": "failed",
+              "exceptions": 
+                [
+                  "Condition not satisfied:\n\nMath.max(1, 2) == 4\n     |         |\n2         false\n\nat FightOrFlight.WeakOpponent(FightOrFlight.groovy:37)"
+                ],
+              "output": "some\noutput",
+              "errorOutput": "some\nerror output",
+              "attachments":
+                [
+                  "003-001-correct the email address by editing the input field-end.png",
+                  "003-001-correct the email address by editing the input field-end.html"
+                ]           
+            }
+          ],
+        "start": "2007-03-01T13:00:00Z",
+        "end": "2007-03-01T13:01:18Z",
+        "result": "passed"
+      }
+    ]
+}

@@ -1,8 +1,8 @@
-apply from: script("publishMaven")
+//apply from: script("publishMaven")
 
 displayName = "Spock Framework - Report Module"
 
-description = "Generates HTML reports that read like a specification."
+description = "Interactive, specification-style HTML reports for Spock specifications."
 
 dependencies {
   compile project(":spock-core")

@@ -9,3 +9,5 @@ dependencies {
   testRuntime libs.objenesis
   testRuntime libs.h2database
 }
+
+sonar.project.language = "grvy"

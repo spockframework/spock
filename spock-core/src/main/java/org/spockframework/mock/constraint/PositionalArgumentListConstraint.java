@@ -16,6 +16,7 @@
 
 package org.spockframework.mock.constraint;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -58,8 +59,17 @@ public class PositionalArgumentListConstraint implements IInvocationConstraint {
 
   private List<Object> expandVarArgs(List<Object> args) {
     List<Object> expanded = new ArrayList<Object>();
+    Object lastArg = CollectionUtil.getLastElement(args);
     expanded.addAll(args.subList(0, args.size() - 1));
-    expanded.addAll(Arrays.asList((Object[]) CollectionUtil.getLastElement(args)));
+    if (Object[].class.isAssignableFrom(lastArg.getClass())) {
+      expanded.addAll(Arrays.asList((Object[]) lastArg));
+    } else {
+      int length = Array.getLength(lastArg);
+      for (int i = 0; i < length; i++) {
+        Object element = Array.get(lastArg, i);
+        expanded.add(element);
+      }
+    }
     return expanded;
   }
 

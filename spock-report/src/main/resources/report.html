@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html"
+      xmlns="http://www.w3.org/1999/html">
+<head>
+  <meta charset="utf-8">
+  <title>Spock Report - Ninja Commander</title>
+  <link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
+  <link href="css/bootstrap-multiselect.css" rel="stylesheet" media="screen">
+  <link href="css/report.css" rel="stylesheet" media="screen">
+</head>
+<body class="container-fluid">
+<div class="navbar navbar-fixed-top">
+  <div class="navbar-inner">
+    <div class="container-fluid">
+      <a class="brand" href="#">spock-report</a>
+      <div class="nav">
+        <div class="btn-group" data-toggle="buttons-radio">
+          <button id="state-all" type="button" class="btn btn-default active">All</button>
+          <button id="state-passed" type="button" class="btn">Passed</button>
+          <button id="state-failed" type="button" class="btn">Failed</button>
+          <button id="state-skipped" type="button" class="btn">Skipped</button>
+        </div>
+      </div>
+      <div class="nav">
+        <button class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+          Views
+          <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu" role="menu">
+          <li><a id="view-packages" tabindex="-1" href="#">Suites</a></li>
+          <li><a id="view-specifications" tabindex="-1" href="#">Specs</a></li>
+          <li><a id="view-requirements" tabindex="-1" href="#">Features</a></li>
+          <li><a id="view-requirement-details" tabindex="-1" href="#">Features+</a></li>
+          <li><a id="view-exceptions" tabindex="-1" href="#">Exceptions</a></li>
+          <li><a id="view-full-details" tabindex="-1" href="#">Full Details</a></li>
+        </ul>
+        <select id="tags" multiple="multiple">
+          <!-- entries are generated -->
+        </select>
+        <select id="options" multiple="multiple">
+          <option value="showResults" selected>Show Results</option>
+          <option value="showNarrative" selected>Show Narrative</option>
+          <option value="expandSearches" selected>Expand Searches</option>
+        </select>
+      </div>
+      <form class="navbar-search">
+        <input type="text" id="searchTerms" placeholder="Search Terms">
+      </form>
+    </div>
+  </div>
+</div>
+<script id="template" type="text/x-handlebars-template">
+  <h1>
+    <span class="elementName">Ninja Commander</span>
+    <small class="results">
+      <span class="pieContainer" data-title="{{resultCounts counts 'spec'}}">
+        <span class="pie">{{pieCounts counts}}</span>
+      </span>
+      <br/>{{resultCounts counts "spec"}}
+      <span class="duration">{{duration duration}}</span>
+    </small>
+   </h1>
+  <ul class="packages">
+    {{#packages}}
+    <li class="specElement element package">
+      <h2 class="elementHeader">
+        <a class="elementName">{{name}}</a>
+        <small class="results">
+          <span class="pieContainer" data-title="{{resultCounts counts 'spec'}}">
+            <span class="pie">{{pieCounts counts}}</span>
+          </span>
+          <span class="duration">{{duration duration}}</span>
+        </small>
+      </h2>
+      <ul class="elementBody specs">
+        {{#specs}}
+        <li class="specElement element spec {{result}}" data-tags="{{tagsIndex tags}}">
+          <h3 class="elementHeader">
+            <a class="elementName">{{name}} {{resultIcon result}}</a>
+            {{#iterate tags}}
+            <span class="label tag">{{tagName key value}}</span>
+            {{/iterate}}
+            <small class="results">
+              <span class="pieContainer" data-title="{{resultCounts counts 'feature'}}">
+                <span class="pie">{{pieCounts counts}}</span>
+              </span>
+              <span class="duration">{{duration duration}}</span>
+            </small>
+          </h3>
+          <div class="elementBody">
+            {{#if narrative}}
+            <blockquote class="narrative">
+              <p>{{narrative narrative}}</p>
+            </blockquote>
+            {{/if}}
+            {{#if requirements}}
+            <ul class="requirements">
+              {{#requirements}}
+              <li class="specElement element requirement {{result}}" data-tags="{{tagsIndex tags}}">
+                <h4 class="elementHeader">
+                  <a class="elementName">{{name}} {{resultIcon result}}</a>
+                  {{#iterate tags}}
+                  <span class="label tag">{{tagName key value}}</span>
+                  {{/iterate}}
+                  <small class="results">
+                    <span class="duration">{{duration duration}}</span>
+                  </small>
+                </h4>
+                <div class="elementBody">
+                  {{#if narrative}}
+                  <blockquote class="narrative">
+                    <p>{{narrative narrative}}</p>
+                  </blockquote>
+                  {{/if}}
+                  <ul class="results">
+                    {{#if exceptions}}
+                    <li class="result element exceptions">
+                      <h5 class="elementHeader">
+                        <a class="elementName">Exceptions</a>
+                      </h5>
+                      {{#exceptions}}
+                    <pre class="elementBody">
+{{this}}            </pre>
+                      {{/exceptions}}
+                    </li>
+                    {{/if}}
+                    {{#if output}}
+                    <li class="result element">
+                      <h5 class="elementHeader">
+                        <a class="elementName">Output</a>
+                      </h5>
+                    <pre class="elementBody">
+{{output}}          </pre>
+                    </li>
+                    {{/if}}
+                    {{#if errorOutput}}
+                    <li class="result element">
+                      <h5 class="elementHeader">
+                        <a class="elementName">ErrorOutput</a>
+                      </h5>
+                    <pre class="elementBody">
+{{errorOutput}}     </pre>
+                    </li>
+                    {{/if}}
+                    {{#if attachments}}
+                    <li class="result element">
+                      <h5 class="elementHeader">
+                        <a class="elementName">Attachments</a>
+                      </h5>
+                      <ul class="elementBody">
+                        {{#attachments}}
+                        <li>
+                          <a href="{{this}}">{{this}}</a>
+                        </li>
+                        {{/attachments}}
+                      </ul>
+                    </li>
+                    {{/if}}
+                  </ul>
+                </div>
+              </li>
+              {{/requirements}}
+            </ul>
+            {{/if}}
+          </div>
+        </li>
+        {{/specs}}
+      </ul>
+    </li>
+    {{/packages}}
+  </ul>
+</script>
+<div id="template-placeholder"></div>
+
+<script src="js/jquery.js"></script>
+<script src="js/underscore.js"></script>
+<script src="js/bootstrap.js"></script>
+<script src="js/bootstrap-multiselect.js"></script>
+<script src="js/jquery.peity.js"></script>
+<script src="js/handlebars-1.0.rc.1.js"></script>
+<script src="js/report.js"></script>
+<script src="demoReport.jsonp"></script>
+
+</body>
+</html>

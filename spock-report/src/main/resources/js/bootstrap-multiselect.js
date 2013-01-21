@@ -45,10 +45,11 @@
 			var checkbox = $('ul li input[value="' + $(element).val() + '"]', this.container);
 				
 			checkbox.attr('checked', selected);
-			
-			if (selected) {
-				checkbox.parents('li').addClass('active');
-			}
+
+// PATCHED PN
+//			if (selected) {
+//				checkbox.parents('li').addClass('active');
+//			}
 		}, this));
 		
 		this.select.hide()
@@ -57,13 +58,14 @@
 		// Bind the change event on the dropdown elements.
 		$('ul li input[type="checkbox"]', this.container).on('change', $.proxy(function(event) {
 			var checked = $(event.target).attr('checked') || false;
-			
-			if (checked) {
-				$(event.target).parents('li').addClass('active');
-			}
-			else {
-				$(event.target).parents('li').removeClass('active');
-			}
+
+// PATCHED PN
+//			if (checked) {
+//				$(event.target).parents('li').addClass('active');
+//			}
+//			else {
+//				$(event.target).parents('li').removeClass('active');
+//			}
 			
 			var $option = $('option[value="' + $(event.target).val() + '"]', this.select);
 			$option.attr('selected', checked);

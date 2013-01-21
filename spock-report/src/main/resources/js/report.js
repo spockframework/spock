@@ -1,7 +1,13 @@
+var elementTagsStore = [{}];
+var tagVarieties = {};
+var specs = [];
+var reportModel;
+
 var currentState = "all";
 var currentTags = {};
 var currentKeywords = [];
 var expandSearches = true;
+
 var stopWords = [
   "the",
   "you",
@@ -12,15 +18,18 @@ var stopWords = [
   "may",
   "might",
   "shall",
-  "should",
+  "should"
 ];
 
 $(document).ready(function() {
+  generateReportModel();
+  configureTemplating();
+  renderTemplate();
+
   drawPieCharts();
   computeInheritedTags();
   computeKeywords();
   filterSpecElementsByTagsAndStateAndKeywords(currentTags, currentState, currentKeywords);
-  $(".stats").toggle();
 
   configureTreeElements();
   configureStateFiltering();
@@ -32,22 +41,25 @@ $(document).ready(function() {
 
 function drawPieCharts() {
   $("h1 .pie").peity("pie", {
-    colours: ['#468847', '#B94A48', '#F89406'],
-    diameter: 30
+    colours: ["#468847", "#B94A48", "#D3D3D3"],
+    diameter: 39
   });
   $("h2 .pie").peity("pie", {
-    colours: ['#468847', '#B94A48', '#F89406'],
-    diameter: 25
+    colours: ["#468847", "#B94A48", "#D3D3D3"],
+    diameter: 27
   });
   $("h3 .pie").peity("pie", {
-    colours: ['#468847', '#B94A48', '#F89406'],
-    diameter: 20
-   });
+    colours: ["#468847", "#B94A48", "#D3D3D3"],
+    diameter: 25
+  });
+  $(".pieContainer").tooltip();
 }
 
 function computeInheritedTags() {
   $(".specElement").each(function() {
-    var definedTags = parseTagsString($(this).data("tags"));
+    var tagsIndex = $(this).data("tags");
+    if (_.isUndefined(tagsIndex)) tagsIndex = 0;
+    var definedTags = elementTagsStore[tagsIndex];
     $(this).data("definedTags", definedTags);
     $(this).data("inheritedTags", _.extend({}, $(this).parent().closest(".specElement").data("inheritedTags"), definedTags));
   });
@@ -55,7 +67,7 @@ function computeInheritedTags() {
 
 function computeKeywords() {
   $(".specElement").each(function() {
-    var definedKeywords = extractKeywords($(this).find(" > .elementHeader .elementName").text());
+    var definedKeywords = extractKeywords($(this).find("> .elementHeader .elementName").text());
     $(this).data("definedKeywords", definedKeywords);
     var parentKeywords = $(this).parent().closest(".specElement").data("inherited-keywords");
     if (_.isUndefined(parentKeywords)) parentKeywords = [];
@@ -63,48 +75,34 @@ function computeKeywords() {
   })
 }
 
-function parseTagsString(tagsString) {
-  var tags = {};
-  if (_.isUndefined(tagsString)) return tags;
-
-  _.each(tagsString.split(","), function(tagString) {
-    var keyValue = tagString.split("=");
-    var key = keyValue[0];
-    var value = keyValue[1];
-    if (!_.has(tags, key)) tags[key] = [];
-    tags[key].push(value);
-  });
-
-  return tags;
-}
-
 function filterSpecElementsByTagsAndStateAndKeywords(tags, state, keywords) {
   var tagCount = _.size(tags);
   var keywordCount = _.size(keywords);
+  var specElements = $(".specElement");
 
   if (tagCount == 0 && keywordCount == 0 && state == "all") {
-    $(".specElement").show();
+    specElements.show();
     if (expandSearches) {
       expandToRequirements();
     }
     return;
   }
 
-  var elementsToShow = state == "all" ? $(".specElement") : $(".specElement." + state);
+  var elementsToShow = state == "all" ? specElements : $(".specElement." + state);
 
   if (tagCount > 0) {
     elementsToShow = elementsToShow.filter(function() {
-      return specElementMatchesSearchTags($(this), $(this).data("inheritedTags"), tags);
+      return elementTagsMatchSearchTags($(this).data("inheritedTags"), tags);
     });
   }
 
   if (keywordCount > 0) {
     elementsToShow = elementsToShow.filter(function() {
-      return specElementMatchesSearchKeywords($(this), $(this).data("inheritedKeywords"), keywords);
+      return elementKeywordsMatchSearchKeywords($(this).data("inheritedKeywords"), keywords);
     });
   }
 
-  $(".specElement").hide();
+  specElements.hide();
   elementsToShow.show();
   elementsToShow.parents(".specElement").show();
 
@@ -113,14 +111,14 @@ function filterSpecElementsByTagsAndStateAndKeywords(tags, state, keywords) {
   }
 }
 
-function specElementMatchesSearchTags(element, elementTags, searchTags) {
+function elementTagsMatchSearchTags(elementTags, searchTags) {
   return _.every(searchTags, function(allowedValues, key) {
-    var actualValues = elementTags[key];
-    return !_.isEmpty(_.intersection(actualValues, allowedValues));
+    var actualValue = elementTags[key];
+    return _.contains(allowedValues, actualValue);
   });
 }
 
-function specElementMatchesSearchKeywords(element, elementKeywords, searchKeywords) {
+function elementKeywordsMatchSearchKeywords(elementKeywords, searchKeywords) {
   return _.every(searchKeywords, function(searchKeyword) {
     return _.some(elementKeywords, function(elementKeyword) {
       return elementKeyword.length >= searchKeyword.length
@@ -134,9 +132,9 @@ function expandSearchResults(tags, state, keywords, elementsToShow) {
     var element = $(this);
     return element.hasClass(state) || _.some(tags, function(allowedValues, key) {
       var tag = _.pick(tags, key);
-      return specElementMatchesSearchTags(element, element.data("definedTags"), tag);
+      return elementTagsMatchSearchTags(element.data("definedTags"), tag);
     }) || _.some(keywords, function(keyword) {
-      return specElementMatchesSearchKeywords(element, element.data("definedKeywords"), [keyword]);
+      return elementKeywordsMatchSearchKeywords(element.data("definedKeywords"), [keyword]);
     });
   });
 
@@ -145,7 +143,7 @@ function expandSearchResults(tags, state, keywords, elementsToShow) {
 }
 
 function configureTreeElements() {
-  $(".elementHeader").click(function() {
+  $("a.elementName").click(function() {
     toggleElements($(this).closest(".element"));
   });
 }
@@ -200,23 +198,23 @@ function configureViewSelection() {
 }
 
 function configureTagFiltering() {
-  $("#tags").multiselect({
+  var select = $("#tags");
+  var index = 0
+  _.each(tagVarieties, function(values, key) {
+    _.each(values, function(value) {
+      select.append($("<option/>").attr("value", index++).data("tag", [key, value]).text(getTagName(key, value)));
+    });
+  });
+  select.multiselect({
     'text': function() {
-      return "Tags"
+      return "Tags";
     },
     onchange: function(element, checked) {
-      var tagString = element.attr("value");
-      var keyValue = tagString.split("=");
-      var key = keyValue[0];
-      var value = keyValue[1];
+      var keyValue = $(element).data("tag");
       if (checked) {
-        if (!_.has(currentTags, key)) currentTags[key] = [];
-        currentTags[key].push(value);
+        addToMultimap(currentTags, keyValue[0], keyValue[1]);
       } else {
-        currentTags[key] = _.without(currentTags[key], value);
-        if (_.isEmpty(currentTags[key])) {
-          currentTags = _.omit(currentTags, key);
-        }
+        removeFromMultimap(currentTags, keyValue[0], keyValue[1]);
       }
       filterSpecElementsByTagsAndStateAndKeywords(currentTags, currentState, currentKeywords);
     }
@@ -236,14 +234,12 @@ function configureOptions() {
       case "showResults":
         $(".results").toggle();
         break;
-      case "showStatistics":
-        $(".stats").toggle();
-        break;
       case "expandSearches":
         expandSearches = checked;
         if (checked) {
           filterSpecElementsByTagsAndStateAndKeywords(currentTags, currentState, currentKeywords);
         }
+        break;
       default:
         console.log("unknown option: " + element.id);
       }
@@ -256,6 +252,201 @@ function configureSearch() {
     currentKeywords = extractKeywords($(this).val());
     filterSpecElementsByTagsAndStateAndKeywords(currentTags, currentState, currentKeywords);
   });
+}
+
+function configureTemplating() {
+  Handlebars.registerHelper("pieCounts", function(counts) {
+    return [counts.passed, counts.failed, counts.skipped].join(",");
+  });
+  Handlebars.registerHelper("resultCounts", function(counts, name) {
+    var result = "";
+
+    if (counts.passed > 0) {
+      result += getCountedNoun(counts.passed, name) + " passed";
+    }
+    if (counts.failed > 0) {
+      if (result == "") {
+        result +=  getCountedNoun(counts.failed, name);
+      } else {
+        result += ", " + counts.failed;
+      }
+      result += " failed"
+    }
+    if (counts.skipped > 0) {
+      if (result == "") {
+        result += getCountedNoun(counts.skipped, name);
+      } else {
+        result += ", " + counts.skipped;
+      }
+      result += " skipped";
+    }
+    return result;
+  });
+  Handlebars.registerHelper("narrative", function(narrative) {
+    var lines = narrative.split("\n");
+    var escapedLines = _.map(lines, function(line) {
+      return Handlebars.Utils.escapeExpression(line);
+    });
+    return new Handlebars.SafeString(escapedLines.join("<br/>"));
+  });
+  Handlebars.registerHelper("tagsIndex", function(tags) {
+    if (_.isUndefined(tags)) return 0;
+
+    var index = _.size(elementTagsStore);
+    elementTagsStore.push(tags);
+    return index;
+  });
+  Handlebars.registerHelper("tagName", function(key, value) {
+    return getTagName(key, value);
+  });
+  Handlebars.registerHelper("resultLabel", function(result) {
+    return result == "passed" ? "label-success" : result == "failed" ? "label-important" : "label-warning";
+  });
+  Handlebars.registerHelper("resultIcon", function(result) {
+    //return result == "passed" ? "✓" : result == "failed" ? "✗" : "?";
+    //return result == "passed" ? "" : result == "failed" ? "Failed" : "Skipped";
+    return "";
+  });
+  Handlebars.registerHelper("iterate", function(object, options) {
+    return _.map(object, function(value, key) {
+      return options.fn({value: value, key: key});
+    }).join("\n");
+  });
+  Handlebars.registerHelper("duration", function(duration) {
+    var date = new Date(duration);
+
+    if (date.getUTCFullYear() > 1970 || date.getUTCMonth() > 0) {
+      return "(> 31 days, seriously?!)";
+    }
+
+    var result = "(";
+
+    var days = date.getUTCDate() - 1;
+    if (days > 0) {
+      result += days + "d:";
+    }
+
+    var hours = date.getUTCHours();
+    if (days > 0 || hours > 0) {
+      result += hours + "h:";
+    }
+
+    var minutes = date.getUTCMinutes();
+    if (days > 0 || hours > 0 || minutes > 0) {
+      result += minutes + "m:";
+    }
+
+    var seconds = date.getUTCSeconds();
+    var millis = date.getUTCMilliseconds();
+    if (days > 0 || hours > 0 || minutes > 0 || seconds > 0) {
+      result += Math.round(seconds + (millis / 1000)) + "s"
+    } else {
+      //result += date.getUTCMilliseconds() + "ms";
+      result += (seconds + millis / 1000).toFixed(2) + "s";
+    }
+
+    return result + ")";
+  });
+}
+
+function getTagName(key, value) {
+  return value === true ? key : key + "-" + value;
+}
+
+function getCountedNoun(count, noun) {
+  return count + " " + noun + (count == 1 ? "" : "s");
+}
+
+function renderTemplate() {
+  var template = Handlebars.compile($("#template").html());
+  $("#template-placeholder").html(template(reportModel));
+}
+
+function addProtocol(protocol) {
+  specs = specs.concat(protocol.specs);
+}
+
+function generateReportModel() {
+  _.each(specs, function(spec) {
+    spec.startTime = new Date(spec.start).getTime();
+    spec.endTime = new Date(spec.end).getTime();
+    spec.duration = spec.endTime - spec.startTime;
+    spec.requirementCount = _.size(spec.requirements);
+    spec.counts = getResultCounts(spec.requirements);
+    addAllToMultimap(tagVarieties, spec.tags);
+    _.each(spec.requirements, function(requirement) {
+      requirement.startTime = new Date(requirement.start).getTime();
+      requirement.endTime = new Date(requirement.end).getTime();
+      requirement.duration = requirement.endTime - requirement.startTime;
+      addAllToMultimap(tagVarieties, requirement.tags);
+    })
+  });
+  var specsByPackage = _.groupBy(specs, "package");
+  var packages = _.chain(specsByPackage)
+      .map(function(specs, pkg) {
+        return {name: pkg, duration: getTotalDuration(specs), specCount: _.size(specs),
+          requirementCount: countRequirements(specs), counts: getResultCounts(specs), specs: specs};
+      })
+      .sortBy("name")
+      .value();
+  reportModel = {duration: getTotalDuration(specs), packageCount: _.size(packages), specCount: _.size(specs),
+    requirementCount: countRequirements(specs), counts: getResultCounts(specs), packages: packages};
+}
+
+function countRequirements(specs) {
+  return _.chain(specs)
+      .map(function(spec) { return _.size(spec.requirements); })
+      .reduce(function(total, size) { return total + size; }, 0)
+      .value();
+}
+
+function addToMultimap(multimap, key, value) {
+  if (_.has(multimap, key)) {
+    var values = multimap[key];
+    if (!_.contains(values, value)) {
+      values.push(value);
+    }
+  } else {
+    multimap[key] = [value];
+  }
+}
+
+function addAllToMultimap(multimap, map) {
+  _.each(map, function(value, key) {
+    addToMultimap(multimap, key, value);
+  });
+}
+
+function removeFromMultimap(multimap, key, value) {
+  if (_.has(multimap, key)) {
+    var values = multimap[key];
+    if (_.contains(values, value)) {
+      if (_.size(values) == 1) {
+        delete multimap[key];
+      } else {
+        multimap[key] = _.without(values, value);
+      }
+    }
+  }
+}
+
+function removeAllFromMultimap(multimap, map) {
+  _.each(map, function(value, key) {
+    removeFromMultimap(multimap, key, value);
+  });
+}
+
+function getTotalDuration(specs) {
+  var sortedSpecs = _.sortBy(specs, "startTime");
+  var last = _.last(sortedSpecs);
+  return _.reduce(_.zip(_.initial(sortedSpecs), _.rest(sortedSpecs)), function(memo, pair) {
+    return memo + Math.min(pair[0].endTime, pair[1].startTime) - pair[0].startTime
+  }, last.endTime - last.startTime);
+}
+
+function getResultCounts(elements) {
+  var counts = _.defaults(_.countBy(elements, "result"), {passed: 0, failed: 0, skipped: 0});
+  return _.extend(counts, {total: counts.passed + counts.failed + counts.skipped})
 }
 
 function extractKeywords(text) {

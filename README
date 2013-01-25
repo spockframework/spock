@@ -9,7 +9,7 @@ Current development versions: 1.0-groovy-1.8-SNAPSHOT, 1.0-groovy-2.0-SNAPSHOT
 
 Modules
 -------
-spock-core: Core framework.
+spock-core: Core framework. This is the only mandatory module.
 
 spock-specs: Specifications for spock-core, implemented using Spock. Not required for using Spock.
 

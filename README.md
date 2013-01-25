@@ -1,8 +1,9 @@
 Spock Framework
 ===============
 
-Spock is a developer testing and specification framework for Java and Groovy applications. To learn more about Spock,
-visit http://spockframework.org. To run a sample spec in your browser, go to http://webconsole.spockframework.org.
+Spock is a developer testing and specification framework for Java and [Groovy](http://groovy.codehaus.org) applications.
+To learn more about Spock, visit http://spockframework.org. To run a sample spec in your browser, go to
+http://webconsole.spockframework.org.
 
 Latest Versions
 ---------------
@@ -48,15 +49,12 @@ Resources
 * Developer Forum (http://dev.forum.spockframework.org)
 * Issue Tracker (http://issues.spockframework.org)
 * Build Server (http://builds.spockframework.org)
-* Spock Blog (http://blog.spockframework.org)
-* Spock on Twitter (http://twitter.com/pniederw)
-* Groovy Homepage (http://groovy.codehaus.org)
-* Gradle Homepage (http://www.gradle.org)
 
 If you have any comments or questions, please direct them to the [user forum](http://forum.spockframework.org).
 All feedback is appreciated!
 
 Happy spec'ing!
 
-Peter Niederwieser<br/>
+Peter Niederwieser<br/ >
 Creator, Spock Framework
+[Twitter]((http://twitter.com/pniederw)|[Blog](http://blog.spockframework.org)

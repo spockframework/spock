@@ -4,8 +4,8 @@ Spock Framework README
 Spock is a developer testing and specification framework for Java and Groovy applications. To learn more about Spock,
 visit http://spockframework.org. To run your first spec right away, visit http://meet.spockframework.org.
 
-Current release versions: 0.7-groovy-1.8, 0.7-groovy-2.0 (released 2012-10-08)
-Current development versions: 1.0-groovy-1.8-SNAPSHOT, 1.0-groovy-2.0-SNAPSHOT
+Current release version    : 0.7 (0.7-groovy-1.8, 0.7-groovy-2.0) (released 2012-10-08)
+Current development version: 1.0 (1.0-groovy-1.8-SNAPSHOT, 1.0-groovy-2.0-SNAPSHOT)
 
 Modules
 -------

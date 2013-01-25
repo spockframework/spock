@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 the original author or authors.
+ * Copyright 2009, 2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,6 +34,36 @@ class ServiceInjection extends Specification {
     service1.generateString() == service2.generateQuickBrownFox()
   }
 }
+
+@SubModule(Module1)
+class ServiceInjectionWithJavaxInject extends Specification {
+  @javax.inject.Inject
+  IService1 service1
+
+  @Inject
+  IService2 service2
+
+  def "injected services"() {
+    expect:
+    service1.generateString() == service2.generateQuickBrownFox()
+  }
+}
+
+@SubModule(Module1)
+class ServiceInjectionWithServiceId extends Specification {
+  @InjectService("Service3")
+  IService3 service3
+
+  @Inject
+  IService2 service2
+
+  def "injected services"() {
+    expect:
+    service3.generateString() == service2.generateQuickBrownFox()
+  }
+}
+
+
 
 @SubModule(Module1)
 class ObjectLocatorInjection extends Specification {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 the original author or authors.
+ * Copyright 2009, 2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ import org.apache.tapestry5.ioc.annotations.SubModule;
 public class Module1 {
   public static void bind(ServiceBinder binder) {
     binder.bind(IService1.class, Service1.class);
+    binder.bind(IService3.class, Service3.class);
   }
 
   public void contributeApplicationDefaults(MappedConfiguration<String, String> configuration) {

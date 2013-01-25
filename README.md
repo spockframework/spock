@@ -55,6 +55,6 @@ All feedback is appreciated!
 
 Happy spec'ing!
 
-Peter Niederwieser<br/ >
-Creator, Spock Framework
-[Twitter]((http://twitter.com/pniederw)|[Blog](http://blog.spockframework.org)
+Peter Niederwieser<br>
+Creator, Spock Framework<br>
+[Twitter]((http://twitter.com/pniederw) | [Blog](http://blog.spockframework.org)

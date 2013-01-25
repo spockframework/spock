@@ -41,19 +41,23 @@ Resources
 * Spock Web Console (http://webconsole.spockframework.org)
 * GitHub Organization (http://github.spockframework.org)
 ^
+
 * New Reference Documentation (http://docs.spockframework.org/)
 * Old Wiki Documentation (http://wiki.spockframework.org/SpockBasics)
 * Javadoc (http://javadoc.spockframework.org/latest)
 * Groovydoc (http://groovydoc.spockframework.org/latest)
 ^
+
 * User Forum (http://forum.spockframework.org)
 * Developer Forum (http://dev.forum.spockframework.org)
 * Issue Tracker (http://issues.spockframework.org)
 * Build Server (http://builds.spockframework.org)
 ^
+
 * Spock Blog (http://blog.spockframework.org)
 * Spock on Twitter (http://twitter.com/pniederw)
 ^
+
 * Groovy Homepage (http://groovy.codehaus.org)
 * Gradle Homepage (http://www.gradle.org)
 

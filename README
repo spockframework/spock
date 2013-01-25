@@ -13,7 +13,7 @@ spock-core: Core framework. This is the only mandatory module.
 
 spock-specs: Specifications for spock-core, implemented using Spock. Not required for using Spock.
 
-spock-maven: Extended Maven support (optional).
+spock-maven: Extended Maven support. Note that this module is optional; it is *not* required for using Spock with Maven.
 
 spock-example: Self-contained example project with Ant, Gradle, and Maven build. See spock-example/README for more information.
 

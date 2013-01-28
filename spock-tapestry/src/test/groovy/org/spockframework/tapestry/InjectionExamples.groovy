@@ -22,6 +22,7 @@ import org.apache.tapestry5.ioc.annotations.*
 import spock.lang.*
 
 import org.spockframework.runtime.ConditionNotSatisfiedError
+import spock.util.EmbeddedSpecRunner
 
 @SubModule(Module1)
 class ServiceInjection extends Specification {

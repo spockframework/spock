@@ -14,6 +14,7 @@
 
 package org.spockframework.runtime;
 
+import java.io.File;
 import java.util.*;
 
 import org.junit.runner.notification.RunNotifier;
@@ -33,30 +34,39 @@ public class RunContext {
         }
       };
 
-  private final List<Class<?>> extensionClasses;
-  private final ExtensionRegistry extensionRegistry;
-
-  private final List<Object> configurations = new ArrayList<Object>();
-  private final RunnerConfiguration runnerConfiguration = new RunnerConfiguration();
+  private final String name;
+  private final File spockUserHome;
+  private final List<Class<?>> globalExtensionClasses;
+  private final GlobalExtensionRegistry globalExtensionRegistry;
 
   private final IObjectRenderer<Object> diffedObjectRenderer = createDiffedObjectRenderer();
 
-  private RunContext(@Nullable DelegatingScript configurationScript, List<Class<?>> extensionClasses) {
-    this.extensionClasses = extensionClasses;
+  private RunContext(String name, File spockUserHome,
+      @Nullable DelegatingScript configurationScript, List<Class<?>> globalExtensionClasses) {
+    this.name = name;
+    this.spockUserHome = spockUserHome;
+    this.globalExtensionClasses = globalExtensionClasses;
 
-    configurations.add(runnerConfiguration);
-
-    extensionRegistry = new ExtensionRegistry(extensionClasses, configurations);
-    extensionRegistry.loadExtensions();
+    globalExtensionRegistry = new GlobalExtensionRegistry(globalExtensionClasses, Arrays.asList(new RunnerConfiguration()));
+    globalExtensionRegistry.initializeGlobalExtensions();
 
     if (configurationScript != null) {
       ConfigurationBuilder builder = new ConfigurationBuilder();
-      builder.build(configurations, configurationScript);
+      builder.build(globalExtensionRegistry, configurationScript);
     }
   }
 
+  public String getName() {
+    return name;
+  }
+
+  // TODO: make it possible for configuration class to get at spock user home (w/o causing StackOverflowError)
+  public File getSpockUserHome() {
+    return spockUserHome;
+  }
+
   public ExtensionRunner createExtensionRunner(SpecInfo spec) {
-    return new ExtensionRunner(spec, extensionRegistry.getExtensions());
+    return new ExtensionRunner(spec, globalExtensionRegistry, globalExtensionRegistry);
   }
 
   public ParameterizedSpecRunner createSpecRunner(SpecInfo spec, RunNotifier notifier) {
@@ -66,14 +76,12 @@ public class RunContext {
 
   @Nullable
   public <T> T getConfiguration(Class<T> type) {
-    for (Object config : configurations)
-      if (config.getClass() == type) return type.cast(config);
-
-    return null;
+    return globalExtensionRegistry.getConfigurationByType(type);
   }
 
   private IStackTraceFilter createStackTraceFilter(SpecInfo spec) {
-    return runnerConfiguration.filterStackTrace ? new StackTraceFilter(spec) : new DummyStackTraceFilter();
+    RunnerConfiguration runnerConfig = globalExtensionRegistry.getConfigurationByType(RunnerConfiguration.class);
+    return runnerConfig.filterStackTrace ? new StackTraceFilter(spec) : new DummyStackTraceFilter();
   }
 
   private IObjectRenderer<Object> createDiffedObjectRenderer() {
@@ -107,13 +115,14 @@ public class RunContext {
     return service;
   }
 
-  public static <T, U extends Throwable> T withNewContext(@Nullable DelegatingScript configurationScript,
+  public static <T, U extends Throwable> T withNewContext(String name, File spockUserHome,
+      @Nullable DelegatingScript configurationScript,
       List<Class<?>> extensionClasses, boolean inheritParentExtensions,
       IThrowableFunction<RunContext, T, U> command) throws U {
     List<Class<?>> allExtensionClasses = new ArrayList<Class<?>>(extensionClasses);
     if (inheritParentExtensions) allExtensionClasses.addAll(getCurrentExtensions());
     
-    RunContext context = new RunContext(configurationScript, allExtensionClasses);
+    RunContext context = new RunContext(name, spockUserHome, configurationScript, allExtensionClasses);
     LinkedList<RunContext> contextStack = contextStacks.get();
     contextStack.addFirst(context);
     try {
@@ -136,7 +145,7 @@ public class RunContext {
   private static List<Class<?>> getCurrentExtensions() {
     RunContext context = contextStacks.get().peek();
     if (context == null) return Collections.emptyList();
-    return context.extensionClasses;
+    return context.globalExtensionClasses;
   }
   
   // This context will stay around until the thread dies.
@@ -145,8 +154,19 @@ public class RunContext {
   // That said, since most environments fork a new JVM for each test run,
   // this shouldn't be much of a problem in practice.
   private static RunContext createBottomContext() {
-    DelegatingScript script = new ConfigurationScriptLoader().loadAutoDetectedScript();
+    File spockUserHome = new File(env("spock.user.home", "SPOCK_USER_HOME", System.getProperty("user.home") + "/.spock"));
+    DelegatingScript script = new ConfigurationScriptLoader(spockUserHome).loadAutoDetectedScript();
     List<Class<?>> classes = new ExtensionClassesLoader().loadClassesFromDefaultLocation();
-    return new RunContext(script, classes);
+    return new RunContext("default", spockUserHome, script, classes);
+  }
+
+  private static String env(String systemPropertyKey, String envVariableKey, String defaultValue) {
+    String value = System.getProperty(systemPropertyKey);
+    if (value != null) return value;
+
+    value = System.getenv(envVariableKey);
+    if (value != null) return value;
+
+    return defaultValue;
   }
 }

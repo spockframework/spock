@@ -106,9 +106,13 @@ class EmbeddedSpecRunner {
   }
 
   def withNewContext(Closure block) {
+    def context = RunContext.get()
+    def newContextName = context.name + "/EmbeddedSpecRunner"
+    def newSpockUserHome = new File(context.spockUserHome, "EmbeddedSpecRunner")
     def script = configurationScript ?
-        new ConfigurationScriptLoader().loadClosureBasedScript(configurationScript) : null
-    RunContext.withNewContext(script, extensionClasses, inheritParentExtensions, block as IThrowableFunction)
+        new ConfigurationScriptLoader(newSpockUserHome).loadClosureBasedScript(configurationScript) : null
+    RunContext.withNewContext(newContextName, newSpockUserHome, script,
+        extensionClasses, inheritParentExtensions, block as IThrowableFunction)
   }
 
   private Result doRunRequest(Request request) {

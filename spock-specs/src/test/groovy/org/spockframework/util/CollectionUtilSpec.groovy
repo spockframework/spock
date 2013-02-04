@@ -17,7 +17,7 @@ package org.spockframework.util
 import spock.lang.*
 
 class CollectionUtilSpec extends Specification {
-  def "copyArray"() {
+  def "copy an array"() {
     def array = [1, 2, 3] as Object[]
 
     expect:
@@ -28,6 +28,17 @@ class CollectionUtilSpec extends Specification {
     to     << [3, 2, 0, 3]
     res    << [[1, 2, 3], [2], [], []]
     result = res as Object[]
+  }
+
+  def "convert an array of unknown type to a list"() {
+    Object array = [1, 2, 3] as byte[]
+
+    when:
+    def list = CollectionUtil.arrayToList(array)
+
+    then:
+    list == [1, 2, 3]
+    list*.getClass() == [Byte] * 3
   }
 
   def "reverse an empty list"() {

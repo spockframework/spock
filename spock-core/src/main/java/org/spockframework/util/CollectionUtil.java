@@ -14,6 +14,7 @@
 
 package org.spockframework.util;
 
+import java.lang.reflect.Array;
 import java.util.*;
 
 public abstract class CollectionUtil {
@@ -35,6 +36,15 @@ public abstract class CollectionUtil {
   public static Object[] copyArray(Object[] array, int from, int to) {
     Object[] result = new Object[to - from];
     System.arraycopy(array, from, result, 0, to - from);
+    return result;
+  }
+
+  public static List<Object> arrayToList(Object array) {
+    List<Object> result = new ArrayList<Object>();
+    int length = Array.getLength(array);
+    for (int i = 0; i < length; i++) {
+      result.add(Array.get(array, i));
+    }
     return result;
   }
 

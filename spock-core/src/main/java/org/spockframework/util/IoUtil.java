@@ -15,6 +15,9 @@
 package org.spockframework.util;
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class IoUtil {
   public static void closeQuietly(@Nullable Closeable... closeables) {
@@ -72,7 +75,7 @@ public class IoUtil {
   }
 
   public static void copyStream(InputStream in, OutputStream out) throws IOException {
-    byte[] buffer = new byte[4096];
+    byte[] buffer = new byte[8192];
 
     try {
       int read = in.read(buffer);
@@ -92,6 +95,38 @@ public class IoUtil {
     createDirectory(target.getParentFile());
     doCopyFile(source, target);
     checkSameSize(source, target);
+  }
+
+  public static List<File> listFilesRecursively(File baseDir) throws IOException {
+    if (!baseDir.exists()) return Collections.emptyList();
+
+    List<File> result = new ArrayList<File>();
+    doListFilesRecursively(baseDir, result);
+    return result;
+  }
+
+  @Nullable
+  public static String getFileExtension(File file) {
+    int index = file.getName().lastIndexOf('.');
+    return index == -1 ? null : file.getName().substring(index + 1, file.getName().length());
+  }
+
+  private static void doListFilesRecursively(File baseDir, List<File> result) throws IOException {
+    List<File> dirs = new ArrayList<File>();
+    File[] files = baseDir.listFiles();
+    if (files == null) {
+      throw new IOException("Failed to list files of directory '" + baseDir + "'");
+    }
+    for (File file: files) {
+      if (file.isFile()) {
+        result.add(file);
+      } else {
+        dirs.add(file);
+      }
+    }
+    for (File dir: dirs) {
+      doListFilesRecursively(dir, result);
+    }
   }
 
   private static void doCopyFile(File source, File target) throws IOException {

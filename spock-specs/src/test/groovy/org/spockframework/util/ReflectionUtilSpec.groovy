@@ -18,6 +18,11 @@ import spock.lang.Specification
 import spock.lang.Stepwise
 
 class ReflectionUtilSpec extends Specification {
+  def "get package name"() {
+    expect:
+    ReflectionUtil.getPackageName(ReflectionUtilSpec) == "org.spockframework.util"
+  }
+
   def "load existing class"() {
     expect:
     ReflectionUtil.loadClassIfAvailable("java.util.List") == List

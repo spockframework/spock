@@ -15,6 +15,7 @@
 package org.spockframework.runtime;
 
 import java.beans.Introspector;
+import java.lang.reflect.Constructor;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -28,10 +29,8 @@ import org.codehaus.groovy.reflection.CachedMethod;
 import org.codehaus.groovy.runtime.*;
 import org.codehaus.groovy.runtime.metaclass.MetaClassRegistryImpl;
 import org.codehaus.groovy.runtime.typehandling.DefaultTypeTransformation;
-import org.spockframework.util.ExceptionUtil;
-import org.spockframework.util.Nullable;
-import org.spockframework.util.ObjectUtil;
-import org.spockframework.util.ReflectionUtil;
+import org.codehaus.groovy.runtime.typehandling.GroovyCastException;
+import org.spockframework.util.*;
 
 /**
  * Provides convenient access to Groovy language and runtime features.
@@ -47,10 +46,28 @@ public abstract class GroovyRuntimeUtil {
     return DefaultTypeTransformation.castToBoolean(obj);
   }
 
-  // can't generify return type because DefaultTypeTransformation
-  // returns a wrapper if 'type' refers to a primitive type
-  public static Object coerce(Object obj, Class<?> type) {
-    return DefaultTypeTransformation.castToType(obj, type);
+  @SuppressWarnings("unchecked")
+  public static <T> T coerce(Object obj, Class<T> type) {
+    // can't use `type.cast()` because it will fail if `type` is a primitive type
+    return (T) DefaultTypeTransformation.castToType(obj, type);
+  }
+
+  public static <T> T coerce(Object obj, Class<? extends T>... types) {
+    if (types.length == 0) {
+      throw new IllegalArgumentException("caller must provide at least one target type");
+    }
+
+    GroovyCastException lastException = null;
+
+    for (Class<? extends T> type : types) {
+      try {
+        return GroovyRuntimeUtil.coerce(obj, type);
+      } catch (GroovyCastException e) {
+        lastException = e;
+      }
+    }
+
+    throw lastException;
   }
 
   public static boolean equals(Object obj, Object other) {
@@ -183,6 +200,19 @@ public abstract class GroovyRuntimeUtil {
     try {
       return closure.call(args);
     } catch (InvokerInvocationException e) {
+      ExceptionUtil.sneakyThrow(e.getCause());
+      return null; // never reached
+    }
+  }
+
+  /**
+   * Note: This method may throw checked exceptions although it doesn't say so.
+   */
+  public static <T extends Closure<?>> T instantiateClosure(Class<T> closureType, Object owner, Object thisObject) {
+    try {
+      Constructor<T> constructor = closureType.getConstructor(Object.class, Object.class);
+      return constructor.newInstance(owner, thisObject);
+    } catch (Exception e) {
       ExceptionUtil.sneakyThrow(e.getCause());
       return null; // never reached
     }

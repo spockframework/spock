@@ -14,12 +14,11 @@
 
 package org.spockframework.runtime
 
+import org.codehaus.groovy.runtime.typehandling.GroovyCastException
 import spock.lang.*
-import org.spockframework.runtime.GroovyRuntimeUtil
 
 class GroovyRuntimeUtilSpec extends Specification {
   def "getterMethodToPropertyName"() {
-
     expect:
     GroovyRuntimeUtil.getterMethodToPropertyName(methodName, [], returnType) == propertyName
 
@@ -42,6 +41,50 @@ class GroovyRuntimeUtilSpec extends Specification {
     "foo"             | String     | null
 
     "setFoo"          | void       | null
+  }
+
+  def "coerce"() {
+    expect:
+    GroovyRuntimeUtil.coerce("x", Character) == "x" as Character
+    GroovyRuntimeUtil.coerce([3, 1, 2], Set) == [1, 2, 3] as Set
+
+    when:
+    GroovyRuntimeUtil.coerce([3, 1, 2], Number)
+
+    then:
+    thrown(GroovyCastException)
+  }
+
+  def "coercing to primitive type has same effect as coercing to wrapper type (and doesn't blow up)"() {
+    expect:
+    GroovyRuntimeUtil.coerce("x", char) == "x"
+    GroovyRuntimeUtil.coerce("x", char) instanceof Character
+
+    GroovyRuntimeUtil.coerce(123, byte) == 123
+    GroovyRuntimeUtil.coerce(123, byte) instanceof Byte
+  }
+
+  def "coerce to first successful candidate type"() {
+    expect:
+    GroovyRuntimeUtil.coerce("123", Number, String) == "123"
+    GroovyRuntimeUtil.coerce(123, Number, String) == 123
+
+    when:
+    GroovyRuntimeUtil.coerce(123, List, Set)
+
+    then:
+    thrown(GroovyCastException)
+  }
+
+  def "instantiate closure"() {
+    def owner = [x : 1]
+    def thisObject = new Object() {
+      def y = 2
+    }
+    def cl = { z -> x + this.y + z }
+
+    expect:
+    GroovyRuntimeUtil.instantiateClosure(cl.getClass(), owner, thisObject).call(3) == 6
   }
 }
 

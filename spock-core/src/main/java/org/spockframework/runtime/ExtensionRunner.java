@@ -25,13 +25,15 @@ import org.spockframework.runtime.model.*;
  */
 public class ExtensionRunner {
   private final SpecInfo spec;
-  private final List<IGlobalExtension> globalExtensions;
+  private final IExtensionRegistry extensionRegistry;
+  private final IConfigurationRegistry configurationRegistry;
   private final Map<Class<? extends IAnnotationDrivenExtension>, IAnnotationDrivenExtension> localExtensions =
       new HashMap<Class<? extends IAnnotationDrivenExtension>, IAnnotationDrivenExtension>();
 
-  public ExtensionRunner(SpecInfo spec, List<IGlobalExtension> globalExtensions) {
+  public ExtensionRunner(SpecInfo spec, IExtensionRegistry extensionRegistry, IConfigurationRegistry configurationRegistry) {
     this.spec = spec;
-    this.globalExtensions = globalExtensions;
+    this.extensionRegistry = extensionRegistry;
+    this.configurationRegistry = configurationRegistry;
   }
 
   public void run() {
@@ -40,15 +42,17 @@ public class ExtensionRunner {
   }
 
   private void runGlobalExtensions() {
-    for (IGlobalExtension extension : globalExtensions)
+    for (IGlobalExtension extension : extensionRegistry.getGlobalExtensions()) {
       extension.visitSpec(spec);
+    }
   }
 
   public void runAnnotationDrivenExtensions() {
     runAnnotationDrivenExtensions(spec);
 
-    for (IAnnotationDrivenExtension extension : localExtensions.values())
+    for (IAnnotationDrivenExtension extension : localExtensions.values()) {
       extension.visitSpec(spec);
+    }
   }
 
   public void runAnnotationDrivenExtensions(SpecInfo spec) {
@@ -57,21 +61,24 @@ public class ExtensionRunner {
 
     doRunAnnotationDrivenExtensions(spec);
 
-    for (FieldInfo field : spec.getFields())
+    for (FieldInfo field : spec.getFields()) {
       doRunAnnotationDrivenExtensions(field);
+    }
 
     doRunAnnotationDrivenExtensions(spec.getSetupSpecMethods());
     doRunAnnotationDrivenExtensions(spec.getSetupMethods());
     doRunAnnotationDrivenExtensions(spec.getCleanupMethods());
     doRunAnnotationDrivenExtensions(spec.getCleanupSpecMethods());
 
-    for (FeatureInfo feature : spec.getFeatures())
+    for (FeatureInfo feature : spec.getFeatures()) {
       doRunAnnotationDrivenExtensions(feature.getFeatureMethod());
+    }
   }
 
   private void doRunAnnotationDrivenExtensions(Iterable<MethodInfo> nodes) {
-    for (MethodInfo node : nodes) doRunAnnotationDrivenExtensions(node);
-
+    for (MethodInfo node : nodes) {
+      doRunAnnotationDrivenExtensions(node);
+    }
   }
 
   @SuppressWarnings("unchecked")
@@ -80,30 +87,34 @@ public class ExtensionRunner {
       ExtensionAnnotation extAnn = ann.annotationType().getAnnotation(ExtensionAnnotation.class);
       if (extAnn == null) continue;
       IAnnotationDrivenExtension extension = getOrCreateExtension(extAnn.value());
-      if (node instanceof SpecInfo)
+      if (node instanceof SpecInfo) {
         extension.visitSpecAnnotation(ann, (SpecInfo) node);
-      else if (node instanceof MethodInfo) {
+      } else if (node instanceof MethodInfo) {
         MethodInfo method = (MethodInfo) node;
-        if (method.getKind() == MethodKind.FEATURE)
+        if (method.getKind() == MethodKind.FEATURE) {
           extension.visitFeatureAnnotation(ann, method.getFeature());
-        else
+        } else {
           extension.visitFixtureAnnotation(ann, method);
-      } else extension.visitFieldAnnotation(ann, (FieldInfo) node);
+        }
+      } else {
+        extension.visitFieldAnnotation(ann, (FieldInfo) node);
+      }
     }
   }
 
   private IAnnotationDrivenExtension getOrCreateExtension(Class<? extends IAnnotationDrivenExtension> clazz) {
-    IAnnotationDrivenExtension result = localExtensions.get(clazz);
-    if (result == null) {
+    IAnnotationDrivenExtension extension = localExtensions.get(clazz);
+    if (extension == null) {
       try {
-        result = clazz.newInstance();
+        extension = clazz.newInstance();
       } catch (InstantiationException e) {
         throw new ExtensionException("Failed to instantiate extension '%s'", e).withArgs(clazz);
       } catch (IllegalAccessException e) {
         throw new ExtensionException("No-arg constructor of extension '%s' is not public", e).withArgs(clazz);
       }
-      localExtensions.put(clazz, result);
+      configurationRegistry.configureExtension(extension);
+      localExtensions.put(clazz, extension);
     }
-    return result;
+    return extension;
   }
 }

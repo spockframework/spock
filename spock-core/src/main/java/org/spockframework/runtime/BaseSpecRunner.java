@@ -113,7 +113,8 @@ public class BaseSpecRunner {
       throw new InternalSpockError("Failed to instantiate spec '%s'", t).withArgs(spec.getName());
     }
 
-    getSpecificationContext(currentInstance).setSharedInstance(sharedInstance);
+    getSpecificationContext().setCurrentSpec(spec);
+    getSpecificationContext().setSharedInstance(sharedInstance);
   }
 
   private void runSharedInitializer() {
@@ -281,21 +282,24 @@ public class BaseSpecRunner {
     if (runStatus != OK) return;
 
     currentIteration = createIterationInfo(dataValues, estimatedNumIterations);
-    getSpecificationContext(currentInstance).setIterationInfo(currentIteration);
+    getSpecificationContext().setCurrentIteration(currentIteration);
+
     supervisor.beforeIteration(currentIteration);
     invoke(this, createMethodInfoForDoRunIteration());
     supervisor.afterIteration(currentIteration);
+
+    getSpecificationContext().setCurrentIteration(null);
     currentIteration = null;
   }
 
   private IterationInfo createIterationInfo(Object[] dataValues, int estimatedNumIterations) {
-    currentIteration = new IterationInfo(currentFeature, dataValues, estimatedNumIterations);
-    String iterationName = currentFeature.getIterationNameProvider().getName(currentIteration);
-    currentIteration.setName(iterationName);
+    IterationInfo result = new IterationInfo(currentFeature, dataValues, estimatedNumIterations);
+    String iterationName = currentFeature.getIterationNameProvider().getName(result);
+    result.setName(iterationName);
     Description description = Description.createTestDescription(spec.getReflection(),
         iterationName, currentFeature.getFeatureMethod().getAnnotations());
-    currentIteration.setDescription(description);
-    return currentIteration;
+    result.setDescription(description);
+    return result;
   }
 
   private MethodInfo createMethodInfoForDoRunIteration() {
@@ -428,7 +432,7 @@ public class BaseSpecRunner {
   }
 
   public void doRunCleanup(SpecInfo spec) {
-    if (spec.isBottomSpec()) {
+    if (spec.getIsBottomSpec()) {
       runIterationCleanups();
       if (action(runStatus) == ABORT) return;
     }
@@ -480,8 +484,8 @@ public class BaseSpecRunner {
     }
   }
 
-  protected SpecificationContext getSpecificationContext(Specification instance) {
-    return (SpecificationContext) instance.getSpecificationContext();
+  protected SpecificationContext getSpecificationContext() {
+    return (SpecificationContext) currentInstance.getSpecificationContext();
   }
 }
 

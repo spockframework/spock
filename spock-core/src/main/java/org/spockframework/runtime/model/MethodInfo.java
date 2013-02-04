@@ -16,7 +16,6 @@
 
 package org.spockframework.runtime.model;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,9 +29,10 @@ import org.spockframework.util.ReflectionUtil;
  * 
  * @author Peter Niederwieser
  */
-public class MethodInfo extends NodeInfo<SpecInfo, Method> implements IInterceptable {
+public class MethodInfo extends NodeInfo<SpecInfo, Method> implements IExcludable, IInterceptable {
   private MethodKind kind;
   private FeatureInfo feature;
+  private boolean excluded = false;
   private final List<IMethodInterceptor> interceptors = new ArrayList<IMethodInterceptor>();
 
   public MethodKind getKind() {
@@ -50,6 +50,14 @@ public class MethodInfo extends NodeInfo<SpecInfo, Method> implements IIntercept
 
   public void setFeature(FeatureInfo feature) {
     this.feature = feature;
+  }
+
+  public boolean isExcluded() {
+    return excluded;
+  }
+
+  public void setExcluded(boolean excluded) {
+    this.excluded = excluded;
   }
 
   public List<IMethodInterceptor> getInterceptors() {

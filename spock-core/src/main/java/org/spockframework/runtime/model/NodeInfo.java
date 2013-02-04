@@ -35,7 +35,6 @@ public abstract class NodeInfo<P extends NodeInfo, R extends AnnotatedElement> {
   private R reflection;
   private Object metadata;
   private Description description;
-  private boolean excluded = false;
 
   public String getName() {
     return name;
@@ -85,14 +84,6 @@ public abstract class NodeInfo<P extends NodeInfo, R extends AnnotatedElement> {
 
   public void setDescription(Description description) {
     this.description = description;
-  }
-
-  public boolean isExcluded() {
-    return excluded;
-  }
-
-  public void setExcluded(boolean excluded) {
-    this.excluded = excluded;
   }
 
   public Annotation[] getAnnotations() {

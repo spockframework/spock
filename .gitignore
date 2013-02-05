@@ -1,5 +1,5 @@
-# entries starting with and ending in / will be excluded from root IDEA module,
-# and entries ending in / from all IDEA modules (see ide.gradle)
+# directory names starting and ending with / will be excluded from root IDEA module
+# directory names ending with / will be excluded from all IDEA modules (see ide.gradle)
 
 # Gradle
 .gradle/

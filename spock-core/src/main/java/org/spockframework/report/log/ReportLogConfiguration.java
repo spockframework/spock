@@ -27,7 +27,7 @@ public class ReportLogConfiguration {
   public boolean enabled = false;
 
   public File logFileDir = new File(System.getProperty("spock.logFileDir", "spock/logFiles"));
-  public String logFileBaseName = System.getProperty("spock.logFileBaseName", "spock-log");
+  public String logFileName = System.getProperty("spock.logFileName", "spock-log");
   public String logFileSuffix;
 
   public String issueNamePrefix = "";

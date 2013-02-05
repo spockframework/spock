@@ -31,6 +31,10 @@ public class TeePrintStream extends PrintStream {
     this.delegates = delegates;
   }
 
+  public List<PrintStream> getDelegates() {
+    return delegates;
+  }
+
   @Override
   public void flush() {
     for (PrintStream stream : delegates) {

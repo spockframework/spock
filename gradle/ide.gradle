@@ -14,7 +14,10 @@ idea {
     configure(modules) { module ->
       def prj = module.project
       excludeDirs = prj.files(allLevelDirs) as Set
-      if (prj == prj.rootProject) excludeDirs += (prj.files(topLevelDirs) as Set)
+      if (prj == prj.rootProject) {
+        excludeDirs += allLevelDirs.collect { prj.file("buildSrc/$it") }
+        excludeDirs += (prj.files(topLevelDirs) as Set)
+      }
     }
     ipr {
       withXml { provider ->

@@ -1,12 +1,42 @@
-//apply from: script("publishMaven")
+apply plugin: "spock-base"
+apply from: script("publishMaven")
 
 displayName = "Spock Framework - Report Module"
 
-description = "Interactive, specification-style HTML reports for Spock specifications."
+description = "Interactive, business-friendly HTML reports for Spock specifications."
 
 dependencies {
   compile project(":spock-core")
   //compile "com.github.jknack:handlebars:0.7.0"
   //compile "com.fasterxml.jackson.core:jackson-core:2.1.2"
-  //compile "com.fasterxml.jackson.core:jackson-databind:2.1.2"
+  // "com.fasterxml.jackson.core:jackson-databind:2.1.2"
+}
+
+test {
+  exclude "org/spockframework/report/sample/FightOrFlightStory.class"
+  exclude "org/spockframework/report/sample/FightOrFlightSpec.class"
+}
+
+ext.spockLogFileDir = file("$buildDir/spock/logFiles")
+
+task sampleTest(type: Test) {
+  testClassesDir = test.testClassesDir
+  classpath = test.classpath
+  include "org/spockframework/report/sample/FightOrFlightStory.class"
+  include "org/spockframework/report/sample/FightOrFlightSpec.class"
+  systemProperty "spock.logFileDir", spockLogFileDir
+  testReport = false
+  ignoreFailures = true
+  doFirst {
+    delete spockLogFileDir
+  }
+}
+
+task sampleReport(type: org.spockframework.gradle.GenerateSpockReport, dependsOn: sampleTest) {
+  reportName = "Ninja Commander"
+  logFileDirectories = [spockLogFileDir]
+  outputDirectory = file("$buildDir/spock/reports/")
+  spockReportClasspath = sourceSets.main.runtimeClasspath
+  debug = false
+  local = false
 }

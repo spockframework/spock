@@ -24,9 +24,9 @@ public class ConfigurationBuilder {
   private final List<ISlotFactory> slotFactories =
       Arrays.asList(new SetterSlotFactory(), new AddSlotFactory(), new CollectionSlotFactory());
   
-  public void build(List<Object> configurations, DelegatingScript configScript) {
+  public void build(IConfigurationRegistry configurationRegistry, DelegatingScript configScript) {
     IBlueprint blueprint = new DelegatingScriptBlueprint(configScript);
-    IGestalt configGestalt = new SpockConfigurationGestalt(configurations, blueprint, slotFactories);
+    IGestalt configGestalt = new SpockConfigurationGestalt(configurationRegistry, blueprint, slotFactories);
     gestaltBuilder.build(configGestalt);
   }
 }

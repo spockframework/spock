@@ -16,6 +16,9 @@
 
 package spock.lang;
 
+import org.spockframework.runtime.extension.ExtensionAnnotation;
+import org.spockframework.runtime.extension.builtin.IssueExtension;
+
 import java.lang.annotation.*;
 
 /**
@@ -24,8 +27,9 @@ import java.lang.annotation.*;
  *
  * @author Peter Niederwieser
  */
-@Retention(RetentionPolicy.SOURCE)
+@Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE, ElementType.METHOD})
+@ExtensionAnnotation(IssueExtension.class)
 public @interface Issue {
   /**
    * The IDs of the issues that the annotated element relates to.

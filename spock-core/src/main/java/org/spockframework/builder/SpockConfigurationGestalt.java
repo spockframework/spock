@@ -17,15 +17,16 @@ package org.spockframework.builder;
 import java.util.List;
 
 import groovy.lang.*;
+import org.spockframework.runtime.IConfigurationRegistry;
 
 public class SpockConfigurationGestalt implements IGestalt {
-  private final List<Object> configurations;
+  private final IConfigurationRegistry configurationRegistry;
   private final IBlueprint blueprint;
   private final List<ISlotFactory> slotFactories;
 
-  public SpockConfigurationGestalt(List<Object> configurations, IBlueprint blueprint,
+  public SpockConfigurationGestalt(IConfigurationRegistry configurationRegistry, IBlueprint blueprint,
       List<ISlotFactory> slotFactories) {
-    this.configurations = configurations;
+    this.configurationRegistry = configurationRegistry;
     this.blueprint = blueprint;
     this.slotFactories = slotFactories;
   }
@@ -35,7 +36,7 @@ public class SpockConfigurationGestalt implements IGestalt {
   }
 
   public Object getProperty(String name) {
-    Object config = getConfiguration(name);
+    Object config = configurationRegistry.getConfigurationByName(name);
     if (config == null) throw new MissingPropertyException("configuration not found");
     return config;
   }
@@ -48,26 +49,12 @@ public class SpockConfigurationGestalt implements IGestalt {
     if (args.length != 1 || !(args[0] instanceof Closure))
       throw new MissingMethodException(name, this.getClass(), args);
 
-    Object config = getConfiguration(name);
+    Object config = configurationRegistry.getConfigurationByName(name);
     if (config == null) throw new MissingMethodException(name, this.getClass(), args);
 
     ClosureBlueprint blueprint = new ClosureBlueprint((Closure)args[0], config);
     IGestalt gestalt = new PojoGestalt(config, config.getClass(), blueprint, slotFactories);
     new Sculpturer().$form(gestalt);
     return null;
-  }
-
-  private Object getConfiguration(String name) {
-    for (Object config : configurations) {
-      String configName = getConfigurationName(config);
-      if (configName.equalsIgnoreCase(name)) return config;
-    }
-
-    return null;
-  }
-
-  private String getConfigurationName(Object config) {
-    String className = config.getClass().getSimpleName();
-    return className.substring(0, className.length() - "Configuration".length());
   }
 }

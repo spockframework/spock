@@ -10,13 +10,12 @@ import org.spockframework.util.Nullable;
 /**
  * @author Peter Niederwieser
  */
-public class FeatureInfo extends NodeInfo<SpecInfo, AnnotatedElement> implements ISkippable, IExcludable, IInterceptable {
+public class FeatureInfo extends SpecElementInfo<SpecInfo, AnnotatedElement> {
   private int declarationOrder; // per spec class
   private int executionOrder;   // per spec inheritance chain
 
   private List<String> parameterNames = new ArrayList<String>();
   private final List<BlockInfo> blocks = new ArrayList<BlockInfo>();
-  private final List<IMethodInterceptor> interceptors = new ArrayList<IMethodInterceptor>();
   private final List<IMethodInterceptor> iterationInterceptors = new ArrayList<IMethodInterceptor>();
 
   private MethodInfo featureMethod;
@@ -24,8 +23,11 @@ public class FeatureInfo extends NodeInfo<SpecInfo, AnnotatedElement> implements
   private NameProvider<IterationInfo> iterationNameProvider;
   private final List<DataProviderInfo> dataProviders = new ArrayList<DataProviderInfo>();
 
-  private boolean skipped = false;
   private boolean reportIterations = false;
+
+  public SpecInfo getSpec() {
+    return getParent();
+  }
 
   @Override
   public AnnotatedElement getReflection() {
@@ -66,14 +68,6 @@ public class FeatureInfo extends NodeInfo<SpecInfo, AnnotatedElement> implements
 
   public void addBlock(BlockInfo block) {
     blocks.add(block);
-  }
-
-  public List<IMethodInterceptor> getInterceptors() {
-    return interceptors;
-  }
-
-  public void addInterceptor(IMethodInterceptor interceptor) {
-    interceptors.add(interceptor);
   }
 
   public List<IMethodInterceptor> getIterationInterceptors() {
@@ -127,14 +121,6 @@ public class FeatureInfo extends NodeInfo<SpecInfo, AnnotatedElement> implements
   
   public void setIterationNameProvider(NameProvider<IterationInfo> provider) {
     iterationNameProvider = provider;
-  }
-
-  public boolean isSkipped() {
-    return skipped;
-  }
-
-  public void setSkipped(boolean skipped) {
-    this.skipped = skipped;
   }
 
   /**

@@ -16,13 +16,17 @@ package spock.lang;
 
 import java.lang.annotation.*;
 
+import org.spockframework.runtime.extension.ExtensionAnnotation;
+import org.spockframework.runtime.extension.builtin.SeeExtension;
+
 /**
  * One or more references to external information related to a specification or feature.
  *
  * @author Peter Niederwieser
  */
-@Retention(RetentionPolicy.SOURCE)
+@Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE, ElementType.METHOD})
+@ExtensionAnnotation(SeeExtension.class)
 public @interface See {
   /**
    * References to external information related to a specification or feature.

@@ -87,6 +87,7 @@ public class SpecInfoBuilder {
 
     SpecMetadata metadata = clazz.getAnnotation(SpecMetadata.class);
     spec.setParent(null);
+    spec.setPackage(ReflectionUtil.getPackageName(clazz));
     spec.setName(clazz.getSimpleName());
     spec.setLine(metadata.line());
     spec.setReflection(clazz);

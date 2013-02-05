@@ -15,12 +15,19 @@
 package org.spockframework.util;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
 
 public abstract class ReflectionUtil {
+  /**
+   * Determines the package name without calling {@code Class.getPackage()}
+   * (which may return null).
+   */
+  public static String getPackageName(Class<?> clazz) {
+    int lengthDiff = clazz.getName().length() - clazz.getSimpleName().length();
+    return lengthDiff == 0 ? clazz.getName() : clazz.getName().substring(0, lengthDiff - 1);
+  }
+
   public static Class<?> loadClassIfAvailable(String className) {
     try {
       return ReflectionUtil.class.getClassLoader().loadClass(className);

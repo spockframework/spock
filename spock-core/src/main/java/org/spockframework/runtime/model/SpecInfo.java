@@ -27,9 +27,8 @@ import org.spockframework.util.*;
  * 
  * @author Peter Niederwieser
  */
-public class SpecInfo extends NodeInfo<NodeInfo, Class<?>> implements IMethodNameMapper, ISkippable, IExcludable, IInterceptable {
+public class SpecInfo extends SpecElementInfo<NodeInfo, Class<?>> implements IMethodNameMapper {
   private final List<FieldInfo> fields = new ArrayList<FieldInfo>();
-  private final List<IMethodInterceptor> interceptors = new ArrayList<IMethodInterceptor>();
   private final List<IMethodInterceptor> setupInterceptors = new ArrayList<IMethodInterceptor>();
   private final List<IMethodInterceptor> cleanupInterceptors = new ArrayList<IMethodInterceptor>();
   private final List<IMethodInterceptor> setupSpecInterceptors = new ArrayList<IMethodInterceptor>();
@@ -38,14 +37,17 @@ public class SpecInfo extends NodeInfo<NodeInfo, Class<?>> implements IMethodNam
   private final List<IMethodInterceptor> initializerInterceptors = new ArrayList<IMethodInterceptor>();
 
   private final List<IRunListener> listeners = new ArrayList<IRunListener>();
+
+  private String pkg;
   private String filename;
+  private String narrative;
+
   private SpecInfo superSpec;
   private SpecInfo subSpec;
   private List<SpecInfo> specsTopToBottom;
-
   private List<SpecInfo> specsBottomToTop;
-  private MethodInfo initializerMethod;
 
+  private MethodInfo initializerMethod;
   private MethodInfo sharedInitializerMethod;
   private final List<MethodInfo> setupMethods = new ArrayList<MethodInfo>();
   private final List<MethodInfo> cleanupMethods = new ArrayList<MethodInfo>();
@@ -53,7 +55,14 @@ public class SpecInfo extends NodeInfo<NodeInfo, Class<?>> implements IMethodNam
   private final List<MethodInfo> cleanupSpecMethods = new ArrayList<MethodInfo>();
 
   private final List<FeatureInfo> features = new ArrayList<FeatureInfo>();
-  private boolean skipped = false;
+
+  public String getPackage() {
+    return pkg;
+  }
+
+  public void setPackage(String pkg) {
+    this.pkg = pkg;
+  }
 
   public String getFilename() {
     return filename;
@@ -61,6 +70,14 @@ public class SpecInfo extends NodeInfo<NodeInfo, Class<?>> implements IMethodNam
 
   public void setFilename(String filename) {
     this.filename = filename;
+  }
+
+  public String getNarrative() {
+    return narrative;
+  }
+
+  public void setNarrative(String narrative) {
+    this.narrative = narrative;
   }
 
   public SpecInfo getSuperSpec() {
@@ -86,7 +103,7 @@ public class SpecInfo extends NodeInfo<NodeInfo, Class<?>> implements IMethodNam
     return curr;
   }
 
-  public boolean isTopSpec() {
+  public boolean getIsTopSpec() {
     return superSpec == null;
   }
 
@@ -97,7 +114,7 @@ public class SpecInfo extends NodeInfo<NodeInfo, Class<?>> implements IMethodNam
     return curr;
   }
 
-  public boolean isBottomSpec() {
+  public boolean getIsBottomSpec() {
     return subSpec == null;
   }
 
@@ -229,14 +246,6 @@ public class SpecInfo extends NodeInfo<NodeInfo, Class<?>> implements IMethodNam
     features.add(feature);
   }
 
-  public List<IMethodInterceptor> getInterceptors() {
-    return interceptors;
-  }
-
-  public void addInterceptor(IMethodInterceptor interceptor) {
-    interceptors.add(interceptor);
-  }
-
   public List<IMethodInterceptor> getSetupInterceptors() {
     return setupInterceptors;
   }
@@ -291,14 +300,6 @@ public class SpecInfo extends NodeInfo<NodeInfo, Class<?>> implements IMethodNam
 
   public void addListener(IRunListener listener) {
     listeners.add(listener);
-  }
-
-  public boolean isSkipped() {
-    return skipped;
-  }
-
-  public void setSkipped(boolean skipped) {
-    this.skipped = skipped;
   }
 
   public void filterFeatures(final IFeatureFilter filter) {

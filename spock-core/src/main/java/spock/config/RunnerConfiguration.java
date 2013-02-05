@@ -32,6 +32,7 @@ package spock.config;
  * }
  * </pre>
  */
+@ConfigurationObject("runner")
 public class RunnerConfiguration {
   public IncludeExcludeCriteria include = new IncludeExcludeCriteria();
   public IncludeExcludeCriteria exclude = new IncludeExcludeCriteria();

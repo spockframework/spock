@@ -46,7 +46,7 @@ public class GroovyMockFactory implements IMockFactory {
             ". Global mocking is only possible for classes, but not for interfaces.");
       }
       GroovyRuntimeUtil.setMetaClass(type, newMetaClass);
-      specification.getSpecificationContext().getIterationInfo().addCleanup(new Runnable() {
+      specification.getSpecificationContext().getCurrentIteration().addCleanup(new Runnable() {
         public void run() {
           GroovyRuntimeUtil.setMetaClass(type, oldMetaClass);
         }

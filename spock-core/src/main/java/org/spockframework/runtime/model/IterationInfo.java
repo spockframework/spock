@@ -32,6 +32,10 @@ public class IterationInfo extends NodeInfo<FeatureInfo, AnnotatedElement> {
     this.estimatedNumIterations = estimatedNumIterations;
   }
 
+  public FeatureInfo getFeature() {
+    return getParent();
+  }
+
   @Override
   public AnnotatedElement getReflection() {
     throw new UnsupportedOperationException("getReflection");

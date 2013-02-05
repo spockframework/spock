@@ -19,31 +19,23 @@ import java.io.IOException;
 import java.net.URL;
 import java.security.AccessControlException;
 
+import groovy.lang.*;
+
 import org.codehaus.groovy.control.CompilationFailedException;
 import org.codehaus.groovy.control.CompilerConfiguration;
 
 import org.spockframework.builder.DelegatingScript;
-import org.spockframework.runtime.GroovyRuntimeUtil;
 import org.spockframework.util.Nullable;
 
 import spock.config.ConfigurationException;
 
-import groovy.lang.*;
-
 public class ConfigurationScriptLoader {
-  private static final String DEFAULT_CONFIG_PROPERTY_KEY = "spock.configuration";
-
-  private static final String DEFAULT_CLASS_PATH_LOCATION = "SpockConfig.groovy";
-
-  private static final String DEFAULT_FILE_SYSTEM_LOCATION =
-      System.getProperty("user.home") + File.separator + ".spock" + File.separator + "SpockConfig.groovy";
-
   private final String configPropertyKey;
   private final String classPathLocation;
   private final String fileSystemLocation;
 
-  public ConfigurationScriptLoader() {
-    this(DEFAULT_CONFIG_PROPERTY_KEY, DEFAULT_CLASS_PATH_LOCATION, DEFAULT_FILE_SYSTEM_LOCATION);
+  public ConfigurationScriptLoader(File spockUserHome) {
+    this("spock.configuration", "SpockConfig.groovy", spockUserHome + "/SpockConfig.groovy");
   }
 
   /**
@@ -68,7 +60,7 @@ public class ConfigurationScriptLoader {
     return null;
   }
 
-  public DelegatingScript loadClosureBasedScript(final Closure closure) {
+  public DelegatingScript loadClosureBasedScript(final Closure<?> closure) {
     return new DelegatingScript() {
       @Override
       public Object run() {

@@ -40,14 +40,8 @@ class StandardStreamCapturingInterceptor implements IMethodInterceptor {
   }
 
   private void startStandardStreamCapture() {
-    def out = System.out
-    if (!(out instanceof TeePrintStream)) {
-      System.out = new TeePrintStream([out, new StandardOutNotifier(listener)])
-    }
-    def err = System.err
-    if (!(err instanceof TeePrintStream)) {
-      System.err = new TeePrintStream([err, new StandardErrNotifier(listener)])
-    }
+    System.out = new TeePrintStream([System.out, new StandardOutNotifier(listener)])
+    System.err = new TeePrintStream([System.err, new StandardErrNotifier(listener)])
   }
 
   private void stopStandardStreamCapture() {

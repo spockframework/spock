@@ -44,7 +44,7 @@ class TeePrintStreamSpec extends Specification {
     1 * delegate2.print(arg)
 
     where:
-    arg << ["true", "c" as char, 42, 42l, 42f, 42d, "hi" as char[], "hi", new Object()]
+    arg << [true, "c" as char, 42, 42l, 42f, 42d, "hi" as char[], "hi", new Object()]
   }
 
   def "forwards println methods to all delegates"() {

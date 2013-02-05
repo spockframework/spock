@@ -14,6 +14,9 @@
 
 package org.spockframework.util;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
 /**
  * @author Peter Niederwieser
  */
@@ -23,6 +26,12 @@ public class ExceptionUtil {
    */
   public static void sneakyThrow(Throwable t) {
     ExceptionUtil.<RuntimeException>doSneakyThrow(t);
+  }
+
+  public static String printStackTrace(Throwable t) {
+    StringWriter writer = new StringWriter();
+    t.printStackTrace(new PrintWriter(writer));
+    return writer.toString();
   }
 
   @SuppressWarnings("unchecked")

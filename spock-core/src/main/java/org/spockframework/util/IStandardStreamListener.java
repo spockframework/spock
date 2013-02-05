@@ -14,26 +14,9 @@
  * limitations under the License.
  */
 
-package org.spockframework.util
+package org.spockframework.util;
 
-class GroovyUtil {
-  static void tryAll(Closure... blocks) {
-    Exception exception = null
-
-    for (block in blocks) {
-      try {
-        block()
-      } catch (Exception e) {
-        if (!exception) {
-          exception = e
-        }
-      }
-    }
-
-    if (exception) throw exception
-  }
-
-  static Map filterNullValues(Map input) {
-    input.findAll { key, value -> value != null }
-  }
+public interface IStandardStreamListener {
+  void standardOut(Object object);
+  void standardErr(Object object);
 }

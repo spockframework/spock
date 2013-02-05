@@ -4,9 +4,7 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
  *     http://www.apache.org/licenses/LICENSE-2.0
- *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,24 +14,15 @@
 
 package org.spockframework.util
 
-class GroovyUtil {
-  static void tryAll(Closure... blocks) {
-    Exception exception = null
+import spock.lang.Specification
 
-    for (block in blocks) {
-      try {
-        block()
-      } catch (Exception e) {
-        if (!exception) {
-          exception = e
-        }
-      }
-    }
+class ExceptionUtilSpec extends Specification {
+  def "print stack trace to string"() {
+    def exception = new IOException("ouch")
+    def elem = new StackTraceElement("DeclaringClass", "methodName", "filename", 42)
+    exception.stackTrace = [elem]
 
-    if (exception) throw exception
-  }
-
-  static Map filterNullValues(Map input) {
-    input.findAll { key, value -> value != null }
+    expect:
+    ExceptionUtil.printStackTrace(exception) == "java.io.IOException: ouch\n\tat DeclaringClass.methodName(filename:42)\n"
   }
 }

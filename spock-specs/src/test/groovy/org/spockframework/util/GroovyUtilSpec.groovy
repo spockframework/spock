@@ -52,4 +52,10 @@ class GroovyUtilSpec extends Specification {
     thrown(IOException)
     x == 6
   }
+
+  def "filter null values"() {
+    expect:
+    GroovyUtil.filterNullValues([foo: "foo", bar: null, baz: 1]) == [foo: "foo", baz: 1]
+    GroovyUtil.filterNullValues([foo: "foo", bar: [bar: null], baz: 1]) == [foo: "foo", bar: [bar: null], baz: 1]
+  }
 }

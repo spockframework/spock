@@ -1,0 +1,4 @@
+apply plugin: "groovy"
+
+sourceSets.main.groovy.srcDirs = ["../spock-gradle/src/main/groovy"]
+sourceSets.main.resources.srcDirs = ["../spock-gradle/src/main/resources"]

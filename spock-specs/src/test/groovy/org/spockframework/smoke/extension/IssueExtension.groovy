@@ -1,0 +1,81 @@
+/*
+ * Copyright 2013 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.spockframework.smoke.extension
+
+import org.spockframework.EmbeddedSpecification
+import org.spockframework.runtime.InvalidSpecException
+
+import spock.lang.Issue
+
+@Issue("http://my.issues.org/FOO-123")
+class IssueExtension extends EmbeddedSpecification {
+  def "spec-level @Issue annotation is converted to tag"() {
+    def tags = specificationContext.currentSpec.tags
+
+    expect:
+    tags.size() == 1
+    with(tags[0]) {
+      name == "FOO-123"
+      key == "issue"
+      value == "FOO-123"
+      url == "http://my.issues.org/FOO-123"
+    }
+  }
+
+  @Issue("http://my.issues.org/FOO-456")
+  def "feature-level @Issue annotation is converted to tag"() {
+    def tags = specificationContext.currentFeature.tags
+
+    expect:
+    tags.size() == 1
+    with(tags[0]) {
+      name == "FOO-456"
+      key == "issue"
+      value == "FOO-456"
+      url == "http://my.issues.org/FOO-456"
+    }
+  }
+
+  @Issue(["http://my.issues.org/FOO-1", "http://my.issues.org/FOO-2"])
+  def "if multiple issues are listed, only the first one is converted to a tag"() {
+    def tags = specificationContext.currentFeature.tags
+
+    expect:
+    tags.size() == 1
+    with(tags[0]) {
+      name == "FOO-1"
+      key == "issue"
+      value == "FOO-1"
+      url == "http://my.issues.org/FOO-1"
+    }
+  }
+
+  def "complains if @Issue is used on anything other than a spec or feature"() {
+    when:
+    runner.runSpecBody(
+        """
+@Issue("http://foo")
+def setup() {}
+
+def feature() {
+  expect: true
+}
+""")
+
+    then:
+    InvalidSpecException e = thrown()
+    e.message.contains("may not be applied to fixture methods")
+  }
+}

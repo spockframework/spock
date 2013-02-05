@@ -17,6 +17,6 @@
 package org.spockframework.util;
 
 public interface IStandardStreamListener {
-  void standardOut(Object object);
-  void standardErr(Object object);
+  void standardOut(String message);
+  void standardErr(String message);
 }

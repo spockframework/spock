@@ -17,12 +17,7 @@
 package org.spockframework.report.log
 
 import org.spockframework.runtime.AbstractRunListener
-import org.spockframework.runtime.model.Attachment
-import org.spockframework.runtime.model.BlockInfo
-import org.spockframework.runtime.model.ErrorInfo
-import org.spockframework.runtime.model.FeatureInfo
-import org.spockframework.runtime.model.SpecInfo
-import org.spockframework.runtime.model.Tag
+import org.spockframework.runtime.model.*
 import org.spockframework.util.ExceptionUtil
 import org.spockframework.util.GroovyUtil
 import org.spockframework.util.IStandardStreamListener
@@ -42,15 +37,15 @@ class ReportLogEmitter extends AbstractRunListener implements IStandardStreamLis
     this.listener = listener
   }
 
-  void standardOut(Object object) {
-    standardStream(object, "output")
+  void standardOut(String message) {
+    standardStream(message, "output")
   }
 
-  void standardErr(Object object) {
-    standardStream(object, "errorOutput")
+  void standardErr(String message) {
+    standardStream(message, "errorOutput")
   }
 
-  private void standardStream(Object object, String key) {
+  private void standardStream(String message, String key) {
     if (currentFeature) {
       emit([
           package: currentSpec.package,
@@ -58,7 +53,7 @@ class ReportLogEmitter extends AbstractRunListener implements IStandardStreamLis
           features: [
               [
                   name: currentFeature.name,
-                  (key): [object.toString()]
+                  (key): [message]
               ]
           ]
       ])
@@ -66,7 +61,7 @@ class ReportLogEmitter extends AbstractRunListener implements IStandardStreamLis
       emit([
           package: currentSpec.package,
           name: currentSpec.name,
-          (key): [object.toString()]
+          (key): [message]
       ])
     }
   }

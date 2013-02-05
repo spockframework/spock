@@ -3,16 +3,28 @@
       xmlns="http://www.w3.org/1999/html">
 <head>
   <meta charset="utf-8">
+
+<!--start pageTitle-->
   <title>Spock Report - Ninja Commander</title>
-  <link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
+<!--end pageTitle-->
+
+<!--start css-->
+  <link href="css/bootstrap.css" rel="stylesheet" media="screen">
   <link href="css/bootstrap-multiselect.css" rel="stylesheet" media="screen">
+  <link href="css/colorbox.css" rel="stylesheet" media="screen">
   <link href="css/report.css" rel="stylesheet" media="screen">
+<!--end css-->
+
 </head>
 <body class="container-fluid">
 <div class="navbar navbar-fixed-top">
   <div class="navbar-inner">
     <div class="container-fluid">
-      <a class="brand" href="#">spock-report</a>
+
+<!--start brand-->
+      <a class="brand" href="http://spockframework.org">spock-report</a>
+<!--end brand-->
+
       <div class="nav">
         <div class="btn-group" data-toggle="buttons-radio">
           <button id="state-all" type="button" class="btn btn-default active">All</button>
@@ -29,13 +41,13 @@
         <ul class="dropdown-menu" role="menu">
           <li><a id="view-packages" tabindex="-1" href="#">Suites</a></li>
           <li><a id="view-specifications" tabindex="-1" href="#">Specs</a></li>
-          <li><a id="view-requirements" tabindex="-1" href="#">Features</a></li>
-          <li><a id="view-requirement-details" tabindex="-1" href="#">Features+</a></li>
+          <li><a id="view-features" tabindex="-1" href="#">Features</a></li>
+          <li><a id="view-feature-details" tabindex="-1" href="#">Features+</a></li>
           <li><a id="view-exceptions" tabindex="-1" href="#">Exceptions</a></li>
           <li><a id="view-full-details" tabindex="-1" href="#">Full Details</a></li>
         </ul>
         <select id="tags" multiple="multiple">
-          <!-- entries are generated -->
+          <!-- entries are generated dynamically -->
         </select>
         <select id="options" multiple="multiple">
           <option value="showResults" selected>Show Results</option>
@@ -49,9 +61,12 @@
     </div>
   </div>
 </div>
+
 <script id="template" type="text/x-handlebars-template">
   <h1>
+<!--start reportTitle-->
     <span class="elementName">Ninja Commander</span>
+<!--end reportTitle-->
     <small class="results">
       <span class="pieContainer" data-title="{{resultCounts counts 'spec'}}">
         <span class="pie">{{pieCounts counts}}</span>
@@ -77,9 +92,13 @@
         <li class="specElement element spec {{result}}" data-tags="{{tagsIndex tags}}">
           <h3 class="elementHeader">
             <a class="elementName">{{name}} {{resultIcon result}}</a>
-            {{#iterate tags}}
-            <span class="label tag">{{tagName key value}}</span>
-            {{/iterate}}
+            {{#tags}}
+              {{#if url}}
+              <a href="{{url}}"><span class="label tag">{{name}}</span></a>
+              {{else}}
+              <span class="label tag">{{name}}</span>
+              {{/if}}
+            {{/tags}}
             <small class="results">
               <span class="pieContainer" data-title="{{resultCounts counts 'feature'}}">
                 <span class="pie">{{pieCounts counts}}</span>
@@ -93,15 +112,19 @@
               <p>{{narrative narrative}}</p>
             </blockquote>
             {{/if}}
-            {{#if requirements}}
-            <ul class="requirements">
-              {{#requirements}}
-              <li class="specElement element requirement {{result}}" data-tags="{{tagsIndex tags}}">
+            {{#if features}}
+            <ul class="features">
+              {{#features}}
+              <li class="specElement element feature {{result}}" data-tags="{{tagsIndex tags}}">
                 <h4 class="elementHeader">
                   <a class="elementName">{{name}} {{resultIcon result}}</a>
-                  {{#iterate tags}}
-                  <span class="label tag">{{tagName key value}}</span>
-                  {{/iterate}}
+                  {{#tags}}
+                    {{#if url}}
+                    <a href="{{url}}"><span class="label tag">{{name}}</span></a>
+                    {{else}}
+                    <span class="label tag">{{name}}</span>
+                    {{/if}}
+                  {{/tags}}
                   <small class="results">
                     <span class="duration">{{duration duration}}</span>
                   </small>
@@ -119,8 +142,8 @@
                         <a class="elementName">Exceptions</a>
                       </h5>
                       {{#exceptions}}
-                    <pre class="elementBody">
-{{this}}            </pre>
+                      <pre class="elementBody">
+{{this}}              </pre>
                       {{/exceptions}}
                     </li>
                     {{/if}}
@@ -129,28 +152,28 @@
                       <h5 class="elementHeader">
                         <a class="elementName">Output</a>
                       </h5>
-                    <pre class="elementBody">
-{{output}}          </pre>
+                      <pre class="elementBody">
+{{#output}}{{this}}{{/output}}</pre>
                     </li>
                     {{/if}}
                     {{#if errorOutput}}
                     <li class="result element">
                       <h5 class="elementHeader">
-                        <a class="elementName">ErrorOutput</a>
+                        <a class="elementName">Error Output</a>
                       </h5>
-                    <pre class="elementBody">
-{{errorOutput}}     </pre>
+                      <pre class="elementBody">
+{{#errorOutput}}{{this}}{{/errorOutput}}</pre>
                     </li>
                     {{/if}}
                     {{#if attachments}}
-                    <li class="result element">
+                    <li class="result element attachments">
                       <h5 class="elementHeader">
                         <a class="elementName">Attachments</a>
                       </h5>
                       <ul class="elementBody">
                         {{#attachments}}
                         <li>
-                          <a href="{{this}}">{{this}}</a>
+                          <a href="{{url}}">{{name}}</a>
                         </li>
                         {{/attachments}}
                       </ul>
@@ -159,7 +182,7 @@
                   </ul>
                 </div>
               </li>
-              {{/requirements}}
+              {{/features}}
             </ul>
             {{/if}}
           </div>
@@ -170,16 +193,23 @@
     {{/packages}}
   </ul>
 </script>
+
 <div id="template-placeholder"></div>
 
+<!--start js-->
 <script src="js/jquery.js"></script>
 <script src="js/underscore.js"></script>
 <script src="js/bootstrap.js"></script>
 <script src="js/bootstrap-multiselect.js"></script>
 <script src="js/jquery.peity.js"></script>
-<script src="js/handlebars-1.0.rc.1.js"></script>
+<script src="js/jquery.colorbox.js"></script>
+<script src="js/handlebars.js"></script>
 <script src="js/report.js"></script>
+<!--end js-->
+
+<!--start logs-->
 <script src="demoReport.jsonp"></script>
+<!--end logs-->
 
 </body>
 </html>

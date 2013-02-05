@@ -1,10 +1,10 @@
-var elementTagsStore = [{}];
-var tagVarieties = {};
+var elementTagsStore = [[]]; // list of tag lists (one entry for each element's tag list); first list item reserved for elements with empty tag list
+var distinctTags = {}; // multimap that maps from tag key to list of distinct tags w/ that key
 var specs = [];
 var reportModel;
 
 var currentState = "all";
-var currentTags = {};
+var currentTags = {}; // multimap that maps from tag keys to list of selected tag values
 var currentKeywords = [];
 var expandSearches = true;
 
@@ -37,6 +37,7 @@ $(document).ready(function() {
   configureTagFiltering();
   configureOptions();
   configureSearch();
+  configureAttachmentViewers();
 });
 
 function drawPieCharts() {
@@ -59,7 +60,10 @@ function computeInheritedTags() {
   $(".specElement").each(function() {
     var tagsIndex = $(this).data("tags");
     if (_.isUndefined(tagsIndex)) tagsIndex = 0;
-    var definedTags = elementTagsStore[tagsIndex];
+    var elementTags = elementTagsStore[tagsIndex];
+    var definedTags = _.object(_.map(elementTags, function(tag) {
+      return [tag.key, tag.value];
+    }));
     $(this).data("definedTags", definedTags);
     $(this).data("inheritedTags", _.extend({}, $(this).parent().closest(".specElement").data("inheritedTags"), definedTags));
   });
@@ -70,7 +74,7 @@ function computeKeywords() {
     var definedKeywords = extractKeywords($(this).find("> .elementHeader .elementName").text());
     $(this).data("definedKeywords", definedKeywords);
     var parentKeywords = $(this).parent().closest(".specElement").data("inherited-keywords");
-    if (_.isUndefined(parentKeywords)) parentKeywords = [];
+    if (_.isUndefined(parentKeywords) || _.isNull(parentKeywords)) parentKeywords = [];
     $(this).data("inheritedKeywords", _.union(parentKeywords, definedKeywords));
   })
 }
@@ -83,7 +87,7 @@ function filterSpecElementsByTagsAndStateAndKeywords(tags, state, keywords) {
   if (tagCount == 0 && keywordCount == 0 && state == "all") {
     specElements.show();
     if (expandSearches) {
-      expandToRequirements();
+      expandToFeatures();
     }
     return;
   }
@@ -177,11 +181,11 @@ function configureViewSelection() {
     collapseElements($(".element:not(.package)"));
   });
 
-  $("#view-requirements").click(function() {
-    expandToRequirements();
+  $("#view-features").click(function() {
+    expandToFeatures();
   });
 
-  $("#view-requirement-details").click(function() {
+  $("#view-feature-details").click(function() {
     expandElements($(".specElement"));
     collapseElements($(".element:not(.specElement)"));
   });
@@ -200,21 +204,21 @@ function configureViewSelection() {
 function configureTagFiltering() {
   var select = $("#tags");
   var index = 0
-  _.each(tagVarieties, function(values, key) {
-    _.each(values, function(value) {
-      select.append($("<option/>").attr("value", index++).data("tag", [key, value]).text(getTagName(key, value)));
+  _.each(distinctTags, function(tags, key) {
+    _.each(tags, function(tag) {
+      select.append($("<option/>").attr("value", index++).data("tag", tag).text(tag.name));
     });
   });
   select.multiselect({
-    'text': function() {
+    'buttonText': function() {
       return "Tags";
     },
-    onchange: function(element, checked) {
-      var keyValue = $(element).data("tag");
+    onChange: function(element, checked) {
+      var tag = $(element).data("tag");
       if (checked) {
-        addToMultimap(currentTags, keyValue[0], keyValue[1]);
+        addToMultimap(currentTags, tag.key, tag.value);
       } else {
-        removeFromMultimap(currentTags, keyValue[0], keyValue[1]);
+        removeFromMultimap(currentTags, tag.key, tag.value);
       }
       filterSpecElementsByTagsAndStateAndKeywords(currentTags, currentState, currentKeywords);
     }
@@ -223,10 +227,10 @@ function configureTagFiltering() {
 
 function configureOptions() {
   $("#options").multiselect({
-    'text': function() {
+    'buttonText': function() {
       return "Options"
     },
-    onchange: function(element, checked) {
+    onChange: function(element, checked) {
       switch(element.attr("value")) {
       case "showNarrative":
         $(".narrative").toggle();
@@ -254,32 +258,32 @@ function configureSearch() {
   });
 }
 
+function configureAttachmentViewers() {
+  var idx = 0;
+  $(".attachments .elementBody").each(function() {
+    $(this).find("a").colorbox({iframe: true, current: "Attachment {current} of {total}",
+      transition: "none", width: "90%", height: "90%", scalePhotos: false, rel: "atts-" + idx++});
+  });
+}
+
 function configureTemplating() {
   Handlebars.registerHelper("pieCounts", function(counts) {
     return [counts.passed, counts.failed, counts.skipped].join(",");
   });
   Handlebars.registerHelper("resultCounts", function(counts, name) {
-    var result = "";
+    var total = counts.passed + counts.failed + counts.skipped;
+    var result = getCountedNoun(total, "spec") + " total";
 
     if (counts.passed > 0) {
-      result += getCountedNoun(counts.passed, name) + " passed";
+      result += ", " + counts.passed + " passed";
     }
     if (counts.failed > 0) {
-      if (result == "") {
-        result +=  getCountedNoun(counts.failed, name);
-      } else {
-        result += ", " + counts.failed;
-      }
-      result += " failed"
+      result += ", " + counts.failed + " failed";
     }
     if (counts.skipped > 0) {
-      if (result == "") {
-        result += getCountedNoun(counts.skipped, name);
-      } else {
-        result += ", " + counts.skipped;
-      }
-      result += " skipped";
+      result += ", " + counts.skipped + " skipped";
     }
+
     return result;
   });
   Handlebars.registerHelper("narrative", function(narrative) {
@@ -295,9 +299,6 @@ function configureTemplating() {
     var index = _.size(elementTagsStore);
     elementTagsStore.push(tags);
     return index;
-  });
-  Handlebars.registerHelper("tagName", function(key, value) {
-    return getTagName(key, value);
   });
   Handlebars.registerHelper("resultLabel", function(result) {
     return result == "passed" ? "label-success" : result == "failed" ? "label-important" : "label-warning";
@@ -338,10 +339,10 @@ function configureTemplating() {
 
     var seconds = date.getUTCSeconds();
     var millis = date.getUTCMilliseconds();
-    if (days > 0 || hours > 0 || minutes > 0 || seconds > 0) {
+    if (days > 0 || hours > 0 || minutes > 0 || duration >= 5000 || duration < 10) {
       result += Math.round(seconds + (millis / 1000)) + "s"
     } else {
-      //result += date.getUTCMilliseconds() + "ms";
+      //result += millis + "ms";
       result += (seconds + millis / 1000).toFixed(2) + "s";
     }
 
@@ -362,8 +363,8 @@ function renderTemplate() {
   $("#template-placeholder").html(template(reportModel));
 }
 
-function addProtocol(protocol) {
-  specs = specs.concat(protocol.specs);
+function loadLogFile(logFile) {
+  specs = specs.concat(logFile);
 }
 
 function generateReportModel() {
@@ -371,31 +372,39 @@ function generateReportModel() {
     spec.startTime = new Date(spec.start).getTime();
     spec.endTime = new Date(spec.end).getTime();
     spec.duration = spec.endTime - spec.startTime;
-    spec.requirementCount = _.size(spec.requirements);
-    spec.counts = getResultCounts(spec.requirements);
-    addAllToMultimap(tagVarieties, spec.tags);
-    _.each(spec.requirements, function(requirement) {
-      requirement.startTime = new Date(requirement.start).getTime();
-      requirement.endTime = new Date(requirement.end).getTime();
-      requirement.duration = requirement.endTime - requirement.startTime;
-      addAllToMultimap(tagVarieties, requirement.tags);
+    spec.featureCount = _.size(spec.features);
+    spec.counts = getResultCounts(spec.features);
+    _.each(spec.tags, function(tag) {
+      if (_.has(tag, "key")) {
+        addToMultimap(distinctTags, tag.key, tag)
+      }
+    });
+    _.each(spec.features, function(feature) {
+      feature.startTime = new Date(feature.start).getTime();
+      feature.endTime = new Date(feature.end).getTime();
+      feature.duration = feature.endTime - feature.startTime;
+      _.each(feature.tags, function(tag) {
+        if (_.has(tag, "key")) {
+          addToMultimap(distinctTags, tag.key, tag)
+        }
+      });
     })
   });
   var specsByPackage = _.groupBy(specs, "package");
   var packages = _.chain(specsByPackage)
       .map(function(specs, pkg) {
         return {name: pkg, duration: getTotalDuration(specs), specCount: _.size(specs),
-          requirementCount: countRequirements(specs), counts: getResultCounts(specs), specs: specs};
+          featureCount: countFeatures(specs), counts: getResultCounts(specs), specs: specs};
       })
       .sortBy("name")
       .value();
   reportModel = {duration: getTotalDuration(specs), packageCount: _.size(packages), specCount: _.size(specs),
-    requirementCount: countRequirements(specs), counts: getResultCounts(specs), packages: packages};
+    featureCount: countFeatures(specs), counts: getResultCounts(specs), packages: packages};
 }
 
-function countRequirements(specs) {
+function countFeatures(specs) {
   return _.chain(specs)
-      .map(function(spec) { return _.size(spec.requirements); })
+      .map(function(spec) { return _.size(spec.features); })
       .reduce(function(total, size) { return total + size; }, 0)
       .value();
 }
@@ -403,7 +412,10 @@ function countRequirements(specs) {
 function addToMultimap(multimap, key, value) {
   if (_.has(multimap, key)) {
     var values = multimap[key];
-    if (!_.contains(values, value)) {
+    var contained = _.some(values, function(v){
+      return _.isEqual(v, value);
+    });
+    if (!contained) {
       values.push(value);
     }
   } else {
@@ -420,7 +432,10 @@ function addAllToMultimap(multimap, map) {
 function removeFromMultimap(multimap, key, value) {
   if (_.has(multimap, key)) {
     var values = multimap[key];
-    if (_.contains(values, value)) {
+    var contained = _.some(values, function(v){
+      return _.isEqual(v, value);
+    });
+    if (contained) {
       if (_.size(values) == 1) {
         delete multimap[key];
       } else {
@@ -439,9 +454,10 @@ function removeAllFromMultimap(multimap, map) {
 function getTotalDuration(specs) {
   var sortedSpecs = _.sortBy(specs, "startTime");
   var last = _.last(sortedSpecs);
-  return _.reduce(_.zip(_.initial(sortedSpecs), _.rest(sortedSpecs)), function(memo, pair) {
+  var result = _.reduce(_.zip(_.initial(sortedSpecs), _.rest(sortedSpecs)), function(memo, pair) {
     return memo + Math.min(pair[0].endTime, pair[1].startTime) - pair[0].startTime
   }, last.endTime - last.startTime);
+  return result;
 }
 
 function getResultCounts(elements) {
@@ -459,7 +475,7 @@ function extractKeywords(text) {
   }).value();
 }
 
-function expandToRequirements() {
+function expandToFeatures() {
   expandElements($(".package, .spec"));
   collapseElements($(".element:not(.package):not(.spec)"));
 }

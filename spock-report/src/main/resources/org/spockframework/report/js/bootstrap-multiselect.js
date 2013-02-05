@@ -24,9 +24,18 @@
 		
 		this.options = this.getOptions(options);
 		this.select = $(select);
-		this.container = $(this.options.container)
-				.append('<button style="width:' + this.options.width + '" class="dropdown-toggle ' + this.options.button + '" data-toggle="dropdown">' + this.options.text($('option:selected', select)) + ' <b class="caret"></b></button>')
+		this.container = $(this.options.buttonContainer)
+				.append('<button type="button" style="width:' + this.options.buttonWidth + '" class="dropdown-toggle ' + this.options.buttonClass + '" data-toggle="dropdown">' + this.options.buttonText($('option:selected', select)) + '</button>')
 				.append('<ul class="dropdown-menu"></ul>');
+		
+		// Set max height of dropdown menu to activate auto scrollbar.
+		if (this.options.maxHeight) {
+			$('ul', this.container).css({
+				'max-height': this.options.maxHeight + 'px',
+				'overflow-y': 'auto',
+				'overflow-x': 'hidden',
+			});
+		}
 		
 		// Manually add the multiple attribute, if its not already set.
 		if (!this.select.attr('multiple')) {
@@ -36,20 +45,20 @@
 		// Build the dropdown.
 		$('option', this.select).each($.proxy(function(index, element) {
 			if ($(element).is(':selected')) {
-				$(element).attr('selected', true);
+				$(element).attr('selected', 'selected');
+				$(element).prop('selected', 'selected');
 			}
 			
-			$('ul', this.container).append('<li><a href="#" style="padding:0;"><label style="margin:0;padding: 3px 20px 3px 20px;width:100%;height:100%;cursor:pointer;"><input style="margin-bottom:5px;" type="checkbox" value="' + $(element).val() + '" /> ' + $(element).text() + '</label</a></li>');
+			$('ul', this.container).append('<li><a href="javascript:void(0);" style="padding:0;"><label style="margin:0;padding:3px 20px 3px 20px;width:100%;height:100%;cursor:pointer;"><input style="margin-bottom:5px;" type="checkbox" value="' + $(element).val() + '" /> ' + $(element).text() + '</label</a></li>');
 			
-			var selected = $(element).attr('selected') || false;
+			var selected = $(element).prop('selected') || false;
 			var checkbox = $('ul li input[value="' + $(element).val() + '"]', this.container);
 				
-			checkbox.attr('checked', selected);
-
-// PATCHED PN
-//			if (selected) {
-//				checkbox.parents('li').addClass('active');
-//			}
+			checkbox.prop('checked', selected);
+			
+			if (selected) {
+				checkbox.parents('li').addClass('active');
+			}
 		}, this));
 		
 		this.select.hide()
@@ -57,22 +66,29 @@
 		
 		// Bind the change event on the dropdown elements.
 		$('ul li input[type="checkbox"]', this.container).on('change', $.proxy(function(event) {
-			var checked = $(event.target).attr('checked') || false;
-
-// PATCHED PN
-//			if (checked) {
-//				$(event.target).parents('li').addClass('active');
-//			}
-//			else {
-//				$(event.target).parents('li').removeClass('active');
-//			}
+			var checked = $(event.target).prop('checked') || false;
 			
-			var $option = $('option[value="' + $(event.target).val() + '"]', this.select);
-			$option.attr('selected', checked);
+			if (checked) {
+				$(event.target).parents('li').addClass('active');
+			}
+			else {
+				$(event.target).parents('li').removeClass('active');
+			}
 			
-			$('button', this.container).html(this.options.text($('option:selected', this.select)) + ' <b class="caret"></b>');
+			var option = $('option[value="' + $(event.target).val() + '"]', this.select);
 			
-			this.options.onchange($option, checked);
+			if (checked) {
+				option.attr('selected', 'selected');
+				option.prop('selected', 'selected');
+			}
+			else {
+				option.removeAttr('selected');
+			}
+			console.log(option);
+			var options = $('option:selected', this.select);
+			$('button', this.container).html(this.options.buttonText(options));
+			
+			this.options.onChange(option, checked);
 		}, this));
 		
 		$('ul li a', this.container).on('click', function(event) {
@@ -83,28 +99,34 @@
 	Multiselect.prototype = {
 		
 		defaults: {
-			button: 'btn',
-			width: 'auto',
 			// Default text function will either print 'None selected' in case no option is selected,
 			// or a list of the selected options up to a length of 3 selected options.
 			// If more than 3 options are selected, the number of selected options is printed.
-			text: function(options) {
+			buttonText: function(options) {
 				if (options.length == 0) {
-					return 'None selected';
+					return 'None selected <b class="caret"></b>';
 				}
 				else if (options.length > 3) {
-					return options.length + ' selected';
+					return options.length + ' selected <b class="caret"></b>';
 				}
 				else {
 					var selected = '';
 					options.each(function() {
 						selected += $(this).text() + ', ';
 					});
-					return selected.substr(0, selected.length -2);
+					return selected.substr(0, selected.length -2) + ' <b class="caret"></b>';
 				}
 			},
-			container: '<div class="btn-group" />',
-			onchange:function(){}
+			// Is triggered on change of the selected options.
+			onChange: function() {
+				
+			},
+			buttonClass: 'btn',
+			buttonWidth: 'auto',
+			buttonContainer: '<div class="btn-group" />',
+			// Maximum height of thet dropdown menu.
+			// If maximum height is exceeded a scrollbar will be displayed.
+			maxHeight: 400,
 		},
 
 		constructor: Multiselect,
@@ -123,14 +145,16 @@
 		refresh: function() {
 			$('option', this.select).each($.proxy(function(index, element) {
 				if ($(element).is(':selected')) {
-					$('ul li input[value="' + $(element).val() + '"]', this.container).attr('checked', true);
+					$('ul li input[value="' + $(element).val() + '"]', this.container).prop('checked', true);
+					$('ul li input[value="' + $(element).val() + '"]', this.container).parents('li').addClass('active');
 				}
 				else {
-					$('ul li input[value="' + $(element).val() + '"]', this.container).attr('checked', false);
+					$('ul li input[value="' + $(element).val() + '"]', this.container).prop('checked', false);
+					$('ul li input[value="' + $(element).val() + '"]', this.container).parents('li').removeClass('active');
 				}
 			}, this));
 			
-			$('button', this.container).html(this.options.text($('option:selected', this.select)) + ' <b class="caret"></b>');
+			$('button', this.container).html(this.options.buttonText($('option:selected', this.select)));
 		},
 		
 		// Get options by merging defaults and given options.

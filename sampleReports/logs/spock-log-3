@@ -1,0 +1,125 @@
+loadLogFile([{
+    "package": "org.spockframework.report.sample",
+    "name": "Fight or Flight (Spec Style)",
+    "tags": [
+        {
+            "name": "SPOCK-260",
+            "key": "issue",
+            "value": "260",
+            "url": "http:\/\/issues.spockframework.org\/detail?id=260"
+        }
+    ],
+    "start": 1360058259761,
+    "features": [
+        {
+            "name": "Ninja should flee when encountering a strong opponent",
+            "start": 1360058259791,
+            "output": [
+                "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore \nmagna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd \ngubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing \nelitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos \net accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor \nsit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et \ndolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd\n gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Duis autem vel eum iriure dolor in hendrerit in \n vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla faci",
+                "lisis at vero eros et accumsan et iusto \n odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi. Lorem ipsum \n dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam \n erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip \n ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel \n illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum \n zzril delenit augue duis dolore te feugait nulla facilisi. Nam liber tempor cum soluta nobis eleifend option congue \n nihil imperdiet doming id quod mazim placerat facer possim assum. Lorem ipsum dolor sit amet, consectetuer adipiscing \n elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim \n veniam, quis nostrud exerci ",
+                "tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. Duis autem \n vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla \n facilisis. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata \n sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy \n eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua."
+            ],
+            "end": 1360058259826,
+            "result": "passed"
+        },
+        {
+            "name": "Ninja should cast a tee-mac-woo spell when attacked by an invisible opponent (and hope for the best)",
+            "start": 1360058259828,
+            "end": 1360058259828,
+            "result": "skipped"
+        },
+        {
+            "name": "Ninja should engage a weak opponent",
+            "start": 1360058259832,
+            "output": [
+                "some\n",
+                "output\n"
+            ],
+            "errorOutput": [
+                "some\n",
+                "error output\n"
+            ],
+            "end": 1360058259840,
+            "result": "passed",
+            "attachments": [
+                {
+                    "name": "http:\/\/en.wikipedia.org\/wiki\/Ninja",
+                    "url": "http:\/\/en.wikipedia.org\/wiki\/Ninja"
+                },
+                {
+                    "name": "http:\/\/en.wikipedia.org\/wiki\/Sega_Ninja",
+                    "url": "http:\/\/en.wikipedia.org\/wiki\/Sega_Ninja"
+                }
+            ]
+        }
+    ],
+    "end": 1360058259843,
+    "result": "passed"
+}])
+
+loadLogFile([{
+    "package": "org.spockframework.report.sample",
+    "name": "Fight or Flight (Story Style)",
+    "narrative": "In order to increase the ninja survival rate\nAs a ninja commander\nI want my ninjas to decide whether to take on an opponent based on their skill levels",
+    "start": 1360058259859,
+    "features": [
+        {
+            "name": "Strong Opponent",
+            "narrative": "Given the ninja has a third level black-belt\nWhen When attacked by Chuck Norris\nThen Then the ninja should run for his life",
+            "tags": [
+                {
+                    "name": "SPOCK-260",
+                    "key": "issue",
+                    "value": "260",
+                    "url": "http:\/\/issues.spockframework.org\/detail?id=260"
+                }
+            ],
+            "start": 1360058259878,
+            "output": [
+                "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore \nmagna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd \ngubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing \nelitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos \net accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor \nsit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et \ndolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd\n gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Duis autem vel eum iriure dolor in hendrerit in \n vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla faci",
+                "lisis at vero eros et accumsan et iusto \n odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi. Lorem ipsum \n dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam \n erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip \n ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel \n illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum \n zzril delenit augue duis dolore te feugait nulla facilisi. Nam liber tempor cum soluta nobis eleifend option congue \n nihil imperdiet doming id quod mazim placerat facer possim assum. Lorem ipsum dolor sit amet, consectetuer adipiscing \n elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim \n veniam, quis nostrud exerci ",
+                "tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. Duis autem \n vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla \n facilisis. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata \n sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy \n eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua."
+            ],
+            "end": 1360058259880,
+            "result": "passed"
+        },
+        {
+            "name": "Invisible Opponent",
+            "narrative": "Given the ninja has a third level black-belt\nWhen attacked by an invisible creature\nThen the ninja should cast a 'tee-mac-woo' spell\nAnd hope for the best",
+            "start": 1360058259880,
+            "end": 1360058259880,
+            "result": "skipped"
+        },
+        {
+            "name": "Weak Opponent",
+            "narrative": "Given the ninja has a third level black-belt\nWhen attacked by a samurai\nThen the ninja should engage the opponent",
+            "start": 1360058259885,
+            "output": [
+                "some\n",
+                "output\n"
+            ],
+            "errorOutput": [
+                "some\n",
+                "error output\n"
+            ],
+            "exceptions": [
+                "Condition not satisfied:\n\nMath.max (1, 2) == 4\n     |          |\n     2          false\n\n\tat org.spockframework.runtime.SpockRuntime.verifyCondition(SpockRuntime.java:36)\n\tat org.spockframework.report.sample.FightOrFlightStory.$spock_feature_0_2(FightOrFlightStory.groovy:66)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.Method.invoke(Method.java:601)\n\tat org.spockframework.util.ReflectionUtil.invokeMethod(ReflectionUtil.java:145)\n\tat org.spockframework.runtime.model.MethodInfo.invoke(MethodInfo.java:84)\n\tat org.spockframework.runtime.BaseSpecRunner.invokeRaw(BaseSpecRunner.java:480)\n\tat org.spockframework.runtime.BaseSpecRunner.invoke(BaseSpecRunner.java:463)\n\tat org.spockframework.runtime.BaseSpecRunner.runFeatureMethod(BaseSpecRunner.java:405)\n\tat org.spockframework.runtime.BaseSpecRunner.doRunIteration(BaseSpecRunner.java:324)\n\tat org.spockframework.runtime.BaseSpecRunner$6.invoke(BaseSpecRunner.java:309)\n\tat org.spockframework.runtime.BaseSpecRunner.invokeRaw(BaseSpecRunner.java:480)\n\tat org.spockframework.runtime.BaseSpecRunner.invoke(BaseSpecRunner.java:463)\n\tat org.spockframework.runtime.BaseSpecRunner.runIteration(BaseSpecRunner.java:288)\n\tat org.spockframework.runtime.BaseSpecRunner.initializeAndRunIteration(BaseSpecRunner.java:278)\n\tat org.spockframework.runtime.BaseSpecRunner.runSimpleFeature(BaseSpecRunner.java:269)\n\tat org.spockframework.runtime.BaseSpecRunner.doRunFeature(BaseSpecRunner.java:263)\n\tat org.spockframework.runtime.BaseSpecRunner$5.invoke(BaseSpecRunner.java:246)\n\tat org.spockframework.runtime.BaseSpecRunner.invokeRaw(BaseSpecRunner.java:480)\n\tat org.spockframework.runtime.BaseSpecRunner.invoke(BaseSpecRunner.java:463)\n\tat org.spockframework.runtime.BaseSpecRunner.runFeature(BaseSpecRunner.java:238)\n\tat org.spockframework.runtime.BaseSpecRunner.runFeatures(BaseSpecRunner.java:188)\n\tat org.spockframework.runtime.BaseSpecRunner.doRunSpec(BaseSpecRunner.java:98)\n\tat org.spockframework.runtime.BaseSpecRunner$1.invoke(BaseSpecRunner.java:84)\n\tat org.spockframework.runtime.extension.MethodInvocation.proceed(MethodInvocation.java:88)\n\tat org.spockframework.runtime.extension.IMethodInvocation$proceed.call(Unknown Source)\n\tat org.spockframework.report.log.StandardStreamCapturingInterceptor.intercept(StandardStreamCapturingInterceptor.groovy:36)\n\tat org.spockframework.runtime.extension.MethodInvocation.proceed(MethodInvocation.java:87)\n\tat org.spockframework.runtime.BaseSpecRunner.invoke(BaseSpecRunner.java:471)\n\tat org.spockframework.runtime.BaseSpecRunner.runSpec(BaseSpecRunner.java:76)\n\tat org.spockframework.runtime.BaseSpecRunner.run(BaseSpecRunner.java:67)\n\tat org.spockframework.runtime.Sputnik.run(Sputnik.java:63)\n\tat org.gradle.api.internal.tasks.testing.junit.JUnitTestClassExecuter.runTestClass(JUnitTestClassExecuter.java:55)\n\tat org.gradle.api.internal.tasks.testing.junit.JUnitTestClassExecuter.execute(JUnitTestClassExecuter.java:42)\n\tat org.gradle.api.internal.tasks.testing.junit.JUnitTestClassProcessor.processTestClass(JUnitTestClassProcessor.java:71)\n\tat org.gradle.api.internal.tasks.testing.SuiteTestClassProcessor.processTestClass(SuiteTestClassProcessor.java:49)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.Method.invoke(Method.java:601)\n\tat org.gradle.messaging.dispatch.ReflectionDispatch.dispatch(ReflectionDispatch.java:35)\n\tat org.gradle.messaging.dispatch.ReflectionDispatch.dispatch(ReflectionDispatch.java:24)\n\tat org.gradle.messaging.dispatch.ContextClassLoaderDispatch.dispatch(ContextClassLoaderDispatch.java:32)\n\tat org.gradle.messaging.dispatch.ProxyDispatchAdapter$DispatchingInvocationHandler.invoke(ProxyDispatchAdapter.java:93)\n\tat $Proxy2.processTestClass(Unknown Source)\n\tat org.gradle.api.internal.tasks.testing.worker.TestWorker.processTestClass(TestWorker.java:103)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.Method.invoke(Method.java:601)\n\tat org.gradle.messaging.dispatch.ReflectionDispatch.dispatch(ReflectionDispatch.java:35)\n\tat org.gradle.messaging.dispatch.ReflectionDispatch.dispatch(ReflectionDispatch.java:24)\n\tat org.gradle.messaging.remote.internal.hub.MessageHub$Handler.run(MessageHub.java:355)\n\tat org.gradle.internal.concurrent.DefaultExecutorFactory$StoppableExecutorImpl$1.run(DefaultExecutorFactory.java:66)\n\tat java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1110)\n\tat java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:603)\n\tat java.lang.Thread.run(Thread.java:722)\n"
+            ],
+            "end": 1360058259907,
+            "result": "failed",
+            "attachments": [
+                {
+                    "name": "http:\/\/en.wikipedia.org\/wiki\/Ninja",
+                    "url": "http:\/\/en.wikipedia.org\/wiki\/Ninja"
+                },
+                {
+                    "name": "http:\/\/en.wikipedia.org\/wiki\/Sega_Ninja",
+                    "url": "http:\/\/en.wikipedia.org\/wiki\/Sega_Ninja"
+                }
+            ]
+        }
+    ],
+    "end": 1360058259908,
+    "result": "failed"
+}])
+

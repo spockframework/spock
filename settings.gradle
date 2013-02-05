@@ -1,11 +1,12 @@
 include "spock-core"
-include "spock-guice"
-include "spock-maven"
-include "spock-report"
 include "spock-specs"
 include "spock-spring"
+include "spock-guice"
 include "spock-tapestry"
 include "spock-unitils"
+include "spock-report"
+include "spock-maven"
+include "spock-gradle"
 
 rootProject.name = "spock"
 rootProject.children.each {

@@ -2,10 +2,45 @@ displayName = "Spock Framework - Specs for Core Module"
 
 description = "Spock specifications for the Core Module. Yes, we eat our own dog food."
 
+apply plugin: "spock-base"
+
+configurations {
+  spockReport
+}
+
 dependencies {
   testCompile project(":spock-core")
   testRuntime libs.asm
   testRuntime libs.cglib
   testRuntime libs.objenesis
   testRuntime libs.h2database
+
+  spockReport project(":spock-report")
+}
+
+ext.spockLogFileDir = file("$buildDir/spock/logFiles")
+
+test {
+  testLogging.exceptionFormat = "full"
+  testLogging.showExceptions = true
+  maxParallelForks = 1
+
+  systemProperty "spock.logFileDir", spockLogFileDir
+  ignoreFailures = true
+  testReport = false
+
+  doFirst {
+    delete spockLogFileDir
+  }
+}
+
+task spockReport(type: org.spockframework.gradle.GenerateSpockReport) {
+  dependsOn test
+  reportName = "spock-specs"
+  reportFileName = "spock-specs.html"
+  debug = true
+  local = true
+  liveLogFiles = (1..10).collect { file("$spockLogFileDir/spock-log-$it") }
+  spockReportClasspath = configurations.spockReport
+  outputDirectory = file("$buildDir/spock/reports/")
 }

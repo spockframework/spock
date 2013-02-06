@@ -5,7 +5,7 @@ displayName = "Spock Framework - Spring Module"
 description = "Spock's Spring Module makes it possible to use Spring's TestContext framework together with Spock. \
 Both Spring 2.5.x and 3.x are supported."
 
-def springVersion = "3.1.2.RELEASE"
+def springVersion = "3.2.1.RELEASE"
 
 dependencies {
   compile project(":spock-core")

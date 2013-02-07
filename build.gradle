@@ -1,5 +1,5 @@
 apply plugin: "base"
-apply plugin: "sonar"
+apply plugin: "sonar-runner"
 
 description = "Spock Framework"
 
@@ -103,7 +103,7 @@ task apidoc(dependsOn: ["javadoc", "groovydoc"])
 configureGroovydoc(groovydoc)
 
 task wrapper(type: Wrapper) {
-  gradleVersion = "1.5-20130118002330+0000"
+  gradleVersion = "1.5-20130206175356+0000"
 }
 
 File script(String name) {

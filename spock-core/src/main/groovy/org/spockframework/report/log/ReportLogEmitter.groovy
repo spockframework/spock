@@ -50,12 +50,10 @@ class ReportLogEmitter implements IRunListener, IStandardStreamsListener {
       emit([
           package: currentSpec.package,
           name: currentSpec.name,
-          features: [
-              [
-                  name: currentFeature.name,
-                  (key): [message]
-              ]
-          ]
+          features: [[
+              name: currentFeature.name,
+              (key): [message]
+          ]]
       ])
     } else {
       emit([
@@ -88,14 +86,12 @@ class ReportLogEmitter implements IRunListener, IStandardStreamsListener {
     emit([
         package: feature.spec.bottomSpec.package,
         name: feature.spec.bottomSpec.name,
-        features: [
-            [
-                name: feature.name,
-                *: renderBlocks(feature.blocks),
-                *: renderTags(feature.tags),
-                start: getCurrentTime()
-            ]
-        ]
+        features: [[
+            name: feature.name,
+            *: renderBlocks(feature.blocks),
+            *: renderTags(feature.tags),
+            start: getCurrentTime()
+        ]]
     ])
   }
 
@@ -112,14 +108,12 @@ class ReportLogEmitter implements IRunListener, IStandardStreamsListener {
     emit([
         package: feature.spec.bottomSpec.package,
         name: feature.spec.bottomSpec.name,
-        features: [
-            [
-                name: feature.name,
-                end: getCurrentTime(),
-                result: featureFailed ? "failed" : "passed",
-                *: renderAttachments(feature.attachments)
-            ]
-        ]
+        features: [[
+            name: feature.name,
+            end: getCurrentTime(),
+            result: featureFailed ? "failed" : "passed",
+            *: renderAttachments(feature.attachments)
+        ]]
     ])
 
     currentFeature = null
@@ -148,14 +142,12 @@ class ReportLogEmitter implements IRunListener, IStandardStreamsListener {
       emit([
           package: spec.package,
           name: spec.name,
-          features: [
-              [
-                  name: feature.name,
-                  exceptions: [
-                      ExceptionUtil.printStackTrace(error.exception)
-                  ]
+          features: [[
+              name: feature.name,
+              exceptions: [
+                  ExceptionUtil.printStackTrace(error.exception)
               ]
-          ]
+          ]]
       ])
     } else {
       emit([
@@ -190,16 +182,14 @@ class ReportLogEmitter implements IRunListener, IStandardStreamsListener {
     emit([
         package: feature.spec.bottomSpec.package,
         name: feature.spec.bottomSpec.name,
-        features: [
-            [
-                name: feature.name,
-                *: renderBlocks(feature.blocks),
-                *: renderTags(feature.tags),
-                start: now,
-                end: now,
-                result: "skipped"
-            ]
-        ]
+        features: [[
+            name: feature.name,
+            *: renderBlocks(feature.blocks),
+            *: renderTags(feature.tags),
+            start: now,
+            end: now,
+            result: "skipped"
+        ]]
     ])
   }
 
@@ -210,10 +200,10 @@ class ReportLogEmitter implements IRunListener, IStandardStreamsListener {
   private Object renderTags(List<Tag> tags) {
     def result = tags.collect {
       GroovyUtil.filterNullValues([
-        name: it.name,
-        key: it.key,
-        value: it.value,
-        url: it.url
+          name: it.name,
+          key: it.key,
+          value: it.value,
+          url: it.url
       ])
     }
     result ? [tags: result] : Collections.emptyMap()

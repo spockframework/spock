@@ -26,6 +26,7 @@ import groovy.lang.*;
 /**
  * @author Luke Daley
  */
+// TODO: implement as interceptor
 @NotThreadSafe // expects beforeFeature and afterFeature to be called in matching pairs
 public class RevertMetaClassRunListener extends AbstractRunListener {
   private final Map<Class<?>, MetaClass> specLevelSavedMetaClasses = new HashMap<Class<?>, MetaClass>();

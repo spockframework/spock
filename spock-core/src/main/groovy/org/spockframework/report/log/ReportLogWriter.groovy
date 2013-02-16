@@ -14,84 +14,53 @@
 
 package org.spockframework.report.log
 
-import java.util.concurrent.BlockingQueue
-import java.util.concurrent.LinkedBlockingQueue
-
-import org.spockframework.util.GroovyUtil
+import org.spockframework.util.IoUtil
 import org.spockframework.util.JsonWriter
-import org.spockframework.util.ThreadSafe
 
-@ThreadSafe // `emitted()` may be called from different threads
 class ReportLogWriter implements IReportLogListener {
-  private static final Map STOP = [:]
-
   private final File logFile
-  private final BlockingQueue<Map> logQueue = new LinkedBlockingQueue<Map>()
+
+  String prefix = ""
+  String postfix = ""
+  boolean prettyPrint = true
+  boolean liveUpdate = true
+
   private final ReportLogMerger logMerger = new ReportLogMerger()
-
-  private String prefix = ""
-  private String postfix = ""
-  private boolean prettyPrint = true
-  private boolean liveUpdate = true
-
+  private final Map<String, Map> pendingLogs = [:]
   private Writer fileWriter
   private JsonWriter jsonWriter
-  private Thread writerThread
 
-  ReportLogWriter(File logFile, String prefix, String postfix, boolean prettyPrint) {
+  ReportLogWriter(File logFile) {
     this.logFile = logFile
-    this.prefix = prefix
-    this.postfix = postfix
-    this.prettyPrint = prettyPrint
   }
 
   void start() {
-    Map<String, Map> pendingLogs = [:]
     logFile.parentFile.mkdirs()
     logFile.createNewFile()
     fileWriter = new OutputStreamWriter(new FileOutputStream(logFile), "utf-8")
     jsonWriter = new JsonWriter(fileWriter)
     jsonWriter.prettyPrint = prettyPrint
-
-    writerThread = Thread.start("spock-report-file-writer") {
-      GroovyUtil.tryAll({
-        def log = logQueue.take()
-        while(!log.is(STOP)) {
-          process(log, pendingLogs)
-          log = logQueue.take()
-        }
-      }, {
-        for (spec in pendingLogs.values()) {
-          writeLog(spec)
-        }
-      }, {
-        fileWriter.close()
-      })
-    }
   }
 
   void stop() {
-    logQueue.put(STOP)
-    writerThread.join()
+    try {
+      for (spec in pendingLogs.values()) {
+        writeLog(spec)
+      }
+    } finally {
+      IoUtil.closeQuietly(fileWriter)
+    }
   }
 
   void emitted(Map log) {
-    logQueue.put(log)
-  }
-
-  private void process(Map log, Map<String, Map> pendingLogs) {
     def key = log.package + "." + log.name
     def mergedLog = logMerger.merge(pendingLogs[key], log)
-    if (hasResult(mergedLog)) {
+    if (mergedLog.result != null) {
       writeLog(mergedLog)
       pendingLogs.remove(key)
     } else {
       pendingLogs[key] = mergedLog
     }
-  }
-
-  private boolean hasResult(Map log) {
-    log.result
   }
 
   private void writeLog(Map log) {

@@ -16,16 +16,22 @@
 
 package org.spockframework.report.log
 
-import org.spockframework.runtime.RunContext
+import org.spockframework.runtime.AsyncStandardStreamsListener
+import org.spockframework.runtime.StandardStreamsCapturer
 import org.spockframework.runtime.extension.IGlobalExtension
 import org.spockframework.runtime.model.SpecInfo
+import org.spockframework.util.GroovyUtil
 
 class ReportLogExtension implements IGlobalExtension {
-  ReportLogConfiguration reportConfig
+  private final StandardStreamsCapturer streamsCapturer = new StandardStreamsCapturer()
+  private AsyncStandardStreamsListener logWriterListener;
+  private AsyncStandardStreamsListener logClientListener;
 
-  private boolean started
-
+  private boolean started = false
   private ReportLogWriter logWriter
+  private ReportServerClient logClient
+
+  volatile ReportLogConfiguration reportConfig
 
   void visitSpec(SpecInfo spec) {
     if (!reportConfig.enabled) return
@@ -33,32 +39,49 @@ class ReportLogExtension implements IGlobalExtension {
     if (!started) {
       start()
       started = true
+      Runtime.runtime.addShutdownHook(new Thread({ stop() }))
     }
 
-    def eventEmitter = new ReportLogEmitter(logWriter)
-    // reclaiming and releasing standard out/err capture before/after each spec is the safest choice
-    spec.addInterceptor(new StandardStreamCapturingInterceptor(eventEmitter))
-    spec.addListener(eventEmitter)
+    if (logWriterListener != null) {
+      spec.addListener(logWriterListener)
+      // make sure capturer is still installed
+      streamsCapturer.start()
+    }
+    if (logClientListener != null) {
+      spec.addListener(logClientListener)
+      // make sure capturer is still installed
+      streamsCapturer.start()
+    }
   }
 
   void start() {
-    logWriter = new ReportLogWriter(getLogFile(), "loadLogFile(", ")\n\n", true)
-    logWriter.start()
-    Runtime.runtime.addShutdownHook(new Thread({ stop() }))
+    def logFile = reportConfig.logFile
+    if (logFile != null) {
+      logWriter = new ReportLogWriter(logFile)
+      logWriter.prefix = "loadLogFile("
+      logWriter.postfix = ")\n\n"
+      logWriter.start()
+      logWriterListener = createRunListener("report-log-writer", logWriter)
+      logWriterListener.start()
+    }
+
+    if (reportConfig.reportServerAddress != null) {
+      logClient = new ReportServerClient(reportConfig.reportServerAddress, reportConfig.reportServerPort)
+      logClient.start()
+      logClientListener = createRunListener("report-log-client", logClient)
+      logClientListener.start()
+    }
   }
 
   void stop() {
-    logWriter.stop()
+    GroovyUtil.closeQuietly("stop", streamsCapturer, logWriterListener, logWriter, logClientListener, logClient)
   }
 
-  private File getLogFile() {
-    def logFileName = reportConfig.logFileName
-    def logFileSuffix = reportConfig.logFileSuffix
-    if (logFileSuffix) logFileName += "-$logFileSuffix"
-    def logFileDir = reportConfig.logFileDir
-    if (!logFileDir.absolute) {
-      logFileDir = new File(RunContext.get().getSpockUserHome(), logFileDir.path)
-    }
-    new File(logFileDir, logFileName)
+  private createRunListener(String name, IReportLogListener logListener) {
+    def emitter = new ReportLogEmitter()
+    emitter.addListener(logListener)
+    def listener = new AsyncStandardStreamsListener(name, emitter, emitter)
+    streamsCapturer.addStandardStreamsListener(listener)
+    listener
   }
 }

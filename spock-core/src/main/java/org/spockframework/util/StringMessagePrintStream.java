@@ -18,19 +18,20 @@ package org.spockframework.util;
 
 import java.io.*;
 
-public abstract class StandardStreamNotifier extends PrintStream {
-  protected final IStandardStreamListener listener;
-
-  public StandardStreamNotifier(IStandardStreamListener listener) {
+/**
+ * Delegates all PrintStream invocations to {@link #printed(String)}.
+ * Aims to keep the original invocation granularity.
+ */
+public abstract class StringMessagePrintStream extends PrintStream {
+  public StringMessagePrintStream() {
     super(new ByteArrayOutputStream(0));
-    this.listener = listener;
   }
 
   @Override
   public void write(int b) {
     InputStreamReader reader = new InputStreamReader(new ByteArrayInputStream(new byte[] {(byte) b}));
     try {
-      notify(String.valueOf((char) reader.read()));
+      printed(String.valueOf((char) reader.read()));
     } catch (IOException e) {
       throw new InternalSpockError(e);
     }
@@ -44,7 +45,7 @@ public abstract class StandardStreamNotifier extends PrintStream {
     try {
       char[] target = new char[len];
       int actualLen = reader.read(target, 0, len);
-      notify(String.valueOf(target, 0, actualLen));
+      printed(String.valueOf(target, 0, actualLen));
     } catch (IOException e) {
       throw new InternalSpockError(e);
     }
@@ -57,47 +58,47 @@ public abstract class StandardStreamNotifier extends PrintStream {
 
   @Override
   public void print(boolean b) {
-    notify(String.valueOf(b));
+    printed(String.valueOf(b));
   }
 
   @Override
   public void print(char c) {
-    notify(String.valueOf(c));
+    printed(String.valueOf(c));
   }
 
   @Override
   public void print(int i) {
-    notify(String.valueOf(i));
+    printed(String.valueOf(i));
   }
 
   @Override
   public void print(long l) {
-    notify(String.valueOf(l));
+    printed(String.valueOf(l));
   }
 
   @Override
   public void print(float f) {
-    notify(String.valueOf(f));
+    printed(String.valueOf(f));
   }
 
   @Override
   public void print(double d) {
-    notify(String.valueOf(d));
+    printed(String.valueOf(d));
   }
 
   @Override
   public void print(char[] s) {
-    notify(String.valueOf(s));
+    printed(String.valueOf(s));
   }
 
   @Override
   public void print(String s) {
-    notify(String.valueOf(s));
+    printed(String.valueOf(s));
   }
 
   @Override
   public void print(Object obj) {
-    notify(String.valueOf(obj));
+    printed(String.valueOf(obj));
   }
 
   // we want a single notification for println() methods,
@@ -105,64 +106,64 @@ public abstract class StandardStreamNotifier extends PrintStream {
 
   @Override
   public void println() {
-    notify("\n");
+    printed("\n");
   }
 
   @Override
   public void println(boolean x) {
-    notify(String.valueOf(x) + "\n");
+    printed(String.valueOf(x) + "\n");
   }
 
   @Override
   public void println(char x) {
-    notify(String.valueOf(x) + "\n");
+    printed(String.valueOf(x) + "\n");
   }
 
   @Override
   public void println(int x) {
-    notify(String.valueOf(x) + "\n");
+    printed(String.valueOf(x) + "\n");
   }
 
   @Override
   public void println(long x) {
-    notify(String.valueOf(x) + "\n");
+    printed(String.valueOf(x) + "\n");
   }
 
   @Override
   public void println(float x) {
-    notify(String.valueOf(x) + "\n");
+    printed(String.valueOf(x) + "\n");
   }
 
   @Override
   public void println(double x) {
-    notify(String.valueOf(x) + "\n");
+    printed(String.valueOf(x) + "\n");
   }
 
   @Override
   public void println(char[] x) {
-    notify(String.valueOf(x) + "\n");
+    printed(String.valueOf(x) + "\n");
   }
 
   @Override
   public void println(String x) {
-    notify(String.valueOf(x) + "\n");
+    printed(String.valueOf(x) + "\n");
   }
 
   @Override
   public void println(Object x) {
-    notify(String.valueOf(x) + "\n");
+    printed(String.valueOf(x) + "\n");
   }
 
   @Override
   public PrintStream append(CharSequence csq) {
-    notify(String.valueOf(csq));
+    printed(String.valueOf(csq));
     return this;
   }
 
   @Override
   public PrintStream append(CharSequence csq, int start, int end) {
     CharSequence seq = csq == null ? "null" : csq;
-    notify(seq.subSequence(start, end).toString());
+    printed(seq.subSequence(start, end).toString());
     return this;
   }
 
@@ -173,7 +174,7 @@ public abstract class StandardStreamNotifier extends PrintStream {
   }
 
   // we are relying on printf() and format() methods to eventually delegate to append()
-  // TODO: printf() and format() methods should produce a single notify() event
+  // TODO: printf() and format() methods should produce a single printed() event
 
-  protected abstract void notify(String string);
+  protected abstract void printed(String message);
 }

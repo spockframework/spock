@@ -18,13 +18,13 @@ package org.spockframework.util
 
 import spock.lang.Specification
 
-class StandardStreamNotifierSpec extends Specification {
+class StringMessagePrintStreamSpec extends Specification {
   def log
 
-  def notifier = new StandardStreamNotifier(null) {
+  def notifier = new StringMessagePrintStream() {
     @Override
-    protected void notify(String string) {
-      log = string
+    protected void printed(String message) {
+      log = message
     }
   }
 
@@ -104,10 +104,10 @@ class StandardStreamNotifierSpec extends Specification {
 
   def log2 = []
 
-  def notifier2 = new StandardStreamNotifier(null) {
+  def notifier2 = new StringMessagePrintStream() {
     @Override
-    protected void notify(String string) {
-      log2 << string
+    protected void printed(String message) {
+      log2 << message
     }
   }
 

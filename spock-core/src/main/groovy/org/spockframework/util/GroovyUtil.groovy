@@ -33,6 +33,14 @@ class GroovyUtil {
     if (exception) throw exception
   }
 
+  static void closeQuietly(String closeMethod = "close", Object... objects) {
+    for (obj in objects) {
+      try {
+        obj?."$closeMethod"()
+      } catch (Exception ignored) {}
+    }
+  }
+
   static Map filterNullValues(Map input) {
     input.findAll { key, value -> value != null }
   }

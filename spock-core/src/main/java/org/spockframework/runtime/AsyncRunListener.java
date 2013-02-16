@@ -26,33 +26,29 @@ public class AsyncRunListener implements IRunListener {
     }
   };
 
-  private final BlockingQueue<Runnable> events = new LinkedBlockingQueue<Runnable>();
-
-  private String threadName;
   private final IRunListener delegate;
-  
+  private final Thread workerThread;
+  private final BlockingQueue<Runnable> events = new LinkedBlockingQueue<Runnable>();
   private volatile boolean stopped = false;
-  
-  private final Thread workerThread = new Thread(threadName) {
-    @Override
-    public void run() {
-      while(true) {
-        Runnable event = events.poll();
-        if (event == STOP) return;
-        try {
-          event.run();
-        } catch (Throwable t) {
-          stopped = true;
-          t.printStackTrace();
-          return;
-        }
-      }
-    }
-  };
 
   public AsyncRunListener(String threadName, IRunListener delegate) {
-    this.threadName = threadName;
     this.delegate = delegate;
+    this.workerThread = new Thread(threadName) {
+      @Override
+      public void run() {
+        while(true) {
+          try {
+            Runnable event = events.take();
+            if (event == STOP) return;
+            event.run();
+          } catch (Throwable t) {
+            stopped = true;
+            t.printStackTrace();
+            return;
+          }
+        }
+      }
+    };
   }
 
   public void start() {
@@ -73,8 +69,6 @@ public class AsyncRunListener implements IRunListener {
   }
 
   public void beforeFeature(final FeatureInfo feature) {
-    if (stopped) return;
-    
     addEvent(new Runnable() {
       public void run() {
         delegate.beforeFeature(feature);

@@ -16,16 +16,16 @@
 
 package org.spockframework.report.log
 
-import org.spockframework.runtime.AbstractRunListener
+import org.spockframework.runtime.IRunListener
 import org.spockframework.runtime.model.*
+import org.spockframework.runtime.IStandardStreamsListener
 import org.spockframework.util.ExceptionUtil
 import org.spockframework.util.GroovyUtil
-import org.spockframework.util.IStandardStreamListener
 
 // NOTE: assumes single-threaded execution
 // TODO: challenge assumptions that tags are added before execution, and attachments afterwards
-class ReportLogEmitter extends AbstractRunListener implements IStandardStreamListener {
-  private final IReportLogListener listener
+class ReportLogEmitter implements IRunListener, IStandardStreamsListener {
+  private final List<IReportLogListener> listeners = []
 
   private SpecInfo currentSpec
   private FeatureInfo currentFeature
@@ -33,8 +33,8 @@ class ReportLogEmitter extends AbstractRunListener implements IStandardStreamLis
   private boolean specFailed
   private boolean featureFailed
 
-  ReportLogEmitter(IReportLogListener listener) {
-    this.listener = listener
+  void addListener(IReportLogListener listener) {
+    listeners << listener
   }
 
   void standardOut(String message) {
@@ -97,6 +97,14 @@ class ReportLogEmitter extends AbstractRunListener implements IStandardStreamLis
             ]
         ]
     ])
+  }
+
+  void beforeIteration(IterationInfo iteration) {
+    //TODO
+  }
+
+  void afterIteration(IterationInfo iteration) {
+    //TODO
   }
 
   @Override
@@ -237,6 +245,8 @@ class ReportLogEmitter extends AbstractRunListener implements IStandardStreamLis
   }
 
   private void emit(Map log) {
-    listener.emitted(log)
+    for (listener in listeners) {
+      listener.emitted(log)
+    }
   }
 }

@@ -30,7 +30,7 @@ class ReportLogEmitterSpec extends Specification {
       this.log = log
     }
   }
-  def emitter = new ReportLogEmitter(listener) {
+  def emitter = new ReportLogEmitter() {
     @Override
     protected long getCurrentTime() {
       123456789
@@ -38,6 +38,8 @@ class ReportLogEmitterSpec extends Specification {
   }
 
   def setup() {
+    emitter.addListener(listener)
+
     spec.with {
       setPackage("foo.bar")
       name = "SampleSpec"

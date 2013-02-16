@@ -25,7 +25,7 @@ public class StandardStreamsCapturer {
   private final Set<IStandardStreamsListener> standardStreamsListeners =
     new CopyOnWriteArraySet<IStandardStreamsListener>();
 
-  public void install() {
+  public void start() {
     PrintStream out = System.out;
     if (!(out instanceof MyTeePrintStream)) {
       StringMessagePrintStream stream = new StringMessagePrintStream() {
@@ -53,7 +53,7 @@ public class StandardStreamsCapturer {
     }
   }
 
-  public void uninstall() {
+  public void stop() {
     PrintStream out = System.out;
     if (out instanceof MyTeePrintStream) {
       System.setOut(((MyTeePrintStream) out).getDelegates().get(0));

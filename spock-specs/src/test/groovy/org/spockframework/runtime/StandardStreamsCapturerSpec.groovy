@@ -24,11 +24,11 @@ class StandardStreamsCapturerSpec extends Specification {
 
   def setup() {
     capturer.addStandardStreamsListener(listener)
-    capturer.install()
+    capturer.start()
   }
 
   def cleanup() {
-    capturer.uninstall()
+    capturer.stop()
   }
 
   def "captures standard out/err while installed"() {
@@ -44,7 +44,7 @@ class StandardStreamsCapturerSpec extends Specification {
     0 * _
 
     when:
-    capturer.uninstall()
+    capturer.stop()
     println("another message")
     System.err.println("another error message")
 
@@ -57,7 +57,7 @@ class StandardStreamsCapturerSpec extends Specification {
     capturer.addStandardStreamsListener(listener2)
 
     when:
-    capturer.install()
+    capturer.start()
     println("some message")
 
     then:

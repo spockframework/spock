@@ -20,22 +20,50 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
 
+import org.spockframework.util.IoUtil;
+import org.spockframework.util.Nullable;
+
 import spock.config.ConfigurationObject;
 
 @ConfigurationObject("report")
 public class ReportLogConfiguration {
   public boolean enabled = false;
 
-  public File logFileDir = new File(System.getProperty("spock.logFileDir", "spock/logFiles"));
-  public String logFileName = System.getProperty("spock.logFileName", "spock-log");
-  public String logFileSuffix;
+  public String logFileDir = System.getProperty("spock.logFileDir");
+  public String logFileName = System.getProperty("spock.logFileName");
+  public String logFileSuffix = System.getProperty("spock.logFileSuffix");
 
   public String issueNamePrefix = "";
   public String issueUrlPrefix = "";
 
-  public ReportLogConfiguration() {
-    DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
-    dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-    logFileSuffix = System.getProperty("spock.logFileSuffix", dateFormat.format(new Date()));
+  public String reportServerAddress = System.getProperty("spock.reportServerAddress");
+  public int reportServerPort = Integer.valueOf(System.getProperty("spock.reportServerPort", "4242"));
+
+  public String getLogFileSuffix() {
+    if (logFileSuffix != null && logFileSuffix.contains("#timestamp")) {
+      DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+      dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+      String timestamp = dateFormat.format(new Date());
+      logFileSuffix = logFileSuffix.replace("#timestamp", timestamp);
+    }
+    return logFileSuffix;
+  }
+
+  @Nullable
+  public File getLogFile() {
+    if (logFileDir == null) return null;
+
+    String fullName = logFileName;
+    String suffix = getLogFileSuffix();
+    if (suffix != null) {
+      String extension = IoUtil.getFileExtension(logFileName);
+      if (extension == null) {
+        fullName = logFileName + "-" + suffix;
+      }  else {
+        fullName = logFileName.substring(0, logFileName.length() - extension.length() - 1)
+            + "-" + suffix + "." + extension;
+      }
+    }
+    return new File(logFileDir, fullName);
   }
 }

@@ -26,8 +26,8 @@ class IoUtilSpec extends Specification {
 
   def "get file extension"() {
     expect:
-    IoUtil.getFileExtension(new File("foo/bar/my.file.ext")) == "ext"
-    IoUtil.getFileExtension(new File("foo/bar/myfile")) == null
+    IoUtil.getFileExtension("foo/bar/my.file.ext") == "ext"
+    IoUtil.getFileExtension("foo/bar/myfile") == null
   }
 
   def "list files recursively"() {

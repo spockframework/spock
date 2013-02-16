@@ -106,9 +106,9 @@ public class IoUtil {
   }
 
   @Nullable
-  public static String getFileExtension(File file) {
-    int index = file.getName().lastIndexOf('.');
-    return index == -1 ? null : file.getName().substring(index + 1, file.getName().length());
+  public static String getFileExtension(String filename) {
+    int index = filename.lastIndexOf('.');
+    return index == -1 ? null : filename.substring(index + 1, filename.length());
   }
 
   private static void doListFilesRecursively(File baseDir, List<File> result) throws IOException {

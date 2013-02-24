@@ -16,14 +16,12 @@ package org.spockframework.runtime;
 
 import java.beans.Introspector;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import groovy.lang.Closure;
-import groovy.lang.GroovySystem;
-import groovy.lang.MetaClass;
-import groovy.lang.MetaMethod;
+import groovy.lang.*;
 
 import org.codehaus.groovy.reflection.CachedMethod;
 import org.codehaus.groovy.runtime.*;
@@ -87,6 +85,11 @@ public abstract class GroovyRuntimeUtil {
   }
 
   public static void setMetaClass(Object object, MetaClass metaClass) {
+    GroovyObject groovyObject = ObjectUtil.asInstance(object, GroovyObject.class);
+    if (groovyObject != null) {
+      groovyObject.setMetaClass(metaClass);
+      return;
+    }
     ((MetaClassRegistryImpl) GroovySystem.getMetaClassRegistry()).setMetaClass(object, metaClass);
   }
 
@@ -296,12 +299,9 @@ public abstract class GroovyRuntimeUtil {
     }
   }
 
-  /**
-   * Tells whether the specified method is declared (in byte code) in the specified target class
-   * or one of its superclasses.
-   */
-  public static boolean isPhysicalMethod(MetaMethod method, Class<?> targetClass) {
-    CachedMethod cachedMethod = ObjectUtil.asInstance(method, CachedMethod.class);
-    return cachedMethod != null && cachedMethod.getCachedMethod().getDeclaringClass().isAssignableFrom(targetClass);
+  @Nullable
+  public static Method toMethod(@Nullable MetaMethod metaMethod) {
+    CachedMethod cachedMethod = ObjectUtil.asInstance(metaMethod, CachedMethod.class);
+    return cachedMethod == null ? null : cachedMethod.getCachedMethod();
   }
 }

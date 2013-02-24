@@ -14,6 +14,9 @@
 
 package org.spockframework.smoke.mock
 
+import org.spockframework.mock.FinalJavaPerson
+import org.spockframework.mock.FinalMethodsJavaPerson
+
 import spock.lang.Specification
 
 public class GroovyMocksForGroovyClasses extends Specification {
@@ -24,7 +27,20 @@ public class GroovyMocksForGroovyClasses extends Specification {
     person.sing("song")
 
     then:
-    1 * person.sing("song")
+    person.sing("song")
+  }
+
+  def "final physical method"() {
+    def finalPerson = GroovyMock(clazz)
+
+    when:
+    finalPerson.sing("song")
+
+    then:
+    1 * finalPerson.sing("song")
+
+    where:
+    clazz << [FinalPerson, FinalMethodsPerson, FinalJavaPerson, FinalMethodsJavaPerson]
   }
 
   def "dynamic method"() {
@@ -79,6 +95,25 @@ public class GroovyMocksForGroovyClasses extends Specification {
 
     then:
     1 * person.name
+  }
+
+  def "get final physical property"() {
+    def finalPerson = GroovyMock(clazz)
+
+    when:
+    finalPerson.name
+
+    then:
+    1 * finalPerson.getName()
+
+    when:
+    finalPerson.name
+
+    then:
+    1 * finalPerson.name
+
+    where:
+    clazz << [FinalPerson, FinalMethodsPerson, FinalJavaPerson, FinalMethodsJavaPerson]
   }
 
   def "get dynamic property"() {
@@ -204,7 +239,20 @@ public class GroovyMocksForGroovyClasses extends Specification {
     String getName() { throw new UnsupportedOperationException("getName") }
     void setName(String name) { throw new UnsupportedOperationException("setName") }
   }
+
+  static final class FinalPerson {
+    void sing(String song) { throw new UnsupportedOperationException("sing") }
+    String getName() { throw new UnsupportedOperationException("getName") }
+    void setName(String name) { throw new UnsupportedOperationException("setName") }
+  }
+
+  static class FinalMethodsPerson {
+    final void sing(String song) { throw new UnsupportedOperationException("sing") }
+    final String getName() { throw new UnsupportedOperationException("getName") }
+    final void setName(String name) { throw new UnsupportedOperationException("setName") }
+  }
 }
+
 
 
 

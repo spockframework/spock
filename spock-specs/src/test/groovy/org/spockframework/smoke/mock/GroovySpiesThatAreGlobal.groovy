@@ -14,8 +14,9 @@
 
 package org.spockframework.smoke.mock
 
-import spock.lang.Specification
 import java.lang.reflect.Modifier
+
+import spock.lang.Specification
 
 class GroovySpiesThatAreGlobal extends Specification {
   def "mock instance method"() {

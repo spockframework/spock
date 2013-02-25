@@ -18,7 +18,7 @@ import java.io.IOException;
 
 import org.spockframework.runtime.AbstractRunListener;
 import org.spockframework.runtime.SpecRunHistory;
-import org.spockframework.runtime.extension.IGlobalExtension;
+import org.spockframework.runtime.extension.AbstractGlobalExtension;
 import org.spockframework.runtime.model.*;
 
 import spock.config.RunnerConfiguration;
@@ -27,7 +27,7 @@ import spock.config.RunnerConfiguration;
  * Inspired from JUnit's MaxCore.
  */
 @SuppressWarnings("UnusedDeclaration")
-public class OptimizeRunOrderExtension implements IGlobalExtension {
+public class OptimizeRunOrderExtension extends AbstractGlobalExtension {
   private RunnerConfiguration configuration;
 
   public void visitSpec(SpecInfo spec) {

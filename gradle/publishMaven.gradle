@@ -56,6 +56,10 @@ uploadArchives {
           authentication(userName: sonatypeOssUsername, password: sonatypeOssPassword)
         }
       }
+    } else if (project.hasProperty("bintray")) {
+      repository(url: "https://api.bintray.com/maven/spockframework/spockframework/spock/") {
+        authentication(userName: bintrayUsername, password: bintrayApiKey)
+      }     
     } else {
       repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
         if (project.hasProperty("sonatypeOssUsername")) {

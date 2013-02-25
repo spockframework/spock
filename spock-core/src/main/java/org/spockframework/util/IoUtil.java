@@ -32,6 +32,18 @@ public class IoUtil {
     }
   }
 
+  public static void stopQuietly(@Nullable IStoppable... stoppables) {
+    if (stoppables == null) return;
+
+    for (IStoppable stoppable : stoppables) {
+      if (stoppable == null) return;
+
+      try {
+        stoppable.stop();
+      } catch (Exception ignored) {}
+    }
+  }
+
   /**
    * Returns the text read from the given reader as a String.
    * Closes the given reader upon return.
@@ -106,9 +118,9 @@ public class IoUtil {
   }
 
   @Nullable
-  public static String getFileExtension(File file) {
-    int index = file.getName().lastIndexOf('.');
-    return index == -1 ? null : file.getName().substring(index + 1, file.getName().length());
+  public static String getFileExtension(String filename) {
+    int index = filename.lastIndexOf('.');
+    return index == -1 ? null : filename.substring(index + 1, filename.length());
   }
 
   private static void doListFilesRecursively(File baseDir, List<File> result) throws IOException {

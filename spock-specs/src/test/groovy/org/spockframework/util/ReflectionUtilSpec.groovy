@@ -51,6 +51,20 @@ class ReflectionUtilSpec extends Specification {
     !ReflectionUtil.isAnnotationPresent(Stepwise, "foo.bar.Baz")
   }
 
+  static final class FinalClass {
+    void foo() {}
+  }
+
+  static class FinalMethod {
+    final void foo() {}
+  }
+
+  def "check if method is final"() {
+    expect:
+    ReflectionUtil.isFinalMethod(FinalClass.getDeclaredMethod("foo"))
+    ReflectionUtil.isFinalMethod(FinalMethod.getDeclaredMethod("foo"))
+  }
+
   def "find method by name"() {
     expect:
     ReflectionUtil.getMethodByName(Derived, "baseMethod") == Base.getDeclaredMethod("baseMethod", String, int)

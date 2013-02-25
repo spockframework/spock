@@ -16,19 +16,19 @@
 
 package org.spockframework.spring;
 
+import org.spockframework.runtime.extension.AbstractGlobalExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.ProfileValueUtils;
 import org.springframework.test.context.ContextConfiguration;
 
 import org.spockframework.runtime.AbstractRunListener;
-import org.spockframework.runtime.extension.IGlobalExtension;
 import org.spockframework.runtime.model.*;
 import org.spockframework.util.*;
 
 import spock.lang.Shared;
 
 @NotThreadSafe
-public class SpringExtension implements IGlobalExtension {
+public class SpringExtension extends AbstractGlobalExtension {
   public void visitSpec(SpecInfo spec) {
     if (!spec.getReflection().isAnnotationPresent(ContextConfiguration.class)) return;
 

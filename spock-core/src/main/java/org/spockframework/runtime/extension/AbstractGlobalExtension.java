@@ -14,20 +14,16 @@
  * limitations under the License.
  */
 
-package org.spockframework.util
+package org.spockframework.runtime.extension;
 
-import spock.lang.Specification
+import org.spockframework.runtime.model.SpecInfo;
 
-class StandardOutNotifierSpec extends Specification {
-  def listener = Mock(IStandardStreamListener)
-  def notifier = new StandardOutNotifier(listener)
-
-  def "notifies via standardOut method"() {
-    when:
-    notifier.notify("foo")
-
-    then:
-    1 * listener.standardOut("foo")
-    0 * _
-  }
+/**
+ * Convenience base class for global extensions that allows to implement
+ * methods selectively.
+ */
+public abstract class AbstractGlobalExtension implements IGlobalExtension {
+  public void start() {}
+  public void visitSpec(SpecInfo spec) {}
+  public void stop() {}
 }

@@ -14,20 +14,8 @@
  * limitations under the License.
  */
 
-package org.spockframework.util
+package org.spockframework.mock;
 
-import spock.lang.Specification
-
-class StandardErrNotifierSpec extends Specification {
-  def listener = Mock(IStandardStreamListener)
-  def notifier = new StandardErrNotifier(listener)
-
-  def "notifies via standardErr method"() {
-    when:
-    notifier.notify("foo")
-
-    then:
-    1 * listener.standardErr("foo")
-    0 * _
-  }
+public class FinalMethodsJavaPerson {
+  public final void sing() {}
 }

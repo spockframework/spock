@@ -36,6 +36,7 @@ public class RunContext {
 
   private final String name;
   private final File spockUserHome;
+  private final DelegatingScript configurationScript;
   private final List<Class<?>> globalExtensionClasses;
   private final GlobalExtensionRegistry globalExtensionRegistry;
 
@@ -45,15 +46,24 @@ public class RunContext {
       @Nullable DelegatingScript configurationScript, List<Class<?>> globalExtensionClasses) {
     this.name = name;
     this.spockUserHome = spockUserHome;
+    this.configurationScript = configurationScript;
     this.globalExtensionClasses = globalExtensionClasses;
-
     globalExtensionRegistry = new GlobalExtensionRegistry(globalExtensionClasses, Arrays.asList(new RunnerConfiguration()));
+  }
+
+  private void start() {
     globalExtensionRegistry.initializeGlobalExtensions();
 
     if (configurationScript != null) {
       ConfigurationBuilder builder = new ConfigurationBuilder();
       builder.build(globalExtensionRegistry, configurationScript);
     }
+
+    globalExtensionRegistry.startGlobalExtensions();
+  }
+
+  private void stop() {
+    globalExtensionRegistry.stopGlobalExtensions();
   }
 
   public String getName() {
@@ -126,9 +136,11 @@ public class RunContext {
     LinkedList<RunContext> contextStack = contextStacks.get();
     contextStack.addFirst(context);
     try {
+      context.start();
       return command.apply(context);
     } finally {
       contextStack.removeFirst();
+      context.stop();
     }
   }
 
@@ -138,6 +150,14 @@ public class RunContext {
     if (context == null) {
       context = createBottomContext();
       contextStack.addFirst(context);
+      final RunContext bottomContext = context;
+      Runtime.getRuntime().addShutdownHook(new Thread("org.spockframework.runtime.RunContext.stop()") {
+        @Override
+        public void run() {
+          bottomContext.stop();
+        }
+      });
+      context.start();
     }
     return context;
   }

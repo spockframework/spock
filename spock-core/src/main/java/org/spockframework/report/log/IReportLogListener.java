@@ -12,8 +12,10 @@
  * limitations under the License.
  */
 
-package org.spockframework.report.log
+package org.spockframework.report.log;
 
-interface IReportLogListener {
-  void emitted(Map log)
+import java.util.Map;
+
+public interface IReportLogListener {
+  void emitted(Map<String, Object> log);
 }

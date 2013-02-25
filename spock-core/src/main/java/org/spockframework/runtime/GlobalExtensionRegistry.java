@@ -20,10 +20,11 @@ import java.lang.reflect.Field;
 import java.util.*;
 
 import org.spockframework.util.InternalSpockError;
-import spock.config.ConfigurationObject;
 import org.spockframework.runtime.extension.ExtensionException;
 import org.spockframework.runtime.extension.IGlobalExtension;
 import org.spockframework.util.UnreachableCodeError;
+
+import spock.config.ConfigurationObject;
 
 /**
  * Maintains a registry of global Spock extensions and their configuration objects,
@@ -96,6 +97,18 @@ public class GlobalExtensionRegistry implements IExtensionRegistry, IConfigurati
       if (annotation != null) {
         injectConfiguration(field, annotation.value(), extension);
       }
+    }
+  }
+
+  public void startGlobalExtensions() {
+    for (IGlobalExtension extension : globalExtensions) {
+      extension.start();
+    }
+  }
+
+  public void stopGlobalExtensions() {
+    for (IGlobalExtension extension : globalExtensions) {
+      extension.stop();
     }
   }
 

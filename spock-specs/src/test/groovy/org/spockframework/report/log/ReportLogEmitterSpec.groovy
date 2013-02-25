@@ -26,11 +26,11 @@ class ReportLogEmitterSpec extends Specification {
   def feature = new FeatureInfo()
   def log
   def listener = new IReportLogListener() {
-    void emitted(Map log) {
+    void emitted(Map<String, Object> log) {
       this.log = log
     }
   }
-  def emitter = new ReportLogEmitter(listener) {
+  def emitter = new ReportLogEmitter() {
     @Override
     protected long getCurrentTime() {
       123456789
@@ -38,6 +38,8 @@ class ReportLogEmitterSpec extends Specification {
   }
 
   def setup() {
+    emitter.addListener(listener)
+
     spec.with {
       setPackage("foo.bar")
       name = "SampleSpec"

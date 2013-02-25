@@ -14,15 +14,8 @@
  * limitations under the License.
  */
 
-package org.spockframework.util;
+package org.spockframework.mock;
 
-public class StandardErrNotifier extends StandardStreamNotifier {
-  public StandardErrNotifier(IStandardStreamListener listener) {
-    super(listener);
-  }
-
-  @Override
-  protected void notify(String string) {
-    listener.standardErr(string);
-  }
+public final class FinalJavaPerson {
+  public void sing() {}
 }

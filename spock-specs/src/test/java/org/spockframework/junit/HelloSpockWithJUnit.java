@@ -33,7 +33,7 @@ public class HelloSpockWithJUnit {
 		this.length = length;
 	}
 
-    @Parameters
+  @Parameters
 	public static List<Object[]> data() {
 		return Arrays.asList(new Object[][] {{"Spock", 5}, {"Kirk", 4}, {"Scotty", 6}});
 	}

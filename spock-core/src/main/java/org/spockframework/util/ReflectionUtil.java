@@ -57,6 +57,10 @@ public abstract class ReflectionUtil {
     return false;
   }
 
+  public static boolean isFinalMethod(Method method) {
+    return Modifier.isFinal(method.getDeclaringClass().getModifiers() | method.getModifiers());
+  }
+
   /**
    * Finds a public method with the given name declared in the given
    * class/interface or one of its super classes/interfaces. If multiple such

@@ -58,4 +58,34 @@ class GroovyUtilSpec extends Specification {
     GroovyUtil.filterNullValues([foo: "foo", bar: null, baz: 1]) == [foo: "foo", baz: 1]
     GroovyUtil.filterNullValues([foo: "foo", bar: [bar: null], baz: 1]) == [foo: "foo", bar: [bar: null], baz: 1]
   }
+
+  def "close quietly"() {
+    def closeable1 = Mock(MyCloseable)
+    def closeable2 = Mock(MyCloseable)
+
+    when:
+    GroovyUtil.closeQuietly(closeable1, closeable2)
+
+    then:
+    1 * closeable1.close() >> { throw new IOException() }
+    1 * closeable2.close() >> { throw new RuntimeException() }
+    noExceptionThrown()
+  }
+
+  def "close quietly with custom method"() {
+    def stoppable1 = Mock(MyStoppable)
+    def stoppable2 = Mock(MyStoppable)
+
+    when:
+    GroovyUtil.closeQuietly("stop", stoppable1, stoppable2)
+
+    then:
+    1 * stoppable1.stop() >> { throw new IOException() }
+    1 * stoppable2.stop() >> { throw new RuntimeException() }
+    noExceptionThrown()
+  }
+
+  interface MyCloseable { void close() }
+
+  interface MyStoppable { void stop() }
 }

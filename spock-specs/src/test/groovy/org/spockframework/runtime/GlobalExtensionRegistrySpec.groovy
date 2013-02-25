@@ -17,6 +17,7 @@
 package org.spockframework.runtime
 
 import org.spockframework.runtime.extension.AbstractAnnotationDrivenExtension
+import org.spockframework.runtime.extension.AbstractGlobalExtension
 import org.spockframework.runtime.extension.ExtensionException
 import org.spockframework.runtime.extension.IGlobalExtension
 import org.spockframework.runtime.extension.builtin.IgnoreExtension
@@ -160,32 +161,25 @@ class GlobalExtensionRegistrySpec extends Specification {
     e.message.contains("unknown configuration class")
   }
 
-  static class MyExtension implements IGlobalExtension {
+  static class MyExtension extends AbstractGlobalExtension {
     static instantiated = false
 
     MyExtension() {
       instantiated = true
     }
-
-    void visitSpec(SpecInfo spec) {}
   }
 
-  static class MissingNoArgCtorExtension implements IGlobalExtension {
+  static class MissingNoArgCtorExtension extends AbstractGlobalExtension {
     MissingNoArgCtorExtension(int x) {}
-    void visitSpec(SpecInfo spec) {}
   }
 
-  static class InjectableExtension implements IGlobalExtension {
+  static class InjectableExtension extends AbstractGlobalExtension {
     RunnerConfiguration config
     MySettings settings
-
-    void visitSpec(SpecInfo spec) {}
   }
 
-  static class SettingsExtension implements IGlobalExtension {
+  static class SettingsExtension extends AbstractGlobalExtension {
     MySettings settings
-
-    void visitSpec(SpecInfo spec) {}
   }
 
   static class LocalExtension extends AbstractAnnotationDrivenExtension<Ignore> {

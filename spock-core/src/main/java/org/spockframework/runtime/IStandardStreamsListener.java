@@ -14,15 +14,9 @@
  * limitations under the License.
  */
 
-package org.spockframework.util;
+package org.spockframework.runtime;
 
-public class StandardOutNotifier extends StandardStreamNotifier {
-  public StandardOutNotifier(IStandardStreamListener listener) {
-    super(listener);
-  }
-
-  @Override
-  protected void notify(String string) {
-    listener.standardOut(string);
-  }
+public interface IStandardStreamsListener {
+  void standardOut(String message);
+  void standardErr(String message);
 }

@@ -21,6 +21,7 @@ dependencies {
 }
 
 ext.spockLogFileDir = file("$buildDir/spock/logFiles")
+ext.spockLogFileName = "spock-log"
 
 test {
   testLogging.exceptionFormat = "full"
@@ -28,7 +29,7 @@ test {
   maxParallelForks = 1
 
   systemProperty "spock.logFileDir", spockLogFileDir
-  ignoreFailures = true
+  systemProperty "spock.logFileName", spockLogFileName
   testReport = false
 
   doFirst {
@@ -37,12 +38,24 @@ test {
 }
 
 task spockReport(type: org.spockframework.gradle.GenerateSpockReport) {
-  dependsOn test
   reportName = "spock-specs"
   reportFileName = "spock-specs.html"
   debug = true
   local = true
-  liveLogFiles = (1..10).collect { file("$spockLogFileDir/spock-log-$it") }
+  liveLogFiles = (1..10).collect { file("$spockLogFileDir/$spockLogFileName-$it") }
   spockReportClasspath = configurations.spockReport
   outputDirectory = file("$buildDir/spock/reports/")
 }
+
+def prj = project
+
+//workaround until Gradle gets soft task dependencies
+gradle.addListener(new TaskExecutionListener() {
+  void beforeExecute(Task task) {}
+
+  void afterExecute(Task task, TaskState state) {
+    if (task.path == ":spock-specs:test" && state.executed) {
+      prj.spockReport.execute()
+    }
+  }
+})

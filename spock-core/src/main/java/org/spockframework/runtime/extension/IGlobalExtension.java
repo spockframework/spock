@@ -22,5 +22,7 @@ import org.spockframework.runtime.model.SpecInfo;
 // TODO: improve configuration injection (inject into ctor/start?)
 // TODO: design threading model
 public interface IGlobalExtension {
+  void start();
   void visitSpec(SpecInfo spec);
+  void stop();
 }

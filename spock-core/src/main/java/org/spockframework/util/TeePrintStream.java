@@ -14,25 +14,37 @@
 
 package org.spockframework.util;
 
-import groovy.lang.MissingMethodException;
-import org.spockframework.runtime.GroovyRuntimeUtil;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.CopyOnWriteArrayList;
 
+import groovy.lang.MissingMethodException;
+
+import org.spockframework.runtime.GroovyRuntimeUtil;
+
+@ThreadSafe
 public class TeePrintStream extends PrintStream {
   private final List<PrintStream> delegates;
 
+  public TeePrintStream(PrintStream... delegates) {
+    this(Arrays.asList(delegates));
+  }
+
   public TeePrintStream(List<PrintStream> delegates) {
     super(new ByteArrayOutputStream(0));
-    this.delegates = delegates;
+    this.delegates = new CopyOnWriteArrayList<PrintStream>(delegates);
   }
 
   public List<PrintStream> getDelegates() {
     return delegates;
+  }
+
+  public void stopDelegation() {
+    delegates.clear();
   }
 
   @Override

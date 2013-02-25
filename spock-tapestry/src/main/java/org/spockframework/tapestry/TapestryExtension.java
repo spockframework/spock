@@ -20,10 +20,9 @@ import java.util.*;
 
 import org.apache.tapestry5.ioc.annotations.SubModule;
 
-import org.spockframework.runtime.extension.IGlobalExtension;
+import org.spockframework.runtime.extension.AbstractGlobalExtension;
 import org.spockframework.runtime.extension.IMethodInterceptor;
 import org.spockframework.runtime.model.SpecInfo;
-import org.spockframework.util.CollectionUtil;
 
 /**
  * Facilitates the creation of integration-level specifications for applications based
@@ -85,7 +84,7 @@ import org.spockframework.util.CollectionUtil;
  *
  * @author Peter Niederwieser
  */
-public class TapestryExtension implements IGlobalExtension {
+public class TapestryExtension extends AbstractGlobalExtension {
   public void visitSpec(SpecInfo spec) {
     Set<Class<?>> modules = collectModules(spec);
     if (modules == null) return;

@@ -55,7 +55,7 @@ public class ReportLogConfiguration {
 
     String fullName = logFileName;
     String suffix = getLogFileSuffix();
-    if (suffix != null) {
+    if (suffix != null && suffix.length() > 0) {
       String extension = IoUtil.getFileExtension(logFileName);
       if (extension == null) {
         fullName = logFileName + "-" + suffix;

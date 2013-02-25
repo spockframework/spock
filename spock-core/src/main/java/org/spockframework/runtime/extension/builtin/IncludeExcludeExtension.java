@@ -17,14 +17,14 @@ package org.spockframework.runtime.extension.builtin;
 import java.lang.annotation.Annotation;
 import java.util.List;
 
-import org.spockframework.runtime.extension.IGlobalExtension;
+import org.spockframework.runtime.extension.AbstractGlobalExtension;
 import org.spockframework.runtime.model.*;
 
 import spock.config.IncludeExcludeCriteria;
 import spock.config.RunnerConfiguration;
 
 @SuppressWarnings("UnusedDeclaration")
-public class IncludeExcludeExtension implements IGlobalExtension {
+public class IncludeExcludeExtension extends AbstractGlobalExtension {
   private RunnerConfiguration config;
 
   public void visitSpec(SpecInfo spec) {

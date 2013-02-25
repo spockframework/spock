@@ -18,7 +18,7 @@ import java.lang.reflect.Array;
 import java.util.*;
 
 public abstract class CollectionUtil {
-  public static <E, F> ArrayList<F> filterMap(Collection<E> collection, IFunction<E, F> function) {
+  public static <E, F> ArrayList<F> filterMap(Collection<E> collection, IFunction<? super E, ? extends F> function) {
     ArrayList<F> result = new ArrayList<F>(collection.size());
 
     for (E elem : collection) {
@@ -96,25 +96,68 @@ public abstract class CollectionUtil {
     return new HashSet<T>(Arrays.asList(values));
   }
 
+  public static <E> List<E> listOf(E... elements) {
+    List<E> result = new ArrayList<E>(elements.length);
+    result.addAll(Arrays.asList(elements));
+    return result;
+  }
+
   public static <K, V> Map<K, V> mapOf(K key, V value) {
-    Map<K, V> map = new HashMap<K, V>();
+    Map<K, V> map = new LinkedHashMap<K, V>();
     map.put(key, value);
     return map;
   }
 
   public static <K, V> Map<K, V> mapOf(K key, V value, K key2, V value2) {
-    Map<K, V> map = new HashMap<K, V>();
+    Map<K, V> map = new LinkedHashMap<K, V>();
     map.put(key, value);
     map.put(key2, value2);
     return map;
   }
 
   public static <K, V> Map<K, V> mapOf(K key, V value, K key2, V value2, K key3, V value3) {
-    Map<K, V> map = new HashMap<K, V>();
+    Map<K, V> map = new LinkedHashMap<K, V>();
     map.put(key, value);
     map.put(key2, value2);
     map.put(key3, value3);
     return map;
+  }
+
+  public static <K, V> Map<K, V> mapOf(K key, V value, K key2, V value2, K key3, V value3, K key4, V value4) {
+    Map<K, V> map = new LinkedHashMap<K, V>();
+    map.put(key, value);
+    map.put(key2, value2);
+    map.put(key3, value3);
+    map.put(key4, value4);
+    return map;
+  }
+
+  public static <K, V> Map<K, V> mapOf(K key, V value, K key2, V value2, K key3, V value3, K key4, V value4, K key5, V value5) {
+    Map<K, V> map = new LinkedHashMap<K, V>();
+    map.put(key, value);
+    map.put(key2, value2);
+    map.put(key3, value3);
+    map.put(key4, value4);
+    map.put(key5, value5);
+    return map;
+  }
+
+  public static Map filterNullValues(Map map) {
+    Iterator<Map.Entry> iterator = map.entrySet().iterator();
+    while(iterator.hasNext()) {
+      Map.Entry next = iterator.next();
+      if (next.getValue() == null) {
+        iterator.remove();
+      }
+    }
+    return map;
+  }
+
+  public static Map putAll(Map original, Map... others) {
+    for (Map other : others) {
+      original.putAll(other);
+    }
+    return original;
   }
 
   public static <T> Iterable<T> concat(Iterable<? extends T>... iterables) {
@@ -163,5 +206,14 @@ public abstract class CollectionUtil {
       }
     }
     return false;
+  }
+
+  public static <T> int findIndexOf(Iterable<T> iterable, IFunction<? super T, Boolean> predicate) {
+    int index = 0;
+    for (T elem : iterable) {
+      if (predicate.apply(elem)) return index;
+      index++;
+    }
+    return -1;
   }
 }

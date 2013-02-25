@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 the original author or authors.
+ * Copyright 2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,11 +18,12 @@ package org.spockframework.runtime.extension;
 
 import org.spockframework.runtime.model.SpecInfo;
 
-// TODO: start/stop lifecycle
-// TODO: improve configuration injection (inject into ctor/start?)
-// TODO: design threading model
-public interface IGlobalExtension {
-  void start();
-  void visitSpec(SpecInfo spec);
-  void stop();
+/**
+ * Convenience base class for global extensions that allows to implement
+ * methods selectively.
+ */
+public abstract class AbstractGlobalExtension implements IGlobalExtension {
+  public void start() {}
+  public void visitSpec(SpecInfo spec) {}
+  public void stop() {}
 }

@@ -32,6 +32,18 @@ public class IoUtil {
     }
   }
 
+  public static void stopQuietly(@Nullable IStoppable... stoppables) {
+    if (stoppables == null) return;
+
+    for (IStoppable stoppable : stoppables) {
+      if (stoppable == null) return;
+
+      try {
+        stoppable.stop();
+      } catch (Exception ignored) {}
+    }
+  }
+
   /**
    * Returns the text read from the given reader as a String.
    * Closes the given reader upon return.

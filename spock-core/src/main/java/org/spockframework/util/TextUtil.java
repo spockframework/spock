@@ -166,4 +166,13 @@ public abstract class TextUtil {
 
     return result.toString();
   }
+
+  public static String capitalize(String str) {
+    if (str == null || str.length() == 0) return str;
+
+    StringBuilder builder = new StringBuilder();
+    builder.append(Character.toUpperCase(str.charAt(0)));
+    builder.append(str.substring(1));
+    return builder.toString();
+  }
 }

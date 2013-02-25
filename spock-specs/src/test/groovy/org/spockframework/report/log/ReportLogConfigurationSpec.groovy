@@ -26,9 +26,9 @@ class ReportLogConfigurationSpec extends Specification {
     with(configuration) {
       !enabled
 
-      logFileDir == null
-      logFileName == null
-      logFileSuffix == null
+      logFileDir == System.getProperty("spock.logFileDir")
+      logFileName == System.getProperty("spock.logFileName")
+      logFileSuffix == System.getProperty("spock.logFileSuffix")
 
       issueNamePrefix == ""
       issueUrlPrefix == ""

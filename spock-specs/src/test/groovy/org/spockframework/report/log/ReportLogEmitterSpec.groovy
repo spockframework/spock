@@ -26,7 +26,7 @@ class ReportLogEmitterSpec extends Specification {
   def feature = new FeatureInfo()
   def log
   def listener = new IReportLogListener() {
-    void emitted(Map log) {
+    void emitted(Map<String, Object> log) {
       this.log = log
     }
   }

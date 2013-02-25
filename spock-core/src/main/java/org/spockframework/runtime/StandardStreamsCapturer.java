@@ -18,50 +18,65 @@ import java.io.PrintStream;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
+import org.spockframework.util.IStoppable;
 import org.spockframework.util.StringMessagePrintStream;
 import org.spockframework.util.TeePrintStream;
+import org.spockframework.util.ThreadSafe;
 
-public class StandardStreamsCapturer {
+@ThreadSafe
+public class StandardStreamsCapturer implements IStoppable {
   private final Set<IStandardStreamsListener> standardStreamsListeners =
     new CopyOnWriteArraySet<IStandardStreamsListener>();
 
-  public void start() {
-    PrintStream out = System.out;
-    if (!(out instanceof MyTeePrintStream)) {
-      StringMessagePrintStream stream = new StringMessagePrintStream() {
-        @Override
-        protected void printed(String message) {
-          for (IStandardStreamsListener listener : standardStreamsListeners) {
-            listener.standardOut(message);
-          }
-        }
-      };
-      System.setOut(new MyTeePrintStream(out, stream));
+  private volatile TeePrintStream outStream;
+  private volatile TeePrintStream errStream;
+
+  public synchronized void start() {
+    startCapture(System.out, outStream, true);
+    startCapture(System.err, errStream, false);
+  }
+
+  private void startCapture(PrintStream originalStream, TeePrintStream teeStream, final boolean isOut) {
+    if (originalStream == teeStream) return;
+
+    if (teeStream != null) {
+      teeStream.stopDelegation();
     }
 
-    PrintStream err = System.err;
-    if (!(err instanceof MyTeePrintStream)) {
-      StringMessagePrintStream stream = new StringMessagePrintStream() {
-        @Override
-        protected void printed(String message) {
-          for (IStandardStreamsListener listener : standardStreamsListeners) {
+    StringMessagePrintStream notifyingStream = new StringMessagePrintStream() {
+      @Override
+      protected void printed(String message) {
+        for (IStandardStreamsListener listener : standardStreamsListeners) {
+          if (isOut) {
+            listener.standardOut(message);
+          } else {
             listener.standardErr(message);
           }
         }
-      };
-      System.setErr(new MyTeePrintStream(err, stream));
+      }
+    };
+
+    teeStream = new TeePrintStream(originalStream, notifyingStream);
+    if (isOut) {
+      outStream = teeStream;
+      System.setOut(teeStream);
+    } else {
+      errStream = teeStream;
+      System.setErr(teeStream);
     }
   }
 
-  public void stop() {
-    PrintStream out = System.out;
-    if (out instanceof MyTeePrintStream) {
-      System.setOut(((MyTeePrintStream) out).getDelegates().get(0));
-    }
+  public synchronized void stop() {
+    stopCapture(System.out, outStream, true);
+    stopCapture(System.err, errStream, false);
+  }
 
-    PrintStream err = System.err;
-    if (err instanceof MyTeePrintStream) {
-      System.setErr(((MyTeePrintStream) err).getDelegates().get(0));
+  private void stopCapture(PrintStream originalStream, TeePrintStream teeStream, boolean isOut) {
+    if (originalStream != teeStream) return;
+    if (isOut) {
+      System.setOut(teeStream.getDelegates().get(0));
+    } else {
+      System.setErr(teeStream.getDelegates().get(0));
     }
   }
 
@@ -71,11 +86,5 @@ public class StandardStreamsCapturer {
 
   public void removeStandardStreamsListener(IStandardStreamsListener listener) {
     standardStreamsListeners.remove(listener);
-  }
-
-  private static class MyTeePrintStream extends TeePrintStream {
-    MyTeePrintStream(PrintStream... delegates) {
-      super(delegates);
-    }
   }
 }

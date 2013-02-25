@@ -43,6 +43,10 @@ public class TeePrintStream extends PrintStream {
     return delegates;
   }
 
+  public void stopDelegation() {
+    delegates.clear();
+  }
+
   @Override
   public void flush() {
     for (PrintStream stream : delegates) {

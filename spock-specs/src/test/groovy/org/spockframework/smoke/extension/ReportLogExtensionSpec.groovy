@@ -29,7 +29,6 @@ class ReportLogExtensionSpec extends EmbeddedSpecification {
         enabled true
         logFileDir = logFile.parentFile
         logFileName = logFile.name
-        logFileSuffix = ""
       }
     }
   }
@@ -62,8 +61,6 @@ So that bar
     }
   }
 """)
-    // TODO: remove once global extensions have a lifecycle
-    System.sleep(1000)
 
     then:
     normalize(logFile.getText("utf-8")) == normalize(
@@ -71,13 +68,13 @@ So that bar
 loadLogFile([{
     "package": "apackage",
     "name": "A beautiful mind",
-    "narrative": "As a user\\nI want foo\\nSo that bar",
     "start": 1360051647510,
+    "narrative": "As a user\\nI want foo\\nSo that bar",
     "features": [
         {
             "name": "some feature",
-            "narrative": "Given foo\\nWhen bar\\nThen baz\\nAnd bazbaz",
             "start": 1360056471570,
+            "narrative": "Given foo\\nWhen bar\\nThen baz\\nAnd bazbaz",
             "output": [
                 "out1\\n",
                 "out2\\n"
@@ -146,8 +143,6 @@ So that bar
     }
   }
 """)
-    // TODO: remove once global extensions have a lifecycle
-    System.sleep(1000)
 
     then:
     normalize(logFile.getText("utf-8")) == normalize(
@@ -155,13 +150,13 @@ So that bar
 loadLogFile([{
     "package": "apackage",
     "name": "A beautiful mind",
-    "narrative": "As a user\\nI want foo\\nSo that bar",
     "start": 1360051647510,
+    "narrative": "As a user\\nI want foo\\nSo that bar",
     "features": [
         {
             "name": "some feature",
-            "narrative": "Given foo\\nWhen bar\\nThen baz\\nAnd bazbaz",
             "start": 1360056471570,
+            "narrative": "Given foo\\nWhen bar\\nThen baz\\nAnd bazbaz",
             "output": [
                 "out1\\n",
                 "out2\\n"
@@ -223,8 +218,6 @@ So that bar
     }
   }
 """)
-    // TODO: remove once global extensions have a lifecycle
-    System.sleep(1000)
 
     then:
     normalize(logFile.getText("utf-8")) == normalize(
@@ -232,15 +225,15 @@ So that bar
 loadLogFile([{
     "package": "apackage",
     "name": "A beautiful mind",
-    "narrative": "As a user\\nI want foo\\nSo that bar",
     "start": 1360051647510,
+    "narrative": "As a user\\nI want foo\\nSo that bar",
     "features": [
         {
             "name": "some feature",
-            "narrative": "Given foo\\nWhen bar\\nThen baz\\nAnd bazbaz",
             "start": 1360056471570,
             "end": 1360056471570,
-            "result": "skipped"
+            "result": "skipped",
+            "narrative": "Given foo\\nWhen bar\\nThen baz\\nAnd bazbaz"
         }
     ],
     "end": 1360051647593,

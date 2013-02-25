@@ -18,8 +18,9 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import org.spockframework.runtime.model.*;
+import org.spockframework.util.IStoppable;
 
-public class AsyncRunListener implements IRunListener {
+public class AsyncRunListener implements IRunListener, IStoppable {
   private static final Runnable STOP = new Runnable() {
     public void run() {
       throw new IllegalStateException("should never run");

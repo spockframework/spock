@@ -39,8 +39,8 @@ public class ReportLogClient implements IReportLogListener, IStoppable {
     try {
       socket = new Socket(reportServerAddress, reportServerPort);
     } catch (IOException e) {
-      throw new ExtensionException("Error opening connection to report server. " +
-          "Server address: $reportServerAddress Server port: $reportServerPort", e);
+      throw new ExtensionException(String.format("Error opening connection to report server. " +
+          "Server address: %s Server port: %d", reportServerAddress, reportServerPort), e);
     }
   }
 

@@ -28,6 +28,7 @@ test {
 
   systemProperty "spock.logFileDir", spockLogFileDir
   systemProperty "spock.logFileName", spockLogFileName
+  //systemProperty "spock.reportServerAddress", "127.0.0.1"
   testReport = false
 
   doFirst {

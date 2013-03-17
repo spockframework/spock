@@ -38,7 +38,7 @@ class JsonWriterSpec extends Specification {
     [1, 2, 3] as int[]      | "[1,2,3]"
     [1, 2, 3]               | "[1,2,3]"
     [name: "Fred", age: 32] | '{"name":"Fred","age":32}'
-    new Date(1359975046334) | '"2013-02-04T11:50:46+0100"'
+    new Date(1359975046334) | '"2013-02-04T10:50:46+0000"'
     "foobar"                | '"foobar"'
     new ToString()          | '"hello, world!"'
   }
@@ -48,7 +48,7 @@ class JsonWriterSpec extends Specification {
     jsonWriter.write(["foobar", [name: "Fred", age: [new Date(1359975046334), null]], 3.45])
 
     then:
-    stringWriter.toString() == '["foobar",{"name":"Fred","age":["2013-02-04T11:50:46+0100",null]},3.45]'
+    stringWriter.toString() == '["foobar",{"name":"Fred","age":["2013-02-04T10:50:46+0000",null]},3.45]'
   }
 
   def "escapes special String characters"() {
@@ -111,7 +111,7 @@ class JsonWriterSpec extends Specification {
   {
     "name": "Fred",
     "age": [
-      "2013-02-04T11:50:46+0100",
+      "2013-02-04T10:50:46+0000",
       null
     ]
   },

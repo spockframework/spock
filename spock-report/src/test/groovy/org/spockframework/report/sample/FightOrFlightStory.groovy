@@ -30,10 +30,10 @@ class FightOrFlightStory extends Specification {
     given: "the ninja has a third level black-belt"
     System.out << getClass().getResourceAsStream("loremipsum.txt")
 
-    when: "When attacked by Chuck Norris"
+    when: "attacked by Chuck Norris"
     impl()
 
-    then: "Then the ninja should run for his life"
+    then: "the ninja should run for his life"
     impl()
   }
 

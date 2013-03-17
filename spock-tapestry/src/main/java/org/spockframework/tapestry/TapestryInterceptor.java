@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2013 the original author or authors.
+ * Copyright 2009 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,17 +22,20 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+
 import org.apache.tapestry5.ioc.AnnotationProvider;
 import org.apache.tapestry5.ioc.Registry;
 import org.apache.tapestry5.ioc.RegistryBuilder;
 import org.apache.tapestry5.ioc.annotations.Autobuild;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.InjectService;
+
 import org.spockframework.runtime.extension.AbstractMethodInterceptor;
 import org.spockframework.runtime.extension.IMethodInvocation;
 import org.spockframework.runtime.model.FieldInfo;
 import org.spockframework.runtime.model.SpecInfo;
 import org.spockframework.util.ReflectionUtil;
+
 import spock.lang.Shared;
 import spock.lang.Specification;
 
@@ -120,11 +123,11 @@ public class TapestryInterceptor extends AbstractMethodInterceptor {
       if ((rawField.isAnnotationPresent(Inject.class)
           || ReflectionUtil.isAnnotationPresent(rawField, "javax.inject.Inject")
           || rawField.isAnnotationPresent(Autobuild.class))
-            && rawField.isAnnotationPresent(Shared.class) == sharedFields) {
+          && rawField.isAnnotationPresent(Shared.class) == sharedFields) {
         Object value = registry.getObject(rawField.getType(), createAnnotationProvider(field));
         rawField.setAccessible(true);
         rawField.set(target, value);
-      }else if(rawField.isAnnotationPresent(InjectService.class)){
+      } else if (rawField.isAnnotationPresent(InjectService.class)) {
         String serviceName = rawField.getAnnotation(InjectService.class).value();
         Object value = registry.getService(serviceName, rawField.getType());
         rawField.setAccessible(true);

@@ -38,9 +38,8 @@ class InjectionExamples extends Specification {
     service instanceof IService1
   }
 
-  def "injecting a field by name (@Resource is JDK 1.6 only)"() {
-    if (!ReflectionUtil.isClassAvailable("javax.annotation.Resource")) return
-
+  @Requires({ReflectionUtil.isClassAvailable("javax.annotation.Resource")})
+  def "injecting a field by name"() {
     def runner = new EmbeddedSpecRunner()
     
     when:

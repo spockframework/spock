@@ -12,8 +12,8 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */ 
- 
+ */
+
 package org.spockframework.tapestry
 
 import org.apache.tapestry5.ioc.ObjectLocator
@@ -32,6 +32,34 @@ class ServiceInjection extends Specification {
   def "injected services"() {
     expect:
     service1.generateString() == service2.generateQuickBrownFox()
+  }
+}
+
+@SubModule(Module1)
+class ServiceInjectionWithJavaxInject extends Specification {
+  @javax.inject.Inject
+  org.spockframework.tapestry.IService1 service1
+
+  @javax.inject.Inject
+  org.spockframework.tapestry.IService2 service2
+
+  def "injected services"() {
+    expect:
+    service1.generateString() == service2.generateQuickBrownFox()
+  }
+}
+
+@SubModule(Module1)
+class ServiceInjectionWithServiceId extends Specification {
+  @InjectService("Service3")
+  IService3 service3
+
+  @Inject
+  IService2 service2
+
+  def "injected services"() {
+    expect:
+    service3.generateString() == service2.generateQuickBrownFox()
   }
 }
 

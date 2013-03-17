@@ -100,8 +100,8 @@ After creating the publisher and its subscribers, we need to make the latter kno
         Subscriber subscriber2 = Mock()
 
         def setup() {
-            publisher << subscriber // << is a Groovy shorthand for List.add()
-            publisher << subscriber2
+            publisher.subscribers << subscriber // << is a Groovy shorthand for List.add()
+            publisher.subscribers << subscriber2
         }
     }
 

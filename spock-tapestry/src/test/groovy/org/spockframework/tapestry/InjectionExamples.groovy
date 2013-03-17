@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2013 the original author or authors.
+ * Copyright 2009 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,9 +21,6 @@ import org.apache.tapestry5.ioc.annotations.*
 
 import spock.lang.*
 
-import org.spockframework.runtime.ConditionNotSatisfiedError
-import spock.util.EmbeddedSpecRunner
-
 @SubModule(Module1)
 class ServiceInjection extends Specification {
   @Inject
@@ -40,30 +37,16 @@ class ServiceInjection extends Specification {
 
 @SubModule(Module1)
 class ServiceInjectionWithJavaxInject extends Specification {
-
-  EmbeddedSpecRunner runner = new EmbeddedSpecRunner()
-
-  def "services are injected using javax.inject.Inject"(){
-    when:
-    runner.runWithImports """
-@org.apache.tapestry5.ioc.annotations.SubModule(org.spockframework.tapestry.Module1)
-class EmbeddedJavaxInjectSpec extends Specification {
   @javax.inject.Inject
   org.spockframework.tapestry.IService1 service1
 
   @javax.inject.Inject
   org.spockframework.tapestry.IService2 service2
 
-  def feature() {
+  def "injected services"() {
     expect:
     service1.generateString() == service2.generateQuickBrownFox()
   }
-}
-""";
-    then:
-    notThrown(ConditionNotSatisfiedError)
-  }
-
 }
 
 @SubModule(Module1)
@@ -79,8 +62,6 @@ class ServiceInjectionWithServiceId extends Specification {
     service3.generateString() == service2.generateQuickBrownFox()
   }
 }
-
-
 
 @SubModule(Module1)
 class ObjectLocatorInjection extends Specification {

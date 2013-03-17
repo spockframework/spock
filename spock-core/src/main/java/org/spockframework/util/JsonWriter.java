@@ -36,6 +36,10 @@ public class JsonWriter {
   private String indent = "    ";
   private int indentLevel = 0;
 
+  static {
+    dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+  }
+
   public JsonWriter(Writer out) {
     this.out = out;
   }

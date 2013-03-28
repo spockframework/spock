@@ -102,7 +102,7 @@ task apidoc(dependsOn: ["javadoc", "groovydoc"])
 configureGroovydoc(groovydoc)
 
 task wrapper(type: Wrapper) {
-  gradleVersion = "1.5-rc-2"
+  gradleVersion = "1.5"
 }
 
 File script(String name) {

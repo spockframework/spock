@@ -330,6 +330,9 @@ public class GenericTypeReflector {
 
   public static Type[] getExactParameterTypes(Method m, Type type) {
     Type[] parameterTypes = m.getGenericParameterTypes();
+    if (m.getDeclaringClass() == Object.class) {
+      return parameterTypes;
+    }
     Type exactDeclaringType = getExactSuperType(capture(type), m.getDeclaringClass());
 
     Type[] result = new Type[parameterTypes.length];
@@ -347,6 +350,9 @@ public class GenericTypeReflector {
 	 */
 	public static Type getExactReturnType(Method m, Type type) {
 		Type returnType = m.getGenericReturnType();
+    if (m.getDeclaringClass() == Object.class) {
+      return returnType;
+    }
 		Type exactDeclaringType = getExactSuperType(capture(type), m.getDeclaringClass());
 		return mapTypeParameters(returnType, exactDeclaringType);
 	}

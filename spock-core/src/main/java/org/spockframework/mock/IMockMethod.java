@@ -14,6 +14,7 @@
 
 package org.spockframework.mock;
 
+import java.lang.reflect.Type;
 import java.util.List;
 
 /**
@@ -37,12 +38,28 @@ public interface IMockMethod {
   List<Class<?>> getParameterTypes();
 
   /**
+   * Returns the generic parameter types of the method. In cases where no static type information is available,
+   * all arguments are assumed to have type {@code Object}.
+   *
+   * @return the generic parameter types of the method
+   */
+  List<Type> getGenericParameterTypes();
+
+  /**
    * Returns the return type of the method. In cases where no static type information is available,
    * the return type is assumed to be {@code Object}.
    *
    * @return the return type of the method
    */
   Class<?> getReturnType();
+
+  /**
+   * Returns the generic return type of the method. In cases where no static type information is available,
+   * the return type is assumed to be {@code Object}.
+   *
+   * @return the generic return type of the method
+   */
+  Type getGenericReturnType();
 
   /**
    * Tells whether the method is static or an instance method.

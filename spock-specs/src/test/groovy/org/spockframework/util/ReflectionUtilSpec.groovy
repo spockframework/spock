@@ -155,6 +155,14 @@ class ReflectionUtilSpec extends Specification {
     thrown(IOException)
   }
 
+  def "erase types"() {
+    def method = Generics.methods.find { it.name == "foo" }
+    def types = method.getGenericParameterTypes() as List
+
+    expect:
+    ReflectionUtil.eraseTypes(types) == [Object, List, List]
+  }
+
   static class Base {
     def baseMethod(String arg1, int arg2) {}
   }
@@ -171,5 +179,9 @@ class ReflectionUtilSpec extends Specification {
     def good(int arg) { arg }
     def unchecked() { throw new IllegalArgumentException("oops") }
     def checked() { throw new IOException("ouch") }
+  }
+
+  static class Generics<T> {
+    void foo(T one, List<T> two, List<String> three) {}
   }
 }

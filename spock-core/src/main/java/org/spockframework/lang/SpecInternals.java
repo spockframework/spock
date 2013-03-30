@@ -14,6 +14,7 @@
 
 package org.spockframework.lang;
 
+import java.lang.reflect.Type;
 import java.util.Collections;
 import java.util.Map;
 
@@ -39,7 +40,7 @@ public abstract class SpecInternals {
   }
 
   @Beta
-  public Object createMock(@Nullable String name, Class<?> type, MockNature nature,
+  public Object createMock(@Nullable String name, Type type, MockNature nature,
       MockImplementation implementation, Map<String, Object> options, @Nullable Closure closure) {
     Object mock = CompositeMockFactory.INSTANCE.create(
         new MockConfiguration(name, type, nature, implementation, options), (Specification) this);
@@ -272,12 +273,11 @@ public abstract class SpecInternals {
 
   private Object createMockImpl(String inferredName, Class<?> inferredType, MockNature nature,
       MockImplementation implementation, Map<String, Object> options, Class<?> specifiedType, Closure closure) {
-    if (specifiedType == null && inferredType == null) {
+    Type effectiveType = specifiedType != null ? specifiedType : options.containsKey("type") ? (Type) options.get("type") : inferredType;
+    if (effectiveType == null) {
       throw new InvalidSpecException("Mock object type cannot be inferred automatically. " +
           "Please specify a type explicitly (e.g. 'Mock(Person)').");
     }
-
-    Class<?> effectiveType = specifiedType != null ? specifiedType : inferredType;
     return createMock(inferredName, effectiveType, nature, implementation, options, closure);
   }
 }

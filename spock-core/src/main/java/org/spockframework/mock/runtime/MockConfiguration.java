@@ -14,9 +14,11 @@
 
 package org.spockframework.mock.runtime;
 
+import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
 
+import org.spockframework.gentyref.GenericTypeReflector;
 import org.spockframework.mock.IMockConfiguration;
 import org.spockframework.mock.IDefaultResponse;
 import org.spockframework.mock.MockImplementation;
@@ -27,7 +29,7 @@ import org.spockframework.util.Beta;
 @Beta
 public class MockConfiguration implements IMockConfiguration {
   private final String name;
-  private final Class<?> type;
+  private final Type type;
   private final MockNature nature;
   private final MockImplementation implementation;
   private final List<Object> constructorArgs;
@@ -37,10 +39,10 @@ public class MockConfiguration implements IMockConfiguration {
   private final boolean useObjenesis;
 
   @SuppressWarnings("unchecked")
-  public MockConfiguration(@Nullable String name, Class<?> type, MockNature nature,
+  public MockConfiguration(@Nullable String name, Type type, MockNature nature,
       MockImplementation implementation, Map<String, Object> options) {
     this.name = getOption(options, "name", String.class, name);
-    this.type = getOption(options, "type", Class.class, type);
+    this.type = getOption(options, "type", Type.class, type);
     this.nature = getOption(options, "nature", MockNature.class, nature);
     this.implementation = getOption(options, "implementation", MockImplementation.class, implementation);
     this.constructorArgs = getOption(options, "constructorArgs", List.class, null);
@@ -56,6 +58,10 @@ public class MockConfiguration implements IMockConfiguration {
   }
 
   public Class<?> getType() {
+    return GenericTypeReflector.erase(type);
+  }
+
+  public Type getGenericType() {
     return type;
   }
 

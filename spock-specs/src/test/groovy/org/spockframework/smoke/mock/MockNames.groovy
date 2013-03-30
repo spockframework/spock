@@ -1,4 +1,3 @@
-
 /*
  * Copyright 2010 the original author or authors.
  *
@@ -18,7 +17,7 @@ package org.spockframework.smoke.mock
 import spock.lang.*
 import org.spockframework.mock.IMockInvocation
 
-class MockNamesAndStringRepresentations extends Specification {
+class MockNames extends Specification {
   def fieldMock = Mock(List)
   def fieldMock2
 

@@ -15,6 +15,7 @@
 package org.spockframework.mock.runtime;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.List;
 
@@ -114,11 +115,11 @@ public class GroovyMockMetaClass extends DelegatingMetaClass {
 
   private IMockInvocation createMockInvocation(MetaMethod metaMethod, Object target,
       String methodName, Object[] arguments, boolean isStatic) {
-    IMockObject mockObject = new MockObject(configuration.getName(), configuration.getType(), target,
+    IMockObject mockObject = new MockObject(configuration.getName(), configuration.getGenericType(), target,
         configuration.isVerified(), configuration.isGlobal(), configuration.getDefaultResponse(), specification);
     IMockMethod mockMethod;
     if (metaMethod != null) {
-      List<Class<?>> parameterTypes = Arrays.<Class<?>>asList(metaMethod.getNativeParameterTypes());
+      List<Type> parameterTypes = Arrays.<Type>asList(metaMethod.getNativeParameterTypes());
       mockMethod = new DynamicMockMethod(methodName, parameterTypes, metaMethod.getReturnType(), isStatic);
     } else {
       mockMethod = new DynamicMockMethod(methodName, arguments.length, isStatic);

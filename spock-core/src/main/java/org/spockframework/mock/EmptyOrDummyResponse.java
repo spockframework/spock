@@ -16,6 +16,7 @@ package org.spockframework.mock;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.*;
@@ -117,8 +118,9 @@ public class EmptyOrDummyResponse implements IDefaultResponse {
 
   private Object createDummy(IMockInvocation invocation) {
     Class<?> type = invocation.getMethod().getReturnType();
+    Type genericType = invocation.getMethod().getGenericReturnType();
     Specification spec = invocation.getMockObject().getSpecification();
-    return spec.createMock("dummy", type, MockNature.STUB, GroovyObject.class.isAssignableFrom(type) ?
+    return spec.createMock("dummy", genericType, MockNature.STUB, GroovyObject.class.isAssignableFrom(type) ?
         MockImplementation.GROOVY : MockImplementation.JAVA, Collections.<String, Object>emptyMap(), null);
   }
 }

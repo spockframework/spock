@@ -14,6 +14,9 @@
 
 package org.spockframework.mock.runtime;
 
+import java.lang.reflect.Type;
+
+import org.spockframework.gentyref.GenericTypeReflector;
 import org.spockframework.lang.Wildcard;
 import org.spockframework.mock.IMockInteraction;
 import org.spockframework.mock.IMockObject;
@@ -25,14 +28,14 @@ import spock.lang.Specification;
 
 public class MockObject implements IMockObject {
   private final String name;
-  private final Class<?> type;
+  private final Type type;
   private final Object instance;
   private final boolean verified;
   private final boolean global;
   private final IDefaultResponse defaultResponse;
   private final Specification specification;
 
-  public MockObject(@Nullable String name, Class<?> type, Object instance,
+  public MockObject(@Nullable String name, Type type, Object instance,
       boolean verified, boolean global, IDefaultResponse defaultResponse, Specification specification) {
     this.name = name;
     this.type = type;
@@ -48,8 +51,11 @@ public class MockObject implements IMockObject {
     return name;
   }
 
-  @Nullable
   public Class<?> getType() {
+    return GenericTypeReflector.erase(type);
+  }
+
+  public Type getGenericType() {
     return type;
   }
 

@@ -14,22 +14,25 @@
 
 package org.spockframework.mock.runtime;
 
+import java.lang.reflect.Type;
 import java.util.Collections;
 import java.util.List;
 
+import org.spockframework.gentyref.GenericTypeReflector;
 import org.spockframework.mock.IMockMethod;
+import org.spockframework.util.ReflectionUtil;
 
 public class DynamicMockMethod implements IMockMethod {
   private final String methodName;
-  private final List<Class<?>> parameterTypes;
-  Class<?> returnType;
+  private final List<Type> parameterTypes;
+  Type returnType;
   private final boolean isStatic;
 
   public DynamicMockMethod(String methodName, int argumentCount, boolean isStatic) {
-    this(methodName, Collections.<Class<?>>nCopies(argumentCount , Object.class), Object.class, isStatic);
+    this(methodName, Collections.<Type>nCopies(argumentCount , Object.class), Object.class, isStatic);
   }
 
-  public DynamicMockMethod(String methodName, List<Class<?>> parameterTypes, Class<?> returnType, boolean isStatic) {
+  public DynamicMockMethod(String methodName, List<Type> parameterTypes, Type returnType, boolean isStatic) {
     this.methodName = methodName;
     this.parameterTypes = parameterTypes;
     this.returnType = returnType;
@@ -41,10 +44,18 @@ public class DynamicMockMethod implements IMockMethod {
   }
 
   public List<Class<?>> getParameterTypes() {
+    return ReflectionUtil.eraseTypes(getGenericParameterTypes());
+  }
+
+  public List<Type> getGenericParameterTypes() {
     return parameterTypes;
   }
 
   public Class<?> getReturnType() {
+    return GenericTypeReflector.erase(returnType);
+  }
+
+  public Type getGenericReturnType() {
     return returnType;
   }
 

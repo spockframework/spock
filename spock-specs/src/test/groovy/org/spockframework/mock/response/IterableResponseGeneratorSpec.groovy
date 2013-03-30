@@ -28,7 +28,7 @@ class IterableResponseGeneratorSpec extends Specification {
   def "iterate over non-empty list" () {
     def gen = new IterableResponseGenerator([1,2,3])
     def method = ReflectionUtil.getMethodByName(Object, "hashCode")
-    inv.getMethod() >> new StaticMockMethod(method)
+    inv.getMethod() >> new StaticMockMethod(method, Object)
 
     expect:
     gen.respond(inv) == 1
@@ -40,7 +40,7 @@ class IterableResponseGeneratorSpec extends Specification {
   def "iterate over empty list"() {
     def gen = new IterableResponseGenerator([])
     def method = ReflectionUtil.getMethodByName(Object, "hashCode")
-    inv.getMethod() >> new StaticMockMethod(method)
+    inv.getMethod() >> new StaticMockMethod(method, Object)
 
     expect:
     gen.respond(inv) == null
@@ -50,7 +50,7 @@ class IterableResponseGeneratorSpec extends Specification {
   def "iterate over string"() {
     def gen = new IterableResponseGenerator("abc")
     def method = ReflectionUtil.getMethodByName(Object, "toString")
-    inv.getMethod() >> new StaticMockMethod(method)
+    inv.getMethod() >> new StaticMockMethod(method, Object)
 
     expect:
     gen.respond(inv) == "a"

@@ -17,6 +17,10 @@ package org.spockframework.util;
 import java.io.File;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.spockframework.gentyref.GenericTypeReflector;
 
 public abstract class ReflectionUtil {
   /**
@@ -154,5 +158,13 @@ public abstract class ReflectionUtil {
       ExceptionUtil.sneakyThrow(e.getCause());
       return null; // never reached
     }
+  }
+
+  public static List<Class<?>> eraseTypes(List<Type> types) {
+    List<Class<?>> result = new ArrayList<Class<?>>();
+    for (Type type : types) {
+      result.add(GenericTypeReflector.erase(type));
+    }
+    return result;
   }
 }

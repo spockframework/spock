@@ -18,6 +18,8 @@ import org.spockframework.util.Nullable;
 
 import spock.lang.Specification;
 
+import java.lang.reflect.Type;
+
 public interface IMockObject {
   /**
    * Returns the name of this mock object, or {@code null} if it has no name.
@@ -33,6 +35,13 @@ public interface IMockObject {
    * @return the declared type of this mock object
    */
   Class<?> getType();
+
+  /**
+   * Returns the generic declared type of this mock object.
+   *
+   * @return the generic declared type of this mock object
+   */
+  Type getGenericType();
 
   /**
    * Returns the instance of this mock object.

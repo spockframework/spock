@@ -1,5 +1,6 @@
 package org.spockframework.mock;
 
+import java.lang.reflect.Type;
 import java.util.List;
 
 import org.spockframework.util.Beta;
@@ -32,6 +33,13 @@ public interface IMockConfiguration {
    * @return the interface or class type of the mock object
    */
   Class<?> getType();
+
+  /**
+   * Returns the generic interface or class type of the mock object.
+   *
+   * @return the generic interface or class type of the mock object
+   */
+  Type getGenericType();
 
   /**
    * Returns the nature of the mock object. A nature is a named

@@ -185,14 +185,26 @@ class MockingMethodsWithVarArgParameters extends Specification {
     1 * mock.foo(1, new Object[0])
   }
 
-  def "handle matching primitive array value in invocation of a vararg interaction"() {
-    def mock = Mock(GroovyPrimitiveArrayParameter)
+  @Issue("http://issues.spockframework.org/detail?id=294")
+  def "vararg handling also works when element type is a primitive type"() {
+    def mock = Mock(clazz)
 
     when:
-    mock.foo(1, [2, 3] as byte[])
+    mock.foo("one", 1, 2, 3)
+    mock.foo("one", [1, 2, 3] as int[])
 
     then:
-    1 * mock.foo(1, 2, 3)
+    2 * mock.foo("one", 1, 2, 3)
+
+    when:
+    mock.foo("one", 1, 2, 3)
+    mock.foo("one", [1, 2, 3] as int[])
+
+    then:
+    2 * mock.foo("one", [1, 2, 3] as int[])
+
+    where:
+    clazz << [GroovyPrimitiveVarArgParameter, GroovyPrimitiveArrayParameter]
   }
 
   interface GroovyVarArgParameter {
@@ -203,8 +215,12 @@ class MockingMethodsWithVarArgParameters extends Specification {
     def foo(int i, String[] strings)
   }
 
+  interface GroovyPrimitiveVarArgParameter {
+    def foo(String str, int... strings)
+  }
+
   interface GroovyPrimitiveArrayParameter {
-    def foo(int i, byte[] bytes)
+    def foo(String str, int[] bytes)
   }
 
   interface NoVarArgParameter {

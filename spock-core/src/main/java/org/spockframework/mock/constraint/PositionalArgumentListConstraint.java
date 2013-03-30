@@ -59,17 +59,14 @@ public class PositionalArgumentListConstraint implements IInvocationConstraint {
 
   private List<Object> expandVarArgs(List<Object> args) {
     List<Object> expanded = new ArrayList<Object>();
-    Object lastArg = CollectionUtil.getLastElement(args);
     expanded.addAll(args.subList(0, args.size() - 1));
-    if (Object[].class.isAssignableFrom(lastArg.getClass())) {
-      expanded.addAll(Arrays.asList((Object[]) lastArg));
-    } else {
-      int length = Array.getLength(lastArg);
-      for (int i = 0; i < length; i++) {
-        Object element = Array.get(lastArg, i);
-        expanded.add(element);
-      }
+
+    Object varArgs = CollectionUtil.getLastElement(args);
+    int length = Array.getLength(varArgs);
+    for (int i = 0; i < length; i++) {
+      expanded.add(Array.get(varArgs, i));
     }
+
     return expanded;
   }
 

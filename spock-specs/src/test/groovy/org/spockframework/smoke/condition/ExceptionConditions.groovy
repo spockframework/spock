@@ -255,4 +255,18 @@ thrown() == e
     then:
     e = thrown()
   }
+
+  @Issue("http://issues.spockframework.org/detail?id=297")
+  def "can have multi-assignments in when-block"() {
+    when:
+    def (x, y) = [1, 2]
+    (x, y) = [3, 4]
+    throw new RuntimeException()
+    (x, y) = [5, 6]
+
+    then:
+    thrown(RuntimeException)
+    x == 3
+    y == 4
+  }
 }

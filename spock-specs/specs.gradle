@@ -60,6 +60,6 @@ gradle.addListener(new TaskExecutionListener() {
 })
 
 task groovyConsole(type: JavaExec) {
-  main = 'groovy.ui.Console'
+  main = "groovy.ui.Console"
   classpath = sourceSets.test.runtimeClasspath
 }

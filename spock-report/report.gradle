@@ -18,15 +18,21 @@ test {
 }
 
 ext.spockLogFileDir = file("$buildDir/spock/logFiles")
+ext.spockLogFileName = "spock-log"
 
 task sampleTest(type: Test) {
   testClassesDir = test.testClassesDir
   classpath = test.classpath
   include "org/spockframework/report/sample/FightOrFlightStory.class"
   include "org/spockframework/report/sample/FightOrFlightSpec.class"
+  testLogging.exceptionFormat = "full"
+  testLogging.showExceptions = true
+  maxParallelForks = 1
+
   systemProperty "spock.logFileDir", spockLogFileDir
+  systemProperty "spock.logFileName", spockLogFileName
   testReport = false
-  ignoreFailures = true
+
   doFirst {
     delete spockLogFileDir
   }
@@ -34,9 +40,23 @@ task sampleTest(type: Test) {
 
 task sampleReport(type: org.spockframework.gradle.GenerateSpockReport, dependsOn: sampleTest) {
   reportName = "Ninja Commander"
-  logFileDirectories = [spockLogFileDir]
-  outputDirectory = file("$buildDir/spock/reports/")
+  reportFileName = "ninja.html"
+  debug = true
+  local = true
+  liveLogFiles = (1..10).collect { file("$spockLogFileDir/$spockLogFileName-$it") }
   spockReportClasspath = sourceSets.main.runtimeClasspath
-  debug = false
-  local = false
+  outputDirectory = file("$buildDir/spock/reports/")
 }
+
+def prj = project
+
+//workaround until Gradle gets soft task dependencies
+gradle.addListener(new TaskExecutionListener() {
+  void beforeExecute(Task task) {}
+
+  void afterExecute(Task task, TaskState state) {
+    if (task.path == ":spock-report:sampleTest" && state.executed) {
+      prj.sampleReport.execute()
+    }
+  }
+})

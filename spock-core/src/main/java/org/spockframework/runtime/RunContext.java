@@ -15,6 +15,7 @@
 package org.spockframework.runtime;
 
 import java.io.File;
+import java.security.AccessControlException;
 import java.util.*;
 
 import org.junit.runner.notification.RunNotifier;
@@ -151,12 +152,16 @@ public class RunContext {
       context = createBottomContext();
       contextStack.addFirst(context);
       final RunContext bottomContext = context;
-      Runtime.getRuntime().addShutdownHook(new Thread("org.spockframework.runtime.RunContext.stop()") {
-        @Override
-        public void run() {
-          bottomContext.stop();
-        }
-      });
+      try {
+        Runtime.getRuntime().addShutdownHook(new Thread("org.spockframework.runtime.RunContext.stop()") {
+          @Override
+          public void run() {
+            bottomContext.stop();
+          }
+        });
+      } catch (AccessControlException ignored) {
+        // GAE doesn't support creating a new thread
+      }
       context.start();
     }
     return context;

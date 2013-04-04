@@ -25,7 +25,7 @@ I want my ninjas to decide whether to take on an opponent based on their skill l
 """)
 @Title("Fight or Flight (Story Style)")
 class FightOrFlightStory extends Specification {
-  @Issue("260")
+  @Issue("261")
   def "Strong Opponent"() {
     given: "the ninja has a third level black-belt"
     System.out << getClass().getResourceAsStream("loremipsum.txt")

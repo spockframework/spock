@@ -35,11 +35,12 @@ public interface IMockConfiguration {
   Class<?> getType();
 
   /**
-   * Returns the generic interface or class type of the mock object.
+   * Returns the exact interface or class type of the mock object.
+   * The returned {@link Type} is either a {@link Class} or a {@link java.lang.reflect.ParameterizedType}.
    *
-   * @return the generic interface or class type of the mock object
+   * @return the exact interface or class type of the mock object
    */
-  Type getGenericType();
+  Type getExactType();
 
   /**
    * Returns the nature of the mock object. A nature is a named

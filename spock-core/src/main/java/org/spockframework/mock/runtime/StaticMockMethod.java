@@ -38,18 +38,18 @@ public class StaticMockMethod implements IMockMethod {
   }
 
   public List<Class<?>> getParameterTypes() {
-    return ReflectionUtil.eraseTypes(getGenericParameterTypes());
+    return ReflectionUtil.eraseTypes(getExactParameterTypes());
   }
 
-  public List<Type> getGenericParameterTypes() {
+  public List<Type> getExactParameterTypes() {
     return Arrays.asList(GenericTypeReflector.getExactParameterTypes(method, mockType));
   }
 
   public Class<?> getReturnType() {
-    return GenericTypeReflector.erase(getGenericReturnType());
+    return GenericTypeReflector.erase(getExactReturnType());
   }
 
-  public Type getGenericReturnType() {
+  public Type getExactReturnType() {
     return GenericTypeReflector.getExactReturnType(method, mockType);
   }
 

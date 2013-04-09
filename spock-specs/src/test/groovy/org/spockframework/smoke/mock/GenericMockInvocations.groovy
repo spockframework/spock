@@ -39,6 +39,21 @@ class GenericMockInvocations extends Specification {
     }
   }
 
+  def "mock with raw type"() {
+    def holder = Mock(Function)
+
+    when:
+    holder.get("foo")
+
+    then:
+    1 * holder.get(_) >> { IMockInvocation invocation ->
+      assert invocation.method.parameterTypes == [Object]
+      assert invocation.method.returnType == Object
+      assert invocation.method.exactParameterTypes == [Object]
+      assert invocation.method.exactReturnType == Object
+    }
+  }
+
   static class StringIntFunction implements Function<String, Integer> {
     Integer get(String value) {}
   }
@@ -85,8 +100,25 @@ class GenericMockInvocations extends Specification {
 
     then:
     1 * holder.get(_) >> { IMockInvocation invocation ->
-      assert invocation.method.genericParameterTypes == [new TypeToken<List<String>>(){}.type]
-      assert invocation.method.genericReturnType == new TypeToken<List<Integer>>(){}.type
+      assert invocation.method.exactParameterTypes == [new TypeToken<List<String>>(){}.type]
+      assert invocation.method.exactReturnType == new TypeToken<List<Integer>>(){}.type
+    }
+  }
+
+  static class GenericMethod {
+    public <T> T doIt(Class<T> type) { null }
+  }
+
+  def "mock with generic method"() {
+    def generic = Mock(GenericMethod)
+
+    when:
+    generic.doIt(String)
+
+    then:
+    1 * generic.doIt(_) >> { IMockInvocation invocation ->
+      assert invocation.method.returnType == Object
+      assert invocation.method.exactReturnType == Object
     }
   }
 }

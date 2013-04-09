@@ -36,4 +36,19 @@ class GenericTypeReflectorSpec extends Specification {
     notThrown(NullPointerException)
     type == boolean
   }
+
+  public <T> T genericMethod(Class<T> arg) {
+    null
+  }
+
+  def "can get exact return type for generic method"() {
+    def method = getClass().getDeclaredMethod("genericMethod", Class)
+
+    when:
+    def type = GenericTypeReflector.getExactReturnType(method, getClass())
+
+    then:
+    notThrown(NullPointerException)
+    type == Object
+  }
 }

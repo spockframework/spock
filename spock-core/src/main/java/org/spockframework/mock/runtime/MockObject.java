@@ -55,7 +55,7 @@ public class MockObject implements IMockObject {
     return GenericTypeReflector.erase(type);
   }
 
-  public Type getGenericType() {
+  public Type getExactType() {
     return type;
   }
 

@@ -30,23 +30,24 @@ public interface IMockMethod {
   String getName();
 
   /**
-   * Returns the parameter types of the method. In cases where no static type information is available,
-   * all arguments are assumed to have type {@code Object}.
+   * Returns the exact parameter types of the method.
+   * If no static type information is available for the method, parameters are assumed to have type {@link Object}.
    *
    * @return the parameter types of the method
    */
   List<Class<?>> getParameterTypes();
 
   /**
-   * Returns the generic parameter types of the method. In cases where no static type information is available,
-   * all arguments are assumed to have type {@code Object}.
+   * Returns the exact parameter types of the method. Each returned {@link Type} is either a {@link Class} or
+   * a {@link java.lang.reflect.ParameterizedType}. Unbound type parameters are substituted with {@link Object}.
+   * If no static type information is available for the method, parameters are assumed to have type {@link Object}.
    *
-   * @return the generic parameter types of the method
+   * @return the exact parameter types of the method
    */
-  List<Type> getGenericParameterTypes();
+  List<Type> getExactParameterTypes();
 
   /**
-   * Returns the return type of the method. In cases where no static type information is available,
+   * Returns the return type of the method. If no static type information is available for the method,
    * the return type is assumed to be {@code Object}.
    *
    * @return the return type of the method
@@ -54,12 +55,13 @@ public interface IMockMethod {
   Class<?> getReturnType();
 
   /**
-   * Returns the generic return type of the method. In cases where no static type information is available,
-   * the return type is assumed to be {@code Object}.
+   * Returns the exact return type of the method. The returned {@link Type} is either a {@link Class} or
+   * a {@link java.lang.reflect.ParameterizedType}. In cases where no static type information is available,
+   * the return type is assumed to be {@link Object}.
    *
-   * @return the generic return type of the method
+   * @return the exact return type of the method
    */
-  Type getGenericReturnType();
+  Type getExactReturnType();
 
   /**
    * Tells whether the method is static or an instance method.

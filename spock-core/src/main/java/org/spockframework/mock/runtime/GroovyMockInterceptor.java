@@ -39,7 +39,7 @@ public class GroovyMockInterceptor implements IProxyBasedMockInterceptor {
   }
 
   public Object intercept(Object target, Method method, Object[] arguments, IResponseGenerator realMethodInvoker) {
-    IMockObject mockObject = new MockObject(mockConfiguration.getName(), mockConfiguration.getGenericType(), target,
+    IMockObject mockObject = new MockObject(mockConfiguration.getName(), mockConfiguration.getExactType(), target,
         mockConfiguration.isVerified(), mockConfiguration.isGlobal(), mockConfiguration.getDefaultResponse(), specification);
 
     if (method.getDeclaringClass() == ISpockMockObject.class) {
@@ -73,7 +73,7 @@ public class GroovyMockInterceptor implements IProxyBasedMockInterceptor {
       throw new MissingPropertyException((String) normalizedArgs[0], mockConfiguration.getType());
     }
 
-    IMockMethod mockMethod = new StaticMockMethod(method, mockConfiguration.getGenericType());
+    IMockMethod mockMethod = new StaticMockMethod(method, mockConfiguration.getExactType());
     IMockInvocation invocation = new MockInvocation(mockObject, mockMethod, Arrays.asList(normalizedArgs), realMethodInvoker);
     IMockController controller = specification.getSpecificationContext().getMockController();
 

@@ -37,11 +37,12 @@ public interface IMockObject {
   Class<?> getType();
 
   /**
-   * Returns the generic declared type of this mock object.
+   * Returns the exact declared type of this mock object.
+   * The returned {@link Type} is either a {@link Class} or a {@link java.lang.reflect.ParameterizedType}.
    *
-   * @return the generic declared type of this mock object
+   * @return the exact declared type of this mock object
    */
-  Type getGenericType();
+  Type getExactType();
 
   /**
    * Returns the instance of this mock object.

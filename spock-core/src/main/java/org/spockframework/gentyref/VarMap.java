@@ -44,8 +44,8 @@ class VarMap {
 		if (type instanceof Class) {
 			return type;
 		} else if (type instanceof TypeVariable) {
-			assert map.containsKey(type);
-			return map.get(type);
+      Type result = map.get(type);
+      return result == null ? Object.class : result;
 		} else if (type instanceof ParameterizedType) {
 			ParameterizedType pType = (ParameterizedType) type;
 			return new ParameterizedTypeImpl((Class<?>)pType.getRawType(), map(pType.getActualTypeArguments()), pType.getOwnerType() == null ? pType.getOwnerType() : map(pType.getOwnerType()));

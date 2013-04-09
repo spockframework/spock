@@ -44,10 +44,10 @@ public class DynamicMockMethod implements IMockMethod {
   }
 
   public List<Class<?>> getParameterTypes() {
-    return ReflectionUtil.eraseTypes(getGenericParameterTypes());
+    return ReflectionUtil.eraseTypes(getExactParameterTypes());
   }
 
-  public List<Type> getGenericParameterTypes() {
+  public List<Type> getExactParameterTypes() {
     return parameterTypes;
   }
 
@@ -55,7 +55,7 @@ public class DynamicMockMethod implements IMockMethod {
     return GenericTypeReflector.erase(returnType);
   }
 
-  public Type getGenericReturnType() {
+  public Type getExactReturnType() {
     return returnType;
   }
 

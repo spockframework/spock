@@ -21,6 +21,7 @@ import java.util.*;
 import org.codehaus.groovy.ast.*;
 import org.codehaus.groovy.ast.expr.*;
 import org.codehaus.groovy.ast.stmt.*;
+import org.codehaus.groovy.control.SourceUnit;
 import org.codehaus.groovy.syntax.Token;
 import org.codehaus.groovy.syntax.Types;
 import org.objectweb.asm.Opcodes;
@@ -342,7 +343,10 @@ public class WhereBlockRewriter {
         new ReturnStatement(
             new ArrayExpression(
                 ClassHelper.OBJECT_TYPE,
-                (List)dataProcessorVars)));
+                (List) dataProcessorVars)));
+
+    BlockStatement blockStat = new BlockStatement(dataProcessorStats, new VariableScope());
+    new DataProcessorVariableRewriter().visitBlockStatement(blockStat);
 
     whereBlock.getParent().getParent().getAst().addMethod(
       new MethodNode(
@@ -351,13 +355,30 @@ public class WhereBlockRewriter {
           ClassHelper.OBJECT_TYPE,
           dataProcessorParams.toArray(new Parameter[dataProcessorParams.size()]),
           ClassNode.EMPTY_ARRAY,
-          new BlockStatement(
-              dataProcessorStats,
-              new VariableScope())));
+          blockStat));
   }
 
   private static void notAParameterization(ASTNode stat) throws InvalidSpecCompileException {
     throw new InvalidSpecCompileException(stat,
 "where-blocks may only contain parameterizations (e.g. 'salary << [1000, 5000, 9000]; salaryk = salary / 1000')");
+  }
+
+  private class DataProcessorVariableRewriter extends ClassCodeVisitorSupport {
+    @Override
+    protected SourceUnit getSourceUnit() {
+      throw new UnsupportedOperationException("getSourceUnit");
+    }
+
+    @Override
+    public void visitClosureExpression(ClosureExpression expr) {
+      super.visitClosureExpression(expr);
+      AstUtil.fixUpLocalVariables(dataProcessorVars, expr.getVariableScope(), true);
+    }
+
+    @Override
+    public void visitBlockStatement(BlockStatement stat) {
+      super.visitBlockStatement(stat);
+      AstUtil.fixUpLocalVariables(dataProcessorVars, stat.getVariableScope(), false);
+    }
   }
 }

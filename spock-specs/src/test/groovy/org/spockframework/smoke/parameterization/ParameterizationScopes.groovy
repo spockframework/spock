@@ -67,4 +67,29 @@ class ParameterizationScopes extends Specification {
     where:
     val = 1
   }
+
+  @Issue("http://issues.spockframework.org/detail?id=286")
+  def "in closure scope of derived data value"() {
+    expect:
+    val2 == [2, 3]
+
+    where:
+    val1 = 2
+    val2 = [1, 2, 3].findAll { it >= val1 }
+  }
+
+  @Issue("http://issues.spockframework.org/detail?id=286")
+  def "in nested closure scope of derived data value"() {
+    expect:
+    val2 == [2, 3]
+
+    where:
+    val1 = 2
+    val2 = [1, 2, 3].findAll { x ->
+      def val1Copy = val1
+      (0..2).every {
+        x >= val1 && x >= val1Copy
+      }
+    }
+  }
 }

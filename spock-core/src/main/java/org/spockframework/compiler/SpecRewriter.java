@@ -279,7 +279,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
 
   // where block must be rewritten before all other blocks
   // s.t. missing method parameters are added; these parameters
-  // will then be used by DeepStatementRewriter.fixupVariableScope()
+  // will then be used by DeepBlockRewriter
   private void handleWhereBlock(Method method) {
     Block block = method.getLastBlock();
     if (!(block instanceof WhereBlock)) return;

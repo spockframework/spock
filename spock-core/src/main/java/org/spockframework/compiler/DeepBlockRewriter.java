@@ -66,7 +66,9 @@ public class DeepBlockRewriter extends AbstractDeepBlockRewriter {
   }
 
   protected void doVisitClosureExpression(ClosureExpression expr) {
-    fixUpParameters(expr.getVariableScope(), true);
+    if (resources.getCurrentMethod() instanceof FeatureMethod) {
+      AstUtil.fixUpLocalVariables(resources.getCurrentMethod().getAst().getParameters(), expr.getVariableScope(), true);
+    }
     super.doVisitClosureExpression(expr);
     if (conditionFound) defineValueRecorder(expr);
   }
@@ -74,7 +76,9 @@ public class DeepBlockRewriter extends AbstractDeepBlockRewriter {
   @Override
   public void visitBlockStatement(BlockStatement stat) {
     super.visitBlockStatement(stat);
-    fixUpParameters(stat.getVariableScope(), false);
+    if (resources.getCurrentMethod() instanceof FeatureMethod) {
+      AstUtil.fixUpLocalVariables(resources.getCurrentMethod().getAst().getParameters(), stat.getVariableScope(), false);
+    }
   }
 
   @Override
@@ -191,25 +195,6 @@ public class DeepBlockRewriter extends AbstractDeepBlockRewriter {
 
   private void defineValueRecorder(ClosureExpression expr) {
     resources.defineValueRecorder(AstUtil.getStatements(expr));
-  }
-
-  private void fixUpParameters(VariableScope scope, boolean isClosureScope) {
-    Method method = resources.getCurrentMethod();
-    if (!(method instanceof FeatureMethod)) return;
-
-    // if this is a parameterized feature method w/o explicit parameter list,
-    // update any references to parameterization variables
-    // (parameterization variables used to be free variables,
-    // but have been changed to method parameters by WhereBlockRewriter)
-    for (Parameter param : method.getAst().getParameters()) {
-      Variable var = scope.getReferencedClassVariable(param.getName());
-      if (var instanceof DynamicVariable) {
-        scope.removeReferencedClassVariable(param.getName());
-        scope.putReferencedLocalVariable(param);
-        if (isClosureScope)
-          param.setClosureSharedVariable(true);
-      }
-    }
   }
 
   // Forbid the use of super.foo() in fixture method foo,

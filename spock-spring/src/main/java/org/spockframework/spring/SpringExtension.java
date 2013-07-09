@@ -58,7 +58,8 @@ public class SpringExtension extends AbstractGlobalExtension {
       if (field.getReflection().isAnnotationPresent(Shared.class)
           && (field.getReflection().isAnnotationPresent(Autowired.class)
           // avoid compile-time dependency on JDK 1.6 only class
-          || ReflectionUtil.isAnnotationPresent(field.getReflection(), "javax.annotation.Resource")))
+          || ReflectionUtil.isAnnotationPresent(field.getReflection(), "javax.annotation.Resource")
+          || ReflectionUtil.isAnnotationPresent(field.getReflection(), "javax.inject.Inject")))
         throw new SpringExtensionException(
             "@Shared field '%s' cannot be injected; use an instance field instead").withArgs(field.getName());
     }

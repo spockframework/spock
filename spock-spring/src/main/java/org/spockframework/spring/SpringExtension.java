@@ -30,7 +30,9 @@ import spock.lang.Shared;
 @NotThreadSafe
 public class SpringExtension extends AbstractGlobalExtension {
   public void visitSpec(SpecInfo spec) {
-    if (!spec.getReflection().isAnnotationPresent(ContextConfiguration.class)) return;
+    if (!spec.getReflection().isAnnotationPresent(ContextConfiguration.class)
+        // avoid compile-time dependency on Spring 3.2.2
+        && !ReflectionUtil.isAnnotationPresent(spec.getReflection(), "org.springframework.test.context.ContextHierarchy")) return;
 
     checkNoSharedFieldsInjected(spec);
 

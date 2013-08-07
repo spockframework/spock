@@ -22,6 +22,10 @@ ext.spockLogFileDir = file("$buildDir/spock/logFiles")
 ext.spockLogFileName = "spock-log"
 
 test {
+  finalizedBy "spockReport"
+  reports.junitXml.enabled = false
+  reports.html.enabled = false
+
   testLogging.exceptionFormat = "full"
   testLogging.showExceptions = true
   maxParallelForks = 1
@@ -29,7 +33,6 @@ test {
   systemProperty "spock.logFileDir", spockLogFileDir
   systemProperty "spock.logFileName", spockLogFileName
   //systemProperty "spock.reportServerAddress", "127.0.0.1"
-  testReport = false
 
   doFirst {
     delete spockLogFileDir

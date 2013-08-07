@@ -48,7 +48,7 @@ subprojects {
   }
 
   dependencies {
-    groovy(project.name == "spock-gradle" ? [] : libs.groovy)
+    compile(project.name == "spock-gradle" ? [] : libs.groovy)
   }
 
   signing {
@@ -100,10 +100,6 @@ task groovydoc(type: Groovydoc) {
 task apidoc(dependsOn: ["javadoc", "groovydoc"])
 
 configureGroovydoc(groovydoc)
-
-task wrapper(type: Wrapper) {
-  gradleVersion = "1.5"
-}
 
 File script(String name) {
   project.file("gradle/${name}.gradle")

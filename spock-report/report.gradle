@@ -21,6 +21,10 @@ ext.spockLogFileDir = file("$buildDir/spock/logFiles")
 ext.spockLogFileName = "spock-log"
 
 task sampleTest(type: Test) {
+  finalizedBy "sampleReport"
+  reports.junitXml.enabled = false
+  reports.html.enabled = false
+
   testClassesDir = test.testClassesDir
   classpath = test.classpath
   include "org/spockframework/report/sample/FightOrFlightStory.class"
@@ -31,14 +35,13 @@ task sampleTest(type: Test) {
 
   systemProperty "spock.logFileDir", spockLogFileDir
   systemProperty "spock.logFileName", spockLogFileName
-  testReport = false
 
   doFirst {
     delete spockLogFileDir
   }
 }
 
-task sampleReport(type: org.spockframework.gradle.GenerateSpockReport, dependsOn: sampleTest) {
+task sampleReport(type: org.spockframework.gradle.GenerateSpockReport) {
   reportName = "Ninja Commander"
   reportFileName = "ninja.html"
   debug = true
@@ -48,15 +51,3 @@ task sampleReport(type: org.spockframework.gradle.GenerateSpockReport, dependsOn
   outputDirectory = file("$buildDir/spock/reports/")
 }
 
-def prj = project
-
-//workaround until Gradle gets soft task dependencies
-gradle.addListener(new TaskExecutionListener() {
-  void beforeExecute(Task task) {}
-
-  void afterExecute(Task task, TaskState state) {
-    if (task.path == ":spock-report:sampleTest" && state.executed) {
-      prj.sampleReport.execute()
-    }
-  }
-})

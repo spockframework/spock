@@ -6,18 +6,26 @@ apply plugin: "spock-base"
 
 configurations {
   spockReport
+  junit
 }
 
 dependencies {
-  groovy libs.junit // necessary to make @NotYetImplemented transform work (transform that ships with Groovy and statically references third-party class junit.framwork.AssertionFailedError)
-
   testCompile project(":spock-core")
+
   testRuntime libs.asm
   testRuntime libs.cglib
   testRuntime libs.objenesis
   testRuntime libs.h2database
 
   spockReport project(":spock-report")
+
+  junit libs.junit
+}
+
+// necessary to make @NotYetImplemented transform work (transform that ships 
+// with Groovy and statically references third-party class junit.framwork.AssertionFailedError)
+tasks.withType(GroovyCompile) {
+	groovyClasspath += configurations.junit
 }
 
 ext.spockLogFileDir = file("$buildDir/spock/logFiles")

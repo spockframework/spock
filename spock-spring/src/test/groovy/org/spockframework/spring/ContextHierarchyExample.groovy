@@ -19,16 +19,13 @@ package org.spockframework.spring
 import javax.inject.Inject;
 
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.context.ApplicationContext
-import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.ContextHierarchy;
 
 import spock.lang.*
 
-@ContextHierarchy ([@ContextConfiguration(locations = "InjectionExamples-context.xml")])
+@ContextHierarchy(@ContextConfiguration(locations = "InjectionExamples-context.xml"))
 class ContextHierarchyExample extends Specification {
-
   @Autowired
   Service1 service1
   
@@ -37,8 +34,7 @@ class ContextHierarchyExample extends Specification {
 
   def "Injection works with @ContextHierarchy"() {
     expect:
-	service1 != null
-	service2 != null
+	service1 instanceof Service1
+	service2 instanceof Service2
   }
-
 }

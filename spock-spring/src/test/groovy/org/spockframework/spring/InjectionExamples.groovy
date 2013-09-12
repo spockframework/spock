@@ -100,6 +100,7 @@ class Foo extends Specification {
 
     where:
     ann << ["org.springframework.beans.factory.annotation.Autowired",
-            "javax.annotation.Resource"]
+            "javax.annotation.Resource",
+            "javax.inject.Inject"]
   }
 }

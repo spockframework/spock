@@ -276,7 +276,7 @@ method with interactions declared in a ``then:`` block.
 
    In other words, what makes an expression an interaction declaration, rather than, say, a regular method call?
    Spock uses a simple syntactic rule to recognize interactions: If an expression is in statement position
-   and is either a multiplication (``*``) or a left-shift (``>>``, ``>>>``) operation, then it is considered
+   and is either a multiplication (``*``) or a right-shift (``>>``, ``>>>``) operation, then it is considered
    an interaction and will be parsed accordingly. Such an expression would have little to no value in statement
    position, so changing its meaning works out fine. Note how the operations correspond to the syntax for declaring
    a cardinality (when mocking) or a response generator (when stubbing). Either of them must always be present;

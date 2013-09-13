@@ -30,7 +30,10 @@ import spock.lang.Shared;
 @NotThreadSafe
 public class SpringExtension extends AbstractGlobalExtension {
   public void visitSpec(SpecInfo spec) {
-    if (!spec.getReflection().isAnnotationPresent(ContextConfiguration.class)) return;
+    if (!spec.isAnnotationPresent(ContextConfiguration.class)
+        // avoid compile-time dependency on Spring 3.2.2
+        && !ReflectionUtil.isAnnotationPresent(spec.getReflection(),
+        "org.springframework.test.context.ContextHierarchy")) return;
 
     checkNoSharedFieldsInjected(spec);
 
@@ -55,8 +58,9 @@ public class SpringExtension extends AbstractGlobalExtension {
     for (FieldInfo field : spec.getAllFields()) {
       if (field.getReflection().isAnnotationPresent(Shared.class)
           && (field.getReflection().isAnnotationPresent(Autowired.class)
-          // avoid compile-time dependency on JDK 1.6 only class
-          || ReflectionUtil.isAnnotationPresent(field.getReflection(), "javax.annotation.Resource")))
+          // avoid compile-time dependency on optional classes
+          || ReflectionUtil.isAnnotationPresent(field.getReflection(), "javax.annotation.Resource")
+          || ReflectionUtil.isAnnotationPresent(field.getReflection(), "javax.inject.Inject")))
         throw new SpringExtensionException(
             "@Shared field '%s' cannot be injected; use an instance field instead").withArgs(field.getName());
     }

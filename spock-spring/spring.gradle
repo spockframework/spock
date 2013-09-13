@@ -17,6 +17,7 @@ dependencies {
   testCompile "org.springframework:spring-core:$springVersion"
   testCompile "org.springframework:spring-jdbc:$springVersion"
   testCompile "org.springframework:spring-tx:$springVersion"
+  testCompile "javax.inject:javax.inject:1"
   testRuntime libs.h2database
   testRuntime libs.log4j
 }

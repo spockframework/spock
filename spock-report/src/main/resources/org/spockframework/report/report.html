@@ -186,6 +186,24 @@
             </ul>
             {{/if}}
           </div>
+		  {{#if attachments}}
+			<div>
+				<ul>
+					<li class="result element attachments">
+					  <h5 class="elementHeader">
+						<a class="elementName">Attachments</a>
+					  </h5>
+					  <ul class="elementBody">
+						{{#attachments}}
+						<li>
+						  <a href="{{url}}">{{name}}</a>
+						</li>
+						{{/attachments}}
+					  </ul>
+					</li>
+				</ul>
+			<div>
+			{{/if}}
         </li>
         {{/specs}}
       </ul>

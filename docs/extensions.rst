@@ -81,6 +81,42 @@ followed by a predicate::
 ``Requires`` works exactly like ``IgnoreIf``, except that the predicate is inverted. In general, it is preferable
 to state the conditions under which a method gets executed, rather than the conditions under which it gets ignored.
 
+FailsWith
+~~~~~~~~~~~
+
+If you have a feature that you would like to verify whether it fails with a particular exception, you can annotate the said feature with ``spock.lang.FailsWith``,
+followed by the type of Exception that the said feature is expected to throw::
+
+    @FailsWith(TimeoutException)
+    def "I fail with TimeoutException"() { ... }
+
+The annotation can also be applied at Spec level, once applied it will be applicable for all the feature methods that are not already annotated with FailsWith.
+
+See
+~~~~~~~
+
+If you want to provide a link to external information for a Spec or a feature inside the spock report, you can do so by annotating the feature or spec with ``spoc.lang.See``, followed by an array of url::
+
+    @See( ["http://en.wikipedia.org/wiki/Uniform_resource_locator","http://en.wikipedia.org/wiki/Wikipedia:External_links"] )
+    def "I have reference to external links"() { ... }
+
+The external links provided to the annotation are shown under the section "Attachments" for a feature or spec in the spock report. These links hen clicked in the report opens the said reference link in an iframe window inside the report page.
+
+
+Timeout
+~~~~~~~~~
+
+If you want to timeout an execution of a feature, fixture or a Spec after specified amount of time you can do so by annotating the said feature, fixture or spec with ``spock.lang.Timeout``, followed by time period after which the execution should timeout::
+
+    @Timeout(60)
+    def "I will fail with timeout if I dont execute within the specified time"() { ... }
+
+The timeout mentioned should be provided in integer format. By default the time period for timeout is calculated in 'seconds' but if you want to use some other time unit you can do so by using the TimeUnit enum of ``java.util.concurrent.TimeUnit`` available with JDK::
+
+    @Timeout(value = 600, unit = TimeUnit.MILLISECONDS)
+    def "I fail with timeout error if I don't get executed within 600 miliseconds"(){ ... }
+    
+
 TODO More to follow.
 
 Writing Custom Extensions

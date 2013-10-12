@@ -26,6 +26,10 @@ import java.util.List;
 public class BlockInfo {
   private BlockKind kind;
   private List<String> texts;
+  private int lineNumber;
+  private int columnNumber;
+  private int lastLineNumber;
+  private int lastColumnNumber;
 
   public BlockKind getKind() {
     return kind;
@@ -41,5 +45,37 @@ public class BlockInfo {
 
   public void setTexts(List<String> texts) {
     this.texts = texts;
+  }
+
+  public int getLineNumber() {
+    return lineNumber;
+  }
+
+  public void setLineNumber(int lineNumber) {
+    this.lineNumber = lineNumber;
+  }
+
+  public int getColumnNumber() {
+    return columnNumber;
+  }
+
+  public void setColumnNumber(int columnNumber) {
+    this.columnNumber = columnNumber;
+  }
+
+  public int getLastLineNumber() {
+    return lastLineNumber;
+  }
+
+  public void setLastLineNumber(int lastLineNumber) {
+    this.lastLineNumber = lastLineNumber;
+  }
+
+  public int getLastColumnNumber() {
+    return lastColumnNumber;
+  }
+
+  public void setLastColumnNumber(int lastColumnNumber) {
+    this.lastColumnNumber = lastColumnNumber;
   }
 }

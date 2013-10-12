@@ -52,18 +52,21 @@ class FightOrFlightStory extends Specification {
     impl()
   }
 
+  @Unroll
   @See(["http://en.wikipedia.org/wiki/Ninja", "http://en.wikipedia.org/wiki/Sega_Ninja"])
-  def "Weak Opponent"() {
-    given: "the ninja has a third level black-belt"
-    println "some"
-    println "output"
+  def "Weak Opponent level #level"() {
+    given: "the ninja has a #level level black-belt"
+        println "some"
+        println "output"
 
     when: "attacked by a samurai"
-    System.err.println("some")
-    System.err.println("error output")
+        System.err.println("some")
+        System.err.println("error output")
 
     then: "the ninja should engage the opponent"
-    Math.max (1, 2) == 4
+        Math.max (1, 2) == 4
+    where:
+        level<<["first","second","third"]
   }
 
   private void impl() {}

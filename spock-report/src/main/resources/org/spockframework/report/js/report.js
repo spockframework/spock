@@ -289,7 +289,15 @@ function configureTemplating() {
   Handlebars.registerHelper("narrative", function(narrative) {
     var lines = narrative.split("\n");
     var escapedLines = _.map(lines, function(line) {
-      return Handlebars.Utils.escapeExpression(line);
+      var index = line.search("->failed");
+      if(index !=-1){
+//      TODO
+        var subStr =  Handlebars.Utils.escapeExpression(line.split("->failed")[0])
+        return failed(subStr)
+
+      }else
+        return Handlebars.Utils.escapeExpression(line);
+
     });
     return new Handlebars.SafeString(escapedLines.join("<br/>"));
   });
@@ -350,6 +358,9 @@ function configureTemplating() {
   });
 }
 
+function failed(msg){
+   return "<b style=\"color:red\">"+msg+" failed - Check Exceptions section for failure message </b>"
+}
 function getTagName(key, value) {
   return value === true ? key : key + "-" + value;
 }

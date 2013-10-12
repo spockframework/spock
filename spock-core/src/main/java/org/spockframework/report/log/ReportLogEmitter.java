@@ -18,8 +18,11 @@ package org.spockframework.report.log;
 
 import java.util.*;
 
+import org.spockframework.runtime.Condition;
+import org.spockframework.runtime.ConditionNotSatisfiedError;
 import org.spockframework.runtime.IRunListener;
 import org.spockframework.runtime.IStandardStreamsListener;
+import org.spockframework.runtime.extension.builtin.UnrollNameProvider;
 import org.spockframework.runtime.model.*;
 import org.spockframework.util.ExceptionUtil;
 import org.spockframework.util.IFunction;
@@ -35,9 +38,10 @@ class ReportLogEmitter implements IRunListener, IStandardStreamsListener {
 
   private SpecInfo currentSpec;
   private FeatureInfo currentFeature;
+  private IterationInfo currentIteration;
 
   private boolean specFailed;
-  private boolean featureFailed;
+  private boolean featureOrIterationFailed;
 
   public void addListener(IReportLogListener listener) {
     listeners.add(listener);
@@ -52,13 +56,24 @@ class ReportLogEmitter implements IRunListener, IStandardStreamsListener {
   }
 
   private void standardStream(String message, String key) {
-    if (currentFeature != null) {
+    if (currentFeature != null && !currentFeature.isParameterized()) {
       emit(mapOf(
           "package", currentSpec.getPackage(),
           "name", currentSpec.getName(),
           "features", listOf(
           mapOf(
               "name", currentFeature.getName(),
+              key, listOf(message)
+          )
+      )
+      ));
+    } else if (currentIteration != null) {
+      emit(mapOf(
+          "package", currentSpec.getPackage(),
+          "name", currentSpec.getName(),
+          "features", listOf(
+          mapOf(
+              "name", currentIteration.getFeature().getIterationNameProvider().getName(currentIteration),
               key, listOf(message)
           )
       )
@@ -84,41 +99,69 @@ class ReportLogEmitter implements IRunListener, IStandardStreamsListener {
   }
 
   public void beforeFeature(FeatureInfo feature) {
-    currentFeature = feature;
-    featureFailed = false;
+    if (!feature.isParameterized()) {
+      currentFeature = feature;
+      featureOrIterationFailed = false;
 
-    emit(mapOf(
-        "package", feature.getSpec().getBottomSpec().getPackage(),
-        "name", feature.getSpec().getBottomSpec().getName(),
-        "features", listOf(putAll(mapOf(
-        "name", feature.getName(),
-        "start", getCurrentTime()
-    ), renderBlocks(feature.getBlocks()), renderTags(feature.getTags())))
-    ));
+      emit(mapOf(
+          "package", feature.getSpec().getBottomSpec().getPackage(),
+          "name", feature.getSpec().getBottomSpec().getName(),
+          "features", listOf(putAll(mapOf(
+          "name", feature.getName(),
+          "start", getCurrentTime()
+      ), renderBlocks(feature.getBlocks()), renderTags(feature.getTags())))
+      ));
+    }
   }
 
   public void beforeIteration(IterationInfo iteration) {
-    //TODO
+    currentIteration = iteration;
+    featureOrIterationFailed = false;
+
+    emit(mapOf(
+        "package", iteration.getFeature().getSpec().getBottomSpec().getPackage(),
+        "name", iteration.getFeature().getSpec().getBottomSpec().getName(),
+        "features", listOf(putAll(mapOf(
+        "name", iteration.getFeature().getIterationNameProvider().getName(iteration),
+        "start", getCurrentTime(),
+        "data", iteration.getDataValues()
+    ), renderBlocks(iteration), renderTags(iteration.getFeature().getTags())))
+    ));
   }
 
   public void afterIteration(IterationInfo iteration) {
-    //TODO
-  }
-
-  public void afterFeature(FeatureInfo feature) {
     emit(mapOf(
-        "package", feature.getSpec().getBottomSpec().getPackage(),
-        "name", feature.getSpec().getBottomSpec().getName(),
+        "package", iteration.getFeature().getSpec().getBottomSpec().getPackage(),
+        "name", iteration.getFeature().getSpec().getBottomSpec().getName(),
         "features", listOf(
         putAll(mapOf(
-            "name", feature.getName(),
+            "name", iteration.getFeature().getIterationNameProvider().getName(iteration),
             "end", getCurrentTime(),
-            "result", featureFailed ? "failed" : "passed"
-        ), renderAttachments(feature.getAttachments()))
+            "result", featureOrIterationFailed ? "failed" : "passed"
+        ), renderAttachments(iteration.getFeature().getAttachments()))
     )
     ));
 
-    currentFeature = null;
+    currentIteration = null;
+
+  }
+
+  public void afterFeature(FeatureInfo feature) {
+    if (!feature.isParameterized()) {
+      emit(mapOf(
+          "package", feature.getSpec().getBottomSpec().getPackage(),
+          "name", feature.getSpec().getBottomSpec().getName(),
+          "features", listOf(
+          putAll(mapOf(
+              "name", feature.getName(),
+              "end", getCurrentTime(),
+              "result", featureOrIterationFailed ? "failed" : "passed"
+          ), renderAttachments(feature.getAttachments()))
+      )
+      ));
+
+      currentFeature = null;
+    }
   }
 
   public void afterSpec(SpecInfo spec) {
@@ -135,18 +178,31 @@ class ReportLogEmitter implements IRunListener, IStandardStreamsListener {
   public void error(ErrorInfo error) {
     specFailed = true;
     SpecInfo spec = error.getMethod().getParent().getBottomSpec();
-    FeatureInfo feature = error.getMethod().getFeature();
-    if (feature != null) {
-      featureFailed = true;
+//        FeatureInfo feature = error.getMethod().getFeature();
+    if (currentFeature != null) {
+      featureOrIterationFailed = true;
       emit(mapOf(
           "package", spec.getPackage(),
           "name", spec.getName(),
-          "features", listOf(
+          "features", listOf(putAll(
           mapOf(
-              "name", feature.getName(),
+              "name", currentFeature.getName(),
               "exceptions", listOf(ExceptionUtil.printStackTrace(error.getException()))
-          )
-      )
+          ), renderBlocks(currentFeature.getBlocks(), error)
+      ))
+      ));
+    } else if (currentIteration != null) {
+      featureOrIterationFailed = true;
+      emit(mapOf(
+          "package", spec.getPackage(),
+          "name", spec.getName(),
+          "features", listOf(putAll(
+          mapOf(
+//              not so nice but it works
+              "name", currentIteration.getFeature().getIterationNameProvider().getName(currentIteration),
+              "exceptions", listOf(ExceptionUtil.printStackTrace(error.getException()))
+          ), renderBlocks(currentIteration, error)
+      ))
       ));
     } else {
       emit(mapOf(
@@ -208,6 +264,119 @@ class ReportLogEmitter implements IRunListener, IStandardStreamsListener {
 
   private Map renderNarrative(String narrative) {
     return narrative != null ? mapOf("narrative", narrative) : emptyMap();
+  }
+
+  private Map renderBlocks(IterationInfo iteration) {
+    List<BlockInfo> blocks = iteration.getFeature().getBlocks();
+    StringBuilder builder = new StringBuilder();
+
+    for (int i = 0; i < blocks.size(); i++) {
+      BlockInfo block = blocks.get(i);
+      if (block.getTexts().isEmpty()) {
+        continue;
+      }
+      String name = block.getKind().name();
+      String label = name == "SETUP" ? "Given" : TextUtil.capitalize(name.toLowerCase());
+      for (int j = 0; j < block.getTexts().size(); j++) {
+        String text = block.getTexts().get(j);
+        if (j == 0) {
+          builder.append(label);
+        } else {
+          builder.append("And");
+        }
+        builder.append(" ");
+        UnrollNameProvider p = new UnrollNameProvider(iteration.getFeature(), text);
+        builder.append(p.getName(iteration));
+        if (i < blocks.size() - 1 || j < block.getTexts().size() - 1) {
+          builder.append("\n");
+        }
+      }
+    }
+
+    String result = builder.toString();
+    return result.length() > 0 ? mapOf("narrative", result) : emptyMap();
+  }
+
+  //    TODO duplicate code..needs to be updated
+  private Map renderBlocks(IterationInfo iteration, ErrorInfo error) {
+    List<BlockInfo> blocks = iteration.getFeature().getBlocks();
+    StringBuilder builder = new StringBuilder();
+
+    for (int i = 0; i < blocks.size(); i++) {
+      BlockInfo block = blocks.get(i);
+      if (block.getTexts().isEmpty()) {
+        continue;
+      }
+      String name = block.getKind().name();
+      String label = name == "SETUP" ? "Given" : TextUtil.capitalize(name.toLowerCase());
+      for (int j = 0; j < block.getTexts().size(); j++) {
+        String text = block.getTexts().get(j);
+        if (j == 0) {
+          builder.append(label);
+        } else {
+          builder.append("And");
+        }
+        builder.append(" ");
+//       TODO probably reuse the compiled pattern
+        UnrollNameProvider p = new UnrollNameProvider(iteration.getFeature(), text);
+        String n = p.getName(iteration);
+
+        if (error.getException() instanceof ConditionNotSatisfiedError) {
+          ConditionNotSatisfiedError conditionNotSatisfiedError = (ConditionNotSatisfiedError) error.getException();
+          Condition condition = conditionNotSatisfiedError.getCondition();
+          if (condition.getPosition().getLine() >= block.getLineNumber()
+              && condition.getPosition().getLine() <= block.getLastLineNumber()) {
+            n = n + "->failed";
+          }
+        }
+        builder.append(n);
+        if (i < blocks.size() - 1 || j < block.getTexts().size() - 1) {
+          builder.append("\n");
+        }
+      }
+    }
+
+    String result = builder.toString();
+    return result.length() > 0 ? mapOf("narrative", result) : emptyMap();
+  }
+
+  private Map renderBlocks(List<BlockInfo> blocks, ErrorInfo error) {
+    StringBuilder builder = new StringBuilder();
+
+
+    for (int i = 0; i < blocks.size(); i++) {
+      BlockInfo block = blocks.get(i);
+      if (block.getTexts().isEmpty()) {
+        continue;
+      }
+      String name = block.getKind().name();
+      String label = name == "SETUP" ? "Given" : TextUtil.capitalize(name.toLowerCase());
+      for (int j = 0; j < block.getTexts().size(); j++) {
+        String text = block.getTexts().get(j);
+        if (j == 0) {
+          builder.append(label);
+        } else {
+          builder.append("And");
+        }
+        builder.append(" ");
+        if (error.getException() instanceof ConditionNotSatisfiedError) {
+          ConditionNotSatisfiedError conditionNotSatisfiedError = (ConditionNotSatisfiedError) error.getException();
+          Condition condition = conditionNotSatisfiedError.getCondition();
+          if (condition.getPosition().getLine() >= block.getLineNumber()
+              && condition.getPosition().getLine() <= block.getLastLineNumber()) {
+            text = text + "->failed";
+          }
+        }
+        builder.append(text);
+
+        if (i < blocks.size() - 1 || j < block.getTexts().size() - 1) {
+          builder.append("\n");
+        }
+      }
+    }
+
+    String result = builder.toString();
+    return result.length() > 0 ? mapOf("narrative", result) : emptyMap();
   }
 
   private Map renderBlocks(List<BlockInfo> blocks) {

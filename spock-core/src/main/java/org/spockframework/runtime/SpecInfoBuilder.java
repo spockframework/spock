@@ -167,6 +167,13 @@ public class SpecInfoBuilder {
       BlockInfo block = new BlockInfo();
       block.setKind(blockMetadata.kind());
       block.setTexts(Arrays.asList(blockMetadata.texts()));
+      if (blockMetadata.bounds().length > 0) {
+        String[] bounds = blockMetadata.bounds();
+        block.setLineNumber(Integer.parseInt(bounds[0]));
+        block.setColumnNumber(Integer.parseInt(bounds[1]));
+        block.setLastLineNumber(Integer.parseInt(bounds[2]));
+        block.setLastColumnNumber(Integer.parseInt(bounds[3]));
+      }
       feature.addBlock(block);
     }
 

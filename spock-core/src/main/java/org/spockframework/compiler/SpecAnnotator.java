@@ -17,18 +17,20 @@
 package org.spockframework.compiler;
 
 import java.io.File;
+import java.util.List;
 
 import org.codehaus.groovy.ast.AnnotationNode;
 import org.codehaus.groovy.ast.Parameter;
 import org.codehaus.groovy.ast.expr.*;
 
+import org.codehaus.groovy.ast.stmt.Statement;
 import org.spockframework.compiler.model.*;
 import org.spockframework.runtime.model.*;
 
 /**
  * Puts all spec information required at runtime into annotations
  * attached to class members.
- * 
+ *
  * @author Peter Niederwieser
  */
 public class SpecAnnotator extends AbstractSpecVisitor {
@@ -69,7 +71,7 @@ public class SpecAnnotator extends AbstractSpecVisitor {
   @Override
   public void visitMethod(Method method) throws Exception {
     if (method instanceof FeatureMethod)
-      addFeatureMetadata((FeatureMethod)method);
+      addFeatureMetadata((FeatureMethod) method);
   }
 
   private void addFeatureMetadata(FeatureMethod feature) {
@@ -95,6 +97,19 @@ public class SpecAnnotator extends AbstractSpecVisitor {
     for (String text : block.getDescriptions())
       textExprs.addExpression(new ConstantExpression(text));
     blockAnn.setMember(BlockMetadata.TEXTS, textExprs);
+
+    List<Statement> statements = block.getAst();
+    ListExpression boundExprs = new ListExpression();
+    if (statements != null && !statements.isEmpty()) {
+      boundExprs.addExpression(new ConstantExpression("" + statements.get(0).getLineNumber()));
+      boundExprs.addExpression(new ConstantExpression("" + statements.get(0).getColumnNumber()));
+      boundExprs.addExpression(new ConstantExpression("" + statements.get(statements.size() - 1).getLastLineNumber()));
+      boundExprs.addExpression(new ConstantExpression("" + statements.get(statements.size() - 1).getLastColumnNumber()));
+      blockAnn.setMember(BlockMetadata.BOUNDS, boundExprs);
+    } else
+      blockAnn.setMember(BlockMetadata.BOUNDS,
+          boundExprs);
+
     blockAnnElems.addExpression(new AnnotationConstantExpression(blockAnn));
   }
 

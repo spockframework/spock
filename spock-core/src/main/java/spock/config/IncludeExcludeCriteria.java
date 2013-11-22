@@ -17,29 +17,42 @@ package spock.config;
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * Configuration indicating which specs and methods should be
  * included/excluded from a spec run. Specs can be included/excluded
  * based on their annotations and their (base) classes. Methods
- * can be included/excluded based on their annotations.
+ * can be included/excluded based on their annotations and names.
+ * Criteria can be annotations, spec classes, base classes,
+ * and regex pattern strings.  Patterns are matched against the
+ * simple names of annotations, spec (but not base) classes,
+ * and methods.
  *
  * @author Peter Niederwieser
  */
 public class IncludeExcludeCriteria {
   @SuppressWarnings("unchecked")
-  public IncludeExcludeCriteria(Class<?>... criteria) {
-    for (Class<?> criterium : criteria)
-      if (criterium.isAnnotation())
-        annotations.add((Class<? extends Annotation>)criterium);
-      else
-        baseClasses.add(criterium);
+  public IncludeExcludeCriteria(Object... criteria) {
+    for (Object criterium : criteria)
+      if (criterium instanceof Class) {
+        Class<?> classCriterium = (Class<?>) criterium;
+        if (classCriterium.isAnnotation())
+          annotations.add((Class<? extends Annotation>)classCriterium);
+        else
+          baseClasses.add(classCriterium);
+      } else if (criterium instanceof String) {
+        patterns.add(Pattern.compile((String) criterium));
+      } else {
+        throw new ConfigurationException("unsupported criterium, must be pattern string or class: %s", criterium.toString());
+      }
   }
   
   public List<Class<? extends Annotation>> annotations = new ArrayList<Class<? extends Annotation>>();
   public List<Class<?>> baseClasses = new ArrayList<Class<?>>();
+  public List<Pattern> patterns = new ArrayList<Pattern>();
 
   public boolean isEmpty() {
-    return annotations.isEmpty() && baseClasses.isEmpty();
+    return annotations.isEmpty() && baseClasses.isEmpty() && patterns.isEmpty();
   }
 }

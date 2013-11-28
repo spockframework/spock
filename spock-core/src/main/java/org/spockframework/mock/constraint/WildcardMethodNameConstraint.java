@@ -23,8 +23,12 @@ public class WildcardMethodNameConstraint implements IInvocationConstraint {
   public static final WildcardMethodNameConstraint INSTANCE = new WildcardMethodNameConstraint();
 
   private WildcardMethodNameConstraint() {}
-  
+
+  private boolean isFinalizeCall(IMockInvocation invocation) {
+    return invocation.getMethod().getName().equals("finalize") && invocation.getArguments().size() == 0;
+  }
+
   public boolean isSatisfiedBy(IMockInvocation invocation) {
-    return DefaultEqualsHashCodeToStringInteractions.INSTANCE.match(invocation) == null;
+    return DefaultEqualsHashCodeToStringInteractions.INSTANCE.match(invocation) == null && !isFinalizeCall(invocation);
   }
 }

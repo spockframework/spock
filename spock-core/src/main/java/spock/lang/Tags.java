@@ -1,6 +1,6 @@
-package common.extension.spock.lang;
+package spock.lang;
 
-import common.extension.spock.runtime.TagsExtension;
+import org.spockframework.runtime.extension.builtin.TagsExtension;
 import org.spockframework.runtime.extension.ExtensionAnnotation;
 
 import java.lang.annotation.ElementType;

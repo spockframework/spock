@@ -1,10 +1,10 @@
-package common.extension.spock.runtime;
+package org.spockframework.runtime.extension.builtin; 
 
 import org.spockframework.runtime.extension.AbstractAnnotationDrivenExtension;
 import org.spockframework.runtime.model.FeatureInfo;
 import org.spockframework.runtime.model.ISkippable;
 import org.spockframework.runtime.model.SpecInfo;
-import common.extension.spock.lang.Tags;
+import spock.lang.Tags;
 
 /**
  * User: gcurrey

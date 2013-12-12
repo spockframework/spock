@@ -1,12 +1,12 @@
-package common.extension.spock.lang
+package common.extension.spock.lang;
 
-import common.extension.spock.runtime.TagsExtension
-import org.spockframework.runtime.extension.ExtensionAnnotation
+import common.extension.spock.runtime.TagsExtension;
+import org.spockframework.runtime.extension.ExtensionAnnotation;
 
-import java.lang.annotation.ElementType
-import java.lang.annotation.Retention
-import java.lang.annotation.RetentionPolicy
-import java.lang.annotation.Target
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  * User: gcurrey
@@ -36,5 +36,5 @@ import java.lang.annotation.Target
 @Target(ElementType.METHOD)
 @ExtensionAnnotation(TagsExtension.class)
 public @interface Tags {
-    String[] value() default new String[]{};
+    String[] value() default {};
 }

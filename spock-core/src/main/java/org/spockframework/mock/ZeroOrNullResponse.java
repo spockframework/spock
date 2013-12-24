@@ -27,7 +27,7 @@ public class ZeroOrNullResponse implements IDefaultResponse {
   private ZeroOrNullResponse() {}
 
   public Object respond(IMockInvocation invocation) {
-    IMockInteraction interaction = DefaultEqualsHashCodeToStringInteractions.INSTANCE.match(invocation);
+    IMockInteraction interaction = DefaultJavaLangObjectInteractions.INSTANCE.match(invocation);
     if (interaction != null) return interaction.accept(invocation);
 
     Class<?> returnType = invocation.getMethod().getReturnType();

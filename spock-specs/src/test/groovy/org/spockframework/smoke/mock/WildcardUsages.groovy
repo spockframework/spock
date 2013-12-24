@@ -100,13 +100,17 @@ class WildcardUsages extends Specification {
     3 * _
   }
 
-  def "wildcard method name doesn't match Object's equals(), hashCode(), and toString() methods"() {
-    def list = Mock(List)
+  @Issue("http://issues.spockframework.org/detail?id=338")
+  def "wildcard method name doesn't match Object's equals(), hashCode(), toString(), and finalize() methods"() {
+    // needs to be a class, otherwise finalize() call wouldn't get through in any case
+    // (probably a difference between Java and CGLIB proxies)
+    def list = Mock(ArrayList)
 
     when:
     list.equals(new Object())
     list.hashCode()
     list.toString()
+    list.finalize()
 
     then:
     0 * list._()
@@ -114,16 +118,17 @@ class WildcardUsages extends Specification {
     0 * _
   }
 
-  def "wildcard method name matches overloaded equals(), hashCode(), and toString() methods"() {
+  def "wildcard method name matches overloaded equals(), hashCode(), toString(), and finalize() methods"() {
     def overloaded = Mock(Overloaded)
 
     when:
     overloaded.equals("me")
     overloaded.hashCode([])
     overloaded.toString(true)
+    overloaded.finalize(true)
 
     then:
-    3 * overloaded._
+    4 * overloaded._
   }
 
   def "usage in interaction doesn't interfere with usage in where-block"() {
@@ -148,4 +153,5 @@ interface Overloaded {
   boolean equals(String str)
   int hashCode(List list)
   String toString(boolean verbose)
+  void finalize(boolean now)
 }

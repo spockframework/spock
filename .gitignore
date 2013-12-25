@@ -9,7 +9,15 @@ build/
 target/
 
 # IDEA
-.idea/
+.idea/libraries
+.idea/scopes
+.idea/.name
+.idea/compiler.xml
+.idea/encodings.xml
+.idea/gradle.xml
+.idea/misc.xml
+.idea/modules.xml
+.idea/workspace.xml
 *.iml
 *.ipr
 *.iws
@@ -27,5 +35,5 @@ stacktrace.log
 # Documentation
 /docs/_build/
 
-# Other
+# Mac
 .DS_Store

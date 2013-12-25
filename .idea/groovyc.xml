@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="GroovyCompilerProjectConfiguration">
+    <excludes>
+      <directory url="file://$PROJECT_DIR$/spock-core/src/main/groovy" includeSubdirectories="true" />
+      <directory url="file://$PROJECT_DIR$/spock-core/src/main/java" includeSubdirectories="true" />
+      <directory url="file://$PROJECT_DIR$/spock-core/src/main/resources" includeSubdirectories="true" />
+      <directory url="file://$PROJECT_DIR$/spock-gradle/src/main/groovy" includeSubdirectories="true" />
+      <directory url="file://$PROJECT_DIR$/spock-gradle/src/main/resources" includeSubdirectories="true" />
+      <directory url="file://$PROJECT_DIR$/spock-guice/src/main/java" includeSubdirectories="true" />
+      <directory url="file://$PROJECT_DIR$/spock-guice/src/test/groovy" includeSubdirectories="true" />
+      <directory url="file://$PROJECT_DIR$/spock-maven/src/main/java" includeSubdirectories="true" />
+      <directory url="file://$PROJECT_DIR$/spock-maven/src/main/resources" includeSubdirectories="true" />
+      <directory url="file://$PROJECT_DIR$/spock-report/src/main/groovy" includeSubdirectories="true" />
+      <directory url="file://$PROJECT_DIR$/spock-report/src/main/java" includeSubdirectories="true" />
+      <directory url="file://$PROJECT_DIR$/spock-report/src/main/resources" includeSubdirectories="true" />
+      <directory url="file://$PROJECT_DIR$/spock-report/src/test/groovy" includeSubdirectories="true" />
+      <directory url="file://$PROJECT_DIR$/spock-report/src/test/resources" includeSubdirectories="true" />
+      <directory url="file://$PROJECT_DIR$/spock-specs/src/test/groovy" includeSubdirectories="true" />
+      <directory url="file://$PROJECT_DIR$/spock-specs/src/test/java" includeSubdirectories="true" />
+      <directory url="file://$PROJECT_DIR$/spock-specs/src/test/resources" includeSubdirectories="true" />
+      <directory url="file://$PROJECT_DIR$/spock-spring/src/main/java" includeSubdirectories="true" />
+      <directory url="file://$PROJECT_DIR$/spock-spring/src/main/resources" includeSubdirectories="true" />
+      <directory url="file://$PROJECT_DIR$/spock-spring/src/test/groovy" includeSubdirectories="true" />
+      <directory url="file://$PROJECT_DIR$/spock-spring/src/test/resources" includeSubdirectories="true" />
+      <directory url="file://$PROJECT_DIR$/spock-tapestry/src/main/java" includeSubdirectories="true" />
+      <directory url="file://$PROJECT_DIR$/spock-tapestry/src/main/resources" includeSubdirectories="true" />
+      <directory url="file://$PROJECT_DIR$/spock-tapestry/src/test/groovy" includeSubdirectories="true" />
+      <directory url="file://$PROJECT_DIR$/spock-tapestry/src/test/java" includeSubdirectories="true" />
+      <directory url="file://$PROJECT_DIR$/spock-unitils/src/main/java" includeSubdirectories="true" />
+      <directory url="file://$PROJECT_DIR$/spock-unitils/src/test/groovy" includeSubdirectories="true" />
+      <directory url="file://$PROJECT_DIR$/spock-unitils/src/test/java" includeSubdirectories="true" />
+      <directory url="file://$PROJECT_DIR$/spock-unitils/src/test/resources" includeSubdirectories="true" />
+    </excludes>
+  </component>
+</project>
+

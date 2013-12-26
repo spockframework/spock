@@ -3,27 +3,15 @@ allprojects {
   apply plugin: "eclipse"
 }
 
-def gitIgnore = file(".gitignore").readLines()
-def gitIgnoreDirs = gitIgnore*.trim().findAll { !it.startsWith("#") && it.endsWith("/") }
-def (topLevelDirs, allLevelDirs) = gitIgnoreDirs.split { it.startsWith("/") }
-topLevelDirs = topLevelDirs.collect { it.substring(1) }
-
 idea {
   project {
     languageLevel "1.5"
-    configure(modules) { module ->
-      def prj = module.project
-      excludeDirs = prj.files(allLevelDirs) as Set
-      if (prj == prj.rootProject) {
-        excludeDirs += allLevelDirs.collect { prj.file("buildSrc/$it") }
-        excludeDirs += (prj.files(topLevelDirs) as Set)
-      }
-    }
-    ipr {
-      withXml { provider ->
-        def node = provider.asNode()
-        node.component.find { it.'@name' == 'VcsDirectoryMappings' }?.mapping[0].'@vcs' = 'Git'
-      }
-    }
+  }
+}
+
+gradle.taskGraph.whenReady { graph ->
+  if (graph.allTasks.any { it.name.startsWith("idea") }) {
+    throw new GradleException("Please use the Gradle import facility in IntelliJ 13 " +
+        "and above, rather than generating IntelliJ files with Gradle.")
   }
 }

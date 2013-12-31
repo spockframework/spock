@@ -16,15 +16,15 @@
 
 package org.spockframework.compiler;
 
-import java.util.List;
-
-import org.codehaus.groovy.ast.*;
+import org.codehaus.groovy.ast.Parameter;
 import org.codehaus.groovy.ast.expr.*;
 import org.codehaus.groovy.ast.stmt.*;
-
 import org.codehaus.groovy.syntax.Types;
 import org.spockframework.compiler.model.*;
 import org.spockframework.util.Nullable;
+
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Walks the statement and expression tree to:
@@ -86,14 +86,32 @@ public class DeepBlockRewriter extends AbstractDeepBlockRewriter {
     visitBinaryExpression(expr);
   }
 
-  protected void doVisitMethodCallExpression(final MethodCallExpression expr) {
+  protected void doVisitMethodCallExpression(MethodCallExpression expr) {
     super.doVisitMethodCallExpression(expr);
 
     boolean handled = handleMockCall(expr)
         || handleThrownCall(expr)
         || handleOldCall(expr)
         || handleInteractionBlockCall(expr)
+        || handleImplicitCallOnMethodParam(expr)
         || forbidUseOfSuperInFixtureMethod(expr);
+  }
+
+  private boolean handleImplicitCallOnMethodParam(MethodCallExpression expr) {
+    if (!expr.isImplicitThis()) return false;
+
+    String methodName = expr.getMethodAsString();
+    List<Parameter> params = Arrays.asList(resources.getCurrentMethod().getAst().getParameters());
+
+    for (Parameter param : params) {
+      if (param.getName().equals(methodName)) {
+        expr.setMethod(new ConstantExpression("call"));
+        expr.setObjectExpression(new VariableExpression(methodName));
+        return true;
+      }
+    }
+
+    return false;
   }
 
   private boolean handleInteraction(ExpressionStatement stat) {

@@ -124,4 +124,15 @@ class Parameterizations extends Specification {
     featureName << [1, 2, 3]
     iterationCount << [2, 4, 6]
   }
+
+  @Issue("http://issues.spockframework.org/detail?id=274")
+  def "can call closure in data variable with method syntax"() {
+    expect:
+    a() == 1
+    b(1, 2) == 3
+
+    where:
+    a = { 1 }
+    b = { i, j -> i + j }
+  }
 }

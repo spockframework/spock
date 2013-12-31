@@ -126,13 +126,20 @@ class Parameterizations extends Specification {
   }
 
   @Issue("http://issues.spockframework.org/detail?id=274")
-  def "can call closure in data variable with method syntax"() {
+  def "can call closures contained in data variables with method syntax"() {
     expect:
     a() == 1
     b(1, 2) == 3
+    1.times { n ->
+      b(n, n) - n == n
+    }
+
+    and:
+    "123".size() == 3
 
     where:
     a = { 1 }
     b = { i, j -> i + j }
+    size = { 42 }
   }
 }

@@ -18,10 +18,7 @@ package org.spockframework.compiler;
 
 import org.codehaus.groovy.ast.Parameter;
 import org.codehaus.groovy.ast.expr.*;
-import org.codehaus.groovy.ast.stmt.AssertStatement;
-import org.codehaus.groovy.ast.stmt.BlockStatement;
-import org.codehaus.groovy.ast.stmt.ExpressionStatement;
-import org.codehaus.groovy.ast.stmt.Statement;
+import org.codehaus.groovy.ast.stmt.*;
 import org.codehaus.groovy.syntax.Types;
 import org.spockframework.compiler.model.*;
 import org.spockframework.util.Nullable;
@@ -89,34 +86,32 @@ public class DeepBlockRewriter extends AbstractDeepBlockRewriter {
     visitBinaryExpression(expr);
   }
 
-  protected void doVisitMethodCallExpression(final MethodCallExpression expr) {
+  protected void doVisitMethodCallExpression(MethodCallExpression expr) {
     super.doVisitMethodCallExpression(expr);
-
-    handleImplicitCallOnParam(expr);
 
     boolean handled = handleMockCall(expr)
         || handleThrownCall(expr)
         || handleOldCall(expr)
         || handleInteractionBlockCall(expr)
+        || handleImplicitCallOnMethodParam(expr)
         || forbidUseOfSuperInFixtureMethod(expr);
   }
 
-  private void handleImplicitCallOnParam(final MethodCallExpression expr) {
+  private boolean handleImplicitCallOnMethodParam(MethodCallExpression expr) {
+    if (!expr.isImplicitThis()) return false;
+
     String methodName = expr.getMethodAsString();
-
     List<Parameter> params = Arrays.asList(resources.getCurrentMethod().getAst().getParameters());
-    boolean methodIsParam = false;
 
-    for(Parameter param : params) {
+    for (Parameter param : params) {
       if (param.getName().equals(methodName)) {
-        methodIsParam = true;
+        expr.setMethod(new ConstantExpression("call"));
+        expr.setObjectExpression(new VariableExpression(methodName));
+        return true;
       }
     }
 
-    if (methodIsParam) {
-      expr.setMethod(new ConstantExpression("call"));
-      expr.setObjectExpression(new VariableExpression(methodName));
-    }
+    return false;
   }
 
   private boolean handleInteraction(ExpressionStatement stat) {

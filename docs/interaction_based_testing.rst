@@ -406,7 +406,7 @@ fields.
 Verification of Interactions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-There a two main ways in which a mock-based test can fail: An interaction can match more invocations than
+There are two main ways in which a mock-based test can fail: An interaction can match more invocations than
 allowed, or it can match fewer invocations than required. The former case is detected right when the invocation
 happens, and causes a ``TooManyInvocationsError``::
 

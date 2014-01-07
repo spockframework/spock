@@ -7,7 +7,9 @@ There are many ways to contribute to Spock:
 * Improving and extending the [reference documentation](http://docs.spockframework.org) [(source)](https://github.com/spockframework/spock/tree/groovy-1.8/docs)
 * Fixing open issues listed in the [issue tracker](http://issues.spockframework.org)
 * Proposing, discussing, and implementing new features
-* Designing a Spock logo and/or website (Disclaimer: Our expectations are high on this one, and obviously we'll need to be heavily involved)
+* Designing a Spock logo and/or website (Disclaimer: Our expectations are high on this one, and of course we'll need to be heavily involved)
+* Hiring us for Spock/[Geb](http://gebish.org) related training and consulting
+* Donating money to fund further development
 
 All forms of contribution are very much appreciated.
 

@@ -2,11 +2,11 @@
 
 There are many ways to contribute to Spock:
 
-* Helping to build a bigger community, for example by submitting Spock-related talks or answering Spock questions on [Stack Overflow](http://stackoverflow.com/questions/tagged/spock).
-* Helping to improve the [reference documentation](http://docs.spockframework.org) [(source)](https://github.com/spockframework/spock/tree/groovy-1.8/docs).
-* Fixing open issues listed in the [issue tracker](http://issues.spockframework.org).
-* Proposing, discussing, and implementing new features.
-* Designing a Spock logo and/or website. (Disclaimer: Our expectations are high.)
+* Helping to build a bigger community, for example by submitting Spock-related talks or answering Spock questions on [Stack Overflow](http://stackoverflow.com/questions/tagged/spock)
+* Helping to improve the [reference documentation](http://docs.spockframework.org) [(source)](https://github.com/spockframework/spock/tree/groovy-1.8/docs)
+* Fixing open issues listed in the [issue tracker](http://issues.spockframework.org)
+* Proposing, discussing, and implementing new features
+* Designing a Spock logo and/or website (disclaimer: our expectations are high)
 
 All forms of contribution are very much appreciated.
 
@@ -27,7 +27,7 @@ When reviewing pull requests, we value the following qualities (in no particular
 * Carefully crafted, clean and concise code
 * Small, focused commits that tackle one thing at a time
 * New code blends in well with existing code, respecting established coding standards and practices
-* Tests are updated/added along with the code, communicate intent and cover important cases (see [Tests] below for more information)
+* Tests are updated/added along with the code, communicate intent and cover important cases (see [Tests](#tests) for additional information)
 * Documentation (Javadoc, Groovydoc, reference documentation) is updated/added along with the code
 
 Don't be intimitated by these words. Pull requests that satisfy Spock's overall direction and goals (see above), are crafted carefully, and aren't aiming too high, have a good chance of getting accepted. Before doing so, we may ask for some concrete improvements to be made, in which case we hope for your cooperation.

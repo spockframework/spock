@@ -2,14 +2,18 @@
 
 There are many ways to contribute to Spock:
 
-* Spreading the word by talking, tweeting, blogging, presenting, submitting talks, writing articles (or a book!), sharing success stories, adding your project/company to [Who is Using Spock](http://wiki.spockframework.org/WhoIsUsingSpock), etc.
+* Spreading the word by talking, tweeting, blogging, presenting, submitting talks, writing tutorials or articles (or a book!), sharing success stories, adding your project/company to [Who is Using Spock](http://wiki.spockframework.org/WhoIsUsingSpock), etc.
 * Helping other users by participating in [forum](http://forum.spockframework.org) discussions, answering [Spock questions](http://stackoverflow.com/questions/tagged/spock) on Stack Overflow, etc.
+* Providing early feedback on development snapshots and new features
 * Improving and extending the [reference documentation](http://docs.spockframework.org) [(source)](https://github.com/spockframework/spock/tree/groovy-1.8/docs)
+* Translating blog posts, articles, and the reference documentation to other languages (with permission of the authors)
 * Fixing open issues listed in the [issue tracker](http://issues.spockframework.org)
 * Proposing, discussing, and implementing new features
+* Building the next generation of [Spock Web Console](http://webconsole.spockframework.org), or an interactive Spock tutorial
 * Designing a Spock logo and/or website (Disclaimer: Our expectations are high on this one, and obviously we'll need to be heavily involved)
 * Hiring us for Spock/[Geb](http://gebish.org) related training and consulting
 * Donating money to fund further development
+* Suprising us with some other form of contribution!
 
 All forms of contribution are very much appreciated.
 

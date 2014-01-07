@@ -6,13 +6,13 @@ There are many ways to contribute to Spock:
 * Helping to improve the [reference documentation](http://docs.spockframework.org) [(source)](https://github.com/spockframework/spock/tree/groovy-1.8/docs)
 * Fixing open issues listed in the [issue tracker](http://issues.spockframework.org)
 * Proposing, discussing, and implementing new features
-* Designing a Spock logo and/or website (disclaimer: our expectations are high)
+* Designing a Spock logo and/or website (disclaimer: our expectations are high on this one)
 
 All forms of contribution are very much appreciated.
 
 ## Communication
 
-Good communication makes a big difference. That's why we would love to hear from you! Don't hesitate to get in touch via the [issue tracker](http://issues.spockframework.org), [user forum](http://forum.spockframework.org), or [dev forum](http://dev.forum.spockframework.org). Choose whatever medium feels most appropriate.
+Good communication makes a big difference. We are always eager to listen, reflect, and discuss. Don't hesitate to get in touch via the [issue tracker](http://issues.spockframework.org), [user forum](http://forum.spockframework.org), or [dev forum](http://dev.forum.spockframework.org). Choose whatever medium feels most appropriate.
 
 ## Contributing Code/Docs
 

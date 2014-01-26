@@ -3,7 +3,7 @@
   <description></description>
   <groupId>org.spockframework</groupId>
   <artifactId>spock-maven</artifactId>
-  <version>1.0-groovy-2.0-SNAPSHOT</version>
+  <version>@spock-maven.version@</version>
   <goalPrefix>spock</goalPrefix>
   <isolatedRealm>false</isolatedRealm>
   <inheritedByDefault>true</inheritedByDefault>
@@ -11,18 +11,19 @@
     <mojo>
       <goal>find-specs</goal>
       <description>Plugin that auto-detects and runs all Spock specs in a Maven project.
-Specs are run by adding them as &amp;lt;include&amp;gt;&apos;s to Surefire&apos;s
-configuration. Unless &lt;tt&gt;overrideSurefireIncludes&lt;/tt&gt; is set to &lt;tt&gt;true&lt;/tt&gt;,
-Surefire&apos;s default includes or any explicit &amp;lt;include&amp;gt;&apos;s overriding
-those defaults will remain intact. This means that Spock specs will get run
-together with all other JUnit-based tests that would get run without this
-plugin being present.
+        Specs are run by adding them as &amp;lt;include&amp;gt;&apos;s to Surefire&apos;s
+        configuration. Unless &lt;tt&gt;overrideSurefireIncludes&lt;/tt&gt; is set to &lt;tt&gt;true&lt;/tt&gt;,
+        Surefire&apos;s default includes or any explicit &amp;lt;include&amp;gt;&apos;s overriding
+        those defaults will remain intact. This means that Spock specs will get run
+        together with all other JUnit-based tests that would get run without this
+        plugin being present.
 
-&lt;p&gt;&lt;strong&gt;Note:&lt;/strong&gt;This plugin is &lt;em&gt;not&lt;/em&gt; required for using Spock
-together with Maven; it merely adds some advanced capabilities like auto-
-detection of specs. If you decide not to use this plugin, make sure that your
-spec classes conform to Surefire&apos;s naming conventions. By default, these are
-&amp;#42;&amp;#42;/Test&amp;#42;.java, &amp;#42;&amp;#42;/&amp;#42;Test.java, and &amp;#42;&amp;#42;/&amp;#42;TestCase.java.</description>
+        &lt;p&gt;&lt;strong&gt;Note:&lt;/strong&gt;This plugin is &lt;em&gt;not&lt;/em&gt; required for using Spock
+        together with Maven; it merely adds some advanced capabilities like auto-
+        detection of specs. If you decide not to use this plugin, make sure that your
+        spec classes conform to Surefire&apos;s naming conventions. By default, these are
+        &amp;#42;&amp;#42;/Test&amp;#42;.java, &amp;#42;&amp;#42;/&amp;#42;Test.java, and &amp;#42;&amp;#42;/&amp;#42;TestCase.java.
+      </description>
       <requiresDirectInvocation>false</requiresDirectInvocation>
       <requiresProject>true</requiresProject>
       <requiresReports>false</requiresReports>
@@ -41,10 +42,11 @@ spec classes conform to Surefire&apos;s naming conventions. By default, these ar
           <required>false</required>
           <editable>true</editable>
           <description>If &lt;tt&gt;true&lt;/tt&gt; the run order of spec &lt;em&gt;classes&lt;/em&gt; will be
-optimized such that frequently failing specs are run first. Note
-that this requires all specs to be wrapped with a dynamically
-generated JUnit suite, which may have a negative impact on test
-reporting.</description>
+            optimized such that frequently failing specs are run first. Note
+            that this requires all specs to be wrapped with a dynamically
+            generated JUnit suite, which may have a negative impact on test
+            reporting.
+          </description>
         </parameter>
         <parameter>
           <name>overrideSurefireIncludes</name>
@@ -52,7 +54,8 @@ reporting.</description>
           <required>false</required>
           <editable>true</editable>
           <description>If &lt;tt&gt;true&lt;/tt&gt;, any existing Surefire &amp;lt;include&amp;gt;&apos;s will
-be overridden to make sure that only Spock specs will get run.</description>
+            be overridden to make sure that only Spock specs will get run.
+          </description>
         </parameter>
         <parameter>
           <name>project</name>
@@ -74,8 +77,9 @@ be overridden to make sure that only Spock specs will get run.</description>
           <required>false</required>
           <editable>true</editable>
           <description>If non-null, &amp;lt;include&amp;gt;&apos;s for Spock specs will be added to the
-configuration of the specified Surefire execution. Otherwise, they
-will be added to the global Surefire configuration.</description>
+            configuration of the specified Surefire execution. Otherwise, they
+            will be added to the global Surefire configuration.
+          </description>
         </parameter>
         <parameter>
           <name>testOutputDirectory</name>
@@ -88,7 +92,8 @@ will be added to the global Surefire configuration.</description>
       <configuration>
         <surefireExecutionId implementation="java.lang.String">${findspecs.surefireExecutionId}</surefireExecutionId>
         <project implementation="org.apache.maven.project.MavenProject">${project}</project>
-        <overrideSurefireIncludes implementation="boolean">${findspecs.overrideSurefireIncludes}</overrideSurefireIncludes>
+        <overrideSurefireIncludes implementation="boolean">${findspecs.overrideSurefireIncludes}
+        </overrideSurefireIncludes>
         <skip implementation="boolean">${findspecs.skip}</skip>
         <optimizeRunOrder implementation="boolean">${findspecs.optimizeRunOrder}</optimizeRunOrder>
         <testOutputDirectory implementation="java.io.File">${project.build.testOutputDirectory}</testOutputDirectory>
@@ -106,217 +111,217 @@ will be added to the global Surefire configuration.</description>
       <groupId>org.spockframework</groupId>
       <artifactId>spock-core</artifactId>
       <type>jar</type>
-      <version>1.0-groovy-2.0-SNAPSHOT</version>
+      <version>@spock-maven.version@</version>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit-dep</artifactId>
       <type>jar</type>
-      <version>4.10</version>
+      <version>@junit-dep.version@</version>
     </dependency>
     <dependency>
       <groupId>org.hamcrest</groupId>
       <artifactId>hamcrest-core</artifactId>
       <type>jar</type>
-      <version>1.3</version>
+      <version>@hamcrest.version@</version>
     </dependency>
     <dependency>
       <groupId>org.codehaus.groovy</groupId>
       <artifactId>groovy-all</artifactId>
       <type>jar</type>
-      <version>2.0.5</version>
+      <version>@groovy.version@</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-plugin-api</artifactId>
       <type>jar</type>
-      <version>2.0</version>
+      <version>@maven.version@</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-project</artifactId>
       <type>jar</type>
-      <version>2.0</version>
+      <version>@maven.version@</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-profile</artifactId>
       <type>jar</type>
-      <version>2.0</version>
+      <version>@maven.version@</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-model</artifactId>
       <type>jar</type>
-      <version>2.0</version>
+      <version>@maven.version@</version>
     </dependency>
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-utils</artifactId>
       <type>jar</type>
-      <version>1.5.7</version>
+      <version>@plexus.version@</version>
     </dependency>
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-container-default</artifactId>
       <type>jar</type>
-      <version>1.0-alpha-8</version>
+      <version>@plexus-container.version@</version>
     </dependency>
     <dependency>
       <groupId>classworlds</groupId>
       <artifactId>classworlds</artifactId>
       <type>jar</type>
-      <version>1.1-alpha-2</version>
+      <version>@classworlds.version@</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-artifact-manager</artifactId>
       <type>jar</type>
-      <version>2.0</version>
+      <version>@maven.version@</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-repository-metadata</artifactId>
       <type>jar</type>
-      <version>2.0</version>
+      <version>@maven.version@</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-artifact</artifactId>
       <type>jar</type>
-      <version>2.0</version>
+      <version>@maven.version@</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.wagon</groupId>
       <artifactId>wagon-provider-api</artifactId>
       <type>jar</type>
-      <version>1.0-alpha-5</version>
+      <version>@wagon.version@</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-core</artifactId>
       <type>jar</type>
-      <version>2.0</version>
+      <version>@maven.version@</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-settings</artifactId>
       <type>jar</type>
-      <version>2.0</version>
+      <version>@maven.version@</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.wagon</groupId>
       <artifactId>wagon-file</artifactId>
       <type>jar</type>
-      <version>1.0-alpha-5</version>
+      <version>@wagon.version@</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-plugin-parameter-documenter</artifactId>
       <type>jar</type>
-      <version>2.0</version>
+      <version>@maven.version@</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.wagon</groupId>
       <artifactId>wagon-http-lightweight</artifactId>
       <type>jar</type>
-      <version>1.0-alpha-5</version>
+      <version>@wagon.version@</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.reporting</groupId>
       <artifactId>maven-reporting-api</artifactId>
       <type>jar</type>
-      <version>2.0</version>
+      <version>@maven.version@</version>
     </dependency>
     <dependency>
       <groupId>doxia</groupId>
       <artifactId>doxia-sink-api</artifactId>
       <type>jar</type>
-      <version>1.0-alpha-4</version>
+      <version>@doxia.version@</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-error-diagnostics</artifactId>
       <type>jar</type>
-      <version>2.0</version>
+      <version>@maven.version@</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-plugin-registry</artifactId>
       <type>jar</type>
-      <version>2.0</version>
+      <version>@maven.version@</version>
     </dependency>
     <dependency>
       <groupId>commons-cli</groupId>
       <artifactId>commons-cli</artifactId>
       <type>jar</type>
-      <version>1.0</version>
+      <version>@commons-cli.version@</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-plugin-descriptor</artifactId>
       <type>jar</type>
-      <version>2.0</version>
+      <version>@maven.version@</version>
     </dependency>
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-interactivity-api</artifactId>
       <type>jar</type>
-      <version>1.0-alpha-4</version>
+      <version>@doxia.version@</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-monitor</artifactId>
       <type>jar</type>
-      <version>2.0</version>
+      <version>@maven.version@</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.wagon</groupId>
       <artifactId>wagon-ssh</artifactId>
       <type>jar</type>
-      <version>1.0-alpha-5</version>
+      <version>@wagon.version@</version>
     </dependency>
     <dependency>
       <groupId>com.jcraft</groupId>
       <artifactId>jsch</artifactId>
       <type>jar</type>
-      <version>0.1.23</version>
+      <version>@jsch.version@</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.surefire</groupId>
       <artifactId>surefire-junit47</artifactId>
       <type>jar</type>
-      <version>2.11</version>
+      <version>@surefire.version@</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.surefire</groupId>
       <artifactId>common-junit48</artifactId>
       <type>jar</type>
-      <version>2.11</version>
+      <version>@surefire.version@</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.surefire</groupId>
       <artifactId>common-junit4</artifactId>
       <type>jar</type>
-      <version>2.11</version>
+      <version>@surefire.version@</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.surefire</groupId>
       <artifactId>common-junit3</artifactId>
       <type>jar</type>
-      <version>2.11</version>
+      <version>@surefire.version@</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.surefire</groupId>
       <artifactId>surefire-api</artifactId>
       <type>jar</type>
-      <version>2.11</version>
+      <version>@surefire.version@</version>
     </dependency>
     <dependency>
       <groupId>org.ow2.asm</groupId>
       <artifactId>asm</artifactId>
       <type>jar</type>
-      <version>4.0</version>
+      <version>@asm.version@</version>
     </dependency>
   </dependencies>
 </plugin>

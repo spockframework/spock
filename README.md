@@ -17,8 +17,8 @@ Modules
 -------
 * spock-core -- Core framework. This is the only mandatory module.
 * spock-specs -- Specifications for spock-core, implemented using Spock. Not required for using Spock.
-* spock-maven -- Extended [Maven](http://maven.apache.org/) support. Note that this module is optional;
-it is *not* required for using Spock with Maven.
+* spock-maven -- Extended [Maven 2](http://maven.apache.org/) support. Note that this module is optional;
+it is *not* required for using Spock with Maven. And does *not* work with Maven 3+.
 * spock-example -- Self-contained example project with [Ant](http://ant.apache.org/), [Gradle](http://www.gradle.org),
 and [Maven](http://maven.apache.org/) builds. See `spock-example/README` for more information.
 * spock-spring -- Integration with the [Spring TestContext Framework]

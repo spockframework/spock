@@ -1,3 +1,5 @@
+import org.apache.tools.ant.filters.ReplaceTokens
+
 apply from: script("publishMaven")
 
 displayName = "Spock Framework - Maven Module"
@@ -5,19 +7,59 @@ displayName = "Spock Framework - Maven Module"
 description = "Spock's Maven Module provides some advanced features when executing Spock specifications with Maven 2. \
 This module is purely optional; Maven 2/3 will execute Spock specifications just fine without it."
 
+ext {
+  spockMavenVersions = [
+      junitDep: '4.10',
+      hamcrest: '1.3',
+      groovy: '2.0.5',  // or getVersionFromDependencyString(libs.groovy)
+      maven: '2.0',
+      surefire: '2.11',
+      wagon: '1.0-alpha-5',
+      plexus: '1.5.7',
+      plexusContainer: '1.0-alpha-8',
+      classworlds: '1.1-alpha-2',
+      doxia: '1.0-alpha-4',
+      commonsCli: '1.0',
+      jsch: '0.1.23',
+      asm: getVersionFromDependencyString(libs.asm),
+  ]
+}
+
+def getVersionFromDependencyString(String text) {
+  return text.split(/:/)[2]
+}
+
 dependencies {
   compile project(":spock-core")
 
   // Surefire provider
-  compile "org.apache.maven.surefire:surefire-junit47:2.11"
+  compile "org.apache.maven.surefire:surefire-junit47:${spockMavenVersions.surefire}"
 
   // Mojo
-  compile "org.apache.maven:maven-plugin-api:2.0"
-  compile "org.apache.maven:maven-project:2.0"
-  compile "org.apache.maven:maven-core:2.0"
-  compile "org.codehaus.plexus:plexus-utils:1.5.7"
+  compile "org.apache.maven:maven-plugin-api:${spockMavenVersions.maven}"
+  compile "org.apache.maven:maven-project:${spockMavenVersions.maven}"
+  compile "org.apache.maven:maven-core:${spockMavenVersions.maven}"
+  compile "org.codehaus.plexus:plexus-utils:${spockMavenVersions.plexus}"
   runtime libs.asm
 }
 
-
+processResources {
+  include '**/plugin.xml'
+  filter ReplaceTokens, tokens: [
+      'spock-maven.version': (String) project.version,
+      'groovy.version': (String) spockMavenVersions.groovy,
+      'junit-dep.version': (String) spockMavenVersions.junitDep,
+      'commons-cli.version': (String) spockMavenVersions.commonsCli,
+      'jsch.version': (String) spockMavenVersions.jsch,
+      'hamcrest.version': (String) spockMavenVersions.hamcrest,
+      'maven.version': (String) spockMavenVersions.maven,
+      'surefire.version': (String) spockMavenVersions.surefire,
+      'wagon.version': (String) spockMavenVersions.wagon,
+      'plexus.version': (String) spockMavenVersions.plexus,
+      'plexus-container.version': (String) spockMavenVersions.plexusContainer,
+      'classworlds.version': (String) spockMavenVersions.classworlds,
+      'doxia.version': (String) spockMavenVersions.doxia,
+      'asm.version': (String) spockMavenVersions.asm,
+  ]
+}
 

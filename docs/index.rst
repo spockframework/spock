@@ -16,6 +16,7 @@ Table of Contents
 
    introduction
    getting_started
+   basics
    data_driven_testing
    interaction_based_testing
    extensions

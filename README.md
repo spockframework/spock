@@ -57,4 +57,4 @@ Happy spec'ing!
 
 Peter Niederwieser<br>
 Creator, Spock Framework<br>
-[Twitter]((http://twitter.com/pniederw) | [Blog](http://blog.spockframework.org)
+[Twitter](http://twitter.com/pniederw) | [Blog](http://blog.spockframework.org)

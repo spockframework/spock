@@ -1,0 +1,17 @@
+= Spock Framework Reference Documentation
+Peter Niederwieser<pniederw@gmail.com>
+1.0-SNAPSHOT
+
+NOTE: This documentation effort is a work in progress. For the time being, we also recommend to check out the
+old documentation at http://wiki.spockframework.org.
+
+. <<introduction.adoc#,Introduction>>
+. <<getting_started.adoc#,Getting Started>>
+. <<spock_basics.adoc#,Spock Basics>>
+. <<state_based_testing.adoc#,State Based Testing>>
+. <<data_driven_testing.adoc#,Data Driven Testing>>
+. <<interaction_based_testing.adoc#,Interaction Based Testing>>
+. <<extensions.adoc#,Extensions>>
+. <<modules.adoc#,Modules>>
+. <<new_and_noteworthy.adoc#,New And Noteworthy>>
+. <<migration_guide.adoc#,Migration Guide>>

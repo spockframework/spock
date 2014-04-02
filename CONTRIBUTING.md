@@ -4,7 +4,7 @@ There are many ways to contribute to Spock:
 
 * Spreading the word by talking, tweeting, blogging, presenting, submitting talks, writing tutorials or articles (or a book!), sharing success stories, adding your project/company to [Who is Using Spock](http://wiki.spockframework.org/WhoIsUsingSpock), etc.
 * Helping other users by participating in [forum](http://forum.spockframework.org) discussions, answering [Spock questions](http://stackoverflow.com/questions/tagged/spock) on Stack Overflow, etc.
-* Providing early feedback on development snapshots and new features
+* Providing early feedback on [development snapshots](https://oss.sonatype.org/content/repositories/snapshots/org/spockframework/) and new features
 * Improving and extending the [reference documentation](http://docs.spockframework.org) [(source)](https://github.com/spockframework/spock/tree/groovy-1.8/docs)
 * Translating blog posts, articles, and the reference documentation to other languages (with permission of the authors)
 * Fixing open issues listed in the [issue tracker](http://issues.spockframework.org)

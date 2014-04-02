@@ -1,4 +1,16 @@
+buildscript {
+  repositories {
+    maven { url "http://dl.bintray.com/content/aalmiray/asciidoctor" }
+    jcenter()
+  }
+
+  dependencies {
+    classpath "org.asciidoctor:asciidoctor-gradle-plugin:0.7.0"
+  }
+}
+
 apply plugin: "base"
+apply plugin: "asciidoctor"
 
 description = "Spock Framework"
 
@@ -101,6 +113,16 @@ task groovydoc(type: Groovydoc) {
 task apidoc(dependsOn: ["javadoc", "groovydoc"])
 
 configureGroovydoc(groovydoc)
+
+asciidoctor {
+  sourceDir = file("docs")
+  logDocuments = true
+  options = [
+    attributes: [
+      "source-highlighter": "coderay"
+    ]
+  ]
+}
 
 File script(String name) {
   project.file("gradle/${name}.gradle")

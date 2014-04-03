@@ -9,9 +9,3 @@ idea {
   }
 }
 
-gradle.taskGraph.whenReady { graph ->
-  if (graph.allTasks.any { it.name.startsWith("idea") }) {
-    throw new GradleException("Please use the Gradle import facility in IntelliJ 13 " +
-        "and above, rather than generating IntelliJ files with Gradle.")
-  }
-}

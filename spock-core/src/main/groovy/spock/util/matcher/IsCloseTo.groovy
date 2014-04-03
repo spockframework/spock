@@ -28,17 +28,19 @@ public class IsCloseTo extends TypeSafeMatcher<Number> {
     private final Number value
     private final Number epsilon
 
-  IsCloseTo(Number value, Number epsilon) {
+    IsCloseTo(Number value, Number epsilon) {
       this.value = value
       this.epsilon = epsilon
     }
 
-    @Override
+    // see http://jira.codehaus.org/browse/GROOVY-6654
+    //@Override
     boolean matchesSafely(Number item) {
         delta(item) <= epsilon
     }
 
-    @Override
+    // see http://jira.codehaus.org/browse/GROOVY-6654
+    //@Override
     void describeMismatchSafely(Number item, Description mismatchDescription) {
       mismatchDescription.appendValue(item)
                          .appendText(" differed by ")

@@ -489,15 +489,26 @@ public class AstInspector {
     @Override
     public void visitMethodCallExpression(MethodCallExpression node) {
       if (node.isImplicitThis()) {
-        String methodName = node.getMethodAsString();
-        if (methodName != null && methodName.startsWith(EXPRESSION_MARKER_PREFIX)) {
-          ArgumentListExpression args = (ArgumentListExpression)node.getArguments();
-          if (args != null && args.getExpressions().size() == 1)
-            addNode(expressions, methodName.substring(EXPRESSION_MARKER_PREFIX.length()),
-              args.getExpressions().get(0));
-        }
+        doVisitMethodCall(node);
       }
       super.visitMethodCallExpression(node);
+    }
+
+    @Override
+    public void visitStaticMethodCallExpression(StaticMethodCallExpression node) {
+      // note: we don't impose any constraints on the receiver type here
+      doVisitMethodCall(node);
+      super.visitStaticMethodCallExpression(node);
+    }
+
+    private void doVisitMethodCall(MethodCall node) {
+      String methodName = node.getMethodAsString();
+      if (methodName != null && methodName.startsWith(EXPRESSION_MARKER_PREFIX)) {
+        ArgumentListExpression args = (ArgumentListExpression) node.getArguments();
+        if (args != null && args.getExpressions().size() == 1)
+          addNode(expressions, methodName.substring(EXPRESSION_MARKER_PREFIX.length()),
+              args.getExpressions().get(0));
+      }
     }
 
     @Override

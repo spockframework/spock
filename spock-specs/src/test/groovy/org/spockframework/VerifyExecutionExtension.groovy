@@ -26,7 +26,8 @@ import org.spockframework.runtime.AbstractRunListener
 import org.spockframework.runtime.model.ErrorInfo
 
 class VerifyExecutionExtension extends AbstractAnnotationDrivenExtension<VerifyExecution> {
-  @Override
+  // see http://jira.codehaus.org/browse/GROOVY-6654
+  //@Override
   void visitSpecAnnotation(VerifyExecution annotation, SpecInfo spec) {
     def executionLog = new ExecutionLog()
     def verifyMethod = spec.getFeatures().find { it.name == "verifyExecution" }

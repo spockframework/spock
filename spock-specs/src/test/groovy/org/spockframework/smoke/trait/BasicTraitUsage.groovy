@@ -18,6 +18,30 @@ package org.spockframework.smoke.trait
 import spock.lang.*
 
 class BasicTraitUsage extends Specification implements MyTrait {
+  boolean setupEvaluated
+  @Shared
+  boolean cleanupEvaluated
+  @Shared
+  boolean setupSpecEvaluated
+  boolean beforeEvaluated
+  @Shared
+  boolean afterEvaluated
+
+  def "call trait method"() {
+    def result = multiply(4, 3)
+
+    expect:
+    result == 12
+  }
+
+  def "mutate trait state"() {
+    when:
+    x = 99
+
+    then:
+    x == 99
+  }
+
   def "call trait method from condition"() {
     expect:
     multiply(4, 3) == 12
@@ -26,6 +50,31 @@ class BasicTraitUsage extends Specification implements MyTrait {
   def "access trait state from condition"() {
     expect:
     x == 10
+  }
+
+  def "mix in setup() method"() {
+    expect:
+    setupEvaluated
+  }
+
+  def "mix in cleanup() method"() {
+    expect:
+    cleanupEvaluated // for previous feature method(s)
+  }
+
+  def "mix in setupSpec() method"() {
+    expect:
+    setupSpecEvaluated
+  }
+
+  def "mix in @Before method"() {
+    expect:
+    beforeEvaluated
+  }
+
+  def "mix in @After method"() {
+    expect:
+    afterEvaluated // for previous feature method(s)
   }
 }
 

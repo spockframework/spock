@@ -15,14 +15,33 @@
 */
 package org.spockframework.smoke.trait
 
+import org.junit.After
 import org.junit.Before
 
-trait MyTrait {
+trait MyTrait implements SpecificationTrait {
   int x = 10
+
   def multiply(m, n) { m * n }
+
+  def setup() {
+    setupEvaluated = true
+  }
+
+  def cleanup() {
+    cleanupEvaluated = true
+  }
+
+  def setupSpec() {
+    setupSpecEvaluated = true
+  }
 
   @Before
   void before() {
-    x = 12
+    beforeEvaluated = true
+  }
+
+  @After
+  void after() {
+    afterEvaluated = true
   }
 }

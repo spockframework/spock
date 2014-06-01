@@ -75,8 +75,8 @@ public class MockingApi extends SpecInternals {
    * recognized as belonging to an interaction definition:
    * <ul>
    * <li><tt>num * target.method(args)</tt></li>
-   * <li><tt>target.method(args) >>(>) result(s)</tt></li>
-   * <li><tt>num * target.method(args) >>(>) result(s)</li>
+   * <li><tt>target.method(args) &gt;&gt;(&gt;) result(s)</tt></li>
+   * <li><tt>num * target.method(args) &gt;&gt;(&gt;) result(s)</tt></li>
    * </ul>
    *
    * <p>Regular interaction definition:

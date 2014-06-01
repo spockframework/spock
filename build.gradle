@@ -41,6 +41,12 @@ allprojects {
   ext.groovyLessVersion = baseVersion + (snapshotVersion ? "-SNAPSHOT" : "")
   
   apply from: script("common")
+  
+  if (System.getProperty("java.version").startsWith("1.8")) {
+    tasks.withType(Javadoc) {
+      options.addStringOption('Xdoclint:none', '-quiet')
+    }
+  }
 }
 
 apply from: script("ide")

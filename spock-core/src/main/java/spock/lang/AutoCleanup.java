@@ -35,10 +35,10 @@ import org.spockframework.runtime.extension.builtin.AutoCleanupExtension;
  *
  * <pre>
  * &#64;AutoCleanup("dispose") // invoke the object's "dispose" method
- * </pre
+ * </pre>
  *
  * <h3>Cleaning up multiple objects</h3>
- * If multiple fields or properties are annotated with </tt>&#64;AutoCleanup</tt>,
+ * If multiple fields or properties are annotated with <tt>&#64;AutoCleanup</tt>,
  * their objects are cleaned up sequentially in reverse field/property declaration
  * order, starting from the most derived class and walking up the inheritance chain.
  *
@@ -51,7 +51,7 @@ import org.spockframework.runtime.extension.builtin.AutoCleanupExtension;
  *
  * <pre>
  * &#64;AutoCleanup(quiet = true) // don't report exceptions
- * </pre
+ * </pre>
  *
  * @author Peter Niederwieser
  */

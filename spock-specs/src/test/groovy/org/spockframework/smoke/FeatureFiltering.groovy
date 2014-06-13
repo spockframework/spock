@@ -74,7 +74,7 @@ class Derived extends Base {
   def feature3() { expect: true }
   def feature4() { expect: true }
 }
-    """)[0]
+    """).find { it.simpleName == "Derived" }
 
     def request = Request.aClass(derived).filterWith(
         [shouldRun: { desc -> desc.methodName in ["feature1", "feature3"] }, describe: { "xxx" }] as Filter)

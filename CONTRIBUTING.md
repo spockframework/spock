@@ -39,7 +39,7 @@ When reviewing pull requests, we value the following qualities (in no particular
 * Tests are updated/added along with the code, communicate intent and cover important cases (see [Tests](#tests) for additional information)
 * Documentation (Javadoc, Groovydoc, reference documentation) is updated/added along with the code
 
-Don't be intimitated by these words. Pull requests that satisfy Spock's overall direction and goals (see above), are crafted carefully, and aren't aiming too high, have a good chance of getting accepted. Before doing so, we may ask for some concrete improvements to be made, in which case we hope for your cooperation.
+Don't be intimidated by these words. Pull requests that satisfy Spock's overall direction and goals (see above), are crafted carefully, and aren't aiming too high, have a good chance of getting accepted. Before doing so, we may ask for some concrete improvements to be made, in which case we hope for your cooperation.
 
 ### Implementation Language
 
@@ -72,9 +72,9 @@ Using an IDE is recommended but not mandatory. Whether or not you use an IDE, pl
 IntelliJ IDEA 13+ is the preferred IDE for developing Spock. To import the Gradle build into IDEA, choose `File->Import Project` and select the top-level `build.gradle` file. This should result in a fully functional IDE setup where:
 
 * Git VCS integration is configured
-* Important formatter settings are configured (e.g. two spaces indent) 
+* Important formatter settings are configured (e.g. two spaces indent)
 * Both Java and Groovy code compiles without problems
-* All tests can be run without problems 
+* All tests can be run without problems
 
 From time to time (e.g. when someone has added a new dependency), it may be necessary to resync the IDEA project with the Gradle build. This is done by pushing the `Refresh` button in the Gradle Tool Window.
 

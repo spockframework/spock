@@ -19,8 +19,6 @@ Modules
 * spock-specs -- Specifications for spock-core, implemented using Spock. Not required for using Spock.
 * spock-maven -- Extended [Maven](http://maven.apache.org/) support. Note that this module is optional;
 it is *not* required for using Spock with Maven.
-* spock-example -- Self-contained example project with [Ant](http://ant.apache.org/), [Gradle](http://www.gradle.org),
-and [Maven](http://maven.apache.org/) builds. See `spock-example/README` for more information.
 * spock-spring -- Integration with the [Spring TestContext Framework]
 (http://static.springsource.org/spring/docs/3.2.1.RELEASE/spring-framework-reference/html/testing.html#testcontext-framework).
 * spock-tapestry -- Integration with the [Tapestry 5](http://tapestry.apache.org/tapestry5/) IoC container.
@@ -49,6 +47,9 @@ Resources
 * Developer Forum -- http://dev.forum.spockframework.org
 * Issue Tracker -- http://issues.spockframework.org
 * Build Server -- http://builds.spockframework.org
+* Example Spock Project -- https://github.com/spockframework/spock-example
+
+Contributions are always welcome! Please take a look at our [ways to contribute page](https://github.com/spockframework/spock/blob/groovy-1.8/CONTRIBUTING.md) for more information.
 
 If you have any comments or questions, please direct them to the [user forum](http://forum.spockframework.org).
 All feedback is appreciated!
@@ -57,4 +58,4 @@ Happy spec'ing!
 
 Peter Niederwieser<br>
 Creator, Spock Framework<br>
-[Twitter]((http://twitter.com/pniederw) | [Blog](http://blog.spockframework.org)
+[Twitter](http://twitter.com/pniederw) | [Blog](http://blog.spockframework.org)

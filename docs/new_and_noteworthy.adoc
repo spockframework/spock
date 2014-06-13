@@ -91,7 +91,7 @@ Interactions can now be declared at mock creation time:
 [source,groovy]
 ----
 def person = Mock(Person) {
-    sing() >> "tra-la-la
+    sing() >> "tra-la-la"
     3 * eat()
 }
 ----

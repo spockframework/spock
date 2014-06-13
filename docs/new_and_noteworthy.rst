@@ -86,7 +86,7 @@ Declaring Interactions at Mock Creation Time
 Interactions can now be declared at mock creation time::
 
     def person = Mock(Person) {
-        sing() >> "tra-la-la
+        sing() >> "tra-la-la"
         3 * eat()
     }
 

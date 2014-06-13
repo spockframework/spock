@@ -18,7 +18,7 @@ package org.spockframework.smoke.trait
 import org.junit.After
 import org.junit.Before
 
-trait MyTrait implements SpecificationTrait {
+trait MyTrait {
   int x = 10
 
   def multiply(m, n) { m * n }

@@ -13,7 +13,7 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
-package org.spockframework.smoke.trait
+package org.spockframework.smoke.traits
 
 import org.junit.After
 import org.junit.Before

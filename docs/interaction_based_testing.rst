@@ -7,7 +7,7 @@ Interaction-based testing is a design and testing technique that emerged in the 
 (XP) community in the early 2000's. Focusing on the behavior of objects rather than their state, it explores how
 the object(s) under specification interact, by way of method calls, with their collaborators.
 
-For example, suppose we have a ``Publisher`` that sends messages to its ``Subscriber``'s::
+For example, suppose we have a ``Publisher`` that sends messages to its ``Subscriber``s::
 
     class Publisher {
         List<Subscriber> subscribers

@@ -472,7 +472,7 @@ multiple ``then:`` blocks::
     then:
     1 * subscriber.receive("goodbye")
 
-Now Spock will verify that both ``"hello"``'s are received before the ``"goodbye"``.
+Now Spock will verify that both ``"hello"``s are received before the ``"goodbye"``.
 In other words, invocation order is enforced *between* but not *within* ``then:`` blocks.
 
 .. note:: Splitting up a ``then:`` block with ``and:`` does not impose any ordering, as ``and:``

@@ -385,13 +385,13 @@ Interactions declared in a ``then:`` block are scoped to the preceding ``when:``
     publisher.send("message1")
 
     then:
-    subscriber.receive("message1")
+    1 * subscriber.receive("message1")
 
     when:
     publisher.send("message2")
 
     then:
-    subscriber.receive("message2")
+    1 * subscriber.receive("message2")
 
 This makes sure that ``subscriber`` receives ``"message1"`` during execution of the first ``when:`` block,
 and ``"message2"`` during execution of the second ``when:`` block.

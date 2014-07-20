@@ -7,7 +7,7 @@ Interaction-based testing is a design and testing technique that emerged in the 
 (XP) community in the early 2000's. Focusing on the behavior of objects rather than their state, it explores how
 the object(s) under specification interact, by way of method calls, with their collaborators.
 
-For example, suppose we have a ``Publisher`` that sends messages to its ``Subscriber``'s::
+For example, suppose we have a ``Publisher`` that sends messages to its ``Subscriber``s::
 
     class Publisher {
         List<Subscriber> subscribers
@@ -385,13 +385,13 @@ Interactions declared in a ``then:`` block are scoped to the preceding ``when:``
     publisher.send("message1")
 
     then:
-    subscriber.receive("message1")
+    1 * subscriber.receive("message1")
 
     when:
     publisher.send("message2")
 
     then:
-    subscriber.receive("message2")
+    1 * subscriber.receive("message2")
 
 This makes sure that ``subscriber`` receives ``"message1"`` during execution of the first ``when:`` block,
 and ``"message2"`` during execution of the second ``when:`` block.
@@ -472,7 +472,7 @@ multiple ``then:`` blocks::
     then:
     1 * subscriber.receive("goodbye")
 
-Now Spock will verify that both ``"hello"``'s are received before the ``"goodbye"``.
+Now Spock will verify that both ``"hello"``s are received before the ``"goodbye"``.
 In other words, invocation order is enforced *between* but not *within* ``then:`` blocks.
 
 .. note:: Splitting up a ``then:`` block with ``and:`` does not impose any ordering, as ``and:``

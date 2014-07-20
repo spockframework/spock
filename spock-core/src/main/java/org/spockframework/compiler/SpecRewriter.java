@@ -29,7 +29,7 @@ import org.objectweb.asm.Opcodes;
 import org.spockframework.compiler.model.*;
 import org.spockframework.mock.runtime.MockController;
 import org.spockframework.runtime.SpecificationContext;
-import org.spockframework.util.InternalIdentifiers;
+import org.spockframework.util.*;
 
 /**
  * A Spec visitor responsible for most of the rewriting of a Spec's AST.
@@ -536,10 +536,29 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
               Token.newSymbol(Types.ASSIGN, -1, -1),
               declExpr.getRightExpression()));
 
-      declExpr.setRightExpression(declExpr.isMultipleAssignmentDeclaration() ?
-          new ListExpression() : EmptyExpression.INSTANCE);
+      declExpr.setRightExpression(createDefaultValueInitializer(declExpr));
       to.add(new ExpressionStatement(declExpr));
     }
+  }
+
+  private Expression createDefaultValueInitializer(DeclarationExpression expr) {
+    TupleExpression tupleExpr = ObjectUtil.asInstance(expr.getLeftExpression(), TupleExpression.class);
+    if (tupleExpr == null) {
+      return EmptyExpression.INSTANCE;
+    }
+
+    assert expr.isMultipleAssignmentDeclaration();
+
+    // initializing to empty list only works when none of the element types is primitive,
+    // so create a proper list expression
+    ListExpression listExpr = new ListExpression();
+    for (Expression elementExpr : tupleExpr.getExpressions()) {
+      Variable variable = (Variable) elementExpr;
+      listExpr.addExpression(new ConstantExpression(
+          ReflectionUtil.getDefaultValue(variable.getOriginType().getTypeClass())));
+    }
+
+    return listExpr;
   }
 
   private Expression copyLhsVariableExpressions(DeclarationExpression declExpr) {

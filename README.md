@@ -10,7 +10,7 @@ Latest Versions
 The latest release version is **0.7** (0.7-groovy-1.8, 0.7-groovy-2.0), released on 2012-10-08. The current development
 version is **1.0-SNAPSHOT** (1.0-groovy-1.8-SNAPSHOT, 1.0-groovy-2.0-SNAPSHOT).
 
-Releases are available from [Maven Central](http://search.maven.org/#search%7Cga%7C1%7Cspock).
+Releases are available from [Maven Central](https://search.maven.org/#search%7Cga%7C1%7Cspock).
 Development snapshots are available from [Sonatype OSS](https://oss.sonatype.org/content/repositories/snapshots/org/spockframework/).
 
 Modules

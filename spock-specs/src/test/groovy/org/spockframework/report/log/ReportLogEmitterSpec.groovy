@@ -250,7 +250,7 @@ class ReportLogEmitterSpec extends Specification {
         name: "SampleSpec",
         features: [[
             name: "sample feature",
-            errorOutput: ["foo\nbar"]
+            output: ["foo\nbar"]
         ]]
     ]
   }
@@ -277,7 +277,7 @@ class ReportLogEmitterSpec extends Specification {
     log == [
         package: "foo.bar",
         name: "SampleSpec",
-        errorOutput: ["foo\nbar"]
+        output: ["foo\nbar"]
     ]
   }
 }

@@ -48,7 +48,7 @@ class ReportLogEmitter implements IRunListener, IStandardStreamsListener {
   }
 
   public void standardErr(String message) {
-    standardStream(message, "errorOutput");
+    standardStream(message, "output");
   }
 
   private void standardStream(String message, String key) {

@@ -29,12 +29,14 @@ ext {
     mockito: "org.mockito:mockito-all:1.9.0",
     objenesis: "org.objenesis:objenesis:1.2"
   ]
+  
+  baseVersion = "1.0"
+  groovyVersion = "2.0"
+  snapshotVersion = true
 }
 
 allprojects {  
-  ext.baseVersion = "1.0"
-  ext.groovyVersion = "2.0"
-  ext.snapshotVersion = true
+  ext.displayName = null
   
   group = "org.spockframework"
   version = "$baseVersion-groovy-$groovyVersion" + (snapshotVersion ? "-SNAPSHOT" : "")

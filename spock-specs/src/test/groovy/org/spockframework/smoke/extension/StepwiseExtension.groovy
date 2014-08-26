@@ -56,5 +56,25 @@ class Foo extends Specification {
     result.failureCount == 0
     result.ignoreCount == 0
   }
+
+  def "honors method-level @Ignore"() {
+    runner.throwFailure = false
+
+    when:
+    def result = runner.runWithImports("""
+@Stepwise
+class Foo extends Specification {
+  def step1() { expect: true }
+  @Ignore
+  def step2() { expect: true }
+  def step3() { expect: true }
+}
+    """)
+
+    then:
+    result.runCount == 2
+    result.failureCount == 0
+    result.ignoreCount == 1
+  }
 }
 

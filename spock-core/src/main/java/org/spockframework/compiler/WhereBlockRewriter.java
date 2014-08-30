@@ -238,6 +238,9 @@ public class WhereBlockRewriter {
     if (varExpr == null)
       throw new InvalidSpecCompileException(column.get(0),
           "Header of data table may only contain variable names");
+    if (AstUtil.isWildcardRef(varExpr)){
+      return; // ignore wildcards - _ can be used as placeholder for pseudo-second-column in one-column data
+    }
 
     ListExpression listExpr = new ListExpression(column.subList(1, column.size()));
     BinaryExpression binExpr = new BinaryExpression(varExpr, Token.newSymbol(Types.LEFT_SHIFT, -1, -1), listExpr);

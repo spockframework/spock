@@ -138,6 +138,15 @@ a | a
     3 | "wow"
   }
 
+  def "allow one column to be passed as parameter"(a) {
+    expect:
+    a == 3
+
+    where:
+    a | _
+    3 | _
+  }
+
   def "tables can be mixed with other parameterizations"() {
     expect:
     [a, b, c, d] == [1, 2, 3, 4]

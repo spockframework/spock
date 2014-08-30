@@ -1,5 +1,5 @@
 install:
-  - cinst jdk7
+  - cinst jdk8
   
 #shallow_clone: true
 

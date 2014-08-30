@@ -1,0 +1,12 @@
+install:
+  - cinst jdk7
+  
+#shallow_clone: true
+
+build_script:
+  - gradlew build
+ 
+test: off
+ 
+#test_script:
+#  - gradlew test

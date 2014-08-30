@@ -249,6 +249,6 @@ loadLogFile([{
   }
 
   private String normalize(String str) {
-    str.trim().replaceAll("\\d", "X")
+    str.trim().replaceAll("\\d", "X").replaceAll("(\\\\r\\\\n|\\\\n)", "\\n")
   }
 }

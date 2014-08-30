@@ -17,6 +17,7 @@
 package org.spockframework.report.log
 
 import spock.lang.Specification
+import java.util.regex.Matcher
 
 class ReportLogConfigurationSpec extends Specification {
   def configuration = new ReportLogConfiguration()
@@ -44,6 +45,6 @@ class ReportLogConfigurationSpec extends Specification {
     configuration.logFileSuffix = "at-#timestamp"
 
     expect:
-    configuration.logFile ==~ "/foo/bar/baz-at-2\\d\\d\\d-.+\\.log"
+    (configuration.logFile as String).replaceAll(Matcher.quoteReplacement(System.getProperty("file.separator")), "/") ==~ "/foo/bar/baz-at-2\\d\\d\\d-.+\\.log"
   }
 }

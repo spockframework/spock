@@ -1,3 +1,6 @@
+[![Linux Build Status](https://drone.io/github.com/spockframework/spock/status.png)](https://drone.io/github.com/spockframework/spock/latest)
+[![Windows Build Status](https://ci.appveyor.com/api/projects/status/o4hljlr3q44m8vf1/branch/groovy-1.8)](https://ci.appveyor.com/project/pniederw/spock/branch/groovy-1.8)
+
 Spock Framework
 ===============
 

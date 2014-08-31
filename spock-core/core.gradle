@@ -1,3 +1,4 @@
+apply plugin: 'osgi'
 apply from: script("publishMaven")
 
 displayName = "Spock Framework - Core Module"
@@ -17,3 +18,18 @@ dependencies {
   compile libs.objenesis, optional
 }
 
+jar {
+  manifest {
+    name = 'spock-core'
+    instruction 'Export-Package', 'org.spockframework.*', 'spock.*'
+    instruction 'Embed-Dependency', 'groovy;inline=false', 'junit;inline=false'
+    instruction 'Import-Package', 
+        'org.objenesis;version="[1,2)";resolution:=optional', 
+        'org.apache.tools.ant;version="[1,2)";resolution:=optional', 
+        'org.apache.tools.ant.types;version="[1,2)";resolution:=optional',
+        'net.sf.cglib.proxy;version="[2.2,2)";resolution:=optional', 
+        'org.apache.tools.ant.types.selectors;version="[1.7,2)";resolution:=optional',
+		'groovy.lang;version="[1.8,3)"', 'org.codehaus.groovy.*;version="[1.8,3)"', 
+        'org.junit.runner;version="[4,7)"'
+  }
+}

@@ -1,0 +1,15 @@
+install:
+  - cinst java.jdk
+
+#environment:
+#  JAVA_HOME: C:\Program Files\Java\jdk1.8.0_20
+  
+shallow_clone: true
+
+build_script:
+  - gradlew build
+ 
+test: off
+ 
+#test_script:
+#  - gradlew test

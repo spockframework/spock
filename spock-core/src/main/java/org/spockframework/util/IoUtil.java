@@ -15,6 +15,7 @@
 package org.spockframework.util;
 
 import java.io.*;
+import java.net.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -28,6 +29,19 @@ public class IoUtil {
 
       try {
         closeable.close();
+      } catch (IOException ignored) {}
+    }
+  }
+
+  // In JDK 1.6, java.net.Socket doesn't implement Closeable, so we have this overload.
+  public static void closeQuietly(@Nullable final Socket... sockets) {
+    if (sockets == null) return;
+
+    for (Socket socket : sockets) {
+      if (socket == null) return;
+
+      try {
+        socket.close();
       } catch (IOException ignored) {}
     }
   }

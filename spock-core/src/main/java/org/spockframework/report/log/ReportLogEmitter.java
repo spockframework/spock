@@ -220,7 +220,7 @@ class ReportLogEmitter implements IRunListener, IStandardStreamsListener {
         continue;
       }
       String name = block.getKind().name();
-      String label = name == "SETUP" ? "Given" : TextUtil.capitalize(name.toLowerCase());
+      String label = name.equals("SETUP") ? "Given" : TextUtil.capitalize(name.toLowerCase());
       for (int j = 0; j < block.getTexts().size(); j++) {
         String text = block.getTexts().get(j);
         if (j == 0) {

@@ -34,14 +34,14 @@ public class IoUtil {
   }
 
   // In JDK 1.6, java.net.Socket doesn't implement Closeable, so we have this overload.
-  public static void closeQuietly(@Nullable final Socket... closeables) {
-    if (closeables == null) return;
+  public static void closeQuietly(@Nullable final Socket... sockets) {
+    if (sockets == null) return;
 
-    for (Closeable closeable : closeables) {
-      if (closeable == null) return;
+    for (Socket socket : sockets) {
+      if (socket == null) return;
 
       try {
-        closeable.close();
+        socket.close();
       } catch (IOException ignored) {}
     }
   }

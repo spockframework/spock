@@ -1,6 +1,7 @@
 include "spock-core"
 include "spock-specs"
 include "spock-spring"
+include "spock-boot"
 include "spock-guice"
 include "spock-tapestry"
 include "spock-unitils"

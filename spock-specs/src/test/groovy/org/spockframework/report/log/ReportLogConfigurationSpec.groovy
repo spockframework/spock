@@ -40,11 +40,12 @@ class ReportLogConfigurationSpec extends Specification {
   }
 
   def "can use timestamp placeholder in suffix"() {
-    configuration.logFileDir = "/foo/bar"
+    configuration.logFileDir = "foo/bar"
     configuration.logFileName = "baz.log"
     configuration.logFileSuffix = "at-#timestamp"
+    def sep = System.getProperty("file.separator")
 
     expect:
-    (configuration.logFile as String).replaceAll(Matcher.quoteReplacement(System.getProperty("file.separator")), "/") ==~ "/foo/bar/baz-at-2\\d\\d\\d-.+\\.log"
+    configuration.logFile.path ==~ "foo${sep}bar${sep}baz-at-2\\d\\d\\d-.+\\.log"
   }
 }

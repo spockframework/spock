@@ -16,24 +16,40 @@
 
 package org.spockframework.spring;
 
-import org.spockframework.runtime.extension.AbstractGlobalExtension;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.annotation.ProfileValueUtils;
-import org.springframework.test.context.ContextConfiguration;
+import java.lang.annotation.*;
+import java.lang.reflect.*;
 
+import org.spockframework.runtime.extension.AbstractGlobalExtension;
 import org.spockframework.runtime.AbstractRunListener;
 import org.spockframework.runtime.model.*;
 import org.spockframework.util.*;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.ProfileValueUtils;
+import org.springframework.test.context.ContextConfiguration;
 
 import spock.lang.Shared;
 
 @NotThreadSafe
 public class SpringExtension extends AbstractGlobalExtension {
+  // since Spring 3.2.2
+  @SuppressWarnings("unchecked")
+  private static final Class<? extends Annotation> contextHierarchyClass =
+      (Class) ReflectionUtil.loadClassIfAvailable("org.springframework.test.context.ContextHierarchy");
+
+  // since Spring 4.0
+  private static final Method findAnnotationDescriptorForTypesMethod;
+
+  static {
+    Class<?> metaAnnotationUtilsClass =
+        ReflectionUtil.loadClassIfAvailable("org.springframework.test.util.MetaAnnotationUtils");
+    findAnnotationDescriptorForTypesMethod = metaAnnotationUtilsClass == null ? null :
+        ReflectionUtil.getMethodBySignature(metaAnnotationUtilsClass,
+            "findAnnotationDescriptorForTypes", Class.class, Class[].class);
+  }
+
   public void visitSpec(SpecInfo spec) {
-    if (!spec.isAnnotationPresent(ContextConfiguration.class)
-        // avoid compile-time dependency on Spring 3.2.2
-        && !ReflectionUtil.isAnnotationPresent(spec.getReflection(),
-        "org.springframework.test.context.ContextHierarchy")) return;
+    if (!isSpringSpec(spec)) return;
 
     checkNoSharedFieldsInjected(spec);
 
@@ -52,6 +68,15 @@ public class SpringExtension extends AbstractGlobalExtension {
     spec.addSetupInterceptor(interceptor);
     spec.addCleanupInterceptor(interceptor);
     spec.addCleanupSpecInterceptor(interceptor);
+  }
+
+  private boolean isSpringSpec(SpecInfo spec) {
+    if (spec.isAnnotationPresent(ContextConfiguration.class)) return true;
+    if (contextHierarchyClass != null && spec.isAnnotationPresent(contextHierarchyClass)) return true;
+    return findAnnotationDescriptorForTypesMethod != null
+        && ReflectionUtil.invokeMethod(
+            null, findAnnotationDescriptorForTypesMethod, spec.getReflection(),
+            new Class[] {ContextConfiguration.class, contextHierarchyClass}) != null;
   }
 
   private void checkNoSharedFieldsInjected(SpecInfo spec) {

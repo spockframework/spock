@@ -20,10 +20,11 @@ class ExceptionUtilSpec extends Specification {
   def "print stack trace to string"() {
     def exception = new IOException("ouch")
     def elem = new StackTraceElement("DeclaringClass", "methodName", "filename", 42)
-    def lineSeparator = System.getProperty("line.separator")
     exception.stackTrace = [elem]
+    def sep = System.getProperty("line.separator")
 
     expect:
-    ExceptionUtil.printStackTrace(exception) == "java.io.IOException: ouch${lineSeparator}\tat DeclaringClass.methodName(filename:42)${lineSeparator}"
+    ExceptionUtil.printStackTrace(exception) ==
+        "java.io.IOException: ouch${sep}\tat DeclaringClass.methodName(filename:42)${sep}"
   }
 }

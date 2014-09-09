@@ -1,0 +1,15 @@
+def springVersion = "4.1.0.RELEASE"
+def bootVersion = "1.1.6.RELEASE"
+
+dependencies {
+	compile "org.springframework:spring-core:$springVersion"
+	compile "org.springframework.boot:spring-boot:$bootVersion"
+	compile "org.springframework.boot:spring-boot-autoconfigure:$bootVersion"
+
+  testCompile project(":spock-core")
+  testCompile "org.springframework:spring-context:$springVersion"
+  testCompile "org.springframework:spring-test:$springVersion"
+
+  testRuntime project(":spock-spring")
+}
+

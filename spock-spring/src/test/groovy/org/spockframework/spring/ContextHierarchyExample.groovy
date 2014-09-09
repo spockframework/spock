@@ -34,7 +34,7 @@ class ContextHierarchyExample extends Specification {
 
   def "Injection works with @ContextHierarchy"() {
     expect:
-	service1 instanceof Service1
-	service2 instanceof Service2
+    service1 instanceof Service1
+    service2 instanceof Service2
   }
 }

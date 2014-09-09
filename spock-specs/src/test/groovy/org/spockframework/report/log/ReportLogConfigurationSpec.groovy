@@ -46,6 +46,6 @@ class ReportLogConfigurationSpec extends Specification {
     def sep = System.getProperty("file.separator")
 
     expect:
-    configuration.logFile.path ==~ "foo${sep}bar${sep}baz-at-2\\d\\d\\d-.+\\.log"
+    configuration.logFile.path.replace(sep, "/") ==~ "foo/bar/baz-at-2\\d\\d\\d-.+\\.log"
   }
 }

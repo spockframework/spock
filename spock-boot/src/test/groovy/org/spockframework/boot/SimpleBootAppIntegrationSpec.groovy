@@ -33,12 +33,12 @@ import spock.lang.Specification
 @SpringApplicationConfiguration(classes = SimpleBootApp.class)
 class SimpleBootAppIntegrationSpec extends Specification {
   @Autowired
-  ApplicationContext ctx
+  ApplicationContext context
 
   def "test context loads"() {
     expect:
-    ctx != null
-    ctx.containsBean("helloWorldService")
-    ctx.containsBean("simpleBootApp")
+    context != null
+    context.containsBean("helloWorldService")
+    context.containsBean("simpleBootApp")
   }
 }

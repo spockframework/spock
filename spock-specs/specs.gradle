@@ -33,7 +33,7 @@ ext.spockLogFileName = "spock-log"
 
 test {
   finalizedBy "spockReport"
-  reports.junitXml.enabled = false
+  reports.junitXml.enabled = true
   reports.html.enabled = false
 
   testLogging.exceptionFormat = "full"

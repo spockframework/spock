@@ -97,14 +97,16 @@ subprojects {
   }
 }
 
+// https://app.shippable.com/projects/541614fdf82ab7ebd69cad63
 task shippableCiBuild {
   dependsOn { subprojects.build }
 }
 
-if (gradle.startParameter.taskNames == ["shippableCiBuild"]) {
+if (gradle.startParameter.taskNames.contains("shippableCiBuild")) {
   task aggregateTestResults(type: Sync) {
     from { subprojects.test.reports.junitXml.destination } 
     into "shippable/testresults"
+    include "**/TEST-*.xml"
   }
   subprojects {
     tasks.withType(Test) {

@@ -57,7 +57,7 @@ a
     e.failures*.class == [InvalidSpecCompileException] * 2
   }
 
-  def "can use wildcards to effectively turn one-column table into two-column"() {
+  def "can use pseudo-column to enable one-column table"() {
     expect:
     a == 1
     _ == _ // won't use this in practice
@@ -128,7 +128,7 @@ a | a
     thrown(InvalidSpecCompileException)
   }
 
-  def "columns may be declared as parameters"(a, String b) {
+  def "columns can be declared as parameters"(a, String b) {
     expect:
     a == 3
     b == "wow"
@@ -136,6 +136,24 @@ a | a
     where:
     a | b
     3 | "wow"
+  }
+
+  def "pseudo-column can be omitted from parameter list"(a) {
+    expect:
+    a == 3
+
+    where:
+    a | _
+    3 | _
+  }
+
+  def "pseudo-column can be declared as parameter"(a, _) {
+    expect:
+    a == 3
+
+    where:
+    a | _
+    3 | _
   }
 
   def "tables can be mixed with other parameterizations"() {

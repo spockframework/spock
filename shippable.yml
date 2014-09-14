@@ -1,5 +1,5 @@
 language: java
 jdk:
- - openjdk6
+ - openjdk7
 script:
  - ./gradlew shippableCiBuild --continue

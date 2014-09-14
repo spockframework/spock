@@ -3,3 +3,5 @@ jdk:
  - openjdk6
  - openjdk7
  - oraclejdk8
+script:
+ - ./gradlew shippableCiBuild --continue

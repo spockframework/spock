@@ -97,6 +97,22 @@ subprojects {
   }
 }
 
+task shippableCiBuild {
+  dependsOn { subprojects.build }
+}
+
+if (gradle.startParameter.taskNames == ["shippableCiBuild"]) {
+  task aggregateTestResults(type: Sync) {
+    from { subprojects.test.reports.junitXml.destination } 
+    into "shippable/testresults"
+  }
+  subprojects {
+    tasks.withType(Test) {
+      it.finalizedBy(aggregateTestResults)
+    }
+  }
+}
+
 task javadoc(type: Javadoc) {
   title "Spock Framework API Documentation ($groovyLessVersion)"
   def docPath = snapshotVersion ? "latest" : baseVersion

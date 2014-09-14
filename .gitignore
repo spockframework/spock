@@ -37,3 +37,6 @@ stacktrace.log
 
 # Mac
 .DS_Store
+
+# Shippable CI
+/shippable/

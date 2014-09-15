@@ -21,7 +21,7 @@ package org.spockframework.runtime;
  *
  * @author Peter Niederwieser
  */
-public class SpockExecutionException extends RuntimeException {
+public class SpockExecutionException extends SpockException {
   private volatile String msg;
 
   public SpockExecutionException(String msg) {

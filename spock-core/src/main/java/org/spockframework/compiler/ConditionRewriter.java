@@ -18,7 +18,9 @@ package org.spockframework.compiler;
 
 import java.util.*;
 
+import org.codehaus.groovy.ast.ClassNode;
 import org.codehaus.groovy.ast.MethodNode;
+import org.codehaus.groovy.ast.Parameter;
 import org.codehaus.groovy.ast.expr.*;
 import org.codehaus.groovy.ast.stmt.*;
 import org.codehaus.groovy.classgen.BytecodeExpression;
@@ -438,10 +440,17 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> {
   }
 
   private Expression record(Expression expr) {
+    // replace expr with $spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(recordCount++), <expr>)
     return AstUtil.createDirectMethodCall(
         new VariableExpression("$spock_valueRecorder"),
         resources.getAstNodeCache().ValueRecorder_Record,
-        new ArgumentListExpression(new ConstantExpression(recordCount++), expr));
+        new ArgumentListExpression(
+            AstUtil.createDirectMethodCall(
+                new VariableExpression("$spock_valueRecorder"),
+                resources.getAstNodeCache().ValueRecorder_StartRecordingValue,
+                new ConstantExpression(recordCount++)
+            ),
+            expr));
   }
 
   private Expression realizeNas(Expression expr) {
@@ -487,18 +496,18 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> {
   }
 
   private Statement rewriteCondition(Statement conditionStat, Expression conditionExpr, Expression message, boolean explicit) {
-    Statement result = new ExpressionStatement(rewriteCondition(conditionExpr, message, explicit));
+    Statement result = rewriteCondition(conditionExpr, message, explicit);
     result.setSourcePosition(conditionStat);
     return result;
   }
 
-  private Expression rewriteCondition(Expression expr, Expression message, boolean explicit) {
+  private Statement rewriteCondition(Expression expr, Expression message, boolean explicit) {
     // method conditions with spread operator are not lifted because MOP doesn't support spreading
     if (expr instanceof MethodCallExpression && !((MethodCallExpression) expr).isSpreadSafe())
-      return rewriteMethodCondition((MethodCallExpression) expr, message, explicit);
+      return new ExpressionStatement(rewriteMethodCondition((MethodCallExpression) expr, message, explicit));
 
     if (expr instanceof StaticMethodCallExpression)
-      return rewriteStaticMethodCondition((StaticMethodCallExpression) expr, message, explicit);
+      return new ExpressionStatement(rewriteStaticMethodCondition((StaticMethodCallExpression) expr, message, explicit));
 
     return rewriteOtherCondition(expr, message);
   }
@@ -534,11 +543,39 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> {
     return rewriteToSpockRuntimeCall(resources.getAstNodeCache().SpockRuntime_VerifyMethodCondition, condition, message, args);
   }
 
-  private Expression rewriteOtherCondition(Expression condition, Expression message) {
+  private Statement rewriteOtherCondition(Expression condition, Expression message) {
     Expression rewritten = message == null ? convert(condition) : condition;
 
-    return rewriteToSpockRuntimeCall(resources.getAstNodeCache().SpockRuntime_VerifyCondition,
+    final Expression executeAndVerify = rewriteToSpockRuntimeCall(resources.getAstNodeCache().SpockRuntime_VerifyCondition,
         condition, message, Collections.singletonList(rewritten));
+
+//      return new ExpressionStatement(executeAndVerify);
+    final TryCatchStatement tryCatchStatement = new TryCatchStatement(
+        new ExpressionStatement(executeAndVerify),
+        new EmptyStatement()
+    );
+
+    tryCatchStatement.addCatch(
+        new CatchStatement(
+            new Parameter(new ClassNode(Throwable.class), "throwable"),
+            new ExpressionStatement(
+                AstUtil.createDirectMethodCall(
+                    new ClassExpression(resources.getAstNodeCache().SpockRuntime),
+                    resources.getAstNodeCache().SpockRuntime_ConditionFailedWithException,
+                    new ArgumentListExpression(Arrays.asList(
+                        message == null ? new VariableExpression("$spock_valueRecorder") : ConstantExpression.NULL, // recorder
+                        new ConstantExpression(resources.getSourceText(condition)),                                 // text
+                        new ConstantExpression(condition.getLineNumber()),                                          // line
+                        new ConstantExpression(condition.getColumnNumber()),                                        // column
+                        message == null ? ConstantExpression.NULL : message,                                        // message
+                        new VariableExpression("throwable")                                                         // throwable
+                    ))
+                )
+            )
+        )
+    );
+
+    return tryCatchStatement;
   }
 
   private Expression rewriteToSpockRuntimeCall(MethodNode method, Expression condition, Expression message,

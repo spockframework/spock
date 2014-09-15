@@ -34,8 +34,28 @@ public abstract class SpockRuntime {
       @Nullable String text, int line, int column, @Nullable Object message, @Nullable Object condition) {
     if (!GroovyRuntimeUtil.isTruthy(condition)) {
       throw new ConditionNotSatisfiedError(
-          new Condition(getValues(recorder), text, TextPosition.create(line, column), messageToString(message)));
+          new Condition(getValues(recorder), text, TextPosition.create(line, column), messageToString(message), null, null));
     }
+  }
+
+  public static final String CONDITION_FAILED_WITH_EXCEPTION = "conditionFailedWithException";
+
+  public static void conditionFailedWithException(@Nullable ValueRecorder recorder, @Nullable String text, int line, int column, @Nullable Object message, Throwable throwable){
+    if (throwable instanceof SpockAssertionError){
+      throw (SpockAssertionError) throwable; // this is our exception - it already has good message
+    }
+    if (throwable instanceof SpockException){
+      throw (SpockException) throwable; // this is our exception - it already has good message
+    }
+    throw new ConditionNotSatisfiedError(
+        new Condition(
+            getValues(recorder),
+            text,
+            TextPosition.create(line, column),
+            messageToString(message),
+            recorder == null ? null : recorder.getCurrentRecordingVarNum(),
+            recorder == null ? null : throwable),
+        throwable);
   }
 
   public static final String VERIFY_METHOD_CONDITION = "verifyMethodCondition";
@@ -58,7 +78,7 @@ public abstract class SpockRuntime {
       List<Object> values = getValues(recorder);
       if (values != null) CollectionUtil.setLastElement(values, result);
       throw new ConditionNotSatisfiedError(
-          new Condition(values, text, TextPosition.create(line, column), messageToString(message)));
+          new Condition(values, text, TextPosition.create(line, column), messageToString(message), null, null));
     }
   }
 
@@ -103,7 +123,7 @@ public abstract class SpockRuntime {
       }
 
       String description = HamcrestFacade.getFailureDescription(matcher, actual, message);
-      Condition condition = new Condition(values, text, TextPosition.create(line, column), description);
+      Condition condition = new Condition(values, text, TextPosition.create(line, column), description, null, null);
       throw new ConditionNotSatisfiedError(condition);
     }
 

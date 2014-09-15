@@ -27,6 +27,7 @@ import org.spockframework.runtime.model.ExpressionInfo;
  */
 public class ValueRecorder {
   private final ArrayList<Object> values = new ArrayList<Object>();
+  private final Stack<Integer> startedRecordings = new Stack<Integer>();
 
   public static final String RESET = "reset";
 
@@ -44,7 +45,27 @@ public class ValueRecorder {
   public Object record(int index, Object value) {
     realizeNas(index, null);
     values.add(value);
+
+    boolean foundThisCallOnStack = false;
+    while (!startedRecordings.empty()){
+      final Integer indexFromStack = startedRecordings.pop();
+      if (indexFromStack==index){
+        foundThisCallOnStack = true;
+        break;
+      }
+    }
+    if (!foundThisCallOnStack){
+      throw new IllegalStateException("can not found call #"+index+" on stack. Invalid call of record method?");
+    }
+
     return value;
+  }
+
+  public static final String START_RECORDING_VALUE = "startRecordingValue";
+
+  public int startRecordingValue(int index){
+    startedRecordings.push(index);
+    return index;
   }
 
   public static final String REALIZE_NAS = "realizeNas";
@@ -60,5 +81,13 @@ public class ValueRecorder {
 
   public List<Object> getValues() {
     return new ArrayList<Object>(values);
+  }
+
+  public Integer getCurrentRecordingVarNum() {
+    if (startedRecordings.isEmpty()) {
+      return null;
+    } else {
+      return startedRecordings.peek();
+    }
   }
 }

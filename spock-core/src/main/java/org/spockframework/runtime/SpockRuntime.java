@@ -62,13 +62,16 @@ public abstract class SpockRuntime {
 
   // method calls with spread-dot operator are not rewritten, hence this method doesn't have to care about spread-dot
   public static void verifyMethodCondition(@Nullable ValueRecorder recorder, @Nullable String text, int line, int column,
-      @Nullable Object message, Object target, String method, Object[] args, boolean safe, boolean explicit) {
+      @Nullable Object message, Object target, String method, Object[] args, boolean safe, boolean explicit, int lastVariableNum) {
     MatcherCondition matcherCondition = MatcherCondition.parse(target, method, args, safe);
     if (matcherCondition != null) {
       matcherCondition.verify(getValues(recorder), text, line, column, messageToString(message));
       return;
     }
 
+    if (recorder != null) {
+      recorder.startRecordingValue(lastVariableNum);
+    }
     Object result = safe ? GroovyRuntimeUtil.invokeMethodNullSafe(target, method, args) :
         GroovyRuntimeUtil.invokeMethod(target, method, args);
 

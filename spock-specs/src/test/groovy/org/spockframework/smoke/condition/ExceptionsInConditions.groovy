@@ -1,82 +1,136 @@
 package org.spockframework.smoke.condition
 
 import junit.framework.Assert
+import org.spockframework.EmbeddedSpecification
 import org.spockframework.runtime.ConditionNotSatisfiedError
 import org.spockframework.runtime.SpockException
 import spock.lang.FailsWith
 import spock.lang.Specification
 
 
-class ExceptionsInConditions extends ConditionRenderingSpec {
+class ExceptionsInConditions extends EmbeddedSpecification {
   def "null pointer exception in condition"() {
-    expect:
-    isRendered("""\
+    when:
+    runner.runFeatureBody(
+        """
+                def map = new HashMap<String, String>()
+                expect:
+                map.get("key").length() == 0
+            """)
+
+    then:
+    ConditionNotSatisfiedError e = thrown()
+
+
+    def expected = """\
             map.get("key").length() == 0
             |   |          |
             [:] null       java.lang.NullPointerException: Cannot invoke method length() on null object
-        """.stripIndent(),
-        {
-          def map = new HashMap<String, String>()
-          assert map.get("key").length() == 0
-        }
-    )
+        """.stripIndent()
+    expected == e.getCondition().getRendering()
+    e.getCause() instanceof NullPointerException
   }
 
+  def "null pointer exception in method condition"() {
+    when:
+    runner.runFeatureBody(
+        """
+                def map = new HashMap<String, String>()
+                expect:
+                map.get("key").isEmpty()
+            """)
 
-  def "exception while invoking methods condition"() {
-    expect:
-    isRendered("""\
+    then:
+    ConditionNotSatisfiedError e = thrown()
+
+
+    def expected = """\
+            map.get("key").isEmpty()
+            |   |          |
+            [:] null       java.lang.NullPointerException: Cannot invoke method isEmpty() on null object
+        """.stripIndent()
+    expected == e.getCondition().getRendering()
+    e.getCause() instanceof NullPointerException
+  }
+
+  def "exception while invoking condition"() {
+    when:
+    runner.runFeatureBody(
+        """
+                    def getKey = { map, key ->
+                        def result = map.get(key)
+                        if (result == null) {
+                            throw new IllegalArgumentException("key does not exists")
+                        }
+                        return result;
+                    }
+                  def map = new HashMap<String, String>()
+                  expect:
+                  getKey(map, "key").length() == 0
+                """)
+
+    then:
+    ConditionNotSatisfiedError e = thrown()
+
+
+    def expected = """\
             getKey(map, "key").length() == 0
             |      |
             |      [:]
             java.lang.IllegalArgumentException: key does not exists
-        """.stripIndent(),
-        {
-          def getKey = { map, key ->
-            def result = map.get(key)
-            if (result == null) {
-              throw new IllegalArgumentException("key does not exists")
-            }
-            return result;
-          }
-          def map = new HashMap<String, String>()
-          assert getKey(map, "key").length() == 0
-        }
-    )
+        """.stripIndent()
+    expected == e.getCondition().getRendering()
+
+    e.getCause() instanceof IllegalArgumentException
   }
+
 
   def "spock assertion errors should be processed as is"() {
-    expect:
-    isRendered("""\
-            result != null
-            |      |
-            null   false
-        """.stripIndent(),
-        {
-          def getKey = { map, key ->
-            def result = map.get(key)
-            assert result != null
-            return result;
-          }
-          def map = new HashMap<String, String>()
-          assert getKey(map, "key").length() == 0
-        }
-    )
+    when:
+    runner.runFeatureBody(
+        """
+                    def getKey = { map, key ->
+                        def result = map.get(key)
+                        assert result
+                        return result;
+                    }
+                  def map = new HashMap<String, String>()
+                  expect:
+                  getKey(map, "key").length() == 0
+                """)
+
+    then:
+    ConditionNotSatisfiedError e = thrown()
+
+
+    def expected = """\
+            result
+            |
+            null
+        """.stripIndent()
+    expected == e.getCondition().getRendering()
+
+    e.getCause() == null
   }
 
-  @FailsWith(SpockException)
   def "spock exceptions should be processed as is"() {
-    def getKey = { map, key ->
-      def result = map.get(key)
-      if (result == null) {
-        throw new SpockException("key does not exists")
-      }
-      return result;
-    }
-    def map = new HashMap<String, String>()
+    when:
+    runner.runFeatureBody(
+        """
+                    def getKey = { map, key ->
+                        def result = map.get(key)
+                        if (result==null){
+                            throw new org.spockframework.runtime.SpockException("key does not exists")
+                        }
+                        return result;
+                    }
+                  def map = new HashMap<String, String>()
+                  expect:
+                  getKey(map, "key").length() == 0
+                """)
 
-    expect:
-    getKey(map, "key").length() == 0
-
+    then:
+    SpockException e = thrown()
+    e.getMessage() == "key does not exists"
   }
 }

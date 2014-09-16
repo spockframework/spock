@@ -165,7 +165,7 @@ loadLogFile([{
                 "err1\\n"
             ],
             "exceptions": [
-                "java.io.IOException: ouch\\n\\tat DeclaringClass.methodName(filename:42)\\n"
+                "Condition not satisfied:nnthrowException()n|njava.io.IOException: ouchnn\\tat apackage.MySpec.some feature(scriptXXXXXXXXXXXXXXXXXXXXXXX.groovy:XX)nCaused by: java.io.IOException: ouchn\\tat DeclaringClass.methodName(filename:XX)n"
             ],
             "end": 1360051647586,
             "result": "failed",

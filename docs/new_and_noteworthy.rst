@@ -7,7 +7,7 @@ New and Noteworthy
 Snapshot Repository Moved
 -------------------------
 
-Spock snapshots are now available from http://oss.sonatype.org/content/repositories/snapshots/.
+Spock snapshots are now available from https://oss.sonatype.org/content/repositories/snapshots/.
 
 New Reference Documentation
 ---------------------------

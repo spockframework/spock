@@ -49,6 +49,12 @@ public class AstNodeCache {
   public final MethodNode SpockRuntime_VerifyMethodCondition =
       SpockRuntime.getDeclaredMethods(org.spockframework.runtime.SpockRuntime.VERIFY_METHOD_CONDITION).get(0);
 
+  public final MethodNode SpockRuntime_VerifyCollectedErrors =
+      SpockRuntime.getDeclaredMethods(org.spockframework.runtime.SpockRuntime.VERIFY_COLLECTED_ERRORS).get(0);
+
+  public final MethodNode SpockRuntime_SetupErrorCollector =
+      SpockRuntime.getDeclaredMethods(org.spockframework.runtime.SpockRuntime.SETUP_ERROR_COLLECTOR).get(0);
+
   public final MethodNode ValueRecorder_Reset =
       ValueRecorder.getDeclaredMethods(org.spockframework.runtime.ValueRecorder.RESET).get(0);
 

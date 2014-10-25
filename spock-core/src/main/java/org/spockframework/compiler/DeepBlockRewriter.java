@@ -41,7 +41,7 @@ public class DeepBlockRewriter extends AbstractDeepBlockRewriter {
   private final IRewriteResources resources;
 
   public DeepBlockRewriter(IRewriteResources resources) {
-    super(resources.getCurrentBlock());
+    super(resources.getCurrentBlock(), resources);
     this.resources = resources;
   }
 

@@ -24,6 +24,7 @@ public class FeatureInfo extends SpecElementInfo<SpecInfo, AnnotatedElement> {
   private final List<DataProviderInfo> dataProviders = new ArrayList<DataProviderInfo>();
 
   private boolean reportIterations = false;
+  private boolean errorCollectionEnabled = false;
 
   public SpecInfo getSpec() {
     return getParent();
@@ -137,5 +138,13 @@ public class FeatureInfo extends SpecElementInfo<SpecInfo, AnnotatedElement> {
     for (DataProviderInfo provider : dataProviders)
       if (provider.getDataProviderMethod().hasBytecodeName(name)) return true;
     return false;
+  }
+
+  public boolean isErrorCollectionEnabled() {
+    return errorCollectionEnabled;
+  }
+
+  public void setErrorCollectionEnabled(boolean errorCollectionEnabled) {
+    this.errorCollectionEnabled = errorCollectionEnabled;
   }
 }

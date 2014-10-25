@@ -16,17 +16,24 @@
 
 package org.spockframework.runtime;
 
-import java.util.*;
-
+import org.junit.runners.model.MultipleFailureException;
 import org.spockframework.runtime.model.ExpressionInfo;
 import org.spockframework.runtime.model.TextPosition;
-import org.spockframework.util.*;
+import org.spockframework.util.CollectionUtil;
+import org.spockframework.util.Nullable;
+import spock.lang.Specification;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ListIterator;
 
 /**
  * @author Peter Niederwieser
  */
 @SuppressWarnings("UnusedDeclaration")
 public abstract class SpockRuntime {
+  private static final ThreadLocal<List<Throwable>> ERROR_COLLECTOR_THREAD_LOCAL = new ThreadLocal<List<Throwable>>();
+
   public static final String VERIFY_CONDITION = "verifyCondition";
 
   // condition can be null too, but not in the sense of "not available"
@@ -41,13 +48,17 @@ public abstract class SpockRuntime {
   public static final String CONDITION_FAILED_WITH_EXCEPTION = "conditionFailedWithException";
 
   public static void conditionFailedWithException(@Nullable ValueRecorder recorder, @Nullable String text, int line, int column, @Nullable Object message, Throwable throwable){
-    if (throwable instanceof SpockAssertionError){
-      throw (SpockAssertionError) throwable; // this is our exception - it already has good message
-    }
-    if (throwable instanceof SpockException){
-      throw (SpockException) throwable; // this is our exception - it already has good message
-    }
-    throw new ConditionNotSatisfiedError(
+      if (throwable instanceof SpockAssertionError) {
+        final SpockAssertionError spockAssertionError = (SpockAssertionError) throwable;
+        collectOrThrow(spockAssertionError); // this is our exception - it already has good message
+        return;
+      }
+      if (throwable instanceof SpockException) {
+        final SpockException spockException = (SpockException) throwable;
+        collectOrThrow(spockException); // this is our exception - it already has good message
+        return;
+      }
+    final ConditionNotSatisfiedError conditionNotSatisfiedError = new ConditionNotSatisfiedError(
         new Condition(
             getValues(recorder),
             text,
@@ -56,6 +67,7 @@ public abstract class SpockRuntime {
             recorder == null ? null : recorder.getCurrentRecordingVarNum(),
             recorder == null ? null : throwable),
         throwable);
+    collectOrThrow(conditionNotSatisfiedError);
   }
 
   public static final String VERIFY_METHOD_CONDITION = "verifyMethodCondition";
@@ -80,8 +92,29 @@ public abstract class SpockRuntime {
     if (!GroovyRuntimeUtil.isTruthy(result)) {
       List<Object> values = getValues(recorder);
       if (values != null) CollectionUtil.setLastElement(values, result);
-      throw new ConditionNotSatisfiedError(
+      final ConditionNotSatisfiedError conditionNotSatisfiedError = new ConditionNotSatisfiedError(
           new Condition(values, text, TextPosition.create(line, column), messageToString(message), null, null));
+      collectOrThrow(conditionNotSatisfiedError);
+    }
+  }
+
+  public static final String VERIFY_COLLECTED_ERRORS = "verifyCollectedErrors";
+
+  public static void verifyCollectedErrors() throws Throwable {
+    final List<Throwable> errorCollector = ERROR_COLLECTOR_THREAD_LOCAL.get();
+    if (errorCollector != null) {
+      MultipleFailureException.assertEmpty(errorCollector);
+    }
+  }
+
+  public static final String SETUP_ERROR_COLLECTOR = "setupErrorCollector";
+
+  public static void setupErrorCollector(Specification specification){
+    final boolean errorCollectionEnabled = specification.getSpecificationContext().getCurrentFeature().isErrorCollectionEnabled();
+    if (errorCollectionEnabled){
+      ERROR_COLLECTOR_THREAD_LOCAL.set(new ArrayList<Throwable>());
+    }else {
+      ERROR_COLLECTOR_THREAD_LOCAL.remove();
     }
   }
 
@@ -99,6 +132,15 @@ public abstract class SpockRuntime {
     if (message == null) return null; // treat as "not available"
 
     return GroovyRuntimeUtil.toString(message);
+  }
+
+  private static <T extends Throwable> void collectOrThrow(T throwable) throws T {
+    final List<Throwable> errorCollector = ERROR_COLLECTOR_THREAD_LOCAL.get();
+    if (errorCollector != null) {
+      errorCollector.add(throwable);
+    } else {
+      throw throwable;
+    }
   }
   /**
    * A condition of the form "foo equalTo(bar)" or "that(foo, equalTo(bar)"
@@ -127,7 +169,7 @@ public abstract class SpockRuntime {
 
       String description = HamcrestFacade.getFailureDescription(matcher, actual, message);
       Condition condition = new Condition(values, text, TextPosition.create(line, column), description, null, null);
-      throw new ConditionNotSatisfiedError(condition);
+      collectOrThrow(new ConditionNotSatisfiedError(condition));
     }
 
     void replaceMatcherValues(List<Object> values) {

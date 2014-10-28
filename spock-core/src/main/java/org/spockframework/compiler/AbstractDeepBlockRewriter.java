@@ -27,7 +27,7 @@ import java.util.ListIterator;
 
 public class AbstractDeepBlockRewriter extends StatementReplacingVisitorSupport {
   protected Block block;
-  private final IRewriteResources resources;
+  protected final IRewriteResources resources;
   protected Statement currTopLevelStat;
   protected ExpressionStatement currExprStat;
   protected BinaryExpression currBinaryExpr;

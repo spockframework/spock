@@ -6,6 +6,9 @@ import org.spockframework.runtime.model.SpecInfo;
 import spock.lang.AssertionMode;
 import spock.lang.AssertionType;
 
+/**
+ * This extension enables error collection in feature method. For detailed information see {@link spock.lang.AssertionMode}.
+ */
 public class AssertionModeExtension extends AbstractAnnotationDrivenExtension<AssertionMode> {
   @Override
   public void visitSpecAnnotation(AssertionMode annotation, SpecInfo spec) {

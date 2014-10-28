@@ -38,11 +38,9 @@ import java.util.List;
  * @author Peter Niederwieser
  */
 public class DeepBlockRewriter extends AbstractDeepBlockRewriter {
-  private final IRewriteResources resources;
 
   public DeepBlockRewriter(IRewriteResources resources) {
     super(resources.getCurrentBlock(), resources);
-    this.resources = resources;
   }
 
   public void visit(Block block) {

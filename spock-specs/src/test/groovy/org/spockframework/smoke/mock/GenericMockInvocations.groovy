@@ -92,7 +92,7 @@ class GenericMockInvocations extends Specification {
 
   static class StringIntListFunction extends FunctionClass<List<String>, List<Integer>> {}
 
-  @Ignore("appears to run into a groovy 2.3.3 bug")
+  @Ignore("appears to run into a groovy 2.3.x bug")
   def "mock with parameterized parameter and return types"() {
     def holder = Mock(StringIntListFunction)
 

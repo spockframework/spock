@@ -32,8 +32,7 @@ import org.spockframework.runtime.extension.ExtensionAnnotation
 }
 
 class IsRenderedExtension extends AbstractAnnotationDrivenExtension<IsRendered> {
-  // see http://jira.codehaus.org/browse/GROOVY-6654
-  //@Override
+  @Override
   void visitFeatureAnnotation(IsRendered annotation, FeatureInfo feature) {
     feature.featureMethod.interceptors.add({ IMethodInvocation invocation ->
       try {

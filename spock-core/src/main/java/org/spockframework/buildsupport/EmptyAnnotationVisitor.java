@@ -14,7 +14,7 @@
 
 package org.spockframework.buildsupport;
 
-import groovyjarjarasm.asm.Opcodes;
+import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.AnnotationVisitor;
 
 class EmptyAnnotationVisitor extends AnnotationVisitor {

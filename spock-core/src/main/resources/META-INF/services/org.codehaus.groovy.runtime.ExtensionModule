@@ -1,3 +1,0 @@
-moduleName=spock-core
-moduleVersion=1.0-SNAPSHOT
-extensionClasses=spock.util.Exceptions

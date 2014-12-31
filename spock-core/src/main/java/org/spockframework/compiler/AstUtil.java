@@ -161,6 +161,16 @@ public abstract class AstUtil {
         && node.getColumnNumber() > 0 && node.getLastColumnNumber() > node.getColumnNumber();
   }
 
+  public static String getMethodName(Expression invocation) {
+    if (invocation instanceof MethodCallExpression) {
+      return ((MethodCallExpression) invocation).getMethodAsString();
+    }
+    if (invocation instanceof StaticMethodCallExpression) {
+      return ((StaticMethodCallExpression) invocation).getMethod();
+    }
+    return null;
+  }
+
   public static Expression getArguments(Expression invocation) {
     if (invocation instanceof MethodCallExpression)
       return ((MethodCallExpression) invocation).getArguments();

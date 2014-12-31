@@ -26,6 +26,7 @@ import org.codehaus.groovy.ast.stmt.*;
 import org.codehaus.groovy.control.*;
 
 import groovy.lang.GroovyClassLoader;
+import org.spockframework.compiler.AstUtil;
 
 /**
  * Utility class for inspecting the abstract syntax tree (AST) produced by
@@ -501,10 +502,10 @@ public class AstInspector {
       super.visitStaticMethodCallExpression(node);
     }
 
-    private void doVisitMethodCall(MethodCall node) {
-      String methodName = node.getMethodAsString();
+    private void doVisitMethodCall(Expression node) {
+      String methodName = AstUtil.getMethodName(node);
       if (methodName != null && methodName.startsWith(EXPRESSION_MARKER_PREFIX)) {
-        ArgumentListExpression args = (ArgumentListExpression) node.getArguments();
+        ArgumentListExpression args = (ArgumentListExpression) AstUtil.getArguments(node);
         if (args != null && args.getExpressions().size() == 1)
           addNode(expressions, methodName.substring(EXPRESSION_MARKER_PREFIX.length()),
               args.getExpressions().get(0));

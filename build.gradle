@@ -70,7 +70,7 @@ subprojects {
   apply plugin: "groovy"
   apply plugin: "signing"
 
-  sourceCompatibility = 1.5
+  sourceCompatibility = 1.6
 
   sourceSets.all { ss ->
     for (v in variants.findAll { it <= variant } ) {

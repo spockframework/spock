@@ -1,3 +1,5 @@
+import org.gradle.api.internal.artifacts.dependencies.DefaultSelfResolvingDependency
+
 apply plugin: 'osgi'
 apply from: script("publishMaven")
 
@@ -9,7 +11,7 @@ Thanks to its JUnit runner, Spock is compatible with most IDEs, build tools, and
 Spock is inspired from JUnit, jMock, RSpec, Groovy, Scala, Vulcans, and other fascinating life forms."
 
 dependencies {
-  compile libs.groovy // simplest way to add Groovy dependency to POM
+  compile libs.groovy // easiest way to add Groovy dependency to POM
   compile libs.junit
 
   compile libs.ant, optional
@@ -35,6 +37,7 @@ jar {
 }
 
 processResources {
-  filter(org.apache.tools.ant.filters.ReplaceTokens, tokens:
-      [version: version.toString(), minGroovyVersion: minGroovyVersion, maxGroovyVersion: maxGroovyVersion])
+  def tokens = [version: version.toString(), minGroovyVersion: minGroovyVersion, maxGroovyVersion: maxGroovyVersion]
+  inputs.property "tokens", tokens
+  filter(org.apache.tools.ant.filters.ReplaceTokens, tokens: tokens)
 }

@@ -33,3 +33,8 @@ jar {
         'org.junit.runner;version="[4,7)"'
   }
 }
+
+processResources {
+  filter(org.apache.tools.ant.filters.ReplaceTokens, tokens:
+      [version: version.toString(), minGroovyVersion: minGroovyVersion, maxGroovyVersion: maxGroovyVersion])
+}

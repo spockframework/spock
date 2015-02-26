@@ -14,12 +14,11 @@
 
 package org.spockframework.compiler;
 
-import org.codehaus.groovy.ast.expr.BinaryExpression;
-import org.codehaus.groovy.ast.expr.ClosureExpression;
-import org.codehaus.groovy.ast.expr.MethodCallExpression;
+import org.codehaus.groovy.ast.expr.*;
 import org.codehaus.groovy.ast.stmt.ExpressionStatement;
 import org.codehaus.groovy.ast.stmt.Statement;
 import org.spockframework.compiler.model.Block;
+import org.spockframework.compiler.model.ExpectBlock;
 import org.spockframework.compiler.model.ThenBlock;
 
 import java.util.ArrayList;
@@ -28,6 +27,7 @@ import java.util.ListIterator;
 
 public class AbstractDeepBlockRewriter extends StatementReplacingVisitorSupport {
   protected Block block;
+  protected final IRewriteResources resources;
   protected Statement currTopLevelStat;
   protected ExpressionStatement currExprStat;
   protected BinaryExpression currBinaryExpr;
@@ -42,8 +42,9 @@ public class AbstractDeepBlockRewriter extends StatementReplacingVisitorSupport 
   protected MethodCallExpression foundExceptionCondition;
   protected final List<Statement> thenBlockInteractionStats = new ArrayList<Statement>();
 
-  public AbstractDeepBlockRewriter(Block block) {
+  public AbstractDeepBlockRewriter(Block block, IRewriteResources resources) {
     this.block = block;
+    this.resources = resources;
   }
 
   public boolean isConditionFound() {
@@ -64,6 +65,7 @@ public class AbstractDeepBlockRewriter extends StatementReplacingVisitorSupport 
 
   public void visit(Block block) {
     this.block = block;
+
     ListIterator<Statement> iterator = block.getAst().listIterator();
     while (iterator.hasNext()) {
       Statement next = iterator.next();
@@ -76,6 +78,20 @@ public class AbstractDeepBlockRewriter extends StatementReplacingVisitorSupport 
       } else {
         iterator.set(replaced);
       }
+    }
+
+    if (block instanceof ThenBlock || block instanceof ExpectBlock) {
+      block.getAst().add(0, new ExpressionStatement(
+          AstUtil.createDirectMethodCall(
+              new ClassExpression(resources.getAstNodeCache().SpockRuntime),
+              resources.getAstNodeCache().SpockRuntime_SetupErrorCollector,
+              new ArgumentListExpression(VariableExpression.THIS_EXPRESSION))));
+
+      block.getAst().add(new ExpressionStatement(
+          AstUtil.createDirectMethodCall(
+              new ClassExpression(resources.getAstNodeCache().SpockRuntime),
+              resources.getAstNodeCache().SpockRuntime_VerifyCollectedErrors,
+              new ArgumentListExpression())));
     }
   }
 

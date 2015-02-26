@@ -43,14 +43,26 @@ public class AstNodeCache {
   public final MethodNode SpockRuntime_VerifyCondition =
       SpockRuntime.getDeclaredMethods(org.spockframework.runtime.SpockRuntime.VERIFY_CONDITION).get(0);
 
+  public final MethodNode SpockRuntime_ConditionFailedWithException =
+      SpockRuntime.getDeclaredMethods(org.spockframework.runtime.SpockRuntime.CONDITION_FAILED_WITH_EXCEPTION).get(0);
+
   public final MethodNode SpockRuntime_VerifyMethodCondition =
       SpockRuntime.getDeclaredMethods(org.spockframework.runtime.SpockRuntime.VERIFY_METHOD_CONDITION).get(0);
+
+  public final MethodNode SpockRuntime_VerifyCollectedErrors =
+      SpockRuntime.getDeclaredMethods(org.spockframework.runtime.SpockRuntime.VERIFY_COLLECTED_ERRORS).get(0);
+
+  public final MethodNode SpockRuntime_SetupErrorCollector =
+      SpockRuntime.getDeclaredMethods(org.spockframework.runtime.SpockRuntime.SETUP_ERROR_COLLECTOR).get(0);
 
   public final MethodNode ValueRecorder_Reset =
       ValueRecorder.getDeclaredMethods(org.spockframework.runtime.ValueRecorder.RESET).get(0);
 
   public final MethodNode ValueRecorder_Record =
       ValueRecorder.getDeclaredMethods(org.spockframework.runtime.ValueRecorder.RECORD).get(0);
+
+  public final MethodNode ValueRecorder_StartRecordingValue =
+      ValueRecorder.getDeclaredMethods(org.spockframework.runtime.ValueRecorder.START_RECORDING_VALUE).get(0);
 
   public final MethodNode ValueRecorder_RealizeNas =
       ValueRecorder.getDeclaredMethods(org.spockframework.runtime.ValueRecorder.REALIZE_NAS).get(0);

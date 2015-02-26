@@ -51,7 +51,12 @@ public class SpockReleaseInfo {
   }
 
   public static boolean isCompatibleGroovyVersion(VersionNumber groovyVersion) {
-    if (groovyVersion.equals(VersionNumber.UNKNOWN)) return true; // optimistic fall-back
+    if (
+        // happens when running tests from IDE as the latter doesn't have processed properties file
+        minGroovyVersion.equals(VersionNumber.UNKNOWN) ||
+        maxGroovyVersion.equals(VersionNumber.UNKNOWN) ||
+        // may happen if (future) Groovy version cannot be parsed
+        groovyVersion.equals(VersionNumber.UNKNOWN)) return true; // be optimistic
 
     return minGroovyVersion.compareTo(groovyVersion) <= 0
         && maxGroovyVersion.compareTo(groovyVersion) >= 0;

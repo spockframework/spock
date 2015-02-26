@@ -18,7 +18,8 @@ package org.spockframework.smoke
 
 import org.spockframework.EmbeddedSpecification
 import org.spockframework.runtime.InvalidSpecException
-
+import org.spockframework.util.GroovyReleaseInfo
+import org.spockframework.util.VersionNumber
 import spock.lang.*
 
 /**
@@ -60,7 +61,8 @@ class Foo extends spock.lang.Specification {
     noExceptionThrown()
   }
 
-  def "cannot be referred to by 'super' (since Groovy 1.8.1)"() {
+  @Requires({GroovyReleaseInfo.version <= VersionNumber.parse("2.3.99")})
+  def "cannot be referred to by 'super'"() {
     when:
     runner.run """
 class Foo extends spock.lang.Specification {

@@ -11,7 +11,7 @@ http://webconsole.spockframework.org.
 Latest Versions
 ---------------
 The latest release version is **0.7** (0.7-groovy-1.8, 0.7-groovy-2.0), released on 2012-10-08. The current development
-version is **1.0-SNAPSHOT** (1.0-groovy-1.8-SNAPSHOT, 1.0-groovy-2.0-SNAPSHOT, 1.0-groovy-2.3-SNAPSHOT).
+version is **1.0-SNAPSHOT** (1.0-groovy-2.0-SNAPSHOT, 1.0-groovy-2.3-SNAPSHOT, 1.0-groovy-2.4-SNAPSHOT).
 
 Releases are available from [Maven Central](https://search.maven.org/#search%7Cga%7C1%7Cspock).
 Development snapshots are available from [Sonatype OSS](https://oss.sonatype.org/content/repositories/snapshots/org/spockframework/).
@@ -32,7 +32,7 @@ it is *not* required for using Spock with Maven.
 
 Building Spock
 --------------
-The only prerequisite is that you have JDK 5 or higher installed.
+The only prerequisite is that you have JDK 6 or higher installed.
 
 After cloning the project, type `./gradlew clean build` (Windows: `gradlew clean build`). All build dependencies,
 including [Gradle](http://www.gradle.org) itself, will be downloaded automatically (unless already present).
@@ -52,7 +52,7 @@ Resources
 * Build Server -- http://builds.spockframework.org
 * Example Spock Project -- https://github.com/spockframework/spock-example
 
-Contributions are always welcome! Please take a look at our [ways to contribute page](https://github.com/spockframework/spock/blob/groovy-1.8/CONTRIBUTING.md) for more information.
+Contributions are always welcome! Please take a look at our [ways to contribute page](https://github.com/spockframework/spock/blob/master/CONTRIBUTING.md) for more information.
 
 If you have any comments or questions, please direct them to the [user forum](http://forum.spockframework.org).
 All feedback is appreciated!

@@ -5,7 +5,7 @@ There are many ways to contribute to Spock:
 * Spreading the word by talking, tweeting, blogging, presenting, submitting talks, writing tutorials or articles (or a book!), sharing success stories, adding your project/company to [Who is Using Spock](http://wiki.spockframework.org/WhoIsUsingSpock), etc.
 * Helping other users by participating in [forum](http://forum.spockframework.org) discussions, answering [Spock questions](http://stackoverflow.com/questions/tagged/spock) on Stack Overflow, etc.
 * Providing early feedback on [development snapshots](https://oss.sonatype.org/content/repositories/snapshots/org/spockframework/) and new features
-* Improving and extending the [reference documentation](http://docs.spockframework.org) [(source)](https://github.com/spockframework/spock/tree/groovy-1.8/docs)
+* Improving and extending the [reference documentation](http://docs.spockframework.org) [(source)](https://github.com/spockframework/spock/tree/master/docs)
 * Translating blog posts, articles, and the reference documentation to other languages (with permission of the authors)
 * Fixing open issues listed in the [issue tracker](http://issues.spockframework.org)
 * Proposing, discussing, and implementing new features
@@ -23,7 +23,7 @@ Good communication makes a big difference. We are always eager to listen, reflec
 
 ## Contributing Code/Docs
 
-To contribute code or documentation, please submit a pull request to the [GitHub repository](http://github.spockframework.org/spock). The repository has one branch per major Groovy version. As of this writing, the active branches are `groovy-1.8` for Groovy 1.8.x, and `groovy-1.9` for Groovy 2.x (which was historically named 1.9). Unless stated otherwise, all pull requests should be made against the "lowest" active branch (`groovy-1.8` as of this writing). Accepted pull requests will be merged into "higher" branches (e.g. `groovy-1.9`) by the Spock team.
+To contribute code or documentation, please submit a pull request to the [GitHub repository](http://github.spockframework.org/spock).
 
 A good way to familiarize yourself with the codebase and contribution process is to look for and tackle low-hanging fruits in the [issue tracker](http://issues.spockframework.org). Before embarking on a more ambitious contribution, please quickly [get in touch](#communication) with us. This will help to make sure that the contribution is aligned with Spock's overall direction and goals, and gives us a chance to guide design and implementation where needed. 
 
@@ -43,7 +43,7 @@ Don't be intimidated by these words. Pull requests that satisfy Spock's overall 
 
 ### Implementation Language
 
-The implementation language for the [spock-core](https://github.spockframework.org/spock/tree/groovy-1.8/spock-core) module is Java. Java is also the default language for all other modules (except `spock-specs`), but it's fine to use Groovy when there is a concrete reason. As a general guideline, use the same language as the code around you.
+The implementation language for the [spock-core](https://github.spockframework.org/spock/tree/master/spock-core) module is Java. Java is also the default language for all other modules (except `spock-specs`), but it's fine to use Groovy when there is a concrete reason. As a general guideline, use the same language as the code around you.
 
 ### Compatibility
 
@@ -51,7 +51,7 @@ Spock supports JRE 1.5 and higher. Therefore, language features and APIs that ar
 
 ### Tests
 
-All tests are written in Spock. Tests for `spock-core` are located in the `spock-specs` project; all other projects have co-located tests. For each user-visible behavior, a functional test is required. Functional tests for `spock-core` are located under [`spock-specs/src/test/groovy/org/spockframework/smoke`](https://github.spockframework.org/spock/tree/groovy-1.8/spock-specs/src/test/groovy/org/spockframework/smoke).
+All tests are written in Spock. Tests for `spock-core` are located in the `spock-specs` project; all other projects have co-located tests. For each user-visible behavior, a functional test is required. Functional tests for `spock-core` are located under [`spock-specs/src/test/groovy/org/spockframework/smoke`](https://github.spockframework.org/spock/tree/master/spock-specs/src/test/groovy/org/spockframework/smoke).
 
 ## Development Tools
 
@@ -61,7 +61,7 @@ Spock is built with [Gradle](http://www.gradle.org). The only prerequsite for ex
 
 ### CI Build
 
-Each push to an active branch of the official GitHub repository triggers a [drone.io build](http://builds.spockframework.org). The CI build uses JDK 1.6, and therefore won't catch usages of Java 1.6 only APIs. (Given that we strive for Java 1.5 compatibility, this is unfortunate, but drone.io doesn't offer JDK 1.5.) However, the build will catch usages of Java 1.7+ only APIs.
+Each push to the official GitHub repository triggers a [Linux CI build](https://app.shippable.com/projects/541614fdf82ab7ebd69cad63) and [Windows CI build](https://ci.appveyor.com/project/pniederw/spock).
 
 ### IDE Setup
 

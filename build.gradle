@@ -33,7 +33,7 @@ ext {
     throw new InvalidUserDataException("Unknown variant: $variant. Choose one of: $variants")
   }
   javaVersions = [1.6, 1.7, 1.8]
-  javaVersion = System.getProperty("java.specification.version")
+  javaVersion = System.getProperty("java.specification.version") as BigDecimal
   baseVersion = "1.0"
   snapshotVersion = true
   fullVersion = "$baseVersion-groovy-$variant" + (snapshotVersion ? "-SNAPSHOT" : "")

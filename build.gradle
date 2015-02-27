@@ -30,7 +30,7 @@ ext {
     minGroovyVersion = "2.4.0"
     maxGroovyVersion = "2.9.99"
   } else {
-    throw new InvalidUserDataException("Unsupported variant: $variant")
+    throw new InvalidUserDataException("Unknown variant: $variant")
   }
   baseVersion = "1.0"
   snapshotVersion = true
@@ -181,7 +181,21 @@ if (gradle.startParameter.taskNames.contains("shippableCiBuild")) {
       it.finalizedBy(aggregateTestResults)
     }
   }
+
+  if (javaVersion == "1.6") {
+    gradle.startParameter.taskNames += ["uploadArchives", "publishApiDoc"]
+    if (variant == 2.0) { // TODO: try to have a separate build item for this (e.g. env: -PUBLISH_SITE=true)
+      gradle.startParameter.taskNames += ["publishReferenceDoc"]
+      if (!snapshotVersion) {
+        gradle.startParameter.taskNames += ["publishGithubRelease"]
+      }
+    }
+  }
 }
+
+task publishApiDoc // TODO
+task publishReferenceDoc // TODO
+task publishGithubRelease // TODO
 
 task javadoc(type: Javadoc) {
   title "Spock Framework API Documentation ($variantLessVersion)"

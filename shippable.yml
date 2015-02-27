@@ -21,4 +21,4 @@ jdk:
     - java -version
 
 script:
- - ./gradlew shippableCiBuild --continue
+ - ./gradlew shippableCiBuild -Dvariant=$VARIANT --continue

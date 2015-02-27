@@ -30,13 +30,14 @@ ext {
     minGroovyVersion = "2.4.0"
     maxGroovyVersion = "2.9.99"
   } else {
-    throw new InvalidUserDataException("Unknown variant: $variant")
+    throw new InvalidUserDataException("Unknown variant: $variant. Choose one of: $variants")
   }
+  javaVersions = [1.6, 1.7, 1.8]
+  javaVersion = System.getProperty("java.specification.version")
   baseVersion = "1.0"
   snapshotVersion = true
   fullVersion = "$baseVersion-groovy-$variant" + (snapshotVersion ? "-SNAPSHOT" : "")
   variantLessVersion = baseVersion + (snapshotVersion ? "-SNAPSHOT" : "")
-  javaVersion = System.getProperty("java.version")
   libs = [
     ant: "org.apache.ant:ant:1.9.4",
     asm: "org.ow2.asm:asm:5.0.3",
@@ -57,7 +58,7 @@ allprojects {
 
   apply from: script("common")
   
-  if (javaVersion.startsWith("1.8")) {
+  if (javaVersion >= 1.8) {
     tasks.withType(Javadoc) {
       options.addStringOption('Xdoclint:none', '-quiet')
     }
@@ -102,7 +103,8 @@ subprojects {
   apply plugin: "groovy"
   apply plugin: "signing"
 
-  sourceCompatibility = 1.6
+  sourceCompatibility = javaVersions.min()
+  targetCompatibility = javaVersions.min()
 
   sourceSets.all { ss ->
     for (v in variants.findAll { it <= variant } ) {
@@ -165,12 +167,20 @@ subprojects {
   }
 }
 
-// https://app.shippable.com/projects/541614fdf82ab7ebd69cad63
-task shippableCiBuild {
-  dependsOn { subprojects.build }
-}
+if (gradle.startParameter.taskNames == ["shippableCiBuild"]) {
+  gradle.startParameter.taskNames = ["build"]
+  if (javaVersion == javaVersions.min()) {
+    gradle.startParameter.taskNames += ["uploadArchives"]
+  }
+  if (javaVersion == javaVersions.max()) {
+    if (variant == variants.max()) {
+      gradle.startParameter.taskNames += ["publishJavadoc", "publishDocs"]
+      if (!snapshotVersion) {
+        gradle.startParameter.taskNames += ["publishGithubRelease"]
+      }
+    }
+  }
 
-if (gradle.startParameter.taskNames.contains("shippableCiBuild")) {
   task aggregateTestResults(type: Sync) {
     from { subprojects.test.reports.junitXml.destination } 
     into "shippable/testresults"
@@ -181,26 +191,41 @@ if (gradle.startParameter.taskNames.contains("shippableCiBuild")) {
       it.finalizedBy(aggregateTestResults)
     }
   }
-
-  if (javaVersion == "1.6") {
-    gradle.startParameter.taskNames += ["uploadArchives", "publishApiDoc"]
-    if (variant == 2.0) { // TODO: try to have a separate build item for this (e.g. env: -PUBLISH_SITE=true)
-      gradle.startParameter.taskNames += ["publishReferenceDoc"]
-      if (!snapshotVersion) {
-        gradle.startParameter.taskNames += ["publishGithubRelease"]
-      }
-    }
-  }
 }
 
-task publishApiDoc // TODO
-task publishReferenceDoc // TODO
+if (gradle.startParameter.taskNames == ["appveyorCiBuild"]) {
+  gradle.startParameter.taskNames = ["build"]
+}
+
+task publishJavadoc(type: Exec) {
+  dependsOn "javadoc"
+  commandLine "sh", "-c",
+"""
+  git checkout gh-pages
+  rm -rf javadoc/$variantLessVersion
+  cp build/javadoc/$variantLessVersion javadoc/$variantLessVersion
+  git commit -am "Publish javadoc/$variantLessVersion"
+  git push origin gh-pages
+  git checkout -
+"""
+}
+task publishDocs(type: Exec) {
+  dependsOn "asciidoctor"
+  commandLine "sh", "-c",
+      """
+  git checkout gh-pages
+  rm -rf docs/$variantLessVersion
+  cp build/docs/$variantLessVersion docs/$variantLessVersion
+  git commit -am "Publish docs/$variantLessVersion"
+  git push origin gh-pages
+  git checkout -
+"""
+}
 task publishGithubRelease // TODO
 
 task javadoc(type: Javadoc) {
   title "Spock Framework API Documentation ($variantLessVersion)"
-  def docPath = snapshotVersion ? "latest" : baseVersion
-  destinationDir file("build/javadoc/$docPath")
+  destinationDir file("build/javadoc/$variantLessVersion")
   source subprojects.javadoc.source
   classpath = files(subprojects.javadoc.classpath)
 }
@@ -210,14 +235,11 @@ configureJavadoc(javadoc)
 task groovydoc(type: Groovydoc) {
   docTitle "Spock Framework API Documentation ($variantLessVersion)"
   windowTitle "Spock Framework API Documentation ($variantLessVersion)"
-  def docPath = snapshotVersion ? "latest" : baseVersion
-  destinationDir file("build/groovydoc/$docPath")
+  destinationDir file("build/groovydoc/$variantLessVersion")
   source subprojects.groovydoc.source
   classpath = files(subprojects.groovydoc.classpath)
   groovyClasspath = project(":spock-core").groovydoc.groovyClasspath
 }
-
-task apidoc(dependsOn: ["javadoc", "groovydoc"])
 
 configureGroovydoc(groovydoc)
 
@@ -234,7 +256,6 @@ File script(String name) {
 def configureJavadoc(task) {
   configure(task) {
     include "spock/**"
-    include "org/spockframework/mock/*"
     configure(options) {
       links "http://docs.oracle.com/javase/6/docs/api/"
       links "http://docs.groovy-lang.org/docs/groovy-$groovyVersion/html/gapi/"
@@ -247,7 +268,6 @@ def configureJavadoc(task) {
 def configureGroovydoc(task) {
   configure(task) {
     include "spock/**"
-    include "org/spockframework/mock/*"
   }
 }
 

@@ -1,6 +1,12 @@
 allprojects {
   apply plugin: "idea"
   apply plugin: "eclipse"
+
+  idea {
+    module {
+      outputFile = file(outputFile.path.replace(".iml", "-${variant}.iml"))
+    }
+  }
 }
 
 def gitIgnore = file(".gitignore").readLines()
@@ -12,6 +18,7 @@ idea {
   project {
     languageLevel = "1.6"
     vcs = "Git"
+    outputFile = file(outputFile.path.replace(".ipr", "-${variant}.ipr"))
     configure(modules) { module ->
       def prj = module.project
       excludeDirs = prj.files(allLevelDirs) as Set
@@ -21,4 +28,8 @@ idea {
       }
     }
   }
+}
+
+ideaWorkspace {
+  outputFile = file(outputFile.path.replace(".iws", "-${variant}.iws"))
 }

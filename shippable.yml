@@ -2,15 +2,19 @@ build_image: shippableimages/ubuntu1404_java
 
 language: java
 
-jdk:
- - openjdk6
- - openjdk7
- - oraclejdk8
+ matrix:
+   include:
+     - jdk: openjdk6
+       env: VARIANT=2.0
+     - jdk: openjdk6
+       env: VARIANT=2.3
+     - jdk: openjdk6
+       env: VARIANT=2.4
+     - jdk: openjdk7
+       env: VARIANT=2.3
+     - jdk: oraclejdk8
+       env: VARIANT=2.4
 
- env:
- - VARIANT=2.0
- - VARIANT=2.3
- - VARIANT=2.4
 
  before_script:
     - if [[ $SHIPPABLE_JDK_VERSION == "openjdk6" ]] ; then export JAVA_HOME="/usr/lib/jvm/java-6-openjdk-amd64"; export PATH="$PATH:/usr/lib/jvm/java-6-openjdk-amd64/bin"; export java_path="/usr/lib/jvm/java-6-openjdk-amd64/jre/bin/java"; fi
@@ -21,4 +25,4 @@ jdk:
     - java -version
 
 script:
- - ./gradlew shippableCiBuild -Dvariant=$VARIANT --continue
+ - ./gradlew shippableCiBuild -Dvariant=$VARIANT

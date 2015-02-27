@@ -2,6 +2,6 @@ language: java
 jdk:
  - oraclejdk7
 install:
- - :
+ - true
 script:
  - ./gradlew shippableCiBuild --continue

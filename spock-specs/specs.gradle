@@ -56,21 +56,8 @@ task spockReport(type: org.spockframework.gradle.GenerateSpockReport) {
   local = true
   liveLogFiles = (1..10).collect { file("$spockLogFileDir/$spockLogFileName-$it") }
   spockReportClasspath = configurations.spockReport
-  outputDirectory = file("$buildDir/spock/reports/")
+  outputDirectory = file("$buildDir/reports/spock/$variant")
 }
-
-def prj = project
-
-//workaround until Gradle gets soft task dependencies
-gradle.addListener(new TaskExecutionListener() {
-  void beforeExecute(Task task) {}
-
-  void afterExecute(Task task, TaskState state) {
-    if (task.path == ":spock-specs:test" && state.executed) {
-      prj.spockReport.execute()
-    }
-  }
-})
 
 task groovyConsole(type: JavaExec) {
   main = "groovy.ui.Console"

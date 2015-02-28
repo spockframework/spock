@@ -13,7 +13,7 @@ rootProject.name = "spock"
 nameBuildScriptsAfterProjectNames(rootProject.children)
 
 def nameBuildScriptsAfterProjectNames(projects) {
-  projects.each { prj ->
+  for (prj in projects) {
     prj.buildFileName = prj.name + ".gradle" - "spock-"
     nameBuildScriptsAfterProjectNames(prj.children)
   }

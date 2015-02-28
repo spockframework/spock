@@ -1,7 +1,7 @@
 include "spock-core"
 include "spock-specs"
 include "spock-spring"
-include "spock-boot"
+include "spock-spring:boot-test"
 include "spock-guice"
 include "spock-tapestry"
 include "spock-unitils"
@@ -10,7 +10,11 @@ include "spock-maven"
 include "spock-gradle"
 
 rootProject.name = "spock"
-rootProject.children.each {
-  it.buildFileName = it.name + ".gradle" - "spock-"
-}
+nameBuildScriptsAfterProjectNames(rootProject.children)
 
+def nameBuildScriptsAfterProjectNames(projects) {
+  projects.each { prj ->
+    prj.buildFileName = prj.name + ".gradle" - "spock-"
+    nameBuildScriptsAfterProjectNames(prj.children)
+  }
+}

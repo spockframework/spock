@@ -24,7 +24,7 @@ def basePom = {
       developer {
         id "pniederw"
         name "Peter Niederwieser"
-        email "pniederw@gmail.com"
+        email "peter@pniederw.com"
       }
 
       developer {

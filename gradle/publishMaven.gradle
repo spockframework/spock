@@ -50,14 +50,11 @@ install {
 
 uploadArchives {
   deployers << repositories.mavenDeployer {
-    if (snapshotVersion) {
-      snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
-        authentication(userName: "pniederw", password: System.getenv("SONATYPE_OSS_PASSWORD"))
-      }
-    } else {
-      repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
-        authentication(userName: "pniederw", password: System.getenv("SONATYPE_OSS_PASSWORD"))
-      }
+    snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+      authentication(userName: "pniederw", password: System.getenv("SONATYPE_OSS_PASSWORD"))
+    }
+    repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+      authentication(userName: "pniederw", password: System.getenv("SONATYPE_OSS_PASSWORD"))
     }
   }
 }

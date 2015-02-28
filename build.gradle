@@ -176,7 +176,7 @@ if (gradle.startParameter.taskNames == ["shippableCiBuild"]) {
     if (variant == variants.max()) {
       gradle.startParameter.taskNames += ["publishJavadoc", "publishDocs"]
       if (!snapshotVersion) {
-        gradle.startParameter.taskNames += ["publishGithubRelease"]
+        gradle.startParameter.taskNames += ["tagRelease"]
       }
     }
   }
@@ -221,7 +221,7 @@ task publishDocs(type: Exec) {
   git checkout -
 """
 }
-task publishGithubRelease // TODO
+task tagRelease // TODO
 
 task javadoc(type: Javadoc) {
   title "Spock Framework API Documentation ($variantLessVersion)"

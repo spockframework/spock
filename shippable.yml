@@ -2,6 +2,13 @@ build_image: shippableimages/ubuntu1404_java
 
 language: java
 
+env:
+  global:
+    # SIGNING_PASSWORD
+    - secure: YIBOAiFxZQLYAzigG3iNccMP4wCoeO8Zy75qcfRi/Gkad7EpaLzxFpSt/kDqCJfnevPtUPj+Rv8dJ21UwXzLtbqzsrIiTPYY6sBDwbKwIXzqYBUdMbPs4HavKeMQFs0S8+Xhm84s19JpWzH9cUarv//PbfCJyQW7DGDjM6E7hFULsn8iJLmXfOZvLIygjHmhrpTEIgEROsjWIlnYrlDd/1Z1Tq8p8X3VMR1euvtbeMxSE33lov7OrvGzutTYnMD7lCv37SdhF8eBhe6+Jk0V0XEY2F58MCf5PIeusk+hHyWU0b99IHrrNqFhobEi2427EZACsSuaPtRei4lUEMzY2w==
+    # SONATYPE_OSS_PASSWORD
+    - secure: r87vY4ORpkxwRzUQTHuaAmIUC1dFhxQeJeeDuv2llOeYSxNnfKWQlweklqEDsNeqLTMncrr8dhZ4Zw3V69sHStoUVokCe1xCc171retP3iU5Dp4gmVxM6fRa2FMMm7ayH5FeZOdWxSxyno4kvatwB+2PVpwUJRZyrpvZmZvbiyyPwRhz7vwQPOKeV4aGsPcK2NHsDFweqXsfE88SNd+WNh1kttj0+mABkBCKPMFobQg/wdV4GMRwP8mhrs4gDF+QEP31ShM33VjFUtgXNs3DIeCNwUE5kTf0XxRvKTV4/giX1xqFv5GjkWpysxVtijwz5E8SC9SfSyNwDidNI7ldjQ==
+
 matrix:
   include:
     - jdk: openjdk6
@@ -14,7 +21,6 @@ matrix:
       env: VARIANT=2.3
     - jdk: oraclejdk8
       env: VARIANT=2.4
-
 
 before_script:
   - if [[ $SHIPPABLE_JDK_VERSION == "openjdk6" ]] ; then export JAVA_HOME="/usr/lib/jvm/java-6-openjdk-amd64"; export PATH="$PATH:/usr/lib/jvm/java-6-openjdk-amd64/bin"; export java_path="/usr/lib/jvm/java-6-openjdk-amd64/jre/bin/java"; fi

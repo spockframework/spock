@@ -138,6 +138,10 @@ subprojects {
     onlyIf { gradle.taskGraph.hasTask(uploadArchives) }
   }
 
+  ext."signing.keyId" = "2EA0A67F"
+  ext."signing.password" = System.getenv("SIGNING_PASSWORD")
+  ext."signing.secretKeyRingFile" = "$rootDir/config/code-signing-secring.gpg"
+
   configureJavadoc(javadoc)
   configureGroovydoc(groovydoc)
 

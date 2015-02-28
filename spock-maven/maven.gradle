@@ -1,5 +1,3 @@
-apply from: script("publishMaven")
-
 displayName = "Spock Framework - Maven Module"
 
 description = "Spock's Maven Module provides some advanced features when executing Spock specifications with Maven 2. \

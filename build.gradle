@@ -14,6 +14,8 @@ apply plugin: "org.asciidoctor.convert"
 
 description = "Spock Framework"
 
+assert System.getenv("TEST_KEY") == "something/*<("
+
 ext {
   variants = [2.0, 2.3, 2.4]
   variant = System.getProperty("variant") as BigDecimal ?: variants.first()

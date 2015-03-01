@@ -9,11 +9,13 @@ cache:
 jdk:
   - openjdk6
   - openjdk7
+  - oraclejdk8
 
 env:
   matrix:
     - VARIANT=2.0
     - VARIANT=2.3
+    - VARIANT=2.4
   global:
     # TEST_KEY
     - secure: "HmTo8LOnmnpltouytq43SldT+vjN+UZMa9fDshdLTuLfn7ODA3RzQPPu5slBHhAZhCdDQCusupl4vo7VQweiA9fhq73I5eoUdbg3EHlUWQde7dr2avhK7hTCpPA18W+jL33gd0EIH2VmvjFuigHgEeOsFEBZbCtZ6htlnug0YLA="
@@ -21,6 +23,13 @@ env:
     - secure: "GBvPdDAaMfr0iAYHzVxhMIBVHFanEPY+69CbEFijbZjhv8h0FPvuLos2p1K5/hbmNkQ1Hd2+CHsm3ErvXQHXtpXn0HmKvzSP7pnPk83iRNVGPieasvfnKiSohZeEplkAK6kbK8sZbjJRUFqUZtwyPtWfs244rCOo++D3KtfggzQ="
     # SONATYPE_OSS_PASSWORD
     - secure: "Y2PbI07I8M8k1qkwN671HdcLPPpnjATWya/m4PDIICioXkkdJrQzpj5x57efAJEWx2upI8PpgGm8ekUd2F/6l1rq0n4DnGHwGTNe1PDAXUw5qFt66RnqrfIVh2eUvPuQk6bXczLV39GksqqD1T/HS6KofknXpHKzk/JeCiiGoxI="
+
+matrix:
+  exclude:
+    - jdk: oraclejdk8
+      env: VARIANT=2.0
+    - jdk: oraclejdk8
+      env: VARIANT=2.3
 
 install: true
 

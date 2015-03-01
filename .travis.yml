@@ -10,9 +10,9 @@ env:
     - VARIANT=2.3
   global:
     # TEST_KEY
-    - secure: "Lbzzv+JWk4Qq8xrWG9De82gz+JP1TCik7nataiqy4TxPy7iFMkuWqanQ7pzRnTvlAoADedMlzcn8I7H0XXK7X74hKDYdVrCxZaxqeLX7BG8Dr0bDY1FfjqyCjh3PjnRq1MOUU6+OvzExWm4fvNd5f9mvmLWf4SjqR24Vxg1Igfc="
+    - secure: "HmTo8LOnmnpltouytq43SldT+vjN+UZMa9fDshdLTuLfn7ODA3RzQPPu5slBHhAZhCdDQCusupl4vo7VQweiA9fhq73I5eoUdbg3EHlUWQde7dr2avhK7hTCpPA18W+jL33gd0EIH2VmvjFuigHgEeOsFEBZbCtZ6htlnug0YLA="
     # SIGNING_PASSWORD
-    - secure: "Yk2UcOceN02uYUMKWxDTNUnOLwtNVhu0S6j65plclusZ7UWdKTmqGbE4E6Qswr95SIT5dOIGhslrMhl0ABD44JCMy51EFPqyxC89xA9dFVi7OV7rcmlBwlKJ1RU846yJaegxaoH6pBvLTtGcAhAodqQo/IvJyHK07PgeawH4lKk="
+    - secure: "GBvPdDAaMfr0iAYHzVxhMIBVHFanEPY+69CbEFijbZjhv8h0FPvuLos2p1K5/hbmNkQ1Hd2+CHsm3ErvXQHXtpXn0HmKvzSP7pnPk83iRNVGPieasvfnKiSohZeEplkAK6kbK8sZbjJRUFqUZtwyPtWfs244rCOo++D3KtfggzQ="
     # SONATYPE_OSS_PASSWORD
     - secure: "Y2PbI07I8M8k1qkwN671HdcLPPpnjATWya/m4PDIICioXkkdJrQzpj5x57efAJEWx2upI8PpgGm8ekUd2F/6l1rq0n4DnGHwGTNe1PDAXUw5qFt66RnqrfIVh2eUvPuQk6bXczLV39GksqqD1T/HS6KofknXpHKzk/JeCiiGoxI="
 

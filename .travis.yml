@@ -1,5 +1,11 @@
 language: java
 
+sudo: false # run on container-based infrastructure
+
+cache:
+  directories:
+    - $HOME/.gradle
+
 jdk:
   - openjdk6
   - openjdk7

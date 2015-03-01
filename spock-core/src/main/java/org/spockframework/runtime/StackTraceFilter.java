@@ -105,6 +105,12 @@ public class StackTraceFilter implements IStackTraceFilter {
     String methodContainingClosureDef = matcher.group(2);
     String consecutiveNumberOfClosureDef = matcher.group(3);
 
+    if (methodContainingClosureDef.startsWith("_spock_")) {
+      // In Groovy 2.4 and higher, a leading `$spock_` in a method name becomes `_spock_`
+      // in the corresponding closure class name, so let's map this back
+      methodContainingClosureDef = "$" + methodContainingClosureDef.substring(1);
+    }
+
     String prettyClassName = classContainingClosureDef;
     String prettyMethodName =
         mapper.toFeatureName(methodContainingClosureDef) + "_closure" + consecutiveNumberOfClosureDef;

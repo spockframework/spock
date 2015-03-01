@@ -53,14 +53,15 @@ Links
 * Spock Homepage -- http://spockframework.org
 * Spock Web Console -- http://webconsole.spockframework.org
 * GitHub Organization -- http://github.spockframework.org
-* Reference Documentation -- http://docs.spockframework.org/
-* Old Wiki -- http://wiki.spockframework.org/SpockBasics
-* Javadoc -- http://javadoc.spockframework.org/latest
+* Reference Documentation -- http://docs.spockframework.org
+* Old Wiki -- http://wiki.spockframework.org
+* Javadoc -- http://javadoc.spockframework.org
 * User Forum -- http://forum.spockframework.org
 * Developer Forum -- http://dev.forum.spockframework.org
 * Issue Tracker -- http://issues.spockframework.org
 * Build Server -- http://builds.spockframework.org
-* Spock Example Project -- https://github.com/spockframework/spock-example
+* Spock Example Project -- http://github.spockframework.org/spock-example
+* Twitter -- http://twitter.spockframework.org
 
 Live Long And Prosper!
 

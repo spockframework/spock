@@ -10,7 +10,6 @@ env:
   matrix:
     - VARIANT=2.0
     - VARIANT=2.3
-    - VARIANT=2.4
   global:
     # TEST_KEY
     - secure: xScuHhwwvJn/E0xrjfwcGCQd6GQmSbINoSV69IhmPEhhXVY2TKANevMs63zqEsEAkD3h1znOjYKFMtCjp9rPZMy0FwtSGVAHWrucj8tqga5MG9gwlB7DH092gH7T1AzFjhwmrBjlgJEAOy0rWkXLSxqdhO/rpy3d34eE1iK43AN7W0IW1jmytykJYdYPldULdNPzoHmkgaGRh/fXQ2YmW9gSKYJMl1ul96i8K+/okvR73Zuabl5/zuQ+UrzkqsQ0o1Xf07A+k58JTgOicHohfYxMWOvHyi6Bk7/UFAL7V9haEKSFc3cyWyGmj8l+fubz02XTWqXOBFV7U35dCGDFMw==

@@ -50,51 +50,19 @@ ext {
   ]
 }
 
-allprojects {  
+allprojects {
   ext.displayName = null
-  
+
   group = "org.spockframework"
   version = fullVersion
 
   apply from: script("common")
-  
+
   if (javaVersion >= 1.8) {
     tasks.withType(Javadoc) {
       options.addStringOption('Xdoclint:none', '-quiet')
     }
   }
-
-  // variant aware tasks
-  for (v in variants) {
-    task "build$v"(type: GradleBuild) {
-      tasks = ["build"]
-      startParameter.systemPropertiesArgs = [variant: v]
-    }
-    task "test$v"(type: GradleBuild) {
-      tasks = ["test"]
-      startParameter.systemPropertiesArgs = [variant: v]
-    }
-    task "upload$v"(type: GradleBuild) {
-      tasks = ["uploadArchives"]
-      startParameter.systemPropertiesArgs = [variant: v]
-    }
-  }
-
-  task buildAll {
-    dependsOn tasks.withType(GradleBuild).matching { it.name.startsWith("build") }
-  }
-  task testAll {
-    dependsOn tasks.withType(GradleBuild).matching { it.name.startsWith("test") }
-  }
-  task uploadAll {
-    dependsOn tasks.withType(GradleBuild).matching { it.name.startsWith("upload") }
-  }
-}
-
-// only run the GradleBuild task(s) of the current project (don't recurse)
-def currentProject = allprojects.find { it.projectDir == gradle.startParameter.currentDir }
-gradle.startParameter.taskNames = gradle.startParameter.taskNames.collect {
-  it ==~ "(build(\\d|\\.)+)|(test(\\d|\\.)+)|(upload(\\d|\\.)+)|(buildAll)|(testAll)|(uploadAll)" ? "$currentProject.path:$it".replaceAll("::", ":") : it
 }
 
 apply from: script("ide")

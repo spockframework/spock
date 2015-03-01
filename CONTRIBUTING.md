@@ -93,5 +93,5 @@ If you encounter any problems with the IDE setup, or want to make some improveme
 
 Thanks for reading this far. We are looking forward to your contributions!
 
-The Spock Team
+The Spock Framework Team
 

@@ -1,7 +1,7 @@
-[![License](https://img.shields.io/badge/license-apache-2.0-blue.svg)](https://github.com/spockframework/spock/blob/master/LICENSE)
-[![Maven Central](https://img.shields.io/maven-central/v/org.spockframework/spock-core.svg)](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22org.spockframework%22%20AND%20a%3A%22spock-core%22)
-[![Linux Build Status](https://img.shields.io/travis/spockframework/spock/master.svg?label=linux-build)](https://travis-ci.org/spockframework/spock)
-[![Windows Build Status](https://img.shields.io/appveyor/ci/spockframework/spock/master.svg?label=windows-build)](https://ci.appveyor.com/project/spockframework/spock/branch/master)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/spockframework/spock/blob/master/LICENSE)
+[![Maven Central](https://img.shields.io/maven-central/v/org.spockframework/spock-core.svg?label=Maven Central)](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22org.spockframework%22%20AND%20a%3A%22spock-core%22)
+[![Linux Build Status](https://img.shields.io/travis/spockframework/spock/master.svg?label=Linux Build)](https://travis-ci.org/spockframework/spock)
+[![Windows Build Status](https://img.shields.io/appveyor/ci/spockframework/spock/master.svg?label=Windows Build)](https://ci.appveyor.com/project/spockframework/spock/branch/master)
 
 Spock Framework
 ===============

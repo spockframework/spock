@@ -24,4 +24,4 @@ env:
 
 install: true
 
-script: ./gradlew shippableCiBuild -Dvariant=$VARIANT
+script: ./gradlew travisCiBuild -Dvariant=$VARIANT

@@ -17,8 +17,6 @@ env:
     - VARIANT=2.3
     - VARIANT=2.4
   global:
-    # TEST_KEY
-    - secure: "HmTo8LOnmnpltouytq43SldT+vjN+UZMa9fDshdLTuLfn7ODA3RzQPPu5slBHhAZhCdDQCusupl4vo7VQweiA9fhq73I5eoUdbg3EHlUWQde7dr2avhK7hTCpPA18W+jL33gd0EIH2VmvjFuigHgEeOsFEBZbCtZ6htlnug0YLA="
     # SIGNING_PASSWORD
     - secure: "GBvPdDAaMfr0iAYHzVxhMIBVHFanEPY+69CbEFijbZjhv8h0FPvuLos2p1K5/hbmNkQ1Hd2+CHsm3ErvXQHXtpXn0HmKvzSP7pnPk83iRNVGPieasvfnKiSohZeEplkAK6kbK8sZbjJRUFqUZtwyPtWfs244rCOo++D3KtfggzQ="
     # SONATYPE_OSS_PASSWORD

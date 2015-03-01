@@ -32,15 +32,24 @@ it is *not* required for using Spock with Maven.
 * spock-report -- Interactive, business-friendly HTML reports.
 * spock-grails -- The Grails plugin has become its own project hosted at https://github.spockframework.org/spock-grails.
 
-Building Spock
---------------
+Building
+--------
 The only prerequisite is JDK 6 or higher.
 
 After cloning the project, type `./gradlew clean build` (Windows: `gradlew clean build`). All build dependencies,
-including [Gradle](http://www.gradle.org) itself, will be downloaded automatically (unless already present).
+including the [build tool](http://www.gradle.org) itself, will be downloaded automatically (unless already present).
 
-Resources
----------
+Contributing
+------------
+Contributions are welcome! Please see the [contributing page](https://github.com/spockframework/spock/blob/master/CONTRIBUTING.md) for detailed instructions.
+
+Support
+-------
+If you have any comments or questions, please direct them to the [user forum](http://forum.spockframework.org).
+All feedback is appreciated!
+
+Links
+-----
 * Spock Homepage -- http://spockframework.org
 * Spock Web Console -- http://webconsole.spockframework.org
 * GitHub Organization -- http://github.spockframework.org
@@ -53,10 +62,6 @@ Resources
 * Build Server -- http://builds.spockframework.org
 * Spock Example Project -- https://github.com/spockframework/spock-example
 
-Contributions are always welcome! Please take a look at our [ways to contribute page](https://github.com/spockframework/spock/blob/master/CONTRIBUTING.md) for more information.
-
-If you have any comments or questions, please direct them to the [user forum](http://forum.spockframework.org).
-All feedback is appreciated!
-
 Live Long And Prosper!
-The Spock Team
+
+The Spock Framework Team

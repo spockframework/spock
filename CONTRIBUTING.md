@@ -47,7 +47,7 @@ The implementation language for the [spock-core](https://github.spockframework.o
 
 ### Compatibility
 
-Spock supports JRE 1.5 and higher. Therefore, language features and APIs that are only available in Java 1.6 or higher cannot be used. (A typical pitfall is to use `String#isEmpty`, which only exists since Java 1.6.) Exceptions to this rule need to be discussed beforehand. The same goes for changes to user-visible behavior.
+Spock supports JRE 1.6 and higher. Therefore, language features and APIs that are only available in Java 1.7 or higher cannot be used. Exceptions to this rule need to be discussed beforehand. The same goes for changes to user-visible behavior.
 
 ### Tests
 
@@ -57,11 +57,11 @@ All tests are written in Spock. Tests for `spock-core` are located in the `spock
 
 ### Command Line Build
 
-Spock is built with [Gradle](http://www.gradle.org). The only prerequsite for executing the build is an installation of JDK 1.5 (or higher). After cloning the [GitHub repository](http://github.spockframework.org/spock), cd into the top directory and execute `./gradlew build` (Windows: `gradlew build`). The build should succeed without any errors. `gradlew tasks` lists the available tasks. Always use the Gradle Wrapper (`gradlew` command) rather than your own Gradle installation.
+Spock is built with [Gradle](http://www.gradle.org). The only prerequsite for executing the build is an installation of JDK 1.6 (or higher). After cloning the [GitHub repository](http://github.spockframework.org/spock), cd into the top directory and execute `./gradlew build` (Windows: `gradlew build`). The build should succeed without any errors. `gradlew tasks` lists the available tasks. Always use the Gradle Wrapper (`gradlew` command) rather than your own Gradle installation.
 
 ### CI Build
 
-Each push to the official GitHub repository triggers a [Linux CI build](https://app.shippable.com/projects/541614fdf82ab7ebd69cad63) and [Windows CI build](https://ci.appveyor.com/project/pniederw/spock).
+Each push to the official GitHub repository triggers a [Linux CI build](http://builds.spockframework.org) and [Windows CI build](http://winbuilds.spockframework.org). Pull requests are built as well.
 
 ### IDE Setup
 
@@ -69,7 +69,7 @@ Using an IDE is recommended but not mandatory. Whether or not you use an IDE, pl
 
 #### IntelliJ IDEA
 
-IntelliJ IDEA 13+ is the preferred IDE for developing Spock. To import the Gradle build into IDEA, choose `File->Import Project` and select the top-level `build.gradle` file. This should result in a fully functional IDE setup where:
+IntelliJ IDEA 14+ is the preferred IDE for developing Spock. To import the Gradle build into IDEA, choose `File->Import Project` and select the top-level `build.gradle` file. This should result in a fully functional IDE setup where:
 
 * Git VCS integration is configured
 * Important formatter settings are configured (e.g. two spaces indent)

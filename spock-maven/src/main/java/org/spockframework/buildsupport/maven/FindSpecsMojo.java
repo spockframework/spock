@@ -29,7 +29,6 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.spockframework.buildsupport.SpecClassFileFinder;
-import org.spockframework.runtime.OptimizeRunOrderSuite;
 import org.spockframework.util.IoUtil;
 import org.spockframework.util.TextUtil;
 

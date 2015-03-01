@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-package org.spockframework.runtime;
+package org.spockframework.buildsupport.maven;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +21,7 @@ import org.junit.runner.*;
 import org.junit.runners.Suite;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.RunnerBuilder;
+import org.spockframework.runtime.SpecUtil;
 
 @RunWith(OptimizeRunOrderSuite.class)
 public class OptimizeRunOrderSuite extends Suite {

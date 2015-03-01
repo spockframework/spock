@@ -34,7 +34,7 @@ it is *not* required for using Spock with Maven.
 
 Building Spock
 --------------
-The only prerequisite is that you have JDK 6 or higher installed.
+The only prerequisite is JDK 6 or higher.
 
 After cloning the project, type `./gradlew clean build` (Windows: `gradlew clean build`). All build dependencies,
 including [Gradle](http://www.gradle.org) itself, will be downloaded automatically (unless already present).
@@ -44,23 +44,19 @@ Resources
 * Spock Homepage -- http://spockframework.org
 * Spock Web Console -- http://webconsole.spockframework.org
 * GitHub Organization -- http://github.spockframework.org
-* New Reference Documentation -- http://docs.spockframework.org/
-* Old Wiki Documentation -- http://wiki.spockframework.org/SpockBasics
+* Reference Documentation -- http://docs.spockframework.org/
+* Old Wiki -- http://wiki.spockframework.org/SpockBasics
 * Javadoc -- http://javadoc.spockframework.org/latest
-* Groovydoc -- http://groovydoc.spockframework.org/latest
 * User Forum -- http://forum.spockframework.org
 * Developer Forum -- http://dev.forum.spockframework.org
 * Issue Tracker -- http://issues.spockframework.org
 * Build Server -- http://builds.spockframework.org
-* Example Spock Project -- https://github.com/spockframework/spock-example
+* Spock Example Project -- https://github.com/spockframework/spock-example
 
 Contributions are always welcome! Please take a look at our [ways to contribute page](https://github.com/spockframework/spock/blob/master/CONTRIBUTING.md) for more information.
 
 If you have any comments or questions, please direct them to the [user forum](http://forum.spockframework.org).
 All feedback is appreciated!
 
-Happy spec'ing!
-
-Peter Niederwieser<br>
-Creator, Spock Framework<br>
-[Twitter](http://twitter.com/pniederw) | [Blog](http://blog.spockframework.org)
+Live Long And Prosper!
+The Spock Team

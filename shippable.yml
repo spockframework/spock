@@ -2,6 +2,8 @@ build_image: shippableimages/ubuntu1404_java
 
 language: java
 
+cache: true
+
 jdk:
   - openjdk6
   - openjdk7
@@ -22,14 +24,8 @@ env:
 
 matrix:
   exclude:
-    - jdk: openjdk7
-      env: VARIANT=2.0
-    - jdk: openjdk7
-      env: VARIANT=2.4
     - jdk: oraclejdk8
-      env: VARIANT=2.0
-    - jdk: oraclejdk8
-      env: VARIANT=2.3
+    - jdk: openjdk7
 
 before_script:
   - if [[ $SHIPPABLE_JDK_VERSION == "openjdk6" ]] ; then export JAVA_HOME="/usr/lib/jvm/java-6-openjdk-amd64"; export PATH="$PATH:/usr/lib/jvm/java-6-openjdk-amd64/bin"; export java_path="/usr/lib/jvm/java-6-openjdk-amd64/jre/bin/java"; fi

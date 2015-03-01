@@ -1,7 +1,0 @@
-dependencies:
-  override:
-    - true
-
-test:
-  override:
-    - gradlew circleCiBuild

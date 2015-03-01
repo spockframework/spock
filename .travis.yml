@@ -1,0 +1,21 @@
+language: java
+
+jdk:
+  - openjdk6
+  - openjdk7
+
+env:
+  matrix:
+    - VARIANT=2.0
+    - VARIANT=2.3
+  global:
+    # TEST_KEY
+    - secure: "Lbzzv+JWk4Qq8xrWG9De82gz+JP1TCik7nataiqy4TxPy7iFMkuWqanQ7pzRnTvlAoADedMlzcn8I7H0XXK7X74hKDYdVrCxZaxqeLX7BG8Dr0bDY1FfjqyCjh3PjnRq1MOUU6+OvzExWm4fvNd5f9mvmLWf4SjqR24Vxg1Igfc="
+    # SIGNING_PASSWORD
+    - secure: "Yk2UcOceN02uYUMKWxDTNUnOLwtNVhu0S6j65plclusZ7UWdKTmqGbE4E6Qswr95SIT5dOIGhslrMhl0ABD44JCMy51EFPqyxC89xA9dFVi7OV7rcmlBwlKJ1RU846yJaegxaoH6pBvLTtGcAhAodqQo/IvJyHK07PgeawH4lKk="
+    # SONATYPE_OSS_PASSWORD
+    - secure: "Y2PbI07I8M8k1qkwN671HdcLPPpnjATWya/m4PDIICioXkkdJrQzpj5x57efAJEWx2upI8PpgGm8ekUd2F/6l1rq0n4DnGHwGTNe1PDAXUw5qFt66RnqrfIVh2eUvPuQk6bXczLV39GksqqD1T/HS6KofknXpHKzk/JeCiiGoxI="
+
+install: true
+
+script: ./gradlew shippableCiBuild -Dvariant=$VARIANT

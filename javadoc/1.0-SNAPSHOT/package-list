@@ -1,0 +1,9 @@
+spock.config
+spock.guice
+spock.lang
+spock.unitils
+spock.util
+spock.util.concurrent
+spock.util.environment
+spock.util.matcher
+spock.util.mop

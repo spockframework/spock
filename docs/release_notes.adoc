@@ -12,7 +12,7 @@ Cédric Champeau, David Dawson, Rob Fletcher, Sean Gilligan, Ken Kousen, Guillau
 http://www.nofluffjuststuff.com/home/main[NFJS Tour], Graeme Rocher, Baruch Sadogursky, Odin Hole Standal,
 Howard M. Lewis Ship, Ken Sipe, Venkat Subramaniam, Russel Winder.
 
-=== What's In This Release
+=== What's New In This Release
 
 * <<Contributors,17 contributors>>, <<Resolved Issues,21 resolved issues>>, <<Merged Pull Requests,18 merged pull requests>>,
   <<Ongoing Work,some ongoing work>>. No ground-breaking new features, but significant improvements and fixes across the board.

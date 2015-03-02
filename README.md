@@ -12,8 +12,8 @@ http://webconsole.spockframework.org.
 
 Latest Versions
 ---------------
-The latest release version is **0.7** (0.7-groovy-1.8, 0.7-groovy-2.0), released on 2012-10-08. The current development
-version is **1.0-SNAPSHOT** (1.0-groovy-2.0-SNAPSHOT, 1.0-groovy-2.3-SNAPSHOT, 1.0-groovy-2.4-SNAPSHOT).
+The latest release version is **1.0** (1.0-groovy-2.0, 1.0-groovy-2.3, 1.0-groovy-2.4), released on 2015-03-02. The
+current development version is **1.1-SNAPSHOT** (1.1-groovy-2.0-SNAPSHOT, 1.1-groovy-2.3-SNAPSHOT, 1.1-groovy-2.4-SNAPSHOT).
 
 Releases are available from [Maven Central](https://search.maven.org/#search%7Cga%7C1%7Cspock).
 Development snapshots are available from [Sonatype OSS](https://oss.sonatype.org/content/repositories/snapshots/org/spockframework/).
@@ -54,7 +54,7 @@ Links
 * Old Wiki -- http://wiki.spockframework.org
 * Javadoc -- http://javadoc.spockframework.org
 * User Forum -- http://forum.spockframework.org
-* Developer Forum -- http://dev.forum.spockframework.org
+* Developer Forum -- http://dev-forum.spockframework.org
 * Issue Tracker -- http://issues.spockframework.org
 * Build Server -- http://builds.spockframework.org
 * Spock Example Project -- http://github.spockframework.org/spock-example

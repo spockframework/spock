@@ -35,7 +35,7 @@ ext {
   javaVersions = [1.6, 1.7, 1.8]
   javaVersion = System.getProperty("java.specification.version") as BigDecimal
   baseVersion = "1.0"
-  snapshotVersion = true
+  snapshotVersion = false
   fullVersion = "$baseVersion-groovy-$variant" + (snapshotVersion ? "-SNAPSHOT" : "")
   variantLessVersion = baseVersion + (snapshotVersion ? "-SNAPSHOT" : "")
   libs = [

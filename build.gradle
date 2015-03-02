@@ -198,7 +198,7 @@ task publishJavadoc(type: Exec) {
   git fetch origin +gh-pages:gh-pages
   git checkout gh-pages
   rm -rf javadoc/$variantLessVersion
-  mkdir javadoc/$variantLessVersion
+  mkdir -p javadoc/$variantLessVersion
   cp -r build/javadoc/$variantLessVersion javadoc/
   git add javadoc
   git commit -m "Publish javadoc/$variantLessVersion"
@@ -215,7 +215,7 @@ task publishDocs(type: Exec) {
   git fetch origin +gh-pages:gh-pages
   git checkout gh-pages
   rm -rf docs/$variantLessVersion
-  mkdir docs/$variantLessVersion
+  mkdir -p docs/$variantLessVersion
   cp -r build/docs/$variantLessVersion docs/
   git add docs
   git commit -m "Publish docs/$variantLessVersion"

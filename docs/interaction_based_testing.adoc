@@ -35,14 +35,14 @@ collaborators, and can generate mock implementations of collaborators that verif
 
 .How Are Mock Implementations Generated?
 ****
-Like most Java mocking frameworks, Spock uses http://docs.oracle.com/javase/7/docs/api/java/lang/reflect/Proxy.html
-[JDK dynamic proxies] (when mocking interfaces) and http://cglib.sourceforge.net[CGLIB] proxies (when mocking classes)
-to generate mock implementations at runtime. Compared to implementations based on Groovy meta-programming,
-this has the advantage that it also works for testing Java code.
+Like most Java mocking frameworks, Spock uses
+http://docs.oracle.com/javase/7/docs/api/java/lang/reflect/Proxy.html[JDK dynamic proxies] (when mocking interfaces)
+and https://github.com/cglib/cglib[CGLIB] proxies (when mocking classes) to generate mock implementations at runtime.
+Compared to implementations based on Groovy meta-programming, this has the advantage that it also works for testing Java code.
 ****
 
 The Java world has no shortage of popular and mature mocking frameworks: http://www.jmock.org/[JMock],
-http://www.easymock.org[EasyMock], http://code.google.com/p/mockito/[Mockito], to name just a few.
+http://www.easymock.org[EasyMock], http://mockito.org/[Mockito], to name just a few.
 Although each of these tools can be used together with Spock, we decided to roll our own mocking framework,
 tightly integrated with Spock's specification language. This decision was driven by the desire to leverage all of
 Groovy's capabilities to make interaction-based tests easier to write, more readable, and ultimately more fun.
@@ -320,6 +320,7 @@ a cardinality (when mocking) or a response generator (when stubbing). Either of 
 `foo.bar()` alone will never be considered an interaction.
 ****
 
+[[declaring-interactions-at-creation-time]]
 === Declaring Interactions at Mock Creation Time (New in 0.7)
 
 If a mock has a set of "base" interactions that don't vary, they can be declared right at mock creation time:
@@ -352,7 +353,8 @@ class MySpec extends Specification {
 === Grouping Interactions with Same Target (New in 0.7)
 
 Interactions sharing the same target can be grouped in a `Specification.with` block. Similar to
-<<declaring interactions at mock creation time>>, this makes it unnecessary to repeat the target constraint:
+<<declaring-interactions-at-creation-time,Declaring Interactions at Mock Creation Time>>, this makes it unnecessary
+to repeat the target constraint:
 
 [source,groovy]
 ----
@@ -405,7 +407,7 @@ linked to the variable declaration. Hence it will just move the interaction, whi
 `MissingPropertyException` at runtime.
 
 One way to solve this problem is to move (at least) the variable declaration to before the `when:`
-block. (Fans of <<data-driven testing>> might move the variable into a `where:` block.)
+block. (Fans of <<data_driven_testing.adoc#,Data Driven Testing>> might move the variable into a `where:` block.)
 In our example, this would have the added benefit that we could use the same variable for sending the message.
 
 Another solution is to be explicit about the fact that variable declaration and interaction belong together:
@@ -546,6 +548,10 @@ just like mocking interfaces; the only additional requirement is to put `cglib-n
 and `objenesis-1.2` or higher on the class path. If either of these libraries is missing from
 the class path, Spock will gently let you know.
 
+NOTE: Java 8 is only supported from CGLIB 3.2 onwards, which has not been released as of
+2015-03-02. As a temporary workaround, you can pull a prerelease version (e.g.
+`com.github.cglib:cglib.cglib-nodep:e10bc3dda2`) from Maven repository `https://jitpack.io`.
+
 == Stubbing
 
 Stubbing is the act of making collaborators respond to method calls in a certain way. When stubbing
@@ -584,8 +590,8 @@ target constraint
 ----
 
 A stubbed interaction can be declared in the usual places: either inside a `then:` block, or anywhere before a
-`when:` block. (See <<WhereToDeclareInteractions>> for the details.) If a mock object is only used for stubbing,
-it's common to declare interactions <<DeclaringInteractionsAtMockCreationTime,at mock creation time>> or in a
+`when:` block. (See <<Where to Declare Interactions>> for the details.) If a mock object is only used for stubbing,
+it's common to declare interactions <<declaring-interactions-at-creation-time,at mock creation time>> or in a
 `setup:` block.
 
 === Returning Fixed Values
@@ -700,7 +706,7 @@ then:
 1 * subscriber.receive("message1")
 ----
 
-As explained <<WhereToDeclareInteractions>>, the `receive` call will first get matched against
+As explained in <<Where to Declare Interactions>>, the `receive` call will first get matched against
 the interaction in the `then:` block. Since that interaction doesn't specify a response, the default
 value for the method's return type (`null` in this case) will be returned. (This is just another
 facet of Spock's lenient approach to mocking.). Hence, the interaction in the `setup:` block will never
@@ -733,13 +739,13 @@ NOTE: If a stub invocation matches a _mandatory_ interaction (like `1 * foo.bar(
 Like a mock, a stub allows unexpected invocations. However, the values returned by a stub in such cases are more ambitious:
 
 * For primitive types, the primitive type's default value is returned.
-* For non-primitive numerical values (like `BigDecimal`), zero is returned.
+* For non-primitive numerical values (such as `BigDecimal`), zero is returned.
 * For non-numerical values, an "empty" or "dummy" object is returned. This could mean an empty String, an empty collection,
   an object constructed from its default constructor, or another stub returning default values.
   See class `org.spockframework.mock.EmptyOrDummyResponse` for the details.
 
 A stub often has a fixed set of interactions, which makes
-<<DeclaringInteractionsAtMockCreationTime,declaring interactions at mock creation time>> particularly attractive::
+<<declaring-interactions-at-creation-time,declaring interactions at mock creation time>> particularly attractive::
 
 [source,groovy]
 ----
@@ -855,8 +861,8 @@ def subscriber = GroovyMock(Subscriber)
 Usually, Groovy mocks need to be injected into the code under specification just like regular mocks.
 However, when a Groovy mock is created as _global_, it automagically replaces all real instances
 of the mocked type for the duration of the feature method:footnote:[You may know this behavior from Groovy's
-http://groovy.codehaus.org/gapi/groovy/mock/interceptor/MockFor.html[MockFor] and
-http://groovy.codehaus.org/gapi/groovy/mock/interceptor/StubFor.html[StubFor] facilities.]
+http://docs.groovy-lang.org/docs/groovy-2.4.1/html/gapi/groovy/mock/interceptor/MockFor.html[MockFor] and
+http://docs.groovy-lang.org/docs/groovy-2.4.1/html/gapi/groovy/mock/interceptor/StubFor.html[StubFor] facilities.]
 
 [source,groovy]
 ----
@@ -949,7 +955,7 @@ Most of the time you shouldn't need these features. But if you do, you'll be gla
 [[ALaCarteMocks]]
 === A la Carte Mocks
 
-At the end of the day, the `Mock()`, `Stub()`, and `Spy()` factory methods are just precanned ways to
+At the end of the day, the `Mock()`, `Stub()`, and `Spy()` factory methods are just canned ways to
 create mock objects with a certain configuration. If you want more fine-grained control over a mock's configuration,
 have a look at the `org.spockframework.mock.IMockConfiguration` interface. All properties of this interface
 footnoote:[Because mock configurations are immutable, the interface contains just the properties' getters.]
@@ -994,21 +1000,17 @@ mock.nature == MockNature.MOCK
 
 == Further Reading
 
-To learn more about interaction-based testing, we recommend the following resources:
+If you would like to dive deeper into interaction-based testing, we recommend the following resources:
 
-* http://connextra.com/aboutUs/mockobjects.pdf[`Endo-Testing: Unit Testing with Mock Objects]
-
+http://www.ccs.neu.edu/research/demeter/related-work/extreme-programming/MockObjectsFinal.PDF[Endo-Testing: Unit Testing with Mock Objects]::
   Paper from the XP2000 conference that introduces the concept of mock objects.
 
-* http://www.jmock.org/oopsla2004.pdf[Mock Roles, not Objects]
-
+http://www.jmock.org/oopsla2004.pdf[Mock Roles, not Objects]::
   Paper from the OOPSLA2004 conference that explains how to do mocking _right_.
 
-* http://martinfowler.com/articles/mocksArentStubs.html[Mocks Aren't Stubs]
-
+http://martinfowler.com/articles/mocksArentStubs.html[Mocks Aren't Stubs]::
   Martin Fowler's take on mocking.
 
-* http://www.growing-object-oriented-software.com[Growing Object-Oriented Software Guided by Tests]
-
+http://www.growing-object-oriented-software.com[Growing Object-Oriented Software Guided by Tests]::
   TDD pioneers Steve Freeman and Nat Pryce explain in detail how test-driven development and mocking work in the real world.
 

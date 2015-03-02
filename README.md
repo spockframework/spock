@@ -22,15 +22,12 @@ Modules
 -------
 * spock-core -- Core framework. This is the only mandatory module.
 * spock-specs -- Specifications for spock-core, implemented using Spock. Not required for using Spock.
-* spock-maven -- Extended [Maven](http://maven.apache.org/) support. Note that this module is optional;
-it is *not* required for using Spock with Maven.
 * spock-spring -- Integration with the [Spring TestContext Framework]
-(http://static.springsource.org/spring/docs/3.2.1.RELEASE/spring-framework-reference/html/testing.html#testcontext-framework).
+(http://docs.spring.io/spring/docs/4.1.5.RELEASE/spring-framework-reference/html/testing.html#testcontext-framework).
 * spock-tapestry -- Integration with the [Tapestry 5](http://tapestry.apache.org/tapestry5/) IoC container.
 * spock-guice -- Integration with [Guice](http://code.google.com/p/google-guice/) 2/3.
 * spock-unitils -- Integration with [Unitils](http://www.unitils.org/).
 * spock-report -- Interactive, business-friendly HTML reports.
-* spock-grails -- The Grails plugin has become its own project hosted at https://github.spockframework.org/spock-grails.
 
 Building
 --------

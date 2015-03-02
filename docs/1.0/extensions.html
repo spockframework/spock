@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 1.5.2">
+<title>Extensions</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400">
+<link rel="stylesheet" href="./asciidoctor.css">
+<link rel="stylesheet" href="./coderay-asciidoctor.css">
+</head>
+<body class="article">
+<div id="header">
+<h1>Extensions</h1>
+</div>
+<div id="content">
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>Spock comes with a powerful extension mechanism, which allows to hook into a spec&#8217;s lifecycle to enrich or alter its
+behavior. In this chapter, we will first learn about Spock&#8217;s built-in extensions, and then dive into writing custom
+extensions.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_built_in_extensions">Built-In Extensions</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Most of Spock&#8217;s built-in extensions are <em>annotation-driven</em>. In other words, they are triggered by annotating a
+spec class or method with a certain annotation. You can tell such an annotation by its @ExtensionAnnotation
+meta-annotation.</p>
+</div>
+<div class="sect2">
+<h3 id="_ignore">Ignore</h3>
+<div class="paragraph">
+<p>To temporarily prevent a feature method from getting executed, annotate it with spock.lang.Ignore:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@Ignore</span>
+<span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">my feature</span><span class="delimiter">&quot;</span></span>() { ... }</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>For documentation purposes, a reason can be provided:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@Ignore</span>(reason = <span class="string"><span class="delimiter">&quot;</span><span class="content">TODO</span><span class="delimiter">&quot;</span></span>)
+<span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">my feature</span><span class="delimiter">&quot;</span></span>() { ... }</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>To ignore a whole specification, annotate its class:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@Ignore</span>
+<span class="type">class</span> <span class="class">MySpec</span> <span class="directive">extends</span> Specification { ... }</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In most execution environments, ignored feature methods and specs will be reported as "skipped".</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_ignorerest">IgnoreRest</h3>
+<div class="paragraph">
+<p>To ignore all but a (typically) small subset of methods, annotate the latter with spock.lang.IgnoreRest:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">I'll be ignored</span><span class="delimiter">&quot;</span></span>() { ... }
+
+<span class="annotation">@IgnoreRest</span>
+<span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">I'll run</span><span class="delimiter">&quot;</span></span>() { ... }
+
+<span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">I'll also be ignored</span><span class="delimiter">&quot;</span></span>() { ... }</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>@IgnoreRest is especially handy in execution environments that don&#8217;t provide an (easy) way to run a subset of methods.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_ignoreif">IgnoreIf</h3>
+<div class="paragraph">
+<p>To ignore a feature method under certain conditions, annotate it with spock.lang.IgnoreIf,
+followed by a predicate:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@IgnoreIf</span>({ <span class="predefined-type">System</span>.getProperty(<span class="string"><span class="delimiter">&quot;</span><span class="content">os.name</span><span class="delimiter">&quot;</span></span>).contains(<span class="string"><span class="delimiter">&quot;</span><span class="content">windows</span><span class="delimiter">&quot;</span></span>) })
+<span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">I'll run everywhere but on Windows</span><span class="delimiter">&quot;</span></span>() { ... }</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>To make predicates easier to read and write, the following properties are available inside the closure:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>sys</code> A map of all system properties</p>
+</li>
+<li>
+<p><code>env</code> A map of all environment variables</p>
+</li>
+<li>
+<p><code>os</code> Information about the operating system (see <code>spock.util.environment.OperatingSystem</code>)</p>
+</li>
+<li>
+<p><code>jvm</code> Information about the JVM (see <code>spock.util.environment.Jvm</code>)</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Using the <code>os</code> property, the previous example can be rewritten as:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@IgnoreIf</span>({ os.windows })
+<span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">I'll run everywhere but on Windows</span><span class="delimiter">&quot;</span></span>() { ... }</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_requires">Requires</h3>
+<div class="paragraph">
+<p>To execute a feature method under certain conditions, annotate it with <code>spock.lang.Requires</code>,
+followed by a predicate:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@Requires</span>({ os.windows })
+<span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">I'll only run on Windows</span><span class="delimiter">&quot;</span></span>() { ... }</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><code>Requires</code> works exactly like <code>IgnoreIf</code>, except that the predicate is inverted. In general, it is preferable
+to state the conditions under which a method gets executed, rather than the conditions under which it gets ignored.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_stepwise">Stepwise</h3>
+<div class="paragraph">
+<p>To execute features in the order that they are declared, annotate a spec class with <code>spock.lang.Stepwise</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@Stepwise</span>
+<span class="type">class</span> <span class="class">RunInOrderSpec</span> <span class="directive">extends</span> Specification {
+  <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">I run first</span><span class="delimiter">&quot;</span></span>()  { ... }
+  <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">I run second</span><span class="delimiter">&quot;</span></span>() { ... }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><code>Stepwise</code> only affects the class carrying the annotation; not sub or super classes.  Features after the first
+failure are skipped.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_timeout">Timeout</h3>
+<div class="paragraph">
+<p>To fail a feature method, fixture, or class that exceeds a given execution duration, use <code>spock.lang.Timeout</code>,
+followed by a duration, and optionally a time unit. The default time unit is seconds.</p>
+</div>
+<div class="paragraph">
+<p>When applied to a feature method, the timeout is per execution of one iteration, excluding time spent in fixture methods:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@Timeout</span>(<span class="integer">5</span>)
+<span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">I fail if I run for more than five seconds</span><span class="delimiter">&quot;</span></span>() { ... }
+
+<span class="annotation">@Timeout</span>(value = <span class="integer">100</span>, unit = <span class="predefined-type">TimeUnit</span>.MILLISECONDS)
+<span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">I better be quick</span><span class="delimiter">&quot;</span></span> { ... }</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Applying <code>Timeout</code> to a spec class has the same effect as applying it to each feature that is not already annotated
+with <code>Timeout</code>, excluding time spent in fixtures:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@Timeout</span>(<span class="integer">10</span>)
+<span class="type">class</span> <span class="class">TimedSpec</span> <span class="directive">extends</span> Specification {
+  <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">I fail after ten seconds</span><span class="delimiter">&quot;</span></span>() { ... }
+  <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">Me too</span><span class="delimiter">&quot;</span></span>() { ... }
+
+  <span class="annotation">@Timeout</span>(value = <span class="integer">250</span>, unit = MILLISECONDS)
+  <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">I fail much faster</span><span class="delimiter">&quot;</span></span>() { ... }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>When applied to a fixture method, the timeout is per execution of the fixture method.</p>
+</div>
+<div class="paragraph">
+<p>When a timeout is reported to the user, the stack trace shown reflects the execution stack of the test framework when
+the timeout was exceeded.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_use">Use</h3>
+<div class="paragraph">
+<p>To activate one or more Groovy categories within the scope of a feature method or spec, use <code>spock.util.mop.Use</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="type">class</span> <span class="class">ListExtensions</span> {
+  <span class="directive">static</span> avg(<span class="predefined-type">List</span> list) { list.sum() / list.size() }
+}
+
+<span class="type">class</span> <span class="class">MySpec</span> <span class="directive">extends</span> Specification {
+  <span class="annotation">@Use</span>(listExtensions)
+  <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">can use avg() method</span><span class="delimiter">&quot;</span></span>() {
+    <span class="key">expect</span>:
+    [<span class="integer">1</span>, <span class="integer">2</span>, <span class="integer">3</span>].avg() == <span class="integer">2</span>
+  }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This can be useful for stubbing of dynamic methods, which are usually provided by the runtime environment (e.g. Grails).
+It has no effect when applied to a helper method. However, when applied to a spec class, it will also affect its helper
+methods.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_confinemetaclasschanges">ConfineMetaClassChanges</h3>
+<div class="paragraph">
+<p>To confine meta class changes to the scope of a feature method or spec class, use <code>spock.util.mop.ConfineMetaClassChanges</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@Stepwise</span>
+<span class="type">class</span> <span class="class">FooSpec</span> <span class="directive">extends</span> Specification {
+  <span class="annotation">@ConfineMetaClassChanges</span>
+  <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">I run first</span><span class="delimiter">&quot;</span></span>() {
+    <span class="key">when</span>:
+    <span class="predefined-type">String</span>.metaClass.someMethod = { delegate }
+
+    <span class="key">then</span>:
+    <span class="predefined-type">String</span>.metaClass.hasMetaMethod(<span class="string"><span class="delimiter">'</span><span class="content">someMethod</span><span class="delimiter">'</span></span>)
+  }
+
+  <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">I run second</span><span class="delimiter">&quot;</span></span>() {
+    <span class="key">when</span>:
+    <span class="string"><span class="delimiter">&quot;</span><span class="content">Foo</span><span class="delimiter">&quot;</span></span>.someMethod()
+
+    <span class="key">then</span>:
+    thrown(MissingMethodException)
+  }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>When applied to a spec class, the meta classes are restored to the state that they were in before <code>setupSpec</code> was executed,
+after <code>cleanupSpec</code> is executed.</p>
+</div>
+<div class="paragraph">
+<p>When applied to a feature method, the meta classes are restored to as they were after <code>setup</code> was executed,
+before <code>cleanup</code> is executed.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_autocleanup">AutoCleanup</h3>
+<div class="paragraph">
+<p>Automatically clean up a field or property at the end of its lifetime by using <code>spock.lang.AutoCleanup</code>.</p>
+</div>
+<div class="paragraph">
+<p>By default, an object is cleaned up by invoking its parameterless <code>close()</code> method. If some other
+method should be called instead, override the annotation&#8217;s <code>value</code> attribute:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="comment">// invoke foo.dispose()</span>
+<span class="annotation">@AutoCleanup</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">dispose</span><span class="delimiter">&quot;</span></span>)
+<span class="keyword">def</span> foo</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If multiple fields or properties are annotated with <code>AutoCleanup</code>, their objects are cleaned up sequentially, in reverse
+field/property declaration order, starting from the most derived class class and walking up the inheritance chain.</p>
+</div>
+<div class="paragraph">
+<p>If a cleanup operation fails with an exception, the exception is reported by default, and cleanup proceeds with the next
+annotated object. To prevent cleanup exceptions from being reported, override the annotation&#8217;s <code>quiet</code> attribute:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@AutoCleanup</span>(quiet = <span class="predefined-constant">true</span>)
+<span class="keyword">def</span> ignoreMyExceptions</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_title_and_narrative">Title and Narrative</h3>
+<div class="paragraph">
+<p>To attach a natural-language name to a spec, use <code>spock.lang.Title</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@Title</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">This is easy to read</span><span class="delimiter">&quot;</span></span>)
+<span class="type">class</span> <span class="class">ThisIsHarderToReadSpec</span> <span class="directive">extends</span> Specification {
+  ...
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Similarly, to attach a natural-language description to a spec, use <code>spock.lang.Narrative</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@Narrative</span>(<span class="string"><span class="delimiter">&quot;&quot;&quot;</span><span class="content">
+As a user
+I want foo
+So that bar
+</span><span class="delimiter">&quot;&quot;&quot;</span></span>)
+<span class="type">class</span> <span class="class">GiveTheUserFooSpec</span>() { ... }</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_issue">Issue</h3>
+<div class="paragraph">
+<p>To indicate that a feature or spec relates to one or more issues in an external tracking system, use <code>spock.lang.Issue</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@Issue</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">http://my.issues.org/FOO-1</span><span class="delimiter">&quot;</span></span>)
+<span class="type">class</span> <span class="class">MySpec</span> {
+  <span class="annotation">@Issue</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">http://my.issues.org/FOO-2</span><span class="delimiter">&quot;</span></span>)
+  <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">Foo should do bar</span><span class="delimiter">&quot;</span></span>() { ... }
+
+  <span class="annotation">@Issue</span>([<span class="string"><span class="delimiter">&quot;</span><span class="content">http://my.issues.org/FOO-3</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">http://my.issues.org/FOO-4</span><span class="delimiter">&quot;</span></span>])
+  <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">I have two related issues</span><span class="delimiter">&quot;</span></span>() { ... }
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_subject">Subject</h3>
+<div class="paragraph">
+<p>To indicate one or more subjects of a spec, use <code>spock.lang.Subject</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@Subject</span>([Foo, Bar]) { ... }</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Additionally, <code>Subject</code> can be applied to fields and local variables:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@Subject</span>
+Foo myFoo</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><code>Subject</code> currently has only informational purposes.</p>
+</div>
+<div class="paragraph">
+<p>TODO More to follow.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_writing_custom_extensions">Writing Custom Extensions</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>TODO</p>
+</div>
+</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2015-03-02 11:42:41 UTC
+</div>
+</div>
+</body>
+</html>

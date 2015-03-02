@@ -1,0 +1,1348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 1.5.2">
+<title>Interaction Based Testing</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400">
+<link rel="stylesheet" href="./asciidoctor.css">
+<link rel="stylesheet" href="./coderay-asciidoctor.css">
+</head>
+<body class="article">
+<div id="header">
+<h1>Interaction Based Testing</h1>
+</div>
+<div id="content">
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>Interaction-based testing is a design and testing technique that emerged in the Extreme Programming
+(XP) community in the early 2000&#8217;s. Focusing on the behavior of objects rather than their state, it explores how
+the object(s) under specification interact, by way of method calls, with their collaborators.</p>
+</div>
+<div class="paragraph">
+<p>For example, suppose we have a Publisher that sends messages to its +Subscriber+s:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="type">class</span> <span class="class">Publisher</span> {
+    <span class="predefined-type">List</span>&lt;Subscriber&gt; subscribers
+    <span class="type">void</span> send(<span class="predefined-type">String</span> message)
+}
+
+<span class="type">interface</span> Subscriber {
+    <span class="type">void</span> receive(<span class="predefined-type">String</span> message)
+}
+
+<span class="type">class</span> <span class="class">PublisherSpec</span> <span class="directive">extends</span> Specification {
+    Publisher publisher = <span class="keyword">new</span> Publisher()
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>How are we going to test Publisher? With state-based testing, we can verify that the publisher keeps track of its
+subscribers. The more interesting question, though, is whether a message sent by the publisher
+is received by the subscribers. To answer this question, we need a special implementation of
+Subscriber that listens in on the conversation between the publisher and its subscribers. Such an
+implementation is called a <em>mock object</em>.</p>
+</div>
+<div class="paragraph">
+<p>While we could certainly create a mock implementation of Subscriber by hand, writing and maintaining this code
+can get unpleasant as the number of methods and complexity of interactions increases. This is where mocking frameworks
+come in: They provide a way to describe the expected interactions between an object under specification and its
+collaborators, and can generate mock implementations of collaborators that verify these expectations.</p>
+</div>
+<div class="sidebarblock">
+<div class="content">
+<div class="title">How Are Mock Implementations Generated?</div>
+<div class="paragraph">
+<p>Like most Java mocking frameworks, Spock uses
+<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/reflect/Proxy.html">JDK dynamic proxies</a> (when mocking interfaces)
+and <a href="https://github.com/cglib/cglib">CGLIB</a> proxies (when mocking classes) to generate mock implementations at runtime.
+Compared to implementations based on Groovy meta-programming, this has the advantage that it also works for testing Java code.</p>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>The Java world has no shortage of popular and mature mocking frameworks: <a href="http://www.jmock.org/">JMock</a>,
+<a href="http://www.easymock.org">EasyMock</a>, <a href="http://mockito.org/">Mockito</a>, to name just a few.
+Although each of these tools can be used together with Spock, we decided to roll our own mocking framework,
+tightly integrated with Spock&#8217;s specification language. This decision was driven by the desire to leverage all of
+Groovy&#8217;s capabilities to make interaction-based tests easier to write, more readable, and ultimately more fun.
+We hope that by the end of this chapter, you will agree that we have achieved these goals.</p>
+</div>
+<div class="paragraph">
+<p>Except where indicated, all features of Spock&#8217;s mocking framework work both for testing Java and Groovy code.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_creating_mock_objects">Creating Mock Objects</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Mock objects are created with the MockingApi.Mock() method.<span class="footnote">[<a id="_footnoteref_1" class="footnote" href="#_footnote_1" title="View footnote.">1</a>]</span>
+Let&#8217;s create two mock subscribers:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> subscriber = Mock(Subscriber)
+<span class="keyword">def</span> subscriber2 = Mock(Subscriber)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Alternatively, the following Java-like syntax is supported, which may give better IDE support:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">Subscriber subscriber = Mock()
+Subscriber subscriber2 = Mock()</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Here, the mock&#8217;s type is inferred from the variable type on the left-hand side of the assignment.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+If the mock&#8217;s type is given on the left-hand side of the assignment, it&#8217;s permissible
+(though not required) to omit it on the right-hand side.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Mock objects literally implement (or, in the case of a class, extend) the type they stand in for. In other
+words, in our example subscriber <em>is-a</em> Subscriber. Hence it can be passed to statically typed (Java)
+code that expects this type.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_default_behavior_of_mock_objects">Default Behavior of Mock Objects</h2>
+<div class="sectionbody">
+<div class="sidebarblock">
+<div class="content">
+<div class="title">Lenient vs. Strict Mocking Frameworks</div>
+<div class="paragraph">
+<p>Like Mockito, we firmly believe that a mocking framework should be lenient by default. This means that unexpected
+method calls on mock objects (or, in other words, interactions that aren&#8217;t relevant for the test at hand) are allowed
+and answered with a default response. Conversely, mocking frameworks like EasyMock and JMock are strict by default,
+and throw an exception for every unexpected method call. While strictness enforces rigor, it can also lead
+to over-specification, resulting in brittle tests that fail with every other internal code change. Spock&#8217;s mocking
+framework makes it easy to describe only what&#8217;s relevant about an interaction, avoiding the over-specification trap.</p>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>Initially, mock objects have no behavior. Calling methods on them is allowed but has no effect other than returning
+the default value for the method&#8217;s return type (false, 0, or null). An exception are the Object.equals,
+Object.hashCode, and Object.toString methods, which have the following default behavior: A mock object is only
+equal to itself, has a unique hash code, and a string representation that includes the name of the type it represents.
+This default behavior is overridable by stubbing the methods, which we will learn about in the <a href="#_stubbing">Stubbing</a> section.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_injecting_mock_objects_into_code_under_specification">Injecting Mock Objects into Code Under Specification</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>After creating the publisher and its subscribers, we need to make the latter known to the former:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="type">class</span> <span class="class">PublisherSpec</span> <span class="directive">extends</span> Specification {
+    Publisher publisher = <span class="keyword">new</span> Publisher()
+    Subscriber subscriber = Mock()
+    Subscriber subscriber2 = Mock()
+
+    <span class="keyword">def</span> <span class="function">setup</span>() {
+        publisher.subscribers &lt;&lt; subscriber <span class="comment">// &lt;&lt; is a Groovy shorthand for List.add()</span>
+        publisher.subscribers &lt;&lt; subscriber2
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>We are now ready to describe the expected interactions between the two parties.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_mocking">Mocking</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Mocking is the act of describing (mandatory) interactions between the object under specification and its collaborators.
+Here is an example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">should send messages to all subscribers</span><span class="delimiter">&quot;</span></span>() {
+    <span class="key">when</span>:
+    publisher.send(<span class="string"><span class="delimiter">&quot;</span><span class="content">hello</span><span class="delimiter">&quot;</span></span>)
+
+    <span class="key">then</span>:
+    <span class="integer">1</span> * subscriber.receive(<span class="string"><span class="delimiter">&quot;</span><span class="content">hello</span><span class="delimiter">&quot;</span></span>)
+    <span class="integer">1</span> * subscriber2.receive(<span class="string"><span class="delimiter">&quot;</span><span class="content">hello</span><span class="delimiter">&quot;</span></span>)
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Read out aloud: "When the publisher sends a 'hello' message, then both subscribers should receive that message exactly once."</p>
+</div>
+<div class="paragraph">
+<p>When this feature method gets run, all invocations on mock objects that occur while executing the
+when block will be matched against the interactions described in the then: block. If one of the interactions isn&#8217;t
+satisfied, a (subclass of) InteractionNotSatisfiedError will be thrown. This verification happens automatically
+and does not require any additional code.</p>
+</div>
+<div class="sect2">
+<h3 id="_interactions">Interactions</h3>
+<div class="sidebarblock">
+<div class="content">
+<div class="title">Is an Interaction Just a Regular Method Invocation?</div>
+<div class="paragraph">
+<p>Not quite. While an interaction looks similar to a regular method invocation, it is simply a way to express which
+method invocations are expected to occur. A good way to think of an interaction is as a regular expression
+that all incoming invocations on mock objects are matched against. Depending on the circumstances, the interaction
+may match zero, one, or multiple invocations.</p>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>Let&#8217;s take a closer look at the then: block. It contains two <em>interactions</em>, each of which has four distinct
+parts: a <em>cardinality</em>, a <em>target constraint</em>, a <em>method constraint</em>, and an <em>argument constraint</em>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>1 * subscriber.receive("hello")
+|   |          |       |
+|   |          |       argument constraint
+|   |          method constraint
+|   target constraint
+cardinality</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_cardinality">Cardinality</h3>
+<div class="paragraph">
+<p>The cardinality of an interaction describes how often a method call is expected. It can either be a fixed number or
+a range:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="integer">1</span> * subscriber.receive(<span class="string"><span class="delimiter">&quot;</span><span class="content">hello</span><span class="delimiter">&quot;</span></span>)      <span class="comment">// exactly one call</span>
+<span class="integer">0</span> * subscriber.receive(<span class="string"><span class="delimiter">&quot;</span><span class="content">hello</span><span class="delimiter">&quot;</span></span>)      <span class="comment">// zero calls</span>
+(<span class="integer">1</span>..<span class="integer">3</span>) * subscriber.receive(<span class="string"><span class="delimiter">&quot;</span><span class="content">hello</span><span class="delimiter">&quot;</span></span>) <span class="comment">// between one and three calls (inclusive)</span>
+(<span class="integer">1</span>.._) * subscriber.receive(<span class="string"><span class="delimiter">&quot;</span><span class="content">hello</span><span class="delimiter">&quot;</span></span>) <span class="comment">// at least one call</span>
+(_..<span class="integer">3</span>) * subscriber.receive(<span class="string"><span class="delimiter">&quot;</span><span class="content">hello</span><span class="delimiter">&quot;</span></span>) <span class="comment">// at most three calls</span>
+_ * subscriber.receive(<span class="string"><span class="delimiter">&quot;</span><span class="content">hello</span><span class="delimiter">&quot;</span></span>)      <span class="comment">// any number of calls, including zero</span>
+                                     <span class="comment">// (rarely needed; see 'Strict Mocking')</span></code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_target_constraint">Target Constraint</h3>
+<div class="paragraph">
+<p>The target constraint of an interaction describes which mock object is expected to receive the method call:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="integer">1</span> * subscriber.receive(<span class="string"><span class="delimiter">&quot;</span><span class="content">hello</span><span class="delimiter">&quot;</span></span>) <span class="comment">// a call to 'subscriber'</span>
+<span class="integer">1</span> * _.receive(<span class="string"><span class="delimiter">&quot;</span><span class="content">hello</span><span class="delimiter">&quot;</span></span>)          <span class="comment">// a call to any mock object</span></code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_method_constraint">Method Constraint</h3>
+<div class="paragraph">
+<p>The method constraint of an interaction describes which method is expected to be called:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="integer">1</span> * subscriber.receive(<span class="string"><span class="delimiter">&quot;</span><span class="content">hello</span><span class="delimiter">&quot;</span></span>) <span class="comment">// a method named 'receive'</span>
+<span class="integer">1</span> * subscriber.<span class="regexp"><span class="delimiter">/</span><span class="content">r.*e</span><span class="delimiter">/</span></span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">hello</span><span class="delimiter">&quot;</span></span>)  <span class="comment">// a method whose name matches the given regular expression</span>
+                                <span class="comment">// (here: method name starts with 'r' and ends in 'e')</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>When expecting a call to a getter method, Groovy property syntax <em>can</em> be used instead of method syntax:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="integer">1</span> * subscriber.status <span class="comment">// same as: 1 * subscriber.getStatus()</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>When expecting a call to a setter method, only method syntax can be used:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="integer">1</span> * subscriber.setStatus(<span class="string"><span class="delimiter">&quot;</span><span class="content">ok</span><span class="delimiter">&quot;</span></span>) <span class="comment">// NOT: 1 * subscriber.status = &quot;ok&quot;</span></code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_argument_constraints">Argument Constraints</h3>
+<div class="paragraph">
+<p>The argument constraints of an interaction describe which method arguments are expected:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="integer">1</span> * subscriber.receive(<span class="string"><span class="delimiter">&quot;</span><span class="content">hello</span><span class="delimiter">&quot;</span></span>)     <span class="comment">// an argument that is equal to the String &quot;hello&quot;</span>
+<span class="integer">1</span> * subscriber.receive(!<span class="string"><span class="delimiter">&quot;</span><span class="content">hello</span><span class="delimiter">&quot;</span></span>)    <span class="comment">// an argument that is unequal to the String &quot;hello&quot;</span>
+<span class="integer">1</span> * subscriber.receive()            <span class="comment">// the empty argument list (would never match in our example)</span>
+<span class="integer">1</span> * subscriber.receive(_)           <span class="comment">// any single argument (including null)</span>
+<span class="integer">1</span> * subscriber.receive(*_)          <span class="comment">// any argument list (including the empty argument list)</span>
+<span class="integer">1</span> * subscriber.receive(!<span class="predefined-constant">null</span>)       <span class="comment">// any non-null argument</span>
+<span class="integer">1</span> * subscriber.receive(_ <span class="keyword">as</span> <span class="predefined-type">String</span>) <span class="comment">// any non-null argument that is-a String</span>
+<span class="integer">1</span> * subscriber.receive({ <span class="local-variable">it</span>.size() &gt; <span class="integer">3</span> }) <span class="comment">// an argument that satisfies the given predicate</span>
+                                          <span class="comment">// (here: message length is greater than 3)</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Argument constraints work as expected for methods with multiple arguments:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="integer">1</span> * process.invoke(<span class="string"><span class="delimiter">&quot;</span><span class="content">ls</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">-a</span><span class="delimiter">&quot;</span></span>, _, !<span class="predefined-constant">null</span>, { [<span class="string"><span class="delimiter">&quot;</span><span class="content">abcdefghiklmnopqrstuwx1</span><span class="delimiter">&quot;</span></span>].contains(<span class="local-variable">it</span>) })</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>When dealing with vararg methods, vararg syntax can also be used in the corresponding interactions:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="type">interface</span> VarArgSubscriber {
+    <span class="type">void</span> receive(<span class="predefined-type">String</span>... messages)
+}
+
+...
+
+subscriber.receive(<span class="string"><span class="delimiter">&quot;</span><span class="content">hello</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">goodbye</span><span class="delimiter">&quot;</span></span>)</code></pre>
+</div>
+</div>
+<div class="sidebarblock">
+<div class="content">
+<div class="title">Spock Deep Dive: Groovy Varargs</div>
+<div class="paragraph">
+<p>Groovy allows any method whose last parameter has an array type to be called in vararg style. Consequently,
+vararg syntax can also be used in interactions matching such methods.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_matching_any_method_call">Matching Any Method Call</h3>
+<div class="paragraph">
+<p>Sometimes it can be useful to match "anything", in some sense of the word:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="integer">1</span> * subscriber._(*_)     <span class="comment">// any method on subscriber, with any argument list</span>
+<span class="integer">1</span> * subscriber._         <span class="comment">// shortcut for and preferred over the above</span>
+
+<span class="integer">1</span> * _._                  <span class="comment">// any method call on any mock object</span>
+<span class="integer">1</span> * _                    <span class="comment">// shortcut for and preferred over the above</span></code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+Although <code>(<em>..</em>) * <em>.</em>(*_) &gt;&gt; _</code> is a valid interaction declaration,
+it is neither good style nor particularly useful.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_strict_mocking">Strict Mocking</h3>
+<div class="paragraph">
+<p>Now, when would matching any method call be useful? A good example is <em>strict mocking</em>,
+a style of mocking where no interactions other than those explicitly declared are allowed:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="key">when</span>:
+publisher.publish(<span class="string"><span class="delimiter">&quot;</span><span class="content">hello</span><span class="delimiter">&quot;</span></span>)
+
+<span class="key">then</span>:
+<span class="integer">1</span> * subscriber.receive(<span class="string"><span class="delimiter">&quot;</span><span class="content">hello</span><span class="delimiter">&quot;</span></span>) <span class="comment">// demand one 'receive' call on 'subscriber'</span>
+_ * auditing._                  <span class="comment">// allow any interaction with 'auditing'</span>
+<span class="integer">0</span> * _                           <span class="comment">// don't allow any other interaction</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><code>0 *</code> only makes sense as the last interaction of a <code>then:</code> block or method. Note the
+use of <code>_ *</code> (any number of calls), which allows any interaction with the auditing component.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+<code>_ *</code> is only meaningful in the context of strict mocking. In particular, it is never necessary
+when <a href="#_stubbing">Stubbing</a> an invocation. For example, <code>_ * auditing.record(<em>) &gt;&gt; "ok"</code>
+can (and should!) be simplified to <code>auditing.record(</em>) &gt;&gt; "ok"</code>.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_where_to_declare_interactions">Where to Declare Interactions</h3>
+<div class="paragraph">
+<p>So far, we declared all our interactions in a <code>then:</code> block. This often results in a spec that reads naturally.
+However, it is also permissible to put interactions anywhere <em>before</em> the <code>when:</code> block that is supposed to satisfy
+them. In particular, this means that interactions can be declared in a <code>setup</code> method. Interactions can also be
+declared in any "helper" instance method of the same specification class.</p>
+</div>
+<div class="paragraph">
+<p>When an invocation on a mock object occurs, it is matched against interactions in the interactions' declared order.
+If an invocation matches multiple interactions, the earliest declared interaction that hasn&#8217;t reached its upper
+invocation limit will win. There is one exception to this rule: Interactions declared in a <code>then:</code> block are
+matched against before any other interactions. This allows to override interactions declared in, say, a <code>setup</code>
+method with interactions declared in a <code>then:</code> block.</p>
+</div>
+<div class="sidebarblock">
+<div class="content">
+<div class="title">Spock Deep Dive: How Are Interactions Recognized?</div>
+<div class="paragraph">
+<p>In other words, what makes an expression an interaction declaration, rather than, say, a regular method call?
+Spock uses a simple syntactic rule to recognize interactions: If an expression is in statement position
+and is either a multiplication (<code>*</code>) or a right-shift (<code>&gt;&gt;</code>, <code>&gt;&gt;&gt;</code>) operation, then it is considered
+an interaction and will be parsed accordingly. Such an expression would have little to no value in statement
+position, so changing its meaning works out fine. Note how the operations correspond to the syntax for declaring
+a cardinality (when mocking) or a response generator (when stubbing). Either of them must always be present;
+<code>foo.bar()</code> alone will never be considered an interaction.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="declaring-interactions-at-creation-time">Declaring Interactions at Mock Creation Time (New in 0.7)</h3>
+<div class="paragraph">
+<p>If a mock has a set of "base" interactions that don&#8217;t vary, they can be declared right at mock creation time:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> subscriber = Mock(Subscriber) {
+   <span class="integer">1</span> * receive(<span class="string"><span class="delimiter">&quot;</span><span class="content">hello</span><span class="delimiter">&quot;</span></span>)
+   <span class="integer">1</span> * receive(<span class="string"><span class="delimiter">&quot;</span><span class="content">goodbye</span><span class="delimiter">&quot;</span></span>)
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This feature is particularly attractive for <a href="#_stubbing">Stubbing</a> and with dedicated <a href="#Stubs">Stubs</a>. Note that the
+interactions don&#8217;t (and cannot <span class="footnote">[<a id="_footnoteref_2" class="footnote" href="#_footnote_2" title="View footnote.">2</a>]</span>) have a target constraint; it&#8217;s clear from the context which mock
+object they belong to.</p>
+</div>
+<div class="paragraph">
+<p>Interactions can also be declared when initializing an instance field with a mock:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="type">class</span> <span class="class">MySpec</span> <span class="directive">extends</span> Specification {
+    Subscriber subscriber = Mock {
+        <span class="integer">1</span> * receive(<span class="string"><span class="delimiter">&quot;</span><span class="content">hello</span><span class="delimiter">&quot;</span></span>)
+        <span class="integer">1</span> * receive(<span class="string"><span class="delimiter">&quot;</span><span class="content">goodbye</span><span class="delimiter">&quot;</span></span>)
+    }
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_grouping_interactions_with_same_target_new_in_0_7">Grouping Interactions with Same Target (New in 0.7)</h3>
+<div class="paragraph">
+<p>Interactions sharing the same target can be grouped in a <code>Specification.with</code> block. Similar to
+<a href="#declaring-interactions-at-creation-time">Declaring Interactions at Mock Creation Time</a>, this makes it unnecessary
+to repeat the target constraint:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">with(subscriber) {
+    <span class="integer">1</span> * receive(<span class="string"><span class="delimiter">&quot;</span><span class="content">hello</span><span class="delimiter">&quot;</span></span>)
+    <span class="integer">1</span> * receive(<span class="string"><span class="delimiter">&quot;</span><span class="content">goodbye</span><span class="delimiter">&quot;</span></span>)
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>A <code>with</code> block can also be used for grouping conditions with the same target.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_mixing_interactions_and_conditions">Mixing Interactions and Conditions</h3>
+<div class="paragraph">
+<p>A <code>then:</code> block may contain both interactions and conditions. Although not strictly required, it is customary
+to declare interactions before conditions:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="key">when</span>:
+publisher.send(<span class="string"><span class="delimiter">&quot;</span><span class="content">hello</span><span class="delimiter">&quot;</span></span>)
+
+<span class="key">then</span>:
+<span class="integer">1</span> * subscriber.receive(<span class="string"><span class="delimiter">&quot;</span><span class="content">hello</span><span class="delimiter">&quot;</span></span>)
+publisher.messageCount == <span class="integer">1</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Read out aloud: "When the publisher sends a 'hello' message, then the subscriber should receive the message exactly
+once, and the publisher&#8217;s message count should be one."</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_explicit_interaction_blocks">Explicit Interaction Blocks</h3>
+<div class="paragraph">
+<p>Internally, Spock must have full information about expected interactions <em>before</em> they take place.
+So how is it possible for interactions to be declared in a <code>then:</code> block?
+The answer is that under the hood, Spock moves interactions declared in a <code>then:</code> block to immediately
+before the preceding <code>when:</code> block. In most cases this works out just fine, but sometimes it can lead to problems:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="key">when</span>:
+publisher.send(<span class="string"><span class="delimiter">&quot;</span><span class="content">hello</span><span class="delimiter">&quot;</span></span>)
+
+<span class="key">then</span>:
+<span class="keyword">def</span> message = <span class="string"><span class="delimiter">&quot;</span><span class="content">hello</span><span class="delimiter">&quot;</span></span>
+<span class="integer">1</span> * subscriber.receive(message)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Here we have introduced a variable for the expected argument. (Likewise, we could have introduced a variable
+for the cardinality.) However, Spock isn&#8217;t smart enough (huh?) to tell that the interaction is intrinsically
+linked to the variable declaration. Hence it will just move the interaction, which will cause a
+<code>MissingPropertyException</code> at runtime.</p>
+</div>
+<div class="paragraph">
+<p>One way to solve this problem is to move (at least) the variable declaration to before the <code>when:</code>
+block. (Fans of <a href="data_driven_testing.html">Data Driven Testing</a> might move the variable into a <code>where:</code> block.)
+In our example, this would have the added benefit that we could use the same variable for sending the message.</p>
+</div>
+<div class="paragraph">
+<p>Another solution is to be explicit about the fact that variable declaration and interaction belong together:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="key">when</span>:
+publisher.send(<span class="string"><span class="delimiter">&quot;</span><span class="content">hello</span><span class="delimiter">&quot;</span></span>)
+
+<span class="key">then</span>:
+interaction {
+    <span class="keyword">def</span> message = <span class="string"><span class="delimiter">&quot;</span><span class="content">hello</span><span class="delimiter">&quot;</span></span>
+    <span class="integer">1</span> * subscriber.receive(message)
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Since an <code>MockingApi.interaction</code> block is always moved in its entirety, the code now works as intended.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_scope_of_interactions">Scope of Interactions</h3>
+<div class="paragraph">
+<p>Interactions declared in a <code>then:</code> block are scoped to the preceding <code>when:</code> block:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="key">when</span>:
+publisher.send(<span class="string"><span class="delimiter">&quot;</span><span class="content">message1</span><span class="delimiter">&quot;</span></span>)
+
+<span class="key">then</span>:
+subscriber.receive(<span class="string"><span class="delimiter">&quot;</span><span class="content">message1</span><span class="delimiter">&quot;</span></span>)
+
+<span class="key">when</span>:
+publisher.send(<span class="string"><span class="delimiter">&quot;</span><span class="content">message2</span><span class="delimiter">&quot;</span></span>)
+
+<span class="key">then</span>:
+subscriber.receive(<span class="string"><span class="delimiter">&quot;</span><span class="content">message2</span><span class="delimiter">&quot;</span></span>)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This makes sure that <code>subscriber</code> receives <code>"message1"</code> during execution of the first <code>when:</code> block,
+and <code>"message2"</code> during execution of the second <code>when:</code> block.</p>
+</div>
+<div class="paragraph">
+<p>Interactions declared outside a <code>then:</code> block are active from their declaration until the end of the
+containing feature method.</p>
+</div>
+<div class="paragraph">
+<p>Interactions are always scoped to a particular feature method. Hence they cannot be declared in a static method,
+<code>setupSpec</code> method, or <code>cleanupSpec</code> method. Likewise, mock objects should not be stored in static or <code>@Shared</code>
+fields.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_verification_of_interactions">Verification of Interactions</h3>
+<div class="paragraph">
+<p>There a two main ways in which a mock-based test can fail: An interaction can match more invocations than
+allowed, or it can match fewer invocations than required. The former case is detected right when the invocation
+happens, and causes a <code>TooManyInvocationsError</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>Too many invocations for:
+
+2 * subscriber.receive(_) (3 invocations)</pre>
+</div>
+</div>
+<div id="ShowAllMatchingInvocations" class="paragraph">
+<p>To make it easier to diagnose why too many invocations matched, Spock will show all invocations matching
+the interaction in question (new in Spock 0.7):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>Matching invocations (ordered by last occurrence):
+
+2 * subscriber.receive("hello")   &lt;-- this triggered the error
+1 * subscriber.receive("goodbye")</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>According to this output, one of the <code>receive("hello")</code> calls triggered the <code>TooManyInvocationsError</code>.
+Note that because indistinguishable calls like the two invocations of <code>subscriber.receive("hello")</code> are aggregated
+into a single line of output, the first <code>receive("hello")</code> may well have occurred before the <code>receive("goodbye")</code>.</p>
+</div>
+<div class="paragraph">
+<p>The second case (fewer invocations than required) can only be detected once execution of the <code>when</code> block has completed.
+(Until then, further invocations may still occur.) It causes a <code>TooFewInvocationsError</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>Too few invocations for:
+
+1 * subscriber.receive("hello") (0 invocations)</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Note that it doesn&#8217;t matter whether the method was not called at all, the same method was called with different arguments,
+the same method was called on a different mock object, or a different method was called "instead" of this one;
+in either case, a <code>TooFewInvocationsError</code> error will occur.</p>
+</div>
+<div id="ShowUnmatchedInvocations" class="paragraph">
+<p>To make it easier to diagnose what happened "instead" of a missing invocation, Spock will show all
+invocations that didn&#8217;t match any interaction, ordered by their similarity with the interaction in question
+(new in Spock 0.7). In particular, invocations that match everything but the interaction&#8217;s arguments will be shown first:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">Unmatched invocations (ordered by similarity):
+
+<span class="integer">1</span> * subscriber.receive(<span class="string"><span class="delimiter">&quot;</span><span class="content">goodbye</span><span class="delimiter">&quot;</span></span>)
+<span class="integer">1</span> * subscriber2.receive(<span class="string"><span class="delimiter">&quot;</span><span class="content">hello</span><span class="delimiter">&quot;</span></span>)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_invocation_order">Invocation Order</h3>
+<div class="paragraph">
+<p>Often, the exact method invocation order isn&#8217;t relevant and may change over time. To avoid over-specification,
+Spock defaults to allowing any invocation order, provided that the specified interactions are eventually satisfied:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="key">then</span>:
+<span class="integer">2</span> * subscriber.receive(<span class="string"><span class="delimiter">&quot;</span><span class="content">hello</span><span class="delimiter">&quot;</span></span>)
+<span class="integer">1</span> * subscriber.receive(<span class="string"><span class="delimiter">&quot;</span><span class="content">goodbye</span><span class="delimiter">&quot;</span></span>)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Here, any of the invocation sequences <code>"hello"</code> <code>"hello"</code> <code>"goodbye"</code>, <code>"hello"</code> <code>"goodbye"</code> <code>"hello"</code>, and
+<code>"goodbye"</code> <code>"hello"</code> <code>"hello"</code> will satisfy the specified interactions.</p>
+</div>
+<div class="paragraph">
+<p>In those cases where invocation order matters, you can impose an order by splitting up interactions into
+multiple <code>then:</code> blocks:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="key">then</span>:
+<span class="integer">2</span> * subscriber.receive(<span class="string"><span class="delimiter">&quot;</span><span class="content">hello</span><span class="delimiter">&quot;</span></span>)
+
+<span class="key">then</span>:
+<span class="integer">1</span> * subscriber.receive(<span class="string"><span class="delimiter">&quot;</span><span class="content">goodbye</span><span class="delimiter">&quot;</span></span>)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Now Spock will verify that both <code>"hello"&#8217;s are received before the `"goodbye"</code>.
+In other words, invocation order is enforced <em>between</em> but not <em>within</em> <code>then:</code> blocks.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+Splitting up a <code>then:</code> block with <code>and:</code> does not impose any ordering, as <code>and:</code>
+is only meant for documentation purposes and doesn&#8217;t carry any semantics.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_mocking_classes">Mocking Classes</h3>
+<div class="paragraph">
+<p>Besides interfaces, Spock also supports mocking of classes. Mocking classes works
+just like mocking interfaces; the only additional requirement is to put <code>cglib-nodep-2.2</code> or higher
+and <code>objenesis-1.2</code> or higher on the class path. If either of these libraries is missing from
+the class path, Spock will gently let you know.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+Java 8 is only supported from CGLIB 3.2 onwards, which has not been released as of
+2015-03-02. As a temporary workaround, you can pull a prerelease version (e.g.
+<code>com.github.cglib:cglib.cglib-nodep:e10bc3dda2</code>) from Maven repository <code><a href="https://jitpack.io" class="bare">https://jitpack.io</a></code>.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_stubbing">Stubbing</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Stubbing is the act of making collaborators respond to method calls in a certain way. When stubbing
+a method, you don&#8217;t care if and how many times the method is going to be called; you just want it to
+return some value, or perform some side effect, <em>whenever</em> it gets called.</p>
+</div>
+<div class="paragraph">
+<p>For the sake of the following examples, let&#8217;s modify the <code>Subscriber&#8217;s `receive</code> method
+to return a status code that tells if the subscriber was able to process a message:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="type">interface</span> Subscriber {
+    <span class="predefined-type">String</span> receive(<span class="predefined-type">String</span> message)
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Now, let&#8217;s make the <code>receive</code> method return <code>"ok"</code> on every invocation:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">subscriber.receive(_) &gt;&gt; <span class="string"><span class="delimiter">&quot;</span><span class="content">ok</span><span class="delimiter">&quot;</span></span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Read out aloud: "<em>Whenever</em> the subscriber receives a message, <em>make</em> it respond with 'ok'."</p>
+</div>
+<div class="paragraph">
+<p>Compared to a mocked interaction, a stubbed interaction has no cardinality on the left end, but adds a
+<em>response generator</em> on the right end:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>subscriber.receive(_) &gt;&gt; "ok"
+|          |       |     |
+|          |       |     response generator
+|          |       argument constraint
+|          method constraint
+target constraint</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>A stubbed interaction can be declared in the usual places: either inside a <code>then:</code> block, or anywhere before a
+<code>when:</code> block. (See <a href="#_where_to_declare_interactions">Where to Declare Interactions</a> for the details.) If a mock object is only used for stubbing,
+it&#8217;s common to declare interactions <a href="#declaring-interactions-at-creation-time">at mock creation time</a> or in a
+<code>setup:</code> block.</p>
+</div>
+<div class="sect2">
+<h3 id="_returning_fixed_values">Returning Fixed Values</h3>
+<div class="paragraph">
+<p>We have already seen the use of the right-shift (<code>&gt;&gt;</code>) operator to return a fixed value:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">subscriber.receive(_) &gt;&gt; <span class="string"><span class="delimiter">&quot;</span><span class="content">ok</span><span class="delimiter">&quot;</span></span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>To return different values for different invocations, use multiple interactions:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">subscriber.receive(<span class="string"><span class="delimiter">&quot;</span><span class="content">message1</span><span class="delimiter">&quot;</span></span>) &gt;&gt; <span class="string"><span class="delimiter">&quot;</span><span class="content">ok</span><span class="delimiter">&quot;</span></span>
+subscriber.receive(<span class="string"><span class="delimiter">&quot;</span><span class="content">message2</span><span class="delimiter">&quot;</span></span>) &gt;&gt; <span class="string"><span class="delimiter">&quot;</span><span class="content">fail</span><span class="delimiter">&quot;</span></span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This will return <code>"ok"</code> whenever <code>"message1"</code> is received, and <code>"fail"</code> whenever
+<code>"message2"</code> is received. There is no limit as to which values can be returned, provided they are
+compatible with the method&#8217;s declared return type.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_returning_sequences_of_values">Returning Sequences of Values</h3>
+<div class="paragraph">
+<p>To return different values on successive invocations, use the triple-right-shift (<code>&gt;&gt;&gt;</code>) operator:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">subscriber.receive(_) &gt;&gt;&gt; [<span class="string"><span class="delimiter">&quot;</span><span class="content">ok</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">error</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">error</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">ok</span><span class="delimiter">&quot;</span></span>]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This will return <code>"ok"</code> for the first invocation, <code>"error"</code> for the second and third invocation,
+and <code>"ok"</code> for all remaining invocations. The right-hand side must be a value that Groovy knows how to iterate over;
+in this example, we&#8217;ve used a plain list.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_computing_return_values">Computing Return Values</h3>
+<div class="paragraph">
+<p>To compute a return value based on the method&#8217;s argument, use the the right-shift (<code>&gt;&gt;</code>) operator together with a closure.
+If the closure declares a single untyped parameter, it gets passed the method&#8217;s argument list:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">subscriber.receive(_) &gt;&gt; { args -&gt; args[<span class="integer">0</span>].size() &gt; <span class="integer">3</span> ? <span class="string"><span class="delimiter">&quot;</span><span class="content">ok</span><span class="delimiter">&quot;</span></span> : <span class="string"><span class="delimiter">&quot;</span><span class="content">fail</span><span class="delimiter">&quot;</span></span> }</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Here <code>"ok"</code> gets returned if the message is more than three characters long, and <code>"fail"</code> otherwise.</p>
+</div>
+<div class="paragraph">
+<p>In most cases it would be more convenient to have direct access to the method&#8217;s arguments. If the closure declares more
+than one parameter or a single <em>typed</em> parameter, method arguments will be mapped one-by-one to closure
+parameters:<span class="footnote">[<a id="_footnoteref_3" class="footnote" href="#_footnote_3" title="View footnote.">3</a>]</span></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">subscriber.receive(_) &gt;&gt; { <span class="predefined-type">String</span> message -&gt; message.size() &gt; <span class="integer">3</span> ? <span class="string"><span class="delimiter">&quot;</span><span class="content">ok</span><span class="delimiter">&quot;</span></span> : <span class="string"><span class="delimiter">&quot;</span><span class="content">fail</span><span class="delimiter">&quot;</span></span> }</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This response generator behaves the same as the previous one, but is arguably more readable.</p>
+</div>
+<div class="paragraph">
+<p>If you find yourself in need of more information about a method invocation than its arguments, have a look at
+<code>org.spockframework.mock.IMockInvocation</code>. All methods declared in this interface are available inside the closure,
+without a need to prefix them. (In Groovy terminology, the closure <em>delegates</em> to an instance of <code>IMockInvocation</code>.)</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_performing_side_effects">Performing Side Effects</h3>
+<div class="paragraph">
+<p>Sometimes you may want to do more than just computing a return value. A typical example is
+throwing an exception. Again, closures come to the rescue:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">subscriber.receive(_) &gt;&gt; { <span class="keyword">throw</span> <span class="keyword">new</span> <span class="exception">InternalError</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">ouch</span><span class="delimiter">&quot;</span></span>) }</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Of course, the closure can contain more code, for example a <code>println</code> statement. It
+will get executed every time an incoming invocation matches the interaction.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_chaining_method_responses">Chaining Method Responses</h3>
+<div class="paragraph">
+<p>Method responses can be chained:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">subscriber.receive(_) &gt;&gt;&gt; [<span class="string"><span class="delimiter">&quot;</span><span class="content">ok</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">fail</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">ok</span><span class="delimiter">&quot;</span></span>] &gt;&gt; { <span class="keyword">throw</span> <span class="keyword">new</span> <span class="exception">InternalError</span>() } &gt;&gt; <span class="string"><span class="delimiter">&quot;</span><span class="content">ok</span><span class="delimiter">&quot;</span></span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This will return <code>"ok", "fail", "ok"</code> for the first three invocations, throw <code>InternalError</code>
+for the fourth invocations, and return <code>ok</code> for any further invocation.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_combining_mocking_and_stubbing">Combining Mocking and Stubbing</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Mocking and stubbing go hand-in-hand:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="integer">1</span> * subscriber.receive(<span class="string"><span class="delimiter">&quot;</span><span class="content">message1</span><span class="delimiter">&quot;</span></span>) &gt;&gt; <span class="string"><span class="delimiter">&quot;</span><span class="content">ok</span><span class="delimiter">&quot;</span></span>
+<span class="integer">1</span> * subscriber.receive(<span class="string"><span class="delimiter">&quot;</span><span class="content">message2</span><span class="delimiter">&quot;</span></span>) &gt;&gt; <span class="string"><span class="delimiter">&quot;</span><span class="content">fail</span><span class="delimiter">&quot;</span></span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>When mocking and stubbing the same method call, they have to happen in the same interaction.
+In particular, the following Mockito-style splitting of stubbing and mocking into two separate
+statements will <em>not</em> work:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="key">setup</span>:
+subscriber.receive(<span class="string"><span class="delimiter">&quot;</span><span class="content">message1</span><span class="delimiter">&quot;</span></span>) &gt;&gt; <span class="string"><span class="delimiter">&quot;</span><span class="content">ok</span><span class="delimiter">&quot;</span></span>
+
+<span class="key">when</span>:
+publisher.send(<span class="string"><span class="delimiter">&quot;</span><span class="content">message1</span><span class="delimiter">&quot;</span></span>)
+
+<span class="key">then</span>:
+<span class="integer">1</span> * subscriber.receive(<span class="string"><span class="delimiter">&quot;</span><span class="content">message1</span><span class="delimiter">&quot;</span></span>)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>As explained in <a href="#_where_to_declare_interactions">Where to Declare Interactions</a>, the <code>receive</code> call will first get matched against
+the interaction in the <code>then:</code> block. Since that interaction doesn&#8217;t specify a response, the default
+value for the method&#8217;s return type (<code>null</code> in this case) will be returned. (This is just another
+facet of Spock&#8217;s lenient approach to mocking.). Hence, the interaction in the <code>setup:</code> block will never
+get a chance to match.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+Mocking and stubbing of the same method call has to happen in the same interaction.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="OtherKindsOfMockObjects">Other Kinds of Mock Objects (New in 0.7)</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>So far, we have created mock objects with the <code>MockingApi.Mock</code> method. Aside from
+this method, the <code>MockingApi</code> class provides a couple of other factory methods for creating
+more specialized kinds of mock objects.</p>
+</div>
+<div class="sect2">
+<h3 id="Stubs">Stubs</h3>
+<div class="paragraph">
+<p>A <em>stub</em> is created with the <code>MockingApi.Stub</code> factory method:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> subscriber = <span class="predefined-type">Stub</span>(Subscriber)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Whereas a mock can be used both for stubbing and mocking, a stub can only be used for stubbing.
+Limiting a collaborator to a stub communicates its role to the readers of the specification.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+If a stub invocation matches a <em>mandatory</em> interaction (like <code>1 * foo.bar()</code>), an <code>InvalidSpecException</code> is thrown.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Like a mock, a stub allows unexpected invocations. However, the values returned by a stub in such cases are more ambitious:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>For primitive types, the primitive type&#8217;s default value is returned.</p>
+</li>
+<li>
+<p>For non-primitive numerical values (such as <code>BigDecimal</code>), zero is returned.</p>
+</li>
+<li>
+<p>For non-numerical values, an "empty" or "dummy" object is returned. This could mean an empty String, an empty collection,
+an object constructed from its default constructor, or another stub returning default values.
+See class <code>org.spockframework.mock.EmptyOrDummyResponse</code> for the details.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>A stub often has a fixed set of interactions, which makes
+<a href="#declaring-interactions-at-creation-time">declaring interactions at mock creation time</a> particularly attractive::</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> subscriber = <span class="predefined-type">Stub</span>(Subscriber) {
+    receive(<span class="string"><span class="delimiter">&quot;</span><span class="content">message1</span><span class="delimiter">&quot;</span></span>) &gt;&gt; <span class="string"><span class="delimiter">&quot;</span><span class="content">ok</span><span class="delimiter">&quot;</span></span>
+    receive(<span class="string"><span class="delimiter">&quot;</span><span class="content">message2</span><span class="delimiter">&quot;</span></span>) &gt;&gt; <span class="string"><span class="delimiter">&quot;</span><span class="content">fail</span><span class="delimiter">&quot;</span></span>
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="Spies">Spies</h3>
+<div class="paragraph">
+<p>(Think twice before using this feature. It might be better to change the design of the code under specification.)</p>
+</div>
+<div class="paragraph">
+<p>A <em>spy</em> is created with the <code>MockingApi.Spy</code> factory method:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> subscriber = Spy(SubscriberImpl, <span class="key">constructorArgs</span>: [<span class="string"><span class="delimiter">&quot;</span><span class="content">Fred</span><span class="delimiter">&quot;</span></span>])</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>A spy is always based on a real object. Hence you must provide a class type rather
+than an interface type, along with any constructor arguments for the type.
+If no constructor arguments are provided, the type&#8217;s default constructor will be used.</p>
+</div>
+<div class="paragraph">
+<p>Method calls on a spy are automatically delegated to the real object. Likewise, values
+returned from the real object&#8217;s methods are passed back to the caller via the spy.</p>
+</div>
+<div class="paragraph">
+<p>After creating a spy, you can listen in on the conversation between the caller and the real object underlying the spy:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="integer">1</span> * subscriber.receive(_)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Apart from making sure that <code>receive</code> gets called exactly once,
+the conversation between the publisher and the <code>SubscriberImpl</code> instance underlying the spy remains unaltered.</p>
+</div>
+<div class="paragraph">
+<p>When stubbing a method on a spy, the real method no longer gets called:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">subscriber.receive(_) &gt;&gt; <span class="string"><span class="delimiter">&quot;</span><span class="content">ok</span><span class="delimiter">&quot;</span></span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Instead of calling <code>SubscriberImpl.receive</code>, the <code>receive</code> method will now simply return <code>"ok"</code>.</p>
+</div>
+<div class="paragraph">
+<p>Sometimes, it is desirable to both execute some code <em>and</em> delegate to the real method:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">subscriber.receive(_) &gt;&gt; { <span class="predefined-type">String</span> message -&gt; callRealMethod(); message.size() &gt; <span class="integer">3</span> ? <span class="string"><span class="delimiter">&quot;</span><span class="content">ok</span><span class="delimiter">&quot;</span></span> : <span class="string"><span class="delimiter">&quot;</span><span class="content">fail</span><span class="delimiter">&quot;</span></span> }</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Here we use <code>callRealMethod()</code> to delegate the method invocation to the real object.
+Note that we don&#8217;t have to pass the <code>message</code> argument along; this is taken care of automatically. <code>callRealMethod()</code>
+returns the real invocation&#8217;s result, but in this example we opted to return our own result instead.
+If we had wanted to pass a different message to the real method, we could have used <code>callRealMethodWithArgs("changed message")</code>.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="PartialMocks">Partial Mocks</h3>
+<div class="paragraph">
+<p>(Think twice before using this feature. It might be better to change the design of the code under specification.)</p>
+</div>
+<div class="paragraph">
+<p>Spies can also be used as partial mocks:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="comment">// this is now the object under specification, not a collaborator</span>
+<span class="keyword">def</span> persister = Spy(MessagePersister) {
+  <span class="comment">// stub a call on the same object</span>
+  isPersistable(_) &gt;&gt; <span class="predefined-constant">true</span>
+}
+
+<span class="key">when</span>:
+persister.receive(<span class="string"><span class="delimiter">&quot;</span><span class="content">msg</span><span class="delimiter">&quot;</span></span>)
+
+<span class="key">then</span>:
+<span class="comment">// demand a call on the same object</span>
+<span class="integer">1</span> * persister.persist(<span class="string"><span class="delimiter">&quot;</span><span class="content">msg</span><span class="delimiter">&quot;</span></span>)</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="GroovyMocks">Groovy Mocks (New in 0.7)</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>So far, all the mocking features we have seen work the same no matter if the calling code is written in Java or Groovy.
+By leveraging Groovy&#8217;s dynamic capabilities, Groovy mocks offer some additional features specifically for testing Groovy code.
+They are created with the <code>MockingApi.GroovyMock()</code>, <code>MockingApi.GroovyStub()</code>, and <code>MockingApi.GroovySpy()</code> factory methods.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Tip</div>
+</td>
+<td class="content">
+When Should Groovy Mocks be Favored over Regular Mocks?
+Groovy mocks should be used when the code under specification is written in Groovy <em>and</em> some of the unique Groovy
+mock features are needed. When called from Java code, Groovy mocks will behave like regular mocks. Note that it
+isn&#8217;t necessary to use a Groovy mock merely because the code under specification and/or mocked type is written
+in Groovy. Unless you have a concrete reason to use a Groovy mock, prefer a regular mock.
+</td>
+</tr>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_mocking_dynamic_methods">Mocking Dynamic Methods</h3>
+<div class="paragraph">
+<p>All Groovy mocks implement the <code>GroovyObject</code> interface. They support the mocking and stubbing of
+dynamic methods as if they were physically declared methods:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> subscriber = GroovyMock(Subscriber)
+
+<span class="integer">1</span> * subscriber.someDynamicMethod(<span class="string"><span class="delimiter">&quot;</span><span class="content">hello</span><span class="delimiter">&quot;</span></span>)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="MockingAllInstancesOfAType">Mocking All Instances of a Type</h3>
+<div class="paragraph">
+<p>(Think twice before using this feature. It might be better to change the design of the code under specification.)</p>
+</div>
+<div class="paragraph">
+<p>Usually, Groovy mocks need to be injected into the code under specification just like regular mocks.
+However, when a Groovy mock is created as <em>global</em>, it automagically replaces all real instances
+of the mocked type for the duration of the feature method:<span class="footnote">[<a id="_footnoteref_4" class="footnote" href="#_footnote_4" title="View footnote.">4</a>]</span></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> publisher = <span class="keyword">new</span> Publisher()
+publisher &lt;&lt; <span class="keyword">new</span> RealSubscriber() &lt;&lt; <span class="keyword">new</span> RealSubscriber()
+
+<span class="keyword">def</span> anySubscriber = GroovyMock(RealSubscriber, <span class="key">global</span>: <span class="predefined-constant">true</span>)
+
+<span class="key">when</span>:
+publisher.publish(<span class="string"><span class="delimiter">&quot;</span><span class="content">message</span><span class="delimiter">&quot;</span></span>)
+
+<span class="key">then</span>:
+<span class="integer">2</span> * anySubscriber.receive(<span class="string"><span class="delimiter">&quot;</span><span class="content">message</span><span class="delimiter">&quot;</span></span>)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Here, we set up the publisher with two instances of a real subscriber implementation.
+Then we create a global mock of the <em>same</em> type. This reroutes all method calls on the
+real subscribers to the mock object. The mock object&#8217;s instance isn&#8217;t ever passed to the publisher;
+it is only used to describe the interaction.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+A global mock can only be created for a class type. It effectively replaces
+all instances of that type for the duration of the feature method.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Since global mocks have a somewhat, well, global effect, it&#8217;s often convenient
+to use them together with <code>GroovySpy</code>. This leads to the real code getting
+executed <em>unless</em> an interaction matches, allowing you to selectively listen
+in on objects and change their behavior just where needed.</p>
+</div>
+<div class="sidebarblock">
+<div class="content">
+<div class="title">How Are Global Groovy Mocks Implemented?</div>
+<div class="paragraph">
+<p>Global Groovy mocks get their super powers from Groovy meta-programming. To be more precise,
+every globally mocked type is assigned a custom meta class for the duration of the feature method.
+Since a global Groovy mock is still based on a CGLIB proxy, it will retain its general mocking capabilities
+(but not its super powers) when called from Java code.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="MockingConstructors">Mocking Constructors</h3>
+<div class="paragraph">
+<p>(Think twice before using this feature. It might be better to change the design of the code under specification.)</p>
+</div>
+<div class="paragraph">
+<p>Global mocks support mocking of constructors:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> anySubscriber = GroovySpy(RealSubscriber, <span class="key">global</span>: <span class="predefined-constant">true</span>)
+
+<span class="integer">1</span> * <span class="keyword">new</span> RealSubscriber(<span class="string"><span class="delimiter">&quot;</span><span class="content">Fred</span><span class="delimiter">&quot;</span></span>)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Since we are using a spy, the object returned from the constructor call remains unchanged.
+To change which object gets constructed, we can stub the constructor:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">new</span> RealSubscriber(<span class="string"><span class="delimiter">&quot;</span><span class="content">Fred</span><span class="delimiter">&quot;</span></span>) &gt;&gt; <span class="keyword">new</span> RealSubscriber(<span class="string"><span class="delimiter">&quot;</span><span class="content">Barney</span><span class="delimiter">&quot;</span></span>)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Now, whenever some code tries to construct a subscriber named Fred, we&#8217;ll construct
+a subscriber named Barney instead.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_mocking_static_methods">Mocking Static Methods</h3>
+<div class="paragraph">
+<p>(Think twice before using this feature. It might be better to change the design of the code under specification.)</p>
+</div>
+<div class="paragraph">
+<p>Global mocks support mocking and stubbing of static methods:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> anySubscriber = GroovySpy(RealSubscriber, <span class="key">global</span>: <span class="predefined-constant">true</span>)
+
+<span class="integer">1</span> * RealSubscriber.someStaticMethod(<span class="string"><span class="delimiter">&quot;</span><span class="content">hello</span><span class="delimiter">&quot;</span></span>) &gt;&gt; <span class="integer">42</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The same works for dynamic static methods.</p>
+</div>
+<div class="paragraph">
+<p>When a global mock is used solely for mocking constructors and static methods,
+the mock&#8217;s instance isn&#8217;t really needed. In such a case one can just write:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">GroovySpy(RealSubscriber, <span class="key">global</span>: <span class="predefined-constant">true</span>)</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_advanced_features_new_in_0_7">Advanced Features (New in 0.7)</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Most of the time you shouldn&#8217;t need these features. But if you do, you&#8217;ll be glad to have them.</p>
+</div>
+<div class="sect2">
+<h3 id="ALaCarteMocks">A la Carte Mocks</h3>
+<div class="paragraph">
+<p>At the end of the day, the <code>Mock()</code>, <code>Stub()</code>, and <code>Spy()</code> factory methods are just canned ways to
+create mock objects with a certain configuration. If you want more fine-grained control over a mock&#8217;s configuration,
+have a look at the <code>org.spockframework.mock.IMockConfiguration</code> interface. All properties of this interface
+footnoote:[Because mock configurations are immutable, the interface contains just the properties' getters.]
+can be passed as named arguments to the <code>Mock()</code> method. For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> person = Mock(<span class="key">name</span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">Fred</span><span class="delimiter">&quot;</span></span>, <span class="key">type</span>: Person, <span class="key">defaultResponse</span>: ZeroOrNullResponse, <span class="key">verified</span>: <span class="predefined-constant">false</span>)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Here, we create a mock whose default return values match those of a <code>Mock()</code>, but whose invocations aren&#8217;t
+verified (as for a <code>Stub()</code>). Instead of passing <code>ZeroOrNullResponse</code>, we could have supplied our own custom
+<code>org.spockframework.mock.IDefaultResponse</code> for responding to unexpected method invocations.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="DetectingMockObjects">Detecting Mock Objects</h3>
+<div class="paragraph">
+<p>To find out whether a particular object is a Spock mock object, use a <code>org.spockframework.mock.MockDetector</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> detector = <span class="keyword">new</span> MockDetector()
+<span class="keyword">def</span> list1 = <span class="type">[]</span>
+<span class="keyword">def</span> list2 = Mock(<span class="predefined-type">List</span>)
+
+<span class="key">expect</span>:
+!detector.isMock(list1)
+detector.isMock(list2)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>A detector can also be used to get more information about a mock object:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> mock = detector.asMock(list2)
+
+<span class="key">expect</span>:
+mock.name == <span class="string"><span class="delimiter">&quot;</span><span class="content">list2</span><span class="delimiter">&quot;</span></span>
+mock.type == <span class="predefined-type">List</span>
+mock.nature == MockNature.MOCK</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_further_reading">Further Reading</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>If you would like to dive deeper into interaction-based testing, we recommend the following resources:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><a href="http://www.ccs.neu.edu/research/demeter/related-work/extreme-programming/MockObjectsFinal.PDF">Endo-Testing: Unit Testing with Mock Objects</a></dt>
+<dd>
+<p>Paper from the XP2000 conference that introduces the concept of mock objects.</p>
+</dd>
+<dt class="hdlist1"><a href="http://www.jmock.org/oopsla2004.pdf">Mock Roles, not Objects</a></dt>
+<dd>
+<p>Paper from the OOPSLA2004 conference that explains how to do mocking <em>right</em>.</p>
+</dd>
+<dt class="hdlist1"><a href="http://martinfowler.com/articles/mocksArentStubs.html">Mocks Aren&#8217;t Stubs</a></dt>
+<dd>
+<p>Martin Fowler&#8217;s take on mocking.</p>
+</dd>
+<dt class="hdlist1"><a href="http://www.growing-object-oriented-software.com">Growing Object-Oriented Software Guided by Tests</a></dt>
+<dd>
+<p>TDD pioneers Steve Freeman and Nat Pryce explain in detail how test-driven development and mocking work in the real world.</p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+</div>
+<div id="footnotes">
+<hr>
+<div class="footnote" id="_footnote_1">
+<a href="#_footnoteref_1">1</a>. For additional ways to create mock objects, see <a href="#OtherKindsOfMockObjects">Other Kinds of Mock Objects (New in 0.7)</a> and <a href="#ALaCarteMocks">A la Carte Mocks</a>.
+</div>
+<div class="footnote" id="_footnote_2">
+<a href="#_footnoteref_2">2</a>. The <code>subscriber</code> variable cannot be referenced from the closure because it is being declared as part of the same statement.
+</div>
+<div class="footnote" id="_footnote_3">
+<a href="#_footnoteref_3">3</a>. The destructuring semantics for closure arguments come straight from Groovy.
+</div>
+<div class="footnote" id="_footnote_4">
+<a href="#_footnoteref_4">4</a>. You may know this behavior from Groovy&#8217;s <a href="http://docs.groovy-lang.org/docs/groovy-2.4.1/html/gapi/groovy/mock/interceptor/MockFor.html">MockFor</a> and <a href="http://docs.groovy-lang.org/docs/groovy-2.4.1/html/gapi/groovy/mock/interceptor/StubFor.html">StubFor</a> facilities.
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2015-03-02 11:42:41 UTC
+</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 1.5.2">
+<title>Data Driven Testing</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400">
+<link rel="stylesheet" href="./asciidoctor.css">
+<link rel="stylesheet" href="./coderay-asciidoctor.css">
+</head>
+<body class="article">
+<div id="header">
+<h1>Data Driven Testing</h1>
+</div>
+<div id="content">
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>Oftentimes, it is useful to exercise the same test code multiple times, with varying inputs and expected results.
+Spock&#8217;s data driven testing support makes this a first class feature.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_introduction">Introduction</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Suppose we want to specify the behavior of the Math.max method:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="type">class</span> <span class="class">MathSpec</span> <span class="directive">extends</span> Specification {
+    <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">maximum of two numbers</span><span class="delimiter">&quot;</span></span>() {
+        <span class="key">expect</span>:
+        <span class="comment">// exercise math method for a few different inputs</span>
+        <span class="predefined-type">Math</span>.max(<span class="integer">1</span>, <span class="integer">3</span>) == <span class="integer">3</span>
+        <span class="predefined-type">Math</span>.max(<span class="integer">7</span>, <span class="integer">4</span>) == <span class="integer">7</span>
+        <span class="predefined-type">Math</span>.max(<span class="integer">0</span>, <span class="integer">0</span>) == <span class="integer">0</span>
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Although this approach is fine in simple cases like this one, it has some potential drawbacks:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Code and data are mixed and cannot easily be changed independently</p>
+</li>
+<li>
+<p>Data cannot easily be auto-generated or fetched from external sources</p>
+</li>
+<li>
+<p>In order to exercise the same code multiple times, it either has to be duplicated or extracted into a separate method</p>
+</li>
+<li>
+<p>In case of a failure, it may not be immediately clear which inputs caused the failure</p>
+</li>
+<li>
+<p>Exercising the same code multiple times does not benefit from the same isolation as executing separate methods does</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Spock&#8217;s data-driven testing support tries to address these concerns. To get started, let&#8217;s refactor above code into a
+data-driven feature method. First, we introduce three method parameters (called <em>data variables</em>) that replace the
+hard-coded integer values:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="type">class</span> <span class="class">MathSpec</span> <span class="directive">extends</span> Specification {
+    <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">maximum of two numbers</span><span class="delimiter">&quot;</span></span>(<span class="type">int</span> a, <span class="type">int</span> b, <span class="type">int</span> c) {
+        <span class="key">expect</span>:
+        <span class="predefined-type">Math</span>.max(a, b) == c
+
+        ...
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>We have finished the test logic, but still need to supply the data values to be used. This is done in a where: block,
+which always comes at the end of the method. In the simplest (and most common) case, the where: block holds a <em>data table</em>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="data-tables">Data Tables</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Data tables are a convenient way to exercise a feature method with a fixed set of data values:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="type">class</span> <span class="class">Math</span> <span class="directive">extends</span> Specification {
+    <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">maximum of two numbers</span><span class="delimiter">&quot;</span></span>(<span class="type">int</span> a, <span class="type">int</span> b, <span class="type">int</span> c) {
+        <span class="key">expect</span>:
+        <span class="predefined-type">Math</span>.max(a, b) == c
+
+        <span class="key">where</span>:
+        a | b | c
+        <span class="integer">1</span> | <span class="integer">3</span> | <span class="integer">3</span>
+        <span class="integer">7</span> | <span class="integer">4</span> | <span class="integer">4</span>
+        <span class="integer">0</span> | <span class="integer">0</span> | <span class="integer">0</span>
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The first line of the table, called the <em>table header</em>, declares the data variables. The subsequent lines, called
+<em>table rows</em>, hold the corresponding values. For each row, the feature method will get executed once; we call this an
+<em>iteration</em> of the method. If an iteration fails, the remaining iterations will nevertheless be executed. All
+failures will be reported.</p>
+</div>
+<div class="paragraph">
+<p>Data tables must have at least two columns. A single-column table can be written as:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="key">where</span>:
+a | _
+<span class="integer">1</span> | _
+<span class="integer">7</span> | _
+<span class="integer">0</span> | _</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_isolated_execution_of_iterations">Isolated Execution of Iterations</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Iterations are isolated from each other in the same way as separate feature methods. Each iteration gets its own instance
+of the specification class, and the <code>setup</code> and <code>cleanup</code> methods will be called before and after each iteration,
+respectively.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_sharing_of_objects_between_iterations">Sharing of Objects between Iterations</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In order to share an object between iterations, it has to be kept in a <code>@Shared</code> or static field.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+Only <code>@Shared</code> and static variables can be accessed from within a <code>where:</code> block.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Note that such objects will also be shared with other methods. There is currently no good way to share an object
+just between iterations of the same method. If you consider this a problem, consider putting each method into a separate
+spec, all of which can be kept in the same file. This achieves better isolation at the cost of some boilerplate code.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_syntactic_variations">Syntactic Variations</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The previous code can be tweaked in a few ways. First, since the <code>where:</code> block already declares all data variables, the
+method parameters can be omitted.<span class="footnote">[<a id="_footnoteref_1" class="footnote" href="#_footnote_1" title="View footnote.">1</a>]</span>
+Second, inputs and expected outputs can be separated with a double pipe symbol (<code>||</code>) to visually set them apart.
+With this, the code becomes:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="type">class</span> <span class="class">DataDriven</span> <span class="directive">extends</span> Specification {
+    <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">maximum of two numbers</span><span class="delimiter">&quot;</span></span>() {
+        <span class="key">expect</span>:
+        <span class="predefined-type">Math</span>.max(a, b) == c
+
+        <span class="key">where</span>:
+        a | b || c
+        <span class="integer">3</span> | <span class="integer">5</span> || <span class="integer">5</span>
+        <span class="integer">7</span> | <span class="integer">0</span> || <span class="integer">7</span>
+        <span class="integer">0</span> | <span class="integer">0</span> || <span class="integer">0</span>
+    }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_reporting_of_failures">Reporting of Failures</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Let&#8217;s assume that our implementation of the <code>max</code> method has a flaw, and one of the iterations fails:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">maximum of two numbers   FAILED
+
+<span class="predefined-type">Condition</span> not <span class="key">satisfied</span>:
+
+<span class="predefined-type">Math</span>.max(a, b) == c
+    |    |  |  |  |
+    |    <span class="integer">7</span>  <span class="integer">0</span>  |  <span class="integer">7</span>
+    <span class="integer">42</span>         <span class="predefined-constant">false</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The obvious question is: Which iteration failed, and what are its data values? In our example, it isn&#8217;t hard to figure
+out that it&#8217;s the second iteration that failed. At other times this can be more difficult or even impossible.
+<span class="footnote">[<a id="_footnoteref_2" class="footnote" href="#_footnote_2" title="View footnote.">2</a>]</span>
+In any case, it would be nice if Spock made it loud and clear which iteration failed, rather than just reporting the
+failure. This is the purpose of the <code>@Unroll</code> annotation.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_method_unrolling">Method Unrolling</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>A method annotated with <code>@Unroll</code> will have its iterations reported independently:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@Unroll</span>
+<span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">maximum of two numbers</span><span class="delimiter">&quot;</span></span>() { ... }</code></pre>
+</div>
+</div>
+<div class="sidebarblock">
+<div class="content">
+<div class="title">Why isn&#8217;t <code>@Unroll</code> the default?</div>
+<div class="paragraph">
+<p>One reason why <code>@Unroll</code> isn&#8217;t the default is that some execution environments (in particular IDEs) expect to be
+told the number of test methods in advance, and have certain problems if the actual number varies. Another reason
+is that <code>@Unroll</code> can drastically change the number of reported tests, which may not always be desirable.</p>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>Note that unrolling has no effect on how the method gets executed; it is only an alternation in reporting.
+Depending on the execution environment, the output will look something like:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>maximum of two numbers[0]   PASSED
+maximum of two numbers[1]   FAILED
+
+Math.max(a, b) == c
+    |    |  |  |  |
+    |    7  0  |  7
+    42         false
+
+maximum of two numbers[2]   PASSED</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This tells us that the second iteration (with index 1) failed. With a bit of effort, we can do even better:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@Unroll</span>
+<span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">maximum of #a and #b is #c</span><span class="delimiter">&quot;</span></span>() { ... }</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This method name uses placeholders, denoted by a leading hash sign (<code>#</code>), to refer to data variables <code>a</code>, <code>b</code>,
+and <code>c</code>. In the output, the placeholders will be replaced with concrete values:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>maximum of 3 and 5 is 5   PASSED
+maximum of 7 and 0 is 7   FAILED
+
+Math.max(a, b) == c
+    |    |  |  |  |
+    |    7  0  |  7
+    42         false
+
+maximum of 0 and 0 is 0   PASSED</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Now we can tell at a glance that the <code>max</code> method failed for inputs <code>7</code> and <code>0</code>. See <a href="#_more_on_unrolled_method_names">More on Unrolled Method Names</a>
+for further details on this topic.</p>
+</div>
+<div class="paragraph">
+<p>The <code>@Unroll</code> annotation can also be placed on a spec. This has the same effect as placing it on each data-driven
+feature method of the spec.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_data_pipes">Data Pipes</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Data tables aren&#8217;t the only way to supply values to data variables. In fact, a data table is just syntactic sugar for
+one or more <em>data pipes</em>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">...
+where:
+a &lt;&lt; [<span class="integer">3</span>, <span class="integer">7</span>, <span class="integer">0</span>]
+b &lt;&lt; [<span class="integer">5</span>, <span class="integer">0</span>, <span class="integer">0</span>]
+c &lt;&lt; [<span class="integer">5</span>, <span class="integer">7</span>, <span class="integer">0</span>]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>A data pipe, indicated by the left-shift (<code>&lt;&lt;</code>) operator, connects a data variable to a <em>data provider</em>. The data
+provider holds all values for the variable, one per iteration. Any object that Groovy knows how to iterate over can be
+used as a data provider. This includes objects of type <code>Collection</code>, <code>String</code>, <code>Iterable</code>, and objects implementing the
+<code>Iterable</code> contract. Data providers don&#8217;t necessarily have to <em>be</em> the data (as in the case of a <code>Collection</code>);
+they can fetch data from external sources like text files, databases and spreadsheets, or generate data randomly.
+Data providers are queried for their next value only when needed (before the next iteration).</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_multi_variable_data_pipes">Multi-Variable Data Pipes</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>If a data provider returns multiple values per iteration (as an object that Groovy knows how to iterate over),
+it can be connected to multiple data variables simultaneously. The syntax is somewhat similar to Groovy multi-assignment
+but uses brackets instead of parentheses on the left-hand side:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@Shared</span> sql = Sql.newInstance(<span class="string"><span class="delimiter">&quot;</span><span class="content">jdbc:h2:mem:</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">org.h2.Driver</span><span class="delimiter">&quot;</span></span>)
+
+<span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">maximum of two numbers</span><span class="delimiter">&quot;</span></span>() {
+    ...
+    where:
+    [a, b, c] &lt;&lt; sql.rows(<span class="string"><span class="delimiter">&quot;</span><span class="content">select a, b, c from maxdata</span><span class="delimiter">&quot;</span></span>)
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Data values that aren&#8217;t of interest can be ignored with an underscore (<code>_</code>):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">...
+where:
+[a, b, _, c] &lt;&lt; sql.rows(<span class="string"><span class="delimiter">&quot;</span><span class="content">select * from maxdata</span><span class="delimiter">&quot;</span></span>)</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_data_variable_assignment">Data Variable Assignment</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>A data variable can be directly assigned a value:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">...
+where:
+a = <span class="integer">3</span>
+b = <span class="predefined-type">Math</span>.random() * <span class="integer">100</span>
+c = a &gt; b ? a : b</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Assignments are re-evaluated for every iteration. As already shown above, the right-hand side of an assignment may refer
+to other data variables:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">...
+where:
+row &lt;&lt; sql.rows(<span class="string"><span class="delimiter">&quot;</span><span class="content">select * from maxdata</span><span class="delimiter">&quot;</span></span>)
+<span class="comment">// pick apart columns</span>
+a = row.a
+b = row.b
+c = row.c</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_combining_data_tables_data_pipes_and_variable_assignments">Combining Data Tables, Data Pipes, and Variable Assignments</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Data tables, data pipes, and variable assignments can be combined as needed:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">...
+where:
+a | _
+<span class="integer">3</span> | _
+<span class="integer">7</span> | _
+<span class="integer">0</span> | _
+
+b &lt;&lt; [<span class="integer">5</span>, <span class="integer">0</span>, <span class="integer">0</span>]
+
+c = a &gt; b ? a : b</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_number_of_iterations">Number of Iterations</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The number of iterations depends on how much data is available. Successive executions of the same method can
+yield different numbers of iterations. If a data provider runs out of values sooner than its peers, an exception will occur.
+Variable assignments don&#8217;t affect the number of iterations. A <code>where:</code> block that only contains assignments yields
+exactly one iteration.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_closing_of_data_providers">Closing of Data Providers</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>After all iterations have completed, the zero-argument <code>close</code> method is called on all data providers that have
+such a method.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_more_on_unrolled_method_names">More on Unrolled Method Names</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>An unrolled method name is similar to a Groovy <code>GString</code>, except for the following differences:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Expressions are denoted with <code>#</code> instead of <code>$</code> <span class="footnote">[<a id="_footnoteref_3" class="footnote" href="#_footnote_3" title="View footnote.">3</a>]</span>,
+and there is no equivalent for the <code>${&#8230;&#8203;}</code> syntax.</p>
+</li>
+<li>
+<p>Expressions only support property access and zero-arg method calls.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Given a class <code>Person</code> with properties <code>name</code> and <code>age</code>, and a data variable <code>person</code> of type <code>Person</code>, the
+following are valid method names:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">#person is #person.age years old</span><span class="delimiter">&quot;</span></span>() { ... } <span class="comment">// property access</span>
+<span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">#person.name.toUpperCase()</span><span class="delimiter">&quot;</span></span>() { ... } <span class="comment">// zero-arg method call</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Non-string values (like <code>#person</code> above) are converted to Strings according to Groovy semantics.</p>
+</div>
+<div class="paragraph">
+<p>The following are invalid method names:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">#person.name.split(' ')[1]</span><span class="delimiter">&quot;</span></span> { ... } <span class="comment">// cannot have method arguments</span>
+<span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">#person.age / 2</span><span class="delimiter">&quot;</span></span> { ... } <span class="comment">// cannot use operators</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If necessary, additional data variables can be introduced to hold more complex expression:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">#lastName</span><span class="delimiter">&quot;</span></span>() {
+    ...
+    where:
+    person &lt;&lt; ...
+    lastName = person.name.split(<span class="string"><span class="delimiter">'</span><span class="content"> </span><span class="delimiter">'</span></span>)[<span class="integer">1</span>]
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="footnotes">
+<hr>
+<div class="footnote" id="_footnote_1">
+<a href="#_footnoteref_1">1</a>. The idea behind allowing method parameters is to enable better IDE support. However, recent versions of IntelliJ IDEA recognize data variables automatically, and even infer their types from the values contained in the data table.
+</div>
+<div class="footnote" id="_footnote_2">
+<a href="#_footnoteref_2">2</a>. For example, a feature method could use data variables in its <code>setup:</code> block, but not in any conditions.
+</div>
+<div class="footnote" id="_footnote_3">
+<a href="#_footnoteref_3">3</a>. Groovy syntax does not allow dollar signs in method names.
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2015-03-02 11:42:41 UTC
+</div>
+</div>
+</body>
+</html>

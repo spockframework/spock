@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 1.5.2">
+<title>Migration Guide</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400">
+<link rel="stylesheet" href="./asciidoctor.css">
+<link rel="stylesheet" href="./coderay-asciidoctor.css">
+</head>
+<body class="article">
+<div id="header">
+<h1>Migration Guide</h1>
+</div>
+<div id="content">
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>This page explains incompatible changes between successive versions and provides suggestions on how to deal with them.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_1_0">1.0</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Specs, Spec base classes and third-party extensions may have be recompiled in order to work with Spock 1.0.</p>
+</div>
+<div class="paragraph">
+<p>JRE 1.5 and Groovy versions below 2.0 are no longer supported.</p>
+</div>
+<div class="paragraph">
+<p>Make sure to pick the right binaries for your Groovy version of choice: <code>groovy-2.0</code> for Groovy 2.0/2.1/2.2,
+<code>groovy-2.3</code> for Groovy 2.3, and <code>groovy-2.4</code> for Groovy 2.4 and higher. Spock won&#8217;t let you run with a "wrong" version.</p>
+</div>
+<div class="paragraph">
+<p>No known source incompatible changes.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_0_7">0.7</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Client code must be recompiled in order to work with Spock 0.7. This includes third-party Spock extensions and base classes.</p>
+</div>
+<div class="paragraph">
+<p>No known source incompatible changes.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_0_6">0.6</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_class_initialization_order">Class initialization order</h3>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+This only affects cases where one specification class inherits from another one.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Given these specifications:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="type">class</span> <span class="class">Base</span> <span class="directive">extends</span> Specification {
+    <span class="keyword">def</span> base1 = <span class="string"><span class="delimiter">&quot;</span><span class="content">base1</span><span class="delimiter">&quot;</span></span>
+    <span class="keyword">def</span> base2
+
+    <span class="keyword">def</span> <span class="function">setup</span>() { base2 = <span class="string"><span class="delimiter">&quot;</span><span class="content">base2</span><span class="delimiter">&quot;</span></span> }
+}
+
+<span class="type">class</span> <span class="class">Derived</span> <span class="directive">extends</span> Base {
+    <span class="keyword">def</span> derived1 = <span class="string"><span class="delimiter">&quot;</span><span class="content">derived1</span><span class="delimiter">&quot;</span></span>
+    <span class="keyword">def</span> derived2
+
+    <span class="keyword">def</span> <span class="function">setup</span>() { derived2 = <span class="string"><span class="delimiter">&quot;</span><span class="content">derived2</span><span class="delimiter">&quot;</span></span> }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In 0.5, above assignments happened in the order <code>base1</code>, <code>base2</code>, <code>derived1</code>, <code>derived2</code>. In other words, field
+initializers were executed right before the setup method in the same class. In 0.6, assignments happen in the order
+<code>base1</code>, <code>derived1</code>, <code>base2</code>, <code>derived2</code>. This is a more conventional order that solves a few problems that users
+faced with the previous behavior, and also allows us to support JUnit&#8217;s new <code>TestRule</code>. As a result of this change,
+the following will no longer work:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="type">class</span> <span class="class">Base</span> <span class="directive">extends</span> Specification {
+    <span class="keyword">def</span> base
+
+    <span class="keyword">def</span> <span class="function">setup</span>() { base = <span class="string"><span class="delimiter">&quot;</span><span class="content">base</span><span class="delimiter">&quot;</span></span> }
+}
+
+<span class="type">class</span> <span class="class">Derived</span> <span class="directive">extends</span> Base {
+    <span class="keyword">def</span> derived = base + <span class="string"><span class="delimiter">&quot;</span><span class="content">derived</span><span class="delimiter">&quot;</span></span> <span class="comment">// base is not yet set</span>
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>To overcome this problem, you can either use a field initializer for <code>base</code>, or move the assignment of <code>derived</code> into
+a setup method.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="__code_unroll_code_naming_pattern_syntax"><code>@Unroll</code> naming pattern syntax</h3>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+This is not a change from 0.5, but a change compared to 0.6-SNAPSHOT.
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+This only affects the Groovy 1.8 and 2.0 variants.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>In 0.5, the naming pattern was string based:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@Unroll</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">maximum of #a and #b is #c</span><span class="delimiter">&quot;</span></span>)
+<span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">maximum of two numbers</span><span class="delimiter">&quot;</span></span>() {
+    <span class="key">expect</span>:
+    <span class="predefined-type">Math</span>.max(a, b) == c
+
+    <span class="key">where</span>:
+    a | b | c
+    <span class="integer">1</span> | <span class="integer">2</span> | <span class="integer">2</span>
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In 0.6-SNAPSHOT, this was changed to a closure returning a <code>GString</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@Unroll</span>({<span class="string"><span class="delimiter">&quot;</span><span class="content">maximum of </span><span class="inline"><span class="inline-delimiter">$</span>a</span><span class="content"> and </span><span class="inline"><span class="inline-delimiter">$</span>b</span><span class="content"> is </span><span class="inline"><span class="inline-delimiter">$</span>c</span><span class="delimiter">&quot;</span></span>})
+<span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">maximum of two numbers</span><span class="delimiter">&quot;</span></span>() { ... }</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>For various reasons, the new syntax didn&#8217;t work out as we had hoped, and eventually we decided to go back to the string
+based syntax. See <a href="#improved-unroll-0.6">Improved <code>@Unroll</code></a> for recent improvements to that syntax.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_hamcrest_matcher_syntax">Hamcrest matcher syntax</h3>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+This only affects users moving from the Groovy 1.7 to the 1.8 or 2.0 variant.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Spock offers a very neat syntax for using <a href="http://code.google.com/p/hamcrest/">Hamcrest</a> matchers:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">import</span> <span class="include">static</span> <span class="include">spock.util.matcher.HamcrestMatchers.closeTo</span>
+
+...
+
+expect:
+answer closeTo(<span class="integer">42</span>, <span class="float">0.001</span>)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Due to changes made between Groovy 1.7 and 1.8, this syntax no longer works in as many cases as it did before.
+For example, the following will no longer work:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="key">expect</span>:
+object.getAnswer() closeTo(<span class="integer">42</span>, <span class="float">0.001</span>)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>To avoid such problems, use <code>HamcrestSupport.that</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">import</span> <span class="include">static</span> <span class="include">spock.util.matcher.HamcrestSupport.that</span>
+
+...
+
+expect:
+that answer, closeTo(<span class="integer">42</span>, <span class="float">0.001</span>)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>A future version of Spock will likely remove the former syntax and strengthen the latter one.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2015-03-02 11:42:41 UTC
+</div>
+</div>
+</body>
+</html>

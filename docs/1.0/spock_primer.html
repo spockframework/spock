@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 1.5.2">
+<title>Spock Primer</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400">
+<link rel="stylesheet" href="./asciidoctor.css">
+<link rel="stylesheet" href="./coderay-asciidoctor.css">
+</head>
+<body class="article">
+<div id="header">
+<h1>Spock Primer</h1>
+</div>
+<div id="content">
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>This chapter assumes that you have a basic knowledge of Groovy and unit testing. If you are a Java developer but haven&#8217;t
+heard about Groovy, don&#8217;t worry - Groovy will feel very familiar to you! In fact, one of Groovy&#8217;s main design goals is to
+be <em>the</em> scripting language alongside Java. So just follow along and consult the
+<a href="http://groovy-lang.org/documentation.html">Groovy documentation</a> whenever you feel like it.</p>
+</div>
+<div class="paragraph">
+<p>The goals of this chapter are to teach you enough Spock to write real-world Spock specifications, and to
+whet your appetite for more.</p>
+</div>
+<div class="paragraph">
+<p>To learn more about Groovy, go to <a href="http://groovy-lang.org/" class="bare">http://groovy-lang.org/</a>.</p>
+</div>
+<div class="paragraph">
+<p>To learn more about unit testing, go to <a href="http://en.wikipedia.org/wiki/Unit_testing" class="bare">http://en.wikipedia.org/wiki/Unit_testing</a>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_terminology">Terminology</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Let&#8217;s start with a few definitions: Spock lets you write <em>specifications</em> that describe expected <em>features</em> (properties,
+aspects) exhibited by a system of interest. The system of interest could be anything between a single class and a whole
+application, and is also called <em>system under specification (SUS)</em>. The description of a feature starts from a specific
+snapshot of the SUS and its collaborators; this snapshot is called the feature&#8217;s <em>fixture</em>.</p>
+</div>
+<div class="paragraph">
+<p>The following sections walk you through all building blocks of which a Spock specification may be composed. A typical
+specification uses only a subset of them.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_imports">Imports</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">import</span> <span class="include">spock.lang.*</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Package <code>spock.lang</code> contains the most important types for writing specifications.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_specification">Specification</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="type">class</span> <span class="class">MyFirstSpecification</span> <span class="directive">extends</span> Specification {
+  <span class="comment">// fields</span>
+  <span class="comment">// fixture methods</span>
+  <span class="comment">// feature methods</span>
+  <span class="comment">// helper methods</span>
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>A specification is represented as a Groovy class that extends from <code>spock.lang.Specification</code>. The name of a specification
+usually relates to the system or system operation described by the specification. For example, <code>CustomerSpec</code>,
+<code>H264VideoPlayback</code>, and <code>ASpaceshipAttackedFromTwoSides</code> are all reasonable names for a specification.</p>
+</div>
+<div class="paragraph">
+<p>Class <code>Specification</code> contains a number of useful methods for writing specifications. Furthermore it instructs JUnit to
+run specification with <code>Sputnik</code>, Spock&#8217;s JUnit runner. Thanks to Sputnik, Spock specifications can be run by most modern
+Java IDEs and build tools.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_fields">Fields</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> obj = <span class="keyword">new</span> ClassUnderSpecification()
+<span class="keyword">def</span> coll = <span class="keyword">new</span> Collaborator()</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Instance fields are a good place to store objects belonging to the specification&#8217;s fixture. It is good practice to
+initialize them right at the point of declaration. (Semantically, this is equivalent to initializing them at the very
+beginning of the <code>setup()</code> method.) Objects stored into instance fields are <em>not</em> shared between feature methods.
+Instead, every feature method gets its own object. This helps to isolate feature methods from each other, which is often
+a desirable goal.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@Shared</span> res = <span class="keyword">new</span> VeryExpensiveResource()</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Sometimes you need to share an object between feature methods. For example, the object might be very expensive to create,
+or you might want your feature methods to interact with each other. To achieve this, declare a <code>@Shared</code> field. Again
+it&#8217;s best to initialize the field right at the point of declaration. (Semantically, this is equivalent to initializing
+the field at the very beginning of the <code>setupSpec()</code> method.)</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="directive">static</span> <span class="directive">final</span> PI = <span class="float">3.141592654</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Static fields should only be used for constants. Otherwise shared fields are preferable, because their semantics with
+respect to sharing are more well-defined.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_fixture_methods">Fixture Methods</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> <span class="function">setup</span>() {}          <span class="comment">// run before every feature method</span>
+<span class="keyword">def</span> <span class="function">cleanup</span>() {}        <span class="comment">// run after every feature method</span>
+<span class="keyword">def</span> <span class="function">setupSpec</span>() {}     <span class="comment">// run before the first feature method</span>
+<span class="keyword">def</span> <span class="function">cleanupSpec</span>() {}   <span class="comment">// run after the last feature method</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Fixture methods are responsible for setting up and cleaning up the environment in which feature methods are run.
+Usually it&#8217;s a good idea to use a fresh fixture for every feature method, which is what the <code>setup()</code> and <code>cleanup()</code>
+methods are for. Occasionally it makes sense for feature methods to share a fixture, which is achieved by using shared
+fields together with the <code>setupSpec()</code> and <code>cleanupSpec()</code> methods. All fixture methods are optional.</p>
+</div>
+<div class="paragraph">
+<p>Note: The <code>setupSpec()</code> and <code>cleanupSpec()</code> methods may not reference instance fields.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_feature_methods">Feature Methods</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">pushing an element on the stack</span><span class="delimiter">&quot;</span></span>() {
+  <span class="comment">// blocks go here</span>
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Feature methods are the heart of a specification. They describe the features (properties, aspects) that you expect to
+find in the system under specification. By convention, feature methods are named with String literals. Try to choose
+good names for your feature methods, and feel free to use any characters you like!</p>
+</div>
+<div class="paragraph">
+<p>Conceptually, a feature method consists of four phases:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Set up the feature&#8217;s fixture</p>
+</li>
+<li>
+<p>Provide a <em>stimulus</em> to the system under specification</p>
+</li>
+<li>
+<p>Describe the <em>response</em> expected from the system</p>
+</li>
+<li>
+<p>Clean up the feature&#8217;s fixture</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Whereas the first and last phases are optional, the stimulus and response phases are always present (except in
+interacting feature methods), and may occur more than once.</p>
+</div>
+<div class="sect2">
+<h3 id="_blocks">Blocks</h3>
+<div class="paragraph">
+<p>Spock has built-in support for implementing each of the conceptual phases of a feature method. To this end, feature
+methods are structured into so-called <em>blocks</em>. Blocks start with a label, and extend to the beginning of the next block,
+or the end of the method. There are six kinds of blocks: <code>setup</code>, <code>when</code>, <code>then</code>, <code>expect</code>, <code>cleanup</code>, and <code>where</code> blocks.
+Any statements between the beginning of the method and the first explicit block belong to an implicit <code>setup</code> block.</p>
+</div>
+<div class="paragraph">
+<p>A feature method must have at least one explicit (i.e. labelled) block - in fact, the presence of an explicit block is
+what makes a method a feature method. Blocks divide a method into distinct sections, and cannot be nested.</p>
+</div>
+<div class="openblock float-group">
+<div class="content">
+<div class="imageblock right text-left">
+<div class="content">
+<img src="images/Blocks2Phases.png" alt="Blocks2Phases">
+</div>
+</div>
+<div class="paragraph">
+<p>The picture on the right shows how blocks map to the conceptual phases of a feature method. The <code>where</code> block has a
+special role, which will be revealed shortly. But first, let&#8217;s have a closer look at the other blocks.</p>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_setup_blocks">Setup Blocks</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="key">setup</span>:
+<span class="keyword">def</span> stack = <span class="keyword">new</span> <span class="predefined-type">Stack</span>()
+<span class="keyword">def</span> elem = <span class="string"><span class="delimiter">&quot;</span><span class="content">push me</span><span class="delimiter">&quot;</span></span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The <code>setup</code> block is where you do any setup work for the feature that you are describing. It may not be preceded by
+other blocks, and may not be repeated. A <code>setup</code> block doesn&#8217;t have any special semantics. The <code>setup:</code> label is
+optional and may be omitted, resulting in an <em>implicit</em> <code>setup</code> block. The <code>given:</code> label is an alias for <code>setup:</code>,
+and sometimes leads to a more readable feature method description (see <a href="#specs-as-doc">Specifications as Documentation</a>).</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_when_and_then_blocks">When and Then Blocks</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="key">when</span>:   <span class="comment">// stimulus</span>
+<span class="key">then</span>:   <span class="comment">// response</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The <code>when</code> and <code>then</code> blocks always occur together. They describe a stimulus and the expected response. Whereas <code>when</code>
+blocks may contain arbitrary code, <code>then</code> blocks are restricted to <em>conditions</em>, <em>exception conditions</em>, <em>interactions</em>,
+and variable definitions. A feature method may contain multiple pairs of <code>when-then</code> blocks.</p>
+</div>
+<div class="sect4">
+<h5 id="_conditions">Conditions</h5>
+<div class="paragraph">
+<p>Conditions describe an expected state, much like JUnit&#8217;s assertions. However, conditions are written as plain boolean
+expressions, eliminating the need for an assertion API. (More precisely, a condition may also produce a non-boolean
+value, which will then be evaluated according to Groovy truth.) Let&#8217;s see some conditions in action:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="key">when</span>:
+stack.push(elem)
+
+<span class="key">then</span>:
+!stack.empty
+stack.size() == <span class="integer">1</span>
+stack.peek() == elem</code></pre>
+</div>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Tip</div>
+</td>
+<td class="content">
+Try to keep the number of conditions per feature method small. One to five conditions is a good guideline. If you
+have more than that, ask yourself if you are specifying multiple unrelated features at once. If the answer is yes,
+break up the feature method in several smaller ones. If your conditions only differ in their values, consider using
+a <a href="data_driven_testing.html#data-tables">data table</a>.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>What kind of feedback does Spock provide if a condition is violated? Let&#8217;s try and change the second condition to
+<code>stack.size() == 2</code>. Here is what we get:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="predefined-type">Condition</span> not <span class="key">satisfied</span>:
+
+stack.size() == <span class="integer">2</span>
+|     |      |
+|     <span class="integer">1</span>      <span class="predefined-constant">false</span>
+[push me]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>As you can see, Spock captures all values produced during the evaluation of a condition, and presents them in an easily
+digestible form. Nice, isn&#8217;t it?</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_implicit_and_explicit_conditions">Implicit and explicit conditions</h5>
+<div class="paragraph">
+<p>Conditions are an essential ingredient of <code>then</code> blocks and <code>expect</code> blocks. Except for calls to <code>void</code> methods and
+expressions classified as interactions, all top-level expressions in these blocks are implicitly treated as conditions.
+To use conditions in other places, you need to designate them with Groovy&#8217;s assert keyword:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> <span class="function">setup</span>() {
+  stack = <span class="keyword">new</span> <span class="predefined-type">Stack</span>()
+  <span class="keyword">assert</span> stack.empty
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If an explicit condition is violated, it will produce the same nice diagnostic message as an implicit condition.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_exception_conditions">Exception Conditions</h5>
+<div class="paragraph">
+<p>Exception conditions are used to describe that a <code>when</code> block should throw an exception. They are defined using the
+<code>thrown()</code> method, passing along the expected exception type. For example, to describe that popping from an empty stack
+should throw an <code>EmptyStackException</code>, you could write the following:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="key">when</span>:
+stack.pop()
+
+<span class="key">then</span>:
+thrown(<span class="exception">EmptyStackException</span>)
+stack.empty</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>As you can see, exception conditions may be followed by other conditions (and even other blocks). This is particularly
+useful for specifying the expected content of an exception. To access the exception, first bind it to a variable:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="key">when</span>:
+stack.pop()
+
+<span class="key">then</span>:
+<span class="keyword">def</span> e = thrown(<span class="exception">EmptyStackException</span>)
+e.cause == <span class="predefined-constant">null</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Alternatively, you may use a slight variation of the above syntax:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="key">when</span>:
+stack.pop()
+
+<span class="key">then</span>:
+<span class="exception">EmptyStackException</span> e = thrown()
+e.cause == <span class="predefined-constant">null</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This syntax has two small advantages: First, the exception variable is strongly typed, making it easier for IDEs to
+offer code completion. Second, the condition reads a bit more like a sentence ("then an EmptyStackException is thrown").
+Note that if no exception type is passed to the <code>thrown()</code> method, it is inferred from the variable type on the left-hand
+side.</p>
+</div>
+<div class="paragraph">
+<p>Sometimes we need to convey that an exception should <strong>not</strong> be thrown. For example, let&#8217;s try to express that a <code>HashMap</code>
+should accept a <code>null</code> key:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">HashMap accepts null key</span><span class="delimiter">&quot;</span></span>() {
+  <span class="key">setup</span>:
+  <span class="keyword">def</span> map = <span class="keyword">new</span> <span class="predefined-type">HashMap</span>()
+  map.put(<span class="predefined-constant">null</span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">elem</span><span class="delimiter">&quot;</span></span>)
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This works but doesn&#8217;t reveal the intention of the code. Did someone just leave the building before he had finished
+implementing this method? After all, where are the conditions? Fortunately, we can do better:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">HashMap accepts null key</span><span class="delimiter">&quot;</span></span>() {
+  <span class="key">setup</span>:
+  <span class="keyword">def</span> map = <span class="keyword">new</span> <span class="predefined-type">HashMap</span>()
+
+  <span class="key">when</span>:
+  map.put(<span class="predefined-constant">null</span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">elem</span><span class="delimiter">&quot;</span></span>)
+
+  <span class="key">then</span>:
+  notThrown(<span class="exception">NullPointerException</span>)
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>By using <code>notThrown()</code>, we make it clear that in particular a <code>NullPointerException</code> should not be thrown. (As per the
+contract of <code>Map.put()</code>, this would be the right thing to do for a map that doesn&#8217;t support <code>null</code> keys.) However,
+the method will also fail if any other exception is thrown.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_interactions">Interactions</h5>
+<div class="paragraph">
+<p>Whereas conditions describe an object&#8217;s state, interactions describe how objects communicate with each other.
+Interactions are devoted a whole <a href="interaction_based_testing.html">chapter</a>, and so we only give a quick example here.
+Suppose we want to describe the flow of events from a publisher to its subscribers. Here is the code:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">events are published to all subscribers</span><span class="delimiter">&quot;</span></span>() {
+  <span class="keyword">def</span> subscriber1 = Mock(Subscriber)
+  <span class="keyword">def</span> subscriber2 = Mock(Subscriber)
+  <span class="keyword">def</span> publisher = <span class="keyword">new</span> Publisher()
+  publisher.add(subscriber1)
+  publisher.add(subscriber2)
+
+  <span class="key">when</span>:
+  publisher.fire(<span class="string"><span class="delimiter">&quot;</span><span class="content">event</span><span class="delimiter">&quot;</span></span>)
+
+  <span class="key">then</span>:
+  <span class="integer">1</span> * subscriber1.receive(<span class="string"><span class="delimiter">&quot;</span><span class="content">event</span><span class="delimiter">&quot;</span></span>)
+  <span class="integer">1</span> * subscriber2.receive(<span class="string"><span class="delimiter">&quot;</span><span class="content">event</span><span class="delimiter">&quot;</span></span>)
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_expect_blocks">Expect Blocks</h4>
+<div class="paragraph">
+<p>An <code>expect</code> block is more limited than a <code>then</code> block in that it may only contain conditions and variable definitions.
+It is useful in situations where it is more natural to describe stimulus and expected response in a single expression.
+For example, compare the following two attempts to describe the <code>Math.max()</code> method:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="key">when</span>:
+<span class="keyword">def</span> x = <span class="predefined-type">Math</span>.max(<span class="integer">1</span>, <span class="integer">2</span>)
+
+<span class="key">then</span>:
+x == <span class="integer">2</span></code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="key">expect</span>:
+<span class="predefined-type">Math</span>.max(<span class="integer">1</span>, <span class="integer">2</span>) == <span class="integer">2</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Although both snippets are semantically equivalent, the second one is clearly preferable. As a guideline, use <code>when-then</code>
+to describe methods with side effects, and <code>expect</code> to describe purely functional methods.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Tip</div>
+</td>
+<td class="content">
+Leverage <a href="http://docs.groovy-lang.org/docs/latest/html/groovy-jdk/">Groovy JDK</a> methods like <code>any()</code> and <code>every()</code>
+to create more expressive and succinct conditions.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_cleanup_blocks">Cleanup Blocks</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="key">setup</span>:
+<span class="keyword">def</span> file = <span class="keyword">new</span> <span class="predefined-type">File</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/some/path</span><span class="delimiter">&quot;</span></span>)
+file.createNewFile()
+
+<span class="comment">// ...</span>
+
+<span class="key">cleanup</span>:
+file.delete()</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>A <code>cleanup</code> block may only be followed by a <code>where</code> block, and may not be repeated. Like a <code>cleanup</code> method, it is used
+to free any resources used by a feature method, and is run even if (a previous part of) the feature method has produced
+an exception. As a consequence, a <code>cleanup</code> block must be coded defensively; in the worst case, it must gracefully
+handle the situation where the first statement in a feature method has thrown an exception, and all local variables
+still have their default values.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Tip</div>
+</td>
+<td class="content">
+Groovy&#8217;s safe dereference operator (<code>foo?.bar()</code>) simplifies writing defensive code.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Object-level specifications usually don&#8217;t need a <code>cleanup</code> method, as the only resource they consume is memory, which
+is automatically reclaimed by the garbage collector. More coarse-grained specifications, however, might use a <code>cleanup</code>
+block to clean up the file system, close a database connection, or shut down a network service.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Tip</div>
+</td>
+<td class="content">
+If a specification is designed in such a way that all its feature methods require the same resources, use a
+<code>cleanup()</code> method; otherwise, prefer <code>cleanup</code> blocks. The same trade-off applies to <code>setup()</code> methods and <code>setup</code> blocks.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_where_blocks">Where Blocks</h4>
+<div class="paragraph">
+<p>A <code>where</code> block always comes last in a method, and may not be repeated. It is used to write data-driven feature methods.
+To give you an idea how this is done, have a look at the following example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">computing the maximum of two numbers</span><span class="delimiter">&quot;</span></span>() {
+  <span class="key">expect</span>:
+  <span class="predefined-type">Math</span>.max(a, b) == c
+
+  <span class="key">where</span>:
+  a &lt;&lt; [<span class="integer">5</span>, <span class="integer">3</span>]
+  b &lt;&lt; [<span class="integer">1</span>, <span class="integer">9</span>]
+  c &lt;&lt; [<span class="integer">5</span>, <span class="integer">9</span>]
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This <code>where</code> block effectively creates two "versions" of the feature method: One where <code>a</code> is 5, <code>b</code> is 1, and <code>c</code> is 5,
+and another one where <code>a</code> is 3, <code>b</code> is 9, and <code>c</code> is 9.</p>
+</div>
+<div class="paragraph">
+<p>The <code>where</code> block will be further explained in the <a href="data_driven_testing.html">Data Driven Testing</a> chapter.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_helper_methods">Helper Methods</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Sometimes feature methods grow large and/or contain lots of duplicated code. In such cases it can make sense to introduce
+one or more helper methods. Two good candidates for helper methods are setup/cleanup logic and complex conditions.
+Factoring out the former is straightforward, so let&#8217;s have a look at conditions:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">offered PC matches preferred configuration</span><span class="delimiter">&quot;</span></span>() {
+  <span class="key">when</span>:
+  <span class="keyword">def</span> pc = shop.buyPc()
+
+  <span class="key">then</span>:
+  pc.vendor == <span class="string"><span class="delimiter">&quot;</span><span class="content">Sunny</span><span class="delimiter">&quot;</span></span>
+  pc.clockRate &gt;= <span class="integer">2333</span>
+  pc.ram &gt;= <span class="integer">4096</span>
+  pc.os == <span class="string"><span class="delimiter">&quot;</span><span class="content">Linux</span><span class="delimiter">&quot;</span></span>
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If you happen to be a computer geek, your preferred PC configuration might be very detailed, or you might want to
+compare offers from many different shops. Therefore, let&#8217;s factor out the conditions:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">offered PC matches preferred configuration</span><span class="delimiter">&quot;</span></span>() {
+  <span class="key">when</span>:
+  <span class="keyword">def</span> pc = shop.buyPc()
+
+  <span class="key">then</span>:
+  matchesPreferredConfiguration(pc)
+}
+
+<span class="keyword">def</span> <span class="function">matchesPreferredConfiguration</span>(pc) {
+  pc.vendor == <span class="string"><span class="delimiter">&quot;</span><span class="content">Sunny</span><span class="delimiter">&quot;</span></span>
+  &amp;&amp; pc.clockRate &gt;= <span class="integer">2333</span>
+  &amp;&amp; pc.ram &gt;= <span class="integer">4096</span>
+  &amp;&amp; pc.os == <span class="string"><span class="delimiter">&quot;</span><span class="content">Linux</span><span class="delimiter">&quot;</span></span>
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The new helper method <code>matchesPreferredConfiguration()</code> consists of a single boolean expression whose result is returned.
+(The <code>return</code> keyword is optional in Groovy.) This is fine except for the way that an inadequate offer is now presented:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="predefined-type">Condition</span> not <span class="key">satisfied</span>:
+
+matchesPreferredConfiguration(pc)
+|                             |
+<span class="predefined-constant">false</span>                         ...</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Not very helpful. Fortunately, we can do better:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="type">void</span> matchesPreferredConfiguration(pc) {
+  <span class="keyword">assert</span> pc.vendor == <span class="string"><span class="delimiter">&quot;</span><span class="content">Sunny</span><span class="delimiter">&quot;</span></span>
+  <span class="keyword">assert</span> pc.clockRate &gt;= <span class="integer">2333</span>
+  <span class="keyword">assert</span> pc.ram &gt;= <span class="integer">4096</span>
+  <span class="keyword">assert</span> pc.os == <span class="string"><span class="delimiter">&quot;</span><span class="content">Linux</span><span class="delimiter">&quot;</span></span>
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>When factoring out conditions into a helper method, two points need to be considered: First, implicit conditions must
+be turned into explicit conditions with the <code>assert</code> keyword. Second, the helper method must have return type <code>void</code>.
+Otherwise, Spock might interpret the return value as a failing condition, which is not what we want.</p>
+</div>
+<div class="paragraph">
+<p>As expected, the improved helper method tells us exactly what&#8217;s wrong:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="predefined-type">Condition</span> not <span class="key">satisfied</span>:
+
+<span class="keyword">assert</span> pc.clockRate &gt;= <span class="integer">2333</span>
+       |  |         |
+       |  <span class="integer">1666</span>      <span class="predefined-constant">false</span>
+       ...</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>A final advice: Although code reuse is generally a good thing, don&#8217;t take it too far. Be aware that the use of fixture
+and helper methods can increase the coupling between feature methods. If you reuse too much or the wrong code, you will
+end up with specifications that are fragile and hard to evolve.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="specs-as-doc">Specifications as Documentation</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Well-written specifications are a valuable source of information. Especially for higher-level specifications targeting
+a wider audience than just developers (architects, domain experts, customers, etc.), it makes sense to provide more
+information in natural language than just the names of specifications and features. Therefore, Spock provides a way to
+attach textual descriptions to blocks:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="key">setup</span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">open a database connection</span><span class="delimiter">&quot;</span></span>
+<span class="comment">// code goes here</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Individual parts of a block can be described with <code>and:</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="key">setup</span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">open a database connection</span><span class="delimiter">&quot;</span></span>
+<span class="comment">// code goes here</span>
+
+<span class="key">and</span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">seed the customer table</span><span class="delimiter">&quot;</span></span>
+<span class="comment">// code goes here</span>
+
+<span class="key">and</span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">seed the product table</span><span class="delimiter">&quot;</span></span>
+<span class="comment">// code goes here</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>An <code>and:</code> label followed by a description can be inserted at any (top-level) position of a feature method, without
+altering the method&#8217;s semantics.</p>
+</div>
+<div class="paragraph">
+<p>In Behavior Driven Development, customer-facing features (called <em>stories</em>) are described in a given-when-then format.
+Spock directly supports this style of specification with the <code>given:</code> label:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="key">given</span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">an empty bank account</span><span class="delimiter">&quot;</span></span>
+<span class="comment">// ...</span>
+
+<span class="key">when</span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">the account is credited </span><span class="content">$</span><span class="content">10</span><span class="delimiter">&quot;</span></span>
+<span class="comment">// ...</span>
+
+<span class="key">then</span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">the account's balance is </span><span class="content">$</span><span class="content">10</span><span class="delimiter">&quot;</span></span>
+<span class="comment">// ...</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>As noted before, <code>given:</code> is just an alias for <code>setup:</code>.</p>
+</div>
+<div class="paragraph">
+<p>Block descriptions are not only present in source code, but are also available to the Spock runtime. Planned usages of
+block descriptions are enhanced diagnostic messages, and textual reports that are equally understood by all stakeholders.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_extensions">Extensions</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>As we have seen, Spock offers lots of functionality for writing specifications. However, there always comes a time
+when something else is needed. Therefore, Spock provides an interception-based extension mechanism. Extensions are
+activated by annotations called <em>directives</em>. Currently, Spock ships with the following directives:</p>
+</div>
+<div class="hdlist">
+<table>
+<tr>
+<td class="hdlist1">
+<code>@Timeout</code>
+</td>
+<td class="hdlist2">
+<p>Sets a timeout for execution of a feature or fixture method.</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>@Ignore</code>
+</td>
+<td class="hdlist2">
+<p>Ignores a feature method.</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>@IgnoreRest</code>
+</td>
+<td class="hdlist2">
+<p>Ignores all feature methods not carrying this annotation. Useful for quickly running just a single method.</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>@FailsWith</code>
+</td>
+<td class="hdlist2">
+<p>Expects a feature method to complete abruptly. <code>@FailsWith</code> has two use cases: First, to document known bugs that cannot
+be resolved immediately. Second, to replace exception conditions in certain corner cases where the latter cannot be
+used (like specifying the behavior of exception conditions). In all other cases, exception conditions are preferable.</p>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>To learn how to implement your own directives and extensions, go to the <a href="extensions.html">Extensions</a> chapter.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_comparison_to_junit">Comparison to JUnit</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Although Spock uses a different terminology, many of its concepts and features are inspired from JUnit. Here is a rough
+comparison:</p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Spock</th>
+<th class="tableblock halign-left valign-top">JUnit</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Specification</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Test class</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>setup()</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>@Before</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>cleanup()</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>@After</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>setupSpec()</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>@BeforeClass</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>cleanupSpec()</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>@AfterClass</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Feature</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Test</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Feature method</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Test method</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Data-driven feature</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Theory</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Condition</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Assertion</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Exception condition</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>@Test(expected=&#8230;&#8203;)</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Interaction</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Mock expectation (e.g. in Mockito)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2015-03-02 11:42:41 UTC
+</div>
+</div>
+</body>
+</html>

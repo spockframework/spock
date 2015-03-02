@@ -195,7 +195,8 @@ task publishJavadoc(type: Exec) {
 """
   git checkout gh-pages
   rm -rf javadoc/$variantLessVersion
-  cp build/javadoc/$variantLessVersion javadoc/$variantLessVersion
+  mkdir javadoc/$variantLessVersion
+  cp -r build/javadoc/$variantLessVersion javadoc/
   git commit -am "Publish javadoc/$variantLessVersion"
   git push origin gh-pages
   git checkout -
@@ -207,13 +208,22 @@ task publishDocs(type: Exec) {
       """
   git checkout gh-pages
   rm -rf docs/$variantLessVersion
-  cp build/docs/$variantLessVersion docs/$variantLessVersion
+  mkdir docs/$variantLessVersion
+  cp -r build/docs/$variantLessVersion docs/
   git commit -am "Publish docs/$variantLessVersion"
   git push origin gh-pages
   git checkout -
 """
 }
-task tagRelease // TODO
+task tagRelease(type: Exec) {
+  commandLine "sh", "-c",
+      """
+  git checkout master
+  git tag spock-$baseVersion
+  git push origin spock-$baseVersion
+  git checkout -
+"""
+}
 
 task javadoc(type: Javadoc) {
   title "Spock Framework API Documentation ($variantLessVersion)"
@@ -238,7 +248,7 @@ configureGroovydoc(groovydoc)
 asciidoctor {
   sourceDir = file("docs")
   logDocuments = true
-  attributes "source-highlighter": "coderay"
+  attributes "source-highlighter": "coderay", "linkcss": true
 }
 
 File script(String name) {

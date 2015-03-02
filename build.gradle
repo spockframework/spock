@@ -205,7 +205,7 @@ task publishJavadoc(type: Exec) {
   cp -r build/javadoc/$variantLessVersion javadoc/
   git add javadoc
   git commit -m "Publish javadoc/$variantLessVersion"
-  git push origin gh-pages
+  git push --quiet "https://${GITHUB_TOKEN}@github.com/spockframework/spock.git" gh-pages > /dev/null 2>&1
   git checkout master
 """
 }
@@ -222,7 +222,7 @@ task publishDocs(type: Exec) {
   cp -r build/asciidoc/html5/* docs/$variantLessVersion
   git add docs
   git commit -m "Publish docs/$variantLessVersion"
-  git push origin gh-pages
+  git push --quiet "https://${GITHUB_TOKEN}@github.com/spockframework/spock.git" gh-pages > /dev/null 2>&1
   git checkout master
 """
 }
@@ -233,7 +233,7 @@ task tagRelease(type: Exec) {
   git config user.name "Spock Framework Robot"
   git checkout master
   git tag spock-$baseVersion
-  git push origin spock-$baseVersion
+  git push --quiet "https://${GITHUB_TOKEN}@github.com/spockframework/spock.git" spock-$baseVersion > /dev/null 2>&1
 """
 }
 

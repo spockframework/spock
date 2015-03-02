@@ -141,46 +141,49 @@ subprojects {
 
 if (gradle.startParameter.taskNames == ["travisCiBuild"]) {
   gradle.startParameter.taskNames = ["build"]
-  if (javaVersion == javaVersions.min()) {
-    gradle.startParameter.taskNames += ["uploadArchives"]
-  }
-  if (javaVersion == javaVersions.max()) {
-    if (variant == variants.max()) {
-      gradle.startParameter.taskNames += ["publishJavadoc", "publishDocs"]
-      if (!snapshotVersion) {
-        gradle.startParameter.taskNames += ["tagRelease"]
-      }
-    }
-  }
   subprojects {
     tasks.withType(Test) {
       maxParallelForks = 2
+    }
+  }
+  if (System.getenv("TRAVIS_PULL_REQUEST") == "false") {
+    if (javaVersion == javaVersions.min()) {
+      gradle.startParameter.taskNames += ["uploadArchives"]
+    }
+    if (javaVersion == javaVersions.max()) {
+      if (variant == variants.max()) {
+        gradle.startParameter.taskNames += ["publishJavadoc", "publishDocs"]
+        if (!snapshotVersion) {
+          gradle.startParameter.taskNames += ["tagRelease"]
+        }
+      }
     }
   }
 }
 
 if (gradle.startParameter.taskNames == ["shippableCiBuild"]) {
   gradle.startParameter.taskNames = ["clean", "build"] // use clean because whole minion is cached
-  if (javaVersion == javaVersions.min()) {
-    gradle.startParameter.taskNames += ["uploadArchives"]
-  }
-  if (javaVersion == javaVersions.max()) {
-    if (variant == variants.max()) {
-      gradle.startParameter.taskNames += ["publishJavadoc", "publishDocs"]
-      if (!snapshotVersion) {
-        gradle.startParameter.taskNames += ["tagRelease"]
-      }
-    }
-  }
-
   task aggregateTestResults(type: Sync) {
-    from { subprojects.test.reports.junitXml.destination } 
+    from { subprojects.test.reports.junitXml.destination }
     into "shippable/testresults"
     include "**/TEST-*.xml"
   }
   subprojects {
     tasks.withType(Test) {
       it.finalizedBy(aggregateTestResults)
+    }
+  }
+  if (System.getenv("PULL_REQUEST") == "false") {
+    if (javaVersion == javaVersions.min()) {
+      gradle.startParameter.taskNames += ["uploadArchives"]
+    }
+    if (javaVersion == javaVersions.max()) {
+      if (variant == variants.max()) {
+        gradle.startParameter.taskNames += ["publishJavadoc", "publishDocs"]
+        if (!snapshotVersion) {
+          gradle.startParameter.taskNames += ["tagRelease"]
+        }
+      }
     }
   }
 }
@@ -209,7 +212,7 @@ task publishJavadoc(type: Exec) {
 task publishDocs(type: Exec) {
   dependsOn "asciidoctor"
   commandLine "sh", "-c",
-      """
+"""
   git config user.email "dev@forum.spockframework.org"
   git config user.name "Spock Framework Robot"
   git fetch origin +gh-pages:gh-pages
@@ -225,7 +228,7 @@ task publishDocs(type: Exec) {
 }
 task tagRelease(type: Exec) {
   commandLine "sh", "-c",
-      """
+"""
   git config user.email "dev@forum.spockframework.org"
   git config user.name "Spock Framework Robot"
   git checkout master

@@ -6,7 +6,6 @@ include "spock-guice"
 include "spock-tapestry"
 include "spock-unitils"
 include "spock-report"
-include "spock-maven"
 include "spock-gradle"
 
 rootProject.name = "spock"

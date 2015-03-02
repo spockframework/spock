@@ -1,6 +1,6 @@
 = Release Notes
 
-== Spock 1.0 (released 2015-03-02)
+== 1.0 (released 2015-03-02)
 
 1.0 has arrived! Finally (and some years late) the version number communicates what
 https://code.google.com/p/spock/wiki/WhoIsUsingSpock[Spock users] have known for ages - that Spock isn't only useful
@@ -15,7 +15,7 @@ Howard M. Lewis Ship, Ken Sipe, Venkat Subramaniam, Russel Winder.
 === What's In This Release
 
 * <<Contributors,17 contributors>>, <<Resolved Issues,21 resolved issues>>, <<Merged Pull Requests,18 merged pull requests>>,
-  <<Ongoing Work,some ongoing work>>. No ground-breaking new features, but lots of improvements and fixes.
+  <<Ongoing Work,some ongoing work>>. No ground-breaking new features, but significant improvements and fixes across the board.
 * Minimum runtime requirements raised to JRE 1.6 and Groovy 2.0.
 * Improved and restyled reference documentation at http://docs.spockframework.org. Generated with
   http://asciidoctor.org/[Asciidoctor] (what else?).

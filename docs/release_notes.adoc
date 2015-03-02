@@ -129,7 +129,7 @@ These awesome extensions have been published or updated:
 These great features didn't make it into this release (but hopefully the next!):
 
 * http://spockframework.github.io/spock/sampleReports/Ninja%20Commander.html[Spock reports]
-* render exceptions in conditions as condition failure[Render exceptions in conditions as condition failure]
+* https://github.com/spockframework/spock/pull/49[Render exceptions in conditions as condition failure]
 * https://github.com/spockframework/spock/pull/50[Soft asserts: check all then throw all failures]
 * https://github.com/spockframework/spock/pull/17[Detached mocks]
 

@@ -204,8 +204,8 @@ task publishJavadoc(type: Exec) {
   mkdir -p javadoc/$variantLessVersion
   cp -r build/javadoc/$variantLessVersion javadoc/
   git add javadoc
-  git commit -m "Publish javadoc/$variantLessVersion"
-  git push --quiet "https://${GITHUB_TOKEN}@github.com/spockframework/spock.git" gh-pages > /dev/null 2>&1
+  git commit -qm "Publish javadoc/$variantLessVersion"
+  git push -q "https://${GITHUB_TOKEN}@github.com/spockframework/spock.git" gh-pages > /dev/null 2>&1
   git checkout master
 """
 }
@@ -221,8 +221,8 @@ task publishDocs(type: Exec) {
   mkdir -p docs/$variantLessVersion
   cp -r build/asciidoc/html5/* docs/$variantLessVersion
   git add docs
-  git commit -m "Publish docs/$variantLessVersion"
-  git push --quiet "https://${GITHUB_TOKEN}@github.com/spockframework/spock.git" gh-pages > /dev/null 2>&1
+  git commit -qm "Publish docs/$variantLessVersion"
+  git push -q "https://${GITHUB_TOKEN}@github.com/spockframework/spock.git" gh-pages > /dev/null 2>&1
   git checkout master
 """
 }

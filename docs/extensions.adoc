@@ -180,7 +180,7 @@ To confine meta class changes to the scope of a feature method or spec class, us
 ----
 @Stepwise
 class FooSpec extends Specification {
-  @ConfineMetaClassChanges
+  @ConfineMetaClassChanges([String])
   def "I run first"() {
     when:
     String.metaClass.someMethod = { delegate }

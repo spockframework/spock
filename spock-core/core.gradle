@@ -10,6 +10,10 @@ What makes it stand out from the crowd is its beautiful and highly expressive sp
 Thanks to its JUnit runner, Spock is compatible with most IDEs, build tools, and continuous integration servers. \
 Spock is inspired from JUnit, jMock, RSpec, Groovy, Scala, Vulcans, and other fascinating life forms."
 
+configurations {
+  tools
+}
+
 dependencies {
   compile libs.groovy // easiest way to add Groovy dependency to POM
   compile libs.junit
@@ -18,6 +22,8 @@ dependencies {
   compile libs.asm, optional
   compile libs.cglib, optional
   compile libs.objenesis, optional
+
+  tools "com.googlecode.jarjar:jarjar:1.3"
 }
 
 jar {
@@ -40,4 +46,31 @@ processResources {
   def tokens = [version: version.toString(), minGroovyVersion: minGroovyVersion, maxGroovyVersion: maxGroovyVersion]
   inputs.property "tokens", tokens
   filter(org.apache.tools.ant.filters.ReplaceTokens, tokens: tokens)
+}
+
+task spockAndroidJar(type: Jar, dependsOn: jar) {
+  destinationDir = jar.destinationDir
+  baseName = jar.baseName
+  appendix = jar.appendix
+  classifier = jar.classifier ? "${jar.classifier}android" : 'android'
+  includeEmptyDirs = false
+  def target = new File("${archivePath}.tmp")
+
+  doFirst {
+    from zipTree(target)
+    ant {
+      taskdef name: 'jarjar', classname: 'com.tonicsystems.jarjar.JarJarTask', classpath: configurations.tools.asPath
+      jarjar(jarfile: target) {
+        zipfileset(src: jar.archivePath)
+        if (isRootProject) {
+          zipfileset(src: rootProject.configurations.runtime.files.find { it.name.startsWith('openbeans') })
+        }
+        rule pattern: 'java.beans.**', result: 'groovyjarjaropenbeans.@1'
+      }
+    }
+
+  }
+  doLast {
+    target.delete()
+  }
 }

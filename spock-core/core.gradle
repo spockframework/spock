@@ -48,6 +48,9 @@ processResources {
   filter(org.apache.tools.ant.filters.ReplaceTokens, tokens: tokens)
 }
 
+/**
+ * Android does not have java.bean available to it. Instead use the groovy-grooid.jar's implementation.
+ */
 task spockAndroidJar(type: Jar, dependsOn: jar) {
   destinationDir = jar.destinationDir
   baseName = jar.baseName

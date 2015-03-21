@@ -16,10 +16,21 @@
 
 package org.spockframework.runtime
 
+import org.junit.runners.model.RunnerScheduler
 import spock.lang.Specification
 
 class ClosingOfDataProviders extends Specification {
-  def runner = new ParameterizedSpecRunner(null, null)
+  def runner = new ParameterizedSpecRunner(null, null, new RunnerScheduler() {
+    @Override
+    void schedule(Runnable childStatement) {
+      childStatement.run()
+    }
+
+    @Override
+    void finished() {
+
+    }
+  })
 
   def "close one provider which potentially throws an exception"() {
     MyCloseable provider = Mock()

@@ -119,7 +119,10 @@ public class ParameterizedSpecRunner extends BaseSpecRunner {
   private void runIterations(final FeatureInfo currentFeature, final Iterator[] iterators, final int estimatedNumIterations) {
     if (runStatus.get() != OK) return;
 
+    boolean atLeastOneIteration = false;
+
     while (haveNext(currentFeature, iterators)) {
+      atLeastOneIteration = true;
       final Object[] dataValues = nextArgs(currentFeature, iterators);
       
       if (currentFeature.isReportIterations()){// it is time to schedule independent tasks
@@ -137,6 +140,10 @@ public class ParameterizedSpecRunner extends BaseSpecRunner {
       }
       // no iterators => no data providers => only derived parameterizations => limit to one iteration
       if(iterators.length == 0) break;
+    }
+
+    if (!atLeastOneIteration) {
+      supervisor.noIterationFound(currentFeature);
     }
   }
 

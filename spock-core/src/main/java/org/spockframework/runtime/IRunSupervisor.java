@@ -34,6 +34,7 @@ public interface IRunSupervisor {
   void beforeIteration(FeatureInfo currentFeature, IterationInfo iteration);
 
   void afterIteration(FeatureInfo currentFeature, IterationInfo iteration);
+  void noIterationFound(FeatureInfo currentFeature);
   void afterFeature(FeatureInfo feature);
   void afterSpec(SpecInfo spec);
 

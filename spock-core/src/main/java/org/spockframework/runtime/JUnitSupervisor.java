@@ -35,11 +35,8 @@ public class JUnitSupervisor implements IRunSupervisor {
   private final IRunListener masterListener;
   private final IObjectRenderer<Object> diffedObjectRenderer;
 
-  private int iterationCount;
-  private boolean errorSinceLastReset;
-
   public JUnitSupervisor(SpecInfo spec, RunNotifier notifier, IStackTraceFilter filter,
-                         IObjectRenderer<Object> diffedObjectRenderer) {
+      IObjectRenderer<Object> diffedObjectRenderer) {
     this.spec = spec;
     this.notifier = notifier;
     this.filter = filter;
@@ -56,17 +53,11 @@ public class JUnitSupervisor implements IRunSupervisor {
 
     if (!feature.isReportIterations())
       notifier.fireTestStarted(feature.getDescription());
-
-    if (feature.isParameterized()) {
-      iterationCount = 0;
-      errorSinceLastReset = false;
-    }
   }
 
   public void beforeIteration(FeatureInfo currentFeature, IterationInfo iteration) {
     masterListener.beforeIteration(iteration);
 
-    iterationCount++;
     if (currentFeature.isReportIterations())
       notifier.fireTestStarted(iteration.getDescription());
   }
@@ -95,7 +86,6 @@ public class JUnitSupervisor implements IRunSupervisor {
       notifier.fireTestFailure(failure);
     }
 
-    errorSinceLastReset = true;
     return statusFor(error);
   }
 
@@ -111,33 +101,23 @@ public class JUnitSupervisor implements IRunSupervisor {
   private boolean isFailedEqualityComparison(Throwable exception) {
     if (!(exception instanceof ConditionNotSatisfiedError)) return false;
 
-    final ConditionNotSatisfiedError conditionNotSatisfiedError = (ConditionNotSatisfiedError) exception;
-    Condition condition = conditionNotSatisfiedError.getCondition();
+    Condition condition = ((ConditionNotSatisfiedError) exception).getCondition();
     ExpressionInfo expr = condition.getExpression();
     return expr != null && expr.isEqualityComparison() && // it is equality
-        conditionNotSatisfiedError.getCause() == null;    // and it is not failed because of exception
+        exception.getCause() == null;    // and it is not failed because of exception
   }
 
   // enables IDE support (diff dialog)
   private Throwable convertToComparisonFailure(Throwable exception) {
     assert isFailedEqualityComparison(exception);
 
-    final ConditionNotSatisfiedError conditionNotSatisfiedError = (ConditionNotSatisfiedError) exception;
-    Condition condition = conditionNotSatisfiedError.getCondition();
+    Condition condition = ((ConditionNotSatisfiedError) exception).getCondition();
     ExpressionInfo expr = condition.getExpression();
 
     String actual = renderValue(expr.getChildren().get(0).getValue());
     String expected = renderValue(expr.getChildren().get(1).getValue());
     ComparisonFailure failure = new SpockComparisonFailure(condition, expected, actual);
     failure.setStackTrace(exception.getStackTrace());
-
-    if (conditionNotSatisfiedError.getCause()!=null){
-      failure.initCause(conditionNotSatisfiedError.getCause());
-    }
-
-    if (conditionNotSatisfiedError.getCause() != null) {
-      failure.initCause(conditionNotSatisfiedError.getCause());
-    }
 
     return failure;
   }
@@ -179,13 +159,12 @@ public class JUnitSupervisor implements IRunSupervisor {
     }
   }
 
-  public void afterFeature(FeatureInfo feature) {
-    if (feature.isParameterized()) {
-      if (iterationCount == 0 && !errorSinceLastReset) {
-        notifier.fireTestFailure(new Failure(feature.getDescription(), new SpockExecutionException("Data provider has no data")));
-      }
-    }
+  public void noIterationFound(FeatureInfo currentFeature){
+    notifier.fireTestFailure(new Failure(currentFeature.getDescription(),
+        new SpockExecutionException("Data provider has no data")));
+  }
 
+  public void afterFeature(FeatureInfo feature) {
     masterListener.afterFeature(feature);
     if (!feature.isReportIterations()) {
       notifier.fireTestFinished(feature.getDescription());

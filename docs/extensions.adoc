@@ -24,7 +24,7 @@ For documentation purposes, a reason can be provided:
 
 [source,groovy]
 ----
-@Ignore(reason = "TODO")
+@Ignore("TODO")
 def "my feature"() { ... }
 ----
 

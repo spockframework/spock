@@ -69,14 +69,24 @@ Using an IDE is recommended but not mandatory. Whether or not you use an IDE, pl
 
 #### IntelliJ IDEA
 
-IntelliJ IDEA 14+ is the preferred IDE for developing Spock. To import the Gradle build into IDEA, choose `File->Import Project` and select the top-level `build.gradle` file. This should result in a fully functional IDE setup where:
+IntelliJ IDEA 14+ is the preferred IDE for developing Spock. To generate an IDEA project configuration:
+
+* `./gradlew cleanIdea idea`, followed by
+* `File -> Open` in Intellij, then
+* select the appropriate `spock-2.0.ipr`.
+
+Note: You can provide an optional 'variant' flag to the gradle build `-Dvariant=[2.0|2.3|2.4]` that specifies the version of groovy you wish to use. For example, if we wish to use groovy 2.4, we would run `./gradlew cleanIdea idea -Dvariant=2.4` and import the generated `spock-2.4.ipr` into Intellij.  
+
+This should result in a fully functional IDE setup where:
 
 * Git VCS integration is configured
 * Important formatter settings are configured (e.g. two spaces indent)
 * Both Java and Groovy code compiles without problems
 * All tests can be run without problems
 
-From time to time (e.g. when someone has added a new dependency), it may be necessary to resync the IDEA project with the Gradle build. This is done by pushing the `Refresh` button in the Gradle Tool Window.
+From time to time (e.g. when someone has added a new dependency), it may be necessary to resync the IDEA project with the Gradle build. This is done by rerunning the steps above.
+
+Note: Unfortunately there are currently [some issues](https://github.com/spockframework/spock/issues/70) with Intellij's Gradle support that prevent integration with the Spock project. Please use the method described above rather than importing the top-level `build.gradle` file. 
 
 #### Eclipse
 

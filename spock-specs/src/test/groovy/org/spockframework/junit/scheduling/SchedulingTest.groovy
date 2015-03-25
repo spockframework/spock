@@ -9,30 +9,32 @@ import spock.lang.Specification
 import spock.lang.Unroll
 
 class SchedulingTest extends Specification {
-  def "with sequential scheduler iterations and features should be executed sequentially"() {
+
+  @Unroll
+  def "with sequential scheduler iterations and features should be executed sequentially [#clazz]"(Class clazz) {
     def listener = Mock(RunListener)
     def jUnitCore = new JUnitCore()
     jUnitCore.addListener(listener)
     when:
-    jUnitCore.run(Computer.serial(), SampleTest.class);
+    jUnitCore.run(Computer.serial(), clazz);
     then:
     1 * listener.testRunStarted(_)
     then:
-    1 * listener.testStarted(testDescription("test for x=1"))
+    1 * listener.testStarted(testDescription(clazz, "test for x=1"))
     then:
-    1 * listener.testFinished(testDescription("test for x=1"))
+    1 * listener.testFinished(testDescription(clazz, "test for x=1"))
     then:
-    1 * listener.testStarted(testDescription("test for x=2"))
+    1 * listener.testStarted(testDescription(clazz, "test for x=2"))
     then:
-    1 * listener.testFinished(testDescription("test for x=2"))
+    1 * listener.testFinished(testDescription(clazz, "test for x=2"))
     then:
-    1 * listener.testStarted(testDescription("test simple"))
+    1 * listener.testStarted(testDescription(clazz, "test simple"))
     then:
-    1 * listener.testFinished(testDescription("test simple"))
+    1 * listener.testFinished(testDescription(clazz, "test simple"))
     then:
-    1 * listener.testStarted(testDescription("test no unroll"))
+    1 * listener.testStarted(testDescription(clazz, "test no unroll"))
     then:
-    1 * listener.testFinished(testDescription("test no unroll"))
+    1 * listener.testFinished(testDescription(clazz, "test no unroll"))
     then:
     1 * listener.testRunFinished(_)
 
@@ -40,25 +42,26 @@ class SchedulingTest extends Specification {
     clazz << [SampleTest.class, SampleTestWithTimeout.class]
   }
 
-  def "with parallel scheduler iterations and features should be executed concurrently"() {
+  @Unroll
+  def "with parallel scheduler iterations and features should be executed concurrently [#clazz]"() {
     def listener = Mock(RunListener)
     def jUnitCore = new JUnitCore()
     jUnitCore.addListener(listener)
     when:
-    jUnitCore.run(ParallelComputer.methods(), SampleTest.class);
+    jUnitCore.run(ParallelComputer.methods(), clazz);
     then:
     1 * listener.testRunStarted(_)
     then:
-    1 * listener.testStarted(testDescription("test for x=1"))
-    1 * listener.testStarted(testDescription("test for x=2"))
-    1 * listener.testStarted(testDescription("test simple"))
-    1 * listener.testStarted(testDescription("test no unroll"))
+    1 * listener.testStarted(testDescription(clazz, "test for x=1"))
+    1 * listener.testStarted(testDescription(clazz, "test for x=2"))
+    1 * listener.testStarted(testDescription(clazz, "test simple"))
+    1 * listener.testStarted(testDescription(clazz, "test no unroll"))
     0 * listener.testFailure(_)
     then:
-    1 * listener.testFinished(testDescription("test for x=1"))
-    1 * listener.testFinished(testDescription("test for x=2"))
-    1 * listener.testFinished(testDescription("test simple"))
-    1 * listener.testFinished(testDescription("test no unroll"))
+    1 * listener.testFinished(testDescription(clazz, "test for x=1"))
+    1 * listener.testFinished(testDescription(clazz, "test for x=2"))
+    1 * listener.testFinished(testDescription(clazz, "test simple"))
+    1 * listener.testFinished(testDescription(clazz, "test no unroll"))
     0 * listener.testFailure(_)
     then:
     1 * listener.testRunFinished(_)
@@ -67,8 +70,8 @@ class SchedulingTest extends Specification {
     clazz << [SampleTest.class, SampleTestWithTimeout.class]
   }
 
-  private static Description testDescription(String testName) {
-    Description.createTestDescription(SampleTest.class, testName)
+  private static Description testDescription(Class clazz, String testName) {
+    Description.createTestDescription(clazz, testName)
   }
 
 }
@@ -109,7 +112,7 @@ class SampleTest extends Specification {
 
 class SampleTestWithTimeout extends Specification {
 
-  def setup(){
+  def setup() {
     sleep 1000
   }
 

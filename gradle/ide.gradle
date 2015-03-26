@@ -27,6 +27,13 @@ idea {
         excludeDirs += (prj.files(topLevelDirs) as Set)
       }
     }
+
+    ipr {
+      withXml { provider ->
+        def node = provider.asNode()
+        node.append(new XmlParser().parse(file("gradle/idea/codeStyle.xml")))
+      }
+    }
   }
 }
 

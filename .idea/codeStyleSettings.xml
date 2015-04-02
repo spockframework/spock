@@ -58,19 +58,9 @@
             <option name="CONTINUATION_INDENT_SIZE" value="4" />
             <option name="TAB_SIZE" value="2" />
           </indentOptions>
-          <arrangement>
-            <rules>
-              <rule>
-                <match>
-                  <NAME>xmlns:.*</NAME>
-                </match>
-              </rule>
-            </rules>
-          </arrangement>
         </codeStyleSettings>
       </value>
     </option>
     <option name="USE_PER_PROJECT_SETTINGS" value="true" />
   </component>
 </project>
-

@@ -81,7 +81,7 @@ public class RunContext {
     return new ExtensionRunner(spec, globalExtensionRegistry, globalExtensionRegistry);
   }
 
-  public ParameterizedSpecRunner createSpecRunner(SpecInfo spec, RunNotifier notifier, RunnerScheduler scheduler) {
+  public ParameterizedSpecRunner createSpecRunner(SpecInfo spec, RunNotifier notifier, Scheduler scheduler) {
     return new ParameterizedSpecRunner(
         spec,
         new JUnitSupervisor(spec, notifier, createStackTraceFilter(spec), diffedObjectRenderer),

@@ -21,7 +21,6 @@ import java.util.List;
 
 import static org.spockframework.runtime.RunStatus.*;
 
-import org.junit.runners.model.RunnerScheduler;
 import org.spockframework.runtime.model.*;
 
 /**
@@ -30,7 +29,7 @@ import org.spockframework.runtime.model.*;
  * @author Peter Niederwieser
  */
 public class ParameterizedSpecRunner extends BaseSpecRunner {
-  public ParameterizedSpecRunner(SpecInfo spec, IRunSupervisor supervisor, RunnerScheduler scheduler) {
+  public ParameterizedSpecRunner(SpecInfo spec, IRunSupervisor supervisor, Scheduler scheduler) {
     super(spec, supervisor, scheduler);
   }
 
@@ -121,12 +120,14 @@ public class ParameterizedSpecRunner extends BaseSpecRunner {
 
     boolean atLeastOneIteration = false;
 
+    Scheduler schedulerForRunIterations = this.scheduler.deriveScheduler(!currentFeature.isReportIterations());
+
     while (haveNext(currentFeature, iterators)) {
       atLeastOneIteration = true;
       final Object[] dataValues = nextArgs(currentFeature, iterators);
-      
-      if (currentFeature.isReportIterations()){// it is time to schedule independent tasks
-        scheduler.schedule(new Runnable() {
+
+      if (haveNext(currentFeature, iterators)) {
+        schedulerForRunIterations.schedule(new Runnable() {
           @Override
           public void run() {
             runStatus.set(OK);
@@ -134,16 +135,20 @@ public class ParameterizedSpecRunner extends BaseSpecRunner {
             resetStatus(ITERATION);
           }
         });
-      }else {
+
+      } else { // let's not waste threads and execute last iteration in current
         initializeAndRunIteration(currentFeature, dataValues, estimatedNumIterations);
         if (resetStatus(ITERATION) != OK) break;
       }
+
       // no iterators => no data providers => only derived parameterizations => limit to one iteration
-      if(iterators.length == 0) break;
+      if (iterators.length == 0) break;
     }
 
     if (!atLeastOneIteration) {
       supervisor.noIterationFound(currentFeature);
+    }else {
+      schedulerForRunIterations.waitFinished();
     }
   }
 

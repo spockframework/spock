@@ -97,7 +97,8 @@ public class Sputnik extends ParentRunner implements Filterable, Sortable {
   public void run(RunNotifier notifier) {
     runExtensionsIfNecessary();
     generateSpecDescriptionIfNecessary();
-    RunContext.get().createSpecRunner(getSpec(), notifier, scheduler).run();
+    RunContext.get().createSpecRunner(getSpec(), notifier, new Scheduler(scheduler, false)).run();
+    scheduler.finished();
   }
 
   public void filter(Filter filter) throws NoTestsRemainException {

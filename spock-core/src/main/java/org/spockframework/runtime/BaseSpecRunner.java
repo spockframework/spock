@@ -18,7 +18,6 @@ package org.spockframework.runtime;
 
 import org.junit.runner.Description;
 
-import org.junit.runners.model.RunnerScheduler;
 import org.spockframework.runtime.extension.IMethodInterceptor;
 import org.spockframework.runtime.extension.MethodInvocation;
 import org.spockframework.runtime.model.*;
@@ -26,6 +25,8 @@ import org.spockframework.util.CollectionUtil;
 import org.spockframework.util.InternalSpockError;
 
 import spock.lang.Specification;
+
+import java.util.List;
 
 import static org.spockframework.runtime.RunStatus.*;
 
@@ -43,7 +44,7 @@ public class BaseSpecRunner {
 
   protected final SpecInfo spec;
   protected final IRunSupervisor supervisor;
-  protected final RunnerScheduler scheduler;
+  protected final Scheduler scheduler;
 
   protected Specification sharedInstance;
   protected ThreadLocal<Integer> runStatus = new ThreadLocal<Integer>(){
@@ -53,7 +54,7 @@ public class BaseSpecRunner {
     }
   };
 
-  public BaseSpecRunner(SpecInfo spec, IRunSupervisor supervisor, RunnerScheduler scheduler) {
+  public BaseSpecRunner(SpecInfo spec, IRunSupervisor supervisor, Scheduler scheduler) {
     this.spec = spec;
     this.supervisor = supervisor;
     this.scheduler = scheduler;
@@ -179,12 +180,13 @@ public class BaseSpecRunner {
   }
 
   private void runFeatures() {
-    for (final FeatureInfo feature : spec.getAllFeaturesInExecutionOrder()) {
+    List<FeatureInfo> allFeaturesInExecutionOrder = spec.getAllFeaturesInExecutionOrder();
+    for (int i = 0; i < allFeaturesInExecutionOrder.size(); i++) {
+      final FeatureInfo feature = allFeaturesInExecutionOrder.get(i);
       if (resetStatus(FEATURE) != OK) return;
 
-      if (feature.isReportIterations()) {
-        runFeature(feature);// we will schedule each iteration independently
-      } else {
+      final boolean isLastFeature = i != allFeaturesInExecutionOrder.size() - 1;
+      if (isLastFeature) {
         scheduler.schedule(new Runnable() {
           @Override
           public void run() {
@@ -192,10 +194,11 @@ public class BaseSpecRunner {
             runFeature(feature);
           }
         });
+      } else {// let's not waste threads and execute last iteration in current
+        runFeature(feature);
       }
-
     }
-    scheduler.finished();
+    scheduler.waitFinished();
   }
 
   private void runCleanupSpec() {

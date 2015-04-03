@@ -120,7 +120,7 @@ public class ParameterizedSpecRunner extends BaseSpecRunner {
 
     boolean atLeastOneIteration = false;
 
-    Scheduler schedulerForRunIterations = this.scheduler.deriveScheduler(!currentFeature.isReportIterations());
+    Scheduler schedulerForRunIterations = this.scheduler.deriveScheduler(!currentFeature.isReportIterations() || !currentFeature.isSupportParallelExecution());
 
     while (haveNext(currentFeature, iterators)) {
       atLeastOneIteration = true;

@@ -181,6 +181,7 @@ public class BaseSpecRunner {
 
   private void runFeatures() {
     List<FeatureInfo> allFeaturesInExecutionOrder = spec.getAllFeaturesInExecutionOrder();
+    Scheduler scheduler = this.scheduler.deriveScheduler(!spec.isSupportParallelExecution());
     for (int i = 0; i < allFeaturesInExecutionOrder.size(); i++) {
       final FeatureInfo feature = allFeaturesInExecutionOrder.get(i);
       if (resetStatus(FEATURE) != OK) return;

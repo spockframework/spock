@@ -56,6 +56,8 @@ public class SpecInfo extends SpecElementInfo<NodeInfo, Class<?>> implements IMe
 
   private final List<FeatureInfo> features = new ArrayList<FeatureInfo>();
 
+  private boolean supportParallelExecution = true;
+
   public String getPackage() {
     return pkg;
   }
@@ -94,6 +96,14 @@ public class SpecInfo extends SpecElementInfo<NodeInfo, Class<?>> implements IMe
 
   public void setSubSpec(SpecInfo subSpec) {
     this.subSpec = subSpec;
+  }
+
+  public boolean isSupportParallelExecution() {
+    return supportParallelExecution;
+  }
+
+  public void setSupportParallelExecution(boolean supportParallelExecution) {
+    this.supportParallelExecution = supportParallelExecution;
   }
 
   public SpecInfo getTopSpec() {

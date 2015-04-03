@@ -17,26 +17,33 @@ package org.spockframework.smoke.extension
 import org.spockframework.EmbeddedSpecification
 
 class AutoCleanupExtension extends EmbeddedSpecification {
-  static closable
-  static disposable
-  static boom1
-  static boom2
+  public static ThreadLocal<MyClosable> closable = new ThreadLocal<>();
+  public static ThreadLocal<MyDisposable> disposable = new ThreadLocal<>();
+  public static ThreadLocal<Boom> boom1 = new ThreadLocal<>();
+  public static ThreadLocal<Boom> boom2 = new ThreadLocal<>();
 
   def setup() {
     runner.addClassImport(AutoCleanupExtension)
-    closable = new MyClosable()
-    disposable = new MyDisposable()
-    boom1 = new Boom()
-    boom2 = new Boom()
+    closable.set(new MyClosable());
+    disposable.set(new MyDisposable());
+    boom1.set(new Boom());
+    boom2.set(new Boom());
+  }
+
+  void cleanup() {
+    closable.remove()
+    disposable.remove()
+    boom1.remove()
+    boom2.remove()
   }
 
   def "@AutoCleanup resources are cleaned up after cleanup()"() {
-    assert !closable.called
+    assert !closable.get().called
 
     when:
     runner.runSpecBody("""
 @AutoCleanup
-closable = AutoCleanupExtension.closable
+closable = AutoCleanupExtension.closable.get()
 
 def feature() {
   expect: !closable.called
@@ -49,16 +56,16 @@ def cleanup() {
     """)
 
     then:
-    closable.called
+    closable.get().called
   }
 
   def "@Shared @AutoCleanup resources are cleaned up after cleanupSpec()"() {
-    assert !closable.called
-    
+    assert !closable.get().called
+
     when:
     runner.runSpecBody("""
 @Shared @AutoCleanup
-closable = AutoCleanupExtension.closable
+closable = AutoCleanupExtension.closable.get()
 
 def feature() {
   expect: !closable.called
@@ -75,14 +82,14 @@ def cleanupSpec() {
     """)
 
     then:
-    closable.called
+    closable.get().called
   }
 
   def "may specify custom method to be called for cleanup"() {
     when:
     runner.runSpecBody("""
 @AutoCleanup("dispose")
-disposable = AutoCleanupExtension.disposable
+disposable = AutoCleanupExtension.disposable.get()
 
 def feature() {
   expect: true
@@ -90,7 +97,7 @@ def feature() {
     """)
 
     then:
-    disposable.called
+    disposable.get().called
   }
 
   def "error during cleanup will fail feature"() {
@@ -129,9 +136,9 @@ def feature() {
     when:
     def result = runner.runSpecBody("""
 @AutoCleanup
-boom1 = AutoCleanupExtension.boom1
+boom1 = AutoCleanupExtension.boom1.get()
 @AutoCleanup
-boom2 = AutoCleanupExtension.boom2
+boom2 = AutoCleanupExtension.boom2.get()
 
 def feature() {
   expect: true
@@ -139,8 +146,8 @@ def feature() {
     """)
 
     then:
-    boom1.called
-    boom2.called
+    boom1.get().called
+    boom2.get().called
 
     and:
     result.failures.size() == 2
@@ -150,12 +157,12 @@ def feature() {
 
   // debatable
   def "no cleanup if field initialization fails"() {
-    assert !closable.called
+    assert !closable.get().called
 
     when:
     runner.runSpecBody("""
 @AutoCleanup
-closable = AutoCleanupExtension.closable
+closable = AutoCleanupExtension.closable.get()
 def x = new AutoCleanupExtension.BlowUp()
 
 def feature() { expect: true }
@@ -163,17 +170,17 @@ def feature() { expect: true }
 
     then:
     thrown(BoomException)
-    !closable.called
+    !closable.get().called
   }
 
   // debatable
   def "no cleanup if shared field initialization fails"() {
-    assert !closable.called
+    assert !closable.get().called
 
     when:
     runner.runSpecBody("""
 @Shared @AutoCleanup
-closable = AutoCleanupExtension.closable
+closable = AutoCleanupExtension.closable.get()
 @Shared
 def x = new AutoCleanupExtension.BlowUp()
 
@@ -182,7 +189,7 @@ def feature() { expect: true }
 
     then:
     thrown(BoomException)
-    !closable.called
+    !closable.get().called
   }
 
   static class MyClosable {

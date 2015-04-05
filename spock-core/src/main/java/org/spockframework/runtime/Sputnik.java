@@ -45,17 +45,7 @@ public class Sputnik extends ParentRunner implements Filterable, Sortable {
   private SpecInfo spec;
   private boolean extensionsRun = false;
   private boolean descriptionGenerated = false;
-  private RunnerScheduler scheduler = new RunnerScheduler() {
-    @Override
-    public void schedule(Runnable childStatement) {
-      childStatement.run();
-    }
-
-    @Override
-    public void finished() {
-      // do nothing
-    }
-  };
+  private RunnerScheduler scheduler = new SequentialRunnerScheduler();
 
   public Sputnik(Class<?> clazz) throws InitializationError {
     super(Object.class); // fake class - we need ParentRunner only to obtain RunnerScheduler

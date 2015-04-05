@@ -105,17 +105,6 @@ public class SchedulerTest {
 
   //------------------------------------------------------------------------
 
-  private static class SequentialRunnerScheduler implements RunnerScheduler {
-    @Override
-    public void schedule(Runnable childStatement) {
-      childStatement.run();
-    }
-
-    @Override
-    public void finished() {
-    }
-  }
-
   private static class ParallelRunnerScheduler implements RunnerScheduler {
     private final ExecutorService fService = Executors.newCachedThreadPool();
 

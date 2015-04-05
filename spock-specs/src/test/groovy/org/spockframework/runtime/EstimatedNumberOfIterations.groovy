@@ -20,17 +20,10 @@ import org.junit.runners.model.RunnerScheduler
 import spock.lang.Specification
 
 class EstimatedNumberOfIterations extends Specification {
-  def runner = new ParameterizedSpecRunner(null, null, new Scheduler(new RunnerScheduler() {
-    @Override
-    void schedule(Runnable childStatement) {
-      childStatement.run()
-    }
-
-    @Override
-    void finished() {
-
-    }
-  }, false))
+  def runner =  new ParameterizedSpecRunner(
+          null,
+          null,
+          new Scheduler(new SequentialRunnerScheduler(), false))
 
   def "w/o data provider"() {
     expect: "estimation is 1"

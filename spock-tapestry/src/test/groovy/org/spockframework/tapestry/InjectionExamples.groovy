@@ -21,7 +21,7 @@ import org.apache.tapestry5.ioc.annotations.*
 
 import spock.lang.*
 
-@SubModule(Module1)
+@ImportModule(Module1)
 class ServiceInjection extends Specification {
   @Inject
   IService1 service1
@@ -35,7 +35,7 @@ class ServiceInjection extends Specification {
   }
 }
 
-@SubModule(Module1)
+@ImportModule(Module1)
 class ServiceInjectionWithJavaxInject extends Specification {
   @javax.inject.Inject
   org.spockframework.tapestry.IService1 service1
@@ -49,7 +49,7 @@ class ServiceInjectionWithJavaxInject extends Specification {
   }
 }
 
-@SubModule(Module1)
+@ImportModule(Module1)
 class ServiceInjectionWithServiceId extends Specification {
   @InjectService("Service3")
   IService3 service3
@@ -63,7 +63,7 @@ class ServiceInjectionWithServiceId extends Specification {
   }
 }
 
-@SubModule(Module1)
+@ImportModule(Module1)
 class ObjectLocatorInjection extends Specification {
   @Inject
   private ObjectLocator locator
@@ -74,7 +74,7 @@ class ObjectLocatorInjection extends Specification {
   }
 }
 
-@SubModule(Module1)
+@ImportModule(Module1)
 class SymbolInjection extends Specification {
   @Inject
   @Symbol("java.version")
@@ -104,7 +104,7 @@ class SymbolInjection extends Specification {
   }
 }
 
-@SubModule(Module2)
+@ImportModule(Module2)
 class AutobuildInjection extends Specification {
   @Autobuild
   Service1 service1

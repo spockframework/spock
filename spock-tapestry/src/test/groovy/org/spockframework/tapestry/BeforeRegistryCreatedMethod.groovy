@@ -19,7 +19,7 @@ import org.apache.tapestry5.ioc.annotations.*
 
 import spock.lang.*
 
-@SubModule(Module1)
+@ImportModule(Module1)
 class BeforeRegistryCreatedMethod extends Specification {
   @Shared
   @Inject
@@ -63,7 +63,7 @@ class BeforeRegistryCreatedMethod extends Specification {
   }
 }
 
-@SubModule([])
+@ImportModule([])
 class CustomTapestryRegistry extends Specification {
   @Inject
   IService1 service1

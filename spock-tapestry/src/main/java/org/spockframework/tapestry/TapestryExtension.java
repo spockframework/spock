@@ -20,7 +20,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.apache.tapestry5.ioc.annotations.ImportModule;
 import org.apache.tapestry5.ioc.annotations.SubModule;
 import org.spockframework.runtime.extension.AbstractGlobalExtension;
 import org.spockframework.runtime.extension.IMethodInterceptor;
@@ -39,8 +38,9 @@ import org.spockframework.runtime.model.SpecInfo;
  *
  * <ul>
  * <li><tt>&#64;ImportModule</tt> indicates which Tapestry module(s) should be
- * started (and subsequently shut down). The deprecated <tt>&#64;ImportModule</tt> 
- * annotation is still supported for compatibility reasons.</li>
+ * started (and subsequently shut down). The deprecated
+ * <tt>&#64;ImportModule</tt> annotation is still supported for compatibility
+ * reasons.</li>
  * <li><tt>&#64;Inject</tt> marks fields which should be injected with a
  * Tapestry service or symbol</li>
  * </ul>
@@ -54,10 +54,10 @@ import org.spockframework.runtime.model.SpecInfo;
  *
  * <p>
  * For every specification annotated with <tt>&#64;ImportModule</tt> or
- * <tt>&#64;SubModule</tt>, the Tapestry registry will be started up (and subsequently
- * shut down) once. Because fields are injected <em>before</em> field initializers and
- * the <tt>setup()</tt>/<tt>setupSpec()</tt> methods are run, they can be safely
- * accessed from these places.
+ * <tt>&#64;SubModule</tt>, the Tapestry registry will be started up (and
+ * subsequently shut down) once. Because fields are injected <em>before</em>
+ * field initializers and the <tt>setup()</tt>/<tt>setupSpec()</tt> methods are
+ * run, they can be safely accessed from these places.
  *
  * <p>
  * Fields marked as <tt>&#64;Shared</tt> are injected once per specification;
@@ -115,16 +115,19 @@ public class TapestryExtension extends AbstractGlobalExtension {
   // allow activation of the extension w/o specifying any modules.
   private Set<Class<?>> collectModules(final SpecInfo spec) {
     Set<Class<?>> modules = null;
-
     for (SpecInfo curr : spec.getSpecsTopToBottom()) {
-      ImportModule importModule = curr.getAnnotation(ImportModule.class);
-      if (importModule != null) {
-        if (modules == null) {
-          modules = new HashSet<Class<?>>();
+      try {
+        org.apache.tapestry5.ioc.annotations.ImportModule importModule = curr
+            .getAnnotation(org.apache.tapestry5.ioc.annotations.ImportModule.class);
+        if (importModule != null) {
+          if (modules == null) {
+            modules = new HashSet<Class<?>>();
+          }
+          modules.addAll(Arrays.<Class<?>> asList(importModule.value()));
         }
-        modules.addAll(Arrays.<Class<?>> asList(importModule.value()));
+      } catch (NoClassDefFoundError e) {
+        // that's fine, we're probably on an old Tapestry version
       }
-
       SubModule subModule = curr.getAnnotation(SubModule.class);
       if (subModule != null) {
         if (modules == null) {

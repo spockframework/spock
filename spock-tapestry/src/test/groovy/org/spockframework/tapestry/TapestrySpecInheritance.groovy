@@ -10,7 +10,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ */  
 
 package org.spockframework.tapestry
 
@@ -18,7 +18,7 @@ import org.apache.tapestry5.ioc.annotations.*
 
 import spock.lang.*
 
-@ImportModule(Module1)
+@SubModule(Module1)
 abstract class BaseSpec extends Specification {
   static beforeRegistryCreatedCount = 0
 
@@ -43,7 +43,7 @@ abstract class BaseSpec extends Specification {
   }
 }
 
-@ImportModule(Module2)
+@SubModule(Module2)
 class TapestrySpecInheritance extends BaseSpec {
   @Inject
   IService2 anotherService2

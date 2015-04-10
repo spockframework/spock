@@ -18,18 +18,18 @@ package org.spockframework.tapestry;
 
 import org.apache.tapestry5.ioc.MappedConfiguration;
 import org.apache.tapestry5.ioc.ServiceBinder;
-import org.apache.tapestry5.ioc.annotations.ImportModule;
+import org.apache.tapestry5.ioc.annotations.SubModule;
 
 // Tapestry module classes cannot currently be written in Groovy
 // See https://issues.apache.org/jira/browse/TAPESTRY-2746
-@ImportModule(Module2.class)
+@SubModule(Module2.class)
 public class Module1 {
-  public static void bind(final ServiceBinder binder) {
+  public static void bind(ServiceBinder binder) {
     binder.bind(IService1.class, Service1.class);
     binder.bind(IService3.class, Service3.class);
   }
 
-  public void contributeApplicationDefaults(final MappedConfiguration<String, String> configuration) {
+  public void contributeApplicationDefaults(MappedConfiguration<String, String> configuration) {
     configuration.add("configKey", "configValue");
   }
 }

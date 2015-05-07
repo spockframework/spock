@@ -94,7 +94,18 @@ def "I'll only run on Windows"() { ... }
 `Requires` works exactly like `IgnoreIf`, except that the predicate is inverted. In general, it is preferable
 to state the conditions under which a method gets executed, rather than the conditions under which it gets ignored.
 
+=== NotYetImplemented
 
+Spock supports Groovy's +@NotYetImplemented+ annotation, which inverts the test result. The use case is to annotate
+tests that can not yet run but should already be committed. The main difference to +@Ignore+ is that the test are
+executed and when they execute without error, they will be reported as failure since the +@NotYetImplemented+ should
+be removed. This way the tests will become part of the normal tests instead of being +@Ignore+ forever.
+
+[source,groovy]
+----
+@NotYetImplemented
+def "I can not run yet"() { ... }
+----
 === Stepwise
 
 To execute features in the order that they are declared, annotate a spec class with `spock.lang.Stepwise`:

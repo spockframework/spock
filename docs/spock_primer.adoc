@@ -401,7 +401,7 @@ def "computing the maximum of two numbers"() {
 This `where` block effectively creates two "versions" of the feature method: One where `a` is 5, `b` is 1, and `c` is 5,
 and another one where `a` is 3, `b` is 9, and `c` is 9.
 
-The `where` block will be further explained in the <<data_driven_testing.adoc#,Data Driven Testing>> chapter.
+The `where` block is called before the `setup` block. The `where` block will be further explained in the <<data_driven_testing.adoc#,Data Driven Testing>> chapter.
 
 == Helper Methods
 

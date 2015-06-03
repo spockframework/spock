@@ -12,10 +12,10 @@
 </head>
 <body class="article">
 <div id="header">
-<h1>Spock Primer</h1>
 </div>
 <div id="content">
-<div id="preamble">
+<div class="sect1">
+<h2 id="_spock_primer">Spock Primer</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>This chapter assumes that you have a basic knowledge of Groovy and unit testing. If you are a Java developer but haven&#8217;t
@@ -33,11 +33,8 @@ whet your appetite for more.</p>
 <div class="paragraph">
 <p>To learn more about unit testing, go to <a href="http://en.wikipedia.org/wiki/Unit_testing" class="bare">http://en.wikipedia.org/wiki/Unit_testing</a>.</p>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_terminology">Terminology</h2>
-<div class="sectionbody">
+<div class="sect2">
+<h3 id="_terminology">Terminology</h3>
 <div class="paragraph">
 <p>Let&#8217;s start with a few definitions: Spock lets you write <em>specifications</em> that describe expected <em>features</em> (properties,
 aspects) exhibited by a system of interest. The system of interest could be anything between a single class and a whole
@@ -49,10 +46,8 @@ snapshot of the SUS and its collaborators; this snapshot is called the feature&#
 specification uses only a subset of them.</p>
 </div>
 </div>
-</div>
-<div class="sect1">
-<h2 id="_imports">Imports</h2>
-<div class="sectionbody">
+<div class="sect2">
+<h3 id="_imports">Imports</h3>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">import</span> <span class="include">spock.lang.*</span></code></pre>
@@ -62,10 +57,8 @@ specification uses only a subset of them.</p>
 <p>Package <code>spock.lang</code> contains the most important types for writing specifications.</p>
 </div>
 </div>
-</div>
-<div class="sect1">
-<h2 id="_specification">Specification</h2>
-<div class="sectionbody">
+<div class="sect2">
+<h3 id="_specification">Specification</h3>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="type">class</span> <span class="class">MyFirstSpecification</span> <span class="directive">extends</span> Specification {
@@ -87,10 +80,8 @@ run specification with <code>Sputnik</code>, Spock&#8217;s JUnit runner. Thanks 
 Java IDEs and build tools.</p>
 </div>
 </div>
-</div>
-<div class="sect1">
-<h2 id="_fields">Fields</h2>
-<div class="sectionbody">
+<div class="sect2">
+<h3 id="_fields">Fields</h3>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> obj = <span class="keyword">new</span> ClassUnderSpecification()
@@ -125,10 +116,8 @@ the field at the very beginning of the <code>setupSpec()</code> method.)</p>
 respect to sharing are more well-defined.</p>
 </div>
 </div>
-</div>
-<div class="sect1">
-<h2 id="_fixture_methods">Fixture Methods</h2>
-<div class="sectionbody">
+<div class="sect2">
+<h3 id="_fixture_methods">Fixture Methods</h3>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> <span class="function">setup</span>() {}          <span class="comment">// run before every feature method</span>
@@ -147,10 +136,8 @@ fields together with the <code>setupSpec()</code> and <code>cleanupSpec()</code>
 <p>Note: The <code>setupSpec()</code> and <code>cleanupSpec()</code> methods may not reference instance fields.</p>
 </div>
 </div>
-</div>
-<div class="sect1">
-<h2 id="_feature_methods">Feature Methods</h2>
-<div class="sectionbody">
+<div class="sect2">
+<h3 id="_feature_methods">Feature Methods</h3>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">pushing an element on the stack</span><span class="delimiter">&quot;</span></span>() {
@@ -186,8 +173,8 @@ good names for your feature methods, and feel free to use any characters you lik
 <p>Whereas the first and last phases are optional, the stimulus and response phases are always present (except in
 interacting feature methods), and may occur more than once.</p>
 </div>
-<div class="sect2">
-<h3 id="_blocks">Blocks</h3>
+<div class="sect3">
+<h4 id="_blocks">Blocks</h4>
 <div class="paragraph">
 <p>Spock has built-in support for implementing each of the conceptual phases of a feature method. To this end, feature
 methods are structured into so-called <em>blocks</em>. Blocks start with a label, and extend to the beginning of the next block,
@@ -211,8 +198,8 @@ special role, which will be revealed shortly. But first, let&#8217;s have a clos
 </div>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_setup_blocks">Setup Blocks</h4>
+<div class="sect4">
+<h5 id="_setup_blocks">Setup Blocks</h5>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="key">setup</span>:
@@ -227,8 +214,8 @@ optional and may be omitted, resulting in an <em>implicit</em> <code>setup</code
 and sometimes leads to a more readable feature method description (see <a href="#specs-as-doc">Specifications as Documentation</a>).</p>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_when_and_then_blocks">When and Then Blocks</h4>
+<div class="sect4">
+<h5 id="_when_and_then_blocks">When and Then Blocks</h5>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="key">when</span>:   <span class="comment">// stimulus</span>
@@ -240,8 +227,8 @@ and sometimes leads to a more readable feature method description (see <a href="
 blocks may contain arbitrary code, <code>then</code> blocks are restricted to <em>conditions</em>, <em>exception conditions</em>, <em>interactions</em>,
 and variable definitions. A feature method may contain multiple pairs of <code>when-then</code> blocks.</p>
 </div>
-<div class="sect4">
-<h5 id="_conditions">Conditions</h5>
+<div class="sect5">
+<h6 id="_conditions">Conditions</h6>
 <div class="paragraph">
 <p>Conditions describe an expected state, much like JUnit&#8217;s assertions. However, conditions are written as plain boolean
 expressions, eliminating the need for an assertion API. (More precisely, a condition may also produce a non-boolean
@@ -292,8 +279,8 @@ stack.size() == <span class="integer">2</span>
 digestible form. Nice, isn&#8217;t it?</p>
 </div>
 </div>
-<div class="sect4">
-<h5 id="_implicit_and_explicit_conditions">Implicit and explicit conditions</h5>
+<div class="sect5">
+<h6 id="_implicit_and_explicit_conditions">Implicit and explicit conditions</h6>
 <div class="paragraph">
 <p>Conditions are an essential ingredient of <code>then</code> blocks and <code>expect</code> blocks. Except for calls to <code>void</code> methods and
 expressions classified as interactions, all top-level expressions in these blocks are implicitly treated as conditions.
@@ -311,8 +298,8 @@ To use conditions in other places, you need to designate them with Groovy&#8217;
 <p>If an explicit condition is violated, it will produce the same nice diagnostic message as an implicit condition.</p>
 </div>
 </div>
-<div class="sect4">
-<h5 id="_exception_conditions">Exception Conditions</h5>
+<div class="sect5">
+<h6 id="_exception_conditions">Exception Conditions</h6>
 <div class="paragraph">
 <p>Exception conditions are used to describe that a <code>when</code> block should throw an exception. They are defined using the
 <code>thrown()</code> method, passing along the expected exception type. For example, to describe that popping from an empty stack
@@ -398,8 +385,8 @@ contract of <code>Map.put()</code>, this would be the right thing to do for a ma
 the method will also fail if any other exception is thrown.</p>
 </div>
 </div>
-<div class="sect4">
-<h5 id="_interactions">Interactions</h5>
+<div class="sect5">
+<h6 id="_interactions">Interactions</h6>
 <div class="paragraph">
 <p>Whereas conditions describe an object&#8217;s state, interactions describe how objects communicate with each other.
 Interactions are devoted a whole <a href="interaction_based_testing.html">chapter</a>, and so we only give a quick example here.
@@ -425,8 +412,8 @@ Suppose we want to describe the flow of events from a publisher to its subscribe
 </div>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_expect_blocks">Expect Blocks</h4>
+<div class="sect4">
+<h5 id="_expect_blocks">Expect Blocks</h5>
 <div class="paragraph">
 <p>An <code>expect</code> block is more limited than a <code>then</code> block in that it may only contain conditions and variable definitions.
 It is useful in situations where it is more natural to describe stimulus and expected response in a single expression.
@@ -465,8 +452,8 @@ to create more expressive and succinct conditions.
 </table>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_cleanup_blocks">Cleanup Blocks</h4>
+<div class="sect4">
+<h5 id="_cleanup_blocks">Cleanup Blocks</h5>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="key">setup</span>:
@@ -517,8 +504,8 @@ If a specification is designed in such a way that all its feature methods requir
 </table>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_where_blocks">Where Blocks</h4>
+<div class="sect4">
+<h5 id="_where_blocks">Where Blocks</h5>
 <div class="paragraph">
 <p>A <code>where</code> block always comes last in a method, and may not be repeated. It is used to write data-driven feature methods.
 To give you an idea how this is done, have a look at the following example:</p>
@@ -549,10 +536,8 @@ and another one where <code>a</code> is 3, <code>b</code> is 9, and <code>c</cod
 </div>
 </div>
 </div>
-</div>
-<div class="sect1">
-<h2 id="_helper_methods">Helper Methods</h2>
-<div class="sectionbody">
+<div class="sect2">
+<h3 id="_helper_methods">Helper Methods</h3>
 <div class="paragraph">
 <p>Sometimes feature methods grow large and/or contain lots of duplicated code. In such cases it can make sense to introduce
 one or more helper methods. Two good candidates for helper methods are setup/cleanup logic and complex conditions.
@@ -644,10 +629,8 @@ and helper methods can increase the coupling between feature methods. If you reu
 end up with specifications that are fragile and hard to evolve.</p>
 </div>
 </div>
-</div>
-<div class="sect1">
-<h2 id="specs-as-doc">Specifications as Documentation</h2>
-<div class="sectionbody">
+<div class="sect2">
+<h3 id="specs-as-doc">Specifications as Documentation</h3>
 <div class="paragraph">
 <p>Well-written specifications are a valuable source of information. Especially for higher-level specifications targeting
 a wider audience than just developers (architects, domain experts, customers, etc.), it makes sense to provide more
@@ -703,10 +686,8 @@ Spock directly supports this style of specification with the <code>given:</code>
 block descriptions are enhanced diagnostic messages, and textual reports that are equally understood by all stakeholders.</p>
 </div>
 </div>
-</div>
-<div class="sect1">
-<h2 id="_extensions">Extensions</h2>
-<div class="sectionbody">
+<div class="sect2">
+<h3 id="_extensions">Extensions</h3>
 <div class="paragraph">
 <p>As we have seen, Spock offers lots of functionality for writing specifications. However, there always comes a time
 when something else is needed. Therefore, Spock provides an interception-based extension mechanism. Extensions are
@@ -754,10 +735,8 @@ used (like specifying the behavior of exception conditions). In all other cases,
 <p>To learn how to implement your own directives and extensions, go to the <a href="extensions.html">Extensions</a> chapter.</p>
 </div>
 </div>
-</div>
-<div class="sect1">
-<h2 id="_comparison_to_junit">Comparison to JUnit</h2>
-<div class="sectionbody">
+<div class="sect2">
+<h3 id="_comparison_to_junit">Comparison to JUnit</h3>
 <div class="paragraph">
 <p>Although Spock uses a different terminology, many of its concepts and features are inspired from JUnit. Here is a rough
 comparison:</p>
@@ -823,9 +802,10 @@ comparison:</p>
 </div>
 </div>
 </div>
+</div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2015-06-03 00:54:50 UTC
+Last updated 2015-06-03 00:59:21 UTC
 </div>
 </div>
 </body>

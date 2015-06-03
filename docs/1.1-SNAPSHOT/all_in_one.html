@@ -3000,7 +3000,7 @@ methods.</p>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@Stepwise</span>
 <span class="type">class</span> <span class="class">FooSpec</span> <span class="directive">extends</span> Specification {
-  <span class="annotation">@ConfineMetaClassChanges</span>
+  <span class="annotation">@ConfineMetaClassChanges</span>([<span class="predefined-type">String</span>])
   <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">I run first</span><span class="delimiter">&quot;</span></span>() {
     <span class="key">when</span>:
     <span class="predefined-type">String</span>.metaClass.someMethod = { delegate }
@@ -4301,7 +4301,7 @@ that answer, closeTo(<span class="integer">42</span>, <span class="float">0.001<
 <div id="footer">
 <div id="footer-text">
 Version 1.0<br>
-Last updated 2015-06-03 00:59:21 UTC
+Last updated 2015-06-03 01:04:54 UTC
 </div>
 </div>
 </body>

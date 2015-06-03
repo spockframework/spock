@@ -44,4 +44,4 @@ script: ./gradlew travisCiBuild -Dvariant=$VARIANT
 
 notifications:
   slack:
-    secure: Koo3EDl5ftvBI8zzFB6q9haUZSaxHdEBZn5WzIxGeOrls3kCMD4qHA909ft389HXFIQRGgiCWEnu6oPQy7ld3d6XpGmy4ty/0L2Ivse57CVV9vuVXF0L/xigx3zbIZ/YYRm9KwYFbGgtyC/L0/dtkcZpqJSA9GQW4q0CQzlAn8A=
+    secure: eOht23SFXh9MayI/vIiez6pWvwYw/D92d8gvbQvRWtL4EumgA7aRW52roSCayKBg8HzYFUdylFyD2d1P8cgHBhdvIwq/aMSVa/5EsJ4fTlwJJEhS3aTPdGQqgv8XdRrE9WJ8S/yp7LbZXbEpGKKUqsjLYkTDM7SQJUJmvLz0X00=

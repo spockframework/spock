@@ -1,4 +1,4 @@
-= Spock Primer
+== Spock Primer
 
 This chapter assumes that you have a basic knowledge of Groovy and unit testing. If you are a Java developer but haven't
 heard about Groovy, don't worry - Groovy will feel very familiar to you! In fact, one of Groovy's main design goals is to
@@ -12,7 +12,7 @@ To learn more about Groovy, go to http://groovy-lang.org/.
 
 To learn more about unit testing, go to http://en.wikipedia.org/wiki/Unit_testing.
 
-== Terminology
+=== Terminology
 
 Let's start with a few definitions: Spock lets you write _specifications_ that describe expected _features_ (properties,
 aspects) exhibited by a system of interest. The system of interest could be anything between a single class and a whole
@@ -22,7 +22,7 @@ snapshot of the SUS and its collaborators; this snapshot is called the feature's
 The following sections walk you through all building blocks of which a Spock specification may be composed. A typical
 specification uses only a subset of them.
 
-== Imports
+=== Imports
 
 [source,groovy]
 ----
@@ -31,7 +31,7 @@ import spock.lang.*
 
 Package `spock.lang` contains the most important types for writing specifications.
 
-== Specification
+=== Specification
 
 [source,groovy]
 ----
@@ -51,7 +51,7 @@ Class `Specification` contains a number of useful methods for writing specificat
 run specification with `Sputnik`, Spock's JUnit runner. Thanks to Sputnik, Spock specifications can be run by most modern
 Java IDEs and build tools.
 
-== Fields
+=== Fields
 
 [source,groovy]
 ----
@@ -83,7 +83,7 @@ static final PI = 3.141592654
 Static fields should only be used for constants. Otherwise shared fields are preferable, because their semantics with
 respect to sharing are more well-defined.
 
-== Fixture Methods
+=== Fixture Methods
 
 [source,groovy]
 ----
@@ -100,7 +100,7 @@ fields together with the `setupSpec()` and `cleanupSpec()` methods. All fixture 
 
 Note: The `setupSpec()` and `cleanupSpec()` methods may not reference instance fields.
 
-== Feature Methods
+=== Feature Methods
 
 [source,groovy]
 ----
@@ -123,7 +123,7 @@ Conceptually, a feature method consists of four phases:
 Whereas the first and last phases are optional, the stimulus and response phases are always present (except in
 interacting feature methods), and may occur more than once.
 
-=== Blocks
+==== Blocks
 
 Spock has built-in support for implementing each of the conceptual phases of a feature method. To this end, feature
 methods are structured into so-called _blocks_. Blocks start with a label, and extend to the beginning of the next block,
@@ -141,7 +141,7 @@ The picture on the right shows how blocks map to the conceptual phases of a feat
 special role, which will be revealed shortly. But first, let's have a closer look at the other blocks.
 --
 
-==== Setup Blocks
+===== Setup Blocks
 
 [source,groovy]
 ----
@@ -155,7 +155,7 @@ other blocks, and may not be repeated. A `setup` block doesn't have any special 
 optional and may be omitted, resulting in an _implicit_ `setup` block. The `given:` label is an alias for `setup:`,
 and sometimes leads to a more readable feature method description (see <<specs-as-doc,Specifications as Documentation>>).
 
-==== When and Then Blocks
+===== When and Then Blocks
 
 [source,groovy]
 ----
@@ -167,7 +167,7 @@ The `when` and `then` blocks always occur together. They describe a stimulus and
 blocks may contain arbitrary code, `then` blocks are restricted to _conditions_, _exception conditions_, _interactions_,
 and variable definitions. A feature method may contain multiple pairs of `when-then` blocks.
 
-===== Conditions
+====== Conditions
 
 Conditions describe an expected state, much like JUnit's assertions. However, conditions are written as plain boolean
 expressions, eliminating the need for an assertion API. (More precisely, a condition may also produce a non-boolean
@@ -205,7 +205,7 @@ stack.size() == 2
 As you can see, Spock captures all values produced during the evaluation of a condition, and presents them in an easily
 digestible form. Nice, isn't it?
 
-===== Implicit and explicit conditions
+====== Implicit and explicit conditions
 
 Conditions are an essential ingredient of `then` blocks and `expect` blocks. Except for calls to `void` methods and
 expressions classified as interactions, all top-level expressions in these blocks are implicitly treated as conditions.
@@ -221,7 +221,7 @@ def setup() {
 
 If an explicit condition is violated, it will produce the same nice diagnostic message as an implicit condition.
 
-===== Exception Conditions
+====== Exception Conditions
 
 Exception conditions are used to describe that a `when` block should throw an exception. They are defined using the
 `thrown()` method, passing along the expected exception type. For example, to describe that popping from an empty stack
@@ -300,7 +300,7 @@ By using `notThrown()`, we make it clear that in particular a `NullPointerExcept
 contract of `Map.put()`, this would be the right thing to do for a map that doesn't support `null` keys.) However,
 the method will also fail if any other exception is thrown.
 
-===== Interactions
+====== Interactions
 
 Whereas conditions describe an object's state, interactions describe how objects communicate with each other.
 Interactions are devoted a whole <<interaction_based_testing.adoc#,chapter>>, and so we only give a quick example here.
@@ -324,7 +324,7 @@ def "events are published to all subscribers"() {
 }
 ----
 
-==== Expect Blocks
+===== Expect Blocks
 
 An `expect` block is more limited than a `then` block in that it may only contain conditions and variable definitions.
 It is useful in situations where it is more natural to describe stimulus and expected response in a single expression.
@@ -351,7 +351,7 @@ to describe methods with side effects, and `expect` to describe purely functiona
 TIP: Leverage http://docs.groovy-lang.org/docs/latest/html/groovy-jdk/[Groovy JDK] methods like `any()` and `every()`
 to create more expressive and succinct conditions.
 
-==== Cleanup Blocks
+===== Cleanup Blocks
 
 [source,groovy]
 ----
@@ -380,7 +380,7 @@ block to clean up the file system, close a database connection, or shut down a n
 TIP: If a specification is designed in such a way that all its feature methods require the same resources, use a
 `cleanup()` method; otherwise, prefer `cleanup` blocks. The same trade-off applies to `setup()` methods and `setup` blocks.
 
-==== Where Blocks
+===== Where Blocks
 
 A `where` block always comes last in a method, and may not be repeated. It is used to write data-driven feature methods.
 To give you an idea how this is done, have a look at the following example:
@@ -405,7 +405,7 @@ Although it is declared last the `where` block is evaluated before feature metho
 
 The `where` block will be further explained in the <<data_driven_testing.adoc#,Data Driven Testing>> chapter.
 
-== Helper Methods
+=== Helper Methods
 
 Sometimes feature methods grow large and/or contain lots of duplicated code. In such cases it can make sense to introduce
 one or more helper methods. Two good candidates for helper methods are setup/cleanup logic and complex conditions.
@@ -491,7 +491,7 @@ and helper methods can increase the coupling between feature methods. If you reu
 end up with specifications that are fragile and hard to evolve.
 
 [[specs-as-doc]]
-== Specifications as Documentation
+=== Specifications as Documentation
 
 Well-written specifications are a valuable source of information. Especially for higher-level specifications targeting
 a wider audience than just developers (architects, domain experts, customers, etc.), it makes sense to provide more
@@ -541,7 +541,7 @@ As noted before, `given:` is just an alias for `setup:`.
 Block descriptions are not only present in source code, but are also available to the Spock runtime. Planned usages of
 block descriptions are enhanced diagnostic messages, and textual reports that are equally understood by all stakeholders.
 
-== Extensions
+=== Extensions
 
 As we have seen, Spock offers lots of functionality for writing specifications. However, there always comes a time
 when something else is needed. Therefore, Spock provides an interception-based extension mechanism. Extensions are
@@ -560,7 +560,7 @@ used (like specifying the behavior of exception conditions). In all other cases,
 
 To learn how to implement your own directives and extensions, go to the <<extensions.adoc#,Extensions>> chapter.
 
-== Comparison to JUnit
+=== Comparison to JUnit
 
 Although Spock uses a different terminology, many of its concepts and features are inspired from JUnit. Here is a rough
 comparison:

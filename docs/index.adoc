@@ -11,3 +11,5 @@ Version 1.0
 . <<modules.adoc#,Modules>>
 . <<release_notes.adoc#,Release Notes>>
 . <<migration_guide.adoc#,Migration Guide>>
+
+<<all_in_one.adoc#,Single Page Documentation>>

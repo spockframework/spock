@@ -1,4 +1,4 @@
-== Interaction Based Testing
+= Interaction Based Testing
 
 Interaction-based testing is a design and testing technique that emerged in the Extreme Programming
 (XP) community in the early 2000's. Focusing on the behavior of objects rather than their state, it explores how
@@ -50,7 +50,7 @@ We hope that by the end of this chapter, you will agree that we have achieved th
 
 Except where indicated, all features of Spock's mocking framework work both for testing Java and Groovy code.
 
-=== Creating Mock Objects
+== Creating Mock Objects
 
 Mock objects are created with the +MockingApi.Mock()+ method.footnote:[For additional ways to create mock objects,
 see <<OtherKindsOfMockObjects>> and <<ALaCarteMocks>>.]
@@ -79,7 +79,7 @@ Mock objects literally implement (or, in the case of a class, extend) the type t
 words, in our example +subscriber+ _is-a_ +Subscriber+. Hence it can be passed to statically typed (Java)
 code that expects this type.
 
-=== Default Behavior of Mock Objects
+== Default Behavior of Mock Objects
 
 .Lenient vs. Strict Mocking Frameworks
 ****
@@ -97,7 +97,7 @@ the default value for the method's return type (+false+, +0+, or +null+). An exc
 equal to itself, has a unique hash code, and a string representation that includes the name of the type it represents.
 This default behavior is overridable by stubbing the methods, which we will learn about in the <<Stubbing>> section.
 
-=== Injecting Mock Objects into Code Under Specification
+== Injecting Mock Objects into Code Under Specification
 
 After creating the publisher and its subscribers, we need to make the latter known to the former:
 
@@ -117,7 +117,7 @@ class PublisherSpec extends Specification {
 
 We are now ready to describe the expected interactions between the two parties.
 
-=== Mocking
+== Mocking
 
 Mocking is the act of describing (mandatory) interactions between the object under specification and its collaborators.
 Here is an example:
@@ -141,7 +141,7 @@ When this feature method gets run, all invocations on mock objects that occur wh
 satisfied, a (subclass of) +InteractionNotSatisfiedError+ will be thrown. This verification happens automatically
 and does not require any additional code.
 
-==== Interactions
+=== Interactions
 
 .Is an Interaction Just a Regular Method Invocation?
 ****
@@ -163,7 +163,7 @@ parts: a _cardinality_, a _target constraint_, a _method constraint_, and an _ar
 cardinality
 ----
 
-==== Cardinality
+=== Cardinality
 
 The cardinality of an interaction describes how often a method call is expected. It can either be a fixed number or
 a range:
@@ -179,7 +179,7 @@ _ * subscriber.receive("hello")      // any number of calls, including zero
                                      // (rarely needed; see 'Strict Mocking')
 ----
 
-==== Target Constraint
+=== Target Constraint
 
 The target constraint of an interaction describes which mock object is expected to receive the method call:
 
@@ -189,7 +189,7 @@ The target constraint of an interaction describes which mock object is expected 
 1 * _.receive("hello")          // a call to any mock object
 ----
 
-==== Method Constraint
+=== Method Constraint
 
 The method constraint of an interaction describes which method is expected to be called:
 
@@ -214,7 +214,7 @@ When expecting a call to a setter method, only method syntax can be used:
 1 * subscriber.setStatus("ok") // NOT: 1 * subscriber.status = "ok"
 ----
 
-==== Argument Constraints
+=== Argument Constraints
 
 The argument constraints of an interaction describe which method arguments are expected:
 
@@ -257,7 +257,7 @@ Groovy allows any method whose last parameter has an array type to be called in 
 vararg syntax can also be used in interactions matching such methods.
 ****
 
-==== Matching Any Method Call
+=== Matching Any Method Call
 
 Sometimes it can be useful to match "anything", in some sense of the word:
 
@@ -273,7 +273,7 @@ Sometimes it can be useful to match "anything", in some sense of the word:
 NOTE: Although `(_.._) * _._(*_) >> _` is a valid interaction declaration,
 it is neither good style nor particularly useful.
 
-==== Strict Mocking
+=== Strict Mocking
 
 Now, when would matching any method call be useful? A good example is _strict mocking_,
 a style of mocking where no interactions other than those explicitly declared are allowed:
@@ -296,7 +296,7 @@ NOTE: `_ *` is only meaningful in the context of strict mocking. In particular, 
 when <<Stubbing>> an invocation. For example, `_ * auditing.record(_) >> "ok"`
 can (and should!) be simplified to `auditing.record(_) >> "ok"`.
 
-==== Where to Declare Interactions
+=== Where to Declare Interactions
 
 So far, we declared all our interactions in a `then:` block. This often results in a spec that reads naturally.
 However, it is also permissible to put interactions anywhere _before_ the `when:` block that is supposed to satisfy
@@ -321,7 +321,7 @@ a cardinality (when mocking) or a response generator (when stubbing). Either of 
 ****
 
 [[declaring-interactions-at-creation-time]]
-==== Declaring Interactions at Mock Creation Time (New in 0.7)
+=== Declaring Interactions at Mock Creation Time (New in 0.7)
 
 If a mock has a set of "base" interactions that don't vary, they can be declared right at mock creation time:
 
@@ -350,7 +350,7 @@ class MySpec extends Specification {
 }
 ----
 
-==== Grouping Interactions with Same Target (New in 0.7)
+=== Grouping Interactions with Same Target (New in 0.7)
 
 Interactions sharing the same target can be grouped in a `Specification.with` block. Similar to
 <<declaring-interactions-at-creation-time,Declaring Interactions at Mock Creation Time>>, this makes it unnecessary
@@ -366,7 +366,7 @@ with(subscriber) {
 
 A `with` block can also be used for grouping conditions with the same target.
 
-==== Mixing Interactions and Conditions
+=== Mixing Interactions and Conditions
 
 A `then:` block may contain both interactions and conditions. Although not strictly required, it is customary
 to declare interactions before conditions:
@@ -384,7 +384,7 @@ publisher.messageCount == 1
 Read out aloud: "When the publisher sends a 'hello' message, then the subscriber should receive the message exactly
 once, and the publisher's message count should be one."
 
-==== Explicit Interaction Blocks
+=== Explicit Interaction Blocks
 
 Internally, Spock must have full information about expected interactions _before_ they take place.
 So how is it possible for interactions to be declared in a `then:` block?
@@ -426,7 +426,7 @@ interaction {
 
 Since an `MockingApi.interaction` block is always moved in its entirety, the code now works as intended.
 
-==== Scope of Interactions
+=== Scope of Interactions
 
 Interactions declared in a `then:` block are scoped to the preceding `when:` block:
 
@@ -455,7 +455,7 @@ Interactions are always scoped to a particular feature method. Hence they cannot
 `setupSpec` method, or `cleanupSpec` method. Likewise, mock objects should not be stored in static or `@Shared`
 fields.
 
-==== Verification of Interactions
+=== Verification of Interactions
 
 There a two main ways in which a mock-based test can fail: An interaction can match more invocations than
 allowed, or it can match fewer invocations than required. The former case is detected right when the invocation
@@ -508,7 +508,7 @@ Unmatched invocations (ordered by similarity):
 1 * subscriber2.receive("hello")
 ----
 
-==== Invocation Order
+=== Invocation Order
 
 Often, the exact method invocation order isn't relevant and may change over time. To avoid over-specification,
 Spock defaults to allowing any invocation order, provided that the specified interactions are eventually satisfied:
@@ -541,7 +541,7 @@ In other words, invocation order is enforced _between_ but not _within_ `then:` 
 NOTE: Splitting up a `then:` block with `and:` does not impose any ordering, as `and:`
 is only meant for documentation purposes and doesn't carry any semantics.
 
-==== Mocking Classes
+=== Mocking Classes
 
 Besides interfaces, Spock also supports mocking of classes. Mocking classes works
 just like mocking interfaces; the only additional requirement is to put `cglib-nodep-2.2` or higher
@@ -552,7 +552,7 @@ NOTE: Java 8 is only supported from CGLIB 3.2 onwards, which has not been releas
 2015-03-02. As a temporary workaround, you can pull a prerelease version (e.g.
 `com.github.cglib:cglib.cglib-nodep:e10bc3dda2`) from Maven repository `https://jitpack.io`.
 
-=== Stubbing
+== Stubbing
 
 Stubbing is the act of making collaborators respond to method calls in a certain way. When stubbing
 a method, you don't care if and how many times the method is going to be called; you just want it to
@@ -577,7 +577,7 @@ subscriber.receive(_) >> "ok"
 
 Read out aloud: "_Whenever_ the subscriber receives a message, _make_ it respond with 'ok'."
 
-Compared to a mocked interaction, a stubbed interaction has no cardinality on the left end, but adds a 
+Compared to a mocked interaction, a stubbed interaction has no cardinality on the left end, but adds a
 _response generator_ on the right end:
 
 ----
@@ -594,7 +594,7 @@ A stubbed interaction can be declared in the usual places: either inside a `then
 it's common to declare interactions <<declaring-interactions-at-creation-time,at mock creation time>> or in a
 `setup:` block.
 
-==== Returning Fixed Values
+=== Returning Fixed Values
 
 We have already seen the use of the right-shift (`>>`) operator to return a fixed value:
 
@@ -615,7 +615,7 @@ This will return `"ok"` whenever `"message1"` is received, and `"fail"` whenever
 `"message2"` is received. There is no limit as to which values can be returned, provided they are
 compatible with the method's declared return type.
 
-==== Returning Sequences of Values
+=== Returning Sequences of Values
 
 To return different values on successive invocations, use the triple-right-shift (`>>>`) operator:
 
@@ -628,7 +628,7 @@ This will return `"ok"` for the first invocation, `"error"` for the second and t
 and `"ok"` for all remaining invocations. The right-hand side must be a value that Groovy knows how to iterate over;
 in this example, we've used a plain list.
 
-==== Computing Return Values
+=== Computing Return Values
 
 To compute a return value based on the method's argument, use the the right-shift (`>>`) operator together with a closure.
 If the closure declares a single untyped parameter, it gets passed the method's argument list:
@@ -655,7 +655,7 @@ If you find yourself in need of more information about a method invocation than 
 `org.spockframework.mock.IMockInvocation`. All methods declared in this interface are available inside the closure,
 without a need to prefix them. (In Groovy terminology, the closure _delegates_ to an instance of `IMockInvocation`.)
 
-==== Performing Side Effects
+=== Performing Side Effects
 
 Sometimes you may want to do more than just computing a return value. A typical example is
 throwing an exception. Again, closures come to the rescue:
@@ -668,7 +668,7 @@ subscriber.receive(_) >> { throw new InternalError("ouch") }
 Of course, the closure can contain more code, for example a `println` statement. It
 will get executed every time an incoming invocation matches the interaction.
 
-==== Chaining Method Responses
+=== Chaining Method Responses
 
 Method responses can be chained:
 
@@ -680,7 +680,7 @@ subscriber.receive(_) >>> ["ok", "fail", "ok"] >> { throw new InternalError() } 
 This will return `"ok", "fail", "ok"` for the first three invocations, throw `InternalError`
 for the fourth invocations, and return `ok` for any further invocation.
 
-=== Combining Mocking and Stubbing
+== Combining Mocking and Stubbing
 
 Mocking and stubbing go hand-in-hand:
 
@@ -715,14 +715,14 @@ get a chance to match.
 NOTE: Mocking and stubbing of the same method call has to happen in the same interaction.
 
 [[OtherKindsOfMockObjects]]
-=== Other Kinds of Mock Objects (New in 0.7)
+== Other Kinds of Mock Objects (New in 0.7)
 
 So far, we have created mock objects with the `MockingApi.Mock` method. Aside from
 this method, the `MockingApi` class provides a couple of other factory methods for creating
 more specialized kinds of mock objects.
 
 [[Stubs]]
-==== Stubs
+=== Stubs
 
 A _stub_ is created with the `MockingApi.Stub` factory method:
 
@@ -756,7 +756,7 @@ def subscriber = Stub(Subscriber) {
 ----
 
 [[Spies]]
-==== Spies
+=== Spies
 
 (Think twice before using this feature. It might be better to change the design of the code under specification.)
 
@@ -806,7 +806,7 @@ returns the real invocation's result, but in this example we opted to return our
 If we had wanted to pass a different message to the real method, we could have used `callRealMethodWithArgs("changed message")`.
 
 [[PartialMocks]]
-==== Partial Mocks
+=== Partial Mocks
 
 (Think twice before using this feature. It might be better to change the design of the code under specification.)
 
@@ -829,7 +829,7 @@ then:
 ----
 
 [[GroovyMocks]]
-=== Groovy Mocks (New in 0.7)
+== Groovy Mocks (New in 0.7)
 
 So far, all the mocking features we have seen work the same no matter if the calling code is written in Java or Groovy.
 By leveraging Groovy's dynamic capabilities, Groovy mocks offer some additional features specifically for testing Groovy code.
@@ -841,7 +841,7 @@ mock features are needed. When called from Java code, Groovy mocks will behave l
 isn't necessary to use a Groovy mock merely because the code under specification and/or mocked type is written
 in Groovy. Unless you have a concrete reason to use a Groovy mock, prefer a regular mock.
 
-==== Mocking Dynamic Methods
+=== Mocking Dynamic Methods
 
 All Groovy mocks implement the `GroovyObject` interface. They support the mocking and stubbing of
 dynamic methods as if they were physically declared methods:
@@ -854,7 +854,7 @@ def subscriber = GroovyMock(Subscriber)
 ----
 
 [[MockingAllInstancesOfAType]]
-==== Mocking All Instances of a Type
+=== Mocking All Instances of a Type
 
 (Think twice before using this feature. It might be better to change the design of the code under specification.)
 
@@ -900,7 +900,7 @@ Since a global Groovy mock is still based on a CGLIB proxy, it will retain its g
 ****
 
 [[MockingConstructors]]
-==== Mocking Constructors
+=== Mocking Constructors
 
 (Think twice before using this feature. It might be better to change the design of the code under specification.)
 
@@ -925,7 +925,7 @@ Now, whenever some code tries to construct a subscriber named Fred, we'll constr
 a subscriber named Barney instead.
 
 [MockingStaticMethods]
-==== Mocking Static Methods
+=== Mocking Static Methods
 
 (Think twice before using this feature. It might be better to change the design of the code under specification.)
 
@@ -948,12 +948,12 @@ the mock's instance isn't really needed. In such a case one can just write:
 GroovySpy(RealSubscriber, global: true)
 ----
 
-=== Advanced Features (New in 0.7)
+== Advanced Features (New in 0.7)
 
 Most of the time you shouldn't need these features. But if you do, you'll be glad to have them.
 
 [[ALaCarteMocks]]
-==== A la Carte Mocks
+=== A la Carte Mocks
 
 At the end of the day, the `Mock()`, `Stub()`, and `Spy()` factory methods are just canned ways to
 create mock objects with a certain configuration. If you want more fine-grained control over a mock's configuration,
@@ -971,7 +971,7 @@ verified (as for a `Stub()`). Instead of passing `ZeroOrNullResponse`, we could 
 `org.spockframework.mock.IDefaultResponse` for responding to unexpected method invocations.
 
 [[DetectingMockObjects]]
-==== Detecting Mock Objects
+=== Detecting Mock Objects
 
 To find out whether a particular object is a Spock mock object, use a `org.spockframework.mock.MockDetector`:
 
@@ -998,7 +998,7 @@ mock.type == List
 mock.nature == MockNature.MOCK
 ----
 
-=== Further Reading
+== Further Reading
 
 If you would like to dive deeper into interaction-based testing, we recommend the following resources:
 

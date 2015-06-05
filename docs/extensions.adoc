@@ -1,16 +1,16 @@
-= Extensions
+== Extensions
 
 Spock comes with a powerful extension mechanism, which allows to hook into a spec's lifecycle to enrich or alter its
 behavior. In this chapter, we will first learn about Spock's built-in extensions, and then dive into writing custom
 extensions.
 
-== Built-In Extensions
+=== Built-In Extensions
 
 Most of Spock's built-in extensions are _annotation-driven_. In other words, they are triggered by annotating a
 spec class or method with a certain annotation. You can tell such an annotation by its +@ExtensionAnnotation+
 meta-annotation.
 
-=== Ignore
+==== Ignore
 
 To temporarily prevent a feature method from getting executed, annotate it with +spock.lang.Ignore+:
 
@@ -38,7 +38,7 @@ class MySpec extends Specification { ... }
 
 In most execution environments, ignored feature methods and specs will be reported as "skipped".
 
-=== IgnoreRest
+==== IgnoreRest
 
 To ignore all but a (typically) small subset of methods, annotate the latter with +spock.lang.IgnoreRest+:
 
@@ -54,7 +54,7 @@ def "I'll also be ignored"() { ... }
 
 +@IgnoreRest+ is especially handy in execution environments that don't provide an (easy) way to run a subset of methods.
 
-=== IgnoreIf
+==== IgnoreIf
 
 To ignore a feature method under certain conditions, annotate it with +spock.lang.IgnoreIf+,
 followed by a predicate:
@@ -80,7 +80,7 @@ Using the `os` property, the previous example can be rewritten as:
 def "I'll run everywhere but on Windows"() { ... }
 ----
 
-=== Requires
+==== Requires
 
 To execute a feature method under certain conditions, annotate it with `spock.lang.Requires`,
 followed by a predicate:
@@ -95,7 +95,7 @@ def "I'll only run on Windows"() { ... }
 to state the conditions under which a method gets executed, rather than the conditions under which it gets ignored.
 
 
-=== Stepwise
+==== Stepwise
 
 To execute features in the order that they are declared, annotate a spec class with `spock.lang.Stepwise`:
 
@@ -112,7 +112,7 @@ class RunInOrderSpec extends Specification {
 failure are skipped.
 
 
-=== Timeout
+==== Timeout
 
 To fail a feature method, fixture, or class that exceeds a given execution duration, use `spock.lang.Timeout`,
 followed by a duration, and optionally a time unit. The default time unit is seconds.
@@ -148,7 +148,7 @@ When applied to a fixture method, the timeout is per execution of the fixture me
 When a timeout is reported to the user, the stack trace shown reflects the execution stack of the test framework when
 the timeout was exceeded.
 
-=== Use
+==== Use
 
 To activate one or more Groovy categories within the scope of a feature method or spec, use `spock.util.mop.Use`:
 
@@ -172,7 +172,7 @@ It has no effect when applied to a helper method. However, when applied to a spe
 methods.
 
 
-=== ConfineMetaClassChanges
+==== ConfineMetaClassChanges
 
 To confine meta class changes to the scope of a feature method or spec class, use `spock.util.mop.ConfineMetaClassChanges`:
 
@@ -180,7 +180,7 @@ To confine meta class changes to the scope of a feature method or spec class, us
 ----
 @Stepwise
 class FooSpec extends Specification {
-  @ConfineMetaClassChanges
+  @ConfineMetaClassChanges([String])
   def "I run first"() {
     when:
     String.metaClass.someMethod = { delegate }
@@ -205,7 +205,7 @@ after `cleanupSpec` is executed.
 When applied to a feature method, the meta classes are restored to as they were after `setup` was executed,
 before `cleanup` is executed.
 
-=== AutoCleanup
+==== AutoCleanup
 
 Automatically clean up a field or property at the end of its lifetime by using `spock.lang.AutoCleanup`.
 
@@ -231,7 +231,7 @@ annotated object. To prevent cleanup exceptions from being reported, override th
 def ignoreMyExceptions
 ----
 
-=== Title and Narrative
+==== Title and Narrative
 
 To attach a natural-language name to a spec, use `spock.lang.Title`:
 
@@ -255,7 +255,7 @@ So that bar
 class GiveTheUserFooSpec() { ... }
 ----
 
-=== Issue
+==== Issue
 
 To indicate that a feature or spec relates to one or more issues in an external tracking system, use `spock.lang.Issue`:
 
@@ -271,7 +271,7 @@ class MySpec {
 }
 ----
 
-=== Subject
+==== Subject
 
 To indicate one or more subjects of a spec, use `spock.lang.Subject`:
 
@@ -292,7 +292,7 @@ Foo myFoo
 
 TODO More to follow.
 
-== Writing Custom Extensions
+=== Writing Custom Extensions
 
 TODO
 

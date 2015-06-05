@@ -1,6 +1,6 @@
-= Release Notes
+== Release Notes
 
-== 1.0 (released 2015-03-02)
+=== 1.0 (released 2015-03-02)
 
 1.0 has arrived! Finally (and some years late) the version number communicates what
 https://code.google.com/p/spock/wiki/WhoIsUsingSpock[Spock users] have known for ages - that Spock isn't only useful
@@ -12,7 +12,7 @@ Cédric Champeau, David Dawson, Rob Fletcher, Sean Gilligan, Ken Kousen, Guillau
 http://www.nofluffjuststuff.com/home/main[NFJS Tour], Graeme Rocher, Baruch Sadogursky, Odin Hole Standal,
 Howard M. Lewis Ship, Ken Sipe, Venkat Subramaniam, Russel Winder.
 
-=== What's New In This Release
+==== What's New In This Release
 
 * <<Contributors,17 contributors>>, <<Resolved Issues,21 resolved issues>>, <<Merged Pull Requests,18 merged pull requests>>,
   <<Ongoing Work,some ongoing work>>. No ground-breaking new features, but significant improvements and fixes across the board.
@@ -28,13 +28,13 @@ Howard M. Lewis Ship, Ken Sipe, Venkat Subramaniam, Russel Winder.
   http://builds.spockframework.org[Linux] CI builds, pull requests automatically tested, all development on `master`
   branch (bye-bye `groovy-x.y` branches!).
 
-=== Other News
+==== Other News
 
 * Follow our new http://twitter.spockframework.org[Twitter account]
 * Try these <<New Third Party Extensions,new third-party extensions>>
 * Check out the upcoming http://manning.com/kapelonis/[Java Testing with Spock] book from Manning
 
-=== What's Up Next?
+==== What's Up Next?
 
 With a revamped build/release process and a reforming core team, we hope to release much more frequently from now on.
 Another big focus will be to better involve the community and their valuable contributions. Last but not least, we are
@@ -46,7 +46,7 @@ The Spock Team
 
 '''
 
-=== Contributors
+==== Contributors
 
 17 awesome people contributed to this release:
 
@@ -68,7 +68,7 @@ The Spock Team
 * https://github.com/magdzikk[Magda Stożek]
 * https://github.com/rvarlikli[Ramazan VARLIKLI]
 
-=== Resolved Issues
+==== Resolved Issues
 
 21 burning issues were fixed:
 
@@ -94,7 +94,7 @@ The Spock Team
 * https://code.google.com/p/spock/issues/detail?id=392[Release binary variants for Groovy 2.3 and Groovy 2.4]
 * https://code.google.com/p/spock/issues/detail?id=393[Port reference documentation to Asciidoc]
 
-=== Merged Pull Requests
+==== Merged Pull Requests
 
 18 hand-crafted pull requests were merged or cherry-picked:
 
@@ -117,14 +117,14 @@ The Spock Team
 * https://github.com/spockframework/spock/pull/11[missing code]
 * https://github.com/spockframework/spock/pull/10[Support overriding Junit After*/Before* methods in the derived class](
 
-=== New Third Party Extensions
+==== New Third Party Extensions
 
 These awesome extensions have been published or updated:
 
 * https://github.com/marcingrzejszczak/spock-subjects-collaborators-extension[Spock Subjects-Collaborators Extension]
 * https://github.com/renatoathaydes/spock-reports[Spock Reports Extension]
 
-=== Ongoing Work
+==== Ongoing Work
 
 These great features didn't make it into this release (but hopefully the next!):
 
@@ -133,13 +133,13 @@ These great features didn't make it into this release (but hopefully the next!):
 * https://github.com/spockframework/spock/pull/50[Soft asserts: check all then throw all failures]
 * https://github.com/spockframework/spock/pull/17[Detached mocks]
 
-== 0.7 (released 2012-10-08)
+=== 0.7 (released 2012-10-08)
 
-=== Snapshot Repository Moved
+==== Snapshot Repository Moved
 
 Spock snapshots are now available from http://oss.sonatype.org/content/repositories/snapshots/.
 
-=== New Reference Documentation
+==== New Reference Documentation
 
 The new Spock reference documentation is available at http://docs.spockframework.org.
 It will gradually replace the documentation at http://wiki.spockframework.org.
@@ -148,7 +148,7 @@ Documentation for the latest Spock snapshot is at http://docs.spockframework.org
 As of Spock 0.7, the chapters on <<data_driven_testing.adoc#,Data Driven Testing>> and
 <<interaction_based_testing.adoc#,Interaction Based Testing>> are complete.
 
-=== Improved Mocking Failure Message for +TooManyInvocationsError+
+==== Improved Mocking Failure Message for +TooManyInvocationsError+
 
 The diagnostic message accompanying a +TooManyInvocationsError+ has been greatly improved.
 Here is an example:
@@ -167,7 +167,7 @@ Matching invocations (ordered by last occurrence):
 
 <<interaction_based_testing.adoc#ShowAllMatchingInvocations,Reference Documentation>>
 
-=== Improved Mocking Failure Message for `TooFewInvocationsError`
+==== Improved Mocking Failure Message for `TooFewInvocationsError`
 
 The diagnostic message accompanying a `TooFewInvocationsError` has been greatly improved.
 Here is an example:
@@ -186,7 +186,7 @@ Unmatched invocations (ordered by similarity):
 
 <<interaction_based_testing.adoc#ShowUnmatchedInvocations,Reference Documentation>>
 
-=== Stubs
+==== Stubs
 
 Besides mocks, Spock now has explicit support for stubs:
 
@@ -201,7 +201,7 @@ Using a stub over a mock is an effective way to communicate its role to readers 
 
 <<interaction_based_testing.adoc#Stubs,Reference Documentation>>
 
-=== Spies
+==== Spies
 
 Besides mocks, Spock now has support for spies:
 
@@ -217,7 +217,7 @@ change the behavior of the real object. Furthermore, spies can be used as partia
 <<interaction_based_testing.adoc#Spies,Reference Documentation>>
 
 
-=== Declaring Interactions at Mock Creation Time
+==== Declaring Interactions at Mock Creation Time
 
 Interactions can now be declared at mock creation time:
 
@@ -233,7 +233,7 @@ This feature is particularly attractive for <<Stubs>>.
 
 <<interaction_based_testing.adoc#declaring-interactions-at-creation-time,Reference Documentation>>
 
-=== Groovy Mocks
+==== Groovy Mocks
 
 Spock now offers specialized mock objects for spec'ing Groovy code:
 
@@ -250,7 +250,7 @@ rather than Groovy code, it behaves like a regular mock.
 
 <<interaction_based_testing.adoc#GroovyMocks,Reference Documentation>>
 
-=== Global Mocks
+==== Global Mocks
 
 A Groovy mock can be made _global_:
 
@@ -265,7 +265,7 @@ Furthermore, a global mock allows mocking of the type's constructors and static 
 
 <<interaction_based_testing.adoc#MockingAllInstancesOfAType,Reference Documentation>>
 
-=== Grouping Conditions with Same Target Object
+==== Grouping Conditions with Same Target Object
 
 Inspired from Groovy's `Object.with` method, the `Specification.with` method allows to group conditions
 involving the same target object:
@@ -282,7 +282,7 @@ with(person) {
 }
 ----
 
-=== Grouping Interactions with Same Target Object
+==== Grouping Interactions with Same Target Object
 
 The `with` method can also be used for grouping interactions:
 
@@ -304,7 +304,7 @@ with(service) {
 
 <<interaction_based_testing.adoc#GroupingInteractionsWithSameTarget,Reference Documentation>>
 
-=== Polling Conditions
+==== Polling Conditions
 
 `spock.util.concurrent.PollingConditions` joins `AsyncConditions` and `BlockingVariable(s)` as another utility for
 testing asynchronous code:
@@ -332,7 +332,7 @@ conditions.eventually {
 }
 ----
 
-=== Experimental DSL Support for Eclipse
+==== Experimental DSL Support for Eclipse
 
 Spock now ships with a DSL descriptor that lets Groovy Eclipse better
 understand certain parts of Spock's DSL. The descriptor is automatically
@@ -363,7 +363,7 @@ def person = Stub(Person) {
 DSL support is activated for Groovy Eclipse 2.7.1 and higher. If necessary,
 it can be deactivated in the Groovy Eclipse preferences.
 
-=== Experimental DSL Support for IntelliJ IDEA
+==== Experimental DSL Support for IntelliJ IDEA
 
 Spock now ships with a DSL descriptor that lets Intellij IDEA better
 understand certain parts of Spock's DSL. The descriptor is automatically
@@ -392,13 +392,13 @@ def person = Stub(Person) {
 
 DSL support is activated for IntelliJ IDEA 11.1 and higher.
 
-=== Splitting up Class Specification
+==== Splitting up Class Specification
 
 Parts of class `spock.lang.Specification` were pulled up into two new super classes: `spock.lang.MockingApi`
 now contains all mocking-related methods, and `org.spockframework.lang.SpecInternals` contains internal methods
 which aren't meant to be used directly.
 
-=== Improved Failure Messages for `notThrown` and `noExceptionThrown`
+==== Improved Failure Messages for `notThrown` and `noExceptionThrown`
 
 Instead of just passing through exceptions, `Specification.notThrown` and `Specification.noExceptionThrown`
 now fail with messages like:
@@ -409,7 +409,7 @@ Expected no exception to be thrown, but got 'java.io.FileNotFoundException'
 Caused by: java.io.FileNotFoundException: ...
 ----
 
-=== `HamcrestSupport.expect`
+==== `HamcrestSupport.expect`
 
 Class `spock.util.matcher.HamcrestSupport` has a new `expect` method that makes
 http://code.google.com/p/hamcrest/[Hamcrest] assertions read better in then-blocks:
@@ -423,19 +423,19 @@ then:
 expect x, closeTo(42, 0.01)
 ----
 
-=== @Beta
+==== @Beta
 
 Recently introduced classes and methods may be annotated with `@Beta`, as a sign that they may still undergo incompatible
 changes. This gives us a chance to incorporate valuable feedback from our users. (Yes, we need your feedback!) Typically,
 a `@Beta` annotation is removed within one or two releases.
 
-=== Fixed Issues
+==== Fixed Issues
 
 See the https://code.google.com/p/spock/issues/list?can=1&q=label%3AMilestone-0.7[issue tracker] for a list of fixed issues.
 
-== 0.6 (released 2012-05-02)
+=== 0.6 (released 2012-05-02)
 
-=== Mocking Improvements
+==== Mocking Improvements
 
 The mocking framework now provides better diagnostic messages in some cases.
 
@@ -460,7 +460,7 @@ import static spock.util.matcher.HamcrestMatchers.closeTo
 1 * foo.bar(closeTo(42, 0.001))
 ----
 
-=== Extended JUnit Rules Support
+==== Extended JUnit Rules Support
 
 In addition to rules implementing `org.junit.rules.MethodRule` (which has been deprecated in JUnit 4.9), Spock now also
 supports rules implementing the new `org.junit.rules.TestRule` interface. Also supported is the new `@ClassRule`
@@ -470,7 +470,7 @@ honor the `@Unroll` annotation and any defined naming pattern.
  
 See https://code.google.com/p/spock/issues/detail?id=240[Issue 240] for a known limitation with Spock's TestRule support.
 
-=== Condition Rendering Improvements
+==== Condition Rendering Improvements
 
 When two objects are compared with the `==` operator, they are unequal, but their string representations are the same,
 Spock will now print the objects' types:
@@ -482,27 +482,27 @@ enteredNumber == 42
 42 (java.lang.String)
 ----
 
-=== JUnit Fixture Annotations
+==== JUnit Fixture Annotations
 
 Fixture methods can now be declared with JUnit's `@Before`, `@After`, `@BeforeClass`, and `@AfterClass` annotations,
 as an addition or alternative to Spock's own fixture methods. This was particularly needed for Grails 2.0 support.
 
-=== Tapestry 5.3 Support
+==== Tapestry 5.3 Support
 
 Thanks to a contribution from http://howardlewisship.com/[Howard Lewis Ship], the Tapestry module is now compatible
 with Tapestry 5.3. Older 5.x versions are still supported.
 
-=== IBM JDK Support
+==== IBM JDK Support
 
 Spock now runs fine on IBM JDKs, working around a bug in the IBM JDK's verifier.
 
-=== Improved JUnit Compatibility
+==== Improved JUnit Compatibility
 
 `org.junit.internal.AssumptionViolatedException` is now recognized and handled as known from JUnit. `@Unrolled` methods
 no longer cause "yellow" nodes in IDEs.
 
 [[improved-unroll-0.6]]
-=== Improved `@Unroll`
+==== Improved `@Unroll`
 
 The `@Unroll` naming pattern can now be provided in the method name, instead of as an argument to the annotation:
 
@@ -530,7 +530,7 @@ def "#person.name.toUpperCase() is #person.age years old"() { ... }
 The `@Unroll` annotation can now be applied to a spec class. In this case, all data-driven feature methods in the class
 will be unrolled.
 
-=== Improved `@Timeout`
+==== Improved `@Timeout`
 
 The `@Timeout` annotation can now be applied to a spec class. In this case, the timeout applies to all feature methods
 (individually) that aren't already annotated with `@Timeout`. Timed methods are now executed on the regular test
@@ -540,7 +540,7 @@ Also the interruption behavior has been improved, to increase the chance that a 
 The failure exception that is thrown when a timeout occurs now contains the stacktrace of test execution, allowing you
 to see where the test was “stuck” or how far it got in the allocated time.
 
-=== Improved Data Table Syntax
+==== Improved Data Table Syntax
 
 Table cells can now be separated with double pipes. This can be used to visually set apart expected outputs from
 provided inputs:
@@ -554,14 +554,14 @@ a | b || sum
 3 | 1 || 4
 ----
 
-=== Groovy 1.8/2.0 Support
+==== Groovy 1.8/2.0 Support
 
 Spock 0.6 ships in three variants for Groovy 1.7, 1.8, and 2.0. Make sure to pick the right version - for example,
 for Groovy 1.8 you need to use spock-core-0.6-groovy-1.8 (likewise for all other modules). The Groovy 2.0 variant
 is based on Groovy 2.0-beta-3-SNAPSHOT and only available from http://m2repo.spockframework.org. The Groovy 1.7 and
 1.8 variants are also available from Maven Central. The next version of Spock will no longer support Groovy 1.7.
 
-=== Grails 2.0 Support
+==== Grails 2.0 Support
 
 Spock's Grails plugin was split off into a separate project and now lives at http://github.spockframework.org/spock-grails.
 The plugin supports both Grails 1.3 and 2.0.
@@ -569,13 +569,13 @@ The plugin supports both Grails 1.3 and 2.0.
 The Spock Grails plugin supports all of the new Grails 2.0 test mixins, effectively deprecating the existing unit
 testing classes (e.g. UnitSpec). For integration testing, IntegrationSpec must still be used.
 
-=== IntelliJ IDEA Integration
+==== IntelliJ IDEA Integration
 
 The folks from http://www.jetbrains.com[JetBrains] have added a few handy features around data tables. Data tables
 will now be layed out automatically when reformatting code. Data variables are no longer shown as "unknown" and have
 their types inferred from the values in the table (!).
 
-=== GitHub Repository
+==== GitHub Repository
 
 All source code has moved to http://github.spockframework.org/. The http://github.spockframework.org/spock-grails[Grails Spock plugin],
 http://github.spockframework.org/spock-example[Spock Example] project, and
@@ -583,13 +583,13 @@ http://github.spockframework.org/spockwebconsole[Spock Web Console] now have the
 Also available are slides and code for various Spock presentations (such as
 http://github.spockframework.org/smarter-testing-with-spock[this one]).
 
-=== Gradle Build
+==== Gradle Build
 
 Spock is now exclusively built with Gradle. Building Spock yourself is as easy as cloning the
 http://github.spockframework.org/spock[Github repo] and executing `gradlew build`. No build tool installation is
 required; the only prerequisite for building Spock is a JDK installation (1.5 or higher).
 
-=== Fixed Issues
+==== Fixed Issues
 
 See the https://code.google.com/p/spock/issues/list?can=1&q=label%3AMilestone-0.6[issue tracker] for a list of fixed issues.
 

@@ -41,3 +41,7 @@ matrix:
 install: true
 
 script: ./gradlew travisCiBuild -Dvariant=$VARIANT
+
+notifications:
+  slack:
+    secure: eOht23SFXh9MayI/vIiez6pWvwYw/D92d8gvbQvRWtL4EumgA7aRW52roSCayKBg8HzYFUdylFyD2d1P8cgHBhdvIwq/aMSVa/5EsJ4fTlwJJEhS3aTPdGQqgv8XdRrE9WJ8S/yp7LbZXbEpGKKUqsjLYkTDM7SQJUJmvLz0X00=

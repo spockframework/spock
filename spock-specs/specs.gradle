@@ -9,7 +9,7 @@ configurations {
   junit
 }
 
-// for "com.github.cglib:cglib.cglib-nodep:e10bc3dda2"
+// for "com.github.cglib:cglib.cglib-nodep:5503bcca74"
 repositories {
   maven {
     url "https://jitpack.io"
@@ -20,7 +20,7 @@ dependencies {
   testCompile project(":spock-core")
 
   testRuntime libs.asm
-  testRuntime javaVersion >= 1.8 ? "com.github.cglib:cglib.cglib-nodep:e10bc3dda2" : libs.cglib
+  testRuntime javaVersion >= 1.8 ? "com.github.cglib.cglib:cglib-nodep:5503bcca74" : libs.cglib
   testRuntime libs.objenesis
   testRuntime libs.h2database
 

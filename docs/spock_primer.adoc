@@ -98,7 +98,7 @@ Usually it's a good idea to use a fresh fixture for every feature method, which 
 methods are for. Occasionally it makes sense for feature methods to share a fixture, which is achieved by using shared
 fields together with the `setupSpec()` and `cleanupSpec()` methods. All fixture methods are optional.
 
-Note: The `setupSpec()` and `cleanupSpec()` methods may not reference instance fields.
+Note: The `setupSpec()` and `cleanupSpec()` methods may not reference instance fields. Fixture methods overridden in subclasses will be executed like class constructors.
 
 === Feature Methods
 

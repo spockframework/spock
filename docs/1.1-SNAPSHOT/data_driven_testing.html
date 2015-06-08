@@ -12,17 +12,20 @@
 </head>
 <body class="article">
 <div id="header">
+<h1>Data Driven Testing</h1>
 </div>
 <div id="content">
-<div class="sect1">
-<h2 id="_data_driven_testing">Data Driven Testing</h2>
+<div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
 <p>Oftentimes, it is useful to exercise the same test code multiple times, with varying inputs and expected results.
 Spock&#8217;s data driven testing support makes this a first class feature.</p>
 </div>
-<div class="sect2">
-<h3 id="_introduction">Introduction</h3>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_introduction">Introduction</h2>
+<div class="sectionbody">
 <div class="paragraph">
 <p>Suppose we want to specify the behavior of the Math.max method:</p>
 </div>
@@ -83,8 +86,10 @@ hard-coded integer values:</p>
 which always comes at the end of the method. In the simplest (and most common) case, the where: block holds a <em>data table</em>.</p>
 </div>
 </div>
-<div class="sect2">
-<h3 id="data-tables">Data Tables</h3>
+</div>
+<div class="sect1">
+<h2 id="data-tables">Data Tables</h2>
+<div class="sectionbody">
 <div class="paragraph">
 <p>Data tables are a convenient way to exercise a feature method with a fixed set of data values:</p>
 </div>
@@ -123,16 +128,20 @@ a | _
 </div>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_isolated_execution_of_iterations">Isolated Execution of Iterations</h3>
+</div>
+<div class="sect1">
+<h2 id="_isolated_execution_of_iterations">Isolated Execution of Iterations</h2>
+<div class="sectionbody">
 <div class="paragraph">
 <p>Iterations are isolated from each other in the same way as separate feature methods. Each iteration gets its own instance
 of the specification class, and the <code>setup</code> and <code>cleanup</code> methods will be called before and after each iteration,
 respectively.</p>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_sharing_of_objects_between_iterations">Sharing of Objects between Iterations</h3>
+</div>
+<div class="sect1">
+<h2 id="_sharing_of_objects_between_iterations">Sharing of Objects between Iterations</h2>
+<div class="sectionbody">
 <div class="paragraph">
 <p>In order to share an object between iterations, it has to be kept in a <code>@Shared</code> or static field.</p>
 </div>
@@ -154,8 +163,10 @@ just between iterations of the same method. If you consider this a problem, cons
 spec, all of which can be kept in the same file. This achieves better isolation at the cost of some boilerplate code.</p>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_syntactic_variations">Syntactic Variations</h3>
+</div>
+<div class="sect1">
+<h2 id="_syntactic_variations">Syntactic Variations</h2>
+<div class="sectionbody">
 <div class="paragraph">
 <p>The previous code can be tweaked in a few ways. First, since the <code>where:</code> block already declares all data variables, the
 method parameters can be omitted.<span class="footnote">[<a id="_footnoteref_1" class="footnote" href="#_footnote_1" title="View footnote.">1</a>]</span>
@@ -179,8 +190,10 @@ With this, the code becomes:</p>
 </div>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_reporting_of_failures">Reporting of Failures</h3>
+</div>
+<div class="sect1">
+<h2 id="_reporting_of_failures">Reporting of Failures</h2>
+<div class="sectionbody">
 <div class="paragraph">
 <p>Let&#8217;s assume that our implementation of the <code>max</code> method has a flaw, and one of the iterations fails:</p>
 </div>
@@ -204,8 +217,10 @@ In any case, it would be nice if Spock made it loud and clear which iteration fa
 failure. This is the purpose of the <code>@Unroll</code> annotation.</p>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_method_unrolling">Method Unrolling</h3>
+</div>
+<div class="sect1">
+<h2 id="_method_unrolling">Method Unrolling</h2>
+<div class="sectionbody">
 <div class="paragraph">
 <p>A method annotated with <code>@Unroll</code> will have its iterations reported independently:</p>
 </div>
@@ -277,8 +292,10 @@ for further details on this topic.</p>
 feature method of the spec.</p>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_data_pipes">Data Pipes</h3>
+</div>
+<div class="sect1">
+<h2 id="_data_pipes">Data Pipes</h2>
+<div class="sectionbody">
 <div class="paragraph">
 <p>Data tables aren&#8217;t the only way to supply values to data variables. In fact, a data table is just syntactic sugar for
 one or more <em>data pipes</em>:</p>
@@ -301,8 +318,10 @@ they can fetch data from external sources like text files, databases and spreads
 Data providers are queried for their next value only when needed (before the next iteration).</p>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_multi_variable_data_pipes">Multi-Variable Data Pipes</h3>
+</div>
+<div class="sect1">
+<h2 id="_multi_variable_data_pipes">Multi-Variable Data Pipes</h2>
+<div class="sectionbody">
 <div class="paragraph">
 <p>If a data provider returns multiple values per iteration (as an object that Groovy knows how to iterate over),
 it can be connected to multiple data variables simultaneously. The syntax is somewhat similar to Groovy multi-assignment
@@ -330,8 +349,10 @@ where:
 </div>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_data_variable_assignment">Data Variable Assignment</h3>
+</div>
+<div class="sect1">
+<h2 id="_data_variable_assignment">Data Variable Assignment</h2>
+<div class="sectionbody">
 <div class="paragraph">
 <p>A data variable can be directly assigned a value:</p>
 </div>
@@ -360,8 +381,10 @@ c = row.c</code></pre>
 </div>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_combining_data_tables_data_pipes_and_variable_assignments">Combining Data Tables, Data Pipes, and Variable Assignments</h3>
+</div>
+<div class="sect1">
+<h2 id="_combining_data_tables_data_pipes_and_variable_assignments">Combining Data Tables, Data Pipes, and Variable Assignments</h2>
+<div class="sectionbody">
 <div class="paragraph">
 <p>Data tables, data pipes, and variable assignments can be combined as needed:</p>
 </div>
@@ -380,8 +403,10 @@ c = a &gt; b ? a : b</code></pre>
 </div>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_number_of_iterations">Number of Iterations</h3>
+</div>
+<div class="sect1">
+<h2 id="_number_of_iterations">Number of Iterations</h2>
+<div class="sectionbody">
 <div class="paragraph">
 <p>The number of iterations depends on how much data is available. Successive executions of the same method can
 yield different numbers of iterations. If a data provider runs out of values sooner than its peers, an exception will occur.
@@ -389,15 +414,19 @@ Variable assignments don&#8217;t affect the number of iterations. A <code>where:
 exactly one iteration.</p>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_closing_of_data_providers">Closing of Data Providers</h3>
+</div>
+<div class="sect1">
+<h2 id="_closing_of_data_providers">Closing of Data Providers</h2>
+<div class="sectionbody">
 <div class="paragraph">
 <p>After all iterations have completed, the zero-argument <code>close</code> method is called on all data providers that have
 such a method.</p>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_more_on_unrolled_method_names">More on Unrolled Method Names</h3>
+</div>
+<div class="sect1">
+<h2 id="_more_on_unrolled_method_names">More on Unrolled Method Names</h2>
+<div class="sectionbody">
 <div class="paragraph">
 <p>An unrolled method name is similar to a Groovy <code>GString</code>, except for the following differences:</p>
 </div>
@@ -450,7 +479,6 @@ following are valid method names:</p>
 </div>
 </div>
 </div>
-</div>
 <div id="footnotes">
 <hr>
 <div class="footnote" id="_footnote_1">
@@ -465,7 +493,7 @@ following are valid method names:</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2015-06-03 10:07:45 UTC
+Last updated 2015-06-08 19:19:20 UTC
 </div>
 </div>
 </body>

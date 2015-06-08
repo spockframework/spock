@@ -12,16 +12,19 @@
 </head>
 <body class="article">
 <div id="header">
+<h1>Migration Guide</h1>
 </div>
 <div id="content">
-<div class="sect1">
-<h2 id="_migration_guide">Migration Guide</h2>
+<div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
 <p>This page explains incompatible changes between successive versions and provides suggestions on how to deal with them.</p>
 </div>
-<div class="sect2">
-<h3 id="_1_0">1.0</h3>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_1_0">1.0</h2>
+<div class="sectionbody">
 <div class="paragraph">
 <p>Specs, Spec base classes and third-party extensions may have be recompiled in order to work with Spock 1.0.</p>
 </div>
@@ -36,8 +39,10 @@
 <p>No known source incompatible changes.</p>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_0_7">0.7</h3>
+</div>
+<div class="sect1">
+<h2 id="_0_7">0.7</h2>
+<div class="sectionbody">
 <div class="paragraph">
 <p>Client code must be recompiled in order to work with Spock 0.7. This includes third-party Spock extensions and base classes.</p>
 </div>
@@ -45,10 +50,12 @@
 <p>No known source incompatible changes.</p>
 </div>
 </div>
+</div>
+<div class="sect1">
+<h2 id="_0_6">0.6</h2>
+<div class="sectionbody">
 <div class="sect2">
-<h3 id="_0_6">0.6</h3>
-<div class="sect3">
-<h4 id="_class_initialization_order">Class initialization order</h4>
+<h3 id="_class_initialization_order">Class initialization order</h3>
 <div class="admonitionblock note">
 <table>
 <tr>
@@ -106,8 +113,8 @@ the following will no longer work:</p>
 a setup method.</p>
 </div>
 </div>
-<div class="sect3">
-<h4 id="__code_unroll_code_naming_pattern_syntax"><code>@Unroll</code> naming pattern syntax</h4>
+<div class="sect2">
+<h3 id="__code_unroll_code_naming_pattern_syntax"><code>@Unroll</code> naming pattern syntax</h3>
 <div class="admonitionblock note">
 <table>
 <tr>
@@ -162,8 +169,8 @@ This only affects the Groovy 1.8 and 2.0 variants.
 based syntax. See <a href="#improved-unroll-0.6">Improved <code>@Unroll</code></a> for recent improvements to that syntax.</p>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_hamcrest_matcher_syntax">Hamcrest matcher syntax</h4>
+<div class="sect2">
+<h3 id="_hamcrest_matcher_syntax">Hamcrest matcher syntax</h3>
 <div class="admonitionblock note">
 <table>
 <tr>
@@ -219,10 +226,9 @@ that answer, closeTo(<span class="integer">42</span>, <span class="float">0.001<
 </div>
 </div>
 </div>
-</div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2015-06-03 10:07:45 UTC
+Last updated 2015-06-08 19:19:20 UTC
 </div>
 </div>
 </body>

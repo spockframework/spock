@@ -12,10 +12,10 @@
 </head>
 <body class="article">
 <div id="header">
+<h1>Interaction Based Testing</h1>
 </div>
 <div id="content">
-<div class="sect1">
-<h2 id="_interaction_based_testing">Interaction Based Testing</h2>
+<div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
 <p>Interaction-based testing is a design and testing technique that emerged in the Extreme Programming
@@ -76,8 +76,11 @@ We hope that by the end of this chapter, you will agree that we have achieved th
 <div class="paragraph">
 <p>Except where indicated, all features of Spock&#8217;s mocking framework work both for testing Java and Groovy code.</p>
 </div>
-<div class="sect2">
-<h3 id="_creating_mock_objects">Creating Mock Objects</h3>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_creating_mock_objects">Creating Mock Objects</h2>
+<div class="sectionbody">
 <div class="paragraph">
 <p>Mock objects are created with the MockingApi.Mock() method.<span class="footnote">[<a id="_footnoteref_1" class="footnote" href="#_footnote_1" title="View footnote.">1</a>]</span>
 Let&#8217;s create two mock subscribers:</p>
@@ -119,8 +122,10 @@ words, in our example subscriber <em>is-a</em> Subscriber. Hence it can be passe
 code that expects this type.</p>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_default_behavior_of_mock_objects">Default Behavior of Mock Objects</h3>
+</div>
+<div class="sect1">
+<h2 id="_default_behavior_of_mock_objects">Default Behavior of Mock Objects</h2>
+<div class="sectionbody">
 <div class="sidebarblock">
 <div class="content">
 <div class="title">Lenient vs. Strict Mocking Frameworks</div>
@@ -142,8 +147,10 @@ equal to itself, has a unique hash code, and a string representation that includ
 This default behavior is overridable by stubbing the methods, which we will learn about in the <a href="#_stubbing">Stubbing</a> section.</p>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_injecting_mock_objects_into_code_under_specification">Injecting Mock Objects into Code Under Specification</h3>
+</div>
+<div class="sect1">
+<h2 id="_injecting_mock_objects_into_code_under_specification">Injecting Mock Objects into Code Under Specification</h2>
+<div class="sectionbody">
 <div class="paragraph">
 <p>After creating the publisher and its subscribers, we need to make the latter known to the former:</p>
 </div>
@@ -165,8 +172,10 @@ This default behavior is overridable by stubbing the methods, which we will lear
 <p>We are now ready to describe the expected interactions between the two parties.</p>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_mocking">Mocking</h3>
+</div>
+<div class="sect1">
+<h2 id="_mocking">Mocking</h2>
+<div class="sectionbody">
 <div class="paragraph">
 <p>Mocking is the act of describing (mandatory) interactions between the object under specification and its collaborators.
 Here is an example:</p>
@@ -192,8 +201,8 @@ when block will be matched against the interactions described in the then: block
 satisfied, a (subclass of) InteractionNotSatisfiedError will be thrown. This verification happens automatically
 and does not require any additional code.</p>
 </div>
-<div class="sect3">
-<h4 id="_interactions">Interactions</h4>
+<div class="sect2">
+<h3 id="_interactions">Interactions</h3>
 <div class="sidebarblock">
 <div class="content">
 <div class="title">Is an Interaction Just a Regular Method Invocation?</div>
@@ -220,8 +229,8 @@ cardinality</pre>
 </div>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_cardinality">Cardinality</h4>
+<div class="sect2">
+<h3 id="_cardinality">Cardinality</h3>
 <div class="paragraph">
 <p>The cardinality of an interaction describes how often a method call is expected. It can either be a fixed number or
 a range:</p>
@@ -238,8 +247,8 @@ _ * subscriber.receive(<span class="string"><span class="delimiter">&quot;</span
 </div>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_target_constraint">Target Constraint</h4>
+<div class="sect2">
+<h3 id="_target_constraint">Target Constraint</h3>
 <div class="paragraph">
 <p>The target constraint of an interaction describes which mock object is expected to receive the method call:</p>
 </div>
@@ -250,8 +259,8 @@ _ * subscriber.receive(<span class="string"><span class="delimiter">&quot;</span
 </div>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_method_constraint">Method Constraint</h4>
+<div class="sect2">
+<h3 id="_method_constraint">Method Constraint</h3>
 <div class="paragraph">
 <p>The method constraint of an interaction describes which method is expected to be called:</p>
 </div>
@@ -279,8 +288,8 @@ _ * subscriber.receive(<span class="string"><span class="delimiter">&quot;</span
 </div>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_argument_constraints">Argument Constraints</h4>
+<div class="sect2">
+<h3 id="_argument_constraints">Argument Constraints</h3>
 <div class="paragraph">
 <p>The argument constraints of an interaction describe which method arguments are expected:</p>
 </div>
@@ -329,8 +338,8 @@ vararg syntax can also be used in interactions matching such methods.</p>
 </div>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_matching_any_method_call">Matching Any Method Call</h4>
+<div class="sect2">
+<h3 id="_matching_any_method_call">Matching Any Method Call</h3>
 <div class="paragraph">
 <p>Sometimes it can be useful to match "anything", in some sense of the word:</p>
 </div>
@@ -357,8 +366,8 @@ it is neither good style nor particularly useful.
 </table>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_strict_mocking">Strict Mocking</h4>
+<div class="sect2">
+<h3 id="_strict_mocking">Strict Mocking</h3>
 <div class="paragraph">
 <p>Now, when would matching any method call be useful? A good example is <em>strict mocking</em>,
 a style of mocking where no interactions other than those explicitly declared are allowed:</p>
@@ -393,8 +402,8 @@ can (and should!) be simplified to <code>auditing.record(</em>) &gt;&gt; "ok"</c
 </table>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_where_to_declare_interactions">Where to Declare Interactions</h4>
+<div class="sect2">
+<h3 id="_where_to_declare_interactions">Where to Declare Interactions</h3>
 <div class="paragraph">
 <p>So far, we declared all our interactions in a <code>then:</code> block. This often results in a spec that reads naturally.
 However, it is also permissible to put interactions anywhere <em>before</em> the <code>when:</code> block that is supposed to satisfy
@@ -423,8 +432,8 @@ a cardinality (when mocking) or a response generator (when stubbing). Either of 
 </div>
 </div>
 </div>
-<div class="sect3">
-<h4 id="declaring-interactions-at-creation-time">Declaring Interactions at Mock Creation Time (New in 0.7)</h4>
+<div class="sect2">
+<h3 id="declaring-interactions-at-creation-time">Declaring Interactions at Mock Creation Time (New in 0.7)</h3>
 <div class="paragraph">
 <p>If a mock has a set of "base" interactions that don&#8217;t vary, they can be declared right at mock creation time:</p>
 </div>
@@ -455,8 +464,8 @@ object they belong to.</p>
 </div>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_grouping_interactions_with_same_target_new_in_0_7">Grouping Interactions with Same Target (New in 0.7)</h4>
+<div class="sect2">
+<h3 id="_grouping_interactions_with_same_target_new_in_0_7">Grouping Interactions with Same Target (New in 0.7)</h3>
 <div class="paragraph">
 <p>Interactions sharing the same target can be grouped in a <code>Specification.with</code> block. Similar to
 <a href="#declaring-interactions-at-creation-time">Declaring Interactions at Mock Creation Time</a>, this makes it unnecessary
@@ -474,8 +483,8 @@ to repeat the target constraint:</p>
 <p>A <code>with</code> block can also be used for grouping conditions with the same target.</p>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_mixing_interactions_and_conditions">Mixing Interactions and Conditions</h4>
+<div class="sect2">
+<h3 id="_mixing_interactions_and_conditions">Mixing Interactions and Conditions</h3>
 <div class="paragraph">
 <p>A <code>then:</code> block may contain both interactions and conditions. Although not strictly required, it is customary
 to declare interactions before conditions:</p>
@@ -495,8 +504,8 @@ publisher.messageCount == <span class="integer">1</span></code></pre>
 once, and the publisher&#8217;s message count should be one."</p>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_explicit_interaction_blocks">Explicit Interaction Blocks</h4>
+<div class="sect2">
+<h3 id="_explicit_interaction_blocks">Explicit Interaction Blocks</h3>
 <div class="paragraph">
 <p>Internally, Spock must have full information about expected interactions <em>before</em> they take place.
 So how is it possible for interactions to be declared in a <code>then:</code> block?
@@ -543,8 +552,8 @@ interaction {
 <p>Since an <code>MockingApi.interaction</code> block is always moved in its entirety, the code now works as intended.</p>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_scope_of_interactions">Scope of Interactions</h4>
+<div class="sect2">
+<h3 id="_scope_of_interactions">Scope of Interactions</h3>
 <div class="paragraph">
 <p>Interactions declared in a <code>then:</code> block are scoped to the preceding <code>when:</code> block:</p>
 </div>
@@ -577,8 +586,8 @@ containing feature method.</p>
 fields.</p>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_verification_of_interactions">Verification of Interactions</h4>
+<div class="sect2">
+<h3 id="_verification_of_interactions">Verification of Interactions</h3>
 <div class="paragraph">
 <p>There a two main ways in which a mock-based test can fail: An interaction can match more invocations than
 allowed, or it can match fewer invocations than required. The former case is detected right when the invocation
@@ -638,8 +647,8 @@ invocations that didn&#8217;t match any interaction, ordered by their similarity
 </div>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_invocation_order">Invocation Order</h4>
+<div class="sect2">
+<h3 id="_invocation_order">Invocation Order</h3>
 <div class="paragraph">
 <p>Often, the exact method invocation order isn&#8217;t relevant and may change over time. To avoid over-specification,
 Spock defaults to allowing any invocation order, provided that the specified interactions are eventually satisfied:</p>
@@ -686,8 +695,8 @@ is only meant for documentation purposes and doesn&#8217;t carry any semantics.
 </table>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_mocking_classes">Mocking Classes</h4>
+<div class="sect2">
+<h3 id="_mocking_classes">Mocking Classes</h3>
 <div class="paragraph">
 <p>Besides interfaces, Spock also supports mocking of classes. Mocking classes works
 just like mocking interfaces; the only additional requirement is to put <code>cglib-nodep-2.2</code> or higher
@@ -710,8 +719,10 @@ Java 8 is only supported from CGLIB 3.2 onwards, which has not been released as 
 </div>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_stubbing">Stubbing</h3>
+</div>
+<div class="sect1">
+<h2 id="_stubbing">Stubbing</h2>
+<div class="sectionbody">
 <div class="paragraph">
 <p>Stubbing is the act of making collaborators respond to method calls in a certain way. When stubbing
 a method, you don&#8217;t care if and how many times the method is going to be called; you just want it to
@@ -759,8 +770,8 @@ target constraint</pre>
 it&#8217;s common to declare interactions <a href="#declaring-interactions-at-creation-time">at mock creation time</a> or in a
 <code>setup:</code> block.</p>
 </div>
-<div class="sect3">
-<h4 id="_returning_fixed_values">Returning Fixed Values</h4>
+<div class="sect2">
+<h3 id="_returning_fixed_values">Returning Fixed Values</h3>
 <div class="paragraph">
 <p>We have already seen the use of the right-shift (<code>&gt;&gt;</code>) operator to return a fixed value:</p>
 </div>
@@ -784,8 +795,8 @@ subscriber.receive(<span class="string"><span class="delimiter">&quot;</span><sp
 compatible with the method&#8217;s declared return type.</p>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_returning_sequences_of_values">Returning Sequences of Values</h4>
+<div class="sect2">
+<h3 id="_returning_sequences_of_values">Returning Sequences of Values</h3>
 <div class="paragraph">
 <p>To return different values on successive invocations, use the triple-right-shift (<code>&gt;&gt;&gt;</code>) operator:</p>
 </div>
@@ -800,8 +811,8 @@ and <code>"ok"</code> for all remaining invocations. The right-hand side must be
 in this example, we&#8217;ve used a plain list.</p>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_computing_return_values">Computing Return Values</h4>
+<div class="sect2">
+<h3 id="_computing_return_values">Computing Return Values</h3>
 <div class="paragraph">
 <p>To compute a return value based on the method&#8217;s argument, use the the right-shift (<code>&gt;&gt;</code>) operator together with a closure.
 If the closure declares a single untyped parameter, it gets passed the method&#8217;s argument list:</p>
@@ -833,8 +844,8 @@ parameters:<span class="footnote">[<a id="_footnoteref_3" class="footnote" href=
 without a need to prefix them. (In Groovy terminology, the closure <em>delegates</em> to an instance of <code>IMockInvocation</code>.)</p>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_performing_side_effects">Performing Side Effects</h4>
+<div class="sect2">
+<h3 id="_performing_side_effects">Performing Side Effects</h3>
 <div class="paragraph">
 <p>Sometimes you may want to do more than just computing a return value. A typical example is
 throwing an exception. Again, closures come to the rescue:</p>
@@ -849,8 +860,8 @@ throwing an exception. Again, closures come to the rescue:</p>
 will get executed every time an incoming invocation matches the interaction.</p>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_chaining_method_responses">Chaining Method Responses</h4>
+<div class="sect2">
+<h3 id="_chaining_method_responses">Chaining Method Responses</h3>
 <div class="paragraph">
 <p>Method responses can be chained:</p>
 </div>
@@ -865,8 +876,10 @@ for the fourth invocations, and return <code>ok</code> for any further invocatio
 </div>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_combining_mocking_and_stubbing">Combining Mocking and Stubbing</h3>
+</div>
+<div class="sect1">
+<h2 id="_combining_mocking_and_stubbing">Combining Mocking and Stubbing</h2>
+<div class="sectionbody">
 <div class="paragraph">
 <p>Mocking and stubbing go hand-in-hand:</p>
 </div>
@@ -913,15 +926,17 @@ Mocking and stubbing of the same method call has to happen in the same interacti
 </table>
 </div>
 </div>
-<div class="sect2">
-<h3 id="OtherKindsOfMockObjects">Other Kinds of Mock Objects (New in 0.7)</h3>
+</div>
+<div class="sect1">
+<h2 id="OtherKindsOfMockObjects">Other Kinds of Mock Objects (New in 0.7)</h2>
+<div class="sectionbody">
 <div class="paragraph">
 <p>So far, we have created mock objects with the <code>MockingApi.Mock</code> method. Aside from
 this method, the <code>MockingApi</code> class provides a couple of other factory methods for creating
 more specialized kinds of mock objects.</p>
 </div>
-<div class="sect3">
-<h4 id="Stubs">Stubs</h4>
+<div class="sect2">
+<h3 id="Stubs">Stubs</h3>
 <div class="paragraph">
 <p>A <em>stub</em> is created with the <code>MockingApi.Stub</code> factory method:</p>
 </div>
@@ -977,8 +992,8 @@ See class <code>org.spockframework.mock.EmptyOrDummyResponse</code> for the deta
 </div>
 </div>
 </div>
-<div class="sect3">
-<h4 id="Spies">Spies</h4>
+<div class="sect2">
+<h3 id="Spies">Spies</h3>
 <div class="paragraph">
 <p>(Think twice before using this feature. It might be better to change the design of the code under specification.)</p>
 </div>
@@ -1037,8 +1052,8 @@ returns the real invocation&#8217;s result, but in this example we opted to retu
 If we had wanted to pass a different message to the real method, we could have used <code>callRealMethodWithArgs("changed message")</code>.</p>
 </div>
 </div>
-<div class="sect3">
-<h4 id="PartialMocks">Partial Mocks</h4>
+<div class="sect2">
+<h3 id="PartialMocks">Partial Mocks</h3>
 <div class="paragraph">
 <p>(Think twice before using this feature. It might be better to change the design of the code under specification.)</p>
 </div>
@@ -1063,8 +1078,10 @@ persister.receive(<span class="string"><span class="delimiter">&quot;</span><spa
 </div>
 </div>
 </div>
-<div class="sect2">
-<h3 id="GroovyMocks">Groovy Mocks (New in 0.7)</h3>
+</div>
+<div class="sect1">
+<h2 id="GroovyMocks">Groovy Mocks (New in 0.7)</h2>
+<div class="sectionbody">
 <div class="paragraph">
 <p>So far, all the mocking features we have seen work the same no matter if the calling code is written in Java or Groovy.
 By leveraging Groovy&#8217;s dynamic capabilities, Groovy mocks offer some additional features specifically for testing Groovy code.
@@ -1086,8 +1103,8 @@ in Groovy. Unless you have a concrete reason to use a Groovy mock, prefer a regu
 </tr>
 </table>
 </div>
-<div class="sect3">
-<h4 id="_mocking_dynamic_methods">Mocking Dynamic Methods</h4>
+<div class="sect2">
+<h3 id="_mocking_dynamic_methods">Mocking Dynamic Methods</h3>
 <div class="paragraph">
 <p>All Groovy mocks implement the <code>GroovyObject</code> interface. They support the mocking and stubbing of
 dynamic methods as if they were physically declared methods:</p>
@@ -1100,8 +1117,8 @@ dynamic methods as if they were physically declared methods:</p>
 </div>
 </div>
 </div>
-<div class="sect3">
-<h4 id="MockingAllInstancesOfAType">Mocking All Instances of a Type</h4>
+<div class="sect2">
+<h3 id="MockingAllInstancesOfAType">Mocking All Instances of a Type</h3>
 <div class="paragraph">
 <p>(Think twice before using this feature. It might be better to change the design of the code under specification.)</p>
 </div>
@@ -1161,8 +1178,8 @@ Since a global Groovy mock is still based on a CGLIB proxy, it will retain its g
 </div>
 </div>
 </div>
-<div class="sect3">
-<h4 id="MockingConstructors">Mocking Constructors</h4>
+<div class="sect2">
+<h3 id="MockingConstructors">Mocking Constructors</h3>
 <div class="paragraph">
 <p>(Think twice before using this feature. It might be better to change the design of the code under specification.)</p>
 </div>
@@ -1190,8 +1207,8 @@ To change which object gets constructed, we can stub the constructor:</p>
 a subscriber named Barney instead.</p>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_mocking_static_methods">Mocking Static Methods</h4>
+<div class="sect2">
+<h3 id="_mocking_static_methods">Mocking Static Methods</h3>
 <div class="paragraph">
 <p>(Think twice before using this feature. It might be better to change the design of the code under specification.)</p>
 </div>
@@ -1219,13 +1236,15 @@ the mock&#8217;s instance isn&#8217;t really needed. In such a case one can just
 </div>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_advanced_features_new_in_0_7">Advanced Features (New in 0.7)</h3>
+</div>
+<div class="sect1">
+<h2 id="_advanced_features_new_in_0_7">Advanced Features (New in 0.7)</h2>
+<div class="sectionbody">
 <div class="paragraph">
 <p>Most of the time you shouldn&#8217;t need these features. But if you do, you&#8217;ll be glad to have them.</p>
 </div>
-<div class="sect3">
-<h4 id="ALaCarteMocks">A la Carte Mocks</h4>
+<div class="sect2">
+<h3 id="ALaCarteMocks">A la Carte Mocks</h3>
 <div class="paragraph">
 <p>At the end of the day, the <code>Mock()</code>, <code>Stub()</code>, and <code>Spy()</code> factory methods are just canned ways to
 create mock objects with a certain configuration. If you want more fine-grained control over a mock&#8217;s configuration,
@@ -1244,8 +1263,8 @@ verified (as for a <code>Stub()</code>). Instead of passing <code>ZeroOrNullResp
 <code>org.spockframework.mock.IDefaultResponse</code> for responding to unexpected method invocations.</p>
 </div>
 </div>
-<div class="sect3">
-<h4 id="DetectingMockObjects">Detecting Mock Objects</h4>
+<div class="sect2">
+<h3 id="DetectingMockObjects">Detecting Mock Objects</h3>
 <div class="paragraph">
 <p>To find out whether a particular object is a Spock mock object, use a <code>org.spockframework.mock.MockDetector</code>:</p>
 </div>
@@ -1275,8 +1294,10 @@ mock.nature == MockNature.MOCK</code></pre>
 </div>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_further_reading">Further Reading</h3>
+</div>
+<div class="sect1">
+<h2 id="_further_reading">Further Reading</h2>
+<div class="sectionbody">
 <div class="paragraph">
 <p>If you would like to dive deeper into interaction-based testing, we recommend the following resources:</p>
 </div>
@@ -1303,7 +1324,6 @@ mock.nature == MockNature.MOCK</code></pre>
 </div>
 </div>
 </div>
-</div>
 <div id="footnotes">
 <hr>
 <div class="footnote" id="_footnote_1">
@@ -1321,7 +1341,7 @@ mock.nature == MockNature.MOCK</code></pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2015-06-03 10:07:45 UTC
+Last updated 2015-06-08 19:19:20 UTC
 </div>
 </div>
 </body>

@@ -12,25 +12,28 @@
 </head>
 <body class="article">
 <div id="header">
+<h1>Extensions</h1>
 </div>
 <div id="content">
-<div class="sect1">
-<h2 id="_extensions">Extensions</h2>
+<div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
 <p>Spock comes with a powerful extension mechanism, which allows to hook into a spec&#8217;s lifecycle to enrich or alter its
 behavior. In this chapter, we will first learn about Spock&#8217;s built-in extensions, and then dive into writing custom
 extensions.</p>
 </div>
-<div class="sect2">
-<h3 id="_built_in_extensions">Built-In Extensions</h3>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_built_in_extensions">Built-In Extensions</h2>
+<div class="sectionbody">
 <div class="paragraph">
 <p>Most of Spock&#8217;s built-in extensions are <em>annotation-driven</em>. In other words, they are triggered by annotating a
 spec class or method with a certain annotation. You can tell such an annotation by its @ExtensionAnnotation
 meta-annotation.</p>
 </div>
-<div class="sect3">
-<h4 id="_ignore">Ignore</h4>
+<div class="sect2">
+<h3 id="_ignore">Ignore</h3>
 <div class="paragraph">
 <p>To temporarily prevent a feature method from getting executed, annotate it with spock.lang.Ignore:</p>
 </div>
@@ -62,8 +65,8 @@ meta-annotation.</p>
 <p>In most execution environments, ignored feature methods and specs will be reported as "skipped".</p>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_ignorerest">IgnoreRest</h4>
+<div class="sect2">
+<h3 id="_ignorerest">IgnoreRest</h3>
 <div class="paragraph">
 <p>To ignore all but a (typically) small subset of methods, annotate the latter with spock.lang.IgnoreRest:</p>
 </div>
@@ -81,8 +84,8 @@ meta-annotation.</p>
 <p>@IgnoreRest is especially handy in execution environments that don&#8217;t provide an (easy) way to run a subset of methods.</p>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_ignoreif">IgnoreIf</h4>
+<div class="sect2">
+<h3 id="_ignoreif">IgnoreIf</h3>
 <div class="paragraph">
 <p>To ignore a feature method under certain conditions, annotate it with spock.lang.IgnoreIf,
 followed by a predicate:</p>
@@ -122,8 +125,8 @@ followed by a predicate:</p>
 </div>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_requires">Requires</h4>
+<div class="sect2">
+<h3 id="_requires">Requires</h3>
 <div class="paragraph">
 <p>To execute a feature method under certain conditions, annotate it with <code>spock.lang.Requires</code>,
 followed by a predicate:</p>
@@ -139,8 +142,8 @@ followed by a predicate:</p>
 to state the conditions under which a method gets executed, rather than the conditions under which it gets ignored.</p>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_stepwise">Stepwise</h4>
+<div class="sect2">
+<h3 id="_stepwise">Stepwise</h3>
 <div class="paragraph">
 <p>To execute features in the order that they are declared, annotate a spec class with <code>spock.lang.Stepwise</code>:</p>
 </div>
@@ -158,8 +161,8 @@ to state the conditions under which a method gets executed, rather than the cond
 failure are skipped.</p>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_timeout">Timeout</h4>
+<div class="sect2">
+<h3 id="_timeout">Timeout</h3>
 <div class="paragraph">
 <p>To fail a feature method, fixture, or class that exceeds a given execution duration, use <code>spock.lang.Timeout</code>,
 followed by a duration, and optionally a time unit. The default time unit is seconds.</p>
@@ -200,8 +203,8 @@ with <code>Timeout</code>, excluding time spent in fixtures:</p>
 the timeout was exceeded.</p>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_use">Use</h4>
+<div class="sect2">
+<h3 id="_use">Use</h3>
 <div class="paragraph">
 <p>To activate one or more Groovy categories within the scope of a feature method or spec, use <code>spock.util.mop.Use</code>:</p>
 </div>
@@ -226,8 +229,8 @@ It has no effect when applied to a helper method. However, when applied to a spe
 methods.</p>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_confinemetaclasschanges">ConfineMetaClassChanges</h4>
+<div class="sect2">
+<h3 id="_confinemetaclasschanges">ConfineMetaClassChanges</h3>
 <div class="paragraph">
 <p>To confine meta class changes to the scope of a feature method or spec class, use <code>spock.util.mop.ConfineMetaClassChanges</code>:</p>
 </div>
@@ -263,8 +266,8 @@ after <code>cleanupSpec</code> is executed.</p>
 before <code>cleanup</code> is executed.</p>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_autocleanup">AutoCleanup</h4>
+<div class="sect2">
+<h3 id="_autocleanup">AutoCleanup</h3>
 <div class="paragraph">
 <p>Automatically clean up a field or property at the end of its lifetime by using <code>spock.lang.AutoCleanup</code>.</p>
 </div>
@@ -294,8 +297,8 @@ annotated object. To prevent cleanup exceptions from being reported, override th
 </div>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_title_and_narrative">Title and Narrative</h4>
+<div class="sect2">
+<h3 id="_title_and_narrative">Title and Narrative</h3>
 <div class="paragraph">
 <p>To attach a natural-language name to a spec, use <code>spock.lang.Title</code>:</p>
 </div>
@@ -321,8 +324,8 @@ So that bar
 </div>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_issue">Issue</h4>
+<div class="sect2">
+<h3 id="_issue">Issue</h3>
 <div class="paragraph">
 <p>To indicate that a feature or spec relates to one or more issues in an external tracking system, use <code>spock.lang.Issue</code>:</p>
 </div>
@@ -339,8 +342,8 @@ So that bar
 </div>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_subject">Subject</h4>
+<div class="sect2">
+<h3 id="_subject">Subject</h3>
 <div class="paragraph">
 <p>To indicate one or more subjects of a spec, use <code>spock.lang.Subject</code>:</p>
 </div>
@@ -366,18 +369,19 @@ Foo myFoo</code></pre>
 </div>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_writing_custom_extensions">Writing Custom Extensions</h3>
+</div>
+<div class="sect1">
+<h2 id="_writing_custom_extensions">Writing Custom Extensions</h2>
+<div class="sectionbody">
 <div class="paragraph">
 <p>TODO</p>
 </div>
 </div>
 </div>
 </div>
-</div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2015-06-03 10:07:45 UTC
+Last updated 2015-06-08 19:19:20 UTC
 </div>
 </div>
 </body>

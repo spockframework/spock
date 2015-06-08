@@ -4,20 +4,20 @@
 :author: Peter Niederwieser
 :revnumber: 1.0
 
-include::introduction.adoc[]
+include::introduction.adoc[leveloffset=+1]
 
-include::getting_started.adoc[]
+include::getting_started.adoc[leveloffset=+1]
 
-include::spock_primer.adoc[]
+include::spock_primer.adoc[leveloffset=+1]
 
-include::data_driven_testing.adoc[]
+include::data_driven_testing.adoc[leveloffset=+1]
 
-include::interaction_based_testing.adoc[]
+include::interaction_based_testing.adoc[leveloffset=+1]
 
-include::extensions.adoc[]
+include::extensions.adoc[leveloffset=+1]
 
-include::modules.adoc[]
+include::modules.adoc[leveloffset=+1]
 
-include::release_notes.adoc[]
+include::release_notes.adoc[leveloffset=+1]
 
-include::migration_guide.adoc[]
+include::migration_guide.adoc[leveloffset=+1]

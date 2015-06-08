@@ -1,8 +1,8 @@
-== Migration Guide
+= Migration Guide
 
 This page explains incompatible changes between successive versions and provides suggestions on how to deal with them.
 
-=== 1.0
+== 1.0
 
 Specs, Spec base classes and third-party extensions may have be recompiled in order to work with Spock 1.0.
 
@@ -13,15 +13,15 @@ Make sure to pick the right binaries for your Groovy version of choice: `groovy-
 
 No known source incompatible changes.
 
-=== 0.7
+== 0.7
 
 Client code must be recompiled in order to work with Spock 0.7. This includes third-party Spock extensions and base classes.
 
 No known source incompatible changes.
 
-=== 0.6
+== 0.6
 
-==== Class initialization order
+=== Class initialization order
 
 NOTE: This only affects cases where one specification class inherits from another one.
 
@@ -66,7 +66,7 @@ class Derived extends Base {
 To overcome this problem, you can either use a field initializer for `base`, or move the assignment of `derived` into
 a setup method.
 
-==== `@Unroll` naming pattern syntax
+=== `@Unroll` naming pattern syntax
 
 NOTE: This is not a change from 0.5, but a change compared to 0.6-SNAPSHOT.
 
@@ -98,7 +98,7 @@ def "maximum of two numbers"() { ... }
 For various reasons, the new syntax didn't work out as we had hoped, and eventually we decided to go back to the string
 based syntax. See <<improved-unroll-0.6,Improved `@Unroll`>> for recent improvements to that syntax.
 
-==== Hamcrest matcher syntax
+=== Hamcrest matcher syntax
 
 NOTE: This only affects users moving from the Groovy 1.7 to the 1.8 or 2.0 variant.
 

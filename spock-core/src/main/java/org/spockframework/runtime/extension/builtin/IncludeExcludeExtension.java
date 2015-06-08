@@ -16,6 +16,7 @@ package org.spockframework.runtime.extension.builtin;
 
 import java.lang.annotation.Annotation;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import org.spockframework.runtime.extension.AbstractGlobalExtension;
 import org.spockframework.runtime.model.*;
@@ -43,7 +44,8 @@ public class IncludeExcludeExtension extends AbstractGlobalExtension {
     if (criteria.isEmpty()) return;
 
     if (!hasAnyAnnotation(spec, criteria.annotations)
-        && !hasAnyBaseClass(spec, criteria.baseClasses))
+        && !hasAnyBaseClass(spec, criteria.baseClasses)
+        && !matchesAnyPattern(spec, criteria.patterns))
       spec.setExcluded(true);
   }
 
@@ -51,7 +53,8 @@ public class IncludeExcludeExtension extends AbstractGlobalExtension {
     if (criteria.isEmpty()) return;
 
     if (hasAnyAnnotation(spec, criteria.annotations)
-        || hasAnyBaseClass(spec, criteria.baseClasses))
+        || hasAnyBaseClass(spec, criteria.baseClasses)
+        || matchesAnyPattern(spec, criteria.patterns))
       spec.setExcluded(true);
   }
 
@@ -60,7 +63,8 @@ public class IncludeExcludeExtension extends AbstractGlobalExtension {
     if (criteria.isEmpty()) return;
 
     for (FeatureInfo feature : spec.getAllFeatures())
-      if (hasAnyAnnotation(feature.getFeatureMethod(), criteria.annotations))
+      if (hasAnyAnnotation(feature.getFeatureMethod(), criteria.annotations)
+          || matchesAnyPattern(feature.getFeatureMethod(), criteria.patterns))
         feature.setExcluded(false);
   }
 
@@ -68,7 +72,8 @@ public class IncludeExcludeExtension extends AbstractGlobalExtension {
     if (criteria.isEmpty()) return;
     
     for (FeatureInfo feature : spec.getAllFeatures())
-      if (hasAnyAnnotation(feature.getFeatureMethod(), criteria.annotations))
+      if (hasAnyAnnotation(feature.getFeatureMethod(), criteria.annotations)
+          || matchesAnyPattern(feature.getFeatureMethod(), criteria.patterns))
         feature.setExcluded(true);
   }
 
@@ -95,6 +100,25 @@ public class IncludeExcludeExtension extends AbstractGlobalExtension {
   private boolean hasAnyBaseClass(SpecInfo spec, List<Class<?>> baseClasses) {
     for (Class<?> clazz : baseClasses)
       if (clazz.isAssignableFrom(spec.getReflection()))
+        return true;
+
+    return false;
+  }
+
+  private boolean matchesAnyPattern(NodeInfo<?, ?> node, List<Pattern> patterns) {
+    if (matchesAnyPattern(node.getName(), patterns))
+      return true;
+
+    for (Annotation ann : node.getAnnotations())
+      if (matchesAnyPattern(ann.annotationType().getSimpleName(), patterns))
+        return true;
+
+    return false;
+  }
+
+  private boolean matchesAnyPattern(String s, List<Pattern> patterns) {
+    for (Pattern p : patterns)
+      if (p.matcher(s).matches())
         return true;
 
     return false;

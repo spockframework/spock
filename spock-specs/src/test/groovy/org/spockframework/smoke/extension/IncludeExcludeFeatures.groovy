@@ -39,10 +39,10 @@ def feature3() {
   """)
   }
 
-  def "include methods based on annotations"() {
+  def "include methods based on annotations or patterns"() {
     runner.configurationScript = {
       runner {
-        include(*annotationTypes)
+        include(*criteria)
       }
     }
 
@@ -55,14 +55,24 @@ def feature3() {
     result.ignoreCount == 0
 
     where:
-    annotationTypes << [[Slow], [Fast], [Slow, Fast]]
-    runCount        << [1,      1,      2           ]
+    criteria            || runCount
+    [Slow]              || 1
+    [Fast]              || 1
+    [Slow, Fast]        || 2
+
+    ['Slow']            || 1
+    ['Fast']            || 1
+    ['Slow', 'Fast']    || 2
+
+    ['feature1']        || 1
+    ['feature[12]']     || 2
+    ['feature.']        || 3
   }
 
-  def "exclude methods based on annotations"() {
+  def "exclude methods based on annotations or patterns"() {
     runner.configurationScript = {
       runner {
-        exclude(*annotationTypes)
+        exclude(*criteria)
       }
     }
 
@@ -75,8 +85,18 @@ def feature3() {
     result.ignoreCount == 0
 
     where:
-    annotationTypes << [[Slow], [Fast], [Slow, Fast]]
-    runCount        << [2,      2,      1           ]
+    criteria            || runCount
+    [Slow]              || 2
+    [Fast]              || 2
+    [Slow, Fast]        || 1
+
+    ['Slow']            || 2
+    ['Fast']            || 2
+    ['Slow', 'Fast']    || 1
+
+    ['feature1']        || 2
+    ['feature[12]']     || 1
+    ['feature.']        || 0
   }
 
   def "include and exclude features based on annotations"() {
@@ -100,9 +120,34 @@ def feature3() {
     annTypes2   << [[Slow], [Fast], [Slow, Fast], [Slow], [Fast], [Slow, Fast], [Slow],       [Fast],       [Slow, Fast]]
     runCount    << [0,      1,      0,            1,      0,      0,            1,            1,            0           ]
   }
+
+  def "include and exclude features based on patterns"() {
+    runner.configurationScript = {
+      runner {
+        include(*includes)
+        exclude(*excludes)
+      }
+    }
+
+    when:
+    def result = runner.runClass(spec)
+
+    then:
+    result.runCount == runCount
+    result.failureCount == 0
+    result.ignoreCount == (runCount == 0 ? 1 : 0) // cannot prevent JUnit from running excluded specs, so they get ignored
+
+    where:
+    includes            | excludes          || runCount
+    ['Slow']            | ['Slow']          || 0
+    ['Slow']            | ['Fast']          || 1
+    ['Slow']            | ['Slow', 'Fast']  || 0
+    ['Fast']            | ['Slow']          || 1
+    ['Fast']            | ['Fast']          || 0
+    ['Fast']            | ['Slow', 'Fast']  || 0
+    ['Slow', 'Fast']    | ['Slow']          || 1
+    ['Slow', 'Fast']    | ['Fast']          || 1
+    ['Slow', 'Fast']    | ['Slow', 'Fast']  || 0
+  }
 }
-
-
-
-
 

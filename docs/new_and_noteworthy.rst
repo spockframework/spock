@@ -1,6 +1,25 @@
 New and Noteworthy
 ==================
 
+1.0
+~~~
+
+Patterns in SpockConfig
+-----------------------
+
+``SpockConfig.groovy`` now supports regex patterns of simple names of annotations,
+spec classes, or features.  This is useful in Grails, where the project classes
+are not available to the config loader.  Here is an example using both classes and patterns:
+
+    import some.pkg.Fast
+    import some.pkg.IntegrationSpec
+
+    runner {
+      include Fast, 'Good', 'Browser.*Spec'
+      exclude some.pkg.Slow, IntegrationSpec
+    }
+
+
 0.7
 ~~~
 

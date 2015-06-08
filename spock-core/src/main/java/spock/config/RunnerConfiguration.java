@@ -23,11 +23,8 @@ package spock.config;
  * import some.pkg.IntegrationSpec
  *
  * runner {
- *   include Fast // could be either an annotation or a (base) class
- *   exclude {
- *     annotation some.pkg.Slow
- *     baseClass IntegrationSpec
- *   }
+ *   include Fast, 'Good' // annotations, (base) classes, or regex patterns
+ *   exclude some.pkg.Slow, IntegrationSpec
  *   filterStackTrace true // this is the default
  * }
  * </pre>

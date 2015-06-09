@@ -17,19 +17,24 @@
 package org.spockframework.report.log
 
 import spock.lang.Specification
-import java.util.regex.Matcher
+import spock.lang.Unroll
 
 class ReportLogConfigurationSpec extends Specification {
-  def configuration = new ReportLogConfiguration()
 
   def "defaults"() {
+    given:
+    ['spock.logEnabled', 'spock.logFileDir', 'spock.logFileName', 'spock.logFileSuffix'].each {
+      System.clearProperty(it)
+    }
+    def configuration = new ReportLogConfiguration()
+
     expect:
     with(configuration) {
       !enabled
 
-      logFileDir == System.getProperty("spock.logFileDir")
-      logFileName == System.getProperty("spock.logFileName")
-      logFileSuffix == System.getProperty("spock.logFileSuffix")
+      logFileDir == System.getProperty('spock.logFileDir')
+      logFileName == System.getProperty('spock.logFileName')
+      logFileSuffix == System.getProperty('spock.logFileSuffix')
 
       issueNamePrefix == ""
       issueUrlPrefix == ""
@@ -40,12 +45,38 @@ class ReportLogConfigurationSpec extends Specification {
   }
 
   def "can use timestamp placeholder in suffix"() {
-    configuration.logFileDir = "foo/bar"
-    configuration.logFileName = "baz.log"
-    configuration.logFileSuffix = "at-#timestamp"
-    def sep = System.getProperty("file.separator")
+    given:
+    def configuration = new ReportLogConfiguration()
+    configuration.logFileDir = 'foo/bar'
+    configuration.logFileName = 'baz.log'
+    configuration.logFileSuffix = 'at-#timestamp'
+    def sep = System.getProperty('file.separator')
 
     expect:
     configuration.logFile.path.replace(sep, "/") ==~ "foo/bar/baz-at-2\\d\\d\\d-.+\\.log"
+  }
+
+  @Unroll
+  def "handles spock.logEnabled #description"(boolean set, String value, boolean enabled, String description) {
+    given:
+    if (set) {
+      System.setProperty('spock.logEnabled', value)
+    } else {
+      System.clearProperty('spock.logEnabled')
+    }
+
+    def configuration = new ReportLogConfiguration()
+
+    expect:
+    configuration.enabled == enabled
+
+    where:
+    set   | value     || enabled
+    true  | 'false'   || false
+    true  | 'true'    || true
+    true  | 'foo'     || false
+    false | 'ignored' || false
+
+    description = set ? "set to '$value'" : "unset"
   }
 }

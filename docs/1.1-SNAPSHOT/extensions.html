@@ -265,6 +265,56 @@ after <code>cleanupSpec</code> is executed.</p>
 <p>When applied to a feature method, the meta classes are restored to as they were after <code>setup</code> was executed,
 before <code>cleanup</code> is executed.</p>
 </div>
+<div class="admonitionblock caution">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Caution</div>
+</td>
+<td class="content">
+Temporarily changing the meta classes is only safe when specs are
+run in a single thread per JVM. Even though many execution environments do limit themselves to one thread
+per JVM, keep in mind that Spock cannot enforce this.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_restoresystemproperties">RestoreSystemProperties</h3>
+<div class="paragraph">
+<p>Saves system properties before the annotated feature method (including any setup and cleanup methods) gets run,
+and restores them afterwards.</p>
+</div>
+<div class="paragraph">
+<p>Applying this annotation to a spec class has the same effect as applying it to all its feature methods.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@RestoreSystemProperties</span>
+<span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">determines family based on os.name system property</span><span class="delimiter">&quot;</span></span>() {
+  <span class="key">given</span>:
+  <span class="predefined-type">System</span>.setProperty(<span class="string"><span class="delimiter">'</span><span class="content">os.name</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">Windows 7</span><span class="delimiter">'</span></span>)
+
+  <span class="key">expect</span>:
+  OperatingSystem.current.family == OperatingSystem.Family.WINDOWS
+}</code></pre>
+</div>
+</div>
+<div class="admonitionblock caution">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Caution</div>
+</td>
+<td class="content">
+Temporarily changing the values of system properties is only safe when specs are
+run in a single thread per JVM. Even though many execution environments do limit themselves to one thread
+per JVM, keep in mind that Spock cannot enforce this.
+</td>
+</tr>
+</table>
+</div>
 </div>
 <div class="sect2">
 <h3 id="_autocleanup">AutoCleanup</h3>
@@ -381,7 +431,7 @@ Foo myFoo</code></pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2015-06-08 19:19:20 UTC
+Last updated 2015-06-10 20:01:47 UTC
 </div>
 </div>
 </body>

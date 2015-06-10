@@ -18,7 +18,9 @@ package org.spockframework.report.log
 
 import spock.lang.Specification
 import spock.lang.Unroll
+import spock.util.environment.RestoreSystemProperties
 
+@RestoreSystemProperties
 class ReportLogConfigurationSpec extends Specification {
 
   def "defaults"() {

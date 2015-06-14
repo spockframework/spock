@@ -381,12 +381,21 @@ respect to sharing are more well-defined.</p>
 </div>
 <div class="paragraph">
 <p>Fixture methods are responsible for setting up and cleaning up the environment in which feature methods are run.
-Usually it&#8217;s a good idea to use a fresh fixture for every feature method, which is what the <code>setup()</code> and <code>cleanup()</code>
-methods are for. Occasionally it makes sense for feature methods to share a fixture, which is achieved by using shared
-fields together with the <code>setupSpec()</code> and <code>cleanupSpec()</code> methods. All fixture methods are optional.</p>
+Usually it&#8217;s a good idea to use a fresh fixture for every feature method, which is what the <code>setup()</code> and <code>cleanup()</code> methods are for.</p>
 </div>
 <div class="paragraph">
-<p>Note: The <code>setupSpec()</code> and <code>cleanupSpec()</code> methods may not reference instance fields.</p>
+<p>All fixture methods are optional.</p>
+</div>
+<div class="paragraph">
+<p>Occasionally it makes sense for feature methods to share a fixture, which is achieved by using shared
+fields together with the <code>setupSpec()</code> and <code>cleanupSpec()</code> methods.
+Note that <code>setupSpec()</code> and <code>cleanupSpec()</code> <em>may not</em> reference instance fields unless they are annotated with <code>@Shared</code>.</p>
+</div>
+<div class="paragraph">
+<p>If fixture methods are overridden in a specification subclass then <code>setup()</code> of the superclass will run before <code>setup()</code> of the subclass.
+<code>cleanup()</code> works in reverse order, that is <code>cleanup()</code> of the subclass will execute before <code>cleanup()</code> of the superclass.
+<code>setupSpec()</code> and <code>cleanupSpec()</code> behave in the same way.
+There is no need to explicitly call <code>super.setup()</code> or <code>super.cleanup()</code> as Spock will automatically find and execute fixture methods at all levels in an inheritance heirarchy.</p>
 </div>
 </div>
 <div class="sect2">
@@ -4352,7 +4361,7 @@ that answer, closeTo(<span class="integer">42</span>, <span class="float">0.001<
 <div id="footer">
 <div id="footer-text">
 Version 1.0<br>
-Last updated 2015-06-10 20:01:47 UTC
+Last updated 2015-06-14 14:36:42 UTC
 </div>
 </div>
 </body>

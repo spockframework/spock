@@ -118,5 +118,20 @@ class PollingConditionsSpec extends Specification {
     spans[0] < spans[1]
     spans[1] < spans[2]
   }
+
+  def "work normally for long-running conditions"() {
+    when:
+    def condition = new PollingConditions(timeout: 4)
+    boolean secondAttempt = false
+    then:
+    condition.eventually {
+      try {
+        sleep 5000;
+        assert secondAttempt;
+      } finally {
+        secondAttempt = true
+      }
+    }
+  }
 }
 

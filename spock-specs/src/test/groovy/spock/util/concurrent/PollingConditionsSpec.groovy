@@ -119,7 +119,7 @@ class PollingConditionsSpec extends Specification {
     spans[1] < spans[2]
   }
 
-  def "work normally for long-running conditions"() {
+  def "correctly handles checks that take longer than given check interval"() {
     when:
     def condition = new PollingConditions(timeout: 4)
     boolean secondAttempt = false

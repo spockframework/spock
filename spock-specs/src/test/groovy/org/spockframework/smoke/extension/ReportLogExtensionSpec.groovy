@@ -18,6 +18,8 @@ import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import org.spockframework.EmbeddedSpecification
 
+import java.util.regex.Matcher
+
 class ReportLogExtensionSpec extends EmbeddedSpecification {
   @Rule TemporaryFolder tempDir
   def logFile
@@ -249,6 +251,6 @@ loadLogFile([{
   }
 
   private String normalize(String str) {
-    str.trim().replaceAll("\\d", "X").replaceAll("(\\\\r\\\\n|\\\\n)", "\\n")
+    str.trim().replaceAll("\\d", "X").replaceAll("(\\\\r\\\\n|\\\\n)", Matcher.quoteReplacement("\\n"))
   }
 }

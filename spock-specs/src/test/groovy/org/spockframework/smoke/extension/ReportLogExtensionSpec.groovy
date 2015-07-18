@@ -77,10 +77,8 @@ loadLogFile([{
             "narrative": "Given foo\\nWhen bar\\nThen baz\\nAnd bazbaz",
             "output": [
                 "out1\\n",
-                "out2\\n"
-            ],
-            "errorOutput": [
                 "err1\\n",
+                "out2\\n",
                 "err2\\n"
             ],
             "end": 1360051647586,
@@ -159,10 +157,8 @@ loadLogFile([{
             "narrative": "Given foo\\nWhen bar\\nThen baz\\nAnd bazbaz",
             "output": [
                 "out1\\n",
+                "err1\\n",
                 "out2\\n"
-            ],
-            "errorOutput": [
-                "err1\\n"
             ],
             "exceptions": [
                 "java.io.IOException: ouch\\n\\tat DeclaringClass.methodName(filename:42)\\n"

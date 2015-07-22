@@ -535,7 +535,7 @@ then:
 1 * subscriber.receive("goodbye")
 ----
 
-Now Spock will verify that both `"hello"`'s are received before the `"goodbye"`.
+Now Spock will verify that both ``"hello"``'s are received before the `"goodbye"`.
 In other words, invocation order is enforced _between_ but not _within_ `then:` blocks.
 
 NOTE: Splitting up a `then:` block with `and:` does not impose any ordering, as `and:`
@@ -558,7 +558,7 @@ Stubbing is the act of making collaborators respond to method calls in a certain
 a method, you don't care if and how many times the method is going to be called; you just want it to
 return some value, or perform some side effect, _whenever_ it gets called.
 
-For the sake of the following examples, let's modify the `Subscriber`'s `receive` method
+For the sake of the following examples, let's modify the ``Subscriber``'s `receive` method
 to return a status code that tells if the subscriber was able to process a message:
 
 [source,groovy]
@@ -745,7 +745,7 @@ Like a mock, a stub allows unexpected invocations. However, the values returned 
   See class `org.spockframework.mock.EmptyOrDummyResponse` for the details.
 
 A stub often has a fixed set of interactions, which makes
-<<declaring-interactions-at-creation-time,declaring interactions at mock creation time>> particularly attractive::
+<<declaring-interactions-at-creation-time,declaring interactions at mock creation time>> particularly attractive:
 
 [source,groovy]
 ----
@@ -958,7 +958,7 @@ Most of the time you shouldn't need these features. But if you do, you'll be gla
 At the end of the day, the `Mock()`, `Stub()`, and `Spy()` factory methods are just canned ways to
 create mock objects with a certain configuration. If you want more fine-grained control over a mock's configuration,
 have a look at the `org.spockframework.mock.IMockConfiguration` interface. All properties of this interface
-footnoote:[Because mock configurations are immutable, the interface contains just the properties' getters.]
+footnote:[Because mock configurations are immutable, the interface contains just the properties' getters.]
 can be passed as named arguments to the `Mock()` method. For example:
 
 [source,groovy]

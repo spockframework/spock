@@ -2155,7 +2155,7 @@ multiple <code>then:</code> blocks:</p>
 </div>
 </div>
 <div class="paragraph">
-<p>Now Spock will verify that both <code>"hello"&#8217;s are received before the `"goodbye"</code>.
+<p>Now Spock will verify that both <code>"hello"</code>'s are received before the <code>"goodbye"</code>.
 In other words, invocation order is enforced <em>between</em> but not <em>within</em> <code>then:</code> blocks.</p>
 </div>
 <div class="admonitionblock note">
@@ -2204,7 +2204,7 @@ a method, you don&#8217;t care if and how many times the method is going to be c
 return some value, or perform some side effect, <em>whenever</em> it gets called.</p>
 </div>
 <div class="paragraph">
-<p>For the sake of the following examples, let&#8217;s modify the <code>Subscriber&#8217;s `receive</code> method
+<p>For the sake of the following examples, let&#8217;s modify the <code>Subscriber</code>'s <code>receive</code> method
 to return a status code that tells if the subscriber was able to process a message:</p>
 </div>
 <div class="listingblock">
@@ -2452,7 +2452,7 @@ See class <code>org.spockframework.mock.EmptyOrDummyResponse</code> for the deta
 </div>
 <div class="paragraph">
 <p>A stub often has a fixed set of interactions, which makes
-<a href="#declaring-interactions-at-creation-time">declaring interactions at mock creation time</a> particularly attractive::</p>
+<a href="#declaring-interactions-at-creation-time">declaring interactions at mock creation time</a> particularly attractive:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -2716,7 +2716,7 @@ the mock&#8217;s instance isn&#8217;t really needed. In such a case one can just
 <p>At the end of the day, the <code>Mock()</code>, <code>Stub()</code>, and <code>Spy()</code> factory methods are just canned ways to
 create mock objects with a certain configuration. If you want more fine-grained control over a mock&#8217;s configuration,
 have a look at the <code>org.spockframework.mock.IMockConfiguration</code> interface. All properties of this interface
-footnoote:[Because mock configurations are immutable, the interface contains just the properties' getters.]
+<span class="footnote">[<a id="_footnoteref_8" class="footnote" href="#_footnote_8" title="View footnote.">8</a>]</span>
 can be passed as named arguments to the <code>Mock()</code> method. For example:</p>
 </div>
 <div class="listingblock">
@@ -4357,11 +4357,14 @@ that answer, closeTo(<span class="integer">42</span>, <span class="float">0.001<
 <div class="footnote" id="_footnote_7">
 <a href="#_footnoteref_7">7</a>. You may know this behavior from Groovy&#8217;s <a href="http://docs.groovy-lang.org/docs/groovy-2.4.1/html/gapi/groovy/mock/interceptor/MockFor.html">MockFor</a> and <a href="http://docs.groovy-lang.org/docs/groovy-2.4.1/html/gapi/groovy/mock/interceptor/StubFor.html">StubFor</a> facilities.
 </div>
+<div class="footnote" id="_footnote_8">
+<a href="#_footnoteref_8">8</a>. Because mock configurations are immutable, the interface contains just the properties' getters.
+</div>
 </div>
 <div id="footer">
 <div id="footer-text">
 Version 1.0<br>
-Last updated 2015-06-19 21:53:45 UTC
+Last updated 2015-07-22 19:39:04 UTC
 </div>
 </div>
 </body>

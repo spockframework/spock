@@ -86,6 +86,17 @@ subprojects {
     }
   }
 
+  sourceSets.all { ss ->
+    for (jv in javaVersions.findAll { it <= javaVersion } ) {
+      java {
+        srcDir "src/${ss.name}.java$jv/java"
+      }
+      groovy {
+        srcDir "src/${ss.name}.java$jv/groovy"
+      }
+    }
+  }
+
   repositories {
     mavenCentral()
     maven { url "https://oss.jfrog.org/oss-snapshot-local/" }

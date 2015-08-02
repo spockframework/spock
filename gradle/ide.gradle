@@ -21,6 +21,17 @@ idea {
     outputFile = file(outputFile.path.replace(".ipr", "-${variant}.ipr"))
     configure(modules) { module ->
       def prj = module.project
+      if(prj.name == "spock-specs") {
+        module.iml {
+          withXml {
+            def node = it.asNode()
+            def comp = node.component.find{it.@name == 'NewModuleRootManager'}
+            if(comp) {
+              comp.@LANGUAGE_LEVEL = "JDK_$javaVersion".replace('.', '_')
+            }
+          }
+        }
+      }      
       excludeDirs = prj.files(allLevelDirs) as Set
       if (prj == prj.rootProject) {
         excludeDirs += allLevelDirs.collect { prj.file("buildSrc/$it") }

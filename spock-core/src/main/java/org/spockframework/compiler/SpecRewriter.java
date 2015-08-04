@@ -356,7 +356,10 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
 
   public void visitWhenBlock(WhenBlock block) throws Exception {
     updateNotify("when", block);
+  }
 
+  public void visitSetupBlock(SetupBlock block) throws Exception {
+    updateNotify("setup", block);
   }
 
   public void visitThenBlock(ThenBlock block) {
@@ -604,7 +607,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
     for (Expression elementExpr : tupleExpr.getExpressions()) {
       Variable variable = (Variable) elementExpr;
       listExpr.addExpression(new ConstantExpression(
-          ReflectionUtil.getDefaultValue(variable.getOriginType().getTypeClass())));
+        ReflectionUtil.getDefaultValue(variable.getOriginType().getTypeClass())));
     }
 
     return listExpr;

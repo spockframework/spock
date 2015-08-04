@@ -77,10 +77,14 @@ class ReportLogEmitter implements IRunListener, IStandardStreamsListener {
     specFailed = false;
 
     emit(putAll(mapOf(
-        "package", spec.getPackage(),
-        "name", spec.getName(),
-        "start", getCurrentTime()
+      "package", spec.getPackage(),
+      "name", spec.getName(),
+      "start", getCurrentTime()
     ), renderNarrative(spec.getNarrative()), renderTags(spec.getTags())));
+  }
+
+  public void block(String type, String description) {
+//    System.out.println(type+description);
   }
 
   public void beforeFeature(FeatureInfo feature) {

@@ -26,4 +26,5 @@ public class AbstractRunListener implements IRunListener {
   public void error(ErrorInfo error) {}
   public void specSkipped(SpecInfo spec) {}
   public void featureSkipped(FeatureInfo feature) {}
+  public void block(String type, String description) {}
 }

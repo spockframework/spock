@@ -91,7 +91,7 @@ public class SpecParser implements GroovyClassVisitor {
 
   public void visitMethod(MethodNode method) {
     if (isIgnoredMethod(method)) return;
-    
+
     if (isFixtureMethod(method))
       buildFixtureMethod(method);
     else if (isFeatureMethod(method))
@@ -111,7 +111,7 @@ public class SpecParser implements GroovyClassVisitor {
       if (!fmName.equalsIgnoreCase(name)) continue;
 
       // assertion: is (meant to be) a fixture method, so we'll return true in the end
-      
+
       if (method.isStatic())
         errorReporter.error(method, "Fixture methods must not be static");
       if (!fmName.equals(name))
@@ -172,7 +172,7 @@ public class SpecParser implements GroovyClassVisitor {
     spec.getMethods().add(feature);
   }
 
-  private void buildHelperMethod(MethodNode method) {  
+  private void buildHelperMethod(MethodNode method) {
     Method helper = new HelperMethod(spec, method);
     spec.getMethods().add(helper);
 
@@ -192,7 +192,7 @@ public class SpecParser implements GroovyClassVisitor {
       else
         currBlock = addBlock(method, stat);
     }
-    
+
     checkIsValidSuccessor(method, BlockParseInfo.METHOD_END,
         method.getAst().getLastLineNumber(), method.getAst().getLastColumnNumber());
 
@@ -212,8 +212,13 @@ public class SpecParser implements GroovyClassVisitor {
       String description = getDescription(stat);
       if (description == null)
         block.getAst().add(stat);
-      else
+      else {
+        if(block.getName().equalsIgnoreCase("when") || block.getName().equalsIgnoreCase("then")
+          || block.getName().equalsIgnoreCase("setup")) {
+          block.getAst().add(stat);
+        }
         block.getDescriptions().add(description);
+      }
 
       return block;
 		}

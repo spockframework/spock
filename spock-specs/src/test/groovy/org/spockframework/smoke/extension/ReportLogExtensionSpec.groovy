@@ -58,6 +58,7 @@ So that bar
       then: "baz"
       println("out2")
 
+
       and: "bazbaz"
       System.err.println("err2")
     }
@@ -109,7 +110,6 @@ loadLogFile([{
 
   def "write execution log for spec with failing feature"() {
     runner.throwFailure = false
-
     when:
     runner.runWithImports(
         """

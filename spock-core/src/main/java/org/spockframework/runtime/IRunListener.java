@@ -31,6 +31,11 @@ public interface IRunListener {
   void beforeSpec(SpecInfo spec);
 
   /**
+   * Called when a block is reached.
+   */
+  void block(String type,String description);
+
+  /**
    * Called before each feature of a spec.
    */
   void beforeFeature(FeatureInfo feature);
@@ -71,7 +76,7 @@ public interface IRunListener {
   // IDEA: might be able to remove remaining two methods and
   // call before/after instead, since skip flag should be set on
   // SpecInfo/FeatureInfo anyway
-  
+
   /**
    * Called if a spec is skipped, for example because it is marked
    * with @Ignore.

@@ -66,7 +66,11 @@ public class AsyncRunListener implements IRunListener, IStoppable {
       public void run() {
         delegate.beforeSpec(spec);
       }
-    });  
+    });
+  }
+
+  public void block(String type, String description) {
+    delegate.block(type, description);
   }
 
   public void beforeFeature(final FeatureInfo feature) {

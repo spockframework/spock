@@ -16,10 +16,8 @@
 
 package org.spockframework.smoke.mock;
 
-public interface ISquare {
-  int getLength();
-
-  default int getArea() {
-    return getLength() * getLength();
+public interface IQuarterlyCompoundedDeposit extends IDeposit {
+  default double getCompoundingPeriodInMonths() {
+    return 3;
   }
 }

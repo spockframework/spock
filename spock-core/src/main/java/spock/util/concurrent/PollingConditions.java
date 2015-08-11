@@ -163,7 +163,10 @@ public class PollingConditions {
           String msg = String.format("Condition not satisfied after %1.2f seconds and %d attempts", elapsedTime / 1000d, attempts);
           throw new SpockTimeoutError(seconds, msg, e);
         }
-        Thread.sleep(Math.min(currDelay, start + timeoutMillis - System.currentTimeMillis()));
+        final long timeout = Math.min(currDelay, start + timeoutMillis - System.currentTimeMillis());
+        if (timeout > 0) {
+          Thread.sleep(timeout);
+        }
         currDelay *= factor;
       }
     }

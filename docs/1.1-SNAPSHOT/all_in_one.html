@@ -131,6 +131,7 @@
 <li><a href="#_ignorerest">IgnoreRest</a></li>
 <li><a href="#_ignoreif">IgnoreIf</a></li>
 <li><a href="#_requires">Requires</a></li>
+<li><a href="#_pendingfeature">PendingFeature</a></li>
 <li><a href="#_stepwise">Stepwise</a></li>
 <li><a href="#_timeout">Timeout</a></li>
 <li><a href="#_use">Use</a></li>
@@ -2807,7 +2808,7 @@ meta-annotation.</p>
 <div class="sect3">
 <h4 id="_ignore">Ignore</h4>
 <div class="paragraph">
-<p>To temporarily prevent a feature method from getting executed, annotate it with spock.lang.Ignore:</p>
+<p>To temporarily prevent a feature method from getting executed, annotate it with <code>spock.lang.Ignore</code>:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -2840,7 +2841,7 @@ meta-annotation.</p>
 <div class="sect3">
 <h4 id="_ignorerest">IgnoreRest</h4>
 <div class="paragraph">
-<p>To ignore all but a (typically) small subset of methods, annotate the latter with spock.lang.IgnoreRest:</p>
+<p>To ignore all but a (typically) small subset of methods, annotate the latter with <code>spock.lang.IgnoreRest</code>:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -2859,7 +2860,7 @@ meta-annotation.</p>
 <div class="sect3">
 <h4 id="_ignoreif">IgnoreIf</h4>
 <div class="paragraph">
-<p>To ignore a feature method under certain conditions, annotate it with spock.lang.IgnoreIf,
+<p>To ignore a feature method under certain conditions, annotate it with <code>spock.lang.IgnoreIf</code>,
 followed by a predicate:</p>
 </div>
 <div class="listingblock">
@@ -2912,6 +2913,53 @@ followed by a predicate:</p>
 <div class="paragraph">
 <p><code>Requires</code> works exactly like <code>IgnoreIf</code>, except that the predicate is inverted. In general, it is preferable
 to state the conditions under which a method gets executed, rather than the conditions under which it gets ignored.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_pendingfeature">PendingFeature</h4>
+<div class="paragraph">
+<p>To indicate that the feature is not fully implemented yet and should not be reported as error, annotate it with <code>spock.lang.PendingFeature</code>.</p>
+</div>
+<div class="paragraph">
+<p>The use case is to annotate tests that can not yet run but should already be committed.
+The main difference to <code>Ignore</code> is that the test are executed, but test failures are ignored.
+If the test passes without an error, then it will be reported as failure since the <code>PendingFeature</code> annotation should be removed.
+This way the tests will become part of the normal tests instead of being ignored forever.</p>
+</div>
+<div class="paragraph">
+<p>Groovy has the <code>groovy.transform.NotYetImplemented</code> annotation which is similar but behaves a differently.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>it will mark failing tests as passed</p>
+</li>
+<li>
+<p>if at least one iteration of a data-driven test passes it will be reported as error</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><code>PendingFeature</code>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>it will mark failing tests as skipped</p>
+</li>
+<li>
+<p>if at least one iteration of a data-driven test fails it will be reported as skipped</p>
+</li>
+<li>
+<p>if every iteration of a data-driven test passes it will be reported as error</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@PendingFeature</span>
+<span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">not implemented yet</span><span class="delimiter">&quot;</span></span>() { ... }</code></pre>
+</div>
 </div>
 </div>
 <div class="sect3">
@@ -4364,7 +4412,7 @@ that answer, closeTo(<span class="integer">42</span>, <span class="float">0.001<
 <div id="footer">
 <div id="footer-text">
 Version 1.0<br>
-Last updated 2015-08-11 18:26:18 UTC
+Last updated 2015-08-18 03:55:31 UTC
 </div>
 </div>
 </body>

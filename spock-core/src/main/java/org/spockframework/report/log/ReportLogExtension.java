@@ -46,6 +46,7 @@ public class ReportLogExtension extends AbstractGlobalExtension {
       @Override
       public void intercept(IMethodInvocation invocation) throws Throwable {
         forceSequential(spec);
+        invocation.proceed();
       }
     });
 

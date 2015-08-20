@@ -8,6 +8,7 @@ import org.junit.runner.notification.RunListener
 import spock.lang.ConcurrentExecutionMode
 import spock.lang.Specification
 import spock.lang.Unroll
+import spock.util.EmbeddedSpecRunner
 
 class SchedulingTest extends Specification {
 
@@ -17,7 +18,10 @@ class SchedulingTest extends Specification {
     def jUnitCore = new JUnitCore()
     jUnitCore.addListener(listener)
     when:
-    jUnitCore.run(Computer.serial(), clazz);
+    def runner = new EmbeddedSpecRunner()
+    runner.withNewContext {
+      jUnitCore.run(Computer.serial(), clazz);
+    }
     then:
     1 * listener.testRunStarted(_)
     then:
@@ -49,7 +53,10 @@ class SchedulingTest extends Specification {
     def jUnitCore = new JUnitCore()
     jUnitCore.addListener(listener)
     when:
-    jUnitCore.run(ParallelComputer.methods(), clazz);
+    def runner = new EmbeddedSpecRunner()
+    runner.withNewContext {
+      jUnitCore.run(ParallelComputer.methods(), clazz);
+    }
     then:
     1 * listener.testRunStarted(_)
     then:
@@ -79,7 +86,10 @@ class SchedulingTest extends Specification {
 
     def clazz = SampleTestWithSequentialOnClassLevel.class
     when:
-    jUnitCore.run(Computer.serial(), clazz);
+    def runner = new EmbeddedSpecRunner()
+    runner.withNewContext {
+      jUnitCore.run(ParallelComputer.methods(), clazz);
+    }
     then:
     1 * listener.testRunStarted(_)
     then:
@@ -110,7 +120,10 @@ class SchedulingTest extends Specification {
 
     def clazz = SampleTestWithSequentialOnMethodLevel.class
     when:
-    jUnitCore.run(ParallelComputer.methods(), clazz);
+    def runner = new EmbeddedSpecRunner()
+    runner.withNewContext {
+      jUnitCore.run(ParallelComputer.methods(), clazz);
+    }
     then:
     1 * listener.testRunStarted(_)
     then:

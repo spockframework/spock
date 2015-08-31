@@ -22,8 +22,8 @@ class MockingAndBridgeMethods extends Specification {
   def "bridge methods are not intercepted"() {
     def comparator = Mock([:], MyComparator)
 
-    when:
-    comparator.compare((Object) 0, (Object) 0) // call bridge method
+    when: 'calling bridge method'
+    comparator.compare((Object) 0, (Object) 0)
 
     then:
     1 * comparator.compare(0, 0) >> { IMockInvocation inv ->
@@ -43,9 +43,10 @@ class MockingAndBridgeMethods extends Specification {
     def di = Mock(DiscountedItem)
     def dpi = Mock(DiscountedPublicItem)
 
-    when:
-    di.getId() >> 333   // bridge method
-    dpi.getId() >> 555  // non-bridge method
+    when: 'stubbing bridge method'
+    di.getId() >> 333
+    and: 'stubbing non-bridge method'
+    dpi.getId() >> 555
 
     then:
     1 * di.getId() == 333
@@ -59,9 +60,10 @@ class MockingAndBridgeMethods extends Specification {
     def di = Mock(DiscountedItem)
     def dpi = Mock(DiscountedPublicItem)
 
-    when:
-    def diId = di.getId()   // call bridge method
-    def dpiId = dpi.getId() // call non-bridge method
+    when: 'calling bridge method'
+    def diId = di.getId()
+    and: 'calling non-bridge method'
+    def dpiId = dpi.getId()
 
     then:
     1 * di.getId() >> { IMockInvocation inv ->
@@ -81,9 +83,10 @@ class MockingAndBridgeMethods extends Specification {
     def di = Mock(DiscountedItem)
     def dpi = Mock(DiscountedPublicItem)
 
-    when:
-    def diPrice = di.getPrice()   // call non-bridge method
-    def dpiPrice = dpi.getPrice() // call non-bridge method
+    when: 'calling bridge method'
+    def diPrice = di.getPrice()
+    and: 'calling non-bridge method'
+    def dpiPrice = dpi.getPrice()
 
     then:
     1 * di.getPrice() >> { IMockInvocation inv ->
@@ -112,9 +115,10 @@ class MockingAndBridgeMethods extends Specification {
       }
     }
 
-    when:
-    def id = di.getId()   // call bridge method
-    def pid = dpi.getId() // call non-bridge method
+    when: 'calling bridge method'
+    def id = di.getId()
+    and: 'calling non-bridge method'
+    def pid = dpi.getId()
 
     then:
     id == 333
@@ -137,9 +141,10 @@ class MockingAndBridgeMethods extends Specification {
       }
     }
 
-    when:
-    def diText = di.toString()   // toString() implementation calls the bridge method getId()
-    def dpiText = dpi.toString() // toString() implementation calls the non-bridge method getId()
+    when: 'invoking di.toString(), which will call the bridge method getId()'
+    def diText = di.toString()
+    and: 'invoking dpi.toString(), which will call the non-bridge method getId()'
+    def dpiText = dpi.toString()
 
     then:
     diText == '#333: 9 (discounted)'

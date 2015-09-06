@@ -39,14 +39,15 @@ ext {
   fullVersion = "$baseVersion-groovy-$variant" + (snapshotVersion ? "-SNAPSHOT" : "")
   variantLessVersion = baseVersion + (snapshotVersion ? "-SNAPSHOT" : "")
   libs = [
-    ant: "org.apache.ant:ant:1.9.4",
-    asm: "org.ow2.asm:asm:5.0.3",
-    cglib: "cglib:cglib-nodep:3.1",
-    groovy: "org.codehaus.groovy:groovy-all:$groovyVersion",
-    h2database: "com.h2database:h2:1.3.174",
-    junit: "junit:junit:4.12",
-    log4j: "log4j:log4j:1.2.17",
-    objenesis: "org.objenesis:objenesis:2.1"
+    ant        : "org.apache.ant:ant:1.9.4",
+    annotations: 'com.intellij:annotations:12.0',
+    asm        : "org.ow2.asm:asm:5.0.3",
+    cglib      : "cglib:cglib-nodep:3.1",
+    groovy     : "org.codehaus.groovy:groovy-all:$groovyVersion",
+    h2database : "com.h2database:h2:1.3.174",
+    junit      : "junit:junit:4.12",
+    log4j      : "log4j:log4j:1.2.17",
+    objenesis  : "org.objenesis:objenesis:2.1"
   ]
 }
 

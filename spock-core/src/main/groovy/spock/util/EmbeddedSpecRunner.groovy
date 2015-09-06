@@ -16,13 +16,15 @@
 
 package spock.util
 
+import org.intellij.lang.annotations.Language
+import org.junit.runner.JUnitCore
+import org.junit.runner.Request
+import org.junit.runner.Result
 import org.junit.runner.notification.RunListener
-import org.junit.runner.*
-
-import org.spockframework.util.NotThreadSafe
-import org.spockframework.util.IThrowableFunction
-import org.spockframework.runtime.RunContext
 import org.spockframework.runtime.ConfigurationScriptLoader
+import org.spockframework.runtime.RunContext
+import org.spockframework.util.IThrowableFunction
+import org.spockframework.util.NotThreadSafe
 
 import java.lang.reflect.Modifier
 
@@ -39,7 +41,7 @@ class EmbeddedSpecRunner {
   boolean throwFailure = true
 
   List<RunListener> listeners = []
-  
+
   Closure configurationScript = null
   List<Class> extensionClasses = []
   boolean inheritParentExtensions = true
@@ -97,11 +99,13 @@ class EmbeddedSpecRunner {
     runClasses(compiler.compileWithImports(source))
   }
 
-  Result runSpecBody(String source) {
+  Result runSpecBody(@Language(value = 'Groovy', prefix = 'class ASpec extends spock.lang.Specification { ', suffix = '}')
+                     String source) {
     runClass(compiler.compileSpecBody(source))
   }
 
-  Result runFeatureBody(String source) {
+  Result runFeatureBody(@Language(value = 'Groovy', prefix = "def 'a feature'() { ", suffix = '}')
+                        String source) {
     runClass(compiler.compileFeatureBody(source))
   }
 

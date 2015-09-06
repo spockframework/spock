@@ -17,6 +17,7 @@
 package spock.util
 
 import org.codehaus.groovy.control.MultipleCompilationErrorsException
+import org.intellij.lang.annotations.Language
 import org.junit.Test
 import org.junit.internal.runners.model.MultipleFailureException
 import org.junit.runner.RunWith
@@ -29,7 +30,7 @@ import spock.lang.Specification
 /**
  * Utility class that allows to compile (fragments of) specs programmatically.
  * Mainly intended for spec'ing Spock itself.
- * 
+ *
  * @author Peter Niederwieser
  */
 @NotThreadSafe
@@ -61,7 +62,7 @@ class EmbeddedSpecCompiler {
   }
 
   void addClassMemberImport(String className) {
-    imports += "import static $className.*;"
+    imports += "import static ${className}.*;"
   }
 
   void addClassMemberImport(Class<?> clazz) {
@@ -82,17 +83,19 @@ class EmbeddedSpecCompiler {
     doCompile "package apackage; $imports ${source.trim()}"
   }
 
-  Class compileSpecBody(String source) {
+  Class compileSpecBody(@Language(value = 'Groovy', prefix = 'class ASpec extends spock.lang.Specification { ', suffix = '}')
+                        String source) {
     // one-liner keeps line numbers intact; newline safeguards against source ending in a line comment
     compileWithImports("class ASpec extends Specification { ${source.trim() + '\n'} }")[0]
   }
 
-  Class compileFeatureBody(String source) {
+  Class compileFeatureBody(@Language(value = 'Groovy', prefix = "def 'a feature'() { ", suffix = '}')
+                           String source) {
     // one-liner keeps line numbers intact; newline safeguards against source ending in a line comment
     compileSpecBody "def 'a feature'() { ${source.trim() + '\n'} }"
   }
 
-  private List<Class> doCompile(String source) {
+  private List<Class> doCompile(@Language('Groovy') String source) {
     loader.clearCache()
 
     try {
@@ -104,7 +107,7 @@ class EmbeddedSpecCompiler {
           throw errors[0].cause
         else
           throw new MultipleFailureException(errors.cause)
-      
+
       throw e
     }
 
@@ -112,7 +115,7 @@ class EmbeddedSpecCompiler {
       SpecUtil.isSpec(it) || isJUnitTest(it) // need JUnit tests sometimes
     } as List
   }
-  
+
   private boolean isJUnitTest(Class clazz) {
     clazz.isAnnotationPresent(RunWith) || clazz.methods.any { it.getAnnotation(Test) }
   }

@@ -16,19 +16,22 @@
 
 package org.spockframework.compiler;
 
-import java.util.*;
-
 import org.codehaus.groovy.ast.*;
 import org.codehaus.groovy.ast.expr.*;
-import org.codehaus.groovy.ast.stmt.*;
+import org.codehaus.groovy.ast.stmt.BlockStatement;
+import org.codehaus.groovy.ast.stmt.ExpressionStatement;
+import org.codehaus.groovy.ast.stmt.ReturnStatement;
+import org.codehaus.groovy.ast.stmt.Statement;
 import org.codehaus.groovy.control.SourceUnit;
 import org.codehaus.groovy.syntax.Token;
 import org.codehaus.groovy.syntax.Types;
 import org.objectweb.asm.Opcodes;
-
 import org.spockframework.compiler.model.WhereBlock;
 import org.spockframework.runtime.model.DataProviderMetadata;
-import org.spockframework.util.*;
+import org.spockframework.util.InternalIdentifiers;
+import org.spockframework.util.ObjectUtil;
+
+import java.util.*;
 
 /**
  *
@@ -215,8 +218,42 @@ public class WhereBlockRewriter {
       rows.add(row);
     }
 
+    validateParameterAndTableHeaderOrder(rows);
+
     for (List<Expression> column : transposeTable(rows))
       turnIntoSimpleParameterization(column);
+  }
+
+  private void validateParameterAndTableHeaderOrder(List<List<Expression>> rows) throws InvalidSpecCompileException {
+    if (rows.size() > 0) {
+      MethodNode methodNode = whereBlock.getParent().getAst();
+      Parameter[] parameters = methodNode.getParameters();
+
+      if (parameters.length > 0) {
+        List<Expression> headerRow = getValidHeaderNames(rows.get(0));
+
+        if (headerRow.size() == parameters.length) // only validate if we only have tables in the where block, i.e. no assignments
+          for (int i = 0; i < headerRow.size(); i++) {
+            Parameter parameter = parameters[i];
+            String parameterName = parameter.getName();
+
+            Expression header = headerRow.get(i);
+            String headerName = header.getText();
+
+            if (!parameterName.equals(headerName))
+              throw new InvalidSpecCompileException(parameter, String.format("Parameter '%s' is in wrong order, should be: '%s'!", parameterName, headerName));
+          }
+      }
+    }
+  }
+
+  private List<Expression> getValidHeaderNames(List<Expression> expressions) {
+    List<Expression> results = new ArrayList<Expression>(expressions.size());
+    for (Expression expression : expressions) {
+      if (!AstUtil.isWildcardRef(expression))
+        results.add(expression);
+    }
+    return results;
   }
 
   List<List<Expression>> transposeTable(List<List<Expression>> rows) {
@@ -263,19 +300,19 @@ public class WhereBlockRewriter {
       splitRow(orExpr.getRightExpression(), parts);
     }
   }
-  
+
   private BinaryExpression getOrExpression(Statement stat) {
     Expression expr = AstUtil.getExpression(stat, Expression.class);
     return getOrExpression(expr);
   }
-  
+
   private BinaryExpression getOrExpression(Expression expr) {
     BinaryExpression binExpr = ObjectUtil.asInstance(expr, BinaryExpression.class);
     if (binExpr == null) return null;
-    
+
     int binExprType = binExpr.getOperation().getType();
     if (binExprType == Types.BITWISE_OR || binExprType == Types.LOGICAL_OR) return binExpr;
-    
+
     return null;
   }
 
@@ -343,7 +380,7 @@ public class WhereBlockRewriter {
   @SuppressWarnings("unchecked")
   private void createDataProcessorMethod() {
     if (dataProcessorVars.isEmpty()) return;
-    
+
     dataProcessorStats.add(
         new ReturnStatement(
             new ArrayExpression(

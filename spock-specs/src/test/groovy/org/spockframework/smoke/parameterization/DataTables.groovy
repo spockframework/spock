@@ -28,9 +28,7 @@ class DataTables extends EmbeddedSpecification {
   @Shared
   def sharedField = 42
 
-  def instanceField = 42
-
-  def "basic usage"() {
+  def 'basic usage'() {
     expect:
     Math.max(a, b) == c
 
@@ -41,23 +39,23 @@ class DataTables extends EmbeddedSpecification {
     9 | 9 | 9
   }
 
-  def "table must have at least two columns"() {
+  def 'table must have at least two columns'() {
     when:
-    compiler.compileFeatureBody """
-expect:
-true
+    compiler.compileFeatureBody '''
+      expect:
+      true
 
-where:
-a
-1
-    """
+      where:
+      a
+      1
+    '''
 
     then:
     MultipleFailureException e = thrown()
     e.failures*.class == [InvalidSpecCompileException] * 2
   }
 
-  def "can use pseudo-column to enable one-column table"() {
+  def 'can use pseudo-column to enable one-column table'() {
     expect:
     a == 1
     _ == _ // won't use this in practice
@@ -67,78 +65,93 @@ a
     1 | _
   }
 
-  def "table with just a header are not allowed"() {
+  def 'table with just a header are not allowed'() {
     when:
-    runner.runFeatureBody """
-expect:
-true
+    runner.runFeatureBody '''
+      expect:
+      true
 
-where:
-a | b
-    """
+      where:
+      a | b
+    '''
 
     then:
-    thrown(SpockExecutionException)
+    thrown SpockExecutionException
   }
 
-  def "header may only contain variable names"() {
+  def 'header may only contain variable names'() {
     when:
-    compiler.compileFeatureBody """
-expect:
-true
+    compiler.compileFeatureBody '''
+      expect:
+      true
 
-where:
-a | 1 | b
-1 | 1 | 1
-    """
+      where:
+      a | 1 | b
+      1 | 1 | 1
+    '''
 
     then:
-    thrown(InvalidSpecCompileException)
+    thrown InvalidSpecCompileException
   }
 
-  def "header variable names must not clash with local variables"() {
+  def 'header variable names must not clash with local variables'() {
     when:
-    compiler.compileFeatureBody """
-def local = 1
+    compiler.compileFeatureBody '''
+      def local = 1
 
-expect:
-true
+      expect:
+      true
 
-where:
-a | local
-1 | 1
-    """
+      where:
+      a | local
+      1 | 1
+    '''
 
     then:
-    thrown(InvalidSpecCompileException)
+    thrown InvalidSpecCompileException
   }
 
-    def "header variable names must not clash with each other"() {
+  def 'header variable names must not clash with each other'() {
     when:
-    compiler.compileFeatureBody """
-expect:
-true
+    compiler.compileFeatureBody '''
+      expect:
+      true
 
-where:
-a | a
-1 | 1
-    """
+      where:
+      a | a
+      1 | 1
+    '''
 
     then:
-    thrown(InvalidSpecCompileException)
+    thrown InvalidSpecCompileException
   }
 
-  def "columns can be declared as parameters"(a, String b) {
+  def 'columns can be declared as parameters'(a, String b) {
     expect:
     a == 3
-    b == "wow"
+    b == 'wow'
 
     where:
     a | b
-    3 | "wow"
+    3 | 'wow'
   }
 
-  def "pseudo-column can be omitted from parameter list"(a) {
+  def 'parameters must have same order as the table header'() {
+    when:
+    compiler.compileSpecBody '''
+      def 'invalid parameter order'(b, a) {
+        expect: a != b
+        where:  a | b
+                1 | 2
+      }
+    '''
+
+    then:
+    MultipleFailureException e = thrown()
+    e.failures*.class == [InvalidSpecCompileException] * 3
+  }
+
+  def 'pseudo-column can be omitted from parameter list'(a) {
     expect:
     a == 3
 
@@ -147,7 +160,7 @@ a | a
     3 | _
   }
 
-  def "pseudo-column can be declared as parameter"(a, _) {
+  def 'pseudo-column can be declared as parameter'(a, _) {
     expect:
     a == 3
 
@@ -156,7 +169,7 @@ a | a
     3 | _
   }
 
-  def "tables can be mixed with other parameterizations"() {
+  def 'tables can be mixed with other parameterizations'() {
     expect:
     [a, b, c, d] == [1, 2, 3, 4]
 
@@ -167,18 +180,29 @@ a | a
     d = c + 1
   }
 
-  def "cells may contain arbitrary expressions"() {
+  def 'tables can be mixed with other parameterizations and can be declared as parameters'(int a, int b, int c, int d) {
     expect:
-    a == "oo"
+    [a, b, c, d] == [1, 2, 3, 4]
+
+    where:
+    a << [1]
+    b | c
+    2 | 3
+    d = c + 1
+  }
+
+  def 'cells may contain arbitrary expressions'() {
+    expect:
+    a == 'oo'
     b.age == 23
     c == 5
 
     where:
     a           | b                   | c
-    "foo"[1..2] | new Person(age: 23) | Math.max(4, 5)
+    'foo'[1..2] | new Person(age: 23) | Math.max(4, 5)
   }
 
-  def "cells can reference shared and static fields"() {
+  def 'cells can reference shared and static fields'() {
     expect:
     a == 42
     b == 42
@@ -188,76 +212,75 @@ a | a
     staticField | sharedField
   }
 
-  @Issue("http://issues.spockframework.org/detail?id=139")
-  def "cells cannot reference instance fields"() {
+  def 'cells cannot reference instance fields'() {
     when:
-    compiler.compileSpecBody """
-def instanceField
+    compiler.compileSpecBody '''
+      def instanceField
 
-def foo() {
-  expect:
-  true
+      def foo() {
+        expect:
+        true
 
-  where:
-  a             | b
-  instanceField | 1
-}
-    """
+        where:
+        a             | b
+        instanceField | 1
+      }
+    '''
 
     then:
     InvalidSpecCompileException e = thrown()
-    e.message.contains("@Shared")
+    e.message.contains('@Shared')
   }
 
   def "cells cannot reference local variables (won't be found)"() {
     when:
-    runner.runFeatureBody """
-def local = 42
+    runner.runFeatureBody '''
+      def local = 42
 
-expect:
-true
+      expect:
+      true
 
-where:
-a     | b
-local | 1
-    """
+      where:
+      a     | b
+      local | 1
+    '''
 
     then:
-    thrown(MissingPropertyException)
+    thrown MissingPropertyException
   }
 
-  def "cells cannot reference other cells"() {
+  def 'cells cannot reference other cells'() {
     when:
-    runner.runFeatureBody """
-expect:
-true
+    runner.runFeatureBody '''
+      expect:
+      true
 
-where:
-a | b
-1 | a
-    """
+      where:
+      first   | second
+      'dummy' | first + ' value'
+    '''
 
     then:
-    thrown(MissingPropertyException)
+    thrown MissingPropertyException
   }
 
-  def "rows must have same number of elements as header"() {
+  def 'rows must have same number of elements as header'() {
     when:
-    compiler.compileFeatureBody """
-expect:
-true
+    compiler.compileFeatureBody '''
+      expect:
+      true
 
-where:
-a | b | c
-1 | 2 | 3
-4 | 5
-    """
+      where:
+      a | b | c
+      1 | 2 | 3
+      4 | 5
+    '''
 
     then:
-    thrown(InvalidSpecCompileException)
+    thrown InvalidSpecCompileException
   }
 
-  def "cells can be separated with single or double pipe operator"() {
+  def 'cells can be separated with single or double pipe operator'() {
     expect:
     a + b == c
 
@@ -267,7 +290,7 @@ a | b | c
     4 | 5 || 9
   }
 
-  def "consistent use of cell separators is not enforced"() {
+  def 'consistent use of cell separators is not enforced'() {
     expect:
     a + b == c
 

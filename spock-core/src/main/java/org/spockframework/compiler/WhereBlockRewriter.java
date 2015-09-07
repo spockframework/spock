@@ -69,9 +69,31 @@ public class WhereBlockRewriter {
         resources.getErrorReporter().error(e);
       }
 
+    validateWhereBlockVariableOrder();
+
     whereBlock.getAst().clear();
     handleFeatureParameters();
     createDataProcessorMethod();
+  }
+
+  private void validateWhereBlockVariableOrder() {
+    try {
+      Parameter[] parameters = whereBlock.getParent().getAst().getParameters();
+      if (parameters.length == 0 || dataProcessorVars.size() == 0) return;
+
+      for (int i = 0; i < Math.min(parameters.length, dataProcessorVars.size()); i++)
+        validate(parameters[i], dataProcessorVars.get(i));
+    } catch (InvalidSpecCompileException e) {
+      resources.getErrorReporter().error(e);
+    }
+  }
+
+  private void validate(Parameter parameter, Expression expression) throws InvalidSpecCompileException {
+    String parameterName = parameter.getName();
+    String variableName = expression.getText();
+
+    if (!parameterName.equals(variableName))
+      throw new InvalidSpecCompileException(parameter, String.format("Parameter '%s' is in wrong order, should be: '%s'!", parameterName, variableName));
   }
 
   private void rewriteWhereStat(ListIterator<Statement> stats) throws InvalidSpecCompileException {
@@ -218,42 +240,8 @@ public class WhereBlockRewriter {
       rows.add(row);
     }
 
-    validateParameterAndTableHeaderOrder(rows);
-
     for (List<Expression> column : transposeTable(rows))
       turnIntoSimpleParameterization(column);
-  }
-
-  private void validateParameterAndTableHeaderOrder(List<List<Expression>> rows) throws InvalidSpecCompileException {
-    if (rows.size() > 0) {
-      MethodNode methodNode = whereBlock.getParent().getAst();
-      Parameter[] parameters = methodNode.getParameters();
-
-      if (parameters.length > 0) {
-        List<Expression> headerRow = getValidHeaderNames(rows.get(0));
-
-        if (headerRow.size() == parameters.length) // only validate if we only have tables in the where block, i.e. no assignments
-          for (int i = 0; i < headerRow.size(); i++) {
-            Parameter parameter = parameters[i];
-            String parameterName = parameter.getName();
-
-            Expression header = headerRow.get(i);
-            String headerName = header.getText();
-
-            if (!parameterName.equals(headerName))
-              throw new InvalidSpecCompileException(parameter, String.format("Parameter '%s' is in wrong order, should be: '%s'!", parameterName, headerName));
-          }
-      }
-    }
-  }
-
-  private List<Expression> getValidHeaderNames(List<Expression> expressions) {
-    List<Expression> results = new ArrayList<Expression>(expressions.size());
-    for (Expression expression : expressions) {
-      if (!AstUtil.isWildcardRef(expression))
-        results.add(expression);
-    }
-    return results;
   }
 
   List<List<Expression>> transposeTable(List<List<Expression>> rows) {

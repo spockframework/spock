@@ -15,12 +15,10 @@
 package org.spockframework.smoke.parameterization
 
 import org.junit.internal.runners.model.MultipleFailureException
-
 import org.spockframework.EmbeddedSpecification
 import org.spockframework.compiler.InvalidSpecCompileException
 import org.spockframework.runtime.SpockExecutionException
-
-import spock.lang.*
+import spock.lang.Shared
 
 class DataTables extends EmbeddedSpecification {
   static staticField = 42
@@ -139,16 +137,19 @@ class DataTables extends EmbeddedSpecification {
   def 'parameters must have same order as the table header'() {
     when:
     compiler.compileSpecBody '''
-      def 'invalid parameter order'(b, a) {
-        expect: a != b
-        where:  a | b
-                1 | 2
+      def 'invalid parameter order'(b, a, c, d) {
+        expect: true
+        where:  a << [1]
+
+                b | c
+                2 | 3
+
+                d = c + 1
       }
     '''
 
     then:
-    MultipleFailureException e = thrown()
-    e.failures*.class == [InvalidSpecCompileException] * 3
+    thrown InvalidSpecCompileException
   }
 
   def 'pseudo-column can be omitted from parameter list'(a) {

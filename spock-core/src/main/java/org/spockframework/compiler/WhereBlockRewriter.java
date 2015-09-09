@@ -18,18 +18,14 @@ package org.spockframework.compiler;
 
 import org.codehaus.groovy.ast.*;
 import org.codehaus.groovy.ast.expr.*;
-import org.codehaus.groovy.ast.stmt.BlockStatement;
-import org.codehaus.groovy.ast.stmt.ExpressionStatement;
-import org.codehaus.groovy.ast.stmt.ReturnStatement;
-import org.codehaus.groovy.ast.stmt.Statement;
-import org.codehaus.groovy.control.SourceUnit;
-import org.codehaus.groovy.syntax.Token;
-import org.codehaus.groovy.syntax.Types;
-import org.objectweb.asm.Opcodes;
-import org.spockframework.compiler.model.WhereBlock;
-import org.spockframework.runtime.model.DataProviderMetadata;
-import org.spockframework.util.InternalIdentifiers;
-import org.spockframework.util.ObjectUtil;
+import org.codehaus.groovy.ast.stmt.*;
+import org.codehaus.groovy.control.*;
+import org.codehaus.groovy.syntax.*;
+import org.objectweb.asm.*;
+import org.spockframework.compiler.model.*;
+import org.spockframework.runtime.model.*;
+import org.spockframework.util.*;
+import static org.spockframework.util.ObjectUtil.firstNonNull;
 
 import java.util.*;
 
@@ -69,31 +65,35 @@ public class WhereBlockRewriter {
         resources.getErrorReporter().error(e);
       }
 
-    validateWhereBlockVariableOrder();
+    validateParameterOrder();
 
     whereBlock.getAst().clear();
-    handleFeatureParameters();
+    addFeatureParameters();
     createDataProcessorMethod();
   }
 
-  private void validateWhereBlockVariableOrder() {
-    try {
-      Parameter[] parameters = whereBlock.getParent().getAst().getParameters();
-      if (parameters.length == 0 || dataProcessorVars.size() == 0) return;
+  private void validateParameterOrder() {
+    Iterator<VariableExpression> dataIterator = dataProcessorVars.iterator();
 
-      for (int i = 0; i < Math.min(parameters.length, dataProcessorVars.size()); i++)
-        validate(parameters[i], dataProcessorVars.get(i));
-    } catch (InvalidSpecCompileException e) {
-      resources.getErrorReporter().error(e);
+    for (Parameter parameter : whereBlock.getParent().getAst().getParameters()) {
+      String parameterName = parameter.getName();
+
+      if ((find(dataIterator, parameterName) == null) && isDataProcessorVariable(parameterName)) {
+        String message = String.format("Parameter '%s' is in the wrong order!", parameterName);
+        resources.getErrorReporter().error(new InvalidSpecCompileException(parameter, message));
+        return;
+      }
     }
   }
 
-  private void validate(Parameter parameter, Expression expression) throws InvalidSpecCompileException {
-    String parameterName = parameter.getName();
-    String variableName = expression.getText();
-
-    if (!parameterName.equals(variableName))
-      throw new InvalidSpecCompileException(parameter, String.format("Parameter '%s' is in wrong order, should be: '%s'!", parameterName, variableName));
+  @Nullable
+  private VariableExpression find(Iterator<VariableExpression> dataIterator, String name) {
+    while (dataIterator.hasNext()) {
+      VariableExpression variable = dataIterator.next();
+      if (name.equals(variable.getText()))
+        return variable;
+    }
+    return null;
   }
 
   private void rewriteWhereStat(ListIterator<Statement> stats) throws InvalidSpecCompileException {
@@ -325,44 +325,55 @@ public class WhereBlockRewriter {
       return;
     }
 
-    if (getDataProcessorVariable(varExpr.getName()) != null) {
+    if (isDataProcessorVariable(varExpr.getName())) {
       resources.getErrorReporter().error(varExpr, "Duplicate declaration of data variable '%s'", varExpr.getName());
       return;
     }
-
-    if (whereBlock.getParent().getAst().getParameters().length > 0 && !(accessedVar instanceof Parameter)) {
-      resources.getErrorReporter().error(varExpr,
-          "Data variable '%s' needs to be declared as method parameter",
-          varExpr.getName());
-    }
   }
 
-  private VariableExpression getDataProcessorVariable(String name) {
+  private boolean isDataProcessorVariable(String name) {
     for (VariableExpression var : dataProcessorVars)
-      if (var.getName().equals(name)) return var;
-
-    return null;
-  }
-
-  private void handleFeatureParameters() {
-    Parameter[] parameters = whereBlock.getParent().getAst().getParameters();
-    if (parameters.length == 0)
-      addFeatureParameters();
-    else
-      checkAllParametersAreDataVariables(parameters);
-  }
-
-  private void checkAllParametersAreDataVariables(Parameter[] parameters) {
-    for (Parameter param : parameters)
-      if (getDataProcessorVariable(param.getName()) == null)
-        resources.getErrorReporter().error(param, "Parameter '%s' does not refer to a data variable", param.getName());
+      if (name.equals(var.getName()))
+        return true;
+    return false;
   }
 
   private void addFeatureParameters() {
-    Parameter[] parameters = new Parameter[dataProcessorVars.size()];
-    for (int i = 0; i < dataProcessorVars.size(); i++)
-      parameters[i] = new Parameter(ClassHelper.DYNAMIC_TYPE, dataProcessorVars.get(i).getName());
-    whereBlock.getParent().getAst().setParameters(parameters);
+    MethodNode methodNode = whereBlock.getParent().getAst();
+    Map<String, Parameter> parameterTypes = getParameters(methodNode);
+
+    List<Parameter> newParameters = new ArrayList<Parameter>();
+
+    for (VariableExpression variableExpression : dataProcessorVars) {
+      String name = variableExpression.getName();
+      Parameter parameter = firstNonNull(parameterTypes.remove(name), new Parameter(ClassHelper.DYNAMIC_TYPE, name));
+      checkDefaultValue(parameter);
+      newParameters.add(parameter);
+    }
+
+    for (Parameter parameter : parameterTypes.values()) {
+      ClassNode type = parameter.getType();
+      if (type.getTypeClass().isPrimitive()) /* convert primitive to nullable */
+        type = ClassHelper.makeWithoutCaching(ReflectionUtil.getDefaultValue(type.getTypeClass()).getClass());
+      checkDefaultValue(parameter);
+      newParameters.add(new Parameter(type, parameter.getName()));
+    }
+
+    methodNode.setParameters(newParameters.toArray(new Parameter[newParameters.size()]));
+  }
+
+  private void checkDefaultValue(Parameter parameter) {
+    if (parameter.hasInitialExpression()) {
+      String message = String.format("Parameter '%s' has default value, which is not supported yet!", parameter.getName());
+      resources.getErrorReporter().error(new InvalidSpecCompileException(parameter, message));
+    }
+  }
+
+  private Map<String, Parameter> getParameters(MethodNode methodNode) {
+    Map<String, Parameter> result = new LinkedHashMap<String, Parameter>();
+    for (Parameter parameter : methodNode.getParameters())
+      result.put(parameter.getName(), parameter);
+    return result;
   }
 
   @SuppressWarnings("unchecked")

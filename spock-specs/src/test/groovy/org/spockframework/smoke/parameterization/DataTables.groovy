@@ -135,23 +135,57 @@ class DataTables extends EmbeddedSpecification {
     3 | 'wow'
   }
 
-  def 'parameters must have same order as the table header'() {
+  def 'invalid parameter order should cause a compile error'() {
     when:
-    compiler.compileSpecBody '''
-      def 'invalid parameter order'(b, a, c, d) {
-        expect: true
+    compiler.compileSpecBody """
+      def 'invalid parameter order'(${parameters.join(', ')}) {
+        expect: false
         where:  a << [1]
 
                 b | c
                 2 | 3
 
-                d = c + 1
+                d = 4
       }
-    '''
+    """
 
     then:
     thrown InvalidSpecCompileException
+
+    where: 'all invalid permutations of the parameters'
+    parameters << ('a'..'e').subsequences().collectMany { it.permutations() }.findAll { it != it.sort(false) }
   }
+
+  def 'parameters should be ordered according to data table header'() {
+    when:
+    def result = runner.runSpecBody("""
+      def 'valid parameter order'(${parameters.join(', ')}) {
+        expect: a + b + c + d == (1..4).sum()
+        where:  a << [1]
+
+                b | c
+                2 | 3
+
+                d = 4
+      }
+    """)
+
+    then:
+    result.wasSuccessful()
+
+    where: 'all valid permutations of the parameters'
+    parameters << ('a'..'e').subsequences().collectMany { it.permutations() }.findAll { it == it.sort(false) }
+  }
+
+  def 'partial parameter definition is possible'(int b, c) {
+    expect:
+    a + b + c > 0
+
+    where:
+    a | b | c
+    1 | 2 | 3
+  }
+
 
   def 'pseudo-column can be omitted from parameter list'(a) {
     expect:

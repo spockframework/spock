@@ -114,7 +114,14 @@ public class ParameterizedSpecRunner extends BaseSpecRunner {
     if (runStatus != OK) return;
 
     while (haveNext(iterators)) {
-      initializeAndRunIteration(nextArgs(iterators).toArray(), estimatedNumIterations);
+      List<Object> dataValues = new ArrayList<Object>(nextArgs(iterators));
+
+      /* TODO should we take default parameter values into consideration instead? */
+      for (int i = dataValues.size(); i < currentFeature.getDataVariables().size(); i++) {
+        dataValues.add(null);
+      }
+
+      initializeAndRunIteration(dataValues.toArray(), estimatedNumIterations);
 
       if (resetStatus(ITERATION) != OK) break;
       // no iterators => no data providers => only derived parameterizations => limit to one iteration

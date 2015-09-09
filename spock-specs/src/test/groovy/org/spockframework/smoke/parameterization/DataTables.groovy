@@ -226,19 +226,14 @@ local | 1
     thrown(MissingPropertyException)
   }
 
-  def "cells cannot reference other cells"() {
-    when:
-    runner.runFeatureBody """
-expect:
-true
+  @PendingFeature
+  def 'cells can reference previous cells'() {
+    expect:
+    column3 == 3
 
-where:
-a | b
-1 | a
-    """
-
-    then:
-    thrown(MissingPropertyException)
+    where:
+    column1 | column2     | column3
+    1       | column1 + 1 | column1 + column2
   }
 
   def "rows must have same number of elements as header"() {

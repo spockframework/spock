@@ -15,7 +15,12 @@ class PendingFeatureIterationInterceptor implements IMethodInterceptor {
 
     AtomicBoolean pass = new AtomicBoolean(false);
     invocation.getFeature().getFeatureMethod().addInterceptor(new InnerIterationInterceptor(pass));
-    invocation.proceed();
+    try {
+      invocation.proceed();
+    } catch (Throwable t) {
+      pass.set(true);
+    }
+    
     if (pass.get()) {
       throw new AssumptionViolatedException("Feature not yet implemented correctly.");
     } else {
@@ -34,7 +39,7 @@ class PendingFeatureIterationInterceptor implements IMethodInterceptor {
     public void intercept(IMethodInvocation invocation) throws Throwable {
       try {
         invocation.proceed();
-      } catch (AssertionError e) {
+      } catch (Throwable t) {
         pass.set(true);
       }
     }

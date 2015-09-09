@@ -55,8 +55,9 @@ public class ParameterizedSpecRunner extends BaseSpecRunner {
       Object provider = invokeRaw(sharedInstance, method, EMPTY_ARGS);
       if (runStatus != OK) return null;
       if (provider == null) {
-        runStatus = supervisor.error(
-            new ErrorInfo(method, new SpockExecutionException("Data provider is null")));
+        // TODO fix it properly
+        // runStatus = supervisor.error(
+        //    new ErrorInfo(method, new SpockExecutionException("Data provider is null")));
         return null;
       }
       dataProviders[i] = provider;

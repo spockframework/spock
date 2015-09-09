@@ -22,6 +22,37 @@ class Foo extends Specification {
     result.failureCount == 0
     result.ignoreCount == 0
   }
+  
+  def 'Thrown exceptions mark the feature as skipped'() {
+    when:
+    def result = runner.runSpecBody ''' 
+      @PendingFeature def 'throwing an exception'() {
+        expect: throw new Exception()
+      }
+    '''
+
+    then:
+    notThrown AssertionError
+    result.runCount == 1
+    result.failureCount == 0
+    result.ignoreCount == 0
+  }
+  
+  def 'Thrown exceptions mark the parametrized feature as skipped'() {
+    when:
+    def result = runner.runSpecBody ''' 
+      @PendingFeature def 'throwing an exception'() {
+        expect: true
+        where:  a << { throw new IllegalArgumentException() }()
+      }
+    '''
+
+    then:
+    notThrown AssertionError
+    result.runCount == 1
+    result.failureCount == 0
+    result.ignoreCount == 0
+  }
 
   def "@PendingFeature marks passing feature as failed"() {
     when:

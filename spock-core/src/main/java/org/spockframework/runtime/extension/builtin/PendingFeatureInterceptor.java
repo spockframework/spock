@@ -12,7 +12,7 @@ class PendingFeatureInterceptor implements IMethodInterceptor {
   public void intercept(IMethodInvocation invocation) throws Throwable {
     try {
       invocation.proceed();
-    } catch (AssertionError e) {
+    } catch (Throwable t) {
       throw new AssumptionViolatedException("Feature not yet implemented correctly.");
     }
     throw new AssertionError("Feature is marked with @PendingFeature but passes unexpectedly");

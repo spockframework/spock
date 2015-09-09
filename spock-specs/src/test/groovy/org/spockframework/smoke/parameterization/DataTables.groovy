@@ -18,6 +18,7 @@ import org.junit.internal.runners.model.MultipleFailureException
 import org.spockframework.EmbeddedSpecification
 import org.spockframework.compiler.InvalidSpecCompileException
 import org.spockframework.runtime.SpockExecutionException
+import spock.lang.Ignore
 import spock.lang.Shared
 
 class DataTables extends EmbeddedSpecification {
@@ -250,19 +251,14 @@ class DataTables extends EmbeddedSpecification {
     thrown MissingPropertyException
   }
 
-  def 'cells cannot reference other cells'() {
-    when:
-    runner.runFeatureBody '''
+  @Ignore /* @PendingFeature */
+  def 'cells can reference previous cells'() {
       expect:
-      true
+      column3 == 3
 
       where:
-      first   | second
-      'dummy' | first + ' value'
-    '''
-
-    then:
-    thrown MissingPropertyException
+      column1 | column2     | column3
+      1       | column1 + 1 | column1 + column2
   }
 
   def 'rows must have same number of elements as header'() {

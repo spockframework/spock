@@ -99,12 +99,12 @@ class EmbeddedSpecRunner {
     runClasses(compiler.compileWithImports(source))
   }
 
-  Result runSpecBody(@Language(value = 'Groovy', prefix = 'class ASpec extends spock.lang.Specification { ', suffix = '}')
+  Result runSpecBody(@Language(value = 'Groovy', prefix = 'class ASpec extends spock.lang.Specification { ', suffix = '\n}')
                      String source) {
     runClass(compiler.compileSpecBody(source))
   }
 
-  Result runFeatureBody(@Language(value = 'Groovy', prefix = "def 'a feature'() { ", suffix = '}')
+  Result runFeatureBody(@Language(value = 'Groovy', prefix = "def 'a feature'() { ", suffix = '\n}')
                         String source) {
     runClass(compiler.compileFeatureBody(source))
   }

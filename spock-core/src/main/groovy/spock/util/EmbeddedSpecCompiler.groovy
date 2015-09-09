@@ -83,13 +83,13 @@ class EmbeddedSpecCompiler {
     doCompile "package apackage; $imports ${source.trim()}"
   }
 
-  Class compileSpecBody(@Language(value = 'Groovy', prefix = 'class ASpec extends spock.lang.Specification { ', suffix = '}')
+  Class compileSpecBody(@Language(value = 'Groovy', prefix = 'class ASpec extends spock.lang.Specification { ', suffix = '\n}')
                         String source) {
     // one-liner keeps line numbers intact; newline safeguards against source ending in a line comment
     compileWithImports("class ASpec extends Specification { ${source.trim() + '\n'} }")[0]
   }
 
-  Class compileFeatureBody(@Language(value = 'Groovy', prefix = "def 'a feature'() { ", suffix = '}')
+  Class compileFeatureBody(@Language(value = 'Groovy', prefix = "def 'a feature'() { ", suffix = '\n}')
                            String source) {
     // one-liner keeps line numbers intact; newline safeguards against source ending in a line comment
     compileSpecBody "def 'a feature'() { ${source.trim() + '\n'} }"

@@ -23,26 +23,26 @@ class EstimatedNumberOfIterations extends Specification {
 
   def "w/o data provider"() {
     expect: "estimation is 1"
-      runner.estimateNumIterations(new Object[0]) == 1
+      runner.estimateNumIterations([]) == 1
   }
 
   def "w/ data provider that doesn't respond to size"() {
     expect: "estimation is 'unknown', represented as -1"
-      runner.estimateNumIterations([1] as Object[]) == -1
+      runner.estimateNumIterations([1]) == -1
   }
 
   def "w/ data provider that responds to size"() {
     expect: "estimation is size"
-      runner.estimateNumIterations([[1, 2, 3]] as Object[]) == 3
+      runner.estimateNumIterations([[1, 2, 3]]) == 3
   }
 
   def "w/ multiple data providers, all of which respond to size"() {
     expect: "estimation is minimum"
-      runner.estimateNumIterations([[1], [1, 2], [1, 2, 3]] as Object[]) == 1
+      runner.estimateNumIterations([[1], [1, 2], [1, 2, 3]]) == 1
   }
 
   def "w/ multiple data providers, one of which doesn't respond to size"() {
   expect: "estimation is minimum of others"
-    runner.estimateNumIterations([1, [1, 2], [1, 2, 3]] as Object[]) == 2
+    runner.estimateNumIterations([1, [1, 2], [1, 2, 3]]) == 2
   }
 }

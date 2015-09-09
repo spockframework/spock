@@ -16,8 +16,7 @@
 
 package org.spockframework.runtime;
 
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 import static org.spockframework.runtime.RunStatus.*;
 import org.spockframework.runtime.model.*;
@@ -37,41 +36,40 @@ public class ParameterizedSpecRunner extends BaseSpecRunner {
   protected void runParameterizedFeature() {
     if (runStatus != OK) return;
 
-    Object[] dataProviders = createDataProviders();
+    List<Object> dataProviders = createDataProviders();
     int numIterations = estimateNumIterations(dataProviders);
     Iterator[] iterators = createIterators(dataProviders);
     runIterations(iterators, numIterations);
     closeDataProviders(dataProviders);
   }
 
-  private Object[] createDataProviders() {
-    if (runStatus != OK) return null;
+  private List<Object> createDataProviders() {
+    if (runStatus != OK) return Collections.emptyList();
 
-    List<DataProviderInfo> dataProviderInfos = currentFeature.getDataProviders();
-    Object[] dataProviders = new Object[dataProviderInfos.size()];
+    List<Object> dataProviders = new ArrayList<Object>();
 
-    for (int i = 0; i < dataProviderInfos.size(); i++) {
-      MethodInfo method = dataProviderInfos.get(i).getDataProviderMethod();
+    for (DataProviderInfo dataProviderInfo : currentFeature.getDataProviders()) {
+      MethodInfo method = dataProviderInfo.getDataProviderMethod();
       Object provider = invokeRaw(sharedInstance, method, EMPTY_ARGS);
-      if (runStatus != OK) return null;
-      if (provider == null) {
-        runStatus = supervisor.error(
-            new ErrorInfo(method, new SpockExecutionException("Data provider is null")));
-        return null;
+      if (runStatus != OK)
+        return Collections.emptyList();
+      else if (provider == null) {
+        runStatus = supervisor.error(new ErrorInfo(method, new SpockExecutionException("Data provider is null")));
+        return Collections.emptyList();
       }
-      dataProviders[i] = provider;
+      dataProviders.add(provider);
     }
 
     return dataProviders;
   }
 
-  private Iterator[] createIterators(Object[] dataProviders) {
+  private Iterator[] createIterators(List<Object> dataProviders) {
     if (runStatus != OK) return null;
 
-    Iterator[] iterators = new Iterator<?>[dataProviders.length];
-    for (int i = 0; i < dataProviders.length; i++)
+    Iterator[] iterators = new Iterator<?>[dataProviders.size()];
+    for (int i = 0; i < dataProviders.size(); i++)
       try {
-        Iterator<?> iter = GroovyRuntimeUtil.asIterator(dataProviders[i]);
+        Iterator<?> iter = GroovyRuntimeUtil.asIterator(dataProviders.get(i));
         if (iter == null) {
           runStatus = supervisor.error(
               new ErrorInfo(currentFeature.getDataProviders().get(i).getDataProviderMethod(),
@@ -89,9 +87,9 @@ public class ParameterizedSpecRunner extends BaseSpecRunner {
   }
 
   // -1 => unknown
-  private int estimateNumIterations(Object[] dataProviders) {
+  private int estimateNumIterations(List<Object> dataProviders) {
     if (runStatus != OK) return -1;
-    if (dataProviders.length == 0) return 1;
+    else if (dataProviders.isEmpty()) return 1;
 
     int result = Integer.MAX_VALUE;
     for (Object prov : dataProviders) {
@@ -116,7 +114,7 @@ public class ParameterizedSpecRunner extends BaseSpecRunner {
     if (runStatus != OK) return;
 
     while (haveNext(iterators)) {
-      initializeAndRunIteration(nextArgs(iterators), estimatedNumIterations);
+      initializeAndRunIteration(nextArgs(iterators).toArray(), estimatedNumIterations);
 
       if (resetStatus(ITERATION) != OK) break;
       // no iterators => no data providers => only derived parameterizations => limit to one iteration
@@ -124,7 +122,7 @@ public class ParameterizedSpecRunner extends BaseSpecRunner {
     }
   }
 
-  private void closeDataProviders(Object[] dataProviders) {
+  private void closeDataProviders(List<Object> dataProviders) {
     if (action(runStatus) == ABORT) return;
     if (dataProviders == null) return; // there was an error creating the providers
 
@@ -172,8 +170,8 @@ public class ParameterizedSpecRunner extends BaseSpecRunner {
   }
 
   // advances iterators and computes args
-  private Object[] nextArgs(Iterator[] iterators) {
-    if (runStatus != OK) return null;
+  private List<Object> nextArgs(Iterator[] iterators) {
+    if (runStatus != OK) return Collections.emptyList();
 
     Object[] next = new Object[iterators.length];
     for (int i = 0; i < iterators.length; i++)
@@ -182,15 +180,15 @@ public class ParameterizedSpecRunner extends BaseSpecRunner {
       } catch (Throwable t) {
         runStatus = supervisor.error(
             new ErrorInfo(currentFeature.getDataProviders().get(i).getDataProviderMethod(), t));
-        return null;
+        return Collections.emptyList();
       }
 
     try {
-      return (Object[])invokeRaw(sharedInstance, currentFeature.getDataProcessorMethod(), next);
+      return Arrays.asList((Object[]) invokeRaw(sharedInstance, currentFeature.getDataProcessorMethod(), next));
     } catch (Throwable t) {
       runStatus = supervisor.error(
           new ErrorInfo(currentFeature.getDataProcessorMethod(), t));
-      return null;
+      return Collections.emptyList();
     }
   }
 }

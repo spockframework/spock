@@ -25,7 +25,7 @@ class ClosingOfDataProviders extends Specification {
     MyCloseable provider = Mock()
 
     when:
-    runner.closeDataProviders(provider)
+    runner.closeDataProviders([provider])
 
     then:
     1 * provider.close() >> { action() }
@@ -40,7 +40,7 @@ class ClosingOfDataProviders extends Specification {
     java.io.Closeable provider2 = Mock()
 
     when:
-    runner.closeDataProviders(provider1, provider2)
+    runner.closeDataProviders([provider1, provider2])
 
     then:
     1 * provider1.close() >> { action() }

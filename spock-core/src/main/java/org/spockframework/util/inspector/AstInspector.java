@@ -26,6 +26,7 @@ import org.codehaus.groovy.ast.stmt.*;
 import org.codehaus.groovy.control.*;
 
 import groovy.lang.GroovyClassLoader;
+import org.intellij.lang.annotations.Language;
 import org.spockframework.compiler.AstUtil;
 
 /**
@@ -131,9 +132,9 @@ public class AstInspector {
    * phase and stores the resulting AST for subsequent inspection.
    *
    * @param sourceText the source text to compile
-   * @throws CompilationFailedException if an error occurrs during compilation
+   * @throws CompilationFailedException if an error occurs during compilation
    */
-  public void load(String sourceText) throws CompilationFailedException {
+  public void load(@Language("Groovy") String sourceText) throws CompilationFailedException {
     reset();
     
     try {

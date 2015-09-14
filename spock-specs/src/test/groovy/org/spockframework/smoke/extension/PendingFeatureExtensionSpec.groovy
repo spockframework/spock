@@ -23,6 +23,42 @@ class Foo extends Specification {
     result.ignoreCount == 0
   }
 
+  def "@PendingFeature marks feature that fails with exception as skipped"() {
+    when:
+    def result = runner.runWithImports("""
+
+class Foo extends Specification {
+  @PendingFeature
+  def bar() {
+    expect:
+    throw new Exception()
+  }
+}
+    """)
+
+    then:
+    noExceptionThrown()
+    result.runCount == 1
+    result.failureCount == 0
+    result.ignoreCount == 0
+  }
+  def "@PendingFeature rethrows non handled exceptions"() {
+    when:
+    def result = runner.runWithImports("""
+
+class Foo extends Specification {
+  @PendingFeature(exceptions=[IndexOutOfBoundsException])
+  def bar() {
+    expect:
+    throw new IllegalArgumentException()
+  }
+}
+    """)
+
+    then:
+    thrown(IllegalArgumentException)
+  }
+
   def "@PendingFeature marks passing feature as failed"() {
     when:
     runner.runWithImports("""

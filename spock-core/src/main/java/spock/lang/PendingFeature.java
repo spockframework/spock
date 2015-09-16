@@ -2,7 +2,6 @@ package spock.lang;
 
 
 import org.spockframework.runtime.extension.ExtensionAnnotation;
-import org.spockframework.runtime.extension.builtin.IgnoreExtension;
 import org.spockframework.runtime.extension.builtin.PendingFeatureExtension;
 import org.spockframework.util.Beta;
 
@@ -40,4 +39,12 @@ import java.lang.annotation.Target;
 @Target({ElementType.METHOD})
 @ExtensionAnnotation(PendingFeatureExtension.class)
 public @interface PendingFeature {
+  /**
+   * Configures which types of Exceptions are expected in the pending feature.
+   *
+   * Subclasses are included if their parent class is listed.
+   *
+   * @return array of Exception classes to ignore.
+   */
+  Class<? extends Throwable>[] exceptions() default {Exception.class};
 }

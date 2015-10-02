@@ -27,5 +27,8 @@ The Grails plugin has moved to its own https://github.com/spockframework/spock-g
 
 NOTE: Grails 2.3 and higher have built-in Spock support and do not require a plugin.
 
+== Arquillian Module
 
+Integration of Spock with Arquillian for writing Java EE integration tests. https://github.com/arquillian/arquillian-testrunner-spock[Arquillian Sputnik]
 
+NOTE: Currently only version 0.7 or before is supported. Issue is already created to fix this. https://github.com/arquillian/arquillian-testrunner-spock/issues/18[#18]

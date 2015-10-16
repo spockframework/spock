@@ -44,7 +44,9 @@ public class RequiresExtension extends AbstractAnnotationDrivenExtension<Require
   private void doVisit(Requires annotation, ISkippable skippable) {
     Closure condition = createCondition(annotation.value());
     Object result = evaluateCondition(condition);
-    skippable.setSkipped(!GroovyRuntimeUtil.isTruthy(result));
+    if (!GroovyRuntimeUtil.isTruthy(result)) {
+      skippable.setSkipped(true);
+    }
   }
 
   private Closure createCondition(Class<? extends Closure> clazz) {
@@ -58,7 +60,7 @@ public class RequiresExtension extends AbstractAnnotationDrivenExtension<Require
   private Object evaluateCondition(Closure condition) {
     condition.setDelegate(new PreconditionContext());
     condition.setResolveStrategy(Closure.DELEGATE_ONLY);
-    
+
     try {
       return condition.call();
     } catch (Exception e) {

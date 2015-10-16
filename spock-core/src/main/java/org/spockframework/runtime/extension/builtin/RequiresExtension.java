@@ -60,7 +60,7 @@ public class RequiresExtension extends AbstractAnnotationDrivenExtension<Require
   private Object evaluateCondition(Closure condition) {
     condition.setDelegate(new PreconditionContext());
     condition.setResolveStrategy(Closure.DELEGATE_ONLY);
-
+    
     try {
       return condition.call();
     } catch (Exception e) {

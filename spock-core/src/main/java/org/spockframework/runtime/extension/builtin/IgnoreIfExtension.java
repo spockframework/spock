@@ -58,7 +58,7 @@ public class IgnoreIfExtension extends AbstractAnnotationDrivenExtension<IgnoreI
   private Object evaluateCondition(Closure condition) {
     condition.setDelegate(new PreconditionContext());
     condition.setResolveStrategy(Closure.DELEGATE_ONLY);
-
+    
     try {
       return condition.call();
     } catch (Exception e) {

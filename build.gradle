@@ -26,7 +26,7 @@ ext {
     minGroovyVersion = "2.3.0"
     maxGroovyVersion = "2.3.99"
   } else if (variant == 2.4) {
-    groovyVersion = "2.4.4"
+    groovyVersion = "2.4.5"
     minGroovyVersion = "2.4.0"
     maxGroovyVersion = "2.9.99"
   } else {

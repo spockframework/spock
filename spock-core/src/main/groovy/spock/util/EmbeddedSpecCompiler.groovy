@@ -17,6 +17,7 @@
 package spock.util
 
 import org.codehaus.groovy.control.MultipleCompilationErrorsException
+import org.intellij.lang.annotations.Language
 import org.junit.Test
 import org.junit.internal.runners.model.MultipleFailureException
 import org.junit.runner.RunWith
@@ -72,27 +73,29 @@ class EmbeddedSpecCompiler {
    * Compiles the given source code, and returns all Spock specifications
    * contained therein (but not other classes).
    */
-  List<Class> compile(String source) {
+  List<Class> compile(@Language('Groovy') String source) {
     doCompile(imports + source)
   }
 
-  List<Class> compileWithImports(String source) {
+  List<Class> compileWithImports(@Language('Groovy') String source) {
     addPackageImport(Specification.package )
     // one-liner keeps line numbers intact
     doCompile "package apackage; $imports ${source.trim()}"
   }
 
-  Class compileSpecBody(String source) {
+  Class compileSpecBody(@Language(value = 'Groovy', prefix = 'class ASpec extends spock.lang.Specification { ', suffix = '\n }')
+                        String source) {
     // one-liner keeps line numbers intact; newline safeguards against source ending in a line comment
     compileWithImports("class ASpec extends Specification { ${source.trim() + '\n'} }")[0]
   }
 
-  Class compileFeatureBody(String source) {
+  Class compileFeatureBody(@Language(value = 'Groovy', prefix = "def 'a feature'() { ", suffix = '\n }')
+                           String source) {
     // one-liner keeps line numbers intact; newline safeguards against source ending in a line comment
     compileSpecBody "def 'a feature'() { ${source.trim() + '\n'} }"
   }
 
-  private List<Class> doCompile(String source) {
+  private List<Class> doCompile(@Language('Groovy') String source) {
     loader.clearCache()
 
     try {

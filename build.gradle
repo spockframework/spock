@@ -39,6 +39,7 @@ ext {
   fullVersion = "$baseVersion-groovy-$variant" + (snapshotVersion ? "-SNAPSHOT" : "")
   variantLessVersion = baseVersion + (snapshotVersion ? "-SNAPSHOT" : "")
   libs = [
+    jetbrainsAnnotations: "org.jetbrains:annotations:13.0",
     ant: "org.apache.ant:ant:1.9.4",
     asm: "org.ow2.asm:asm:5.0.3",
     cglib: "cglib:cglib-nodep:3.1",

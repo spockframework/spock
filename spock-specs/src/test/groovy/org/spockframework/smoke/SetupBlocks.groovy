@@ -47,6 +47,11 @@ class SetupBlocks extends EmbeddedSpecification {
     and: def b = 2
   }
 
+  def "but-ed"() {
+    setup: def a = 1
+    but: def b = 2
+  }
+
   def "full house"() {
     def a = 1
     def b = 2
@@ -89,6 +94,12 @@ setup: b = 2
     expect: a == 4
   }
 
+  def "blocks are executed - with but-ed block"() {
+    def a = 1
+    setup: a += 1
+    but: "blah"; a += 2
+    expect: a == 4
+  }
   def "given is alias for setup"() {
     def a
     given: a = 1

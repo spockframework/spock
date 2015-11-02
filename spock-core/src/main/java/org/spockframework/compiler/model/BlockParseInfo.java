@@ -37,16 +37,25 @@ public enum BlockParseInfo {
       return method.addBlock(new AnonymousBlock(method));
     }
     public EnumSet<BlockParseInfo> getSuccessors(Method method) {
-      return EnumSet.of(SETUP, GIVEN, EXPECT, WHEN, CLEANUP, WHERE, METHOD_END);
+      return EnumSet.of(SETUP, GIVEN, EXPECT, WHEN, CLEANUP, WHERE, EXAMPLES, METHOD_END);
     }
   },
+
+  BUT {
+	    public EnumSet<BlockParseInfo> getSuccessors(Method method) {
+	      return method.getLastBlock().getParseInfo().getSuccessors(method);
+	    }
+	    public Block addNewBlock(Method method) {
+	      return method.getLastBlock();
+	    }
+	  },
 
   SETUP {
     public Block addNewBlock(Method method) {
       return method.addBlock(new SetupBlock(method));
     }
     public EnumSet<BlockParseInfo> getSuccessors(Method method) {
-      return EnumSet.of(AND, EXPECT, WHEN, CLEANUP, WHERE, METHOD_END);
+      return EnumSet.of(AND, BUT, EXPECT, WHEN, CLEANUP, WHERE, EXAMPLES, METHOD_END);
     }
   },
 
@@ -64,7 +73,7 @@ public enum BlockParseInfo {
       return method.addBlock(new ExpectBlock(method));
     }
     public EnumSet<BlockParseInfo> getSuccessors(Method method) {
-      return EnumSet.of(AND, WHEN, CLEANUP, WHERE, METHOD_END);
+      return EnumSet.of(AND, BUT, WHEN, CLEANUP, WHERE, EXAMPLES, METHOD_END);
     }
   },
 
@@ -73,7 +82,7 @@ public enum BlockParseInfo {
       return method.addBlock(new WhenBlock(method));
     }
     public EnumSet<BlockParseInfo> getSuccessors(Method method) {
-      return EnumSet.of(AND, THEN);
+      return EnumSet.of(AND, BUT, THEN);
     }
   },
 
@@ -82,7 +91,7 @@ public enum BlockParseInfo {
       return method.addBlock(new ThenBlock(method));
     }
     public EnumSet<BlockParseInfo> getSuccessors(Method method) {
-      return EnumSet.of(AND, EXPECT, WHEN, THEN, CLEANUP, WHERE, METHOD_END);
+      return EnumSet.of(AND, BUT, EXPECT, WHEN, THEN, CLEANUP, WHERE, EXAMPLES, METHOD_END);
     }
   },
 
@@ -91,7 +100,7 @@ public enum BlockParseInfo {
       return method.addBlock(new CleanupBlock(method));
     }
     public EnumSet<BlockParseInfo> getSuccessors(Method method) {
-      return EnumSet.of(AND, WHERE, METHOD_END);
+      return EnumSet.of(AND, BUT, WHERE, EXAMPLES, METHOD_END);
     }
   },
 
@@ -100,9 +109,18 @@ public enum BlockParseInfo {
       return method.addBlock(new WhereBlock(method));
     }
     public EnumSet<BlockParseInfo> getSuccessors(Method method) {
-      return EnumSet.of(AND, METHOD_END);
+      return EnumSet.of(AND, BUT, METHOD_END);
     }
   },
+
+  EXAMPLES {
+	    public Block addNewBlock(Method method) {
+	      return method.addBlock(new ExamplesBlock(method));
+	    }
+	    public EnumSet<BlockParseInfo> getSuccessors(Method method) {
+	      return EnumSet.of(AND, BUT, METHOD_END);
+	    }
+	  },
 
   METHOD_END {
     public Block addNewBlock(Method method) {

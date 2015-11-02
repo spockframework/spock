@@ -33,4 +33,5 @@ public interface ISpecVisitor {
   void visitThenBlock(ThenBlock block) throws Exception;
   void visitCleanupBlock(CleanupBlock block) throws Exception;
   void visitWhereBlock(WhereBlock block) throws Exception;
+  void visitExamplesBlock(ExamplesBlock block) throws Exception;
 }

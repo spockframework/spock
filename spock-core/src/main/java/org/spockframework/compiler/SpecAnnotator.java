@@ -127,4 +127,9 @@ public class SpecAnnotator extends AbstractSpecVisitor {
   public void visitWhereBlock(WhereBlock block) throws Exception {
     addBlockMetadata(block, BlockKind.WHERE);
   }
+
+  @Override
+  public void visitExamplesBlock(ExamplesBlock block) throws Exception {
+    addBlockMetadata(block, BlockKind.EXAMPLES);
+  }
 }

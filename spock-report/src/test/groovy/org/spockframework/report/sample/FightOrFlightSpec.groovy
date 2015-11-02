@@ -47,6 +47,21 @@ class FightOrFlightSpec extends Specification {
     impl()
   }
 
+  @Ignore
+  def "Ninja should cast a tee-mac-woo spell when attacked by an invisible opponent (but hope for the best)"() {
+    given:
+    impl()
+
+    when:
+    impl()
+
+    then:
+    impl()
+
+    but:
+    impl()
+  }
+
   @See(["http://en.wikipedia.org/wiki/Ninja", "http://en.wikipedia.org/wiki/Sega_Ninja"])
   def "Ninja should engage a weak opponent"() {
     given:

@@ -85,7 +85,7 @@ println(  List  )
     node2.lastLineNumber == 3
     node2.lastColumnNumber == 5
 
-    and:
+    but:
     ASTNode node3 = inspector.scriptExpressions[2].arguments.expressions[0]
     node3 instanceof ClassExpression
     node3.lineNumber == 4
@@ -109,6 +109,29 @@ List.class.methods
     node1.lastColumnNumber == 11
 
     and:
+    ASTNode node2 = inspector.scriptExpressions[1].objectExpression
+    node2 instanceof ClassExpression
+    node2.lineNumber == 3
+    node2.columnNumber == 1
+    node2.lastLineNumber == 3
+    node2.lastColumnNumber == 11
+  }
+
+  def "long-form class literals have accurate line/column info using but block"() {
+    inspector.load("""
+List.class
+List.class.methods
+    """)
+
+    expect:
+    ASTNode node1 = inspector.scriptExpressions[0]
+    node1 instanceof ClassExpression
+    node1.lineNumber == 2
+    node1.columnNumber == 1
+    node1.lastLineNumber == 2
+    node1.lastColumnNumber == 11
+
+    but:
     ASTNode node2 = inspector.scriptExpressions[1].objectExpression
     node2 instanceof ClassExpression
     node2.lineNumber == 3

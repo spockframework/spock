@@ -14,19 +14,21 @@
  * limitations under the License.
  */
 
-package org.spockframework.runtime.model;
+package org.spockframework.compiler.model;
 
-/**
- * The different kind of blocks that a <tt>BlockInfo</tt> instance can represent.
- * 
- * @author Peter Niederwieser
- */
-public enum BlockKind {
-  SETUP,
-  EXPECT,
-  WHEN,
-  THEN,
-  CLEANUP,
-  WHERE,
-  EXAMPLES
+public class ExamplesBlock extends Block {
+  public ExamplesBlock(Method parent) {
+    super(parent);
+    setName("Examples");
+  }
+
+  @Override
+  public void accept(ISpecVisitor visitor) throws Exception {
+    visitor.visitAnyBlock(this);
+    visitor.visitExamplesBlock(this);
+  }
+
+  public BlockParseInfo getParseInfo() {
+    return BlockParseInfo.EXAMPLES;
+  }
 }

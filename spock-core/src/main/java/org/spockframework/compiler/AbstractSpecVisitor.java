@@ -33,4 +33,5 @@ public class AbstractSpecVisitor implements ISpecVisitor {
   public void visitThenBlock(ThenBlock block) throws Exception {}
   public void visitCleanupBlock(CleanupBlock block) throws Exception {}
   public void visitWhereBlock(WhereBlock block) throws Exception {}
+  public void visitExamplesBlock(ExamplesBlock block) throws Exception {}
 }

@@ -89,4 +89,8 @@ modifyPom { pom ->
   pom.dependencies.removeAll { it.scope == "test" }
 }
 
-deployers*.beforeDeployment { signing.signPom(it) }
+deployers*.beforeDeployment {
+  if (gradle.taskGraph.hasTask(uploadArchives)) {
+    signing.signPom(it)
+  }
+}

@@ -142,6 +142,54 @@ a | a
     3 | "wow"
   }
 
+  def 'invalid parameter order should cause a compile error'() {
+    when:
+    compiler.compileSpecBody """
+      def 'invalid parameter order'(${parameters.join(', ')}) {
+        expect: false
+        where:  a << [1]
+
+                b | c
+                2 | 3
+
+                d = 4
+      }
+    """
+
+    then:
+    thrown InvalidSpecCompileException
+
+    where: 'all invalid permutations of the parameters'
+    parameters << ('a'..'e').subsequences().collectMany { it.permutations() }.findAll { it != it.sort(false) }
+  }
+
+  def 'parameters should be ordered according to data table header'() {
+    expect:
+    runner.runSpecBody """
+      def 'valid parameter order'(${parameters.join(', ')}) {
+        expect: a + b + c + d == (1..4).sum()
+        where:  a << [1]
+
+                b | c
+                2 | 3
+
+                d = 4
+      }
+    """
+
+    where: 'all valid permutations of the parameters'
+    parameters << ('a'..'e').subsequences().collectMany { it.permutations() }.findAll { it == it.sort(false) }
+  }
+
+  def 'partial parameter definition is possible'(int b, c) {
+    expect:
+    a + b + c > 0
+    where:
+    a | b | c
+    1 | 2 | 3
+    4 | 5 | 6
+  }
+
   def "pseudo-column can be omitted from parameter list"(a) {
     expect:
     a == 3
@@ -160,14 +208,15 @@ a | a
     3 | _
   }
 
-  def "tables can be mixed with other parameterizations"() {
+  def 'tables can be mixed with other parameterizations'(int a, int b, int c, int d) {
     expect:
     [a, b, c, d] == [1, 2, 3, 4]
-
     where:
     a << [1]
+
     b | c
     2 | 3
+
     d = c + 1
   }
 
@@ -257,7 +306,7 @@ local | 1
       @Unroll def 'a = #a, b = #b'() {
         expect:
         true
-        
+
         where:
         a | b
         0 | a + 1
@@ -273,7 +322,7 @@ local | 1
     runner.runFeatureBody '''
       expect:
       false
-      
+
       where:
       a | b
       b | 1
@@ -288,7 +337,7 @@ local | 1
     runner.runFeatureBody '''
       expect:
       false
-      
+
       where:
       a | b
       1 | b + 1
@@ -324,23 +373,38 @@ local | 1
   def 'data table elements can reference each other'() {
     expect:
     runner.runFeatureBody '''
-      expect:
-      g == 12
-  
-      where:
-      a = 1
-      b = a + 1
-      
-      c << [b + 1]
-      
-      d = c + 1
-      
-      e         | f
-      b + c + d | e + 1
-      
-      g << [f + 1]
-      
-      h = g + 1       
+      expect: g == 12
+      where:  a = 1
+              b = a + 1
+
+              c << [b + 1]
+
+              d = c + 1
+
+              e         | f
+              b + c + d | e + 1
+
+              g << [f + 1]
+
+              h = g + 1
+    '''
+  }
+
+  @Ignore
+  def 'data tables can reference variable initializations'() {
+    expect:
+    runner.runFeatureBody '''
+      expect: b == 2
+      where:  a = 1
+              b << [a + 1]
+    '''
+
+    and:
+    runner.runFeatureBody '''
+      expect: c == 3
+      where:  a = 1
+              b     || c
+              a + 1 || b + 1
     '''
   }
 

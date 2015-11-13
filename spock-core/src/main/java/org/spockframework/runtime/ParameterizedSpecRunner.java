@@ -16,10 +16,12 @@
 
 package org.spockframework.runtime;
 
+import org.spockframework.runtime.model.*;
+
 import java.util.*;
 
+import static java.util.Arrays.asList;
 import static org.spockframework.runtime.RunStatus.*;
-import org.spockframework.runtime.model.*;
 
 /**
  * Adds the ability to run parameterized features.
@@ -55,8 +57,8 @@ public class ParameterizedSpecRunner extends BaseSpecRunner {
         MethodInfo method = dataProviderInfo.getDataProviderMethod();
         Object[] arguments = Arrays.copyOf(dataProviders, getDataTableOffset(dataProviderInfo));
         Object provider = invokeRaw(sharedInstance, method, arguments);
-        
-        if (runStatus != OK) 
+
+        if (runStatus != OK)
           return null;
         else if (provider == null) {
           SpockExecutionException error = new SpockExecutionException("Data provider is null!");
@@ -136,12 +138,23 @@ public class ParameterizedSpecRunner extends BaseSpecRunner {
     if (runStatus != OK) return;
 
     while (haveNext(iterators)) {
-      initializeAndRunIteration(nextArgs(iterators), estimatedNumIterations);
+      initializeAndRunIteration(getInitializedDataValues(iterators), estimatedNumIterations);
 
       if (resetStatus(ITERATION) != OK) break;
       // no iterators => no data providers => only derived parameterizations => limit to one iteration
       if(iterators.length == 0) break;
     }
+  }
+
+  /* TODO we should take the default parameter values into consideration, instead of initing them always with null? */
+  private Object[] getInitializedDataValues(Iterator[] iterators) {
+    Collection<Object> dataValues = new ArrayList<Object>(asList(nextArgs(iterators)));
+
+    int extraParameterCount = currentFeature.getDataVariables().size() - dataValues.size();
+    for (int i = 0; i < extraParameterCount; i++)
+      dataValues.add(null);
+
+    return dataValues.toArray();
   }
 
   private void closeDataProviders(Object[] dataProviders) {
@@ -193,7 +206,7 @@ public class ParameterizedSpecRunner extends BaseSpecRunner {
 
   // advances iterators and computes args
   private Object[] nextArgs(Iterator[] iterators) {
-    if (runStatus != OK) return null;
+    if (runStatus != OK) return EMPTY_ARGS;
 
     Object[] next = new Object[iterators.length];
     for (int i = 0; i < iterators.length; i++)
@@ -202,7 +215,7 @@ public class ParameterizedSpecRunner extends BaseSpecRunner {
       } catch (Throwable t) {
         runStatus = supervisor.error(
             new ErrorInfo(currentFeature.getDataProviders().get(i).getDataProviderMethod(), t));
-        return null;
+        return EMPTY_ARGS;
       }
 
     try {
@@ -210,7 +223,7 @@ public class ParameterizedSpecRunner extends BaseSpecRunner {
     } catch (Throwable t) {
       runStatus = supervisor.error(
           new ErrorInfo(currentFeature.getDataProcessorMethod(), t));
-      return null;
+      return EMPTY_ARGS;
     }
   }
 }

@@ -18,7 +18,6 @@ package org.spockframework.smoke.parameterization
 
 import org.codehaus.groovy.runtime.typehandling.GroovyCastException
 import org.spockframework.EmbeddedSpecification
-import org.spockframework.compiler.InvalidSpecCompileException
 
 /**
  * @author Peter Niederwieser
@@ -68,80 +67,6 @@ class MethodParameters extends EmbeddedSpecification {
     x << [1, 2]
     y << [1, 2]
   }
-  
-  def "fewer parameters than data variables"() {
-    when:
-    compiler.compileSpecBody """
-def foo(x) {
-  expect:
-  x == y
-
-  where:
-  x << [1, 2]
-  y << [1, 2]
-}
-    """
-
-    then:
-    thrown(InvalidSpecCompileException)
-  }
-
-
-  def "more parameters than data variables"() {
-    when:
-    compiler.compileSpecBody """
-def foo(x, y, z) {
-  expect:
-  x == y
-
-  where:
-  x << [1, 2]
-  y << [1, 2]
-}
-    """
-
-    then:
-    thrown(InvalidSpecCompileException)
-  }
-
-  def "parameter that is not a data variable"() {
-    when:
-    compiler.compileSpecBody """
-def foo(x, a) {
-  expect:
-  x == x
-
-  where:
-  x << [1, 2]
-}
-    """
-
-    then:
-    thrown(InvalidSpecCompileException)
-  }
-
-  def "data variable that is not a parameter"() {
-    when:
-    compiler.compileSpecBody """
-def foo(x) {
-  expect:
-  x == y
-
-  where:
-  $parameterizations
-}
-    """
-
-    then:
-    thrown(InvalidSpecCompileException)
-
-    where:
-    parameterizations << [
-        "x << [1,2]; y << [1, 2]",
-        "[x, y] << [[1, 2], [1, 2]]",
-        "x << [1, 2]; y = x"
-    ]
-  }
 
   def "data value type can be coerced to parameter type"(x, String y) {
     expect:
@@ -167,5 +92,25 @@ def foo(x, ClassLoader y) {
 
     then:
     thrown(GroovyCastException)
+  }
+
+  def 'extra parameters are type safe'(x, y, TreeMap<BigInteger, BigDecimal> z, boolean b) {
+    when:
+    z = [(1): 3]
+    b = true
+
+    then:
+    z instanceof TreeMap
+    z == [(1): 3]
+
+    b instanceof Boolean
+    b == true
+
+    x == y
+
+    where:
+    x | y
+    1 | 1
+    2 | 2
   }
 }

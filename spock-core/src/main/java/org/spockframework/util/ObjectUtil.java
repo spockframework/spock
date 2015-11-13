@@ -46,6 +46,14 @@ public abstract class ObjectUtil {
     return false;
   }
 
+  public static <T> T firstNonNull(T... objs) {
+    for (T obj : objs) {
+      if (obj != null)
+        return obj;
+    }
+    throw new IllegalArgumentException("All elements were null!");
+  }
+
   @SuppressWarnings("unchecked")
   public static @Nullable <T> T asInstance(Object obj, Class<T> type) {
     return type.isInstance(obj) ? (T) obj : null;

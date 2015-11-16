@@ -16,7 +16,7 @@ package org.spockframework.mock
 import spock.lang.Specification
 
 class MockDetectorSpec extends Specification {
-  def detector = new MockDetector()
+  def detector = new MockUtil()
   
   def "detects interface based mocks"() {
     expect:

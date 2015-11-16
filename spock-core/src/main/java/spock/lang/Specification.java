@@ -24,11 +24,12 @@ import org.spockframework.lang.Wildcard;
 import org.spockframework.util.ExceptionUtil;
 import org.spockframework.runtime.*;
 import org.spockframework.runtime.GroovyRuntimeUtil;
+import spock.mock.MockingApi;
 
 /**
  * Base class for Spock specifications. All specifications must inherit from
  * this class, either directly or indirectly.
- * 
+ *
  * @author Peter Niederwieser
  */
 @RunWith(Sputnik.class)

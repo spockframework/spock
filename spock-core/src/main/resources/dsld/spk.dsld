@@ -40,7 +40,7 @@ contribute(
 // works for all mock factory methods and all overloads that include a type
 contribute(
     enclosingClass(subType("spock.lang.Specification")) &
-    enclosingCallDeclaringType("spock.lang.MockingApi") &
+    enclosingCallDeclaringType("spock.mock.MockingApi") &
     bind(theCalls: enclosingCall(name("Mock") | name("Stub") | name("Spy") | name("GroovyMock") | name("GroovyStub") | name("GroovySpy"))) &
 	enclosingClosure()) {
   def args = theCalls.iterator().next().arguments.expressions

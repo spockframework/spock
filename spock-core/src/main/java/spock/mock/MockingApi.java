@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-package spock.lang;
+package spock.mock;
 
 import java.util.Map;
 
@@ -67,7 +67,7 @@ import org.spockframework.runtime.GroovyRuntimeUtil;
  * </pre>
  */
 @SuppressWarnings("unused")
-public class MockingApi extends SpecInternals {
+public class MockingApi extends SpecInternals implements MockFactory {
   /**
    * Encloses one or more interaction definitions in a <tt>then</tt> block.
    * Required when an interaction definition uses a statement that doesn't
@@ -179,6 +179,7 @@ public class MockingApi extends SpecInternals {
    *
    * @return a mock with the specified type
    */
+  @Override
   public <T> T Mock(Class<T> type) {
     invalidMockCreation();
     return null;
@@ -200,6 +201,7 @@ public class MockingApi extends SpecInternals {
    *
    * @return a mock with the specified options and type
    */
+  @Override
   @Beta
   public <T> T Mock(Map<String, Object> options, Class<T> type) {
     invalidMockCreation();
@@ -363,6 +365,7 @@ public class MockingApi extends SpecInternals {
    *
    * @return a stub with the specified type
    */
+  @Override
   @Beta
   public <T> T Stub(Class<T> type) {
     invalidMockCreation();
@@ -385,6 +388,7 @@ public class MockingApi extends SpecInternals {
    *
    * @return a stub with the specified options and type
    */
+  @Override
   @Beta
   public <T> T Stub(Map<String, Object> options, Class<T> type) {
     invalidMockCreation();
@@ -548,6 +552,7 @@ public class MockingApi extends SpecInternals {
    *
    * @return a spy with the specified type
    */
+  @Override
   @Beta
   public <T> T Spy(Class<T> type) {
     invalidMockCreation();
@@ -570,6 +575,7 @@ public class MockingApi extends SpecInternals {
    *
    * @return a spy with the specified options and type
    */
+  @Override
   @Beta
   public <T> T Spy(Map<String, Object> options, Class<T> type) {
     invalidMockCreation();

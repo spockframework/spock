@@ -23,6 +23,7 @@ import org.spockframework.util.ObjectUtil;
 import org.spockframework.util.Nullable;
 
 public class ExpressionInfoValueRenderer {
+  public static final long MAX_EDIT_DISTANCE_MEMORY = 1024*1024;
   private final ExpressionInfo expr;
 
   private ExpressionInfoValueRenderer(ExpressionInfo expr) {
@@ -101,12 +102,52 @@ public class ExpressionInfoValueRenderer {
     // values can't be null here
     String str1 = expr.getChildren().get(0).getValue().toString();
     String str2 = expr.getChildren().get(1).getValue().toString();
+
+    if (str1.length() * str2.length() > MAX_EDIT_DISTANCE_MEMORY) {
+      return tryReduceStringSizes(str1, str2);
+    } else {
+      return createAndRenderEditDistance(str1, str2);
+    }
+  }
+
+  private String tryReduceStringSizes(String str1, String str2) {
+    int minLength = Math.min(str1.length(), str2.length());
+    int commonStart = minLength;
+    for (int i = 0; i < minLength; i++) {
+      if (str1.charAt(i) != str2.charAt(i)) {
+        commonStart = i-1;
+        break;
+      }
+    }
+    commonStart = Math.max(0, commonStart);
+    int end1 = str1.length()-1;
+    int end2 = str2.length()-1;
+    while (end1 >= 0 && end2 >= 0 && str1.charAt(end1) == str2.charAt(end2)){
+      end1--; end2--;
+    }
+    end1++;
+    end2++;
+
+    if ((end1-commonStart) * (end2-commonStart) > MAX_EDIT_DISTANCE_MEMORY) {
+      return "false\nStrings too large to calculate edit distance.";
+    } else {
+      // Check if we can add some context
+      if ((end1 - commonStart + 20) * (end2 - commonStart + 20) < MAX_EDIT_DISTANCE_MEMORY){
+        commonStart = Math.max(0, commonStart - 10);
+        end1 = Math.min(str1.length(), end1 + 10);
+        end2 = Math.min(str2.length(), end2 + 10);
+      }
+      return createAndRenderEditDistance(str1.substring(commonStart, end1), str2.substring(commonStart, end2));
+    }
+  }
+
+  private String createAndRenderEditDistance(String str1, String str2) {
     EditDistance dist = new EditDistance(str1, str2);
     return String.format("false\n%d difference%s (%d%% similarity)\n%s",
-        dist.getDistance(), dist.getDistance() == 1 ? "" : "s", dist.getSimilarityInPercent(),
-        new EditPathRenderer().render(str1, str2, dist.calculatePath()));
+      dist.getDistance(), dist.getDistance() == 1 ? "" : "s", dist.getSimilarityInPercent(),
+      new EditPathRenderer().render(str1, str2, dist.calculatePath()));
   }
-  
+
   private String renderAsFailedEqualityComparison(ExpressionInfo expr) {
     if (!(Boolean.FALSE.equals(expr.getValue()))) return null;
     if (!expr.isEqualityComparison()) return null;
@@ -120,7 +161,7 @@ public class ExpressionInfoValueRenderer {
 
     return "false";
   }
-  
+
   private void addTypeHint(ExpressionInfo expr) {
     if (expr.getRenderedValue() == null) return;
 

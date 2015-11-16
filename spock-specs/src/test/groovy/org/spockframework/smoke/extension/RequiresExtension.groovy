@@ -20,6 +20,8 @@ import org.spockframework.VerifyExecution
 import org.spockframework.ExecutionLog
 
 import spock.lang.Specification
+import spock.lang.IgnoreIf
+import spock.lang.Issue
 import spock.lang.Requires
 
 @VerifyExecution
@@ -54,11 +56,18 @@ class RequiresExtension extends Specification {
     expect: true
   }
 
+  @Issue("https://github.com/spockframework/spock/issues/535")
+  @IgnoreIf({ true })
+  @Requires({ true })
+  def "allows determinate use of multiple filters" () {
+    expect: false
+  }
+
   def verifyExecution(ExecutionLog log) {
     expect:
     log.passed.size() == 5
     log.failed.size() == 0
-    log.skipped == ["skips feature if precondition is not satisfied"]
+    log.skipped == ["skips feature if precondition is not satisfied", "allows determinate use of multiple filters"]
   }
 }
 

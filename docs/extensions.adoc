@@ -12,7 +12,7 @@ meta-annotation.
 
 === Ignore
 
-To temporarily prevent a feature method from getting executed, annotate it with +spock.lang.Ignore+:
+To temporarily prevent a feature method from getting executed, annotate it with `spock.lang.Ignore`:
 
 [source,groovy]
 ----
@@ -24,7 +24,7 @@ For documentation purposes, a reason can be provided:
 
 [source,groovy]
 ----
-@Ignore(reason = "TODO")
+@Ignore("TODO")
 def "my feature"() { ... }
 ----
 
@@ -40,7 +40,7 @@ In most execution environments, ignored feature methods and specs will be report
 
 === IgnoreRest
 
-To ignore all but a (typically) small subset of methods, annotate the latter with +spock.lang.IgnoreRest+:
+To ignore all but a (typically) small subset of methods, annotate the latter with `spock.lang.IgnoreRest`:
 
 [source,groovy]
 ----
@@ -56,7 +56,7 @@ def "I'll also be ignored"() { ... }
 
 === IgnoreIf
 
-To ignore a feature method under certain conditions, annotate it with +spock.lang.IgnoreIf+,
+To ignore a feature method under certain conditions, annotate it with `spock.lang.IgnoreIf`,
 followed by a predicate:
 
 [source,groovy]
@@ -94,6 +94,32 @@ def "I'll only run on Windows"() { ... }
 `Requires` works exactly like `IgnoreIf`, except that the predicate is inverted. In general, it is preferable
 to state the conditions under which a method gets executed, rather than the conditions under which it gets ignored.
 
+
+=== PendingFeature
+
+To indicate that the feature is not fully implemented yet and should not be reported as error, annotate it with `spock.lang.PendingFeature`.
+
+The use case is to annotate tests that can not yet run but should already be committed.
+The main difference to `Ignore` is that the test are executed, but test failures are ignored.
+If the test passes without an error, then it will be reported as failure since the `PendingFeature` annotation should be removed.
+This way the tests will become part of the normal tests instead of being ignored forever.
+
+Groovy has the `groovy.transform.NotYetImplemented` annotation which is similar but behaves a differently.
+
+* it will mark failing tests as passed
+* if at least one iteration of a data-driven test passes it will be reported as error
+
+`PendingFeature`:
+
+* it will mark failing tests as skipped
+* if at least one iteration of a data-driven test fails it will be reported as skipped
+* if every iteration of a data-driven test passes it will be reported as error
+
+[source,groovy]
+----
+@PendingFeature
+def "not implemented yet"() { ... }
+----
 
 === Stepwise
 
@@ -180,7 +206,7 @@ To confine meta class changes to the scope of a feature method or spec class, us
 ----
 @Stepwise
 class FooSpec extends Specification {
-  @ConfineMetaClassChanges
+  @ConfineMetaClassChanges([String])
   def "I run first"() {
     when:
     String.metaClass.someMethod = { delegate }
@@ -204,6 +230,32 @@ after `cleanupSpec` is executed.
 
 When applied to a feature method, the meta classes are restored to as they were after `setup` was executed,
 before `cleanup` is executed.
+
+CAUTION: Temporarily changing the meta classes is only safe when specs are
+run in a single thread per JVM. Even though many execution environments do limit themselves to one thread
+per JVM, keep in mind that Spock cannot enforce this.
+
+=== RestoreSystemProperties
+Saves system properties before the annotated feature method (including any setup and cleanup methods) gets run,
+and restores them afterwards.
+
+Applying this annotation to a spec class has the same effect as applying it to all its feature methods.
+
+[source,groovy]
+----
+@RestoreSystemProperties
+def "determines family based on os.name system property"() {
+  given:
+  System.setProperty('os.name', 'Windows 7')
+
+  expect:
+  OperatingSystem.current.family == OperatingSystem.Family.WINDOWS
+}
+----
+
+CAUTION: Temporarily changing the values of system properties is only safe when specs are
+run in a single thread per JVM. Even though many execution environments do limit themselves to one thread
+per JVM, keep in mind that Spock cannot enforce this.
 
 === AutoCleanup
 

@@ -16,7 +16,7 @@
 
 package org.spockframework.smoke.mock
 
-import org.spockframework.mock.MockDetector
+import org.spockframework.mock.MockUtil
 
 import spock.lang.Specification
 
@@ -109,7 +109,7 @@ class StubDefaultResponses extends Specification {
 
     expect:
     with(stub.getUnknownInterface()) {
-      new MockDetector().isMock(it)
+      new MockUtil().isMock(it)
       name == ""
       age == 0
       children == []
@@ -121,7 +121,7 @@ class StubDefaultResponses extends Specification {
 
     expect:
     with(stub.getUnknownClassWithDefaultCtor()) {
-      !new MockDetector().isMock(it)
+      !new MockUtil().isMock(it)
       name == "default"
       age == 0
       children == null
@@ -133,7 +133,7 @@ class StubDefaultResponses extends Specification {
 
     expect:
     with(stub.getUnknownClassWithoutDefaultCtor()) {
-      new MockDetector().isMock(it)
+      new MockUtil().isMock(it)
       name == ""
       age == 0
       children == []

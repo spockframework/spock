@@ -1,17 +1,20 @@
+import org.gradle.api.internal.artifacts.dependencies.DefaultSelfResolvingDependency
+
 apply plugin: 'osgi'
 apply from: script("publishMaven")
 
 displayName = "Spock Framework - Core Module"
 
-description = "Spock is a testing and specification framework for Java and Groovy applications. \
-What makes it stand out from the crowd is its beautiful and highly expressive specification language. \
-Thanks to its JUnit runner, Spock is compatible with most IDEs, build tools, and continuous integration servers. \
-Spock is inspired from JUnit, jMock, RSpec, Groovy, Scala, Vulcans, and other fascinating life forms."
+description = '''Spock is a testing and specification framework for Java and Groovy applications.
+What makes it stand out from the crowd is its beautiful and highly expressive specification language.
+Thanks to its JUnit runner, Spock is compatible with most IDEs, build tools, and continuous integration servers.
+Spock is inspired from JUnit, jMock, RSpec, Groovy, Scala, Vulcans, and other fascinating life forms.'''
 
 dependencies {
-  compile libs.groovy // simplest way to add Groovy dependency to POM
+  compile libs.groovy // easiest way to add Groovy dependency to POM
   compile libs.junit
 
+  compile libs.jetbrainsAnnotations, optional
   compile libs.ant, optional
   compile libs.asm, optional
   compile libs.cglib, optional
@@ -29,7 +32,13 @@ jar {
         'org.apache.tools.ant.types;version="[1,2)";resolution:=optional',
         'net.sf.cglib.proxy;version="[2.2,2)";resolution:=optional', 
         'org.apache.tools.ant.types.selectors;version="[1.7,2)";resolution:=optional',
-		'groovy.lang;version="[1.8,3)"', 'org.codehaus.groovy.*;version="[1.8,3)"', 
+        'groovy.lang;version="[1.8,3)"', 'org.codehaus.groovy.*;version="[1.8,3)"', 
         'org.junit.runner;version="[4,7)"'
   }
+}
+
+processResources {
+  def tokens = [version: version.toString(), minGroovyVersion: minGroovyVersion, maxGroovyVersion: maxGroovyVersion]
+  inputs.property "tokens", tokens
+  filter(org.apache.tools.ant.filters.ReplaceTokens, tokens: tokens)
 }

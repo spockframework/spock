@@ -26,7 +26,7 @@ import org.spockframework.runtime.model.SpecInfo;
 import spock.guice.UseModules;
 
 public class GuiceExtension extends AbstractAnnotationDrivenExtension<UseModules> {
-  private final Set<Class<? extends Module>> moduleClasses = new HashSet<Class<? extends Module>>();
+  private final Set<Class<? extends Module>> moduleClasses = new LinkedHashSet<Class<? extends Module>>();
 
   @Override
   public void visitSpecAnnotation(UseModules useModules, SpecInfo spec) {

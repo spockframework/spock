@@ -50,7 +50,7 @@ contributor(ctx, {
   if (call) {
     def method = call.bind()
     def clazz = method?.containingClass
-    if (clazz?.qualName == "spock.lang.MockingApi") {
+    if (clazz?.qualName == "spock.mock.MockingApi") {
       def mockType = call.arguments.find { it.type.className == "Class" }
       if (mockType) {
         def typeParameter = mockType.type.parameters[0]

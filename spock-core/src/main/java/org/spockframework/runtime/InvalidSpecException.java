@@ -22,7 +22,7 @@ package org.spockframework.runtime;
  *
  * @author Peter Niederwieser
  */
-public class InvalidSpecException extends RuntimeException {
+public class InvalidSpecException extends SpockException {
   private String msg;
 
   public InvalidSpecException(String msg) {

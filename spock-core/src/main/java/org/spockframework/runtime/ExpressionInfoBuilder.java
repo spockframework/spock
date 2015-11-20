@@ -46,38 +46,53 @@ public class ExpressionInfoBuilder {
   }
 
   public ExpressionInfo build() {
-    SourceUnit unit = SourceUnit.create("Spec expression", adjustedText);
-    unit.parse();
-    unit.completePhase();
-    unit.convert();
+    try {
+      SourceUnit unit = SourceUnit.create("Spec expression", adjustedText);
+      unit.parse();
+      unit.completePhase();
+      unit.convert();
 
-    BlockStatement blockStat = unit.getAST().getStatementBlock();
-    Assert.that(blockStat != null && blockStat.getStatements().size() == 1);
-    Statement stat = blockStat.getStatements().get(0);
-    Assert.that(stat instanceof ExpressionStatement);
-    Expression expr = ((ExpressionStatement)stat).getExpression();
+      BlockStatement blockStat = unit.getAST().getStatementBlock();
+      Assert.that(blockStat != null && blockStat.getStatements().size() == 1);
+      Statement stat = blockStat.getStatements().get(0);
+      Assert.that(stat instanceof ExpressionStatement);
+      Expression expr = ((ExpressionStatement) stat).getExpression();
 
-    ExpressionInfo exprInfo = new ExpressionInfoConverter(lines).convert(expr);
+      ExpressionInfo exprInfo = new ExpressionInfoConverter(lines).convert(expr);
 
-    // IDEA: rest of this method could be moved to ExpressionInfoConverter (but: might make EIC less testable)
-    // IDEA: could make ExpressionInfo immutable
-    Iterator<?> iter = values.iterator();
-    for (ExpressionInfo info : exprInfo.inPostfixOrder(false)) {
-      info.setText(findText(info.getRegion()));
-      if (!iter.hasNext())
-        Assert.fail("Missing value for expression '%s' in condition '%s'", info.getText(), text);
-      info.setValue(iter.next());
-      if (startPos.getLineIndex() > 0)
-        info.shiftVertically(startPos.getLineIndex());
+      // IDEA: rest of this method could be moved to ExpressionInfoConverter (but: might make EIC less testable)
+      // IDEA: could make ExpressionInfo immutable
+      Iterator<?> iter = values.iterator();
+      for (ExpressionInfo info : exprInfo.inPostfixOrder(false)) {
+        info.setText(findText(info.getRegion()));
+        if (!iter.hasNext())
+          Assert.fail("Missing value for expression '%s' in condition '%s'", info.getText(), text);
+        info.setValue(iter.next());
+        if (startPos.getLineIndex() > 0)
+          info.shiftVertically(startPos.getLineIndex());
+      }
+
+      return exprInfo;
+    }catch (Throwable t){
+      final ExpressionInfo expressionInfo = new ExpressionInfo(TextRegion.create(TextPosition.create(1, 1), TextPosition.create(1, 1)), TextPosition.create(1, 1), null);
+      expressionInfo.setText(text);
+      expressionInfo.setValue(lastOrNull(values));
+      return expressionInfo;
     }
+  }
 
-    return exprInfo;
+  private Object lastOrNull(Iterable<Object> values){
+    Object result = null;
+    for (Object value : values) {
+      result = value;
+    }
+    return result;
   }
 
   private String findText(TextRegion region) {
     if (region == TextRegion.NOT_AVAILABLE)
       return ExpressionInfo.TEXT_NOT_AVAILABLE;
-    
+
     try {
       String text = "";
       for (int i = 0; i <= region.getEnd().getLineIndex(); i++) {

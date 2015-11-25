@@ -21,7 +21,7 @@ import spock.lang.Specification
 
 class SafeIterationNameProviderSpec extends Specification {
   def feature = new FeatureInfo()
-  def iteration = new IterationInfo(feature, [] as Object[], 3)
+  def iteration = new IterationInfo(feature, [] as Object[])
   def other = Mock(NameProvider)
   def provider = new SafeIterationNameProvider(other)
 

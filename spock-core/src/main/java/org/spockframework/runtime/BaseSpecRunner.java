@@ -262,22 +262,22 @@ public class BaseSpecRunner {
   private void runSimpleFeature() {
     if (runStatus != OK) return;
 
-    initializeAndRunIteration(EMPTY_ARGS, 1);
+    initializeAndRunIteration(EMPTY_ARGS);
     resetStatus(ITERATION);
   }
 
-  protected void initializeAndRunIteration(Object[] dataValues, int estimatedNumIterations) {
+  protected void initializeAndRunIteration(Object[] dataValues) {
     if (runStatus != OK) return;
 
     createSpecInstance(false);
     runInitializer();
-    runIteration(dataValues, estimatedNumIterations);
+    runIteration(dataValues);
   }
 
-  private void runIteration(Object[] dataValues, int estimatedNumIterations) {
+  private void runIteration(Object[] dataValues) {
     if (runStatus != OK) return;
 
-    currentIteration = createIterationInfo(dataValues, estimatedNumIterations);
+    currentIteration = createIterationInfo(dataValues);
     getSpecificationContext().setCurrentIteration(currentIteration);
 
     supervisor.beforeIteration(currentIteration);
@@ -288,8 +288,8 @@ public class BaseSpecRunner {
     currentIteration = null;
   }
 
-  private IterationInfo createIterationInfo(Object[] dataValues, int estimatedNumIterations) {
-    IterationInfo result = new IterationInfo(currentFeature, dataValues, estimatedNumIterations);
+  private IterationInfo createIterationInfo(Object[] dataValues) {
+    IterationInfo result = new IterationInfo(currentFeature, dataValues);
     String iterationName = currentFeature.getIterationNameProvider().getName(result);
     result.setName(iterationName);
     Description description = Description.createTestDescription(spec.getReflection(),

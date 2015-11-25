@@ -37,9 +37,8 @@ public class ParameterizedSpecRunner extends BaseSpecRunner {
     if (runStatus != OK) return;
 
     Object[] dataProviders = createDataProviders();
-    int numIterations = estimateNumIterations(dataProviders);
     Iterator[] iterators = createIterators(dataProviders);
-    runIterations(iterators, numIterations);
+    runIterations(iterators);
     closeDataProviders(dataProviders);
   }
 
@@ -109,35 +108,11 @@ public class ParameterizedSpecRunner extends BaseSpecRunner {
     return iterators;
   }
 
-  // -1 => unknown
-  private int estimateNumIterations(Object[] dataProviders) {
-    if (runStatus != OK) return -1;
-    if (dataProviders.length == 0) return 1;
-
-    int result = Integer.MAX_VALUE;
-    for (Object prov : dataProviders) {
-      if (prov instanceof Iterator)
-        // unbelievably, DGM provides a size() method for Iterators,
-        // although it is of course destructive (i.e. it exhausts the Iterator)
-        continue;
-
-      Object rawSize = GroovyRuntimeUtil.invokeMethodQuietly(prov, "size");
-      if (!(rawSize instanceof Number)) continue;
-
-      int size = ((Number) rawSize).intValue();
-      if (size < 0 || size >= result) continue;
-
-      result = size;
-    }
-
-    return result == Integer.MAX_VALUE ? -1 : result;
-  }
-
-  private void runIterations(Iterator[] iterators, int estimatedNumIterations) {
+  private void runIterations(Iterator[] iterators) {
     if (runStatus != OK) return;
 
     while (haveNext(iterators)) {
-      initializeAndRunIteration(nextArgs(iterators), estimatedNumIterations);
+      initializeAndRunIteration(nextArgs(iterators));
 
       if (resetStatus(ITERATION) != OK) break;
       // no iterators => no data providers => only derived parameterizations => limit to one iteration
@@ -146,8 +121,7 @@ public class ParameterizedSpecRunner extends BaseSpecRunner {
   }
 
   private void closeDataProviders(Object[] dataProviders) {
-    if (action(runStatus) == ABORT) return;
-    if (dataProviders == null) return; // there was an error creating the providers
+    if ((action(runStatus) != OK) || (dataProviders == null)) return;
 
     for (Object provider : dataProviders) {
       GroovyRuntimeUtil.invokeMethodQuietly(provider, "close");

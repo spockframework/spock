@@ -17,13 +17,9 @@
 package org.spockframework.runtime;
 
 import org.junit.runner.Description;
-
-import org.spockframework.runtime.extension.IMethodInterceptor;
-import org.spockframework.runtime.extension.MethodInvocation;
+import org.spockframework.runtime.extension.*;
 import org.spockframework.runtime.model.*;
-import org.spockframework.util.CollectionUtil;
-import org.spockframework.util.InternalSpockError;
-
+import org.spockframework.util.*;
 import spock.lang.Specification;
 
 import static org.spockframework.runtime.RunStatus.*;
@@ -297,7 +293,7 @@ public class BaseSpecRunner {
     String iterationName = currentFeature.getIterationNameProvider().getName(result);
     result.setName(iterationName);
     Description description = Description.createTestDescription(spec.getReflection(),
-        iterationName, currentFeature.getFeatureMethod().getAnnotations());
+                                                                iterationName, currentFeature.getFeatureMethod().getAnnotations());
     result.setDescription(description);
     return result;
   }
@@ -467,7 +463,7 @@ public class BaseSpecRunner {
 
     // slow lane
     MethodInvocation invocation = new MethodInvocation(currentFeature,
-        currentIteration, sharedInstance, currentInstance, target, method, arguments);
+                                                       currentIteration, sharedInstance, currentInstance, target, method, arguments);
     try {
       invocation.proceed();
     } catch (Throwable t) {

@@ -19,7 +19,6 @@ import org.junit.runners.model.MultipleFailureException
 import org.spockframework.EmbeddedSpecification
 import org.spockframework.compiler.InvalidSpecCompileException
 import org.spockframework.runtime.SpockExecutionException
-
 import spock.lang.*
 
 class DataTables extends EmbeddedSpecification {
@@ -117,7 +116,7 @@ a | local
     thrown(InvalidSpecCompileException)
   }
 
-    def "header variable names must not clash with each other"() {
+  def "header variable names must not clash with each other"() {
     when:
     compiler.compileFeatureBody """
 expect:
@@ -257,7 +256,7 @@ local | 1
       @Unroll def 'a = #a, b = #b'() {
         expect:
         true
-        
+
         where:
         a | b
         0 | a + 1
@@ -273,7 +272,7 @@ local | 1
     runner.runFeatureBody '''
       expect:
       false
-      
+
       where:
       a | b
       b | 1
@@ -288,7 +287,7 @@ local | 1
     runner.runFeatureBody '''
       expect:
       false
-      
+
       where:
       a | b
       1 | b + 1
@@ -326,21 +325,21 @@ local | 1
     runner.runFeatureBody '''
       expect:
       g == 12
-  
+
       where:
       a = 1
       b = a + 1
-      
+
       c << [b + 1]
-      
+
       d = c + 1
-      
+
       e         | f
       b + c + d | e + 1
-      
+
       g << [f + 1]
-      
-      h = g + 1       
+
+      h = g + 1
     '''
   }
 
@@ -375,8 +374,8 @@ a | b | c
     a + b == c
 
     where:
-    a | b || c
-    1 | 2 || 3
+    a  | b || c
+    1  | 2 || 3
     4 || 5 | 9
   }
 

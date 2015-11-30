@@ -15,8 +15,7 @@
 package org.spockframework.runtime.model;
 
 import java.lang.reflect.AnnotatedElement;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Runtime information about an iteration of a feature method.
@@ -57,7 +56,7 @@ public class IterationInfo extends NodeInfo<FeatureInfo, AnnotatedElement> {
    * Return this iteration's data values for the ongoing execution of the
    * owning feature method. The names of the data values (in the same order)
    * are available through {@link FeatureInfo#getDataVariables}.
-   * 
+   *
    * @return this iteration's data values for the ongoing execution of the
    * owning feature method
    */

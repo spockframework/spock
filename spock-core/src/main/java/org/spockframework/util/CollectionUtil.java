@@ -56,7 +56,7 @@ public abstract class CollectionUtil {
 
   public static @Nullable <T> T getLastElement(List<T> list) {
     Assert.that(list.size() > 0);
-    
+
     return list.get(list.size() - 1);
   }
 
@@ -144,7 +144,7 @@ public abstract class CollectionUtil {
 
   public static Map filterNullValues(Map map) {
     Iterator<Map.Entry> iterator = map.entrySet().iterator();
-    while(iterator.hasNext()) {
+    while (iterator.hasNext()) {
       Map.Entry next = iterator.next();
       if (next.getValue() == null) {
         iterator.remove();
@@ -200,8 +200,8 @@ public abstract class CollectionUtil {
   }
 
   public static boolean containsAny(Iterable<?> iterable, Object... elements) {
-    for (Object curr: iterable) {
-      for (Object elem: elements) {
+    for (Object curr : iterable) {
+      for (Object elem : elements) {
         if (ObjectUtil.equals(curr, elem)) return true;
       }
     }

@@ -16,10 +16,7 @@
 
 package org.spockframework.runtime
 
-import org.spockframework.runtime.model.NameProvider
-import org.spockframework.runtime.model.IterationInfo
-import org.spockframework.runtime.model.FeatureInfo
-
+import org.spockframework.runtime.model.*
 import spock.lang.Specification
 
 class SafeIterationNameProviderSpec extends Specification {
@@ -35,32 +32,32 @@ class SafeIterationNameProviderSpec extends Specification {
   def "delegates to other provider"() {
     when:
     provider.getName(iteration)
-    
+
     then:
     1 * other.getName(iteration)
   }
-  
+
   def "returns default if there is no other provider"() {
-    provider = new SafeIterationNameProvider(null)  
-    
+    provider = new SafeIterationNameProvider(null)
+
     expect:
     provider.getName(iteration) == "feature"
   }
-  
+
   def "returns default if other provider returns nothing"() {
     other.getName(iteration) >> null
 
     expect:
     provider.getName(iteration) == "feature"
   }
-  
+
   def "returns default if other provider blows up"() {
     other.getName(iteration) >> { throw new RuntimeException() }
 
     expect:
     provider.getName(iteration) == "feature"
   }
-  
+
   def "iteration name defaults to feature name when iterations aren't reported"() {
     feature.reportIterations = false
 

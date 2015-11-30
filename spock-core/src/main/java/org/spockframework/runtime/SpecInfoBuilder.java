@@ -16,20 +16,14 @@
 
 package org.spockframework.runtime;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.util.*;
-
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
+import org.junit.*;
 import org.spockframework.runtime.model.*;
 import org.spockframework.util.*;
-
 import spock.lang.Specification;
+
+import java.lang.annotation.Annotation;
+import java.lang.reflect.*;
+import java.util.*;
 
 /**
  * Builds a SpecInfo from a Class instance.

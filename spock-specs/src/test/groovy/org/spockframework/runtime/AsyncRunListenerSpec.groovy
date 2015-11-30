@@ -1,8 +1,6 @@
 package org.spockframework.runtime
 
-import org.spockframework.runtime.model.ErrorInfo
-import org.spockframework.runtime.model.IterationInfo
-
+import org.spockframework.runtime.model.*
 import spock.lang.Specification
 
 class AsyncRunListenerSpec extends Specification {

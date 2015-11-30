@@ -1,11 +1,10 @@
 package org.spockframework.runtime.model;
 
-import java.lang.reflect.AnnotatedElement;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.spockframework.runtime.extension.IMethodInterceptor;
 import org.spockframework.util.Nullable;
+
+import java.lang.reflect.AnnotatedElement;
+import java.util.*;
 
 /**
  * @author Peter Niederwieser
@@ -57,7 +56,7 @@ public class FeatureInfo extends SpecElementInfo<SpecInfo, AnnotatedElement> {
   public void addParameterName(String parameterName) {
     parameterNames.add(parameterName);
   }
-  
+
   public List<String> getDataVariables() {
     return parameterNames; // currently the same
   }
@@ -109,7 +108,7 @@ public class FeatureInfo extends SpecElementInfo<SpecInfo, AnnotatedElement> {
   public boolean isReportIterations() {
     return reportIterations;
   }
-  
+
   public void setReportIterations(boolean flag) {
     reportIterations = flag;
   }
@@ -118,7 +117,7 @@ public class FeatureInfo extends SpecElementInfo<SpecInfo, AnnotatedElement> {
   public NameProvider<IterationInfo> getIterationNameProvider() {
     return iterationNameProvider;
   }
-  
+
   public void setIterationNameProvider(NameProvider<IterationInfo> provider) {
     iterationNameProvider = provider;
   }

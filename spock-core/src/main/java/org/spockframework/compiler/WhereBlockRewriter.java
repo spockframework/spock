@@ -16,24 +16,21 @@
 
 package org.spockframework.compiler;
 
-import java.util.*;
-
 import org.codehaus.groovy.ast.*;
 import org.codehaus.groovy.ast.expr.*;
 import org.codehaus.groovy.ast.stmt.*;
 import org.codehaus.groovy.control.SourceUnit;
-import org.codehaus.groovy.syntax.Token;
-import org.codehaus.groovy.syntax.Types;
+import org.codehaus.groovy.syntax.*;
 import org.objectweb.asm.Opcodes;
-
 import org.spockframework.compiler.model.WhereBlock;
 import org.spockframework.runtime.model.DataProviderMetadata;
 import org.spockframework.util.*;
 
+import java.util.*;
+
 import static org.spockframework.compiler.AstUtil.createGetAtMethod;
 
 /**
- *
  * @author Peter Niederwieser
  */
 public class WhereBlockRewriter {
@@ -87,15 +84,14 @@ public class WhereBlockRewriter {
         rewriteSimpleParameterization(binExpr, stat);
       else if (leftExpr instanceof ListExpression)
         rewriteMultiParameterization(binExpr, stat);
-      else 
+      else
         notAParameterization(stat);
     } else if (type == Types.ASSIGN)
       rewriteDerivedParameterization(binExpr, stat);
     else if (getOrExpression(binExpr) != null) {
       stats.previous();
       rewriteTableLikeParameterization(stats);
-    }
-    else 
+    } else
       notAParameterization(stat);
   }
 
@@ -105,17 +101,17 @@ public class WhereBlockRewriter {
     dataProviderExpr = dataProviderExpr.transformExpression(new DataTablePreviousVariableTransformer());
 
     MethodNode method =
-        new MethodNode(
-            InternalIdentifiers.getDataProviderName(whereBlock.getParent().getAst().getName(), dataProviderCount++),
-            Opcodes.ACC_PUBLIC | Opcodes.ACC_SYNTHETIC,
-            ClassHelper.OBJECT_TYPE,
-            getPreviousParameters(nextDataVariableIndex),
-            ClassNode.EMPTY_ARRAY,
-            new BlockStatement(
-                Arrays.<Statement> asList(
-                    new ReturnStatement(
-                        new ExpressionStatement(dataProviderExpr))),
-                new VariableScope()));
+      new MethodNode(
+        InternalIdentifiers.getDataProviderName(whereBlock.getParent().getAst().getName(), dataProviderCount++),
+        Opcodes.ACC_PUBLIC | Opcodes.ACC_SYNTHETIC,
+        ClassHelper.OBJECT_TYPE,
+        getPreviousParameters(nextDataVariableIndex),
+        ClassNode.EMPTY_ARRAY,
+        new BlockStatement(
+          Arrays.<Statement>asList(
+            new ReturnStatement(
+              new ExpressionStatement(dataProviderExpr))),
+          new VariableScope()));
 
     method.addAnnotation(createDataProviderAnnotation(dataProviderExpr, nextDataVariableIndex));
     whereBlock.getParent().getParent().getAst().addMethod(method);
@@ -147,17 +143,17 @@ public class WhereBlockRewriter {
 
   // generates: arg = argMethodParam
   private void rewriteSimpleParameterization(BinaryExpression binExpr, ASTNode sourcePos)
-      throws InvalidSpecCompileException {
+    throws InvalidSpecCompileException {
     int nextDataVariableIndex = dataProcessorVars.size();
     Parameter dataProcessorParameter = createDataProcessorParameter();
     VariableExpression arg = (VariableExpression) binExpr.getLeftExpression();
 
     VariableExpression dataVar = createDataProcessorVariable(arg, sourcePos);
     ExpressionStatement exprStat = new ExpressionStatement(
-        new DeclarationExpression(
-            dataVar,
-            Token.newSymbol(Types.ASSIGN, -1, -1),
-            new VariableExpression(dataProcessorParameter)));
+      new DeclarationExpression(
+        dataVar,
+        Token.newSymbol(Types.ASSIGN, -1, -1),
+        new VariableExpression(dataProcessorParameter)));
     exprStat.setSourcePosition(sourcePos);
     dataProcessorStats.add(exprStat);
 
@@ -168,7 +164,7 @@ public class WhereBlockRewriter {
   // arg0 = argMethodParam.getAt(0)
   // arg1 = argMethodParam.getAt(1)
   private void rewriteMultiParameterization(BinaryExpression binExpr, Statement enclosingStat)
-      throws InvalidSpecCompileException {
+    throws InvalidSpecCompileException {
     int nextDataVariableIndex = dataProcessorVars.size();
     Parameter dataProcessorParameter = createDataProcessorParameter();
     ListExpression list = (ListExpression) binExpr.getLeftExpression();
@@ -180,11 +176,11 @@ public class WhereBlockRewriter {
       if (AstUtil.isWildcardRef(listElem)) continue;
       VariableExpression dataVar = createDataProcessorVariable(listElem, enclosingStat);
       ExpressionStatement exprStat =
-          new ExpressionStatement(
-              new DeclarationExpression(
-                  dataVar,
-                  Token.newSymbol(Types.ASSIGN, -1, -1),
-                  createGetAtMethod(new VariableExpression(dataProcessorParameter), i)));
+        new ExpressionStatement(
+          new DeclarationExpression(
+            dataVar,
+            Token.newSymbol(Types.ASSIGN, -1, -1),
+            createGetAtMethod(new VariableExpression(dataProcessorParameter), i)));
       exprStat.setSourcePosition(enclosingStat);
       dataProcessorStats.add(exprStat);
     }
@@ -193,15 +189,15 @@ public class WhereBlockRewriter {
   }
 
   private void rewriteDerivedParameterization(BinaryExpression parameterization, Statement enclosingStat)
-      throws InvalidSpecCompileException {
+    throws InvalidSpecCompileException {
     VariableExpression dataVar = createDataProcessorVariable(parameterization.getLeftExpression(), enclosingStat);
 
     ExpressionStatement exprStat =
-        new ExpressionStatement(
-            new DeclarationExpression(
-                dataVar,
-                Token.newSymbol(Types.ASSIGN, -1, -1),
-                parameterization.getRightExpression()));
+      new ExpressionStatement(
+        new DeclarationExpression(
+          dataVar,
+          Token.newSymbol(Types.ASSIGN, -1, -1),
+          parameterization.getRightExpression()));
 
     exprStat.setSourcePosition(enclosingStat);
     dataProcessorStats.add(exprStat);
@@ -247,7 +243,7 @@ public class WhereBlockRewriter {
     VariableExpression varExpr = ObjectUtil.asInstance(column.get(0), VariableExpression.class);
     if (varExpr == null)
       throw new InvalidSpecCompileException(column.get(0),
-          "Header of data table may only contain variable names");
+                                            "Header of data table may only contain variable names");
     if (AstUtil.isWildcardRef(varExpr)) {
       // assertion: column has a wildcard header, but the method's
       // explicit parameter list does not have a wildcard parameter
@@ -273,28 +269,28 @@ public class WhereBlockRewriter {
       splitRow(orExpr.getRightExpression(), parts);
     }
   }
-  
+
   private BinaryExpression getOrExpression(Statement stat) {
     Expression expr = AstUtil.getExpression(stat, Expression.class);
     return getOrExpression(expr);
   }
-  
+
   private BinaryExpression getOrExpression(Expression expr) {
     BinaryExpression binExpr = ObjectUtil.asInstance(expr, BinaryExpression.class);
     if (binExpr == null) return null;
-    
+
     int binExprType = binExpr.getOperation().getType();
     if (binExprType == Types.BITWISE_OR || binExprType == Types.LOGICAL_OR) return binExpr;
-    
+
     return null;
   }
 
   private VariableExpression createDataProcessorVariable(Expression varExpr, ASTNode sourcePos)
-      throws InvalidSpecCompileException {
+    throws InvalidSpecCompileException {
     if (!(varExpr instanceof VariableExpression))
       notAParameterization(sourcePos);
 
-    VariableExpression typedVarExpr = (VariableExpression)varExpr;
+    VariableExpression typedVarExpr = (VariableExpression) varExpr;
     verifyDataProcessorVariable(typedVarExpr);
 
     VariableExpression result = new VariableExpression(typedVarExpr.getName(), typedVarExpr.getType());
@@ -317,8 +313,8 @@ public class WhereBlockRewriter {
 
     if (whereBlock.getParent().getAst().getParameters().length > 0 && !(accessedVar instanceof Parameter)) {
       resources.getErrorReporter().error(varExpr,
-          "Data variable '%s' needs to be declared as method parameter",
-          varExpr.getName());
+                                         "Data variable '%s' needs to be declared as method parameter",
+                                         varExpr.getName());
     }
   }
 
@@ -353,29 +349,29 @@ public class WhereBlockRewriter {
   @SuppressWarnings("unchecked")
   private void createDataProcessorMethod() {
     if (dataProcessorVars.isEmpty()) return;
-    
+
     dataProcessorStats.add(
-        new ReturnStatement(
-            new ArrayExpression(
-                ClassHelper.OBJECT_TYPE,
-                (List) dataProcessorVars)));
+      new ReturnStatement(
+        new ArrayExpression(
+          ClassHelper.OBJECT_TYPE,
+          (List) dataProcessorVars)));
 
     BlockStatement blockStat = new BlockStatement(dataProcessorStats, new VariableScope());
     new DataProcessorVariableRewriter().visitBlockStatement(blockStat);
 
     whereBlock.getParent().getParent().getAst().addMethod(
       new MethodNode(
-          InternalIdentifiers.getDataProcessorName(whereBlock.getParent().getAst().getName()),
-          Opcodes.ACC_PUBLIC | Opcodes.ACC_SYNTHETIC,
-          ClassHelper.OBJECT_TYPE,
-          dataProcessorParams.toArray(new Parameter[dataProcessorParams.size()]),
-          ClassNode.EMPTY_ARRAY,
-          blockStat));
+        InternalIdentifiers.getDataProcessorName(whereBlock.getParent().getAst().getName()),
+        Opcodes.ACC_PUBLIC | Opcodes.ACC_SYNTHETIC,
+        ClassHelper.OBJECT_TYPE,
+        dataProcessorParams.toArray(new Parameter[dataProcessorParams.size()]),
+        ClassNode.EMPTY_ARRAY,
+        blockStat));
   }
 
   private static void notAParameterization(ASTNode stat) throws InvalidSpecCompileException {
     throw new InvalidSpecCompileException(stat,
-"where-blocks may only contain parameterizations (e.g. 'salary << [1000, 5000, 9000]; salaryk = salary / 1000')");
+                                          "where-blocks may only contain parameterizations (e.g. 'salary << [1000, 5000, 9000]; salaryk = salary / 1000')");
   }
 
   private class DataProcessorVariableRewriter extends ClassCodeVisitorSupport {

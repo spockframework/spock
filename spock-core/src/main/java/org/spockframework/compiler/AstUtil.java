@@ -16,25 +16,21 @@
 
 package org.spockframework.compiler;
 
-import java.util.*;
-
 import org.codehaus.groovy.ast.*;
 import org.codehaus.groovy.ast.expr.*;
 import org.codehaus.groovy.ast.stmt.*;
-import org.codehaus.groovy.runtime.dgmimpl.arrays.*;
-
+import org.codehaus.groovy.runtime.dgmimpl.arrays.IntegerArrayGetAtMetaMethod;
 import org.objectweb.asm.Opcodes;
-
 import org.spockframework.lang.Wildcard;
 import org.spockframework.runtime.SpockRuntime;
-import org.spockframework.util.Nullable;
-
-import org.spockframework.util.ObjectUtil;
+import org.spockframework.util.*;
 import spock.lang.Specification;
+
+import java.util.*;
 
 /**
  * Utility methods for AST processing.
- * 
+ *
  * @author Peter Niederwieser
  */
 public abstract class AstUtil {
@@ -43,7 +39,7 @@ public abstract class AstUtil {
   /**
    * Tells whether the given node has an annotation of the given type.
    *
-   * @param node an AST node
+   * @param node           an AST node
    * @param annotationType an annotation type
    * @return <tt>true</tt> iff the given node has an annotation of the given type
    */
@@ -54,7 +50,7 @@ public abstract class AstUtil {
   public static AnnotationNode getAnnotation(ASTNode node, Class<?> annotationType) {
     if (!(node instanceof AnnotatedNode)) return null;
 
-    AnnotatedNode annotated = (AnnotatedNode)node;
+    AnnotatedNode annotated = (AnnotatedNode) node;
     @SuppressWarnings("unchecked")
     List<AnnotationNode> annotations = annotated.getAnnotations();
     for (AnnotationNode a : annotations)
@@ -77,15 +73,15 @@ public abstract class AstUtil {
       if (code != null) block.addStatement(code);
       method.setCode(block);
     }
-    return ((BlockStatement)method.getCode()).getStatements();
+    return ((BlockStatement) method.getCode()).getStatements();
   }
 
   @SuppressWarnings("unchecked")
   public static List<Statement> getStatements(ClosureExpression closure) {
-    BlockStatement blockStat = (BlockStatement)closure.getCode();
+    BlockStatement blockStat = (BlockStatement) closure.getCode();
     return blockStat == null ?
-        Collections.<Statement> emptyList() : // it's not possible to add any statements to such a ClosureExpression, so immutable list is OK
-        blockStat.getStatements();
+           Collections.<Statement>emptyList() : // it's not possible to add any statements to such a ClosureExpression, so immutable list is OK
+           blockStat.getStatements();
   }
 
   public static boolean isInvocationWithImplicitThis(Expression invocation) {
@@ -162,7 +158,7 @@ public abstract class AstUtil {
    */
   public static boolean hasPlausibleSourcePosition(ASTNode node) {
     return node.getLineNumber() > 0 && node.getLastLineNumber() >= node.getLineNumber()
-        && node.getColumnNumber() > 0 && node.getLastColumnNumber() > node.getColumnNumber();
+           && node.getColumnNumber() > 0 && node.getLastColumnNumber() > node.getColumnNumber();
   }
 
   public static String getMethodName(Expression invocation) {
@@ -229,13 +225,13 @@ public abstract class AstUtil {
       return new ArrayExpression(ClassHelper.OBJECT_TYPE, argList);
 
     return new MethodCallExpression(
-        new ClassExpression(resources.getAstNodeCache().SpockRuntime),
-        new ConstantExpression(SpockRuntime.DESPREAD_LIST),
-        new ArgumentListExpression(
-            new ArrayExpression(ClassHelper.OBJECT_TYPE, normalArgs),
-            new ArrayExpression(ClassHelper.OBJECT_TYPE, spreadArgs),
-            new ArrayExpression(ClassHelper.int_TYPE, spreadPositions)
-        ));
+      new ClassExpression(resources.getAstNodeCache().SpockRuntime),
+      new ConstantExpression(SpockRuntime.DESPREAD_LIST),
+      new ArgumentListExpression(
+        new ArrayExpression(ClassHelper.OBJECT_TYPE, normalArgs),
+        new ArrayExpression(ClassHelper.OBJECT_TYPE, spreadArgs),
+        new ArrayExpression(ClassHelper.int_TYPE, spreadPositions)
+      ));
   }
 
   public static void copySourcePosition(ASTNode from, ASTNode to) {
@@ -255,12 +251,12 @@ public abstract class AstUtil {
 
   public static boolean isThisExpression(Expression expr) {
     return expr instanceof VariableExpression
-        && ((VariableExpression) expr).isThisExpression();
+           && ((VariableExpression) expr).isThisExpression();
   }
 
   public static boolean isSuperExpression(Expression expr) {
     return expr instanceof VariableExpression
-        && ((VariableExpression) expr).isSuperExpression();
+           && ((VariableExpression) expr).isSuperExpression();
   }
 
   public static boolean isThisOrSuperExpression(Expression expr) {
@@ -274,7 +270,7 @@ public abstract class AstUtil {
   }
 
   public static int getVisibility(FieldNode field) {
-    return field.getModifiers() & (Opcodes.ACC_PUBLIC | Opcodes.ACC_PROTECTED | Opcodes.ACC_PRIVATE);  
+    return field.getModifiers() & (Opcodes.ACC_PUBLIC | Opcodes.ACC_PROTECTED | Opcodes.ACC_PRIVATE);
   }
 
   public static void setVisibility(FieldNode field, int visibility) {

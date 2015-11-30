@@ -16,13 +16,14 @@
 
 package org.spockframework.smoke.parameterization
 
-import spock.lang.Issue
-import spock.lang.Specification
+import spock.lang.*
 
 class ParameterizationScopes extends Specification {
   def "in outer scope"() {
-    expect: x == 1
-    where: x << 1
+    expect:
+    x == 1
+    where:
+    x << 1
   }
 
   def "in inner scope"() {
@@ -75,7 +76,9 @@ class ParameterizationScopes extends Specification {
 
     where:
     val1 = 2
-    val2 = [1, 2, 3].findAll { it >= val1 }
+    val2 = [1, 2, 3].findAll {
+      it >= val1
+    }
   }
 
   @Issue("http://issues.spockframework.org/detail?id=286")

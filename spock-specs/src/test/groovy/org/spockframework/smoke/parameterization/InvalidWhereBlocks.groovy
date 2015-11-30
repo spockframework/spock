@@ -145,8 +145,8 @@ def foo() {
     e.message.contains("@Shared")
 
     where:
-    rhs |_
-    "[1, instanceField, 2]" |_
-    "{ -> { -> [instanceField] }() }()" |_
+    rhs                                 | _
+    "[1, instanceField, 2]"             | _
+    "{ -> { -> [instanceField] }() }()" | _
   }
 }

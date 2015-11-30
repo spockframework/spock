@@ -200,20 +200,25 @@ public abstract class CollectionUtil {
   }
 
   public static boolean containsAny(Iterable<?> iterable, Object... elements) {
-    for (Object curr : iterable) {
-      for (Object elem : elements) {
-        if (ObjectUtil.equals(curr, elem)) return true;
-      }
-    }
+    for (Object curr : iterable)
+      for (Object elem : elements)
+        if (ObjectUtil.equals(curr, elem))
+          return true;
     return false;
   }
 
   public static <T> int findIndexOf(Iterable<T> iterable, IFunction<? super T, Boolean> predicate) {
     int index = 0;
     for (T elem : iterable) {
-      if (predicate.apply(elem)) return index;
+      if (predicate.apply(elem))
+        return index;
       index++;
     }
     return -1;
+  }
+
+  public static <T> T[] toArray(Collection<T> elems, Class<T> type) {
+    T[] results = (T[]) Array.newInstance(type, elems.size());
+    return elems.toArray(results);
   }
 }

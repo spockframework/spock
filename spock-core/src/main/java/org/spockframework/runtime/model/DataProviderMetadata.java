@@ -10,7 +10,9 @@ import java.lang.annotation.*;
 public @interface DataProviderMetadata {
   String LINE = "line";
   String DATA_VARIABLES = "dataVariables";
+  String IS_COLLECTION = "isCollection";
 
   int line();
   String[] dataVariables();
+  boolean isCollection();
 }

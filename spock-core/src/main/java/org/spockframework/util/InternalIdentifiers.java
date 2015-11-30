@@ -26,6 +26,7 @@ import java.util.*;
 public class InternalIdentifiers {
   public static final String INITIALIZER_METHOD = "$spock_initializeFields";
   public static final String SHARED_INITIALIZER_METHOD = "$spock_initializeSharedFields";
+  public static final String FEATURE_METHOD = "$spock_feature";
 
   public static final List<String> INITIALIZER_METHODS = Arrays.asList(INITIALIZER_METHOD, SHARED_INITIALIZER_METHOD);
 
@@ -46,7 +47,7 @@ public class InternalIdentifiers {
   }
 
   public static boolean isFeatureMethodName(String name) {
-    return name.startsWith("$spock_feature");
+    return name.startsWith(FEATURE_METHOD);
   }
 
   public static String getSharedFieldName(String baseName) {

@@ -23,12 +23,13 @@ import org.codehaus.groovy.control.SourceUnit;
 import org.codehaus.groovy.syntax.*;
 import org.objectweb.asm.Opcodes;
 import org.spockframework.compiler.model.WhereBlock;
-import org.spockframework.runtime.model.DataProviderMetadata;
 import org.spockframework.util.*;
 
 import java.util.*;
 
 import static org.spockframework.compiler.AstUtil.createGetAtMethod;
+import static org.spockframework.runtime.model.DataProviderMetadata.*;
+import static org.spockframework.util.CollectionUtil.toArray;
 
 /**
  * @author Peter Niederwieser
@@ -39,12 +40,10 @@ public class WhereBlockRewriter {
   private final InstanceFieldAccessChecker instanceFieldAccessChecker;
 
   private int dataProviderCount = 0;
-  // parameters of the data processor method (one for each data provider)
-  private final List<Parameter> dataProcessorParams = new ArrayList<Parameter>();
-  // statements of the data processor method (one for each parameterization variable)
-  private final List<Statement> dataProcessorStats = new ArrayList<Statement>();
-  // parameterization variables of the data processor method
-  private final List<VariableExpression> dataProcessorVars = new ArrayList<VariableExpression>();
+
+  private final List<Parameter> dataProcessorParams = new ArrayList<Parameter>(); // parameters of the data processor method (one for each data provider)
+  private final List<Statement> dataProcessorStats = new ArrayList<Statement>(); // statements of the data processor method (one for each parameterization variable)
+  private final List<VariableExpression> dataProcessorVars = new ArrayList<VariableExpression>(); // parameterization variables of the data processor method // TODO unify with dataProcessorStats
 
   private WhereBlockRewriter(WhereBlock whereBlock, IRewriteResources resources) {
     this.whereBlock = whereBlock;
@@ -57,8 +56,7 @@ public class WhereBlockRewriter {
   }
 
   private void rewrite() {
-    ListIterator<Statement> stats = whereBlock.getAst().listIterator();
-    while (stats.hasNext())
+    for (ListIterator<Statement> stats = whereBlock.getAst().listIterator(); stats.hasNext(); )
       try {
         rewriteWhereStat(stats);
       } catch (InvalidSpecCompileException e) {
@@ -78,128 +76,134 @@ public class WhereBlockRewriter {
 
     int type = binExpr.getOperation().getType();
 
-    if (type == Types.LEFT_SHIFT) {
-      Expression leftExpr = binExpr.getLeftExpression();
-      if (leftExpr instanceof VariableExpression)
-        rewriteSimpleParameterization(binExpr, stat);
-      else if (leftExpr instanceof ListExpression)
-        rewriteMultiParameterization(binExpr, stat);
-      else
-        notAParameterization(stat);
-    } else if (type == Types.ASSIGN)
-      rewriteDerivedParameterization(binExpr, stat);
-    else if (getOrExpression(binExpr) != null) {
+    if (type == Types.LEFT_SHIFT)
+      rewriteDataPipeParameterization(stat, binExpr); // e.g. `a << [1]`
+    else if (type == Types.ASSIGN)
+      rewriteDerivedParameterization(stat, binExpr);  // e.g. `a = 1`
+    else if (isOrExpression(type)) {
       stats.previous();
-      rewriteTableLikeParameterization(stats);
-    } else
-      notAParameterization(stat);
+      rewriteTableLikeParameterization(stats);        // e.g. a | b \n 0 | 1
+    } else notAParameterization(stat);
   }
 
-  private void createDataProviderMethod(Expression dataProviderExpr, int nextDataVariableIndex) {
+  private void rewriteDataPipeParameterization(ASTNode parent, BinaryExpression binExpr) throws InvalidSpecCompileException {
+    Expression leftExpr = binExpr.getLeftExpression();
+    if (leftExpr instanceof VariableExpression)
+      rewriteSimpleParameterization(parent, binExpr); // e.g. a << [1,2]
+    else if (leftExpr instanceof ListExpression)
+      rewriteMultiParameterization(parent, binExpr);  // e.g. [a,b] << [1,2]
+    else notAParameterization(parent);
+  }
+
+  private void createDataProviderMethod(Expression dataProviderExpr, int nextDataVariableIndex, boolean isCollection) {
     instanceFieldAccessChecker.check(dataProviderExpr);
 
     dataProviderExpr = dataProviderExpr.transformExpression(new DataTablePreviousVariableTransformer());
 
-    MethodNode method =
-      new MethodNode(
-        InternalIdentifiers.getDataProviderName(whereBlock.getParent().getAst().getName(), dataProviderCount++),
-        Opcodes.ACC_PUBLIC | Opcodes.ACC_SYNTHETIC,
-        ClassHelper.OBJECT_TYPE,
-        getPreviousParameters(nextDataVariableIndex),
-        ClassNode.EMPTY_ARRAY,
-        new BlockStatement(
-          Arrays.<Statement>asList(
-            new ReturnStatement(
-              new ExpressionStatement(dataProviderExpr))),
-          new VariableScope()));
+    MethodNode method = new MethodNode(
+      InternalIdentifiers.getDataProviderName(whereBlock.getParent().getAst().getName(), dataProviderCount++),
+      Opcodes.ACC_PUBLIC | Opcodes.ACC_SYNTHETIC,
+      ClassHelper.DYNAMIC_TYPE,
+      getParameters(nextDataVariableIndex),
+      ClassNode.EMPTY_ARRAY,
+      new BlockStatement(Arrays.<Statement>asList(new ExpressionStatement(dataProviderExpr)), new VariableScope())
+    );
 
-    method.addAnnotation(createDataProviderAnnotation(dataProviderExpr, nextDataVariableIndex));
+    method.addAnnotation(createDataProviderAnnotation(dataProviderExpr, nextDataVariableIndex, isCollection));
     whereBlock.getParent().getParent().getAst().addMethod(method);
   }
 
-  private Parameter[] getPreviousParameters(int nextDataVariableIndex) {
-    Parameter[] results = new Parameter[nextDataVariableIndex];
+  /**
+   * every data provider depends on the previous data providers
+   */
+  private Parameter[] getParameters(int nextDataVariableIndex) {
+    List<Parameter> results = new ArrayList<Parameter>();
+
     for (int i = 0; i < nextDataVariableIndex; i++)
-      results[i] = new Parameter(ClassHelper.DYNAMIC_TYPE,
-                                 dataProcessorVars.get(i).getName());
-    return results;
+      results.add(new Parameter(ClassHelper.DYNAMIC_TYPE,
+                                dataProcessorVars.get(i).getName()));
+
+    return toArray(results, Parameter.class);
   }
 
-  private AnnotationNode createDataProviderAnnotation(Expression dataProviderExpr, int nextDataVariableIndex) {
+  private AnnotationNode createDataProviderAnnotation(Expression dataProviderExpr, int nextDataVariableIndex, boolean isCollection) {
     AnnotationNode ann = new AnnotationNode(resources.getAstNodeCache().DataProviderMetadata);
-    ann.addMember(DataProviderMetadata.LINE, new ConstantExpression(dataProviderExpr.getLineNumber()));
+
+    ann.addMember(LINE, new ConstantExpression(dataProviderExpr.getLineNumber()));
+    ann.addMember(IS_COLLECTION, new ConstantExpression(isCollection));
+
     List<Expression> dataVariableNames = new ArrayList<Expression>();
     for (int i = nextDataVariableIndex; i < dataProcessorVars.size(); i++)
       dataVariableNames.add(new ConstantExpression(dataProcessorVars.get(i).getName()));
-    ann.addMember(DataProviderMetadata.DATA_VARIABLES, new ListExpression(dataVariableNames));
+
+    ann.addMember(DATA_VARIABLES, new ListExpression(dataVariableNames));
+
     return ann;
   }
 
-  private Parameter createDataProcessorParameter() {
+  private VariableExpression createDataProcessorVariable() {
     Parameter p = new Parameter(ClassHelper.DYNAMIC_TYPE, "$spock_p" + dataProcessorParams.size());
     dataProcessorParams.add(p);
-    return p;
+    return new VariableExpression(p);
   }
 
   // generates: arg = argMethodParam
-  private void rewriteSimpleParameterization(BinaryExpression binExpr, ASTNode sourcePos)
-    throws InvalidSpecCompileException {
+  private void rewriteSimpleParameterization(ASTNode parent, BinaryExpression binExpr) throws InvalidSpecCompileException {
     int nextDataVariableIndex = dataProcessorVars.size();
-    Parameter dataProcessorParameter = createDataProcessorParameter();
-    VariableExpression arg = (VariableExpression) binExpr.getLeftExpression();
 
-    VariableExpression dataVar = createDataProcessorVariable(arg, sourcePos);
-    ExpressionStatement exprStat = new ExpressionStatement(
-      new DeclarationExpression(
-        dataVar,
-        Token.newSymbol(Types.ASSIGN, -1, -1),
-        new VariableExpression(dataProcessorParameter)));
-    exprStat.setSourcePosition(sourcePos);
-    dataProcessorStats.add(exprStat);
+    addDataProcessorStat(
+      parent,
+      binExpr.getLeftExpression(),
+      createDataProcessorVariable()
+    );
 
-    createDataProviderMethod(binExpr.getRightExpression(), nextDataVariableIndex);
+    createDataProviderMethod(binExpr.getRightExpression(), nextDataVariableIndex, true);
   }
 
   // generates:
   // arg0 = argMethodParam.getAt(0)
   // arg1 = argMethodParam.getAt(1)
-  private void rewriteMultiParameterization(BinaryExpression binExpr, Statement enclosingStat)
-    throws InvalidSpecCompileException {
+  private void rewriteMultiParameterization(ASTNode parent, BinaryExpression binExpr) throws InvalidSpecCompileException {
     int nextDataVariableIndex = dataProcessorVars.size();
-    Parameter dataProcessorParameter = createDataProcessorParameter();
-    ListExpression list = (ListExpression) binExpr.getLeftExpression();
 
-    @SuppressWarnings("unchecked")
-    List<Expression> listElems = list.getExpressions();
+    VariableExpression dataProcessorVariable = createDataProcessorVariable();
+    List<Expression> listElems = ((ListExpression) binExpr.getLeftExpression()).getExpressions();
+
     for (int i = 0; i < listElems.size(); i++) {
-      Expression listElem = listElems.get(i);
-      if (AstUtil.isWildcardRef(listElem)) continue;
-      VariableExpression dataVar = createDataProcessorVariable(listElem, enclosingStat);
-      ExpressionStatement exprStat =
-        new ExpressionStatement(
-          new DeclarationExpression(
-            dataVar,
-            Token.newSymbol(Types.ASSIGN, -1, -1),
-            createGetAtMethod(new VariableExpression(dataProcessorParameter), i)));
-      exprStat.setSourcePosition(enclosingStat);
-      dataProcessorStats.add(exprStat);
+      addDataProcessorStat(
+        parent,
+        listElems.get(i),
+        createGetAtMethod(dataProcessorVariable, new ConstantExpression(i))
+      );
     }
 
-    createDataProviderMethod(binExpr.getRightExpression(), nextDataVariableIndex);
+    createDataProviderMethod(binExpr.getRightExpression(), nextDataVariableIndex, true);
   }
 
-  private void rewriteDerivedParameterization(BinaryExpression parameterization, Statement enclosingStat)
-    throws InvalidSpecCompileException {
-    VariableExpression dataVar = createDataProcessorVariable(parameterization.getLeftExpression(), enclosingStat);
+  /* TODO make this a data provider also (see tests in DataTables)
+   * TODO IS_COLLECTION -> false
+   * TODO in case there are no collection data providers, it should iterate only once
+   * TODO should be recomputed for every iteration (can depend on previous data provider values)
+   * TODO inner closures should be able to reference previous data values also
+   * TODO other data providers should be able to reference this value
+   */
+  private void rewriteDerivedParameterization(ASTNode parent, BinaryExpression binExpr) throws InvalidSpecCompileException {
+    addDataProcessorStat(
+      parent,
+      binExpr.getLeftExpression(),
+      binExpr.getRightExpression()
+    );
+  }
 
-    ExpressionStatement exprStat =
-      new ExpressionStatement(
-        new DeclarationExpression(
-          dataVar,
-          Token.newSymbol(Types.ASSIGN, -1, -1),
-          parameterization.getRightExpression()));
+  private void addDataProcessorStat(ASTNode parent, Expression left, Expression right) throws InvalidSpecCompileException {
+    if (AstUtil.isWildcardRef(left)) return;
 
-    exprStat.setSourcePosition(enclosingStat);
+    ExpressionStatement exprStat = new ExpressionStatement(new DeclarationExpression(
+      createDataProcessorVariable(left, parent),
+      Token.newSymbol(Types.ASSIGN, -1, -1),
+      right)
+    );
+    exprStat.setSourcePosition(parent);
     dataProcessorStats.add(exprStat);
   }
 
@@ -257,7 +261,7 @@ public class WhereBlockRewriter {
     // unlikely to make it into a compile error, because header variable has already been checked, and the
     // assignment itself is unlikely to cause a compile error. (It's more likely that the rval causes a
     // compile error, but the rval's source position is retained.)
-    rewriteSimpleParameterization(binExpr, varExpr);
+    rewriteSimpleParameterization(varExpr, binExpr);
   }
 
   private void splitRow(Expression row, List<Expression> parts) {
@@ -275,18 +279,20 @@ public class WhereBlockRewriter {
     return getOrExpression(expr);
   }
 
-  private BinaryExpression getOrExpression(Expression expr) {
+  private @Nullable BinaryExpression getOrExpression(Expression expr) {
     BinaryExpression binExpr = ObjectUtil.asInstance(expr, BinaryExpression.class);
     if (binExpr == null) return null;
 
-    int binExprType = binExpr.getOperation().getType();
-    if (binExprType == Types.BITWISE_OR || binExprType == Types.LOGICAL_OR) return binExpr;
-
-    return null;
+    if (isOrExpression(binExpr.getOperation().getType())) return binExpr;
+    else return null;
   }
 
-  private VariableExpression createDataProcessorVariable(Expression varExpr, ASTNode sourcePos)
-    throws InvalidSpecCompileException {
+  private boolean isOrExpression(int binExprType) {
+    return (binExprType == Types.BITWISE_OR)
+           || (binExprType == Types.LOGICAL_OR);
+  }
+
+  private VariableExpression createDataProcessorVariable(Expression varExpr, ASTNode sourcePos) throws InvalidSpecCompileException {
     if (!(varExpr instanceof VariableExpression))
       notAParameterization(sourcePos);
 
@@ -320,7 +326,7 @@ public class WhereBlockRewriter {
 
   private boolean isDataProcessorVariable(String name) {
     for (VariableExpression var : dataProcessorVars)
-      if (var.getName().equals(name))
+      if (name.equals(var.getName()))
         return true;
     return false;
   }
@@ -329,8 +335,7 @@ public class WhereBlockRewriter {
     Parameter[] parameters = whereBlock.getParent().getAst().getParameters();
     if (parameters.length == 0)
       addFeatureParameters();
-    else
-      checkAllParametersAreDataVariables(parameters);
+    else checkAllParametersAreDataVariables(parameters);
   }
 
   private void checkAllParametersAreDataVariables(Parameter[] parameters) {
@@ -341,8 +346,10 @@ public class WhereBlockRewriter {
 
   private void addFeatureParameters() {
     Parameter[] parameters = new Parameter[dataProcessorVars.size()];
+
     for (int i = 0; i < dataProcessorVars.size(); i++)
       parameters[i] = new Parameter(ClassHelper.DYNAMIC_TYPE, dataProcessorVars.get(i).getName());
+
     whereBlock.getParent().getAst().setParameters(parameters);
   }
 
@@ -350,30 +357,31 @@ public class WhereBlockRewriter {
   private void createDataProcessorMethod() {
     if (dataProcessorVars.isEmpty()) return;
 
-    dataProcessorStats.add(
-      new ReturnStatement(
-        new ArrayExpression(
-          ClassHelper.OBJECT_TYPE,
-          (List) dataProcessorVars)));
+    dataProcessorStats.add(new ReturnStatement(new ArrayExpression(ClassHelper.DYNAMIC_TYPE, (List) dataProcessorVars)));
 
     BlockStatement blockStat = new BlockStatement(dataProcessorStats, new VariableScope());
     new DataProcessorVariableRewriter().visitBlockStatement(blockStat);
 
-    whereBlock.getParent().getParent().getAst().addMethod(
-      new MethodNode(
-        InternalIdentifiers.getDataProcessorName(whereBlock.getParent().getAst().getName()),
-        Opcodes.ACC_PUBLIC | Opcodes.ACC_SYNTHETIC,
-        ClassHelper.OBJECT_TYPE,
-        dataProcessorParams.toArray(new Parameter[dataProcessorParams.size()]),
-        ClassNode.EMPTY_ARRAY,
-        blockStat));
+    whereBlock.getParent().getParent().getAst().addMethod(new MethodNode(
+      InternalIdentifiers.getDataProcessorName(whereBlock.getParent().getAst().getName()),
+      Opcodes.ACC_PUBLIC | Opcodes.ACC_SYNTHETIC,
+      ClassHelper.OBJECT_TYPE,
+      toArray(dataProcessorParams, Parameter.class),
+      ClassNode.EMPTY_ARRAY,
+      blockStat)
+    );
   }
 
   private static void notAParameterization(ASTNode stat) throws InvalidSpecCompileException {
     throw new InvalidSpecCompileException(stat,
-                                          "where-blocks may only contain parameterizations (e.g. 'salary << [1000, 5000, 9000]; salaryk = salary / 1000')");
+                                          "where-blocks may only contain parameterizations" +
+                                          " (e.g. 'salary << [1000, 5000, 9000];" +
+                                          " salaryk = salary / 1000')");
   }
 
+  /**
+   * TODO should be generalized for all data providers (see: DataTables#'in closure scope of data provider')
+   */
   private class DataProcessorVariableRewriter extends ClassCodeVisitorSupport {
     @Override
     protected SourceUnit getSourceUnit() {
@@ -393,6 +401,12 @@ public class WhereBlockRewriter {
     }
   }
 
+  /**
+   * Transformer, used to access previous cell references from Data Tables
+   * Only works for random access collections (e.g. lists), i.e. those that have a getAt method.
+   * Iterables wouldn't work, since the same data provider can be accessed multiple times
+   * and Iterables don't have a 'current' method, just a 'next'.
+   */
   private class DataTablePreviousVariableTransformer extends ClassCodeExpressionTransformer {
     private int depth = 0, rowIndex = 0;
 
@@ -401,9 +415,8 @@ public class WhereBlockRewriter {
 
     @Override
     public Expression transform(Expression expression) {
-      if ((expression instanceof VariableExpression) && isDataProcessorVariable(expression.getText())) {
-        return AstUtil.createGetAtMethod(expression, rowIndex);
-      }
+      if ((expression instanceof VariableExpression) && isDataProcessorVariable(expression.getText()))
+        return createGetAtMethod(expression, new ConstantExpression(rowIndex));
 
       depth++;
       Expression transform = super.transform(expression);

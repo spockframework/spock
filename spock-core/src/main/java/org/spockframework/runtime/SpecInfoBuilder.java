@@ -174,6 +174,7 @@ public class SpecInfoBuilder {
     provider.setParent(feature);
     provider.setLine(metadata.line());
     provider.setDataVariables(Arrays.asList(metadata.dataVariables()));
+    provider.setCollection(metadata.isCollection());
     provider.setDataProviderMethod(method);
     return provider;
   }

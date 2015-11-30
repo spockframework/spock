@@ -312,10 +312,10 @@ public abstract class AstUtil {
     fixUpLocalVariables(Arrays.asList(localVariables), scope, isClosureScope);
   }
 
-  public static MethodCallExpression createGetAtMethod(Expression expression, int index) {
+  public static MethodCallExpression createGetAtMethod(Expression expression, Expression index) {
     return new MethodCallExpression(expression,
                                     GET_AT_METHOD_NAME,
-                                    new ConstantExpression(index));
+                                    index);
   }
 
   /**

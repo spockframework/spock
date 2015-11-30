@@ -137,4 +137,11 @@ public class FeatureInfo extends SpecElementInfo<SpecInfo, AnnotatedElement> {
       if (provider.getDataProviderMethod().hasBytecodeName(name)) return true;
     return false;
   }
+
+  public boolean hasMultipleIterations() {
+    for (DataProviderInfo provider : dataProviders)
+      if (provider.isCollection())
+        return true;
+    return false;
+  }
 }

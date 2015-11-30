@@ -14,6 +14,7 @@
 package spock.util.concurrent
 
 import groovy.transform.CompileStatic
+import org.spockframework.lang.ConditionBlock
 
 /**
  * Wrapper of {@link PollingConditions} which allows to use it as trait.
@@ -104,6 +105,7 @@ trait AsyncSupport {
      *
      * @throws InterruptedException if evaluation is interrupted
      */
+    @ConditionBlock
     void eventually(Closure predicate) {
         new PollingConditions(timeout: timeout, delay: delay, factor: factor, initialDelay: initialDelay).eventually {
             predicate()
@@ -117,6 +119,7 @@ trait AsyncSupport {
      *
      * @throws PredicateEventuallyFulfilled when conditions is satisfied
      */
+    @ConditionBlock
     void eventuallyNot(Closure predicate) {
         try {
             new PollingConditions(timeout: timeout, delay: delay).eventually {

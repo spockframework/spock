@@ -229,6 +229,23 @@ local | 1
     thrown(MissingPropertyException)
   }
 
+  def "no data tables don't cause infinite loop"() {
+    expect:
+    a + 1 == b
+
+    where:
+    a = 1
+    b = 2
+  }
+
+  def 'generated data table'() {
+    expect:
+    runner.runFeatureBody '''
+      expect: true
+      where:  [a, b] << [[0, 1], [2, 3]].combinations()
+    '''
+  }
+
   def 'cells can reference previous cells'() {
     expect:
     [a, b, c] == [0, 1, 2]
@@ -297,6 +314,28 @@ local | 1
     thrown Exception
   }
 
+  def "in closure scope of derived data value"() {
+    expect:
+    runner.runFeatureBody '''
+      expect: val2 == [2, 3]
+
+      where:  val1 = 2
+              val2 = [1, 2, 3].findAll { it >= val1 }
+    '''
+  }
+
+  @PendingFeature
+  def "in closure scope of data provider"() {
+    expect:
+    runner.runFeatureBody '''
+      expect: val2 == [2, 3]
+
+      where:  val1 << [1, 2]
+              val2 << [[1, 2, 3].findAll { it > val1 }, [1, 2, 3].findAll { it >= val1 }]
+    '''
+  }
+
+
   def 'cell references are working with simple parameterization also'() {
     expect:
     c == 2
@@ -304,7 +343,7 @@ local | 1
     where:
     a << [1, 2]
     b << [3, 4]
-    c << [b - a, b - a]
+    c << [b - a, 3 * a - b]
   }
 
   def 'data tables can be referenced from following variables'() {
@@ -319,28 +358,72 @@ local | 1
     c = b + 1
   }
 
-  @Ignore
-  def 'data table elements can reference each other'() {
+  @PendingFeature
+  def 'assignments can refer to non-first data table row'() {
     expect:
     runner.runFeatureBody '''
-      expect:
-      g == 12
+      expect: c == d
 
-      where:
-      a = 1
-      b = a + 1
-
-      c << [b + 1]
-
-      d = c + 1
-
-      e         | f
-      b + c + d | e + 1
-
-      g << [f + 1]
-
-      h = g + 1
+      where:  a << [1, 2]
+              b = a + 1
+              c << [b + 1, b + 2]
+              d << [3, 5]
     '''
+  }
+
+  @PendingFeature
+  def 'data tables can reference variable initializations'() {
+    expect:
+    runner.runFeatureBody '''
+      expect: [a, b, c] == [1, 2, 3]
+
+      where:  a = 1
+              b     || c
+              a + 1 || a + b
+    '''
+  }
+
+  @PendingFeature
+  def 'data pipes can reference constants'() {
+    expect:
+    runner.runFeatureBody '''
+      expect: CONST > 3 && b < 3
+
+      where:  CONST = Math.PI
+              b << [CONST / 2, CONST / 3]
+    '''
+  }
+
+  @PendingFeature
+  def 'data table elements can reference each other'() {
+    when:
+    def result = runner.runWithImports '''
+      class Foo extends Specification {
+        @Unroll def test() {
+          expect: a + b + c + d + e + f + g + h == 53
+
+          where:  a = 1
+                  b = a + 1
+
+                  c << [b + 1, b + 2]
+
+                  d = c + 1
+
+                  e         | f
+                  c + d + 1 | e + 1
+                  c + d - 1 | e - 1
+
+                  g << [e + 1, f + 2]
+
+                  h = e + g
+        }
+      }
+    '''
+
+    then:
+    result.runCount == 2
+    result.failureCount == 0
+    result.ignoreCount == 0
   }
 
   def "rows must have same number of elements as header"() {

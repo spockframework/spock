@@ -29,7 +29,7 @@ import spock.mock.MockingApi;
 /**
  * Base class for Spock specifications. All specifications must inherit from
  * this class, either directly or indirectly.
- * 
+ *
  * @author Peter Niederwieser
  */
 @RunWith(Sputnik.class)
@@ -216,5 +216,9 @@ public abstract class Specification extends MockingApi {
           type, target.getClass().getName()));
     }
     with(target, closure);
+  }
+
+  public void verifyAll(Closure closure){
+    GroovyRuntimeUtil.invokeClosure(closure);
   }
 }

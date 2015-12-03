@@ -37,6 +37,8 @@ public interface ISpecialMethodCall {
 
   boolean isConditionBlock();
 
+  boolean isGroupConditionBlock();
+
   boolean isTestDouble();
 
   boolean isExceptionCondition(MethodCallExpression expr);

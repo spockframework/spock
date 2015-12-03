@@ -38,6 +38,7 @@ public class AbstractDeepBlockRewriter extends StatementReplacingVisitorSupport 
 
   // following fields are filled in by subclasses
   protected boolean conditionFound;
+  protected boolean groupConditionFound;
   protected boolean interactionFound;
   protected MethodCallExpression foundExceptionCondition;
   protected final List<Statement> thenBlockInteractionStats = new ArrayList<Statement>();
@@ -48,6 +49,10 @@ public class AbstractDeepBlockRewriter extends StatementReplacingVisitorSupport 
 
   public boolean isConditionFound() {
     return conditionFound;
+  }
+
+  public boolean isGroupConditionFound() {
+    return groupConditionFound;
   }
 
   public boolean isExceptionConditionFound() {
@@ -128,7 +133,9 @@ public class AbstractDeepBlockRewriter extends StatementReplacingVisitorSupport 
     ClosureExpression oldClosure = currClosure;
     currClosure = expr;
     boolean oldConditionFound = conditionFound;
+    boolean oldGroupConditionFound = groupConditionFound;
     conditionFound = false; // any closure terminates conditionFound scope
+    groupConditionFound = false;
     ISpecialMethodCall oldSpecialMethodCall = currSpecialMethodCall;
     if (!currSpecialMethodCall.isMatch(expr)) {
       currSpecialMethodCall = NoSpecialMethodCall.INSTANCE; // unrelated closure terminates currSpecialMethodCall scope
@@ -138,6 +145,7 @@ public class AbstractDeepBlockRewriter extends StatementReplacingVisitorSupport 
     } finally {
       currClosure = oldClosure;
       conditionFound = oldConditionFound;
+      groupConditionFound = oldGroupConditionFound;
       currSpecialMethodCall = oldSpecialMethodCall;
     }
   }

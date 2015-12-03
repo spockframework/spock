@@ -70,7 +70,7 @@ public class DeepBlockRewriter extends AbstractDeepBlockRewriter {
       AstUtil.fixUpLocalVariables(resources.getCurrentMethod().getAst().getParameters(), expr.getVariableScope(), true);
     }
     super.doVisitClosureExpression(expr);
-    if (conditionFound) defineValueRecorder(expr);
+    if (conditionFound || groupConditionFound) defineRecorders(expr, groupConditionFound);
   }
 
   @Override
@@ -136,13 +136,15 @@ public class DeepBlockRewriter extends AbstractDeepBlockRewriter {
   private boolean handleImplicitCondition(ExpressionStatement stat) {
     if (!(stat == currTopLevelStat && isThenOrExpectBlock()
         || currSpecialMethodCall.isWithCall()
-        || currSpecialMethodCall.isConditionBlock())) {
+        || currSpecialMethodCall.isConditionBlock()
+        || currSpecialMethodCall.isGroupConditionBlock())) {
       return false;
     }
     if (!isImplicitCondition(stat)) return false;
 
     checkIsValidImplicitCondition(stat);
     conditionFound = true;
+    groupConditionFound = currSpecialMethodCall.isGroupConditionBlock();
     Statement condition = ConditionRewriter.rewriteImplicitCondition(stat, resources);
     replaceVisitedStatementWith(condition);
     return true;
@@ -211,8 +213,8 @@ public class DeepBlockRewriter extends AbstractDeepBlockRewriter {
     return true;
   }
 
-  private void defineValueRecorder(ClosureExpression expr) {
-    resources.defineValueRecorder(AstUtil.getStatements(expr));
+  private void defineRecorders(ClosureExpression expr, boolean enableErrorCollector) {
+    resources.defineRecorders(AstUtil.getStatements(expr), enableErrorCollector);
   }
 
   // Forbid the use of super.foo() in fixture method foo,

@@ -157,7 +157,7 @@ public class PollingConditions {
         lastAttempt = System.currentTimeMillis();
         GroovyRuntimeUtil.invokeClosure(conditions);
         return;
-      } catch (AssertionError e) {
+      } catch (Throwable e) {
         long elapsedTime = lastAttempt - start;
         if (elapsedTime >= timeoutMillis) {
           String msg = String.format("Condition not satisfied after %1.2f seconds and %d attempts", elapsedTime / 1000d, attempts);

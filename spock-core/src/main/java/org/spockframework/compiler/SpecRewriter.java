@@ -33,7 +33,7 @@ import org.spockframework.util.*;
 
 /**
  * A Spec visitor responsible for most of the rewriting of a Spec's AST.
- * 
+ *
  * @author Peter Niederwieser
  */
 // IDEA: mock controller / leaveScope calls should only be inserted when necessary (increases robustness)
@@ -176,7 +176,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
      class DerivedSpec extends BaseSpec {}
 
      // when DerivedSpec is run:
-     
+
      def sharedInstance = new DerivedSpec()
 
      def spec = new DerivedSpec()
@@ -291,9 +291,6 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
   public void visitMethodAgain(Method method) {
     this.block = null;
 
-    if (methodHasCondition)
-      defineValueRecorder(method.getStatements());
-
     if (!movedStatsBackToMethod)
       for (Block b : method.getBlocks())
         method.getStatements().addAll(b.getAst());
@@ -301,6 +298,9 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
     // for global required interactions
     if (method instanceof FeatureMethod)
       method.getStatements().add(createMockControllerCall(MockController.LEAVE_SCOPE));
+
+    if (methodHasCondition)
+      defineRecorders(method.getStatements(), false);
   }
 
   public void visitAnyBlock(Block block) {
@@ -309,7 +309,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
 
     DeepBlockRewriter deep = new DeepBlockRewriter(this);
     deep.visit(block);
-    methodHasCondition |= deep.isConditionFound();
+    methodHasCondition |= deep.isConditionFound() || deep.isGroupConditionFound();
   }
 
   public void visitThenBlock(ThenBlock block) {
@@ -317,7 +317,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
 
     DeepBlockRewriter deep = new DeepBlockRewriter(this);
     deep.visit(block);
-    methodHasCondition |= deep.isConditionFound();
+    methodHasCondition |= deep.isConditionFound() || deep.isGroupConditionFound();
 
     if (deep.isExceptionConditionFound()) {
       if (thenBlockChainHasExceptionCondition) {
@@ -402,17 +402,39 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
     return block;
   }
 
-  public void defineValueRecorder(List<Statement> stats) {
+  public void defineRecorders(List<Statement> stats, boolean enableErrorCollector) {
     // recorder variable needs to be defined in outermost scope,
     // hence we insert it at the beginning of the block
+    List<Statement> allStats = new ArrayList<Statement>(stats);
+
+    stats.clear();
+
     stats.add(0,
         new ExpressionStatement(
             new DeclarationExpression(
-                new VariableExpression("$spock_valueRecorder"),
+                new VariableExpression("$spock_valueRecorder", nodeCache.ValueRecorder),
                 Token.newSymbol(Types.ASSIGN, -1, -1),
                 new ConstructorCallExpression(
                     nodeCache.ValueRecorder,
                     ArgumentListExpression.EMPTY_ARGUMENTS))));
+    stats.add(0,
+        new ExpressionStatement(
+            new DeclarationExpression(
+                new VariableExpression("$spock_errorCollector", nodeCache.ErrorCollector),
+                Token.newSymbol(Types.ASSIGN, -1, -1),
+                new ConstructorCallExpression(
+                    nodeCache.ErrorCollector,
+                    new ArgumentListExpression(Collections.<Expression>singletonList(new ConstantExpression(enableErrorCollector, true)))))));
+
+    stats.add(
+      new TryCatchStatement(
+        new BlockStatement(allStats, new VariableScope()),
+        new ExpressionStatement(
+          AstUtil.createDirectMethodCall(
+            new VariableExpression("$spock_errorCollector"),
+            nodeCache.ErrorCollector_Validate,
+            ArgumentListExpression.EMPTY_ARGUMENTS
+          ))));
   }
 
   public VariableExpression captureOldValue(Expression oldValue) {

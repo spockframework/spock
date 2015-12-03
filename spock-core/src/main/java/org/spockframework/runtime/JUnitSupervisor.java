@@ -16,7 +16,7 @@ package org.spockframework.runtime;
 
 import org.junit.ComparisonFailure;
 import org.junit.internal.AssumptionViolatedException;
-import org.junit.internal.runners.model.MultipleFailureException;
+import org.junit.runners.model.MultipleFailureException;
 import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;

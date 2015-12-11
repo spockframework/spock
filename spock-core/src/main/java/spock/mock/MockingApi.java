@@ -138,7 +138,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
    *
    * @return a mock whose type and name are inferred from the left-hand side of the enclosing variable assignment
    */
-  public Object Mock() {
+  public <T> T Mock() {
     invalidMockCreation();
     return null;
   }
@@ -159,7 +159,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
    * enclosing variable assignment
    */
   @Beta
-  public Object Mock(Map<String, Object> options) {
+  public <T> T Mock(Map<String, Object> options) {
     invalidMockCreation();
     return null;
   }
@@ -228,7 +228,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
    * from the left-hand side of the enclosing assignment
    */
   @Beta
-  public Object Mock(Closure interactions) {
+  public <T> T Mock(Closure interactions) {
     invalidMockCreation();
     return null;
   }
@@ -254,7 +254,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
    * from the left-hand side of the enclosing assignment
    */
   @Beta
-  public Object Mock(Map<String, Object> options, Closure interactions) {
+  public <T> T Mock(Map<String, Object> options, Closure interactions) {
     invalidMockCreation();
     return null;
   }
@@ -324,7 +324,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
    * @return a stub whose type and name are inferred from the left-hand side of the enclosing variable assignment
    */
   @Beta
-  public Object Stub() {
+  public <T> T Stub() {
     invalidMockCreation();
     return null;
   }
@@ -345,7 +345,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
    * enclosing variable assignment
    */
   @Beta
-  public Object Stub(Map<String, Object> options) {
+  public <T> T Stub(Map<String, Object> options) {
     invalidMockCreation();
     return null;
   }
@@ -415,7 +415,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
    * from the left-hand side of the enclosing assignment
    */
   @Beta
-  public Object Stub(Closure interactions) {
+  public <T> T Stub(Closure interactions) {
     invalidMockCreation();
     return null;
   }
@@ -441,7 +441,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
    * from the left-hand side of the enclosing assignment
    */
   @Beta
-  public Object Stub(Map<String, Object> options, Closure interactions) {
+  public <T> T Stub(Map<String, Object> options, Closure interactions) {
     invalidMockCreation();
     return null;
   }
@@ -511,7 +511,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
    * @return a spy whose type and name are inferred from the left-hand side of the enclosing variable assignment
    */
   @Beta
-  public Object Spy() {
+  public <T> T Spy() {
     invalidMockCreation();
     return null;
   }
@@ -532,7 +532,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
    * enclosing variable assignment
    */
   @Beta
-  public Object Spy(Map<String, Object> options) {
+  public <T> T Spy(Map<String, Object> options) {
     invalidMockCreation();
     return null;
   }
@@ -601,7 +601,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
    * from the left-hand side of the enclosing assignment
    */
   @Beta
-  public Object Spy(Closure interactions) {
+  public <T> T Spy(Closure interactions) {
     invalidMockCreation();
     return null;
   }
@@ -626,7 +626,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
    * from the left-hand side of the enclosing assignment
    */
   @Beta
-  public Object Spy(Map<String, Object> options, Closure interactions) {
+  public <T> T Spy(Map<String, Object> options, Closure interactions) {
     invalidMockCreation();
     return null;
   }
@@ -695,7 +695,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
    * @return a Groovy mock whose type and name are inferred from the left-hand side of the enclosing variable assignment
    */
   @Beta
-  public Object GroovyMock() {
+  public <T> T GroovyMock() {
     invalidMockCreation();
     return null;
   }
@@ -716,7 +716,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
    * enclosing variable assignment
    */
   @Beta
-  public Object GroovyMock(Map<String, Object> options) {
+  public <T> T GroovyMock(Map<String, Object> options) {
     invalidMockCreation();
     return null;
   }
@@ -784,7 +784,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
    * from the left-hand side of the enclosing assignment
    */
   @Beta
-  public Object GroovyMock(Closure interactions) {
+  public <T> T GroovyMock(Closure interactions) {
     invalidMockCreation();
     return null;
   }
@@ -810,7 +810,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
    * from the left-hand side of the enclosing assignment
    */
   @Beta
-  public Object GroovyMock(Map<String, Object> options, Closure interactions) {
+  public <T> T GroovyMock(Map<String, Object> options, Closure interactions) {
     invalidMockCreation();
     return null;
   }
@@ -880,7 +880,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
    * @return a Groovy stub whose type and name are inferred from the left-hand side of the enclosing variable assignment
    */
   @Beta
-  public Object GroovyStub() {
+  public <T> T GroovyStub() {
     invalidMockCreation();
     return null;
   }
@@ -901,7 +901,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
    * enclosing variable assignment
    */
   @Beta
-  public Object GroovyStub(Map<String, Object> options) {
+  public <T> T GroovyStub(Map<String, Object> options) {
     invalidMockCreation();
     return null;
   }
@@ -969,7 +969,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
    * from the left-hand side of the enclosing assignment
    */
   @Beta
-  public Object GroovyStub(Closure interactions) {
+  public <T> T GroovyStub(Closure interactions) {
     invalidMockCreation();
     return null;
   }
@@ -995,7 +995,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
    * from the left-hand side of the enclosing assignment
    */
   @Beta
-  public Object GroovyStub(Map<String, Object> options, Closure interactions) {
+  public <T> T GroovyStub(Map<String, Object> options, Closure interactions) {
     invalidMockCreation();
     return null;
   }
@@ -1065,7 +1065,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
    * @return a Groovy spy whose type and name are inferred from the left-hand side of the enclosing variable assignment
    */
   @Beta
-  public Object GroovySpy() {
+  public <T> T GroovySpy() {
     invalidMockCreation();
     return null;
   }
@@ -1086,7 +1086,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
    * enclosing variable assignment
    */
   @Beta
-  public Object GroovySpy(Map<String, Object> options) {
+  public <T> T GroovySpy(Map<String, Object> options) {
     invalidMockCreation();
     return null;
   }
@@ -1153,7 +1153,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
    * from the left-hand side of the enclosing assignment
    */
   @Beta
-  public Object GroovySpy(Closure interactions) {
+  public <T> T GroovySpy(Closure interactions) {
     invalidMockCreation();
     return null;
   }
@@ -1178,7 +1178,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
    * from the left-hand side of the enclosing assignment
    */
   @Beta
-  public Object GroovySpy(Map<String, Object> options, Closure interactions) {
+  public <T> T GroovySpy(Map<String, Object> options, Closure interactions) {
     invalidMockCreation();
     return null;
   }

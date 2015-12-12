@@ -16,17 +16,14 @@ package org.spockframework.runtime;
 
 import org.junit.ComparisonFailure;
 import org.junit.internal.AssumptionViolatedException;
-import org.junit.internal.runners.model.MultipleFailureException;
 import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
 
+import org.junit.runners.model.MultipleFailureException;
 import org.spockframework.runtime.condition.IObjectRenderer;
 import org.spockframework.runtime.model.*;
-import org.spockframework.util.InternalSpockError;
 import org.spockframework.util.TextUtil;
-
-import static org.spockframework.runtime.RunStatus.*;
 
 public class JUnitSupervisor implements IRunSupervisor {
   private final SpecInfo spec;
@@ -62,11 +59,21 @@ public class JUnitSupervisor implements IRunSupervisor {
       notifier.fireTestStarted(iteration.getDescription());
   }
 
-  public int error(FeatureInfo currentFeature, IterationInfo currentIteration, ErrorInfo error) {
+
+  public void error(InvokeException invokeException) {
+    FeatureInfo currentFeature = invokeException.getCurrentFeature();
+    IterationInfo currentIteration = invokeException.getCurrentIteration();
+    ErrorInfo error = invokeException.getErrorInfo();
+    error(currentFeature, currentIteration, error);
+  }
+
+  public void error(FeatureInfo currentFeature, IterationInfo currentIteration, ErrorInfo error) {
     Throwable exception = error.getException();
 
-    if (exception instanceof MultipleFailureException)
-      return handleMultipleFailures(currentFeature, currentIteration, error);
+    if (exception instanceof MultipleFailureException) {
+      handleMultipleFailures(currentFeature, currentIteration, error);
+      return;
+    }
 
     if (isFailedEqualityComparison(exception))
       exception = convertToComparisonFailure(exception);
@@ -85,17 +92,13 @@ public class JUnitSupervisor implements IRunSupervisor {
       masterListener.error(error);
       notifier.fireTestFailure(failure);
     }
-
-    return statusFor(error);
   }
 
   // for better JUnit compatibility, e.g when a @Rule is used
-  private int handleMultipleFailures(FeatureInfo currentFeature, IterationInfo currentIteration, ErrorInfo error) {
+  private void handleMultipleFailures(FeatureInfo currentFeature, IterationInfo currentIteration, ErrorInfo error) {
     MultipleFailureException multiFailure = (MultipleFailureException) error.getException();
-    int runStatus = OK;
     for (Throwable failure : multiFailure.getFailures())
-      runStatus = error(currentFeature, currentIteration, new ErrorInfo(error.getMethod(), failure));
-    return runStatus;
+      error(currentFeature, currentIteration, new ErrorInfo(error.getMethod(), failure));
   }
 
   private boolean isFailedEqualityComparison(Throwable exception) {
@@ -127,28 +130,6 @@ public class JUnitSupervisor implements IRunSupervisor {
       return diffedObjectRenderer.render(value);
     } catch (Throwable t) {
       return "Failed to render value due to:\n\n" + TextUtil.printStackTrace(t);
-    }
-  }
-
-  private int statusFor(ErrorInfo error) {
-    switch (error.getMethod().getKind()) {
-      case DATA_PROCESSOR:
-      case INITIALIZER:
-      case ITERATION_EXECUTION:
-      case SETUP:
-      case CLEANUP:
-      case FEATURE:
-        return END_ITERATION;
-      case FEATURE_EXECUTION:
-      case DATA_PROVIDER:
-        return END_FEATURE;
-      case SHARED_INITIALIZER:
-      case SETUP_SPEC:
-      case CLEANUP_SPEC:
-      case SPEC_EXECUTION:
-        return END_SPEC;
-      default:
-        throw new InternalSpockError("unknown method kind");
     }
   }
 

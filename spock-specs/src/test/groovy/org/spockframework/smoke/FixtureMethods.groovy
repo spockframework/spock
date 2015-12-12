@@ -126,6 +126,22 @@ def cleanup() { log << "cleanup" }
     log.get() == ["cleanup"]
   }
 
+  def "cleanupSpec() is run when setupSpec() fails"() {
+    runner.addClassMemberImport(FixtureMethods)
+
+    when:
+    runner.runSpecBody("""
+def getLog() { org.spockframework.smoke.FixtureMethods.log.get() }
+def setupSpec() { throw new RuntimeException() }
+def feature() { expect: true }
+def cleanupSpec() { log << "cleanupSpec" }
+    """)
+
+    then:
+    thrown(RuntimeException)
+    log.get() == ["cleanupSpec"]
+  }
+
   def "cleanup() is not run when field initializer fails"() {
     runner.addClassImport(BlowUp)
     runner.addClassMemberImport(FixtureMethods)

@@ -156,6 +156,13 @@ public class JUnitSupervisor implements IRunSupervisor {
     masterListener.afterSpec(spec);
   }
 
+  @Override
+  public void error(MultipleInvokeException multipleInvokeException) {
+    for (InvokeException invokeException : multipleInvokeException.getInvokeExceptions()) {
+      error(invokeException);
+    }
+  }
+
   public void specSkipped(SpecInfo spec) {
     masterListener.specSkipped(spec);
     notifier.fireTestIgnored(spec.getDescription());

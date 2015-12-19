@@ -33,7 +33,7 @@ public class ParameterizedSpecRunner extends BaseSpecRunner {
   }
 
   @Override
-  protected void runParameterizedFeature(FeatureInfo currentFeature) throws InvokeException {
+  protected void runParameterizedFeature(FeatureInfo currentFeature) throws InvokeException, MultipleInvokeException {
     Object[] dataProviders = createDataProviders(currentFeature);
     int numIterations = estimateNumIterations(dataProviders);
     Iterator[] iterators = createIterators(currentFeature, dataProviders);
@@ -41,7 +41,7 @@ public class ParameterizedSpecRunner extends BaseSpecRunner {
     closeDataProviders(dataProviders);
   }
 
-  private Object[] createDataProviders(FeatureInfo currentFeature) throws InvokeException {
+  private Object[] createDataProviders(FeatureInfo currentFeature) throws InvokeException, MultipleInvokeException {
     List<DataProviderInfo> dataProviderInfos = currentFeature.getDataProviders();
     Object[] dataProviders = new Object[dataProviderInfos.size()];
 
@@ -116,7 +116,7 @@ public class ParameterizedSpecRunner extends BaseSpecRunner {
     return result == Integer.MAX_VALUE ? -1 : result;
   }
 
-  private void runIterations(final FeatureInfo currentFeature, final Iterator[] iterators, final int estimatedNumIterations) throws InvokeException {
+  private void runIterations(final FeatureInfo currentFeature, final Iterator[] iterators, final int estimatedNumIterations) throws InvokeException, MultipleInvokeException {
     boolean atLeastOneIteration = false;
 
     Scheduler schedulerForRunIterations = this.scheduler.deriveScheduler(!currentFeature.isReportIterations() || !currentFeature.isSupportParallelExecution());
@@ -201,7 +201,7 @@ public class ParameterizedSpecRunner extends BaseSpecRunner {
   }
 
   // advances iterators and computes args
-  private Object[] nextArgs(FeatureInfo currentFeature, Iterator[] iterators) throws InvokeException {
+  private Object[] nextArgs(FeatureInfo currentFeature, Iterator[] iterators) throws InvokeException, MultipleInvokeException {
     Object[] next = new Object[iterators.length];
     for (int i = 0; i < iterators.length; i++)
       try {

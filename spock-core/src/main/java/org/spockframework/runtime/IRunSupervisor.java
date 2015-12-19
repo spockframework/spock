@@ -38,6 +38,8 @@ public interface IRunSupervisor {
   void afterFeature(FeatureInfo feature);
   void afterSpec(SpecInfo spec);
 
+  void error(MultipleInvokeException multipleInvokeException);
+
   void error(InvokeException invokeException);
 
   void error(FeatureInfo currentFeature, IterationInfo currentIteration, ErrorInfo error);

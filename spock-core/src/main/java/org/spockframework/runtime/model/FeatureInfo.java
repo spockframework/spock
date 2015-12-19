@@ -27,6 +27,8 @@ public class FeatureInfo extends SpecElementInfo<SpecInfo, AnnotatedElement> {
 
   private boolean supportParallelExecution = true;
 
+  private int retryCount = 0;
+
   public SpecInfo getSpec() {
     return getParent();
   }
@@ -59,7 +61,7 @@ public class FeatureInfo extends SpecElementInfo<SpecInfo, AnnotatedElement> {
   public void addParameterName(String parameterName) {
     parameterNames.add(parameterName);
   }
-  
+
   public List<String> getDataVariables() {
     return parameterNames; // currently the same
   }
@@ -111,7 +113,7 @@ public class FeatureInfo extends SpecElementInfo<SpecInfo, AnnotatedElement> {
   public boolean isReportIterations() {
     return reportIterations;
   }
-  
+
   public void setReportIterations(boolean flag) {
     reportIterations = flag;
   }
@@ -124,11 +126,22 @@ public class FeatureInfo extends SpecElementInfo<SpecInfo, AnnotatedElement> {
     this.supportParallelExecution = supportParallelExecution;
   }
 
+  public int getRetryCount() {
+    return retryCount;
+  }
+
+  public void setRetryCount(int retryCount) {
+    if (retryCount < 0) {
+      throw new IllegalArgumentException("retry count can not be negative, but it is " + retryCount);
+    }
+    this.retryCount = retryCount;
+  }
+
   @Nullable
   public NameProvider<IterationInfo> getIterationNameProvider() {
     return iterationNameProvider;
   }
-  
+
   public void setIterationNameProvider(NameProvider<IterationInfo> provider) {
     iterationNameProvider = provider;
   }

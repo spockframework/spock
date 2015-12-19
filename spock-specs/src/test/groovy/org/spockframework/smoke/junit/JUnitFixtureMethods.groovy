@@ -145,7 +145,8 @@ class JUnitFixtureMethods extends EmbeddedSpecification {
     invocations.get() == ["beforeClass", "before", "after", "afterClass"]
   }
 
-  def "exceptions thrown by fixture methods are handled correctly"() {
+  @Unroll
+  def "exceptions thrown by fixture methods are handled correctly (#name)"() {
     runner.throwFailure = false
 
     when:

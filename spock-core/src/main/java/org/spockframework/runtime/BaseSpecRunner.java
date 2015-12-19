@@ -26,6 +26,10 @@ import org.spockframework.util.InternalSpockError;
 
 import spock.lang.Specification;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
 import static org.spockframework.runtime.RunStatus.*;
 
 /**
@@ -266,11 +270,11 @@ public class BaseSpecRunner {
   private void runSimpleFeature() {
     if (runStatus != OK) return;
 
-    initializeAndRunIteration(EMPTY_ARGS, 1);
+    initializeAndRunIteration(Collections.<String, Object>emptyMap(), 1);
     resetStatus(ITERATION);
   }
 
-  protected void initializeAndRunIteration(Object[] dataValues, int estimatedNumIterations) {
+  protected void initializeAndRunIteration(Map<String, Object> dataValues, int estimatedNumIterations) {
     if (runStatus != OK) return;
 
     createSpecInstance(false);
@@ -278,7 +282,7 @@ public class BaseSpecRunner {
     runIteration(dataValues, estimatedNumIterations);
   }
 
-  private void runIteration(Object[] dataValues, int estimatedNumIterations) {
+  private void runIteration(Map<String, Object> dataValues, int estimatedNumIterations) {
     if (runStatus != OK) return;
 
     currentIteration = createIterationInfo(dataValues, estimatedNumIterations);
@@ -292,7 +296,7 @@ public class BaseSpecRunner {
     currentIteration = null;
   }
 
-  private IterationInfo createIterationInfo(Object[] dataValues, int estimatedNumIterations) {
+  private IterationInfo createIterationInfo(Map<String, Object> dataValues, int estimatedNumIterations) {
     IterationInfo result = new IterationInfo(currentFeature, dataValues, estimatedNumIterations);
     String iterationName = currentFeature.getIterationNameProvider().getName(result);
     result.setName(iterationName);
@@ -403,7 +407,20 @@ public class BaseSpecRunner {
 
   private void runFeatureMethod() {
     if (runStatus != OK) return;
-    invoke(currentInstance, currentFeature.getFeatureMethod(), currentIteration.getDataValues());
+    invoke(currentInstance, currentFeature.getFeatureMethod(), dataValuesToArray(currentFeature.getParameterNames(), currentIteration.getDataValues()));
+  }
+
+  private Object[] dataValuesToArray(List<String> parameterNames, Map<String, Object> dataValues) {
+    Object[] result = new Object[parameterNames.size()];
+    for (int i = 0; i < parameterNames.size(); i++) {
+      final String parameterName = parameterNames.get(i);
+      if (dataValues.containsKey(parameterName)){
+        result[i] = dataValues.get(parameterName);
+      }else {
+        throw new SpockExecutionException("Parameter '%s' was not set").withArgs(parameterName);
+      }
+    }
+    return result;
   }
 
   private void runCleanup() {

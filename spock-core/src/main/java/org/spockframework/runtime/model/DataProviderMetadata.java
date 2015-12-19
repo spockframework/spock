@@ -10,7 +10,9 @@ import java.lang.annotation.*;
 public @interface DataProviderMetadata {
   String LINE = "line";
   String DATA_VARIABLES = "dataVariables";
-  
+  String PARAMETERS = "parameters";
+
   int line();
   String[] dataVariables();
+  String[] parameters();
 }

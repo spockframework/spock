@@ -57,7 +57,7 @@ public class FeatureInfo extends SpecElementInfo<SpecInfo, AnnotatedElement> {
   public void addParameterName(String parameterName) {
     parameterNames.add(parameterName);
   }
-  
+
   public List<String> getDataVariables() {
     return parameterNames; // currently the same
   }
@@ -109,7 +109,7 @@ public class FeatureInfo extends SpecElementInfo<SpecInfo, AnnotatedElement> {
   public boolean isReportIterations() {
     return reportIterations;
   }
-  
+
   public void setReportIterations(boolean flag) {
     reportIterations = flag;
   }
@@ -118,7 +118,7 @@ public class FeatureInfo extends SpecElementInfo<SpecInfo, AnnotatedElement> {
   public NameProvider<IterationInfo> getIterationNameProvider() {
     return iterationNameProvider;
   }
-  
+
   public void setIterationNameProvider(NameProvider<IterationInfo> provider) {
     iterationNameProvider = provider;
   }

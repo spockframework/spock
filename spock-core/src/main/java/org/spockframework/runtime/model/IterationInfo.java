@@ -16,19 +16,21 @@ package org.spockframework.runtime.model;
 
 import java.lang.reflect.AnnotatedElement;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Runtime information about an iteration of a feature method.
  */
 public class IterationInfo extends NodeInfo<FeatureInfo, AnnotatedElement> {
-  private final Object[] dataValues;
+  private final Map<String, Object> dataValues;
   private final int estimatedNumIterations;
   private final List<Runnable> cleanups = new ArrayList<Runnable>();
 
-  public IterationInfo(FeatureInfo feature, Object[] dataValues, int estimatedNumIterations) {
+  public IterationInfo(FeatureInfo feature, Map<String, Object> dataValues, int estimatedNumIterations) {
     setParent(feature);
-    this.dataValues = dataValues;
+    this.dataValues = new HashMap<String, Object>(dataValues);
     this.estimatedNumIterations = estimatedNumIterations;
   }
 
@@ -57,11 +59,11 @@ public class IterationInfo extends NodeInfo<FeatureInfo, AnnotatedElement> {
    * Return this iteration's data values for the ongoing execution of the
    * owning feature method. The names of the data values (in the same order)
    * are available through {@link FeatureInfo#getDataVariables}.
-   * 
+   *
    * @return this iteration's data values for the ongoing execution of the
    * owning feature method
    */
-  public Object[] getDataValues() {
+  public Map<String, Object> getDataValues() {
     return dataValues;
   }
 

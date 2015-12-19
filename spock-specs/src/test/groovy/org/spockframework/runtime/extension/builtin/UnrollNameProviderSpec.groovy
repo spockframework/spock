@@ -26,7 +26,7 @@ class UnrollNameProviderSpec extends Specification {
     def nameGenerator = new UnrollNameProvider(feature, "foo #dataVar bar")
 
     expect:
-    nameGenerator.nameFor(value) == name
+    nameGenerator.nameFor(Collections.singletonMap("dataVar", value)) == name
 
     where:
     value                   | name
@@ -40,7 +40,7 @@ class UnrollNameProviderSpec extends Specification {
     def nameGenerator = new UnrollNameProvider(feature, "foo #dataVar bar")
 
     expect:
-    nameGenerator.nameFor(value) == name
+    nameGenerator.nameFor(Collections.singletonMap("dataVar", value)) == name
 
     where:
     value                   | name

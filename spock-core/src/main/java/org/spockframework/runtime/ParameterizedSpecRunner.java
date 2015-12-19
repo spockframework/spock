@@ -48,15 +48,21 @@ public class ParameterizedSpecRunner extends BaseSpecRunner {
     List<DataProviderInfo> dataProviderInfos = currentFeature.getDataProviders();
     Object[] dataProviders = new Object[dataProviderInfos.size()];
 
+    int dataTableOffset = 0;
+
     if (!dataProviderInfos.isEmpty()) {
       for (int i = 0; i < dataProviderInfos.size(); i++) {
         DataProviderInfo dataProviderInfo = dataProviderInfos.get(i);
 
         MethodInfo method = dataProviderInfo.getDataProviderMethod();
-        Object[] arguments = Arrays.copyOf(dataProviders, getDataTableOffset(dataProviderInfo));
-        Object provider = invokeRaw(sharedInstance, method, arguments);
-        
-        if (runStatus != OK) 
+        final List<String> parameters = dataProviderInfo.getParameters();
+        List<Object> arguments = new ArrayList<Object>();
+        for (String parameter : parameters) {
+          arguments.add(findArgument(dataProviderInfos, i, dataProviders, parameter));
+        }
+        Object provider = invokeRaw(sharedInstance, method, arguments.toArray());
+
+        if (runStatus != OK)
           return null;
         else if (provider == null) {
           SpockExecutionException error = new SpockExecutionException("Data provider is null!");
@@ -64,10 +70,29 @@ public class ParameterizedSpecRunner extends BaseSpecRunner {
           return null;
         }
         dataProviders[i] = provider;
+        dataTableOffset += dataProviderInfo.getDataVariables().size();
       }
     }
 
     return dataProviders;
+  }
+
+  private Object findArgument(List<DataProviderInfo> dataProviderInfos, int currentDataProviderIndex, Object[] dataProviders, String parameter) {
+    for (int i = 0; i < currentDataProviderIndex; i++) {
+      DataProviderInfo providerInfo = dataProviderInfos.get(i);
+      if (providerInfo.getDataVariables().contains(parameter)) {
+        return dataProviders[i];
+      }
+    }
+    return null; // possible we have derived parametrization. With current implementation Spock does not support reference on derived variables.
+  }
+
+  private List<String> extractParameterNames(List<DataProviderInfo> dataProviderInfos, int currentDataProviderIndex) {
+    List<String> result = new ArrayList<String>();
+    for (int i = 0; i < currentDataProviderIndex; i++) {
+      result.addAll(dataProviderInfos.get(i).getDataVariables());
+    }
+    return result;
   }
 
   private int getDataTableOffset(DataProviderInfo dataProviderInfo) {
@@ -94,14 +119,14 @@ public class ParameterizedSpecRunner extends BaseSpecRunner {
         Iterator<?> iter = GroovyRuntimeUtil.asIterator(dataProviders[i]);
         if (iter == null) {
           runStatus = supervisor.error(
-              new ErrorInfo(currentFeature.getDataProviders().get(i).getDataProviderMethod(),
+            new ErrorInfo(currentFeature.getDataProviders().get(i).getDataProviderMethod(),
               new SpockExecutionException("Data provider's iterator() method returned null")));
           return null;
         }
         iterators[i] = iter;
       } catch (Throwable t) {
         runStatus = supervisor.error(
-            new ErrorInfo(currentFeature.getDataProviders().get(i).getDataProviderMethod(), t));
+          new ErrorInfo(currentFeature.getDataProviders().get(i).getDataProviderMethod(), t));
         return null;
       }
 
@@ -165,13 +190,13 @@ public class ParameterizedSpecRunner extends BaseSpecRunner {
         else if (haveNext != hasNext) {
           DataProviderInfo provider = currentFeature.getDataProviders().get(i);
           runStatus = supervisor.error(new ErrorInfo(provider.getDataProviderMethod(),
-              createDifferentNumberOfDataValuesException(provider, hasNext)));
+            createDifferentNumberOfDataValuesException(provider, hasNext)));
           return false;
         }
 
       } catch (Throwable t) {
         runStatus = supervisor.error(
-            new ErrorInfo(currentFeature.getDataProviders().get(i).getDataProviderMethod(), t));
+          new ErrorInfo(currentFeature.getDataProviders().get(i).getDataProviderMethod(), t));
         return false;
       }
 
@@ -192,7 +217,7 @@ public class ParameterizedSpecRunner extends BaseSpecRunner {
   }
 
   // advances iterators and computes args
-  private Object[] nextArgs(Iterator[] iterators) {
+  private Map<String, Object> nextArgs(Iterator[] iterators) {
     if (runStatus != OK) return null;
 
     Object[] next = new Object[iterators.length];
@@ -201,15 +226,16 @@ public class ParameterizedSpecRunner extends BaseSpecRunner {
         next[i] = iterators[i].next();
       } catch (Throwable t) {
         runStatus = supervisor.error(
-            new ErrorInfo(currentFeature.getDataProviders().get(i).getDataProviderMethod(), t));
+          new ErrorInfo(currentFeature.getDataProviders().get(i).getDataProviderMethod(), t));
         return null;
       }
 
     try {
-      return (Object[])invokeRaw(sharedInstance, currentFeature.getDataProcessorMethod(), next);
+      //noinspection unchecked
+      return (Map)invokeRaw(sharedInstance, currentFeature.getDataProcessorMethod(), next);
     } catch (Throwable t) {
       runStatus = supervisor.error(
-          new ErrorInfo(currentFeature.getDataProcessorMethod(), t));
+        new ErrorInfo(currentFeature.getDataProcessorMethod(), t));
       return null;
     }
   }

@@ -10,7 +10,7 @@ Suppose we want to specify the behavior of the +Math.max+ method:
 [source,groovy]
 ----
 class MathSpec extends Specification {
-    def "maximum of two numbers"() {
+    def 'maximum of two numbers'() {
         expect:
         // exercise math method for a few different inputs
         Math.max(1, 3) == 3
@@ -35,7 +35,7 @@ hard-coded integer values:
 [source,groovy]
 ----
 class MathSpec extends Specification {
-    def "maximum of two numbers"(int a, int b, int c) {
+    def 'maximum of two numbers'(int a, int b, int c) {
         expect:
         Math.max(a, b) == c
 
@@ -55,7 +55,7 @@ Data tables are a convenient way to exercise a feature method with a fixed set o
 [source,groovy]
 ----
 class Math extends Specification {
-    def "maximum of two numbers"(int a, int b, int c) {
+    def 'maximum of two numbers'(int a, int b, int c) {
         expect:
         Math.max(a, b) == c
 
@@ -72,6 +72,15 @@ The first line of the table, called the _table header_, declares the data variab
 _table rows_, hold the corresponding values. For each row, the feature method will get executed once; we call this an
 _iteration_ of the method. If an iteration fails, the remaining iterations will nevertheless be executed. All
 failures will be reported.
+
+Since version 1.1 data table cells can reference previous ones also (works for data pipes also), e.g.
+
+[source,groovy]
+----
+where:
+a | b
+1 | a + 1
+----
 
 Data tables must have at least two columns. A single-column table can be written as:
 
@@ -104,17 +113,21 @@ spec, all of which can be kept in the same file. This achieves better isolation 
 
 The previous code can be tweaked in a few ways. First, since the `where:` block already declares all data variables, the
 method parameters can be omitted.footnote:[The idea behind allowing method parameters is to enable better IDE support.
-However, recent versions of IntelliJ IDEA recognize data variables automatically, and even infer their types from the
-values contained in the data table.]
+However, recent versions of IntelliJ IDEA recognize data variables automatically, and often infer their types from the
+values contained in the data table. They might still be needed if you want `@CompileStatic` or `@TypeChecked` support.]
+
+Since version 1.1 you can also declare the types of the data table variables selectively (in their declaration order),
+omitting the obvious ones.
+
 Second, inputs and expected outputs can be separated with a double pipe symbol (`||`) to visually set them apart.
 With this, the code becomes:
 
 [source,groovy]
 ----
 class DataDriven extends Specification {
-    def "maximum of two numbers"() {
+    def 'maximum of two numbers'() {
         expect:
-        Math.max(a, b) == c
+        max(a, b) == c
 
         where:
         a | b || c
@@ -135,7 +148,7 @@ maximum of two numbers   FAILED
 
 Condition not satisfied:
 
-Math.max(a, b) == c
+max(a, b) == c
     |    |  |  |  |
     |    7  0  |  7
     42         false
@@ -154,7 +167,7 @@ A method annotated with `@Unroll` will have its iterations reported independentl
 [source,groovy]
 ----
 @Unroll
-def "maximum of two numbers"() { ... }
+def 'maximum of two numbers'() { ... }
 ----
 
 .Why isn't `@Unroll` the default?
@@ -171,7 +184,7 @@ Depending on the execution environment, the output will look something like:
 maximum of two numbers[0]   PASSED
 maximum of two numbers[1]   FAILED
 
-Math.max(a, b) == c
+max(a, b) == c
     |    |  |  |  |
     |    7  0  |  7
     42         false
@@ -184,7 +197,7 @@ This tells us that the second iteration (with index 1) failed. With a bit of eff
 [source,groovy]
 ----
 @Unroll
-def "maximum of #a and #b is #c"() { ... }
+def 'maximum of #a and #b is #c'() { ... }
 ----
 
 This method name uses placeholders, denoted by a leading hash sign (`#`), to refer to data variables `a`, `b`,
@@ -194,7 +207,7 @@ and `c`. In the output, the placeholders will be replaced with concrete values:
 maximum of 3 and 5 is 5   PASSED
 maximum of 7 and 0 is 7   FAILED
 
-Math.max(a, b) == c
+max(a, b) == c
     |    |  |  |  |
     |    7  0  |  7
     42         false
@@ -218,14 +231,14 @@ one or more _data pipes_:
 ...
 where:
 a << [3, 7, 0]
-b << [5, 0, 0]
-c << [5, 7, 0]
+b << [5, 0, 1]
+c << [a+1, b+1, a+b]
 ----
 
 A data pipe, indicated by the left-shift (`<<`) operator, connects a data variable to a _data provider_. The data
 provider holds all values for the variable, one per iteration. Any object that Groovy knows how to iterate over can be
-used as a data provider. This includes objects of type `Collection`, `String`, `Iterable`, and objects implementing the
-`Iterable` contract. Data providers don't necessarily have to _be_ the data (as in the case of a `Collection`);
+used as a data provider. This includes objects implementing the `Iterable` contract.
+Data providers don't necessarily have to _be_ the data (as in the case of a `Collection`);
 they can fetch data from external sources like text files, databases and spreadsheets, or generate data randomly.
 Data providers are queried for their next value only when needed (before the next iteration).
 
@@ -237,12 +250,12 @@ but uses brackets instead of parentheses on the left-hand side:
 
 [source,groovy]
 ----
-@Shared sql = Sql.newInstance("jdbc:h2:mem:", "org.h2.Driver")
+@Shared sql = Sql.newInstance('jdbc:h2:mem:', 'org.h2.Driver')
 
-def "maximum of two numbers"() {
+def 'maximum of two numbers'() {
     ...
     where:
-    [a, b, c] << sql.rows("select a, b, c from maxdata")
+    [a, b, c] << sql.rows('select a, b, c from maxdata')
 }
 ----
 
@@ -252,7 +265,7 @@ Data values that aren't of interest can be ignored with an underscore (`_`):
 ----
 ...
 where:
-[a, b, _, c] << sql.rows("select * from maxdata")
+[a, b, _, c] << sql.rows('select * from maxdata')
 ----
 
 == Data Variable Assignment
@@ -265,7 +278,7 @@ A data variable can be directly assigned a value:
 where:
 a = 3
 b = Math.random() * 100
-c = a > b ? a : b
+c = (a > b) ? a : b
 ----
 
 Assignments are re-evaluated for every iteration. As already shown above, the right-hand side of an assignment may refer
@@ -275,7 +288,7 @@ to other data variables:
 ----
 ...
 where:
-row << sql.rows("select * from maxdata")
+row << sql.rows('select * from maxdata')
 // pick apart columns
 a = row.a
 b = row.b
@@ -325,8 +338,8 @@ following are valid method names:
 
 [source,groovy]
 ----
-def "#person is #person.age years old"() { ... } // property access
-def "#person.name.toUpperCase()"() { ... } // zero-arg method call
+def '#person is #person.age years old'() { ... } // property access
+def '#person.name.toUpperCase()'() { ... } // zero-arg method call
 ----
 
 Non-string values (like `#person` above) are converted to Strings according to Groovy semantics.
@@ -336,14 +349,14 @@ The following are invalid method names:
 [source,groovy]
 ----
 def "#person.name.split(' ')[1]" { ... } // cannot have method arguments
-def "#person.age / 2" { ... } // cannot use operators
+def '#person.age / 2' { ... } // cannot use operators
 ----
 
 If necessary, additional data variables can be introduced to hold more complex expression:
 
 [source,groovy]
 ----
-def "#lastName"() {
+def '#lastName'() {
     ...
     where:
     person << ...

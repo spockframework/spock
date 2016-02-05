@@ -18,6 +18,9 @@ package org.spockframework.runtime
 
 import spock.lang.Specification
 
+import static java.util.Arrays.asList
+
+// TODO these should be tested through their public interface, i.e. a closable generator in the where block
 class ClosingOfDataProviders extends Specification {
   def runner = new ParameterizedSpecRunner(null, null)
 
@@ -25,7 +28,7 @@ class ClosingOfDataProviders extends Specification {
     MyCloseable provider = Mock()
 
     when:
-    runner.closeDataProviders(provider)
+    runner.closeDataProviders(asList(provider))
 
     then:
     1 * provider.close() >> { action() }
@@ -37,10 +40,10 @@ class ClosingOfDataProviders extends Specification {
 
   def "close multiple providers which potentially throw an exception"() {
     MyCloseable provider1 = Mock()
-    java.io.Closeable provider2 = Mock()
+    Closeable provider2 = Mock()
 
     when:
-    runner.closeDataProviders(provider1, provider2)
+    runner.closeDataProviders(asList(provider1, provider2))
 
     then:
     1 * provider1.close() >> { action() }

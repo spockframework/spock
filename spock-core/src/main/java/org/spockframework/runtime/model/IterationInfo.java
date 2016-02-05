@@ -15,21 +15,18 @@
 package org.spockframework.runtime.model;
 
 import java.lang.reflect.AnnotatedElement;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Runtime information about an iteration of a feature method.
  */
 public class IterationInfo extends NodeInfo<FeatureInfo, AnnotatedElement> {
   private final Object[] dataValues;
-  private final int estimatedNumIterations;
   private final List<Runnable> cleanups = new ArrayList<Runnable>();
 
-  public IterationInfo(FeatureInfo feature, Object[] dataValues, int estimatedNumIterations) {
+  public IterationInfo(FeatureInfo feature, Object[] dataValues) {
     setParent(feature);
     this.dataValues = dataValues;
-    this.estimatedNumIterations = estimatedNumIterations;
   }
 
   public FeatureInfo getFeature() {
@@ -57,26 +54,12 @@ public class IterationInfo extends NodeInfo<FeatureInfo, AnnotatedElement> {
    * Return this iteration's data values for the ongoing execution of the
    * owning feature method. The names of the data values (in the same order)
    * are available through {@link FeatureInfo#getDataVariables}.
-   * 
+   *
    * @return this iteration's data values for the ongoing execution of the
    * owning feature method
    */
   public Object[] getDataValues() {
     return dataValues;
-  }
-
-  /**
-   * Returns the estimated total number of iterations for the ongoing execution
-   * of the owning feature method. The value is obtained by calling
-   * <tt>size()</tt> on each data provider before the first iteration is run.
-   * It is only an estimate and won't change during feature execution (i.e. all
-   * <tt>FeatureInfo<tt>s will return the same value).
-   *
-   * @return the estimated total number of iterations for the execution
-   * of the owning feature method
-   */
-  public int getEstimatedNumIterations() {
-    return estimatedNumIterations;
   }
 
   public void addCleanup(Runnable cleanup) {

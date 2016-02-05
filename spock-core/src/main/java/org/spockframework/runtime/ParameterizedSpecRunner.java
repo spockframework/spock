@@ -16,10 +16,13 @@
 
 package org.spockframework.runtime;
 
+import org.spockframework.runtime.model.*;
+
+import java.util.ArrayList;
 import java.util.*;
 
+import static java.util.Arrays.*;
 import static org.spockframework.runtime.RunStatus.*;
-import org.spockframework.runtime.model.*;
 
 /**
  * Adds the ability to run parameterized features.
@@ -35,41 +38,34 @@ public class ParameterizedSpecRunner extends BaseSpecRunner {
   protected void runParameterizedFeature() {
     if (runStatus != OK) return;
 
-    Object[] dataProviders = createDataProviders();
-    int numIterations = estimateNumIterations(dataProviders);
-    Iterator[] iterators = createIterators(dataProviders);
-    runIterations(iterators, numIterations);
+    List<Object> dataProviders = createDataProviders();
+    runIterations(dataProviders);
     closeDataProviders(dataProviders);
   }
 
-  private Object[] createDataProviders() {
+  private List<Object> createDataProviders() {
     if (runStatus != OK) return null;
 
-    List<DataProviderInfo> dataProviderInfos = currentFeature.getDataProviders();
-    Object[] dataProviders = new Object[dataProviderInfos.size()];
+    List<Object> dataProviders = new ArrayList<Object>();
+    for (DataProviderInfo dataProviderInfo : currentFeature.getDataProviders()) {
+      MethodInfo method = dataProviderInfo.getDataProviderMethod();
+      Object[] arguments = copyOf(dataProviders.toArray(), getDataTableOffset(dataProviderInfo));
+      Object provider = invokeRaw(sharedInstance, method, arguments);
 
-    if (!dataProviderInfos.isEmpty()) {
-      for (int i = 0; i < dataProviderInfos.size(); i++) {
-        DataProviderInfo dataProviderInfo = dataProviderInfos.get(i);
-
-        MethodInfo method = dataProviderInfo.getDataProviderMethod();
-        Object[] arguments = Arrays.copyOf(dataProviders, getDataTableOffset(dataProviderInfo));
-        Object provider = invokeRaw(sharedInstance, method, arguments);
-        
-        if (runStatus != OK) 
-          return null;
-        else if (provider == null) {
-          SpockExecutionException error = new SpockExecutionException("Data provider is null!");
-          runStatus = supervisor.error(new ErrorInfo(method, error));
-          return null;
-        }
-        dataProviders[i] = provider;
+      if (runStatus != OK)
+        return null;
+      else if (provider == null) {
+        SpockExecutionException error = new SpockExecutionException("Data provider is null!");
+        runStatus = supervisor.error(new ErrorInfo(method, error));
+        return null;
       }
+      dataProviders.add(provider);
     }
 
     return dataProviders;
   }
 
+  /* TODO remove when all *where* elements are data providers */
   private int getDataTableOffset(DataProviderInfo dataProviderInfo) {
     int result = 0;
     for (String variableName : dataProviderInfo.getDataVariables()) {
@@ -85,93 +81,63 @@ public class ParameterizedSpecRunner extends BaseSpecRunner {
                                                   currentFeature.getParameterNames()));
   }
 
-  private Iterator[] createIterators(Object[] dataProviders) {
+  private List<Iterator> createIterators(List<Object> dataProviders) {
     if (runStatus != OK) return null;
 
-    Iterator[] iterators = new Iterator<?>[dataProviders.length];
-    for (int i = 0; i < dataProviders.length; i++)
+    List<Iterator> iterators = new ArrayList<Iterator>();
+    for (int i = 0; i < dataProviders.size(); i++)
       try {
-        Iterator<?> iter = GroovyRuntimeUtil.asIterator(dataProviders[i]);
+        Iterator<?> iter = GroovyRuntimeUtil.asIterator(dataProviders.get(i));
         if (iter == null) {
-          runStatus = supervisor.error(
-              new ErrorInfo(currentFeature.getDataProviders().get(i).getDataProviderMethod(),
-              new SpockExecutionException("Data provider's iterator() method returned null")));
+          runStatus = supervisor.error(new ErrorInfo(currentFeature.getDataProviders().get(i).getDataProviderMethod(),
+                                                     new SpockExecutionException("Data provider's iterator() method returned null")));
           return null;
         }
-        iterators[i] = iter;
-      } catch (Throwable t) {
-        runStatus = supervisor.error(
-            new ErrorInfo(currentFeature.getDataProviders().get(i).getDataProviderMethod(), t));
+        iterators.add(iter);
+      } catch (RuntimeException e) {
+        runStatus = supervisor.error(new ErrorInfo(currentFeature.getDataProviders().get(i).getDataProviderMethod(), e));
         return null;
       }
 
     return iterators;
   }
 
-  // -1 => unknown
-  private int estimateNumIterations(Object[] dataProviders) {
-    if (runStatus != OK) return -1;
-    if (dataProviders.length == 0) return 1;
-
-    int result = Integer.MAX_VALUE;
-    for (Object prov : dataProviders) {
-      if (prov instanceof Iterator)
-        // unbelievably, DGM provides a size() method for Iterators,
-        // although it is of course destructive (i.e. it exhausts the Iterator)
-        continue;
-
-      Object rawSize = GroovyRuntimeUtil.invokeMethodQuietly(prov, "size");
-      if (!(rawSize instanceof Number)) continue;
-
-      int size = ((Number) rawSize).intValue();
-      if (size < 0 || size >= result) continue;
-
-      result = size;
-    }
-
-    return result == Integer.MAX_VALUE ? -1 : result;
-  }
-
-  private void runIterations(Iterator[] iterators, int estimatedNumIterations) {
+  private void runIterations(List<Object> dataProviders) {
     if (runStatus != OK) return;
 
-    while (haveNext(iterators)) {
-      initializeAndRunIteration(nextArgs(iterators), estimatedNumIterations);
+    for (List<Iterator> iterators = createIterators(dataProviders); haveNext(iterators); ) {
+      initializeAndRunIteration(nextArgs(iterators));
 
       if (resetStatus(ITERATION) != OK) break;
       // no iterators => no data providers => only derived parameterizations => limit to one iteration
-      if(iterators.length == 0) break;
+      if (iterators.isEmpty()) break;
     }
   }
 
-  private void closeDataProviders(Object[] dataProviders) {
-    if (action(runStatus) == ABORT) return;
-    if (dataProviders == null) return; // there was an error creating the providers
+  private void closeDataProviders(List<Object> dataProviders) {
+    if ((action(runStatus) != OK) || (dataProviders == null)) return;
 
-    for (Object provider : dataProviders) {
+    for (Object provider : dataProviders)
       GroovyRuntimeUtil.invokeMethodQuietly(provider, "close");
-    }
   }
 
-  private boolean haveNext(Iterator[] iterators) {
+  private boolean haveNext(List<Iterator> iterators) {
     if (runStatus != OK) return false;
 
     boolean haveNext = true;
 
-    for (int i = 0; i < iterators.length; i++)
+    for (int i = 0; i < iterators.size(); i++)
       try {
-        boolean hasNext = iterators[i].hasNext();
+        boolean hasNext = iterators.get(i).hasNext();
         if (i == 0) haveNext = hasNext;
         else if (haveNext != hasNext) {
           DataProviderInfo provider = currentFeature.getDataProviders().get(i);
           runStatus = supervisor.error(new ErrorInfo(provider.getDataProviderMethod(),
-              createDifferentNumberOfDataValuesException(provider, hasNext)));
+                                                     createDifferentNumberOfDataValuesException(provider, hasNext)));
           return false;
         }
-
-      } catch (Throwable t) {
-        runStatus = supervisor.error(
-            new ErrorInfo(currentFeature.getDataProviders().get(i).getDataProviderMethod(), t));
+      } catch (RuntimeException e) {
+        runStatus = supervisor.error(new ErrorInfo(currentFeature.getDataProviders().get(i).getDataProviderMethod(), e));
         return false;
       }
 
@@ -179,37 +145,35 @@ public class ParameterizedSpecRunner extends BaseSpecRunner {
   }
 
   private SpockExecutionException createDifferentNumberOfDataValuesException(DataProviderInfo provider,
-    boolean hasNext) {
+                                                                             boolean hasNext) {
     String msg = String.format("Data provider for variable '%s' has %s values than previous data provider(s)",
-        provider.getDataVariables().get(0), hasNext ? "more" : "fewer");
+                               provider.getDataVariables().get(0), hasNext ? "more" : "fewer");
     SpockExecutionException exception = new SpockExecutionException(msg);
     FeatureInfo feature = provider.getParent();
     SpecInfo spec = feature.getParent();
     StackTraceElement elem = new StackTraceElement(spec.getReflection().getName(),
-        feature.getName(), spec.getFilename(), provider.getLine());
-    exception.setStackTrace(new StackTraceElement[] { elem });
+                                                   feature.getName(), spec.getFilename(), provider.getLine());
+    exception.setStackTrace(new StackTraceElement[]{elem});
     return exception;
   }
 
   // advances iterators and computes args
-  private Object[] nextArgs(Iterator[] iterators) {
+  private List<Object> nextArgs(List<Iterator> iterators) {
     if (runStatus != OK) return null;
 
-    Object[] next = new Object[iterators.length];
-    for (int i = 0; i < iterators.length; i++)
+    List<Object> next = new ArrayList<Object>();
+    for (int i = 0; i < iterators.size(); i++)
       try {
-        next[i] = iterators[i].next();
-      } catch (Throwable t) {
-        runStatus = supervisor.error(
-            new ErrorInfo(currentFeature.getDataProviders().get(i).getDataProviderMethod(), t));
+        next.add(iterators.get(i).next());
+      } catch (RuntimeException e) {
+        runStatus = supervisor.error(new ErrorInfo(currentFeature.getDataProviders().get(i).getDataProviderMethod(), e));
         return null;
       }
 
     try {
-      return (Object[])invokeRaw(sharedInstance, currentFeature.getDataProcessorMethod(), next);
-    } catch (Throwable t) {
-      runStatus = supervisor.error(
-          new ErrorInfo(currentFeature.getDataProcessorMethod(), t));
+      return asList((Object[]) invokeRaw(sharedInstance, currentFeature.getDataProcessorMethod(), next.toArray()));
+    } catch (RuntimeException e) {
+      runStatus = supervisor.error(new ErrorInfo(currentFeature.getDataProcessorMethod(), e));
       return null;
     }
   }

@@ -17,11 +17,10 @@
 package org.spockframework.smoke
 
 import org.spockframework.EmbeddedSpecification
-
 import org.spockframework.compiler.InvalidSpecCompileException
-import static org.spockframework.runtime.model.BlockKind.*
-import org.spockframework.runtime.RunContext
 import org.spockframework.runtime.SpecInfoBuilder
+
+import static org.spockframework.runtime.model.BlockKind.*
 
 class Blocks extends EmbeddedSpecification {
   def "labels and comments"() {
@@ -56,18 +55,18 @@ def m3() {
 
     expect:
     def m1 = specInfo.features[0]
-    m1.blocks*.kind == [SETUP,WHEN,THEN,WHERE]
-    m1.blocks*.texts.flatten() == ["setup","setup2","when","when2","then","then2","where","where2"]
+    m1.blocks*.kind == [SETUP, WHEN, THEN, WHERE]
+    m1.blocks*.texts.flatten() == ["setup", "setup2", "when", "when2", "then", "then2", "where", "where2"]
 
     and:
     def m2 = specInfo.features[1]
     m2.blocks*.kind == [EXPECT]
-    m2.blocks*.texts.flatten() == ["expect","expect2"]
+    m2.blocks*.texts.flatten() == ["expect", "expect2"]
 
     and:
     def m3 = specInfo.features[2]
-    m3.blocks*.kind == [SETUP,EXPECT,WHERE]
-    m3.blocks*.texts.flatten() == ["given","and",""]
+    m3.blocks*.kind == [SETUP, EXPECT, WHERE]
+    m3.blocks*.texts.flatten() == ["given", "and", ""]
   }
 
   def "unknown label"() {

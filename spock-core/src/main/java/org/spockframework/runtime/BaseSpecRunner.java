@@ -17,15 +17,14 @@
 package org.spockframework.runtime;
 
 import org.junit.runner.Description;
-
-import org.spockframework.runtime.extension.IMethodInterceptor;
-import org.spockframework.runtime.extension.MethodInvocation;
+import org.spockframework.runtime.extension.*;
 import org.spockframework.runtime.model.*;
-import org.spockframework.util.CollectionUtil;
-import org.spockframework.util.InternalSpockError;
-
+import org.spockframework.util.*;
 import spock.lang.Specification;
 
+import java.util.List;
+
+import static java.util.Collections.emptyList;
 import static org.spockframework.runtime.RunStatus.*;
 
 /**
@@ -36,8 +35,6 @@ import static org.spockframework.runtime.RunStatus.*;
  * @author Peter Niederwieser
  */
 public class BaseSpecRunner {
-  protected static final Object[] EMPTY_ARGS = new Object[0];
-
   protected final SpecInfo spec;
   protected final IRunSupervisor supervisor;
 
@@ -266,22 +263,22 @@ public class BaseSpecRunner {
   private void runSimpleFeature() {
     if (runStatus != OK) return;
 
-    initializeAndRunIteration(EMPTY_ARGS, 1);
+    initializeAndRunIteration(emptyList());
     resetStatus(ITERATION);
   }
 
-  protected void initializeAndRunIteration(Object[] dataValues, int estimatedNumIterations) {
-    if (runStatus != OK) return;
+  protected void initializeAndRunIteration(@Nullable List<Object> dataValues) {
+    if ((dataValues == null) || (runStatus != OK)) return;
 
     createSpecInstance(false);
     runInitializer();
-    runIteration(dataValues, estimatedNumIterations);
+    runIteration(dataValues);
   }
 
-  private void runIteration(Object[] dataValues, int estimatedNumIterations) {
+  private void runIteration(List<Object> dataValues) {
     if (runStatus != OK) return;
 
-    currentIteration = createIterationInfo(dataValues, estimatedNumIterations);
+    currentIteration = createIterationInfo(dataValues);
     getSpecificationContext().setCurrentIteration(currentIteration);
 
     supervisor.beforeIteration(currentIteration);
@@ -292,12 +289,12 @@ public class BaseSpecRunner {
     currentIteration = null;
   }
 
-  private IterationInfo createIterationInfo(Object[] dataValues, int estimatedNumIterations) {
-    IterationInfo result = new IterationInfo(currentFeature, dataValues, estimatedNumIterations);
+  private IterationInfo createIterationInfo(List<Object> dataValues) {
+    IterationInfo result = new IterationInfo(currentFeature, dataValues.toArray());
     String iterationName = currentFeature.getIterationNameProvider().getName(result);
     result.setName(iterationName);
     Description description = Description.createTestDescription(spec.getReflection(),
-        iterationName, currentFeature.getFeatureMethod().getAnnotations());
+                                                                iterationName, currentFeature.getFeatureMethod().getAnnotations());
     result.setDescription(description);
     return result;
   }
@@ -467,7 +464,7 @@ public class BaseSpecRunner {
 
     // slow lane
     MethodInvocation invocation = new MethodInvocation(currentFeature,
-        currentIteration, sharedInstance, currentInstance, target, method, arguments);
+                                                       currentIteration, sharedInstance, currentInstance, target, method, arguments);
     try {
       invocation.proceed();
     } catch (Throwable t) {

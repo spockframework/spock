@@ -1,8 +1,6 @@
 package org.spockframework.runtime
 
-import org.spockframework.runtime.model.ErrorInfo
-import org.spockframework.runtime.model.IterationInfo
-
+import org.spockframework.runtime.model.*
 import spock.lang.Specification
 
 class AsyncRunListenerSpec extends Specification {
@@ -12,7 +10,7 @@ class AsyncRunListenerSpec extends Specification {
   def "replays events in correct order in a separate thread"() {
     def specInfo = new SpecInfoBuilder(getClass()).build()
     def featureInfo = specInfo.features[0]
-    def iterationInfo = new IterationInfo(featureInfo, [] as Object[], 1)
+    def iterationInfo = new IterationInfo(featureInfo, [] as Object[])
     def errorInfo = new ErrorInfo(featureInfo.featureMethod, new Exception())
 
     when:

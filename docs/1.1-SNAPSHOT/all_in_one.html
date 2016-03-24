@@ -2837,6 +2837,10 @@ meta-annotation.</p>
 <div class="paragraph">
 <p>In most execution environments, ignored feature methods and specs will be reported as "skipped".</p>
 </div>
+<div class="paragraph">
+<p>Care should be taken when ignoring feature methods in a spec class annotated with <code>spock.lang.Stepwise</code> since
+later feature methods may depend on earlier feature methods having executed.</p>
+</div>
 </div>
 <div class="sect3">
 <h4 id="_ignorerest">IgnoreRest</h4>
@@ -2855,6 +2859,10 @@ meta-annotation.</p>
 </div>
 <div class="paragraph">
 <p>@IgnoreRest is especially handy in execution environments that don&#8217;t provide an (easy) way to run a subset of methods.</p>
+</div>
+<div class="paragraph">
+<p>Care should be taken when ignoring feature methods in a spec class annotated with <code>spock.lang.Stepwise</code> since
+later feature methods may depend on earlier feature methods having executed.</p>
 </div>
 </div>
 <div class="sect3">
@@ -2896,6 +2904,10 @@ followed by a predicate:</p>
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@IgnoreIf</span>({ os.windows })
 <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">I'll run everywhere but on Windows</span><span class="delimiter">&quot;</span></span>() { ... }</code></pre>
 </div>
+</div>
+<div class="paragraph">
+<p>Care should be taken when ignoring feature methods in a spec class annotated with <code>spock.lang.Stepwise</code> since
+later feature methods may depend on earlier feature methods having executed.</p>
 </div>
 </div>
 <div class="sect3">
@@ -2979,6 +2991,10 @@ This way the tests will become part of the normal tests instead of being ignored
 <div class="paragraph">
 <p><code>Stepwise</code> only affects the class carrying the annotation; not sub or super classes.  Features after the first
 failure are skipped.</p>
+</div>
+<div class="paragraph">
+<p><code>Stepwise</code> does not override the behaviour of annotations such as <code>Ignore</code>, <code>IgnoreRest</code>, and <code>IgnoreIf</code>, so care
+should be taken when ignoring feature methods in spec classes annotated with <code>Stepwise</code>.</p>
 </div>
 </div>
 <div class="sect3">
@@ -4412,7 +4428,7 @@ that answer, closeTo(<span class="integer">42</span>, <span class="float">0.001<
 <div id="footer">
 <div id="footer-text">
 Version 1.0<br>
-Last updated 2016-02-28 16:34:15 UTC
+Last updated 2016-03-24 21:50:14 UTC
 </div>
 </div>
 </body>

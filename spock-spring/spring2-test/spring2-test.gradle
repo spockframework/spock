@@ -1,0 +1,12 @@
+def springVersion = "2.5.6.SEC03"
+
+dependencies {
+  compile "org.springframework:spring-core:$springVersion"
+
+  testCompile project(":spock-core")
+  testCompile "org.springframework:spring-context:$springVersion"
+  testCompile ("org.springframework:spring-test:$springVersion") { force = true }
+
+  testRuntime project(":spock-spring")
+}
+

@@ -5,7 +5,6 @@ import org.spockframework.util.ReflectionUtil;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.ApplicationContext;
-import org.springframework.test.context.TestContext;
 import org.springframework.test.context.TestExecutionListener;
 import spock.lang.Specification;
 
@@ -17,19 +16,22 @@ import java.util.*;
  *
  * @author Leonard Bruenings
  */
-public class SpringMockTestExecutionListener implements TestExecutionListener {
+public class SpringMockTestExecutionListener extends AbstractSpringTestExecutionListener {
 
   public static final String MOCKED_BEANS_LIST = "org.spockframework.spring.SpringMockTestExecutionListener.MOCKED_BEANS_LIST";
 
   private final MockUtil mockUtil = new MockUtil();
 
-  public void beforeTestClass(TestContext testContext) throws Exception {
+  @Override
+  public void beforeTestClass(SpringTestContext testContext) throws Exception {
   }
 
-  public void prepareTestInstance(TestContext testContext) throws Exception {
+  @Override
+  public void prepareTestInstance(SpringTestContext testContext) throws Exception {
   }
 
-  public void beforeTestMethod(TestContext testContext) throws Exception {
+  @Override
+  public void beforeTestMethod(SpringTestContext testContext) throws Exception {
     Object testInstance = testContext.getTestInstance();
 
     if (testInstance instanceof Specification) {
@@ -68,8 +70,9 @@ public class SpringMockTestExecutionListener implements TestExecutionListener {
     return scanScopedBeans != null && (scopes.size() == 0 || scopes.contains(beanDefinition.getScope()));
   }
 
+  @Override
   @SuppressWarnings("unchecked")
-  public void afterTestMethod(TestContext testContext) throws Exception {
+  public void afterTestMethod(SpringTestContext testContext) throws Exception {
     List<Object> mockedBeans = (List<Object>) testContext.getAttribute(MOCKED_BEANS_LIST);
 
     if (mockedBeans != null) {
@@ -79,7 +82,7 @@ public class SpringMockTestExecutionListener implements TestExecutionListener {
     }
   }
 
-  public void afterTestClass(TestContext testContext) throws Exception {
+  @Override
+  public void afterTestClass(SpringTestContext testContext) throws Exception {
   }
-
 }

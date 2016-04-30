@@ -37,6 +37,10 @@ public class SpringExtension extends AbstractGlobalExtension {
   private static final Class<? extends Annotation> contextHierarchyClass =
       (Class) ReflectionUtil.loadClassIfAvailable("org.springframework.test.context.ContextHierarchy");
 
+  @SuppressWarnings("unchecked")
+  private static final Class<? extends Annotation> springBootTestClass =
+    (Class) ReflectionUtil.loadClassIfAvailable("org.springframework.boot.test.context.SpringBootTest");
+
   // since Spring 4.0
   private static final Method findAnnotationDescriptorForTypesMethod;
 
@@ -57,7 +61,7 @@ public class SpringExtension extends AbstractGlobalExtension {
 
     SpringTestContextManager manager = new SpringTestContextManager(spec.getReflection());
     final SpringInterceptor interceptor = new SpringInterceptor(manager);
-    
+
     spec.addListener(new AbstractRunListener() {
       public void error(ErrorInfo error) {
         interceptor.error(error);
@@ -73,6 +77,7 @@ public class SpringExtension extends AbstractGlobalExtension {
   private boolean isSpringSpec(SpecInfo spec) {
     if (spec.isAnnotationPresent(ContextConfiguration.class)) return true;
     if (contextHierarchyClass != null && spec.isAnnotationPresent(contextHierarchyClass)) return true;
+    if (springBootTestClass != null && spec.isAnnotationPresent(springBootTestClass)) return true;
     return findAnnotationDescriptorForTypesMethod != null
         && ReflectionUtil.invokeMethod(
             null, findAnnotationDescriptorForTypesMethod, spec.getReflection(),

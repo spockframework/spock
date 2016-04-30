@@ -37,12 +37,13 @@ public class SpringExtension extends AbstractGlobalExtension {
   private static final Class<? extends Annotation> contextHierarchyClass =
       (Class) ReflectionUtil.loadClassIfAvailable("org.springframework.test.context.ContextHierarchy");
 
+  // since Spring 4.0
+  private static final Method findAnnotationDescriptorForTypesMethod;
+
+  // since Spring-Boot 1.4
   @SuppressWarnings("unchecked")
   private static final Class<? extends Annotation> springBootTestClass =
     (Class) ReflectionUtil.loadClassIfAvailable("org.springframework.boot.test.context.SpringBootTest");
-
-  // since Spring 4.0
-  private static final Method findAnnotationDescriptorForTypesMethod;
 
   static {
     Class<?> metaAnnotationUtilsClass =
@@ -75,13 +76,25 @@ public class SpringExtension extends AbstractGlobalExtension {
   }
 
   private boolean isSpringSpec(SpecInfo spec) {
-    if (spec.isAnnotationPresent(ContextConfiguration.class)) return true;
-    if (contextHierarchyClass != null && spec.isAnnotationPresent(contextHierarchyClass)) return true;
-    if (springBootTestClass != null && spec.isAnnotationPresent(springBootTestClass)) return true;
+    boolean contextAnnotationPresent = spec.isAnnotationPresent(ContextConfiguration.class);
+    boolean contextHierarchyAnnotationPresent = contextHierarchyClass != null
+      && spec.isAnnotationPresent(contextHierarchyClass);
+    boolean springBootTestAnnotationPresent = springBootTestClass != null
+      && spec.isAnnotationPresent(springBootTestClass);
+
+    boolean springAnnotationPresent = contextAnnotationPresent
+      || contextHierarchyAnnotationPresent
+      || springBootTestAnnotationPresent;
+
+    if (springAnnotationPresent) {
+      return true;
+    }
+
     return findAnnotationDescriptorForTypesMethod != null
         && ReflectionUtil.invokeMethod(
-            null, findAnnotationDescriptorForTypesMethod, spec.getReflection(),
-            new Class[] {ContextConfiguration.class, contextHierarchyClass}) != null;
+        null, findAnnotationDescriptorForTypesMethod, spec.getReflection(),
+        new Class[] {ContextConfiguration.class, contextHierarchyClass}) != null;
+
   }
 
   private void checkNoSharedFieldsInjected(SpecInfo spec) {

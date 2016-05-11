@@ -25,7 +25,7 @@ import org.spockframework.util.Nullable;
 
 /**
  * Base class for runtime information about an element in a Spock specification.
- * 
+ *
  * @author Peter Niederwieser
  */
 public abstract class NodeInfo<P extends NodeInfo, R extends AnnotatedElement> {
@@ -35,6 +35,18 @@ public abstract class NodeInfo<P extends NodeInfo, R extends AnnotatedElement> {
   private R reflection;
   private Object metadata;
   private Description description;
+
+  public NodeInfo(NodeInfo<P, R> nodeInfo) {
+    name = nodeInfo.name;
+    line = nodeInfo.line;
+    parent = nodeInfo.parent;
+    reflection = nodeInfo.reflection;
+    metadata = nodeInfo.metadata;
+    description = nodeInfo.description;
+  }
+
+  public NodeInfo() {
+  }
 
   public String getName() {
     return name;

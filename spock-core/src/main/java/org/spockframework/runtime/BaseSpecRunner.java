@@ -317,10 +317,11 @@ public class BaseSpecRunner {
     for (int attempt = 0; attempt < attemptsCount; attempt++) {
       boolean reportFailures = attempt == attemptsCount - 1; // report only on last attempt
       try {
+        IterationInfo currentIterationForAttempt = currentIteration.copy();
         Specification currentInstance = createNewInstance(false);
 
         runInitializer(feature, currentInstance);
-        runIteration(feature, currentInstance, currentIteration, reportFailures);
+        runIteration(feature, currentInstance, currentIterationForAttempt, reportFailures);
 
         break;
       } catch (InvokeException ie) {

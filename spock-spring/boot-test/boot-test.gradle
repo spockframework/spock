@@ -1,15 +1,15 @@
-def springVersion = "4.1.0.RELEASE"
-def bootVersion = "1.1.6.RELEASE"
+def bootVersion = "1.4.0.M2"
 
 dependencies {
-	compile "org.springframework:spring-core:$springVersion"
-	compile "org.springframework.boot:spring-boot:$bootVersion"
-	compile "org.springframework.boot:spring-boot-autoconfigure:$bootVersion"
+	compile "org.springframework.boot:spring-boot-starter-test:$bootVersion"
 
   testCompile project(":spock-core")
-  testCompile "org.springframework:spring-context:$springVersion"
-  testCompile "org.springframework:spring-test:$springVersion"
-
   testRuntime project(":spock-spring")
+}
+
+repositories {
+  maven {
+    url 'https://repo.spring.io/libs-milestone'
+  }
 }
 

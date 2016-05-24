@@ -55,6 +55,10 @@ public class NoSpecialMethodCall implements ISpecialMethodCall {
     return false;
   }
 
+  public boolean isGroupConditionBlock() {
+    return false;
+  }
+
   public boolean isTestDouble() {
     return false;
   }

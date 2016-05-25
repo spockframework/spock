@@ -26,7 +26,8 @@ import org.spockframework.util.InternalSpockError;
 
 import spock.lang.Specification;
 
-import static org.spockframework.runtime.RunStatus.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Executes a single Spec. Notifies its supervisor about overall execution
@@ -37,43 +38,62 @@ import static org.spockframework.runtime.RunStatus.*;
  */
 public class BaseSpecRunner {
   protected static final Object[] EMPTY_ARGS = new Object[0];
+  protected static final FeatureInfo NO_CURRENT_FEATURE = null;
+  protected static final IterationInfo NO_CURRENT_ITERATION = null;
 
   protected final SpecInfo spec;
   protected final IRunSupervisor supervisor;
-
-  protected FeatureInfo currentFeature;
-  protected IterationInfo currentIteration;
+  protected final Scheduler scheduler;
 
   protected Specification sharedInstance;
-  protected Specification currentInstance;
-  protected int runStatus = OK;
 
-  public BaseSpecRunner(SpecInfo spec, IRunSupervisor supervisor) {
+  public BaseSpecRunner(SpecInfo spec, IRunSupervisor supervisor, Scheduler scheduler) {
     this.spec = spec;
     this.supervisor = supervisor;
+    this.scheduler = scheduler;
   }
 
-  public int run() {
+  public void run() {
     // Sometimes a spec run is requested even though the spec has been excluded
     // (e.g. if JUnit is in control). In such a case, the best thing we can do
     // is to treat the spec as skipped.
     if (spec.isExcluded() || spec.isSkipped()) {
       supervisor.specSkipped(spec);
-      return OK;
+      return;
     }
 
-    createSpecInstance(true);
-    runSharedInitializer();
-    runSpec();
+    sharedInstance = createNewInstance(true);
 
-    return resetStatus(SPEC);
+    try {
+      runSharedInitializer();
+      runSpec();
+    } catch (InvokeException ie) {
+      supervisor.error(ie);
+    } catch (MultipleInvokeException me){
+      supervisor.error(me);
+    }
   }
 
-  private void runSpec() {
-    if (runStatus != OK) return;
+  private Specification createNewInstance(boolean shared) {
+    Specification instance;
+    try {
+      instance = (Specification) spec.getReflection().newInstance();
+    } catch (Throwable t) {
+      throw new InternalSpockError("Failed to instantiate spec '%s'", t).withArgs(spec.getName());
+    }
 
+    instance.getSpecificationContext().setCurrentSpec(spec);
+    if (shared){
+      instance.getSpecificationContext().setSharedInstance(instance);
+    }else {
+      instance.getSpecificationContext().setSharedInstance(sharedInstance);
+    }
+    return instance;
+  }
+
+  private void runSpec() throws InvokeException, MultipleInvokeException {
     supervisor.beforeSpec(spec);
-    invoke(this, createMethodInfoForDoRunSpec());
+    invoke(NO_CURRENT_FEATURE, NO_CURRENT_ITERATION, sharedInstance, this, createMethodInfoForDoRunSpec());
     supervisor.afterSpec(spec);
   }
 
@@ -94,43 +114,34 @@ public class BaseSpecRunner {
   }
 
   public void doRunSpec() {
-    runSetupSpec();
-    runFeatures();
+    try {
+      runSetupSpec();
+      runFeatures();
+    } catch (InvokeException ie) {
+      supervisor.error(ie);
+    } catch (MultipleInvokeException e) {
+      supervisor.error(e);
+    }
     runCleanupSpec();
   }
 
-  private void createSpecInstance(boolean shared) {
-    if (runStatus != OK) return;
-
-    try {
-      if (shared) {
-        sharedInstance = (Specification) spec.getReflection().newInstance();
-        currentInstance = sharedInstance;
-      } else {
-        currentInstance = (Specification) spec.getReflection().newInstance();
-      }
-    } catch (Throwable t) {
-      throw new InternalSpockError("Failed to instantiate spec '%s'", t).withArgs(spec.getName());
-    }
-
-    getSpecificationContext().setCurrentSpec(spec);
-    getSpecificationContext().setSharedInstance(sharedInstance);
-  }
-
-  private void runSharedInitializer() {
+  private void runSharedInitializer() throws InvokeException, MultipleInvokeException {
     runSharedInitializer(spec);
   }
 
-  private void runSharedInitializer(SpecInfo spec) {
-    if (spec == null) return;
-    invoke(this, createMethodInfoForDoRunSharedInitializer(spec), spec);
+  private void runSharedInitializer(SpecInfo spec) throws InvokeException, MultipleInvokeException {
+    invoke(NO_CURRENT_FEATURE, NO_CURRENT_ITERATION, sharedInstance, this, createMethodInfoForDoRunSharedInitializer(spec), spec);
   }
 
   private MethodInfo createMethodInfoForDoRunSharedInitializer(final SpecInfo spec) {
     MethodInfo result = new MethodInfo() {
       @Override
-      public Object invoke(Object target, Object... arguments) {
-        doRunSharedInitializer(spec);
+      public Object invoke(Object target, Object... arguments) throws InvokeException, MultipleInvokeException {
+        final SpecInfo superSpec = spec.getSuperSpec();
+        if (superSpec != null) {
+          runSharedInitializer(superSpec);
+        }
+        BaseSpecRunner.this.invoke(NO_CURRENT_FEATURE, NO_CURRENT_ITERATION, sharedInstance, sharedInstance, spec.getSharedInitializerMethod());
         return null;
       }
     };
@@ -142,25 +153,18 @@ public class BaseSpecRunner {
     return result;
   }
 
-  public void doRunSharedInitializer(SpecInfo spec) {
-    runSharedInitializer(spec.getSuperSpec());
-    if (runStatus != OK) return;
-    invoke(currentInstance, spec.getSharedInitializerMethod());
-  }
-
-  private void runSetupSpec() {
+  private void runSetupSpec() throws InvokeException, MultipleInvokeException {
     runSetupSpec(spec);
   }
 
-  private void runSetupSpec(SpecInfo spec) {
-    if (spec == null) return;
-    invoke(this, createMethodInfoForDoRunSetupSpec(spec), spec);
+  private void runSetupSpec(SpecInfo spec) throws InvokeException, MultipleInvokeException {
+    invoke(NO_CURRENT_FEATURE, NO_CURRENT_ITERATION, sharedInstance, this, createMethodInfoForDoRunSetupSpec(spec), spec);
   }
 
-  private MethodInfo createMethodInfoForDoRunSetupSpec(final SpecInfo spec) {
+  private MethodInfo createMethodInfoForDoRunSetupSpec(final SpecInfo spec) throws InvokeException {
     MethodInfo result = new MethodInfo() {
       @Override
-      public Object invoke(Object target, Object... arguments) {
+      public Object invoke(Object target, Object... arguments) throws InvokeException, MultipleInvokeException {
         doRunSetupSpec(spec);
         return null;
       }
@@ -173,37 +177,58 @@ public class BaseSpecRunner {
     return result;
   }
 
-  public void doRunSetupSpec(SpecInfo spec) {
-    runSetupSpec(spec.getSuperSpec());
+  public void doRunSetupSpec(SpecInfo spec) throws InvokeException, MultipleInvokeException {
+    final SpecInfo superSpec = spec.getSuperSpec();
+    if (superSpec != null) {
+      runSetupSpec(superSpec);
+    }
     for (MethodInfo method : spec.getSetupSpecMethods()) {
-      if (runStatus != OK) return;
-      invoke(currentInstance, method);
+      invoke(NO_CURRENT_FEATURE, NO_CURRENT_ITERATION, sharedInstance, sharedInstance, method);
     }
   }
 
   private void runFeatures() {
-    for (FeatureInfo feature : spec.getAllFeaturesInExecutionOrder()) {
-      if (resetStatus(FEATURE) != OK) return;
-      currentFeature = feature;
-      runFeature();
-      currentFeature = null;
+    List<FeatureInfo> allFeaturesInExecutionOrder = spec.getAllFeaturesInExecutionOrder();
+    Scheduler scheduler = this.scheduler.deriveScheduler(!spec.isSupportParallelExecution());
+    final int featureCount = allFeaturesInExecutionOrder.size();
+    for (int i = 0; i < featureCount; i++) {
+      final FeatureInfo feature = allFeaturesInExecutionOrder.get(i);
+
+      final boolean isLastFeature = i == featureCount - 1;
+      if (isLastFeature) {// let's not waste threads and execute last iteration in current
+        runFeature(feature);
+      } else {
+        scheduler.schedule(new Runnable() {
+          @Override
+          public void run() {
+            runFeature(feature);
+          }
+        });
+      }
     }
+    scheduler.waitFinished();
   }
 
   private void runCleanupSpec() {
-    currentInstance = sharedInstance;
     runCleanupSpec(spec);
   }
 
   private void runCleanupSpec(SpecInfo spec) {
-    if (spec == null) return;
-    invoke(this, createMethodForDoRunCleanupSpec(spec), spec);
+    try {
+      invoke(NO_CURRENT_FEATURE, NO_CURRENT_ITERATION, sharedInstance, this, createMethodForDoRunCleanupSpec(spec), spec);
+    } catch (InvokeException e) {
+      supervisor.error(e);
+    } catch (MultipleInvokeException e) {
+      for (InvokeException invokeException : e.getInvokeExceptions()) {
+        supervisor.error(invokeException);
+      }
+    }
   }
 
   private MethodInfo createMethodForDoRunCleanupSpec(final SpecInfo spec) {
     MethodInfo result = new MethodInfo() {
       @Override
-      public Object invoke(Object target, Object... arguments) {
+      public Object invoke(Object target, Object... arguments) throws InvokeException {
         doRunCleanupSpec(spec);
         return null;
       }
@@ -218,275 +243,326 @@ public class BaseSpecRunner {
 
   public void doRunCleanupSpec(SpecInfo spec) {
     for (MethodInfo method : spec.getCleanupSpecMethods()) {
-      if (action(runStatus) == ABORT) return;
-      invoke(currentInstance, method);
+      try {
+        invoke(NO_CURRENT_FEATURE, NO_CURRENT_ITERATION, sharedInstance, sharedInstance, method);
+      } catch (InvokeException e) {
+        supervisor.error(e);
+      } catch (MultipleInvokeException e) {
+        supervisor.error(e);
+      }
     }
-    runCleanupSpec(spec.getSuperSpec());
+    final SpecInfo superSpec = spec.getSuperSpec();
+    if (superSpec != null) {
+      runCleanupSpec(superSpec);
+    }
   }
 
-  private void runFeature() {
-    if (runStatus != OK) return;
+  private void runFeature(FeatureInfo feature) {
+    if (feature.isExcluded()) return;
 
-    if (currentFeature.isExcluded()) return;
-
-    if (currentFeature.isSkipped()) {
-      supervisor.featureSkipped(currentFeature);
+    if (feature.isSkipped()) {
+      supervisor.featureSkipped(feature);
       return;
     }
 
-    supervisor.beforeFeature(currentFeature);
-    invoke(this, createMethodInfoForDoRunFeature());
-    supervisor.afterFeature(currentFeature);
+    supervisor.beforeFeature(feature);
+    try {
+      invoke(feature, NO_CURRENT_ITERATION, sharedInstance, this, createMethodInfoForDoRunFeature(feature));
+    } catch (InvokeException e) {
+      supervisor.error(e);
+    } catch (MultipleInvokeException e) {
+      supervisor.error(e);
+    }
+    supervisor.afterFeature(feature);
   }
 
-  private MethodInfo createMethodInfoForDoRunFeature() {
+  private MethodInfo createMethodInfoForDoRunFeature(final FeatureInfo feature) {
     MethodInfo result = new MethodInfo() {
       @Override
-      public Object invoke(Object target, Object... arguments) {
-        doRunFeature();
+      public Object invoke(Object target, Object... arguments) throws InvokeException, MultipleInvokeException {
+        doRunFeature(feature);
         return null;
       }
     };
-    result.setParent(currentFeature.getParent());
+    result.setParent(feature.getParent());
     result.setKind(MethodKind.FEATURE_EXECUTION);
-    result.setFeature(currentFeature);
-    result.setDescription(currentFeature.getDescription());
-    for (IMethodInterceptor interceptor : currentFeature.getInterceptors())
+    result.setFeature(feature);
+    result.setDescription(feature.getDescription());
+    for (IMethodInterceptor interceptor : feature.getInterceptors()){
       result.addInterceptor(interceptor);
+    }
     return result;
   }
 
-  public void doRunFeature() {
-    currentFeature.setIterationNameProvider(new SafeIterationNameProvider(currentFeature.getIterationNameProvider()));
-    if (currentFeature.isParameterized())
-      runParameterizedFeature();
-    else runSimpleFeature();
+  public void doRunFeature(FeatureInfo feature) throws InvokeException, MultipleInvokeException {
+    feature.setIterationNameProvider(new SafeIterationNameProvider(feature.getIterationNameProvider()));
+    if (feature.isParameterized()){
+      runParameterizedFeature(feature);
+    }else {
+      runSimpleFeature(feature);
+    }
   }
 
-  private void runSimpleFeature() {
-    if (runStatus != OK) return;
-
-    initializeAndRunIteration(EMPTY_ARGS, 1);
-    resetStatus(ITERATION);
+  private void runSimpleFeature(FeatureInfo feature) throws InvokeException {
+    initializeAndRunIteration(feature, EMPTY_ARGS, 1);
   }
 
-  protected void initializeAndRunIteration(Object[] dataValues, int estimatedNumIterations) {
-    if (runStatus != OK) return;
+  protected void initializeAndRunIteration(FeatureInfo feature, Object[] dataValues, int estimatedNumIterations) throws InvokeException {
+    final int attemptsCount = feature.getRetryCount() + 1;
 
-    createSpecInstance(false);
-    runInitializer();
-    runIteration(dataValues, estimatedNumIterations);
+    IterationInfo currentIteration = createIterationInfo(feature, dataValues, estimatedNumIterations);
+
+    supervisor.beforeIteration(feature, currentIteration);
+
+    for (int attempt = 0; attempt < attemptsCount; attempt++) {
+      boolean reportFailures = attempt == attemptsCount - 1; // report only on last attempt
+      try {
+        IterationInfo currentIterationForAttempt = currentIteration.copy();
+        Specification currentInstance = createNewInstance(false);
+
+        runInitializer(feature, currentInstance);
+        runIteration(feature, currentInstance, currentIterationForAttempt, reportFailures);
+
+        break;
+      } catch (InvokeException ie) {
+        if (reportFailures) {
+          supervisor.error(ie);
+        }
+      } catch (MultipleInvokeException me) {
+        if (reportFailures) {
+          supervisor.error(me);
+        }
+      }
+    }
+
+    supervisor.afterIteration(feature, currentIteration);
   }
 
-  private void runIteration(Object[] dataValues, int estimatedNumIterations) {
-    if (runStatus != OK) return;
+  private void runIteration(FeatureInfo feature, Specification currentInstance, IterationInfo currentIteration, boolean reportFailures) throws InvokeException, MultipleInvokeException {
+    currentInstance.getSpecificationContext().setCurrentIteration(currentIteration);
 
-    currentIteration = createIterationInfo(dataValues, estimatedNumIterations);
-    getSpecificationContext().setCurrentIteration(currentIteration);
-
-    supervisor.beforeIteration(currentIteration);
-    invoke(this, createMethodInfoForDoRunIteration());
-    supervisor.afterIteration(currentIteration);
-
-    getSpecificationContext().setCurrentIteration(null);
-    currentIteration = null;
+    invoke(feature, currentIteration, currentInstance, this, createMethodInfoForDoRunIteration(feature, currentInstance, currentIteration, reportFailures));
   }
 
-  private IterationInfo createIterationInfo(Object[] dataValues, int estimatedNumIterations) {
-    IterationInfo result = new IterationInfo(currentFeature, dataValues, estimatedNumIterations);
-    String iterationName = currentFeature.getIterationNameProvider().getName(result);
+  private IterationInfo createIterationInfo(FeatureInfo feature, Object[] dataValues, int estimatedNumIterations) {
+    IterationInfo result = new IterationInfo(feature, dataValues, estimatedNumIterations);
+    String iterationName = feature.getIterationNameProvider().getName(result);
     result.setName(iterationName);
     Description description = Description.createTestDescription(spec.getReflection(),
-        iterationName, currentFeature.getFeatureMethod().getAnnotations());
+        iterationName, feature.getFeatureMethod().getAnnotations());
     result.setDescription(description);
     return result;
   }
 
-  private MethodInfo createMethodInfoForDoRunIteration() {
+  private MethodInfo createMethodInfoForDoRunIteration(final FeatureInfo feature, final Specification currentInstance, final IterationInfo currentIteration, final boolean reportFailures) {
     MethodInfo result = new MethodInfo() {
       @Override
-      public Object invoke(Object target, Object... arguments) {
-        doRunIteration();
+      public Object invoke(Object target, Object... arguments) throws InvokeException, MultipleInvokeException {
+        doRunIteration(feature, currentInstance, currentIteration, reportFailures);
         return null;
       }
     };
-    result.setParent(currentFeature.getParent());
+    result.setParent(feature.getParent());
     result.setKind(MethodKind.ITERATION_EXECUTION);
-    result.setFeature(currentFeature);
-    result.setDescription(currentFeature.getDescription());
-    for (IMethodInterceptor interceptor : currentFeature.getIterationInterceptors())
+    result.setFeature(feature);
+    result.setDescription(feature.getDescription());
+    for (IMethodInterceptor interceptor : feature.getIterationInterceptors()){
       result.addInterceptor(interceptor);
+    }
     return result;
   }
 
-  public void doRunIteration() {
-    runSetup();
-    runFeatureMethod();
-    runCleanup();
+  public void doRunIteration(FeatureInfo feature, Specification currentInstance, IterationInfo currentIteration, boolean reportFailures) throws MultipleInvokeException {
+    List<InvokeException> failures = new ArrayList<InvokeException>();
+    try {
+      runSetup(feature, currentInstance, currentIteration);
+      runFeatureMethod(feature, currentInstance, currentIteration);
+    } catch (InvokeException e) {
+      if (reportFailures){
+        supervisor.error(e);
+      }else{
+        failures.add(e);
+      }
+    }
+
+    try {
+      runCleanup(feature, currentInstance, currentIteration);
+    } catch (InvokeException e) {
+      if (reportFailures){
+        supervisor.error(e);
+      }else{
+        failures.add(e);
+      }
+    }
+
+    if (!failures.isEmpty()) {
+      throw new MultipleInvokeException(failures);
+    }
   }
 
-  protected int resetStatus(int scope) {
-    if (scope(runStatus) <= scope) runStatus = OK;
-    return runStatus;
-  }
-
-  protected void runParameterizedFeature() {
+  protected void runParameterizedFeature(FeatureInfo currentFeature) throws InvokeException, MultipleInvokeException {
     throw new UnsupportedOperationException("This runner cannot run parameterized features");
   }
 
-  private void runInitializer() {
-    runInitializer(spec);
+  private void runInitializer(FeatureInfo feature, final Specification currentInstance) throws InvokeException, MultipleInvokeException {
+    runInitializer(spec, feature, currentInstance);
   }
 
-  private void runInitializer(SpecInfo spec) {
-    if (spec == null) return;
-    invoke(this, createMethodInfoForDoRunInitializer(spec), spec);
+  private void runInitializer(SpecInfo spec, FeatureInfo feature, final Specification currentInstance) throws InvokeException, MultipleInvokeException {
+    invoke(feature, NO_CURRENT_ITERATION, currentInstance, this, createMethodInfoForDoRunInitializer(spec, feature, currentInstance), spec);
   }
 
-  private MethodInfo createMethodInfoForDoRunInitializer(final SpecInfo spec) {
+  private MethodInfo createMethodInfoForDoRunInitializer(final SpecInfo spec, final FeatureInfo feature, final Specification currentInstance) {
     MethodInfo result = new MethodInfo() {
       @Override
-      public Object invoke(Object target, Object... arguments) {
-        doRunInitializer(spec);
+      public Object invoke(Object target, Object... arguments) throws InvokeException, MultipleInvokeException {
+        doRunInitializer(spec, feature, currentInstance);
         return null;
       }
     };
-    result.setParent(currentFeature.getParent());
+    result.setParent(feature.getParent());
     result.setKind(MethodKind.INITIALIZER);
-    result.setFeature(currentFeature);
-    result.setDescription(currentFeature.getDescription());
-    for (IMethodInterceptor interceptor : spec.getInitializerInterceptors())
+    result.setFeature(feature);
+    result.setDescription(feature.getDescription());
+    for (IMethodInterceptor interceptor : spec.getInitializerInterceptors()){
       result.addInterceptor(interceptor);
+    }
     return result;
   }
 
-  public void doRunInitializer(SpecInfo spec) {
-    runInitializer(spec.getSuperSpec());
-    if (runStatus != OK) return;
-    invoke(currentInstance, spec.getInitializerMethod());
+  public void doRunInitializer(SpecInfo spec, FeatureInfo feature, Specification currentInstance) throws InvokeException, MultipleInvokeException {
+    final SpecInfo superSpec = spec.getSuperSpec();
+    if (superSpec != null) {
+      runInitializer(superSpec, feature, currentInstance);
+    }
+    invoke(feature, NO_CURRENT_ITERATION, currentInstance, currentInstance, spec.getInitializerMethod());
   }
 
-  private void runSetup() {
-    runSetup(spec);
+  private void runSetup(FeatureInfo feature, Specification currentInstance, IterationInfo currentIteration) throws InvokeException, MultipleInvokeException {
+    runSetup(spec, feature, currentInstance, currentIteration);
   }
 
-  private void runSetup(SpecInfo spec) {
+  private void runSetup(SpecInfo spec, FeatureInfo feature, Specification currentInstance, IterationInfo currentIteration) throws InvokeException, MultipleInvokeException {
     if (spec == null) return;
-    invoke(this, createMethodInfoForDoRunSetup(spec), spec);
+    invoke(feature, currentIteration, currentInstance, this, createMethodInfoForDoRunSetup(spec, feature, currentInstance, currentIteration), spec);
   }
 
-  private MethodInfo createMethodInfoForDoRunSetup(final SpecInfo spec) {
+  private MethodInfo createMethodInfoForDoRunSetup(final SpecInfo spec, final FeatureInfo feature, final Specification currentInstance, final IterationInfo currentIteration) {
     MethodInfo result = new MethodInfo() {
       @Override
-      public Object invoke(Object target, Object... arguments) {
-        doRunSetup(spec);
+      public Object invoke(Object target, Object... arguments) throws InvokeException, MultipleInvokeException {
+        doRunSetup(spec, feature, currentInstance, currentIteration);
         return null;
       }
     };
-    result.setParent(currentFeature.getParent());
+    result.setParent(feature.getParent());
     result.setKind(MethodKind.SETUP);
-    result.setFeature(currentFeature);
-    result.setDescription(currentFeature.getDescription());
-    for (IMethodInterceptor interceptor : spec.getSetupInterceptors())
+    result.setFeature(feature);
+    result.setDescription(feature.getDescription());
+    for (IMethodInterceptor interceptor : spec.getSetupInterceptors()){
       result.addInterceptor(interceptor);
+    }
     return result;
   }
 
-  public void doRunSetup(SpecInfo spec) {
-    runSetup(spec.getSuperSpec());
+  public void doRunSetup(SpecInfo spec, FeatureInfo feature, final Specification currentInstance, IterationInfo currentIteration) throws InvokeException, MultipleInvokeException {
+    final SpecInfo superSpec = spec.getSuperSpec();
+    if (superSpec != null) {
+      runSetup(superSpec, feature, currentInstance, currentIteration);
+    }
     for (MethodInfo method : spec.getSetupMethods()) {
-      if (runStatus != OK) return;
-      method.setFeature(currentFeature);
-      invoke(currentInstance, method);
+      invoke(feature, currentIteration, currentInstance, currentInstance, method);
     }
   }
 
-  private void runFeatureMethod() {
-    if (runStatus != OK) return;
-    invoke(currentInstance, currentFeature.getFeatureMethod(), currentIteration.getDataValues());
+  private void runFeatureMethod(FeatureInfo feature, final Specification currentInstance, IterationInfo currentIteration) throws InvokeException, MultipleInvokeException {
+    invoke(feature, currentIteration, currentInstance, currentInstance, feature.getFeatureMethod(), currentIteration.getDataValues());
   }
 
-  private void runCleanup() {
-    runCleanup(spec);
+  private void runCleanup(FeatureInfo feature, final Specification currentInstance, IterationInfo currentIteration) throws InvokeException, MultipleInvokeException {
+    runCleanup(spec, feature, currentInstance, currentIteration);
   }
 
-  private void runCleanup(SpecInfo spec) {
-    if (spec == null) return;
-    invoke(this, createMethodInfoForDoRunCleanup(spec), spec);
+  private void runCleanup(SpecInfo spec, FeatureInfo feature, final Specification currentInstance, IterationInfo currentIteration) throws InvokeException, MultipleInvokeException {
+    invoke(feature, currentIteration, currentInstance, this, createMethodInfoForDoRunCleanup(spec, feature, currentInstance, currentIteration), spec);
   }
 
-  private MethodInfo createMethodInfoForDoRunCleanup(final SpecInfo spec) {
+  private MethodInfo createMethodInfoForDoRunCleanup(final SpecInfo spec, final FeatureInfo feature, final Specification currentInstance, final IterationInfo currentIteration) {
     MethodInfo result = new MethodInfo() {
       @Override
-      public Object invoke(Object target, Object... arguments) {
-        doRunCleanup(spec);
+      public Object invoke(Object target, Object... arguments) throws InvokeException, MultipleInvokeException {
+        doRunCleanup(spec, feature, currentInstance, currentIteration);
         return null;
       }
     };
-    result.setParent(currentFeature.getParent());
+    result.setParent(feature.getParent());
     result.setKind(MethodKind.CLEANUP);
-    result.setFeature(currentFeature);
-    result.setDescription(currentFeature.getDescription());
-    for (IMethodInterceptor interceptor : spec.getCleanupInterceptors())
+    result.setFeature(feature);
+    result.setDescription(feature.getDescription());
+    for (IMethodInterceptor interceptor : spec.getCleanupInterceptors()){
       result.addInterceptor(interceptor);
+    }
     return result;
   }
 
-  public void doRunCleanup(SpecInfo spec) {
+  public void doRunCleanup(SpecInfo spec, FeatureInfo feature, final Specification currentInstance, IterationInfo currentIteration) throws InvokeException, MultipleInvokeException {
     if (spec.getIsBottomSpec()) {
-      runIterationCleanups();
-      if (action(runStatus) == ABORT) return;
+      runIterationCleanups(feature, currentIteration);
     }
     for (MethodInfo method : spec.getCleanupMethods()) {
-      if (action(runStatus) == ABORT) return;
-      invoke(currentInstance, method);
+      invoke(feature, currentIteration, currentInstance, currentInstance, method);
     }
-    runCleanup(spec.getSuperSpec());
+    final SpecInfo superSpec = spec.getSuperSpec();
+    if (superSpec != null) {
+      runCleanup(superSpec, feature, currentInstance, currentIteration);
+    }
   }
 
-  private void runIterationCleanups() {
+  private void runIterationCleanups(FeatureInfo currentFeature, IterationInfo currentIteration) {
     for (Runnable cleanup : currentIteration.getCleanups()) {
-      if (action(runStatus) == ABORT) return;
       try {
         cleanup.run();
       } catch (Throwable t) {
         ErrorInfo error = new ErrorInfo(CollectionUtil.getFirstElement(spec.getCleanupMethods()), t);
-        runStatus = supervisor.error(error);
+        supervisor.error(currentFeature, currentIteration, error);
       }
     }
   }
 
-  private void invoke(Object target, MethodInfo method, Object... arguments) {
+  private void invoke(FeatureInfo currentFeature, IterationInfo currentIteration, final Specification currentInstance, Object target, MethodInfo method, Object... arguments) throws InvokeException, MultipleInvokeException {
     if (method == null || method.isExcluded()) return;
 
     // fast lane
     if (method.getInterceptors().isEmpty()) {
-      invokeRaw(target, method, arguments);
+      invokeRaw(currentFeature, currentIteration, target, method, arguments);
       return;
     }
 
     // slow lane
-    MethodInvocation invocation = new MethodInvocation(currentFeature,
-        currentIteration, sharedInstance, currentInstance, target, method, arguments);
+    MethodInvocation invocation = new MethodInvocation(currentFeature, currentIteration, sharedInstance, currentInstance, target, method, arguments);
     try {
       invocation.proceed();
+    } catch (InvokeException ie) {
+      throw ie;
+    } catch (MultipleInvokeException ie) {
+      throw ie;
     } catch (Throwable t) {
       ErrorInfo error = new ErrorInfo(method, t);
-      runStatus = supervisor.error(error);
+      throw new InvokeException(currentFeature, currentIteration, error);
     }
   }
 
-  protected Object invokeRaw(Object target, MethodInfo method, Object... arguments) {
+  protected Object invokeRaw(FeatureInfo currentFeature, IterationInfo currentIteration, Object target, MethodInfo method, Object... arguments) throws InvokeException, MultipleInvokeException {
     try {
       return method.invoke(target, arguments);
+    } catch (MultipleInvokeException ie) {
+      throw ie;
+    } catch (InvokeException ie) {
+      throw ie;
     } catch (Throwable t) {
-      runStatus = supervisor.error(new ErrorInfo(method, t));
-      return null;
+      throw new InvokeException(currentFeature, currentIteration, new ErrorInfo(method, t));
     }
   }
 
-  protected SpecificationContext getSpecificationContext() {
-    return (SpecificationContext) currentInstance.getSpecificationContext();
-  }
 }
 

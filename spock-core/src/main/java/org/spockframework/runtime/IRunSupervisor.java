@@ -31,13 +31,18 @@ public interface IRunSupervisor {
    * run. All parameterization values have been computed successfully
    * at this point. Not called for non-parameterized features.
    */
-  void beforeIteration(IterationInfo iteration);
+  void beforeIteration(FeatureInfo currentFeature, IterationInfo iteration);
 
-  void afterIteration(IterationInfo iteration);
+  void afterIteration(FeatureInfo currentFeature, IterationInfo iteration);
+  void noIterationFound(FeatureInfo currentFeature);
   void afterFeature(FeatureInfo feature);
   void afterSpec(SpecInfo spec);
 
-  int error(ErrorInfo error);
+  void error(MultipleInvokeException multipleInvokeException);
+
+  void error(InvokeException invokeException);
+
+  void error(FeatureInfo currentFeature, IterationInfo currentIteration, ErrorInfo error);
 
   void specSkipped(SpecInfo spec);
   void featureSkipped(FeatureInfo feature);

@@ -32,6 +32,13 @@ public class IterationInfo extends NodeInfo<FeatureInfo, AnnotatedElement> {
     this.estimatedNumIterations = estimatedNumIterations;
   }
 
+  public IterationInfo(IterationInfo iterationInfo) {
+    super(iterationInfo);
+    dataValues = iterationInfo.dataValues == null ? null : iterationInfo.dataValues.clone();
+    estimatedNumIterations = iterationInfo.estimatedNumIterations;
+    cleanups.addAll(iterationInfo.cleanups);
+  }
+
   public FeatureInfo getFeature() {
     return getParent();
   }
@@ -57,7 +64,7 @@ public class IterationInfo extends NodeInfo<FeatureInfo, AnnotatedElement> {
    * Return this iteration's data values for the ongoing execution of the
    * owning feature method. The names of the data values (in the same order)
    * are available through {@link FeatureInfo#getDataVariables}.
-   * 
+   *
    * @return this iteration's data values for the ongoing execution of the
    * owning feature method
    */
@@ -85,5 +92,9 @@ public class IterationInfo extends NodeInfo<FeatureInfo, AnnotatedElement> {
 
   public List<Runnable> getCleanups() {
     return cleanups;
+  }
+
+  public IterationInfo copy() {
+    return new IterationInfo(this);
   }
 }

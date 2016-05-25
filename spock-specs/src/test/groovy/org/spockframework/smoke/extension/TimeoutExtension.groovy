@@ -29,13 +29,12 @@ import static java.util.concurrent.TimeUnit.*
  * @author Peter Niederwieser
  */
 class TimeoutExtension extends EmbeddedSpecification {
-  @Shared Thread testFrameworkThread = Thread.currentThread()
 
   def setup() {
     runner.addClassMemberImport TimeUnit
   }
 
-  @Timeout(1)
+  @Timeout(10)
   def "method that completes in time"() {
     setup: Thread.sleep 500
   }
@@ -43,31 +42,31 @@ class TimeoutExtension extends EmbeddedSpecification {
   @FailsWith(SpockTimeoutError)
   @Timeout(1)
   def "method that doesn't complete in time"() {
-    setup: Thread.sleep 1100
+    setup: Thread.sleep 12000
   }
 
-  @Timeout(value = 500, unit = MILLISECONDS)
+  @Timeout(value = 5000, unit = MILLISECONDS)
   def "method that completes in time (millis)"() {
     setup: Thread.sleep 250
   }
 
   @FailsWith(SpockTimeoutError)
-  @Timeout(value = 250, unit = MILLISECONDS)
+  @Timeout(value = 2500, unit = MILLISECONDS)
   def "method that doesn't complete in time (millis)"() {
-    setup: Thread.sleep 500
+    setup: Thread.sleep 5000
   }
 
   @Issue("http://issues.spockframework.org/detail?id=230")
   def "stack trace shows where thread is hung"() {
     when:
     runner.runSpecBody """
-      @Timeout(value = 250, unit = MILLISECONDS)
+      @Timeout(value = 2500, unit = MILLISECONDS)
       def foo() {
         setup: helper()
       }
 
       def helper() {
-        Thread.sleep 300
+        Thread.sleep 10000
       }
     """
 
@@ -84,19 +83,19 @@ class TimeoutExtension extends EmbeddedSpecification {
 
     when:
     def result = runner.runWithImports("""
-      @Timeout(value = 250, unit = MILLISECONDS)
+      @Timeout(value = 2500, unit = MILLISECONDS)
       class Foo extends Specification {
         def foo() {
           expect: true
         }
         def bar() {
           setup:
-          Thread.sleep 300
+          Thread.sleep 10000
         }
         @Timeout(value = 100, unit = MILLISECONDS)
         def baz() {
           setup:
-          Thread.sleep 150
+          Thread.sleep 15000
         }
       }
     """)
@@ -106,18 +105,11 @@ class TimeoutExtension extends EmbeddedSpecification {
 
     def e1 = result.failures[0].exception
     e1 instanceof SpockTimeoutError
-    e1.timeout == 0.25
+    e1.timeout == 2.5
 
     def e2 = result.failures[1].exception
     e2 instanceof SpockTimeoutError
     e2.timeout == 0.1
-  }
-
-  @Issue("issues.spockframework.org/detail?id=181")
-  @Timeout(1)
-  def "method invocation occurs on regular test framework thread"() {
-    expect:
-    Thread.currentThread() == testFrameworkThread
   }
 
   def "SpockTimeoutError indicates timeout settings"() {
@@ -125,7 +117,7 @@ class TimeoutExtension extends EmbeddedSpecification {
     runner.runSpecBody """
       @Timeout(value = 100, unit = MILLISECONDS)
       def foo() {
-        setup: Thread.sleep 250
+        setup: Thread.sleep 10000
       }
     """
 
@@ -162,5 +154,18 @@ class TimeoutExtension extends EmbeddedSpecification {
 
     expect:
     threads.find { it.name == "[spock.lang.Timeout] Watcher for method 'watcher thread has descriptive name'" }
+  }
+}
+
+// will not work with junit's Parallel Computer
+class TimeoutExtensionThreadAffinity extends EmbeddedSpecification{
+
+  @Shared Thread testFrameworkThread = Thread.currentThread()
+
+  @Issue("issues.spockframework.org/detail?id=181")
+  @Timeout(1)
+  def "method invocation occurs on regular test framework thread"() {
+    expect:
+        Thread.currentThread() == testFrameworkThread
   }
 }

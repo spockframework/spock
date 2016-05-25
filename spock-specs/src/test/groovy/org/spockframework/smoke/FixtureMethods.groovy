@@ -22,16 +22,20 @@ import org.spockframework.compiler.InvalidSpecCompileException
 import spock.lang.Issue
 
 class FixtureMethods extends EmbeddedSpecification {
-  static List log
+  public static ThreadLocal<List> log = new ThreadLocal<>()
 
   def setup() {
-    log = []
+    log.set([])
+  }
+
+  def cleanup() {
+    log.remove();
   }
 
   def "are run in correct order"() {
     when:
     runner.runSpecBody """
-def getLog() { org.spockframework.smoke.FixtureMethods.log }
+def getLog() { org.spockframework.smoke.FixtureMethods.log.get() }
 
 def setup() { log << "s" }
 def cleanup() { log << "c" }
@@ -42,7 +46,7 @@ def feature() { expect: true }
     """
 
     then:
-    log == ["ss", "s", "c", "cs"]
+    log.get() == ["ss", "s", "c", "cs"]
   }
 
   def "are run in correct order across class hierarchy"() {
@@ -50,7 +54,7 @@ def feature() { expect: true }
     runner.runWithImports """
 @Ignore
 class Base extends Specification {
-  def getLog() { org.spockframework.smoke.FixtureMethods.log }
+  def getLog() { org.spockframework.smoke.FixtureMethods.log.get() }
 
   def setup() { log << "s1" }
   def cleanup() { log << "c1" }
@@ -59,7 +63,7 @@ class Base extends Specification {
 }
 
 class Derived extends Base {
-  def getLog() { org.spockframework.smoke.FixtureMethods.log }
+  def getLog() { org.spockframework.smoke.FixtureMethods.log.get() }
 
   def setup() { log << "s2" }
   def cleanup() { log << "c2" }
@@ -71,7 +75,7 @@ class Derived extends Base {
     """
 
     then:
-    log == ["ss1", "ss2", "s1", "s2", "c2", "c1", "cs2", "cs1"]
+    log.get() == ["ss1", "ss2", "s1", "s2", "c2", "c1", "cs2", "cs1"]
   }
 
   @Issue("http://issues.spockframework.org/detail?id=139")
@@ -111,6 +115,7 @@ def cleanupSpec() {
 
     when:
     runner.runSpecBody("""
+def getLog() { org.spockframework.smoke.FixtureMethods.log.get() }
 def setup() { throw new RuntimeException() }
 def feature() { expect: true }
 def cleanup() { log << "cleanup" }
@@ -118,7 +123,23 @@ def cleanup() { log << "cleanup" }
 
     then:
     thrown(RuntimeException)
-    log == ["cleanup"]
+    log.get() == ["cleanup"]
+  }
+
+  def "cleanupSpec() is run when setupSpec() fails"() {
+    runner.addClassMemberImport(FixtureMethods)
+
+    when:
+    runner.runSpecBody("""
+def getLog() { org.spockframework.smoke.FixtureMethods.log.get() }
+def setupSpec() { throw new RuntimeException() }
+def feature() { expect: true }
+def cleanupSpec() { log << "cleanupSpec" }
+    """)
+
+    then:
+    thrown(RuntimeException)
+    log.get() == ["cleanupSpec"]
   }
 
   def "cleanup() is not run when field initializer fails"() {
@@ -135,7 +156,7 @@ def cleanup() { log << "cleanup" }
 
     then:
     thrown(RuntimeException)
-    log.empty
+    log.get().empty
   }
 
   static class BlowUp {

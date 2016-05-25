@@ -16,17 +16,14 @@ package org.spockframework.runtime;
 
 import org.junit.ComparisonFailure;
 import org.junit.internal.AssumptionViolatedException;
-import org.junit.internal.runners.model.MultipleFailureException;
 import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
 
+import org.junit.runners.model.MultipleFailureException;
 import org.spockframework.runtime.condition.IObjectRenderer;
 import org.spockframework.runtime.model.*;
-import org.spockframework.util.InternalSpockError;
 import org.spockframework.util.TextUtil;
-
-import static org.spockframework.runtime.RunStatus.*;
 
 public class JUnitSupervisor implements IRunSupervisor {
   private final SpecInfo spec;
@@ -34,12 +31,6 @@ public class JUnitSupervisor implements IRunSupervisor {
   private final IStackTraceFilter filter;
   private final IRunListener masterListener;
   private final IObjectRenderer<Object> diffedObjectRenderer;
-
-  private FeatureInfo currentFeature;
-  private IterationInfo currentIteration;
-
-  private int iterationCount;
-  private boolean errorSinceLastReset;
 
   public JUnitSupervisor(SpecInfo spec, RunNotifier notifier, IStackTraceFilter filter,
       IObjectRenderer<Object> diffedObjectRenderer) {
@@ -56,38 +47,40 @@ public class JUnitSupervisor implements IRunSupervisor {
 
   public void beforeFeature(FeatureInfo feature) {
     masterListener.beforeFeature(feature);
-    currentFeature = feature;
 
     if (!feature.isReportIterations())
       notifier.fireTestStarted(feature.getDescription());
-
-    if (feature.isParameterized()) {
-      iterationCount = 0;
-      errorSinceLastReset = false;
-    }
   }
 
-  public void beforeIteration(IterationInfo iteration) {
+  public void beforeIteration(FeatureInfo currentFeature, IterationInfo iteration) {
     masterListener.beforeIteration(iteration);
-    currentIteration = iteration;
-    
-    iterationCount++;
+
     if (currentFeature.isReportIterations())
       notifier.fireTestStarted(iteration.getDescription());
   }
 
-  public int error(ErrorInfo error) {
+
+  public void error(InvokeException invokeException) {
+    FeatureInfo currentFeature = invokeException.getCurrentFeature();
+    IterationInfo currentIteration = invokeException.getCurrentIteration();
+    ErrorInfo error = invokeException.getErrorInfo();
+    error(currentFeature, currentIteration, error);
+  }
+
+  public void error(FeatureInfo currentFeature, IterationInfo currentIteration, ErrorInfo error) {
     Throwable exception = error.getException();
 
-    if (exception instanceof MultipleFailureException)
-      return handleMultipleFailures(error);
+    if (exception instanceof MultipleFailureException) {
+      handleMultipleFailures(currentFeature, currentIteration, error);
+      return;
+    }
 
     if (isFailedEqualityComparison(exception))
       exception = convertToComparisonFailure(exception);
 
     filter.filter(exception);
 
-    Failure failure = new Failure(getCurrentDescription(), exception);
+    Failure failure = new Failure(getCurrentDescription(currentFeature, currentIteration), exception);
 
     if (exception instanceof AssumptionViolatedException) {
       // Spock has no concept of "violated assumption", so we don't notify Spock listeners
@@ -99,18 +92,13 @@ public class JUnitSupervisor implements IRunSupervisor {
       masterListener.error(error);
       notifier.fireTestFailure(failure);
     }
-
-    errorSinceLastReset = true;
-    return statusFor(error);
   }
 
   // for better JUnit compatibility, e.g when a @Rule is used
-  private int handleMultipleFailures(ErrorInfo error) {
+  private void handleMultipleFailures(FeatureInfo currentFeature, IterationInfo currentIteration, ErrorInfo error) {
     MultipleFailureException multiFailure = (MultipleFailureException) error.getException();
-    int runStatus = OK;
     for (Throwable failure : multiFailure.getFailures())
-      runStatus = error(new ErrorInfo(error.getMethod(), failure));
-    return runStatus;
+      error(currentFeature, currentIteration, new ErrorInfo(error.getMethod(), failure));
   }
 
   private boolean isFailedEqualityComparison(Throwable exception) {
@@ -118,7 +106,8 @@ public class JUnitSupervisor implements IRunSupervisor {
 
     Condition condition = ((ConditionNotSatisfiedError) exception).getCondition();
     ExpressionInfo expr = condition.getExpression();
-    return expr != null && expr.isEqualityComparison();
+    return expr != null && expr.isEqualityComparison() && // it is equality
+        exception.getCause() == null;    // and it is not failed because of exception
   }
 
   // enables IDE support (diff dialog)
@@ -144,52 +133,34 @@ public class JUnitSupervisor implements IRunSupervisor {
     }
   }
 
-  private int statusFor(ErrorInfo error) {
-    switch (error.getMethod().getKind()) {
-      case DATA_PROCESSOR:
-      case INITIALIZER:
-      case ITERATION_EXECUTION:
-      case SETUP:
-      case CLEANUP:
-      case FEATURE:
-        return END_ITERATION;
-      case FEATURE_EXECUTION:
-      case DATA_PROVIDER:
-        return END_FEATURE;
-      case SHARED_INITIALIZER:
-      case SETUP_SPEC:
-      case CLEANUP_SPEC:
-      case SPEC_EXECUTION:
-        return END_SPEC;
-      default:
-        throw new InternalSpockError("unknown method kind");
+  public void afterIteration(FeatureInfo currentFeature, IterationInfo iteration) {
+    masterListener.afterIteration(iteration);
+    if (currentFeature.isReportIterations()) {
+      notifier.fireTestFinished(iteration.getDescription());
     }
   }
 
-  public void afterIteration(IterationInfo iteration) {
-    masterListener.afterIteration(iteration);
-    if (currentFeature.isReportIterations())
-      notifier.fireTestFinished(iteration.getDescription());
-    
-    currentIteration = null;
+  public void noIterationFound(FeatureInfo currentFeature){
+    notifier.fireTestFailure(new Failure(currentFeature.getDescription(),
+      new SpockExecutionException("Data provider has no data")));
   }
 
   public void afterFeature(FeatureInfo feature) {
-    if (feature.isParameterized()) {
-      if (iterationCount == 0 && !errorSinceLastReset)
-        notifier.fireTestFailure(new Failure(feature.getDescription(),
-            new SpockExecutionException("Data provider has no data")));
-    }
-
     masterListener.afterFeature(feature);
-    if (!feature.isReportIterations())
+    if (!feature.isReportIterations()) {
       notifier.fireTestFinished(feature.getDescription());
-
-    currentFeature = null;
+    }
   }
 
   public void afterSpec(SpecInfo spec) {
     masterListener.afterSpec(spec);
+  }
+
+  @Override
+  public void error(MultipleInvokeException multipleInvokeException) {
+    for (InvokeException invokeException : multipleInvokeException.getInvokeExceptions()) {
+      error(invokeException);
+    }
   }
 
   public void specSkipped(SpecInfo spec) {
@@ -202,11 +173,13 @@ public class JUnitSupervisor implements IRunSupervisor {
     notifier.fireTestIgnored(feature.getDescription());
   }
 
-  private Description getCurrentDescription() {
-    if (currentIteration != null && currentFeature.isReportIterations())
+  private Description getCurrentDescription(FeatureInfo currentFeature, IterationInfo currentIteration) {
+    if (currentIteration != null && currentFeature.isReportIterations()) {
       return currentIteration.getDescription();
-    if (currentFeature != null) 
+    }
+    if (currentFeature != null) {
       return currentFeature.getDescription();
+    }
     return spec.getDescription();
   }
 }

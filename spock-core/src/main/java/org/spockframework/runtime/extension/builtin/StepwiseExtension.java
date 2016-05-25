@@ -26,6 +26,15 @@ public class StepwiseExtension extends AbstractAnnotationDrivenExtension {
     sortFeaturesInDeclarationOrder(spec);
     includeFeaturesBeforeLastIncludedFeature(spec);
     skipFeaturesAfterFirstFailingFeature(spec);
+
+    forceSequential(spec);
+  }
+
+  private void forceSequential(SpecInfo spec) {
+    spec.setSupportParallelExecution(false);
+    for (FeatureInfo featureInfo : spec.getAllFeaturesInExecutionOrder()) {
+      featureInfo.setSupportParallelExecution(false);
+    }
   }
 
   private void sortFeaturesInDeclarationOrder(SpecInfo spec) {

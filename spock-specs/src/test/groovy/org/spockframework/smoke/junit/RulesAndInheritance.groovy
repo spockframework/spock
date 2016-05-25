@@ -19,6 +19,7 @@ import org.junit.rules.TestName
 
 import spock.lang.*
 
+@ConcurrentExecutionMode(ConcurrentExecutionMode.Mode.FORCE_SEQUENTIAL) // it should be executed in order to distinguish between base and derived feature
 @Issue("http://issues.spockframework.org/detail?id=98")
 class RulesAndInheritance extends RulesAndInheritanceBase {
   @Rule

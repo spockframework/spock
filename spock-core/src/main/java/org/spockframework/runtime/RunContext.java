@@ -20,6 +20,7 @@ import java.util.*;
 
 import org.junit.runner.notification.RunNotifier;
 
+import org.junit.runners.model.RunnerScheduler;
 import org.spockframework.builder.DelegatingScript;
 import org.spockframework.runtime.condition.*;
 import org.spockframework.runtime.model.SpecInfo;
@@ -80,9 +81,11 @@ public class RunContext {
     return new ExtensionRunner(spec, globalExtensionRegistry, globalExtensionRegistry);
   }
 
-  public ParameterizedSpecRunner createSpecRunner(SpecInfo spec, RunNotifier notifier) {
-    return new ParameterizedSpecRunner(spec,
-        new JUnitSupervisor(spec, notifier, createStackTraceFilter(spec), diffedObjectRenderer));
+  public ParameterizedSpecRunner createSpecRunner(SpecInfo spec, RunNotifier notifier, Scheduler scheduler) {
+    return new ParameterizedSpecRunner(
+        spec,
+        new JUnitSupervisor(spec, notifier, createStackTraceFilter(spec), diffedObjectRenderer),
+        scheduler);
   }
 
   @Nullable

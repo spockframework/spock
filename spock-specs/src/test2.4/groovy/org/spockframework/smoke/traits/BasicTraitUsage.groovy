@@ -18,6 +18,7 @@ package org.spockframework.smoke.traits
 
 import spock.lang.*
 
+@ConcurrentExecutionMode(ConcurrentExecutionMode.Mode.FORCE_SEQUENTIAL)
 class BasicTraitUsage extends Specification implements MyTrait {
   boolean setupEvaluated
   @Shared

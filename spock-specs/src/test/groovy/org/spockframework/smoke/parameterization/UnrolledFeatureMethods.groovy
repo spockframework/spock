@@ -327,6 +327,32 @@ def "an actor (named #actor.getName()) age #actor.getAge()"() {
 
   }
 
+  def "duplicated generated names should become different"() {
+    def List<String> descriptions = new ArrayList<>()
+    when:
+    runner.runSpecBody("""
+@Unroll
+def "test #x"(int x) {
+  expect: true
+
+  where:
+    x | _
+    1 | _
+    1 | _
+    1 | _
+    2 | _
+    2 | _
+}
+    """)
+
+    then:
+     _ * listener.testStarted { descriptions.add(it.methodName) }
+     descriptions.size() == new HashSet(descriptions).size() // no duplicates
+
+  }
+
+
+
   static class Actor {
     Map details = [name: "fred", age: 30]
   }

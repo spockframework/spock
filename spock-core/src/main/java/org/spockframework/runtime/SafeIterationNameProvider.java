@@ -17,20 +17,52 @@ package org.spockframework.runtime;
 import org.spockframework.runtime.model.IterationInfo;
 import org.spockframework.runtime.model.NameProvider;
 
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.atomic.AtomicInteger;
+
 public class SafeIterationNameProvider implements NameProvider<IterationInfo> {
   private final NameProvider<IterationInfo> delegate;
-  private int iterationCount;
-  
+  private final AtomicInteger iterationCount = new AtomicInteger(0);
+  private final ConcurrentMap<String, Boolean> usedNames = new ConcurrentHashMap<String, Boolean>();
+
   public SafeIterationNameProvider(NameProvider<IterationInfo> delegate) {
     this.delegate = delegate;
   }
-  
+
   public String getName(IterationInfo iteration) {
-    String safeName = iteration.getParent().isReportIterations() ? 
-        String.format("%s[%d]", iteration.getParent().getName(), iterationCount++) : iteration.getParent().getName();
-    
+    final String name = getNameImpl(iteration);
+    if (iteration.getParent().isReportIterations()){
+      return unique(name);
+    }else {
+      return name;
+    }
+  }
+
+    private String unique(String name) {
+        if (tryRegisterName(name)){
+            return name;
+        }else {
+            for (int i=1; i<Integer.MAX_VALUE; i++){
+                final String newName = name + " [" + i + "]";
+                if (tryRegisterName(newName)){
+                    return newName;
+                }
+            }
+        }
+        throw new RuntimeException("will not reach here");
+    }
+
+    private boolean tryRegisterName(String name) {
+        return usedNames.putIfAbsent(name, Boolean.TRUE) == null;
+    }
+
+    private String getNameImpl(IterationInfo iteration) {
+    String safeName = iteration.getParent().isReportIterations() ?
+        String.format("%s[%d]", iteration.getParent().getName(), iterationCount.getAndIncrement()) : iteration.getParent().getName();
+
     if (delegate == null) return safeName;
-    
+
     try {
       String name = delegate.getName(iteration);
       if (name != null) return name;

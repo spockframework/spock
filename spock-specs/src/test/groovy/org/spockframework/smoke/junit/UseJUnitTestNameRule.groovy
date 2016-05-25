@@ -10,7 +10,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */  
+ */
 
 package org.spockframework.smoke.junit
 
@@ -18,6 +18,7 @@ import spock.lang.*
 import org.junit.Rule
 import org.junit.rules.TestName
 
+@ConcurrentExecutionMode(ConcurrentExecutionMode.Mode.FORCE_SEQUENTIAL) // TestName rule does not support parallel execution
 @Issue("http://issues.spockframework.org/detail?id=108")
 class UseJUnitTestNameRule extends Specification {
   @Rule
@@ -31,7 +32,7 @@ class UseJUnitTestNameRule extends Specification {
   def "data-driven, not unrolled"() {
     expect:
     name.methodName == "data-driven, not unrolled"
-    
+
     where:
     i << (1..3)
   }

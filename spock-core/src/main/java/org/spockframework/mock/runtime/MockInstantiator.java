@@ -16,7 +16,7 @@ package org.spockframework.mock.runtime;
 
 import java.util.List;
 
-import org.objenesis.ObjenesisHelper;
+import org.objenesis.ObjenesisStd;
 import org.spockframework.mock.CannotCreateMockException;
 import org.spockframework.runtime.GroovyRuntimeUtil;
 import org.spockframework.util.Nullable;
@@ -42,7 +42,7 @@ public class MockInstantiator {
   // inner class to defer class loading
   private static class ObjenesisInstantiator {
     static Object instantiate(Class<?> clazz) {
-      return clazz.cast(ObjenesisHelper.newInstance(clazz));
+      return clazz.cast(new ObjenesisStd(false).newInstance(clazz));
     }
   }
 }

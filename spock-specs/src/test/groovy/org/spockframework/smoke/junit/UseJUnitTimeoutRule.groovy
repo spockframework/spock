@@ -21,7 +21,7 @@ import spock.lang.FailsWith
 import spock.lang.Ignore
 
 class UseJUnitTimeoutRule extends EmbeddedSpecification {
-  def timeout
+  ThreadLocal<Integer> timeout = new ThreadLocal<>()
 
   def setup() {
     runner.configurationScript = {
@@ -31,8 +31,12 @@ class UseJUnitTimeoutRule extends EmbeddedSpecification {
     }
   }
 
+  void cleanup() {
+    timeout.remove()
+  }
+
   def "feature method that completes in time"() {
-    timeout = 500
+    timeout.set(5000)
 
     when:
     runFeatureMethodThatSleeps(0)
@@ -43,10 +47,10 @@ class UseJUnitTimeoutRule extends EmbeddedSpecification {
 
   @Ignore("sometimes fails due to changed rule semantics in JUnit 4.10")
   def "feature method that does not complete in time"() {
-    timeout = 250
+    timeout.set(2500)
 
     when:
-    runFeatureMethodThatSleeps(500)
+    runFeatureMethodThatSleeps(10000)
 
     then:
     Exception e = thrown()
@@ -56,7 +60,7 @@ class UseJUnitTimeoutRule extends EmbeddedSpecification {
   private Result runFeatureMethodThatSleeps(delay) {
     runner.runSpecBody """
 @org.junit.Rule
-org.junit.rules.Timeout timeout = new org.junit.rules.Timeout($timeout)
+org.junit.rules.Timeout timeout = new org.junit.rules.Timeout(${timeout.get()})
 
 def foo() {
   setup:

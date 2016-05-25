@@ -58,25 +58,31 @@ public class TimeoutInterceptor implements IMethodInterceptor {
           System.out.printf("[spock.lang.Timeout] Could not sync with Feature for method '%s'", invocation.getMethod().getName());
         }
 
-        while (!synced) {
-          try {
-            synced = sync.offer(stackTrace, waitMillis, TimeUnit.MILLISECONDS);
-          } catch (InterruptedException ignored) {
-            // The mission of this thread is to repeatedly interrupt the main thread until
-            // the latter returns. Once this mission has been accomplished, this thread will die quickly
-          }
-          if (!synced) {
-            if (stackTrace.length == 0) {
-              stackTrace = mainThread.getStackTrace();
-              waitMillis = 250;
-            } else {
-              waitMillis *= 2;
-              System.out.printf("[spock.lang.Timeout] Method '%s' has not yet returned - interrupting. Next try in %1.2f seconds.\n",
-                  invocation.getMethod().getName(), waitMillis / 1000.);
+        try {
+          while (!synced) {
+            try {
+              synced = sync.offer(stackTrace, waitMillis, TimeUnit.MILLISECONDS);
+            } catch (InterruptedException ignored) {
+              // The mission of this thread is to repeatedly interrupt the main thread until
+              // the latter returns. Once this mission has been accomplished, this thread will die quickly
             }
-            mainThread.interrupt();
+            if (!synced) {
+              if (stackTrace.length == 0) {
+                stackTrace = mainThread.getStackTrace();
+                waitMillis = 250;
+              } else {
+                waitMillis *= 2;
+                System.out.printf("[spock.lang.Timeout] Method '%s' has not yet returned - interrupting. Next try in %1.2f seconds.\n",
+                  invocation.getMethod().getName(), waitMillis / 1000.);
+              }
+              mainThread.interrupt();
+            }
           }
+        }catch (Throwable t){
+          t.printStackTrace();
         }
+        System.out.printf("[spock.lang.Timeout] Method '%s' DONE - interrupting. Next try in %1.2f seconds.\n",
+          invocation.getMethod().getName(), waitMillis / 1000.);
       }
     }.start();
 

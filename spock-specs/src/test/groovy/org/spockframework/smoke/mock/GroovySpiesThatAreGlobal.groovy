@@ -14,6 +14,8 @@
 
 package org.spockframework.smoke.mock
 
+import spock.lang.ConcurrentExecutionMode
+
 import java.lang.reflect.Modifier
 
 import spock.lang.Specification

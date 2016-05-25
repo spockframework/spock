@@ -20,6 +20,9 @@ import org.spockframework.runtime.AbstractRunListener;
 import org.spockframework.runtime.AsyncStandardStreamsListener;
 import org.spockframework.runtime.StandardStreamsCapturer;
 import org.spockframework.runtime.extension.AbstractGlobalExtension;
+import org.spockframework.runtime.extension.IMethodInterceptor;
+import org.spockframework.runtime.extension.IMethodInvocation;
+import org.spockframework.runtime.model.FeatureInfo;
 import org.spockframework.runtime.model.SpecInfo;
 import org.spockframework.util.IoUtil;
 
@@ -35,8 +38,17 @@ public class ReportLogExtension extends AbstractGlobalExtension {
 
   volatile ReportLogConfiguration reportConfig;
 
-  public void visitSpec(SpecInfo spec) {
+  public void visitSpec(final SpecInfo spec) {
     if (!reportConfig.enabled) return;
+
+    // we should force sequential mode after other annotation-driven extension (for ex. ConcurrentExecutionModeExtension) will change parallel mode
+    spec.addInitializerInterceptor(new IMethodInterceptor() {
+      @Override
+      public void intercept(IMethodInvocation invocation) throws Throwable {
+        forceSequential(spec);
+        invocation.proceed();
+      }
+    });
 
     if (logWriterListener != null) {
       spec.addListener(logWriterListener);
@@ -51,6 +63,13 @@ public class ReportLogExtension extends AbstractGlobalExtension {
           streamsCapturer.start();
         }
       });
+    }
+  }
+
+  private void forceSequential(SpecInfo spec) {
+    spec.setSupportParallelExecution(false);
+    for (FeatureInfo featureInfo : spec.getAllFeaturesInExecutionOrder()) {
+      featureInfo.setSupportParallelExecution(false);
     }
   }
 

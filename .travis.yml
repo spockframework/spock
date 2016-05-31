@@ -7,7 +7,6 @@ cache:
     - $HOME/.gradle
 
 jdk:
-  - openjdk6
   - openjdk7
   - oraclejdk8
 
@@ -17,6 +16,7 @@ env:
     - VARIANT=2.3
     - VARIANT=2.4
   global:
+    - SONATYPE_OSS_USERNAME=pniederw
     # SIGNING_PASSWORD
     - secure: "GBvPdDAaMfr0iAYHzVxhMIBVHFanEPY+69CbEFijbZjhv8h0FPvuLos2p1K5/hbmNkQ1Hd2+CHsm3ErvXQHXtpXn0HmKvzSP7pnPk83iRNVGPieasvfnKiSohZeEplkAK6kbK8sZbjJRUFqUZtwyPtWfs244rCOo++D3KtfggzQ="
     # SONATYPE_OSS_PASSWORD
@@ -33,14 +33,12 @@ matrix:
     # See travisCiBuild task for mandatory combinations
     - jdk: oraclejdk8
       env: VARIANT=2.3
-    - jdk: openjdk7
-      env: VARIANT=2.0
-    - jdk: openjdk7
-      env: VARIANT=2.4
+
+before_install: "export TRAVIS_COMMIT_MSG=$(git log --format=%B -n 1 $TRAVIS_COMMIT)"
 
 install: true
 
-script: ./gradlew travisCiBuild -Dvariant=$VARIANT
+script: ./gradlew prepareForTravisCiBuild -Dvariant=$VARIANT -i && ./gradlew travisCiBuild -Dvariant=$VARIANT
 
 notifications:
   slack:

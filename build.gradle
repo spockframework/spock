@@ -6,11 +6,15 @@ buildscript {
 
   dependencies {
     classpath "org.asciidoctor:asciidoctor-gradle-plugin:1.5.2"
+    classpath 'pl.allegro.tech.build:axion-release-plugin:1.3.3'
+    classpath "io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.5.3"
   }
 }
 
 apply plugin: "base"
 apply plugin: "org.asciidoctor.convert"
+apply plugin: 'pl.allegro.tech.build.axion-release'
+apply plugin: 'io.codearte.nexus-staging'
 
 description = "Spock Framework"
 
@@ -32,12 +36,10 @@ ext {
   } else {
     throw new InvalidUserDataException("Unknown variant: $variant. Choose one of: $variants")
   }
-  javaVersions = [1.6, 1.7, 1.8]
+  javaVersions = [1.7, 1.8]
   javaVersion = System.getProperty("java.specification.version") as BigDecimal
-  baseVersion = "1.1"
-  snapshotVersion = true
-  fullVersion = "$baseVersion-groovy-$variant" + (snapshotVersion ? "-SNAPSHOT" : "")
-  variantLessVersion = baseVersion + (snapshotVersion ? "-SNAPSHOT" : "")
+  targetJavaVersion = "1.6"
+  releaseTriggeringCommand = "[#DO_RELEASE]"
   libs = [
     jetbrainsAnnotations: "org.jetbrains:annotations:13.0",
     ant: "org.apache.ant:ant:1.9.4",
@@ -49,6 +51,30 @@ ext {
     log4j: "log4j:log4j:1.2.17",
     objenesis: "org.objenesis:objenesis:2.1"
   ]
+}
+
+scmVersion {
+  tag {
+    prefix = 'release'
+    versionSeparator = '/'
+  }
+  createReleaseCommit = true
+  releaseCommitMessage { version, position -> "Release version: ${version}\n\n[ci skip]" }
+  versionIncrementer 'incrementPrerelease'
+}
+
+String calculateFullVersion(String baseVersion) {
+  //TODO: Replace with a smart regexp like (.*)(-SNAPSHOT|) -> {1}-groovy-2.3{2}
+  if (baseVersion.endsWith('-SNAPSHOT')) {
+    return baseVersion - '-SNAPSHOT' + "-groovy-$variant-SNAPSHOT"
+  }
+  return baseVersion + "-groovy-$variant"
+}
+
+ext {
+  baseVersion = scmVersion.version
+  fullVersion = calculateFullVersion(baseVersion)
+  snapshotVersion = baseVersion.endsWith('-SNAPSHOT')
 }
 
 allprojects {
@@ -72,8 +98,8 @@ subprojects {
   apply plugin: "groovy"
   apply plugin: "signing"
 
-  sourceCompatibility = javaVersions.min()
-  targetCompatibility = javaVersions.min()
+  sourceCompatibility = targetJavaVersion
+  targetCompatibility = targetJavaVersion
 
   sourceSets.all { ss ->
     for (v in variants.findAll { it <= variant } ) {
@@ -140,6 +166,19 @@ subprojects {
   }
 }
 
+if (gradle.startParameter.taskNames == ["prepareForTravisCiBuild"]) {
+  gradle.startParameter.taskNames = ["currentVersion"]
+  if (System.getenv("TRAVIS_PULL_REQUEST") == "false" && System.getenv("TRAVIS_BRANCH") == "master") {
+    logger.info("TRAVIS_COMMIT: ${System.getenv("TRAVIS_COMMIT")}, TRAVIS_COMMIT_MSG: ${System.getenv("TRAVIS_COMMIT_MSG")}")
+    if (System.getenv("TRAVIS_COMMIT_MSG")?.contains(releaseTriggeringCommand)) {
+      if (javaVersion == javaVersions.min() && variant == variants.max()) {
+        project.ext["release.disableRemoteCheck"] = true	//TODO: Switch to setting in task properties
+        gradle.startParameter.taskNames = ["createRelease"]
+      }
+    }
+  }
+}
+
 if (gradle.startParameter.taskNames == ["travisCiBuild"]) {
   gradle.startParameter.taskNames = ["build"]
   subprojects {
@@ -147,16 +186,19 @@ if (gradle.startParameter.taskNames == ["travisCiBuild"]) {
       maxParallelForks = 2
     }
   }
-  if (System.getenv("TRAVIS_PULL_REQUEST") == "false") {
+  if (System.getenv("TRAVIS_PULL_REQUEST") == "false" && System.getenv("TRAVIS_BRANCH") == "master") {
     if (javaVersion == javaVersions.min()) {
       gradle.startParameter.taskNames += ["uploadArchives"]
+      if (variant == variants.max()) {
+        if (!snapshotVersion) {
+          gradle.startParameter.taskNames += ["closeRepository", "tagRelease", "promoteRepository"]
+        }
+      }
     }
     if (javaVersion == javaVersions.max()) {
       if (variant == variants.max()) {
+        //TODO: Would it be a problem to do it with javaVersions.min()? Should Javadocs for snapshot published?
         gradle.startParameter.taskNames += ["publishJavadoc", "publishDocs"]
-        if (!snapshotVersion) {
-          gradle.startParameter.taskNames += ["tagRelease"]
-        }
       }
     }
   }
@@ -201,12 +243,12 @@ task publishJavadoc(type: Exec) {
   git config user.name "Spock Framework Robot"
   git fetch origin +gh-pages:gh-pages
   git checkout gh-pages
-  rm -rf javadoc/$variantLessVersion
-  mkdir -p javadoc/$variantLessVersion
-  cp -r build/javadoc/$variantLessVersion javadoc/
+  rm -rf javadoc/$baseVersion
+  mkdir -p javadoc/$baseVersion
+  cp -r build/javadoc/$baseVersion javadoc/
   git add javadoc
-  git commit -qm "Publish javadoc/$variantLessVersion"
-  git push -q "https://${System.getenv("GITHUB_TOKEN")}@github.com/spockframework/spock.git" gh-pages > /dev/null 2>&1
+  git commit -qm "Publish javadoc/$baseVersion"
+  git push -q "https://\$GITHUB_TOKEN@github.com/spockframework/spock.git" gh-pages > /dev/null 2>&1
   git checkout master
 """
 }
@@ -218,12 +260,12 @@ task publishDocs(type: Exec) {
   git config user.name "Spock Framework Robot"
   git fetch origin +gh-pages:gh-pages
   git checkout gh-pages
-  rm -rf docs/$variantLessVersion
-  mkdir -p docs/$variantLessVersion
-  cp -r build/asciidoc/html5/* docs/$variantLessVersion
+  rm -rf docs/$baseVersion
+  mkdir -p docs/$baseVersion
+  cp -r build/asciidoc/html5/* docs/$baseVersion
   git add docs
-  git commit -qm "Publish docs/$variantLessVersion"
-  git push -q "https://${System.getenv("GITHUB_TOKEN")}@github.com/spockframework/spock.git" gh-pages > /dev/null 2>&1
+  git commit -qm "Publish docs/$baseVersion"
+  git push -q "https://\$GITHUB_TOKEN@github.com/spockframework/spock.git" gh-pages > /dev/null 2>&1
   git checkout master
 """
 }
@@ -232,15 +274,13 @@ task tagRelease(type: Exec) {
 """
   git config user.email "dev@forum.spockframework.org"
   git config user.name "Spock Framework Robot"
-  git checkout master
-  git tag spock-$baseVersion
-  git push -q "https://${System.getenv("GITHUB_TOKEN")}@github.com/spockframework/spock.git" spock-$baseVersion > /dev/null 2>&1
+  git push -q "https://\$GITHUB_TOKEN@github.com/spockframework/spock.git" HEAD:refs/heads/master --follow-tags > /dev/null 2>&1
 """
 }
 
 task javadoc(type: Javadoc) {
-  title "Spock Framework API Documentation ($variantLessVersion)"
-  destinationDir file("build/javadoc/$variantLessVersion")
+  title "Spock Framework API Documentation ($baseVersion)"
+  destinationDir file("build/javadoc/$baseVersion")
   source subprojects.javadoc.source
   classpath = files(subprojects.javadoc.classpath)
 }
@@ -248,9 +288,9 @@ task javadoc(type: Javadoc) {
 configureJavadoc(javadoc)
 
 task groovydoc(type: Groovydoc) {
-  docTitle "Spock Framework API Documentation ($variantLessVersion)"
-  windowTitle "Spock Framework API Documentation ($variantLessVersion)"
-  destinationDir file("build/groovydoc/$variantLessVersion")
+  docTitle "Spock Framework API Documentation ($baseVersion)"
+  windowTitle "Spock Framework API Documentation ($baseVersion)"
+  destinationDir file("build/groovydoc/$baseVersion")
   source subprojects.groovydoc.source
   classpath = files(subprojects.groovydoc.classpath)
   groovyClasspath = project(":spock-core").groovydoc.groovyClasspath
@@ -286,4 +326,6 @@ def configureGroovydoc(task) {
   }
 }
 
+tagRelease.mustRunAfter closeRepository
+promoteRepository.mustRunAfter tagRelease
 

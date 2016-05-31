@@ -191,7 +191,9 @@ if (gradle.startParameter.taskNames == ["travisCiBuild"]) {
       gradle.startParameter.taskNames += ["uploadArchives"]
       if (variant == variants.max()) {
         if (!snapshotVersion) {
-          gradle.startParameter.taskNames += ["closeRepository", "tagRelease", "promoteRepository"]
+//          //enable "promoteRepository" after content of the first automatic release is verified
+//          gradle.startParameter.taskNames += ["closeRepository", "tagRelease", "promoteRepository"]
+          gradle.startParameter.taskNames += ["closeRepository", "tagRelease"]
         }
       }
     }

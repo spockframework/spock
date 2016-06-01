@@ -36,9 +36,9 @@ Building
 Spock is supported for Java version 6, 7, and 8.
 Spock is supported for Groovy version 2.0 (Not supported for Java 8+), 2.3, 2.4
 
-The tests are testing spock with a specific versions (variants) of groovy. Default is groovy version 2.0
+The tests are testing spock with a specific versions (variants) of groovy. Default is groovy version 2.4
 
-If you are using JDK 6 or JDK 7 the whole test suite should be pass:
+The groovy 2.4 variant should pass on all supported JDK versions:
 
 ```
 ./gradlew clean build
@@ -49,11 +49,11 @@ All build dependencies, including
 the[build tool](http://www.gradle.org) itself, will be downloaded
 automatically (unless already present).
 
-If you are using JDK 8 you can specify another variant of groovy to
-test with using `-Dvariant=2.3`.
+If you are using JDK 6 or 7 you can specify groovy version 2.0 with
+using `-Dvariant=2.0` and it should pass as well:
 
 ```
-./gradlew clean build -Dvariant=2.3
+./gradlew clean build -Dvariant=2.0
 ```
 
 Contributing

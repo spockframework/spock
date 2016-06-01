@@ -31,10 +31,30 @@ Modules
 
 Building
 --------
-The only prerequisite is JDK 6 or higher.
 
-After cloning the project, type `./gradlew clean build` (Windows: `gradlew clean build`). All build dependencies,
-including the [build tool](http://www.gradle.org) itself, will be downloaded automatically (unless already present).
+### Supported versions
+Spock is supported for Java version 6, 7, and 8.
+Spock is supported for Groovy version 2.0 (Not supported for Java 8+), 2.3, 2.4
+
+The tests are testing spock with a specific versions (variants) of groovy. Default is groovy version 2.0
+
+If you are using JDK 6 or JDK 7 the whole test suite should be pass:
+
+```
+./gradlew clean build
+```
+
+(Windows: `gradlew clean build`).
+All build dependencies, including
+the[build tool](http://www.gradle.org) itself, will be downloaded
+automatically (unless already present).
+
+If you are using JDK 8 you can specify another variant of groovy to
+test with using `-Dvariant=2.3`.
+
+```
+./gradlew clean build -Dvariant=2.3
+```
 
 Contributing
 ------------

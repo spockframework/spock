@@ -1,0 +1,15 @@
+def bootVersion = "1.4.0.M2"
+
+dependencies {
+	compile "org.springframework.boot:spring-boot-starter-test:$bootVersion"
+
+  testCompile project(":spock-core")
+  testRuntime project(":spock-spring")
+}
+
+repositories {
+  maven {
+    url 'https://repo.spring.io/libs-milestone'
+  }
+}
+

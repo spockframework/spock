@@ -16,23 +16,53 @@
 
 package org.spockframework.util;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
+
 public class SpockReleaseInfo {
-  private static final VersionNumber spockVersion = VersionNumber.parse("0.7-groovy-1.8");
-  private static final VersionNumber minGroovyVersion = VersionNumber.parse("1.8.0");
-  private static final VersionNumber maxGroovyVersion = VersionNumber.parse("1.8.99");
+  private static final VersionNumber version;
+  private static final VersionNumber minGroovyVersion;
+  private static final VersionNumber maxGroovyVersion;
+
+  static {
+    InputStream stream = SpockReleaseInfo.class.getResourceAsStream("SpockReleaseInfo.properties");
+    Properties properties = new Properties();
+    try {
+      properties.load(stream);
+    } catch (IOException e) {
+      throw new InternalSpockError("Failed to load `SpockReleaseInfo.properties`", e);
+    }
+    version = VersionNumber.parse(properties.getProperty("version"));
+    minGroovyVersion = VersionNumber.parse(properties.getProperty("minGroovyVersion"));
+    maxGroovyVersion = VersionNumber.parse(properties.getProperty("maxGroovyVersion"));
+  }
 
   public static VersionNumber getVersion() {
-    return spockVersion;
+    return version;
+  }
+
+  public static VersionNumber getMinGroovyVersion() {
+    return minGroovyVersion;
+  }
+
+  public static VersionNumber getMaxGroovyVersion() {
+    return maxGroovyVersion;
+  }
+
+  public static boolean isCompatibleGroovyVersion(VersionNumber groovyVersion) {
+    if (
+        // happens when running tests from IDE as the latter doesn't have processed properties file
+        minGroovyVersion.equals(VersionNumber.UNKNOWN) ||
+        maxGroovyVersion.equals(VersionNumber.UNKNOWN) ||
+        // may happen if (future) Groovy version cannot be parsed
+        groovyVersion.equals(VersionNumber.UNKNOWN)) return true; // be optimistic
+
+    return minGroovyVersion.compareTo(groovyVersion) <= 0
+        && maxGroovyVersion.compareTo(groovyVersion) >= 0;
   }
 
   public static String getArtifactPath() {
     return SpockReleaseInfo.class.getProtectionDomain().getCodeSource().getLocation().toString();
-  }
-
-  public static boolean isCompatibleGroovyVersion(VersionNumber groovyVersion) {
-    if (groovyVersion == VersionNumber.UNKNOWN) return true;
-
-    return minGroovyVersion.compareTo(groovyVersion) <= 0
-        && maxGroovyVersion.compareTo(groovyVersion) >= 0;
   }
 }

@@ -1,0 +1,31 @@
+= Modules
+
+== Guice Module
+
+Integration with the http://code.google.com/p/google-guice/[Guice] IoC container. For examples see the specs in the
+https://github.com/spockframework/spock/tree/master/spock-guice/src/test/groovy/org/spockframework/guice[codebase].
+
+== Spring Module
+
+Integration with the http://docs.spring.io/spring/docs/4.1.5.RELEASE/spring-framework-reference/html/testing.html#testcontext-framework[Spring TestContext Framework].
+For examples see the specs in the https://github.com/spockframework/spock/tree/master/spock-spring/src/test/groovy/org/spockframework/spring[codebase].
+
+== Tapestry Module
+
+Integration with the http://tapestry.apache.org/tapestry5/[Tapestry5] IoC container. For examples see the specs in the
+https://github.com/spockframework/spock/tree/master/spock-tapestry/src/test/groovy/org/spockframework/tapestry[codebase].
+
+
+== Unitils Module
+
+Integration with the http://www.unitils.org/[Unitils] library. For examples see the specs in the
+https://github.com/spockframework/spock/tree/master/spock-unitils/src/test/groovy/org/spockframework/unitils/dbunit[codebase].
+
+== Grails Module
+
+The Grails plugin has moved to its own https://github.com/spockframework/spock-grails[GitHub project].
+
+NOTE: Grails 2.3 and higher have built-in Spock support and do not require a plugin.
+
+
+

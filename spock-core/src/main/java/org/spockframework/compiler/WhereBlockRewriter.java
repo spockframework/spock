@@ -30,6 +30,8 @@ import org.spockframework.compiler.model.WhereBlock;
 import org.spockframework.runtime.model.DataProviderMetadata;
 import org.spockframework.util.*;
 
+import static org.spockframework.compiler.AstUtil.createGetAtMethod;
+
 /**
  *
  * @author Peter Niederwieser
@@ -77,7 +79,6 @@ public class WhereBlockRewriter {
     if (binExpr == null || binExpr.getClass() != BinaryExpression.class) // don't allow subclasses like DeclarationExpression
       notAParameterization(stat);
 
-    @SuppressWarnings("ConstantConditions")
     int type = binExpr.getOperation().getType();
 
     if (type == Types.LEFT_SHIFT) {
@@ -86,25 +87,29 @@ public class WhereBlockRewriter {
         rewriteSimpleParameterization(binExpr, stat);
       else if (leftExpr instanceof ListExpression)
         rewriteMultiParameterization(binExpr, stat);
-      else notAParameterization(stat);
+      else 
+        notAParameterization(stat);
     } else if (type == Types.ASSIGN)
       rewriteDerivedParameterization(binExpr, stat);
     else if (getOrExpression(binExpr) != null) {
       stats.previous();
       rewriteTableLikeParameterization(stats);
     }
-    else notAParameterization(stat);
+    else 
+      notAParameterization(stat);
   }
 
   private void createDataProviderMethod(Expression dataProviderExpr, int nextDataVariableIndex) {
     instanceFieldAccessChecker.check(dataProviderExpr);
+
+    dataProviderExpr = dataProviderExpr.transformExpression(new DataTablePreviousVariableTransformer());
 
     MethodNode method =
         new MethodNode(
             InternalIdentifiers.getDataProviderName(whereBlock.getParent().getAst().getName(), dataProviderCount++),
             Opcodes.ACC_PUBLIC | Opcodes.ACC_SYNTHETIC,
             ClassHelper.OBJECT_TYPE,
-            Parameter.EMPTY_ARRAY,
+            getPreviousParameters(nextDataVariableIndex),
             ClassNode.EMPTY_ARRAY,
             new BlockStatement(
                 Arrays.<Statement> asList(
@@ -114,6 +119,14 @@ public class WhereBlockRewriter {
 
     method.addAnnotation(createDataProviderAnnotation(dataProviderExpr, nextDataVariableIndex));
     whereBlock.getParent().getParent().getAst().addMethod(method);
+  }
+
+  private Parameter[] getPreviousParameters(int nextDataVariableIndex) {
+    Parameter[] results = new Parameter[nextDataVariableIndex];
+    for (int i = 0; i < nextDataVariableIndex; i++)
+      results[i] = new Parameter(ClassHelper.DYNAMIC_TYPE,
+                                 dataProcessorVars.get(i).getName());
+    return results;
   }
 
   private AnnotationNode createDataProviderAnnotation(Expression dataProviderExpr, int nextDataVariableIndex) {
@@ -171,10 +184,7 @@ public class WhereBlockRewriter {
               new DeclarationExpression(
                   dataVar,
                   Token.newSymbol(Types.ASSIGN, -1, -1),
-                  new MethodCallExpression(
-                      new VariableExpression(dataProcessorParameter),
-                      "getAt",
-                      new ConstantExpression(i))));
+                  createGetAtMethod(new VariableExpression(dataProcessorParameter), i)));
       exprStat.setSourcePosition(enclosingStat);
       dataProcessorStats.add(exprStat);
     }
@@ -238,6 +248,11 @@ public class WhereBlockRewriter {
     if (varExpr == null)
       throw new InvalidSpecCompileException(column.get(0),
           "Header of data table may only contain variable names");
+    if (AstUtil.isWildcardRef(varExpr)) {
+      // assertion: column has a wildcard header, but the method's
+      // explicit parameter list does not have a wildcard parameter
+      return; // ignore column (see https://github.com/spockframework/spock/pull/48/)
+    }
 
     ListExpression listExpr = new ListExpression(column.subList(1, column.size()));
     BinaryExpression binExpr = new BinaryExpression(varExpr, Token.newSymbol(Types.LEFT_SHIFT, -1, -1), listExpr);
@@ -295,7 +310,7 @@ public class WhereBlockRewriter {
       return;
     }
 
-    if (getDataProcessorVariable(varExpr.getName()) != null) {
+    if (isDataProcessorVariable(varExpr.getName())) {
       resources.getErrorReporter().error(varExpr, "Duplicate declaration of data variable '%s'", varExpr.getName());
       return;
     }
@@ -307,11 +322,11 @@ public class WhereBlockRewriter {
     }
   }
 
-  private VariableExpression getDataProcessorVariable(String name) {
+  private boolean isDataProcessorVariable(String name) {
     for (VariableExpression var : dataProcessorVars)
-      if (var.getName().equals(name)) return var;
-
-    return null;
+      if (var.getName().equals(name))
+        return true;
+    return false;
   }
 
   private void handleFeatureParameters() {
@@ -324,7 +339,7 @@ public class WhereBlockRewriter {
 
   private void checkAllParametersAreDataVariables(Parameter[] parameters) {
     for (Parameter param : parameters)
-      if (getDataProcessorVariable(param.getName()) == null)
+      if (!isDataProcessorVariable(param.getName()))
         resources.getErrorReporter().error(param, "Parameter '%s' does not refer to a data variable", param.getName());
   }
 
@@ -379,6 +394,29 @@ public class WhereBlockRewriter {
     public void visitBlockStatement(BlockStatement stat) {
       super.visitBlockStatement(stat);
       AstUtil.fixUpLocalVariables(dataProcessorVars, stat.getVariableScope(), false);
+    }
+  }
+
+  private class DataTablePreviousVariableTransformer extends ClassCodeExpressionTransformer {
+    private int depth = 0, rowIndex = 0;
+
+    @Override
+    protected SourceUnit getSourceUnit() { return null; }
+
+    @Override
+    public Expression transform(Expression expression) {
+      if ((expression instanceof VariableExpression) && isDataProcessorVariable(expression.getText())) {
+        return AstUtil.createGetAtMethod(expression, rowIndex);
+      }
+
+      depth++;
+      Expression transform = super.transform(expression);
+      depth--;
+
+      if (depth == 0)
+        rowIndex++;
+
+      return transform;
     }
   }
 }

@@ -1,0 +1,147 @@
+= Migration Guide
+
+This page explains incompatible changes between successive versions and provides suggestions on how to deal with them.
+
+== 1.0
+
+Specs, Spec base classes and third-party extensions may have be recompiled in order to work with Spock 1.0.
+
+JRE 1.5 and Groovy versions below 2.0 are no longer supported.
+
+Make sure to pick the right binaries for your Groovy version of choice: `groovy-2.0` for Groovy 2.0/2.1/2.2,
+`groovy-2.3` for Groovy 2.3, and `groovy-2.4` for Groovy 2.4 and higher. Spock won't let you run with a "wrong" version.
+
+No known source incompatible changes.
+
+== 0.7
+
+Client code must be recompiled in order to work with Spock 0.7. This includes third-party Spock extensions and base classes.
+
+No known source incompatible changes.
+
+== 0.6
+
+=== Class initialization order
+
+NOTE: This only affects cases where one specification class inherits from another one.
+
+Given these specifications:
+
+[source,groovy]
+----
+class Base extends Specification {
+    def base1 = "base1"
+    def base2
+
+    def setup() { base2 = "base2" }
+}
+
+class Derived extends Base {
+    def derived1 = "derived1"
+    def derived2
+
+    def setup() { derived2 = "derived2" }
+}
+----
+
+In 0.5, above assignments happened in the order `base1`, `base2`, `derived1`, `derived2`. In other words, field
+initializers were executed right before the setup method in the same class. In 0.6, assignments happen in the order
+`base1`, `derived1`, `base2`, `derived2`. This is a more conventional order that solves a few problems that users
+faced with the previous behavior, and also allows us to support JUnit's new `TestRule`. As a result of this change,
+the following will no longer work:
+
+[source,groovy]
+----
+class Base extends Specification {
+    def base
+
+    def setup() { base = "base" }
+}
+
+class Derived extends Base {
+    def derived = base + "derived" // base is not yet set
+}
+----
+
+To overcome this problem, you can either use a field initializer for `base`, or move the assignment of `derived` into
+a setup method.
+
+=== `@Unroll` naming pattern syntax
+
+NOTE: This is not a change from 0.5, but a change compared to 0.6-SNAPSHOT.
+
+NOTE: This only affects the Groovy 1.8 and 2.0 variants.
+
+In 0.5, the naming pattern was string based:
+
+[source,groovy]
+----
+@Unroll("maximum of #a and #b is #c")
+def "maximum of two numbers"() {
+    expect:
+    Math.max(a, b) == c
+
+    where:
+    a | b | c
+    1 | 2 | 2
+}
+----
+
+In 0.6-SNAPSHOT, this was changed to a closure returning a `GString`:
+
+[source,groovy]
+----
+@Unroll({"maximum of $a and $b is $c"})
+def "maximum of two numbers"() { ... }
+----
+
+For various reasons, the new syntax didn't work out as we had hoped, and eventually we decided to go back to the string
+based syntax. See <<improved-unroll-0.6,Improved `@Unroll`>> for recent improvements to that syntax.
+
+=== Hamcrest matcher syntax
+
+NOTE: This only affects users moving from the Groovy 1.7 to the 1.8 or 2.0 variant.
+
+Spock offers a very neat syntax for using http://code.google.com/p/hamcrest/[Hamcrest] matchers:
+
+[source,groovy]
+----
+import static spock.util.matcher.HamcrestMatchers.closeTo
+
+...
+
+expect:
+answer closeTo(42, 0.001)
+----
+
+Due to changes made between Groovy 1.7 and 1.8, this syntax no longer works in as many cases as it did before.
+For example, the following will no longer work:
+
+[source,groovy]
+----
+expect:
+object.getAnswer() closeTo(42, 0.001)
+----
+
+To avoid such problems, use `HamcrestSupport.that`:
+
+[source,groovy]
+----
+import static spock.util.matcher.HamcrestSupport.that
+
+...
+
+expect:
+that answer, closeTo(42, 0.001)
+----
+
+A future version of Spock will likely remove the former syntax and strengthen the latter one.
+
+
+
+
+
+
+
+
+

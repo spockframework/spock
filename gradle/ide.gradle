@@ -1,17 +1,35 @@
 allprojects {
   apply plugin: "idea"
   apply plugin: "eclipse"
+
+  idea {
+    module {
+      outputFile = file(outputFile.path.replace(".iml", "-${variant}.iml"))
+    }
+  }
 }
+
+def gitIgnore = file(".gitignore").readLines()
+def gitIgnoreDirs = gitIgnore*.trim().findAll { !it.startsWith("#") && it.endsWith("/") }
+def (topLevelDirs, allLevelDirs) = gitIgnoreDirs.split { it.startsWith("/") }
+topLevelDirs = topLevelDirs.collect { it.substring(1) }
 
 idea {
   project {
-    languageLevel "1.5"
+    languageLevel = "1.6"
+    vcs = "Git"
+    outputFile = file(outputFile.path.replace(".ipr", "-${variant}.ipr"))
+    configure(modules) { module ->
+      def prj = module.project
+      excludeDirs = prj.files(allLevelDirs) as Set
+      if (prj == prj.rootProject) {
+        excludeDirs += allLevelDirs.collect { prj.file("buildSrc/$it") }
+        excludeDirs += (prj.files(topLevelDirs) as Set)
+      }
+    }
   }
 }
 
-gradle.taskGraph.whenReady { graph ->
-  if (graph.allTasks.any { it.name.startsWith("idea") }) {
-    throw new GradleException("Please use the Gradle import facility in IntelliJ 13 " +
-        "and above, rather than generating IntelliJ files with Gradle.")
-  }
+ideaWorkspace {
+  outputFile = file(outputFile.path.replace(".iws", "-${variant}.iws"))
 }

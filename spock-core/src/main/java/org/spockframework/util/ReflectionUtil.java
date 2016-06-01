@@ -17,8 +17,7 @@ package org.spockframework.util;
 import java.io.File;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import org.spockframework.gentyref.GenericTypeReflector;
 
@@ -117,17 +116,18 @@ public abstract class ReflectionUtil {
     return clazzFile.isFile() ? clazzFile : null;
   }
 
+  @Nullable
   public static Object getDefaultValue(Class<?> type) {
     if (!type.isPrimitive()) return null;
 
-    if (type == boolean.class) return false;
-    if (type == int.class) return 0;
-    if (type == long.class) return 0l;
-    if (type == float.class) return 0f;
-    if (type == double.class) return 0d;
-    if (type == char.class) return (char) 0;
-    if (type == short.class) return (short) 0;
-    if (type == byte.class) return (byte) 0;
+    else if (type == boolean.class) return false;
+    else if (type == int.class) return 0;
+    else if (type == long.class) return 0L;
+    else if (type == float.class) return 0F;
+    else if (type == double.class) return 0D;
+    else if (type == char.class) return (char) 0;
+    else if (type == short.class) return (short) 0;
+    else if (type == byte.class) return (byte) 0;
 
     assert type == void.class;
     return null;
@@ -150,6 +150,7 @@ public abstract class ReflectionUtil {
   @Nullable
   public static Object invokeMethod(@Nullable Object target, Method method, @Nullable Object... args) {
     try {
+      validateArguments(method, args);
       return method.invoke(target, args);
     } catch (IllegalAccessException e) {
       ExceptionUtil.sneakyThrow(e);
@@ -158,6 +159,40 @@ public abstract class ReflectionUtil {
       ExceptionUtil.sneakyThrow(e.getCause());
       return null; // never reached
     }
+  }
+
+  public static void validateArguments(Method method, Object[] args) {
+    if (!hasValidArguments(args, method.getParameterTypes()))
+      throw new IllegalArgumentException(
+        String.format("Method '%s(%s)' can't be called with parameters '%s'!",
+                      method.getName(), Arrays.toString(method.getParameterTypes()), Arrays.toString(args)));
+  }
+
+  public static boolean hasValidArguments(Object[] args, Class<?>[] parameterTypes) {
+    if (parameterTypes.length != args.length)
+      return false;
+
+    for (int i = 0; i < parameterTypes.length; i++) {
+      if (!isAssignable(parameterTypes[i], args[i]))
+        return false;
+    }
+
+    return true;
+  }
+
+  public static boolean isAssignable(Class<?> type, @Nullable Object arg) {
+    if (arg == null)
+      return !type.isPrimitive();
+
+    type = getWrapperType(type);
+    Class<?> argType = getWrapperType(arg.getClass());
+    return type.isAssignableFrom(argType);
+  }
+
+  @SuppressWarnings("ConstantConditions")
+  private static Class<?> getWrapperType(Class<?> type) {
+    return type.isPrimitive() ? getDefaultValue(type).getClass()
+                              : type;
   }
 
   public static List<Class<?>> eraseTypes(List<Type> types) {

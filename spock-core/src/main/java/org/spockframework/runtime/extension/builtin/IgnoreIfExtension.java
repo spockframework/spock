@@ -42,7 +42,9 @@ public class IgnoreIfExtension extends AbstractAnnotationDrivenExtension<IgnoreI
   private void doVisit(IgnoreIf annotation, ISkippable skippable) {
     Closure condition = createCondition(annotation.value());
     Object result = evaluateCondition(condition);
-    skippable.setSkipped(GroovyRuntimeUtil.isTruthy(result));
+    if (GroovyRuntimeUtil.isTruthy(result)) {
+      skippable.setSkipped(true);
+    }
   }
 
   private Closure createCondition(Class<? extends Closure> clazz) {

@@ -16,9 +16,10 @@
 
 package org.spockframework.smoke.parameterization
 
+import org.spockframework.EmbeddedSpecification
 import spock.lang.*
 
-class Parameterizations extends Specification {
+class Parameterizations extends EmbeddedSpecification {
   def "multi-parameterization"() {
     expect: a == b
     where :
@@ -57,7 +58,6 @@ class Parameterizations extends Specification {
     where:
     [_, a] << [["foo", 3]]
     [b, _] << [[3, "bar"]]
-    [_, _] << [["baz", "baz"]]
   }
 
   def "derived parameterization"() {
@@ -76,13 +76,17 @@ class Parameterizations extends Specification {
       d = c / 2
   }
 
-  @Ignore("""argument computer fails with groovy.lang.MissingPropertyException,
-  which is expected but cannot be easily tested; should check for this at compile-time""")
-  def "arguments may not be used before they have been assigned"() {
-    expect: true
-    where:
-      b = a
-      a = 1
+  def 'arguments may not be used before they have been assigned'() {
+    when:
+    runner.runFeatureBody '''
+      expect: true
+      where:
+        b = a
+        a = 1
+    '''
+
+    then:
+    thrown Exception
   }
 
   def "simple, multi- and derived parameterizations used together"() {
@@ -91,17 +95,6 @@ class Parameterizations extends Specification {
       a << [1, 2, 3]
       [b, _, c] << [[1, 9, 1], [2, 9, 2], [3, 9, 3]]
       d = a + b + c
-  }
-
-  @Ignore("we should either support this or disallow it")
-  def "simple parameterization whose value is accessed from closure within other parameterization"() {
-    expect:
-    a == 1
-    b == 1
-
-    where:
-    a << 1
-    b << {a}()
   }
 
   @Issue("http://code.google.com/p/spock/issues/detail?id=149")
@@ -131,7 +124,7 @@ class Parameterizations extends Specification {
     a() == 1
     b(1, 2) == 3
     1.times { n ->
-      b(n, n) - n == n
+      assert b(n, n) - n == n
     }
 
     and:

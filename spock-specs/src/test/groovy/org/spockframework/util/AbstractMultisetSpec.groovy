@@ -212,14 +212,24 @@ abstract class AbstractMultisetSpec extends Specification {
     multiset = createMultiset(["foo", "bar", "foo"])
 
     expect:
-    multiset.toArray() == ["foo", "bar"] as Object[]
+    def array = multiset.toArray()
+    array.getClass().isArray()
+    array.size() == 2
+    array.contains("foo")
+    array.contains("bar")
+  }
 
+  def "convert to existing array"() {
+    multiset = createMultiset(["foo", "bar", "foo"])
     def array = new Object[2]
 
     when:
     multiset.toArray(array)
 
     then:
-    array == ["foo", "bar"] as Object[]
+    array.getClass().isArray()
+    array.size() == 2
+    array.contains("foo")
+    array.contains("bar")
   }
 }

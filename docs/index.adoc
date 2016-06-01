@@ -1,0 +1,15 @@
+= Spock Framework Reference Documentation
+Peter Niederwieser
+Version 1.0
+
+. <<introduction.adoc#,Introduction>>
+. <<getting_started.adoc#,Getting Started>>
+. <<spock_primer.adoc#,Spock Primer>>
+. <<data_driven_testing.adoc#,Data Driven Testing>>
+. <<interaction_based_testing.adoc#,Interaction Based Testing>>
+. <<extensions.adoc#,Extensions>>
+. <<modules.adoc#,Modules>>
+. <<release_notes.adoc#,Release Notes>>
+. <<migration_guide.adoc#,Migration Guide>>
+
+<<all_in_one.adoc#,Single Page Documentation>>

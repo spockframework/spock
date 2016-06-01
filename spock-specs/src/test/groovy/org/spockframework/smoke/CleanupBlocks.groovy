@@ -91,7 +91,7 @@ class CleanupBlocks extends EmbeddedSpecification {
     int x = 1
 
     cleanup:
-    x
+    assert x == 1
   }
 
   @FailsWith(GroovyCastException)
@@ -100,5 +100,42 @@ class CleanupBlocks extends EmbeddedSpecification {
 
     cleanup:
     []
+  }
+
+  @Issue("http://issues.spockframework.org/detail?id=371")
+  def "multi-declaration with primitive type in presence of cleanup-block"() {
+    when:
+    def (String foo, int bar) = ["foo", 42]
+
+    then:
+    foo == "foo"
+    bar == 42
+
+    cleanup:
+    assert foo == "foo"
+    assert bar == 42
+  }
+
+  // TODO: doesn't work for char
+  def "multi-declaration with all primitive types in presence of cleanup-block"() {
+    setup:
+    def (byte b, int i, long l, float f, double d, boolean bool) =
+    [(byte) 1, 1, 1l, 1f, 1d, true]
+
+    expect:
+    b == (byte) 1
+    i == 1
+    l == 1l
+    f == 1f
+    d == 1d
+    bool
+
+    cleanup:
+    assert b == (byte) 1
+    assert i == 1
+    assert l == 1l
+    assert f == 1f
+    assert d == 1d
+    assert bool
   }
 }

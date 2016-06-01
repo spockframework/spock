@@ -1,34 +1,69 @@
+buildscript {
+  repositories {
+    maven { url "http://dl.bintray.com/content/aalmiray/asciidoctor" }
+    jcenter()
+  }
+
+  dependencies {
+    classpath "org.asciidoctor:asciidoctor-gradle-plugin:1.5.2"
+  }
+}
+
 apply plugin: "base"
+apply plugin: "org.asciidoctor.convert"
 
 description = "Spock Framework"
 
 ext {
+  variants = [2.0, 2.3, 2.4]
+  variant = System.getProperty("variant") as BigDecimal ?: variants.first()
+  if (variant == 2.0) {
+    groovyVersion = "2.0.8"
+    minGroovyVersion = "2.0.0"
+    maxGroovyVersion = "2.2.99"
+  } else if (variant == 2.3) {
+    groovyVersion = "2.3.11"
+    minGroovyVersion = "2.3.0"
+    maxGroovyVersion = "2.3.99"
+  } else if (variant == 2.4) {
+    groovyVersion = "2.4.5"
+    minGroovyVersion = "2.4.0"
+    maxGroovyVersion = "2.9.99"
+  } else {
+    throw new InvalidUserDataException("Unknown variant: $variant. Choose one of: $variants")
+  }
+  javaVersions = [1.6, 1.7, 1.8]
+  javaVersion = System.getProperty("java.specification.version") as BigDecimal
+  baseVersion = "1.1"
+  snapshotVersion = true
+  fullVersion = "$baseVersion-groovy-$variant" + (snapshotVersion ? "-SNAPSHOT" : "")
+  variantLessVersion = baseVersion + (snapshotVersion ? "-SNAPSHOT" : "")
   libs = [
-    ant: "org.apache.ant:ant:1.8.2", // use same version as Groovy 1.8
-    asm: "asm:asm:3.2", // use same version as Groovy 1.8
-    cglib: "cglib:cglib-nodep:2.2.2",
-    easymock: "org.easymock:easymock:3.0",
-    groovy: "org.codehaus.groovy:groovy-all:1.8.9",
-    h2database: "com.h2database:h2:1.3.164",
-    jmock: "org.jmock:jmock:2.5.1",
-    jmock_junit4: "org.jmock:jmock-junit4:2.5.1",
-    junit: "junit:junit:4.11",
-    log4j: "log4j:log4j:1.2.16",
-    mockito: "org.mockito:mockito-all:1.9.0",
-    objenesis: "org.objenesis:objenesis:1.2"
+    jetbrainsAnnotations: "org.jetbrains:annotations:13.0",
+    ant: "org.apache.ant:ant:1.9.4",
+    asm: "org.ow2.asm:asm:5.0.3",
+    cglib: "cglib:cglib-nodep:3.2.0",
+    groovy: "org.codehaus.groovy:groovy-all:$groovyVersion",
+    h2database: "com.h2database:h2:1.3.174",
+    junit: "junit:junit:4.12",
+    log4j: "log4j:log4j:1.2.17",
+    objenesis: "org.objenesis:objenesis:2.1"
   ]
 }
 
-allprojects {  
-  ext.baseVersion = "1.0"
-  ext.groovyVersion = "1.8"
-  ext.snapshotVersion = true
-  
+allprojects {
+  ext.displayName = null
+
   group = "org.spockframework"
-  version = "$baseVersion-groovy-$groovyVersion" + (snapshotVersion ? "-SNAPSHOT" : "")
-  ext.groovyLessVersion = baseVersion + (snapshotVersion ? "-SNAPSHOT" : "")
-  
+  version = fullVersion
+
   apply from: script("common")
+
+  if (javaVersion >= 1.8) {
+    tasks.withType(Javadoc) {
+      options.addStringOption('Xdoclint:none', '-quiet')
+    }
+  }
 }
 
 apply from: script("ide")
@@ -37,10 +72,23 @@ subprojects {
   apply plugin: "groovy"
   apply plugin: "signing"
 
-  sourceCompatibility = 1.5
+  sourceCompatibility = javaVersions.min()
+  targetCompatibility = javaVersions.min()
+
+  sourceSets.all { ss ->
+    for (v in variants.findAll { it <= variant } ) {
+      java {
+        srcDir "src/$ss.name$v/java"
+      }
+      groovy {
+        srcDir "src/$ss.name$v/groovy"
+      }
+    }
+  }
 
   repositories {
     mavenCentral()
+    maven { url "https://oss.jfrog.org/oss-snapshot-local/" }
   }
 
   configurations {
@@ -59,6 +107,10 @@ subprojects {
     onlyIf { gradle.taskGraph.hasTask(uploadArchives) }
   }
 
+  ext."signing.keyId" = "2EA0A67F"
+  ext."signing.password" = System.getenv("SIGNING_PASSWORD")
+  ext."signing.secretKeyRingFile" = "$rootDir/config/code-signing-secring.gpg"
+
   configureJavadoc(javadoc)
   configureGroovydoc(groovydoc)
 
@@ -75,12 +127,120 @@ subprojects {
   artifacts {
     archives sourcesJar, javadocJar
   }
+
+  tasks.withType(Test) {
+    reports {
+      junitXml {
+        destination = file("$destination/$variant")
+      }
+      html {
+        destination = file("$destination/$variant")
+      }
+    }
+  }
+}
+
+if (gradle.startParameter.taskNames == ["travisCiBuild"]) {
+  gradle.startParameter.taskNames = ["build"]
+  subprojects {
+    tasks.withType(Test) {
+      maxParallelForks = 2
+    }
+  }
+  if (System.getenv("TRAVIS_PULL_REQUEST") == "false") {
+    if (javaVersion == javaVersions.min()) {
+      gradle.startParameter.taskNames += ["uploadArchives"]
+    }
+    if (javaVersion == javaVersions.max()) {
+      if (variant == variants.max()) {
+        gradle.startParameter.taskNames += ["publishJavadoc", "publishDocs"]
+        if (!snapshotVersion) {
+          gradle.startParameter.taskNames += ["tagRelease"]
+        }
+      }
+    }
+  }
+}
+
+if (gradle.startParameter.taskNames == ["shippableCiBuild"]) {
+  gradle.startParameter.taskNames = ["clean", "build"] // use clean because whole minion is cached
+  task aggregateTestResults(type: Sync) {
+    from { subprojects.test.reports.junitXml.destination }
+    into "shippable/testresults"
+    include "**/TEST-*.xml"
+  }
+  subprojects {
+    tasks.withType(Test) {
+      it.finalizedBy(aggregateTestResults)
+    }
+  }
+  if (System.getenv("PULL_REQUEST") == "false") {
+    if (javaVersion == javaVersions.min()) {
+      gradle.startParameter.taskNames += ["uploadArchives"]
+    }
+    if (javaVersion == javaVersions.max()) {
+      if (variant == variants.max()) {
+        gradle.startParameter.taskNames += ["publishJavadoc", "publishDocs"]
+        if (!snapshotVersion) {
+          gradle.startParameter.taskNames += ["tagRelease"]
+        }
+      }
+    }
+  }
+}
+
+if (gradle.startParameter.taskNames == ["appveyorCiBuild"]) {
+  gradle.startParameter.taskNames = ["build"]
+}
+
+task publishJavadoc(type: Exec) {
+  dependsOn "javadoc"
+  commandLine "sh", "-c",
+"""
+  git config user.email "dev@forum.spockframework.org"
+  git config user.name "Spock Framework Robot"
+  git fetch origin +gh-pages:gh-pages
+  git checkout gh-pages
+  rm -rf javadoc/$variantLessVersion
+  mkdir -p javadoc/$variantLessVersion
+  cp -r build/javadoc/$variantLessVersion javadoc/
+  git add javadoc
+  git commit -qm "Publish javadoc/$variantLessVersion"
+  git push -q "https://${System.getenv("GITHUB_TOKEN")}@github.com/spockframework/spock.git" gh-pages > /dev/null 2>&1
+  git checkout master
+"""
+}
+task publishDocs(type: Exec) {
+  dependsOn "asciidoctor"
+  commandLine "sh", "-c",
+"""
+  git config user.email "dev@forum.spockframework.org"
+  git config user.name "Spock Framework Robot"
+  git fetch origin +gh-pages:gh-pages
+  git checkout gh-pages
+  rm -rf docs/$variantLessVersion
+  mkdir -p docs/$variantLessVersion
+  cp -r build/asciidoc/html5/* docs/$variantLessVersion
+  git add docs
+  git commit -qm "Publish docs/$variantLessVersion"
+  git push -q "https://${System.getenv("GITHUB_TOKEN")}@github.com/spockframework/spock.git" gh-pages > /dev/null 2>&1
+  git checkout master
+"""
+}
+task tagRelease(type: Exec) {
+  commandLine "sh", "-c",
+"""
+  git config user.email "dev@forum.spockframework.org"
+  git config user.name "Spock Framework Robot"
+  git checkout master
+  git tag spock-$baseVersion
+  git push -q "https://${System.getenv("GITHUB_TOKEN")}@github.com/spockframework/spock.git" spock-$baseVersion > /dev/null 2>&1
+"""
 }
 
 task javadoc(type: Javadoc) {
-  title "Spock Framework API Documentation ($groovyLessVersion)"
-  def docPath = snapshotVersion ? "latest" : baseVersion
-  destinationDir file("build/javadoc/$docPath")
+  title "Spock Framework API Documentation ($variantLessVersion)"
+  destinationDir file("build/javadoc/$variantLessVersion")
   source subprojects.javadoc.source
   classpath = files(subprojects.javadoc.classpath)
 }
@@ -88,18 +248,21 @@ task javadoc(type: Javadoc) {
 configureJavadoc(javadoc)
 
 task groovydoc(type: Groovydoc) {
-  docTitle "Spock Framework API Documentation ($groovyLessVersion)"
-  windowTitle "Spock Framework API Documentation ($groovyLessVersion)"
-  def docPath = snapshotVersion ? "latest" : baseVersion
-  destinationDir file("build/groovydoc/$docPath")
+  docTitle "Spock Framework API Documentation ($variantLessVersion)"
+  windowTitle "Spock Framework API Documentation ($variantLessVersion)"
+  destinationDir file("build/groovydoc/$variantLessVersion")
   source subprojects.groovydoc.source
   classpath = files(subprojects.groovydoc.classpath)
   groovyClasspath = project(":spock-core").groovydoc.groovyClasspath
 }
 
-task apidoc(dependsOn: ["javadoc", "groovydoc"])
-
 configureGroovydoc(groovydoc)
+
+asciidoctor {
+  sourceDir = file("docs")
+  logDocuments = true
+  attributes "source-highlighter": "coderay", "linkcss": true
+}
 
 File script(String name) {
   project.file("gradle/${name}.gradle")
@@ -108,11 +271,10 @@ File script(String name) {
 def configureJavadoc(task) {
   configure(task) {
     include "spock/**"
-    include "org/spockframework/mock/*"
     configure(options) {
-      links "http://download.oracle.com/javase/1.5.0/docs/api/"
-      links "http://groovy.codehaus.org/gapi"
-      links "http://junit-team.github.com/junit/javadoc/4.10" // missing for 4.11
+      links "http://docs.oracle.com/javase/6/docs/api/"
+      links "http://docs.groovy-lang.org/docs/groovy-$groovyVersion/html/gapi/"
+      links "http://junit.org/javadoc/latest/"
       links "http://hamcrest.org/JavaHamcrest/javadoc/1.3/"
     }
   }
@@ -121,7 +283,7 @@ def configureJavadoc(task) {
 def configureGroovydoc(task) {
   configure(task) {
     include "spock/**"
-    include "org/spockframework/mock/*"
   }
 }
+
 

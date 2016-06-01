@@ -25,38 +25,38 @@ import org.hamcrest.Description
  * identical to that class.
  */
 public class IsCloseTo extends TypeSafeMatcher<Number> {
-    private final Number value
-    private final Number epsilon
+  private final Number value
+  private final Number epsilon
 
   IsCloseTo(Number value, Number epsilon) {
-      this.value = value
-      this.epsilon = epsilon
-    }
+    this.value = value
+    this.epsilon = epsilon
+  }
 
-    @Override
-    boolean matchesSafely(Number item) {
-        delta(item) <= epsilon
-    }
+  @Override
+  boolean matchesSafely(Number item) {
+    delta(item) <= epsilon
+  }
 
-    @Override
-    void describeMismatchSafely(Number item, Description mismatchDescription) {
-      mismatchDescription.appendValue(item)
-                         .appendText(" differed by ")
-                         .appendValue(delta(item))
-    }
+  @Override
+  void describeMismatchSafely(Number item, Description mismatchDescription) {
+    mismatchDescription.appendValue(item)
+        .appendText(" differed by ")
+        .appendValue(delta(item))
+  }
 
-    void describeTo(Description description) {
-        description.appendText("a numeric value within ")
-                .appendValue(epsilon)
-                .appendText(" of ")
-                .appendValue(value)
-    }
+  void describeTo(Description description) {
+    description.appendText("a numeric value within ")
+        .appendValue(epsilon)
+        .appendText(" of ")
+        .appendValue(value)
+  }
 
-    private Number delta(Number item) {
-      // handle special values (infinity, nan)
-      if (item == value) return 0
+  private Number delta(Number item) {
+    // handle special values (infinity, nan)
+    if (item == value) return 0
 
-      (item - value).abs()
-    }
+    (item - value).abs()
+  }
 }
 

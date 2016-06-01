@@ -14,9 +14,14 @@
 
 package org.spockframework.buildsupport;
 
+import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.AnnotationVisitor;
 
-class EmptyAnnotationVisitor implements AnnotationVisitor {
+class EmptyAnnotationVisitor extends AnnotationVisitor {
+  public EmptyAnnotationVisitor() {
+    super(Opcodes.ASM4);
+  }
+
   public void visit(String s, Object o) {}
 
   public void visitEnum(String s, String s1, String s2) {}

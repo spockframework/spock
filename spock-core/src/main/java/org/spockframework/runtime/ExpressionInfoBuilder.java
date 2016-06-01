@@ -16,16 +16,19 @@
 
 package org.spockframework.runtime;
 
-import java.util.List;
-
 import org.codehaus.groovy.ast.expr.Expression;
-import org.codehaus.groovy.ast.stmt.*;
+import org.codehaus.groovy.ast.stmt.BlockStatement;
+import org.codehaus.groovy.ast.stmt.ExpressionStatement;
+import org.codehaus.groovy.ast.stmt.Statement;
 import org.codehaus.groovy.control.SourceUnit;
-
-import org.spockframework.runtime.model.*;
+import org.spockframework.runtime.model.ExpressionInfo;
+import org.spockframework.runtime.model.TextPosition;
+import org.spockframework.runtime.model.TextRegion;
 import org.spockframework.util.Assert;
 import org.spockframework.util.Nullable;
 import org.spockframework.util.TextUtil;
+
+import java.util.List;
 
 /**
  *
@@ -49,19 +52,18 @@ public class ExpressionInfoBuilder {
   }
 
   public ExpressionInfo build() {
-    try {
-      SourceUnit unit = SourceUnit.create("Spec expression", adjustedText);
-      unit.parse();
-      unit.completePhase();
-      unit.convert();
+    SourceUnit unit = SourceUnit.create("Spec expression", adjustedText);
+    unit.parse();
+    unit.completePhase();
+    unit.convert();
 
-      BlockStatement blockStat = unit.getAST().getStatementBlock();
-      Assert.that(blockStat != null && blockStat.getStatements().size() == 1);
-      Statement stat = blockStat.getStatements().get(0);
-      Assert.that(stat instanceof ExpressionStatement);
-      Expression expr = ((ExpressionStatement) stat).getExpression();
+    BlockStatement blockStat = unit.getAST().getStatementBlock();
+    Assert.that(blockStat != null && blockStat.getStatements().size() == 1);
+    Statement stat = blockStat.getStatements().get(0);
+    Assert.that(stat instanceof ExpressionStatement);
+    Expression expr = ((ExpressionStatement) stat).getExpression();
 
-      ExpressionInfo exprInfo = new ExpressionInfoConverter(lines).convert(expr);
+    ExpressionInfo exprInfo = new ExpressionInfoConverter(lines).convert(expr);
 
     // IDEA: rest of this method could be moved to ExpressionInfoConverter (but: might make EIC less testable)
     // IDEA: could make ExpressionInfo immutable
@@ -69,32 +71,18 @@ public class ExpressionInfoBuilder {
     for (int variableNumber = 0; variableNumber < inPostfixOrder.size(); variableNumber++) {
       ExpressionInfo info = inPostfixOrder.get(variableNumber);
       info.setText(findText(info.getRegion()));
-      if (notRecordedVarNumberBecauseOfException!=null && variableNumber == notRecordedVarNumberBecauseOfException) {
+      if (notRecordedVarNumberBecauseOfException != null && variableNumber == notRecordedVarNumberBecauseOfException) {
         info.setValue(exception);
       } else if (values.size() > variableNumber) { //we have this value
         info.setValue(values.get(variableNumber));
-      }else {
+      } else {
         info.setValue(ExpressionInfo.VALUE_NOT_AVAILABLE);
       }
       if (startPos.getLineIndex() > 0)
         info.shiftVertically(startPos.getLineIndex());
     }
 
-      return exprInfo;
-    }catch (Throwable t){
-      final ExpressionInfo expressionInfo = new ExpressionInfo(TextRegion.create(TextPosition.create(1, 1), TextPosition.create(1, 1)), TextPosition.create(1, 1), null);
-      expressionInfo.setText(text);
-      expressionInfo.setValue(lastOrNull(values));
-      return expressionInfo;
-    }
-  }
-
-  private Object lastOrNull(Iterable<Object> values){
-    Object result = null;
-    for (Object value : values) {
-      result = value;
-    }
-    return result;
+    return exprInfo;
   }
 
   private String findText(TextRegion region) {

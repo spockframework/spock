@@ -16,22 +16,26 @@
 
 package org.spockframework.runtime;
 
-import java.util.List;
-
 import org.codehaus.groovy.ast.expr.Expression;
-import org.codehaus.groovy.ast.stmt.*;
+import org.codehaus.groovy.ast.stmt.BlockStatement;
+import org.codehaus.groovy.ast.stmt.ExpressionStatement;
+import org.codehaus.groovy.ast.stmt.Statement;
 import org.codehaus.groovy.control.SourceUnit;
-
-import org.spockframework.runtime.model.*;
+import org.spockframework.runtime.model.ExpressionInfo;
+import org.spockframework.runtime.model.TextPosition;
+import org.spockframework.runtime.model.TextRegion;
 import org.spockframework.util.Assert;
 import org.spockframework.util.Nullable;
 import org.spockframework.util.TextUtil;
+
+import java.util.List;
 
 /**
  *
  * @author Peter Niederwieser
  */
 public class ExpressionInfoBuilder {
+  private final String text;
   private final String adjustedText;
   private final TextPosition startPos;
   private final List<Object> values;
@@ -40,6 +44,7 @@ public class ExpressionInfoBuilder {
   private final String[] lines;
 
   public ExpressionInfoBuilder(String text, TextPosition startPos, List<Object> values, @Nullable Integer notRecordedVarNumberBecauseOfException, @Nullable Throwable exception) {
+    this.text = text;
     this.startPos = startPos;
     this.values = values;
     this.notRecordedVarNumberBecauseOfException = notRecordedVarNumberBecauseOfException;
@@ -49,18 +54,19 @@ public class ExpressionInfoBuilder {
   }
 
   public ExpressionInfo build() {
-    SourceUnit unit = SourceUnit.create("Spec expression", adjustedText);
-    unit.parse();
-    unit.completePhase();
-    unit.convert();
+    try {
+      SourceUnit unit = SourceUnit.create("Spec expression", adjustedText);
+      unit.parse();
+      unit.completePhase();
+      unit.convert();
 
-    BlockStatement blockStat = unit.getAST().getStatementBlock();
-    Assert.that(blockStat != null && blockStat.getStatements().size() == 1);
-    Statement stat = blockStat.getStatements().get(0);
-    Assert.that(stat instanceof ExpressionStatement);
-    Expression expr = ((ExpressionStatement)stat).getExpression();
+      BlockStatement blockStat = unit.getAST().getStatementBlock();
+      Assert.that(blockStat != null && blockStat.getStatements().size() == 1);
+      Statement stat = blockStat.getStatements().get(0);
+      Assert.that(stat instanceof ExpressionStatement);
+      Expression expr = ((ExpressionStatement) stat).getExpression();
 
-    ExpressionInfo exprInfo = new ExpressionInfoConverter(lines).convert(expr);
+      ExpressionInfo exprInfo = new ExpressionInfoConverter(lines).convert(expr);
 
     // IDEA: rest of this method could be moved to ExpressionInfoConverter (but: might make EIC less testable)
     // IDEA: could make ExpressionInfo immutable
@@ -79,7 +85,21 @@ public class ExpressionInfoBuilder {
         info.shiftVertically(startPos.getLineIndex());
     }
 
-    return exprInfo;
+      return exprInfo;
+    }catch (Throwable t){
+      final ExpressionInfo expressionInfo = new ExpressionInfo(TextRegion.create(TextPosition.create(1, 1), TextPosition.create(1, 1)), TextPosition.create(1, 1), null);
+      expressionInfo.setText(text);
+      expressionInfo.setValue(lastOrNull(values));
+      return expressionInfo;
+    }
+  }
+
+  private Object lastOrNull(Iterable<Object> values){
+    Object result = null;
+    for (Object value : values) {
+      result = value;
+    }
+    return result;
   }
 
   private String findText(TextRegion region) {

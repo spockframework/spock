@@ -16,16 +16,19 @@
 
 package org.spockframework.runtime;
 
-import java.util.List;
-
 import org.codehaus.groovy.ast.expr.Expression;
-import org.codehaus.groovy.ast.stmt.*;
+import org.codehaus.groovy.ast.stmt.BlockStatement;
+import org.codehaus.groovy.ast.stmt.ExpressionStatement;
+import org.codehaus.groovy.ast.stmt.Statement;
 import org.codehaus.groovy.control.SourceUnit;
-
-import org.spockframework.runtime.model.*;
+import org.spockframework.runtime.model.ExpressionInfo;
+import org.spockframework.runtime.model.TextPosition;
+import org.spockframework.runtime.model.TextRegion;
 import org.spockframework.util.Assert;
 import org.spockframework.util.Nullable;
 import org.spockframework.util.TextUtil;
+
+import java.util.List;
 
 /**
  *
@@ -58,7 +61,7 @@ public class ExpressionInfoBuilder {
     Assert.that(blockStat != null && blockStat.getStatements().size() == 1);
     Statement stat = blockStat.getStatements().get(0);
     Assert.that(stat instanceof ExpressionStatement);
-    Expression expr = ((ExpressionStatement)stat).getExpression();
+    Expression expr = ((ExpressionStatement) stat).getExpression();
 
     ExpressionInfo exprInfo = new ExpressionInfoConverter(lines).convert(expr);
 
@@ -68,11 +71,11 @@ public class ExpressionInfoBuilder {
     for (int variableNumber = 0; variableNumber < inPostfixOrder.size(); variableNumber++) {
       ExpressionInfo info = inPostfixOrder.get(variableNumber);
       info.setText(findText(info.getRegion()));
-      if (notRecordedVarNumberBecauseOfException!=null && variableNumber == notRecordedVarNumberBecauseOfException) {
+      if (notRecordedVarNumberBecauseOfException != null && variableNumber == notRecordedVarNumberBecauseOfException) {
         info.setValue(exception);
       } else if (values.size() > variableNumber) { //we have this value
         info.setValue(values.get(variableNumber));
-      }else {
+      } else {
         info.setValue(ExpressionInfo.VALUE_NOT_AVAILABLE);
       }
       if (startPos.getLineIndex() > 0)

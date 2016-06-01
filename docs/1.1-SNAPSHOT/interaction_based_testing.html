@@ -4,9 +4,9 @@
 <meta charset="UTF-8">
 <!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Asciidoctor 1.5.2">
+<meta name="generator" content="Asciidoctor 1.5.3">
 <title>Interaction Based Testing</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <link rel="stylesheet" href="./asciidoctor.css">
 <link rel="stylesheet" href="./coderay-asciidoctor.css">
 </head>
@@ -82,7 +82,7 @@ We hope that by the end of this chapter, you will agree that we have achieved th
 <h2 id="_creating_mock_objects">Creating Mock Objects</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Mock objects are created with the MockingApi.Mock() method.<span class="footnote">[<a id="_footnoteref_1" class="footnote" href="#_footnote_1" title="View footnote.">1</a>]</span>
+<p>Mock objects are created with the MockingApi.Mock() method.<sup class="footnote">[<a id="_footnoteref_1" class="footnote" href="#_footnote_1" title="View footnote.">1</a>]</sup>
 Let&#8217;s create two mock subscribers:</p>
 </div>
 <div class="listingblock">
@@ -447,7 +447,7 @@ a cardinality (when mocking) or a response generator (when stubbing). Either of 
 </div>
 <div class="paragraph">
 <p>This feature is particularly attractive for <a href="#_stubbing">Stubbing</a> and with dedicated <a href="#Stubs">Stubs</a>. Note that the
-interactions don&#8217;t (and cannot <span class="footnote">[<a id="_footnoteref_2" class="footnote" href="#_footnote_2" title="View footnote.">2</a>]</span>) have a target constraint; it&#8217;s clear from the context which mock
+interactions don&#8217;t (and cannot <sup class="footnote">[<a id="_footnoteref_2" class="footnote" href="#_footnote_2" title="View footnote.">2</a>]</sup>) have a target constraint; it&#8217;s clear from the context which mock
 object they belong to.</p>
 </div>
 <div class="paragraph">
@@ -826,7 +826,7 @@ If the closure declares a single untyped parameter, it gets passed the method&#8
 <div class="paragraph">
 <p>In most cases it would be more convenient to have direct access to the method&#8217;s arguments. If the closure declares more
 than one parameter or a single <em>typed</em> parameter, method arguments will be mapped one-by-one to closure
-parameters:<span class="footnote">[<a id="_footnoteref_3" class="footnote" href="#_footnote_3" title="View footnote.">3</a>]</span></p>
+parameters:<sup class="footnote">[<a id="_footnoteref_3" class="footnote" href="#_footnote_3" title="View footnote.">3</a>]</sup></p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -1123,7 +1123,7 @@ dynamic methods as if they were physically declared methods:</p>
 <div class="paragraph">
 <p>Usually, Groovy mocks need to be injected into the code under specification just like regular mocks.
 However, when a Groovy mock is created as <em>global</em>, it automagically replaces all real instances
-of the mocked type for the duration of the feature method:<span class="footnote">[<a id="_footnoteref_4" class="footnote" href="#_footnote_4" title="View footnote.">4</a>]</span></p>
+of the mocked type for the duration of the feature method:<sup class="footnote">[<a id="_footnoteref_4" class="footnote" href="#_footnote_4" title="View footnote.">4</a>]</sup></p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -1247,7 +1247,7 @@ the mock&#8217;s instance isn&#8217;t really needed. In such a case one can just
 <p>At the end of the day, the <code>Mock()</code>, <code>Stub()</code>, and <code>Spy()</code> factory methods are just canned ways to
 create mock objects with a certain configuration. If you want more fine-grained control over a mock&#8217;s configuration,
 have a look at the <code>org.spockframework.mock.IMockConfiguration</code> interface. All properties of this interface
-<span class="footnote">[<a id="_footnoteref_5" class="footnote" href="#_footnote_5" title="View footnote.">5</a>]</span>
+<sup class="footnote">[<a id="_footnoteref_5" class="footnote" href="#_footnote_5" title="View footnote.">5</a>]</sup>
 can be passed as named arguments to the <code>Mock()</code> method. For example:</p>
 </div>
 <div class="listingblock">
@@ -1342,7 +1342,7 @@ mock.nature == MockNature.MOCK</code></pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2016-06-01 18:55:12 UTC
+Last updated 2016-06-01 19:46:07 UTC
 </div>
 </div>
 </body>

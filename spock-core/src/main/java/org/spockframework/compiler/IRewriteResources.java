@@ -19,7 +19,6 @@ package org.spockframework.compiler;
 import java.util.List;
 
 import org.codehaus.groovy.ast.ASTNode;
-import org.codehaus.groovy.ast.expr.ClosureExpression;
 import org.codehaus.groovy.ast.expr.Expression;
 import org.codehaus.groovy.ast.expr.MethodCallExpression;
 import org.codehaus.groovy.ast.expr.VariableExpression;
@@ -38,7 +37,7 @@ public interface IRewriteResources {
   Method getCurrentMethod();
   Block getCurrentBlock();
 
-  void defineValueRecorder(List<Statement> stats);
+  void defineRecorders(List<Statement> stats, boolean enableErrorCollector);
   VariableExpression captureOldValue(Expression oldValue);
   MethodCallExpression getMockInvocationMatcher();
 

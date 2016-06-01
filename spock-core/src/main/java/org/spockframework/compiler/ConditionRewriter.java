@@ -618,6 +618,7 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> {
                     new ClassExpression(resources.getAstNodeCache().SpockRuntime),
                     resources.getAstNodeCache().SpockRuntime_ConditionFailedWithException,
                     new ArgumentListExpression(Arrays.asList(
+                        new VariableExpression("$spock_errorCollector"),
                         message == null ? new VariableExpression("$spock_valueRecorder") : ConstantExpression.NULL, // recorder
                         new ConstantExpression(resources.getSourceText(condition)),                                 // text
                         new ConstantExpression(condition.getLineNumber()),                                          // line
@@ -640,6 +641,7 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> {
         new ClassExpression(resources.getAstNodeCache().SpockRuntime), method,
         new ArgumentListExpression(args));
 
+    args.add(new VariableExpression("$spock_errorCollector"));
     args.add(message == null ?
         AstUtil.createDirectMethodCall(
             new VariableExpression("$spock_valueRecorder"),

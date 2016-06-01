@@ -16,22 +16,26 @@
 
 package org.spockframework.runtime;
 
-import java.util.List;
-
 import org.codehaus.groovy.ast.expr.Expression;
-import org.codehaus.groovy.ast.stmt.*;
+import org.codehaus.groovy.ast.stmt.BlockStatement;
+import org.codehaus.groovy.ast.stmt.ExpressionStatement;
+import org.codehaus.groovy.ast.stmt.Statement;
 import org.codehaus.groovy.control.SourceUnit;
-
-import org.spockframework.runtime.model.*;
+import org.spockframework.runtime.model.ExpressionInfo;
+import org.spockframework.runtime.model.TextPosition;
+import org.spockframework.runtime.model.TextRegion;
 import org.spockframework.util.Assert;
 import org.spockframework.util.Nullable;
 import org.spockframework.util.TextUtil;
+
+import java.util.List;
 
 /**
  *
  * @author Peter Niederwieser
  */
 public class ExpressionInfoBuilder {
+  private final String text;
   private final String adjustedText;
   private final TextPosition startPos;
   private final List<Object> values;
@@ -40,6 +44,7 @@ public class ExpressionInfoBuilder {
   private final String[] lines;
 
   public ExpressionInfoBuilder(String text, TextPosition startPos, List<Object> values, @Nullable Integer notRecordedVarNumberBecauseOfException, @Nullable Throwable exception) {
+    this.text = text;
     this.startPos = startPos;
     this.values = values;
     this.notRecordedVarNumberBecauseOfException = notRecordedVarNumberBecauseOfException;
@@ -83,7 +88,7 @@ public class ExpressionInfoBuilder {
       return exprInfo;
     }catch (Throwable t){
       final ExpressionInfo expressionInfo = new ExpressionInfo(TextRegion.create(TextPosition.create(1, 1), TextPosition.create(1, 1)), TextPosition.create(1, 1), null);
-      expressionInfo.setText(adjustedText);
+      expressionInfo.setText(text);
       expressionInfo.setValue(lastOrNull(values));
       return expressionInfo;
     }

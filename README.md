@@ -2,7 +2,7 @@
 [![Maven Central](https://img.shields.io/maven-central/v/org.spockframework/spock-core.svg?label=Maven Central)](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22org.spockframework%22%20AND%20a%3A%22spock-core%22)
 [![Linux Build Status](https://img.shields.io/travis/spockframework/spock/master.svg?label=Linux Build)](https://travis-ci.org/spockframework/spock)
 [![Windows Build Status](https://img.shields.io/appveyor/ci/spockframework/spock/master.svg?label=Windows Build)](https://ci.appveyor.com/project/spockframework/spock/branch/master)
-
+[![Gitter](https://badges.gitter.im/spockframework/spock.svg)](https://gitter.im/spockframework/spock?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 Spock Framework
 ===============
 

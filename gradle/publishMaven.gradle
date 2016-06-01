@@ -51,10 +51,10 @@ install {
 uploadArchives {
   deployers << repositories.mavenDeployer {
     snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
-      authentication(userName: "pniederw", password: System.getenv("SONATYPE_OSS_PASSWORD"))
+      authentication(userName: System.getenv("SONATYPE_OSS_USERNAME"), password: System.getenv("SONATYPE_OSS_PASSWORD"))
     }
     repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
-      authentication(userName: "pniederw", password: System.getenv("SONATYPE_OSS_PASSWORD"))
+      authentication(userName: System.getenv("SONATYPE_OSS_USERNAME"), password: System.getenv("SONATYPE_OSS_PASSWORD"))
     }
   }
 }
@@ -90,3 +90,11 @@ modifyPom { pom ->
 }
 
 deployers*.beforeDeployment { signing.signPom(it) }
+
+nexusStaging {
+    packageGroup = 'org.spockframework'
+    numberOfRetries = 20
+    username = hasProperty('nexusUsername') ? getProperty('nexusUsername') : System.env.SONATYPE_OSS_USERNAME
+    password = hasProperty('nexusPassword') ? getProperty('nexusPassword') : System.env.SONATYPE_OSS_PASSWORD
+}
+

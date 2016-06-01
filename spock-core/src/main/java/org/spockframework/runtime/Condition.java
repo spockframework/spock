@@ -16,6 +16,7 @@
 
 package org.spockframework.runtime;
 
+import java.util.List;
 import java.util.regex.Pattern;
 
 import org.spockframework.runtime.model.ExpressionInfo;
@@ -30,24 +31,28 @@ import org.spockframework.util.Nullable;
 public class Condition {
   private static final Pattern pattern = Pattern.compile("\\s*\n\\s*");
 
-  private final Iterable<Object> values;
+  private final List<Object> values;
   private final String text;
   private final TextPosition position;
   private final String message;
+  private final Integer notRecordedVarNumberBecauseOfException;
+  private final Throwable exception;
 
   private volatile ExpressionInfo expression;
   private volatile String rendering;
 
-  public Condition(@Nullable Iterable<Object> values, @Nullable String text, TextPosition position,
-      @Nullable String message) {
+  public Condition(@Nullable List<Object> values, @Nullable String text, TextPosition position,
+      @Nullable String message, @Nullable Integer notRecordedVarNumberBecauseOfException, @Nullable Throwable exception) {
     this.text = text;
     this.position = position;
     this.values = values;
     this.message = message;
+    this.notRecordedVarNumberBecauseOfException = notRecordedVarNumberBecauseOfException;
+    this.exception = exception;
   }
 
   @Nullable
-  public Iterable<Object> getValues() {
+  public List<Object> getValues() {
     return values;
   }
 
@@ -84,7 +89,7 @@ public class Condition {
 
   private void createExpression() {
     if (text == null || values == null) return;
-    expression = new ExpressionInfoBuilder(flatten(text), TextPosition.create(1, 1), values).build();
+    expression = new ExpressionInfoBuilder(flatten(text), TextPosition.create(1, 1), values, notRecordedVarNumberBecauseOfException, exception).build();
   }
 
   private void createRendering() {

@@ -16,12 +16,10 @@
 
 package org.spockframework.runtime;
 
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 import static org.spockframework.runtime.RunStatus.*;
 import org.spockframework.runtime.model.*;
-import org.spockframework.runtime.GroovyRuntimeUtil;
 
 /**
  * Adds the ability to run parameterized features.
@@ -50,19 +48,41 @@ public class ParameterizedSpecRunner extends BaseSpecRunner {
     List<DataProviderInfo> dataProviderInfos = currentFeature.getDataProviders();
     Object[] dataProviders = new Object[dataProviderInfos.size()];
 
-    for (int i = 0; i < dataProviderInfos.size(); i++) {
-      MethodInfo method = dataProviderInfos.get(i).getDataProviderMethod();
-      Object provider = invokeRaw(sharedInstance, method, EMPTY_ARGS);
-      if (runStatus != OK) return null;
-      if (provider == null) {
-        runStatus = supervisor.error(
-            new ErrorInfo(method, new SpockExecutionException("Data provider is null")));
-        return null;
+    if (!dataProviderInfos.isEmpty()) {
+      for (int i = 0; i < dataProviderInfos.size(); i++) {
+        DataProviderInfo dataProviderInfo = dataProviderInfos.get(i);
+
+        MethodInfo method = dataProviderInfo.getDataProviderMethod();
+        Object[] arguments = Arrays.copyOf(dataProviders, getDataTableOffset(dataProviderInfo));
+        Object provider = invokeRaw(sharedInstance, method, arguments);
+        
+        if (runStatus != OK) 
+          return null;
+        else if (provider == null) {
+          SpockExecutionException error = new SpockExecutionException("Data provider is null!");
+          runStatus = supervisor.error(new ErrorInfo(method, error));
+          return null;
+        }
+        dataProviders[i] = provider;
       }
-      dataProviders[i] = provider;
     }
 
     return dataProviders;
+  }
+
+  private int getDataTableOffset(DataProviderInfo dataProviderInfo) {
+    int result = 0;
+    for (String variableName : dataProviderInfo.getDataVariables()) {
+      for (String parameterName : currentFeature.getParameterNames()) {
+        if (variableName.equals(parameterName))
+          return result;
+        else
+          result++;
+      }
+    }
+    throw new IllegalStateException(String.format("Variable name not defined (%s not in %s)!",
+                                                  dataProviderInfo.getDataVariables(),
+                                                  currentFeature.getParameterNames()));
   }
 
   private Iterator[] createIterators(Object[] dataProviders) {

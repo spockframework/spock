@@ -21,8 +21,8 @@ public class VersionChecker {
   public static void checkGroovyVersion(String whoIsChecking) {
     if (!compatibleGroovyVersion) throw new IncompatibleGroovyVersionException(String.format(
 "The Spock %s cannot execute because Spock %s is not compatible with Groovy %s. For more information, see http://versioninfo.spockframework.org\n" +
-"Spock location: %s\n" +
-"Groovy location: %s",
+"Spock artifact: %s\n" +
+"Groovy artifact: %s",
         whoIsChecking, SpockReleaseInfo.getVersion(), GroovyReleaseInfo.getVersion(),
         SpockReleaseInfo.getArtifactPath(), GroovyReleaseInfo.getArtifactPath()));
   }

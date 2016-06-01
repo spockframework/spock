@@ -27,7 +27,7 @@ import spock.config.ConfigurationObject;
 
 @ConfigurationObject("report")
 public class ReportLogConfiguration {
-  public boolean enabled = Boolean.getBoolean(System.getProperty("spock.logEnabled", "false"));
+  public boolean enabled = Boolean.getBoolean("spock.logEnabled");
 
   public String logFileDir = System.getProperty("spock.logFileDir");
   public String logFileName = System.getProperty("spock.logFileName");

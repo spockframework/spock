@@ -26,6 +26,11 @@ public class ConditionNotSatisfiedError extends SpockAssertionError {
     this.condition = condition;
   }
 
+  public ConditionNotSatisfiedError(Condition condition, Throwable cause) {
+    super(cause);
+    this.condition = condition;
+  }
+
   public Condition getCondition() {
     return condition;
   }

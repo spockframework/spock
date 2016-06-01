@@ -17,7 +17,7 @@ package org.spockframework.util
 import spock.lang.Specification
 
 class ObjectUtilSpec extends Specification {
-  def equals() {
+  def "null aware equals"() {
     expect:
     ObjectUtil.equals(null, null)
     !ObjectUtil.equals(null, "foo")
@@ -26,25 +26,25 @@ class ObjectUtilSpec extends Specification {
     !ObjectUtil.equals("foo", "bar")
   }
   
-  def hashCode() {
+  def "null aware hashCode"() {
     expect:
     ObjectUtil.hashCode(null) == 0
     ObjectUtil.hashCode("foo") == "foo".hashCode()
   }
   
-  def toString() {
+  def "null aware toString"() {
     expect:
     ObjectUtil.toString(null) == "null"
     ObjectUtil.toString("foo") == "foo"
   }
   
-  def getClass() {
+  def "null aware getClass"() {
     expect:
     ObjectUtil.getClass(null) == null
     ObjectUtil.getClass("foo") == String
   }
   
-  def voidAwareGetClass() {
+  def "void aware getClass"() {
     expect:
     ObjectUtil.voidAwareGetClass(null) == void
     ObjectUtil.voidAwareGetClass("foo") == String

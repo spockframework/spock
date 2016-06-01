@@ -70,7 +70,7 @@ public class JUnitSupervisor implements IRunSupervisor {
   public void beforeIteration(IterationInfo iteration) {
     masterListener.beforeIteration(iteration);
     currentIteration = iteration;
-    
+
     iterationCount++;
     if (currentFeature.isReportIterations())
       notifier.fireTestStarted(iteration.getDescription());
@@ -116,22 +116,29 @@ public class JUnitSupervisor implements IRunSupervisor {
   private boolean isFailedEqualityComparison(Throwable exception) {
     if (!(exception instanceof ConditionNotSatisfiedError)) return false;
 
-    Condition condition = ((ConditionNotSatisfiedError) exception).getCondition();
+    ConditionNotSatisfiedError conditionNotSatisfiedError = (ConditionNotSatisfiedError) exception;
+    Condition condition = conditionNotSatisfiedError.getCondition();
     ExpressionInfo expr = condition.getExpression();
-    return expr != null && expr.isEqualityComparison();
+    return expr != null && expr.isEqualityComparison() && // it is equality
+        conditionNotSatisfiedError.getCause() == null;    // and it is not failed because of exception
   }
 
   // enables IDE support (diff dialog)
   private Throwable convertToComparisonFailure(Throwable exception) {
     assert isFailedEqualityComparison(exception);
 
-    Condition condition = ((ConditionNotSatisfiedError) exception).getCondition();
+    ConditionNotSatisfiedError conditionNotSatisfiedError = (ConditionNotSatisfiedError) exception;
+    Condition condition = conditionNotSatisfiedError.getCondition();
     ExpressionInfo expr = condition.getExpression();
 
     String actual = renderValue(expr.getChildren().get(0).getValue());
     String expected = renderValue(expr.getChildren().get(1).getValue());
     ComparisonFailure failure = new SpockComparisonFailure(condition, expected, actual);
     failure.setStackTrace(exception.getStackTrace());
+
+    if (conditionNotSatisfiedError.getCause()!=null){
+      failure.initCause(conditionNotSatisfiedError.getCause());
+    }
 
     return failure;
   }
@@ -170,7 +177,7 @@ public class JUnitSupervisor implements IRunSupervisor {
     masterListener.afterIteration(iteration);
     if (currentFeature.isReportIterations())
       notifier.fireTestFinished(iteration.getDescription());
-    
+
     currentIteration = null;
   }
 
@@ -205,7 +212,7 @@ public class JUnitSupervisor implements IRunSupervisor {
   private Description getCurrentDescription() {
     if (currentIteration != null && currentFeature.isReportIterations())
       return currentIteration.getDescription();
-    if (currentFeature != null) 
+    if (currentFeature != null)
       return currentFeature.getDescription();
     return spec.getDescription();
   }

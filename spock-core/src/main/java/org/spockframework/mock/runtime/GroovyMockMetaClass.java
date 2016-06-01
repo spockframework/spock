@@ -27,7 +27,7 @@ import org.spockframework.util.ReflectionUtil;
 
 import spock.lang.Specification;
 
-public class GroovyMockMetaClass extends DelegatingMetaClass {
+public class GroovyMockMetaClass extends DelegatingMetaClass implements SpecificationAttachable {
   private final IMockConfiguration configuration;
   private final Specification specification;
 
@@ -116,7 +116,7 @@ public class GroovyMockMetaClass extends DelegatingMetaClass {
   private IMockInvocation createMockInvocation(MetaMethod metaMethod, Object target,
       String methodName, Object[] arguments, boolean isStatic) {
     IMockObject mockObject = new MockObject(configuration.getName(), configuration.getExactType(), target,
-        configuration.isVerified(), configuration.isGlobal(), configuration.getDefaultResponse(), specification);
+        configuration.isVerified(), configuration.isGlobal(), configuration.getDefaultResponse(), specification, this);
     IMockMethod mockMethod;
     if (metaMethod != null) {
       List<Type> parameterTypes = Arrays.<Type>asList(metaMethod.getNativeParameterTypes());
@@ -125,5 +125,13 @@ public class GroovyMockMetaClass extends DelegatingMetaClass {
       mockMethod = new DynamicMockMethod(methodName, arguments.length, isStatic);
     }
     return new MockInvocation(mockObject, mockMethod, Arrays.asList(arguments), new GroovyRealMethodInvoker(getAdaptee()));
+  }
+
+  public void attach(Specification specification) {
+    // NO-OP since GroovyMocks do not support detached mocks at the moment
+  }
+
+  public void detach() {
+    // NO-OP since GroovyMocks do not support detached mocks at the moment
   }
 }

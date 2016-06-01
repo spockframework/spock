@@ -68,16 +68,7 @@ class MethodParameters extends EmbeddedSpecification {
     x << [1, 2]
     y << [1, 2]
   }
-
-  def "parameters in different order"(y, x) {
-    expect:
-    x == y
-
-    where:
-    x << [1, 2]
-    y << [1, 2]
-  }
-
+  
   def "fewer parameters than data variables"() {
     when:
     compiler.compileSpecBody """

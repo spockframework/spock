@@ -14,7 +14,9 @@
 
 package org.spockframework.util;
 
-public class IncompatibleGroovyVersionException extends RuntimeException {
+import org.spockframework.runtime.SpockException;
+
+public class IncompatibleGroovyVersionException extends SpockException {
   public IncompatibleGroovyVersionException(String message) {
     super(message);
   }

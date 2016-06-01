@@ -54,7 +54,7 @@ class TimeoutExtension extends EmbeddedSpecification {
   @FailsWith(SpockTimeoutError)
   @Timeout(value = 250, unit = MILLISECONDS)
   def "method that doesn't complete in time (millis)"() {
-    setup: Thread.sleep 300
+    setup: Thread.sleep 500
   }
 
   @Issue("http://issues.spockframework.org/detail?id=230")

@@ -43,6 +43,13 @@ class IgnoreIfExtension extends Specification {
   def "provides access to system properties"() {
     expect: false
   }
+
+  @Issue("https://github.com/spockframework/spock/issues/535")
+  @Requires({ false })
+  @IgnoreIf({ false })
+  def "allows determinate use of multiple filters" () {
+    expect: false
+  }
 }
 
 

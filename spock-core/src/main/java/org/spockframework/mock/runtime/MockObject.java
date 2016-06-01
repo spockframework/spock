@@ -33,10 +33,12 @@ public class MockObject implements IMockObject {
   private final boolean verified;
   private final boolean global;
   private final IDefaultResponse defaultResponse;
-  private final Specification specification;
+  private final SpecificationAttachable mockInterceptor;
 
-  public MockObject(@Nullable String name, Type type, Object instance,
-      boolean verified, boolean global, IDefaultResponse defaultResponse, Specification specification) {
+  private Specification specification;
+
+  public MockObject(@Nullable String name, Type type, Object instance, boolean verified, boolean global,
+      IDefaultResponse defaultResponse, Specification specification, SpecificationAttachable mockInterceptor) {
     this.name = name;
     this.type = type;
     this.instance = instance;
@@ -44,6 +46,7 @@ public class MockObject implements IMockObject {
     this.global = global;
     this.defaultResponse = defaultResponse;
     this.specification = specification;
+    this.mockInterceptor = mockInterceptor;
   }
 
   @Nullable
@@ -91,5 +94,15 @@ public class MockObject implements IMockObject {
       throw new InvalidSpecException("Stub '%s' matches the following required interaction:" +
           "\n\n%s\n\nRemove the cardinality (e.g. '1 *'), or turn the stub into a mock.\n").withArgs(mockName, interaction);
     }
+  }
+
+  public void attach(Specification spec) {
+    this.specification = spec;
+    this.mockInterceptor.attach(spec);
+  }
+
+  public void detach() {
+    this.specification = null;
+    this.mockInterceptor.detach();
   }
 }

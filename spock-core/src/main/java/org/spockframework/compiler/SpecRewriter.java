@@ -103,7 +103,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
 
     BlockStatement getterBlock = new BlockStatement();
     getter = new MethodNode(getterName, determineVisibilityForSharedFieldAccessor(field) | Opcodes.ACC_SYNTHETIC,
-        ClassHelper.DYNAMIC_TYPE, Parameter.EMPTY_ARRAY, ClassNode.EMPTY_ARRAY, getterBlock);
+        field.getAst().getType(), Parameter.EMPTY_ARRAY, ClassNode.EMPTY_ARRAY, getterBlock);
 
     getterBlock.addStatement(
         new ReturnStatement(

@@ -18,11 +18,15 @@ package org.spockframework.buildsupport;
 
 import org.objectweb.asm.*;
 
-class SpecClassFileVisitor implements ClassVisitor {
+class SpecClassFileVisitor extends ClassVisitor {
   private final AnnotationVisitor annVisitor = new EmptyAnnotationVisitor();
 
   private boolean hasSpecMetadataAnnotation = false;
   private boolean isAbstract;
+
+  SpecClassFileVisitor() {
+    super(Opcodes.ASM4);
+  }
 
   public boolean isSpec() {
     return hasSpecMetadataAnnotation;

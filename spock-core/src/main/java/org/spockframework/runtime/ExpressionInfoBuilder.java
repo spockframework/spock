@@ -16,7 +16,7 @@
 
 package org.spockframework.runtime;
 
-import java.util.Iterator;
+import java.util.List;
 
 import org.codehaus.groovy.ast.expr.Expression;
 import org.codehaus.groovy.ast.stmt.*;
@@ -24,6 +24,7 @@ import org.codehaus.groovy.control.SourceUnit;
 
 import org.spockframework.runtime.model.*;
 import org.spockframework.util.Assert;
+import org.spockframework.util.Nullable;
 import org.spockframework.util.TextUtil;
 
 /**
@@ -31,16 +32,18 @@ import org.spockframework.util.TextUtil;
  * @author Peter Niederwieser
  */
 public class ExpressionInfoBuilder {
-  private final String text;
   private final String adjustedText;
   private final TextPosition startPos;
-  private final Iterable<Object> values;
+  private final List<Object> values;
+  private final Integer notRecordedVarNumberBecauseOfException;
+  private final Throwable exception;
   private final String[] lines;
 
-  public ExpressionInfoBuilder(String text, TextPosition startPos, Iterable<Object> values) {
-    this.text = text;
+  public ExpressionInfoBuilder(String text, TextPosition startPos, List<Object> values, @Nullable Integer notRecordedVarNumberBecauseOfException, @Nullable Throwable exception) {
     this.startPos = startPos;
     this.values = values;
+    this.notRecordedVarNumberBecauseOfException = notRecordedVarNumberBecauseOfException;
+    this.exception = exception;
     adjustedText = TextUtil.repeatChar(' ', startPos.getColumnIndex()) + text;
     lines = adjustedText.split("\n");
   }
@@ -61,12 +64,17 @@ public class ExpressionInfoBuilder {
 
     // IDEA: rest of this method could be moved to ExpressionInfoConverter (but: might make EIC less testable)
     // IDEA: could make ExpressionInfo immutable
-    Iterator<?> iter = values.iterator();
-    for (ExpressionInfo info : exprInfo.inPostfixOrder(false)) {
+    List<ExpressionInfo> inPostfixOrder = exprInfo.inPostfixOrder(false);
+    for (int variableNumber = 0; variableNumber < inPostfixOrder.size(); variableNumber++) {
+      ExpressionInfo info = inPostfixOrder.get(variableNumber);
       info.setText(findText(info.getRegion()));
-      if (!iter.hasNext())
-        Assert.fail("Missing value for expression '%s' in condition '%s'", info.getText(), text);
-      info.setValue(iter.next());
+      if (notRecordedVarNumberBecauseOfException!=null && variableNumber == notRecordedVarNumberBecauseOfException) {
+        info.setValue(exception);
+      } else if (values.size() > variableNumber) { //we have this value
+        info.setValue(values.get(variableNumber));
+      }else {
+        info.setValue(ExpressionInfo.VALUE_NOT_AVAILABLE);
+      }
       if (startPos.getLineIndex() > 0)
         info.shiftVertically(startPos.getLineIndex());
     }
@@ -77,7 +85,7 @@ public class ExpressionInfoBuilder {
   private String findText(TextRegion region) {
     if (region == TextRegion.NOT_AVAILABLE)
       return ExpressionInfo.TEXT_NOT_AVAILABLE;
-    
+
     try {
       String text = "";
       for (int i = 0; i <= region.getEnd().getLineIndex(); i++) {

@@ -33,6 +33,7 @@ public class SpringTestContextManager {
 
   public SpringTestContextManager(Class<?> testClass) {
     delegate = new TestContextManager(testClass);
+    delegate.registerTestExecutionListeners(new SpringMockTestExecutionListener());
   }
 
   public void beforeTestClass() throws Exception {

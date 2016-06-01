@@ -16,6 +16,7 @@
 
 package spock.util
 
+import org.intellij.lang.annotations.Language
 import org.junit.runner.notification.RunListener
 import org.junit.runner.*
 
@@ -89,19 +90,21 @@ class EmbeddedSpecRunner {
     }
   }
 
-  Result run(String source) {
+  Result run(@Language('Groovy') String source) {
     runClasses(compiler.compile(source))
   }
 
-  Result runWithImports(String source) {
+  Result runWithImports(@Language('Groovy') String source) {
     runClasses(compiler.compileWithImports(source))
   }
 
-  Result runSpecBody(String source) {
+  Result runSpecBody(@Language(value = 'Groovy', prefix = 'class ASpec extends spock.lang.Specification { ', suffix = '\n }')
+                     String source) {
     runClass(compiler.compileSpecBody(source))
   }
 
-  Result runFeatureBody(String source) {
+  Result runFeatureBody(@Language(value = 'Groovy', prefix = "def 'a feature'() { ", suffix = '\n }')
+                        String source) {
     runClass(compiler.compileFeatureBody(source))
   }
 

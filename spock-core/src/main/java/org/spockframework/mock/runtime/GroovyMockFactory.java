@@ -71,4 +71,9 @@ public class GroovyMockFactory implements IMockFactory {
   private boolean isFinalClass(Class<?> type) {
     return !type.isInterface() && Modifier.isFinal(type.getModifiers());
   }
+
+  public Object createDetached(IMockConfiguration configuration, ClassLoader classLoader) {
+    throw new CannotCreateMockException(configuration.getType(),
+        ". Detached mocking is only possible for JavaMocks but not GroovyMocks at the moment.");
+  }
 }

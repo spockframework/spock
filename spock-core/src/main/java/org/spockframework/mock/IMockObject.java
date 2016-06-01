@@ -14,13 +14,14 @@
 
 package org.spockframework.mock;
 
+import org.spockframework.mock.runtime.SpecificationAttachable;
 import org.spockframework.util.Nullable;
 
 import spock.lang.Specification;
 
 import java.lang.reflect.Type;
 
-public interface IMockObject {
+public interface IMockObject extends SpecificationAttachable {
   /**
    * Returns the name of this mock object, or {@code null} if it has no name.
    *
@@ -70,6 +71,7 @@ public interface IMockObject {
    *
    * @return the specification that this mock object is attached to
    */
+  @Nullable
   Specification getSpecification();
 
   /**

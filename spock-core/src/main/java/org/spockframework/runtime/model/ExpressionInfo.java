@@ -141,14 +141,10 @@ public class ExpressionInfo implements Iterable<ExpressionInfo> {
     };
   }
 
-  public Iterable<ExpressionInfo> inPostfixOrder(final boolean skipIrrelevant) {
-    return new Iterable<ExpressionInfo>() {
-      public Iterator<ExpressionInfo> iterator() {
-        List<ExpressionInfo> list = new ArrayList<ExpressionInfo>();
-        collectPostfix(list, skipIrrelevant);
-        return list.iterator();
-      }
-    };
+  public List<ExpressionInfo> inPostfixOrder(final boolean skipIrrelevant) {
+    List<ExpressionInfo> list = new ArrayList<ExpressionInfo>();
+    collectPostfix(list, skipIrrelevant);
+    return list;
   }
 
   public Iterable<ExpressionInfo> inCustomOrder(boolean skipIrrelevant, Comparator<ExpressionInfo> comparator) {

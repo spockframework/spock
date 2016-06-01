@@ -55,6 +55,9 @@ class Foo {
     (1..inspect_upperValue(5)).each { println(3 * inspect_varRef(x)) }
     stat3: println "bye"
   }
+
+  def inspect_init1(n) {}
+  static inspect_init2(n) {}
 }
     """)
   }

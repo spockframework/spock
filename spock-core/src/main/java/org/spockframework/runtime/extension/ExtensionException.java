@@ -16,7 +16,9 @@
 
 package org.spockframework.runtime.extension;
 
-public class ExtensionException extends RuntimeException {
+import org.spockframework.runtime.SpockException;
+
+public class ExtensionException extends SpockException {
   private String message;
 
   public ExtensionException(String message) {

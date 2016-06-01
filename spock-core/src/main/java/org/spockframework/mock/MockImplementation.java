@@ -15,23 +15,24 @@
 package org.spockframework.mock;
 
 import org.spockframework.util.Beta;
+import spock.mock.MockingApi;
 
 /**
  * Determines how method calls are processed and matched against interactions. A mock implementation
- * is chosen at mock creation time, typically by selecting the appropriate {@link spock.lang.MockingApi} factory method.
+ * is chosen at mock creation time, typically by selecting the appropriate {@link MockingApi} factory method.
  */
 @Beta
 public enum MockImplementation {
   /**
-   * A generic implementation targeting any callers. Used by the {@link spock.lang.MockingApi#Mock},
-   * {@link spock.lang.MockingApi#Stub}, and {@link spock.lang.MockingApi#Spy} factory methods.
+   * A generic implementation targeting any callers. Used by the {@link MockingApi#Mock},
+   * {@link MockingApi#Stub}, and {@link MockingApi#Spy} factory methods.
    */
   JAVA,
   /**
    * An implementation specifically targeting Groovy callers. Supports mocking of dynamic methods,
    * constructors, static methods, and "magic" mocking of all objects of a particular type.
-   * Used by the {@link spock.lang.MockingApi#GroovyMock}, {@link spock.lang.MockingApi#GroovyStub},
-   * and {@link spock.lang.MockingApi#GroovySpy} factory methods.
+   * Used by the {@link MockingApi#GroovyMock}, {@link MockingApi#GroovyStub},
+   * and {@link MockingApi#GroovySpy} factory methods.
    */
   GROOVY
 }

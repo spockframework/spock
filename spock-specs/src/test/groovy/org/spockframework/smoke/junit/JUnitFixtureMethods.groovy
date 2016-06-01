@@ -14,6 +14,7 @@
 
 package org.spockframework.smoke.junit
 
+import org.intellij.lang.annotations.Language
 import org.spockframework.EmbeddedSpecification
 
 import spock.lang.*
@@ -191,7 +192,7 @@ class JUnitFixtureMethods extends EmbeddedSpecification {
     """
   }
 
-  protected run(String source) {
+  protected run(@Language('Groovy') String source) {
     addImports()
     runner.runWithImports(source)
   }

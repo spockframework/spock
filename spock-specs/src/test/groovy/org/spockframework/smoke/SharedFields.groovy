@@ -61,4 +61,27 @@ class Foo extends Specification {
     then:
     noExceptionThrown()
   }
+
+  @Issue("https://github.com/spockframework/spock/issues/570")
+  def 'getters and setters generated for shared fields use the declared type of the field'() {
+    when:
+    runner.runWithImports '''
+class ImplementsInterface extends Specification implements HasValueProperty {
+  @Shared String value = "1"
+
+  def test() {
+    expect:
+    value == "1"
+  }
+}
+
+interface HasValueProperty {
+    String getValue()
+    void setValue(String value)
+}
+    '''
+
+    then:
+    noExceptionThrown()
+  }
 }

@@ -30,7 +30,7 @@ class SpockReportPlugin implements Plugin<Project> {
         if (spockBuild) {
           testRuntime project(":spock-report")
         } else {
-          testRuntime "org.spockframework:spock-report:1.0-SNAPSHOT"
+          testRuntime "org.spockframework:spock-report:1.1-SNAPSHOT"
         }
       }
     }

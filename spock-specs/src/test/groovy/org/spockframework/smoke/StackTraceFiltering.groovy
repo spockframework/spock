@@ -79,19 +79,68 @@ apackage.ASpec|a feature|2
     displayName << ["Groovy call chain", "Java call chain"]
   }
 
-  def "exception in closure"() {
+  def "exception in closure in feature method"() {
     when:
     runner.runFeatureBody """
-setup:
-def x // need some statement between label and closure (otherwise Groovy would consider the following a block)
-{ -> assert false }()
+$block:
+def cl = { assert false }
+cl()
     """
 
     then:
     ConditionNotSatisfiedError e = thrown()
     stackTraceLooksLike e, """
+apackage.ASpec|a feature_closure1|2
 apackage.ASpec|a feature_closure1|-
 apackage.ASpec|a feature|3
+    """
+
+    where:
+    block << ["setup", "expect"]
+  }
+
+  def "exception in closure in helper method"() {
+    when:
+    runner.runSpecBody """
+def "a feature"() {
+  expect: helper()
+}
+
+def helper() {
+  def cl = { assert false }
+  cl()
+}
+    """
+
+    then:
+    ConditionNotSatisfiedError e = thrown()
+    stackTraceLooksLike e, """
+apackage.ASpec|helper_closure1|6
+apackage.ASpec|helper_closure1|-
+apackage.ASpec|helper|7
+apackage.ASpec|a feature|2
+    """
+  }
+
+  def "exception in closure in fixture method"() {
+    when:
+    runner.runSpecBody """
+def "a feature"() {
+  expect: true
+}
+
+def setup() {
+  def cl = { assert false }
+  cl()
+}
+    """
+
+    then:
+    ConditionNotSatisfiedError e = thrown()
+    stackTraceLooksLike e, """
+apackage.ASpec|setup_closure1|6
+apackage.ASpec|setup_closure1|-
+apackage.ASpec|setup|7
     """
   }
 
@@ -105,9 +154,8 @@ def foo() { expect: true }
 
     then:
     ConditionNotSatisfiedError e = thrown()
-    // no idea why setup_closure1 appears twice
     stackTraceLooksLike e, """
-apackage.ASpec|\$spock_initializeFields_closure1|-
+apackage.ASpec|\$spock_initializeFields_closure1|1
 apackage.ASpec|\$spock_initializeFields_closure1|-
 apackage.ASpec|\$spock_initializeFields|1
     """

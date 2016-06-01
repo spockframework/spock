@@ -16,7 +16,7 @@ package org.spockframework.mock;
 
 /**
  * Marker-like interface implemented by all mock objects that allows
- * {@link MockDetector} to detect mock objects. Not intended for direct use.
+ * {@link MockUtil} to detect mock objects. Not intended for direct use.
  */
 public interface ISpockMockObject {
   IMockObject $spock_get();

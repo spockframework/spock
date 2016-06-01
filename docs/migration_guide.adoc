@@ -2,6 +2,17 @@
 
 This page explains incompatible changes between successive versions and provides suggestions on how to deal with them.
 
+== 1.0
+
+Specs, Spec base classes and third-party extensions may have be recompiled in order to work with Spock 1.0.
+
+JRE 1.5 and Groovy versions below 2.0 are no longer supported.
+
+Make sure to pick the right binaries for your Groovy version of choice: `groovy-2.0` for Groovy 2.0/2.1/2.2,
+`groovy-2.3` for Groovy 2.3, and `groovy-2.4` for Groovy 2.4 and higher. Spock won't let you run with a "wrong" version.
+
+No known source incompatible changes.
+
 == 0.7
 
 Client code must be recompiled in order to work with Spock 0.7. This includes third-party Spock extensions and base classes.

@@ -5,7 +5,7 @@ displayName = "Spock Framework - Spring Module"
 description = "Spock's Spring Module makes it possible to use Spring's TestContext framework together with Spock. \
 Supports Spring 2.5.x, 3.x, and 4.x."
 
-def springVersion = "2.5.6.SEC01"
+def springVersion = "4.1.0.RELEASE"
 
 if (springVersion.startsWith("2.")) {
   sourceSets.test.groovy.exclude "**/*ContextHierarchyExample.groovy"
@@ -15,8 +15,8 @@ dependencies {
   compile project(":spock-core")
   compile "org.springframework:spring-test:$springVersion", provided
   compile "org.springframework:spring-beans:$springVersion", provided
+  compile "org.springframework:spring-context:$springVersion", provided
 
-  testCompile "org.springframework:spring-context:$springVersion"
   // not used directly at compile-time, but needed by groovyc
   testCompile "org.springframework:spring-core:$springVersion"
   testCompile "org.springframework:spring-jdbc:$springVersion"

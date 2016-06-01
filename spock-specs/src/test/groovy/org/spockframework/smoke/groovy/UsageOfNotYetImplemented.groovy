@@ -15,9 +15,29 @@
  */
 package org.spockframework.smoke.groovy
 
-import spock.lang.Specification
+import groovy.transform.NotYetImplemented
 
-// spec only implemented in groovy-1.9 branch and higher
-// using NotYetImplementedASTTransformation with Groovy 1.8
-// can cause compile error due to class loading problem (fix wasn't backported)
-class UsageOfNotYetImplemented extends Specification {}
+import junit.framework.AssertionFailedError
+
+import spock.lang.Specification
+import spock.lang.FailsWith
+
+// make sure that Groovy's @NotYetImplemented works with Spock
+class UsageOfNotYetImplemented extends Specification {
+  @NotYetImplemented
+  def "expected to fail"() {
+    expect: false  
+  }  
+
+  @NotYetImplemented
+  def "allowed to raise arbitrary exception"() {
+    setup:
+    throw new IOException("ouch")
+  }
+  
+  @FailsWith(AssertionFailedError)
+  @NotYetImplemented
+  def "not allowed to pass"() {
+    expect: true
+  }
+}

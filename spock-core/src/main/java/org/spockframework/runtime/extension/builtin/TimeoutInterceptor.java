@@ -43,12 +43,20 @@ public class TimeoutInterceptor implements IMethodInterceptor {
   public void intercept(final IMethodInvocation invocation) throws Throwable {
     final Thread mainThread = Thread.currentThread();
     final SynchronousQueue<StackTraceElement[]> sync = new SynchronousQueue<StackTraceElement[]>();
+    final CountDownLatch startLatch = new CountDownLatch(2);
 
     new Thread(String.format("[spock.lang.Timeout] Watcher for method '%s'", invocation.getMethod().getName())) {
       public void run() {
         StackTraceElement[] stackTrace = new StackTraceElement[0];
         long waitMillis = timeout.unit().toMillis(timeout.value());
         boolean synced = false;
+
+        try {
+          startLatch.countDown();
+          startLatch.await(5, TimeUnit.SECONDS);
+        } catch (InterruptedException ignored) {
+          System.out.printf("[spock.lang.Timeout] Could not sync with Feature for method '%s'", invocation.getMethod().getName());
+        }
 
         while (!synced) {
           try {
@@ -71,6 +79,14 @@ public class TimeoutInterceptor implements IMethodInterceptor {
         }
       }
     }.start();
+
+
+    try {
+      startLatch.countDown();
+      startLatch.await(5, TimeUnit.SECONDS);
+    } catch (InterruptedException ignored) {
+      System.out.printf("[spock.lang.Timeout] Could not sync with Watcher for method '%s'", invocation.getMethod().getName());
+    }
 
     Throwable saved = null;
     try {

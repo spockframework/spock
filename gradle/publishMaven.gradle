@@ -24,7 +24,7 @@ def basePom = {
       developer {
         id "pniederw"
         name "Peter Niederwieser"
-        email "pniederw@gmail.com"
+        email "peter@pniederw.com"
       }
 
       developer {
@@ -50,22 +50,11 @@ install {
 
 uploadArchives {
   deployers << repositories.mavenDeployer {
-    if (snapshotVersion) {
-      snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
-        if (project.hasProperty("sonatypeOssUsername")) {
-          authentication(userName: sonatypeOssUsername, password: sonatypeOssPassword)
-        }
-      }
-    } else if (project.hasProperty("bintray")) {
-      repository(url: "https://api.bintray.com/maven/spockframework/spockframework/spock/") {
-        authentication(userName: bintrayUsername, password: bintrayApiKey)
-      }     
-    } else {
-      repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
-        if (project.hasProperty("sonatypeOssUsername")) {
-          authentication(userName: sonatypeOssUsername, password: sonatypeOssPassword)
-        }
-      }
+    snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+      authentication(userName: "pniederw", password: System.getenv("SONATYPE_OSS_PASSWORD"))
+    }
+    repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+      authentication(userName: "pniederw", password: System.getenv("SONATYPE_OSS_PASSWORD"))
     }
   }
 }

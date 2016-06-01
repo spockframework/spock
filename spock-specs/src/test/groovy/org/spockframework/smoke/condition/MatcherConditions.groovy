@@ -130,7 +130,7 @@ class MatcherConditions extends EmbeddedSpecification {
     42 equalTo(x)
   }
 
-  @FailsWith(MissingMethodException)
+  @FailsWith(ConditionNotSatisfiedError)
   def "cannot have a string literal as actual (because matcher expression gets parsed as a method call)"() {
     def x = "fred"
 
@@ -150,7 +150,7 @@ class MatcherConditions extends EmbeddedSpecification {
     String property = "property"
   }
 
-  @FailsWith(MissingMethodException)
+  @FailsWith(ConditionNotSatisfiedError)
   def "cannot have a method expression as actual in Groovy 1.8 (because matcher expression gets parsed as a chained method call)"() {
     def foo = new Foo()
 
@@ -165,7 +165,7 @@ class MatcherConditions extends EmbeddedSpecification {
     that foo.method(), equalTo("method")
   }
 
-  @FailsWith(MissingMethodException)
+  @FailsWith(ConditionNotSatisfiedError)
   def "cannot have a property expression as actual (because matcher expression gets parsed as a method call)"() {
     def foo = new Foo()
 

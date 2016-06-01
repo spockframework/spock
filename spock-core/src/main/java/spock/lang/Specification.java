@@ -218,6 +218,7 @@ public abstract class Specification extends MockingApi {
     with(target, closure);
   }
 
+  @Beta
   public void verifyAll(Closure closure){
     GroovyRuntimeUtil.invokeClosure(closure);
   }

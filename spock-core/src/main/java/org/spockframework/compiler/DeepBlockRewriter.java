@@ -16,6 +16,8 @@
 
 package org.spockframework.compiler;
 
+import groovy.lang.Closure;
+import org.codehaus.groovy.ast.ClassHelper;
 import org.codehaus.groovy.ast.Parameter;
 import org.codehaus.groovy.ast.expr.*;
 import org.codehaus.groovy.ast.stmt.*;
@@ -145,9 +147,36 @@ public class DeepBlockRewriter extends AbstractDeepBlockRewriter {
     checkIsValidImplicitCondition(stat);
     conditionFound = true;
     groupConditionFound = currSpecialMethodCall.isGroupConditionBlock();
+
+    if (currSpecialMethodCall.isWithCall()
+      && AstUtil.isInvocationWithImplicitThis(stat.getExpression())) {
+      replaceObjectExpressionWithCurrentClosure(stat);
+    }
+
     Statement condition = ConditionRewriter.rewriteImplicitCondition(stat, resources);
     replaceVisitedStatementWith(condition);
     return true;
+  }
+
+  private void replaceObjectExpressionWithCurrentClosure(ExpressionStatement stat) {
+    MethodCallExpression methodCall = AstUtil.getExpression(stat, MethodCallExpression.class);
+    if (methodCall == null) return;
+
+    MethodCallExpression target = referenceToCurrentClosure();
+    methodCall.setObjectExpression(target);
+  }
+
+  private MethodCallExpression referenceToCurrentClosure() {
+    return new MethodCallExpression(
+      new VariableExpression("this"),
+      new ConstantExpression("each"),
+      new ArgumentListExpression(
+        new PropertyExpression(
+          new ClassExpression(ClassHelper.makeWithoutCaching(Closure.class)),
+          new ConstantExpression("IDENTITY")
+        )
+      )
+    );
   }
 
   private boolean handleMockCall(MethodCallExpression expr) {

@@ -65,6 +65,64 @@ class WithBlocks extends Specification {
     e.message.contains("Person")
   }
 
+  def "method condition is invoked on closure but not on the spec"() {
+
+    def map = [ 'value1' : 1, 'value2' : 2]
+
+    expect:
+    with(map) {
+      size() == 2
+      containsKey('value2')
+    }
+  }
+
+  def "nested method conditions are invoked on closure but not on the spec"() {
+
+    def map = [ 'value1' : 1, 'value2' : 2]
+
+    expect:
+    with(map) {
+      containsKey('value2')
+
+      def list = [1, 2, 3]
+      with(list) {
+        contains(2)
+      }
+    }
+  }
+
+  def "a closure encloses a with clause that has a method condition"() {
+    def list = [1, 2, 3]
+
+    expect:
+    (1..3).each { number ->
+      with(list) {
+        contains(number)
+      }
+    }
+  }
+
+  def "spec has methods with the same signature as the with target object"() {
+    def list = [1, 2, 3]
+
+    expect:
+    size() == 42        // WithBlocks::size
+    contains(4)         // WithBlocks::contains
+    with(list) {
+      size() == 3       // list::size
+      contains(3)       // list::contains
+      this.contains(4)  // WithBlocks::size
+    }
+  }
+
+  int size() {
+    42
+  }
+
+  boolean contains(Object object) {
+    object == 4
+  }
+
   static class Person {
     String name = "Fred"
     int age = 42

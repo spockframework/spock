@@ -16,19 +16,21 @@
 
 package org.spockframework.spring;
 
-import java.lang.annotation.*;
-import java.lang.reflect.*;
-
-import org.spockframework.runtime.extension.AbstractGlobalExtension;
 import org.spockframework.runtime.AbstractRunListener;
-import org.spockframework.runtime.model.*;
-import org.spockframework.util.*;
-
+import org.spockframework.runtime.extension.AbstractGlobalExtension;
+import org.spockframework.runtime.model.ErrorInfo;
+import org.spockframework.runtime.model.FeatureInfo;
+import org.spockframework.runtime.model.FieldInfo;
+import org.spockframework.runtime.model.SpecInfo;
+import org.spockframework.util.NotThreadSafe;
+import org.spockframework.util.ReflectionUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.ProfileValueUtils;
 import org.springframework.test.context.ContextConfiguration;
-
 import spock.lang.Shared;
+
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 
 @NotThreadSafe
 public class SpringExtension extends AbstractGlobalExtension {
@@ -42,8 +44,8 @@ public class SpringExtension extends AbstractGlobalExtension {
 
   // since Spring-Boot 1.4
   @SuppressWarnings("unchecked")
-  private static final Class<? extends Annotation> springBootTestClass =
-    (Class) ReflectionUtil.loadClassIfAvailable("org.springframework.boot.test.context.SpringBootTest");
+  private static final Class<? extends Annotation> bootstrapWithAnnotation =
+    (Class) ReflectionUtil.loadClassIfAvailable("org.springframework.test.context.BootstrapWith");
 
   static {
     Class<?> metaAnnotationUtilsClass =
@@ -76,17 +78,8 @@ public class SpringExtension extends AbstractGlobalExtension {
   }
 
   private boolean isSpringSpec(SpecInfo spec) {
-    boolean contextAnnotationPresent = spec.isAnnotationPresent(ContextConfiguration.class);
-    boolean contextHierarchyAnnotationPresent = contextHierarchyClass != null
-      && spec.isAnnotationPresent(contextHierarchyClass);
-    boolean springBootTestAnnotationPresent = springBootTestClass != null
-      && spec.isAnnotationPresent(springBootTestClass);
 
-    boolean springAnnotationPresent = contextAnnotationPresent
-      || contextHierarchyAnnotationPresent
-      || springBootTestAnnotationPresent;
-
-    if (springAnnotationPresent) {
+    if (isSpringBootSpec(spec)) {
       return true;
     }
 
@@ -95,6 +88,23 @@ public class SpringExtension extends AbstractGlobalExtension {
         null, findAnnotationDescriptorForTypesMethod, spec.getReflection(),
         new Class[] {ContextConfiguration.class, contextHierarchyClass}) != null;
 
+  }
+
+  private boolean isSpringBootSpec(SpecInfo spec) {
+
+    boolean bootstrapWithAnnotationPresent;
+
+    Annotation[] annotations = spec.getAnnotations();
+    for (Annotation a : annotations) {
+      // we can identify a spring-boot spec by looking for an annotation annotated with BootstrapWith
+      bootstrapWithAnnotationPresent = a.annotationType().isAnnotationPresent(bootstrapWithAnnotation);
+
+      if (bootstrapWithAnnotationPresent) {
+        return true;
+      }
+
+    }
+    return false;
   }
 
   private void checkNoSharedFieldsInjected(SpecInfo spec) {

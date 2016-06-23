@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2013 the original author or authors.
+ * Copyright 2012-2016 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,21 +14,13 @@
  * limitations under the License.
  */
 
-package org.spockframework.boot;
 
-import org.springframework.boot.CommandLineRunner;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+package org.spockframework.boot.jpa;
 
-@SpringBootApplication
-public class SimpleBootApp implements CommandLineRunner {
+import org.springframework.data.repository.CrudRepository;
 
-	@Override
-	public void run(String... args) {
-    System.out.println("Hello World");
-  }
-
-	public static void main(String[] args) throws Exception {
-		SpringApplication.run(SimpleBootApp.class, args);
-	}
+/**
+ * Spring-Data repository for {@link Book} entities.
+ */
+public interface BookRepository extends CrudRepository<Book, Long> {
 }

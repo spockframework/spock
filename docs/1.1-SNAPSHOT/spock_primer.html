@@ -655,7 +655,54 @@ end up with specifications that are fragile and hard to evolve.</p>
 </div>
 </div>
 <div class="sect1">
-<h2 id="specs-as-doc">Specifications as Documentation</h2>
+<h2 id="specs-as-doc">Using <code>with</code> for expectations</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>As an alternative to the above helper methods, you can use a <code>with(target, closure)</code> method to interact on the object being verified.
+This is especially useful in <code>then</code> and <code>expect</code> blocks.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">offered PC matches preferred configuration</span><span class="delimiter">&quot;</span></span>() {
+  <span class="key">when</span>:
+  <span class="keyword">def</span> pc = shop.buyPc()
+
+  <span class="key">then</span>:
+  with(pc) {
+    vendor == <span class="string"><span class="delimiter">&quot;</span><span class="content">Sunny</span><span class="delimiter">&quot;</span></span>
+    clockRate &gt;= <span class="integer">2333</span>
+    ram &gt;= <span class="integer">406</span>
+    os == <span class="string"><span class="delimiter">&quot;</span><span class="content">Linux</span><span class="delimiter">&quot;</span></span>
+  }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Unlike when you use helper methods, there is no need for explicit assert statements for proper error reporting.</p>
+</div>
+<div class="paragraph">
+<p>When verifying mocks, a <code>with</code> statement can also cut out verbose verification statements.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> service = Mock(Service) <span class="comment">// has start(), stop(), and doWork() methods</span>
+<span class="keyword">def</span> app = <span class="keyword">new</span> Application(service) <span class="comment">// controls the lifecycle of the service</span>
+
+<span class="key">when</span>:
+app.run()
+
+<span class="key">then</span>:
+with(service) {
+  <span class="integer">1</span> * start()
+  <span class="integer">1</span> * doWork()
+  <span class="integer">1</span> * stop()
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_specifications_as_documentation">Specifications as Documentation</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Well-written specifications are a valuable source of information. Especially for higher-level specifications targeting
@@ -834,7 +881,7 @@ comparison:</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2016-06-13 17:53:12 UTC
+Last updated 2016-06-28 23:20:45 UTC
 </div>
 </div>
 </body>

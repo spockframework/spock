@@ -1,6 +1,6 @@
 = Release Notes
 
-== 1.1-rc-1
+== 1.1-rc-1 (released 2016-06-30)
 
 A number of excellent pull requests have been integrated into the 1.1 stream.
 Currently some features are incubating.

@@ -18,6 +18,7 @@ package org.spockframework.compiler;
 
 import java.util.*;
 
+import org.codehaus.groovy.ast.ClassHelper;
 import org.codehaus.groovy.ast.ClassNode;
 import org.codehaus.groovy.ast.MethodNode;
 import org.codehaus.groovy.ast.Parameter;
@@ -25,7 +26,7 @@ import org.codehaus.groovy.ast.expr.*;
 import org.codehaus.groovy.ast.stmt.*;
 import org.codehaus.groovy.classgen.BytecodeExpression;
 import org.codehaus.groovy.syntax.Types;
-
+import org.spockframework.runtime.ErrorCollector;
 import org.spockframework.runtime.ValueRecorder;
 import org.spockframework.util.*;
 
@@ -641,7 +642,7 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> {
         new ClassExpression(resources.getAstNodeCache().SpockRuntime), method,
         new ArgumentListExpression(args));
 
-    args.add(new VariableExpression("$spock_errorCollector"));
+    args.add(new VariableExpression("$spock_errorCollector", ClassHelper.make(ErrorCollector.class)));
     args.add(message == null ?
         AstUtil.createDirectMethodCall(
             new VariableExpression("$spock_valueRecorder"),

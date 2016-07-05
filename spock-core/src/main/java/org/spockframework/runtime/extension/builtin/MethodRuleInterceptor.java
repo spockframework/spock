@@ -41,7 +41,7 @@ public class MethodRuleInterceptor extends AbstractRuleInterceptor {
   }
 
   private FrameworkMethod createFrameworkMethod(final IMethodInvocation invocation) {
-    return new FrameworkMethod(invocation.getMethod().getReflection()) {
+    return new FrameworkMethod(invocation.getIteration().getParent().getFeatureMethod().getReflection()) {
       @Override
       public String getName() {
         return invocation.getIteration().getDescription().getMethodName();

@@ -23,11 +23,9 @@ import spock.lang.Specification
 
 /**
  * Integration test similar to {@link SimpleBootAppIntegrationSpec} but using the {@link SpringBootTest} annotation.
- *
- * @author Kevin Wittek
  */
 @SpringBootTest
-class SimpleBootAppTestAnnotationIntegrationSpec extends Specification {
+class SpringBootTestAnnotationIntegrationSpec extends Specification {
   @Autowired
   ApplicationContext context
 

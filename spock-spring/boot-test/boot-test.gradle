@@ -1,15 +1,45 @@
-def springVersion = "4.1.0.RELEASE"
-def bootVersion = "1.1.6.RELEASE"
+buildscript {
+  ext {
+    springBootVersion = '1.4.0.M3'
+  }
+  repositories {
+    mavenCentral()
+    maven { url "https://repo.spring.io/snapshot" }
+    maven { url "https://repo.spring.io/milestone" }
+  }
+  dependencies {
+    classpath "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}"
+  }
+}
 
+
+apply plugin: 'spring-boot'
+
+
+
+ext['tomcat.version'] = '7.0.59' // use Tomcat 7 to ensure Java 6 compatibility
 dependencies {
-	compile "org.springframework:spring-core:$springVersion"
-	compile "org.springframework.boot:spring-boot:$bootVersion"
-	compile "org.springframework.boot:spring-boot-autoconfigure:$bootVersion"
+  compile("org.springframework.boot:spring-boot-starter-data-jpa") {
+    // for Java 6 compatibility, see http://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#how-to-use-java-6-jta-api
+    exclude group: "javax.transaction", module: "javax.transaction-api"
+  }
 
+  compile "org.jboss.spec.javax.transaction:jboss-transaction-api_1.2_spec:1.0.0.Final"
+
+  compile "org.springframework.boot:spring-boot-starter-web"
+
+
+  testCompile "org.springframework.boot:spring-boot-starter-test"
   testCompile project(":spock-core")
-  testCompile "org.springframework:spring-context:$springVersion"
-  testCompile "org.springframework:spring-test:$springVersion"
+
+  runtime "com.h2database:h2"
 
   testRuntime project(":spock-spring")
+}
+
+repositories {
+  mavenCentral()
+  maven { url "https://repo.spring.io/snapshot" }
+  maven { url "https://repo.spring.io/milestone" }
 }
 

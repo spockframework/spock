@@ -52,7 +52,7 @@ public class RuleExtension extends AbstractRuleExtension {
     static void install(SpecInfo spec, List<FieldInfo> ruleFields) {
       MethodRuleInterceptor interceptor = new MethodRuleInterceptor(ruleFields);
       for (FeatureInfo feature : spec.getAllFeatures()) {
-        feature.getFeatureMethod().addInterceptor(interceptor);
+        feature.addIterationInterceptor(interceptor);
       }
     }
   }

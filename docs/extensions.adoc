@@ -38,6 +38,9 @@ class MySpec extends Specification { ... }
 
 In most execution environments, ignored feature methods and specs will be reported as "skipped".
 
+Care should be taken when ignoring feature methods in a spec class annotated with `spock.lang.Stepwise` since
+later feature methods may depend on earlier feature methods having executed.
+
 === IgnoreRest
 
 To ignore all but a (typically) small subset of methods, annotate the latter with `spock.lang.IgnoreRest`:
@@ -53,6 +56,9 @@ def "I'll also be ignored"() { ... }
 ----
 
 +@IgnoreRest+ is especially handy in execution environments that don't provide an (easy) way to run a subset of methods.
+
+Care should be taken when ignoring feature methods in a spec class annotated with `spock.lang.Stepwise` since
+later feature methods may depend on earlier feature methods having executed.
 
 === IgnoreIf
 
@@ -79,6 +85,9 @@ Using the `os` property, the previous example can be rewritten as:
 @IgnoreIf({ os.windows })
 def "I'll run everywhere but on Windows"() { ... }
 ----
+
+Care should be taken when ignoring feature methods in a spec class annotated with `spock.lang.Stepwise` since
+later feature methods may depend on earlier feature methods having executed.
 
 === Requires
 
@@ -137,6 +146,8 @@ class RunInOrderSpec extends Specification {
 `Stepwise` only affects the class carrying the annotation; not sub or super classes.  Features after the first
 failure are skipped.
 
+`Stepwise` does not override the behaviour of annotations such as `Ignore`, `IgnoreRest`, and `IgnoreIf`, so care
+should be taken when ignoring feature methods in spec classes annotated with `Stepwise`.
 
 === Timeout
 

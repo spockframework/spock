@@ -34,6 +34,7 @@ import spock.lang.*;
 public class AstNodeCache {
   public final ClassNode SpockRuntime = ClassHelper.makeWithoutCaching(SpockRuntime.class);
   public final ClassNode ValueRecorder = ClassHelper.makeWithoutCaching(ValueRecorder.class);
+  public final ClassNode ErrorCollector = ClassHelper.makeWithoutCaching(org.spockframework.runtime.ErrorCollector.class);
   public final ClassNode Specification = ClassHelper.makeWithoutCaching(Specification.class);
   public final ClassNode SpecInternals = ClassHelper.makeWithoutCaching(org.spockframework.lang.SpecInternals.class);
 
@@ -42,6 +43,9 @@ public class AstNodeCache {
 
   public final MethodNode SpockRuntime_VerifyCondition =
       SpockRuntime.getDeclaredMethods(org.spockframework.runtime.SpockRuntime.VERIFY_CONDITION).get(0);
+
+  public final MethodNode SpockRuntime_ConditionFailedWithException =
+      SpockRuntime.getDeclaredMethods(org.spockframework.runtime.SpockRuntime.CONDITION_FAILED_WITH_EXCEPTION).get(0);
 
   public final MethodNode SpockRuntime_VerifyMethodCondition =
       SpockRuntime.getDeclaredMethods(org.spockframework.runtime.SpockRuntime.VERIFY_METHOD_CONDITION).get(0);
@@ -52,8 +56,14 @@ public class AstNodeCache {
   public final MethodNode ValueRecorder_Record =
       ValueRecorder.getDeclaredMethods(org.spockframework.runtime.ValueRecorder.RECORD).get(0);
 
+  public final MethodNode ValueRecorder_StartRecordingValue =
+      ValueRecorder.getDeclaredMethods(org.spockframework.runtime.ValueRecorder.START_RECORDING_VALUE).get(0);
+
   public final MethodNode ValueRecorder_RealizeNas =
       ValueRecorder.getDeclaredMethods(org.spockframework.runtime.ValueRecorder.REALIZE_NAS).get(0);
+
+  public final MethodNode ErrorCollector_Validate =
+      ErrorCollector.getDeclaredMethods(org.spockframework.runtime.ErrorCollector.VALIDATE_COLLECTED_ERRORS).get(0);
 
   // annotations and annotation elements
   public final ClassNode SpecMetadata = ClassHelper.makeWithoutCaching(SpecMetadata.class);

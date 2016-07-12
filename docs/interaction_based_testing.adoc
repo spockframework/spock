@@ -457,7 +457,7 @@ fields.
 
 === Verification of Interactions
 
-There a two main ways in which a mock-based test can fail: An interaction can match more invocations than
+There are two main ways in which a mock-based test can fail: An interaction can match more invocations than
 allowed, or it can match fewer invocations than required. The former case is detected right when the invocation
 happens, and causes a `TooManyInvocationsError`:
 
@@ -548,9 +548,7 @@ just like mocking interfaces; the only additional requirement is to put `cglib-n
 and `objenesis-1.2` or higher on the class path. If either of these libraries is missing from
 the class path, Spock will gently let you know.
 
-NOTE: Java 8 is only supported from CGLIB 3.2 onwards, which has not been released as of
-2015-03-02. As a temporary workaround, you can pull a prerelease version (e.g.
-`com.github.cglib:cglib.cglib-nodep:e10bc3dda2`) from Maven repository `https://jitpack.io`.
+NOTE: Java 8 is only supported from CGLIB 3.2.0 onwards.
 
 == Stubbing
 

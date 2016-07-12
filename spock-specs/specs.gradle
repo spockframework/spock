@@ -22,7 +22,10 @@ dependencies {
   junit libs.junit
 }
 
-// necessary to make @NotYetImplemented transform work (transform that ships 
+sourceCompatibility = javaVersion
+targetCompatibility = javaVersion
+
+// necessary to make @NotYetImplemented transform work (transform that ships
 // with Groovy and statically references third-party class junit.framwork.AssertionFailedError)
 tasks.withType(GroovyCompile) {
 	groovyClasspath += configurations.junit

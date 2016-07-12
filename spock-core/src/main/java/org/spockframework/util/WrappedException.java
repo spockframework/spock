@@ -14,13 +14,15 @@
 
 package org.spockframework.util;
 
+import org.spockframework.runtime.SpockException;
+
 /**
  * Wraps a checked exception s.t. it can be thrown from a method that doesn't
  * declare to throw it.
  *
  * @author Peter Niederwieser
  */
-public class WrappedException extends RuntimeException {
+public class WrappedException extends SpockException {
   public WrappedException(Throwable cause) {
     super(cause);
   }

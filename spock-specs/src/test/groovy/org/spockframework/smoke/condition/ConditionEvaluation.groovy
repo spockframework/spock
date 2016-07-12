@@ -16,11 +16,14 @@
 
 package org.spockframework.smoke.condition
 
+import org.spockframework.EmbeddedSpecification
 import org.spockframework.runtime.ConditionNotSatisfiedError
 
 import spock.lang.Issue
 import spock.lang.FailsWith
 import spock.lang.Specification
+
+import java.util.concurrent.Callable
 
 import static java.lang.Math.max
 import static java.lang.Math.min
@@ -36,7 +39,7 @@ import static java.lang.Thread.State.BLOCKED
  * @author Peter Niederwieser
  */
 
-class ConditionEvaluation extends Specification {
+class ConditionEvaluation extends EmbeddedSpecification {
   def "multi-line condition"() {
     expect:
     2 *
@@ -91,7 +94,7 @@ class ConditionEvaluation extends Specification {
     expect:
     new Person().eat([what: "steak", where: "tokyo"]) == [what: "steak", where: "tokyo"]
   }
-  
+
   def "StaticMethodCallExpression"() {
     expect:
     max(1, 2) == 2
@@ -335,6 +338,25 @@ class ConditionEvaluation extends Specification {
   def "statically imported enum value"() {
     expect:
     BLOCKED instanceof Thread.State
+  }
+
+  def "block condition (can not be parsed if flattened)"(){
+    when:
+    runner.runFeatureBody("""
+        expect:
+                def apply = {
+                  Closure c -> c.call()
+                }
+                apply {
+                  def x = 5
+                  assert x
+                  false
+                }
+        """)
+    then:
+    def failure = thrown(ConditionNotSatisfiedError)
+    failure.getMessage() // should be rendered without errors
+
   }
 
   /*

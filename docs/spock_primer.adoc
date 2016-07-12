@@ -498,6 +498,47 @@ and helper methods can increase the coupling between feature methods. If you reu
 end up with specifications that are fragile and hard to evolve.
 
 [[specs-as-doc]]
+
+== Using `with` for expectations
+
+As an alternative to the above helper methods, you can use a `with(target, closure)` method to interact on the object being verified.
+This is especially useful in `then` and `expect` blocks.
+
+[source,groovy]
+----
+def "offered PC matches preferred configuration"() {
+  when:
+  def pc = shop.buyPc()
+
+  then:
+  with(pc) {
+    vendor == "Sunny"
+    clockRate >= 2333
+    ram >= 406
+    os == "Linux"
+  }
+}
+----
+
+Unlike when you use helper methods, there is no need for explicit assert statements for proper error reporting.
+
+When verifying mocks, a `with` statement can also cut out verbose verification statements.
+
+[source,groovy]
+----
+def service = Mock(Service) // has start(), stop(), and doWork() methods
+def app = new Application(service) // controls the lifecycle of the service
+
+when:
+app.run()
+
+then:
+with(service) {
+  1 * start()
+  1 * doWork()
+  1 * stop()
+}
+----
 == Specifications as Documentation
 
 Well-written specifications are a valuable source of information. Especially for higher-level specifications targeting

@@ -49,17 +49,23 @@ class IssueExtension extends EmbeddedSpecification {
   }
 
   @Issue(["http://my.issues.org/FOO-1", "http://my.issues.org/FOO-2"])
-  def "if multiple issues are listed, only the first one is converted to a tag"() {
+  def "if multiple issues are listed, all of them are converted to a tag"() {
     def tags = specificationContext.currentFeature.tags
 
     expect:
-    tags.size() == 1
+    tags.size() == 2
     with(tags[0]) {
       name == "FOO-1"
       key == "issue"
       value == "FOO-1"
       url == "http://my.issues.org/FOO-1"
     }
+    with(tags[1]) {
+        name == "FOO-2"
+        key == "issue"
+        value == "FOO-2"
+        url == "http://my.issues.org/FOO-2"
+      }
   }
 
   def "complains if @Issue is used on anything other than a spec or feature"() {

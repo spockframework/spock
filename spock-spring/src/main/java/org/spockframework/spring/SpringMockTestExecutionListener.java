@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.spockframework.mock.ISpockMockObject;
 import org.spockframework.mock.MockUtil;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.TestContext;
 import org.springframework.test.context.TestExecutionListener;
@@ -40,6 +42,10 @@ public class SpringMockTestExecutionListener implements TestExecutionListener {
       List<Object> mockedBeans = new ArrayList<Object>();
 
       for (String beanName : mockBeanNames) {
+        BeanDefinition beanDefinition = ((BeanDefinitionRegistry)applicationContext).getBeanDefinition(beanName);
+        if(beanDefinition.isAbstract()){
+            continue;
+        }
         Object bean = applicationContext.getBean(beanName);
         if (mockUtil.isMock(bean)) {
           mockUtil.attachMock(bean, specification);

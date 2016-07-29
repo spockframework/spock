@@ -19,6 +19,15 @@ import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.bytebuddy.ByteBuddy;
+import net.bytebuddy.NamingStrategy;
+import net.bytebuddy.description.modifier.SynchronizationState;
+import net.bytebuddy.description.modifier.Visibility;
+import net.bytebuddy.dynamic.Transformer;
+import net.bytebuddy.implementation.FieldAccessor;
+import net.bytebuddy.implementation.MethodDelegation;
+import net.bytebuddy.implementation.bind.annotation.Morph;
+
 import net.sf.cglib.proxy.*;
 
 import org.spockframework.mock.CannotCreateMockException;
@@ -26,6 +35,9 @@ import org.spockframework.mock.ISpockMockObject;
 import org.spockframework.runtime.InvalidSpecException;
 import org.spockframework.util.Nullable;
 import org.spockframework.util.ReflectionUtil;
+
+import static net.bytebuddy.matcher.ElementMatchers.any;
+import static net.bytebuddy.matcher.ElementMatchers.none;
 
 /**
  * Some implementation details of this class are inspired from Spring, EasyMock
@@ -35,6 +47,8 @@ import org.spockframework.util.ReflectionUtil;
  * @author Peter Niederwieser
  */
 public class ProxyBasedMockFactory {
+  private static final boolean ignoreByteBuddy = Boolean.getBoolean("org.spockframework.mock.ignoreByteBuddy");
+  private static final boolean byteBuddyAvailable = ReflectionUtil.isClassAvailable("net.bytebuddy.ByteBuddy");
   private static final boolean cglibAvailable = ReflectionUtil.isClassAvailable("net.sf.cglib.proxy.Enhancer");
 
   public static ProxyBasedMockFactory INSTANCE = new ProxyBasedMockFactory();
@@ -45,12 +59,15 @@ public class ProxyBasedMockFactory {
 
     if (mockType.isInterface()) {
       proxy = createDynamicProxyMock(mockType, additionalInterfaces, constructorArgs, mockInterceptor, classLoader);
+    } else if (byteBuddyAvailable && !ignoreByteBuddy) {
+      proxy = ByteBuddyMockFactory.createMock(mockType, additionalInterfaces,
+        constructorArgs, mockInterceptor, classLoader, useObjenesis);
     } else if (cglibAvailable) {
       proxy = CglibMockFactory.createMock(mockType, additionalInterfaces,
           constructorArgs, mockInterceptor, classLoader, useObjenesis);
     } else {
       throw new CannotCreateMockException(mockType,
-          ". Mocking of non-interface types requires the CGLIB library. Please put cglib-nodep-2.2 or higher on the class path."
+          ". Mocking of non-interface types requires a code generation library. Please put byte-buddy-1.4.0 or cglib-nodep-3.2 or higher on the class path."
       );
     }
 
@@ -71,6 +88,53 @@ public class ProxyBasedMockFactory {
         interfaces.toArray(new Class<?>[interfaces.size()]),
         new DynamicProxyMockInterceptorAdapter(mockInterceptor)
     );
+  }
+
+  // inner class to defer class loading
+  private static class ByteBuddyMockFactory {
+
+    private static final ByteBuddyClassCache CACHE = new ByteBuddyClassCache(true);
+
+    static Object createMock(Class<?> type, List<Class<?>> additionalInterfaces, @Nullable List<Object> constructorArgs,
+        IProxyBasedMockInterceptor interceptor, ClassLoader classLoader, boolean useObjenesis) {
+      Class<?> enhancedType = CACHE.find(classLoader, type, additionalInterfaces);
+
+      if (enhancedType == null) {
+        // Typically, users create a single mock type per class. The alternative where Byte Buddy would need to create
+        // multiple mock types for mocking a type plus additional (explicitly specified) interfaces is rather the
+        // exception. Given that most mock types derive of a single type, the application is lock-free for these
+        // scenarios. Covering the 99% scenario lock free is probably a sane approach. Also, this requires locking
+        // only a single monitor such that dead locks are impossible (live locks are however still possible).
+        // Locking on the class loader is more likely to cause problems, though, as class loaders typically lock on
+        // themselves during class loading. Creating a mock can cause class loading as using the reflection API
+        // (for finding methods to override) causes eager resolution of a type where all types references in methods
+        // are loaded. This is typically not a problem but can be one with parallel capable class loaders.
+        synchronized (type) {
+          enhancedType = CACHE.find(classLoader, type, additionalInterfaces);
+          if (enhancedType == null) {
+            enhancedType = new ByteBuddy()
+              .with(new NamingStrategy.SuffixingRandom("SpockMock"))
+              .ignore(none())
+              .subclass(type)
+              .implement(additionalInterfaces)
+              .implement(ISpockMockObject.class)
+              .method(any())
+                .intercept(MethodDelegation.to(ByteBuddyInterceptorAdapter.class).appendParameterBinder(Morph.Binder.install(ByteBuddyInvoker.class)))
+                .transform(Transformer.ForMethod.withModifiers(SynchronizationState.PLAIN)) // Overridden methods should not be declared synchronized.
+              .implement(ByteBuddyInterceptorAdapter.InterceptorAccess.class)
+                .intercept(FieldAccessor.ofField("$spock_interceptor").defineAs(IProxyBasedMockInterceptor.class, Visibility.PRIVATE))
+              .make()
+              .load(classLoader)
+              .getLoaded();
+            CACHE.insert(classLoader, type, additionalInterfaces, enhancedType);
+          }
+        }
+      }
+
+      Object proxy = MockInstantiator.instantiate(type, enhancedType, constructorArgs, useObjenesis);
+      ((ByteBuddyInterceptorAdapter.InterceptorAccess) proxy).$spock_set(interceptor);
+      return proxy;
+    }
   }
 
   // inner class to defer class loading

@@ -15,4 +15,6 @@
   </bean>
 
   <bean id="nonMock" class="java.util.ArrayList"/>
+  
+  <bean id="abstractBean" class="java.util.ArrayList" abstract="true"/>
 </beans>

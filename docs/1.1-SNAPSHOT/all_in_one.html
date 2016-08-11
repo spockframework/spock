@@ -158,9 +158,14 @@
 </li>
 <li><a href="#_release_notes">Release Notes</a>
 <ul class="sectlevel2">
+<li><a href="#_1_1_rc_1_released_2016_06_30">1.1-rc-1 (released 2016-06-30)</a>
+<ul class="sectlevel3">
+<li><a href="#_what_s_new_in_this_release">What&#8217;s New In This release</a></li>
+</ul>
+</li>
 <li><a href="#_1_0_released_2015_03_02">1.0 (released 2015-03-02)</a>
 <ul class="sectlevel3">
-<li><a href="#_what_s_new_in_this_release">What&#8217;s New In This Release</a></li>
+<li><a href="#_what_s_new_in_this_release_2">What&#8217;s New In This Release</a></li>
 <li><a href="#_other_news">Other News</a></li>
 <li><a href="#_what_s_up_next">What&#8217;s Up Next?</a></li>
 <li><a href="#_contributors">Contributors</a></li>
@@ -261,10 +266,10 @@ So why not run <a href="http://webconsole.spockframework.org/edit/9001">Hello, S
 <div class="sect2">
 <h3 id="_spock_example_project">Spock Example Project</h3>
 <div class="paragraph">
-<p>To try Spock in your local environment, clone or download/unzip the <a href="https://github.com/spockframework/spock-example" class="bare">https://github.com/spockframework/spock-example</a>
-[Spock Example Project]. It comes with fully working Ant, Gradle, and Maven builds that require no further setup.
-The Gradle build even bootstraps Gradle itself and gets you up and running in Eclipse or IDEA with a single command.
-See the README for detailed instructions.</p>
+<p>To try Spock in your local environment, clone or download/unzip the
+<a href="https://github.com/spockframework/spock-example">Spock Example Project</a>. It comes with fully working Ant, Gradle, and
+Maven builds that require no further setup. The Gradle build even bootstraps Gradle itself and gets you up and
+running in Eclipse or IDEA with a single command. See the README for detailed instructions.</p>
 </div>
 </div>
 </div>
@@ -3362,6 +3367,59 @@ Grails 2.3 and higher have built-in Spock support and do not require a plugin.
 <h2 id="_release_notes">Release Notes</h2>
 <div class="sectionbody">
 <div class="sect2">
+<h3 id="_1_1_rc_1_released_2016_06_30">1.1-rc-1 (released 2016-06-30)</h3>
+<div class="paragraph">
+<p>A number of excellent pull requests have been integrated into the 1.1 stream.
+Currently some features are incubating.
+We encourage users to try out these new features and provide feedback so we can finalize the content for a 1.1 release.</p>
+</div>
+<div class="sect3">
+<h4 id="_what_s_new_in_this_release">What&#8217;s New In This release</h4>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#_merged_pull_requests">44 merged pull requests</a></p>
+</li>
+<li>
+<p>The <code>verifyAll</code> method can be used to assert multiple boolean expressions <em>without</em> short-circuiting those after a failure.
+For example:</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>then:
+verifyAll {
+  a == b
+  b == c
+}</pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Detached mocks via the <code>DetachedMockFactory</code> and <code>SpockMockFactoryBean</code> classes.</p>
+</li>
+<li>
+<p>Cells in a data table can refer to the current value for a column to the left.</p>
+</li>
+<li>
+<p><code>Spy</code> can be used to create partial mocks for Java 8 interfaces with <code>default</code> methods just as it can for abstract classes.</p>
+</li>
+<li>
+<p>Improved power assert output when an exception occurs evaluating an assertion.</p>
+</li>
+<li>
+<p>A new <code>@PendingFeature</code> annotation to distinguish incomplete functionality from features with <code>@Ignore</code>.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Special thanks to all the contributors to this release: Dmitry Andreychuk, Aseem Bansal, Daniel Bechler, Fedor Bobin, Leonard Brünings, Leonard Daume, Marcin Erdmann, Jarl Friis, Søren Berg Glasius, Serban Iordache, Michal Kordas, Pap Lőrinc, Vlad Muresan, Etienne Neveu, Glyn Normington, David Norton, Magnus Palmér, Gus Power, Oliver Reissig, Kevin Wittek and Marcin Zajączkowski</p>
+</div>
+</div>
+</div>
+<div class="sect2">
 <h3 id="_1_0_released_2015_03_02">1.0 (released 2015-03-02)</h3>
 <div class="paragraph">
 <p>1.0 has arrived! Finally (and some years late) the version number communicates what
@@ -3376,7 +3434,7 @@ Cédric Champeau, David Dawson, Rob Fletcher, Sean Gilligan, Ken Kousen, Guillau
 Howard M. Lewis Ship, Ken Sipe, Venkat Subramaniam, Russel Winder.</p>
 </div>
 <div class="sect3">
-<h4 id="_what_s_new_in_this_release">What&#8217;s New In This Release</h4>
+<h4 id="_what_s_new_in_this_release_2">What&#8217;s New In This Release</h4>
 <div class="ulist">
 <ul>
 <li>
@@ -4472,7 +4530,7 @@ that answer, closeTo(<span class="integer">42</span>, <span class="float">0.001<
 <div id="footer">
 <div id="footer-text">
 Version 1.0<br>
-Last updated 2016-06-28 23:20:45 UTC
+Last updated 2016-08-11 20:15:37 UTC
 </div>
 </div>
 </body>

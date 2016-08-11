@@ -37,8 +37,8 @@ ext {
   baseVersion = "1.1"
   snapshotVersion = true
   releaseCandidate = 1
-  fullVersion = "$baseVersion-groovy-$variant" + (snapshotVersion ? "-SNAPSHOT" : "") + (releaseCandidate ? "-rc-$releaseCandidate" : "")
-  variantLessVersion = baseVersion + (snapshotVersion ? "-SNAPSHOT" : "") + (releaseCandidate ? "-rc-$releaseCandidate" : "")
+  fullVersion = "$baseVersion-groovy-$variant" + (snapshotVersion ? "-SNAPSHOT" :  (releaseCandidate ? "-rc-$releaseCandidate" : ""))
+  variantLessVersion = baseVersion + (snapshotVersion ? "-SNAPSHOT" : (releaseCandidate ? "-rc-$releaseCandidate" : ""))
   libs = [
     jetbrainsAnnotations: "org.jetbrains:annotations:13.0",
     ant: "org.apache.ant:ant:1.9.7",

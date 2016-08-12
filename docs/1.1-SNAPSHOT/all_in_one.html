@@ -4,10 +4,10 @@
 <meta charset="UTF-8">
 <!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Asciidoctor 1.5.3">
+<meta name="generator" content="Asciidoctor 1.5.0">
 <meta name="author" content="Peter Niederwieser">
 <title>Spock Framework Reference Documentation</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic|Noto+Serif:400,400italic,700,700italic|Droid+Sans+Mono:400">
 <link rel="stylesheet" href="./asciidoctor.css">
 <link rel="stylesheet" href="./coderay-asciidoctor.css">
 </head>
@@ -1260,7 +1260,7 @@ spec, all of which can be kept in the same file. This achieves better isolation 
 <h3 id="_syntactic_variations">Syntactic Variations</h3>
 <div class="paragraph">
 <p>The previous code can be tweaked in a few ways. First, since the <code>where:</code> block already declares all data variables, the
-method parameters can be omitted.<sup class="footnote">[<a id="_footnoteref_1" class="footnote" href="#_footnote_1" title="View footnote.">1</a>]</sup>
+method parameters can be omitted.<span class="footnote">[<a id="_footnoteref_1" class="footnote" href="#_footnote_1" title="View footnote.">1</a>]</span>
 Second, inputs and expected outputs can be separated with a double pipe symbol (<code>||</code>) to visually set them apart.
 With this, the code becomes:</p>
 </div>
@@ -1301,7 +1301,7 @@ With this, the code becomes:</p>
 <div class="paragraph">
 <p>The obvious question is: Which iteration failed, and what are its data values? In our example, it isn&#8217;t hard to figure
 out that it&#8217;s the second iteration that failed. At other times this can be more difficult or even impossible.
-<sup class="footnote">[<a id="_footnoteref_2" class="footnote" href="#_footnote_2" title="View footnote.">2</a>]</sup>
+<span class="footnote">[<a id="_footnoteref_2" class="footnote" href="#_footnote_2" title="View footnote.">2</a>]</span>
 In any case, it would be nice if Spock made it loud and clear which iteration failed, rather than just reporting the
 failure. This is the purpose of the <code>@Unroll</code> annotation.</p>
 </div>
@@ -1506,7 +1506,7 @@ such a method.</p>
 <div class="ulist">
 <ul>
 <li>
-<p>Expressions are denoted with <code>#</code> instead of <code>$</code> <sup class="footnote">[<a id="_footnoteref_3" class="footnote" href="#_footnote_3" title="View footnote.">3</a>]</sup>,
+<p>Expressions are denoted with <code>#</code> instead of <code>$</code> <span class="footnote">[<a id="_footnoteref_3" class="footnote" href="#_footnote_3" title="View footnote.">3</a>]</span>,
 and there is no equivalent for the <code>${&#8230;&#8203;}</code> syntax.</p>
 </li>
 <li>
@@ -1617,7 +1617,7 @@ We hope that by the end of this chapter, you will agree that we have achieved th
 <div class="sect2">
 <h3 id="_creating_mock_objects">Creating Mock Objects</h3>
 <div class="paragraph">
-<p>Mock objects are created with the MockingApi.Mock() method.<sup class="footnote">[<a id="_footnoteref_4" class="footnote" href="#_footnote_4" title="View footnote.">4</a>]</sup>
+<p>Mock objects are created with the 0 method.<span class="footnote">[<a id="_footnoteref_4" class="footnote" href="#_footnote_4" title="View footnote.">4</a>]</span>
 Let&#8217;s create two mock subscribers:</p>
 </div>
 <div class="listingblock">
@@ -1976,7 +1976,7 @@ a cardinality (when mocking) or a response generator (when stubbing). Either of 
 </div>
 <div class="paragraph">
 <p>This feature is particularly attractive for <a href="#_stubbing">Stubbing</a> and with dedicated <a href="#Stubs">Stubs</a>. Note that the
-interactions don&#8217;t (and cannot <sup class="footnote">[<a id="_footnoteref_5" class="footnote" href="#_footnote_5" title="View footnote.">5</a>]</sup>) have a target constraint; it&#8217;s clear from the context which mock
+interactions don&#8217;t (and cannot <span class="footnote">[<a id="_footnoteref_5" class="footnote" href="#_footnote_5" title="View footnote.">5</a>]</span>) have a target constraint; it&#8217;s clear from the context which mock
 object they belong to.</p>
 </div>
 <div class="paragraph">
@@ -2353,7 +2353,7 @@ If the closure declares a single untyped parameter, it gets passed the method&#8
 <div class="paragraph">
 <p>In most cases it would be more convenient to have direct access to the method&#8217;s arguments. If the closure declares more
 than one parameter or a single <em>typed</em> parameter, method arguments will be mapped one-by-one to closure
-parameters:<sup class="footnote">[<a id="_footnoteref_6" class="footnote" href="#_footnote_6" title="View footnote.">6</a>]</sup></p>
+parameters:<span class="footnote">[<a id="_footnoteref_6" class="footnote" href="#_footnote_6" title="View footnote.">6</a>]</span></p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -2644,7 +2644,7 @@ dynamic methods as if they were physically declared methods:</p>
 <div class="paragraph">
 <p>Usually, Groovy mocks need to be injected into the code under specification just like regular mocks.
 However, when a Groovy mock is created as <em>global</em>, it automagically replaces all real instances
-of the mocked type for the duration of the feature method:<sup class="footnote">[<a id="_footnoteref_7" class="footnote" href="#_footnote_7" title="View footnote.">7</a>]</sup></p>
+of the mocked type for the duration of the feature method:<span class="footnote">[<a id="_footnoteref_7" class="footnote" href="#_footnote_7" title="View footnote.">7</a>]</span></p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -2766,7 +2766,7 @@ the mock&#8217;s instance isn&#8217;t really needed. In such a case one can just
 <p>At the end of the day, the <code>Mock()</code>, <code>Stub()</code>, and <code>Spy()</code> factory methods are just canned ways to
 create mock objects with a certain configuration. If you want more fine-grained control over a mock&#8217;s configuration,
 have a look at the <code>org.spockframework.mock.IMockConfiguration</code> interface. All properties of this interface
-<sup class="footnote">[<a id="_footnoteref_8" class="footnote" href="#_footnote_8" title="View footnote.">8</a>]</sup>
+<span class="footnote">[<a id="_footnoteref_8" class="footnote" href="#_footnote_8" title="View footnote.">8</a>]</span>
 can be passed as named arguments to the <code>Mock()</code> method. For example:</p>
 </div>
 <div class="listingblock">
@@ -4530,7 +4530,7 @@ that answer, closeTo(<span class="integer">42</span>, <span class="float">0.001<
 <div id="footer">
 <div id="footer-text">
 Version 1.0<br>
-Last updated 2016-08-11 20:15:37 UTC
+Last updated 2016-08-12 16:16:16 UTC
 </div>
 </div>
 </body>

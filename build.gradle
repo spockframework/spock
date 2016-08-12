@@ -28,7 +28,7 @@ ext {
   } else {
     throw new InvalidUserDataException("Unknown variant: $variant. Choose one of: $variants")
   }
-  fullVersion = "$baseVersion-groovy-$variant" + (snapshotVersion ? "-SNAPSHOT" :  (releaseCandidate ? "-rc-$releaseCandidate" : ""))
+  fullVersion = baseVersion + (snapshotVersion ? "-SNAPSHOT" :  (releaseCandidate ? "-rc-$releaseCandidate" : "")) + "-groovy-$variant"
   variantLessVersion = baseVersion + (snapshotVersion ? "-SNAPSHOT" : (releaseCandidate ? "-rc-$releaseCandidate" : ""))
   javaVersions = [1.6, 1.7, 1.8]
   javaVersion = System.getProperty("java.specification.version") as BigDecimal

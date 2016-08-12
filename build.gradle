@@ -1,16 +1,8 @@
-buildscript {
-  repositories {
-    maven { url "http://dl.bintray.com/content/aalmiray/asciidoctor" }
-    jcenter()
-  }
-
-  dependencies {
-    classpath "org.asciidoctor:asciidoctor-gradle-plugin:1.5.3"
-  }
+plugins {
+  id 'com.gradle.build-scan' version '1.0'
+  id "base"
+  id "org.asciidoctor.gradle.asciidoctor" version "1.5.1"
 }
-
-apply plugin: "base"
-apply plugin: "org.asciidoctor.convert"
 
 description = "Spock Framework"
 
@@ -298,4 +290,7 @@ def configureGroovydoc(task) {
   }
 }
 
-
+buildScan {
+  licenseAgreementUrl = 'https://gradle.com/terms-of-service'
+  licenseAgree = 'yes'
+}

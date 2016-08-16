@@ -1,3 +1,4 @@
+include "spock-bom"
 include "spock-core"
 include "spock-specs"
 include "spock-spring"

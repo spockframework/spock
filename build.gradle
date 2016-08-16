@@ -104,11 +104,12 @@ subprojects {
   }
 
   signing {
+    required { gradle.taskGraph.hasTask('uploadArchives') }
     sign configurations.archives
   }
 
   signArchives {
-    onlyIf { gradle.taskGraph.hasTask(uploadArchives) }
+    onlyIf { gradle.taskGraph.hasTask('uploadArchives') }
   }
 
   ext."signing.keyId" = "2EA0A67F"

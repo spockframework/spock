@@ -237,8 +237,8 @@ task tagRelease(type: Exec) {
   git config user.email "dev@forum.spockframework.org"
   git config user.name "Spock Framework Robot"
   git checkout master
-  git tag spock-$baseVersion
-  git push -q "https://${System.getenv("GITHUB_TOKEN")}@github.com/spockframework/spock.git" spock-$baseVersion > /dev/null 2>&1
+  git tag spock-$variantLessVersion
+  git push -q "https://${System.getenv("GITHUB_TOKEN")}@github.com/spockframework/spock.git" spock-$variantLessVersion > /dev/null 2>&1
 """
 }
 

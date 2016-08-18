@@ -1,6 +1,6 @@
 = Spock Framework Reference Documentation
 Peter Niederwieser
-Version 1.1-rc-1
+Version 1.1-rc-2
 
 . <<introduction.adoc#,Introduction>>
 . <<getting_started.adoc#,Getting Started>>

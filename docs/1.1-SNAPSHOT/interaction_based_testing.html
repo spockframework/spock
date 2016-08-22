@@ -5,6 +5,7 @@
 <!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 1.5.0">
+<meta name="author" content="Peter Niederwieser">
 <title>Interaction Based Testing</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic|Noto+Serif:400,400italic,700,700italic|Droid+Sans+Mono:400">
 <link rel="stylesheet" href="./asciidoctor.css">
@@ -13,6 +14,10 @@
 <body class="article">
 <div id="header">
 <h1>Interaction Based Testing</h1>
+<div class="details">
+<span id="author" class="author">Peter Niederwieser</span><br>
+<span id="revnumber">version 1.1-rc2</span>
+</div>
 </div>
 <div id="content">
 <div id="preamble">
@@ -28,16 +33,18 @@ the object(s) under specification interact, by way of method calls, with their c
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="type">class</span> <span class="class">Publisher</span> {
-    <span class="predefined-type">List</span>&lt;Subscriber&gt; subscribers
-    <span class="type">void</span> send(<span class="predefined-type">String</span> message)
+  <span class="predefined-type">List</span>&lt;Subscriber&gt; subscribers = <span class="type">[]</span>
+  <span class="type">void</span> send(<span class="predefined-type">String</span> message){
+    subscribers*.receive(message)
+  }
 }
 
 <span class="type">interface</span> Subscriber {
-    <span class="type">void</span> receive(<span class="predefined-type">String</span> message)
+  <span class="type">void</span> receive(<span class="predefined-type">String</span> message)
 }
 
 <span class="type">class</span> <span class="class">PublisherSpec</span> <span class="directive">extends</span> Specification {
-    Publisher publisher = <span class="keyword">new</span> Publisher()
+  Publisher publisher = <span class="keyword">new</span> Publisher()
 }</code></pre>
 </div>
 </div>
@@ -157,15 +164,14 @@ This default behavior is overridable by stubbing the methods, which we will lear
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="type">class</span> <span class="class">PublisherSpec</span> <span class="directive">extends</span> Specification {
-    Publisher publisher = <span class="keyword">new</span> Publisher()
-    Subscriber subscriber = Mock()
-    Subscriber subscriber2 = Mock()
+  Publisher publisher = <span class="keyword">new</span> Publisher()
+  Subscriber subscriber = Mock()
+  Subscriber subscriber2 = Mock()
 
-    <span class="keyword">def</span> <span class="function">setup</span>() {
-        publisher.subscribers &lt;&lt; subscriber <span class="comment">// &lt;&lt; is a Groovy shorthand for List.add()</span>
-        publisher.subscribers &lt;&lt; subscriber2
-    }
-}</code></pre>
+  <span class="keyword">def</span> <span class="function">setup</span>() {
+    publisher.subscribers &lt;&lt; subscriber <span class="comment">// &lt;&lt; is a Groovy shorthand for List.add()</span>
+    publisher.subscribers &lt;&lt; subscriber2
+  }</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -183,12 +189,12 @@ Here is an example:</p>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">should send messages to all subscribers</span><span class="delimiter">&quot;</span></span>() {
-    <span class="key">when</span>:
-    publisher.send(<span class="string"><span class="delimiter">&quot;</span><span class="content">hello</span><span class="delimiter">&quot;</span></span>)
+  <span class="key">when</span>:
+  publisher.send(<span class="string"><span class="delimiter">&quot;</span><span class="content">hello</span><span class="delimiter">&quot;</span></span>)
 
-    <span class="key">then</span>:
-    <span class="integer">1</span> * subscriber.receive(<span class="string"><span class="delimiter">&quot;</span><span class="content">hello</span><span class="delimiter">&quot;</span></span>)
-    <span class="integer">1</span> * subscriber2.receive(<span class="string"><span class="delimiter">&quot;</span><span class="content">hello</span><span class="delimiter">&quot;</span></span>)
+  <span class="key">then</span>:
+  <span class="integer">1</span> * subscriber.receive(<span class="string"><span class="delimiter">&quot;</span><span class="content">hello</span><span class="delimiter">&quot;</span></span>)
+  <span class="integer">1</span> * subscriber2.receive(<span class="string"><span class="delimiter">&quot;</span><span class="content">hello</span><span class="delimiter">&quot;</span></span>)
 }</code></pre>
 </div>
 </div>
@@ -1342,7 +1348,8 @@ mock.nature == MockNature.MOCK</code></pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2016-08-22 19:45:00 UTC
+Version 1.1-rc2<br>
+Last updated 2016-08-22 22:04:26 UTC
 </div>
 </div>
 </body>

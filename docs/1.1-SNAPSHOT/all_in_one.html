@@ -16,12 +16,12 @@
 <h1>Spock Framework Reference Documentation</h1>
 <div class="details">
 <span id="author" class="author">Peter Niederwieser</span><br>
-<span id="revnumber">version 1.0</span>
+<span id="revnumber">version 1.1-rc2</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
-<li><a href="#introduction">Introduction</a></li>
+<li><a href="#_introduction">Introduction</a></li>
 <li><a href="#_getting_started">Getting Started</a>
 <ul class="sectlevel2">
 <li><a href="#_spock_web_console">Spock Web Console</a></li>
@@ -49,7 +49,7 @@
 </li>
 <li><a href="#_data_driven_testing">Data Driven Testing</a>
 <ul class="sectlevel2">
-<li><a href="#_introduction">Introduction</a></li>
+<li><a href="#_introduction_2">Introduction</a></li>
 <li><a href="#data-tables">Data Tables</a></li>
 <li><a href="#_isolated_execution_of_iterations">Isolated Execution of Iterations</a></li>
 <li><a href="#_sharing_of_objects_between_iterations">Sharing of Objects between Iterations</a></li>
@@ -243,7 +243,7 @@
 </div>
 <div id="content">
 <div class="sect1">
-<h2 id="introduction">Introduction</h2>
+<h2 id="_introduction">Introduction</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Spock is a testing and specification framework for Java and Groovy applications. What makes it stand out from the crowd
@@ -1129,20 +1129,20 @@ comparison:</p>
 Spock&#8217;s data driven testing support makes this a first class feature.</p>
 </div>
 <div class="sect2">
-<h3 id="_introduction">Introduction</h3>
+<h3 id="_introduction_2">Introduction</h3>
 <div class="paragraph">
 <p>Suppose we want to specify the behavior of the Math.max method:</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="type">class</span> <span class="class">MathSpec</span> <span class="directive">extends</span> Specification {
-    <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">maximum of two numbers</span><span class="delimiter">&quot;</span></span>() {
-        <span class="key">expect</span>:
-        <span class="comment">// exercise math method for a few different inputs</span>
-        <span class="predefined-type">Math</span>.max(<span class="integer">1</span>, <span class="integer">3</span>) == <span class="integer">3</span>
-        <span class="predefined-type">Math</span>.max(<span class="integer">7</span>, <span class="integer">4</span>) == <span class="integer">7</span>
-        <span class="predefined-type">Math</span>.max(<span class="integer">0</span>, <span class="integer">0</span>) == <span class="integer">0</span>
-    }
+  <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">maximum of two numbers</span><span class="delimiter">&quot;</span></span>() {
+    <span class="key">expect</span>:
+    <span class="comment">// exercise math method for a few different inputs</span>
+    <span class="predefined-type">Math</span>.max(<span class="integer">1</span>, <span class="integer">3</span>) == <span class="integer">3</span>
+    <span class="predefined-type">Math</span>.max(<span class="integer">7</span>, <span class="integer">4</span>) == <span class="integer">7</span>
+    <span class="predefined-type">Math</span>.max(<span class="integer">0</span>, <span class="integer">0</span>) == <span class="integer">0</span>
+  }
 }</code></pre>
 </div>
 </div>
@@ -1176,12 +1176,11 @@ hard-coded integer values:</p>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="type">class</span> <span class="class">MathSpec</span> <span class="directive">extends</span> Specification {
-    <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">maximum of two numbers</span><span class="delimiter">&quot;</span></span>(<span class="type">int</span> a, <span class="type">int</span> b, <span class="type">int</span> c) {
-        <span class="key">expect</span>:
-        <span class="predefined-type">Math</span>.max(a, b) == c
-
-        ...
-    }
+  <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">maximum of two numbers</span><span class="delimiter">&quot;</span></span>(<span class="type">int</span> a, <span class="type">int</span> b, <span class="type">int</span> c) {
+    <span class="key">expect</span>:
+    <span class="predefined-type">Math</span>.max(a, b) == c
+    ...
+  }
 }</code></pre>
 </div>
 </div>
@@ -1197,17 +1196,17 @@ which always comes at the end of the method. In the simplest (and most common) c
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="type">class</span> <span class="class">Math</span> <span class="directive">extends</span> Specification {
-    <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">maximum of two numbers</span><span class="delimiter">&quot;</span></span>(<span class="type">int</span> a, <span class="type">int</span> b, <span class="type">int</span> c) {
-        <span class="key">expect</span>:
-        <span class="predefined-type">Math</span>.max(a, b) == c
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="type">class</span> <span class="class">MathSpec</span> <span class="directive">extends</span> Specification {
+  <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">maximum of two numbers</span><span class="delimiter">&quot;</span></span>(<span class="type">int</span> a, <span class="type">int</span> b, <span class="type">int</span> c) {
+    <span class="key">expect</span>:
+    <span class="predefined-type">Math</span>.max(a, b) == c
 
-        <span class="key">where</span>:
-        a | b | c
-        <span class="integer">1</span> | <span class="integer">3</span> | <span class="integer">3</span>
-        <span class="integer">7</span> | <span class="integer">4</span> | <span class="integer">7</span>
-        <span class="integer">0</span> | <span class="integer">0</span> | <span class="integer">0</span>
-    }
+    <span class="key">where</span>:
+    a | b | c
+    <span class="integer">1</span> | <span class="integer">3</span> | <span class="integer">3</span>
+    <span class="integer">7</span> | <span class="integer">4</span> | <span class="integer">7</span>
+    <span class="integer">0</span> | <span class="integer">0</span> | <span class="integer">0</span>
+  }
 }</code></pre>
 </div>
 </div>
@@ -1271,17 +1270,17 @@ With this, the code becomes:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="type">class</span> <span class="class">DataDriven</span> <span class="directive">extends</span> Specification {
-    <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">maximum of two numbers</span><span class="delimiter">&quot;</span></span>() {
-        <span class="key">expect</span>:
-        <span class="predefined-type">Math</span>.max(a, b) == c
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="type">class</span> <span class="class">MathSpec</span> <span class="directive">extends</span> Specification {
+  <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">maximum of two numbers</span><span class="delimiter">&quot;</span></span>() {
+    <span class="key">expect</span>:
+    <span class="predefined-type">Math</span>.max(a, b) == c
 
-        <span class="key">where</span>:
-        a | b || c
-        <span class="integer">3</span> | <span class="integer">5</span> || <span class="integer">5</span>
-        <span class="integer">7</span> | <span class="integer">0</span> || <span class="integer">7</span>
-        <span class="integer">0</span> | <span class="integer">0</span> || <span class="integer">0</span>
-    }
+    <span class="key">where</span>:
+    a | b || c
+    <span class="integer">1</span> | <span class="integer">3</span> || <span class="integer">3</span>
+    <span class="integer">7</span> | <span class="integer">4</span> || <span class="integer">7</span>
+    <span class="integer">0</span> | <span class="integer">0</span> || <span class="integer">0</span>
+  }
 }</code></pre>
 </div>
 </div>
@@ -1319,7 +1318,8 @@ failure. This is the purpose of the <code>@Unroll</code> annotation.</p>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@Unroll</span>
-<span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">maximum of two numbers</span><span class="delimiter">&quot;</span></span>() { ... }</code></pre>
+<span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">maximum of two numbers</span><span class="delimiter">&quot;</span></span>() {
+...</code></pre>
 </div>
 </div>
 <div class="sidebarblock">
@@ -1355,7 +1355,8 @@ maximum of two numbers[2]   PASSED</pre>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@Unroll</span>
-<span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">maximum of #a and #b is #c</span><span class="delimiter">&quot;</span></span>() { ... }</code></pre>
+<span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">maximum of #a and #b is #c</span><span class="delimiter">&quot;</span></span>() {
+...</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1394,9 +1395,9 @@ one or more <em>data pipes</em>:</p>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy">...
 where:
-a &lt;&lt; [<span class="integer">3</span>, <span class="integer">7</span>, <span class="integer">0</span>]
-b &lt;&lt; [<span class="integer">5</span>, <span class="integer">0</span>, <span class="integer">0</span>]
-c &lt;&lt; [<span class="integer">5</span>, <span class="integer">7</span>, <span class="integer">0</span>]</code></pre>
+a &lt;&lt; [<span class="integer">1</span>, <span class="integer">7</span>, <span class="integer">0</span>]
+b &lt;&lt; [<span class="integer">3</span>, <span class="integer">4</span>, <span class="integer">0</span>]
+c &lt;&lt; [<span class="integer">3</span>, <span class="integer">7</span>, <span class="integer">0</span>]</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1420,9 +1421,11 @@ but uses brackets instead of parentheses on the left-hand side:</p>
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@Shared</span> sql = Sql.newInstance(<span class="string"><span class="delimiter">&quot;</span><span class="content">jdbc:h2:mem:</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">org.h2.Driver</span><span class="delimiter">&quot;</span></span>)
 
 <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">maximum of two numbers</span><span class="delimiter">&quot;</span></span>() {
-    ...
-    where:
-    [a, b, c] &lt;&lt; sql.rows(<span class="string"><span class="delimiter">&quot;</span><span class="content">select a, b, c from maxdata</span><span class="delimiter">&quot;</span></span>)
+  <span class="key">expect</span>:
+  <span class="predefined-type">Math</span>.max(a, b) == c
+
+  <span class="key">where</span>:
+  [a, b, c] &lt;&lt; sql.rows(<span class="string"><span class="delimiter">&quot;</span><span class="content">select a, b, c from maxdata</span><span class="delimiter">&quot;</span></span>)
 }</code></pre>
 </div>
 </div>
@@ -1459,6 +1462,8 @@ to other data variables:</p>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy">...
 where:
+
+<span class="key">where</span>:
 row &lt;&lt; sql.rows(<span class="string"><span class="delimiter">&quot;</span><span class="content">select * from maxdata</span><span class="delimiter">&quot;</span></span>)
 <span class="comment">// pick apart columns</span>
 a = row.a
@@ -1525,8 +1530,8 @@ following are valid method names:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">#person is #person.age years old</span><span class="delimiter">&quot;</span></span>() { ... } <span class="comment">// property access</span>
-<span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">#person.name.toUpperCase()</span><span class="delimiter">&quot;</span></span>() { ... } <span class="comment">// zero-arg method call</span></code></pre>
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">#person is #person.age years old</span><span class="delimiter">&quot;</span></span>() { <span class="comment">// property access</span>
+<span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">#person.name.toUpperCase()</span><span class="delimiter">&quot;</span></span>() { <span class="comment">// zero-arg method call</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1537,8 +1542,8 @@ following are valid method names:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">#person.name.split(' ')[1]</span><span class="delimiter">&quot;</span></span> { ... } <span class="comment">// cannot have method arguments</span>
-<span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">#person.age / 2</span><span class="delimiter">&quot;</span></span> { ... } <span class="comment">// cannot use operators</span></code></pre>
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">#person.name.split(' ')[1]</span><span class="delimiter">&quot;</span></span> {  <span class="comment">// cannot have method arguments</span>
+<span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">#person.age / 2</span><span class="delimiter">&quot;</span></span> {  <span class="comment">// cannot use operators</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1546,11 +1551,11 @@ following are valid method names:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">#lastName</span><span class="delimiter">&quot;</span></span>() {
-    ...
-    where:
-    person &lt;&lt; ...
-    lastName = person.name.split(<span class="string"><span class="delimiter">'</span><span class="content"> </span><span class="delimiter">'</span></span>)[<span class="integer">1</span>]
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">#lastName</span><span class="delimiter">&quot;</span></span>() { <span class="comment">// zero-arg method call</span>
+  ...
+  where:
+  person &lt;&lt; [<span class="keyword">new</span> Person(<span class="key">age</span>: <span class="integer">14</span>, <span class="key">name</span>: <span class="string"><span class="delimiter">'</span><span class="content">Phil Cole</span><span class="delimiter">'</span></span>)]
+  lastName = person.name.split(<span class="string"><span class="delimiter">'</span><span class="content"> </span><span class="delimiter">'</span></span>)[<span class="integer">1</span>]
 }</code></pre>
 </div>
 </div>
@@ -1571,16 +1576,18 @@ the object(s) under specification interact, by way of method calls, with their c
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="type">class</span> <span class="class">Publisher</span> {
-    <span class="predefined-type">List</span>&lt;Subscriber&gt; subscribers
-    <span class="type">void</span> send(<span class="predefined-type">String</span> message)
+  <span class="predefined-type">List</span>&lt;Subscriber&gt; subscribers = <span class="type">[]</span>
+  <span class="type">void</span> send(<span class="predefined-type">String</span> message){
+    subscribers*.receive(message)
+  }
 }
 
 <span class="type">interface</span> Subscriber {
-    <span class="type">void</span> receive(<span class="predefined-type">String</span> message)
+  <span class="type">void</span> receive(<span class="predefined-type">String</span> message)
 }
 
 <span class="type">class</span> <span class="class">PublisherSpec</span> <span class="directive">extends</span> Specification {
-    Publisher publisher = <span class="keyword">new</span> Publisher()
+  Publisher publisher = <span class="keyword">new</span> Publisher()
 }</code></pre>
 </div>
 </div>
@@ -1693,15 +1700,14 @@ This default behavior is overridable by stubbing the methods, which we will lear
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="type">class</span> <span class="class">PublisherSpec</span> <span class="directive">extends</span> Specification {
-    Publisher publisher = <span class="keyword">new</span> Publisher()
-    Subscriber subscriber = Mock()
-    Subscriber subscriber2 = Mock()
+  Publisher publisher = <span class="keyword">new</span> Publisher()
+  Subscriber subscriber = Mock()
+  Subscriber subscriber2 = Mock()
 
-    <span class="keyword">def</span> <span class="function">setup</span>() {
-        publisher.subscribers &lt;&lt; subscriber <span class="comment">// &lt;&lt; is a Groovy shorthand for List.add()</span>
-        publisher.subscribers &lt;&lt; subscriber2
-    }
-}</code></pre>
+  <span class="keyword">def</span> <span class="function">setup</span>() {
+    publisher.subscribers &lt;&lt; subscriber <span class="comment">// &lt;&lt; is a Groovy shorthand for List.add()</span>
+    publisher.subscribers &lt;&lt; subscriber2
+  }</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1717,12 +1723,12 @@ Here is an example:</p>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">should send messages to all subscribers</span><span class="delimiter">&quot;</span></span>() {
-    <span class="key">when</span>:
-    publisher.send(<span class="string"><span class="delimiter">&quot;</span><span class="content">hello</span><span class="delimiter">&quot;</span></span>)
+  <span class="key">when</span>:
+  publisher.send(<span class="string"><span class="delimiter">&quot;</span><span class="content">hello</span><span class="delimiter">&quot;</span></span>)
 
-    <span class="key">then</span>:
-    <span class="integer">1</span> * subscriber.receive(<span class="string"><span class="delimiter">&quot;</span><span class="content">hello</span><span class="delimiter">&quot;</span></span>)
-    <span class="integer">1</span> * subscriber2.receive(<span class="string"><span class="delimiter">&quot;</span><span class="content">hello</span><span class="delimiter">&quot;</span></span>)
+  <span class="key">then</span>:
+  <span class="integer">1</span> * subscriber.receive(<span class="string"><span class="delimiter">&quot;</span><span class="content">hello</span><span class="delimiter">&quot;</span></span>)
+  <span class="integer">1</span> * subscriber2.receive(<span class="string"><span class="delimiter">&quot;</span><span class="content">hello</span><span class="delimiter">&quot;</span></span>)
 }</code></pre>
 </div>
 </div>
@@ -4556,8 +4562,8 @@ that answer, closeTo(<span class="integer">42</span>, <span class="float">0.001<
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 1.0<br>
-Last updated 2016-08-22 19:45:00 UTC
+Version 1.1-rc2<br>
+Last updated 2016-08-22 22:04:26 UTC
 </div>
 </div>
 </body>

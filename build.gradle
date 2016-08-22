@@ -266,6 +266,8 @@ asciidoctor {
   sourceDir = file("docs")
   logDocuments = true
   attributes "source-highlighter": "coderay", "linkcss": true
+  // also treats the included specs as inputs
+  inputs.dir file("spock-specs/src/test/groovy/org/spockframework/docs")
 }
 
 File script(String name) {

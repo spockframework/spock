@@ -1,4 +1,5 @@
 = Getting Started
+include::include.adoc[]
 
 It's really easy to get started with Spock. This section shows you how.
 

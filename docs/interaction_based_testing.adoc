@@ -1,4 +1,5 @@
 = Interaction Based Testing
+include::include.adoc[]
 
 Interaction-based testing is a design and testing technique that emerged in the Extreme Programming
 (XP) community in the early 2000's. Focusing on the behavior of objects rather than their state, it explores how
@@ -6,19 +7,9 @@ the object(s) under specification interact, by way of method calls, with their c
 
 For example, suppose we have a +Publisher+ that sends messages to its +Subscriber+s:
 
-[source,groovy]
+[source,groovy,indent=0]
 ----
-class Publisher {
-    List<Subscriber> subscribers
-    void send(String message)
-}
-
-interface Subscriber {
-    void receive(String message)
-}
-
-class PublisherSpec extends Specification {
-    Publisher publisher = new Publisher()
+include::{sourcedir}/interaction/InteractionDocSpec.groovy[tag=examplesetup]
 }
 ----
 
@@ -56,18 +47,18 @@ Mock objects are created with the +MockingApi.Mock()+ method.footnote:[For addit
 see <<OtherKindsOfMockObjects>> and <<ALaCarteMocks>>.]
 Let's create two mock subscribers:
 
-[source,groovy]
+
+[source,groovy,indent=0]
 ----
-def subscriber = Mock(Subscriber)
-def subscriber2 = Mock(Subscriber)
+include::{sourcedir}/interaction/InteractionDocSpec.groovy[tag=mock1]
 ----
 
 Alternatively, the following Java-like syntax is supported, which may give better IDE support:
 
-[source,groovy]
+
+[source,groovy,indent=0]
 ----
-Subscriber subscriber = Mock()
-Subscriber subscriber2 = Mock()
+include::{sourcedir}/interaction/InteractionDocSpec.groovy[tag=mock2]
 ----
 
 Here, the mock's type is inferred from the variable type on the left-hand side of the assignment.
@@ -101,18 +92,9 @@ This default behavior is overridable by stubbing the methods, which we will lear
 
 After creating the publisher and its subscribers, we need to make the latter known to the former:
 
-[source,groovy]
+[source,groovy,indent=0]
 ----
-class PublisherSpec extends Specification {
-    Publisher publisher = new Publisher()
-    Subscriber subscriber = Mock()
-    Subscriber subscriber2 = Mock()
-
-    def setup() {
-        publisher.subscribers << subscriber // << is a Groovy shorthand for List.add()
-        publisher.subscribers << subscriber2
-    }
-}
+include::{sourcedir}/interaction/InteractionDocSpec.groovy[tag=example1]
 ----
 
 We are now ready to describe the expected interactions between the two parties.
@@ -122,16 +104,9 @@ We are now ready to describe the expected interactions between the two parties.
 Mocking is the act of describing (mandatory) interactions between the object under specification and its collaborators.
 Here is an example:
 
-[source,groovy]
+[source,groovy,indent=0]
 ----
-def "should send messages to all subscribers"() {
-    when:
-    publisher.send("hello")
-
-    then:
-    1 * subscriber.receive("hello")
-    1 * subscriber2.receive("hello")
-}
+include::{sourcedir}/interaction/InteractionDocSpec.groovy[tag=example2]
 ----
 
 Read out aloud: "When the publisher sends a 'hello' message, then both subscribers should receive that message exactly once."

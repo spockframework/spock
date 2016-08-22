@@ -104,15 +104,19 @@ subprojects {
   }
 
   signing {
+    required { gradle.taskGraph.hasTask('uploadArchives') }
     sign configurations.archives
   }
 
   signArchives {
-    onlyIf { gradle.taskGraph.hasTask(uploadArchives) }
+    onlyIf { gradle.taskGraph.hasTask('uploadArchives') }
   }
 
   ext."signing.keyId" = "2EA0A67F"
-  ext."signing.password" = System.getenv("SIGNING_PASSWORD")
+  if (System.getenv("SIGNING_PASSWORD")) {
+    // if the password property is set, even if its null null, the SigningExtension will try to load the key
+    ext."signing.password" = System.getenv("SIGNING_PASSWORD")
+  }
   ext."signing.secretKeyRingFile" = "$rootDir/config/code-signing-secring.gpg"
 
   configureJavadoc(javadoc)

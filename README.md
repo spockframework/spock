@@ -46,7 +46,7 @@ The groovy 2.4 variant should pass on all supported JDK versions:
 
 (Windows: `gradlew clean build`).
 All build dependencies, including
-the[build tool](http://www.gradle.org) itself, will be downloaded
+the [build tool](http://www.gradle.org) itself, will be downloaded
 automatically (unless already present).
 
 If you are using JDK 6 or 7 you can specify groovy version 2.0 with

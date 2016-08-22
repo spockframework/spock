@@ -16,10 +16,11 @@
 
 package org.spockframework.smoke.extension
 
+import org.spockframework.EmbeddedSpecification
+import org.spockframework.runtime.ConditionFailedWithExceptionError
+import org.spockframework.runtime.InvalidSpecException
 import spock.lang.FailsWith
 import spock.lang.Specification
-import org.spockframework.EmbeddedSpecification
-import org.spockframework.runtime.InvalidSpecException
 
 /**
  *
@@ -42,6 +43,25 @@ class FailsWithOnMethod extends Specification {
 
   def ex3() {
     expect: true
+  }
+
+
+  @FailsWith(ConditionFailedWithExceptionError)
+  def "can handle ConditionFailedWithExceptionError"() {
+    when:
+    def a = [b:null]
+
+    then:
+    a.b.c.size()
+  }
+
+  @FailsWith(NullPointerException)
+  def "can handle cause of ConditionFailedWithExceptionError"() {
+    when:
+    def a = [b:null]
+
+    then:
+    a.b.c.size()
   }
 }
 

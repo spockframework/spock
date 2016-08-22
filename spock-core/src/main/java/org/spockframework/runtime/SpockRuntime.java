@@ -16,11 +16,13 @@
 
 package org.spockframework.runtime;
 
-import java.util.*;
-
 import org.spockframework.runtime.model.ExpressionInfo;
 import org.spockframework.runtime.model.TextPosition;
-import org.spockframework.util.*;
+import org.spockframework.util.CollectionUtil;
+import org.spockframework.util.Nullable;
+
+import java.util.List;
+import java.util.ListIterator;
 
 /**
  * @author Peter Niederwieser
@@ -52,7 +54,7 @@ public abstract class SpockRuntime {
         errorCollector.collectOrThrow(spockException); // this is our exception - it already has good message
         return;
       }
-    final ConditionNotSatisfiedError conditionNotSatisfiedError = new ConditionNotSatisfiedError(
+    final ConditionFailedWithExceptionError conditionNotSatisfiedError = new ConditionFailedWithExceptionError(
         new Condition(
             getValues(recorder),
             text,

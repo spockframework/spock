@@ -1,4 +1,5 @@
 = Spock Primer
+include::include.adoc[]
 
 This chapter assumes that you have a basic knowledge of Groovy and unit testing. If you are a Java developer but haven't
 heard about Groovy, don't worry - Groovy will feel very familiar to you! In fact, one of Groovy's main design goals is to

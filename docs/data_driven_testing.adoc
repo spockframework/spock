@@ -1,4 +1,5 @@
 = Data Driven Testing
+include::include.adoc[]
 
 Oftentimes, it is useful to exercise the same test code multiple times, with varying inputs and expected results.
 Spock's data driven testing support makes this a first class feature.
@@ -7,17 +8,9 @@ Spock's data driven testing support makes this a first class feature.
 
 Suppose we want to specify the behavior of the +Math.max+ method:
 
-[source,groovy]
+[source,groovy,indent=0]
 ----
-class MathSpec extends Specification {
-    def "maximum of two numbers"() {
-        expect:
-        // exercise math method for a few different inputs
-        Math.max(1, 3) == 3
-        Math.max(7, 4) == 7
-        Math.max(0, 0) == 0
-    }
-}
+include::{sourcedir}/datadriven/v1/MathSpec.groovy[tag=example]
 ----
 
 Although this approach is fine in simple cases like this one, it has some potential drawbacks:
@@ -32,16 +25,11 @@ Spock's data-driven testing support tries to address these concerns. To get star
 data-driven feature method. First, we introduce three method parameters (called _data variables_) that replace the
 hard-coded integer values:
 
-[source,groovy]
+[source,groovy,indent=0]
 ----
-class MathSpec extends Specification {
-    def "maximum of two numbers"(int a, int b, int c) {
-        expect:
-        Math.max(a, b) == c
-
-        ...
-    }
-}
+include::{sourcedir}/datadriven/v2/MathSpec.groovy[tag=example-a]
+    ...
+include::{sourcedir}/datadriven/v2/MathSpec.groovy[tag=example-b]
 ----
 
 We have finished the test logic, but still need to supply the data values to be used. This is done in a +where:+ block,
@@ -52,20 +40,9 @@ which always comes at the end of the method. In the simplest (and most common) c
 
 Data tables are a convenient way to exercise a feature method with a fixed set of data values:
 
-[source,groovy]
+[source,groovy,indent=0]
 ----
-class Math extends Specification {
-    def "maximum of two numbers"(int a, int b, int c) {
-        expect:
-        Math.max(a, b) == c
-
-        where:
-        a | b | c
-        1 | 3 | 3
-        7 | 4 | 7
-        0 | 0 | 0
-    }
-}
+include::{sourcedir}/datadriven/v2/MathSpec.groovy[tag=example]
 ----
 
 The first line of the table, called the _table header_, declares the data variables. The subsequent lines, called
@@ -75,13 +52,9 @@ failures will be reported.
 
 Data tables must have at least two columns. A single-column table can be written as:
 
-[source,groovy]
+[source,groovy,indent=0]
 ----
-where:
-a | _
-1 | _
-7 | _
-0 | _
+include::{sourcedir}/datadriven/DataSpec.groovy[tag=single-column]
 ----
 
 == Isolated Execution of Iterations
@@ -109,20 +82,9 @@ values contained in the data table.]
 Second, inputs and expected outputs can be separated with a double pipe symbol (`||`) to visually set them apart.
 With this, the code becomes:
 
-[source,groovy]
+[source,groovy,indent=0]
 ----
-class DataDriven extends Specification {
-    def "maximum of two numbers"() {
-        expect:
-        Math.max(a, b) == c
-
-        where:
-        a | b || c
-        3 | 5 || 5
-        7 | 0 || 7
-        0 | 0 || 0
-    }
-}
+include::{sourcedir}/datadriven/v3/MathSpec.groovy[tag=example]
 ----
 
 == Reporting of Failures
@@ -151,10 +113,10 @@ failure. This is the purpose of the `@Unroll` annotation.
 
 A method annotated with `@Unroll` will have its iterations reported independently:
 
-[source,groovy]
+[source,groovy,indent=0]
 ----
-@Unroll
-def "maximum of two numbers"() { ... }
+include::{sourcedir}/datadriven/v4/MathSpec.groovy[tag=example]
+  ...
 ----
 
 .Why isn't `@Unroll` the default?
@@ -181,10 +143,10 @@ maximum of two numbers[2]   PASSED
 
 This tells us that the second iteration (with index 1) failed. With a bit of effort, we can do even better:
 
-[source,groovy]
+[source,groovy,indent=0]
 ----
-@Unroll
-def "maximum of #a and #b is #c"() { ... }
+include::{sourcedir}/datadriven/v5/MathSpec.groovy[tag=example]
+  ...
 ----
 
 This method name uses placeholders, denoted by a leading hash sign (`#`), to refer to data variables `a`, `b`,
@@ -213,13 +175,10 @@ feature method of the spec.
 Data tables aren't the only way to supply values to data variables. In fact, a data table is just syntactic sugar for
 one or more _data pipes_:
 
-[source,groovy]
+[source,groovy,indent=0]
 ----
-...
-where:
-a << [3, 7, 0]
-b << [5, 0, 0]
-c << [5, 7, 0]
+    ...
+include::{sourcedir}/datadriven/DataSpec.groovy[tag=data-pipes]
 ----
 
 A data pipe, indicated by the left-shift (`<<`) operator, connects a data variable to a _data provider_. The data
@@ -235,69 +194,48 @@ If a data provider returns multiple values per iteration (as an object that Groo
 it can be connected to multiple data variables simultaneously. The syntax is somewhat similar to Groovy multi-assignment
 but uses brackets instead of parentheses on the left-hand side:
 
-[source,groovy]
+[source,groovy,indent=0]
 ----
-@Shared sql = Sql.newInstance("jdbc:h2:mem:", "org.h2.Driver")
+include::{sourcedir}/datadriven/DataSpec.groovy[tag=datasource]
 
-def "maximum of two numbers"() {
-    ...
-    where:
-    [a, b, c] << sql.rows("select a, b, c from maxdata")
-}
+include::{sourcedir}/datadriven/DataSpec.groovy[tag=sql-data-pipe]
 ----
 
 Data values that aren't of interest can be ignored with an underscore (`_`):
 
-[source,groovy]
+[source,groovy,indent=0]
 ----
-...
-where:
-[a, b, _, c] << sql.rows("select * from maxdata")
+    ...
+include::{sourcedir}/datadriven/DataSpec.groovy[tag=sql-data-pipe-with-underscore]
 ----
 
 == Data Variable Assignment
 
 A data variable can be directly assigned a value:
 
-[source,groovy]
+[source,groovy,indent=0]
 ----
-...
-where:
-a = 3
-b = Math.random() * 100
-c = a > b ? a : b
+    ...
+include::{sourcedir}/datadriven/DataSpec.groovy[tag=data-variable-assignment]
 ----
 
 Assignments are re-evaluated for every iteration. As already shown above, the right-hand side of an assignment may refer
 to other data variables:
 
-[source,groovy]
+[source,groovy,indent=0]
 ----
-...
-where:
-row << sql.rows("select * from maxdata")
-// pick apart columns
-a = row.a
-b = row.b
-c = row.c
+    ...
+include::{sourcedir}/datadriven/DataSpec.groovy[tag=sql-data-variable-assignment]
 ----
 
 == Combining Data Tables, Data Pipes, and Variable Assignments
 
 Data tables, data pipes, and variable assignments can be combined as needed:
 
-[source,groovy]
+[source,groovy,indent=0]
 ----
-...
-where:
-a | _
-3 | _
-7 | _
-0 | _
-
-b << [5, 0, 0]
-
-c = a > b ? a : b
+    ...
+include::{sourcedir}/datadriven/DataSpec.groovy[tag=combined-variable-assignment]
 ----
 
 == Number of Iterations
@@ -323,10 +261,10 @@ An unrolled method name is similar to a Groovy `GString`, except for the followi
 Given a class `Person` with properties `name` and `age`, and a data variable `person` of type `Person`, the
 following are valid method names:
 
-[source,groovy]
+[source,groovy,indent=0]
 ----
-def "#person is #person.age years old"() { ... } // property access
-def "#person.name.toUpperCase()"() { ... } // zero-arg method call
+include::{sourcedir}/datadriven/DataSpec.groovy[tag=unrolled-1]
+include::{sourcedir}/datadriven/DataSpec.groovy[tag=unrolled-2]
 ----
 
 Non-string values (like `#person` above) are converted to Strings according to Groovy semantics.
@@ -335,20 +273,17 @@ The following are invalid method names:
 
 [source,groovy]
 ----
-def "#person.name.split(' ')[1]" { ... } // cannot have method arguments
-def "#person.age / 2" { ... } // cannot use operators
+def "#person.name.split(' ')[1]" {  // cannot have method arguments
+def "#person.age / 2" {  // cannot use operators
 ----
 
 If necessary, additional data variables can be introduced to hold more complex expression:
 
-[source,groovy]
+[source,groovy,indent=0]
 ----
-def "#lastName"() {
+include::{sourcedir}/datadriven/DataSpec.groovy[tag=unrolled-3a]
     ...
-    where:
-    person << ...
-    lastName = person.name.split(' ')[1]
-}
+include::{sourcedir}/datadriven/DataSpec.groovy[tag=unrolled-3b]
 ----
 
 

@@ -1,4 +1,5 @@
 = Modules
+include::include.adoc[]
 
 == Guice Module
 

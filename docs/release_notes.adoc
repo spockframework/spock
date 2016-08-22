@@ -1,6 +1,17 @@
 = Release Notes
 
-== 1.1-rc-2 (released 2016-06-30)
+== 1.1-rc-2 (released 2016-08-22)
+
+1.1 should be here soon but in the meantime there's a new release candidate.
+
+=== What's New In This release
+
+* Support for the new test annotations in Spring Boot 1.4.
+* Fixed the integration of JUnit method rules which now correctly happen "outside" the `setup` / `cleanup` methods.
+
+Thanks to all the contributors to this release: Jochen Berger, Leonard Brünings, Mariusz Gilewicz, Tomasz Juchniewicz, Gamal Mateo, Tobias Schulte, Florian Wilhelm, Kevin Wittek
+
+== 1.1-rc-1 (released 2016-06-30)
 
 A number of excellent pull requests have been integrated into the 1.1 stream.
 Currently some features are incubating.

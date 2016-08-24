@@ -20,7 +20,7 @@ We encourage users to try out these new features and provide feedback so we can 
 
 === What's New In This release
 
-* <<Merged Pull Requests,44 merged pull requests>>
+* 44 merged pull requests
 * The `verifyAll` method can be used to assert multiple boolean expressions _without_ short-circuiting those after a failure.
 For example:
 [source,groovy]

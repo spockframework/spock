@@ -42,7 +42,7 @@ To use the mocks just inject them like any other bean and configure them as usua
 
 [source,groovy,indent=0]
 ----
-include::{sourcedir-spring}/MockExampleBase.groovy[tag=example]
+include::{sourcedir-spring}/MockExamples.groovy[tag=example]
 ----
 
 === Spring Boot

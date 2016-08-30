@@ -1,5 +1,7 @@
 package org.spockframework.spring.docs
 
+import org.spockframework.spring.xml.SpockMockFactoryBean
+import org.springframework.beans.factory.FactoryBean
 import org.springframework.context.annotation.Bean
 import spock.mock.DetachedMockFactory
 
@@ -20,6 +22,11 @@ public class DetachedJavaConfig {
   @Bean
   GreeterService serviceSpy() {
     return mockFactory.Spy(GreeterServiceImpl)
+  }
+
+  @Bean
+  FactoryBean<GreeterService> alternativeMock() {
+    return new SpockMockFactoryBean(GreeterService)
   }
 }
 //end::javaconfig[]

@@ -1,0 +1,58 @@
+= Spring Module
+include::include.adoc[]
+
+The Spring module enables integration with http://docs.spring.io/spring/docs/4.1.5.RELEASE/spring-framework-reference/html/testing.html#testcontext-framework[Spring TestContext Framework].
+It supports the following spring annotations `@ContextConfiguration` and `@ContextHierarchy`. Furthermore, it supports the meta-annotation `@BootstrapWith` and so any annotation that is annotated with `@BootstrapWith` will also work, such as `@SpringBootTest`, `@WebMvcTest`.
+
+== Mocks
+
+Spock 1.1 introduced the `DetachedMockFactory` and the `SpockMockFactoryBean` which allow the creation of Spock mocks outside of a specification.
+
+[NOTE]
+====
+Although the mocks can be created outside of a specification,
+they only work inside the scope of a specification. So don't perform any actions on them until they are attached to one.
+====
+
+=== Java Config
+
+
+[source,groovy,indent=0]
+----
+include::{sourcedir-spring}/DetachedJavaConfig.groovy[tag=javaconfig]
+----
+
+=== XML
+
+Spock has spring namespace support, so if you declare the spock namespace with `xmlns:spock="http://www.spockframework.org/spring"` you get access to the convenience functions for creating mocks.
+
+[source,xml,indent=0]
+----
+include::{resourcedir-spring}/MockDocu-context.xml[]
+----
+<1> Creates a `Mock`
+<2> Creates a `Stub`
+<3> Creates a `Spy`
+<4> If you don't want to use the special namespace support you can create the beans via the `SpockMockFactoryBean`
+<5> The `mockNature` can be `MOCK`, `STUB`, or `SPY` and defaults to `MOCK` if not declared.
+
+=== Usage
+
+To use the mocks just inject them like any other bean and configure them as usual.
+
+[source,groovy,indent=0]
+----
+include::{sourcedir-spring}/MockExampleBase.groovy[tag=example]
+----
+
+=== Spring Boot
+
+The recommended way to use Spock mocks in `@WebMvcTest` tests, is to use an embedded config annotated with `@TestConfiguration` and to create the mocks using the `DetachedMockFactory`.
+
+[source,groovy,indent=0]
+----
+include::{sourcedir-spring-boot}/WebMvcTestIntegrationSpec.groovy[tag=include]
+----
+
+
+For more examples see the specs in the https://github.com/spockframework/spock/tree/master/spock-spring/src/test/groovy/org/spockframework/spring[codebase] and https://github.com/spockframework/spock/tree/master/spock-spring/src/test/groovy/org/spockframework/spring/boot-test[boot examples].

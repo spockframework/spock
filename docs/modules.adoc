@@ -6,10 +6,7 @@ include::include.adoc[]
 Integration with the http://code.google.com/p/google-guice/[Guice] IoC container. For examples see the specs in the
 https://github.com/spockframework/spock/tree/master/spock-guice/src/test/groovy/org/spockframework/guice[codebase].
 
-== Spring Module
-
-Integration with the http://docs.spring.io/spring/docs/4.1.5.RELEASE/spring-framework-reference/html/testing.html#testcontext-framework[Spring TestContext Framework].
-For examples see the specs in the https://github.com/spockframework/spock/tree/master/spock-spring/src/test/groovy/org/spockframework/spring[codebase].
+include::module_spring.adoc[leveloffset=+1]
 
 == Tapestry Module
 

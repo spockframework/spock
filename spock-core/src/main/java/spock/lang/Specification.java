@@ -16,14 +16,13 @@
 
 package spock.lang;
 
-import groovy.lang.Closure;
-
 import org.junit.runner.RunWith;
-import org.spockframework.util.Beta;
 import org.spockframework.lang.Wildcard;
-import org.spockframework.util.ExceptionUtil;
 import org.spockframework.runtime.*;
-import org.spockframework.runtime.GroovyRuntimeUtil;
+import org.spockframework.util.Beta;
+import org.spockframework.util.ExceptionUtil;
+
+import groovy.lang.Closure;
 
 /**
  * Base class for Spock specifications. All specifications must inherit from
@@ -44,6 +43,14 @@ public abstract class Specification extends MockingApi {
    * </ul>
    */
   public static final Object _ = Wildcard.INSTANCE;
+
+  /**
+   * Syntactic sugar for writing your test names in a BDD fashion.
+   * <p>Example:
+   * <p>Instead of the usual <tt>def "tests descriptions use syntactic sugar" { }</tt>
+   * <p>You can now write <tt>It "uses syntactic sugar in test descriptions" { }</tt>
+   */
+  protected static class It { }
 
   /**
    * Specifies that the preceding <tt>when</tt> block should throw an exception.

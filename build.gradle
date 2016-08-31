@@ -55,6 +55,7 @@ allprojects {
   if (javaVersion >= 1.8) {
     tasks.withType(Javadoc) {
       options.addStringOption('Xdoclint:none', '-quiet')
+      options.noTimestamp()
     }
   }
 }
@@ -180,19 +181,6 @@ if (gradle.startParameter.taskNames == ["shippableCiBuild"]) {
   subprojects {
     tasks.withType(Test) {
       it.finalizedBy(aggregateTestResults)
-    }
-  }
-  if (System.getenv("PULL_REQUEST") == "false") {
-    if (javaVersion == javaVersions.min()) {
-      gradle.startParameter.taskNames += ["uploadArchives"]
-    }
-    if (javaVersion == javaVersions.max()) {
-      if (variant == variants.max()) {
-        gradle.startParameter.taskNames += ["publishJavadoc", "publishDocs"]
-        if (!snapshotVersion) {
-          gradle.startParameter.taskNames += ["tagRelease"]
-        }
-      }
     }
   }
 }

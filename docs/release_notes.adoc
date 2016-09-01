@@ -31,7 +31,7 @@ verifyAll {
   b == c
 }
 ----
-* Detached mocks via the `DetachedMockFactory` and `SpockMockFactoryBean` classes.
+* Detached mocks via the `DetachedMockFactory` and `SpockMockFactoryBean` classes see the <<module_spring.adoc#_spring_module,Spring Module Docs>>.
 * Cells in a data table can refer to the current value for a column to the left.
 * `Spy` can be used to create partial mocks for Java 8 interfaces with `default` methods just as it can for abstract classes.
 * Improved power assert output when an exception occurs evaluating an assertion.

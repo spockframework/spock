@@ -167,7 +167,7 @@ loadLogFile([{
                 "err1\\n"
             ],
             "exceptions": [
-                "Condition not satisfied:\\n\\nthrowException()\\n|\\njava.io.IOException: ouch\\n\\n\\tat apackage.MySpec.some feature(scriptXXXXXXXXXXXXXXXXXXXXXXX.groovy:XX)\\nCaused by: java.io.IOException: ouch\\n\\tat DeclaringClass.methodName(filename:XX)\\n"
+                "Condition failed with Exception:\\n\\nthrowException()\\n|\\njava.io.IOException: ouch\\n\\n\\tat apackage.MySpec.some feature(scriptXXXXXXXXXXXXXXXXXXXXXXX.groovy:XX)\\nCaused by: java.io.IOException: ouch\\n\\tat DeclaringClass.methodName(filename:XX)\\n"
             ],
             "end": 1360051647586,
             "result": "failed",

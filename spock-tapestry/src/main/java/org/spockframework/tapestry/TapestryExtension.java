@@ -103,6 +103,11 @@ public class TapestryExtension extends AbstractGlobalExtension {
   private static final Class<? extends Annotation> importModuleAnnotation =
       (Class) ReflectionUtil.loadClassIfAvailable("org.apache.tapestry5.ioc.annotations.ImportModule");
 
+  // deprecated as of Tapestry 5.4
+  @SuppressWarnings("unchecked")
+  private static final Class<? extends Annotation> submoduleAnnotation =
+      (Class) ReflectionUtil.loadClassIfAvailable("org.apache.tapestry5.ioc.annotations.SubModule");
+
   @Override
   public void visitSpec(final SpecInfo spec) {
     Set<Class<?>> modules = collectModules(spec);
@@ -134,12 +139,15 @@ public class TapestryExtension extends AbstractGlobalExtension {
           modules.addAll(Arrays.<Class<?>> asList(importModule.value()));
         }
       }
-      SubModule subModule = curr.getAnnotation(SubModule.class);
-      if (subModule != null) {
-        if (modules == null) {
-          modules = new HashSet<Class<?>>();
+      if (submoduleAnnotation != null && spec.isAnnotationPresent(submoduleAnnotation)){
+        @SuppressWarnings("deprecation")
+        SubModule subModule = curr.getAnnotation(SubModule.class);
+        if (subModule != null) {
+          if (modules == null) {
+            modules = new HashSet<Class<?>>();
+          }
+          modules.addAll(Arrays.<Class<?>> asList(subModule.value()));
         }
-        modules.addAll(Arrays.<Class<?>> asList(subModule.value()));
       }
     }
 

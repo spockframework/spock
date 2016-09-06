@@ -16,6 +16,7 @@
 
 package org.spockframework.tapestry;
 
+import java.lang.annotation.Annotation;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -24,6 +25,7 @@ import org.apache.tapestry5.ioc.annotations.SubModule;
 import org.spockframework.runtime.extension.AbstractGlobalExtension;
 import org.spockframework.runtime.extension.IMethodInterceptor;
 import org.spockframework.runtime.model.SpecInfo;
+import org.spockframework.util.ReflectionUtil;
 
 /**
  * Facilitates the creation of integration-level specifications for applications
@@ -81,9 +83,9 @@ import org.spockframework.runtime.model.SpecInfo;
  * class UniverseSpec extends Specification {
  *   &#64;Inject
  *   UniverseService service
- * 
+ *
  *   UniverseService copy = service
- * 
+ *
  *   def "service knows the answer to the universe"() {
  *     expect:
  *     copy == service        // injection occurred before 'copy' was initialized
@@ -95,6 +97,12 @@ import org.spockframework.runtime.model.SpecInfo;
  * @author Peter Niederwieser
  */
 public class TapestryExtension extends AbstractGlobalExtension {
+
+  // since Tapestry 5.4
+  @SuppressWarnings("unchecked")
+  private static final Class<? extends Annotation> importModuleAnnotation =
+      (Class) ReflectionUtil.loadClassIfAvailable("org.apache.tapestry5.ioc.annotations.ImportModule");
+
   @Override
   public void visitSpec(final SpecInfo spec) {
     Set<Class<?>> modules = collectModules(spec);
@@ -116,7 +124,7 @@ public class TapestryExtension extends AbstractGlobalExtension {
   private Set<Class<?>> collectModules(final SpecInfo spec) {
     Set<Class<?>> modules = null;
     for (SpecInfo curr : spec.getSpecsTopToBottom()) {
-      try {
+      if (importModuleAnnotation != null && spec.isAnnotationPresent(importModuleAnnotation)){
         org.apache.tapestry5.ioc.annotations.ImportModule importModule = curr
             .getAnnotation(org.apache.tapestry5.ioc.annotations.ImportModule.class);
         if (importModule != null) {
@@ -125,8 +133,6 @@ public class TapestryExtension extends AbstractGlobalExtension {
           }
           modules.addAll(Arrays.<Class<?>> asList(importModule.value()));
         }
-      } catch (NoClassDefFoundError e) {
-        // that's fine, we're probably on an old Tapestry version
       }
       SubModule subModule = curr.getAnnotation(SubModule.class);
       if (subModule != null) {

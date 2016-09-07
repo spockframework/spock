@@ -126,7 +126,7 @@ public class TapestryExtension extends AbstractGlobalExtension {
   // were found,
   // but they didn't specify any modules. This distinction is important to
   // allow activation of the extension w/o specifying any modules.
-  private Set<Class<?>> collectModules(final SpecInfo spec) {
+  private Set<Class<?>> collectModules(SpecInfo spec) {
     Set<Class<?>> modules = null;
     for (SpecInfo curr : spec.getSpecsTopToBottom()) {
       if (importModuleAnnotation != null && spec.isAnnotationPresent(importModuleAnnotation)){

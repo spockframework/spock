@@ -85,7 +85,7 @@ class SymbolInjectionWithImportModule extends Specification {
   String configValue
 
   @Inject
-  @Value("\${java.version} and \${configKey}")
+  @Value('${java.version} and ${configKey}')
   String computedValue
 
   def "injected system property"() {

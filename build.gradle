@@ -35,6 +35,7 @@ ext {
     jetbrainsAnnotations: "org.jetbrains:annotations:13.0",
     ant: "org.apache.ant:ant:1.9.7",
     asm: "org.ow2.asm:asm:5.1",
+    bytebuddy: "net.bytebuddy:byte-buddy:1.4.26",
     cglib: "cglib:cglib-nodep:3.2.2",
     groovy: "org.codehaus.groovy:groovy-all:$groovyVersion",
     h2database: "com.h2database:h2:1.3.176",
@@ -136,6 +137,20 @@ subprojects {
   artifacts {
     archives sourcesJar, javadocJar
   }
+
+  task testCglib(type: Test) {
+    systemProperty("org.spockframework.mock.ignoreByteBuddy", "true")
+    testClassesDir = sourceSets.test.output.classesDir
+    classpath = sourceSets.test.runtimeClasspath
+  }
+
+  if (gradle.startParameter.taskNames.contains("travisCiBuild")
+    || gradle.startParameter.taskNames.contains("shippableCiBuild")
+    || gradle.startParameter.taskNames.contains("appveyorCiBuild")) {
+    check.dependsOn testCglib
+  }
+
+  testCglib.mustRunAfter test
 
   tasks.withType(Test) {
     reports {

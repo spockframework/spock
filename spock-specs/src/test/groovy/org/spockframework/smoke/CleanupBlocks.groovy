@@ -21,8 +21,16 @@ import spock.lang.Specification
 import spock.lang.Issue
 import org.spockframework.EmbeddedSpecification
 import org.codehaus.groovy.runtime.typehandling.GroovyCastException
+import org.junit.runner.Result
+import org.junit.runners.model.MultipleFailureException
 
 class CleanupBlocks extends EmbeddedSpecification {
+  static List log
+
+  def setup() {
+    log = []
+  }
+
   def "basic usage"() {
     def x
     setup: x = 1
@@ -56,14 +64,49 @@ class CleanupBlocks extends EmbeddedSpecification {
     if (a == 0) throw new IllegalArgumentException()
   }
 
-  @FailsWith(IllegalArgumentException)
   def "is executed if exception is thrown"() {
-    def a = 1
-    throw new Exception()
+    when:
+    runner.runSpecBody """
+def getLog() { org.spockframework.smoke.CleanupBlocks.log }
 
-    cleanup:
-    a = 0
-    if (a == 0) throw new IllegalArgumentException()
+def feature() {
+  log << "feature"
+  throw new IllegalArgumentException()
+
+  cleanup:
+  log << "cleanup"
+}
+"""
+
+    then:
+    thrown(IllegalArgumentException)
+    log == ["feature", "cleanup"]
+  }
+
+  @Issue('https://github.com/spockframework/spock/issues/142')
+  def "feature exception and cleanup exception are both reported"() {
+    // turn off throwing the first failure so all failures can be inspected
+    runner.throwFailure = false
+
+    when:
+    Result result = runner.runSpecBody """
+def getLog() { org.spockframework.smoke.CleanupBlocks.log }
+
+def feature() {
+  log << "feature"
+  throw new IllegalArgumentException("feature")
+
+  cleanup:
+  log << "cleanup"
+  throw new IllegalArgumentException("cleanup")
+}
+"""
+
+    then:
+    List<Throwable> failures = result.getFailures()
+    failures[0].message == "feature"
+    failures[1].message == "cleanup"
+    log == ["feature", "cleanup"]
   }
 
   @FailsWith(IllegalArgumentException)

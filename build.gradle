@@ -1,8 +1,19 @@
+buildscript {
+  repositories {
+    mavenCentral()
+  }
+  dependencies {
+    classpath "io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.5.3"  //it's not available through Gradle plugins portal yet
+  }
+}
+
 plugins {
   id 'com.gradle.build-scan' version '1.0'
   id "base"
   id "org.asciidoctor.gradle.asciidoctor" version "1.5.1"
 }
+
+apply plugin: 'io.codearte.nexus-staging'
 
 description = "Spock Framework"
 
@@ -306,3 +317,11 @@ buildScan {
   licenseAgreementUrl = 'https://gradle.com/terms-of-service'
   licenseAgree = 'yes'
 }
+
+nexusStaging {
+  packageGroup = 'org.spockframework'
+  numberOfRetries = 20
+  username = hasProperty('nexusUsername') ? getProperty('nexusUsername') : System.env.SONATYPE_OSS_USERNAME
+  password = hasProperty('nexusPassword') ? getProperty('nexusPassword') : System.env.SONATYPE_OSS_PASSWORD
+}
+

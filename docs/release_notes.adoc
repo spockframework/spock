@@ -1,6 +1,10 @@
 = Release Notes
 include::include.adoc[]
 
+== 1.1-rc-3 (released 2016-10-17)
+
+Adds compatibility with ByteBuddy as an alternative to cglib for generating mocks and stubs for classes.
+
 == 1.1-rc-2 (released 2016-08-22)
 
 1.1 should be here soon but in the meantime there's a new release candidate.

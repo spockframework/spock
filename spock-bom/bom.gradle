@@ -44,6 +44,26 @@ def bom = {
         distribution "repo"
       }
     }
+
+    scm {
+      connection "scm:git:git://github.com/spockframework/spock.git"
+      developerConnection "scm:git:ssh://git@github.com/spockframework/spock.git"
+      url "http://github.spockframework.org/spock"
+    }
+
+    developers {
+      developer {
+        id "pniederw"
+        name "Peter Niederwieser"
+        email "peter@pniederw.com"
+      }
+
+      developer {
+        id "ldaley"
+        name "Luke Daley"
+        email "ld@ldaley.com"
+      }
+    }
   }
 }
 task writeBom << {

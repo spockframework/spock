@@ -217,7 +217,7 @@ task publishJavadoc(type: Exec) {
   cp -r build/javadoc/$variantLessVersion javadoc/
   git add javadoc
   git commit -qm "Publish javadoc/$variantLessVersion"
-  git push -q "https://${System.getenv("GITHUB_TOKEN")}@github.com/spockframework/spock.git" gh-pages > /dev/null 2>&1
+  git push "https://\$GITHUB_TOKEN@github.com/spockframework/spock.git" gh-pages 2>&1 | sed "s/\$GITHUB_TOKEN/xxx/g"
   git checkout master
 """
 }
@@ -234,7 +234,7 @@ task publishDocs(type: Exec) {
   cp -r build/asciidoc/html5/* docs/$variantLessVersion
   git add docs
   git commit -qm "Publish docs/$variantLessVersion"
-  git push -q "https://${System.getenv("GITHUB_TOKEN")}@github.com/spockframework/spock.git" gh-pages > /dev/null 2>&1
+  git push "https://\$GITHUB_TOKEN@github.com/spockframework/spock.git" gh-pages 2>&1 | sed "s/\$GITHUB_TOKEN/xxx/g"
   git checkout master
 """
 }
@@ -245,7 +245,7 @@ task tagRelease(type: Exec) {
   git config user.name "Spock Framework Robot"
   git checkout master
   git tag -f spock-$variantLessVersion
-  git push -q "https://${System.getenv("GITHUB_TOKEN")}@github.com/spockframework/spock.git" spock-$variantLessVersion > /dev/null 2>&1
+  git push "https://\$GITHUB_TOKEN@github.com/spockframework/spock.git" spock-$variantLessVersion 2>&1 | sed "s/\$GITHUB_TOKEN/xxx/g"
 """
 }
 

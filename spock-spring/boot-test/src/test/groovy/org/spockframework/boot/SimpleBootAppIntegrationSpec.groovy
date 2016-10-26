@@ -40,5 +40,6 @@ class SimpleBootAppIntegrationSpec extends Specification {
     context != null
     context.containsBean("helloWorldService")
     context.containsBean("simpleBootApp")
+    context.containsBean("scopedHelloWorldService")
   }
 }

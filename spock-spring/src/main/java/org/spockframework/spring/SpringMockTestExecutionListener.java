@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.spockframework.mock.ISpockMockObject;
 import org.spockframework.mock.MockUtil;
+import org.springframework.aop.scope.ScopedProxyUtils;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.ApplicationContext;
@@ -43,7 +44,7 @@ public class SpringMockTestExecutionListener implements TestExecutionListener {
 
       for (String beanName : mockBeanNames) {
         BeanDefinition beanDefinition = ((BeanDefinitionRegistry)applicationContext).getBeanDefinition(beanName);
-        if(beanDefinition.isAbstract()){
+        if(beanDefinition.isAbstract() || beanName.startsWith("scopedTarget.")){
             continue;
         }
         Object bean = applicationContext.getBean(beanName);

@@ -132,7 +132,7 @@ public class RunContext {
       IThrowableFunction<RunContext, T, U> command) throws U {
     List<Class<?>> allExtensionClasses = new ArrayList<Class<?>>(extensionClasses);
     if (inheritParentExtensions) allExtensionClasses.addAll(getCurrentExtensions());
-    
+
     RunContext context = new RunContext(name, spockUserHome, configurationScript, allExtensionClasses);
     LinkedList<RunContext> contextStack = contextStacks.get();
     contextStack.addFirst(context);
@@ -172,26 +172,16 @@ public class RunContext {
     if (context == null) return Collections.emptyList();
     return context.globalExtensionClasses;
   }
-  
+
   // This context will stay around until the thread dies.
   // It would be more accurate to remove the context once the test run
   // has finished, but the JUnit Runner SPI doesn't provide an adequate hook.
   // That said, since most environments fork a new JVM for each test run,
   // this shouldn't be much of a problem in practice.
   private static RunContext createBottomContext() {
-    File spockUserHome = new File(env("spock.user.home", "SPOCK_USER_HOME", System.getProperty("user.home") + "/.spock"));
+    File spockUserHome = SpockUserHomeUtil.getSpockUserHome();
     DelegatingScript script = new ConfigurationScriptLoader(spockUserHome).loadAutoDetectedScript();
     List<Class<?>> classes = new ExtensionClassesLoader().loadClassesFromDefaultLocation();
     return new RunContext("default", spockUserHome, script, classes);
-  }
-
-  private static String env(String systemPropertyKey, String envVariableKey, String defaultValue) {
-    String value = System.getProperty(systemPropertyKey);
-    if (value != null) return value;
-
-    value = System.getenv(envVariableKey);
-    if (value != null) return value;
-
-    return defaultValue;
   }
 }

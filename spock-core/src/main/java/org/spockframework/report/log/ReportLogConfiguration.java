@@ -41,7 +41,7 @@ public class ReportLogConfiguration {
 
   public String getLogFileSuffix() {
     if (logFileSuffix != null && logFileSuffix.contains("#timestamp")) {
-      DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+      DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH_mm_ss");
       dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
       String timestamp = dateFormat.format(new Date());
       logFileSuffix = logFileSuffix.replace("#timestamp", timestamp);

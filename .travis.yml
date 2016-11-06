@@ -43,6 +43,8 @@ matrix:
       env: VARIANT=2.0
     - jdk: openjdk7
       env: VARIANT=2.4
+    - jdk: openjdk6
+      env: VARIANT=2.4
 
 install: true
 

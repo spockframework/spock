@@ -290,7 +290,7 @@ def configureJavadoc(task) {
     configure(options) {
       links "http://docs.oracle.com/javase/6/docs/api/"
       links "http://docs.groovy-lang.org/docs/groovy-$groovyVersion/html/gapi/"
-      links "http://junit.org/javadoc/latest/"
+      links "http://junit.org/junit4/javadoc/latest/"
       links "http://hamcrest.org/JavaHamcrest/javadoc/1.3/"
     }
   }

@@ -27,8 +27,8 @@ ext {
   javaVersions = [1.6, 1.7, 1.8]
   javaVersion = System.getProperty("java.specification.version") as BigDecimal
   baseVersion = "1.1"
-  snapshotVersion = true
-  releaseCandidate = 0
+  snapshotVersion = false
+  releaseCandidate = 3
   fullVersion = "$baseVersion-groovy-$variant" + (snapshotVersion ? "-SNAPSHOT" :  (releaseCandidate ? "-rc-$releaseCandidate" : ""))
   variantLessVersion = baseVersion + (snapshotVersion ? "-SNAPSHOT" : (releaseCandidate ? "-rc-$releaseCandidate" : ""))
   libs = [
@@ -173,14 +173,9 @@ if (gradle.startParameter.taskNames == ["travisCiBuild"]) {
   }
   if (System.getenv("TRAVIS_PULL_REQUEST") == "false" && System.getenv("TRAVIS_BRANCH") == "master") {
     if (javaVersion == javaVersions.min()) {
-      gradle.startParameter.taskNames += ["uploadArchives"]
-    }
-    if (javaVersion == javaVersions.max()) {
-      if (variant == variants.max()) {
-        gradle.startParameter.taskNames += ["publishJavadoc", "publishDocs"]
-        if (!snapshotVersion) {
-          gradle.startParameter.taskNames += ["tagRelease"]
-        }
+      gradle.startParameter.taskNames += ["uploadArchives", "publishJavadoc", "publishDocs"]
+      if (!snapshotVersion) {
+        gradle.startParameter.taskNames += ["tagRelease"]
       }
     }
   }

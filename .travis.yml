@@ -37,10 +37,9 @@ matrix:
       env: VARIANT=2.0
     # Reduce Travis workload (currently 5 concurrent builds are allowed)
     # See travisCiBuild task for mandatory combinations
-    - jdk: oraclejdk8
-      env: VARIANT=2.3
     - jdk: openjdk7
       env: VARIANT=2.0
+    ## ensure docs only get published once otherwise it causes build to fail
     - jdk: openjdk7
       env: VARIANT=2.4
     - jdk: openjdk6

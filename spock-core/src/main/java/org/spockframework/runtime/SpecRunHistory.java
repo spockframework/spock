@@ -22,7 +22,7 @@ import java.util.*;
 import org.spockframework.runtime.model.FeatureInfo;
 import org.spockframework.runtime.model.SpecInfo;
 import org.spockframework.util.IoUtil;
-import org.spockframework.util.TextUtil;
+import org.spockframework.util.SpockUserHomeUtil;
 
 public class SpecRunHistory implements Comparable<SpecRunHistory> {
   private static final int MAX_CONFIDENCE = 5;
@@ -129,7 +129,7 @@ public class SpecRunHistory implements Comparable<SpecRunHistory> {
   }
 
   private File getDataFile() {
-    return new File(TextUtil.join(File.separator, System.getProperty("user.home"), ".spock", "RunHistory", specName));
+    return SpockUserHomeUtil.getFileInSpockUserHome("RunHistory", specName);
   }
 
   private static class Data implements Serializable {

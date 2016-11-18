@@ -78,10 +78,8 @@ public class SpringExtension extends AbstractGlobalExtension {
   }
 
   private boolean isSpringSpec(SpecInfo spec) {
+    if (isSpringBootSpec(spec)) return true;
 
-    if (isSpringBootSpec(spec)) {
-      return true;
-    }
 
     return findAnnotationDescriptorForTypesMethod != null
         && ReflectionUtil.invokeMethod(
@@ -91,6 +89,7 @@ public class SpringExtension extends AbstractGlobalExtension {
   }
 
   private boolean isSpringBootSpec(SpecInfo spec) {
+    if (bootstrapWithAnnotation == null) return false;
 
     boolean bootstrapWithAnnotationPresent;
 
@@ -99,9 +98,7 @@ public class SpringExtension extends AbstractGlobalExtension {
       // we can identify a spring-boot spec by looking for an annotation annotated with BootstrapWith
       bootstrapWithAnnotationPresent = a.annotationType().isAnnotationPresent(bootstrapWithAnnotation);
 
-      if (bootstrapWithAnnotationPresent) {
-        return true;
-      }
+      if (bootstrapWithAnnotationPresent) return true;
 
     }
     return false;

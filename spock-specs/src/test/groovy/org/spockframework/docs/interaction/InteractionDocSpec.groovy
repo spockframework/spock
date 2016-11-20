@@ -40,8 +40,10 @@ class InteractionDocSpec extends Specification {
 // tag::examplesetup[]
 class Publisher {
   List<Subscriber> subscribers = []
+  int messageCount = 0
   void send(String message){
     subscribers*.receive(message)
+    messageCount++
   }
 }
 
@@ -71,4 +73,44 @@ class PublisherSpec extends Specification {
     1 * subscriber2.receive("hello")
   }
 // end::example2[]
+
+  def "Mixing Interactions and Conditions"() {
+// tag::example3[]
+    when:
+    publisher.send("hello")
+
+    then:
+    1 * subscriber.receive("hello")
+    publisher.messageCount == 1
+// end::example3[]
+  }
+
+  def "Explicit Interaction Blocks"() {
+// tag::example4[]
+    when:
+    publisher.send("hello")
+
+    then:
+    interaction {
+      def message = "hello"
+      1 * subscriber.receive(message)
+    }
+// end::example4[]
+  }
+
+  def "Scope of Interactions"() {
+// tag::example5[]
+    when:
+    publisher.send("message1")
+
+    then:
+    1 * subscriber.receive("message1")
+
+    when:
+    publisher.send("message2")
+
+    then:
+    1 * subscriber.receive("message2")
+// end::example5[]
+  }
 }

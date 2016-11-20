@@ -346,14 +346,9 @@ A `with` block can also be used for grouping conditions with the same target.
 A `then:` block may contain both interactions and conditions. Although not strictly required, it is customary
 to declare interactions before conditions:
 
-[source,groovy]
+[source,groovy,indent=0]
 ----
-when:
-publisher.send("hello")
-
-then:
-1 * subscriber.receive("hello")
-publisher.messageCount == 1
+include::{sourcedir}/interaction/InteractionDocSpec.groovy[tag=example3]
 ----
 
 Read out aloud: "When the publisher sends a 'hello' message, then the subscriber should receive the message exactly
@@ -387,16 +382,9 @@ In our example, this would have the added benefit that we could use the same var
 
 Another solution is to be explicit about the fact that variable declaration and interaction belong together:
 
-[source,groovy]
+[source,groovy,indent=0]
 ----
-when:
-publisher.send("hello")
-
-then:
-interaction {
-    def message = "hello"
-    1 * subscriber.receive(message)
-}
+include::{sourcedir}/interaction/InteractionDocSpec.groovy[tag=example4]
 ----
 
 Since an `MockingApi.interaction` block is always moved in its entirety, the code now works as intended.
@@ -405,19 +393,9 @@ Since an `MockingApi.interaction` block is always moved in its entirety, the cod
 
 Interactions declared in a `then:` block are scoped to the preceding `when:` block:
 
-[source,groovy]
+[source,groovy,indent=0]
 ----
-when:
-publisher.send("message1")
-
-then:
-subscriber.receive("message1")
-
-when:
-publisher.send("message2")
-
-then:
-subscriber.receive("message2")
+include::{sourcedir}/interaction/InteractionDocSpec.groovy[tag=example5]
 ----
 
 This makes sure that `subscriber` receives `"message1"` during execution of the first `when:` block,

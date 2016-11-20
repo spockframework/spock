@@ -717,6 +717,9 @@ Like a mock, a stub allows unexpected invocations. However, the values returned 
   an object constructed from its default constructor, or another stub returning default values.
   See class `org.spockframework.mock.EmptyOrDummyResponse` for the details.
 
+NOTE: If the response type of the method is a final class or if it requires a class-mocking library and cglib or ByteBuddy
+      are not available, then the "dummy" object creation will fail with a `CannotCreateMockException`.
+
 A stub often has a fixed set of interactions, which makes
 <<declaring-interactions-at-creation-time,declaring interactions at mock creation time>> particularly attractive:
 

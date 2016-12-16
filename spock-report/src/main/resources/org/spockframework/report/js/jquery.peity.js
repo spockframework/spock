@@ -1,89 +1,92 @@
-// Peity jQuery plugin version 1.0.0
-// (c) 2012 Ben Pickles
+// Peity jQuery plugin version 3.2.1
+// (c) 2016 Ben Pickles
 //
-// http://benpickles.github.com/peity
+// http://benpickles.github.io/peity
 //
 // Released under MIT license.
-(function($, document, Math, devicePixelRatio) {
-  var canvasSupported = document.createElement("canvas").getContext
-
+(function($, document, Math, undefined) {
   var peity = $.fn.peity = function(type, options) {
-    if (canvasSupported) {
+    if (svgSupported) {
       this.each(function() {
-        var defaults = peity.defaults[type]
-        var data = {}
         var $this = $(this)
+        var chart = $this.data('_peity')
 
-        $.each($this.data(), function(name, value) {
-          if (name in defaults) data[name] = value
-        })
+        if (chart) {
+          if (type) chart.type = type
+          $.extend(chart.opts, options)
+        } else {
+          chart = new Peity(
+            $this,
+            type,
+            $.extend({},
+              peity.defaults[type],
+              $this.data('peity'),
+              options)
+          )
 
-        var opts = $.extend({}, defaults, data, options)
-        var chart = new Peity($this, type, opts)
+          $this
+            .change(function() { chart.draw() })
+            .data('_peity', chart)
+        }
+
         chart.draw()
-
-        $this.change(function() {
-          chart.draw()
-        })
       });
     }
 
     return this;
   };
 
-  var Peity = function($elem, type, opts) {
-    this.$elem = $elem
+  var Peity = function($el, type, opts) {
+    this.$el = $el
     this.type = type
     this.opts = opts
   }
 
   var PeityPrototype = Peity.prototype
 
-  PeityPrototype.colours = function() {
-    var colours = this.opts.colours
-    var func = colours
-
-    if (!$.isFunction(func)) {
-      func = function(_, i) {
-        return colours[i % colours.length]
-      }
-    }
-
-    return func
+  var svgElement = PeityPrototype.svgElement = function(tag, attrs) {
+    return $(
+      document.createElementNS('http://www.w3.org/2000/svg', tag)
+    ).attr(attrs)
   }
+
+  // https://gist.github.com/madrobby/3201472
+  var svgSupported = 'createElementNS' in document && svgElement('svg', {})[0].createSVGRect
 
   PeityPrototype.draw = function() {
-    peity.graphers[this.type].call(this, this.opts)
+    var opts = this.opts
+    peity.graphers[this.type].call(this, opts)
+    if (opts.after) opts.after.call(this, opts)
   }
 
-  PeityPrototype.prepareCanvas = function(width, height) {
-    var canvas = this.canvas
+  PeityPrototype.fill = function() {
+    var fill = this.opts.fill
 
-    if (canvas) {
-      this.context.clearRect(0, 0, canvas.width, canvas.height)
-    } else {
-      canvas = $("<canvas>").attr({
-        height: height * devicePixelRatio,
-        width: width * devicePixelRatio
-      })
+    return $.isFunction(fill)
+      ? fill
+      : function(_, i) { return fill[i % fill.length] }
+  }
 
-      if (devicePixelRatio != 1) {
-        canvas.css({
-          height: height,
-          width: width
+  PeityPrototype.prepare = function(width, height) {
+    if (!this.$svg) {
+      this.$el.hide().after(
+        this.$svg = svgElement('svg', {
+          "class": "peity"
         })
-      }
-
-      this.canvas = canvas = canvas[0]
-      this.context = canvas.getContext("2d")
-      this.$elem.hide().before(canvas)
+      )
     }
 
-    return canvas
+    return this.$svg
+      .empty()
+      .data('peity', this)
+      .attr({
+        height: height,
+        width: width
+      })
   }
 
   PeityPrototype.values = function() {
-    return $.map(this.$elem.text().split(this.opts.delimiter), function(value) {
+    return $.map(this.$el.text().split(this.opts.delimiter), function(value) {
       return parseFloat(value)
     })
   }
@@ -99,22 +102,23 @@
   peity.register(
     'pie',
     {
-      colours: ["#ff9900", "#fff4dd", "#ffc66e"],
-      delimiter: null,
-      diameter: 16
+      fill: ['#ff9900', '#fff4dd', '#ffc66e'],
+      radius: 8
     },
     function(opts) {
       if (!opts.delimiter) {
-        var delimiter = this.$elem.text().match(/[^0-9\.]/)
+        var delimiter = this.$el.text().match(/[^0-9\.]/)
         opts.delimiter = delimiter ? delimiter[0] : ","
       }
 
-      var values = this.values()
+      var values = $.map(this.values(), function(n) {
+        return n > 0 ? n : 0
+      })
 
       if (opts.delimiter == "/") {
         var v1 = values[0]
         var v2 = values[1]
-        values = [v1, v2 - v1]
+        values = [v1, Math.max(0, v2 - v1)]
       }
 
       var i = 0
@@ -125,92 +129,183 @@
         sum += values[i]
       }
 
-      var canvas = this.prepareCanvas(opts.diameter, opts.diameter)
-      var context = this.context
-      var half = canvas.width / 2
-      var pi = Math.PI
-      var colours = this.colours()
+      if (!sum) {
+        length = 2
+        sum = 1
+        values = [0, 1]
+      }
 
-      context.save()
-      context.translate(half, half)
-      context.rotate(-pi / 2)
+      var diameter = opts.radius * 2
+
+      var $svg = this.prepare(
+        opts.width || diameter,
+        opts.height || diameter
+      )
+
+      var width = $svg.width()
+        , height = $svg.height()
+        , cx = width / 2
+        , cy = height / 2
+
+      var radius = Math.min(cx, cy)
+        , innerRadius = opts.innerRadius
+
+      if (this.type == 'donut' && !innerRadius) {
+        innerRadius = radius * 0.5
+      }
+
+      var pi = Math.PI
+      var fill = this.fill()
+
+      var scale = this.scale = function(value, radius) {
+        var radians = value / sum * pi * 2 - pi / 2
+
+        return [
+          radius * Math.cos(radians) + cx,
+          radius * Math.sin(radians) + cy
+        ]
+      }
+
+      var cumulative = 0
 
       for (i = 0; i < length; i++) {
         var value = values[i]
-        var slice = (value / sum) * pi * 2
+          , portion = value / sum
+          , $node
 
-        context.beginPath()
-        context.moveTo(0, 0)
-        context.arc(0, 0, half, 0, slice, false)
-        context.fillStyle = colours.call(this, value, i, values)
-        context.fill()
+        if (portion == 0) continue
 
-        context.beginPath()
-        context.moveTo(0, 0)
-        context.lineTo(half, 0)
-        context.lineWidth = 1 * devicePixelRatio
-        context.strokeStyle = 'white'
-        context.stroke()
+        if (portion == 1) {
+          if (innerRadius) {
+            var x2 = cx - 0.01
+              , y1 = cy - radius
+              , y2 = cy - innerRadius
 
-        context.rotate(slice)
+            $node = svgElement('path', {
+              d: [
+                'M', cx, y1,
+                'A', radius, radius, 0, 1, 1, x2, y1,
+                'L', x2, y2,
+                'A', innerRadius, innerRadius, 0, 1, 0, cx, y2
+              ].join(' ')
+            })
+          } else {
+            $node = svgElement('circle', {
+              cx: cx,
+              cy: cy,
+              r: radius
+            })
+          }
+        } else {
+          var cumulativePlusValue = cumulative + value
+
+          var d = ['M'].concat(
+            scale(cumulative, radius),
+            'A', radius, radius, 0, portion > 0.5 ? 1 : 0, 1,
+            scale(cumulativePlusValue, radius),
+            'L'
+          )
+
+          if (innerRadius) {
+            d = d.concat(
+              scale(cumulativePlusValue, innerRadius),
+              'A', innerRadius, innerRadius, 0, portion > 0.5 ? 1 : 0, 0,
+              scale(cumulative, innerRadius)
+            )
+          } else {
+            d.push(cx, cy)
+          }
+
+          cumulative += value
+
+          $node = svgElement('path', {
+            d: d.join(" ")
+          })
+        }
+
+        $node.attr('fill', fill.call(this, value, i, values))
+
+        $svg.append($node)
       }
+    }
+  )
 
-      context.restore()
+  peity.register(
+    'donut',
+    $.extend(true, {}, peity.defaults.pie),
+    function(opts) {
+      peity.graphers.pie.call(this, opts)
     }
   )
 
   peity.register(
     "line",
     {
-      colour: "#c6d9fd",
-      strokeColour: "#4d89f9",
-      strokeWidth: 1,
       delimiter: ",",
+      fill: "#c6d9fd",
       height: 16,
-      max: null,
       min: 0,
+      stroke: "#4d89f9",
+      strokeWidth: 1,
       width: 32
     },
     function(opts) {
       var values = this.values()
       if (values.length == 1) values.push(values[0])
-      var max = Math.max.apply(Math, values.concat([opts.max]));
-      var min = Math.min.apply(Math, values.concat([opts.min]))
+      var max = Math.max.apply(Math, opts.max == undefined ? values : values.concat(opts.max))
+        , min = Math.min.apply(Math, opts.min == undefined ? values : values.concat(opts.min))
 
-      var canvas = this.prepareCanvas(opts.width, opts.height)
-      var context = this.context
-      var width = canvas.width
-      var height = canvas.height
-      var xQuotient = width / (values.length - 1)
-      var yQuotient = height / (max - min)
+      var $svg = this.prepare(opts.width, opts.height)
+        , strokeWidth = opts.strokeWidth
+        , width = $svg.width()
+        , height = $svg.height() - strokeWidth
+        , diff = max - min
 
-      var coords = [];
-      var i;
-
-      context.beginPath();
-      context.moveTo(0, height + (min * yQuotient))
-
-      for (i = 0; i < values.length; i++) {
-        var x = i * xQuotient
-        var y = height - (yQuotient * (values[i] - min))
-
-        coords.push({ x: x, y: y });
-        context.lineTo(x, y);
+      var xScale = this.x = function(input) {
+        return input * (width / (values.length - 1))
       }
 
-      context.lineTo(width, height + (min * yQuotient))
-      context.fillStyle = opts.colour;
-      context.fill();
+      var yScale = this.y = function(input) {
+        var y = height
 
-      if (opts.strokeWidth) {
-        context.beginPath();
-        context.moveTo(0, coords[0].y);
-        for (i = 0; i < coords.length; i++) {
-          context.lineTo(coords[i].x, coords[i].y);
+        if (diff) {
+          y -= ((input - min) / diff) * height
         }
-        context.lineWidth = opts.strokeWidth * devicePixelRatio;
-        context.strokeStyle = opts.strokeColour;
-        context.stroke();
+
+        return y + strokeWidth / 2
+      }
+
+      var zero = yScale(Math.max(min, 0))
+        , coords = [0, zero]
+
+      for (var i = 0; i < values.length; i++) {
+        coords.push(
+          xScale(i),
+          yScale(values[i])
+        )
+      }
+
+      coords.push(width, zero)
+
+      if (opts.fill) {
+        $svg.append(
+          svgElement('polygon', {
+            fill: opts.fill,
+            points: coords.join(' ')
+          })
+        )
+      }
+
+      if (strokeWidth) {
+        $svg.append(
+          svgElement('polyline', {
+            fill: 'none',
+            points: coords.slice(2, coords.length - 2).join(' '),
+            stroke: opts.stroke,
+            'stroke-width': strokeWidth,
+            'stroke-linecap': 'square'
+          })
+        )
       }
     }
   );
@@ -218,37 +313,71 @@
   peity.register(
     'bar',
     {
-      colours: ["#4D89F9"],
       delimiter: ",",
+      fill: ["#4D89F9"],
       height: 16,
-      max: null,
       min: 0,
-      spacing: devicePixelRatio,
+      padding: 0.1,
       width: 32
     },
     function(opts) {
       var values = this.values()
-      var max = Math.max.apply(Math, values.concat([opts.max]));
-      var min = Math.min.apply(Math, values.concat([opts.min]))
+        , max = Math.max.apply(Math, opts.max == undefined ? values : values.concat(opts.max))
+        , min = Math.min.apply(Math, opts.min == undefined ? values : values.concat(opts.min))
 
-      var canvas = this.prepareCanvas(opts.width, opts.height)
-      var context = this.context
+      var $svg = this.prepare(opts.width, opts.height)
+        , width = $svg.width()
+        , height = $svg.height()
+        , diff = max - min
+        , padding = opts.padding
+        , fill = this.fill()
 
-      var width = canvas.width
-      var height = canvas.height
-      var yQuotient = height / (max - min)
-      var space = opts.spacing
-      var xQuotient = (width + space) / values.length
-      var colours = this.colours()
+      var xScale = this.x = function(input) {
+        return input * width / values.length
+      }
+
+      var yScale = this.y = function(input) {
+        return height - (
+          diff
+            ? ((input - min) / diff) * height
+            : 1
+        )
+      }
 
       for (var i = 0; i < values.length; i++) {
-        var value = values[i]
-        var x = i * xQuotient
-        var y = height - (yQuotient * (value - min))
+        var x = xScale(i + padding)
+          , w = xScale(i + 1 - padding) - x
+          , value = values[i]
+          , valueY = yScale(value)
+          , y1 = valueY
+          , y2 = valueY
+          , h
 
-        context.fillStyle = colours.call(this, value, i, values)
-        context.fillRect(x, y, xQuotient - space, yQuotient * values[i])
+        if (!diff) {
+          h = 1
+        } else if (value < 0) {
+          y1 = yScale(Math.min(max, 0))
+        } else {
+          y2 = yScale(Math.max(min, 0))
+        }
+
+        h = y2 - y1
+
+        if (h == 0) {
+          h = 1
+          if (max > 0 && diff) y1--
+        }
+
+        $svg.append(
+          svgElement('rect', {
+            fill: fill.call(this, value, i, values),
+            x: x,
+            y: y1,
+            width: w,
+            height: h
+          })
+        )
       }
     }
   );
-})(jQuery, document, Math, window.devicePixelRatio || 1);
+})(jQuery, document, Math);

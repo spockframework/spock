@@ -12,11 +12,13 @@ dependencies {
 }
 
 test {
+  exclude "org/spockframework/report/sample/ParameterizedFightSpec.class"
   exclude "org/spockframework/report/sample/FightOrFlightStory.class"
   exclude "org/spockframework/report/sample/FightOrFlightSpec.class"
 }
 
 testCglib {
+  exclude "org/spockframework/report/sample/ParameterizedFightSpec.class"
   exclude "org/spockframework/report/sample/FightOrFlightStory.class"
   exclude "org/spockframework/report/sample/FightOrFlightSpec.class"
 }
@@ -31,6 +33,7 @@ task sampleTest(type: Test) {
 
   testClassesDir = test.testClassesDir
   classpath = test.classpath
+  include "org/spockframework/report/sample/ParameterizedFightSpec.class"
   include "org/spockframework/report/sample/FightOrFlightStory.class"
   include "org/spockframework/report/sample/FightOrFlightSpec.class"
   testLogging.exceptionFormat = "full"

@@ -17,6 +17,7 @@
 package org.spockframework.report
 
 class Assets {
+  private static final String CDN = "https://cdnjs.cloudflare.com/ajax/libs"
   private final String location
   private final String mode
 
@@ -39,110 +40,111 @@ class Assets {
 
   private static CSS =
     [
-        local: [
-            normal: [
-                "css/bootstrap.min.css",
-                "css/bootstrap-responsive.min.css",
-                "css/bootstrap-multiselect.css",
-                "css/colorbox.css",
-                "css/report.css"
-            ],
-            debug: [
-                "css/bootstrap.css",
-                "css/bootstrap-responsive.css",
-                "css/bootstrap-multiselect.css",
-                "css/colorbox.css",
-                "css/report.css"
-            ]
+      local : [
+        normal: [
+          [href: "css/bootstrap.min.css"],
+          [href: "css/bootstrap-responsive.min.css"],
+          [href: "css/bootstrap-multiselect.css"],
+          [href: "css/colorbox.css"],
+          [href: "css/report.css"]
         ],
-        remote: [
-            normal: [
-                "http://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.2/css/bootstrap.no-icons.min.css",
-                "css/bootstrap-multiselect.css",
-                "http://cdnjs.cloudflare.com/ajax/libs/jquery.colorbox/1.3.27/example3/colorbox.css",
-                "css/report.css"
-            ],
-            debug: [
-                "http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.2.2/css/bootstrap.css",
-                "http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.2.2/css/bootstrap-responsive.css",
-                "css/bootstrap-multiselect.css",
-                "http://cdnjs.cloudflare.com/ajax/libs/jquery.colorbox/1.3.27/example3/colorbox.css",
-                "css/report.css"
-            ]
+        debug : [
+          [href: "css/bootstrap.css"],
+          [href: "css/bootstrap-responsive.css"],
+          [href: "css/bootstrap-multiselect.css"],
+          [href: "css/colorbox.css"],
+          [href: "css/report.css"]
         ]
+      ],
+      remote: [
+        normal: [
+          [href: "$CDN/twitter-bootstrap/2.3.2/css/bootstrap-responsive.min.css", crossorigin: "anonymous"],
+          [href: "$CDN/twitter-bootstrap/2.3.2/css/bootstrap.min.css", crossorigin: "anonymous"],
+          [href: "$CDN/bootstrap-multiselect/0.9.13/css/bootstrap-multiselect.css", crossorigin: "anonymous"],
+          [href: "$CDN/jquery.colorbox/1.3.27/example3/colorbox.css", crossorigin: "anonymous"],
+          [href: "css/report.css"]
+        ],
+        debug : [
+          [href: "$CDN/twitter-bootstrap/2.3.2/css/bootstrap.css", crossorigin: "anonymous"],
+          [href: "$CDN/twitter-bootstrap/2.3.2/css/bootstrap-responsive.css", crossorigin: "anonymous"],
+          [href: "$CDN/bootstrap-multiselect/0.9.13/css/bootstrap-multiselect.css", crossorigin: "anonymous"],
+          [href: "$CDN/jquery.colorbox/1.3.27/example3/colorbox.css", crossorigin: "anonymous"],
+          [href: "css/report.css"]
+        ]
+      ]
     ]
 
   private static IMG =
     [
-        local: [
-            "img/colorbox/border.png",
-            "img/colorbox/controls.png",
-            "img/colorbox/loading.gif",
-            "img/colorbox/loading_background.png",
-            "img/colorbox/overlay.png",
-            "img/glyphicons-halflings-white.png",
-            "img/glyphicons-halflings.png",
-            "img/glyphicons_circle_minus_small.png",
-            "img/glyphicons_circle_plus_small.png"
-        ],
-        remote: [
-            "http://cdnjs.cloudflare.com/ajax/libs/jquery.colorbox/1.3.27/example3/images/border.png",
-            "http://cdnjs.cloudflare.com/ajax/libs/jquery.colorbox/1.3.27/example3/images/controls.png",
-            "http://cdnjs.cloudflare.com/ajax/libs/jquery.colorbox/1.3.27/example3/images/loading.gif",
-            "http://cdnjs.cloudflare.com/ajax/libs/jquery.colorbox/1.3.27/example3/images/loading_background.png",
-            "http://cdnjs.cloudflare.com/ajax/libs/jquery.colorbox/1.3.27/example3/images/overlay.png",
-            "http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.2.2/img/glyphicons-halflings-white.png",
-            "http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.2.2/img/glyphicons-halflings.png",
-            "img/glyphicons_circle_minus_small.png",
-            "img/glyphicons_circle_plus_small.png"
-        ]
+      local : [
+        "img/colorbox/border.png",
+        "img/colorbox/controls.png",
+        "img/colorbox/loading.gif",
+        "img/colorbox/loading_background.png",
+        "img/colorbox/overlay.png",
+        "img/glyphicons-halflings-white.png",
+        "img/glyphicons-halflings.png",
+        "img/glyphicons_circle_minus_small.png",
+        "img/glyphicons_circle_plus_small.png"
+      ],
+      remote: [
+        "$CDN/jquery.colorbox/1.3.27/example3/images/border.png",
+        "$CDN/jquery.colorbox/1.3.27/example3/images/controls.png",
+        "$CDN/jquery.colorbox/1.3.27/example3/images/loading.gif",
+        "$CDN/jquery.colorbox/1.3.27/example3/images/loading_background.png",
+        "$CDN/jquery.colorbox/1.3.27/example3/images/overlay.png",
+        "$CDN/twitter-bootstrap/2.3.2/img/glyphicons-halflings-white.png",
+        "$CDN/twitter-bootstrap/2.3.2/img/glyphicons-halflings.png",
+        "img/glyphicons_circle_minus_small.png",
+        "img/glyphicons_circle_plus_small.png"
+      ]
     ]
 
   private static JS =
     [
-        local:  [
-            normal: [
-                "js/jquery.min.js",
-                "js/jquery.peity.min.js",
-                "js/jquery.colorbox-min.js",
-                "js/bootstrap.min.js",
-                "js/bootstrap-multiselect.js",
-                "js/underscore-min.js",
-                "js/handlebars.min.js",
-                "js/report.js"
-            ],
-            debug: [
-                "js/jquery.js",
-                "js/jquery.peity.js",
-                "js/jquery.colorbox.js",
-                "js/bootstrap.js",
-                "js/bootstrap-multiselect.js",
-                "js/underscore.js",
-                "js/handlebars.js",
-                "js/report.js"
-            ]
+      local : [
+        normal: [
+          [src: "js/jquery.min.js"],
+          [src: "js/jquery.peity.min.js"],
+          [src: "js/jquery.colorbox.min.js"],
+          [src: "js/bootstrap.min.js"],
+          [src: "js/bootstrap-multiselect.js"],
+          [src: "js/underscore.min.js"],
+          [src: "js/handlebars.min.js"],
+          [src: "js/report.js"]
         ],
-        remote: [
-            normal: [
-                "http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js",
-                "js/jquery.peity.min.js",
-                "http://cdnjs.cloudflare.com/ajax/libs/jquery.colorbox/1.3.27/jquery.colorbox-min.js",
-                "http://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.2/js/bootstrap.min.js",
-                "js/bootstrap-multiselect.js",
-                "http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.3/underscore-min.js",
-                "http://cdnjs.cloudflare.com/ajax/libs/handlebars.js/1.0.rc.2/handlebars.min.js",
-                "js/report.js"
-            ],
-            debug: [
-                "http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.js",
-                "js/jquery.peity.js",
-                "http://cdnjs.cloudflare.com/ajax/libs/jquery.colorbox/1.3.27/jquery.colorbox.js",
-                "http://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.2/js/bootstrap.js",
-                "js/bootstrap-multiselect.js",
-                "http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.3/underscore.js",
-                "http://cdnjs.cloudflare.com/ajax/libs/handlebars.js/1.0.rc.2/handlebars.js",
-                "js/report.js"
-            ]
+        debug : [
+          [src: "js/jquery.js"],
+          [src: "js/jquery.peity.js"],
+          [src: "js/jquery.colorbox.js"],
+          [src: "js/bootstrap.js"],
+          [src: "js/bootstrap-multiselect.js"],
+          [src: "js/underscore.js"],
+          [src: "js/handlebars.js"],
+          [src: "js/report.js"]
         ]
+      ],
+      remote: [
+        normal: [
+          [src: "$CDN/jquery/3.1.1/jquery.min.js", crossorigin: "anonymous"],
+          [src: "$CDN/peity/3.2.1/jquery.peity.min.js", crossorigin: "anonymous"],
+          [src: "$CDN/jquery.colorbox/1.6.4/jquery.colorbox-min.js", crossorigin: "anonymous"],
+          [src: "$CDN/twitter-bootstrap/2.3.2/js/bootstrap.min.js",crossorigin: "anonymous"],
+          [src: "$CDN/bootstrap-multiselect/0.9.13/js/bootstrap-multiselect.min.js", crossorigin: "anonymous"],
+          [src: "$CDN/underscore.js/1.8.3/underscore-min.js", crossorigin: "anonymous"],
+          [src: "$CDN/handlebars.js/4.0.5/handlebars.min.js", crossorigin: "anonymous"],
+          [src: "js/report.js"]
+        ],
+        debug : [
+          [src: "$CDN/jquery/3.1.1/jquery.js", crossorigin: "anonymous"],
+          [src: "$CDN/peity/3.2.1/jquery.peity.js", crossorigin: "anonymous"],
+          [src: "$CDN/jquery.colorbox/1.6.4/jquery.colorbox.js", crossorigin: "anonymous"],
+          [src: "$CDN/twitter-bootstrap/2.3.2/js/bootstrap.js", crossorigin: "anonymous"],
+          [src: "$CDN/bootstrap-multiselect/0.9.13/js/bootstrap-multiselect.js", crossorigin: "anonymous"],
+          [src: "$CDN/underscore.js/1.8.3/underscore.js", crossorigin: "anonymous"],
+          [src: "$CDN/handlebars.js/4.0.5/handlebars.js", crossorigin: "anonymous"],
+          [src: "js/report.js"]
+        ]
+      ]
     ]
 }

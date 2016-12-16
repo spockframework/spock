@@ -16,15 +16,12 @@
 
 package org.spockframework.runtime;
 
-import org.junit.runner.Description;
-
-import org.spockframework.runtime.extension.IMethodInterceptor;
-import org.spockframework.runtime.extension.MethodInvocation;
+import org.spockframework.runtime.extension.*;
 import org.spockframework.runtime.model.*;
-import org.spockframework.util.CollectionUtil;
-import org.spockframework.util.InternalSpockError;
-
+import org.spockframework.util.*;
 import spock.lang.Specification;
+
+import org.junit.runner.Description;
 
 import static org.spockframework.runtime.RunStatus.*;
 
@@ -314,6 +311,7 @@ public class BaseSpecRunner {
     result.setKind(MethodKind.ITERATION_EXECUTION);
     result.setFeature(currentFeature);
     result.setDescription(currentFeature.getDescription());
+    result.setIteration(currentIteration);
     for (IMethodInterceptor interceptor : currentFeature.getIterationInterceptors())
       result.addInterceptor(interceptor);
     return result;
@@ -387,6 +385,7 @@ public class BaseSpecRunner {
     result.setKind(MethodKind.SETUP);
     result.setFeature(currentFeature);
     result.setDescription(currentFeature.getDescription());
+    result.setIteration(currentIteration);
     for (IMethodInterceptor interceptor : spec.getSetupInterceptors())
       result.addInterceptor(interceptor);
     return result;
@@ -403,7 +402,13 @@ public class BaseSpecRunner {
 
   private void runFeatureMethod() {
     if (runStatus != OK) return;
-    invoke(currentInstance, currentFeature.getFeatureMethod(), currentIteration.getDataValues());
+    if ((currentIteration == null)) {
+      invoke(currentInstance, currentFeature.getFeatureMethod(), currentIteration.getDataValues());
+    } else {
+      MethodInfo featureIteration = new MethodInfo(currentFeature.getFeatureMethod());
+      featureIteration.setIteration(currentIteration);
+      invoke(currentInstance, featureIteration, currentIteration.getDataValues());
+    }
   }
 
   private void runCleanup() {
@@ -427,6 +432,7 @@ public class BaseSpecRunner {
     result.setKind(MethodKind.CLEANUP);
     result.setFeature(currentFeature);
     result.setDescription(currentFeature.getDescription());
+    result.setIteration(currentIteration);
     for (IMethodInterceptor interceptor : spec.getCleanupInterceptors())
       result.addInterceptor(interceptor);
     return result;

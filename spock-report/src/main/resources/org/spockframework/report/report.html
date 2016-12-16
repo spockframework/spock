@@ -34,7 +34,7 @@
         </div>
       </div>
       <div class="nav">
-        <button class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+        <button class="btn dropdown-toggle" data-toggle="dropdown">
           Views
           <span class="caret"></span>
         </button>
@@ -63,6 +63,51 @@
 </div>
 
 <script id="template" type="text/x-handlebars-template">
+  {{#*inline "resultsPartial"}}
+  <ul class="results">
+    {{#if exceptions}}
+    <li class="result element exceptions">
+      <h6 class="elementHeader">
+        <a class="elementName">Exceptions</a>
+      </h6>
+      {{#exceptions}}
+      <pre class="elementBody">{{this}}</pre>
+      {{/exceptions}}
+    </li>
+    {{/if}}
+    {{#if output}}
+    <li class="result element">
+      <h6 class="elementHeader">
+        <a class="elementName">Output</a>
+      </h6>
+      <pre class="elementBody">{{#output}}{{this}}{{/output}}</pre>
+    </li>
+    {{/if}}
+    {{#if errorOutput}}
+    <li class="result element">
+      <h6 class="elementHeader">
+        <a class="elementName">Error Output</a>
+      </h6>
+      <pre class="elementBody">{{#errorOutput}}{{this}}{{/errorOutput}}</pre>
+    </li>
+    {{/if}}
+    {{#if attachments}}
+    <li class="result element attachments">
+      <h6 class="elementHeader">
+        <a class="elementName">Attachments</a>
+      </h6>
+      <ul class="elementBody">
+        {{#attachments}}
+        <li>
+          <a href="{{url}}">{{name}}</a>
+        </li>
+        {{/attachments}}
+      </ul>
+    </li>
+    {{/if}}
+  </ul>
+  {{/inline}}
+
   <h1>
 <!--start reportTitle-->
     <span class="elementName">Ninja Commander</span>
@@ -135,51 +180,22 @@
                     <p>{{narrative narrative}}</p>
                   </blockquote>
                   {{/if}}
-                  <ul class="results">
-                    {{#if exceptions}}
-                    <li class="result element exceptions">
+                  {{#if iterations}}
+                  <ul class="iterations">
+                    {{#iterations}}
+                    <li class="specElement iteration {{result}}">
                       <h5 class="elementHeader">
-                        <a class="elementName">Exceptions</a>
+                        <span class="elementName">{{name}} {{resultIcon result}}</span>
+                        <small class="results">
+                          <span class="duration">{{duration duration}}</span>
+                        </small>
                       </h5>
-                      {{#exceptions}}
-                      <pre class="elementBody">
-{{this}}              </pre>
-                      {{/exceptions}}
+                      {{~> resultsPartial }}
                     </li>
-                    {{/if}}
-                    {{#if output}}
-                    <li class="result element">
-                      <h5 class="elementHeader">
-                        <a class="elementName">Output</a>
-                      </h5>
-                      <pre class="elementBody">
-{{#output}}{{this}}{{/output}}</pre>
-                    </li>
-                    {{/if}}
-                    {{#if errorOutput}}
-                    <li class="result element">
-                      <h5 class="elementHeader">
-                        <a class="elementName">Error Output</a>
-                      </h5>
-                      <pre class="elementBody">
-{{#errorOutput}}{{this}}{{/errorOutput}}</pre>
-                    </li>
-                    {{/if}}
-                    {{#if attachments}}
-                    <li class="result element attachments">
-                      <h5 class="elementHeader">
-                        <a class="elementName">Attachments</a>
-                      </h5>
-                      <ul class="elementBody">
-                        {{#attachments}}
-                        <li>
-                          <a href="{{url}}">{{name}}</a>
-                        </li>
-                        {{/attachments}}
-                      </ul>
-                    </li>
-                    {{/if}}
+                    {{/iterations}}
                   </ul>
+                  {{/if}}
+                  {{~> resultsPartial }}
                 </div>
               </li>
               {{/features}}

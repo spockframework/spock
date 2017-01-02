@@ -18,9 +18,11 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.NamingStrategy;
+import net.bytebuddy.TypeCache;
 import net.bytebuddy.description.modifier.SynchronizationState;
 import net.bytebuddy.description.modifier.Visibility;
 import net.bytebuddy.dynamic.Transformer;
@@ -67,7 +69,7 @@ public class ProxyBasedMockFactory {
           constructorArgs, mockInterceptor, classLoader, useObjenesis);
     } else {
       throw new CannotCreateMockException(mockType,
-          ". Mocking of non-interface types requires a code generation library. Please put byte-buddy-1.5.0 or cglib-nodep-3.2 or higher on the class path."
+          ". Mocking of non-interface types requires a code generation library. Please put byte-buddy-1.6.4 or cglib-nodep-3.2 or higher on the class path."
       );
     }
 
@@ -93,44 +95,40 @@ public class ProxyBasedMockFactory {
   // inner class to defer class loading
   private static class ByteBuddyMockFactory {
 
-    private static final ByteBuddyClassCache CACHE = new ByteBuddyClassCache(true);
+    private static final TypeCache<TypeCache.SimpleKey> CACHE =
+      new TypeCache.WithInlineExpunction<TypeCache.SimpleKey>(TypeCache.Sort.SOFT);
 
-    static Object createMock(Class<?> type, List<Class<?>> additionalInterfaces, @Nullable List<Object> constructorArgs,
-        IProxyBasedMockInterceptor interceptor, ClassLoader classLoader, boolean useObjenesis) {
-      Class<?> enhancedType = CACHE.find(classLoader, type, additionalInterfaces);
+    static Object createMock(final Class<?> type,
+                             final List<Class<?>> additionalInterfaces,
+                             @Nullable List<Object> constructorArgs,
+                             IProxyBasedMockInterceptor interceptor,
+                             final ClassLoader classLoader,
+                             boolean useObjenesis) {
 
-      if (enhancedType == null) {
-        // Typically, users create a single mock type per class. The alternative where Byte Buddy would need to create
-        // multiple mock types for mocking a type plus additional (explicitly specified) interfaces is rather the
-        // exception. Given that most mock types derive of a single type, the application is lock-free for these
-        // scenarios. Covering the 99% scenario lock free is probably a sane approach. Also, this requires locking
-        // only a single monitor such that dead locks are impossible (live locks are however still possible).
-        // Locking on the class loader is more likely to cause problems, though, as class loaders typically lock on
-        // themselves during class loading. Creating a mock can cause class loading as using the reflection API
-        // (for finding methods to override) causes eager resolution of a type where all types references in methods
-        // are loaded. This is typically not a problem but can be one with parallel capable class loaders.
-        synchronized (type) {
-          enhancedType = CACHE.find(classLoader, type, additionalInterfaces);
-          if (enhancedType == null) {
-            enhancedType = new ByteBuddy()
+      Class<?> enhancedType = CACHE.findOrInsert(classLoader,
+        new TypeCache.SimpleKey(type, additionalInterfaces),
+        new Callable<Class<?>>() {
+          @Override
+          public Class<?> call() throws Exception {
+            return new ByteBuddy()
               .with(new NamingStrategy.SuffixingRandom("SpockMock"))
               .ignore(none())
               .subclass(type)
               .implement(additionalInterfaces)
               .implement(ISpockMockObject.class)
               .method(any())
-                .intercept(MethodDelegation.to(ByteBuddyInterceptorAdapter.class).appendParameterBinder(Morph.Binder.install(ByteBuddyInvoker.class)))
-                .transform(Transformer.ForMethod.withModifiers(SynchronizationState.PLAIN, Visibility.PUBLIC)) // Overridden methods should be public and non-synchronized.
+              .intercept(MethodDelegation.withDefaultConfiguration()
+                .withBinders(Morph.Binder.install(ByteBuddyInvoker.class))
+                .to(ByteBuddyInterceptorAdapter.class))
+              .transform(Transformer.ForMethod.withModifiers(SynchronizationState.PLAIN, Visibility.PUBLIC)) // Overridden methods should be public and non-synchronized.
               .implement(ByteBuddyInterceptorAdapter.InterceptorAccess.class)
-                .intercept(FieldAccessor.ofField("$spock_interceptor"))
-                .defineField("$spock_interceptor", IProxyBasedMockInterceptor.class, Visibility.PRIVATE)
+              .intercept(FieldAccessor.ofField("$spock_interceptor"))
+              .defineField("$spock_interceptor", IProxyBasedMockInterceptor.class, Visibility.PRIVATE)
               .make()
               .load(classLoader)
               .getLoaded();
-            CACHE.insert(classLoader, type, additionalInterfaces, enhancedType);
           }
-        }
-      }
+        }, type);
 
       Object proxy = MockInstantiator.instantiate(type, enhancedType, constructorArgs, useObjenesis);
       ((ByteBuddyInterceptorAdapter.InterceptorAccess) proxy).$spock_set(interceptor);

@@ -17,66 +17,58 @@
 package org.spockframework.tapestry;
 
 import java.lang.annotation.Annotation;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+
+import java.util.*;
 
 import org.apache.tapestry5.ioc.annotations.SubModule;
+
 import org.spockframework.runtime.extension.AbstractGlobalExtension;
 import org.spockframework.runtime.extension.IMethodInterceptor;
 import org.spockframework.runtime.model.SpecInfo;
 import org.spockframework.util.ReflectionUtil;
 
 /**
- * Facilitates the creation of integration-level specifications for applications
- * based on the Tapestry 5 inversion-of-control container. The main focus is on
- * injecting specifications with Tapestry-provided objects. This works just like
- * for regular Tapestry services, except that only field (and no constructor)
+ * Facilitates the creation of integration-level specifications for applications based
+ * on the Tapestry 5 inversion-of-control container. The main focus is on injecting
+ * specifications with Tapestry-provided objects. This works just like for
+ * regular Tapestry services, except that only field (and no constructor)
  * injection is supported.
  *
- * <p>
- * Instead of inventing its own set of annotations, this extension reuses
+ * <p>Instead of inventing its own set of annotations, this extension reuses
  * Tapestry's own annotations. In particular,
  *
  * <ul>
- * <li><tt>&#64;ImportModule</tt> indicates which Tapestry module(s) should be
- * started (and subsequently shut down). The deprecated
- * <tt>&#64;ImportModule</tt> annotation is still supported for compatibility
- * reasons.</li>
- * <li><tt>&#64;Inject</tt> marks fields which should be injected with a
- * Tapestry service or symbol</li>
+ * <li><tt>&#64;ImportModule</tt> indicates which Tapestry module(s) should be started
+ *  (and subsequently shut down). The deprecated <tt>&#64;ImportModule</tt> annotation
+ *  is still supported for compatibility reasons.</li>
+ * <li><tt>&#64;Inject</tt> marks fields which should be injected with a Tapestry service or
+ * symbol</li>
  * </ul>
  *
- * Related Tapestry annotations, such as <tt>&#64;Service</tt> and
- * <tt>&#64;Symbol</tt>, are also supported. For information on their use, see
- * the <a href="http://tapestry.apache.org/tapestry5/tapestry-ioc/">Tapestry IoC
- * documentation</a>. To interact directly with the Tapestry registry, an
- * injection point of type <tt>ObjectLocator</tt> may be defined. However, this
- * should be rarely needed.
+ * Related Tapestry annotations, such as <tt>&#64;Service</tt> and <tt>&#64;Symbol</tt>,
+ * are also supported. For information on their use, see the
+ * <a href="http://tapestry.apache.org/tapestry5/tapestry-ioc/">Tapestry IoC documentation</a>.
+ * To interact directly with the Tapestry registry, an injection point of type
+ * <tt>ObjectLocator</tt> may be defined. However, this should be rarely needed.
  *
- * <p>
- * For every specification annotated with <tt>&#64;ImportModule</tt> or
- * <tt>&#64;SubModule</tt>, the Tapestry registry will be started up (and
- * subsequently shut down) once. Because fields are injected <em>before</em>
- * field initializers and the <tt>setup()</tt>/<tt>setupSpec()</tt> methods are
- * run, they can be safely accessed from these places.
+ * <p>For every specification annotated with <tt>&#64;ImportModule</tt> or
+ * <tt>&#64;SubModule</tt>, the Tapestry registry will be started up (and subsequently shut down)
+ * once. Because fields are injected <em>before</em> field initializers and the <tt>setup()</tt>/
+ * <tt>setupSpec()</tt> methods are run, they can be safely accessed from these places.
  *
- * <p>
- * Fields marked as <tt>&#64;Shared</tt> are injected once per specification;
- * regular fields once per feature (iteration). However, this does <em>not</em>
- * mean that each feature will receive a fresh service instance; rather, it is
- * left to the Tapestry registry to control the lifecycle of a service. Most
- * Tapestry services use the default "singleton" scope, which results in the
- * same service instance being shared between all features.
+ * <p>Fields marked as <tt>&#64;Shared</tt> are injected once per specification; regular 
+ * fields once per feature (iteration). However, this does <em>not</em> mean that each
+ * feature will receive a fresh service instance; rather, it is left to the Tapestry
+ * registry to control the lifecycle of a service. Most Tapestry services use the default
+ * "singleton" scope, which results in the same service instance being shared between all
+ * features.
  *
- * <p>
- * Features that require their own service instance(s) should be moved into
- * separate specifications. To avoid code fragmentation and duplication, you
- * might want to put multiple (micro-)specifications into the same source file,
- * and factor out their commonalities into a base class.
+ * <p>Features that require their own service instance(s) should be moved into separate
+ * specifications. To avoid code fragmentation and duplication, you might want to put
+ * multiple (micro-)specifications into the same source file, and factor out their
+ * commonalities into a base class.
  *
- * <p>
- * <b>Usage example:</b>
+ * <p><b>Usage example:</b>
  *
  * <pre>
  * &#64;ImportModule(UniverseModule)
@@ -111,9 +103,7 @@ public class TapestryExtension extends AbstractGlobalExtension {
   @Override
   public void visitSpec(final SpecInfo spec) {
     Set<Class<?>> modules = collectModules(spec);
-    if (modules == null) {
-      return;
-    }
+    if (modules == null) return;
 
     IMethodInterceptor interceptor = new TapestryInterceptor(spec, modules);
     spec.addSharedInitializerInterceptor(interceptor);
@@ -122,12 +112,12 @@ public class TapestryExtension extends AbstractGlobalExtension {
   }
 
   // Returns null if no ImportModule or SubModule annotation was found.
-  // Returns an empty list if one or more ImportModule or SubModule annotations
-  // were found,
+  // Returns an empty list if one or more ImportModule or SubModule annotations were found,
   // but they didn't specify any modules. This distinction is important to
   // allow activation of the extension w/o specifying any modules.
   private Set<Class<?>> collectModules(SpecInfo spec) {
     Set<Class<?>> modules = null;
+
     for (SpecInfo curr : spec.getSpecsTopToBottom()) {
       if (importModuleAnnotation != null && spec.isAnnotationPresent(importModuleAnnotation)){
         org.apache.tapestry5.ioc.annotations.ImportModule importModule = curr

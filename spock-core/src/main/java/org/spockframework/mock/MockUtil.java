@@ -96,4 +96,24 @@ public class MockUtil {
         new MockConfiguration(name, type, nature, implementation, options), classloader);
     return mock;
   }
+  
+  /**
+   * Creates a detached mock.
+   *
+   * @param name the name
+   * @param type the type of the mock
+   * @param nature the nature
+   * @param implementation the implementation
+   * @param options the options
+   * @param classloader the classloader to use
+   * @return the mock
+   */
+  @Beta
+  public Object createDetachedMock(@Nullable String name, Object obj, MockNature nature,
+      MockImplementation implementation, Map<String, Object> options,  ClassLoader classloader) {
+
+    Object mock = CompositeMockFactory.INSTANCE.createDetached(
+        new MockConfiguration(name, obj.getClass(), obj, nature, implementation, options), classloader);
+    return mock;
+  }
 }

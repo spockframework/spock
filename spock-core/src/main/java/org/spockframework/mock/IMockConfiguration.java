@@ -34,6 +34,14 @@ public interface IMockConfiguration {
    * @return the interface or class type of the mock object
    */
   Class<?> getType();
+  
+  /**
+   * Returns the instance to be used as a delegate
+   * 
+   * @return the instance to be used as a delegate
+   */
+  @Nullable
+  Object getInstance();
 
   /**
    * Returns the exact interface or class type of the mock object.

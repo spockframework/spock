@@ -16,6 +16,13 @@
 
 package spock.lang;
 
+import groovy.lang.Closure;
+
+import groovy.lang.DelegatesTo;
+import groovy.transform.stc.ClosureParams;
+import groovy.transform.stc.FirstParam;
+import org.junit.runner.RunWith;
+import org.spockframework.util.Beta;
 import org.spockframework.lang.Wildcard;
 import org.spockframework.runtime.*;
 import org.spockframework.util.*;
@@ -175,7 +182,12 @@ public abstract class Specification extends MockingApi {
    * @param closure a code block containing top-level conditions and/or interactions
    */
   @Beta
-  public void with(Object target, Closure<?> closure) {
+  public <U> void with(
+    @DelegatesTo.Target("self")
+    U target,
+    @DelegatesTo(value=DelegatesTo.Target.class, target="self", strategy=Closure.DELEGATE_FIRST) @ClosureParams(FirstParam.class)
+    Closure<?> closure
+  ) {
     if (target == null) {
       throw new SpockAssertionError("Target of 'with' block must not be null");
     }

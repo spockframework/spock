@@ -128,7 +128,7 @@ public class ProxyBasedMockFactory {
               .load(classLoader)
               .getLoaded();
           }
-        }, type);
+        }, CACHE);
 
       Object proxy = MockInstantiator.instantiate(type, enhancedType, constructorArgs, useObjenesis);
       ((ByteBuddyInterceptorAdapter.InterceptorAccess) proxy).$spock_set(interceptor);

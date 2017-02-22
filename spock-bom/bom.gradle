@@ -18,9 +18,10 @@ def modifyBom = { xml ->
   def mvnProjects = project.parent.subprojects.findAll { it.hasProperty('install') } // find all published projects
   mvnProjects -= project // don't self reference
 
+  String groupId = project.group
   mvnProjects.name.each {
     dependencyManagement.appendNode('dependency').with { dep ->
-      dep.appendNode('groupId', project.group)
+      dep.appendNode('groupId', groupId)
       dep.appendNode('artifactId', it)
       dep.appendNode('version', '${spock.version}')
     }

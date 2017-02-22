@@ -16,10 +16,23 @@ in the root of the test execution classpath. If there is also no such file, you 
 in your Spock user home. This by default is the directory `.spock` within your home directory, but can be changed using
 the system property `spock.user.home` or if not set the environment property `SPOCK_USER_HOME`.
 
+=== Stack Trace Filtering
+
+You can configure Spock whether it should filter stack traces or not by using the configuration file. The default value
+is `true`.
+
+.Stack Trace Filtering Configuration
+[source,groovy]
+----
+runner {
+  filterStackTrace false
+}
+----
+
 == Built-In Extensions
 
 Most of Spock's built-in extensions are _annotation-driven_. In other words, they are triggered by annotating a
-spec class or method with a certain annotation. You can tell such an annotation by its +@ExtensionAnnotation+
+spec class or method with a certain annotation. You can tell such an annotation by its `@ExtensionAnnotation`
 meta-annotation.
 
 === Ignore
@@ -330,6 +343,19 @@ So that bar
 class GiveTheUserFooSpec() { ... }
 ----
 
+=== See
+
+To link to one or more references to external information related to a specification or feature, use `spock.lang.See`:
+
+[source,groovy]
+----
+@See("http://spockframework.org/spec")
+class MoreInformationAvailableSpec extends Specification {
+  @See(["http://en.wikipedia.org/wiki/Levenshtein_distance", "http://www.levenshtein.net/"])
+  def "Even more information is available on the feature"() { ... }
+}
+----
+
 === Issue
 
 To indicate that a feature or spec relates to one or more issues in an external tracking system, use `spock.lang.Issue`:
@@ -343,6 +369,21 @@ class MySpec {
 
   @Issue(["http://my.issues.org/FOO-3", "http://my.issues.org/FOO-4"])
   def "I have two related issues"() { ... }
+}
+----
+
+If you have a common prefix URL for all issues in a project, you can use the <<Spock Configuration File>> to set it up
+for all at once. If it is set, it is prepended to the value of the `@Issue` annotation when building the URL.
+
+If the `issueNamePrefix` is set, it is prepended to the value of the `@Issue` annotation when building the name for the
+issue.
+
+.Issue Configuration
+[source,groovy]
+----
+report {
+    issueNamePrefix 'Bug '
+    issueUrlPrefix 'http://my.issues.org/'
 }
 ----
 
@@ -365,7 +406,82 @@ Foo myFoo
 
 `Subject` currently has only informational purposes.
 
-TODO More to follow.
+=== Rule
+
+Spock understands `@org.junit.Rule` annotations on non-`@Shared` instance fields. The according rules are run at the
+iteration interception point in the Spock lifecycle. This means that the rules before-actions are done before the
+execution of `setup` methods and the after-actions are done after the execution of `cleanup` methods.
+
+=== ClassRule
+
+Spock understands `@org.junit.ClassRule` annotations on `@Shared` fields. The according rules are run at the
+specification interception point in the Spock lifecycle. This means that the rules before-actions are done before the
+execution of `setupSpec` methods and the after-actions are done after the execution of `cleanupSpec` methods.
+
+=== Include and Exclude
+
+Spock is capable of including and excluding specifications according to their classes, super-classes and interfaces and
+according to annotations that are applied to the specification. Spock is also capable of including and excluding
+individual features according to annotations that are applied to the feature method. The configuration for what to
+include or exclude is done according to the <<Spock Configuration File>> section.
+
+.Include / Exclude Configuration
+[source,groovy]
+----
+import some.pkg.Fast
+import some.pkg.IntegrationSpec
+
+runner {
+  include Fast // could be either an annotation or a (base) class
+  exclude {
+    annotation some.pkg.Slow
+    baseClass IntegrationSpec
+  }
+}
+----
+
+=== Optimize Run Order
+
+Spock can remember which features last failed and how often successively and also how long a feature needed to be
+tested. For successive runs Spock will then first run features that failed at last run and first features that failed
+more often successively. Within the previously failed or non-failed features Spock will run the fastest tests first.
+This behaviour can be enabled according to the <<Spock Configuration File>> section. The default value is `false`.
+
+.Optimize Run Order Configuration
+[source,groovy]
+----
+runner {
+  optimizeRunOrder true
+}
+----
+
+=== Report Log
+
+Spock can create a report log of the executed tests in JSON format. This report contains also things like
+<<Title and Narrative,`@Title`>>, <<Title and Narrative,`@Narrative`>>, <<See,`@See`>> and <<Issue,`@Issue`>> values or
+<<specs-as-doc,block descriptors>>.
+This report can be enabled according to the <<Spock Configuration File>> section. The default is to not generate this
+report.
+
+For the report to be generated, you have to enable it and set at least the `logFileDir` and `logFileName`. `enabled` can
+also be set via the system property `spock.logEnabled`, `logFileDir` can also be set via the system property
+`spock.logFileDir` and `logFileName` can also be set via the system property `spock.logFileName`.
+
+If a `logFileSuffix` is set (or the system property `spock.logFileSuffix`), it is appended to the base filename,
+separated by a dash. If the suffix contains the string `#timestamp`, this is replaced by the current date and time in
+`UTC` automatically. If you instead want to have your local date and time, you can use the setting from the example
+below.
+
+.Report Log Configuration
+[source,groovy]
+----
+report {
+    enabled true
+    logFileDir '.'
+    logFileName 'spock-report.json'
+    logFileSuffix new Date().format('yyyy-MM-dd_HH_mm_ss')
+}
+----
 
 == Writing Custom Extensions
 
@@ -503,7 +619,6 @@ can of course build two different interceptors or add a parameter to your interc
 each at addition time whether it is attached to the method interceptor or the other one.
 
 .Add All Interceptors
-====
 [source,groovy]
 ----
 class I extends AbstractMethodInterceptor { I(def s) {} }
@@ -525,7 +640,7 @@ specInfo.cleanupMethods*.addInterceptor new I('cleanup method')
 specInfo.addCleanupSpecInterceptor new I('cleanup spec')
 specInfo.cleanupSpecMethods*.addInterceptor new I('cleanup spec method')
 specInfo.allFixtureMethods*.addInterceptor new I('fixture method')
-====
+----
 
 ==== Injecting Method Parameters
 
@@ -542,7 +657,6 @@ array that is at least five elements long and copy the contents of the old array
 your objects to be injected.
 
 .Inject Method Parameters
-====
 [source,groovy]
 ----
 // create a map of all MyInjectable parameters with their parameter index
@@ -566,7 +680,7 @@ if(invocation.arguments.length < lastMyInjectableParameterIndex) {
 parameters.each { parameter, i ->
   invocation.arguments[i] = new MyInjectable(parameter)
 }
-====
+----
 
 [NOTE]
 --
@@ -584,7 +698,6 @@ assignments happen before the method interceptor is called
 for this simply check whether `invocation.arguments[i]` is `null` or not
 
 .Data Driven Feature with Injected Parameter
-====
 [source, groovy]
 ----
 def 'test parameter injection'(a, b, MyInjectable myInjectable) {
@@ -598,5 +711,5 @@ def 'test parameter injection'(a, b, MyInjectable myInjectable) {
   and:
   myInjectable = null
 }
-====
+----
 --

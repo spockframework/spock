@@ -23,8 +23,11 @@ import spock.lang.Specification
 
 /**
  * Integration test similar to {@link SimpleBootAppIntegrationSpec} but using the {@link SpringBootTest} annotation.
+ *
+ * SpringBootTest.webEnvironment needs to something other than {@link SpringBootTest.WebEnvironment.MOCK},
+ * otherwise there is always a MockRequest active.
  */
-@SpringBootTest
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
 class SpringBootTestAnnotationIntegrationSpec extends Specification {
   @Autowired
   ApplicationContext context

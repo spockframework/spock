@@ -1,18 +1,15 @@
 package org.spockframework.spring;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.spockframework.mock.ISpockMockObject;
 import org.spockframework.mock.MockUtil;
-import org.springframework.aop.scope.ScopedProxyUtils;
+import org.spockframework.util.ReflectionUtil;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.TestContext;
 import org.springframework.test.context.TestExecutionListener;
-
 import spock.lang.Specification;
+
+import java.util.*;
 
 /**
  * This {@link TestExecutionListener} takes care of attaching and detaching the
@@ -37,6 +34,10 @@ public class SpringMockTestExecutionListener implements TestExecutionListener {
 
     if (testInstance instanceof Specification) {
       Specification specification = (Specification) testInstance;
+      ScanScopedBeans scanScopedBeans = ReflectionUtil.getAnnotationRecursive(specification.getClass(),
+        ScanScopedBeans.class);
+      Set<String> scopes = scanScopedBeans == null ? Collections.<String>emptySet() :
+        new HashSet<String>(Arrays.asList(scanScopedBeans.value()));
 
       ApplicationContext applicationContext = testContext.getApplicationContext();
       String[] mockBeanNames = applicationContext.getBeanDefinitionNames();
@@ -44,13 +45,15 @@ public class SpringMockTestExecutionListener implements TestExecutionListener {
 
       for (String beanName : mockBeanNames) {
         BeanDefinition beanDefinition = ((BeanDefinitionRegistry)applicationContext).getBeanDefinition(beanName);
-        if(beanDefinition.isAbstract() || beanName.startsWith("scopedTarget.")){
+        if(beanDefinition.isAbstract()){
             continue;
         }
-        Object bean = applicationContext.getBean(beanName);
-        if (mockUtil.isMock(bean)) {
-          mockUtil.attachMock(bean, specification);
-          mockedBeans.add(bean);
+        if (beanDefinition.isSingleton() || scanScopedBean(scanScopedBeans, scopes, beanDefinition)){
+          Object bean = applicationContext.getBean(beanName);
+          if (mockUtil.isMock(bean)) {
+            mockUtil.attachMock(bean, specification);
+            mockedBeans.add(bean);
+          }
         }
       }
 
@@ -59,6 +62,10 @@ public class SpringMockTestExecutionListener implements TestExecutionListener {
     } else {
       throw new IllegalArgumentException("SpringMockTestExecutionListener is only applicable for spock specifications.");
     }
+  }
+
+  private boolean scanScopedBean(ScanScopedBeans scanScopedBeans, Set<String> scopes, BeanDefinition beanDefinition) {
+    return scanScopedBeans != null && (scopes.size() == 0 || scopes.contains(beanDefinition.getScope()));
   }
 
   @SuppressWarnings("unchecked")

@@ -43,8 +43,11 @@ public class SpringMockTestExecutionListener implements TestExecutionListener {
       List<Object> mockedBeans = new ArrayList<Object>();
 
       for (String beanName : mockBeanNames) {
+        if (beanName.startsWith("scopedTarget.")) {
+          continue;
+        }
         BeanDefinition beanDefinition = ((BeanDefinitionRegistry)applicationContext).getBeanDefinition(beanName);
-        if(beanDefinition.isAbstract() || beanName.startsWith("scopedTarget.")){
+        if (beanDefinition.isAbstract() || !isSupportedBeanScope(beanDefinition)) {
             continue;
         }
         Object bean = applicationContext.getBean(beanName);
@@ -59,6 +62,10 @@ public class SpringMockTestExecutionListener implements TestExecutionListener {
     } else {
       throw new IllegalArgumentException("SpringMockTestExecutionListener is only applicable for spock specifications.");
     }
+  }
+
+  private boolean isSupportedBeanScope(BeanDefinition beanDefinition) {
+    return beanDefinition.isPrototype() || beanDefinition.isSingleton();
   }
 
   @SuppressWarnings("unchecked")

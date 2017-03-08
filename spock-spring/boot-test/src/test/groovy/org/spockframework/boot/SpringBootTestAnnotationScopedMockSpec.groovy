@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2016 the original author or authors.
+ * Copyright 2012-2014 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,40 +17,47 @@
 package org.spockframework.boot
 
 import org.spockframework.boot.service.HelloWorldService
+import org.spockframework.spring.ScanScopedBeans
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
+import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.TestConfiguration
+import org.springframework.context.ApplicationContext
 import org.springframework.context.annotation.Bean
-import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import spock.lang.Specification
 import spock.mock.DetachedMockFactory
 
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-
 /**
- * Integration tests for ensuring compatibility with Spring-Boot's {@link WebMvcTest} annotation.
+ * Tests enabled scanning of scoped beans.
  */
-//tag::include[]
-@WebMvcTest
-class WebMvcTestIntegrationSpec extends Specification {
-
+@ScanScopedBeans
+@SpringBootTest
+class SpringBootTestAnnotationScopedMockSpec extends Specification {
   @Autowired
-  MockMvc mvc
+  ApplicationContext context
 
   @Autowired
   HelloWorldService helloWorldService
 
-  def "spring context loads for web mvc slice"() {
-    given:
-    helloWorldService.getHelloMessage() >> 'hello world'
-
-    expect: "controller is available"
-    mvc.perform(MockMvcRequestBuilders.get("/"))
-      .andExpect(status().isOk())
-      .andExpect(content().string("hello world"))
+  def "test context loads"() {
+    expect:
+    context != null
+    context.containsBean("helloWorldService")
+    !context.containsBean("scopedTarget.helloWorldService")
+    context.containsBean("simpleBootApp")
   }
+
+  def "scoped mock can be used"() {
+    expect:
+    !helloWorldService.class.simpleName.startsWith('HelloWorldService$$EnhancerBySpringCGLIB$$')
+
+    when:
+    def result = helloWorldService.helloMessage
+
+    then:
+    1 * helloWorldService.getHelloMessage() >> 'sup?'
+    result == 'sup?'
+  }
+
 
   @TestConfiguration
   static class MockConfig {
@@ -58,8 +65,7 @@ class WebMvcTestIntegrationSpec extends Specification {
 
     @Bean
     HelloWorldService helloWorldService() {
-      return detachedMockFactory.Stub(HelloWorldService)
+      return detachedMockFactory.Mock(HelloWorldService)
     }
   }
 }
-//end::include[]

@@ -1,15 +1,14 @@
-package org.spockframework.spring;
+package org.spockframework.spring
 
 import org.spockframework.mock.MockUtil
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.test.context.ContextConfiguration;
-
+import org.springframework.test.context.ContextConfiguration
 import spock.lang.Specification
 
-import javax.inject.Named;
+import javax.inject.Named
 
-@ContextConfiguration(locations = "classpath:MockExamples-context.xml")
-public class MockInjectionExample extends Specification {
+@ContextConfiguration(locations = "MockExamples-context.xml")
+class MockInjectionExample extends Specification {
 
   @Autowired @Named('serviceMock')
   IService1 serviceMock

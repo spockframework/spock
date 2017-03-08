@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+
+  <bean id="service2Request" class="org.spockframework.spring.xml.SpockMockFactoryBean" scope="request">
+    <constructor-arg value="org.spockframework.spring.IService2"/>
+  </bean>
+
+  <bean class="org.springframework.beans.factory.config.CustomScopeConfigurer">
+    <property name="scopes">
+      <map>
+        <entry key="request">
+          <bean class="org.springframework.context.support.SimpleThreadScope" />
+        </entry>
+      </map>
+    </property>
+  </bean>
+</beans>

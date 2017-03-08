@@ -78,30 +78,19 @@ public class SpringExtension extends AbstractGlobalExtension {
   }
 
   private boolean isSpringSpec(SpecInfo spec) {
-    if (isSpringBootSpec(spec)) return true;
+    if (isSpringSpecUsingFindAnnotationDescriptorForTypes(spec)) return true;
 
+    if (ReflectionUtil.isAnnotationPresentRecursive(spec.getClass(), ContextConfiguration.class)) return true;
 
+    return  (contextHierarchyClass != null
+      && ReflectionUtil.isAnnotationPresentRecursive(spec.getClass(), contextHierarchyClass));
+  }
+
+  private boolean isSpringSpecUsingFindAnnotationDescriptorForTypes(SpecInfo spec) {
     return findAnnotationDescriptorForTypesMethod != null
         && ReflectionUtil.invokeMethod(
         null, findAnnotationDescriptorForTypesMethod, spec.getReflection(),
-        new Class[] {ContextConfiguration.class, contextHierarchyClass}) != null;
-
-  }
-
-  private boolean isSpringBootSpec(SpecInfo spec) {
-    if (bootstrapWithAnnotation == null) return false;
-
-    boolean bootstrapWithAnnotationPresent;
-
-    Annotation[] annotations = spec.getAnnotations();
-    for (Annotation a : annotations) {
-      // we can identify a spring-boot spec by looking for an annotation annotated with BootstrapWith
-      bootstrapWithAnnotationPresent = a.annotationType().isAnnotationPresent(bootstrapWithAnnotation);
-
-      if (bootstrapWithAnnotationPresent) return true;
-
-    }
-    return false;
+        new Class[] {ContextConfiguration.class, contextHierarchyClass, bootstrapWithAnnotation}) != null;
   }
 
   private void checkNoSharedFieldsInjected(SpecInfo spec) {

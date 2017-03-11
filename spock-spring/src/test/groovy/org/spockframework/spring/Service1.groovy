@@ -16,7 +16,7 @@
 
 package org.spockframework.spring
 
-public class Service1 implements IService1 {
+class Service1 implements IService1 {
   private IService2 service2
 
   Service1(Service2 service2) {

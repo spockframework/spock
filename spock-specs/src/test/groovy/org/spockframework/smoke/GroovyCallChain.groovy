@@ -21,8 +21,8 @@ package org.spockframework.smoke
  *
  * @author Peter Niederwieser
  */
-public class GroovyCallChain {
-  public void a() {
+class GroovyCallChain {
+  void a() {
     b();
   }
 
@@ -34,13 +34,13 @@ public class GroovyCallChain {
   static void c(String foo, String bar) {
     throw new CallChainException();
   }
-    
+
   class Inner {
       def inner() {
         new StaticInner().staticInner()
       }
   }
-    
+
   static class StaticInner {
       def staticInner() {
         c("foo", "bar")

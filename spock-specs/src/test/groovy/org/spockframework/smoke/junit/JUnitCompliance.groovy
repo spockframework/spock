@@ -22,7 +22,7 @@ import org.spockframework.EmbeddedSpecification
 import spock.lang.Issue
 import spock.util.EmbeddedSpecCompiler
 
-public class JUnitCompliance extends EmbeddedSpecification {
+class JUnitCompliance extends EmbeddedSpecification {
   @Issue("http://issues.spockframework.org/detail?id=13")
   def "failing setupSpec method"() {
     runner.throwFailure = false

@@ -16,7 +16,7 @@ package org.spockframework.smoke.mock
 
 import spock.lang.Specification
 
-public class GroovyMocksForInterfaces extends Specification {
+class GroovyMocksForInterfaces extends Specification {
   def person = GroovyMock(Person)
 
   def "physical method"() {

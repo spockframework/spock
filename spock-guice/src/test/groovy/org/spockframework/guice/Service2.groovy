@@ -15,8 +15,8 @@
 
 package org.spockframework.guice
 
-public class Service2 implements IService2 {
-  public String generateQuickBrownFox() {
+class Service2 implements IService2 {
+  String generateQuickBrownFox() {
     return "The quick brown fox jumps over the lazy dog.";
   }
 }

@@ -24,7 +24,7 @@ import org.hamcrest.Description
  * <tt>Number</tt>s (in particular <tt>BigDecimal</tt>s). Otherwise almost
  * identical to that class.
  */
-public class IsCloseTo extends TypeSafeMatcher<Number> {
+class IsCloseTo extends TypeSafeMatcher<Number> {
   private final Number value
   private final Number epsilon
 

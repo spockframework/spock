@@ -19,7 +19,7 @@ import org.spockframework.mock.FinalMethodsJavaPerson
 
 import spock.lang.Specification
 
-public class GroovyMocksForGroovyClasses extends Specification {
+class GroovyMocksForGroovyClasses extends Specification {
   def person = GroovyMock(Person)
 
   def "physical method"() {

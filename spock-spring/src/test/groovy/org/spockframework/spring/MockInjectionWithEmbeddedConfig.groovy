@@ -18,12 +18,12 @@ class MockInjectionWithEmbeddedConfig extends Specification {
     private DetachedMockFactory factory = new DetachedMockFactory()
 
     @Bean
-    public IService1 service1() {
+    IService1 service1() {
         return factory.Mock(IService1, name: "service1")
     }
 
     @Bean
-    public IService2 service2() {
+    IService2 service2() {
         return factory.Mock(IService2, name: "service2")
     }
   }

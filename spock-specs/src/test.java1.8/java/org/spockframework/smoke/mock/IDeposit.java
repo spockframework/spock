@@ -20,7 +20,7 @@ package org.spockframework.smoke.mock;
  * A bank deposit with <a href="https://en.wikipedia.org/wiki/Compound_interest">compound interest</a>.
  */
 public interface IDeposit {
-  public static class DepositException extends Exception {
+  class DepositException extends Exception {
     public DepositException(String message) {
       super(message);
     }

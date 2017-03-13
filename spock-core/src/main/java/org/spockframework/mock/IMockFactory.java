@@ -17,7 +17,7 @@ package org.spockframework.mock;
 import spock.lang.Specification;
 
 public interface IMockFactory {
-  public boolean canCreate(IMockConfiguration configuration);
-  public Object create(IMockConfiguration configuration, Specification specification);
-  public Object createDetached(IMockConfiguration configuration, ClassLoader classLoader);
+  boolean canCreate(IMockConfiguration configuration);
+  Object create(IMockConfiguration configuration, Specification specification);
+  Object createDetached(IMockConfiguration configuration, ClassLoader classLoader);
 }

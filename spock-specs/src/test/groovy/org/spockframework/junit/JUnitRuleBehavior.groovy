@@ -19,7 +19,7 @@ class JUnitRuleBehavior extends Base {
 
   abstract static class Base {
     @Test
-    public void ruleInDerivedClassAffectsTestInBaseClass() {
+    void ruleInDerivedClassAffectsTestInBaseClass() {
       assert this.started
     }
   }

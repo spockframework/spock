@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Bean
 import spock.mock.DetachedMockFactory
 
 //tag::javaconfig[]
-public class DetachedJavaConfig {
+class DetachedJavaConfig {
   def mockFactory = new DetachedMockFactory()
 
   @Bean

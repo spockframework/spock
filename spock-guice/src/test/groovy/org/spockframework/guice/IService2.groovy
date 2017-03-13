@@ -14,6 +14,6 @@
 
 package org.spockframework.guice
 
-public interface IService2 {
-  public String generateQuickBrownFox();
+interface IService2 {
+  String generateQuickBrownFox();
 }

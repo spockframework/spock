@@ -14,8 +14,9 @@ class OptionalSpec extends Specification {
     then:
     !result.present
   }
+
+  interface TestService {
+    Optional<String> getValue()
+  }
 }
 
-interface TestService {
-  Optional<String> getValue()
-}

@@ -38,12 +38,18 @@ public abstract class SpecInternals {
   public ISpecificationContext getSpecificationContext() {
     return specificationContext;
   }
-
+  
   @Beta
   public Object createMock(@Nullable String name, Type type, MockNature nature,
       MockImplementation implementation, Map<String, Object> options, @Nullable Closure closure) {
+    return createMock(name, null, type, nature, implementation, options, closure);
+  }
+
+  @Beta
+  public Object createMock(@Nullable String name, Object instance, Type type, MockNature nature,
+      MockImplementation implementation, Map<String, Object> options, @Nullable Closure closure) {
     Object mock = CompositeMockFactory.INSTANCE.create(
-        new MockConfiguration(name, type, nature, implementation, options), (Specification) this);
+        new MockConfiguration(name, type, instance, nature, implementation, options), (Specification) this);
     if (closure != null) {
       GroovyRuntimeUtil.invokeClosure(closure, mock);
     }
@@ -174,6 +180,10 @@ public abstract class SpecInternals {
   Object SpyImpl(String inferredName, Class<?> inferredType, Map<String, Object> options, Class<?> specifiedType, Closure closure) {
     return createMockImpl(inferredName, inferredType, MockNature.SPY, MockImplementation.JAVA, options, specifiedType, closure);
   }
+  
+  Object SpyImpl(String inferredName, Class<?> inferredType, Object instance) {
+    return createMockImpl(inferredName, inferredType == null ? instance.getClass() : inferredType, instance, MockNature.SPY, MockImplementation.JAVA, Collections.<String, Object>emptyMap(), null, null);
+  }
 
   Object GroovyMockImpl(String inferredName, Class<?> inferredType) {
     return createMockImpl(inferredName, inferredType, MockNature.MOCK, MockImplementation.GROOVY, Collections.<String, Object>emptyMap(), null, null);
@@ -270,14 +280,19 @@ public abstract class SpecInternals {
   Object GroovySpyImpl(String inferredName, Class<?> inferredType, Map<String, Object> options, Class<?> specifiedType, Closure closure) {
     return createMockImpl(inferredName, inferredType, MockNature.SPY, MockImplementation.GROOVY, options, specifiedType, closure);
   }
-
+  
   private Object createMockImpl(String inferredName, Class<?> inferredType, MockNature nature,
+      MockImplementation implementation, Map<String, Object> options, Class<?> specifiedType, Closure closure) {
+    return createMockImpl(inferredName, inferredType, null, nature, implementation, options, specifiedType, closure);
+  }
+
+  private Object createMockImpl(String inferredName, Class<?> inferredType, Object instance, MockNature nature,
       MockImplementation implementation, Map<String, Object> options, Class<?> specifiedType, Closure closure) {
     Type effectiveType = specifiedType != null ? specifiedType : options.containsKey("type") ? (Type) options.get("type") : inferredType;
     if (effectiveType == null) {
       throw new InvalidSpecException("Mock object type cannot be inferred automatically. " +
           "Please specify a type explicitly (e.g. 'Mock(Person)').");
     }
-    return createMock(inferredName, effectiveType, nature, implementation, options, closure);
+    return createMock(inferredName, instance, effectiveType, nature, implementation, options, closure);
   }
 }

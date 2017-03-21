@@ -98,6 +98,17 @@ class JavaSpies extends Specification {
     person.work() == "singing, singing"
     person.work() == "singing"
   }
+  
+  def "can spy on concrete instances"() {
+    def person = Spy(new Person())
+    
+    when:
+    def result = person.work()  
+    
+    then:
+    1 * person.work()
+    result == "singing, singing"
+  }
 
   def "cannot spy on final classes"() {
     when:

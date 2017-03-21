@@ -22,7 +22,23 @@
         </xs:complexContent>
     </xs:complexType>
 
+	<xs:complexType name="wrapWithSpyDefinitionType">
+		<xs:attribute name="ref" use="required">
+			<xs:annotation>
+				<xs:documentation>
+                       <![CDATA[ The bean id that you would like to wrap with a spy. ]]>
+				</xs:documentation>
+			</xs:annotation>
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:minLength value="1" />
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+
     <xs:element name="mock" type="spock:mockDefinitionType"/>
     <xs:element name="spy" type="spock:mockDefinitionType"/>
     <xs:element name="stub" type="spock:mockDefinitionType"/>
+    <xs:element name="wrapWithSpy" type="wrapWithSpyDefinitionType"/>
 </xs:schema>

@@ -16,6 +16,6 @@ package org.spockframework.guice
  * limitations under the License.
  */
 
-public interface IService1 {
+interface IService1 {
   String generateString()
 }

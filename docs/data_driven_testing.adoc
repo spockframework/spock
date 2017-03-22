@@ -99,7 +99,7 @@ Condition not satisfied:
 
 Math.max(a, b) == c
     |    |  |  |  |
-    |    7  0  |  7
+    |    7  4  |  7
     42         false
 ----
 
@@ -135,7 +135,7 @@ maximum of two numbers[1]   FAILED
 
 Math.max(a, b) == c
     |    |  |  |  |
-    |    7  0  |  7
+    |    7  4  |  7
     42         false
 
 maximum of two numbers[2]   PASSED
@@ -154,17 +154,17 @@ and `c`. In the output, the placeholders will be replaced with concrete values:
 
 ----
 maximum of 3 and 5 is 5   PASSED
-maximum of 7 and 0 is 7   FAILED
+maximum of 7 and 4 is 7   FAILED
 
 Math.max(a, b) == c
     |    |  |  |  |
-    |    7  0  |  7
+    |    7  4  |  7
     42         false
 
 maximum of 0 and 0 is 0   PASSED
 ----
 
-Now we can tell at a glance that the `max` method failed for inputs `7` and `0`. See <<More on Unrolled Method Names>>
+Now we can tell at a glance that the `max` method failed for inputs `7` and `4`. See <<More on Unrolled Method Names>>
 for further details on this topic.
 
 The `@Unroll` annotation can also be placed on a spec. This has the same effect as placing it on each data-driven

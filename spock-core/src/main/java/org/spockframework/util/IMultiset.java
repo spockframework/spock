@@ -31,7 +31,7 @@ import java.util.*;
  */
 @NotThreadSafe
 public interface IMultiset<E> extends Collection<E> {
-  public int count(E element);
+  int count(E element);
 
-  public Set<Map.Entry<E, Integer>> entrySet();
+  Set<Map.Entry<E, Integer>> entrySet();
 }

@@ -1,5 +1,5 @@
 package org.spockframework.spring.docs;
 
-public interface GreeterService {
+interface GreeterService {
   String getGreeting()
 }

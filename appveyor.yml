@@ -4,7 +4,7 @@ environment:
 shallow_clone: true
 
 build_script:
-  - gradlew appveyorCiBuild -Dscan
+  - gradlew --no-daemon appveyorCiBuild -Dscan
 
 test: off
 

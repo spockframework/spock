@@ -115,6 +115,11 @@ public class DetachedMockFactory implements MockFactory {
   public <T> T Spy(Class<T> type) {
     return createMock(inferNameFromType(type), type, MockNature.SPY, Collections.<String, Object>emptyMap());
   }
+  
+  @Override
+  public <T> T Spy(T obj) {
+    return createMock(inferNameFromType(obj.getClass()), obj, MockNature.SPY, Collections.<String, Object>emptyMap());
+  }
 
   /**
      * Creates a spy with the specified options and type. The mock name will be the types simple name.
@@ -144,6 +149,15 @@ public class DetachedMockFactory implements MockFactory {
       classLoader = ClassLoader.getSystemClassLoader();
     }
     return (T) new MockUtil().createDetachedMock(name, type, nature, MockImplementation.JAVA, options, classLoader);
+  }
+  
+  @SuppressWarnings("unchecked")
+  public <T> T createMock(@Nullable String name, T obj, MockNature nature, Map<String, Object> options) {
+    ClassLoader classLoader = obj.getClass().getClassLoader();
+    if (classLoader == null) {
+      classLoader = ClassLoader.getSystemClassLoader();
+    }
+    return (T) new MockUtil().createDetachedMock(name, obj, nature, MockImplementation.JAVA, options, classLoader);
   }
 
   private String inferNameFromType(Class<?> type) {

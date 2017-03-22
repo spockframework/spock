@@ -1,8 +1,8 @@
 package org.spockframework.mock
 
-import spock.lang.Shared;
-import spock.lang.Specification;
-import spock.lang.Stepwise;
+import spock.lang.Shared
+import spock.lang.Specification
+import spock.lang.Stepwise
 
 @Stepwise
 class DetachedMockSpec extends Specification {

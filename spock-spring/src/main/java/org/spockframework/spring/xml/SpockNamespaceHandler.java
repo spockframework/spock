@@ -16,5 +16,6 @@ public class SpockNamespaceHandler extends NamespaceHandlerSupport {
     registerBeanDefinitionParser("mock", new MockBeanDefinitionParser());
     registerBeanDefinitionParser("spy", new MockBeanDefinitionParser());
     registerBeanDefinitionParser("stub", new MockBeanDefinitionParser());
+    registerBeanDefinitionParser("wrapWithSpy", new WrapWithSpyBeanDefinitionParser());
   }
 }

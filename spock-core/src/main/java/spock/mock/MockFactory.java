@@ -93,6 +93,23 @@ public interface MockFactory {
    */
   @Beta
   <T> T Spy(Class<T> type);
+  
+  /**
+   * Creates a spy wrapping a provided instance.
+   *
+   * Example:
+   *
+   * <pre>
+   *   def person = Spy(new Person()) // type is Person.class, name is "person"
+   * </pre>
+   *
+   * @param obj the instance to spy
+   * @param <T> the class type of the spy
+   *
+   * @return a spy with the specified type
+   */
+  @Beta
+  <T> T Spy(T obj);
 
   /**
    * Creates a spy with the specified options and type.

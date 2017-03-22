@@ -22,7 +22,10 @@ class MockInjectionExample extends Specification {
 
   @Autowired @Named('service2')
   IService2 service2
-
+  
+  @Autowired @Named('nonMock')
+  ArrayList concreteSpy;
+  
   def "Injected services are mocks"() {
     expect:
     new MockUtil().isMock(serviceMock)
@@ -54,6 +57,14 @@ class MockInjectionExample extends Specification {
     serviceSpy.generateQuickBrownFox() == "The quick brown fox jumps over the lazy dog."
     service2.generateQuickBrownFox() == null
 
+  }
+  
+  def "Spies can be created from concrete objects and injected"() {
+    when:
+    concreteSpy.size()
+
+    then:
+    1 * concreteSpy.size() >> 0
   }
 
 }

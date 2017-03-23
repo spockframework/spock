@@ -161,6 +161,9 @@ subprojects {
         destination = file("$destination/$variant")
       }
     }
+    //Required for building on Travis' container-based infrastructure to not be killed with
+    //'exit code 137' - https://github.com/travis-ci/travis-ci/issues/5582
+    jvmArgs '-Xmx512m'
   }
 }
 

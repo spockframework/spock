@@ -42,8 +42,8 @@ matrix:
     ## ensure docs only get published once otherwise it causes build to fail
     - jdk: openjdk7
       env: VARIANT=2.4
-    - jdk: openjdk6
-      env: VARIANT=2.4
+    - jdk: oraclejdk8
+      env: VARIANT=2.3
 
 install: true
 

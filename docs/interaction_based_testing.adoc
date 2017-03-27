@@ -5,7 +5,7 @@ Interaction-based testing is a design and testing technique that emerged in the 
 (XP) community in the early 2000's. Focusing on the behavior of objects rather than their state, it explores how
 the object(s) under specification interact, by way of method calls, with their collaborators.
 
-For example, suppose we have a +Publisher+ that sends messages to its +Subscriber+s:
+For example, suppose we have a `Publisher` that sends messages to its `Subscriber`s:
 
 [source,groovy,indent=0]
 ----
@@ -13,13 +13,13 @@ include::{sourcedir}/interaction/InteractionDocSpec.groovy[tag=examplesetup]
 }
 ----
 
-How are we going to test +Publisher+? With state-based testing, we can verify that the publisher keeps track of its
+How are we going to test `Publisher`? With state-based testing, we can verify that the publisher keeps track of its
 subscribers. The more interesting question, though, is whether a message sent by the publisher
 is received by the subscribers. To answer this question, we need a special implementation of
-+Subscriber+ that listens in on the conversation between the publisher and its subscribers. Such an
+`Subscriber` that listens in on the conversation between the publisher and its subscribers. Such an
 implementation is called a _mock object_.
 
-While we could certainly create a mock implementation of +Subscriber+ by hand, writing and maintaining this code
+While we could certainly create a mock implementation of `Subscriber` by hand, writing and maintaining this code
 can get unpleasant as the number of methods and complexity of interactions increases. This is where mocking frameworks
 come in: They provide a way to describe the expected interactions between an object under specification and its
 collaborators, and can generate mock implementations of collaborators that verify these expectations.
@@ -43,7 +43,7 @@ Except where indicated, all features of Spock's mocking framework work both for 
 
 == Creating Mock Objects
 
-Mock objects are created with the +MockingApi.Mock()+ method.footnote:[For additional ways to create mock objects,
+Mock objects are created with the `MockingApi.Mock()` method.footnote:[For additional ways to create mock objects,
 see <<OtherKindsOfMockObjects>> and <<ALaCarteMocks>>.]
 Let's create two mock subscribers:
 
@@ -67,7 +67,7 @@ NOTE: If the mock's type is given on the left-hand side of the assignment, it's 
 (though not required) to omit it on the right-hand side.
 
 Mock objects literally implement (or, in the case of a class, extend) the type they stand in for. In other
-words, in our example +subscriber+ _is-a_ +Subscriber+. Hence it can be passed to statically typed (Java)
+words, in our example `subscriber` _is-a_ `Subscriber`. Hence it can be passed to statically typed (Java)
 code that expects this type.
 
 == Default Behavior of Mock Objects
@@ -83,8 +83,8 @@ framework makes it easy to describe only what's relevant about an interaction, a
 ****
 
 Initially, mock objects have no behavior. Calling methods on them is allowed but has no effect other than returning
-the default value for the method's return type (+false+, +0+, or +null+). An exception are the +Object.equals+,
-+Object.hashCode+, and +Object.toString+ methods, which have the following default behavior: A mock object is only
+the default value for the method's return type (`false`, `0`, or `null`). An exception are the `Object.equals`,
+`Object.hashCode`, and `Object.toString` methods, which have the following default behavior: A mock object is only
 equal to itself, has a unique hash code, and a string representation that includes the name of the type it represents.
 This default behavior is overridable by stubbing the methods, which we will learn about in the <<Stubbing>> section.
 
@@ -112,8 +112,8 @@ include::{sourcedir}/interaction/InteractionDocSpec.groovy[tag=example2]
 Read out aloud: "When the publisher sends a 'hello' message, then both subscribers should receive that message exactly once."
 
 When this feature method gets run, all invocations on mock objects that occur while executing the
-+when+ block will be matched against the interactions described in the +then:+ block. If one of the interactions isn't
-satisfied, a (subclass of) +InteractionNotSatisfiedError+ will be thrown. This verification happens automatically
+`when` block will be matched against the interactions described in the `then:` block. If one of the interactions isn't
+satisfied, a (subclass of) `InteractionNotSatisfiedError` will be thrown. This verification happens automatically
 and does not require any additional code.
 
 === Interactions
@@ -126,7 +126,7 @@ that all incoming invocations on mock objects are matched against. Depending on 
 may match zero, one, or multiple invocations.
 ****
 
-Let's take a closer look at the +then:+ block. It contains two _interactions_, each of which has four distinct
+Let's take a closer look at the `then:` block. It contains two _interactions_, each of which has four distinct
 parts: a _cardinality_, a _target constraint_, a _method constraint_, and an _argument constraint_:
 
 ----

@@ -212,9 +212,9 @@ Documentation for the latest Spock snapshot is at http://docs.spockframework.org
 As of Spock 0.7, the chapters on <<data_driven_testing.adoc#,Data Driven Testing>> and
 <<interaction_based_testing.adoc#,Interaction Based Testing>> are complete.
 
-=== Improved Mocking Failure Message for +TooManyInvocationsError+
+=== Improved Mocking Failure Message for `TooManyInvocationsError`
 
-The diagnostic message accompanying a +TooManyInvocationsError+ has been greatly improved.
+The diagnostic message accompanying a `TooManyInvocationsError` has been greatly improved.
 Here is an example:
 
 ----

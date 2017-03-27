@@ -33,8 +33,9 @@ include::{resourcedir-spring}/MockDocu-context.xml[]
 <1> Creates a `Mock`
 <2> Creates a `Stub`
 <3> Creates a `Spy`
-<4> If you don't want to use the special namespace support you can create the beans via the `SpockMockFactoryBean`
-<5> The `mockNature` can be `MOCK`, `STUB`, or `SPY` and defaults to `MOCK` if not declared.
+<4> Wraps an existing bean with a `Spy`. Fails fast if referenced bean is not found.
+<5> If you don't want to use the special namespace support you can create the beans via the `SpockMockFactoryBean`
+<6> The `mockNature` can be `MOCK`, `STUB`, or `SPY` and defaults to `MOCK` if not declared.
 
 === Usage
 

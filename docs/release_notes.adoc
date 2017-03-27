@@ -1,6 +1,27 @@
 = Release Notes
 include::include.adoc[]
 
+== 1.1-rc-4 (tbd)
+
+This should be the last rc for 1.1
+
+=== What's New In This release
+
+* 15 merged pull requests
+* Spies can now be created with an already existing target
+* Fix for scoped Spring Beans
+* Fix incompatibility with Spring 2/3 that was introduced in 1.1-rc-1
+* Fix groovy compatibility
+* Fix ByteBuddy compatibility
+* Fix OutOfMemoryError when comparing huge strings
+* Improve default response for `java.util.Optional<T>`, will now return empty optional
+* Improve detection of Spring Boot tests
+* Improve documentation for global extensions
+
+Thanks to all the contributors to this release: Taylor Wicksell, Rafael Winterhalter, Marcin Zajączkowski, Eduardo Grajeda, Paul King, Andrii, Björn Kautler, Libor Rysavy
+
+Known issues with groovy 2.4.10 which breaks a smoke test, but should have little impact on normal use (#709).
+
 == 1.1-rc-3 (released 2016-10-17)
 
 Adds compatibility with ByteBuddy as an alternative to cglib for generating mocks and stubs for classes.

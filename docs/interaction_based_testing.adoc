@@ -723,7 +723,12 @@ def subscriber = Spy(SubscriberImpl, constructorArgs: ["Fred"])
 
 A spy is always based on a real object. Hence you must provide a class type rather
 than an interface type, along with any constructor arguments for the type.
-If no constructor arguments are provided, the type's default constructor will be used.
+If no constructor arguments are provided, the type's default constructor will be used. 
+
+You may also create a spy from an instantiated object. This may be useful in cases 
+where you do not have full control over the instatiation of types you are interested 
+in spying. (For example when testing within a Dependency Injection framework such as 
+Spring or Guice.)
 
 Method calls on a spy are automatically delegated to the real object. Likewise, values
 returned from the real object's methods are passed back to the caller via the spy.

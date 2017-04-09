@@ -67,8 +67,10 @@ def bom = {
     }
   }
 }
-task writeBom << {
-  pom(bom).withXml(modifyBom) .writeTo("$buildDir/pom.xml")
+task writeBom {
+  doLast {
+    pom(bom).withXml(modifyBom) .writeTo("$buildDir/pom.xml")
+  }
 }
 
 def deployers = []

@@ -25,4 +25,5 @@ before_script:
   - java -version
 
 script:
+  - ./gradlew --no-daemon --version
   - ./gradlew --no-daemon shippableCiBuild -Dvariant=$VARIANT -Dscan

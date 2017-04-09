@@ -47,7 +47,12 @@ matrix:
 
 install: true
 
-script: ./gradlew --no-daemon travisCiBuild -Dvariant=$VARIANT -Dscan
+script: 
+  - ./gradlew --no-daemon --version
+  - ./gradlew --no-daemon travisCiBuild -Dvariant=$VARIANT -Dscan
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
 
 notifications:
   slack:

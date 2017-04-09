@@ -2,6 +2,7 @@ plugins {
   id 'com.gradle.build-scan' version '1.1.1'
   id "base"
   id "org.asciidoctor.gradle.asciidoctor" version "1.5.1"
+  id "jacoco"
 }
 
 description = "Spock Framework"
@@ -65,6 +66,7 @@ apply from: script("ide")
 
 subprojects {
   apply plugin: "groovy"
+  apply plugin: "jacoco"
   apply plugin: "signing"
 
   sourceCompatibility = javaVersions.min()
@@ -153,12 +155,13 @@ subprojects {
   testCglib.mustRunAfter test
 
   tasks.withType(Test) {
+    def taskName = name
     reports {
       junitXml {
-        destination = file("$destination/$variant")
+        destination = file("$destination/$taskName-$variant")
       }
       html {
-        destination = file("$destination/$variant")
+        destination = file("$destination/$taskName-$variant")
       }
     }
     //Required for building on Travis' container-based infrastructure to not be killed with
@@ -167,8 +170,35 @@ subprojects {
   }
 }
 
+task codeCoverageReport (type: JacocoReport, group: 'Coverage reports') {
+  description = "Creates an aggregate coverage for the whole project."
+  def reportingProjects = subprojects.findAll()
+  dependsOn(reportingProjects.tasks.collectMany{it.withType(Test)})
+
+  onlyIf = { true } // required to circumvent a wrong check in the jacoco report plugin (v2.13)
+
+  sourceDirectories = files() //must be set
+  classDirectories = files()  //must be set
+  additionalSourceDirs files(reportingProjects.sourceSets.main.allSource.srcDirs)
+  additionalClassDirs files(reportingProjects.sourceSets.main.output)
+
+  executionData = files(reportingProjects.jacocoTestReport.executionData)
+
+  doFirst {
+    // find all *.exec files
+    executionData = fileTree(project.rootDir.absolutePath).include("**/build/jacoco/*.exec")
+  }
+
+  reports {
+    html.enabled = true
+    xml.enabled = true
+    xml.destination "${buildDir}/reports/jacoco/report.xml" // report must be here for codecov to pick it up
+    csv.enabled = false
+  }
+}
+
 if (gradle.startParameter.taskNames == ["travisCiBuild"]) {
-  gradle.startParameter.taskNames = ["build"]
+  gradle.startParameter.taskNames = ["build", "codeCoverageReport"]
   subprojects {
     tasks.withType(Test) {
       maxParallelForks = 2

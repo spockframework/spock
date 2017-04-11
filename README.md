@@ -13,7 +13,7 @@ http://webconsole.spockframework.org.
 
 Latest Versions
 ---------------
-The latest release version is **1.1-rc-4** (1.1-groovy-2.0-rc-4, 1.1-groovy-2.3-rc-4, 1.1-groovy-2.4-rc-4), released on 2016-10-17. The
+The latest release version is **1.1-rc-4** (1.1-groovy-2.0-rc-4, 1.1-groovy-2.3-rc-4, 1.1-groovy-2.4-rc-4), released on 2017-03-28. The
 current development version is **1.1-SNAPSHOT** (1.1-groovy-2.0-SNAPSHOT, 1.1-groovy-2.3-SNAPSHOT, 1.1-groovy-2.4-SNAPSHOT).
 
 Releases are available from [Maven Central](https://search.maven.org/#search%7Cga%7C1%7Cspock).

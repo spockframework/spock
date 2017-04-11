@@ -60,7 +60,7 @@ public class BlockingVariable<T> {
   private final double timeout;
 
   private T value; // access guarded by valueReady
-  private final CountDownLatch valueReady = new CountDownLatch(1);
+  private CountDownLatch valueReady;
 
   /**
    * Same as <tt>BlockingVariable(1)</tt>.
@@ -76,6 +76,7 @@ public class BlockingVariable<T> {
    */
   public BlockingVariable(double timeout) {
     this.timeout = timeout;
+    this.reset();
   }
 
   /**
@@ -123,5 +124,14 @@ public class BlockingVariable<T> {
   public void set(T value) {
     this.value = value;
     valueReady.countDown();
+  }
+
+  /**
+   * Resets this <tt>BlockingVariable</tt> to its initial state. That affects all
+   * operations currently working on this object.
+   */
+  public void reset() {
+    value = null;
+    valueReady = new CountDownLatch(1);
   }
 }

@@ -18,12 +18,11 @@ import groovy.lang.GString;
 import org.spockframework.runtime.condition.EditDistance;
 import org.spockframework.runtime.condition.EditPathRenderer;
 import org.spockframework.runtime.model.ExpressionInfo;
-import org.spockframework.runtime.GroovyRuntimeUtil;
-import org.spockframework.util.ObjectUtil;
 import org.spockframework.util.Nullable;
+import org.spockframework.util.ObjectUtil;
 
 public class ExpressionInfoValueRenderer {
-  public static final long MAX_EDIT_DISTANCE_MEMORY = 1024*1024;
+  public static final long MAX_EDIT_DISTANCE_MEMORY = 50 * 1024;
   private final ExpressionInfo expr;
 
   private ExpressionInfoValueRenderer(ExpressionInfo expr) {
@@ -88,13 +87,13 @@ public class ExpressionInfoValueRenderer {
   private String doRenderValue(ExpressionInfo expr) {
     String result = renderAsFailedStringComparison(expr);
     if (result != null) return result;
-    
+
     result = renderAsFailedEqualityComparison(expr);
     if (result != null) return result;
-    
+
     return GroovyRuntimeUtil.toString(expr.getValue());
   }
-  
+
   private String renderAsFailedStringComparison(ExpressionInfo expr) {
     if (!(Boolean.FALSE.equals(expr.getValue()))) return null;
     if (!expr.isEqualityComparison(String.class, GString.class)) return null;
@@ -103,7 +102,7 @@ public class ExpressionInfoValueRenderer {
     String str1 = expr.getChildren().get(0).getValue().toString();
     String str2 = expr.getChildren().get(1).getValue().toString();
 
-    if (str1.length() * str2.length() > MAX_EDIT_DISTANCE_MEMORY) {
+    if (((long)str1.length()) * str2.length() > MAX_EDIT_DISTANCE_MEMORY) {
       return tryReduceStringSizes(str1, str2);
     } else {
       return createAndRenderEditDistance(str1, str2);
@@ -137,7 +136,7 @@ public class ExpressionInfoValueRenderer {
         end1 = Math.min(str1.length(), end1 + 10);
         end2 = Math.min(str2.length(), end2 + 10);
       }
-      return createAndRenderEditDistance(str1.substring(commonStart, end1), str2.substring(commonStart, end2));
+      return createAndRenderEditDistance(str1, str2, commonStart, end1, end2);
     }
   }
 
@@ -146,6 +145,16 @@ public class ExpressionInfoValueRenderer {
     return String.format("false\n%d difference%s (%d%% similarity)\n%s",
       dist.getDistance(), dist.getDistance() == 1 ? "" : "s", dist.getSimilarityInPercent(),
       new EditPathRenderer().render(str1, str2, dist.calculatePath()));
+  }
+
+  private String createAndRenderEditDistance(String str1, String str2, int commonStart, int end1, int end2) {
+    String sub1 = str1.substring(commonStart, end1);
+    String sub2 = str2.substring(commonStart, end2);
+    EditDistance dist = new EditDistance(sub1, sub2);
+    return String.format("false\n%d difference%s (%d%% similarity) (comparing subset start: %d, end1: %d, end2: %d)\n%s",
+      dist.getDistance(), dist.getDistance() == 1 ? "" : "s", dist.getSimilarityInPercent(),
+      commonStart, end1, end2,
+      new EditPathRenderer().render(sub1, sub2, dist.calculatePath()));
   }
 
   private String renderAsFailedEqualityComparison(ExpressionInfo expr) {

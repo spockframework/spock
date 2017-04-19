@@ -10,7 +10,7 @@ repositories {
   maven { url "http://repository.jboss.com/maven2" }
 }
 
-def tapestryVersion54 = "5.4.1"
+def tapestryVersion54 = "5.4.2
 
 def useTapestry54 = javaVersion >= 1.8
 

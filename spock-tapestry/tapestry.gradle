@@ -10,7 +10,7 @@ repositories {
   maven { url "http://repository.jboss.com/maven2" }
 }
 
-def tapestryVersion = javaVersion >= 1.8 ? "5.4.2" : "5.2.6"
+def tapestryVersion = javaVersion >= 1.8 ? "5.4.3" : "5.2.6"
 
 dependencies {
   compile project(":spock-core")

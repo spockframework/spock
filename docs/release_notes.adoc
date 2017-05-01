@@ -1,7 +1,15 @@
 = Release Notes
 include::include.adoc[]
 
-== 1.1-rc-4 (tbd)
+== 1.1 (2017-05-01)
+
+=== What's New In This release
+
+* Update docs to include info/examples for Spying instantiated objects
+* Fix integer overflow that could occur when the OutOfMemoryError protection while comparing huge strings kicked in
+* Improve rendering for OutOfMemoryError protection
+
+== 1.1-rc-4 (2017-03-28)
 
 This should be the last rc for 1.1
 

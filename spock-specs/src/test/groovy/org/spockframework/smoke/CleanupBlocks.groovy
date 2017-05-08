@@ -16,13 +16,11 @@
 
 package org.spockframework.smoke
 
-import spock.lang.FailsWith
-import spock.lang.Specification
-import spock.lang.Issue
-import org.spockframework.EmbeddedSpecification
 import org.codehaus.groovy.runtime.typehandling.GroovyCastException
 import org.junit.runner.Result
-import org.junit.runners.model.MultipleFailureException
+import org.spockframework.EmbeddedSpecification
+import spock.lang.FailsWith
+import spock.lang.Issue
 
 class CleanupBlocks extends EmbeddedSpecification {
   static List log
@@ -103,9 +101,9 @@ def feature() {
 """
 
     then:
-    List<Throwable> failures = result.getFailures()
-    failures[0].message == "feature"
-    failures[1].message == "cleanup"
+    def failure = result.failures[0]
+    failure.message == "feature"
+    failure.exception.suppressed[0].message == "cleanup"
     log == ["feature", "cleanup"]
   }
 

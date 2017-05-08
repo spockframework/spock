@@ -366,26 +366,126 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
       moveVariableDeclarations(b.getAst(), method.getStatements());
     }
 
-    List<Statement> tryStats = new ArrayList<Statement>();
+    VariableExpression featureThrowableVar =
+        new VariableExpression("$spock_feature_throwable", nodeCache.Throwable);
+    method.getStatements().add(createVariableDeclarationStatement(featureThrowableVar));
+
+    VariableExpression cleanupThrowableVar =
+        new VariableExpression("$spock_cleanup_throwable", nodeCache.Throwable);
+    method.getStatements().add(createVariableDeclarationStatement(cleanupThrowableVar));
+
+    List<Statement> featureStats = new ArrayList<Statement>();
     for (Block b : method.getBlocks()) {
       if (b == block) break;
-      tryStats.addAll(b.getAst());
+      featureStats.addAll(b.getAst());
     }
 
-    List<Statement> finallyStats = new ArrayList<Statement>();
-    finallyStats.addAll(block.getAst());
+    CatchStatement featureCatchStat = createThrowableAssignmentCatchStatement(featureThrowableVar);
+
+    List<Statement> cleanupStats = Collections.<Statement>singletonList(
+        createCleanupTryCatch(block, cleanupThrowableVar));
 
     TryCatchStatement tryFinally =
         new TryCatchStatement(
-            new BlockStatement(tryStats, new VariableScope()),
-            new BlockStatement(finallyStats, new VariableScope()));
+            new BlockStatement(featureStats, new VariableScope()),
+            new BlockStatement(cleanupStats, new VariableScope()));
+    tryFinally.addCatch(featureCatchStat);
 
     method.getStatements().add(tryFinally);
+
+    IfStatement ifBothNotNullStat = new IfStatement(null, null, null);
+    IfStatement elseIfFeatureNotNullStat = new IfStatement(null, null, null);
+    IfStatement elseIfCleanupNotNullStat = new IfStatement(null, null, null);
+
+    // if both throwables not null, throw new MultipleFailureException
+    BinaryExpression bothNotNullExpr =
+        new BinaryExpression(
+            createVariableNotNullExpression(featureThrowableVar),
+            Token.newSymbol(Types.LOGICAL_AND, -1, -1),
+            createVariableNotNullExpression(cleanupThrowableVar));
+
+    ListExpression constructorArgsListExpr = new ListExpression();
+    constructorArgsListExpr.addExpression(new VariableExpression(featureThrowableVar));
+    constructorArgsListExpr.addExpression(new VariableExpression(cleanupThrowableVar));
+    ConstructorCallExpression constructorExpr =
+        new ConstructorCallExpression(
+            ClassHelper.makeWithoutCaching("org.junit.runners.model.MultipleFailureException"),
+            new ArgumentListExpression(constructorArgsListExpr));
+    ThrowStatement throwMultiFailureStat = new ThrowStatement(constructorExpr);
+
+    ifBothNotNullStat.setBooleanExpression(new BooleanExpression(bothNotNullExpr));
+    ifBothNotNullStat.setIfBlock(
+        new BlockStatement(Collections.<Statement>singletonList(throwMultiFailureStat), new VariableScope()));
+    ifBothNotNullStat.setElseBlock(elseIfFeatureNotNullStat);
+
+    // else if feature throwable not null, throw it
+    BinaryExpression featureThrowableNotNullExpr = createVariableNotNullExpression(featureThrowableVar);
+    List<Statement> throwFeatureStats =
+        Collections.<Statement>singletonList(new ThrowStatement(new VariableExpression(featureThrowableVar)));
+    elseIfFeatureNotNullStat.setBooleanExpression(new BooleanExpression(featureThrowableNotNullExpr));
+    elseIfFeatureNotNullStat.setIfBlock(new BlockStatement(throwFeatureStats, new VariableScope()));
+    elseIfFeatureNotNullStat.setElseBlock(elseIfCleanupNotNullStat);
+
+    // else if cleanup throwable not null, throw it
+    BinaryExpression soloCleanupThrowableNotNullExpr = createVariableNotNullExpression(cleanupThrowableVar);
+    List<Statement> throwCleanupStats =
+        Collections.<Statement>singletonList(new ThrowStatement(new VariableExpression(cleanupThrowableVar)));
+    elseIfCleanupNotNullStat.setBooleanExpression(new BooleanExpression(soloCleanupThrowableNotNullExpr));
+    elseIfCleanupNotNullStat.setIfBlock(new BlockStatement(throwCleanupStats, new VariableScope()));
+    elseIfCleanupNotNullStat.setElseBlock(EmptyStatement.INSTANCE);
+
+    method.getStatements().add(ifBothNotNullStat);
 
     // a cleanup-block may only be followed by a where-block, whose
     // statements are copied to newly generated methods rather than
     // the original method
     movedStatsBackToMethod = true;
+  }
+
+  private BinaryExpression createVariableNotNullExpression(VariableExpression var) {
+    return new BinaryExpression(
+        new VariableExpression(var),
+        Token.newSymbol(Types.COMPARE_NOT_EQUAL, -1, -1),
+        new ConstantExpression(null));
+  }
+
+  private Statement createVariableDeclarationStatement(VariableExpression var) {
+    DeclarationExpression throwableDecl =
+        new DeclarationExpression(
+            var,
+            Token.newSymbol(Types.ASSIGN, -1, -1),
+            EmptyExpression.INSTANCE);
+
+    return new ExpressionStatement(throwableDecl);
+  }
+
+  private TryCatchStatement createCleanupTryCatch(CleanupBlock block, VariableExpression cleanupThrowable) {
+    List<Statement> cleanupStats = new ArrayList<Statement>();
+    cleanupStats.addAll(block.getAst());
+
+    TryCatchStatement tryCatchStat =
+        new TryCatchStatement(
+            new BlockStatement(cleanupStats, new VariableScope()),
+            EmptyStatement.INSTANCE);
+
+    tryCatchStat.addCatch(createThrowableAssignmentCatchStatement(cleanupThrowable));
+
+    return tryCatchStat;
+  }
+
+  private CatchStatement createThrowableAssignmentCatchStatement(VariableExpression assignmentVar) {
+    Parameter catchParameter = new Parameter(nodeCache.Throwable, "exc");
+
+    BinaryExpression assignThrowableExpr =
+        new BinaryExpression(
+            new VariableExpression(assignmentVar),
+            Token.newSymbol(Types.ASSIGN, -1, -1),
+            new VariableExpression(catchParameter));
+
+    return new CatchStatement(catchParameter,
+        new BlockStatement(
+            Collections.<Statement>singletonList(new ExpressionStatement(assignThrowableExpr)),
+            new VariableScope()));
   }
 
   // IRewriteResources members

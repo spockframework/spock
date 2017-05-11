@@ -16,8 +16,6 @@
 
 package org.spockframework.compiler;
 
-import java.util.*;
-
 import org.codehaus.groovy.ast.*;
 import org.codehaus.groovy.ast.expr.*;
 import org.codehaus.groovy.ast.stmt.*;
@@ -25,11 +23,14 @@ import org.codehaus.groovy.runtime.MetaClassHelper;
 import org.codehaus.groovy.syntax.Token;
 import org.codehaus.groovy.syntax.Types;
 import org.objectweb.asm.Opcodes;
-
 import org.spockframework.compiler.model.*;
 import org.spockframework.mock.runtime.MockController;
 import org.spockframework.runtime.SpecificationContext;
-import org.spockframework.util.*;
+import org.spockframework.util.InternalIdentifiers;
+import org.spockframework.util.ObjectUtil;
+import org.spockframework.util.ReflectionUtil;
+
+import java.util.*;
 
 /**
  * A Spec visitor responsible for most of the rewriting of a Spec's AST.
@@ -360,25 +361,54 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
             ArgumentListExpression.EMPTY_ARGUMENTS));
   }
 
+  /*
+    This emulates Java 7 try-with-resources exception handling
+
+    Throwable $spock_feature_throwable = null;
+
+    try {
+      // feature statements (setup, when/then, expect, etc. blocks)
+    } catch (Throwable $spock_tmp_throwable) {
+      $spock_feature_throwable = $spock_tmp_throwable;
+      throw $spock_tmp_throwable;
+    } finally {
+      try {
+        // feature cleanup statements (cleanup block)
+      } catch (Throwable $spock_tmp_throwable) {
+        if($spock_feature_throwable != null) {
+            $spock_feature_throwable.addSuppressed($spock_tmp_throwable);
+        } else {
+            throw $spock_tmp_throwable;
+        }
+      }
+    }
+  */
   public void visitCleanupBlock(CleanupBlock block) {
     for (Block b : method.getBlocks()) {
       if (b == block) break;
       moveVariableDeclarations(b.getAst(), method.getStatements());
     }
 
-    List<Statement> tryStats = new ArrayList<Statement>();
+    VariableExpression featureThrowableVar =
+        new VariableExpression("$spock_feature_throwable", nodeCache.Throwable);
+    method.getStatements().add(createVariableDeclarationStatement(featureThrowableVar));
+
+    List<Statement> featureStats = new ArrayList<>();
     for (Block b : method.getBlocks()) {
       if (b == block) break;
-      tryStats.addAll(b.getAst());
+      featureStats.addAll(b.getAst());
     }
 
-    List<Statement> finallyStats = new ArrayList<Statement>();
-    finallyStats.addAll(block.getAst());
+    CatchStatement featureCatchStat = createThrowableAssignmentAndRethrowCatchStatement(featureThrowableVar);
+
+    List<Statement> cleanupStats = Collections.<Statement>singletonList(
+        createCleanupTryCatch(block, featureThrowableVar));
 
     TryCatchStatement tryFinally =
         new TryCatchStatement(
-            new BlockStatement(tryStats, new VariableScope()),
-            new BlockStatement(finallyStats, new VariableScope()));
+            new BlockStatement(featureStats, new VariableScope()),
+            new BlockStatement(cleanupStats, new VariableScope()));
+    tryFinally.addCatch(featureCatchStat);
 
     method.getStatements().add(tryFinally);
 
@@ -386,6 +416,77 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
     // statements are copied to newly generated methods rather than
     // the original method
     movedStatsBackToMethod = true;
+  }
+
+  private BinaryExpression createVariableNotNullExpression(VariableExpression var) {
+    return new BinaryExpression(
+        new VariableExpression(var),
+        Token.newSymbol(Types.COMPARE_NOT_EQUAL, -1, -1),
+        new ConstantExpression(null));
+  }
+
+  private Statement createVariableDeclarationStatement(VariableExpression var) {
+    DeclarationExpression throwableDecl =
+        new DeclarationExpression(
+            var,
+            Token.newSymbol(Types.ASSIGN, -1, -1),
+            EmptyExpression.INSTANCE);
+
+    return new ExpressionStatement(throwableDecl);
+  }
+
+  private TryCatchStatement createCleanupTryCatch(CleanupBlock block, VariableExpression featureThrowableVar) {
+    List<Statement> cleanupStats = new ArrayList<>(block.getAst());
+
+    TryCatchStatement tryCatchStat =
+        new TryCatchStatement(
+            new BlockStatement(cleanupStats, new VariableScope()),
+            EmptyStatement.INSTANCE);
+
+    tryCatchStat.addCatch(createHandleSuppressedThrowableStatement(featureThrowableVar));
+
+    return tryCatchStat;
+  }
+
+  private CatchStatement createThrowableAssignmentAndRethrowCatchStatement(VariableExpression assignmentVar) {
+    Parameter catchParameter = new Parameter(nodeCache.Throwable, "$spock_tmp_throwable");
+
+    BinaryExpression assignThrowableExpr =
+        new BinaryExpression(
+            new VariableExpression(assignmentVar),
+            Token.newSymbol(Types.ASSIGN, -1, -1),
+            new VariableExpression(catchParameter));
+
+    return new CatchStatement(catchParameter,
+        new BlockStatement(
+            Arrays.asList(
+              new ExpressionStatement(assignThrowableExpr),
+              new ThrowStatement(new VariableExpression(catchParameter))),
+            new VariableScope()));
+  }
+
+  private CatchStatement createHandleSuppressedThrowableStatement(VariableExpression featureThrowableVar) {
+    Parameter catchParameter = new Parameter(nodeCache.Throwable, "$spock_tmp_throwable");
+
+
+    MethodCallExpression addSuppressedCall = new MethodCallExpression(featureThrowableVar, "addSuppressed",
+      new ArgumentListExpression(new VariableExpression(catchParameter)));
+
+    BinaryExpression featureThrowableNotNullExpr = createVariableNotNullExpression(featureThrowableVar);
+
+    List<Statement> addSuppressedStats =
+      Collections.<Statement>singletonList(new ExpressionStatement(addSuppressedCall));
+    List<Statement> throwFeatureStats =
+      Collections.<Statement>singletonList(new ThrowStatement(new VariableExpression(catchParameter)));
+
+    IfStatement ifFeatureNotNullStat = new IfStatement(new BooleanExpression(featureThrowableNotNullExpr),
+      new BlockStatement(addSuppressedStats, new VariableScope()),
+      new BlockStatement(throwFeatureStats, new VariableScope()));
+
+    return new CatchStatement(catchParameter,
+      new BlockStatement(
+        Collections.<Statement>singletonList(ifFeatureNotNullStat),
+        new VariableScope()));
   }
 
   // IRewriteResources members
@@ -405,7 +506,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
   public void defineRecorders(List<Statement> stats, boolean enableErrorCollector) {
     // recorder variable needs to be defined in outermost scope,
     // hence we insert it at the beginning of the block
-    List<Statement> allStats = new ArrayList<Statement>(stats);
+    List<Statement> allStats = new ArrayList<>(stats);
 
     stats.clear();
 
@@ -513,7 +614,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
 
   private void rewriteWhenBlockForExceptionCondition(WhenBlock block) {
     List<Statement> tryStats = block.getAst();
-    List<Statement> blockStats = new ArrayList<Statement>();
+    List<Statement> blockStats = new ArrayList<>();
     block.setAst(blockStats);
 
     blockStats.add(

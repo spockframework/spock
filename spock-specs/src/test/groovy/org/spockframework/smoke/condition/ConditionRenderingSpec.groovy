@@ -16,9 +16,8 @@
 
 package org.spockframework.smoke.condition
 
-import org.spockframework.runtime.ConditionNotSatisfiedError
 import org.spockframework.runtime.Condition
-
+import org.spockframework.runtime.ConditionNotSatisfiedError
 import spock.lang.Specification
 
 /**
@@ -36,6 +35,18 @@ abstract class ConditionRenderingSpec extends Specification {
       condition()
     } catch (ConditionNotSatisfiedError e) {
       isRendered(expectedRendering, e.condition)
+      return
+    }
+
+    assert false, "condition should have failed but didn't"
+  }
+
+  void renderedConditionContains(Closure condition, String... contents) {
+    try {
+      condition()
+    } catch (ConditionNotSatisfiedError e) {
+      String rendering = e.condition.rendering.trim()
+      contents.each { assert rendering.contains(it)}
       return
     }
 

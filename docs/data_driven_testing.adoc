@@ -6,7 +6,7 @@ Spock's data driven testing support makes this a first class feature.
 
 == Introduction
 
-Suppose we want to specify the behavior of the +Math.max+ method:
+Suppose we want to specify the behavior of the `Math.max` method:
 
 [source,groovy,indent=0]
 ----
@@ -32,8 +32,8 @@ include::{sourcedir}/datadriven/v2/MathSpec.groovy[tag=example-a]
 include::{sourcedir}/datadriven/v2/MathSpec.groovy[tag=example-b]
 ----
 
-We have finished the test logic, but still need to supply the data values to be used. This is done in a +where:+ block,
-which always comes at the end of the method. In the simplest (and most common) case, the +where:+ block holds a _data table_.
+We have finished the test logic, but still need to supply the data values to be used. This is done in a `where:` block,
+which always comes at the end of the method. In the simplest (and most common) case, the `where:` block holds a _data table_.
 
 [[data-tables]]
 == Data Tables

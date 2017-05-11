@@ -2,7 +2,9 @@
 [![Maven Central](https://img.shields.io/maven-central/v/org.spockframework/spock-core.svg?label=Maven%20Central)](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22org.spockframework%22%20AND%20a%3A%22spock-core%22)
 [![Linux Build Status](https://img.shields.io/travis/spockframework/spock/master.svg?label=Linux%20Build)](https://travis-ci.org/spockframework/spock)
 [![Windows Build Status](https://img.shields.io/appveyor/ci/spockframework/spock/master.svg?label=Windows%20Build)](https://ci.appveyor.com/project/spockframework/spock/branch/master)
+[![Codecov](https://codecov.io/gh/spockframework/spock/branch/master/graph/badge.svg)](https://codecov.io/gh/spockframework/spock)
 [![Gitter](https://badges.gitter.im/spockframework/spock.svg)](https://gitter.im/spockframework/spock?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+
 Spock Framework
 ===============
 
@@ -12,8 +14,10 @@ http://webconsole.spockframework.org.
 
 Latest Versions
 ---------------
-The latest release version is **1.1-rc-3** (1.1-groovy-2.0-rc-3, 1.1-groovy-2.3-rc-3, 1.1-groovy-2.4-rc-3), released on 2016-10-17. The
-current development version is **1.1-SNAPSHOT** (1.1-groovy-2.0-SNAPSHOT, 1.1-groovy-2.3-SNAPSHOT, 1.1-groovy-2.4-SNAPSHOT).
+The latest release version is **1.1** (1.1-groovy-2.0, 1.1-groovy-2.3, 1.1-groovy-2.4), released on 2017-05-05. The
+current development version is **1.2-SNAPSHOT** (1.2-SNAPSHOT-groovy-2.4).
+
+**NOTE:** Spock 1.2 drops support for Java 6, Groovy 2.0 and Groovy 2.3. 
 
 Releases are available from [Maven Central](https://search.maven.org/#search%7Cga%7C1%7Cspock).
 Development snapshots are available from [Sonatype OSS](https://oss.sonatype.org/content/repositories/snapshots/org/spockframework/).

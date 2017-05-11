@@ -13,14 +13,11 @@ cache:
     - $HOME/.gradle/wrapper/
 
 jdk:
-  - openjdk6
   - openjdk7
   - oraclejdk8
 
 env:
   matrix:
-    - VARIANT=2.0
-    - VARIANT=2.3
     - VARIANT=2.4
   global:
     # SIGNING_PASSWORD
@@ -30,24 +27,14 @@ env:
     # GITHUB_TOKEN
     - secure: "YhBI9LWk4AlRSOmt0aBo0TphuVIzHIVdPGClg35S1b2I6xbc0gRIVXb+ySBZIhFkqaicPFTjO2FXerXEr6SJwz5y3LvA5oBWJC4U/9FdegoP9PopZwiAKA0KLTuBMFrTAjTHAmwJePO7a8yqNCbjKfwEc9hbM64YU+sSXdUJfEU="
 
-matrix:
-  exclude:
-    # Groovy 2.0 doesn't support Java 8
-    - jdk: oraclejdk8
-      env: VARIANT=2.0
-    # Reduce Travis workload (currently 5 concurrent builds are allowed)
-    # See travisCiBuild task for mandatory combinations
-    - jdk: openjdk7
-      env: VARIANT=2.0
-    ## ensure docs only get published once otherwise it causes build to fail
-    - jdk: openjdk7
-      env: VARIANT=2.4
-    - jdk: openjdk6
-      env: VARIANT=2.4
-
 install: true
 
-script: ./gradlew --no-daemon travisCiBuild -Dvariant=$VARIANT -Dscan
+script:
+  - ./gradlew --no-daemon --version
+  - ./gradlew --no-daemon travisCiBuild -Dvariant=$VARIANT -Dscan
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
 
 notifications:
   slack:

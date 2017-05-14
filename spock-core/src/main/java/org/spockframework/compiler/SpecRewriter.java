@@ -239,7 +239,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
       AstUtil.setVisibility(method.getAst(), Opcodes.ACC_PRIVATE);
     } else if (method instanceof FeatureMethod) {
       transplantMethod(method);
-      handleWhereBlock(method);
+      handleWhereOrExamplesBlock(method);
     }
   }
 
@@ -278,15 +278,18 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
     return newMethod;
   }
 
-  // where block must be rewritten before all other blocks
+  // examples and where blocks must be rewritten before all other blocks
   // s.t. missing method parameters are added; these parameters
   // will then be used by DeepBlockRewriter
-  private void handleWhereBlock(Method method) {
+  private void handleWhereOrExamplesBlock(Method method) {
     Block block = method.getLastBlock();
-    if (!(block instanceof WhereBlock)) return;
-
-    new DeepBlockRewriter(this).visit(block);
-    WhereBlockRewriter.rewrite((WhereBlock) block, this);
+    if (block instanceof WhereBlock) {
+    	new DeepBlockRewriter(this).visit(block);
+        WhereBlockRewriter.rewrite((WhereBlock) block, this);
+    } else if (block instanceof ExamplesBlock) {
+    	new DeepBlockRewriter(this).visit(block);
+        ExamplesBlockRewriter.rewrite((ExamplesBlock) block, this);
+    }
   }
 
   public void visitMethodAgain(Method method) {
@@ -412,7 +415,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
 
     method.getStatements().add(tryFinally);
 
-    // a cleanup-block may only be followed by a where-block, whose
+    // a cleanup-block may only be followed by a where-block or an examples-block, whose
     // statements are copied to newly generated methods rather than
     // the original method
     movedStatsBackToMethod = true;

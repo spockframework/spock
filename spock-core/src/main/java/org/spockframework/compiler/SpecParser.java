@@ -216,7 +216,7 @@ public class SpecParser implements GroovyClassVisitor {
         block.getDescriptions().add(description);
 
       return block;
-		}
+    }
 
 		throw new InvalidSpecCompileException(stat, "Unrecognized block label: " + label);
   }

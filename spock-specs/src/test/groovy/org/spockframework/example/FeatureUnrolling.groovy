@@ -32,6 +32,15 @@ class FeatureUnrolling extends Specification {
     length << [4, 5, 6]
   }
 
+  def "without unrolling - using examples"() {
+    expect:
+    name.size() == length
+
+    examples:
+    name << ["Kirk", "Spock", "Scotty"]
+    length << [4, 5, 6]
+  }
+
   @Unroll
   def "with unrolling"() {
     expect:
@@ -42,12 +51,32 @@ class FeatureUnrolling extends Specification {
     length << [4, 5, 6]
   }
 
+  @Unroll
+  def "with unrolling - using examples"() {
+    expect:
+    name.size() == length
+
+    examples:
+    name << ["Kirk", "Spock", "Scotty"]
+    length << [4, 5, 6]
+  }
+
   @Unroll("length of '#name' should be #length")
   def "with unrolling and custom naming pattern"() {
     expect:
     name.size() == length
 
     where:
+    name << ["Kirk", "Spock", "Scotty"]
+    length << [4, 5, 6]
+  }
+
+  @Unroll("length of '#name' should be #length")
+  def "with unrolling and custom naming pattern - using examples"() {
+    expect:
+    name.size() == length
+
+    examples:
     name << ["Kirk", "Spock", "Scotty"]
     length << [4, 5, 6]
   }

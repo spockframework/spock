@@ -2,7 +2,7 @@ apply plugin: "maven"
 
 def basePom = {
   project {
-    name project.displayName
+    name project.ext.displayName
     description project.description
     url "http://spockframework.org"
 

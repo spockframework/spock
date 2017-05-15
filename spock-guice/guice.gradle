@@ -1,6 +1,6 @@
 apply from: script("publishMaven")
 
-displayName = "Spock Framework - Guice Module"
+ext.displayName = "Spock Framework - Guice Module"
 
 description = "Spock's Guice Module provides support for testing Guice 2/3 based applications."
 

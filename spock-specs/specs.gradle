@@ -1,4 +1,4 @@
-displayName = "Spock Framework - Specs for Core Module"
+ext.displayName = "Spock Framework - Specs for Core Module"
 
 description = "Spock specifications for the Core Module. Yes, we eat our own dog food."
 

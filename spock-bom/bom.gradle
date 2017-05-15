@@ -28,13 +28,13 @@ def modifyBom = { xml ->
   }
 }
 
-displayName = "Spock Framework - Bill of Materials"
+ext.displayName = "Spock Framework - Bill of Materials"
 
 description = '''This bill of materials provides managed spock dependencies.'''
 
 def bom = {
   project {
-    name project.displayName
+    name project.ext.displayName
     description project.description
     url "http://spockframework.org"
 

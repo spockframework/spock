@@ -1,6 +1,6 @@
 apply from: script("publishMaven")
 
-displayName = "Spock Framework - Unitils Module"
+ext.displayName = "Spock Framework - Unitils Module"
 
 description = "Spock's Unitils Module makes it possible to use Unitils together with Spock."
 

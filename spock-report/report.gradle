@@ -1,6 +1,6 @@
 apply plugin: "spock-base"
 
-displayName = "Spock Framework - Report Module"
+ext.displayName = "Spock Framework - Report Module"
 
 description = "Interactive, business-friendly HTML reports for Spock specifications."
 

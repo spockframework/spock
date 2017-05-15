@@ -1,9 +1,7 @@
-import org.gradle.api.internal.artifacts.dependencies.DefaultSelfResolvingDependency
-
 apply plugin: 'osgi'
 apply from: script("publishMaven")
 
-displayName = "Spock Framework - Core Module"
+ext.displayName = "Spock Framework - Core Module"
 
 description = '''Spock is a testing and specification framework for Java and Groovy applications.
 What makes it stand out from the crowd is its beautiful and highly expressive specification language.

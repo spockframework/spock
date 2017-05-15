@@ -26,6 +26,7 @@ env:
     - secure: "Y2PbI07I8M8k1qkwN671HdcLPPpnjATWya/m4PDIICioXkkdJrQzpj5x57efAJEWx2upI8PpgGm8ekUd2F/6l1rq0n4DnGHwGTNe1PDAXUw5qFt66RnqrfIVh2eUvPuQk6bXczLV39GksqqD1T/HS6KofknXpHKzk/JeCiiGoxI="
     # GITHUB_TOKEN
     - secure: "YhBI9LWk4AlRSOmt0aBo0TphuVIzHIVdPGClg35S1b2I6xbc0gRIVXb+ySBZIhFkqaicPFTjO2FXerXEr6SJwz5y3LvA5oBWJC4U/9FdegoP9PopZwiAKA0KLTuBMFrTAjTHAmwJePO7a8yqNCbjKfwEc9hbM64YU+sSXdUJfEU="
+    - GRADLE_OPTS: "-Xmx768m -Xms256m -Xss1m"
 
 install: true
 

@@ -4,3 +4,4 @@
 :sourcedir-spring: ../spock-spring/src/test/groovy/org/spockframework/spring/docs
 :resourcedir-spring: ../spock-spring/src/test/resources/org/spockframework/spring/docs
 :sourcedir-spring-boot: ../spock-spring/boot-test/src/test/groovy/org/spockframework/boot
+:sectlinks: true

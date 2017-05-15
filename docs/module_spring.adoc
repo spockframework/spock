@@ -56,7 +56,7 @@ include::{sourcedir-spring-boot}/WebMvcTestIntegrationSpec.groovy[tag=include]
 ----
 
 
-For more examples see the specs in the https://github.com/spockframework/spock/tree/master/spock-spring/src/test/groovy/org/spockframework/spring[codebase] and https://github.com/spockframework/spock/tree/master/spock-spring/src/test/groovy/org/spockframework/spring/boot-test[boot examples].
+For more examples see the specs in the https://github.com/spockframework/spock/tree/master/spock-spring/src/test/groovy/org/spockframework/spring[codebase] and https://github.com/spockframework/spock/tree/master/spock-spring/boot-test/src/test/groovy/org/spockframework/boot[boot examples].
 
 == Scopes
 

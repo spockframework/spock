@@ -38,8 +38,12 @@ public class SpringInterceptor extends AbstractMethodInterceptor {
   }
 
   @Override
-  public void interceptSetupMethod(IMethodInvocation invocation) throws Throwable {
+  public void interceptInitializerMethod(IMethodInvocation invocation) throws Throwable {
     manager.prepareTestInstance(invocation.getInstance());
+  }
+
+  @Override
+  public void interceptSetupMethod(IMethodInvocation invocation) throws Throwable {
     exception = null;
     beforeTestMethodInvoked = true;
     manager.beforeTestMethod(invocation.getInstance(),

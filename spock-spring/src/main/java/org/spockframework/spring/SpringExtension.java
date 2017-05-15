@@ -72,6 +72,7 @@ public class SpringExtension extends AbstractGlobalExtension {
     });
 
     spec.addSetupSpecInterceptor(interceptor);
+    spec.addInitializerInterceptor(interceptor);
     spec.addSetupInterceptor(interceptor);
     spec.addCleanupInterceptor(interceptor);
     spec.addCleanupSpecInterceptor(interceptor);

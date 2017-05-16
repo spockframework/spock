@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns="http://www.spockframework.org/spring"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:beans="http://www.springframework.org/schema/beans"
+           xmlns:spock="http://www.spockframework.org/spring"
+           targetNamespace="http://www.spockframework.org/spring"
+           elementFormDefault="qualified" attributeFormDefault="unqualified">
+
+    <xs:import namespace="http://www.springframework.org/schema/beans"
+               schemaLocation="http://www.springframework.org/schema/beans/spring-beans.xsd"/>
+
+    <xs:complexType name="mockDefinitionType">
+        <xs:complexContent>
+            <xs:extension base="beans:identifiedType">
+                <xs:attribute name="class" type="xs:string" use="required">
+                    <xs:annotation>
+                        <xs:documentation source="java:java.lang.Class">
+                            <![CDATA[ The fully qualified name of the mocks class. ]]>
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+	<xs:complexType name="wrapWithSpyDefinitionType">
+		<xs:attribute name="ref" use="required">
+			<xs:annotation>
+				<xs:documentation>
+                       <![CDATA[ The bean id that you would like to wrap with a spy. ]]>
+				</xs:documentation>
+			</xs:annotation>
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:minLength value="1" />
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+
+    <xs:element name="mock" type="spock:mockDefinitionType"/>
+    <xs:element name="spy" type="spock:mockDefinitionType"/>
+    <xs:element name="stub" type="spock:mockDefinitionType"/>
+    <xs:element name="wrapWithSpy" type="wrapWithSpyDefinitionType"/>
+</xs:schema>

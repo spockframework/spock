@@ -1,4 +1,5 @@
 = Spock Primer
+include::include.adoc[]
 
 This chapter assumes that you have a basic knowledge of Groovy and unit testing. If you are a Java developer but haven't
 heard about Groovy, don't worry - Groovy will feel very familiar to you! In fact, one of Groovy's main design goals is to
@@ -94,11 +95,18 @@ def cleanupSpec() {}   // run after the last feature method
 ----
 
 Fixture methods are responsible for setting up and cleaning up the environment in which feature methods are run.
-Usually it's a good idea to use a fresh fixture for every feature method, which is what the `setup()` and `cleanup()`
-methods are for. Occasionally it makes sense for feature methods to share a fixture, which is achieved by using shared
-fields together with the `setupSpec()` and `cleanupSpec()` methods. All fixture methods are optional.
+Usually it's a good idea to use a fresh fixture for every feature method, which is what the `setup()` and `cleanup()` methods are for.
 
-Note: The `setupSpec()` and `cleanupSpec()` methods may not reference instance fields.
+All fixture methods are optional.
+
+Occasionally it makes sense for feature methods to share a fixture, which is achieved by using shared
+fields together with the `setupSpec()` and `cleanupSpec()` methods.
+Note that `setupSpec()` and `cleanupSpec()` _may not_ reference instance fields unless they are annotated with `@Shared`.
+
+If fixture methods are overridden in a specification subclass then `setup()` of the superclass will run before `setup()` of the subclass.
+`cleanup()` works in reverse order, that is `cleanup()` of the subclass will execute before `cleanup()` of the superclass.
+`setupSpec()` and `cleanupSpec()` behave in the same way.
+There is no need to explicitly call `super.setup()` or `super.cleanup()` as Spock will automatically find and execute fixture methods at all levels in an inheritance heirarchy.
 
 == Feature Methods
 
@@ -401,6 +409,8 @@ def "computing the maximum of two numbers"() {
 This `where` block effectively creates two "versions" of the feature method: One where `a` is 5, `b` is 1, and `c` is 5,
 and another one where `a` is 3, `b` is 9, and `c` is 9.
 
+Although it is declared last the `where` block is evaluated before feature method runs.
+
 The `where` block will be further explained in the <<data_driven_testing.adoc#,Data Driven Testing>> chapter.
 
 == Helper Methods
@@ -489,6 +499,47 @@ and helper methods can increase the coupling between feature methods. If you reu
 end up with specifications that are fragile and hard to evolve.
 
 [[specs-as-doc]]
+
+== Using `with` for expectations
+
+As an alternative to the above helper methods, you can use a `with(target, closure)` method to interact on the object being verified.
+This is especially useful in `then` and `expect` blocks.
+
+[source,groovy]
+----
+def "offered PC matches preferred configuration"() {
+  when:
+  def pc = shop.buyPc()
+
+  then:
+  with(pc) {
+    vendor == "Sunny"
+    clockRate >= 2333
+    ram >= 406
+    os == "Linux"
+  }
+}
+----
+
+Unlike when you use helper methods, there is no need for explicit assert statements for proper error reporting.
+
+When verifying mocks, a `with` statement can also cut out verbose verification statements.
+
+[source,groovy]
+----
+def service = Mock(Service) // has start(), stop(), and doWork() methods
+def app = new Application(service) // controls the lifecycle of the service
+
+when:
+app.run()
+
+then:
+with(service) {
+  1 * start()
+  1 * doWork()
+  1 * stop()
+}
+----
 == Specifications as Documentation
 
 Well-written specifications are a valuable source of information. Especially for higher-level specifications targeting

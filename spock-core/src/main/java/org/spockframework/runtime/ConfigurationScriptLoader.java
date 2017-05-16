@@ -116,10 +116,15 @@ public class ConfigurationScriptLoader {
     if (url == null) return null;
 
     GroovyShell shell = createShell();
+    GroovyCodeSource codeSource = null;
+    // try block below for compatibility pre/post Groovy 2.4.7 (see GROOVY-8126)
     try {
-      return (DelegatingScript) shell.parse(new GroovyCodeSource(url));
-    } catch (IOException e) {
+      codeSource = new GroovyCodeSource(url);
+    } catch (Exception e) {
       throw new ConfigurationException("Error reading configuration script '%s'", location);
+    }
+    try {
+      return (DelegatingScript) shell.parse(codeSource);
     } catch (CompilationFailedException e) {
       throw new ConfigurationException("Error compiling configuration script '%s'", location);
     }

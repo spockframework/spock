@@ -36,6 +36,12 @@ import spock.lang.Specification;
 @Beta
 public class EmptyOrDummyResponse implements IDefaultResponse {
   public static final EmptyOrDummyResponse INSTANCE = new EmptyOrDummyResponse();
+  private static final Class<?> OPTIONAL = ReflectionUtil.loadClassIfAvailable("java.util.Optional");
+  private static final Method optionalEmptyMethod;
+
+  static {
+    optionalEmptyMethod = OPTIONAL == null ? null : ReflectionUtil.getDeclaredMethodByName(OPTIONAL, "empty");
+  }
 
   private EmptyOrDummyResponse() {}
 
@@ -82,6 +88,8 @@ public class EmptyOrDummyResponse implements IDefaultResponse {
       if (returnType == GString.class) return GString.EMPTY;
       // continue on
     }
+
+    if (returnType == OPTIONAL) return ReflectionUtil.invokeMethod(null, optionalEmptyMethod);
 
     Object emptyWrapper = createEmptyWrapper(returnType);
     if (emptyWrapper != null) return emptyWrapper;

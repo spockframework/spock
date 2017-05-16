@@ -23,12 +23,12 @@ import java.util.Set;
 
 /**
  * Identifiers used throughout the core.
- * 
+ *
  * @author Peter Niederwieser
  */
 public abstract class Identifiers {
   // Tokens -------------------------------------------------------------------
-  
+
   public static final String SETUP = "setup";
 
   public static final String GIVEN = "given";
@@ -61,7 +61,7 @@ public abstract class Identifiers {
   public static final String SETUP_METHOD = "setup";
 
   public static final String CLEANUP_METHOD = "cleanup";
-  
+
   /**
    * Method name identifying a fixture method that is executed before each spec.
    */
@@ -72,12 +72,14 @@ public abstract class Identifiers {
    */
   public static final String CLEANUP_SPEC_METHOD = "cleanupSpec";
 
-  public static final List<String> FIXTURE_METHODS = Arrays.asList(SETUP_METHOD, CLEANUP_METHOD, 
+  public static final List<String> FIXTURE_METHODS = Arrays.asList(SETUP_METHOD, CLEANUP_METHOD,
 		  SETUP_SPEC_METHOD, CLEANUP_SPEC_METHOD);
 
   public static final String GET_SPECIFICATION_CONTEXT = "getSpecificationContext";
 
   public static final String WITH = "with";
+
+  public static final String VERIFY_ALL = "verifyAll";
 
   public static final String STUB = "Stub";
   public static final String MOCK = "Mock";
@@ -95,7 +97,7 @@ public abstract class Identifiers {
   public static final String OLD = "old";
 
   public static final Set<String> BUILT_IN_METHODS = new HashSet<String>(Arrays.asList(THROWN, NOT_THROWN,
-      NO_EXCEPTION_THROWN, OLD, WITH, INTERACTION, STUB, MOCK, SPY, GROOVY_STUB, GROOVY_MOCK, GROOVY_SPY));
+      NO_EXCEPTION_THROWN, OLD, WITH, VERIFY_ALL, INTERACTION, STUB, MOCK, SPY, GROOVY_STUB, GROOVY_MOCK, GROOVY_SPY));
 
   public static final Set<String> TEST_DOUBLE_METHODS = new HashSet<String>(
       Arrays.asList(STUB, MOCK, SPY, GROOVY_STUB, GROOVY_MOCK, GROOVY_SPY));

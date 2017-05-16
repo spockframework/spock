@@ -1,12 +1,18 @@
+include "spock-bom"
 include "spock-core"
 include "spock-specs"
 include "spock-spring"
-include "spock-spring:boot-test"
+include "spock-spring:spring2-test"
+include "spock-spring:spring3-test"
 include "spock-guice"
 include "spock-tapestry"
 include "spock-unitils"
 include "spock-report"
 include "spock-gradle"
+
+if (JavaVersion.current().java7Compatible) {
+  include "spock-spring:boot-test"
+}
 
 rootProject.name = "spock"
 nameBuildScriptsAfterProjectNames(rootProject.children)

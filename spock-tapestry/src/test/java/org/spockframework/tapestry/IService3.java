@@ -17,5 +17,5 @@
 package org.spockframework.tapestry;
 
 public interface IService3 {
-  public String generateString();
+  String generateString();
 }

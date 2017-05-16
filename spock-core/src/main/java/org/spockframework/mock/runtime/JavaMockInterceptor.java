@@ -28,7 +28,8 @@ import spock.lang.Specification;
 
 public class JavaMockInterceptor implements IProxyBasedMockInterceptor {
   private final IMockConfiguration mockConfiguration;
-  private final Specification specification;
+  private Specification specification;
+  private MockController fallbackMockController;
   private final MetaClass mockMetaClass;
 
   public JavaMockInterceptor(IMockConfiguration mockConfiguration, Specification specification, MetaClass mockMetaClass) {
@@ -39,7 +40,7 @@ public class JavaMockInterceptor implements IProxyBasedMockInterceptor {
 
   public Object intercept(Object target, Method method, Object[] arguments, IResponseGenerator realMethodInvoker) {
     IMockObject mockObject = new MockObject(mockConfiguration.getName(), mockConfiguration.getExactType(),
-        target, mockConfiguration.isVerified(), false, mockConfiguration.getDefaultResponse(), specification);
+        target, mockConfiguration.getInstance(), mockConfiguration.isVerified(), false, mockConfiguration.getDefaultResponse(), specification, this);
 
     if (method.getDeclaringClass() == ISpockMockObject.class) {
       return mockObject;
@@ -67,13 +68,30 @@ public class JavaMockInterceptor implements IProxyBasedMockInterceptor {
 
     IMockMethod mockMethod = new StaticMockMethod(method, mockConfiguration.getExactType());
     IMockInvocation invocation = new MockInvocation(mockObject, mockMethod, Arrays.asList(normalizedArgs), realMethodInvoker);
-    IMockController mockController = specification.getSpecificationContext().getMockController();
+    IMockController mockController = specification == null ? getFallbackMockController() :
+                                                             specification.getSpecificationContext().getMockController();
 
     return mockController.handle(invocation);
   }
 
   private boolean isMethod(Method method, String name, Class<?>... parameterTypes) {
     return method.getName().equals(name) && Arrays.equals(method.getParameterTypes(), parameterTypes);
+  }
+
+	public void attach(Specification specification) {
+		this.specification = specification;
+
+	}
+
+	public void detach() {
+	  this.specification = null;
+	}
+
+	public MockController getFallbackMockController() {
+	  if (fallbackMockController == null) {
+	    fallbackMockController = new MockController();
+	  }
+    return fallbackMockController;
   }
 }
 

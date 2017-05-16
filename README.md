@@ -1,7 +1,9 @@
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/spockframework/spock/blob/master/LICENSE)
-[![Maven Central](https://img.shields.io/maven-central/v/org.spockframework/spock-core.svg?label=Maven Central)](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22org.spockframework%22%20AND%20a%3A%22spock-core%22)
-[![Linux Build Status](https://img.shields.io/travis/spockframework/spock/master.svg?label=Linux Build)](https://travis-ci.org/spockframework/spock)
-[![Windows Build Status](https://img.shields.io/appveyor/ci/spockframework/spock/master.svg?label=Windows Build)](https://ci.appveyor.com/project/spockframework/spock/branch/master)
+[![Maven Central](https://img.shields.io/maven-central/v/org.spockframework/spock-core.svg?label=Maven%20Central)](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22org.spockframework%22%20AND%20a%3A%22spock-core%22)
+[![Linux Build Status](https://img.shields.io/travis/spockframework/spock/master.svg?label=Linux%20Build)](https://travis-ci.org/spockframework/spock)
+[![Windows Build Status](https://img.shields.io/appveyor/ci/spockframework/spock/master.svg?label=Windows%20Build)](https://ci.appveyor.com/project/spockframework/spock/branch/master)
+[![Codecov](https://codecov.io/gh/spockframework/spock/branch/master/graph/badge.svg)](https://codecov.io/gh/spockframework/spock)
+[![Gitter](https://badges.gitter.im/spockframework/spock.svg)](https://gitter.im/spockframework/spock?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 Spock Framework
 ===============
@@ -12,8 +14,10 @@ http://webconsole.spockframework.org.
 
 Latest Versions
 ---------------
-The latest release version is **1.0** (1.0-groovy-2.0, 1.0-groovy-2.3, 1.0-groovy-2.4), released on 2015-03-02. The
-current development version is **1.1-SNAPSHOT** (1.1-groovy-2.0-SNAPSHOT, 1.1-groovy-2.3-SNAPSHOT, 1.1-groovy-2.4-SNAPSHOT).
+The latest release version is **1.1** (1.1-groovy-2.0, 1.1-groovy-2.3, 1.1-groovy-2.4), released on 2017-05-05. The
+current development version is **1.2-SNAPSHOT** (1.2-SNAPSHOT-groovy-2.4).
+
+**NOTE:** Spock 1.2 drops support for Java 6, Groovy 2.0 and Groovy 2.3. 
 
 Releases are available from [Maven Central](https://search.maven.org/#search%7Cga%7C1%7Cspock).
 Development snapshots are available from [Sonatype OSS](https://oss.sonatype.org/content/repositories/snapshots/org/spockframework/).
@@ -31,10 +35,30 @@ Modules
 
 Building
 --------
-The only prerequisite is JDK 6 or higher.
 
-After cloning the project, type `./gradlew clean build` (Windows: `gradlew clean build`). All build dependencies,
-including the [build tool](http://www.gradle.org) itself, will be downloaded automatically (unless already present).
+### Supported versions
+Spock is supported for Java version 6, 7, and 8.
+Spock is supported for Groovy version 2.0 (Not supported for Java 8+), 2.3, 2.4
+
+The tests are testing spock with a specific versions (variants) of groovy. Default is groovy version 2.4
+
+The groovy 2.4 variant should pass on all supported JDK versions:
+
+```
+./gradlew clean build
+```
+
+(Windows: `gradlew clean build`).
+All build dependencies, including
+the [build tool](http://www.gradle.org) itself, will be downloaded
+automatically (unless already present).
+
+If you are using JDK 6 or 7 you can specify groovy version 2.0 with
+using `-Dvariant=2.0` and it should pass as well:
+
+```
+./gradlew clean build -Dvariant=2.0
+```
 
 Contributing
 ------------

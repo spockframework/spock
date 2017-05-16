@@ -1,4 +1,5 @@
 = Migration Guide
+include::include.adoc[]
 
 This page explains incompatible changes between successive versions and provides suggestions on how to deal with them.
 

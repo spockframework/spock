@@ -22,12 +22,22 @@ import spock.lang.Specification
 
 class JUnitTestRuleOrder extends Specification {
   List log = []
-  @Rule LoggingRule rule1 = new LoggingRule(log: log, msg: "rule1")
-  @Rule LoggingRule rule2 = new LoggingRule(log: log, msg: "rule2")
+  @Rule LoggingRule rule1 = new LoggingRule(log: log, msg: "testRule1")
+  @Rule LoggingRule rule2 = new LoggingRule(log: log, msg: "testRule2")
+
+  def setup() {
+    // expect: setup is called during base.evaluate()
+    assert log == ["testRule2: before", "testRule1: before"]
+  }
 
   def "rules declared later wrap around rules declared earlier"() {
     expect:
-    log == ["rule2", "rule1"]
+    log == ["testRule2: before", "testRule1: before"]
+  }
+
+  def cleanup() {
+    // expect: cleanup is called before base.evaluate() leaves
+    assert log == ["testRule2: before", "testRule1: before"]
   }
 
   static class LoggingRule implements TestRule {
@@ -38,8 +48,9 @@ class JUnitTestRuleOrder extends Specification {
       new Statement() {
         @Override
         void evaluate() {
-          log << msg
+          log << "$msg: before"
           base.evaluate()
+          log << "$msg: after"
         }
       }
     }

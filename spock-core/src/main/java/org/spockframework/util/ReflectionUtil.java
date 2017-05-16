@@ -14,13 +14,14 @@
 
 package org.spockframework.util;
 
+import org.spockframework.gentyref.GenericTypeReflector;
+
 import java.io.File;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-
-import org.spockframework.gentyref.GenericTypeReflector;
 
 public abstract class ReflectionUtil {
   /**
@@ -61,8 +62,40 @@ public abstract class ReflectionUtil {
     return false;
   }
 
+  public static boolean isAnnotationPresentRecursive(Class<?> cls, Class<? extends Annotation> annotationClass) {
+    return cls.isAnnotationPresent(annotationClass) ||
+      (Object.class.equals(cls) ? false : isAnnotationPresentRecursive(cls.getSuperclass(), annotationClass));
+  }
+
+  public static <T extends Annotation> T getAnnotationRecursive(Class<?> cls, Class<T> annotationClass) {
+    T annotation = cls.getAnnotation(annotationClass);
+    if (annotation != null) return annotation;
+    if (Object.class.equals(cls)) return null;
+    return getAnnotationRecursive(cls.getSuperclass(), annotationClass);
+  }
+
   public static boolean isFinalMethod(Method method) {
     return Modifier.isFinal(method.getDeclaringClass().getModifiers() | method.getModifiers());
+  }
+
+  /**
+   * Returns {@code true} if the argument {@code m} is a default method; returns {@code false} otherwise.
+   * <br/>This method is used instead of {@link Method#isDefault()} in order to preserve the compatibility with Java versions prior to Java 8.
+   *
+   * @param m the method to be checked whether it is default or not
+   * @return true if and only if the argument {@code m} is a default method as defined by the Java Language Specification.
+   */
+  public static boolean isDefault(Method m) {
+    // Default methods are public non-abstract instance methods declared in an interface.
+    return ((m.getModifiers() & (Modifier.ABSTRACT | Modifier.PUBLIC | Modifier.STATIC)) ==
+      Modifier.PUBLIC) && m.getDeclaringClass().isInterface();
+  }
+
+  /**
+   * Returns {@code true} if the argument {@code m} is a public method of java.lang.Object.
+   */
+  public static boolean isObjectMethod(Method m) {
+    return Arrays.asList(Object.class.getMethods()).contains(m);
   }
 
   /**
@@ -117,24 +150,25 @@ public abstract class ReflectionUtil {
     return clazzFile.isFile() ? clazzFile : null;
   }
 
+  @Nullable
   public static Object getDefaultValue(Class<?> type) {
     if (!type.isPrimitive()) return null;
 
-    if (type == boolean.class) return false;
-    if (type == int.class) return 0;
-    if (type == long.class) return 0l;
-    if (type == float.class) return 0f;
-    if (type == double.class) return 0d;
-    if (type == char.class) return (char) 0;
-    if (type == short.class) return (short) 0;
-    if (type == byte.class) return (byte) 0;
+    else if (type == boolean.class) return false;
+    else if (type == int.class) return 0;
+    else if (type == long.class) return 0L;
+    else if (type == float.class) return 0F;
+    else if (type == double.class) return 0D;
+    else if (type == char.class) return (char) 0;
+    else if (type == short.class) return (short) 0;
+    else if (type == byte.class) return (byte) 0;
 
     assert type == void.class;
     return null;
   }
 
   public static boolean hasAnyOfTypes(Object value, Class<?>... types) {
-    for (Class<?> type : types) 
+    for (Class<?> type : types)
       if (type.isInstance(value)) return true;
 
     return false;
@@ -150,6 +184,7 @@ public abstract class ReflectionUtil {
   @Nullable
   public static Object invokeMethod(@Nullable Object target, Method method, @Nullable Object... args) {
     try {
+      validateArguments(method, args);
       return method.invoke(target, args);
     } catch (IllegalAccessException e) {
       ExceptionUtil.sneakyThrow(e);
@@ -158,6 +193,40 @@ public abstract class ReflectionUtil {
       ExceptionUtil.sneakyThrow(e.getCause());
       return null; // never reached
     }
+  }
+
+  public static void validateArguments(Method method, Object[] args) {
+    if (!hasValidArguments(args, method.getParameterTypes()))
+      throw new IllegalArgumentException(
+        String.format("Method '%s(%s)' can't be called with parameters '%s'!",
+                      method.getName(), Arrays.toString(method.getParameterTypes()), Arrays.toString(args)));
+  }
+
+  public static boolean hasValidArguments(Object[] args, Class<?>[] parameterTypes) {
+    if (parameterTypes.length != args.length)
+      return false;
+
+    for (int i = 0; i < parameterTypes.length; i++) {
+      if (!isAssignable(parameterTypes[i], args[i]))
+        return false;
+    }
+
+    return true;
+  }
+
+  public static boolean isAssignable(Class<?> type, @Nullable Object arg) {
+    if (arg == null)
+      return !type.isPrimitive();
+
+    type = getWrapperType(type);
+    Class<?> argType = getWrapperType(arg.getClass());
+    return type.isAssignableFrom(argType);
+  }
+
+  @SuppressWarnings("ConstantConditions")
+  private static Class<?> getWrapperType(Class<?> type) {
+    return type.isPrimitive() ? getDefaultValue(type).getClass()
+                              : type;
   }
 
   public static List<Class<?>> eraseTypes(List<Type> types) {

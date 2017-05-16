@@ -396,6 +396,7 @@ public class BaseSpecRunner {
     runSetup(spec.getSuperSpec());
     for (MethodInfo method : spec.getSetupMethods()) {
       if (runStatus != OK) return;
+      method.setFeature(currentFeature);
       invoke(currentInstance, method);
     }
   }

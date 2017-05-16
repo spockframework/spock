@@ -21,6 +21,8 @@ import java.util.*;
 import org.codehaus.groovy.ast.*;
 import org.codehaus.groovy.ast.expr.*;
 import org.codehaus.groovy.ast.stmt.*;
+import org.codehaus.groovy.runtime.dgmimpl.arrays.*;
+
 import org.objectweb.asm.Opcodes;
 
 import org.spockframework.lang.Wildcard;
@@ -36,6 +38,8 @@ import spock.lang.Specification;
  * @author Peter Niederwieser
  */
 public abstract class AstUtil {
+  private static String GET_AT_METHOD_NAME = new IntegerArrayGetAtMetaMethod().getName();
+
   /**
    * Tells whether the given node has an annotation of the given type.
    *
@@ -310,6 +314,12 @@ public abstract class AstUtil {
 
   public static void fixUpLocalVariables(Variable[] localVariables, VariableScope scope, boolean isClosureScope) {
     fixUpLocalVariables(Arrays.asList(localVariables), scope, isClosureScope);
+  }
+
+  public static MethodCallExpression createGetAtMethod(Expression expression, int index) {
+    return new MethodCallExpression(expression,
+                                    GET_AT_METHOD_NAME,
+                                    new ConstantExpression(index));
   }
 
   /**

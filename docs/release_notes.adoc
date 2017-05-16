@@ -1,4 +1,76 @@
 = Release Notes
+include::include.adoc[]
+
+== 1.1 (2017-05-01)
+
+=== What's New In This release
+
+* Update docs to include info/examples for Spying instantiated objects
+* Fix integer overflow that could occur when the OutOfMemoryError protection while comparing huge strings kicked in
+* Improve rendering for OutOfMemoryError protection
+
+== 1.1-rc-4 (2017-03-28)
+
+This should be the last rc for 1.1
+
+=== What's New In This release
+
+* 15 merged pull requests
+* Spies can now be created with an already existing target
+* Fix for scoped Spring Beans
+* Fix incompatibility with Spring 2/3 that was introduced in 1.1-rc-1
+* Fix groovy compatibility
+* Fix ByteBuddy compatibility
+* Fix OutOfMemoryError when comparing huge strings
+* Improve default response for `java.util.Optional<T>`, will now return empty optional
+* Improve detection of Spring Boot tests
+* Improve documentation for global extensions
+
+Thanks to all the contributors to this release: Taylor Wicksell, Rafael Winterhalter, Marcin Zajączkowski, Eduardo Grajeda, Paul King, Andrii, Björn Kautler, Libor Rysavy
+
+Known issues with groovy 2.4.10 which breaks a smoke test, but should have little impact on normal use (#709).
+
+== 1.1-rc-3 (released 2016-10-17)
+
+Adds compatibility with ByteBuddy as an alternative to cglib for generating mocks and stubs for classes.
+
+== 1.1-rc-2 (released 2016-08-22)
+
+1.1 should be here soon but in the meantime there's a new release candidate.
+
+=== What's New In This release
+
+* Support for the new test annotations in Spring Boot 1.4.
+* Fixed the integration of JUnit method rules which now correctly happen "outside" the `setup` / `cleanup` methods.
+
+Thanks to all the contributors to this release: Jochen Berger, Leonard Brünings, Mariusz Gilewicz, Tomasz Juchniewicz, Gamal Mateo, Tobias Schulte, Florian Wilhelm, Kevin Wittek
+
+== 1.1-rc-1 (released 2016-06-30)
+
+A number of excellent pull requests have been integrated into the 1.1 stream.
+Currently some features are incubating.
+We encourage users to try out these new features and provide feedback so we can finalize the content for a 1.1 release.
+
+=== What's New In This release
+
+* 44 merged pull requests
+* The `verifyAll` method can be used to assert multiple boolean expressions _without_ short-circuiting those after a failure.
+For example:
+[source,groovy]
+----
+then:
+verifyAll {
+  a == b
+  b == c
+}
+----
+* Detached mocks via the `DetachedMockFactory` and `SpockMockFactoryBean` classes see the <<module_spring.adoc#_spring_module,Spring Module Docs>>.
+* Cells in a data table can refer to the current value for a column to the left.
+* `Spy` can be used to create partial mocks for Java 8 interfaces with `default` methods just as it can for abstract classes.
+* Improved power assert output when an exception occurs evaluating an assertion.
+* A new `@PendingFeature` annotation to distinguish incomplete functionality from features with `@Ignore`.
+
+Special thanks to all the contributors to this release: Dmitry Andreychuk, Aseem Bansal, Daniel Bechler, Fedor Bobin, Leonard Brünings, Leonard Daume, Marcin Erdmann, Jarl Friis, Søren Berg Glasius, Serban Iordache, Michal Kordas, Pap Lőrinc, Vlad Muresan, Etienne Neveu, Glyn Normington, David Norton, Magnus Palmér, Gus Power, Oliver Reissig, Kevin Wittek and Marcin Zajączkowski
 
 == 1.0 (released 2015-03-02)
 
@@ -148,9 +220,9 @@ Documentation for the latest Spock snapshot is at http://docs.spockframework.org
 As of Spock 0.7, the chapters on <<data_driven_testing.adoc#,Data Driven Testing>> and
 <<interaction_based_testing.adoc#,Interaction Based Testing>> are complete.
 
-=== Improved Mocking Failure Message for +TooManyInvocationsError+
+=== Improved Mocking Failure Message for `TooManyInvocationsError`
 
-The diagnostic message accompanying a +TooManyInvocationsError+ has been greatly improved.
+The diagnostic message accompanying a `TooManyInvocationsError` has been greatly improved.
 Here is an example:
 
 ----
@@ -467,7 +539,7 @@ supports rules implementing the new `org.junit.rules.TestRule` interface. Also s
 annotation. Rule declarations are now verified and can leave off the initialization part. I that case Spock will
 automatically initialize the rule by calling the default constructor. The `@TestName` rule, and rules in general, now
 honor the `@Unroll` annotation and any defined naming pattern.
- 
+
 See https://code.google.com/p/spock/issues/detail?id=240[Issue 240] for a known limitation with Spock's TestRule support.
 
 === Condition Rendering Improvements
@@ -592,4 +664,3 @@ required; the only prerequisite for building Spock is a JDK installation (1.5 or
 === Fixed Issues
 
 See the https://code.google.com/p/spock/issues/list?can=1&q=label%3AMilestone-0.6[issue tracker] for a list of fixed issues.
-

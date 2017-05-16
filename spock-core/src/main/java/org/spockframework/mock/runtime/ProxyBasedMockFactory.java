@@ -18,6 +18,17 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
+
+import net.bytebuddy.ByteBuddy;
+import net.bytebuddy.NamingStrategy;
+import net.bytebuddy.TypeCache;
+import net.bytebuddy.description.modifier.SynchronizationState;
+import net.bytebuddy.description.modifier.Visibility;
+import net.bytebuddy.dynamic.Transformer;
+import net.bytebuddy.implementation.FieldAccessor;
+import net.bytebuddy.implementation.MethodDelegation;
+import net.bytebuddy.implementation.bind.annotation.Morph;
 
 import net.sf.cglib.proxy.*;
 
@@ -27,6 +38,9 @@ import org.spockframework.runtime.InvalidSpecException;
 import org.spockframework.util.Nullable;
 import org.spockframework.util.ReflectionUtil;
 
+import static net.bytebuddy.matcher.ElementMatchers.any;
+import static net.bytebuddy.matcher.ElementMatchers.none;
+
 /**
  * Some implementation details of this class are inspired from Spring, EasyMock
  * Class Extensions, JMock, Mockito, and this thread:
@@ -35,6 +49,8 @@ import org.spockframework.util.ReflectionUtil;
  * @author Peter Niederwieser
  */
 public class ProxyBasedMockFactory {
+  private static final boolean ignoreByteBuddy = Boolean.getBoolean("org.spockframework.mock.ignoreByteBuddy");
+  private static final boolean byteBuddyAvailable = ReflectionUtil.isClassAvailable("net.bytebuddy.ByteBuddy");
   private static final boolean cglibAvailable = ReflectionUtil.isClassAvailable("net.sf.cglib.proxy.Enhancer");
 
   public static ProxyBasedMockFactory INSTANCE = new ProxyBasedMockFactory();
@@ -45,12 +61,15 @@ public class ProxyBasedMockFactory {
 
     if (mockType.isInterface()) {
       proxy = createDynamicProxyMock(mockType, additionalInterfaces, constructorArgs, mockInterceptor, classLoader);
+    } else if (byteBuddyAvailable && !ignoreByteBuddy) {
+      proxy = ByteBuddyMockFactory.createMock(mockType, additionalInterfaces,
+        constructorArgs, mockInterceptor, classLoader, useObjenesis);
     } else if (cglibAvailable) {
       proxy = CglibMockFactory.createMock(mockType, additionalInterfaces,
           constructorArgs, mockInterceptor, classLoader, useObjenesis);
     } else {
       throw new CannotCreateMockException(mockType,
-          ". Mocking of non-interface types requires the CGLIB library. Please put cglib-nodep-2.2 or higher on the class path."
+          ". Mocking of non-interface types requires a code generation library. Please put byte-buddy-1.6.4 or cglib-nodep-3.2 or higher on the class path."
       );
     }
 
@@ -71,6 +90,50 @@ public class ProxyBasedMockFactory {
         interfaces.toArray(new Class<?>[interfaces.size()]),
         new DynamicProxyMockInterceptorAdapter(mockInterceptor)
     );
+  }
+
+  // inner class to defer class loading
+  private static class ByteBuddyMockFactory {
+
+    private static final TypeCache<TypeCache.SimpleKey> CACHE =
+      new TypeCache.WithInlineExpunction<TypeCache.SimpleKey>(TypeCache.Sort.SOFT);
+
+    static Object createMock(final Class<?> type,
+                             final List<Class<?>> additionalInterfaces,
+                             @Nullable List<Object> constructorArgs,
+                             IProxyBasedMockInterceptor interceptor,
+                             final ClassLoader classLoader,
+                             boolean useObjenesis) {
+
+      Class<?> enhancedType = CACHE.findOrInsert(classLoader,
+        new TypeCache.SimpleKey(type, additionalInterfaces),
+        new Callable<Class<?>>() {
+          @Override
+          public Class<?> call() throws Exception {
+            return new ByteBuddy()
+              .with(new NamingStrategy.SuffixingRandom("SpockMock"))
+              .ignore(none())
+              .subclass(type)
+              .implement(additionalInterfaces)
+              .implement(ISpockMockObject.class)
+              .method(any())
+              .intercept(MethodDelegation.withDefaultConfiguration()
+                .withBinders(Morph.Binder.install(ByteBuddyInvoker.class))
+                .to(ByteBuddyInterceptorAdapter.class))
+              .transform(Transformer.ForMethod.withModifiers(SynchronizationState.PLAIN, Visibility.PUBLIC)) // Overridden methods should be public and non-synchronized.
+              .implement(ByteBuddyInterceptorAdapter.InterceptorAccess.class)
+              .intercept(FieldAccessor.ofField("$spock_interceptor"))
+              .defineField("$spock_interceptor", IProxyBasedMockInterceptor.class, Visibility.PRIVATE)
+              .make()
+              .load(classLoader)
+              .getLoaded();
+          }
+        }, CACHE);
+
+      Object proxy = MockInstantiator.instantiate(type, enhancedType, constructorArgs, useObjenesis);
+      ((ByteBuddyInterceptorAdapter.InterceptorAccess) proxy).$spock_set(interceptor);
+      return proxy;
+    }
   }
 
   // inner class to defer class loading

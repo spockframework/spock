@@ -16,19 +16,21 @@
 
 package org.spockframework.spring;
 
-import java.lang.annotation.*;
-import java.lang.reflect.*;
-
-import org.spockframework.runtime.extension.AbstractGlobalExtension;
 import org.spockframework.runtime.AbstractRunListener;
-import org.spockframework.runtime.model.*;
-import org.spockframework.util.*;
-
+import org.spockframework.runtime.extension.AbstractGlobalExtension;
+import org.spockframework.runtime.model.ErrorInfo;
+import org.spockframework.runtime.model.FeatureInfo;
+import org.spockframework.runtime.model.FieldInfo;
+import org.spockframework.runtime.model.SpecInfo;
+import org.spockframework.util.NotThreadSafe;
+import org.spockframework.util.ReflectionUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.ProfileValueUtils;
 import org.springframework.test.context.ContextConfiguration;
-
 import spock.lang.Shared;
+
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 
 @NotThreadSafe
 public class SpringExtension extends AbstractGlobalExtension {
@@ -39,6 +41,11 @@ public class SpringExtension extends AbstractGlobalExtension {
 
   // since Spring 4.0
   private static final Method findAnnotationDescriptorForTypesMethod;
+
+  // since Spring-Boot 1.4
+  @SuppressWarnings("unchecked")
+  private static final Class<? extends Annotation> bootstrapWithAnnotation =
+    (Class) ReflectionUtil.loadClassIfAvailable("org.springframework.test.context.BootstrapWith");
 
   static {
     Class<?> metaAnnotationUtilsClass =
@@ -57,7 +64,7 @@ public class SpringExtension extends AbstractGlobalExtension {
 
     SpringTestContextManager manager = new SpringTestContextManager(spec.getReflection());
     final SpringInterceptor interceptor = new SpringInterceptor(manager);
-    
+
     spec.addListener(new AbstractRunListener() {
       public void error(ErrorInfo error) {
         interceptor.error(error);
@@ -71,12 +78,19 @@ public class SpringExtension extends AbstractGlobalExtension {
   }
 
   private boolean isSpringSpec(SpecInfo spec) {
-    if (spec.isAnnotationPresent(ContextConfiguration.class)) return true;
-    if (contextHierarchyClass != null && spec.isAnnotationPresent(contextHierarchyClass)) return true;
+    if (isSpringSpecUsingFindAnnotationDescriptorForTypes(spec)) return true;
+
+    if (ReflectionUtil.isAnnotationPresentRecursive(spec.getClass(), ContextConfiguration.class)) return true;
+
+    return  (contextHierarchyClass != null
+      && ReflectionUtil.isAnnotationPresentRecursive(spec.getClass(), contextHierarchyClass));
+  }
+
+  private boolean isSpringSpecUsingFindAnnotationDescriptorForTypes(SpecInfo spec) {
     return findAnnotationDescriptorForTypesMethod != null
         && ReflectionUtil.invokeMethod(
-            null, findAnnotationDescriptorForTypesMethod, spec.getReflection(),
-            new Class[] {ContextConfiguration.class, contextHierarchyClass}) != null;
+        null, findAnnotationDescriptorForTypesMethod, spec.getReflection(),
+        new Class[] {ContextConfiguration.class, contextHierarchyClass, bootstrapWithAnnotation}) != null;
   }
 
   private void checkNoSharedFieldsInjected(SpecInfo spec) {

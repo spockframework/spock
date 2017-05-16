@@ -99,7 +99,7 @@ class PollingConditionsSpec extends Specification {
   }
 
   def "provides fine-grained control over polling rhythm"() {
-    conditions.initialDelay = 0.1
+    conditions.initialDelay = 0.01
     conditions.delay = 0.2
     conditions.factor = 2
 
@@ -117,6 +117,21 @@ class PollingConditionsSpec extends Specification {
     def spans = (1..3).collect { stats[it] - stats[it - 1] }
     spans[0] < spans[1]
     spans[1] < spans[2]
+  }
+
+  def "correctly handles checks that take longer than given check interval"() {
+    when:
+    def condition = new PollingConditions(timeout: 0.05)
+    boolean secondAttempt = false
+    then:
+    condition.eventually {
+      try {
+        sleep 200;
+        assert secondAttempt;
+      } finally {
+        secondAttempt = true
+      }
+    }
   }
 }
 

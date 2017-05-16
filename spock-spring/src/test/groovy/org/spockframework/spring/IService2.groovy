@@ -14,6 +14,6 @@
 
 package org.spockframework.spring
 
-public interface IService2 {
+interface IService2 {
   String generateQuickBrownFox()
 }

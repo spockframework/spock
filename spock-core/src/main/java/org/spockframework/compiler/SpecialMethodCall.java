@@ -86,6 +86,10 @@ public class SpecialMethodCall implements ISpecialMethodCall {
     return conditionBlock;
   }
 
+  public boolean isGroupConditionBlock() {
+    return isMethodName(Identifiers.VERIFY_ALL);
+  }
+
   public boolean isTestDouble() {
     return isOneOfMethodNames(Identifiers.TEST_DOUBLE_METHODS);
   }

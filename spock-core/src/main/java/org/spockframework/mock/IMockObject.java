@@ -14,13 +14,14 @@
 
 package org.spockframework.mock;
 
+import org.spockframework.mock.runtime.SpecificationAttachable;
 import org.spockframework.util.Nullable;
 
 import spock.lang.Specification;
 
 import java.lang.reflect.Type;
 
-public interface IMockObject {
+public interface IMockObject extends SpecificationAttachable {
   /**
    * Returns the name of this mock object, or {@code null} if it has no name.
    *
@@ -50,6 +51,13 @@ public interface IMockObject {
    * @return the instance of this mock object
    */
   Object getInstance();
+  
+  /**
+   * Returns the original instance provided by the user for wrapping with a Spy, or {@code null} if not applicable.
+   *
+   * @return the the original instance provided by the user for wrapping with a Spy, or {@code null} if not applicable.
+   */
+  Object getUserCreatedInstance();
 
   /**
    * Tells whether this mock object supports verification of invocations.
@@ -70,6 +78,7 @@ public interface IMockObject {
    *
    * @return the specification that this mock object is attached to
    */
+  @Nullable
   Specification getSpecification();
 
   /**

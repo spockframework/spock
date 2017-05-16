@@ -1,15 +1,37 @@
-def springVersion = "4.1.0.RELEASE"
-def bootVersion = "1.1.6.RELEASE"
+buildscript {
+  ext {
+    springBootVersion = '1.4.0.RELEASE'
+  }
+  repositories {
+    mavenCentral()
+    maven { url "https://repo.spring.io/snapshot" }
+    maven { url "https://repo.spring.io/milestone" }
+  }
+  dependencies {
+    classpath "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}"
+  }
+}
+
+
+apply plugin: 'spring-boot'
+
+
 
 dependencies {
-	compile "org.springframework:spring-core:$springVersion"
-	compile "org.springframework.boot:spring-boot:$bootVersion"
-	compile "org.springframework.boot:spring-boot-autoconfigure:$bootVersion"
+  compile "org.springframework.boot:spring-boot-starter-data-jpa"
+  compile "org.springframework.boot:spring-boot-starter-web"
 
+  testCompile "org.springframework.boot:spring-boot-starter-test"
   testCompile project(":spock-core")
-  testCompile "org.springframework:spring-context:$springVersion"
-  testCompile "org.springframework:spring-test:$springVersion"
+  testCompile project(":spock-spring")
 
-  testRuntime project(":spock-spring")
+  runtime "com.h2database:h2"
+
+}
+
+repositories {
+  mavenCentral()
+  maven { url "https://repo.spring.io/snapshot" }
+  maven { url "https://repo.spring.io/milestone" }
 }
 

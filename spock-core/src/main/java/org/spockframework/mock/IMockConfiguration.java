@@ -5,12 +5,13 @@ import java.util.List;
 
 import org.spockframework.util.Beta;
 import org.spockframework.util.Nullable;
+import spock.mock.MockingApi;
 
 /**
  * Configuration options for mock objects. Once a mock object has been created, its configuration cannot be changed.
  *
  * <p>{@link #getNature()} and {@link #getImplementation()} are mandatory options that are typically
- * determined by choosing the appropriate {@link spock.lang.MockingApi} factory method. {@link #getType()}
+ * determined by choosing the appropriate {@link MockingApi} factory method. {@link #getType()}
  * is a mandatory option that is typically passed directly to a {@code MockingApi} factory method, or inferred
  * from the left-hand side of the enclosing variable assignment. The remaining options are optional and are
  * typically passed to a {@code MockingApi} factory method as named arguments. For example,
@@ -33,6 +34,14 @@ public interface IMockConfiguration {
    * @return the interface or class type of the mock object
    */
   Class<?> getType();
+  
+  /**
+   * Returns the instance to be used as a delegate
+   * 
+   * @return the instance to be used as a delegate
+   */
+  @Nullable
+  Object getInstance();
 
   /**
    * Returns the exact interface or class type of the mock object.

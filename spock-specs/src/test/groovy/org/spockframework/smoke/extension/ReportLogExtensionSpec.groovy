@@ -18,6 +18,8 @@ import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import org.spockframework.EmbeddedSpecification
 
+import java.util.regex.Matcher
+
 class ReportLogExtensionSpec extends EmbeddedSpecification {
   @Rule TemporaryFolder tempDir
   def logFile
@@ -165,7 +167,7 @@ loadLogFile([{
                 "err1\\n"
             ],
             "exceptions": [
-                "java.io.IOException: ouch\\n\\tat DeclaringClass.methodName(filename:42)\\n"
+                "Condition failed with Exception:\\n\\nthrowException()\\n|\\njava.io.IOException: ouch\\n\\n\\tat apackage.MySpec.some feature(scriptXXXXXXXXXXXXXXXXXXXXXXX.groovy:XX)\\nCaused by: java.io.IOException: ouch\\n\\tat DeclaringClass.methodName(filename:XX)\\n"
             ],
             "end": 1360051647586,
             "result": "failed",
@@ -249,6 +251,6 @@ loadLogFile([{
   }
 
   private String normalize(String str) {
-    str.trim().replaceAll("\\d", "X").replaceAll("(\\\\r\\\\n|\\\\n)", "\\n")
+    str.trim().replaceAll("\\d", "X").replaceAll("(\\\\r\\\\n|\\\\n)", Matcher.quoteReplacement("\\n"))
   }
 }

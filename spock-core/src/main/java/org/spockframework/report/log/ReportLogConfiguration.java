@@ -27,7 +27,7 @@ import spock.config.ConfigurationObject;
 
 @ConfigurationObject("report")
 public class ReportLogConfiguration {
-  public boolean enabled = Boolean.getBoolean(System.getProperty("spock.logEnabled", "false"));
+  public boolean enabled = Boolean.getBoolean("spock.logEnabled");
 
   public String logFileDir = System.getProperty("spock.logFileDir");
   public String logFileName = System.getProperty("spock.logFileName");
@@ -41,7 +41,7 @@ public class ReportLogConfiguration {
 
   public String getLogFileSuffix() {
     if (logFileSuffix != null && logFileSuffix.contains("#timestamp")) {
-      DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+      DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH_mm_ss");
       dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
       String timestamp = dateFormat.format(new Date());
       logFileSuffix = logFileSuffix.replace("#timestamp", timestamp);

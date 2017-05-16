@@ -16,68 +16,95 @@
 
 package org.spockframework.runtime;
 
-import java.util.Iterator;
-
 import org.codehaus.groovy.ast.expr.Expression;
-import org.codehaus.groovy.ast.stmt.*;
+import org.codehaus.groovy.ast.stmt.BlockStatement;
+import org.codehaus.groovy.ast.stmt.ExpressionStatement;
+import org.codehaus.groovy.ast.stmt.Statement;
 import org.codehaus.groovy.control.SourceUnit;
-
-import org.spockframework.runtime.model.*;
+import org.spockframework.runtime.model.ExpressionInfo;
+import org.spockframework.runtime.model.TextPosition;
+import org.spockframework.runtime.model.TextRegion;
 import org.spockframework.util.Assert;
+import org.spockframework.util.Nullable;
 import org.spockframework.util.TextUtil;
 
+import java.util.List;
+
 /**
- *
  * @author Peter Niederwieser
  */
 public class ExpressionInfoBuilder {
   private final String text;
   private final String adjustedText;
   private final TextPosition startPos;
-  private final Iterable<Object> values;
+  private final List<Object> values;
+  private final Integer notRecordedVarNumberBecauseOfException;
+  private final Throwable exception;
   private final String[] lines;
 
-  public ExpressionInfoBuilder(String text, TextPosition startPos, Iterable<Object> values) {
+  public ExpressionInfoBuilder(String text, TextPosition startPos, List<Object> values, @Nullable Integer notRecordedVarNumberBecauseOfException, @Nullable Throwable exception) {
     this.text = text;
     this.startPos = startPos;
     this.values = values;
+    this.notRecordedVarNumberBecauseOfException = notRecordedVarNumberBecauseOfException;
+    this.exception = exception;
     adjustedText = TextUtil.repeatChar(' ', startPos.getColumnIndex()) + text;
     lines = adjustedText.split("\n");
   }
 
   public ExpressionInfo build() {
-    SourceUnit unit = SourceUnit.create("Spec expression", adjustedText);
-    unit.parse();
-    unit.completePhase();
-    unit.convert();
+    try {
+      SourceUnit unit = SourceUnit.create("Spec expression", adjustedText);
+      unit.parse();
+      unit.completePhase();
+      unit.convert();
 
-    BlockStatement blockStat = unit.getAST().getStatementBlock();
-    Assert.that(blockStat != null && blockStat.getStatements().size() == 1);
-    Statement stat = blockStat.getStatements().get(0);
-    Assert.that(stat instanceof ExpressionStatement);
-    Expression expr = ((ExpressionStatement)stat).getExpression();
+      BlockStatement blockStat = unit.getAST().getStatementBlock();
+      Assert.that(blockStat != null && blockStat.getStatements().size() == 1);
+      Statement stat = blockStat.getStatements().get(0);
+      Assert.that(stat instanceof ExpressionStatement);
+      Expression expr = ((ExpressionStatement) stat).getExpression();
 
-    ExpressionInfo exprInfo = new ExpressionInfoConverter(lines).convert(expr);
+      ExpressionInfo exprInfo = new ExpressionInfoConverter(lines).convert(expr);
 
-    // IDEA: rest of this method could be moved to ExpressionInfoConverter (but: might make EIC less testable)
-    // IDEA: could make ExpressionInfo immutable
-    Iterator<?> iter = values.iterator();
-    for (ExpressionInfo info : exprInfo.inPostfixOrder(false)) {
-      info.setText(findText(info.getRegion()));
-      if (!iter.hasNext())
-        Assert.fail("Missing value for expression '%s' in condition '%s'", info.getText(), text);
-      info.setValue(iter.next());
-      if (startPos.getLineIndex() > 0)
-        info.shiftVertically(startPos.getLineIndex());
+      // IDEA: rest of this method could be moved to ExpressionInfoConverter (but: might make EIC less testable)
+      // IDEA: could make ExpressionInfo immutable
+      List<ExpressionInfo> inPostfixOrder = exprInfo.inPostfixOrder(false);
+      for (int variableNumber = 0; variableNumber < inPostfixOrder.size(); variableNumber++) {
+        ExpressionInfo info = inPostfixOrder.get(variableNumber);
+        info.setText(findText(info.getRegion()));
+        if (notRecordedVarNumberBecauseOfException != null && variableNumber == notRecordedVarNumberBecauseOfException) {
+          info.setValue(exception);
+        } else if (values.size() > variableNumber) { //we have this value
+          info.setValue(values.get(variableNumber));
+        } else {
+          info.setValue(ExpressionInfo.VALUE_NOT_AVAILABLE);
+        }
+        if (startPos.getLineIndex() > 0)
+          info.shiftVertically(startPos.getLineIndex());
+      }
+
+      return exprInfo;
+    } catch (Throwable t) {
+      final ExpressionInfo expressionInfo = new ExpressionInfo(TextRegion.create(TextPosition.create(1, 1), TextPosition.create(1, 1)), TextPosition.create(1, 1), null);
+      expressionInfo.setText(text);
+      expressionInfo.setValue(lastOrNull(values));
+      return expressionInfo;
     }
+  }
 
-    return exprInfo;
+  private Object lastOrNull(Iterable<Object> values) {
+    Object result = null;
+    for (Object value : values) {
+      result = value;
+    }
+    return result;
   }
 
   private String findText(TextRegion region) {
     if (region == TextRegion.NOT_AVAILABLE)
       return ExpressionInfo.TEXT_NOT_AVAILABLE;
-    
+
     try {
       String text = "";
       for (int i = 0; i <= region.getEnd().getLineIndex(); i++) {

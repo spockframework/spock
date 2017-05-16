@@ -1,34 +1,25 @@
 = Interaction Based Testing
+include::include.adoc[]
 
 Interaction-based testing is a design and testing technique that emerged in the Extreme Programming
 (XP) community in the early 2000's. Focusing on the behavior of objects rather than their state, it explores how
 the object(s) under specification interact, by way of method calls, with their collaborators.
 
-For example, suppose we have a +Publisher+ that sends messages to its +Subscriber+s:
+For example, suppose we have a `Publisher` that sends messages to its `Subscriber`s:
 
-[source,groovy]
+[source,groovy,indent=0]
 ----
-class Publisher {
-    List<Subscriber> subscribers
-    void send(String message)
-}
-
-interface Subscriber {
-    void receive(String message)
-}
-
-class PublisherSpec extends Specification {
-    Publisher publisher = new Publisher()
+include::{sourcedir}/interaction/InteractionDocSpec.groovy[tag=examplesetup]
 }
 ----
 
-How are we going to test +Publisher+? With state-based testing, we can verify that the publisher keeps track of its
+How are we going to test `Publisher`? With state-based testing, we can verify that the publisher keeps track of its
 subscribers. The more interesting question, though, is whether a message sent by the publisher
 is received by the subscribers. To answer this question, we need a special implementation of
-+Subscriber+ that listens in on the conversation between the publisher and its subscribers. Such an
+`Subscriber` that listens in on the conversation between the publisher and its subscribers. Such an
 implementation is called a _mock object_.
 
-While we could certainly create a mock implementation of +Subscriber+ by hand, writing and maintaining this code
+While we could certainly create a mock implementation of `Subscriber` by hand, writing and maintaining this code
 can get unpleasant as the number of methods and complexity of interactions increases. This is where mocking frameworks
 come in: They provide a way to describe the expected interactions between an object under specification and its
 collaborators, and can generate mock implementations of collaborators that verify these expectations.
@@ -52,22 +43,22 @@ Except where indicated, all features of Spock's mocking framework work both for 
 
 == Creating Mock Objects
 
-Mock objects are created with the +MockingApi.Mock()+ method.footnote:[For additional ways to create mock objects,
+Mock objects are created with the `MockingApi.Mock()` method.footnote:[For additional ways to create mock objects,
 see <<OtherKindsOfMockObjects>> and <<ALaCarteMocks>>.]
 Let's create two mock subscribers:
 
-[source,groovy]
+
+[source,groovy,indent=0]
 ----
-def subscriber = Mock(Subscriber)
-def subscriber2 = Mock(Subscriber)
+include::{sourcedir}/interaction/InteractionDocSpec.groovy[tag=mock1]
 ----
 
 Alternatively, the following Java-like syntax is supported, which may give better IDE support:
 
-[source,groovy]
+
+[source,groovy,indent=0]
 ----
-Subscriber subscriber = Mock()
-Subscriber subscriber2 = Mock()
+include::{sourcedir}/interaction/InteractionDocSpec.groovy[tag=mock2]
 ----
 
 Here, the mock's type is inferred from the variable type on the left-hand side of the assignment.
@@ -76,7 +67,7 @@ NOTE: If the mock's type is given on the left-hand side of the assignment, it's 
 (though not required) to omit it on the right-hand side.
 
 Mock objects literally implement (or, in the case of a class, extend) the type they stand in for. In other
-words, in our example +subscriber+ _is-a_ +Subscriber+. Hence it can be passed to statically typed (Java)
+words, in our example `subscriber` _is-a_ `Subscriber`. Hence it can be passed to statically typed (Java)
 code that expects this type.
 
 == Default Behavior of Mock Objects
@@ -92,8 +83,8 @@ framework makes it easy to describe only what's relevant about an interaction, a
 ****
 
 Initially, mock objects have no behavior. Calling methods on them is allowed but has no effect other than returning
-the default value for the method's return type (+false+, +0+, or +null+). An exception are the +Object.equals+,
-+Object.hashCode+, and +Object.toString+ methods, which have the following default behavior: A mock object is only
+the default value for the method's return type (`false`, `0`, or `null`). An exception are the `Object.equals`,
+`Object.hashCode`, and `Object.toString` methods, which have the following default behavior: A mock object is only
 equal to itself, has a unique hash code, and a string representation that includes the name of the type it represents.
 This default behavior is overridable by stubbing the methods, which we will learn about in the <<Stubbing>> section.
 
@@ -101,18 +92,9 @@ This default behavior is overridable by stubbing the methods, which we will lear
 
 After creating the publisher and its subscribers, we need to make the latter known to the former:
 
-[source,groovy]
+[source,groovy,indent=0]
 ----
-class PublisherSpec extends Specification {
-    Publisher publisher = new Publisher()
-    Subscriber subscriber = Mock()
-    Subscriber subscriber2 = Mock()
-
-    def setup() {
-        publisher.subscribers << subscriber // << is a Groovy shorthand for List.add()
-        publisher.subscribers << subscriber2
-    }
-}
+include::{sourcedir}/interaction/InteractionDocSpec.groovy[tag=example1]
 ----
 
 We are now ready to describe the expected interactions between the two parties.
@@ -122,23 +104,16 @@ We are now ready to describe the expected interactions between the two parties.
 Mocking is the act of describing (mandatory) interactions between the object under specification and its collaborators.
 Here is an example:
 
-[source,groovy]
+[source,groovy,indent=0]
 ----
-def "should send messages to all subscribers"() {
-    when:
-    publisher.send("hello")
-
-    then:
-    1 * subscriber.receive("hello")
-    1 * subscriber2.receive("hello")
-}
+include::{sourcedir}/interaction/InteractionDocSpec.groovy[tag=example2]
 ----
 
 Read out aloud: "When the publisher sends a 'hello' message, then both subscribers should receive that message exactly once."
 
 When this feature method gets run, all invocations on mock objects that occur while executing the
-+when+ block will be matched against the interactions described in the +then:+ block. If one of the interactions isn't
-satisfied, a (subclass of) +InteractionNotSatisfiedError+ will be thrown. This verification happens automatically
+`when` block will be matched against the interactions described in the `then:` block. If one of the interactions isn't
+satisfied, a (subclass of) `InteractionNotSatisfiedError` will be thrown. This verification happens automatically
 and does not require any additional code.
 
 === Interactions
@@ -151,7 +126,7 @@ that all incoming invocations on mock objects are matched against. Depending on 
 may match zero, one, or multiple invocations.
 ****
 
-Let's take a closer look at the +then:+ block. It contains two _interactions_, each of which has four distinct
+Let's take a closer look at the `then:` block. It contains two _interactions_, each of which has four distinct
 parts: a _cardinality_, a _target constraint_, a _method constraint_, and an _argument constraint_:
 
 ----
@@ -371,14 +346,9 @@ A `with` block can also be used for grouping conditions with the same target.
 A `then:` block may contain both interactions and conditions. Although not strictly required, it is customary
 to declare interactions before conditions:
 
-[source,groovy]
+[source,groovy,indent=0]
 ----
-when:
-publisher.send("hello")
-
-then:
-1 * subscriber.receive("hello")
-publisher.messageCount == 1
+include::{sourcedir}/interaction/InteractionDocSpec.groovy[tag=example3]
 ----
 
 Read out aloud: "When the publisher sends a 'hello' message, then the subscriber should receive the message exactly
@@ -412,16 +382,9 @@ In our example, this would have the added benefit that we could use the same var
 
 Another solution is to be explicit about the fact that variable declaration and interaction belong together:
 
-[source,groovy]
+[source,groovy,indent=0]
 ----
-when:
-publisher.send("hello")
-
-then:
-interaction {
-    def message = "hello"
-    1 * subscriber.receive(message)
-}
+include::{sourcedir}/interaction/InteractionDocSpec.groovy[tag=example4]
 ----
 
 Since an `MockingApi.interaction` block is always moved in its entirety, the code now works as intended.
@@ -430,19 +393,9 @@ Since an `MockingApi.interaction` block is always moved in its entirety, the cod
 
 Interactions declared in a `then:` block are scoped to the preceding `when:` block:
 
-[source,groovy]
+[source,groovy,indent=0]
 ----
-when:
-publisher.send("message1")
-
-then:
-subscriber.receive("message1")
-
-when:
-publisher.send("message2")
-
-then:
-subscriber.receive("message2")
+include::{sourcedir}/interaction/InteractionDocSpec.groovy[tag=example5]
 ----
 
 This makes sure that `subscriber` receives `"message1"` during execution of the first `when:` block,
@@ -457,7 +410,7 @@ fields.
 
 === Verification of Interactions
 
-There a two main ways in which a mock-based test can fail: An interaction can match more invocations than
+There are two main ways in which a mock-based test can fail: An interaction can match more invocations than
 allowed, or it can match fewer invocations than required. The former case is detected right when the invocation
 happens, and causes a `TooManyInvocationsError`:
 
@@ -535,7 +488,7 @@ then:
 1 * subscriber.receive("goodbye")
 ----
 
-Now Spock will verify that both `"hello"`'s are received before the `"goodbye"`.
+Now Spock will verify that both ``"hello"``'s are received before the `"goodbye"`.
 In other words, invocation order is enforced _between_ but not _within_ `then:` blocks.
 
 NOTE: Splitting up a `then:` block with `and:` does not impose any ordering, as `and:`
@@ -548,9 +501,7 @@ just like mocking interfaces; the only additional requirement is to put `cglib-n
 and `objenesis-1.2` or higher on the class path. If either of these libraries is missing from
 the class path, Spock will gently let you know.
 
-NOTE: Java 8 is only supported from CGLIB 3.2 onwards, which has not been released as of
-2015-03-02. As a temporary workaround, you can pull a prerelease version (e.g.
-`com.github.cglib:cglib.cglib-nodep:e10bc3dda2`) from Maven repository `https://jitpack.io`.
+NOTE: Java 8 is only supported from CGLIB 3.2.0 onwards.
 
 == Stubbing
 
@@ -558,7 +509,7 @@ Stubbing is the act of making collaborators respond to method calls in a certain
 a method, you don't care if and how many times the method is going to be called; you just want it to
 return some value, or perform some side effect, _whenever_ it gets called.
 
-For the sake of the following examples, let's modify the `Subscriber`'s `receive` method
+For the sake of the following examples, let's modify the ``Subscriber``'s `receive` method
 to return a status code that tells if the subscriber was able to process a message:
 
 [source,groovy]
@@ -577,7 +528,7 @@ subscriber.receive(_) >> "ok"
 
 Read out aloud: "_Whenever_ the subscriber receives a message, _make_ it respond with 'ok'."
 
-Compared to a mocked interaction, a stubbed interaction has no cardinality on the left end, but adds a 
+Compared to a mocked interaction, a stubbed interaction has no cardinality on the left end, but adds a
 _response generator_ on the right end:
 
 ----
@@ -744,8 +695,11 @@ Like a mock, a stub allows unexpected invocations. However, the values returned 
   an object constructed from its default constructor, or another stub returning default values.
   See class `org.spockframework.mock.EmptyOrDummyResponse` for the details.
 
+NOTE: If the response type of the method is a final class or if it requires a class-mocking library and cglib or ByteBuddy
+      are not available, then the "dummy" object creation will fail with a `CannotCreateMockException`.
+
 A stub often has a fixed set of interactions, which makes
-<<declaring-interactions-at-creation-time,declaring interactions at mock creation time>> particularly attractive::
+<<declaring-interactions-at-creation-time,declaring interactions at mock creation time>> particularly attractive:
 
 [source,groovy]
 ----
@@ -769,7 +723,12 @@ def subscriber = Spy(SubscriberImpl, constructorArgs: ["Fred"])
 
 A spy is always based on a real object. Hence you must provide a class type rather
 than an interface type, along with any constructor arguments for the type.
-If no constructor arguments are provided, the type's default constructor will be used.
+If no constructor arguments are provided, the type's default constructor will be used. 
+
+You may also create a spy from an instantiated object. This may be useful in cases 
+where you do not have full control over the instatiation of types you are interested 
+in spying. (For example when testing within a Dependency Injection framework such as 
+Spring or Guice.)
 
 Method calls on a spy are automatically delegated to the real object. Likewise, values
 returned from the real object's methods are passed back to the caller via the spy.
@@ -958,7 +917,7 @@ Most of the time you shouldn't need these features. But if you do, you'll be gla
 At the end of the day, the `Mock()`, `Stub()`, and `Spy()` factory methods are just canned ways to
 create mock objects with a certain configuration. If you want more fine-grained control over a mock's configuration,
 have a look at the `org.spockframework.mock.IMockConfiguration` interface. All properties of this interface
-footnoote:[Because mock configurations are immutable, the interface contains just the properties' getters.]
+footnote:[Because mock configurations are immutable, the interface contains just the properties' getters.]
 can be passed as named arguments to the `Mock()` method. For example:
 
 [source,groovy]

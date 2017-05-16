@@ -87,7 +87,7 @@ public class WhereBlockRewriter {
         rewriteSimpleParameterization(binExpr, stat);
       else if (leftExpr instanceof ListExpression)
         rewriteMultiParameterization(binExpr, stat);
-      else 
+      else
         notAParameterization(stat);
     } else if (type == Types.ASSIGN)
       rewriteDerivedParameterization(binExpr, stat);
@@ -95,7 +95,7 @@ public class WhereBlockRewriter {
       stats.previous();
       rewriteTableLikeParameterization(stats);
     }
-    else 
+    else
       notAParameterization(stat);
   }
 
@@ -104,12 +104,13 @@ public class WhereBlockRewriter {
 
     dataProviderExpr = dataProviderExpr.transformExpression(new DataTablePreviousVariableTransformer());
 
+    final Parameter[] previousParameters = getPreviousParameters(nextDataVariableIndex);
     MethodNode method =
         new MethodNode(
             InternalIdentifiers.getDataProviderName(whereBlock.getParent().getAst().getName(), dataProviderCount++),
-            Opcodes.ACC_PUBLIC | Opcodes.ACC_SYNTHETIC,
+            Opcodes.ACC_PUBLIC /*| Opcodes.ACC_SYNTHETIC*/,
             ClassHelper.OBJECT_TYPE,
-            getPreviousParameters(nextDataVariableIndex),
+          previousParameters,
             ClassNode.EMPTY_ARRAY,
             new BlockStatement(
                 Arrays.<Statement> asList(
@@ -117,7 +118,7 @@ public class WhereBlockRewriter {
                         new ExpressionStatement(dataProviderExpr))),
                 new VariableScope()));
 
-    method.addAnnotation(createDataProviderAnnotation(dataProviderExpr, nextDataVariableIndex));
+    method.addAnnotation(createDataProviderAnnotation(dataProviderExpr, nextDataVariableIndex, previousParameters));
     whereBlock.getParent().getParent().getAst().addMethod(method);
   }
 
@@ -129,13 +130,20 @@ public class WhereBlockRewriter {
     return results;
   }
 
-  private AnnotationNode createDataProviderAnnotation(Expression dataProviderExpr, int nextDataVariableIndex) {
+  private AnnotationNode createDataProviderAnnotation(Expression dataProviderExpr, int nextDataVariableIndex, Parameter[] parameters) {
     AnnotationNode ann = new AnnotationNode(resources.getAstNodeCache().DataProviderMetadata);
     ann.addMember(DataProviderMetadata.LINE, new ConstantExpression(dataProviderExpr.getLineNumber()));
+
     List<Expression> dataVariableNames = new ArrayList<Expression>();
     for (int i = nextDataVariableIndex; i < dataProcessorVars.size(); i++)
       dataVariableNames.add(new ConstantExpression(dataProcessorVars.get(i).getName()));
     ann.addMember(DataProviderMetadata.DATA_VARIABLES, new ListExpression(dataVariableNames));
+
+    List<Expression> parameterNames = new ArrayList<Expression>();
+    for (Parameter parameter : parameters)
+      parameterNames.add(new ConstantExpression(parameter.getName()));
+    ann.addMember(DataProviderMetadata.PARAMETERS, new ListExpression(parameterNames));
+
     return ann;
   }
 
@@ -273,19 +281,19 @@ public class WhereBlockRewriter {
       splitRow(orExpr.getRightExpression(), parts);
     }
   }
-  
+
   private BinaryExpression getOrExpression(Statement stat) {
     Expression expr = AstUtil.getExpression(stat, Expression.class);
     return getOrExpression(expr);
   }
-  
+
   private BinaryExpression getOrExpression(Expression expr) {
     BinaryExpression binExpr = ObjectUtil.asInstance(expr, BinaryExpression.class);
     if (binExpr == null) return null;
-    
+
     int binExprType = binExpr.getOperation().getType();
     if (binExprType == Types.BITWISE_OR || binExprType == Types.LOGICAL_OR) return binExpr;
-    
+
     return null;
   }
 
@@ -333,14 +341,6 @@ public class WhereBlockRewriter {
     Parameter[] parameters = whereBlock.getParent().getAst().getParameters();
     if (parameters.length == 0)
       addFeatureParameters();
-    else
-      checkAllParametersAreDataVariables(parameters);
-  }
-
-  private void checkAllParametersAreDataVariables(Parameter[] parameters) {
-    for (Parameter param : parameters)
-      if (!isDataProcessorVariable(param.getName()))
-        resources.getErrorReporter().error(param, "Parameter '%s' does not refer to a data variable", param.getName());
   }
 
   private void addFeatureParameters() {
@@ -353,24 +353,44 @@ public class WhereBlockRewriter {
   @SuppressWarnings("unchecked")
   private void createDataProcessorMethod() {
     if (dataProcessorVars.isEmpty()) return;
-    
-    dataProcessorStats.add(
-        new ReturnStatement(
-            new ArrayExpression(
-                ClassHelper.OBJECT_TYPE,
-                (List) dataProcessorVars)));
+
+    final VariableExpression resultMap = new VariableExpression("$spock_result", new ClassNode(Map.class));
+
+    dataProcessorStats.add( // Map $spock_result = new HashMap();
+      new ExpressionStatement(
+        new DeclarationExpression(
+          resultMap,
+          Token.newSymbol(Types.EQUALS, 0, 0),
+          new ConstructorCallExpression(new ClassNode(HashMap.class), ArgumentListExpression.EMPTY_ARGUMENTS))));
+
+    for (VariableExpression dataProcessorVar : dataProcessorVars) {
+      dataProcessorStats.add( // $spock_result.put(variable_name, variable);
+        new ExpressionStatement(
+          new MethodCallExpression(
+            resultMap,
+            "put",
+            new ArgumentListExpression(Arrays.asList(
+              new ConstantExpression(dataProcessorVar.getName()),
+              dataProcessorVar)))));
+    }
+
+    dataProcessorStats.add( // return $spock_result
+        new ReturnStatement(resultMap));
 
     BlockStatement blockStat = new BlockStatement(dataProcessorStats, new VariableScope());
+
     new DataProcessorVariableRewriter().visitBlockStatement(blockStat);
 
+    final MethodNode method = new MethodNode(
+      InternalIdentifiers.getDataProcessorName(whereBlock.getParent().getAst().getName()),
+      Opcodes.ACC_PUBLIC /*| Opcodes.ACC_SYNTHETIC*/,
+      ClassHelper.OBJECT_TYPE,
+      dataProcessorParams.toArray(new Parameter[dataProcessorParams.size()]),
+      ClassNode.EMPTY_ARRAY,
+      blockStat);
+
     whereBlock.getParent().getParent().getAst().addMethod(
-      new MethodNode(
-          InternalIdentifiers.getDataProcessorName(whereBlock.getParent().getAst().getName()),
-          Opcodes.ACC_PUBLIC | Opcodes.ACC_SYNTHETIC,
-          ClassHelper.OBJECT_TYPE,
-          dataProcessorParams.toArray(new Parameter[dataProcessorParams.size()]),
-          ClassNode.EMPTY_ARRAY,
-          blockStat));
+      method);
   }
 
   private static void notAParameterization(ASTNode stat) throws InvalidSpecCompileException {

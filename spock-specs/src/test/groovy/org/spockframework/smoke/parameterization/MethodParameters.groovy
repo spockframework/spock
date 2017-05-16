@@ -68,7 +68,7 @@ class MethodParameters extends EmbeddedSpecification {
     x << [1, 2]
     y << [1, 2]
   }
-  
+
   def "fewer parameters than data variables"() {
     when:
     compiler.compileSpecBody """
@@ -79,40 +79,6 @@ def foo(x) {
   where:
   x << [1, 2]
   y << [1, 2]
-}
-    """
-
-    then:
-    thrown(InvalidSpecCompileException)
-  }
-
-
-  def "more parameters than data variables"() {
-    when:
-    compiler.compileSpecBody """
-def foo(x, y, z) {
-  expect:
-  x == y
-
-  where:
-  x << [1, 2]
-  y << [1, 2]
-}
-    """
-
-    then:
-    thrown(InvalidSpecCompileException)
-  }
-
-  def "parameter that is not a data variable"() {
-    when:
-    compiler.compileSpecBody """
-def foo(x, a) {
-  expect:
-  x == x
-
-  where:
-  x << [1, 2]
 }
     """
 

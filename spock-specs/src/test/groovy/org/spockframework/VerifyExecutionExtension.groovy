@@ -62,15 +62,15 @@ class VerifyExecutionExtension extends AbstractAnnotationDrivenExtension<VerifyE
       }
     })
 
-    verifyMethod.featureMethod.addInterceptor(
-        new IMethodInterceptor() {
-          void intercept(IMethodInvocation invocation) {
-            if (invocation.method.reflection.parameterTypes.size() == 1) {
-              invocation.arguments = [executionLog]
-            }
-            invocation.proceed()
-          }
+    verifyMethod.addIterationInterceptor(new IMethodInterceptor() {
+      @Override
+      void intercept(IMethodInvocation invocation) throws Throwable {
+        def variables = verifyMethod.getDataVariables()
+        if (variables.size() == 1){
+          invocation.getIteration().getDataValues().put(variables.get(0), executionLog);
         }
-    )
+        invocation.proceed();
+      }
+    })
   }
 }

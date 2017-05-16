@@ -12,7 +12,7 @@ class AsyncRunListenerSpec extends Specification {
   def "replays events in correct order in a separate thread"() {
     def specInfo = new SpecInfoBuilder(getClass()).build()
     def featureInfo = specInfo.features[0]
-    def iterationInfo = new IterationInfo(featureInfo, [] as Object[], 1)
+    def iterationInfo = new IterationInfo(featureInfo, new HashMap<String, Object>(), 1)
     def errorInfo = new ErrorInfo(featureInfo.featureMethod, new Exception())
 
     when:

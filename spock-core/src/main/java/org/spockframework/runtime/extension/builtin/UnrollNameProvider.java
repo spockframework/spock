@@ -16,6 +16,7 @@
 
 package org.spockframework.runtime.extension.builtin;
 
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -44,7 +45,7 @@ public class UnrollNameProvider implements NameProvider<IterationInfo> {
     return nameFor(iterationInfo.getDataValues());
   }
 
-  String nameFor(Object... dataValues) {
+  String nameFor(Map<String, Object> dataValues) {
     StringBuffer result = new StringBuffer();
     expressionMatcher.reset();
 
@@ -59,7 +60,7 @@ public class UnrollNameProvider implements NameProvider<IterationInfo> {
     return result.toString();
   }
 
-  private String evaluateExpression(String expr, Object[] dataValues) {
+  private String evaluateExpression(String expr, Map<String, Object> dataValues) {
     String[] exprParts = expr.split("\\.");
     String firstPart = exprParts[0];
     Object result;
@@ -69,9 +70,11 @@ public class UnrollNameProvider implements NameProvider<IterationInfo> {
     } else if (firstPart.equals("iterationCount")) {
       result = String.valueOf(iterationCount);
     } else {
-      int index = feature.getDataVariables().indexOf(firstPart);
-      if (index < 0) return "#Error:" + expr;
-      result = dataValues[index];
+      if (dataValues.containsKey(firstPart)) {
+        result = dataValues.get(firstPart);
+      } else {
+        return "#Error:" + expr;
+      }
     }
 
     try {

@@ -37,10 +37,14 @@ import spock.lang.Specification;
 public class EmptyOrDummyResponse implements IDefaultResponse {
   public static final EmptyOrDummyResponse INSTANCE = new EmptyOrDummyResponse();
   private static final Class<?> OPTIONAL = ReflectionUtil.loadClassIfAvailable("java.util.Optional");
+  private static final Class<?> COMPLETABLE_FUTURE = ReflectionUtil.loadClassIfAvailable("java.util.concurrent.CompletableFuture");
   private static final Method optionalEmptyMethod;
+  private static final Method completableFutureCompletedFutureMethod;
 
   static {
     optionalEmptyMethod = OPTIONAL == null ? null : ReflectionUtil.getDeclaredMethodByName(OPTIONAL, "empty");
+    completableFutureCompletedFutureMethod = COMPLETABLE_FUTURE == null ? null :
+      ReflectionUtil.getDeclaredMethodByName(COMPLETABLE_FUTURE, "completedFuture");
   }
 
   private EmptyOrDummyResponse() {}
@@ -90,6 +94,7 @@ public class EmptyOrDummyResponse implements IDefaultResponse {
     }
 
     if (returnType == OPTIONAL) return ReflectionUtil.invokeMethod(null, optionalEmptyMethod);
+    if (returnType == COMPLETABLE_FUTURE) return ReflectionUtil.invokeMethod(null, completableFutureCompletedFutureMethod, (Object) null);
 
     Object emptyWrapper = createEmptyWrapper(returnType);
     if (emptyWrapper != null) return emptyWrapper;

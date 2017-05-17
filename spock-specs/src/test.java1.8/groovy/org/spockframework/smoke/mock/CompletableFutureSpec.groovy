@@ -16,6 +16,7 @@ class CompletableFutureSpec extends Specification {
     then:
     receivedFuture.done
     !receivedFuture.completedExceptionally
+    receivedFuture.get() == null
   }
 
   interface TestService {

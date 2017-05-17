@@ -14,20 +14,15 @@
 
 package org.spockframework.mock;
 
-import java.lang.reflect.Array;
-import java.lang.reflect.Method;
-import java.lang.reflect.Type;
-import java.math.BigDecimal;
-import java.math.BigInteger;
+import org.spockframework.util.*;
+import spock.lang.Specification;
+
+import java.lang.reflect.*;
+import java.math.*;
 import java.util.*;
 
-import groovy.lang.GString;
-import groovy.lang.GroovyObject;
-
-import org.spockframework.util.ReflectionUtil;
-import org.spockframework.util.Beta;
-
-import spock.lang.Specification;
+import groovy.lang.*;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * A response strategy that returns zero, an "empty" object, or a "dummy" object,
@@ -37,14 +32,30 @@ import spock.lang.Specification;
 public class EmptyOrDummyResponse implements IDefaultResponse {
   public static final EmptyOrDummyResponse INSTANCE = new EmptyOrDummyResponse();
   private static final Class<?> OPTIONAL = ReflectionUtil.loadClassIfAvailable("java.util.Optional");
+  private static final Class<?> STREAM = ReflectionUtil.loadClassIfAvailable("java.util.stream.Stream");
+  private static final Class<?> INT_STREAM = ReflectionUtil.loadClassIfAvailable("java.util.stream.IntStream");
+  private static final Class<?> DOUBLE_STREAM = ReflectionUtil.loadClassIfAvailable("java.util.stream.DoubleStream");
+  private static final Class<?> LONG_STREAM = ReflectionUtil.loadClassIfAvailable("java.util.stream.LongStream");
   private static final Class<?> COMPLETABLE_FUTURE = ReflectionUtil.loadClassIfAvailable("java.util.concurrent.CompletableFuture");
   private static final Method optionalEmptyMethod;
+  private static final Method streamEmptyMethod;
+  private static final Method intStreamEmptyMethod;
+  private static final Method doubleStreamEmptyMethod;
+  private static final Method longStreamEmptyMethod;
   private static final Method completableFutureCompletedFutureMethod;
 
   static {
-    optionalEmptyMethod = OPTIONAL == null ? null : ReflectionUtil.getDeclaredMethodByName(OPTIONAL, "empty");
-    completableFutureCompletedFutureMethod = COMPLETABLE_FUTURE == null ? null :
-      ReflectionUtil.getDeclaredMethodByName(COMPLETABLE_FUTURE, "completedFuture");
+    optionalEmptyMethod = getMethodIfAvailable(OPTIONAL, "empty");
+    streamEmptyMethod = getMethodIfAvailable(STREAM , "empty");
+    intStreamEmptyMethod = getMethodIfAvailable(INT_STREAM , "empty");
+    doubleStreamEmptyMethod = getMethodIfAvailable(DOUBLE_STREAM , "empty");
+    longStreamEmptyMethod = getMethodIfAvailable(LONG_STREAM , "empty");
+    completableFutureCompletedFutureMethod = getMethodIfAvailable(COMPLETABLE_FUTURE, "completedFuture");
+  }
+
+  @Nullable
+  private static Method getMethodIfAvailable(Class<?> target, String method) {
+    return target == null ? null : ReflectionUtil.getDeclaredMethodByName(target, method);
   }
 
   private EmptyOrDummyResponse() {}
@@ -63,6 +74,10 @@ public class EmptyOrDummyResponse implements IDefaultResponse {
       return ReflectionUtil.getDefaultValue(returnType);
     }
 
+    if (returnType.isAssignableFrom(invocation.getMockObject().getType())) {
+      return invocation.getMockObject().getInstance();
+    }
+
     if (returnType.isInterface()) {
       if (returnType == Iterable.class) return new ArrayList();
       if (returnType == Collection.class) return new ArrayList();
@@ -73,6 +88,10 @@ public class EmptyOrDummyResponse implements IDefaultResponse {
       if (returnType == SortedSet.class) return new TreeSet();
       if (returnType == SortedMap.class) return new TreeMap();
       if (returnType == CharSequence.class) return "";
+      if (returnType == STREAM) return ReflectionUtil.invokeMethod(null, streamEmptyMethod);
+      if (returnType == INT_STREAM) return ReflectionUtil.invokeMethod(null, intStreamEmptyMethod);
+      if (returnType == DOUBLE_STREAM) return ReflectionUtil.invokeMethod(null, doubleStreamEmptyMethod);
+      if (returnType == LONG_STREAM) return ReflectionUtil.invokeMethod(null, longStreamEmptyMethod);
       return createDummy(invocation);
     }
 

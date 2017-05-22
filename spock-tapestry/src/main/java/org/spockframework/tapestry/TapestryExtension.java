@@ -16,6 +16,8 @@
 
 package org.spockframework.tapestry;
 
+import java.lang.annotation.Annotation;
+
 import java.util.*;
 
 import org.apache.tapestry5.ioc.annotations.SubModule;
@@ -23,6 +25,7 @@ import org.apache.tapestry5.ioc.annotations.SubModule;
 import org.spockframework.runtime.extension.AbstractGlobalExtension;
 import org.spockframework.runtime.extension.IMethodInterceptor;
 import org.spockframework.runtime.model.SpecInfo;
+import org.spockframework.util.ReflectionUtil;
 
 /**
  * Facilitates the creation of integration-level specifications for applications based
@@ -35,8 +38,9 @@ import org.spockframework.runtime.model.SpecInfo;
  * Tapestry's own annotations. In particular,
  *
  * <ul>
- * <li><tt>&#64;SubModule</tt> indicates which Tapestry module(s) should be started
- *  (and subsequently shut down)</li>
+ * <li><tt>&#64;ImportModule</tt> indicates which Tapestry module(s) should be started
+ *  (and subsequently shut down). The deprecated <tt>&#64;ImportModule</tt> annotation
+ *  is still supported for compatibility reasons.</li>
  * <li><tt>&#64;Inject</tt> marks fields which should be injected with a Tapestry service or
  * symbol</li>
  * </ul>
@@ -47,10 +51,10 @@ import org.spockframework.runtime.model.SpecInfo;
  * To interact directly with the Tapestry registry, an injection point of type
  * <tt>ObjectLocator</tt> may be defined. However, this should be rarely needed.
  *
- * <p>For every specification annotated with <tt>&#64;SubModule</tt>, the Tapestry
- * registry will be started up (and subsequently shut down) once. Because fields are injected
- * <em>before</em> field initializers and the <tt>setup()</tt>/<tt>setupSpec()</tt>
- * methods are run, they can be safely accessed from these places.
+ * <p>For every specification annotated with <tt>&#64;ImportModule</tt> or
+ * <tt>&#64;SubModule</tt>, the Tapestry registry will be started up (and subsequently shut down)
+ * once. Because fields are injected <em>before</em> field initializers and the <tt>setup()</tt>/
+ * <tt>setupSpec()</tt> methods are run, they can be safely accessed from these places.
  *
  * <p>Fields marked as <tt>&#64;Shared</tt> are injected once per specification; regular 
  * fields once per feature (iteration). However, this does <em>not</em> mean that each
@@ -67,7 +71,7 @@ import org.spockframework.runtime.model.SpecInfo;
  * <p><b>Usage example:</b>
  *
  * <pre>
- * &#64;SubModule(UniverseModule)
+ * &#64;ImportModule(UniverseModule)
  * class UniverseSpec extends Specification {
  *   &#64;Inject
  *   UniverseService service
@@ -85,7 +89,19 @@ import org.spockframework.runtime.model.SpecInfo;
  * @author Peter Niederwieser
  */
 public class TapestryExtension extends AbstractGlobalExtension {
-  public void visitSpec(SpecInfo spec) {
+
+  // since Tapestry 5.4
+  @SuppressWarnings("unchecked")
+  private static final Class<? extends Annotation> importModuleAnnotation =
+      (Class) ReflectionUtil.loadClassIfAvailable("org.apache.tapestry5.ioc.annotations.ImportModule");
+
+  // deprecated as of Tapestry 5.4
+  @SuppressWarnings("unchecked")
+  private static final Class<? extends Annotation> submoduleAnnotation =
+      (Class) ReflectionUtil.loadClassIfAvailable("org.apache.tapestry5.ioc.annotations.SubModule");
+
+  @Override
+  public void visitSpec(final SpecInfo spec) {
     Set<Class<?>> modules = collectModules(spec);
     if (modules == null) return;
 
@@ -95,19 +111,34 @@ public class TapestryExtension extends AbstractGlobalExtension {
     spec.addCleanupSpecInterceptor(interceptor);
   }
 
-  // Returns null if no SubModule annotation was found.
-  // Returns an empty list if one or more SubModule annotations were found,
+  // Returns null if no ImportModule or SubModule annotation was found.
+  // Returns an empty list if one or more ImportModule or SubModule annotations were found,
   // but they didn't specify any modules. This distinction is important to
   // allow activation of the extension w/o specifying any modules.
   private Set<Class<?>> collectModules(SpecInfo spec) {
     Set<Class<?>> modules = null;
 
     for (SpecInfo curr : spec.getSpecsTopToBottom()) {
-      SubModule subModule = curr.getAnnotation(SubModule.class);
-      if (subModule == null) continue;
-
-      if (modules == null) modules = new HashSet<Class<?>>();
-      modules.addAll(Arrays.<Class<?>>asList(subModule.value()));
+      if (importModuleAnnotation != null && spec.isAnnotationPresent(importModuleAnnotation)){
+        org.apache.tapestry5.ioc.annotations.ImportModule importModule = curr
+            .getAnnotation(org.apache.tapestry5.ioc.annotations.ImportModule.class);
+        if (importModule != null) {
+          if (modules == null) {
+            modules = new HashSet<Class<?>>();
+          }
+          modules.addAll(Arrays.<Class<?>> asList(importModule.value()));
+        }
+      }
+      if (submoduleAnnotation != null && spec.isAnnotationPresent(submoduleAnnotation)){
+        @SuppressWarnings("deprecation")
+        SubModule subModule = curr.getAnnotation(SubModule.class);
+        if (subModule != null) {
+          if (modules == null) {
+            modules = new HashSet<Class<?>>();
+          }
+          modules.addAll(Arrays.<Class<?>> asList(subModule.value()));
+        }
+      }
     }
 
     return modules;

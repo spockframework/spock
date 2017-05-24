@@ -27,7 +27,7 @@ class BlockingVariablesImpl {
   public BlockingVariablesImpl(double timeout) {
     this.timeout = timeout;
   }
-  
+
   public Object get(String name) throws InterruptedException {
     BlockingVariable<Object> entry = new BlockingVariable<Object>(timeout);
     BlockingVariable<Object> oldEntry = map.putIfAbsent(name, entry);

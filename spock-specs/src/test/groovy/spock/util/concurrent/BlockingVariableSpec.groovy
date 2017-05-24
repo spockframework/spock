@@ -67,4 +67,26 @@ class BlockingVariableSpec extends Specification {
     then:
     thrown(SpockTimeoutError)
   }
+
+  def "reset allows to use the same blocking variable several times in a row"() {
+    def blockingVar = new BlockingVariable<String>(1, TimeUnit.MILLISECONDS)
+
+    when:
+    blockingVar.set("foo")
+    then:
+    blockingVar.get() == "foo"
+    blockingVar.get() == "foo"
+    blockingVar.get() == "foo"
+
+    when:
+    blockingVar.reset()
+    blockingVar.get()
+    then:
+    thrown(SpockTimeoutError)
+
+    when:
+    blockingVar.set("bar")
+    then:
+    blockingVar.get() == "bar"
+  }
 }

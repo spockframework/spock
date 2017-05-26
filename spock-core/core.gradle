@@ -23,6 +23,19 @@ dependencies {
 jar {
   manifest {
     name = 'spock-core'
+    attributes(
+      'Created-By': "${System.properties['java.version']} (${System.properties['java.vendor']} ${System.properties['java.vm.version']})".toString(),
+      'Build-Date': buildDate,
+      'Build-Time': buildTime,
+      'Build-Revision': versioning.info.commit,
+      'Specification-Title': project.name,
+      'Specification-Version': baseVersion,
+      'Specification-Vendor': 'spockframework.org',
+      'Implementation-Title': project.name,
+      'Implementation-Version': variantLessVersion,
+      'Implementation-Vendor': 'spockframework.org',
+      'Automatic-Module-Name': 'org.spockframework'
+    )
     instruction 'Export-Package', 'org.spockframework.*', 'spock.*'
     instruction 'Embed-Dependency', 'groovy;inline=false', 'junit;inline=false'
     instruction 'Import-Package',

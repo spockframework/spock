@@ -1,8 +1,11 @@
+import java.text.SimpleDateFormat
+
 plugins {
   id 'com.gradle.build-scan' version '1.8'
   id "base"
   id "org.asciidoctor.gradle.asciidoctor" version "1.5.1"
   id "jacoco"
+  id "net.nemerosa.versioning" version "2.6.0"
 }
 
 description = "Spock Framework"
@@ -39,6 +42,9 @@ ext {
     log4j: "log4j:log4j:1.2.17",
     objenesis: "org.objenesis:objenesis:2.5.1"
   ]
+  Date buildTimeAndDate = new Date()
+  buildDate = new SimpleDateFormat('yyyy-MM-dd').format(buildTimeAndDate)
+  buildTime = new SimpleDateFormat('HH:mm:ss.SSSZ').format(buildTimeAndDate)
 }
 
 allprojects {

@@ -11,6 +11,24 @@ dependencies {
   // "com.fasterxml.jackson.core:jackson-databind:2.1.2"
 }
 
+jar {
+  manifest {
+    attributes(
+      'Created-By': "${System.properties['java.version']} (${System.properties['java.vendor']} ${System.properties['java.vm.version']})".toString(),
+      'Build-Date': buildDate,
+      'Build-Time': buildTime,
+      'Build-Revision': versioning.info.commit,
+      'Specification-Title': project.name,
+      'Specification-Version': baseVersion,
+      'Specification-Vendor': 'spockframework.org',
+      'Implementation-Title': project.name,
+      'Implementation-Version': variantLessVersion,
+      'Implementation-Vendor': 'spockframework.org',
+      'Automatic-Module-Name': 'org.spockframework.report'
+    )
+  }
+}
+
 test {
   exclude "org/spockframework/report/sample/ParameterizedFightSpec.class"
   exclude "org/spockframework/report/sample/FightOrFlightStory.class"

@@ -10,3 +10,21 @@ dependencies {
   // surfaces in the Guice API; groovyc complains if we don't add it
   compile "aopalliance:aopalliance:1.0", internal
 }
+
+jar {
+  manifest {
+    attributes(
+      'Created-By': "${System.properties['java.version']} (${System.properties['java.vendor']} ${System.properties['java.vm.version']})".toString(),
+      'Build-Date': buildDate,
+      'Build-Time': buildTime,
+      'Build-Revision': versioning.info.commit,
+      'Specification-Title': project.name,
+      'Specification-Version': baseVersion,
+      'Specification-Vendor': 'spockframework.org',
+      'Implementation-Title': project.name,
+      'Implementation-Version': variantLessVersion,
+      'Implementation-Vendor': 'spockframework.org',
+      'Automatic-Module-Name': 'org.spockframework.guice'
+    )
+  }
+}

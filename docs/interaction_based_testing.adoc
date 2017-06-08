@@ -204,6 +204,8 @@ The argument constraints of an interaction describe which method arguments are e
 1 * subscriber.receive(_ as String) // any non-null argument that is-a String
 1 * subscriber.receive({ it.size() > 3 }) // an argument that satisfies the given predicate
                                           // (here: message length is greater than 3)
+1 * subscriber.receive(endsWith("lo"))    // Hamcrest Matchers are also supported
+                                          // (here: a string ending with 'lo')
 ----
 
 Argument constraints work as expected for methods with multiple arguments:
@@ -723,11 +725,11 @@ def subscriber = Spy(SubscriberImpl, constructorArgs: ["Fred"])
 
 A spy is always based on a real object. Hence you must provide a class type rather
 than an interface type, along with any constructor arguments for the type.
-If no constructor arguments are provided, the type's default constructor will be used. 
+If no constructor arguments are provided, the type's default constructor will be used.
 
-You may also create a spy from an instantiated object. This may be useful in cases 
-where you do not have full control over the instatiation of types you are interested 
-in spying. (For example when testing within a Dependency Injection framework such as 
+You may also create a spy from an instantiated object. This may be useful in cases
+where you do not have full control over the instatiation of types you are interested
+in spying. (For example when testing within a Dependency Injection framework such as
 Spring or Guice.)
 
 Method calls on a spy are automatically delegated to the real object. Likewise, values

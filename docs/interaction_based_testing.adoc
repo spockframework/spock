@@ -298,7 +298,7 @@ a cardinality (when mocking) or a response generator (when stubbing). Either of 
 ****
 
 [[declaring-interactions-at-creation-time]]
-=== Declaring Interactions at Mock Creation Time (New in 0.7)
+=== Declaring Interactions at Mock Creation Time
 
 If a mock has a set of "base" interactions that don't vary, they can be declared right at mock creation time:
 
@@ -327,7 +327,7 @@ class MySpec extends Specification {
 }
 ----
 
-=== Grouping Interactions with Same Target (New in 0.7)
+=== Grouping Interactions with Same Target
 
 Interactions sharing the same target can be grouped in a `Specification.with` block. Similar to
 <<declaring-interactions-at-creation-time,Declaring Interactions at Mock Creation Time>>, this makes it unnecessary
@@ -424,7 +424,7 @@ Too many invocations for:
 
 [[ShowAllMatchingInvocations]]
 To make it easier to diagnose why too many invocations matched, Spock will show all invocations matching
-the interaction in question (new in Spock 0.7):
+the interaction in question:
 
 ----
 Matching invocations (ordered by last occurrence):
@@ -452,8 +452,8 @@ in either case, a `TooFewInvocationsError` error will occur.
 
 [[ShowUnmatchedInvocations]]
 To make it easier to diagnose what happened "instead" of a missing invocation, Spock will show all
-invocations that didn't match any interaction, ordered by their similarity with the interaction in question
-(new in Spock 0.7). In particular, invocations that match everything but the interaction's arguments will be shown first:
+invocations that didn't match any interaction, ordered by their similarity with the interaction in question.
+In particular, invocations that match everything but the interaction's arguments will be shown first:
 
 [source,groovy]
 ----
@@ -668,7 +668,7 @@ get a chance to match.
 NOTE: Mocking and stubbing of the same method call has to happen in the same interaction.
 
 [[OtherKindsOfMockObjects]]
-== Other Kinds of Mock Objects (New in 0.7)
+== Other Kinds of Mock Objects
 
 So far, we have created mock objects with the `MockingApi.Mock` method. Aside from
 this method, the `MockingApi` class provides a couple of other factory methods for creating
@@ -790,7 +790,7 @@ then:
 ----
 
 [[GroovyMocks]]
-== Groovy Mocks (New in 0.7)
+== Groovy Mocks
 
 So far, all the mocking features we have seen work the same no matter if the calling code is written in Java or Groovy.
 By leveraging Groovy's dynamic capabilities, Groovy mocks offer some additional features specifically for testing Groovy code.
@@ -909,7 +909,7 @@ the mock's instance isn't really needed. In such a case one can just write:
 GroovySpy(RealSubscriber, global: true)
 ----
 
-== Advanced Features (New in 0.7)
+== Advanced Features
 
 Most of the time you shouldn't need these features. But if you do, you'll be glad to have them.
 

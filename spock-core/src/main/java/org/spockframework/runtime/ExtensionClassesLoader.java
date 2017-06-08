@@ -33,11 +33,11 @@ public class ExtensionClassesLoader {
   }
 
   public List<Class<?>> loadClasses(String descriptorPath) {
-    List<Class<?>> extClasses = new ArrayList<Class<?>>();
+    Set<Class<?>> extClasses = new HashSet<Class<?>>();
     for (URL url : locateDescriptors(descriptorPath))
       for (String className : readDescriptor(url))
         extClasses.add(loadExtensionClass(className));
-    return extClasses;
+    return new ArrayList<Class<?>>(extClasses);
   }
 
   private List<URL> locateDescriptors(String descriptorPath) {

@@ -18,6 +18,7 @@ package org.spockframework.mock;
 
 import org.spockframework.util.*;
 
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -26,8 +27,10 @@ import java.util.*;
  * @author Peter Niederwieser
  */
 public class TooFewInvocationsError extends InteractionNotSatisfiedError {
-  private final List<IMockInteraction> interactions;
-  private final List<IMockInvocation> unmatchedInvocations;
+  private static final long serialVersionUID = 1L;
+
+  private final transient List<IMockInteraction> interactions;
+  private final transient List<IMockInvocation> unmatchedInvocations;
   private String message;
 
   public TooFewInvocationsError(List<IMockInteraction> interactions, List<IMockInvocation> unmatchedInvocations) {
@@ -66,6 +69,12 @@ public class TooFewInvocationsError extends InteractionNotSatisfiedError {
 
     message = builder.toString();
     return message;
+  }
+
+  private void writeObject(java.io.ObjectOutputStream out) throws IOException {
+    // create the message so that it is available for serialization
+    getMessage();
+    out.defaultWriteObject();
   }
 
   private List<ScoredInvocation> scoreInvocations(IMockInteraction interaction, IMultiset<IMockInvocation> invocations) {

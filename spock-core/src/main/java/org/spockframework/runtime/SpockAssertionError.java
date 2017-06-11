@@ -21,6 +21,8 @@ package org.spockframework.runtime;
  * @author Peter Niederwieser
  */
 public class SpockAssertionError extends AssertionError {
+  private static final long serialVersionUID = 1L;
+
   public SpockAssertionError() {}
 
   public SpockAssertionError(String message) {

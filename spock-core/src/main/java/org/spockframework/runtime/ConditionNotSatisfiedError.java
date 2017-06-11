@@ -20,6 +20,8 @@ package org.spockframework.runtime;
  * @author Peter Niederwieser
  */
 public class ConditionNotSatisfiedError extends SpockAssertionError {
+  private static final long serialVersionUID = 1L;
+
   private final Condition condition;
 
   public ConditionNotSatisfiedError(Condition condition) {

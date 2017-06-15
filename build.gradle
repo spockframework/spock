@@ -30,14 +30,14 @@ ext {
   libs = [
     jetbrainsAnnotations: "org.jetbrains:annotations:13.0",
     ant: "org.apache.ant:ant:1.9.7",
-    asm: "org.ow2.asm:asm:5.1",
-    bytebuddy: "net.bytebuddy:byte-buddy:1.6.5",
-    cglib: "cglib:cglib-nodep:3.2.2",
+    asm: "org.ow2.asm:asm:5.2",
+    bytebuddy: "net.bytebuddy:byte-buddy:1.7.0",
+    cglib: "cglib:cglib-nodep:3.2.5",
     groovy: "org.codehaus.groovy:groovy-all:$groovyVersion",
     h2database: "com.h2database:h2:1.3.176",
     junit: "junit:junit:4.12",
     log4j: "log4j:log4j:1.2.17",
-    objenesis: "org.objenesis:objenesis:2.4"
+    objenesis: "org.objenesis:objenesis:2.5.1"
   ]
 }
 

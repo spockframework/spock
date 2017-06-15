@@ -26,18 +26,18 @@ jar {
     instruction 'Export-Package', 'org.spockframework.*', 'spock.*'
     instruction 'Embed-Dependency', 'groovy;inline=false', 'junit;inline=false'
     instruction 'Import-Package',
-        'org.objenesis;version="[1,2)";resolution:=optional',
+        'org.objenesis;version="[2,3)";resolution:=optional',
         'org.apache.tools.ant;version="[1,2)";resolution:=optional',
         'org.apache.tools.ant.types;version="[1,2)";resolution:=optional',
-        'net.bytebuddy;version="[1.6.0,1)";resolution:=optional',
-        'net.bytebuddy.dynamic;version="[1.6.0,1)";resolution:=optional',
-        'net.bytebuddy.implementation;version="[1.6.0,1)";resolution:=optional',
-        'net.bytebuddy.implementation.bind.annotation;version="[1.6.0,1)";resolution:=optional',
-        'net.bytebuddy.description.modifier;version="[1.6.0,1)";resolution:=optional',
-        'net.sf.cglib.proxy;version="[2.2,2)";resolution:=optional',
+        'net.bytebuddy;version="[1.6.0,2)";resolution:=optional',
+        'net.bytebuddy.dynamic;version="[1.6.0,2)";resolution:=optional',
+        'net.bytebuddy.implementation;version="[1.6.0,2)";resolution:=optional',
+        'net.bytebuddy.implementation.bind.annotation;version="[1.6.0,2)";resolution:=optional',
+        'net.bytebuddy.description.modifier;version="[1.6.0,2)";resolution:=optional',
+        'net.sf.cglib.proxy;version="[3.2,4)";resolution:=optional',
         'org.apache.tools.ant.types.selectors;version="[1.7,2)";resolution:=optional',
-        'groovy.lang;version="[1.8,3)"', 'org.codehaus.groovy.*;version="[1.8,3)"',
-        'org.junit.runner;version="[4,7)"'
+        'groovy.lang;version="[1.8,4)"', 'org.codehaus.groovy.*;version="[1.8,4)"',
+        'org.junit.runner;version="[4,6)"'
   }
 }
 

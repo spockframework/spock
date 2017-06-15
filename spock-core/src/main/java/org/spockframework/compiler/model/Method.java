@@ -16,16 +16,16 @@
 
 package org.spockframework.compiler.model;
 
+import org.spockframework.compiler.AstUtil;
+
 import java.util.*;
 
 import org.codehaus.groovy.ast.MethodNode;
 import org.codehaus.groovy.ast.stmt.Statement;
 
-import org.spockframework.compiler.AstUtil;
-
 /**
  * AST node representing a Spec method (one of fixture method, feature method, helper method).
- * 
+ *
  * @author Peter Niederwieser
  */
 public abstract class Method extends Node<Spec, MethodNode> {
@@ -79,14 +79,17 @@ class BlockIterable implements Iterable<Block> {
     this.first = first;
   }
 
+  @Override
   public Iterator<Block> iterator() {
     return new Iterator<Block>() {
       Block block = first;
 
+      @Override
       public boolean hasNext() {
         return block != null;
       }
 
+      @Override
       public Block next() {
         if (hasNext()) {
           Block result = block;
@@ -96,6 +99,7 @@ class BlockIterable implements Iterable<Block> {
           throw new NoSuchElementException();
       }
 
+      @Override
       public void remove() {
         throw new UnsupportedOperationException("remove");
       }

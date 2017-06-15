@@ -16,8 +16,7 @@
 
 package org.spockframework.mock.constraint;
 
-import org.spockframework.mock.IInvocationConstraint;
-import org.spockframework.mock.IMockInvocation;
+import org.spockframework.mock.*;
 
 /**
  *
@@ -30,6 +29,7 @@ public class EqualMethodNameConstraint implements IInvocationConstraint {
     this.methodName = methodName;
   }
 
+  @Override
   public boolean isSatisfiedBy(IMockInvocation invocation) {
     return invocation.getMethod().getName().equals(methodName);
   }

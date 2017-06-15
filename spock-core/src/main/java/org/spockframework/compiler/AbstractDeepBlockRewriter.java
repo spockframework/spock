@@ -14,17 +14,12 @@
 
 package org.spockframework.compiler;
 
-import org.codehaus.groovy.ast.expr.BinaryExpression;
-import org.codehaus.groovy.ast.expr.ClosureExpression;
-import org.codehaus.groovy.ast.expr.MethodCallExpression;
-import org.codehaus.groovy.ast.stmt.ExpressionStatement;
-import org.codehaus.groovy.ast.stmt.Statement;
-import org.spockframework.compiler.model.Block;
-import org.spockframework.compiler.model.ThenBlock;
+import org.spockframework.compiler.model.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ListIterator;
+import java.util.*;
+
+import org.codehaus.groovy.ast.expr.*;
+import org.codehaus.groovy.ast.stmt.*;
 
 public class AbstractDeepBlockRewriter extends StatementReplacingVisitorSupport {
   protected Block block;
@@ -41,7 +36,7 @@ public class AbstractDeepBlockRewriter extends StatementReplacingVisitorSupport 
   protected boolean groupConditionFound;
   protected boolean interactionFound;
   protected MethodCallExpression foundExceptionCondition;
-  protected final List<Statement> thenBlockInteractionStats = new ArrayList<Statement>();
+  protected final List<Statement> thenBlockInteractionStats = new ArrayList<>();
 
   public AbstractDeepBlockRewriter(Block block) {
     this.block = block;

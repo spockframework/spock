@@ -16,8 +16,7 @@
 
 package org.spockframework.compiler.model;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import org.codehaus.groovy.ast.ClassNode;
 
@@ -28,8 +27,8 @@ import org.codehaus.groovy.ast.ClassNode;
  * @author Peter Niederwieser
  */
 public class Spec extends Node<Spec, ClassNode> {
-  private final List<Field> fields = new ArrayList<Field>();
-  private final List<Method> methods = new ArrayList<Method>();
+  private final List<Field> fields = new ArrayList<>();
+  private final List<Method> methods = new ArrayList<>();
 
   private FixtureMethod initializerMethod;
   private FixtureMethod sharedInitializerMethod;
@@ -47,7 +46,7 @@ public class Spec extends Node<Spec, ClassNode> {
   public List<Field> getFields() {
     return fields;
   }
- 
+
   public List<Method> getMethods() {
     return methods;
   }

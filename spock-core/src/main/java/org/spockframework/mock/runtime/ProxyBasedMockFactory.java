@@ -14,32 +14,23 @@
 
 package org.spockframework.mock.runtime;
 
-import java.lang.reflect.Method;
+import org.spockframework.mock.*;
+import org.spockframework.runtime.InvalidSpecException;
+import org.spockframework.util.*;
+
+import java.lang.reflect.*;
 import java.lang.reflect.Proxy;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.Callable;
 
-import net.bytebuddy.ByteBuddy;
-import net.bytebuddy.NamingStrategy;
-import net.bytebuddy.TypeCache;
-import net.bytebuddy.description.modifier.SynchronizationState;
-import net.bytebuddy.description.modifier.Visibility;
+import net.bytebuddy.*;
+import net.bytebuddy.description.modifier.*;
 import net.bytebuddy.dynamic.Transformer;
-import net.bytebuddy.implementation.FieldAccessor;
-import net.bytebuddy.implementation.MethodDelegation;
+import net.bytebuddy.implementation.*;
 import net.bytebuddy.implementation.bind.annotation.Morph;
-
 import net.sf.cglib.proxy.*;
 
-import org.spockframework.mock.CannotCreateMockException;
-import org.spockframework.mock.ISpockMockObject;
-import org.spockframework.runtime.InvalidSpecException;
-import org.spockframework.util.Nullable;
-import org.spockframework.util.ReflectionUtil;
-
-import static net.bytebuddy.matcher.ElementMatchers.any;
-import static net.bytebuddy.matcher.ElementMatchers.none;
+import static net.bytebuddy.matcher.ElementMatchers.*;
 
 /**
  * Some implementation details of this class are inspired from Spring, EasyMock
@@ -81,7 +72,7 @@ public class ProxyBasedMockFactory {
     if (constructorArgs != null) {
       throw new InvalidSpecException("Interface based mocks may not have constructor arguments");
     }
-    List<Class<?>> interfaces = new ArrayList<Class<?>>();
+    List<Class<?>> interfaces = new ArrayList<>();
     interfaces.add(mockType);
     interfaces.addAll(additionalInterfaces);
     interfaces.add(ISpockMockObject.class);
@@ -96,7 +87,7 @@ public class ProxyBasedMockFactory {
   private static class ByteBuddyMockFactory {
 
     private static final TypeCache<TypeCache.SimpleKey> CACHE =
-      new TypeCache.WithInlineExpunction<TypeCache.SimpleKey>(TypeCache.Sort.SOFT);
+      new TypeCache.WithInlineExpunction<>(TypeCache.Sort.SOFT);
 
     static Object createMock(final Class<?> type,
                              final List<Class<?>> additionalInterfaces,
@@ -143,8 +134,7 @@ public class ProxyBasedMockFactory {
       Enhancer enhancer = new ConstructorFriendlyEnhancer();
       enhancer.setClassLoader(classLoader);
       enhancer.setSuperclass(type);
-      List<Class<?>> interfaces = new ArrayList<Class<?>>();
-      interfaces.addAll(additionalInterfaces);
+      List<Class<?>> interfaces = new ArrayList<>(additionalInterfaces);
       interfaces.add(ISpockMockObject.class);
       enhancer.setInterfaces(interfaces.toArray(new Class<?>[interfaces.size()]));
       enhancer.setCallbackFilter(BridgeMethodAwareCallbackFilter.INSTANCE);
@@ -167,6 +157,7 @@ public class ProxyBasedMockFactory {
       // keep creating new classes rather than reusing previously generated ones
       static BridgeMethodAwareCallbackFilter INSTANCE = new BridgeMethodAwareCallbackFilter();
 
+      @Override
       public int accept(Method method) {
         return method.isBridge() ? 1 : 0;
       }

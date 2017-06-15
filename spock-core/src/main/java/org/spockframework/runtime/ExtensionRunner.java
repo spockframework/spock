@@ -14,11 +14,11 @@
 
 package org.spockframework.runtime;
 
-import java.lang.annotation.Annotation;
-import java.util.*;
-
 import org.spockframework.runtime.extension.*;
 import org.spockframework.runtime.model.*;
+
+import java.lang.annotation.Annotation;
+import java.util.*;
 
 /**
  * Runs global and local extensions for a spec.
@@ -28,7 +28,7 @@ public class ExtensionRunner {
   private final IExtensionRegistry extensionRegistry;
   private final IConfigurationRegistry configurationRegistry;
   private final Map<Class<? extends IAnnotationDrivenExtension>, IAnnotationDrivenExtension> localExtensions =
-      new HashMap<Class<? extends IAnnotationDrivenExtension>, IAnnotationDrivenExtension>();
+    new HashMap<>();
 
   public ExtensionRunner(SpecInfo spec, IExtensionRegistry extensionRegistry, IConfigurationRegistry configurationRegistry) {
     this.spec = spec;

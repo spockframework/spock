@@ -15,10 +15,9 @@
  */
 package org.spockframework.runtime;
 
-import org.junit.runner.Description;
-import org.junit.runner.manipulation.Sorter;
-
 import org.spockframework.runtime.model.FeatureInfo;
+
+import org.junit.runner.manipulation.Sorter;
 
 /**
  * Adapts an org.junit.runner.manipulation.Sorter to a IMethodInfoSorter.
@@ -31,6 +30,7 @@ public class JUnitSorterAdapter implements IFeatureSortOrder {
     this.sorter = sorter;
   }
 
+  @Override
   public int compare(FeatureInfo m1, FeatureInfo m2) {
     return sorter.compare(m1.getDescription(), m2.getDescription());
   }

@@ -14,14 +14,13 @@
 
 package spock.mock;
 
+import org.spockframework.lang.SpecInternals;
+import org.spockframework.runtime.*;
+import org.spockframework.util.Beta;
+
 import java.util.Map;
 
 import groovy.lang.Closure;
-
-import org.spockframework.util.Beta;
-import org.spockframework.lang.SpecInternals;
-import org.spockframework.runtime.InvalidSpecException;
-import org.spockframework.runtime.GroovyRuntimeUtil;
 
 /**
  * Spock's mocking API primarily consists of the following factory methods:
@@ -66,7 +65,7 @@ import org.spockframework.runtime.GroovyRuntimeUtil;
  * }
  * </pre>
  */
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "SameReturnValue"})
 public class MockingApi extends SpecInternals implements MockFactory {
   /**
    * Encloses one or more interaction definitions in a <tt>then</tt> block.
@@ -558,7 +557,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
     invalidMockCreation();
     return null;
   }
-  
+
   /**
    * Creates a spy wrapping a provided instance.
    *

@@ -14,12 +14,11 @@
 
 package org.spockframework.runtime;
 
+import org.spockframework.util.*;
+
 import java.lang.reflect.Method;
 
 import org.hamcrest.*;
-
-import org.spockframework.util.Nullable;
-import org.spockframework.util.ReflectionUtil;
 
 /**
  * Facade around Hamcrest API that works both with Hamcrest 1.1 and 1.2,
@@ -45,7 +44,7 @@ public abstract class HamcrestFacade {
     return HamcrestFacadeImpl.getFailureDescription(matcher, value, message);
   }
 
-  private static abstract class HamcrestFacadeImpl {
+  private abstract static class HamcrestFacadeImpl {
     static final Method describeMismatchMethod =
         ReflectionUtil.getMethodByName(Matcher.class, "describeMismatch");
 

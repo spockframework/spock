@@ -14,19 +14,18 @@
 
 package org.spockframework.runtime.extension.builtin;
 
-import java.lang.annotation.Annotation;
-import java.util.List;
-
 import org.spockframework.runtime.extension.AbstractGlobalExtension;
 import org.spockframework.runtime.model.*;
+import spock.config.*;
 
-import spock.config.IncludeExcludeCriteria;
-import spock.config.RunnerConfiguration;
+import java.lang.annotation.Annotation;
+import java.util.List;
 
 @SuppressWarnings("UnusedDeclaration")
 public class IncludeExcludeExtension extends AbstractGlobalExtension {
   private RunnerConfiguration config;
 
+  @Override
   public void visitSpec(SpecInfo spec) {
     handleSpecIncludes(spec, config.include);
     handleSpecExcludes(spec, config.exclude);
@@ -35,7 +34,7 @@ public class IncludeExcludeExtension extends AbstractGlobalExtension {
 
     handleFeatureIncludes(spec, config.include);
     handleFeatureExcludes(spec, config.exclude);
-    if (spec.isExcluded() && !allFeaturesExcluded(spec)) 
+    if (spec.isExcluded() && !allFeaturesExcluded(spec))
       spec.setExcluded(false);
   }
 
@@ -66,7 +65,7 @@ public class IncludeExcludeExtension extends AbstractGlobalExtension {
 
   private void handleFeatureExcludes(SpecInfo spec, IncludeExcludeCriteria criteria) {
     if (criteria.isEmpty()) return;
-    
+
     for (FeatureInfo feature : spec.getAllFeatures())
       if (hasAnyAnnotation(feature.getFeatureMethod(), criteria.annotations))
         feature.setExcluded(true);
@@ -76,7 +75,7 @@ public class IncludeExcludeExtension extends AbstractGlobalExtension {
     for (FeatureInfo feature : spec.getAllFeatures())
       feature.setExcluded(true);
   }
-  
+
   private boolean allFeaturesExcluded(SpecInfo spec) {
     for (FeatureInfo feature : spec.getAllFeatures())
       if (!feature.isExcluded()) return false;

@@ -14,23 +14,23 @@
 
 package org.spockframework.runtime;
 
-import org.spockframework.runtime.model.IterationInfo;
-import org.spockframework.runtime.model.NameProvider;
+import org.spockframework.runtime.model.*;
 
 public class SafeIterationNameProvider implements NameProvider<IterationInfo> {
   private final NameProvider<IterationInfo> delegate;
   private int iterationCount;
-  
+
   public SafeIterationNameProvider(NameProvider<IterationInfo> delegate) {
     this.delegate = delegate;
   }
-  
+
+  @Override
   public String getName(IterationInfo iteration) {
-    String safeName = iteration.getParent().isReportIterations() ? 
+    String safeName = iteration.getParent().isReportIterations() ?
         String.format("%s[%d]", iteration.getParent().getName(), iterationCount++) : iteration.getParent().getName();
-    
+
     if (delegate == null) return safeName;
-    
+
     try {
       String name = delegate.getName(iteration);
       if (name != null) return name;

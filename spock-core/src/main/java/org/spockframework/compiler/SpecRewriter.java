@@ -16,21 +16,19 @@
 
 package org.spockframework.compiler;
 
+import org.spockframework.compiler.model.*;
+import org.spockframework.mock.runtime.MockController;
+import org.spockframework.runtime.SpecificationContext;
+import org.spockframework.util.*;
+
+import java.util.*;
+
 import org.codehaus.groovy.ast.*;
 import org.codehaus.groovy.ast.expr.*;
 import org.codehaus.groovy.ast.stmt.*;
 import org.codehaus.groovy.runtime.MetaClassHelper;
-import org.codehaus.groovy.syntax.Token;
-import org.codehaus.groovy.syntax.Types;
+import org.codehaus.groovy.syntax.*;
 import org.objectweb.asm.Opcodes;
-import org.spockframework.compiler.model.*;
-import org.spockframework.mock.runtime.MockController;
-import org.spockframework.runtime.SpecificationContext;
-import org.spockframework.util.InternalIdentifiers;
-import org.spockframework.util.ObjectUtil;
-import org.spockframework.util.ReflectionUtil;
-
-import java.util.*;
 
 /**
  * A Spec visitor responsible for most of the rewriting of a Spec's AST.
@@ -62,6 +60,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
     this.errorReporter = errorReporter;
   }
 
+  @Override
   public void visitSpec(Spec spec) {
     this.spec = spec;
     specDepth = computeDepth(spec.getAst());
@@ -72,6 +71,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
     return computeDepth(node.getSuperClass()) + 1;
   }
 
+  @Override
   public void visitField(Field field) {
     if (field.isShared())
       handleSharedField(field);
@@ -228,6 +228,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
     field.getAst().setInitialValueExpression(null);
   }
 
+  @Override
   public void visitMethod(Method method) {
     this.method = method;
     methodHasCondition = false;
@@ -289,6 +290,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
     WhereBlockRewriter.rewrite((WhereBlock) block, this);
   }
 
+  @Override
   public void visitMethodAgain(Method method) {
     this.block = null;
 
@@ -304,6 +306,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
       defineRecorders(method.getStatements(), false);
   }
 
+  @Override
   public void visitAnyBlock(Block block) {
     this.block = block;
     if (block instanceof ThenBlock) return;
@@ -313,6 +316,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
     methodHasCondition |= deep.isConditionFound() || deep.isGroupConditionFound();
   }
 
+  @Override
   public void visitThenBlock(ThenBlock block) {
     if (block.isFirstInChain()) thenBlockChainHasExceptionCondition = false;
 
@@ -383,6 +387,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
       }
     }
   */
+  @Override
   public void visitCleanupBlock(CleanupBlock block) {
     for (Block b : method.getBlocks()) {
       if (b == block) break;
@@ -491,18 +496,22 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
 
   // IRewriteResources members
 
+  @Override
   public Spec getCurrentSpec() {
     return spec;
   }
 
+  @Override
   public Method getCurrentMethod() {
     return method;
   }
 
+  @Override
   public Block getCurrentBlock() {
     return block;
   }
 
+  @Override
   public void defineRecorders(List<Statement> stats, boolean enableErrorCollector) {
     // recorder variable needs to be defined in outermost scope,
     // hence we insert it at the beginning of the block
@@ -538,6 +547,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
           ))));
   }
 
+  @Override
   public VariableExpression captureOldValue(Expression oldValue) {
     VariableExpression var = new OldValueExpression(oldValue, "$spock_oldValue" + oldValueCount++);
     DeclarationExpression decl = new DeclarationExpression(
@@ -557,6 +567,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
         nodeCache.SpecInternals_GetSpecificationContext, ArgumentListExpression.EMPTY_ARGUMENTS);
   }
 
+  @Override
   public MethodCallExpression getMockInvocationMatcher() {
     return new MethodCallExpression(getSpecificationContext(),
         SpecificationContext.GET_MOCK_CONTROLLER, ArgumentListExpression.EMPTY_ARGUMENTS);
@@ -572,6 +583,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
         SpecificationContext.GET_SHARED_INSTANCE, ArgumentListExpression.EMPTY_ARGUMENTS);
   }
 
+  @Override
   public AstNodeCache getAstNodeCache() {
     return nodeCache;
   }
@@ -590,10 +602,12 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
     return spec.getInitializerMethod();
   }
 
+  @Override
   public String getSourceText(ASTNode node) {
     return lookup.lookup(node);
   }
 
+  @Override
   public ErrorReporter getErrorReporter() {
     return errorReporter;
   }
@@ -637,10 +651,10 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
         new CatchStatement(
             new Parameter(nodeCache.Throwable, "$spock_ex"),
             new BlockStatement(
-                Arrays.<Statement> asList(
-                    new ExpressionStatement(
-                      setThrownException(
-                          new VariableExpression("$spock_ex")))),
+              Arrays.<Statement>asList(
+                new ExpressionStatement(
+                  setThrownException(
+                    new VariableExpression("$spock_ex")))),
                 new VariableScope())));
   }
 

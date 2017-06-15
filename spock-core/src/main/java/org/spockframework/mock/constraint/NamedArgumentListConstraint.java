@@ -16,12 +16,10 @@
 
 package org.spockframework.mock.constraint;
 
-import java.util.*;
-
-import org.spockframework.mock.IArgumentConstraint;
-import org.spockframework.mock.IInvocationConstraint;
-import org.spockframework.mock.IMockInvocation;
+import org.spockframework.mock.*;
 import org.spockframework.util.Assert;
+
+import java.util.*;
 
 /**
  *
@@ -38,6 +36,7 @@ public class NamedArgumentListConstraint implements IInvocationConstraint {
     this.argConstraints = argConstraints;
   }
 
+  @Override
   @SuppressWarnings("unchecked")
   public boolean isSatisfiedBy(IMockInvocation invocation) {
     List<Object> args = invocation.getArguments();
@@ -45,14 +44,14 @@ public class NamedArgumentListConstraint implements IInvocationConstraint {
     if (args.size() == 1 && args.get(0) instanceof Map)
       return matchesArgMap(new HashMap((Map)args.get(0)));
 
-    return matchesArgList(new ArrayList<Object>(args));
+    return matchesArgList(new ArrayList<>(args));
   }
 
   private boolean matchesArgList(List<Object> args) {
     nextMatcher:
     for (int i = 0; i < argConstraints.size(); i++) {
       Object name = argNames.get(i);
-      if (!name.equals("_")) return false; // cannot possibly match because we have unnamed args
+      if (!"_".equals(name)) return false; // cannot possibly match because we have unnamed args
       IArgumentConstraint matcher = argConstraints.get(i);
 
       Iterator<Object> argIter = args.iterator();
@@ -72,7 +71,7 @@ public class NamedArgumentListConstraint implements IInvocationConstraint {
     // first pass: named matchers
     for (int i = 0; i < argConstraints.size(); i++) {
       Object name = argNames.get(i);
-      if (name.equals("_")) continue;
+      if ("_".equals(name)) continue;
       IArgumentConstraint matcher = argConstraints.get(i);
       if (!argMap.containsKey(name) || !matcher.isSatisfiedBy(argMap.remove(name)))
         return false;
@@ -82,7 +81,7 @@ public class NamedArgumentListConstraint implements IInvocationConstraint {
     nextMatcher:
     for (int i = 0; i < argConstraints.size(); i++) {
       Object name = argNames.get(i);
-      if (!name.equals("_")) continue;
+      if (!"_".equals(name)) continue;
       IArgumentConstraint matcher = argConstraints.get(i);
 
       @SuppressWarnings("unchecked")

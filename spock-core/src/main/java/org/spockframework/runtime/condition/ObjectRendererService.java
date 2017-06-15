@@ -14,17 +14,19 @@
 
 package org.spockframework.runtime.condition;
 
-import java.util.*;
-
 import org.spockframework.util.InternalSpockError;
 
-public class ObjectRendererService implements IObjectRendererService {
-  private final HashMap<Class<?>, IObjectRenderer<?>> renderers = new HashMap<Class<?>, IObjectRenderer<?>>();
+import java.util.*;
 
+public class ObjectRendererService implements IObjectRendererService {
+  private final HashMap<Class<?>, IObjectRenderer<?>> renderers = new HashMap<>();
+
+  @Override
   public <T> void addRenderer(Class<T> type, IObjectRenderer<? super T> renderer) {
     renderers.put(type, renderer);
   }
 
+  @Override
   @SuppressWarnings("unchecked")
   public String render(Object object) {
     if (object == null) return "null\n";
@@ -48,7 +50,7 @@ public class ObjectRendererService implements IObjectRendererService {
   }
 
   private Set<Class<?>> getParents(Set<Class<?>> types) {
-    Set<Class<?>> parents = new HashSet<Class<?>>();
+    Set<Class<?>> parents = new HashSet<>();
 
     for (Class<?> type : types) {
       Class<?> superclass = type.getSuperclass();

@@ -14,12 +14,14 @@
 
 package org.spockframework.builder;
 
+import org.spockframework.runtime.GroovyRuntimeUtil;
+
 import java.lang.reflect.Type;
 
 import groovy.lang.MetaMethod;
-import org.spockframework.runtime.GroovyRuntimeUtil;
 
 public class AddSlotFactory implements ISlotFactory {
+  @Override
   public ISlot create(Object owner, Type ownerType, String name) {
     String addMethodName = GroovyRuntimeUtil.propertyToMethodName("add", name);
     MetaMethod addMethod = GroovyRuntimeUtil.getMetaClass(owner).pickMethod(addMethodName, new Class[]{Object.class});

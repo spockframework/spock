@@ -16,17 +16,16 @@
 
 package org.spockframework.compiler;
 
-import groovy.lang.Closure;
-import org.codehaus.groovy.ast.ClassHelper;
-import org.codehaus.groovy.ast.Parameter;
-import org.codehaus.groovy.ast.expr.*;
-import org.codehaus.groovy.ast.stmt.*;
-import org.codehaus.groovy.syntax.Types;
 import org.spockframework.compiler.model.*;
 import org.spockframework.util.Nullable;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
+
+import groovy.lang.Closure;
+import org.codehaus.groovy.ast.*;
+import org.codehaus.groovy.ast.expr.*;
+import org.codehaus.groovy.ast.stmt.*;
+import org.codehaus.groovy.syntax.Types;
 
 /**
  * Walks the statement and expression tree to:
@@ -47,6 +46,7 @@ public class DeepBlockRewriter extends AbstractDeepBlockRewriter {
     this.resources = resources;
   }
 
+  @Override
   public void visit(Block block) {
     super.visit(block);
   }
@@ -59,6 +59,7 @@ public class DeepBlockRewriter extends AbstractDeepBlockRewriter {
         ConditionRewriter.rewriteExplicitCondition(stat, resources));
   }
 
+  @Override
   protected void doVisitExpressionStatement(ExpressionStatement stat) {
     super.doVisitExpressionStatement(stat);
 
@@ -67,6 +68,7 @@ public class DeepBlockRewriter extends AbstractDeepBlockRewriter {
         || handleImplicitCondition(stat);
   }
 
+  @Override
   protected void doVisitClosureExpression(ClosureExpression expr) {
     if (resources.getCurrentMethod() instanceof FeatureMethod) {
       AstUtil.fixUpLocalVariables(resources.getCurrentMethod().getAst().getParameters(), expr.getVariableScope(), true);
@@ -88,6 +90,7 @@ public class DeepBlockRewriter extends AbstractDeepBlockRewriter {
     visitBinaryExpression(expr);
   }
 
+  @Override
   protected void doVisitMethodCallExpression(MethodCallExpression expr) {
     super.doVisitMethodCallExpression(expr);
 

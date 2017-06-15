@@ -16,16 +16,13 @@
 
 package org.spockframework.mock;
 
-import java.util.List;
-import java.util.Map;
+import org.spockframework.util.*;
 
-import org.spockframework.util.CollectionUtil;
-import org.spockframework.util.IMultiset;
-import org.spockframework.util.LinkedHashMultiset;
+import java.util.*;
 
 /**
  * Thrown to indicate that a mandatory interaction matched too many invocations.
- * 
+ *
  * @author Peter Niederwieser
  */
 public class TooManyInvocationsError extends InteractionNotSatisfiedError {
@@ -50,7 +47,7 @@ public class TooManyInvocationsError extends InteractionNotSatisfiedError {
   public synchronized String getMessage() {
     if (message != null) return message;
 
-    IMultiset<IMockInvocation> uniqueInvocations = new LinkedHashMultiset<IMockInvocation>();
+    IMultiset<IMockInvocation> uniqueInvocations = new LinkedHashMultiset<>();
     for (IMockInvocation invocation : CollectionUtil.reverse(acceptedInvocations)) {
       uniqueInvocations.add(invocation);
     }

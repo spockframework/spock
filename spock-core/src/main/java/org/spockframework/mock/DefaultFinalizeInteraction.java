@@ -18,16 +18,19 @@ public class DefaultFinalizeInteraction extends DefaultInteraction {
 
   private DefaultFinalizeInteraction() {}
 
+  @Override
   public String getText() {
     return "Object.finalize() interaction";
   }
 
+  @Override
   public boolean matches(IMockInvocation invocation) {
-    return invocation.getMethod().getName().equals("finalize")
+    return "finalize".equals(invocation.getMethod().getName())
         && invocation.getMethod().getParameterTypes().isEmpty();
 
   }
 
+  @Override
   public Object accept(IMockInvocation invocation) {
     return null;
   }

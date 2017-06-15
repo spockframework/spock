@@ -14,10 +14,9 @@
 
 package org.spockframework.mock.runtime;
 
-import groovy.lang.MetaClass;
+import org.spockframework.mock.*;
 
-import org.spockframework.mock.IMockInvocation;
-import org.spockframework.mock.IResponseGenerator;
+import groovy.lang.MetaClass;
 
 public class GroovyRealMethodInvoker implements IResponseGenerator {
   private final MetaClass metaClass;
@@ -26,11 +25,12 @@ public class GroovyRealMethodInvoker implements IResponseGenerator {
     this.metaClass = metaClass;
   }
 
+  @Override
   public Object respond(IMockInvocation invocation) {
     Object instance = invocation.getMockObject().getInstance();
     Object[] arguments = invocation.getArguments().toArray();
     if (invocation.getMethod().isStatic()) {
-      if (invocation.getMethod().getName().equals("<init>")) {
+      if ("<init>".equals(invocation.getMethod().getName())) {
         return metaClass.invokeConstructor(arguments);
       }
       return metaClass.invokeStaticMethod(instance, invocation.getMethod().getName(), arguments);

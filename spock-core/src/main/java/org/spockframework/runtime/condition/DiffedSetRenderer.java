@@ -23,6 +23,7 @@ public class DiffedSetRenderer implements IObjectRenderer<Set> {
     this.sort = sort;
   }
 
+  @Override
   public String render(Set set) {
     LineBuilder builder = new LineBuilder();
 

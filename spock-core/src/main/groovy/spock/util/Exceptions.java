@@ -15,8 +15,7 @@ package spock.util;
 
 import org.spockframework.util.Assert;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public abstract class Exceptions {
   /**
@@ -42,7 +41,7 @@ public abstract class Exceptions {
    */
   public static List<Throwable> getCauseChain(Throwable exception) {
     Assert.notNull(exception);
-    List<Throwable> result = new ArrayList<Throwable>();
+    List<Throwable> result = new ArrayList<>();
     collectCauseChain(exception, result);
     return result;
   }

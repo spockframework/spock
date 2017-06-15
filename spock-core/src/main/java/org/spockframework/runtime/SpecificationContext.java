@@ -1,12 +1,9 @@
 package org.spockframework.runtime;
 
+import org.spockframework.lang.ISpecificationContext;
 import org.spockframework.mock.IMockController;
 import org.spockframework.mock.runtime.MockController;
-import org.spockframework.runtime.model.FeatureInfo;
-import org.spockframework.runtime.model.IterationInfo;
-
-import org.spockframework.lang.ISpecificationContext;
-import org.spockframework.runtime.model.SpecInfo;
+import org.spockframework.runtime.model.*;
 import spock.lang.Specification;
 
 public class SpecificationContext implements ISpecificationContext {
@@ -28,6 +25,7 @@ public class SpecificationContext implements ISpecificationContext {
     this.sharedInstance = sharedInstance;
   }
 
+  @Override
   public SpecInfo getCurrentSpec() {
     return currentSpec;
   }
@@ -36,6 +34,7 @@ public class SpecificationContext implements ISpecificationContext {
     this.currentSpec = currentSpec;
   }
 
+  @Override
   public FeatureInfo getCurrentFeature() {
     if (currentIteration == null) {
       throw new IllegalStateException("Cannot request current feature in @Shared context");
@@ -43,6 +42,7 @@ public class SpecificationContext implements ISpecificationContext {
     return getCurrentIteration().getFeature();
   }
 
+  @Override
   public IterationInfo getCurrentIteration() {
     if (currentIteration == null) {
       throw new IllegalStateException("Cannot request current iteration in @Shared context");
@@ -54,6 +54,7 @@ public class SpecificationContext implements ISpecificationContext {
     this.currentIteration = currentIteration;
   }
 
+  @Override
   public Throwable getThrownException() {
     return thrownException;
   }
@@ -64,6 +65,7 @@ public class SpecificationContext implements ISpecificationContext {
   }
 
   public static String GET_MOCK_CONTROLLER = "getMockController";
+  @Override
   public IMockController getMockController() {
     return mockController;
   }

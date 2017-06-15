@@ -16,17 +16,15 @@
 
 package org.spockframework.guice;
 
+import org.spockframework.runtime.extension.*;
+import org.spockframework.runtime.model.SpecInfo;
+import spock.lang.Shared;
+
 import java.lang.reflect.Field;
 import java.util.*;
 
 import com.google.inject.*;
-import com.google.inject.Module; // needs to stay due to Eclipse bug
 import com.google.inject.spi.InjectionPoint;
-
-import org.spockframework.runtime.extension.*;
-import org.spockframework.runtime.model.SpecInfo;
-
-import spock.lang.Shared;
 
 /**
  * Creates a Guice injector, and injects Guice-provided objects into specifications.
@@ -62,15 +60,13 @@ public class GuiceInterceptor extends AbstractMethodInterceptor {
   private void createInjector() {
     injector = Guice.createInjector(createModules());
   }
-  
+
   private List<Module> createModules() {
-    List<Module> modules = new ArrayList<Module>();
+    List<Module> modules = new ArrayList<>();
     for (Class<? extends Module> clazz : moduleClasses) {
       try {
         modules.add(clazz.newInstance());
-      } catch (InstantiationException e) {
-        throw new GuiceExtensionException("Failed to instantiate module '%s'", e).withArgs(clazz.getSimpleName());
-      } catch (IllegalAccessException e) {
+      } catch (InstantiationException | IllegalAccessException e) {
         throw new GuiceExtensionException("Failed to instantiate module '%s'", e).withArgs(clazz.getSimpleName());
       }
     }
@@ -81,7 +77,7 @@ public class GuiceInterceptor extends AbstractMethodInterceptor {
     for (InjectionPoint point : injectionPoints) {
       if (!(point.getMember() instanceof Field))
         throw new GuiceExtensionException("Method injection is not supported; use field injection instead");
-      
+
       Field field = (Field)point.getMember();
       if (field.isAnnotationPresent(Shared.class) != sharedFields) continue;
 

@@ -16,9 +16,7 @@
 
 package org.spockframework.report.log;
 
-import org.spockframework.runtime.AbstractRunListener;
-import org.spockframework.runtime.AsyncStandardStreamsListener;
-import org.spockframework.runtime.StandardStreamsCapturer;
+import org.spockframework.runtime.*;
 import org.spockframework.runtime.extension.AbstractGlobalExtension;
 import org.spockframework.runtime.model.SpecInfo;
 import org.spockframework.util.IoUtil;
@@ -35,6 +33,7 @@ public class ReportLogExtension extends AbstractGlobalExtension {
 
   volatile ReportLogConfiguration reportConfig;
 
+  @Override
   public void visitSpec(SpecInfo spec) {
     if (!reportConfig.enabled) return;
 
@@ -54,6 +53,7 @@ public class ReportLogExtension extends AbstractGlobalExtension {
     }
   }
 
+  @Override
   public void start() {
     if (!reportConfig.enabled) return;
 
@@ -75,6 +75,7 @@ public class ReportLogExtension extends AbstractGlobalExtension {
     }
   }
 
+  @Override
   public void stop() {
     if (!reportConfig.enabled) return;
     IoUtil.stopQuietly(streamsCapturer, logWriterListener, logWriter, logClientListener, logClient);

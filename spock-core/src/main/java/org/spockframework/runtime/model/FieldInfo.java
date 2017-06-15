@@ -16,16 +16,14 @@
 
 package org.spockframework.runtime.model;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-
 import org.spockframework.runtime.GroovyRuntimeUtil;
 import spock.lang.Shared;
 
+import java.lang.reflect.*;
+
 /**
  * Runtime information about a field in a Spock specification.
- * 
+ *
  * @author Peter Niederwieser
  */
 public class FieldInfo extends NodeInfo<SpecInfo, Field> {

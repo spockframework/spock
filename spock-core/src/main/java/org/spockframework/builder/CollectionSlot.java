@@ -14,12 +14,11 @@
 
 package org.spockframework.builder;
 
+import org.spockframework.gentyref.GenericTypeReflector;
+import org.spockframework.util.*;
+
 import java.lang.reflect.*;
 import java.util.*;
-
-import org.spockframework.gentyref.GenericTypeReflector;
-import org.spockframework.util.MopUtil;
-import org.spockframework.util.UnreachableCodeError;
 
 import groovy.lang.MetaProperty;
 
@@ -36,6 +35,7 @@ public class CollectionSlot implements ISlot {
     this.property = property;
   }
 
+  @Override
   public Type getType() {
     Type type = getCollectionType();
     if (type instanceof ParameterizedType) return ((ParameterizedType)type).getActualTypeArguments()[0];
@@ -53,6 +53,7 @@ public class CollectionSlot implements ISlot {
     throw new UnreachableCodeError();
   }
 
+  @Override
   @SuppressWarnings("unchecked")
   public void write(Object value) {
     Collection collection = (Collection) property.getProperty(owner);

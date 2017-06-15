@@ -16,13 +16,11 @@
 
 package org.spockframework.runtime.model;
 
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.spockframework.runtime.extension.IMethodInterceptor;
-import org.spockframework.util.Nullable;
-import org.spockframework.util.ReflectionUtil;
+import org.spockframework.util.*;
+
+import java.lang.reflect.Method;
+import java.util.*;
 
 /**
  * Runtime information about a method in a Spock specification.
@@ -34,7 +32,7 @@ public class MethodInfo extends NodeInfo<SpecInfo, Method> implements IExcludabl
   private FeatureInfo feature;
   private IterationInfo iteration;
   private boolean excluded = false;
-  private final List<IMethodInterceptor> interceptors = new ArrayList<IMethodInterceptor>();
+  private final List<IMethodInterceptor> interceptors = new ArrayList<>();
 
   public MethodInfo() {
   }
@@ -79,18 +77,22 @@ public class MethodInfo extends NodeInfo<SpecInfo, Method> implements IExcludabl
     this.iteration = iteration;
   }
 
+  @Override
   public boolean isExcluded() {
     return excluded;
   }
 
+  @Override
   public void setExcluded(boolean excluded) {
     this.excluded = excluded;
   }
 
+  @Override
   public List<IMethodInterceptor> getInterceptors() {
     return interceptors;
   }
 
+  @Override
   public void addInterceptor(IMethodInterceptor interceptor) {
     interceptors.add(interceptor);
   }

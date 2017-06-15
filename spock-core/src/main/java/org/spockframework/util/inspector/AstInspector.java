@@ -16,18 +16,18 @@
 
 package org.spockframework.util.inspector;
 
+import org.spockframework.compiler.AstUtil;
+
 import java.io.*;
 import java.security.CodeSource;
 import java.util.*;
 
+import groovy.lang.GroovyClassLoader;
 import org.codehaus.groovy.ast.*;
 import org.codehaus.groovy.ast.expr.*;
 import org.codehaus.groovy.ast.stmt.*;
 import org.codehaus.groovy.control.*;
-
-import groovy.lang.GroovyClassLoader;
 import org.intellij.lang.annotations.Language;
-import org.spockframework.compiler.AstUtil;
 
 /**
  * Utility class for inspecting the abstract syntax tree (AST) produced by
@@ -50,7 +50,7 @@ import org.spockframework.compiler.AstUtil;
  * def expr = inspector.getExpression("label")
  * assert expr instanceof MethodCallExpression
  * </pre
- * 
+ *
  * @author Peter Niederwieser
  */
 public class AstInspector {
@@ -62,14 +62,14 @@ public class AstInspector {
   private final MyVisitor visitor = new MyVisitor();
 
   private ModuleNode module;
-  private final Map<String, AnnotatedNode> markedNodes = new HashMap<String, AnnotatedNode>();
-  private final Map<String, ClassNode> classes = new HashMap<String, ClassNode>();
-  private final Map<String, FieldNode> fields = new HashMap<String, FieldNode>();
-  private final Map<String, PropertyNode> properties = new HashMap<String, PropertyNode>();
-  private final Map<String, ConstructorNode> constructors = new HashMap<String, ConstructorNode>();
-  private final Map<String, MethodNode> methods = new HashMap<String, MethodNode>();
-  private final Map<String, Statement> statements = new HashMap<String, Statement>();
-  private final Map<String, Expression> expressions = new HashMap<String, Expression>();
+  private final Map<String, AnnotatedNode> markedNodes = new HashMap<>();
+  private final Map<String, ClassNode> classes = new HashMap<>();
+  private final Map<String, FieldNode> fields = new HashMap<>();
+  private final Map<String, PropertyNode> properties = new HashMap<>();
+  private final Map<String, ConstructorNode> constructors = new HashMap<>();
+  private final Map<String, MethodNode> methods = new HashMap<>();
+  private final Map<String, Statement> statements = new HashMap<>();
+  private final Map<String, Expression> expressions = new HashMap<>();
 
   /**
    * Constructs an AstInspector, configuring the GroovyClassLoader used
@@ -90,7 +90,7 @@ public class AstInspector {
     this();
     setCompilePhase(phase);
   }
-  
+
   /**
    * Constructs an AstInspector, configuring the GroovyClassLoader used
    * underneath with the specified parent class loader and compiler configuration.
@@ -136,7 +136,7 @@ public class AstInspector {
    */
   public void load(@Language("Groovy") String sourceText) throws CompilationFailedException {
     reset();
-    
+
     try {
       classLoader.parseClass(sourceText);
     } catch (AstSuccessfullyCaptured e) {
@@ -171,7 +171,7 @@ public class AstInspector {
 
     throw new AstInspectorException("internal error");
   }
-  
+
   /**
    * Returns the root of the inspected AST.
    *
@@ -390,7 +390,7 @@ public class AstInspector {
   }
 
   private static List<Expression> getExpressions(List<Statement> statements) {
-     List<Expression> exprs = new ArrayList<Expression>();
+     List<Expression> exprs = new ArrayList<>();
     for (Statement stat : statements)
       if (stat instanceof ExpressionStatement)
         exprs.add(((ExpressionStatement)stat).getExpression());

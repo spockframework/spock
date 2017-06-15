@@ -14,12 +14,11 @@
 
 package org.spockframework.runtime;
 
-import groovy.lang.GString;
-import org.spockframework.runtime.condition.EditDistance;
-import org.spockframework.runtime.condition.EditPathRenderer;
+import org.spockframework.runtime.condition.*;
 import org.spockframework.runtime.model.ExpressionInfo;
-import org.spockframework.util.Nullable;
-import org.spockframework.util.ObjectUtil;
+import org.spockframework.util.*;
+
+import groovy.lang.GString;
 
 public class ExpressionInfoValueRenderer {
   public static final long MAX_EDIT_DISTANCE_MEMORY = 50 * 1024;
@@ -64,7 +63,7 @@ public class ExpressionInfoValueRenderer {
           javaLangObjectToString(value), e.getClass().getSimpleName());
     }
 
-    if (str == null || str.equals("")) {
+    if (str == null || "".equals(str)) {
       return javaLangObjectToString(value);
     }
 

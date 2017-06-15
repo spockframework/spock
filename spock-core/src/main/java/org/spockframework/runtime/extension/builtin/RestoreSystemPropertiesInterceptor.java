@@ -16,8 +16,7 @@
 
 package org.spockframework.runtime.extension.builtin;
 
-import org.spockframework.runtime.extension.IMethodInterceptor;
-import org.spockframework.runtime.extension.IMethodInvocation;
+import org.spockframework.runtime.extension.*;
 
 import java.util.Properties;
 
@@ -26,6 +25,7 @@ public class RestoreSystemPropertiesInterceptor implements IMethodInterceptor {
 
   private RestoreSystemPropertiesInterceptor() {}
 
+  @Override
   public void intercept(IMethodInvocation invocation) throws Throwable {
     Properties original = new Properties();
     original.putAll(System.getProperties());

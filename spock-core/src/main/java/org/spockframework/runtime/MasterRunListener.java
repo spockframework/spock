@@ -23,54 +23,63 @@ public class MasterRunListener implements IRunListener {
     this.spec = spec;
   }
 
+  @Override
   public void beforeSpec(SpecInfo spec) {
     for (IRunListener listener : spec.getListeners()) {
       listener.beforeSpec(spec);
     }
   }
 
+  @Override
   public void beforeFeature(FeatureInfo feature) {
     for (IRunListener listener : spec.getListeners()) {
       listener.beforeFeature(feature);
     }
   }
 
+  @Override
   public void beforeIteration(IterationInfo iteration) {
     for (IRunListener listener : spec.getListeners()) {
       listener.beforeIteration(iteration);
     }
   }
 
+  @Override
   public void afterIteration(IterationInfo iteration) {
     for (IRunListener listener : spec.getListeners()) {
       listener.afterIteration(iteration);
     }
   }
 
+  @Override
   public void afterFeature(FeatureInfo feature) {
     for (IRunListener listener : spec.getListeners()) {
       listener.afterFeature(feature);
     }
   }
 
+  @Override
   public void afterSpec(SpecInfo spec) {
     for (IRunListener listener : spec.getListeners()) {
       listener.afterSpec(spec);
     }
   }
 
+  @Override
   public void error(ErrorInfo error) {
     for (IRunListener listener : spec.getListeners()) {
       listener.error(error);
     }
   }
 
+  @Override
   public void specSkipped(SpecInfo spec) {
     for (IRunListener listener : spec.getListeners()) {
       listener.specSkipped(spec);
     }
   }
 
+  @Override
   public void featureSkipped(FeatureInfo feature) {
     for (IRunListener listener : spec.getListeners()) {
       listener.featureSkipped(feature);

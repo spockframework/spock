@@ -14,27 +14,24 @@
 
 package org.spockframework.mock.runtime;
 
+import org.spockframework.mock.*;
+import org.spockframework.runtime.GroovyRuntimeUtil;
+import spock.lang.Specification;
+
 import java.lang.reflect.Modifier;
 import java.util.Collections;
 
-import groovy.lang.GroovyObject;
-import groovy.lang.MetaClass;
-
-import org.spockframework.mock.CannotCreateMockException;
-import org.spockframework.mock.IMockConfiguration;
-import org.spockframework.mock.IMockFactory;
-import org.spockframework.mock.MockImplementation;
-import org.spockframework.runtime.GroovyRuntimeUtil;
-
-import spock.lang.Specification;
+import groovy.lang.*;
 
 public class GroovyMockFactory implements IMockFactory {
   public static GroovyMockFactory INSTANCE = new GroovyMockFactory();
 
+  @Override
   public boolean canCreate(IMockConfiguration configuration) {
     return configuration.getImplementation() == MockImplementation.GROOVY;
   }
 
+  @Override
   public Object create(IMockConfiguration configuration, Specification specification) throws CannotCreateMockException {
     final MetaClass oldMetaClass = GroovyRuntimeUtil.getMetaClass(configuration.getType());
     GroovyMockMetaClass newMetaClass = new GroovyMockMetaClass(configuration, specification, oldMetaClass);
@@ -47,6 +44,7 @@ public class GroovyMockFactory implements IMockFactory {
       }
       GroovyRuntimeUtil.setMetaClass(type, newMetaClass);
       specification.getSpecificationContext().getCurrentIteration().addCleanup(new Runnable() {
+        @Override
         public void run() {
           GroovyRuntimeUtil.setMetaClass(type, oldMetaClass);
         }
@@ -72,6 +70,7 @@ public class GroovyMockFactory implements IMockFactory {
     return !type.isInterface() && Modifier.isFinal(type.getModifiers());
   }
 
+  @Override
   public Object createDetached(IMockConfiguration configuration, ClassLoader classLoader) {
     throw new CannotCreateMockException(configuration.getType(),
         ". Detached mocking is only possible for JavaMocks but not GroovyMocks at the moment.");

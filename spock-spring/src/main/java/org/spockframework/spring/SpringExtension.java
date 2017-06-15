@@ -18,19 +18,16 @@ package org.spockframework.spring;
 
 import org.spockframework.runtime.AbstractRunListener;
 import org.spockframework.runtime.extension.AbstractGlobalExtension;
-import org.spockframework.runtime.model.ErrorInfo;
-import org.spockframework.runtime.model.FeatureInfo;
-import org.spockframework.runtime.model.FieldInfo;
-import org.spockframework.runtime.model.SpecInfo;
-import org.spockframework.util.NotThreadSafe;
-import org.spockframework.util.ReflectionUtil;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.annotation.ProfileValueUtils;
-import org.springframework.test.context.ContextConfiguration;
+import org.spockframework.runtime.model.*;
+import org.spockframework.util.*;
 import spock.lang.Shared;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.ProfileValueUtils;
+import org.springframework.test.context.ContextConfiguration;
 
 @NotThreadSafe
 public class SpringExtension extends AbstractGlobalExtension {
@@ -55,6 +52,7 @@ public class SpringExtension extends AbstractGlobalExtension {
             "findAnnotationDescriptorForTypes", Class.class, Class[].class);
   }
 
+  @Override
   public void visitSpec(SpecInfo spec) {
     if (!isSpringSpec(spec)) return;
 
@@ -66,6 +64,7 @@ public class SpringExtension extends AbstractGlobalExtension {
     final SpringInterceptor interceptor = new SpringInterceptor(manager);
 
     spec.addListener(new AbstractRunListener() {
+      @Override
       public void error(ErrorInfo error) {
         interceptor.error(error);
       }

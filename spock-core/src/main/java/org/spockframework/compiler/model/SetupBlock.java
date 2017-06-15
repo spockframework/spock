@@ -33,6 +33,7 @@ public class SetupBlock extends Block {
     visitor.visitSetupBlock(this);
   }
 
+  @Override
   public BlockParseInfo getParseInfo() {
     return BlockParseInfo.SETUP;
   }

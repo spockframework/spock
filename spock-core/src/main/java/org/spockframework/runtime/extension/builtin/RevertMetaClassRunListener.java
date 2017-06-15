@@ -14,12 +14,12 @@
 
 package org.spockframework.runtime.extension.builtin;
 
-import java.util.*;
-import java.util.Map.Entry;
-
 import org.spockframework.runtime.AbstractRunListener;
 import org.spockframework.runtime.model.*;
 import org.spockframework.util.NotThreadSafe;
+
+import java.util.*;
+import java.util.Map.Entry;
 
 import groovy.lang.*;
 
@@ -29,61 +29,67 @@ import groovy.lang.*;
 // TODO: implement as interceptor
 @NotThreadSafe // expects beforeFeature and afterFeature to be called in matching pairs
 public class RevertMetaClassRunListener extends AbstractRunListener {
-  private final Map<Class<?>, MetaClass> specLevelSavedMetaClasses = new HashMap<Class<?>, MetaClass>();
-  private final Map<Class<?>, MetaClass> methodLevelSavedMetaClasses = new HashMap<Class<?>, MetaClass>();
-  
+  private final Map<Class<?>, MetaClass> specLevelSavedMetaClasses = new HashMap<>();
+  private final Map<Class<?>, MetaClass> methodLevelSavedMetaClasses = new HashMap<>();
+
   private final Set<Class<?>> specRestorations;
   private final Map<String, Set<Class<?>>> methodRestorations;
-  
+
   public RevertMetaClassRunListener(Set<Class<?>> specRestorations, Map<String, Set<Class<?>>> methodRestorations) {
     this.specRestorations = specRestorations;
     this.methodRestorations = methodRestorations;
   }
-  
+
+  @Override
   public void beforeSpec(SpecInfo spec) {
     if (specRestorations.isEmpty()) return;
     saveMetaClassesInto(specRestorations, specLevelSavedMetaClasses);
   }
-  
+
+  @Override
   public void beforeFeature(FeatureInfo feature) {
     if (feature.isParameterized()) return;
     if (methodRestorations.isEmpty()) return;
-    
+
     String methodName = feature.getFeatureMethod().getReflection().getName();
     if (!methodRestorations.containsKey(methodName)) return;
-    
+
     saveMetaClassesInto(methodRestorations.get(methodName), methodLevelSavedMetaClasses);
   }
-  
+
+  @Override
   public void beforeIteration(IterationInfo iteration) {
     if (!iteration.getParent().isParameterized()) return;
     if (methodRestorations.isEmpty()) return;
-    
+
     String methodName = iteration.getParent().getFeatureMethod().getReflection().getName();
     if (!methodRestorations.containsKey(methodName)) return;
-    
+
     saveMetaClassesInto(methodRestorations.get(methodName), methodLevelSavedMetaClasses);
   }
-  
+
+  @Override
   public void afterIteration(IterationInfo iteration) {
     if (!iteration.getParent().isParameterized()) return;
     if (methodLevelSavedMetaClasses.isEmpty()) return;
-    
+
     revertMetaClassesFromAndClear(methodLevelSavedMetaClasses);
   }
-  
+
+  @Override
   public void afterFeature(FeatureInfo feature) {
     if (feature.isParameterized()) return;
     if (methodLevelSavedMetaClasses.isEmpty()) return;
-    
+
     revertMetaClassesFromAndClear(methodLevelSavedMetaClasses);
   }
-  
+
+  @Override
   public void afterSpec(SpecInfo spec) {
     if (specRestorations.isEmpty()) return;
     revertMetaClassesFromAndClear(specLevelSavedMetaClasses);
   }
-  
+
   private void saveMetaClassesInto(Set<Class<?>> toSave, Map<Class<?>, MetaClass> into) {
     MetaClassRegistry registry = GroovySystem.getMetaClassRegistry();
 
@@ -94,14 +100,14 @@ public class RevertMetaClassRunListener extends AbstractRunListener {
       registry.setMetaClass(clazz, newMetaClass);
     }
   }
-  
+
   private void revertMetaClassesFromAndClear(Map<Class<?>, MetaClass> savedMetaClasses) {
     MetaClassRegistry registry = GroovySystem.getMetaClassRegistry();
 
     for (Entry<Class<?>, MetaClass> entry : savedMetaClasses.entrySet()) {
       Class<?> clazz = entry.getKey();
       MetaClass originalMetaClass = entry.getValue();
-      
+
       registry.removeMetaClass(clazz);
       registry.setMetaClass(clazz, originalMetaClass);
     }

@@ -14,15 +14,12 @@
 
 package org.spockframework.runtime;
 
-import java.io.IOException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.util.*;
-
-import org.spockframework.runtime.model.FeatureMetadata;
-import org.spockframework.runtime.model.SpecMetadata;
-
+import org.spockframework.runtime.model.*;
 import spock.lang.Specification;
+
+import java.io.IOException;
+import java.lang.reflect.*;
+import java.util.*;
 
 /**
  * Utility methods related to specifications. Particularly useful when
@@ -43,7 +40,7 @@ public final class SpecUtil {
   }
 
   /**
-   * Checks if the given class is a Spock specification (according to <tt>isSpec()</tt>), 
+   * Checks if the given class is a Spock specification (according to <tt>isSpec()</tt>),
    * and throws an <tt>InvalidSpecException</tt> with a detailed explanation if it is not.
    */
   public static void checkIsSpec(Class<?> clazz) {
@@ -102,7 +99,7 @@ public final class SpecUtil {
   }
 
   private static List<SpecRunHistory> loadHistories(List<String> specNames) {
-    List<SpecRunHistory> histories = new ArrayList<SpecRunHistory>(specNames.size());
+    List<SpecRunHistory> histories = new ArrayList<>(specNames.size());
 
     for (String name : specNames) {
       SpecRunHistory history = new SpecRunHistory(name);
@@ -116,7 +113,7 @@ public final class SpecUtil {
   }
 
   private static List<String> extractNames(List<SpecRunHistory> histories) {
-    List<String> specNames = new ArrayList<String>(histories.size());
+    List<String> specNames = new ArrayList<>(histories.size());
     for (SpecRunHistory history : histories)
       specNames.add(history.getSpecName());
     return specNames;

@@ -14,17 +14,14 @@
 
 package org.spockframework.mock.runtime;
 
-import java.lang.reflect.Type;
-
 import org.spockframework.gentyref.GenericTypeReflector;
 import org.spockframework.lang.Wildcard;
-import org.spockframework.mock.IMockInteraction;
-import org.spockframework.mock.IMockObject;
-import org.spockframework.mock.IDefaultResponse;
+import org.spockframework.mock.*;
 import org.spockframework.runtime.InvalidSpecException;
 import org.spockframework.util.Nullable;
-
 import spock.lang.Specification;
+
+import java.lang.reflect.Type;
 
 public class MockObject implements IMockObject {
   private final String name;
@@ -37,7 +34,7 @@ public class MockObject implements IMockObject {
   private final SpecificationAttachable mockInterceptor;
 
   private Specification specification;
-  
+
   public MockObject(@Nullable String name, Type type, Object instance, boolean verified, boolean global,
       IDefaultResponse defaultResponse, Specification specification, SpecificationAttachable mockInterceptor) {
     this(name, type, instance, null, verified, global, defaultResponse, specification, mockInterceptor);
@@ -56,39 +53,48 @@ public class MockObject implements IMockObject {
     this.mockInterceptor = mockInterceptor;
   }
 
+  @Override
   @Nullable
   public String getName() {
     return name;
   }
 
+  @Override
   public Class<?> getType() {
     return GenericTypeReflector.erase(type);
   }
 
+  @Override
   public Type getExactType() {
     return type;
   }
 
+  @Override
   public Object getInstance() {
     return instance;
   }
-  
+
+  @Override
   public Object getUserCreatedInstance() {
     return userCreatedInstance;
   }
 
+  @Override
   public boolean isVerified() {
     return verified;
   }
 
+  @Override
   public IDefaultResponse getDefaultResponse() {
     return defaultResponse;
   }
 
+  @Override
   public Specification getSpecification() {
     return specification;
   }
 
+  @Override
   public boolean matches(Object target, IMockInteraction interaction) {
     if (target instanceof Wildcard) return verified || !interaction.isRequired();
 
@@ -107,11 +113,13 @@ public class MockObject implements IMockObject {
     }
   }
 
+  @Override
   public void attach(Specification spec) {
     this.specification = spec;
     this.mockInterceptor.attach(spec);
   }
 
+  @Override
   public void detach() {
     this.specification = null;
     this.mockInterceptor.detach();

@@ -14,12 +14,12 @@
 
 package org.spockframework.runtime.condition;
 
-import java.util.*;
-
 import org.spockframework.runtime.GroovyRuntimeUtil;
 
+import java.util.*;
+
 public class LineBuilder {
-  private final List<String> lines = new ArrayList<String>();
+  private final List<String> lines = new ArrayList<>();
 
   public void addLine(Object object) {
     lines.add(GroovyRuntimeUtil.toString(object));

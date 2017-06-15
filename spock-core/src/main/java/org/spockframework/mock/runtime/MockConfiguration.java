@@ -14,17 +14,12 @@
 
 package org.spockframework.mock.runtime;
 
-import java.lang.reflect.Type;
-import java.util.List;
-import java.util.Map;
-
 import org.spockframework.gentyref.GenericTypeReflector;
-import org.spockframework.mock.IDefaultResponse;
-import org.spockframework.mock.IMockConfiguration;
-import org.spockframework.mock.MockImplementation;
-import org.spockframework.mock.MockNature;
-import org.spockframework.util.Beta;
-import org.spockframework.util.Nullable;
+import org.spockframework.mock.*;
+import org.spockframework.util.*;
+
+import java.lang.reflect.Type;
+import java.util.*;
 
 @Beta
 public class MockConfiguration implements IMockConfiguration {
@@ -43,7 +38,7 @@ public class MockConfiguration implements IMockConfiguration {
       MockImplementation implementation, Map<String, Object> options) {
       this(name, type, null, nature, implementation, options);
   }
-  
+
   @SuppressWarnings("unchecked")
   public MockConfiguration(@Nullable String name, Type type, @Nullable Object instance, MockNature nature,
       MockImplementation implementation, Map<String, Object> options) {
@@ -59,48 +54,59 @@ public class MockConfiguration implements IMockConfiguration {
     this.useObjenesis = getOption(options, "useObjenesis", Boolean.class, this.nature.isUseObjenesis());
   }
 
+  @Override
   @Nullable
   public String getName() {
     return name;
   }
 
+  @Override
   public Class<?> getType() {
     return GenericTypeReflector.erase(type);
   }
-  
+
+  @Override
   public Object getInstance() {
     return instance;
   }
 
+  @Override
   public Type getExactType() {
     return type;
   }
 
+  @Override
   public MockNature getNature() {
     return nature;
   }
 
+  @Override
   public MockImplementation getImplementation() {
     return implementation;
   }
 
+  @Override
   @Nullable
   public List<Object> getConstructorArgs() {
     return constructorArgs;
   }
 
+  @Override
   public IDefaultResponse getDefaultResponse() {
     return defaultResponse;
   }
 
+  @Override
   public boolean isGlobal() {
     return global;
   }
 
+  @Override
   public boolean isVerified() {
     return verified;
   }
 
+  @Override
   public boolean isUseObjenesis() {
     return useObjenesis;
   }

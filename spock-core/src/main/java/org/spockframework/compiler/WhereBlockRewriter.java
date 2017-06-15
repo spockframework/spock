@@ -16,19 +16,18 @@
 
 package org.spockframework.compiler;
 
+import org.spockframework.compiler.model.WhereBlock;
+import org.spockframework.runtime.model.DataProviderMetadata;
+import org.spockframework.util.*;
+
 import java.util.*;
 
 import org.codehaus.groovy.ast.*;
 import org.codehaus.groovy.ast.expr.*;
 import org.codehaus.groovy.ast.stmt.*;
 import org.codehaus.groovy.control.SourceUnit;
-import org.codehaus.groovy.syntax.Token;
-import org.codehaus.groovy.syntax.Types;
+import org.codehaus.groovy.syntax.*;
 import org.objectweb.asm.Opcodes;
-
-import org.spockframework.compiler.model.WhereBlock;
-import org.spockframework.runtime.model.DataProviderMetadata;
-import org.spockframework.util.*;
 
 import static org.spockframework.compiler.AstUtil.createGetAtMethod;
 
@@ -43,11 +42,11 @@ public class WhereBlockRewriter {
 
   private int dataProviderCount = 0;
   // parameters of the data processor method (one for each data provider)
-  private final List<Parameter> dataProcessorParams = new ArrayList<Parameter>();
+  private final List<Parameter> dataProcessorParams = new ArrayList<>();
   // statements of the data processor method (one for each parameterization variable)
-  private final List<Statement> dataProcessorStats = new ArrayList<Statement>();
+  private final List<Statement> dataProcessorStats = new ArrayList<>();
   // parameterization variables of the data processor method
-  private final List<VariableExpression> dataProcessorVars = new ArrayList<VariableExpression>();
+  private final List<VariableExpression> dataProcessorVars = new ArrayList<>();
 
   private WhereBlockRewriter(WhereBlock whereBlock, IRewriteResources resources) {
     this.whereBlock = whereBlock;
@@ -87,7 +86,7 @@ public class WhereBlockRewriter {
         rewriteSimpleParameterization(binExpr, stat);
       else if (leftExpr instanceof ListExpression)
         rewriteMultiParameterization(binExpr, stat);
-      else 
+      else
         notAParameterization(stat);
     } else if (type == Types.ASSIGN)
       rewriteDerivedParameterization(binExpr, stat);
@@ -95,7 +94,7 @@ public class WhereBlockRewriter {
       stats.previous();
       rewriteTableLikeParameterization(stats);
     }
-    else 
+    else
       notAParameterization(stat);
   }
 
@@ -112,9 +111,9 @@ public class WhereBlockRewriter {
             getPreviousParameters(nextDataVariableIndex),
             ClassNode.EMPTY_ARRAY,
             new BlockStatement(
-                Arrays.<Statement> asList(
-                    new ReturnStatement(
-                        new ExpressionStatement(dataProviderExpr))),
+              Arrays.<Statement>asList(
+                new ReturnStatement(
+                  new ExpressionStatement(dataProviderExpr))),
                 new VariableScope()));
 
     method.addAnnotation(createDataProviderAnnotation(dataProviderExpr, nextDataVariableIndex));
@@ -132,7 +131,7 @@ public class WhereBlockRewriter {
   private AnnotationNode createDataProviderAnnotation(Expression dataProviderExpr, int nextDataVariableIndex) {
     AnnotationNode ann = new AnnotationNode(resources.getAstNodeCache().DataProviderMetadata);
     ann.addMember(DataProviderMetadata.LINE, new ConstantExpression(dataProviderExpr.getLineNumber()));
-    List<Expression> dataVariableNames = new ArrayList<Expression>();
+    List<Expression> dataVariableNames = new ArrayList<>();
     for (int i = nextDataVariableIndex; i < dataProcessorVars.size(); i++)
       dataVariableNames.add(new ConstantExpression(dataProcessorVars.get(i).getName()));
     ann.addMember(DataProviderMetadata.DATA_VARIABLES, new ListExpression(dataVariableNames));
@@ -208,7 +207,7 @@ public class WhereBlockRewriter {
   }
 
   private void rewriteTableLikeParameterization(ListIterator<Statement> stats) throws InvalidSpecCompileException {
-    LinkedList<List<Expression>> rows = new LinkedList<List<Expression>>();
+    LinkedList<List<Expression>> rows = new LinkedList<>();
 
     while (stats.hasNext()) {
       Statement stat = stats.next();
@@ -218,7 +217,7 @@ public class WhereBlockRewriter {
         break;
       }
 
-      List<Expression> row = new ArrayList<Expression>();
+      List<Expression> row = new ArrayList<>();
       splitRow(orExpr, row);
       if (rows.size() > 0 && rows.getLast().size() != row.size())
         throw new InvalidSpecCompileException(stat, String.format("Row in data table has wrong number of elements (%s instead of %s)", row.size(), rows.getLast().size()));
@@ -230,7 +229,7 @@ public class WhereBlockRewriter {
   }
 
   List<List<Expression>> transposeTable(List<List<Expression>> rows) {
-    List<List<Expression>> columns = new ArrayList<List<Expression>>();
+    List<List<Expression>> columns = new ArrayList<>();
     if (rows.isEmpty()) return columns;
 
     for (int i = 0; i < rows.get(0).size(); i++)
@@ -273,19 +272,19 @@ public class WhereBlockRewriter {
       splitRow(orExpr.getRightExpression(), parts);
     }
   }
-  
+
   private BinaryExpression getOrExpression(Statement stat) {
     Expression expr = AstUtil.getExpression(stat, Expression.class);
     return getOrExpression(expr);
   }
-  
+
   private BinaryExpression getOrExpression(Expression expr) {
     BinaryExpression binExpr = ObjectUtil.asInstance(expr, BinaryExpression.class);
     if (binExpr == null) return null;
-    
+
     int binExprType = binExpr.getOperation().getType();
     if (binExprType == Types.BITWISE_OR || binExprType == Types.LOGICAL_OR) return binExpr;
-    
+
     return null;
   }
 
@@ -353,7 +352,7 @@ public class WhereBlockRewriter {
   @SuppressWarnings("unchecked")
   private void createDataProcessorMethod() {
     if (dataProcessorVars.isEmpty()) return;
-    
+
     dataProcessorStats.add(
         new ReturnStatement(
             new ArrayExpression(
@@ -398,7 +397,8 @@ public class WhereBlockRewriter {
   }
 
   private class DataTablePreviousVariableTransformer extends ClassCodeExpressionTransformer {
-    private int depth = 0, rowIndex = 0;
+    private int depth = 0;
+    private int rowIndex = 0;
 
     @Override
     protected SourceUnit getSourceUnit() { return null; }

@@ -16,6 +16,9 @@
 
 package org.spockframework.compiler;
 
+import org.spockframework.compiler.model.*;
+import spock.lang.Shared;
+
 import java.util.List;
 
 import org.codehaus.groovy.ast.*;
@@ -23,9 +26,6 @@ import org.codehaus.groovy.ast.expr.ConstantExpression;
 import org.codehaus.groovy.ast.stmt.Statement;
 
 import static org.spockframework.util.Identifiers.*;
-import org.spockframework.compiler.model.*;
-
-import spock.lang.Shared;
 
 /**
  * Given the abstract syntax tree of a Groovy class representing a Spock
@@ -50,6 +50,7 @@ public class SpecParser implements GroovyClassVisitor {
     return spec;
   }
 
+  @Override
   public void visitClass(ClassNode clazz) {
    throw new UnsupportedOperationException("visitClass");
   }
@@ -58,6 +59,7 @@ public class SpecParser implements GroovyClassVisitor {
   // definition, but it's hard to tell them apart; for example,
   // field.isSynthetic() is true for a property's backing field
   // although it IS related to a user-provided definition
+  @Override
   public void visitField(FieldNode gField) {
     PropertyNode owner = spec.getAst().getProperty(gField.getName());
     if (gField.isStatic()) return;
@@ -68,8 +70,10 @@ public class SpecParser implements GroovyClassVisitor {
     spec.getFields().add(field);
   }
 
+  @Override
   public void visitProperty(PropertyNode node) {}
 
+  @Override
   public void visitConstructor(ConstructorNode constructor) {
     if (AstUtil.isSynthetic(constructor)) return;
     if (constructorMayHaveBeenAddedByCompiler(constructor)) return;
@@ -89,9 +93,10 @@ public class SpecParser implements GroovyClassVisitor {
       && params != null && params.length == 0 && firstStat == null;
   }
 
+  @Override
   public void visitMethod(MethodNode method) {
     if (isIgnoredMethod(method)) return;
-    
+
     if (isFixtureMethod(method))
       buildFixtureMethod(method);
     else if (isFeatureMethod(method))
@@ -111,7 +116,7 @@ public class SpecParser implements GroovyClassVisitor {
       if (!fmName.equalsIgnoreCase(name)) continue;
 
       // assertion: is (meant to be) a fixture method, so we'll return true in the end
-      
+
       if (method.isStatic())
         errorReporter.error(method, "Fixture methods must not be static");
       if (!fmName.equals(name))
@@ -172,7 +177,7 @@ public class SpecParser implements GroovyClassVisitor {
     spec.getMethods().add(feature);
   }
 
-  private void buildHelperMethod(MethodNode method) {  
+  private void buildHelperMethod(MethodNode method) {
     Method helper = new HelperMethod(spec, method);
     spec.getMethods().add(helper);
 
@@ -192,7 +197,7 @@ public class SpecParser implements GroovyClassVisitor {
       else
         currBlock = addBlock(method, stat);
     }
-    
+
     checkIsValidSuccessor(method, BlockParseInfo.METHOD_END,
         method.getAst().getLastLineNumber(), method.getAst().getLastColumnNumber());
 

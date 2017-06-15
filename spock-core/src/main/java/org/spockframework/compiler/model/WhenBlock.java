@@ -38,6 +38,7 @@ public class WhenBlock extends Block {
     return (ThenBlock)super.getNext();
   }
 
+  @Override
   public BlockParseInfo getParseInfo() {
     return BlockParseInfo.WHEN;
   }

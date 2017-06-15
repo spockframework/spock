@@ -16,11 +16,9 @@
 
 package org.spockframework.mock;
 
-import java.util.*;
+import org.spockframework.util.*;
 
-import org.spockframework.util.Assert;
-import org.spockframework.util.HashMultiset;
-import org.spockframework.util.IMultiset;
+import java.util.*;
 
 /**
  * Thrown to indicate that one or more mandatory interactions matched too few invocations.
@@ -43,7 +41,7 @@ public class TooFewInvocationsError extends InteractionNotSatisfiedError {
   public synchronized String getMessage() {
     if (message != null) return message;
 
-    IMultiset<IMockInvocation> unmatchedMultiInvocations = new HashMultiset<IMockInvocation>(unmatchedInvocations);
+    IMultiset<IMockInvocation> unmatchedMultiInvocations = new HashMultiset<>(unmatchedInvocations);
 
     StringBuilder builder = new StringBuilder();
 
@@ -71,7 +69,7 @@ public class TooFewInvocationsError extends InteractionNotSatisfiedError {
   }
 
   private List<ScoredInvocation> scoreInvocations(IMockInteraction interaction, IMultiset<IMockInvocation> invocations) {
-    List<ScoredInvocation> result = new ArrayList<ScoredInvocation>();
+    List<ScoredInvocation> result = new ArrayList<>();
     for (Map.Entry<IMockInvocation, Integer> entry : invocations.entrySet()) {
       result.add(new ScoredInvocation(entry.getKey(), entry.getValue(), interaction.computeSimilarityScore(entry.getKey())));
     }
@@ -90,6 +88,7 @@ public class TooFewInvocationsError extends InteractionNotSatisfiedError {
       this.score = score;
     }
 
+    @Override
     public int compareTo(ScoredInvocation other) {
       return score - other.score;
     }

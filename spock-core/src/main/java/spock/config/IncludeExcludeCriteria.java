@@ -15,8 +15,7 @@
 package spock.config;
 
 import java.lang.annotation.Annotation;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Configuration indicating which specs and methods should be
@@ -35,9 +34,9 @@ public class IncludeExcludeCriteria {
       else
         baseClasses.add(criterium);
   }
-  
-  public List<Class<? extends Annotation>> annotations = new ArrayList<Class<? extends Annotation>>();
-  public List<Class<?>> baseClasses = new ArrayList<Class<?>>();
+
+  public List<Class<? extends Annotation>> annotations = new ArrayList<>();
+  public List<Class<?>> baseClasses = new ArrayList<>();
 
   public boolean isEmpty() {
     return annotations.isEmpty() && baseClasses.isEmpty();

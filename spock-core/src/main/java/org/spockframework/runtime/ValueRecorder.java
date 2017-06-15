@@ -16,9 +16,9 @@
 
 package org.spockframework.runtime;
 
-import java.util.*;
-
 import org.spockframework.runtime.model.ExpressionInfo;
+
+import java.util.*;
 
 /**
  * Records the values in a condition.
@@ -26,8 +26,8 @@ import org.spockframework.runtime.model.ExpressionInfo;
  * @author Peter Niederwieser
  */
 public class ValueRecorder {
-  private final ArrayList<Object> values = new ArrayList<Object>();
-  private final Deque<Integer> startedRecordings = new ArrayDeque<Integer>();
+  private final ArrayList<Object> values = new ArrayList<>();
+  private final Deque<Integer> startedRecordings = new ArrayDeque<>();
 
   public static final String RESET = "reset";
 
@@ -80,7 +80,7 @@ public class ValueRecorder {
   }
 
   public List<Object> getValues() {
-    return new ArrayList<Object>(values);
+    return new ArrayList<>(values);
   }
 
   public Integer getCurrentRecordingVarNum() {

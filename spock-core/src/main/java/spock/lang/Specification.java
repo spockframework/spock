@@ -16,15 +16,13 @@
 
 package spock.lang;
 
-import groovy.lang.Closure;
-
-import org.junit.runner.RunWith;
-import org.spockframework.util.Beta;
 import org.spockframework.lang.Wildcard;
-import org.spockframework.util.ExceptionUtil;
 import org.spockframework.runtime.*;
-import org.spockframework.runtime.GroovyRuntimeUtil;
+import org.spockframework.util.*;
 import spock.mock.MockingApi;
+
+import groovy.lang.Closure;
+import org.junit.runner.RunWith;
 
 /**
  * Base class for Spock specifications. All specifications must inherit from

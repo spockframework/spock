@@ -28,7 +28,7 @@ import static org.spockframework.util.CollectionUtil.*;
 // NOTE: assumes single-threaded execution
 // TODO: challenge assumptions that tags are added before execution, and attachments afterwards
 class ReportLogEmitter implements IRunListener, IStandardStreamsListener {
-  private final List<IReportLogListener> listeners = new ArrayList<IReportLogListener>();
+  private final List<IReportLogListener> listeners = new ArrayList<>();
 
   private SpecInfo currentSpec;
   private FeatureInfo currentFeature;
@@ -42,10 +42,12 @@ class ReportLogEmitter implements IRunListener, IStandardStreamsListener {
     listeners.add(listener);
   }
 
+  @Override
   public void standardOut(String message) {
     standardStream(message, "output");
   }
 
+  @Override
   public void standardErr(String message) {
     standardStream(message, "errorOutput");
   }
@@ -83,6 +85,7 @@ class ReportLogEmitter implements IRunListener, IStandardStreamsListener {
     }
   }
 
+  @Override
   public void beforeSpec(SpecInfo spec) {
     currentSpec = spec;
     specFailed = false;
@@ -94,6 +97,7 @@ class ReportLogEmitter implements IRunListener, IStandardStreamsListener {
     ), renderNarrative(spec.getNarrative()), renderTags(spec.getTags())));
   }
 
+  @Override
   public void beforeFeature(FeatureInfo feature) {
     currentFeature = feature;
     featureFailed = false;
@@ -108,6 +112,7 @@ class ReportLogEmitter implements IRunListener, IStandardStreamsListener {
     ));
   }
 
+  @Override
   public void beforeIteration(IterationInfo iteration) {
     if(reportIterations(iteration.getFeature())) {
       currentIteration = iteration;
@@ -128,6 +133,7 @@ class ReportLogEmitter implements IRunListener, IStandardStreamsListener {
     }
   }
 
+  @Override
   public void afterIteration(IterationInfo iteration) {
     if(reportIterations(iteration.getFeature())) {
       emit(mapOf(
@@ -147,6 +153,7 @@ class ReportLogEmitter implements IRunListener, IStandardStreamsListener {
     currentIteration = null;
   }
 
+  @Override
   public void afterFeature(FeatureInfo feature) {
     emit(mapOf(
         "package", feature.getSpec().getBottomSpec().getPackage(),
@@ -163,6 +170,7 @@ class ReportLogEmitter implements IRunListener, IStandardStreamsListener {
     currentFeature = null;
   }
 
+  @Override
   public void afterSpec(SpecInfo spec) {
     emit(putAll(mapOf(
         "package", spec.getPackage(),
@@ -174,6 +182,7 @@ class ReportLogEmitter implements IRunListener, IStandardStreamsListener {
     currentSpec = null;
   }
 
+  @Override
   public void error(ErrorInfo error) {
     specFailed = true;
     SpecInfo spec = error.getMethod().getParent().getBottomSpec();
@@ -215,6 +224,7 @@ class ReportLogEmitter implements IRunListener, IStandardStreamsListener {
     }
   }
 
+  @Override
   public void specSkipped(SpecInfo spec) {
     long now = getCurrentTime();
 
@@ -227,6 +237,7 @@ class ReportLogEmitter implements IRunListener, IStandardStreamsListener {
     ), renderNarrative(spec.getNarrative()), renderTags(spec.getTags())));
   }
 
+  @Override
   public void featureSkipped(FeatureInfo feature) {
     long now = getCurrentTime();
 
@@ -252,6 +263,7 @@ class ReportLogEmitter implements IRunListener, IStandardStreamsListener {
     if (tags.isEmpty()) return emptyMap();
 
     List result = filterMap(tags, new IFunction<Tag, Object>() {
+      @Override
       public Object apply(Tag tag) {
         return filterNullValues(mapOf(
             "name", tag.getName(),
@@ -278,7 +290,7 @@ class ReportLogEmitter implements IRunListener, IStandardStreamsListener {
         continue;
       }
       String name = block.getKind().name();
-      String label = name.equals("SETUP") ? "Given" : TextUtil.capitalize(name.toLowerCase());
+      String label = "SETUP".equals(name) ? "Given" : TextUtil.capitalize(name.toLowerCase());
       for (int j = 0; j < block.getTexts().size(); j++) {
         String text = block.getTexts().get(j);
         if (j == 0) {
@@ -300,6 +312,7 @@ class ReportLogEmitter implements IRunListener, IStandardStreamsListener {
 
   private Map renderAttachments(List<Attachment> attachments) {
     List result = filterMap(attachments, new IFunction<Attachment, Object>() {
+      @Override
       public Object apply(Attachment attachment) {
         return mapOf("name", attachment.getName(), "url", attachment.getUrl());
       }

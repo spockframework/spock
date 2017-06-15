@@ -17,9 +17,7 @@
 package org.spockframework.runtime.extension.builtin;
 
 import org.spockframework.runtime.extension.AbstractAnnotationDrivenExtension;
-import org.spockframework.runtime.model.FeatureInfo;
-import org.spockframework.runtime.model.SpecInfo;
-
+import org.spockframework.runtime.model.*;
 import spock.lang.Ignore;
 
 /**
@@ -28,10 +26,12 @@ import spock.lang.Ignore;
 // we cannot easily support @Ignore on fixture methods because
 // setup() and setupSpec() perform initialization of user-defined and internal fields
 public class IgnoreExtension extends AbstractAnnotationDrivenExtension<Ignore> {
+  @Override
   public void visitSpecAnnotation(Ignore ignore, SpecInfo spec) {
     if (spec.getIsBottomSpec()) spec.setSkipped(true);
   }
 
+  @Override
   public void visitFeatureAnnotation(Ignore ignore, FeatureInfo feature) {
     feature.setSkipped(true);
   }

@@ -16,20 +16,21 @@
 
 package org.spockframework.mock.response;
 
-import org.spockframework.mock.IChainableResponseGenerator;
-import org.spockframework.mock.IMockInvocation;
+import org.spockframework.mock.*;
 
 public abstract class SingleResponseGenerator implements IChainableResponseGenerator {
   private boolean endOfCycle = false;
 
+  @Override
   public boolean isAtEndOfCycle() {
     return endOfCycle;
   }
 
+  @Override
   public final Object respond(IMockInvocation invocation) {
     endOfCycle = true;
     return doRespond(invocation);
   }
-  
+
   public abstract Object doRespond(IMockInvocation invocation);
 }

@@ -14,15 +14,12 @@
 
 package org.spockframework.mock.runtime;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.lang.reflect.Type;
-import java.util.Arrays;
-import java.util.List;
-
 import org.spockframework.gentyref.GenericTypeReflector;
 import org.spockframework.mock.IMockMethod;
 import org.spockframework.util.ReflectionUtil;
+
+import java.lang.reflect.*;
+import java.util.*;
 
 public class StaticMockMethod implements IMockMethod {
   private final Method method;
@@ -33,26 +30,32 @@ public class StaticMockMethod implements IMockMethod {
     this.mockType = mockType;
   }
 
+  @Override
   public String getName() {
     return method.getName();
   }
 
+  @Override
   public List<Class<?>> getParameterTypes() {
     return ReflectionUtil.eraseTypes(getExactParameterTypes());
   }
 
+  @Override
   public List<Type> getExactParameterTypes() {
     return Arrays.asList(GenericTypeReflector.getExactParameterTypes(method, mockType));
   }
 
+  @Override
   public Class<?> getReturnType() {
     return GenericTypeReflector.erase(getExactReturnType());
   }
 
+  @Override
   public Type getExactReturnType() {
     return GenericTypeReflector.getExactReturnType(method, mockType);
   }
 
+  @Override
   public boolean isStatic() {
     return Modifier.isStatic(method.getModifiers());
   }

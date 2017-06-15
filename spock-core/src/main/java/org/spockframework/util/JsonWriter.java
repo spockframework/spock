@@ -16,11 +16,8 @@
 
 package org.spockframework.util;
 
-import java.io.IOException;
-import java.io.Writer;
-import java.lang.reflect.Array;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import java.io.*;
+import java.text.*;
 import java.util.*;
 
 /**
@@ -80,7 +77,7 @@ public class JsonWriter {
 
   private void writeNumber(Number number) throws IOException {
     String str = number.toString();
-    if (str.equals("NaN") || str.equals("Infinity") || str.equals("-Infinity")) {
+    if ("NaN".equals(str) || "Infinity".equals(str) || "-Infinity".equals(str)) {
       throw new IllegalArgumentException(number + " cannot be represented in JSON");
     }
     out.write(str);

@@ -16,17 +16,16 @@
 
 package org.spockframework.guice;
 
+import org.spockframework.runtime.extension.AbstractAnnotationDrivenExtension;
+import org.spockframework.runtime.model.SpecInfo;
+import spock.guice.UseModules;
+
 import java.util.*;
 
 import com.google.inject.Module;
 
-import org.spockframework.runtime.extension.AbstractAnnotationDrivenExtension;
-import org.spockframework.runtime.model.SpecInfo;
-
-import spock.guice.UseModules;
-
 public class GuiceExtension extends AbstractAnnotationDrivenExtension<UseModules> {
-  private final Set<Class<? extends Module>> moduleClasses = new LinkedHashSet<Class<? extends Module>>();
+  private final Set<Class<? extends Module>> moduleClasses = new LinkedHashSet<>();
 
   @Override
   public void visitSpecAnnotation(UseModules useModules, SpecInfo spec) {
@@ -36,7 +35,7 @@ public class GuiceExtension extends AbstractAnnotationDrivenExtension<UseModules
   @Override
   public void visitSpec(SpecInfo spec) {
     if (moduleClasses.isEmpty()) return;
-    
+
     GuiceInterceptor interceptor = new GuiceInterceptor(spec, moduleClasses);
     spec.addSharedInitializerInterceptor(interceptor);
     spec.addInitializerInterceptor(interceptor);

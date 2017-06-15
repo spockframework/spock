@@ -58,7 +58,7 @@ public class Jvm {
    * @return whether the Java version is 5
    */
   public boolean isJava5() {
-    return javaSpecVersion.equals("1.5");
+    return "1.5".equals(javaSpecVersion);
   }
 
   /**
@@ -67,7 +67,7 @@ public class Jvm {
    * @return whether the Java version is 6
    */
   public boolean isJava6() {
-    return javaSpecVersion.equals("1.6");
+    return "1.6".equals(javaSpecVersion);
   }
 
   /**
@@ -76,7 +76,7 @@ public class Jvm {
    * @return whether the Java version is 7
    */
   public boolean isJava7() {
-    return javaSpecVersion.equals("1.7");
+    return "1.7".equals(javaSpecVersion);
   }
 
   /**
@@ -85,7 +85,7 @@ public class Jvm {
    * @return whether the Java version is 8
    */
   public boolean isJava8() {
-    return javaSpecVersion.equals("1.8");
+    return "1.8".equals(javaSpecVersion);
   }
 
   /**
@@ -94,7 +94,7 @@ public class Jvm {
    * @return whether the Java version is 9
    */
   public boolean isJava9() {
-    return javaSpecVersion.equals("1.9");
+    return "1.9".equals(javaSpecVersion);
   }
 
   /**

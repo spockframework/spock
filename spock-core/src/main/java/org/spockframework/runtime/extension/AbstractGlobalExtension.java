@@ -23,7 +23,10 @@ import org.spockframework.runtime.model.SpecInfo;
  * methods selectively.
  */
 public abstract class AbstractGlobalExtension implements IGlobalExtension {
+  @Override
   public void start() {}
+  @Override
   public void visitSpec(SpecInfo spec) {}
+  @Override
   public void stop() {}
 }

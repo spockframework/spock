@@ -14,14 +14,11 @@
 
 package org.spockframework.report.log;
 
-import java.io.*;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.spockframework.runtime.extension.ExtensionException;
-import org.spockframework.util.IStoppable;
-import org.spockframework.util.IoUtil;
-import org.spockframework.util.JsonWriter;
+import org.spockframework.util.*;
+
+import java.io.*;
+import java.util.*;
 
 public class ReportLogWriter implements IReportLogListener, IStoppable {
   private final File logFile;
@@ -32,7 +29,7 @@ public class ReportLogWriter implements IReportLogListener, IStoppable {
   private boolean liveUpdate = true;
 
   private final ReportLogMerger logMerger = new ReportLogMerger();
-  private final Map<String, Map<String, Object>> pendingLogs = new HashMap<String, Map<String, Object>>();
+  private final Map<String, Map<String, Object>> pendingLogs = new HashMap<>();
   private Writer fileWriter;
   private JsonWriter jsonWriter;
 
@@ -68,6 +65,7 @@ public class ReportLogWriter implements IReportLogListener, IStoppable {
     jsonWriter.setPrettyPrint(prettyPrint);
   }
 
+  @Override
   public void stop() {
     try {
       for (Map spec : pendingLogs.values()) {
@@ -78,6 +76,7 @@ public class ReportLogWriter implements IReportLogListener, IStoppable {
     }
   }
 
+  @Override
   public void emitted(Map<String, Object> log) {
     String key = log.get("package") + "." + log.get("name");
     Map<String, Object> mergedLog = logMerger.merge(pendingLogs.get(key), log);

@@ -14,8 +14,7 @@
 
 package org.spockframework.mock;
 
-import org.spockframework.util.ReflectionUtil;
-import org.spockframework.util.Beta;
+import org.spockframework.util.*;
 
 /**
  * A response strategy that returns zero, false, or null, depending on the method's return type.
@@ -26,6 +25,7 @@ public class ZeroOrNullResponse implements IDefaultResponse {
 
   private ZeroOrNullResponse() {}
 
+  @Override
   public Object respond(IMockInvocation invocation) {
     IMockInteraction interaction = DefaultJavaLangObjectInteractions.INSTANCE.match(invocation);
     if (interaction != null) return interaction.accept(invocation);

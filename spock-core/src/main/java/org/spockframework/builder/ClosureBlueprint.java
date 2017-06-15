@@ -14,28 +14,31 @@
 
 package org.spockframework.builder;
 
-import groovy.lang.Closure;
-
 import org.spockframework.runtime.GroovyRuntimeUtil;
+
+import groovy.lang.Closure;
 
 public class ClosureBlueprint implements IBlueprint {
   private final Closure closure;
   private final Object subject;
-  
+
   public ClosureBlueprint(Closure closure, Object subject) {
     this.closure = closure;
     this.subject = subject;
     closure.setResolveStrategy(Closure.DELEGATE_ONLY);
   }
 
+  @Override
   public Object getThisObject() {
     return closure.getThisObject();
   }
 
+  @Override
   public void setDelegate(Object delegate) {
     closure.setDelegate(delegate);
   }
 
+  @Override
   public void evaluate() {
     GroovyRuntimeUtil.invokeClosure(closure, subject);
   }

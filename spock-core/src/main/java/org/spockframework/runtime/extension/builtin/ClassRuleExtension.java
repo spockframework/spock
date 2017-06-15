@@ -14,18 +14,17 @@
 
 package org.spockframework.runtime.extension.builtin;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.spockframework.runtime.model.*;
 
-import org.spockframework.runtime.model.FieldInfo;
-import org.spockframework.runtime.model.SpecInfo;
+import java.util.*;
 
 @SuppressWarnings("UnusedDeclaration")
 public class ClassRuleExtension extends AbstractRuleExtension {
+  @Override
   public void visitSpec(SpecInfo spec) {
     if (classRuleClass == null) return;
 
-    List<FieldInfo> ruleFields = new ArrayList<FieldInfo>();
+    List<FieldInfo> ruleFields = new ArrayList<>();
 
     for (FieldInfo field : spec.getAllFields()) {
       if (!field.isAnnotationPresent(classRuleClass)) continue;

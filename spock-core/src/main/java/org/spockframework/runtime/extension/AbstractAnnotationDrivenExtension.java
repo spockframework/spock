@@ -16,35 +16,40 @@
 
 package org.spockframework.runtime.extension;
 
-import java.lang.annotation.Annotation;
-
 import org.spockframework.runtime.InvalidSpecException;
 import org.spockframework.runtime.model.*;
+
+import java.lang.annotation.Annotation;
 
 /**
  *
  * @author Peter Niederwieser
  */
 public abstract class AbstractAnnotationDrivenExtension<T extends Annotation> implements IAnnotationDrivenExtension<T> {
+  @Override
   public void visitSpecAnnotation(T annotation, SpecInfo spec) {
     throw new InvalidSpecException("@%s may not be applied to Specs")
         .withArgs(annotation.annotationType().getSimpleName());
   }
 
+  @Override
   public void visitFeatureAnnotation(T annotation, FeatureInfo feature) {
     throw new InvalidSpecException("@%s may not be applied to feature methods")
         .withArgs(annotation.annotationType().getSimpleName());
   }
 
+  @Override
   public void visitFixtureAnnotation(T annotation, MethodInfo fixtureMethod) {
     throw new InvalidSpecException("@%s may not be applied to fixture methods")
         .withArgs(annotation.annotationType().getSimpleName());
   }
 
+  @Override
   public void visitFieldAnnotation(T annotation, FieldInfo field) {
     throw new InvalidSpecException("@%s may not be applied to fields")
         .withArgs(annotation.annotationType().getSimpleName());
   }
 
+  @Override
   public void visitSpec(SpecInfo spec) {} // do nothing
 }

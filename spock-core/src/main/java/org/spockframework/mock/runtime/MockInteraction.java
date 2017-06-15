@@ -16,15 +16,9 @@
 
 package org.spockframework.mock.runtime;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.spockframework.mock.*;
 
-import org.spockframework.mock.IInteractionAware;
-import org.spockframework.mock.IMockInteraction;
-import org.spockframework.mock.IMockInvocation;
-import org.spockframework.mock.TooManyInvocationsError;
-import org.spockframework.mock.IInvocationConstraint;
-import org.spockframework.mock.IResponseGenerator;
+import java.util.*;
 
 /**
  * An anticipated interaction between the SUT and one or more mock objects.
@@ -40,7 +34,7 @@ public class MockInteraction implements IMockInteraction {
   private final List<IInvocationConstraint> constraints;
   private final IResponseGenerator responseGenerator;
 
-  private final List<IMockInvocation> acceptedInvocations = new ArrayList<IMockInvocation>();
+  private final List<IMockInvocation> acceptedInvocations = new ArrayList<>();
 
   public MockInteraction(int line, int column, String text, int minCount,
       int maxCount, List<IInvocationConstraint> constraints,
@@ -60,6 +54,7 @@ public class MockInteraction implements IMockInteraction {
     }
   }
 
+  @Override
   public boolean matches(IMockInvocation invocation) {
     for (IInvocationConstraint constraint : constraints) {
       if (!constraint.isSatisfiedBy(invocation)) return false;
@@ -67,6 +62,7 @@ public class MockInteraction implements IMockInteraction {
     return true;
   }
 
+  @Override
   public Object accept(IMockInvocation invocation) {
     acceptedInvocations.add(invocation);
     if (acceptedInvocations.size() > maxCount) {
@@ -76,10 +72,12 @@ public class MockInteraction implements IMockInteraction {
     return responseGenerator == null ? null : responseGenerator.respond(invocation);
   }
 
+  @Override
   public List<IMockInvocation> getAcceptedInvocations() {
     return acceptedInvocations;
   }
 
+  @Override
   public int computeSimilarityScore(IMockInvocation invocation) {
     int score = 0;
     int weight = constraints.size();
@@ -100,26 +98,32 @@ public class MockInteraction implements IMockInteraction {
     return score;
   }
 
+  @Override
   public boolean isSatisfied() {
     return acceptedInvocations.size() >= minCount;
   }
 
+  @Override
   public boolean isExhausted() {
     return acceptedInvocations.size() >= maxCount;
   }
 
+  @Override
   public boolean isRequired() {
     return minCount != 0 || maxCount != Integer.MAX_VALUE;
   }
 
+  @Override
   public int getLine() {
     return line;
   }
 
+  @Override
   public int getColumn() {
     return column;
   }
 
+  @Override
   public String getText() {
     return text;
   }

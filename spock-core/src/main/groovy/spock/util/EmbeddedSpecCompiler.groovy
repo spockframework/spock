@@ -16,21 +16,20 @@
 
 package spock.util
 
+import org.spockframework.runtime.SpecUtil
+import org.spockframework.util.NotThreadSafe
+import spock.lang.Specification
+
 import org.codehaus.groovy.control.MultipleCompilationErrorsException
 import org.intellij.lang.annotations.Language
 import org.junit.Test
-import org.junit.internal.runners.model.MultipleFailureException
 import org.junit.runner.RunWith
-
-import org.spockframework.runtime.SpecUtil
-import org.spockframework.util.NotThreadSafe
-
-import spock.lang.Specification
+import org.junit.runners.model.MultipleFailureException
 
 /**
  * Utility class that allows to compile (fragments of) specs programmatically.
  * Mainly intended for spec'ing Spock itself.
- * 
+ *
  * @author Peter Niederwieser
  */
 @NotThreadSafe
@@ -107,7 +106,7 @@ class EmbeddedSpecCompiler {
           throw errors[0].cause
         else
           throw new MultipleFailureException(errors.cause)
-      
+
       throw e
     }
 
@@ -115,7 +114,7 @@ class EmbeddedSpecCompiler {
       SpecUtil.isSpec(it) || isJUnitTest(it) // need JUnit tests sometimes
     } as List
   }
-  
+
   private boolean isJUnitTest(Class clazz) {
     clazz.isAnnotationPresent(RunWith) || clazz.methods.any { it.getAnnotation(Test) }
   }

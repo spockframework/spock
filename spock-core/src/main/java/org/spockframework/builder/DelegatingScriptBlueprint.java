@@ -21,14 +21,17 @@ public class DelegatingScriptBlueprint implements IBlueprint {
     this.script = script;
   }
 
+  @Override
   public Object getThisObject() {
     return null;
   }
 
+  @Override
   public void setDelegate(final Object delegate) {
     script.$setDelegate(delegate);
   }
 
+  @Override
   public void evaluate() {
     script.run();
   }

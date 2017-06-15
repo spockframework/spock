@@ -19,13 +19,13 @@ package org.spockframework.runtime.extension.builtin;
 import org.spockframework.runtime.InvalidSpecException;
 import org.spockframework.runtime.extension.AbstractAnnotationDrivenExtension;
 import org.spockframework.runtime.model.*;
-
 import spock.lang.FailsWith;
 
 /**
  * @author Peter Niederwieser
  */
 public class FailsWithExtension extends AbstractAnnotationDrivenExtension<FailsWith> {
+  @Override
   public void visitSpecAnnotation(FailsWith failsWith, SpecInfo spec) {
     checkRefersToException(failsWith);
 
@@ -34,12 +34,14 @@ public class FailsWithExtension extends AbstractAnnotationDrivenExtension<FailsW
         feature.getFeatureMethod().addInterceptor(new FailsWithInterceptor(failsWith));
   }
 
+  @Override
   public void visitFeatureAnnotation(FailsWith failsWith, FeatureInfo feature) {
     checkRefersToException(failsWith);
 
     feature.getFeatureMethod().addInterceptor(new FailsWithInterceptor(failsWith));
   }
 
+  @Override
   public void visitFixtureAnnotation(FailsWith failsWith, MethodInfo fixtureMethod) {
     checkRefersToException(failsWith);
 

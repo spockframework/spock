@@ -14,11 +14,12 @@
 
 package org.spockframework.runtime.condition;
 
-import java.lang.reflect.Field;
-
 import org.spockframework.runtime.GroovyRuntimeUtil;
 
+import java.lang.reflect.Field;
+
 public class DiffedObjectAsBeanRenderer implements IObjectRenderer<Object> {
+  @Override
   public String render(Object object) {
     LineBuilder builder = new LineBuilder();
 

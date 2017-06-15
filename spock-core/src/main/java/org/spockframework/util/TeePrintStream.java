@@ -14,17 +14,13 @@
 
 package org.spockframework.util;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
+import org.spockframework.runtime.GroovyRuntimeUtil;
+
+import java.io.*;
+import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import groovy.lang.MissingMethodException;
-
-import org.spockframework.runtime.GroovyRuntimeUtil;
 
 @ThreadSafe
 public class TeePrintStream extends PrintStream {
@@ -36,7 +32,7 @@ public class TeePrintStream extends PrintStream {
 
   public TeePrintStream(List<PrintStream> delegates) {
     super(new ByteArrayOutputStream(0));
-    this.delegates = new CopyOnWriteArrayList<PrintStream>(delegates);
+    this.delegates = new CopyOnWriteArrayList<>(delegates);
   }
 
   public List<PrintStream> getDelegates() {
@@ -81,7 +77,7 @@ public class TeePrintStream extends PrintStream {
         GroovyRuntimeUtil.invokeMethod(stream, "clearError");
       } catch (MissingMethodException e) {
         // method doesn't exist in JDK 1.5
-        if (!e.getMethod().equals("clearError")) {
+        if (!"clearError".equals(e.getMethod())) {
           throw e;
         }
       }

@@ -28,6 +28,7 @@ public class SpreadWildcardArgumentConstraint implements IArgumentConstraint {
 
   private SpreadWildcardArgumentConstraint() {}
 
+  @Override
   public boolean isSatisfiedBy(Object arg) {
     throw new InvalidSpecException("*_ may only appear at the end of an argument list");
   }

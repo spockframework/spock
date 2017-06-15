@@ -16,19 +16,16 @@
 
 package org.spockframework.runtime.extension.builtin;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import org.spockframework.runtime.model.FeatureInfo;
-import org.spockframework.runtime.model.IterationInfo;
-import org.spockframework.runtime.model.NameProvider;
 import org.spockframework.runtime.GroovyRuntimeUtil;
+import org.spockframework.runtime.model.*;
+
+import java.util.regex.*;
 
 /**
  * @author Peter Niederwieser
  */
 public class UnrollNameProvider implements NameProvider<IterationInfo> {
-  private static final Pattern EXPRESSION_PATTERN = Pattern.compile("#([a-zA-Z_\\$]([\\w\\$\\.]|\\(\\))*)");
+  private static final Pattern EXPRESSION_PATTERN = Pattern.compile("#([a-zA-Z_$]([\\w$.]|\\(\\))*)");
 
   private final FeatureInfo feature;
   private final Matcher expressionMatcher;
@@ -40,6 +37,7 @@ public class UnrollNameProvider implements NameProvider<IterationInfo> {
   }
 
   // always returns a name
+  @Override
   public String getName(IterationInfo iterationInfo) {
     return nameFor(iterationInfo.getDataValues());
   }
@@ -64,9 +62,9 @@ public class UnrollNameProvider implements NameProvider<IterationInfo> {
     String firstPart = exprParts[0];
     Object result;
 
-    if (firstPart.equals("featureName")) {
+    if ("featureName".equals(firstPart)) {
       result = feature.getName();
-    } else if (firstPart.equals("iterationCount")) {
+    } else if ("iterationCount".equals(firstPart)) {
       result = String.valueOf(iterationCount);
     } else {
       int index = feature.getDataVariables().indexOf(firstPart);

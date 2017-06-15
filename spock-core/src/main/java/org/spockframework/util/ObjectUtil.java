@@ -38,7 +38,7 @@ public abstract class ObjectUtil {
   public static Class<?> voidAwareGetClass(Object obj) {
     return obj == null ? void.class : obj.getClass();
   }
-  
+
   public static boolean eitherNull(Object... objs) {
     for (Object obj: objs) {
       if (obj == null) return true;
@@ -46,8 +46,9 @@ public abstract class ObjectUtil {
     return false;
   }
 
+  @Nullable
   @SuppressWarnings("unchecked")
-  public static @Nullable <T> T asInstance(Object obj, Class<T> type) {
+  public static <T> T asInstance(Object obj, Class<T> type) {
     return type.isInstance(obj) ? (T) obj : null;
   }
 

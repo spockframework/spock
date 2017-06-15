@@ -18,9 +18,10 @@ package org.spockframework.util;
 
 /**
  * A function from domain D to co-domain C.
- * 
+ *
  * @author Peter Niederwieser
  */
 public interface IFunction<D, C> extends IThrowableFunction<D, C, Throwable> {
+  @Override
   C apply(D value);
 }

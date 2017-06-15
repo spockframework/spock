@@ -16,21 +16,15 @@
 
 package org.spockframework.compiler;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import org.spockframework.lang.Wildcard;
+import org.spockframework.mock.runtime.*;
+import org.spockframework.util.*;
+
+import java.util.*;
 
 import org.codehaus.groovy.ast.expr.*;
 import org.codehaus.groovy.ast.stmt.ExpressionStatement;
 import org.codehaus.groovy.syntax.Types;
-
-import org.spockframework.lang.Wildcard;
-import org.spockframework.mock.runtime.InteractionBuilder;
-import org.spockframework.mock.runtime.MockController;
-import org.spockframework.util.Assert;
-import org.spockframework.util.Nullable;
-import org.spockframework.util.ObjectUtil;
-import org.spockframework.util.UnreachableCodeError;
 
 /**
  * Creates the AST representation of an InteractionBuilder build sequence.
@@ -47,7 +41,7 @@ public class InteractionRewriter {
   private Expression call;
   private boolean wildcardCall;
   private boolean implicitTarget;
-  private List<InteractionResponse> responses = new ArrayList<InteractionResponse>();
+  private List<InteractionResponse> responses = new ArrayList<>();
 
   // holds the incrementally constructed expression, which looks roughly as follows:
   // "new InteractionBuilder(..).setCount(..).setTarget(..).setMethod(..).addArg(..).addResult(..).build()"
@@ -83,7 +77,7 @@ public class InteractionRewriter {
 
   private boolean isInteraction(ExpressionStatement stat) throws InvalidSpecCompileException {
     this.stat = stat;
-    
+
     Expression expr = parseCount(parseResults(stat.getExpression()));
     boolean interaction = (count != null || !responses.isEmpty()) && parseCall(expr);
     if (interaction && resources.getCurrentMethod().getAst().isStatic()) {
@@ -91,7 +85,7 @@ public class InteractionRewriter {
     }
     return interaction;
   }
-  
+
   private Expression parseResults(Expression expr) {
     while (expr instanceof BinaryExpression) {
       BinaryExpression binExpr = (BinaryExpression) expr;
@@ -102,7 +96,7 @@ public class InteractionRewriter {
     }
     return expr;
   }
-  
+
   private Expression parseCount(Expression expr) {
     BinaryExpression binExpr = ObjectUtil.asInstance(expr, BinaryExpression.class);
     if (binExpr == null || binExpr.getOperation().getType() != Types.MULTIPLY) return expr;
@@ -248,10 +242,10 @@ public class InteractionRewriter {
 
     Expression args = AstUtil.getArguments(call);
     if (args == ArgumentListExpression.EMPTY_ARGUMENTS) return; // fast lane
-    
+
     call(InteractionBuilder.SET_ARG_LIST_KIND,
         new ConstantExpression(args instanceof ArgumentListExpression));
-    
+
     if (args instanceof ArgumentListExpression)
       addPositionalArgs((ArgumentListExpression) args);
     else if (args instanceof NamedArgumentListExpression)
@@ -334,7 +328,7 @@ public class InteractionRewriter {
         method,
         new ArgumentListExpression(args));
   }
-  
+
   private static class InteractionResponse {
     final Expression expr;
     final boolean iterable;

@@ -16,8 +16,7 @@
 
 package org.spockframework.util;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import org.codehaus.groovy.ast.GroovyCodeVisitor;
 import org.codehaus.groovy.ast.expr.Expression;
@@ -42,7 +41,7 @@ public abstract class AbstractExpressionConverter<T> implements GroovyCodeVisito
   }
 
   protected List<T> convertAll(List<? extends Expression> expressions) {
-    List<T> converted = new ArrayList<T>(expressions.size());
+    List<T> converted = new ArrayList<>(expressions.size());
     for (Expression expr : expressions) converted.add(convert(expr));
     return converted;
   }
@@ -52,67 +51,83 @@ public abstract class AbstractExpressionConverter<T> implements GroovyCodeVisito
   }
 
   // remaining methods are statement callbacks of GroovyCodeVisitor
-  
+
+  @Override
   public final void visitBlockStatement(BlockStatement statement) {
     unsupported();
   }
 
+  @Override
   public final void visitForLoop(ForStatement forLoop) {
     unsupported();
   }
 
+  @Override
   public final void visitWhileLoop(WhileStatement loop) {
     unsupported();
   }
 
+  @Override
   public final void visitDoWhileLoop(DoWhileStatement loop) {
     unsupported();
   }
 
+  @Override
   public final void visitIfElse(IfStatement ifElse) {
     unsupported();
   }
 
+  @Override
   public final void visitExpressionStatement(ExpressionStatement statement) {
     unsupported();
   }
 
+  @Override
   public final void visitReturnStatement(ReturnStatement statement) {
     unsupported();
   }
 
+  @Override
   public final void visitAssertStatement(AssertStatement statement) {
     unsupported();
   }
 
+  @Override
   public final void visitTryCatchFinally(TryCatchStatement finally1) {
     unsupported();
   }
 
+  @Override
   public final void visitSwitch(SwitchStatement statement) {
     unsupported();
   }
 
+  @Override
   public final void visitCaseStatement(CaseStatement statement) {
     unsupported();
   }
 
+  @Override
   public final void visitBreakStatement(BreakStatement statement) {
     unsupported();
   }
 
+  @Override
   public final void visitContinueStatement(ContinueStatement statement) {
     unsupported();
   }
 
+  @Override
   public final void visitThrowStatement(ThrowStatement statement) {
     unsupported();
   }
 
+  @Override
   public final void visitSynchronizedStatement(SynchronizedStatement statement) {
     unsupported();
   }
 
+  @Override
   public final void visitCatchStatement(CatchStatement statement) {
     unsupported();
   }

@@ -16,19 +16,15 @@
 
 package org.spockframework.mock.runtime;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import groovy.lang.Closure;
-
-import org.spockframework.lang.SpreadWildcard;
-import org.spockframework.lang.Wildcard;
-import org.spockframework.mock.IArgumentConstraint;
-import org.spockframework.mock.IInvocationConstraint;
-import org.spockframework.mock.IMockInteraction;
+import org.spockframework.lang.*;
+import org.spockframework.mock.*;
 import org.spockframework.mock.constraint.*;
 import org.spockframework.mock.response.*;
 import org.spockframework.runtime.InvalidSpecException;
+
+import java.util.*;
+
+import groovy.lang.Closure;
 
 /**
  *
@@ -41,7 +37,7 @@ public class InteractionBuilder {
 
   private int minCount = 0;
   private int maxCount = Integer.MAX_VALUE;
-  private List<IInvocationConstraint> invConstraints = new ArrayList<IInvocationConstraint>();
+  private List<IInvocationConstraint> invConstraints = new ArrayList<>();
   private List<Object> argNames;
   private List<IArgumentConstraint> argConstraints;
   private ResponseGeneratorChain responseGeneratorChain = new ResponseGeneratorChain();
@@ -118,11 +114,11 @@ public class InteractionBuilder {
 
   public static final String SET_ARG_LIST_KIND = "setArgListKind";
   public InteractionBuilder setArgListKind(boolean isPositional) {
-    argConstraints = new ArrayList<IArgumentConstraint>();
+    argConstraints = new ArrayList<>();
     if (isPositional) {
       invConstraints.add(new PositionalArgumentListConstraint(argConstraints));
     } else {
-      argNames = new ArrayList<Object>();
+      argNames = new ArrayList<>();
       invConstraints.add(new NamedArgumentListConstraint(argNames, argConstraints));
     }
     return this;

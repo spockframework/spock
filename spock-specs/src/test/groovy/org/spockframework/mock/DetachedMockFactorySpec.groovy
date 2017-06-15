@@ -1,11 +1,6 @@
 package org.spockframework.mock
 
-import org.spockframework.util.ReflectionUtil
-
-import spock.lang.IgnoreIf
-import spock.lang.Requires
-import spock.lang.Specification
-import spock.lang.Subject
+import spock.lang.*
 import spock.mock.DetachedMockFactory
 
 class DetachedMockFactorySpec extends Specification {
@@ -106,19 +101,19 @@ class DetachedMockFactorySpec extends Specification {
     cleanup:
     detach(spy)
   }
-  
+
   def "Spy(obj)" () {
       given:
       IMockMe spy = factory.Spy(new MockMe(42))
       attach(spy)
-  
+
       when:
       int result = spy.foo(2)
-  
+
       then:
       result == 42
       1 * spy.foo(2)
-  
+
       cleanup:
       detach(spy)
   }

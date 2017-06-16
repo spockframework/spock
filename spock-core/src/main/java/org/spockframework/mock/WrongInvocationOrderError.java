@@ -14,6 +14,8 @@
 
 package org.spockframework.mock;
 
+import java.io.IOException;
+
 /**
  * Thrown if an invocation on a mock object occurs too late. Example:
  *
@@ -40,8 +42,11 @@ package org.spockframework.mock;
  * A <tt>WrongInvocationOrderError</tt> will be thrown on the third call.
  */
 public class WrongInvocationOrderError extends InteractionNotSatisfiedError {
-  private final IMockInteraction interaction;
-  private final IMockInvocation lastInvocation;
+  private static final long serialVersionUID = 1L;
+
+  private final transient IMockInteraction interaction;
+  private final transient IMockInvocation lastInvocation;
+  private String message;
 
   public WrongInvocationOrderError(IMockInteraction interaction, IMockInvocation lastInvocation) {
     this.interaction = interaction;
@@ -58,6 +63,7 @@ public class WrongInvocationOrderError extends InteractionNotSatisfiedError {
 
   @Override
   public String getMessage() {
+    if (message != null) return message;
     StringBuilder builder = new StringBuilder();
     builder.append("Wrong invocation order for:\n\n");
     builder.append(interaction);
@@ -65,6 +71,14 @@ public class WrongInvocationOrderError extends InteractionNotSatisfiedError {
     builder.append("Last invocation: ");
     builder.append(lastInvocation);
     builder.append("\n");
-    return builder.toString();
+
+    message = builder.toString();
+    return message;
+  }
+
+  private void writeObject(java.io.ObjectOutputStream out) throws IOException {
+    // create the message so that it is available for serialization
+    getMessage();
+    out.defaultWriteObject();
   }
 }

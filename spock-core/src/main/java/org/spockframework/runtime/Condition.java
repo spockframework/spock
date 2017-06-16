@@ -16,33 +16,34 @@
 
 package org.spockframework.runtime;
 
+import org.spockframework.runtime.model.*;
+import org.spockframework.util.Nullable;
+
+import java.io.*;
 import java.util.List;
 import java.util.regex.Pattern;
-
-import org.spockframework.runtime.model.ExpressionInfo;
-import org.spockframework.runtime.model.TextPosition;
-import org.spockframework.util.Nullable;
 
 /**
  * Runtime representation of an evaluated condition.
  *
  * @author Peter Niederwieser
  */
-public class Condition {
+public class Condition implements Serializable {
+  private static final long serialVersionUID = 1L;
   private static final Pattern pattern = Pattern.compile("\\s*\n\\s*");
 
-  private final List<Object> values;
+  private final transient List<Object> values;
   private final String text;
   private final TextPosition position;
   private final String message;
   private final Integer notRecordedVarNumberBecauseOfException;
   private final Throwable exception;
 
-  private volatile ExpressionInfo expression;
+  private transient volatile ExpressionInfo expression;
   private volatile String rendering;
 
   public Condition(@Nullable List<Object> values, @Nullable String text, TextPosition position,
-      @Nullable String message, @Nullable Integer notRecordedVarNumberBecauseOfException, @Nullable Throwable exception) {
+                   @Nullable String message, @Nullable Integer notRecordedVarNumberBecauseOfException, @Nullable Throwable exception) {
     this.text = text;
     this.position = position;
     this.values = values;
@@ -116,5 +117,11 @@ public class Condition {
 
   private String flatten(String text) {
     return pattern.matcher(text).replaceAll(" ");
+  }
+
+  private void writeObject(java.io.ObjectOutputStream out) throws IOException {
+    // create the rendering so that it is available for serialization
+    getRendering();
+    out.defaultWriteObject();
   }
 }

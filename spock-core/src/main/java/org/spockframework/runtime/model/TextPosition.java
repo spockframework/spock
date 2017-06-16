@@ -16,6 +16,8 @@
 
 package org.spockframework.runtime.model;
 
+import java.io.Serializable;
+
 import org.codehaus.groovy.ast.ASTNode;
 import org.codehaus.groovy.syntax.Token;
 
@@ -25,9 +27,11 @@ import org.codehaus.groovy.syntax.Token;
  *
  * @author Peter Niederwieser
  */
-public class TextPosition implements Comparable<TextPosition> {
+public class TextPosition implements Comparable<TextPosition>, Serializable {
   // IDEA: override methods to throw UnsupportedOperationException
   public static final TextPosition NOT_AVAILABLE = new TextPosition(-1, -1);
+
+  private static final long serialVersionUID = 1L;
 
   private final int line;
   private final int column;

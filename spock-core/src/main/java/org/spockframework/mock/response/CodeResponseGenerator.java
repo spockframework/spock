@@ -16,10 +16,10 @@
 
 package org.spockframework.mock.response;
 
-import groovy.lang.Closure;
-
 import org.spockframework.mock.IMockInvocation;
 import org.spockframework.runtime.GroovyRuntimeUtil;
+
+import groovy.lang.Closure;
 
 /**
  *
@@ -32,10 +32,11 @@ public class CodeResponseGenerator extends SingleResponseGenerator {
     this.code = code;
   }
 
+  @Override
   public Object doRespond(IMockInvocation invocation) {
     Object result = invokeClosure(invocation);
     Class<?> returnType = invocation.getMethod().getReturnType();
-    
+
     // don't attempt cast for void methods (closure could be an action that accidentally returns a value)
     if (returnType == void.class || returnType == Void.class) return null;
 

@@ -26,7 +26,8 @@ public class WildcardArgumentConstraint implements IArgumentConstraint {
   public static final WildcardArgumentConstraint INSTANCE = new WildcardArgumentConstraint();
 
   private WildcardArgumentConstraint() {}
-  
+
+  @Override
   public boolean isSatisfiedBy(Object arg) {
     return true;
   }

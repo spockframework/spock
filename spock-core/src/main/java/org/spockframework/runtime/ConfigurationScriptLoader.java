@@ -14,20 +14,16 @@
 
 package org.spockframework.runtime;
 
-import java.io.File;
-import java.io.IOException;
+import org.spockframework.builder.DelegatingScript;
+import org.spockframework.util.Nullable;
+import spock.config.ConfigurationException;
+
+import java.io.*;
 import java.net.URL;
 import java.security.AccessControlException;
 
 import groovy.lang.*;
-
-import org.codehaus.groovy.control.CompilationFailedException;
-import org.codehaus.groovy.control.CompilerConfiguration;
-
-import org.spockframework.builder.DelegatingScript;
-import org.spockframework.util.Nullable;
-
-import spock.config.ConfigurationException;
+import org.codehaus.groovy.control.*;
 
 public class ConfigurationScriptLoader {
   private final String configPropertyKey;
@@ -47,7 +43,8 @@ public class ConfigurationScriptLoader {
     this.fileSystemLocation = fileSystemLocation;
   }
 
-  public @Nullable DelegatingScript loadAutoDetectedScript() {
+  @Nullable
+  public DelegatingScript loadAutoDetectedScript() {
     DelegatingScript script = loadScriptFromSystemPropertyInducedLocation(configPropertyKey);
     if (script != null) return script;
 
@@ -76,7 +73,8 @@ public class ConfigurationScriptLoader {
     };
   }
 
-  private @Nullable DelegatingScript loadScriptFromSystemPropertyInducedLocation(String propertyKey) {
+  @Nullable
+  private DelegatingScript loadScriptFromSystemPropertyInducedLocation(String propertyKey) {
     String location = System.getProperty(propertyKey);
     if (location == null || location.length() == 0) return null;
 
@@ -89,7 +87,8 @@ public class ConfigurationScriptLoader {
     throw new ConfigurationException("Cannot find configuration script '%s'", location);
   }
 
-  private @Nullable DelegatingScript loadScriptFromFileSystemLocation(String location) {
+  @Nullable
+  private DelegatingScript loadScriptFromFileSystemLocation(String location) {
     File file = new File(location);
 
     try {
@@ -111,7 +110,8 @@ public class ConfigurationScriptLoader {
     }
   }
 
-  private @Nullable DelegatingScript loadScriptFromClassPathLocation(String location) {
+  @Nullable
+  private DelegatingScript loadScriptFromClassPathLocation(String location) {
     URL url = this.getClass().getClassLoader().getResource(location);
     if (url == null) return null;
 

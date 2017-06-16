@@ -14,18 +14,14 @@
 
 package org.spockframework.mock.runtime;
 
+import org.spockframework.mock.*;
+import org.spockframework.runtime.GroovyRuntimeUtil;
+import spock.lang.Specification;
+
 import java.lang.reflect.Method;
 import java.util.Arrays;
 
-import groovy.lang.MetaClass;
-import groovy.lang.MissingMethodException;
-import groovy.lang.MissingPropertyException;
-
-import org.spockframework.mock.*;
-import org.spockframework.mock.IResponseGenerator;
-import org.spockframework.runtime.GroovyRuntimeUtil;
-
-import spock.lang.Specification;
+import groovy.lang.*;
 
 public class GroovyMockInterceptor implements IProxyBasedMockInterceptor {
   private final IMockConfiguration mockConfiguration;
@@ -38,6 +34,7 @@ public class GroovyMockInterceptor implements IProxyBasedMockInterceptor {
     this.mockMetaClass = mockMetaClass;
   }
 
+  @Override
   public Object intercept(Object target, Method method, Object[] arguments, IResponseGenerator realMethodInvoker) {
     IMockObject mockObject = new MockObject(mockConfiguration.getName(), mockConfiguration.getExactType(), target,
         mockConfiguration.isVerified(), mockConfiguration.isGlobal(), mockConfiguration.getDefaultResponse(), specification, this);
@@ -84,10 +81,12 @@ public class GroovyMockInterceptor implements IProxyBasedMockInterceptor {
     return method.getName().equals(name) && Arrays.equals(method.getParameterTypes(), parameterTypes);
   }
 
+  @Override
   public void attach(Specification specification) {
     // NO-OP since GroovyMocks do not support detached mocks at the moment
   }
 
+  @Override
   public void detach() {
     // NO-OP since GroovyMocks do not support detached mocks at the moment
   }

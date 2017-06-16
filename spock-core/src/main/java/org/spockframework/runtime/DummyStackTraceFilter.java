@@ -15,5 +15,6 @@
 package org.spockframework.runtime;
 
 public class DummyStackTraceFilter implements IStackTraceFilter {
+  @Override
   public void filter(Throwable throwable) {} // do nothing
 }

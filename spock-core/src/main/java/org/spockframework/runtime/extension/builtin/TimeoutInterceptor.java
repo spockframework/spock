@@ -16,14 +16,12 @@
 
 package org.spockframework.runtime.extension.builtin;
 
-import java.util.concurrent.*;
-
 import org.spockframework.runtime.SpockTimeoutError;
-import org.spockframework.runtime.extension.IMethodInterceptor;
-import org.spockframework.runtime.extension.IMethodInvocation;
-
+import org.spockframework.runtime.extension.*;
 import org.spockframework.util.TimeUtil;
 import spock.lang.Timeout;
+
+import java.util.concurrent.*;
 
 /**
  * Times out a method invocation if it takes too long. The method invocation
@@ -40,12 +38,14 @@ public class TimeoutInterceptor implements IMethodInterceptor {
     this.timeout = timeout;
   }
 
+  @Override
   public void intercept(final IMethodInvocation invocation) throws Throwable {
     final Thread mainThread = Thread.currentThread();
-    final SynchronousQueue<StackTraceElement[]> sync = new SynchronousQueue<StackTraceElement[]>();
+    final SynchronousQueue<StackTraceElement[]> sync = new SynchronousQueue<>();
     final CountDownLatch startLatch = new CountDownLatch(2);
 
     new Thread(String.format("[spock.lang.Timeout] Watcher for method '%s'", invocation.getMethod().getName())) {
+      @Override
       public void run() {
         StackTraceElement[] stackTrace = new StackTraceElement[0];
         long waitMillis = timeout.unit().toMillis(timeout.value());

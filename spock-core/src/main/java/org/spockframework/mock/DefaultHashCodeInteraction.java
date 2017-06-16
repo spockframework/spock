@@ -18,15 +18,18 @@ class DefaultHashCodeInteraction extends DefaultInteraction {
 
   private DefaultHashCodeInteraction() {}
 
+  @Override
   public String getText() {
     return "Object.hashCode() interaction";
   }
 
+  @Override
   public boolean matches(IMockInvocation invocation) {
-    return invocation.getMethod().getName().equals("hashCode")
+    return "hashCode".equals(invocation.getMethod().getName())
         && invocation.getMethod().getParameterTypes().isEmpty();
   }
 
+  @Override
   public Object accept(IMockInvocation invocation) {
     return System.identityHashCode(invocation.getMockObject().getInstance());
   }

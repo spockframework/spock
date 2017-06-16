@@ -14,15 +14,12 @@
 
 package org.spockframework.mock;
 
+import org.spockframework.mock.runtime.*;
+import org.spockframework.util.*;
+import spock.lang.Specification;
+
 import java.lang.reflect.Type;
 import java.util.Map;
-
-import org.spockframework.mock.runtime.CompositeMockFactory;
-import org.spockframework.mock.runtime.MockConfiguration;
-import org.spockframework.util.Beta;
-import org.spockframework.util.Nullable;
-
-import spock.lang.Specification;
 
 /**
  * Detects mock objects and provides information about them.
@@ -96,12 +93,12 @@ public class MockUtil {
         new MockConfiguration(name, type, nature, implementation, options), classloader);
     return mock;
   }
-  
+
   /**
    * Creates a detached mock.
    *
    * @param name the name
-   * @param type the type of the mock
+   * @param obj the existing object to wrap
    * @param nature the nature
    * @param implementation the implementation
    * @param options the options

@@ -16,10 +16,10 @@
 
 package org.spockframework.mock.response;
 
-import org.spockframework.mock.IMockInvocation;
-import org.spockframework.mock.IResponseGenerator;
+import org.spockframework.mock.*;
 
 public class DefaultResponseGenerator implements IResponseGenerator {
+  @Override
   public Object respond(IMockInvocation invocation) {
     return invocation.getMockObject().getDefaultResponse().respond(invocation);
   }

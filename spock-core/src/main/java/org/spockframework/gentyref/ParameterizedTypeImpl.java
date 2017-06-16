@@ -1,32 +1,34 @@
 package org.spockframework.gentyref;
 
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
+import java.lang.reflect.*;
 import java.util.Arrays;
 
 class ParameterizedTypeImpl implements ParameterizedType {
 	private final Class<?> rawType;
 	private final Type[] actualTypeArguments;
 	private final Type ownerType;
-	
+
 	public ParameterizedTypeImpl(Class<?> rawType, Type[] actualTypeArguments, Type ownerType) {
 		this.rawType = rawType;
 		this.actualTypeArguments = actualTypeArguments;
 		this.ownerType = ownerType;
 	}
 
-	public Type getRawType() {
+	@Override
+  public Type getRawType() {
 		return rawType;
 	}
-	
-	public Type[] getActualTypeArguments() {
+
+	@Override
+  public Type[] getActualTypeArguments() {
 		return actualTypeArguments;
 	}
 
-	public Type getOwnerType() {
+	@Override
+  public Type getOwnerType() {
 		return ownerType;
 	}
-	
+
 	@Override
 	public boolean equals(Object obj) {
 		if (!(obj instanceof ParameterizedType))
@@ -37,7 +39,7 @@ class ParameterizedTypeImpl implements ParameterizedType {
 			&& Arrays.equals(actualTypeArguments, other.getActualTypeArguments())
 			&& (ownerType == null ? other.getOwnerType() == null : ownerType.equals(other.getOwnerType()));
 	}
-	
+
 	@Override
 	public int hashCode() {
 		int result = rawType.hashCode() ^ Arrays.hashCode(actualTypeArguments);
@@ -45,23 +47,23 @@ class ParameterizedTypeImpl implements ParameterizedType {
 			result ^= ownerType.hashCode();
 		return result;
 	}
-	
+
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		
+
 		String clazz = rawType.getName();
-		
+
 		if (ownerType != null) {
 			sb.append(GenericTypeReflector.getTypeName(ownerType)).append('.');
-			
+
 			String prefix = (ownerType instanceof ParameterizedType) ? ((Class<?>)((ParameterizedType)ownerType).getRawType()).getName() + '$'
 					: ((Class<?>)ownerType).getName() + '$';
 			if (clazz.startsWith(prefix))
 				clazz = clazz.substring(prefix.length());
 		}
 		sb.append(clazz);
-		
+
 		if(actualTypeArguments.length != 0) {
 			sb.append('<');
 			for (int i = 0; i < actualTypeArguments.length; i++) {
@@ -72,7 +74,7 @@ class ParameterizedTypeImpl implements ParameterizedType {
 			}
 			sb.append('>');
 		}
-		
+
 		return sb.toString();
 	}
 }

@@ -16,17 +16,15 @@
 
 package org.spockframework.mock.response;
 
-import java.util.LinkedList;
-
-import org.spockframework.mock.IChainableResponseGenerator;
-import org.spockframework.mock.IMockInvocation;
-import org.spockframework.mock.IResponseGenerator;
+import org.spockframework.mock.*;
 import org.spockframework.util.InternalSpockError;
+
+import java.util.LinkedList;
 
 public class ResponseGeneratorChain implements IResponseGenerator {
   private IChainableResponseGenerator current;
-  private final LinkedList<IChainableResponseGenerator> remaining = new LinkedList<IChainableResponseGenerator>();
-  
+  private final LinkedList<IChainableResponseGenerator> remaining = new LinkedList<>();
+
   public void addFirst(IChainableResponseGenerator generator) {
     if (current != null) remaining.addFirst(current);
     current = generator;
@@ -36,9 +34,10 @@ public class ResponseGeneratorChain implements IResponseGenerator {
     return current == null;
   }
 
+  @Override
   public Object respond(IMockInvocation invocation) {
     if (isEmpty()) throw new InternalSpockError("ResultGeneratorChain should never be empty");
-    
+
     while (current.isAtEndOfCycle() && !remaining.isEmpty()) {
       current = remaining.removeFirst();
     }

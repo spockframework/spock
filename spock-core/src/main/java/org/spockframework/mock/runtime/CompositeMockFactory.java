@@ -14,15 +14,11 @@
 
 package org.spockframework.mock.runtime;
 
-import java.util.Arrays;
-import java.util.List;
-
-import org.spockframework.mock.IMockConfiguration;
-import org.spockframework.mock.IMockFactory;
-import org.spockframework.util.InternalSpockError;
-import org.spockframework.util.UnreachableCodeError;
-
+import org.spockframework.mock.*;
+import org.spockframework.util.*;
 import spock.lang.Specification;
+
+import java.util.*;
 
 public class CompositeMockFactory implements IMockFactory {
   public static CompositeMockFactory INSTANCE =
@@ -34,10 +30,12 @@ public class CompositeMockFactory implements IMockFactory {
     this.mockFactories = mockFactories;
   }
 
+  @Override
   public boolean canCreate(IMockConfiguration configuration) {
     throw new UnreachableCodeError("canCreate");
   }
 
+  @Override
   public Object create(IMockConfiguration configuration, Specification specification) {
     for (IMockFactory factory : mockFactories) {
       if (factory.canCreate(configuration)) {
@@ -48,8 +46,9 @@ public class CompositeMockFactory implements IMockFactory {
     throw new InternalSpockError("No matching mock factory found");
   }
 
-	public Object createDetached(IMockConfiguration configuration,
-			ClassLoader classLoader) {
+	@Override
+  public Object createDetached(IMockConfiguration configuration,
+                               ClassLoader classLoader) {
 	  for (IMockFactory factory : mockFactories) {
       if (factory.canCreate(configuration)) {
         return factory.createDetached(configuration, classLoader);

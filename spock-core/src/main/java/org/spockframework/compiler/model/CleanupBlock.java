@@ -33,6 +33,7 @@ public class CleanupBlock extends Block {
     visitor.visitCleanupBlock(this);
   }
 
+  @Override
   public BlockParseInfo getParseInfo() {
     return BlockParseInfo.CLEANUP;
   }

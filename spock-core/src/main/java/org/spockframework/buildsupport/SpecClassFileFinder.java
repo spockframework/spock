@@ -29,7 +29,7 @@ public class SpecClassFileFinder {
     if (!baseDir.isDirectory())
       throw new FileNotFoundException(String.format("directory %s not found", baseDir));
 
-    List<File> specs = new ArrayList<File>();
+    List<File> specs = new ArrayList<>();
     doFindRunnableSpecs(baseDir, specs);
     Collections.sort(specs);
     return specs;
@@ -46,15 +46,12 @@ public class SpecClassFileFinder {
   public boolean isRunnableSpec(File file) throws IOException {
     if (!(file.getName().endsWith(".class") && file.isFile()))
       return false;
-    
-    InputStream stream = new BufferedInputStream(new FileInputStream(file));
-    try {
+
+    try (InputStream stream = new BufferedInputStream(new FileInputStream(file))) {
       SpecClassFileVisitor visitor = new SpecClassFileVisitor();
       AsmClassReader reader = new AsmClassReader(stream);
       reader.accept(visitor);
       return visitor.isRunnableSpec();
-    } finally {
-      stream.close();
     }
   }
 }

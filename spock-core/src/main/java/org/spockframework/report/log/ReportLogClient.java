@@ -14,15 +14,12 @@
 
 package org.spockframework.report.log;
 
+import org.spockframework.runtime.extension.ExtensionException;
+import org.spockframework.util.*;
+
 import java.io.*;
 import java.net.Socket;
 import java.util.Map;
-
-import org.spockframework.runtime.extension.ExtensionException;
-import org.spockframework.util.IStoppable;
-import org.spockframework.util.InternalSpockError;
-import org.spockframework.util.IoUtil;
-import org.spockframework.util.JsonWriter;
 
 public class ReportLogClient implements IReportLogListener, IStoppable {
   private final String reportServerAddress;
@@ -44,11 +41,13 @@ public class ReportLogClient implements IReportLogListener, IStoppable {
     }
   }
 
+  @Override
   public void stop() {
     IoUtil.closeQuietly(socket);
   }
 
   // TODO: reuse buffers?
+  @Override
   public void emitted(Map<String, Object>log)  {
     if (socket == null) return;
 

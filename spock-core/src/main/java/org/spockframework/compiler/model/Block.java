@@ -16,20 +16,19 @@
 
 package org.spockframework.compiler.model;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import org.codehaus.groovy.ast.stmt.Statement;
 
 /**
  * AST node representing a block in a feature method. There are six kinds
  * of blocks: setup-block, expect-block, when-block, then-block, cleanup-block,
- * and where-block. 
- * 
+ * and where-block.
+ *
  * @author Peter Niederwieser
  */
 public abstract class Block extends Node<Method, List<Statement>> {
-  private final List<String> descriptions = new ArrayList<String>(3);
+  private final List<String> descriptions = new ArrayList<>(3);
   private Block prev;
   private Block next;
 

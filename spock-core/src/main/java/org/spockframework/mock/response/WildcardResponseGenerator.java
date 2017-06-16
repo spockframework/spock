@@ -20,10 +20,11 @@ import org.spockframework.mock.IMockInvocation;
 
 /**
  * Returns the default value for the invoked method's return type.
- * 
+ *
  * @author Peter Niederwieser
  */
 public class WildcardResponseGenerator extends SingleResponseGenerator {
+  @Override
   public Object doRespond(IMockInvocation invocation) {
     return invocation.getMockObject().getDefaultResponse().respond(invocation);
   }

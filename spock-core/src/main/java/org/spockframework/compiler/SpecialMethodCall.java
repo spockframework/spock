@@ -14,22 +14,15 @@
 
 package org.spockframework.compiler;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
-import org.codehaus.groovy.ast.AnnotationNode;
-import org.codehaus.groovy.ast.ClassNode;
-import org.codehaus.groovy.ast.MethodNode;
-import org.codehaus.groovy.ast.expr.*;
-import org.codehaus.groovy.ast.stmt.ExpressionStatement;
-import org.codehaus.groovy.ast.stmt.Statement;
-import org.codehaus.groovy.syntax.Types;
 import org.spockframework.lang.ConditionBlock;
-import org.spockframework.util.CollectionUtil;
-import org.spockframework.util.Identifiers;
-import org.spockframework.util.Nullable;
-import org.spockframework.util.ObjectUtil;
+import org.spockframework.util.*;
+
+import java.util.*;
+
+import org.codehaus.groovy.ast.*;
+import org.codehaus.groovy.ast.expr.*;
+import org.codehaus.groovy.ast.stmt.*;
+import org.codehaus.groovy.syntax.Types;
 
 public class SpecialMethodCall implements ISpecialMethodCall {
   private final String methodName;
@@ -54,62 +47,77 @@ public class SpecialMethodCall implements ISpecialMethodCall {
     this.conditionBlock = conditionBlock;
   }
 
+  @Override
   public boolean isMethodName(String name) {
     return name.equals(methodName);
   }
 
+  @Override
   public boolean isOneOfMethodNames(Collection<String> names) {
     return names.contains(methodName);
   }
 
+  @Override
   public boolean isExceptionCondition() {
     return isOneOfMethodNames(Identifiers.EXCEPTION_CONDITION_METHODS);
   }
 
+  @Override
   public boolean isThrownCall() {
     return isMethodName(Identifiers.THROWN);
   }
 
+  @Override
   public boolean isOldCall() {
     return isMethodName(Identifiers.OLD);
   }
 
+  @Override
   public boolean isInteractionCall() {
     return isMethodName(Identifiers.INTERACTION);
   }
 
+  @Override
   public boolean isWithCall() {
     return isMethodName(Identifiers.WITH);
   }
 
+  @Override
   public boolean isConditionBlock() {
     return conditionBlock;
   }
 
+  @Override
   public boolean isGroupConditionBlock() {
     return isMethodName(Identifiers.VERIFY_ALL);
   }
 
+  @Override
   public boolean isTestDouble() {
     return isOneOfMethodNames(Identifiers.TEST_DOUBLE_METHODS);
   }
 
+  @Override
   public boolean isExceptionCondition(MethodCallExpression expr) {
     return expr == methodCallExpr && isExceptionCondition();
   }
 
+  @Override
   public boolean isThrownCall(MethodCallExpression expr) {
     return expr == methodCallExpr && isThrownCall();
   }
 
+  @Override
   public boolean isOldCall(MethodCallExpression expr) {
     return expr == methodCallExpr && isOldCall();
   }
 
+  @Override
   public boolean isInteractionCall(MethodCallExpression expr) {
     return expr == methodCallExpr && isInteractionCall();
   }
 
+  @Override
   public boolean isWithCall(MethodCallExpression expr) {
     return expr == methodCallExpr && isWithCall();
   }
@@ -118,10 +126,12 @@ public class SpecialMethodCall implements ISpecialMethodCall {
     return expr == methodCallExpr && isConditionBlock();
   }
 
+  @Override
   public boolean isTestDouble(MethodCallExpression expr) {
     return expr == methodCallExpr && isTestDouble();
   }
 
+  @Override
   public boolean isMatch(Statement stat) {
     ExpressionStatement exprStat = ObjectUtil.asInstance(stat, ExpressionStatement.class);
     if (exprStat == null) return false;
@@ -129,17 +139,20 @@ public class SpecialMethodCall implements ISpecialMethodCall {
     return expr == binaryExpr || expr == methodCallExpr;
   }
 
+  @Override
   public boolean isMatch(ClosureExpression expr) {
     return expr == closureExpr;
   }
 
+  @Override
   @Nullable
   public ClosureExpression getClosureExpr() {
     return closureExpr;
   }
 
+  @Override
   public void expand() {
-    List<Expression> args = new ArrayList<Expression>();
+    List<Expression> args = new ArrayList<>();
     args.add(inferredName);
     args.add(inferredType);
     args.addAll(AstUtil.getArgumentList(methodCallExpr));

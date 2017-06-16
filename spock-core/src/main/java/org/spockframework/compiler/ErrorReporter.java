@@ -14,14 +14,11 @@
 
 package org.spockframework.compiler;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import org.spockframework.util.TextUtil;
 
 import org.codehaus.groovy.ast.ASTNode;
-import org.codehaus.groovy.control.*;
+import org.codehaus.groovy.control.SourceUnit;
 import org.codehaus.groovy.control.messages.*;
-
-import org.spockframework.util.TextUtil;
 
 /**
  * Reporting facility for problems found during compilation.
@@ -40,7 +37,7 @@ public class ErrorReporter {
   public ErrorReporter(SourceUnit sourceUnit) {
     this.sourceUnit = sourceUnit;
   }
-  
+
   public void error(String msg, Object... args) {
     sourceUnit.getErrorCollector().addErrorAndContinue(
         new SimpleMessage(String.format(msg, args), sourceUnit));

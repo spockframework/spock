@@ -16,10 +16,8 @@
 
 package org.spockframework.runtime.extension.builtin;
 
-import org.spockframework.runtime.ConditionFailedWithExceptionError;
-import org.spockframework.runtime.WrongExceptionThrownError;
-import org.spockframework.runtime.extension.IMethodInterceptor;
-import org.spockframework.runtime.extension.IMethodInvocation;
+import org.spockframework.runtime.*;
+import org.spockframework.runtime.extension.*;
 import spock.lang.FailsWith;
 
 /**
@@ -33,6 +31,7 @@ public class FailsWithInterceptor implements IMethodInterceptor {
     this.failsWith = failsWith;
   }
 
+  @Override
   public void intercept(IMethodInvocation invocation) throws Throwable {
     try {
       invocation.proceed();

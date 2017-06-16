@@ -14,8 +14,7 @@
 
 package org.spockframework.runtime.condition;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 import static org.spockframework.runtime.condition.EditOperation.Kind.*;
 
@@ -26,7 +25,7 @@ import static org.spockframework.runtime.condition.EditOperation.Kind.*;
  * Ideas for improvements:
  * - Favor fewer EditOperationS when calculating distance and/or path
  * - Use algorithm with lower time and/or space complexity
- * 
+ *
  * @author Peter Niederwieser
  */
 public class EditDistance {
@@ -59,7 +58,7 @@ public class EditDistance {
   public int[][] getMatrix() {
     return matrix;
   }
-  
+
   public int getDistance() {
     return matrix[seq1.length()][seq2.length()];
   }
@@ -70,7 +69,7 @@ public class EditDistance {
   }
 
   public List<EditOperation> calculatePath() {
-    LinkedList<EditOperation> ops = new LinkedList<EditOperation>();
+    LinkedList<EditOperation> ops = new LinkedList<>();
     int i = seq1.length();
     int j = seq2.length();
     int dist = matrix[i][j];
@@ -91,7 +90,7 @@ public class EditDistance {
         else addOrUpdate(ops, SUBSTITUTE, 1);
         i--; j--;
       }
-      
+
       dist = matrix[i][j];
     }
 

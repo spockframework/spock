@@ -16,16 +16,14 @@
 
 package org.spockframework.runtime;
 
-import org.junit.runner.Description;
-import org.junit.runner.Runner;
+import org.spockframework.runtime.model.*;
+import org.spockframework.util.*;
+
+import org.junit.runner.*;
+import org.junit.runner.manipulation.Filter;
 import org.junit.runner.manipulation.*;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.model.InitializationError;
-
-import org.spockframework.runtime.model.FeatureInfo;
-import org.spockframework.runtime.model.SpecInfo;
-import org.spockframework.util.IncompatibleGroovyVersionException;
-import org.spockframework.util.VersionChecker;
 
 /**
  * A JUnit runner for Spock specifications. There is no need to put
@@ -51,18 +49,21 @@ public class Sputnik extends Runner implements Filterable, Sortable {
     this.clazz = clazz;
   }
 
+  @Override
   public Description getDescription() {
     runExtensionsIfNecessary();
     generateSpecDescriptionIfNecessary();
     return getSpec().getDescription();
   }
 
+  @Override
   public void run(RunNotifier notifier) {
     runExtensionsIfNecessary();
     generateSpecDescriptionIfNecessary();
     RunContext.get().createSpecRunner(getSpec(), notifier).run();
   }
 
+  @Override
   public void filter(Filter filter) throws NoTestsRemainException {
     invalidateSpecDescription();
     getSpec().filterFeatures(new JUnitFilterAdapter(filter));
@@ -70,6 +71,7 @@ public class Sputnik extends Runner implements Filterable, Sortable {
       throw new NoTestsRemainException();
   }
 
+  @Override
   public void sort(Sorter sorter) {
     invalidateSpecDescription();
     getSpec().sortFeatures(new JUnitSorterAdapter(sorter));

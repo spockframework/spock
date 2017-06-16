@@ -1,14 +1,14 @@
 package org.spockframework.runtime;
 
-import org.junit.runners.model.MultipleFailureException;
-
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+
+import org.junit.runners.model.MultipleFailureException;
 
 public class ErrorCollector {
   private final boolean errorCollectionEnabled;
 
-  private final List<Throwable> throwables = new CopyOnWriteArrayList<Throwable>();
+  private final List<Throwable> throwables = new CopyOnWriteArrayList<>();
 
   public ErrorCollector(boolean enabled) {
     errorCollectionEnabled = enabled;

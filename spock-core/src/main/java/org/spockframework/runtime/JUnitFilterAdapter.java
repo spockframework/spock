@@ -15,10 +15,9 @@
  */
 package org.spockframework.runtime;
 
-import org.junit.runner.Description;
-import org.junit.runner.manipulation.Filter;
-
 import org.spockframework.runtime.model.FeatureInfo;
+
+import org.junit.runner.manipulation.Filter;
 
 /**
  * Adapts an org.junit.runner.manipulation.Filter to an IMethodInfoFilter.
@@ -32,6 +31,7 @@ public class JUnitFilterAdapter implements IFeatureFilter {
     this.filter = filter;
   }
 
+  @Override
   public boolean matches(FeatureInfo method) {
     return filter.shouldRun(method.getDescription());
   }

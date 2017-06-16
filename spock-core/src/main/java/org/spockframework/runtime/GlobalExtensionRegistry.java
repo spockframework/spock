@@ -16,15 +16,12 @@
 
 package org.spockframework.runtime;
 
+import org.spockframework.runtime.extension.*;
+import org.spockframework.util.*;
+import spock.config.ConfigurationObject;
+
 import java.lang.reflect.Field;
 import java.util.*;
-
-import org.spockframework.util.InternalSpockError;
-import org.spockframework.runtime.extension.ExtensionException;
-import org.spockframework.runtime.extension.IGlobalExtension;
-import org.spockframework.util.UnreachableCodeError;
-
-import spock.config.ConfigurationObject;
 
 /**
  * Maintains a registry of global Spock extensions and their configuration objects,
@@ -34,10 +31,10 @@ import spock.config.ConfigurationObject;
  */
 public class GlobalExtensionRegistry implements IExtensionRegistry, IConfigurationRegistry {
   private final List<Class<?>> globalExtensionClasses;
-  private final Map<Class<?>, Object> configurationsByType = new HashMap<Class<?>, Object>();
-  private final Map<String, Object> configurationsByName = new HashMap<String, Object>();
+  private final Map<Class<?>, Object> configurationsByType = new HashMap<>();
+  private final Map<String, Object> configurationsByName = new HashMap<>();
 
-  private final List<IGlobalExtension> globalExtensions = new ArrayList<IGlobalExtension>();
+  private final List<IGlobalExtension> globalExtensions = new ArrayList<>();
 
   GlobalExtensionRegistry(List<Class<?>> globalExtensionClasses, List<?> initialConfigurations) {
     this.globalExtensionClasses = globalExtensionClasses;
@@ -64,14 +61,17 @@ public class GlobalExtensionRegistry implements IExtensionRegistry, IConfigurati
     }
   }
 
+  @Override
   public <T> T getConfigurationByType(Class<T> clazz) {
     return clazz.cast(configurationsByType.get(clazz));
   }
 
+  @Override
   public Object getConfigurationByName(String name) {
     return configurationsByName.get(name);
   }
 
+  @Override
   public List<IGlobalExtension> getGlobalExtensions() {
     return globalExtensions;
   }
@@ -91,6 +91,7 @@ public class GlobalExtensionRegistry implements IExtensionRegistry, IConfigurati
     }
   }
 
+  @Override
   public void configureExtension(Object extension) {
     for (Field field : extension.getClass().getDeclaredFields()) {
       ConfigurationObject annotation = field.getType().getAnnotation(ConfigurationObject.class);

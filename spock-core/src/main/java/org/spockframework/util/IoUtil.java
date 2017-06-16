@@ -15,10 +15,8 @@
 package org.spockframework.util;
 
 import java.io.*;
-import java.net.*;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.net.Socket;
+import java.util.*;
 
 public class IoUtil {
   public static void closeQuietly(@Nullable Closeable... closeables) {
@@ -114,7 +112,7 @@ public class IoUtil {
     }
   }
 
-  public static void copyFile(File source, File target) throws FileNotFoundException, IOException {
+  public static void copyFile(File source, File target) throws IOException {
     if (!source.isFile())
       throw new IOException(String.format("Error copying file %s to %s; source file does not exist", source, target));
 
@@ -126,7 +124,7 @@ public class IoUtil {
   public static List<File> listFilesRecursively(File baseDir) throws IOException {
     if (!baseDir.exists()) return Collections.emptyList();
 
-    List<File> result = new ArrayList<File>();
+    List<File> result = new ArrayList<>();
     doListFilesRecursively(baseDir, result);
     return result;
   }
@@ -138,7 +136,7 @@ public class IoUtil {
   }
 
   private static void doListFilesRecursively(File baseDir, List<File> result) throws IOException {
-    List<File> dirs = new ArrayList<File>();
+    List<File> dirs = new ArrayList<>();
     File[] files = baseDir.listFiles();
     if (files == null) {
       throw new IOException("Failed to list files of directory '" + baseDir + "'");

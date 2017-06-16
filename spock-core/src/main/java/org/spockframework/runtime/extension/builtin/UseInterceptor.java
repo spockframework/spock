@@ -16,14 +16,12 @@
 
 package org.spockframework.runtime.extension.builtin;
 
+import org.spockframework.runtime.extension.*;
+
 import java.util.List;
 
-import org.codehaus.groovy.runtime.DefaultGroovyMethods;
-
-import org.spockframework.runtime.extension.IMethodInterceptor;
-import org.spockframework.runtime.extension.IMethodInvocation;
-
 import groovy.lang.Closure;
+import org.codehaus.groovy.runtime.DefaultGroovyMethods;
 
 /**
  * @author Peter Niederwieser
@@ -35,6 +33,7 @@ public class UseInterceptor implements IMethodInterceptor {
     this.categories = categories;
   }
 
+  @Override
   public void intercept(final IMethodInvocation invocation) throws Throwable {
     DefaultGroovyMethods.use(null, categories,
         new Closure<Void>(invocation.getInstance(), invocation.getInstance()) {

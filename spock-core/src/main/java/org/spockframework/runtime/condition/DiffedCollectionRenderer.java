@@ -17,6 +17,7 @@ package org.spockframework.runtime.condition;
 import java.util.Collection;
 
 public class DiffedCollectionRenderer implements IObjectRenderer<Collection> {
+  @Override
   public String render(Collection collection) {
     LineBuilder builder = new LineBuilder();
 

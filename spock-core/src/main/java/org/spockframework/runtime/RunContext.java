@@ -14,24 +14,24 @@
 
 package org.spockframework.runtime;
 
+import org.spockframework.builder.DelegatingScript;
+import org.spockframework.runtime.condition.*;
+import org.spockframework.runtime.model.SpecInfo;
+import org.spockframework.util.*;
+import spock.config.RunnerConfiguration;
+
 import java.io.File;
 import java.security.AccessControlException;
 import java.util.*;
 
 import org.junit.runner.notification.RunNotifier;
 
-import org.spockframework.builder.DelegatingScript;
-import org.spockframework.runtime.condition.*;
-import org.spockframework.runtime.model.SpecInfo;
-import org.spockframework.util.*;
-
-import spock.config.RunnerConfiguration;
-
 public class RunContext {
   private static final ThreadLocal<LinkedList<RunContext>> contextStacks =
       new ThreadLocal<LinkedList<RunContext>>() {
+        @Override
         protected LinkedList<RunContext> initialValue() {
-          return new LinkedList<RunContext>();
+          return new LinkedList<>();
         }
       };
 
@@ -49,7 +49,7 @@ public class RunContext {
     this.spockUserHome = spockUserHome;
     this.configurationScript = configurationScript;
     this.globalExtensionClasses = globalExtensionClasses;
-    globalExtensionRegistry = new GlobalExtensionRegistry(globalExtensionClasses, Arrays.asList(new RunnerConfiguration()));
+    globalExtensionRegistry = new GlobalExtensionRegistry(globalExtensionClasses, Collections.singletonList(new RunnerConfiguration()));
   }
 
   private void start() {
@@ -130,7 +130,7 @@ public class RunContext {
       @Nullable DelegatingScript configurationScript,
       List<Class<?>> extensionClasses, boolean inheritParentExtensions,
       IThrowableFunction<RunContext, T, U> command) throws U {
-    List<Class<?>> allExtensionClasses = new ArrayList<Class<?>>(extensionClasses);
+    List<Class<?>> allExtensionClasses = new ArrayList<>(extensionClasses);
     if (inheritParentExtensions) allExtensionClasses.addAll(getCurrentExtensions());
 
     RunContext context = new RunContext(name, spockUserHome, configurationScript, allExtensionClasses);

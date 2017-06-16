@@ -20,17 +20,30 @@ import org.spockframework.compiler.model.*;
 
 // IDEA: store context (SpecInfo, method, etc.); e.g. by overriding new visitNode method and making it final
 public class AbstractSpecVisitor implements ISpecVisitor {
+  @Override
   public void visitSpec(Spec spec) throws Exception {}
+  @Override
   public void visitSpecAgain(Spec spec) throws Exception {}
+  @Override
   public void visitField(Field field) throws Exception {}
+  @Override
   public void visitMethod(Method method) throws Exception {}
+  @Override
   public void visitMethodAgain(Method method) throws Exception {}
+  @Override
   public void visitAnyBlock(Block block) throws Exception {}
+  @Override
   public void visitAnonymousBlock(AnonymousBlock block) throws Exception {}
+  @Override
   public void visitSetupBlock(SetupBlock block) throws Exception {}
+  @Override
   public void visitExpectBlock(ExpectBlock block) throws Exception {}
+  @Override
   public void visitWhenBlock(WhenBlock block) throws Exception {}
+  @Override
   public void visitThenBlock(ThenBlock block) throws Exception {}
+  @Override
   public void visitCleanupBlock(CleanupBlock block) throws Exception {}
+  @Override
   public void visitWhereBlock(WhereBlock block) throws Exception {}
 }

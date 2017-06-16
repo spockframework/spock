@@ -14,10 +14,9 @@
 
 package org.spockframework.mock;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.spockframework.util.UnreachableCodeError;
+
+import java.util.*;
 
 public class DefaultJavaLangObjectInteractions implements IInteractionScope {
   public static final DefaultJavaLangObjectInteractions INSTANCE = new DefaultJavaLangObjectInteractions();
@@ -28,18 +27,22 @@ public class DefaultJavaLangObjectInteractions implements IInteractionScope {
       DefaultEqualsInteraction.INSTANCE, DefaultHashCodeInteraction.INSTANCE,
       DefaultToStringInteraction.INSTANCE, DefaultFinalizeInteraction.INSTANCE);
 
+  @Override
   public void addInteraction(IMockInteraction interaction) {
     throw new UnreachableCodeError("addInteraction");
   }
 
+  @Override
   public void addOrderingBarrier() {
     throw new UnreachableCodeError("addOrderingBarrier()");
   }
 
+  @Override
   public void addUnmatchedInvocation(IMockInvocation invocation) {
     throw new UnreachableCodeError("addUnmatchedInvocation()");
   }
 
+  @Override
   public IMockInteraction match(IMockInvocation invocation) {
     for (IMockInteraction interaction : interactions) {
       if (interaction.matches(invocation)) return interaction;
@@ -47,6 +50,7 @@ public class DefaultJavaLangObjectInteractions implements IInteractionScope {
     return null;
   }
 
+  @Override
   public void verifyInteractions() {
     throw new UnreachableCodeError("verifyInteractions");
   }

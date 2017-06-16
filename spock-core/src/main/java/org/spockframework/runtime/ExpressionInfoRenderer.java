@@ -16,10 +16,10 @@
 
 package org.spockframework.runtime;
 
-import java.util.*;
+import org.spockframework.runtime.model.*;
 
-import org.spockframework.runtime.model.ExpressionInfo;
-import org.spockframework.runtime.model.TextPosition;
+import java.util.*;
+import java.util.regex.Pattern;
 
 /**
  * Creates a string representation of an assertion and its recorded values.
@@ -27,12 +27,13 @@ import org.spockframework.runtime.model.TextPosition;
  * @author Peter Niederwieser
  */
 public class ExpressionInfoRenderer {
+  private static final Pattern NEWLINE_PATTERN = Pattern.compile("\r\n|\r|\n");
   private final ExpressionInfo expr;
 
-  private final List<StringBuilder> lines = new ArrayList<StringBuilder>();
+  private final List<StringBuilder> lines = new ArrayList<>();
 
   // startColumns.get(i) is the first non-empty column of lines.get(i)
-  private final List<Integer> startColumns = new ArrayList<Integer>();
+  private final List<Integer> startColumns = new ArrayList<>();
 
   private ExpressionInfoRenderer(ExpressionInfo expr) {
     TextPosition start = expr.getRegion().getStart();
@@ -60,6 +61,7 @@ public class ExpressionInfoRenderer {
 
   private void placeValues() {
     Comparator<ExpressionInfo> comparator = new Comparator<ExpressionInfo>() {
+      @Override
       public int compare(ExpressionInfo expr1, ExpressionInfo expr2) {
         return expr2.getAnchor().getColumn() - expr1.getAnchor().getColumn();
       }
@@ -76,7 +78,7 @@ public class ExpressionInfoRenderer {
     int startColumn = expr.getAnchor().getColumn();
     if (startColumn < 1) return; // node with invalid source position
 
-    String[] strs = str.split("\r\n|\r|\n");
+    String[] strs = NEWLINE_PATTERN.split(str);
     int endColumn = strs.length == 1 ?
         expr.getAnchor().getColumn() + str.length() : // exclusive
         Integer.MAX_VALUE; // multi-line strings are always placed on new lines

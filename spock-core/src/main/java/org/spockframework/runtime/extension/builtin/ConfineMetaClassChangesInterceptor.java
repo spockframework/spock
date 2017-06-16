@@ -16,15 +16,11 @@
 
 package org.spockframework.runtime.extension.builtin;
 
-import groovy.lang.ExpandoMetaClass;
-import groovy.lang.GroovySystem;
-import groovy.lang.MetaClass;
-import groovy.lang.MetaClassRegistry;
-
-import org.spockframework.runtime.extension.IMethodInterceptor;
-import org.spockframework.runtime.extension.IMethodInvocation;
+import org.spockframework.runtime.extension.*;
 
 import java.util.*;
+
+import groovy.lang.*;
 
 /**
  * @author Luke Daley
@@ -32,12 +28,13 @@ import java.util.*;
  */
 public class ConfineMetaClassChangesInterceptor implements IMethodInterceptor {
   private final Collection<Class<?>> classes;
-  private final List<MetaClass> originalMetaClasses = new ArrayList<MetaClass>();
+  private final List<MetaClass> originalMetaClasses = new ArrayList<>();
 
   public ConfineMetaClassChangesInterceptor(Collection<Class<?>> classes) {
     this.classes = classes;
   }
 
+  @Override
   public void intercept(IMethodInvocation invocation) throws Throwable {
     MetaClassRegistry registry = GroovySystem.getMetaClassRegistry();
 

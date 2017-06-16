@@ -24,7 +24,7 @@ public class Filter<T> {
   }
 
   public List<T> filter(List<? extends T> items) {
-    List<T> result = new ArrayList<T>();
+    List<T> result = new ArrayList<>();
     for (T item : items)
       if (matcher.matches(item))
         result.add(item);
@@ -40,6 +40,6 @@ public class Filter<T> {
   }
 
   public static <T> Filter<T> create(IMatcher<T> matcher) {
-    return new Filter<T>(matcher);
+    return new Filter<>(matcher);
   }
 }

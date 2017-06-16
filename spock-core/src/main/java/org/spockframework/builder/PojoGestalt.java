@@ -14,14 +14,14 @@
 
 package org.spockframework.builder;
 
+import org.spockframework.gentyref.GenericTypeReflector;
+import org.spockframework.runtime.GroovyRuntimeUtil;
+import org.spockframework.util.CollectionUtil;
+
 import java.lang.reflect.Type;
 import java.util.List;
 
-import org.spockframework.gentyref.GenericTypeReflector;
-import org.spockframework.util.CollectionUtil;
-
 import groovy.lang.Closure;
-import org.spockframework.runtime.GroovyRuntimeUtil;
 
 public class PojoGestalt implements IGestalt {
   private final Object pojo;
@@ -40,14 +40,17 @@ public class PojoGestalt implements IGestalt {
     return pojo;
   }
 
+  @Override
   public IBlueprint getBlueprint() {
     return blueprint;
   }
 
+  @Override
   public Object getProperty(String name) {
     return GroovyRuntimeUtil.getProperty(pojo, name);
   }
 
+  @Override
   public void setProperty(String name, Object value) {
     GroovyRuntimeUtil.setProperty(pojo, name, value);
   }
@@ -59,6 +62,7 @@ public class PojoGestalt implements IGestalt {
   // current impl is dead stupid:
   // - named args not treated specially
   // - last arg is closure => treat as blueprint
+  @Override
   public Object invokeMethod(String name, Object[] args) {
     ISlot slot = findSlot(name, args);
     PojoGestalt gestalt = createGestalt(slot.getType(), args);

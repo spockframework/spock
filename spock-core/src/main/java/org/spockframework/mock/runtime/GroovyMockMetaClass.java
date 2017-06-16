@@ -14,18 +14,15 @@
 
 package org.spockframework.mock.runtime;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.Type;
-import java.util.Arrays;
-import java.util.List;
-
-import groovy.lang.*;
-
 import org.spockframework.mock.*;
 import org.spockframework.runtime.GroovyRuntimeUtil;
 import org.spockframework.util.ReflectionUtil;
-
 import spock.lang.Specification;
+
+import java.lang.reflect.*;
+import java.util.*;
+
+import groovy.lang.*;
 
 public class GroovyMockMetaClass extends DelegatingMetaClass implements SpecificationAttachable {
   private final IMockConfiguration configuration;
@@ -91,13 +88,13 @@ public class GroovyMockMetaClass extends DelegatingMetaClass implements Specific
     // in that the originally declaring class/interface is returned; we leverage this behavior
     // to check if a GroovyObject method was called
     if (metaMethod != null && metaMethod.getDeclaringClass().getTheClass() == GroovyObject.class) {
-      if (methodName.equals("invokeMethod")) {
+      if ("invokeMethod".equals(methodName)) {
         return invokeMethod(target, (String) arguments[0], GroovyRuntimeUtil.asArgumentArray(arguments[1]));
       }
-      if (methodName.equals("getProperty")) {
+      if ("getProperty".equals(methodName)) {
         return getProperty(target, (String) arguments[0]);
       }
-      if (methodName.equals("setProperty")) {
+      if ("setProperty".equals(methodName)) {
         setProperty(target, (String) arguments[0], arguments[1]);
         return null;
       }
@@ -110,7 +107,7 @@ public class GroovyMockMetaClass extends DelegatingMetaClass implements Specific
   }
 
   private boolean isGetMetaClassCallOnGroovyObject(Object target, String method, Object[] arguments, boolean isStatic) {
-    return !isStatic && target instanceof GroovyObject && method.equals("getMetaClass") && arguments.length == 0;
+    return !isStatic && target instanceof GroovyObject && "getMetaClass".equals(method) && arguments.length == 0;
   }
 
   private IMockInvocation createMockInvocation(MetaMethod metaMethod, Object target,
@@ -127,10 +124,12 @@ public class GroovyMockMetaClass extends DelegatingMetaClass implements Specific
     return new MockInvocation(mockObject, mockMethod, Arrays.asList(arguments), new GroovyRealMethodInvoker(getAdaptee()));
   }
 
+  @Override
   public void attach(Specification specification) {
     // NO-OP since GroovyMocks do not support detached mocks at the moment
   }
 
+  @Override
   public void detach() {
     // NO-OP since GroovyMocks do not support detached mocks at the moment
   }

@@ -14,8 +14,9 @@
 
 package org.spockframework.builder;
 
-import groovy.lang.*;
 import org.spockframework.runtime.GroovyRuntimeUtil;
+
+import groovy.lang.*;
 
 /**
  * Forms a gestalt from its blueprint.
@@ -32,6 +33,7 @@ public class Sculpturer extends GroovyObjectSupport {
     blueprint.evaluate();
   }
 
+  @Override
   public Object getProperty(String name) {
     Object thisObject = $gestalt.getBlueprint().getThisObject();
     if (thisObject != null) {
@@ -42,6 +44,7 @@ public class Sculpturer extends GroovyObjectSupport {
     return $gestalt.getProperty(name);
   }
 
+  @Override
   public void setProperty(String name, Object value) {
     Object thisObject = $gestalt.getBlueprint().getThisObject();
     if (thisObject != null) {
@@ -53,6 +56,7 @@ public class Sculpturer extends GroovyObjectSupport {
     $gestalt.setProperty(name, value);
   }
 
+  @Override
   public Object invokeMethod(String name, Object args) {
     Object thisObject = $gestalt.getBlueprint().getThisObject();
     if (thisObject != null) {

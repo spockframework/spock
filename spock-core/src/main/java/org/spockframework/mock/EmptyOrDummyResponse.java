@@ -60,6 +60,7 @@ public class EmptyOrDummyResponse implements IDefaultResponse {
 
   private EmptyOrDummyResponse() {}
 
+  @Override
   public Object respond(IMockInvocation invocation) {
     IMockInteraction interaction = DefaultJavaLangObjectInteractions.INSTANCE.match(invocation);
     if (interaction != null) return interaction.accept(invocation);

@@ -14,17 +14,14 @@
 
 package org.spockframework.mock.runtime;
 
+import org.spockframework.mock.*;
+import org.spockframework.runtime.GroovyRuntimeUtil;
+import spock.lang.Specification;
+
 import java.lang.reflect.Method;
 import java.util.Arrays;
 
-import groovy.lang.GroovyObject;
-import groovy.lang.MetaClass;
-
-import org.spockframework.mock.*;
-import org.spockframework.mock.IResponseGenerator;
-import org.spockframework.runtime.GroovyRuntimeUtil;
-
-import spock.lang.Specification;
+import groovy.lang.*;
 
 public class JavaMockInterceptor implements IProxyBasedMockInterceptor {
   private final IMockConfiguration mockConfiguration;
@@ -38,6 +35,7 @@ public class JavaMockInterceptor implements IProxyBasedMockInterceptor {
     this.mockMetaClass = mockMetaClass;
   }
 
+  @Override
   public Object intercept(Object target, Method method, Object[] arguments, IResponseGenerator realMethodInvoker) {
     IMockObject mockObject = new MockObject(mockConfiguration.getName(), mockConfiguration.getExactType(),
         target, mockConfiguration.getInstance(), mockConfiguration.isVerified(), false, mockConfiguration.getDefaultResponse(), specification, this);
@@ -57,7 +55,7 @@ public class JavaMockInterceptor implements IProxyBasedMockInterceptor {
       if (isMethod(method, "setProperty", String.class, Object.class)) {
         Throwable throwable = new Throwable();
         StackTraceElement mockCaller = throwable.getStackTrace()[3];
-        if (mockCaller.getClassName().equals("org.codehaus.groovy.runtime.ScriptBytecodeAdapter")) {
+        if ("org.codehaus.groovy.runtime.ScriptBytecodeAdapter".equals(mockCaller.getClassName())) {
           // for some reason, runtime dispatches direct property access on mock classes via ScriptBytecodeAdapter
           // delegate to the corresponding setter method
           String methodName = GroovyRuntimeUtil.propertyToMethodName("set", (String) normalizedArgs[0]);
@@ -78,12 +76,14 @@ public class JavaMockInterceptor implements IProxyBasedMockInterceptor {
     return method.getName().equals(name) && Arrays.equals(method.getParameterTypes(), parameterTypes);
   }
 
-	public void attach(Specification specification) {
+	@Override
+  public void attach(Specification specification) {
 		this.specification = specification;
 
 	}
 
-	public void detach() {
+	@Override
+  public void detach() {
 	  this.specification = null;
 	}
 

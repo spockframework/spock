@@ -30,6 +30,7 @@ public class ConstantResponseGenerator extends SingleResponseGenerator {
     this.constant = constant;
   }
 
+  @Override
   public Object doRespond(IMockInvocation invocation) {
     return GroovyRuntimeUtil.coerce(constant, invocation.getMethod().getReturnType());
   }

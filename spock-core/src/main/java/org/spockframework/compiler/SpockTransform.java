@@ -16,15 +16,14 @@
 
 package org.spockframework.compiler;
 
+import org.spockframework.compiler.model.Spec;
+import org.spockframework.util.VersionChecker;
+
 import java.util.List;
 
 import org.codehaus.groovy.ast.*;
 import org.codehaus.groovy.control.*;
-import org.codehaus.groovy.transform.ASTTransformation;
-import org.codehaus.groovy.transform.GroovyASTTransformation;
-
-import org.spockframework.compiler.model.Spec;
-import org.spockframework.util.VersionChecker;
+import org.codehaus.groovy.transform.*;
 
 /**
  * AST transformation for rewriting Spock specifications. Runs after phase
@@ -43,13 +42,14 @@ public class SpockTransform implements ASTTransformation {
     VersionChecker.checkGroovyVersion("compiler plugin");
   }
 
+  @Override
   public void visit(ASTNode[] nodes, SourceUnit sourceUnit) {
     new Impl().visit(nodes, sourceUnit);
   }
 
   // use of nested class defers linking until after groovy version check
   private static class Impl {
-    final static AstNodeCache nodeCache = new AstNodeCache();
+    static final AstNodeCache nodeCache = new AstNodeCache();
 
     void visit(ASTNode[] nodes, SourceUnit sourceUnit) {
       ErrorReporter errorReporter = new ErrorReporter(sourceUnit);

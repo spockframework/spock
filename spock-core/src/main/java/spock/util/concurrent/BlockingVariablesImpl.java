@@ -14,22 +14,22 @@
 
 package spock.util.concurrent;
 
-import java.util.concurrent.*;
-
 import org.spockframework.util.ThreadSafe;
+
+import java.util.concurrent.ConcurrentHashMap;
 
 @ThreadSafe
 class BlockingVariablesImpl {
   private final double timeout;
   private final ConcurrentHashMap<String, BlockingVariable<Object>> map =
-      new ConcurrentHashMap<String, BlockingVariable<Object>>();
+    new ConcurrentHashMap<>();
 
   public BlockingVariablesImpl(double timeout) {
     this.timeout = timeout;
   }
-  
+
   public Object get(String name) throws InterruptedException {
-    BlockingVariable<Object> entry = new BlockingVariable<Object>(timeout);
+    BlockingVariable<Object> entry = new BlockingVariable<>(timeout);
     BlockingVariable<Object> oldEntry = map.putIfAbsent(name, entry);
     if (oldEntry == null)
       return entry.get();
@@ -38,7 +38,7 @@ class BlockingVariablesImpl {
   }
 
   public void put(String name, Object value) {
-    BlockingVariable<Object> entry = new BlockingVariable<Object>(timeout);
+    BlockingVariable<Object> entry = new BlockingVariable<>(timeout);
     BlockingVariable<Object> oldEntry = map.putIfAbsent(name, entry);
     if (oldEntry == null)
       entry.set(value);

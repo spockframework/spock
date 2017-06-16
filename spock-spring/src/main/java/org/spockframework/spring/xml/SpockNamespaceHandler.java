@@ -12,6 +12,7 @@ import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
  */
 public class SpockNamespaceHandler extends NamespaceHandlerSupport {
 
+  @Override
   public void init() {
     registerBeanDefinitionParser("mock", new MockBeanDefinitionParser());
     registerBeanDefinitionParser("spy", new MockBeanDefinitionParser());

@@ -14,15 +14,12 @@
 
 package org.spockframework.runtime;
 
-import java.io.*;
-import java.math.BigDecimal;
-import java.math.MathContext;
-import java.util.*;
+import org.spockframework.runtime.model.*;
+import org.spockframework.util.*;
 
-import org.spockframework.runtime.model.FeatureInfo;
-import org.spockframework.runtime.model.SpecInfo;
-import org.spockframework.util.IoUtil;
-import org.spockframework.util.SpockUserHomeUtil;
+import java.io.*;
+import java.math.*;
+import java.util.*;
 
 public class SpecRunHistory implements Comparable<SpecRunHistory> {
   private static final int MAX_CONFIDENCE = 5;
@@ -66,6 +63,7 @@ public class SpecRunHistory implements Comparable<SpecRunHistory> {
 
   public void sortFeatures(SpecInfo spec) {
     spec.sortFeatures(new IFeatureSortOrder() {
+      @Override
       public int compare(FeatureInfo f1, FeatureInfo f2) {
         Integer confidence1 = data.featureConfidences.get(f1.getName());
         if (confidence1 == null) return -1;
@@ -83,6 +81,7 @@ public class SpecRunHistory implements Comparable<SpecRunHistory> {
     });
   }
 
+  @Override
   public int compareTo(SpecRunHistory other) {
     int confidenceDiff = data.specConfidence.compareTo(other.data.specConfidence);
     if (confidenceDiff != 0) return confidenceDiff;
@@ -122,7 +121,7 @@ public class SpecRunHistory implements Comparable<SpecRunHistory> {
   }
 
   private Set<String> extractNames(List<FeatureInfo> features) {
-    Set<String> featureNames = new HashSet<String>(features.size());
+    Set<String> featureNames = new HashSet<>(features.size());
     for (FeatureInfo feature : features)
       featureNames.add(feature.getName());
     return featureNames;
@@ -138,8 +137,8 @@ public class SpecRunHistory implements Comparable<SpecRunHistory> {
     BigDecimal specConfidence = new BigDecimal(0);
     long specDuration = 0;
 
-    Map<String, Integer> featureConfidences = new HashMap<String, Integer>();
-    Map<String, Long> featureDurations = new HashMap<String, Long>();
+    Map<String, Integer> featureConfidences = new HashMap<>();
+    Map<String, Long> featureDurations = new HashMap<>();
   }
 }
 

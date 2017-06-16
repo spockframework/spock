@@ -16,16 +16,11 @@
 
 package org.spockframework.mock.constraint;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import org.spockframework.mock.*;
+import org.spockframework.util.CollectionUtil;
 
-import org.spockframework.mock.IArgumentConstraint;
-import org.spockframework.mock.IInvocationConstraint;
-import org.spockframework.mock.IMockInvocation;
-import org.spockframework.mock.IMockMethod;
-import org.spockframework.util.*;
+import java.lang.reflect.Array;
+import java.util.*;
 
 /**
  *
@@ -38,6 +33,7 @@ public class PositionalArgumentListConstraint implements IInvocationConstraint {
     this.argConstraints = argConstraints;
   }
 
+  @Override
   public boolean isSatisfiedBy(IMockInvocation invocation) {
     List<Object> args = invocation.getArguments();
 
@@ -58,8 +54,7 @@ public class PositionalArgumentListConstraint implements IInvocationConstraint {
   }
 
   private List<Object> expandVarArgs(List<Object> args) {
-    List<Object> expanded = new ArrayList<Object>();
-    expanded.addAll(args.subList(0, args.size() - 1));
+    List<Object> expanded = new ArrayList<>(args.subList(0, args.size() - 1));
 
     Object varArgs = CollectionUtil.getLastElement(args);
     int length = Array.getLength(varArgs);
@@ -73,11 +68,11 @@ public class PositionalArgumentListConstraint implements IInvocationConstraint {
   private boolean areConstraintsSatisfiedBy(List<Object> args) {
     if (argConstraints.isEmpty()) return args.isEmpty();
     if (argConstraints.size() - args.size() > 1) return false;
-    
+
     for (int i = 0; i < argConstraints.size() - 1; i++) {
       if (!argConstraints.get(i).isSatisfiedBy(args.get(i))) return false;
     }
-    
+
     IArgumentConstraint lastConstraint = CollectionUtil.getLastElement(argConstraints);
     if (lastConstraint instanceof SpreadWildcardArgumentConstraint) return true;
     return argConstraints.size() == args.size() && lastConstraint.isSatisfiedBy(CollectionUtil.getLastElement(args));

@@ -16,10 +16,9 @@
 
 package org.spockframework.mock.runtime;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.spockframework.mock.*;
+
+import java.util.*;
 
 /**
  * A scope for interactions defined outside a then-block
@@ -27,11 +26,12 @@ import org.spockframework.mock.*;
  * @author Peter Niederwieser
  */
 public class InteractionScope implements IInteractionScope {
-  private final List<IMockInteraction> interactions = new ArrayList<IMockInteraction>();
-  private final List<IMockInvocation> unmatchedInvocations = new ArrayList<IMockInvocation>();
+  private final List<IMockInteraction> interactions = new ArrayList<>();
+  private final List<IMockInvocation> unmatchedInvocations = new ArrayList<>();
   private int currentRegistrationZone = 0;
   private int currentExecutionZone = 0;
 
+  @Override
   public void addInteraction(IMockInteraction interaction) {
     interactions.add(new MockInteractionDecorator(interaction) {
       final int myRegistrationZone = currentRegistrationZone;
@@ -47,16 +47,19 @@ public class InteractionScope implements IInteractionScope {
     });
   }
 
+  @Override
   public void addOrderingBarrier() {
     currentRegistrationZone++;
   }
 
+  @Override
   public void addUnmatchedInvocation(IMockInvocation invocation) {
     if (invocation.getMockObject().isVerified()) {
       unmatchedInvocations.add(invocation);
     }
   }
 
+  @Override
   public IMockInteraction match(IMockInvocation invocation) {
     IMockInteraction firstMatch = null;
     for (IMockInteraction interaction : interactions)
@@ -68,8 +71,9 @@ public class InteractionScope implements IInteractionScope {
     return firstMatch;
   }
 
+  @Override
   public void verifyInteractions() {
-    List<IMockInteraction> unsatisfiedInteractions = new ArrayList<IMockInteraction>();
+    List<IMockInteraction> unsatisfiedInteractions = new ArrayList<>();
 
     for (IMockInteraction interaction : interactions)
       if (!interaction.isSatisfied()) unsatisfiedInteractions.add(interaction);

@@ -14,14 +14,15 @@
 
 package org.spockframework.runtime.extension.builtin;
 
-import java.lang.annotation.Annotation;
-import java.util.*;
-
 import org.spockframework.runtime.AbstractRunListener;
 import org.spockframework.runtime.extension.AbstractAnnotationDrivenExtension;
 import org.spockframework.runtime.model.*;
 
+import java.lang.annotation.Annotation;
+import java.util.List;
+
 public class StepwiseExtension extends AbstractAnnotationDrivenExtension {
+  @Override
   public void visitSpecAnnotation(Annotation annotation, final SpecInfo spec) {
     sortFeaturesInDeclarationOrder(spec);
     includeFeaturesBeforeLastIncludedFeature(spec);
@@ -46,6 +47,7 @@ public class StepwiseExtension extends AbstractAnnotationDrivenExtension {
 
   private void skipFeaturesAfterFirstFailingFeature(final SpecInfo spec) {
     spec.getBottomSpec().addListener(new AbstractRunListener() {
+      @Override
       public void error(ErrorInfo error) {
         // @Stepwise only affects class that carries the annotation,
         // but not sub- and super classes

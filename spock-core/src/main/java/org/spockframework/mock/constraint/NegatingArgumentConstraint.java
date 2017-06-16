@@ -29,6 +29,7 @@ public class NegatingArgumentConstraint implements IArgumentConstraint {
     this.constraint = constraint;
   }
 
+  @Override
   public boolean isSatisfiedBy(Object arg) {
     return !constraint.isSatisfiedBy(arg);
   }

@@ -14,19 +14,18 @@
 
 package org.spockframework.runtime.extension.builtin;
 
-import java.util.*;
-
+import org.spockframework.runtime.GroovyRuntimeUtil;
 import org.spockframework.runtime.extension.*;
 import org.spockframework.runtime.model.FieldInfo;
-import org.spockframework.runtime.GroovyRuntimeUtil;
-
 import spock.lang.AutoCleanup;
+
+import java.util.*;
 
 /**
  * @author Peter Niederwieser
  */
 public class AutoCleanupInterceptor implements IMethodInterceptor {
-  private final List<FieldInfo> fields = new ArrayList<FieldInfo>();
+  private final List<FieldInfo> fields = new ArrayList<>();
 
   public void add(FieldInfo field) {
     fields.add(field);
@@ -39,8 +38,9 @@ public class AutoCleanupInterceptor implements IMethodInterceptor {
     interceptors.add(this);
   }
 
+  @Override
   public void intercept(IMethodInvocation invocation) throws Throwable {
-    List<Throwable> exceptions = new ArrayList<Throwable>();
+    List<Throwable> exceptions = new ArrayList<>();
 
     try {
       invocation.proceed();
@@ -60,7 +60,7 @@ public class AutoCleanupInterceptor implements IMethodInterceptor {
         if (!annotation.quiet()) exceptions.add(t);
       }
     }
-    
+
     ExtensionUtil.throwAll(exceptions);
   }
 }

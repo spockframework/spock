@@ -16,16 +16,14 @@
 
 package org.spockframework.tapestry;
 
-import java.lang.annotation.Annotation;
+import org.spockframework.runtime.extension.*;
+import org.spockframework.runtime.model.SpecInfo;
+import org.spockframework.util.ReflectionUtil;
 
+import java.lang.annotation.Annotation;
 import java.util.*;
 
 import org.apache.tapestry5.ioc.annotations.SubModule;
-
-import org.spockframework.runtime.extension.AbstractGlobalExtension;
-import org.spockframework.runtime.extension.IMethodInterceptor;
-import org.spockframework.runtime.model.SpecInfo;
-import org.spockframework.util.ReflectionUtil;
 
 /**
  * Facilitates the creation of integration-level specifications for applications based
@@ -56,7 +54,7 @@ import org.spockframework.util.ReflectionUtil;
  * once. Because fields are injected <em>before</em> field initializers and the <tt>setup()</tt>/
  * <tt>setupSpec()</tt> methods are run, they can be safely accessed from these places.
  *
- * <p>Fields marked as <tt>&#64;Shared</tt> are injected once per specification; regular 
+ * <p>Fields marked as <tt>&#64;Shared</tt> are injected once per specification; regular
  * fields once per feature (iteration). However, this does <em>not</em> mean that each
  * feature will receive a fresh service instance; rather, it is left to the Tapestry
  * registry to control the lifecycle of a service. Most Tapestry services use the default
@@ -124,7 +122,7 @@ public class TapestryExtension extends AbstractGlobalExtension {
             .getAnnotation(org.apache.tapestry5.ioc.annotations.ImportModule.class);
         if (importModule != null) {
           if (modules == null) {
-            modules = new HashSet<Class<?>>();
+            modules = new HashSet<>();
           }
           modules.addAll(Arrays.<Class<?>> asList(importModule.value()));
         }
@@ -134,7 +132,7 @@ public class TapestryExtension extends AbstractGlobalExtension {
         SubModule subModule = curr.getAnnotation(SubModule.class);
         if (subModule != null) {
           if (modules == null) {
-            modules = new HashSet<Class<?>>();
+            modules = new HashSet<>();
           }
           modules.addAll(Arrays.<Class<?>> asList(subModule.value()));
         }

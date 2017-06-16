@@ -14,22 +14,20 @@
 
 package org.spockframework.runtime.extension.builtin;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.spockframework.runtime.model.*;
 
-import org.spockframework.runtime.model.FeatureInfo;
-import org.spockframework.runtime.model.FieldInfo;
-import org.spockframework.runtime.model.SpecInfo;
+import java.util.*;
 
 // This extension supports different JUnit versions with different rule capabilities/implementations.
 // Implementation makes use of reflection and nested classes to make sure that no ClassNotFoundErrorS will occur.
 @SuppressWarnings("UnusedDeclaration")
 public class RuleExtension extends AbstractRuleExtension {
+  @Override
   public void visitSpec(SpecInfo spec) {
     if (ruleClass == null) return;
 
-    List<FieldInfo> methodRuleFields = new ArrayList<FieldInfo>();
-    List<FieldInfo> testRuleFields = new ArrayList<FieldInfo>();
+    List<FieldInfo> methodRuleFields = new ArrayList<>();
+    List<FieldInfo> testRuleFields = new ArrayList<>();
 
     for (FieldInfo field : spec.getAllFields()) {
       if (!field.isAnnotationPresent(ruleClass)) continue;

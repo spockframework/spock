@@ -16,11 +16,9 @@
 
 package org.spockframework.report.log;
 
-import org.spockframework.util.CollectionUtil;
-import org.spockframework.util.IFunction;
+import org.spockframework.util.*;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 class ReportLogMerger {
   @SuppressWarnings("unchecked")
@@ -62,6 +60,7 @@ class ReportLogMerger {
   private List mergeNameIndexed(List<Map<String, Object>> list, List<Map<String, Object>> update) {
     for (final Map<String, Object> fromElem : update) {
       int index = CollectionUtil.findIndexOf(list, new IFunction<Map<String, Object>, Boolean>() {
+        @Override
         public Boolean apply(Map<String, Object> map) {
           return map.get("name").equals(fromElem.get("name"));
         }

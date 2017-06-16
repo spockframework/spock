@@ -16,10 +16,7 @@
 
 package org.spockframework.util;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Identifiers used throughout the core.
@@ -96,11 +93,11 @@ public abstract class Identifiers {
 
   public static final String OLD = "old";
 
-  public static final Set<String> BUILT_IN_METHODS = new HashSet<String>(Arrays.asList(THROWN, NOT_THROWN,
-      NO_EXCEPTION_THROWN, OLD, WITH, VERIFY_ALL, INTERACTION, STUB, MOCK, SPY, GROOVY_STUB, GROOVY_MOCK, GROOVY_SPY));
+  public static final Set<String> BUILT_IN_METHODS = new HashSet<>(Arrays.asList(THROWN, NOT_THROWN,
+    NO_EXCEPTION_THROWN, OLD, WITH, VERIFY_ALL, INTERACTION, STUB, MOCK, SPY, GROOVY_STUB, GROOVY_MOCK, GROOVY_SPY));
 
-  public static final Set<String> TEST_DOUBLE_METHODS = new HashSet<String>(
-      Arrays.asList(STUB, MOCK, SPY, GROOVY_STUB, GROOVY_MOCK, GROOVY_SPY));
+  public static final Set<String> TEST_DOUBLE_METHODS = new HashSet<>(
+    Arrays.asList(STUB, MOCK, SPY, GROOVY_STUB, GROOVY_MOCK, GROOVY_SPY));
 
-  public static final Set<String> EXCEPTION_CONDITION_METHODS = new HashSet<String>(Arrays.asList(THROWN, NOT_THROWN, NO_EXCEPTION_THROWN));
+  public static final Set<String> EXCEPTION_CONDITION_METHODS = new HashSet<>(Arrays.asList(THROWN, NOT_THROWN, NO_EXCEPTION_THROWN));
 }

@@ -14,9 +14,7 @@
 
 package org.spockframework.mock.runtime;
 
-import org.spockframework.mock.CannotInvokeRealMethodException;
-import org.spockframework.mock.IMockInvocation;
-import org.spockframework.mock.IResponseGenerator;
+import org.spockframework.mock.*;
 
 public class FailingRealMethodInvoker implements IResponseGenerator {
   private final String message;
@@ -25,6 +23,7 @@ public class FailingRealMethodInvoker implements IResponseGenerator {
     this.message = message;
   }
 
+  @Override
   public Object respond(IMockInvocation invocation) {
     throw new CannotInvokeRealMethodException(message);
   }

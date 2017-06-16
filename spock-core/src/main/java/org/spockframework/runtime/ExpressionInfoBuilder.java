@@ -16,19 +16,14 @@
 
 package org.spockframework.runtime;
 
-import org.codehaus.groovy.ast.expr.Expression;
-import org.codehaus.groovy.ast.stmt.BlockStatement;
-import org.codehaus.groovy.ast.stmt.ExpressionStatement;
-import org.codehaus.groovy.ast.stmt.Statement;
-import org.codehaus.groovy.control.SourceUnit;
-import org.spockframework.runtime.model.ExpressionInfo;
-import org.spockframework.runtime.model.TextPosition;
-import org.spockframework.runtime.model.TextRegion;
-import org.spockframework.util.Assert;
-import org.spockframework.util.Nullable;
-import org.spockframework.util.TextUtil;
+import org.spockframework.runtime.model.*;
+import org.spockframework.util.*;
 
 import java.util.List;
+
+import org.codehaus.groovy.ast.expr.Expression;
+import org.codehaus.groovy.ast.stmt.*;
+import org.codehaus.groovy.control.SourceUnit;
 
 /**
  * @author Peter Niederwieser
@@ -106,15 +101,15 @@ public class ExpressionInfoBuilder {
       return ExpressionInfo.TEXT_NOT_AVAILABLE;
 
     try {
-      String text = "";
+      StringBuilder text = new StringBuilder();
       for (int i = 0; i <= region.getEnd().getLineIndex(); i++) {
         String line = lines[i];
         if (i == region.getEnd().getLineIndex()) line = line.substring(0, region.getEnd().getColumnIndex());
         if (i == region.getStart().getLineIndex()) line = line.substring(region.getStart().getColumnIndex());
-        text += line;
-        if (i != region.getEnd().getLineIndex()) text += '\n';
+        text.append(line);
+        if (i != region.getEnd().getLineIndex()) text.append('\n');
       }
-      return text;
+      return text.toString();
     } catch (IndexOutOfBoundsException e) {
       return ExpressionInfo.TEXT_NOT_AVAILABLE;
     }

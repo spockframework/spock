@@ -14,25 +14,29 @@
 
 package org.spockframework.buildsupport;
 
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.AnnotationVisitor;
+import org.objectweb.asm.*;
 
 class EmptyAnnotationVisitor extends AnnotationVisitor {
   public EmptyAnnotationVisitor() {
     super(Opcodes.ASM4);
   }
 
+  @Override
   public void visit(String s, Object o) {}
 
+  @Override
   public void visitEnum(String s, String s1, String s2) {}
 
+  @Override
   public AnnotationVisitor visitAnnotation(String s, String s1) {
     return this;
   }
 
+  @Override
   public AnnotationVisitor visitArray(String s) {
     return this;
   }
 
+  @Override
   public void visitEnd() {}
 }

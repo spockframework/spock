@@ -17,8 +17,7 @@
 package org.spockframework.mock.constraint;
 
 import org.spockframework.mock.IArgumentConstraint;
-import org.spockframework.runtime.HamcrestFacade;
-import org.spockframework.runtime.GroovyRuntimeUtil;
+import org.spockframework.runtime.*;
 
 /**
  *
@@ -31,11 +30,12 @@ public class EqualArgumentConstraint implements IArgumentConstraint {
     this.expected = expected;
   }
 
+  @Override
   public boolean isSatisfiedBy(Object arg) {
     if (HamcrestFacade.isMatcher(expected)) {
       return HamcrestFacade.matches(expected, arg);
     }
-    
+
     return GroovyRuntimeUtil.equals(arg, expected);
   }
 }

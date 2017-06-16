@@ -1,9 +1,10 @@
 package org.spockframework.spring.xml;
 
+import org.spockframework.mock.MockNature;
+import spock.mock.DetachedMockFactory;
+
 import java.util.Collections;
 
-import spock.mock.DetachedMockFactory;
-import org.spockframework.mock.MockNature;
 import org.springframework.beans.factory.FactoryBean;
 
 /**
@@ -26,6 +27,7 @@ public class SpockMockFactoryBean<T> implements FactoryBean<T> {
     this.targetClass = targetClass;
   }
 
+  @Override
   @SuppressWarnings("unchecked")
   public T getObject() throws Exception {
     if (instance == null) {
@@ -36,10 +38,12 @@ public class SpockMockFactoryBean<T> implements FactoryBean<T> {
     return instance;
   }
 
+  @Override
   public Class<?> getObjectType() {
     return targetClass;
   }
 
+  @Override
   public boolean isSingleton() {
     return true;
   }

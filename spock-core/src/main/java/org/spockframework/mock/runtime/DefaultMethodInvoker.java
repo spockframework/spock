@@ -14,13 +14,10 @@
 
 package org.spockframework.mock.runtime;
 
-import org.spockframework.mock.CannotCreateMockException;
-import org.spockframework.mock.IMockInvocation;
-import org.spockframework.mock.IResponseGenerator;
+import org.spockframework.mock.*;
 import org.spockframework.util.ReflectionUtil;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
+import java.lang.reflect.*;
 
 public class DefaultMethodInvoker implements IResponseGenerator {
   private final Object target;
@@ -33,6 +30,7 @@ public class DefaultMethodInvoker implements IResponseGenerator {
     this.arguments = arguments;
   }
 
+  @Override
   public Object respond(IMockInvocation invocation) {
     // This implementation uses classes from the java.lang.invoke package in order to invoke a default method.
     // Without exception handling, the implementation is analogous to the following code:

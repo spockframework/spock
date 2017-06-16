@@ -14,17 +14,15 @@
 
 package org.spockframework.runtime;
 
-import org.junit.ComparisonFailure;
-import org.junit.internal.AssumptionViolatedException;
-import org.junit.runners.model.MultipleFailureException;
-import org.junit.runner.Description;
-import org.junit.runner.notification.Failure;
-import org.junit.runner.notification.RunNotifier;
-
 import org.spockframework.runtime.condition.IObjectRenderer;
 import org.spockframework.runtime.model.*;
-import org.spockframework.util.InternalSpockError;
-import org.spockframework.util.TextUtil;
+import org.spockframework.util.*;
+
+import org.junit.ComparisonFailure;
+import org.junit.internal.AssumptionViolatedException;
+import org.junit.runner.Description;
+import org.junit.runner.notification.*;
+import org.junit.runners.model.MultipleFailureException;
 
 import static org.spockframework.runtime.RunStatus.*;
 
@@ -50,10 +48,12 @@ public class JUnitSupervisor implements IRunSupervisor {
     this.diffedObjectRenderer = diffedObjectRenderer;
   }
 
+  @Override
   public void beforeSpec(SpecInfo spec) {
     masterListener.beforeSpec(spec);
   }
 
+  @Override
   public void beforeFeature(FeatureInfo feature) {
     masterListener.beforeFeature(feature);
     currentFeature = feature;
@@ -67,6 +67,7 @@ public class JUnitSupervisor implements IRunSupervisor {
     }
   }
 
+  @Override
   public void beforeIteration(IterationInfo iteration) {
     masterListener.beforeIteration(iteration);
     currentIteration = iteration;
@@ -76,6 +77,7 @@ public class JUnitSupervisor implements IRunSupervisor {
       notifier.fireTestStarted(iteration.getDescription());
   }
 
+  @Override
   public int error(ErrorInfo error) {
     Throwable exception = error.getException();
 
@@ -173,6 +175,7 @@ public class JUnitSupervisor implements IRunSupervisor {
     }
   }
 
+  @Override
   public void afterIteration(IterationInfo iteration) {
     masterListener.afterIteration(iteration);
     if (currentFeature.isReportIterations())
@@ -181,6 +184,7 @@ public class JUnitSupervisor implements IRunSupervisor {
     currentIteration = null;
   }
 
+  @Override
   public void afterFeature(FeatureInfo feature) {
     if (feature.isParameterized()) {
       if (iterationCount == 0 && !errorSinceLastReset)
@@ -195,15 +199,18 @@ public class JUnitSupervisor implements IRunSupervisor {
     currentFeature = null;
   }
 
+  @Override
   public void afterSpec(SpecInfo spec) {
     masterListener.afterSpec(spec);
   }
 
+  @Override
   public void specSkipped(SpecInfo spec) {
     masterListener.specSkipped(spec);
     notifier.fireTestIgnored(spec.getDescription());
   }
 
+  @Override
   public void featureSkipped(FeatureInfo feature) {
     masterListener.featureSkipped(feature);
     notifier.fireTestIgnored(feature.getDescription());

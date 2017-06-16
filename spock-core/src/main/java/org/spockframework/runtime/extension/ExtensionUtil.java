@@ -14,17 +14,16 @@
 
 package org.spockframework.runtime.extension;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
-import org.junit.internal.runners.model.MultipleFailureException;
+import org.junit.runners.model.MultipleFailureException;
 
 public class ExtensionUtil {
   public static void throwAll(List<? extends Throwable> exceptions) throws Throwable {
     if (exceptions.isEmpty()) return;
     if (exceptions.size() == 1) throw exceptions.get(0);
 
-    List<Throwable> unrolled = new ArrayList<Throwable>();
+    List<Throwable> unrolled = new ArrayList<>();
     for (Throwable exception : exceptions) {
       if (exception instanceof MultipleFailureException)
         unrolled.addAll(((MultipleFailureException) exception).getFailures());

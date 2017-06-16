@@ -13,35 +13,42 @@
  */
 package org.spockframework.mock;
 
-import java.util.List;
-
 import org.spockframework.util.UnreachableCodeError;
 
+import java.util.List;
+
 abstract class DefaultInteraction implements IMockInteraction {
+  @Override
   public int getLine() {
     return -1;
   }
 
+  @Override
   public int getColumn() {
     return -1;
   }
 
+  @Override
   public List<IMockInvocation> getAcceptedInvocations() {
     throw new UnreachableCodeError("getAcceptedInvocations");
   }
 
+  @Override
   public int computeSimilarityScore(IMockInvocation invocation) {
     throw new UnreachableCodeError("computeSimilarityScore");
   }
 
+  @Override
   public boolean isSatisfied() {
     return true;
   }
 
+  @Override
   public boolean isExhausted() {
     return false;
   }
 
+  @Override
   public boolean isRequired() {
     return false;
   }

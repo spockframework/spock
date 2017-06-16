@@ -14,21 +14,17 @@
 
 package org.spockframework.runtime;
 
+import org.spockframework.util.*;
+
 import java.beans.Introspector;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
+import java.lang.reflect.*;
+import java.util.*;
 
 import groovy.lang.*;
-
 import org.codehaus.groovy.reflection.CachedMethod;
 import org.codehaus.groovy.runtime.*;
 import org.codehaus.groovy.runtime.metaclass.MetaClassRegistryImpl;
-import org.codehaus.groovy.runtime.typehandling.DefaultTypeTransformation;
-import org.codehaus.groovy.runtime.typehandling.GroovyCastException;
-import org.spockframework.util.*;
+import org.codehaus.groovy.runtime.typehandling.*;
 
 /**
  * Provides convenient access to Groovy language and runtime features.
@@ -50,6 +46,7 @@ public abstract class GroovyRuntimeUtil {
     return (T) DefaultTypeTransformation.castToType(obj, type);
   }
 
+  @SafeVarargs
   public static <T> T coerce(Object obj, Class<? extends T>... types) {
     if (types.length == 0) {
       throw new IllegalArgumentException("caller must provide at least one target type");
@@ -96,7 +93,7 @@ public abstract class GroovyRuntimeUtil {
   public static void setMetaClass(Class<?> clazz, MetaClass metaClass) {
     GroovySystem.getMetaClassRegistry().setMetaClass(clazz, metaClass);
   }
-  
+
   public static String propertyToMethodName(String prefix, String propertyName) {
     return prefix + MetaClassHelper.capitalize(propertyName);
   }
@@ -130,7 +127,7 @@ public abstract class GroovyRuntimeUtil {
     if (result.length() == 0) return null;
     return Introspector.decapitalize(result);
   }
-  
+
   /**
    * Note: This method may throw checked exceptions although it doesn't say so.
    */
@@ -249,7 +246,7 @@ public abstract class GroovyRuntimeUtil {
     // there may be a better impl than this (maybe on some Groovy class)
     return Arrays.asList(GroovyRuntimeUtil.asArgumentArray(args));
   }
-  
+
   public static Object[] despreadList(Object[] args, Object[] spreads, int[] positions) {
     return ScriptBytecodeAdapter.despreadList(args, spreads, positions);
   }

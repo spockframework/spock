@@ -1,8 +1,8 @@
 package org.spockframework.spring;
 
-import org.springframework.test.context.TestContext;
-import org.springframework.test.context.TestExecutionListener;
+import org.springframework.test.context.*;
 
+@SuppressWarnings("EmptyMethod")
 public abstract class AbstractSpringTestExecutionListener implements TestExecutionListener {
   @Override
   public void beforeTestClass(TestContext testContext) throws Exception {

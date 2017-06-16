@@ -17,6 +17,7 @@
 package org.spockframework.compiler;
 
 import org.codehaus.groovy.ast.*;
+import org.codehaus.groovy.ast.builder.AstBuilder;
 import org.codehaus.groovy.ast.expr.*;
 import org.codehaus.groovy.ast.stmt.*;
 import org.codehaus.groovy.runtime.MetaClassHelper;
@@ -313,7 +314,58 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
     methodHasCondition |= deep.isConditionFound() || deep.isGroupConditionFound();
   }
 
+  private void updateNotify(String method, Block block) {
+    List<Statement> statements = block.getAst();
+    if (!statements.isEmpty()) {
+      int count = 0;
+      for (Statement stmt : statements) {
+        if (stmt instanceof ExpressionStatement) {
+          ExpressionStatement exptrStmt = (ExpressionStatement) stmt;
+          if (exptrStmt.getExpression() instanceof GStringExpression || (exptrStmt.getExpression() instanceof ConstantExpression && ((ConstantExpression)exptrStmt.getExpression()).getValue() instanceof String)) {
+            ForStatement forStmt = getNotifyWhenThen(method, exptrStmt.getExpression());
+            statements.set(count, forStmt);
+          }
+        }
+        count++;
+      }
+    }
+  }
+
+  private ForStatement getNotifyWhenThen(String blockType, Expression expr) {
+    List<ASTNode> nodes = new AstBuilder().buildFromString("for( def listener : getSpecificationContext().getCurrentSpec().getListeners()){ \n" +
+      "true;\n" +
+
+      "}\n");
+    ForStatement forStatement = (ForStatement) ((BlockStatement) ((BlockStatement) nodes.get(0)).getStatements().get(0)).getStatements().get(0);
+    BlockStatement forLoopBlock = new BlockStatement();
+    forLoopBlock.addStatement(
+      new ExpressionStatement(
+        new BinaryExpression(
+          new MethodCallExpression(
+            new VariableExpression("listener"),
+            new ConstantExpression("block"),
+            new ArgumentListExpression(new Expression[]{new ConstantExpression(blockType), expr})
+          ),
+          new Token( Types.LOGICAL_OR, "||", -1, -1 ),
+          new ConstantExpression(true)
+        )
+      )
+    );
+    forStatement.setLoopBlock(forLoopBlock);
+    return forStatement;
+  }
+
+  public void visitWhenBlock(WhenBlock block) throws Exception {
+    updateNotify("when", block);
+  }
+
+  public void visitSetupBlock(SetupBlock block) throws Exception {
+    updateNotify("setup", block);
+  }
+
   public void visitThenBlock(ThenBlock block) {
+    updateNotify("then", block);
+
     if (block.isFirstInChain()) thenBlockChainHasExceptionCondition = false;
 
     DeepBlockRewriter deep = new DeepBlockRewriter(this);
@@ -678,7 +730,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
     for (Expression elementExpr : tupleExpr.getExpressions()) {
       Variable variable = (Variable) elementExpr;
       listExpr.addExpression(new ConstantExpression(
-          ReflectionUtil.getDefaultValue(variable.getOriginType().getTypeClass())));
+        ReflectionUtil.getDefaultValue(variable.getOriginType().getTypeClass())));
     }
 
     return listExpr;

@@ -29,6 +29,12 @@ public class MasterRunListener implements IRunListener {
     }
   }
 
+  public void block(String type, String description) {
+    for (IRunListener listener : spec.getListeners()) {
+      listener.block(type, description);
+    }
+  }
+
   public void beforeFeature(FeatureInfo feature) {
     for (IRunListener listener : spec.getListeners()) {
       listener.beforeFeature(feature);

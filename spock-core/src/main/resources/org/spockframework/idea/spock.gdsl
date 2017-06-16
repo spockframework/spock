@@ -21,27 +21,6 @@ if (!supportsVersion("11.1")) return
 
 def ctx = context(ctype: "spock.lang.Specification", scope: closureScope(isArg: true))
 
-// with(foo) { /* delegates to foo */ }
-// with(foo, Bar) { /* delegates to instance of Bar */ }
-contributor(ctx, {
-  def call = enclosingCall("with")
-  if (call) {
-    def method = call.bind()
-    def clazz = method?.containingClass
-    if (clazz?.qualName == "spock.lang.Specification") {
-      def args = call.arguments
-      if (args?.size() == 1) {
-        delegatesTo(args[0])
-      } else if (args?.size() == 2) {
-        def type = args[1].type
-        if (type?.className == "Class") {
-          delegatesTo(type.parameters[0].resolve())
-        }
-      }
-    }
-  }
-})
-
 // Mock(Foo) { /* delegates to instance of type Foo */ }
 // Foo x = Mock { /* delegates to instance of type Foo */ }
 contributor(ctx, {

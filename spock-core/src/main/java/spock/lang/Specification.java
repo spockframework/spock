@@ -16,19 +16,13 @@
 
 package spock.lang;
 
-import groovy.lang.Closure;
-
-import groovy.lang.DelegatesTo;
-import groovy.transform.stc.ClosureParams;
-import groovy.transform.stc.FirstParam;
-import org.junit.runner.RunWith;
-import org.spockframework.util.Beta;
 import org.spockframework.lang.Wildcard;
 import org.spockframework.runtime.*;
 import org.spockframework.util.*;
 import spock.mock.MockingApi;
 
-import groovy.lang.Closure;
+import groovy.lang.*;
+import groovy.transform.stc.*;
 import org.junit.runner.RunWith;
 
 /**
@@ -180,12 +174,13 @@ public abstract class Specification extends MockingApi {
    *
    * @param target an implicit target for conditions and/or interactions
    * @param closure a code block containing top-level conditions and/or interactions
+   * @param <U> type of target
    */
   @Beta
   public <U> void with(
-    @DelegatesTo.Target("self")
+    @DelegatesTo.Target
     U target,
-    @DelegatesTo(value=DelegatesTo.Target.class, target="self", strategy=Closure.DELEGATE_FIRST) @ClosureParams(FirstParam.class)
+    @DelegatesTo(strategy = Closure.DELEGATE_FIRST) @ClosureParams(FirstParam.class)
     Closure<?> closure
   ) {
     if (target == null) {
@@ -218,9 +213,16 @@ public abstract class Specification extends MockingApi {
    * @param target an implicit target for conditions and/or interactions
    * @param type the expected type of the target
    * @param closure a code block containing top-level conditions and/or interactions
+   * @param <U> type of target
    */
   @Beta
-  public void with(Object target, Class<?> type, Closure closure) {
+  public <U> void with(
+    Object target,
+    @DelegatesTo.Target
+      Class<U> type,
+    @DelegatesTo(genericTypeIndex = 0, strategy = Closure.DELEGATE_FIRST)
+    @ClosureParams(SecondParam.FirstGenericType.class)
+      Closure closure) {
     if (target != null && !type.isInstance(target)) {
       throw new SpockAssertionError(String.format("Expected target of 'with' block to have type '%s', but got '%s'",
           type, target.getClass().getName()));
@@ -228,8 +230,71 @@ public abstract class Specification extends MockingApi {
     with(target, closure);
   }
 
+
+  /**
+   * All assertions in this block are executed and the errors recorded and reported at the end.
+   *
+   * <p>Example:
+   *
+   * <pre>
+   * expect:
+   * verifyAll {
+   *   1 == 2
+   *   2 == 3
+   * }
+   * </pre>
+   *
+   * This will report two errors, instead of just the first.
+   *
+   * @param closure a code block containing top-level conditions and/or interactions
+   */
   @Beta
   public void verifyAll(Closure closure){
     GroovyRuntimeUtil.invokeClosure(closure);
+  }
+
+  /**
+   * A combination of {@link #with(Object, Closure)} and {@link #verifyAll(Closure)}.
+   *
+   * @param target an implicit target for conditions and/or interactions
+   * @param closure a code block containing top-level conditions and/or interactions
+   * @param <U> type of target
+   */
+  @Beta
+  public <U> void verifyAll(
+    @DelegatesTo.Target
+      U target,
+    @DelegatesTo(strategy = Closure.DELEGATE_FIRST) @ClosureParams(FirstParam.class)
+      Closure<?> closure
+  ){
+    if (target == null) {
+      throw new SpockAssertionError("Target of 'verifyAll' block must not be null");
+    }
+    closure.setDelegate(target); // for conditions
+    closure.setResolveStrategy(Closure.DELEGATE_FIRST);
+    GroovyRuntimeUtil.invokeClosure(closure, target);
+  }
+
+  /**
+   * A combination of {@link #with(Object, Class, Closure)} and {@link #verifyAll(Closure)}.
+   *
+   * @param target an implicit target for conditions and/or interactions
+   * @param type the expected type of the target
+   * @param closure a code block containing top-level conditions and/or interactions
+   * @param <U> type of target
+   */
+  @Beta
+  public <U> void verifyAll(
+    Object target,
+    @DelegatesTo.Target
+      Class<U> type,
+    @DelegatesTo(genericTypeIndex = 0, strategy = Closure.DELEGATE_FIRST)
+    @ClosureParams(SecondParam.FirstGenericType.class)
+      Closure closure) {
+    if (target != null && !type.isInstance(target)) {
+      throw new SpockAssertionError(String.format("Expected target of 'verifyAll' block to have type '%s', but got '%s'",
+        type, target.getClass().getName()));
+    }
+    verifyAll(target, closure);
   }
 }

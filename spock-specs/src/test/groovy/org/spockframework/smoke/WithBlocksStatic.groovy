@@ -15,13 +15,15 @@
  */
 package org.spockframework.smoke
 
-import groovy.transform.CompileStatic
 import spock.lang.Specification
+
+import groovy.transform.CompileStatic
 
 @CompileStatic
 class WithBlocksStatic extends Specification {
 
   def "can statically compile against type of the target"() {
+    given:
     def fred = new Person(spouse: new Person(name: "Wilma"))
 
     expect:
@@ -31,9 +33,22 @@ class WithBlocksStatic extends Specification {
     }
   }
 
-  static class Person {
-    String name = "Fred"
-    int age = 42
-    Person spouse
+  def "can statically compile with explicit class declaration"() {
+    given:
+    Object fred = new Person(spouse: new Person(name: "Wilma"))
+
+    expect:
+    with(fred, Person) {
+      name == "Fred"
+      age == 42
+    }
   }
+}
+
+
+@CompileStatic
+class Person {
+  String name = "Fred"
+  int age = 42
+  Person spouse
 }

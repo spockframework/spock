@@ -151,7 +151,7 @@ public class DeepBlockRewriter extends AbstractDeepBlockRewriter {
     conditionFound = true;
     groupConditionFound = currSpecialMethodCall.isGroupConditionBlock();
 
-    if (currSpecialMethodCall.isWithCall()
+    if ((currSpecialMethodCall.isWithCall() || currSpecialMethodCall.isGroupConditionBlock())
       && AstUtil.isInvocationWithImplicitThis(stat.getExpression())) {
       replaceObjectExpressionWithCurrentClosure(stat);
     }

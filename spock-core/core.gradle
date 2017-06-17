@@ -46,3 +46,14 @@ processResources {
   inputs.property "tokens", tokens
   filter(org.apache.tools.ant.filters.ReplaceTokens, tokens: tokens)
 }
+
+task coreConsole(type: JavaExec,
+                 description: 'Start a groovy Console with Spock Core Classpath, usefull for AST-Inspection') {
+  main = "groovy.ui.Console"
+  classpath = sourceSets.main.runtimeClasspath
+  workingDir = file('build/console')
+  ignoreExitValue = true
+  doFirst {
+    workingDir.mkdirs()
+  }
+}

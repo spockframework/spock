@@ -162,6 +162,133 @@ null == "foo"
       "Strings too large to calculate edit distance.")
   }
 
+  @Issue("https://github.com/spockframework/spock/issues/737")
+  def 'shows differences between string literals with line breaks'() {
+    expect:
+    isRendered '''
+"""foo """ == """bar """
+           |
+           false
+           4 differences (20% similarity)
+           (foo)\\n(-~)
+           (bar)\\n(\\n)
+''', {
+      assert """foo
+""" == """bar
+
+"""
+    }
+  }
+
+  @Issue("https://github.com/spockframework/spock/issues/737")
+  def 'shows differences between string literals with newline escapes'() {
+    expect:
+    isRendered '''
+"""foo  """ == """bar  """
+            |
+            false
+            3 differences (40% similarity)
+            (foo)  
+            (bar)  
+''', {
+      assert """\
+foo  \
+""" == """\
+bar  \
+"""
+    }
+  }
+
+  @Issue("https://github.com/spockframework/spock/issues/737")
+  def 'shows differences between string literals with line breaks and newline escapes'() {
+    expect:
+    isRendered '''
+"""\\\\ foo""" == """\\\\ foo """
+             |
+             false
+             8 differences (38% similarity)
+             \\\\\\nfoo(--------~)
+             \\\\\\nfoo(       \\n)
+''', {
+      assert """\\
+foo\
+""" == """\\
+foo       
+"""
+    }
+  }
+
+  @Issue("https://github.com/spockframework/spock/issues/737")
+  def 'shows differences between interpolated string literals with line breaks and newline escapes'() {
+    given:
+    def a = 'foo'
+    def b = 'bar'
+
+    expect:
+    isRendered '''
+"""$a """ == """\\\\$b """
+    |     |        |
+    foo   |        bar
+          false
+          5 differences (16% similarity)
+          (f~oo--)\\n
+          (\\\\bar )\\n
+''', {
+      assert """\
+$a\
+
+""" == """\\\
+$b 
+"""
+    }
+  }
+
+  @Issue("https://github.com/spockframework/spock/issues/737")
+  def 'shows differences between long string literals with line breaks and newline escapes'() {
+    expect:
+    isRendered '''
+"""Lorem ipsum Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.""" == """Lorem ipsum Lorem ipsum  dolor sit amet,  consetetur sadipscing elitr, sed  diam nonumy eirmod tempor  invidunt ut labore et  dolore magna aliquyam erat, sed diam voluptua. """
+                                                                                                                                                                              |
+                                                                                                                                                                              false
+                                                                                                                                                                              7 differences (95% similarity)
+                                                                                                                                                                              Lorem ipsum\\n(\\n)Lorem ipsum (-)dolor sit amet, (-)consetetur sadipscing elitr, sed (-)diam nonumy eirmod tempor (-)invidunt ut labore et (-)dolore magna aliquyam erat, sed diam voluptua.(-~)
+                                                                                                                                                                              Lorem ipsum\\n(-~)Lorem ipsum ( )dolor sit amet, ( )consetetur sadipscing elitr, sed ( )diam nonumy eirmod tempor ( )invidunt ut labore et ( )dolore magna aliquyam erat, sed diam voluptua.(\\n)
+''', {
+      assert """\
+Lorem ipsum
+
+Lorem ipsum\
+ dolor sit amet, \
+consetetur sadipscing elitr, sed\
+\
+ diam nonumy eirmod tempor \
+\
+\
+invidunt ut labore et\
+ \
+\
+dolore magna aliquyam erat, sed diam voluptua.\
+\
+\
+""" == """Lorem ipsum
+Lorem ipsum \
+ dolor sit amet, \
+ consetetur sadipscing elitr, sed\
+ \
+ diam nonumy eirmod tempor \
+\
+ \
+invidunt ut labore et\
+ \
+ \
+dolore magna aliquyam erat, sed diam voluptua.\
+
+\
+\
+"""
+    }
+  }
+
   private StringBuilder largeStringBuilder(CharSequence source = "aaaaaaaaaaaaaaaa") {
     int length = ExpressionInfoValueRenderer.MAX_EDIT_DISTANCE_MEMORY / 2
     def sb = new StringBuilder(length + 10)

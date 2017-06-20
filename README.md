@@ -26,8 +26,7 @@ Modules
 -------
 * spock-core -- Core framework. This is the only mandatory module.
 * spock-specs -- Specifications for spock-core, implemented using Spock. Not required for using Spock.
-* spock-spring -- Integration with the [Spring TestContext Framework]
-(http://docs.spring.io/spring/docs/4.1.5.RELEASE/spring-framework-reference/html/testing.html#testcontext-framework).
+* spock-spring -- Integration with the [Spring TestContext Framework](http://docs.spring.io/spring/docs/4.1.5.RELEASE/spring-framework-reference/html/testing.html#testcontext-framework).
 * spock-tapestry -- Integration with the [Tapestry 5](http://tapestry.apache.org/tapestry5/) IoC container.
 * spock-guice -- Integration with [Guice](http://code.google.com/p/google-guice/) 2/3.
 * spock-unitils -- Integration with [Unitils](http://www.unitils.org/).
@@ -37,8 +36,9 @@ Building
 --------
 
 ### Supported versions
-Spock is supported for Java version 6, 7, and 8.
-Spock is supported for Groovy version 2.0 (Not supported for Java 8+), 2.3, 2.4
+Spock is supported for Java version 7, and 8.
+
+Spock is supported for Groovy version 2.4+
 
 The tests are testing spock with a specific versions (variants) of groovy. Default is groovy version 2.4
 
@@ -52,13 +52,6 @@ The groovy 2.4 variant should pass on all supported JDK versions:
 All build dependencies, including
 the [build tool](http://www.gradle.org) itself, will be downloaded
 automatically (unless already present).
-
-If you are using JDK 6 or 7 you can specify groovy version 2.0 with
-using `-Dvariant=2.0` and it should pass as well:
-
-```
-./gradlew clean build -Dvariant=2.0
-```
 
 Contributing
 ------------

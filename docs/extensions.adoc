@@ -210,6 +210,45 @@ When applied to a fixture method, the timeout is per execution of the fixture me
 When a timeout is reported to the user, the stack trace shown reflects the execution stack of the test framework when
 the timeout was exceeded.
 
+=== Retry
+
+The `@Retry` extensions can be used for flaky integration tests, where remote systems can fail sometimes.
+By default it retries an iteration `3` times with `0` delay if either an `Exception` or `AssertionError` has been thrown, all this is configurable.
+It also provides special support for data driven features, offering to either retry all iterations or just the failing ones.
+
+[source,groovy]
+----
+class FlakyInegrationSpec extends Specification {
+  @Retry
+  def retry3Times() { ... }
+
+  @Retry(count = 5)
+  def retry5Times() { ... }
+
+  @Retry(exceptions=[IOException])
+  def onlyRetryIOException() { ... }
+
+  @Retry
+  def retryFailingIterations() {
+    ...
+    where:
+    data << sql.select()
+  }
+
+  @Retry(mode = Retry.Mode.FEATURE)
+  def retryWholeFeature() {
+    ...
+    where:
+    data << sql.select()
+  }
+
+  @Retry(delay = 1000)
+  def retryAfter1000MsDelay() { ... }
+}
+----
+
+Check https://github.com/spockframework/spock/blob/master/spock-specs/src/test/groovy/org/spockframework/smoke/extension/RetryFeatureExtensionSpec.groovy[RetryFeatureExtensionSpec] for more examples.
+
 === Use
 
 To activate one or more Groovy categories within the scope of a feature method or spec, use `spock.util.mop.Use`:

@@ -3,9 +3,29 @@ include::include.adoc[]
 
 == 1.2 (tbd)
 
+Breaking Changes: Spock 1.2 drops support for Java 6, Groovy 2.0 and Groovy 2.3
+
 === What's New In This release
-* In assertions Spock now uses `DefaultGroovyMethods.dump` instead of `toString` if a class doesn't override the default `Object.toString`.
+
 * Add flag to UnrollNameProvider to assert unroll expressions (set the system property `spock.assertUnrollExpressions` to `true`) https://github.com/spockframework/spock/issues/767[#767]
+* Add automatic module name descriptors for Java 9
+* Add `@Retry` extension (<<extensions.adoc#_retry,Docs>>)
+* Fix SpockAssertionErrors and its subclasses now are properly `Serializeable`
+* Fix Spring injection of JUnit Rules, due to the changes in 1.1 the rules where initialized before Spring could inject them,
+  this has been fixed by performing the injection earlier in the process
+* Improve in assertions Spock now uses `DefaultGroovyMethods.dump` instead of `toString` if a class doesn't override the default `Object.toString`.
+* Improve `verifyAll` can now also have a target same as `with`
+* Improve static type hints for `verifyAll` and `with`
+* Improve reporting of exceptions during cleanup, they are now properly reported as suppressed exceptions instead of hiding the real exception
+* Improve default responses for stubs, Java 8 types like `Optional` and `Streams` now return empty, `CompleteableFuture` completes with `null` result
+* Improve support for builder pattern, stubs now return themselves if the return type matches the type of the stub
+* Improve tapestry support with by supporting `@ImportModule`
+* General dependency update
+
+Thanks to all the contributors to this release: Rob Elliot, jochenberger, Jan Papenbrock, Paul King, Marcin Zajączkowski, mrb-twx
+
+=== Known Issues
+* Groovy 2.4.10 introduced a bug that interfered with the way `verifyAll` works, it has been fixed in 2.4.12
 
 == 1.1 (2017-05-01)
 

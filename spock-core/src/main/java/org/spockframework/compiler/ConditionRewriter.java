@@ -640,7 +640,7 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> {
   private TryCatchStatement surroundWithTryCatch(Expression condition, Expression message, Expression executeAndVerify) {
     final TryCatchStatement tryCatchStatement = new TryCatchStatement(
         new ExpressionStatement(executeAndVerify),
-        new EmptyStatement()
+        EmptyStatement.INSTANCE
     );
 
     tryCatchStatement.addCatch(

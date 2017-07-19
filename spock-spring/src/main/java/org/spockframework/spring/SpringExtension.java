@@ -80,10 +80,10 @@ public class SpringExtension extends AbstractGlobalExtension {
   private boolean isSpringSpec(SpecInfo spec) {
     if (isSpringSpecUsingFindAnnotationDescriptorForTypes(spec)) return true;
 
-    if (ReflectionUtil.isAnnotationPresentRecursive(spec.getClass(), ContextConfiguration.class)) return true;
+    if (ReflectionUtil.isAnnotationPresentRecursive(spec.getReflection(), ContextConfiguration.class)) return true;
 
     return  (contextHierarchyClass != null
-      && ReflectionUtil.isAnnotationPresentRecursive(spec.getClass(), contextHierarchyClass));
+      && ReflectionUtil.isAnnotationPresentRecursive(spec.getReflection(), contextHierarchyClass));
   }
 
   private boolean isSpringSpecUsingFindAnnotationDescriptorForTypes(SpecInfo spec) {

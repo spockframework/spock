@@ -21,7 +21,6 @@ import org.spockframework.runtime.GroovyRuntimeUtil;
 import spock.lang.Specification;
 
 import java.lang.reflect.Modifier;
-import java.util.Collections;
 
 import groovy.lang.MetaClass;
 
@@ -55,7 +54,7 @@ public class JavaMockFactory implements IMockFactory {
 
     MetaClass mockMetaClass = GroovyRuntimeUtil.getMetaClass(configuration.getType());
     IProxyBasedMockInterceptor interceptor = new JavaMockInterceptor(configuration, specification, mockMetaClass);
-    return ProxyBasedMockFactory.INSTANCE.create(configuration.getType(), Collections.<Class<?>>emptyList(),
+    return ProxyBasedMockFactory.INSTANCE.create(configuration.getType(), configuration.getAdditionalInterfaces(),
         configuration.getConstructorArgs(), interceptor, classLoader,
         configuration.isUseObjenesis());
   }

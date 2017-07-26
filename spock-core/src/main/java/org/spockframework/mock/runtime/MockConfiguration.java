@@ -29,6 +29,7 @@ public class MockConfiguration implements IMockConfiguration {
   private final MockNature nature;
   private final MockImplementation implementation;
   private final List<Object> constructorArgs;
+  private final List<Class<?>> additionalInterfaces;
   private final IDefaultResponse defaultResponse;
   private final boolean global;
   private final boolean verified;
@@ -48,6 +49,7 @@ public class MockConfiguration implements IMockConfiguration {
     this.nature = getOption(options, "nature", MockNature.class, nature);
     this.implementation = getOption(options, "implementation", MockImplementation.class, implementation);
     this.constructorArgs = getOption(options, "constructorArgs", List.class, null);
+    this.additionalInterfaces = getOption(options, "additionalInterfaces", List.class, Collections.emptyList());
     this.defaultResponse = getOption(options, "defaultResponse", IDefaultResponse.class, this.nature.getDefaultResponse());
     this.global = getOption(options, "global", Boolean.class, false);
     this.verified = getOption(options, "verified", Boolean.class, this.nature.isVerified());
@@ -89,6 +91,11 @@ public class MockConfiguration implements IMockConfiguration {
   @Nullable
   public List<Object> getConstructorArgs() {
     return constructorArgs;
+  }
+
+  @Override
+  public List<Class<?>> getAdditionalInterfaces() {
+    return additionalInterfaces;
   }
 
   @Override

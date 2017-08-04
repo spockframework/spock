@@ -31,7 +31,7 @@ task sampleTest(type: Test) {
   reports.junitXml.enabled = false
   reports.html.enabled = false
 
-  testClassesDir = test.testClassesDir
+  testClassesDirs = test.testClassesDirs
   classpath = test.classpath
   include "org/spockframework/report/sample/ParameterizedFightSpec.class"
   include "org/spockframework/report/sample/FightOrFlightStory.class"

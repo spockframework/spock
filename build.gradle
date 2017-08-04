@@ -137,7 +137,7 @@ subprojects {
 
   task testCglib(type: Test) {
     systemProperty("org.spockframework.mock.ignoreByteBuddy", "true")
-    testClassesDir = sourceSets.test.output.classesDir
+    testClassesDirs = sourceSets.test.output.classesDirs
     classpath = sourceSets.test.runtimeClasspath
   }
 
@@ -187,7 +187,7 @@ task codeCoverageReport (type: JacocoReport, group: 'Coverage reports') {
   reports {
     html.enabled = true
     xml.enabled = true
-    xml.destination "${buildDir}/reports/jacoco/report.xml" // report must be here for codecov to pick it up
+    xml.destination file("${buildDir}/reports/jacoco/report.xml") // report must be here for codecov to pick it up
     csv.enabled = false
   }
 }

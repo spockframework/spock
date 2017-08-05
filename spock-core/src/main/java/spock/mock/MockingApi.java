@@ -14,11 +14,12 @@
 
 package spock.mock;
 
-import org.spockframework.lang.SpecInternals;
-import org.spockframework.runtime.*;
-import org.spockframework.util.Beta;
-
 import java.util.Map;
+
+import org.spockframework.lang.SpecInternals;
+import org.spockframework.runtime.GroovyRuntimeUtil;
+import org.spockframework.runtime.InvalidSpecException;
+import org.spockframework.util.Beta;
 
 import groovy.lang.Closure;
 
@@ -566,6 +567,11 @@ public class MockingApi extends SpecInternals implements MockFactory {
    * <pre>
    *   def person = Spy(new Person()) // type is Person.class, name is "person"
    * </pre>
+   *
+   * You need to use the spy returned by this method instead of the original instance,
+   * otherwise interactions won't be picked up.
+   *
+   * @since 1.1
    *
    * @param obj the instance to spy
    * @param <T> the class type of the spy

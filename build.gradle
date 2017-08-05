@@ -23,8 +23,8 @@ ext {
   if (System.getProperty("groovyVersion")) {
     groovyVersion = System.getProperty("groovyVersion")
   }
-  fullVersion = baseVersion + (snapshotVersion ? "-SNAPSHOT" :  (releaseCandidate ? "-rc-$releaseCandidate" : "")) + "-groovy-$variant"
-  variantLessVersion = baseVersion + (snapshotVersion ? "-SNAPSHOT" : (releaseCandidate ? "-rc-$releaseCandidate" : ""))
+  fullVersion = baseVersion + ((!snapshotVersion && releaseCandidate) ? "-rc-$releaseCandidate" : "") + "-groovy-$variant" + (snapshotVersion ? "-SNAPSHOT" : '')
+    variantLessVersion = baseVersion + (snapshotVersion ? "-SNAPSHOT" : (releaseCandidate ? "-rc-$releaseCandidate" : ""))
   javaVersions = [1.7, 1.8]
   javaVersion = System.getProperty("java.specification.version") as BigDecimal
   libs = [

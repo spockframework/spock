@@ -16,7 +16,7 @@
 > Make sure you choose the correct label as well (bug or enhancement)
 
 # How to reproduce
-> Please provide information how to reproduce this issue.
+> Please provide information on how to reproduce this issue, a [Short, Self Contained, Correct (Compilable), Example](http://www.sscce.org/) helps tremendously.
 > Only applicable for bugs.
 
 ## Link to a gist or similar (optional)

@@ -98,11 +98,19 @@ public class MockObject implements IMockObject {
   public boolean matches(Object target, IMockInteraction interaction) {
     if (target instanceof Wildcard) return verified || !interaction.isRequired();
 
-    boolean match = global ? instance.getClass() == target.getClass() : instance == target;
+    boolean match = global ? matchGlobal(target) : instance == target;
     if (match) {
       checkRequiredInteractionAllowed(interaction);
     }
     return match;
+  }
+
+  private boolean matchGlobal(Object target) {
+    return (instance.getClass() == target.getClass()) && (!isMockOfClass() || (instance == target));
+  }
+
+  private boolean isMockOfClass() {
+    return instance instanceof Class<?>;
   }
 
   private void checkRequiredInteractionAllowed(IMockInteraction interaction) {

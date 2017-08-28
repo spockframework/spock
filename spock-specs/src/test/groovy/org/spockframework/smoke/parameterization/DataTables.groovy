@@ -14,13 +14,13 @@
 
 package org.spockframework.smoke.parameterization
 
-import org.junit.runner.notification.RunListener
-import org.junit.runners.model.MultipleFailureException
 import org.spockframework.EmbeddedSpecification
 import org.spockframework.compiler.InvalidSpecCompileException
 import org.spockframework.runtime.SpockExecutionException
-
 import spock.lang.*
+
+import org.junit.runner.notification.RunListener
+import org.junit.runners.model.MultipleFailureException
 
 class DataTables extends EmbeddedSpecification {
   static staticField = 42
@@ -239,6 +239,19 @@ local | 1
     0 | a + 1 | b + 1
   }
 
+  @Issue("https://github.com/spockframework/spock/issues/763")
+  def "cells in a data table can refer to the current value for a column to the left (plain reference)"(int a, int b, int c) {
+    expect:
+    Math.max(a, b) == c
+
+    where:
+    a  | b  || c
+    10 | 20 || b
+    5  | 3  || a
+    7  | 9  || b
+    15 | 11 || a
+  }
+
   def 'cell references are pointing to the current row'() {
     expect:
     b == 1 + a * 2
@@ -261,11 +274,13 @@ local | 1
         where:
         a | b
         0 | a + 1
+        2 | a 
       }
     '''
 
     then:
     1 * listener.testStarted { it.methodName == "a = 0, b = 1" }
+    1 * listener.testStarted { it.methodName == "a = 2, b = 2" }
   }
 
   def "cells can't reference next cells"() {

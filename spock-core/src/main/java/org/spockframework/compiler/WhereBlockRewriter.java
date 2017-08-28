@@ -406,7 +406,11 @@ public class WhereBlockRewriter {
     @Override
     public Expression transform(Expression expression) {
       if ((expression instanceof VariableExpression) && isDataProcessorVariable(expression.getText())) {
-        return AstUtil.createGetAtMethod(expression, rowIndex);
+
+        MethodCallExpression getAtMethod = AstUtil.createGetAtMethod(expression, rowIndex);
+        if (depth == 0)
+          rowIndex++;
+        return getAtMethod;
       }
 
       depth++;

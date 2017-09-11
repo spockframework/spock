@@ -16,7 +16,7 @@
 
 package org.spockframework.runtime.extension.builtin;
 
-import org.spockframework.runtime.GroovyRuntimeUtil;
+import org.spockframework.runtime.*;
 import org.spockframework.runtime.model.*;
 
 import java.util.regex.*;
@@ -27,6 +27,7 @@ import java.util.regex.*;
 public class UnrollNameProvider implements NameProvider<IterationInfo> {
   private static final Pattern EXPRESSION_PATTERN = Pattern.compile("#([a-zA-Z_$]([\\w$.]|\\(\\))*)");
 
+  private final boolean assertUnrollExpressions = Boolean.getBoolean("spock.assertUnrollExpressions");
   private final FeatureInfo feature;
   private final Matcher expressionMatcher;
   private int iterationCount;
@@ -68,7 +69,12 @@ public class UnrollNameProvider implements NameProvider<IterationInfo> {
       result = String.valueOf(iterationCount);
     } else {
       int index = feature.getDataVariables().indexOf(firstPart);
-      if (index < 0) return "#Error:" + expr;
+      if (index < 0) {
+        if (assertUnrollExpressions) {
+          throw new SpockAssertionError("Error in @Unroll, could not find matching variable for expression: " + expr);
+        }
+        return "#Error:" + expr;
+      }
       result = dataValues[index];
     }
 
@@ -83,6 +89,9 @@ public class UnrollNameProvider implements NameProvider<IterationInfo> {
       }
       return GroovyRuntimeUtil.toString(result);
     } catch (Exception e) {
+      if (assertUnrollExpressions) {
+        throw new SpockAssertionError("Error in @Unroll expression: " + expr, e);
+      }
       return "#Error:" + expr;
     }
   }

@@ -170,6 +170,10 @@ for further details on this topic.
 The `@Unroll` annotation can also be placed on a spec. This has the same effect as placing it on each data-driven
 feature method of the spec.
 
+TIP: You can set the system property `spock.assertUnrollExpressions` to `true`,
+     to let tests fail that have invalid unroll expressions.
+     This can be used to help catch errors during refactoring.
+
 == Data Pipes
 
 Data tables aren't the only way to supply values to data variables. In fact, a data table is just syntactic sugar for

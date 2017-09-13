@@ -118,6 +118,26 @@ class DetachedMockFactorySpec extends Specification {
       detach(spy)
   }
 
+  @Issue("https://github.com/spockframework/spock/issues/769")
+  def "can spy on instances of classes with no default constructor"() {
+    given:
+    def spy = factory.Spy(new NoDefaultConstructor(42))
+    attach(spy)
+
+    expect:
+    spy.value == 42
+
+    when:
+    def result = spy.value
+
+    then:
+    1 * spy.getValue() >> 7
+    result == 7
+
+    cleanup:
+    detach(spy)
+  }
+
   private String getMockName(IMockMe mock) {
     new MockUtil().asMock(mock).name
   }
@@ -148,5 +168,12 @@ class MockMe implements IMockMe {
 
   int foo(int i) {
     defaultAnswer
+  }
+}
+
+class NoDefaultConstructor {
+  int value
+  NoDefaultConstructor(int value) {
+    this.value = value
   }
 }

@@ -15,8 +15,7 @@
 package org.spockframework.smoke.mock
 
 import org.spockframework.mock.CannotCreateMockException
-
-import spock.lang.Specification
+import spock.lang.*
 
 class JavaSpies extends Specification {
   def "construct spied-on object using default constructor when no constructor args given (even if Objenesis is available on class path)"() {
@@ -98,16 +97,32 @@ class JavaSpies extends Specification {
     person.work() == "singing, singing"
     person.work() == "singing"
   }
-  
+
   def "can spy on concrete instances"() {
     def person = Spy(new Person())
-    
+
     when:
-    def result = person.work()  
-    
+    def result = person.work()
+
     then:
     1 * person.work()
     result == "singing, singing"
+  }
+
+  @Issue("https://github.com/spockframework/spock/issues/769")
+  def "can spy on instances of classes with no default constructor"() {
+    given:
+    def spy = Spy(new NoDefaultConstructor(42))
+
+    expect:
+    spy.value == 42
+
+    when:
+    def result = spy.value
+
+    then:
+    1 * spy.getValue() >> 7
+    result == 7
   }
 
   def "cannot spy on final classes"() {
@@ -201,6 +216,13 @@ class JavaSpies extends Specification {
 
   static class FinalMethodPerson extends Person {
     final String getPhoneNumber() { "12345" }
+  }
+
+  static class NoDefaultConstructor {
+    int value
+    NoDefaultConstructor(int value) {
+      this.value = value
+    }
   }
 }
 

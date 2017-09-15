@@ -2,6 +2,7 @@ language: java
 
 sudo: false # run on container-based infrastructure
 
+
 before_cache:
   - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
   - rm -f $HOME/.gradle/user-id.txt.lock
@@ -15,8 +16,9 @@ cache:
     - $HOME/.gradle/caches/
     - $HOME/.gradle/wrapper/
 
+dist: precise # downgrade to avoid jdk7 SSL Bug https://github.com/docker-library/openjdk/issues/117
 jdk:
-  - openjdk7
+  - oraclejdk7 # openjdk7 has SSL Bug avoid jdk7 SSL Bug https://github.com/docker-library/openjdk/issues/117
   - oraclejdk8
 
 env:
@@ -32,6 +34,10 @@ env:
     - GRADLE_OPTS: "-Xmx768m -Xms256m -Xss1m"
 
 install: true
+
+# Undo _JAVA_OPTIONS environment variable (https://github.com/travis-ci/travis-ci/issues/8408)
+before_script:
+  - _JAVA_OPTIONS=
 
 script:
   - ./gradlew --no-daemon --version

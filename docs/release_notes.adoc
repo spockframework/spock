@@ -4,6 +4,7 @@ include::include.adoc[]
 == 1.2 (tbd)
 
 === What's New In This release
+* In assertions Spock now uses `DefaultGroovyMethods.dump` instead of `toString` if a class doesn't override the default `Object.toString`.
 * Add flag to UnrollNameProvider to assert unroll expressions (set the system property `spock.assertUnrollExpressions` to `true`) https://github.com/spockframework/spock/issues/767[#767]
 
 == 1.1 (2017-05-01)

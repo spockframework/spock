@@ -19,6 +19,7 @@ import org.spockframework.runtime.model.ExpressionInfo;
 import org.spockframework.util.*;
 
 import groovy.lang.GString;
+import org.codehaus.groovy.runtime.DefaultGroovyMethods;
 
 public class ExpressionInfoValueRenderer {
   public static final long MAX_EDIT_DISTANCE_MEMORY = 50 * 1024;
@@ -90,7 +91,46 @@ public class ExpressionInfoValueRenderer {
     result = renderAsFailedEqualityComparison(expr);
     if (result != null) return result;
 
-    return GroovyRuntimeUtil.toString(expr.getValue());
+    return renderToStringOrDump(expr);
+  }
+
+  private String renderToStringOrDump(ExpressionInfo expr) {
+    Object value = expr.getValue();
+    Class<?> valueClass = value.getClass();
+    if (valueClass.isArray()) {
+      if (isToStringOverridden(valueClass.getComponentType()) || valueClass.getComponentType().isPrimitive()) {
+        return GroovyRuntimeUtil.toString(value);
+      } else {
+        return dumpArrayString((Object[])value);
+      }
+    } else if (isToStringOverridden(valueClass)) {
+      return GroovyRuntimeUtil.toString(value);
+    } else {
+      return DefaultGroovyMethods.dump(value);
+    }
+  }
+
+  /*
+   * Adapted from org.codehaus.groovy.runtime.InvokerHelper.toArrayString(java.lang.Object[]) to use dump()
+   */
+  private String dumpArrayString(Object[] arguments) {
+    StringBuilder argBuf = new StringBuilder("[");
+    for (int i = 0; i < arguments.length; i++) {
+      if (i > 0) {
+        argBuf.append(", ");
+      }
+      argBuf.append(DefaultGroovyMethods.dump(arguments[i]));
+    }
+    argBuf.append("]");
+    return argBuf.toString();
+  }
+
+  private boolean isToStringOverridden(Class<?> valueClass) {
+    try {
+      return !Object.class.equals(valueClass.getMethod("toString").getDeclaringClass());
+    } catch (NoSuchMethodException e) {
+      return false;
+    }
   }
 
   private String renderAsFailedStringComparison(ExpressionInfo expr) {

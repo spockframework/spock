@@ -20,7 +20,7 @@ import spock.lang.*
 class JavaSpies extends Specification {
   def "construct spied-on object using default constructor when no constructor args given (even if Objenesis is available on class path)"() {
     when:
-    Spy(Constructable)
+    Spy(NoDefaultConstructor)
 
     then:
     thrown(CannotCreateMockException)
@@ -36,10 +36,14 @@ class JavaSpies extends Specification {
     spy.arg4 == arg4
 
     where:
-    ctorArgs | arg1 | arg2 | arg3 | arg4
-    [1]      | 1    | 0    | 0    | null
-    [2, 3]   | 0    | 2    | 3    | null
-    ["hi"]   | 0    | 0    | 0    | "hi"
+    ctorArgs                         | arg1 | arg2 | arg3 | arg4
+    [1]                              | 1    | 0    | 0    | null
+    [2, 3]                           | 0    | 2    | 3    | null
+    ["hi"]                           | 0    | 0    | 0    | "hi"
+    [arg4: "hi"]                     | 0    | 0    | 0    | "hi"
+    [arg1: 2, arg3: 5, arg4: "hi"]   | 2    | 0    | 5    | "hi"
+    [[arg1: 2, arg3: 5, arg4: "hi"]] | 2    | 0    | 5    | "hi"
+    [arg2: 1]                        | 0    | 1    | 0    | null
   }
 
   def "call real methods by default"() {
@@ -158,6 +162,9 @@ class JavaSpies extends Specification {
     int arg2
     int arg3
     String arg4
+
+    Constructable() {
+    }
 
     Constructable(int arg1) {
       this.arg1 = arg1

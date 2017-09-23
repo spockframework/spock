@@ -48,7 +48,7 @@ public class MockConfiguration implements IMockConfiguration {
     this.instance = getOption(options, "instance", Object.class, instance);
     this.nature = getOption(options, "nature", MockNature.class, nature);
     this.implementation = getOption(options, "implementation", MockImplementation.class, implementation);
-    this.constructorArgs = getOption(options, "constructorArgs", List.class, null);
+    this.constructorArgs = getOptionAsList(options, "constructorArgs");
     this.additionalInterfaces = getOption(options, "additionalInterfaces", List.class, Collections.emptyList());
     this.defaultResponse = getOption(options, "defaultResponse", IDefaultResponse.class, this.nature.getDefaultResponse());
     this.global = getOption(options, "global", Boolean.class, false);
@@ -120,5 +120,16 @@ public class MockConfiguration implements IMockConfiguration {
 
   private <T> T getOption(Map<String, Object> options, String key, Class<T> type, T defaultValue) {
     return options.containsKey(key) ? type.cast(options.get(key)) : defaultValue;
+  }
+
+  private List getOptionAsList(Map<String, Object> options, String key) {
+    if (options.containsKey(key)) {
+      Object obj = options.get(key);
+      if (obj instanceof Map) {
+        return Collections.singletonList((Map)obj);
+      }
+      return (List)obj;
+    }
+    return null;
   }
 }

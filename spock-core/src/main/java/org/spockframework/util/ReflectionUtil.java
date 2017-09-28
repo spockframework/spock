@@ -234,4 +234,12 @@ public abstract class ReflectionUtil {
     }
     return result;
   }
+
+  public static boolean isToStringOverridden(Class<?> valueClass) {
+    try {
+      return !Object.class.equals(valueClass.getMethod("toString").getDeclaringClass());
+    } catch (NoSuchMethodException e) {
+      return false;
+    }
+  }
 }

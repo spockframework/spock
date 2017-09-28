@@ -174,7 +174,27 @@ then:
     e.message.contains("barney.setName")
   }
 
-  static class Person {}
+
+  def "renders with dump() if no better toString exists"() {
+    when:
+    runner.runFeatureBody("""
+def list = Mock(List)
+def person = new org.spockframework.smoke.mock.TooFewInvocations.Person(age: 18, name: 'Foo')
+
+when:
+list.add(person)
+
+then:
+1 * list.add('bar')
+    """)
+
+    then:
+    TooFewInvocationsError e = thrown()
+    e.message.trim() =~ /(?m)^\Q1 * list.add(<org.spockframework.smoke.mock.TooFewInvocations\E.Person@\w+ name=Foo age=18>\)$/
+  }
+
+  static class Person {
     String name
     int age
+  }
 }

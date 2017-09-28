@@ -17,11 +17,9 @@
 package org.spockframework.mock.runtime;
 
 import org.spockframework.mock.*;
-import org.spockframework.util.TextUtil;
+import org.spockframework.util.*;
 
 import java.util.*;
-
-import org.codehaus.groovy.runtime.DefaultGroovyMethods;
 
 /**
  *
@@ -98,7 +96,7 @@ public class MockInvocation implements IMockInvocation {
 
   private String render(List<Object> arguments) {
     List<String> strings = new ArrayList<>();
-    for (Object arg : arguments) strings.add(DefaultGroovyMethods.inspect(arg));
+    for (Object arg : arguments) strings.add(RenderUtil.inspectOrDump(arg));
     return TextUtil.join(", ", strings);
   }
 }

@@ -18,24 +18,24 @@ package org.spockframework.util;
  * Utility methods applicable to (almost) any object. Includes null-safe variants of methods on class Object.
  */
 public abstract class ObjectUtil {
-  public static boolean equals(Object obj1, Object obj2) {
+  public static boolean equals(@Nullable Object obj1, @Nullable Object obj2) {
     if (obj1 == null) return obj2 == null;
     return obj1.equals(obj2);
   }
 
-  public static int hashCode(Object obj) {
+  public static int hashCode(@Nullable Object obj) {
     return obj == null ? 0 : obj.hashCode();
   }
 
-  public static String toString(Object obj) {
+  public static String toString(@Nullable Object obj) {
     return obj == null ? "null" : obj.toString();
   }
 
-  public static Class<?> getClass(Object obj) {
+  public static Class<?> getClass(@Nullable Object obj) {
     return obj == null ? null : obj.getClass();
   }
 
-  public static Class<?> voidAwareGetClass(Object obj) {
+  public static Class<?> voidAwareGetClass(@Nullable Object obj) {
     return obj == null ? void.class : obj.getClass();
   }
 
@@ -52,7 +52,7 @@ public abstract class ObjectUtil {
     return type.isInstance(obj) ? (T) obj : null;
   }
 
-  public static <T extends Comparable<T>> int compare(T comparable1, T comparable2) {
+  public static <T extends Comparable<T>> int compare(@Nullable T comparable1, @Nullable T comparable2) {
     if (comparable1 == null && comparable2 == null) return 0;
     if (comparable1 == null) return -1;
     if (comparable2 == null) return 1;

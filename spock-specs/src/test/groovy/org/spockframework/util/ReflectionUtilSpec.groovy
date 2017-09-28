@@ -14,8 +14,7 @@
 
 package org.spockframework.util
 
-import spock.lang.Specification
-import spock.lang.Stepwise
+import spock.lang.*
 
 class ReflectionUtilSpec extends Specification {
   def "get package name"() {
@@ -161,6 +160,23 @@ class ReflectionUtilSpec extends Specification {
 
     expect:
     ReflectionUtil.eraseTypes(types) == [Object, List, List]
+  }
+
+
+  def "detects overridden toString"(Class clazz) {
+    expect:
+    ReflectionUtil.isToStringOverridden(clazz)
+
+    where:
+    clazz << [String, ArrayList, AbstractCollection]
+  }
+
+  def "detects not overridden toString"(Class clazz) {
+    expect:
+    !ReflectionUtil.isToStringOverridden(clazz)
+
+    where:
+    clazz << [Object, Base, InvokeMe, Generics]
   }
 
   static class Base {

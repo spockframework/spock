@@ -3,7 +3,7 @@ import java.text.SimpleDateFormat
 plugins {
   id 'com.gradle.build-scan' version '1.9'
   id "base"
-  id "org.asciidoctor.gradle.asciidoctor" version "1.5.1"
+  id "org.asciidoctor.convert" version "1.5.6"
   id "jacoco"
   id "net.nemerosa.versioning" version "2.6.1"
 }

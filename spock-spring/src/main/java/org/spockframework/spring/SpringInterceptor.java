@@ -39,6 +39,7 @@ public class SpringInterceptor extends AbstractMethodInterceptor {
 
   @Override
   public void interceptInitializerMethod(IMethodInvocation invocation) throws Throwable {
+    invocation.proceed(); // needs to run before so that mocks are already initialized
     manager.prepareTestInstance(invocation.getInstance());
   }
 

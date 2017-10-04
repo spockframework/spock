@@ -13,6 +13,7 @@ import org.spockframework.runtime.extension.builtin.UnrollNameProviderSpec
 import org.spockframework.smoke.CleanupBlocks
 import org.spockframework.smoke.extension.ReportLogExtensionSpec
 import org.spockframework.smoke.extension.RestoreSystemPropertiesExtension
+import org.spockframework.smoke.extension.RetryFeatureExtensionSpec
 import org.spockframework.smoke.extension.TimeoutExtensionThreadAffinity
 import org.spockframework.smoke.extension.UseRestoreSystemPropertiesOnSpecClass
 import org.spockframework.smoke.mock.GroovySpiesThatAreGlobal
@@ -39,6 +40,7 @@ class AllTestsInParallelTest extends Specification {
     InvokingMocksFromMultipleThreads.class, // starts new threads, can fail on slow boxes
     CleanupBlocks.class, // use shared static field
     UnrollNameProviderSpec.class, // sets system properties
+    RetryFeatureExtensionSpec.class, // use timeouts, will fail on slow boxes
   ]
 
   def "all spock-spec tests in parallel mode"() {

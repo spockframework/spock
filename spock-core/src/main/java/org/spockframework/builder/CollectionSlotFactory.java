@@ -14,18 +14,19 @@
 
 package org.spockframework.builder;
 
+import org.spockframework.runtime.GroovyRuntimeUtil;
+import org.spockframework.util.MopUtil;
+
 import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.regex.Pattern;
-
-import org.spockframework.runtime.GroovyRuntimeUtil;
-import org.spockframework.util.MopUtil;
 
 import groovy.lang.MetaProperty;
 
 public class CollectionSlotFactory implements ISlotFactory {
   private static final Pattern pluralIESPattern = Pattern.compile(".*[^aeiouy]y", Pattern.CASE_INSENSITIVE);
 
+  @Override
   public ISlot create(Object owner, Type ownerType, String name) {
     String plural = toPluralForm(name);
     MetaProperty property = GroovyRuntimeUtil.getMetaClass(owner).getMetaProperty(plural);

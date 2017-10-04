@@ -9,10 +9,12 @@
   <spock:mock id="serviceMock" class="org.spockframework.spring.IService1"/>
   <spock:stub id="serviceStub" class="org.spockframework.spring.IService1"/>
   <spock:spy id="serviceSpy" class="org.spockframework.spring.Service2"/>
+  <spock:wrapWithSpy ref="nonMock"/>
 
   <bean id="service2" class="org.spockframework.spring.xml.SpockMockFactoryBean">
     <constructor-arg value="org.spockframework.spring.IService2"/>
   </bean>
 
   <bean id="nonMock" class="java.util.ArrayList"/>
+  <bean id="abstractBean" class="java.util.ArrayList" abstract="true"/>
 </beans>

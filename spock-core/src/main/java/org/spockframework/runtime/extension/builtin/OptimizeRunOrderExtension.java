@@ -14,14 +14,12 @@
 
 package org.spockframework.runtime.extension.builtin;
 
-import java.io.IOException;
-
-import org.spockframework.runtime.AbstractRunListener;
-import org.spockframework.runtime.SpecRunHistory;
+import org.spockframework.runtime.*;
 import org.spockframework.runtime.extension.AbstractGlobalExtension;
 import org.spockframework.runtime.model.*;
-
 import spock.config.RunnerConfiguration;
+
+import java.io.IOException;
 
 /**
  * Inspired from JUnit's MaxCore.
@@ -30,9 +28,10 @@ import spock.config.RunnerConfiguration;
 public class OptimizeRunOrderExtension extends AbstractGlobalExtension {
   private RunnerConfiguration configuration;
 
+  @Override
   public void visitSpec(SpecInfo spec) {
     if (!configuration.optimizeRunOrder) return;
-    
+
     final SpecRunHistory history = new SpecRunHistory(spec.getReflection().getName());
     safeLoadFromDisk(history);
     history.sortFeatures(spec);

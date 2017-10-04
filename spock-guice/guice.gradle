@@ -1,6 +1,6 @@
 apply from: script("publishMaven")
 
-displayName = "Spock Framework - Guice Module"
+ext.displayName = "Spock Framework - Guice Module"
 
 description = "Spock's Guice Module provides support for testing Guice 2/3 based applications."
 
@@ -9,4 +9,22 @@ dependencies {
   compile "com.google.inject:guice:3.0", provided
   // surfaces in the Guice API; groovyc complains if we don't add it
   compile "aopalliance:aopalliance:1.0", internal
+}
+
+jar {
+  manifest {
+    attributes(
+      'Created-By': "${System.properties['java.version']} (${System.properties['java.vendor']} ${System.properties['java.vm.version']})".toString(),
+      'Build-Date': buildDate,
+      'Build-Time': buildTime,
+      'Build-Revision': versioning.info.commit,
+      'Specification-Title': project.name,
+      'Specification-Version': baseVersion,
+      'Specification-Vendor': 'spockframework.org',
+      'Implementation-Title': project.name,
+      'Implementation-Version': variantLessVersion,
+      'Implementation-Vendor': 'spockframework.org',
+      'Automatic-Module-Name': 'org.spockframework.guice'
+    )
+  }
 }

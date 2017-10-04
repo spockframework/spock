@@ -42,15 +42,15 @@ $(document).ready(function() {
 
 function drawPieCharts() {
   $("h1 .pie").peity("pie", {
-    colours: ["#468847", "#B94A48", "#D3D3D3"],
+    fill: ["#468847", "#B94A48", "#D3D3D3"],
     diameter: 39
   });
   $("h2 .pie").peity("pie", {
-    colours: ["#468847", "#B94A48", "#D3D3D3"],
+    fill: ["#468847", "#B94A48", "#D3D3D3"],
     diameter: 27
   });
   $("h3 .pie").peity("pie", {
-    colours: ["#468847", "#B94A48", "#D3D3D3"],
+    fill: ["#468847", "#B94A48", "#D3D3D3"],
     diameter: 25
   });
   $(".pieContainer").tooltip();
@@ -388,6 +388,12 @@ function generateReportModel() {
           addToMultimap(distinctTags, tag.key, tag)
         }
       });
+      _.each(feature.iterations, function(iteration) {
+          iteration.startTime = new Date(iteration.start).getTime();
+          iteration.endTime = new Date(iteration.end).getTime();
+          iteration.duration = iteration.endTime - iteration.startTime;
+
+      })
     })
   });
   var specsByPackage = _.groupBy(specs, "package");

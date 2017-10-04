@@ -14,20 +14,20 @@
 
 package org.spockframework.runtime.extension.builtin;
 
-import org.junit.rules.MethodRule;
-import org.junit.runners.model.FrameworkMethod;
-import org.junit.runners.model.Statement;
-
 import org.spockframework.runtime.extension.IMethodInvocation;
 import org.spockframework.runtime.model.FieldInfo;
 
 import java.util.List;
+
+import org.junit.rules.MethodRule;
+import org.junit.runners.model.*;
 
 public class MethodRuleInterceptor extends AbstractRuleInterceptor {
   MethodRuleInterceptor(List<FieldInfo> ruleFields) {
     super(ruleFields);
   }
 
+  @Override
   public void intercept(final IMethodInvocation invocation) throws Throwable {
     Statement statement = createBaseStatement(invocation);
     FrameworkMethod method = createFrameworkMethod(invocation);

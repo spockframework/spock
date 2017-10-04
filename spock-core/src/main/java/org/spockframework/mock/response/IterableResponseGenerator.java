@@ -16,11 +16,10 @@
 
 package org.spockframework.mock.response;
 
-import java.util.Iterator;
-
-import org.spockframework.mock.IChainableResponseGenerator;
-import org.spockframework.mock.IMockInvocation;
+import org.spockframework.mock.*;
 import org.spockframework.runtime.GroovyRuntimeUtil;
+
+import java.util.Iterator;
 
 /**
  * Generates result values from an iterable object. If the iterator has no more
@@ -36,10 +35,12 @@ public class IterableResponseGenerator implements IChainableResponseGenerator {
     iterator = GroovyRuntimeUtil.asIterator(iterable);
   }
 
+  @Override
   public boolean isAtEndOfCycle() {
     return !iterator.hasNext();
   }
 
+  @Override
   public Object respond(IMockInvocation invocation) {
     if (iterator.hasNext()) nextValue = iterator.next();
     return GroovyRuntimeUtil.coerce(nextValue, invocation.getMethod().getReturnType());

@@ -17,13 +17,22 @@ package org.spockframework.runtime;
 import org.spockframework.runtime.model.*;
 
 public class AbstractRunListener implements IRunListener {
+  @Override
   public void beforeSpec(SpecInfo spec) {}
+  @Override
   public void beforeFeature(FeatureInfo feature) {}
+  @Override
   public void beforeIteration(IterationInfo iteration) {}
+  @Override
   public void afterIteration(IterationInfo iteration) {}
+  @Override
   public void afterFeature(FeatureInfo feature) {}
+  @Override
   public void afterSpec(SpecInfo spec) {}
+  @Override
   public void error(ErrorInfo error) {}
+  @Override
   public void specSkipped(SpecInfo spec) {}
+  @Override
   public void featureSkipped(FeatureInfo feature) {}
 }

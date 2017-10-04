@@ -16,10 +16,10 @@
 
 package org.spockframework.mock.constraint;
 
-import groovy.lang.Closure;
-
 import org.spockframework.mock.IArgumentConstraint;
 import org.spockframework.runtime.GroovyRuntimeUtil;
+
+import groovy.lang.Closure;
 
 /**
  *
@@ -32,6 +32,7 @@ public class CodeArgumentConstraint implements IArgumentConstraint {
     this.code = code;
   }
 
+  @Override
   public boolean isSatisfiedBy(Object argument) {
     return GroovyRuntimeUtil.isTruthy(GroovyRuntimeUtil.invokeClosure(code, argument));
   }

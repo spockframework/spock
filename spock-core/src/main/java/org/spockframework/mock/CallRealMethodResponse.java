@@ -25,6 +25,7 @@ public class CallRealMethodResponse implements IDefaultResponse {
 
   private CallRealMethodResponse() {}
 
+  @Override
   public Object respond(IMockInvocation invocation) {
     return invocation.callRealMethod();
   }

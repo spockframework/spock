@@ -31,6 +31,7 @@ public class TypeArgumentConstraint implements IArgumentConstraint {
     this.constraint = constraint;
   }
 
+  @Override
   public boolean isSatisfiedBy(Object argument) {
     return type.isInstance(argument) && constraint.isSatisfiedBy(argument);
   }

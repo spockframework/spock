@@ -16,16 +16,15 @@
 
 package org.spockframework.runtime.model;
 
-import java.util.*;
+import org.spockframework.util.*;
 
-import org.spockframework.util.Nullable;
-import org.spockframework.util.ReflectionUtil;
+import java.util.*;
 
 /**
  * @author Peter Niederwieser
  */
 public class ExpressionInfo implements Iterable<ExpressionInfo> {
-  public static final String TEXT_NOT_AVAILABLE = new String("(n/a)");
+  public static final String TEXT_NOT_AVAILABLE = "(n/a)";
   /**
    * Indicates that an expression's value is not available, either because the
    * expression has no value (e.g. def foo = 42), or because it wasn't evaluated
@@ -106,7 +105,7 @@ public class ExpressionInfo implements Iterable<ExpressionInfo> {
   public void setRenderedValue(String renderedValue) {
     this.renderedValue = renderedValue;
   }
-  
+
   public String getEffectiveRenderedValue() {
     return renderedValue != null ? renderedValue : text;
   }
@@ -125,16 +124,18 @@ public class ExpressionInfo implements Iterable<ExpressionInfo> {
     anchor = anchor.shiftVertically(numLines);
   }
 
+  @Override
   public Iterator<ExpressionInfo> iterator() {
-    List<ExpressionInfo> list = new ArrayList<ExpressionInfo>();
+    List<ExpressionInfo> list = new ArrayList<>();
     collectPrefix(list, false);
     return list.iterator();
   }
 
   public Iterable<ExpressionInfo> inPrefixOrder(final boolean skipIrrelevant) {
     return new Iterable<ExpressionInfo>() {
+      @Override
       public Iterator<ExpressionInfo> iterator() {
-        List<ExpressionInfo> list = new ArrayList<ExpressionInfo>();
+        List<ExpressionInfo> list = new ArrayList<>();
         collectPrefix(list, skipIrrelevant);
         return list.iterator();
       }
@@ -142,13 +143,13 @@ public class ExpressionInfo implements Iterable<ExpressionInfo> {
   }
 
   public List<ExpressionInfo> inPostfixOrder(final boolean skipIrrelevant) {
-    List<ExpressionInfo> list = new ArrayList<ExpressionInfo>();
+    List<ExpressionInfo> list = new ArrayList<>();
     collectPostfix(list, skipIrrelevant);
     return list;
   }
 
   public Iterable<ExpressionInfo> inCustomOrder(boolean skipIrrelevant, Comparator<ExpressionInfo> comparator) {
-    List<ExpressionInfo> list = new ArrayList<ExpressionInfo>();
+    List<ExpressionInfo> list = new ArrayList<>();
     collectPrefix(list, skipIrrelevant);
     Collections.sort(list, comparator);
     return list;

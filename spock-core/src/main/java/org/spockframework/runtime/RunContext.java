@@ -14,25 +14,25 @@
 
 package org.spockframework.runtime;
 
+import org.junit.runners.model.RunnerScheduler;
+import org.spockframework.builder.DelegatingScript;
+import org.spockframework.runtime.condition.*;
+import org.spockframework.runtime.model.SpecInfo;
+import org.spockframework.util.*;
+import spock.config.RunnerConfiguration;
+
 import java.io.File;
 import java.security.AccessControlException;
 import java.util.*;
 
 import org.junit.runner.notification.RunNotifier;
 
-import org.junit.runners.model.RunnerScheduler;
-import org.spockframework.builder.DelegatingScript;
-import org.spockframework.runtime.condition.*;
-import org.spockframework.runtime.model.SpecInfo;
-import org.spockframework.util.*;
-
-import spock.config.RunnerConfiguration;
-
 public class RunContext {
   private static final ThreadLocal<LinkedList<RunContext>> contextStacks =
       new ThreadLocal<LinkedList<RunContext>>() {
+        @Override
         protected LinkedList<RunContext> initialValue() {
-          return new LinkedList<RunContext>();
+          return new LinkedList<>();
         }
       };
 
@@ -50,7 +50,7 @@ public class RunContext {
     this.spockUserHome = spockUserHome;
     this.configurationScript = configurationScript;
     this.globalExtensionClasses = globalExtensionClasses;
-    globalExtensionRegistry = new GlobalExtensionRegistry(globalExtensionClasses, Arrays.asList(new RunnerConfiguration()));
+    globalExtensionRegistry = new GlobalExtensionRegistry(globalExtensionClasses, Collections.singletonList(new RunnerConfiguration()));
   }
 
   private void start() {
@@ -133,9 +133,9 @@ public class RunContext {
       @Nullable DelegatingScript configurationScript,
       List<Class<?>> extensionClasses, boolean inheritParentExtensions,
       IThrowableFunction<RunContext, T, U> command) throws U {
-    List<Class<?>> allExtensionClasses = new ArrayList<Class<?>>(extensionClasses);
+    List<Class<?>> allExtensionClasses = new ArrayList<>(extensionClasses);
     if (inheritParentExtensions) allExtensionClasses.addAll(getCurrentExtensions());
-    
+
     RunContext context = new RunContext(name, spockUserHome, configurationScript, allExtensionClasses);
     LinkedList<RunContext> contextStack = contextStacks.get();
     contextStack.addFirst(context);
@@ -175,26 +175,16 @@ public class RunContext {
     if (context == null) return Collections.emptyList();
     return context.globalExtensionClasses;
   }
-  
+
   // This context will stay around until the thread dies.
   // It would be more accurate to remove the context once the test run
   // has finished, but the JUnit Runner SPI doesn't provide an adequate hook.
   // That said, since most environments fork a new JVM for each test run,
   // this shouldn't be much of a problem in practice.
   private static RunContext createBottomContext() {
-    File spockUserHome = new File(env("spock.user.home", "SPOCK_USER_HOME", System.getProperty("user.home") + "/.spock"));
+    File spockUserHome = SpockUserHomeUtil.getSpockUserHome();
     DelegatingScript script = new ConfigurationScriptLoader(spockUserHome).loadAutoDetectedScript();
     List<Class<?>> classes = new ExtensionClassesLoader().loadClassesFromDefaultLocation();
     return new RunContext("default", spockUserHome, script, classes);
-  }
-
-  private static String env(String systemPropertyKey, String envVariableKey, String defaultValue) {
-    String value = System.getProperty(systemPropertyKey);
-    if (value != null) return value;
-
-    value = System.getenv(envVariableKey);
-    if (value != null) return value;
-
-    return defaultValue;
   }
 }

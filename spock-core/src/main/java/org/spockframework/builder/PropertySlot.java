@@ -14,11 +14,10 @@
 
 package org.spockframework.builder;
 
-import java.lang.reflect.*;
-
 import org.spockframework.gentyref.GenericTypeReflector;
-import org.spockframework.util.MopUtil;
-import org.spockframework.util.UnreachableCodeError;
+import org.spockframework.util.*;
+
+import java.lang.reflect.*;
 
 import groovy.lang.MetaProperty;
 
@@ -33,6 +32,7 @@ public class PropertySlot implements ISlot {
     this.property = property;
   }
 
+  @Override
   public Type getType() {
     // could possibly add fast path here, but be careful (inner classes etc.)
 
@@ -45,6 +45,7 @@ public class PropertySlot implements ISlot {
     throw new UnreachableCodeError();
   }
 
+  @Override
   public void write(Object value) {
     property.setProperty(owner, value);
   }

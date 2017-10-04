@@ -1,14 +1,13 @@
 package org.spockframework.spring
 
-import spock.mock.DetachedMockFactory
 import org.spockframework.mock.MockUtil
+import spock.lang.Specification
+import spock.mock.DetachedMockFactory
+
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.context.annotation.Bean
-import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.*
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.support.AnnotationConfigContextLoader
-
-import spock.lang.Specification
 
 @ContextConfiguration(loader=AnnotationConfigContextLoader)
 class MockInjectionWithEmbeddedConfig extends Specification {
@@ -18,12 +17,12 @@ class MockInjectionWithEmbeddedConfig extends Specification {
     private DetachedMockFactory factory = new DetachedMockFactory()
 
     @Bean
-    public IService1 service1() {
+    IService1 service1() {
         return factory.Mock(IService1, name: "service1")
     }
 
     @Bean
-    public IService2 service2() {
+    IService2 service2() {
         return factory.Mock(IService2, name: "service2")
     }
   }
@@ -33,6 +32,8 @@ class MockInjectionWithEmbeddedConfig extends Specification {
 
   @Autowired
   IService2 service2
+
+  List normalMock = Mock()
 
   def "Injected services are mocks"() {
     expect:
@@ -54,6 +55,14 @@ class MockInjectionWithEmbeddedConfig extends Specification {
     expect:
     service1.generateString() == null
     service2.generateQuickBrownFox() == null
+  }
 
+  def "normal mocks work too"() {
+    when:
+    def result = normalMock.get(0)
+
+    then:
+    result == "hello"
+    1 * normalMock.get(_) >> 'hello'
   }
 }

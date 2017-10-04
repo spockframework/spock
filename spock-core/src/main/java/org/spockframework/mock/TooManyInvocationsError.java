@@ -16,21 +16,21 @@
 
 package org.spockframework.mock;
 
-import java.util.List;
-import java.util.Map;
+import org.spockframework.util.*;
 
-import org.spockframework.util.CollectionUtil;
-import org.spockframework.util.IMultiset;
-import org.spockframework.util.LinkedHashMultiset;
+import java.io.IOException;
+import java.util.*;
 
 /**
  * Thrown to indicate that a mandatory interaction matched too many invocations.
- * 
+ *
  * @author Peter Niederwieser
  */
 public class TooManyInvocationsError extends InteractionNotSatisfiedError {
-  private final IMockInteraction interaction;
-  private final List<IMockInvocation> acceptedInvocations;
+  private static final long serialVersionUID = 1L;
+
+  private final transient IMockInteraction interaction;
+  private final transient List<IMockInvocation> acceptedInvocations;
   private String message;
 
   public TooManyInvocationsError(IMockInteraction interaction, List<IMockInvocation> acceptedInvocations) {
@@ -50,7 +50,7 @@ public class TooManyInvocationsError extends InteractionNotSatisfiedError {
   public synchronized String getMessage() {
     if (message != null) return message;
 
-    IMultiset<IMockInvocation> uniqueInvocations = new LinkedHashMultiset<IMockInvocation>();
+    IMultiset<IMockInvocation> uniqueInvocations = new LinkedHashMultiset<>();
     for (IMockInvocation invocation : CollectionUtil.reverse(acceptedInvocations)) {
       uniqueInvocations.add(invocation);
     }
@@ -75,5 +75,10 @@ public class TooManyInvocationsError extends InteractionNotSatisfiedError {
 
     message = builder.toString();
     return message;
+  }
+  private void writeObject(java.io.ObjectOutputStream out) throws IOException {
+    // create the message so that it is available for serialization
+    getMessage();
+    out.defaultWriteObject();
   }
 }

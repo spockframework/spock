@@ -17,6 +17,7 @@ package org.spockframework.runtime.condition;
 import org.spockframework.runtime.GroovyRuntimeUtil;
 
 public class DiffedObjectAsStringRenderer implements IObjectRenderer<Object> {
+  @Override
   public String render(Object object) {
     return GroovyRuntimeUtil.toString(object) + "\n";
   }

@@ -16,28 +16,17 @@
 
 package org.spockframework.tapestry;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
-import org.apache.tapestry5.ioc.AnnotationProvider;
-import org.apache.tapestry5.ioc.Registry;
-import org.apache.tapestry5.ioc.RegistryBuilder;
-import org.apache.tapestry5.ioc.annotations.Autobuild;
-import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.ioc.annotations.InjectService;
-
-import org.spockframework.runtime.extension.AbstractMethodInterceptor;
-import org.spockframework.runtime.extension.IMethodInvocation;
-import org.spockframework.runtime.model.FieldInfo;
-import org.spockframework.runtime.model.SpecInfo;
+import org.spockframework.runtime.extension.*;
+import org.spockframework.runtime.model.*;
 import org.spockframework.util.ReflectionUtil;
+import spock.lang.*;
 
-import spock.lang.Shared;
-import spock.lang.Specification;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.*;
+import java.util.*;
+
+import org.apache.tapestry5.ioc.*;
+import org.apache.tapestry5.ioc.annotations.*;
 
 /**
  * Controls creation, startup and shutdown of the Tapestry container,
@@ -104,7 +93,7 @@ public class TapestryInterceptor extends AbstractMethodInterceptor {
   }
 
   private List<Method> findAllBeforeRegistryCreatedMethods() {
-    List<Method> methods = new ArrayList<Method>();
+    List<Method> methods = new ArrayList<>();
 
     for (SpecInfo curr : spec.getSpecsTopToBottom()) {
       Method method = ReflectionUtil.getDeclaredMethodByName(curr.getReflection(), "beforeRegistryCreated");
@@ -138,6 +127,7 @@ public class TapestryInterceptor extends AbstractMethodInterceptor {
 
   private AnnotationProvider createAnnotationProvider(final FieldInfo field) {
     return new AnnotationProvider() {
+      @Override
       public <T extends Annotation> T getAnnotation(Class<T> annotationClass) {
         return field.getAnnotation(annotationClass);
       }

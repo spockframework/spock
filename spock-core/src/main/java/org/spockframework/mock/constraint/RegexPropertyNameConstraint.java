@@ -14,12 +14,10 @@
 
 package org.spockframework.mock.constraint;
 
-import java.util.regex.Pattern;
-
-import org.spockframework.mock.IInvocationConstraint;
-import org.spockframework.mock.IMockInvocation;
-import org.spockframework.mock.IMockMethod;
+import org.spockframework.mock.*;
 import org.spockframework.runtime.GroovyRuntimeUtil;
+
+import java.util.regex.Pattern;
 
 /**
  *
@@ -32,6 +30,7 @@ public class RegexPropertyNameConstraint implements IInvocationConstraint {
     pattern = Pattern.compile(regex);
   }
 
+  @Override
   public boolean isSatisfiedBy(IMockInvocation invocation) {
     IMockMethod method = invocation.getMethod();
     String propertyName = GroovyRuntimeUtil.getterMethodToPropertyName(

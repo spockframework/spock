@@ -16,12 +16,12 @@ package spock.mock;
 
 import java.util.Map;
 
-import groovy.lang.Closure;
-
-import org.spockframework.util.Beta;
 import org.spockframework.lang.SpecInternals;
-import org.spockframework.runtime.InvalidSpecException;
 import org.spockframework.runtime.GroovyRuntimeUtil;
+import org.spockframework.runtime.InvalidSpecException;
+import org.spockframework.util.Beta;
+
+import groovy.lang.Closure;
 
 /**
  * Spock's mocking API primarily consists of the following factory methods:
@@ -66,7 +66,7 @@ import org.spockframework.runtime.GroovyRuntimeUtil;
  * }
  * </pre>
  */
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "SameReturnValue"})
 public class MockingApi extends SpecInternals implements MockFactory {
   /**
    * Encloses one or more interaction definitions in a <tt>then</tt> block.
@@ -557,6 +557,32 @@ public class MockingApi extends SpecInternals implements MockFactory {
   public <T> T Spy(Class<T> type) {
     invalidMockCreation();
     return null;
+  }
+
+  /**
+   * Creates a spy wrapping a provided instance.
+   *
+   * Example:
+   *
+   * <pre>
+   *   def person = Spy(new Person()) // type is Person.class, name is "person"
+   * </pre>
+   *
+   * You need to use the spy returned by this method instead of the original instance,
+   * otherwise interactions won't be picked up.
+   *
+   * @since 1.1
+   *
+   * @param obj the instance to spy
+   * @param <T> the class type of the spy
+   *
+   * @return a spy with the specified type
+   */
+  @Override
+  @Beta
+  public <T> T Spy(T obj) {
+      invalidMockCreation();
+      return null;
   }
 
   /**

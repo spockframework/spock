@@ -17,6 +17,7 @@
 package org.spockframework.smoke.condition
 
 import spock.lang.Issue
+
 import static java.lang.Thread.State.NEW
 
 /**
@@ -261,6 +262,34 @@ NEW
     }
   }
 
+  def "variable with default to string is dump()ed"() {
+    def x = new DefaultToString()
+    expect:
+    isRendered """
+x == null
+| |
+| false
+${x.dump()}
+    """, {
+      assert x == null
+    }
+  }
+
+  def "arrays of variables with default to string is dump()ed"() {
+    def a = new DefaultToString()
+    def b = new DefaultToString()
+    DefaultToString[] x = [a, b]
+    expect:
+    isRendered """
+x == null
+| |
+| false
+[${a.dump()}, ${b.dump()}]
+    """, {
+      assert x == null
+    }
+  }
+
   static class SingleLineToString {
     String toString() {
       "single line"
@@ -297,6 +326,11 @@ NEW
     String toString() {
       throw new UnsupportedOperationException()
     }
+  }
+
+
+  static class DefaultToString {
+    int a = 4
   }
 
   enum EnumWithToString {

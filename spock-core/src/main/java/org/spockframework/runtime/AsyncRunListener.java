@@ -14,14 +14,14 @@
 
 package org.spockframework.runtime;
 
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
-
 import org.spockframework.runtime.model.*;
 import org.spockframework.util.IStoppable;
 
+import java.util.concurrent.*;
+
 public class AsyncRunListener implements IRunListener, IStoppable {
   private static final Runnable STOP = new Runnable() {
+    @Override
     public void run() {
       throw new IllegalStateException("should never run");
     }
@@ -29,7 +29,7 @@ public class AsyncRunListener implements IRunListener, IStoppable {
 
   private final IRunListener delegate;
   private final Thread workerThread;
-  private final BlockingQueue<Runnable> events = new LinkedBlockingQueue<Runnable>();
+  private final BlockingQueue<Runnable> events = new LinkedBlockingQueue<>();
   private volatile boolean stopped = false;
 
   public AsyncRunListener(String threadName, IRunListener delegate) {
@@ -56,77 +56,96 @@ public class AsyncRunListener implements IRunListener, IStoppable {
     workerThread.start();
   }
 
+  @Override
   public void stop() throws InterruptedException {
     addEvent(STOP);
     workerThread.join();
   }
 
+  @Override
   public void beforeSpec(final SpecInfo spec) {
     addEvent(new Runnable() {
+      @Override
       public void run() {
         delegate.beforeSpec(spec);
       }
-    });  
+    });
   }
 
+  @Override
   public void beforeFeature(final FeatureInfo feature) {
     addEvent(new Runnable() {
+      @Override
       public void run() {
         delegate.beforeFeature(feature);
       }
     });
   }
 
+  @Override
   public void beforeIteration(final IterationInfo iteration) {
     addEvent(new Runnable() {
+      @Override
       public void run() {
         delegate.beforeIteration(iteration);
       }
     });
   }
 
+  @Override
   public void afterIteration(final IterationInfo iteration) {
     addEvent(new Runnable() {
+      @Override
       public void run() {
         delegate.afterIteration(iteration);
       }
     });
   }
 
+  @Override
   public void afterFeature(final FeatureInfo feature) {
     addEvent(new Runnable() {
+      @Override
       public void run() {
         delegate.afterFeature(feature);
       }
     });
   }
 
+  @Override
   public void afterSpec(final SpecInfo spec) {
     addEvent(new Runnable() {
+      @Override
       public void run() {
         delegate.afterSpec(spec);
       }
     });
   }
 
+  @Override
   public void error(final ErrorInfo error) {
     addEvent(new Runnable() {
+      @Override
       public void run() {
         delegate.error(error);
       }
     });
   }
 
+  @Override
   public void specSkipped(final SpecInfo spec) {
     addEvent(new Runnable() {
+      @Override
       public void run() {
         delegate.specSkipped(spec);
       }
     });
   }
 
+  @Override
   public void featureSkipped(final FeatureInfo feature) {
     addEvent(new Runnable() {
+      @Override
       public void run() {
         delegate.featureSkipped(feature);
       }

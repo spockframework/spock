@@ -14,19 +14,16 @@
 
 package org.spockframework.runtime;
 
+import org.spockframework.util.*;
+
 import java.io.PrintStream;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
-import org.spockframework.util.IStoppable;
-import org.spockframework.util.StringMessagePrintStream;
-import org.spockframework.util.TeePrintStream;
-import org.spockframework.util.ThreadSafe;
-
 @ThreadSafe
 public class StandardStreamsCapturer implements IStoppable {
   private final Set<IStandardStreamsListener> standardStreamsListeners =
-    new CopyOnWriteArraySet<IStandardStreamsListener>();
+    new CopyOnWriteArraySet<>();
 
   private volatile TeePrintStream outStream;
   private volatile TeePrintStream errStream;
@@ -66,6 +63,7 @@ public class StandardStreamsCapturer implements IStoppable {
     }
   }
 
+  @Override
   public synchronized void stop() {
     stopCapture(System.out, outStream, true);
     stopCapture(System.err, errStream, false);

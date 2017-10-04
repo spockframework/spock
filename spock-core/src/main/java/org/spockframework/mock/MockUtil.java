@@ -14,15 +14,12 @@
 
 package org.spockframework.mock;
 
+import org.spockframework.mock.runtime.*;
+import org.spockframework.util.*;
+import spock.lang.Specification;
+
 import java.lang.reflect.Type;
 import java.util.Map;
-
-import org.spockframework.mock.runtime.CompositeMockFactory;
-import org.spockframework.mock.runtime.MockConfiguration;
-import org.spockframework.util.Beta;
-import org.spockframework.util.Nullable;
-
-import spock.lang.Specification;
 
 /**
  * Detects mock objects and provides information about them.
@@ -94,6 +91,26 @@ public class MockUtil {
 
     Object mock = CompositeMockFactory.INSTANCE.createDetached(
         new MockConfiguration(name, type, nature, implementation, options), classloader);
+    return mock;
+  }
+
+  /**
+   * Creates a detached mock.
+   *
+   * @param name the name
+   * @param obj the existing object to wrap
+   * @param nature the nature
+   * @param implementation the implementation
+   * @param options the options
+   * @param classloader the classloader to use
+   * @return the mock
+   */
+  @Beta
+  public Object createDetachedMock(@Nullable String name, Object obj, MockNature nature,
+      MockImplementation implementation, Map<String, Object> options,  ClassLoader classloader) {
+
+    Object mock = CompositeMockFactory.INSTANCE.createDetached(
+        new MockConfiguration(name, obj.getClass(), obj, nature, implementation, options), classloader);
     return mock;
   }
 }

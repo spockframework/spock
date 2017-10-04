@@ -2,22 +2,27 @@ language: java
 
 sudo: false # run on container-based infrastructure
 
+
 before_cache:
   - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -f $HOME/.gradle/user-id.txt.lock
+  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+  - rm -fr $HOME/.gradle/caches/*/scripts/
+  - rm -fr $HOME/.gradle/caches/*/scripts-remapped/
+  - rm -fr $HOME/.gradle/caches/*/fileHashes/
+  - rm -fr $HOME/.gradle/jars*
 cache:
   directories:
     - $HOME/.gradle/caches/
     - $HOME/.gradle/wrapper/
 
+dist: precise # downgrade to avoid jdk7 SSL Bug https://github.com/docker-library/openjdk/issues/117
 jdk:
-  - openjdk6
-  - openjdk7
+  - oraclejdk7 # openjdk7 has SSL Bug avoid jdk7 SSL Bug https://github.com/docker-library/openjdk/issues/117
   - oraclejdk8
 
 env:
   matrix:
-    - VARIANT=2.0
-    - VARIANT=2.3
     - VARIANT=2.4
   global:
     # SIGNING_PASSWORD
@@ -26,24 +31,20 @@ env:
     - secure: "Y2PbI07I8M8k1qkwN671HdcLPPpnjATWya/m4PDIICioXkkdJrQzpj5x57efAJEWx2upI8PpgGm8ekUd2F/6l1rq0n4DnGHwGTNe1PDAXUw5qFt66RnqrfIVh2eUvPuQk6bXczLV39GksqqD1T/HS6KofknXpHKzk/JeCiiGoxI="
     # GITHUB_TOKEN
     - secure: "YhBI9LWk4AlRSOmt0aBo0TphuVIzHIVdPGClg35S1b2I6xbc0gRIVXb+ySBZIhFkqaicPFTjO2FXerXEr6SJwz5y3LvA5oBWJC4U/9FdegoP9PopZwiAKA0KLTuBMFrTAjTHAmwJePO7a8yqNCbjKfwEc9hbM64YU+sSXdUJfEU="
-
-matrix:
-  exclude:
-    # Groovy 2.0 doesn't support Java 8
-    - jdk: oraclejdk8
-      env: VARIANT=2.0
-    # Reduce Travis workload (currently 5 concurrent builds are allowed)
-    # See travisCiBuild task for mandatory combinations
-    - jdk: oraclejdk8
-      env: VARIANT=2.3
-    - jdk: openjdk7
-      env: VARIANT=2.0
-    - jdk: openjdk7
-      env: VARIANT=2.4
+    - GRADLE_OPTS: "-Xmx768m -Xms256m -Xss1m"
 
 install: true
 
-script: ./gradlew travisCiBuild -Dvariant=$VARIANT
+# Undo _JAVA_OPTIONS environment variable (https://github.com/travis-ci/travis-ci/issues/8408)
+before_script:
+  - _JAVA_OPTIONS=
+
+script:
+  - ./gradlew --no-daemon --version
+  - ./gradlew --no-daemon travisCiBuild -Dvariant=$VARIANT --scan
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
 
 notifications:
   slack:

@@ -14,10 +14,8 @@
 
 package org.spockframework.smoke
 
-import spock.lang.Specification
-import spock.lang.FailsWith
-
-import org.spockframework.runtime.ConditionNotSatisfiedError
+import org.spockframework.runtime.*
+import spock.lang.*
 
 class WithBlockFailingConditions extends Specification {
   @FailsWith(ConditionNotSatisfiedError)
@@ -109,6 +107,31 @@ class WithBlockFailingConditions extends Specification {
 
     expect:
     helper(list)
+  }
+
+  @FailsWith(value = SpockAssertionError, reason = "Target of 'with' block must not be null")
+  def "with null fails"() {
+    expect:
+    with(null) {
+      size() == 42
+    }
+  }
+
+  @FailsWith(value = SpockAssertionError, reason = "Target of 'with' block must not be null")
+  def "with target null and incompatible type fails"() {
+    expect:
+    with(null, String) {
+      length() == 42
+    }
+  }
+
+  @FailsWith(value = SpockAssertionError, reason = "Expected target of 'with' block to have type '%s', but got '%s'")
+  def "with target and incompatible type fails"() {
+    def list = [1, 2, 3]
+    expect:
+    with(list, String) {
+      length() == 42
+    }
   }
 
   void helper(list) {

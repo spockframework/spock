@@ -16,15 +16,10 @@
 
 package org.spockframework.mock.runtime;
 
+import org.spockframework.mock.*;
+import org.spockframework.util.*;
+
 import java.util.*;
-
-import org.codehaus.groovy.runtime.DefaultGroovyMethods;
-
-import org.spockframework.mock.IMockInvocation;
-import org.spockframework.mock.IMockMethod;
-import org.spockframework.mock.IMockObject;
-import org.spockframework.mock.IResponseGenerator;
-import org.spockframework.util.TextUtil;
 
 /**
  *
@@ -44,22 +39,27 @@ public class MockInvocation implements IMockInvocation {
     this.realMethodInvoker = realMethodInvoker;
   }
 
+  @Override
   public IMockObject getMockObject() {
     return mockObject;
   }
 
+  @Override
   public IMockMethod getMethod() {
     return method;
   }
 
+  @Override
   public List<Object> getArguments() {
     return arguments;
   }
 
+  @Override
   public Object callRealMethod() {
     return realMethodInvoker.respond(this);
   }
 
+  @Override
   public Object callRealMethodWithArgs(final Object... arguments) {
       return realMethodInvoker.respond(new DelegatingMockInvocation(this) {
         @Override
@@ -95,8 +95,8 @@ public class MockInvocation implements IMockInvocation {
   }
 
   private String render(List<Object> arguments) {
-    List<String> strings = new ArrayList<String>();
-    for (Object arg : arguments) strings.add(DefaultGroovyMethods.inspect(arg));
+    List<String> strings = new ArrayList<>();
+    for (Object arg : arguments) strings.add(RenderUtil.inspectOrDump(arg));
     return TextUtil.join(", ", strings);
   }
 }

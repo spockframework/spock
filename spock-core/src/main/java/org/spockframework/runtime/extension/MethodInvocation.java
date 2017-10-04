@@ -16,9 +16,9 @@
 
 package org.spockframework.runtime.extension;
 
-import java.util.Iterator;
-
 import org.spockframework.runtime.model.*;
+
+import java.util.Iterator;
 
 /**
  *
@@ -46,42 +46,52 @@ public class MethodInvocation implements IMethodInvocation {
     interceptors = method.getInterceptors().iterator();
   }
 
+  @Override
   public SpecInfo getSpec() {
     return method.getParent();
   }
 
+  @Override
   public FeatureInfo getFeature() {
     return feature;
   }
 
+  @Override
   public IterationInfo getIteration() {
     return iteration;
   }
 
+  @Override
   public Object getSharedInstance() {
     return sharedInstance;
   }
 
+  @Override
   public Object getInstance() {
     return instance;
   }
 
+  @Override
   public Object getTarget() {
     return target;
   }
 
+  @Override
   public MethodInfo getMethod() {
     return method;
   }
 
+  @Override
   public Object[] getArguments() {
     return arguments;
   }
 
+  @Override
   public void setArguments(Object[] arguments) {
     this.arguments = arguments;
   }
 
+  @Override
   public void proceed() throws Throwable {
     if (interceptors.hasNext())
       interceptors.next().intercept(this);

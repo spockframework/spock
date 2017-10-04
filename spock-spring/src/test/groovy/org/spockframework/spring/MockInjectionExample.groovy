@@ -1,15 +1,14 @@
-package org.spockframework.spring;
+package org.spockframework.spring
 
 import org.spockframework.mock.MockUtil
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.test.context.ContextConfiguration;
-
+import org.springframework.test.context.ContextConfiguration
 import spock.lang.Specification
 
-import javax.inject.Named;
+import javax.inject.Named
 
-@ContextConfiguration(locations = "classpath:MockExamples-context.xml")
-public class MockInjectionExample extends Specification {
+@ContextConfiguration(locations = "MockExamples-context.xml")
+class MockInjectionExample extends Specification {
 
   @Autowired @Named('serviceMock')
   IService1 serviceMock
@@ -23,7 +22,10 @@ public class MockInjectionExample extends Specification {
 
   @Autowired @Named('service2')
   IService2 service2
-
+  
+  @Autowired @Named('nonMock')
+  ArrayList concreteSpy;
+  
   def "Injected services are mocks"() {
     expect:
     new MockUtil().isMock(serviceMock)
@@ -55,6 +57,14 @@ public class MockInjectionExample extends Specification {
     serviceSpy.generateQuickBrownFox() == "The quick brown fox jumps over the lazy dog."
     service2.generateQuickBrownFox() == null
 
+  }
+  
+  def "Spies can be created from concrete objects and injected"() {
+    when:
+    concreteSpy.size()
+
+    then:
+    1 * concreteSpy.size() >> 0
   }
 
 }

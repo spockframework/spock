@@ -16,16 +16,14 @@
 
 package spock.util
 
-import org.intellij.lang.annotations.Language
-import org.junit.runner.notification.RunListener
-import org.junit.runner.*
-
-import org.spockframework.util.NotThreadSafe
-import org.spockframework.util.IThrowableFunction
-import org.spockframework.runtime.RunContext
-import org.spockframework.runtime.ConfigurationScriptLoader
+import org.spockframework.runtime.*
+import org.spockframework.util.*
 
 import java.lang.reflect.Modifier
+
+import org.intellij.lang.annotations.Language
+import org.junit.runner.*
+import org.junit.runner.notification.RunListener
 
 /**
  * Utility class that allows to run (fragments of) specs programmatically.
@@ -40,7 +38,7 @@ class EmbeddedSpecRunner {
   boolean throwFailure = true
 
   List<RunListener> listeners = []
-  
+
   Closure configurationScript = null
   List<Class> extensionClasses = []
   boolean inheritParentExtensions = true
@@ -103,12 +101,13 @@ class EmbeddedSpecRunner {
     runClass(compiler.compileSpecBody(source))
   }
 
-  Result runFeatureBody(@Language(value = 'Groovy', prefix = "def 'a feature'() { ", suffix = '\n }')
+  Result runFeatureBody(@Language(value = 'Groovy',
+    prefix = "class ASpec extends spock.lang.Specification { def 'a feature'() { ", suffix = '\n } }')
                         String source) {
     runClass(compiler.compileFeatureBody(source))
   }
 
-  def withNewContext(Closure block) {
+  def <T> T withNewContext(Closure<T> block) {
     def context = RunContext.get()
     def newContextName = context.name + "/EmbeddedSpecRunner"
     def newSpockUserHome = new File(context.spockUserHome, "EmbeddedSpecRunner")

@@ -16,11 +16,10 @@
 
 package org.spockframework.runtime;
 
-import java.util.*;
-
-import org.spockframework.runtime.model.ExpressionInfo;
-import org.spockframework.runtime.model.TextPosition;
+import org.spockframework.runtime.model.*;
 import org.spockframework.util.*;
+
+import java.util.*;
 
 /**
  * @author Peter Niederwieser
@@ -52,7 +51,7 @@ public abstract class SpockRuntime {
         errorCollector.collectOrThrow(spockException); // this is our exception - it already has good message
         return;
       }
-    final ConditionNotSatisfiedError conditionNotSatisfiedError = new ConditionNotSatisfiedError(
+    final ConditionFailedWithExceptionError conditionNotSatisfiedError = new ConditionFailedWithExceptionError(
         new Condition(
             getValues(recorder),
             text,
@@ -161,12 +160,12 @@ public abstract class SpockRuntime {
     static MatcherCondition parse(Object target, String method, Object[] args, boolean safe) {
       if (safe) return null;
 
-      if (method.equals("call")) {
+      if ("call".equals(method)) {
         if (args.length != 1 || !HamcrestFacade.isMatcher(args[0])) return null;
         return new MatcherCondition(target, args[0], true);
       }
 
-      if (method.equals("that") || method.equals("expect")) {
+      if ("that".equals(method) || "expect".equals(method)) {
         if (target != spock.util.matcher.HamcrestSupport.class) return null;
         if (args.length != 2 || !HamcrestFacade.isMatcher(args[1])) return null;
         return new MatcherCondition(args[0], args[1], false);

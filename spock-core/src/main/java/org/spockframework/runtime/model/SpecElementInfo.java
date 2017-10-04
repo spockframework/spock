@@ -19,54 +19,63 @@ package org.spockframework.runtime.model;
 import org.spockframework.runtime.extension.IMethodInterceptor;
 
 import java.lang.reflect.AnnotatedElement;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 //TODO: should not be generic
 public abstract class SpecElementInfo<P extends NodeInfo, R extends AnnotatedElement>
     extends NodeInfo<P, R> implements ISkippable, IExcludable, ITaggable, IAttachmentContainer, IInterceptable {
   private boolean skipped = false;
   private boolean excluded = false;
-  private final List<Tag> tags = new ArrayList<Tag>();
-  private final List<Attachment> attachments = new ArrayList<Attachment>();
-  private final List<IMethodInterceptor> interceptors = new ArrayList<IMethodInterceptor>();
+  private final List<Tag> tags = new ArrayList<>();
+  private final List<Attachment> attachments = new ArrayList<>();
+  private final List<IMethodInterceptor> interceptors = new ArrayList<>();
 
+  @Override
   public boolean isSkipped() {
     return skipped;
   }
 
+  @Override
   public void setSkipped(boolean skipped) {
     this.skipped = skipped;
   }
 
+  @Override
   public boolean isExcluded() {
     return excluded;
   }
 
+  @Override
   public void setExcluded(boolean excluded) {
     this.excluded = excluded;
   }
 
+  @Override
   public List<Tag> getTags() {
     return tags;
   }
 
+  @Override
   public void addTag(Tag tag) {
     tags.add(tag);
   }
 
+  @Override
   public List<Attachment> getAttachments() {
     return attachments;
   }
 
+  @Override
   public void addAttachment(Attachment attachment) {
     attachments.add(attachment);
   }
 
+  @Override
   public List<IMethodInterceptor> getInterceptors() {
     return interceptors;
   }
 
+  @Override
   public void addInterceptor(IMethodInterceptor interceptor) {
     interceptors.add(interceptor);
   }

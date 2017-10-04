@@ -83,7 +83,7 @@ func(42) == null
 holder.func(42) == null
 |      |        |
 |      42       false
-${holder.toString()}
+${holder.dump()}
         """, {
       assert holder.func(42) == null
     }
@@ -101,7 +101,7 @@ ${holder.toString()}
 getFunc()(42) == null
 |             |
 |             false
-${getFunc().toString()}
+${getFunc().dump()}
         """, {
       assert getFunc()(42) == null
     }
@@ -115,8 +115,8 @@ ${getFunc().toString()}
 holder.getFunc()(42) == null
 |      |             |
 |      |             false
-|      ${holder.func.toString()}
-${holder.toString()}
+|      ${holder.func.dump()}
+${holder.dump()}
         """, {
       assert holder.getFunc()(42) == null
     }

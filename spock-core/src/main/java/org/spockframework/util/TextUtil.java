@@ -16,12 +16,9 @@
 
 package org.spockframework.util;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.Arrays;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.io.*;
+import java.util.*;
+import java.util.regex.*;
 
 /**
  * Utility methods for text processing.
@@ -138,7 +135,7 @@ public abstract class TextUtil {
   }
 
   public static String camelCaseToConstantCase(String value) {
-    if (value == null || value.equals("")) return value;
+    if (value == null || "".equals(value)) return value;
 
     StringBuilder result = new StringBuilder();
     Matcher matcher = LOWER_UPPER.matcher(value);

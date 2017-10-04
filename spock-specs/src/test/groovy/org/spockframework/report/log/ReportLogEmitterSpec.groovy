@@ -16,14 +16,30 @@
 
 package org.spockframework.report.log
 
-import org.spockframework.runtime.model.*
+import org.spockframework.runtime.model.Attachment
+import org.spockframework.runtime.model.BlockInfo
+import org.spockframework.runtime.model.BlockKind
+import org.spockframework.runtime.model.ErrorInfo
+import org.spockframework.runtime.model.FeatureInfo
+import org.spockframework.runtime.model.IterationInfo
+import org.spockframework.runtime.model.MethodInfo
+import org.spockframework.runtime.model.SpecInfo
+import org.spockframework.runtime.model.Tag
 import org.spockframework.util.ExceptionUtil
 
+import spock.lang.Shared
 import spock.lang.Specification
+import spock.lang.Unroll
 
 class ReportLogEmitterSpec extends Specification {
+
+  @Shared
+  def featureWithoutIteration = new FeatureInfo()
+  @Shared
+  def featureWithIteration = new FeatureInfo()
+
   def spec = new SpecInfo()
-  def feature = new FeatureInfo()
+  def iteration = new IterationInfo(featureWithIteration, null, 1)
   def log
   def listener = new IReportLogListener() {
     void emitted(Map<String, Object> log) {
@@ -46,11 +62,27 @@ class ReportLogEmitterSpec extends Specification {
       narrative = "As a user\nI want foo\nSo that bar"
       addTag(new Tag("tag name", "tag key", "tag value", "http://tag.url"))
       addAttachment(new Attachment("att name", "http://att.url"))
-      addFeature(feature)
+      addFeature(featureWithoutIteration)
     }
 
-    feature.parent = spec // for some reason doesn't work inside `with` block
-    feature.with {
+    featureWithoutIteration.parent = spec // for some reason doesn't work inside `with` block
+    prepareFeature(featureWithoutIteration)
+
+    featureWithIteration.parent = spec
+    prepareFeature(featureWithIteration)
+    featureWithIteration.dataProcessorMethod = new MethodInfo()
+    featureWithIteration.reportIterations = true
+
+    iteration.name = "sample feature[0]"
+  }
+
+  def cleanup() {
+    featureWithoutIteration = new FeatureInfo()
+    featureWithIteration = new FeatureInfo()
+  }
+
+  private Object prepareFeature(FeatureInfo featureInfo) {
+    featureInfo.with {
       name = "sample feature"
       addTag(new Tag("ftag name", "ftag key", "ftag value", "http://ftag.url"))
       addAttachment(new Attachment("fatt name", "http://fatt.url"))
@@ -144,7 +176,8 @@ class ReportLogEmitterSpec extends Specification {
     ]
   }
 
-  def "feature started"() {
+  @Unroll
+  def "feature started (#name)"(String name, FeatureInfo feature) {
     when:
     emitter.beforeFeature(feature)
 
@@ -159,11 +192,55 @@ class ReportLogEmitterSpec extends Specification {
             narrative: "Given foo\nWhen bar\nThen baz\nAnd bazbaz"
         ]]
     ]
+
+    where:
+    name                      | feature
+    "featureWithoutIteration" | featureWithoutIteration
+    "featureWithIteration"    | featureWithIteration
   }
 
-  def "feature completed"() {
+  def "iteration started"() {
     when:
-    emitter.afterFeature(feature)
+    emitter.beforeIteration(iteration)
+
+    then:
+    log == [
+      package: "foo.bar",
+      name: "SampleSpec",
+      features: [[
+       name: "sample feature",
+       iterations: [[
+          name: "sample feature[0]",
+          start: 123456789,
+       ]]
+     ]]
+    ]
+  }
+
+  def "iteration completed"() {
+    when:
+    emitter.afterIteration(iteration)
+
+    then:
+    log == [
+      package: "foo.bar",
+      name: "SampleSpec",
+      features: [[
+         name: "sample feature",
+         iterations: [[
+            name: "sample feature[0]",
+            end: 123456789,
+            result: "passed"
+          ]]
+       ]]
+    ]
+  }
+
+
+  @Unroll
+  def "feature completed (#name)"(String name, FeatureInfo feature) {
+    when:
+    emitter.afterFeature(featureWithoutIteration)
 
     then:
     log == [
@@ -176,11 +253,17 @@ class ReportLogEmitterSpec extends Specification {
             result: "passed"
         ]]
     ]
+
+    where:
+    name                      | feature
+    "featureWithoutIteration" | featureWithoutIteration
+    "featureWithIteration"    | featureWithIteration
   }
 
-  def "feature skipped"() {
+  @Unroll
+  def "feature skipped (#name)"(String name, FeatureInfo feature) {
     when:
-    emitter.featureSkipped(feature)
+    emitter.featureSkipped(featureWithoutIteration)
 
     then:
     log == [
@@ -195,11 +278,16 @@ class ReportLogEmitterSpec extends Specification {
             result: "skipped"
         ]]
     ]
+
+    where:
+    name                      | feature
+    "featureWithoutIteration" | featureWithoutIteration
+    "featureWithIteration"    | featureWithIteration
   }
 
-  def "failure during feature execution"() {
+  def "failure during feature execution (featureWithoutIteration)"() {
     def method = new MethodInfo()
-    method.feature = feature
+    method.feature = featureWithoutIteration
     method.parent = spec
 
     def exception = new Exception("ouch")
@@ -221,10 +309,38 @@ class ReportLogEmitterSpec extends Specification {
     ]
   }
 
-  def "standard out during feature execution"() {
+  def "failure during feature execution (featureWithIteration)"() {
+    def method = new MethodInfo()
+    method.feature = featureWithIteration
+    method.parent = spec
+    method.iteration = iteration
+
+    def exception = new Exception("ouch")
+    def error = new ErrorInfo(method, exception)
+
+    when:
+    emitter.error(error)
+
+    then:
+    log == [
+      package: "foo.bar",
+      name: "SampleSpec",
+      features: [[
+         name: "sample feature",
+         iterations: [[
+           name: "sample feature[0]",
+           exceptions: [
+             ExceptionUtil.printStackTrace(exception)
+           ]
+         ]]
+       ]]
+    ]
+  }
+
+  def "standard out during feature execution (featureWithoutIteration)"() {
     when:
     emitter.beforeSpec(spec)
-    emitter.beforeFeature(feature)
+    emitter.beforeFeature(featureWithoutIteration)
     emitter.standardOut("foo\nbar")
 
     then:
@@ -238,10 +354,31 @@ class ReportLogEmitterSpec extends Specification {
     ]
   }
 
-  def "standard err during feature execution"() {
+  def "standard out during feature execution (featureWithIteration)"() {
     when:
     emitter.beforeSpec(spec)
-    emitter.beforeFeature(feature)
+    emitter.beforeFeature(featureWithIteration)
+    emitter.beforeIteration(iteration)
+    emitter.standardOut("foo\nbar")
+
+    then:
+    log == [
+      package: "foo.bar",
+      name: "SampleSpec",
+      features: [[
+         name: "sample feature",
+         iterations: [[
+            name: "sample feature[0]",
+            output: ["foo\nbar"]
+          ]]
+       ]]
+    ]
+  }
+
+  def "standard err during feature execution (featureWithoutIteration)"() {
+    when:
+    emitter.beforeSpec(spec)
+    emitter.beforeFeature(featureWithoutIteration)
     emitter.standardErr("foo\nbar")
 
     then:
@@ -252,6 +389,27 @@ class ReportLogEmitterSpec extends Specification {
             name: "sample feature",
             errorOutput: ["foo\nbar"]
         ]]
+    ]
+  }
+
+  def "standard err during feature execution (featureWithIteration)"() {
+    when:
+    emitter.beforeSpec(spec)
+    emitter.beforeFeature(featureWithIteration)
+    emitter.beforeIteration(iteration)
+    emitter.standardErr("foo\nbar")
+
+    then:
+    log == [
+      package: "foo.bar",
+      name: "SampleSpec",
+      features: [[
+         name: "sample feature",
+         iterations: [[
+              name: "sample feature[0]",
+              errorOutput: ["foo\nbar"]
+            ]]
+       ]]
     ]
   }
 

@@ -16,10 +16,9 @@
 
 package org.spockframework.mock.constraint;
 
-import java.util.regex.Pattern;
+import org.spockframework.mock.*;
 
-import org.spockframework.mock.IInvocationConstraint;
-import org.spockframework.mock.IMockInvocation;
+import java.util.regex.Pattern;
 
 /**
  *
@@ -32,6 +31,7 @@ public class RegexMethodNameConstraint implements IInvocationConstraint {
     pattern = Pattern.compile(regex);
   }
 
+  @Override
   public boolean isSatisfiedBy(IMockInvocation invocation) {
     return pattern.matcher(invocation.getMethod().getName()).matches();
   }

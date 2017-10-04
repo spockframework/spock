@@ -14,19 +14,20 @@
 
 package org.spockframework.runtime.extension.builtin;
 
+import org.spockframework.runtime.extension.IMethodInvocation;
+import org.spockframework.runtime.model.FieldInfo;
+
 import java.util.List;
 
 import org.junit.rules.TestRule;
 import org.junit.runners.model.Statement;
-
-import org.spockframework.runtime.extension.IMethodInvocation;
-import org.spockframework.runtime.model.FieldInfo;
 
 public class TestRuleInterceptor extends AbstractRuleInterceptor {
   public TestRuleInterceptor(List<FieldInfo> ruleFields) {
     super(ruleFields);
   }
 
+  @Override
   public void intercept(final IMethodInvocation invocation) throws Throwable {
     Statement stat = createBaseStatement(invocation);
 

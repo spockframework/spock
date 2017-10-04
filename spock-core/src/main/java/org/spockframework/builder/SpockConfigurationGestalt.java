@@ -14,10 +14,11 @@
 
 package org.spockframework.builder;
 
+import org.spockframework.runtime.IConfigurationRegistry;
+
 import java.util.List;
 
 import groovy.lang.*;
-import org.spockframework.runtime.IConfigurationRegistry;
 
 public class SpockConfigurationGestalt implements IGestalt {
   private final IConfigurationRegistry configurationRegistry;
@@ -31,20 +32,24 @@ public class SpockConfigurationGestalt implements IGestalt {
     this.slotFactories = slotFactories;
   }
 
+  @Override
   public IBlueprint getBlueprint() {
     return blueprint;
   }
 
+  @Override
   public Object getProperty(String name) {
     Object config = configurationRegistry.getConfigurationByName(name);
     if (config == null) throw new MissingPropertyException("configuration not found");
     return config;
   }
 
+  @Override
   public void setProperty(String name, Object value) {
     throw new MissingPropertyException("configurations cannot be set directly");
   }
 
+  @Override
   public Object invokeMethod(String name, Object[] args) {
     if (args.length != 1 || !(args[0] instanceof Closure))
       throw new MissingMethodException(name, this.getClass(), args);

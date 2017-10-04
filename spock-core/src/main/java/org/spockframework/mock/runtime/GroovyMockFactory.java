@@ -14,27 +14,24 @@
 
 package org.spockframework.mock.runtime;
 
-import java.lang.reflect.Modifier;
-import java.util.Collections;
-
-import groovy.lang.GroovyObject;
-import groovy.lang.MetaClass;
-
-import org.spockframework.mock.CannotCreateMockException;
-import org.spockframework.mock.IMockConfiguration;
-import org.spockframework.mock.IMockFactory;
-import org.spockframework.mock.MockImplementation;
+import org.spockframework.mock.*;
 import org.spockframework.runtime.GroovyRuntimeUtil;
-
 import spock.lang.Specification;
+
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+
+import groovy.lang.*;
 
 public class GroovyMockFactory implements IMockFactory {
   public static GroovyMockFactory INSTANCE = new GroovyMockFactory();
 
+  @Override
   public boolean canCreate(IMockConfiguration configuration) {
     return configuration.getImplementation() == MockImplementation.GROOVY;
   }
 
+  @Override
   public Object create(IMockConfiguration configuration, Specification specification) throws CannotCreateMockException {
     final MetaClass oldMetaClass = GroovyRuntimeUtil.getMetaClass(configuration.getType());
     GroovyMockMetaClass newMetaClass = new GroovyMockMetaClass(configuration, specification, oldMetaClass);
@@ -45,8 +42,13 @@ public class GroovyMockFactory implements IMockFactory {
         throw new CannotCreateMockException(type,
             ". Global mocking is only possible for classes, but not for interfaces.");
       }
+      if (!configuration.getAdditionalInterfaces().isEmpty()) {
+        throw new CannotCreateMockException(type,
+          ". Global cannot add additionalInterfaces.");
+      }
       GroovyRuntimeUtil.setMetaClass(type, newMetaClass);
       specification.getSpecificationContext().getCurrentIteration().addCleanup(new Runnable() {
+        @Override
         public void run() {
           GroovyRuntimeUtil.setMetaClass(type, oldMetaClass);
         }
@@ -55,6 +57,10 @@ public class GroovyMockFactory implements IMockFactory {
     }
 
     if (isFinalClass(type)) {
+      if (!configuration.getAdditionalInterfaces().isEmpty()) {
+        throw new CannotCreateMockException(type,
+          ". Cannot add additionalInterfaces to final classes.");
+      }
       final Object instance = MockInstantiator.instantiate(type,
           type, configuration.getConstructorArgs(), configuration.isUseObjenesis());
       GroovyRuntimeUtil.setMetaClass(instance, newMetaClass);
@@ -63,7 +69,9 @@ public class GroovyMockFactory implements IMockFactory {
     }
 
     IProxyBasedMockInterceptor mockInterceptor = new GroovyMockInterceptor(configuration, specification, newMetaClass);
-    return ProxyBasedMockFactory.INSTANCE.create(type, Collections.<Class<?>>singletonList(GroovyObject.class),
+    ArrayList<Class<?>> additionalInterfaces = new ArrayList<>(configuration.getAdditionalInterfaces());
+    additionalInterfaces.add(GroovyObject.class);
+    return ProxyBasedMockFactory.INSTANCE.create(type, additionalInterfaces,
         configuration.getConstructorArgs(), mockInterceptor, specification.getClass().getClassLoader(),
         configuration.isUseObjenesis());
   }
@@ -72,6 +80,7 @@ public class GroovyMockFactory implements IMockFactory {
     return !type.isInterface() && Modifier.isFinal(type.getModifiers());
   }
 
+  @Override
   public Object createDetached(IMockConfiguration configuration, ClassLoader classLoader) {
     throw new CannotCreateMockException(configuration.getType(),
         ". Detached mocking is only possible for JavaMocks but not GroovyMocks at the moment.");

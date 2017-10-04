@@ -16,21 +16,22 @@
 
 package org.spockframework.mock.runtime;
 
-import java.util.*;
-
 import org.spockframework.mock.*;
+
+import java.util.*;
 
 /**
  * @author Peter Niederwieser
  */
 public class MockController implements IMockController {
-  private final LinkedList<IInteractionScope> scopes = new LinkedList<IInteractionScope>();
-  private final List<InteractionNotSatisfiedError> errors = new ArrayList<InteractionNotSatisfiedError>();
+  private final LinkedList<IInteractionScope> scopes = new LinkedList<>();
+  private final List<InteractionNotSatisfiedError> errors = new ArrayList<>();
 
   public MockController() {
     scopes.addFirst(new InteractionScope());
   }
 
+  @Override
   public synchronized Object handle(IMockInvocation invocation) {
     for (IInteractionScope scope : scopes) {
       IMockInteraction interaction = scope.match(invocation);

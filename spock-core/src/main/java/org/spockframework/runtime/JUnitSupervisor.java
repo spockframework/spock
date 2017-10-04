@@ -14,17 +14,15 @@
 
 package org.spockframework.runtime;
 
-import org.junit.ComparisonFailure;
-import org.junit.internal.AssumptionViolatedException;
-import org.junit.runners.model.MultipleFailureException;
-import org.junit.runner.Description;
-import org.junit.runner.notification.Failure;
-import org.junit.runner.notification.RunNotifier;
-
 import org.spockframework.runtime.condition.IObjectRenderer;
 import org.spockframework.runtime.model.*;
-import org.spockframework.util.InternalSpockError;
-import org.spockframework.util.TextUtil;
+import org.spockframework.util.*;
+
+import org.junit.ComparisonFailure;
+import org.junit.internal.AssumptionViolatedException;
+import org.junit.runner.Description;
+import org.junit.runner.notification.*;
+import org.junit.runners.model.MultipleFailureException;
 
 import static org.spockframework.runtime.RunStatus.*;
 
@@ -44,10 +42,12 @@ public class JUnitSupervisor implements IRunSupervisor {
     this.diffedObjectRenderer = diffedObjectRenderer;
   }
 
+  @Override
   public void beforeSpec(SpecInfo spec) {
     masterListener.beforeSpec(spec);
   }
 
+  @Override
   public void beforeFeature(FeatureInfo feature) {
     masterListener.beforeFeature(feature);
 
@@ -55,6 +55,7 @@ public class JUnitSupervisor implements IRunSupervisor {
       notifier.fireTestStarted(feature.getDescription());
   }
 
+  @Override
   public void beforeIteration(FeatureInfo currentFeature, IterationInfo iteration) {
     masterListener.beforeIteration(iteration);
 
@@ -62,6 +63,7 @@ public class JUnitSupervisor implements IRunSupervisor {
       notifier.fireTestStarted(iteration.getDescription());
   }
 
+  @Override
   public int error(FeatureInfo currentFeature, IterationInfo currentIteration, ErrorInfo error) {
     Throwable exception = error.getException();
 
@@ -158,6 +160,7 @@ public class JUnitSupervisor implements IRunSupervisor {
     }
   }
 
+  @Override
   public void afterIteration(FeatureInfo currentFeature, IterationInfo iteration) {
     masterListener.afterIteration(iteration);
     if (currentFeature.isReportIterations()) {
@@ -165,6 +168,7 @@ public class JUnitSupervisor implements IRunSupervisor {
     }
   }
 
+  @Override
   public void noIterationFound(FeatureInfo currentFeature){
     notifier.fireTestFailure(new Failure(currentFeature.getDescription(),
       new SpockExecutionException("Data provider has no data")));
@@ -177,15 +181,18 @@ public class JUnitSupervisor implements IRunSupervisor {
     }
   }
 
+  @Override
   public void afterSpec(SpecInfo spec) {
     masterListener.afterSpec(spec);
   }
 
+  @Override
   public void specSkipped(SpecInfo spec) {
     masterListener.specSkipped(spec);
     notifier.fireTestIgnored(spec.getDescription());
   }
 
+  @Override
   public void featureSkipped(FeatureInfo feature) {
     masterListener.featureSkipped(feature);
     notifier.fireTestIgnored(feature.getDescription());

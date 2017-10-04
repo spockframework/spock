@@ -1,14 +1,10 @@
 package spock.mock;
 
-import org.spockframework.mock.MockImplementation;
-import org.spockframework.mock.MockNature;
-import org.spockframework.mock.MockUtil;
-import org.spockframework.util.Beta;
-import org.spockframework.util.Nullable;
+import org.spockframework.mock.*;
+import org.spockframework.util.*;
 import spock.lang.Specification;
 
-import java.util.Collections;
-import java.util.Map;
+import java.util.*;
 
 /**
  * This factory allows the creations of mocks outside of a {@link spock.lang.Specification},
@@ -116,6 +112,11 @@ public class DetachedMockFactory implements MockFactory {
     return createMock(inferNameFromType(type), type, MockNature.SPY, Collections.<String, Object>emptyMap());
   }
 
+  @Override
+  public <T> T Spy(T obj) {
+    return createMock(inferNameFromType(obj.getClass()), obj, MockNature.SPY,  Collections.<String, Object>singletonMap("useObjenesis", true));
+  }
+
   /**
      * Creates a spy with the specified options and type. The mock name will be the types simple name.
      *
@@ -144,6 +145,15 @@ public class DetachedMockFactory implements MockFactory {
       classLoader = ClassLoader.getSystemClassLoader();
     }
     return (T) new MockUtil().createDetachedMock(name, type, nature, MockImplementation.JAVA, options, classLoader);
+  }
+
+  @SuppressWarnings("unchecked")
+  public <T> T createMock(@Nullable String name, T obj, MockNature nature, Map<String, Object> options) {
+    ClassLoader classLoader = obj.getClass().getClassLoader();
+    if (classLoader == null) {
+      classLoader = ClassLoader.getSystemClassLoader();
+    }
+    return (T) new MockUtil().createDetachedMock(name, obj, nature, MockImplementation.JAVA, options, classLoader);
   }
 
   private String inferNameFromType(Class<?> type) {

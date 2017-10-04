@@ -24,90 +24,110 @@ import java.util.EnumSet;
  */
 public enum BlockParseInfo {
   AND {
+    @Override
     public EnumSet<BlockParseInfo> getSuccessors(Method method) {
       return method.getLastBlock().getParseInfo().getSuccessors(method);
     }
+    @Override
     public Block addNewBlock(Method method) {
       return method.getLastBlock();
     }
   },
 
   ANONYMOUS {
+    @Override
     public Block addNewBlock(Method method) {
       return method.addBlock(new AnonymousBlock(method));
     }
+    @Override
     public EnumSet<BlockParseInfo> getSuccessors(Method method) {
       return EnumSet.of(SETUP, GIVEN, EXPECT, WHEN, CLEANUP, WHERE, METHOD_END);
     }
   },
 
   SETUP {
+    @Override
     public Block addNewBlock(Method method) {
       return method.addBlock(new SetupBlock(method));
     }
+    @Override
     public EnumSet<BlockParseInfo> getSuccessors(Method method) {
       return EnumSet.of(AND, EXPECT, WHEN, CLEANUP, WHERE, METHOD_END);
     }
   },
 
   GIVEN {
+    @Override
     public Block addNewBlock(Method method) {
       return SETUP.addNewBlock(method);
     }
+    @Override
     public EnumSet<BlockParseInfo> getSuccessors(Method method) {
       return SETUP.getSuccessors(method);
     }
   },
 
   EXPECT {
+    @Override
     public Block addNewBlock(Method method) {
       return method.addBlock(new ExpectBlock(method));
     }
+    @Override
     public EnumSet<BlockParseInfo> getSuccessors(Method method) {
       return EnumSet.of(AND, WHEN, CLEANUP, WHERE, METHOD_END);
     }
   },
 
   WHEN {
+    @Override
     public Block addNewBlock(Method method) {
       return method.addBlock(new WhenBlock(method));
     }
+    @Override
     public EnumSet<BlockParseInfo> getSuccessors(Method method) {
       return EnumSet.of(AND, THEN);
     }
   },
 
   THEN {
+    @Override
     public Block addNewBlock(Method method) {
       return method.addBlock(new ThenBlock(method));
     }
+    @Override
     public EnumSet<BlockParseInfo> getSuccessors(Method method) {
       return EnumSet.of(AND, EXPECT, WHEN, THEN, CLEANUP, WHERE, METHOD_END);
     }
   },
 
   CLEANUP {
+    @Override
     public Block addNewBlock(Method method) {
       return method.addBlock(new CleanupBlock(method));
     }
+    @Override
     public EnumSet<BlockParseInfo> getSuccessors(Method method) {
       return EnumSet.of(AND, WHERE, METHOD_END);
     }
   },
 
   WHERE {
+    @Override
     public Block addNewBlock(Method method) {
       return method.addBlock(new WhereBlock(method));
     }
+    @Override
     public EnumSet<BlockParseInfo> getSuccessors(Method method) {
       return EnumSet.of(AND, METHOD_END);
     }
   },
 
   METHOD_END {
+    @Override
     public Block addNewBlock(Method method) {
       throw new UnsupportedOperationException("addNewBlock");
     }
+    @Override
     public EnumSet<BlockParseInfo> getSuccessors(Method method) {
       throw new UnsupportedOperationException("getSuccessors");
     }

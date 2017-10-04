@@ -14,12 +14,12 @@
 
 package org.spockframework.util;
 
+import org.spockframework.gentyref.GenericTypeReflector;
+
 import java.io.File;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
 import java.util.*;
-
-import org.spockframework.gentyref.GenericTypeReflector;
 
 public abstract class ReflectionUtil {
   /**
@@ -58,6 +58,18 @@ public abstract class ReflectionUtil {
         return true;
 
     return false;
+  }
+
+  public static boolean isAnnotationPresentRecursive(Class<?> cls, Class<? extends Annotation> annotationClass) {
+    return cls.isAnnotationPresent(annotationClass) ||
+      (Object.class.equals(cls) ? false : isAnnotationPresentRecursive(cls.getSuperclass(), annotationClass));
+  }
+
+  public static <T extends Annotation> T getAnnotationRecursive(Class<?> cls, Class<T> annotationClass) {
+    T annotation = cls.getAnnotation(annotationClass);
+    if (annotation != null) return annotation;
+    if (Object.class.equals(cls)) return null;
+    return getAnnotationRecursive(cls.getSuperclass(), annotationClass);
   }
 
   public static boolean isFinalMethod(Method method) {
@@ -216,10 +228,18 @@ public abstract class ReflectionUtil {
   }
 
   public static List<Class<?>> eraseTypes(List<Type> types) {
-    List<Class<?>> result = new ArrayList<Class<?>>();
+    List<Class<?>> result = new ArrayList<>();
     for (Type type : types) {
       result.add(GenericTypeReflector.erase(type));
     }
     return result;
+  }
+
+  public static boolean isToStringOverridden(Class<?> valueClass) {
+    try {
+      return !Object.class.equals(valueClass.getMethod("toString").getDeclaringClass());
+    } catch (NoSuchMethodException e) {
+      return false;
+    }
   }
 }

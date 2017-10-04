@@ -14,13 +14,12 @@
 
 package org.spockframework.runtime;
 
+import org.spockframework.runtime.extension.*;
+import org.spockframework.util.IoUtil;
+
 import java.io.*;
 import java.net.URL;
 import java.util.*;
-
-import org.spockframework.runtime.extension.ExtensionException;
-import org.spockframework.runtime.extension.IGlobalExtension;
-import org.spockframework.util.IoUtil;
 
 /**
  * Scans class path for extension descriptors and loads the extension classes specified therein.
@@ -33,10 +32,19 @@ public class ExtensionClassesLoader {
   }
 
   public List<Class<?>> loadClasses(String descriptorPath) {
-    List<Class<?>> extClasses = new ArrayList<Class<?>>();
-    for (URL url : locateDescriptors(descriptorPath))
-      for (String className : readDescriptor(url))
+    Map<String, URL> discoveredClasses = new HashMap<>();
+    List<Class<?>> extClasses = new ArrayList<>();
+    for (URL url : locateDescriptors(descriptorPath)) {
+      for (String className : readDescriptor(url)) {
+        if (discoveredClasses.containsKey(className)) {
+          throw new ExtensionException("Duplicated Extension declaration for [%s]\nSource 1: %s\nSource 2: %s\n" +
+            "This is most likely caused by having two different version of a library on the classpath."
+          ).withArgs(className, url, discoveredClasses.get(className));
+        }
+        discoveredClasses.put(className, url);
         extClasses.add(loadExtensionClass(className));
+      }
+    }
     return extClasses;
   }
 
@@ -53,7 +61,7 @@ public class ExtensionClassesLoader {
 
     try {
       reader = new BufferedReader(new InputStreamReader(url.openStream()));
-      List<String> lines = new ArrayList<String>();
+      List<String> lines = new ArrayList<>();
       String line = reader.readLine();
       while (line != null) {
         line = line.trim();

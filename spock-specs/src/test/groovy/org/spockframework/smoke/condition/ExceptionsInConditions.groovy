@@ -1,12 +1,8 @@
 package org.spockframework.smoke.condition
 
-import junit.framework.Assert
 import org.spockframework.EmbeddedSpecification
 import org.spockframework.runtime.ConditionNotSatisfiedError
 import org.spockframework.runtime.SpockException
-import spock.lang.FailsWith
-import spock.lang.Specification
-
 
 class ExceptionsInConditions extends EmbeddedSpecification {
   def "null pointer exception in condition"() {
@@ -146,7 +142,7 @@ class ExceptionsInConditions extends EmbeddedSpecification {
     then:
     ConditionNotSatisfiedError e = thrown()
     e.getMessage() == """\
-      Condition not satisfied:
+      Condition failed with Exception:
 
       map.get("key").b.c.d.e()
       |   |          |

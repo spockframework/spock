@@ -16,12 +16,10 @@
 
 package org.spockframework.runtime;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.spockframework.util.InternalIdentifiers;
+
+import java.util.*;
+import java.util.regex.*;
 
 /**
  * Filters an exception's stack trace. Removes internal Groovy and Spock methods, and
@@ -34,14 +32,14 @@ import org.spockframework.util.InternalIdentifiers;
 // IDEA: find entry points into user code by looking for BaseSpecRunner.invoke()/invokeRaw()
 public class StackTraceFilter implements IStackTraceFilter {
   private static final Pattern FILTERED_CLASSES = Pattern.compile(
-      "org.codehaus.groovy.runtime\\..*" + 
+      "org.codehaus.groovy.runtime\\..*" +
       "|org.codehaus.groovy.reflection\\..*" +
       "|org.codehaus.groovy\\..*MetaClass.*" +
       "|groovy\\..*MetaClass.*" +
       "|groovy.lang.MetaMethod" +
       "|java.lang.reflect\\..*" +
       "|sun.reflect\\..*" +
-      "|org.spockframework.runtime\\.[^\\.]+" // exclude subpackages
+      "|org.spockframework.runtime\\.[^.]+" // exclude subpackages
   );
 
   private static final Pattern CLOSURE_CLASS = Pattern.compile("(.+)\\$_(.+)_closure(\\d+)");
@@ -52,8 +50,9 @@ public class StackTraceFilter implements IStackTraceFilter {
     this.mapper = mapper;
   }
 
+  @Override
   public void filter(Throwable throwable) {
-    List<StackTraceElement> filteredTrace = new ArrayList<StackTraceElement>();
+    List<StackTraceElement> filteredTrace = new ArrayList<>();
 
     for (StackTraceElement elem : throwable.getStackTrace()) {
       if (isInitializerOrFixtureMethod(elem)) {
@@ -92,7 +91,7 @@ public class StackTraceFilter implements IStackTraceFilter {
   }
 
   private boolean checkForAndAddPrettyPrintedClosureInvocation(StackTraceElement elem, List<StackTraceElement> trace) {
-    if (!elem.getMethodName().equals("doCall")) return false;
+    if (!"doCall".equals(elem.getMethodName())) return false;
     Matcher matcher = CLOSURE_CLASS.matcher(elem.getClassName());
     if (!matcher.matches()) return false;
 

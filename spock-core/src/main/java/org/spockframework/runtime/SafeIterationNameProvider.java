@@ -14,8 +14,7 @@
 
 package org.spockframework.runtime;
 
-import org.spockframework.runtime.model.IterationInfo;
-import org.spockframework.runtime.model.NameProvider;
+import org.spockframework.runtime.model.*;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -30,6 +29,7 @@ public class SafeIterationNameProvider implements NameProvider<IterationInfo> {
     this.delegate = delegate;
   }
 
+  @Override
   public String getName(IterationInfo iteration) {
     final String name = getNameImpl(iteration);
     if (iteration.getParent().isReportIterations()){

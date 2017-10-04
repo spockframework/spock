@@ -14,21 +14,16 @@
 
 package org.spockframework.lang;
 
+import org.spockframework.mock.*;
+import org.spockframework.mock.runtime.*;
+import org.spockframework.runtime.*;
+import org.spockframework.util.*;
+import spock.lang.Specification;
+
 import java.lang.reflect.Type;
-import java.util.Collections;
-import java.util.Map;
+import java.util.*;
 
 import groovy.lang.Closure;
-
-import org.spockframework.mock.MockImplementation;
-import org.spockframework.mock.MockNature;
-import org.spockframework.mock.runtime.CompositeMockFactory;
-import org.spockframework.mock.runtime.MockConfiguration;
-import org.spockframework.runtime.*;
-import org.spockframework.util.Beta;
-import org.spockframework.util.Nullable;
-
-import spock.lang.Specification;
 
 @SuppressWarnings("UnusedDeclaration")
 public abstract class SpecInternals {
@@ -42,8 +37,14 @@ public abstract class SpecInternals {
   @Beta
   public Object createMock(@Nullable String name, Type type, MockNature nature,
       MockImplementation implementation, Map<String, Object> options, @Nullable Closure closure) {
+    return createMock(name, null, type, nature, implementation, options, closure);
+  }
+
+  @Beta
+  public Object createMock(@Nullable String name, Object instance, Type type, MockNature nature,
+      MockImplementation implementation, Map<String, Object> options, @Nullable Closure closure) {
     Object mock = CompositeMockFactory.INSTANCE.create(
-        new MockConfiguration(name, type, nature, implementation, options), (Specification) this);
+        new MockConfiguration(name, type, instance, nature, implementation, options), (Specification) this);
     if (closure != null) {
       GroovyRuntimeUtil.invokeClosure(closure, mock);
     }
@@ -175,6 +176,10 @@ public abstract class SpecInternals {
     return createMockImpl(inferredName, inferredType, MockNature.SPY, MockImplementation.JAVA, options, specifiedType, closure);
   }
 
+  Object SpyImpl(String inferredName, Class<?> inferredType, Object instance) {
+    return createMockImpl(inferredName, inferredType == null ? instance.getClass() : inferredType, instance, MockNature.SPY, MockImplementation.JAVA, Collections.<String, Object>singletonMap("useObjenesis", true), null, null);
+  }
+
   Object GroovyMockImpl(String inferredName, Class<?> inferredType) {
     return createMockImpl(inferredName, inferredType, MockNature.MOCK, MockImplementation.GROOVY, Collections.<String, Object>emptyMap(), null, null);
   }
@@ -273,11 +278,16 @@ public abstract class SpecInternals {
 
   private Object createMockImpl(String inferredName, Class<?> inferredType, MockNature nature,
       MockImplementation implementation, Map<String, Object> options, Class<?> specifiedType, Closure closure) {
+    return createMockImpl(inferredName, inferredType, null, nature, implementation, options, specifiedType, closure);
+  }
+
+  private Object createMockImpl(String inferredName, Class<?> inferredType, Object instance, MockNature nature,
+      MockImplementation implementation, Map<String, Object> options, Class<?> specifiedType, Closure closure) {
     Type effectiveType = specifiedType != null ? specifiedType : options.containsKey("type") ? (Type) options.get("type") : inferredType;
     if (effectiveType == null) {
       throw new InvalidSpecException("Mock object type cannot be inferred automatically. " +
           "Please specify a type explicitly (e.g. 'Mock(Person)').");
     }
-    return createMock(inferredName, effectiveType, nature, implementation, options, closure);
+    return createMock(inferredName, instance, effectiveType, nature, implementation, options, closure);
   }
 }

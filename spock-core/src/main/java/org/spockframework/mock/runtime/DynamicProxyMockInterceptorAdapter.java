@@ -17,8 +17,7 @@ package org.spockframework.mock.runtime;
 import org.spockframework.mock.IResponseGenerator;
 import org.spockframework.util.ReflectionUtil;
 
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
+import java.lang.reflect.*;
 
 public class DynamicProxyMockInterceptorAdapter implements InvocationHandler {
   private final IProxyBasedMockInterceptor interceptor;
@@ -27,6 +26,7 @@ public class DynamicProxyMockInterceptorAdapter implements InvocationHandler {
     this.interceptor = interceptor;
   }
 
+  @Override
   public Object invoke(Object target, Method method, Object[] arguments) throws Throwable {
     IResponseGenerator realMethodInvoker = (ReflectionUtil.isDefault(method) || ReflectionUtil.isObjectMethod(method))
       ? new DefaultMethodInvoker(target, method, arguments)

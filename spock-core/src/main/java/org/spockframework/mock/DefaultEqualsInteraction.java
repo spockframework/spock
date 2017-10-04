@@ -17,19 +17,22 @@ class DefaultEqualsInteraction extends DefaultInteraction {
   public static final DefaultEqualsInteraction INSTANCE = new DefaultEqualsInteraction();
 
   private DefaultEqualsInteraction() {}
-  
+
+  @Override
   public String getText() {
     return "Object.equals() interaction";
   }
 
+  @Override
   public boolean matches(IMockInvocation invocation) {
     IMockMethod method = invocation.getMethod();
 
-    return method.getName().equals("equals")
+    return "equals".equals(method.getName())
         && method.getParameterTypes().size() == 1
         && method.getParameterTypes().get(0) == Object.class;
   }
 
+  @Override
   public Object accept(IMockInvocation invocation) {
     return invocation.getMockObject().getInstance() == invocation.getArguments().get(0);
   }

@@ -14,10 +14,9 @@
 
 package org.spockframework.mock.runtime;
 
-import java.util.List;
+import org.spockframework.mock.*;
 
-import org.spockframework.mock.IMockInteraction;
-import org.spockframework.mock.IMockInvocation;
+import java.util.List;
 
 public abstract class MockInteractionDecorator implements IMockInteraction {
   protected final IMockInteraction decorated;
@@ -26,42 +25,52 @@ public abstract class MockInteractionDecorator implements IMockInteraction {
     this.decorated = decorated;
   }
 
+  @Override
   public int getLine() {
     return decorated.getLine();
   }
 
+  @Override
   public int getColumn() {
     return decorated.getColumn();
   }
 
+  @Override
   public String getText() {
     return decorated.getText();
   }
 
+  @Override
   public boolean matches(IMockInvocation invocation) {
     return decorated.matches(invocation);
   }
 
+  @Override
   public Object accept(IMockInvocation invocation) {
     return decorated.accept(invocation);
   }
 
+  @Override
   public List<IMockInvocation> getAcceptedInvocations() {
     return decorated.getAcceptedInvocations();
   }
 
+  @Override
   public int computeSimilarityScore(IMockInvocation invocation) {
     return decorated.computeSimilarityScore(invocation);
   }
 
+  @Override
   public boolean isSatisfied() {
     return decorated.isSatisfied();
   }
 
+  @Override
   public boolean isExhausted() {
     return decorated.isExhausted();
   }
 
+  @Override
   public boolean isRequired() {
     return decorated.isRequired();
   }

@@ -16,20 +16,15 @@
 
 package org.spockframework.runtime;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.util.*;
-
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.spockframework.runtime.model.*;
 import org.spockframework.util.*;
-
 import spock.lang.Specification;
+
+import java.lang.annotation.Annotation;
+import java.lang.reflect.*;
+import java.util.*;
+
+import org.junit.*;
 
 /**
  * Builds a SpecInfo from a Class instance.
@@ -109,6 +104,7 @@ public class SpecInfoBuilder {
     }
 
     Collections.sort(spec.getFields(), new Comparator<FieldInfo>() {
+      @Override
       public int compare(FieldInfo f1, FieldInfo f2) {
         return f1.getOrdinal() - f2.getOrdinal();
       }
@@ -124,6 +120,7 @@ public class SpecInfoBuilder {
     }
 
     Collections.sort(spec.getFeatures(), new IFeatureSortOrder() {
+      @Override
       public int compare(FeatureInfo m1, FeatureInfo m2) {
         return m1.getDeclarationOrder() - m2.getDeclarationOrder();
       }

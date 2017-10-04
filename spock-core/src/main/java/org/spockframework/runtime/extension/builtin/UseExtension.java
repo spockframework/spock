@@ -17,20 +17,18 @@
 package org.spockframework.runtime.extension.builtin;
 
 import org.spockframework.runtime.extension.AbstractAnnotationDrivenExtension;
-import org.spockframework.runtime.model.FeatureInfo;
-import org.spockframework.runtime.model.IInterceptable;
-import org.spockframework.runtime.model.MethodInfo;
-import org.spockframework.runtime.model.SpecInfo;
-
+import org.spockframework.runtime.model.*;
 import spock.util.mop.Use;
 
 import java.util.Arrays;
 
 public class UseExtension extends AbstractAnnotationDrivenExtension<Use> {
+  @Override
   public void visitSpecAnnotation(Use annotation, SpecInfo spec) {
     addInterceptor(annotation, spec.getBottomSpec());
   }
 
+  @Override
   public void visitFeatureAnnotation(Use annotation, FeatureInfo feature) {
     addInterceptor(annotation, feature.getFeatureMethod());
   }

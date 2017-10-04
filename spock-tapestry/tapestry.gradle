@@ -1,6 +1,6 @@
 apply from: script("publishMaven")
 
-displayName = "Spock Framework - Tapestry Module"
+ext.displayName = "Spock Framework - Tapestry Module"
 
 description = "Spock's Tapestry Module provides support for testing Tapestry 5 based applications."
 
@@ -10,13 +10,42 @@ repositories {
   maven { url "http://repository.jboss.com/maven2" }
 }
 
-def tapestryVersion = javaVersion >= 1.8 ? "5.4-beta-26" : "5.2.6"
+def tapestryVersion54 = "5.4.3"
+
+def useTapestry54 = javaVersion >= 1.8
+
+def tapestryVersionTest = useTapestry54 ? tapestryVersion54 : "5.2.6"
 
 dependencies {
   compile project(":spock-core")
-  compile "org.apache.tapestry:tapestry-ioc:$tapestryVersion", provided
-  compile "org.apache.tapestry:tapestry5-annotations:$tapestryVersion", provided
+  compile "org.apache.tapestry:tapestry-ioc:$tapestryVersion54", provided
 
   testCompile "javax.inject:javax.inject:1"
+  testRuntime ("org.apache.tapestry:tapestry-ioc:$tapestryVersionTest"){
+    force = true
+  }
 }
 
+if (!useTapestry54) {
+  tasks.withType(Test) {
+    exclude '**/*WithImportModule.class'
+  }
+}
+
+jar {
+  manifest {
+    attributes(
+      'Created-By': "${System.properties['java.version']} (${System.properties['java.vendor']} ${System.properties['java.vm.version']})".toString(),
+      'Build-Date': buildDate,
+      'Build-Time': buildTime,
+      'Build-Revision': versioning.info.commit,
+      'Specification-Title': project.name,
+      'Specification-Version': baseVersion,
+      'Specification-Vendor': 'spockframework.org',
+      'Implementation-Title': project.name,
+      'Implementation-Version': variantLessVersion,
+      'Implementation-Vendor': 'spockframework.org',
+      'Automatic-Module-Name': 'org.spockframework.tapestry'
+    )
+  }
+}

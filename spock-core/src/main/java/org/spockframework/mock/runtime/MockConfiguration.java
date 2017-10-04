@@ -14,87 +14,122 @@
 
 package org.spockframework.mock.runtime;
 
-import java.lang.reflect.Type;
-import java.util.List;
-import java.util.Map;
-
 import org.spockframework.gentyref.GenericTypeReflector;
-import org.spockframework.mock.IMockConfiguration;
-import org.spockframework.mock.IDefaultResponse;
-import org.spockframework.mock.MockImplementation;
-import org.spockframework.mock.MockNature;
-import org.spockframework.util.Nullable;
-import org.spockframework.util.Beta;
+import org.spockframework.mock.*;
+import org.spockframework.util.*;
+
+import java.lang.reflect.Type;
+import java.util.*;
 
 @Beta
 public class MockConfiguration implements IMockConfiguration {
   private final String name;
   private final Type type;
+  private final Object instance;
   private final MockNature nature;
   private final MockImplementation implementation;
   private final List<Object> constructorArgs;
+  private final List<Class<?>> additionalInterfaces;
   private final IDefaultResponse defaultResponse;
   private final boolean global;
   private final boolean verified;
   private final boolean useObjenesis;
 
-  @SuppressWarnings("unchecked")
   public MockConfiguration(@Nullable String name, Type type, MockNature nature,
+      MockImplementation implementation, Map<String, Object> options) {
+      this(name, type, null, nature, implementation, options);
+  }
+
+  @SuppressWarnings("unchecked")
+  public MockConfiguration(@Nullable String name, Type type, @Nullable Object instance, MockNature nature,
       MockImplementation implementation, Map<String, Object> options) {
     this.name = getOption(options, "name", String.class, name);
     this.type = getOption(options, "type", Type.class, type);
+    this.instance = getOption(options, "instance", Object.class, instance);
     this.nature = getOption(options, "nature", MockNature.class, nature);
     this.implementation = getOption(options, "implementation", MockImplementation.class, implementation);
-    this.constructorArgs = getOption(options, "constructorArgs", List.class, null);
+    this.constructorArgs = getOptionAsList(options, "constructorArgs");
+    this.additionalInterfaces = getOption(options, "additionalInterfaces", List.class, Collections.emptyList());
     this.defaultResponse = getOption(options, "defaultResponse", IDefaultResponse.class, this.nature.getDefaultResponse());
     this.global = getOption(options, "global", Boolean.class, false);
     this.verified = getOption(options, "verified", Boolean.class, this.nature.isVerified());
     this.useObjenesis = getOption(options, "useObjenesis", Boolean.class, this.nature.isUseObjenesis());
   }
 
+  @Override
   @Nullable
   public String getName() {
     return name;
   }
 
+  @Override
   public Class<?> getType() {
     return GenericTypeReflector.erase(type);
   }
 
+  @Override
+  public Object getInstance() {
+    return instance;
+  }
+
+  @Override
   public Type getExactType() {
     return type;
   }
 
+  @Override
   public MockNature getNature() {
     return nature;
   }
 
+  @Override
   public MockImplementation getImplementation() {
     return implementation;
   }
 
+  @Override
   @Nullable
   public List<Object> getConstructorArgs() {
     return constructorArgs;
   }
 
+  @Override
+  public List<Class<?>> getAdditionalInterfaces() {
+    return additionalInterfaces;
+  }
+
+  @Override
   public IDefaultResponse getDefaultResponse() {
     return defaultResponse;
   }
 
+  @Override
   public boolean isGlobal() {
     return global;
   }
 
+  @Override
   public boolean isVerified() {
     return verified;
   }
 
+  @Override
   public boolean isUseObjenesis() {
     return useObjenesis;
   }
 
   private <T> T getOption(Map<String, Object> options, String key, Class<T> type, T defaultValue) {
     return options.containsKey(key) ? type.cast(options.get(key)) : defaultValue;
+  }
+
+  private List getOptionAsList(Map<String, Object> options, String key) {
+    if (options.containsKey(key)) {
+      Object obj = options.get(key);
+      if (obj instanceof Map) {
+        return Collections.singletonList((Map)obj);
+      }
+      return (List)obj;
+    }
+    return null;
   }
 }

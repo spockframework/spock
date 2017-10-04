@@ -17,20 +17,18 @@
 package org.spockframework.runtime.extension.builtin;
 
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import org.spockframework.runtime.*;
+import org.spockframework.runtime.model.*;
 
-import org.spockframework.runtime.model.FeatureInfo;
-import org.spockframework.runtime.model.IterationInfo;
-import org.spockframework.runtime.model.NameProvider;
-import org.spockframework.runtime.GroovyRuntimeUtil;
+import java.util.regex.*;
 
 /**
  * @author Peter Niederwieser
  */
 public class UnrollNameProvider implements NameProvider<IterationInfo> {
-  private static final Pattern EXPRESSION_PATTERN = Pattern.compile("#([a-zA-Z_\\$]([\\w\\$\\.]|\\(\\))*)");
+  private static final Pattern EXPRESSION_PATTERN = Pattern.compile("#([a-zA-Z_$]([\\w$.]|\\(\\))*)");
 
+  private final boolean assertUnrollExpressions = Boolean.getBoolean("spock.assertUnrollExpressions");
   private final FeatureInfo feature;
   private final String namePattern;
   private final AtomicInteger iterationCount = new AtomicInteger(0);
@@ -41,6 +39,7 @@ public class UnrollNameProvider implements NameProvider<IterationInfo> {
   }
 
   // always returns a name
+  @Override
   public String getName(IterationInfo iterationInfo) {
     return nameFor(iterationInfo.getDataValues());
   }
@@ -69,13 +68,18 @@ public class UnrollNameProvider implements NameProvider<IterationInfo> {
     String firstPart = exprParts[0];
     Object result;
 
-    if (firstPart.equals("featureName")) {
+    if ("featureName".equals(firstPart)) {
       result = feature.getName();
-    } else if (firstPart.equals("iterationCount")) {
+    } else if ("iterationCount".equals(firstPart)) {
       result = String.valueOf(currentIteration);
     } else {
       int index = feature.getDataVariables().indexOf(firstPart);
-      if (index < 0) return "#Error:" + expr;
+      if (index < 0) {
+        if (assertUnrollExpressions) {
+          throw new SpockAssertionError("Error in @Unroll, could not find matching variable for expression: " + expr);
+        }
+        return "#Error:" + expr;
+      }
       result = dataValues[index];
     }
 
@@ -90,6 +94,9 @@ public class UnrollNameProvider implements NameProvider<IterationInfo> {
       }
       return GroovyRuntimeUtil.toString(result);
     } catch (Exception e) {
+      if (assertUnrollExpressions) {
+        throw new SpockAssertionError("Error in @Unroll expression: " + expr, e);
+      }
       return "#Error:" + expr;
     }
   }

@@ -14,10 +14,9 @@
 
 package org.spockframework.runtime.condition;
 
-import java.util.Map;
-import java.util.Set;
-
 import org.spockframework.runtime.GroovyRuntimeUtil;
+
+import java.util.*;
 
 public class DiffedMapRenderer implements IObjectRenderer<Map> {
   private final boolean sort;
@@ -26,6 +25,7 @@ public class DiffedMapRenderer implements IObjectRenderer<Map> {
     this.sort = sort;
   }
 
+  @Override
   @SuppressWarnings("unchecked")
   public String render(Map map) {
     LineBuilder builder = new LineBuilder();

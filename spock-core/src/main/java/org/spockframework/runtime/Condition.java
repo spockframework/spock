@@ -16,33 +16,37 @@
 
 package org.spockframework.runtime;
 
-import java.util.List;
-import java.util.regex.Pattern;
-
-import org.spockframework.runtime.model.ExpressionInfo;
-import org.spockframework.runtime.model.TextPosition;
+import org.spockframework.runtime.model.*;
 import org.spockframework.util.Nullable;
+
+import java.io.*;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Runtime representation of an evaluated condition.
  *
  * @author Peter Niederwieser
  */
-public class Condition {
-  private static final Pattern pattern = Pattern.compile("\\s*\n\\s*");
+public class Condition implements Serializable {
+  private static final long serialVersionUID = 1L;
 
-  private final List<Object> values;
+  private static final Pattern pattern =
+    Pattern.compile("(?<backslashesToEscape>(:?\\\\\\\\)+)|(?<stripBackslash>\\\\\n)|(?<whitespacesToCollapse>\\s*\n\\s*)");
+
+  private final transient List<Object> values;
   private final String text;
   private final TextPosition position;
   private final String message;
   private final Integer notRecordedVarNumberBecauseOfException;
   private final Throwable exception;
 
-  private volatile ExpressionInfo expression;
+  private transient volatile ExpressionInfo expression;
   private volatile String rendering;
 
   public Condition(@Nullable List<Object> values, @Nullable String text, TextPosition position,
-      @Nullable String message, @Nullable Integer notRecordedVarNumberBecauseOfException, @Nullable Throwable exception) {
+                   @Nullable String message, @Nullable Integer notRecordedVarNumberBecauseOfException, @Nullable Throwable exception) {
     this.text = text;
     this.position = position;
     this.values = values;
@@ -89,7 +93,8 @@ public class Condition {
 
   private void createExpression() {
     if (text == null || values == null) return;
-    expression = new ExpressionInfoBuilder(flatten(text), TextPosition.create(1, 1), values, notRecordedVarNumberBecauseOfException, exception).build();
+    String stripAndFlattenText = stripAndFlatten(text).toString();
+    expression = new ExpressionInfoBuilder(stripAndFlattenText, TextPosition.create(1, 1), values, notRecordedVarNumberBecauseOfException, exception).build();
   }
 
   private void createRendering() {
@@ -99,7 +104,7 @@ public class Condition {
       ExpressionInfoValueRenderer.render(expression);
       builder.append(ExpressionInfoRenderer.render(expression));
     } else if (text != null) {
-      builder.append(flatten(text));
+      builder.append(stripAndFlatten(text));
       builder.append("\n");
     } else {
       builder.append("(Source code not available)\n");
@@ -114,7 +119,28 @@ public class Condition {
     rendering = builder.toString();
   }
 
-  private String flatten(String text) {
-    return pattern.matcher(text).replaceAll(" ");
+  private static CharSequence stripAndFlatten(String text) {
+    Matcher m = pattern.matcher(text);
+    StringBuffer sb = new StringBuffer();
+    while (m.find()) {
+      String replacement;
+      String backslashesToEscape = m.group("backslashesToEscape");
+      if (backslashesToEscape != null) {
+        replacement = backslashesToEscape + backslashesToEscape;
+      } else if (m.group("whitespacesToCollapse") != null){
+        replacement = " ";
+      } else {
+        replacement = "";
+      }
+      m.appendReplacement(sb, replacement);
+    }
+    m.appendTail(sb);
+    return sb;
+  }
+
+  private void writeObject(java.io.ObjectOutputStream out) throws IOException {
+    // create the rendering so that it is available for serialization
+    getRendering();
+    out.defaultWriteObject();
   }
 }

@@ -16,25 +16,22 @@
 
 package org.spockframework.compiler;
 
+import org.spockframework.lang.Wildcard;
+import org.spockframework.runtime.SpockRuntime;
+import org.spockframework.util.*;
+import spock.lang.Specification;
+
 import java.util.*;
 
 import org.codehaus.groovy.ast.*;
 import org.codehaus.groovy.ast.expr.*;
 import org.codehaus.groovy.ast.stmt.*;
-import org.codehaus.groovy.runtime.dgmimpl.arrays.*;
-
+import org.codehaus.groovy.runtime.dgmimpl.arrays.IntegerArrayGetAtMetaMethod;
 import org.objectweb.asm.Opcodes;
-
-import org.spockframework.lang.Wildcard;
-import org.spockframework.runtime.SpockRuntime;
-import org.spockframework.util.Nullable;
-
-import org.spockframework.util.ObjectUtil;
-import spock.lang.Specification;
 
 /**
  * Utility methods for AST processing.
- * 
+ *
  * @author Peter Niederwieser
  */
 public abstract class AstUtil {
@@ -211,9 +208,9 @@ public abstract class AstUtil {
    * to handle SpreadExpression's correctly.
    */
   public static Expression toArgumentArray(List<Expression> argList, IRewriteResources resources) {
-    List<Expression> normalArgs = new ArrayList<Expression>();
-    List<Expression> spreadArgs = new ArrayList<Expression>();
-    List<Expression> spreadPositions = new ArrayList<Expression>();
+    List<Expression> normalArgs = new ArrayList<>();
+    List<Expression> spreadArgs = new ArrayList<>();
+    List<Expression> spreadPositions = new ArrayList<>();
 
     for (int i = 0; i < argList.size(); i++) {
       Expression arg = argList.get(i);
@@ -274,7 +271,7 @@ public abstract class AstUtil {
   }
 
   public static int getVisibility(FieldNode field) {
-    return field.getModifiers() & (Opcodes.ACC_PUBLIC | Opcodes.ACC_PROTECTED | Opcodes.ACC_PRIVATE);  
+    return field.getModifiers() & (Opcodes.ACC_PUBLIC | Opcodes.ACC_PROTECTED | Opcodes.ACC_PRIVATE);
   }
 
   public static void setVisibility(FieldNode field, int visibility) {

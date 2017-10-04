@@ -16,27 +16,27 @@
 
 package org.spockframework.runtime.model;
 
-import java.util.*;
-
 import org.spockframework.runtime.*;
 import org.spockframework.runtime.extension.IMethodInterceptor;
 import org.spockframework.util.*;
 
+import java.util.*;
+
 /**
  * Runtime information about a Spock specification.
- * 
+ *
  * @author Peter Niederwieser
  */
 public class SpecInfo extends SpecElementInfo<NodeInfo, Class<?>> implements IMethodNameMapper {
-  private final List<FieldInfo> fields = new ArrayList<FieldInfo>();
-  private final List<IMethodInterceptor> setupInterceptors = new ArrayList<IMethodInterceptor>();
-  private final List<IMethodInterceptor> cleanupInterceptors = new ArrayList<IMethodInterceptor>();
-  private final List<IMethodInterceptor> setupSpecInterceptors = new ArrayList<IMethodInterceptor>();
-  private final List<IMethodInterceptor> cleanupSpecInterceptors = new ArrayList<IMethodInterceptor>();
-  private final List<IMethodInterceptor> sharedInitializerInterceptors = new ArrayList<IMethodInterceptor>();
-  private final List<IMethodInterceptor> initializerInterceptors = new ArrayList<IMethodInterceptor>();
+  private final List<FieldInfo> fields = new ArrayList<>();
+  private final List<IMethodInterceptor> setupInterceptors = new ArrayList<>();
+  private final List<IMethodInterceptor> cleanupInterceptors = new ArrayList<>();
+  private final List<IMethodInterceptor> setupSpecInterceptors = new ArrayList<>();
+  private final List<IMethodInterceptor> cleanupSpecInterceptors = new ArrayList<>();
+  private final List<IMethodInterceptor> sharedInitializerInterceptors = new ArrayList<>();
+  private final List<IMethodInterceptor> initializerInterceptors = new ArrayList<>();
 
-  private final List<IRunListener> listeners = new ArrayList<IRunListener>();
+  private final List<IRunListener> listeners = new ArrayList<>();
 
   private String pkg;
   private String filename;
@@ -49,12 +49,12 @@ public class SpecInfo extends SpecElementInfo<NodeInfo, Class<?>> implements IMe
 
   private MethodInfo initializerMethod;
   private MethodInfo sharedInitializerMethod;
-  private final List<MethodInfo> setupMethods = new ArrayList<MethodInfo>();
-  private final List<MethodInfo> cleanupMethods = new ArrayList<MethodInfo>();
-  private final List<MethodInfo> setupSpecMethods = new ArrayList<MethodInfo>();
-  private final List<MethodInfo> cleanupSpecMethods = new ArrayList<MethodInfo>();
+  private final List<MethodInfo> setupMethods = new ArrayList<>();
+  private final List<MethodInfo> cleanupMethods = new ArrayList<>();
+  private final List<MethodInfo> setupSpecMethods = new ArrayList<>();
+  private final List<MethodInfo> cleanupSpecMethods = new ArrayList<>();
 
-  private final List<FeatureInfo> features = new ArrayList<FeatureInfo>();
+  private final List<FeatureInfo> features = new ArrayList<>();
 
   private boolean supportParallelExecution = true;
 
@@ -130,7 +130,7 @@ public class SpecInfo extends SpecElementInfo<NodeInfo, Class<?>> implements IMe
 
   public List<SpecInfo> getSpecsTopToBottom() {
     if (specsTopToBottom == null) {
-      specsTopToBottom = new ArrayList<SpecInfo>();
+      specsTopToBottom = new ArrayList<>();
       SpecInfo curr = getTopSpec();
       while (curr != null) {
         specsTopToBottom.add(curr);
@@ -143,14 +143,14 @@ public class SpecInfo extends SpecElementInfo<NodeInfo, Class<?>> implements IMe
 
   public List<SpecInfo> getSpecsBottomToTop() {
     if (specsBottomToTop == null) {
-      specsBottomToTop = new ArrayList<SpecInfo>();
+      specsBottomToTop = new ArrayList<>();
       SpecInfo curr = getBottomSpec();
       while (curr != null) {
         specsBottomToTop.add(curr);
         curr = curr.getSuperSpec();
       }
     }
-    
+
     return specsBottomToTop;
   }
 
@@ -221,7 +221,7 @@ public class SpecInfo extends SpecElementInfo<NodeInfo, Class<?>> implements IMe
   public List<FieldInfo> getAllFields() {
     if (superSpec == null) return fields;
 
-    List<FieldInfo> result = new ArrayList<FieldInfo>(superSpec.getAllFields());
+    List<FieldInfo> result = new ArrayList<>(superSpec.getAllFields());
     result.addAll(fields);
     return result;
   }
@@ -236,8 +236,8 @@ public class SpecInfo extends SpecElementInfo<NodeInfo, Class<?>> implements IMe
 
   public List<FeatureInfo> getAllFeatures() {
     if (superSpec == null) return features;
-    
-    List<FeatureInfo> result = new ArrayList<FeatureInfo>(superSpec.getAllFeatures());
+
+    List<FeatureInfo> result = new ArrayList<>(superSpec.getAllFeatures());
     result.addAll(features);
     return result;
   }
@@ -245,6 +245,7 @@ public class SpecInfo extends SpecElementInfo<NodeInfo, Class<?>> implements IMe
   public List<FeatureInfo> getAllFeaturesInExecutionOrder() {
     List<FeatureInfo> result = getAllFeatures();
     Collections.sort(result, new Comparator<FeatureInfo>() {
+      @Override
       public int compare(FeatureInfo f1, FeatureInfo f2) {
         return f1.getExecutionOrder() - f2.getExecutionOrder();
       }
@@ -322,10 +323,11 @@ public class SpecInfo extends SpecElementInfo<NodeInfo, Class<?>> implements IMe
   public void sortFeatures(final IFeatureSortOrder order) {
     List<FeatureInfo> features = getAllFeatures();
     Collections.sort(features, order);
-    for (int i = 0; i < features.size(); i++) 
+    for (int i = 0; i < features.size(); i++)
       features.get(i).setExecutionOrder(i);
   }
 
+  @Override
   public boolean isInitializerOrFixtureMethod(String className, String methodName) {
     if (!InternalIdentifiers.INITIALIZER_AND_FIXTURE_METHODS.contains(methodName))
       return false;
@@ -337,6 +339,7 @@ public class SpecInfo extends SpecElementInfo<NodeInfo, Class<?>> implements IMe
     return false;
   }
 
+  @Override
   public String toFeatureName(String methodName) {
     for (FeatureInfo feature : getAllFeatures())
       if (feature.hasBytecodeName(methodName))

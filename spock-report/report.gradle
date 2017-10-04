@@ -1,6 +1,6 @@
 apply plugin: "spock-base"
 
-displayName = "Spock Framework - Report Module"
+ext.displayName = "Spock Framework - Report Module"
 
 description = "Interactive, business-friendly HTML reports for Spock specifications."
 
@@ -11,7 +11,32 @@ dependencies {
   // "com.fasterxml.jackson.core:jackson-databind:2.1.2"
 }
 
+jar {
+  manifest {
+    attributes(
+      'Created-By': "${System.properties['java.version']} (${System.properties['java.vendor']} ${System.properties['java.vm.version']})".toString(),
+      'Build-Date': buildDate,
+      'Build-Time': buildTime,
+      'Build-Revision': versioning.info.commit,
+      'Specification-Title': project.name,
+      'Specification-Version': baseVersion,
+      'Specification-Vendor': 'spockframework.org',
+      'Implementation-Title': project.name,
+      'Implementation-Version': variantLessVersion,
+      'Implementation-Vendor': 'spockframework.org',
+      'Automatic-Module-Name': 'org.spockframework.report'
+    )
+  }
+}
+
 test {
+  exclude "org/spockframework/report/sample/ParameterizedFightSpec.class"
+  exclude "org/spockframework/report/sample/FightOrFlightStory.class"
+  exclude "org/spockframework/report/sample/FightOrFlightSpec.class"
+}
+
+testCglib {
+  exclude "org/spockframework/report/sample/ParameterizedFightSpec.class"
   exclude "org/spockframework/report/sample/FightOrFlightStory.class"
   exclude "org/spockframework/report/sample/FightOrFlightSpec.class"
 }
@@ -24,8 +49,9 @@ task sampleTest(type: Test) {
   reports.junitXml.enabled = false
   reports.html.enabled = false
 
-  testClassesDir = test.testClassesDir
+  testClassesDirs = test.testClassesDirs
   classpath = test.classpath
+  include "org/spockframework/report/sample/ParameterizedFightSpec.class"
   include "org/spockframework/report/sample/FightOrFlightStory.class"
   include "org/spockframework/report/sample/FightOrFlightSpec.class"
   testLogging.exceptionFormat = "full"

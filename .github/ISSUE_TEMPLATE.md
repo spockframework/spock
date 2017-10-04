@@ -16,7 +16,7 @@
 > Make sure you choose the correct label as well (bug or enhancement)
 
 # How to reproduce
-> Please provide information how to reproduce this issue.
+> Please provide information on how to reproduce this issue, a [Short, Self Contained, Correct (Compilable), Example](http://www.sscce.org/) helps tremendously.
 > Only applicable for bugs.
 
 ## Link to a gist or similar (optional)
@@ -49,21 +49,19 @@
 ## Build-tool dependencies used
 
 ### Gradle/Grails
-    compile 'org.spockframework:spock-core:1.1-groovy-2.4-rc-1'
+    compile 'org.spockframework:spock-core:1.1-groovy-2.4-rc-2'
 
 ### Apache Maven
     <dependency>
       <groupId>org.spockframework</groupId>
       <artifactId>spock-core</artifactId>
-      <version>1.1-groovy-2.4-rc-1</version>
+      <version>1.1-groovy-2.4-rc-2</version>
     </dependency>
 
 ### Groovy Grape
     @Grapes(
-      @Grab(group='org.spockframework', module='spock-core', version='1.1-groovy-2.4-rc-1')
+      @Grab(group='org.spockframework', module='spock-core', version='1.1-groovy-2.4-rc-2')
     )
 
 ### Scala SBT
-    libraryDependencies += "org.spockframework" % "spock-core" % "1.1-groovy-2.4-rc-1"
-
-
+    libraryDependencies += "org.spockframework" % "spock-core" % "1.1-groovy-2.4-rc-2"

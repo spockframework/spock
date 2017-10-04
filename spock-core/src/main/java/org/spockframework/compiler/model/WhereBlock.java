@@ -28,6 +28,7 @@ public class WhereBlock extends Block {
     visitor.visitWhereBlock(this);
   }
 
+  @Override
   public BlockParseInfo getParseInfo() {
     return BlockParseInfo.WHERE;
   }

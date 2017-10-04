@@ -16,31 +16,29 @@
 
 package org.spockframework.mock.runtime;
 
-import java.lang.reflect.*;
-import java.util.Collections;
-
-import groovy.lang.*;
-
-import org.spockframework.mock.CannotCreateMockException;
-import org.spockframework.mock.IMockConfiguration;
-import org.spockframework.mock.IMockFactory;
-import org.spockframework.mock.MockImplementation;
+import org.spockframework.mock.*;
 import org.spockframework.runtime.GroovyRuntimeUtil;
-
 import spock.lang.Specification;
+
+import java.lang.reflect.Modifier;
+
+import groovy.lang.MetaClass;
 
 public class JavaMockFactory implements IMockFactory {
   public static JavaMockFactory INSTANCE = new JavaMockFactory();
 
+  @Override
   public boolean canCreate(IMockConfiguration configuration) {
     return configuration.getImplementation() == MockImplementation.JAVA;
   }
 
+  @Override
   public Object create(IMockConfiguration configuration, Specification specification) {
     return createInternal(configuration, specification, specification.getClass().getClassLoader());
   }
 
-	public Object createDetached(IMockConfiguration configuration, ClassLoader classLoader) {
+	@Override
+  public Object createDetached(IMockConfiguration configuration, ClassLoader classLoader) {
 		 return createInternal(configuration, null, classLoader);
 	}
 
@@ -56,7 +54,7 @@ public class JavaMockFactory implements IMockFactory {
 
     MetaClass mockMetaClass = GroovyRuntimeUtil.getMetaClass(configuration.getType());
     IProxyBasedMockInterceptor interceptor = new JavaMockInterceptor(configuration, specification, mockMetaClass);
-    return ProxyBasedMockFactory.INSTANCE.create(configuration.getType(), Collections.<Class<?>>emptyList(),
+    return ProxyBasedMockFactory.INSTANCE.create(configuration.getType(), configuration.getAdditionalInterfaces(),
         configuration.getConstructorArgs(), interceptor, classLoader,
         configuration.isUseObjenesis());
   }

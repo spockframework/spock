@@ -1,19 +1,18 @@
 package org.spockframework.gentyref;
 
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
+import java.lang.reflect.*;
 
 /**
  * Wrapper around {@link Type}.
- * 
+ *
  * You can use this to create instances of Type for a type known at compile
  * time.
- * 
+ *
  * For example, to get the Type that represents List&lt;String&gt;:
  * <code>Type listOfString = new TypeToken&lt;List&lt;String&gt;&gt;(){}.getType();</code>
- * 
+ *
  * @author Wouter Coekaerts <wouter@coekaerts.be>
- * 
+ *
  * @param <T>
  *            The type represented by this TypeToken.
  */
@@ -51,7 +50,7 @@ public abstract class TypeToken<T> {
 	 * Gets type token for the given {@code Class} instance.
 	 */
 	public static <T> TypeToken<T> get(Class<T> type) {
-		return new SimpleTypeToken<T>(type);
+		return new SimpleTypeToken<>(type);
 	}
 
 	/**

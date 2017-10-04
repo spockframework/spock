@@ -1,6 +1,6 @@
 apply from: script("publishMaven")
 
-displayName = "Spock Framework - Spring Module"
+ext.displayName = "Spock Framework - Spring Module"
 
 description = "Spock's Spring Module makes it possible to use Spring's TestContext framework together with Spock. \
 Supports Spring 2.5.x, 3.x, and 4.x."
@@ -25,4 +25,22 @@ dependencies {
 
   testRuntime libs.h2database
   testRuntime libs.log4j
+}
+
+jar {
+  manifest {
+    attributes(
+      'Created-By': "${System.properties['java.version']} (${System.properties['java.vendor']} ${System.properties['java.vm.version']})".toString(),
+      'Build-Date': buildDate,
+      'Build-Time': buildTime,
+      'Build-Revision': versioning.info.commit,
+      'Specification-Title': project.name,
+      'Specification-Version': baseVersion,
+      'Specification-Vendor': 'spockframework.org',
+      'Implementation-Title': project.name,
+      'Implementation-Version': variantLessVersion,
+      'Implementation-Vendor': 'spockframework.org',
+      'Automatic-Module-Name': 'org.spockframework.spring'
+    )
+  }
 }

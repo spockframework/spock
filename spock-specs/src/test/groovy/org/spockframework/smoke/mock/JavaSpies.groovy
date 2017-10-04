@@ -15,13 +15,12 @@
 package org.spockframework.smoke.mock
 
 import org.spockframework.mock.CannotCreateMockException
-
-import spock.lang.Specification
+import spock.lang.*
 
 class JavaSpies extends Specification {
   def "construct spied-on object using default constructor when no constructor args given (even if Objenesis is available on class path)"() {
     when:
-    Spy(Constructable)
+    Spy(NoDefaultConstructor)
 
     then:
     thrown(CannotCreateMockException)
@@ -37,10 +36,14 @@ class JavaSpies extends Specification {
     spy.arg4 == arg4
 
     where:
-    ctorArgs | arg1 | arg2 | arg3 | arg4
-    [1]      | 1    | 0    | 0    | null
-    [2, 3]   | 0    | 2    | 3    | null
-    ["hi"]   | 0    | 0    | 0    | "hi"
+    ctorArgs                         | arg1 | arg2 | arg3 | arg4
+    [1]                              | 1    | 0    | 0    | null
+    [2, 3]                           | 0    | 2    | 3    | null
+    ["hi"]                           | 0    | 0    | 0    | "hi"
+    [arg4: "hi"]                     | 0    | 0    | 0    | "hi"
+    [arg1: 2, arg3: 5, arg4: "hi"]   | 2    | 0    | 5    | "hi"
+    [[arg1: 2, arg3: 5, arg4: "hi"]] | 2    | 0    | 5    | "hi"
+    [arg2: 1]                        | 0    | 1    | 0    | null
   }
 
   def "call real methods by default"() {
@@ -99,6 +102,33 @@ class JavaSpies extends Specification {
     person.work() == "singing"
   }
 
+  def "can spy on concrete instances"() {
+    def person = Spy(new Person())
+
+    when:
+    def result = person.work()
+
+    then:
+    1 * person.work()
+    result == "singing, singing"
+  }
+
+  @Issue("https://github.com/spockframework/spock/issues/769")
+  def "can spy on instances of classes with no default constructor"() {
+    given:
+    def spy = Spy(new NoDefaultConstructor(42))
+
+    expect:
+    spy.value == 42
+
+    when:
+    def result = spy.value
+
+    then:
+    1 * spy.getValue() >> 7
+    result == 7
+  }
+
   def "cannot spy on final classes"() {
     when:
     Spy(FinalPerson)
@@ -132,6 +162,9 @@ class JavaSpies extends Specification {
     int arg2
     int arg3
     String arg4
+
+    Constructable() {
+    }
 
     Constructable(int arg1) {
       this.arg1 = arg1
@@ -190,6 +223,13 @@ class JavaSpies extends Specification {
 
   static class FinalMethodPerson extends Person {
     final String getPhoneNumber() { "12345" }
+  }
+
+  static class NoDefaultConstructor {
+    int value
+    NoDefaultConstructor(int value) {
+      this.value = value
+    }
   }
 }
 

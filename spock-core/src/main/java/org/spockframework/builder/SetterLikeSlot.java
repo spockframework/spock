@@ -14,12 +14,11 @@
 
 package org.spockframework.builder;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.Type;
-
 import org.spockframework.gentyref.GenericTypeReflector;
 import org.spockframework.runtime.GroovyRuntimeUtil;
 import org.spockframework.util.MopUtil;
+
+import java.lang.reflect.*;
 
 import groovy.lang.MetaMethod;
 
@@ -34,12 +33,14 @@ public class SetterLikeSlot implements ISlot {
     this.setterLikeMethod = setterLikeMethod;
   }
 
+  @Override
   public Type getType() {
     Method m = MopUtil.methodFor(setterLikeMethod);
     return m != null ? GenericTypeReflector.getExactParameterTypes(m, ownerType)[0] :
         setterLikeMethod.getNativeParameterTypes()[0];
   }
 
+  @Override
   public void write(Object value) {
     setterLikeMethod.doMethodInvoke(owner, GroovyRuntimeUtil.asArgumentArray(value));
   }

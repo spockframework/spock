@@ -16,18 +16,21 @@ package org.spockframework.mock;
 
 class DefaultToStringInteraction extends DefaultInteraction {
   public static final DefaultToStringInteraction INSTANCE = new DefaultToStringInteraction();
-  
+
   private DefaultToStringInteraction() {}
 
+  @Override
   public String getText() {
     return "Object.toString() interaction";
   }
 
+  @Override
   public boolean matches(IMockInvocation invocation) {
-    return invocation.getMethod().getName().equals("toString")
+    return "toString".equals(invocation.getMethod().getName())
         && invocation.getMethod().getParameterTypes().isEmpty();
   }
 
+  @Override
   public Object accept(IMockInvocation invocation) {
     StringBuilder builder = new StringBuilder();
     builder.append("Mock for type '");

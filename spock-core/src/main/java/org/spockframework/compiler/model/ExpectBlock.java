@@ -32,6 +32,7 @@ public class ExpectBlock extends Block {
     visitor.visitExpectBlock(this);
   }
 
+  @Override
   public BlockParseInfo getParseInfo() {
     return BlockParseInfo.EXPECT;
   }

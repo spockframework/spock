@@ -38,8 +38,13 @@ public class SpringInterceptor extends AbstractMethodInterceptor {
   }
 
   @Override
-  public void interceptSetupMethod(IMethodInvocation invocation) throws Throwable {
+  public void interceptInitializerMethod(IMethodInvocation invocation) throws Throwable {
+    invocation.proceed(); // needs to run before so that mocks are already initialized
     manager.prepareTestInstance(invocation.getInstance());
+  }
+
+  @Override
+  public void interceptSetupMethod(IMethodInvocation invocation) throws Throwable {
     exception = null;
     beforeTestMethodInvoked = true;
     manager.beforeTestMethod(invocation.getInstance(),
@@ -54,14 +59,8 @@ public class SpringInterceptor extends AbstractMethodInterceptor {
       return;
     }
     beforeTestMethodInvoked = false;
-    
-    Throwable cleanupEx = null;
-    try {
-      invocation.proceed();
-    } catch (Throwable t) {
-      cleanupEx = t;
-      if (exception == null) exception = t;
-    }
+
+    invocation.proceed();
 
     Throwable afterTestMethodEx = null;
     try {
@@ -70,19 +69,19 @@ public class SpringInterceptor extends AbstractMethodInterceptor {
     } catch (Throwable t) {
       afterTestMethodEx = t;
     }
-    
-    if (cleanupEx != null) throw cleanupEx;
-    if (afterTestMethodEx != null) throw afterTestMethodEx;
+
+    if (afterTestMethodEx != null) {
+      if (exception == null) {
+        throw afterTestMethodEx;
+      } else {
+        exception.addSuppressed(afterTestMethodEx);
+      }
+    }
   }
 
   @Override
   public void interceptCleanupSpecMethod(IMethodInvocation invocation) throws Throwable {
-    Throwable cleanupSpecEx = null;
-    try {
-      invocation.proceed();
-    } catch (Throwable t) {
-      cleanupSpecEx = t;
-    }
+    invocation.proceed();
 
     Throwable afterTestClassEx = null;
     try {
@@ -91,8 +90,13 @@ public class SpringInterceptor extends AbstractMethodInterceptor {
       afterTestClassEx = t;
     }
 
-    if (cleanupSpecEx != null) throw cleanupSpecEx;
-    if (afterTestClassEx != null) throw afterTestClassEx;
+    if (afterTestClassEx != null) {
+      if (exception == null) {
+        throw afterTestClassEx;
+      } else {
+        exception.addSuppressed(afterTestClassEx);
+      }
+    }
   }
 
   public void error(ErrorInfo error) {

@@ -1,4 +1,4 @@
-displayName = "Spock Framework - Specs for Core Module"
+ext.displayName = "Spock Framework - Specs for Core Module"
 
 description = "Spock specifications for the Core Module. Yes, we eat our own dog food."
 
@@ -13,6 +13,7 @@ dependencies {
   testCompile project(":spock-core")
 
   testRuntime libs.asm
+  testRuntime libs.bytebuddy
   testRuntime libs.cglib
   testRuntime libs.objenesis
   testRuntime libs.h2database

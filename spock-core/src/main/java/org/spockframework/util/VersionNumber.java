@@ -14,8 +14,7 @@
 
 package org.spockframework.util;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.regex.*;
 
 /**
  * A version number with format major.minor.micro-qualifier.
@@ -24,7 +23,7 @@ import java.util.regex.Pattern;
 public final class VersionNumber implements Comparable<VersionNumber> {
   public static final VersionNumber UNKNOWN = new VersionNumber(0, 0, 0, null);
 
-	private static final Pattern versionPattern = Pattern.compile("(\\d+)(?:\\.(\\d+))?+(?:\\.(\\d+))?+(?:[-\\.](.+))?");
+	private static final Pattern versionPattern = Pattern.compile("(\\d+)(?:\\.(\\d+))?+(?:\\.(\\d+))?+(?:[-.](.+))?");
 	private static final String versionTemplate = "%d.%d.%d%s";
 
 	private final int major;
@@ -55,7 +54,8 @@ public final class VersionNumber implements Comparable<VersionNumber> {
     return qualifier;
   }
 
-	public int compareTo(VersionNumber other) {
+	@Override
+  public int compareTo(VersionNumber other) {
 		if (major != other.major) return major - other.major;
 		if (minor != other.minor) return minor - other.minor;
 		if (micro != other.micro) return micro - other.micro;

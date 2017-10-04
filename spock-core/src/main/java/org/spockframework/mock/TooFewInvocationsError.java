@@ -16,11 +16,10 @@
 
 package org.spockframework.mock;
 
-import java.util.*;
+import org.spockframework.util.*;
 
-import org.spockframework.util.Assert;
-import org.spockframework.util.HashMultiset;
-import org.spockframework.util.IMultiset;
+import java.io.IOException;
+import java.util.*;
 
 /**
  * Thrown to indicate that one or more mandatory interactions matched too few invocations.
@@ -28,8 +27,10 @@ import org.spockframework.util.IMultiset;
  * @author Peter Niederwieser
  */
 public class TooFewInvocationsError extends InteractionNotSatisfiedError {
-  private final List<IMockInteraction> interactions;
-  private final List<IMockInvocation> unmatchedInvocations;
+  private static final long serialVersionUID = 1L;
+
+  private final transient List<IMockInteraction> interactions;
+  private final transient List<IMockInvocation> unmatchedInvocations;
   private String message;
 
   public TooFewInvocationsError(List<IMockInteraction> interactions, List<IMockInvocation> unmatchedInvocations) {
@@ -43,7 +44,7 @@ public class TooFewInvocationsError extends InteractionNotSatisfiedError {
   public synchronized String getMessage() {
     if (message != null) return message;
 
-    IMultiset<IMockInvocation> unmatchedMultiInvocations = new HashMultiset<IMockInvocation>(unmatchedInvocations);
+    IMultiset<IMockInvocation> unmatchedMultiInvocations = new HashMultiset<>(unmatchedInvocations);
 
     StringBuilder builder = new StringBuilder();
 
@@ -70,8 +71,14 @@ public class TooFewInvocationsError extends InteractionNotSatisfiedError {
     return message;
   }
 
+  private void writeObject(java.io.ObjectOutputStream out) throws IOException {
+    // create the message so that it is available for serialization
+    getMessage();
+    out.defaultWriteObject();
+  }
+
   private List<ScoredInvocation> scoreInvocations(IMockInteraction interaction, IMultiset<IMockInvocation> invocations) {
-    List<ScoredInvocation> result = new ArrayList<ScoredInvocation>();
+    List<ScoredInvocation> result = new ArrayList<>();
     for (Map.Entry<IMockInvocation, Integer> entry : invocations.entrySet()) {
       result.add(new ScoredInvocation(entry.getKey(), entry.getValue(), interaction.computeSimilarityScore(entry.getKey())));
     }
@@ -90,6 +97,7 @@ public class TooFewInvocationsError extends InteractionNotSatisfiedError {
       this.score = score;
     }
 
+    @Override
     public int compareTo(ScoredInvocation other) {
       return score - other.score;
     }

@@ -19,7 +19,7 @@ import java.util.*;
 
 public abstract class CollectionUtil {
   public static <E, F> ArrayList<F> filterMap(Collection<E> collection, IFunction<? super E, ? extends F> function) {
-    ArrayList<F> result = new ArrayList<F>(collection.size());
+    ArrayList<F> result = new ArrayList<>(collection.size());
 
     for (E elem : collection) {
       F resultElem = function.apply(elem);
@@ -40,7 +40,7 @@ public abstract class CollectionUtil {
   }
 
   public static List<Object> arrayToList(Object array) {
-    List<Object> result = new ArrayList<Object>();
+    List<Object> result = new ArrayList<>();
     int length = Array.getLength(array);
     for (int i = 0; i < length; i++) {
       result.add(Array.get(array, i));
@@ -48,15 +48,17 @@ public abstract class CollectionUtil {
     return result;
   }
 
-  public static @Nullable <T> T getFirstElement(Iterable<T> iterable) {
+  @Nullable
+  public static <T> T getFirstElement(Iterable<T> iterable) {
     Iterator<T> iterator = iterable.iterator();
     Assert.that(iterator.hasNext());
     return iterator.next();
   }
 
-  public static @Nullable <T> T getLastElement(List<T> list) {
+  @Nullable
+  public static <T> T getLastElement(List<T> list) {
     Assert.that(list.size() > 0);
-    
+
     return list.get(list.size() - 1);
   }
 
@@ -72,18 +74,22 @@ public abstract class CollectionUtil {
 
   public static <T> Iterable<T> reverse(final List<T> list) {
     return new Iterable<T>() {
+      @Override
       public Iterator<T> iterator() {
         final ListIterator<T> listIterator = list.listIterator(list.size());
 
         return new Iterator<T>() {
+          @Override
           public boolean hasNext() {
             return listIterator.hasPrevious();
           }
 
+          @Override
           public T next() {
             return listIterator.previous();
           }
 
+          @Override
           public void remove() {
             listIterator.remove();
           }
@@ -93,30 +99,31 @@ public abstract class CollectionUtil {
   }
 
   public static <T> Set<T> asSet(T[] values) {
-    return new HashSet<T>(Arrays.asList(values));
+    return new HashSet<>(Arrays.asList(values));
   }
 
+  @SafeVarargs
   public static <E> List<E> listOf(E... elements) {
-    List<E> result = new ArrayList<E>(elements.length);
+    List<E> result = new ArrayList<>(elements.length);
     result.addAll(Arrays.asList(elements));
     return result;
   }
 
   public static <K, V> Map<K, V> mapOf(K key, V value) {
-    Map<K, V> map = new LinkedHashMap<K, V>();
+    Map<K, V> map = new LinkedHashMap<>();
     map.put(key, value);
     return map;
   }
 
   public static <K, V> Map<K, V> mapOf(K key, V value, K key2, V value2) {
-    Map<K, V> map = new LinkedHashMap<K, V>();
+    Map<K, V> map = new LinkedHashMap<>();
     map.put(key, value);
     map.put(key2, value2);
     return map;
   }
 
   public static <K, V> Map<K, V> mapOf(K key, V value, K key2, V value2, K key3, V value3) {
-    Map<K, V> map = new LinkedHashMap<K, V>();
+    Map<K, V> map = new LinkedHashMap<>();
     map.put(key, value);
     map.put(key2, value2);
     map.put(key3, value3);
@@ -124,7 +131,7 @@ public abstract class CollectionUtil {
   }
 
   public static <K, V> Map<K, V> mapOf(K key, V value, K key2, V value2, K key3, V value3, K key4, V value4) {
-    Map<K, V> map = new LinkedHashMap<K, V>();
+    Map<K, V> map = new LinkedHashMap<>();
     map.put(key, value);
     map.put(key2, value2);
     map.put(key3, value3);
@@ -133,7 +140,7 @@ public abstract class CollectionUtil {
   }
 
   public static <K, V> Map<K, V> mapOf(K key, V value, K key2, V value2, K key3, V value3, K key4, V value4, K key5, V value5) {
-    Map<K, V> map = new LinkedHashMap<K, V>();
+    Map<K, V> map = new LinkedHashMap<>();
     map.put(key, value);
     map.put(key2, value2);
     map.put(key3, value3);
@@ -160,17 +167,20 @@ public abstract class CollectionUtil {
     return original;
   }
 
+  @SafeVarargs
   public static <T> Iterable<T> concat(Iterable<? extends T>... iterables) {
     return concat(Arrays.asList(iterables));
   }
 
   public static <T> Iterable<T> concat(final List<Iterable<? extends T>> iterables) {
     return new Iterable<T>() {
+      @Override
       public Iterator<T> iterator() {
         return new Iterator<T>() {
           Iterator<? extends T> iter;
           int pos = 0;
 
+          @Override
           public boolean hasNext() {
             while (pos < iterables.size()) {
               if (iter == null) iter = iterables.get(pos).iterator();
@@ -181,6 +191,7 @@ public abstract class CollectionUtil {
             return false;
           }
 
+          @Override
           public T next() {
             while (pos < iterables.size()) {
               if (iter == null) iter = iterables.get(pos).iterator();
@@ -191,6 +202,7 @@ public abstract class CollectionUtil {
             throw new NoSuchElementException();
           }
 
+          @Override
           public void remove() {
             throw new UnsupportedOperationException("remove");
           }

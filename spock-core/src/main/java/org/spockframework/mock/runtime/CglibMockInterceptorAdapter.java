@@ -16,8 +16,7 @@ package org.spockframework.mock.runtime;
 
 import java.lang.reflect.Method;
 
-import net.sf.cglib.proxy.MethodInterceptor;
-import net.sf.cglib.proxy.MethodProxy;
+import net.sf.cglib.proxy.*;
 
 public class CglibMockInterceptorAdapter implements MethodInterceptor {
   private final IProxyBasedMockInterceptor interceptor;
@@ -26,6 +25,7 @@ public class CglibMockInterceptorAdapter implements MethodInterceptor {
     this.interceptor = interceptor;
   }
 
+  @Override
   public Object intercept(Object target, Method method, Object[] arguments, MethodProxy methodProxy) throws Throwable {
     return interceptor.intercept(target, method, arguments, new CglibRealMethodInvoker(methodProxy));
   }

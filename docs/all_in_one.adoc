@@ -1,8 +1,7 @@
 = Spock Framework Reference Documentation
 :toc: left
 :toclevels: 3
-:author: Peter Niederwieser
-:revnumber: 1.0
+include::include.adoc[]
 
 include::introduction.adoc[leveloffset=+1]
 

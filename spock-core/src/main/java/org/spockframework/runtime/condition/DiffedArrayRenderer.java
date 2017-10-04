@@ -17,6 +17,7 @@ package org.spockframework.runtime.condition;
 import java.lang.reflect.Array;
 
 public class DiffedArrayRenderer implements IObjectRenderer<Object> {
+  @Override
   public String render(Object array) {
     LineBuilder builder = new LineBuilder();
 

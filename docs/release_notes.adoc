@@ -1,4 +1,76 @@
 = Release Notes
+include::include.adoc[]
+
+== 1.2 (tbd)
+
+Breaking Changes: Spock 1.2 drops support for Java 6, Groovy 2.0 and Groovy 2.3
+
+=== What's New In This release
+
+* Add flag to UnrollNameProvider to assert unroll expressions (set the system property `spock.assertUnrollExpressions` to `true`) https://github.com/spockframework/spock/issues/767[#767]
+* Add automatic module name descriptors for Java 9
+* Add `@Retry` extension (<<extensions.adoc#_retry,Docs>>)
+* Fix SpockAssertionErrors and its subclasses now are properly `Serializeable`
+* Fix Spring injection of JUnit Rules, due to the changes in 1.1 the rules where initialized before Spring could inject them,
+  this has been fixed by performing the injection earlier in the process
+* Improve in assertions Spock now uses `DefaultGroovyMethods.dump` instead of `toString` if a class doesn't override the default `Object.toString`.
+* Improve `verifyAll` can now also have a target same as `with`
+* Improve static type hints for `verifyAll` and `with`
+* Improve reporting of exceptions during cleanup, they are now properly reported as suppressed exceptions instead of hiding the real exception
+* Improve default responses for stubs, Java 8 types like `Optional` and `Streams` now return empty, `CompleteableFuture` completes with `null` result
+* Improve support for builder pattern, stubs now return themselves if the return type matches the type of the stub
+* Improve tapestry support with by supporting `@ImportModule`
+* Improve `constructorArgs` for spies can now accept a map directly without the need to wrap it in a list
+* General dependency update
+
+Thanks to all the contributors to this release: Rob Elliot, jochenberger, Jan Papenbrock, Paul King, Marcin Zajączkowski, mrb-twx
+
+=== Known Issues
+* Groovy 2.4.10 introduced a bug that interfered with the way `verifyAll` works, it has been fixed in 2.4.12
+
+== 1.1 (2017-05-01)
+
+=== What's New In This release
+
+* Update docs to include info/examples for Spying instantiated objects
+* Fix integer overflow that could occur when the OutOfMemoryError protection while comparing huge strings kicked in
+* Improve rendering for OutOfMemoryError protection
+
+== 1.1-rc-4 (2017-03-28)
+
+This should be the last rc for 1.1
+
+=== What's New In This release
+
+* 15 merged pull requests
+* Spies can now be created with an already existing target
+* Fix for scoped Spring Beans
+* Fix incompatibility with Spring 2/3 that was introduced in 1.1-rc-1
+* Fix groovy compatibility
+* Fix ByteBuddy compatibility
+* Fix OutOfMemoryError when comparing huge strings
+* Improve default response for `java.util.Optional<T>`, will now return empty optional
+* Improve detection of Spring Boot tests
+* Improve documentation for global extensions
+
+Thanks to all the contributors to this release: Taylor Wicksell, Rafael Winterhalter, Marcin Zajączkowski, Eduardo Grajeda, Paul King, Andrii, Björn Kautler, Libor Rysavy
+
+Known issues with groovy 2.4.10 which breaks a smoke test, but should have little impact on normal use (#709).
+
+== 1.1-rc-3 (released 2016-10-17)
+
+Adds compatibility with ByteBuddy as an alternative to cglib for generating mocks and stubs for classes.
+
+== 1.1-rc-2 (released 2016-08-22)
+
+1.1 should be here soon but in the meantime there's a new release candidate.
+
+=== What's New In This release
+
+* Support for the new test annotations in Spring Boot 1.4.
+* Fixed the integration of JUnit method rules which now correctly happen "outside" the `setup` / `cleanup` methods.
+
+Thanks to all the contributors to this release: Jochen Berger, Leonard Brünings, Mariusz Gilewicz, Tomasz Juchniewicz, Gamal Mateo, Tobias Schulte, Florian Wilhelm, Kevin Wittek
 
 == 1.1-rc-1 (released 2016-06-30)
 
@@ -8,7 +80,7 @@ We encourage users to try out these new features and provide feedback so we can 
 
 === What's New In This release
 
-* <<Merged Pull Requests,44 merged pull requests>>
+* 44 merged pull requests
 * The `verifyAll` method can be used to assert multiple boolean expressions _without_ short-circuiting those after a failure.
 For example:
 [source,groovy]
@@ -19,7 +91,7 @@ verifyAll {
   b == c
 }
 ----
-* Detached mocks via the `DetachedMockFactory` and `SpockMockFactoryBean` classes.
+* Detached mocks via the `DetachedMockFactory` and `SpockMockFactoryBean` classes see the <<module_spring.adoc#_spring_module,Spring Module Docs>>.
 * Cells in a data table can refer to the current value for a column to the left.
 * `Spy` can be used to create partial mocks for Java 8 interfaces with `default` methods just as it can for abstract classes.
 * Improved power assert output when an exception occurs evaluating an assertion.
@@ -175,9 +247,9 @@ Documentation for the latest Spock snapshot is at http://docs.spockframework.org
 As of Spock 0.7, the chapters on <<data_driven_testing.adoc#,Data Driven Testing>> and
 <<interaction_based_testing.adoc#,Interaction Based Testing>> are complete.
 
-=== Improved Mocking Failure Message for +TooManyInvocationsError+
+=== Improved Mocking Failure Message for `TooManyInvocationsError`
 
-The diagnostic message accompanying a +TooManyInvocationsError+ has been greatly improved.
+The diagnostic message accompanying a `TooManyInvocationsError` has been greatly improved.
 Here is an example:
 
 ----

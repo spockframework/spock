@@ -16,24 +16,40 @@
 
 package org.spockframework.runtime.model;
 
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.spockframework.runtime.extension.IMethodInterceptor;
-import org.spockframework.util.Nullable;
-import org.spockframework.util.ReflectionUtil;
+import org.spockframework.util.*;
+
+import java.lang.reflect.Method;
+import java.util.*;
 
 /**
  * Runtime information about a method in a Spock specification.
- * 
+ *
  * @author Peter Niederwieser
  */
 public class MethodInfo extends NodeInfo<SpecInfo, Method> implements IExcludable, IInterceptable {
   private MethodKind kind;
   private FeatureInfo feature;
+  private IterationInfo iteration;
   private boolean excluded = false;
-  private final List<IMethodInterceptor> interceptors = new ArrayList<IMethodInterceptor>();
+  private final List<IMethodInterceptor> interceptors = new ArrayList<>();
+
+  public MethodInfo() {
+  }
+
+  public MethodInfo(MethodInfo other) {
+    this.kind = other.kind;
+    this.feature = other.feature;
+    this.iteration = other.iteration;
+    this.excluded = other.excluded;
+    this.setName(other.getName());
+    this.setLine(other.getLine());
+    this.setParent(other.getParent());
+    this.setReflection(other.getReflection());
+    this.setMetadata(other.getMetadata());
+    this.setDescription(other.getDescription());
+    this.interceptors.addAll(other.interceptors);
+  }
 
   public MethodKind getKind() {
     return kind;
@@ -52,18 +68,31 @@ public class MethodInfo extends NodeInfo<SpecInfo, Method> implements IExcludabl
     this.feature = feature;
   }
 
+  @Nullable
+  public IterationInfo getIteration() {
+    return iteration;
+  }
+
+  public void setIteration(IterationInfo iteration) {
+    this.iteration = iteration;
+  }
+
+  @Override
   public boolean isExcluded() {
     return excluded;
   }
 
+  @Override
   public void setExcluded(boolean excluded) {
     this.excluded = excluded;
   }
 
+  @Override
   public List<IMethodInterceptor> getInterceptors() {
     return interceptors;
   }
 
+  @Override
   public void addInterceptor(IMethodInterceptor interceptor) {
     interceptors.add(interceptor);
   }

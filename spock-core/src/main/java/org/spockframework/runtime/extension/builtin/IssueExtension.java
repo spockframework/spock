@@ -24,25 +24,24 @@ public class IssueExtension extends AbstractAnnotationDrivenExtension<Issue> {
 
   @Override
   public void visitSpecAnnotation(Issue issue, SpecInfo spec) {
-    addTag(issue, spec);
+    addTags(issue, spec);
   }
 
   @Override
   public void visitFeatureAnnotation(Issue issue, FeatureInfo feature) {
-    addTag(issue, feature);
+    addTags(issue, feature);
   }
 
-  private void addTag(Issue issue, SpecElementInfo specElement) {
-    String value = issue.value()[0];
-
-    if (value.startsWith("http://")) {
-      int index = value.lastIndexOf('/');
-      String name = value.substring(index + 1);
-      specElement.addTag(new Tag(configuration.issueNamePrefix + name, "issue", name, value));
-      return;
+  private void addTags(Issue issue, SpecElementInfo specElement) {
+    for (String value : issue.value()) {
+      if (value.startsWith("http")) {
+        int index = value.lastIndexOf('/');
+        String name = value.substring(index + 1);
+        specElement.addTag(new Tag(configuration.issueNamePrefix + name, "issue", name, value));
+      } else {
+        specElement.addTag(new Tag(configuration.issueNamePrefix + value,
+            "issue", value, configuration.issueUrlPrefix + value));
+      }
     }
-
-    specElement.addTag(new Tag(configuration.issueNamePrefix + value,
-        "issue", value, configuration.issueUrlPrefix + value));
   }
 }

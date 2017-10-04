@@ -108,13 +108,13 @@ class HtmlReportGenerator {
     def assets = new Assets(local, debug)
 
     assets.css.each {
-      copyResource(it)
+      copyResource(it.href)
     }
     assets.img.each {
       copyResource(it)
     }
     assets.js.each {
-      copyResource(it)
+      copyResource(it.src)
     }
   }
 
@@ -150,10 +150,10 @@ class HtmlReportGenerator {
             brand: brand,
             reportTitle: ["""<span class="elementName">$reportName</span>"""],
             css: assets.css.collect { asset ->
-              """<link href="$asset" rel="stylesheet" media="screen">"""
+              """<link ${mapToAttributes(asset)} rel="stylesheet" media="screen">"""
             },
             js: assets.js.collect { asset ->
-              """<script src="$asset"></script>"""
+              """<script ${mapToAttributes(asset)}></script>"""
             },
             logs: getLogFileIncludePaths().collect { path ->
               """<script src="$path"></script>"""
@@ -163,6 +163,10 @@ class HtmlReportGenerator {
     }
 
     target
+  }
+
+  private mapToAttributes(def map) {
+    map.entrySet().collect{ "$it.key=\"$it.value\""}.join(' ')
   }
 
   private List<String> getLogFileIncludePaths() {

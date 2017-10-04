@@ -14,12 +14,11 @@
 
 package spock.util.concurrent;
 
-import java.util.concurrent.*;
-
 import org.spockframework.lang.ConditionBlock;
 import org.spockframework.runtime.SpockTimeoutError;
-import org.spockframework.util.ThreadSafe;
-import org.spockframework.util.TimeUtil;
+import org.spockframework.util.*;
+
+import java.util.concurrent.*;
 
 /**
  * Alternative to class <tt>BlockingVariable(s)</tt> that allows to evaluate conditions
@@ -65,7 +64,7 @@ import org.spockframework.util.TimeUtil;
 public class AsyncConditions {
   private final int numEvalBlocks;
   private final CountDownLatch latch;
-  private final ConcurrentLinkedQueue<Throwable> exceptions = new ConcurrentLinkedQueue<Throwable>();
+  private final ConcurrentLinkedQueue<Throwable> exceptions = new ConcurrentLinkedQueue<>();
 
   /**
    * Same as <tt>AsyncConditions(1)</tt>.
@@ -118,7 +117,7 @@ public class AsyncConditions {
   /**
    * Same as {@code await(1)}.
    */
-  public void await() throws InterruptedException, Throwable {
+  public void await() throws Throwable {
     await(1);
   }
 
@@ -131,7 +130,7 @@ public class AsyncConditions {
    * @throws InterruptedException if the calling thread is interrupted
    * @throws Throwable the first exception thrown by an evaluate block
    */
-  public void await(double seconds) throws InterruptedException, Throwable {
+  public void await(double seconds) throws Throwable {
     latch.await((long) (seconds * 1000), TimeUnit.MILLISECONDS);
     if (!exceptions.isEmpty())
       throw exceptions.poll();
@@ -157,7 +156,7 @@ public class AsyncConditions {
    * @deprecated use {@link #await(double)} instead
    */
   @Deprecated
-  public void await(int value, TimeUnit unit) throws InterruptedException, Throwable {
+  public void await(int value, TimeUnit unit) throws Throwable {
     await(TimeUtil.toSeconds(value, unit));
   }
 }

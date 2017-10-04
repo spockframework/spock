@@ -18,7 +18,7 @@ package org.spockframework.compiler.model;
 
 /**
  * AST node representing a then-block in a feature method.
- * 
+ *
  * @author Peter Niederwieser
  */
 public class ThenBlock extends Block {
@@ -33,6 +33,7 @@ public class ThenBlock extends Block {
     visitor.visitThenBlock(this);
   }
 
+  @Override
   public BlockParseInfo getParseInfo() {
     return BlockParseInfo.THEN;
   }

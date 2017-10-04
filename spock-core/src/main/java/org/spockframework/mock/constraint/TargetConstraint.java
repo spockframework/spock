@@ -16,10 +16,7 @@
 
 package org.spockframework.mock.constraint;
 
-import org.spockframework.mock.IInteractionAware;
-import org.spockframework.mock.IMockInteraction;
-import org.spockframework.mock.IMockInvocation;
-import org.spockframework.mock.IInvocationConstraint;
+import org.spockframework.mock.*;
 
 /**
  * @author Peter Niederwieser
@@ -32,10 +29,12 @@ public class TargetConstraint implements IInvocationConstraint, IInteractionAwar
     this.target = target;
   }
 
+  @Override
   public boolean isSatisfiedBy(IMockInvocation invocation) {
     return invocation.getMockObject().matches(target, interaction);
   }
 
+  @Override
   public void setInteraction(IMockInteraction interaction) {
     this.interaction = interaction;
   }

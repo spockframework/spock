@@ -16,6 +16,8 @@
 
 package org.spockframework.runtime.model;
 
+import java.io.Serializable;
+
 import org.codehaus.groovy.ast.ASTNode;
 import org.codehaus.groovy.syntax.Token;
 
@@ -25,10 +27,12 @@ import org.codehaus.groovy.syntax.Token;
  *
  * @author Peter Niederwieser
  */
-public class TextPosition implements Comparable<TextPosition> {
+public class TextPosition implements Comparable<TextPosition>, Serializable {
   // IDEA: override methods to throw UnsupportedOperationException
   public static final TextPosition NOT_AVAILABLE = new TextPosition(-1, -1);
-  
+
+  private static final long serialVersionUID = 1L;
+
   private final int line;
   private final int column;
 
@@ -59,7 +63,7 @@ public class TextPosition implements Comparable<TextPosition> {
   public int getColumnIndex() {
     return column - 1;
   }
-  
+
   public TextPosition shiftVertically(int numLines) {
     return create(line + numLines, column);
   }
@@ -78,6 +82,7 @@ public class TextPosition implements Comparable<TextPosition> {
     return String.format("(%d,%d)", line, column);
   }
 
+  @Override
   public int compareTo(TextPosition other) {
     if (line != other.line) return line - other.line;
     return column - other.column;

@@ -15,7 +15,9 @@ package org.spockframework.runtime.extension;
 
 import org.spockframework.util.UnreachableCodeError;
 
+@SuppressWarnings({"EmptyMethod", "RedundantThrows"})
 public abstract class AbstractMethodInterceptor implements IMethodInterceptor {
+  @Override
   public final void intercept(IMethodInvocation invocation) throws Throwable {
     switch(invocation.getMethod().getKind()) {
       case INITIALIZER:

@@ -1,11 +1,10 @@
 package org.spockframework.mock;
 
+import org.spockframework.util.*;
+import spock.mock.MockingApi;
+
 import java.lang.reflect.Type;
 import java.util.List;
-
-import org.spockframework.util.Beta;
-import org.spockframework.util.Nullable;
-import spock.mock.MockingApi;
 
 /**
  * Configuration options for mock objects. Once a mock object has been created, its configuration cannot be changed.
@@ -34,6 +33,14 @@ public interface IMockConfiguration {
    * @return the interface or class type of the mock object
    */
   Class<?> getType();
+
+  /**
+   * Returns the instance to be used as a delegate
+   *
+   * @return the instance to be used as a delegate
+   */
+  @Nullable
+  Object getInstance();
 
   /**
    * Returns the exact interface or class type of the mock object.
@@ -65,6 +72,14 @@ public interface IMockConfiguration {
    */
   @Nullable
   List<Object> getConstructorArgs();
+
+  /**
+   * Returns the list of additional interfaces to be implemented by the mock.
+   *
+   * @since 1.2
+   * @return the list of additional interfaces to be implemented by the mock
+   */
+  List<Class<?>> getAdditionalInterfaces();
 
   /**
    * Returns the default response strategy for the mock object.

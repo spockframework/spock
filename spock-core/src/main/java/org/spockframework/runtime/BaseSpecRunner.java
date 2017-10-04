@@ -16,17 +16,13 @@
 
 package org.spockframework.runtime;
 
-import org.junit.runner.Description;
-
-import org.spockframework.runtime.extension.IMethodInterceptor;
-import org.spockframework.runtime.extension.MethodInvocation;
+import org.spockframework.runtime.extension.*;
 import org.spockframework.runtime.model.*;
-import org.spockframework.util.CollectionUtil;
-import org.spockframework.util.InternalSpockError;
-
+import org.spockframework.util.*;
 import spock.lang.Specification;
 
 import java.util.List;
+import org.junit.runner.Description;
 
 import static org.spockframework.runtime.RunStatus.*;
 
@@ -337,6 +333,7 @@ public class BaseSpecRunner {
     result.setKind(MethodKind.ITERATION_EXECUTION);
     result.setFeature(feature);
     result.setDescription(feature.getDescription());
+    result.setIteration(currentIteration);
     for (IMethodInterceptor interceptor : feature.getIterationInterceptors()){
       result.addInterceptor(interceptor);
     }
@@ -412,6 +409,7 @@ public class BaseSpecRunner {
     result.setKind(MethodKind.SETUP);
     result.setFeature(feature);
     result.setDescription(feature.getDescription());
+    result.setIteration(currentIteration);
     for (IMethodInterceptor interceptor : spec.getSetupInterceptors()){
       result.addInterceptor(interceptor);
     }
@@ -456,6 +454,7 @@ public class BaseSpecRunner {
     result.setKind(MethodKind.CLEANUP);
     result.setFeature(feature);
     result.setDescription(feature.getDescription());
+    result.setIteration(currentIteration);
     for (IMethodInterceptor interceptor : spec.getCleanupInterceptors()){
       result.addInterceptor(interceptor);
     }

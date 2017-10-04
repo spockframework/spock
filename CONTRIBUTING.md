@@ -25,7 +25,7 @@ Good communication makes a big difference. We are always eager to listen, reflec
 
 To contribute code or documentation, please submit a pull request to the [GitHub repository](http://github.spockframework.org/spock).
 
-A good way to familiarize yourself with the codebase and contribution process is to look for and tackle low-hanging fruits in the [issue tracker](http://issues.spockframework.org). Before embarking on a more ambitious contribution, please quickly [get in touch](#communication) with us. This will help to make sure that the contribution is aligned with Spock's overall direction and goals, and gives us a chance to guide design and implementation where needed. 
+A good way to familiarize yourself with the codebase and contribution process is to look for and tackle low-hanging fruits in the [issue tracker](http://issues.spockframework.org). Before embarking on a more ambitious contribution, please quickly [get in touch](#communication) with us. This will help to make sure that the contribution is aligned with Spock's overall direction and goals, and gives us a chance to guide design and implementation where needed.
 
 **We appreciate your effort, and want to avoid a situation where a contribution requires extensive rework (by you or by us), sits in the queue for a long time, or cannot be accepted at all!**
 
@@ -38,6 +38,7 @@ When reviewing pull requests, we value the following qualities (in no particular
 * New code blends in well with existing code, respecting established coding standards and practices
 * Tests are updated/added along with the code, communicate intent and cover important cases (see [Tests](#tests) for additional information)
 * Documentation (Javadoc, Groovydoc, reference documentation) is updated/added along with the code
+* A good commit message that follows the [seven rules](http://chris.beams.io/posts/git-commit/)
 
 Don't be intimidated by these words. Pull requests that satisfy Spock's overall direction and goals (see above), are crafted carefully, and aren't aiming too high, have a good chance of getting accepted. Before doing so, we may ask for some concrete improvements to be made, in which case we hope for your cooperation.
 
@@ -75,7 +76,7 @@ IntelliJ IDEA 14+ is the preferred IDE for developing Spock. To generate an IDEA
 * `File -> Open` in Intellij, then
 * select the appropriate `spock-2.0.ipr`.
 
-Note: You can provide an optional 'variant' flag to the gradle build `-Dvariant=[2.0|2.3|2.4]` that specifies the version of groovy you wish to use. For example, if we wish to use groovy 2.4, we would run `./gradlew cleanIdea idea -Dvariant=2.4` and import the generated `spock-2.4.ipr` into Intellij.  
+Note: You can provide an optional 'variant' flag to the gradle build `-Dvariant=[2.0|2.3|2.4]` that specifies the version of groovy you wish to use. For example, if we wish to use groovy 2.4, we would run `./gradlew cleanIdea idea -Dvariant=2.4` and import the generated `spock-2.4.ipr` into Intellij.
 
 This should result in a fully functional IDE setup where:
 
@@ -86,7 +87,7 @@ This should result in a fully functional IDE setup where:
 
 From time to time (e.g. when someone has added a new dependency), it may be necessary to resync the IDEA project with the Gradle build. This is done by rerunning the steps above.
 
-Note: Unfortunately there are currently [some issues](https://github.com/spockframework/spock/issues/70) with Intellij's Gradle support that prevent integration with the Spock project. Please use the method described above rather than importing the top-level `build.gradle` file. 
+Note: Unfortunately there are currently [some issues](https://github.com/spockframework/spock/issues/70) with Intellij's Gradle support that prevent integration with the Spock project. Please use the method described above rather than importing the top-level `build.gradle` file.
 
 #### Eclipse
 

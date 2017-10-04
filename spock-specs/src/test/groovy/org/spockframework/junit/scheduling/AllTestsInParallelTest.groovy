@@ -2,11 +2,15 @@ package org.spockframework.junit.scheduling
 
 import org.junit.runner.JUnitCore
 import org.junit.runner.Result
+import org.junit.runner.notification.Failure
 import org.junit.runner.notification.RunListener
 import org.spockframework.report.log.ReportLogConfigurationSpec
+import org.spockframework.report.log.ReportLogEmitterSpec
 import org.spockframework.runtime.ConfigurationScriptLoaderSpec
 import org.spockframework.runtime.RunContextSpec
 import org.spockframework.runtime.StandardStreamsCapturerSpec
+import org.spockframework.runtime.extension.builtin.UnrollNameProviderSpec
+import org.spockframework.smoke.CleanupBlocks
 import org.spockframework.smoke.extension.ReportLogExtensionSpec
 import org.spockframework.smoke.extension.RestoreSystemPropertiesExtension
 import org.spockframework.smoke.extension.TimeoutExtensionThreadAffinity
@@ -24,6 +28,7 @@ class AllTestsInParallelTest extends Specification {
     AllTestsInParallelTest.class, // prevent recursion
     RunContextSpec.class, // this spec tests top level naming, will not work under runner.withNewContext
     ReportLogExtensionSpec.class, // LogExtension will not work in parallel mode
+    ReportLogEmitterSpec.class, // complex shared-field logic
     ReportLogConfigurationSpec.class,
     ConfigurationScriptLoaderSpec.class, // sets system properties
     StandardStreamsCapturerSpec.class, // sets System.out
@@ -32,6 +37,8 @@ class AllTestsInParallelTest extends Specification {
     RestoreSystemPropertiesExtension.class, // use system properties
     UseRestoreSystemPropertiesOnSpecClass.class, // use system properties
     InvokingMocksFromMultipleThreads.class, // starts new threads, can fail on slow boxes
+    CleanupBlocks.class, // use shared static field
+    UnrollNameProviderSpec.class, // sets system properties
   ]
 
   def "all spock-spec tests in parallel mode"() {
@@ -44,15 +51,16 @@ class AllTestsInParallelTest extends Specification {
     def runner = new EmbeddedSpecRunner()
     AtomicReference<Result> resultAR = new AtomicReference<>()
     runner.withNewContext {
-      def parallelComputer = new ParallelComputerWithFixedPool(10)
+      def parallelComputer = new ParallelComputerWithFixedPool(5)
       def testClasses = getTestClasses("org.spockframework")
       def testClassesAsArray = testClasses.toArray(new Class<?>[0])
       def result = jUnitCore.run(parallelComputer, testClassesAsArray)
       resultAR.set(result)
     }
 
+    def failures = resultAR.get().failures
     then:
-    resultAR.get().failures.isEmpty()
+    failures.isEmpty()
   }
 
   private static List<Class> getTestClasses(String packageName) {

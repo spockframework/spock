@@ -51,7 +51,7 @@ class AllTestsInParallelTest extends Specification {
     def runner = new EmbeddedSpecRunner()
     AtomicReference<Result> resultAR = new AtomicReference<>()
     runner.withNewContext {
-      def parallelComputer = new ParallelComputerWithFixedPool(5)
+      def parallelComputer = new ParallelComputerWithFixedPool(3)
       def testClasses = getTestClasses("org.spockframework")
       def testClassesAsArray = testClasses.toArray(new Class<?>[0])
       def result = jUnitCore.run(parallelComputer, testClassesAsArray)

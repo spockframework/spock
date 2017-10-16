@@ -19,6 +19,21 @@ import org.spockframework.runtime.SpockAssertionError
 import spock.lang.Specification
 
 class WithBlocks extends Specification {
+  def "don't turn nested with expressions into condition"() {
+    def list = [[['end']]]
+
+    expect:
+    with(list) {
+      with(it[0]) {
+        with(it[0]) {
+          with(it[0]) {
+            it == 'end'
+          }
+        }
+      }
+    }
+  }
+
   def "don't turn nested statements into conditions"() {
     def list = [1, 2]
 

@@ -125,6 +125,22 @@ class WithBlockFailingConditions extends Specification {
     }
   }
 
+  @FailsWith(ConditionNotSatisfiedError)
+  def "nested with expressions, the last one has a failing method condition"() {
+    def list = [[['value']]]
+
+    expect:
+    with(list) {
+      with(it[0]) {
+        with(it[0]) {
+          with(it[0]) {
+            isEmpty()
+          }
+        }
+      }
+    }
+  }
+
   @FailsWith(value = SpockAssertionError, reason = "Expected target of 'with' block to have type '%s', but got '%s'")
   def "with target and incompatible type fails"() {
     def list = [1, 2, 3]

@@ -108,6 +108,63 @@ class WithBlockPassingConditions extends Specification {
     }
   }
 
+  def "nested with expressions, the last one has a method condition"() {
+    def list = [[['value']]]
+
+    expect:
+    with(list) {
+      with(it[0]) {
+        with(it[0]) {
+          with(it[0]) {
+            !isEmpty()
+          }
+        }
+      }
+    }
+  }
+
+  def "nested with expressions with conditions"() {
+    def list = [[['value']]]
+
+    expect:
+    with(list) {
+      with(it[0]) {
+        size() > 0
+        with(it[0]) {
+          !isEmpty()
+          with(it[0]) {
+            it == 'value'
+          }
+        }
+      }
+    }
+  }
+
+  def "nested with expressions with interaction"() {
+    Supplier<String> supplier = Mock(Supplier) {
+      get() >> 'value'
+    }
+    def list = [[[supplier]]]
+
+    when:
+    supplier.get()
+
+    then:
+    with(list) {
+      with(it[0]) {
+        with(it[0]) {
+          with(it[0]) {
+            1 * get()
+          }
+        }
+      }
+    }
+  }
+
+  static interface Supplier<T> {
+    T get()
+  }
+
   def "in helper method"() {
     def list = [1, 2]
 

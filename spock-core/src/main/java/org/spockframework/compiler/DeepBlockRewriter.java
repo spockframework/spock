@@ -17,6 +17,7 @@
 package org.spockframework.compiler;
 
 import org.spockframework.compiler.model.*;
+import org.spockframework.util.Identifiers;
 import org.spockframework.util.Nullable;
 
 import java.util.*;
@@ -152,7 +153,8 @@ public class DeepBlockRewriter extends AbstractDeepBlockRewriter {
     groupConditionFound = currSpecialMethodCall.isGroupConditionBlock();
 
     if ((currSpecialMethodCall.isWithCall() || currSpecialMethodCall.isGroupConditionBlock())
-      && AstUtil.isInvocationWithImplicitThis(stat.getExpression())) {
+      && AstUtil.isInvocationWithImplicitThis(stat.getExpression())
+      && !Identifiers.WITH.equals(AstUtil.getMethodName(stat.getExpression()))) {
       replaceObjectExpressionWithCurrentClosure(stat);
     }
 

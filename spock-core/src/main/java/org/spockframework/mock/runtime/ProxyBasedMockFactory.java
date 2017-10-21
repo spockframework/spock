@@ -26,6 +26,7 @@ import java.util.concurrent.Callable;
 import net.bytebuddy.*;
 import net.bytebuddy.description.modifier.*;
 import net.bytebuddy.dynamic.Transformer;
+import net.bytebuddy.dynamic.scaffold.TypeValidation;
 import net.bytebuddy.implementation.*;
 import net.bytebuddy.implementation.bind.annotation.Morph;
 import net.sf.cglib.proxy.*;
@@ -103,6 +104,7 @@ public class ProxyBasedMockFactory {
           public Class<?> call() throws Exception {
             return new ByteBuddy()
               .with(new NamingStrategy.SuffixingRandom("SpockMock"))
+              .with(TypeValidation.DISABLED) // https://github.com/spockframework/spock/issues/776
               .ignore(none())
               .subclass(type)
               .implement(additionalInterfaces)

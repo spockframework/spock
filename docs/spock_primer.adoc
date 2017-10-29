@@ -319,6 +319,7 @@ Here is the code:
 [source,groovy]
 ----
 def "events are published to all subscribers"() {
+  given:
   def subscriber1 = Mock(Subscriber)
   def subscriber2 = Mock(Subscriber)
   def publisher = new Publisher()

@@ -332,6 +332,12 @@ CAUTION: Temporarily changing the values of system properties is only safe when 
 run in a single thread per JVM. Even though many execution environments do limit themselves to one thread
 per JVM, keep in mind that Spock cannot enforce this.
 
+=== AutoAttach
+
+Automatically attaches a detached mock to the current `Specification`. Use this if there is no direct framework
+support available. Spring and Guice dependency injection is automatically handled by the
+<<module_spring.adoc#_spring_module,Spring Module>> and <<modules.adoc#_guice_module,Guice Module>> respectively.
+
 === AutoCleanup
 
 Automatically clean up a field or property at the end of its lifetime by using `spock.lang.AutoCleanup`.

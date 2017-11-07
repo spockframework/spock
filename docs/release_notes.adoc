@@ -9,6 +9,7 @@ Breaking Changes: Spock 1.2 drops support for Java 6, Groovy 2.0 and Groovy 2.3
 
 * Add flag to UnrollNameProvider to assert unroll expressions (set the system property `spock.assertUnrollExpressions` to `true`) https://github.com/spockframework/spock/issues/767[#767]
 * Add automatic module name descriptors for Java 9
+* Add `@AutoAttach` extension (<<extensions.adoc#_autoattach,Docs>>)
 * Add `@Retry` extension (<<extensions.adoc#_retry,Docs>>)
 * Fix SpockAssertionErrors and its subclasses now are properly `Serializeable`
 * Fix Spring injection of JUnit Rules, due to the changes in 1.1 the rules where initialized before Spring could inject them,

@@ -16,17 +16,20 @@
 
 package spock.guice;
 
+import org.spockframework.guice.GuiceExtension;
+import org.spockframework.runtime.extension.ExtensionAnnotation;
+
 import java.lang.annotation.*;
 
 import com.google.inject.Module;
-
-import org.spockframework.guice.GuiceExtension;
-import org.spockframework.runtime.extension.ExtensionAnnotation;
 
 /**
  * Activates <a href="http://code.google.com/p/google-guice/">Guice</a> integration for a specification.
  * The specified modules will be started before and stopped after the specification's execution.
  * Services will be injected into the specification based on regular Guice annotations.
+ *
+ * Detached mocks/stubs created by the {@link spock.mock.DetachedMockFactory} are automatically attached
+ * to the Specification when they are injected via {@code @Inject}.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)

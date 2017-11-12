@@ -6,6 +6,8 @@ include::include.adoc[]
 Integration with the http://code.google.com/p/google-guice/[Guice] IoC container. For examples see the specs in the
 https://github.com/spockframework/spock/tree/master/spock-guice/src/test/groovy/org/spockframework/guice[codebase].
 
+With Spock 1.2 detached mocks are automatically attached to the `Specification` if they are injected via `@Inject`.
+
 include::module_spring.adoc[leveloffset=+1]
 
 == Tapestry Module

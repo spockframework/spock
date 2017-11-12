@@ -16,9 +16,10 @@
 
 package org.spockframework.guice;
 
+import org.spockframework.mock.MockUtil;
 import org.spockframework.runtime.extension.*;
 import org.spockframework.runtime.model.SpecInfo;
-import spock.lang.Shared;
+import spock.lang.*;
 
 import java.lang.reflect.Field;
 import java.util.*;
@@ -34,6 +35,7 @@ import com.google.inject.spi.InjectionPoint;
 // Important implementation detail: Only the fixture methods of
 // spec.getTopSpec() are intercepted (see GuiceExtension)
 public class GuiceInterceptor extends AbstractMethodInterceptor {
+  private static final MockUtil MOCK_UTIL = new MockUtil();
   private final Set<Class<? extends Module>> moduleClasses;
   private final Set<InjectionPoint> injectionPoints;
 
@@ -47,13 +49,13 @@ public class GuiceInterceptor extends AbstractMethodInterceptor {
   @Override
   public void interceptSharedInitializerMethod(IMethodInvocation invocation) throws Throwable {
     createInjector();
-    injectValues(invocation.getSharedInstance(), true);
+    injectValues(invocation.getSharedInstance(), true, (Specification)invocation.getInstance());
     invocation.proceed();
   }
 
   @Override
   public void interceptInitializerMethod(IMethodInvocation invocation) throws Throwable {
-    injectValues(invocation.getInstance(), false);
+    injectValues(invocation.getInstance(), false, (Specification)invocation.getInstance());
     invocation.proceed();
   }
 
@@ -73,7 +75,7 @@ public class GuiceInterceptor extends AbstractMethodInterceptor {
     return modules;
   }
 
-  private void injectValues(Object target, boolean sharedFields) throws IllegalAccessException {
+  private void injectValues(Object target, boolean sharedFields, Specification specInstance) throws IllegalAccessException {
     for (InjectionPoint point : injectionPoints) {
       if (!(point.getMember() instanceof Field))
         throw new GuiceExtensionException("Method injection is not supported; use field injection instead");
@@ -82,6 +84,9 @@ public class GuiceInterceptor extends AbstractMethodInterceptor {
       if (field.isAnnotationPresent(Shared.class) != sharedFields) continue;
 
       Object value = injector.getInstance(point.getDependencies().get(0).getKey());
+      if (MOCK_UTIL.isMock(value)) {
+        MOCK_UTIL.attachMock(value, specInstance);
+      }
       field.setAccessible(true);
       field.set(target, value);
     }

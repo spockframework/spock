@@ -21,6 +21,7 @@ Breaking Changes: Spock 1.2 drops support for Java 6, Groovy 2.0 and Groovy 2.3
 * Improve support for builder pattern, stubs now return themselves if the return type matches the type of the stub
 * Improve tapestry support with by supporting `@ImportModule`
 * Improve `constructorArgs` for spies can now accept a map directly without the need to wrap it in a list
+* Improve <<modules.adoc#_guice_module,Guice Module>> now automatically attaches detached mocks
 * General dependency update
 
 Thanks to all the contributors to this release: Rob Elliot, jochenberger, Jan Papenbrock, Paul King, Marcin Zajączkowski, mrb-twx

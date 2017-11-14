@@ -34,7 +34,7 @@ jar {
       'Implementation-Title': project.name,
       'Implementation-Version': variantLessVersion,
       'Implementation-Vendor': 'spockframework.org',
-      'Automatic-Module-Name': 'org.spockframework'
+      'Automatic-Module-Name': 'org.spockframework.core'
     )
     instruction 'Export-Package', 'org.spockframework.*', 'spock.*'
     instruction 'Embed-Dependency', 'groovy;inline=false', 'junit;inline=false'

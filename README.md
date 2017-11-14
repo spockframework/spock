@@ -2,13 +2,16 @@
 [![Maven Central](https://img.shields.io/maven-central/v/org.spockframework/spock-core.svg?label=Maven%20Central)](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22org.spockframework%22%20AND%20a%3A%22spock-core%22)
 [![Linux Build Status](https://img.shields.io/travis/spockframework/spock/master.svg?label=Linux%20Build)](https://travis-ci.org/spockframework/spock)
 [![Windows Build Status](https://img.shields.io/appveyor/ci/spockframework/spock/master.svg?label=Windows%20Build)](https://ci.appveyor.com/project/spockframework/spock/branch/master)
+[![Jitpack](https://jitpack.io/v/spockframework/spock.svg)](https://jitpack.io/#spockframework/spock)
 [![Codecov](https://codecov.io/gh/spockframework/spock/branch/master/graph/badge.svg)](https://codecov.io/gh/spockframework/spock)
 [![Gitter](https://badges.gitter.im/spockframework/spock.svg)](https://gitter.im/spockframework/spock?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+
+
 
 Spock Framework
 ===============
 
-Spock is a developer testing and specification framework for Java and [Groovy](http://groovy.codehaus.org) applications.
+Spock is a developer testing and specification framework for Java and [Groovy](http://groovy-lang.org/) applications.
 To learn more about Spock, visit http://spockframework.org. To run a sample spec in your browser, go to
 http://webconsole.spockframework.org.
 
@@ -19,8 +22,28 @@ current development version is **1.2-SNAPSHOT** (1.2-groovy-2.4-SNAPSHOT).
 
 **NOTE:** Spock 1.2 drops support for Java 6, Groovy 2.0 and Groovy 2.3. 
 
-Releases are available from [Maven Central](https://search.maven.org/#search%7Cga%7C1%7Cspock).
+Releases are available from [Maven Central](https://search.maven.org/#search%7Cga%7C1%7Cg%3A%22org.spockframework%22).
 Development snapshots are available from [Sonatype OSS](https://oss.sonatype.org/content/repositories/snapshots/org/spockframework/).
+
+### Ad-Hoc Intermediate Releases
+
+For intermediate stable builds we recommend to use [Jitpack](https://jitpack.io/#spockframework/spock) (go here for instructions):
+
+1. Add https://jitpack.io as a respository
+2. Use `com.github.spockframework.spock` as `groupId` and the normal `artifact-id`
+
+```groovy
+repositories {
+    // ...
+    maven { url 'https://jitpack.io' }
+}
+
+dependencies {
+        compile 'com.github.spockframework.spock:spock-core:spock-1.1'
+        compile 'com.github.spockframework.spock:spock-spring:spock-1.1'
+}
+```
+3. For intermediate releases you can also use the commit-hash as version, e.g. compile `com.github.spockframework.spock:spock-core:d91bf785a1`
 
 Modules
 -------
@@ -61,6 +84,26 @@ Support
 -------
 If you have any comments or questions, please direct them to the [user forum](http://forum.spockframework.org).
 All feedback is appreciated!
+
+Java 9 Module Names
+-------------------
+
+All published jars (beginning with Spock 1.2) will contain Automatic-Module-Name manifest attribute. This allows for Spock to be
+used in a Java 9 Module Path.
+
+* spock-core -- `org.spockframework.core`
+* spock-spring -- `org.spockframework.spring`
+* spock-tapestry -- `org.spockframework.tapestry`
+* spock-guice -- `org.spockframework.guice`
+* spock-unitils -- `org.spockframework.unitils`
+
+So module authors can use well known module names for the spock modules, e.g. something like this:
+```
+open module foo.bar {
+  requires org.spockframework.core;
+  requires org.spockframework.spring;
+}
+```
 
 Links
 -----

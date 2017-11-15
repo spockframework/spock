@@ -2,7 +2,7 @@
 [![Maven Central](https://img.shields.io/maven-central/v/org.spockframework/spock-core.svg?label=Maven%20Central)](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22org.spockframework%22%20AND%20a%3A%22spock-core%22)
 [![Linux Build Status](https://img.shields.io/travis/spockframework/spock/master.svg?label=Linux%20Build)](https://travis-ci.org/spockframework/spock)
 [![Windows Build Status](https://img.shields.io/appveyor/ci/spockframework/spock/master.svg?label=Windows%20Build)](https://ci.appveyor.com/project/spockframework/spock/branch/master)
-[![Jitpack](https://jitpack.io/v/spockframework/spock.svg)](https://jitpack.io/#spockframework/spock)
+[![Jitpack](https://jitpack.io/v/org.spockframework/spock.svg)](https://jitpack.io/#org.spockframework/spock)
 [![Codecov](https://codecov.io/gh/spockframework/spock/branch/master/graph/badge.svg)](https://codecov.io/gh/spockframework/spock)
 [![Gitter](https://badges.gitter.im/spockframework/spock.svg)](https://gitter.im/spockframework/spock?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
@@ -27,10 +27,10 @@ Development snapshots are available from [Sonatype OSS](https://oss.sonatype.org
 
 ### Ad-Hoc Intermediate Releases
 
-For intermediate stable builds we recommend to use [Jitpack](https://jitpack.io/#spockframework/spock) (go here for instructions):
+For intermediate stable builds we recommend to use [Jitpack](https://jitpack.io/#org.spockframework/spock) (go here for instructions):
 
 1. Add https://jitpack.io as a respository
-2. Use `com.github.spockframework.spock` as `groupId` and the normal `artifact-id`
+2. Use `org.spockframework.spock` as `groupId` and the normal `artifact-id`
 
 ```groovy
 repositories {
@@ -39,8 +39,8 @@ repositories {
 }
 
 dependencies {
-        compile 'com.github.spockframework.spock:spock-core:spock-1.1'
-        compile 'com.github.spockframework.spock:spock-spring:spock-1.1'
+        compile 'org.spockframework.spock:spock-core:spock-1.1'
+        compile 'org.spockframework.spock:spock-spring:spock-1.1'
 }
 ```
 3. For intermediate releases you can also use the commit-hash as version, e.g. compile `com.github.spockframework.spock:spock-core:d91bf785a1`

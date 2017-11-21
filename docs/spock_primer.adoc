@@ -540,6 +540,8 @@ with(service) {
   1 * stop()
 }
 ----
+
+[[specifications_as_documentation]]
 == Specifications as Documentation
 
 Well-written specifications are a valuable source of information. Especially for higher-level specifications targeting

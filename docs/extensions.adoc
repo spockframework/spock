@@ -504,7 +504,7 @@ runner {
 
 Spock can create a report log of the executed tests in JSON format. This report contains also things like
 <<Title and Narrative,`@Title`>>, <<Title and Narrative,`@Narrative`>>, <<See,`@See`>> and <<Issue,`@Issue`>> values or
-<<specs-as-doc,block descriptors>>.
+<<spock_primer.adoc#_blocks,block descriptors>>.
 This report can be enabled according to the <<Spock Configuration File>> section. The default is to not generate this
 report.
 

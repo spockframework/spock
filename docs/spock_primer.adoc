@@ -161,7 +161,7 @@ def elem = "push me"
 The `setup` block is where you do any setup work for the feature that you are describing. It may not be preceded by
 other blocks, and may not be repeated. A `setup` block doesn't have any special semantics. The `setup:` label is
 optional and may be omitted, resulting in an _implicit_ `setup` block. The `given:` label is an alias for `setup:`,
-and sometimes leads to a more readable feature method description (see <<specs-as-doc,Specifications as Documentation>>).
+and sometimes leads to a more readable feature method description (see <<Specifications as Documentation,Specifications as Documentation>>).
 
 ==== When and Then Blocks
 
@@ -540,6 +540,8 @@ with(service) {
   1 * stop()
 }
 ----
+
+[[specifications_as_documentation]]
 == Specifications as Documentation
 
 Well-written specifications are a valuable source of information. Especially for higher-level specifications targeting

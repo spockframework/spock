@@ -289,5 +289,3 @@ include::{sourcedir}/datadriven/DataSpec.groovy[tag=unrolled-3a]
     ...
 include::{sourcedir}/datadriven/DataSpec.groovy[tag=unrolled-3b]
 ----
-
-

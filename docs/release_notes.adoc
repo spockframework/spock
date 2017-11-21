@@ -155,7 +155,7 @@ The Spock Team
 * https://github.com/Fuud[Fedor Bobin]
 * https://github.com/leonard84[Leonard Brünings]
 * https://github.com/cetnar[cetnar]
-* https://github.com/alkemist[Luke Daley]
+* https://github.com/ldaley[Luke Daley]
 * https://github.com/daviddawson[David Dawson]
 * https://github.com/selenium34[Scott G]
 * https://github.com/msgilligan[Sean Gilligan]
@@ -238,7 +238,7 @@ These great features didn't make it into this release (but hopefully the next!):
 
 === Snapshot Repository Moved
 
-Spock snapshots are now available from http://oss.sonatype.org/content/repositories/snapshots/.
+Spock snapshots are now available from https://oss.sonatype.org/content/repositories/snapshots/org/spockframework/.
 
 === New Reference Documentation
 
@@ -266,7 +266,7 @@ Matching invocations (ordered by last occurrence):
 1 * person.sing("mi")
 ----
 
-<<interaction_based_testing.adoc#ShowAllMatchingInvocations,Reference Documentation>>
+<<interaction_based_testing.adoc#_verification_of_interactions,Reference Documentation>>
 
 === Improved Mocking Failure Message for `TooFewInvocationsError`
 
@@ -285,7 +285,7 @@ Unmatched invocations (ordered by similarity):
 1 * person2.shout("mi")
 ----
 
-<<interaction_based_testing.adoc#ShowUnmatchedInvocations,Reference Documentation>>
+<<interaction_based_testing.adoc#_verification_of_interactions,Reference Documentation>>
 
 === Stubs
 
@@ -332,7 +332,7 @@ def person = Mock(Person) {
 
 This feature is particularly attractive for <<Stubs>>.
 
-<<interaction_based_testing.adoc#declaring-interactions-at-creation-time,Reference Documentation>>
+<<interaction_based_testing.adoc#Stubs,Reference Documentation>>
 
 === Groovy Mocks
 
@@ -403,7 +403,7 @@ with(service) {
 }
 ----
 
-<<interaction_based_testing.adoc#GroupingInteractionsWithSameTarget,Reference Documentation>>
+<<interaction_based_testing.adoc#_grouping_interactions_with_same_target,Reference Documentation>>
 
 === Polling Conditions
 

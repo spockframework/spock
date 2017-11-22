@@ -105,7 +105,7 @@ Math.max(a, b) == c
 
 The obvious question is: Which iteration failed, and what are its data values? In our example, it isn't hard to figure
 out that it's the second iteration that failed. At other times this can be more difficult or even impossible.
-footnote:[For example, a feature method could use data variables in its `setup:` block, but not in any conditions.]
+footnote:[For example, a feature method could use data variables in its `given:` block, but not in any conditions.]
 In any case, it would be nice if Spock made it loud and clear which iteration failed, rather than just reporting the
 failure. This is the purpose of the `@Unroll` annotation.
 
@@ -289,5 +289,3 @@ include::{sourcedir}/datadriven/DataSpec.groovy[tag=unrolled-3a]
     ...
 include::{sourcedir}/datadriven/DataSpec.groovy[tag=unrolled-3b]
 ----
-
-

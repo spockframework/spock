@@ -545,7 +545,7 @@ target constraint
 A stubbed interaction can be declared in the usual places: either inside a `then:` block, or anywhere before a
 `when:` block. (See <<Where to Declare Interactions>> for the details.) If a mock object is only used for stubbing,
 it's common to declare interactions <<declaring-interactions-at-creation-time,at mock creation time>> or in a
-`setup:` block.
+`given:` block.
 
 === Returning Fixed Values
 
@@ -649,7 +649,7 @@ statements will _not_ work:
 
 [source,groovy]
 ----
-setup:
+given:
 subscriber.receive("message1") >> "ok"
 
 when:
@@ -662,7 +662,7 @@ then:
 As explained in <<Where to Declare Interactions>>, the `receive` call will first get matched against
 the interaction in the `then:` block. Since that interaction doesn't specify a response, the default
 value for the method's return type (`null` in this case) will be returned. (This is just another
-facet of Spock's lenient approach to mocking.). Hence, the interaction in the `setup:` block will never
+facet of Spock's lenient approach to mocking.). Hence, the interaction in the `given:` block will never
 get a chance to match.
 
 NOTE: Mocking and stubbing of the same method call has to happen in the same interaction.
@@ -974,4 +974,3 @@ http://martinfowler.com/articles/mocksArentStubs.html[Mocks Aren't Stubs]::
 
 http://www.growing-object-oriented-software.com[Growing Object-Oriented Software Guided by Tests]::
   TDD pioneers Steve Freeman and Nat Pryce explain in detail how test-driven development and mocking work in the real world.
-

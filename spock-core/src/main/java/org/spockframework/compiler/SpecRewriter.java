@@ -702,13 +702,18 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
     if (declExpr.isMultipleAssignmentDeclaration()) {
       ArgumentListExpression result = new ArgumentListExpression();
       for (Expression expr : declExpr.getTupleExpression().getExpressions()) {
-        VariableExpression varExpr = (VariableExpression) expr;
-        result.addExpression(new VariableExpression(varExpr.getName(), varExpr.getOriginType()));
+        result.addExpression(copyVarExpr((VariableExpression) expr));
       }
       return result;
     }
 
-    VariableExpression varExpr = declExpr.getVariableExpression();
-    return new VariableExpression(varExpr.getName(), varExpr.getOriginType());
+    return copyVarExpr(declExpr.getVariableExpression());
+  }
+
+  private Expression copyVarExpr(VariableExpression varExpr) {
+    VariableExpression newVarExpr = new VariableExpression(varExpr.getName(), varExpr.getOriginType());
+    newVarExpr.setAccessedVariable(varExpr.getAccessedVariable());
+    newVarExpr.setSourcePosition(varExpr);
+    return newVarExpr;
   }
 }

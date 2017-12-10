@@ -24,7 +24,7 @@ import java.util.*;
  * @author Peter Niederwieser
  */
 public class MockController implements IMockController {
-  private final LinkedList<IInteractionScope> scopes = new LinkedList<>();
+  private final Deque<IInteractionScope> scopes = new LinkedList<>();
   private final List<InteractionNotSatisfiedError> errors = new ArrayList<>();
 
   public MockController() {

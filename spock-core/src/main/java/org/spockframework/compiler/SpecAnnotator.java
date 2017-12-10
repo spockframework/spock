@@ -16,19 +16,18 @@
 
 package org.spockframework.compiler;
 
-import java.io.File;
-
-import org.codehaus.groovy.ast.AnnotationNode;
-import org.codehaus.groovy.ast.Parameter;
-import org.codehaus.groovy.ast.expr.*;
-
 import org.spockframework.compiler.model.*;
 import org.spockframework.runtime.model.*;
+
+import java.io.File;
+
+import org.codehaus.groovy.ast.*;
+import org.codehaus.groovy.ast.expr.*;
 
 /**
  * Puts all spec information required at runtime into annotations
  * attached to class members.
- * 
+ *
  * @author Peter Niederwieser
  */
 public class SpecAnnotator extends AbstractSpecVisitor {
@@ -63,6 +62,7 @@ public class SpecAnnotator extends AbstractSpecVisitor {
     ann.setMember(FieldMetadata.NAME, new ConstantExpression(field.getName()));
     ann.setMember(FieldMetadata.ORDINAL, new ConstantExpression(field.getOrdinal()));
     ann.setMember(FieldMetadata.LINE, new ConstantExpression(field.getAst().getLineNumber()));
+    ann.setMember(FieldMetadata.INITIALIZER, new ConstantExpression(field.hasInitialExpression()));
     field.getAst().addAnnotation(ann);
   }
 

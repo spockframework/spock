@@ -28,6 +28,7 @@ import java.lang.reflect.*;
  */
 public class FieldInfo extends NodeInfo<SpecInfo, Field> {
   private int ordinal;
+  private boolean initializer;
 
   public int getOrdinal() {
     return ordinal;
@@ -47,6 +48,14 @@ public class FieldInfo extends NodeInfo<SpecInfo, Field> {
 
   public boolean isShared() {
     return isAnnotationPresent(Shared.class);
+  }
+
+  public boolean hasInitializer() {
+    return initializer;
+  }
+
+  public void setHasInitializer(boolean initializer) {
+    this.initializer = initializer;
   }
 
   public Object readValue(Object target) {

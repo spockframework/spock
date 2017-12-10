@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 the original author or authors.
+ * Copyright 2017 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,17 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-  
+
 package org.spockframework.spring
+
+import org.spockframework.util.ReflectionUtil
+import spock.lang.*
+import spock.util.EmbeddedSpecRunner
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.ApplicationContext
 import org.springframework.test.context.ContextConfiguration
-
-import org.spockframework.util.ReflectionUtil
-
-import spock.util.EmbeddedSpecRunner
-import spock.lang.*
 
 @ContextConfiguration(locations = "InjectionExamples-context.xml")
 class InjectionExamples extends Specification {
@@ -41,7 +40,7 @@ class InjectionExamples extends Specification {
   @Requires({ReflectionUtil.isClassAvailable("javax.annotation.Resource")})
   def "injecting a field by name"() {
     def runner = new EmbeddedSpecRunner()
-    
+
     when:
     runner.run """
 package org.spockframework.spring

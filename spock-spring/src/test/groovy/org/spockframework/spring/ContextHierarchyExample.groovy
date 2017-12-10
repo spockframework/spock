@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 the original author or authors.
+ * Copyright 2017 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,23 +12,22 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */  
+ */
 
 package org.spockframework.spring
 
-import javax.inject.Inject;
+import spock.lang.Specification
+
+import javax.inject.Inject
 
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.context.ContextHierarchy;
-
-import spock.lang.*
+import org.springframework.test.context.*
 
 @ContextHierarchy(@ContextConfiguration(locations = "InjectionExamples-context.xml"))
 class ContextHierarchyExample extends Specification {
   @Autowired
   Service1 service1
-  
+
   @Inject
   Service2 service2
 

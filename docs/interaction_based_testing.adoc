@@ -202,8 +202,11 @@ The argument constraints of an interaction describe which method arguments are e
 1 * subscriber.receive(*_)          // any argument list (including the empty argument list)
 1 * subscriber.receive(!null)       // any non-null argument
 1 * subscriber.receive(_ as String) // any non-null argument that is-a String
-1 * subscriber.receive({ it.size() > 3 }) // an argument that satisfies the given predicate
-                                          // (here: message length is greater than 3)
+1 * subscriber.receive({ it.size() > 3 && it.contains('a') }) 
+					  // an argument that satisfies the given predicate, meaning that
+					  // code argument constraints need to return true of false 
+					  // depending on whether they match or not
+                                          // (here: message length is greater than 3 and contains the character a)
 1 * subscriber.receive(endsWith("lo"))    // Hamcrest Matchers are also supported
                                           // (here: a string ending with 'lo')
 ----

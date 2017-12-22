@@ -5,7 +5,7 @@ ext.displayName = "Spock Framework - Spring Module"
 description = "Spock's Spring Module makes it possible to use Spring's TestContext framework together with Spock. \
 Supports Spring 2.5.x, 3.x, and 4.x."
 
-def springVersion = "4.1.0.RELEASE"
+def springVersion = "4.3.5.RELEASE"
 
 if (springVersion.startsWith("2.")) {
   sourceSets.test.groovy.exclude "**/*ContextHierarchyExample.groovy"

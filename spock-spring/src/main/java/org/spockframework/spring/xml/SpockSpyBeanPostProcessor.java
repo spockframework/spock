@@ -16,20 +16,18 @@
 
 package org.spockframework.spring.xml;
 
-import java.util.Collections;
-
 import org.spockframework.mock.MockNature;
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.NoSuchBeanDefinitionException;
-import org.springframework.beans.factory.config.BeanPostProcessor;
-import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.beans.factory.support.BeanDefinitionRegistry;
-import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
-
 import spock.mock.DetachedMockFactory;
 
+import java.util.Collections;
+
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
+import org.springframework.beans.factory.config.*;
+import org.springframework.beans.factory.support.*;
+
 /**
- * Wraps a given Spring bean with a detached Spock spy 
+ * Wraps a given Spring bean with a detached Spock spy
  *
  * Spring integration of spock mocks is heavily inspired by
  * Springockito {@see https://bitbucket.org/kubek2k/springockito}.
@@ -37,7 +35,7 @@ import spock.mock.DetachedMockFactory;
  * @author Taylor Wicksell
  */
 public class SpockSpyBeanPostProcessor implements BeanPostProcessor, BeanDefinitionRegistryPostProcessor {
-    
+
     private final String beanName;
 
     public SpockSpyBeanPostProcessor(String beanName) {
@@ -68,6 +66,6 @@ public class SpockSpyBeanPostProcessor implements BeanPostProcessor, BeanDefinit
     public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) throws BeansException {
         if(!registry.containsBeanDefinition(beanName)) {
             throw new NoSuchBeanDefinitionException(beanName, "Spock WrapWithSpy must reference an existing bean id.");
-        }   
+        }
     }
 }

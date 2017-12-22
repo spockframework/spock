@@ -29,8 +29,10 @@ public @interface FieldMetadata {
   String NAME = "name";
   String ORDINAL = "ordinal";
   String LINE = "line";
+  String INITIALIZER = "initializer";
 
   String name();
   int ordinal();
   int line();
+  boolean initializer();
 }

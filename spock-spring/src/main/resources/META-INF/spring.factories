@@ -1,0 +1,8 @@
+# Spring Test ContextCustomizerFactories
+org.springframework.test.context.ContextCustomizerFactory=\
+org.spockframework.spring.mock.SpockContextCustomizerFactory
+
+
+# Test Execution Listeners
+org.springframework.test.context.TestExecutionListener=\
+org.spockframework.spring.SpringMockTestExecutionListener

@@ -937,24 +937,24 @@ verified (as for a `Stub()`). Instead of passing `ZeroOrNullResponse`, we could 
 [[DetectingMockObjects]]
 === Detecting Mock Objects
 
-To find out whether a particular object is a Spock mock object, use a `org.spockframework.mock.MockDetector`:
+To find out whether a particular object is a Spock mock object, use a `org.spockframework.mock.MockUtil`:
 
 [source,groovy]
 ----
-MockDetector detector = new MockDetector()
+MockUtil mockUtil = new MockUtil()
 List list1 = []
 List list2 = Mock()
 
 expect:
-!detector.isMock(list1)
-detector.isMock(list2)
+!mockUtil.isMock(list1)
+mockUtil.isMock(list2)
 ----
 
-A detector can also be used to get more information about a mock object:
+An util can also be used to get more information about a mock object:
 
 [source,groovy]
 ----
-def mock = detector.asMock(list2)
+IMockObject mock = mockUtil.asMock(list2)
 
 expect:
 mock.name == "list2"

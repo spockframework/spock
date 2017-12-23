@@ -17,11 +17,9 @@
 package org.spockframework.boot
 
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.SpringApplicationConfiguration
+import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.ApplicationContext
-
 import spock.lang.Specification
-
 /**
  * Spock test for {@link org.spockframework.boot.SimpleBootApp}.
  * Adapted from https://github.com/spring-projects/spring-boot/blob/master/spring-boot-samples/
@@ -30,7 +28,7 @@ import spock.lang.Specification
  * @author Dave Syer
  * @author Peter Niederwieser
  */
-@SpringApplicationConfiguration(classes = SimpleBootApp.class)
+@SpringBootTest(classes = SimpleBootApp)
 class SimpleBootAppIntegrationSpec extends Specification {
   @Autowired
   ApplicationContext context

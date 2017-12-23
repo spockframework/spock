@@ -1,11 +1,9 @@
 buildscript {
   ext {
-    springBootVersion = '1.4.0.RELEASE'
+    springBootVersion = '1.5.9.RELEASE'
   }
   repositories {
     mavenCentral()
-    maven { url "https://repo.spring.io/snapshot" }
-    maven { url "https://repo.spring.io/milestone" }
   }
   dependencies {
     classpath "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}"
@@ -13,7 +11,7 @@ buildscript {
 }
 
 
-apply plugin: 'spring-boot'
+apply plugin: 'org.springframework.boot'
 
 
 
@@ -31,7 +29,5 @@ dependencies {
 
 repositories {
   mavenCentral()
-  maven { url "https://repo.spring.io/snapshot" }
-  maven { url "https://repo.spring.io/milestone" }
 }
 

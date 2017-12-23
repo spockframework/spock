@@ -14,6 +14,11 @@ if (JavaVersion.current().java7Compatible) {
   include "spock-spring:boot-test"
 }
 
+if (JavaVersion.current().java8Compatible) {
+  include "spock-spring:spring5-test"
+}
+
+
 rootProject.name = "spock"
 nameBuildScriptsAfterProjectNames(rootProject.children)
 

@@ -28,7 +28,7 @@ collaborators, and can generate mock implementations of collaborators that verif
 ****
 Like most Java mocking frameworks, Spock uses
 http://docs.oracle.com/javase/7/docs/api/java/lang/reflect/Proxy.html[JDK dynamic proxies] (when mocking interfaces)
-and https://github.com/cglib/cglib[CGLIB] proxies (when mocking classes) to generate mock implementations at runtime.
+and http://bytebuddy.net/[Byte Buddy] or https://github.com/cglib/cglib[CGLIB] proxies (when mocking classes) to generate mock implementations at runtime.
 Compared to implementations based on Groovy meta-programming, this has the advantage that it also works for testing Java code.
 ****
 

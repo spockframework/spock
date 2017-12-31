@@ -35,9 +35,9 @@ public interface IMockConfiguration {
   Class<?> getType();
 
   /**
-   * Returns the instance to be used as a delegate
+   * Returns the instance to be used as a prototype
    *
-   * @return the instance to be used as a delegate
+   * @return the instance to be used as a prototype
    */
   @Nullable
   Object getInstance();

@@ -242,4 +242,29 @@ public abstract class ReflectionUtil {
       return false;
     }
   }
+
+  public static void deepCopyFields(Object source, Object target) {
+    if (!source.getClass().isAssignableFrom(target.getClass())) {
+      throw new IllegalArgumentException("source and target are not compatible.");
+    }
+    Class<?> clazz = source.getClass();
+    while (!clazz.equals(Object.class)) {
+      Field[] fields = clazz.getDeclaredFields();
+      for (Field field : fields) {
+        copyField(field, source, target);
+      }
+      clazz = clazz.getSuperclass();
+    }
+  }
+
+  private static void copyField(Field field, Object source, Object target) {
+    boolean accessible = field.isAccessible();
+    field.setAccessible(true);
+    try {
+      field.set(target, field.get(source));
+    } catch (IllegalAccessException e) {
+      // ignore
+    }
+    field.setAccessible(accessible);
+  }
 }

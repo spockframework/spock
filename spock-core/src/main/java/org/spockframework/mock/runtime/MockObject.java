@@ -27,7 +27,6 @@ public class MockObject implements IMockObject {
   private final String name;
   private final Type type;
   private final Object instance;
-  private final Object userCreatedInstance;
   private final boolean verified;
   private final boolean global;
   private final IDefaultResponse defaultResponse;
@@ -37,15 +36,9 @@ public class MockObject implements IMockObject {
 
   public MockObject(@Nullable String name, Type type, Object instance, boolean verified, boolean global,
       IDefaultResponse defaultResponse, Specification specification, SpecificationAttachable mockInterceptor) {
-    this(name, type, instance, null, verified, global, defaultResponse, specification, mockInterceptor);
-  }
-
-  public MockObject(@Nullable String name, Type type, Object instance, Object userCreatedInstance, boolean verified, boolean global,
-      IDefaultResponse defaultResponse, Specification specification, SpecificationAttachable mockInterceptor) {
     this.name = name;
     this.type = type;
     this.instance = instance;
-    this.userCreatedInstance = userCreatedInstance;
     this.verified = verified;
     this.global = global;
     this.defaultResponse = defaultResponse;
@@ -72,11 +65,6 @@ public class MockObject implements IMockObject {
   @Override
   public Object getInstance() {
     return instance;
-  }
-
-  @Override
-  public Object getUserCreatedInstance() {
-    return userCreatedInstance;
   }
 
   @Override

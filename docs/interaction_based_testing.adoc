@@ -28,7 +28,7 @@ collaborators, and can generate mock implementations of collaborators that verif
 ****
 Like most Java mocking frameworks, Spock uses
 http://docs.oracle.com/javase/7/docs/api/java/lang/reflect/Proxy.html[JDK dynamic proxies] (when mocking interfaces)
-and https://github.com/cglib/cglib[CGLIB] proxies (when mocking classes) to generate mock implementations at runtime.
+and http://bytebuddy.net/[Byte Buddy] or https://github.com/cglib/cglib[CGLIB] proxies (when mocking classes) to generate mock implementations at runtime.
 Compared to implementations based on Groovy meta-programming, this has the advantage that it also works for testing Java code.
 ****
 
@@ -307,7 +307,7 @@ If a mock has a set of "base" interactions that don't vary, they can be declared
 
 [source,groovy]
 ----
-def subscriber = Mock(Subscriber) {
+Subscriber subscriber = Mock {
    1 * receive("hello")
    1 * receive("goodbye")
 }
@@ -684,7 +684,7 @@ A _stub_ is created with the `MockingApi.Stub` factory method:
 
 [source,groovy]
 ----
-def subscriber = Stub(Subscriber)
+Subscriber subscriber = Stub()
 ----
 
 Whereas a mock can be used both for stubbing and mocking, a stub can only be used for stubbing.
@@ -708,7 +708,7 @@ A stub often has a fixed set of interactions, which makes
 
 [source,groovy]
 ----
-def subscriber = Stub(Subscriber) {
+Subscriber subscriber = Stub {
     receive("message1") >> "ok"
     receive("message2") >> "fail"
 }
@@ -723,7 +723,7 @@ A _spy_ is created with the `MockingApi.Spy` factory method:
 
 [source,groovy]
 ----
-def subscriber = Spy(SubscriberImpl, constructorArgs: ["Fred"])
+SubscriberImpl subscriber = Spy(constructorArgs: ["Fred"])
 ----
 
 A spy is always based on a real object. Hence you must provide a class type rather
@@ -779,7 +779,7 @@ Spies can also be used as partial mocks:
 [source,groovy]
 ----
 // this is now the object under specification, not a collaborator
-def persister = Spy(MessagePersister) {
+MessagePersister persister = Spy {
   // stub a call on the same object
   isPersistable(_) >> true
 }
@@ -812,7 +812,7 @@ dynamic methods as if they were physically declared methods:
 
 [source,groovy]
 ----
-def subscriber = GroovyMock(Subscriber)
+Subscriber subscriber = GroovyMock()
 
 1 * subscriber.someDynamicMethod("hello")
 ----
@@ -833,7 +833,7 @@ http://docs.groovy-lang.org/docs/groovy-2.4.1/html/gapi/groovy/mock/interceptor/
 def publisher = new Publisher()
 publisher << new RealSubscriber() << new RealSubscriber()
 
-def anySubscriber = GroovyMock(RealSubscriber, global: true)
+RealSubscriber anySubscriber = GroovyMock(global: true)
 
 when:
 publisher.publish("message")
@@ -872,7 +872,7 @@ Global mocks support mocking of constructors:
 
 [source,groovy]
 ----
-def anySubscriber = GroovySpy(RealSubscriber, global: true)
+RealSubscriber anySubscriber = GroovySpy(global: true)
 
 1 * new RealSubscriber("Fred")
 ----
@@ -897,7 +897,7 @@ Global mocks support mocking and stubbing of static methods:
 
 [source,groovy]
 ----
-def anySubscriber = GroovySpy(RealSubscriber, global: true)
+RealSubscriber anySubscriber = GroovySpy(global: true)
 
 1 * RealSubscriber.someStaticMethod("hello") >> 42
 ----
@@ -937,24 +937,24 @@ verified (as for a `Stub()`). Instead of passing `ZeroOrNullResponse`, we could 
 [[DetectingMockObjects]]
 === Detecting Mock Objects
 
-To find out whether a particular object is a Spock mock object, use a `org.spockframework.mock.MockDetector`:
+To find out whether a particular object is a Spock mock object, use a `org.spockframework.mock.MockUtil`:
 
 [source,groovy]
 ----
-def detector = new MockDetector()
-def list1 = []
-def list2 = Mock(List)
+MockUtil mockUtil = new MockUtil()
+List list1 = []
+List list2 = Mock()
 
 expect:
-!detector.isMock(list1)
-detector.isMock(list2)
+!mockUtil.isMock(list1)
+mockUtil.isMock(list2)
 ----
 
-A detector can also be used to get more information about a mock object:
+An util can also be used to get more information about a mock object:
 
 [source,groovy]
 ----
-def mock = detector.asMock(list2)
+IMockObject mock = mockUtil.asMock(list2)
 
 expect:
 mock.name == "list2"

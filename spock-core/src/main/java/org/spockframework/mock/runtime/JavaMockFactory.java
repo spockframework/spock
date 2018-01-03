@@ -18,6 +18,7 @@ package org.spockframework.mock.runtime;
 
 import org.spockframework.mock.*;
 import org.spockframework.runtime.GroovyRuntimeUtil;
+import org.spockframework.util.ReflectionUtil;
 import spock.lang.Specification;
 
 import java.lang.reflect.Modifier;
@@ -25,7 +26,7 @@ import java.lang.reflect.Modifier;
 import groovy.lang.MetaClass;
 
 public class JavaMockFactory implements IMockFactory {
-  public static JavaMockFactory INSTANCE = new JavaMockFactory();
+  public static final JavaMockFactory INSTANCE = new JavaMockFactory();
 
   @Override
   public boolean canCreate(IMockConfiguration configuration) {
@@ -54,9 +55,13 @@ public class JavaMockFactory implements IMockFactory {
 
     MetaClass mockMetaClass = GroovyRuntimeUtil.getMetaClass(configuration.getType());
     IProxyBasedMockInterceptor interceptor = new JavaMockInterceptor(configuration, specification, mockMetaClass);
-    return ProxyBasedMockFactory.INSTANCE.create(configuration.getType(), configuration.getAdditionalInterfaces(),
-        configuration.getConstructorArgs(), interceptor, classLoader,
-        configuration.isUseObjenesis());
+    Object proxy = ProxyBasedMockFactory.INSTANCE.create(configuration.getType(), configuration.getAdditionalInterfaces(),
+      configuration.getConstructorArgs(), interceptor, classLoader,
+      configuration.isUseObjenesis());
+    if ((configuration.getNature() == MockNature.SPY) && (configuration.getInstance() != null)) {
+      ReflectionUtil.deepCopyFields(configuration.getInstance(), proxy);
+    }
+    return proxy;
   }
 }
 

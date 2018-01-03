@@ -106,11 +106,6 @@ public class DelegatingInterceptor implements IProxyBasedMockInterceptor {
     }
 
     @Override
-    public Object getUserCreatedInstance() {
-      return null;
-    }
-
-    @Override
     public boolean isVerified() {
       return false;
     }

@@ -83,8 +83,6 @@ public class SpringMockTestExecutionListener extends AbstractSpringTestExecution
 
       testContext.setAttribute(MOCKED_BEANS_LIST, mockedBeans);
 
-    } else {
-      throw new IllegalArgumentException("SpringMockTestExecutionListener is only applicable for spock specifications.");
     }
   }
 

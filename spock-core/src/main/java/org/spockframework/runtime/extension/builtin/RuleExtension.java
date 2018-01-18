@@ -42,6 +42,10 @@ public class RuleExtension extends AbstractRuleExtension {
       }
     }
 
+    // Apply JUnit rules in the same order as the class fields are initialized.
+    Collections.reverse(methodRuleFields);
+    Collections.reverse(testRuleFields);
+
     if (!methodRuleFields.isEmpty()) MethodRuleInterceptorInstaller.install(spec, methodRuleFields);
     if (!testRuleFields.isEmpty()) TestRuleInterceptorInstaller.install(spec, testRuleFields);
   }

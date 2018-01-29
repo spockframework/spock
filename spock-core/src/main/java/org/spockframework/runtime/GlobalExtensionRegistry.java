@@ -27,17 +27,32 @@ import java.util.*;
  * Maintains a registry of global Spock extensions and their configuration objects,
  * which can be used to configure other extensions.
  *
+ * <p>If an extension is specified in two or more {@code IGlobalExtension} files on the classpath, it will only
+ * be processed for the first time it is discovered.
+ * This allows processing other extensions (e.g. Spring) before custom ones by listing the order of extensions
+ * explicitly in the file.
+ *
+ * <p>
+ * For instance this will load and run {@code SpringExtension} before {@code  MyExtension}:
+ * <pre>{@code
+ * org.spockframework.spring.SpringExtension
+ * com.example.MyExtension}</pre>
+ * </p>
+ *
+ *
  * @author Peter Niederwieser
  */
 public class GlobalExtensionRegistry implements IExtensionRegistry, IConfigurationRegistry {
-  private final List<Class<?>> globalExtensionClasses;
+  private final Set<Class<?>> globalExtensionClasses;
   private final Map<Class<?>, Object> configurationsByType = new HashMap<>();
   private final Map<String, Object> configurationsByName = new HashMap<>();
 
-  private final List<IGlobalExtension> globalExtensions = new ArrayList<>();
+  private final Set<IGlobalExtension> globalExtensions = new LinkedHashSet<>();
 
   GlobalExtensionRegistry(List<Class<?>> globalExtensionClasses, List<?> initialConfigurations) {
-    this.globalExtensionClasses = globalExtensionClasses;
+    // Only add an extension the first time it is encountered, i.e
+    // turns [A, A, B, A,] into [A,B]
+    this.globalExtensionClasses = new LinkedHashSet<>(globalExtensionClasses);
     initializeConfigurations(initialConfigurations);
   }
 
@@ -72,7 +87,7 @@ public class GlobalExtensionRegistry implements IExtensionRegistry, IConfigurati
   }
 
   @Override
-  public List<IGlobalExtension> getGlobalExtensions() {
+  public Set<IGlobalExtension> getGlobalExtensions() {
     return globalExtensions;
   }
 

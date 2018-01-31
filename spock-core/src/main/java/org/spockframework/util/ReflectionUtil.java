@@ -184,8 +184,11 @@ public abstract class ReflectionUtil {
     try {
       validateArguments(method, args);
       return method.invoke(target, args);
-    } catch (ReflectiveOperationException e) {
+    } catch (IllegalAccessException e) {
       ExceptionUtil.sneakyThrow(e);
+      return null; // never reached
+    } catch (InvocationTargetException e) {
+      ExceptionUtil.sneakyThrow(e.getCause());
       return null; // never reached
     }
   }

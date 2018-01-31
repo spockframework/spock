@@ -19,6 +19,7 @@ import org.spockframework.util.*;
 
 import java.io.*;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 public class ReportLogClient implements IReportLogListener, IStoppable {
@@ -52,28 +53,20 @@ public class ReportLogClient implements IReportLogListener, IStoppable {
     if (socket == null) return;
 
     ByteArrayOutputStream messageBuffer = new ByteArrayOutputStream(1024);
-    Writer messageWriter = null;
-    try {
-      messageWriter = new OutputStreamWriter(messageBuffer, "utf-8");
+    try (Writer messageWriter = new OutputStreamWriter(messageBuffer, StandardCharsets.UTF_8)) {
       JsonWriter jsonWriter = new JsonWriter(messageWriter);
       jsonWriter.write(log);
       messageWriter.write("\n");
     } catch (IOException e) {
       throw new InternalSpockError(e);
-    } finally {
-      IoUtil.closeQuietly(messageWriter);
     }
 
     ByteArrayOutputStream sizeBuffer = new ByteArrayOutputStream();
-    Writer sizeWriter = null;
-    try {
-      sizeWriter = new OutputStreamWriter(sizeBuffer, "utf-8");
+    try (Writer sizeWriter = new OutputStreamWriter(sizeBuffer, StandardCharsets.UTF_8)) {
       sizeWriter.write(String.valueOf(messageBuffer.size()));
       sizeWriter.write("\n");
     } catch (IOException e) {
       throw new InternalSpockError(e);
-    } finally {
-      IoUtil.closeQuietly(sizeWriter);
     }
 
     try {

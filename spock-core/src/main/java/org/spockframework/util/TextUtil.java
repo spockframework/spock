@@ -144,10 +144,10 @@ public abstract class TextUtil {
       String lowers = matcher.group(1);
       String uppers = matcher.group(2);
 
-      if (uppers.length() == 0) {
+      if (uppers.isEmpty()) {
         result.append(lowers.toUpperCase());
       } else {
-        if (lowers.length() > 0) {
+        if (!lowers.isEmpty()) {
           result.append(lowers.toUpperCase());
           result.append('_');
         }
@@ -165,7 +165,7 @@ public abstract class TextUtil {
   }
 
   public static String capitalize(String str) {
-    if (str == null || str.length() == 0) return str;
+    if (str == null || str.isEmpty()) return str;
 
     StringBuilder builder = new StringBuilder();
     builder.append(Character.toUpperCase(str.charAt(0)));

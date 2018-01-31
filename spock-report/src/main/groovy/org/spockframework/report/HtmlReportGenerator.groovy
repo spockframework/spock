@@ -19,6 +19,7 @@ package org.spockframework.report
 import org.spockframework.util.InternalSpockError
 import org.spockframework.util.IoUtil
 
+import java.nio.file.Files
 import java.util.regex.Pattern
 
 /**
@@ -134,7 +135,7 @@ class HtmlReportGenerator {
     def target = new File(outputDirectory, resourcePath)
     if (!target.exists()) {
       target.parentFile.mkdirs()
-      IoUtil.copyStream(source, new FileOutputStream(target))
+      Files.copy(source, target.toPath())
     }
   }
 

@@ -83,7 +83,7 @@ public class PojoGestalt implements IGestalt {
     Closure closure = null;
     if (args != null && args.length > 0 && args[args.length - 1] instanceof Closure) {
       closure = (Closure)args[args.length - 1];
-      args = Arrays.copyOf(args, args.length);
+      args = Arrays.copyOf(args, args.length -1);
     }
 
     Class<?> newClazz = GenericTypeReflector.erase(newType); // TODO: check that this succeeds (Type could be a TypeVariable etc.)

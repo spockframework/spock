@@ -34,5 +34,6 @@ public @interface FieldMetadata {
   String name();
   int ordinal();
   int line();
-  boolean initializer();
+  // This should not have a default, but to make it backwards compatible it has to have one.
+  boolean initializer() default false;
 }

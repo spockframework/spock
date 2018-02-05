@@ -55,7 +55,7 @@ public class ValueRecorder {
       }
     }
     if (!foundThisCallOnStack){
-      throw new IllegalStateException("can not found call #"+index+" on stack. Invalid call of record method?");
+      throw new IllegalStateException("Did not find call #"+index+" on stack. Invalid call of record method?");
     }
 
     return value;

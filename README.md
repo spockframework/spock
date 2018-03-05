@@ -20,7 +20,7 @@ Latest Versions
 The latest release version is **1.1** (1.1-groovy-2.0, 1.1-groovy-2.3, 1.1-groovy-2.4), released on 2017-05-05. The
 current development version is **1.2-SNAPSHOT** (1.2-groovy-2.4-SNAPSHOT).
 
-**NOTE:** Spock 1.2 drops support for Java 6, Groovy 2.0 and Groovy 2.3. 
+**NOTE:** Spock 1.2 drops support for Java 6, Groovy 2.0 and Groovy 2.3.
 
 Releases are available from [Maven Central](https://search.maven.org/#search%7Cga%7C1%7Cg%3A%22org.spockframework%22).
 Development snapshots are available from [Sonatype OSS](https://oss.sonatype.org/content/repositories/snapshots/org/spockframework/).

@@ -162,6 +162,23 @@ null == "foo"
       "Strings too large to calculate edit distance.")
   }
 
+
+  def "String diff does not cause int overflow when shortening, causing OOM"() {
+    int stringLength = Math.sqrt(Integer.MAX_VALUE) * 2
+
+    String a = largeStringBuilder("aaaaaaaaaaaaaaaa", stringLength)
+    String b = largeStringBuilder("bbbbbbbbbbbbbbbb", stringLength)
+
+
+    expect:
+    renderedConditionContains({
+      assert a == b
+    },
+      "false",
+      "Strings too large to calculate edit distance.")
+  }
+
+
   @Issue("https://github.com/spockframework/spock/issues/737")
   def 'shows differences between string literals with line breaks'() {
     expect:
@@ -289,8 +306,7 @@ dolore magna aliquyam erat, sed diam voluptua.\
     }
   }
 
-  private StringBuilder largeStringBuilder(CharSequence source = "aaaaaaaaaaaaaaaa") {
-    int length = ExpressionInfoValueRenderer.MAX_EDIT_DISTANCE_MEMORY / 2
+  private StringBuilder largeStringBuilder(CharSequence source = "aaaaaaaaaaaaaaaa", int length = ExpressionInfoValueRenderer.MAX_EDIT_DISTANCE_MEMORY / 2) {
     def sb = new StringBuilder(length + 10)
     int cslength = source.length()
     for (int i = 0; i < length; i += cslength) {

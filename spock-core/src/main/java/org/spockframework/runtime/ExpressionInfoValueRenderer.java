@@ -130,7 +130,7 @@ public class ExpressionInfoValueRenderer {
     end1++;
     end2++;
 
-    if ((end1-commonStart) * (end2-commonStart) > MAX_EDIT_DISTANCE_MEMORY) {
+    if (((long) end1-commonStart) * (end2-commonStart) > MAX_EDIT_DISTANCE_MEMORY) {
       return "false\nStrings too large to calculate edit distance.";
     } else {
       // Check if we can add some context

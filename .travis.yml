@@ -24,6 +24,7 @@ jdk:
 env:
   matrix:
     - VARIANT=2.4
+    - VARIANT=2.5
   global:
     # SIGNING_PASSWORD
     - secure: "GBvPdDAaMfr0iAYHzVxhMIBVHFanEPY+69CbEFijbZjhv8h0FPvuLos2p1K5/hbmNkQ1Hd2+CHsm3ErvXQHXtpXn0HmKvzSP7pnPk83iRNVGPieasvfnKiSohZeEplkAK6kbK8sZbjJRUFqUZtwyPtWfs244rCOo++D3KtfggzQ="

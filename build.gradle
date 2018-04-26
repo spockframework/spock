@@ -14,15 +14,30 @@ ext {
   baseVersion = "1.2"
   snapshotVersion = true
   releaseCandidate = 0
-  variants = [2.4]
-  variant = System.getProperty("variant") as BigDecimal ?: variants.last()
+  variants = [2.4, 2.5]
+  variant = System.getProperty("variant") as BigDecimal ?: variants.first()
   if (variant == 2.4) {
-    groovyVersion = "2.4.13"
+    groovyVersion = "2.4.15"
     minGroovyVersion = "2.4.0"
-    maxGroovyVersion = snapshotVersion ? "3.9.99" : "2.9.99" // TODO lock these down once Groovy 3 gets close to RC stage
+    groovyDependency = "org.codehaus.groovy:groovy-all:${groovyVersion}"
+  } else if (variant == 2.5) {
+    groovyVersion = "2.5.0"
+    minGroovyVersion = "2.5.0"
+    groovyDependency = [
+      "org.codehaus.groovy:groovy:${groovyVersion}",
+      "org.codehaus.groovy:groovy-groovysh:${groovyVersion}",
+      "org.codehaus.groovy:groovy-json:${groovyVersion}",
+      "org.codehaus.groovy:groovy-nio:${groovyVersion}",
+      "org.codehaus.groovy:groovy-macro:${groovyVersion}",
+      "org.codehaus.groovy:groovy-templates:${groovyVersion}",
+      "org.codehaus.groovy:groovy-test:${groovyVersion}",
+      "org.codehaus.groovy:groovy-sql:${groovyVersion}",
+      "org.codehaus.groovy:groovy-xml:${groovyVersion}",
+    ]
   } else {
     throw new InvalidUserDataException("Unknown variant: $variant. Choose one of: $variants")
   }
+  maxGroovyVersion = snapshotVersion ? "3.9.99" : "2.9.99" // TODO lock these down once Groovy 3 gets close to RC stage
   if (System.getProperty("groovyVersion")) {
     groovyVersion = System.getProperty("groovyVersion")
   }
@@ -36,7 +51,7 @@ ext {
     asm: "org.ow2.asm:asm:6.2",
     bytebuddy: "net.bytebuddy:byte-buddy:1.8.3",
     cglib: "cglib:cglib-nodep:3.2.6",
-    groovy: "org.codehaus.groovy:groovy-all:$groovyVersion",
+    groovy: groovyDependency,
     h2database: "com.h2database:h2:1.3.176",
     junit: "junit:junit:4.12",
     log4j: "log4j:log4j:1.2.17",

@@ -340,3 +340,7 @@ buildScan {
   licenseAgreementUrl = 'https://gradle.com/terms-of-service'
   licenseAgree = 'yes'
 }
+
+wrapper {
+  gradleVersion = '4.7'
+}

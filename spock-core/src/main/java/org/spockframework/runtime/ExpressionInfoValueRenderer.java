@@ -134,7 +134,7 @@ public class ExpressionInfoValueRenderer {
       return "false\nStrings too large to calculate edit distance.";
     } else {
       // Check if we can add some context
-      if ((end1 - commonStart + 20) * (end2 - commonStart + 20) < MAX_EDIT_DISTANCE_MEMORY){
+      if (((long) end1 - commonStart + 20) * (end2 - commonStart + 20) < MAX_EDIT_DISTANCE_MEMORY){
         commonStart = Math.max(0, commonStart - 10);
         end1 = Math.min(str1.length(), end1 + 10);
         end2 = Math.min(str2.length(), end2 + 10);

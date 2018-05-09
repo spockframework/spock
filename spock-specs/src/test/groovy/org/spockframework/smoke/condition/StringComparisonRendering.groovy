@@ -163,6 +163,25 @@ null == "foo"
   }
 
 
+  def "large String comparision without room for context"() {
+    int stringLength = Math.sqrt(ExpressionInfoValueRenderer.MAX_EDIT_DISTANCE_MEMORY)
+
+    String common = largeStringBuilder("cccccccccccccccc", stringLength)
+    String a = largeStringBuilder("aaaaaaaaaaaaaaaa", stringLength) + common
+    String b = largeStringBuilder("bbbbbbbbbbbbbbbb", stringLength) + common
+
+
+    expect:
+    renderedConditionContains({
+      assert a == b
+    },
+      "false",
+      a,
+      b,
+      "$stringLength differences (0% similarity) (comparing subset start: 0, end1: $stringLength, end2: $stringLength)")
+  }
+
+
   def "String diff does not cause int overflow when shortening, causing OOM"() {
     int stringLength = Math.sqrt(Integer.MAX_VALUE) * 2
 

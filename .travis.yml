@@ -40,8 +40,8 @@ before_script:
   - _JAVA_OPTIONS=
 
 script:
-  - ./gradlew --no-daemon --version
-  - ./gradlew --no-daemon travisCiBuild -Dvariant=$VARIANT --scan --stacktrace
+  - ./gradlew --no-daemon --no-parallel  --version
+  - ./gradlew --no-daemon --no-parallel  travisCiBuild -Dvariant=$VARIANT --scan --stacktrace
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)

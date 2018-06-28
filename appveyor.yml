@@ -4,8 +4,8 @@ environment:
 shallow_clone: true
 
 build_script:
-  - gradlew --no-daemon --version
-  - gradlew --no-daemon appveyorCiBuild -Dscan
+  - gradlew --no-daemon --no-daemon --version
+  - gradlew --no-daemon --no-daemon appveyorCiBuild --scan --stacktrace
 
 after_build:
 # upload test results via rest-api

@@ -18,8 +18,10 @@ package org.spockframework.smoke.extension
 
 import spock.lang.*
 
+import java.util.concurrent.CopyOnWriteArrayList
+
 class ConditionallyIgnoreFeature extends Specification {
-  @Shared log = []
+  @Shared List log = new CopyOnWriteArrayList()
 
   @IgnoreIf({ 1 < 2 })
   def "should be ignored"() {

@@ -27,10 +27,10 @@ import groovy.lang.Closure;
 
 @SuppressWarnings("UnusedDeclaration")
 public abstract class SpecInternals {
-  private final ISpecificationContext specificationContext = new SpecificationContext();
+  private final SpecificationContext specificationContext = new SpecificationContext();
 
   @Beta
-  public ISpecificationContext getSpecificationContext() {
+  public SpecificationContext getSpecificationContext() {
     return specificationContext;
   }
 

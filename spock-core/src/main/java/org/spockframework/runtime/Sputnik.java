@@ -16,14 +16,20 @@
 
 package org.spockframework.runtime;
 
-import org.spockframework.runtime.model.*;
-import org.spockframework.util.*;
-
-import org.junit.runner.*;
-import org.junit.runner.manipulation.Filter;
+import org.junit.runner.Description;
+import org.junit.runner.Runner;
 import org.junit.runner.manipulation.*;
 import org.junit.runner.notification.RunNotifier;
+import org.junit.runners.ParentRunner;
 import org.junit.runners.model.InitializationError;
+
+import org.junit.runners.model.RunnerScheduler;
+import org.spockframework.runtime.model.FeatureInfo;
+import org.spockframework.runtime.model.SpecInfo;
+import org.spockframework.util.IncompatibleGroovyVersionException;
+import org.spockframework.util.VersionChecker;
+
+import java.util.List;
 
 /**
  * A JUnit runner for Spock specifications. There is no need to put
@@ -34,13 +40,15 @@ import org.junit.runners.model.InitializationError;
  * @author Peter Niederwieser
  */
 // TODO: check if StoppedByUserException thrown in Notifier.fireTestStarted() is handled correctly on our side
-public class Sputnik extends Runner implements Filterable, Sortable {
+public class Sputnik extends ParentRunner implements Filterable, Sortable {
   private final Class<?> clazz;
   private SpecInfo spec;
   private boolean extensionsRun = false;
   private boolean descriptionGenerated = false;
+  private RunnerScheduler scheduler = new SequentialRunnerScheduler();
 
   public Sputnik(Class<?> clazz) throws InitializationError {
+    super(Object.class); // fake class - we need ParentRunner only to obtain RunnerScheduler
     try {
       VersionChecker.checkGroovyVersion("JUnit runner");
     } catch (IncompatibleGroovyVersionException e) {
@@ -50,20 +58,39 @@ public class Sputnik extends Runner implements Filterable, Sortable {
   }
 
   @Override
+  protected List getChildren() {
+    throw new UnsupportedOperationException("workflow from ParentRunner not supported");
+  }
+
+  @Override
+  protected Description describeChild(Object child) {
+    throw new UnsupportedOperationException("workflow from ParentRunner not supported");
+  }
+
+  @Override
+  protected void runChild(Object child, RunNotifier notifier) {
+    throw new UnsupportedOperationException("workflow from ParentRunner not supported");
+  }
+
+  @Override
+  public void setScheduler(RunnerScheduler scheduler) {
+    super.setScheduler(scheduler);
+    this.scheduler = scheduler;
+  }
+
   public Description getDescription() {
     runExtensionsIfNecessary();
     generateSpecDescriptionIfNecessary();
     return getSpec().getDescription();
   }
 
-  @Override
   public void run(RunNotifier notifier) {
     runExtensionsIfNecessary();
     generateSpecDescriptionIfNecessary();
-    RunContext.get().createSpecRunner(getSpec(), notifier).run();
+    RunContext.get().createSpecRunner(getSpec(), notifier, new Scheduler(scheduler, false)).run();
+    scheduler.finished();
   }
 
-  @Override
   public void filter(Filter filter) throws NoTestsRemainException {
     invalidateSpecDescription();
     getSpec().filterFeatures(new JUnitFilterAdapter(filter));
@@ -71,7 +98,6 @@ public class Sputnik extends Runner implements Filterable, Sortable {
       throw new NoTestsRemainException();
   }
 
-  @Override
   public void sort(Sorter sorter) {
     invalidateSpecDescription();
     getSpec().sortFeatures(new JUnitSorterAdapter(sorter));

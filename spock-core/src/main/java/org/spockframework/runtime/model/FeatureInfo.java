@@ -24,6 +24,8 @@ public class FeatureInfo extends SpecElementInfo<SpecInfo, AnnotatedElement> {
 
   private boolean reportIterations = false;
 
+  private boolean supportParallelExecution = true;
+
   public SpecInfo getSpec() {
     return getParent();
   }
@@ -111,6 +113,14 @@ public class FeatureInfo extends SpecElementInfo<SpecInfo, AnnotatedElement> {
 
   public void setReportIterations(boolean flag) {
     reportIterations = flag;
+  }
+
+  public boolean isSupportParallelExecution() {
+    return supportParallelExecution;
+  }
+
+  public void setSupportParallelExecution(boolean supportParallelExecution) {
+    this.supportParallelExecution = supportParallelExecution;
   }
 
   @Nullable

@@ -4,10 +4,10 @@ environment:
 shallow_clone: true
 
 build_script:
-  - gradlew --no-daemon --no-daemon --version
-  - gradlew --no-daemon --no-daemon appveyorCiBuild --scan --stacktrace
+  - gradlew --no-daemon --no-parallel --version
+  - gradlew --no-daemon --no-parallel appveyorCiBuild --scan --stacktrace
 
-after_build:
+on_finish:
 # upload test results via rest-api
   - ps: |
         $wc = New-Object 'System.Net.WebClient'

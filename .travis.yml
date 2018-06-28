@@ -41,7 +41,7 @@ before_script:
 
 script:
   - ./gradlew --no-daemon --version
-  - ./gradlew --no-daemon travisCiBuild -Dvariant=$VARIANT --scan
+  - ./gradlew --no-daemon travisCiBuild -Dvariant=$VARIANT --scan --stacktrace
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)

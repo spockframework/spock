@@ -15,8 +15,7 @@
 */
 package org.spockframework.smoke.traits
 
-import org.junit.After
-import org.junit.Before
+import org.junit.*
 
 trait MyTrait {
   int x = 10

@@ -18,9 +18,9 @@ http://webconsole.spockframework.org.
 Latest Versions
 ---------------
 The latest release version is **1.1** (1.1-groovy-2.0, 1.1-groovy-2.3, 1.1-groovy-2.4), released on 2017-05-05. The
-current development version is **1.2-SNAPSHOT** (1.2-groovy-2.4-SNAPSHOT).
+current development version is **1.2-SNAPSHOT** (1.2-groovy-2.4-SNAPSHOT and 1.2-groovy-2.5-SNAPSHOT).
 
-**NOTE:** Spock 1.2 drops support for Java 6, Groovy 2.0 and Groovy 2.3. 
+**NOTE:** Spock 1.2 drops support for Java 6, Groovy 2.0 and Groovy 2.3.
 
 Releases are available from [Maven Central](https://search.maven.org/#search%7Cga%7C1%7Cg%3A%22org.spockframework%22).
 Development snapshots are available from [Sonatype OSS](https://oss.sonatype.org/content/repositories/snapshots/org/spockframework/).
@@ -59,13 +59,13 @@ Building
 --------
 
 ### Supported versions
-Spock is supported for Java version 7, and 8.
+Spock is supported for Java version 7, and 8 (with Groovy 2.5 Java 9 and 10 are supported as well).
 
 Spock is supported for Groovy version 2.4+
 
 The tests are testing spock with a specific versions (variants) of groovy. Default is groovy version 2.4
 
-The groovy 2.4 variant should pass on all supported JDK versions:
+The groovy 2.4 and 2.5 variant should pass on all supported JDK versions:
 
 ```
 ./gradlew clean build

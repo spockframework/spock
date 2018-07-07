@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 the original author or authors.
+ * Copyright 2015 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,27 +14,18 @@
  * limitations under the License.
  */
 
+package org.spockframework.smoke.mock;
 
-package org.spockframework.boot.jpa;
-
-import javax.persistence.*;
-
-/**
- * JPA example entity class.
- */
-@Entity
-public class Book {
-
-  @Id
-  @GeneratedValue
-  private Long id;
-  private String title;
-
-  protected Book() {
-    // no-args JPA constructor
+class Item {
+  public int getId() {
+    return 777;
+  }
+  public int getPrice() {
+    return 10;
   }
 
-  public Book(String title) {
-    this.title = title;
+  @Override
+  public String toString() {
+    return "#" + getId() + ": " + getPrice();
   }
 }

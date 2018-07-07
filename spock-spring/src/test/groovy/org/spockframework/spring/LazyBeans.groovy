@@ -14,35 +14,35 @@
  * limitations under the License.
  */
 
+package org.spockframework.spring
 
-package org.spockframework.boot
-
-import org.spockframework.boot.jpa.*
 import spock.lang.Specification
 
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.orm.jpa.*
+import org.springframework.context.annotation.*
+import org.springframework.test.context.ContextConfiguration
 
-/**
- * Integration tests for ensuring compatibility with Spring-Boot's {@link DataJpaTest} annotation.
- */
-@DataJpaTest
-class DataJpaTestIntegrationSpec extends Specification {
-
+@ContextConfiguration(classes = SpringConfig)
+class LazyBeans extends Specification {
   @Autowired
-  TestEntityManager entityManager
+  Object foo
 
-  @Autowired
-  BookRepository bookRepository
+  def "foo#bar shouldn't be initialized"() {
+    expect:
+    foo == "bar"
+  }
+}
 
-  def "spring context loads for data jpa slice"() {
-    given: "some existing books"
-    entityManager.persist(new Book("Moby Dick"))
-    entityManager.persist(new Book("Testing Spring with Spock"))
-
-    expect: "the correct count is inside the repository"
-    bookRepository.count() == 2L
+@Configuration
+class SpringConfig {
+  @Bean
+  Object foo() {
+    "bar"
   }
 
-
+  @Lazy
+  @Bean
+  List bar() {
+    assert false: "@Lazy beans should not be initialized."
+  }
 }

@@ -72,7 +72,7 @@ public class SpringMockTestExecutionListener extends AbstractSpringTestExecution
 
     for (String beanName : mockBeanNames) {
       BeanDefinition beanDefinition = ((BeanDefinitionRegistry)applicationContext).getBeanDefinition(beanName);
-      if (beanDefinition.isAbstract()) {
+      if (beanDefinition.isAbstract() || beanDefinition.isLazyInit()) {
         continue;
       }
       if (beanDefinition.isSingleton() || scanScopedBean(scanScopedBeans, scopes, beanDefinition)) {

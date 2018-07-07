@@ -1,11 +1,11 @@
 /*
- * Copyright 2018 the original author or authors.
+ * Copyright 2012-2016 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,26 +15,12 @@
  */
 
 
-package org.spockframework.boot.jpa;
+package org.spockframework.boot2.jpa;
 
-import javax.persistence.*;
+import org.springframework.data.repository.CrudRepository;
 
 /**
- * JPA example entity class.
+ * Spring-Data repository for {@link Book} entities.
  */
-@Entity
-public class Book {
-
-  @Id
-  @GeneratedValue
-  private Long id;
-  private String title;
-
-  protected Book() {
-    // no-args JPA constructor
-  }
-
-  public Book(String title) {
-    this.title = title;
-  }
+public interface BookRepository extends CrudRepository<Book, Long> {
 }

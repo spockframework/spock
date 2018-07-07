@@ -1,11 +1,11 @@
 /*
- * Copyright 2018 the original author or authors.
+ * Copyright 2012-2014 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package org.spockframework.boot
+package org.spockframework.boot2
 
-import org.spockframework.boot.service.HelloWorldService
+import org.spockframework.boot2.service.HelloWorldService
 import org.spockframework.spring.ScanScopedBeans
 import spock.lang.Specification
 import spock.mock.DetachedMockFactory
@@ -24,14 +24,15 @@ import spock.mock.DetachedMockFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.*
 import org.springframework.context.ApplicationContext
-import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.*
+import org.springframework.web.context.annotation.RequestScope
 
 /**
- * Tests enabled scanning of scoped beans.
+ * Tests enabled scanning of scoped and proxied beans.
  */
 @ScanScopedBeans
 @SpringBootTest
-class SpringBootTestAnnotationScopedMockSpec extends Specification {
+class SpringBootTestAnnotationScopedProxyMockSpec extends Specification {
   @Autowired
   ApplicationContext context
 
@@ -42,19 +43,22 @@ class SpringBootTestAnnotationScopedMockSpec extends Specification {
     expect:
     context != null
     context.containsBean("helloWorldService")
-    !context.containsBean("scopedTarget.helloWorldService")
+    context.containsBean("scopedTarget.helloWorldService")
     context.containsBean("simpleBootApp")
   }
 
   def "scoped mock can be used"() {
+    given:
+    def helloWorldServiceMock = context.getBean("scopedTarget.helloWorldService") as HelloWorldService
+
     expect:
-    !helloWorldService.class.simpleName.startsWith('HelloWorldService$$EnhancerBySpringCGLIB$$')
+    helloWorldService.class.simpleName.startsWith('HelloWorldService$$EnhancerBySpringCGLIB$$')
 
     when:
     def result = helloWorldService.helloMessage
 
     then:
-    1 * helloWorldService.getHelloMessage() >> 'sup?'
+    1 * helloWorldServiceMock.getHelloMessage() >> 'sup?'
     result == 'sup?'
   }
 
@@ -63,7 +67,7 @@ class SpringBootTestAnnotationScopedMockSpec extends Specification {
   static class MockConfig {
     def detachedMockFactory = new DetachedMockFactory()
 
-    @Bean
+    @Bean @RequestScope(proxyMode = ScopedProxyMode.TARGET_CLASS)
     HelloWorldService helloWorldService() {
       return detachedMockFactory.Mock(HelloWorldService)
     }

@@ -21,6 +21,10 @@ All forms of contribution are very much appreciated.
 
 Good communication makes a big difference. We are always eager to listen, reflect, and discuss. Don't hesitate to get in touch via the [issue tracker](http://issues.spockframework.org), [user forum](http://forum.spockframework.org), or [dev forum](http://dev.forum.spockframework.org). Choose whatever medium feels most appropriate.
 
+## Triage Issues [![Open Source Helpers](https://www.codetriage.com/spockframework/spock/badges/users.svg)](https://www.codetriage.com/spockframework/spock)
+
+You can triage issues which may include reproducing bug reports or asking for vital information, such as version numbers or reproduction instructions. If you would like to start triaging issues, one easy way to get started is to [subscribe to spock on CodeTriage](https://www.codetriage.com/spockframework/spock).
+
 ## Contributing Code/Docs
 
 To contribute code or documentation, please submit a pull request to the [GitHub repository](http://github.spockframework.org/spock).

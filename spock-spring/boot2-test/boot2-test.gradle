@@ -14,27 +14,24 @@
  * limitations under the License.
  */
 
-
-package org.spockframework.boot.jpa;
-
-import javax.persistence.*;
-
-/**
- * JPA example entity class.
- */
-@Entity
-public class Book {
-
-  @Id
-  @GeneratedValue
-  private Long id;
-  private String title;
-
-  protected Book() {
-    // no-args JPA constructor
-  }
-
-  public Book(String title) {
-    this.title = title;
-  }
+plugins {
+  id "io.spring.dependency-management" version "1.0.5.RELEASE"
+  id 'org.springframework.boot' version "2.0.3.RELEASE"
 }
+
+dependencies {
+  compile "org.springframework.boot:spring-boot-starter-data-jpa"
+  compile "org.springframework.boot:spring-boot-starter-web"
+
+  testCompile "org.springframework.boot:spring-boot-starter-test"
+  testCompile project(":spock-core")
+  testCompile project(":spock-spring")
+
+  runtime "com.h2database:h2"
+
+}
+
+repositories {
+  mavenCentral()
+}
+

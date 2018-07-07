@@ -159,9 +159,30 @@ public class ProxyBasedMockFactory {
       // keep creating new classes rather than reusing previously generated ones
       static BridgeMethodAwareCallbackFilter INSTANCE = new BridgeMethodAwareCallbackFilter();
 
+      /**
+       * @return 0 if the method should be intercepted; 1 otherwise
+       */
       @Override
       public int accept(Method method) {
-        return method.isBridge() ? 1 : 0;
+        // All non-bridge methods are intercepted
+        if(!method.isBridge()) return 0;
+
+        // Bridge methods are not intercepted unless they override a concrete method in a supertype (issue #122)
+        Class[] prmTypes = method.getParameterTypes();
+        String methodName = method.getName();
+        Class<?> superclass = method.getDeclaringClass().getSuperclass();
+        while(superclass != null) {
+          for(Method m : superclass.getDeclaredMethods()) {
+            if(!methodName.equals(m.getName())) continue;
+            if(Arrays.equals(prmTypes, m.getParameterTypes())) {
+              int modifiers = m.getModifiers();
+              if(Modifier.isAbstract(modifiers)) return 1;
+              return (Modifier.isPublic(modifiers) || Modifier.isProtected(modifiers)) ? 0 : 1;
+            }
+          }
+          superclass = superclass.getSuperclass();
+        }
+        return 1;
       }
     }
   }

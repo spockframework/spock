@@ -16,7 +16,7 @@
 
 package org.spockframework.compiler;
 
-import org.spockframework.runtime.*;
+import org.spockframework.runtime.ValueRecorder;
 import org.spockframework.util.*;
 
 import java.util.*;
@@ -475,11 +475,11 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> {
   private Expression record(Expression expr) {
     // replace expr with $spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(recordCount++), <expr>)
     return AstUtil.createDirectMethodCall(
-        new VariableExpression("$spock_valueRecorder"),
+        new VariableExpression(SpockNames.VALUE_RECORDER),
         resources.getAstNodeCache().ValueRecorder_Record,
         new ArgumentListExpression(
             AstUtil.createDirectMethodCall(
-                new VariableExpression("$spock_valueRecorder"),
+                new VariableExpression(SpockNames.VALUE_RECORDER),
                 resources.getAstNodeCache().ValueRecorder_StartRecordingValue,
                 new ArgumentListExpression(new ConstantExpression(recordCount++))
             ),
@@ -488,7 +488,7 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> {
 
   private Expression realizeNas(Expression expr) {
     return AstUtil.createDirectMethodCall(
-        new VariableExpression("$spock_valueRecorder"),
+        new VariableExpression(SpockNames.VALUE_RECORDER),
         resources.getAstNodeCache().ValueRecorder_RealizeNas,
         new ArgumentListExpression(new ConstantExpression(recordCount), expr));
   }
@@ -523,7 +523,7 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> {
     Expression targetExpr = methodExpr.getObjectExpression();
     if (!(targetExpr instanceof VariableExpression)) return expr;
     VariableExpression var = (VariableExpression)targetExpr;
-    if (!"$spock_valueRecorder".equals(var.getName())) return expr;
+    if (!SpockNames.VALUE_RECORDER.equals(var.getName())) return expr;
     if(!ValueRecorder.RECORD.equals(methodExpr.getMethodAsString())) return expr;
     return ((ArgumentListExpression)methodExpr.getArguments()).getExpression(1);
   }
@@ -537,7 +537,7 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> {
     Expression targetExpr = methodExpr.getObjectExpression();
     if (!(targetExpr instanceof VariableExpression)) return -1;
     VariableExpression var = (VariableExpression)targetExpr;
-    if (!"$spock_valueRecorder".equals(var.getName())) return -1;
+    if (!SpockNames.VALUE_RECORDER.equals(var.getName())) return -1;
     if(!ValueRecorder.RECORD.equals(methodExpr.getMethodAsString())) return -1;
     Expression startRecordingEpr = ((ArgumentListExpression) methodExpr.getArguments()).getExpression(0);
     if (!(startRecordingEpr instanceof MethodCallExpression)) return -1;
@@ -651,8 +651,8 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> {
                     new ClassExpression(resources.getAstNodeCache().SpockRuntime),
                     resources.getAstNodeCache().SpockRuntime_ConditionFailedWithException,
                     new ArgumentListExpression(Arrays.asList(
-                        new VariableExpression("$spock_errorCollector"),
-                        message == null ? new VariableExpression("$spock_valueRecorder") : ConstantExpression.NULL, // recorder
+                        new VariableExpression(SpockNames.ERROR_COLLECTOR),
+                        message == null ? new VariableExpression(SpockNames.VALUE_RECORDER) : ConstantExpression.NULL, // recorder
                         new ConstantExpression(resources.getSourceText(condition)),                                 // text
                         new ConstantExpression(condition.getLineNumber()),                                          // line
                         new ConstantExpression(condition.getColumnNumber()),                                        // column
@@ -674,10 +674,10 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> {
         new ClassExpression(resources.getAstNodeCache().SpockRuntime), method,
         new ArgumentListExpression(args));
 
-    args.add(new VariableExpression("$spock_errorCollector", ClassHelper.make(ErrorCollector.class)));
+    args.add(new VariableExpression(SpockNames.ERROR_COLLECTOR, resources.getAstNodeCache().ErrorCollector));
     args.add(message == null ?
         AstUtil.createDirectMethodCall(
-            new VariableExpression("$spock_valueRecorder"),
+            new VariableExpression(SpockNames.VALUE_RECORDER),
             resources.getAstNodeCache().ValueRecorder_Reset,
             ArgumentListExpression.EMPTY_ARGUMENTS) :
         ConstantExpression.NULL);

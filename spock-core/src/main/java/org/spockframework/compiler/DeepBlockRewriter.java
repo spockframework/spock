@@ -17,13 +17,11 @@
 package org.spockframework.compiler;
 
 import org.spockframework.compiler.model.*;
-import org.spockframework.util.Identifiers;
-import org.spockframework.util.Nullable;
+import org.spockframework.util.*;
 
 import java.util.*;
 
-import groovy.lang.Closure;
-import org.codehaus.groovy.ast.*;
+import org.codehaus.groovy.ast.Parameter;
 import org.codehaus.groovy.ast.expr.*;
 import org.codehaus.groovy.ast.stmt.*;
 import org.codehaus.groovy.syntax.Types;
@@ -167,21 +165,7 @@ public class DeepBlockRewriter extends AbstractDeepBlockRewriter {
     MethodCallExpression methodCall = AstUtil.getExpression(stat, MethodCallExpression.class);
     if (methodCall == null) return;
 
-    MethodCallExpression target = referenceToCurrentClosure();
-    methodCall.setObjectExpression(target);
-  }
-
-  private MethodCallExpression referenceToCurrentClosure() {
-    return new MethodCallExpression(
-      new VariableExpression("this"),
-      new ConstantExpression("each"),
-      new ArgumentListExpression(
-        new PropertyExpression(
-          new ClassExpression(ClassHelper.makeWithoutCaching(Closure.class)),
-          new ConstantExpression("IDENTITY")
-        )
-      )
-    );
+    methodCall.setObjectExpression(new ClosureReferenceExpression());
   }
 
   private boolean handleMockCall(MethodCallExpression expr) {
@@ -297,4 +281,5 @@ public class DeepBlockRewriter extends AbstractDeepBlockRewriter {
       resources.getErrorReporter().error(stat, "Expected a condition, but found an assignment. Did you intend to write '==' ?");
     }
   }
+
 }

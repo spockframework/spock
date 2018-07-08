@@ -14,6 +14,12 @@ import org.codehaus.groovy.control.SourceUnit;
  */
 public class RecorderScopeNameRewriter extends ClassCodeVisitorSupport {
 
+  private static final Set<String> REWRITE_METHOD_ARGS = new HashSet<>(Arrays.asList(
+    SpockRuntime.VERIFY_CONDITION,
+    SpockRuntime.CONDITION_FAILED_WITH_EXCEPTION,
+    SpockRuntime.GROUP_CONDITION_FAILED_WITH_EXCEPTION,
+    SpockRuntime.VERIFY_METHOD_CONDITION));
+
   private final AstNodeCache astNodeCache;
   private int valueRecorderIndex = -1;
   private int errorCollectorIndex = -1;
@@ -68,9 +74,7 @@ public class RecorderScopeNameRewriter extends ClassCodeVisitorSupport {
   private void rewriteArgumentList(MethodCallExpression call, ClassExpression objectExpression) {
     if (SpockRuntime.class.getName().equals(objectExpression.getType().getName())) {
       String methodName = call.getMethod().getText();
-      if ("verifyCondition".equals(methodName)
-        || "conditionFailedWithException".equals(methodName)
-        || "verifyMethodCondition".equals(methodName)) {
+      if (REWRITE_METHOD_ARGS.contains(methodName)) {
         List<Expression> arguments = new ArrayList<>(((ArgumentListExpression)call.getArguments()).getExpressions());
         Expression expression = arguments.get(0);
         if (expression instanceof VariableExpression && isErrorCollectorExpression(((VariableExpression)expression))) {
@@ -109,6 +113,4 @@ public class RecorderScopeNameRewriter extends ClassCodeVisitorSupport {
   private boolean isValueRecorderExpression(VariableExpression variableExpression) {
     return SpockNames.VALUE_RECORDER.equals(variableExpression.getName());
   }
-  // this would be so much cleaner with java8
-
 }

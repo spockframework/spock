@@ -252,6 +252,54 @@ class VerifyAllSpecification extends EmbeddedSpecification {
     }
   }
 
+  def "don't turn nested with expressions into condition"() {
+    def list = [[['start', 'end']]]
+
+    expect:
+    with(list) {
+      with(it[0]) {
+        verifyAll(it[0]) {
+          verifyAll(it) {
+            it[0] == 'start'
+            it[1] == 'end'
+          }
+          it.size() == 2
+        }
+      }
+    }
+  }
+
+  def "verifyAll with nested verifyAll"() {
+    when:
+    def result = runner.runSpecBody("""
+        def "test1"() {
+          expect:
+          verifyAll{
+            verifyAll{
+              1 == 2
+            }
+            verifyAll(4){
+              3 == 4
+              it == 5
+            }
+          }
+        }""")
+    then:
+    result.failures.size() == 3
+    with(result.failures[0].exception, SpockComparisonFailure) {
+      expected.trim() == "2"
+      actual.trim() == "1"
+    }
+    with(result.failures[1].exception, SpockComparisonFailure) {
+      expected.trim() == "4"
+      actual.trim() == "3"
+    }
+    with(result.failures[2].exception, SpockComparisonFailure) {
+      expected.trim() == "5"
+      actual.trim() == "4"
+    }
+  }
+
   int size() {
     42
   }

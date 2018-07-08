@@ -21,6 +21,8 @@ import org.spockframework.util.*;
 
 import java.util.*;
 
+import org.junit.runners.model.MultipleFailureException;
+
 /**
  * @author Peter Niederwieser
  */
@@ -61,6 +63,30 @@ public abstract class SpockRuntime {
             recorder == null ? null : throwable),
         throwable);
     errorCollector.collectOrThrow(conditionNotSatisfiedError);
+  }
+
+  public static final String GROUP_CONDITION_FAILED_WITH_EXCEPTION = "groupConditionFailedWithException";
+
+  public static void groupConditionFailedWithException(@Nullable ErrorCollector errorCollector, Throwable throwable){
+    if (throwable instanceof AssertionError) {
+      final AssertionError assertionError = (AssertionError) throwable;
+      errorCollector.collectOrThrow(assertionError); // this is our exception - it already has good message
+      return;
+    }
+    if (throwable instanceof SpockException) {
+      final SpockException spockException = (SpockException) throwable;
+      errorCollector.collectOrThrow(spockException); // this is our exception - it already has good message
+      return;
+    }
+    if (throwable instanceof MultipleFailureException) { // this comes from verifyAll so pass it right through
+      try {
+        errorCollector.collectOrThrow(((MultipleFailureException)throwable));
+      } catch (MultipleFailureException e) {
+        ExceptionUtil.sneakyThrow(e);
+      }
+      return;
+    }
+    ExceptionUtil.sneakyThrow(throwable);
   }
 
   public static final String VERIFY_METHOD_CONDITION = "verifyMethodCondition";

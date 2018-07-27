@@ -1,11 +1,26 @@
 import java.text.SimpleDateFormat
 
 plugins {
-  id 'com.gradle.build-scan' version '1.9'
+  id 'com.gradle.build-scan' version '1.15.1'
   id "base"
-  id "org.asciidoctor.convert" version "1.5.6"
+  id "org.asciidoctor.convert" version "1.5.8.1"
   id "jacoco"
-  id "net.nemerosa.versioning" version "2.6.1"
+  id "net.nemerosa.versioning" version "2.7.1"
+  id "com.github.ben-manes.versions" version "0.20.0"
+}
+
+// This is for "com.github.ben-manes.versions" plugin
+dependencyUpdates.resolutionStrategy = {
+  componentSelection { rules ->
+    rules.all { ComponentSelection selection ->
+      boolean rejected = ['alpha', 'beta', 'rc', 'cr', 'm'].any { qualifier ->
+        selection.candidate.version ==~ /(?i).*[.-]${qualifier}[.\d-]*/
+      }
+      if (rejected) {
+        selection.reject('Release candidate')
+      }
+    }
+  }
 }
 
 description = "Spock Framework"
@@ -14,26 +29,11 @@ ext {
   baseVersion = "1.2"
   snapshotVersion = true
   releaseCandidate = 0
-  variants = [2.4, 2.5]
+  variants = [2.5]
   variant = System.getProperty("variant") as BigDecimal ?: variants.first()
-  if (variant == 2.4) {
-    groovyVersion = "2.4.15"
-    minGroovyVersion = "2.4.0"
-    groovyDependency = "org.codehaus.groovy:groovy-all:${groovyVersion}"
-  } else if (variant == 2.5) {
-    groovyVersion = "2.5.0"
-    minGroovyVersion = "2.5.0"
-    groovyDependency = [
-      "org.codehaus.groovy:groovy:${groovyVersion}",
-      "org.codehaus.groovy:groovy-groovysh:${groovyVersion}",
-      "org.codehaus.groovy:groovy-json:${groovyVersion}",
-      "org.codehaus.groovy:groovy-nio:${groovyVersion}",
-      "org.codehaus.groovy:groovy-macro:${groovyVersion}",
-      "org.codehaus.groovy:groovy-templates:${groovyVersion}",
-      "org.codehaus.groovy:groovy-test:${groovyVersion}",
-      "org.codehaus.groovy:groovy-sql:${groovyVersion}",
-      "org.codehaus.groovy:groovy-xml:${groovyVersion}",
-    ]
+  if (variant == 2.5) {
+    groovyVersion = "2.5.1"
+    minGroovyVersion = "2.5.1"
   } else {
     throw new InvalidUserDataException("Unknown variant: $variant. Choose one of: $variants")
   }
@@ -43,16 +43,15 @@ ext {
   }
   fullVersion = baseVersion + ((!snapshotVersion && releaseCandidate) ? "-rc-$releaseCandidate" : "") + "-groovy-$variant" + (snapshotVersion ? "-SNAPSHOT" : '')
     variantLessVersion = baseVersion + (snapshotVersion ? "-SNAPSHOT" : (releaseCandidate ? "-rc-$releaseCandidate" : ""))
-  javaVersions = [1.7, 1.8]
+  javaVersions = [1.8]
   javaVersion = System.getProperty("java.specification.version") as BigDecimal
   libs = [
-    jetbrainsAnnotations: "org.jetbrains:annotations:13.0",
-    ant: "org.apache.ant:ant:1.9.7",
+    jetbrainsAnnotations: "org.jetbrains:annotations:16.0.2",
+    ant: "org.apache.ant:ant:1.10.5",
     asm: "org.ow2.asm:asm:6.2",
     bytebuddy: "net.bytebuddy:byte-buddy:1.8.3",
-    cglib: "cglib:cglib-nodep:3.2.6",
-    groovy: groovyDependency,
-    h2database: "com.h2database:h2:1.3.176",
+    cglib: "cglib:cglib-nodep:3.2.7",
+    h2database: "com.h2database:h2:1.4.197",
     junit: "junit:junit:4.12",
     log4j: "log4j:log4j:1.2.17",
     objenesis: "org.objenesis:objenesis:2.6"
@@ -110,6 +109,16 @@ subprojects {
     }
   }
 
+  compileJava {
+    options.compilerArgs.addAll(['--release', '8'])
+  }
+
+  test {
+    jvmArgs '--add-opens=java.base/java.lang=ALL-UNNAMED'
+    jvmArgs '--add-opens=java.base/java.lang.invoke=ALL-UNNAMED'
+    jvmArgs '--add-opens=java.base/jdk.internal.reflect=ALL-UNNAMED'
+  }
+
   repositories {
     mavenCentral()
     maven { url "https://oss.jfrog.org/oss-snapshot-local/" }
@@ -120,7 +129,7 @@ subprojects {
   }
 
   dependencies {
-    compile(project.name == "spock-gradle" ? [] : libs.groovy)
+    // compile(project.name == "spock-gradle" ? [] : libs.groovy)
   }
 
   signing {
@@ -337,6 +346,7 @@ def configureJavadoc(task) {
   configure(task) {
     include "spock/**"
     configure(options) {
+      options.addStringOption('source', '1.8')
       links "http://docs.oracle.com/javase/8/docs/api/"
       links "http://docs.groovy-lang.org/docs/groovy-$groovyVersion/html/gapi/"
       links "http://junit.org/junit4/javadoc/latest/"

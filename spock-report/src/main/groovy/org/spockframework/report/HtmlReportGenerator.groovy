@@ -19,6 +19,7 @@ package org.spockframework.report
 import org.spockframework.util.InternalSpockError
 import org.spockframework.util.IoUtil
 
+import java.nio.file.Files
 import java.util.regex.Pattern
 
 /**
@@ -119,29 +120,45 @@ class HtmlReportGenerator {
   }
 
   private InputStream getResourceStream(String resourceName) {
-    def resourcePath = "org/spockframework/report/$resourceName"
-    def stream = getClass().classLoader.getResourceAsStream(resourcePath)
+    println("XXX:getResourceStream(resourceName: $resourceName)")
+    def resourcePath = "/org/spockframework/report/$resourceName"
+    println("XXX:getResourceStream(): resourcePath: $resourcePath)")
+    def stream = getClass().getResourceAsStream(resourcePath)
     if (stream == null) {
       throw new InternalSpockError("Failed to load class path resource '$resourcePath'")
     }
+
+    println("XXX:getResourceStream(-):" + stream.toString())
     stream
   }
 
   private void copyResource(String resourcePath) {
-    if (resourcePath.startsWith("http://") || resourcePath.startsWith("https://")) return
+//    println("XXX:copyResource(resourcePath: $resourcePath)")
+//    if (resourcePath.startsWith("http://") || resourcePath.startsWith("https://")) {
+//      println("XXX:copyResource(-):RETURN")
+//      return
+//    }
 
-    def source = getResourceStream(resourcePath)
-    def target = new File(outputDirectory, resourcePath)
-    if (!target.exists()) {
-      target.parentFile.mkdirs()
-      IoUtil.copyStream(source, new FileOutputStream(target))
-    }
+    // TODO: Fails with: ZipException: ZipFile invalid LOC header (bad signature)
+
+//    def source = getResourceStream(resourcePath)
+//    def target = new File(outputDirectory, resourcePath)
+//    if (!target.exists()) {
+//      println("XXX:copyResource() '$outputDirectory' + '$resourcePath' Target does not exist: ${target.getAbsolutePath().toString()}")
+//      target.parentFile.mkdirs()
+//      // IoUtil.copyStream(source, new FileOutputStream(target))
+//      Files.copy(source, target.toPath())
+//    }
+
+//    println("XXX:copyResource(-)")
   }
 
   private File generateReportFile() {
     def assets = new Assets(local, debug)
     def source = getResourceStream("report.html")
     def target = new File(outputDirectory, reportFileName ?: "${reportName}.html")
+
+    println("XXX: $reportFileName / $reportName")
 
     source.newReader("utf-8").withReader { BufferedReader bufReader ->
       target.withWriter("utf-8") { BufferedWriter bufWriter ->
@@ -177,42 +194,44 @@ class HtmlReportGenerator {
     String currTag = null
     boolean skipping = false
 
-    def line = reader.readLine()
-    while (line != null) {
-      def startMatcher = START_DELIMITER.matcher(line)
-      if (startMatcher.matches()) {
-        def startTag = startMatcher.group(1)
-        if (currTag != null) {
-          throw new IllegalArgumentException("Tag '$startTag' is nested inside '$currTag', but nesting is not allowed.")
-        }
-        if (!replacements.containsKey(startTag)) {
-          throw new IllegalArgumentException("Missing replacement for tag '$startTag'")
-        }
-        currTag = startTag
-        skipping = replacements[startTag] == null
-        line = reader.readLine()
-        continue
-      }
-
-      def endMatcher = END_DELIMITER.matcher(line)
-      if (endMatcher.matches()) {
-        def endTag = endMatcher.group(1)
-        if (endTag != currTag) {
-          throw new IllegalArgumentException("Expected end tag '$currTag' but got '$endTag'")
-        }
-        if (!skipping) {
-          for (String newLine in replacements[endTag]) {
-            writer.writeLine(newLine)
-          }
-        }
-        currTag = null
-        skipping = false
-        line = reader.readLine()
-        continue
-      }
-
-      if (currTag == null || skipping) writer.writeLine(line)
-      line = reader.readLine()
-    }
+    // @TODO
+//    def line = reader.readLine()
+//
+//    while (line != null) {
+//      def startMatcher = START_DELIMITER.matcher(line)
+//      if (startMatcher.matches()) {
+//        def startTag = startMatcher.group(1)
+//        if (currTag != null) {
+//          throw new IllegalArgumentException("Tag '$startTag' is nested inside '$currTag', but nesting is not allowed.")
+//        }
+//        if (!replacements.containsKey(startTag)) {
+//          throw new IllegalArgumentException("Missing replacement for tag '$startTag'")
+//        }
+//        currTag = startTag
+//        skipping = replacements[startTag] == null
+//        line = reader.readLine()
+//        continue
+//      }
+//
+//      def endMatcher = END_DELIMITER.matcher(line)
+//      if (endMatcher.matches()) {
+//        def endTag = endMatcher.group(1)
+//        if (endTag != currTag) {
+//          throw new IllegalArgumentException("Expected end tag '$currTag' but got '$endTag'")
+//        }
+//        if (!skipping) {
+//          for (String newLine in replacements[endTag]) {
+//            writer.writeLine(newLine)
+//          }
+//        }
+//        currTag = null
+//        skipping = false
+//        line = reader.readLine()
+//        continue
+//      }
+//
+//      if (currTag == null || skipping) writer.writeLine(line)
+//      line = reader.readLine()
+//    }
   }
 }

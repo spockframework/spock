@@ -9,7 +9,20 @@ Thanks to its JUnit runner, Spock is compatible with most IDEs, build tools, and
 Spock is inspired from JUnit, jMock, RSpec, Groovy, Scala, Vulcans, and other fascinating life forms.'''
 
 dependencies {
-  compile libs.groovy // easiest way to add Groovy dependency to POM
+  // easiest way to add Groovy dependency to POM
+  compile ("org.codehaus.groovy:groovy-all:${groovyVersion}") {
+    exclude(group: "org.codehaus.groovy", module: "groovy-xml")
+  }
+  compile "org.codehaus.groovy:groovy-groovysh:${groovyVersion}"
+  compile "org.codehaus.groovy:groovy-json:${groovyVersion}"
+  compile "org.codehaus.groovy:groovy-nio:${groovyVersion}"
+  compile "org.codehaus.groovy:groovy-macro:${groovyVersion}"
+  compile "org.codehaus.groovy:groovy-templates:${groovyVersion}"
+  compile "org.codehaus.groovy:groovy-test:${groovyVersion}"
+  compile "org.codehaus.groovy:groovy-sql:${groovyVersion}"
+
+  compile "javax.xml.bind:jaxb-api:2.3.0"
+
   compile libs.junit
 
   compile libs.jetbrainsAnnotations, optional

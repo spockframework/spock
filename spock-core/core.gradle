@@ -64,6 +64,7 @@ task coreConsole(type: JavaExec,
   classpath = sourceSets.main.runtimeClasspath
   workingDir = file('build/console')
   ignoreExitValue = true
+  args file('CoreConsole.groovy').absolutePath
   doFirst {
     workingDir.mkdirs()
   }

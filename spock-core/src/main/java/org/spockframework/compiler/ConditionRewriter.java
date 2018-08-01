@@ -556,8 +556,14 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> {
 
   private Statement rewriteCondition(Expression expr, Expression message, boolean explicit) {
     // method conditions with spread operator are not lifted because MOP doesn't support spreading
-    if (expr instanceof MethodCallExpression && !((MethodCallExpression) expr).isSpreadSafe())
-      return rewriteMethodCondition((MethodCallExpression) expr, message, explicit);
+    if (expr instanceof MethodCallExpression && !((MethodCallExpression) expr).isSpreadSafe()) {
+      MethodCallExpression methodCallExpression = (MethodCallExpression)expr;
+      String methodName = AstUtil.getMethodName(methodCallExpression);
+      if ((Identifiers.WITH.equals(methodName) || Identifiers.VERIFY_ALL.equals(methodName))) {
+        return surroundSpecialTryCatch(expr);
+      }
+      return rewriteMethodCondition(methodCallExpression, message, explicit);
+    }
 
     if (expr instanceof StaticMethodCallExpression)
       return rewriteStaticMethodCondition((StaticMethodCallExpression) expr, message, explicit);
@@ -662,6 +668,30 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> {
                 )
             )
         )
+    );
+    return tryCatchStatement;
+  }
+
+  private TryCatchStatement surroundSpecialTryCatch(Expression executeAndVerify) {
+    final TryCatchStatement tryCatchStatement = new TryCatchStatement(
+      new ExpressionStatement(executeAndVerify),
+      EmptyStatement.INSTANCE
+    );
+
+    tryCatchStatement.addCatch(
+      new CatchStatement(
+        new Parameter(new ClassNode(Throwable.class), "throwable"),
+        new ExpressionStatement(
+          AstUtil.createDirectMethodCall(
+            new ClassExpression(resources.getAstNodeCache().SpockRuntime),
+            resources.getAstNodeCache().SpockRuntime_GroupConditionFailedWithException,
+            new ArgumentListExpression(Arrays.<Expression>asList(
+              new VariableExpression(SpockNames.ERROR_COLLECTOR),
+              new VariableExpression("throwable")                                                         // throwable
+            ))
+          )
+        )
+      )
     );
     return tryCatchStatement;
   }

@@ -16,14 +16,12 @@
 
 package org.spockframework.compiler;
 
-import org.codehaus.groovy.ast.*;
-
-import org.spockframework.runtime.SpockRuntime;
-import org.spockframework.runtime.ValueRecorder;
+import org.spockframework.runtime.*;
 import org.spockframework.runtime.model.*;
-
 import org.spockframework.util.Identifiers;
-import spock.lang.*;
+import spock.lang.Specification;
+
+import org.codehaus.groovy.ast.*;
 
 /**
  * Provides access to frequently used AST nodes.
@@ -46,6 +44,9 @@ public class AstNodeCache {
 
   public final MethodNode SpockRuntime_ConditionFailedWithException =
       SpockRuntime.getDeclaredMethods(org.spockframework.runtime.SpockRuntime.CONDITION_FAILED_WITH_EXCEPTION).get(0);
+
+  public final MethodNode SpockRuntime_GroupConditionFailedWithException =
+      SpockRuntime.getDeclaredMethods(org.spockframework.runtime.SpockRuntime.GROUP_CONDITION_FAILED_WITH_EXCEPTION).get(0);
 
   public final MethodNode SpockRuntime_VerifyMethodCondition =
       SpockRuntime.getDeclaredMethods(org.spockframework.runtime.SpockRuntime.VERIFY_METHOD_CONDITION).get(0);

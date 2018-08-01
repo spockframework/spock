@@ -17,7 +17,7 @@
 package org.spockframework.compiler;
 
 import org.spockframework.compiler.model.*;
-import org.spockframework.util.Nullable;
+import org.spockframework.util.*;
 
 import java.util.*;
 
@@ -63,7 +63,7 @@ public class DeepBlockRewriter extends AbstractDeepBlockRewriter {
   protected void doVisitExpressionStatement(ExpressionStatement stat) {
     super.doVisitExpressionStatement(stat);
 
-    boolean handled = stat == lastSpecialMethodCallStat // don't process further
+    boolean handled = (stat == lastSpecialMethodCallStat && !(currSpecialMethodCall.isWithCall() || currSpecialMethodCall.isGroupConditionBlock())) // don't process further
         || handleInteraction(stat)
         || handleImplicitCondition(stat);
   }
@@ -152,7 +152,9 @@ public class DeepBlockRewriter extends AbstractDeepBlockRewriter {
     groupConditionFound = currSpecialMethodCall.isGroupConditionBlock();
 
     if ((currSpecialMethodCall.isWithCall() || currSpecialMethodCall.isGroupConditionBlock())
-      && AstUtil.isInvocationWithImplicitThis(stat.getExpression())) {
+      && AstUtil.isInvocationWithImplicitThis(stat.getExpression())
+      && !(Identifiers.WITH.equals(AstUtil.getMethodName(stat.getExpression()))
+            || Identifiers.VERIFY_ALL.equals(AstUtil.getMethodName(stat.getExpression())))) {
       replaceObjectExpressionWithCurrentClosure(stat);
     }
 

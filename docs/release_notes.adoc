@@ -1,12 +1,15 @@
 = Release Notes
 include::include.adoc[]
 
-== 1.2 (tbd)
+== 1.2-rc-1 (tbd)
 
 Breaking Changes: Spock 1.2 drops support for Java 6, Groovy 2.0 and Groovy 2.3
 
 === What's New In This release
 
+* Add Groovy 2.5.0 Variant for better Java 10 Support
+* Add @SpringBean and @SpringSpy inspired by @MockBean
+* Add @UnwrapAopProxy to make automatically unwrap SpringAopProxie
 * Add flag to UnrollNameProvider to assert unroll expressions (set the system property `spock.assertUnrollExpressions` to `true`) https://github.com/spockframework/spock/issues/767[#767]
 * Add automatic module name descriptors for Java 9
 * Add `@AutoAttach` extension (<<extensions.adoc#_autoattach,Docs>>)
@@ -14,6 +17,11 @@ Breaking Changes: Spock 1.2 drops support for Java 6, Groovy 2.0 and Groovy 2.3
 * Fix SpockAssertionErrors and its subclasses now are properly `Serializeable`
 * Fix Spring injection of JUnit Rules, due to the changes in 1.1 the rules where initialized before Spring could inject them,
   this has been fixed by performing the injection earlier in the process
+* Fix SpringMockTestExecutionListener initializes lazy beans
+* Fix OSGi Import-Package header
+* Fix re-declare recorder variables (#783), this caused annotations such as `@Slf4j` to break Specifications
+* Fix MissingFieldException in DiffedObjectAsBeanRenderer
+* Fix problems with nested `with` and `verifyAll` method calls
 * Improve in assertions Spock now uses `DefaultGroovyMethods.dump` instead of `toString` if a class doesn't override the default `Object.toString`.
 * Improve `verifyAll` can now also have a target same as `with`
 * Improve static type hints for `verifyAll` and `with`
@@ -23,9 +31,13 @@ Breaking Changes: Spock 1.2 drops support for Java 6, Groovy 2.0 and Groovy 2.3
 * Improve tapestry support with by supporting `@ImportModule`
 * Improve `constructorArgs` for spies can now accept a map directly without the need to wrap it in a list
 * Improve <<modules.adoc#_guice_module,Guice Module>> now automatically attaches detached mocks
+* Improve unmatched mock messages by using `dump` instead of `inspect` for classes which don't provide a custom `toString`
+* Improve spying on concrete instances to enable partial mocking
 * General dependency update
 
-Thanks to all the contributors to this release: Rob Elliot, jochenberger, Jan Papenbrock, Paul King, Marcin Zajączkowski, mrb-twx
+Thanks to all the contributors to this release: Rob Elliot, jochenberger, Jan Papenbrock, Paul King, Marcin Zajączkowski, mrb-twx,
+Alexander Kazakov, Serban Iordache, Xavier Fournet, timothy-long, John Osberg, AlexElin, Benjamin Muschko, Andreas Neumann, geoand,
+Burk Hufnagel
 
 === Known Issues
 * Groovy 2.4.10 introduced a bug that interfered with the way `verifyAll` works, it has been fixed in 2.4.12

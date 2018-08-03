@@ -541,6 +541,46 @@ with(service) {
 }
 ----
 
+Sometimes an IDE as trouble to determine the type of the target, in that case you can help out by manually specifying the
+target type via `with(target, type, closure)`.
+
+== Using `verifyAll` to assert multiple expectations together
+
+Normal expectations fail the test on the first failed assertions. Sometimes it is helpful to collect these failures before
+failing the test to have more information, this behavior is also known as soft assertions.
+
+The `verifyAll` method can be used like `with`,
+
+[source,groovy]
+----
+def "offered PC matches preferred configuration"() {
+  when:
+  def pc = shop.buyPc()
+
+  then:
+  verifyAll(pc) {
+    vendor == "Sunny"
+    clockRate >= 2333
+    ram >= 406
+    os == "Linux"
+  }
+}
+----
+
+or it can be used without a target.
+
+
+[source,groovy]
+----
+  expect:
+  verifyAll {
+    2 == 2
+    4 == 4
+  }
+----
+
+Like `with` you can also optionally define a type hint for the IDE.
+
 [[specifications_as_documentation]]
 == Specifications as Documentation
 

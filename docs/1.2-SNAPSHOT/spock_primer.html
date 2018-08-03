@@ -705,6 +705,53 @@ with(service) {
 }</code></pre>
 </div>
 </div>
+<div class="paragraph">
+<p>Sometimes an IDE as trouble to determine the type of the target, in that case you can help out by manually specifying the
+target type via <code>with(target, type, closure)</code>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_using_code_verifyall_code_to_assert_multiple_expectations_together"><a class="anchor" href="#_using_code_verifyall_code_to_assert_multiple_expectations_together"></a><a class="link" href="#_using_code_verifyall_code_to_assert_multiple_expectations_together">Using <code>verifyAll</code> to assert multiple expectations together</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Normal expectations fail the test on the first failed assertions. Sometimes it is helpful to collect these failures before
+failing the test to have more information, this behavior is also known as soft assertions.</p>
+</div>
+<div class="paragraph">
+<p>The <code>verifyAll</code> method can be used like <code>with</code>,</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">offered PC matches preferred configuration</span><span class="delimiter">&quot;</span></span>() {
+  <span class="key">when</span>:
+  <span class="keyword">def</span> pc = shop.buyPc()
+
+  <span class="key">then</span>:
+  verifyAll(pc) {
+    vendor == <span class="string"><span class="delimiter">&quot;</span><span class="content">Sunny</span><span class="delimiter">&quot;</span></span>
+    clockRate &gt;= <span class="integer">2333</span>
+    ram &gt;= <span class="integer">406</span>
+    os == <span class="string"><span class="delimiter">&quot;</span><span class="content">Linux</span><span class="delimiter">&quot;</span></span>
+  }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>or it can be used without a target.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">  <span class="key">expect</span>:
+  verifyAll {
+    <span class="integer">2</span> == <span class="integer">2</span>
+    <span class="integer">4</span> == <span class="integer">4</span>
+  }</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Like <code>with</code> you can also optionally define a type hint for the IDE.</p>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -887,7 +934,7 @@ used (like specifying the behavior of exception conditions). In all other cases,
 <div id="footer">
 <div id="footer-text">
 Version 1.2-SNAPSHOT<br>
-Last updated 2018-08-02 22:48:29 UTC
+Last updated 2018-08-03 13:59:31 UTC
 </div>
 </div>
 </body>

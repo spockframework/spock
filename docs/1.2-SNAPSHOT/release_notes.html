@@ -21,7 +21,7 @@
 </div>
 <div id="content">
 <div class="sect1">
-<h2 id="_1_2_tbd"><a class="anchor" href="#_1_2_tbd"></a><a class="link" href="#_1_2_tbd">1.2 (tbd)</a></h2>
+<h2 id="_1_2_rc_1_tbd"><a class="anchor" href="#_1_2_rc_1_tbd"></a><a class="link" href="#_1_2_rc_1_tbd">1.2-rc-1 (tbd)</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Breaking Changes: Spock 1.2 drops support for Java 6, Groovy 2.0 and Groovy 2.3</p>
@@ -30,6 +30,15 @@
 <h3 id="_what_s_new_in_this_release"><a class="anchor" href="#_what_s_new_in_this_release"></a><a class="link" href="#_what_s_new_in_this_release">What&#8217;s New In This release</a></h3>
 <div class="ulist">
 <ul>
+<li>
+<p>Add Groovy 2.5.0 Variant for better Java 10 Support</p>
+</li>
+<li>
+<p>Add @SpringBean and @SpringSpy inspired by @MockBean</p>
+</li>
+<li>
+<p>Add @UnwrapAopProxy to make automatically unwrap SpringAopProxie</p>
+</li>
 <li>
 <p>Add flag to UnrollNameProvider to assert unroll expressions (set the system property <code>spock.assertUnrollExpressions</code> to <code>true</code>) <a href="https://github.com/spockframework/spock/issues/767">#767</a></p>
 </li>
@@ -48,6 +57,21 @@
 <li>
 <p>Fix Spring injection of JUnit Rules, due to the changes in 1.1 the rules where initialized before Spring could inject them,
 this has been fixed by performing the injection earlier in the process</p>
+</li>
+<li>
+<p>Fix SpringMockTestExecutionListener initializes lazy beans</p>
+</li>
+<li>
+<p>Fix OSGi Import-Package header</p>
+</li>
+<li>
+<p>Fix re-declare recorder variables (#783), this caused annotations such as <code>@Slf4j</code> to break Specifications</p>
+</li>
+<li>
+<p>Fix MissingFieldException in DiffedObjectAsBeanRenderer</p>
+</li>
+<li>
+<p>Fix problems with nested <code>with</code> and <code>verifyAll</code> method calls</p>
 </li>
 <li>
 <p>Improve in assertions Spock now uses <code>DefaultGroovyMethods.dump</code> instead of <code>toString</code> if a class doesn&#8217;t override the default <code>Object.toString</code>.</p>
@@ -77,12 +101,20 @@ this has been fixed by performing the injection earlier in the process</p>
 <p>Improve <a href="modules.html#_guice_module">Guice Module</a> now automatically attaches detached mocks</p>
 </li>
 <li>
+<p>Improve unmatched mock messages by using <code>dump</code> instead of <code>inspect</code> for classes which don&#8217;t provide a custom <code>toString</code></p>
+</li>
+<li>
+<p>Improve spying on concrete instances to enable partial mocking</p>
+</li>
+<li>
 <p>General dependency update</p>
 </li>
 </ul>
 </div>
 <div class="paragraph">
-<p>Thanks to all the contributors to this release: Rob Elliot, jochenberger, Jan Papenbrock, Paul King, Marcin Zajączkowski, mrb-twx</p>
+<p>Thanks to all the contributors to this release: Rob Elliot, jochenberger, Jan Papenbrock, Paul King, Marcin Zajączkowski, mrb-twx,
+Alexander Kazakov, Serban Iordache, Xavier Fournet, timothy-long, John Osberg, AlexElin, Benjamin Muschko, Andreas Neumann, geoand,
+Burk Hufnagel</p>
 </div>
 </div>
 <div class="sect2">
@@ -1139,7 +1171,7 @@ required; the only prerequisite for building Spock is a JDK installation (1.5 or
 <div id="footer">
 <div id="footer-text">
 Version 1.2-SNAPSHOT<br>
-Last updated 2018-08-02 22:48:29 UTC
+Last updated 2018-08-03 13:59:31 UTC
 </div>
 </div>
 </body>

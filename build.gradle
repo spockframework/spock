@@ -49,7 +49,7 @@ ext {
     jetbrainsAnnotations: "org.jetbrains:annotations:16.0.2",
     ant: "org.apache.ant:ant:1.10.5",
     asm: "org.ow2.asm:asm:6.2",
-    bytebuddy: "net.bytebuddy:byte-buddy:1.8.3",
+    bytebuddy: "net.bytebuddy:byte-buddy:1.8.16",
     cglib: "cglib:cglib-nodep:3.2.7",
     h2database: "com.h2database:h2:1.4.197",
     junit: "junit:junit:4.12",

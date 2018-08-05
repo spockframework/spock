@@ -14,8 +14,11 @@
 
 package org.spockframework.mock.runtime;
 
+import net.bytebuddy.dynamic.loading.ClassInjector;
+import net.bytebuddy.dynamic.loading.ClassLoadingStrategy;
 import org.spockframework.mock.*;
 import org.spockframework.runtime.InvalidSpecException;
+import org.spockframework.runtime.SpockException;
 import org.spockframework.util.*;
 
 import java.lang.reflect.*;

@@ -14,8 +14,9 @@
 
 package org.spockframework.util;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import java.io.*;
+
+import org.jetbrains.annotations.Contract;
 
 /**
  * @author Peter Niederwieser
@@ -38,5 +39,19 @@ public class ExceptionUtil {
   private static <T extends Throwable> void doSneakyThrow(Throwable t) throws T {
     throw (T) t;
   }
+
+  @Contract("!null, _ -> fail; _, !null -> fail")
+  public static void throwWithSuppressed(@Nullable Throwable a, @Nullable Throwable b) {
+    if (a != null) {
+      if (b != null) {
+        a.addSuppressed(b);
+      }
+      sneakyThrow(a);
+    }
+    if (b != null) {
+      sneakyThrow(b);
+    }
+  }
+
 }
 

@@ -14,11 +14,8 @@
 
 package org.spockframework.smoke.mock
 
-import org.spockframework.mock.WrongInvocationOrderError
-
+import org.spockframework.mock.*
 import spock.lang.*
-import org.spockframework.mock.TooFewInvocationsError
-import org.spockframework.mock.TooManyInvocationsError
 
 class OrderedInteractions extends Specification {
   def "basic passing example"() {
@@ -81,6 +78,23 @@ class OrderedInteractions extends Specification {
 
     then:
     1 * list.add("bar")
+  }
+
+  @Issue("https://github.com/spockframework/spock/issues/475")
+  def "mock invocation order works correctly with nested invocations"() {
+    given:
+    def r1 = Mock(Runnable)
+    def r2 = Mock(Runnable)
+    def r3 = { r1.run() }
+
+    when:
+    r3()
+
+    then:
+    1 * r1.run() >> { r2.run() }
+
+    then:
+    1 * r2.run()
   }
 }
 

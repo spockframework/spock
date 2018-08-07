@@ -23,6 +23,7 @@ import spock.lang.Retry;
 
 /**
  * @author Leonard Brünings
+ * @since 1.2
  */
 public class RetryExtension extends AbstractAnnotationDrivenExtension<Retry> {
   @Override

@@ -16,18 +16,16 @@
 
 package spock.lang;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
 import org.spockframework.runtime.extension.ExtensionAnnotation;
 import org.spockframework.runtime.extension.builtin.RetryExtension;
 import org.spockframework.util.Beta;
 
+import java.lang.annotation.*;
+
 
 /**
  * @author Leonard Brünings
+ * @since 1.2
  */
 @Beta
 @Retention(RetentionPolicy.RUNTIME)

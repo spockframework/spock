@@ -100,6 +100,7 @@ public class Jvm {
   /**
    * Tells whether the Java version is 10.
    *
+   * @since 1.2
    * @return whether the Java version is 10
    */
   public boolean isJava10() {
@@ -109,6 +110,7 @@ public class Jvm {
   /**
    * Tells whether the Java version is 11.
    *
+   * @since 1.2
    * @return whether the Java version is 11
    */
   public boolean isJava11() {

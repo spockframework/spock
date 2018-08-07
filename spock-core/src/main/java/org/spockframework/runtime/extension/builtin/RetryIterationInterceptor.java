@@ -16,19 +16,17 @@
 
 package org.spockframework.runtime.extension.builtin;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Queue;
+import org.spockframework.runtime.extension.*;
+import spock.lang.Retry;
+
+import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.junit.runners.model.MultipleFailureException;
-import org.spockframework.runtime.extension.IMethodInterceptor;
-import org.spockframework.runtime.extension.IMethodInvocation;
-
-import spock.lang.Retry;
 
 /**
  * @author Leonard Brünings
+ * @since 1.2
  */
 public class RetryIterationInterceptor extends RetryBaseInterceptor implements IMethodInterceptor {
   public RetryIterationInterceptor(Retry retry) {

@@ -19,6 +19,7 @@ package org.spockframework.spring.mock;
 import org.spockframework.runtime.SpecInfoBuilder;
 import org.spockframework.runtime.model.*;
 import org.spockframework.spring.*;
+import org.spockframework.util.ReflectionUtil;
 import spock.lang.Specification;
 
 import java.util.*;
@@ -43,6 +44,15 @@ class DefinitionsParser {
   }
 
   private void inspect(Class<?> clazz) {
+    // Add stub beans first so that they might be replaced by SpringBeans later
+    List<StubBeans> stubBeans = ReflectionUtil.collectAnnotationRecursive(clazz, StubBeans.class);
+    for (StubBeans stubBean : stubBeans) {
+      for (Class<?> stub : stubBean.value()) {
+        definitions.add(new StubDefinition(stub));
+      }
+      if (!stubBean.inherit()) break;
+    }
+
     SpecInfo specInfo = new SpecInfoBuilder(clazz).build();
     List<FieldInfo> fields = specInfo.getAllFields();
     for (FieldInfo field : fields) {

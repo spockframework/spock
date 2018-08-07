@@ -25,7 +25,7 @@ import java.util.*;
 import org.springframework.core.ResolvableType;
 import org.springframework.util.ObjectUtils;
 
-class SpockDefinition extends Definition {
+class SpockDefinition extends FieldDefinition implements MockDefinition {
 
   private final SpringBean annotation;
 
@@ -51,11 +51,12 @@ class SpockDefinition extends Definition {
   }
 
   @Override
-  String getName() {
+  public String getName() {
     return annotation.name();
   }
 
-  List<String> getAliases() {
+  @Override
+  public List<String> getAliases() {
     if (annotation.aliases().length == 0) {
       return Collections.singletonList(getFieldInfo().getName());
     }
@@ -64,11 +65,13 @@ class SpockDefinition extends Definition {
     return aliases;
   }
 
-  ResolvableType getTypeToMock() {
+  @Override
+  public ResolvableType getTypeToMock() {
     return resolvableType;
   }
 
-  Object createMock(String s) {
+  @Override
+  public Object createMock(String s) {
     return SpockSpringProxyCreator.create(getFieldInfo());
   }
 

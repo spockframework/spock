@@ -8,7 +8,7 @@ Breaking Changes: Spock 1.2 drops support for Java 6, Groovy 2.0 and Groovy 2.3
 === What's New In This release
 
 * Add Groovy 2.5.0 Variant for better Java 10 Support
-* Add @SpringBean and @SpringSpy inspired by @MockBean
+* Add @SpringBean and @SpringSpy inspired by @MockBean, Also add @StubBeans
 * Add @UnwrapAopProxy to make automatically unwrap SpringAopProxie
 * Add flag to UnrollNameProvider to assert unroll expressions (set the system property `spock.assertUnrollExpressions` to `true`) https://github.com/spockframework/spock/issues/767[#767]
 * Add automatic module name descriptors for Java 9

@@ -52,9 +52,13 @@ however it requires Spring Framework 4.3.5 or greater to work.
 
 ==== Using `@SpringBean`
 
+Registers mock/stub/spy as a spring bean in the test context.
+
 To use `@SpringBean` you have to use a strongly typed field `def` or `Object` won't work. You also need to directly assign the
 `Mock`/`Stub`/`Spy` to the field using the standard Spock syntax. You can even use the initializer blocks to define common behavior,
 however they are only picked up once they are attached to the `Specification`.
+
+`@SpringBean` definitions can replace existing Beans in your `ApplicationContext`.
 
 NOTE: Spock's `@SpringBean` actually creates a proxy in the `ApplicationContext` which forwards everything to the current
       mock instance. The type of the proxy is determined by the type of the annotated field.
@@ -82,6 +86,19 @@ As with `@SpringBean` the field must be of the type you want to spy on, however 
 [source,groovy,indent=0]
 ----
 include::{sourcedir-spring}/SpringSpyExamples.groovy[tag=example]
+----
+
+==== Using `@StubBeans`
+
+`@StubBeans` registers plain `Stub` instances in an `ApplicationContext`.
+Use this if you just need to satisfy some dependencies without actually doing anything with these stubs.
+If you need to control the stubs, e.g., configure return values then use `@SpringBean` instead.
+Like `@SpringBean` `@StubBeans` also replaced existing BeanDefinitions,so you can use it to remove real beans from an ApplicationContext.
+`@StubBeans` can be replaced by `@SpringBean`, this can be useful if you need to replace some `@StubBeans` defined in a parent class.
+
+[source,groovy,indent=0]
+----
+include::{sourcedir-spring}/StubBeansExamples.groovy[tag=example]
 ----
 
 === Spring Boot

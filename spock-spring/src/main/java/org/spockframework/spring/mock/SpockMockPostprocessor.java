@@ -31,6 +31,8 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.core.*;
 import org.springframework.util.*;
 
+import static java.util.Arrays.asList;
+
 /**
  * A {@link BeanFactoryPostProcessor} used to register and inject
  * {@link SpringBean @SpringBean} and wrap spies using {@link SpringSpy @SpringSpy} with the {@link ApplicationContext}.
@@ -86,20 +88,19 @@ public class SpockMockPostprocessor extends InstantiationAwareBeanPostProcessorA
 
   private void register(ConfigurableListableBeanFactory beanFactory,
                         BeanDefinitionRegistry registry, Definition definition) {
-    if (definition instanceof SpockDefinition) {
-      registerMock(beanFactory, registry, (SpockDefinition)definition);
+    if (definition instanceof MockDefinition) {
+      registerMock(beanFactory, registry, (MockDefinition)definition);
     } else if (definition instanceof SpyDefinition) {
       registerSpy(beanFactory, registry, (SpyDefinition)definition);
     }
   }
 
   private void registerMock(ConfigurableListableBeanFactory beanFactory,
-                            BeanDefinitionRegistry registry, SpockDefinition definition) {
+                            BeanDefinitionRegistry registry, MockDefinition definition) {
     BeanDefinition beanDefinition = createBeanDefinition(definition);
     String beanName = getBeanName(beanFactory, registry, definition, beanDefinition);
     String transformedBeanName = BeanFactoryUtils.transformedBeanName(beanName);
-    beanDefinition.getConstructorArgumentValues().addIndexedArgumentValue(1,
-      beanName);
+    beanDefinition.getConstructorArgumentValues().addIndexedArgumentValue(1, beanName);
     if (registry.containsBeanDefinition(transformedBeanName)) {
       registry.removeBeanDefinition(transformedBeanName);
     }
@@ -109,13 +110,14 @@ public class SpockMockPostprocessor extends InstantiationAwareBeanPostProcessorA
     registerAliases(beanFactory, definition, transformedBeanName);
   }
 
-  private void registerAliases(ConfigurableListableBeanFactory beanFactory, SpockDefinition definition, String beanName) {
+  private void registerAliases(ConfigurableListableBeanFactory beanFactory,
+                               MockDefinition definition, String beanName) {
     for (String alias : definition.getAliases()) {
       beanFactory.registerAlias(beanName, alias);
     }
   }
 
-  private BeanDefinition createBeanDefinition(SpockDefinition mockDefinition) {
+  private BeanDefinition createBeanDefinition(MockDefinition mockDefinition) {
     RootBeanDefinition definition = new RootBeanDefinition(mockDefinition.getTypeToMock().resolve());
     definition.setTargetType(mockDefinition.getTypeToMock());
     definition.setFactoryBeanName(BEAN_NAME);
@@ -134,12 +136,12 @@ public class SpockMockPostprocessor extends InstantiationAwareBeanPostProcessorA
    * @param name the bean name
    * @return the mock instance
    */
-  private Object createMock(SpockDefinition mockDefinition, String name) {
+  private Object createMock(MockDefinition mockDefinition, String name) {
     return mockDefinition.createMock(name + " bean");
   }
 
   private String getBeanName(ConfigurableListableBeanFactory beanFactory,
-                             BeanDefinitionRegistry registry, SpockDefinition mockDefinition,
+                             BeanDefinitionRegistry registry, MockDefinition mockDefinition,
                              BeanDefinition beanDefinition) {
     if (StringUtils.hasLength(mockDefinition.getName())) {
       return mockDefinition.getName();
@@ -171,7 +173,7 @@ public class SpockMockPostprocessor extends InstantiationAwareBeanPostProcessorA
   }
 
   private Set<String> findCandidateBeans(ConfigurableListableBeanFactory beanFactory,
-                                         SpockDefinition mockDefinition) {
+                                         MockDefinition mockDefinition) {
     QualifierDefinition qualifier = mockDefinition.getQualifier();
     Set<String> candidates = new TreeSet<>();
     for (String candidate : getExistingBeans(beanFactory,
@@ -186,7 +188,7 @@ public class SpockMockPostprocessor extends InstantiationAwareBeanPostProcessorA
   private String[] getExistingBeans(ConfigurableListableBeanFactory beanFactory,
                                     ResolvableType type) {
     Set<String> beans = new LinkedHashSet<>(
-      Arrays.asList(beanFactory.getBeanNamesForType(type)));
+      asList(beanFactory.getBeanNamesForType(type)));
     String resolvedTypeName = type.resolve(Object.class).getName();
     for (String beanName : beanFactory.getBeanNamesForType(FactoryBean.class)) {
       beanName = BeanFactoryUtils.transformedBeanName(beanName);
@@ -246,7 +248,7 @@ public class SpockMockPostprocessor extends InstantiationAwareBeanPostProcessorA
           throw new NoUniqueBeanDefinitionException(type.resolve(),
             candidateBeanNames.length,
             "more than one 'primary' bean found among candidates: "
-              + Arrays.asList(candidateBeanNames));
+              + asList(candidateBeanNames));
         }
         primaryBeanName = candidateBeanName;
       }
@@ -281,7 +283,7 @@ public class SpockMockPostprocessor extends InstantiationAwareBeanPostProcessorA
    * @param definitions the initial mock/spy definitions
    */
   static void register(BeanDefinitionRegistry registry,
-                              Set<Definition> definitions) {
+                       Set<Definition> definitions) {
     register(registry, SpockMockPostprocessor.class, definitions);
   }
 
@@ -295,8 +297,8 @@ public class SpockMockPostprocessor extends InstantiationAwareBeanPostProcessorA
    */
   @SuppressWarnings("unchecked")
   static void register(BeanDefinitionRegistry registry,
-                              Class<? extends SpockMockPostprocessor> postProcessor,
-                              Set<Definition> definitions) {
+                       Class<? extends SpockMockPostprocessor> postProcessor,
+                       Set<Definition> definitions) {
     SpyPostProcessor.register(registry);
     BeanDefinition definition = getOrAddBeanDefinition(registry, postProcessor);
     ValueHolder constructorArg = definition.getConstructorArgumentValues().getIndexedArgumentValue(0, Set.class);

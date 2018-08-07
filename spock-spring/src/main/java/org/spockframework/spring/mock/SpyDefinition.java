@@ -24,7 +24,7 @@ import spock.mock.DetachedMockFactory;
 import org.springframework.core.ResolvableType;
 import org.springframework.util.ObjectUtils;
 
-class SpyDefinition extends Definition {
+class SpyDefinition extends FieldDefinition {
 
   private final SpringSpy annotation;
 
@@ -54,7 +54,7 @@ class SpyDefinition extends Definition {
   }
 
   @Override
-  String getName() {
+  public String getName() {
     return annotation.name();
   }
 

@@ -72,6 +72,20 @@ public abstract class ReflectionUtil {
     return getAnnotationRecursive(cls.getSuperclass(), annotationClass);
   }
 
+  public static <T extends Annotation> List<T> collectAnnotationRecursive(Class<?> cls, Class<T> annotationClass) {
+    return collectAnnotationRecursive(cls, annotationClass, new ArrayList<T>());
+  }
+
+  private static <T extends Annotation> List<T> collectAnnotationRecursive(Class<?> cls, Class<T> annotationClass,
+                                                                           List<T> result) {
+    T annotation = cls.getAnnotation(annotationClass);
+    if (annotation != null) {
+      result.add(annotation);
+    }
+    if (Object.class.equals(cls)) return result;
+    return collectAnnotationRecursive(cls.getSuperclass(), annotationClass, result);
+  }
+
   public static boolean isFinalMethod(Method method) {
     return Modifier.isFinal(method.getDeclaringClass().getModifiers() | method.getModifiers());
   }

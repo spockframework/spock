@@ -4136,9 +4136,15 @@ however it requires Spring Framework 4.3.5 or greater to work.</p>
 <div class="sect5">
 <h6 id="_using_code_springbean_code"><a class="anchor" href="#_using_code_springbean_code"></a><a class="link" href="#_using_code_springbean_code">Using <code>@SpringBean</code></a></h6>
 <div class="paragraph">
+<p>Registers mock/stub/spy as a spring bean in the test context.</p>
+</div>
+<div class="paragraph">
 <p>To use <code>@SpringBean</code> you have to use a strongly typed field <code>def</code> or <code>Object</code> won&#8217;t work. You also need to directly assign the
 <code>Mock</code>/<code>Stub</code>/<code>Spy</code> to the field using the standard Spock syntax. You can even use the initializer blocks to define common behavior,
 however they are only picked up once they are attached to the <code>Specification</code>.</p>
+</div>
+<div class="paragraph">
+<p><code>@SpringBean</code> definitions can replace existing Beans in your <code>ApplicationContext</code>.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -4226,6 +4232,23 @@ Service1 service1
   result == <span class="string"><span class="delimiter">&quot;</span><span class="content">Foo</span><span class="delimiter">&quot;</span></span>
   <span class="integer">1</span> * service2.generateQuickBrownFox() &gt;&gt; <span class="string"><span class="delimiter">&quot;</span><span class="content">Foo</span><span class="delimiter">&quot;</span></span>
 }</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_using_code_stubbeans_code"><a class="anchor" href="#_using_code_stubbeans_code"></a><a class="link" href="#_using_code_stubbeans_code">Using <code>@StubBeans</code></a></h6>
+<div class="paragraph">
+<p><code>@StubBeans</code> registers plain <code>Stub</code> instances in an <code>ApplicationContext</code>.
+Use this if you just need to satisfy some dependencies without actually doing anything with these stubs.
+If you need to control the stubs, e.g., configure return values then use <code>@SpringBean</code> instead.
+Like <code>@SpringBean</code> <code>@StubBeans</code> also replaced existing BeanDefinitions,so you can use it to remove real beans from an ApplicationContext.
+<code>@StubBeans</code> can be replaced by <code>@SpringBean</code>, this can be useful if you need to replace some <code>@StubBeans</code> defined in a parent class.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@StubBeans</span>(Service2)
+<span class="annotation">@ContextConfiguration</span>(classes = DemoMockContext)
+<span class="type">class</span> <span class="class">StubBeansExamples</span> <span class="directive">extends</span> Specification {</code></pre>
 </div>
 </div>
 </div>
@@ -4350,7 +4373,7 @@ Grails 2.3 and higher have built-in Spock support and do not require a plugin.
 <p>Add Groovy 2.5.0 Variant for better Java 10 Support</p>
 </li>
 <li>
-<p>Add @SpringBean and @SpringSpy inspired by @MockBean</p>
+<p>Add @SpringBean and @SpringSpy inspired by @MockBean, Also add @StubBeans</p>
 </li>
 <li>
 <p>Add @UnwrapAopProxy to make automatically unwrap SpringAopProxie</p>
@@ -5707,7 +5730,7 @@ that answer, closeTo(<span class="integer">42</span>, <span class="float">0.001<
 <div id="footer">
 <div id="footer-text">
 Version 1.2-SNAPSHOT<br>
-Last updated 2018-08-07 12:48:04 UTC
+Last updated 2018-08-08 10:39:46 UTC
 </div>
 </div>
 </body>

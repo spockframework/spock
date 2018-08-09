@@ -23,6 +23,7 @@ Breaking Changes: Spock 1.2 drops support for Java 6, Groovy 2.0 and Groovy 2.3
 * Fix MissingFieldException in DiffedObjectAsBeanRenderer
 * Fix problems with nested `with` and `verifyAll` method calls
 * Fix assertion of mock invocation order with nested invocations (#475)
+* Fix ignore inferred type for Spies on existing instance
 * Improve in assertions Spock now uses `DefaultGroovyMethods.dump` instead of `toString` if a class doesn't override the default `Object.toString`.
 * Improve `verifyAll` can now also have a target same as `with`
 * Improve static type hints for `verifyAll` and `with`

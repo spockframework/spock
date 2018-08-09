@@ -170,6 +170,16 @@ class JavaSpies extends Specification {
     e.message.contains("global")
   }
 
+  @Issue("https://github.com/spockframework/spock/issues/822")
+  def "inferred type is ignored for instance mocks"() {
+    when:
+    List list = new ArrayList<>()
+    List second = Spy(list)
+
+    then:
+    noExceptionThrown()
+  }
+
   static class Constructable {
     int arg1
     int arg2

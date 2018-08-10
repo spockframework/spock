@@ -2,6 +2,9 @@ package org.spockframework.smoke.extension
 
 import org.spockframework.EmbeddedSpecification
 import org.spockframework.runtime.ConditionNotSatisfiedError
+import spock.lang.*
+
+import java.util.concurrent.atomic.AtomicInteger
 
 class RetryFeatureExtensionSpec extends EmbeddedSpecification {
 
@@ -48,6 +51,51 @@ class Foo extends Specification {
     result.failureCount == 4
     result.failures.exception.every { it instanceof IOException }
     result.ignoreCount == 0
+  }
+
+  static AtomicInteger setupCounter = new AtomicInteger()
+  static AtomicInteger cleanupCounter = new AtomicInteger()
+
+  @Unroll
+  def "@Retry mode #mode executes setup and cleanup #expectedCount times"(String mode, int expectedCount) {
+    given:
+    setupCounter.set(0)
+    cleanupCounter.set(0)
+
+    when:
+    def result = runner.runWithImports("""
+import spock.lang.Retry
+
+class Foo extends Specification {
+  def setup() {
+    org.spockframework.smoke.extension.RetryFeatureExtensionSpec.setupCounter.incrementAndGet()
+  }
+
+  @Retry(mode = Retry.Mode.${mode})
+  def bar() {
+    expect:
+    throw new IOException()
+  }
+
+  def cleanup() {
+    org.spockframework.smoke.extension.RetryFeatureExtensionSpec.cleanupCounter.incrementAndGet()
+  }
+}
+    """)
+
+    then:
+    result.runCount == 1
+    result.failureCount == 4
+    result.failures.exception.every { it instanceof IOException }
+    result.ignoreCount == 0
+    setupCounter.get() == expectedCount
+    cleanupCounter.get() == expectedCount
+
+    where:
+    mode                                    || expectedCount
+    Retry.Mode.FEATURE.name()               || 1
+    Retry.Mode.ITERATION.name()             || 1
+    Retry.Mode.SETUP_FEATURE_CLEANUP.name() || 4
   }
 
   def "@Retry count can be changed"() {
@@ -114,6 +162,7 @@ class Foo extends Specification {
     then:
     thrown(IllegalArgumentException)
   }
+
   def "@Retry rethrows non handled exceptions for data driven features with FEATURE mode"() {
     given:
     runner.throwFailure = true

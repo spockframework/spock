@@ -24,6 +24,8 @@ import java.lang.annotation.*;
 
 
 /**
+ * Retries the given feature if an exception occurs during execution.
+ *
  * @author Leonard Brünings
  * @since 1.2
  */
@@ -56,7 +58,7 @@ public @interface Retry {
   int delay() default 0;
 
   /**
-   * Retry mode, only relevant for data driven features.
+   * Retry mode, controls what is retried.
    *
    * @return retry mode
    */
@@ -71,6 +73,11 @@ public @interface Retry {
     /**
      * Retry the iterations individually.
      */
-    ITERATION
+    ITERATION,
+
+    /**
+     * Retry the the feature together with the setup and cleanup methods.
+     */
+    SETUP_FEATURE_CLEANUP
   }
 }

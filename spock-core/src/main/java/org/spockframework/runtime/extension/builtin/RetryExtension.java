@@ -18,7 +18,6 @@ package org.spockframework.runtime.extension.builtin;
 
 import org.spockframework.runtime.extension.AbstractAnnotationDrivenExtension;
 import org.spockframework.runtime.model.FeatureInfo;
-
 import spock.lang.Retry;
 
 /**
@@ -30,6 +29,8 @@ public class RetryExtension extends AbstractAnnotationDrivenExtension<Retry> {
   public void visitFeatureAnnotation(Retry annotation, FeatureInfo feature) {
     if (feature.isParameterized() && (annotation.mode() == Retry.Mode.FEATURE)) {
       feature.addInterceptor(new RetryIterationInterceptor(annotation));
+    } else if (annotation.mode() == Retry.Mode.SETUP_FEATURE_CLEANUP) {
+      feature.addIterationInterceptor(new RetryIterationInterceptor(annotation));
     } else {
       feature.getFeatureMethod().addInterceptor(new RetryFeatureInterceptor(annotation));
     }

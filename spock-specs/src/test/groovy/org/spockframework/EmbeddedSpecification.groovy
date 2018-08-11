@@ -12,13 +12,15 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */ 
+ */
 
 package org.spockframework
 
 import spock.lang.Specification
 import spock.util.EmbeddedSpecCompiler
 import spock.util.EmbeddedSpecRunner
+
+import static java.util.stream.Collectors.toList
 
 /**
  * Convenience base class for specifications that need to compile
@@ -31,7 +33,11 @@ abstract class EmbeddedSpecification extends Specification {
   EmbeddedSpecCompiler compiler = new EmbeddedSpecCompiler()
 
   void stackTraceLooksLike(Throwable exception, String template) {
-    def trace = exception.stackTrace
+    def trace = Arrays.stream(exception.getStackTrace())
+        .filter({ se -> (se.moduleName != "java.base") }) // JDK9+
+        .collect(toList())
+        .toArray(new StackTraceElement[0])
+
     def lines = template.trim().split("\n")
     assert trace.size() == lines.size()
 

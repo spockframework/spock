@@ -41,7 +41,7 @@ class RequiresExtension extends Specification {
     expect: true
   }
 
-  @Requires({ jvm.java5 || jvm.java6 || jvm.java7 || jvm.java8 || jvm.java9 })
+  @Requires({ jvm.java5 || jvm.java6 || jvm.java7 || jvm.java8 || jvm.java9 || jvm.java10 })
   def "provides JVM information"() {
     expect: true
   }

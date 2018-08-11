@@ -1,4 +1,4 @@
-def springVersion = "5.0.2.RELEASE"
+def springVersion = "5.0.7.RELEASE"
 
 dependencies {
   compile "org.springframework:spring-core:$springVersion"

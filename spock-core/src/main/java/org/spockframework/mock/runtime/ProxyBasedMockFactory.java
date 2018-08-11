@@ -14,8 +14,11 @@
 
 package org.spockframework.mock.runtime;
 
+import net.bytebuddy.dynamic.loading.ClassInjector;
+import net.bytebuddy.dynamic.loading.ClassLoadingStrategy;
 import org.spockframework.mock.*;
 import org.spockframework.runtime.InvalidSpecException;
+import org.spockframework.runtime.SpockException;
 import org.spockframework.util.*;
 
 import java.lang.reflect.*;
@@ -97,6 +100,27 @@ public class ProxyBasedMockFactory {
                              final ClassLoader classLoader,
                              boolean useObjenesis) {
 
+      ClassLoadingStrategy strategy;
+      if (ClassInjector.UsingLookup.isAvailable()) {
+        try {
+          Class<?> methodHandles = Class.forName("java.lang.invoke.MethodHandles");
+          Object lookup = methodHandles.getMethod("lookup").invoke(null);
+          Method privateLookupIn = methodHandles.getMethod("privateLookupIn",
+              Class.class,
+              Class.forName("java.lang.invoke.MethodHandles$Lookup"));
+          Object privateLookup = privateLookupIn.invoke(null, type, lookup);
+          strategy = ClassLoadingStrategy.UsingLookup.of(privateLookup);
+        } catch (ReflectiveOperationException e) {
+          throw new SpockException(e);
+        }
+      }
+      // Commented force the "lookup" strategy
+    /* else if (ClassInjector.UsingReflection.isAvailable()) {
+        strategy = ClassLoadingStrategy.Default.INJECTION;
+      }*/ else {
+        throw new IllegalStateException("No code loading strategy available");
+      }
+
       Class<?> enhancedType = CACHE.findOrInsert(classLoader,
         new TypeCache.SimpleKey(type, additionalInterfaces),
         new Callable<Class<?>>() {
@@ -118,7 +142,7 @@ public class ProxyBasedMockFactory {
               .intercept(FieldAccessor.ofField("$spock_interceptor"))
               .defineField("$spock_interceptor", IProxyBasedMockInterceptor.class, Visibility.PRIVATE)
               .make()
-              .load(classLoader)
+              .load(classLoader, strategy)
               .getLoaded();
           }
         }, CACHE);

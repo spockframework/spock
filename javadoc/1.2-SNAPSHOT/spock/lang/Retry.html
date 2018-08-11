@@ -95,6 +95,7 @@
  @Retention(value=RUNTIME)
  @Target(value=METHOD)
 public @interface <span class="memberNameLabel">Retry</span></pre>
+<div class="block">Retries the given feature if an exception occurs during execution.</div>
 <dl>
 <dt><span class="simpleTagLabel">Since:</span></dt>
 <dd>1.2</dd>
@@ -138,7 +139,7 @@ public @interface <span class="memberNameLabel">Retry</span></pre>
 <tr class="rowColor">
 <td class="colFirst"><code><a href="../../spock/lang/Retry.Mode.html" title="enum in spock.lang">Retry.Mode</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../spock/lang/Retry.html#mode--">mode</a></span></code>
-<div class="block">Retry mode, only relevant for data driven features.</div>
+<div class="block">Retry mode, controls what is retried.</div>
 </td>
 </tr>
 </table>
@@ -228,7 +229,7 @@ public @interface <span class="memberNameLabel">Retry</span></pre>
 <li class="blockList">
 <h4>mode</h4>
 <pre>public abstract&nbsp;<a href="../../spock/lang/Retry.Mode.html" title="enum in spock.lang">Retry.Mode</a>&nbsp;mode</pre>
-<div class="block">Retry mode, only relevant for data driven features.</div>
+<div class="block">Retry mode, controls what is retried.</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>retry mode</dd>

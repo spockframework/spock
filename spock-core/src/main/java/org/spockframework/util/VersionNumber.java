@@ -14,6 +14,7 @@
 
 package org.spockframework.util;
 
+import java.util.Objects;
 import java.util.regex.*;
 
 /**
@@ -70,7 +71,7 @@ public final class VersionNumber implements Comparable<VersionNumber> {
     int result = major;
     result = 31 * result + minor;
     result = 31 * result + micro;
-    result = 31 * result + ObjectUtil.hashCode(qualifier);
+    result = 31 * result + Objects.hashCode(qualifier);
     return result;
   }
 
@@ -83,7 +84,7 @@ public final class VersionNumber implements Comparable<VersionNumber> {
 		Matcher m = versionPattern.matcher(versionString);
 		if (!m.matches()) return UNKNOWN;
 
-		int major = Integer.valueOf(m.group(1));
+		int major = Integer.parseInt(m.group(1));
 		String minorString = m.group(2);
 		int minor = minorString == null ? 0 : Integer.valueOf(minorString);
 		String microString = m.group(3);

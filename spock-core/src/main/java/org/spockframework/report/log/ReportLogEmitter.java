@@ -307,7 +307,7 @@ class ReportLogEmitter implements IRunListener, IStandardStreamsListener {
     }
 
     String result = builder.toString();
-    return result.length() > 0 ? mapOf("narrative", result) : emptyMap();
+    return !result.isEmpty() ? mapOf("narrative", result) : emptyMap();
   }
 
   private Map renderAttachments(List<Attachment> attachments) {

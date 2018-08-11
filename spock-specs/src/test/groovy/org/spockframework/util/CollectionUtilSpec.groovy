@@ -10,25 +10,13 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */  
+ */
 
 package org.spockframework.util
 
 import spock.lang.*
 
 class CollectionUtilSpec extends Specification {
-  def "copy an array"() {
-    def array = [1, 2, 3] as Object[]
-
-    expect:
-    CollectionUtil.copyArray(array, from, to) == result
-
-    where:
-    from   << [0, 1, 0, 3]
-    to     << [3, 2, 0, 3]
-    res    << [[1, 2, 3], [2], [], []]
-    result = res as Object[]
-  }
 
   def "convert an array of unknown type to a list"() {
     Object array = [1, 2, 3] as byte[]
@@ -44,12 +32,12 @@ class CollectionUtilSpec extends Specification {
   def "reverse an empty list"() {
     when:
     def reversed = CollectionUtil.reverse([])
-    
+
     then:
     toList(reversed) == []
 
   }
-  
+
   def "reverse a non-empty list"() {
     when:
     def reversed = CollectionUtil.reverse([1, 2, 3])

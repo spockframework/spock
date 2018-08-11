@@ -76,7 +76,7 @@ public class ConfigurationScriptLoader {
   @Nullable
   private DelegatingScript loadScriptFromSystemPropertyInducedLocation(String propertyKey) {
     String location = System.getProperty(propertyKey);
-    if (location == null || location.length() == 0) return null;
+    if (location == null || location.isEmpty()) return null;
 
     DelegatingScript script = loadScriptFromClassPathLocation(location);
     if (script != null) return script;

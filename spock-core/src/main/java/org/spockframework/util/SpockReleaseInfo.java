@@ -26,9 +26,8 @@ public class SpockReleaseInfo {
   private static final VersionNumber maxGroovyVersion;
 
   static {
-    InputStream stream = SpockReleaseInfo.class.getResourceAsStream("SpockReleaseInfo.properties");
     Properties properties = new Properties();
-    try {
+    try (InputStream stream = SpockReleaseInfo.class.getResourceAsStream("SpockReleaseInfo.properties")) {
       properties.load(stream);
     } catch (IOException e) {
       throw new InternalSpockError("Failed to load `SpockReleaseInfo.properties`", e);

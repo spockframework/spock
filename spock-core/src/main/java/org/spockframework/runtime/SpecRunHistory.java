@@ -36,16 +36,10 @@ public class SpecRunHistory implements Comparable<SpecRunHistory> {
   }
 
   public void loadFromDisk() throws IOException {
-    ObjectInputStream in = new ObjectInputStream(new FileInputStream(getDataFile()));
-    try {
+    try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(getDataFile()));) {
       data = (Data) in.readObject();
     } catch (ClassNotFoundException e) {
-      // in JDK 1.5, there is no IOException constructor that takes a cause
-      IOException io = new IOException("deserialization error");
-      io.initCause(e);
-      throw io;
-    } finally {
-      IoUtil.closeQuietly(in);
+      throw new IOException("deserialization error", e);
     }
   }
 
@@ -53,11 +47,8 @@ public class SpecRunHistory implements Comparable<SpecRunHistory> {
     File file = getDataFile();
     IoUtil.createDirectory(file.getParentFile());
 
-    ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(file));
-    try {
+    try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(file));) {
       out.writeObject(data);
-    } finally {
-      IoUtil.closeQuietly(out);
     }
   }
 

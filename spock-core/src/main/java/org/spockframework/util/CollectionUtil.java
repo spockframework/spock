@@ -30,15 +30,6 @@ public abstract class CollectionUtil {
     return result;
   }
 
-  /**
-   * (Partial) replacement for Arrays.copyOfRange, which is only available in JDK6.
-   */
-  public static Object[] copyArray(Object[] array, int from, int to) {
-    Object[] result = new Object[to - from];
-    System.arraycopy(array, from, result, 0, to - from);
-    return result;
-  }
-
   public static List<Object> arrayToList(Object array) {
     List<Object> result = new ArrayList<>();
     int length = Array.getLength(array);
@@ -57,13 +48,13 @@ public abstract class CollectionUtil {
 
   @Nullable
   public static <T> T getLastElement(List<T> list) {
-    Assert.that(list.size() > 0);
+    Assert.that(!list.isEmpty());
 
     return list.get(list.size() - 1);
   }
 
   public static <T> void setLastElement(List<T> list, T elem) {
-    Assert.that(list.size() > 0);
+    Assert.that(!list.isEmpty());
 
     list.set(list.size() - 1, elem);
   }
@@ -214,7 +205,7 @@ public abstract class CollectionUtil {
   public static boolean containsAny(Iterable<?> iterable, Object... elements) {
     for (Object curr: iterable) {
       for (Object elem: elements) {
-        if (ObjectUtil.equals(curr, elem)) return true;
+        if (Objects.equals(curr, elem)) return true;
       }
     }
     return false;

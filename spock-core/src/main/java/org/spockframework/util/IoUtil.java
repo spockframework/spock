@@ -16,9 +16,12 @@ package org.spockframework.util;
 
 import java.io.*;
 import java.net.Socket;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class IoUtil {
+
   public static void closeQuietly(@Nullable Closeable... closeables) {
     if (closeables == null) return;
 
@@ -27,19 +30,6 @@ public class IoUtil {
 
       try {
         closeable.close();
-      } catch (IOException ignored) {}
-    }
-  }
-
-  // In JDK 1.6, java.net.Socket doesn't implement Closeable, so we have this overload.
-  public static void closeQuietly(@Nullable final Socket... sockets) {
-    if (sockets == null) return;
-
-    for (Socket socket : sockets) {
-      if (socket == null) return;
-
-      try {
-        socket.close();
       } catch (IOException ignored) {}
     }
   }
@@ -56,60 +46,9 @@ public class IoUtil {
     }
   }
 
-  /**
-   * Returns the text read from the given reader as a String.
-   * Closes the given reader upon return.
-   */
-  public static String getText(Reader reader) throws IOException {
-    try {
-      StringBuilder source = new StringBuilder();
-      BufferedReader buffered = new BufferedReader(reader);
-      String line = buffered.readLine();
-
-      while (line != null) {
-        source.append(line);
-        source.append('\n');
-        line = buffered.readLine();
-      }
-
-      return source.toString();
-    } finally {
-      closeQuietly(reader);
-    }
-  }
-
-  /**
-   * Returns the text read from the given file as a String.
-   */
-  public static String getText(File path) throws IOException {
-    return getText(new FileReader(path));
-  }
-
-  /**
-   * Returns the text read from the given stream as a String.
-   * Closes the given stream upon return.
-   */
-  public static String getText(InputStream stream) throws IOException {
-    return getText(new InputStreamReader(stream));
-  }
-
   public static void createDirectory(File dir) throws IOException {
     if (!dir.isDirectory() && !dir.mkdirs())
       throw new IOException("Failed to create directory: " + dir);
-  }
-
-  public static void copyStream(InputStream in, OutputStream out) throws IOException {
-    byte[] buffer = new byte[8192];
-
-    try {
-      int read = in.read(buffer);
-      while (read > 0) {
-        out.write(buffer, 0, read);
-        read = in.read(buffer);
-      }
-    } finally {
-      IoUtil.closeQuietly(in, out);
-    }
   }
 
   public static void copyFile(File source, File target) throws IOException {

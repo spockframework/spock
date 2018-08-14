@@ -1,7 +1,7 @@
 = Release Notes
 include::include.adoc[]
 
-== 1.2-rc-1 (tbd)
+== 1.2-RC1 (2018-08-14)
 
 Breaking Changes: Spock 1.2 drops support for Java 6, Groovy 2.0 and Groovy 2.3
 

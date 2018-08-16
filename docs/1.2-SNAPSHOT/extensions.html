@@ -306,11 +306,12 @@ the timeout was exceeded.</p>
 <div class="paragraph">
 <p>The <code>@Retry</code> extensions can be used for flaky integration tests, where remote systems can fail sometimes.
 By default it retries an iteration <code>3</code> times with <code>0</code> delay if either an <code>Exception</code> or <code>AssertionError</code> has been thrown, all this is configurable.
+In addition, an optional <code>condition</code> closure can be used to determine if a feature should be retried.
 It also provides special support for data driven features, offering to either retry all iterations or just the failing ones.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="type">class</span> <span class="class">FlakyInegrationSpec</span> <span class="directive">extends</span> Specification {
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="type">class</span> <span class="class">FlakyIntegrationSpec</span> <span class="directive">extends</span> Specification {
   <span class="annotation">@Retry</span>
   <span class="keyword">def</span> <span class="function">retry3Times</span>() { ... }
 
@@ -319,6 +320,12 @@ It also provides special support for data driven features, offering to either re
 
   <span class="annotation">@Retry</span>(exceptions=[<span class="exception">IOException</span>])
   <span class="keyword">def</span> <span class="function">onlyRetryIOException</span>() { ... }
+
+  <span class="annotation">@Retry</span>(condition = { failure.message.contains(<span class="string"><span class="delimiter">'</span><span class="content">foo</span><span class="delimiter">'</span></span>) })
+  <span class="keyword">def</span> <span class="function">onlyRetryIfConditionOnFailureHolds</span>() { ... }
+
+  <span class="annotation">@Retry</span>(condition = { instance.field != <span class="predefined-constant">null</span> })
+  <span class="keyword">def</span> <span class="function">onlyRetryIfConditionOnInstanceHolds</span>() { ... }
 
   <span class="annotation">@Retry</span>
   <span class="keyword">def</span> <span class="function">retryFailingIterations</span>() {
@@ -998,7 +1005,7 @@ assignments happen before the method interceptor is called</p>
 <div id="footer">
 <div id="footer-text">
 Version 1.2-SNAPSHOT<br>
-Last updated 2018-08-14 21:05:26 UTC
+Last updated 2018-08-16 11:43:48 UTC
 </div>
 </div>
 </body>

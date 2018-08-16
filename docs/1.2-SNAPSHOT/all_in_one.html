@@ -184,36 +184,41 @@
 </li>
 <li><a href="#_release_notes">Release Notes</a>
 <ul class="sectlevel2">
-<li><a href="#_1_2_rc1_2018_08_14">1.2-RC1 (2018-08-14)</a>
+<li><a href="#_1_2_rc2_tbd">1.2-RC2 (tbd)</a>
 <ul class="sectlevel3">
 <li><a href="#_what_s_new_in_this_release">What&#8217;s New In This release</a></li>
+</ul>
+</li>
+<li><a href="#_1_2_rc1_2018_08_14">1.2-RC1 (2018-08-14)</a>
+<ul class="sectlevel3">
+<li><a href="#_what_s_new_in_this_release_2">What&#8217;s New In This release</a></li>
 <li><a href="#_known_issues">Known Issues</a></li>
 </ul>
 </li>
 <li><a href="#_1_1_2017_05_01">1.1 (2017-05-01)</a>
 <ul class="sectlevel3">
-<li><a href="#_what_s_new_in_this_release_2">What&#8217;s New In This release</a></li>
+<li><a href="#_what_s_new_in_this_release_3">What&#8217;s New In This release</a></li>
 </ul>
 </li>
 <li><a href="#_1_1_rc_4_2017_03_28">1.1-rc-4 (2017-03-28)</a>
 <ul class="sectlevel3">
-<li><a href="#_what_s_new_in_this_release_3">What&#8217;s New In This release</a></li>
+<li><a href="#_what_s_new_in_this_release_4">What&#8217;s New In This release</a></li>
 </ul>
 </li>
 <li><a href="#_1_1_rc_3_released_2016_10_17">1.1-rc-3 (released 2016-10-17)</a></li>
 <li><a href="#_1_1_rc_2_released_2016_08_22">1.1-rc-2 (released 2016-08-22)</a>
 <ul class="sectlevel3">
-<li><a href="#_what_s_new_in_this_release_4">What&#8217;s New In This release</a></li>
+<li><a href="#_what_s_new_in_this_release_5">What&#8217;s New In This release</a></li>
 </ul>
 </li>
 <li><a href="#_1_1_rc_1_released_2016_06_30">1.1-rc-1 (released 2016-06-30)</a>
 <ul class="sectlevel3">
-<li><a href="#_what_s_new_in_this_release_5">What&#8217;s New In This release</a></li>
+<li><a href="#_what_s_new_in_this_release_6">What&#8217;s New In This release</a></li>
 </ul>
 </li>
 <li><a href="#_1_0_released_2015_03_02">1.0 (released 2015-03-02)</a>
 <ul class="sectlevel3">
-<li><a href="#_what_s_new_in_this_release_6">What&#8217;s New In This Release</a></li>
+<li><a href="#_what_s_new_in_this_release_7">What&#8217;s New In This Release</a></li>
 <li><a href="#_other_news">Other News</a></li>
 <li><a href="#_what_s_up_next">What&#8217;s Up Next?</a></li>
 <li><a href="#_contributors">Contributors</a></li>
@@ -3260,11 +3265,12 @@ the timeout was exceeded.</p>
 <div class="paragraph">
 <p>The <code>@Retry</code> extensions can be used for flaky integration tests, where remote systems can fail sometimes.
 By default it retries an iteration <code>3</code> times with <code>0</code> delay if either an <code>Exception</code> or <code>AssertionError</code> has been thrown, all this is configurable.
+In addition, an optional <code>condition</code> closure can be used to determine if a feature should be retried.
 It also provides special support for data driven features, offering to either retry all iterations or just the failing ones.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="type">class</span> <span class="class">FlakyInegrationSpec</span> <span class="directive">extends</span> Specification {
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="type">class</span> <span class="class">FlakyIntegrationSpec</span> <span class="directive">extends</span> Specification {
   <span class="annotation">@Retry</span>
   <span class="keyword">def</span> <span class="function">retry3Times</span>() { ... }
 
@@ -3273,6 +3279,12 @@ It also provides special support for data driven features, offering to either re
 
   <span class="annotation">@Retry</span>(exceptions=[<span class="exception">IOException</span>])
   <span class="keyword">def</span> <span class="function">onlyRetryIOException</span>() { ... }
+
+  <span class="annotation">@Retry</span>(condition = { failure.message.contains(<span class="string"><span class="delimiter">'</span><span class="content">foo</span><span class="delimiter">'</span></span>) })
+  <span class="keyword">def</span> <span class="function">onlyRetryIfConditionOnFailureHolds</span>() { ... }
+
+  <span class="annotation">@Retry</span>(condition = { instance.field != <span class="predefined-constant">null</span> })
+  <span class="keyword">def</span> <span class="function">onlyRetryIfConditionOnInstanceHolds</span>() { ... }
 
   <span class="annotation">@Retry</span>
   <span class="keyword">def</span> <span class="function">retryFailingIterations</span>() {
@@ -4361,12 +4373,25 @@ Grails 2.3 and higher have built-in Spock support and do not require a plugin.
 <h2 id="_release_notes"><a class="anchor" href="#_release_notes"></a><a class="link" href="#_release_notes">Release Notes</a></h2>
 <div class="sectionbody">
 <div class="sect2">
+<h3 id="_1_2_rc2_tbd"><a class="anchor" href="#_1_2_rc2_tbd"></a><a class="link" href="#_1_2_rc2_tbd">1.2-RC2 (tbd)</a></h3>
+<div class="sect3">
+<h4 id="_what_s_new_in_this_release"><a class="anchor" href="#_what_s_new_in_this_release"></a><a class="link" href="#_what_s_new_in_this_release">What&#8217;s New In This release</a></h4>
+<div class="ulist">
+<ul>
+<li>
+<p>The <code>@Retry</code> extension can now be configured to evaluate a <code>condition</code> (<a href="#_retry">Docs</a>)</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect2">
 <h3 id="_1_2_rc1_2018_08_14"><a class="anchor" href="#_1_2_rc1_2018_08_14"></a><a class="link" href="#_1_2_rc1_2018_08_14">1.2-RC1 (2018-08-14)</a></h3>
 <div class="paragraph">
 <p>Breaking Changes: Spock 1.2 drops support for Java 6, Groovy 2.0 and Groovy 2.3</p>
 </div>
 <div class="sect3">
-<h4 id="_what_s_new_in_this_release"><a class="anchor" href="#_what_s_new_in_this_release"></a><a class="link" href="#_what_s_new_in_this_release">What&#8217;s New In This release</a></h4>
+<h4 id="_what_s_new_in_this_release_2"><a class="anchor" href="#_what_s_new_in_this_release_2"></a><a class="link" href="#_what_s_new_in_this_release_2">What&#8217;s New In This release</a></h4>
 <div class="ulist">
 <ul>
 <li>
@@ -4476,7 +4501,7 @@ Burk Hufnagel</p>
 <div class="sect2">
 <h3 id="_1_1_2017_05_01"><a class="anchor" href="#_1_1_2017_05_01"></a><a class="link" href="#_1_1_2017_05_01">1.1 (2017-05-01)</a></h3>
 <div class="sect3">
-<h4 id="_what_s_new_in_this_release_2"><a class="anchor" href="#_what_s_new_in_this_release_2"></a><a class="link" href="#_what_s_new_in_this_release_2">What&#8217;s New In This release</a></h4>
+<h4 id="_what_s_new_in_this_release_3"><a class="anchor" href="#_what_s_new_in_this_release_3"></a><a class="link" href="#_what_s_new_in_this_release_3">What&#8217;s New In This release</a></h4>
 <div class="ulist">
 <ul>
 <li>
@@ -4498,7 +4523,7 @@ Burk Hufnagel</p>
 <p>This should be the last rc for 1.1</p>
 </div>
 <div class="sect3">
-<h4 id="_what_s_new_in_this_release_3"><a class="anchor" href="#_what_s_new_in_this_release_3"></a><a class="link" href="#_what_s_new_in_this_release_3">What&#8217;s New In This release</a></h4>
+<h4 id="_what_s_new_in_this_release_4"><a class="anchor" href="#_what_s_new_in_this_release_4"></a><a class="link" href="#_what_s_new_in_this_release_4">What&#8217;s New In This release</a></h4>
 <div class="ulist">
 <ul>
 <li>
@@ -4553,7 +4578,7 @@ Burk Hufnagel</p>
 <p>1.1 should be here soon but in the meantime there&#8217;s a new release candidate.</p>
 </div>
 <div class="sect3">
-<h4 id="_what_s_new_in_this_release_4"><a class="anchor" href="#_what_s_new_in_this_release_4"></a><a class="link" href="#_what_s_new_in_this_release_4">What&#8217;s New In This release</a></h4>
+<h4 id="_what_s_new_in_this_release_5"><a class="anchor" href="#_what_s_new_in_this_release_5"></a><a class="link" href="#_what_s_new_in_this_release_5">What&#8217;s New In This release</a></h4>
 <div class="ulist">
 <ul>
 <li>
@@ -4577,7 +4602,7 @@ Currently some features are incubating.
 We encourage users to try out these new features and provide feedback so we can finalize the content for a 1.1 release.</p>
 </div>
 <div class="sect3">
-<h4 id="_what_s_new_in_this_release_5"><a class="anchor" href="#_what_s_new_in_this_release_5"></a><a class="link" href="#_what_s_new_in_this_release_5">What&#8217;s New In This release</a></h4>
+<h4 id="_what_s_new_in_this_release_6"><a class="anchor" href="#_what_s_new_in_this_release_6"></a><a class="link" href="#_what_s_new_in_this_release_6">What&#8217;s New In This release</a></h4>
 <div class="ulist">
 <ul>
 <li>
@@ -4637,7 +4662,7 @@ Cédric Champeau, David Dawson, Rob Fletcher, Sean Gilligan, Ken Kousen, Guillau
 Howard M. Lewis Ship, Ken Sipe, Venkat Subramaniam, Russel Winder.</p>
 </div>
 <div class="sect3">
-<h4 id="_what_s_new_in_this_release_6"><a class="anchor" href="#_what_s_new_in_this_release_6"></a><a class="link" href="#_what_s_new_in_this_release_6">What&#8217;s New In This Release</a></h4>
+<h4 id="_what_s_new_in_this_release_7"><a class="anchor" href="#_what_s_new_in_this_release_7"></a><a class="link" href="#_what_s_new_in_this_release_7">What&#8217;s New In This Release</a></h4>
 <div class="ulist">
 <ul>
 <li>
@@ -5733,7 +5758,7 @@ that answer, closeTo(<span class="integer">42</span>, <span class="float">0.001<
 <div id="footer">
 <div id="footer-text">
 Version 1.2-SNAPSHOT<br>
-Last updated 2018-08-14 21:05:26 UTC
+Last updated 2018-08-16 11:43:48 UTC
 </div>
 </div>
 </body>

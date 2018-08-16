@@ -6,6 +6,7 @@ include::include.adoc[]
 === What's New In This release
 
 * The `@Retry` extension can now be configured to evaluate a `condition` (<<extensions.adoc#_retry,Docs>>)
+* `@Retry` can now be used to configure retries for all feature methods in a spec class (<<extensions.adoc#_retry,Docs>>)
 
 == 1.2-RC1 (2018-08-14)
 

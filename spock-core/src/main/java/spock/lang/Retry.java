@@ -27,12 +27,25 @@ import java.lang.annotation.*;
 /**
  * Retries the given feature if an exception occurs during execution.
  *
+ * <p>Retries can be applied to feature methods and spec classes. Applying it to
+ * a spec class has the same effect as applying it to each feature method that
+ * isn't already annotated with {@code @Retry}.
+ *
+ * <p>{@code @Retry} annotations are inherited, i.e. if declared on a superclass
+ * of a spec class, it will be applied to all feature methods of both classes
+ * unless the subclass declares its own annotation. If so, it is applied to all
+ * feature methods declared in the subclass, but not to any feature methods
+ * declared in the superclass. In particular, that means that retries are not
+ * applied to inherited feature methods if the annotation is only present on the
+ * subclass.
+ *
  * @author Leonard Brünings
  * @since 1.2
  */
 @Beta
+@Inherited
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.METHOD})
+@Target({ElementType.TYPE, ElementType.METHOD})
 @ExtensionAnnotation(RetryExtension.class)
 public @interface Retry {
   /**

@@ -119,24 +119,31 @@ public @interface <span class="memberNameLabel">Retry</span></pre>
 <th class="colLast" scope="col">Optional Element and Description</th>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code>java.lang.Class&lt;? extends <a href="http://docs.groovy-lang.org/docs/groovy-2.5.0/html/gapi/groovy/lang/Closure.html?is-external=true" title="class or interface in groovy.lang">Closure</a>&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../spock/lang/Retry.html#condition--">condition</a></span></code>
+<div class="block">Condition that is evaluated to decide whether the feature should be
+ retried.</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../spock/lang/Retry.html#count--">count</a></span></code>
 <div class="block">The number of retries.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../spock/lang/Retry.html#delay--">delay</a></span></code>
 <div class="block">Delay between retries in millis, 0 to disable.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>java.lang.Class&lt;? extends java.lang.Throwable&gt;[]</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../spock/lang/Retry.html#exceptions--">exceptions</a></span></code>
 <div class="block">Configures which types of Exceptions should be retried.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code><a href="../../spock/lang/Retry.Mode.html" title="enum in spock.lang">Retry.Mode</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../spock/lang/Retry.html#mode--">mode</a></span></code>
 <div class="block">Retry mode, controls what is retried.</div>
@@ -174,6 +181,37 @@ public @interface <span class="memberNameLabel">Retry</span></pre>
 <dl>
 <dt>Default:</dt>
 <dd>{java.lang.Exception.class, java.lang.AssertionError.class}</dd>
+</dl>
+</li>
+</ul>
+</li>
+</ul>
+<ul class="blockList">
+<li class="blockList"><a name="condition--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>condition</h4>
+<pre>public abstract&nbsp;java.lang.Class&lt;? extends <a href="http://docs.groovy-lang.org/docs/groovy-2.5.0/html/gapi/groovy/lang/Closure.html?is-external=true" title="class or interface in groovy.lang">Closure</a>&gt;&nbsp;condition</pre>
+<div class="block">Condition that is evaluated to decide whether the feature should be
+ retried.
+
+ The configured closure is called with a delegate of type
+ <code>RetryConditionContext</code>
+ which provides access to the current exception and <code>Specification</code>
+ instance.
+
+ The feature is retried if the exception class passes the type check and the
+ specified condition holds true. If no condition is specified, only the type
+ check is performed.</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>predicate that must hold for the feature to be retried.</dd>
+</dl>
+<dl>
+<dt>Default:</dt>
+<dd>groovy.lang.Closure.class</dd>
 </dl>
 </li>
 </ul>

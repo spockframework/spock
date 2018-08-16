@@ -16,6 +16,7 @@
 
 package spock.lang;
 
+import groovy.lang.Closure;
 import org.spockframework.runtime.extension.ExtensionAnnotation;
 import org.spockframework.runtime.extension.builtin.RetryExtension;
 import org.spockframework.util.Beta;
@@ -42,6 +43,23 @@ public @interface Retry {
    * @return array of Exception classes to retry.
    */
   Class<? extends Throwable>[] exceptions() default {Exception.class, AssertionError.class};
+
+  /**
+   * Condition that is evaluated to decide whether the feature should be
+   * retried.
+   *
+   * The configured closure is called with a delegate of type
+   * {@link org.spockframework.runtime.extension.builtin.RetryConditionContext}
+   * which provides access to the current exception and {@code Specification}
+   * instance.
+   *
+   * The feature is retried if the exception class passes the type check and the
+   * specified condition holds true. If no condition is specified, only the type
+   * check is performed.
+   *
+   * @return predicate that must hold for the feature to be retried.
+   */
+  Class<? extends Closure> condition() default Closure.class;
 
   /**
    * The number of retries.

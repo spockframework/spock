@@ -214,6 +214,7 @@ the timeout was exceeded.
 
 The `@Retry` extensions can be used for flaky integration tests, where remote systems can fail sometimes.
 By default it retries an iteration `3` times with `0` delay if either an `Exception` or `AssertionError` has been thrown, all this is configurable.
+In addition, an optional `condition` closure can be used to determine if a feature should be retried.
 It also provides special support for data driven features, offering to either retry all iterations or just the failing ones.
 
 [source,groovy]
@@ -227,6 +228,12 @@ class FlakyInegrationSpec extends Specification {
 
   @Retry(exceptions=[IOException])
   def onlyRetryIOException() { ... }
+
+  @Retry(condition = { failure.message.contains('foo') })
+  def onlyRetryIfConditionOnFailureHolds() { ... }
+
+  @Retry(condition = { instance.field != null })
+  def onlyRetryIfConditionOnInstanceHolds() { ... }
 
   @Retry
   def retryFailingIterations() {

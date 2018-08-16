@@ -374,4 +374,82 @@ class Foo extends Specification {
     result.ignoreCount == 0
   }
 
+  def "@Retry evaluates condition"() {
+    when:
+    def result = runner.runWithImports("""
+import spock.lang.Retry
+
+class Foo extends Specification {
+  @Unroll
+  @Retry(condition = { failure.message.contains('1') })
+  def "bar #message"() {
+    expect:
+    assert false : message
+
+    where:
+    message << ['1', '2', '3']
+  }
+}
+    """)
+
+    then:
+    result.runCount == 3
+    result.failureCount == 4 + 1 + 1
+  }
+
+  def "@Retry does not evaluate condition if exception type is unexpected"() {
+    when:
+    def result = runner.runWithImports("""
+import spock.lang.Retry
+
+class Foo extends Specification {
+  @Unroll
+  @Retry(exceptions = IllegalArgumentException, condition = { failure.message.contains('1') })
+  def "bar #exceptionClass #message"() {
+    expect:
+    throw exceptionClass.newInstance(message as String)
+
+    where:
+    exceptionClass           | message
+    IllegalArgumentException | 1
+    IllegalArgumentException | 2
+    IllegalStateException    | 1
+    IllegalStateException    | 2
+    RuntimeException         | 1
+    RuntimeException         | 2
+  }
+}
+    """)
+
+    then:
+    result.runCount == 6
+    result.failureCount == (4 + 1) + (1 + 1) + (1 + 1)
+  }
+
+  def "@Retry provides condition access to Specification instance"() {
+    when:
+    def result = runner.runWithImports("""
+import spock.lang.Retry
+
+class Foo extends Specification {
+  int value
+  @Unroll
+  @Retry(condition = { instance.value == 2 })
+  def "bar #input"() {
+    value = input
+    
+    expect:
+    false
+
+    where:
+    input << [1, 2, 3]
+  }
+}
+    """)
+
+    then:
+    result.runCount == 3
+    result.failureCount == 1 + 4 + 1
+  }
+
 }

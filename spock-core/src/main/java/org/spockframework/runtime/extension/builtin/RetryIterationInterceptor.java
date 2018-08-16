@@ -66,7 +66,7 @@ public class RetryIterationInterceptor extends RetryBaseInterceptor implements I
       try {
         invocation.proceed();
       } catch (Throwable e) {
-        if (isExpected(e)) {
+        if (isExpected(invocation, e)) {
           throwables.add(e);
         } else {
           throw e;

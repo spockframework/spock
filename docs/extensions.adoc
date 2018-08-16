@@ -219,7 +219,7 @@ It also provides special support for data driven features, offering to either re
 
 [source,groovy]
 ----
-class FlakyInegrationSpec extends Specification {
+class FlakyIntegrationSpec extends Specification {
   @Retry
   def retry3Times() { ... }
 

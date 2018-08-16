@@ -33,14 +33,18 @@ import spock.lang.Retry;
 public class RetryBaseInterceptor {
 
   protected final Retry retry;
-  private final Closure condition;
+  protected final Closure condition;
 
   public RetryBaseInterceptor(Retry retry) {
-    this.retry = retry;
-    condition = createCondition(retry.condition());
+    this(retry, createCondition(retry.condition()));
   }
 
-  private Closure createCondition(Class<? extends Closure> clazz) {
+  protected RetryBaseInterceptor(Retry retry, Closure condition) {
+    this.retry = retry;
+    this.condition = condition;
+  }
+
+  private static Closure createCondition(Class<? extends Closure> clazz) {
     if (clazz.equals(Closure.class)) {
       return null;
     }

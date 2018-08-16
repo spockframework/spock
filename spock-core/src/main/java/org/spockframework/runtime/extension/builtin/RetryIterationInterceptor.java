@@ -16,6 +16,7 @@
 
 package org.spockframework.runtime.extension.builtin;
 
+import groovy.lang.Closure;
 import org.spockframework.runtime.extension.*;
 import spock.lang.Retry;
 
@@ -38,7 +39,7 @@ public class RetryIterationInterceptor extends RetryBaseInterceptor implements I
     List<Throwable> throwableList = new ArrayList<>();
     for (int i = 0; i <= retry.count(); i++) {
       Queue<Throwable> throwables = new ConcurrentLinkedQueue<>();
-      invocation.getFeature().getFeatureMethod().addInterceptor(new InnerRetryInterceptor(retry, throwables));
+      invocation.getFeature().getFeatureMethod().addInterceptor(new InnerRetryInterceptor(retry, condition, throwables));
       invocation.proceed();
       if (throwables.isEmpty()) {
         break;
@@ -56,8 +57,8 @@ public class RetryIterationInterceptor extends RetryBaseInterceptor implements I
 
     private final Queue<Throwable> throwables;
 
-    public InnerRetryInterceptor(Retry retry, Queue<Throwable> throwables) {
-      super(retry);
+    public InnerRetryInterceptor(Retry retry, Closure condition, Queue<Throwable> throwables) {
+      super(retry, condition);
       this.throwables = throwables;
     }
 

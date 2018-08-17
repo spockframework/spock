@@ -232,7 +232,7 @@ class Foo extends Specification {
     result.ignoreCount == 0
   }
 
-  def "@Retry mode FEATURE for data driven"() {
+  def "@Retry mode FEATURE retries complete feature when an iteration fails"() {
     when:
     def result = runner.runWithImports("""
 import spock.lang.Retry
@@ -250,8 +250,35 @@ class Foo extends Specification {
     """)
 
     then:
-    result.runCount == 12
+    result.runCount == 4 * 3
     result.failureCount == 4
+    result.ignoreCount == 0
+  }
+
+  def "@Retry mode FEATURE stops retries after all iterations have passed once"() {
+    when:
+    def result = runner.runWithImports("""
+import spock.lang.Retry
+
+class Foo extends Specification {
+  static int[] counters = new int[3]
+  @Unroll
+  @Retry(mode=Retry.Mode.FEATURE)
+  def bar() {
+    counters[index]++
+
+    expect:
+    index < 2 || counters[index] > 1
+
+    where:
+    index << [0, 1, 2]
+  }
+}
+    """)
+
+    then:
+    result.runCount == 2 * 3
+    result.failureCount == 0
     result.ignoreCount == 0
   }
 
@@ -318,6 +345,26 @@ class Foo extends Specification {
 
     then:
     result.runCount == 3
+    result.failureCount == 0
+    result.ignoreCount == 0
+  }
+
+  def "@Retry mode SETUP_FEATURE_CLEANUP ignores previous failures if a retry succeeds"() {
+    when:
+    def result = runner.runWithImports("""
+import spock.lang.Retry
+
+class Foo extends Specification {
+  static int counter
+  @Retry(mode = Retry.Mode.SETUP_FEATURE_CLEANUP)
+  def bar() {
+    expect: counter++ > 0
+  }
+}
+    """)
+
+    then:
+    result.runCount == 1
     result.failureCount == 0
     result.ignoreCount == 0
   }

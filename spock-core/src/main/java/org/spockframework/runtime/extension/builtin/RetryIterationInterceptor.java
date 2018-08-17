@@ -42,6 +42,7 @@ public class RetryIterationInterceptor extends RetryBaseInterceptor implements I
       invocation.getFeature().getFeatureMethod().addInterceptor(new InnerRetryInterceptor(retry, condition, throwables));
       invocation.proceed();
       if (throwables.isEmpty()) {
+        throwableList.clear();
         break;
       } else {
         throwableList.addAll(throwables);

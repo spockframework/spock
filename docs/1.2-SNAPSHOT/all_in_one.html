@@ -4379,7 +4379,10 @@ Grails 2.3 and higher have built-in Spock support and do not require a plugin.
 <div class="ulist">
 <ul>
 <li>
-<p>The <code>@Retry</code> extension can now be configured to evaluate a <code>condition</code> (<a href="#_retry">Docs</a>)</p>
+<p>Add configurable <code>condition</code> to <code>@Retry</code> extension to allow for customizing when retries should be attempted (<a href="#_retry">Docs</a>)</p>
+</li>
+<li>
+<p>Fix <code>Retry.Mode.FEATURE</code> and <code>Retry.Mode.SETUP_FEATURE_CLEANUP</code> to make a test pass if a retry was successful.</p>
 </li>
 </ul>
 </div>
@@ -5758,7 +5761,7 @@ that answer, closeTo(<span class="integer">42</span>, <span class="float">0.001<
 <div id="footer">
 <div id="footer-text">
 Version 1.2-SNAPSHOT<br>
-Last updated 2018-08-16 11:43:48 UTC
+Last updated 2018-08-17 09:16:50 UTC
 </div>
 </div>
 </body>

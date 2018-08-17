@@ -254,6 +254,54 @@ class FlakyIntegrationSpec extends Specification {
 }
 ----
 
+Retries can also be applied to spec classes which has the same effect as applying it to each feature method that isn't
+already annotated with {@code Retry}.
+
+[source,groovy]
+----
+@Retry
+class FlakyIntegrationSpec extends Specification {
+  def "will be retried with config from class"() {
+    ...
+  }
+  @Retry(count = 5)
+  def "will be retried using its own config"() {
+    ...
+  }
+}
+----
+
+`@Retry` annotations are inherited, i.e. if declared on a superclass of a spec class, it will be applied to all feature
+methods of both classes unless the subclass declares its own annotation. If so, it is applied to all feature methods
+declared in the subclass, but not to any feature methods declared in the superclass. In particular, that means that
+retries are not applied to inherited feature methods if the annotation is only present on the subclass.
+
+Given the following example, running `FooIntegrationSpec` will execute both `inherited` and `foo` with one retry.
+Running `BarIntegrationSpec` will execute `inherited` with one and `bar` with two retries.
+
+[source,groovy]
+----
+@Retry(count = 1)
+abstract class AbstractIntegrationSpec extends Specification {
+  def inherited() {
+    ...
+  }
+}
+
+class FooIntegrationSpec extends AbstractIntegrationSpec {
+  def foo() {
+    ...
+  }
+}
+
+@Retry(count = 2)
+class BarIntegrationSpec extends AbstractIntegrationSpec {
+  def bar() {
+    ...
+  }
+}
+----
+
 Check https://github.com/spockframework/spock/blob/master/spock-specs/src/test/groovy/org/spockframework/smoke/extension/RetryFeatureExtensionSpec.groovy[RetryFeatureExtensionSpec] for more examples.
 
 === Use

@@ -499,4 +499,104 @@ class Foo extends Specification {
     result.failureCount == 1 + 4 + 1
   }
 
+  def "@Retry can be declared on a spec class"() {
+    when:
+    def result = runner.runWithImports("""
+import spock.lang.Retry
+
+@Retry
+class Foo extends Specification {
+  def foo() {
+    expect:
+    false
+  }
+  def bar() {
+    expect:
+    true
+  }
+  @Retry(count = 1)
+  def baz() {
+    expect:
+    false
+  }
+}
+    """)
+
+    then:
+    result.runCount == 3
+    result.failureCount == 4 + 0 + 2
+  }
+
+  def "@Retry declared on a spec class is inherited"() {
+    when:
+    def result = runner.runWithImports("""
+import spock.lang.Retry
+
+@Retry(count = 1)
+abstract class Foo extends Specification {
+}
+class Bar extends Foo {
+  def bar() {
+    expect:
+    false
+  }
+}
+    """)
+
+    then:
+    result.runCount == 1
+    result.failureCount == 2
+  }
+
+  def "@Retry declared on a subclass is only applied to features declared in subclass"() {
+    when:
+    def result = runner.runWithImports("""
+import spock.lang.Retry
+
+abstract class Foo extends Specification {
+  def foo() {
+    expect:
+    false
+  }
+}
+@Retry(count = 1)
+class Bar extends Foo {
+  def bar() {
+    expect:
+    false
+  }
+}
+    """)
+
+    then:
+    result.runCount == 2
+    result.failureCount == 1 + 2
+  }
+
+  def "@Retry declared on a spec class can be overridden"() {
+    when:
+    def result = runner.runWithImports("""
+import spock.lang.Retry
+
+@Retry(count = 1)
+abstract class Foo extends Specification {
+  def foo() {
+    expect:
+    false
+  }
+}
+@Retry(count = 2)
+class Bar extends Foo {
+  def bar() {
+    expect:
+    false
+  }
+}
+    """)
+
+    then:
+    result.runCount == 2
+    result.failureCount == 2 + 3
+  }
+
 }

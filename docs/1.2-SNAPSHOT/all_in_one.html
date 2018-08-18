@@ -3306,6 +3306,56 @@ It also provides special support for data driven features, offering to either re
 </div>
 </div>
 <div class="paragraph">
+<p>Retries can also be applied to spec classes which has the same effect as applying it to each feature method that isn&#8217;t
+already annotated with {@code Retry}.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@Retry</span>
+<span class="type">class</span> <span class="class">FlakyIntegrationSpec</span> <span class="directive">extends</span> Specification {
+  <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">will be retried with config from class</span><span class="delimiter">&quot;</span></span>() {
+    ...
+  }
+  <span class="annotation">@Retry</span>(count = <span class="integer">5</span>)
+  <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">will be retried using its own config</span><span class="delimiter">&quot;</span></span>() {
+    ...
+  }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>A {@code @Retry} annotation that is declared on a spec class is applied to all features in all subclasses as well,
+unless a subclass declares its own annotation. If so, the retries defined in the subclass are applied to all feature
+methods declared in the subclass as well as inherited ones.</p>
+</div>
+<div class="paragraph">
+<p>Given the following example, running <code>FooIntegrationSpec</code> will execute both <code>inherited</code> and <code>foo</code> with one retry.
+Running <code>BarIntegrationSpec</code> will execute <code>inherited</code> and <code>bar</code> with two retries.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@Retry</span>(count = <span class="integer">1</span>)
+<span class="directive">abstract</span> <span class="type">class</span> <span class="class">AbstractIntegrationSpec</span> <span class="directive">extends</span> Specification {
+  <span class="keyword">def</span> <span class="function">inherited</span>() {
+    ...
+  }
+}
+
+<span class="type">class</span> <span class="class">FooIntegrationSpec</span> <span class="directive">extends</span> AbstractIntegrationSpec {
+  <span class="keyword">def</span> <span class="function">foo</span>() {
+    ...
+  }
+}
+
+<span class="annotation">@Retry</span>(count = <span class="integer">2</span>)
+<span class="type">class</span> <span class="class">BarIntegrationSpec</span> <span class="directive">extends</span> AbstractIntegrationSpec {
+  <span class="keyword">def</span> <span class="function">bar</span>() {
+    ...
+  }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
 <p>Check <a href="https://github.com/spockframework/spock/blob/master/spock-specs/src/test/groovy/org/spockframework/smoke/extension/RetryFeatureExtensionSpec.groovy">RetryFeatureExtensionSpec</a> for more examples.</p>
 </div>
 </div>
@@ -4383,6 +4433,9 @@ Grails 2.3 and higher have built-in Spock support and do not require a plugin.
 </li>
 <li>
 <p>Fix <code>Retry.Mode.FEATURE</code> and <code>Retry.Mode.SETUP_FEATURE_CLEANUP</code> to make a test pass if a retry was successful.</p>
+</li>
+<li>
+<p>Improve <code>@Retry</code> to be declarable on a spec class which will apply it to all feature methods in that class and subclasses (<a href="#_retry">Docs</a>)</p>
 </li>
 </ul>
 </div>
@@ -5761,7 +5814,7 @@ that answer, closeTo(<span class="integer">42</span>, <span class="float">0.001<
 <div id="footer">
 <div id="footer-text">
 Version 1.2-SNAPSHOT<br>
-Last updated 2018-08-17 15:43:43 UTC
+Last updated 2018-08-18 19:08:01 UTC
 </div>
 </div>
 </body>

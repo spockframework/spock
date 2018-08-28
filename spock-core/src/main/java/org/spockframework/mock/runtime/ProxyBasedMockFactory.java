@@ -100,7 +100,7 @@ public class ProxyBasedMockFactory {
                              final ClassLoader classLoader,
                              boolean useObjenesis) {
 
-      ClassLoadingStrategy strategy = ClassLoadingStrategy.Default.WRAPPER;
+      final ClassLoadingStrategy strategy = ClassLoadingStrategy.Default.WRAPPER;
 
       Class<?> enhancedType = CACHE.findOrInsert(classLoader,
         new TypeCache.SimpleKey(type, additionalInterfaces),

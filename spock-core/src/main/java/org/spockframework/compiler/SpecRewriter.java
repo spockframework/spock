@@ -225,6 +225,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
     method.getFirstBlock().getAst().add(position,
         new ExpressionStatement(
             new FieldInitializationExpression(field.getAst())));
+    field.getAst().setModifiers((field.getAst().getModifiers() & (~Opcodes.ACC_FINAL))); // Remove final modifier
     field.getAst().setInitialValueExpression(null);
   }
 

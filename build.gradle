@@ -53,7 +53,7 @@ ext {
   libs = [
     jetbrainsAnnotations: "org.jetbrains:annotations:13.0",
     ant: "org.apache.ant:ant:1.9.7",
-    asm: "org.ow2.asm:asm:6.2",
+    asm: "org.ow2.asm:asm:6.2.1",
     bytebuddy: "net.bytebuddy:byte-buddy:1.8.18",
     cglib: "cglib:cglib-nodep:3.2.7",
     groovy: groovyDependency,

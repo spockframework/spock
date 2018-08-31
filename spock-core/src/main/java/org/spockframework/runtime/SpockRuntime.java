@@ -21,6 +21,7 @@ import org.spockframework.util.*;
 
 import java.util.*;
 
+import groovy.lang.Closure;
 import org.junit.runners.model.MultipleFailureException;
 
 /**
@@ -106,7 +107,7 @@ public abstract class SpockRuntime {
     Object result = safe ? GroovyRuntimeUtil.invokeMethodNullSafe(target, method, args) :
         GroovyRuntimeUtil.invokeMethod(target, method, args);
 
-    if (!explicit && result == null && GroovyRuntimeUtil.isVoidMethod(target, method, args)) return;
+    if (!explicit && result == null && isVoidMethod(target, method, args)) return;
 
     if (!GroovyRuntimeUtil.isTruthy(result)) {
       List<Object> values = getValues(recorder);
@@ -115,6 +116,15 @@ public abstract class SpockRuntime {
           new Condition(values, text, TextPosition.create(line, column), messageToString(message), null, null));
       errorCollector.collectOrThrow(conditionNotSatisfiedError);
     }
+  }
+
+  private static boolean isVoidMethod(@Nullable Object target, String method, Object... args) {
+    if (target instanceof Closure) { // since we support verifyAll we must check the closure hierarchy
+      Closure closure = ((Closure)target);
+      return GroovyRuntimeUtil.isVoidMethod(closure.getDelegate(), method, args)
+        || isVoidMethod(closure.getOwner(), method, args);
+    }
+    return GroovyRuntimeUtil.isVoidMethod(target, method, args);
   }
 
   public static final String DESPREAD_LIST = "despreadList";

@@ -16,6 +16,8 @@
 
 package org.spockframework.spring;
 
+import org.spockframework.util.Beta;
+
 import java.lang.annotation.*;
 
 /**
@@ -30,6 +32,7 @@ import java.lang.annotation.*;
  * {@code prototype} scoped mocks will not work since spring will create different
  * instances for each injection target.
  */
+@Beta
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ScanScopedBeans {

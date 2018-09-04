@@ -53,10 +53,12 @@ public class StepwiseExtension extends AbstractAnnotationDrivenExtension {
         // but not sub- and super classes
         if (!error.getMethod().getParent().equals(spec)) return;
 
-        // we can just set skip flag on all features, even though
-        // some of them might already have run
-        for (FeatureInfo feature : spec.getFeatures())
-          feature.setSkipped(true);
+        // mark all subsequent features as skipped
+        List<FeatureInfo> features = spec.getFeatures();
+        int indexOfFailedFeature = features.indexOf(error.getMethod().getFeature());
+        for (int i = indexOfFailedFeature + 1; i < features.size(); i++) {
+          features.get(i).setSkipped(true);
+        }
       }
     });
   }

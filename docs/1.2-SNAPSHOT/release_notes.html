@@ -21,10 +21,19 @@
 </div>
 <div id="content">
 <div class="sect1">
-<h2 id="_1_2_rc2_tbd"><a class="anchor" href="#_1_2_rc2_tbd"></a><a class="link" href="#_1_2_rc2_tbd">1.2-RC2 (tbd)</a></h2>
+<h2 id="_1_2_rc3_tbd"><a class="anchor" href="#_1_2_rc3_tbd"></a><a class="link" href="#_1_2_rc3_tbd">1.2-RC3 (tbd)</a></h2>
 <div class="sectionbody">
 <div class="sect2">
 <h3 id="_what_s_new_in_this_release"><a class="anchor" href="#_what_s_new_in_this_release"></a><a class="link" href="#_what_s_new_in_this_release">What&#8217;s New In This release</a></h3>
+
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_1_2_rc2_2018_09_04"><a class="anchor" href="#_1_2_rc2_2018_09_04"></a><a class="link" href="#_1_2_rc2_2018_09_04">1.2-RC2 (2018-09-04)</a></h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_what_s_new_in_this_release_2"><a class="anchor" href="#_what_s_new_in_this_release_2"></a><a class="link" href="#_what_s_new_in_this_release_2">What&#8217;s New In This release</a></h3>
 <div class="ulist">
 <ul>
 <li>
@@ -36,7 +45,19 @@
 <li>
 <p>Improve <code>@Retry</code> to be declarable on a spec class which will apply it to all feature methods in that class and subclasses (<a href="extensions.html#_retry">Docs</a>)</p>
 </li>
+<li>
+<p>Improve StepwiseExtension mark only subsequent features as skipped in case of failure (#893)</p>
+</li>
+<li>
+<p>Fix issue with <code>@SpringBean</code> mocks throwing <code>InvocationTargetException</code> instead of actual declared exceptions (#878, #887)</p>
+</li>
+<li>
+<p>Fix void methods with implicit targets failing in <code>with</code> and <code>verifyAll</code> (#886)</p>
+</li>
 </ul>
+</div>
+<div class="paragraph">
+<p>Thanks to all the contributors to this release: Marc Philipp, Tilman Ginzel, Marcin Zajączkowski, Martin Vseticka</p>
 </div>
 </div>
 </div>
@@ -48,7 +69,7 @@
 <p>Breaking Changes: Spock 1.2 drops support for Java 6, Groovy 2.0 and Groovy 2.3</p>
 </div>
 <div class="sect2">
-<h3 id="_what_s_new_in_this_release_2"><a class="anchor" href="#_what_s_new_in_this_release_2"></a><a class="link" href="#_what_s_new_in_this_release_2">What&#8217;s New In This release</a></h3>
+<h3 id="_what_s_new_in_this_release_3"><a class="anchor" href="#_what_s_new_in_this_release_3"></a><a class="link" href="#_what_s_new_in_this_release_3">What&#8217;s New In This release</a></h3>
 <div class="ulist">
 <ul>
 <li>
@@ -160,7 +181,7 @@ Burk Hufnagel</p>
 <h2 id="_1_1_2017_05_01"><a class="anchor" href="#_1_1_2017_05_01"></a><a class="link" href="#_1_1_2017_05_01">1.1 (2017-05-01)</a></h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_what_s_new_in_this_release_3"><a class="anchor" href="#_what_s_new_in_this_release_3"></a><a class="link" href="#_what_s_new_in_this_release_3">What&#8217;s New In This release</a></h3>
+<h3 id="_what_s_new_in_this_release_4"><a class="anchor" href="#_what_s_new_in_this_release_4"></a><a class="link" href="#_what_s_new_in_this_release_4">What&#8217;s New In This release</a></h3>
 <div class="ulist">
 <ul>
 <li>
@@ -184,7 +205,7 @@ Burk Hufnagel</p>
 <p>This should be the last rc for 1.1</p>
 </div>
 <div class="sect2">
-<h3 id="_what_s_new_in_this_release_4"><a class="anchor" href="#_what_s_new_in_this_release_4"></a><a class="link" href="#_what_s_new_in_this_release_4">What&#8217;s New In This release</a></h3>
+<h3 id="_what_s_new_in_this_release_5"><a class="anchor" href="#_what_s_new_in_this_release_5"></a><a class="link" href="#_what_s_new_in_this_release_5">What&#8217;s New In This release</a></h3>
 <div class="ulist">
 <ul>
 <li>
@@ -243,7 +264,7 @@ Burk Hufnagel</p>
 <p>1.1 should be here soon but in the meantime there&#8217;s a new release candidate.</p>
 </div>
 <div class="sect2">
-<h3 id="_what_s_new_in_this_release_5"><a class="anchor" href="#_what_s_new_in_this_release_5"></a><a class="link" href="#_what_s_new_in_this_release_5">What&#8217;s New In This release</a></h3>
+<h3 id="_what_s_new_in_this_release_6"><a class="anchor" href="#_what_s_new_in_this_release_6"></a><a class="link" href="#_what_s_new_in_this_release_6">What&#8217;s New In This release</a></h3>
 <div class="ulist">
 <ul>
 <li>
@@ -269,7 +290,7 @@ Currently some features are incubating.
 We encourage users to try out these new features and provide feedback so we can finalize the content for a 1.1 release.</p>
 </div>
 <div class="sect2">
-<h3 id="_what_s_new_in_this_release_6"><a class="anchor" href="#_what_s_new_in_this_release_6"></a><a class="link" href="#_what_s_new_in_this_release_6">What&#8217;s New In This release</a></h3>
+<h3 id="_what_s_new_in_this_release_7"><a class="anchor" href="#_what_s_new_in_this_release_7"></a><a class="link" href="#_what_s_new_in_this_release_7">What&#8217;s New In This release</a></h3>
 <div class="ulist">
 <ul>
 <li>
@@ -331,7 +352,7 @@ Cédric Champeau, David Dawson, Rob Fletcher, Sean Gilligan, Ken Kousen, Guillau
 Howard M. Lewis Ship, Ken Sipe, Venkat Subramaniam, Russel Winder.</p>
 </div>
 <div class="sect2">
-<h3 id="_what_s_new_in_this_release_7"><a class="anchor" href="#_what_s_new_in_this_release_7"></a><a class="link" href="#_what_s_new_in_this_release_7">What&#8217;s New In This Release</a></h3>
+<h3 id="_what_s_new_in_this_release_8"><a class="anchor" href="#_what_s_new_in_this_release_8"></a><a class="link" href="#_what_s_new_in_this_release_8">What&#8217;s New In This Release</a></h3>
 <div class="ulist">
 <ul>
 <li>
@@ -1198,7 +1219,7 @@ required; the only prerequisite for building Spock is a JDK installation (1.5 or
 <div id="footer">
 <div id="footer-text">
 Version 1.2-SNAPSHOT<br>
-Last updated 2018-08-26 01:24:38 UTC
+Last updated 2018-09-04 23:55:21 MESZ
 </div>
 </div>
 </body>

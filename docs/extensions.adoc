@@ -582,6 +582,10 @@ report {
 }
 ----
 
+== Third-Party Extensions
+
+You can find a list of third-party extensions in the https://github.com/spockframework/spock/wiki/Third-Party-Extensions[Spock Wiki].
+
 == Writing Custom Extensions
 
 There are two types of extensions that can be created for usage with Spock. These are global extensions and annotation

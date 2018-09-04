@@ -1,15 +1,18 @@
 = Release Notes
 include::include.adoc[]
 
-== 1.2-RC2 (tbd)
+== 1.2-RC2 (2018-09-04)
 
 === What's New In This release
 
 * Add configurable `condition` to `@Retry` extension to allow for customizing when retries should be attempted (<<extensions.adoc#_retry,Docs>>)
 * Fix `Retry.Mode.FEATURE` and `Retry.Mode.SETUP_FEATURE_CLEANUP` to make a test pass if a retry was successful.
 * Improve `@Retry` to be declarable on a spec class which will apply it to all feature methods in that class and subclasses (<<extensions.adoc#_retry,Docs>>)
+* Improve StepwiseExtension mark only subsequent features as skipped in case of failure (#893)
 * Fix issue with `@SpringBean` mocks throwing `InvocationTargetException` instead of actual declared exceptions (#878, #887)
 * Fix void methods with implicit targets failing in `with` and `verifyAll` (#886)
+
+Thanks to all the contributors to this release: Marc Philipp, Tilman Ginzel, Marcin Zajączkowski, Martin Vseticka
 
 == 1.2-RC1 (2018-08-14)
 

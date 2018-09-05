@@ -14,6 +14,7 @@
 
 package org.spockframework.mock.runtime;
 
+import net.bytebuddy.dynamic.loading.ClassLoadingStrategy;
 import org.spockframework.mock.*;
 import org.spockframework.runtime.InvalidSpecException;
 import org.spockframework.util.*;
@@ -118,7 +119,7 @@ public class ProxyBasedMockFactory {
               .intercept(FieldAccessor.ofField("$spock_interceptor"))
               .defineField("$spock_interceptor", IProxyBasedMockInterceptor.class, Visibility.PRIVATE)
               .make()
-              .load(classLoader)
+              .load(classLoader, ClassLoadingStrategy.Default.WRAPPER)
               .getLoaded();
           }
         }, CACHE);

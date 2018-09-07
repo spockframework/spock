@@ -29,7 +29,7 @@ class IgnoreIfExtension extends Specification {
     expect: false
   }
 
-  @IgnoreIf({ jvm.java5 || jvm.java6 || jvm.java7 || jvm.java8 || jvm.java9 || jvm.java10 })
+  @IgnoreIf({ jvm.java5 || jvm.java6 || jvm.java7 || jvm.java8 || jvm.java9 || jvm.java10 || jvm.java11 })
   def "provides JVM information"() {
     expect: false
   }

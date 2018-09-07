@@ -201,6 +201,10 @@ subprojects {
     //'exit code 137' - https://github.com/travis-ci/travis-ci/issues/5582
     jvmArgs '-Xmx512m'
   }
+
+  jacoco {
+    toolVersion = '0.8.2'
+  }
 }
 
 task codeCoverageReport (type: JacocoReport, group: 'Coverage reports') {

@@ -16,6 +16,8 @@
 
 package org.spockframework.spring;
 
+import org.spockframework.util.Beta;
+
 import java.lang.annotation.*;
 
 /**
@@ -46,6 +48,7 @@ import java.lang.annotation.*;
  * @author Leonard Brünings
  * @since 1.2
  */
+@Beta
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface SpringSpy {

@@ -18,7 +18,7 @@ import net.bytebuddy.dynamic.loading.ClassInjector;
 import net.bytebuddy.dynamic.loading.ClassLoadingStrategy;
 import org.jetbrains.annotations.NotNull;
 import org.spockframework.mock.*;
-import org.spockframework.mock.codegen.CodegenDummy;
+import org.spockframework.mock.codegen.Target;
 import org.spockframework.runtime.InvalidSpecException;
 import org.spockframework.util.*;
 
@@ -26,6 +26,7 @@ import java.lang.reflect.*;
 import java.lang.reflect.Proxy;
 import java.util.*;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ThreadLocalRandom;
 
 import net.bytebuddy.*;
 import net.bytebuddy.description.modifier.*;
@@ -93,8 +94,7 @@ public class ProxyBasedMockFactory {
 
     private static final TypeCache<TypeCache.SimpleKey> CACHE =
       new TypeCache.WithInlineExpunction<>(TypeCache.Sort.SOFT);
-    private static final Random RANDOM = new Random();
-    public static final Class<?> CODEGEN_TARGET_CLASS = CodegenDummy.class;
+    private static final Class<?> CODEGEN_TARGET_CLASS = Target.class;
     private static final String CODEGEN_PACKAGE = CODEGEN_TARGET_CLASS.getPackage().getName();
 
     static Object createMock(final Class<?> type,
@@ -115,7 +115,8 @@ public class ProxyBasedMockFactory {
               typeName = CODEGEN_PACKAGE + "." + type.getSimpleName();
               targetClass = CODEGEN_TARGET_CLASS;
             }
-            String name = String.format("%s$%s$%d", typeName, "SpockMock", Math.abs(RANDOM.nextInt()));
+            int randomNumber = Math.abs(ThreadLocalRandom.current().nextInt());
+            String name = String.format("%s$%s$%d", typeName, "SpockMock", randomNumber);
             ClassLoadingStrategy<ClassLoader> strategy = determineBestClassLoadingStrategy(targetClass);
             return new ByteBuddy()
               .with(TypeValidation.DISABLED) // https://github.com/spockframework/spock/issues/776
@@ -143,6 +144,7 @@ public class ProxyBasedMockFactory {
       return proxy;
     }
 
+    // This methods and the ones it calls are inspired by similar code in Mockito's SubclassBytecodeGenerator
     private static boolean shouldLoadIntoCodegenPackage(Class<?> type) {
       return isComingFromJDK(type) || isComingFromSignedJar(type) || isComingFromSealedPackage(type);
     }
@@ -176,7 +178,7 @@ public class ProxyBasedMockFactory {
       if (ClassInjector.UsingReflection.isAvailable()) {
         return ClassLoadingStrategy.Default.INJECTION;
       }
-      throw new IllegalStateException("No class loading strategy available");
+      return ClassLoadingStrategy.Default.WRAPPER;
     }
   }
 

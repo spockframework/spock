@@ -8,6 +8,8 @@ What makes it stand out from the crowd is its beautiful and highly expressive sp
 Thanks to its JUnit runner, Spock is compatible with most IDEs, build tools, and continuous integration servers.
 Spock is inspired from JUnit, jMock, RSpec, Groovy, Scala, Vulcans, and other fascinating life forms.'''
 
+configurations { coreConsoleRuntime }
+
 dependencies {
   compile libs.groovy // easiest way to add Groovy dependency to POM
   compile libs.junit
@@ -18,7 +20,10 @@ dependencies {
   compile libs.bytebuddy, optional
   compile libs.cglib, optional
   compile libs.objenesis, optional
+
+  coreConsoleRuntime groovyConsoleExtraDependency
 }
+
 
 jar {
   manifest {
@@ -61,7 +66,7 @@ processResources {
 task coreConsole(type: JavaExec,
                  description: 'Start a groovy Console with Spock Core Classpath, usefull for AST-Inspection') {
   main = "groovy.ui.Console"
-  classpath = sourceSets.main.runtimeClasspath
+  classpath = sourceSets.main.runtimeClasspath + configurations.coreConsoleRuntime
   workingDir = file('build/console')
   ignoreExitValue = true
   args file('CoreConsole.groovy').absolutePath

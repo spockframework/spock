@@ -20,12 +20,12 @@ ext {
     groovyVersion = "2.4.15"
     minGroovyVersion = "2.4.0"
     groovyDependency = ["org.codehaus.groovy:groovy-all:${groovyVersion}"]
+    groovyConsoleExtraDependency = []  //bundled in groovy-all
   } else if (variant == 2.5) {
     groovyVersion = "2.5.2"
     minGroovyVersion = "2.5.2"
     groovyDependency = [
       "org.codehaus.groovy:groovy:${groovyVersion}",
-      "org.codehaus.groovy:groovy-groovysh:${groovyVersion}",
       "org.codehaus.groovy:groovy-json:${groovyVersion}",
       "org.codehaus.groovy:groovy-nio:${groovyVersion}",
       "org.codehaus.groovy:groovy-macro:${groovyVersion}",
@@ -33,6 +33,9 @@ ext {
       "org.codehaus.groovy:groovy-test:${groovyVersion}",
       "org.codehaus.groovy:groovy-sql:${groovyVersion}",
       "org.codehaus.groovy:groovy-xml:${groovyVersion}",
+    ]
+    groovyConsoleExtraDependency = [
+      "org.codehaus.groovy:groovy-groovysh:${groovyVersion}"
     ]
   } else {
     throw new InvalidUserDataException("Unknown variant: $variant. Choose one of: $variants")

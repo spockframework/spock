@@ -25,14 +25,7 @@ ext {
     groovyVersion = "2.5.2"
     minGroovyVersion = "2.5.2"
     groovyDependency = [
-      "org.codehaus.groovy:groovy:${groovyVersion}",
-      "org.codehaus.groovy:groovy-json:${groovyVersion}",
-      "org.codehaus.groovy:groovy-nio:${groovyVersion}",
-      "org.codehaus.groovy:groovy-macro:${groovyVersion}",
-      "org.codehaus.groovy:groovy-templates:${groovyVersion}",
-      "org.codehaus.groovy:groovy-test:${groovyVersion}",
-      "org.codehaus.groovy:groovy-sql:${groovyVersion}",
-      "org.codehaus.groovy:groovy-xml:${groovyVersion}",
+      "org.codehaus.groovy:groovy:${groovyVersion}"
     ]
     groovyConsoleExtraDependency = [
       "org.codehaus.groovy:groovy-groovysh:${groovyVersion}"

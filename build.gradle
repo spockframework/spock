@@ -176,20 +176,6 @@ subprojects {
     archives sourcesJar, javadocJar
   }
 
-  task testCglib(type: Test) {
-    systemProperty("org.spockframework.mock.ignoreByteBuddy", "true")
-    testClassesDirs = sourceSets.test.output.classesDirs
-    classpath = sourceSets.test.runtimeClasspath
-  }
-
-  if (gradle.startParameter.taskNames.contains("travisCiBuild")
-    || gradle.startParameter.taskNames.contains("shippableCiBuild")
-    || gradle.startParameter.taskNames.contains("appveyorCiBuild")) {
-    check.dependsOn testCglib
-  }
-
-  testCglib.mustRunAfter test
-
   tasks.withType(Test) {
     def taskName = name
     reports {

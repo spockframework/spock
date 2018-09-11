@@ -35,12 +35,6 @@ test {
   exclude "org/spockframework/report/sample/FightOrFlightSpec.class"
 }
 
-testCglib {
-  exclude "org/spockframework/report/sample/ParameterizedFightSpec.class"
-  exclude "org/spockframework/report/sample/FightOrFlightStory.class"
-  exclude "org/spockframework/report/sample/FightOrFlightSpec.class"
-}
-
 ext.spockLogFileDir = file("$buildDir/spock/logFiles")
 ext.spockLogFileName = "spock-log"
 
@@ -75,4 +69,3 @@ task sampleReport(type: org.spockframework.gradle.GenerateSpockReport) {
   spockReportClasspath = sourceSets.main.runtimeClasspath
   outputDirectory = file("$buildDir/spock/reports/")
 }
-

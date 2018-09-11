@@ -1,6 +1,7 @@
 include "spock-bom"
 include "spock-core"
 include "spock-specs"
+include "spock-specs:mock-integration"
 include "spock-spring"
 include "spock-spring:spring2-test"
 include "spock-spring:spring3-test"

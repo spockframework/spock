@@ -27,6 +27,13 @@ dependencies {
   testRuntime libs.log4j
 }
 
+task testCglib(type: Test) {
+  systemProperty("org.spockframework.mock.ignoreByteBuddy", "true")
+  mustRunAfter test
+}
+
+check.dependsOn testCglib
+
 jar {
   manifest {
     attributes(

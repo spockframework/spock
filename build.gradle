@@ -23,7 +23,7 @@ ext {
     groovyConsoleExtraDependency = []  //bundled in groovy-all
   } else if (variant == 2.5) {
     groovyVersion = "2.5.2"
-    minGroovyVersion = "2.5.2"
+    minGroovyVersion = "2.5.0"
     groovyDependency = [
       "org.codehaus.groovy:groovy:${groovyVersion}",
       "org.codehaus.groovy:groovy-json:${groovyVersion}",

@@ -28,6 +28,6 @@ public class PendingFeatureBaseInterceptor {
 
   protected AssumptionViolatedException assumptionViolation() {
     return new AssumptionViolatedException("Feature not yet implemented correctly."
-      + ("".equals(reason) ? "" : "Reason: "+reason));
+      + ("".equals(reason) ? "" : " Reason: " + reason));
   }
 }

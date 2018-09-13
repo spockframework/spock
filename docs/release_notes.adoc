@@ -6,7 +6,7 @@ include::include.adoc[]
 
 === What's New In This release
 
-* Improve `@PendingFeature` now has an optional `reason` attribute
+* Improve `@PendingFeature` to now have an optional `reason` attribute
 
 == 1.2-RC2 (2018-09-04)
 

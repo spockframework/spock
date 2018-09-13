@@ -40,7 +40,7 @@ class Foo extends Specification {
     result.runCount == 1
     result.failureCount == 0
     result.ignoreCount == 0
-    // unfortunately we can't access the skip reason here, but at least the branch is coverd
+    // unfortunately we can't access the skip reason here, but at least the branch is covered
   }
 
   def "@PendingFeature marks feature that fails with exception as skipped"() {

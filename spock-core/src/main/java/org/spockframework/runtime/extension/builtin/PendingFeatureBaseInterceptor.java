@@ -7,9 +7,11 @@ import org.junit.AssumptionViolatedException;
  */
 public class PendingFeatureBaseInterceptor {
   protected final Class<? extends Throwable>[] expectedExceptions;
+  protected final String reason;
 
-  public PendingFeatureBaseInterceptor(Class<? extends Throwable>[] expectedExceptions) {
+  public PendingFeatureBaseInterceptor(Class<? extends Throwable>[] expectedExceptions, String reason) {
     this.expectedExceptions = expectedExceptions;
+    this.reason = reason;
   }
 
   protected boolean isExpected(Throwable e) {
@@ -25,6 +27,7 @@ public class PendingFeatureBaseInterceptor {
   }
 
   protected AssumptionViolatedException assumptionViolation() {
-    return new AssumptionViolatedException("Feature not yet implemented correctly.");
+    return new AssumptionViolatedException("Feature not yet implemented correctly."
+      + ("".equals(reason) ? "" : "Reason: "+reason));
   }
 }

@@ -166,6 +166,13 @@ public @interface <span class="memberNameLabel">PendingFeature</span></pre>
 <div class="block">Configures which types of Exceptions are expected in the pending feature.</div>
 </td>
 </tr>
+<tr class="rowColor">
+<td class="colFirst"><code>java.lang.String</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="../../spock/lang/PendingFeature.html#reason--">reason</a></span></code></th>
+<td class="colLast">
+<div class="block">The reason why this feature is pending</div>
+</td>
+</tr>
 </table>
 </li>
 </ul>
@@ -184,7 +191,7 @@ public @interface <span class="memberNameLabel">PendingFeature</span></pre>
 <a name="exceptions--">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>exceptions</h4>
 <pre>java.lang.Class&lt;? extends java.lang.Throwable&gt;[]&nbsp;exceptions</pre>
@@ -198,6 +205,27 @@ public @interface <span class="memberNameLabel">PendingFeature</span></pre>
 <dl>
 <dt>Default:</dt>
 <dd>{java.lang.Exception.class}</dd>
+</dl>
+</li>
+</ul>
+</li>
+</ul>
+<ul class="blockList">
+<li class="blockList"><a name="reason--">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>reason</h4>
+<pre>java.lang.String&nbsp;reason</pre>
+<div class="block">The reason why this feature is pending</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>reason why this feature is pending</dd>
+</dl>
+<dl>
+<dt>Default:</dt>
+<dd>""</dd>
 </dl>
 </li>
 </ul>

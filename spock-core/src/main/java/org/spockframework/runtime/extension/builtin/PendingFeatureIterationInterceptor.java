@@ -1,7 +1,6 @@
 package org.spockframework.runtime.extension.builtin;
 
-import org.spockframework.runtime.extension.IMethodInterceptor;
-import org.spockframework.runtime.extension.IMethodInvocation;
+import org.spockframework.runtime.extension.*;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -10,16 +9,18 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 class PendingFeatureIterationInterceptor extends PendingFeatureBaseInterceptor implements IMethodInterceptor {
 
-  public PendingFeatureIterationInterceptor(Class<? extends Throwable>[] expectedExceptions) {
-    super(expectedExceptions);
+  public PendingFeatureIterationInterceptor(Class<? extends Throwable>[] expectedExceptions, String reason) {
+    super(expectedExceptions, reason);
   }
 
   @Override
   public void intercept(IMethodInvocation invocation) throws Throwable {
 
     AtomicBoolean pass = new AtomicBoolean(false);
-    invocation.getFeature().getFeatureMethod().addInterceptor(new InnerIterationInterceptor(pass, expectedExceptions));
+    invocation.getFeature().getFeatureMethod().addInterceptor(
+      new InnerIterationInterceptor(pass, expectedExceptions, reason));
     invocation.proceed();
+
     if (pass.get()) {
       throw assumptionViolation();
     } else {
@@ -30,8 +31,9 @@ class PendingFeatureIterationInterceptor extends PendingFeatureBaseInterceptor i
   private static class InnerIterationInterceptor extends PendingFeatureBaseInterceptor implements IMethodInterceptor {
     private final AtomicBoolean pass;
 
-    public InnerIterationInterceptor(AtomicBoolean pass, Class<? extends Throwable>[] expectedExceptions) {
-      super(expectedExceptions);
+    public InnerIterationInterceptor(AtomicBoolean pass, Class<? extends Throwable>[] expectedExceptions,
+                                     String reason) {
+      super(expectedExceptions, reason);
       this.pass = pass;
     }
 

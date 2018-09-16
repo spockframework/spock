@@ -126,6 +126,10 @@ told the number of test methods in advance, and have certain problems if the act
 is that `@Unroll` can drastically change the number of reported tests, which may not always be desirable.
 ****
 
+While unrolling is not enabled by default, there is a 3rd-party global extension
+https://github.com/szpak/spock-global-unroll[spock-global-unroll] which seamlessly enables it in the whole project
+just by putting a JAR on a project classpath.
+
 Note that unrolling has no effect on how the method gets executed; it is only an alternation in reporting.
 Depending on the execution environment, the output will look something like:
 

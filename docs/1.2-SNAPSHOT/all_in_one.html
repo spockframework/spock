@@ -185,46 +185,51 @@
 </li>
 <li><a href="#_release_notes">Release Notes</a>
 <ul class="sectlevel2">
-<li><a href="#_1_2_rc3_tbd">1.2-RC3 (tbd)</a>
+<li><a href="#_1_2_rc4_tbd">1.2-RC4 (tbd)</a>
 <ul class="sectlevel3">
 <li><a href="#_what_s_new_in_this_release">What&#8217;s New In This release</a></li>
 </ul>
 </li>
-<li><a href="#_1_2_rc2_2018_09_04">1.2-RC2 (2018-09-04)</a>
+<li><a href="#_1_2_rc3_2018_09_16">1.2-RC3 (2018-09-16)</a>
 <ul class="sectlevel3">
 <li><a href="#_what_s_new_in_this_release_2">What&#8217;s New In This release</a></li>
 </ul>
 </li>
-<li><a href="#_1_2_rc1_2018_08_14">1.2-RC1 (2018-08-14)</a>
+<li><a href="#_1_2_rc2_2018_09_04">1.2-RC2 (2018-09-04)</a>
 <ul class="sectlevel3">
 <li><a href="#_what_s_new_in_this_release_3">What&#8217;s New In This release</a></li>
+</ul>
+</li>
+<li><a href="#_1_2_rc1_2018_08_14">1.2-RC1 (2018-08-14)</a>
+<ul class="sectlevel3">
+<li><a href="#_what_s_new_in_this_release_4">What&#8217;s New In This release</a></li>
 <li><a href="#_known_issues">Known Issues</a></li>
 </ul>
 </li>
 <li><a href="#_1_1_2017_05_01">1.1 (2017-05-01)</a>
 <ul class="sectlevel3">
-<li><a href="#_what_s_new_in_this_release_4">What&#8217;s New In This release</a></li>
+<li><a href="#_what_s_new_in_this_release_5">What&#8217;s New In This release</a></li>
 </ul>
 </li>
 <li><a href="#_1_1_rc_4_2017_03_28">1.1-rc-4 (2017-03-28)</a>
 <ul class="sectlevel3">
-<li><a href="#_what_s_new_in_this_release_5">What&#8217;s New In This release</a></li>
+<li><a href="#_what_s_new_in_this_release_6">What&#8217;s New In This release</a></li>
 </ul>
 </li>
 <li><a href="#_1_1_rc_3_released_2016_10_17">1.1-rc-3 (released 2016-10-17)</a></li>
 <li><a href="#_1_1_rc_2_released_2016_08_22">1.1-rc-2 (released 2016-08-22)</a>
 <ul class="sectlevel3">
-<li><a href="#_what_s_new_in_this_release_6">What&#8217;s New In This release</a></li>
+<li><a href="#_what_s_new_in_this_release_7">What&#8217;s New In This release</a></li>
 </ul>
 </li>
 <li><a href="#_1_1_rc_1_released_2016_06_30">1.1-rc-1 (released 2016-06-30)</a>
 <ul class="sectlevel3">
-<li><a href="#_what_s_new_in_this_release_7">What&#8217;s New In This release</a></li>
+<li><a href="#_what_s_new_in_this_release_8">What&#8217;s New In This release</a></li>
 </ul>
 </li>
 <li><a href="#_1_0_released_2015_03_02">1.0 (released 2015-03-02)</a>
 <ul class="sectlevel3">
-<li><a href="#_what_s_new_in_this_release_8">What&#8217;s New In This Release</a></li>
+<li><a href="#_what_s_new_in_this_release_9">What&#8217;s New In This Release</a></li>
 <li><a href="#_other_news">Other News</a></li>
 <li><a href="#_what_s_up_next">What&#8217;s Up Next?</a></li>
 <li><a href="#_contributors">Contributors</a></li>
@@ -4435,22 +4440,44 @@ Grails 2.3 and higher have built-in Spock support and do not require a plugin.
 <h2 id="_release_notes"><a class="anchor" href="#_release_notes"></a><a class="link" href="#_release_notes">Release Notes</a></h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_1_2_rc3_tbd"><a class="anchor" href="#_1_2_rc3_tbd"></a><a class="link" href="#_1_2_rc3_tbd">1.2-RC3 (tbd)</a></h3>
+<h3 id="_1_2_rc4_tbd"><a class="anchor" href="#_1_2_rc4_tbd"></a><a class="link" href="#_1_2_rc4_tbd">1.2-RC4 (tbd)</a></h3>
 <div class="sect3">
 <h4 id="_what_s_new_in_this_release"><a class="anchor" href="#_what_s_new_in_this_release"></a><a class="link" href="#_what_s_new_in_this_release">What&#8217;s New In This release</a></h4>
+
+</div>
+</div>
+<div class="sect2">
+<h3 id="_1_2_rc3_2018_09_16"><a class="anchor" href="#_1_2_rc3_2018_09_16"></a><a class="link" href="#_1_2_rc3_2018_09_16">1.2-RC3 (2018-09-16)</a></h3>
+<div class="sect3">
+<h4 id="_what_s_new_in_this_release_2"><a class="anchor" href="#_what_s_new_in_this_release_2"></a><a class="link" href="#_what_s_new_in_this_release_2">What&#8217;s New In This release</a></h4>
 <div class="ulist">
 <ul>
 <li>
-<p>Improve <code>@PendingFeature</code> to now have an optional <code>reason</code> attribute</p>
+<p>Add support for Java 11+ (#895, #902, #903)</p>
+</li>
+<li>
+<p>Improve <code>@PendingFeature</code> to now have an optional <code>reason</code> attribute (#907)</p>
+</li>
+<li>
+<p>Fix use String renderer for Class instances (#909)</p>
+</li>
+<li>
+<p>Fix mark new Spring extensions as @Beta (#890)</p>
+</li>
+<li>
+<p>Fix exclude groovy-groovysh from compile dependencies (#882)</p>
 </li>
 </ul>
+</div>
+<div class="paragraph">
+<p>Thanks to all the contributors to this release: Marc Philipp, Marcin Zajączkowski, signalw</p>
 </div>
 </div>
 </div>
 <div class="sect2">
 <h3 id="_1_2_rc2_2018_09_04"><a class="anchor" href="#_1_2_rc2_2018_09_04"></a><a class="link" href="#_1_2_rc2_2018_09_04">1.2-RC2 (2018-09-04)</a></h3>
 <div class="sect3">
-<h4 id="_what_s_new_in_this_release_2"><a class="anchor" href="#_what_s_new_in_this_release_2"></a><a class="link" href="#_what_s_new_in_this_release_2">What&#8217;s New In This release</a></h4>
+<h4 id="_what_s_new_in_this_release_3"><a class="anchor" href="#_what_s_new_in_this_release_3"></a><a class="link" href="#_what_s_new_in_this_release_3">What&#8217;s New In This release</a></h4>
 <div class="ulist">
 <ul>
 <li>
@@ -4484,7 +4511,7 @@ Grails 2.3 and higher have built-in Spock support and do not require a plugin.
 <p>Breaking Changes: Spock 1.2 drops support for Java 6, Groovy 2.0 and Groovy 2.3</p>
 </div>
 <div class="sect3">
-<h4 id="_what_s_new_in_this_release_3"><a class="anchor" href="#_what_s_new_in_this_release_3"></a><a class="link" href="#_what_s_new_in_this_release_3">What&#8217;s New In This release</a></h4>
+<h4 id="_what_s_new_in_this_release_4"><a class="anchor" href="#_what_s_new_in_this_release_4"></a><a class="link" href="#_what_s_new_in_this_release_4">What&#8217;s New In This release</a></h4>
 <div class="ulist">
 <ul>
 <li>
@@ -4594,7 +4621,7 @@ Burk Hufnagel</p>
 <div class="sect2">
 <h3 id="_1_1_2017_05_01"><a class="anchor" href="#_1_1_2017_05_01"></a><a class="link" href="#_1_1_2017_05_01">1.1 (2017-05-01)</a></h3>
 <div class="sect3">
-<h4 id="_what_s_new_in_this_release_4"><a class="anchor" href="#_what_s_new_in_this_release_4"></a><a class="link" href="#_what_s_new_in_this_release_4">What&#8217;s New In This release</a></h4>
+<h4 id="_what_s_new_in_this_release_5"><a class="anchor" href="#_what_s_new_in_this_release_5"></a><a class="link" href="#_what_s_new_in_this_release_5">What&#8217;s New In This release</a></h4>
 <div class="ulist">
 <ul>
 <li>
@@ -4616,7 +4643,7 @@ Burk Hufnagel</p>
 <p>This should be the last rc for 1.1</p>
 </div>
 <div class="sect3">
-<h4 id="_what_s_new_in_this_release_5"><a class="anchor" href="#_what_s_new_in_this_release_5"></a><a class="link" href="#_what_s_new_in_this_release_5">What&#8217;s New In This release</a></h4>
+<h4 id="_what_s_new_in_this_release_6"><a class="anchor" href="#_what_s_new_in_this_release_6"></a><a class="link" href="#_what_s_new_in_this_release_6">What&#8217;s New In This release</a></h4>
 <div class="ulist">
 <ul>
 <li>
@@ -4671,7 +4698,7 @@ Burk Hufnagel</p>
 <p>1.1 should be here soon but in the meantime there&#8217;s a new release candidate.</p>
 </div>
 <div class="sect3">
-<h4 id="_what_s_new_in_this_release_6"><a class="anchor" href="#_what_s_new_in_this_release_6"></a><a class="link" href="#_what_s_new_in_this_release_6">What&#8217;s New In This release</a></h4>
+<h4 id="_what_s_new_in_this_release_7"><a class="anchor" href="#_what_s_new_in_this_release_7"></a><a class="link" href="#_what_s_new_in_this_release_7">What&#8217;s New In This release</a></h4>
 <div class="ulist">
 <ul>
 <li>
@@ -4695,7 +4722,7 @@ Currently some features are incubating.
 We encourage users to try out these new features and provide feedback so we can finalize the content for a 1.1 release.</p>
 </div>
 <div class="sect3">
-<h4 id="_what_s_new_in_this_release_7"><a class="anchor" href="#_what_s_new_in_this_release_7"></a><a class="link" href="#_what_s_new_in_this_release_7">What&#8217;s New In This release</a></h4>
+<h4 id="_what_s_new_in_this_release_8"><a class="anchor" href="#_what_s_new_in_this_release_8"></a><a class="link" href="#_what_s_new_in_this_release_8">What&#8217;s New In This release</a></h4>
 <div class="ulist">
 <ul>
 <li>
@@ -4755,7 +4782,7 @@ Cédric Champeau, David Dawson, Rob Fletcher, Sean Gilligan, Ken Kousen, Guillau
 Howard M. Lewis Ship, Ken Sipe, Venkat Subramaniam, Russel Winder.</p>
 </div>
 <div class="sect3">
-<h4 id="_what_s_new_in_this_release_8"><a class="anchor" href="#_what_s_new_in_this_release_8"></a><a class="link" href="#_what_s_new_in_this_release_8">What&#8217;s New In This Release</a></h4>
+<h4 id="_what_s_new_in_this_release_9"><a class="anchor" href="#_what_s_new_in_this_release_9"></a><a class="link" href="#_what_s_new_in_this_release_9">What&#8217;s New In This Release</a></h4>
 <div class="ulist">
 <ul>
 <li>
@@ -5851,7 +5878,7 @@ that answer, closeTo(<span class="integer">42</span>, <span class="float">0.001<
 <div id="footer">
 <div id="footer-text">
 Version 1.2-SNAPSHOT<br>
-Last updated 2018-09-16 18:38:27 UTC
+Last updated 2018-09-16 19:32:43 UTC
 </div>
 </div>
 </body>

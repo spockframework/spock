@@ -89,6 +89,20 @@ class DiffedObjectRendering extends EmbeddedSpecification {
     failure.expected == "long1: 2\nstring: fun2\n"
   }
 
+  @Issue("https://github.com/spockframework/spock/issues/909")
+  def 'render class properly'() {
+    when:
+    runner.runFeatureBody '''
+       expect:
+        new SocketTimeoutException().getClass() == new ClassNotFoundException().getClass()
+    '''
+
+    then:
+    SpockComparisonFailure failure = thrown()
+    failure.actual == "class java.net.SocketTimeoutException\n"
+    failure.expected == "class java.lang.ClassNotFoundException\n"
+  }
+
   interface RenderBean {
     long getLong()
   }

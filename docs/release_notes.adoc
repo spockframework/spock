@@ -2,11 +2,19 @@
 include::include.adoc[]
 
 
-== 1.2-RC3 (tbd)
+== 1.2-RC3 (2018-09-16)
 
 === What's New In This release
 
-* Improve `@PendingFeature` to now have an optional `reason` attribute
+* Add support for Java 11+ (#895, #902, #903)
+* Improve `@PendingFeature` to now have an optional `reason` attribute (#907)
+* Fix use String renderer for Class instances (#909)
+* Fix mark new Spring extensions as @Beta (#890)
+* Fix exclude groovy-groovysh from compile dependencies (#882)
+
+
+Thanks to all the contributors to this release: Marc Philipp, Marcin Zajączkowski, signalw
+
 
 == 1.2-RC2 (2018-09-04)
 

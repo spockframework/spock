@@ -17,7 +17,7 @@ http://webconsole.spockframework.org.
 
 Latest Versions
 ---------------
-The latest release version is **1.2-RC2** (1.2-RC2-groovy-2.4, 1.2-RC2-groovy-2.5), released on 2018-08-14. The
+The latest release version is **1.2-RC3** (1.2-RC3-groovy-2.4, 1.2-RC3-groovy-2.5), released on 2018-09-16. The
 current development version is **1.2-SNAPSHOT** (1.2-groovy-2.4-SNAPSHOT and 1.2-groovy-2.5-SNAPSHOT).
 
 **NOTE:** Spock 1.2 drops support for Java 6, Groovy 2.0 and Groovy 2.3.

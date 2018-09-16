@@ -2,6 +2,10 @@
 include::include.adoc[]
 
 
+== 1.2-RC4 (tbd)
+
+=== What's New In This release
+
 == 1.2-RC3 (2018-09-16)
 
 === What's New In This release

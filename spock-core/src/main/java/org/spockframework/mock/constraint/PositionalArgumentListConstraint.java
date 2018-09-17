@@ -17,7 +17,7 @@
 package org.spockframework.mock.constraint;
 
 import org.spockframework.mock.*;
-import org.spockframework.util.CollectionUtil;
+import org.spockframework.util.*;
 
 import java.lang.reflect.Array;
 import java.util.*;
@@ -40,6 +40,33 @@ public class PositionalArgumentListConstraint implements IInvocationConstraint {
     if (areConstraintsSatisfiedBy(args)) return true;
     if (!hasExpandableVarArgs(invocation.getMethod(), args)) return false;
     return areConstraintsSatisfiedBy(expandVarArgs(args));
+  }
+
+  @Override
+  public String describeMismatch(IMockInvocation invocation) {
+    List<Object> args = invocation.getArguments();
+
+    if (argConstraints.isEmpty()) return "<no args expected>";
+    int constraintsToArgs = argConstraints.size() - args.size();
+    if (constraintsToArgs > 0) return "<too few arguments>";
+    if (constraintsToArgs < 0) return "<too many arguments>";
+
+    StringBuilder result = new StringBuilder("One or more Arguments(s) didn't match:\n");
+    for (int i = 0; i < argConstraints.size(); i++) {
+      if (i > 0) {
+        result.append("\n");
+      }
+      result.append(i).append(": ");
+      IArgumentConstraint constraint = argConstraints.get(i);
+      if (constraint.isSatisfiedBy(args.get(i))) {
+        result.append("<matches>");
+      } else {
+        result.append(TextUtil.changeSubsequentIndent(constraint.describeMismatch(args.get(i)), 3 + (i / 10), "\n"));
+      }
+    }
+
+    return result.toString();
+
   }
 
   /**

@@ -18,6 +18,7 @@ package org.spockframework.mock.constraint;
 
 import org.spockframework.mock.IArgumentConstraint;
 import org.spockframework.runtime.*;
+import org.spockframework.util.CollectionUtil;
 
 /**
  *
@@ -37,5 +38,16 @@ public class EqualArgumentConstraint implements IArgumentConstraint {
     }
 
     return GroovyRuntimeUtil.equals(arg, expected);
+  }
+
+  @Override
+  public String describeMismatch(Object arg) {
+    if (HamcrestFacade.isMatcher(expected)) {
+      return HamcrestFacade.getFailureDescription(expected, arg, null);
+    }
+    Condition condition = new Condition(CollectionUtil.listOf(arg, expected, false),
+      "argument == expected", null, null,
+      null, null);
+    return condition.getRendering();
   }
 }

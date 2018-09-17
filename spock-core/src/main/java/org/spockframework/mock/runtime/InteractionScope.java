@@ -33,7 +33,7 @@ public class InteractionScope implements IInteractionScope {
   private int currentExecutionZone = 0;
 
   @Override
-  public void addInteraction(IMockInteraction interaction) {
+  public void addInteraction(final IMockInteraction interaction) {
     interactions.add(new MockInteractionDecorator(interaction) {
       final int myRegistrationZone = currentRegistrationZone;
 
@@ -54,6 +54,11 @@ public class InteractionScope implements IInteractionScope {
         }
         ExceptionUtil.throwWithSuppressed(invocationException, wrongInvocationOrderError);
         return result;
+      }
+
+      @Override
+      public String describeMismatch(IMockInvocation invocation) {
+        return interaction.describeMismatch(invocation);
       }
     });
   }

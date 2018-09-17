@@ -17,6 +17,7 @@
 package org.spockframework.mock.runtime;
 
 import org.spockframework.mock.*;
+import org.spockframework.util.TextUtil;
 
 import java.util.*;
 
@@ -96,6 +97,26 @@ public class MockInteraction implements IMockInteraction {
       weight--;
     }
     return score;
+  }
+
+  @Override
+  public String describeMismatch(IMockInvocation invocation) {
+    List<String> mismatches = new ArrayList<>();
+    for (IInvocationConstraint constraint : constraints) {
+      boolean satisfied;
+      try {
+        satisfied = constraint.isSatisfiedBy(invocation);
+      } catch (Exception e) {
+        // can happen because we evaluate (code) argument constraints
+        // even if target and/or method constraints aren't satisfied
+        satisfied = false;
+      }
+
+      if (!satisfied) {
+        mismatches.add(constraint.describeMismatch(invocation));
+      }
+    }
+    return TextUtil.join("\n", mismatches);
   }
 
   @Override

@@ -16,9 +16,9 @@
 
 package org.spockframework.mock;
 
-import java.util.List;
-
 import org.spockframework.util.Nullable;
+
+import java.util.List;
 
 /**
  * An anticipated interaction between the SUT and one or more mock objects.
@@ -40,6 +40,8 @@ public interface IMockInteraction {
   List<IMockInvocation> getAcceptedInvocations();
 
   int computeSimilarityScore(IMockInvocation invocation);
+
+  String describeMismatch(IMockInvocation invocation);
 
   boolean isSatisfied();
 

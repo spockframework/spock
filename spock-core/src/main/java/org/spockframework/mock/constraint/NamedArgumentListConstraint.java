@@ -17,7 +17,7 @@
 package org.spockframework.mock.constraint;
 
 import org.spockframework.mock.*;
-import org.spockframework.util.Assert;
+import org.spockframework.util.*;
 
 import java.util.*;
 
@@ -45,6 +45,56 @@ public class NamedArgumentListConstraint implements IInvocationConstraint {
       return matchesArgMap(new HashMap((Map)args.get(0)));
 
     return matchesArgList(new ArrayList<>(args));
+  }
+
+  @Override
+  @SuppressWarnings("unchecked")
+  public String describeMismatch(IMockInvocation invocation) {
+    List<Object> args = invocation.getArguments();
+    if (args.size() == 1 && args.get(0) instanceof Map)
+      return describeMismatchArgMap(new HashMap((Map)args.get(0)));
+    return null;
+  }
+
+  private String describeMismatchArgMap(Map argMap) {
+
+    StringBuilder result = new StringBuilder("One or more Arguments(s) didn't match:\n");
+
+    // first pass: named matchers
+    for (int i = 0; i < argConstraints.size(); i++) {
+      Object name = argNames.get(i);
+      if ("_".equals(name)) continue;
+      IArgumentConstraint matcher = argConstraints.get(i);
+      if (!argMap.containsKey(name)) {
+        result.append("[").append(name).append("]: <missing>\n");
+      } else {
+        Object arg = argMap.remove(name);
+        if (!matcher.isSatisfiedBy(arg)) {
+          int prev = result.length();
+          result.append("[").append(name).append("]: ");
+          int indent = result.length() - prev;
+          result.append(TextUtil.changeSubsequentIndent(matcher.describeMismatch(arg), indent, "\n"))
+            .append("\n");
+        }
+      }
+    }
+
+    // second pass: unnamed matchers
+    nextMatcher:
+    for (int i = 0; i < argConstraints.size(); i++) {
+      Object name = argNames.get(i);
+      if (!"_".equals(name)) continue;
+      IArgumentConstraint matcher = argConstraints.get(i);
+
+      @SuppressWarnings("unchecked")
+      Iterator<Object> argIter = argMap.values().iterator();
+      while (argIter.hasNext())
+        if (matcher.isSatisfiedBy(argIter.next())) {
+          argIter.remove();
+          continue nextMatcher;
+        }
+    }
+    return result.toString();
   }
 
   private boolean matchesArgList(List<Object> args) {

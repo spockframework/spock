@@ -49,6 +49,15 @@ public abstract class TextUtil {
     return result;
   }
 
+  public static String changeSubsequentIndent(String block, int delta, String lineSeparator) {
+    List<String> lines = Arrays.asList(block.split(lineSeparator));
+    if (lines.size() == 1) {
+      return block;
+    }
+    changeIndent(lines.subList(1, lines.size()), delta);
+    return join(lineSeparator, lines);
+  }
+
   public static String changeIndent(String line, int delta) {
     return delta > 0 ? repeatChar(' ', delta) + line : line.substring(-delta);
   }

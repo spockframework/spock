@@ -35,6 +35,11 @@ public class TargetConstraint implements IInvocationConstraint, IInteractionAwar
   }
 
   @Override
+  public String describeMismatch(IMockInvocation invocation) {
+    return null;
+  }
+
+  @Override
   public void setInteraction(IMockInteraction interaction) {
     this.interaction = interaction;
   }

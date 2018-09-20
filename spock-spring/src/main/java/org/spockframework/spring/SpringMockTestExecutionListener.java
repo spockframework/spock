@@ -105,5 +105,8 @@ public class SpringMockTestExecutionListener extends AbstractSpringTestExecution
 
   @Override
   public void afterTestClass(SpringTestContext testContext) throws Exception {
+    if (testContext instanceof AutoCloseable) {
+      ((AutoCloseable) testContext).close();
+    }
   }
 }

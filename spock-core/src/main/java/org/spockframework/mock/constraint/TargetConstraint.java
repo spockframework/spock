@@ -17,6 +17,8 @@
 package org.spockframework.mock.constraint;
 
 import org.spockframework.mock.*;
+import org.spockframework.runtime.Condition;
+import org.spockframework.util.CollectionUtil;
 
 /**
  * @author Peter Niederwieser
@@ -36,7 +38,11 @@ public class TargetConstraint implements IInvocationConstraint, IInteractionAwar
 
   @Override
   public String describeMismatch(IMockInvocation invocation) {
-    return null;
+
+    Condition condition = new Condition(CollectionUtil.listOf(  invocation.getMockObject().getInstance(), target, false),
+      "instance == target", null, null,
+      null, null);
+    return condition.getRendering();
   }
 
   @Override

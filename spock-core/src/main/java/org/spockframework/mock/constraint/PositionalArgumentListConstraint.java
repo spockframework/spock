@@ -51,7 +51,7 @@ public class PositionalArgumentListConstraint implements IInvocationConstraint {
     if (constraintsToArgs > 0) return "<too few arguments>";
     if (constraintsToArgs < 0) return "<too many arguments>";
 
-    StringBuilder result = new StringBuilder("One or more Arguments(s) didn't match:\n");
+    StringBuilder result = new StringBuilder("One or more arguments(s) didn't match:\n");
     for (int i = 0; i < argConstraints.size(); i++) {
       if (i > 0) {
         result.append("\n");

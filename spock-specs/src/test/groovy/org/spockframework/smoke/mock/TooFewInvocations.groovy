@@ -493,6 +493,39 @@ age          false
     """.trim()
   }
 
+
+  def "can describe target mismatch"() {
+    when:
+    runner.addClassImport(Person)
+    runner.runFeatureBody("""
+def fred = Mock(Person)
+def barney = Mock(Person)
+
+when:
+def name = fred.name
+
+then:
+1 * barney.name
+    """)
+
+    then:
+    TooFewInvocationsError e = thrown()
+    e.message.trim() == """
+Too few invocations for:
+
+1 * barney.name   (0 invocations)
+
+Unmatched invocations (ordered by similarity):
+
+1 * fred.getName()
+instance == target
+|        |  |
+|        |  Mock for type 'Person' named 'barney'
+|        false
+Mock for type 'Person' named 'fred'
+    """.trim()
+  }
+
   def "can describe namedArgument on normal method mismatch"() {
     when:
     runner.addClassImport(Person)

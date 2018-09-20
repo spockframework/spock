@@ -58,7 +58,7 @@ public class NamedArgumentListConstraint implements IInvocationConstraint {
 
   private String describeMismatchArgMap(Map argMap) {
 
-    StringBuilder result = new StringBuilder("One or more Arguments(s) didn't match:\n");
+    StringBuilder result = new StringBuilder("One or more arguments(s) didn't match:\n");
 
     // first pass: named matchers
     for (int i = 0; i < argConstraints.size(); i++) {

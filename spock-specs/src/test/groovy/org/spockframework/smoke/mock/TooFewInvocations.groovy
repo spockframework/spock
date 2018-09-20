@@ -50,7 +50,7 @@ Too few invocations for:
 Unmatched invocations (ordered by similarity):
 
 1 * list.add(1)
-One or more Arguments(s) didn't match:
+One or more arguments(s) didn't match:
 0: argument == expected
    |        |  |
    1        |  2
@@ -121,7 +121,7 @@ Too few invocations for:
 Unmatched invocations (ordered by similarity):
 
 1 * list.add(2)
-One or more Arguments(s) didn't match:
+One or more arguments(s) didn't match:
 0: argument == expected
    |        |  |
    2        |  1
@@ -134,7 +134,7 @@ remove     false
            (remove)
            (add---)
 
-One or more Arguments(s) didn't match:
+One or more arguments(s) didn't match:
 0: argument == expected
    |        |  |
    2        |  1
@@ -147,7 +147,7 @@ Too few invocations for:
 Unmatched invocations (ordered by similarity):
 
 1 * list.remove(2)
-One or more Arguments(s) didn't match:
+One or more arguments(s) didn't match:
 0: argument == expected
    |        |  |
    2        |  1
@@ -160,7 +160,7 @@ add        false
            (add---)
            (remove)
 
-One or more Arguments(s) didn't match:
+One or more arguments(s) didn't match:
 0: argument == expected
    |        |  |
    2        |  1
@@ -230,7 +230,7 @@ Too few invocations for:
 Unmatched invocations (ordered by similarity):
 
 1 * fred.wife('Fred', 'Flintstone', 30, 'Quarry')
-One or more Arguments(s) didn't match:
+One or more arguments(s) didn't match:
 0: argument == expected
    |        |  |
    Fred     |  Wilma
@@ -273,7 +273,7 @@ Too few invocations for:
 Unmatched invocations (ordered by similarity):
 
 1 * fred.wife('Wilma', 'Flintstone', 30, 'Bedrock')
-One or more Arguments(s) didn't match:
+One or more arguments(s) didn't match:
 0: <matches>
 1: <matches>
 2: <Code argument did not match>
@@ -305,7 +305,7 @@ Too few invocations for:
 Unmatched invocations (ordered by similarity):
 
 1 * fred.wife('Wilma', 'Flintstone', 30, 'Bedrock')
-One or more Arguments(s) didn't match:
+One or more arguments(s) didn't match:
 0: <matches>
 1: <matches>
 2: Expected: <20>
@@ -337,7 +337,7 @@ Too few invocations for:
 Unmatched invocations (ordered by similarity):
 
 1 * fred.wife('Wilma', 'Flintstone', 30, 'Bedrock')
-One or more Arguments(s) didn't match:
+One or more arguments(s) didn't match:
 0: <matches>
 1: <matches>
 2: argument instanceof java.lang.String
@@ -577,7 +577,7 @@ Too few invocations for:
 Unmatched invocations (ordered by similarity):
 
 1 * fred.familiy(['firstName':'Wilma', 'surname':'Flintstone', 'age':30, 'address':'Quarry'])
-One or more Arguments(s) didn't match:
+One or more arguments(s) didn't match:
 [age]: argument instanceof java.lang.String
        |        |
        |        false

@@ -97,7 +97,7 @@ null (void)
  | |  |  |
  | |  |  false
  | |  1 (java.lang.String)
- | false
+ | false (java.lang.Boolean)
  1 (java.lang.Integer)
     """, {
       def x = 1
@@ -113,7 +113,7 @@ null (void)
 (x == y) instanceof String
  | |  |  |
  1 |  1  false
-   true
+   true (java.lang.Boolean)
     """, {
       int x = 1
       BigDecimal y = 1

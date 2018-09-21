@@ -42,7 +42,7 @@ then:
 
     then:
     TooFewInvocationsError e = thrown()
-    e.message.trim() == """
+    e.message.trim() == '''
 Too few invocations for:
 
 1 * list.add(2)   (0 invocations)
@@ -64,12 +64,34 @@ remove     false
            (add---)
 
 1 * list2.add(2)
-null  // TODO Fix
+instance == target
+|        |  |
+|        |  Mock for type 'List' named 'list\'
+|        false
+|        1 difference (97% similarity)
+|        Mock for type 'List' named 'list(2)\'
+|        Mock for type 'List' named 'list(-)\'
+Mock for type 'List' named 'list2\'
+
 1 * map.size()
-    """.trim()
-    // TODO figure out what to do about the following line, which is caused by interaction ordering not matching
-    // 1 * list2.add(2)
-    // null
+instance == target
+|        |  |
+|        |  Mock for type 'List' named 'list\'
+|        false
+|        8 differences (75% similarity)
+|        Mock for type '(Map-)' named '(map-)\'
+|        Mock for type '(List)' named '(list)\'
+Mock for type 'Map' named 'map\'
+
+methodName == "add"
+|          |
+size       false
+           4 differences (0% similarity)
+           (size)
+           (add-)
+
+<too few arguments>
+    '''.trim()
   }
 
   def "makes it clear if no unmatched invocations exist"() {
@@ -522,6 +544,9 @@ instance == target
 |        |  |
 |        |  Mock for type 'Person' named 'barney'
 |        false
+|        4 differences (89% similarity)
+|        Mock for type 'Person' named '(f-)r(-)e(d)'
+|        Mock for type 'Person' named '(ba)r(n)e(y)'
 Mock for type 'Person' named 'fred'
     """.trim()
   }
@@ -549,9 +574,8 @@ Too few invocations for:
 Unmatched invocations (ordered by similarity):
 
 1 * fred.wife('Wilma', 'Flintstone', 30, 'Bedrock')
-null // TODO Fix
+<named arguments expected>
     """.trim()
-    // TODO fix this
   }
 
   def "can describe namedArgument on map method mismatch"() {

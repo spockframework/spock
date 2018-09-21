@@ -63,7 +63,7 @@ public class TooFewInvocationsError extends InteractionNotSatisfiedError {
           builder.append(" * ");
           builder.append(scoredInvocation.invocation);
           builder.append('\n');
-          if (idx++ < 3) {
+          if (idx++ < 5) {
             builder.append(interaction.describeMismatch(scoredInvocation.invocation));
             builder.append('\n');
           }

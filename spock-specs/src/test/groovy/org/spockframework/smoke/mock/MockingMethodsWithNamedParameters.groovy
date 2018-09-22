@@ -23,11 +23,11 @@ class MockingMethodsWithNamedParameters extends Specification {
 
     when:
     collaborator.method(arg1: 1, arg2: 2)
+    collaborator.method(arg1: 1, arg2: 2)
 
     then:
     1 * collaborator.method([arg1: 1, arg2: 2])
-    // TODO: This fails to compile
-    // 1 * collaborator.method(arg1: 1, arg2: 2)
+    1 * collaborator.method(arg1: 1, arg2: 2)
   }
 }
 

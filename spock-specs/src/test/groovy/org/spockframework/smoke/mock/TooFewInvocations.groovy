@@ -515,7 +515,6 @@ age          false
     """.trim()
   }
 
-
   def "can describe target mismatch"() {
     when:
     runner.addClassImport(Person)
@@ -548,6 +547,73 @@ instance == target
 |        Mock for type 'Person' named '(f-)r(-)e(d)'
 |        Mock for type 'Person' named '(ba)r(n)e(y)'
 Mock for type 'Person' named 'fred'
+    """.trim()
+  }
+
+  def "can describe not equal mismatch"() {
+    when:
+    runner.addClassImport(Person)
+    runner.runFeatureBody("""
+def fred = Mock(Person)
+
+when:
+fred.familiy(null)
+
+then:
+1 * fred.familiy(!null)
+    """)
+
+    then:
+    TooFewInvocationsError e = thrown()
+    e.message.trim() == """
+Too few invocations for:
+
+1 * fred.familiy(!null)   (0 invocations)
+
+Unmatched invocations (ordered by similarity):
+
+1 * fred.familiy(null)
+One or more arguments(s) didn't match:
+0: <not> EqualArgument (matched)
+    """.trim()
+  }
+
+  def "can describe not other mismatch"() {
+    when:
+    runner.addClassImport(Person)
+    runner.runFeatureBody("""
+def fred = Mock(Person)
+
+when:
+fred.familiy([:])
+
+then:
+1 * fred.familiy(!{ it.size() == 0 })
+1 * fred.familiy(!(_ as Map))
+    """)
+
+    then:
+    TooFewInvocationsError e = thrown()
+    e.message.trim() == """
+Too few invocations for:
+
+1 * fred.familiy(!{ it.size() == 0 })   (0 invocations)
+
+Unmatched invocations (ordered by similarity):
+
+1 * fred.familiy([:])
+One or more arguments(s) didn't match:
+0: <not> CodeArgument (matched)
+
+Too few invocations for:
+
+1 * fred.familiy(!(_ as Map))   (0 invocations)
+
+Unmatched invocations (ordered by similarity):
+
+1 * fred.familiy([:])
+One or more arguments(s) didn't match:
+0: <not> TypeArgument (matched)
     """.trim()
   }
 
@@ -613,6 +679,61 @@ One or more arguments(s) didn't match:
                     6 differences (14% similarity)
                     (Qua)r(ry-)
                     (Bed)r(ock)
+    """.trim()
+  }
+
+  def "can describe namedArgument on map method size mismatch"() {
+    when:
+    runner.addClassImport(Person)
+    runner.runFeatureBody("""
+def fred = Mock(Person)
+
+when:
+fred.familiy(firstName: "Wilma", surname: "Flintstone")
+
+then:
+1 * fred.familiy(firstName: "Wilma", surname: "Flintstone", address: "Bedrock")
+1 * fred.familiy(firstName: "Wilma")
+1 * fred.familiy(age: 30, address: "Quarry")
+    """)
+
+    then:
+    TooFewInvocationsError e = thrown()
+    e.message.trim() == """
+Too few invocations for:
+
+1 * fred.familiy(firstName: "Wilma", surname: "Flintstone", address: "Bedrock")   (0 invocations)
+
+Unmatched invocations (ordered by similarity):
+
+1 * fred.familiy(['firstName':'Wilma', 'surname':'Flintstone'])
+One or more arguments(s) didn't match:
+[address]: <missing>
+
+
+Too few invocations for:
+
+1 * fred.familiy(firstName: "Wilma")   (0 invocations)
+
+Unmatched invocations (ordered by similarity):
+
+1 * fred.familiy(['firstName':'Wilma', 'surname':'Flintstone'])
+One or more arguments(s) didn't match:
+[surname]: <unexpected argument>
+
+
+Too few invocations for:
+
+1 * fred.familiy(age: 30, address: "Quarry")   (0 invocations)
+
+Unmatched invocations (ordered by similarity):
+
+1 * fred.familiy(['firstName':'Wilma', 'surname':'Flintstone'])
+One or more arguments(s) didn't match:
+[age]: <missing>
+[address]: <missing>
+[firstName]: <unexpected argument>
+[surname]: <unexpected argument>
     """.trim()
   }
 

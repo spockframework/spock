@@ -60,8 +60,6 @@ public class NamedArgumentListConstraint implements IInvocationConstraint {
   private String describeMismatchArgMap(Map argMap) {
 
     StringBuilder result = new StringBuilder("One or more arguments(s) didn't match:\n");
-
-    // first pass: named matchers
     for (int i = 0; i < argConstraints.size(); i++) {
       Object name = argNames.get(i);
       IArgumentConstraint matcher = argConstraints.get(i);
@@ -78,11 +76,16 @@ public class NamedArgumentListConstraint implements IInvocationConstraint {
         }
       }
     }
+    for (Object arg : argMap.keySet()) {
+      result.append("[").append(arg).append("]: <unexpected argument>\n");
+    }
     return result.toString();
   }
 
   private boolean matchesArgMap(Map argMap) {
-    // first pass: named matchers
+    if (argConstraints.size() != argMap.size()) {
+      return false;
+    }
     for (int i = 0; i < argConstraints.size(); i++) {
       Object name = argNames.get(i);
       IArgumentConstraint matcher = argConstraints.get(i);

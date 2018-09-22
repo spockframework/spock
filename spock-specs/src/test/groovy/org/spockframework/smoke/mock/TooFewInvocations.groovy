@@ -694,7 +694,7 @@ fred.familiy(firstName: "Wilma", surname: "Flintstone")
 then:
 1 * fred.familiy(firstName: "Wilma", surname: "Flintstone", address: "Bedrock")
 1 * fred.familiy(firstName: "Wilma")
-1 * fred.familiy(age: 30, address: "Quarry")
+1 * fred.familiy(surname: "Flintstone", address: "Quarry")
     """)
 
     then:
@@ -724,16 +724,14 @@ One or more arguments(s) didn't match:
 
 Too few invocations for:
 
-1 * fred.familiy(age: 30, address: "Quarry")   (0 invocations)
+1 * fred.familiy(surname: "Flintstone", address: "Quarry")   (0 invocations)
 
 Unmatched invocations (ordered by similarity):
 
 1 * fred.familiy(['firstName':'Wilma', 'surname':'Flintstone'])
 One or more arguments(s) didn't match:
-[age]: <missing>
 [address]: <missing>
 [firstName]: <unexpected argument>
-[surname]: <unexpected argument>
     """.trim()
   }
 

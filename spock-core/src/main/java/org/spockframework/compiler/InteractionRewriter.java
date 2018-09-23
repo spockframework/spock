@@ -250,6 +250,10 @@ public class InteractionRewriter {
       addPositionalArgs((ArgumentListExpression) args);
     else if (args instanceof NamedArgumentListExpression)
       addNamedArgs((NamedArgumentListExpression) args);
+    else if (args instanceof TupleExpression
+        && ((TupleExpression)args).getExpression(0) instanceof NamedArgumentListExpression)
+      //for some reason groovy wraps NamedArgumentListExpression into a TupleExpression
+      addNamedArgs((NamedArgumentListExpression) ((TupleExpression)args).getExpression(0));
     else Assert.that(false, "unknown kind of argument list: " + args);
   }
 

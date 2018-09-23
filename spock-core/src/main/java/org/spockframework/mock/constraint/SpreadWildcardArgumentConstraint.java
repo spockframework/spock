@@ -32,4 +32,9 @@ public class SpreadWildcardArgumentConstraint implements IArgumentConstraint {
   public boolean isSatisfiedBy(Object arg) {
     throw new InvalidSpecException("*_ may only appear at the end of an argument list");
   }
+
+  @Override
+  public String describeMismatch(Object arg) {
+    throw new InvalidSpecException("*_ may only appear at the end of an argument list");
+  }
 }

@@ -62,7 +62,7 @@ null == "foo"
              false
              1 difference (88% similarity)
              the qui(c)k
-             the qui(r)k
+             the qui(r)k (java.lang.Boolean)
     """, {
       assert ("the quick" == "the quirk") instanceof String
     }
@@ -74,7 +74,8 @@ null == "foo"
     isRendered """
 ("the quick" == "the quick") instanceof String
              |               |
-             true            false
+             |               false
+             true (java.lang.Boolean)
     """, {
       assert ("the quick" == "the quick") instanceof String
     }

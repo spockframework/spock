@@ -31,4 +31,9 @@ public class WildcardArgumentConstraint implements IArgumentConstraint {
   public boolean isSatisfiedBy(Object arg) {
     return true;
   }
+
+  @Override
+  public String describeMismatch(Object arg) {
+    return "<wildcard always matches>";
+  }
 }

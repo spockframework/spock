@@ -36,4 +36,9 @@ public class CodeArgumentConstraint implements IArgumentConstraint {
   public boolean isSatisfiedBy(Object argument) {
     return GroovyRuntimeUtil.isTruthy(GroovyRuntimeUtil.invokeClosure(code, argument));
   }
+
+  @Override
+  public String describeMismatch(Object arg) {
+    return "<Code argument did not match>";
+  }
 }

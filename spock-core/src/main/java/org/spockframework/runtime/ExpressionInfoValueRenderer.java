@@ -90,6 +90,10 @@ public class ExpressionInfoValueRenderer {
     result = renderAsFailedEqualityComparison(expr);
     if (result != null) return result;
 
+
+    result = renderAsFailedInstanceOfComparison(expr);
+    if (result != null) return result;
+
     return renderToStringOrDump(expr);
   }
 
@@ -171,6 +175,14 @@ public class ExpressionInfoValueRenderer {
       addTypeHint(expr2);
     }
 
+    return "false";
+  }
+
+  private String renderAsFailedInstanceOfComparison(ExpressionInfo expr) {
+    if (!(Boolean.FALSE.equals(expr.getValue()))) return null;
+    if (!expr.isInstanceOfComparison()) return null;
+
+    addTypeHint(expr.getChildren().get(0));
     return "false";
   }
 

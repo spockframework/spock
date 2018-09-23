@@ -28,4 +28,9 @@ public class WildcardMethodNameConstraint implements IInvocationConstraint {
   public boolean isSatisfiedBy(IMockInvocation invocation) {
     return DefaultJavaLangObjectInteractions.INSTANCE.match(invocation) == null;
   }
+
+  @Override
+  public String describeMismatch(IMockInvocation invocation) {
+    return "<Wildcard always matches>";
+  }
 }

@@ -303,6 +303,41 @@ One or more arguments(s) didn't match:
     """.trim()
   }
 
+  def "can describe code argument assertion mismatch"() {
+    when:
+    runner.addClassImport(Person)
+    runner.runFeatureBody("""
+def fred = Mock(Person)
+
+when:
+fred.wife("Wilma", "Flintstone", 30, "Bedrock")
+
+then:
+1 * fred.wife("Wilma", "Flintstone", { assert it < 30}, "Bedrock")
+    """)
+
+    then:
+    TooFewInvocationsError e = thrown()
+    e.message.trim() == """
+Too few invocations for:
+
+1 * fred.wife("Wilma", "Flintstone", { assert it < 30}, "Bedrock")   (0 invocations)
+
+Unmatched invocations (ordered by similarity):
+
+1 * fred.wife('Wilma', 'Flintstone', 30, 'Bedrock')
+One or more arguments(s) didn't match:
+0: <matches>
+1: <matches>
+2: Condition not satisfied:
+   
+   it < 30
+   |  |
+   30 false
+3: <matches>
+    """.trim()
+  }
+
   def "can describe hamcrest matcher argument mismatch"() {
     when:
     runner.addClassImport(Person)

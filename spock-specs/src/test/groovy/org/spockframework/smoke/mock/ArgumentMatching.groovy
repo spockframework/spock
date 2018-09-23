@@ -58,6 +58,16 @@ class ArgumentMatching extends Specification {
     1 * list.add({ it.length() > 1 })
   }
 
+  @FailsWith(value = TooFewInvocationsError, reason = "Should not fail with ConditionNotSatisfiedError from assert")
+  def "match code argument as assertions"() {
+    List list = Mock()
+
+    when:
+    list.add('foo')
+    then:
+    1 * list.add({ assert it.length() == 1 })
+  }
+
   def "match code argument with type"() {
     List list = Mock()
 

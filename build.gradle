@@ -11,7 +11,7 @@ plugins {
 description = "Spock Framework"
 
 ext {
-  baseVersion = "1.2"
+  baseVersion = "1.3"
   snapshotVersion = true
   releaseCandidate = 0
   variants = [2.4, 2.5]

@@ -2,9 +2,58 @@
 include::include.adoc[]
 
 
-== 1.2-RC4 (tbd)
+== 1.2 (2018-09-23)
+
+Breaking Changes: Spock 1.2 drops support for Java 6, Groovy 2.0 and Groovy 2.3
 
 === What's New In This release
+
+* Add support for Java 11+ (https://github.com/spockframework/spock/issues/895[#895], https://github.com/spockframework/spock/issues/902[#902], https://github.com/spockframework/spock/issues/903[#903])
+* Add Groovy 2.5.0 Variant for better Java 10+ Support
+* Add `@SpringBean` and `@SpringSpy` inspired by `@MockBean`, Also add `@StubBeans` (<<extensions.adoc#_annotation_driven,Docs>>)
+* Add `@UnwrapAopProxy` to make automatically unwrap SpringAopProxie
+* Add `@AutoAttach` extension  (<<extensions.adoc#_autoattach,Docs>>)
+* Add `@Retry` extension (<<extensions.adoc#_retry,Docs>>)
+* Add flag to UnrollNameProvider to assert unroll expressions (set the system property `spock.assertUnrollExpressions` to `true`) (https://github.com/spockframework/spock/issues/767[#767])
+* Add automatic module name descriptors for Java 9
+* Add configurable `condition` to `@Retry` extension to allow for customizing when retries should be attempted (<<extensions.adoc#_retry,Docs>>)
+* Improve `@PendingFeature` to now have an optional `reason` attribute (https://github.com/spockframework/spock/issues/907[#907])
+* Improve `@Retry` to be declarable on a spec class which will apply it to all feature methods in that class and subclasses (<<extensions.adoc#_retry,Docs>>)
+* Improve StepwiseExtension mark only subsequent features as skipped in case of failure (https://github.com/spockframework/spock/issues/893[#893])
+* Improve in assertions Spock now uses `DefaultGroovyMethods.dump` instead of `toString` if a class doesn't override the default `Object.toString`.
+* Improve `verifyAll` can now also have a target same as `with`
+* Improve static type hints for `verifyAll` and `with`
+* Improve reporting of exceptions during cleanup, they are now properly reported as suppressed exceptions instead of hiding the real exception
+* Improve default responses for stubs, Java 8 types like `Optional` and `Streams` now return empty, `CompleteableFuture` completes with `null` result
+* Improve support for builder pattern, stubs now return themselves if the return type matches the type of the stub
+* Improve tapestry support with by supporting `@ImportModule`
+* Improve `constructorArgs` for spies can now accept a map directly without the need to wrap it in a list
+* Improve <<modules.adoc#_guice_module,Guice Module>> now automatically attaches detached mocks
+* Improve unmatched mock messages by using `dump` instead of `inspect` for classes which don't provide a custom `toString`
+* Improve spying on concrete instances to enable partial mocking
+* Fix use String renderer for Class instances (https://github.com/spockframework/spock/issues/909[#909])
+* Fix mark new Spring extensions as @Beta (https://github.com/spockframework/spock/issues/890[#890])
+* Fix exclude groovy-groovysh from compile dependencies (https://github.com/spockframework/spock/issues/882[#882])
+* Fix `Retry.Mode.FEATURE` and `Retry.Mode.SETUP_FEATURE_CLEANUP` to make a test pass if a retry was successful.
+* Fix issue with `@SpringBean` mocks throwing `InvocationTargetException` instead of actual declared exceptions (https://github.com/spockframework/spock/issues/878[#878], https://github.com/spockframework/spock/issues/887[#887])
+* Fix void methods with implicit targets failing in `with` and `verifyAll` (https://github.com/spockframework/spock/issues/886[#886])
+* Fix SpockAssertionErrors and its subclasses now are properly `Serializeable`
+* Fix Spring injection of JUnit Rules, due to the changes in 1.1 the rules where initialized before Spring could inject them,
+  this has been fixed by performing the injection earlier in the process
+* Fix SpringMockTestExecutionListener initializes lazy beans
+* Fix OSGi Import-Package header
+* Fix re-declare recorder variables (https://github.com/spockframework/spock/issues/783[#783]), this caused annotations such as `@Slf4j` to break Specifications
+* Fix MissingFieldException in DiffedObjectAsBeanRenderer
+* Fix problems with nested `with` and `verifyAll` method calls
+* Fix assertion of mock invocation order with nested invocations (https://github.com/spockframework/spock/issues/475[#475])
+* Fix ignore inferred type for Spies on existing instance
+* General dependency update
+
+
+Thanks to all the contributors to this release: Marc Philipp, Rob Elliot, jochenberger, Jan Papenbrock, Paul King, Marcin Zajączkowski, mrb-twx,
+Alexander Kazakov, Serban Iordache, Xavier Fournet, timothy-long, John Osberg, AlexElin, Benjamin Muschko, Andreas Neumann, geoand,
+Burk Hufnagel, signalw, Martin Vseticka, Tilman Ginzel
+
 
 == 1.2-RC3 (2018-09-16)
 

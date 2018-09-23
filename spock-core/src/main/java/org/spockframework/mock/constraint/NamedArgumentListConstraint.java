@@ -29,8 +29,10 @@ public class NamedArgumentListConstraint implements IInvocationConstraint {
   // NOTE: why not use List<String> here?
   private final List<Object> argNames;
   private final List<IArgumentConstraint> argConstraints;
+  private final boolean isMixed;
 
-  public NamedArgumentListConstraint(List<Object> argNames, List<IArgumentConstraint> argConstraints) {
+  public NamedArgumentListConstraint(List<Object> argNames, List<IArgumentConstraint> argConstraints, boolean isMixed) {
+    this.isMixed = isMixed;
     Assert.that(argNames.size() == argConstraints.size());
     this.argNames = argNames;
     this.argConstraints = argConstraints;
@@ -41,8 +43,9 @@ public class NamedArgumentListConstraint implements IInvocationConstraint {
   public boolean isSatisfiedBy(IMockInvocation invocation) {
     List<Object> args = invocation.getArguments();
 
-    if (args.size() == 1 && args.get(0) instanceof Map)
-      return matchesArgMap(new HashMap((Map)args.get(0)));
+    if ((args.size() == 1 || isMixed) && args.get(0) instanceof Map) {
+      return matchesArgMap(new HashMap((Map) args.get(0)));
+    }
 
     return false;
   }
@@ -51,7 +54,7 @@ public class NamedArgumentListConstraint implements IInvocationConstraint {
   @SuppressWarnings("unchecked")
   public String describeMismatch(IMockInvocation invocation) {
     List<Object> args = invocation.getArguments();
-    if (args.size() == 1 && args.get(0) instanceof Map)
+    if ((args.size() == 1 || isMixed) && args.get(0) instanceof Map)
       return describeMismatchArgMap(new HashMap((Map)args.get(0)));
 
     return "<named arguments expected>";

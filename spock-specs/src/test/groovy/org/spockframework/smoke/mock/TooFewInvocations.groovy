@@ -771,6 +771,48 @@ One or more arguments(s) didn't match:
   }
 
 
+  def "can describe mixed namedArgument and posidionalArgument mismatch"() {
+    when:
+    runner.addClassImport(Person)
+    runner.runFeatureBody("""
+def fred = Mock(Person)
+
+when:
+fred.named("Wilma", "Flintstone", age: 5, address: "Bedrock")
+
+then:
+1 * fred.named("Pebbles", "Flintstone", age: _ as String, address: "Bedrock")
+    """)
+
+    then:
+    TooFewInvocationsError e = thrown()
+    e.message.trim() == """
+Too few invocations for:
+
+1 * fred.named("Pebbles", "Flintstone", age: _ as String, address: "Bedrock")   (0 invocations)
+
+Unmatched invocations (ordered by similarity):
+
+1 * fred.named(['age':5, 'address':'Bedrock'], 'Wilma', 'Flintstone')
+One or more arguments(s) didn't match:
+[age]: argument instanceof java.lang.String
+       |        |
+       |        false
+       5 (java.lang.Integer)
+
+One or more arguments(s) didn't match:
+0: <matches>
+1: argument == expected
+   |        |  |
+   Wilma    |  Pebbles
+            false
+            6 differences (14% similarity)
+            (Wi--)l(ma)
+            (Pebb)l(es)
+2: <matches>
+    """.trim()
+  }
+
   def "can compute similarity between an interaction and a completely different invocation (without blowing up)"() {
     when:
     runner.addClassImport(Person)
@@ -818,6 +860,10 @@ then:
     }
 
     String familiy(Map args) {
+      return ''
+    }
+
+    String named(Map args, String a, String b){
       return ''
     }
   }

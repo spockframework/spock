@@ -243,32 +243,54 @@ public class InteractionRewriter {
     Expression args = AstUtil.getArguments(call);
     if (args == ArgumentListExpression.EMPTY_ARGUMENTS) return; // fast lane
 
-    call(InteractionBuilder.SET_ARG_LIST_KIND,
-        new ConstantExpression(args instanceof ArgumentListExpression));
-
     if (args instanceof ArgumentListExpression)
       addPositionalArgs((ArgumentListExpression) args);
     else if (args instanceof NamedArgumentListExpression)
-      addNamedArgs((NamedArgumentListExpression) args);
+      addNamedArgs((NamedArgumentListExpression) args, false);
     else if (args instanceof TupleExpression
         && ((TupleExpression)args).getExpression(0) instanceof NamedArgumentListExpression)
       //for some reason groovy wraps NamedArgumentListExpression into a TupleExpression
-      addNamedArgs((NamedArgumentListExpression) ((TupleExpression)args).getExpression(0));
+      addNamedArgs((NamedArgumentListExpression) ((TupleExpression)args).getExpression(0), false);
     else Assert.that(false, "unknown kind of argument list: " + args);
   }
 
   @SuppressWarnings("unchecked")
   private void addPositionalArgs(ArgumentListExpression args) {
-    for (Expression arg: args.getExpressions())
+    List<Expression> expressions = args.getExpressions();
+
+    if (expressions.size() > 0 && expressions.get(0) instanceof MapExpression) {
+      boolean isMixed = expressions.size() > 1;
+      addNamedArgs((MapExpression) expressions.get(0), isMixed);
+      if (isMixed) {
+        addPositionalListArgs(expressions.subList(1, expressions.size()), true);
+      }
+    } else {
+      addPositionalListArgs(expressions, false);
+    }
+  }
+
+  private void addPositionalListArgs(List<Expression> expressions, boolean isMixed) {
+    usePositionalArgs(isMixed);
+    for (Expression arg : expressions) {
       addArg(arg);
+    }
   }
 
   @SuppressWarnings("unchecked")
-  private void addNamedArgs(NamedArgumentListExpression args) {
+  private void addNamedArgs(MapExpression args, boolean isMixed) {
+    useNamedArgs(isMixed);
     for (MapEntryExpression arg : args.getMapEntryExpressions()) {
       addName(arg.getKeyExpression());
       addArg(arg.getValueExpression());
     }
+  }
+
+  private void useNamedArgs(boolean isMixed) {
+    call(InteractionBuilder.SET_ARG_LIST_KIND, new ConstantExpression(false), new ConstantExpression(isMixed));
+  }
+
+  private void usePositionalArgs(boolean isMixed) {
+    call(InteractionBuilder.SET_ARG_LIST_KIND, new ConstantExpression(true), new ConstantExpression(isMixed));
   }
 
   private void addName(Expression name) {

@@ -16,6 +16,10 @@ package spock.mock;
 
 import java.util.Map;
 
+import groovy.lang.DelegatesTo;
+import groovy.transform.stc.ClosureParams;
+import groovy.transform.stc.FirstParam;
+import groovy.transform.stc.SecondParam;
 import org.spockframework.lang.SpecInternals;
 import org.spockframework.runtime.GroovyRuntimeUtil;
 import org.spockframework.runtime.InvalidSpecException;
@@ -280,7 +284,12 @@ public class MockingApi extends SpecInternals implements MockFactory {
    * @return a mock with the specified type and interactions
    */
   @Beta
-  public <T> T Mock(Class<T> type, Closure interactions) {
+  public <T> T Mock(
+    @DelegatesTo.Target
+      Class<T> type,
+    @DelegatesTo(strategy = Closure.DELEGATE_FIRST, genericTypeIndex = 0)
+    @ClosureParams(FirstParam.FirstGenericType.class)
+      Closure interactions) {
     invalidMockCreation();
     return null;
   }
@@ -307,7 +316,13 @@ public class MockingApi extends SpecInternals implements MockFactory {
    * @return a mock with the specified options, type, and interactions
    */
   @Beta
-  public <T> T Mock(Map<String, Object> options, Class<T> type, Closure interactions) {
+  public <T> T Mock(
+    Map<String, Object> options,
+    @DelegatesTo.Target
+      Class<T> type,
+    @DelegatesTo(strategy = Closure.DELEGATE_FIRST, genericTypeIndex = 0)
+    @ClosureParams(SecondParam.FirstGenericType.class)
+      Closure interactions) {
     invalidMockCreation();
     return null;
   }
@@ -467,7 +482,12 @@ public class MockingApi extends SpecInternals implements MockFactory {
    * @return a stub with the specified type and interactions
    */
   @Beta
-  public <T> T Stub(Class<T> type, Closure interactions) {
+  public <T> T Stub(
+    @DelegatesTo.Target
+      Class<T> type,
+    @DelegatesTo(strategy = Closure.DELEGATE_FIRST, genericTypeIndex = 0)
+    @ClosureParams(FirstParam.FirstGenericType.class)
+      Closure interactions) {
     invalidMockCreation();
     return null;
   }
@@ -494,7 +514,13 @@ public class MockingApi extends SpecInternals implements MockFactory {
    * @return a stub with the specified options, type, and interactions
    */
   @Beta
-  public <T> T Stub(Map<String, Object> options, Class<T> type, Closure interactions) {
+  public <T> T Stub(
+    Map<String, Object> options,
+    @DelegatesTo.Target
+      Class<T> type,
+    @DelegatesTo(strategy = Closure.DELEGATE_FIRST, genericTypeIndex = 0)
+    @ClosureParams(SecondParam.FirstGenericType.class)
+      Closure interactions) {
     invalidMockCreation();
     return null;
   }
@@ -678,7 +704,12 @@ public class MockingApi extends SpecInternals implements MockFactory {
    * @return a spy with the specified type and interactions
    */
   @Beta
-  public <T> T Spy(Class<T> type, Closure interactions) {
+  public <T> T Spy(
+    @DelegatesTo.Target
+      Class<T> type,
+    @DelegatesTo(strategy = Closure.DELEGATE_FIRST, genericTypeIndex = 0)
+    @ClosureParams(FirstParam.FirstGenericType.class)
+      Closure interactions) {
     invalidMockCreation();
     return null;
   }
@@ -704,7 +735,13 @@ public class MockingApi extends SpecInternals implements MockFactory {
    * @return a spy with the specified options, type, and interactions
    */
   @Beta
-  public <T> T Spy(Map<String, Object> options, Class<T> type, Closure interactions) {
+  public <T> T Spy(
+    Map<String, Object> options,
+    @DelegatesTo.Target
+      Class<T> type,
+    @DelegatesTo(strategy = Closure.DELEGATE_FIRST, genericTypeIndex = 0)
+    @ClosureParams(SecondParam.FirstGenericType.class)
+      Closure interactions) {
     invalidMockCreation();
     return null;
   }
@@ -862,7 +899,12 @@ public class MockingApi extends SpecInternals implements MockFactory {
    * @return a Groovy mock with the specified type and interactions
    */
   @Beta
-  public <T> T GroovyMock(Class<T> type, Closure interactions) {
+  public <T> T GroovyMock(
+    @DelegatesTo.Target
+      Class<T> type,
+    @DelegatesTo(strategy = Closure.DELEGATE_FIRST, genericTypeIndex = 0)
+    @ClosureParams(FirstParam.FirstGenericType.class)
+      Closure interactions) {
     invalidMockCreation();
     return null;
   }
@@ -889,7 +931,13 @@ public class MockingApi extends SpecInternals implements MockFactory {
    * @return a Groovy mock with the specified options, type, and interactions
    */
   @Beta
-  public <T> T GroovyMock(Map<String, Object> options, Class<T> type, Closure interactions) {
+  public <T> T GroovyMock(
+    Map<String, Object> options,
+    @DelegatesTo.Target
+      Class<T> type,
+    @DelegatesTo(strategy = Closure.DELEGATE_FIRST, genericTypeIndex = 0)
+    @ClosureParams(SecondParam.FirstGenericType.class)
+      Closure interactions) {
     invalidMockCreation();
     return null;
   }
@@ -1047,7 +1095,12 @@ public class MockingApi extends SpecInternals implements MockFactory {
    * @return a Groovy stub with the specified type and interactions
    */
   @Beta
-  public <T> T GroovyStub(Class<T> type, Closure interactions) {
+  public <T> T GroovyStub(
+    @DelegatesTo.Target
+      Class<T> type,
+    @DelegatesTo(strategy = Closure.DELEGATE_FIRST, genericTypeIndex = 0)
+    @ClosureParams(FirstParam.FirstGenericType.class)
+      Closure interactions) {
     invalidMockCreation();
     return null;
   }
@@ -1074,7 +1127,13 @@ public class MockingApi extends SpecInternals implements MockFactory {
    * @return a Groovy stub with the specified options, type, and interactions
    */
   @Beta
-  public <T> T GroovyStub(Map<String, Object> options, Class<T> type, Closure interactions) {
+  public <T> T GroovyStub(
+    Map<String, Object> options,
+    @DelegatesTo.Target
+      Class<T> type,
+    @DelegatesTo(strategy = Closure.DELEGATE_FIRST, genericTypeIndex = 0)
+    @ClosureParams(SecondParam.FirstGenericType.class)
+      Closure interactions) {
     invalidMockCreation();
     return null;
   }
@@ -1230,7 +1289,12 @@ public class MockingApi extends SpecInternals implements MockFactory {
    * @return a Groovy spy with the specified type and interactions
    */
   @Beta
-  public <T> T GroovySpy(Class<T> type, Closure interactions) {
+  public <T> T GroovySpy(
+    @DelegatesTo.Target
+      Class<T> type,
+    @DelegatesTo(strategy = Closure.DELEGATE_FIRST, genericTypeIndex = 0)
+    @ClosureParams(FirstParam.FirstGenericType.class)
+      Closure interactions) {
     invalidMockCreation();
     return null;
   }
@@ -1256,7 +1320,13 @@ public class MockingApi extends SpecInternals implements MockFactory {
    * @return a Groovy spy with the specified options, type, and interactions
    */
   @Beta
-  public <T> T GroovySpy(Map<String, Object> options, Class<T> type, Closure interactions) {
+  public <T> T GroovySpy(
+    Map<String, Object> options,
+    @DelegatesTo.Target
+      Class<T> type,
+    @DelegatesTo(strategy = Closure.DELEGATE_FIRST, genericTypeIndex = 0)
+    @ClosureParams(SecondParam.FirstGenericType.class)
+      Closure interactions) {
     invalidMockCreation();
     return null;
   }

@@ -286,11 +286,11 @@ public class InteractionRewriter {
   }
 
   private void useNamedArgs(boolean isMixed) {
-    call(InteractionBuilder.SET_ARG_LIST_KIND, new ConstantExpression(false), new ConstantExpression(isMixed));
+    call(InteractionBuilder.SET_ARG_LIST_KIND, ConstantExpression.PRIM_FALSE, new ConstantExpression(isMixed,true));
   }
 
   private void usePositionalArgs(boolean isMixed) {
-    call(InteractionBuilder.SET_ARG_LIST_KIND, new ConstantExpression(true), new ConstantExpression(isMixed));
+    call(InteractionBuilder.SET_ARG_LIST_KIND, ConstantExpression.PRIM_TRUE, new ConstantExpression(isMixed, true));
   }
 
   private void addName(Expression name) {

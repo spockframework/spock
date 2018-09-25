@@ -31,7 +31,7 @@ public class PositionalArgumentListConstraint implements IInvocationConstraint {
 
   public PositionalArgumentListConstraint(List<IArgumentConstraint> argConstraints, boolean isMixed) {
     this.argConstraints = argConstraints;
-    if(isMixed) {
+    if (isMixed) {
       // The first Argument is a Map and will be handled by another constraint, so just use wildcard here
       argConstraints.add(WildcardArgumentConstraint.INSTANCE);
     }

@@ -7,6 +7,10 @@ include "spock-spring:spring2-test"
 include "spock-spring:spring3-test"
 include "spock-guice"
 
+if ((System.getProperty("variant") as BigDecimal ?: 2.4) == 2.4) {
+  include "internal-backport"
+}
+
 // https://issues.apache.org/jira/projects/TAP5/issues/TAP5-2588
 if (JavaVersion.current().isJava7() || JavaVersion.current().isJava8()) {
   include "spock-tapestry"

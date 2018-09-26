@@ -171,7 +171,6 @@ class ArgumentMatching extends Specification {
     then: 1 * na.m(foo: _ as String)
   }
 
-  @FailsWith(TooFewInvocationsError)
   def "match named argument with type matcher (named args only, explicit map)"() {
     NamedArgs na = Mock()
 
@@ -179,7 +178,6 @@ class ArgumentMatching extends Specification {
     then: 1 * na.m([foo:  _ as String])
   }
 
-  @PendingFeature(reason = "InteractionRewriter must be changed to make this work")
   def "match named argument with type matcher (named args only, map expression and positional arguments)"() {
     NamedArgs na = Mock()
 
@@ -187,7 +185,6 @@ class ArgumentMatching extends Specification {
     then: 1 * na.m('test', foo:  _ as String)
   }
 
-  @FailsWith(TooFewInvocationsError)
   def "match named argument with type matcher (named args only, explicit map and positional arguments)"() {
     NamedArgs na = Mock()
 

@@ -23,9 +23,10 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-// Backport so that we can add it for 2.5 but can still build with 2.4 as well
 
 /**
+ * WARNING: This is only present here so that we can build with 2.4 as well, the code will not be shipped.
+ *
  * Marker interface used to indicate that the name of the annotated parameter
  * (or specified optional name) is a valid key name when using named arguments
  * and that the parameter type is applicable for type checking purposes.

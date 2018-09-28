@@ -23,9 +23,9 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-// Backport so that we can add it for 2.5 but can still build with 2.4 as well
-
 /**
+ * WARNING: This is only present here so that we can build with 2.4 as well, the code will not be shipped.
+ *
  * Collector annotation for {@link NamedParam}.
  *
  * @since 2.5.0

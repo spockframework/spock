@@ -18,6 +18,8 @@ import org.spockframework.runtime.condition.*;
 import org.spockframework.runtime.model.ExpressionInfo;
 import org.spockframework.util.*;
 
+import java.util.*;
+
 import groovy.lang.GString;
 
 public class ExpressionInfoValueRenderer {
@@ -85,6 +87,9 @@ public class ExpressionInfoValueRenderer {
 
   private String doRenderValue(ExpressionInfo expr) {
     String result = renderAsFailedStringComparison(expr);
+    if (result != null) return result;
+
+    result = renderAsFailedSetEqualityComparison(expr);
     if (result != null) return result;
 
     result = renderAsFailedEqualityComparison(expr);
@@ -162,6 +167,45 @@ public class ExpressionInfoValueRenderer {
       dist.getDistance(), dist.getDistance() == 1 ? "" : "s", dist.getSimilarityInPercent(),
       commonStart, end1, end2,
       new EditPathRenderer().render(sub1, sub2, dist.calculatePath()));
+  }
+
+  @SuppressWarnings("unchecked")
+  private String renderAsFailedSetEqualityComparison(ExpressionInfo expr) {
+    if (!(Boolean.FALSE.equals(expr.getValue()))) return null;
+    if (!expr.isEqualityComparison()) return null;
+
+    Object value1 = expr.getChildren().get(0).getValue();
+    Object value2 = expr.getChildren().get(1).getValue();
+    if (!(value1 instanceof Set) || !(value2 instanceof Set))
+      return null;
+
+    Set v1 = (Set)value1;
+    Set v2 = (Set)value2;
+
+    Set missing = new LinkedHashSet(v2);
+    Set extra = new LinkedHashSet(v1);
+    missing.removeAll(v1);
+    extra.removeAll(v2);
+
+    int missingSize = missing.size();
+    int extraSize = extra.size();
+    int maxDistance = Math.max(v1.size(), v2.size());
+    int editDistance = Math.max(missingSize, extraSize);
+    int similarityInPercent = (maxDistance - editDistance) * 100 / maxDistance;
+    int differences = missingSize + extraSize;
+
+    if (editDistance < 11)
+      return String.format("false%n%d difference%s (%d%% similarity missing %d extra %d)%nmissing: %s%nextra: %s",
+        differences,
+        differences == 1 ? "" : "s",
+        similarityInPercent,
+        missingSize, extraSize,
+        missing, extra);
+
+    return String.format("false%n%d differences (%d%% similarity missing %d extra %d details omitted)",
+      differences,
+      similarityInPercent,
+      missingSize, extraSize);
   }
 
   private String renderAsFailedEqualityComparison(ExpressionInfo expr) {

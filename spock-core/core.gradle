@@ -50,7 +50,7 @@ jar {
         'org.hamcrest.*;version="[1,2)";resolution:=optional',
         'org.objenesis.*;version="[2,3)";resolution:=optional',
         'org.apache.tools.ant.*;version="[1.7,2)";resolution:=optional',
-        'net.bytebuddy.*;version="[1.6,2)";resolution:=optional',
+        'net.bytebuddy.*;version="[1.8,2)";resolution:=optional',
         'net.sf.cglib.*;version="[3.2,4)";resolution:=optional',
         'org.objectweb.asm.*;version="[5.2,6)";resolution:=optional',
         'org.w3c.dom.*'

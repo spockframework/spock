@@ -28,6 +28,7 @@ import static java.util.concurrent.TimeUnit.*
 /**
  * @author Peter Niederwieser
  */
+@Retry
 class TimeoutExtension extends EmbeddedSpecification {
   @Shared Thread testFrameworkThread = Thread.currentThread()
 

@@ -14,13 +14,15 @@
 
 package spock.mock;
 
-import java.util.Map;
+import java.util.*;
 
 import groovy.lang.DelegatesTo;
+import groovy.transform.*;
 import groovy.transform.stc.ClosureParams;
 import groovy.transform.stc.FirstParam;
 import groovy.transform.stc.SecondParam;
 import org.spockframework.lang.SpecInternals;
+import org.spockframework.mock.*;
 import org.spockframework.runtime.GroovyRuntimeUtil;
 import org.spockframework.runtime.InvalidSpecException;
 import org.spockframework.util.Beta;
@@ -163,7 +165,15 @@ public class MockingApi extends SpecInternals implements MockFactory {
    * enclosing variable assignment
    */
   @Beta
-  public <T> T Mock(Map<String, Object> options) {
+  public <T> T Mock(
+    @NamedParams({
+      @NamedParam(value = "name", type = String.class),
+      @NamedParam(value = "additionalInterfaces", type = List.class),
+      @NamedParam(value = "defaultResponse", type = IDefaultResponse.class),
+      @NamedParam(value = "verified", type = Boolean.class),
+      @NamedParam(value = "useObjenesis", type = Boolean.class)
+    })
+      Map<String, Object> options) {
     invalidMockCreation();
     return null;
   }
@@ -207,7 +217,15 @@ public class MockingApi extends SpecInternals implements MockFactory {
    */
   @Override
   @Beta
-  public <T> T Mock(Map<String, Object> options, Class<T> type) {
+  public <T> T Mock(
+    @NamedParams({
+      @NamedParam(value = "name", type = String.class),
+      @NamedParam(value = "additionalInterfaces", type = List.class),
+      @NamedParam(value = "defaultResponse", type = IDefaultResponse.class),
+      @NamedParam(value = "verified", type = Boolean.class),
+      @NamedParam(value = "useObjenesis", type = Boolean.class)
+    })
+      Map<String, Object> options, Class<T> type) {
     invalidMockCreation();
     return null;
   }
@@ -317,7 +335,14 @@ public class MockingApi extends SpecInternals implements MockFactory {
    */
   @Beta
   public <T> T Mock(
-    Map<String, Object> options,
+    @NamedParams({
+      @NamedParam(value = "name", type = String.class),
+      @NamedParam(value = "additionalInterfaces", type = List.class),
+      @NamedParam(value = "defaultResponse", type = IDefaultResponse.class),
+      @NamedParam(value = "verified", type = Boolean.class),
+      @NamedParam(value = "useObjenesis", type = Boolean.class)
+    })
+      Map<String, Object> options,
     @DelegatesTo.Target
       Class<T> type,
     @DelegatesTo(strategy = Closure.DELEGATE_FIRST, genericTypeIndex = 0)
@@ -360,7 +385,15 @@ public class MockingApi extends SpecInternals implements MockFactory {
    * enclosing variable assignment
    */
   @Beta
-  public <T> T Stub(Map<String, Object> options) {
+  public <T> T Stub(
+    @NamedParams({
+      @NamedParam(value = "name", type = String.class),
+      @NamedParam(value = "additionalInterfaces", type = List.class),
+      @NamedParam(value = "defaultResponse", type = IDefaultResponse.class),
+      @NamedParam(value = "verified", type = Boolean.class),
+      @NamedParam(value = "useObjenesis", type = Boolean.class)
+    })
+      Map<String, Object> options) {
     invalidMockCreation();
     return null;
   }
@@ -405,7 +438,15 @@ public class MockingApi extends SpecInternals implements MockFactory {
    */
   @Override
   @Beta
-  public <T> T Stub(Map<String, Object> options, Class<T> type) {
+  public <T> T Stub(
+    @NamedParams({
+      @NamedParam(value = "name", type = String.class),
+      @NamedParam(value = "additionalInterfaces", type = List.class),
+      @NamedParam(value = "defaultResponse", type = IDefaultResponse.class),
+      @NamedParam(value = "verified", type = Boolean.class),
+      @NamedParam(value = "useObjenesis", type = Boolean.class)
+    })
+      Map<String, Object> options, Class<T> type) {
     invalidMockCreation();
     return null;
   }
@@ -456,7 +497,15 @@ public class MockingApi extends SpecInternals implements MockFactory {
    * from the left-hand side of the enclosing assignment
    */
   @Beta
-  public <T> T Stub(Map<String, Object> options, Closure interactions) {
+  public <T> T Stub(
+    @NamedParams({
+      @NamedParam(value = "name", type = String.class),
+      @NamedParam(value = "additionalInterfaces", type = List.class),
+      @NamedParam(value = "defaultResponse", type = IDefaultResponse.class),
+      @NamedParam(value = "verified", type = Boolean.class),
+      @NamedParam(value = "useObjenesis", type = Boolean.class)
+    })
+      Map<String, Object> options, Closure interactions) {
     invalidMockCreation();
     return null;
   }
@@ -515,7 +564,14 @@ public class MockingApi extends SpecInternals implements MockFactory {
    */
   @Beta
   public <T> T Stub(
-    Map<String, Object> options,
+    @NamedParams({
+      @NamedParam(value = "name", type = String.class),
+      @NamedParam(value = "additionalInterfaces", type = List.class),
+      @NamedParam(value = "defaultResponse", type = IDefaultResponse.class),
+      @NamedParam(value = "verified", type = Boolean.class),
+      @NamedParam(value = "useObjenesis", type = Boolean.class)
+    })
+      Map<String, Object> options,
     @DelegatesTo.Target
       Class<T> type,
     @DelegatesTo(strategy = Closure.DELEGATE_FIRST, genericTypeIndex = 0)
@@ -558,7 +614,15 @@ public class MockingApi extends SpecInternals implements MockFactory {
    * enclosing variable assignment
    */
   @Beta
-  public <T> T Spy(Map<String, Object> options) {
+  public <T> T Spy(
+    @NamedParams({
+      @NamedParam(value = "name", type = String.class),
+      @NamedParam(value = "additionalInterfaces", type = List.class),
+      @NamedParam(value = "defaultResponse", type = IDefaultResponse.class),
+      @NamedParam(value = "verified", type = Boolean.class),
+      @NamedParam(value = "useObjenesis", type = Boolean.class)
+    })
+      Map<String, Object> options) {
     invalidMockCreation();
     return null;
   }
@@ -629,7 +693,15 @@ public class MockingApi extends SpecInternals implements MockFactory {
    */
   @Override
   @Beta
-  public <T> T Spy(Map<String, Object> options, Class<T> type) {
+  public <T> T Spy(
+    @NamedParams({
+      @NamedParam(value = "name", type = String.class),
+      @NamedParam(value = "additionalInterfaces", type = List.class),
+      @NamedParam(value = "defaultResponse", type = IDefaultResponse.class),
+      @NamedParam(value = "verified", type = Boolean.class),
+      @NamedParam(value = "useObjenesis", type = Boolean.class)
+    })
+      Map<String, Object> options, Class<T> type) {
     invalidMockCreation();
     return null;
   }
@@ -678,7 +750,15 @@ public class MockingApi extends SpecInternals implements MockFactory {
    * from the left-hand side of the enclosing assignment
    */
   @Beta
-  public <T> T Spy(Map<String, Object> options, Closure interactions) {
+  public <T> T Spy(
+    @NamedParams({
+      @NamedParam(value = "name", type = String.class),
+      @NamedParam(value = "additionalInterfaces", type = List.class),
+      @NamedParam(value = "defaultResponse", type = IDefaultResponse.class),
+      @NamedParam(value = "verified", type = Boolean.class),
+      @NamedParam(value = "useObjenesis", type = Boolean.class)
+    })
+      Map<String, Object> options, Closure interactions) {
     invalidMockCreation();
     return null;
   }
@@ -736,7 +816,14 @@ public class MockingApi extends SpecInternals implements MockFactory {
    */
   @Beta
   public <T> T Spy(
-    Map<String, Object> options,
+    @NamedParams({
+      @NamedParam(value = "name", type = String.class),
+      @NamedParam(value = "additionalInterfaces", type = List.class),
+      @NamedParam(value = "defaultResponse", type = IDefaultResponse.class),
+      @NamedParam(value = "verified", type = Boolean.class),
+      @NamedParam(value = "useObjenesis", type = Boolean.class)
+    })
+      Map<String, Object> options,
     @DelegatesTo.Target
       Class<T> type,
     @DelegatesTo(strategy = Closure.DELEGATE_FIRST, genericTypeIndex = 0)
@@ -779,7 +866,16 @@ public class MockingApi extends SpecInternals implements MockFactory {
    * enclosing variable assignment
    */
   @Beta
-  public <T> T GroovyMock(Map<String, Object> options) {
+  public <T> T GroovyMock(
+    @NamedParams({
+      @NamedParam(value = "name", type = String.class),
+      @NamedParam(value = "additionalInterfaces", type = List.class),
+      @NamedParam(value = "defaultResponse", type = IDefaultResponse.class),
+      @NamedParam(value = "verified", type = Boolean.class),
+      @NamedParam(value = "useObjenesis", type = Boolean.class),
+      @NamedParam(value = "global", type = Boolean.class)
+    })
+      Map<String, Object> options) {
     invalidMockCreation();
     return null;
   }
@@ -822,7 +918,16 @@ public class MockingApi extends SpecInternals implements MockFactory {
    * @return a Groovy mock with the specified options and type
    */
   @Beta
-  public <T> T GroovyMock(Map<String, Object> options, Class<T> type) {
+  public <T> T GroovyMock(
+    @NamedParams({
+      @NamedParam(value = "name", type = String.class),
+      @NamedParam(value = "additionalInterfaces", type = List.class),
+      @NamedParam(value = "defaultResponse", type = IDefaultResponse.class),
+      @NamedParam(value = "verified", type = Boolean.class),
+      @NamedParam(value = "useObjenesis", type = Boolean.class),
+      @NamedParam(value = "global", type = Boolean.class)
+    })
+      Map<String, Object> options, Class<T> type) {
     invalidMockCreation();
     return null;
   }
@@ -873,7 +978,16 @@ public class MockingApi extends SpecInternals implements MockFactory {
    * from the left-hand side of the enclosing assignment
    */
   @Beta
-  public <T> T GroovyMock(Map<String, Object> options, Closure interactions) {
+  public <T> T GroovyMock(
+    @NamedParams({
+      @NamedParam(value = "name", type = String.class),
+      @NamedParam(value = "additionalInterfaces", type = List.class),
+      @NamedParam(value = "defaultResponse", type = IDefaultResponse.class),
+      @NamedParam(value = "verified", type = Boolean.class),
+      @NamedParam(value = "useObjenesis", type = Boolean.class),
+      @NamedParam(value = "global", type = Boolean.class)
+    })
+      Map<String, Object> options, Closure interactions) {
     invalidMockCreation();
     return null;
   }
@@ -932,7 +1046,15 @@ public class MockingApi extends SpecInternals implements MockFactory {
    */
   @Beta
   public <T> T GroovyMock(
-    Map<String, Object> options,
+    @NamedParams({
+      @NamedParam(value = "name", type = String.class),
+      @NamedParam(value = "additionalInterfaces", type = List.class),
+      @NamedParam(value = "defaultResponse", type = IDefaultResponse.class),
+      @NamedParam(value = "verified", type = Boolean.class),
+      @NamedParam(value = "useObjenesis", type = Boolean.class),
+      @NamedParam(value = "global", type = Boolean.class)
+    })
+      Map<String, Object> options,
     @DelegatesTo.Target
       Class<T> type,
     @DelegatesTo(strategy = Closure.DELEGATE_FIRST, genericTypeIndex = 0)
@@ -975,7 +1097,16 @@ public class MockingApi extends SpecInternals implements MockFactory {
    * enclosing variable assignment
    */
   @Beta
-  public <T> T GroovyStub(Map<String, Object> options) {
+  public <T> T GroovyStub(
+    @NamedParams({
+      @NamedParam(value = "name", type = String.class),
+      @NamedParam(value = "additionalInterfaces", type = List.class),
+      @NamedParam(value = "defaultResponse", type = IDefaultResponse.class),
+      @NamedParam(value = "verified", type = Boolean.class),
+      @NamedParam(value = "useObjenesis", type = Boolean.class),
+      @NamedParam(value = "global", type = Boolean.class)
+    })
+      Map<String, Object> options) {
     invalidMockCreation();
     return null;
   }
@@ -1018,7 +1149,16 @@ public class MockingApi extends SpecInternals implements MockFactory {
    * @return a Groovy stub with the specified options and type
    */
   @Beta
-  public <T> T GroovyStub(Map<String, Object> options, Class<T> type) {
+  public <T> T GroovyStub(
+    @NamedParams({
+      @NamedParam(value = "name", type = String.class),
+      @NamedParam(value = "additionalInterfaces", type = List.class),
+      @NamedParam(value = "defaultResponse", type = IDefaultResponse.class),
+      @NamedParam(value = "verified", type = Boolean.class),
+      @NamedParam(value = "useObjenesis", type = Boolean.class),
+      @NamedParam(value = "global", type = Boolean.class)
+    })
+      Map<String, Object> options, Class<T> type) {
     invalidMockCreation();
     return null;
   }
@@ -1069,7 +1209,16 @@ public class MockingApi extends SpecInternals implements MockFactory {
    * from the left-hand side of the enclosing assignment
    */
   @Beta
-  public <T> T GroovyStub(Map<String, Object> options, Closure interactions) {
+  public <T> T GroovyStub(
+    @NamedParams({
+      @NamedParam(value = "name", type = String.class),
+      @NamedParam(value = "additionalInterfaces", type = List.class),
+      @NamedParam(value = "defaultResponse", type = IDefaultResponse.class),
+      @NamedParam(value = "verified", type = Boolean.class),
+      @NamedParam(value = "useObjenesis", type = Boolean.class),
+      @NamedParam(value = "global", type = Boolean.class)
+    })
+      Map<String, Object> options, Closure interactions) {
     invalidMockCreation();
     return null;
   }
@@ -1128,7 +1277,15 @@ public class MockingApi extends SpecInternals implements MockFactory {
    */
   @Beta
   public <T> T GroovyStub(
-    Map<String, Object> options,
+    @NamedParams({
+      @NamedParam(value = "name", type = String.class),
+      @NamedParam(value = "additionalInterfaces", type = List.class),
+      @NamedParam(value = "defaultResponse", type = IDefaultResponse.class),
+      @NamedParam(value = "verified", type = Boolean.class),
+      @NamedParam(value = "useObjenesis", type = Boolean.class),
+      @NamedParam(value = "global", type = Boolean.class)
+    })
+      Map<String, Object> options,
     @DelegatesTo.Target
       Class<T> type,
     @DelegatesTo(strategy = Closure.DELEGATE_FIRST, genericTypeIndex = 0)
@@ -1171,7 +1328,16 @@ public class MockingApi extends SpecInternals implements MockFactory {
    * enclosing variable assignment
    */
   @Beta
-  public <T> T GroovySpy(Map<String, Object> options) {
+  public <T> T GroovySpy(
+    @NamedParams({
+      @NamedParam(value = "name", type = String.class),
+      @NamedParam(value = "additionalInterfaces", type = List.class),
+      @NamedParam(value = "defaultResponse", type = IDefaultResponse.class),
+      @NamedParam(value = "verified", type = Boolean.class),
+      @NamedParam(value = "useObjenesis", type = Boolean.class),
+      @NamedParam(value = "global", type = Boolean.class)
+    })
+      Map<String, Object> options) {
     invalidMockCreation();
     return null;
   }
@@ -1214,7 +1380,16 @@ public class MockingApi extends SpecInternals implements MockFactory {
    * @return a Groovy spy with the specified options and type
    */
   @Beta
-  public <T> T GroovySpy(Map<String, Object> options, Class<T> type) {
+  public <T> T GroovySpy(
+    @NamedParams({
+      @NamedParam(value = "name", type = String.class),
+      @NamedParam(value = "additionalInterfaces", type = List.class),
+      @NamedParam(value = "defaultResponse", type = IDefaultResponse.class),
+      @NamedParam(value = "verified", type = Boolean.class),
+      @NamedParam(value = "useObjenesis", type = Boolean.class),
+      @NamedParam(value = "global", type = Boolean.class)
+    })
+      Map<String, Object> options, Class<T> type) {
     invalidMockCreation();
     return null;
   }
@@ -1263,7 +1438,16 @@ public class MockingApi extends SpecInternals implements MockFactory {
    * from the left-hand side of the enclosing assignment
    */
   @Beta
-  public <T> T GroovySpy(Map<String, Object> options, Closure interactions) {
+  public <T> T GroovySpy(
+    @NamedParams({
+      @NamedParam(value = "name", type = String.class),
+      @NamedParam(value = "additionalInterfaces", type = List.class),
+      @NamedParam(value = "defaultResponse", type = IDefaultResponse.class),
+      @NamedParam(value = "verified", type = Boolean.class),
+      @NamedParam(value = "useObjenesis", type = Boolean.class),
+      @NamedParam(value = "global", type = Boolean.class)
+    })
+      Map<String, Object> options, Closure interactions) {
     invalidMockCreation();
     return null;
   }
@@ -1321,7 +1505,15 @@ public class MockingApi extends SpecInternals implements MockFactory {
    */
   @Beta
   public <T> T GroovySpy(
-    Map<String, Object> options,
+    @NamedParams({
+      @NamedParam(value = "name", type = String.class),
+      @NamedParam(value = "additionalInterfaces", type = List.class),
+      @NamedParam(value = "defaultResponse", type = IDefaultResponse.class),
+      @NamedParam(value = "verified", type = Boolean.class),
+      @NamedParam(value = "useObjenesis", type = Boolean.class),
+      @NamedParam(value = "global", type = Boolean.class)
+    })
+      Map<String, Object> options,
     @DelegatesTo.Target
       Class<T> type,
     @DelegatesTo(strategy = Closure.DELEGATE_FIRST, genericTypeIndex = 0)

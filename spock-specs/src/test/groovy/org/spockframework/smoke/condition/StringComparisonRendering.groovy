@@ -17,6 +17,7 @@
 package org.spockframework.smoke.condition
 
 import org.spockframework.runtime.ExpressionInfoValueRenderer
+import org.spockframework.runtime.FailedStringComparisonRenderer
 import spock.lang.Issue
 
 class StringComparisonRendering extends ConditionRenderingSpec {
@@ -165,7 +166,7 @@ null == "foo"
 
 
   def "large String comparision without room for context"() {
-    int stringLength = Math.sqrt(ExpressionInfoValueRenderer.MAX_EDIT_DISTANCE_MEMORY)
+    int stringLength = Math.sqrt(FailedStringComparisonRenderer.MAX_EDIT_DISTANCE_MEMORY)
 
     String common = largeStringBuilder("cccccccccccccccc", stringLength)
     String a = largeStringBuilder("aaaaaaaaaaaaaaaa", stringLength) + common
@@ -326,7 +327,7 @@ dolore magna aliquyam erat, sed diam voluptua.\
     }
   }
 
-  private StringBuilder largeStringBuilder(CharSequence source = "aaaaaaaaaaaaaaaa", int length = ExpressionInfoValueRenderer.MAX_EDIT_DISTANCE_MEMORY / 2) {
+  private StringBuilder largeStringBuilder(CharSequence source = "aaaaaaaaaaaaaaaa", int length = FailedStringComparisonRenderer.MAX_EDIT_DISTANCE_MEMORY / 2) {
     def sb = new StringBuilder(length + 10)
     int cslength = source.length()
     for (int i = 0; i < length; i += cslength) {

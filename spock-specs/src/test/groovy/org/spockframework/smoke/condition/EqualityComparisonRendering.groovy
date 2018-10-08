@@ -66,12 +66,25 @@ x == y
     expect:
     isRendered """
 x == 123
-| |
+| |  |
+| |  123 (java.lang.Integer)
 | false
 123 (java.lang.String)
     """, {
       def x = "123"
       assert x == 123
+    }
+  }
+
+  def "values with same literal representations"() {
+    expect:
+    isRendered """
+[0, 1] == [0, 1] as Set
+|      |         |
+|      false     [0, 1] (java.util.LinkedHashSet)
+[0, 1] (java.util.ArrayList)
+    """, {
+      assert [0, 1] == [0, 1] as Set
     }
   }
 

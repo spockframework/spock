@@ -16,6 +16,8 @@
 
 package org.spockframework.smoke.condition
 
+import org.spockframework.runtime.ConditionNotSatisfiedError
+import org.spockframework.runtime.SpockComparisonFailure
 import spock.lang.Issue
 import java.sql.Date
 
@@ -219,6 +221,28 @@ new ArrayList(a) == null
       def a = 1
       assert new ArrayList(a) == null
     }
+  }
+
+  def "ConstructorCallExpression for non-static inner class"() {
+    when:
+    runner.runSpecBody '''
+      def test() {
+        expect:
+        new NonStaticInnerClass() == null
+      }
+
+      class NonStaticInnerClass {
+        String toString() { "nsi" }
+      }
+    '''
+
+    then:
+    SpockComparisonFailure e = thrown()
+    isRendered """
+new NonStaticInnerClass() == null
+|                         |
+nsi                       false
+    """, e.condition
   }
 
   def "ConstructorCallExpression with named arguments"() {

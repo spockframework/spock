@@ -16,16 +16,16 @@
 
 package org.spockframework.smoke.condition
 
+import org.spockframework.EmbeddedSpecification
 import org.spockframework.runtime.Condition
 import org.spockframework.runtime.ConditionNotSatisfiedError
-import spock.lang.Specification
 
 /**
  * Convenience base class for specs that describe rendering of conditions.
  *
  * @author Peter Niederwieser
  */
-abstract class ConditionRenderingSpec extends Specification {
+abstract class ConditionRenderingSpec extends EmbeddedSpecification {
   void isRendered(String expectedRendering, Condition condition) {
     def rendering = condition.rendering.trim()
     expectedRendering = expectedRendering.trim()

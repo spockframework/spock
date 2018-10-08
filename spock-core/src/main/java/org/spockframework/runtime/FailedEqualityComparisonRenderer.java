@@ -23,6 +23,8 @@ public class FailedEqualityComparisonRenderer implements ExpressionComparisonRen
     if (expr.getRenderedValue() == null) return;
 
     Class<?> exprType = ObjectUtil.voidAwareGetClass(expr.getValue());
-    expr.setRenderedValue(expr.getRenderedValue() + " (" + exprType.getName() + ")");
+    String typeName = exprType.getCanonicalName();
+    typeName = typeName == null ? exprType.getName() : typeName;
+    expr.setRenderedValue(expr.getRenderedValue() + " (" + typeName + ")");
   }
 }

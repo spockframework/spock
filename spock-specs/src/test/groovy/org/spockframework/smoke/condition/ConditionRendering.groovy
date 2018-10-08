@@ -517,6 +517,18 @@ interface java.util.List
     }
   }
 
+  def "ClassExpression with dot-containing comments"() {
+    expect:
+    isRendered """
+java.util./*.awt.*/List == java.lang.String // I. Like. Dots.
+                   |    |            |
+                   |    false        class java.lang.String
+                   interface java.util.List
+    """, {
+      assert java.util./*.awt.*/List == java.lang.String // I. Like. Dots.
+    }
+  }
+
   def "ClassExpression with different classes with same name"() {
     given:
     def defaultTimeZone = TimeZone.default

@@ -398,8 +398,8 @@ One or more arguments(s) didn't match:
 0: <matches>
 1: <matches>
 2: argument instanceof java.lang.String
-   |        |
-   |        false
+   |        |          |
+   |        false      class java.lang.String
    30 (java.lang.Integer)
 3: <matches>
     """.trim()
@@ -704,8 +704,8 @@ Unmatched invocations (ordered by similarity):
 1 * fred.familiy(['firstName':'Wilma', 'surname':'Flintstone', 'age':30, 'address':'Quarry'])
 One or more arguments(s) didn't match:
 [age]: argument instanceof java.lang.String
-       |        |
-       |        false
+       |        |          |
+       |        false      class java.lang.String
        30 (java.lang.Integer)
 [address]: argument == expected
            |        |  |
@@ -796,8 +796,8 @@ Unmatched invocations (ordered by similarity):
 1 * fred.named(['age':5, 'address':'Bedrock'], 'Wilma', 'Flintstone')
 One or more arguments(s) didn't match:
 [age]: argument instanceof java.lang.String
-       |        |
-       |        false
+       |        |          |
+       |        false      class java.lang.String
        5 (java.lang.Integer)
 
 One or more arguments(s) didn't match:

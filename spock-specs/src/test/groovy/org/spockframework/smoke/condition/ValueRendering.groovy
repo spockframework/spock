@@ -217,11 +217,12 @@ ${x.objectToString()} (renderer threw UnsupportedOperationException)
 
   def "enum literal"() {
     expect:
-    isRendered """
+    isRendered '''
 Thread.State.NEW == null
-                 |
-                 false
-    """, {
+       |         |
+       |         false
+       class java.lang.Thread$State
+    ''', {
       assert Thread.State.NEW == null
     }
   }
@@ -239,12 +240,13 @@ NEW == null
 
   def "enum literal with toString"() {
     expect:
-    isRendered """
+    isRendered '''
 EnumWithToString.VALUE == null
-                 |     |
-                 |     false
-                 I'm a value
-    """, {
+|                |     |
+|                |     false
+|                I'm a value
+class org.spockframework.smoke.condition.ValueRendering$EnumWithToString
+    ''', {
       assert EnumWithToString.VALUE == null
     }
   }

@@ -197,14 +197,18 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> {
 
   @Override
   public void visitBinaryExpression(BinaryExpression expr) {
-    BinaryExpression conversion =
-        new BinaryExpression(
-            Types.ofType(expr.getOperation().getType(), Types.ASSIGNMENT_OPERATOR) ?
-                // prevent lvalue from getting turned into record(lvalue), which can no longer be assigned to
-                convertAndRecordNa(expr.getLeftExpression()) :
-                convert(expr.getLeftExpression()),
-            expr.getOperation(),
-            convert(expr.getRightExpression()));
+    // order of convert calls is important or indexes and thus recorded values get confused
+    Expression convertedLeftExpression = Types.ofType(expr.getOperation().getType(), Types.ASSIGNMENT_OPERATOR) ?
+        // prevent lvalue from getting turned into record(lvalue), which can no longer be assigned to
+        convertAndRecordNa(expr.getLeftExpression()) :
+        convert(expr.getLeftExpression());
+    Expression convertedRightExpression = convert(expr.getRightExpression());
+
+    Expression conversion =
+        Types.ofType(expr.getOperation().getType(), Types.KEYWORD_INSTANCEOF) ?
+            // morph instanceof expression to isInstance method call to be able to record rvalue
+            new MethodCallExpression(convertedRightExpression, "isInstance", convertedLeftExpression):
+            new BinaryExpression(convertedLeftExpression, expr.getOperation(), convertedRightExpression);
 
     conversion.setSourcePosition(expr);
     result = record(conversion);
@@ -230,7 +234,9 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> {
     // therefore we have to provide one N/A value for every part of the class name
     String text = resources.getSourceText(expr);
     // NOTE: remove guessing (text == null) once underlying Groovy problem has been fixed
-    recordCount += text == null ? 1 : TextUtil.countOccurrences(text, '.') + 1;
+    recordCount += text == null ? 0 : TextUtil.countOccurrences(text, '.');
+    // record the expression on the last expression part
+    result = record(expr);
   }
 
   @Override

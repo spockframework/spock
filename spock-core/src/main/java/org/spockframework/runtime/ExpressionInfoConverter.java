@@ -154,7 +154,7 @@ public class ExpressionInfoConverter extends AbstractExpressionConverter<Express
         TextRegion.of(expr),
         TextPosition.startOf(expr),
         null
-    ).setRelevant(false);
+    );
   }
 
   @Override

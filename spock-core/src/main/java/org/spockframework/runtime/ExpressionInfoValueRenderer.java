@@ -56,7 +56,7 @@ public class ExpressionInfoValueRenderer {
    * @return a string representation of the value
    */
   @Nullable
-  private String renderValue(ExpressionInfo expr) {
+  static String renderValue(ExpressionInfo expr) {
     Object value = expr.getValue();
 
     if (value == null) return "null";
@@ -93,12 +93,14 @@ public class ExpressionInfoValueRenderer {
     return str;
   }
 
-  private String javaLangObjectToString(Object value) {
+  private static String javaLangObjectToString(Object value) {
     String hash = Integer.toHexString(System.identityHashCode(value));
-    return value.getClass().getName() + "@" + hash;
+    Class<?> type = value.getClass();
+    String typeName = type.getCanonicalName();
+    return (typeName == null ? type.getName() : typeName) + "@" + hash;
   }
 
-  private String doRenderValue(ExpressionInfo expr) {
+  private static String doRenderValue(ExpressionInfo expr) {
     for (ExpressionComparisonRenderer renderer : RENDERERS) {
       String result = renderer.render(expr);
       if (result != null) return result;

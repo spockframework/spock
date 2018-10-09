@@ -68,6 +68,9 @@ Expected: <43>
 
   @IsRendered("""
 that(x, equalTo(43))
+|    |
+|    42
+false
 
 oops!
 

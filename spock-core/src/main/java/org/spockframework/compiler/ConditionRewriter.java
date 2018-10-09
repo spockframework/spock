@@ -580,14 +580,9 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> {
   private Statement rewriteMethodCondition(MethodCallExpression condition, Expression message, boolean explicit) {
     MethodCallExpression rewritten;
     int lastVariableNum;
-    if (message == null){
-      final Expression converted = convert(condition);
-      rewritten = (MethodCallExpression) unrecord(converted);
-      lastVariableNum = extractVariableNumber(converted);
-    }else{
-      rewritten = condition;
-      lastVariableNum = -1;
-    }
+    final Expression converted = convert(condition);
+    rewritten = (MethodCallExpression) unrecord(converted);
+    lastVariableNum = extractVariableNumber(converted);
 
     List<Expression> args = new ArrayList<>();
     args.add(rewritten.getObjectExpression());
@@ -612,14 +607,9 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> {
       boolean explicit) {
     StaticMethodCallExpression rewritten;
     int lastVariableNum;
-    if (message == null){
-      final Expression converted = convert(condition);
-      rewritten = (StaticMethodCallExpression) unrecord(converted);
-      lastVariableNum = extractVariableNumber(converted);
-    }else{
-      rewritten = condition;
-      lastVariableNum = -1;
-    }
+    final Expression converted = convert(condition);
+    rewritten = (StaticMethodCallExpression) unrecord(converted);
+    lastVariableNum = extractVariableNumber(converted);
 
     List<Expression> args = new ArrayList<>();
     args.add(new ClassExpression(rewritten.getOwnerType()));
@@ -641,7 +631,7 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> {
   }
 
   private Statement rewriteOtherCondition(Expression condition, Expression message) {
-    Expression rewritten = message == null ? convert(condition) : condition;
+    Expression rewritten = convert(condition);
 
     final Expression executeAndVerify = rewriteToSpockRuntimeCall(resources.getAstNodeCache().SpockRuntime_VerifyCondition,
         condition, message, Collections.singletonList(rewritten));
@@ -664,7 +654,7 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> {
                     resources.getAstNodeCache().SpockRuntime_ConditionFailedWithException,
                     new ArgumentListExpression(Arrays.asList(
                         new VariableExpression(SpockNames.ERROR_COLLECTOR),
-                        message == null ? new VariableExpression(SpockNames.VALUE_RECORDER) : ConstantExpression.NULL, // recorder
+                        new VariableExpression(SpockNames.VALUE_RECORDER), // recorder
                         new ConstantExpression(resources.getSourceText(condition)),                                 // text
                         new ConstantExpression(condition.getLineNumber()),                                          // line
                         new ConstantExpression(condition.getColumnNumber()),                                        // column
@@ -711,12 +701,10 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> {
         new ArgumentListExpression(args));
 
     args.add(new VariableExpression(SpockNames.ERROR_COLLECTOR, resources.getAstNodeCache().ErrorCollector));
-    args.add(message == null ?
-        AstUtil.createDirectMethodCall(
+    args.add(AstUtil.createDirectMethodCall(
             new VariableExpression(SpockNames.VALUE_RECORDER),
             resources.getAstNodeCache().ValueRecorder_Reset,
-            ArgumentListExpression.EMPTY_ARGUMENTS) :
-        ConstantExpression.NULL);
+            ArgumentListExpression.EMPTY_ARGUMENTS));
     args.add(new ConstantExpression(resources.getSourceText(condition)));
     args.add(new ConstantExpression(condition.getLineNumber()));
     args.add(new ConstantExpression(condition.getColumnNumber()));

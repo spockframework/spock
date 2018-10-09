@@ -263,6 +263,10 @@ if (gradle.startParameter.taskNames == ["appveyorCiBuild"]) {
   gradle.startParameter.taskNames = ["build"]
 }
 
+if (gradle.startParameter.taskNames == ["circleCiBuild"]) {
+  gradle.startParameter.taskNames = ["build"]
+}
+
 task publishJavadoc(type: Exec) {
   dependsOn "javadoc"
   commandLine "sh", "-c",

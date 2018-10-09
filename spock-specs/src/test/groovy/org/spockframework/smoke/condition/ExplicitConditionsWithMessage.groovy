@@ -24,7 +24,7 @@ import spock.lang.Issue
 /**
  * @author Peter Niederwieser
  */
-@Issue("http://issues.spockframework.org/detail?id=22")
+@Issue(["https://github.com/spockframework/spock/issues/145", "https://github.com/spockframework/spock/issues/922"])
 class ExplicitConditionsWithMessage extends ConditionRenderingSpec {
   def "evaluation of satisfied condition"() {
     expect:
@@ -41,6 +41,8 @@ class ExplicitConditionsWithMessage extends ConditionRenderingSpec {
     expect:
     isRendered """
 1 + 2 == 2
+  |   |
+  3   false
 
 need to brush up my math
     """, {
@@ -52,6 +54,8 @@ need to brush up my math
     expect:
     isRendered """
 a + b == 2
+| | | |
+1 3 2 false
 
 a: 1 b: 2
     """, {
@@ -65,6 +69,10 @@ a: 1 b: 2
     expect:
     isRendered """
 map.a + map.b == 2
+|   | | |   | |
+|   1 3 |   2 false
+|       [a:1, b:2]
+[a:1, b:2]
 
 [a:1, b:2]
     """, {
@@ -90,9 +98,60 @@ map.a + map.b == 2
     expect:
     isRendered """
 1 + 2 == 2
+  |   |
+  3   false
     """, {
       def x = null
       assert 1 + 2 == 2, x
     }
   }
+
+  void "explicit assertion with message"() {
+    expect:
+    isRendered """
+a == b
+| |  |
+1 |  2
+  false
+
+Additional message
+    """, {
+      def a = 1
+      def b = 2
+      assert a == b : "Additional message"
+    }
+  }
+
+  void "explicit assertion with methodCondition and message"() {
+    expect:
+    isRendered """
+a.contains(b)
+| |        |
+| false    bar
+foo
+
+Additional message
+    """, {
+      def a = 'foo'
+      def b = 'bar'
+      assert a.contains(b) : "Additional message"
+    }
+  }
+
+
+  void "explicit assertion with static methodCondition and message"() {
+    expect:
+    isRendered """
+Boolean.parseBoolean(a)
+|       |            |
+|       false        foo
+class java.lang.Boolean
+
+Additional message
+    """, {
+      def a = 'foo'
+      assert Boolean.parseBoolean(a) : "Additional message"
+    }
+  }
+
 }

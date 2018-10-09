@@ -4,6 +4,36 @@ include::include.adoc[]
 
 == 1.3 (tbd)
 
+Potential Breaking change: Assertions with explicit messages now include power assertions output.
+
+.Given
+[source,groovy]
+----
+def a = 1
+def b = 2
+assert a == b : "Additional message"
+----
+
+.Before
+----
+a == b
+
+Additional message
+----
+
+.Now
+----
+a == b
+| |  |
+1 |  2
+  false
+
+Additional message
+----
+
+If you relied on this behavior to hide some output, or to prevent a stack overflow due to a self referenceing
+data structure, then you need to move the condition into a separate method that just returns the boolean result.
+
 === What's New In This release
 
 == 1.2 (2018-09-23)

@@ -27,7 +27,9 @@ import spock.lang.Specification
  */
 abstract class ConditionRenderingSpec extends Specification {
   void isRendered(String expectedRendering, Condition condition) {
-    assert condition.rendering.trim() == expectedRendering.trim()
+    def rendering = condition.rendering.trim()
+    expectedRendering = expectedRendering.trim()
+    assert rendering == expectedRendering
   }
 
   void isRendered(String expectedRendering, Closure condition) {

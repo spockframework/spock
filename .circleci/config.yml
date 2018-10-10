@@ -63,7 +63,7 @@ jobs:
     #   If you break your build into multiple jobs with workflows, you will probably want to do the parts of this that are relevant in each
     # Save test results
     - store_test_results:
-        path: spock-specs/build/test-results
+        path: build/collected-test-results
     # Save artifacts
     #- store_artifacts:
     #    path: /tmp/circleci-artifacts

@@ -65,5 +65,5 @@ jobs:
     - store_test_results:
         path: build/collected-test-results
     # Save artifacts
-    #- store_artifacts:
-    #    path: /tmp/circleci-artifacts
+    - store_artifacts:
+        path: build/collected-test-results

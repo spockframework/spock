@@ -196,6 +196,31 @@ subprojects {
   }
 }
 
+task collectTestXml (group: 'Test reports') {
+  description = "Collects the test xmls from every subproject into a new directory with subproject as name."
+  def reportingProjects = subprojects.findAll()
+  dependsOn(reportingProjects.tasks.collectMany{it.withType(Test)})
+
+
+  doFirst {
+    def target = file("$buildDir/collected-test-results")
+    target.mkdirs()
+    reportingProjects.each { rp ->
+      rp.tasks.withType(Test).each { testTask ->
+        def repSrc = testTask.reports.junitXml.destination
+
+        def repTarget = file("$target/$rp.name-$repSrc.name")
+        copy {
+          from repSrc
+          into repTarget
+          include '**/*.xml'
+        }
+      }
+    }
+  }
+}
+
+
 task codeCoverageReport (type: JacocoReport, group: 'Coverage reports') {
   description = "Creates an aggregate coverage for the whole project."
   def reportingProjects = subprojects.findAll()
@@ -261,6 +286,10 @@ if (gradle.startParameter.taskNames == ["shippableCiBuild"]) {
 
 if (gradle.startParameter.taskNames == ["appveyorCiBuild"]) {
   gradle.startParameter.taskNames = ["build"]
+}
+
+if (gradle.startParameter.taskNames == ["circleCiBuild"]) {
+  gradle.startParameter.taskNames = ["build", "collectTestXml"]
 }
 
 task publishJavadoc(type: Exec) {

@@ -9,6 +9,9 @@
 version: 2.1
 jobs:
   build:
+    branches:
+      ignore:
+        - gh-pages
     working_directory: ~/spockframework/spock
     parallelism: 1
     shell: /bin/bash --login

@@ -724,7 +724,18 @@ ${func.toString()}
     """, {
       assert func.call(42) == null
     }
-}
+  }
+
+  def "properly escape backslashes in rendering"() {
+    expect:
+    isRendered """
+":\\":\\\\" == null
+         |
+         false
+    """, {
+      assert ":\":\\" == null
+    }
+  }
 
   /*
   def "MapEntryExpression"() {

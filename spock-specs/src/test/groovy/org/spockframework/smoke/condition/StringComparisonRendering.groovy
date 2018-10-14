@@ -58,8 +58,8 @@ null == "foo"
     expect:
     isRendered """
 ("the quick" == "the quirk") instanceof String
-             |               |
-             |               false
+             |               |          |
+             |               false      class java.lang.String
              false
              1 difference (88% similarity)
              the qui(c)k
@@ -74,8 +74,8 @@ null == "foo"
     expect:
     isRendered """
 ("the quick" == "the quick") instanceof String
-             |               |
-             |               false
+             |               |          |
+             |               false      class java.lang.String
              true (java.lang.Boolean)
     """, {
       assert ("the quick" == "the quick") instanceof String

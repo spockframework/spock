@@ -94,8 +94,8 @@ null (void)
     expect:
     isRendered """
 (x == y) instanceof String
- | |  |  |
- | |  |  false
+ | |  |  |          |
+ | |  |  false      class java.lang.String
  | |  1 (java.lang.String)
  | false (java.lang.Boolean)
  1 (java.lang.Integer)
@@ -111,8 +111,8 @@ null (void)
     expect:
     isRendered """
 (x == y) instanceof String
- | |  |  |
- 1 |  1  false
+ | |  |  |          |
+ 1 |  1  false      class java.lang.String
    true (java.lang.Boolean)
     """, {
       int x = 1

@@ -762,12 +762,12 @@ BLOCKED == 0
   // for implicit closure calls see ImplicitClosureCallRendering
   void "explicit closure call"() {
     def func = { it }
-
+    expect:
     isRendered """
 func.call(42) == null
 |    |        |
 |    42       false
-${func.toString()}
+${func.dump()}
     """, {
       assert func.call(42) == null
     }

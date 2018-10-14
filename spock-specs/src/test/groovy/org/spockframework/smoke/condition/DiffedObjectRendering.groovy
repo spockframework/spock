@@ -99,8 +99,26 @@ class DiffedObjectRendering extends EmbeddedSpecification {
 
     then:
     SpockComparisonFailure failure = thrown()
-    failure.actual == "class java.net.SocketTimeoutException\n"
-    failure.expected == "class java.lang.ClassNotFoundException\n"
+    failure.actual == "class java.net.SocketTimeoutException [Bootstrap Class Loader]\n"
+    failure.expected == "class java.lang.ClassNotFoundException [Bootstrap Class Loader]\n"
+  }
+
+  def 'render class with class loader'() {
+    when:
+    runner.runFeatureBody '''
+       when:
+       def clazz1 = new GroovyClassLoader().parseClass('class Clazz {}')
+       def clazz2 = new GroovyClassLoader().parseClass('class Clazz {}')
+
+       then:
+       clazz1 == clazz2
+    '''
+
+    then:
+    SpockComparisonFailure failure = thrown()
+    failure.actual != failure.expected
+    failure.actual.replaceFirst(/(?<=@)\p{XDigit}++/, 'X') == 'class Clazz [groovy.lang.GroovyClassLoader$InnerLoader@X]\n'
+    failure.expected.replaceFirst(/(?<=@)\p{XDigit}++/, 'X') == 'class Clazz [groovy.lang.GroovyClassLoader$InnerLoader@X]\n'
   }
 
   interface RenderBean {

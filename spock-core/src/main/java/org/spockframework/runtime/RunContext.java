@@ -105,8 +105,8 @@ public class RunContext {
     service.addRenderer(Number.class, asStringRenderer);
     service.addRenderer(Character.class, asStringRenderer);
     service.addRenderer(Boolean.class, asStringRenderer);
-    service.addRenderer(Class.class, asStringRenderer);
 
+    service.addRenderer(Class.class, new DiffedClassRenderer());
     service.addRenderer(Collection.class, new DiffedCollectionRenderer());
     service.addRenderer(Set.class, new DiffedSetRenderer(true));
     service.addRenderer(SortedSet.class, new DiffedSetRenderer(false));

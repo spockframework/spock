@@ -32,14 +32,15 @@ import java.util.regex.*;
 // IDEA: find entry points into user code by looking for BaseSpecRunner.invoke()/invokeRaw()
 public class StackTraceFilter implements IStackTraceFilter {
   private static final Pattern FILTERED_CLASSES = Pattern.compile(
-      "org.codehaus.groovy.runtime\\..*" +
-      "|org.codehaus.groovy.reflection\\..*" +
-      "|org.codehaus.groovy\\..*MetaClass.*" +
+      "\\Qorg.codehaus.groovy.runtime.\\E.*" +
+      "|\\Qorg.codehaus.groovy.reflection.\\E.*" +
+      "|\\Qorg.codehaus.groovy.\\E.*MetaClass.*" +
       "|groovy\\..*MetaClass.*" +
-      "|groovy.lang.MetaMethod" +
-      "|java.lang.reflect\\..*" +
-      "|sun.reflect\\..*" +
-      "|org.spockframework.runtime\\.[^.]+" // exclude subpackages
+      "|groovy\\.lang\\.MetaMethod" +
+      "|\\Qjava.lang.reflect.\\E.*" +
+      "|sun\\.reflect\\..*" +
+      "|\\Qjdk.internal.reflect.\\E.*" +
+      "|\\Qorg.spockframework.runtime.\\E[^.]+" // exclude subpackages
   );
 
   private static final Pattern CLOSURE_CLASS = Pattern.compile("(.+)\\$_(.+)_closure(\\d+)");

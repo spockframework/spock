@@ -20,6 +20,7 @@ import org.spockframework.runtime.ValueRecorder;
 import org.spockframework.util.*;
 
 import java.util.*;
+import java.util.regex.Pattern;
 
 import org.codehaus.groovy.ast.*;
 import org.codehaus.groovy.ast.expr.*;
@@ -45,6 +46,8 @@ import org.codehaus.groovy.syntax.Types;
  * @author Peter Niederwieser
  */
 public class ConditionRewriter extends AbstractExpressionConverter<Expression> {
+  private static final Pattern COMMENTS_PATTERN = Pattern.compile("/\\*.*?\\*/|//.*$");
+
   private final IRewriteResources resources;
 
   private int recordCount = 0;
@@ -232,7 +235,7 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> {
     // (e.g. "Type"), or a VariableExpression nested within one or more PropertyExpressions
     // (e.g. "org.Type", "Type.class", "org.Type.class");
     // therefore we have to provide one N/A value for every part of the class name
-    String text = resources.getSourceText(expr);
+    String text = COMMENTS_PATTERN.matcher(resources.getSourceText(expr)).replaceAll("");
     // NOTE: remove guessing (text == null) once underlying Groovy problem has been fixed
     recordCount += text == null ? 0 : TextUtil.countOccurrences(text, '.');
     // record the expression on the last expression part

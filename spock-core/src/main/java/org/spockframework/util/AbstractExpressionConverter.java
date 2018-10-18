@@ -22,6 +22,8 @@ import org.codehaus.groovy.ast.GroovyCodeVisitor;
 import org.codehaus.groovy.ast.expr.Expression;
 import org.codehaus.groovy.ast.stmt.*;
 
+import static org.codehaus.groovy.ast.expr.VariableExpression.THIS_EXPRESSION;
+
 // IDEA: abstract method that provides default conversion if result not set
 public abstract class AbstractExpressionConverter<T> implements GroovyCodeVisitor {
   protected T result;
@@ -42,7 +44,8 @@ public abstract class AbstractExpressionConverter<T> implements GroovyCodeVisito
 
   protected List<T> convertAll(List<? extends Expression> expressions) {
     List<T> converted = new ArrayList<>(expressions.size());
-    for (Expression expr : expressions) converted.add(convert(expr));
+    // do not convert the implicit this expression like when calling the constructor of a non-static inner class
+    for (Expression expr : expressions) converted.add(expr == THIS_EXPRESSION ? (T) expr : convert(expr));
     return converted;
   }
 

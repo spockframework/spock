@@ -37,9 +37,9 @@ x == y
     isRendered """
 x == y
 | |  |
-| |  Fred (org.spockframework.smoke.condition.EqualityComparisonRendering\$Person)
+| |  Fred (org.spockframework.smoke.condition.EqualityComparisonRendering.Person)
 | false
-Fred (org.spockframework.smoke.condition.EqualityComparisonRendering\$Person)
+Fred (org.spockframework.smoke.condition.EqualityComparisonRendering.Person)
     """, {
       def x = new Person(name: "Fred")
       def y = new Person(name: "Fred")
@@ -58,6 +58,36 @@ x == y
     """, {
       def x = 1
       def y = "1"
+      assert x == y
+    }
+  }
+
+  def "values with same representations and different array types"() {
+    expect:
+    isRendered """
+x == y
+| |  |
+| |  [1] (java.lang.String[])
+| false
+[1] (int[])
+    """, {
+      def x = [1] as int[]
+      def y = ['1'] as String[]
+      assert x == y
+    }
+  }
+
+  def "values with same representations and different anonymous types"() {
+    expect:
+    isRendered '''
+x == y
+| |  |
+| |  foo (org.spockframework.smoke.condition.EqualityComparisonRendering$2)
+| false
+foo (org.spockframework.smoke.condition.EqualityComparisonRendering$1)
+    ''', {
+      def x = new Serializable() { String toString() { "foo" } }
+      def y = new Serializable() { String toString() { "foo" } }
       assert x == y
     }
   }

@@ -19,6 +19,9 @@ import org.spockframework.util.*;
 
 import java.util.*;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
 public class ExpressionInfoValueRenderer {
   private static final List<ExpressionComparisonRenderer> RENDERERS = Arrays.asList(
     new FailedStringComparisonRenderer(),
@@ -66,6 +69,13 @@ public class ExpressionInfoValueRenderer {
     } catch (Exception e) {
       return String.format("%s (renderer threw %s)",
           javaLangObjectToString(value), e.getClass().getSimpleName());
+    }
+
+    if (value instanceof Throwable) {
+      Throwable throwable = (Throwable) value;
+      StringWriter stackTrace = new StringWriter();
+      throwable.printStackTrace(new PrintWriter(stackTrace));
+      return stackTrace.toString();
     }
 
     if (str == null || "".equals(str)) {

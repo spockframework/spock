@@ -181,7 +181,7 @@ tiple
 x == null
 | |
 | false
-${x.objectToString()}
+${x.objectToString().replace '$NullToString', '.NullToString'}
     """, {
       assert x == null
     }
@@ -195,7 +195,7 @@ ${x.objectToString()}
 x == null
 | |
 | false
-${x.objectToString()}
+${x.objectToString().replace '$EmptyToString', '.EmptyToString'}
     """, {
       assert x == null
     }
@@ -209,7 +209,7 @@ ${x.objectToString()}
 x == null
 | |
 | false
-${x.objectToString()} (renderer threw UnsupportedOperationException)
+${x.objectToString().replace '$ThrowingToString', '.ThrowingToString'} (renderer threw UnsupportedOperationException)
     """, {
       assert x == null
     }

@@ -15,6 +15,7 @@
  */
 package org.spockframework.smoke.condition
 
+import org.spockframework.runtime.ConditionNotSatisfiedError
 import spock.lang.Issue
 
 class EqualityComparisonRendering extends ConditionRenderingSpec {
@@ -33,18 +34,24 @@ x == y
   }
 
   def "values with same representations and same types"() {
-    expect:
-    isRendered """
+    given:
+    def x = new Person(name: "Fred")
+    def y = new Person(name: "Fred")
+
+    when:
+    assert x == y
+
+    then:
+    ConditionNotSatisfiedError e = thrown()
+    def rendering = e.condition.rendering.trim().replaceAll(/(?<=@)\p{XDigit}++/, 'X')
+    def expectedRendering = '''
 x == y
 | |  |
-| |  Fred (org.spockframework.smoke.condition.EqualityComparisonRendering.Person)
+| |  Fred (org.spockframework.smoke.condition.EqualityComparisonRendering.Person@X)
 | false
-Fred (org.spockframework.smoke.condition.EqualityComparisonRendering.Person)
-    """, {
-      def x = new Person(name: "Fred")
-      def y = new Person(name: "Fred")
-      assert x == y
-    }
+Fred (org.spockframework.smoke.condition.EqualityComparisonRendering.Person@X)
+    '''.trim()
+    rendering == expectedRendering
   }
 
   def "values with same representations and different types"() {
@@ -96,12 +103,25 @@ foo (org.spockframework.smoke.condition.EqualityComparisonRendering$1)
     expect:
     isRendered """
 x == 123
-| |
+| |  |
+| |  123 (java.lang.Integer)
 | false
 123 (java.lang.String)
     """, {
       def x = "123"
       assert x == 123
+    }
+  }
+
+  def "values with same literal representations"() {
+    expect:
+    isRendered """
+[0, 1] == [0, 1] as Set
+|      |         |
+|      false     [0, 1] (java.util.LinkedHashSet)
+[0, 1] (java.util.ArrayList)
+    """, {
+      assert [0, 1] == [0, 1] as Set
     }
   }
 

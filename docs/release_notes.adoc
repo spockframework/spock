@@ -36,6 +36,17 @@ data structure, then you need to move the condition into a separate method that 
 
 === What's New In This release
 
+* Fix erroneous regex where an optional colon was defined instead of a non-capturing group
+* Render class loader for classes in comparison failures
+* Record class literal values to display FQCN in comparison failures
+* Filter Java 9+ reflection stack frames
+* Do not convert implicit "this" expression like when calling the constructor of a non-static inner class
+* Fix class expression recording when there are comments with dots in the same line
+* Show stacktrace of throwables in comparison failure result
+* Use canonical class name in comparison failure results if present
+* Render otherwise irrelevant expressions if they get a type hint in comparison failure
+* Add identity hash code to type hints in comparison failures if they are identical
+
 == 1.2 (2018-09-23)
 
 Breaking Changes: Spock 1.2 drops support for Java 6, Groovy 2.0 and Groovy 2.3

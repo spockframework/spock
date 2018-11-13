@@ -34,7 +34,11 @@
 <li><a href="#_imports">Imports</a></li>
 <li><a href="#_specification">Specification</a></li>
 <li><a href="#_fields">Fields</a></li>
-<li><a href="#_fixture_methods">Fixture Methods</a></li>
+<li><a href="#_fixture_methods">Fixture Methods</a>
+<ul class="sectlevel3">
+<li><a href="#_invocation_order">Invocation Order</a></li>
+</ul>
+</li>
 <li><a href="#_feature_methods">Feature Methods</a>
 <ul class="sectlevel3">
 <li><a href="#_blocks">Blocks</a></li>
@@ -87,7 +91,7 @@
 <li><a href="#_explicit_interaction_blocks">Explicit Interaction Blocks</a></li>
 <li><a href="#_scope_of_interactions">Scope of Interactions</a></li>
 <li><a href="#_verification_of_interactions">Verification of Interactions</a></li>
-<li><a href="#_invocation_order">Invocation Order</a></li>
+<li><a href="#_invocation_order_2">Invocation Order</a></li>
 <li><a href="#_mocking_classes">Mocking Classes</a></li>
 </ul>
 </li>
@@ -467,11 +471,45 @@ Usually it&#8217;s a good idea to use a fresh fixture for every feature method, 
 fields together with the <code>setupSpec()</code> and <code>cleanupSpec()</code> methods.
 Note that <code>setupSpec()</code> and <code>cleanupSpec()</code> <em>may not</em> reference instance fields unless they are annotated with <code>@Shared</code>.</p>
 </div>
+<div class="sect3">
+<h4 id="_invocation_order"><a class="anchor" href="#_invocation_order"></a><a class="link" href="#_invocation_order">Invocation Order</a></h4>
 <div class="paragraph">
 <p>If fixture methods are overridden in a specification subclass then <code>setup()</code> of the superclass will run before <code>setup()</code> of the subclass.
 <code>cleanup()</code> works in reverse order, that is <code>cleanup()</code> of the subclass will execute before <code>cleanup()</code> of the superclass.
 <code>setupSpec()</code> and <code>cleanupSpec()</code> behave in the same way.
 There is no need to explicitly call <code>super.setup()</code> or <code>super.cleanup()</code> as Spock will automatically find and execute fixture methods at all levels in an inheritance hierarchy.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><code>super.setupSpec</code></p>
+</li>
+<li>
+<p><code>sub.setupSpec</code></p>
+</li>
+<li>
+<p><code>super.setup</code></p>
+</li>
+<li>
+<p><code>sub.setup</code></p>
+</li>
+<li>
+<p>feature method</p>
+</li>
+<li>
+<p><code>sub.cleanup</code></p>
+</li>
+<li>
+<p><code>super.cleanup</code></p>
+</li>
+<li>
+<p><code>sub.cleanupSpec</code></p>
+</li>
+<li>
+<p><code>super.cleanupSpec</code></p>
+</li>
+</ol>
+</div>
 </div>
 </div>
 <div class="sect2">
@@ -2318,7 +2356,7 @@ In particular, invocations that match everything but the interaction&#8217;s arg
 </div>
 </div>
 <div class="sect3">
-<h4 id="_invocation_order"><a class="anchor" href="#_invocation_order"></a><a class="link" href="#_invocation_order">Invocation Order</a></h4>
+<h4 id="_invocation_order_2"><a class="anchor" href="#_invocation_order_2"></a><a class="link" href="#_invocation_order_2">Invocation Order</a></h4>
 <div class="paragraph">
 <p>Often, the exact method invocation order isn&#8217;t relevant and may change over time. To avoid over-specification,
 Spock defaults to allowing any invocation order, provided that the specified interactions are eventually satisfied:</p>
@@ -6053,7 +6091,7 @@ that answer, closeTo(<span class="integer">42</span>, <span class="float">0.001<
 <div id="footer">
 <div id="footer-text">
 Version 1.3-SNAPSHOT<br>
-Last updated 2018-11-02 13:59:02 UTC
+Last updated 2018-11-13 18:48:30 UTC
 </div>
 </div>
 </body>

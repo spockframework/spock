@@ -103,10 +103,22 @@ Occasionally it makes sense for feature methods to share a fixture, which is ach
 fields together with the `setupSpec()` and `cleanupSpec()` methods.
 Note that `setupSpec()` and `cleanupSpec()` _may not_ reference instance fields unless they are annotated with `@Shared`.
 
+=== Invocation Order
+
 If fixture methods are overridden in a specification subclass then `setup()` of the superclass will run before `setup()` of the subclass.
 `cleanup()` works in reverse order, that is `cleanup()` of the subclass will execute before `cleanup()` of the superclass.
 `setupSpec()` and `cleanupSpec()` behave in the same way.
 There is no need to explicitly call `super.setup()` or `super.cleanup()` as Spock will automatically find and execute fixture methods at all levels in an inheritance hierarchy.
+
+1. `super.setupSpec`
+2. `sub.setupSpec`
+3. `super.setup`
+4. `sub.setup`
+5. feature method
+6. `sub.cleanup`
+7. `super.cleanup`
+8. `sub.cleanupSpec`
+9. `super.cleanupSpec`
 
 == Feature Methods
 

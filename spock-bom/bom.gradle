@@ -3,8 +3,6 @@ apply from: script("publishMaven")
 def modifyBom = { xml ->
   def projectNode = xml.asNode()
 
-  projectNode.remove(projectNode['dependencies'][0]) // remove default dependency section
-
   projectNode.appendNode('properties').appendNode('spock.version', project.fullVersion)
 
   def dependencyManagement = projectNode.appendNode('dependencyManagement').appendNode('dependencies')
@@ -22,13 +20,12 @@ def modifyBom = { xml ->
   }
 }
 
-ext.displayName = "Spock Framework - Bill of Materials"
-
-description = '''This bill of materials provides managed spock dependencies.'''
+ext.displayName = 'Spock Framework - Bill of Materials'
+description = 'This bill of materials provides managed spock dependencies.'
+ext.packaging = 'pom'
 
 publishing.publications.maven {
   pom {
-    packaging = 'pom'
     withXml modifyBom
   }
 }

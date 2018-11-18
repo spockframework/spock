@@ -8,12 +8,6 @@ dependencies {
   compile project(":spock-core")
   compile "org.unitils:unitils-core:3.3"
 
-  // the following are transitive deps of unitils-core with scope compile
-  // nevertheless, if we don't specify them explicitely, groovyc crashes with
-  // NoClassDefFoundError at org.codehaus.groovy.vmplugin.v5.Java5.configureClassNode(Java5.java:285)
-  compile "commons-collections:commons-collections:3.2", internal
-  compile "ognl:ognl:2.6.9", internal
-
   testCompile "org.unitils:unitils-dbunit:3.3", {
     exclude module: "jta"
   }

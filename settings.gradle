@@ -38,3 +38,5 @@ def nameBuildScriptsAfterProjectNames(projects) {
     nameBuildScriptsAfterProjectNames(prj.children)
   }
 }
+
+enableFeaturePreview("STABLE_PUBLISHING")

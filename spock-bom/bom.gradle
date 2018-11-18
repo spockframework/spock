@@ -1,21 +1,15 @@
-plugins {
-  id 'maven'
-}
+apply from: script("publishMaven")
 
 def modifyBom = { xml ->
   def projectNode = xml.asNode()
 
   projectNode.remove(projectNode['dependencies'][0]) // remove default dependency section
 
-  projectNode['version'] + { // add packaging next to version
-    packaging 'pom'
-  }
-
   projectNode.appendNode('properties').appendNode('spock.version', project.fullVersion)
 
   def dependencyManagement = projectNode.appendNode('dependencyManagement').appendNode('dependencies')
 
-  def mvnProjects = project.parent.subprojects.findAll { it.hasProperty('install') } // find all published projects
+  def mvnProjects = project.parent.subprojects.findAll { it.plugins.hasPlugin('maven-publish') } // find all published projects
   mvnProjects -= project // don't self reference
 
   String groupId = project.group
@@ -32,68 +26,9 @@ ext.displayName = "Spock Framework - Bill of Materials"
 
 description = '''This bill of materials provides managed spock dependencies.'''
 
-def bom = {
-  project {
-    name project.ext.displayName
-    description project.description
-    url "http://spockframework.org"
-
-    licenses {
-      license {
-        name "The Apache Software License, Version 2.0"
-        url "http://www.apache.org/licenses/LICENSE-2.0.txt"
-        distribution "repo"
-      }
-    }
-
-    scm {
-      connection "scm:git:git://github.com/spockframework/spock.git"
-      developerConnection "scm:git:ssh://git@github.com/spockframework/spock.git"
-      url "http://github.spockframework.org/spock"
-    }
-
-    developers {
-      developer {
-        id "pniederw"
-        name "Peter Niederwieser"
-        email "peter@pniederw.com"
-      }
-
-      developer {
-        id "ldaley"
-        name "Luke Daley"
-        email "ld@ldaley.com"
-      }
-    }
+publishing.publications.maven {
+  pom {
+    packaging = 'pom'
+    withXml modifyBom
   }
 }
-task writeBom {
-  doLast {
-    pom(bom).withXml(modifyBom) .writeTo("$buildDir/pom.xml")
-  }
-}
-
-def deployers = []
-
-project.afterEvaluate {
-  configure(deployers) {
-    pom(bom).withXml(modifyBom)
-  }
-}
-
-install {
-  deployers << repositories.mavenInstaller
-}
-
-uploadArchives {
-  deployers << repositories.mavenDeployer {
-    snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
-      authentication(userName: "pniederw", password: System.getenv("SONATYPE_OSS_PASSWORD"))
-    }
-    repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
-      authentication(userName: "pniederw", password: System.getenv("SONATYPE_OSS_PASSWORD"))
-    }
-  }
-}
-
-deployers*.beforeDeployment { signing.signPom(it) }

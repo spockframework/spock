@@ -2,6 +2,13 @@ language: java
 
 sudo: false # run on container-based infrastructure
 
+before_install:
+  # Workaround limitation of OpenJDK <11 - https://bugs.openjdk.java.net/browse/JDK-8196141
+  - |
+    if [[ "$TRAVIS_JDK_VERSION" == "openjdk9" || "$TRAVIS_JDK_VERSION" == "openjdk10" ]]; then
+      mv "${JAVA_HOME}/lib/security/cacerts" "${JAVA_HOME}/lib/security/cacerts.jdk"
+      ln -s /etc/ssl/certs/java/cacerts "${JAVA_HOME}/lib/security/cacerts"
+    fi
 
 before_cache:
   - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
@@ -21,6 +28,7 @@ jdk:
   - oraclejdk7 # openjdk7 has SSL Bug avoid jdk7 SSL Bug https://github.com/docker-library/openjdk/issues/117
   - oraclejdk8
   - openjdk10
+  - openjdk11
 
 env:
   matrix:

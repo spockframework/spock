@@ -22,7 +22,7 @@ ext {
     groovyDependency = ["org.codehaus.groovy:groovy-all:${groovyVersion}"]
     groovyConsoleExtraDependency = []  //bundled in groovy-all
   } else if (variant == 2.5) {
-    groovyVersion = "2.5.2"
+    groovyVersion = "2.5.4"
     minGroovyVersion = "2.5.0"
     groovyDependency = [
       "org.codehaus.groovy:groovy:${groovyVersion}",
@@ -46,7 +46,7 @@ ext {
   }
   fullVersion = baseVersion + ((!snapshotVersion && releaseCandidate) ? "-RC$releaseCandidate" : "") + "-groovy-$variant" + (snapshotVersion ? "-SNAPSHOT" : '')
   variantLessVersion = baseVersion + (snapshotVersion ? "-SNAPSHOT" : (releaseCandidate ? "-RC$releaseCandidate" : ""))
-  javaVersions = [1.7, 1.8, 9, 10] // ensure that latest version is actually build on travis, otherwise no docs get published
+  javaVersions = [1.7, 1.8, 9, 10, 11] // ensure that latest version is actually build on travis, otherwise no docs get published
   javaVersion = System.getProperty("java.specification.version") as BigDecimal
 
   if (javaVersion >= 9) {
@@ -56,9 +56,9 @@ ext {
   libs = [
     jetbrainsAnnotations: "org.jetbrains:annotations:13.0",
     ant: "org.apache.ant:ant:1.9.7",
-    asm: "org.ow2.asm:asm:6.2.1",
-    bytebuddy: "net.bytebuddy:byte-buddy:1.9.2",
-    cglib: "cglib:cglib-nodep:3.2.8",
+    asm: "org.ow2.asm:asm:7.0",
+    bytebuddy: "net.bytebuddy:byte-buddy:1.9.3",
+    cglib: "cglib:cglib-nodep:3.2.9",
     groovy: groovyDependency,
     h2database: "com.h2database:h2:1.3.176",
     junit: "junit:junit:4.12",

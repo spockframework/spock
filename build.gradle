@@ -103,7 +103,6 @@ apply from: script("ide")
 subprojects {
   apply plugin: "groovy"
   apply plugin: "jacoco"
-  apply plugin: "signing"
 
   sourceCompatibility = javaVersions.min()
   targetCompatibility = javaVersions.min()
@@ -143,22 +142,6 @@ subprojects {
     compile(project.name == "spock-gradle" ? [] : libs.groovy)
   }
 
-  signing {
-    required { gradle.taskGraph.hasTask(':uploadArchives') }
-    sign configurations.archives
-  }
-
-  signArchives {
-    onlyIf { gradle.taskGraph.hasTask(':uploadArchives') }
-  }
-
-  ext."signing.keyId" = "2EA0A67F"
-  if (System.getenv("SIGNING_PASSWORD")) {
-    // if the password property is set, even if its null null, the SigningExtension will try to load the key
-    ext."signing.password" = System.getenv("SIGNING_PASSWORD")
-  }
-  ext."signing.secretKeyRingFile" = "$rootDir/config/code-signing-secring.gpg"
-
   configureJavadoc(javadoc)
   configureGroovydoc(groovydoc)
 
@@ -170,10 +153,6 @@ subprojects {
   task javadocJar(type: Jar) {
     classifier "javadoc"
     from javadoc
-  }
-
-  artifacts {
-    archives sourcesJar, javadocJar
   }
 
   tasks.withType(Test) {
@@ -257,7 +236,7 @@ if (gradle.startParameter.taskNames == ["travisCiBuild"]) {
   }
   if (System.getenv("TRAVIS_PULL_REQUEST") == "false" && System.getenv("TRAVIS_BRANCH") == "master") {
     if (javaVersion == javaVersions.min()) {
-      gradle.startParameter.taskNames += ["uploadArchives"]
+      gradle.startParameter.taskNames += ["publish"]
       if (!snapshotVersion) {
         gradle.startParameter.taskNames += ["tagRelease"]
       }

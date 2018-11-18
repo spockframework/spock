@@ -1,4 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE HTML>
 <!-- NewPage -->
 <html lang="en">
 <head>
@@ -13,7 +13,8 @@
 <!--[if IE]>
 <script type="text/javascript" src="../../../jquery/jszip-utils/dist/jszip-utils-ie.min.js"></script>
 <![endif]-->
-<script type="text/javascript" src="../../../jquery/jquery-1.10.2.js"></script>
+<script type="text/javascript" src="../../../jquery/jquery-3.3.1.js"></script>
+<script type="text/javascript" src="../../../jquery/jquery-migrate-3.0.1.js"></script>
 <script type="text/javascript" src="../../../jquery/jquery-ui.js"></script>
 </head>
 <body>
@@ -26,27 +27,31 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":42,"i3":10};
+var data = {"i0":10,"i1":10,"i2":42,"i3":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"],32:["t6","Deprecated Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
 var tableTab = "tableTab";
 var activeTableTab = "activeTableTab";
-var pathtoroot = "../../../";loadScripts(document, 'script');</script>
+var pathtoroot = "../../../";
+var useModuleDirectories = true;
+loadScripts(document, 'script');</script>
 <noscript>
 <div>JavaScript is disabled on your browser.</div>
 </noscript>
+<header role="banner">
+<nav role="navigation">
 <div class="fixedNav">
 <!-- ========= START OF TOP NAVBAR ======= -->
-<div class="topNav"><a name="navbar.top">
+<div class="topNav"><a id="navbar.top">
 <!--   -->
 </a>
 <div class="skipNav"><a href="#skip.navbar.top" title="Skip navigation links">Skip navigation links</a></div>
-<a name="navbar.top.firstrow">
+<a id="navbar.top.firstrow">
 <!--   -->
 </a>
 <ul class="navList" title="Navigation">
-<li><a href="../../../overview-summary.html">Overview</a></li>
+<li><a href="../../../index.html">Overview</a></li>
 <li><a href="package-summary.html">Package</a></li>
 <li class="navBarCell1Rev">Class</li>
 <li><a href="package-tree.html">Tree</a></li>
@@ -56,16 +61,8 @@ var pathtoroot = "../../../";loadScripts(document, 'script');</script>
 </ul>
 </div>
 <div class="subNav">
-<ul class="navList">
-<li>Prev&nbsp;Class</li>
-<li><a href="../../../spock/util/concurrent/BlockingVariable.html" title="class in spock.util.concurrent"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
-</ul>
-<ul class="navList">
-<li><a href="../../../index.html?spock/util/concurrent/AsyncConditions.html" target="_top">Frames</a></li>
-<li><a href="AsyncConditions.html" target="_top">No&nbsp;Frames</a></li>
-</ul>
 <ul class="navList" id="allclasses_navbar_top">
-<li><a href="../../../allclasses-noframe.html">All&nbsp;Classes</a></li>
+<li><a href="../../../allclasses.html">All&nbsp;Classes</a></li>
 </ul>
 <ul class="navListSearch">
 <li><label for="search">SEARCH:</label>
@@ -103,7 +100,7 @@ var pathtoroot = "../../../";loadScripts(document, 'script');</script>
 <li><a href="#method.detail">Method</a></li>
 </ul>
 </div>
-<a name="skip.navbar.top">
+<a id="skip.navbar.top">
 <!--   -->
 </a></div>
 <!-- ========= END OF TOP NAVBAR ========= -->
@@ -113,9 +110,12 @@ var pathtoroot = "../../../";loadScripts(document, 'script');</script>
 $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 //-->
 </script>
+</nav>
+</header>
 <!-- ======== START OF CLASS DATA ======== -->
+<main role="main">
 <div class="header">
-<div class="subTitle"><span class="packageLabelInType">Package</span>&nbsp;<a href="../../../spock/util/concurrent/package-summary.html">spock.util.concurrent</a></div>
+<div class="subTitle"><span class="packageLabelInType">Package</span>&nbsp;<a href="package-summary.html">spock.util.concurrent</a></div>
 <h2 title="Class AsyncConditions" class="title">Class AsyncConditions</h2>
 </div>
 <div class="contentContainer">
@@ -176,25 +176,26 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <!-- ======== CONSTRUCTOR SUMMARY ======== -->
+<section role="region">
 <ul class="blockList">
-<li class="blockList"><a name="constructor.summary">
+<li class="blockList"><a id="constructor.summary">
 <!--   -->
 </a>
 <h3>Constructor Summary</h3>
-<table class="memberSummary" summary="Constructor Summary table, listing constructors, and an explanation">
+<table class="memberSummary">
 <caption><span>Constructors</span><span class="tabEnd">&nbsp;</span></caption>
 <tr>
 <th class="colFirst" scope="col">Constructor</th>
 <th class="colLast" scope="col">Description</th>
 </tr>
 <tr class="altColor">
-<th class="colConstructorName" scope="row"><code><span class="memberNameLink"><a href="../../../spock/util/concurrent/AsyncConditions.html#AsyncConditions--">AsyncConditions</a></span>()</code></th>
+<th class="colConstructorName" scope="row"><code><span class="memberNameLink"><a href="#%3Cinit%3E()">AsyncConditions</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Same as <tt>AsyncConditions(1)</tt>.</div>
 </td>
 </tr>
 <tr class="rowColor">
-<th class="colConstructorName" scope="row"><code><span class="memberNameLink"><a href="../../../spock/util/concurrent/AsyncConditions.html#AsyncConditions-int-">AsyncConditions</a></span>&#8203;(int&nbsp;numEvalBlocks)</code></th>
+<th class="colConstructorName" scope="row"><code><span class="memberNameLink"><a href="#%3Cinit%3E(int)">AsyncConditions</a></span>&#8203;(int&nbsp;numEvalBlocks)</code></th>
 <td class="colLast">
 <div class="block">Instantiates an <tt>AsyncConditions</tt> instance with the specified number
  of evaluate blocks.</div>
@@ -203,13 +204,15 @@ extends java.lang.Object</pre>
 </table>
 </li>
 </ul>
+</section>
 <!-- ========== METHOD SUMMARY =========== -->
+<section role="region">
 <ul class="blockList">
-<li class="blockList"><a name="method.summary">
+<li class="blockList"><a id="method.summary">
 <!--   -->
 </a>
 <h3>Method Summary</h3>
-<table class="memberSummary" summary="Method Summary table, listing methods, and an explanation">
+<table class="memberSummary">
 <caption><span id="t0" class="activeTableTab"><span>All Methods</span><span class="tabEnd">&nbsp;</span></span><span id="t2" class="tableTab"><span><a href="javascript:show(2);">Instance Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t4" class="tableTab"><span><a href="javascript:show(8);">Concrete Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t6" class="tableTab"><span><a href="javascript:show(32);">Deprecated Methods</a></span><span class="tabEnd">&nbsp;</span></span></caption>
 <tr>
 <th class="colFirst" scope="col">Modifier and Type</th>
@@ -218,14 +221,14 @@ extends java.lang.Object</pre>
 </tr>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="../../../spock/util/concurrent/AsyncConditions.html#await--">await</a></span>()</code></th>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#await()">await</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Same as <code>await(1)</code>.</div>
 </td>
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="../../../spock/util/concurrent/AsyncConditions.html#await-double-">await</a></span>&#8203;(double&nbsp;seconds)</code></th>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#await(double)">await</a></span>&#8203;(double&nbsp;seconds)</code></th>
 <td class="colLast">
 <div class="block">Waits until all evaluate blocks have completed or the specified timeout
  (in seconds) expires.</div>
@@ -233,17 +236,17 @@ extends java.lang.Object</pre>
 </tr>
 <tr id="i2" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="../../../spock/util/concurrent/AsyncConditions.html#await-int-java.util.concurrent.TimeUnit-">await</a></span>&#8203;(int&nbsp;value,
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#await(int,java.util.concurrent.TimeUnit)">await</a></span>&#8203;(int&nbsp;value,
      java.util.concurrent.TimeUnit&nbsp;unit)</code></th>
 <td class="colLast">
 <div class="block"><span class="deprecatedLabel">Deprecated.</span>
-<div class="deprecationComment">use <a href="../../../spock/util/concurrent/AsyncConditions.html#await-double-"><code>await(double)</code></a> instead</div>
+<div class="deprecationComment">use <a href="#await(double)"><code>await(double)</code></a> instead</div>
 </div>
 </td>
 </tr>
 <tr id="i3" class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="../../../spock/util/concurrent/AsyncConditions.html#evaluate-java.lang.Runnable-">evaluate</a></span>&#8203;(java.lang.Runnable&nbsp;block)</code></th>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#evaluate(java.lang.Runnable)">evaluate</a></span>&#8203;(java.lang.Runnable&nbsp;block)</code></th>
 <td class="colLast">
 <div class="block">Evaluates the specified block, which is expected to contain
  one or more explicit conditions (i.e.</div>
@@ -251,7 +254,7 @@ extends java.lang.Object</pre>
 </tr>
 </table>
 <ul class="blockList">
-<li class="blockList"><a name="methods.inherited.from.class.java.lang.Object">
+<li class="blockList"><a id="methods.inherited.from.class.java.lang.Object">
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;java.lang.Object</h3>
@@ -259,6 +262,7 @@ extends java.lang.Object</pre>
 </ul>
 </li>
 </ul>
+</section>
 </li>
 </ul>
 </div>
@@ -266,12 +270,13 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <!-- ========= CONSTRUCTOR DETAIL ======== -->
+<section role="region">
 <ul class="blockList">
-<li class="blockList"><a name="constructor.detail">
+<li class="blockList"><a id="constructor.detail">
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a name="AsyncConditions--">
+<a id="&lt;init&gt;()">
 <!--   -->
 </a>
 <ul class="blockList">
@@ -281,7 +286,7 @@ extends java.lang.Object</pre>
 <div class="block">Same as <tt>AsyncConditions(1)</tt>.</div>
 </li>
 </ul>
-<a name="AsyncConditions-int-">
+<a id="&lt;init&gt;(int)">
 <!--   -->
 </a>
 <ul class="blockListLast">
@@ -302,19 +307,21 @@ extends java.lang.Object</pre>
 </ul>
 </li>
 </ul>
+</section>
 <!-- ============ METHOD DETAIL ========== -->
+<section role="region">
 <ul class="blockList">
-<li class="blockList"><a name="method.detail">
+<li class="blockList"><a id="method.detail">
 <!--   -->
 </a>
 <h3>Method Detail</h3>
-<a name="evaluate-java.lang.Runnable-">
+<a id="evaluate(java.lang.Runnable)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>evaluate</h4>
-<pre>public&nbsp;void&nbsp;evaluate&#8203;(java.lang.Runnable&nbsp;block)</pre>
+<pre class="methodSignature">public&nbsp;void&nbsp;evaluate&#8203;(java.lang.Runnable&nbsp;block)</pre>
 <div class="block">Evaluates the specified block, which is expected to contain
  one or more explicit conditions (i.e. assert statements).
  Any caught exception will be rethrown from <tt>await()</tt>.</div>
@@ -324,13 +331,13 @@ extends java.lang.Object</pre>
 </dl>
 </li>
 </ul>
-<a name="await--">
+<a id="await()">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>await</h4>
-<pre>public&nbsp;void&nbsp;await()
+<pre class="methodSignature">public&nbsp;void&nbsp;await()
            throws java.lang.Throwable</pre>
 <div class="block">Same as <code>await(1)</code>.</div>
 <dl>
@@ -339,13 +346,13 @@ extends java.lang.Object</pre>
 </dl>
 </li>
 </ul>
-<a name="await-double-">
+<a id="await(double)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>await</h4>
-<pre>public&nbsp;void&nbsp;await&#8203;(double&nbsp;seconds)
+<pre class="methodSignature">public&nbsp;void&nbsp;await&#8203;(double&nbsp;seconds)
            throws java.lang.Throwable</pre>
 <div class="block">Waits until all evaluate blocks have completed or the specified timeout
  (in seconds) expires. If one of the evaluate blocks throws an exception, it is rethrown
@@ -359,18 +366,18 @@ extends java.lang.Object</pre>
 </dl>
 </li>
 </ul>
-<a name="await-int-java.util.concurrent.TimeUnit-">
+<a id="await(int,java.util.concurrent.TimeUnit)">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>await</h4>
-<pre>@Deprecated
+<pre class="methodSignature">@Deprecated
 public&nbsp;void&nbsp;await&#8203;(int&nbsp;value,
                   java.util.concurrent.TimeUnit&nbsp;unit)
            throws java.lang.Throwable</pre>
 <div class="deprecationBlock"><span class="deprecatedLabel">Deprecated.</span>
-<div class="deprecationComment">use <a href="../../../spock/util/concurrent/AsyncConditions.html#await-double-"><code>await(double)</code></a> instead</div>
+<div class="deprecationComment">use <a href="#await(double)"><code>await(double)</code></a> instead</div>
 </div>
 <div class="block">Waits until all evaluate blocks have completed or the specified timeout
  expires. If one of the evaluate blocks throws an exception, it is rethrown
@@ -384,21 +391,25 @@ public&nbsp;void&nbsp;await&#8203;(int&nbsp;value,
 </ul>
 </li>
 </ul>
+</section>
 </li>
 </ul>
 </div>
 </div>
+</main>
 <!-- ========= END OF CLASS DATA ========= -->
+<footer role="contentinfo">
+<nav role="navigation">
 <!-- ======= START OF BOTTOM NAVBAR ====== -->
-<div class="bottomNav"><a name="navbar.bottom">
+<div class="bottomNav"><a id="navbar.bottom">
 <!--   -->
 </a>
 <div class="skipNav"><a href="#skip.navbar.bottom" title="Skip navigation links">Skip navigation links</a></div>
-<a name="navbar.bottom.firstrow">
+<a id="navbar.bottom.firstrow">
 <!--   -->
 </a>
 <ul class="navList" title="Navigation">
-<li><a href="../../../overview-summary.html">Overview</a></li>
+<li><a href="../../../index.html">Overview</a></li>
 <li><a href="package-summary.html">Package</a></li>
 <li class="navBarCell1Rev">Class</li>
 <li><a href="package-tree.html">Tree</a></li>
@@ -408,16 +419,8 @@ public&nbsp;void&nbsp;await&#8203;(int&nbsp;value,
 </ul>
 </div>
 <div class="subNav">
-<ul class="navList">
-<li>Prev&nbsp;Class</li>
-<li><a href="../../../spock/util/concurrent/BlockingVariable.html" title="class in spock.util.concurrent"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
-</ul>
-<ul class="navList">
-<li><a href="../../../index.html?spock/util/concurrent/AsyncConditions.html" target="_top">Frames</a></li>
-<li><a href="AsyncConditions.html" target="_top">No&nbsp;Frames</a></li>
-</ul>
 <ul class="navList" id="allclasses_navbar_bottom">
-<li><a href="../../../allclasses-noframe.html">All&nbsp;Classes</a></li>
+<li><a href="../../../allclasses.html">All&nbsp;Classes</a></li>
 </ul>
 <div>
 <script type="text/javascript"><!--
@@ -449,9 +452,11 @@ public&nbsp;void&nbsp;await&#8203;(int&nbsp;value,
 <li><a href="#method.detail">Method</a></li>
 </ul>
 </div>
-<a name="skip.navbar.bottom">
+<a id="skip.navbar.bottom">
 <!--   -->
 </a></div>
 <!-- ======== END OF BOTTOM NAVBAR ======= -->
+</nav>
+</footer>
 </body>
 </html>

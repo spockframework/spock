@@ -1,4 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE HTML>
 <!-- NewPage -->
 <html lang="en">
 <head>
@@ -13,7 +13,8 @@
 <!--[if IE]>
 <script type="text/javascript" src="../../jquery/jszip-utils/dist/jszip-utils-ie.min.js"></script>
 <![endif]-->
-<script type="text/javascript" src="../../jquery/jquery-1.10.2.js"></script>
+<script type="text/javascript" src="../../jquery/jquery-3.3.1.js"></script>
+<script type="text/javascript" src="../../jquery/jquery-migrate-3.0.1.js"></script>
 <script type="text/javascript" src="../../jquery/jquery-ui.js"></script>
 </head>
 <body>
@@ -26,21 +27,25 @@
     catch(err) {
     }
 //-->
-var pathtoroot = "../../";loadScripts(document, 'script');</script>
+var pathtoroot = "../../";
+var useModuleDirectories = true;
+loadScripts(document, 'script');</script>
 <noscript>
 <div>JavaScript is disabled on your browser.</div>
 </noscript>
+<header role="banner">
+<nav role="navigation">
 <div class="fixedNav">
 <!-- ========= START OF TOP NAVBAR ======= -->
-<div class="topNav"><a name="navbar.top">
+<div class="topNav"><a id="navbar.top">
 <!--   -->
 </a>
 <div class="skipNav"><a href="#skip.navbar.top" title="Skip navigation links">Skip navigation links</a></div>
-<a name="navbar.top.firstrow">
+<a id="navbar.top.firstrow">
 <!--   -->
 </a>
 <ul class="navList" title="Navigation">
-<li><a href="../../overview-summary.html">Overview</a></li>
+<li><a href="../../index.html">Overview</a></li>
 <li><a href="package-summary.html">Package</a></li>
 <li class="navBarCell1Rev">Class</li>
 <li><a href="package-tree.html">Tree</a></li>
@@ -50,16 +55,8 @@ var pathtoroot = "../../";loadScripts(document, 'script');</script>
 </ul>
 </div>
 <div class="subNav">
-<ul class="navList">
-<li><a href="../../spock/lang/Narrative.html" title="annotation in spock.lang"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li><a href="../../spock/lang/Requires.html" title="annotation in spock.lang"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
-</ul>
-<ul class="navList">
-<li><a href="../../index.html?spock/lang/PendingFeature.html" target="_top">Frames</a></li>
-<li><a href="PendingFeature.html" target="_top">No&nbsp;Frames</a></li>
-</ul>
 <ul class="navList" id="allclasses_navbar_top">
-<li><a href="../../allclasses-noframe.html">All&nbsp;Classes</a></li>
+<li><a href="../../allclasses.html">All&nbsp;Classes</a></li>
 </ul>
 <ul class="navListSearch">
 <li><label for="search">SEARCH:</label>
@@ -95,7 +92,7 @@ var pathtoroot = "../../";loadScripts(document, 'script');</script>
 <li><a href="#annotation.type.element.detail">Element</a></li>
 </ul>
 </div>
-<a name="skip.navbar.top">
+<a id="skip.navbar.top">
 <!--   -->
 </a></div>
 <!-- ========= END OF TOP NAVBAR ========= -->
@@ -105,9 +102,12 @@ var pathtoroot = "../../";loadScripts(document, 'script');</script>
 $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 //-->
 </script>
+</nav>
+</header>
 <!-- ======== START OF CLASS DATA ======== -->
+<main role="main">
 <div class="header">
-<div class="subTitle"><span class="packageLabelInType">Package</span>&nbsp;<a href="../../spock/lang/package-summary.html">spock.lang</a></div>
+<div class="subTitle"><span class="packageLabelInType">Package</span>&nbsp;<a href="package-summary.html">spock.lang</a></div>
 <h2 title="Annotation Type PendingFeature" class="title">Annotation Type PendingFeature</h2>
 </div>
 <div class="contentContainer">
@@ -122,18 +122,18 @@ public @interface <span class="memberNameLabel">PendingFeature</span></pre>
 <div class="block">Indicates that the feature is not fully implemented yet and should not be reported as error.
  <p>
  The use case is to annotate tests that can not yet run but should already be committed.
- The main difference to <a href="../../spock/lang/Ignore.html" title="annotation in spock.lang"><code>Ignore</code></a> is that the test are executed, but test failures are ignored.
- If the test passes without an error, then it will be reported as failure since the <a href="../../spock/lang/PendingFeature.html" title="annotation in spock.lang"><code>PendingFeature</code></a>
+ The main difference to <a href="Ignore.html" title="annotation in spock.lang"><code>Ignore</code></a> is that the test are executed, but test failures are ignored.
+ If the test passes without an error, then it will be reported as failure since the <a href="PendingFeature.html" title="annotation in spock.lang"><code>PendingFeature</code></a>
  annotation should be removed. This way the tests will become part of the normal tests
  instead of being ignored forever.
  </p>
  <p>
- Groovy has the <a href="http://docs.groovy-lang.org/docs/groovy-2.5.2/html/gapi/groovy/transform/NotYetImplemented.html?is-external=true" title="class or interface in groovy.transform" class="externalLink"><code>NotYetImplemented</code></a> annotation which is similar but behaves a differently.
+ Groovy has the <a href="http://docs.groovy-lang.org/docs/groovy-2.5.4/html/gapi/groovy/transform/NotYetImplemented.html?is-external=true" title="class or interface in groovy.transform" class="externalLink"><code>NotYetImplemented</code></a> annotation which is similar but behaves a differently.
  <ul>
      <li>it will mark failing tests as passed</li>
      <li>if at least one iteration of a data-driven test passes it will be reported as error</li>
  </ul>
- <a href="../../spock/lang/PendingFeature.html" title="annotation in spock.lang"><code>PendingFeature</code></a>:
+ <a href="PendingFeature.html" title="annotation in spock.lang"><code>PendingFeature</code></a>:
  <ul>
      <li>it will mark failing tests as skipped</li>
      <li>if at least one iteration of a data-driven test fails it will be reported as skipped</li>
@@ -147,12 +147,13 @@ public @interface <span class="memberNameLabel">PendingFeature</span></pre>
 <ul class="blockList">
 <li class="blockList">
 <!-- =========== ANNOTATION TYPE OPTIONAL MEMBER SUMMARY =========== -->
+<section role="region">
 <ul class="blockList">
-<li class="blockList"><a name="annotation.type.optional.element.summary">
+<li class="blockList"><a id="annotation.type.optional.element.summary">
 <!--   -->
 </a>
 <h3>Optional Element Summary</h3>
-<table class="memberSummary" summary="Optional Element Summary table, listing optional elements, and an explanation">
+<table class="memberSummary">
 <caption><span>Optional Elements</span><span class="tabEnd">&nbsp;</span></caption>
 <tr>
 <th class="colFirst" scope="col">Modifier and Type</th>
@@ -161,14 +162,14 @@ public @interface <span class="memberNameLabel">PendingFeature</span></pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>java.lang.Class&lt;? extends java.lang.Throwable&gt;[]</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="../../spock/lang/PendingFeature.html#exceptions--">exceptions</a></span></code></th>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#exceptions()">exceptions</a></span></code></th>
 <td class="colLast">
 <div class="block">Configures which types of Exceptions are expected in the pending feature.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="../../spock/lang/PendingFeature.html#reason--">reason</a></span></code></th>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#reason()">reason</a></span></code></th>
 <td class="colLast">
 <div class="block">The reason why this feature is pending</div>
 </td>
@@ -176,6 +177,7 @@ public @interface <span class="memberNameLabel">PendingFeature</span></pre>
 </table>
 </li>
 </ul>
+</section>
 </li>
 </ul>
 </div>
@@ -183,12 +185,13 @@ public @interface <span class="memberNameLabel">PendingFeature</span></pre>
 <ul class="blockList">
 <li class="blockList">
 <!-- ============ ANNOTATION TYPE MEMBER DETAIL =========== -->
+<section role="region">
 <ul class="blockList">
-<li class="blockList"><a name="annotation.type.element.detail">
+<li class="blockList"><a id="annotation.type.element.detail">
 <!--   -->
 </a>
 <h3>Element Detail</h3>
-<a name="exceptions--">
+<a id="exceptions()">
 <!--   -->
 </a>
 <ul class="blockList">
@@ -210,8 +213,10 @@ public @interface <span class="memberNameLabel">PendingFeature</span></pre>
 </ul>
 </li>
 </ul>
+</section>
+<section role="region">
 <ul class="blockList">
-<li class="blockList"><a name="reason--">
+<li class="blockList"><a id="reason()">
 <!--   -->
 </a>
 <ul class="blockListLast">
@@ -231,21 +236,25 @@ public @interface <span class="memberNameLabel">PendingFeature</span></pre>
 </ul>
 </li>
 </ul>
+</section>
 </li>
 </ul>
 </div>
 </div>
+</main>
 <!-- ========= END OF CLASS DATA ========= -->
+<footer role="contentinfo">
+<nav role="navigation">
 <!-- ======= START OF BOTTOM NAVBAR ====== -->
-<div class="bottomNav"><a name="navbar.bottom">
+<div class="bottomNav"><a id="navbar.bottom">
 <!--   -->
 </a>
 <div class="skipNav"><a href="#skip.navbar.bottom" title="Skip navigation links">Skip navigation links</a></div>
-<a name="navbar.bottom.firstrow">
+<a id="navbar.bottom.firstrow">
 <!--   -->
 </a>
 <ul class="navList" title="Navigation">
-<li><a href="../../overview-summary.html">Overview</a></li>
+<li><a href="../../index.html">Overview</a></li>
 <li><a href="package-summary.html">Package</a></li>
 <li class="navBarCell1Rev">Class</li>
 <li><a href="package-tree.html">Tree</a></li>
@@ -255,16 +264,8 @@ public @interface <span class="memberNameLabel">PendingFeature</span></pre>
 </ul>
 </div>
 <div class="subNav">
-<ul class="navList">
-<li><a href="../../spock/lang/Narrative.html" title="annotation in spock.lang"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li><a href="../../spock/lang/Requires.html" title="annotation in spock.lang"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
-</ul>
-<ul class="navList">
-<li><a href="../../index.html?spock/lang/PendingFeature.html" target="_top">Frames</a></li>
-<li><a href="PendingFeature.html" target="_top">No&nbsp;Frames</a></li>
-</ul>
 <ul class="navList" id="allclasses_navbar_bottom">
-<li><a href="../../allclasses-noframe.html">All&nbsp;Classes</a></li>
+<li><a href="../../allclasses.html">All&nbsp;Classes</a></li>
 </ul>
 <div>
 <script type="text/javascript"><!--
@@ -294,9 +295,11 @@ public @interface <span class="memberNameLabel">PendingFeature</span></pre>
 <li><a href="#annotation.type.element.detail">Element</a></li>
 </ul>
 </div>
-<a name="skip.navbar.bottom">
+<a id="skip.navbar.bottom">
 <!--   -->
 </a></div>
 <!-- ======== END OF BOTTOM NAVBAR ======= -->
+</nav>
+</footer>
 </body>
 </html>

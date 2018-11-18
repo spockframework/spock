@@ -1,4 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE HTML>
 <!-- NewPage -->
 <html lang="en">
 <head>
@@ -13,7 +13,8 @@
 <!--[if IE]>
 <script type="text/javascript" src="../../../jquery/jszip-utils/dist/jszip-utils-ie.min.js"></script>
 <![endif]-->
-<script type="text/javascript" src="../../../jquery/jquery-1.10.2.js"></script>
+<script type="text/javascript" src="../../../jquery/jquery-3.3.1.js"></script>
+<script type="text/javascript" src="../../../jquery/jquery-migrate-3.0.1.js"></script>
 <script type="text/javascript" src="../../../jquery/jquery-ui.js"></script>
 </head>
 <body>
@@ -26,27 +27,31 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10};
+var data = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
 var tableTab = "tableTab";
 var activeTableTab = "activeTableTab";
-var pathtoroot = "../../../";loadScripts(document, 'script');</script>
+var pathtoroot = "../../../";
+var useModuleDirectories = true;
+loadScripts(document, 'script');</script>
 <noscript>
 <div>JavaScript is disabled on your browser.</div>
 </noscript>
+<header role="banner">
+<nav role="navigation">
 <div class="fixedNav">
 <!-- ========= START OF TOP NAVBAR ======= -->
-<div class="topNav"><a name="navbar.top">
+<div class="topNav"><a id="navbar.top">
 <!--   -->
 </a>
 <div class="skipNav"><a href="#skip.navbar.top" title="Skip navigation links">Skip navigation links</a></div>
-<a name="navbar.top.firstrow">
+<a id="navbar.top.firstrow">
 <!--   -->
 </a>
 <ul class="navList" title="Navigation">
-<li><a href="../../../overview-summary.html">Overview</a></li>
+<li><a href="../../../index.html">Overview</a></li>
 <li><a href="package-summary.html">Package</a></li>
 <li class="navBarCell1Rev">Class</li>
 <li><a href="package-tree.html">Tree</a></li>
@@ -56,16 +61,8 @@ var pathtoroot = "../../../";loadScripts(document, 'script');</script>
 </ul>
 </div>
 <div class="subNav">
-<ul class="navList">
-<li><a href="../../../spock/util/concurrent/BlockingVariable.html" title="class in spock.util.concurrent"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li>Next&nbsp;Class</li>
-</ul>
-<ul class="navList">
-<li><a href="../../../index.html?spock/util/concurrent/PollingConditions.html" target="_top">Frames</a></li>
-<li><a href="PollingConditions.html" target="_top">No&nbsp;Frames</a></li>
-</ul>
 <ul class="navList" id="allclasses_navbar_top">
-<li><a href="../../../allclasses-noframe.html">All&nbsp;Classes</a></li>
+<li><a href="../../../allclasses.html">All&nbsp;Classes</a></li>
 </ul>
 <ul class="navListSearch">
 <li><label for="search">SEARCH:</label>
@@ -103,7 +100,7 @@ var pathtoroot = "../../../";loadScripts(document, 'script');</script>
 <li><a href="#method.detail">Method</a></li>
 </ul>
 </div>
-<a name="skip.navbar.top">
+<a id="skip.navbar.top">
 <!--   -->
 </a></div>
 <!-- ========= END OF TOP NAVBAR ========= -->
@@ -113,9 +110,12 @@ var pathtoroot = "../../../";loadScripts(document, 'script');</script>
 $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 //-->
 </script>
+</nav>
+</header>
 <!-- ======== START OF CLASS DATA ======== -->
+<main role="main">
 <div class="header">
-<div class="subTitle"><span class="packageLabelInType">Package</span>&nbsp;<a href="../../../spock/util/concurrent/package-summary.html">spock.util.concurrent</a></div>
+<div class="subTitle"><span class="packageLabelInType">Package</span>&nbsp;<a href="package-summary.html">spock.util.concurrent</a></div>
 <h2 title="Class PollingConditions" class="title">Class PollingConditions</h2>
 </div>
 <div class="contentContainer">
@@ -159,31 +159,34 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <!-- ======== CONSTRUCTOR SUMMARY ======== -->
+<section role="region">
 <ul class="blockList">
-<li class="blockList"><a name="constructor.summary">
+<li class="blockList"><a id="constructor.summary">
 <!--   -->
 </a>
 <h3>Constructor Summary</h3>
-<table class="memberSummary" summary="Constructor Summary table, listing constructors, and an explanation">
+<table class="memberSummary">
 <caption><span>Constructors</span><span class="tabEnd">&nbsp;</span></caption>
 <tr>
 <th class="colFirst" scope="col">Constructor</th>
 <th class="colLast" scope="col">Description</th>
 </tr>
 <tr class="altColor">
-<th class="colConstructorName" scope="row"><code><span class="memberNameLink"><a href="../../../spock/util/concurrent/PollingConditions.html#PollingConditions--">PollingConditions</a></span>()</code></th>
+<th class="colConstructorName" scope="row"><code><span class="memberNameLink"><a href="#%3Cinit%3E()">PollingConditions</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
 </table>
 </li>
 </ul>
+</section>
 <!-- ========== METHOD SUMMARY =========== -->
+<section role="region">
 <ul class="blockList">
-<li class="blockList"><a name="method.summary">
+<li class="blockList"><a id="method.summary">
 <!--   -->
 </a>
 <h3>Method Summary</h3>
-<table class="memberSummary" summary="Method Summary table, listing methods, and an explanation">
+<table class="memberSummary">
 <caption><span id="t0" class="activeTableTab"><span>All Methods</span><span class="tabEnd">&nbsp;</span></span><span id="t2" class="tableTab"><span><a href="javascript:show(2);">Instance Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t4" class="tableTab"><span><a href="javascript:show(8);">Concrete Methods</a></span><span class="tabEnd">&nbsp;</span></span></caption>
 <tr>
 <th class="colFirst" scope="col">Modifier and Type</th>
@@ -192,93 +195,93 @@ extends java.lang.Object</pre>
 </tr>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="../../../spock/util/concurrent/PollingConditions.html#call-double-groovy.lang.Closure-">call</a></span>&#8203;(double&nbsp;seconds,
-    <a href="http://docs.groovy-lang.org/docs/groovy-2.5.2/html/gapi/groovy/lang/Closure.html?is-external=true" title="class or interface in groovy.lang" class="externalLink">Closure</a>&lt;?&gt;&nbsp;conditions)</code></th>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#call(double,groovy.lang.Closure)">call</a></span>&#8203;(double&nbsp;seconds,
+    <a href="http://docs.groovy-lang.org/docs/groovy-2.5.4/html/gapi/groovy/lang/Closure.html?is-external=true" title="class or interface in groovy.lang" class="externalLink">Closure</a>&lt;?&gt;&nbsp;conditions)</code></th>
 <td class="colLast">
-<div class="block">Alias for <a href="../../../spock/util/concurrent/PollingConditions.html#within-double-groovy.lang.Closure-"><code>within(double, groovy.lang.Closure)</code></a>.</div>
+<div class="block">Alias for <a href="#within(double,groovy.lang.Closure)"><code>within(double, groovy.lang.Closure)</code></a>.</div>
 </td>
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="../../../spock/util/concurrent/PollingConditions.html#call-groovy.lang.Closure-">call</a></span>&#8203;(<a href="http://docs.groovy-lang.org/docs/groovy-2.5.2/html/gapi/groovy/lang/Closure.html?is-external=true" title="class or interface in groovy.lang" class="externalLink">Closure</a>&lt;?&gt;&nbsp;conditions)</code></th>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#call(groovy.lang.Closure)">call</a></span>&#8203;(<a href="http://docs.groovy-lang.org/docs/groovy-2.5.4/html/gapi/groovy/lang/Closure.html?is-external=true" title="class or interface in groovy.lang" class="externalLink">Closure</a>&lt;?&gt;&nbsp;conditions)</code></th>
 <td class="colLast">
-<div class="block">Alias for <a href="../../../spock/util/concurrent/PollingConditions.html#eventually-groovy.lang.Closure-"><code>eventually(groovy.lang.Closure)</code></a>.</div>
+<div class="block">Alias for <a href="#eventually(groovy.lang.Closure)"><code>eventually(groovy.lang.Closure)</code></a>.</div>
 </td>
 </tr>
 <tr id="i2" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="../../../spock/util/concurrent/PollingConditions.html#eventually-groovy.lang.Closure-">eventually</a></span>&#8203;(<a href="http://docs.groovy-lang.org/docs/groovy-2.5.2/html/gapi/groovy/lang/Closure.html?is-external=true" title="class or interface in groovy.lang" class="externalLink">Closure</a>&lt;?&gt;&nbsp;conditions)</code></th>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#eventually(groovy.lang.Closure)">eventually</a></span>&#8203;(<a href="http://docs.groovy-lang.org/docs/groovy-2.5.4/html/gapi/groovy/lang/Closure.html?is-external=true" title="class or interface in groovy.lang" class="externalLink">Closure</a>&lt;?&gt;&nbsp;conditions)</code></th>
 <td class="colLast">
 <div class="block">Repeatedly evaluates the specified conditions until they are satisfied or the timeout has elapsed.</div>
 </td>
 </tr>
 <tr id="i3" class="rowColor">
 <td class="colFirst"><code>double</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="../../../spock/util/concurrent/PollingConditions.html#getDelay--">getDelay</a></span>()</code></th>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getDelay()">getDelay</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Returns the delay (in seconds) between successive evaluations of the conditions.</div>
 </td>
 </tr>
 <tr id="i4" class="altColor">
 <td class="colFirst"><code>double</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="../../../spock/util/concurrent/PollingConditions.html#getFactor--">getFactor</a></span>()</code></th>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getFactor()">getFactor</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Returns the factor by which the delay grows (or shrinks) after each evaluation of the conditions.</div>
 </td>
 </tr>
 <tr id="i5" class="rowColor">
 <td class="colFirst"><code>double</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="../../../spock/util/concurrent/PollingConditions.html#getInitialDelay--">getInitialDelay</a></span>()</code></th>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getInitialDelay()">getInitialDelay</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Returns the initial delay (in seconds) before first evaluating the conditions.</div>
 </td>
 </tr>
 <tr id="i6" class="altColor">
 <td class="colFirst"><code>double</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="../../../spock/util/concurrent/PollingConditions.html#getTimeout--">getTimeout</a></span>()</code></th>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getTimeout()">getTimeout</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Returns the timeout (in seconds) until which the conditions have to be satisfied.</div>
 </td>
 </tr>
 <tr id="i7" class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="../../../spock/util/concurrent/PollingConditions.html#setDelay-double-">setDelay</a></span>&#8203;(double&nbsp;seconds)</code></th>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setDelay(double)">setDelay</a></span>&#8203;(double&nbsp;seconds)</code></th>
 <td class="colLast">
 <div class="block">Sets the delay (in seconds) between successive evaluations of the conditions.</div>
 </td>
 </tr>
 <tr id="i8" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="../../../spock/util/concurrent/PollingConditions.html#setFactor-double-">setFactor</a></span>&#8203;(double&nbsp;factor)</code></th>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setFactor(double)">setFactor</a></span>&#8203;(double&nbsp;factor)</code></th>
 <td class="colLast">
 <div class="block">Sets the factor by which the delay grows (or shrinks) after each evaluation of the conditions.</div>
 </td>
 </tr>
 <tr id="i9" class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="../../../spock/util/concurrent/PollingConditions.html#setInitialDelay-double-">setInitialDelay</a></span>&#8203;(double&nbsp;seconds)</code></th>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setInitialDelay(double)">setInitialDelay</a></span>&#8203;(double&nbsp;seconds)</code></th>
 <td class="colLast">
 <div class="block">Sets the initial delay (in seconds) before first evaluating the conditions.</div>
 </td>
 </tr>
 <tr id="i10" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="../../../spock/util/concurrent/PollingConditions.html#setTimeout-double-">setTimeout</a></span>&#8203;(double&nbsp;seconds)</code></th>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setTimeout(double)">setTimeout</a></span>&#8203;(double&nbsp;seconds)</code></th>
 <td class="colLast">
 <div class="block">Sets the timeout (in seconds) until which the conditions have to be satisfied.</div>
 </td>
 </tr>
 <tr id="i11" class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="../../../spock/util/concurrent/PollingConditions.html#within-double-groovy.lang.Closure-">within</a></span>&#8203;(double&nbsp;seconds,
-      <a href="http://docs.groovy-lang.org/docs/groovy-2.5.2/html/gapi/groovy/lang/Closure.html?is-external=true" title="class or interface in groovy.lang" class="externalLink">Closure</a>&lt;?&gt;&nbsp;conditions)</code></th>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#within(double,groovy.lang.Closure)">within</a></span>&#8203;(double&nbsp;seconds,
+      <a href="http://docs.groovy-lang.org/docs/groovy-2.5.4/html/gapi/groovy/lang/Closure.html?is-external=true" title="class or interface in groovy.lang" class="externalLink">Closure</a>&lt;?&gt;&nbsp;conditions)</code></th>
 <td class="colLast">
 <div class="block">Repeatedly evaluates the specified conditions until they are satisfied or the specified timeout (in seconds) has elapsed.</div>
 </td>
 </tr>
 </table>
 <ul class="blockList">
-<li class="blockList"><a name="methods.inherited.from.class.java.lang.Object">
+<li class="blockList"><a id="methods.inherited.from.class.java.lang.Object">
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;java.lang.Object</h3>
@@ -286,6 +289,7 @@ extends java.lang.Object</pre>
 </ul>
 </li>
 </ul>
+</section>
 </li>
 </ul>
 </div>
@@ -293,12 +297,13 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <!-- ========= CONSTRUCTOR DETAIL ======== -->
+<section role="region">
 <ul class="blockList">
-<li class="blockList"><a name="constructor.detail">
+<li class="blockList"><a id="constructor.detail">
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a name="PollingConditions--">
+<a id="&lt;init&gt;()">
 <!--   -->
 </a>
 <ul class="blockListLast">
@@ -309,19 +314,21 @@ extends java.lang.Object</pre>
 </ul>
 </li>
 </ul>
+</section>
 <!-- ============ METHOD DETAIL ========== -->
+<section role="region">
 <ul class="blockList">
-<li class="blockList"><a name="method.detail">
+<li class="blockList"><a id="method.detail">
 <!--   -->
 </a>
 <h3>Method Detail</h3>
-<a name="getTimeout--">
+<a id="getTimeout()">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>getTimeout</h4>
-<pre>public&nbsp;double&nbsp;getTimeout()</pre>
+<pre class="methodSignature">public&nbsp;double&nbsp;getTimeout()</pre>
 <div class="block">Returns the timeout (in seconds) until which the conditions have to be satisfied.
  Defaults to one second.</div>
 <dl>
@@ -330,13 +337,13 @@ extends java.lang.Object</pre>
 </dl>
 </li>
 </ul>
-<a name="setTimeout-double-">
+<a id="setTimeout(double)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>setTimeout</h4>
-<pre>public&nbsp;void&nbsp;setTimeout&#8203;(double&nbsp;seconds)</pre>
+<pre class="methodSignature">public&nbsp;void&nbsp;setTimeout&#8203;(double&nbsp;seconds)</pre>
 <div class="block">Sets the timeout (in seconds) until which the conditions have to be satisfied.
  Defaults to one second.</div>
 <dl>
@@ -345,24 +352,24 @@ extends java.lang.Object</pre>
 </dl>
 </li>
 </ul>
-<a name="getInitialDelay--">
+<a id="getInitialDelay()">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>getInitialDelay</h4>
-<pre>public&nbsp;double&nbsp;getInitialDelay()</pre>
+<pre class="methodSignature">public&nbsp;double&nbsp;getInitialDelay()</pre>
 <div class="block">Returns the initial delay (in seconds) before first evaluating the conditions.
  Defaults to zero seconds.</div>
 </li>
 </ul>
-<a name="setInitialDelay-double-">
+<a id="setInitialDelay(double)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>setInitialDelay</h4>
-<pre>public&nbsp;void&nbsp;setInitialDelay&#8203;(double&nbsp;seconds)</pre>
+<pre class="methodSignature">public&nbsp;void&nbsp;setInitialDelay&#8203;(double&nbsp;seconds)</pre>
 <div class="block">Sets the initial delay (in seconds) before first evaluating the conditions.
  Defaults to zero seconds.</div>
 <dl>
@@ -371,24 +378,24 @@ extends java.lang.Object</pre>
 </dl>
 </li>
 </ul>
-<a name="getDelay--">
+<a id="getDelay()">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>getDelay</h4>
-<pre>public&nbsp;double&nbsp;getDelay()</pre>
+<pre class="methodSignature">public&nbsp;double&nbsp;getDelay()</pre>
 <div class="block">Returns the delay (in seconds) between successive evaluations of the conditions.
  Defaults to 0.1 seconds.</div>
 </li>
 </ul>
-<a name="setDelay-double-">
+<a id="setDelay(double)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>setDelay</h4>
-<pre>public&nbsp;void&nbsp;setDelay&#8203;(double&nbsp;seconds)</pre>
+<pre class="methodSignature">public&nbsp;void&nbsp;setDelay&#8203;(double&nbsp;seconds)</pre>
 <div class="block">Sets the delay (in seconds) between successive evaluations of the conditions.
  Defaults to 0.1 seconds.</div>
 <dl>
@@ -397,24 +404,24 @@ extends java.lang.Object</pre>
 </dl>
 </li>
 </ul>
-<a name="getFactor--">
+<a id="getFactor()">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>getFactor</h4>
-<pre>public&nbsp;double&nbsp;getFactor()</pre>
+<pre class="methodSignature">public&nbsp;double&nbsp;getFactor()</pre>
 <div class="block">Returns the factor by which the delay grows (or shrinks) after each evaluation of the conditions.
  Defaults to 1.</div>
 </li>
 </ul>
-<a name="setFactor-double-">
+<a id="setFactor(double)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>setFactor</h4>
-<pre>public&nbsp;void&nbsp;setFactor&#8203;(double&nbsp;factor)</pre>
+<pre class="methodSignature">public&nbsp;void&nbsp;setFactor&#8203;(double&nbsp;factor)</pre>
 <div class="block">Sets the factor by which the delay grows (or shrinks) after each evaluation of the conditions.
  Defaults to 1.</div>
 <dl>
@@ -423,13 +430,13 @@ extends java.lang.Object</pre>
 </dl>
 </li>
 </ul>
-<a name="eventually-groovy.lang.Closure-">
+<a id="eventually(groovy.lang.Closure)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>eventually</h4>
-<pre>public&nbsp;void&nbsp;eventually&#8203;(<a href="http://docs.groovy-lang.org/docs/groovy-2.5.2/html/gapi/groovy/lang/Closure.html?is-external=true" title="class or interface in groovy.lang" class="externalLink">Closure</a>&lt;?&gt;&nbsp;conditions)
+<pre class="methodSignature">public&nbsp;void&nbsp;eventually&#8203;(<a href="http://docs.groovy-lang.org/docs/groovy-2.5.4/html/gapi/groovy/lang/Closure.html?is-external=true" title="class or interface in groovy.lang" class="externalLink">Closure</a>&lt;?&gt;&nbsp;conditions)
                 throws java.lang.InterruptedException</pre>
 <div class="block">Repeatedly evaluates the specified conditions until they are satisfied or the timeout has elapsed.</div>
 <dl>
@@ -440,14 +447,14 @@ extends java.lang.Object</pre>
 </dl>
 </li>
 </ul>
-<a name="within-double-groovy.lang.Closure-">
+<a id="within(double,groovy.lang.Closure)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>within</h4>
-<pre>public&nbsp;void&nbsp;within&#8203;(double&nbsp;seconds,
-                   <a href="http://docs.groovy-lang.org/docs/groovy-2.5.2/html/gapi/groovy/lang/Closure.html?is-external=true" title="class or interface in groovy.lang" class="externalLink">Closure</a>&lt;?&gt;&nbsp;conditions)
+<pre class="methodSignature">public&nbsp;void&nbsp;within&#8203;(double&nbsp;seconds,
+                   <a href="http://docs.groovy-lang.org/docs/groovy-2.5.4/html/gapi/groovy/lang/Closure.html?is-external=true" title="class or interface in groovy.lang" class="externalLink">Closure</a>&lt;?&gt;&nbsp;conditions)
             throws java.lang.InterruptedException</pre>
 <div class="block">Repeatedly evaluates the specified conditions until they are satisfied or the specified timeout (in seconds) has elapsed.</div>
 <dl>
@@ -458,31 +465,31 @@ extends java.lang.Object</pre>
 </dl>
 </li>
 </ul>
-<a name="call-groovy.lang.Closure-">
+<a id="call(groovy.lang.Closure)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>call</h4>
-<pre>public&nbsp;void&nbsp;call&#8203;(<a href="http://docs.groovy-lang.org/docs/groovy-2.5.2/html/gapi/groovy/lang/Closure.html?is-external=true" title="class or interface in groovy.lang" class="externalLink">Closure</a>&lt;?&gt;&nbsp;conditions)
+<pre class="methodSignature">public&nbsp;void&nbsp;call&#8203;(<a href="http://docs.groovy-lang.org/docs/groovy-2.5.4/html/gapi/groovy/lang/Closure.html?is-external=true" title="class or interface in groovy.lang" class="externalLink">Closure</a>&lt;?&gt;&nbsp;conditions)
           throws java.lang.InterruptedException</pre>
-<div class="block">Alias for <a href="../../../spock/util/concurrent/PollingConditions.html#eventually-groovy.lang.Closure-"><code>eventually(groovy.lang.Closure)</code></a>.</div>
+<div class="block">Alias for <a href="#eventually(groovy.lang.Closure)"><code>eventually(groovy.lang.Closure)</code></a>.</div>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code>java.lang.InterruptedException</code></dd>
 </dl>
 </li>
 </ul>
-<a name="call-double-groovy.lang.Closure-">
+<a id="call(double,groovy.lang.Closure)">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>call</h4>
-<pre>public&nbsp;void&nbsp;call&#8203;(double&nbsp;seconds,
-                 <a href="http://docs.groovy-lang.org/docs/groovy-2.5.2/html/gapi/groovy/lang/Closure.html?is-external=true" title="class or interface in groovy.lang" class="externalLink">Closure</a>&lt;?&gt;&nbsp;conditions)
+<pre class="methodSignature">public&nbsp;void&nbsp;call&#8203;(double&nbsp;seconds,
+                 <a href="http://docs.groovy-lang.org/docs/groovy-2.5.4/html/gapi/groovy/lang/Closure.html?is-external=true" title="class or interface in groovy.lang" class="externalLink">Closure</a>&lt;?&gt;&nbsp;conditions)
           throws java.lang.InterruptedException</pre>
-<div class="block">Alias for <a href="../../../spock/util/concurrent/PollingConditions.html#within-double-groovy.lang.Closure-"><code>within(double, groovy.lang.Closure)</code></a>.</div>
+<div class="block">Alias for <a href="#within(double,groovy.lang.Closure)"><code>within(double, groovy.lang.Closure)</code></a>.</div>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code>java.lang.InterruptedException</code></dd>
@@ -491,21 +498,25 @@ extends java.lang.Object</pre>
 </ul>
 </li>
 </ul>
+</section>
 </li>
 </ul>
 </div>
 </div>
+</main>
 <!-- ========= END OF CLASS DATA ========= -->
+<footer role="contentinfo">
+<nav role="navigation">
 <!-- ======= START OF BOTTOM NAVBAR ====== -->
-<div class="bottomNav"><a name="navbar.bottom">
+<div class="bottomNav"><a id="navbar.bottom">
 <!--   -->
 </a>
 <div class="skipNav"><a href="#skip.navbar.bottom" title="Skip navigation links">Skip navigation links</a></div>
-<a name="navbar.bottom.firstrow">
+<a id="navbar.bottom.firstrow">
 <!--   -->
 </a>
 <ul class="navList" title="Navigation">
-<li><a href="../../../overview-summary.html">Overview</a></li>
+<li><a href="../../../index.html">Overview</a></li>
 <li><a href="package-summary.html">Package</a></li>
 <li class="navBarCell1Rev">Class</li>
 <li><a href="package-tree.html">Tree</a></li>
@@ -515,16 +526,8 @@ extends java.lang.Object</pre>
 </ul>
 </div>
 <div class="subNav">
-<ul class="navList">
-<li><a href="../../../spock/util/concurrent/BlockingVariable.html" title="class in spock.util.concurrent"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li>Next&nbsp;Class</li>
-</ul>
-<ul class="navList">
-<li><a href="../../../index.html?spock/util/concurrent/PollingConditions.html" target="_top">Frames</a></li>
-<li><a href="PollingConditions.html" target="_top">No&nbsp;Frames</a></li>
-</ul>
 <ul class="navList" id="allclasses_navbar_bottom">
-<li><a href="../../../allclasses-noframe.html">All&nbsp;Classes</a></li>
+<li><a href="../../../allclasses.html">All&nbsp;Classes</a></li>
 </ul>
 <div>
 <script type="text/javascript"><!--
@@ -556,9 +559,11 @@ extends java.lang.Object</pre>
 <li><a href="#method.detail">Method</a></li>
 </ul>
 </div>
-<a name="skip.navbar.bottom">
+<a id="skip.navbar.bottom">
 <!--   -->
 </a></div>
 <!-- ======== END OF BOTTOM NAVBAR ======= -->
+</nav>
+</footer>
 </body>
 </html>

@@ -6,6 +6,7 @@ plugins {
   id "org.asciidoctor.convert" version "1.5.7"
   id "jacoco"
   id "net.nemerosa.versioning" version "2.6.1"
+  id "de.marcphilipp.nexus-publish" version "0.1.0" apply false
 }
 
 description = "Spock Framework"

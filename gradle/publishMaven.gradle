@@ -1,92 +1,90 @@
-apply plugin: "maven"
+apply plugin: "maven-publish"
+apply plugin: "signing"
 
-def basePom = {
-  project {
-    name project.ext.displayName
-    description project.description
-    url "http://spockframework.org"
-
-    licenses {
-      license {
-        name "The Apache Software License, Version 2.0"
-        url "http://www.apache.org/licenses/LICENSE-2.0.txt"
-        distribution "repo"
-      }
-    }
-
-    scm {
-      connection "scm:git:git://github.com/spockframework/spock.git"
-      developerConnection "scm:git:ssh://git@github.com/spockframework/spock.git"
-      url "http://github.spockframework.org/spock"
-    }
-
-    developers {
-      developer {
-        id "pniederw"
-        name "Peter Niederwieser"
-        email "peter@pniederw.com"
-      }
-
-      developer {
-        id "ldaley"
-        name "Luke Daley"
-        email "ld@ldaley.com"
-      }
-    }
-  }
-}
-
-def deployers = []
-
-project.afterEvaluate {
-  configure(deployers) {
-    pom basePom
-  }
-}
-
-install {
-  deployers << repositories.mavenInstaller
-}
-
-uploadArchives {
-  deployers << repositories.mavenDeployer {
-    snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
-      authentication(userName: "pniederw", password: System.getenv("SONATYPE_OSS_PASSWORD"))
-    }
-    repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
-      authentication(userName: "pniederw", password: System.getenv("SONATYPE_OSS_PASSWORD"))
-    }
-  }
-}
-
-def poms = deployers*.pom
 def optionalDeps = []
 def providedDeps = []
-def internalDeps = []
 
 ext {
-    modifyPom = { Closure modification ->
-      poms.each {
-        it.whenConfigured(modification)
+  optional = { optionalDeps << it; it }
+  provided = { providedDeps << it; it }
+}
+
+publishing {
+  publications {
+    maven(MavenPublication) {
+      from(components.java)
+      afterEvaluate {
+        if (pom.packaging != "pom") {
+          artifact(sourcesJar)
+          artifact(javadocJar)
+        }
+      }
+      pom {
+        name = provider { project.ext.displayName }
+        description = provider { project.description }
+        url = "http://spockframework.org"
+        licenses {
+          license {
+            name = "The Apache Software License, Version 2.0"
+            url = "http://www.apache.org/licenses/LICENSE-2.0.txt"
+            distribution = "repo"
+          }
+        }
+        scm {
+          connection = "scm:git:git://github.com/spockframework/spock.git"
+          developerConnection = "scm:git:ssh://git@github.com/spockframework/spock.git"
+          url = "http://github.spockframework.org/spock"
+        }
+        developers {
+          developer {
+            id = "pniederw"
+            name = "Peter Niederwieser"
+            email = "peter@pniederw.com"
+          }
+          developer {
+            id = "ldaley"
+            name = "Luke Daley"
+            email = "ld@ldaley.com"
+          }
+        }
+        afterEvaluate {
+          withXml {
+            def dependencies = asNode().dependencies[0]
+            optionalDeps.each { dep ->
+              dependencies.find { it.artifactId.text() == dep.name }.appendNode("optional", true)
+            }
+            providedDeps.each { dep ->
+              dependencies.find { it.artifactId.text() == dep.name }.scope[0].value = "provided"
+            }
+          }
+        }
       }
     }
-    optional = { optionalDeps << it; it }
-    provided = { providedDeps << it; it }
-    internal = { internalDeps << it; it }
+  }
+  repositories {
+    maven {
+      def snapshotsRepoUrl = "https://oss.sonatype.org/content/repositories/snapshots/"
+      def releasesRepoUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+      url = snapshotVersion ? snapshotsRepoUrl : releasesRepoUrl
+      credentials {
+        username = "pniederw"
+        password = System.getenv("SONATYPE_OSS_PASSWORD")
+      }
+    }
+  }
 }
 
-modifyPom { pom ->
-  optionalDeps.each { dep ->
-    pom.dependencies.find { it.artifactId == dep.name }.optional = true
-  }
-  providedDeps.each { dep ->
-    pom.dependencies.find { it.artifactId == dep.name }.scope = "provided"
-  }
-  internalDeps.each { dep ->
-    pom.dependencies.removeAll { it.artifactId == dep.name }
-  }
-  // no need to publish test dependencies
-  pom.dependencies.removeAll { it.scope == "test" }
+// ensure all checks pass before publishing
+tasks.withType(AbstractPublishToMaven) {
+  dependsOn(check)
 }
 
-deployers*.beforeDeployment { signing.signPom(it) }
+signing {
+  sign(publishing.publications).each { task ->
+    task.onlyIf { gradle.taskGraph.hasTask(publish) }
+  }
+}
+
+ext."signing.keyId" = "2EA0A67F"
+ext."signing.password" = System.getenv("SIGNING_PASSWORD")
+ext."signing.secretKeyRingFile" = "$rootDir/config/code-signing-secring.gpg"

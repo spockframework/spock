@@ -16,12 +16,15 @@
 
 plugins {
   id "io.spring.dependency-management" version "1.0.5.RELEASE"
-  id 'org.springframework.boot' version "2.0.3.RELEASE"
+  id 'org.springframework.boot' version "2.0.6.RELEASE"
 }
 
 dependencies {
   compile "org.springframework.boot:spring-boot-starter-data-jpa"
   compile "org.springframework.boot:spring-boot-starter-web"
+
+  // Remove this when Spring Boot 2 is upgraded to 2.1.x version
+  compile "org.hibernate:hibernate-core:5.3.7.Final"
 
   testCompile "org.springframework.boot:spring-boot-starter-test"
   testCompile project(":spock-core")

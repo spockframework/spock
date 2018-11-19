@@ -7,8 +7,6 @@ description = "Spock's Guice Module provides support for testing Guice 2/3 based
 dependencies {
   compile project(":spock-core")
   compile "com.google.inject:guice:3.0", provided
-  // surfaces in the Guice API; groovyc complains if we don't add it
-  compile "aopalliance:aopalliance:1.0", internal
 }
 
 jar {

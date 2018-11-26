@@ -30,6 +30,18 @@ public class ExpressionInfoValueRenderer {
     new FailedInstanceOfComparisonRenderer()
   );
 
+  private static final StackTraceFilter genericStackTraceFilter = new StackTraceFilter(new IMethodNameMapper() {
+    @Override
+    public boolean isInitializerOrFixtureMethod(String className, String methodName) {
+      return false;
+    }
+
+    @Override
+    public String toFeatureName(String methodName) {
+      return methodName;
+    }
+  });
+
   private final ExpressionInfo expr;
 
   private ExpressionInfoValueRenderer(ExpressionInfo expr) {
@@ -73,6 +85,7 @@ public class ExpressionInfoValueRenderer {
 
     if (value instanceof Throwable) {
       Throwable throwable = (Throwable) value;
+      genericStackTraceFilter.filter(throwable);
       StringWriter stackTrace = new StringWriter();
       throwable.printStackTrace(new PrintWriter(stackTrace));
       return stackTrace.toString();

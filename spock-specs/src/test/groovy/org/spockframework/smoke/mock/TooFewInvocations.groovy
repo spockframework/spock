@@ -298,12 +298,16 @@ Unmatched invocations (ordered by similarity):
 One or more arguments(s) didn't match:
 0: <matches>
 1: <matches>
-2: <Code argument did not match>
+2: Condition not satisfied:
+   
+   it < 30
+   |  |
+   30 false
 3: <matches>
     """.trim()
   }
 
-  def "can describe code argument assertion mismatch"() {
+  def "can describe code argument explicit assertion mismatch"() {
     when:
     runner.addClassImport(Person)
     runner.runFeatureBody("""

@@ -4,7 +4,62 @@ include::include.adoc[]
 
 == 1.3 (tbd)
 
-Potential breaking change: assertions with explicit messages now include power assertions output.
+The theme for this release is to increase the information that is provided when an assertion failed.
+
+=== Potential breaking changes
+
+==== code argument constraints are treated as implicit assertions
+
+Before this release the code argument constrains worked by returning a boolean result.
+This was fine if you just wanted to do a simple comparison, but it breaks down if you
+need to do 5 comparisons. Users also often assumed that it worked like the assertions in
+`then` blocks and didn't add `&&` to chain multiple assertions together, so their constraint
+ignored all before the next line.
+
+[source,groovy]
+----
+1 * mock.foo( { it.size() > 1
+                it[0].length == 2 })
+----
+
+This would only use the length comparison, to make it work you had to add `&&`.
+Another problem arises by having more than one comparison inside the constraints,
+you don't know which of the 5 comparisons failed. If you just expected one method
+call you could use an explicit `assert` as a workaround, but since it immediately
+breaks, you can't use it if you want to have multiple different calls to the same
+mock.
+
+With 1.3 the above code will actually work as intended, and even more important it
+will give actual feedback what didn't match.
+
+So what can break?
+
+If you used the code argument constraint as a way of capturing
+the argument value, then this will most likely not work anymore, since assignments
+to already declared variables are forbidden in implicit assertion block.
+If you still need access to the argument, you can use the response generator closure
+instead.
+
+[source,groovy]
+----
+def extern = null
+
+1 * mock.foo( { extern = it; it.size() > 0 })  // old
+1 * mock.foo( { it.size() > 0 }) >> { extern = it[0] } // new
+----
+
+The added benefit of this changes is, that it clearly differentiates the condition from
+the capture.
+
+Another consequence of the change is, that the empty `{}` assertion block will now pass
+instead of fail, since no assertion error is being treated as passing, while it required
+a `true` result beforehand.
+
+It is advised, that if you have multiple conditions joined by `&&`, that you remove
+it to get individual assertions reports instead of a large joined block.
+
+
+==== assertions with explicit messages now include power assertions output.
 
 .Given
 [source,groovy]
@@ -33,6 +88,8 @@ Additional message
 
 If you relied on this behavior to hide some output, or to prevent a stack overflow due to a self referenceing
 data structure, then you need to move the condition into a separate method that just returns the boolean result.
+
+
 
 === What's New In This release
 

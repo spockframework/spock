@@ -16,28 +16,14 @@
 
 package org.spockframework.runtime;
 
-import static org.spockframework.runtime.RunStatus.ABORT;
-import static org.spockframework.runtime.RunStatus.FEATURE;
-import static org.spockframework.runtime.RunStatus.ITERATION;
-import static org.spockframework.runtime.RunStatus.OK;
-import static org.spockframework.runtime.RunStatus.SPEC;
-import static org.spockframework.runtime.RunStatus.action;
-import static org.spockframework.runtime.RunStatus.scope;
+import org.spockframework.runtime.extension.*;
+import org.spockframework.runtime.model.*;
+import org.spockframework.util.*;
+import spock.lang.Specification;
 
 import org.junit.runner.Description;
-import org.spockframework.runtime.extension.IMethodInterceptor;
-import org.spockframework.runtime.extension.MethodInvocation;
-import org.spockframework.runtime.model.ErrorInfo;
-import org.spockframework.runtime.model.FeatureInfo;
-import org.spockframework.runtime.model.IterationInfo;
-import org.spockframework.runtime.model.MethodInfo;
-import org.spockframework.runtime.model.MethodKind;
-import org.spockframework.runtime.model.SpecInfo;
-import org.spockframework.util.CollectionUtil;
-import org.spockframework.util.ExceptionUtil;
-import org.spockframework.util.InternalSpockError;
 
-import spock.lang.Specification;
+import static org.spockframework.runtime.RunStatus.*;
 
 /**
  * Executes a single Spec. Notifies its supervisor about overall execution
@@ -88,13 +74,11 @@ public class PlatformSpecRunner {
   }
 
   private MethodInfo createMethodInfoForDoRunSpec(SpockExecutionContext context) {
-    MethodInfo result = new MethodInfo() {
-      @Override
-      public Object invoke(Object target, Object... arguments) {
+    MethodInfo result = new MethodInfo((Object target, Object... arguments) -> {
         doRunSpec(context);
         return null;
       }
-    };
+    );
     SpecInfo spec = context.getSpec();
     result.setParent(spec);
     result.setKind(MethodKind.SPEC_EXECUTION);
@@ -140,13 +124,11 @@ public class PlatformSpecRunner {
   }
 
   private MethodInfo createMethodInfoForDoRunSharedInitializer(SpockExecutionContext context, final SpecInfo spec) {
-    MethodInfo result = new MethodInfo() {
-      @Override
-      public Object invoke(Object target, Object... arguments) {
+    MethodInfo result = new MethodInfo((Object target, Object... arguments) -> {
         doRunSharedInitializer(context, spec);
         return null;
       }
-    };
+    );
     result.setParent(spec);
     result.setKind(MethodKind.SHARED_INITIALIZER);
     result.setDescription(spec.getDescription());
@@ -171,13 +153,11 @@ public class PlatformSpecRunner {
   }
 
   private MethodInfo createMethodInfoForDoRunSetupSpec(SpockExecutionContext context, final SpecInfo spec) {
-    MethodInfo result = new MethodInfo() {
-      @Override
-      public Object invoke(Object target, Object... arguments) {
+    MethodInfo result = new MethodInfo((Object target, Object... arguments) -> {
         doRunSetupSpec(context, spec);
         return null;
       }
-    };
+    );
     result.setParent(spec);
     result.setKind(MethodKind.SETUP_SPEC);
     result.setDescription(spec.getDescription());
@@ -211,13 +191,11 @@ public class PlatformSpecRunner {
   }
 
   private MethodInfo createMethodForDoRunCleanupSpec(SpockExecutionContext context, final SpecInfo spec) {
-    MethodInfo result = new MethodInfo() {
-      @Override
-      public Object invoke(Object target, Object... arguments) {
+    MethodInfo result = new MethodInfo((Object target, Object... arguments) -> {
         doRunCleanupSpec(context, spec);
         return null;
       }
-    };
+    );
     result.setParent(spec);
     result.setKind(MethodKind.CLEANUP_SPEC);
     result.setDescription(spec.getDescription());
@@ -252,13 +230,11 @@ public class PlatformSpecRunner {
 
   private MethodInfo createMethodInfoForDoRunFeature(SpockExecutionContext context) {
     FeatureInfo currentFeature = context.getCurrentFeature();
-    MethodInfo result = new MethodInfo() {
-      @Override
-      public Object invoke(Object target, Object... arguments) {
+    MethodInfo result = new MethodInfo((Object target, Object... arguments) -> {
         doRunFeature(context);
         return null;
       }
-    };
+    );
     result.setParent(currentFeature.getParent());
     result.setKind(MethodKind.FEATURE_EXECUTION);
     result.setFeature(currentFeature);
@@ -318,13 +294,11 @@ public class PlatformSpecRunner {
 
   private MethodInfo createMethodInfoForDoRunIteration(SpockExecutionContext context) {
     FeatureInfo currentFeature = context.getCurrentFeature();
-    MethodInfo result = new MethodInfo() {
-      @Override
-      public Object invoke(Object target, Object... arguments) {
+    MethodInfo result = new MethodInfo((Object target, Object... arguments) -> {
         doRunIteration(context);
         return null;
       }
-    };
+    );
     result.setParent(currentFeature.getParent());
     result.setKind(MethodKind.ITERATION_EXECUTION);
     result.setFeature(currentFeature);
@@ -361,13 +335,11 @@ public class PlatformSpecRunner {
 
   private MethodInfo createMethodInfoForDoRunInitializer(SpockExecutionContext context, final SpecInfo spec) {
     FeatureInfo currentFeature = context.getCurrentFeature();
-    MethodInfo result = new MethodInfo() {
-      @Override
-      public Object invoke(Object target, Object... arguments) {
+    MethodInfo result = new MethodInfo((Object target, Object... arguments) -> {
         doRunInitializer(context, spec);
         return null;
       }
-    };
+    );
     result.setParent(currentFeature.getParent());
     result.setKind(MethodKind.INITIALIZER);
     result.setFeature(currentFeature);
@@ -394,13 +366,11 @@ public class PlatformSpecRunner {
 
   private MethodInfo createMethodInfoForDoRunSetup(SpockExecutionContext context, final SpecInfo spec) {
     FeatureInfo currentFeature = context.getCurrentFeature();
-    MethodInfo result = new MethodInfo() {
-      @Override
-      public Object invoke(Object target, Object... arguments) {
+    MethodInfo result = new MethodInfo((Object target, Object... arguments) -> {
         doRunSetup(context, spec);
         return null;
       }
-    };
+    );
     result.setParent(currentFeature.getParent());
     result.setKind(MethodKind.SETUP);
     result.setFeature(currentFeature);
@@ -439,13 +409,11 @@ public class PlatformSpecRunner {
 
   private MethodInfo createMethodInfoForDoRunCleanup(SpockExecutionContext context, final SpecInfo spec) {
     FeatureInfo currentFeature = context.getCurrentFeature();
-    MethodInfo result = new MethodInfo() {
-      @Override
-      public Object invoke(Object target, Object... arguments) {
+    MethodInfo result = new MethodInfo((Object target, Object... arguments) -> {
         doRunCleanup(context, spec);
         return null;
       }
-    };
+    );
     result.setParent(currentFeature.getParent());
     result.setKind(MethodKind.CLEANUP);
     result.setFeature(currentFeature);

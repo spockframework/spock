@@ -7,6 +7,8 @@ include "spock-spring:spring2-test"
 include "spock-spring:spring3-test"
 include "spock-guice"
 include "spock-junit4"
+include "spock-temp"
+include "spock-testkit"
 
 // https://issues.apache.org/jira/projects/TAP5/issues/TAP5-2588
 if (JavaVersion.current().isJava8()) {
@@ -35,5 +37,3 @@ def nameBuildScriptsAfterProjectNames(projects) {
     nameBuildScriptsAfterProjectNames(prj.children)
   }
 }
-
-enableFeaturePreview("STABLE_PUBLISHING")

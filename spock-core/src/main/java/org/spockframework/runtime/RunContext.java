@@ -14,19 +14,39 @@
 
 package org.spockframework.runtime;
 
-import org.spockframework.builder.DelegatingScript;
-import org.spockframework.runtime.condition.*;
-import org.spockframework.runtime.model.SpecInfo;
-import org.spockframework.util.*;
-import spock.config.RunnerConfiguration;
-
 import java.io.File;
 import java.security.AccessControlException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.SortedMap;
+import java.util.SortedSet;
 
+import org.junit.platform.engine.support.hierarchical.EngineExecutionContext;
 import org.junit.runner.notification.RunNotifier;
+import org.spockframework.builder.DelegatingScript;
+import org.spockframework.runtime.condition.DiffedArrayRenderer;
+import org.spockframework.runtime.condition.DiffedClassRenderer;
+import org.spockframework.runtime.condition.DiffedCollectionRenderer;
+import org.spockframework.runtime.condition.DiffedMapRenderer;
+import org.spockframework.runtime.condition.DiffedObjectAsBeanRenderer;
+import org.spockframework.runtime.condition.DiffedObjectAsStringRenderer;
+import org.spockframework.runtime.condition.DiffedSetRenderer;
+import org.spockframework.runtime.condition.IObjectRenderer;
+import org.spockframework.runtime.condition.IObjectRendererService;
+import org.spockframework.runtime.condition.ObjectRendererService;
+import org.spockframework.runtime.model.SpecInfo;
+import org.spockframework.util.IThrowableFunction;
+import org.spockframework.util.Nullable;
+import org.spockframework.util.SpockUserHomeUtil;
 
-public class RunContext {
+import spock.config.RunnerConfiguration;
+
+public class RunContext implements EngineExecutionContext {
   private static final ThreadLocal<LinkedList<RunContext>> contextStacks =
       new ThreadLocal<LinkedList<RunContext>>() {
         @Override
@@ -80,8 +100,8 @@ public class RunContext {
     return new ExtensionRunner(spec, globalExtensionRegistry, globalExtensionRegistry);
   }
 
-  public ParameterizedSpecRunner createSpecRunner(SpecInfo spec, RunNotifier notifier) {
-    return new ParameterizedSpecRunner(spec,
+  public PlatformParameterizedSpecRunner createSpecRunner(SpecInfo spec, RunNotifier notifier) {
+    return new PlatformParameterizedSpecRunner(
         new JUnitSupervisor(spec, notifier, createStackTraceFilter(spec), diffedObjectRenderer));
   }
 
@@ -179,7 +199,7 @@ public class RunContext {
   // has finished, but the JUnit Runner SPI doesn't provide an adequate hook.
   // That said, since most environments fork a new JVM for each test run,
   // this shouldn't be much of a problem in practice.
-  private static RunContext createBottomContext() {
+  static RunContext createBottomContext() {
     File spockUserHome = SpockUserHomeUtil.getSpockUserHome();
     DelegatingScript script = new ConfigurationScriptLoader(spockUserHome).loadAutoDetectedScript();
     List<Class<?>> classes = new ExtensionClassesLoader().loadClassesFromDefaultLocation();

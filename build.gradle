@@ -6,7 +6,7 @@ plugins {
   id "org.asciidoctor.convert" version "1.5.9.2"
   id "jacoco"
   id "net.nemerosa.versioning" version "2.8.2"
-  id "com.github.ben-manes.versions" version "0.20.0"
+//  id "com.github.ben-manes.versions" version "0.20.0"
 }
 
 description = "Spock Framework"
@@ -58,7 +58,10 @@ ext {
     groovy: groovyDependency,
     h2database: "com.h2database:h2:1.3.176",
     junit4: "junit:junit:4.12",
-    junitPlatform: "org.junit.platform:junit-platform-engine:1.3.2",
+//    junitPlatform: "org.junit.platform:junit-platform-engine:1.3.2",
+    jupiter: "com.github.junit-team.junit5:junit-jupiter:7bc6ecb86d",
+    junitPlatform: "com.github.junit-team.junit5:junit-platform-engine:7bc6ecb86d",
+    junitPlatformTestkit: "com.github.junit-team.junit5:junit-platform-testkit:7bc6ecb86d",
     log4j: "log4j:log4j:1.2.17",
     objenesis: "org.objenesis:objenesis:3.0.1"
   ]
@@ -128,7 +131,12 @@ subprojects {
 
   repositories {
     mavenCentral()
-    maven { url "https://oss.jfrog.org/oss-snapshot-local/" }
+    maven {
+      url 'https://jitpack.io'
+      content {
+        includeGroup "com.github.junit-team.junit5"
+      }
+    }
   }
 
   configurations {

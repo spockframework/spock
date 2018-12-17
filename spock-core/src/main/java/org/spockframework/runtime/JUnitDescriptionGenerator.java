@@ -27,6 +27,7 @@ import org.spockframework.runtime.model.*;
  *
  * @author Peter Niederwieser
  */
+@SuppressWarnings("ALL")
 public class JUnitDescriptionGenerator {
   private final SpecInfo spec;
 
@@ -37,7 +38,7 @@ public class JUnitDescriptionGenerator {
   public void describeSpecMethods() {
     Description desc = Description.createSuiteDescription(spec.getReflection());
     spec.setDescription(desc);
-    
+
     for (FeatureInfo feature : spec.getAllFeatures())
       describeFeature(feature);
 

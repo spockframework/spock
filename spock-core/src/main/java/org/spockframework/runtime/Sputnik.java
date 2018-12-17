@@ -60,7 +60,7 @@ public class Sputnik extends Runner implements Filterable, Sortable {
   public void run(RunNotifier notifier) {
     runExtensionsIfNecessary();
     generateSpecDescriptionIfNecessary();
-    RunContext.get().createSpecRunner(getSpec(), notifier).run();
+//    RunContext.get().createSpecRunner(getSpec(), notifier).run();
   }
 
   @Override

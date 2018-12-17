@@ -12,21 +12,20 @@
  * limitations under the License.
  */
 
-package org.spockframework.smoke.junit
+package org.spockframework.junit4.junit
 
 import org.intellij.lang.annotations.Language
-import org.spockframework.EmbeddedSpecification
 
-import spock.lang.*
+import spock.lang.Unroll
 
-class JUnitFixtureMethods extends EmbeddedSpecification {
+class JUnitFixtureMethods extends JUnitBaseSpec {
   static invocations = []
   static RECORD_INVOCATION_METHOD = "static record(methodName) { JUnitFixtureMethods.invocations << methodName }"
 
   def setup() {
     invocations.clear()
   }
-  
+
   def "lifecycle"() {
     when:
     runSpecBody """
@@ -34,20 +33,20 @@ class JUnitFixtureMethods extends EmbeddedSpecification {
       def setupSpec() { record("setupSpec") }
       ${before()}
       def setup() { record("setup") }
-      
+
       def feature1() { expect: true }
       def feature2() { expect: true }
-      
+
       def cleanup() { record("cleanup") }
       ${after()}
       def cleanupSpec() { record("cleanupSpec") }
       ${afterClass()}
     """
-    
+
     then:
     invocations == [
-        "beforeClass", "setupSpec", 
-        "before", "setup" , "cleanup", "after", 
+        "beforeClass", "setupSpec",
+        "before", "setup" , "cleanup", "after",
         "before", "setup" , "cleanup", "after",
         "cleanupSpec", "afterClass"
     ]
@@ -59,14 +58,14 @@ class JUnitFixtureMethods extends EmbeddedSpecification {
     runSpecBody """
       ${this."$fixtureType"("m1")}
       ${this."$fixtureType"("m2")}
-      
+
       def feature1() { expect: true }
     """
-    
+
     then:
     invocations.contains("m1")
     invocations.contains("m2")
-    
+
     where:
     fixtureType << ["beforeClass", "before", "after", "afterClass"]
   }
@@ -77,22 +76,22 @@ class JUnitFixtureMethods extends EmbeddedSpecification {
     run """
       abstract class Parent extends Specification {
         $RECORD_INVOCATION_METHOD
-        
+
         ${this."$fixtureType"("parent")}
       }
-      
+
       class Child extends Parent {
         ${this."$fixtureType"("child")}
-        
+
         def feature1() { expect: true }
       }
     """
-    
+
     then:
     invocations == order
-    
+
     where:
-    fixtureType   | order 
+    fixtureType   | order
     "beforeClass" | ["parent", "child"]
     "before"      | ["parent", "child"]
     "after"       | ["child", "parent"]
@@ -136,7 +135,7 @@ class JUnitFixtureMethods extends EmbeddedSpecification {
       def feature() { when: mode = "after"; then: true }
       @BeforeClass @AfterClass static void sf() { record mode + "Class" }
     """
-    
+
     then:
     invocations == ["beforeClass", "before", "after", "afterClass"]
   }
@@ -167,7 +166,7 @@ class JUnitFixtureMethods extends EmbeddedSpecification {
     "afterClass"  | "@AfterClass static"  | true        | 1
     "afterClass"  | "@AfterClass static"  | false       | 0
   }
-  
+
   protected beforeClass(name = "beforeClass") { "@BeforeClass static void $name() { record('$name') }" }
   protected before(name = "before") { "@Before void $name() { record('$name') }" }
   protected after(name = "after") { "@After void $name() { record('$name') } "}
@@ -177,17 +176,17 @@ class JUnitFixtureMethods extends EmbeddedSpecification {
   protected before2(log) { "@Before void before() { record('$log') }" }
   protected after2(log) { "@After void after() { record('$log') } "}
   protected afterClass2(log) { "@AfterClass static void afterClass() { record('$log') } "}
-  
+
   protected addImports() {
     runner.addPackageImport(getClass().package)
     runner.addPackageImport(org.junit.Before.package)
   }
-  
+
   protected runSpecBody(String specBody) {
     addImports()
     runner.runSpecBody """
       $RECORD_INVOCATION_METHOD
-      
+
       $specBody
     """
   }
@@ -196,5 +195,5 @@ class JUnitFixtureMethods extends EmbeddedSpecification {
     addImports()
     runner.runWithImports(source)
   }
-  
+
 }

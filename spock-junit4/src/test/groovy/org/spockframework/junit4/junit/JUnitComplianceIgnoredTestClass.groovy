@@ -13,16 +13,16 @@
  * limitations under the License.
  */
 
-package org.spockframework.smoke.junit
+package org.spockframework.junit4.junit
 
 import org.junit.Test
 import org.junit.runner.Request
 
-import spock.lang.Specification
 import spock.lang.Issue
+import spock.lang.Specification
 
 @Issue("http://issues.spockframework.org/detail?id=77")
-class JUnitComplianceIgnoredTestClass extends org.spockframework.EmbeddedSpecification {
+class JUnitComplianceIgnoredTestClass extends JUnitBaseSpec {
   def "a priori description of ignored test class has no method descriptions"() {
     Request request = Request.aClass(base)
     def desc = request.runner.description

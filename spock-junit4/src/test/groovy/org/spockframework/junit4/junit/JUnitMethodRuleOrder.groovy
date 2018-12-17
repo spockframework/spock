@@ -11,16 +11,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.spockframework.smoke.junit
+package org.spockframework.junit4.junit
 
 import org.junit.Rule
+import org.junit.rules.MethodRule
+import org.junit.runners.model.FrameworkMethod
 import org.junit.runners.model.Statement
-import org.junit.rules.TestRule
-import org.junit.runner.Description
 
 import spock.lang.Specification
 
-class JUnitTestRuleOrder extends Specification {
+class JUnitMethodRuleOrder extends Specification {
   List log = []
   @Rule LoggingRule rule1 = new LoggingRule(log: log, msg: "testRule1")
   @Rule LoggingRule rule2 = new LoggingRule(log: log, msg: "testRule2")
@@ -40,11 +40,11 @@ class JUnitTestRuleOrder extends Specification {
     assert log == ["testRule2: before", "testRule1: before"]
   }
 
-  static class LoggingRule implements TestRule {
+  static class LoggingRule implements MethodRule {
     List log
     String msg
 
-    Statement apply(Statement base, Description description) {
+    Statement apply(Statement base, FrameworkMethod method, Object target) {
       new Statement() {
         @Override
         void evaluate() {
@@ -56,4 +56,3 @@ class JUnitTestRuleOrder extends Specification {
     }
   }
 }
-

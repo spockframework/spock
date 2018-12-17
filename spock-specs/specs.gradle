@@ -11,6 +11,7 @@ configurations {
 
 dependencies {
   testCompile project(":spock-core")
+  testCompile project(":spock-junit4")
 
   testRuntime libs.asm
   testRuntime libs.bytebuddy
@@ -20,7 +21,7 @@ dependencies {
 
   spockReport project(":spock-report")
 
-  junit libs.junit
+  junit libs.junit4
 }
 
 sourceCompatibility = javaVersion

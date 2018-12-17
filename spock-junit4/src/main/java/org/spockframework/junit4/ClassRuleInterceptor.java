@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 the original author or authors.
+ * Copyright 2012 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-package org.spockframework.runtime.extension.builtin;
+package org.spockframework.junit4;
 
 import org.spockframework.runtime.extension.IMethodInvocation;
 import org.spockframework.runtime.model.FieldInfo;
@@ -22,8 +22,8 @@ import java.util.List;
 import org.junit.rules.TestRule;
 import org.junit.runners.model.Statement;
 
-public class TestRuleInterceptor extends AbstractRuleInterceptor {
-  public TestRuleInterceptor(List<FieldInfo> ruleFields) {
+public class ClassRuleInterceptor extends AbstractRuleInterceptor {
+  public ClassRuleInterceptor(List<FieldInfo> ruleFields) {
     super(ruleFields);
   }
 
@@ -32,8 +32,8 @@ public class TestRuleInterceptor extends AbstractRuleInterceptor {
     Statement stat = createBaseStatement(invocation);
 
     for (FieldInfo field : ruleFields) {
-      TestRule rule = (TestRule) getRuleInstance(field, invocation.getInstance());
-      stat = rule.apply(stat, invocation.getIteration().getDescription());
+      TestRule rule = (TestRule) getRuleInstance(field, field.isShared() ? invocation.getSharedInstance() : invocation.getInstance());
+      stat = rule.apply(stat, invocation.getSpec().getDescription());
     }
 
     stat.evaluate();

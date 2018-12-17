@@ -12,25 +12,21 @@
  * limitations under the License.
  */
 
-package org.spockframework.smoke.junit
+package org.spockframework.junit4.junit
 
+import org.junit.Rule
 import org.junit.rules.TestName
 import org.junit.rules.TestRule
 import org.junit.runner.Description
 import org.junit.runners.model.Statement
-import org.junit.ClassRule
-
-import org.spockframework.EmbeddedSpecification
 import org.spockframework.runtime.InvalidSpecException
 
-import spock.lang.Shared
-
-class JUnitClassRules extends EmbeddedSpecification {
-  @ClassRule @Shared MyRule rule1
-  @ClassRule @Shared MyRule rule2 = new MyRule(42)
+class JUnitRules extends JUnitBaseSpec {
+  @Rule MyRule rule1
+  @Rule MyRule rule2 = new MyRule(42)
 
   def setup() {
-    runner.addClassImport(ClassRule)
+    runner.addClassImport(Rule)
     runner.addClassImport(TestName)
   }
 
@@ -49,7 +45,7 @@ class JUnitClassRules extends EmbeddedSpecification {
   def "must declare a type"() {
     when:
     runner.runSpecBody """
-      @ClassRule @Shared testName = new TestName()
+      @Rule testName = new TestName()
     """
 
     then:
@@ -57,10 +53,10 @@ class JUnitClassRules extends EmbeddedSpecification {
     e.message.contains("does not have a declared type")
   }
 
-  def "must declare a type that implements TestRule"() {
+  def "must declare a type that implements MethodRule or TestRule"() {
     when:
     runner.runSpecBody """
-      @ClassRule @Shared String rule = "rule"
+      @Rule String rule = "rule"
     """
 
     then:
@@ -68,20 +64,20 @@ class JUnitClassRules extends EmbeddedSpecification {
     e.message.contains("does not appear to be a rule type")
   }
 
-  def "must be @Shared"() {
+  def "cannot be @Shared"() {
     when:
     runner.runSpecBody """
-      @ClassRule TestName testName = new TestName()
+      @Rule @Shared TestName testName = new TestName()
     """
 
     then:
     InvalidSpecException e = thrown()
-    e.message.contains("must be @Shared")
+    e.message.contains("cannot be @Shared")
   }
 
-  static @ClassRule TestName staticRule
+  static @Rule TestName staticRule
 
-  def "static class rules are not detected"() {
+  def "static rules are not detected"() {
     expect:
     staticRule == null
   }

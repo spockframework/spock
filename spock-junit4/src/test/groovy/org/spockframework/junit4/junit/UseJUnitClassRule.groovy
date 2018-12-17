@@ -1,10 +1,10 @@
-package org.spockframework.smoke.junit
+package org.spockframework.junit4.junit
 
+import org.junit.ClassRule
 import org.junit.rules.TemporaryFolder
 
 import spock.lang.Shared
 import spock.lang.Specification
-import org.junit.ClassRule
 
 class UseJUnitClassRule extends Specification {
   @ClassRule

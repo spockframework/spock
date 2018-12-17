@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-package org.spockframework.smoke.junit
+package org.spockframework.junit4.junit
 
-import org.spockframework.EmbeddedSpecification
-import org.junit.runner.notification.RunListener
 import org.junit.Assume
+import org.junit.runner.notification.RunListener
 
-class HandlingOfAssumptionViolatedException extends EmbeddedSpecification {
+class HandlingOfAssumptionViolatedException extends JUnitBaseSpec {
   RunListener listener = Mock()
 
   def setup() {

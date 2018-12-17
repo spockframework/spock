@@ -6,6 +6,7 @@ description = "Interactive, business-friendly HTML reports for Spock specificati
 
 dependencies {
   compile project(":spock-core")
+  compile project(":spock-junit4")
   //compile "com.github.jknack:handlebars:0.7.0"
   //compile "com.fasterxml.jackson.core:jackson-core:2.1.2"
   // "com.fasterxml.jackson.core:jackson-databind:2.1.2"

@@ -6,6 +6,7 @@ include "spock-spring"
 include "spock-spring:spring2-test"
 include "spock-spring:spring3-test"
 include "spock-guice"
+include "spock-junit4"
 
 // https://issues.apache.org/jira/projects/TAP5/issues/TAP5-2588
 if (JavaVersion.current().isJava8()) {

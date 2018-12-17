@@ -22,7 +22,7 @@ import java.lang.annotation.Target;
 
 
 /**
- * Allows to attaching id, impact, component and frequency of failure along with any addional data.
+ * Allows attaching id, impact, component and frequency of failure along with any addional data.
  * This can be used in ACC analysis and risk based testing
  */
 @Retention(RetentionPolicy.RUNTIME)
@@ -32,5 +32,4 @@ public @interface FeatureInfo {
   int impact() default 1;
   int frequencyOfFailure() default 1;
   String component() default "";
-  String[] additionalInfo() default {};
 }

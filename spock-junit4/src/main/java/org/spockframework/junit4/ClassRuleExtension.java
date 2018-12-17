@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-package org.spockframework.runtime.extension.builtin;
+package org.spockframework.junit4;
 
 import org.spockframework.runtime.model.*;
 

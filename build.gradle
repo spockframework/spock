@@ -1,17 +1,18 @@
 import java.text.SimpleDateFormat
 
 plugins {
-  id 'com.gradle.build-scan' version '1.16'
+  id 'com.gradle.build-scan' version '2.1'
   id "base"
-  id "org.asciidoctor.convert" version "1.5.7"
+  id "org.asciidoctor.convert" version "1.5.9.2"
   id "jacoco"
-  id "net.nemerosa.versioning" version "2.6.1"
+  id "net.nemerosa.versioning" version "2.8.2"
+  id "com.github.ben-manes.versions" version "0.20.0"
 }
 
 description = "Spock Framework"
 
 ext {
-  baseVersion = "1.3.1"
+  baseVersion = "2.0"
   snapshotVersion = true
   releaseCandidate = 0
   variants = [2.5]
@@ -50,15 +51,16 @@ ext {
 
   libs = [
     jetbrainsAnnotations: "org.jetbrains:annotations:13.0",
-    ant: "org.apache.ant:ant:1.9.7",
+    ant: "org.apache.ant:ant:1.10.5",
     asm: "org.ow2.asm:asm:7.0",
-    bytebuddy: "net.bytebuddy:byte-buddy:1.9.3",
-    cglib: "cglib:cglib-nodep:3.2.9",
+    bytebuddy: "net.bytebuddy:byte-buddy:1.9.6",
+    cglib: "cglib:cglib-nodep:3.2.10",
     groovy: groovyDependency,
     h2database: "com.h2database:h2:1.3.176",
-    junit: "junit:junit:4.12",
+    junit4: "junit:junit:4.12",
+    junitPlatform: "org.junit.platform:junit-platform-engine:1.3.2",
     log4j: "log4j:log4j:1.2.17",
-    objenesis: "org.objenesis:objenesis:2.6"
+    objenesis: "org.objenesis:objenesis:3.0.1"
   ]
   Date buildTimeAndDate = new Date()
   buildDate = new SimpleDateFormat('yyyy-MM-dd').format(buildTimeAndDate)
@@ -229,9 +231,7 @@ if (gradle.startParameter.taskNames == ["travisCiBuild"]) {
       maxParallelForks = 2
     }
   }
-  if (System.getenv("TRAVIS_PULL_REQUEST") == "false" && System.getenv("TRAVIS_BRANCH") == "master" && baseVersion.startsWith('2.')) { /* TODO remove baseVersion check when switching to 2.x
-                                                                                                                                          1.3 is EOL so don't publish new snapshot/docs when updating Readme.md until 2.x is merged to master
-                                                                                                                                        */
+  if (System.getenv("TRAVIS_PULL_REQUEST") == "false" && System.getenv("TRAVIS_BRANCH") == "master") {
     if (javaVersion == javaVersions.min()) {
       gradle.startParameter.taskNames += ["publish"]
       if (!snapshotVersion) {
@@ -368,6 +368,6 @@ def configureGroovydoc(task) {
 }
 
 buildScan {
-  licenseAgreementUrl = 'https://gradle.com/terms-of-service'
-  licenseAgree = 'yes'
+  termsOfServiceUrl = 'https://gradle.com/terms-of-service'
+  termsOfServiceAgree = 'yes'
 }

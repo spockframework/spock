@@ -12,15 +12,15 @@
  * limitations under the License.
  */
 
-package org.spockframework.runtime.extension.builtin;
-
-import org.spockframework.runtime.extension.IMethodInvocation;
-import org.spockframework.runtime.model.FieldInfo;
+package org.spockframework.junit4;
 
 import java.util.List;
 
 import org.junit.rules.MethodRule;
-import org.junit.runners.model.*;
+import org.junit.runners.model.FrameworkMethod;
+import org.junit.runners.model.Statement;
+import org.spockframework.runtime.extension.IMethodInvocation;
+import org.spockframework.runtime.model.FieldInfo;
 
 public class MethodRuleInterceptor extends AbstractRuleInterceptor {
   MethodRuleInterceptor(List<FieldInfo> ruleFields) {
@@ -49,4 +49,3 @@ public class MethodRuleInterceptor extends AbstractRuleInterceptor {
     };
   }
 }
-

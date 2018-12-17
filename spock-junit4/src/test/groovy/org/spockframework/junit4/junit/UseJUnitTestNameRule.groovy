@@ -10,13 +10,16 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */  
+ */
 
-package org.spockframework.smoke.junit
+package org.spockframework.junit4.junit
 
-import spock.lang.*
 import org.junit.Rule
 import org.junit.rules.TestName
+
+import spock.lang.Issue
+import spock.lang.Specification
+import spock.lang.Unroll
 
 @Issue("http://issues.spockframework.org/detail?id=108")
 class UseJUnitTestNameRule extends Specification {
@@ -31,7 +34,7 @@ class UseJUnitTestNameRule extends Specification {
   def "data-driven, not unrolled"() {
     expect:
     name.methodName == "data-driven, not unrolled"
-    
+
     where:
     i << (1..3)
   }

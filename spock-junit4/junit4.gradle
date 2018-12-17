@@ -1,28 +1,18 @@
 apply from: script("publishMaven")
 
-ext.displayName = "Spock Framework - Unitils Module"
+ext.displayName = "Spock Framework - JUnit 4"
 
-description = "Spock's Unitils Module makes it possible to use Unitils together with Spock."
+description = '''Spock is a testing and specification framework for Java and Groovy applications.
+What makes it stand out from the crowd is its beautiful and highly expressive specification language.
+Thanks to its JUnit runner, Spock is compatible with most IDEs, build tools, and continuous integration servers.
+Spock is inspired from JUnit, jMock, RSpec, Groovy, Scala, Vulcans, and other fascinating life forms.'''
+
 
 dependencies {
   compile project(":spock-core")
-  compile "org.unitils:unitils-core:3.3"
-
-  testCompile "org.unitils:unitils-dbunit:3.3", {
-    exclude module: "jta"
-  }
-  testCompile "org.unitils:unitils-database:3.3",  {
-    exclude module: "jta"
-  }
-
-  // for some reason, groovyc needs junit dependency for compiling tests
-  // otherwise we'll get:
-  // java.lang.NoClassDefFoundError: junit/framework/AssertionFailedError
-  testCompile libs.junit4
-
-  testRuntime libs.h2database
-  testRuntime libs.log4j
+  compile libs.junit4
 }
+
 
 jar {
   manifest {
@@ -37,7 +27,7 @@ jar {
       'Implementation-Title': project.name,
       'Implementation-Version': variantLessVersion,
       'Implementation-Vendor': 'spockframework.org',
-      'Automatic-Module-Name': 'org.spockframework.unitils'
+      'Automatic-Module-Name': 'org.spockframework.junit4'
     )
   }
 }

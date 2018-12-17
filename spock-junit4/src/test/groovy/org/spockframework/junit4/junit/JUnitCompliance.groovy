@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package org.spockframework.smoke.junit
+package org.spockframework.junit4.junit
 
 import org.junit.runner.Request
 import org.junit.runner.notification.RunListener
-import org.spockframework.EmbeddedSpecification
+
 import spock.lang.Issue
 import spock.util.EmbeddedSpecCompiler
 
-class JUnitCompliance extends EmbeddedSpecification {
+class JUnitCompliance extends JUnitBaseSpec {
   @Issue("http://issues.spockframework.org/detail?id=13")
   def "failing setupSpec method"() {
     runner.throwFailure = false

@@ -12,15 +12,13 @@
  * limitations under the License.
  */
 
-package org.spockframework.smoke.junit
+package org.spockframework.junit4.junit
 
-import org.spockframework.EmbeddedSpecification
 import org.junit.runner.Result
-import org.spockframework.runtime.SpockTimeoutError
-import spock.lang.FailsWith
+
 import spock.lang.Ignore
 
-class UseJUnitTimeoutRule extends EmbeddedSpecification {
+class UseJUnitTimeoutRule extends JUnitBaseSpec {
   def timeout
 
   def setup() {

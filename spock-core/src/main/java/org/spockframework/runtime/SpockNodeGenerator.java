@@ -16,9 +16,9 @@
 
 package org.spockframework.runtime;
 
+import org.spockframework.runtime.model.*;
+
 import org.junit.platform.engine.UniqueId;
-import org.spockframework.runtime.model.FeatureInfo;
-import org.spockframework.runtime.model.SpecInfo;
 
 /**
  * Generates and attaches JUnit Description's to a SpecInfo's nodes.
@@ -27,6 +27,7 @@ import org.spockframework.runtime.model.SpecInfo;
  */
 @SuppressWarnings("ALL")
 class SpockNodeGenerator {
+  private static final Object[] EMPTY_ARGS = new Object[0];
   private final UniqueId baseId;
   private final RunContext runContext;
 
@@ -43,13 +44,23 @@ class SpockNodeGenerator {
     for (FeatureInfo feature : specInfo.getAllFeaturesInExecutionOrder()) {
       if (feature.isExcluded()) continue;
 
-      specNode.addChild(describeFeature(specNode.getUniqueId(), feature));
+      if (feature.isParameterized()) {
+        specNode.addChild(describeFeature(specNode.getUniqueId(), feature));
+      } else {
+        specNode.addChild(describeSimpleIteration(specNode.getUniqueId(), feature));
+      }
     }
 
     return specNode;
   }
 
+  private IterationNode describeSimpleIteration(UniqueId parentId, FeatureInfo feature) {
+    IterationInfo iterationInfo = new IterationInfo(feature, EMPTY_ARGS, 1);
+    iterationInfo.setName(feature.getName());
+    return new IterationNode(parentId.append("iteration", feature.getFeatureMethod().getReflection().getName()), iterationInfo);
+  }
+
   private FeatureNode describeFeature(UniqueId parentId, FeatureInfo feature) {
-    return new FeatureNode(parentId.append("feature", feature.getFeatureMethod().getName()), feature);
+    return new FeatureNode(parentId.append("feature", feature.getFeatureMethod().getReflection().getName()), feature);
   }
 }

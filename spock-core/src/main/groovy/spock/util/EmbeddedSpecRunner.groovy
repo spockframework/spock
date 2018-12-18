@@ -22,9 +22,12 @@ import org.spockframework.util.*
 import java.lang.reflect.Modifier
 
 import org.intellij.lang.annotations.Language
+import org.junit.platform.engine.DiscoverySelector
+import org.junit.platform.testkit.engine.*
 import org.junit.runner.*
-import org.junit.runner.notification.RunListener
+import org.junit.runner.notification.*
 
+import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClass
 /**
  * Utility class that allows to run (fragments of) specs programmatically.
  * Mainly intended for spec'ing Spock itself.
@@ -68,14 +71,16 @@ class EmbeddedSpecRunner {
   }
 
   Result runRequest(Request request) {
-    withNewContext {
-      doRunRequest(request)
-    }
+    // TODO retire
+//    withNewContext {
+//      doRunRequest(request)
+//    }
+    new Result()
   }
 
   Result runClasses(List classes) {
     withNewContext {
-      doRunRequest(Request.classes(classes.findAll { !Modifier.isAbstract(it.modifiers) } as Class[]))
+      doRunRequest(classes.findAll { !Modifier.isAbstract(it.modifiers) }.collect {selectClass(it)})
     }
   }
 
@@ -84,7 +89,7 @@ class EmbeddedSpecRunner {
   // the correct context from the stack
   Result runClass(Class clazz) {
     withNewContext {
-      doRunRequest(Request.aClass(clazz))
+      doRunRequest([selectClass(clazz)])
     }
   }
 
@@ -117,13 +122,52 @@ class EmbeddedSpecRunner {
         extensionClasses, inheritParentExtensions, block as IThrowableFunction)
   }
 
-  private Result doRunRequest(Request request) {
-    def junitCore = new JUnitCore()
-    listeners.each { junitCore.addListener(it) }
+  private Result doRunRequest(List<DiscoverySelector> selectors) {
+    def executionResults = doRunRequestInner(selectors)
 
-    def result = junitCore.run(request)
-    if (throwFailure && result.failureCount > 0) throw result.failures[0].exception
+    return new ExecutionResultAdapter(executionResults)
+  }
+  private EngineExecutionResults doRunRequestInner(List<DiscoverySelector> selectors) {
+    def executionResults = EngineTestKit
+      .engine("spock")
+      .selectors(*selectors)
+      .execute()
+    if (throwFailure) {
+      def first = executionResults.tests().failed().executions().stream().findFirst()
+      if (first.present) {
+        throw first.get().terminationInfo.executionResult.throwable.get()
+      }
+    }
+    return executionResults
+  }
 
-    result
+  static class ExecutionResultAdapter extends Result {
+    private final EngineExecutionResults results
+
+    ExecutionResultAdapter(EngineExecutionResults results) {
+      this.results = results
+    }
+
+    @Override
+    int getFailureCount() {
+      return results.tests().failed().count()
+    }
+
+    @Override
+    int getRunCount() {
+      return results.tests().started().count()
+    }
+
+    @Override
+    int getIgnoreCount() {
+      return results.tests().skipped().count()
+    }
+
+    @Override
+    List<Failure> getFailures() {
+      return results.tests().failed().executions()
+        .map{ it.terminationInfo.executionResult.throwable.get()}
+        .map {new Failure(Description.createSuiteDescription("FAIL"), it)}
+    }
   }
 }

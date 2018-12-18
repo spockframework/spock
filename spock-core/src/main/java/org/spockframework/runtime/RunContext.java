@@ -14,37 +14,17 @@
 
 package org.spockframework.runtime;
 
+import org.spockframework.builder.DelegatingScript;
+import org.spockframework.runtime.condition.*;
+import org.spockframework.runtime.model.SpecInfo;
+import org.spockframework.util.*;
+import spock.config.RunnerConfiguration;
+
 import java.io.File;
 import java.security.AccessControlException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.SortedMap;
-import java.util.SortedSet;
+import java.util.*;
 
 import org.junit.platform.engine.support.hierarchical.EngineExecutionContext;
-import org.junit.runner.notification.RunNotifier;
-import org.spockframework.builder.DelegatingScript;
-import org.spockframework.runtime.condition.DiffedArrayRenderer;
-import org.spockframework.runtime.condition.DiffedClassRenderer;
-import org.spockframework.runtime.condition.DiffedCollectionRenderer;
-import org.spockframework.runtime.condition.DiffedMapRenderer;
-import org.spockframework.runtime.condition.DiffedObjectAsBeanRenderer;
-import org.spockframework.runtime.condition.DiffedObjectAsStringRenderer;
-import org.spockframework.runtime.condition.DiffedSetRenderer;
-import org.spockframework.runtime.condition.IObjectRenderer;
-import org.spockframework.runtime.condition.IObjectRendererService;
-import org.spockframework.runtime.condition.ObjectRendererService;
-import org.spockframework.runtime.model.SpecInfo;
-import org.spockframework.util.IThrowableFunction;
-import org.spockframework.util.Nullable;
-import org.spockframework.util.SpockUserHomeUtil;
-
-import spock.config.RunnerConfiguration;
 
 public class RunContext implements EngineExecutionContext {
   private static final ThreadLocal<LinkedList<RunContext>> contextStacks =
@@ -100,9 +80,9 @@ public class RunContext implements EngineExecutionContext {
     return new ExtensionRunner(spec, globalExtensionRegistry, globalExtensionRegistry);
   }
 
-  public PlatformParameterizedSpecRunner createSpecRunner(SpecInfo spec, RunNotifier notifier) {
+  public PlatformParameterizedSpecRunner createSpecRunner(SpecInfo spec) {
     return new PlatformParameterizedSpecRunner(
-        new JUnitSupervisor(spec, notifier, createStackTraceFilter(spec), diffedObjectRenderer));
+        new MasterRunSupervisor(spec, createStackTraceFilter(spec), diffedObjectRenderer));
   }
 
   @Nullable

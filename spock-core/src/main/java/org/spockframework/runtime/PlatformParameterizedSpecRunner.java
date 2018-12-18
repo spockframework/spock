@@ -16,20 +16,13 @@
 
 package org.spockframework.runtime;
 
-import static org.spockframework.runtime.RunStatus.ABORT;
-import static org.spockframework.runtime.RunStatus.ITERATION;
-import static org.spockframework.runtime.RunStatus.OK;
-import static org.spockframework.runtime.RunStatus.action;
+import org.spockframework.runtime.model.*;
 
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
-import org.spockframework.runtime.model.DataProviderInfo;
-import org.spockframework.runtime.model.ErrorInfo;
-import org.spockframework.runtime.model.FeatureInfo;
-import org.spockframework.runtime.model.MethodInfo;
-import org.spockframework.runtime.model.SpecInfo;
+import org.junit.platform.engine.support.hierarchical.Node;
+
+import static org.spockframework.runtime.RunStatus.*;
 
 /**
  * Adds the ability to run parameterized features.
@@ -42,7 +35,7 @@ public class PlatformParameterizedSpecRunner extends PlatformSpecRunner {
   }
 
   @Override
-  protected void runParameterizedFeature(SpockExecutionContext context) {
+  void runParameterizedFeature(SpockExecutionContext context, Node.DynamicTestExecutor dynamicTestExecutor) throws InterruptedException {
     if (runStatus != OK) {
       return;
     }
@@ -50,8 +43,13 @@ public class PlatformParameterizedSpecRunner extends PlatformSpecRunner {
     Object[] dataProviders = createDataProviders(context);
     int numIterations = estimateNumIterations(dataProviders);
     Iterator[] iterators = createIterators(context, dataProviders);
-    runIterations(context, iterators, numIterations);
-    closeDataProviders(context, dataProviders);
+    runIterations(context, dynamicTestExecutor, iterators, numIterations);
+    try {
+      dynamicTestExecutor.awaitFinished();
+    } finally {
+      closeDataProviders(context, dataProviders);
+
+    }
   }
 
   private Object[] createDataProviders(SpockExecutionContext context) {
@@ -148,7 +146,7 @@ public class PlatformParameterizedSpecRunner extends PlatformSpecRunner {
         continue;
       }
 
-      int size = ((Number) rawSize).intValue();
+      int size = ((Number)rawSize).intValue();
       if (size < 0 || size >= result) {
         continue;
       }
@@ -159,17 +157,18 @@ public class PlatformParameterizedSpecRunner extends PlatformSpecRunner {
     return result == Integer.MAX_VALUE ? -1 : result;
   }
 
-  private void runIterations(SpockExecutionContext context, Iterator[] iterators, int estimatedNumIterations) {
+  private void runIterations(SpockExecutionContext context, Node.DynamicTestExecutor dynamicTestExecutor, Iterator[] iterators, int estimatedNumIterations) {
     if (runStatus != OK) {
       return;
     }
 
+    int iterationIndex = 0;
     while (haveNext(context, iterators)) {
-      initializeAndRunIteration(context, nextArgs(context, iterators), estimatedNumIterations);
+      IterationInfo iterationInfo = createIterationInfo(context, nextArgs(context, iterators), estimatedNumIterations);
+      IterationNode iterationNode = new IterationNode(context.getParentId().append("iteration",String.valueOf(iterationIndex++)), iterationInfo);
+      //initializeAndRunIteration(context, nextArgs(context, iterators), estimatedNumIterations);
+      dynamicTestExecutor.execute(iterationNode);
 
-      if (resetStatus(ITERATION) != OK) {
-        break;
-      }
       // no iterators => no data providers => only derived parameterizations => limit to one iteration
       if (iterators.length == 0) {
         break;
@@ -219,7 +218,7 @@ public class PlatformParameterizedSpecRunner extends PlatformSpecRunner {
   }
 
   private SpockExecutionException createDifferentNumberOfDataValuesException(DataProviderInfo provider,
-    boolean hasNext) {
+                                                                             boolean hasNext) {
     String msg = String.format("Data provider for variable '%s' has %s values than previous data provider(s)",
       provider.getDataVariables().get(0), hasNext ? "more" : "fewer");
     SpockExecutionException exception = new SpockExecutionException(msg);
@@ -227,7 +226,7 @@ public class PlatformParameterizedSpecRunner extends PlatformSpecRunner {
     SpecInfo spec = feature.getParent();
     StackTraceElement elem = new StackTraceElement(spec.getReflection().getName(),
       feature.getName(), spec.getFilename(), provider.getLine());
-    exception.setStackTrace(new StackTraceElement[] { elem });
+    exception.setStackTrace(new StackTraceElement[]{elem});
     return exception;
   }
 
@@ -248,7 +247,7 @@ public class PlatformParameterizedSpecRunner extends PlatformSpecRunner {
       }
 
     try {
-      return (Object[]) invokeRaw(context.getSharedInstance(), context.getCurrentFeature().getDataProcessorMethod(), next);
+      return (Object[])invokeRaw(context.getSharedInstance(), context.getCurrentFeature().getDataProcessorMethod(), next);
     } catch (Throwable t) {
       runStatus = supervisor.error(
         new ErrorInfo(context.getCurrentFeature().getDataProcessorMethod(), t));

@@ -1,12 +1,11 @@
 package org.spockframework.runtime;
 
-import org.junit.platform.engine.support.hierarchical.EngineExecutionContext;
-import org.spockframework.runtime.model.FeatureInfo;
-import org.spockframework.runtime.model.IterationInfo;
-import org.spockframework.runtime.model.SpecInfo;
+import org.spockframework.runtime.model.*;
 import org.spockframework.util.InternalSpockError;
-
 import spock.lang.Specification;
+
+import org.junit.platform.engine.UniqueId;
+import org.junit.platform.engine.support.hierarchical.EngineExecutionContext;
 
 public class SpockExecutionContext implements EngineExecutionContext, Cloneable {
   private RunContext runContext;
@@ -22,6 +21,8 @@ public class SpockExecutionContext implements EngineExecutionContext, Cloneable 
   private Specification sharedInstance;
 
   private Specification currentInstance;
+
+  private UniqueId parentId;
 
   private SpockExecutionContext setRunContext(RunContext runContext) {
     this.runContext = runContext;
@@ -58,12 +59,17 @@ public class SpockExecutionContext implements EngineExecutionContext, Cloneable 
     return this;
   }
 
+  public SpockExecutionContext setParentId(UniqueId parentId) {
+    this.parentId = parentId;
+    return this;
+  }
+
   @Override
-  protected SpockExecutionContext clone()  {
+  protected SpockExecutionContext clone() {
     try {
-      return (SpockExecutionContext) super.clone();
+      return (SpockExecutionContext)super.clone();
     } catch (CloneNotSupportedException e) {
-      throw new InternalSpockError("Could not clone context",e);
+      throw new InternalSpockError("Could not clone context", e);
     }
   }
 
@@ -90,6 +96,7 @@ public class SpockExecutionContext implements EngineExecutionContext, Cloneable 
   public SpockExecutionContext withCurrentInstance(Specification currentInstance) {
     return clone().setCurrentInstance(currentInstance);
   }
+
   SpockExecutionContext withSpec(SpecInfo spec) {
     return clone().setSpec(spec);
   }
@@ -99,7 +106,11 @@ public class SpockExecutionContext implements EngineExecutionContext, Cloneable 
   }
 
   public SpockExecutionContext withCurrentIteration(IterationInfo iteration) {
-    return clone().setCurrentIteration(iteration);
+    return clone().setCurrentFeature(iteration.getFeature()).setCurrentIteration(iteration);
+  }
+
+  public SpockExecutionContext withParentId(UniqueId uniqueId) {
+    return clone().setParentId(uniqueId);
   }
 
   public Specification getSharedInstance() {
@@ -120,5 +131,9 @@ public class SpockExecutionContext implements EngineExecutionContext, Cloneable 
 
   public IterationInfo getCurrentIteration() {
     return currentIteration;
+  }
+
+  public UniqueId getParentId() {
+    return parentId;
   }
 }

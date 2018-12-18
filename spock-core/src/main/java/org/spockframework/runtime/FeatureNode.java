@@ -1,8 +1,11 @@
 package org.spockframework.runtime;
 
-import org.junit.platform.engine.UniqueId;
-import org.junit.platform.engine.support.descriptor.MethodSource;
 import org.spockframework.runtime.model.FeatureInfo;
+
+import java.util.function.Consumer;
+
+import org.junit.platform.engine.*;
+import org.junit.platform.engine.support.descriptor.MethodSource;
 
 public class FeatureNode extends SpockNode {
   private final FeatureInfo featureInfo;
@@ -14,29 +17,19 @@ public class FeatureNode extends SpockNode {
 
   @Override
   public Type getType() {
-    return Type.TEST;
+    return Type.CONTAINER;
   }
 
   @Override
   public SpockExecutionContext prepare(SpockExecutionContext context) throws Exception {
-    return context.withCurrentInstance(createSpecInstance(featureInfo.getSpec()));
-  }
-
-  @Override
-  public SpockExecutionContext before(SpockExecutionContext context) throws Exception {
-//    context.getRunner().d;
-    return context;
+    featureInfo.setIterationNameProvider(new SafeIterationNameProvider(featureInfo.getIterationNameProvider()));
+    return context.withCurrentFeature(featureInfo).withParentId(getUniqueId());
   }
 
   @Override
   public SpockExecutionContext execute(SpockExecutionContext context, DynamicTestExecutor dynamicTestExecutor) throws Exception {
-    context.getRunner().runFeature(context.withCurrentFeature(featureInfo));
+    context.getRunner().runParameterizedFeature(context, new ChildExecutor(dynamicTestExecutor));
     return context;
-  }
-
-  @Override
-  public void after(SpockExecutionContext context) throws Exception {
-
   }
 
   @Override
@@ -45,5 +38,32 @@ public class FeatureNode extends SpockNode {
     return featureInfo.isSkipped() ? SkipResult.skip("because I said so") : SkipResult.doNotSkip();
   }
 
+  @Override
+  public void around(SpockExecutionContext context, Consumer<SpockExecutionContext> runnable) {
+    context.getRunner().runFeature(context, () -> runnable.accept(context));
+  }
 
+  @Override
+  public boolean mayRegisterTests() {
+    return true;
+  }
+
+  class ChildExecutor implements DynamicTestExecutor {
+
+    private final DynamicTestExecutor delegate;
+
+    ChildExecutor(DynamicTestExecutor delegate) {this.delegate = delegate;}
+
+    @Override
+    public void execute(TestDescriptor testDescriptor) {
+      addChild(testDescriptor);
+      delegate.execute(testDescriptor);
+
+    }
+
+    @Override
+    public void awaitFinished() throws InterruptedException {
+      delegate.awaitFinished();
+    }
+  }
 }

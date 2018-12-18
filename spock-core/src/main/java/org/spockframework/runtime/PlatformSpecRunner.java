@@ -21,6 +21,7 @@ import org.spockframework.runtime.model.*;
 import org.spockframework.util.*;
 import spock.lang.Specification;
 
+import org.junit.platform.engine.support.hierarchical.Node;
 import org.junit.runner.Description;
 
 import static org.spockframework.runtime.RunStatus.*;
@@ -53,7 +54,7 @@ public class PlatformSpecRunner {
     }
 
     context = runSharedSpec(context);
-    runSpec(context);
+//    runSpec(context);
 
     return resetStatus(SPEC);
   }
@@ -64,18 +65,18 @@ public class PlatformSpecRunner {
     return context;
   }
 
-  public void runSpec(SpockExecutionContext context) {
+  public void runSpec(SpockExecutionContext context, Runnable specRunner) {
     if (runStatus != OK) return;
 
     SpecInfo spec = context.getSpec();
     supervisor.beforeSpec(spec);
-    invoke(context, this, createMethodInfoForDoRunSpec(context));
+    invoke(context, this, createMethodInfoForDoRunSpec(context, specRunner));
     supervisor.afterSpec(spec);
   }
 
-  private MethodInfo createMethodInfoForDoRunSpec(SpockExecutionContext context) {
+  private MethodInfo createMethodInfoForDoRunSpec(SpockExecutionContext context, Runnable specRunner) {
     MethodInfo result = new MethodInfo((Object target, Object... arguments) -> {
-        doRunSpec(context);
+        specRunner.run();
         return null;
       }
     );
@@ -94,7 +95,7 @@ public class PlatformSpecRunner {
     runCleanupSpec(context);
   }
 
-  private SpockExecutionContext createSpecInstance(SpockExecutionContext context, boolean shared) {
+  SpockExecutionContext createSpecInstance(SpockExecutionContext context, boolean shared) {
     if (runStatus != OK) return context;
 
     Specification instance;
@@ -109,8 +110,8 @@ public class PlatformSpecRunner {
     getSpecificationContext(context).setCurrentSpec(context.getSpec());
     if (shared) {
       context = context.withSharedInstance(instance);
-      getSpecificationContext(context).setSharedInstance(instance);
     }
+    getSpecificationContext(context).setSharedInstance(context.getSharedInstance());
     return context;
   }
 
@@ -144,6 +145,7 @@ public class PlatformSpecRunner {
   }
 
   void runSetupSpec(SpockExecutionContext context) {
+    supervisor.beforeSpec(context.getSpec());
     runSetupSpec(context, context.getSpec());
   }
 
@@ -177,12 +179,13 @@ public class PlatformSpecRunner {
   private void runFeatures(SpockExecutionContext context) {
     for (FeatureInfo feature : context.getSpec().getAllFeaturesInExecutionOrder()) {
       if (resetStatus(FEATURE) != OK) return;
-      runFeature(context.withCurrentFeature(feature));
+//      runFeature(context.withCurrentFeature(feature));
     }
   }
 
   void runCleanupSpec(SpockExecutionContext context) {
     runCleanupSpec(context.withCurrentInstance(context.getSharedInstance()), context.getSpec());
+    supervisor.afterSpec(context.getSpec());
   }
 
   private void runCleanupSpec(SpockExecutionContext context, SpecInfo spec) {
@@ -212,26 +215,26 @@ public class PlatformSpecRunner {
     runCleanupSpec(context, spec.getSuperSpec());
   }
 
-  public void runFeature(SpockExecutionContext context) {
+  public void runFeature(SpockExecutionContext context, Runnable feature) {
     if (runStatus != OK) return;
 
     FeatureInfo currentFeature = context.getCurrentFeature();
     if (currentFeature.isExcluded()) return;
 
     if (currentFeature.isSkipped()) {
-      supervisor.featureSkipped(currentFeature);
+      supervisor.featureSkipped(currentFeature); // todo notify in node isSkipped
       return;
     }
 
     supervisor.beforeFeature(currentFeature);
-    invoke(context, this, createMethodInfoForDoRunFeature(context));
+    invoke(context, this, createMethodInfoForDoRunFeature(context, feature));
     supervisor.afterFeature(currentFeature);
   }
 
-  private MethodInfo createMethodInfoForDoRunFeature(SpockExecutionContext context) {
+  private MethodInfo createMethodInfoForDoRunFeature(SpockExecutionContext context, Runnable feature) {
     FeatureInfo currentFeature = context.getCurrentFeature();
     MethodInfo result = new MethodInfo((Object target, Object... arguments) -> {
-        doRunFeature(context);
+        feature.run();
         return null;
       }
     );
@@ -244,12 +247,12 @@ public class PlatformSpecRunner {
     return result;
   }
 
-  public void doRunFeature(SpockExecutionContext context) {
+  public void doRunFeature(SpockExecutionContext context) { // TODO Remove
     FeatureInfo currentFeature = context.getCurrentFeature();
     currentFeature.setIterationNameProvider(new SafeIterationNameProvider(currentFeature.getIterationNameProvider()));
-    if (currentFeature.isParameterized())
-      runParameterizedFeature(context);
-    else runSimpleFeature(context);
+//    if (currentFeature.isParameterized())
+//      runParameterizedFeature(context);
+//    else runSimpleFeature(context);
   }
 
   private void runSimpleFeature(SpockExecutionContext context) {
@@ -275,13 +278,23 @@ public class PlatformSpecRunner {
     getSpecificationContext(context).setCurrentIteration(currentIteration);
 
     supervisor.beforeIteration(currentIteration);
-    invoke(context, this, createMethodInfoForDoRunIteration(context));
+//    invoke(context, this, createMethodInfoForDoRunIteration(context, runnable));
     supervisor.afterIteration(currentIteration);
 
     getSpecificationContext(context).setCurrentIteration(null); // TODO check if we really need to null here
   }
+  void runIteration(SpockExecutionContext context, IterationInfo iterationInfo, Runnable runnable) {
+    if (runStatus != OK) return;
 
-  private IterationInfo createIterationInfo(SpockExecutionContext context, Object[] dataValues, int estimatedNumIterations) {
+
+    supervisor.beforeIteration(iterationInfo);
+    invoke(context, this, createMethodInfoForDoRunIteration(context, runnable));
+    supervisor.afterIteration(iterationInfo);
+
+    getSpecificationContext(context).setCurrentIteration(null); // TODO check if we really need to null here
+  }
+
+  IterationInfo createIterationInfo(SpockExecutionContext context, Object[] dataValues, int estimatedNumIterations) {
     FeatureInfo currentFeature = context.getCurrentFeature();
     IterationInfo result = new IterationInfo(currentFeature, dataValues, estimatedNumIterations);
     String iterationName = currentFeature.getIterationNameProvider().getName(result);
@@ -292,10 +305,10 @@ public class PlatformSpecRunner {
     return result;
   }
 
-  private MethodInfo createMethodInfoForDoRunIteration(SpockExecutionContext context) {
+  private MethodInfo createMethodInfoForDoRunIteration(SpockExecutionContext context, Runnable runnable) {
     FeatureInfo currentFeature = context.getCurrentFeature();
     MethodInfo result = new MethodInfo((Object target, Object... arguments) -> {
-        doRunIteration(context);
+        runnable.run();
         return null;
       }
     );
@@ -320,11 +333,11 @@ public class PlatformSpecRunner {
     return runStatus;
   }
 
-  protected void runParameterizedFeature(SpockExecutionContext context) {
+  void runParameterizedFeature(SpockExecutionContext context, Node.DynamicTestExecutor dynamicTestExecutor) throws InterruptedException  {
     throw new UnsupportedOperationException("This runner cannot run parameterized features");
   }
 
-  private void runInitializer(SpockExecutionContext context) {
+  void runInitializer(SpockExecutionContext context) {
     runInitializer(context, context.getSpec());
   }
 
@@ -355,7 +368,7 @@ public class PlatformSpecRunner {
     invoke(context, context.getCurrentInstance(), spec.getInitializerMethod());
   }
 
-  private void runSetup(SpockExecutionContext context) {
+  void runSetup(SpockExecutionContext context) {
     runSetup(context, context.getSpec());
   }
 
@@ -381,7 +394,7 @@ public class PlatformSpecRunner {
     return result;
   }
 
-  public void doRunSetup(SpockExecutionContext context, SpecInfo spec) {
+  private void doRunSetup(SpockExecutionContext context, SpecInfo spec) {
     runSetup(context, spec.getSuperSpec());
     for (MethodInfo method : spec.getSetupMethods()) {
       if (runStatus != OK) return;
@@ -390,7 +403,7 @@ public class PlatformSpecRunner {
     }
   }
 
-  private void runFeatureMethod(SpockExecutionContext context) {
+  void runFeatureMethod(SpockExecutionContext context) {
     if (runStatus != OK) return;
 
     MethodInfo featureIteration = new MethodInfo(context.getCurrentFeature().getFeatureMethod());
@@ -398,7 +411,7 @@ public class PlatformSpecRunner {
     invoke(context, context.getCurrentInstance(), featureIteration, context.getCurrentIteration().getDataValues());
   }
 
-  private void runCleanup(SpockExecutionContext context) {
+  void runCleanup(SpockExecutionContext context) {
     runCleanup(context, context.getSpec());
   }
 
@@ -424,7 +437,7 @@ public class PlatformSpecRunner {
     return result;
   }
 
-  public void doRunCleanup(SpockExecutionContext context, SpecInfo spec) {
+  private void doRunCleanup(SpockExecutionContext context, SpecInfo spec) {
     if (spec.getIsBottomSpec()) {
       runIterationCleanups(context);
       if (action(runStatus) == ABORT) return;
@@ -464,6 +477,8 @@ public class PlatformSpecRunner {
     try {
       invocation.proceed();
     } catch (Throwable throwable) {
+      ErrorInfo error = new ErrorInfo(method, throwable);
+      supervisor.error(error);
       ExceptionUtil.sneakyThrow(throwable);
     }
   }
@@ -472,6 +487,8 @@ public class PlatformSpecRunner {
     try {
       return method.invoke(target, arguments);
     } catch (Throwable throwable) {
+      ErrorInfo error = new ErrorInfo(method, throwable);
+      supervisor.error(error);
       ExceptionUtil.sneakyThrow(throwable);
       return null; // never happens tm
     }

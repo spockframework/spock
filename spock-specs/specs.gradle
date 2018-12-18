@@ -37,12 +37,15 @@ ext.spockLogFileDir = file("$buildDir/spock/logFiles")
 ext.spockLogFileName = "spock-log"
 
 test {
+  useJUnitPlatform()
   finalizedBy "spockReport"
   reports.junitXml.enabled = true
-  reports.html.enabled = false
+  reports.html.enabled = true
 
   testLogging.exceptionFormat = "full"
   testLogging.showExceptions = true
+  testLogging.events 'standard_out'
+  testLogging.events 'standard_error'
   maxParallelForks = 1
 
   systemProperty "spock.logFileDir", spockLogFileDir

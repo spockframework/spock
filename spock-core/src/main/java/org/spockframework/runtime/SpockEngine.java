@@ -1,17 +1,16 @@
 package org.spockframework.runtime;
 
+import spock.lang.Specification;
+
+import java.lang.reflect.Modifier;
 import java.util.Optional;
 
-import org.junit.platform.engine.EngineDiscoveryRequest;
-import org.junit.platform.engine.ExecutionRequest;
-import org.junit.platform.engine.TestDescriptor;
-import org.junit.platform.engine.UniqueId;
+import org.junit.platform.engine.*;
 import org.junit.platform.engine.discovery.ClassSelector;
 import org.junit.platform.engine.support.hierarchical.HierarchicalTestEngine;
 
-import spock.lang.Specification;
-
 public class SpockEngine extends HierarchicalTestEngine<SpockExecutionContext> {
+
   @Override
   protected SpockExecutionContext createExecutionContext(ExecutionRequest request) {
     return new SpockExecutionContext();
@@ -24,16 +23,31 @@ public class SpockEngine extends HierarchicalTestEngine<SpockExecutionContext> {
 
   @Override
   public TestDescriptor discover(EngineDiscoveryRequest discoveryRequest, UniqueId uniqueId) {
-    RunContext runContext = RunContext.createBottomContext(); // TODO cleanup
+    RunContext runContext = RunContext.get(); // TODO cleanup
+
     SpockNodeGenerator spockNodeGenerator = new SpockNodeGenerator(uniqueId, runContext);
     SpockEngineDescriptor engineDescriptor = new SpockEngineDescriptor(uniqueId, runContext);
     discoveryRequest.getSelectorsByType(ClassSelector.class).forEach(classSelector -> {
-        if (Specification.class.isAssignableFrom(classSelector.getJavaClass())) {
-          engineDescriptor.addChild(spockNodeGenerator.describeSpec(classSelector.getJavaClass()));
+      Class<?> javaClass = classSelector.getJavaClass();
+      if(exclude(javaClass)) return;
+
+      if (Specification.class.isAssignableFrom(javaClass)) {
+          engineDescriptor.addChild(spockNodeGenerator.describeSpec(javaClass));
         }
       }
     );
     return engineDescriptor;
+  }
+
+  boolean exclude(Class<?> javaClass) {
+    return Modifier.isAbstract(javaClass.getModifiers())
+      || javaClass.isLocalClass()
+      || javaClass.isAnonymousClass()
+      || isNonStaticInnerclass(javaClass);
+  }
+
+  private boolean isNonStaticInnerclass(Class<?> javaClass) {
+    return javaClass.isMemberClass() && !Modifier.isStatic(javaClass.getModifiers());
   }
 
   @Override

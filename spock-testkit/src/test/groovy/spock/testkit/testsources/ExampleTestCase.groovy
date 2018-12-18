@@ -1,9 +1,8 @@
 package spock.testkit.testsources
 
-import spock.lang.Ignore
-import spock.lang.Specification
+import spock.lang.*
 
-class ExampleTestCase extends Specification{
+class ExampleTestCase extends Specification {
 
   def "first"() {
     expect: true

@@ -14,7 +14,8 @@ dependencies {
   testRuntime libs.cglib
   testRuntime libs.objenesis
   testRuntime libs.h2database
-  testRuntime libs.junitPlatformTestkit
+  testRuntime libs.junitPlatformConsole
+  testCompile libs.junitPlatformTestkit
 
   testCompile libs.jupiter
 //  junit libs.junit4
@@ -36,4 +37,20 @@ test {
 
   testLogging.exceptionFormat = "full"
   testLogging.showExceptions = true
+}
+
+task consoleLauncherTest(type: JavaExec) {
+  dependsOn(testClasses)
+  def reportsDir = file("$buildDir/test-results")
+  outputs.dir(reportsDir)
+  classpath = sourceSets["test"].runtimeClasspath
+  main = "org.junit.platform.console.ConsoleLauncher"
+//  jvmArgs "-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005"
+//  args("--select-class", "spock.testkit.testsources.ExampleTestCase")
+  args("--select-class", "spock.testkit.testsources.UnrollTestCase")
+  args("--details", "tree")
+  args("--details-theme", "ascii")
+  args("--include-classname", ".*TestCase")
+  args("--reports-dir", reportsDir)
+//  systemProperty("java.util.logging.manager", "org.apache.logging.log4j.jul.LogManager")
 }

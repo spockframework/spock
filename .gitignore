@@ -32,3 +32,5 @@ stacktrace.log
 
 # Shippable CI
 /shippable/
+
+Foo.*

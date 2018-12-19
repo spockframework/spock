@@ -2,8 +2,6 @@ package org.spockframework.runtime;
 
 import org.spockframework.runtime.model.SpecInfo;
 
-import java.util.function.Consumer;
-
 import org.junit.platform.engine.UniqueId;
 import org.junit.platform.engine.support.descriptor.ClassSource;
 
@@ -40,8 +38,8 @@ public class SpecNode extends SpockNode {
   }
 
   @Override
-  public void around(SpockExecutionContext context, Consumer<SpockExecutionContext> invocation) {
-    context.getRunner().runSpec(context, () -> invocation.accept(context));
+  public void around(SpockExecutionContext context, Invocation<SpockExecutionContext> invocation) throws Exception {
+    context.getRunner().runSpec(context, () -> sneakyInvoke(invocation, context));
   }
 
 }

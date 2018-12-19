@@ -133,7 +133,7 @@ class EmbeddedSpecRunner {
       .selectors(*selectors)
       .execute()
     if (throwFailure) {
-      def first = executionResults.tests().failed().executions().stream().findFirst()
+      def first = executionResults.tests().executions().failed().stream().findFirst()
       if (first.present) {
         throw first.get().terminationInfo.executionResult.throwable.get()
       }
@@ -165,7 +165,7 @@ class EmbeddedSpecRunner {
 
     @Override
     List<Failure> getFailures() {
-      return results.tests().failed().executions()
+      return results.tests().executions().failed()
         .map{ it.terminationInfo.executionResult.throwable.get()}
         .map {new Failure(Description.createSuiteDescription("FAIL"), it)}
     }

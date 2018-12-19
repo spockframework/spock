@@ -2,8 +2,6 @@ package org.spockframework.runtime;
 
 import org.spockframework.runtime.model.IterationInfo;
 
-import java.util.function.Consumer;
-
 import org.junit.platform.engine.UniqueId;
 import org.junit.platform.engine.support.descriptor.MethodSource;
 
@@ -42,8 +40,8 @@ public class IterationNode extends SpockNode {
   }
 
   @Override
-  public void around(SpockExecutionContext context, Consumer<SpockExecutionContext> runnable) {
-    context.getRunner().runIteration(context, iterationInfo, () -> runnable.accept(context));
+  public void around(SpockExecutionContext context, Invocation<SpockExecutionContext> invocation) {
+    context.getRunner().runIteration(context, iterationInfo, () -> sneakyInvoke(invocation, context));
   }
 
   @Override

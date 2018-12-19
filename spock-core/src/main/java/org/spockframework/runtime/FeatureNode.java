@@ -2,8 +2,6 @@ package org.spockframework.runtime;
 
 import org.spockframework.runtime.model.FeatureInfo;
 
-import java.util.function.Consumer;
-
 import org.junit.platform.engine.*;
 import org.junit.platform.engine.support.descriptor.MethodSource;
 
@@ -39,8 +37,8 @@ public class FeatureNode extends SpockNode {
   }
 
   @Override
-  public void around(SpockExecutionContext context, Consumer<SpockExecutionContext> runnable) {
-    context.getRunner().runFeature(context, () -> runnable.accept(context));
+  public void around(SpockExecutionContext context, Invocation<SpockExecutionContext> invocation) {
+    context.getRunner().runFeature(context, () -> sneakyInvoke(invocation, context));
   }
 
   @Override

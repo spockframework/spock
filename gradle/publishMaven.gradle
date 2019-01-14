@@ -5,6 +5,7 @@ def optionalDeps = []
 def providedDeps = []
 
 ext {
+  packaging = null // use the default ("jar")
   optional = { optionalDeps << it; it }
   provided = { providedDeps << it; it }
 }
@@ -12,11 +13,21 @@ ext {
 publishing {
   publications {
     maven(MavenPublication) {
-      from(components.java)
       afterEvaluate {
-        if (pom.packaging != "pom") {
+        pom.packaging = project.ext.packaging
+        if (project.ext.packaging != "pom") {
+          from(components.java)
           artifact(sourcesJar)
           artifact(javadocJar)
+          pom.withXml {
+            def dependencies = asNode().dependencies[0]
+            optionalDeps.each { dep ->
+              dependencies.find { it.artifactId.text() == dep.name }.appendNode("optional", true)
+            }
+            providedDeps.each { dep ->
+              dependencies.find { it.artifactId.text() == dep.name }.scope[0].value = "provided"
+            }
+          }
         }
       }
       pom {
@@ -45,17 +56,6 @@ publishing {
             id = "ldaley"
             name = "Luke Daley"
             email = "ld@ldaley.com"
-          }
-        }
-        afterEvaluate {
-          withXml {
-            def dependencies = asNode().dependencies[0]
-            optionalDeps.each { dep ->
-              dependencies.find { it.artifactId.text() == dep.name }.appendNode("optional", true)
-            }
-            providedDeps.each { dep ->
-              dependencies.find { it.artifactId.text() == dep.name }.scope[0].value = "provided"
-            }
           }
         }
       }

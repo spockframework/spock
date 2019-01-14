@@ -24,9 +24,9 @@ import java.io.File;
 import java.security.AccessControlException;
 import java.util.*;
 
-import org.junit.runner.notification.RunNotifier;
+import org.junit.platform.engine.support.hierarchical.EngineExecutionContext;
 
-public class RunContext {
+public class RunContext implements EngineExecutionContext {
   private static final ThreadLocal<LinkedList<RunContext>> contextStacks =
       new ThreadLocal<LinkedList<RunContext>>() {
         @Override
@@ -80,9 +80,9 @@ public class RunContext {
     return new ExtensionRunner(spec, globalExtensionRegistry, globalExtensionRegistry);
   }
 
-  public ParameterizedSpecRunner createSpecRunner(SpecInfo spec, RunNotifier notifier) {
-    return new ParameterizedSpecRunner(spec,
-        new JUnitSupervisor(spec, notifier, createStackTraceFilter(spec), diffedObjectRenderer));
+  public PlatformParameterizedSpecRunner createSpecRunner(SpecInfo spec) {
+    return new PlatformParameterizedSpecRunner(
+        new MasterRunSupervisor(spec, createStackTraceFilter(spec), diffedObjectRenderer));
   }
 
   @Nullable
@@ -179,7 +179,7 @@ public class RunContext {
   // has finished, but the JUnit Runner SPI doesn't provide an adequate hook.
   // That said, since most environments fork a new JVM for each test run,
   // this shouldn't be much of a problem in practice.
-  private static RunContext createBottomContext() {
+  static RunContext createBottomContext() {
     File spockUserHome = SpockUserHomeUtil.getSpockUserHome();
     DelegatingScript script = new ConfigurationScriptLoader(spockUserHome).loadAutoDetectedScript();
     List<Class<?>> classes = new ExtensionClassesLoader().loadClassesFromDefaultLocation();

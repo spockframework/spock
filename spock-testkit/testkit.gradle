@@ -1,0 +1,56 @@
+ext.displayName = "Spock Framework - Temp Specs for Core Module"
+
+apply plugin: "spock-base"
+
+//configurations {
+//  junit
+//}
+
+dependencies {
+  testCompile project(":spock-core")
+
+  testRuntime libs.asm
+  testRuntime libs.bytebuddy
+  testRuntime libs.cglib
+  testRuntime libs.objenesis
+  testRuntime libs.h2database
+  testRuntime libs.junitPlatformConsole
+  testCompile libs.junitPlatformTestkit
+
+  testCompile libs.jupiter
+//  junit libs.junit4
+}
+
+sourceCompatibility = javaVersion
+targetCompatibility = javaVersion
+
+// necessary to make @NotYetImplemented transform work (transform that ships
+// with Groovy and statically references third-party class junit.framwork.AssertionFailedError)
+//tasks.withType(GroovyCompile) {
+//	groovyClasspath += configurations.junit
+//}
+
+test {
+  useJUnitPlatform()
+  reports.junitXml.enabled = true
+  reports.html.enabled = false
+
+  testLogging.exceptionFormat = "full"
+  testLogging.showExceptions = true
+}
+
+task consoleLauncherTest(type: JavaExec) {
+  dependsOn(testClasses)
+  def reportsDir = file("$buildDir/test-results")
+  outputs.dir(reportsDir)
+  classpath = sourceSets["test"].runtimeClasspath
+  main = "org.junit.platform.console.ConsoleLauncher"
+//  jvmArgs "-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005"
+//  args("--select-class", "spock.testkit.testsources.ExampleTestCase")
+  args("--select-class", "spock.testkit.testsources.UnrollTestCase")
+  args("--details", "tree")
+  args("--details-theme", "ascii")
+  args("--include-classname", ".*TestCase")
+  args("--reports-dir", reportsDir)
+//  systemProperty("java.util.logging.manager", "org.apache.logging.log4j.jul.LogManager")
+}

@@ -6,6 +6,7 @@ plugins {
   id "org.asciidoctor.convert" version "1.5.9.2"
   id "jacoco"
   id "net.nemerosa.versioning" version "2.8.2"
+  id "de.marcphilipp.nexus-publish" version "0.1.1" apply false
 //  id "com.github.ben-manes.versions" version "0.20.0"
 }
 

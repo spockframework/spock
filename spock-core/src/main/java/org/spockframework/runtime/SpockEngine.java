@@ -1,5 +1,7 @@
 package org.spockframework.runtime;
 
+import org.junit.platform.commons.util.ClassFilter;
+import org.junit.platform.engine.support.discovery.EngineDiscoveryRequestResolver;
 import spock.lang.Specification;
 
 import java.lang.reflect.Modifier;
@@ -24,30 +26,14 @@ public class SpockEngine extends HierarchicalTestEngine<SpockExecutionContext> {
   @Override
   public TestDescriptor discover(EngineDiscoveryRequest discoveryRequest, UniqueId uniqueId) {
     RunContext runContext = RunContext.get(); // TODO cleanup
-
-    SpockNodeGenerator spockNodeGenerator = new SpockNodeGenerator(uniqueId, runContext);
     SpockEngineDescriptor engineDescriptor = new SpockEngineDescriptor(uniqueId, runContext);
-    discoveryRequest.getSelectorsByType(ClassSelector.class).forEach(classSelector -> {
-      Class<?> javaClass = classSelector.getJavaClass();
-      if(exclude(javaClass)) return;
-
-      if (Specification.class.isAssignableFrom(javaClass)) {
-          engineDescriptor.addChild(spockNodeGenerator.describeSpec(javaClass));
-        }
-      }
-    );
+    EngineDiscoveryRequestResolver.builder()
+      .withDefaultsForClassBasedTestEngines(SpecUtil::isRunnableSpec)
+      .addSelectorResolver(context -> new ClassSelectorResolver(context.getClassNameFilter(), runContext))
+      .addSelectorResolver(new MethodSelectorResolver())
+      .build()
+      .resolve(discoveryRequest, engineDescriptor);
     return engineDescriptor;
-  }
-
-  boolean exclude(Class<?> javaClass) {
-    return Modifier.isAbstract(javaClass.getModifiers())
-      || javaClass.isLocalClass()
-      || javaClass.isAnonymousClass()
-      || isNonStaticInnerclass(javaClass);
-  }
-
-  private boolean isNonStaticInnerclass(Class<?> javaClass) {
-    return javaClass.isMemberClass() && !Modifier.isStatic(javaClass.getModifiers());
   }
 
   @Override

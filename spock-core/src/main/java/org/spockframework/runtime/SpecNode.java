@@ -6,12 +6,16 @@ import org.junit.platform.engine.UniqueId;
 import org.junit.platform.engine.support.descriptor.ClassSource;
 
 public class SpecNode extends SpockNode {
+
   private final SpecInfo specInfo;
 
   protected SpecNode(UniqueId uniqueId, SpecInfo specInfo) {
     super(uniqueId, specInfo.getName(), ClassSource.from(specInfo.getReflection()));
     this.specInfo = specInfo;
+  }
 
+  public SpecInfo getSpecInfo() {
+    return specInfo;
   }
 
   @Override

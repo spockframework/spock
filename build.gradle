@@ -60,10 +60,10 @@ ext {
     h2database: "com.h2database:h2:1.3.176",
     junit4: "junit:junit:4.12",
 //    junitPlatform: "org.junit.platform:junit-platform-engine:1.3.2",
-    jupiter: "com.github.leonard84.junit5:junit-jupiter:7aa1bdbe98",
-    junitPlatform: "com.github.leonard84.junit5:junit-platform-engine:7aa1bdbe98",
-    junitPlatformTestkit: "com.github.leonard84.junit5:junit-platform-testkit:7aa1bdbe98",
-    junitPlatformConsole: "com.github.leonard84.junit5:junit-platform-console:7aa1bdbe98",
+    jupiter: "com.github.junit-team.junit5:junit-jupiter:158484a786",
+    junitPlatform: "com.github.junit-team.junit5:junit-platform-engine:158484a786",
+    junitPlatformTestkit: "com.github.junit-team.junit5:junit-platform-testkit:158484a786",
+    junitPlatformConsole: "com.github.junit-team.junit5:junit-platform-console:158484a786",
     log4j: "log4j:log4j:1.2.17",
     objenesis: "org.objenesis:objenesis:3.0.1"
   ]
@@ -136,8 +136,7 @@ subprojects {
     maven {
       url 'https://jitpack.io'
       content {
-//        includeGroup "com.github.junit-team.junit5"
-        includeGroup "com.github.leonard84.junit5"
+        includeGroup "com.github.junit-team.junit5"
       }
     }
   }

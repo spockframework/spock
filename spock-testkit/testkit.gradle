@@ -37,6 +37,8 @@ test {
 
   testLogging.exceptionFormat = "full"
   testLogging.showExceptions = true
+
+  include("**/*Test.class", "**/*Tests.class")
 }
 
 task consoleLauncherTest(type: JavaExec) {

@@ -1,27 +1,17 @@
 package spock.platform;
 
-import org.junit.platform.commons.support.ReflectionSupport;
-import org.junit.platform.engine.DiscoverySelector;
-import org.junit.platform.engine.UniqueId;
-import org.junit.platform.testkit.engine.EngineExecutionResults;
-import org.junit.platform.testkit.engine.Event;
-import org.junit.platform.testkit.engine.EventStatistics;
-import org.junit.platform.testkit.engine.EventType;
 import spock.testkit.testsources.*;
+
+import java.util.function.Consumer;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.junit.platform.testkit.engine.EngineTestKit;
-
-import java.util.Optional;
-import java.util.function.Consumer;
+import org.junit.platform.engine.*;
+import org.junit.platform.testkit.engine.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClass;
-import static org.junit.platform.engine.discovery.DiscoverySelectors.selectMethod;
-import static org.junit.platform.engine.discovery.DiscoverySelectors.selectPackage;
-import static org.junit.platform.engine.discovery.DiscoverySelectors.selectUniqueId;
+import static org.junit.platform.engine.discovery.DiscoverySelectors.*;
 
 class SpockHelloWorldTest {
 
@@ -59,7 +49,7 @@ class SpockHelloWorldTest {
 
   @Test
   void verifyUnrollExample() {
-    execute(selectClass(UnrollTestCase.class), stats -> stats.started(10).succeeded(10));
+    execute(selectClass(UnrollTestCase.class), stats -> stats.started(12).succeeded(12));
   }
 
   @Test

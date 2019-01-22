@@ -191,6 +191,7 @@
 <ul class="sectlevel2">
 <li><a href="#_1_3_tbd">1.3 (tbd)</a>
 <ul class="sectlevel3">
+<li><a href="#_potential_breaking_changes">Potential breaking changes</a></li>
 <li><a href="#_what_s_new_in_this_release">What&#8217;s New In This release</a></li>
 </ul>
 </li>
@@ -1998,20 +1999,19 @@ _ * subscriber.receive(<span class="string"><span class="delimiter">&quot;</span
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="integer">1</span> * subscriber.receive(<span class="string"><span class="delimiter">&quot;</span><span class="content">hello</span><span class="delimiter">&quot;</span></span>)     <span class="comment">// an argument that is equal to the String &quot;hello&quot;</span>
-<span class="integer">1</span> * subscriber.receive(!<span class="string"><span class="delimiter">&quot;</span><span class="content">hello</span><span class="delimiter">&quot;</span></span>)    <span class="comment">// an argument that is unequal to the String &quot;hello&quot;</span>
-<span class="integer">1</span> * subscriber.receive()            <span class="comment">// the empty argument list (would never match in our example)</span>
-<span class="integer">1</span> * subscriber.receive(_)           <span class="comment">// any single argument (including null)</span>
-<span class="integer">1</span> * subscriber.receive(*_)          <span class="comment">// any argument list (including the empty argument list)</span>
-<span class="integer">1</span> * subscriber.receive(!<span class="predefined-constant">null</span>)       <span class="comment">// any non-null argument</span>
-<span class="integer">1</span> * subscriber.receive(_ <span class="keyword">as</span> <span class="predefined-type">String</span>) <span class="comment">// any non-null argument that is-a String</span>
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="integer">1</span> * subscriber.receive(<span class="string"><span class="delimiter">&quot;</span><span class="content">hello</span><span class="delimiter">&quot;</span></span>)        <span class="comment">// an argument that is equal to the String &quot;hello&quot;</span>
+<span class="integer">1</span> * subscriber.receive(!<span class="string"><span class="delimiter">&quot;</span><span class="content">hello</span><span class="delimiter">&quot;</span></span>)       <span class="comment">// an argument that is unequal to the String &quot;hello&quot;</span>
+<span class="integer">1</span> * subscriber.receive()               <span class="comment">// the empty argument list (would never match in our example)</span>
+<span class="integer">1</span> * subscriber.receive(_)              <span class="comment">// any single argument (including null)</span>
+<span class="integer">1</span> * subscriber.receive(*_)             <span class="comment">// any argument list (including the empty argument list)</span>
+<span class="integer">1</span> * subscriber.receive(!<span class="predefined-constant">null</span>)          <span class="comment">// any non-null argument</span>
+<span class="integer">1</span> * subscriber.receive(_ <span class="keyword">as</span> <span class="predefined-type">String</span>)    <span class="comment">// any non-null argument that is-a String</span>
+<span class="integer">1</span> * subscriber.receive(endsWith(<span class="string"><span class="delimiter">&quot;</span><span class="content">lo</span><span class="delimiter">&quot;</span></span>)) <span class="comment">// any non-null argument that is-a String</span>
 <span class="integer">1</span> * subscriber.receive({ <span class="local-variable">it</span>.size() &gt; <span class="integer">3</span> &amp;&amp; <span class="local-variable">it</span>.contains(<span class="string"><span class="delimiter">'</span><span class="content">a</span><span class="delimiter">'</span></span>) })
-                                          <span class="comment">// an argument that satisfies the given predicate, meaning that</span>
-                                          <span class="comment">// code argument constraints need to return true of false</span>
-                                          <span class="comment">// depending on whether they match or not</span>
-                                          <span class="comment">// (here: message length is greater than 3 and contains the character a)</span>
-<span class="integer">1</span> * subscriber.receive(endsWith(<span class="string"><span class="delimiter">&quot;</span><span class="content">lo</span><span class="delimiter">&quot;</span></span>))    <span class="comment">// Hamcrest Matchers are also supported</span>
-                                          <span class="comment">// (here: a string ending with 'lo')</span></code></pre>
+<span class="comment">// an argument that satisfies the given predicate, meaning that</span>
+<span class="comment">// code argument constraints need to return true of false</span>
+<span class="comment">// depending on whether they match or not</span>
+<span class="comment">// (here: message length is greater than 3 and contains the character a)</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2040,9 +2040,93 @@ subscriber.receive(<span class="string"><span class="delimiter">&quot;</span><sp
 <div class="content">
 <div class="title">Spock Deep Dive: Groovy Varargs</div>
 <div class="paragraph">
-<p>Groovy allows any method whose last parameter has an array type to be called in vararg style. Consequently,
-vararg syntax can also be used in interactions matching such methods.</p>
+<p>Groovy allows any method whose last parameter has an array type to be called in vararg style.
+Consequently, vararg syntax can also be used in interactions matching such methods.</p>
 </div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_equality_constraint"><a class="anchor" href="#_equality_constraint"></a><a class="link" href="#_equality_constraint">Equality Constraint</a></h5>
+<div class="paragraph">
+<p>The equality constraint uses groovy equality to check the argument, i.e, <code>argument == constraint</code>. You can use</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>any literal <code>1 * check('string')</code> / <code>1 * check(1)</code> / <code>1 * check(null)</code>,</p>
+</li>
+<li>
+<p>a variable <code>1 * check(var)</code>,</p>
+</li>
+<li>
+<p>a list or map literal <code>1 * check([1])</code> / <code>1 * check([foo: 'bar'])</code>,</p>
+</li>
+<li>
+<p>an object <code>1 * check(new Person('sam'))</code>,</p>
+</li>
+<li>
+<p>or the result of a method call <code>1 * check(person())</code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>as an equality constraint.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_hamcrest_constraint"><a class="anchor" href="#_hamcrest_constraint"></a><a class="link" href="#_hamcrest_constraint">Hamcrest Constraint</a></h5>
+<div class="paragraph">
+<p>A variation of the equality constraint, if the constraint object is a Hamcrest matcher, then it will use that matcher
+to check the argument.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_wildcard_constraint"><a class="anchor" href="#_wildcard_constraint"></a><a class="link" href="#_wildcard_constraint">Wildcard Constraint</a></h5>
+<div class="paragraph">
+<p>The wildcard constraint will match any argument <code>null</code> or otherwise. It is the <code><em></code>, i.e. <code>1 * subscriber.receive(</em>)</code>.
+There is also the spread wildcard constraint <code>*_</code> which matches any number of arguments <code>1 * subscriber.receive(*_)</code> including none.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_code_constraint"><a class="anchor" href="#_code_constraint"></a><a class="link" href="#_code_constraint">Code Constraint</a></h5>
+<div class="paragraph">
+<p>The code constraint is the most versatile of all. It is a groovy closure that gets the argument as its parameter.
+The closure is treated as an condition block, so it behaves like a <code>then</code> block, i.e., every line is treated as an implicit assertion.
+It can emulate all but the spread wildcard constraint, however it is suggested to use the simpler constraints where possible.
+You can do multiple assertions, call methods for assertions, or use <code>with</code>/<code>verifyAll</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="integer">1</span> * list.add({
+  verifyAll(<span class="local-variable">it</span>, Person) {
+    firstname == <span class="string"><span class="delimiter">'</span><span class="content">William</span><span class="delimiter">'</span></span>
+    lastname == <span class="string"><span class="delimiter">'</span><span class="content">Kirk</span><span class="delimiter">'</span></span>
+    age == <span class="integer">45</span>
+  }
+})</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_negating_constraint"><a class="anchor" href="#_negating_constraint"></a><a class="link" href="#_negating_constraint">Negating Constraint</a></h5>
+<div class="paragraph">
+<p>The negating constraint <code>!</code> is a compound constraint, i.e. it needs to be combined with another constraint to work.
+It inverts the result of the nested constraint, e.g, <code>1 * subscriber.receive(!null)</code> is the combination of
+an equality constraint checking for null and then the negating constraint inverting the result, turning it into not null.</p>
+</div>
+<div class="paragraph">
+<p>Although it can be combined with any other constraint it does not always make sense, e.g., <code>1 * subscriber.receive(!_)</code> will match nothing.
+Also keep in mind that the diagnostics for a non matching negating constraint will just be that the inner
+constraint did match, without any more information.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_type_constraint"><a class="anchor" href="#_type_constraint"></a><a class="link" href="#_type_constraint">Type Constraint</a></h5>
+<div class="paragraph">
+<p>The type constraint checks for the type/class of the argument, like the negating constraint it is also a compound constraint.
+It usually written as <code>_ as Type</code>, which is a combination of the wildcard constraint and the type constraint.
+You can combined it with other constraints as well, <code>1 * subscriber.receive({ it.contains('foo')} as String)</code> will assert that it is
+a <code>String</code> before executing the code constraint to check if it contains <code>foo</code>.</p>
 </div>
 </div>
 </div>
@@ -4485,8 +4569,71 @@ Grails 2.3 and higher have built-in Spock support and do not require a plugin.
 <div class="sect2">
 <h3 id="_1_3_tbd"><a class="anchor" href="#_1_3_tbd"></a><a class="link" href="#_1_3_tbd">1.3 (tbd)</a></h3>
 <div class="paragraph">
-<p>Potential breaking change: assertions with explicit messages now include power assertions output.</p>
+<p>The theme for this release is to increase the information that is provided when an assertion failed.</p>
 </div>
+<div class="sect3">
+<h4 id="_potential_breaking_changes"><a class="anchor" href="#_potential_breaking_changes"></a><a class="link" href="#_potential_breaking_changes">Potential breaking changes</a></h4>
+<div class="sect4">
+<h5 id="_code_argument_constraints_are_treated_as_implicit_assertions"><a class="anchor" href="#_code_argument_constraints_are_treated_as_implicit_assertions"></a><a class="link" href="#_code_argument_constraints_are_treated_as_implicit_assertions">code argument constraints are treated as implicit assertions</a></h5>
+<div class="paragraph">
+<p>Before this release the code argument constrains worked by returning a boolean result.
+This was fine if you just wanted to do a simple comparison, but it breaks down if you
+need to do 5 comparisons. Users also often assumed that it worked like the assertions in
+<code>then</code> blocks and didn&#8217;t add <code>&amp;&amp;</code> to chain multiple assertions together, so their constraint
+ignored all before the next line.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="integer">1</span> * mock.foo( { <span class="local-variable">it</span>.size() &gt; <span class="integer">1</span>
+                <span class="local-variable">it</span>[<span class="integer">0</span>].length == <span class="integer">2</span> })</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This would only use the length comparison, to make it work you had to add <code>&amp;&amp;</code>.
+Another problem arises by having more than one comparison inside the constraints,
+you don&#8217;t know which of the 5 comparisons failed. If you just expected one method
+call you could use an explicit <code>assert</code> as a workaround, but since it immediately
+breaks, you can&#8217;t use it if you want to have multiple different calls to the same
+mock.</p>
+</div>
+<div class="paragraph">
+<p>With 1.3 the above code will actually work as intended, and even more important it
+will give actual feedback what didn&#8217;t match.</p>
+</div>
+<div class="paragraph">
+<p>So what can break?</p>
+</div>
+<div class="paragraph">
+<p>If you used the code argument constraint as a way of capturing
+the argument value, then this will most likely not work anymore, since assignments
+to already declared variables are forbidden in implicit assertion block.
+If you still need access to the argument, you can use the response generator closure
+instead.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> extern = <span class="predefined-constant">null</span>
+
+<span class="integer">1</span> * mock.foo( { extern = <span class="local-variable">it</span>; <span class="local-variable">it</span>.size() &gt; <span class="integer">0</span> })  <span class="comment">// old</span>
+<span class="integer">1</span> * mock.foo( { <span class="local-variable">it</span>.size() &gt; <span class="integer">0</span> }) &gt;&gt; { extern = <span class="local-variable">it</span>[<span class="integer">0</span>] } <span class="comment">// new</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The added benefit of this changes is, that it clearly differentiates the condition from
+the capture.</p>
+</div>
+<div class="paragraph">
+<p>Another consequence of the change is, that the empty <code>{}</code> assertion block will now pass
+instead of fail, since no assertion error is being treated as passing, while it required
+a <code>true</code> result beforehand.</p>
+</div>
+<div class="paragraph">
+<p>It is advised, that if you have multiple conditions joined by <code>&amp;&amp;</code>, that you remove
+it to get individual assertions reports instead of a large joined block.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_assertions_with_explicit_messages_now_include_power_assertions_output"><a class="anchor" href="#_assertions_with_explicit_messages_now_include_power_assertions_output"></a><a class="link" href="#_assertions_with_explicit_messages_now_include_power_assertions_output">assertions with explicit messages now include power assertions output.</a></h5>
 <div class="listingblock">
 <div class="title">Given</div>
 <div class="content">
@@ -4517,6 +4664,8 @@ Additional message</pre>
 <div class="paragraph">
 <p>If you relied on this behavior to hide some output, or to prevent a stack overflow due to a self referenceing
 data structure, then you need to move the condition into a separate method that just returns the boolean result.</p>
+</div>
+</div>
 </div>
 <div class="sect3">
 <h4 id="_what_s_new_in_this_release"><a class="anchor" href="#_what_s_new_in_this_release"></a><a class="link" href="#_what_s_new_in_this_release">What&#8217;s New In This release</a></h4>
@@ -6124,7 +6273,7 @@ that answer, closeTo(<span class="integer">42</span>, <span class="float">0.001<
 <div id="footer">
 <div id="footer-text">
 Version 1.3-SNAPSHOT<br>
-Last updated 2018-11-29 19:16:44 UTC
+Last updated 2019-01-22 02:38:10 UTC
 </div>
 </div>
 </body>

@@ -19,6 +19,7 @@ package org.spockframework.smoke.mock
 import org.spockframework.EmbeddedSpecification
 import org.spockframework.mock.TooFewInvocationsError
 
+import groovy.transform.Canonical
 import org.hamcrest.CoreMatchers
 
 class TooFewInvocations extends EmbeddedSpecification {
@@ -298,12 +299,16 @@ Unmatched invocations (ordered by similarity):
 One or more arguments(s) didn't match:
 0: <matches>
 1: <matches>
-2: <Code argument did not match>
+2: Condition not satisfied:
+   
+   it < 30
+   |  |
+   30 false
 3: <matches>
     """.trim()
   }
 
-  def "can describe code argument assertion mismatch"() {
+  def "can describe code argument explicit assertion mismatch"() {
     when:
     runner.addClassImport(Person)
     runner.runFeatureBody("""
@@ -335,6 +340,102 @@ One or more arguments(s) didn't match:
    |  |
    30 false
 3: <matches>
+    """.trim()
+  }
+
+
+  def "can describe code argument with multiple lines"() {
+    when:
+    runner.addClassImport(PersonWithFirstname)
+    runner.runFeatureBody("""
+List list = Mock()
+
+when:
+list.add(new PersonWithFirstname(firstname: 'Willam T.', name: 'Kirk', age: 45))
+
+then:
+1 * list.add({
+                it.firstname == 'Willam T.'
+                it.name == 'Kirk'
+                it.age == 35
+} )
+    """)
+
+    then:
+    TooFewInvocationsError e = thrown()
+    e.message.trim() == """
+Too few invocations for:
+
+1 * list.add({
+                it.firstname == 'Willam T.'
+                it.name == 'Kirk'
+                it.age == 35
+} )   (0 invocations)
+
+Unmatched invocations (ordered by similarity):
+
+1 * list.add(Person)
+One or more arguments(s) didn't match:
+0: Condition not satisfied:
+   
+   it.age == 35
+   |  |   |
+   |  45  false
+   Person
+    """.trim()
+  }
+  def "can describe code argument with verifyAll"() {
+    when:
+    runner.addClassImport(PersonWithFirstname)
+    runner.runFeatureBody("""
+List list = Mock()
+
+when:
+list.add(new PersonWithFirstname(firstname: 'Willam T.', name: 'Kirk', age: 45))
+
+then:
+1 * list.add({
+              verifyAll(it, PersonWithFirstname) {
+                firstname == 'Willam'
+                name == 'Kirk'
+                age == 35
+              } 
+} )
+    """)
+
+    then:
+    TooFewInvocationsError e = thrown()
+    e.message.trim() == """
+Too few invocations for:
+
+1 * list.add({
+              verifyAll(it, PersonWithFirstname) {
+                firstname == 'Willam'
+                name == 'Kirk'
+                age == 35
+              } 
+} )   (0 invocations)
+
+Unmatched invocations (ordered by similarity):
+
+1 * list.add(Person)
+One or more arguments(s) didn't match:
+0: There were 2 errors:
+     org.spockframework.runtime.ConditionNotSatisfiedError(Condition not satisfied:
+   
+   firstname == 'Willam'
+   |         |
+   Willam T. false
+             3 differences (66% similarity)
+             Willam( T.)
+             Willam(---)
+   )
+     org.spockframework.runtime.ConditionNotSatisfiedError(Condition not satisfied:
+   
+   age == 35
+   |   |
+   45  false
+   )
     """.trim()
   }
 
@@ -771,7 +872,7 @@ One or more arguments(s) didn't match:
   }
 
 
-  def "can describe mixed namedArgument and posidionalArgument mismatch"() {
+  def "can describe mixed namedArgument and positionalArgument mismatch"() {
     when:
     runner.addClassImport(Person)
     runner.runFeatureBody("""
@@ -865,6 +966,15 @@ then:
 
     String named(Map args, String a, String b){
       return ''
+    }
+  }
+
+  static class PersonWithFirstname extends Person {
+    String firstname
+
+    @Override
+    String toString() {
+      return "Person"
     }
   }
 }

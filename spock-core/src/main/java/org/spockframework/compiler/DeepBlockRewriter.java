@@ -40,6 +40,7 @@ import org.codehaus.groovy.syntax.Types;
  */
 public class DeepBlockRewriter extends AbstractDeepBlockRewriter {
   private final IRewriteResources resources;
+  private boolean insideInteraction = false;
 
   public DeepBlockRewriter(IRewriteResources resources) {
     super(resources.getCurrentBlock());
@@ -61,11 +62,53 @@ public class DeepBlockRewriter extends AbstractDeepBlockRewriter {
 
   @Override
   protected void doVisitExpressionStatement(ExpressionStatement stat) {
-    super.doVisitExpressionStatement(stat);
+    InteractionRewriter rewriter = visitInteractionAwareExpressionStatement(stat);
 
     boolean handled = (stat == lastSpecialMethodCallStat && !(currSpecialMethodCall.isWithCall() || currSpecialMethodCall.isGroupConditionBlock())) // don't process further
-        || handleInteraction(stat)
+        || handleInteraction(rewriter, stat)
         || handleImplicitCondition(stat);
+  }
+
+  private InteractionRewriter visitInteractionAwareExpressionStatement(ExpressionStatement stat) {
+    InteractionRewriter rewriter = new InteractionRewriter(resources, getCurrentWithOrMockClosure());
+    if (isInteractionExpression(rewriter, stat)) {
+      insideInteraction = true;
+      super.doVisitExpressionStatement(stat);
+      insideInteraction = false;
+    } else {
+      super.doVisitExpressionStatement(stat);
+    }
+    return rewriter;
+  }
+
+  @Override
+  protected void doVisitBinaryExpression(BinaryExpression expression) {
+    if(insideInteraction) {
+      /* We are inside an interaction expression, e.g., mock.foo({it > 0}) >> { result }
+         We don't want the closures to the right of the right shift to be treated
+         as condition closures, whereas the method argument closures should be treated
+         as conditions.
+       */
+      Expression expr = expression;
+      insideInteraction = false;
+      boolean found = false;
+      while (expr instanceof BinaryExpression) {
+        BinaryExpression binExpr = (BinaryExpression) expr;
+        int type = binExpr.getOperation().getType();
+        if (type != Types.RIGHT_SHIFT && type != Types.RIGHT_SHIFT_UNSIGNED) break;
+        found = true;
+        binExpr.getRightExpression().visit(this);
+        expr = binExpr.getLeftExpression();
+      }
+      insideInteraction = true;
+      if (found) {
+        expr.visit(this);
+      } else {
+        super.doVisitBinaryExpression(expression);
+      }
+    } else {
+      super.doVisitBinaryExpression(expression);
+    }
   }
 
   @Override
@@ -119,8 +162,7 @@ public class DeepBlockRewriter extends AbstractDeepBlockRewriter {
     return false;
   }
 
-  private boolean handleInteraction(ExpressionStatement stat) {
-    InteractionRewriter rewriter = new InteractionRewriter(resources, getCurrentWithOrMockClosure());
+  private boolean handleInteraction(InteractionRewriter rewriter, ExpressionStatement stat) {
     ExpressionStatement interaction = rewriter.rewrite(stat);
     if (interaction == null) return false;
 
@@ -142,7 +184,8 @@ public class DeepBlockRewriter extends AbstractDeepBlockRewriter {
     if (!(stat == currTopLevelStat && isThenOrExpectBlock()
         || currSpecialMethodCall.isWithCall()
         || currSpecialMethodCall.isConditionBlock()
-        || currSpecialMethodCall.isGroupConditionBlock())) {
+        || currSpecialMethodCall.isGroupConditionBlock()
+        || insideInteraction)) {
       return false;
     }
     if (!isImplicitCondition(stat)) return false;
@@ -281,6 +324,14 @@ public class DeepBlockRewriter extends AbstractDeepBlockRewriter {
 
   private boolean isThenOrExpectBlock() {
     return (block instanceof ThenBlock || block instanceof ExpectBlock);
+  }
+
+  private boolean isInteractionExpression(InteractionRewriter rewriter, ExpressionStatement stat) {
+    try {
+      return rewriter.isInteraction(stat);
+    } catch (InvalidSpecCompileException e) {
+      return false;
+    }
   }
 
   // assumption: not already an interaction

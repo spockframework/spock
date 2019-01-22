@@ -12,8 +12,8 @@ description = "Spock Framework"
 
 ext {
   baseVersion = "1.3"
-  snapshotVersion = false
-  releaseCandidate = 1
+  snapshotVersion = true
+  releaseCandidate = 0
   variants = [2.4, 2.5]
   variant = System.getProperty("variant") as BigDecimal ?: variants.first()
   if (variant == 2.4) {

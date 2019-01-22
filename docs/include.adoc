@@ -1,4 +1,4 @@
-:author: Peter Niederwieser, The Spock Framework Team
+:author: Peter Niederwieser, Leonard Brünings, The Spock Framework Team
 :revnumber: X-replaced-by-gradle
 :sourcedir: ../spock-specs/src/test/groovy/org/spockframework/docs
 :sourcedir-spring: ../spock-spring/src/test/groovy/org/spockframework/spring/docs

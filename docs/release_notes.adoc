@@ -2,7 +2,7 @@
 include::include.adoc[]
 
 
-== 1.3 (tbd)
+== 1.3-RC1 (2019-01-22)
 
 The theme for this release is to increase the information that is provided when an assertion failed.
 
@@ -93,16 +93,27 @@ data structure, then you need to move the condition into a separate method that 
 
 === What's New In This release
 
-* Fix erroneous regex where an optional colon was defined instead of a non-capturing group
-* Render class loader for classes in comparison failures
-* Record class literal values to display FQCN in comparison failures
-* Filter Java 9+ reflection stack frames
-* Do not convert implicit "this" expression like when calling the constructor of a non-static inner class
-* Fix class expression recording when there are comments with dots in the same line
-* Show stacktrace of throwables in comparison failure result
-* Use canonical class name in comparison failure results if present
-* Render otherwise irrelevant expressions if they get a type hint in comparison failure
+* Add implicit assertions for CodeArgument constraints (#956)
+* Add power assertion output to asserts with explicit message (#928)
+* Add support for mixed named and positional arguments in mocks (#919)
+* Add NamedParam support for gradle-2.5 with backport to 2.4 (#921)
+* Add special rendering for Set comparisons (#925)
 * Add identity hash code to type hints in comparison failures if they are identical
+* Fix erroneous regex where an optional colon was defined instead of a non-capturing group (#931)
+* Improve CodeArgumentConstraint by supporting assertions (#918)
+* Improve IDE type inference in MockingApi (#920)
+* Improve reporting of TooFewInvocationsError (#912)
+* Improve render class loader for classes in comparison failures (#932)
+* Improve record class literal values to display FQCN in comparison failures (#935)
+* Improve filter Java 9+ reflection stack frames
+* Improve show stacktrace of throwables in comparison failure result
+* Improve use canonical class name in comparison failure results if present
+* Improve render otherwise irrelevant expressions if they get a type hint in comparison failure (#936)
+* Fix do not convert implicit "this" expression like when calling the constructor of a non-static inner class (#930)
+* Fix class expression recording when there are comments with dots in the same line (#937)
+
+
+Thanks to all the contributors to this release: Björn Kautler, Marc Philipp, Marcin Zajączkowski, Martin Vseticka, Michael Kutz, Kacper Bublik
 
 == 1.2 (2018-09-23)
 

@@ -98,7 +98,7 @@ data structure, then you need to move the condition into a separate method that 
 * Add implicit assertions for CodeArgument constraints (#956)
 * Add power assertion output to asserts with explicit message (#928)
 * Add support for mixed named and positional arguments in mocks (#919)
-* Add NamedParam support for gradle-2.5 with backport to 2.4 (#921)
+* Add NamedParam support for groovy-2.5 with backport to 2.4 (#921)
 * Add special rendering for Set comparisons (#925)
 * Add identity hash code to type hints in comparison failures if they are identical
 * Fix erroneous regex where an optional colon was defined instead of a non-capturing group (#931)

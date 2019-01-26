@@ -59,7 +59,7 @@ public abstract class RenderUtil {
 
   private static String dump(@Nullable Object value) {
     if (value.getClass().isArray()) {
-      return dumpArrayString((Object[])value);
+      return Arrays.deepToString((Object[])value);
     } else {
       return DefaultGroovyMethods.dump(value);
     }

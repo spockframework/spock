@@ -11,8 +11,8 @@ plugins {
 description = "Spock Framework"
 
 ext {
-  baseVersion = "1.3"
-  snapshotVersion = false
+  baseVersion = "1.3.1"
+  snapshotVersion = true
   releaseCandidate = 0
   variants = [2.4, 2.5]
   variant = System.getProperty("variant") as BigDecimal ?: variants.first()
@@ -234,7 +234,9 @@ if (gradle.startParameter.taskNames == ["travisCiBuild"]) {
       maxParallelForks = 2
     }
   }
-  if (System.getenv("TRAVIS_PULL_REQUEST") == "false" && System.getenv("TRAVIS_BRANCH") == "master") {
+  if (System.getenv("TRAVIS_PULL_REQUEST") == "false" && System.getenv("TRAVIS_BRANCH") == "master" && baseVersion.startsWith('2.')) { /* TODO remove baseVersion check when switching to 2.x
+                                                                                                                                          1.3 is EOL so don't publish new snapshot/docs when updating Readme.md until 2.x is merged to master
+                                                                                                                                        */
     if (javaVersion == javaVersions.min()) {
       gradle.startParameter.taskNames += ["publish"]
       if (!snapshotVersion) {

@@ -18,10 +18,11 @@ http://webconsole.spockframework.org.
 
 Latest Versions
 ---------------
-The latest release version is **1.3-RC1** (1.3-RC1-groovy-2.4, 1.3-RC1-groovy-2.5), released on 2019-01-22. The
-current development version is **1.3-SNAPSHOT** (1.3-groovy-2.4-SNAPSHOT and 1.3-groovy-2.5-SNAPSHOT).
+The latest release version is **1.3** (1.3-RC1-groovy-2.4, 1.3-RC1-groovy-2.5), released on 2019-01-22. The
+current development version is **2.0-SNAPSHOT** (2.0-groovy-2.5-SNAPSHOT).
 
-**NOTE:** Spock 1.2 drops support for Java 6, Groovy 2.0 and Groovy 2.3.
+**NOTE:** Spock 1.3 is the last planned release for 1.x based on JUnit 4. Spock 2.0 will be based on the JUnit 5 Platform
+          and require Java 8/groovy-2.5 
 
 Releases are available from [Maven Central](https://search.maven.org/#search%7Cga%7C1%7Cg%3A%22org.spockframework%22).
 Development snapshots are available from [Sonatype OSS](https://oss.sonatype.org/content/repositories/snapshots/org/spockframework/).
@@ -40,8 +41,8 @@ repositories {
 }
 
 dependencies {
-        compile 'org.spockframework.spock:spock-core:spock-1.2'
-        compile 'org.spockframework.spock:spock-spring:spock-1.2'
+        compile 'org.spockframework.spock:spock-core:spock-1.3'
+        compile 'org.spockframework.spock:spock-spring:spock-1.3'
 }
 ```
 3. For intermediate releases you can also use the commit-hash as version, e.g. compile `com.github.spockframework.spock:spock-core:d91bf785a1`

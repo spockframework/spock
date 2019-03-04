@@ -57,6 +57,11 @@ publishing {
             name = "Luke Daley"
             email = "ld@ldaley.com"
           }
+          developer {
+            id = "leonard84"
+            name = "Leonard Brünings"
+            email = "lord_damokles@gmx.net"
+          }
         }
       }
     }

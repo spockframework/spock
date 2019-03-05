@@ -193,22 +193,9 @@ When expecting a call to a setter method, only method syntax can be used:
 
 The argument constraints of an interaction describe which method arguments are expected:
 
-[source,groovy]
+[source,groovy,indent=0]
 ----
-1 * subscriber.receive("hello")     // an argument that is equal to the String "hello"
-1 * subscriber.receive(!"hello")    // an argument that is unequal to the String "hello"
-1 * subscriber.receive()            // the empty argument list (would never match in our example)
-1 * subscriber.receive(_)           // any single argument (including null)
-1 * subscriber.receive(*_)          // any argument list (including the empty argument list)
-1 * subscriber.receive(!null)       // any non-null argument
-1 * subscriber.receive(_ as String) // any non-null argument that is-a String
-1 * subscriber.receive({ it.size() > 3 && it.contains('a') }) 
-					  // an argument that satisfies the given predicate, meaning that
-					  // code argument constraints need to return true of false 
-					  // depending on whether they match or not
-                                          // (here: message length is greater than 3 and contains the character a)
-1 * subscriber.receive(endsWith("lo"))    // Hamcrest Matchers are also supported
-                                          // (here: a string ending with 'lo')
+include::{sourcedir}/interaction/InteractionDocSpec.groovy[tag=argConstraints]
 ----
 
 Argument constraints work as expected for methods with multiple arguments:
@@ -233,21 +220,70 @@ subscriber.receive("hello", "goodbye")
 
 .Spock Deep Dive: Groovy Varargs
 ****
-Groovy allows any method whose last parameter has an array type to be called in vararg style. Consequently,
-vararg syntax can also be used in interactions matching such methods.
+Groovy allows any method whose last parameter has an array type to be called in vararg style.
+Consequently, vararg syntax can also be used in interactions matching such methods.
 ****
+
+==== Equality Constraint
+
+The equality constraint uses groovy equality to check the argument, i.e, `argument == constraint`. You can use
+
+* any literal `1 * check('string')` / `1 * check(1)` / `1 * check(null)`,
+* a variable `1 * check(var)`,
+* a list or map literal `1 * check([1])` / `1 * check([foo: 'bar'])`,
+* an object `1 * check(new Person('sam'))`,
+* or the result of a method call `1 * check(person())`
+
+as an equality constraint.
+
+==== Hamcrest Constraint
+
+A variation of the equality constraint, if the constraint object is a Hamcrest matcher, then it will use that matcher
+to check the argument.
+
+==== Wildcard Constraint
+
+The wildcard constraint will match any argument `null` or otherwise. It is the `_`, i.e. `1 * subscriber.receive(_)`.
+There is also the spread wildcard constraint `*\_` which matches any number of arguments `1 * subscriber.receive(*_)` including none.
+
+==== Code Constraint
+
+The code constraint is the most versatile of all. It is a groovy closure that gets the argument as its parameter.
+The closure is treated as an condition block, so it behaves like a `then` block, i.e., every line is treated as an implicit assertion.
+It can emulate all but the spread wildcard constraint, however it is suggested to use the simpler constraints where possible.
+You can do multiple assertions, call methods for assertions, or use `with`/`verifyAll`.
+
+
+[source,groovy,indent=0]
+----
+include::{sourcedir}/interaction/InteractionDocSpec.groovy[tag=codeConstraint]
+----
+
+==== Negating Constraint
+
+The negating constraint `!` is a compound constraint, i.e. it needs to be combined with another constraint to work.
+It inverts the result of the nested constraint, e.g, `1 * subscriber.receive(!null)` is the combination of
+an equality constraint checking for null and then the negating constraint inverting the result, turning it into not null.
+
+Although it can be combined with any other constraint it does not always make sense, e.g., `1 * subscriber.receive(!_)` will match nothing.
+Also keep in mind that the diagnostics for a non matching negating constraint will just be that the inner
+constraint did match, without any more information.
+
+==== Type Constraint
+
+The type constraint checks for the type/class of the argument, like the negating constraint it is also a compound constraint.
+It usually written as `_ as Type`, which is a combination of the wildcard constraint and the type constraint.
+You can combined it with other constraints as well, `1 * subscriber.receive({ it.contains('foo')} as String)` will assert that it is
+a `String` before executing the code constraint to check if it contains `foo`.
+
 
 === Matching Any Method Call
 
 Sometimes it can be useful to match "anything", in some sense of the word:
 
-[source,groovy]
+[source,groovy,indent=0]
 ----
-1 * subscriber._(*_)     // any method on subscriber, with any argument list
-1 * subscriber._         // shortcut for and preferred over the above
-
-1 * _._                  // any method call on any mock object
-1 * _                    // shortcut for and preferred over the above
+include::{sourcedir}/interaction/InteractionDocSpec.groovy[tag=anyConstraints]
 ----
 
 NOTE: Although `(_.._) * _._(*_) >> _` is a valid interaction declaration,

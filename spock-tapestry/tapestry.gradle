@@ -4,12 +4,6 @@ ext.displayName = "Spock Framework - Tapestry Module"
 
 description = "Spock's Tapestry Module provides support for testing Tapestry 5 based applications."
 
-repositories {
-  // need to explicitly add repository defined in tapestry-ioc POM
-  // (workaround for http://jira.codehaus.org/browse/GRADLE-611)
-  maven { url "http://repository.jboss.com/maven2" }
-}
-
 def tapestryVersion54 = "5.4.3"
 
 def useTapestry54 = javaVersion >= 1.8

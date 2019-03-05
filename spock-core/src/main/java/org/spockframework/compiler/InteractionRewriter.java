@@ -42,6 +42,7 @@ public class InteractionRewriter {
   private boolean wildcardCall;
   private boolean implicitTarget;
   private List<InteractionResponse> responses = new ArrayList<>();
+  private Boolean scanResult;
 
   // holds the incrementally constructed expression, which looks roughly as follows:
   // "new InteractionBuilder(..).setCount(..).setTarget(..).setMethod(..).addArg(..).addResult(..).build()"
@@ -75,7 +76,14 @@ public class InteractionRewriter {
     }
   }
 
-  private boolean isInteraction(ExpressionStatement stat) throws InvalidSpecCompileException {
+  public boolean isInteraction(ExpressionStatement stat) throws InvalidSpecCompileException {
+    if (scanResult != null) {
+      if (stat != this.stat) {
+        throw new InvalidSpecCompileException(stat, "InteractionRewriter was reused");
+      }
+      return scanResult;
+    }
+
     this.stat = stat;
 
     Expression expr = parseCount(parseResults(stat.getExpression()));
@@ -83,7 +91,8 @@ public class InteractionRewriter {
     if (interaction && resources.getCurrentMethod().getAst().isStatic()) {
       throw new InvalidSpecCompileException(stat, "Interactions cannot be declared in static scope");
     }
-    return interaction;
+
+    return scanResult = interaction;
   }
 
   private Expression parseResults(Expression expr) {

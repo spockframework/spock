@@ -64,7 +64,7 @@ public class MethodSelectorResolver implements SelectorResolver {
     if ("iteration".equals(lastSegment.getType())) {
       return context
         .addToParent(() -> selectUniqueId(uniqueId.removeLastSegment()), parent -> {
-          if (parent instanceof FeatureNode) {
+          if (parent instanceof ParameterizedFeatureNode) {
             FeatureNode featureNode = (FeatureNode) parent;
             int iterationIndex = Integer.parseInt(lastSegment.getValue());
             // TODO Add iterationIndex as allowed index to featureNode
@@ -86,20 +86,23 @@ public class MethodSelectorResolver implements SelectorResolver {
 
   private SpockNode createNode(SpecNode specNode, FeatureInfo feature) {
     if (feature.isParameterized()) {
-      return describeFeature(specNode.getUniqueId(), feature);
+      return describeParameterizedFeature(specNode.getUniqueId(), feature);
     } else {
-      return describeSimpleIteration(specNode.getUniqueId(), feature);
+      return describeSimpleFeature(specNode.getUniqueId(), feature);
     }
   }
 
-  private FeatureNode describeFeature(UniqueId parentId, FeatureInfo feature) {
-    return new FeatureNode(toUniqueId(parentId, feature), feature);
+  private FeatureNode describeParameterizedFeature(UniqueId parentId, FeatureInfo feature) {
+    return new ParameterizedFeatureNode(toUniqueId(parentId, feature), feature);
   }
 
-  private IterationNode describeSimpleIteration(UniqueId parentId, FeatureInfo feature) {
+  private FeatureNode describeSimpleFeature(UniqueId parentId, FeatureInfo feature) {
+    SimpleFeatureNode simpleFeatureNode = new SimpleFeatureNode(toUniqueId(parentId, feature), feature);
     IterationInfo iterationInfo = new IterationInfo(feature, EMPTY_ARGS, 1);
     iterationInfo.setName(feature.getName());
-    return new IterationNode(toUniqueId(parentId, feature), iterationInfo);
+    IterationNode iterationNode = new IterationNode(toUniqueId(simpleFeatureNode.getUniqueId(), feature), iterationInfo);
+    simpleFeatureNode.addChild(iterationNode);
+    return simpleFeatureNode;
   }
 
   private UniqueId toUniqueId(UniqueId parentId, FeatureInfo feature) {

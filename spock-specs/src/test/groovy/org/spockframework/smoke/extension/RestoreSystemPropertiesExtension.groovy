@@ -17,6 +17,9 @@ package org.spockframework.smoke.extension
 import spock.lang.Specification
 import spock.util.environment.RestoreSystemProperties
 
+import org.junit.platform.commons.annotation.Testable
+
+@Testable
 class RestoreSystemPropertiesExtension extends Specification {
   def setupSpec() {
     System.setProperty("RestoreSystemPropertiesExtension.prop1", "original value")
@@ -40,6 +43,7 @@ class RestoreSystemPropertiesExtension extends Specification {
   }
 }
 
+@Testable
 @RestoreSystemProperties
 class UseRestoreSystemPropertiesOnSpecClass extends Specification {
   def setupSpec() {

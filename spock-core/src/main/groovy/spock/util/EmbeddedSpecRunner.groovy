@@ -20,6 +20,7 @@ import org.spockframework.runtime.*
 import org.spockframework.util.*
 
 import java.lang.reflect.Modifier
+import java.util.stream.Collectors
 
 import org.intellij.lang.annotations.Language
 import org.junit.platform.engine.DiscoverySelector
@@ -168,6 +169,7 @@ class EmbeddedSpecRunner {
       return results.tests().executions().failed()
         .map{ it.terminationInfo.executionResult.throwable.get()}
         .map {new Failure(Description.createSuiteDescription("FAIL"), it)}
+        .collect(Collectors.toList())
     }
   }
 }

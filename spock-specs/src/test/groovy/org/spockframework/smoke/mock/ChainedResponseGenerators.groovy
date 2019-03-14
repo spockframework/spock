@@ -18,11 +18,12 @@ package org.spockframework.smoke.mock
 
 import spock.lang.Specification
 import spock.lang.Issue
+import spock.lang.Unroll
 
 @Issue("http://issues.spockframework.org/detail?id=235")
 class ChainedResponseGenerators extends Specification {
   Queue queue = Mock()
-  
+
   def "implicit default response"() {
     expect:
     queue.poll() == null
@@ -100,7 +101,7 @@ class ChainedResponseGenerators extends Specification {
     queue.poll() == 5
     queue.poll() == 5
   }
-  
+
   def "chaining in then-block"() {
     when:
     def res1 = queue.poll()
@@ -118,5 +119,111 @@ class ChainedResponseGenerators extends Specification {
     res4 == null
     res5 == null
     thrown(UnsupportedOperationException)
+  }
+
+  def "chaining code responses as a list"() {
+    def count = 0
+    queue.poll() >>> [{ throw new UnsupportedOperationException() },  { throw new IllegalArgumentException() }, { count++ }]
+
+    when:
+    queue.poll()
+
+    then:
+    thrown(UnsupportedOperationException)
+
+    when:
+    queue.poll()
+
+    then:
+    thrown(IllegalArgumentException)
+
+    expect:
+    queue.poll() == 0
+    queue.poll() == 1
+  }
+
+  def "chaining code responses as unitary lists"() {
+    def count = 0
+    queue.poll() >>> [{ throw new UnsupportedOperationException() }] >>> [{ throw new IllegalArgumentException() }] >>> [{ count++ }]
+
+    when:
+    queue.poll()
+
+    then:
+    thrown(UnsupportedOperationException)
+
+    when:
+    queue.poll()
+
+    then:
+    thrown(IllegalArgumentException)
+
+    expect:
+    queue.poll() == 0
+    queue.poll() == 1
+  }
+
+  def "chaining code responses as a unitary list without state changes"() {
+    def count = 0
+    queue.poll() >>> [{ throw new UnsupportedOperationException() }]
+
+    when:
+    queue.poll()
+
+    then:
+    thrown(UnsupportedOperationException)
+  }
+
+  def "chaining code responses as a unitary list with state changes"() {
+    def count = 0
+    queue.poll() >>> [{ ++count }]
+
+    expect:
+    queue.poll() == 1
+  }
+
+  def "chaining code responses with heterogeneous lists"() {
+    def count = 1
+    queue.poll() >>> [{ throw new UnsupportedOperationException() }, 0, { count++ }, 2, [3, 4]]
+
+    when:
+    queue.poll()
+
+    then:
+    thrown(UnsupportedOperationException)
+
+    expect:
+    queue.poll() == 0
+    queue.poll() == 1
+    queue.poll() == 2
+    queue.poll() == [3, 4]
+  }
+
+  @Unroll('#exception_name: chain of #iterations exceptions')
+  def "chaining code responses as a list using datatables"() {
+    def count = 0
+    queue.poll() >>> [ { throw exception } ] * iterations >> { count++ }
+
+    when:
+    queue.poll()
+
+    then:
+    thrown(exception_name)
+
+    when:
+    queue.poll()
+
+    then:
+    thrown(exception_name)
+
+    expect:
+    queue.poll() == 0
+    queue.poll() == 1
+
+    where:
+
+    exception                           | exception_name                | iterations
+    new UnsupportedOperationException() | UnsupportedOperationException | 2
+    new IllegalArgumentException()      | IllegalArgumentException      | 2
   }
 }

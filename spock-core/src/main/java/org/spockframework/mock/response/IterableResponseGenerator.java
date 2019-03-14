@@ -16,6 +16,7 @@
 
 package org.spockframework.mock.response;
 
+import groovy.lang.Closure;
 import org.spockframework.mock.*;
 import org.spockframework.runtime.GroovyRuntimeUtil;
 
@@ -43,6 +44,29 @@ public class IterableResponseGenerator implements IChainableResponseGenerator {
   @Override
   public Object respond(IMockInvocation invocation) {
     if (iterator.hasNext()) nextValue = iterator.next();
-    return GroovyRuntimeUtil.coerce(nextValue, invocation.getMethod().getReturnType());
+
+    if (nextValue instanceof Closure) {
+      Closure closure = (Closure) nextValue;
+      Object result = invokeClosure(invocation, closure);
+      Class<?> returnType = invocation.getMethod().getReturnType();
+
+      // don't attempt cast for void methods (closure could be an action that accidentally returns a value)
+      if (returnType == void.class || returnType == Void.class) return null;
+
+      return GroovyRuntimeUtil.coerce(result, invocation.getMethod().getReturnType());
+    } else {
+      return GroovyRuntimeUtil.coerce(nextValue, invocation.getMethod().getReturnType());
+    }
+  }
+
+  private Object invokeClosure(IMockInvocation invocation, Closure code) {
+    Class<?>[] paramTypes = code.getParameterTypes();
+    if (paramTypes.length == 1 && paramTypes[0] == IMockInvocation.class) {
+      return GroovyRuntimeUtil.invokeClosure(code, invocation);
+    }
+
+    code.setDelegate(invocation);
+    code.setResolveStrategy(Closure.DELEGATE_FIRST);
+    return GroovyRuntimeUtil.invokeClosure(code, invocation.getArguments());
   }
 }

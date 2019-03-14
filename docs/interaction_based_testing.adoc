@@ -672,6 +672,20 @@ subscriber.receive(_) >>> ["ok", "fail", "ok"] >> { throw new InternalError() } 
 This will return `"ok", "fail", "ok"` for the first three invocations, throw `InternalError`
 for the fourth invocations, and return `ok` for any further invocation.
 
+Alternatively, we can use a single list:
+
+[source,groovy]
+----
+subscriber.receive(_) >>> ["ok", "fail", "ok", { throw new InternalError() }, "ok"]
+----
+
+This can be particularly useful in cases where we have repeated method responses:
+
+[source,groovy]
+----
+subscriber.receive(_) >>> [{ throw new InternalError() }] * 3 >> "ok"
+----
+
 == Combining Mocking and Stubbing
 
 Mocking and stubbing go hand-in-hand:

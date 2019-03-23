@@ -118,6 +118,16 @@ public class Jvm {
   }
 
   /**
+   * Tells whether the Java version is 12.
+   *
+   * @since 2.0
+   * @return whether the Java version is 12
+   */
+  public boolean isJava12() {
+    return "12".equals(javaSpecVersion);
+  }
+
+  /**
    * Tells whether the Java version is compatible with Java 5.
    *
    * @return whether the Java version is compatible with Java 5
@@ -165,6 +175,7 @@ public class Jvm {
   /**
    * Tells whether the Java version is compatible with Java 10.
    *
+   * @since 1.2
    * @return whether the Java version is compatible with Java 10
    */
   public boolean isJava10Compatible() {
@@ -174,10 +185,21 @@ public class Jvm {
   /**
    * Tells whether the Java version is compatible with Java 11.
    *
+   * @since 1.2
    * @return whether the Java version is compatible with Java 11
    */
   public boolean isJava11Compatible() {
     return javaSpecVersionNumber.getMajor() >= 11;
+  }
+
+  /**
+   * Tells whether the Java version is compatible with Java 12.
+   *
+   * @since 2.0
+   * @return whether the Java version is compatible with Java 12
+   */
+  public boolean isJava12Compatible() {
+    return javaSpecVersionNumber.getMajor() >= 12;
   }
 
   /**

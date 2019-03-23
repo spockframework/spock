@@ -90,6 +90,12 @@ allprojects {
       options.compilerArgs += ['--release', '8']
       options.encoding = 'UTF-8'
     }
+    tasks.withType(GroovyCompile) {
+      sourceCompatibility = javaVersions.min()
+      targetCompatibility = javaVersions.min()
+      options.compilerArgs += ['--release', '8']
+      options.encoding = 'UTF-8'
+    }
 
     tasks.withType(Javadoc) {
       options.addStringOption('Xdoclint:none', '-quiet')

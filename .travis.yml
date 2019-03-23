@@ -29,6 +29,7 @@ jdk:
   - oraclejdk8
   - openjdk10
   - openjdk11
+  - openjdk12
 
 env:
   matrix:

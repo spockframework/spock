@@ -25,7 +25,6 @@ cache:
 
 dist: precise # downgrade to avoid jdk7 SSL Bug https://github.com/docker-library/openjdk/issues/117
 jdk:
-  - oraclejdk7 # openjdk7 has SSL Bug avoid jdk7 SSL Bug https://github.com/docker-library/openjdk/issues/117
   - oraclejdk8
   - openjdk10
   - openjdk11
@@ -33,7 +32,6 @@ jdk:
 
 env:
   matrix:
-    - VARIANT=2.4
     - VARIANT=2.5
   global:
     # SIGNING_PASSWORD

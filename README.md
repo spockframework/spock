@@ -18,7 +18,7 @@ http://webconsole.spockframework.org.
 
 Latest Versions
 ---------------
-The latest release version is **1.3** (1.3-RC1-groovy-2.4, 1.3-RC1-groovy-2.5), released on 2019-01-22. The
+The latest release version is **1.3** (1.3-groovy-2.4, 1.3-groovy-2.5), released on 2019-01-22. The
 current development version is **2.0-SNAPSHOT** (2.0-groovy-2.5-SNAPSHOT).
 
 **NOTE:** Spock 1.3 is the last planned release for 1.x based on JUnit 4. Spock 2.0 will be based on the JUnit 5 Platform

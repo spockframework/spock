@@ -26,7 +26,7 @@ public class ParameterizedFeatureNode extends FeatureNode {
 
   @Override
   public Type getType() {
-    return Type.CONTAINER_AND_TEST;
+    return Type.CONTAINER;
   }
 
   class ChildExecutor implements DynamicTestExecutor {

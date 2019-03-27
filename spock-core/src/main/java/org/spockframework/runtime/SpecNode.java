@@ -32,7 +32,6 @@ public class SpecNode extends SpockNode {
 
   @Override
   public SkipResult shouldBeSkipped(SpockExecutionContext context) throws Exception {
-    System.out.println("Skipping spec=" + specInfo.isSkipped());
     return specInfo.isSkipped() ? SkipResult.skip("because I said so") : SkipResult.doNotSkip();
   }
 

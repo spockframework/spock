@@ -34,7 +34,6 @@ import static org.spockframework.runtime.RunStatus.*;
  * @author Peter Niederwieser
  */
 public class PlatformSpecRunner {
-  protected static final Object[] EMPTY_ARGS = new Object[0];
 
   protected final IRunSupervisor supervisor;
   protected int runStatus = OK;
@@ -255,37 +254,11 @@ public class PlatformSpecRunner {
 //    else runSimpleFeature(context);
   }
 
-  private void runSimpleFeature(SpockExecutionContext context) {
-    if (runStatus != OK) return;
-
-    initializeAndRunIteration(context, EMPTY_ARGS, 1);
-    resetStatus(ITERATION);
-  }
-
-  protected void initializeAndRunIteration(SpockExecutionContext context, Object[] dataValues, int estimatedNumIterations) {
-    if (runStatus != OK) return;
-
-    context = createSpecInstance(context, false);
-    runInitializer(context);
-    runIteration(context, dataValues, estimatedNumIterations);
-  }
-
-  private void runIteration(SpockExecutionContext context, Object[] dataValues, int estimatedNumIterations) {
-    if (runStatus != OK) return;
-
-    IterationInfo currentIteration = createIterationInfo(context, dataValues, estimatedNumIterations);
-    context = context.withCurrentIteration(currentIteration);
-    getSpecificationContext(context).setCurrentIteration(currentIteration);
-
-    supervisor.beforeIteration(currentIteration);
-//    invoke(context, this, createMethodInfoForDoRunIteration(context, runnable));
-    supervisor.afterIteration(currentIteration);
-
-    getSpecificationContext(context).setCurrentIteration(null); // TODO check if we really need to null here
-  }
   void runIteration(SpockExecutionContext context, IterationInfo iterationInfo, Runnable runnable) {
     if (runStatus != OK) return;
 
+    context = context.withCurrentIteration(iterationInfo);
+    getSpecificationContext(context).setCurrentIteration(iterationInfo);
 
     supervisor.beforeIteration(iterationInfo);
     invoke(context, this, createMethodInfoForDoRunIteration(context, runnable));

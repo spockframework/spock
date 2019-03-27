@@ -96,13 +96,12 @@ public class MethodSelectorResolver implements SelectorResolver {
     return new ParameterizedFeatureNode(toUniqueId(parentId, feature), feature);
   }
 
-  private FeatureNode describeSimpleFeature(UniqueId parentId, FeatureInfo feature) {
-    SimpleFeatureNode simpleFeatureNode = new SimpleFeatureNode(toUniqueId(parentId, feature), feature);
+  private SpockNode describeSimpleFeature(UniqueId parentId, FeatureInfo feature) {
     IterationInfo iterationInfo = new IterationInfo(feature, EMPTY_ARGS, 1);
     iterationInfo.setName(feature.getName());
-    IterationNode iterationNode = new IterationNode(toUniqueId(simpleFeatureNode.getUniqueId(), feature), iterationInfo);
-    simpleFeatureNode.addChild(iterationNode);
-    return simpleFeatureNode;
+    UniqueId uniqueId = toUniqueId(parentId, feature);
+    IterationNode iterationNode = new IterationNode(toUniqueId(uniqueId, feature), iterationInfo);
+    return new SimpleFeatureNode(uniqueId, feature, iterationNode);
   }
 
   private UniqueId toUniqueId(UniqueId parentId, FeatureInfo feature) {

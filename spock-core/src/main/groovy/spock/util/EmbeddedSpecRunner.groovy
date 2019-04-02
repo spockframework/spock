@@ -134,7 +134,8 @@ class EmbeddedSpecRunner {
       .selectors(*selectors)
       .execute()
     if (throwFailure) {
-      def first = executionResults.tests().executions().failed().stream().findFirst()
+      // TODO revisit filtering here all() vs tests(), currently extensions can also throw failure on container level
+      def first = executionResults.all().executions().failed().stream().findFirst()
       if (first.present) {
         throw first.get().terminationInfo.executionResult.throwable.get()
       }

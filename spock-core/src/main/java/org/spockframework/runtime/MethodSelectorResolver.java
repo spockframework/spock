@@ -1,21 +1,16 @@
 package org.spockframework.runtime;
 
-import org.junit.platform.engine.DiscoverySelector;
-import org.junit.platform.engine.TestDescriptor;
-import org.junit.platform.engine.UniqueId;
-import org.junit.platform.engine.discovery.MethodSelector;
-import org.junit.platform.engine.support.discovery.SelectorResolver;
-import org.spockframework.runtime.model.FeatureInfo;
-import org.spockframework.runtime.model.IterationInfo;
+import org.spockframework.runtime.model.*;
 
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Predicate;
 
-import static java.util.Collections.emptySet;
-import static java.util.Collections.singleton;
-import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClass;
-import static org.junit.platform.engine.discovery.DiscoverySelectors.selectUniqueId;
+import org.junit.platform.engine.*;
+import org.junit.platform.engine.discovery.MethodSelector;
+import org.junit.platform.engine.support.discovery.SelectorResolver;
+
+import static java.util.Collections.*;
+import static org.junit.platform.engine.discovery.DiscoverySelectors.*;
 
 public class MethodSelectorResolver implements SelectorResolver {
 
@@ -77,7 +72,7 @@ public class MethodSelectorResolver implements SelectorResolver {
   }
 
   private Optional<SpockNode> toNode(SpecNode specNode, Predicate<FeatureInfo> predicate) {
-    return specNode.getSpecInfo().getAllFeatures().stream()
+    return specNode.getSpecInfo().getAllFeaturesInExecutionOrder().stream()
       .filter(predicate)
       .filter(feature -> !feature.isExcluded())
       .findAny()

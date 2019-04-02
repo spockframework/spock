@@ -16,16 +16,14 @@
 
 package org.spockframework.runtime.extension.builtin;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.spockframework.runtime.GroovyRuntimeUtil;
+import org.spockframework.runtime.extension.*;
+import spock.lang.Retry;
+
+import java.util.*;
 
 import groovy.lang.Closure;
-import org.junit.runners.model.MultipleFailureException;
-import org.spockframework.runtime.GroovyRuntimeUtil;
-import org.spockframework.runtime.extension.ExtensionException;
-import org.spockframework.runtime.extension.IMethodInvocation;
-
-import spock.lang.Retry;
+import org.opentest4j.MultipleFailuresError;
 
 /**
  * @author Leonard Brünings
@@ -100,6 +98,6 @@ public class RetryBaseInterceptor {
         }
       }
     }
-    throw new MultipleFailureException(throwables);
+    throw new MultipleFailuresError("Retries exhausted", throwables);
   }
 }

@@ -20,7 +20,7 @@ import org.spockframework.runtime.SpockExecutionException
 import spock.lang.*
 
 import org.junit.runner.notification.RunListener
-import org.junit.runners.model.MultipleFailureException
+import org.opentest4j.MultipleFailuresError
 
 class DataTables extends EmbeddedSpecification {
   static staticField = 42
@@ -57,7 +57,7 @@ a
     """
 
     then:
-    MultipleFailureException e = thrown()
+    MultipleFailuresError e = thrown()
     e.failures*.class == [InvalidSpecCompileException] * 2
   }
 

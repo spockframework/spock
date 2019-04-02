@@ -6,6 +6,7 @@ import spock.lang.FailsWith
 import spock.lang.Issue
 
 import groovy.transform.*
+import org.opentest4j.MultipleFailuresError
 
 class VerifyAllSpecification extends EmbeddedSpecification {
 

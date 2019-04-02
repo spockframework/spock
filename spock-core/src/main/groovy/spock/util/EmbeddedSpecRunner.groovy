@@ -150,6 +150,10 @@ class EmbeddedSpecRunner {
       this.results = results
     }
 
+    EngineExecutionResults unwrap() {
+      results
+    }
+
     @Override
     int getFailureCount() {
       return results.tests().failed().count()

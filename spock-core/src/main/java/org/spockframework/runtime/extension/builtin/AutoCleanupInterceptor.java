@@ -61,6 +61,6 @@ public class AutoCleanupInterceptor implements IMethodInterceptor {
       }
     }
 
-    ExtensionUtil.throwAll(exceptions);
+    ExtensionUtil.throwAll("Exceptions during cleanup", exceptions);
   }
 }

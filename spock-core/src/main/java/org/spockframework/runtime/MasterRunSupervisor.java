@@ -2,11 +2,11 @@ package org.spockframework.runtime;
 
 import org.spockframework.runtime.condition.IObjectRenderer;
 import org.spockframework.runtime.model.*;
-import org.spockframework.util.TextUtil;
+import org.spockframework.util.*;
 
-import org.junit.ComparisonFailure;
 import org.junit.internal.AssumptionViolatedException;
 import org.junit.runners.model.MultipleFailureException;
+import org.opentest4j.*;
 
 import static org.spockframework.runtime.RunStatus.OK;
 
@@ -42,20 +42,21 @@ class MasterRunSupervisor implements IRunSupervisor {
   public int error(ErrorInfo error) {
     Throwable exception = error.getException();
 
-//    if (exception instanceof MultipleFailureException)
+//    if (exception instanceof MultipleFailureException)  // TODO move to junit4 extension?
 //      return handleMultipleFailures(error);
 //
-//    if (isFailedEqualityComparison(exception))
-//      exception = convertToComparisonFailure(exception);
+    if (isFailedEqualityComparison(exception))
+      exception = convertToComparisonFailure(exception);
 
     filter.filter(exception);
 
-    if (exception instanceof AssumptionViolatedException) {
+    if (exception instanceof AssumptionViolatedException) { // TODO move to junit4 extension?
       // Spock has no concept of "violated assumption", so we don't notify Spock listeners
       // do notify JUnit listeners unless it's a data-driven iteration that's reported as one feature
     } else {
       masterListener.error(error);
     }
+    ExceptionUtil.sneakyThrow(exception);
     return 0;
   }
 
@@ -86,10 +87,10 @@ class MasterRunSupervisor implements IRunSupervisor {
     Condition condition = conditionNotSatisfiedError.getCondition();
     ExpressionInfo expr = condition.getExpression();
 
-    String actual = renderValue(expr.getChildren().get(0).getValue());
-    String expected = renderValue(expr.getChildren().get(1).getValue());
-    // TODO replace by AssertionFailedError
-    ComparisonFailure failure = new SpockComparisonFailure(condition, expected, actual);
+    ValueWrapper actual = ValueWrapper.create(expr.getChildren().get(0).getValue());
+    ValueWrapper expected = ValueWrapper.create(expr.getChildren().get(1).getValue());
+    // TODO check if the new rendering by ValueWrapper is good enough
+    AssertionFailedError failure = new SpockComparisonFailure(condition, expected, actual);
     failure.setStackTrace(exception.getStackTrace());
 
     if (conditionNotSatisfiedError.getCause()!=null){

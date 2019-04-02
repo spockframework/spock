@@ -18,7 +18,6 @@ import org.spockframework.runtime.condition.IObjectRenderer;
 import org.spockframework.runtime.model.*;
 import org.spockframework.util.*;
 
-import org.junit.ComparisonFailure;
 import org.junit.internal.AssumptionViolatedException;
 import org.junit.runner.Description;
 import org.junit.runner.notification.*;
@@ -83,9 +82,9 @@ public class JUnitSupervisor implements IRunSupervisor {
 
     if (exception instanceof MultipleFailureException)
       return handleMultipleFailures(error);
-
-    if (isFailedEqualityComparison(exception))
-      exception = convertToComparisonFailure(exception);
+//
+//    if (isFailedEqualityComparison(exception))
+//      exception = convertToComparisonFailure(exception);
 
     filter.filter(exception);
 
@@ -126,24 +125,24 @@ public class JUnitSupervisor implements IRunSupervisor {
   }
 
   // enables IDE support (diff dialog)
-  private Throwable convertToComparisonFailure(Throwable exception) {
-    assert isFailedEqualityComparison(exception);
-
-    ConditionNotSatisfiedError conditionNotSatisfiedError = (ConditionNotSatisfiedError) exception;
-    Condition condition = conditionNotSatisfiedError.getCondition();
-    ExpressionInfo expr = condition.getExpression();
-
-    String actual = renderValue(expr.getChildren().get(0).getValue());
-    String expected = renderValue(expr.getChildren().get(1).getValue());
-    ComparisonFailure failure = new SpockComparisonFailure(condition, expected, actual);
-    failure.setStackTrace(exception.getStackTrace());
-
-    if (conditionNotSatisfiedError.getCause()!=null){
-      failure.initCause(conditionNotSatisfiedError.getCause());
-    }
-
-    return failure;
-  }
+//  private Throwable convertToComparisonFailure(Throwable exception) {
+//    assert isFailedEqualityComparison(exception);
+//
+//    ConditionNotSatisfiedError conditionNotSatisfiedError = (ConditionNotSatisfiedError) exception;
+//    Condition condition = conditionNotSatisfiedError.getCondition();
+//    ExpressionInfo expr = condition.getExpression();
+//
+//    ValueWrapper actual = ValueWrapper.create(expr.getChildren().get(0).getValue());
+//    ValueWrapper expected = ValueWrapper.create(expr.getChildren().get(1).getValue());
+//    ComparisonFailure failure = new SpockComparisonFailure(condition, expected, actual);
+//    failure.setStackTrace(exception.getStackTrace());
+//
+//    if (conditionNotSatisfiedError.getCause()!=null){
+//      failure.initCause(conditionNotSatisfiedError.getCause());
+//    }
+//
+//    return failure;
+//  }
 
   private String renderValue(Object value) {
     try {

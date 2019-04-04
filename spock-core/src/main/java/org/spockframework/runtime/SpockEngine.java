@@ -28,7 +28,7 @@ public class SpockEngine extends HierarchicalTestEngine<SpockExecutionContext> {
     RunContext runContext = RunContext.get(); // TODO cleanup
     SpockEngineDescriptor engineDescriptor = new SpockEngineDescriptor(uniqueId, runContext);
     EngineDiscoveryRequestResolver.builder()
-      .withDefaultsForClassBasedTestEngines(SpecUtil::isRunnableSpec)
+      .addClassContainerSelectorResolver(SpecUtil::isRunnableSpec)
       .addSelectorResolver(context -> new ClassSelectorResolver(context.getClassNameFilter(), runContext))
       .addSelectorResolver(new MethodSelectorResolver())
       .build()

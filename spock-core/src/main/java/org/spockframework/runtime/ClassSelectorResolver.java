@@ -4,6 +4,7 @@ import org.junit.platform.commons.support.ReflectionSupport;
 import org.junit.platform.engine.DiscoverySelector;
 import org.junit.platform.engine.UniqueId;
 import org.junit.platform.engine.discovery.ClassSelector;
+import org.junit.platform.engine.discovery.UniqueIdSelector;
 import org.junit.platform.engine.support.discovery.SelectorResolver;
 import org.spockframework.runtime.model.SpecInfo;
 
@@ -13,7 +14,6 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-import static java.util.Collections.singleton;
 import static java.util.stream.Collectors.toCollection;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectMethod;
 
@@ -28,30 +28,22 @@ class ClassSelectorResolver implements SelectorResolver {
   }
 
   @Override
-  public Set<Class<? extends DiscoverySelector>> getSupportedSelectorTypes() {
-    return singleton(ClassSelector.class);
+  public Resolution resolve(ClassSelector selector, Context context) {
+    return resolveClass(((ClassSelector) selector).getJavaClass(), context);
   }
 
   @Override
-  public Optional<Result> resolveSelector(DiscoverySelector selector, Context context) {
-    if (selector instanceof ClassSelector) {
-      return resolveClass(((ClassSelector) selector).getJavaClass(), context);
-    }
-    return Optional.empty();
-  }
-
-  @Override
-  public Optional<Result> resolveUniqueId(UniqueId uniqueId, Context context) {
-    UniqueId.Segment lastSegment = uniqueId.getLastSegment();
+  public Resolution resolve(UniqueIdSelector selector, Context context) {
+    UniqueId.Segment lastSegment = selector.getUniqueId().getLastSegment();
     if ("spec".equals(lastSegment.getType())) {
       String className = lastSegment.getValue();
       Class<?> specClass = ReflectionSupport.tryToLoadClass(className).getOrThrow(SpockException::new);
       return resolveClass(specClass, context);
     }
-    return Optional.empty();
+    return Resolution.unresolved();
   }
 
-  private Optional<Result> resolveClass(Class<?> specClass, Context context) {
+  private Resolution resolveClass(Class<?> specClass, Context context) {
     if (SpecUtil.isRunnableSpec(specClass) && classNameFilter.test(specClass.getName())) {
       SpecInfo specInfo = new SpecInfoBuilder(specClass).build();
       return context
@@ -60,13 +52,14 @@ class ClassSelectorResolver implements SelectorResolver {
           runContext.createExtensionRunner(specInfo).run();
           return Optional.of(new SpecNode(uniqueId, specInfo));
         })
-        .map(specNode -> toResult(specInfo, specNode));
+        .map(specNode -> toResolution(specInfo, specNode))
+        .orElse(Resolution.unresolved());
     }
-    return Optional.empty();
+    return Resolution.unresolved();
   }
 
-  private Result toResult(SpecInfo specInfo, SpecNode specNode) {
-    return Result.of(Match.of(specNode, features(specInfo)));
+  private Resolution toResolution(SpecInfo specInfo, SpecNode specNode) {
+    return Resolution.match(Match.exact(specNode, features(specInfo)));
   }
 
   private Supplier<Set<? extends DiscoverySelector>> features(SpecInfo specInfo) {

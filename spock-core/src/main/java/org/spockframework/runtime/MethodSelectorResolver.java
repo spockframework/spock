@@ -4,9 +4,11 @@ import org.spockframework.runtime.model.*;
 
 import java.util.*;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 import org.junit.platform.engine.*;
 import org.junit.platform.engine.discovery.MethodSelector;
+import org.junit.platform.engine.discovery.UniqueIdSelector;
 import org.junit.platform.engine.support.discovery.SelectorResolver;
 
 import static java.util.Collections.*;
@@ -17,33 +19,26 @@ public class MethodSelectorResolver implements SelectorResolver {
   private static final Object[] EMPTY_ARGS = new Object[0];
 
   @Override
-  public Set<Class<? extends DiscoverySelector>> getSupportedSelectorTypes() {
-    return singleton(MethodSelector.class);
-  }
-
-  @Override
-  public Optional<Result> resolveSelector(DiscoverySelector selector, Context context) {
-    if (selector instanceof MethodSelector) {
-      MethodSelector methodSelector = (MethodSelector) selector;
-      return context
-        .addToParent(() -> selectClass(methodSelector.getJavaClass()), parent -> {
-          if (parent instanceof SpecNode) {
-            String methodName = methodSelector.getMethodName();
-            Optional<SpockNode> node = toNode((SpecNode) parent, feature -> feature.getFeatureMethod().getReflection().getName().equals(methodName));
-            if (!node.isPresent()) {
-              node = toNode((SpecNode) parent, feature -> methodName.equals(feature.getName()));
-            }
-            return node;
+  public Resolution resolve(MethodSelector selector, Context context) {
+    return context
+      .addToParent(() -> selectClass(selector.getJavaClass()), parent -> {
+        if (parent instanceof SpecNode) {
+          String methodName = selector.getMethodName();
+          Optional<SpockNode> node = toNode((SpecNode) parent, feature -> feature.getFeatureMethod().getReflection().getName().equals(methodName));
+          if (!node.isPresent()) {
+            node = toNode((SpecNode) parent, feature -> methodName.equals(feature.getName()));
           }
-          return Optional.empty();
-        })
-        .map(this::toResult);
-    }
-    return Optional.empty();
+          return node;
+        }
+        return Optional.empty();
+      })
+      .map(node -> Resolution.match(Match.exact(node, expansionCallback(node))))
+      .orElse(Resolution.unresolved());
   }
 
   @Override
-  public Optional<Result> resolveUniqueId(UniqueId uniqueId, Context context) {
+  public Resolution resolve(UniqueIdSelector selector, Context context) {
+    UniqueId uniqueId = selector.getUniqueId();
     UniqueId.Segment lastSegment = uniqueId.getLastSegment();
     if ("feature".equals(lastSegment.getType())) {
       return context
@@ -54,7 +49,8 @@ public class MethodSelectorResolver implements SelectorResolver {
           }
           return Optional.empty();
         })
-        .map(this::toResult);
+        .map(node -> Resolution.match(Match.exact(node, expansionCallback(node))))
+        .orElse(Resolution.unresolved());
     }
     if ("iteration".equals(lastSegment.getType())) {
       return context
@@ -66,9 +62,10 @@ public class MethodSelectorResolver implements SelectorResolver {
           }
           return Optional.empty();
         })
-        .map(node -> toResult(node).withPerfectMatch(false));
+        .map(node -> Resolution.match(Match.partial(node, expansionCallback(node))))
+        .orElse(Resolution.unresolved());
     }
-    return Optional.empty();
+    return Resolution.unresolved();
   }
 
   private Optional<SpockNode> toNode(SpecNode specNode, Predicate<FeatureInfo> predicate) {
@@ -103,11 +100,11 @@ public class MethodSelectorResolver implements SelectorResolver {
     return parentId.append("feature", feature.getFeatureMethod().getReflection().getName());
   }
 
-  private Result toResult(TestDescriptor node) {
-    return Result.of(Match.of(node, () -> {
+  private Supplier<Set<? extends DiscoverySelector>> expansionCallback(TestDescriptor node) {
+    return () -> {
       // TODO allow all iteration indexes
       return emptySet();
-    }));
+    };
   }
 
 }

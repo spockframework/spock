@@ -59,11 +59,11 @@ ext {
     groovy: groovyDependency,
     h2database: "com.h2database:h2:1.3.176",
     junit4: "junit:junit:4.12",
-//    junitPlatform: "org.junit.platform:junit-platform-engine:1.3.2",
-    jupiter: "com.github.junit-team.junit5:junit-jupiter:158484a786",
-    junitPlatform: "com.github.junit-team.junit5:junit-platform-engine:158484a786",
-    junitPlatformTestkit: "com.github.junit-team.junit5:junit-platform-testkit:158484a786",
-    junitPlatformConsole: "com.github.junit-team.junit5:junit-platform-console:158484a786",
+    junitBom: "org.junit:junit-bom:5.5.0-M1",
+    jupiter: "org.junit.jupiter:junit-jupiter",
+    junitPlatform: "org.junit.platform:junit-platform-engine",
+    junitPlatformTestkit: "org.junit.platform:junit-platform-testkit",
+    junitPlatformConsole: "org.junit.platform:junit-platform-console",
     log4j: "log4j:log4j:1.2.17",
     objenesis: "org.objenesis:objenesis:3.0.1"
   ]
@@ -152,6 +152,7 @@ subprojects {
   }
 
   dependencies {
+    implementation platform(libs.junitBom)
     compile(project.name == "spock-gradle" ? [] : libs.groovy)
   }
 

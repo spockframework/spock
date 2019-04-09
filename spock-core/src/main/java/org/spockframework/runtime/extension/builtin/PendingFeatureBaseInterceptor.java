@@ -8,10 +8,12 @@ import org.junit.AssumptionViolatedException;
 public class PendingFeatureBaseInterceptor {
   protected final Class<? extends Throwable>[] expectedExceptions;
   protected final String reason;
+  protected final String annotationUsed;
 
-  public PendingFeatureBaseInterceptor(Class<? extends Throwable>[] expectedExceptions, String reason) {
+  public PendingFeatureBaseInterceptor(Class<? extends Throwable>[] expectedExceptions, String reason, String annotationUsed) {
     this.expectedExceptions = expectedExceptions;
     this.reason = reason;
+    this.annotationUsed = annotationUsed;
   }
 
   protected boolean isExpected(Throwable e) {
@@ -23,7 +25,7 @@ public class PendingFeatureBaseInterceptor {
     return false;
   }
   protected AssertionError featurePassedUnexpectedly() {
-    return new AssertionError("Feature is marked with @PendingFeature but passes unexpectedly");
+    return new AssertionError("Feature is marked with " + annotationUsed + " but passes unexpectedly");
   }
 
   protected AssumptionViolatedException assumptionViolation() {

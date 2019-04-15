@@ -1,3 +1,4 @@
+[#_extensions_chapter]
 = Extensions
 include::include.adoc[]
 

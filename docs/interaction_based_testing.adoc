@@ -418,7 +418,7 @@ linked to the variable declaration. Hence it will just move the interaction, whi
 `MissingPropertyException` at runtime.
 
 One way to solve this problem is to move (at least) the variable declaration to before the `when:`
-block. (Fans of <<data_driven_testing.adoc#,Data Driven Testing>> might move the variable into a `where:` block.)
+block. (Fans of <<data_driven_testing.adoc#_data_driven_testing,Data Driven Testing>> might move the variable into a `where:` block.)
 In our example, this would have the added benefit that we could use the same variable for sending the message.
 
 Another solution is to be explicit about the fact that variable declaration and interaction belong together:

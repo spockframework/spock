@@ -152,7 +152,7 @@ subprojects {
   }
 
   dependencies {
-    implementation platform(libs.junitBom)
+    compile(platform(libs.junitBom))
     compile(project.name == "spock-gradle" ? [] : libs.groovy)
   }
 

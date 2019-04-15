@@ -29,7 +29,7 @@ public class SpockComparisonFailure extends AssertionFailedError {
 
   private final Condition condition;
 
-  public SpockComparisonFailure(Condition condition, ValueWrapper expected, ValueWrapper actual) {
+  public SpockComparisonFailure(Condition condition, Object expected, Object actual) {
     super(null, expected, actual);
     this.condition = condition;
   }

@@ -4,11 +4,10 @@ import org.spockframework.runtime.condition.IObjectRenderer;
 import org.spockframework.runtime.model.*;
 import org.spockframework.util.*;
 
-import org.junit.internal.AssumptionViolatedException;
-import org.junit.runners.model.MultipleFailureException;
-import org.opentest4j.*;
+import java.util.List;
+import java.util.stream.*;
 
-import static org.spockframework.runtime.RunStatus.OK;
+import org.opentest4j.*;
 
 class MasterRunSupervisor implements IRunSupervisor {
 
@@ -42,31 +41,37 @@ class MasterRunSupervisor implements IRunSupervisor {
   public int error(ErrorInfo error) {
     Throwable exception = error.getException();
 
-//    if (exception instanceof MultipleFailureException)  // TODO move to junit4 extension?
-//      return handleMultipleFailures(error);
-//
-    if (isFailedEqualityComparison(exception))
-      exception = convertToComparisonFailure(exception);
+    if (exception instanceof MultipleFailuresError) {
+      List<Throwable> failures = expandMultipleFailuresError(exception)
+        .map(this::transform).collect(Collectors.toList());
 
-    filter.filter(exception);
-
-    if (exception instanceof AssumptionViolatedException) { // TODO move to junit4 extension?
-      // Spock has no concept of "violated assumption", so we don't notify Spock listeners
-      // do notify JUnit listeners unless it's a data-driven iteration that's reported as one feature
+      exception = failures.size() == 1 ? failures.get(0) : new MultipleFailuresError(exception.getMessage(), failures);
     } else {
-      masterListener.error(error);
+      exception = transform(exception);
     }
+
+    if (exception instanceof TestAbortedException || exception instanceof TestSkippedException) {
+      // Spock has no concept of "aborted tests", so we don't notify Spock listeners
+    } else {
+      masterListener.error(new ErrorInfo(error.getMethod(), exception));
+    }
+
     ExceptionUtil.sneakyThrow(exception);
     return 0;
   }
 
-  // for better JUnit compatibility, e.g when a @Rule is used
-  private int handleMultipleFailures(ErrorInfo error) {
-    MultipleFailureException multiFailure = (MultipleFailureException) error.getException();
-    int runStatus = OK;
-    for (Throwable failure : multiFailure.getFailures())
-      runStatus = error(new ErrorInfo(error.getMethod(), failure));
-    return runStatus;
+  private Throwable transform(Throwable throwable) {
+    if (isFailedEqualityComparison(throwable))
+      throwable = convertToComparisonFailure(throwable);
+
+    filter.filter(throwable);
+    return throwable;
+  }
+
+  private Stream<Throwable> expandMultipleFailuresError(Throwable throwable) {
+    if (throwable instanceof MultipleFailuresError)
+      return ((MultipleFailuresError)throwable).getFailures().stream().flatMap(this::expandMultipleFailuresError);
+    return Stream.of(throwable);
   }
 
   private boolean isFailedEqualityComparison(Throwable exception) {
@@ -87,9 +92,9 @@ class MasterRunSupervisor implements IRunSupervisor {
     Condition condition = conditionNotSatisfiedError.getCondition();
     ExpressionInfo expr = condition.getExpression();
 
-    ValueWrapper actual = ValueWrapper.create(expr.getChildren().get(0).getValue());
-    ValueWrapper expected = ValueWrapper.create(expr.getChildren().get(1).getValue());
-    // TODO check if the new rendering by ValueWrapper is good enough
+    String actual = renderValue(expr.getChildren().get(0).getValue());
+    String expected = renderValue(expr.getChildren().get(1).getValue());
+    // TODO use new ValueWrapper from ota 1.2 with custom rendering support
     AssertionFailedError failure = new SpockComparisonFailure(condition, expected, actual);
     failure.setStackTrace(exception.getStackTrace());
 

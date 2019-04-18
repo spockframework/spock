@@ -49,7 +49,12 @@ class ClassSelectorResolver implements SelectorResolver {
       return context
         .addToParent(parent -> {
           UniqueId uniqueId = parent.getUniqueId().append("spec", specInfo.getReflection().getName());
-          runContext.createExtensionRunner(specInfo).run();
+          try {
+            runContext.createExtensionRunner(specInfo).run();
+          } catch (Exception e) {
+            // TODO revisit, this should be handled on the platform level
+            return Optional.of(new ErrorSpecNode(uniqueId, specInfo, e));
+          }
           return Optional.of(new SpecNode(uniqueId, specInfo));
         })
         .map(specNode -> toResolution(specInfo, specNode))

@@ -57,7 +57,7 @@ public class StepwiseExtension extends AbstractAnnotationDrivenExtension {
         List<FeatureInfo> features = spec.getFeatures();
         int indexOfFailedFeature = features.indexOf(error.getMethod().getFeature());
         for (int i = indexOfFailedFeature + 1; i < features.size(); i++) {
-          features.get(i).setSkipped(true);
+          features.get(i).skip("Skipped due to previous Error (by @Stepwise)");
         }
       }
     });

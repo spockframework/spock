@@ -20,6 +20,7 @@ public class ParameterizedFeatureNode extends FeatureNode {
 
   @Override
   public SpockExecutionContext execute(SpockExecutionContext context, DynamicTestExecutor dynamicTestExecutor) throws Exception {
+    verifyNotSkipped(featureInfo);
     context.getRunner().runParameterizedFeature(context, new ChildExecutor(dynamicTestExecutor));
     return context;
   }

@@ -51,6 +51,7 @@ public class SimpleFeatureNode extends FeatureNode {
 
   @Override
   public SpockExecutionContext execute(SpockExecutionContext context, DynamicTestExecutor dynamicTestExecutor) throws Exception {
+    verifyNotSkipped(featureInfo);
     delegate.execute(context, dynamicTestExecutor);
     return context;
   }

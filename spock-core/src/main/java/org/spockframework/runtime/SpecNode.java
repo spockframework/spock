@@ -32,7 +32,7 @@ public class SpecNode extends SpockNode {
 
   @Override
   public SkipResult shouldBeSkipped(SpockExecutionContext context) throws Exception {
-    return specInfo.isSkipped() ? SkipResult.skip("because I said so") : SkipResult.doNotSkip();
+    return shouldBeSkipped(specInfo);
   }
 
   @Override

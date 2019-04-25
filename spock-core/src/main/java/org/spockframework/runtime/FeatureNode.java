@@ -19,8 +19,7 @@ public abstract class FeatureNode extends SpockNode {
 
   @Override
   public SkipResult shouldBeSkipped(SpockExecutionContext context) throws Exception {
-
-    return featureInfo.isSkipped() ? SkipResult.skip("because I said so") : SkipResult.doNotSkip();
+    return shouldBeSkipped(featureInfo);
   }
 
   @Override

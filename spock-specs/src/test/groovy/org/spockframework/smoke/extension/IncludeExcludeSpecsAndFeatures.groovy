@@ -49,9 +49,9 @@ class Spec extends Specification {
     def result = runner.runClasses(specs)
 
     then:
-    result.runCount == runCount
-    result.failureCount == 0
-    result.ignoreCount == ignoreCount // cannot prevent JUnit from running excluded specs, so they get ignored
+    result.testsSucceededCount == runCount
+    result.testsFailedCount == 0
+    result.testsSkippedCount == 0
 
     where:
     annTypes1   << [[Slow], [Slow], [Slow],       [Fast], [Fast], [Fast],       [Slow, Fast], [Slow, Fast], [Slow, Fast]]

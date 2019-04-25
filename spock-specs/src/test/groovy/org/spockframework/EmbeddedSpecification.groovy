@@ -17,12 +17,7 @@
 package org.spockframework
 
 import spock.lang.Specification
-import spock.util.EmbeddedSpecCompiler
-import spock.util.EmbeddedSpecRunner
-
-import org.junit.platform.testkit.engine.EngineExecutionResults
-import org.junit.runner.Result
-
+import spock.util.*
 /**
  * Convenience base class for specifications that need to compile
  * and/or run other specifications.
@@ -58,11 +53,5 @@ abstract class EmbeddedSpecification extends Specification {
       assert methodName == "-" || methodName == traceElem.methodName
       assert lineNumber == "-" || lineNumber as int == traceElem.lineNumber
     }
-  }
-
-  EngineExecutionResults unwrap(Result result) {
-    // TODO remove once migrated
-    assert result instanceof EmbeddedSpecRunner.ExecutionResultAdapter
-    result.unwrap()
   }
 }

@@ -48,7 +48,7 @@ class Foo extends Specification {
 
     then:
     result.failureCount == 1
-    result.failures[0].message == 'afterTestMethod'
+    result.failures[0].exception.message == 'afterTestMethod'
   }
 
   def "Exceptions in afterTest are reported as suppressed exceptions if cleanup also throws"() {
@@ -78,7 +78,7 @@ class Foo extends Specification {
 
     then:
     result.failureCount == 1
-    result.failures[0].message == 'cleanup'
+    result.failures[0].exception.message == 'cleanup'
     result.failures[0].exception.suppressed[0].message == 'afterTestMethod'
   }
 
@@ -107,7 +107,7 @@ class Foo extends Specification {
 
     then:
     result.failureCount == 1
-    result.failures[0].message == 'afterTestClass'
+    result.failures[0].exception.message == 'afterTestClass'
   }
 
   def "Exceptions in afterClass are reported as suppressed exceptions if cleanup also throws"() {
@@ -139,7 +139,7 @@ class Foo extends Specification {
 
     then:
     result.failureCount == 1
-    result.failures[0].message == 'cleanupSpec'
+    result.failures[0].exception.message == 'cleanupSpec'
     result.failures[0].exception.suppressed[0].message == 'afterTestClass'
   }
 }

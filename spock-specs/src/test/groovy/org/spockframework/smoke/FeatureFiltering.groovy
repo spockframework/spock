@@ -38,9 +38,9 @@ def feature3() { setup: log += "3" }
 
     then:
     clazz.log == "2"
-    result.runCount == 1
-    result.failureCount == 0
-    result.ignoreCount == 0
+    result.testsSucceededCount == 1
+    result.testsFailedCount == 0
+    result.testsSkippedCount == 0
   }
 
   def "filtering all feature methods results in exception"() {
@@ -83,8 +83,8 @@ class Derived extends Base {
     def result = runner.runRequest(request)
 
     then:
-    result.runCount == 2
-    result.failureCount == 0
-    result.ignoreCount == 0
+    result.testsSucceededCount == 2
+    result.testsFailedCount == 0
+    result.testsSkippedCount == 0
   }
 }

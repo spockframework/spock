@@ -18,9 +18,9 @@ class Foo extends Specification {
 
     then:
     notThrown(AssertionError)
-    result.runCount == 1
-    result.failureCount == 0
-    result.ignoreCount == 0
+    result.testsSucceededCount == 1
+    result.testsFailedCount == 0
+    result.testsSkippedCount == 0
   }
 
   def "@PendingFeature includes reason in exception message"() {
@@ -37,9 +37,9 @@ class Foo extends Specification {
 
     then:
     notThrown(AssertionError)
-    result.runCount == 1
-    result.failureCount == 0
-    result.ignoreCount == 0
+    result.testsSucceededCount == 1
+    result.testsFailedCount == 0
+    result.testsSkippedCount == 0
     // unfortunately we can't access the skip reason here, but at least the branch is covered
   }
 
@@ -58,9 +58,9 @@ class Foo extends Specification {
 
     then:
     noExceptionThrown()
-    result.runCount == 1
-    result.failureCount == 0
-    result.ignoreCount == 0
+    result.testsSucceededCount == 1
+    result.testsFailedCount == 0
+    result.testsSkippedCount == 0
   }
 
   def "@PendingFeature rethrows non handled exceptions"() {
@@ -114,9 +114,9 @@ class Foo extends Specification {
 
     then:
     notThrown(AssertionError)
-    result.runCount == 3
-    result.failureCount == 0
-    result.ignoreCount == 0
+    result.testsSucceededCount == 3
+    result.testsFailedCount == 0
+    result.testsSkippedCount == 0
 
     // TODO add skipped check on refactoring of Result object
   }
@@ -139,9 +139,9 @@ class Foo extends Specification {
 
     then:
     notThrown(AssertionError)
-    result.runCount == 3
-    result.failureCount == 0
-    result.ignoreCount == 0
+    result.testsSucceededCount == 3
+    result.testsFailedCount == 0
+    result.testsSkippedCount == 0
   }
 
 

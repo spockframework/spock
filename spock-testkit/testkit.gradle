@@ -31,7 +31,6 @@ targetCompatibility = javaVersion
 //}
 
 test {
-  useJUnitPlatform()
   reports.junitXml.enabled = true
   reports.html.enabled = false
 

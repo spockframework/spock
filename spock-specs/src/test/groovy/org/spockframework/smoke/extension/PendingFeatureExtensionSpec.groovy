@@ -2,6 +2,8 @@ package org.spockframework.smoke.extension
 
 import org.spockframework.EmbeddedSpecification
 
+import org.junit.platform.engine.TestExecutionResult
+
 class PendingFeatureExtensionSpec extends EmbeddedSpecification {
 
   def "@PendingFeature marks failing feature as skipped"() {
@@ -18,9 +20,10 @@ class Foo extends Specification {
 
     then:
     notThrown(AssertionError)
-    result.testsSucceededCount == 1
+    result.testsStartedCount == 1
     result.testsFailedCount == 0
     result.testsSkippedCount == 0
+    result.testsAbortedCount == 1
   }
 
   def "@PendingFeature includes reason in exception message"() {
@@ -37,10 +40,11 @@ class Foo extends Specification {
 
     then:
     notThrown(AssertionError)
-    result.testsSucceededCount == 1
+    result.testsStartedCount == 1
     result.testsFailedCount == 0
     result.testsSkippedCount == 0
-    // unfortunately we can't access the skip reason here, but at least the branch is covered
+    result.testsAbortedCount == 1
+    (result.tests().aborted().list()[0].payload.get() as TestExecutionResult).throwable.get().message == 'Feature not yet implemented correctly. Reason: 42'
   }
 
   def "@PendingFeature marks feature that fails with exception as skipped"() {
@@ -58,9 +62,10 @@ class Foo extends Specification {
 
     then:
     noExceptionThrown()
-    result.testsSucceededCount == 1
+    result.testsStartedCount == 1
     result.testsFailedCount == 0
     result.testsSkippedCount == 0
+    result.testsAbortedCount == 1
   }
 
   def "@PendingFeature rethrows non handled exceptions"() {

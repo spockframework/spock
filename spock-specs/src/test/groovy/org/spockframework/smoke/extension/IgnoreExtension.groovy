@@ -43,7 +43,7 @@ class Foo extends Specification {
     """)
 
     then:
-    result.containersStartedCount == 0
+    result.containersStartedCount == 1
     result.containersFailedCount == 0
     result.containersSkippedCount == 1
   }

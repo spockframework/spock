@@ -30,6 +30,7 @@ public class IterationNode extends SpockNode {
 
   @Override
   public SpockExecutionContext execute(SpockExecutionContext context, DynamicTestExecutor dynamicTestExecutor) throws Exception {
+    verifyNotSkipped(iterationInfo.getFeature());
     context.getRunner().runFeatureMethod(context);
     return context;
   }
@@ -51,6 +52,6 @@ public class IterationNode extends SpockNode {
 
   @Override
   public SkipResult shouldBeSkipped(SpockExecutionContext context) throws Exception {
-    return iterationInfo.getFeature().isSkipped() ? SkipResult.skip("because I said so") : SkipResult.doNotSkip();
+    return shouldBeSkipped(iterationInfo.getFeature());
   }
 }

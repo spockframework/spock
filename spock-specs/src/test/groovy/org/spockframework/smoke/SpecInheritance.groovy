@@ -200,7 +200,7 @@ class Derived extends Base {
 
     then:
     result.testsStartedCount == 4
-    result.testsSucceededCount == 1
+    result.testsSucceededCount == 2
     result.testsFailedCount == 2
     result.testsSkippedCount == 1
   }

@@ -170,6 +170,7 @@ subprojects {
   }
 
   tasks.withType(Test) {
+    useJUnitPlatform()
     def taskName = name
     reports {
       junitXml {

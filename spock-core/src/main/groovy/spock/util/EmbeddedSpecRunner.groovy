@@ -22,11 +22,14 @@ import org.spockframework.util.*
 import java.lang.reflect.Modifier
 import java.util.stream.Collectors
 
+import groovy.transform.TupleConstructor
 import org.intellij.lang.annotations.Language
 import org.junit.platform.engine.DiscoverySelector
+import org.junit.platform.launcher.TestIdentifier
+import org.junit.platform.launcher.listeners.TestExecutionSummary
 import org.junit.platform.testkit.engine.*
-import org.junit.runner.*
-import org.junit.runner.notification.*
+import org.junit.runner.Request
+import org.junit.runner.notification.RunListener
 
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClass
 /**
@@ -71,15 +74,24 @@ class EmbeddedSpecRunner {
     compiler.addClassMemberImport(clazz)
   }
 
-  Result runRequest(Request request) {
+  SummarizedEngineExecutionResults runRequest(Request request) {
+    throw new UnsupportedOperationException("replace with runWithSelectors()")
     // TODO retire
 //    withNewContext {
 //      doRunRequest(request)
 //    }
-    new Result()
   }
 
-  Result runClasses(List classes) {
+  SummarizedEngineExecutionResults runWithSelectors(DiscoverySelector... selectors) {
+    runWithSelectors(Arrays.asList(selectors))
+  }
+  SummarizedEngineExecutionResults runWithSelectors(List<DiscoverySelector> selectors) {
+    withNewContext {
+      doRunRequest(selectors)
+    }
+  }
+
+  SummarizedEngineExecutionResults runClasses(List classes) {
     withNewContext {
       doRunRequest(classes.findAll { !Modifier.isAbstract(it.modifiers) }.collect {selectClass(it)})
     }
@@ -88,26 +100,26 @@ class EmbeddedSpecRunner {
   // it's very important to open a new context BEFORE Request.aClass/classes is invoked
   // this is because Sputnik is already constructed by those methods, and has to pop
   // the correct context from the stack
-  Result runClass(Class clazz) {
+  SummarizedEngineExecutionResults runClass(Class clazz) {
     withNewContext {
       doRunRequest([selectClass(clazz)])
     }
   }
 
-  Result run(@Language('Groovy') String source) {
+  SummarizedEngineExecutionResults run(@Language('Groovy') String source) {
     runClasses(compiler.compile(source))
   }
 
-  Result runWithImports(@Language('Groovy') String source) {
+  SummarizedEngineExecutionResults runWithImports(@Language('Groovy') String source) {
     runClasses(compiler.compileWithImports(source))
   }
 
-  Result runSpecBody(@Language(value = 'Groovy', prefix = 'class ASpec extends spock.lang.Specification { ', suffix = '\n }')
+  SummarizedEngineExecutionResults runSpecBody(@Language(value = 'Groovy', prefix = 'class ASpec extends spock.lang.Specification { ', suffix = '\n }')
                      String source) {
     runClass(compiler.compileSpecBody(source))
   }
 
-  Result runFeatureBody(@Language(value = 'Groovy',
+  SummarizedEngineExecutionResults runFeatureBody(@Language(value = 'Groovy',
     prefix = "class ASpec extends spock.lang.Specification { def 'a feature'() { ", suffix = '\n } }')
                         String source) {
     runClass(compiler.compileFeatureBody(source))
@@ -123,10 +135,10 @@ class EmbeddedSpecRunner {
         extensionClasses, inheritParentExtensions, block as IThrowableFunction)
   }
 
-  private Result doRunRequest(List<DiscoverySelector> selectors) {
+  private SummarizedEngineExecutionResults doRunRequest(List<DiscoverySelector> selectors) {
     def executionResults = doRunRequestInner(selectors)
 
-    return new ExecutionResultAdapter(executionResults)
+    return new SummarizedEngineExecutionResults(executionResults)
   }
   private EngineExecutionResults doRunRequestInner(List<DiscoverySelector> selectors) {
     def executionResults = EngineTestKit
@@ -143,38 +155,132 @@ class EmbeddedSpecRunner {
     return executionResults
   }
 
-  static class ExecutionResultAdapter extends Result {
+  static class SummarizedEngineExecutionResults implements TestExecutionSummary {
+    @Delegate
     private final EngineExecutionResults results
 
-    ExecutionResultAdapter(EngineExecutionResults results) {
+    SummarizedEngineExecutionResults(EngineExecutionResults results) {
       this.results = results
     }
 
-    EngineExecutionResults unwrap() {
-      results
-    }
-
-    @Override
+    @Deprecated
     int getFailureCount() {
       return results.tests().failed().count()
     }
 
-    @Override
+    @Deprecated
     int getRunCount() {
       return results.tests().started().count()
     }
 
-    @Override
+    @Deprecated
     int getIgnoreCount() {
       return results.tests().skipped().count()
+    }
+
+    @Override
+    long getTimeStarted() {
+      return results.all().started().stream().findFirst().map{it.timestamp.toEpochMilli()}.orElseGet {0}
+    }
+
+    @Override
+    long getTimeFinished() {
+      return results.all().finished().stream()
+        .reduce{first, second -> second} // fancy for .last()
+        .map{it.timestamp.toEpochMilli()}.orElseGet {0}
+    }
+
+    @Override
+    long getTotalFailureCount() {
+      return results.all().failed().count()
+    }
+
+    @Override
+    long getContainersFoundCount() {
+      return 0
+    }
+
+    @Override
+    long getContainersStartedCount() {
+      return results.containers().started().count()
+    }
+
+    @Override
+    long getContainersSkippedCount() {
+      return results.containers().skipped().count()
+    }
+
+    @Override
+    long getContainersAbortedCount() {
+      return results.containers().aborted().count()
+    }
+
+    @Override
+    long getContainersSucceededCount() {
+      return results.containers().succeeded().count()
+    }
+
+    @Override
+    long getContainersFailedCount() {
+      return results.containers().failed().count()
+    }
+
+    @Override
+    long getTestsFoundCount() {
+      return 0
+    }
+
+    @Override
+    long getTestsStartedCount() {
+      return results.tests().started().count()
+    }
+
+    @Override
+    long getTestsSkippedCount() {
+      return results.tests().skipped().count()
+    }
+
+    @Override
+    long getTestsAbortedCount() {
+      return results.tests().aborted().count()
+    }
+
+    @Override
+    long getTestsSucceededCount() {
+      return results.tests().succeeded().count()
+    }
+
+    @Override
+    long getTestsFailedCount() {
+      return results.tests().failed().count()
+    }
+
+    @Override
+    void printTo(PrintWriter writer) {
+      throw new UnsupportedOperationException('Not Implemented')
+    }
+
+    @Override
+    void printFailuresTo(PrintWriter writer) {
+      throw new UnsupportedOperationException('Not Implemented')
     }
 
     @Override
     List<Failure> getFailures() {
       return results.tests().executions().failed()
         .map{ it.terminationInfo.executionResult.throwable.get()}
-        .map {new Failure(Description.createSuiteDescription("FAIL"), it)}
+        .map {new XFailure(it)}
         .collect(Collectors.toList())
+    }
+  }
+
+  @TupleConstructor
+  static class XFailure implements TestExecutionSummary.Failure {
+    Throwable exception
+
+    @Override
+    TestIdentifier getTestIdentifier() {
+      throw new UnsupportedOperationException('Not Implemented')
     }
   }
 }

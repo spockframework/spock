@@ -44,9 +44,9 @@ def baz() {
     """)
 
     then:
-    result.runCount == run
-    result.failureCount == 0
-    result.ignoreCount == ignored
+    result.testsSucceededCount == run
+    result.testsFailedCount == 0
+    result.testsSkippedCount == ignored
 
     where:
     first   << ["",            "@IgnoreRest", "@IgnoreRest"]
@@ -88,9 +88,9 @@ class Derived extends Base {
     def result = runner.runClass(derived)
 
     then:
-    result.runCount == runCount
-    result.failureCount == 0
-    result.ignoreCount == ignoreCount
+    result.testsSucceededCount == runCount
+    result.testsFailedCount == 0
+    result.testsSkippedCount == ignoreCount
 
     where:
     first       << ["@IgnoreRest", ""           , "@IgnoreRest"]

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.spockframework.smoke
 
 import org.spockframework.EmbeddedSpecification
@@ -194,14 +194,15 @@ class Derived extends Base {
 
     def derived = classes.find { it.simpleName == "Derived" }
     runner.throwFailure = false
-    
+
     when:
     def result = runner.runClass(derived)
 
     then:
-    result.runCount == 4
-    result.failureCount == 2
-    result.ignoreCount == 1
+    result.testsStartedCount == 4
+    result.testsSucceededCount == 1
+    result.testsFailedCount == 2
+    result.testsSkippedCount == 1
   }
 
   @Issue("http://code.google.com/p/spock/issues/detail?id=53")
@@ -229,7 +230,7 @@ class Derived extends Base {
 
     then:
     derived.log == [1, 2]
-    result.runCount == 2
+    result.testsSucceededCount == 2
   }
 
   def "private feature methods with same name can coexist peacefully in inheritance chain"() {
@@ -256,7 +257,7 @@ class Derived extends Base {
 
     then:
     derived.log == [1, 2]
-    result.runCount == 2
+    result.testsSucceededCount == 2
   }
 
   def "can invoke super.helperMethod()"() {

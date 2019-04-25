@@ -48,9 +48,9 @@ def foo() {
     """)
 
     then:
-    result.runCount == 3
-    result.failureCount == 0
-    result.ignoreCount == 0
+    result.testsSucceededCount == 3
+    result.testsFailedCount == 0
+    result.testsSkippedCount == 0
   }
 
   def "iterations of an unrolled feature foo are named foo[0], foo[1], etc."() {
@@ -111,9 +111,9 @@ def foo() {
 
     // it's OK for runCount to be zero here; mental model: method "foo"
     // would have been invisible if it had not failed (cf. Spec JUnitErrorBehavior)
-    result.runCount == 0
-    result.failureCount == 1
-    result.ignoreCount == 0
+    result.testsSucceededCount == 0
+    result.testsFailedCount == 1
+    result.testsSkippedCount == 0
   }
 
   def "naming pattern may refer to data variables"() {

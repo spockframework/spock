@@ -22,6 +22,7 @@ public class ParameterizedFeatureNode extends FeatureNode {
   public SpockExecutionContext execute(SpockExecutionContext context, DynamicTestExecutor dynamicTestExecutor) throws Exception {
     verifyNotSkipped(featureInfo);
     context.getRunner().runParameterizedFeature(context, new ChildExecutor(dynamicTestExecutor));
+    // todo assert at least one test execution
     return context;
   }
 
@@ -38,6 +39,7 @@ public class ParameterizedFeatureNode extends FeatureNode {
 
     @Override
     public void execute(TestDescriptor testDescriptor) {
+      // TODO count test
       addChild(testDescriptor);
       delegate.execute(testDescriptor);
 

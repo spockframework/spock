@@ -2,7 +2,8 @@ package org.spockframework.smoke.extension
 
 import org.spockframework.EmbeddedSpecification
 
-import org.junit.platform.engine.TestExecutionResult
+import static org.junit.platform.testkit.engine.EventConditions.*
+import static org.junit.platform.testkit.engine.TestExecutionResultConditions.message
 
 class PendingFeatureExtensionSpec extends EmbeddedSpecification {
 
@@ -44,7 +45,7 @@ class Foo extends Specification {
     result.testsFailedCount == 0
     result.testsSkippedCount == 0
     result.testsAbortedCount == 1
-    (result.tests().aborted().list()[0].payload.get() as TestExecutionResult).throwable.get().message == 'Feature not yet implemented correctly. Reason: 42'
+    result.tests().aborted().assertEventsMatchExactly(abortedWithReason(message("Feature not yet implemented correctly. Reason: 42")))
   }
 
   def "@PendingFeature marks feature that fails with exception as skipped"() {

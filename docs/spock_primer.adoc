@@ -553,7 +553,7 @@ with(service) {
 }
 ----
 
-Sometimes an IDE as trouble to determine the type of the target, in that case you can help out by manually specifying the
+Sometimes an IDE has trouble to determine the type of the target, in that case you can help out by manually specifying the
 target type via `with(target, type, closure)`.
 
 == Using `verifyAll` to assert multiple expectations together

@@ -3,7 +3,6 @@ package org.spockframework.runtime;
 import org.spockframework.runtime.model.FeatureInfo;
 
 import org.junit.platform.engine.*;
-import org.junit.platform.engine.support.descriptor.MethodSource;
 
 /**
  * A non-parametric feature (test) that only has a single "iteration".
@@ -17,7 +16,7 @@ public class SimpleFeatureNode extends FeatureNode {
   private final IterationNode delegate;
 
   public SimpleFeatureNode(UniqueId uniqueId, FeatureInfo featureInfo, IterationNode delegate) {
-    super(uniqueId, featureInfo.getName(), MethodSource.from(featureInfo.getFeatureMethod().getReflection()), featureInfo);
+    super(uniqueId, featureInfo.getName(), featureToMethodSource(featureInfo), featureInfo);
     this.delegate = delegate;
   }
 

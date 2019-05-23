@@ -3,12 +3,11 @@ package org.spockframework.runtime;
 import org.spockframework.runtime.model.FeatureInfo;
 
 import org.junit.platform.engine.*;
-import org.junit.platform.engine.support.descriptor.MethodSource;
 
 public class ParameterizedFeatureNode extends FeatureNode {
 
   protected ParameterizedFeatureNode(UniqueId uniqueId, FeatureInfo featureInfo) {
-    super(uniqueId, featureInfo.getName(), MethodSource.from(featureInfo.getFeatureMethod().getReflection()), featureInfo);
+    super(uniqueId, featureInfo.getName(),featureToMethodSource(featureInfo), featureInfo);
   }
 
 

@@ -3,14 +3,12 @@ package org.spockframework.runtime;
 import org.spockframework.runtime.model.IterationInfo;
 
 import org.junit.platform.engine.UniqueId;
-import org.junit.platform.engine.support.descriptor.MethodSource;
 
 public class IterationNode extends SpockNode {
   private final IterationInfo iterationInfo;
 
   protected IterationNode(UniqueId uniqueId, IterationInfo iterationInfo) {
-    super(uniqueId, iterationInfo.getName(),
-      MethodSource.from(iterationInfo.getFeature().getFeatureMethod().getReflection()));
+    super(uniqueId, iterationInfo.getName(), featureToMethodSource(iterationInfo.getFeature()));
     this.iterationInfo = iterationInfo;
   }
 

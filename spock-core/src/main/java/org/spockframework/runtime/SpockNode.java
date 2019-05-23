@@ -1,10 +1,11 @@
 package org.spockframework.runtime;
 
-import org.spockframework.runtime.model.ISkippable;
+import org.spockframework.runtime.model.*;
 import org.spockframework.util.ExceptionUtil;
 
+import org.junit.platform.commons.util.ClassUtils;
 import org.junit.platform.engine.*;
-import org.junit.platform.engine.support.descriptor.AbstractTestDescriptor;
+import org.junit.platform.engine.support.descriptor.*;
 import org.junit.platform.engine.support.hierarchical.Node;
 import org.opentest4j.TestAbortedException;
 
@@ -34,5 +35,12 @@ public abstract class SpockNode extends AbstractTestDescriptor implements Node<S
     if (skippable.isSkipped()) {
       throw new TestAbortedException(skippable.getSkipReason());
     }
+  }
+
+  protected static MethodSource featureToMethodSource(FeatureInfo info) {
+    return MethodSource.from(info.getSpec().getReflection().getName(),
+      info.getName(),
+      ClassUtils.nullSafeToString(info.getFeatureMethod().getReflection().getParameterTypes()) // TODO replace interal API
+    );
   }
 }

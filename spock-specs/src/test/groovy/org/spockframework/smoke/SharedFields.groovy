@@ -12,8 +12,8 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */ 
- 
+ */
+
 package org.spockframework.smoke
 
 import org.spockframework.EmbeddedSpecification
@@ -39,7 +39,7 @@ class Bar extends Foo {
     noExceptionThrown()
   }
 
-  @Issue("http://issues.spockframework.org/detail?id=112")
+  @Issue("https://github.com/spockframework/spock/issues/234")
   def 'can have name that starts with $'() {
     when:
     runner.runWithImports '''

@@ -69,7 +69,7 @@ null == "foo"
     }
   }
 
-  @Issue("http://issues.spockframework.org/detail?id=252")
+  @Issue("https://github.com/spockframework/spock/issues/374")
   def "does not show differences if strings in subexpression are equal"() {
     expect:
     isRendered """

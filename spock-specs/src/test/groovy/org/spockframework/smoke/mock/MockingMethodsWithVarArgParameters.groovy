@@ -18,7 +18,7 @@ package org.spockframework.smoke.mock
 import spock.lang.*
 import org.spockframework.mock.TooFewInvocationsError
 
-@Issue("http://issues.spockframework.org/detail?id=55")
+@Issue("https://github.com/spockframework/spock/issues/177")
 class MockingMethodsWithVarArgParameters extends Specification {
   def "interactions of methods callable in vararg-style can be written in vararg-style"() {
     def mock = Mock(clazz)
@@ -45,7 +45,7 @@ class MockingMethodsWithVarArgParameters extends Specification {
     where:
     clazz << [GroovyVarArgParameter, GroovyArrayParameter]
   }
-  
+
   def "interactions of methods callable in vararg-style can be written in list-style"() {
     def mock = Mock(clazz)
 
@@ -141,7 +141,7 @@ class MockingMethodsWithVarArgParameters extends Specification {
     mock.foo(1, "one", "two")
 
     then:
-    1 * mock.foo(2, "one", "two")  
+    1 * mock.foo(2, "one", "two")
   }
 
   def "vararg value can be null"() {
@@ -154,7 +154,7 @@ class MockingMethodsWithVarArgParameters extends Specification {
     1 * mock.foo(1, null)
   }
 
-  @Issue("http://issues.spockframework.org/detail?id=245")
+  @Issue("https://github.com/spockframework/spock/issues/367")
   def "handles case where vararg value is null and interaction does not match"() {
     def mock = Mock(GroovyVarArgParameter)
 
@@ -185,7 +185,7 @@ class MockingMethodsWithVarArgParameters extends Specification {
     1 * mock.foo(1, new Object[0])
   }
 
-  @Issue("http://issues.spockframework.org/detail?id=294")
+  @Issue("https://github.com/spockframework/spock/issues/416")
   def "vararg handling also works when element type is a primitive type"() {
     def mock = Mock(clazz)
 

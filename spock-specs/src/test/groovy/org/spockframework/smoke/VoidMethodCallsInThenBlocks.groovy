@@ -24,7 +24,7 @@ import static org.spockframework.smoke.VoidGroovyStaticMethod.foo
 /**
  * @author Peter Niederwieser
  */
-@Issue("http://issues.spockframework.org/detail?id=25")
+@Issue("https://github.com/spockframework/spock/issues/148")
 class VoidMethodCallsInThenBlocks extends Specification {
   def "invocation of void Groovy instance method"() {
     when: ""
@@ -74,7 +74,7 @@ class VoidMethodCallsInThenBlocks extends Specification {
   def "invocation of statically imported void Java method"() {
     when: ""
     then:
-    reverse([])   
+    reverse([])
   }
 
   void voidGroovyInstanceMethod() {}

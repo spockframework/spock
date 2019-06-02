@@ -58,7 +58,7 @@ class TimeoutExtension extends EmbeddedSpecification {
     setup: Thread.sleep 500
   }
 
-  @Issue("http://issues.spockframework.org/detail?id=230")
+  @Issue("https://github.com/spockframework/spock/issues/352")
   def "stack trace shows where thread is hung"() {
     when:
     runner.runSpecBody """
@@ -114,7 +114,7 @@ class TimeoutExtension extends EmbeddedSpecification {
     e2.timeout == 0.1
   }
 
-  @Issue("issues.spockframework.org/detail?id=181")
+  @Issue("https://github.com/spockframework/spock/issues/303")
   @Timeout(1)
   def "method invocation occurs on regular test framework thread"() {
     expect:

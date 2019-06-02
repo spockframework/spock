@@ -21,7 +21,7 @@ import org.spockframework.runtime.SpecInfoBuilder
 import spock.lang.Issue
 
 class JUnitDescriptionGeneratorSpec extends JUnitBaseSpec {
-  @Issue("http://code.google.com/p/spock/issues/detail?id=54")
+  @Issue("https://github.com/spockframework/spock/issues/176")
   def "derived spec has correct Description"() {
     def derived = compiler.compileWithImports("""
 class Base extends Specification {

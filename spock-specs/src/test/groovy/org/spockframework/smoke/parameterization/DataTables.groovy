@@ -187,7 +187,7 @@ a | a
     staticField | sharedField
   }
 
-  @Issue("http://issues.spockframework.org/detail?id=139")
+  @Issue("https://github.com/spockframework/spock/issues/261")
   def "cells cannot reference instance fields"() {
     when:
     compiler.compileSpecBody """

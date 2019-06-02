@@ -150,7 +150,7 @@ then: thrown(Exception)
     e.line == 3
   }
 
-  @Issue("http://issues.spockframework.org/detail?id=216")
+  @Issue("https://github.com/spockframework/spock/issues/338")
   def "must be top-level statements"() {
     when:
     compiler.compileFeatureBody("""
@@ -168,7 +168,7 @@ thrown() == e
     e.message.startsWith("Exception conditions are only allowed as top-level statements")
   }
 
-  @Issue("http://issues.spockframework.org/detail?id=138")
+  @Issue("https://github.com/spockframework/spock/issues/260")
   @FailsWith(InvalidSpecException)
   def "(Java-style) exception condition must specify a type that is-a java.lang.Throwable"() {
     when:
@@ -178,7 +178,7 @@ thrown() == e
     String str = thrown()
   }
 
-  @Issue("http://issues.spockframework.org/detail?id=138")
+  @Issue("https://github.com/spockframework/spock/issues/260")
   @FailsWith(InvalidSpecException)
   def "(Groovy-style) exception condition must specify a type that is-a java.lang.Throwable"() {
     when:
@@ -188,7 +188,7 @@ thrown() == e
     thrown(String)
   }
 
-  @Issue("http://issues.spockframework.org/detail?id=96")
+  @Issue("https://github.com/spockframework/spock/issues/218")
   def "are able to observe a failing explicit condition"() {
     when:
     assert 1 * 2 == 3
@@ -197,7 +197,7 @@ thrown() == e
     thrown(ConditionNotSatisfiedError)
   }
 
-  @Issue("http://issues.spockframework.org/detail?id=96")
+  @Issue("https://github.com/spockframework/spock/issues/218")
   @FailsWith(WrongExceptionThrownError)
   def "are able to observe a failing explicit condition (variation)"() {
     when:
@@ -207,7 +207,7 @@ thrown() == e
     thrown(IOException)
   }
 
-  @Issue("http://issues.spockframework.org/detail?id=96")
+  @Issue("https://github.com/spockframework/spock/issues/218")
   @FailsWith(value = WrongExceptionThrownError, reason = "known limitation, not relevant in practice")
   def "are not able to observe a failing interaction"() {
     def list = Mock(List)
@@ -256,7 +256,7 @@ thrown() == e
     e = thrown()
   }
 
-  @Issue("http://issues.spockframework.org/detail?id=297")
+  @Issue("https://github.com/spockframework/spock/issues/419")
   def "can have multi-assignments in when-block"() {
     when:
     def (x, y) = [1, 2]

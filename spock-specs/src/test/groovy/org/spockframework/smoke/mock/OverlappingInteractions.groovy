@@ -5,7 +5,7 @@ import spock.lang.Issue
 import spock.lang.FailsWith
 import org.spockframework.mock.TooManyInvocationsError
 
-@Issue("http://issues.spockframework.org/detail?id=5")
+@Issue("https://github.com/spockframework/spock/issues/127")
 class OverlappingInteractions extends Specification {
   def "invocations are spread over identical interactions"() {
     def list = Mock(List)

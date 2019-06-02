@@ -67,7 +67,7 @@ class PollingConditionsSpec extends Specification {
     thrown(SpockTimeoutError)
   }
 
-  @Issue("http://issues.spockframework.org/detail?id=291")
+  @Issue("https://github.com/spockframework/spock/issues/413")
   def "reports failed condition of last failed attempt"() {
     num = 42
 

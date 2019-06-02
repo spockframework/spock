@@ -21,7 +21,7 @@ import spock.lang.Issue
 import spock.lang.Specification
 import spock.lang.Unroll
 
-@Issue("http://issues.spockframework.org/detail?id=108")
+@Issue("https://github.com/spockframework/spock/issues/230")
 class UseJUnitTestNameRule extends Specification {
   @Rule
   TestName name = new TestName()

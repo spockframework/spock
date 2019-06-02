@@ -76,7 +76,7 @@ class ConditionEvaluation extends EmbeddedSpecification {
     a?.foo() == null
   }
 
-  @Issue("http://issues.spockframework.org/detail?id=253")
+  @Issue("https://github.com/spockframework/spock/issues/375")
   @FailsWith(ConditionNotSatisfiedError)
   def "top-level MethodCallExpression with safe operator (method condition)"() {
     def a = null
@@ -328,7 +328,7 @@ class ConditionEvaluation extends EmbeddedSpecification {
   }
 
   // as of Groovy 1.7.3, represented as FieldExpression
-  @Issue("http://issues.spockframework.org/detail?id=106")
+  @Issue("https://github.com/spockframework/spock/issues/228")
   def "statically imported field"() {
     expect:
     MAX_VALUE == 2147483647

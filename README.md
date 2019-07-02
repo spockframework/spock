@@ -119,7 +119,7 @@ Links
 * Developer Forum -- http://dev-forum.spockframework.org
 * Issue Tracker -- http://issues.spockframework.org
 * Build Server -- http://builds.spockframework.org
-* Spock Example Project -- http://github.spockframework.org/spock-example
+* Spock Example Project -- https://github.com/spockframework/spock-example
 * Twitter -- http://twitter.spockframework.org
 
 Live Long And Prosper!

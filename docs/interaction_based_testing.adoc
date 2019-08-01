@@ -968,7 +968,7 @@ can be passed as named arguments to the `Mock()` method. For example:
 
 [source,groovy]
 ----
-def person = Mock(name: "Fred", type: Person, defaultResponse: ZeroOrNullResponse, verified: false)
+def person = Mock(name: "Fred", type: Person, defaultResponse: ZeroOrNullResponse.INSTANCE, verified: false)
 ----
 
 Here, we create a mock whose default return values match those of a `Mock()`, but whose invocations aren't

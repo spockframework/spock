@@ -28,7 +28,7 @@ public class ParameterizedFeatureNode extends FeatureNode {
     context.getRunner().runParameterizedFeature(context, testExecutor);
     errorInfoCollector.assertEmpty();
     if (testExecutor.getExecutionCount() < 1) {
-      // TODO assert at least one iteration here?
+     throw new SpockExecutionException("Data provider has no data");
     }
     return context;
   }

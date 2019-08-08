@@ -414,12 +414,11 @@ public class PlatformSpecRunner {
 
   private void runIterationCleanups(SpockExecutionContext context) {
     for (Runnable cleanup : context.getCurrentIteration().getCleanups()) {
-      if (action(runStatus) == ABORT) return;
       try {
         cleanup.run();
       } catch (Throwable t) {
         ErrorInfo error = new ErrorInfo(CollectionUtil.getFirstElement(context.getSpec().getCleanupMethods()), t);
-        runStatus = supervisor.error(error);
+        supervisor.error(context.getErrorInfoCollector(), error);
       }
     }
   }
@@ -430,7 +429,7 @@ public class PlatformSpecRunner {
     }
     // fast lane
     if (method.getInterceptors().isEmpty()) {
-      invokeRaw(target, method, arguments);
+      invokeRaw(context, target, method, arguments);
       return;
     }
 
@@ -441,19 +440,16 @@ public class PlatformSpecRunner {
       invocation.proceed();
     } catch (Throwable throwable) {
       ErrorInfo error = new ErrorInfo(method, throwable);
-      supervisor.error(error);
-      ExceptionUtil.sneakyThrow(throwable);
+      supervisor.error(context.getErrorInfoCollector(), error);
     }
   }
 
-  protected Object invokeRaw(Object target, MethodInfo method, Object... arguments) {
+  protected Object invokeRaw(SpockExecutionContext context, Object target, MethodInfo method, Object... arguments) {
     try {
       return method.invoke(target, arguments);
     } catch (Throwable throwable) {
-      ErrorInfo error = new ErrorInfo(method, throwable);
-      supervisor.error(error);
-      ExceptionUtil.sneakyThrow(throwable);
-      return null; // never happens tm
+      supervisor.error(context.getErrorInfoCollector(), new ErrorInfo(method, throwable));
+      return null;
     }
   }
 

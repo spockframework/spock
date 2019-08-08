@@ -2,6 +2,8 @@ package org.spockframework.runtime;
 
 import org.spockframework.runtime.model.FeatureInfo;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 import org.junit.platform.engine.*;
 
 public class ParameterizedFeatureNode extends FeatureNode {
@@ -20,8 +22,14 @@ public class ParameterizedFeatureNode extends FeatureNode {
   @Override
   public SpockExecutionContext execute(SpockExecutionContext context, DynamicTestExecutor dynamicTestExecutor) throws Exception {
     verifyNotSkipped(featureInfo);
-    context.getRunner().runParameterizedFeature(context, new ChildExecutor(dynamicTestExecutor));
-    // todo assert at least one test execution
+    ErrorInfoCollector errorInfoCollector = new ErrorInfoCollector();
+    context = context.withErrorInfoCollector(errorInfoCollector);
+    ChildExecutor testExecutor = new ChildExecutor(dynamicTestExecutor);
+    context.getRunner().runParameterizedFeature(context, testExecutor);
+    errorInfoCollector.assertEmpty();
+    if (testExecutor.getExecutionCount() < 1) {
+      // TODO assert at least one iteration here?
+    }
     return context;
   }
 
@@ -32,21 +40,26 @@ public class ParameterizedFeatureNode extends FeatureNode {
 
   class ChildExecutor implements DynamicTestExecutor {
 
+    private AtomicInteger executionCounter = new AtomicInteger();
+
     private final DynamicTestExecutor delegate;
 
     ChildExecutor(DynamicTestExecutor delegate) {this.delegate = delegate;}
 
     @Override
     public void execute(TestDescriptor testDescriptor) {
-      // TODO count test
+      executionCounter.incrementAndGet();
       addChild(testDescriptor);
       delegate.execute(testDescriptor);
-
     }
 
     @Override
     public void awaitFinished() throws InterruptedException {
       delegate.awaitFinished();
+    }
+
+    int getExecutionCount() {
+      return executionCounter.get();
     }
   }
 }

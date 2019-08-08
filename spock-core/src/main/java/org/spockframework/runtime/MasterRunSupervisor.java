@@ -2,10 +2,7 @@ package org.spockframework.runtime;
 
 import org.spockframework.runtime.condition.IObjectRenderer;
 import org.spockframework.runtime.model.*;
-import org.spockframework.util.*;
-
-import java.util.List;
-import java.util.stream.*;
+import org.spockframework.util.TextUtil;
 
 import org.opentest4j.*;
 
@@ -38,27 +35,32 @@ class MasterRunSupervisor implements IRunSupervisor {
   }
 
   @Override
-  public int error(ErrorInfo error) {
+  public void error(ErrorInfoCollector errorInfoCollector, ErrorInfo error) {
     Throwable exception = error.getException();
 
     if (exception instanceof MultipleFailuresError) {
-      List<Throwable> failures = expandMultipleFailuresError(exception)
-        .map(this::transform).collect(Collectors.toList());
-
-      exception = failures.size() == 1 ? failures.get(0) : new MultipleFailuresError(exception.getMessage(), failures);
-    } else {
-      exception = transform(exception);
+      handleMultipleFailures(errorInfoCollector, error);
+      return;
     }
 
+    exception = transform(exception);
+
+    ErrorInfo transformedError = new ErrorInfo(error.getMethod(), exception);
     if (exception instanceof TestAbortedException || exception instanceof TestSkippedException) {
       // Spock has no concept of "aborted tests", so we don't notify Spock listeners
     } else {
-      masterListener.error(new ErrorInfo(error.getMethod(), exception));
+      masterListener.error(transformedError);
     }
-
-    ExceptionUtil.sneakyThrow(exception);
-    return 0;
+    errorInfoCollector.addErrorInfo(transformedError);
   }
+
+  // for better JUnit compatibility, e.g when a @Rule is used
+  private void handleMultipleFailures(ErrorInfoCollector errorInfoCollector,  ErrorInfo error) {
+    MultipleFailuresError multiFailure = (MultipleFailuresError) error.getException();
+    for (Throwable failure : multiFailure.getFailures())
+      error(errorInfoCollector, new ErrorInfo(error.getMethod(), failure));
+  }
+
 
   private Throwable transform(Throwable throwable) {
     if (isFailedEqualityComparison(throwable))
@@ -66,12 +68,6 @@ class MasterRunSupervisor implements IRunSupervisor {
 
     filter.filter(throwable);
     return throwable;
-  }
-
-  private Stream<Throwable> expandMultipleFailuresError(Throwable throwable) {
-    if (throwable instanceof MultipleFailuresError)
-      return ((MultipleFailuresError)throwable).getFailures().stream().flatMap(this::expandMultipleFailuresError);
-    return Stream.of(throwable);
   }
 
   private boolean isFailedEqualityComparison(Throwable exception) {

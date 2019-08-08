@@ -37,7 +37,7 @@ public interface IRunSupervisor {
   void afterFeature(FeatureInfo feature);
   void afterSpec(SpecInfo spec);
 
-  int error(ErrorInfo error);
+  void error(ErrorInfoCollector errorInfoCollector,ErrorInfo error);
 
   void specSkipped(SpecInfo spec);
   void featureSkipped(FeatureInfo feature);

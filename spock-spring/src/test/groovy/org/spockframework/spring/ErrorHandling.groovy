@@ -106,7 +106,7 @@ class Foo extends Specification {
 """)
 
     then:
-    result.failureCount == 1
+    result.containersFailedCount == 1
     result.failures[0].exception.message == 'afterTestClass'
   }
 
@@ -138,7 +138,7 @@ class Foo extends Specification {
 """)
 
     then:
-    result.failureCount == 1
+    result.containersFailedCount == 1
     result.failures[0].exception.message == 'cleanupSpec'
     result.failures[0].exception.suppressed[0].message == 'afterTestClass'
   }

@@ -1,22 +1,12 @@
 package org.spockframework.runtime;
 
-import org.junit.platform.commons.util.ClassFilter;
-import org.junit.platform.engine.support.discovery.EngineDiscoveryRequestResolver;
-import spock.lang.Specification;
-
-import java.lang.reflect.Modifier;
 import java.util.Optional;
 
 import org.junit.platform.engine.*;
-import org.junit.platform.engine.discovery.ClassSelector;
+import org.junit.platform.engine.support.discovery.EngineDiscoveryRequestResolver;
 import org.junit.platform.engine.support.hierarchical.HierarchicalTestEngine;
 
 public class SpockEngine extends HierarchicalTestEngine<SpockExecutionContext> {
-
-  @Override
-  protected SpockExecutionContext createExecutionContext(ExecutionRequest request) {
-    return new SpockExecutionContext();
-  }
 
   @Override
   public String getId() {
@@ -34,6 +24,11 @@ public class SpockEngine extends HierarchicalTestEngine<SpockExecutionContext> {
       .build()
       .resolve(discoveryRequest, engineDescriptor);
     return engineDescriptor;
+  }
+
+  @Override
+  protected SpockExecutionContext createExecutionContext(ExecutionRequest request) {
+    return new SpockExecutionContext(request.getEngineExecutionListener());
   }
 
   @Override

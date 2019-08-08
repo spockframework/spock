@@ -4,10 +4,12 @@ import org.spockframework.runtime.model.*;
 import org.spockframework.util.InternalSpockError;
 import spock.lang.Specification;
 
-import org.junit.platform.engine.UniqueId;
+import org.junit.platform.engine.*;
 import org.junit.platform.engine.support.hierarchical.EngineExecutionContext;
 
 public class SpockExecutionContext implements EngineExecutionContext, Cloneable {
+  private EngineExecutionListener engineExecutionListener;
+
   private RunContext runContext;
 
   private PlatformParameterizedSpecRunner runner;
@@ -23,6 +25,12 @@ public class SpockExecutionContext implements EngineExecutionContext, Cloneable 
   private Specification currentInstance;
 
   private UniqueId parentId;
+
+  private ErrorInfoCollector errorInfoCollector;
+
+  public SpockExecutionContext(EngineExecutionListener engineExecutionListener) {
+    this.engineExecutionListener = engineExecutionListener;
+  }
 
   private SpockExecutionContext setRunContext(RunContext runContext) {
     this.runContext = runContext;
@@ -61,6 +69,11 @@ public class SpockExecutionContext implements EngineExecutionContext, Cloneable 
 
   public SpockExecutionContext setParentId(UniqueId parentId) {
     this.parentId = parentId;
+    return this;
+  }
+
+  public SpockExecutionContext setErrorInfoCollector(ErrorInfoCollector errorInfoCollector) {
+    this.errorInfoCollector = errorInfoCollector;
     return this;
   }
 
@@ -109,6 +122,10 @@ public class SpockExecutionContext implements EngineExecutionContext, Cloneable 
     return clone().setCurrentFeature(iteration.getFeature()).setCurrentIteration(iteration);
   }
 
+  public SpockExecutionContext withErrorInfoCollector(ErrorInfoCollector errorInfoCollector) {
+    return clone().setErrorInfoCollector(errorInfoCollector);
+  }
+
   public SpockExecutionContext withParentId(UniqueId uniqueId) {
     return clone().setParentId(uniqueId);
   }
@@ -135,5 +152,9 @@ public class SpockExecutionContext implements EngineExecutionContext, Cloneable 
 
   public UniqueId getParentId() {
     return parentId;
+  }
+
+  public ErrorInfoCollector getErrorInfoCollector() {
+    return errorInfoCollector;
   }
 }

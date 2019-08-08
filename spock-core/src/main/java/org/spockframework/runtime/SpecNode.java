@@ -26,8 +26,12 @@ public class SpecNode extends SpockNode {
   @Override
   public SpockExecutionContext prepare(SpockExecutionContext context) throws Exception {
     PlatformParameterizedSpecRunner specRunner = context.getRunContext().createSpecRunner(specInfo);
+    ErrorInfoCollector errorInfoCollector = new ErrorInfoCollector();
+    context = context.withErrorInfoCollector(errorInfoCollector);
     context = context.withRunner(specRunner).withSpec(specInfo);
-    return specRunner.runSharedSpec(context);
+    context = specRunner.runSharedSpec(context);
+    errorInfoCollector.assertEmpty();
+    return context;
   }
 
   @Override
@@ -37,13 +41,19 @@ public class SpecNode extends SpockNode {
 
   @Override
   public SpockExecutionContext before(SpockExecutionContext context) throws Exception {
+    ErrorInfoCollector errorInfoCollector = new ErrorInfoCollector();
+    context = context.withErrorInfoCollector(errorInfoCollector);
     context.getRunner().runSetupSpec(context);
+    errorInfoCollector.assertEmpty();
     return context;
   }
 
   @Override
   public void after(SpockExecutionContext context) throws Exception {
+    ErrorInfoCollector errorInfoCollector = new ErrorInfoCollector();
+    context = context.withErrorInfoCollector(errorInfoCollector);
     context.getRunner().runCleanupSpec(context);
+    errorInfoCollector.assertEmpty();
   }
 
   @Override

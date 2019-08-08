@@ -36,16 +36,18 @@ public class SimpleFeatureNode extends FeatureNode {
   @Override
   public SpockExecutionContext before(SpockExecutionContext context) throws Exception {
     context = super.before(context);
+    ErrorInfoCollector errorInfoCollector = new ErrorInfoCollector();
+    context = context.withErrorInfoCollector(errorInfoCollector);
     context.getRunner().runSetup(context);
+    errorInfoCollector.assertEmpty();
+
     return context;
   }
 
   @Override
   public void around(SpockExecutionContext context, Invocation<SpockExecutionContext> invocation) {
     // Wrap the Feature invocation around the invocation of the Iteration delegate
-    super.around(context, ctx -> {
-      delegate.around(ctx, invocation);
-    });
+    super.around(context, ctx -> delegate.around(ctx, invocation));
   }
 
   @Override
@@ -57,8 +59,11 @@ public class SimpleFeatureNode extends FeatureNode {
 
   @Override
   public void after(SpockExecutionContext context) throws Exception {
+    ErrorInfoCollector errorInfoCollector = new ErrorInfoCollector();
+    context = context.withErrorInfoCollector(errorInfoCollector);
     delegate.after(context);
     // First the iteration node, then the Feature node
+    errorInfoCollector.assertEmpty();
     super.after(context);
   }
 

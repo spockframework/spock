@@ -13,13 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-  
-package org.spockframework.runtime
 
-import org.spockframework.EmbeddedSpecification
+package org.spockframework.junit4.junit
+
+import org.spockframework.junit4.JUnitDescriptionGenerator
+import org.spockframework.runtime.SpecInfoBuilder
 import spock.lang.Issue
 
-class JUnitDescriptionGeneratorSpec extends EmbeddedSpecification {
+class JUnitDescriptionGeneratorSpec extends JUnitBaseSpec {
   @Issue("http://code.google.com/p/spock/issues/detail?id=54")
   def "derived spec has correct Description"() {
     def derived = compiler.compileWithImports("""
@@ -37,14 +38,11 @@ class Derived extends Base {
     """).find { it.simpleName == "Derived" }
 
     def specInfo = new SpecInfoBuilder(derived).build()
-    def generator = new JUnitDescriptionGenerator(specInfo)
-    
+
     when:
-    generator.describeSpecMethods()
-    generator.describeSpec()
+    def desc = JUnitDescriptionGenerator.describeSpec(specInfo)
 
     then:
-    def desc = specInfo.description
     desc.displayName == "apackage.Derived"
     desc.children.size() == 2
     desc.children.collect { it.methodName } == ["f1", "f2"]

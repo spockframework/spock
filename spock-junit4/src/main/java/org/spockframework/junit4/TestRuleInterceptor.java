@@ -14,25 +14,30 @@
 
 package org.spockframework.junit4;
 
+import org.spockframework.runtime.extension.IMethodInvocation;
+import org.spockframework.runtime.model.*;
+
 import java.util.List;
 
 import org.junit.rules.TestRule;
+import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
-import org.spockframework.runtime.extension.IMethodInvocation;
-import org.spockframework.runtime.model.FieldInfo;
 
 public class TestRuleInterceptor extends AbstractRuleInterceptor {
-  public TestRuleInterceptor(List<FieldInfo> ruleFields) {
+  private final SpecInfo spec;
+  public TestRuleInterceptor(List<FieldInfo> ruleFields, SpecInfo spec) {
     super(ruleFields);
+    this.spec = spec;
   }
 
   @Override
   public void intercept(final IMethodInvocation invocation) throws Throwable {
     Statement stat = createBaseStatement(invocation);
 
+    Description description = JUnitDescriptionGenerator.describeIteration(invocation.getIteration(), spec);
     for (FieldInfo field : ruleFields) {
       TestRule rule = (TestRule) getRuleInstance(field, invocation.getInstance());
-      stat = rule.apply(stat, invocation.getIteration().getDescription());
+      stat = rule.apply(stat, description);
     }
 
     stat.evaluate();

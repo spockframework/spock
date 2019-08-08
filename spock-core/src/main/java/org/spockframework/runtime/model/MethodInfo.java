@@ -54,7 +54,6 @@ public class MethodInfo extends NodeInfo<SpecInfo, Method> implements IExcludabl
     this.setParent(other.getParent());
     this.setReflection(other.getReflection());
     this.setMetadata(other.getMetadata());
-    this.setDescription(other.getDescription());
     this.interceptors.addAll(other.interceptors);
     this.invoker = other.invoker;
   }

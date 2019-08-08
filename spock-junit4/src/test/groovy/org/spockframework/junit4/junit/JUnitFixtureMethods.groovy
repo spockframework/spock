@@ -14,9 +14,9 @@
 
 package org.spockframework.junit4.junit
 
-import org.intellij.lang.annotations.Language
-
 import spock.lang.Unroll
+
+import org.intellij.lang.annotations.Language
 
 class JUnitFixtureMethods extends JUnitBaseSpec {
   static invocations = []
@@ -45,10 +45,10 @@ class JUnitFixtureMethods extends JUnitBaseSpec {
 
     then:
     invocations == [
-        "beforeClass", "setupSpec",
-        "before", "setup" , "cleanup", "after",
-        "before", "setup" , "cleanup", "after",
-        "cleanupSpec", "afterClass"
+      "beforeClass", "setupSpec",
+      "before", "setup", "cleanup", "after",
+      "before", "setup", "cleanup", "after",
+      "cleanupSpec", "afterClass"
     ]
   }
 
@@ -119,7 +119,7 @@ class JUnitFixtureMethods extends JUnitBaseSpec {
     invocations == order
 
     where:
-    fixtureType   | order
+    fixtureType    | order
     "beforeClass2" | ["child"]
     "before2"      | ["child"]
     "after2"       | ["child"]
@@ -140,6 +140,7 @@ class JUnitFixtureMethods extends JUnitBaseSpec {
     invocations == ["beforeClass", "before", "after", "afterClass"]
   }
 
+  @Unroll("exceptions thrown by [#declaration] methods with failing feature [#failFeature]")
   def "exceptions thrown by fixture methods are handled correctly"() {
     runner.throwFailure = false
 
@@ -152,30 +153,39 @@ class JUnitFixtureMethods extends JUnitBaseSpec {
 
     then:
     def e = result.failures[exceptionPos].exception
+    if (suppressed) {
+      e = e.suppressed[0]
+    }
     e instanceof RuntimeException
     e.message == name
 
     where:
-    name          | declaration           | failFeature | exceptionPos
-    "beforeClass" | "@BeforeClass static" | true        | 0
-    "beforeClass" | "@BeforeClass static" | false       | 0
-    "before"      | "@Before"             | true        | 0
-    "before"      | "@Before"             | false       | 0
-    "after"       | "@After"              | true        | 1
-    "after"       | "@After"              | false       | 0
-    "afterClass"  | "@AfterClass static"  | true        | 1
-    "afterClass"  | "@AfterClass static"  | false       | 0
+    name          | declaration           | failFeature | exceptionPos | suppressed
+    "beforeClass" | "@BeforeClass static" | true        | 0            | false
+    "beforeClass" | "@BeforeClass static" | false       | 0            | false
+    "before"      | "@Before"             | true        | 0            | false
+    "before"      | "@Before"             | false       | 0            | false
+    "after"       | "@After"              | true        | 0            | true
+    "after"       | "@After"              | false       | 0            | false
+    "afterClass"  | "@AfterClass static"  | true        | 1            | false
+    "afterClass"  | "@AfterClass static"  | false       | 0            | false
   }
 
   protected beforeClass(name = "beforeClass") { "@BeforeClass static void $name() { record('$name') }" }
+
   protected before(name = "before") { "@Before void $name() { record('$name') }" }
-  protected after(name = "after") { "@After void $name() { record('$name') } "}
-  protected afterClass(name = "afterClass") { "@AfterClass static void $name() { record('$name') } "}
+
+  protected after(name = "after") { "@After void $name() { record('$name') } " }
+
+  protected afterClass(name = "afterClass") { "@AfterClass static void $name() { record('$name') } " }
 
   protected beforeClass2(log) { "@BeforeClass static void beforeClass() { record('$log') }" }
+
   protected before2(log) { "@Before void before() { record('$log') }" }
-  protected after2(log) { "@After void after() { record('$log') } "}
-  protected afterClass2(log) { "@AfterClass static void afterClass() { record('$log') } "}
+
+  protected after2(log) { "@After void after() { record('$log') } " }
+
+  protected afterClass2(log) { "@AfterClass static void afterClass() { record('$log') } " }
 
   protected addImports() {
     runner.addPackageImport(getClass().package)

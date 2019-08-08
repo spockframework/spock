@@ -17,19 +17,16 @@
 package org.spockframework.junit4.junit
 
 import org.junit.Assume
-import org.junit.runner.notification.RunListener
 
 class HandlingOfAssumptionViolatedException extends JUnitBaseSpec {
-  RunListener listener = Mock()
 
   def setup() {
-    runner.listeners << listener
     runner.addClassMemberImport(Assume)
   }
 
   def "reported in regular feature method"() {
     when:
-    runner.runSpecBody """
+    def result = runner.runSpecBody """
 def foo() {
   setup:
   assumeTrue(false)
@@ -37,20 +34,14 @@ def foo() {
     """
 
     then:
-    1 * listener.testStarted(_)
-
-    then:
-    1 * listener.testAssumptionFailure(_)
-
-    then:
-    1 * listener.testFinished(_)
-
-    0 * listener.testFailure(_)
+    result.testsStartedCount == 1
+    result.testsAbortedCount == 1
+    result.testsFailedCount == 0
   }
 
   def "reported in data-driven unrolled feature method"() {
     when:
-    runner.runSpecBody """
+    def result = runner.runSpecBody """
 @Unroll
 def foo() {
   setup:
@@ -62,34 +53,17 @@ def foo() {
     """
 
     then:
-    2 * listener.testStarted(_)
-    2 * listener.testAssumptionFailure(_)
-    2 * listener.testFinished(_)
-    0 * listener.testFailure(_)
-  }
-
-  def "ignored in data-driven feature method that isn't unrolled"() {
-    when:
-    runner.runSpecBody """
-def foo() {
-  setup:
-  assumeTrue(false)
-
-  where:
-  i << (1..2)
-}
-    """
-
-    then:
-    1 * listener.testStarted(_)
-    0 * listener.testAssumptionFailure(_)
-    1 * listener.testFinished(_)
-    0 * listener.testFailure(_)
+    result.testsStartedCount == 2
+    result.testsAbortedCount == 2
+    result.testsFailedCount == 0
   }
 
   def "reported in setup"() {
+    given:
+    runner.throwFailure = false
+
     when:
-    runner.runSpecBody """
+    def result = runner.runSpecBody """
 def setup() {
   assumeTrue(false)
 }
@@ -104,15 +78,17 @@ def bar() {
     """
 
     then:
-    2 * listener.testStarted(_)
-    2 * listener.testAssumptionFailure(_)
-    2 * listener.testFinished(_)
-    0 * listener.testFailure(_)
+    result.testsStartedCount == 2
+    result.testsAbortedCount == 2
+    result.testsFailedCount == 0
   }
 
   def "reported in @Before"() {
+    given:
+    runner.throwFailure = false
+
     when:
-    runner.runSpecBody """
+    def result = runner.runSpecBody """
 @org.junit.Before
 void before() {
   assumeTrue(false)
@@ -128,9 +104,8 @@ def bar() {
     """
 
     then:
-    2 * listener.testStarted(_)
-    2 * listener.testAssumptionFailure(_)
-    2 * listener.testFinished(_)
-    0 * listener.testFailure(_)
+    result.testsStartedCount == 2
+    result.testsAbortedCount == 2
+    result.testsFailedCount == 0
   }
 }

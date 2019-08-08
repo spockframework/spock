@@ -19,7 +19,7 @@ package org.spockframework.runtime
 import spock.lang.Specification
 
 class EstimatedNumberOfIterations extends Specification {
-  def runner = new ParameterizedSpecRunner(null, null)
+  def runner = new PlatformParameterizedSpecRunner(null)
 
   def "w/o data provider"() {
     expect: "estimation is 1"

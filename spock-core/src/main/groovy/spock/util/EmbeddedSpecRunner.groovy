@@ -267,7 +267,7 @@ class EmbeddedSpecRunner {
 
     @Override
     List<Failure> getFailures() {
-      return results.tests().executions().failed()
+      return results.all().executions().failed()
         .map{ it.terminationInfo.executionResult.throwable.get()}
         .map {new XFailure(it)}
         .collect(Collectors.toList())

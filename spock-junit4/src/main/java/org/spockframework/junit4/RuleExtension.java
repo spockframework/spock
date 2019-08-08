@@ -57,7 +57,7 @@ public class RuleExtension extends AbstractRuleExtension {
 
   private static class TestRuleInterceptorInstaller {
     static void install(SpecInfo spec, List<FieldInfo> ruleFields) {
-      TestRuleInterceptor interceptor = new TestRuleInterceptor(ruleFields);
+      TestRuleInterceptor interceptor = new TestRuleInterceptor(ruleFields, spec);
       for (FeatureInfo feature : spec.getAllFeatures()) {
         feature.addIterationInterceptor(interceptor);
       }

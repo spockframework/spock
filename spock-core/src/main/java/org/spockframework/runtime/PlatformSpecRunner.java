@@ -82,7 +82,6 @@ public class PlatformSpecRunner {
     SpecInfo spec = context.getSpec();
     result.setParent(spec);
     result.setKind(MethodKind.SPEC_EXECUTION);
-    result.setDescription(spec.getDescription());
     for (IMethodInterceptor interceptor : spec.getInterceptors())
       result.addInterceptor(interceptor);
     return result;
@@ -131,7 +130,6 @@ public class PlatformSpecRunner {
     );
     result.setParent(spec);
     result.setKind(MethodKind.SHARED_INITIALIZER);
-    result.setDescription(spec.getDescription());
     for (IMethodInterceptor interceptor : spec.getSharedInitializerInterceptors())
       result.addInterceptor(interceptor);
     return result;
@@ -161,7 +159,6 @@ public class PlatformSpecRunner {
     );
     result.setParent(spec);
     result.setKind(MethodKind.SETUP_SPEC);
-    result.setDescription(spec.getDescription());
     for (IMethodInterceptor interceptor : spec.getSetupSpecInterceptors())
       result.addInterceptor(interceptor);
     return result;
@@ -200,7 +197,6 @@ public class PlatformSpecRunner {
     );
     result.setParent(spec);
     result.setKind(MethodKind.CLEANUP_SPEC);
-    result.setDescription(spec.getDescription());
     for (IMethodInterceptor interceptor : spec.getCleanupSpecInterceptors())
       result.addInterceptor(interceptor);
     return result;
@@ -240,7 +236,6 @@ public class PlatformSpecRunner {
     result.setParent(currentFeature.getParent());
     result.setKind(MethodKind.FEATURE_EXECUTION);
     result.setFeature(currentFeature);
-    result.setDescription(currentFeature.getDescription());
     for (IMethodInterceptor interceptor : currentFeature.getInterceptors())
       result.addInterceptor(interceptor);
     return result;
@@ -274,7 +269,6 @@ public class PlatformSpecRunner {
     result.setName(iterationName);
     Description description = Description.createTestDescription(context.getSpec().getReflection(),
         iterationName, currentFeature.getFeatureMethod().getAnnotations());
-    result.setDescription(description);
     return result;
   }
 
@@ -288,7 +282,6 @@ public class PlatformSpecRunner {
     result.setParent(currentFeature.getParent());
     result.setKind(MethodKind.ITERATION_EXECUTION);
     result.setFeature(currentFeature);
-    result.setDescription(currentFeature.getDescription());
     result.setIteration(context.getCurrentIteration());
     for (IMethodInterceptor interceptor : currentFeature.getIterationInterceptors())
       result.addInterceptor(interceptor);
@@ -329,7 +322,6 @@ public class PlatformSpecRunner {
     result.setParent(currentFeature.getParent());
     result.setKind(MethodKind.INITIALIZER);
     result.setFeature(currentFeature);
-    result.setDescription(currentFeature.getDescription());
     for (IMethodInterceptor interceptor : spec.getInitializerInterceptors())
       result.addInterceptor(interceptor);
     return result;
@@ -360,7 +352,6 @@ public class PlatformSpecRunner {
     result.setParent(currentFeature.getParent());
     result.setKind(MethodKind.SETUP);
     result.setFeature(currentFeature);
-    result.setDescription(currentFeature.getDescription());
     result.setIteration(context.getCurrentIteration());
     for (IMethodInterceptor interceptor : spec.getSetupInterceptors())
       result.addInterceptor(interceptor);
@@ -403,7 +394,6 @@ public class PlatformSpecRunner {
     result.setParent(currentFeature.getParent());
     result.setKind(MethodKind.CLEANUP);
     result.setFeature(currentFeature);
-    result.setDescription(currentFeature.getDescription());
     result.setIteration(context.getCurrentIteration());
     for (IMethodInterceptor interceptor : spec.getCleanupInterceptors())
       result.addInterceptor(interceptor);

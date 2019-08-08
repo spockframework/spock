@@ -15,25 +15,30 @@
 package org.spockframework.junit4;
 
 import org.spockframework.runtime.extension.IMethodInvocation;
-import org.spockframework.runtime.model.FieldInfo;
+import org.spockframework.runtime.model.*;
 
 import java.util.List;
 
 import org.junit.rules.TestRule;
+import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 
 public class ClassRuleInterceptor extends AbstractRuleInterceptor {
-  public ClassRuleInterceptor(List<FieldInfo> ruleFields) {
+  private final SpecInfo spec;
+
+  public ClassRuleInterceptor(List<FieldInfo> ruleFields, SpecInfo spec) {
     super(ruleFields);
+    this.spec = spec;
   }
 
   @Override
   public void intercept(final IMethodInvocation invocation) throws Throwable {
     Statement stat = createBaseStatement(invocation);
 
+    Description description = JUnitDescriptionGenerator.describeSpec(spec);
     for (FieldInfo field : ruleFields) {
       TestRule rule = (TestRule) getRuleInstance(field, field.isShared() ? invocation.getSharedInstance() : invocation.getInstance());
-      stat = rule.apply(stat, invocation.getSpec().getDescription());
+      stat = rule.apply(stat, description);
     }
 
     stat.evaluate();

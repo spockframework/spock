@@ -14,13 +14,13 @@
 
 package org.spockframework.junit4;
 
+import org.spockframework.runtime.extension.IMethodInvocation;
+import org.spockframework.runtime.model.FieldInfo;
+
 import java.util.List;
 
 import org.junit.rules.MethodRule;
-import org.junit.runners.model.FrameworkMethod;
-import org.junit.runners.model.Statement;
-import org.spockframework.runtime.extension.IMethodInvocation;
-import org.spockframework.runtime.model.FieldInfo;
+import org.junit.runners.model.*;
 
 public class MethodRuleInterceptor extends AbstractRuleInterceptor {
   MethodRuleInterceptor(List<FieldInfo> ruleFields) {
@@ -44,7 +44,7 @@ public class MethodRuleInterceptor extends AbstractRuleInterceptor {
     return new FrameworkMethod(invocation.getIteration().getParent().getFeatureMethod().getReflection()) {
       @Override
       public String getName() {
-        return invocation.getIteration().getDescription().getMethodName();
+        return invocation.getIteration().getName();
       }
     };
   }

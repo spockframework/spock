@@ -19,7 +19,7 @@ package org.spockframework.runtime
 import spock.lang.Specification
 
 class ClosingOfDataProviders extends Specification {
-  def runner = new ParameterizedSpecRunner(null, null)
+  def runner = new PlatformParameterizedSpecRunner(null)
 
   def "close one provider which potentially throws an exception"() {
     MyCloseable provider = Mock()

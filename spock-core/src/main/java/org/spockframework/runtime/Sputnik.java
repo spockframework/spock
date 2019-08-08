@@ -51,9 +51,7 @@ public class Sputnik extends Runner implements Filterable, Sortable {
 
   @Override
   public Description getDescription() {
-    runExtensionsIfNecessary();
-    generateSpecDescriptionIfNecessary();
-    return getSpec().getDescription();
+    throw new UnsupportedOperationException("TODO delete Sputnik");
   }
 
   @Override
@@ -66,7 +64,7 @@ public class Sputnik extends Runner implements Filterable, Sortable {
   @Override
   public void filter(Filter filter) throws NoTestsRemainException {
     invalidateSpecDescription();
-    getSpec().filterFeatures(new JUnitFilterAdapter(filter));
+//    getSpec().filterFeatures(new JUnitFilterAdapter(filter));
     if (allFeaturesExcluded())
       throw new NoTestsRemainException();
   }
@@ -74,13 +72,13 @@ public class Sputnik extends Runner implements Filterable, Sortable {
   @Override
   public void sort(Sorter sorter) {
     invalidateSpecDescription();
-    getSpec().sortFeatures(new JUnitSorterAdapter(sorter));
+//    getSpec().sortFeatures(new JUnitSorterAdapter(sorter));
   }
 
   private SpecInfo getSpec() {
     if (spec == null) {
       spec = new SpecInfoBuilder(clazz).build();
-      new JUnitDescriptionGenerator(spec).describeSpecMethods();
+      //new JUnitDescriptionGenerator(spec).describeSpecMethods();
     }
     return spec;
   }
@@ -93,7 +91,7 @@ public class Sputnik extends Runner implements Filterable, Sortable {
 
   private void generateSpecDescriptionIfNecessary() {
     if (descriptionGenerated) return;
-    new JUnitDescriptionGenerator(getSpec()).describeSpec();
+    //new JUnitDescriptionGenerator(getSpec()).describeSpec();
     descriptionGenerated = true;
   }
 

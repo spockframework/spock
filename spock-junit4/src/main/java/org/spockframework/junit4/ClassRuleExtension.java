@@ -42,7 +42,7 @@ public class ClassRuleExtension extends AbstractRuleExtension {
 
   private static class ClassRuleInterceptorInstaller {
     static void install(SpecInfo spec, List<FieldInfo> ruleFields) {
-      spec.addInterceptor(new ClassRuleInterceptor(ruleFields));
+      spec.addInterceptor(new ClassRuleInterceptor(ruleFields, spec));
     }
   }
 }

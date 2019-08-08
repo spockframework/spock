@@ -22,7 +22,7 @@ import java.util.*;
 
 import org.junit.platform.engine.support.hierarchical.Node;
 
-import static org.spockframework.runtime.RunStatus.*;
+import static org.spockframework.runtime.RunStatus.OK;
 
 /**
  * Adds the ability to run parameterized features.
@@ -47,7 +47,7 @@ public class PlatformParameterizedSpecRunner extends PlatformSpecRunner {
     try {
       dynamicTestExecutor.awaitFinished();
     } finally {
-      closeDataProviders(context, dataProviders);
+      closeDataProviders(dataProviders);
 
     }
   }
@@ -176,10 +176,7 @@ public class PlatformParameterizedSpecRunner extends PlatformSpecRunner {
     }
   }
 
-  private void closeDataProviders(SpockExecutionContext context, Object[] dataProviders) {
-    if (action(runStatus) == ABORT) {
-      return;
-    }
+  private void closeDataProviders(Object[] dataProviders) {
     if (dataProviders == null) {
       return; // there was an error creating the providers
     }

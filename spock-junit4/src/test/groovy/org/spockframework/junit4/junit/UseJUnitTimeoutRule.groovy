@@ -14,7 +14,6 @@
 
 package org.spockframework.junit4.junit
 
-import org.junit.runner.Result
 
 import spock.lang.Ignore
 
@@ -51,7 +50,7 @@ class UseJUnitTimeoutRule extends JUnitBaseSpec {
     e.message.contains "timed out"
   }
 
-  private Result runFeatureMethodThatSleeps(delay) {
+  private def runFeatureMethodThatSleeps(delay) {
     runner.runSpecBody """
 @org.junit.Rule
 org.junit.rules.Timeout timeout = new org.junit.rules.Timeout($timeout)

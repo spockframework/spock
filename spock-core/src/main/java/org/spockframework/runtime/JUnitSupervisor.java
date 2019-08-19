@@ -188,8 +188,7 @@ public class JUnitSupervisor implements IRunSupervisor {
   public void afterFeature(FeatureInfo feature) {
     if (feature.isParameterized()) {
       if (iterationCount == 0 && !errorSinceLastReset)
-        notifier.fireTestFailure(new Failure(feature.getDescription(),
-            new SpockExecutionException("Data provider has no data")));
+        throw new SpockExecutionException("Data provider has no data");
     }
 
     masterListener.afterFeature(feature);

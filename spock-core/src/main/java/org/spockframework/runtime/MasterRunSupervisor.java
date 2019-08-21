@@ -88,9 +88,12 @@ class MasterRunSupervisor implements IRunSupervisor {
     Condition condition = conditionNotSatisfiedError.getCondition();
     ExpressionInfo expr = condition.getExpression();
 
-    String actual = renderValue(expr.getChildren().get(0).getValue());
-    String expected = renderValue(expr.getChildren().get(1).getValue());
-    // TODO use new ValueWrapper from ota 1.2 with custom rendering support
+    Object actualValue = expr.getChildren().get(0).getValue();
+    ValueWrapper actual = ValueWrapper.create(actualValue, renderValue(actualValue));
+
+    Object expectedValue = expr.getChildren().get(1).getValue();
+    ValueWrapper expected = ValueWrapper.create(expectedValue, renderValue(expectedValue));
+
     AssertionFailedError failure = new SpockComparisonFailure(condition, expected, actual);
     failure.setStackTrace(exception.getStackTrace());
 

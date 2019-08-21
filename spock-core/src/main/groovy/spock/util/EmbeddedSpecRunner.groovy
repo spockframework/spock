@@ -28,10 +28,10 @@ import org.junit.platform.engine.DiscoverySelector
 import org.junit.platform.launcher.TestIdentifier
 import org.junit.platform.launcher.listeners.TestExecutionSummary
 import org.junit.platform.testkit.engine.*
-import org.junit.runner.Request
 import org.junit.runner.notification.RunListener
 
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClass
+
 /**
  * Utility class that allows to run (fragments of) specs programmatically.
  * Mainly intended for spec'ing Spock itself.
@@ -74,13 +74,6 @@ class EmbeddedSpecRunner {
     compiler.addClassMemberImport(clazz)
   }
 
-  SummarizedEngineExecutionResults runRequest(Request request) {
-    throw new UnsupportedOperationException("replace with runWithSelectors()")
-    // TODO retire
-//    withNewContext {
-//      doRunRequest(request)
-//    }
-  }
 
   SummarizedEngineExecutionResults runWithSelectors(DiscoverySelector... selectors) {
     runWithSelectors(Arrays.asList(selectors))
@@ -146,7 +139,6 @@ class EmbeddedSpecRunner {
       .selectors(*selectors)
       .execute()
     if (throwFailure) {
-      // TODO revisit filtering here all() vs tests(), currently extensions can also throw failure on container level
       def first = executionResults.all().executions().failed().stream().findFirst()
       if (first.present) {
         throw first.get().terminationInfo.executionResult.throwable.get()

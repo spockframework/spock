@@ -14,7 +14,7 @@ class DiffedObjectRendering extends EmbeddedSpecification {
     then:
     SpockComparisonFailure failure = thrown()
     failure.actual.stringRepresentation == "1\n"
-    failure.expected.stringRepresentation == "null\n"
+    failure.expected.stringRepresentation == "null"
   }
 
   @Issue("https://github.com/spockframework/spock/issues/659")

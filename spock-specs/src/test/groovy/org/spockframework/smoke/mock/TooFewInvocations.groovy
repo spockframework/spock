@@ -19,7 +19,6 @@ package org.spockframework.smoke.mock
 import org.spockframework.EmbeddedSpecification
 import org.spockframework.mock.TooFewInvocationsError
 
-import groovy.transform.Canonical
 import org.hamcrest.CoreMatchers
 
 class TooFewInvocations extends EmbeddedSpecification {
@@ -422,7 +421,7 @@ Unmatched invocations (ordered by similarity):
 1 * list.add(Person)
 One or more arguments(s) didn't match:
 0: Multiple Failures (2 failures)
-   \tCondition not satisfied:
+   \torg.spockframework.runtime.ConditionNotSatisfiedError: Condition not satisfied:
    
    firstname == 'Willam'
    |         |
@@ -431,8 +430,8 @@ One or more arguments(s) didn't match:
              Willam( T.)
              Willam(---)
 
-   \tCondition not satisfied:
-   
+   \torg.spockframework.runtime.ConditionNotSatisfiedError: Condition not satisfied:
+
    age == 35
    |   |
    45  false

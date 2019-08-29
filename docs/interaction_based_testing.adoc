@@ -538,11 +538,12 @@ is only meant for documentation purposes and doesn't carry any semantics.
 === Mocking Classes
 
 Besides interfaces, Spock also supports mocking of classes. Mocking classes works
-just like mocking interfaces; the only additional requirement is to put `cglib-nodep-2.2` or higher
-and `objenesis-1.2` or higher on the class path. If either of these libraries is missing from
-the class path, Spock will gently let you know.
+just like mocking interfaces; the only additional requirement is to put `byte-buddy` or
+`cglib-nodep-2.2` or higher on the class path. When using normal `Mock`s or `Stub`s or `Spy`s that are
+configured accordingly, it is also necessary to put `objenesis-1.2` or higher on the class path.
+If either of these libraries is missing from the class path, Spock will gently let you know.
 
-NOTE: Java 8 is only supported from CGLIB 3.2.0 onwards.
+NOTE: Java 8 is only supported with Byte Buddy or CGLIB from 3.2.0 onwards.
 
 == Stubbing
 

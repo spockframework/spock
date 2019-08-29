@@ -34,7 +34,7 @@ public class MockInstantiator {
     } catch (Exception e) {
       String msg = constructorArgs == null && useObjenesis && !objenesisAvailable ?
           ". To solve this problem, put an up-to-date version of Objenesis on the class path (recommended), or supply " +
-              "constructor arguments (e.g. 'constructorArgs: [42]') that allow to construct an object of the mocked type." : null;
+              "constructor arguments (e.g. 'constructorArgs: [42]') that allow to construct an object of the mocked type." : "";
       throw new CannotCreateMockException(declaredType, msg, e);
     }
   }

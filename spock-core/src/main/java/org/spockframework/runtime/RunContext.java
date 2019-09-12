@@ -27,13 +27,7 @@ import java.util.*;
 import org.junit.platform.engine.support.hierarchical.EngineExecutionContext;
 
 public class RunContext implements EngineExecutionContext {
-  private static final ThreadLocal<LinkedList<RunContext>> contextStacks =
-      new ThreadLocal<LinkedList<RunContext>>() {
-        @Override
-        protected LinkedList<RunContext> initialValue() {
-          return new LinkedList<>();
-        }
-      };
+  private static final ThreadLocal<LinkedList<RunContext>> contextStacks = ThreadLocal.withInitial(() -> new LinkedList<>());
 
   private final String name;
   private final File spockUserHome;
@@ -63,7 +57,7 @@ public class RunContext implements EngineExecutionContext {
     globalExtensionRegistry.startGlobalExtensions();
   }
 
-  private void stop() {
+  void stop() {
     globalExtensionRegistry.stopGlobalExtensions();
   }
 

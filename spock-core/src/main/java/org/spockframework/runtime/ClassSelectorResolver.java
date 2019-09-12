@@ -1,35 +1,26 @@
 package org.spockframework.runtime;
 
-import org.junit.platform.commons.support.ReflectionSupport;
-import org.junit.platform.engine.DiscoverySelector;
-import org.junit.platform.engine.UniqueId;
-import org.junit.platform.engine.discovery.ClassSelector;
-import org.junit.platform.engine.discovery.UniqueIdSelector;
-import org.junit.platform.engine.support.discovery.SelectorResolver;
 import org.spockframework.runtime.model.SpecInfo;
 
-import java.util.LinkedHashSet;
-import java.util.Optional;
-import java.util.Set;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
+import java.util.*;
+import java.util.function.*;
 
-import static java.util.stream.Collectors.toCollection;
-import static org.junit.platform.engine.discovery.DiscoverySelectors.selectMethod;
+import org.junit.platform.commons.support.ReflectionSupport;
+import org.junit.platform.engine.*;
+import org.junit.platform.engine.discovery.*;
+import org.junit.platform.engine.support.discovery.SelectorResolver;
 
 class ClassSelectorResolver implements SelectorResolver {
 
   private final Predicate<String> classNameFilter;
-  private final RunContext runContext;
 
-  ClassSelectorResolver(Predicate<String> classNameFilter, RunContext runContext) {
+  ClassSelectorResolver(Predicate<String> classNameFilter) {
     this.classNameFilter = classNameFilter;
-    this.runContext = runContext;
   }
 
   @Override
   public Resolution resolve(ClassSelector selector, Context context) {
-    return resolveClass(((ClassSelector) selector).getJavaClass(), context);
+    return resolveClass(selector.getJavaClass(), context);
   }
 
   @Override
@@ -48,13 +39,8 @@ class ClassSelectorResolver implements SelectorResolver {
       SpecInfo specInfo = new SpecInfoBuilder(specClass).build();
       return context
         .addToParent(parent -> {
+          specInfo.getAllFeatures().forEach(featureInfo -> featureInfo.setExcluded(true));
           UniqueId uniqueId = parent.getUniqueId().append("spec", specInfo.getReflection().getName());
-          try {
-            runContext.createExtensionRunner(specInfo).run();
-          } catch (Exception e) {
-            // TODO revisit, this should be handled on the platform level
-            return Optional.of(new ErrorSpecNode(uniqueId, specInfo, e));
-          }
           return Optional.of(new SpecNode(uniqueId, specInfo));
         })
         .map(specNode -> toResolution(specInfo, specNode))
@@ -68,9 +54,9 @@ class ClassSelectorResolver implements SelectorResolver {
   }
 
   private Supplier<Set<? extends DiscoverySelector>> features(SpecInfo specInfo) {
-    return () -> specInfo.getAllFeaturesInExecutionOrder().stream()
-      .map(feature -> selectMethod(specInfo.getReflection(), feature.getFeatureMethod().getReflection()))
-      .collect(toCollection(LinkedHashSet::new));
+    return () -> {
+      specInfo.getAllFeatures().forEach(featureInfo -> featureInfo.setExcluded(false));
+      return Collections.emptySet();
+    };
   }
-
 }

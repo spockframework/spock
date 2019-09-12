@@ -16,7 +16,6 @@ if (JavaVersion.current().isJava8()) {
 }
 
 include "spock-unitils"
-include "spock-report"
 include "spock-gradle"
 
 if (JavaVersion.current().java7Compatible) {

@@ -16,4 +16,9 @@ public class SpockEngineDescriptor extends EngineDescriptor implements Node<Spoc
   public SpockExecutionContext prepare(SpockExecutionContext context) throws Exception {
     return context.withRunContext(runContext);
   }
+
+  @Override
+  public void after(SpockExecutionContext context) throws Exception {
+    runContext.stop();
+  }
 }

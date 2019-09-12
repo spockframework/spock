@@ -1,12 +1,22 @@
 def springVersion = "2.5.6.SEC03"
 
 dependencies {
-  compile "org.springframework:spring-core:$springVersion"
+  compile "org.springframework:spring-core"
 
   testCompile project(":spock-core")
-  testCompile "org.springframework:spring-context:$springVersion"
-  testCompile ("org.springframework:spring-test:$springVersion") { force = true }
+  testCompile "org.springframework:spring-context"
+  testCompile "org.springframework:spring-tx"
+  testCompile ("org.springframework:spring-test")
 
   testRuntime project(":spock-spring")
 }
 
+
+configurations.all {
+  resolutionStrategy.eachDependency {
+    // Since Groovy 2.5 groovy-all is only pom with deps, so we have to manage groovy dependencies here
+    if (requested.group == "org.springframework" ) {
+        useVersion(springVersion)
+    }
+  }
+}

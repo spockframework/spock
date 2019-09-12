@@ -3,7 +3,6 @@ include "spock-core"
 include "spock-specs"
 include "spock-specs:mock-integration"
 include "spock-spring"
-include "spock-spring:spring2-test"
 include "spock-spring:spring3-test"
 include "spock-guice"
 include "spock-junit4"
@@ -18,14 +17,9 @@ if (JavaVersion.current().isJava8()) {
 include "spock-unitils"
 include "spock-gradle"
 
-if (JavaVersion.current().java7Compatible) {
-  include "spock-spring:boot-test"
-}
-
-if (JavaVersion.current().java8Compatible) {
-  include "spock-spring:boot2-test"
-  include "spock-spring:spring5-test"
-}
+include "spock-spring:boot-test"
+include "spock-spring:boot2-test"
+include "spock-spring:spring5-test"
 
 rootProject.name = "spock"
 nameBuildScriptsAfterProjectNames(rootProject.children)

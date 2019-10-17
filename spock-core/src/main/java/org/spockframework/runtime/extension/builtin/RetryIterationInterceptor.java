@@ -16,19 +16,18 @@
 
 package org.spockframework.runtime.extension.builtin;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Queue;
+import groovy.lang.Closure;
+import org.spockframework.runtime.extension.*;
+import spock.lang.Retry;
+
+import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.junit.runners.model.MultipleFailureException;
-import org.spockframework.runtime.extension.IMethodInterceptor;
-import org.spockframework.runtime.extension.IMethodInvocation;
-
-import spock.lang.Retry;
 
 /**
  * @author Leonard Brünings
+ * @since 1.2
  */
 public class RetryIterationInterceptor extends RetryBaseInterceptor implements IMethodInterceptor {
   public RetryIterationInterceptor(Retry retry) {
@@ -40,9 +39,10 @@ public class RetryIterationInterceptor extends RetryBaseInterceptor implements I
     List<Throwable> throwableList = new ArrayList<>();
     for (int i = 0; i <= retry.count(); i++) {
       Queue<Throwable> throwables = new ConcurrentLinkedQueue<>();
-      invocation.getFeature().getFeatureMethod().addInterceptor(new InnerRetryInterceptor(retry, throwables));
+      invocation.getFeature().getFeatureMethod().addInterceptor(new InnerRetryInterceptor(retry, condition, throwables));
       invocation.proceed();
       if (throwables.isEmpty()) {
+        throwableList.clear();
         break;
       } else {
         throwableList.addAll(throwables);
@@ -58,8 +58,8 @@ public class RetryIterationInterceptor extends RetryBaseInterceptor implements I
 
     private final Queue<Throwable> throwables;
 
-    public InnerRetryInterceptor(Retry retry, Queue<Throwable> throwables) {
-      super(retry);
+    public InnerRetryInterceptor(Retry retry, Closure condition, Queue<Throwable> throwables) {
+      super(retry, condition);
       this.throwables = throwables;
     }
 
@@ -68,7 +68,7 @@ public class RetryIterationInterceptor extends RetryBaseInterceptor implements I
       try {
         invocation.proceed();
       } catch (Throwable e) {
-        if (isExpected(e)) {
+        if (isExpected(invocation, e)) {
           throwables.add(e);
         } else {
           throw e;

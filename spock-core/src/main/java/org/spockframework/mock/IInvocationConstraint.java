@@ -22,4 +22,5 @@ package org.spockframework.mock;
  */
 public interface IInvocationConstraint {
   boolean isSatisfiedBy(IMockInvocation invocation);
+  String describeMismatch(IMockInvocation invocation);
 }

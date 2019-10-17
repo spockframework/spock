@@ -57,11 +57,20 @@ public class TooFewInvocationsError extends InteractionNotSatisfiedError {
       if (scoredInvocations.isEmpty()) {
         builder.append("None\n");
       } else {
-        for (ScoredInvocation invocation : scoredInvocations) {
-          builder.append(invocation.count);
+        int idx = 0;
+        for (ScoredInvocation scoredInvocation : scoredInvocations) {
+          builder.append(scoredInvocation.count);
           builder.append(" * ");
-          builder.append(invocation.invocation);
+          builder.append(scoredInvocation.invocation);
           builder.append('\n');
+          if (idx++ < 5) {
+            try {
+              builder.append(interaction.describeMismatch(scoredInvocation.invocation));
+            } catch (AssertionError | Exception e) {
+              builder.append("<Renderer threw Exception>: ").append(e.getMessage());
+            }
+            builder.append('\n');
+          }
         }
       }
       builder.append('\n');

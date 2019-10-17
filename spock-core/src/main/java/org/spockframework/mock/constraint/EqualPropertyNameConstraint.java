@@ -14,14 +14,15 @@
 
 package org.spockframework.mock.constraint;
 
-import org.spockframework.mock.*;
-import org.spockframework.runtime.GroovyRuntimeUtil;
+import org.spockframework.mock.IMockInvocation;
+import org.spockframework.runtime.Condition;
+import org.spockframework.util.CollectionUtil;
 
 /**
  *
  * @author Peter Niederwieser
  */
-public class EqualPropertyNameConstraint implements IInvocationConstraint {
+public class EqualPropertyNameConstraint extends PropertyNameConstraint {
   private final String propertyName;
 
   public EqualPropertyNameConstraint(String propertyName) {
@@ -30,8 +31,14 @@ public class EqualPropertyNameConstraint implements IInvocationConstraint {
 
   @Override
   public boolean isSatisfiedBy(IMockInvocation invocation) {
-    IMockMethod method = invocation.getMethod();
-    return propertyName.equals(GroovyRuntimeUtil.getterMethodToPropertyName(
-        method.getName(), method.getParameterTypes(), method.getReturnType()));
+    return propertyName.equals(getPropertyName(invocation));
+  }
+
+  @Override
+  public String describeMismatch(IMockInvocation invocation) {
+    Condition condition = new Condition(CollectionUtil.<Object>listOf(getPropertyName(invocation), propertyName, false),
+      String.format("propertyName == \"%s\"", propertyName), null, null,
+      null, null);
+    return condition.getRendering();
   }
 }

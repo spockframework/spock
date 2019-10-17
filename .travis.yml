@@ -2,6 +2,13 @@ language: java
 
 sudo: false # run on container-based infrastructure
 
+before_install:
+  # Workaround limitation of OpenJDK <11 - https://bugs.openjdk.java.net/browse/JDK-8196141
+  - |
+    if [[ "$TRAVIS_JDK_VERSION" == "openjdk9" || "$TRAVIS_JDK_VERSION" == "openjdk10" ]]; then
+      mv "${JAVA_HOME}/lib/security/cacerts" "${JAVA_HOME}/lib/security/cacerts.jdk"
+      ln -s /etc/ssl/certs/java/cacerts "${JAVA_HOME}/lib/security/cacerts"
+    fi
 
 before_cache:
   - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
@@ -20,17 +27,20 @@ dist: precise # downgrade to avoid jdk7 SSL Bug https://github.com/docker-librar
 jdk:
   - oraclejdk7 # openjdk7 has SSL Bug avoid jdk7 SSL Bug https://github.com/docker-library/openjdk/issues/117
   - oraclejdk8
+  - openjdk10
+  - openjdk11
 
 env:
   matrix:
     - VARIANT=2.4
+    - VARIANT=2.5
   global:
     # SIGNING_PASSWORD
     - secure: "GBvPdDAaMfr0iAYHzVxhMIBVHFanEPY+69CbEFijbZjhv8h0FPvuLos2p1K5/hbmNkQ1Hd2+CHsm3ErvXQHXtpXn0HmKvzSP7pnPk83iRNVGPieasvfnKiSohZeEplkAK6kbK8sZbjJRUFqUZtwyPtWfs244rCOo++D3KtfggzQ="
     # SONATYPE_OSS_PASSWORD
     - secure: "Y2PbI07I8M8k1qkwN671HdcLPPpnjATWya/m4PDIICioXkkdJrQzpj5x57efAJEWx2upI8PpgGm8ekUd2F/6l1rq0n4DnGHwGTNe1PDAXUw5qFt66RnqrfIVh2eUvPuQk6bXczLV39GksqqD1T/HS6KofknXpHKzk/JeCiiGoxI="
     # GITHUB_TOKEN
-    - secure: "YhBI9LWk4AlRSOmt0aBo0TphuVIzHIVdPGClg35S1b2I6xbc0gRIVXb+ySBZIhFkqaicPFTjO2FXerXEr6SJwz5y3LvA5oBWJC4U/9FdegoP9PopZwiAKA0KLTuBMFrTAjTHAmwJePO7a8yqNCbjKfwEc9hbM64YU+sSXdUJfEU="
+    - secure: "kRjS+Wioim8dGEvTNMTPnizGVyhmMGGAAafhuX8hnBg0kcGN/Vtn77sUA+mk6r1ULQvL+2Dap2uGq19KbEenBQ63LCzBYNZ8CGCC9OEh5N4vOeXCxHu4duYw/uZR6kNI2h3kOdTBlxBMaRnofmAGwqyZPAvwUb2XkeA28ISKW7A="
     - GRADLE_OPTS: "-Xmx768m -Xms256m -Xss1m"
 
 install: true
@@ -40,8 +50,8 @@ before_script:
   - _JAVA_OPTIONS=
 
 script:
-  - ./gradlew --no-daemon --version
-  - ./gradlew --no-daemon travisCiBuild -Dvariant=$VARIANT --scan
+  - ./gradlew --no-daemon --no-parallel  --version
+  - ./gradlew --no-daemon --no-parallel  travisCiBuild -Dvariant=$VARIANT --scan --stacktrace
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)

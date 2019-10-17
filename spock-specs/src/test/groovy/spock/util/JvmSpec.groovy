@@ -14,8 +14,7 @@
 package spock.util
 
 import spock.lang.Specification
-import spock.util.environment.RestoreSystemProperties
-import spock.util.environment.Jvm
+import spock.util.environment.*
 
 @RestoreSystemProperties
 class JvmSpec extends Specification {
@@ -24,12 +23,12 @@ class JvmSpec extends Specification {
     def jvm = Jvm.current
 
     expect:
-    for (i in 5..9) {
+    for (i in 5..8) {
       assert jvm."java$i" == (i == minor)
     }
 
     where:
-    minor << (5..9)
+    minor << (5..8)
   }
 
   def "can check for Java version compatibility"() {
@@ -37,11 +36,37 @@ class JvmSpec extends Specification {
     def jvm = Jvm.current
 
     expect:
-    for (i in 5..9) {
+    for (i in 5..8) {
       assert jvm."java${i}Compatible" == (i <= minor)
     }
 
     where:
-    minor << (5..9)
+    minor << (5..8)
+  }
+
+  def "can check for Java version (new scheme)"() {
+    System.setProperty("java.specification.version", "$major")
+    def jvm = Jvm.current
+
+    expect:
+    for (i in 5..11) {
+      assert jvm."java$i" == (i == major)
+    }
+
+    where:
+    major << (9..11)
+  }
+
+  def "can check for Java version compatibility (new scheme)"() {
+    System.setProperty("java.specification.version", "$major")
+    def jvm = Jvm.current
+
+    expect:
+    for (i in 5..11) {
+      assert jvm."java${i}Compatible" == (i <= major)
+    }
+
+    where:
+    major << (9..11)
   }
 }

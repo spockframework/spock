@@ -42,6 +42,7 @@ public class InteractionRewriter {
   private boolean wildcardCall;
   private boolean implicitTarget;
   private List<InteractionResponse> responses = new ArrayList<>();
+  private Boolean scanResult;
 
   // holds the incrementally constructed expression, which looks roughly as follows:
   // "new InteractionBuilder(..).setCount(..).setTarget(..).setMethod(..).addArg(..).addResult(..).build()"
@@ -75,7 +76,14 @@ public class InteractionRewriter {
     }
   }
 
-  private boolean isInteraction(ExpressionStatement stat) throws InvalidSpecCompileException {
+  public boolean isInteraction(ExpressionStatement stat) throws InvalidSpecCompileException {
+    if (scanResult != null) {
+      if (stat != this.stat) {
+        throw new InvalidSpecCompileException(stat, "InteractionRewriter was reused");
+      }
+      return scanResult;
+    }
+
     this.stat = stat;
 
     Expression expr = parseCount(parseResults(stat.getExpression()));
@@ -83,7 +91,8 @@ public class InteractionRewriter {
     if (interaction && resources.getCurrentMethod().getAst().isStatic()) {
       throw new InvalidSpecCompileException(stat, "Interactions cannot be declared in static scope");
     }
-    return interaction;
+
+    return scanResult = interaction;
   }
 
   private Expression parseResults(Expression expr) {
@@ -243,28 +252,54 @@ public class InteractionRewriter {
     Expression args = AstUtil.getArguments(call);
     if (args == ArgumentListExpression.EMPTY_ARGUMENTS) return; // fast lane
 
-    call(InteractionBuilder.SET_ARG_LIST_KIND,
-        new ConstantExpression(args instanceof ArgumentListExpression));
-
     if (args instanceof ArgumentListExpression)
       addPositionalArgs((ArgumentListExpression) args);
     else if (args instanceof NamedArgumentListExpression)
-      addNamedArgs((NamedArgumentListExpression) args);
+      addNamedArgs((NamedArgumentListExpression) args, false);
+    else if (args instanceof TupleExpression
+        && ((TupleExpression)args).getExpression(0) instanceof NamedArgumentListExpression)
+      //for some reason groovy wraps NamedArgumentListExpression into a TupleExpression
+      addNamedArgs((NamedArgumentListExpression) ((TupleExpression)args).getExpression(0), false);
     else Assert.that(false, "unknown kind of argument list: " + args);
   }
 
   @SuppressWarnings("unchecked")
   private void addPositionalArgs(ArgumentListExpression args) {
-    for (Expression arg: args.getExpressions())
+    List<Expression> expressions = args.getExpressions();
+
+    if (expressions.size() > 0 && expressions.get(0) instanceof MapExpression) {
+      boolean isMixed = expressions.size() > 1;
+      addNamedArgs((MapExpression) expressions.get(0), isMixed);
+      if (isMixed) {
+        addPositionalListArgs(expressions.subList(1, expressions.size()), true);
+      }
+    } else {
+      addPositionalListArgs(expressions, false);
+    }
+  }
+
+  private void addPositionalListArgs(List<Expression> expressions, boolean isMixed) {
+    usePositionalArgs(isMixed);
+    for (Expression arg : expressions) {
       addArg(arg);
+    }
   }
 
   @SuppressWarnings("unchecked")
-  private void addNamedArgs(NamedArgumentListExpression args) {
+  private void addNamedArgs(MapExpression args, boolean isMixed) {
+    useNamedArgs(isMixed);
     for (MapEntryExpression arg : args.getMapEntryExpressions()) {
       addName(arg.getKeyExpression());
       addArg(arg.getValueExpression());
     }
+  }
+
+  private void useNamedArgs(boolean isMixed) {
+    call(InteractionBuilder.SET_ARG_LIST_KIND, ConstantExpression.PRIM_FALSE, new ConstantExpression(isMixed,true));
+  }
+
+  private void usePositionalArgs(boolean isMixed) {
+    call(InteractionBuilder.SET_ARG_LIST_KIND, ConstantExpression.PRIM_TRUE, new ConstantExpression(isMixed, true));
   }
 
   private void addName(Expression name) {

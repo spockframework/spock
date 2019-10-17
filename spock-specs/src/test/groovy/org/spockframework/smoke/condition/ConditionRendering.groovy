@@ -16,7 +16,10 @@
 
 package org.spockframework.smoke.condition
 
+import org.spockframework.runtime.ConditionNotSatisfiedError
+import org.spockframework.runtime.SpockComparisonFailure
 import spock.lang.Issue
+import java.sql.Date
 
 import static java.lang.Math.min
 import static java.lang.Integer.MAX_VALUE
@@ -104,8 +107,9 @@ a.get(b) == null
     expect:
     isRendered """
 Math.max(a,b) == null
-     |   | |  |
-     2   1 2  false
+|    |   | |  |
+|    2   1 2  false
+class java.lang.Math
     """, {
       def a = 1
       def b = 2
@@ -217,6 +221,28 @@ new ArrayList(a) == null
       def a = 1
       assert new ArrayList(a) == null
     }
+  }
+
+  def "ConstructorCallExpression for non-static inner class"() {
+    when:
+    runner.runSpecBody '''
+      def test() {
+        expect:
+        new NonStaticInnerClass() == null
+      }
+
+      class NonStaticInnerClass {
+        String toString() { "nsi" }
+      }
+    '''
+
+    then:
+    SpockComparisonFailure e = thrown()
+    isRendered """
+new NonStaticInnerClass() == null
+|                         |
+nsi                       false
+    """, e.condition
   }
 
   def "ConstructorCallExpression with named arguments"() {
@@ -456,9 +482,10 @@ a.size == null
 
     isRendered """
 Integer.MIN_VALUE == null
-        |         |
-        |         false
-        -2147483648
+|       |         |
+|       |         false
+|       -2147483648
+class java.lang.Integer
     """, {
       assert Integer.MIN_VALUE == null
     }
@@ -505,11 +532,67 @@ a.&"\$b" == null
     expect:
     isRendered """
 List == String
-     |
-     false
+|    |  |
+|    |  class java.lang.String
+|    false
+interface java.util.List
     """, {
       assert List == String
     }
+  }
+
+  def "ClassExpression with dot-containing comments"() {
+    expect:
+    isRendered """
+java.util./*.awt.*/List == java.lang.String // I. Like. Dots.
+                   |    |            |
+                   |    false        class java.lang.String
+                   interface java.util.List
+    """, {
+      assert java.util./*.awt.*/List == java.lang.String // I. Like. Dots.
+    }
+  }
+
+  def "ClassExpression with different classes with same name"() {
+    given:
+    def defaultTimeZone = TimeZone.default
+    TimeZone.default = TimeZone.getTimeZone('UTC')
+
+    expect:
+    isRendered """
+date.getClass() == Date
+|    |          |  |
+|    |          |  class java.sql.Date
+|    |          false
+|    class java.util.Date
+Thu Jan 01 00:00:00 UTC 1970
+    """, {
+      def date = new java.util.Date(0)
+      assert date.getClass() == Date
+    }
+
+    cleanup:
+    TimeZone.default = defaultTimeZone
+  }
+
+  def "instanceof expression"() {
+    given:
+    def defaultTimeZone = TimeZone.default
+    TimeZone.default = TimeZone.getTimeZone('UTC')
+
+    expect:
+    isRendered """
+date instanceof Date
+|    |          |
+|    false      class java.sql.Date
+Thu Jan 01 00:00:00 UTC 1970 (java.util.Date)
+    """, {
+      def date = new java.util.Date(0)
+      assert date instanceof Date
+    }
+
+    cleanup:
+    TimeZone.default = defaultTimeZone
   }
 
   def "VariableExpression"() {
@@ -715,16 +798,27 @@ BLOCKED == 0
   // for implicit closure calls see ImplicitClosureCallRendering
   void "explicit closure call"() {
     def func = { it }
-
+    expect:
     isRendered """
 func.call(42) == null
 |    |        |
 |    42       false
-${func.toString()}
+${func.dump()}
     """, {
       assert func.call(42) == null
     }
-}
+  }
+
+  def "properly escape backslashes in rendering"() {
+    expect:
+    isRendered """
+":\\":\\\\" == null
+         |
+         false
+    """, {
+      assert ":\":\\" == null
+    }
+  }
 
   /*
   def "MapEntryExpression"() {

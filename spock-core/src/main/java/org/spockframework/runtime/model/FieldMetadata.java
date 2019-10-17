@@ -29,8 +29,11 @@ public @interface FieldMetadata {
   String NAME = "name";
   String ORDINAL = "ordinal";
   String LINE = "line";
+  String INITIALIZER = "initializer";
 
   String name();
   int ordinal();
   int line();
+  // This should not have a default, but to make it backwards compatible it has to have one.
+  boolean initializer() default false;
 }

@@ -23,4 +23,5 @@ package org.spockframework.mock;
  */
 public interface IArgumentConstraint {
   boolean isSatisfiedBy(Object arg);
+  String describeMismatch(Object arg);
 }

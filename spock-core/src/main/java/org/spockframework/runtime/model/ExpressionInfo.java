@@ -159,6 +159,10 @@ public class ExpressionInfo implements Iterable<ExpressionInfo> {
     return "==".equals(operation) && children.size() == 2;
   }
 
+  public boolean isInstanceOfComparison() {
+    return "instanceof".equals(operation) && children.size() == 2;
+  }
+
   public boolean isEqualityComparison(Class<?>... types) {
     if (!isEqualityComparison()) return false;
     if (!ReflectionUtil.hasAnyOfTypes(children.get(0).getValue(), types)) return false;

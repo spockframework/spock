@@ -29,6 +29,11 @@ import org.spockframework.runtime.extension.builtin.IgnoreIfExtension;
 /**
  * Ignores the annotated spec or feature if the given condition holds.
  * Same as {@link Requires} except that the condition is inverted.
+ *
+ * The configured closure is called with a delegate of type
+ * {@link org.spockframework.runtime.extension.builtin.PreconditionContext}
+ * which provides access to system properties, environment variables, the type
+ * of operating system and JVM.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE, ElementType.METHOD})

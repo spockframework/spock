@@ -16,15 +16,16 @@ package org.spockframework.mock.runtime;
 
 import org.spockframework.mock.*;
 import org.spockframework.runtime.GroovyRuntimeUtil;
+import org.spockframework.util.ReflectionUtil;
 import spock.lang.Specification;
 
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
+import java.util.*;
 
 import groovy.lang.*;
 
 public class GroovyMockFactory implements IMockFactory {
-  public static GroovyMockFactory INSTANCE = new GroovyMockFactory();
+  public static final GroovyMockFactory INSTANCE = new GroovyMockFactory();
 
   @Override
   public boolean canCreate(IMockConfiguration configuration) {
@@ -69,11 +70,15 @@ public class GroovyMockFactory implements IMockFactory {
     }
 
     IProxyBasedMockInterceptor mockInterceptor = new GroovyMockInterceptor(configuration, specification, newMetaClass);
-    ArrayList<Class<?>> additionalInterfaces = new ArrayList<>(configuration.getAdditionalInterfaces());
+    List<Class<?>> additionalInterfaces = new ArrayList<>(configuration.getAdditionalInterfaces());
     additionalInterfaces.add(GroovyObject.class);
-    return ProxyBasedMockFactory.INSTANCE.create(type, additionalInterfaces,
-        configuration.getConstructorArgs(), mockInterceptor, specification.getClass().getClassLoader(),
-        configuration.isUseObjenesis());
+    Object proxy = ProxyBasedMockFactory.INSTANCE.create(type, additionalInterfaces,
+      configuration.getConstructorArgs(), mockInterceptor, specification.getClass().getClassLoader(),
+      configuration.isUseObjenesis());
+    if ((configuration.getNature() == MockNature.SPY) && (configuration.getInstance() != null)) {
+      ReflectionUtil.deepCopyFields(configuration.getInstance(), proxy);
+    }
+    return proxy;
   }
 
   private boolean isFinalClass(Class<?> type) {

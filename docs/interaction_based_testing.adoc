@@ -28,7 +28,7 @@ collaborators, and can generate mock implementations of collaborators that verif
 ****
 Like most Java mocking frameworks, Spock uses
 http://docs.oracle.com/javase/7/docs/api/java/lang/reflect/Proxy.html[JDK dynamic proxies] (when mocking interfaces)
-and https://github.com/cglib/cglib[CGLIB] proxies (when mocking classes) to generate mock implementations at runtime.
+and http://bytebuddy.net/[Byte Buddy] or https://github.com/cglib/cglib[CGLIB] proxies (when mocking classes) to generate mock implementations at runtime.
 Compared to implementations based on Groovy meta-programming, this has the advantage that it also works for testing Java code.
 ****
 
@@ -193,19 +193,9 @@ When expecting a call to a setter method, only method syntax can be used:
 
 The argument constraints of an interaction describe which method arguments are expected:
 
-[source,groovy]
+[source,groovy,indent=0]
 ----
-1 * subscriber.receive("hello")     // an argument that is equal to the String "hello"
-1 * subscriber.receive(!"hello")    // an argument that is unequal to the String "hello"
-1 * subscriber.receive()            // the empty argument list (would never match in our example)
-1 * subscriber.receive(_)           // any single argument (including null)
-1 * subscriber.receive(*_)          // any argument list (including the empty argument list)
-1 * subscriber.receive(!null)       // any non-null argument
-1 * subscriber.receive(_ as String) // any non-null argument that is-a String
-1 * subscriber.receive({ it.size() > 3 }) // an argument that satisfies the given predicate
-                                          // (here: message length is greater than 3)
-1 * subscriber.receive(endsWith("lo"))    // Hamcrest Matchers are also supported
-                                          // (here: a string ending with 'lo')
+include::{sourcedir}/interaction/InteractionDocSpec.groovy[tag=argConstraints]
 ----
 
 Argument constraints work as expected for methods with multiple arguments:
@@ -230,21 +220,70 @@ subscriber.receive("hello", "goodbye")
 
 .Spock Deep Dive: Groovy Varargs
 ****
-Groovy allows any method whose last parameter has an array type to be called in vararg style. Consequently,
-vararg syntax can also be used in interactions matching such methods.
+Groovy allows any method whose last parameter has an array type to be called in vararg style.
+Consequently, vararg syntax can also be used in interactions matching such methods.
 ****
+
+==== Equality Constraint
+
+The equality constraint uses groovy equality to check the argument, i.e, `argument == constraint`. You can use
+
+* any literal `1 * check('string')` / `1 * check(1)` / `1 * check(null)`,
+* a variable `1 * check(var)`,
+* a list or map literal `1 * check([1])` / `1 * check([foo: 'bar'])`,
+* an object `1 * check(new Person('sam'))`,
+* or the result of a method call `1 * check(person())`
+
+as an equality constraint.
+
+==== Hamcrest Constraint
+
+A variation of the equality constraint, if the constraint object is a Hamcrest matcher, then it will use that matcher
+to check the argument.
+
+==== Wildcard Constraint
+
+The wildcard constraint will match any argument `null` or otherwise. It is the `_`, i.e. `1 * subscriber.receive(_)`.
+There is also the spread wildcard constraint `*\_` which matches any number of arguments `1 * subscriber.receive(*_)` including none.
+
+==== Code Constraint
+
+The code constraint is the most versatile of all. It is a groovy closure that gets the argument as its parameter.
+The closure is treated as an condition block, so it behaves like a `then` block, i.e., every line is treated as an implicit assertion.
+It can emulate all but the spread wildcard constraint, however it is suggested to use the simpler constraints where possible.
+You can do multiple assertions, call methods for assertions, or use `with`/`verifyAll`.
+
+
+[source,groovy,indent=0]
+----
+include::{sourcedir}/interaction/InteractionDocSpec.groovy[tag=codeConstraint]
+----
+
+==== Negating Constraint
+
+The negating constraint `!` is a compound constraint, i.e. it needs to be combined with another constraint to work.
+It inverts the result of the nested constraint, e.g, `1 * subscriber.receive(!null)` is the combination of
+an equality constraint checking for null and then the negating constraint inverting the result, turning it into not null.
+
+Although it can be combined with any other constraint it does not always make sense, e.g., `1 * subscriber.receive(!_)` will match nothing.
+Also keep in mind that the diagnostics for a non matching negating constraint will just be that the inner
+constraint did match, without any more information.
+
+==== Type Constraint
+
+The type constraint checks for the type/class of the argument, like the negating constraint it is also a compound constraint.
+It usually written as `_ as Type`, which is a combination of the wildcard constraint and the type constraint.
+You can combined it with other constraints as well, `1 * subscriber.receive({ it.contains('foo')} as String)` will assert that it is
+a `String` before executing the code constraint to check if it contains `foo`.
+
 
 === Matching Any Method Call
 
 Sometimes it can be useful to match "anything", in some sense of the word:
 
-[source,groovy]
+[source,groovy,indent=0]
 ----
-1 * subscriber._(*_)     // any method on subscriber, with any argument list
-1 * subscriber._         // shortcut for and preferred over the above
-
-1 * _._                  // any method call on any mock object
-1 * _                    // shortcut for and preferred over the above
+include::{sourcedir}/interaction/InteractionDocSpec.groovy[tag=anyConstraints]
 ----
 
 NOTE: Although `(_.._) * _._(*_) >> _` is a valid interaction declaration,
@@ -304,7 +343,7 @@ If a mock has a set of "base" interactions that don't vary, they can be declared
 
 [source,groovy]
 ----
-def subscriber = Mock(Subscriber) {
+Subscriber subscriber = Mock {
    1 * receive("hello")
    1 * receive("goodbye")
 }
@@ -545,7 +584,7 @@ target constraint
 A stubbed interaction can be declared in the usual places: either inside a `then:` block, or anywhere before a
 `when:` block. (See <<Where to Declare Interactions>> for the details.) If a mock object is only used for stubbing,
 it's common to declare interactions <<declaring-interactions-at-creation-time,at mock creation time>> or in a
-`setup:` block.
+`given:` block.
 
 === Returning Fixed Values
 
@@ -649,7 +688,7 @@ statements will _not_ work:
 
 [source,groovy]
 ----
-setup:
+given:
 subscriber.receive("message1") >> "ok"
 
 when:
@@ -662,7 +701,7 @@ then:
 As explained in <<Where to Declare Interactions>>, the `receive` call will first get matched against
 the interaction in the `then:` block. Since that interaction doesn't specify a response, the default
 value for the method's return type (`null` in this case) will be returned. (This is just another
-facet of Spock's lenient approach to mocking.). Hence, the interaction in the `setup:` block will never
+facet of Spock's lenient approach to mocking.). Hence, the interaction in the `given:` block will never
 get a chance to match.
 
 NOTE: Mocking and stubbing of the same method call has to happen in the same interaction.
@@ -681,7 +720,7 @@ A _stub_ is created with the `MockingApi.Stub` factory method:
 
 [source,groovy]
 ----
-def subscriber = Stub(Subscriber)
+Subscriber subscriber = Stub()
 ----
 
 Whereas a mock can be used both for stubbing and mocking, a stub can only be used for stubbing.
@@ -705,7 +744,7 @@ A stub often has a fixed set of interactions, which makes
 
 [source,groovy]
 ----
-def subscriber = Stub(Subscriber) {
+Subscriber subscriber = Stub {
     receive("message1") >> "ok"
     receive("message2") >> "fail"
 }
@@ -720,7 +759,7 @@ A _spy_ is created with the `MockingApi.Spy` factory method:
 
 [source,groovy]
 ----
-def subscriber = Spy(SubscriberImpl, constructorArgs: ["Fred"])
+SubscriberImpl subscriber = Spy(constructorArgs: ["Fred"])
 ----
 
 A spy is always based on a real object. Hence you must provide a class type rather
@@ -776,7 +815,7 @@ Spies can also be used as partial mocks:
 [source,groovy]
 ----
 // this is now the object under specification, not a collaborator
-def persister = Spy(MessagePersister) {
+MessagePersister persister = Spy {
   // stub a call on the same object
   isPersistable(_) >> true
 }
@@ -809,7 +848,7 @@ dynamic methods as if they were physically declared methods:
 
 [source,groovy]
 ----
-def subscriber = GroovyMock(Subscriber)
+Subscriber subscriber = GroovyMock()
 
 1 * subscriber.someDynamicMethod("hello")
 ----
@@ -830,7 +869,7 @@ http://docs.groovy-lang.org/docs/groovy-2.4.1/html/gapi/groovy/mock/interceptor/
 def publisher = new Publisher()
 publisher << new RealSubscriber() << new RealSubscriber()
 
-def anySubscriber = GroovyMock(RealSubscriber, global: true)
+RealSubscriber anySubscriber = GroovyMock(global: true)
 
 when:
 publisher.publish("message")
@@ -869,7 +908,7 @@ Global mocks support mocking of constructors:
 
 [source,groovy]
 ----
-def anySubscriber = GroovySpy(RealSubscriber, global: true)
+RealSubscriber anySubscriber = GroovySpy(global: true)
 
 1 * new RealSubscriber("Fred")
 ----
@@ -894,7 +933,7 @@ Global mocks support mocking and stubbing of static methods:
 
 [source,groovy]
 ----
-def anySubscriber = GroovySpy(RealSubscriber, global: true)
+RealSubscriber anySubscriber = GroovySpy(global: true)
 
 1 * RealSubscriber.someStaticMethod("hello") >> 42
 ----
@@ -934,24 +973,24 @@ verified (as for a `Stub()`). Instead of passing `ZeroOrNullResponse`, we could 
 [[DetectingMockObjects]]
 === Detecting Mock Objects
 
-To find out whether a particular object is a Spock mock object, use a `org.spockframework.mock.MockDetector`:
+To find out whether a particular object is a Spock mock object, use a `org.spockframework.mock.MockUtil`:
 
 [source,groovy]
 ----
-def detector = new MockDetector()
-def list1 = []
-def list2 = Mock(List)
+MockUtil mockUtil = new MockUtil()
+List list1 = []
+List list2 = Mock()
 
 expect:
-!detector.isMock(list1)
-detector.isMock(list2)
+!mockUtil.isMock(list1)
+mockUtil.isMock(list2)
 ----
 
-A detector can also be used to get more information about a mock object:
+An util can also be used to get more information about a mock object:
 
 [source,groovy]
 ----
-def mock = detector.asMock(list2)
+IMockObject mock = mockUtil.asMock(list2)
 
 expect:
 mock.name == "list2"
@@ -974,4 +1013,3 @@ http://martinfowler.com/articles/mocksArentStubs.html[Mocks Aren't Stubs]::
 
 http://www.growing-object-oriented-software.com[Growing Object-Oriented Software Guided by Tests]::
   TDD pioneers Steve Freeman and Nat Pryce explain in detail how test-driven development and mocking work in the real world.
-

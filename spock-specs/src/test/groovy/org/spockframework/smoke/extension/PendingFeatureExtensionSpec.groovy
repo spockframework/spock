@@ -23,6 +23,26 @@ class Foo extends Specification {
     result.ignoreCount == 0
   }
 
+  def "@PendingFeature includes reason in exception message"() {
+    when:
+    def result = runner.runWithImports("""
+
+class Foo extends Specification {
+  @PendingFeature(reason='42')
+  def bar() {
+    expect: false
+  }
+}
+    """)
+
+    then:
+    notThrown(AssertionError)
+    result.runCount == 1
+    result.failureCount == 0
+    result.ignoreCount == 0
+    // unfortunately we can't access the skip reason here, but at least the branch is covered
+  }
+
   def "@PendingFeature marks feature that fails with exception as skipped"() {
     when:
     def result = runner.runWithImports("""
@@ -42,6 +62,7 @@ class Foo extends Specification {
     result.failureCount == 0
     result.ignoreCount == 0
   }
+
   def "@PendingFeature rethrows non handled exceptions"() {
     when:
     def result = runner.runWithImports("""

@@ -61,6 +61,11 @@ public abstract class MockInteractionDecorator implements IMockInteraction {
   }
 
   @Override
+  public String describeMismatch(IMockInvocation invocation) {
+    return decorated.describeMismatch(invocation);
+  }
+
+  @Override
   public boolean isSatisfied() {
     return decorated.isSatisfied();
   }

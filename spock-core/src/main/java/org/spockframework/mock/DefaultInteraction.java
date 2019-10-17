@@ -39,6 +39,11 @@ abstract class DefaultInteraction implements IMockInteraction {
   }
 
   @Override
+  public String describeMismatch(IMockInvocation invocation) {
+    throw new UnreachableCodeError("describeMismatch");
+  }
+
+  @Override
   public boolean isSatisfied() {
     return true;
   }

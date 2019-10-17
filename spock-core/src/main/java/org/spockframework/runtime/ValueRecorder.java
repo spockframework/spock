@@ -43,8 +43,8 @@ public class ValueRecorder {
    * with record(expression) without impacting evaluation of the expression.
    */
   public Object record(int index, Object value) {
-    realizeNas(index, null);
-    values.add(value);
+    realizeNas(index + 1, null);
+    values.set(index, value);
 
     boolean foundThisCallOnStack = false;
     while (!startedRecordings.isEmpty()){
@@ -55,7 +55,7 @@ public class ValueRecorder {
       }
     }
     if (!foundThisCallOnStack){
-      throw new IllegalStateException("can not found call #"+index+" on stack. Invalid call of record method?");
+      throw new IllegalStateException("Did not find call #"+index+" on stack. Invalid call of record method?");
     }
 
     return value;

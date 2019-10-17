@@ -16,8 +16,7 @@
 
 package org.spockframework.compiler.model;
 
-import org.codehaus.groovy.ast.FieldNode;
-import org.codehaus.groovy.ast.PropertyNode;
+import org.codehaus.groovy.ast.*;
 
 /**
  * AST node representing a user-defined instance field.
@@ -27,6 +26,7 @@ import org.codehaus.groovy.ast.PropertyNode;
  */
 public class Field extends Node<Spec, FieldNode> {
   private final int ordinal;
+  private final boolean hasInitialExpression;
   private boolean isShared;
   private PropertyNode owner;
 
@@ -34,6 +34,7 @@ public class Field extends Node<Spec, FieldNode> {
     super(parent, ast);
     setName(ast.getName());
     this.ordinal = ordinal;
+    this.hasInitialExpression = ast.hasInitialExpression();
   }
 
   public int getOrdinal() {
@@ -55,6 +56,10 @@ public class Field extends Node<Spec, FieldNode> {
 
   public void setOwner(PropertyNode owner) {
     this.owner = owner;
+  }
+
+  public boolean hasInitialExpression() {
+    return hasInitialExpression;
   }
 
   @Override

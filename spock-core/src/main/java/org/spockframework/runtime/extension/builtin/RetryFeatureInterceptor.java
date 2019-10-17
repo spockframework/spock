@@ -23,6 +23,7 @@ import spock.lang.Retry;
 
 /**
  * @author Leonard Brünings
+ * @since 1.2
  */
 public class RetryFeatureInterceptor extends RetryBaseInterceptor implements IMethodInterceptor {
   public RetryFeatureInterceptor(Retry retry) {

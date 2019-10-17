@@ -100,6 +100,7 @@ public class SpecInfoBuilder {
       fieldInfo.setName(metadata.name());
       fieldInfo.setOrdinal(metadata.ordinal());
       fieldInfo.setLine(metadata.line());
+      fieldInfo.setHasInitializer(metadata.initializer());
       spec.addField(fieldInfo);
     }
 

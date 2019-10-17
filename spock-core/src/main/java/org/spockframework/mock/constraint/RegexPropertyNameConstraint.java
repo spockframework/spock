@@ -15,7 +15,8 @@
 package org.spockframework.mock.constraint;
 
 import org.spockframework.mock.*;
-import org.spockframework.runtime.GroovyRuntimeUtil;
+import org.spockframework.runtime.*;
+import org.spockframework.util.CollectionUtil;
 
 import java.util.regex.Pattern;
 
@@ -23,7 +24,7 @@ import java.util.regex.Pattern;
  *
  * @author Peter Niederwieser
  */
-public class RegexPropertyNameConstraint implements IInvocationConstraint {
+public class RegexPropertyNameConstraint extends PropertyNameConstraint {
   private final Pattern pattern;
 
   public RegexPropertyNameConstraint(String regex) {
@@ -32,9 +33,15 @@ public class RegexPropertyNameConstraint implements IInvocationConstraint {
 
   @Override
   public boolean isSatisfiedBy(IMockInvocation invocation) {
-    IMockMethod method = invocation.getMethod();
-    String propertyName = GroovyRuntimeUtil.getterMethodToPropertyName(
-        method.getName(), method.getParameterTypes(), method.getReturnType());
+    String propertyName = getPropertyName(invocation);
     return propertyName != null && pattern.matcher(propertyName).matches();
+  }
+
+  @Override
+  public String describeMismatch(IMockInvocation invocation) {
+    Condition condition = new Condition(CollectionUtil.<Object>listOf(getPropertyName(invocation), pattern.pattern(), false),
+      String.format("propertyName ==~ /%s/", pattern.pattern()), null, null,
+      null, null);
+    return condition.getRendering();
   }
 }

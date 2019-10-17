@@ -16,9 +16,24 @@
 package org.spockframework.smoke
 
 import org.spockframework.runtime.SpockAssertionError
-import spock.lang.Specification
+import spock.lang.*
 
 class WithBlocks extends Specification {
+  def "don't turn nested with expressions into condition"() {
+    def list = [[['end']]]
+
+    expect:
+    with(list) {
+      with(it[0]) {
+        with(it[0]) {
+          with(it[0]) {
+            it == 'end'
+          }
+        }
+      }
+    }
+  }
+
   def "don't turn nested statements into conditions"() {
     def list = [1, 2]
 
@@ -115,6 +130,23 @@ class WithBlocks extends Specification {
     }
   }
 
+  @Issue('https://github.com/spockframework/spock/issues/886')
+  def "with works with void methods"() {
+    given:
+    Person person = new Person()
+    expect:
+    person.check()
+    checkCondition()
+    with(person) {
+      check()
+      checkCondition()
+      verifyAll {
+        check()
+        checkCondition()
+      }
+    }
+  }
+
   int size() {
     42
   }
@@ -123,10 +155,18 @@ class WithBlocks extends Specification {
     object == 4
   }
 
+  void checkCondition() {
+    assert true
+  }
+
   static class Person {
     String name = "Fred"
     int age = 42
     Person spouse
+
+    void check() {
+      assert true
+    }
   }
 
   static class Employee extends Person {

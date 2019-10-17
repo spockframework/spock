@@ -17,6 +17,8 @@
 package org.spockframework.mock.constraint;
 
 import org.spockframework.mock.*;
+import org.spockframework.runtime.Condition;
+import org.spockframework.util.CollectionUtil;
 
 /**
  *
@@ -32,5 +34,13 @@ public class EqualMethodNameConstraint implements IInvocationConstraint {
   @Override
   public boolean isSatisfiedBy(IMockInvocation invocation) {
     return invocation.getMethod().getName().equals(methodName);
+  }
+
+  @Override
+  public String describeMismatch(IMockInvocation invocation) {
+    Condition condition = new Condition(CollectionUtil.<Object>listOf(invocation.getMethod().getName(), methodName, false),
+      String.format("methodName == \"%s\"", methodName), null, null,
+      null, null);
+    return condition.getRendering();
   }
 }

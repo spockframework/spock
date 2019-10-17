@@ -302,8 +302,10 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
     if (method instanceof FeatureMethod)
       method.getStatements().add(createMockControllerCall(MockController.LEAVE_SCOPE));
 
-    if (methodHasCondition)
+    if (methodHasCondition) {
       defineRecorders(method.getStatements(), false);
+      new RecorderScopeNameRewriter(getAstNodeCache()).visitMethod(method.getAst());
+    }
   }
 
   @Override
@@ -522,7 +524,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
     stats.add(0,
         new ExpressionStatement(
             new DeclarationExpression(
-                new VariableExpression("$spock_valueRecorder", nodeCache.ValueRecorder),
+                new VariableExpression(SpockNames.VALUE_RECORDER, nodeCache.ValueRecorder),
                 Token.newSymbol(Types.ASSIGN, -1, -1),
                 new ConstructorCallExpression(
                     nodeCache.ValueRecorder,
@@ -530,7 +532,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
     stats.add(0,
         new ExpressionStatement(
             new DeclarationExpression(
-                new VariableExpression("$spock_errorCollector", nodeCache.ErrorCollector),
+                new VariableExpression(SpockNames.ERROR_COLLECTOR, nodeCache.ErrorCollector),
                 Token.newSymbol(Types.ASSIGN, -1, -1),
                 new ConstructorCallExpression(
                     nodeCache.ErrorCollector,
@@ -541,7 +543,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
         new BlockStatement(allStats, new VariableScope()),
         new ExpressionStatement(
           AstUtil.createDirectMethodCall(
-            new VariableExpression("$spock_errorCollector"),
+            new VariableExpression(SpockNames.ERROR_COLLECTOR),
             nodeCache.ErrorCollector_Validate,
             ArgumentListExpression.EMPTY_ARGUMENTS
           ))));
@@ -549,7 +551,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
 
   @Override
   public VariableExpression captureOldValue(Expression oldValue) {
-    VariableExpression var = new OldValueExpression(oldValue, "$spock_oldValue" + oldValueCount++);
+    VariableExpression var = new OldValueExpression(oldValue, SpockNames.OLD_VALUE + oldValueCount++);
     DeclarationExpression decl = new DeclarationExpression(
         var,
         Token.newSymbol(Types.ASSIGN, -1, -1),
@@ -649,12 +651,12 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
 
     tryCatchStat.addCatch(
         new CatchStatement(
-            new Parameter(nodeCache.Throwable, "$spock_ex"),
+            new Parameter(nodeCache.Throwable, SpockNames.SPOCK_EX),
             new BlockStatement(
               Arrays.<Statement>asList(
                 new ExpressionStatement(
                   setThrownException(
-                    new VariableExpression("$spock_ex")))),
+                    new VariableExpression(SpockNames.SPOCK_EX)))),
                 new VariableScope())));
   }
 
@@ -702,13 +704,18 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
     if (declExpr.isMultipleAssignmentDeclaration()) {
       ArgumentListExpression result = new ArgumentListExpression();
       for (Expression expr : declExpr.getTupleExpression().getExpressions()) {
-        VariableExpression varExpr = (VariableExpression) expr;
-        result.addExpression(new VariableExpression(varExpr.getName(), varExpr.getOriginType()));
+        result.addExpression(copyVarExpr((VariableExpression) expr));
       }
       return result;
     }
 
-    VariableExpression varExpr = declExpr.getVariableExpression();
-    return new VariableExpression(varExpr.getName(), varExpr.getOriginType());
+    return copyVarExpr(declExpr.getVariableExpression());
+  }
+
+  private Expression copyVarExpr(VariableExpression varExpr) {
+    VariableExpression newVarExpr = new VariableExpression(varExpr.getName(), varExpr.getOriginType());
+    newVarExpr.setAccessedVariable(varExpr.getAccessedVariable());
+    newVarExpr.setSourcePosition(varExpr);
+    return newVarExpr;
   }
 }

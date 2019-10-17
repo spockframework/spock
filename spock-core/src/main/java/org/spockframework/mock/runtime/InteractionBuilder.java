@@ -114,12 +114,16 @@ public class InteractionBuilder {
 
   public static final String SET_ARG_LIST_KIND = "setArgListKind";
   public InteractionBuilder setArgListKind(boolean isPositional) {
+    return setArgListKind(isPositional, false);
+  }
+
+  public InteractionBuilder setArgListKind(boolean isPositional, boolean isMixed) {
     argConstraints = new ArrayList<>();
+    argNames = new ArrayList<>();
     if (isPositional) {
-      invConstraints.add(new PositionalArgumentListConstraint(argConstraints));
+      invConstraints.add(new PositionalArgumentListConstraint(argConstraints, isMixed));
     } else {
-      argNames = new ArrayList<>();
-      invConstraints.add(new NamedArgumentListConstraint(argNames, argConstraints));
+      invConstraints.add(new NamedArgumentListConstraint(argNames, argConstraints, isMixed));
     }
     return this;
   }

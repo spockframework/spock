@@ -33,7 +33,7 @@ public class Condition implements Serializable {
   private static final long serialVersionUID = 1L;
 
   private static final Pattern pattern =
-    Pattern.compile("(?<backslashesToEscape>(:?\\\\\\\\)+)|(?<stripBackslash>\\\\\n)|(?<whitespacesToCollapse>\\s*\n\\s*)");
+    Pattern.compile("(?<backslashesToEscape>(?:\\\\\\\\)+)|(?<stripBackslash>\\\\\n)|(?<whitespacesToCollapse>\\s*\n\\s*)");
 
   private final transient List<Object> values;
   private final String text;

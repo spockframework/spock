@@ -17,6 +17,7 @@
 package org.spockframework.mock.runtime;
 
 import org.spockframework.mock.*;
+import org.spockframework.util.ExceptionUtil;
 
 import java.util.*;
 
@@ -32,17 +33,32 @@ public class InteractionScope implements IInteractionScope {
   private int currentExecutionZone = 0;
 
   @Override
-  public void addInteraction(IMockInteraction interaction) {
+  public void addInteraction(final IMockInteraction interaction) {
     interactions.add(new MockInteractionDecorator(interaction) {
       final int myRegistrationZone = currentRegistrationZone;
 
       @Override
       public Object accept(IMockInvocation invocation) {
-        Object result = super.accept(invocation);
-        if (currentExecutionZone > myRegistrationZone)
-          throw new WrongInvocationOrderError(decorated, invocation);
+        WrongInvocationOrderError wrongInvocationOrderError = null;
+        if (currentExecutionZone > myRegistrationZone) {
+          wrongInvocationOrderError = new WrongInvocationOrderError(decorated, invocation);
+        }
         currentExecutionZone = myRegistrationZone;
+
+        Object result = null;
+        Throwable invocationException = null;
+        try {
+          result = super.accept(invocation);
+        } catch (AssertionError | Exception e) {
+          invocationException = e;
+        }
+        ExceptionUtil.throwWithSuppressed(invocationException, wrongInvocationOrderError);
         return result;
+      }
+
+      @Override
+      public String describeMismatch(IMockInvocation invocation) {
+        return interaction.describeMismatch(invocation);
       }
     });
   }

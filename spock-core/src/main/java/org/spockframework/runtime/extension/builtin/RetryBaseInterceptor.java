@@ -19,7 +19,10 @@ package org.spockframework.runtime.extension.builtin;
 import java.util.ArrayList;
 import java.util.List;
 
+import groovy.lang.Closure;
 import org.junit.runners.model.MultipleFailureException;
+import org.spockframework.runtime.GroovyRuntimeUtil;
+import org.spockframework.runtime.extension.ExtensionException;
 import org.spockframework.runtime.extension.IMethodInvocation;
 
 import spock.lang.Retry;
@@ -30,18 +33,53 @@ import spock.lang.Retry;
 public class RetryBaseInterceptor {
 
   protected final Retry retry;
+  protected final Closure condition;
 
   public RetryBaseInterceptor(Retry retry) {
-    this.retry = retry;
+    this(retry, createCondition(retry.condition()));
   }
 
-  protected boolean isExpected(Throwable e) {
+  protected RetryBaseInterceptor(Retry retry, Closure condition) {
+    this.retry = retry;
+    this.condition = condition;
+  }
+
+  private static Closure createCondition(Class<? extends Closure> clazz) {
+    if (clazz.equals(Closure.class)) {
+      return null;
+    }
+    try {
+      return clazz.getConstructor(Object.class, Object.class).newInstance(null, null);
+    } catch (Exception e) {
+      throw new ExtensionException("Failed to instantiate @Retry condition", e);
+    }
+  }
+
+  protected boolean isExpected(IMethodInvocation invocation, Throwable failure) {
+    return hasExpectedClass(failure) && satisfiesCondition(invocation, failure);
+  }
+
+  private boolean hasExpectedClass(Throwable failure) {
     for (Class<? extends Throwable> exception : retry.exceptions()) {
-      if(exception.isInstance(e)) {
+      if (exception.isInstance(failure)) {
         return true;
       }
     }
     return false;
+  }
+
+  private boolean satisfiesCondition(IMethodInvocation invocation, Throwable failure) {
+    if (condition == null) {
+      return true;
+    }
+    condition.setDelegate(new RetryConditionContext(invocation, failure));
+    condition.setResolveStrategy(Closure.DELEGATE_ONLY);
+
+    try {
+      return GroovyRuntimeUtil.isTruthy(condition.call());
+    } catch (Exception e) {
+      throw new ExtensionException("Failed to evaluate @Retry condition", e);
+    }
   }
 
   protected void handleInvocation(IMethodInvocation invocation) throws Throwable {
@@ -51,7 +89,7 @@ public class RetryBaseInterceptor {
         invocation.proceed();
         return;
       } catch (Throwable e) {
-        if (isExpected(e)) {
+        if (isExpected(invocation, e)) {
           throwables.add(e);
           if (retry.delay() > 0) {
             Thread.sleep(retry.delay());

@@ -29,11 +29,7 @@ public class CglibRealMethodInvoker implements IResponseGenerator {
   @Override
   public Object respond(IMockInvocation invocation) {
     try {
-      if(invocation.getMockObject().getUserCreatedInstance() != null) {
-        return methodProxy.invoke(invocation.getMockObject().getUserCreatedInstance(), invocation.getArguments().toArray());
-      } else {
-        return methodProxy.invokeSuper(invocation.getMockObject().getInstance(), invocation.getArguments().toArray());
-      }
+      return methodProxy.invokeSuper(invocation.getMockObject().getInstance(), invocation.getArguments().toArray());
     } catch (Throwable t) {
       // MethodProxy doesn't wrap exceptions in InvocationTargetException, so no need to unwrap
       ExceptionUtil.sneakyThrow(t);

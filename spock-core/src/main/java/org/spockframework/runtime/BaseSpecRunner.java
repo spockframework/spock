@@ -402,13 +402,10 @@ public class BaseSpecRunner {
 
   private void runFeatureMethod() {
     if (runStatus != OK) return;
-    if ((currentIteration == null)) {
-      invoke(currentInstance, currentFeature.getFeatureMethod(), currentIteration.getDataValues());
-    } else {
-      MethodInfo featureIteration = new MethodInfo(currentFeature.getFeatureMethod());
-      featureIteration.setIteration(currentIteration);
-      invoke(currentInstance, featureIteration, currentIteration.getDataValues());
-    }
+
+    MethodInfo featureIteration = new MethodInfo(currentFeature.getFeatureMethod());
+    featureIteration.setIteration(currentIteration);
+    invoke(currentInstance, featureIteration, currentIteration.getDataValues());
   }
 
   private void runCleanup() {

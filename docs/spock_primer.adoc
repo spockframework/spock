@@ -15,10 +15,10 @@ To learn more about unit testing, go to http://en.wikipedia.org/wiki/Unit_testin
 
 == Terminology
 
-Let's start with a few definitions: Spock lets you write _specifications_ that describe expected _features_ (properties,
-aspects) exhibited by a system of interest. The system of interest could be anything between a single class and a whole
-application, and is also called _system under specification (SUS)_. The description of a feature starts from a specific
-snapshot of the SUS and its collaborators; this snapshot is called the feature's _fixture_.
+Let's start with a few definitions: Spock lets you write https://en.wikipedia.org/wiki/Specification_by_example[_specifications_]
+that describe expected _features_ (properties, aspects) exhibited by a system of interest. The system of interest could be
+anything between a single class and a whole application, and is also called the _system under specification or SUS_.
+The description of a feature starts from a specific snapshot of the SUS and its collaborators; this snapshot is called the feature's _fixture_.
 
 The following sections walk you through all building blocks of which a Spock specification may be composed. A typical
 specification uses only a subset of them.
@@ -88,10 +88,10 @@ respect to sharing are more well-defined.
 
 [source,groovy]
 ----
-def setup() {}          // run before every feature method
-def cleanup() {}        // run after every feature method
-def setupSpec() {}     // run before the first feature method
-def cleanupSpec() {}   // run after the last feature method
+def setupSpec() {}    // runs once -  before the first feature method
+def setup() {}        // runs before every feature method
+def cleanup() {}      // runs after every feature method
+def cleanupSpec() {}  // runs once -  after the last feature method
 ----
 
 Fixture methods are responsible for setting up and cleaning up the environment in which feature methods are run.
@@ -103,10 +103,22 @@ Occasionally it makes sense for feature methods to share a fixture, which is ach
 fields together with the `setupSpec()` and `cleanupSpec()` methods.
 Note that `setupSpec()` and `cleanupSpec()` _may not_ reference instance fields unless they are annotated with `@Shared`.
 
+=== Invocation Order
+
 If fixture methods are overridden in a specification subclass then `setup()` of the superclass will run before `setup()` of the subclass.
 `cleanup()` works in reverse order, that is `cleanup()` of the subclass will execute before `cleanup()` of the superclass.
 `setupSpec()` and `cleanupSpec()` behave in the same way.
-There is no need to explicitly call `super.setup()` or `super.cleanup()` as Spock will automatically find and execute fixture methods at all levels in an inheritance heirarchy.
+There is no need to explicitly call `super.setup()` or `super.cleanup()` as Spock will automatically find and execute fixture methods at all levels in an inheritance hierarchy.
+
+1. `super.setupSpec`
+2. `sub.setupSpec`
+3. `super.setup`
+4. `sub.setup`
+5. feature method
+6. `sub.cleanup`
+7. `super.cleanup`
+8. `sub.cleanupSpec`
+9. `super.cleanupSpec`
 
 == Feature Methods
 
@@ -135,8 +147,8 @@ interacting feature methods), and may occur more than once.
 
 Spock has built-in support for implementing each of the conceptual phases of a feature method. To this end, feature
 methods are structured into so-called _blocks_. Blocks start with a label, and extend to the beginning of the next block,
-or the end of the method. There are six kinds of blocks: `setup`, `when`, `then`, `expect`, `cleanup`, and `where` blocks.
-Any statements between the beginning of the method and the first explicit block belong to an implicit `setup` block.
+or the end of the method. There are six kinds of blocks: `given`, `when`, `then`, `expect`, `cleanup`, and `where` blocks.
+Any statements between the beginning of the method and the first explicit block belong to an implicit `given` block.
 
 A feature method must have at least one explicit (i.e. labelled) block - in fact, the presence of an explicit block is
 what makes a method a feature method. Blocks divide a method into distinct sections, and cannot be nested.
@@ -149,19 +161,19 @@ The picture on the right shows how blocks map to the conceptual phases of a feat
 special role, which will be revealed shortly. But first, let's have a closer look at the other blocks.
 --
 
-==== Setup Blocks
+==== Given Blocks
 
 [source,groovy]
 ----
-setup:
+given:
 def stack = new Stack()
 def elem = "push me"
 ----
 
-The `setup` block is where you do any setup work for the feature that you are describing. It may not be preceded by
-other blocks, and may not be repeated. A `setup` block doesn't have any special semantics. The `setup:` label is
-optional and may be omitted, resulting in an _implicit_ `setup` block. The `given:` label is an alias for `setup:`,
-and sometimes leads to a more readable feature method description (see <<specs-as-doc,Specifications as Documentation>>).
+The `given` block is where you do any setup work for the feature that you are describing. It may not be preceded by
+other blocks, and may not be repeated. A `given` block doesn't have any special semantics. The `given:` label is
+optional and may be omitted, resulting in an _implicit_ `given` block. Originally, the alias `setup:` was the preferred block name,
+but using `given:` often leads to a more readable feature method description (see <<specifications_as_documentation,Specifications as Documentation>>).
 
 ==== When and Then Blocks
 
@@ -293,7 +305,7 @@ implementing this method? After all, where are the conditions? Fortunately, we c
 [source,groovy]
 ----
 def "HashMap accepts null key"() {
-  setup:
+  given:
   def map = new HashMap()
 
   when:
@@ -311,12 +323,13 @@ the method will also fail if any other exception is thrown.
 ===== Interactions
 
 Whereas conditions describe an object's state, interactions describe how objects communicate with each other.
-Interactions are devoted a whole <<interaction_based_testing.adoc#,chapter>>, and so we only give a quick example here.
+Interactions and Interaction based testing are described in a separate <<interaction_based_testing.adoc#,chapter>>, so we only give a quick example here.
 Suppose we want to describe the flow of events from a publisher to its subscribers. Here is the code:
 
 [source,groovy]
 ----
 def "events are published to all subscribers"() {
+  given:
   def subscriber1 = Mock(Subscriber)
   def subscriber2 = Mock(Subscriber)
   def publisher = new Publisher()
@@ -363,7 +376,7 @@ to create more expressive and succinct conditions.
 
 [source,groovy]
 ----
-setup:
+given:
 def file = new File("/some/path")
 file.createNewFile()
 
@@ -386,7 +399,7 @@ is automatically reclaimed by the garbage collector. More coarse-grained specifi
 block to clean up the file system, close a database connection, or shut down a network service.
 
 TIP: If a specification is designed in such a way that all its feature methods require the same resources, use a
-`cleanup()` method; otherwise, prefer `cleanup` blocks. The same trade-off applies to `setup()` methods and `setup` blocks.
+`cleanup()` method; otherwise, prefer `cleanup` blocks. The same trade-off applies to `setup()` methods and `given` blocks.
 
 ==== Where Blocks
 
@@ -409,9 +422,9 @@ def "computing the maximum of two numbers"() {
 This `where` block effectively creates two "versions" of the feature method: One where `a` is 5, `b` is 1, and `c` is 5,
 and another one where `a` is 3, `b` is 9, and `c` is 9.
 
-Although it is declared last the `where` block is evaluated before feature method runs.
+Although it is declared last, the `where` block is evaluated before the feature method containing it runs.
 
-The `where` block will be further explained in the <<data_driven_testing.adoc#,Data Driven Testing>> chapter.
+The `where` block is further explained in the <<data_driven_testing.adoc#,Data Driven Testing>> chapter.
 
 == Helper Methods
 
@@ -498,7 +511,6 @@ A final advice: Although code reuse is generally a good thing, don't take it too
 and helper methods can increase the coupling between feature methods. If you reuse too much or the wrong code, you will
 end up with specifications that are fragile and hard to evolve.
 
-[[specs-as-doc]]
 
 == Using `with` for expectations
 
@@ -540,6 +552,48 @@ with(service) {
   1 * stop()
 }
 ----
+
+Sometimes an IDE as trouble to determine the type of the target, in that case you can help out by manually specifying the
+target type via `with(target, type, closure)`.
+
+== Using `verifyAll` to assert multiple expectations together
+
+Normal expectations fail the test on the first failed assertions. Sometimes it is helpful to collect these failures before
+failing the test to have more information, this behavior is also known as soft assertions.
+
+The `verifyAll` method can be used like `with`,
+
+[source,groovy]
+----
+def "offered PC matches preferred configuration"() {
+  when:
+  def pc = shop.buyPc()
+
+  then:
+  verifyAll(pc) {
+    vendor == "Sunny"
+    clockRate >= 2333
+    ram >= 406
+    os == "Linux"
+  }
+}
+----
+
+or it can be used without a target.
+
+
+[source,groovy]
+----
+  expect:
+  verifyAll {
+    2 == 2
+    4 == 4
+  }
+----
+
+Like `with` you can also optionally define a type hint for the IDE.
+
+[[specifications_as_documentation]]
 == Specifications as Documentation
 
 Well-written specifications are a valuable source of information. Especially for higher-level specifications targeting
@@ -549,15 +603,15 @@ attach textual descriptions to blocks:
 
 [source,groovy]
 ----
-setup: "open a database connection"
+given: "open a database connection"
 // code goes here
 ----
 
-Individual parts of a block can be described with `and:`:
+Use the `and:` label to describe logically different parts of a block:
 
 [source,groovy]
 ----
-setup: "open a database connection"
+given: "open a database connection"
 // code goes here
 
 and: "seed the customer table"
@@ -585,8 +639,6 @@ then: "the account's balance is $10"
 // ...
 ----
 
-As noted before, `given:` is just an alias for `setup:`.
-
 Block descriptions are not only present in source code, but are also available to the Spock runtime. Planned usages of
 block descriptions are enhanced diagnostic messages, and textual reports that are equally understood by all stakeholders.
 
@@ -599,20 +651,19 @@ activated by annotations called _directives_. Currently, Spock ships with the fo
 [horizontal]
 `@Timeout`:: Sets a timeout for execution of a feature or fixture method.
 
-`@Ignore`:: Ignores a feature method.
+`@Ignore`:: Ignores any feature method carrying this annotation.
 
-`@IgnoreRest`:: Ignores all feature methods not carrying this annotation. Useful for quickly running just a single method.
+`@IgnoreRest`:: Any feature method carrying this annotation will be executed, all others will be ignored. Useful for quickly running just a single method.
 
 `@FailsWith`:: Expects a feature method to complete abruptly. `@FailsWith` has two use cases: First, to document known bugs that cannot
 be resolved immediately. Second, to replace exception conditions in certain corner cases where the latter cannot be
 used (like specifying the behavior of exception conditions). In all other cases, exception conditions are preferable.
 
-To learn how to implement your own directives and extensions, go to the <<extensions.adoc#,Extensions>> chapter.
+Go to the <<extensions.adoc#,Extensions>> chapter to learn how to implement your own directives and extensions.
 
 == Comparison to JUnit
 
-Although Spock uses a different terminology, many of its concepts and features are inspired from JUnit. Here is a rough
-comparison:
+Although Spock uses a different terminology, many of its concepts and features are inspired by JUnit. Here is a rough comparison:
 
 |===
 |Spock                 |JUnit
@@ -629,3 +680,4 @@ comparison:
 |Exception condition   |`@Test(expected=...)`
 |Interaction           | Mock expectation (e.g. in Mockito)
 |===
+`

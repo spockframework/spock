@@ -38,7 +38,7 @@ public class JavaMockInterceptor implements IProxyBasedMockInterceptor {
   @Override
   public Object intercept(Object target, Method method, Object[] arguments, IResponseGenerator realMethodInvoker) {
     IMockObject mockObject = new MockObject(mockConfiguration.getName(), mockConfiguration.getExactType(),
-        target, mockConfiguration.getInstance(), mockConfiguration.isVerified(), false, mockConfiguration.getDefaultResponse(), specification, this);
+        target, mockConfiguration.isVerified(), false, mockConfiguration.getDefaultResponse(), specification, this);
 
     if (method.getDeclaringClass() == ISpockMockObject.class) {
       return mockObject;

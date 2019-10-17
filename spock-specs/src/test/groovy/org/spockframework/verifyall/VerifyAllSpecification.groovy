@@ -3,6 +3,7 @@ package org.spockframework.verifyall
 import org.spockframework.EmbeddedSpecification
 import org.spockframework.runtime.*
 import spock.lang.FailsWith
+import spock.lang.Issue
 
 import groovy.transform.*
 
@@ -58,7 +59,7 @@ class VerifyAllSpecification extends EmbeddedSpecification {
     result.failures[0].exception instanceof SpockTimeoutError
   }
 
-  def "if exception is not in condition, all already failed conditions should be reported"(){
+  def "if exception is not in condition, all already failed conditions should be reported"() {
     when:
     def result = runner.runWithImports("""
       import spock.util.concurrent.PollingConditions
@@ -202,9 +203,41 @@ class VerifyAllSpecification extends EmbeddedSpecification {
     }
   }
 
+  @Issue('https://github.com/spockframework/spock/issues/886')
+  def "verifyAll works with void methods"() {
+    expect:
+    checkCondition()
+    verifyAll {
+      checkCondition()
+      verifyAll {
+        checkCondition()
+        verifyAll {
+          checkCondition()
+        }
+      }
+    }
+  }
+
+  @Issue('https://github.com/spockframework/spock/issues/886')
+  def "verifyAll works with void methods of delegates"() {
+    given:
+    Person person = new Person()
+    expect:
+    person.check()
+    verifyAll(person) {
+      check()
+      verifyAll {
+        check()
+        verifyAll {
+          check()
+        }
+      }
+    }
+  }
+
   def "method condition is invoked on closure but not on the spec"() {
 
-    def map = [ 'value1' : 1, 'value2' : 2]
+    def map = ['value1': 1, 'value2': 2]
 
     expect:
     verifyAll(map) {
@@ -215,7 +248,7 @@ class VerifyAllSpecification extends EmbeddedSpecification {
 
   def "nested method conditions are invoked on closure but not on the spec"() {
 
-    def map = [ 'value1' : 1, 'value2' : 2]
+    def map = ['value1': 1, 'value2': 2]
 
     expect:
     verifyAll(map) {
@@ -252,12 +285,64 @@ class VerifyAllSpecification extends EmbeddedSpecification {
     }
   }
 
+  def "don't turn nested with expressions into condition"() {
+    def list = [[['start', 'end']]]
+
+    expect:
+    with(list) {
+      with(it[0]) {
+        verifyAll(it[0]) {
+          verifyAll(it) {
+            it[0] == 'start'
+            it[1] == 'end'
+          }
+          it.size() == 2
+        }
+      }
+    }
+  }
+
+  def "verifyAll with nested verifyAll"() {
+    when:
+    def result = runner.runSpecBody("""
+        def "test1"() {
+          expect:
+          verifyAll{
+            verifyAll{
+              1 == 2
+            }
+            verifyAll(4){
+              3 == 4
+              it == 5
+            }
+          }
+        }""")
+    then:
+    result.failures.size() == 3
+    with(result.failures[0].exception, SpockComparisonFailure) {
+      expected.trim() == "2"
+      actual.trim() == "1"
+    }
+    with(result.failures[1].exception, SpockComparisonFailure) {
+      expected.trim() == "4"
+      actual.trim() == "3"
+    }
+    with(result.failures[2].exception, SpockComparisonFailure) {
+      expected.trim() == "5"
+      actual.trim() == "4"
+    }
+  }
+
   int size() {
     42
   }
 
   boolean contains(Object object) {
     object == 4
+  }
+
+  void checkCondition() {
+    assert true
   }
 }
 
@@ -266,4 +351,8 @@ class VerifyAllSpecification extends EmbeddedSpecification {
 class Person {
   String name = "Fred"
   int age = 42
+
+  void check() {
+    assert true
+  }
 }

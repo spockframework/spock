@@ -16,22 +16,32 @@
 
 package spock.lang;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
+import groovy.lang.Closure;
 import org.spockframework.runtime.extension.ExtensionAnnotation;
 import org.spockframework.runtime.extension.builtin.RetryExtension;
 import org.spockframework.util.Beta;
 
+import java.lang.annotation.*;
+
 
 /**
+ * Retries the given feature if an exception occurs during execution.
+ *
+ * <p>Retries can be applied to feature methods and spec classes. Applying it to
+ * a spec class has the same effect as applying it to each feature method that
+ * isn't already annotated with {@code @Retry}.
+ *
+ * <p>A {@code @Retry} annotation that is declared on a spec class is applied to
+ * all features in all subclasses as well, unless a subclass declares its own
+ * annotation. If so, the retries defined in the subclass are applied to all
+ * feature methods declared in the subclass as well as inherited ones.
+ *
  * @author Leonard Brünings
+ * @since 1.2
  */
 @Beta
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.METHOD})
+@Target({ElementType.TYPE, ElementType.METHOD})
 @ExtensionAnnotation(RetryExtension.class)
 public @interface Retry {
   /**
@@ -42,6 +52,23 @@ public @interface Retry {
    * @return array of Exception classes to retry.
    */
   Class<? extends Throwable>[] exceptions() default {Exception.class, AssertionError.class};
+
+  /**
+   * Condition that is evaluated to decide whether the feature should be
+   * retried.
+   *
+   * The configured closure is called with a delegate of type
+   * {@link org.spockframework.runtime.extension.builtin.RetryConditionContext}
+   * which provides access to the current exception and {@code Specification}
+   * instance.
+   *
+   * The feature is retried if the exception class passes the type check and the
+   * specified condition holds true. If no condition is specified, only the type
+   * check is performed.
+   *
+   * @return predicate that must hold for the feature to be retried.
+   */
+  Class<? extends Closure> condition() default Closure.class;
 
   /**
    * The number of retries.
@@ -58,7 +85,7 @@ public @interface Retry {
   int delay() default 0;
 
   /**
-   * Retry mode, only relevant for data driven features.
+   * Retry mode, controls what is retried.
    *
    * @return retry mode
    */
@@ -73,6 +100,11 @@ public @interface Retry {
     /**
      * Retry the iterations individually.
      */
-    ITERATION
+    ITERATION,
+
+    /**
+     * Retry the the feature together with the setup and cleanup methods.
+     */
+    SETUP_FEATURE_CLEANUP
   }
 }

@@ -26,8 +26,16 @@ public class DiffedObjectAsBeanRenderer implements IObjectRenderer<Object> {
     for (Class<?> clazz = object.getClass(); clazz != null; clazz = clazz.getSuperclass()) {
       for (Field field : clazz.getDeclaredFields()) {
         if (field.isSynthetic()) continue;
-        String value = GroovyRuntimeUtil.toString(GroovyRuntimeUtil.getAttribute(object, field.getName()));
-        builder.addLine(field.getName() + ": " + value);
+        boolean accessible = field.isAccessible();
+        try {
+          field.setAccessible(true);
+          String value = GroovyRuntimeUtil.toString(field.get(object));
+          builder.addLine(field.getName() + ": " + value);
+        } catch (IllegalAccessException e) {
+          builder.addLine(field.getName() + ": [threw an exception on access: "+e.getMessage()+"]");
+        } finally {
+          field.setAccessible(accessible);
+        }
       }
     }
 

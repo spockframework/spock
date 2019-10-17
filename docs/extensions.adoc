@@ -214,11 +214,12 @@ the timeout was exceeded.
 
 The `@Retry` extensions can be used for flaky integration tests, where remote systems can fail sometimes.
 By default it retries an iteration `3` times with `0` delay if either an `Exception` or `AssertionError` has been thrown, all this is configurable.
+In addition, an optional `condition` closure can be used to determine if a feature should be retried.
 It also provides special support for data driven features, offering to either retry all iterations or just the failing ones.
 
 [source,groovy]
 ----
-class FlakyInegrationSpec extends Specification {
+class FlakyIntegrationSpec extends Specification {
   @Retry
   def retry3Times() { ... }
 
@@ -227,6 +228,12 @@ class FlakyInegrationSpec extends Specification {
 
   @Retry(exceptions=[IOException])
   def onlyRetryIOException() { ... }
+
+  @Retry(condition = { failure.message.contains('foo') })
+  def onlyRetryIfConditionOnFailureHolds() { ... }
+
+  @Retry(condition = { instance.field != null })
+  def onlyRetryIfConditionOnInstanceHolds() { ... }
 
   @Retry
   def retryFailingIterations() {
@@ -244,6 +251,53 @@ class FlakyInegrationSpec extends Specification {
 
   @Retry(delay = 1000)
   def retryAfter1000MsDelay() { ... }
+}
+----
+
+Retries can also be applied to spec classes which has the same effect as applying it to each feature method that isn't
+already annotated with {@code Retry}.
+
+[source,groovy]
+----
+@Retry
+class FlakyIntegrationSpec extends Specification {
+  def "will be retried with config from class"() {
+    ...
+  }
+  @Retry(count = 5)
+  def "will be retried using its own config"() {
+    ...
+  }
+}
+----
+
+A {@code @Retry} annotation that is declared on a spec class is applied to all features in all subclasses as well,
+unless a subclass declares its own annotation. If so, the retries defined in the subclass are applied to all feature
+methods declared in the subclass as well as inherited ones.
+
+Given the following example, running `FooIntegrationSpec` will execute both `inherited` and `foo` with one retry.
+Running `BarIntegrationSpec` will execute `inherited` and `bar` with two retries.
+
+[source,groovy]
+----
+@Retry(count = 1)
+abstract class AbstractIntegrationSpec extends Specification {
+  def inherited() {
+    ...
+  }
+}
+
+class FooIntegrationSpec extends AbstractIntegrationSpec {
+  def foo() {
+    ...
+  }
+}
+
+@Retry(count = 2)
+class BarIntegrationSpec extends AbstractIntegrationSpec {
+  def bar() {
+    ...
+  }
 }
 ----
 
@@ -331,6 +385,12 @@ def "determines family based on os.name system property"() {
 CAUTION: Temporarily changing the values of system properties is only safe when specs are
 run in a single thread per JVM. Even though many execution environments do limit themselves to one thread
 per JVM, keep in mind that Spock cannot enforce this.
+
+=== AutoAttach
+
+Automatically attaches a detached mock to the current `Specification`. Use this if there is no direct framework
+support available. Spring and Guice dependency injection is automatically handled by the
+<<module_spring.adoc#_spring_module,Spring Module>> and <<modules.adoc#_guice_module,Guice Module>> respectively.
 
 === AutoCleanup
 
@@ -498,7 +558,7 @@ runner {
 
 Spock can create a report log of the executed tests in JSON format. This report contains also things like
 <<Title and Narrative,`@Title`>>, <<Title and Narrative,`@Narrative`>>, <<See,`@See`>> and <<Issue,`@Issue`>> values or
-<<specs-as-doc,block descriptors>>.
+<<spock_primer.adoc#_blocks,block descriptors>>.
 This report can be enabled according to the <<Spock Configuration File>> section. The default is to not generate this
 report.
 
@@ -521,6 +581,10 @@ report {
     logFileSuffix new Date().format('yyyy-MM-dd_HH_mm_ss')
 }
 ----
+
+== Third-Party Extensions
+
+You can find a list of third-party extensions in the https://github.com/spockframework/spock/wiki/Third-Party-Extensions[Spock Wiki].
 
 == Writing Custom Extensions
 

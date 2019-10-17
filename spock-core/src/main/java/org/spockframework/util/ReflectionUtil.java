@@ -72,6 +72,20 @@ public abstract class ReflectionUtil {
     return getAnnotationRecursive(cls.getSuperclass(), annotationClass);
   }
 
+  public static <T extends Annotation> List<T> collectAnnotationRecursive(Class<?> cls, Class<T> annotationClass) {
+    return collectAnnotationRecursive(cls, annotationClass, new ArrayList<T>());
+  }
+
+  private static <T extends Annotation> List<T> collectAnnotationRecursive(Class<?> cls, Class<T> annotationClass,
+                                                                           List<T> result) {
+    T annotation = cls.getAnnotation(annotationClass);
+    if (annotation != null) {
+      result.add(annotation);
+    }
+    if (Object.class.equals(cls)) return result;
+    return collectAnnotationRecursive(cls.getSuperclass(), annotationClass, result);
+  }
+
   public static boolean isFinalMethod(Method method) {
     return Modifier.isFinal(method.getDeclaringClass().getModifiers() | method.getModifiers());
   }
@@ -241,5 +255,30 @@ public abstract class ReflectionUtil {
     } catch (NoSuchMethodException e) {
       return false;
     }
+  }
+
+  public static void deepCopyFields(Object source, Object target) {
+    if (!source.getClass().isAssignableFrom(target.getClass())) {
+      throw new IllegalArgumentException("source and target are not compatible.");
+    }
+    Class<?> clazz = source.getClass();
+    while (!clazz.equals(Object.class)) {
+      Field[] fields = clazz.getDeclaredFields();
+      for (Field field : fields) {
+        copyField(field, source, target);
+      }
+      clazz = clazz.getSuperclass();
+    }
+  }
+
+  private static void copyField(Field field, Object source, Object target) {
+    boolean accessible = field.isAccessible();
+    field.setAccessible(true);
+    try {
+      field.set(target, field.get(source));
+    } catch (IllegalAccessException e) {
+      // ignore
+    }
+    field.setAccessible(accessible);
   }
 }

@@ -256,6 +256,7 @@ public abstract class Specification extends MockingApi {
   /**
    * A combination of {@link #with(Object, Closure)} and {@link #verifyAll(Closure)}.
    *
+   * @since 1.2
    * @param target an implicit target for conditions and/or interactions
    * @param closure a code block containing top-level conditions and/or interactions
    * @param <U> type of target
@@ -278,6 +279,7 @@ public abstract class Specification extends MockingApi {
   /**
    * A combination of {@link #with(Object, Class, Closure)} and {@link #verifyAll(Closure)}.
    *
+   * @since 1.2
    * @param target an implicit target for conditions and/or interactions
    * @param type the expected type of the target
    * @param closure a code block containing top-level conditions and/or interactions

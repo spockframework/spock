@@ -15,6 +15,7 @@
  */
 package org.spockframework.smoke.condition
 
+import org.spockframework.runtime.ConditionNotSatisfiedError
 import spock.lang.Issue
 
 class EqualityComparisonRendering extends ConditionRenderingSpec {
@@ -33,18 +34,24 @@ x == y
   }
 
   def "values with same representations and same types"() {
-    expect:
-    isRendered """
+    given:
+    def x = new Person(name: "Fred")
+    def y = new Person(name: "Fred")
+
+    when:
+    assert x == y
+
+    then:
+    ConditionNotSatisfiedError e = thrown()
+    def rendering = e.condition.rendering.trim().replaceAll(/(?<=@)\p{XDigit}++/, 'X')
+    def expectedRendering = '''
 x == y
 | |  |
-| |  Fred (org.spockframework.smoke.condition.EqualityComparisonRendering\$Person)
+| |  Fred (org.spockframework.smoke.condition.EqualityComparisonRendering.Person@X)
 | false
-Fred (org.spockframework.smoke.condition.EqualityComparisonRendering\$Person)
-    """, {
-      def x = new Person(name: "Fred")
-      def y = new Person(name: "Fred")
-      assert x == y
-    }
+Fred (org.spockframework.smoke.condition.EqualityComparisonRendering.Person@X)
+    '''.trim()
+    rendering == expectedRendering
   }
 
   def "values with same representations and different types"() {
@@ -62,16 +69,59 @@ x == y
     }
   }
 
+  def "values with same representations and different array types"() {
+    expect:
+    isRendered """
+x == y
+| |  |
+| |  [1] (java.lang.String[])
+| false
+[1] (int[])
+    """, {
+      def x = [1] as int[]
+      def y = ['1'] as String[]
+      assert x == y
+    }
+  }
+
+  def "values with same representations and different anonymous types"() {
+    expect:
+    isRendered '''
+x == y
+| |  |
+| |  foo (org.spockframework.smoke.condition.EqualityComparisonRendering$2)
+| false
+foo (org.spockframework.smoke.condition.EqualityComparisonRendering$1)
+    ''', {
+      def x = new Serializable() { String toString() { "foo" } }
+      def y = new Serializable() { String toString() { "foo" } }
+      assert x == y
+    }
+  }
+
   def "values with same rendered and literal representations"() {
     expect:
     isRendered """
 x == 123
-| |
+| |  |
+| |  123 (java.lang.Integer)
 | false
 123 (java.lang.String)
     """, {
       def x = "123"
       assert x == 123
+    }
+  }
+
+  def "values with same literal representations"() {
+    expect:
+    isRendered """
+[0, 1] == [0, 1] as Set
+|      |         |
+|      false     [0, 1] (java.util.LinkedHashSet)
+[0, 1] (java.util.ArrayList)
+    """, {
+      assert [0, 1] == [0, 1] as Set
     }
   }
 
@@ -94,10 +144,10 @@ null (void)
     expect:
     isRendered """
 (x == y) instanceof String
- | |  |  |
- | |  |  false
+ | |  |  |          |
+ | |  |  false      class java.lang.String
  | |  1 (java.lang.String)
- | false
+ | false (java.lang.Boolean)
  1 (java.lang.Integer)
     """, {
       def x = 1
@@ -111,9 +161,9 @@ null (void)
     expect:
     isRendered """
 (x == y) instanceof String
- | |  |  |
- 1 |  1  false
-   true
+ | |  |  |          |
+ 1 |  1  false      class java.lang.String
+   true (java.lang.Boolean)
     """, {
       int x = 1
       BigDecimal y = 1

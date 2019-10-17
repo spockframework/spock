@@ -94,7 +94,27 @@ public class Jvm {
    * @return whether the Java version is 9
    */
   public boolean isJava9() {
-    return "1.9".equals(javaSpecVersion);
+    return "9".equals(javaSpecVersion);
+  }
+
+  /**
+   * Tells whether the Java version is 10.
+   *
+   * @since 1.2
+   * @return whether the Java version is 10
+   */
+  public boolean isJava10() {
+    return "10".equals(javaSpecVersion);
+  }
+
+  /**
+   * Tells whether the Java version is 11.
+   *
+   * @since 1.2
+   * @return whether the Java version is 11
+   */
+  public boolean isJava11() {
+    return "11".equals(javaSpecVersion);
   }
 
   /**
@@ -139,7 +159,25 @@ public class Jvm {
    * @return whether the Java version is compatible with Java 9
    */
   public boolean isJava9Compatible() {
-    return javaSpecVersionNumber.getMajor() > 1 || javaSpecVersionNumber.getMinor() >= 9;
+    return javaSpecVersionNumber.getMajor() >= 9;
+  }
+
+  /**
+   * Tells whether the Java version is compatible with Java 10.
+   *
+   * @return whether the Java version is compatible with Java 10
+   */
+  public boolean isJava10Compatible() {
+    return javaSpecVersionNumber.getMajor() >= 10;
+  }
+
+  /**
+   * Tells whether the Java version is compatible with Java 11.
+   *
+   * @return whether the Java version is compatible with Java 11
+   */
+  public boolean isJava11Compatible() {
+    return javaSpecVersionNumber.getMajor() >= 11;
   }
 
   /**

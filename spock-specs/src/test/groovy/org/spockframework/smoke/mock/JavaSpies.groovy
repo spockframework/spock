@@ -113,6 +113,19 @@ class JavaSpies extends Specification {
     result == "singing, singing"
   }
 
+  @Issue("https://github.com/spockframework/spock/issues/771")
+  def "sping on concrete instances can use partial mocking"() {
+    def person = Spy(new Person())
+
+    when:
+    def result = person.work()
+
+    then:
+    1 * person.work()
+    1 * person.getTask() >> "work"
+    result == "work, work"
+  }
+
   @Issue("https://github.com/spockframework/spock/issues/769")
   def "can spy on instances of classes with no default constructor"() {
     given:
@@ -155,6 +168,16 @@ class JavaSpies extends Specification {
     then:
     CannotCreateMockException e = thrown()
     e.message.contains("global")
+  }
+
+  @Issue("https://github.com/spockframework/spock/issues/822")
+  def "inferred type is ignored for instance mocks"() {
+    when:
+    List list = new ArrayList<>()
+    List second = Spy(list)
+
+    then:
+    noExceptionThrown()
   }
 
   static class Constructable {

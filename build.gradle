@@ -1,9 +1,9 @@
 import java.text.SimpleDateFormat
 
 plugins {
-  id 'com.gradle.build-scan' version '1.9'
+  id 'com.gradle.build-scan' version '1.16'
   id "base"
-  id "org.asciidoctor.convert" version "1.5.6"
+  id "org.asciidoctor.convert" version "1.5.7"
   id "jacoco"
   id "net.nemerosa.versioning" version "2.6.1"
 }
@@ -11,36 +11,59 @@ plugins {
 description = "Spock Framework"
 
 ext {
-  baseVersion = "1.2"
+  baseVersion = "1.3.1"
   snapshotVersion = true
   releaseCandidate = 0
-  variants = [2.4]
-  variant = System.getProperty("variant") as BigDecimal ?: variants.last()
+  variants = [2.4, 2.5]
+  variant = System.getProperty("variant") as BigDecimal ?: variants.first()
   if (variant == 2.4) {
-    groovyVersion = "2.4.12"
+    groovyVersion = "2.4.15"
     minGroovyVersion = "2.4.0"
-    maxGroovyVersion = snapshotVersion ? "3.9.99" : "2.9.99" // TODO lock these down once Groovy 3 gets close to RC stage
+    groovyDependency = ["org.codehaus.groovy:groovy-all:${groovyVersion}"]
+    groovyConsoleExtraDependency = []  //bundled in groovy-all
+  } else if (variant == 2.5) {
+    groovyVersion = "2.5.4"
+    minGroovyVersion = "2.5.0"
+    groovyDependency = [
+      "org.codehaus.groovy:groovy:${groovyVersion}",
+      "org.codehaus.groovy:groovy-json:${groovyVersion}",
+      "org.codehaus.groovy:groovy-nio:${groovyVersion}",
+      "org.codehaus.groovy:groovy-macro:${groovyVersion}",
+      "org.codehaus.groovy:groovy-templates:${groovyVersion}",
+      "org.codehaus.groovy:groovy-test:${groovyVersion}",
+      "org.codehaus.groovy:groovy-sql:${groovyVersion}",
+      "org.codehaus.groovy:groovy-xml:${groovyVersion}",
+    ]
+    groovyConsoleExtraDependency = [
+      "org.codehaus.groovy:groovy-groovysh:${groovyVersion}"
+    ]
   } else {
     throw new InvalidUserDataException("Unknown variant: $variant. Choose one of: $variants")
   }
+  maxGroovyVersion = snapshotVersion ? "3.9.99" : "2.9.99" // TODO lock these down once Groovy 3 gets close to RC stage
   if (System.getProperty("groovyVersion")) {
     groovyVersion = System.getProperty("groovyVersion")
   }
-  fullVersion = baseVersion + ((!snapshotVersion && releaseCandidate) ? "-rc-$releaseCandidate" : "") + "-groovy-$variant" + (snapshotVersion ? "-SNAPSHOT" : '')
-    variantLessVersion = baseVersion + (snapshotVersion ? "-SNAPSHOT" : (releaseCandidate ? "-rc-$releaseCandidate" : ""))
-  javaVersions = [1.7, 1.8]
+  fullVersion = baseVersion + ((!snapshotVersion && releaseCandidate) ? "-RC$releaseCandidate" : "") + "-groovy-$variant" + (snapshotVersion ? "-SNAPSHOT" : '')
+  variantLessVersion = baseVersion + (snapshotVersion ? "-SNAPSHOT" : (releaseCandidate ? "-RC$releaseCandidate" : ""))
+  javaVersions = [1.7, 1.8, 9, 10, 11] // ensure that latest version is actually build on travis, otherwise no docs get published
   javaVersion = System.getProperty("java.specification.version") as BigDecimal
+
+  if (javaVersion >= 9) {
+    groovyDependency += ["javax.xml.bind:jaxb-api:2.3.0"]
+  }
+
   libs = [
     jetbrainsAnnotations: "org.jetbrains:annotations:13.0",
     ant: "org.apache.ant:ant:1.9.7",
-    asm: "org.ow2.asm:asm:5.2",
-    bytebuddy: "net.bytebuddy:byte-buddy:1.7.0",
-    cglib: "cglib:cglib-nodep:3.2.5",
-    groovy: "org.codehaus.groovy:groovy-all:$groovyVersion",
+    asm: "org.ow2.asm:asm:7.0",
+    bytebuddy: "net.bytebuddy:byte-buddy:1.9.3",
+    cglib: "cglib:cglib-nodep:3.2.9",
+    groovy: groovyDependency,
     h2database: "com.h2database:h2:1.3.176",
     junit: "junit:junit:4.12",
     log4j: "log4j:log4j:1.2.17",
-    objenesis: "org.objenesis:objenesis:2.5.1"
+    objenesis: "org.objenesis:objenesis:2.6"
   ]
   Date buildTimeAndDate = new Date()
   buildDate = new SimpleDateFormat('yyyy-MM-dd').format(buildTimeAndDate)
@@ -55,7 +78,19 @@ allprojects {
 
   apply from: script("common")
 
-  if (javaVersion >= 1.8) {
+  if (javaVersion == 1.8) {
+    tasks.withType(Javadoc) {
+      options.addStringOption('Xdoclint:none', '-quiet')
+      options.noTimestamp()
+    }
+  } else if (javaVersion >= 9){
+    tasks.withType(JavaCompile) {
+      sourceCompatibility = javaVersions.min()
+      targetCompatibility = javaVersions.min()
+      options.compilerArgs += ['--release', '8']
+      options.encoding = 'UTF-8'
+    }
+
     tasks.withType(Javadoc) {
       options.addStringOption('Xdoclint:none', '-quiet')
       options.noTimestamp()
@@ -68,7 +103,6 @@ apply from: script("ide")
 subprojects {
   apply plugin: "groovy"
   apply plugin: "jacoco"
-  apply plugin: "signing"
 
   sourceCompatibility = javaVersions.min()
   targetCompatibility = javaVersions.min()
@@ -108,22 +142,6 @@ subprojects {
     compile(project.name == "spock-gradle" ? [] : libs.groovy)
   }
 
-  signing {
-    required { gradle.taskGraph.hasTask(':uploadArchives') }
-    sign configurations.archives
-  }
-
-  signArchives {
-    onlyIf { gradle.taskGraph.hasTask(':uploadArchives') }
-  }
-
-  ext."signing.keyId" = "2EA0A67F"
-  if (System.getenv("SIGNING_PASSWORD")) {
-    // if the password property is set, even if its null null, the SigningExtension will try to load the key
-    ext."signing.password" = System.getenv("SIGNING_PASSWORD")
-  }
-  ext."signing.secretKeyRingFile" = "$rootDir/config/code-signing-secring.gpg"
-
   configureJavadoc(javadoc)
   configureGroovydoc(groovydoc)
 
@@ -136,24 +154,6 @@ subprojects {
     classifier "javadoc"
     from javadoc
   }
-
-  artifacts {
-    archives sourcesJar, javadocJar
-  }
-
-  task testCglib(type: Test) {
-    systemProperty("org.spockframework.mock.ignoreByteBuddy", "true")
-    testClassesDirs = sourceSets.test.output.classesDirs
-    classpath = sourceSets.test.runtimeClasspath
-  }
-
-  if (gradle.startParameter.taskNames.contains("travisCiBuild")
-    || gradle.startParameter.taskNames.contains("shippableCiBuild")
-    || gradle.startParameter.taskNames.contains("appveyorCiBuild")) {
-    check.dependsOn testCglib
-  }
-
-  testCglib.mustRunAfter test
 
   tasks.withType(Test) {
     def taskName = name
@@ -169,7 +169,36 @@ subprojects {
     //'exit code 137' - https://github.com/travis-ci/travis-ci/issues/5582
     jvmArgs '-Xmx512m'
   }
+
+  jacoco {
+    toolVersion = '0.8.2'
+  }
 }
+
+task collectTestXml (group: 'Test reports') {
+  description = "Collects the test xmls from every subproject into a new directory with subproject as name."
+  def reportingProjects = subprojects.findAll()
+  dependsOn(reportingProjects.tasks.collectMany{it.withType(Test)})
+
+
+  doFirst {
+    def target = file("$buildDir/collected-test-results")
+    target.mkdirs()
+    reportingProjects.each { rp ->
+      rp.tasks.withType(Test).each { testTask ->
+        def repSrc = testTask.reports.junitXml.destination
+
+        def repTarget = file("$target/$rp.name-$repSrc.name")
+        copy {
+          from repSrc
+          into repTarget
+          include '**/*.xml'
+        }
+      }
+    }
+  }
+}
+
 
 task codeCoverageReport (type: JacocoReport, group: 'Coverage reports') {
   description = "Creates an aggregate coverage for the whole project."
@@ -205,9 +234,11 @@ if (gradle.startParameter.taskNames == ["travisCiBuild"]) {
       maxParallelForks = 2
     }
   }
-  if (System.getenv("TRAVIS_PULL_REQUEST") == "false" && System.getenv("TRAVIS_BRANCH") == "master") {
+  if (System.getenv("TRAVIS_PULL_REQUEST") == "false" && System.getenv("TRAVIS_BRANCH") == "master" && baseVersion.startsWith('2.')) { /* TODO remove baseVersion check when switching to 2.x
+                                                                                                                                          1.3 is EOL so don't publish new snapshot/docs when updating Readme.md until 2.x is merged to master
+                                                                                                                                        */
     if (javaVersion == javaVersions.min()) {
-      gradle.startParameter.taskNames += ["uploadArchives"]
+      gradle.startParameter.taskNames += ["publish"]
       if (!snapshotVersion) {
         gradle.startParameter.taskNames += ["tagRelease"]
       }
@@ -238,6 +269,10 @@ if (gradle.startParameter.taskNames == ["appveyorCiBuild"]) {
   gradle.startParameter.taskNames = ["build"]
 }
 
+if (gradle.startParameter.taskNames == ["circleCiBuild"]) {
+  gradle.startParameter.taskNames = ["build", "collectTestXml"]
+}
+
 task publishJavadoc(type: Exec) {
   dependsOn "javadoc"
   commandLine "sh", "-c",
@@ -251,7 +286,7 @@ task publishJavadoc(type: Exec) {
   cp -r build/javadoc/$variantLessVersion javadoc/
   git add javadoc
   git commit -qm "Publish javadoc/$variantLessVersion"
-  git push -q "https://${System.getenv("GITHUB_TOKEN")}@github.com/spockframework/spock.git" gh-pages > /dev/null 2>&1
+  git push "https://\$GITHUB_TOKEN@github.com/spockframework/spock.git" gh-pages 2>&1 | sed "s/\$GITHUB_TOKEN/xxx/g"
   git checkout master
 """
 }
@@ -268,7 +303,7 @@ task publishDocs(type: Exec) {
   cp -r build/asciidoc/html5/* docs/$variantLessVersion
   git add docs
   git commit -qm "Publish docs/$variantLessVersion"
-  git push -q "https://${System.getenv("GITHUB_TOKEN")}@github.com/spockframework/spock.git" gh-pages > /dev/null 2>&1
+  git push "https://\$GITHUB_TOKEN@github.com/spockframework/spock.git" gh-pages 2>&1 | sed "s/\$GITHUB_TOKEN/xxx/g"
   git checkout master
 """
 }
@@ -279,7 +314,7 @@ task tagRelease(type: Exec) {
   git config user.name "Spock Framework Robot"
   git checkout master
   git tag -f spock-$variantLessVersion
-  git push -q "https://${System.getenv("GITHUB_TOKEN")}@github.com/spockframework/spock.git" spock-$variantLessVersion > /dev/null 2>&1
+  git push "https://\$GITHUB_TOKEN@github.com/spockframework/spock.git" spock-$variantLessVersion 2>&1 | sed "s/\$GITHUB_TOKEN/xxx/g"
 """
 }
 
@@ -306,7 +341,7 @@ configureGroovydoc(groovydoc)
 asciidoctor {
   sourceDir = file("docs")
   logDocuments = true
-  attributes "source-highlighter": "coderay", "linkcss": true, "revnumber": variantLessVersion
+  attributes "source-highlighter": "coderay", "linkcss": true, "sectanchors": true, "revnumber": variantLessVersion
   // also treats the included specs as inputs
   inputs.dir file("spock-specs/src/test/groovy/org/spockframework/docs")
   inputs.dir file("spock-spring/src/test/groovy/org/spockframework/docs")
@@ -322,6 +357,7 @@ def configureJavadoc(task) {
   configure(task) {
     include "spock/**"
     configure(options) {
+      options.addStringOption('source', '1.8')
       links "http://docs.oracle.com/javase/8/docs/api/"
       links "http://docs.groovy-lang.org/docs/groovy-$groovyVersion/html/gapi/"
       links "http://junit.org/junit4/javadoc/latest/"

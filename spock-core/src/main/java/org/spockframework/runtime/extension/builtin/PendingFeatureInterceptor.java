@@ -1,15 +1,14 @@
 package org.spockframework.runtime.extension.builtin;
 
-import org.spockframework.runtime.extension.IMethodInterceptor;
-import org.spockframework.runtime.extension.IMethodInvocation;
+import org.spockframework.runtime.extension.*;
 
 /**
  * @author Leonard Brünings
  */
 class PendingFeatureInterceptor extends PendingFeatureBaseInterceptor implements IMethodInterceptor {
 
-  public PendingFeatureInterceptor(Class<? extends Throwable>[] handledExceptions) {
-    super(handledExceptions);
+  public PendingFeatureInterceptor(Class<? extends Throwable>[] handledExceptions, String reason) {
+    super(handledExceptions, reason);
   }
 
   @Override

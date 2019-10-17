@@ -30,8 +30,18 @@ abstract class EmbeddedSpecification extends Specification {
   EmbeddedSpecRunner runner = new EmbeddedSpecRunner()
   EmbeddedSpecCompiler compiler = new EmbeddedSpecCompiler()
 
+  def javaVersion = System.getProperty("java.specification.version") as BigDecimal
+
   void stackTraceLooksLike(Throwable exception, String template) {
-    def trace = exception.stackTrace
+
+    def trace
+
+    if (javaVersion >= 9) {
+      trace = exception.stackTrace.findAll { it['moduleName'] != "java.base" }
+    } else {
+      trace = exception.stackTrace
+    }
+
     def lines = template.trim().split("\n")
     assert trace.size() == lines.size()
 

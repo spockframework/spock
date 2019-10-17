@@ -18,11 +18,16 @@ package org.spockframework.smoke
 
 import org.spockframework.EmbeddedSpecification
 import org.spockframework.runtime.ConditionNotSatisfiedError
+import org.spockframework.runtime.ExpressionInfoValueRenderer
+import org.spockframework.runtime.StackTraceFilter
 import org.spockframework.runtime.WrongExceptionThrownError
+import org.spockframework.runtime.model.ExpressionInfo
 import org.spockframework.util.Identifiers
 
 import spock.lang.Issue
 import spock.lang.Unroll
+
+import static java.util.Collections.emptyList
 
 /**
  * @author Peter Niederwieser
@@ -282,7 +287,7 @@ setup:
     ConditionNotSatisfiedError e = thrown()
     e.stackTrace[0].lineNumber == 2
   }
-  
+
   @Issue("http://issues.spockframework.org/detail?id=156")
   def "causes get filtered as well"() {
     when:
@@ -292,8 +297,8 @@ throw new IOException()
 
 then:
 thrown(RuntimeException)
-    """   
-    
+    """
+
     then:
     WrongExceptionThrownError e = thrown()
 
@@ -302,9 +307,60 @@ org.spockframework.lang.SpecInternals|checkExceptionThrown|-
 org.spockframework.lang.SpecInternals|thrownImpl|-
 apackage.ASpec|a feature|5
     """
-    
+
     stackTraceLooksLike e.cause, """
 apackage.ASpec|a feature|2
+    """
+  }
+
+  def 'stack traces are filtered on rendering expression info value'() {
+    given:
+    def expressionInfo = new ExpressionInfo(null, null, null, emptyList())
+    expressionInfo.value = new Exception()
+    expressionInfo.value.stackTrace = [
+      new StackTraceElement('org.codehaus.groovy.runtime.Foo', 'bar', null, 0),
+      new StackTraceElement('org.codehaus.groovy.reflection.Foo', 'bar', null, 0),
+      new StackTraceElement('org.codehaus.groovy.FooMetaClassBaz', 'bar', null, 0),
+      new StackTraceElement('groovy.FooMetaClassBaz', 'bar', null, 0),
+      new StackTraceElement('groovy.lang.MetaMethod', 'bar', null, 0),
+      new StackTraceElement('java.lang.reflect.Foo', 'bar', null, 0),
+      new StackTraceElement('sun.reflect.Foo', 'bar', null, 0),
+      new StackTraceElement('jdk.internal.reflect.Foo', 'bar', null, 0),
+      new StackTraceElement('org.spockframework.runtime.Foo', 'bar', null, 0),
+      new StackTraceElement('org.spockframework.runtime.foo.Baz', 'bar', null, 0)
+    ]
+
+    when:
+    ExpressionInfoValueRenderer.renderValue expressionInfo
+
+    then:
+    stackTraceLooksLike expressionInfo.value, """
+org.spockframework.runtime.foo.Baz|bar|0
+    """
+  }
+
+  def "expected stack frames are filtered out"() {
+    given:
+    def e = new Exception()
+    e.stackTrace = [
+        new StackTraceElement('org.codehaus.groovy.runtime.Foo', 'bar', null, 0),
+        new StackTraceElement('org.codehaus.groovy.reflection.Foo', 'bar', null, 0),
+        new StackTraceElement('org.codehaus.groovy.FooMetaClassBaz', 'bar', null, 0),
+        new StackTraceElement('groovy.FooMetaClassBaz', 'bar', null, 0),
+        new StackTraceElement('groovy.lang.MetaMethod', 'bar', null, 0),
+        new StackTraceElement('java.lang.reflect.Foo', 'bar', null, 0),
+        new StackTraceElement('sun.reflect.Foo', 'bar', null, 0),
+        new StackTraceElement('jdk.internal.reflect.Foo', 'bar', null, 0),
+        new StackTraceElement('org.spockframework.runtime.Foo', 'bar', null, 0),
+        new StackTraceElement('org.spockframework.runtime.foo.Baz', 'bar', null, 0)
+    ]
+
+    when:
+    new StackTraceFilter(this.specificationContext.currentSpec).filter e
+
+    then:
+    stackTraceLooksLike e, """
+org.spockframework.runtime.foo.Baz|bar|0
     """
   }
 }

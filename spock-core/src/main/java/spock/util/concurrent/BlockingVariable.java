@@ -35,7 +35,7 @@ import org.spockframework.util.TimeUtil;
  * def result = new BlockingVariable&lt;WorkResult&gt;
  *
  * // register async callback
- * machine.workDone << { r ->
+ * machine.workDone >> { r ->
  *  result.set(r)
  * }
  *

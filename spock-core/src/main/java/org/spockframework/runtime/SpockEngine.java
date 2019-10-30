@@ -1,5 +1,7 @@
 package org.spockframework.runtime;
 
+import org.spockframework.util.SpockReleaseInfo;
+
 import java.util.Optional;
 
 import org.junit.platform.engine.*;
@@ -45,6 +47,6 @@ public class SpockEngine extends HierarchicalTestEngine<SpockExecutionContext> {
 
   @Override
   public Optional<String> getVersion() {
-    return Optional.empty(); // TODO later
+    return Optional.of(SpockReleaseInfo.getVersion().toString());
   }
 }

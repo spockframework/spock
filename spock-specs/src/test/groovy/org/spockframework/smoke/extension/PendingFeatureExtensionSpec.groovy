@@ -2,7 +2,7 @@ package org.spockframework.smoke.extension
 
 import org.spockframework.EmbeddedSpecification
 
-import static org.junit.platform.testkit.engine.EventConditions.*
+import static org.junit.platform.testkit.engine.EventConditions.abortedWithReason
 import static org.junit.platform.testkit.engine.TestExecutionResultConditions.message
 
 class PendingFeatureExtensionSpec extends EmbeddedSpecification {
@@ -123,8 +123,7 @@ class Foo extends Specification {
     result.testsSucceededCount == 3
     result.testsFailedCount == 0
     result.testsSkippedCount == 0
-
-    // TODO add skipped check on refactoring of Result object
+    result.containersAbortedCount == 1
   }
 
 
@@ -148,6 +147,7 @@ class Foo extends Specification {
     result.testsSucceededCount == 3
     result.testsFailedCount == 0
     result.testsSkippedCount == 0
+    result.containersAbortedCount == 1
   }
 
 

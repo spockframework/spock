@@ -22,8 +22,6 @@ import java.util.*;
 
 import org.junit.platform.engine.support.hierarchical.Node;
 
-import static org.spockframework.runtime.RunStatus.OK;
-
 /**
  * Adds the ability to run parameterized features.
  *
@@ -36,7 +34,7 @@ public class PlatformParameterizedSpecRunner extends PlatformSpecRunner {
 
   @Override
   void runParameterizedFeature(SpockExecutionContext context, Node.DynamicTestExecutor dynamicTestExecutor) throws InterruptedException {
-    if (!context.getErrorInfoCollector().isEmpty()) {
+    if (context.getErrorInfoCollector().hasErrors()) {
       return;
     }
 
@@ -53,7 +51,7 @@ public class PlatformParameterizedSpecRunner extends PlatformSpecRunner {
   }
 
   private Object[] createDataProviders(SpockExecutionContext context) {
-    if (!context.getErrorInfoCollector().isEmpty()) {
+    if (context.getErrorInfoCollector().hasErrors()) {
       return null;
     }
 
@@ -68,7 +66,7 @@ public class PlatformParameterizedSpecRunner extends PlatformSpecRunner {
         Object[] arguments = Arrays.copyOf(dataProviders, getDataTableOffset(context, dataProviderInfo));
         Object provider = invokeRaw(context, context.getCurrentInstance(), method, arguments);
 
-        if (runStatus != OK) {
+        if (context.getErrorInfoCollector().hasErrors()) {
           return null;
         } else if (provider == null && context.getErrorInfoCollector().isEmpty()) {
           SpockExecutionException error = new SpockExecutionException("Data provider is null!");
@@ -99,7 +97,7 @@ public class PlatformParameterizedSpecRunner extends PlatformSpecRunner {
   }
 
   private Iterator[] createIterators(SpockExecutionContext context, Object[] dataProviders) {
-    if (!context.getErrorInfoCollector().isEmpty()) {
+    if (context.getErrorInfoCollector().hasErrors()) {
       return null;
     }
 
@@ -123,7 +121,7 @@ public class PlatformParameterizedSpecRunner extends PlatformSpecRunner {
 
   // -1 => unknown
   private int estimateNumIterations(SpockExecutionContext context, Object[] dataProviders) {
-    if (!context.getErrorInfoCollector().isEmpty() || dataProviders == null) {
+    if (context.getErrorInfoCollector().hasErrors() || dataProviders == null) {
       return -1;
     }
     if (dataProviders.length == 0) {
@@ -156,7 +154,7 @@ public class PlatformParameterizedSpecRunner extends PlatformSpecRunner {
   }
 
   private void runIterations(SpockExecutionContext context, Node.DynamicTestExecutor dynamicTestExecutor, Iterator[] iterators, int estimatedNumIterations) {
-    if (!context.getErrorInfoCollector().isEmpty()) {
+    if (context.getErrorInfoCollector().hasErrors()) {
       return;
     }
 
@@ -165,7 +163,7 @@ public class PlatformParameterizedSpecRunner extends PlatformSpecRunner {
       IterationInfo iterationInfo = createIterationInfo(context, nextArgs(context, iterators), estimatedNumIterations);
       IterationNode iterationNode = new IterationNode(context.getParentId().append("iteration",String.valueOf(iterationIndex++)), iterationInfo);
 
-      if (!context.getErrorInfoCollector().isEmpty()) {
+      if (context.getErrorInfoCollector().hasErrors()) {
         return;
       }
       dynamicTestExecutor.execute(iterationNode);
@@ -188,7 +186,7 @@ public class PlatformParameterizedSpecRunner extends PlatformSpecRunner {
   }
 
   private boolean haveNext(SpockExecutionContext context, Iterator[] iterators) {
-    if (!context.getErrorInfoCollector().isEmpty()) {
+    if (context.getErrorInfoCollector().hasErrors()) {
       return false;
     }
 
@@ -229,7 +227,7 @@ public class PlatformParameterizedSpecRunner extends PlatformSpecRunner {
 
   // advances iterators and computes args
   private Object[] nextArgs(SpockExecutionContext context, Iterator[] iterators) {
-    if (!context.getErrorInfoCollector().isEmpty()) {
+    if (context.getErrorInfoCollector().hasErrors()) {
       return null;
     }
 

@@ -19,6 +19,10 @@ public class ErrorInfoCollector {
     return errorInfos.isEmpty();
   }
 
+  public boolean hasErrors() {
+    return !errorInfos.isEmpty();
+  }
+
   public void assertEmpty() {
     if (!errorInfos.isEmpty()) {
       if (errorInfos.size() == 1) {

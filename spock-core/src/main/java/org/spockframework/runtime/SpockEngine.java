@@ -15,7 +15,7 @@ public class SpockEngine extends HierarchicalTestEngine<SpockExecutionContext> {
 
   @Override
   public TestDescriptor discover(EngineDiscoveryRequest discoveryRequest, UniqueId uniqueId) {
-    RunContext runContext = RunContext.get(); // TODO cleanup
+    RunContext runContext = RunContext.get();
     SpockEngineDescriptor engineDescriptor = new SpockEngineDescriptor(uniqueId, runContext);
     EngineDiscoveryRequestResolver.builder()
       .addClassContainerSelectorResolver(SpecUtil::isRunnableSpec)

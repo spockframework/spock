@@ -129,7 +129,7 @@ public class RunContext implements EngineExecutionContext {
     if (inheritParentExtensions) allExtensionClasses.addAll(getCurrentExtensions());
 
     RunContext context = new RunContext(name, spockUserHome, configurationScript, allExtensionClasses);
-    LinkedList<RunContext> contextStack = contextStacks.get();
+    Deque<RunContext> contextStack = contextStacks.get();
     contextStack.addFirst(context);
     try {
       context.start();

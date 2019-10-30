@@ -116,7 +116,6 @@ class Foo extends Specification {
 
     where:
     mode                                    || expectedCount
-    Retry.Mode.FEATURE.name()               || 1
     Retry.Mode.ITERATION.name()             || 1
     Retry.Mode.SETUP_FEATURE_CLEANUP.name() || 4
   }
@@ -189,30 +188,6 @@ class Foo extends Specification {
     thrown(IllegalArgumentException)
   }
 
-  def "@Retry rethrows non handled exceptions for data driven features with FEATURE mode"() {
-    given:
-    runner.throwFailure = true
-
-    when:
-    def result = runner.runWithImports("""
-import spock.lang.Retry
-
-class Foo extends Specification {
-  @Retry(exceptions=[IndexOutOfBoundsException], mode = Retry.Mode.FEATURE)
-  def bar() {
-    expect:
-    throw new IllegalArgumentException()
-    
-    where:
-    ignore << [1, 2]
-  }
-}
-    """)
-
-    then:
-    thrown(IllegalArgumentException)
-  }
-
   def "@Retry works for data driven features"() {
     when:
     def result = runner.runWithImports("""
@@ -262,60 +237,6 @@ class Foo extends Specification {
     featureCounter.get() == 4 + 2
   }
 
-  def "@Retry mode FEATURE retries complete feature when an iteration fails"() {
-    when:
-    def result = runner.runWithImports("""
-import spock.lang.Retry
-
-class Foo extends Specification {
-  @Unroll
-  @Retry(mode=Retry.Mode.FEATURE)
-  def bar() {
-    org.spockframework.smoke.extension.RetryFeatureExtensionSpec.featureCounter.incrementAndGet()
-    expect: test
-
-    where:
-    test << [true, true, false]
-  }
-}
-    """)
-
-    then:
-    // TODO revisit
-    result.testsSucceededCount == 2 * 3 * 4
-    result.testsFailedCount == 1
-    result.testsSkippedCount == 0
-
-    featureCounter.get() == 4 * 3
-  }
-
-  def "@Retry mode FEATURE stops retries after all iterations have passed once"() {
-    when:
-    def result = runner.runWithImports("""
-import spock.lang.Retry
-
-class Foo extends Specification {
-  static int[] counters = new int[3]
-  @Unroll
-  @Retry(mode=Retry.Mode.FEATURE)
-  def bar() {
-    counters[index]++
-
-    expect:
-    index < 2 || counters[index] > 1
-
-    where:
-    index << [0, 1, 2]
-  }
-}
-    """)
-
-    then:
-    result.testsSucceededCount == 2 * 3
-    result.testsFailedCount == 0
-    result.testsSkippedCount == 0
-  }
-
   def "@Retry doesn't affect data driven feature where all iterations pass"() {
     when:
     def result = runner.runWithImports("""
@@ -333,29 +254,7 @@ class Foo extends Specification {
     """)
 
     then:
-    result.testsSucceededCount == 1
-    result.testsFailedCount == 0
-    result.testsSkippedCount == 0
-  }
-
-  def "@Retry doesn't affect data driven feature where all iterations pass in mode FEATURE"() {
-    when:
-    def result = runner.runWithImports("""
-import spock.lang.Retry
-
-class Foo extends Specification {
-  @Retry(mode = Retry.Mode.FEATURE)
-  def bar() {
-    expect: test
-
-    where:
-    test << [true, true, true]
-  }
-}
-    """)
-
-    then:
-    result.testsSucceededCount == 1
+    result.testsSucceededCount == 3
     result.testsFailedCount == 0
     result.testsSkippedCount == 0
   }
@@ -400,32 +299,6 @@ class Foo extends Specification {
     then:
     result.testsSucceededCount == 1
     result.testsFailedCount == 0
-    result.testsSkippedCount == 0
-  }
-
-  def "@Retry can add delay between executions"() {
-    when:
-    long start = System.currentTimeMillis()
-    def result = runner.runWithImports("""
-import spock.lang.Retry
-
-class Foo extends Specification {
-  @Retry(delay = 100, mode = Retry.Mode.FEATURE)
-  def bar() {
-    expect: test
-
-    where:
-    test << [false, false, false, false, false, false, false, false, true]
-  }
-}
-    """)
-
-    then:
-    def duration = System.currentTimeMillis() - start
-    duration > 300
-    duration < 1000
-    result.testsSucceededCount == 1
-    result.testsFailedCount == 32
     result.testsSkippedCount == 0
   }
 

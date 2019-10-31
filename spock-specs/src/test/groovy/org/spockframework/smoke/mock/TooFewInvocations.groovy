@@ -429,9 +429,9 @@ One or more arguments(s) didn't match:
              3 differences (66% similarity)
              Willam( T.)
              Willam(---)
-
+   
    \torg.spockframework.runtime.ConditionNotSatisfiedError: Condition not satisfied:
-
+   
    age == 35
    |   |
    45  false

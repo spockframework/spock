@@ -227,12 +227,8 @@ task codeCoverageReport (type: JacocoReport, group: 'Coverage reports') {
   additionalSourceDirs files(reportingProjects.sourceSets.main.allSource.srcDirs)
   additionalClassDirs files(reportingProjects.sourceSets.main.output)
 
-  executionData = files(reportingProjects.jacocoTestReport.executionData)
-
-  doFirst {
-    // find all *.exec files
-    executionData = fileTree(project.rootDir.absolutePath).include("**/build/jacoco/*.exec")
-  }
+  // exclude projects that don't have tests
+  executionData = files(reportingProjects.findAll { !(it.name in ['spock-core', 'spock-bom', 'spock-gradle'])}.jacocoTestReport.executionData)
 
   reports {
     html.enabled = true

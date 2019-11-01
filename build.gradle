@@ -217,18 +217,12 @@ task collectTestXml (group: 'Test reports') {
 
 task codeCoverageReport (type: JacocoReport, group: 'Coverage reports') {
   description = "Creates an aggregate coverage for the whole project."
-  def reportingProjects = subprojects.findAll()
-  dependsOn(reportingProjects.tasks.collectMany{it.withType(Test)})
+  def reportingProjects = subprojects
+  dependsOn(reportingProjects.tasks.collectMany { it.withType(Test) })
 
-  onlyIf = { true } // required to circumvent a wrong check in the jacoco report plugin (v2.13)
-
-  sourceDirectories = files() //must be set
-  classDirectories = files()  //must be set
-  additionalSourceDirs files(reportingProjects.sourceSets.main.allSource.srcDirs)
-  additionalClassDirs files(reportingProjects.sourceSets.main.output)
-
-  // exclude projects that don't have tests
-  executionData = files(reportingProjects.findAll { !(it.name in ['spock-core', 'spock-bom', 'spock-gradle'])}.jacocoTestReport.executionData)
+  additionalSourceDirs.from(reportingProjects.sourceSets.main.allSource.srcDirs)
+  additionalClassDirs.from(reportingProjects.sourceSets.main.output)
+  executionData.from(files(reportingProjects.jacocoTestReport.executionData).filter { it.exists() })
 
   reports {
     html.enabled = true

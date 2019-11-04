@@ -16,16 +16,18 @@
 
 package org.spockframework.gradle
 
-import org.gradle.api.*
+
+import org.gradle.api.Plugin
+import org.gradle.api.Project
 import org.gradle.api.tasks.testing.Test
 
 class SpockBasePlugin implements Plugin<Project> {
   void apply(Project project) {
-    project.tasks.withType(Test) { task ->
+    project.tasks.withType(Test) { Test task ->
       def taskName = task.name.capitalize()
       def configFile = project.file("Spock${taskName}Config.groovy")
       if (configFile.exists()) {
-        systemProperty "spock.configuration", configFile
+        task.systemProperty "spock.configuration", configFile
       }
     }
   }

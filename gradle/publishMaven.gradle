@@ -1,4 +1,4 @@
-apply plugin: "maven-publish"
+apply plugin: "de.marcphilipp.nexus-publish"
 apply plugin: "signing"
 
 def optionalDeps = []
@@ -66,15 +66,13 @@ publishing {
       }
     }
   }
+}
+
+nexusPublishing {
   repositories {
-    maven {
-      def snapshotsRepoUrl = "https://oss.sonatype.org/content/repositories/snapshots/"
-      def releasesRepoUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
-      url = snapshotVersion ? snapshotsRepoUrl : releasesRepoUrl
-      credentials {
-        username = "pniederw"
-        password = System.getenv("SONATYPE_OSS_PASSWORD")
-      }
+    sonatype {
+      username = "pniederw"
+      password = System.getenv("SONATYPE_OSS_PASSWORD")
     }
   }
 }

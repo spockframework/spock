@@ -24,8 +24,7 @@ import org.codehaus.groovy.control.MultipleCompilationErrorsException
 import org.intellij.lang.annotations.Language
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.junit.runners.model.MultipleFailureException
-
+import org.opentest4j.MultipleFailuresError
 /**
  * Utility class that allows to compile (fragments of) specs programmatically.
  * Mainly intended for spec'ing Spock itself.
@@ -105,7 +104,7 @@ class EmbeddedSpecCompiler {
         if (errors.size() == 1)
           throw errors[0].cause
         else
-          throw new MultipleFailureException(errors.cause)
+          throw new MultipleFailuresError("Errors during compile",errors.cause)
 
       throw e
     }

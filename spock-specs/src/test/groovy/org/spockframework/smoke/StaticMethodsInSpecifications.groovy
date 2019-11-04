@@ -12,14 +12,13 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */ 
+ */
 
 package org.spockframework.smoke
 
-import org.junit.ComparisonFailure
 import org.spockframework.EmbeddedSpecification
 import org.spockframework.compiler.InvalidSpecCompileException
-
+import org.spockframework.runtime.SpockComparisonFailure
 import spock.lang.Issue
 
 class StaticMethodsInSpecifications extends EmbeddedSpecification {
@@ -36,7 +35,7 @@ static void bar() {
     """
 
     then:
-    thrown(ComparisonFailure)
+    thrown(SpockComparisonFailure)
   }
 
   @Issue("http://issues.spockframework.org/detail?id=35")

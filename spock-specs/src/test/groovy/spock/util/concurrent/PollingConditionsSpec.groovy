@@ -21,6 +21,7 @@ import spock.lang.Specification
 
 class PollingConditionsSpec extends Specification {
   PollingConditions conditions = new PollingConditions()
+  def defConditions = new PollingConditions()
 
   volatile int num = 0
   volatile String str = null
@@ -81,6 +82,31 @@ class PollingConditionsSpec extends Specification {
       it instanceof ConditionNotSatisfiedError
       condition.text == 'str == "bye"'
     }
+  }
+
+  def "fails if condition is not met and assert keyword is used for dynamically created conditions object"() {
+    num = 50
+
+    when:
+    defConditions.eventually {
+      assert num == 42
+    }
+
+    then:
+    thrown(SpockTimeoutError)
+  }
+
+  @Issue("https://github.com/spockframework/spock/issues/1054")
+  def "works if condition is not met and assert keyword is not used for dynamically created conditions object"() {
+    num = 50
+
+    when:
+    defConditions.eventually {
+      num == 42
+    }
+
+    then:
+    noExceptionThrown()
   }
 
   def "can override timeout per invocation"() {

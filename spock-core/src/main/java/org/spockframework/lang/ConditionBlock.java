@@ -27,7 +27,7 @@ import java.lang.annotation.*;
  * <p>This annotation only takes effect if:
  * - the closures are passed as literals, and the Groovy compiler can (at compilation time) determine the target
  * type of the method invocation referencing the annotated method,
- * - the annotated method is called on object of type known at compilation time (no defs).
+ * - the annotated method is called on object of type known at compilation time (no "def").
  * If the annotated method is overloaded, the closure arguments of all overloads are considered code blocks.
  */
 @Beta

@@ -395,13 +395,15 @@ public class ExpressionReplacingVisitorSupport extends StatementReplacingVisitor
     replaceExpr(stat.getExpression());
   }
 
+/*
   @Override
   protected void visitListOfExpressions(List exprs) {
     throw new UnsupportedOperationException("visitListOfExpressions");
   }
+*/
 
   // remaining methods are here to make sure we didn't forget anything
-  
+
   @Override
   public void visitBreakStatement(BreakStatement stat) {}
   @Override

@@ -24,7 +24,8 @@ import groovy.lang.*;
 
 public abstract class MopUtil {
   private static final Field ReflectionMetaMethod_method  = getDeclaredField(ReflectionMetaMethod.class, "method");
-  private static final Field CachedField_field = getDeclaredField(CachedField.class, "field");
+  //TODO: cachedField in Groovy 3.0
+  private static final Field CachedField_field = getDeclaredField(CachedField.class, "cachedField");
 
   private static Field getDeclaredField(Class clazz, String name) {
     try {
@@ -52,7 +53,7 @@ public abstract class MopUtil {
         throw new UnreachableCodeError(e);
       }
     }
-    
+
     // could try stunts for MixinInstanceMetaMethod and TransformMetaMethod or
     // even apply some general heuristics (e.g. look for field named "method" or
     // "metaMethod" (or with type Method/MetaMethod) and invoke methodFor()
@@ -134,7 +135,7 @@ public abstract class MopUtil {
        MetaBeanProperty mbp = (MetaBeanProperty) property;
       return mbp.getSetter() != null || mbp.getField() != null;
     }
-    
+
     return false;
   }
 }

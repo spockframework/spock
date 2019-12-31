@@ -124,6 +124,11 @@ public class ExpressionInfoConverter extends AbstractExpressionConverter<Express
   }
 
   @Override
+  public void visitMethodReferenceExpression(MethodReferenceExpression expr) {
+    visitMethodPointerExpression(expr);
+  }
+
+  @Override
   public void visitVariableExpression(VariableExpression expr) {
     result = new ExpressionInfo(
         TextRegion.of(expr),
@@ -321,6 +326,12 @@ public class ExpressionInfoConverter extends AbstractExpressionConverter<Express
         TextPosition.startOf(expr),
         "{->}"
     ).setRelevant(false);
+  }
+
+  @Override
+  public void visitLambdaExpression(LambdaExpression expr) {
+    //TODO: Write test covering lambdas and method references in Spock specification
+    visitClosureExpression(expr);
   }
 
   @Override

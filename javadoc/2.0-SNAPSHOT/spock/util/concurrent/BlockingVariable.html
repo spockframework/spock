@@ -133,7 +133,7 @@ extends <a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?
  def result = new BlockingVariable&lt;WorkResult&gt;
 
  // register async callback
- machine.workDone << { r ->
+ machine.workDone >> { r ->
   result.set(r)
  }
 

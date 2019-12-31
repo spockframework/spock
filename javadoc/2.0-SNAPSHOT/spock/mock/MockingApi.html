@@ -852,7 +852,7 @@ public&nbsp;&lt;T&gt;&nbsp;T&nbsp;Mock&#8203;(<a href="http://docs.groovy-lang.o
  <pre>
    // type is Person.class, name is "person", returns hard-coded value for <code>name</code>, expects one call to <code>sing()</code>
    Person person = Mock {
-     name << "Fred"
+     it.name >> "Fred"
      1 * sing()
    }
  </pre></div>
@@ -882,7 +882,7 @@ public&nbsp;&lt;T&gt;&nbsp;T&nbsp;Mock&#8203;(<a href="http://docs.oracle.com/ja
  <pre>
    // type is Person.class, name is "myPerson", returns hard-coded value for <code>name</code>, expects one call to <code>sing()</code>
    Person person = Mock(name: "myPerson") {
-     name << "Fred"
+     it.name >> "Fred"
      1 * sing()
    }
  </pre></div>
@@ -914,7 +914,7 @@ public&nbsp;&lt;T&gt;&nbsp;T&nbsp;Mock&#8203;(<a href="http://docs.oracle.com/ja
  <pre>
    // name is "person", type is Person.class, returns hard-code value <code>name</code>, expects one call to <code>sing()</code>
    def person = Mock(Person) {
-     name << "Fred"
+     it.name >> "Fred"
      1 * sing()
    }
  </pre></div>
@@ -948,7 +948,7 @@ public&nbsp;&lt;T&gt;&nbsp;T&nbsp;Mock&#8203;(<a href="http://docs.oracle.com/ja
  <pre>
    // type is Person.class, name is "myPerson", returns hard-coded value <code>name</code>, expects one call to <code>sing()</code>
    def person = Mock(Person, name: "myPerson") {
-     name << "Fred"
+     it.name >> "Fred"
      1 * sing()
    }
  </pre></div>
@@ -1084,8 +1084,8 @@ public&nbsp;&lt;T&gt;&nbsp;T&nbsp;Stub&#8203;(<a href="http://docs.groovy-lang.o
  <pre>
    // type is Person.class, name is "person", returns hard-coded values for property <code>name</code> and method <code>sing()</code>
    Person person = Stub {
-     name << "Fred"
-     sing() << "Tra-la-la"
+     it.name >> "Fred"
+     sing() >> "Tra-la-la"
    }
  </pre></div>
 <dl>
@@ -1114,8 +1114,8 @@ public&nbsp;&lt;T&gt;&nbsp;T&nbsp;Stub&#8203;(<a href="http://docs.oracle.com/ja
  <pre>
    // type is Person.class, name is "myPerson", returns hard-coded values for property <code>name</code> and method <code>sing()</code>
    Person person = Stub(name: "myPerson") {
-     name << "Fred"
-     sing() << "Tra-la-la"
+     it.name >> "Fred"
+     sing() >> "Tra-la-la"
    }
  </pre></div>
 <dl>
@@ -1146,8 +1146,8 @@ public&nbsp;&lt;T&gt;&nbsp;T&nbsp;Stub&#8203;(<a href="http://docs.oracle.com/ja
  <pre>
    // name is "person", type is Person.class, returns hard-coded values for property <code>name</code> and method <code>sing()</code>
    def person = Stub(Person) {
-     name << "Fred"
-     sing() << "Tra-la-la"
+     it.name >> "Fred"
+     sing() >> "Tra-la-la"
    }
  </pre></div>
 <dl>
@@ -1180,8 +1180,8 @@ public&nbsp;&lt;T&gt;&nbsp;T&nbsp;Stub&#8203;(<a href="http://docs.oracle.com/ja
  <pre>
    // type is Person.class, name is "myPerson", returns hard-coded values for property <code>name</code> and method <code>sing()</code>
    def person = Stub(Person, name: "myPerson") {
-     name << "Fred"
-     sing() << "Tra-la-la"
+     it.name >> "Fred"
+     sing() >> "Tra-la-la"
    }
  </pre></div>
 <dl>
@@ -1350,7 +1350,7 @@ public&nbsp;&lt;T&gt;&nbsp;T&nbsp;Spy&#8203;(<a href="http://docs.groovy-lang.or
  <pre>
    // type is Person.class, name is "person", returns hard-coded value for <code>name</code>, calls real method otherwise
    Person person = Spy {
-     name << "Fred"
+     it.name >> "Fred"
    }
  </pre></div>
 <dl>
@@ -1379,7 +1379,7 @@ public&nbsp;&lt;T&gt;&nbsp;T&nbsp;Spy&#8203;(<a href="http://docs.oracle.com/jav
  <pre>
    // type is Person.class, name is "myPerson", returns hard-coded value for <code>name</code>, calls real method otherwise
    Person person = Spy(name: "myPerson") {
-     name << "Fred"
+     it.name >> "Fred"
    }
  </pre></div>
 <dl>
@@ -1410,7 +1410,7 @@ public&nbsp;&lt;T&gt;&nbsp;T&nbsp;Spy&#8203;(<a href="http://docs.oracle.com/jav
  <pre>
    // name is "person", type is Person.class, returns hard-code value <code>name</code>, calls real method otherwise
    def person = Spy(Person) {
-     name << "Fred"
+     it.name >> "Fred"
      1 * sing()
    }
  </pre></div>
@@ -1444,7 +1444,7 @@ public&nbsp;&lt;T&gt;&nbsp;T&nbsp;Spy&#8203;(<a href="http://docs.oracle.com/jav
  <pre>
    // type is Person.class, name is "myPerson", returns hard-coded value <code>name</code>, calls real method otherwise
    def person = Spy(Person, name: "myPerson") {
-     name << "Fred"
+     it.name >> "Fred"
    }
  </pre></div>
 <dl>
@@ -1575,7 +1575,7 @@ public&nbsp;&lt;T&gt;&nbsp;T&nbsp;GroovyMock&#8203;(<a href="http://docs.groovy-
  <pre>
    // type is Person.class, name is "person", returns hard-coded value for <code>name</code>, expects one call to <code>sing()</code>
    Person person = GroovyMock {
-     name << "Fred"
+     it.name >> "Fred"
      1 * sing()
    }
  </pre></div>
@@ -1605,7 +1605,7 @@ public&nbsp;&lt;T&gt;&nbsp;T&nbsp;GroovyMock&#8203;(<a href="http://docs.oracle.
  <pre>
    // type is Person.class, name is "myPerson", returns hard-coded value for <code>name</code>, expects one call to <code>sing()</code>
    Person person = GroovyMock(name: "myPerson") {
-     name << "Fred"
+     it.name >> "Fred"
      1 * sing()
    }
  </pre></div>
@@ -1637,7 +1637,7 @@ public&nbsp;&lt;T&gt;&nbsp;T&nbsp;GroovyMock&#8203;(<a href="http://docs.oracle.
  <pre>
    // name is "person", type is Person.class, returns hard-code value <code>name</code>, expects one call to <code>sing()</code>
    def person = GroovyMock(Person) {
-     name << "Fred"
+     it.name >> "Fred"
      1 * sing()
    }
  </pre></div>
@@ -1671,7 +1671,7 @@ public&nbsp;&lt;T&gt;&nbsp;T&nbsp;GroovyMock&#8203;(<a href="http://docs.oracle.
  <pre>
    // type is Person.class, name is "myPerson", returns hard-coded value <code>name</code>, expects one call to <code>sing()</code>
    def person = GroovyMock(Person, name: "myPerson") {
-     name << "Fred"
+     it.name >> "Fred"
      1 * sing()
    }
  </pre></div>
@@ -1803,8 +1803,8 @@ public&nbsp;&lt;T&gt;&nbsp;T&nbsp;GroovyStub&#8203;(<a href="http://docs.groovy-
  <pre>
    // type is Person.class, name is "person", returns hard-coded values for property <code>name</code> and method <code>sing()</code>
    Person person = GroovyStub {
-     name << "Fred"
-     sing() << "Tra-la-la"
+     it.name >> "Fred"
+     sing() >> "Tra-la-la"
    }
  </pre></div>
 <dl>
@@ -1833,8 +1833,8 @@ public&nbsp;&lt;T&gt;&nbsp;T&nbsp;GroovyStub&#8203;(<a href="http://docs.oracle.
  <pre>
    // type is Person.class, name is "myPerson", returns hard-coded values for property <code>name</code> and method <code>sing()</code>
    Person person = GroovyStub(name: "myPerson") {
-     name << "Fred"
-     sing() << "Tra-la-la"
+     it.name >> "Fred"
+     sing() >> "Tra-la-la"
    }
  </pre></div>
 <dl>
@@ -1865,8 +1865,8 @@ public&nbsp;&lt;T&gt;&nbsp;T&nbsp;GroovyStub&#8203;(<a href="http://docs.oracle.
  <pre>
    // name is "person", type is Person.class, returns hard-coded values for property <code>name</code> and method <code>sing()</code>
    def person = GroovyStub(Person) {
-     name << "Fred"
-     sing() << "Tra-la-la"
+     it.name >> "Fred"
+     sing() >> "Tra-la-la"
    }
  </pre></div>
 <dl>
@@ -1899,8 +1899,8 @@ public&nbsp;&lt;T&gt;&nbsp;T&nbsp;GroovyStub&#8203;(<a href="http://docs.oracle.
  <pre>
    // type is Person.class, name is "myPerson", returns hard-coded values for property <code>name</code> and method <code>sing()</code>
    def person = GroovyStub(Person, name: "myPerson") {
-     name << "Fred"
-     sing() << "Tra-la-la"
+     it.name >> "Fred"
+     sing() >> "Tra-la-la"
    }
  </pre></div>
 <dl>
@@ -2031,7 +2031,7 @@ public&nbsp;&lt;T&gt;&nbsp;T&nbsp;GroovySpy&#8203;(<a href="http://docs.groovy-l
  <pre>
    // type is Person.class, name is "person", returns hard-coded value for <code>name</code>, calls real method otherwise
    Person person = GroovySpy {
-     name << "Fred"
+     it.name >> "Fred"
    }
  </pre></div>
 <dl>
@@ -2060,7 +2060,7 @@ public&nbsp;&lt;T&gt;&nbsp;T&nbsp;GroovySpy&#8203;(<a href="http://docs.oracle.c
  <pre>
    // type is Person.class, name is "myPerson", returns hard-coded value for <code>name</code>, calls real method otherwise
    Person person = GroovySpy(name: "myPerson") {
-     name << "Fred"
+     it.name >> "Fred"
    }
  </pre></div>
 <dl>
@@ -2091,7 +2091,7 @@ public&nbsp;&lt;T&gt;&nbsp;T&nbsp;GroovySpy&#8203;(<a href="http://docs.oracle.c
  <pre>
    // name is "person", type is Person.class, returns hard-code value <code>name</code>, calls real method otherwise
    def person = GroovySpy(Person) {
-     name << "Fred"
+     it.name >> "Fred"
      1 * sing()
    }
  </pre></div>
@@ -2125,7 +2125,7 @@ public&nbsp;&lt;T&gt;&nbsp;T&nbsp;GroovySpy&#8203;(<a href="http://docs.oracle.c
  <pre>
    // type is Person.class, name is "myPerson", returns hard-coded value <code>name</code>, calls real method otherwise
    def person = GroovySpy(Person, name: "myPerson") {
-     name << "Fred"
+     it.name >> "Fred"
    }
  </pre></div>
 <dl>

@@ -182,6 +182,11 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> {
   }
 
   @Override
+  public void visitMethodReferenceExpression(MethodReferenceExpression expr) {
+    visitMethodPointerExpression(expr);
+  }
+
+  @Override
   public void visitVariableExpression(VariableExpression expr) {
     if (expr instanceof OldValueExpression) {
       Expression originalExpr = ((OldValueExpression)expr).getOrginalExpression();
@@ -464,6 +469,11 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> {
   @Override
   public void visitClosureExpression(ClosureExpression expr) {
     result = record(expr);
+  }
+
+  @Override
+  public void visitLambdaExpression(LambdaExpression expr) {
+    visitClosureExpression(expr);
   }
 
   // used in the following places:

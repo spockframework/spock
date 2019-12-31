@@ -1,13 +1,12 @@
 import java.text.SimpleDateFormat
 
 plugins {
-  id 'com.gradle.build-scan' version '2.2.1'
   id "base"
-  id "org.asciidoctor.convert" version "1.6.0"
+  id "org.asciidoctor.convert"
   id "jacoco"
-  id "net.nemerosa.versioning" version "2.8.2"
-  id "de.marcphilipp.nexus-publish" version "0.3.1" apply false
-//  id "com.github.ben-manes.versions" version "0.21.0"
+  id "net.nemerosa.versioning"
+  id "de.marcphilipp.nexus-publish"
+//  id "com.github.ben-manes.versions"
 }
 
 description = "Spock Framework"
@@ -376,11 +375,6 @@ def configureGroovydoc(task) {
   configure(task) {
     include "spock/**"
   }
-}
-
-buildScan {
-  termsOfServiceUrl = 'https://gradle.com/terms-of-service'
-  termsOfServiceAgree = 'yes'
 }
 
 subprojects {

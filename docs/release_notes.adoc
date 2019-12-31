@@ -1,6 +1,8 @@
 = Release Notes
 include::include.adoc[]
 
+== 2.0-M2 (tbd)
+
 == 2.0-M1 (31.12.2019)
 
 This is the first milestone release to version 2.0. This means that we have migrated to the new

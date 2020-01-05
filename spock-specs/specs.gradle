@@ -9,8 +9,8 @@ configurations {
 }
 
 dependencies {
-  testCompile project(":spock-core")
-  testCompile project(":spock-junit4")
+  testImplementation project(":spock-core")
+  testImplementation project(":spock-junit4")
 
   testRuntime libs.asm
   testRuntime libs.bytebuddy
@@ -27,7 +27,7 @@ targetCompatibility = javaVersion
 // necessary to make @NotYetImplemented transform work (transform that ships
 // with Groovy and statically references third-party class junit.framwork.AssertionFailedError)
 tasks.withType(GroovyCompile) {
-	groovyClasspath += configurations.junit
+  groovyClasspath += configurations.junit
 }
 
 test {

@@ -53,33 +53,6 @@ public class Jvm {
   }
 
   /**
-   * Tells whether the Java version is 5.
-   *
-   * @return whether the Java version is 5
-   */
-  public boolean isJava5() {
-    return "1.5".equals(javaSpecVersion);
-  }
-
-  /**
-   * Tells whether the Java version is 6.
-   *
-   * @return whether the Java version is 6
-   */
-  public boolean isJava6() {
-    return "1.6".equals(javaSpecVersion);
-  }
-
-  /**
-   * Tells whether the Java version is 7.
-   *
-   * @return whether the Java version is 7
-   */
-  public boolean isJava7() {
-    return "1.7".equals(javaSpecVersion);
-  }
-
-  /**
    * Tells whether the Java version is 8.
    *
    * @return whether the Java version is 8
@@ -128,30 +101,18 @@ public class Jvm {
   }
 
   /**
-   * Tells whether the Java version is compatible with Java 5.
+   * Tells whether the Java version is equal to the given major Java version.
    *
-   * @return whether the Java version is compatible with Java 5
+   * @since 2.0
+   * @param majorJavaVersion major java version (e.g. 8, 12, 17) to check the Java version is equal to
+   * @return whether the Java version is equal to the given major Java version
    */
-  public boolean isJava5Compatible() {
-    return javaSpecVersionNumber.getMajor() > 1 || javaSpecVersionNumber.getMinor() >= 5;
-  }
-
-  /**
-   * Tells whether the Java version is compatible with Java 6.
-   *
-   * @return whether the Java version is compatible with Java 6
-   */
-  public boolean isJava6Compatible() {
-    return javaSpecVersionNumber.getMajor() > 1 || javaSpecVersionNumber.getMinor() >= 6;
-  }
-
-  /**
-   * Tells whether the Java version is compatible with Java 7.
-   *
-   * @return whether the Java version is compatible with Java 7
-   */
-  public boolean isJava7Compatible() {
-    return javaSpecVersionNumber.getMajor() > 1 || javaSpecVersionNumber.getMinor() >= 7;
+  public boolean isJavaVersion(int majorJavaVersion) {
+    if (majorJavaVersion == 8) {
+      return isJava8();
+    } else {
+      return javaSpecVersionNumber.getMajor() == majorJavaVersion;
+    }
   }
 
   /**
@@ -200,6 +161,21 @@ public class Jvm {
    */
   public boolean isJava12Compatible() {
     return javaSpecVersionNumber.getMajor() >= 12;
+  }
+
+  /**
+   * Tells whether the Java version is compatible with the given major Java version.
+   *
+   * @since 2.0
+   * @param majorJavaVersion major java version (e.g. 8, 12, 17) to check the Java version compatibility with
+   * @return whether the Java version is compatible with the given major Java version
+   */
+  public boolean isJavaVersionCompatible(int majorJavaVersion) {
+    if (majorJavaVersion == 8) {
+      return isJava8Compatible();
+    } else {
+      return javaSpecVersionNumber.getMajor() >= majorJavaVersion;
+    }
   }
 
   /**

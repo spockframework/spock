@@ -40,10 +40,14 @@ class JavaStubs extends Specification {
   def "like to be stubbed at creation time"() {
     person = Stub(IPerson) {
       getName() >> "fred"
+      getAge() >> 25
     }
 
     expect:
-    person.name == "fred"
+    person.getName() == "fred"
+
+    and:
+    person.age == 25
   }
 
   @FailsWith(InvalidSpecException)
@@ -72,7 +76,9 @@ class JavaStubs extends Specification {
     }
 
     expect:
-    person.name == "barney"
+    person.getName() == "barney"
+
+    and:  "property access was initially broken for class-based mocks after migration to Groovy 3"
     person.age == 21
     person.children == ["Bamm-Bamm"]
   }

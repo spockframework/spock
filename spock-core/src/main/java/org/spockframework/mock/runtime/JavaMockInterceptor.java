@@ -62,6 +62,11 @@ public class JavaMockInterceptor implements IProxyBasedMockInterceptor {
           return GroovyRuntimeUtil.invokeMethod(target, methodName, GroovyRuntimeUtil.asArgumentArray(normalizedArgs[1]));
         }
       }
+      if (isMethod(method, "getProperty", String.class)) {
+        //Groovy 3 started to call getProperty("x") method instead of getX() directly
+        String methodName = GroovyRuntimeUtil.propertyToMethodName("get", (String) normalizedArgs[0]);
+        return GroovyRuntimeUtil.invokeMethod(target, methodName);
+      }
     }
 
     IMockMethod mockMethod = new StaticMockMethod(method, mockConfiguration.getExactType());

@@ -1164,6 +1164,12 @@ Note that we don&#8217;t have to pass the <code>message</code> argument along; t
 returns the real invocation&#8217;s result, but in this example we opted to return our own result instead.
 If we had wanted to pass a different message to the real method, we could have used <code>callRealMethodWithArgs("changed message")</code>.</p>
 </div>
+<div class="paragraph">
+<p>Please note that while semantically both <code>callRealMethod()</code> and <code>callRealMethodWithArgs(&#8230;&#8203;)</code> only make sense with spies,
+technically you can also call these methods on mock or stub objects, kind of turning them into (pseudo) spy objects
+"through the backdoor". The only precondition is that the mocked/stubbed object actually has a real method implementation,
+i.e. for interface mocks there must be a default method, for class mocks there must be a (non-abstract) original method.</p>
+</div>
 </div>
 <div class="sect2">
 <h3 id="PartialMocks"><a class="anchor" href="#PartialMocks"></a><a class="link" href="#PartialMocks">Partial Mocks</a></h3>
@@ -1367,7 +1373,7 @@ can be passed as named arguments to the <code>Mock()</code> method. For example:
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> person = Mock(<span class="key">name</span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">Fred</span><span class="delimiter">&quot;</span></span>, <span class="key">type</span>: Person, <span class="key">defaultResponse</span>: ZeroOrNullResponse, <span class="key">verified</span>: <span class="predefined-constant">false</span>)</code></pre>
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> person = Mock(<span class="key">name</span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">Fred</span><span class="delimiter">&quot;</span></span>, <span class="key">type</span>: Person, <span class="key">defaultResponse</span>: ZeroOrNullResponse.INSTANCE, <span class="key">verified</span>: <span class="predefined-constant">false</span>)</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1458,7 +1464,7 @@ mock.nature == MockNature.MOCK</code></pre>
 <div id="footer">
 <div id="footer-text">
 Version 2.0-SNAPSHOT<br>
-Last updated 2020-01-12 15:11:52 UTC
+Last updated 2020-01-12 20:33:12 UTC
 </div>
 </div>
 </body>

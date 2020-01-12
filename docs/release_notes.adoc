@@ -1,7 +1,9 @@
 = Release Notes
 include::include.adoc[]
 
-== 2.0-M1 (tbd)
+== 2.0-M2 (tbd)
+
+== 2.0-M1 (31.12.2019)
 
 This is the first milestone release to version 2.0. This means that we have migrated to the new
 JUnit Platform and all internal tests pass. We have tried to keep the API as compatible as possible
@@ -33,8 +35,11 @@ module that provides best effort support to ease migration.
 - `spock-report` module has been removed, it was never officially released
 - The `SpockReportingExtension` has been disabled until we can integrate it with JUnitPlatform
 - Removed testing for `spring-2.x` as it is incompatible
+- Fix some Javadocs
 
 Special thanks goes to Marc Philipp who helped a lot with the integration of the JUnit Platform.
+
+Thanks to all the contributors to this release: Marcin Zajączkowski, k3v1n0x90
 
 == 1.3 (2019-03-05)
 

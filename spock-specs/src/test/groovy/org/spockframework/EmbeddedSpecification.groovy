@@ -12,14 +12,12 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */ 
+ */
 
 package org.spockframework
 
 import spock.lang.Specification
-import spock.util.EmbeddedSpecCompiler
-import spock.util.EmbeddedSpecRunner
-
+import spock.util.*
 /**
  * Convenience base class for specifications that need to compile
  * and/or run other specifications.

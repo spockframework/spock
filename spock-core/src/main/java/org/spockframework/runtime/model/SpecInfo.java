@@ -234,12 +234,7 @@ public class SpecInfo extends SpecElementInfo<NodeInfo, Class<?>> implements IMe
 
   public List<FeatureInfo> getAllFeaturesInExecutionOrder() {
     List<FeatureInfo> result = getAllFeatures();
-    Collections.sort(result, new Comparator<FeatureInfo>() {
-      @Override
-      public int compare(FeatureInfo f1, FeatureInfo f2) {
-        return f1.getExecutionOrder() - f2.getExecutionOrder();
-      }
-    });
+    result.sort(Comparator.comparingInt(FeatureInfo::getExecutionOrder));
     return result;
   }
 

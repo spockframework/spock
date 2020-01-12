@@ -257,6 +257,14 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
     spec.getAst().addMethod(newAst);
     feature.setAst(newAst);
     AstUtil.deleteMethod(spec.getAst(), oldAst);
+
+    Iterator<InnerClassNode> innerClassesOfDeclaringClass = oldAst.getDeclaringClass().getInnerClasses();
+    while (innerClassesOfDeclaringClass.hasNext()) {
+      InnerClassNode innerClass = innerClassesOfDeclaringClass.next();
+      if (oldAst.equals(innerClass.getEnclosingMethod())) {
+        innerClass.setEnclosingMethod(newAst);
+      }
+    }
   }
 
   private String createInternalName(FeatureMethod feature) {

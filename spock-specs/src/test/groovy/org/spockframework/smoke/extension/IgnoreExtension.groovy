@@ -22,7 +22,7 @@ import spock.lang.Issue
 
 /**
  * Spock's @Ignore semantics are the same as JUnit's.
- * 
+ *
  * @author Peter Niederwieser
  */
 @Issue("http://issues.spockframework.org/detail?id=12")
@@ -43,9 +43,9 @@ class Foo extends Specification {
     """)
 
     then:
-    result.runCount == 0
-    result.failureCount == 0
-    result.ignoreCount == 1
+    result.containersStartedCount == 1
+    result.containersFailedCount == 0
+    result.containersSkippedCount == 1
   }
 
   def "ignored feature methods"() {
@@ -67,9 +67,9 @@ def "also ignored"() {
     """)
 
     then:
-    result.runCount == 1
-    result.failureCount == 0
-    result.ignoreCount == 2
+    result.testsSucceededCount == 1
+    result.testsFailedCount == 0
+    result.testsSkippedCount == 2
   }
 
   def "fixture methods cannot be ignored"() {
@@ -115,9 +115,9 @@ class Derived extends Base {
 
 
     then:
-    result.runCount == 2
-    result.failureCount == 0
-    result.ignoreCount == 2
+    result.testsSucceededCount == 2
+    result.testsFailedCount == 0
+    result.testsSkippedCount == 2
   }
 
   def "ignoring base class has no effect on running derived class"() {
@@ -143,9 +143,9 @@ class Derived extends Base {
 
 
     then:
-    result.runCount == 2
-    result.failureCount == 0
-    result.ignoreCount == 0
+    result.testsSucceededCount == 2
+    result.testsFailedCount == 0
+    result.testsSkippedCount == 0
   }
 }
 

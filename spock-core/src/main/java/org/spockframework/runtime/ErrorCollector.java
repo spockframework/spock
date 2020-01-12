@@ -3,7 +3,7 @@ package org.spockframework.runtime;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import org.junit.runners.model.MultipleFailureException;
+import org.opentest4j.MultipleFailuresError;
 
 public class ErrorCollector {
   private final boolean errorCollectionEnabled;
@@ -25,10 +25,10 @@ public class ErrorCollector {
 
   public static final String VALIDATE_COLLECTED_ERRORS = "validateCollectedErrors";
 
-  public void validateCollectedErrors() throws MultipleFailureException {
+  public void validateCollectedErrors() {
     if (errorCollectionEnabled){
       if (!throwables.isEmpty()){
-        throw new MultipleFailureException(throwables);
+        throw new MultipleFailuresError("",throwables);
       }
     }
   }

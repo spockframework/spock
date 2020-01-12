@@ -10,10 +10,11 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */  
+ */
 
 package org.spockframework.smoke.extension
 
+import org.junit.platform.engine.discovery.DiscoverySelectors
 import org.junit.runner.Request
 
 import org.spockframework.EmbeddedSpecification
@@ -33,9 +34,10 @@ class Foo extends Specification {
     """)
 
     then:
-    result.runCount == 2
-    result.failureCount == 1
-    result.ignoreCount == 1
+    result.testsSucceededCount == 1
+    result.testsStartedCount == 2
+    result.testsFailedCount == 1
+    result.testsSkippedCount == 1
   }
 
   def "automatically runs excluded methods that lead up to an included method"() {
@@ -49,12 +51,12 @@ class Foo extends Specification {
     """)[0]
 
     when:
-    def result = runner.runRequest(Request.method(clazz, "step3"))
+    def result = runner.runWithSelectors(DiscoverySelectors.selectMethod(clazz, "step3"))
 
     then:
-    result.runCount == 3
-    result.failureCount == 0
-    result.ignoreCount == 0
+    result.testsSucceededCount == 3
+    result.testsFailedCount == 0
+    result.testsFailedCount == 0
   }
 
   def "honors method-level @Ignore"() {
@@ -72,9 +74,9 @@ class Foo extends Specification {
     """)
 
     then:
-    result.runCount == 2
-    result.failureCount == 0
-    result.ignoreCount == 1
+    result.testsSucceededCount == 2
+    result.testsFailedCount == 0
+    result.testsSkippedCount == 1
   }
 }
 

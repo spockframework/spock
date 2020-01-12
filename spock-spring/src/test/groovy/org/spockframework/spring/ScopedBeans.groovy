@@ -46,8 +46,8 @@ class SpecWithScope extends Specification {
 
     then:
     noExceptionThrown()
-    result.runCount == 1
-    result.failureCount == 0
+    result.testsSucceededCount == 1
+    result.testsFailedCount == 0
   }
 
 
@@ -107,8 +107,8 @@ class SpecWithScopes extends Specification {
 
     then:
     noExceptionThrown()
-    result.runCount == 1
-    result.failureCount == 0
+    result.testsSucceededCount == 1
+    result.testsFailedCount == 0
 
   }
 
@@ -144,8 +144,8 @@ class SpecWithScopes extends Specification {
 
     then:
     noExceptionThrown()
-    result.runCount == 1
-    result.failureCount == 0
+    result.testsSucceededCount == 1
+    result.testsFailedCount == 0
 
   }
 }

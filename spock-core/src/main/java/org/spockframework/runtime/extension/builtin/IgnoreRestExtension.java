@@ -34,7 +34,9 @@ public class IgnoreRestExtension extends AbstractAnnotationDrivenExtension<Ignor
     if (spec.getSuperSpec() != null)
       visitSpec(spec.getSuperSpec());
 
-    for (FeatureInfo feature : spec.getFeatures())
-      feature.setSkipped(!feature.getFeatureMethod().getReflection().isAnnotationPresent(IgnoreRest.class));
+    for (FeatureInfo feature : spec.getFeatures()) {
+      if(!feature.getFeatureMethod().getReflection().isAnnotationPresent(IgnoreRest.class))
+        feature.skip("Not annotated with @IgnoreRest");
+    }
   }
 }

@@ -1,6 +1,45 @@
 = Release Notes
 include::include.adoc[]
 
+== 2.0-M2 (tbd)
+
+== 2.0-M1 (31.12.2019)
+
+This is the first milestone release to version 2.0. This means that we have migrated to the new
+JUnit Platform and all internal tests pass. We have tried to keep the API as compatible as possible
+and if you've only used the public spock API then there is a high possibility that all you have to
+do is to update the spock version and configure gradle/maven to use the JUnit Platform.
+
+However, this doesn't mean that the API is finalized yet, the goal for the first milestone was just
+to get it running on the new platform. The next milestones will focus on improvements like the much
+requested parallel execution support.
+
+Please try it out and report any new bugs so that we can fix them for the final 2.0 release.
+
+=== Breaking Changes
+
+==== New JUnit Platform
+Switch from JUnit 4 to the JUnit Platform.
+See https://junit.org/junit5/docs/current/user-guide/#running-tests-build on how to configure
+maven and gradle to use the JUnit Platform.
+
+JUnit 4 Rules are not supported by `spock-core` anymore, however, there is a new  `spock-junit4`
+module that provides best effort support to ease migration.
+
+==== Misc
+
+- Spock now requires at least Java 8
+- All data-driven test iterations are always reported (unrolled), while `@Unroll` is not necessary anymore
+  it can still be used to define the name template
+- `@Retry.Mode.FEATURE` didn't work anymore and has been removed
+- `spock-report` module has been removed, it was never officially released
+- The `SpockReportingExtension` has been disabled until we can integrate it with JUnitPlatform
+- Removed testing for `spring-2.x` as it is incompatible
+- Fix some Javadocs
+
+Special thanks goes to Marc Philipp who helped a lot with the integration of the JUnit Platform.
+
+Thanks to all the contributors to this release: Marcin Zajączkowski, k3v1n0x90
 
 == 1.3 (2019-03-05)
 

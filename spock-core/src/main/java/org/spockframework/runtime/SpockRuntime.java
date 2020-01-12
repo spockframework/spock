@@ -22,7 +22,6 @@ import org.spockframework.util.*;
 import java.util.*;
 
 import groovy.lang.Closure;
-import org.junit.runners.model.MultipleFailureException;
 
 /**
  * @author Peter Niederwieser
@@ -77,14 +76,6 @@ public abstract class SpockRuntime {
     if (throwable instanceof SpockException) {
       final SpockException spockException = (SpockException) throwable;
       errorCollector.collectOrThrow(spockException); // this is our exception - it already has good message
-      return;
-    }
-    if (throwable instanceof MultipleFailureException) { // this comes from verifyAll so pass it right through
-      try {
-        errorCollector.collectOrThrow(((MultipleFailureException)throwable));
-      } catch (MultipleFailureException e) {
-        ExceptionUtil.sneakyThrow(e);
-      }
       return;
     }
     ExceptionUtil.sneakyThrow(throwable);

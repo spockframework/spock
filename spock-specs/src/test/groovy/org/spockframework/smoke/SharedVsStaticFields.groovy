@@ -16,14 +16,13 @@
 
 package org.spockframework.smoke
 
-import org.junit.ComparisonFailure
-
 import org.spockframework.EmbeddedSpecification
+import org.spockframework.runtime.SpockComparisonFailure
 
 class SharedVsStaticFields extends EmbeddedSpecification {
   def "shared fields are not shared between subsequent runs"() {
     setup:
-    def clazzes = compiler.compileWithImports("""
+    def clazz = compiler.compileWithImports("""
 import org.junit.runner.RunWith
 import org.junit.runners.Suite
 import org.junit.runners.Suite.SuiteClasses
@@ -41,14 +40,11 @@ class SharedField extends Specification {
     expect: x == 44
   }
 }
-
-@RunWith(Suite)
-@SuiteClasses([SharedField, SharedField])
-class SharedFieldSuite {}
-    """)
+    """).find { it.simpleName == "SharedField" }
 
     when:
-    runner.runClass(clazzes.find { it.simpleName == "SharedFieldSuite" })
+    runner.runClass(clazz)
+    runner.runClass(clazz)
 
     then:
     noExceptionThrown()
@@ -56,7 +52,7 @@ class SharedFieldSuite {}
 
   def "static fields are shared between subsequent runs"() {
     setup:
-    def clazzes = compiler.compileWithImports("""
+    def clazz = compiler.compileWithImports("""
 import org.junit.runner.RunWith
 import org.junit.runners.Suite
 import org.junit.runners.Suite.SuiteClasses
@@ -74,16 +70,13 @@ class StaticField extends Specification {
     expect: x == 44
   }
 }
-
-@RunWith(Suite)
-@SuiteClasses([StaticField, StaticField])
-class StaticFieldSuite {}
-    """)
+    """).find { it.simpleName == "StaticField" }
 
     when:
-    runner.runClass(clazzes.find { it.simpleName == "StaticFieldSuite" })
+    runner.runClass(clazz)
+    runner.runClass(clazz)
 
     then:
-    thrown(ComparisonFailure)
+    thrown(SpockComparisonFailure)
   }
 }

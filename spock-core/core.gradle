@@ -12,7 +12,9 @@ configurations { coreConsoleRuntime }
 
 dependencies {
   compile libs.groovy // easiest way to add Groovy dependency to POM
-  compile libs.junit
+  compile libs.junitPlatform
+  compile libs.junitPlatformTestkit, optional
+  compile libs.junit4
 
   compile libs.jetbrainsAnnotations, optional
   compile libs.ant, optional

@@ -16,16 +16,14 @@
 
 package org.spockframework.runtime.model;
 
+import org.spockframework.util.Nullable;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
 
-import org.junit.runner.Description;
-
-import org.spockframework.util.Nullable;
-
 /**
  * Base class for runtime information about an element in a Spock specification.
- * 
+ *
  * @author Peter Niederwieser
  */
 public abstract class NodeInfo<P extends NodeInfo, R extends AnnotatedElement> {
@@ -34,7 +32,6 @@ public abstract class NodeInfo<P extends NodeInfo, R extends AnnotatedElement> {
   private P parent;
   private R reflection;
   private Object metadata;
-  private Description description;
 
   public String getName() {
     return name;
@@ -75,15 +72,6 @@ public abstract class NodeInfo<P extends NodeInfo, R extends AnnotatedElement> {
 
   public void setMetadata(Object metadata) {
     this.metadata = metadata;
-  }
-
-  @Nullable
-  public Description getDescription() {
-    return description;
-  }
-
-  public void setDescription(Description description) {
-    this.description = description;
   }
 
   public Annotation[] getAnnotations() {

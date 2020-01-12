@@ -16,14 +16,12 @@
 
 package org.spockframework.runtime.extension.builtin;
 
-import groovy.lang.Closure;
-
-import org.spockframework.runtime.extension.AbstractAnnotationDrivenExtension;
-import org.spockframework.runtime.extension.ExtensionException;
-import org.spockframework.runtime.model.*;
 import org.spockframework.runtime.GroovyRuntimeUtil;
-
+import org.spockframework.runtime.extension.*;
+import org.spockframework.runtime.model.*;
 import spock.lang.IgnoreIf;
+
+import groovy.lang.Closure;
 
 /**
  * @author Peter Niederwieser
@@ -43,7 +41,7 @@ public class IgnoreIfExtension extends AbstractAnnotationDrivenExtension<IgnoreI
     Closure condition = createCondition(annotation.value());
     Object result = evaluateCondition(condition);
     if (GroovyRuntimeUtil.isTruthy(result)) {
-      skippable.setSkipped(true);
+      skippable.skip("Ignored via @IgnoreIf");
     }
   }
 
@@ -58,7 +56,7 @@ public class IgnoreIfExtension extends AbstractAnnotationDrivenExtension<IgnoreI
   private Object evaluateCondition(Closure condition) {
     condition.setDelegate(new PreconditionContext());
     condition.setResolveStrategy(Closure.DELEGATE_ONLY);
-    
+
     try {
       return condition.call();
     } catch (Exception e) {

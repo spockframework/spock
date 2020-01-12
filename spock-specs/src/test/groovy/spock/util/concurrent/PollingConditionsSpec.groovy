@@ -17,10 +17,12 @@ package spock.util.concurrent
 import org.spockframework.runtime.ConditionNotSatisfiedError
 import org.spockframework.runtime.SpockTimeoutError
 import spock.lang.Issue
+import spock.lang.PendingFeature
 import spock.lang.Specification
 
 class PollingConditionsSpec extends Specification {
   PollingConditions conditions = new PollingConditions()
+  def defConditions = new PollingConditions()
 
   volatile int num = 0
   volatile String str = null
@@ -81,6 +83,32 @@ class PollingConditionsSpec extends Specification {
       it instanceof ConditionNotSatisfiedError
       condition.text == 'str == "bye"'
     }
+  }
+
+  def "fails if condition is not met and assert keyword is used for def declared conditions object"() {
+    num = 50
+
+    when:
+    defConditions.eventually {
+      assert num == 42
+    }
+
+    then:
+    thrown(SpockTimeoutError)
+  }
+
+  @PendingFeature(reason = "Known limitation")
+  @Issue("https://github.com/spockframework/spock/issues/1054")
+  def "fails if condition is not met and assert keyword is not used for def declared conditions object"() {
+    num = 50
+
+    when:
+    defConditions.eventually {
+      num == 42
+    }
+
+    then:
+    thrown(SpockTimeoutError)
   }
 
   def "can override timeout per invocation"() {

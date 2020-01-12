@@ -1,0 +1,33 @@
+apply from: script("publishMaven")
+
+ext.displayName = "Spock Framework - JUnit 4"
+
+description = '''Spock is a testing and specification framework for Java and Groovy applications.
+What makes it stand out from the crowd is its beautiful and highly expressive specification language.
+Thanks to its JUnit runner, Spock is compatible with most IDEs, build tools, and continuous integration servers.
+Spock is inspired from JUnit, jMock, RSpec, Groovy, Scala, Vulcans, and other fascinating life forms.'''
+
+
+dependencies {
+  compile project(":spock-core")
+  compile libs.junit4
+}
+
+
+jar {
+  manifest {
+    attributes(
+      'Created-By': "${System.properties['java.version']} (${System.properties['java.vendor']} ${System.properties['java.vm.version']})".toString(),
+      'Build-Date': buildDate,
+      'Build-Time': buildTime,
+      'Build-Revision': versioning.info.commit,
+      'Specification-Title': project.name,
+      'Specification-Version': baseVersion,
+      'Specification-Vendor': 'spockframework.org',
+      'Implementation-Title': project.name,
+      'Implementation-Version': variantLessVersion,
+      'Implementation-Vendor': 'spockframework.org',
+      'Automatic-Module-Name': 'org.spockframework.junit4'
+    )
+  }
+}

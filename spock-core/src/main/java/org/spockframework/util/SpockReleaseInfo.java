@@ -16,8 +16,7 @@
 
 package org.spockframework.util;
 
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.Properties;
 
 public class SpockReleaseInfo {
@@ -26,9 +25,8 @@ public class SpockReleaseInfo {
   private static final VersionNumber maxGroovyVersion;
 
   static {
-    InputStream stream = SpockReleaseInfo.class.getResourceAsStream("SpockReleaseInfo.properties");
     Properties properties = new Properties();
-    try {
+    try (InputStream stream = SpockReleaseInfo.class.getResourceAsStream("SpockReleaseInfo.properties")){
       properties.load(stream);
     } catch (IOException e) {
       throw new InternalSpockError("Failed to load `SpockReleaseInfo.properties`", e);
@@ -56,7 +54,9 @@ public class SpockReleaseInfo {
         minGroovyVersion.equals(VersionNumber.UNKNOWN) ||
         maxGroovyVersion.equals(VersionNumber.UNKNOWN) ||
         // may happen if (future) Groovy version cannot be parsed
-        groovyVersion.equals(VersionNumber.UNKNOWN)) return true; // be optimistic
+        groovyVersion.equals(VersionNumber.UNKNOWN)) {
+      return true; // be optimistic
+    }
 
     return minGroovyVersion.compareTo(groovyVersion) <= 0
         && maxGroovyVersion.compareTo(groovyVersion) >= 0;

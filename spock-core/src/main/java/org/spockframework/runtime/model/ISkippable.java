@@ -17,5 +17,22 @@ package org.spockframework.runtime.model;
 public interface ISkippable {
   boolean isSkipped();
 
+  /**
+   * Execute or skip.
+   *
+   * @param skipped true if it should be skipped false otherwise
+   * @deprecated use {@link #skip(String)} instead
+   */
+  @Deprecated
   void setSkipped(boolean skipped);
+
+  /**
+   * Skip with a skip reason.
+   *
+   * @param skipReason the reason why it was skipped.
+   * @since 2.0
+   */
+  void skip(String skipReason);
+
+  String getSkipReason();
 }

@@ -20,7 +20,6 @@ import org.spockframework.mock.IArgumentConstraint;
 import org.spockframework.runtime.GroovyRuntimeUtil;
 
 import groovy.lang.Closure;
-import org.junit.runners.model.MultipleFailureException;
 
 /**
  *
@@ -40,12 +39,6 @@ public class CodeArgumentConstraint implements IArgumentConstraint {
       return true;
     } catch (AssertionError ignore) {
       return false;
-    } catch (Exception e) {
-      // MFE can't be catched directly as it thrown by sneakyThrows and not declared as a checked exception
-      if (e instanceof MultipleFailureException) {
-        return false;
-      }
-      throw e;
     }
   }
 
@@ -55,11 +48,6 @@ public class CodeArgumentConstraint implements IArgumentConstraint {
       GroovyRuntimeUtil.invokeClosure(code, argument);
     } catch (AssertionError ae) {
       return ae.getMessage();
-    }  catch (Exception e) {
-      if (e instanceof MultipleFailureException) {
-        return e.getMessage();
-      }
-      throw e;
     }
     return "<Code argument did not match>";
   }

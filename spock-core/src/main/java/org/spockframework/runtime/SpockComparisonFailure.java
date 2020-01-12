@@ -14,7 +14,7 @@
 
 package org.spockframework.runtime;
 
-import org.junit.ComparisonFailure;
+import org.opentest4j.*;
 
 /**
  * Thrown when a condition of the form 'expr1 == expr2' fails.
@@ -24,12 +24,12 @@ import org.junit.ComparisonFailure;
  *
  * @author Peter Niederwieser
  */
-public class SpockComparisonFailure extends ComparisonFailure {
-  private static final long serialVersionUID = 1L;
+public class SpockComparisonFailure extends AssertionFailedError {
+  private static final long serialVersionUID = 2L;
 
   private final Condition condition;
 
-  public SpockComparisonFailure(Condition condition, String expected, String actual) {
+  public SpockComparisonFailure(Condition condition, Object expected, Object actual) {
     super(null, expected, actual);
     this.condition = condition;
   }

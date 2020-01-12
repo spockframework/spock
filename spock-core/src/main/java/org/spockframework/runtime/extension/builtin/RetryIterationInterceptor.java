@@ -16,14 +16,14 @@
 
 package org.spockframework.runtime.extension.builtin;
 
-import groovy.lang.Closure;
 import org.spockframework.runtime.extension.*;
 import spock.lang.Retry;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import org.junit.runners.model.MultipleFailureException;
+import groovy.lang.Closure;
+import org.opentest4j.MultipleFailuresError;
 
 /**
  * @author Leonard Brünings
@@ -37,8 +37,9 @@ public class RetryIterationInterceptor extends RetryBaseInterceptor implements I
   @Override
   public void intercept(IMethodInvocation invocation) throws Throwable {
     List<Throwable> throwableList = new ArrayList<>();
-    for (int i = 0; i <= retry.count(); i++) {
       Queue<Throwable> throwables = new ConcurrentLinkedQueue<>();
+    for (int i = 0; i <= retry.count(); i++) {
+      throwables.clear();
       invocation.getFeature().getFeatureMethod().addInterceptor(new InnerRetryInterceptor(retry, condition, throwables));
       invocation.proceed();
       if (throwables.isEmpty()) {
@@ -50,7 +51,7 @@ public class RetryIterationInterceptor extends RetryBaseInterceptor implements I
       }
     }
     if (!throwableList.isEmpty()) {
-      throw new MultipleFailureException(throwableList);
+      throw new MultipleFailuresError("Retries exhausted", throwableList);
     }
   }
 

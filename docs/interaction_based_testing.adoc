@@ -286,7 +286,7 @@ Sometimes it can be useful to match "anything", in some sense of the word:
 include::{sourcedir}/interaction/InteractionDocSpec.groovy[tag=anyConstraints]
 ----
 
-NOTE: Although `(_.._) * _._(*_) >> _` is a valid interaction declaration,
+NOTE: Although `(\_.._) * \_._(*_) >> _` is a valid interaction declaration,
 it is neither good style nor particularly useful.
 
 === Strict Mocking

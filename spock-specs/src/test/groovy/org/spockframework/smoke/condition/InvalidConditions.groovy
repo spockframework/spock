@@ -20,6 +20,11 @@ import org.codehaus.groovy.syntax.SyntaxException
 
 import org.spockframework.EmbeddedSpecification
 import org.spockframework.compiler.InvalidSpecCompileException
+import org.spockframework.runtime.WrongExceptionThrownError
+import org.spockframework.util.GroovyVersionUtil
+import spock.lang.FailsWith
+import spock.lang.Issue
+import spock.lang.Requires
 
 class InvalidConditions extends EmbeddedSpecification {
   def "assignments are not allowed in expect-blocks"() {
@@ -59,7 +64,8 @@ x $op 42
     op << ["=", "+=", "-="]
   }
 
-  def "assignments are not allowed in explicit conditions"() {
+  @Requires({ GroovyVersionUtil.isGroovy2() })
+  def "assignments are not allowed in explicit conditions (Groovy 2)"() {
     when:
     compiler.compileFeatureBody("""
 def x = 42
@@ -74,6 +80,41 @@ assert x $op 42
 
     where:
     op << ["=", "+=", "-="]
+  }
+
+  @FailsWith(value = WrongExceptionThrownError, reason = "+= and -= are allowed in Groovy 3, to be precised at Groovy side")
+  @Issue("https://issues.apache.org/jira/browse/GROOVY-9360")
+  @Requires({ !GroovyVersionUtil.isGroovy2() })
+  def "assignment arithmetic operators are not allowed in explicit conditions"() {
+    when:
+    compiler.compileFeatureBody("""
+def x = 42
+
+setup:
+assert x $op 42
+    """)
+
+    then:
+    SyntaxException e = thrown()
+    e.message.contains(op)
+
+    where:
+    op << ["+=", "-="]
+  }
+
+  @Requires({ !GroovyVersionUtil.isGroovy2() })
+  def "assignments are not allowed in explicit conditions"() {
+    when:
+    compiler.compileFeatureBody("""
+def x = 42
+
+setup:
+assert x = 42
+    """)
+
+    then:
+    SyntaxException e = thrown()
+    e.message.toLowerCase().contains("assignment")
   }
 
   def "assignments are allowed if they are part of a variable declaration"() {

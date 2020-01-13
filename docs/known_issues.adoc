@@ -1,7 +1,7 @@
 = Known Issues
 include::include.adoc[]
 
-== Usage of `final` in a feature method with `cleanup`
+== Usage of `final` in a feature method with `cleanup` https://github.com/spockframework/spock/issues/1017[#1017]
 
 You might run into issues if you use `final` in your Specification.
 Groovy 2.5 introduced a final checker which broke previously compiling code.
@@ -103,3 +103,43 @@ ____
 Traits are not officially compatible with AST transformations. Some of them, like @CompileStatic will be applied on the trait itself (not on implementing classes), while others will apply on both the implementing class and the trait. There is absolutely no guarantee that an AST transformation will run on a trait as it does on a regular class, so use it at your own risk!
 ____
 
+== Type confusion when using Data-Driven features https://github.com/spockframework/spock/issues/880[#880]
+
+When using data-driven features and variables with the same name but different type in two places with at least one of them in a `where`-block,
+you'll encounter this problem.
+
+[source,groovy]
+----
+class MyTest extends Specification {
+    @Unroll
+    def "#a <=> #b: #result"() {
+        expect:
+        Math.signum(a <=> b) == result
+
+        where:
+        a            | b            | result
+        "abcdef12"   | "abcdef12"   | 0
+    }
+
+    private double[] someOtherMethod() {
+        double[] result = new double[0]
+        return result
+    }
+}
+----
+
+----
+abcdef12 <=> abcdef12: [0.0]
+Condition not satisfied:
+
+Math.signum(a <=> b) == result
+     |      | |   |  |  |
+     0.0    | 0   |  |  [0.0]
+            |     |  false
+            |     abcdef12
+            abcdef12
+
+	at MyTest.#a <=> #b: #result(MyTest.groovy:8)
+----
+
+This issue was introduced by groovy-2.5, previous versions worked fine.

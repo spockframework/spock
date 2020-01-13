@@ -19,7 +19,9 @@ package org.spockframework.groovy
 import org.codehaus.groovy.ast.ASTNode
 import org.codehaus.groovy.ast.expr.ClassExpression
 import org.codehaus.groovy.control.CompilePhase
+import org.spockframework.util.GroovyVersionUtil
 import org.spockframework.util.inspector.AstInspector
+import spock.lang.Requires
 import spock.lang.Specification
 
 /**
@@ -62,7 +64,8 @@ State.NEW
     node.lastColumnNumber == 6
   }
 
-  def "short-form class literals have accurate line/column info"() {
+  @Requires({ GroovyVersionUtil.isGroovy2() })  //lastColumnNumber value fixed in new parser in Groovy 3
+  def "short-form class literals have accurate line/column info (Groovy 2)"() {
     inspector.load("""
 List
 List .methods
@@ -94,7 +97,41 @@ println(  List  )
     node3.lastColumnNumber == 17 // should be: 15
   }
 
-  def "long-form class literals have accurate line/column info"() {
+  @Requires({ !GroovyVersionUtil.isGroovy2() })
+  def "short-form class literals have accurate line/column info"() {
+    inspector.load("""
+List
+List .methods
+println(  List  )
+    """)
+
+    expect:
+    ASTNode node1 = inspector.scriptExpressions[0]
+    node1 instanceof ClassExpression
+    node1.lineNumber == 2
+    node1.columnNumber == 1
+    node1.lastLineNumber == 2
+    node1.lastColumnNumber == 5
+
+    and:
+    ASTNode node2 = inspector.scriptExpressions[1].objectExpression
+    node2 instanceof ClassExpression
+    node2.lineNumber == 3
+    node2.columnNumber == 1
+    node2.lastLineNumber == 3
+    node2.lastColumnNumber == 5
+
+    and:
+    ASTNode node3 = inspector.scriptExpressions[2].arguments.expressions[0]
+    node3 instanceof ClassExpression
+    node3.lineNumber == 4
+    node3.columnNumber == 11
+    node3.lastLineNumber == 4
+    node3.lastColumnNumber == 15
+  }
+
+  @Requires({ GroovyVersionUtil.isGroovy2() })  //column number changed in Groovy 3
+  def "long-form class literals have accurate line/column info (Groovy 2)"() {
     inspector.load("""
 List.class
 List.class.methods
@@ -113,6 +150,30 @@ List.class.methods
     node2 instanceof ClassExpression
     node2.lineNumber == 3
     node2.columnNumber == 1
+    node2.lastLineNumber == 3
+    node2.lastColumnNumber == 11
+  }
+
+  @Requires({ !GroovyVersionUtil.isGroovy2() })
+  def "long-form class literals have accurate line/column info"() {
+    inspector.load("""
+List.class
+List.class.methods
+    """)
+
+    expect:
+    ASTNode node1 = inspector.scriptExpressions[0]
+    node1 instanceof ClassExpression
+    node1.lineNumber == 2
+    node1.columnNumber == 1
+    node1.lastLineNumber == 2
+    node1.lastColumnNumber == 11
+
+    and:
+    ASTNode node2 = inspector.scriptExpressions[1].objectExpression
+    node2 instanceof ClassExpression
+    node2.lineNumber == 3
+    node2.columnNumber == 5
     node2.lastLineNumber == 3
     node2.lastColumnNumber == 11
   }

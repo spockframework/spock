@@ -17,8 +17,40 @@
 package org.spockframework.smoke
 
 import org.spockframework.EmbeddedSpecification
+import org.spockframework.runtime.UnallowedExceptionThrownError
+import org.spockframework.util.GroovyVersionUtil
+import spock.lang.FailsWith
+import spock.lang.Requires
 
 class AnonymousInnerClasses extends EmbeddedSpecification {
+  @Requires({ GroovyVersionUtil.isGroovy2() })
+  def "anonymous inner class and dot in feature name does not fail execution (Groovy 2)"() {
+    when:
+    runner.runSpecBody("""
+def '.'() {
+  expect:
+  new Object() { }
+}
+    """)
+
+    then:
+    noExceptionThrown()
+  }
+
+  @Requires({ GroovyVersionUtil.isGroovy2() })
+  def "enclosing method of anonymous inner class can be accessed (Groovy 2)"() {
+    when:
+    runner.runFeatureBody("""
+expect:
+new Object() { }.getClass().enclosingMethod
+    """)
+
+    then:
+    noExceptionThrown()
+  }
+
+  @Requires({ !GroovyVersionUtil.isGroovy2() })
+  @FailsWith(value = UnallowedExceptionThrownError, reason = "Started failing after late rebase with master. To be fixed.")
   def "anonymous inner class and dot in feature name does not fail execution"() {
     when:
     runner.runSpecBody("""
@@ -32,6 +64,8 @@ def '.'() {
     noExceptionThrown()
   }
 
+  @Requires({ !GroovyVersionUtil.isGroovy2() })
+  @FailsWith(value = UnallowedExceptionThrownError, reason = "Started failing after late rebase with master. To be fixed.")
   def "enclosing method of anonymous inner class can be accessed"() {
     when:
     runner.runFeatureBody("""

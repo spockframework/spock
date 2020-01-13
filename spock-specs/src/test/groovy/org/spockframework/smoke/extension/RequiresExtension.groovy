@@ -53,7 +53,10 @@ class RequiresExtension extends EmbeddedSpecification {
       expect: true
     }
 
-    @Requires({ jvm.java8 || jvm.java9 || jvm.java10 || jvm.java11 || jvm.java12 || jvm.isJavaVersion(13) })
+    @Requires({
+      jvm.java8 || jvm.java9 || jvm.java10 || jvm.java11 || jvm.java12 || jvm.java13 || jvm.java14 || jvm.java15 || jvm.java16 || jvm.java17 ||
+        jvm.isJavaVersion(18)
+    })
     def "provides JVM information"() {
       expect: true
     }

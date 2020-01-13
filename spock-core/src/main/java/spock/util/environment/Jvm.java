@@ -101,6 +101,56 @@ public class Jvm {
   }
 
   /**
+   * Tells whether the Java version is 13.
+   *
+   * @since 2.0
+   * @return whether the Java version is 13
+   */
+  public boolean isJava13() {
+    return "13".equals(javaSpecVersion);
+  }
+
+  /**
+   * Tells whether the Java version is 14.
+   *
+   * @since 2.0
+   * @return whether the Java version is 14
+   */
+  public boolean isJava14() {
+    return "14".equals(javaSpecVersion);
+  }
+
+  /**
+   * Tells whether the Java version is 15.
+   *
+   * @since 2.0
+   * @return whether the Java version is 15
+   */
+  public boolean isJava15() {
+    return "15".equals(javaSpecVersion);
+  }
+
+  /**
+   * Tells whether the Java version is 16.
+   *
+   * @since 2.0
+   * @return whether the Java version is 16
+   */
+  public boolean isJava16() {
+    return "16".equals(javaSpecVersion);
+  }
+
+  /**
+   * Tells whether the Java version is 17.
+   *
+   * @since 2.0
+   * @return whether the Java version is 17
+   */
+  public boolean isJava17() {
+    return "17".equals(javaSpecVersion);
+  }
+
+  /**
    * Tells whether the Java version is equal to the given major Java version.
    *
    * @since 2.0
@@ -161,6 +211,56 @@ public class Jvm {
    */
   public boolean isJava12Compatible() {
     return javaSpecVersionNumber.getMajor() >= 12;
+  }
+
+  /**
+   * Tells whether the Java version is compatible with Java 13.
+   *
+   * @since 2.0
+   * @return whether the Java version is compatible with Java 13
+   */
+  public boolean isJava13Compatible() {
+    return javaSpecVersionNumber.getMajor() >= 13;
+  }
+
+  /**
+   * Tells whether the Java version is compatible with Java 14.
+   *
+   * @since 2.0
+   * @return whether the Java version is compatible with Java 14
+   */
+  public boolean isJava14Compatible() {
+    return javaSpecVersionNumber.getMajor() >= 14;
+  }
+
+  /**
+   * Tells whether the Java version is compatible with Java 15.
+   *
+   * @since 2.0
+   * @return whether the Java version is compatible with Java 15
+   */
+  public boolean isJava15Compatible() {
+    return javaSpecVersionNumber.getMajor() >= 15;
+  }
+
+  /**
+   * Tells whether the Java version is compatible with Java 16.
+   *
+   * @since 2.0
+   * @return whether the Java version is compatible with Java 16
+   */
+  public boolean isJava16Compatible() {
+    return javaSpecVersionNumber.getMajor() >= 16;
+  }
+
+  /**
+   * Tells whether the Java version is compatible with Java 17.
+   *
+   * @since 2.0
+   * @return whether the Java version is compatible with Java 17
+   */
+  public boolean isJava17Compatible() {
+    return javaSpecVersionNumber.getMajor() >= 17;
   }
 
   /**

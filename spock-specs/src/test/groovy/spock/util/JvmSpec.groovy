@@ -67,12 +67,12 @@ class JvmSpec extends Specification {
     def jvm = Jvm.current
 
     expect:
-    for (i in 8..12) {
+    for (i in 8..17) {
       assert jvm."java$i" == (i == major)
     }
 
     where:
-    major << (9..17)
+    major << (9..20)
   }
 
   def "can check for Java version compatibility"() {
@@ -80,12 +80,12 @@ class JvmSpec extends Specification {
     def jvm = Jvm.current
 
     expect:
-    for (i in 8..12) {
+    for (i in 8..17) {
       assert jvm."java${i}Compatible" == (i <= major)
     }
 
     where:
-    major << (9..17)
+    major << (9..20)
   }
 
   def "can check for Java version (given major version)"() {
@@ -98,7 +98,7 @@ class JvmSpec extends Specification {
     }
 
     where:
-    major << (9..17)
+    major << (9..20)
   }
 
   def "can check for Java version compatibility (given major version)"() {
@@ -111,6 +111,6 @@ class JvmSpec extends Specification {
     }
 
     where:
-    major << (9..17)
+    major << (9..20)
   }
 }

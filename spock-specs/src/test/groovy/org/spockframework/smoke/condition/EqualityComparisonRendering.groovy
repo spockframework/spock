@@ -16,7 +16,9 @@
 package org.spockframework.smoke.condition
 
 import org.spockframework.runtime.ConditionNotSatisfiedError
+import org.spockframework.util.GroovyVersionUtil
 import spock.lang.Issue
+import spock.lang.Requires
 
 class EqualityComparisonRendering extends ConditionRenderingSpec {
   def "values with different representations"() {
@@ -113,12 +115,27 @@ x == 123
     }
   }
 
-  def "values with same literal representations"() {
+  @Requires({ GroovyVersionUtil.isGroovy2() })
+  def "values with same literal representations (Groovy 2)"() {
     expect:
     isRendered """
 [0, 1] == [0, 1] as Set
 |      |         |
 |      false     [0, 1] (java.util.LinkedHashSet)
+[0, 1] (java.util.ArrayList)
+    """, {
+      assert [0, 1] == [0, 1] as Set
+    }
+  }
+
+  @Requires({ !GroovyVersionUtil.isGroovy2() })
+  def "values with same literal representations"() {
+    expect:
+    isRendered """
+[0, 1] == [0, 1] as Set
+|      |  |
+|      |  [0, 1] (java.util.LinkedHashSet)
+|      false
 [0, 1] (java.util.ArrayList)
     """, {
       assert [0, 1] == [0, 1] as Set

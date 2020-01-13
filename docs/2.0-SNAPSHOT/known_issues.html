@@ -21,7 +21,7 @@
 </div>
 <div id="content">
 <div class="sect1">
-<h2 id="_usage_of_final_in_a_feature_method_with_cleanup"><a class="anchor" href="#_usage_of_final_in_a_feature_method_with_cleanup"></a><a class="link" href="#_usage_of_final_in_a_feature_method_with_cleanup">Usage of <code>final</code> in a feature method with <code>cleanup</code></a></h2>
+<h2 id="_usage_of_final_in_a_feature_method_with_cleanup_1017"><a class="anchor" href="#_usage_of_final_in_a_feature_method_with_cleanup_1017"></a><a class="link" href="#_usage_of_final_in_a_feature_method_with_cleanup_1017">Usage of <code>final</code> in a feature method with <code>cleanup</code> <a href="https://github.com/spockframework/spock/issues/1017">#1017</a></a></h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>You might run into issues if you use <code>final</code> in your Specification.
@@ -154,11 +154,58 @@ This is due to how groovy implements traits and AST transformations.</p>
 </div>
 </div>
 </div>
+<div class="sect1">
+<h2 id="_type_confusion_when_using_data_driven_features_880"><a class="anchor" href="#_type_confusion_when_using_data_driven_features_880"></a><a class="link" href="#_type_confusion_when_using_data_driven_features_880">Type confusion when using Data-Driven features <a href="https://github.com/spockframework/spock/issues/880">#880</a></a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>When using data-driven features and variables with the same name but different type in two places with at least one of them in a <code>where</code>-block,
+you&#8217;ll encounter this problem.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="type">class</span> <span class="class">MyTest</span> <span class="directive">extends</span> Specification {
+    <span class="annotation">@Unroll</span>
+    <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">#a &lt;=&gt; #b: #result</span><span class="delimiter">&quot;</span></span>() {
+        <span class="key">expect</span>:
+        <span class="predefined-type">Math</span>.signum(a &lt;=&gt; b) == result
+
+        <span class="key">where</span>:
+        a            | b            | result
+        <span class="string"><span class="delimiter">&quot;</span><span class="content">abcdef12</span><span class="delimiter">&quot;</span></span>   | <span class="string"><span class="delimiter">&quot;</span><span class="content">abcdef12</span><span class="delimiter">&quot;</span></span>   | <span class="integer">0</span>
+    }
+
+    <span class="directive">private</span> <span class="type">double</span><span class="type">[]</span> someOtherMethod() {
+        <span class="type">double</span><span class="type">[]</span> result = <span class="keyword">new</span> <span class="type">double</span>[<span class="integer">0</span>]
+        <span class="keyword">return</span> result
+    }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>abcdef12 &lt;=&gt; abcdef12: [0.0]
+Condition not satisfied:
+
+Math.signum(a &lt;=&gt; b) == result
+     |      | |   |  |  |
+     0.0    | 0   |  |  [0.0]
+            |     |  false
+            |     abcdef12
+            abcdef12
+
+	at MyTest.#a &lt;=&gt; #b: #result(MyTest.groovy:8)</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This issue was introduced by groovy-2.5, previous versions worked fine.</p>
+</div>
+</div>
+</div>
 </div>
 <div id="footer">
 <div id="footer-text">
 Version 2.0-SNAPSHOT<br>
-Last updated 2020-01-13 21:35:43 UTC
+Last updated 2020-01-13 22:50:33 UTC
 </div>
 </div>
 </body>

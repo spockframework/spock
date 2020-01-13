@@ -63,9 +63,15 @@ public class JavaMockInterceptor implements IProxyBasedMockInterceptor {
         }
       }
       if (isMethod(method, "getProperty", String.class)) {
-        //Groovy 3 started to call getProperty("x") method instead of getX() directly
-        String methodName = GroovyRuntimeUtil.propertyToMethodName("get", (String) normalizedArgs[0]);
-        return GroovyRuntimeUtil.invokeMethod(target, methodName);
+        //Groovy 3 started to call go.getProperty("x") method instead of go.getX() directly for go.x
+        Throwable throwable = new Throwable();
+        StackTraceElement mockCaller = throwable.getStackTrace()[3];
+        if (!("groovy.lang.GroovyObject$getProperty".equals(mockCaller.getClassName()) && "call".equals(mockCaller.getMethodName()))) {
+          //Only explicit getter executions (go.foo and go.getFoo()) should be deeper processed.
+          //go.getProperty("foo") is treated as is (to allow for its stubbing)
+          String methodName = GroovyRuntimeUtil.propertyToMethodName("get", (String) normalizedArgs[0]);
+          return GroovyRuntimeUtil.invokeMethod(target, methodName);
+        }
       }
     }
 

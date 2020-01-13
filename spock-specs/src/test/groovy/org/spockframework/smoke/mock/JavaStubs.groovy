@@ -16,7 +16,7 @@ package org.spockframework.smoke.mock
 
 import org.spockframework.runtime.InvalidSpecException
 import org.spockframework.mock.CannotCreateMockException
-
+import spock.lang.Issue
 import spock.lang.Specification
 import spock.lang.FailsWith
 
@@ -30,24 +30,47 @@ class JavaStubs extends Specification {
     person.children == []
   }
 
-  def "can be stubbed"() {
+  def "can be stubbed (using property syntax)"() {
     person.name >> "fred"
 
     expect:
     person.name == "fred"
   }
 
-  def "like to be stubbed at creation time"() {
-    person = Stub(IPerson) {
-      getName() >> "fred"
-      getAge() >> 25
-    }
+  def "can be stubbed (using method syntax)"() {
+    person.getName() >> "fred"
 
     expect:
     person.getName() == "fred"
+  }
+
+  @Issue("Property access was initially broken for class-based mocks after migration to Groovy 3")
+  //TODO: Parametrize (in separate PR) most of the tests with interface/class based stubs - implementation is not the same
+  def "can stub property access"() {
+    given:
+    person = Stub(Person)
+
+    and:
+    person.getName() >> "fred"
+    person.age >> 25
+
+    expect:
+    person.name == "fred"
+    person.getProperty("name") == "fred"
 
     and:
     person.age == 25
+    person.getProperty("age") == 25
+
+  }
+
+  def "like to be stubbed at creation time"() {
+    person = Stub(IPerson) {
+      getName() >> "fred"
+    }
+
+    expect:
+    person.name == "fred"
   }
 
   @FailsWith(InvalidSpecException)
@@ -76,9 +99,7 @@ class JavaStubs extends Specification {
     }
 
     expect:
-    person.getName() == "barney"
-
-    and:  "property access was initially broken for class-based mocks after migration to Groovy 3"
+    person.name == "barney"
     person.age == 21
     person.children == ["Bamm-Bamm"]
   }

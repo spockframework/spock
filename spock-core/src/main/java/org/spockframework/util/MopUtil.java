@@ -21,11 +21,12 @@ import org.codehaus.groovy.reflection.CachedMethod;
 import org.codehaus.groovy.runtime.metaclass.*;
 
 import groovy.lang.*;
+import org.spockframework.runtime.GroovyRuntimeUtil;
 
 public abstract class MopUtil {
   private static final Field ReflectionMetaMethod_method  = getDeclaredField(ReflectionMetaMethod.class, "method");
-  //TODO: cachedField in Groovy 3.0
-  private static final Field CachedField_field = getDeclaredField(CachedField.class, "cachedField");
+  private static final Field CachedField_field = GroovyRuntimeUtil.isGroovy2() ? getDeclaredField(CachedField.class, "field") :
+    getDeclaredField(CachedField.class, "cachedField");
 
   private static Field getDeclaredField(Class clazz, String name) {
     try {

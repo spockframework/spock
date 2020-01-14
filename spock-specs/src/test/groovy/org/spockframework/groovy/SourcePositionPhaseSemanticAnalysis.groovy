@@ -19,7 +19,7 @@ package org.spockframework.groovy
 import org.codehaus.groovy.ast.ASTNode
 import org.codehaus.groovy.ast.expr.ClassExpression
 import org.codehaus.groovy.control.CompilePhase
-import org.spockframework.util.GroovyVersionUtil
+import org.spockframework.runtime.GroovyRuntimeUtil
 import org.spockframework.util.inspector.AstInspector
 import spock.lang.Requires
 import spock.lang.Specification
@@ -64,7 +64,7 @@ State.NEW
     node.lastColumnNumber == 6
   }
 
-  @Requires({ GroovyVersionUtil.isGroovy2() })  //lastColumnNumber value fixed in new parser in Groovy 3
+  @Requires({ GroovyRuntimeUtil.isGroovy2() })  //lastColumnNumber value fixed in new parser in Groovy 3
   def "short-form class literals have accurate line/column info (Groovy 2)"() {
     inspector.load("""
 List
@@ -97,7 +97,7 @@ println(  List  )
     node3.lastColumnNumber == 17 // should be: 15
   }
 
-  @Requires({ !GroovyVersionUtil.isGroovy2() })
+  @Requires({ !GroovyRuntimeUtil.isGroovy2() })
   def "short-form class literals have accurate line/column info"() {
     inspector.load("""
 List
@@ -130,7 +130,7 @@ println(  List  )
     node3.lastColumnNumber == 15
   }
 
-  @Requires({ GroovyVersionUtil.isGroovy2() })  //column number changed in Groovy 3
+  @Requires({ GroovyRuntimeUtil.isGroovy2() })  //column number changed in Groovy 3
   def "long-form class literals have accurate line/column info (Groovy 2)"() {
     inspector.load("""
 List.class
@@ -154,7 +154,7 @@ List.class.methods
     node2.lastColumnNumber == 11
   }
 
-  @Requires({ !GroovyVersionUtil.isGroovy2() })
+  @Requires({ !GroovyRuntimeUtil.isGroovy2() })
   def "long-form class literals have accurate line/column info"() {
     inspector.load("""
 List.class

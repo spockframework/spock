@@ -16,13 +16,13 @@ package org.spockframework.smoke
 
 import org.spockframework.EmbeddedSpecification
 import org.spockframework.compiler.InvalidSpecCompileException
+import org.spockframework.runtime.GroovyRuntimeUtil
 import org.spockframework.runtime.WrongExceptionThrownError
-import org.spockframework.util.GroovyVersionUtil
 import spock.lang.FailsWith
 import spock.lang.Requires
 
 class CompileTimeErrorReporting extends EmbeddedSpecification {
-  @Requires({ GroovyVersionUtil.isGroovy2() })
+  @Requires({ GroovyRuntimeUtil.isGroovy2() })
   def "constructor declaration (Groovy 2)"() {
     when:
     compiler.compileSpecBody """
@@ -33,7 +33,7 @@ ASpec() {}
     thrown(InvalidSpecCompileException)
   }
 
-  @Requires({ !GroovyVersionUtil.isGroovy2() }) //TODO: Unify tests while fixed for Groovy 3
+  @Requires({ !GroovyRuntimeUtil.isGroovy2() }) //TODO: Unify tests while fixed for Groovy 3
   @FailsWith(value = WrongExceptionThrownError, reason = "SpecParser.constructorMayHaveBeenAddedByCompiler no longer detect constructor. To be fixed.")
   def "constructor declaration"() {
     when:

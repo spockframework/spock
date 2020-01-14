@@ -14,6 +14,7 @@
 
 package org.spockframework.runtime;
 
+import groovy.transform.Internal;
 import org.spockframework.util.*;
 
 import java.beans.Introspector;
@@ -300,5 +301,10 @@ public abstract class GroovyRuntimeUtil {
   public static Method toMethod(@Nullable MetaMethod metaMethod) {
     CachedMethod cachedMethod = ObjectUtil.asInstance(metaMethod, CachedMethod.class);
     return cachedMethod == null ? null : cachedMethod.getCachedMethod();
+  }
+
+  @Internal
+  public static boolean isGroovy2() {
+    return GroovySystem.getVersion().startsWith("2.");
   }
 }

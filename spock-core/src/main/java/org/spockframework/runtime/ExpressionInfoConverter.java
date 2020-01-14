@@ -331,7 +331,6 @@ public class ExpressionInfoConverter extends AbstractExpressionConverter<Express
 
   @Override
   public void visitLambdaExpression(LambdaExpression expr) {
-    //TODO: Write test covering lambdas and method references in Spock specification
     visitClosureExpression(expr);
   }
 

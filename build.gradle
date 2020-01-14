@@ -136,10 +136,10 @@ subprojects {
   sourceSets.all { ss ->
     for (v in variants.findAll { it <= variant } ) {
       java {
-        srcDir "src/$ss.name$v/java"
+        srcDir "src/${ss.name}$v/java"
       }
       groovy {
-        srcDir "src/$ss.name$v/groovy"
+        srcDir "src/${ss.name}$v/groovy"
       }
     }
   }

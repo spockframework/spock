@@ -1,3 +1,7 @@
 //Module with compatibility layer to keep codebase compilable with both Groovy 2.5 and 3.0
-//
-//WARNING. Do not mix groovy-3 and spock-2.x-groovy-2.5 jars on classpath!
+
+if (variant == 2.5) {
+  dependencies {
+    compile project(':internal-backport')
+  }
+}

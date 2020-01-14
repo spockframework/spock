@@ -16,8 +16,8 @@
 
 package org.spockframework.smoke.condition
 
+import org.spockframework.runtime.GroovyRuntimeUtil
 import org.spockframework.runtime.SpockComparisonFailure
-import org.spockframework.util.GroovyVersionUtil
 import spock.lang.Issue
 import spock.lang.Requires
 
@@ -358,7 +358,7 @@ a[b]
     }
   }
 
-  @Requires({ GroovyVersionUtil.isGroovy2() })
+  @Requires({ GroovyRuntimeUtil.isGroovy2() })
   def "PostfixExpression (Groovy 2)"() {
     expect:
     isRendered """
@@ -371,7 +371,7 @@ x++ == null
     }
   }
 
-  @Requires({ !GroovyVersionUtil.isGroovy2() })
+  @Requires({ !GroovyRuntimeUtil.isGroovy2() })
   def "PostfixExpression"() {
     expect:
     isRendered """
@@ -557,7 +557,7 @@ interface java.util.List
     }
   }
 
-  @Requires({ GroovyVersionUtil.isGroovy2() })  //comments are no longer included in power assertion's error message in Groovy 3
+  @Requires({ GroovyRuntimeUtil.isGroovy2() })  //comments are no longer included in power assertion's error message in Groovy 3
   def "ClassExpression with dot-containing comments (Groovy 2)"() {
     expect:
     isRendered """
@@ -570,7 +570,7 @@ java.util./*.awt.*/List == java.lang.String // I. Like. Dots.
     }
   }
 
-  @Requires({ !GroovyVersionUtil.isGroovy2() })
+  @Requires({ !GroovyRuntimeUtil.isGroovy2() })
   def "ClassExpression with dot-containing comments"() {
     expect:
     isRendered """

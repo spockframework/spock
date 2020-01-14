@@ -16,7 +16,7 @@
 package org.spockframework.smoke.condition
 
 import org.spockframework.runtime.ConditionNotSatisfiedError
-import org.spockframework.util.GroovyVersionUtil
+import org.spockframework.runtime.GroovyRuntimeUtil
 import spock.lang.Issue
 import spock.lang.Requires
 
@@ -115,7 +115,7 @@ x == 123
     }
   }
 
-  @Requires({ GroovyVersionUtil.isGroovy2() })
+  @Requires({ GroovyRuntimeUtil.isGroovy2() })
   def "values with same literal representations (Groovy 2)"() {
     expect:
     isRendered """
@@ -128,7 +128,7 @@ x == 123
     }
   }
 
-  @Requires({ !GroovyVersionUtil.isGroovy2() })
+  @Requires({ !GroovyRuntimeUtil.isGroovy2() })
   def "values with same literal representations"() {
     expect:
     isRendered """

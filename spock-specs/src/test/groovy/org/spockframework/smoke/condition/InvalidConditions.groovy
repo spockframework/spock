@@ -20,8 +20,8 @@ import org.codehaus.groovy.syntax.SyntaxException
 
 import org.spockframework.EmbeddedSpecification
 import org.spockframework.compiler.InvalidSpecCompileException
+import org.spockframework.runtime.GroovyRuntimeUtil
 import org.spockframework.runtime.WrongExceptionThrownError
-import org.spockframework.util.GroovyVersionUtil
 import spock.lang.FailsWith
 import spock.lang.Issue
 import spock.lang.Requires
@@ -64,7 +64,7 @@ x $op 42
     op << ["=", "+=", "-="]
   }
 
-  @Requires({ GroovyVersionUtil.isGroovy2() })
+  @Requires({ GroovyRuntimeUtil.isGroovy2() })
   def "assignments are not allowed in explicit conditions (Groovy 2)"() {
     when:
     compiler.compileFeatureBody("""
@@ -84,7 +84,7 @@ assert x $op 42
 
   @FailsWith(value = WrongExceptionThrownError, reason = "+= and -= are allowed in Groovy 3, to be precised at Groovy side")
   @Issue("https://issues.apache.org/jira/browse/GROOVY-9360")
-  @Requires({ !GroovyVersionUtil.isGroovy2() })
+  @Requires({ !GroovyRuntimeUtil.isGroovy2() })
   def "assignment arithmetic operators are not allowed in explicit conditions"() {
     when:
     compiler.compileFeatureBody("""
@@ -102,7 +102,7 @@ assert x $op 42
     op << ["+=", "-="]
   }
 
-  @Requires({ !GroovyVersionUtil.isGroovy2() })
+  @Requires({ !GroovyRuntimeUtil.isGroovy2() })
   def "assignments are not allowed in explicit conditions"() {
     when:
     compiler.compileFeatureBody("""

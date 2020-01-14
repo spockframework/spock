@@ -9,3 +9,4 @@ trim_trailing_whitespace = true
 [*.{java,groovy,gradle,xml,html,js}]
 indent_style = space
 indent_size = 2
+max_line_length = 150

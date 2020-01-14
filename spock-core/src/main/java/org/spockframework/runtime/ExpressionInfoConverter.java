@@ -16,6 +16,7 @@
 
 package org.spockframework.runtime;
 
+import org.spockframework.compat.groovy2.GroovyCodeVisitorCompat;
 import org.spockframework.runtime.model.*;
 import org.spockframework.util.AbstractExpressionConverter;
 
@@ -33,7 +34,7 @@ import org.codehaus.groovy.syntax.Types;
 // search for the token backwards from the subsequent expression
 // IDEA: combine with value population because values might provide some additional
 // hints about the real nature of a node (as we are only in phase CONVERSION)
-public class ExpressionInfoConverter extends AbstractExpressionConverter<ExpressionInfo> {
+public class ExpressionInfoConverter extends AbstractExpressionConverter<ExpressionInfo> implements GroovyCodeVisitorCompat {
   private final String[] lines;
 
   public ExpressionInfoConverter(String[] lines) {

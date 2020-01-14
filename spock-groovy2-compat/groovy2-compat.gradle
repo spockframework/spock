@@ -1,0 +1,27 @@
+//Module with compatibility layer to keep codebase compilable with both Groovy 2.5 and 3.0
+//
+//WARNING. Do not mix groovy:3.x and spock-groovy2-compat:2.x-groovy-2.5 jars on classpath!
+
+apply from: script("publishMaven")
+
+ext.displayName = "Spock Framework - Groovy 2 Compatibility Module"
+
+description = "Spock's Groovy 2 Compatibility Module provides support for using Spock 2 with Groovy 2.5."
+
+jar {
+  manifest {
+    attributes(
+      'Created-By': "${System.properties['java.version']} (${System.properties['java.vendor']} ${System.properties['java.vm.version']})".toString(),
+      'Build-Date': buildDate,
+      'Build-Time': buildTime,
+      'Build-Revision': versioning.info.commit,
+      'Specification-Title': project.name,
+      'Specification-Version': baseVersion,
+      'Specification-Vendor': 'spockframework.org',
+      'Implementation-Title': project.name,
+      'Implementation-Version': variantLessVersion,
+      'Implementation-Vendor': 'spockframework.org',
+      'Automatic-Module-Name': 'org.spockframework.spring'
+    )
+  }
+}

@@ -8,11 +8,10 @@ include "spock-guice"
 include "spock-junit4"
 include "spock-temp"
 include "spock-testkit"
-//Remove once Groovy 2.5 support is dropped
-include "groovy2-compat"
 
 if ((System.getProperty("variant") as BigDecimal ?: 3.0) != 3.0) {
-  include "internal-backport"
+  //Remove once Groovy 2.5 support is dropped
+  include "spock-groovy2-compat"
 }
 
 // https://issues.apache.org/jira/projects/TAP5/issues/TAP5-2588

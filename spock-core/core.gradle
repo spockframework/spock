@@ -23,7 +23,11 @@ dependencies {
   compile libs.cglib, optional
   compile libs.objenesis, optional
 
-  compile project(':groovy2-compat')
+  if (variant == 2.5) {
+    dependencies {
+      compile project(':spock-groovy2-compat')
+    }
+  }
 
   coreConsoleRuntime groovyConsoleExtraDependency
 }

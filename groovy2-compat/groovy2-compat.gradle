@@ -1,7 +1,0 @@
-//Module with compatibility layer to keep codebase compilable with both Groovy 2.5 and 3.0
-
-if (variant == 2.5) {
-  dependencies {
-    compile project(':internal-backport')
-  }
-}

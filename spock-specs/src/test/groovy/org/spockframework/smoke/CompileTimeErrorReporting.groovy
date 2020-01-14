@@ -18,7 +18,7 @@ import org.spockframework.EmbeddedSpecification
 import org.spockframework.compiler.InvalidSpecCompileException
 import org.spockframework.runtime.GroovyRuntimeUtil
 import org.spockframework.runtime.WrongExceptionThrownError
-import spock.lang.FailsWith
+import spock.lang.PendingFeature
 import spock.lang.Requires
 
 class CompileTimeErrorReporting extends EmbeddedSpecification {
@@ -34,7 +34,7 @@ ASpec() {}
   }
 
   @Requires({ !GroovyRuntimeUtil.isGroovy2() }) //TODO: Unify tests while fixed for Groovy 3
-  @FailsWith(value = WrongExceptionThrownError, reason = "SpecParser.constructorMayHaveBeenAddedByCompiler no longer detect constructor. To be fixed.")
+  @PendingFeature(exceptions = WrongExceptionThrownError, reason = "SpecParser.constructorMayHaveBeenAddedByCompiler no longer detect constructor. To be fixed.")
   def "constructor declaration"() {
     when:
     compiler.compileSpecBody """

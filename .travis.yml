@@ -32,7 +32,7 @@ jdk:
 
 env:
   matrix:
-    # Variant 2.5 is broken due to incompatible changes in Groovy 3 API
+    - VARIANT=2.5
     - VARIANT=3.0
   global:
     # SIGNING_PASSWORD

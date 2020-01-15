@@ -26,9 +26,7 @@ import org.codehaus.groovy.ast.expr.MethodReferenceExpression;
  */
 public interface GroovyCodeVisitorCompat {
 
-  default void visitMethodReferenceExpression(MethodReferenceExpression expr) {
-  }
+  void visitMethodReferenceExpression(MethodReferenceExpression expr);
 
-  default void visitLambdaExpression(LambdaExpression expr) {
-  }
+  void visitLambdaExpression(LambdaExpression expr);
 }

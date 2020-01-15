@@ -166,7 +166,7 @@ class JavaMocksForGroovyClasses extends Specification {
   }
 
   // TODO: swallowed when mocking static inner class because the latter implements methodMissing/propertyMissing
-  @Requires({ !GroovyRuntimeUtil.isGroovy2() })
+  @Requires({ GroovyRuntimeUtil.isGroovy3() })
   @FailsWith(MissingMethodException)
   def "dynamic properties are considered to not exist"() {
     when:

@@ -33,7 +33,7 @@ ASpec() {}
     thrown(InvalidSpecCompileException)
   }
 
-  @Requires({ !GroovyRuntimeUtil.isGroovy2() }) //TODO: Unify tests while fixed for Groovy 3
+  @Requires({ GroovyRuntimeUtil.isGroovy3() }) //TODO: Unify tests while fixed for Groovy 3
   @PendingFeature(exceptions = WrongExceptionThrownError, reason = "SpecParser.constructorMayHaveBeenAddedByCompiler no longer detect constructor. To be fixed.")
   def "constructor declaration"() {
     when:

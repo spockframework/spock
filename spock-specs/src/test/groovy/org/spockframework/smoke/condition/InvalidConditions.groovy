@@ -84,7 +84,7 @@ assert x $op 42
 
   @PendingFeature(exceptions = WrongExceptionThrownError, reason = "+= and -= are allowed in Groovy 3, to be precised at Groovy side")
   @Issue("https://issues.apache.org/jira/browse/GROOVY-9360")
-  @Requires({ !GroovyRuntimeUtil.isGroovy2() })
+  @Requires({ GroovyRuntimeUtil.isGroovy3() })
   def "assignment arithmetic operators are not allowed in explicit conditions"() {
     when:
     compiler.compileFeatureBody("""
@@ -102,7 +102,7 @@ assert x $op 42
     op << ["+=", "-="]
   }
 
-  @Requires({ !GroovyRuntimeUtil.isGroovy2() })
+  @Requires({ GroovyRuntimeUtil.isGroovy3() })
   def "assignments are not allowed in explicit conditions"() {
     when:
     compiler.compileFeatureBody("""

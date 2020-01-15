@@ -16,45 +16,33 @@ ext {
   baseVersion = "2.0"
   snapshotVersion = true
   milestone = 0
-  variants = [3.0, 2.5]
-  variant = System.getProperty("variant") as BigDecimal ?: variants.first()
-  if (variant == 3.0) {
-    groovyVersion = "3.0.0-rc-2"
-    minGroovyVersion = "3.0.0"
-    maxGroovyVersion = "3.9.99"
-    groovyDependency = [
-      "org.codehaus.groovy:groovy:${groovyVersion}",
-      "org.codehaus.groovy:groovy-json:${groovyVersion}",
-      "org.codehaus.groovy:groovy-nio:${groovyVersion}",
-      "org.codehaus.groovy:groovy-macro:${groovyVersion}",
-      "org.codehaus.groovy:groovy-templates:${groovyVersion}",
-      "org.codehaus.groovy:groovy-test:${groovyVersion}",
-      "org.codehaus.groovy:groovy-sql:${groovyVersion}",
-      "org.codehaus.groovy:groovy-xml:${groovyVersion}",
-    ]
-    groovyConsoleExtraDependency = [
-      "org.codehaus.groovy:groovy-groovysh:${groovyVersion}"
-    ]
-  } else if (variant == 2.5) {
-    groovyVersion = "2.5.8"
-    minGroovyVersion = "2.5.0"
-    maxGroovyVersion = "2.9.99"
-    groovyDependency = [
-      "org.codehaus.groovy:groovy:${groovyVersion}",
-      "org.codehaus.groovy:groovy-json:${groovyVersion}",
-      "org.codehaus.groovy:groovy-nio:${groovyVersion}",
-      "org.codehaus.groovy:groovy-macro:${groovyVersion}",
-      "org.codehaus.groovy:groovy-templates:${groovyVersion}",
-      "org.codehaus.groovy:groovy-test:${groovyVersion}",
-      "org.codehaus.groovy:groovy-sql:${groovyVersion}",
-      "org.codehaus.groovy:groovy-xml:${groovyVersion}",
-    ]
-    groovyConsoleExtraDependency = [
-      "org.codehaus.groovy:groovy-groovysh:${groovyVersion}"
-    ]
-  } else {
+  variants = [2.5, 3.0]
+  variant = System.getProperty("variant") as BigDecimal ?: variants.last()
+  if (variant == 2.5) {
+      groovyVersion = "2.5.8"
+      minGroovyVersion = "2.5.0"
+      maxGroovyVersion = "2.9.99"
+    } else if (variant == 3.0) {
+      groovyVersion = "3.0.0-rc-2"
+      minGroovyVersion = "3.0.0"
+      maxGroovyVersion = "3.9.99"
+    } else {
     throw new InvalidUserDataException("Unknown variant: $variant. Choose one of: $variants")
   }
+
+  groovyDependency = [
+    "org.codehaus.groovy:groovy:${groovyVersion}",
+    "org.codehaus.groovy:groovy-json:${groovyVersion}",
+    "org.codehaus.groovy:groovy-nio:${groovyVersion}",
+    "org.codehaus.groovy:groovy-macro:${groovyVersion}",
+    "org.codehaus.groovy:groovy-templates:${groovyVersion}",
+    "org.codehaus.groovy:groovy-test:${groovyVersion}",
+    "org.codehaus.groovy:groovy-sql:${groovyVersion}",
+    "org.codehaus.groovy:groovy-xml:${groovyVersion}",
+  ]
+  groovyConsoleExtraDependency = [
+    "org.codehaus.groovy:groovy-groovysh:${groovyVersion}"
+  ]
   maxGroovyVersion = snapshotVersion ? "3.9.99" : maxGroovyVersion
   if (System.getProperty("groovyVersion")) {
     groovyVersion = System.getProperty("groovyVersion")

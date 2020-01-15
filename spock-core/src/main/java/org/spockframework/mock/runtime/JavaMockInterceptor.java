@@ -56,21 +56,25 @@ public class JavaMockInterceptor implements IProxyBasedMockInterceptor {
         Throwable throwable = new Throwable();
         StackTraceElement mockCaller = throwable.getStackTrace()[3];
         if ("org.codehaus.groovy.runtime.ScriptBytecodeAdapter".equals(mockCaller.getClassName())) {
-          // for some reason, runtime dispatches direct property access on mock classes via ScriptBytecodeAdapter
+          // HACK: for some reason, runtime dispatches direct property access on mock classes via ScriptBytecodeAdapter
           // delegate to the corresponding setter method
           String methodName = GroovyRuntimeUtil.propertyToMethodName("set", (String) normalizedArgs[0]);
           return GroovyRuntimeUtil.invokeMethod(target, methodName, GroovyRuntimeUtil.asArgumentArray(normalizedArgs[1]));
         }
       }
-      if (isMethod(method, "getProperty", String.class)) {
-        //Groovy 3 started to call go.getProperty("x") method instead of go.getX() directly for go.x
-        Throwable throwable = new Throwable();
-        StackTraceElement mockCaller = throwable.getStackTrace()[3];
-        if (!("groovy.lang.GroovyObject$getProperty".equals(mockCaller.getClassName()) && "call".equals(mockCaller.getMethodName()))) {
-          //Only explicit getter executions (go.foo and go.getFoo()) should be deeper processed.
-          //go.getProperty("foo") is treated as is (to allow for its stubbing)
-          String methodName = GroovyRuntimeUtil.propertyToMethodName("get", (String) normalizedArgs[0]);
-          return GroovyRuntimeUtil.invokeMethod(target, methodName);
+      if (GroovyRuntimeUtil.isGroovy3()) {
+        //The following works fine also for Groovy 2, but it's somehow ugly and fragile, so used only for Groovy 3 it limits potential negative
+        //impact on Spock users. It should be replaced with something more reliable: https://github.com/spockframework/spock/issues/1076
+        if (isMethod(method, "getProperty", String.class)) {
+          //Groovy 3 started to call go.getProperty("x") method instead of go.getX() directly for go.x
+          Throwable throwable = new Throwable();
+          StackTraceElement mockCaller = throwable.getStackTrace()[3];
+          if (!("groovy.lang.GroovyObject$getProperty".equals(mockCaller.getClassName()) && "call".equals(mockCaller.getMethodName()))) {
+            //HACK: Only explicit getter executions (go.foo and go.getFoo()) should be deeper processed.
+            //go.getProperty("foo") is treated as is (to allow for its stubbing)
+            String methodName = GroovyRuntimeUtil.propertyToMethodName("get", (String) normalizedArgs[0]);
+            return GroovyRuntimeUtil.invokeMethod(target, methodName);
+          }
         }
       }
     }

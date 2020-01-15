@@ -128,7 +128,7 @@ x == 123
     }
   }
 
-  @Requires({ !GroovyRuntimeUtil.isGroovy2() })
+  @Requires({ GroovyRuntimeUtil.isGroovy3() })
   def "values with same literal representations"() {
     expect:
     isRendered """

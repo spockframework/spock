@@ -49,7 +49,7 @@ new Object() { }.getClass().enclosingMethod
     noExceptionThrown()
   }
 
-  @Requires({ !GroovyRuntimeUtil.isGroovy2() })
+  @Requires({ GroovyRuntimeUtil.isGroovy3() })
   @PendingFeature(exceptions = UnallowedExceptionThrownError, reason = "Started failing after late rebase with master. To be fixed.")
   def "anonymous inner class and dot in feature name does not fail execution"() {
     when:
@@ -64,7 +64,7 @@ def '.'() {
     noExceptionThrown()
   }
 
-  @Requires({ !GroovyRuntimeUtil.isGroovy2() })
+  @Requires({ GroovyRuntimeUtil.isGroovy3() })
   @PendingFeature(exceptions = UnallowedExceptionThrownError, reason = "Started failing after late rebase with master. To be fixed.")
   def "enclosing method of anonymous inner class can be accessed"() {
     when:

@@ -20,8 +20,7 @@ public class ByteBuddyMethodInvoker implements IResponseGenerator {
       return superCall.call(invocation.getArguments().toArray());
     } catch (Throwable t) {
       // Byte Buddy doesn't wrap exceptions in InvocationTargetException, so no need to unwrap
-      ExceptionUtil.sneakyThrow(t);
-      return null; // unreachable
+      return ExceptionUtil.sneakyThrow(t);
     }
   }
 }

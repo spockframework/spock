@@ -52,11 +52,10 @@ public class DelegatingInterceptor implements IProxyBasedMockInterceptor {
     try {
       return method.invoke(delegate, arguments);
     } catch (IllegalAccessException e) {
-      ExceptionUtil.sneakyThrow(e);
+      return ExceptionUtil.sneakyThrow(e);
     } catch (InvocationTargetException e) {
-      ExceptionUtil.sneakyThrow(e.getTargetException());
+      return ExceptionUtil.sneakyThrow(e.getTargetException());
     }
-    return null;
   }
 
   @Override

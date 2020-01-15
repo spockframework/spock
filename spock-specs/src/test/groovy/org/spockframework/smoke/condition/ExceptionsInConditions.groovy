@@ -5,6 +5,8 @@ import org.spockframework.runtime.ConditionNotSatisfiedError
 import org.spockframework.runtime.SpockException
 
 class ExceptionsInConditions extends EmbeddedSpecification {
+  private static final String NORMALIZED_SCRIPT_EXECUTION_LINE = "scriptXXX.groovy:X"
+
   def "null pointer exception in condition"() {
     when:
     runner.runFeatureBody(
@@ -21,10 +23,14 @@ class ExceptionsInConditions extends EmbeddedSpecification {
         map.get("key").length() == 0
         |   |          |
         [:] null       java.lang.NullPointerException: Cannot invoke method length() on null object
-                       \tat apackage.ASpec.a feature(scriptXXXXXXXXXXXXXXXXXXXXXXX.groovy:X)
+                       \tat apackage.ASpec.a feature($NORMALIZED_SCRIPT_EXECUTION_LINE)
     """.stripIndent()
-    e.getCondition().getRendering().replaceAll("(?<! )\\d", "X") == expected
+    unifyScriptExecutionLineInStacktrace(e.getCondition().getRendering()) == expected
     e.getCause() instanceof NullPointerException
+  }
+
+  private String unifyScriptExecutionLineInStacktrace(String stacktrace) {
+    return stacktrace.replaceAll("[Ss]cript_?[\\da-f]+.groovy:[\\d]+", NORMALIZED_SCRIPT_EXECUTION_LINE)
   }
 
   def "null pointer exception in method condition"() {
@@ -43,9 +49,9 @@ class ExceptionsInConditions extends EmbeddedSpecification {
         map.get("key").isEmpty()
         |   |          |
         [:] null       java.lang.NullPointerException: Cannot invoke method isEmpty() on null object
-                       \tat apackage.ASpec.a feature(scriptXXXXXXXXXXXXXXXXXXXXXXX.groovy:X)
+                       \tat apackage.ASpec.a feature($NORMALIZED_SCRIPT_EXECUTION_LINE)
     """.stripIndent()
-    e.getCondition().getRendering().replaceAll("\\d", "X") == expected
+    unifyScriptExecutionLineInStacktrace(e.getCondition().getRendering()) == expected
     e.getCause() instanceof NullPointerException
   }
 
@@ -73,10 +79,10 @@ class ExceptionsInConditions extends EmbeddedSpecification {
         |      |
         |      [:]
         java.lang.IllegalArgumentException: key does not exists
-        \tat apackage.ASpec.a feature_closureX(scriptXXXXXXXXXXXXXXXXXXXXXX.groovy:X)
-        \tat apackage.ASpec.a feature(scriptXXXXXXXXXXXXXXXXXXXXXX.groovy:XX)
+        \tat apackage.ASpec.a feature_closure1($NORMALIZED_SCRIPT_EXECUTION_LINE)
+        \tat apackage.ASpec.a feature($NORMALIZED_SCRIPT_EXECUTION_LINE)
     """.stripIndent()
-    e.getCondition().getRendering().replaceAll("(?<! )\\d", "X") == expected
+    unifyScriptExecutionLineInStacktrace(e.getCondition().getRendering()) == expected
 
     e.getCause() instanceof IllegalArgumentException
   }
@@ -143,12 +149,12 @@ class ExceptionsInConditions extends EmbeddedSpecification {
     ConditionNotSatisfiedError e = thrown()
     def expected = """\
         Condition failed with Exception:
-        
+
         map.get("key").b.c.d.e()
         |   |          |
         [:] null       java.lang.NullPointerException: Cannot get property 'b' on null object
-                       \tat apackage.ASpec.a feature(scriptXXXXXXXXXXXXXXXXXXXXXX.groovy:X)
+                       \tat apackage.ASpec.a feature($NORMALIZED_SCRIPT_EXECUTION_LINE)
     """.stripIndent()
-    e.getMessage().replaceAll("\\d", "X") == expected
+    unifyScriptExecutionLineInStacktrace(e.getMessage()) == expected
   }
 }

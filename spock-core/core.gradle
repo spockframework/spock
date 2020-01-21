@@ -22,9 +22,6 @@ dependencies {
   compile libs.bytebuddy, optional
   compile libs.cglib, optional
   compile libs.objenesis, optional
-  if (variant == 2.4) {
-    compileOnly project(':internal-backport')
-  }
 
   coreConsoleRuntime groovyConsoleExtraDependency
 }

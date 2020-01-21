@@ -358,6 +358,7 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> {
             convert(expr.getArguments()));
 
     conversion.setSourcePosition(expr);
+    conversion.setUsingAnonymousInnerClass(expr.isUsingAnonymousInnerClass());
     result = record(conversion);
   }
 

@@ -12,7 +12,7 @@
 Spock Framework
 ===============
 
-Spock is a developer testing and specification framework for Java and [Groovy](http://groovy-lang.org/) applications.
+Spock is a BDD-style developer testing and specification framework for Java and [Groovy](http://groovy-lang.org/) applications.
 To learn more about Spock, visit http://spockframework.org. To run a sample spec in your browser, go to
 http://webconsole.spockframework.org.
 
@@ -120,7 +120,7 @@ Links
 * Developer Forum -- http://dev-forum.spockframework.org
 * Issue Tracker -- http://issues.spockframework.org
 * Build Server -- http://builds.spockframework.org
-* Spock Example Project -- http://github.spockframework.org/spock-example
+* Spock Example Project -- https://github.com/spockframework/spock-example
 * Twitter -- http://twitter.spockframework.org
 
 Live Long And Prosper!

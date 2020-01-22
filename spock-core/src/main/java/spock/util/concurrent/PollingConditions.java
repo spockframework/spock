@@ -41,6 +41,12 @@ import org.spockframework.util.Beta;
  *   assert reading.efficiency >= 0.9
  * }
  * </pre>
+ *
+ * Warning! Avoiding assert keyword in the clojure is only possible if the conditions object type is known
+ * during compilation (no "def" on the left side):
+ * <pre>
+ *   PollingConditions conditions = new PollingConditions(timeout: 10, initialDelay: 1.5, factor: 1.25)
+ * </pre>
  */
 @Beta
 public class PollingConditions {

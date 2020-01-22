@@ -25,11 +25,13 @@ import java.util.*;
 public abstract class SpecElementInfo<P extends NodeInfo, R extends AnnotatedElement>
     extends NodeInfo<P, R> implements ISkippable, IExcludable, ITaggable, IAttachmentContainer, IInterceptable {
   private boolean skipped = false;
+
+  private String skipReason;
+
   private boolean excluded = false;
   private final List<Tag> tags = new ArrayList<>();
   private final List<Attachment> attachments = new ArrayList<>();
   private final List<IMethodInterceptor> interceptors = new ArrayList<>();
-
   @Override
   public boolean isSkipped() {
     return skipped;
@@ -38,6 +40,17 @@ public abstract class SpecElementInfo<P extends NodeInfo, R extends AnnotatedEle
   @Override
   public void setSkipped(boolean skipped) {
     this.skipped = skipped;
+  }
+
+  @Override
+  public String getSkipReason() {
+    return skipReason;
+  }
+
+  @Override
+  public void skip(String skipReason) {
+    this.skipped = true;
+    this.skipReason = skipReason;
   }
 
   @Override

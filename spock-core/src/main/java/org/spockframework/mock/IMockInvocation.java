@@ -41,8 +41,9 @@ public interface IMockInvocation {
 
   /**
    * Delegates this method invocation to the real object underlying this mock object,
-   * including any method arguments. If this mock object has no underlying real object, a
-   * {@link CannotInvokeRealMethodException} is thrown.
+   * including any method arguments.
+   * If this mock object has no underlying real (non-interface) object or interface
+   * default method implementation, a {@link CannotInvokeRealMethodException} is thrown.
    *
    * @return the return value of the method to which this invocation was delegated
    */
@@ -51,8 +52,8 @@ public interface IMockInvocation {
   /**
    * Delegates this method invocation to the real object underlying this mock object,
    * replacing the original method arguments with the specified arguments.
-   * If this mock object has no underlying real object, a
-   * {@link CannotInvokeRealMethodException} is thrown.
+   * If this mock object has no underlying real (non-interface) object or interface
+   * default method implementation, a {@link CannotInvokeRealMethodException} is thrown.
    *
    * @return the return value of the method to which this invocation was delegated
    */

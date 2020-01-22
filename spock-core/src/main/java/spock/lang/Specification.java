@@ -23,7 +23,7 @@ import spock.mock.MockingApi;
 
 import groovy.lang.*;
 import groovy.transform.stc.*;
-import org.junit.runner.RunWith;
+import org.junit.platform.commons.annotation.Testable;
 
 /**
  * Base class for Spock specifications. All specifications must inherit from
@@ -31,7 +31,7 @@ import org.junit.runner.RunWith;
  *
  * @author Peter Niederwieser
  */
-@RunWith(Sputnik.class)
+@Testable
 @SuppressWarnings("UnusedDeclaration")
 public abstract class Specification extends MockingApi {
   /**

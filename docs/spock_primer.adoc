@@ -553,7 +553,7 @@ with(service) {
 }
 ----
 
-Sometimes an IDE as trouble to determine the type of the target, in that case you can help out by manually specifying the
+Sometimes an IDE has trouble to determine the type of the target, in that case you can help out by manually specifying the
 target type via `with(target, type, closure)`.
 
 == Using `verifyAll` to assert multiple expectations together
@@ -632,10 +632,10 @@ Spock directly supports this style of specification with the `given:` label:
 given: "an empty bank account"
 // ...
 
-when: "the account is credited $10"
+when: "the account is credited \$10"
 // ...
 
-then: "the account's balance is $10"
+then: "the account's balance is \$10"
 // ...
 ----
 

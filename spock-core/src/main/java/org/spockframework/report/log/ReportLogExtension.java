@@ -16,76 +16,10 @@
 
 package org.spockframework.report.log;
 
-import org.spockframework.runtime.*;
 import org.spockframework.runtime.extension.AbstractGlobalExtension;
-import org.spockframework.runtime.model.SpecInfo;
-import org.spockframework.util.IoUtil;
-
-import java.io.File;
 
 public class ReportLogExtension extends AbstractGlobalExtension {
-  private final StandardStreamsCapturer streamsCapturer = new StandardStreamsCapturer();
-  private AsyncStandardStreamsListener logWriterListener;
-  private AsyncStandardStreamsListener logClientListener;
+  ReportLogConfiguration reportConfig;
 
-  private ReportLogWriter logWriter;
-  private ReportLogClient logClient;
-
-  volatile ReportLogConfiguration reportConfig;
-
-  @Override
-  public void visitSpec(SpecInfo spec) {
-    if (!reportConfig.enabled) return;
-
-    if (logWriterListener != null) {
-      spec.addListener(logWriterListener);
-    }
-    if (logClientListener != null) {
-      spec.addListener(logClientListener);
-    }
-    if (logWriterListener != null || logClientListener != null) {
-      spec.addListener(new AbstractRunListener() {
-        @Override
-        public void beforeSpec(SpecInfo theSpec) {
-          streamsCapturer.start();
-        }
-      });
-    }
-  }
-
-  @Override
-  public void start() {
-    if (!reportConfig.enabled) return;
-
-    File logFile = reportConfig.getLogFile();
-    if (logFile != null) {
-      logWriter = new ReportLogWriter(logFile);
-      logWriter.setPrefix("loadLogFile(");
-      logWriter.setPostfix(")\n\n");
-      logWriter.start();
-      logWriterListener = createRunListener("spock-report-log-writer", logWriter);
-      logWriterListener.start();
-    }
-
-    if (reportConfig.reportServerAddress != null) {
-      logClient = new ReportLogClient(reportConfig.reportServerAddress, reportConfig.reportServerPort);
-      logClient.start();
-      logClientListener = createRunListener("spock-report-log-client", logClient);
-      logClientListener.start();
-    }
-  }
-
-  @Override
-  public void stop() {
-    if (!reportConfig.enabled) return;
-    IoUtil.stopQuietly(streamsCapturer, logWriterListener, logWriter, logClientListener, logClient);
-  }
-
-  private AsyncStandardStreamsListener createRunListener(String name, IReportLogListener logListener) {
-    ReportLogEmitter emitter = new ReportLogEmitter();
-    emitter.addListener(logListener);
-    AsyncStandardStreamsListener listener = new AsyncStandardStreamsListener(name, emitter, emitter);
-    streamsCapturer.addStandardStreamsListener(listener);
-    return listener;
-  }
+  // TODO integrate with JUnitPlatform ExecutionListener
 }

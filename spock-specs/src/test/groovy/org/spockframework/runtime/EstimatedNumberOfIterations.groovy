@@ -19,30 +19,31 @@ package org.spockframework.runtime
 import spock.lang.Specification
 
 class EstimatedNumberOfIterations extends Specification {
-  def runner = new ParameterizedSpecRunner(null, null)
+  def runner = new PlatformParameterizedSpecRunner(null)
+  def context = new SpockExecutionContext().withErrorInfoCollector(new ErrorInfoCollector())
 
   def "w/o data provider"() {
     expect: "estimation is 1"
-      runner.estimateNumIterations(new Object[0]) == 1
+      runner.estimateNumIterations(context, new Object[0]) == 1
   }
 
   def "w/ data provider that doesn't respond to size"() {
     expect: "estimation is 'unknown', represented as -1"
-      runner.estimateNumIterations([1] as Object[]) == -1
+      runner.estimateNumIterations(context, [1] as Object[]) == -1
   }
 
   def "w/ data provider that responds to size"() {
     expect: "estimation is size"
-      runner.estimateNumIterations([[1, 2, 3]] as Object[]) == 3
+      runner.estimateNumIterations(context, [[1, 2, 3]] as Object[]) == 3
   }
 
   def "w/ multiple data providers, all of which respond to size"() {
     expect: "estimation is minimum"
-      runner.estimateNumIterations([[1], [1, 2], [1, 2, 3]] as Object[]) == 1
+      runner.estimateNumIterations(context, [[1], [1, 2], [1, 2, 3]] as Object[]) == 1
   }
 
   def "w/ multiple data providers, one of which doesn't respond to size"() {
   expect: "estimation is minimum of others"
-    runner.estimateNumIterations([1, [1, 2], [1, 2, 3]] as Object[]) == 2
+    runner.estimateNumIterations(context, [1, [1, 2], [1, 2, 3]] as Object[]) == 2
   }
 }

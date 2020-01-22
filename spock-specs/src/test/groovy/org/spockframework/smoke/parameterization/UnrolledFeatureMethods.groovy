@@ -16,21 +16,17 @@
 
 package org.spockframework.smoke.parameterization
 
-import org.junit.runner.notification.RunListener
-
 import org.spockframework.EmbeddedSpecification
 import org.spockframework.runtime.SpockExecutionException
-
+import spock.lang.IgnoreRest
 import spock.lang.Issue
 
 /**
  * @author Peter Niederwieser
  */
 class UnrolledFeatureMethods extends EmbeddedSpecification {
-  RunListener listener = Mock()
 
   def setup() {
-    runner.listeners << listener
     runner.addClassImport(Actor)
     runner.addClassImport(Actor2)
   }
@@ -48,14 +44,14 @@ def foo() {
     """)
 
     then:
-    result.runCount == 3
-    result.failureCount == 0
-    result.ignoreCount == 0
+    result.testsSucceededCount == 3
+    result.testsFailedCount == 0
+    result.testsSkippedCount == 0
   }
 
   def "iterations of an unrolled feature foo are named foo[0], foo[1], etc."() {
     when:
-    runner.runSpecBody """
+    def result = runner.runSpecBody """
 @Unroll
 def foo() {
   expect: true
@@ -66,10 +62,7 @@ def foo() {
     """
 
     then:
-    interaction {
-      def count = 0
-      3 * listener.testStarted { it.methodName == "foo[${count++}]" }
-    }
+    result.tests().started().list().testDescriptor.displayName == (0..2).collect {"foo[${it}]" }
   }
 
   def "a feature with an empty data provider causes the same error regardless if it's unrolled or not"() {
@@ -107,18 +100,18 @@ def foo() {
     """)
 
     then:
-    1 * listener.testFailure { it.description.methodName == "foo" }
 
-    // it's OK for runCount to be zero here; mental model: method "foo"
-    // would have been invisible if it had not failed (cf. Spec JUnitErrorBehavior)
-    result.runCount == 0
-    result.failureCount == 1
-    result.ignoreCount == 0
+    result.testsSucceededCount == 0
+    result.testsFailedCount == 0
+    result.testsSkippedCount == 0
+    result.containersStartedCount == 1 + 1 + 1 // engine + spec + unrolled feature
+    result.containersFailedCount == 1
+    result.containers().failed().list().testDescriptor.displayName == ["foo"]
   }
 
   def "naming pattern may refer to data variables"() {
     when:
-    runner.runSpecBody("""
+    def result = runner.runSpecBody("""
 @Unroll("one #y two #x three")
 def foo() {
   expect: true
@@ -130,14 +123,15 @@ def foo() {
     """)
 
     then:
-    1 * listener.testStarted { it.methodName == "one a two 1 three" }
-    1 * listener.testStarted { it.methodName == "one b two 2 three" }
-    1 * listener.testStarted { it.methodName == "one c two 3 three" }
+
+    result.tests().started().list().testDescriptor.displayName == ["one a two 1 three",
+                                                                   "one b two 2 three",
+                                                                   "one c two 3 three"]
   }
 
   def "naming pattern may refer to feature name and iteration count"() {
     when:
-    runner.runSpecBody("""
+    def result = runner.runSpecBody("""
 @Unroll("one #featureName two #iterationCount three")
 def foo() {
   expect: true
@@ -149,15 +143,15 @@ def foo() {
     """)
 
     then:
-    1 * listener.testStarted { it.methodName == "one foo two 0 three" }
-    1 * listener.testStarted { it.methodName == "one foo two 1 three" }
-    1 * listener.testStarted { it.methodName == "one foo two 2 three" }
+    result.tests().started().list().testDescriptor.displayName == ["one foo two 0 three",
+                                                                   "one foo two 1 three",
+                                                                   "one foo two 2 three"]
   }
 
   @Issue("http://issues.spockframework.org/detail?id=65")
   def "variables in naming pattern whose value is null are replaced correctly"() {
     when:
-    runner.runSpecBody("""
+    def result = runner.runSpecBody("""
 @Unroll("one #x two #y three")
 def foo() {
   expect: true
@@ -169,13 +163,13 @@ def foo() {
     """)
 
     then:
-    1 * listener.testStarted { it.methodName == "one 1 two null three" }
+    result.tests().started().list().testDescriptor.displayName == ["one 1 two null three"]
   }
 
   @Issue("http://issues.spockframework.org/detail?id=231")
   def "naming pattern supports property expressions"() {
     when:
-    runner.runSpecBody("""
+    def result = runner.runSpecBody("""
 @Unroll("one #actor.details.name two")
 def foo() {
   expect: true
@@ -186,13 +180,13 @@ def foo() {
     """)
 
     then:
-    1 * listener.testStarted { it.methodName == "one fred two" }
+    result.tests().started().list().testDescriptor.displayName == ["one fred two"]
   }
 
   @Issue("http://issues.spockframework.org/detail?id=231")
   def "naming pattern supports zero-arg method calls"() {
     when:
-    runner.runSpecBody("""
+    def result = runner.runSpecBody("""
 @Unroll("one #actor.details.name.size() two")
 def foo() {
   expect: true
@@ -203,12 +197,12 @@ def foo() {
     """)
 
     then:
-    1 * listener.testStarted { it.methodName == "one 4 two" }
+    result.tests().started().list().testDescriptor.displayName == ["one 4 two"]
   }
 
   def "expressions in naming pattern that can't be evaluated are prefixed with 'Error:'"() {
     when:
-    runner.runSpecBody("""
+    def result = runner.runSpecBody("""
 @Unroll("#obj #obj.ok() #obj.bang() #obj.missing() #missing")
 def foo() {
   expect: true
@@ -219,13 +213,13 @@ def foo() {
     """)
 
     then:
-    1 * listener.testStarted { it.methodName == "#Error:obj ok #Error:obj.bang() #Error:obj.missing() #Error:missing" }
+    result.tests().started().list().testDescriptor.displayName == ["#Error:obj ok #Error:obj.bang() #Error:obj.missing() #Error:missing"]
   }
 
   @Issue("http://issues.spockframework.org/detail?id=231")
   def "method name can act as naming pattern"() {
     when:
-    runner.runSpecBody("""
+    def result = runner.runSpecBody("""
 @Unroll
 def "one #actor.details.name.size() two"() {
   expect: true
@@ -236,14 +230,14 @@ def "one #actor.details.name.size() two"() {
     """)
 
     then:
-    1 * listener.testStarted { it.methodName == "one 4 two" }
+    result.tests().started().list().testDescriptor.displayName == ["one 4 two"]
   }
 
 
   @Issue("http://issues.spockframework.org/detail?id=231")
   def "naming pattern in @Unroll annotation wins over naming pattern in method name"() {
     when:
-    runner.runSpecBody("""
+    def result = runner.runSpecBody("""
 @Unroll("#actor.details.name")
 def "#actor.details.age"() {
   expect: true
@@ -254,13 +248,13 @@ def "#actor.details.age"() {
     """)
 
     then:
-    1 * listener.testStarted { it.methodName == "fred" }
+    result.tests().started().list().testDescriptor.displayName == ["fred"]
   }
 
   @Issue("http://issues.spockframework.org/detail?id=232")
   def "can unroll a whole class at once"() {
     when:
-    runner.runWithImports("""
+    def result = runner.runWithImports("""
 @Unroll
 class Foo extends Specification {
   def "#actor.details.name"() {
@@ -284,15 +278,15 @@ class Foo extends Specification {
     """)
 
     then:
-    1 * listener.testStarted { it.methodName == "fred" }
-    1 * listener.testStarted { it.methodName == "not data-driven" }
-    1 * listener.testStarted { it.methodName == "30" }
+    result.tests().started().list().testDescriptor.displayName == ["fred",
+                                                                   "not data-driven",
+                                                                   "30"]
   }
 
   @Issue("http://issues.spockframework.org/detail?id=232")
   def "method-level unroll annotation wins over class-level annotation"() {
     when:
-    runner.runWithImports("""
+    def result = runner.runWithImports("""
 @Unroll
 class Foo extends Specification {
   @Unroll("#actor.details.name")
@@ -306,13 +300,13 @@ class Foo extends Specification {
     """)
 
     then:
-    1 * listener.testStarted { it.methodName == "fred" }
+    result.tests().started().list().testDescriptor.displayName == ["fred"]
   }
 
   @Issue("http://issues.spockframework.org/detail?id=268")
   def "method name can still contain parentheses"() {
     when:
-    runner.runSpecBody("""
+    def result = runner.runSpecBody("""
 @Unroll
 def "an actor (named #actor.getName()) age #actor.getAge()"() {
   expect: true
@@ -323,7 +317,7 @@ def "an actor (named #actor.getName()) age #actor.getAge()"() {
     """)
 
     then:
-    1 * listener.testStarted { it.methodName == "an actor (named fred) age 30" }
+    result.tests().started().list().testDescriptor.displayName == ["an actor (named fred) age 30"]
 
   }
 

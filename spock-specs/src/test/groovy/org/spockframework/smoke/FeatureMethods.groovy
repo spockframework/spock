@@ -16,12 +16,8 @@
 
 package org.spockframework.smoke
 
-import org.junit.runner.notification.RunListener
-
-import spock.lang.Specification
+import spock.lang.*
 import spock.util.EmbeddedSpecRunner
-import spock.lang.Issue
-
 /**
  *
  * @author Peter Niederwieser
@@ -40,20 +36,18 @@ class FeatureMethods extends Specification {
     expect:
     !getClass().getDeclaredMethods().any { it.name == "featureMethod" }
   }
-  
+
   def "are nevertheless reported with their original name"() {
     def runner = new EmbeddedSpecRunner()
-    RunListener listener = Mock()
-    runner.listeners << listener
-    
+
     when:
-    runner.runSpecBody("""
+    def result = runner.runSpecBody("""
 def "original name"() { expect: true }
     """)
 
     then:
-    1 * listener.testStarted({it.methodName == "original name"})
-    1 * listener.testFinished({it.methodName == "original name"})
+    result.tests().started().list() [0].testDescriptor.displayName == "original name"
+    result.tests().finished().list() [0].testDescriptor.displayName == "original name"
   }
 
   def "can.have?names#con/tain!ing~any`char(act \\ers?!"() {
@@ -62,17 +56,16 @@ def "original name"() { expect: true }
 
   def "can have names containing any characters in embedded specs"() {
     def runner = new EmbeddedSpecRunner()
-    RunListener listener = Mock()
-    runner.listeners << listener
 
     when:
-    runner.runSpecBody("""
+    def result = runner.runSpecBody("""
 def "can.have?names#con/tain!ing~any`char(act \\\\ers?!"() { expect: true }
     """)
 
     then:
-    1 * listener.testStarted({it.methodName == "can.have?names#con/tain!ing~any`char(act \\ers?!"})
-    1 * listener.testFinished({it.methodName == "can.have?names#con/tain!ing~any`char(act \\ers?!"})
+
+    result.tests().started().list() [0].testDescriptor.displayName == "can.have?names#con/tain!ing~any`char(act \\ers?!"
+    result.tests().finished().list() [0].testDescriptor.displayName == "can.have?names#con/tain!ing~any`char(act \\ers?!"
   }
 
   def featureMethod() {

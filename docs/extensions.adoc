@@ -314,7 +314,7 @@ class ListExtensions {
 }
 
 class MySpec extends Specification {
-  @Use(listExtensions)
+  @Use(ListExtensions)
   def "can use avg() method"() {
     expect:
     [1, 2, 3].avg() == 2

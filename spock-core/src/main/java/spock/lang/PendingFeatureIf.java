@@ -11,11 +11,17 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * If a passed in closure evaluates to true, this will be treated as a {@link PendingFeature}
- *
+ * Marks the annotated spec or feature as {@link PendingFeature} if the given condition holds.
  * Otherwise it will be treated like a normal feature.
- *
- * The closure follows the same rules as those used by {@link IgnoreIf}
+ * <p />
+ * <p />
+ * The configured closure is called with a delegate of type
+ * {@link org.spockframework.runtime.extension.builtin.PreconditionContext}
+ * which provides access to system properties, environment variables, the type
+ * of operating system and JVM.
+ * <p />
+ * <p />
+ * Relates annotations (extensions): {@link Requires}, {@link IgnoreIf}
  */
 @Beta
 @Retention(RetentionPolicy.RUNTIME)
@@ -29,7 +35,7 @@ public @interface PendingFeatureIf {
    *
    * If the condition is false, it will not be treated as pending
    *
-   * @return
+   * @return Closure to be evaluated
    */
   Class<? extends Closure> value();
 

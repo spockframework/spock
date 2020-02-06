@@ -78,6 +78,4 @@ class Foo extends Specification {
         result.ignoreCount == 0
   }
 
-
-
 }

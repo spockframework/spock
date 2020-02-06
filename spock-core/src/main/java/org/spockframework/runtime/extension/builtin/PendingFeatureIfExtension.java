@@ -43,6 +43,5 @@ public class PendingFeatureIfExtension extends AbstractAnnotationDrivenExtension
     } catch (Exception e) {
       throw new ExtensionException("Failed to evaluate @PendingFeatureIf condition", e);
     }
-
   }
 }

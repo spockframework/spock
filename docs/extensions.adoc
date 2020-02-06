@@ -169,11 +169,8 @@ If the conditional expression _passes_ it behaves the same way as `PendingFeatur
 ----
 @PendingFeatureIf({ os.windows })
 def "I'm not yet implemented on windows, but I am on other operating systems"() { ... }
-----
 
-[source,groovy]
-----
-@PendingFeatureIf({ System.getProperty("targetEnvironment").startsWith("production") })
+@PendingFeatureIf({ sys["targetEnvironment"] == "prod" })
 def "This feature isn't deployed out to production yet, and isn't expected to pass"() { ... }
 ----
 

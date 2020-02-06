@@ -229,6 +229,10 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>
 <div class="block">Configures which types of Exceptions are expected in the pending feature.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="spock/lang/PendingFeatureIf.html#exceptions()">exceptions()</a></span> - Method in annotation type spock.lang.<a href="spock/lang/PendingFeatureIf.html" title="annotation in spock.lang">PendingFeatureIf</a></dt>
+<dd>
+<div class="block">Configures which types of Exceptions are expected in the pending feature.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="spock/lang/Retry.html#exceptions()">exceptions()</a></span> - Method in annotation type spock.lang.<a href="spock/lang/Retry.html" title="annotation in spock.lang">Retry</a></dt>
 <dd>
 <div class="block">Configures which types of Exceptions should be retried.</div>
@@ -721,6 +725,10 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>
 <div class="block">Indicates that the feature is not fully implemented yet and should not be reported as error.</div>
 </dd>
+<dt><a href="spock/lang/PendingFeatureIf.html" title="annotation in spock.lang"><span class="typeNameLink">PendingFeatureIf</span></a> - Annotation Type in <a href="spock/lang/package-summary.html">spock.lang</a></dt>
+<dd>
+<div class="block">Marks the annotated spec or feature as <a href="spock/lang/PendingFeature.html" title="annotation in spock.lang"><code>PendingFeature</code></a> if the given condition holds.</div>
+</dd>
 <dt><a href="spock/util/concurrent/PollingConditions.html" title="class in spock.util.concurrent"><span class="typeNameLink">PollingConditions</span></a> - Class in <a href="spock/util/concurrent/package-summary.html">spock.util.concurrent</a></dt>
 <dd>
 <div class="block">Repeatedly evaluates one or more conditions until they are satisfied or a timeout has elapsed.</div>
@@ -746,6 +754,10 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <div class="block">The reason for the failure.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="spock/lang/PendingFeature.html#reason()">reason()</a></span> - Method in annotation type spock.lang.<a href="spock/lang/PendingFeature.html" title="annotation in spock.lang">PendingFeature</a></dt>
+<dd>
+<div class="block">The reason why this feature is pending</div>
+</dd>
+<dt><span class="memberNameLink"><a href="spock/lang/PendingFeatureIf.html#reason()">reason()</a></span> - Method in annotation type spock.lang.<a href="spock/lang/PendingFeatureIf.html" title="annotation in spock.lang">PendingFeatureIf</a></dt>
 <dd>
 <div class="block">The reason why this feature is pending</div>
 </dd>
@@ -1061,6 +1073,13 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 </dd>
 <dt><span class="memberNameLink"><a href="spock/lang/Narrative.html#value()">value()</a></span> - Method in annotation type spock.lang.<a href="spock/lang/Narrative.html" title="annotation in spock.lang">Narrative</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="spock/lang/PendingFeatureIf.html#value()">value()</a></span> - Method in annotation type spock.lang.<a href="spock/lang/PendingFeatureIf.html" title="annotation in spock.lang">PendingFeatureIf</a></dt>
+<dd>
+<div class="block">If this condition holds true, the feature will be considered "Pending"
+ and will behave the same way as if it were annotated as a <a href="spock/lang/PendingFeature.html" title="annotation in spock.lang"><code>PendingFeature</code></a>
+
+ If the condition is false, it will not be treated as pending</div>
+</dd>
 <dt><span class="memberNameLink"><a href="spock/lang/Requires.html#value()">value()</a></span> - Method in annotation type spock.lang.<a href="spock/lang/Requires.html" title="annotation in spock.lang">Requires</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="spock/lang/See.html#value()">value()</a></span> - Method in annotation type spock.lang.<a href="spock/lang/See.html" title="annotation in spock.lang">See</a></dt>

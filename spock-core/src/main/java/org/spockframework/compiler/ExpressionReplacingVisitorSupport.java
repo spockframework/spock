@@ -141,6 +141,7 @@ public class ExpressionReplacingVisitorSupport extends StatementReplacingVisitor
         expr.getType(),
         replaceExpr(expr.getArguments()));
     result.setSourcePosition(expr);
+    result.setUsingAnonymousInnerClass(expr.isUsingAnonymousInnerClass());
     replaceVisitedExpressionWith(result);
   }
 

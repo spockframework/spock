@@ -1,4 +1,3 @@
-
 /*
  * Copyright 2010 the original author or authors.
  *
@@ -15,6 +14,7 @@
 
 package org.spockframework.smoke
 
+import org.junit.platform.engine.discovery.DiscoverySelectors
 import org.junit.runner.manipulation.Filter
 import org.junit.runner.Request
 
@@ -22,7 +22,7 @@ import org.spockframework.EmbeddedSpecification
 import spock.lang.Issue
 
 class FeatureFiltering extends EmbeddedSpecification {
-    def "filter selected feature methods"() {
+  def "filter selected feature methods"() {
     def clazz = compiler.compileSpecBody("""
 static log = ""
 def feature1() { setup: log += "1" }
@@ -30,20 +30,19 @@ def feature2() { setup: log += "2" }
 def feature3() { setup: log += "3" }
     """)
 
-    def request = Request.aClass(clazz).filterWith(
-        [shouldRun: { desc -> desc.methodName == "feature2" }, describe: { "feature2" }] as Filter)
+    def request = DiscoverySelectors.selectMethod(clazz, "feature2")
 
     when:
-    def result = runner.runRequest(request)
+    def result = runner.runWithSelectors(request)
 
     then:
     clazz.log == "2"
-    result.runCount == 1
-    result.failureCount == 0
-    result.ignoreCount == 0
+    result.testsSucceededCount == 1
+    result.testsFailedCount == 0
+    result.testsSkippedCount == 0
   }
 
-  def "filtering all feature methods results in exception"() {
+  def "filtering all feature methods results in empty result"() {
     def clazz = compiler.compileSpecBody("""
 static log = ""
 def feature1() { setup: log += "1" }
@@ -51,15 +50,14 @@ def feature2() { setup: log += "2" }
 def feature3() { setup: log += "3" }
     """)
 
-    def request = Request.aClass(clazz).filterWith([shouldRun: { false }, describe: { "xxx" }] as Filter)
+    def request = DiscoverySelectors.selectMethod(clazz, "xxx")
 
     when:
-    runner.runRequest(request)
+    def result = runner.runWithSelectors(request)
 
     then:
-    Exception e = thrown()
-    e.message.contains "xxx"
-    clazz.log == ""
+    noExceptionThrown()
+    result.testsFoundCount == 0
   }
 
   @Issue("http://issues.spockframework.org/detail?id=76")
@@ -76,15 +74,12 @@ class Derived extends Base {
 }
     """).find { it.simpleName == "Derived" }
 
-    def request = Request.aClass(derived).filterWith(
-        [shouldRun: { desc -> desc.methodName in ["feature1", "feature3"] }, describe: { "xxx" }] as Filter)
-
     when:
-    def result = runner.runRequest(request)
+    def result = runner.runWithSelectors(DiscoverySelectors.selectMethod(derived, "feature1"), DiscoverySelectors.selectMethod(derived, "feature3"))
 
     then:
-    result.runCount == 2
-    result.failureCount == 0
-    result.ignoreCount == 0
+    result.testsSucceededCount == 2
+    result.testsFailedCount == 0
+    result.testsSkippedCount == 0
   }
 }

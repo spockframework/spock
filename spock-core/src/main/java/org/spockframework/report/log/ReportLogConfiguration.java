@@ -14,56 +14,11 @@
 
 package org.spockframework.report.log;
 
-import java.io.File;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.TimeZone;
-
-import org.spockframework.util.IoUtil;
-import org.spockframework.util.Nullable;
-
 import spock.config.ConfigurationObject;
 
 @ConfigurationObject("report")
 public class ReportLogConfiguration {
   public boolean enabled = Boolean.getBoolean("spock.logEnabled");
-
-  public String logFileDir = System.getProperty("spock.logFileDir");
-  public String logFileName = System.getProperty("spock.logFileName");
-  public String logFileSuffix = System.getProperty("spock.logFileSuffix");
-
   public String issueNamePrefix = "";
   public String issueUrlPrefix = "";
-
-  public String reportServerAddress = System.getProperty("spock.reportServerAddress");
-  public int reportServerPort = Integer.valueOf(System.getProperty("spock.reportServerPort", "4242"));
-
-  public String getLogFileSuffix() {
-    if (logFileSuffix != null && logFileSuffix.contains("#timestamp")) {
-      DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH_mm_ss");
-      dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-      String timestamp = dateFormat.format(new Date());
-      logFileSuffix = logFileSuffix.replace("#timestamp", timestamp);
-    }
-    return logFileSuffix;
-  }
-
-  @Nullable
-  public File getLogFile() {
-    if (logFileDir == null) return null;
-
-    String fullName = logFileName;
-    String suffix = getLogFileSuffix();
-    if (suffix != null && suffix.length() > 0) {
-      String extension = IoUtil.getFileExtension(logFileName);
-      if (extension == null) {
-        fullName = logFileName + "-" + suffix;
-      }  else {
-        fullName = logFileName.substring(0, logFileName.length() - extension.length() - 1)
-            + "-" + suffix + "." + extension;
-      }
-    }
-    return new File(logFileDir, fullName);
-  }
 }

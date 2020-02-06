@@ -38,7 +38,7 @@ import java.util.concurrent.*;
  * def conds = new AsyncConditions()
  *
  * // register async callback
- * machine.workDone << { result ->
+ * machine.workDone >> { result ->
  *   conds.evaluate {
  *     assert result == WorkResult.OK
  *     // could add more explicit conditions here

@@ -16,12 +16,13 @@
 
 package spock.lang;
 
-import groovy.lang.Closure;
 import org.spockframework.runtime.extension.ExtensionAnnotation;
 import org.spockframework.runtime.extension.builtin.RetryExtension;
 import org.spockframework.util.Beta;
 
 import java.lang.annotation.*;
+
+import groovy.lang.Closure;
 
 
 /**
@@ -92,11 +93,6 @@ public @interface Retry {
   Mode mode() default Mode.ITERATION;
 
   enum Mode {
-    /**
-     * Retry the whole feature, if any iteration fails.
-     */
-    FEATURE,
-
     /**
      * Retry the iterations individually.
      */

@@ -1,5 +1,3 @@
 org.spockframework.runtime.extension.builtin.IncludeExcludeExtension
-org.spockframework.runtime.extension.builtin.RuleExtension
-org.spockframework.runtime.extension.builtin.ClassRuleExtension
 org.spockframework.runtime.extension.builtin.OptimizeRunOrderExtension
 org.spockframework.report.log.ReportLogExtension

@@ -16,6 +16,8 @@ package org.spockframework.smoke.extension
 
 import org.spockframework.EmbeddedSpecification
 
+import org.opentest4j.MultipleFailuresError
+
 class AutoCleanupExtension extends EmbeddedSpecification {
   static closable
   static disposable
@@ -54,7 +56,7 @@ def cleanup() {
 
   def "@Shared @AutoCleanup resources are cleaned up after cleanupSpec()"() {
     assert !closable.called
-    
+
     when:
     runner.runSpecBody("""
 @Shared @AutoCleanup
@@ -143,9 +145,11 @@ def feature() {
     boom2.called
 
     and:
-    result.failures.size() == 2
-    result.failures[0].exception instanceof BoomException
-    result.failures[1].exception instanceof BoomException
+    result.failures.size() == 1
+    with(result.failures[0].exception, MultipleFailuresError) {
+      failures[0] instanceof BoomException
+      failures[1] instanceof BoomException
+    }
   }
 
   // debatable
@@ -187,16 +191,19 @@ def feature() { expect: true }
 
   static class MyClosable {
     def called = false
+
     def close() { called = true }
   }
 
   static class MyDisposable {
     def called = false
+
     def dispose() { called = true }
   }
 
   static class Boom {
     def called = false
+
     def close() { called = true; throw new BoomException() }
   }
 

@@ -83,11 +83,11 @@ public final class VersionNumber implements Comparable<VersionNumber> {
 		Matcher m = versionPattern.matcher(versionString);
 		if (!m.matches()) return UNKNOWN;
 
-		int major = Integer.valueOf(m.group(1));
+        int major = Integer.parseInt(m.group(1));
 		String minorString = m.group(2);
-		int minor = minorString == null ? 0 : Integer.valueOf(minorString);
+        int minor = minorString == null ? 0 : Integer.parseInt(minorString);
 		String microString = m.group(3);
-		int micro = microString == null ? 0 : Integer.valueOf(microString);
+        int micro = microString == null ? 0 : Integer.parseInt(microString);
     String qualifier = m.group(4);
 
 		return new VersionNumber(major, minor, micro, qualifier);

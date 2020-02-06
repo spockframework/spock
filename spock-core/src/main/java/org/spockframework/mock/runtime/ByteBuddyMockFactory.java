@@ -3,6 +3,7 @@ package org.spockframework.mock.runtime;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.TypeCache;
 import net.bytebuddy.description.modifier.SynchronizationState;
+import net.bytebuddy.description.modifier.SyntheticState;
 import net.bytebuddy.description.modifier.Visibility;
 import net.bytebuddy.dynamic.Transformer;
 import net.bytebuddy.dynamic.loading.ClassInjector;
@@ -66,7 +67,7 @@ class ByteBuddyMockFactory {
             .transform(Transformer.ForMethod.withModifiers(SynchronizationState.PLAIN, Visibility.PUBLIC)) // Overridden methods should be public and non-synchronized.
             .implement(ByteBuddyInterceptorAdapter.InterceptorAccess.class)
             .intercept(FieldAccessor.ofField("$spock_interceptor"))
-            .defineField("$spock_interceptor", IProxyBasedMockInterceptor.class, Visibility.PRIVATE)
+            .defineField("$spock_interceptor", IProxyBasedMockInterceptor.class, Visibility.PRIVATE, SyntheticState.SYNTHETIC)
             .make()
             .load(classLoader, strategy)
             .getLoaded();

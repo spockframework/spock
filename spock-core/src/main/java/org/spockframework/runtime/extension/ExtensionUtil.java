@@ -16,19 +16,19 @@ package org.spockframework.runtime.extension;
 
 import java.util.*;
 
-import org.junit.runners.model.MultipleFailureException;
+import org.opentest4j.MultipleFailuresError;
 
 public class ExtensionUtil {
-  public static void throwAll(List<? extends Throwable> exceptions) throws Throwable {
+  public static void throwAll(String message, List<? extends Throwable> exceptions) throws Throwable {
     if (exceptions.isEmpty()) return;
     if (exceptions.size() == 1) throw exceptions.get(0);
 
     List<Throwable> unrolled = new ArrayList<>();
     for (Throwable exception : exceptions) {
-      if (exception instanceof MultipleFailureException)
-        unrolled.addAll(((MultipleFailureException) exception).getFailures());
+      if (exception instanceof MultipleFailuresError)
+        unrolled.addAll(((MultipleFailuresError)exception).getFailures());
       else unrolled.add(exception);
     }
-    throw new MultipleFailureException(unrolled);
+    throw new MultipleFailuresError(message, unrolled);
   }
 }

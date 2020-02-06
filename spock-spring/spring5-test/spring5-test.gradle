@@ -1,12 +1,20 @@
 def springVersion = "5.0.2.RELEASE"
 
 dependencies {
-  compile "org.springframework:spring-core:$springVersion"
+  compile "org.springframework:spring-core"
 
   testCompile project(":spock-core")
   testCompile project(":spock-spring")
-  testCompile "org.springframework:spring-context:$springVersion"
-  testCompile ("org.springframework:spring-test:$springVersion") { force = true }
+  testCompile "org.springframework:spring-context"
+  testCompile ("org.springframework:spring-test")
 
 }
 
+
+configurations.all {
+  resolutionStrategy.eachDependency {
+    if (requested.group == "org.springframework" ) {
+      useVersion(springVersion)
+    }
+  }
+}

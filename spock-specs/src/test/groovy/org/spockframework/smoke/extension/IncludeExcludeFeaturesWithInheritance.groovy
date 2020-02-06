@@ -54,9 +54,9 @@ class Spec2 extends Spec1 {
     def result = runner.runClasses(specs)
 
     then:
-    result.runCount == runCount
-    result.failureCount == 0
-    result.ignoreCount == ignoreCount
+    result.testsSucceededCount == runCount
+    result.testsFailedCount == 0
+    result.testsSkippedCount == 0
 
     where:
     annotationTypes << [[Slow], [Fast], [Slow, Fast]]
@@ -75,9 +75,9 @@ class Spec2 extends Spec1 {
     def result = runner.runClasses(specs)
 
     then:
-    result.runCount == runCount
-    result.failureCount == 0
-    result.ignoreCount == 0
+    result.testsSucceededCount == runCount
+    result.testsFailedCount == 0
+    result.testsSkippedCount == 0
 
     where:
     annotationTypes << [[Slow], [Fast], [Slow, Fast]]

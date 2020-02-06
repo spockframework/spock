@@ -1,6 +1,6 @@
 package org.spockframework.runtime.extension.builtin;
 
-import org.junit.AssumptionViolatedException;
+import org.opentest4j.TestAbortedException;
 
 /**
  * @author Leonard Brünings
@@ -28,8 +28,8 @@ public class PendingFeatureBaseInterceptor {
     return new AssertionError("Feature is marked with " + annotationUsed + " but passes unexpectedly");
   }
 
-  protected AssumptionViolatedException assumptionViolation() {
-    return new AssumptionViolatedException("Feature not yet implemented correctly."
+  protected TestAbortedException assumptionViolation() {
+    return new TestAbortedException("Feature not yet implemented correctly."
       + ("".equals(reason) ? "" : " Reason: " + reason));
   }
 }

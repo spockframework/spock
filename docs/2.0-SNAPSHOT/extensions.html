@@ -237,6 +237,29 @@ This way the tests will become part of the normal tests instead of being ignored
 </div>
 </div>
 <div class="sect2">
+<h3 id="_pendingfeatureif"><a class="anchor" href="#_pendingfeatureif"></a><a class="link" href="#_pendingfeatureif">PendingFeatureIf</a></h3>
+<div class="paragraph">
+<p>To conditionally indicate that a feature is not fully implemented, and should not be reported as an error you can annotate
+it as <code>spock.lang.PendingFeatureIf</code> and include a precondition similar to <code>IgnoreIf</code> or <code>Requires</code></p>
+</div>
+<div class="paragraph">
+<p>If the conditional expression <em>passes</em> it behaves the same way as <code>PendingFeature</code> - otherwise it does nothing.</p>
+</div>
+<div class="paragraph">
+<p>(For instance, annotating a feature as <code>@PendingFeatureIf({false})</code> effectively does nothing - but annotating it as
+ <code>@PendingFeatureIf({true}) behaves the same was as if it was marked as `@PendingFeature</code>)</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@PendingFeatureIf</span>({ os.windows })
+<span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">I'm not yet implemented on windows, but I am on other operating systems</span><span class="delimiter">&quot;</span></span>() { ... }
+
+<span class="annotation">@PendingFeatureIf</span>({ sys[<span class="string"><span class="delimiter">&quot;</span><span class="content">targetEnvironment</span><span class="delimiter">&quot;</span></span>] == <span class="string"><span class="delimiter">&quot;</span><span class="content">prod</span><span class="delimiter">&quot;</span></span> })
+<span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">This feature isn't deployed out to production yet, and isn't expected to pass</span><span class="delimiter">&quot;</span></span>() { ... }</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
 <h3 id="_stepwise"><a class="anchor" href="#_stepwise"></a><a class="link" href="#_stepwise">Stepwise</a></h3>
 <div class="paragraph">
 <p>To execute features in the order that they are declared, annotate a spec class with <code>spock.lang.Stepwise</code>:</p>
@@ -1063,7 +1086,7 @@ assignments happen before the method interceptor is called</p>
 <div id="footer">
 <div id="footer-text">
 Version 2.0-SNAPSHOT<br>
-Last updated 2020-01-21 19:16:13 UTC
+Last updated 2020-02-06 16:00:33 UTC
 </div>
 </div>
 </body>

@@ -16,25 +16,8 @@ package org.spockframework.smoke
 
 import org.spockframework.EmbeddedSpecification
 import org.spockframework.compiler.InvalidSpecCompileException
-import org.spockframework.runtime.GroovyRuntimeUtil
-import org.spockframework.runtime.WrongExceptionThrownError
-import spock.lang.PendingFeature
-import spock.lang.Requires
 
 class CompileTimeErrorReporting extends EmbeddedSpecification {
-  @Requires({ GroovyRuntimeUtil.isGroovy2() })
-  def "constructor declaration (Groovy 2)"() {
-    when:
-    compiler.compileSpecBody """
-ASpec() {}
-    """
-
-    then:
-    thrown(InvalidSpecCompileException)
-  }
-
-  @Requires({ GroovyRuntimeUtil.isGroovy3() }) //TODO: Unify tests while fixed for Groovy 3
-  @PendingFeature(exceptions = WrongExceptionThrownError, reason = "SpecParser.constructorMayHaveBeenAddedByCompiler no longer detect constructor. To be fixed.")
   def "constructor declaration"() {
     when:
     compiler.compileSpecBody """

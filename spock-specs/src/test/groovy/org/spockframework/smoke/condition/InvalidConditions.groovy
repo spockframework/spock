@@ -23,7 +23,7 @@ import org.spockframework.compiler.InvalidSpecCompileException
 import org.spockframework.runtime.GroovyRuntimeUtil
 import org.spockframework.runtime.WrongExceptionThrownError
 import spock.lang.Issue
-import spock.lang.PendingFeature
+import spock.lang.PendingFeatureIf
 import spock.lang.Requires
 
 class InvalidConditions extends EmbeddedSpecification {
@@ -82,9 +82,9 @@ assert x $op 42
     op << ["=", "+=", "-="]
   }
 
-  @PendingFeature(exceptions = WrongExceptionThrownError, reason = "+= and -= are allowed in Groovy 3, to be precised at Groovy side")
+  @PendingFeatureIf(value = { GroovyRuntimeUtil.isGroovy3() }, exceptions = WrongExceptionThrownError,
+    reason = "+= and -= are allowed in Groovy 3, to be precised at Groovy side")
   @Issue("https://issues.apache.org/jira/browse/GROOVY-9360")
-  @Requires({ GroovyRuntimeUtil.isGroovy3() })
   def "assignment arithmetic operators are not allowed in explicit conditions"() {
     when:
     compiler.compileFeatureBody("""

@@ -19,7 +19,7 @@ import org.spockframework.runtime.GroovyRuntimeUtil
 import org.spockframework.runtime.InvalidSpecException
 import org.spockframework.mock.CannotCreateMockException
 import spock.lang.Issue
-import spock.lang.PendingFeature
+import spock.lang.PendingFeatureIf
 import spock.lang.Requires
 import spock.lang.Specification
 import spock.lang.FailsWith
@@ -65,9 +65,9 @@ class JavaStubs extends Specification {
     person.age == 25
   }
 
-  @PendingFeature(exceptions = ConditionNotSatisfiedError, reason = "It didn't work in Spock 1.3 and would require fragile hack to fix for Groovy 2.5")
+  @PendingFeatureIf(value = { GroovyRuntimeUtil.isGroovy2() }, exceptions = ConditionNotSatisfiedError,
+    reason = "It didn't work in Spock 1.3 and would require fragile hack to fix for Groovy 2.5")
   @Issue("https://github.com/spockframework/spock/issues/1076")
-  @Requires({ GroovyRuntimeUtil.isGroovy2() })
   def "can stub property access for implicit getProperty() call (Groovy 2)"() {
     given:
     person = Stub(Person)

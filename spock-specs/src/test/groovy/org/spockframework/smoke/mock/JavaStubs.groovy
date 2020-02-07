@@ -82,7 +82,7 @@ class JavaStubs extends Specification {
   }
 
   @Issue("https://github.com/spockframework/spock/issues/1076")
-  @Requires({ GroovyRuntimeUtil.isGroovy3() })
+  @Requires({ GroovyRuntimeUtil.isGroovy3orNewer() })
   def "can stub property access for implicit getProperty() call"() {
     given:
     person = Stub(Person)

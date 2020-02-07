@@ -62,7 +62,7 @@ public class JavaMockInterceptor implements IProxyBasedMockInterceptor {
           return GroovyRuntimeUtil.invokeMethod(target, methodName, GroovyRuntimeUtil.asArgumentArray(normalizedArgs[1]));
         }
       }
-      if (GroovyRuntimeUtil.isGroovy3()) {
+      if (GroovyRuntimeUtil.isGroovy3orNewer()) {
         //The following works fine also for Groovy 2, but it's somehow ugly and fragile, so used only for Groovy 3 it limits potential negative
         //impact on Spock users. It should be replaced with something more reliable: https://github.com/spockframework/spock/issues/1076
         if (isMethod(method, "getProperty", String.class)) {

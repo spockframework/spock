@@ -371,7 +371,7 @@ x++ == null
     }
   }
 
-  @Requires({ GroovyRuntimeUtil.isGroovy3() })
+  @Requires({ GroovyRuntimeUtil.isGroovy3orNewer() })
   def "PostfixExpression"() {
     expect:
     isRendered """
@@ -570,7 +570,7 @@ java.util./*.awt.*/List == java.lang.String // I. Like. Dots.
     }
   }
 
-  @Requires({ GroovyRuntimeUtil.isGroovy3() })
+  @Requires({ GroovyRuntimeUtil.isGroovy3orNewer() })
   def "ClassExpression with dot-containing comments"() {
     expect:
     isRendered """

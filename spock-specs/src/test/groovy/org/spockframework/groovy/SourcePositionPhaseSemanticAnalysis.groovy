@@ -97,7 +97,7 @@ println(  List  )
     node3.lastColumnNumber == 17 // should be: 15
   }
 
-  @Requires({ GroovyRuntimeUtil.isGroovy3() })
+  @Requires({ GroovyRuntimeUtil.isGroovy3orNewer() })
   def "short-form class literals have accurate line/column info"() {
     inspector.load("""
 List
@@ -154,7 +154,7 @@ List.class.methods
     node2.lastColumnNumber == 11
   }
 
-  @Requires({ GroovyRuntimeUtil.isGroovy3() })
+  @Requires({ GroovyRuntimeUtil.isGroovy3orNewer() })
   def "long-form class literals have accurate line/column info"() {
     inspector.load("""
 List.class

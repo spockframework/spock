@@ -25,10 +25,9 @@ cache:
 
 dist: precise # downgrade to avoid jdk7 SSL Bug https://github.com/docker-library/openjdk/issues/117
 jdk:
-  - oraclejdk8
-  - openjdk10
+  - openjdk8
   - openjdk11
-  - openjdk12
+  - openjdk13
 
 env:
   matrix:

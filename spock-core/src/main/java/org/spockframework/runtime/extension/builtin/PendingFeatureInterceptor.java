@@ -7,8 +7,8 @@ import org.spockframework.runtime.extension.*;
  */
 class PendingFeatureInterceptor extends PendingFeatureBaseInterceptor implements IMethodInterceptor {
 
-  public PendingFeatureInterceptor(Class<? extends Throwable>[] handledExceptions, String reason) {
-    super(handledExceptions, reason);
+  public PendingFeatureInterceptor(Class<? extends Throwable>[] handledExceptions, String reason, String annotationUsedByExtension) {
+    super(handledExceptions, reason, annotationUsedByExtension);
   }
 
   @Override

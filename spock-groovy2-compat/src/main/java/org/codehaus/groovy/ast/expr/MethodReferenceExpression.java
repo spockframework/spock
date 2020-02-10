@@ -16,27 +16,16 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
-package groovy.transform;
-
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
+package org.codehaus.groovy.ast.expr;
 
 /**
- * WARNING: This is only present here so that we can build with 2.4 as well, the code will not be shipped.
- *
- * Marker interface used to indicate that the name of the annotated parameter
- * (or specified optional name) is a valid key name when using named arguments
- * and that the parameter type is applicable for type checking purposes.
- *
- * @since 2.5.0
+ * Dummy Groovy 3 class implementation to keep codebase compilable also with Groovy 2.5
  */
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.PARAMETER)
-public @interface NamedParam {
-  String value() default Undefined.STRING;
-  Class type() default Object.class;
-  boolean required() default false;
+public class MethodReferenceExpression extends MethodPointerExpression {
+
+  public MethodReferenceExpression(Expression expression, Expression methodName) {
+    super(expression, methodName);
+    throw new UnsupportedOperationException("Dummy LambdaExpression providing Spock codebase compatibility with both Groovy 2 and 3 " +
+      "should not be instantiated. Make sure you do not mix spock-2.x-groovy-2.5 and groovy-3 artifacts on classpath.");
+  }
 }

@@ -16,28 +16,34 @@ ext {
   baseVersion = "2.0"
   snapshotVersion = true
   milestone = 0
-  variants = [2.5]
+  variants = [2.5, 3.0]
   variant = System.getProperty("variant") as BigDecimal ?: variants.first()
   if (variant == 2.5) {
-    groovyVersion = "2.5.8"
-    minGroovyVersion = "2.5.0"
-    groovyDependency = [
-      "org.codehaus.groovy:groovy:${groovyVersion}",
-      "org.codehaus.groovy:groovy-json:${groovyVersion}",
-      "org.codehaus.groovy:groovy-nio:${groovyVersion}",
-      "org.codehaus.groovy:groovy-macro:${groovyVersion}",
-      "org.codehaus.groovy:groovy-templates:${groovyVersion}",
-      "org.codehaus.groovy:groovy-test:${groovyVersion}",
-      "org.codehaus.groovy:groovy-sql:${groovyVersion}",
-      "org.codehaus.groovy:groovy-xml:${groovyVersion}",
-    ]
-    groovyConsoleExtraDependency = [
-      "org.codehaus.groovy:groovy-groovysh:${groovyVersion}"
-    ]
-  } else {
+      groovyVersion = "2.5.8"
+      minGroovyVersion = "2.5.0"
+      maxGroovyVersion = "2.9.99"
+    } else if (variant == 3.0) {
+      groovyVersion = "3.0.0"
+      minGroovyVersion = "3.0.0"
+      maxGroovyVersion = "3.9.99"
+    } else {
     throw new InvalidUserDataException("Unknown variant: $variant. Choose one of: $variants")
   }
-  maxGroovyVersion = snapshotVersion ? "3.9.99" : "2.9.99" // TODO lock these down once Groovy 3 gets close to RC stage
+
+  groovyDependency = [
+    "org.codehaus.groovy:groovy:${groovyVersion}",
+    "org.codehaus.groovy:groovy-json:${groovyVersion}",
+    "org.codehaus.groovy:groovy-nio:${groovyVersion}",
+    "org.codehaus.groovy:groovy-macro:${groovyVersion}",
+    "org.codehaus.groovy:groovy-templates:${groovyVersion}",
+    "org.codehaus.groovy:groovy-test:${groovyVersion}",
+    "org.codehaus.groovy:groovy-sql:${groovyVersion}",
+    "org.codehaus.groovy:groovy-xml:${groovyVersion}",
+  ]
+  groovyConsoleExtraDependency = [
+    "org.codehaus.groovy:groovy-groovysh:${groovyVersion}"
+  ]
+  maxGroovyVersion = snapshotVersion ? "3.9.99" : maxGroovyVersion
   if (System.getProperty("groovyVersion")) {
     groovyVersion = System.getProperty("groovyVersion")
   }
@@ -118,10 +124,10 @@ subprojects {
   sourceSets.all { ss ->
     for (v in variants.findAll { it <= variant } ) {
       java {
-        srcDir "src/$ss.name$v/java"
+        srcDir "src/${ss.name}$v/java"
       }
       groovy {
-        srcDir "src/$ss.name$v/groovy"
+        srcDir "src/${ss.name}$v/groovy"
       }
     }
   }
@@ -183,6 +189,15 @@ subprojects {
     //Required for building on Travis' container-based infrastructure to not be killed with
     //'exit code 137' - https://github.com/travis-ci/travis-ci/issues/5582
     jvmArgs '-Xmx512m'
+
+    //Workaround on https://github.com/junit-team/junit5/issues/1909 - to be removed once switched to junit 5.6
+    afterSuite { desc, result ->
+      if (!desc.parent) {
+        if (result.testCount == 0) {
+          throw new IllegalStateException("No tests were found. Failing the build")
+        }
+      }
+    }
   }
 
   jacoco {

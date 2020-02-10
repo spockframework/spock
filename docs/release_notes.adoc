@@ -8,12 +8,12 @@ include::include.adoc[]
 === Groovy-3.0 Support
 
 The main feature of this milestone is support for Groovy 3.
-To use Spock in your Groovy 3 project just select the `spock-\*-2.0-M2` artifact(s) ending with `-groovy-3.0`.
+To use Spock in your Groovy 3 project just select the `spock-*-2.0-M2` artifact(s) ending with `-groovy-3.0`.
 
-NOTE: As Groovy 3 is not backward compatible with Groovy 2, there is a layer of abstraction in Spock to allow to build (and use) the project with both Groovy 2 and 3.
-      As a result, an extra artifact `spock-groovy2-compat` is (automatically) used in projects with Groovy 2.
-      It is *very important* to *do not mix* the `spock-\*-2.x-groovy-2.5` artifacts with the `groovy-*-3.x` artifacts on a classpath.
-      This may result in weird runtime errors.
+NOTE: As Groovy 3 is not backward compatible with Groovy 2, there is a layer of abstraction in Spock to allow
+to build (and use) the project with both Groovy 2 and 3. As a result, an extra artifact `spock-groovy2-compat` is
+(automatically) used in projects with Groovy 2. It is *very important* to *do not mix* the `spock-\*-2.x-groovy-2.5`
+artifacts with the `groovy-*-3.x` artifacts on a classpath. This may result in weird runtime errors.
 
 === Breaking Changes
 
@@ -23,7 +23,7 @@ or used it as a delegate runner will not work anymore, e.g, `PowerMockRunnerDele
 
 === Misc
 
-- Add `@PendingFeatureIf` annotation (<<extensions.adoc#_pendingfeatureif,Docs>>)
+- Add `@PendingFeatureIf` annotation (<<extensions.adoc#pendingfeatureif,Docs>>)
 - Fail-fast for invalid `Stub` interactions, added new validation that catches more invalid usage of `Stub`
 - Forbid spying on `Spy` instances, as this doesn't work anyway and leads to wrong expectations (https://github.com/spockframework/spock/issues/1029[#1029])
 - Update `Jvm` helper utility to include new Java versions, removed pre 8 versions

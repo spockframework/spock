@@ -1,6 +1,8 @@
 = Release Notes
 include::include.adoc[]
 
+== 2.0-M3 (tbd)
+
 == 2.0-M2 (2020-02-10)
 
 === Groovy-3.0 Support

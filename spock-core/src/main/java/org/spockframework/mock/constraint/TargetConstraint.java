@@ -18,12 +18,14 @@ package org.spockframework.mock.constraint;
 
 import org.spockframework.mock.*;
 import org.spockframework.runtime.Condition;
+import org.spockframework.runtime.InvalidSpecException;
 import org.spockframework.util.CollectionUtil;
 
 /**
  * @author Peter Niederwieser
  */
 public class TargetConstraint implements IInvocationConstraint, IInteractionAware {
+  private static final MockUtil MOCK_UTIL = new MockUtil();
   private final Object target;
   private IMockInteraction interaction;
 
@@ -48,5 +50,13 @@ public class TargetConstraint implements IInvocationConstraint, IInteractionAwar
   @Override
   public void setInteraction(IMockInteraction interaction) {
     this.interaction = interaction;
+    if (interaction.isRequired() && MOCK_UTIL.isMock(target)) {
+      IMockObject mockObject = MOCK_UTIL.asMock(target);
+      if (!mockObject.isVerified()) {
+        String mockName = mockObject.getName() != null ? mockObject.getName() : "unnamed";
+        throw new InvalidSpecException("Stub '%s' matches the following required interaction:" +
+          "\n\n%s\n\nRemove the cardinality (e.g. '1 *'), or turn the stub into a mock.\n").withArgs(mockName, interaction);
+      }
+    }
   }
 }

@@ -15,6 +15,7 @@
 package org.spockframework.smoke.mock
 
 import org.spockframework.mock.CannotCreateMockException
+import org.spockframework.runtime.SpockException
 import spock.lang.*
 
 class JavaSpies extends Specification {
@@ -178,6 +179,18 @@ class JavaSpies extends Specification {
 
     then:
     noExceptionThrown()
+  }
+
+  @Issue("https://github.com/spockframework/spock/issues/1029")
+  def "do not allow spying on other mocks"() {
+    given:
+    ArrayList src = Spy()
+
+    when:
+    def other = Spy(src)
+
+    then:
+    thrown(SpockException)
   }
 
   static class Constructable {

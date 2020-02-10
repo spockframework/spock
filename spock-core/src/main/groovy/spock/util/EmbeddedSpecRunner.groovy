@@ -148,7 +148,7 @@ class EmbeddedSpecRunner {
   }
 
   static class SummarizedEngineExecutionResults implements TestExecutionSummary {
-    @Delegate
+    @Delegate(deprecated = true) // enable deprecated delegation https://github.com/spockframework/spock/issues/1073
     private final EngineExecutionResults results
 
     SummarizedEngineExecutionResults(EngineExecutionResults results) {

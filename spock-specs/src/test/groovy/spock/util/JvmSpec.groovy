@@ -18,55 +18,99 @@ import spock.util.environment.*
 
 @RestoreSystemProperties
 class JvmSpec extends Specification {
+  def "can check for Java 8 version (old scheme)"() {
+    System.setProperty("java.specification.version", "1.$minor")
+    def jvm = Jvm.current
+
+    expect:
+    assert jvm.java8 == (minor == 8)
+
+    where:
+    minor << (7..8)
+  }
+
+  def "can check for Java 8 version (old scheme) (given major version)"() {
+    System.setProperty("java.specification.version", "1.$minor")
+    def jvm = Jvm.current
+
+    expect:
+    assert jvm.isJavaVersion(minor) == (minor == 8)
+
+    where:
+    minor << (7..8)
+  }
+
+  def "can check for Java 8 version compatibility (old scheme)"() {
+    System.setProperty("java.specification.version", "1.$minor")
+    def jvm = Jvm.current
+
+    expect:
+    assert jvm."java8Compatible" == (minor >= 8)
+
+    where:
+    minor << (7..8)
+  }
+
+  def "can check for Java 8 version compatibility (old scheme) (given major version)"() {
+    System.setProperty("java.specification.version", "1.$minor")
+    def jvm = Jvm.current
+
+    expect:
+    assert jvm.isJavaVersionCompatible(minor) == (minor >= 8)
+
+    where:
+    minor << (7..8)
+  }
+
   def "can check for Java version"() {
-    System.setProperty("java.specification.version", "1.$minor")
-    def jvm = Jvm.current
-
-    expect:
-    for (i in 5..8) {
-      assert jvm."java$i" == (i == minor)
-    }
-
-    where:
-    minor << (5..8)
-  }
-
-  def "can check for Java version compatibility"() {
-    System.setProperty("java.specification.version", "1.$minor")
-    def jvm = Jvm.current
-
-    expect:
-    for (i in 5..8) {
-      assert jvm."java${i}Compatible" == (i <= minor)
-    }
-
-    where:
-    minor << (5..8)
-  }
-
-  def "can check for Java version (new scheme)"() {
     System.setProperty("java.specification.version", "$major")
     def jvm = Jvm.current
 
     expect:
-    for (i in 5..11) {
+    for (i in 8..17) {
       assert jvm."java$i" == (i == major)
     }
 
     where:
-    major << (9..11)
+    major << (9..20)
   }
 
-  def "can check for Java version compatibility (new scheme)"() {
+  def "can check for Java version compatibility"() {
     System.setProperty("java.specification.version", "$major")
     def jvm = Jvm.current
 
     expect:
-    for (i in 5..11) {
+    for (i in 8..17) {
       assert jvm."java${i}Compatible" == (i <= major)
     }
 
     where:
-    major << (9..11)
+    major << (9..20)
+  }
+
+  def "can check for Java version (given major version)"() {
+    System.setProperty("java.specification.version", "$major")
+    def jvm = Jvm.current
+
+    expect:
+    for (i in 8..17) {
+      assert jvm.isJavaVersion(i) == (i == major)
+    }
+
+    where:
+    major << (9..20)
+  }
+
+  def "can check for Java version compatibility (given major version)"() {
+    System.setProperty("java.specification.version", "$major")
+    def jvm = Jvm.current
+
+    expect:
+    for (i in 8..17) {
+      assert jvm.isJavaVersionCompatible(i) == (i <= major)
+    }
+
+    where:
+    major << (9..20)
   }
 }

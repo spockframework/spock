@@ -114,8 +114,27 @@ class JavaSpies extends Specification {
     result == "singing, singing"
   }
 
+  @Issue("https://github.com/spockframework/spock/issues/1035")
+  def "using >>_ does not call original method and produces stubbed value"() {
+    def person = Spy(new Person())
+
+    when:
+    def result = person.formattedAge
+
+    then:
+    1 * person.getFormattedAge()
+    result == "42 years old"
+
+    when:
+    def result2 = person.formattedAge
+
+    then:
+    1 * person.getFormattedAge() >> _
+    result2 == ""
+  }
+
   @Issue("https://github.com/spockframework/spock/issues/771")
-  def "sping on concrete instances can use partial mocking"() {
+  def "spying on concrete instances can use partial mocking"() {
     def person = Spy(new Person())
 
     when:
@@ -219,7 +238,6 @@ class JavaSpies extends Specification {
   static class Person {
     String name
     int age
-    List<String> children
 
     Person() {
       this("fred", 42)
@@ -240,6 +258,10 @@ class JavaSpies extends Specification {
 
     def getWorkHours() {
       2
+    }
+
+    String getFormattedAge() {
+      "$age years old"
     }
 
     String toString() {

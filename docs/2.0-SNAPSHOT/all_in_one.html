@@ -190,10 +190,17 @@
 </li>
 <li><a href="#_release_notes">Release Notes</a>
 <ul class="sectlevel2">
-<li><a href="#_2_0_m2_tbd">2.0-M2 (tbd)</a></li>
-<li><a href="#_2_0_m1_31_12_2019">2.0-M1 (31.12.2019)</a>
+<li><a href="#_2_0_m3_tbd">2.0-M3 (tbd)</a></li>
+<li><a href="#_2_0_m2_2020_02_10">2.0-M2 (2020-02-10)</a>
 <ul class="sectlevel3">
+<li><a href="#_groovy_3_0_support">Groovy-3.0 Support</a></li>
 <li><a href="#_breaking_changes">Breaking Changes</a></li>
+<li><a href="#_misc">Misc</a></li>
+</ul>
+</li>
+<li><a href="#_2_0_m1_2019_12_31">2.0-M1 (2019-12-31)</a>
+<ul class="sectlevel3">
+<li><a href="#_breaking_changes_2">Breaking Changes</a></li>
 </ul>
 </li>
 <li><a href="#_1_3_2019_03_05">1.3 (2019-03-05)</a></li>
@@ -2506,21 +2513,32 @@ is only meant for documentation purposes and doesn&#8217;t carry any semantics.
 <h4 id="_mocking_classes"><a class="anchor" href="#_mocking_classes"></a><a class="link" href="#_mocking_classes">Mocking Classes</a></h4>
 <div class="paragraph">
 <p>Besides interfaces, Spock also supports mocking of classes. Mocking classes works
-just like mocking interfaces; the only additional requirement is to put <code>cglib-nodep-2.2</code> or higher
-and <code>objenesis-1.2</code> or higher on the class path. If either of these libraries is missing from
-the class path, Spock will gently let you know.</p>
+just like mocking interfaces; the only additional requirement is to put <code>byte-buddy</code> 1.9+ or
+<code>cglib-nodep</code> 3.2.0+ on the class path.</p>
 </div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<div class="title">Note</div>
-</td>
-<td class="content">
-Java 8 is only supported from CGLIB 3.2.0 onwards.
-</td>
-</tr>
-</table>
+<div class="paragraph">
+<p>When using for example</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>normal <code>Mock</code>s or <code>Stub</code>s or</p>
+</li>
+<li>
+<p><code>Spy</code>s that are configured with <code>useObjenesis: true</code> or</p>
+</li>
+<li>
+<p><code>Spy</code>s that spy on a concrete instance like <code>Spy(myInstance)</code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>it is also necessary to put <code>objenesis</code> 3.0+ on the class path, except for classes with accessible
+no-arg constructor or configured <code>constructorArgs</code> unless the constructor call should not be done,
+for example to avoid unwanted side effects.</p>
+</div>
+<div class="paragraph">
+<p>If either of these libraries is missing from the class path, Spock will gently let you know.</p>
 </div>
 </div>
 </div>
@@ -4611,11 +4629,74 @@ Grails 2.3 and higher have built-in Spock support and do not require a plugin.
 <h2 id="_release_notes"><a class="anchor" href="#_release_notes"></a><a class="link" href="#_release_notes">Release Notes</a></h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_2_0_m2_tbd"><a class="anchor" href="#_2_0_m2_tbd"></a><a class="link" href="#_2_0_m2_tbd">2.0-M2 (tbd)</a></h3>
+<h3 id="_2_0_m3_tbd"><a class="anchor" href="#_2_0_m3_tbd"></a><a class="link" href="#_2_0_m3_tbd">2.0-M3 (tbd)</a></h3>
 
 </div>
 <div class="sect2">
-<h3 id="_2_0_m1_31_12_2019"><a class="anchor" href="#_2_0_m1_31_12_2019"></a><a class="link" href="#_2_0_m1_31_12_2019">2.0-M1 (31.12.2019)</a></h3>
+<h3 id="_2_0_m2_2020_02_10"><a class="anchor" href="#_2_0_m2_2020_02_10"></a><a class="link" href="#_2_0_m2_2020_02_10">2.0-M2 (2020-02-10)</a></h3>
+<div class="sect3">
+<h4 id="_groovy_3_0_support"><a class="anchor" href="#_groovy_3_0_support"></a><a class="link" href="#_groovy_3_0_support">Groovy-3.0 Support</a></h4>
+<div class="paragraph">
+<p>The main feature of this milestone is support for Groovy 3.
+To use Spock in your Groovy 3 project just select the <code>spock-\*-2.0-M2</code> artifact(s) ending with <code>-groovy-3.0</code>.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+As Groovy 3 is not backward compatible with Groovy 2, there is a layer of abstraction in Spock to allow to build (and use) the project with both Groovy 2 and 3.
+      As a result, an extra artifact <code>spock-groovy2-compat</code> is (automatically) used in projects with Groovy 2.
+      It is <strong>very important</strong> to <strong>do not mix</strong> the <code>spock-*-2.x-groovy-2.5</code> artifacts with the <code>groovy-*-3.x</code> artifacts on a classpath.
+      This may result in weird runtime errors.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_breaking_changes"><a class="anchor" href="#_breaking_changes"></a><a class="link" href="#_breaking_changes">Breaking Changes</a></h4>
+<div class="sect4">
+<h5 id="_sputnik_runner_removed"><a class="anchor" href="#_sputnik_runner_removed"></a><a class="link" href="#_sputnik_runner_removed">Sputnik Runner removed</a></h5>
+<div class="paragraph">
+<p>Although already in 2.0-M1 it wasn&#8217;t explicitly mentioned: All enhancements that either extended <code>Sputnik</code>
+or used it as a delegate runner will not work anymore, e.g, <code>PowerMockRunnerDelegate</code>.</p>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_misc"><a class="anchor" href="#_misc"></a><a class="link" href="#_misc">Misc</a></h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Add <code>@PendingFeatureIf</code> annotation (<a href="#_pendingfeatureif">Docs</a>)</p>
+</li>
+<li>
+<p>Fail-fast for invalid <code>Stub</code> interactions, added new validation that catches more invalid usage of <code>Stub</code></p>
+</li>
+<li>
+<p>Forbid spying on <code>Spy</code> instances, as this doesn&#8217;t work anyway and leads to wrong expectations (<a href="https://github.com/spockframework/spock/issues/1029">#1029</a>)</p>
+</li>
+<li>
+<p>Update <code>Jvm</code> helper utility to include new Java versions, removed pre 8 versions</p>
+</li>
+<li>
+<p>Update docs regarding ByteBuddy, cglib, objenesis</p>
+</li>
+<li>
+<p>Provide compatibility to both JUnit 5.5.2 and 5.6.0</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Thanks to all the contributors to this release: Marcin Zajączkowski (Groovy 3 support), Björn Kautler, Ryan Gardner</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_2_0_m1_2019_12_31"><a class="anchor" href="#_2_0_m1_2019_12_31"></a><a class="link" href="#_2_0_m1_2019_12_31">2.0-M1 (2019-12-31)</a></h3>
 <div class="paragraph">
 <p>This is the first milestone release to version 2.0. This means that we have migrated to the new
 JUnit Platform and all internal tests pass. We have tried to keep the API as compatible as possible
@@ -4631,7 +4712,7 @@ requested parallel execution support.</p>
 <p>Please try it out and report any new bugs so that we can fix them for the final 2.0 release.</p>
 </div>
 <div class="sect3">
-<h4 id="_breaking_changes"><a class="anchor" href="#_breaking_changes"></a><a class="link" href="#_breaking_changes">Breaking Changes</a></h4>
+<h4 id="_breaking_changes_2"><a class="anchor" href="#_breaking_changes_2"></a><a class="link" href="#_breaking_changes_2">Breaking Changes</a></h4>
 <div class="sect4">
 <h5 id="_new_junit_platform"><a class="anchor" href="#_new_junit_platform"></a><a class="link" href="#_new_junit_platform">New JUnit Platform</a></h5>
 <div class="paragraph">
@@ -4645,7 +4726,7 @@ module that provides best effort support to ease migration.</p>
 </div>
 </div>
 <div class="sect4">
-<h5 id="_misc"><a class="anchor" href="#_misc"></a><a class="link" href="#_misc">Misc</a></h5>
+<h5 id="_misc_2"><a class="anchor" href="#_misc_2"></a><a class="link" href="#_misc_2">Misc</a></h5>
 <div class="ulist">
 <ul>
 <li>
@@ -6601,7 +6682,7 @@ Math.signum(a &lt;=&gt; b) == result
 <div id="footer">
 <div id="footer-text">
 Version 2.0-SNAPSHOT<br>
-Last updated 2020-02-10 13:25:42 UTC
+Last updated 2020-02-11 19:43:42 UTC
 </div>
 </div>
 </body>

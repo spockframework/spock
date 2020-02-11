@@ -61,6 +61,30 @@ loadScripts(document, 'script');</script>
 </ul>
 </div>
 <div class="subNav">
+<ul class="navList" id="allclasses_navbar_top">
+<li><a href="../../allclasses.html">All&nbsp;Classes</a></li>
+</ul>
+<ul class="navListSearch">
+<li><label for="search">SEARCH:</label>
+<input type="text" id="search" value="search" disabled="disabled">
+<input type="reset" id="reset" value="reset" disabled="disabled">
+</li>
+</ul>
+<div>
+<script type="text/javascript"><!--
+  allClassesLink = document.getElementById("allclasses_navbar_top");
+  if(window==top) {
+    allClassesLink.style.display = "block";
+  }
+  else {
+    allClassesLink.style.display = "none";
+  }
+  //-->
+</script>
+<noscript>
+<div>JavaScript is disabled on your browser.</div>
+</noscript>
+</div>
 <div>
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
@@ -76,16 +100,9 @@ loadScripts(document, 'script');</script>
 <li><a href="#method.detail">Method</a></li>
 </ul>
 </div>
-<ul class="navListSearch">
-<li><label for="search">SEARCH:</label>
-<input type="text" id="search" value="search" disabled="disabled">
-<input type="reset" id="reset" value="reset" disabled="disabled">
-</li>
-</ul>
-</div>
 <a id="skip.navbar.top">
 <!--   -->
-</a>
+</a></div>
 <!-- ========= END OF TOP NAVBAR ========= -->
 </div>
 <div class="navPadding">&nbsp;</div>
@@ -103,7 +120,7 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 </div>
 <div class="contentContainer">
 <ul class="inheritance">
-<li><a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang" class="externalLink">java.lang.Object</a></li>
+<li>java.lang.Object</li>
 <li>
 <ul class="inheritance">
 <li>org.spockframework.lang.SpecInternals</li>
@@ -184,21 +201,17 @@ implements <a href="MockFactory.html" title="interface in spock.mock">MockFactor
 <!--   -->
 </a>
 <h3>Constructor Summary</h3>
-<div class="memberSummary">
-<table>
+<table class="memberSummary">
 <caption><span>Constructors</span><span class="tabEnd">&nbsp;</span></caption>
 <tr>
 <th class="colFirst" scope="col">Constructor</th>
 <th class="colLast" scope="col">Description</th>
 </tr>
-<tbody>
 <tr class="altColor">
 <th class="colConstructorName" scope="row"><code><span class="memberNameLink"><a href="#%3Cinit%3E()">MockingApi</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-</tbody>
 </table>
-</div>
 </li>
 </ul>
 </section>
@@ -209,24 +222,21 @@ implements <a href="MockFactory.html" title="interface in spock.mock">MockFactor
 <!--   -->
 </a>
 <h3>Method Summary</h3>
-<div class="memberSummary">
-<div role="tablist" aria-orientation="horizontal"><button role="tab" aria-selected="true" aria-controls="memberSummary_tabpanel" tabindex="0" onkeydown="switchTab(event)" id="t0" class="activeTableTab">All Methods</button><button role="tab" aria-selected="false" aria-controls="memberSummary_tabpanel" tabindex="-1" onkeydown="switchTab(event)" id="t2" class="tableTab" onclick="show(2);">Instance Methods</button><button role="tab" aria-selected="false" aria-controls="memberSummary_tabpanel" tabindex="-1" onkeydown="switchTab(event)" id="t4" class="tableTab" onclick="show(8);">Concrete Methods</button></div>
-<div id="memberSummary_tabpanel" role="tabpanel">
-<table aria-labelledby="t0">
+<table class="memberSummary">
+<caption><span id="t0" class="activeTableTab"><span>All Methods</span><span class="tabEnd">&nbsp;</span></span><span id="t2" class="tableTab"><span><a href="javascript:show(2);">Instance Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t4" class="tableTab"><span><a href="javascript:show(8);">Concrete Methods</a></span><span class="tabEnd">&nbsp;</span></span></caption>
 <tr>
 <th class="colFirst" scope="col">Modifier and Type</th>
 <th class="colSecond" scope="col">Method</th>
 <th class="colLast" scope="col">Description</th>
 </tr>
-<tbody>
-<tr class="altColor" id="i0">
+<tr id="i0" class="altColor">
 <td class="colFirst"><code>&lt;T&gt;&nbsp;T</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#GroovyMock()">GroovyMock</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Creates a Groovy mock whose type and name are inferred from the left-hand side of the enclosing variable assignment.</div>
 </td>
 </tr>
-<tr class="rowColor" id="i1">
+<tr id="i1" class="rowColor">
 <td class="colFirst"><code>&lt;T&gt;&nbsp;T</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#GroovyMock(groovy.lang.Closure)">GroovyMock</a></span>&#8203;(<a href="http://docs.groovy-lang.org/docs/groovy-3.0.0/html/gapi/groovy/lang/Closure.html?is-external=true" title="class or interface in groovy.lang" class="externalLink">Closure</a>&nbsp;interactions)</code></th>
 <td class="colLast">
@@ -234,63 +244,63 @@ implements <a href="MockFactory.html" title="interface in spock.mock">MockFactor
  from the left-hand side of the enclosing assignment.</div>
 </td>
 </tr>
-<tr class="altColor" id="i2">
+<tr id="i2" class="altColor">
 <td class="colFirst"><code>&lt;T&gt;&nbsp;T</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#GroovyMock(java.lang.Class)">GroovyMock</a></span>&#8203;(<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang" class="externalLink">Class</a>&lt;T&gt;&nbsp;type)</code></th>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#GroovyMock(java.lang.Class)">GroovyMock</a></span>&#8203;(java.lang.Class&lt;T&gt;&nbsp;type)</code></th>
 <td class="colLast">
 <div class="block">Creates a Groovy mock with the specified type.</div>
 </td>
 </tr>
-<tr class="rowColor" id="i3">
+<tr id="i3" class="rowColor">
 <td class="colFirst"><code>&lt;T&gt;&nbsp;T</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#GroovyMock(java.lang.Class,groovy.lang.Closure)">GroovyMock</a></span>&#8203;(<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang" class="externalLink">Class</a>&lt;T&gt;&nbsp;type,
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#GroovyMock(java.lang.Class,groovy.lang.Closure)">GroovyMock</a></span>&#8203;(java.lang.Class&lt;T&gt;&nbsp;type,
           <a href="http://docs.groovy-lang.org/docs/groovy-3.0.0/html/gapi/groovy/lang/Closure.html?is-external=true" title="class or interface in groovy.lang" class="externalLink">Closure</a>&nbsp;interactions)</code></th>
 <td class="colLast">
 <div class="block">Creates a Groovy mock with the specified type and interactions.</div>
 </td>
 </tr>
-<tr class="altColor" id="i4">
+<tr id="i4" class="altColor">
 <td class="colFirst"><code>&lt;T&gt;&nbsp;T</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#GroovyMock(java.util.Map)">GroovyMock</a></span>&#8203;(<a href="http://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util" class="externalLink">Map</a>&lt;<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>,&#8203;<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang" class="externalLink">Object</a>&gt;&nbsp;options)</code></th>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#GroovyMock(java.util.Map)">GroovyMock</a></span>&#8203;(java.util.Map&lt;java.lang.String,&#8203;java.lang.Object&gt;&nbsp;options)</code></th>
 <td class="colLast">
 <div class="block">Creates a Groovy mock with the specified options whose type and name are inferred from the left-hand side of the
  enclosing variable assignment.</div>
 </td>
 </tr>
-<tr class="rowColor" id="i5">
+<tr id="i5" class="rowColor">
 <td class="colFirst"><code>&lt;T&gt;&nbsp;T</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#GroovyMock(java.util.Map,groovy.lang.Closure)">GroovyMock</a></span>&#8203;(<a href="http://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util" class="externalLink">Map</a>&lt;<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>,&#8203;<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang" class="externalLink">Object</a>&gt;&nbsp;options,
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#GroovyMock(java.util.Map,groovy.lang.Closure)">GroovyMock</a></span>&#8203;(java.util.Map&lt;java.lang.String,&#8203;java.lang.Object&gt;&nbsp;options,
           <a href="http://docs.groovy-lang.org/docs/groovy-3.0.0/html/gapi/groovy/lang/Closure.html?is-external=true" title="class or interface in groovy.lang" class="externalLink">Closure</a>&nbsp;interactions)</code></th>
 <td class="colLast">
 <div class="block">Creates a Groovy mock with the specified options and interactions whose type and name are inferred
  from the left-hand side of the enclosing assignment.</div>
 </td>
 </tr>
-<tr class="altColor" id="i6">
+<tr id="i6" class="altColor">
 <td class="colFirst"><code>&lt;T&gt;&nbsp;T</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#GroovyMock(java.util.Map,java.lang.Class)">GroovyMock</a></span>&#8203;(<a href="http://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util" class="externalLink">Map</a>&lt;<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>,&#8203;<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang" class="externalLink">Object</a>&gt;&nbsp;options,
-          <a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang" class="externalLink">Class</a>&lt;T&gt;&nbsp;type)</code></th>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#GroovyMock(java.util.Map,java.lang.Class)">GroovyMock</a></span>&#8203;(java.util.Map&lt;java.lang.String,&#8203;java.lang.Object&gt;&nbsp;options,
+          java.lang.Class&lt;T&gt;&nbsp;type)</code></th>
 <td class="colLast">
 <div class="block">Creates a Groovy mock with the specified options and type.</div>
 </td>
 </tr>
-<tr class="rowColor" id="i7">
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code>&lt;T&gt;&nbsp;T</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#GroovyMock(java.util.Map,java.lang.Class,groovy.lang.Closure)">GroovyMock</a></span>&#8203;(<a href="http://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util" class="externalLink">Map</a>&lt;<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>,&#8203;<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang" class="externalLink">Object</a>&gt;&nbsp;options,
-          <a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang" class="externalLink">Class</a>&lt;T&gt;&nbsp;type,
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#GroovyMock(java.util.Map,java.lang.Class,groovy.lang.Closure)">GroovyMock</a></span>&#8203;(java.util.Map&lt;java.lang.String,&#8203;java.lang.Object&gt;&nbsp;options,
+          java.lang.Class&lt;T&gt;&nbsp;type,
           <a href="http://docs.groovy-lang.org/docs/groovy-3.0.0/html/gapi/groovy/lang/Closure.html?is-external=true" title="class or interface in groovy.lang" class="externalLink">Closure</a>&nbsp;interactions)</code></th>
 <td class="colLast">
 <div class="block">Creates a Groovy mock with the specified options, type, and interactions.</div>
 </td>
 </tr>
-<tr class="altColor" id="i8">
+<tr id="i8" class="altColor">
 <td class="colFirst"><code>&lt;T&gt;&nbsp;T</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#GroovySpy()">GroovySpy</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Creates a Groovy spy whose type and name are inferred from the left-hand side of the enclosing variable assignment.</div>
 </td>
 </tr>
-<tr class="rowColor" id="i9">
+<tr id="i9" class="rowColor">
 <td class="colFirst"><code>&lt;T&gt;&nbsp;T</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#GroovySpy(groovy.lang.Closure)">GroovySpy</a></span>&#8203;(<a href="http://docs.groovy-lang.org/docs/groovy-3.0.0/html/gapi/groovy/lang/Closure.html?is-external=true" title="class or interface in groovy.lang" class="externalLink">Closure</a>&nbsp;interactions)</code></th>
 <td class="colLast">
@@ -298,63 +308,63 @@ implements <a href="MockFactory.html" title="interface in spock.mock">MockFactor
  from the left-hand side of the enclosing assignment.</div>
 </td>
 </tr>
-<tr class="altColor" id="i10">
+<tr id="i10" class="altColor">
 <td class="colFirst"><code>&lt;T&gt;&nbsp;T</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#GroovySpy(java.lang.Class)">GroovySpy</a></span>&#8203;(<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang" class="externalLink">Class</a>&lt;T&gt;&nbsp;type)</code></th>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#GroovySpy(java.lang.Class)">GroovySpy</a></span>&#8203;(java.lang.Class&lt;T&gt;&nbsp;type)</code></th>
 <td class="colLast">
 <div class="block">Creates a Groovy spy with the specified type.</div>
 </td>
 </tr>
-<tr class="rowColor" id="i11">
+<tr id="i11" class="rowColor">
 <td class="colFirst"><code>&lt;T&gt;&nbsp;T</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#GroovySpy(java.lang.Class,groovy.lang.Closure)">GroovySpy</a></span>&#8203;(<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang" class="externalLink">Class</a>&lt;T&gt;&nbsp;type,
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#GroovySpy(java.lang.Class,groovy.lang.Closure)">GroovySpy</a></span>&#8203;(java.lang.Class&lt;T&gt;&nbsp;type,
          <a href="http://docs.groovy-lang.org/docs/groovy-3.0.0/html/gapi/groovy/lang/Closure.html?is-external=true" title="class or interface in groovy.lang" class="externalLink">Closure</a>&nbsp;interactions)</code></th>
 <td class="colLast">
 <div class="block">Creates a Groovy spy with the specified type and interactions.</div>
 </td>
 </tr>
-<tr class="altColor" id="i12">
+<tr id="i12" class="altColor">
 <td class="colFirst"><code>&lt;T&gt;&nbsp;T</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#GroovySpy(java.util.Map)">GroovySpy</a></span>&#8203;(<a href="http://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util" class="externalLink">Map</a>&lt;<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>,&#8203;<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang" class="externalLink">Object</a>&gt;&nbsp;options)</code></th>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#GroovySpy(java.util.Map)">GroovySpy</a></span>&#8203;(java.util.Map&lt;java.lang.String,&#8203;java.lang.Object&gt;&nbsp;options)</code></th>
 <td class="colLast">
 <div class="block">Creates a Groovy spy with the specified options whose type and name are inferred from the left-hand side of the
  enclosing variable assignment.</div>
 </td>
 </tr>
-<tr class="rowColor" id="i13">
+<tr id="i13" class="rowColor">
 <td class="colFirst"><code>&lt;T&gt;&nbsp;T</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#GroovySpy(java.util.Map,groovy.lang.Closure)">GroovySpy</a></span>&#8203;(<a href="http://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util" class="externalLink">Map</a>&lt;<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>,&#8203;<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang" class="externalLink">Object</a>&gt;&nbsp;options,
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#GroovySpy(java.util.Map,groovy.lang.Closure)">GroovySpy</a></span>&#8203;(java.util.Map&lt;java.lang.String,&#8203;java.lang.Object&gt;&nbsp;options,
          <a href="http://docs.groovy-lang.org/docs/groovy-3.0.0/html/gapi/groovy/lang/Closure.html?is-external=true" title="class or interface in groovy.lang" class="externalLink">Closure</a>&nbsp;interactions)</code></th>
 <td class="colLast">
 <div class="block">Creates a Groovy spy with the specified options and interactions whose type and name are inferred
  from the left-hand side of the enclosing assignment.</div>
 </td>
 </tr>
-<tr class="altColor" id="i14">
+<tr id="i14" class="altColor">
 <td class="colFirst"><code>&lt;T&gt;&nbsp;T</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#GroovySpy(java.util.Map,java.lang.Class)">GroovySpy</a></span>&#8203;(<a href="http://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util" class="externalLink">Map</a>&lt;<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>,&#8203;<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang" class="externalLink">Object</a>&gt;&nbsp;options,
-         <a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang" class="externalLink">Class</a>&lt;T&gt;&nbsp;type)</code></th>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#GroovySpy(java.util.Map,java.lang.Class)">GroovySpy</a></span>&#8203;(java.util.Map&lt;java.lang.String,&#8203;java.lang.Object&gt;&nbsp;options,
+         java.lang.Class&lt;T&gt;&nbsp;type)</code></th>
 <td class="colLast">
 <div class="block">Creates a Groovy spy with the specified options and type.</div>
 </td>
 </tr>
-<tr class="rowColor" id="i15">
+<tr id="i15" class="rowColor">
 <td class="colFirst"><code>&lt;T&gt;&nbsp;T</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#GroovySpy(java.util.Map,java.lang.Class,groovy.lang.Closure)">GroovySpy</a></span>&#8203;(<a href="http://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util" class="externalLink">Map</a>&lt;<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>,&#8203;<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang" class="externalLink">Object</a>&gt;&nbsp;options,
-         <a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang" class="externalLink">Class</a>&lt;T&gt;&nbsp;type,
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#GroovySpy(java.util.Map,java.lang.Class,groovy.lang.Closure)">GroovySpy</a></span>&#8203;(java.util.Map&lt;java.lang.String,&#8203;java.lang.Object&gt;&nbsp;options,
+         java.lang.Class&lt;T&gt;&nbsp;type,
          <a href="http://docs.groovy-lang.org/docs/groovy-3.0.0/html/gapi/groovy/lang/Closure.html?is-external=true" title="class or interface in groovy.lang" class="externalLink">Closure</a>&nbsp;interactions)</code></th>
 <td class="colLast">
 <div class="block">Creates a Groovy spy with the specified options, type, and interactions.</div>
 </td>
 </tr>
-<tr class="altColor" id="i16">
+<tr id="i16" class="altColor">
 <td class="colFirst"><code>&lt;T&gt;&nbsp;T</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#GroovyStub()">GroovyStub</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Creates a Groovy stub whose type and name are inferred from the left-hand side of the enclosing variable assignment.</div>
 </td>
 </tr>
-<tr class="rowColor" id="i17">
+<tr id="i17" class="rowColor">
 <td class="colFirst"><code>&lt;T&gt;&nbsp;T</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#GroovyStub(groovy.lang.Closure)">GroovyStub</a></span>&#8203;(<a href="http://docs.groovy-lang.org/docs/groovy-3.0.0/html/gapi/groovy/lang/Closure.html?is-external=true" title="class or interface in groovy.lang" class="externalLink">Closure</a>&nbsp;interactions)</code></th>
 <td class="colLast">
@@ -362,70 +372,70 @@ implements <a href="MockFactory.html" title="interface in spock.mock">MockFactor
  from the left-hand side of the enclosing assignment.</div>
 </td>
 </tr>
-<tr class="altColor" id="i18">
+<tr id="i18" class="altColor">
 <td class="colFirst"><code>&lt;T&gt;&nbsp;T</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#GroovyStub(java.lang.Class)">GroovyStub</a></span>&#8203;(<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang" class="externalLink">Class</a>&lt;T&gt;&nbsp;type)</code></th>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#GroovyStub(java.lang.Class)">GroovyStub</a></span>&#8203;(java.lang.Class&lt;T&gt;&nbsp;type)</code></th>
 <td class="colLast">
 <div class="block">Creates a Groovy stub with the specified type.</div>
 </td>
 </tr>
-<tr class="rowColor" id="i19">
+<tr id="i19" class="rowColor">
 <td class="colFirst"><code>&lt;T&gt;&nbsp;T</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#GroovyStub(java.lang.Class,groovy.lang.Closure)">GroovyStub</a></span>&#8203;(<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang" class="externalLink">Class</a>&lt;T&gt;&nbsp;type,
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#GroovyStub(java.lang.Class,groovy.lang.Closure)">GroovyStub</a></span>&#8203;(java.lang.Class&lt;T&gt;&nbsp;type,
           <a href="http://docs.groovy-lang.org/docs/groovy-3.0.0/html/gapi/groovy/lang/Closure.html?is-external=true" title="class or interface in groovy.lang" class="externalLink">Closure</a>&nbsp;interactions)</code></th>
 <td class="colLast">
 <div class="block">Creates a Groovy stub with the specified type and interactions.</div>
 </td>
 </tr>
-<tr class="altColor" id="i20">
+<tr id="i20" class="altColor">
 <td class="colFirst"><code>&lt;T&gt;&nbsp;T</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#GroovyStub(java.util.Map)">GroovyStub</a></span>&#8203;(<a href="http://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util" class="externalLink">Map</a>&lt;<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>,&#8203;<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang" class="externalLink">Object</a>&gt;&nbsp;options)</code></th>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#GroovyStub(java.util.Map)">GroovyStub</a></span>&#8203;(java.util.Map&lt;java.lang.String,&#8203;java.lang.Object&gt;&nbsp;options)</code></th>
 <td class="colLast">
 <div class="block">Creates a Groovy stub with the specified options whose type and name are inferred from the left-hand side of the
  enclosing variable assignment.</div>
 </td>
 </tr>
-<tr class="rowColor" id="i21">
+<tr id="i21" class="rowColor">
 <td class="colFirst"><code>&lt;T&gt;&nbsp;T</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#GroovyStub(java.util.Map,groovy.lang.Closure)">GroovyStub</a></span>&#8203;(<a href="http://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util" class="externalLink">Map</a>&lt;<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>,&#8203;<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang" class="externalLink">Object</a>&gt;&nbsp;options,
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#GroovyStub(java.util.Map,groovy.lang.Closure)">GroovyStub</a></span>&#8203;(java.util.Map&lt;java.lang.String,&#8203;java.lang.Object&gt;&nbsp;options,
           <a href="http://docs.groovy-lang.org/docs/groovy-3.0.0/html/gapi/groovy/lang/Closure.html?is-external=true" title="class or interface in groovy.lang" class="externalLink">Closure</a>&nbsp;interactions)</code></th>
 <td class="colLast">
 <div class="block">Creates a Groovy stub with the specified options and interactions whose type and name are inferred
  from the left-hand side of the enclosing assignment.</div>
 </td>
 </tr>
-<tr class="altColor" id="i22">
+<tr id="i22" class="altColor">
 <td class="colFirst"><code>&lt;T&gt;&nbsp;T</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#GroovyStub(java.util.Map,java.lang.Class)">GroovyStub</a></span>&#8203;(<a href="http://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util" class="externalLink">Map</a>&lt;<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>,&#8203;<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang" class="externalLink">Object</a>&gt;&nbsp;options,
-          <a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang" class="externalLink">Class</a>&lt;T&gt;&nbsp;type)</code></th>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#GroovyStub(java.util.Map,java.lang.Class)">GroovyStub</a></span>&#8203;(java.util.Map&lt;java.lang.String,&#8203;java.lang.Object&gt;&nbsp;options,
+          java.lang.Class&lt;T&gt;&nbsp;type)</code></th>
 <td class="colLast">
 <div class="block">Creates a Groovy stub with the specified options and type.</div>
 </td>
 </tr>
-<tr class="rowColor" id="i23">
+<tr id="i23" class="rowColor">
 <td class="colFirst"><code>&lt;T&gt;&nbsp;T</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#GroovyStub(java.util.Map,java.lang.Class,groovy.lang.Closure)">GroovyStub</a></span>&#8203;(<a href="http://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util" class="externalLink">Map</a>&lt;<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>,&#8203;<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang" class="externalLink">Object</a>&gt;&nbsp;options,
-          <a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang" class="externalLink">Class</a>&lt;T&gt;&nbsp;type,
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#GroovyStub(java.util.Map,java.lang.Class,groovy.lang.Closure)">GroovyStub</a></span>&#8203;(java.util.Map&lt;java.lang.String,&#8203;java.lang.Object&gt;&nbsp;options,
+          java.lang.Class&lt;T&gt;&nbsp;type,
           <a href="http://docs.groovy-lang.org/docs/groovy-3.0.0/html/gapi/groovy/lang/Closure.html?is-external=true" title="class or interface in groovy.lang" class="externalLink">Closure</a>&nbsp;interactions)</code></th>
 <td class="colLast">
 <div class="block">Creates a Groovy stub with the specified options, type, and interactions.</div>
 </td>
 </tr>
-<tr class="altColor" id="i24">
+<tr id="i24" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#interaction(groovy.lang.Closure)">interaction</a></span>&#8203;(<a href="http://docs.groovy-lang.org/docs/groovy-3.0.0/html/gapi/groovy/lang/Closure.html?is-external=true" title="class or interface in groovy.lang" class="externalLink">Closure</a>&nbsp;block)</code></th>
 <td class="colLast">
 <div class="block">Encloses one or more interaction definitions in a <tt>then</tt> block.</div>
 </td>
 </tr>
-<tr class="rowColor" id="i25">
+<tr id="i25" class="rowColor">
 <td class="colFirst"><code>&lt;T&gt;&nbsp;T</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#Mock()">Mock</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Creates a mock whose type and name are inferred from the left-hand side of the enclosing variable assignment.</div>
 </td>
 </tr>
-<tr class="altColor" id="i26">
+<tr id="i26" class="altColor">
 <td class="colFirst"><code>&lt;T&gt;&nbsp;T</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#Mock(groovy.lang.Closure)">Mock</a></span>&#8203;(<a href="http://docs.groovy-lang.org/docs/groovy-3.0.0/html/gapi/groovy/lang/Closure.html?is-external=true" title="class or interface in groovy.lang" class="externalLink">Closure</a>&nbsp;interactions)</code></th>
 <td class="colLast">
@@ -433,63 +443,63 @@ implements <a href="MockFactory.html" title="interface in spock.mock">MockFactor
  from the left-hand side of the enclosing assignment.</div>
 </td>
 </tr>
-<tr class="rowColor" id="i27">
+<tr id="i27" class="rowColor">
 <td class="colFirst"><code>&lt;T&gt;&nbsp;T</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#Mock(java.lang.Class)">Mock</a></span>&#8203;(<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang" class="externalLink">Class</a>&lt;T&gt;&nbsp;type)</code></th>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#Mock(java.lang.Class)">Mock</a></span>&#8203;(java.lang.Class&lt;T&gt;&nbsp;type)</code></th>
 <td class="colLast">
 <div class="block">Creates a mock with the specified type.</div>
 </td>
 </tr>
-<tr class="altColor" id="i28">
+<tr id="i28" class="altColor">
 <td class="colFirst"><code>&lt;T&gt;&nbsp;T</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#Mock(java.lang.Class,groovy.lang.Closure)">Mock</a></span>&#8203;(<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang" class="externalLink">Class</a>&lt;T&gt;&nbsp;type,
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#Mock(java.lang.Class,groovy.lang.Closure)">Mock</a></span>&#8203;(java.lang.Class&lt;T&gt;&nbsp;type,
     <a href="http://docs.groovy-lang.org/docs/groovy-3.0.0/html/gapi/groovy/lang/Closure.html?is-external=true" title="class or interface in groovy.lang" class="externalLink">Closure</a>&nbsp;interactions)</code></th>
 <td class="colLast">
 <div class="block">Creates a mock with the specified type and interactions.</div>
 </td>
 </tr>
-<tr class="rowColor" id="i29">
+<tr id="i29" class="rowColor">
 <td class="colFirst"><code>&lt;T&gt;&nbsp;T</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#Mock(java.util.Map)">Mock</a></span>&#8203;(<a href="http://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util" class="externalLink">Map</a>&lt;<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>,&#8203;<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang" class="externalLink">Object</a>&gt;&nbsp;options)</code></th>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#Mock(java.util.Map)">Mock</a></span>&#8203;(java.util.Map&lt;java.lang.String,&#8203;java.lang.Object&gt;&nbsp;options)</code></th>
 <td class="colLast">
 <div class="block">Creates a mock with the specified options whose type and name are inferred from the left-hand side of the
  enclosing variable assignment.</div>
 </td>
 </tr>
-<tr class="altColor" id="i30">
+<tr id="i30" class="altColor">
 <td class="colFirst"><code>&lt;T&gt;&nbsp;T</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#Mock(java.util.Map,groovy.lang.Closure)">Mock</a></span>&#8203;(<a href="http://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util" class="externalLink">Map</a>&lt;<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>,&#8203;<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang" class="externalLink">Object</a>&gt;&nbsp;options,
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#Mock(java.util.Map,groovy.lang.Closure)">Mock</a></span>&#8203;(java.util.Map&lt;java.lang.String,&#8203;java.lang.Object&gt;&nbsp;options,
     <a href="http://docs.groovy-lang.org/docs/groovy-3.0.0/html/gapi/groovy/lang/Closure.html?is-external=true" title="class or interface in groovy.lang" class="externalLink">Closure</a>&nbsp;interactions)</code></th>
 <td class="colLast">
 <div class="block">Creates a mock with the specified options and interactions whose type and name are inferred
  from the left-hand side of the enclosing assignment.</div>
 </td>
 </tr>
-<tr class="rowColor" id="i31">
+<tr id="i31" class="rowColor">
 <td class="colFirst"><code>&lt;T&gt;&nbsp;T</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#Mock(java.util.Map,java.lang.Class)">Mock</a></span>&#8203;(<a href="http://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util" class="externalLink">Map</a>&lt;<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>,&#8203;<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang" class="externalLink">Object</a>&gt;&nbsp;options,
-    <a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang" class="externalLink">Class</a>&lt;T&gt;&nbsp;type)</code></th>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#Mock(java.util.Map,java.lang.Class)">Mock</a></span>&#8203;(java.util.Map&lt;java.lang.String,&#8203;java.lang.Object&gt;&nbsp;options,
+    java.lang.Class&lt;T&gt;&nbsp;type)</code></th>
 <td class="colLast">
 <div class="block">Creates a mock with the specified options and type.</div>
 </td>
 </tr>
-<tr class="altColor" id="i32">
+<tr id="i32" class="altColor">
 <td class="colFirst"><code>&lt;T&gt;&nbsp;T</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#Mock(java.util.Map,java.lang.Class,groovy.lang.Closure)">Mock</a></span>&#8203;(<a href="http://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util" class="externalLink">Map</a>&lt;<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>,&#8203;<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang" class="externalLink">Object</a>&gt;&nbsp;options,
-    <a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang" class="externalLink">Class</a>&lt;T&gt;&nbsp;type,
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#Mock(java.util.Map,java.lang.Class,groovy.lang.Closure)">Mock</a></span>&#8203;(java.util.Map&lt;java.lang.String,&#8203;java.lang.Object&gt;&nbsp;options,
+    java.lang.Class&lt;T&gt;&nbsp;type,
     <a href="http://docs.groovy-lang.org/docs/groovy-3.0.0/html/gapi/groovy/lang/Closure.html?is-external=true" title="class or interface in groovy.lang" class="externalLink">Closure</a>&nbsp;interactions)</code></th>
 <td class="colLast">
 <div class="block">Creates a mock with the specified options, type, and interactions.</div>
 </td>
 </tr>
-<tr class="rowColor" id="i33">
+<tr id="i33" class="rowColor">
 <td class="colFirst"><code>&lt;T&gt;&nbsp;T</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#Spy()">Spy</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Creates a spy whose type and name are inferred from the left-hand side of the enclosing variable assignment.</div>
 </td>
 </tr>
-<tr class="altColor" id="i34">
+<tr id="i34" class="altColor">
 <td class="colFirst"><code>&lt;T&gt;&nbsp;T</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#Spy(groovy.lang.Closure)">Spy</a></span>&#8203;(<a href="http://docs.groovy-lang.org/docs/groovy-3.0.0/html/gapi/groovy/lang/Closure.html?is-external=true" title="class or interface in groovy.lang" class="externalLink">Closure</a>&nbsp;interactions)</code></th>
 <td class="colLast">
@@ -497,70 +507,70 @@ implements <a href="MockFactory.html" title="interface in spock.mock">MockFactor
  from the left-hand side of the enclosing assignment.</div>
 </td>
 </tr>
-<tr class="rowColor" id="i35">
+<tr id="i35" class="rowColor">
 <td class="colFirst"><code>&lt;T&gt;&nbsp;T</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#Spy(java.lang.Class)">Spy</a></span>&#8203;(<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang" class="externalLink">Class</a>&lt;T&gt;&nbsp;type)</code></th>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#Spy(java.lang.Class)">Spy</a></span>&#8203;(java.lang.Class&lt;T&gt;&nbsp;type)</code></th>
 <td class="colLast">
 <div class="block">Creates a spy with the specified type.</div>
 </td>
 </tr>
-<tr class="altColor" id="i36">
+<tr id="i36" class="altColor">
 <td class="colFirst"><code>&lt;T&gt;&nbsp;T</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#Spy(java.lang.Class,groovy.lang.Closure)">Spy</a></span>&#8203;(<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang" class="externalLink">Class</a>&lt;T&gt;&nbsp;type,
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#Spy(java.lang.Class,groovy.lang.Closure)">Spy</a></span>&#8203;(java.lang.Class&lt;T&gt;&nbsp;type,
    <a href="http://docs.groovy-lang.org/docs/groovy-3.0.0/html/gapi/groovy/lang/Closure.html?is-external=true" title="class or interface in groovy.lang" class="externalLink">Closure</a>&nbsp;interactions)</code></th>
 <td class="colLast">
 <div class="block">Creates a spy with the specified type and interactions.</div>
 </td>
 </tr>
-<tr class="rowColor" id="i37">
+<tr id="i37" class="rowColor">
 <td class="colFirst"><code>&lt;T&gt;&nbsp;T</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#Spy(java.util.Map)">Spy</a></span>&#8203;(<a href="http://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util" class="externalLink">Map</a>&lt;<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>,&#8203;<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang" class="externalLink">Object</a>&gt;&nbsp;options)</code></th>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#Spy(java.util.Map)">Spy</a></span>&#8203;(java.util.Map&lt;java.lang.String,&#8203;java.lang.Object&gt;&nbsp;options)</code></th>
 <td class="colLast">
 <div class="block">Creates a spy with the specified options whose type and name are inferred from the left-hand side of the
  enclosing variable assignment.</div>
 </td>
 </tr>
-<tr class="altColor" id="i38">
+<tr id="i38" class="altColor">
 <td class="colFirst"><code>&lt;T&gt;&nbsp;T</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#Spy(java.util.Map,groovy.lang.Closure)">Spy</a></span>&#8203;(<a href="http://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util" class="externalLink">Map</a>&lt;<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>,&#8203;<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang" class="externalLink">Object</a>&gt;&nbsp;options,
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#Spy(java.util.Map,groovy.lang.Closure)">Spy</a></span>&#8203;(java.util.Map&lt;java.lang.String,&#8203;java.lang.Object&gt;&nbsp;options,
    <a href="http://docs.groovy-lang.org/docs/groovy-3.0.0/html/gapi/groovy/lang/Closure.html?is-external=true" title="class or interface in groovy.lang" class="externalLink">Closure</a>&nbsp;interactions)</code></th>
 <td class="colLast">
 <div class="block">Creates a spy with the specified options and interactions whose type and name are inferred
  from the left-hand side of the enclosing assignment.</div>
 </td>
 </tr>
-<tr class="rowColor" id="i39">
+<tr id="i39" class="rowColor">
 <td class="colFirst"><code>&lt;T&gt;&nbsp;T</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#Spy(java.util.Map,java.lang.Class)">Spy</a></span>&#8203;(<a href="http://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util" class="externalLink">Map</a>&lt;<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>,&#8203;<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang" class="externalLink">Object</a>&gt;&nbsp;options,
-   <a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang" class="externalLink">Class</a>&lt;T&gt;&nbsp;type)</code></th>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#Spy(java.util.Map,java.lang.Class)">Spy</a></span>&#8203;(java.util.Map&lt;java.lang.String,&#8203;java.lang.Object&gt;&nbsp;options,
+   java.lang.Class&lt;T&gt;&nbsp;type)</code></th>
 <td class="colLast">
 <div class="block">Creates a spy with the specified options and type.</div>
 </td>
 </tr>
-<tr class="altColor" id="i40">
+<tr id="i40" class="altColor">
 <td class="colFirst"><code>&lt;T&gt;&nbsp;T</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#Spy(java.util.Map,java.lang.Class,groovy.lang.Closure)">Spy</a></span>&#8203;(<a href="http://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util" class="externalLink">Map</a>&lt;<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>,&#8203;<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang" class="externalLink">Object</a>&gt;&nbsp;options,
-   <a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang" class="externalLink">Class</a>&lt;T&gt;&nbsp;type,
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#Spy(java.util.Map,java.lang.Class,groovy.lang.Closure)">Spy</a></span>&#8203;(java.util.Map&lt;java.lang.String,&#8203;java.lang.Object&gt;&nbsp;options,
+   java.lang.Class&lt;T&gt;&nbsp;type,
    <a href="http://docs.groovy-lang.org/docs/groovy-3.0.0/html/gapi/groovy/lang/Closure.html?is-external=true" title="class or interface in groovy.lang" class="externalLink">Closure</a>&nbsp;interactions)</code></th>
 <td class="colLast">
 <div class="block">Creates a spy with the specified options, type, and interactions.</div>
 </td>
 </tr>
-<tr class="rowColor" id="i41">
+<tr id="i41" class="rowColor">
 <td class="colFirst"><code>&lt;T&gt;&nbsp;T</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#Spy(T)">Spy</a></span>&#8203;(T&nbsp;obj)</code></th>
 <td class="colLast">
 <div class="block">Creates a spy wrapping a provided instance.</div>
 </td>
 </tr>
-<tr class="altColor" id="i42">
+<tr id="i42" class="altColor">
 <td class="colFirst"><code>&lt;T&gt;&nbsp;T</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#Stub()">Stub</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Creates a stub whose type and name are inferred from the left-hand side of the enclosing variable assignment.</div>
 </td>
 </tr>
-<tr class="rowColor" id="i43">
+<tr id="i43" class="rowColor">
 <td class="colFirst"><code>&lt;T&gt;&nbsp;T</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#Stub(groovy.lang.Closure)">Stub</a></span>&#8203;(<a href="http://docs.groovy-lang.org/docs/groovy-3.0.0/html/gapi/groovy/lang/Closure.html?is-external=true" title="class or interface in groovy.lang" class="externalLink">Closure</a>&nbsp;interactions)</code></th>
 <td class="colLast">
@@ -568,59 +578,56 @@ implements <a href="MockFactory.html" title="interface in spock.mock">MockFactor
  from the left-hand side of the enclosing assignment.</div>
 </td>
 </tr>
-<tr class="altColor" id="i44">
+<tr id="i44" class="altColor">
 <td class="colFirst"><code>&lt;T&gt;&nbsp;T</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#Stub(java.lang.Class)">Stub</a></span>&#8203;(<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang" class="externalLink">Class</a>&lt;T&gt;&nbsp;type)</code></th>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#Stub(java.lang.Class)">Stub</a></span>&#8203;(java.lang.Class&lt;T&gt;&nbsp;type)</code></th>
 <td class="colLast">
 <div class="block">Creates a stub with the specified type.</div>
 </td>
 </tr>
-<tr class="rowColor" id="i45">
+<tr id="i45" class="rowColor">
 <td class="colFirst"><code>&lt;T&gt;&nbsp;T</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#Stub(java.lang.Class,groovy.lang.Closure)">Stub</a></span>&#8203;(<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang" class="externalLink">Class</a>&lt;T&gt;&nbsp;type,
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#Stub(java.lang.Class,groovy.lang.Closure)">Stub</a></span>&#8203;(java.lang.Class&lt;T&gt;&nbsp;type,
     <a href="http://docs.groovy-lang.org/docs/groovy-3.0.0/html/gapi/groovy/lang/Closure.html?is-external=true" title="class or interface in groovy.lang" class="externalLink">Closure</a>&nbsp;interactions)</code></th>
 <td class="colLast">
 <div class="block">Creates a stub with the specified type and interactions.</div>
 </td>
 </tr>
-<tr class="altColor" id="i46">
+<tr id="i46" class="altColor">
 <td class="colFirst"><code>&lt;T&gt;&nbsp;T</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#Stub(java.util.Map)">Stub</a></span>&#8203;(<a href="http://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util" class="externalLink">Map</a>&lt;<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>,&#8203;<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang" class="externalLink">Object</a>&gt;&nbsp;options)</code></th>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#Stub(java.util.Map)">Stub</a></span>&#8203;(java.util.Map&lt;java.lang.String,&#8203;java.lang.Object&gt;&nbsp;options)</code></th>
 <td class="colLast">
 <div class="block">Creates a stub with the specified options whose type and name are inferred from the left-hand side of the
  enclosing variable assignment.</div>
 </td>
 </tr>
-<tr class="rowColor" id="i47">
+<tr id="i47" class="rowColor">
 <td class="colFirst"><code>&lt;T&gt;&nbsp;T</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#Stub(java.util.Map,groovy.lang.Closure)">Stub</a></span>&#8203;(<a href="http://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util" class="externalLink">Map</a>&lt;<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>,&#8203;<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang" class="externalLink">Object</a>&gt;&nbsp;options,
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#Stub(java.util.Map,groovy.lang.Closure)">Stub</a></span>&#8203;(java.util.Map&lt;java.lang.String,&#8203;java.lang.Object&gt;&nbsp;options,
     <a href="http://docs.groovy-lang.org/docs/groovy-3.0.0/html/gapi/groovy/lang/Closure.html?is-external=true" title="class or interface in groovy.lang" class="externalLink">Closure</a>&nbsp;interactions)</code></th>
 <td class="colLast">
 <div class="block">Creates a stub with the specified options and interactions whose type and name are inferred
  from the left-hand side of the enclosing assignment.</div>
 </td>
 </tr>
-<tr class="altColor" id="i48">
+<tr id="i48" class="altColor">
 <td class="colFirst"><code>&lt;T&gt;&nbsp;T</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#Stub(java.util.Map,java.lang.Class)">Stub</a></span>&#8203;(<a href="http://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util" class="externalLink">Map</a>&lt;<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>,&#8203;<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang" class="externalLink">Object</a>&gt;&nbsp;options,
-    <a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang" class="externalLink">Class</a>&lt;T&gt;&nbsp;type)</code></th>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#Stub(java.util.Map,java.lang.Class)">Stub</a></span>&#8203;(java.util.Map&lt;java.lang.String,&#8203;java.lang.Object&gt;&nbsp;options,
+    java.lang.Class&lt;T&gt;&nbsp;type)</code></th>
 <td class="colLast">
 <div class="block">Creates a stub with the specified options and type.</div>
 </td>
 </tr>
-<tr class="rowColor" id="i49">
+<tr id="i49" class="rowColor">
 <td class="colFirst"><code>&lt;T&gt;&nbsp;T</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#Stub(java.util.Map,java.lang.Class,groovy.lang.Closure)">Stub</a></span>&#8203;(<a href="http://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util" class="externalLink">Map</a>&lt;<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>,&#8203;<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang" class="externalLink">Object</a>&gt;&nbsp;options,
-    <a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang" class="externalLink">Class</a>&lt;T&gt;&nbsp;type,
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#Stub(java.util.Map,java.lang.Class,groovy.lang.Closure)">Stub</a></span>&#8203;(java.util.Map&lt;java.lang.String,&#8203;java.lang.Object&gt;&nbsp;options,
+    java.lang.Class&lt;T&gt;&nbsp;type,
     <a href="http://docs.groovy-lang.org/docs/groovy-3.0.0/html/gapi/groovy/lang/Closure.html?is-external=true" title="class or interface in groovy.lang" class="externalLink">Closure</a>&nbsp;interactions)</code></th>
 <td class="colLast">
 <div class="block">Creates a stub with the specified options, type, and interactions.</div>
 </td>
 </tr>
-</tbody>
 </table>
-</div>
-</div>
 <ul class="blockList">
 <li class="blockList"><a id="methods.inherited.from.class.org.spockframework.lang.SpecInternals">
 <!--   -->
@@ -632,8 +639,8 @@ implements <a href="MockFactory.html" title="interface in spock.mock">MockFactor
 <li class="blockList"><a id="methods.inherited.from.class.java.lang.Object">
 <!--   -->
 </a>
-<h3>Methods inherited from class&nbsp;java.lang.<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang" class="externalLink">Object</a></h3>
-<code><a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#clone()" title="class or interface in java.lang" class="externalLink">clone</a>, <a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#equals(java.lang.Object)" title="class or interface in java.lang" class="externalLink">equals</a>, <a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#finalize()" title="class or interface in java.lang" class="externalLink">finalize</a>, <a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#getClass()" title="class or interface in java.lang" class="externalLink">getClass</a>, <a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#hashCode()" title="class or interface in java.lang" class="externalLink">hashCode</a>, <a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#notify()" title="class or interface in java.lang" class="externalLink">notify</a>, <a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#notifyAll()" title="class or interface in java.lang" class="externalLink">notifyAll</a>, <a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#toString()" title="class or interface in java.lang" class="externalLink">toString</a>, <a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#wait()" title="class or interface in java.lang" class="externalLink">wait</a>, <a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#wait(long)" title="class or interface in java.lang" class="externalLink">wait</a>, <a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true#wait(long,int)" title="class or interface in java.lang" class="externalLink">wait</a></code></li>
+<h3>Methods inherited from class&nbsp;java.lang.Object</h3>
+<code>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</code></li>
 </ul>
 </li>
 </ul>
@@ -761,7 +768,7 @@ implements <a href="MockFactory.html" title="interface in spock.mock">MockFactor
 <li class="blockList">
 <h4>Mock</h4>
 <pre class="methodSignature">@Beta
-public&nbsp;&lt;T&gt;&nbsp;T&nbsp;Mock&#8203;(<a href="http://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util" class="externalLink">Map</a>&lt;<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>,&#8203;<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang" class="externalLink">Object</a>&gt;&nbsp;options)</pre>
+public&nbsp;&lt;T&gt;&nbsp;T&nbsp;Mock&#8203;(java.util.Map&lt;java.lang.String,&#8203;java.lang.Object&gt;&nbsp;options)</pre>
 <div class="block">Creates a mock with the specified options whose type and name are inferred from the left-hand side of the
  enclosing variable assignment.
 
@@ -785,7 +792,7 @@ public&nbsp;&lt;T&gt;&nbsp;T&nbsp;Mock&#8203;(<a href="http://docs.oracle.com/ja
 <ul class="blockList">
 <li class="blockList">
 <h4>Mock</h4>
-<pre class="methodSignature">public&nbsp;&lt;T&gt;&nbsp;T&nbsp;Mock&#8203;(<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang" class="externalLink">Class</a>&lt;T&gt;&nbsp;type)</pre>
+<pre class="methodSignature">public&nbsp;&lt;T&gt;&nbsp;T&nbsp;Mock&#8203;(java.lang.Class&lt;T&gt;&nbsp;type)</pre>
 <div class="block">Creates a mock with the specified type. If enclosed in a variable assignment, the variable name will be
  used as the mock's name.
 
@@ -813,8 +820,8 @@ public&nbsp;&lt;T&gt;&nbsp;T&nbsp;Mock&#8203;(<a href="http://docs.oracle.com/ja
 <li class="blockList">
 <h4>Mock</h4>
 <pre class="methodSignature">@Beta
-public&nbsp;&lt;T&gt;&nbsp;T&nbsp;Mock&#8203;(<a href="http://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util" class="externalLink">Map</a>&lt;<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>,&#8203;<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang" class="externalLink">Object</a>&gt;&nbsp;options,
-                  <a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang" class="externalLink">Class</a>&lt;T&gt;&nbsp;type)</pre>
+public&nbsp;&lt;T&gt;&nbsp;T&nbsp;Mock&#8203;(java.util.Map&lt;java.lang.String,&#8203;java.lang.Object&gt;&nbsp;options,
+                  java.lang.Class&lt;T&gt;&nbsp;type)</pre>
 <div class="block">Creates a mock with the specified options and type. If enclosed in an variable assignment, the variable name
  will be used as the mock's name.
 
@@ -872,7 +879,7 @@ public&nbsp;&lt;T&gt;&nbsp;T&nbsp;Mock&#8203;(<a href="http://docs.groovy-lang.o
 <li class="blockList">
 <h4>Mock</h4>
 <pre class="methodSignature">@Beta
-public&nbsp;&lt;T&gt;&nbsp;T&nbsp;Mock&#8203;(<a href="http://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util" class="externalLink">Map</a>&lt;<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>,&#8203;<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang" class="externalLink">Object</a>&gt;&nbsp;options,
+public&nbsp;&lt;T&gt;&nbsp;T&nbsp;Mock&#8203;(java.util.Map&lt;java.lang.String,&#8203;java.lang.Object&gt;&nbsp;options,
                   <a href="http://docs.groovy-lang.org/docs/groovy-3.0.0/html/gapi/groovy/lang/Closure.html?is-external=true" title="class or interface in groovy.lang" class="externalLink">Closure</a>&nbsp;interactions)</pre>
 <div class="block">Creates a mock with the specified options and interactions whose type and name are inferred
  from the left-hand side of the enclosing assignment.
@@ -903,7 +910,7 @@ public&nbsp;&lt;T&gt;&nbsp;T&nbsp;Mock&#8203;(<a href="http://docs.oracle.com/ja
 <li class="blockList">
 <h4>Mock</h4>
 <pre class="methodSignature">@Beta
-public&nbsp;&lt;T&gt;&nbsp;T&nbsp;Mock&#8203;(<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang" class="externalLink">Class</a>&lt;T&gt;&nbsp;type,
+public&nbsp;&lt;T&gt;&nbsp;T&nbsp;Mock&#8203;(java.lang.Class&lt;T&gt;&nbsp;type,
                   <a href="http://docs.groovy-lang.org/docs/groovy-3.0.0/html/gapi/groovy/lang/DelegatesTo.html?is-external=true" title="class or interface in groovy.lang" class="externalLink">@DelegatesTo</a>(<a href="http://docs.groovy-lang.org/docs/groovy-3.0.0/html/gapi/groovy/lang/DelegatesTo.html?is-external=true#strategy()" title="class or interface in groovy.lang" class="externalLink">strategy</a>=1,<a href="http://docs.groovy-lang.org/docs/groovy-3.0.0/html/gapi/groovy/lang/DelegatesTo.html?is-external=true#genericTypeIndex()" title="class or interface in groovy.lang" class="externalLink">genericTypeIndex</a>=0)
                   <a href="http://docs.groovy-lang.org/docs/groovy-3.0.0/html/gapi/groovy/lang/Closure.html?is-external=true" title="class or interface in groovy.lang" class="externalLink">Closure</a>&nbsp;interactions)</pre>
 <div class="block">Creates a mock with the specified type and interactions. If enclosed in a variable assignment, the variable name will be
@@ -936,8 +943,8 @@ public&nbsp;&lt;T&gt;&nbsp;T&nbsp;Mock&#8203;(<a href="http://docs.oracle.com/ja
 <li class="blockList">
 <h4>Mock</h4>
 <pre class="methodSignature">@Beta
-public&nbsp;&lt;T&gt;&nbsp;T&nbsp;Mock&#8203;(<a href="http://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util" class="externalLink">Map</a>&lt;<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>,&#8203;<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang" class="externalLink">Object</a>&gt;&nbsp;options,
-                  <a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang" class="externalLink">Class</a>&lt;T&gt;&nbsp;type,
+public&nbsp;&lt;T&gt;&nbsp;T&nbsp;Mock&#8203;(java.util.Map&lt;java.lang.String,&#8203;java.lang.Object&gt;&nbsp;options,
+                  java.lang.Class&lt;T&gt;&nbsp;type,
                   <a href="http://docs.groovy-lang.org/docs/groovy-3.0.0/html/gapi/groovy/lang/DelegatesTo.html?is-external=true" title="class or interface in groovy.lang" class="externalLink">@DelegatesTo</a>(<a href="http://docs.groovy-lang.org/docs/groovy-3.0.0/html/gapi/groovy/lang/DelegatesTo.html?is-external=true#strategy()" title="class or interface in groovy.lang" class="externalLink">strategy</a>=1,<a href="http://docs.groovy-lang.org/docs/groovy-3.0.0/html/gapi/groovy/lang/DelegatesTo.html?is-external=true#genericTypeIndex()" title="class or interface in groovy.lang" class="externalLink">genericTypeIndex</a>=0)
                   <a href="http://docs.groovy-lang.org/docs/groovy-3.0.0/html/gapi/groovy/lang/Closure.html?is-external=true" title="class or interface in groovy.lang" class="externalLink">Closure</a>&nbsp;interactions)</pre>
 <div class="block">Creates a mock with the specified options, type, and interactions. If enclosed in a variable assignment, the
@@ -992,7 +999,7 @@ public&nbsp;&lt;T&gt;&nbsp;T&nbsp;Stub()</pre>
 <li class="blockList">
 <h4>Stub</h4>
 <pre class="methodSignature">@Beta
-public&nbsp;&lt;T&gt;&nbsp;T&nbsp;Stub&#8203;(<a href="http://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util" class="externalLink">Map</a>&lt;<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>,&#8203;<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang" class="externalLink">Object</a>&gt;&nbsp;options)</pre>
+public&nbsp;&lt;T&gt;&nbsp;T&nbsp;Stub&#8203;(java.util.Map&lt;java.lang.String,&#8203;java.lang.Object&gt;&nbsp;options)</pre>
 <div class="block">Creates a stub with the specified options whose type and name are inferred from the left-hand side of the
  enclosing variable assignment.
 
@@ -1017,7 +1024,7 @@ public&nbsp;&lt;T&gt;&nbsp;T&nbsp;Stub&#8203;(<a href="http://docs.oracle.com/ja
 <li class="blockList">
 <h4>Stub</h4>
 <pre class="methodSignature">@Beta
-public&nbsp;&lt;T&gt;&nbsp;T&nbsp;Stub&#8203;(<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang" class="externalLink">Class</a>&lt;T&gt;&nbsp;type)</pre>
+public&nbsp;&lt;T&gt;&nbsp;T&nbsp;Stub&#8203;(java.lang.Class&lt;T&gt;&nbsp;type)</pre>
 <div class="block">Creates a stub with the specified type. If enclosed in a variable assignment, the variable name will be
  used as the stub's name.
 
@@ -1045,8 +1052,8 @@ public&nbsp;&lt;T&gt;&nbsp;T&nbsp;Stub&#8203;(<a href="http://docs.oracle.com/ja
 <li class="blockList">
 <h4>Stub</h4>
 <pre class="methodSignature">@Beta
-public&nbsp;&lt;T&gt;&nbsp;T&nbsp;Stub&#8203;(<a href="http://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util" class="externalLink">Map</a>&lt;<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>,&#8203;<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang" class="externalLink">Object</a>&gt;&nbsp;options,
-                  <a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang" class="externalLink">Class</a>&lt;T&gt;&nbsp;type)</pre>
+public&nbsp;&lt;T&gt;&nbsp;T&nbsp;Stub&#8203;(java.util.Map&lt;java.lang.String,&#8203;java.lang.Object&gt;&nbsp;options,
+                  java.lang.Class&lt;T&gt;&nbsp;type)</pre>
 <div class="block">Creates a stub with the specified options and type. If enclosed in an variable assignment, the variable name
  will be used as the stub's name.
 
@@ -1104,7 +1111,7 @@ public&nbsp;&lt;T&gt;&nbsp;T&nbsp;Stub&#8203;(<a href="http://docs.groovy-lang.o
 <li class="blockList">
 <h4>Stub</h4>
 <pre class="methodSignature">@Beta
-public&nbsp;&lt;T&gt;&nbsp;T&nbsp;Stub&#8203;(<a href="http://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util" class="externalLink">Map</a>&lt;<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>,&#8203;<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang" class="externalLink">Object</a>&gt;&nbsp;options,
+public&nbsp;&lt;T&gt;&nbsp;T&nbsp;Stub&#8203;(java.util.Map&lt;java.lang.String,&#8203;java.lang.Object&gt;&nbsp;options,
                   <a href="http://docs.groovy-lang.org/docs/groovy-3.0.0/html/gapi/groovy/lang/Closure.html?is-external=true" title="class or interface in groovy.lang" class="externalLink">Closure</a>&nbsp;interactions)</pre>
 <div class="block">Creates a stub with the specified options and interactions whose type and name are inferred
  from the left-hand side of the enclosing assignment.
@@ -1135,7 +1142,7 @@ public&nbsp;&lt;T&gt;&nbsp;T&nbsp;Stub&#8203;(<a href="http://docs.oracle.com/ja
 <li class="blockList">
 <h4>Stub</h4>
 <pre class="methodSignature">@Beta
-public&nbsp;&lt;T&gt;&nbsp;T&nbsp;Stub&#8203;(<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang" class="externalLink">Class</a>&lt;T&gt;&nbsp;type,
+public&nbsp;&lt;T&gt;&nbsp;T&nbsp;Stub&#8203;(java.lang.Class&lt;T&gt;&nbsp;type,
                   <a href="http://docs.groovy-lang.org/docs/groovy-3.0.0/html/gapi/groovy/lang/DelegatesTo.html?is-external=true" title="class or interface in groovy.lang" class="externalLink">@DelegatesTo</a>(<a href="http://docs.groovy-lang.org/docs/groovy-3.0.0/html/gapi/groovy/lang/DelegatesTo.html?is-external=true#strategy()" title="class or interface in groovy.lang" class="externalLink">strategy</a>=1,<a href="http://docs.groovy-lang.org/docs/groovy-3.0.0/html/gapi/groovy/lang/DelegatesTo.html?is-external=true#genericTypeIndex()" title="class or interface in groovy.lang" class="externalLink">genericTypeIndex</a>=0)
                   <a href="http://docs.groovy-lang.org/docs/groovy-3.0.0/html/gapi/groovy/lang/Closure.html?is-external=true" title="class or interface in groovy.lang" class="externalLink">Closure</a>&nbsp;interactions)</pre>
 <div class="block">Creates a stub with the specified type and interactions. If enclosed in a variable assignment, the variable name will be
@@ -1168,8 +1175,8 @@ public&nbsp;&lt;T&gt;&nbsp;T&nbsp;Stub&#8203;(<a href="http://docs.oracle.com/ja
 <li class="blockList">
 <h4>Stub</h4>
 <pre class="methodSignature">@Beta
-public&nbsp;&lt;T&gt;&nbsp;T&nbsp;Stub&#8203;(<a href="http://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util" class="externalLink">Map</a>&lt;<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>,&#8203;<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang" class="externalLink">Object</a>&gt;&nbsp;options,
-                  <a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang" class="externalLink">Class</a>&lt;T&gt;&nbsp;type,
+public&nbsp;&lt;T&gt;&nbsp;T&nbsp;Stub&#8203;(java.util.Map&lt;java.lang.String,&#8203;java.lang.Object&gt;&nbsp;options,
+                  java.lang.Class&lt;T&gt;&nbsp;type,
                   <a href="http://docs.groovy-lang.org/docs/groovy-3.0.0/html/gapi/groovy/lang/DelegatesTo.html?is-external=true" title="class or interface in groovy.lang" class="externalLink">@DelegatesTo</a>(<a href="http://docs.groovy-lang.org/docs/groovy-3.0.0/html/gapi/groovy/lang/DelegatesTo.html?is-external=true#strategy()" title="class or interface in groovy.lang" class="externalLink">strategy</a>=1,<a href="http://docs.groovy-lang.org/docs/groovy-3.0.0/html/gapi/groovy/lang/DelegatesTo.html?is-external=true#genericTypeIndex()" title="class or interface in groovy.lang" class="externalLink">genericTypeIndex</a>=0)
                   <a href="http://docs.groovy-lang.org/docs/groovy-3.0.0/html/gapi/groovy/lang/Closure.html?is-external=true" title="class or interface in groovy.lang" class="externalLink">Closure</a>&nbsp;interactions)</pre>
 <div class="block">Creates a stub with the specified options, type, and interactions. If enclosed in a variable assignment, the
@@ -1224,7 +1231,7 @@ public&nbsp;&lt;T&gt;&nbsp;T&nbsp;Spy()</pre>
 <li class="blockList">
 <h4>Spy</h4>
 <pre class="methodSignature">@Beta
-public&nbsp;&lt;T&gt;&nbsp;T&nbsp;Spy&#8203;(<a href="http://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util" class="externalLink">Map</a>&lt;<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>,&#8203;<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang" class="externalLink">Object</a>&gt;&nbsp;options)</pre>
+public&nbsp;&lt;T&gt;&nbsp;T&nbsp;Spy&#8203;(java.util.Map&lt;java.lang.String,&#8203;java.lang.Object&gt;&nbsp;options)</pre>
 <div class="block">Creates a spy with the specified options whose type and name are inferred from the left-hand side of the
  enclosing variable assignment.
 
@@ -1249,7 +1256,7 @@ public&nbsp;&lt;T&gt;&nbsp;T&nbsp;Spy&#8203;(<a href="http://docs.oracle.com/jav
 <li class="blockList">
 <h4>Spy</h4>
 <pre class="methodSignature">@Beta
-public&nbsp;&lt;T&gt;&nbsp;T&nbsp;Spy&#8203;(<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang" class="externalLink">Class</a>&lt;T&gt;&nbsp;type)</pre>
+public&nbsp;&lt;T&gt;&nbsp;T&nbsp;Spy&#8203;(java.lang.Class&lt;T&gt;&nbsp;type)</pre>
 <div class="block">Creates a spy with the specified type. If enclosed in a variable assignment, the variable name will be
  used as the spy's name.
 
@@ -1311,8 +1318,8 @@ public&nbsp;&lt;T&gt;&nbsp;T&nbsp;Spy&#8203;(T&nbsp;obj)</pre>
 <li class="blockList">
 <h4>Spy</h4>
 <pre class="methodSignature">@Beta
-public&nbsp;&lt;T&gt;&nbsp;T&nbsp;Spy&#8203;(<a href="http://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util" class="externalLink">Map</a>&lt;<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>,&#8203;<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang" class="externalLink">Object</a>&gt;&nbsp;options,
-                 <a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang" class="externalLink">Class</a>&lt;T&gt;&nbsp;type)</pre>
+public&nbsp;&lt;T&gt;&nbsp;T&nbsp;Spy&#8203;(java.util.Map&lt;java.lang.String,&#8203;java.lang.Object&gt;&nbsp;options,
+                 java.lang.Class&lt;T&gt;&nbsp;type)</pre>
 <div class="block">Creates a spy with the specified options and type. If enclosed in an variable assignment, the variable name
  will be used as the spy's name.
 
@@ -1369,7 +1376,7 @@ public&nbsp;&lt;T&gt;&nbsp;T&nbsp;Spy&#8203;(<a href="http://docs.groovy-lang.or
 <li class="blockList">
 <h4>Spy</h4>
 <pre class="methodSignature">@Beta
-public&nbsp;&lt;T&gt;&nbsp;T&nbsp;Spy&#8203;(<a href="http://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util" class="externalLink">Map</a>&lt;<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>,&#8203;<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang" class="externalLink">Object</a>&gt;&nbsp;options,
+public&nbsp;&lt;T&gt;&nbsp;T&nbsp;Spy&#8203;(java.util.Map&lt;java.lang.String,&#8203;java.lang.Object&gt;&nbsp;options,
                  <a href="http://docs.groovy-lang.org/docs/groovy-3.0.0/html/gapi/groovy/lang/Closure.html?is-external=true" title="class or interface in groovy.lang" class="externalLink">Closure</a>&nbsp;interactions)</pre>
 <div class="block">Creates a spy with the specified options and interactions whose type and name are inferred
  from the left-hand side of the enclosing assignment.
@@ -1399,7 +1406,7 @@ public&nbsp;&lt;T&gt;&nbsp;T&nbsp;Spy&#8203;(<a href="http://docs.oracle.com/jav
 <li class="blockList">
 <h4>Spy</h4>
 <pre class="methodSignature">@Beta
-public&nbsp;&lt;T&gt;&nbsp;T&nbsp;Spy&#8203;(<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang" class="externalLink">Class</a>&lt;T&gt;&nbsp;type,
+public&nbsp;&lt;T&gt;&nbsp;T&nbsp;Spy&#8203;(java.lang.Class&lt;T&gt;&nbsp;type,
                  <a href="http://docs.groovy-lang.org/docs/groovy-3.0.0/html/gapi/groovy/lang/DelegatesTo.html?is-external=true" title="class or interface in groovy.lang" class="externalLink">@DelegatesTo</a>(<a href="http://docs.groovy-lang.org/docs/groovy-3.0.0/html/gapi/groovy/lang/DelegatesTo.html?is-external=true#strategy()" title="class or interface in groovy.lang" class="externalLink">strategy</a>=1,<a href="http://docs.groovy-lang.org/docs/groovy-3.0.0/html/gapi/groovy/lang/DelegatesTo.html?is-external=true#genericTypeIndex()" title="class or interface in groovy.lang" class="externalLink">genericTypeIndex</a>=0)
                  <a href="http://docs.groovy-lang.org/docs/groovy-3.0.0/html/gapi/groovy/lang/Closure.html?is-external=true" title="class or interface in groovy.lang" class="externalLink">Closure</a>&nbsp;interactions)</pre>
 <div class="block">Creates a spy with the specified type and interactions. If enclosed in a variable assignment, the variable name will be
@@ -1432,8 +1439,8 @@ public&nbsp;&lt;T&gt;&nbsp;T&nbsp;Spy&#8203;(<a href="http://docs.oracle.com/jav
 <li class="blockList">
 <h4>Spy</h4>
 <pre class="methodSignature">@Beta
-public&nbsp;&lt;T&gt;&nbsp;T&nbsp;Spy&#8203;(<a href="http://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util" class="externalLink">Map</a>&lt;<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>,&#8203;<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang" class="externalLink">Object</a>&gt;&nbsp;options,
-                 <a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang" class="externalLink">Class</a>&lt;T&gt;&nbsp;type,
+public&nbsp;&lt;T&gt;&nbsp;T&nbsp;Spy&#8203;(java.util.Map&lt;java.lang.String,&#8203;java.lang.Object&gt;&nbsp;options,
+                 java.lang.Class&lt;T&gt;&nbsp;type,
                  <a href="http://docs.groovy-lang.org/docs/groovy-3.0.0/html/gapi/groovy/lang/DelegatesTo.html?is-external=true" title="class or interface in groovy.lang" class="externalLink">@DelegatesTo</a>(<a href="http://docs.groovy-lang.org/docs/groovy-3.0.0/html/gapi/groovy/lang/DelegatesTo.html?is-external=true#strategy()" title="class or interface in groovy.lang" class="externalLink">strategy</a>=1,<a href="http://docs.groovy-lang.org/docs/groovy-3.0.0/html/gapi/groovy/lang/DelegatesTo.html?is-external=true#genericTypeIndex()" title="class or interface in groovy.lang" class="externalLink">genericTypeIndex</a>=0)
                  <a href="http://docs.groovy-lang.org/docs/groovy-3.0.0/html/gapi/groovy/lang/Closure.html?is-external=true" title="class or interface in groovy.lang" class="externalLink">Closure</a>&nbsp;interactions)</pre>
 <div class="block">Creates a spy with the specified options, type, and interactions. If enclosed in a variable assignment, the
@@ -1487,7 +1494,7 @@ public&nbsp;&lt;T&gt;&nbsp;T&nbsp;GroovyMock()</pre>
 <li class="blockList">
 <h4>GroovyMock</h4>
 <pre class="methodSignature">@Beta
-public&nbsp;&lt;T&gt;&nbsp;T&nbsp;GroovyMock&#8203;(<a href="http://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util" class="externalLink">Map</a>&lt;<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>,&#8203;<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang" class="externalLink">Object</a>&gt;&nbsp;options)</pre>
+public&nbsp;&lt;T&gt;&nbsp;T&nbsp;GroovyMock&#8203;(java.util.Map&lt;java.lang.String,&#8203;java.lang.Object&gt;&nbsp;options)</pre>
 <div class="block">Creates a Groovy mock with the specified options whose type and name are inferred from the left-hand side of the
  enclosing variable assignment.
 
@@ -1512,7 +1519,7 @@ public&nbsp;&lt;T&gt;&nbsp;T&nbsp;GroovyMock&#8203;(<a href="http://docs.oracle.
 <li class="blockList">
 <h4>GroovyMock</h4>
 <pre class="methodSignature">@Beta
-public&nbsp;&lt;T&gt;&nbsp;T&nbsp;GroovyMock&#8203;(<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang" class="externalLink">Class</a>&lt;T&gt;&nbsp;type)</pre>
+public&nbsp;&lt;T&gt;&nbsp;T&nbsp;GroovyMock&#8203;(java.lang.Class&lt;T&gt;&nbsp;type)</pre>
 <div class="block">Creates a Groovy mock with the specified type. If enclosed in a variable assignment, the variable name will be
  used as the mock's name.
 
@@ -1538,8 +1545,8 @@ public&nbsp;&lt;T&gt;&nbsp;T&nbsp;GroovyMock&#8203;(<a href="http://docs.oracle.
 <li class="blockList">
 <h4>GroovyMock</h4>
 <pre class="methodSignature">@Beta
-public&nbsp;&lt;T&gt;&nbsp;T&nbsp;GroovyMock&#8203;(<a href="http://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util" class="externalLink">Map</a>&lt;<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>,&#8203;<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang" class="externalLink">Object</a>&gt;&nbsp;options,
-                        <a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang" class="externalLink">Class</a>&lt;T&gt;&nbsp;type)</pre>
+public&nbsp;&lt;T&gt;&nbsp;T&nbsp;GroovyMock&#8203;(java.util.Map&lt;java.lang.String,&#8203;java.lang.Object&gt;&nbsp;options,
+                        java.lang.Class&lt;T&gt;&nbsp;type)</pre>
 <div class="block">Creates a Groovy mock with the specified options and type. If enclosed in an variable assignment, the variable name
  will be used as the mock's name.
 
@@ -1595,7 +1602,7 @@ public&nbsp;&lt;T&gt;&nbsp;T&nbsp;GroovyMock&#8203;(<a href="http://docs.groovy-
 <li class="blockList">
 <h4>GroovyMock</h4>
 <pre class="methodSignature">@Beta
-public&nbsp;&lt;T&gt;&nbsp;T&nbsp;GroovyMock&#8203;(<a href="http://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util" class="externalLink">Map</a>&lt;<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>,&#8203;<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang" class="externalLink">Object</a>&gt;&nbsp;options,
+public&nbsp;&lt;T&gt;&nbsp;T&nbsp;GroovyMock&#8203;(java.util.Map&lt;java.lang.String,&#8203;java.lang.Object&gt;&nbsp;options,
                         <a href="http://docs.groovy-lang.org/docs/groovy-3.0.0/html/gapi/groovy/lang/Closure.html?is-external=true" title="class or interface in groovy.lang" class="externalLink">Closure</a>&nbsp;interactions)</pre>
 <div class="block">Creates a Groovy mock with the specified options and interactions whose type and name are inferred
  from the left-hand side of the enclosing assignment.
@@ -1626,7 +1633,7 @@ public&nbsp;&lt;T&gt;&nbsp;T&nbsp;GroovyMock&#8203;(<a href="http://docs.oracle.
 <li class="blockList">
 <h4>GroovyMock</h4>
 <pre class="methodSignature">@Beta
-public&nbsp;&lt;T&gt;&nbsp;T&nbsp;GroovyMock&#8203;(<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang" class="externalLink">Class</a>&lt;T&gt;&nbsp;type,
+public&nbsp;&lt;T&gt;&nbsp;T&nbsp;GroovyMock&#8203;(java.lang.Class&lt;T&gt;&nbsp;type,
                         <a href="http://docs.groovy-lang.org/docs/groovy-3.0.0/html/gapi/groovy/lang/DelegatesTo.html?is-external=true" title="class or interface in groovy.lang" class="externalLink">@DelegatesTo</a>(<a href="http://docs.groovy-lang.org/docs/groovy-3.0.0/html/gapi/groovy/lang/DelegatesTo.html?is-external=true#strategy()" title="class or interface in groovy.lang" class="externalLink">strategy</a>=1,<a href="http://docs.groovy-lang.org/docs/groovy-3.0.0/html/gapi/groovy/lang/DelegatesTo.html?is-external=true#genericTypeIndex()" title="class or interface in groovy.lang" class="externalLink">genericTypeIndex</a>=0)
                         <a href="http://docs.groovy-lang.org/docs/groovy-3.0.0/html/gapi/groovy/lang/Closure.html?is-external=true" title="class or interface in groovy.lang" class="externalLink">Closure</a>&nbsp;interactions)</pre>
 <div class="block">Creates a Groovy mock with the specified type and interactions. If enclosed in a variable assignment, the variable name will be
@@ -1659,8 +1666,8 @@ public&nbsp;&lt;T&gt;&nbsp;T&nbsp;GroovyMock&#8203;(<a href="http://docs.oracle.
 <li class="blockList">
 <h4>GroovyMock</h4>
 <pre class="methodSignature">@Beta
-public&nbsp;&lt;T&gt;&nbsp;T&nbsp;GroovyMock&#8203;(<a href="http://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util" class="externalLink">Map</a>&lt;<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>,&#8203;<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang" class="externalLink">Object</a>&gt;&nbsp;options,
-                        <a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang" class="externalLink">Class</a>&lt;T&gt;&nbsp;type,
+public&nbsp;&lt;T&gt;&nbsp;T&nbsp;GroovyMock&#8203;(java.util.Map&lt;java.lang.String,&#8203;java.lang.Object&gt;&nbsp;options,
+                        java.lang.Class&lt;T&gt;&nbsp;type,
                         <a href="http://docs.groovy-lang.org/docs/groovy-3.0.0/html/gapi/groovy/lang/DelegatesTo.html?is-external=true" title="class or interface in groovy.lang" class="externalLink">@DelegatesTo</a>(<a href="http://docs.groovy-lang.org/docs/groovy-3.0.0/html/gapi/groovy/lang/DelegatesTo.html?is-external=true#strategy()" title="class or interface in groovy.lang" class="externalLink">strategy</a>=1,<a href="http://docs.groovy-lang.org/docs/groovy-3.0.0/html/gapi/groovy/lang/DelegatesTo.html?is-external=true#genericTypeIndex()" title="class or interface in groovy.lang" class="externalLink">genericTypeIndex</a>=0)
                         <a href="http://docs.groovy-lang.org/docs/groovy-3.0.0/html/gapi/groovy/lang/Closure.html?is-external=true" title="class or interface in groovy.lang" class="externalLink">Closure</a>&nbsp;interactions)</pre>
 <div class="block">Creates a Groovy mock with the specified options, type, and interactions. If enclosed in a variable assignment, the
@@ -1715,7 +1722,7 @@ public&nbsp;&lt;T&gt;&nbsp;T&nbsp;GroovyStub()</pre>
 <li class="blockList">
 <h4>GroovyStub</h4>
 <pre class="methodSignature">@Beta
-public&nbsp;&lt;T&gt;&nbsp;T&nbsp;GroovyStub&#8203;(<a href="http://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util" class="externalLink">Map</a>&lt;<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>,&#8203;<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang" class="externalLink">Object</a>&gt;&nbsp;options)</pre>
+public&nbsp;&lt;T&gt;&nbsp;T&nbsp;GroovyStub&#8203;(java.util.Map&lt;java.lang.String,&#8203;java.lang.Object&gt;&nbsp;options)</pre>
 <div class="block">Creates a Groovy stub with the specified options whose type and name are inferred from the left-hand side of the
  enclosing variable assignment.
 
@@ -1740,7 +1747,7 @@ public&nbsp;&lt;T&gt;&nbsp;T&nbsp;GroovyStub&#8203;(<a href="http://docs.oracle.
 <li class="blockList">
 <h4>GroovyStub</h4>
 <pre class="methodSignature">@Beta
-public&nbsp;&lt;T&gt;&nbsp;T&nbsp;GroovyStub&#8203;(<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang" class="externalLink">Class</a>&lt;T&gt;&nbsp;type)</pre>
+public&nbsp;&lt;T&gt;&nbsp;T&nbsp;GroovyStub&#8203;(java.lang.Class&lt;T&gt;&nbsp;type)</pre>
 <div class="block">Creates a Groovy stub with the specified type. If enclosed in a variable assignment, the variable name will be
  used as the stub's name.
 
@@ -1766,8 +1773,8 @@ public&nbsp;&lt;T&gt;&nbsp;T&nbsp;GroovyStub&#8203;(<a href="http://docs.oracle.
 <li class="blockList">
 <h4>GroovyStub</h4>
 <pre class="methodSignature">@Beta
-public&nbsp;&lt;T&gt;&nbsp;T&nbsp;GroovyStub&#8203;(<a href="http://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util" class="externalLink">Map</a>&lt;<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>,&#8203;<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang" class="externalLink">Object</a>&gt;&nbsp;options,
-                        <a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang" class="externalLink">Class</a>&lt;T&gt;&nbsp;type)</pre>
+public&nbsp;&lt;T&gt;&nbsp;T&nbsp;GroovyStub&#8203;(java.util.Map&lt;java.lang.String,&#8203;java.lang.Object&gt;&nbsp;options,
+                        java.lang.Class&lt;T&gt;&nbsp;type)</pre>
 <div class="block">Creates a Groovy stub with the specified options and type. If enclosed in an variable assignment, the variable name
  will be used as the stub's name.
 
@@ -1823,7 +1830,7 @@ public&nbsp;&lt;T&gt;&nbsp;T&nbsp;GroovyStub&#8203;(<a href="http://docs.groovy-
 <li class="blockList">
 <h4>GroovyStub</h4>
 <pre class="methodSignature">@Beta
-public&nbsp;&lt;T&gt;&nbsp;T&nbsp;GroovyStub&#8203;(<a href="http://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util" class="externalLink">Map</a>&lt;<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>,&#8203;<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang" class="externalLink">Object</a>&gt;&nbsp;options,
+public&nbsp;&lt;T&gt;&nbsp;T&nbsp;GroovyStub&#8203;(java.util.Map&lt;java.lang.String,&#8203;java.lang.Object&gt;&nbsp;options,
                         <a href="http://docs.groovy-lang.org/docs/groovy-3.0.0/html/gapi/groovy/lang/Closure.html?is-external=true" title="class or interface in groovy.lang" class="externalLink">Closure</a>&nbsp;interactions)</pre>
 <div class="block">Creates a Groovy stub with the specified options and interactions whose type and name are inferred
  from the left-hand side of the enclosing assignment.
@@ -1854,7 +1861,7 @@ public&nbsp;&lt;T&gt;&nbsp;T&nbsp;GroovyStub&#8203;(<a href="http://docs.oracle.
 <li class="blockList">
 <h4>GroovyStub</h4>
 <pre class="methodSignature">@Beta
-public&nbsp;&lt;T&gt;&nbsp;T&nbsp;GroovyStub&#8203;(<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang" class="externalLink">Class</a>&lt;T&gt;&nbsp;type,
+public&nbsp;&lt;T&gt;&nbsp;T&nbsp;GroovyStub&#8203;(java.lang.Class&lt;T&gt;&nbsp;type,
                         <a href="http://docs.groovy-lang.org/docs/groovy-3.0.0/html/gapi/groovy/lang/DelegatesTo.html?is-external=true" title="class or interface in groovy.lang" class="externalLink">@DelegatesTo</a>(<a href="http://docs.groovy-lang.org/docs/groovy-3.0.0/html/gapi/groovy/lang/DelegatesTo.html?is-external=true#strategy()" title="class or interface in groovy.lang" class="externalLink">strategy</a>=1,<a href="http://docs.groovy-lang.org/docs/groovy-3.0.0/html/gapi/groovy/lang/DelegatesTo.html?is-external=true#genericTypeIndex()" title="class or interface in groovy.lang" class="externalLink">genericTypeIndex</a>=0)
                         <a href="http://docs.groovy-lang.org/docs/groovy-3.0.0/html/gapi/groovy/lang/Closure.html?is-external=true" title="class or interface in groovy.lang" class="externalLink">Closure</a>&nbsp;interactions)</pre>
 <div class="block">Creates a Groovy stub with the specified type and interactions. If enclosed in a variable assignment, the variable name will be
@@ -1887,8 +1894,8 @@ public&nbsp;&lt;T&gt;&nbsp;T&nbsp;GroovyStub&#8203;(<a href="http://docs.oracle.
 <li class="blockList">
 <h4>GroovyStub</h4>
 <pre class="methodSignature">@Beta
-public&nbsp;&lt;T&gt;&nbsp;T&nbsp;GroovyStub&#8203;(<a href="http://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util" class="externalLink">Map</a>&lt;<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>,&#8203;<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang" class="externalLink">Object</a>&gt;&nbsp;options,
-                        <a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang" class="externalLink">Class</a>&lt;T&gt;&nbsp;type,
+public&nbsp;&lt;T&gt;&nbsp;T&nbsp;GroovyStub&#8203;(java.util.Map&lt;java.lang.String,&#8203;java.lang.Object&gt;&nbsp;options,
+                        java.lang.Class&lt;T&gt;&nbsp;type,
                         <a href="http://docs.groovy-lang.org/docs/groovy-3.0.0/html/gapi/groovy/lang/DelegatesTo.html?is-external=true" title="class or interface in groovy.lang" class="externalLink">@DelegatesTo</a>(<a href="http://docs.groovy-lang.org/docs/groovy-3.0.0/html/gapi/groovy/lang/DelegatesTo.html?is-external=true#strategy()" title="class or interface in groovy.lang" class="externalLink">strategy</a>=1,<a href="http://docs.groovy-lang.org/docs/groovy-3.0.0/html/gapi/groovy/lang/DelegatesTo.html?is-external=true#genericTypeIndex()" title="class or interface in groovy.lang" class="externalLink">genericTypeIndex</a>=0)
                         <a href="http://docs.groovy-lang.org/docs/groovy-3.0.0/html/gapi/groovy/lang/Closure.html?is-external=true" title="class or interface in groovy.lang" class="externalLink">Closure</a>&nbsp;interactions)</pre>
 <div class="block">Creates a Groovy stub with the specified options, type, and interactions. If enclosed in a variable assignment, the
@@ -1943,7 +1950,7 @@ public&nbsp;&lt;T&gt;&nbsp;T&nbsp;GroovySpy()</pre>
 <li class="blockList">
 <h4>GroovySpy</h4>
 <pre class="methodSignature">@Beta
-public&nbsp;&lt;T&gt;&nbsp;T&nbsp;GroovySpy&#8203;(<a href="http://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util" class="externalLink">Map</a>&lt;<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>,&#8203;<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang" class="externalLink">Object</a>&gt;&nbsp;options)</pre>
+public&nbsp;&lt;T&gt;&nbsp;T&nbsp;GroovySpy&#8203;(java.util.Map&lt;java.lang.String,&#8203;java.lang.Object&gt;&nbsp;options)</pre>
 <div class="block">Creates a Groovy spy with the specified options whose type and name are inferred from the left-hand side of the
  enclosing variable assignment.
 
@@ -1968,7 +1975,7 @@ public&nbsp;&lt;T&gt;&nbsp;T&nbsp;GroovySpy&#8203;(<a href="http://docs.oracle.c
 <li class="blockList">
 <h4>GroovySpy</h4>
 <pre class="methodSignature">@Beta
-public&nbsp;&lt;T&gt;&nbsp;T&nbsp;GroovySpy&#8203;(<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang" class="externalLink">Class</a>&lt;T&gt;&nbsp;type)</pre>
+public&nbsp;&lt;T&gt;&nbsp;T&nbsp;GroovySpy&#8203;(java.lang.Class&lt;T&gt;&nbsp;type)</pre>
 <div class="block">Creates a Groovy spy with the specified type. If enclosed in a variable assignment, the variable name will be
  used as the spy's name.
 
@@ -1994,8 +2001,8 @@ public&nbsp;&lt;T&gt;&nbsp;T&nbsp;GroovySpy&#8203;(<a href="http://docs.oracle.c
 <li class="blockList">
 <h4>GroovySpy</h4>
 <pre class="methodSignature">@Beta
-public&nbsp;&lt;T&gt;&nbsp;T&nbsp;GroovySpy&#8203;(<a href="http://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util" class="externalLink">Map</a>&lt;<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>,&#8203;<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang" class="externalLink">Object</a>&gt;&nbsp;options,
-                       <a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang" class="externalLink">Class</a>&lt;T&gt;&nbsp;type)</pre>
+public&nbsp;&lt;T&gt;&nbsp;T&nbsp;GroovySpy&#8203;(java.util.Map&lt;java.lang.String,&#8203;java.lang.Object&gt;&nbsp;options,
+                       java.lang.Class&lt;T&gt;&nbsp;type)</pre>
 <div class="block">Creates a Groovy spy with the specified options and type. If enclosed in an variable assignment, the variable name
  will be used as the spy's name.
 
@@ -2050,7 +2057,7 @@ public&nbsp;&lt;T&gt;&nbsp;T&nbsp;GroovySpy&#8203;(<a href="http://docs.groovy-l
 <li class="blockList">
 <h4>GroovySpy</h4>
 <pre class="methodSignature">@Beta
-public&nbsp;&lt;T&gt;&nbsp;T&nbsp;GroovySpy&#8203;(<a href="http://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util" class="externalLink">Map</a>&lt;<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>,&#8203;<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang" class="externalLink">Object</a>&gt;&nbsp;options,
+public&nbsp;&lt;T&gt;&nbsp;T&nbsp;GroovySpy&#8203;(java.util.Map&lt;java.lang.String,&#8203;java.lang.Object&gt;&nbsp;options,
                        <a href="http://docs.groovy-lang.org/docs/groovy-3.0.0/html/gapi/groovy/lang/Closure.html?is-external=true" title="class or interface in groovy.lang" class="externalLink">Closure</a>&nbsp;interactions)</pre>
 <div class="block">Creates a Groovy spy with the specified options and interactions whose type and name are inferred
  from the left-hand side of the enclosing assignment.
@@ -2080,7 +2087,7 @@ public&nbsp;&lt;T&gt;&nbsp;T&nbsp;GroovySpy&#8203;(<a href="http://docs.oracle.c
 <li class="blockList">
 <h4>GroovySpy</h4>
 <pre class="methodSignature">@Beta
-public&nbsp;&lt;T&gt;&nbsp;T&nbsp;GroovySpy&#8203;(<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang" class="externalLink">Class</a>&lt;T&gt;&nbsp;type,
+public&nbsp;&lt;T&gt;&nbsp;T&nbsp;GroovySpy&#8203;(java.lang.Class&lt;T&gt;&nbsp;type,
                        <a href="http://docs.groovy-lang.org/docs/groovy-3.0.0/html/gapi/groovy/lang/DelegatesTo.html?is-external=true" title="class or interface in groovy.lang" class="externalLink">@DelegatesTo</a>(<a href="http://docs.groovy-lang.org/docs/groovy-3.0.0/html/gapi/groovy/lang/DelegatesTo.html?is-external=true#strategy()" title="class or interface in groovy.lang" class="externalLink">strategy</a>=1,<a href="http://docs.groovy-lang.org/docs/groovy-3.0.0/html/gapi/groovy/lang/DelegatesTo.html?is-external=true#genericTypeIndex()" title="class or interface in groovy.lang" class="externalLink">genericTypeIndex</a>=0)
                        <a href="http://docs.groovy-lang.org/docs/groovy-3.0.0/html/gapi/groovy/lang/Closure.html?is-external=true" title="class or interface in groovy.lang" class="externalLink">Closure</a>&nbsp;interactions)</pre>
 <div class="block">Creates a Groovy spy with the specified type and interactions. If enclosed in a variable assignment, the variable name will be
@@ -2113,8 +2120,8 @@ public&nbsp;&lt;T&gt;&nbsp;T&nbsp;GroovySpy&#8203;(<a href="http://docs.oracle.c
 <li class="blockList">
 <h4>GroovySpy</h4>
 <pre class="methodSignature">@Beta
-public&nbsp;&lt;T&gt;&nbsp;T&nbsp;GroovySpy&#8203;(<a href="http://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util" class="externalLink">Map</a>&lt;<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>,&#8203;<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang" class="externalLink">Object</a>&gt;&nbsp;options,
-                       <a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang" class="externalLink">Class</a>&lt;T&gt;&nbsp;type,
+public&nbsp;&lt;T&gt;&nbsp;T&nbsp;GroovySpy&#8203;(java.util.Map&lt;java.lang.String,&#8203;java.lang.Object&gt;&nbsp;options,
+                       java.lang.Class&lt;T&gt;&nbsp;type,
                        <a href="http://docs.groovy-lang.org/docs/groovy-3.0.0/html/gapi/groovy/lang/DelegatesTo.html?is-external=true" title="class or interface in groovy.lang" class="externalLink">@DelegatesTo</a>(<a href="http://docs.groovy-lang.org/docs/groovy-3.0.0/html/gapi/groovy/lang/DelegatesTo.html?is-external=true#strategy()" title="class or interface in groovy.lang" class="externalLink">strategy</a>=1,<a href="http://docs.groovy-lang.org/docs/groovy-3.0.0/html/gapi/groovy/lang/DelegatesTo.html?is-external=true#genericTypeIndex()" title="class or interface in groovy.lang" class="externalLink">genericTypeIndex</a>=0)
                        <a href="http://docs.groovy-lang.org/docs/groovy-3.0.0/html/gapi/groovy/lang/Closure.html?is-external=true" title="class or interface in groovy.lang" class="externalLink">Closure</a>&nbsp;interactions)</pre>
 <div class="block">Creates a Groovy spy with the specified options, type, and interactions. If enclosed in a variable assignment, the
@@ -2170,6 +2177,24 @@ public&nbsp;&lt;T&gt;&nbsp;T&nbsp;GroovySpy&#8203;(<a href="http://docs.oracle.c
 </ul>
 </div>
 <div class="subNav">
+<ul class="navList" id="allclasses_navbar_bottom">
+<li><a href="../../allclasses.html">All&nbsp;Classes</a></li>
+</ul>
+<div>
+<script type="text/javascript"><!--
+  allClassesLink = document.getElementById("allclasses_navbar_bottom");
+  if(window==top) {
+    allClassesLink.style.display = "block";
+  }
+  else {
+    allClassesLink.style.display = "none";
+  }
+  //-->
+</script>
+<noscript>
+<div>JavaScript is disabled on your browser.</div>
+</noscript>
+</div>
 <div>
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
@@ -2185,10 +2210,9 @@ public&nbsp;&lt;T&gt;&nbsp;T&nbsp;GroovySpy&#8203;(<a href="http://docs.oracle.c
 <li><a href="#method.detail">Method</a></li>
 </ul>
 </div>
-</div>
 <a id="skip.navbar.bottom">
 <!--   -->
-</a>
+</a></div>
 <!-- ======== END OF BOTTOM NAVBAR ======= -->
 </nav>
 </footer>

@@ -55,6 +55,30 @@ loadScripts(document, 'script');</script>
 </ul>
 </div>
 <div class="subNav">
+<ul class="navList" id="allclasses_navbar_top">
+<li><a href="../../allclasses.html">All&nbsp;Classes</a></li>
+</ul>
+<ul class="navListSearch">
+<li><label for="search">SEARCH:</label>
+<input type="text" id="search" value="search" disabled="disabled">
+<input type="reset" id="reset" value="reset" disabled="disabled">
+</li>
+</ul>
+<div>
+<script type="text/javascript"><!--
+  allClassesLink = document.getElementById("allclasses_navbar_top");
+  if(window==top) {
+    allClassesLink.style.display = "block";
+  }
+  else {
+    allClassesLink.style.display = "none";
+  }
+  //-->
+</script>
+<noscript>
+<div>JavaScript is disabled on your browser.</div>
+</noscript>
+</div>
 <div>
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
@@ -68,16 +92,9 @@ loadScripts(document, 'script');</script>
 <li><a href="#annotation.type.element.detail">Element</a></li>
 </ul>
 </div>
-<ul class="navListSearch">
-<li><label for="search">SEARCH:</label>
-<input type="text" id="search" value="search" disabled="disabled">
-<input type="reset" id="reset" value="reset" disabled="disabled">
-</li>
-</ul>
-</div>
 <a id="skip.navbar.top">
 <!--   -->
-</a>
+</a></div>
 <!-- ========= END OF TOP NAVBAR ========= -->
 </div>
 <div class="navPadding">&nbsp;</div>
@@ -99,8 +116,8 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <li class="blockList">
 <hr>
 <pre>@Beta
-<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/annotation/Retention.html?is-external=true" title="class or interface in java.lang.annotation" class="externalLink">@Retention</a>(<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/annotation/RetentionPolicy.html?is-external=true#RUNTIME" title="class or interface in java.lang.annotation" class="externalLink">RUNTIME</a>)
-<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/annotation/Target.html?is-external=true" title="class or interface in java.lang.annotation" class="externalLink">@Target</a>({<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/annotation/ElementType.html?is-external=true#TYPE" title="class or interface in java.lang.annotation" class="externalLink">TYPE</a>,<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/annotation/ElementType.html?is-external=true#METHOD" title="class or interface in java.lang.annotation" class="externalLink">METHOD</a>})
+@Retention(RUNTIME)
+@Target({TYPE,METHOD})
 public @interface <span class="memberNameLabel">Retry</span></pre>
 <div class="block">Retries the given feature if an exception occurs during execution.
 
@@ -129,17 +146,15 @@ public @interface <span class="memberNameLabel">Retry</span></pre>
 <!--   -->
 </a>
 <h3>Optional Element Summary</h3>
-<div class="memberSummary">
-<table>
+<table class="memberSummary">
 <caption><span>Optional Elements</span><span class="tabEnd">&nbsp;</span></caption>
 <tr>
 <th class="colFirst" scope="col">Modifier and Type</th>
 <th class="colSecond" scope="col">Optional Element</th>
 <th class="colLast" scope="col">Description</th>
 </tr>
-<tbody>
 <tr class="altColor">
-<td class="colFirst"><code><a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang" class="externalLink">Class</a>&lt;? extends <a href="http://docs.groovy-lang.org/docs/groovy-3.0.0/html/gapi/groovy/lang/Closure.html?is-external=true" title="class or interface in groovy.lang" class="externalLink">Closure</a>&gt;</code></td>
+<td class="colFirst"><code>java.lang.Class&lt;? extends <a href="http://docs.groovy-lang.org/docs/groovy-3.0.0/html/gapi/groovy/lang/Closure.html?is-external=true" title="class or interface in groovy.lang" class="externalLink">Closure</a>&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#condition()">condition</a></span></code></th>
 <td class="colLast">
 <div class="block">Condition that is evaluated to decide whether the feature should be
@@ -161,7 +176,7 @@ public @interface <span class="memberNameLabel">Retry</span></pre>
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code><a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang" class="externalLink">Class</a>&lt;? extends <a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Throwable.html?is-external=true" title="class or interface in java.lang" class="externalLink">Throwable</a>&gt;[]</code></td>
+<td class="colFirst"><code>java.lang.Class&lt;? extends java.lang.Throwable&gt;[]</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#exceptions()">exceptions</a></span></code></th>
 <td class="colLast">
 <div class="block">Configures which types of Exceptions should be retried.</div>
@@ -174,9 +189,7 @@ public @interface <span class="memberNameLabel">Retry</span></pre>
 <div class="block">Retry mode, controls what is retried.</div>
 </td>
 </tr>
-</tbody>
 </table>
-</div>
 </li>
 </ul>
 </section>
@@ -199,7 +212,7 @@ public @interface <span class="memberNameLabel">Retry</span></pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>exceptions</h4>
-<pre><a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang" class="externalLink">Class</a>&lt;? extends <a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Throwable.html?is-external=true" title="class or interface in java.lang" class="externalLink">Throwable</a>&gt;[]&nbsp;exceptions</pre>
+<pre>java.lang.Class&lt;? extends java.lang.Throwable&gt;[]&nbsp;exceptions</pre>
 <div class="block">Configures which types of Exceptions should be retried.
 
  Subclasses are included if their parent class is listed.</div>
@@ -224,7 +237,7 @@ public @interface <span class="memberNameLabel">Retry</span></pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>condition</h4>
-<pre><a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang" class="externalLink">Class</a>&lt;? extends <a href="http://docs.groovy-lang.org/docs/groovy-3.0.0/html/gapi/groovy/lang/Closure.html?is-external=true" title="class or interface in groovy.lang" class="externalLink">Closure</a>&gt;&nbsp;condition</pre>
+<pre>java.lang.Class&lt;? extends <a href="http://docs.groovy-lang.org/docs/groovy-3.0.0/html/gapi/groovy/lang/Closure.html?is-external=true" title="class or interface in groovy.lang" class="externalLink">Closure</a>&gt;&nbsp;condition</pre>
 <div class="block">Condition that is evaluated to decide whether the feature should be
  retried.
 
@@ -345,6 +358,24 @@ public @interface <span class="memberNameLabel">Retry</span></pre>
 </ul>
 </div>
 <div class="subNav">
+<ul class="navList" id="allclasses_navbar_bottom">
+<li><a href="../../allclasses.html">All&nbsp;Classes</a></li>
+</ul>
+<div>
+<script type="text/javascript"><!--
+  allClassesLink = document.getElementById("allclasses_navbar_bottom");
+  if(window==top) {
+    allClassesLink.style.display = "block";
+  }
+  else {
+    allClassesLink.style.display = "none";
+  }
+  //-->
+</script>
+<noscript>
+<div>JavaScript is disabled on your browser.</div>
+</noscript>
+</div>
 <div>
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
@@ -358,10 +389,9 @@ public @interface <span class="memberNameLabel">Retry</span></pre>
 <li><a href="#annotation.type.element.detail">Element</a></li>
 </ul>
 </div>
-</div>
 <a id="skip.navbar.bottom">
 <!--   -->
-</a>
+</a></div>
 <!-- ======== END OF BOTTOM NAVBAR ======= -->
 </nav>
 </footer>

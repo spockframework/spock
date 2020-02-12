@@ -27,6 +27,7 @@ import groovy.lang.Closure;
 
 @SuppressWarnings("UnusedDeclaration")
 public abstract class SpecInternals {
+  private static final MockUtil MOCK_UTIL = new MockUtil();
   private final ISpecificationContext specificationContext = new SpecificationContext();
 
   @Beta
@@ -179,6 +180,9 @@ public abstract class SpecInternals {
   Object SpyImpl(String inferredName, Class<?> inferredType, Object instance) {
     if (instance == null) {
       throw new SpockException("Spy instance may not be null");
+    }
+    if (MOCK_UTIL.isMock(instance)) {
+      throw new SpockException("Spy instance may not be another mock object.");
     }
     return createMockImpl(inferredName, instance.getClass(), instance, MockNature.SPY, MockImplementation.JAVA, Collections.<String, Object>singletonMap("useObjenesis", true), null, null);
   }

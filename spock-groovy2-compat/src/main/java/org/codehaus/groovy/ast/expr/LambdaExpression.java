@@ -16,22 +16,19 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
-package groovy.transform;
+package org.codehaus.groovy.ast.expr;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import org.codehaus.groovy.ast.Parameter;
+import org.codehaus.groovy.ast.stmt.Statement;
 
 /**
- * WARNING: This is only present here so that we can build with 2.4 as well, the code will not be shipped.
- *
- * Collector annotation for {@link NamedParam}.
- *
- * @since 2.5.0
+ * Dummy Groovy 3 class implementation to keep codebase compilable also with Groovy 2.5
  */
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.PARAMETER)
-public @interface NamedParams {
-  NamedParam[] value();
+public class LambdaExpression extends ClosureExpression {
+
+  public LambdaExpression(Parameter[] parameters, Statement code) {
+    super(parameters, code);
+    throw new UnsupportedOperationException("Dummy LambdaExpression providing Spock codebase compatibility with both Groovy 2 and 3 " +
+      "should not be instantiated. Make sure you do not mix spock-2.x-groovy-2.5 and groovy-3 artifacts on classpath.");
+  }
 }

@@ -155,6 +155,26 @@ Groovy has the `groovy.transform.NotYetImplemented` annotation which is similar 
 def "not implemented yet"() { ... }
 ----
 
+=== PendingFeatureIf
+
+To conditionally indicate that a feature is not fully implemented, and should not be reported as an error you can annotate
+it as `spock.lang.PendingFeatureIf` and include a precondition similar to `IgnoreIf` or `Requires`
+
+If the conditional expression _passes_ it behaves the same way as `PendingFeature` - otherwise it does nothing.
+
+(For instance, annotating a feature as `@PendingFeatureIf({false})` effectively does nothing - but annotating it as
+ `@PendingFeatureIf({true}) behaves the same was as if it was marked as `@PendingFeature`)
+
+[source,groovy]
+----
+@PendingFeatureIf({ os.windows })
+def "I'm not yet implemented on windows, but I am on other operating systems"() { ... }
+
+@PendingFeatureIf({ sys["targetEnvironment"] == "prod" })
+def "This feature isn't deployed out to production yet, and isn't expected to pass"() { ... }
+----
+
+
 === Stepwise
 
 To execute features in the order that they are declared, annotate a spec class with `spock.lang.Stepwise`:
@@ -314,7 +334,7 @@ class ListExtensions {
 }
 
 class MySpec extends Specification {
-  @Use(listExtensions)
+  @Use(ListExtensions)
   def "can use avg() method"() {
     expect:
     [1, 2, 3].avg() == 2

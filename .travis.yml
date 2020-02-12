@@ -24,15 +24,14 @@ cache:
     - $HOME/.gradle/wrapper/
 
 dist: precise # downgrade to avoid jdk7 SSL Bug https://github.com/docker-library/openjdk/issues/117
-jdk:
+jdk: # if you modify these also modify the `javaVersions` list in build.gradle
   - oraclejdk8
-  - openjdk10
   - openjdk11
-  - openjdk12
 
 env:
   matrix:
     - VARIANT=2.5
+    - VARIANT=3.0
   global:
     # SIGNING_PASSWORD
     - secure: "GBvPdDAaMfr0iAYHzVxhMIBVHFanEPY+69CbEFijbZjhv8h0FPvuLos2p1K5/hbmNkQ1Hd2+CHsm3ErvXQHXtpXn0HmKvzSP7pnPk83iRNVGPieasvfnKiSohZeEplkAK6kbK8sZbjJRUFqUZtwyPtWfs244rCOo++D3KtfggzQ="

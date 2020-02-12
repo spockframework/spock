@@ -16,6 +16,7 @@
 
 package org.spockframework.compiler;
 
+import org.spockframework.compat.groovy2.GroovyCodeVisitorCompat;
 import org.spockframework.runtime.ValueRecorder;
 import org.spockframework.util.*;
 
@@ -45,7 +46,7 @@ import org.codehaus.groovy.syntax.Types;
  *
  * @author Peter Niederwieser
  */
-public class ConditionRewriter extends AbstractExpressionConverter<Expression> {
+public class ConditionRewriter extends AbstractExpressionConverter<Expression> implements GroovyCodeVisitorCompat {
   private static final Pattern COMMENTS_PATTERN = Pattern.compile("/\\*.*?\\*/|//.*$");
 
   private final IRewriteResources resources;
@@ -179,6 +180,11 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> {
 
     conversion.setSourcePosition(expr);
     result = record(conversion);
+  }
+
+  @Override
+  public void visitMethodReferenceExpression(MethodReferenceExpression expr) {
+    visitMethodPointerExpression(expr);
   }
 
   @Override
@@ -464,6 +470,11 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> {
   @Override
   public void visitClosureExpression(ClosureExpression expr) {
     result = record(expr);
+  }
+
+  @Override
+  public void visitLambdaExpression(LambdaExpression expr) {
+    visitClosureExpression(expr);
   }
 
   // used in the following places:

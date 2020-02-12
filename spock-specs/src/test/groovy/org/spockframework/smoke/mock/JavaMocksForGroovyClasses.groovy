@@ -16,6 +16,8 @@
 
 package org.spockframework.smoke.mock
 
+import org.spockframework.runtime.GroovyRuntimeUtil
+import spock.lang.Requires
 import spock.lang.Specification
 import spock.lang.Issue
 import spock.lang.FailsWith
@@ -153,7 +155,19 @@ class JavaMocksForGroovyClasses extends Specification {
   }
 
   // TODO: swallowed when mocking static inner class because the latter implements methodMissing/propertyMissing
+  @Requires({ GroovyRuntimeUtil.isGroovy2() }) //different exception in Groovy 2 and 3
   @FailsWith(MissingPropertyException)
+  def "dynamic properties are considered to not exist (Groovy 2)"() {
+    when:
+    mockMe.someProperty
+
+    then:
+    1 * mockMe.someProperty
+  }
+
+  // TODO: swallowed when mocking static inner class because the latter implements methodMissing/propertyMissing
+  @Requires({ GroovyRuntimeUtil.isGroovy3orNewer() })
+  @FailsWith(MissingMethodException)
   def "dynamic properties are considered to not exist"() {
     when:
     mockMe.someProperty

@@ -22,8 +22,11 @@ dependencies {
   compile libs.bytebuddy, optional
   compile libs.cglib, optional
   compile libs.objenesis, optional
-  if (variant == 2.4) {
-    compileOnly project(':internal-backport')
+
+  if (variant == 2.5) {
+    dependencies {
+      compile project(':spock-groovy2-compat')
+    }
   }
 
   coreConsoleRuntime groovyConsoleExtraDependency
@@ -70,7 +73,7 @@ processResources {
 
 task coreConsole(type: JavaExec,
                  description: 'Start a groovy Console with Spock Core Classpath, usefull for AST-Inspection') {
-  main = "groovy.ui.Console"
+  main = variant == 2.5 ? "groovy.ui.Console" : "groovy.console.ui.Console"
   classpath = sourceSets.main.runtimeClasspath + configurations.coreConsoleRuntime
   workingDir = file('build/console')
   ignoreExitValue = true

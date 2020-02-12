@@ -92,7 +92,7 @@ x << 2
     thrown(InvalidSpecCompileException)
   }
 
-  @Issue("http://issues.spockframework.org/detail?id=163")
+  @Issue("https://github.com/spockframework/spock/issues/285")
   def "duplicate explicit data variable"() {
     when:
     compiler.compileSpecBody """
@@ -110,7 +110,7 @@ def foo(x) {
     thrown(InvalidSpecCompileException)
   }
 
-  @Issue("http://issues.spockframework.org/detail?id=14")
+  @Issue("https://github.com/spockframework/spock/issues/137")
   def "duplicate data variable in multi-parameterization"() {
     when:
     compiler.compileFeatureBody """
@@ -125,7 +125,7 @@ where:
     thrown(InvalidSpecCompileException)
   }
 
-  @Issue("http://issues.spockframework.org/detail?id=139")
+  @Issue("https://github.com/spockframework/spock/issues/261")
   def "right-hand side of parameterization may not reference instance fields (only @Shared and static fields)"() {
     when:
     compiler.compileSpecBody """

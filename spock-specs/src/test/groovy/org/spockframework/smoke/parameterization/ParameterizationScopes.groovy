@@ -55,7 +55,7 @@ class ParameterizationScopes extends Specification {
     inc << 2
   }
 
-  @Issue("http://issues.spockframework.org/detail?id=63")
+  @Issue("https://github.com/spockframework/spock/issues/185")
   def "in nested closure scope"() {
     expect:
     1.every {
@@ -68,7 +68,7 @@ class ParameterizationScopes extends Specification {
     val = 1
   }
 
-  @Issue("http://issues.spockframework.org/detail?id=286")
+  @Issue("https://github.com/spockframework/spock/issues/408")
   def "in closure scope of derived data value"() {
     expect:
     val2 == [2, 3]
@@ -78,7 +78,7 @@ class ParameterizationScopes extends Specification {
     val2 = [1, 2, 3].findAll { it >= val1 }
   }
 
-  @Issue("http://issues.spockframework.org/detail?id=286")
+  @Issue("https://github.com/spockframework/spock/issues/408")
   def "in nested closure scope of derived data value"() {
     expect:
     val2 == [2, 3]

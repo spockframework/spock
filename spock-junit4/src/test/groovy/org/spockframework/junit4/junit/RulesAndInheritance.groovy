@@ -21,7 +21,7 @@ import spock.lang.Issue
 import spock.lang.Shared
 import spock.lang.Specification
 
-@Issue("http://issues.spockframework.org/detail?id=98")
+@Issue("https://github.com/spockframework/spock/issues/220")
 class RulesAndInheritance extends RulesAndInheritanceBase {
   @Rule
   TestName name2 = new TestName()

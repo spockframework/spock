@@ -75,7 +75,7 @@ class ResponseGenerators extends Specification {
     x3 == 2
   }
 
-  @Issue("http://issues.spockframework.org/detail?id=83")
+  @Issue("https://github.com/spockframework/spock/issues/205")
   def "auto-coercion of GString return value to String (as in plain Groovy)"() {
     def fred = "Fred"
     def flintstone = "Flintstone"
@@ -86,7 +86,7 @@ class ResponseGenerators extends Specification {
     named.getName() instanceof String
   }
 
-  @Issue("http://issues.spockframework.org/detail?id=83")
+  @Issue("https://github.com/spockframework/spock/issues/205")
   def "auto-coercion of Integer return value to BigDecimal (as in plain Groovy)"() {
     def calculator = Mock(Calculator)
     calculator.calculate() >> 5
@@ -95,7 +95,7 @@ class ResponseGenerators extends Specification {
     calculator.calculate() instanceof BigDecimal
   }
 
-  @Issue("http://issues.spockframework.org/detail?id=83")
+  @Issue("https://github.com/spockframework/spock/issues/205")
   def "auto-coercion for multi-results"() {
     def calculator = Mock(Calculator)
     calculator.calculate() >>> [1, 2, 3]
@@ -106,7 +106,7 @@ class ResponseGenerators extends Specification {
     calculator.calculate() instanceof BigDecimal
   }
 
-  @Issue("http://issues.spockframework.org/detail?id=83")
+  @Issue("https://github.com/spockframework/spock/issues/205")
   def "auto-coercion for code responses"() {
     def calculator = Mock(Calculator)
     calculator.calculate() >> { 1 }
@@ -173,7 +173,7 @@ class ResponseGenerators extends Specification {
     1 * list.remove(_) >> { int foo -> assert foo == 5 }
   }
 
-  @Issue("http://issues.spockframework.org/detail?id=166")
+  @Issue("https://github.com/spockframework/spock/issues/288")
   def "exceptions thrown from code response generators aren't wrapped"() {
     def callable = Mock(Callable)
     callable.call() >> { throw exception }

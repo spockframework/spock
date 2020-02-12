@@ -173,7 +173,7 @@ null (void)
     }
   }
 
-  @Issue("http://issues.spockframework.org/detail?id=252")
+  @Issue("https://github.com/spockframework/spock/issues/374")
   def "type hints are not added for nested equality comparisons if values are equal"() {
     expect:
     isRendered """

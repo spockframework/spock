@@ -97,7 +97,7 @@ class Parameterizations extends EmbeddedSpecification {
       d = a + b + c
   }
 
-  @Issue("http://code.google.com/p/spock/issues/detail?id=149")
+  @Issue("https://github.com/spockframework/spock/issues/271")
   def "can use data variables named p0, p1, etc."() {
     expect:
     p1 == p0 * 2
@@ -118,7 +118,7 @@ class Parameterizations extends EmbeddedSpecification {
     iterationCount << [2, 4, 6]
   }
 
-  @Issue("http://issues.spockframework.org/detail?id=274")
+  @Issue("https://github.com/spockframework/spock/issues/396")
   def "can call closures contained in data variables with method syntax"() {
     expect:
     a() == 1

@@ -55,7 +55,7 @@ class IsCloseToSpec extends Specification {
     3 closeTo(3.2, 1)
   }
 
-  @Issue("http://issues.spockframework.org/detail?id=262")
+  @Issue("https://github.com/spockframework/spock/issues/384")
   def "compare infinity"() {
     expect:
     that Float.POSITIVE_INFINITY, closeTo(Float.POSITIVE_INFINITY, 0.1)
@@ -64,7 +64,7 @@ class IsCloseToSpec extends Specification {
     that Float.POSITIVE_INFINITY, not(closeTo(Float.NEGATIVE_INFINITY, 99999))
   }
 
-  @Issue("http://issues.spockframework.org/detail?id=262")
+  @Issue("https://github.com/spockframework/spock/issues/384")
   def "compare NaN"() {
     expect:
     that Float.NaN, closeTo(Float.NaN, 0.1)

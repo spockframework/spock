@@ -50,7 +50,7 @@ public class EmptyOrDummyResponse implements IDefaultResponse {
       return ReflectionUtil.getDefaultValue(returnType);
     }
 
-    if (returnType.isAssignableFrom(invocation.getMockObject().getType())) {
+    if (returnType != Object.class && returnType.isAssignableFrom(invocation.getMockObject().getType())) {
       return invocation.getMockObject().getInstance();
     }
 

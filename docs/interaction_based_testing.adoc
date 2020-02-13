@@ -692,6 +692,12 @@ This will use the same logic to compute a response as `Stub` (see <<Stubs>>), so
 subscriber.receive(_) >> _
 ----
 
+You can of course use this with chaining as well. Here it might be useful for `Stub` instances as well.
+
+[source,groovy]
+----
+subscriber.receive(_) >>> ["ok", "fail"] >> _ >> "ok"
+----
 
 == Combining Mocking and Stubbing
 

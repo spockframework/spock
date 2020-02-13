@@ -79,7 +79,7 @@ class Foo extends spock.lang.Specification {
     thrown(IllegalAccessError)
   }
 
-  @Issue("http://issues.spockframework.org/detail?id=43")
+  @Issue("https://github.com/spockframework/spock/issues/166")
   def "can be used in field initializers"() {
     when:
     runner.run """

@@ -38,7 +38,7 @@ static void bar() {
     thrown(SpockComparisonFailure)
   }
 
-  @Issue("http://issues.spockframework.org/detail?id=35")
+  @Issue("https://github.com/spockframework/spock/issues/158")
   def "may not contain interactions"() {
     when:
     compiler.compileSpecBody """
@@ -64,7 +64,7 @@ def foo() {
     e.message.contains("Interactions cannot be declared in static scope")
   }
 
-  @Issue("http://issues.spockframework.org/detail?id=35")
+  @Issue("https://github.com/spockframework/spock/issues/158")
   def "may not create mocks"() {
     when:
     compiler.compileSpecBody """

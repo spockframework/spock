@@ -148,7 +148,7 @@ def foo() {
                                                                    "one foo two 2 three"]
   }
 
-  @Issue("http://issues.spockframework.org/detail?id=65")
+  @Issue("https://github.com/spockframework/spock/issues/187")
   def "variables in naming pattern whose value is null are replaced correctly"() {
     when:
     def result = runner.runSpecBody("""
@@ -166,7 +166,7 @@ def foo() {
     result.tests().started().list().testDescriptor.displayName == ["one 1 two null three"]
   }
 
-  @Issue("http://issues.spockframework.org/detail?id=231")
+  @Issue("https://github.com/spockframework/spock/issues/353")
   def "naming pattern supports property expressions"() {
     when:
     def result = runner.runSpecBody("""
@@ -183,7 +183,7 @@ def foo() {
     result.tests().started().list().testDescriptor.displayName == ["one fred two"]
   }
 
-  @Issue("http://issues.spockframework.org/detail?id=231")
+  @Issue("https://github.com/spockframework/spock/issues/353")
   def "naming pattern supports zero-arg method calls"() {
     when:
     def result = runner.runSpecBody("""
@@ -216,7 +216,7 @@ def foo() {
     result.tests().started().list().testDescriptor.displayName == ["#Error:obj ok #Error:obj.bang() #Error:obj.missing() #Error:missing"]
   }
 
-  @Issue("http://issues.spockframework.org/detail?id=231")
+  @Issue("https://github.com/spockframework/spock/issues/353")
   def "method name can act as naming pattern"() {
     when:
     def result = runner.runSpecBody("""
@@ -234,7 +234,7 @@ def "one #actor.details.name.size() two"() {
   }
 
 
-  @Issue("http://issues.spockframework.org/detail?id=231")
+  @Issue("https://github.com/spockframework/spock/issues/353")
   def "naming pattern in @Unroll annotation wins over naming pattern in method name"() {
     when:
     def result = runner.runSpecBody("""
@@ -251,7 +251,7 @@ def "#actor.details.age"() {
     result.tests().started().list().testDescriptor.displayName == ["fred"]
   }
 
-  @Issue("http://issues.spockframework.org/detail?id=232")
+  @Issue("https://github.com/spockframework/spock/issues/354")
   def "can unroll a whole class at once"() {
     when:
     def result = runner.runWithImports("""
@@ -283,7 +283,7 @@ class Foo extends Specification {
                                                                    "30"]
   }
 
-  @Issue("http://issues.spockframework.org/detail?id=232")
+  @Issue("https://github.com/spockframework/spock/issues/354")
   def "method-level unroll annotation wins over class-level annotation"() {
     when:
     def result = runner.runWithImports("""
@@ -303,7 +303,7 @@ class Foo extends Specification {
     result.tests().started().list().testDescriptor.displayName == ["fred"]
   }
 
-  @Issue("http://issues.spockframework.org/detail?id=268")
+  @Issue("https://github.com/spockframework/spock/issues/390")
   def "method name can still contain parentheses"() {
     when:
     def result = runner.runSpecBody("""

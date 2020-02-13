@@ -32,7 +32,7 @@ import static java.util.Collections.emptyList
 /**
  * @author Peter Niederwieser
  */
-@Issue("http://issues.spockframework.org/detail?id=21")
+@Issue("https://github.com/spockframework/spock/issues/144")
 class StackTraceFiltering extends EmbeddedSpecification {
   def "unsatisfied implicit condition"() {
     when:
@@ -166,7 +166,7 @@ apackage.ASpec|\$spock_initializeFields|1
     """
   }
 
-  @Issue("http://issues.spockframework.org/detail?id=80")
+  @Issue("https://github.com/spockframework/spock/issues/202")
   def "stack trace is truncated below invocation of fixture method"() {
     when:
     runner.runSpecBody """
@@ -189,7 +189,7 @@ apackage.ASpec|$fixtureMethod|-
     fixtureMethod << Identifiers.FIXTURE_METHODS
   }
 
-  @Issue("http://issues.spockframework.org/detail?id=75")
+  @Issue("https://github.com/spockframework/spock/issues/197")
   def "feature method names are also restored for base specs"() {
     when:
     runner.runWithImports """
@@ -209,7 +209,7 @@ apackage.Base|let me fail|3
     """
   }
 
-  @Issue("http://issues.spockframework.org/detail?id=33")
+  @Issue("https://github.com/spockframework/spock/issues/156")
   def "when creation of data provider fails, stack trace points to corresponding parameterization"() {
     when:
     runner.runSpecBody """
@@ -234,7 +234,7 @@ apackage.ASpec|foo|7
     """
   }
 
-  @Issue("http://issues.spockframework.org/detail?id=33")
+  @Issue("https://github.com/spockframework/spock/issues/156")
   def "when data processor fails, stack trace source position points to corresponding parameterization"() {
     when:
     runner.runSpecBody """
@@ -259,7 +259,7 @@ apackage.ASpec|foo|7
     parameterization << ["y << [1]", "y = 1", "[_, y, _] << [[1], [1], [1]]"]
   }
 
-  @Issue("http://issues.spockframework.org/detail?id=90")
+  @Issue("https://github.com/spockframework/spock/issues/212")
   def "stack trace for explicit condition in setup block has line number"() {
     when:
     runner.runSpecBody """
@@ -275,7 +275,7 @@ def foo() { expect: true }
     e.stackTrace[0].lineNumber == 2
   }
 
-  @Issue("http://issues.spockframework.org/detail?id=90")
+  @Issue("https://github.com/spockframework/spock/issues/212")
   def "stack trace for nested explicit condition has line number"() {
     when:
     runner.runFeatureBody """
@@ -288,7 +288,7 @@ setup:
     e.stackTrace[0].lineNumber == 2
   }
 
-  @Issue("http://issues.spockframework.org/detail?id=156")
+  @Issue("https://github.com/spockframework/spock/issues/278")
   def "causes get filtered as well"() {
     when:
     runner.runFeatureBody """

@@ -20,7 +20,7 @@ import spock.lang.*
 import spock.util.environment.RestoreSystemProperties
 
 class UnrollNameProviderSpec extends Specification {
-  @Issue("http://issues.spockframework.org/detail?id=115")
+  @Issue("https://github.com/spockframework/spock/issues/237")
   def "regex-like data values are substituted correctly (i.e. literally)"() {
     given:
     def feature = new FeatureInfo()

@@ -800,7 +800,7 @@ three(a, b,c)
   }
 
   // as of Groovy 1.7.3, represented as FieldExpression
-  @Issue("http://issues.spockframework.org/detail?id=106")
+  @Issue("https://github.com/spockframework/spock/issues/228")
   def "statically imported field"() {
     expect:
     isRendered """

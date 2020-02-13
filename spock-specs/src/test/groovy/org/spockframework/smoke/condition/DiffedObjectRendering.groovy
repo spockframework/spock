@@ -6,7 +6,7 @@ import spock.lang.Issue
 
 class DiffedObjectRendering extends EmbeddedSpecification {
 
-  @Issue("http://issues.spockframework.org/detail?id=170")
+  @Issue("https://github.com/spockframework/spock/issues/292")
   def "can handle null values"() {
     when:
     runner.runFeatureBody("expect: 1 == null")

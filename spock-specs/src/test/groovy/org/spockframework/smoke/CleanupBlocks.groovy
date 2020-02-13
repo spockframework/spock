@@ -116,7 +116,7 @@ def feature() {
     assert a == 1
   }
 
-  @Issue("http://issues.spockframework.org/detail?id=266")
+  @Issue("https://github.com/spockframework/spock/issues/388")
   def "variable with primitive type can be declared in presence of cleanup-block"() {
     int x = 1
 
@@ -142,7 +142,7 @@ def feature() {
     []
   }
 
-  @Issue("http://issues.spockframework.org/detail?id=371")
+  @Issue("https://github.com/spockframework/spock/issues/493")
   def "multi-declaration with primitive type in presence of cleanup-block"() {
     when:
     def (String foo, int bar) = ["foo", 42]

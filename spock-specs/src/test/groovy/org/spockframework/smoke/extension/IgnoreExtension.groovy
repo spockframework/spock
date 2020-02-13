@@ -25,7 +25,7 @@ import spock.lang.Issue
  *
  * @author Peter Niederwieser
  */
-@Issue("http://issues.spockframework.org/detail?id=12")
+@Issue("https://github.com/spockframework/spock/issues/134")
 class IgnoreExtension extends EmbeddedSpecification {
   def "ignore spec"() {
     when:

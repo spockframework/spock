@@ -19,16 +19,16 @@ package org.spockframework.smoke.mock
 import spock.lang.Specification
 import spock.lang.Issue
 
-@Issue("http://issues.spockframework.org/detail?id=235")
+@Issue("https://github.com/spockframework/spock/issues/357")
 class ChainedResponseGenerators extends Specification {
   Queue queue = Mock()
-  
+
   def "implicit default response"() {
     expect:
     queue.poll() == null
     queue.poll() == null
   }
-  
+
   def "explicit default response"() {
     queue.poll() >> _ >> _
 
@@ -37,7 +37,7 @@ class ChainedResponseGenerators extends Specification {
     queue.poll() == null
     queue.poll() == null
   }
-  
+
   def "chaining constant responses"() {
     queue.poll() >> 1 >> 2 >> 3
 
@@ -47,7 +47,7 @@ class ChainedResponseGenerators extends Specification {
     queue.poll() == 3
     queue.poll() == 3
   }
-  
+
   def "chaining iterable responses"() {
     queue.poll() >>> [1, 2] >>> 3 >>> "45"
 
@@ -59,7 +59,7 @@ class ChainedResponseGenerators extends Specification {
     queue.poll() == "5"
     queue.poll() == "5"
   }
-  
+
   def "chaining code responses"() {
     def count = 0
     queue.poll() >> { throw new UnsupportedOperationException() } >> { throw new IllegalArgumentException() } >> { count++ }
@@ -100,7 +100,7 @@ class ChainedResponseGenerators extends Specification {
     queue.poll() == 5
     queue.poll() == 5
   }
-  
+
   def "chaining in then-block"() {
     when:
     def res1 = queue.poll()

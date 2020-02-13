@@ -46,7 +46,7 @@ class JavaMocksForGroovyClasses extends Specification {
     value == "value"
   }
 
-  @Issue("http://issues.spockframework.org/detail?id=258")
+  @Issue("https://github.com/spockframework/spock/issues/380")
   def "mock declared property that is written with property syntax"() {
     when:
     mockMe.bar = "value"

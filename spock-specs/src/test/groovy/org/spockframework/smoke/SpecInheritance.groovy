@@ -205,7 +205,7 @@ class Derived extends Base {
     result.testsSkippedCount == 1
   }
 
-  @Issue("http://code.google.com/p/spock/issues/detail?id=53")
+  @Issue("https://github.com/spockframework/spock/issues/175")
   def "feature methods cannot be overridden"() {
     def classes = compiler.compileWithImports("""
 class Base extends Specification {

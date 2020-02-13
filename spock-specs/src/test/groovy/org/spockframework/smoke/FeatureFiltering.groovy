@@ -60,7 +60,7 @@ def feature3() { setup: log += "3" }
     result.testsFoundCount == 0
   }
 
-  @Issue("http://issues.spockframework.org/detail?id=76")
+  @Issue("https://github.com/spockframework/spock/issues/198")
   def "filtering across inheritance chain"() {
     def derived = compiler.compileWithImports("""
 abstract class Base extends Specification {

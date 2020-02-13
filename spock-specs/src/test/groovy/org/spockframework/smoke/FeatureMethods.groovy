@@ -31,7 +31,7 @@ class FeatureMethods extends Specification {
     thrown(MissingMethodException)
   }
 
-  @Issue("http://issues.spockframework.org/detail?id=229")
+  @Issue("https://github.com/spockframework/spock/issues/351")
   def "don't make it into the class file with their original name"() {
     expect:
     !getClass().getDeclaredMethods().any { it.name == "featureMethod" }

@@ -24,7 +24,7 @@ import static org.spockframework.smoke.VoidGroovyStaticMethod.foo
 /**
  * @author Peter Niederwieser
  */
-@Issue("http://issues.spockframework.org/detail?id=25")
+@Issue("https://github.com/spockframework/spock/issues/148")
 class VoidMethodCallsInExpectBlocks extends Specification {
   def "invocation of void Groovy instance method"() {
     expect:
@@ -66,7 +66,7 @@ class VoidMethodCallsInExpectBlocks extends Specification {
 
   def "invocation of statically imported void Java method"() {
     expect:
-    reverse([])   
+    reverse([])
   }
 
   void voidGroovyInstanceMethod() {}

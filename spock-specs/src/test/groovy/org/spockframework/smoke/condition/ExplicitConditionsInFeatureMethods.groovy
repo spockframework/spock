@@ -92,7 +92,7 @@ class ExplicitConditionsInFeatureMethods extends Specification {
   }
 
   // This may need a more suitable home
-  @Issue("http://code.google.com/p/spock/issues/detail?id=148")
+  @Issue("https://github.com/spockframework/spock/issues/270")
   def "assert expression contains method call"() {
     expect: assert "test".toString() : "dummy text"
   }

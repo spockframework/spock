@@ -100,7 +100,7 @@ class WildcardUsages extends Specification {
     3 * _
   }
 
-  @Issue("http://issues.spockframework.org/detail?id=338")
+  @Issue("https://github.com/spockframework/spock/issues/460")
   def "wildcard method name doesn't match Object's equals(), hashCode(), toString(), and finalize() methods"() {
     // needs to be a class, otherwise finalize() call wouldn't get through in any case
     // (probably a difference between Java and CGLIB proxies)

@@ -6,10 +6,11 @@ include::include.adoc[]
 === Breaking Changes
 
 ==== New meaning of `>> _`
-The meaning of `>> \_` has changed form "use the default response" to "return a stubbed value" (<<interaction_based_testing.adoc#_returning_a_default_response,Docs>>).
+The meaning of `>> _` has changed form "use the default response" to "return a stubbed value" (<<interaction_based_testing.adoc#_returning_a_default_response,Docs>>).
 The original behavior was only ever documented in the Javadocs and was basically the same to just omitting it.
-With the new behavior, you can have a `Mock` or `Spy` return the same value as a `Stub`.
-This is also more in line with the fact that `_` in arguments constraints stands for any non-`null` value, while a `Mock` returns `null` by default.
+The only use-case was chained responses `>> "a" >> _ >> "b"`,
+but even here it is clearer to just use `null` or `{ callRealMethod() }` explicitly.
+With the new behavior, you can have a `Mock` or `Spy` return the same value as a `Stub` would.
 
 [source,groovy]
 ----

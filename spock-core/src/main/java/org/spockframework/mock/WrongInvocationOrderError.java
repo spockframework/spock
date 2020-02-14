@@ -15,6 +15,9 @@
 package org.spockframework.mock;
 
 import java.io.IOException;
+import java.util.*;
+
+import static java.util.Collections.unmodifiableList;
 
 /**
  * Thrown if an invocation on a mock object occurs too late. Example:
@@ -46,11 +49,14 @@ public class WrongInvocationOrderError extends InteractionNotSatisfiedError {
 
   private final transient IMockInteraction interaction;
   private final transient IMockInvocation lastInvocation;
+  private final transient List<IMockInvocation> previousInvocationsInReverseOrder;
   private String message;
 
-  public WrongInvocationOrderError(IMockInteraction interaction, IMockInvocation lastInvocation) {
+  public WrongInvocationOrderError(IMockInteraction interaction, IMockInvocation lastInvocation,
+                                   Deque<IMockInvocation> previousInvocationsInReverseOrder) {
     this.interaction = interaction;
     this.lastInvocation = lastInvocation;
+    this.previousInvocationsInReverseOrder = unmodifiableList(new ArrayList<>(previousInvocationsInReverseOrder));
   }
 
   public IMockInteraction getInteraction() {
@@ -59,6 +65,10 @@ public class WrongInvocationOrderError extends InteractionNotSatisfiedError {
 
   public IMockInvocation getLastInvocation() {
     return lastInvocation;
+  }
+
+  public List<IMockInvocation> getPreviousInvocationsInReverseOrder() {
+    return previousInvocationsInReverseOrder;
   }
 
   @Override
@@ -70,6 +80,17 @@ public class WrongInvocationOrderError extends InteractionNotSatisfiedError {
     builder.append("\n\n");
     builder.append("Last invocation: ");
     builder.append(lastInvocation);
+    builder.append("\n\n");
+    if (previousInvocationsInReverseOrder.size() == 1) {
+      builder.append("Previous invocation:\n\t");
+      builder.append(previousInvocationsInReverseOrder.get(0));
+    } else {
+      builder.append("Previous invocations in reverse order:");
+      previousInvocationsInReverseOrder.forEach(invocation -> {
+        builder.append("\n\t");
+        builder.append(invocation);
+      });
+    }
     builder.append("\n");
 
     message = builder.toString();

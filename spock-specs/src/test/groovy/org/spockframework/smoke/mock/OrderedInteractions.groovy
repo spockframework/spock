@@ -14,10 +14,11 @@
 
 package org.spockframework.smoke.mock
 
+import org.spockframework.EmbeddedSpecification
 import org.spockframework.mock.*
 import spock.lang.*
 
-class OrderedInteractions extends Specification {
+class OrderedInteractions extends EmbeddedSpecification {
   def "basic passing example"() {
     def list = Mock(List)
 
@@ -32,19 +33,33 @@ class OrderedInteractions extends Specification {
     1 * list.add(2)
   }
 
-  @FailsWith(WrongInvocationOrderError)
   def "basic failing example"() {
-    def list = Mock(List)
-
     when:
-    list.add(1)
-    list.add(2)
+    runner.runFeatureBody """
+def list = Mock(List)
+
+when:
+list.add(1)
+list.add(2)
+
+then:
+1 * list.add(2)
+
+then:
+1 * list.add(1)
+"""
 
     then:
-    1 * list.add(2)
+    WrongInvocationOrderError wioe = thrown()
+    wioe.message == '''Wrong invocation order for:
 
-    then:
-    1 * list.add(1)
+1 * list.add(2)   (1 invocation)
+
+Last invocation: list.add(2)
+
+Previous invocation:
+\tlist.add(1)
+'''
   }
 
   def "order of invocations belonging to interactions in same then-block is undefined"() {
@@ -64,20 +79,72 @@ class OrderedInteractions extends Specification {
     1 * list.clear()
   }
 
-  @FailsWith(TooManyInvocationsError)
   def "'too many invocations' wins over 'wrong invocation order'"() {
-    def list = Mock(List)
-
     when:
-    list.add("foo")
-    list.add("bar")
-    list.add("foo")
+    runner.runFeatureBody """
+def list = Mock(List)
+
+when:
+list.add("foo")
+list.add("bar")
+list.add("foo")
+
+then:
+1 * list.add("foo")
+
+then:
+1 * list.add("bar")
+"""
 
     then:
-    1 * list.add("foo")
+    thrown(TooManyInvocationsError)
+  }
+
+  def 'up to five previous mock invocations are rendered'() {
+    when:
+    runner.runFeatureBody """
+given:
+Object o = Mock()
+ThreadLocal tl = Mock()
+Exception e = Mock()
+
+when:
+o == 'a'
+o == 'b'
+o.equals(null)
+e.toString()
+o.toString()
+tl.toString()
+o == 'c'
+
+then:
+4 * o.equals { it in ['a', 'b', 'c'] }
+
+then:
+1 * o.equals(null)
+
+then:
+1 * o.hashCode()
+1 * o.toString()
+1 * e.toString()
+1 * tl.toString()
+"""
 
     then:
-    1 * list.add("bar")
+    WrongInvocationOrderError wioe = thrown()
+    wioe.message == '''Wrong invocation order for:
+
+4 * o.equals { it in ['a', 'b', 'c'] }   (3 invocations)
+
+Last invocation: o.equals('c')
+
+Previous invocations in reverse order:
+\ttl.toString()
+\to.toString()
+\te.toString()
+\to.equals(null)
+\to.equals('b')
+'''
   }
 
   @Issue("https://github.com/spockframework/spock/issues/475")
@@ -98,44 +165,54 @@ class OrderedInteractions extends Specification {
   }
 }
 
-class RemainingBehaviorSameAsForUnorderedInteractions extends Specification {
-  @FailsWith(TooFewInvocationsError)
+class RemainingBehaviorSameAsForUnorderedInteractions extends EmbeddedSpecification {
   def "too few invocations for one of the when-blocks"() {
-    def list = Mock(List)
-
     when:
-    list.add("foo")
-    list.add("bar")
+    runner.runFeatureBody """
+def list = Mock(List)
+
+when:
+list.add("foo")
+list.add("bar")
+
+then:
+m * list.add("foo")
+then:
+n * list.add("bar")
+
+where:
+m | n
+1 | 2
+2 | 1
+"""
 
     then:
-    m * list.add("foo")
-    then:
-    n * list.add("bar")
-
-    where:
-    m | n
-    1 | 2
-    2 | 1
+    thrown(TooFewInvocationsError)
   }
 
-  @FailsWith(TooManyInvocationsError)
   def "too many invocations for one of the when-blocks"() {
-    def list = Mock(List)
-
     when:
-    list.add("foo")
-    list.add("foo")
-    list.add("bar")
-    list.add("bar")
+    runner.runFeatureBody """
+def list = Mock(List)
+
+when:
+list.add("foo")
+list.add("foo")
+list.add("bar")
+list.add("bar")
+
+then:
+m * list.add("foo")
+then:
+n * list.add("bar")
+
+where:
+m | n
+1 | 2
+2 | 1
+"""
 
     then:
-    m * list.add("foo")
-    then:
-    n * list.add("bar")
-
-    where:
-    m | n
-    1 | 2
-    2 | 1
+    thrown(TooManyInvocationsError)
   }
 }

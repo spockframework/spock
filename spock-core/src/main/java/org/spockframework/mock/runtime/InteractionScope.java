@@ -20,6 +20,8 @@ import org.spockframework.mock.*;
 import org.spockframework.util.ExceptionUtil;
 
 import java.util.*;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.Semaphore;
 
 /**
  * A scope for interactions defined outside a then-block
@@ -27,10 +29,13 @@ import java.util.*;
  * @author Peter Niederwieser
  */
 public class InteractionScope implements IInteractionScope {
+  private static final int MAX_PREVIOUS_INVOCATIONS = 5;
   private final List<IMockInteraction> interactions = new ArrayList<>();
   private final List<IMockInvocation> unmatchedInvocations = new ArrayList<>();
   private int currentRegistrationZone = 0;
   private int currentExecutionZone = 0;
+  private final Semaphore previousInvocationsUpdateSemaphore = new Semaphore(1);
+  private final Queue<IMockInvocation> previousInvocations = new ArrayBlockingQueue<>(MAX_PREVIOUS_INVOCATIONS);
 
   @Override
   public void addInteraction(final IMockInteraction interaction) {
@@ -41,9 +46,18 @@ public class InteractionScope implements IInteractionScope {
       public Object accept(IMockInvocation invocation) {
         WrongInvocationOrderError wrongInvocationOrderError = null;
         if (currentExecutionZone > myRegistrationZone) {
-          wrongInvocationOrderError = new WrongInvocationOrderError(decorated, invocation);
+          wrongInvocationOrderError = new WrongInvocationOrderError(decorated, invocation, previousInvocations);
         }
         currentExecutionZone = myRegistrationZone;
+        previousInvocationsUpdateSemaphore.acquireUninterruptibly();
+        try {
+          if (previousInvocations.size() == MAX_PREVIOUS_INVOCATIONS) {
+            previousInvocations.remove();
+          }
+          previousInvocations.add(invocation);
+        } finally {
+          previousInvocationsUpdateSemaphore.release();
+        }
 
         Object result = null;
         Throwable invocationException = null;

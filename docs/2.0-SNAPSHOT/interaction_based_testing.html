@@ -980,6 +980,26 @@ will get executed every time an incoming invocation matches the interaction.</p>
 for the fourth invocations, and return <code>ok</code> for any further invocation.</p>
 </div>
 </div>
+<div class="sect2">
+<h3 id="_returning_a_default_response"><a class="anchor" href="#_returning_a_default_response"></a><a class="link" href="#_returning_a_default_response">Returning a default response</a></h3>
+<div class="paragraph">
+<p>If you don&#8217;t really care what you return, but you must return a non-null value, you can use <code>_</code>.
+This will use the same logic to compute a response as <code>Stub</code> (see <a href="#Stubs">Stubs</a>), so it is only really useful for <code>Mock</code> and <code>Spy</code> instances.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">subscriber.receive(_) &gt;&gt; _</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You can of course use this with chaining as well. Here it might be useful for <code>Stub</code> instances as well.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">subscriber.receive(_) &gt;&gt;&gt; [<span class="string"><span class="delimiter">&quot;</span><span class="content">ok</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">fail</span><span class="delimiter">&quot;</span></span>] &gt;&gt; _ &gt;&gt; <span class="string"><span class="delimiter">&quot;</span><span class="content">ok</span><span class="delimiter">&quot;</span></span></code></pre>
+</div>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -1076,6 +1096,9 @@ If a stub invocation matches a <em>mandatory</em> interaction (like <code>1 * fo
 </li>
 <li>
 <p>For non-primitive numerical values (such as <code>BigDecimal</code>), zero is returned.</p>
+</li>
+<li>
+<p>If the value is assignable from the stub instance, then the instance is returned (e.g. builder pattern)</p>
 </li>
 <li>
 <p>For non-numerical values, an "empty" or "dummy" object is returned. This could mean an empty String, an empty collection,
@@ -1475,7 +1498,7 @@ mock.nature == MockNature.MOCK</code></pre>
 <div id="footer">
 <div id="footer-text">
 Version 2.0-SNAPSHOT<br>
-Last updated 2020-02-13 20:39:45 UTC
+Last updated 2020-02-14 01:33:15 UTC
 </div>
 </div>
 </body>

@@ -27,10 +27,12 @@ import java.util.*;
  * @author Peter Niederwieser
  */
 public class InteractionScope implements IInteractionScope {
+  private static final int MAX_PREVIOUS_INVOCATIONS = 5;
   private final List<IMockInteraction> interactions = new ArrayList<>();
   private final List<IMockInvocation> unmatchedInvocations = new ArrayList<>();
   private int currentRegistrationZone = 0;
   private int currentExecutionZone = 0;
+  private final Deque<IMockInvocation> previousInvocationsInReverseOrder = new ArrayDeque<>(MAX_PREVIOUS_INVOCATIONS);
 
   @Override
   public void addInteraction(final IMockInteraction interaction) {
@@ -41,9 +43,13 @@ public class InteractionScope implements IInteractionScope {
       public Object accept(IMockInvocation invocation) {
         WrongInvocationOrderError wrongInvocationOrderError = null;
         if (currentExecutionZone > myRegistrationZone) {
-          wrongInvocationOrderError = new WrongInvocationOrderError(decorated, invocation);
+          wrongInvocationOrderError = new WrongInvocationOrderError(decorated, invocation, previousInvocationsInReverseOrder);
         }
         currentExecutionZone = myRegistrationZone;
+        if (previousInvocationsInReverseOrder.size() == MAX_PREVIOUS_INVOCATIONS) {
+          previousInvocationsInReverseOrder.removeLast();
+        }
+        previousInvocationsInReverseOrder.addFirst(invocation);
 
         Object result = null;
         Throwable invocationException = null;

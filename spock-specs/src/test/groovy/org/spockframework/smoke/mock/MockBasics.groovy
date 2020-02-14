@@ -16,6 +16,8 @@
 
 package org.spockframework.smoke.mock
 
+import spock.lang.Issue
+
 abstract class MockBasics extends StubBasics {
   abstract List createAndMockListDouble()
   abstract List createStubAndMockListDouble()
@@ -91,6 +93,22 @@ abstract class MockBasics extends StubBasics {
     then:
     1 * list.get(42) >> "foo"
     result == "foo"
+  }
+
+  @Issue("https://github.com/spockframework/spock/issues/1035")
+  def "using >>_ returns stubbed value"() {
+    def list = createListDouble()
+
+    when:
+    def result = list.get(42)
+    def resultDefault = list.get(0)
+
+    then:
+    1 * list.get(42) >> _
+    1 * list.get(0)
+    result != null
+    resultDefault == null
+
   }
 }
 

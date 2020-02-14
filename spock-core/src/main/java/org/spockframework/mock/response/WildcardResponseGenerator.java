@@ -16,16 +16,20 @@
 
 package org.spockframework.mock.response;
 
-import org.spockframework.mock.IMockInvocation;
+import org.spockframework.mock.*;
 
 /**
- * Returns the default value for the invoked method's return type.
+ * Returns a value using {@code Stub} semantics (see  {@link EmptyOrDummyResponse}).
+ *
+ *  The behavior was changed in Spock 2.0, before it would return the default response
+ *  of the MockObject, making it effectively a redundant declaration.
  *
  * @author Peter Niederwieser
+ * @author Leonard Brünings
  */
 public class WildcardResponseGenerator extends SingleResponseGenerator {
   @Override
   public Object doRespond(IMockInvocation invocation) {
-    return invocation.getMockObject().getDefaultResponse().respond(invocation);
+    return EmptyOrDummyResponse.INSTANCE.respond(invocation);
   }
 }

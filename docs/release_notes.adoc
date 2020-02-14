@@ -3,6 +3,20 @@ include::include.adoc[]
 
 == 2.0-M3 (tbd)
 
+=== Breaking Changes
+
+==== New meaning of `>> _`
+The meaning of `>> _` has changed form "use the default response" to "return a stubbed value" (<<interaction_based_testing.adoc#_returning_a_default_response,Docs>>).
+The original behavior was only ever documented in the Javadocs and was basically the same to just omitting it.
+The only use-case was chained responses `>> "a" >> _ >> "b"`,
+but even here it is clearer to just use `null` or `{ callRealMethod() }` explicitly.
+With the new behavior, you can have a `Mock` or `Spy` return the same value as a `Stub` would.
+
+[source,groovy]
+----
+subscriber.receive(_) >> _
+----
+
 == 2.0-M2 (2020-02-10)
 
 === Groovy-3.0 Support

@@ -29,13 +29,12 @@ class ChainedResponseGenerators extends Specification {
     queue.poll() == null
   }
 
-  def "explicit default response"() {
+  def "stub response response"() {
     queue.poll() >> _ >> _
 
     expect:
-    queue.poll() == null
-    queue.poll() == null
-    queue.poll() == null
+    queue.poll() != null
+    queue.poll() != null
   }
 
   def "chaining constant responses"() {
@@ -86,7 +85,7 @@ class ChainedResponseGenerators extends Specification {
 
     expect:
     queue.poll() == 1
-    queue.poll() == null
+    queue.poll() != null
 
     when:
     queue.poll()

@@ -681,6 +681,24 @@ subscriber.receive(_) >>> ["ok", "fail", "ok"] >> { throw new InternalError() } 
 This will return `"ok", "fail", "ok"` for the first three invocations, throw `InternalError`
 for the fourth invocations, and return `ok` for any further invocation.
 
+
+=== Returning a default response
+
+If you don't really care what you return, but you must return a non-null value, you can use `_`.
+This will use the same logic to compute a response as `Stub` (see <<Stubs>>), so it is only really useful for `Mock` and `Spy` instances.
+
+[source,groovy]
+----
+subscriber.receive(_) >> _
+----
+
+You can of course use this with chaining as well. Here it might be useful for `Stub` instances as well.
+
+[source,groovy]
+----
+subscriber.receive(_) >>> ["ok", "fail"] >> _ >> "ok"
+----
+
 == Combining Mocking and Stubbing
 
 Mocking and stubbing go hand-in-hand:
@@ -741,6 +759,7 @@ Like a mock, a stub allows unexpected invocations. However, the values returned 
 
 * For primitive types, the primitive type's default value is returned.
 * For non-primitive numerical values (such as `BigDecimal`), zero is returned.
+* If the value is assignable from the stub instance, then the instance is returned (e.g. builder pattern)
 * For non-numerical values, an "empty" or "dummy" object is returned. This could mean an empty String, an empty collection,
   an object constructed from its default constructor, or another stub returning default values.
   See class `org.spockframework.mock.EmptyOrDummyResponse` for the details.

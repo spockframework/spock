@@ -14,10 +14,11 @@
 
 package org.spockframework.smoke.mock
 
+import org.spockframework.EmbeddedSpecification
 import org.spockframework.mock.*
 import spock.lang.*
 
-class OrderedInteractions extends Specification {
+class OrderedInteractions extends EmbeddedSpecification {
   def "basic passing example"() {
     def list = Mock(List)
 
@@ -32,19 +33,33 @@ class OrderedInteractions extends Specification {
     1 * list.add(2)
   }
 
-  @FailsWith(WrongInvocationOrderError)
   def "basic failing example"() {
-    def list = Mock(List)
-
     when:
-    list.add(1)
-    list.add(2)
+    runner.runFeatureBody """
+def list = Mock(List)
+
+when:
+list.add(1)
+list.add(2)
+
+then:
+1 * list.add(2)
+
+then:
+1 * list.add(1)
+"""
 
     then:
-    1 * list.add(2)
+    WrongInvocationOrderError wioe = thrown()
+    wioe.message == '''Wrong invocation order for:
 
-    then:
-    1 * list.add(1)
+1 * list.add(2)   (1 invocation)
+
+Last invocation: list.add(2)
+
+Previous invocation:
+\tlist.add(1)
+'''
   }
 
   def "order of invocations belonging to interactions in same then-block is undefined"() {
@@ -78,6 +93,53 @@ class OrderedInteractions extends Specification {
 
     then:
     1 * list.add("bar")
+  }
+
+  def 'up to five previous mock invocations are rendered'() {
+    when:
+    runner.runFeatureBody """
+given:
+Object o = Mock()
+ThreadLocal tl = Mock()
+Exception e = Mock()
+
+when:
+o == 'a'
+o == 'b'
+o.equals(null)
+e.toString()
+o.toString()
+tl.toString()
+o == 'c'
+
+then:
+4 * o.equals { it in ['a', 'b', 'c'] }
+
+then:
+1 * o.equals(null)
+
+then:
+1 * o.hashCode()
+1 * o.toString()
+1 * e.toString()
+1 * tl.toString()
+"""
+
+    then:
+    WrongInvocationOrderError wioe = thrown()
+    wioe.message == '''Wrong invocation order for:
+
+4 * o.equals { it in ['a', 'b', 'c'] }   (3 invocations)
+
+Last invocation: o.equals('c')
+
+Previous invocations in reverse order:
+\ttl.toString()
+\to.toString()
+\te.toString()
+\to.equals(null)
+\to.equals('b')
+'''
   }
 
   @Issue("https://github.com/spockframework/spock/issues/475")

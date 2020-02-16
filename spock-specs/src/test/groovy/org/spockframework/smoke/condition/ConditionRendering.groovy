@@ -16,9 +16,11 @@
 
 package org.spockframework.smoke.condition
 
-import org.spockframework.runtime.ConditionNotSatisfiedError
+import org.spockframework.runtime.GroovyRuntimeUtil
 import org.spockframework.runtime.SpockComparisonFailure
 import spock.lang.Issue
+import spock.lang.Requires
+
 import java.sql.Date
 
 import static java.lang.Math.min
@@ -356,12 +358,26 @@ a[b]
     }
   }
 
-  def "PostfixExpression"() {
+  @Requires({ GroovyRuntimeUtil.isGroovy2() })
+  def "PostfixExpression (Groovy 2)"() {
     expect:
     isRendered """
 x++ == null
  |  |
  0  false
+    """, {
+      def x = 0
+      assert x++ == null
+    }
+  }
+
+  @Requires({ GroovyRuntimeUtil.isGroovy3orNewer() })
+  def "PostfixExpression"() {
+    expect:
+    isRendered """
+x++ == null
+|   |
+0   false
     """, {
       def x = 0
       assert x++ == null
@@ -541,10 +557,24 @@ interface java.util.List
     }
   }
 
-  def "ClassExpression with dot-containing comments"() {
+  @Requires({ GroovyRuntimeUtil.isGroovy2() })  //comments are no longer included in power assertion's error message in Groovy 3
+  def "ClassExpression with dot-containing comments (Groovy 2)"() {
     expect:
     isRendered """
 java.util./*.awt.*/List == java.lang.String // I. Like. Dots.
+                   |    |            |
+                   |    false        class java.lang.String
+                   interface java.util.List
+    """, {
+      assert java.util./*.awt.*/List == java.lang.String // I. Like. Dots.
+    }
+  }
+
+  @Requires({ GroovyRuntimeUtil.isGroovy3orNewer() })
+  def "ClassExpression with dot-containing comments"() {
+    expect:
+    isRendered """
+java.util./*.awt.*/List == java.lang.String
                    |    |            |
                    |    false        class java.lang.String
                    interface java.util.List
@@ -770,7 +800,7 @@ three(a, b,c)
   }
 
   // as of Groovy 1.7.3, represented as FieldExpression
-  @Issue("http://issues.spockframework.org/detail?id=106")
+  @Issue("https://github.com/spockframework/spock/issues/228")
   def "statically imported field"() {
     expect:
     isRendered """

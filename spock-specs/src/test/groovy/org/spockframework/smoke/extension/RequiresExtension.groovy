@@ -16,58 +16,68 @@
 
 package org.spockframework.smoke.extension
 
-import org.spockframework.VerifyExecution
-import org.spockframework.ExecutionLog
+import org.spockframework.EmbeddedSpecification
 
-import spock.lang.Specification
 import spock.lang.IgnoreIf
 import spock.lang.Issue
 import spock.lang.Requires
+import spock.lang.Specification
 
-@VerifyExecution
-class RequiresExtension extends Specification {
-  @Requires({ 1 < 2 })
-  def "runs feature if precondition is satisfied"() {
-    expect: true
+class RequiresExtension extends EmbeddedSpecification {
+
+  def verifyExecution() {
+    when:
+    def results = runner.runClass(RequiresExtensionExamples)
+    then:
+    results.testsSucceededCount == 5
+    results.testsFailedCount == 0
+    results.testsSkippedCount == 2
+    results.tests().skipped().list().testDescriptor.displayName == [
+      "skips feature if precondition is not satisfied", "allows determinate use of multiple filters"]
   }
 
-  @Requires({ 1 > 2 })
-  def "skips feature if precondition is not satisfied"() {
-    expect: true
-  }
+  static class RequiresExtensionExamples extends Specification {
 
-  @Requires({ os.windows || os.linux || os.macOs || os.solaris || os.other })
-  def "provides OS information"() {
-    expect: true
-  }
+    @Requires({ 1 < 2 })
+    def "runs feature if precondition is satisfied"() {
+      expect: true
+    }
 
-  @Requires({ jvm.java5 || jvm.java6 || jvm.java7 || jvm.java8 || jvm.java9 || jvm.java10 || jvm.java11 })
-  def "provides JVM information"() {
-    expect: true
-  }
+    @Requires({ 1 > 2 })
+    def "skips feature if precondition is not satisfied"() {
+      expect: true
+    }
 
-  @Requires({ !env.containsKey("FOO_BAR_BAZ") })
-  def "provides access to environment variables"() {
-    expect: true
-  }
+    @Requires({ os.windows || os.linux || os.macOs || os.solaris || os.other })
+    def "provides OS information"() {
+      expect: true
+    }
 
-  @Requires({ sys.containsKey("java.version") })
-  def "provides access to system properties"() {
-    expect: true
-  }
+    @Requires({
+      jvm.java8 || jvm.java9 || jvm.java10 || jvm.java11 || jvm.java12 || jvm.java13 || jvm.java14 || jvm.java15 || jvm.java16 || jvm.java17 ||
+        jvm.isJavaVersion(18)
+    })
+    def "provides JVM information"() {
+      expect: true
+    }
 
-  @Issue("https://github.com/spockframework/spock/issues/535")
-  @IgnoreIf({ true })
-  @Requires({ true })
-  def "allows determinate use of multiple filters" () {
-    expect: false
-  }
+    @Requires({ !env.containsKey("FOO_BAR_BAZ") })
+    def "provides access to environment variables"() {
+      expect: true
+    }
 
-  def verifyExecution(ExecutionLog log) {
-    expect:
-    log.passed.size() == 5
-    log.failed.size() == 0
-    log.skipped == ["skips feature if precondition is not satisfied", "allows determinate use of multiple filters"]
+    @Requires({ sys.containsKey("java.version") })
+    def "provides access to system properties"() {
+      expect: true
+    }
+
+    @Issue("https://github.com/spockframework/spock/issues/535")
+    @IgnoreIf({ true })
+    @Requires({ true })
+    def "allows determinate use of multiple filters"() {
+      expect: false
+    }
+
   }
 }
 

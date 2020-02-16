@@ -286,7 +286,7 @@ Sometimes it can be useful to match "anything", in some sense of the word:
 include::{sourcedir}/interaction/InteractionDocSpec.groovy[tag=anyConstraints]
 ----
 
-NOTE: Although `(_.._) * _._(*_) >> _` is a valid interaction declaration,
+NOTE: Although `(\_.._) * \_._(*_) >> _` is a valid interaction declaration,
 it is neither good style nor particularly useful.
 
 === Strict Mocking
@@ -538,11 +538,20 @@ is only meant for documentation purposes and doesn't carry any semantics.
 === Mocking Classes
 
 Besides interfaces, Spock also supports mocking of classes. Mocking classes works
-just like mocking interfaces; the only additional requirement is to put `cglib-nodep-2.2` or higher
-and `objenesis-1.2` or higher on the class path. If either of these libraries is missing from
-the class path, Spock will gently let you know.
+just like mocking interfaces; the only additional requirement is to put `byte-buddy` 1.9+ or
+`cglib-nodep` 3.2.0+ on the class path.
 
-NOTE: Java 8 is only supported from CGLIB 3.2.0 onwards.
+When using for example
+
+- normal ``Mock``s or ``Stub``s or
+- ``Spy``s that are configured with `useObjenesis: true` or
+- ``Spy``s that spy on a concrete instance like `Spy(myInstance)`
+
+it is also necessary to put `objenesis` 3.0+ on the class path, except for classes with accessible
+no-arg constructor or configured `constructorArgs` unless the constructor call should not be done,
+for example to avoid unwanted side effects.
+
+If either of these libraries is missing from the class path, Spock will gently let you know.
 
 == Stubbing
 
@@ -672,6 +681,24 @@ subscriber.receive(_) >>> ["ok", "fail", "ok"] >> { throw new InternalError() } 
 This will return `"ok", "fail", "ok"` for the first three invocations, throw `InternalError`
 for the fourth invocations, and return `ok` for any further invocation.
 
+
+=== Returning a default response
+
+If you don't really care what you return, but you must return a non-null value, you can use `_`.
+This will use the same logic to compute a response as `Stub` (see <<Stubs>>), so it is only really useful for `Mock` and `Spy` instances.
+
+[source,groovy]
+----
+subscriber.receive(_) >> _
+----
+
+You can of course use this with chaining as well. Here it might be useful for `Stub` instances as well.
+
+[source,groovy]
+----
+subscriber.receive(_) >>> ["ok", "fail"] >> _ >> "ok"
+----
+
 == Combining Mocking and Stubbing
 
 Mocking and stubbing go hand-in-hand:
@@ -732,6 +759,7 @@ Like a mock, a stub allows unexpected invocations. However, the values returned 
 
 * For primitive types, the primitive type's default value is returned.
 * For non-primitive numerical values (such as `BigDecimal`), zero is returned.
+* If the value is assignable from the stub instance, then the instance is returned (e.g. builder pattern)
 * For non-numerical values, an "empty" or "dummy" object is returned. This could mean an empty String, an empty collection,
   an object constructed from its default constructor, or another stub returning default values.
   See class `org.spockframework.mock.EmptyOrDummyResponse` for the details.
@@ -804,6 +832,11 @@ Here we use `callRealMethod()` to delegate the method invocation to the real obj
 Note that we don't have to pass the `message` argument along; this is taken care of automatically. `callRealMethod()`
 returns the real invocation's result, but in this example we opted to return our own result instead.
 If we had wanted to pass a different message to the real method, we could have used `callRealMethodWithArgs("changed message")`.
+
+Please note that while semantically both `callRealMethod()` and `callRealMethodWithArgs(...)` only make sense with spies,
+technically you can also call these methods on mock or stub objects, kind of turning them into (pseudo) spy objects
+"through the backdoor". The only precondition is that the mocked/stubbed object actually has a real method implementation,
+i.e. for interface mocks there must be a default method, for class mocks there must be a (non-abstract) original method.
 
 [[PartialMocks]]
 === Partial Mocks
@@ -963,7 +996,7 @@ can be passed as named arguments to the `Mock()` method. For example:
 
 [source,groovy]
 ----
-def person = Mock(name: "Fred", type: Person, defaultResponse: ZeroOrNullResponse, verified: false)
+def person = Mock(name: "Fred", type: Person, defaultResponse: ZeroOrNullResponse.INSTANCE, verified: false)
 ----
 
 Here, we create a mock whose default return values match those of a `Mock()`, but whose invocations aren't

@@ -12,17 +12,18 @@
 Spock Framework
 ===============
 
-Spock is a developer testing and specification framework for Java and [Groovy](http://groovy-lang.org/) applications.
+Spock is a BDD-style developer testing and specification framework for Java and [Groovy](http://groovy-lang.org/) applications.
 To learn more about Spock, visit http://spockframework.org. To run a sample spec in your browser, go to
 http://webconsole.spockframework.org.
 
 Latest Versions
 ---------------
-The latest release version is **1.3** (1.3-groovy-2.4, 1.3-groovy-2.5), released on 2019-01-22. The
-current development version is **2.0-SNAPSHOT** (2.0-groovy-2.5-SNAPSHOT).
+* The latest 1.x release version is **1.3** (1.3-groovy-2.4, 1.3-groovy-2.5), released on 2019-01-22.
+* The latest 2.0 release version is **2.0-M2** (2.0-M2-groovy-2.5, 2.0-M2-groovy-3.0), released on 2019-12-31.
+* The current development version is **2.0-SNAPSHOT** (2.0-groovy-2.5-SNAPSHOT, 2.0-groovy-3.0-SNAPSHOT).
 
-**NOTE:** Spock 1.3 is the last planned release for 1.x based on JUnit 4. Spock 2.0 will be based on the JUnit 5 Platform
-          and require Java 8/groovy-2.5 
+**NOTE:** Spock 1.3 is the last release for 1.x based on JUnit 4. Spock 2.0 is based on the JUnit 5 Platform
+          and require Java 8/groovy-2.5
 
 Releases are available from [Maven Central](https://search.maven.org/#search%7Cga%7C1%7Cg%3A%22org.spockframework%22).
 Development snapshots are available from [Sonatype OSS](https://oss.sonatype.org/content/repositories/snapshots/org/spockframework/).
@@ -119,7 +120,7 @@ Links
 * Developer Forum -- http://dev-forum.spockframework.org
 * Issue Tracker -- http://issues.spockframework.org
 * Build Server -- http://builds.spockframework.org
-* Spock Example Project -- http://github.spockframework.org/spock-example
+* Spock Example Project -- https://github.com/spockframework/spock-example
 * Twitter -- http://twitter.spockframework.org
 
 Live Long And Prosper!

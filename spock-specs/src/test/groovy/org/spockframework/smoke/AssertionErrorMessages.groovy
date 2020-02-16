@@ -19,7 +19,7 @@ import org.spockframework.runtime.SpockAssertionError
 
 import spock.lang.*
 
-@Issue("http://issues.spockframework.org/detail?id=95")
+@Issue("https://github.com/spockframework/spock/issues/217")
 class AssertionErrorMessages extends Specification {
   def "assertion error returns (same) message for getMessage() and toString()"() {
     def e = createSpockAssertionError()

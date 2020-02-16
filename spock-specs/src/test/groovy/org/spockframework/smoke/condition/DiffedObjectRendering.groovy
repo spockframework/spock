@@ -6,15 +6,15 @@ import spock.lang.Issue
 
 class DiffedObjectRendering extends EmbeddedSpecification {
 
-  @Issue("http://issues.spockframework.org/detail?id=170")
+  @Issue("https://github.com/spockframework/spock/issues/292")
   def "can handle null values"() {
     when:
     runner.runFeatureBody("expect: 1 == null")
 
     then:
     SpockComparisonFailure failure = thrown()
-    failure.actual == "1\n"
-    failure.expected == "null\n"
+    failure.actual.stringRepresentation == "1\n"
+    failure.expected.stringRepresentation == "null"
   }
 
   @Issue("https://github.com/spockframework/spock/issues/659")
@@ -31,8 +31,8 @@ class DiffedObjectRendering extends EmbeddedSpecification {
 
     then:
     SpockComparisonFailure failure = thrown()
-    failure.actual == "integer: 1\nstring: fun\n"
-    failure.expected == "integer: 2\nstring: fun2\n"
+    failure.actual.stringRepresentation == "integer: 1\nstring: fun\n"
+    failure.expected.stringRepresentation == "integer: 2\nstring: fun2\n"
   }
 
   @Issue("https://github.com/spockframework/spock/issues/659")
@@ -49,8 +49,8 @@ class DiffedObjectRendering extends EmbeddedSpecification {
 
     then:
     SpockComparisonFailure failure = thrown()
-    failure.actual == "integer: 1\nstring: fun\n"
-    failure.expected == "integer: 2\nstring: fun2\n"
+    failure.actual.stringRepresentation == "integer: 1\nstring: fun\n"
+    failure.expected.stringRepresentation == "integer: 2\nstring: fun2\n"
   }
 
   @Issue("https://github.com/spockframework/spock/issues/659")
@@ -67,8 +67,8 @@ class DiffedObjectRendering extends EmbeddedSpecification {
 
     then:
     SpockComparisonFailure failure = thrown()
-    failure.actual == "long1: 1\nstring: fun\n"
-    failure.expected == "long1: 2\nstring: fun2\n"
+    failure.actual.stringRepresentation == "long1: 1\nstring: fun\n"
+    failure.expected.stringRepresentation == "long1: 2\nstring: fun2\n"
   }
 
   @Issue("https://github.com/spockframework/spock/issues/659")
@@ -85,8 +85,8 @@ class DiffedObjectRendering extends EmbeddedSpecification {
 
     then:
     SpockComparisonFailure failure = thrown()
-    failure.actual == "long1: 1\nstring: fun\n"
-    failure.expected == "long1: 2\nstring: fun2\n"
+    failure.actual.stringRepresentation == "long1: 1\nstring: fun\n"
+    failure.expected.stringRepresentation == "long1: 2\nstring: fun2\n"
   }
 
   @Issue("https://github.com/spockframework/spock/issues/909")
@@ -99,8 +99,8 @@ class DiffedObjectRendering extends EmbeddedSpecification {
 
     then:
     SpockComparisonFailure failure = thrown()
-    failure.actual == "class java.net.SocketTimeoutException [Bootstrap Class Loader]\n"
-    failure.expected == "class java.lang.ClassNotFoundException [Bootstrap Class Loader]\n"
+    failure.actual.stringRepresentation == "class java.net.SocketTimeoutException [Bootstrap Class Loader]\n"
+    failure.expected.stringRepresentation == "class java.lang.ClassNotFoundException [Bootstrap Class Loader]\n"
   }
 
   def 'render class with class loader'() {
@@ -116,9 +116,9 @@ class DiffedObjectRendering extends EmbeddedSpecification {
 
     then:
     SpockComparisonFailure failure = thrown()
-    failure.actual != failure.expected
-    failure.actual.replaceFirst(/(?<=@)\p{XDigit}++/, 'X') == 'class Clazz [groovy.lang.GroovyClassLoader$InnerLoader@X]\n'
-    failure.expected.replaceFirst(/(?<=@)\p{XDigit}++/, 'X') == 'class Clazz [groovy.lang.GroovyClassLoader$InnerLoader@X]\n'
+    failure.actual.stringRepresentation != failure.expected.stringRepresentation
+    failure.actual.stringRepresentation.replaceFirst(/(?<=@)\p{XDigit}++/, 'X') == 'class Clazz [groovy.lang.GroovyClassLoader$InnerLoader@X]\n'
+    failure.expected.stringRepresentation.replaceFirst(/(?<=@)\p{XDigit}++/, 'X') == 'class Clazz [groovy.lang.GroovyClassLoader$InnerLoader@X]\n'
   }
 
   interface RenderBean {

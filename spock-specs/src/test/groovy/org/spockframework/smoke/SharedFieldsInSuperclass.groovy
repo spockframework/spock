@@ -8,7 +8,7 @@ abstract class SharedFieldsInSuperclassBase extends Specification {
   @Shared public String sharedPublic = "sharedPublic"
   @Shared String sharedProperty = "sharedProperty"
 
-  @Issue("http://issues.spockframework.org/detail?id=151")
+  @Issue("https://github.com/spockframework/spock/issues/273")
   def "can access shared private field"() {
     expect: sharedPrivate == "sharedPrivate"
   }

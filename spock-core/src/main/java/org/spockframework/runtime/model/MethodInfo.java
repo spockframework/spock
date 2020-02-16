@@ -33,8 +33,15 @@ public class MethodInfo extends NodeInfo<SpecInfo, Method> implements IExcludabl
   private IterationInfo iteration;
   private boolean excluded = false;
   private final List<IMethodInterceptor> interceptors = new ArrayList<>();
+  private Invoker invoker;
 
   public MethodInfo() {
+    invoker = (Object target, Object... arguments) ->
+      ReflectionUtil.invokeMethod(target, getReflection(), arguments);
+  }
+
+  public MethodInfo(Invoker invoker) {
+    this.invoker = invoker;
   }
 
   public MethodInfo(MethodInfo other) {
@@ -47,8 +54,8 @@ public class MethodInfo extends NodeInfo<SpecInfo, Method> implements IExcludabl
     this.setParent(other.getParent());
     this.setReflection(other.getReflection());
     this.setMetadata(other.getMetadata());
-    this.setDescription(other.getDescription());
     this.interceptors.addAll(other.interceptors);
+    this.invoker = other.invoker;
   }
 
   public MethodKind getKind() {
@@ -110,6 +117,6 @@ public class MethodInfo extends NodeInfo<SpecInfo, Method> implements IExcludabl
    * @return the return value of the method call
    */
   public Object invoke(Object target, Object... arguments) throws Throwable {
-    return ReflectionUtil.invokeMethod(target, getReflection(), arguments);
+    return invoker.invoke(target, arguments);
   }
 }

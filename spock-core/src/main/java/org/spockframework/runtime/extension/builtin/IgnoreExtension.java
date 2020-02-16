@@ -26,13 +26,16 @@ import spock.lang.Ignore;
 // we cannot easily support @Ignore on fixture methods because
 // setup() and setupSpec() perform initialization of user-defined and internal fields
 public class IgnoreExtension extends AbstractAnnotationDrivenExtension<Ignore> {
+
+  public static final String DEFAULT_REASON = "Ignored via @Ignore";
+
   @Override
   public void visitSpecAnnotation(Ignore ignore, SpecInfo spec) {
-    if (spec.getIsBottomSpec()) spec.setSkipped(true);
+    if (spec.getIsBottomSpec()) spec.skip(ignore.value().isEmpty() ? DEFAULT_REASON : ignore.value());
   }
 
   @Override
   public void visitFeatureAnnotation(Ignore ignore, FeatureInfo feature) {
-    feature.setSkipped(true);
+    feature.skip(ignore.value().isEmpty() ? DEFAULT_REASON : ignore.value());
   }
 }

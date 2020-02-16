@@ -6,6 +6,7 @@ import spock.lang.FailsWith
 import spock.lang.Issue
 
 import groovy.transform.*
+import org.opentest4j.MultipleFailuresError
 
 class VerifyAllSpecification extends EmbeddedSpecification {
 
@@ -24,14 +25,17 @@ class VerifyAllSpecification extends EmbeddedSpecification {
           }
         }""")
     then:
-    result.failures.size() == 2
-    with(result.failures[0].exception, SpockComparisonFailure) {
-      expected.trim() == "2"
-      actual.trim() == "1"
-    }
-    with(result.failures[1].exception, SpockComparisonFailure) {
-      expected.trim() == "4"
-      actual.trim() == "3"
+    result.failures.size() == 1
+    with(result.failures[0].exception, MultipleFailuresError) {
+      failures.size() == 2
+      with(failures[0], SpockComparisonFailure) {
+        expected.stringRepresentation.trim() == "2"
+        actual.stringRepresentation.trim() == "1"
+      }
+      with(failures[1], SpockComparisonFailure) {
+        expected.stringRepresentation.trim() == "4"
+        actual.stringRepresentation.trim() == "3"
+      }
     }
   }
 
@@ -78,16 +82,19 @@ class VerifyAllSpecification extends EmbeddedSpecification {
           }
       }""")
     then:
-    result.failures.size() == 2
+    result.failures.size() ==  1
+    with(result.failures[0].exception, MultipleFailuresError) {
+      failures.size() == 2
+      with(failures[0], SpockComparisonFailure) {
+        expected.stringRepresentation.trim() == "3"
+        actual.stringRepresentation.trim() == "2"
+      }
+      with(failures[1], SpockComparisonFailure) {
+        expected.stringRepresentation.trim() == "4"
+        actual.stringRepresentation.trim() == "3"
+      }
+    }
 
-    with(result.failures[0].exception, SpockComparisonFailure) {
-      expected.trim() == "3"
-      actual.trim() == "2"
-    }
-    with(result.failures[1].exception, SpockComparisonFailure) {
-      expected.trim() == "4"
-      actual.trim() == "3"
-    }
   }
 
   def "verifyAll with target and failures"() {
@@ -107,14 +114,17 @@ class VerifyAllSpecification extends EmbeddedSpecification {
           }
       }""")
     then:
-    result.failures.size() == 2
-    with(result.failures[0].exception, SpockComparisonFailure) {
-      expected.trim() == "Bob"
-      actual.trim() == "Fred"
-    }
-    with(result.failures[1].exception, SpockComparisonFailure) {
-      expected.trim() == "137"
-      actual.trim() == "42"
+    result.failures.size() ==  1
+    with(result.failures[0].exception, MultipleFailuresError) {
+      failures.size() == 2
+      with(failures[0], SpockComparisonFailure) {
+        expected.stringRepresentation.trim() == "Bob"
+        actual.stringRepresentation.trim() == "Fred"
+      }
+      with(failures[1], SpockComparisonFailure) {
+        expected.stringRepresentation.trim() == "137"
+        actual.stringRepresentation.trim() == "42"
+      }
     }
   }
 
@@ -147,14 +157,18 @@ class VerifyAllSpecification extends EmbeddedSpecification {
           }
       }""")
     then:
-    result.failures.size() == 2
-    with(result.failures[0].exception, SpockComparisonFailure) {
-      expected.trim() == "Bob"
-      actual.trim() == "Fred"
-    }
-    with(result.failures[1].exception, SpockComparisonFailure) {
-      expected.trim() == "137"
-      actual.trim() == "42"
+
+    result.failures.size() ==  1
+    with(result.failures[0].exception, MultipleFailuresError) {
+      failures.size() == 2
+      with(failures[0], SpockComparisonFailure) {
+        expected.stringRepresentation.trim() == "Bob"
+        actual.stringRepresentation.trim() == "Fred"
+      }
+      with(failures[1], SpockComparisonFailure) {
+        expected.stringRepresentation.trim() == "137"
+        actual.stringRepresentation.trim() == "42"
+      }
     }
   }
 
@@ -318,18 +332,22 @@ class VerifyAllSpecification extends EmbeddedSpecification {
           }
         }""")
     then:
-    result.failures.size() == 3
-    with(result.failures[0].exception, SpockComparisonFailure) {
-      expected.trim() == "2"
-      actual.trim() == "1"
-    }
-    with(result.failures[1].exception, SpockComparisonFailure) {
-      expected.trim() == "4"
-      actual.trim() == "3"
-    }
-    with(result.failures[2].exception, SpockComparisonFailure) {
-      expected.trim() == "5"
-      actual.trim() == "4"
+
+    result.failures.size() ==  1
+    with(result.failures[0].exception, MultipleFailuresError) {
+      failures.size() == 3
+      with(failures[0], SpockComparisonFailure) {
+        expected.stringRepresentation.trim() == "2"
+        actual.stringRepresentation.trim() == "1"
+      }
+      with(failures[1], SpockComparisonFailure) {
+        expected.stringRepresentation.trim() == "4"
+        actual.stringRepresentation.trim() == "3"
+      }
+      with(failures[2], SpockComparisonFailure) {
+        expected.stringRepresentation.trim() == "5"
+        actual.stringRepresentation.trim() == "4"
+      }
     }
   }
 

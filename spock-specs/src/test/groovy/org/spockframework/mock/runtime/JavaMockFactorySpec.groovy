@@ -31,7 +31,7 @@ class JavaMockFactorySpec extends Specification {
     factory.create(new MockConfiguration("foo", List, MockNature.MOCK, MockImplementation.JAVA, [:]), this) instanceof List
   }
 
-  @Issue("http://issues.spockframework.org/detail?id=227")
+  @Issue("https://github.com/spockframework/spock/issues/349")
   def "can create mocks for interfaces containing nested classes"() {
     expect:
     factory.create(new MockConfiguration("foo", InterfaceWithNestedClass, MockNature.MOCK, MockImplementation.JAVA, [:]), this) instanceof InterfaceWithNestedClass

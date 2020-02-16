@@ -1,6 +1,89 @@
 = Release Notes
 include::include.adoc[]
 
+== 2.0-M3 (tbd)
+
+=== Breaking Changes
+
+==== New meaning of `>> _`
+The meaning of `>> _` has changed form "use the default response" to "return a stubbed value" (<<interaction_based_testing.adoc#_returning_a_default_response,Docs>>).
+The original behavior was only ever documented in the Javadocs and was basically the same to just omitting it.
+The only use-case was chained responses `>> "a" >> _ >> "b"`,
+but even here it is clearer to just use `null` or `{ callRealMethod() }` explicitly.
+With the new behavior, you can have a `Mock` or `Spy` return the same value as a `Stub` would.
+
+[source,groovy]
+----
+subscriber.receive(_) >> _
+----
+
+== 2.0-M2 (2020-02-10)
+
+=== Groovy-3.0 Support
+
+The main feature of this milestone is support for Groovy 3.
+To use Spock in your Groovy 3 project just select the `spock-\*-2.0-M2` artifact(s) ending with `-groovy-3.0`.
+
+NOTE: As Groovy 3 is not backward compatible with Groovy 2, there is a layer of abstraction in Spock to allow to build (and use) the project with both Groovy 2 and 3.
+      As a result, an extra artifact `spock-groovy2-compat` is (automatically) used in projects with Groovy 2.
+      It is *very important* to *do not mix* the `spock-\*-2.x-groovy-2.5` artifacts with the `groovy-*-3.x` artifacts on a classpath.
+      This may result in weird runtime errors.
+
+=== Breaking Changes
+
+==== Sputnik Runner removed
+Although already in 2.0-M1 it wasn't explicitly mentioned: All enhancements that either extended `Sputnik`
+or used it as a delegate runner will not work anymore, e.g, `PowerMockRunnerDelegate`.
+
+=== Misc
+
+- Add `@PendingFeatureIf` annotation (<<extensions.adoc#_pendingfeatureif,Docs>>)
+- Fail-fast for invalid `Stub` interactions, added new validation that catches more invalid usage of `Stub`
+- Forbid spying on `Spy` instances, as this doesn't work anyway and leads to wrong expectations (https://github.com/spockframework/spock/issues/1029[#1029])
+- Update `Jvm` helper utility to include new Java versions, removed pre 8 versions
+- Update docs regarding ByteBuddy, cglib, objenesis
+- Provide compatibility to both JUnit 5.5.2 and 5.6.0
+
+
+Thanks to all the contributors to this release: Marcin Zajączkowski (Groovy 3 support), Björn Kautler, Ryan Gardner
+
+== 2.0-M1 (2019-12-31)
+
+This is the first milestone release to version 2.0. This means that we have migrated to the new
+JUnit Platform and all internal tests pass. We have tried to keep the API as compatible as possible
+and if you've only used the public spock API then there is a high possibility that all you have to
+do is to update the spock version and configure gradle/maven to use the JUnit Platform.
+
+However, this doesn't mean that the API is finalized yet, the goal for the first milestone was just
+to get it running on the new platform. The next milestones will focus on improvements like the much
+requested parallel execution support.
+
+Please try it out and report any new bugs so that we can fix them for the final 2.0 release.
+
+=== Breaking Changes
+
+==== New JUnit Platform
+Switch from JUnit 4 to the JUnit Platform.
+See https://junit.org/junit5/docs/current/user-guide/#running-tests-build on how to configure
+maven and gradle to use the JUnit Platform.
+
+JUnit 4 Rules are not supported by `spock-core` anymore, however, there is a new  `spock-junit4`
+module that provides best effort support to ease migration.
+
+==== Misc
+
+- Spock now requires at least Java 8
+- All data-driven test iterations are always reported (unrolled), while `@Unroll` is not necessary anymore
+  it can still be used to define the name template
+- `@Retry.Mode.FEATURE` didn't work anymore and has been removed
+- `spock-report` module has been removed, it was never officially released
+- The `SpockReportingExtension` has been disabled until we can integrate it with JUnitPlatform
+- Removed testing for `spring-2.x` as it is incompatible
+- Fix some Javadocs
+
+Special thanks goes to Marc Philipp who helped a lot with the integration of the JUnit Platform.
+
+Thanks to all the contributors to this release: Marcin Zajączkowski, k3v1n0x90
 
 == 1.3 (2019-03-05)
 

@@ -17,7 +17,7 @@ package org.spockframework.smoke.mock
 
 import spock.lang.*
 
-@Issue("http://issues.spockframework.org/detail?id=55")
+@Issue("https://github.com/spockframework/spock/issues/177")
 class MockingOfVarArgParametersUserContributedSpec extends Specification {
 	def methodWasCalled = false
 

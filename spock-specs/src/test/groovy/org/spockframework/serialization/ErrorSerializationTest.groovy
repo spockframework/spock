@@ -22,7 +22,7 @@ class ErrorSerializationTest extends EmbeddedSpecification {
     """
 
     then:
-    result.failureCount == 1
+    result.testsFailedCount == 1
     def srcThrowable = result.failures[0].exception
     srcThrowable instanceof SpockComparisonFailure
 
@@ -44,7 +44,7 @@ class ErrorSerializationTest extends EmbeddedSpecification {
     """
 
     then:
-    result.failureCount == 1
+    result.testsFailedCount == 1
     def srcThrowable = result.failures[0].exception
     srcThrowable instanceof ConditionNotSatisfiedError
 
@@ -65,7 +65,7 @@ class ErrorSerializationTest extends EmbeddedSpecification {
     """
 
     then:
-    result.failureCount == 1
+    result.testsFailedCount == 1
     def srcThrowable = result.failures[0].exception
     srcThrowable instanceof ConditionFailedWithExceptionError
 
@@ -92,7 +92,7 @@ class ErrorSerializationTest extends EmbeddedSpecification {
     """
 
     then:
-    result.failureCount == 1
+    result.testsFailedCount == 1
     def srcThrowable = result.failures[0].exception
     srcThrowable instanceof TooFewInvocationsError
 
@@ -119,7 +119,7 @@ class ErrorSerializationTest extends EmbeddedSpecification {
     """
 
     then:
-    result.failureCount == 1
+    result.testsFailedCount == 1
     def srcThrowable = result.failures[0].exception
     srcThrowable instanceof TooManyInvocationsError
 
@@ -150,7 +150,7 @@ class ErrorSerializationTest extends EmbeddedSpecification {
     """
 
     then:
-    result.failureCount == 1
+    result.testsFailedCount == 1
     def srcThrowable = result.failures[0].exception
     srcThrowable instanceof WrongInvocationOrderError
 

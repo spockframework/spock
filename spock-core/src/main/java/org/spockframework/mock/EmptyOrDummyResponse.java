@@ -14,53 +14,28 @@
 
 package org.spockframework.mock;
 
-import org.spockframework.util.*;
+import org.spockframework.util.ReflectionUtil;
 import spock.lang.Specification;
 
 import java.lang.reflect.*;
 import java.math.*;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.stream.*;
 
 import groovy.lang.*;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * A response strategy that returns zero, an "empty" object, or a "dummy" object,
  * depending on the method's declared return type.
  */
-@Beta
 public class EmptyOrDummyResponse implements IDefaultResponse {
   public static final EmptyOrDummyResponse INSTANCE = new EmptyOrDummyResponse();
-  private static final Class<?> OPTIONAL = ReflectionUtil.loadClassIfAvailable("java.util.Optional");
-  private static final Class<?> STREAM = ReflectionUtil.loadClassIfAvailable("java.util.stream.Stream");
-  private static final Class<?> INT_STREAM = ReflectionUtil.loadClassIfAvailable("java.util.stream.IntStream");
-  private static final Class<?> DOUBLE_STREAM = ReflectionUtil.loadClassIfAvailable("java.util.stream.DoubleStream");
-  private static final Class<?> LONG_STREAM = ReflectionUtil.loadClassIfAvailable("java.util.stream.LongStream");
-  private static final Class<?> COMPLETABLE_FUTURE = ReflectionUtil.loadClassIfAvailable("java.util.concurrent.CompletableFuture");
-  private static final Method optionalEmptyMethod;
-  private static final Method streamEmptyMethod;
-  private static final Method intStreamEmptyMethod;
-  private static final Method doubleStreamEmptyMethod;
-  private static final Method longStreamEmptyMethod;
-  private static final Method completableFutureCompletedFutureMethod;
-
-  static {
-    optionalEmptyMethod = getMethodIfAvailable(OPTIONAL, "empty");
-    streamEmptyMethod = getMethodIfAvailable(STREAM , "empty");
-    intStreamEmptyMethod = getMethodIfAvailable(INT_STREAM , "empty");
-    doubleStreamEmptyMethod = getMethodIfAvailable(DOUBLE_STREAM , "empty");
-    longStreamEmptyMethod = getMethodIfAvailable(LONG_STREAM , "empty");
-    completableFutureCompletedFutureMethod = getMethodIfAvailable(COMPLETABLE_FUTURE, "completedFuture");
-  }
-
-  @Nullable
-  private static Method getMethodIfAvailable(Class<?> target, String method) {
-    return target == null ? null : ReflectionUtil.getDeclaredMethodByName(target, method);
-  }
 
   private EmptyOrDummyResponse() {}
 
   @Override
+  @SuppressWarnings("rawtypes")
   public Object respond(IMockInvocation invocation) {
     IMockInteraction interaction = DefaultJavaLangObjectInteractions.INSTANCE.match(invocation);
     if (interaction != null) return interaction.accept(invocation);
@@ -75,7 +50,7 @@ public class EmptyOrDummyResponse implements IDefaultResponse {
       return ReflectionUtil.getDefaultValue(returnType);
     }
 
-    if (returnType.isAssignableFrom(invocation.getMockObject().getType())) {
+    if (returnType != Object.class && returnType.isAssignableFrom(invocation.getMockObject().getType())) {
       return invocation.getMockObject().getInstance();
     }
 
@@ -89,10 +64,10 @@ public class EmptyOrDummyResponse implements IDefaultResponse {
       if (returnType == SortedSet.class) return new TreeSet();
       if (returnType == SortedMap.class) return new TreeMap();
       if (returnType == CharSequence.class) return "";
-      if (returnType == STREAM) return ReflectionUtil.invokeMethod(null, streamEmptyMethod);
-      if (returnType == INT_STREAM) return ReflectionUtil.invokeMethod(null, intStreamEmptyMethod);
-      if (returnType == DOUBLE_STREAM) return ReflectionUtil.invokeMethod(null, doubleStreamEmptyMethod);
-      if (returnType == LONG_STREAM) return ReflectionUtil.invokeMethod(null, longStreamEmptyMethod);
+      if (returnType == Stream.class) return Stream.empty();
+      if (returnType == IntStream.class) return IntStream.empty();
+      if (returnType == DoubleStream.class) return DoubleStream.empty();
+      if (returnType == LongStream.class) return LongStream.empty();
       return createDummy(invocation);
     }
 
@@ -113,8 +88,8 @@ public class EmptyOrDummyResponse implements IDefaultResponse {
       // continue on
     }
 
-    if (returnType == OPTIONAL) return ReflectionUtil.invokeMethod(null, optionalEmptyMethod);
-    if (returnType == COMPLETABLE_FUTURE) return ReflectionUtil.invokeMethod(null, completableFutureCompletedFutureMethod, (Object) null);
+    if (returnType == Optional.class) return Optional.empty();
+    if (returnType == CompletableFuture.class) return CompletableFuture.completedFuture(null);
 
     Object emptyWrapper = createEmptyWrapper(returnType);
     if (emptyWrapper != null) return emptyWrapper;

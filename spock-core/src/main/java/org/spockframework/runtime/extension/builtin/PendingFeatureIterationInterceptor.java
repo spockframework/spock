@@ -9,8 +9,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 class PendingFeatureIterationInterceptor extends PendingFeatureBaseInterceptor implements IMethodInterceptor {
 
-  public PendingFeatureIterationInterceptor(Class<? extends Throwable>[] expectedExceptions, String reason) {
-    super(expectedExceptions, reason);
+  public PendingFeatureIterationInterceptor(Class<? extends Throwable>[] expectedExceptions, String reason, String annotationUsed) {
+    super(expectedExceptions, reason, annotationUsed);
   }
 
   @Override
@@ -18,7 +18,7 @@ class PendingFeatureIterationInterceptor extends PendingFeatureBaseInterceptor i
 
     AtomicBoolean pass = new AtomicBoolean(false);
     invocation.getFeature().getFeatureMethod().addInterceptor(
-      new InnerIterationInterceptor(pass, expectedExceptions, reason));
+      new InnerIterationInterceptor(pass, expectedExceptions, reason, annotationUsed));
     invocation.proceed();
 
     if (pass.get()) {
@@ -32,8 +32,8 @@ class PendingFeatureIterationInterceptor extends PendingFeatureBaseInterceptor i
     private final AtomicBoolean pass;
 
     public InnerIterationInterceptor(AtomicBoolean pass, Class<? extends Throwable>[] expectedExceptions,
-                                     String reason) {
-      super(expectedExceptions, reason);
+                                     String reason, String annotationUsed) {
+      super(expectedExceptions, reason, annotationUsed);
       this.pass = pass;
     }
 

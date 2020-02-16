@@ -74,7 +74,7 @@ class Derived extends Base {
     log == ["ss1", "ss2", "s1", "s2", "c2", "c1", "cs2", "cs1"]
   }
 
-  @Issue("http://issues.spockframework.org/detail?id=139")
+  @Issue("https://github.com/spockframework/spock/issues/261")
   def "setupSpec() may not access instance fields (only @Shared and static fields)"() {
     when:
     compiler.compileSpecBody """
@@ -90,7 +90,7 @@ def setupSpec() {
     e.message.contains("@Shared")
   }
 
-  @Issue("http://issues.spockframework.org/detail?id=139")
+  @Issue("https://github.com/spockframework/spock/issues/261")
   def "cleanupSpec() may not access instance fields (only @Shared and static fields)"() {
     when:
     compiler.compileSpecBody """

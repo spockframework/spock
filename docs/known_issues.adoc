@@ -1,0 +1,145 @@
+= Known Issues
+include::include.adoc[]
+
+== Usage of `final` in a feature method with `cleanup` https://github.com/spockframework/spock/issues/1017[#1017]
+
+You might run into issues if you use `final` in your Specification.
+Groovy 2.5 introduced a final checker which broke previously compiling code.
+
+*tl;dr*: Do not use `final` inside of features if you get compile errors.
+
+[quote,'https://groovy-lang.org/releasenotes/groovy-2.5.html#Groovy2.5releasenotes-Knownissues[Groovy 2.5 Release Notes]']
+____
+Users combining `final` and `@CompileStatic` or `final` and Spock may see errors from the `final` variable analyzer.
+Work is underway to resolve those error messages.
+You may need to temporarily remove the final modifier in the meantime.
+____
+
+[source,groovy]
+----
+class Broken extends Specification {
+    def "test"() {
+        final value = 'hello'
+
+        expect:
+        value.size() > 3
+
+        cleanup:
+        clean value
+    }
+
+    def clean(v) {}
+}
+----
+
+Will fail with something like.
+
+----
+> Task :compileTestGroovy FAILED
+startup failed:
+/Users/acme/projects/spock-tests/src/test/groovy/Broken.groovy: 11: The variable [value] may be uninitialized
+. At [11:15]  @ line 11, column 15.
+           clean value
+----
+
+This is due to how Spock implements `cleanup`, by wrapping the whole body in a `try-finally` block during the AST transformation.
+If you look at the compiled code you can see how it was transformed
+
+[source,groovy]
+----
+try {
+    java.lang.Object value                                       // <1>
+    java.lang.Throwable $spock_feature_throwable
+    try {
+        value = 'hello'                                          // <2>
+        try {
+            org.spockframework.runtime.SpockRuntime.verifyCondition($spock_errorCollector, $spock_valueRecorder.reset(), 'value.size() > 3', 8, 9, null, $spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(5), $spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(3), $spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(0), value).$spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(1), 'size')()) > $spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(4), 3)))
+        }
+        catch (java.lang.Throwable throwable) {
+            org.spockframework.runtime.SpockRuntime.conditionFailedWithException($spock_errorCollector, $spock_valueRecorder, 'value.size() > 3', 8, 9, null, throwable)}
+        finally {
+        }
+    }
+    catch (java.lang.Throwable $spock_tmp_throwable) {
+        $spock_feature_throwable = $spock_tmp_throwable
+        throw $spock_tmp_throwable
+    }
+    finally {
+        try {
+            this.clean(value)                                   // <3>
+        }
+        catch (java.lang.Throwable $spock_tmp_throwable) {
+            if ( $spock_feature_throwable != null) {
+                $spock_feature_throwable.addSuppressed($spock_tmp_throwable)
+            } else {
+                throw $spock_tmp_throwable
+            }
+        }
+        finally {
+        }
+    }
+    this.getSpecificationContext().getMockController().leaveScope()
+}
+finally {
+    $spock_errorCollector.validateCollectedErrors()
+}
+----
+<1> Here it moved the variable declaration outside of the `try-finally` block
+<2> Here it tries to initialize the field
+<3> Here it is passed to cleanup
+
+The catch-22 is that the variable must be declared outside of the `try-finally` block, to be available in the finally,
+but for the variable initialization to be covered by the cleanup it must be initialized inside the `try` block.
+This works fine for normal variables, but final variable can only be initialized when they are declared.
+
+
+== Using Traits with Specifications
+
+Traits on Specifications are not supported by Spock, some use-cases might work while others don't.
+This is due to how groovy implements traits and AST transformations.
+
+[quote,'http://docs.groovy-lang.org/next/html/documentation/core-traits.html#_compatibility_with_ast_transformations[Groovy Docs]']
+____
+Traits are not officially compatible with AST transformations. Some of them, like @CompileStatic will be applied on the trait itself (not on implementing classes), while others will apply on both the implementing class and the trait. There is absolutely no guarantee that an AST transformation will run on a trait as it does on a regular class, so use it at your own risk!
+____
+
+== Type confusion when using Data-Driven features https://github.com/spockframework/spock/issues/880[#880]
+
+When using data-driven features and variables with the same name but different type in two places with at least one of them in a `where`-block,
+you'll encounter this problem.
+
+[source,groovy]
+----
+class MyTest extends Specification {
+    @Unroll
+    def "#a <=> #b: #result"() {
+        expect:
+        Math.signum(a <=> b) == result
+
+        where:
+        a            | b            | result
+        "abcdef12"   | "abcdef12"   | 0
+    }
+
+    private double[] someOtherMethod() {
+        double[] result = new double[0]
+        return result
+    }
+}
+----
+
+----
+abcdef12 <=> abcdef12: [0.0]
+Condition not satisfied:
+
+Math.signum(a <=> b) == result
+     |      | |   |  |  |
+     0.0    | 0   |  |  [0.0]
+            |     |  false
+            |     abcdef12
+            abcdef12
+
+	at MyTest.#a <=> #b: #result(MyTest.groovy:8)
+----
+
+This issue was introduced by groovy-2.5, previous versions worked fine.

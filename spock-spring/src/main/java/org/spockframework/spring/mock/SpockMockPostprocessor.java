@@ -198,14 +198,8 @@ public class SpockMockPostprocessor extends InstantiationAwareBeanPostProcessorA
       }
     }
 
-    //TODO Java 8 beans.removeIf(this::isScopedTarget);
-    Iterator<String> iterator = beans.iterator();
-    while (iterator.hasNext()) {
-      if (isScopedTarget(iterator.next())) {
-        iterator.remove();
-      }
-    }
-    return beans.toArray(new String[beans.size()]);
+    beans.removeIf(this::isScopedTarget);
+    return beans.toArray(new String[0]);
   }
 
   private boolean isScopedTarget(String beanName) {

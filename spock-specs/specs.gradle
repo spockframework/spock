@@ -5,12 +5,12 @@ description = "Spock specifications for the Core Module. Yes, we eat our own dog
 apply plugin: "spock-base"
 
 configurations {
-  spockReport
   junit
 }
 
 dependencies {
   testCompile project(":spock-core")
+  testCompile project(":spock-junit4")
 
   testRuntime libs.asm
   testRuntime libs.bytebuddy
@@ -18,9 +18,7 @@ dependencies {
   testRuntime libs.objenesis
   testRuntime libs.h2database
 
-  spockReport project(":spock-report")
-
-  junit libs.junit
+  junit libs.junit4
 }
 
 sourceCompatibility = javaVersion
@@ -32,35 +30,15 @@ tasks.withType(GroovyCompile) {
 	groovyClasspath += configurations.junit
 }
 
-ext.spockLogFileDir = file("$buildDir/spock/logFiles")
-ext.spockLogFileName = "spock-log"
-
 test {
-  finalizedBy "spockReport"
   reports.junitXml.enabled = true
-  reports.html.enabled = false
+  reports.html.enabled = true
 
   testLogging.exceptionFormat = "full"
   testLogging.showExceptions = true
+  testLogging.events 'standard_out'
+  testLogging.events 'standard_error'
   maxParallelForks = 1
-
-  systemProperty "spock.logFileDir", spockLogFileDir
-  systemProperty "spock.logFileName", spockLogFileName
-  //systemProperty "spock.reportServerAddress", "127.0.0.1"
-
-  doFirst {
-    delete spockLogFileDir
-  }
-}
-
-task spockReport(type: org.spockframework.gradle.GenerateSpockReport) {
-  reportName = "spock-specs"
-  reportFileName = "spock-specs.html"
-  debug = true
-  local = true
-  liveLogFiles = (1..10).collect { file("$spockLogFileDir/$spockLogFileName-$it") }
-  spockReportClasspath = configurations.spockReport
-  outputDirectory = file("$buildDir/reports/spock/$variant")
 }
 
 task groovyConsole(type: JavaExec) {

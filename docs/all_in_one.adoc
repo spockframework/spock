@@ -20,3 +20,5 @@ include::modules.adoc[leveloffset=+1]
 include::release_notes.adoc[leveloffset=+1]
 
 include::migration_guide.adoc[leveloffset=+1]
+
+include::known_issues.adoc[leveloffset=+1]

@@ -14,25 +14,20 @@
 
 package org.spockframework.smoke.parameterization
 
+import org.opentest4j.MultipleFailuresError
 import org.spockframework.EmbeddedSpecification
 import org.spockframework.compiler.InvalidSpecCompileException
 import org.spockframework.runtime.SpockExecutionException
-import spock.lang.*
 
-import org.junit.runner.notification.RunListener
-import org.junit.runners.model.MultipleFailureException
+import spock.lang.Ignore
+import spock.lang.Issue
+import spock.lang.Shared
 
 class DataTables extends EmbeddedSpecification {
   static staticField = 42
 
   @Shared
   def sharedField = 42
-
-  RunListener listener = Mock()
-
-  def setup() {
-    runner.listeners << listener
-  }
 
   def "basic usage"() {
     expect:
@@ -57,7 +52,7 @@ a
     """
 
     then:
-    MultipleFailureException e = thrown()
+    MultipleFailuresError e = thrown()
     e.failures*.class == [InvalidSpecCompileException] * 2
   }
 
@@ -192,7 +187,7 @@ a | a
     staticField | sharedField
   }
 
-  @Issue("http://issues.spockframework.org/detail?id=139")
+  @Issue("https://github.com/spockframework/spock/issues/261")
   def "cells cannot reference instance fields"() {
     when:
     compiler.compileSpecBody """
@@ -266,7 +261,7 @@ local | 1
 
   def "cell references are evaluated correctly in the method's name"() {
     when:
-    runner.runSpecBody '''
+    def result = runner.runSpecBody '''
       @Unroll def 'a = #a, b = #b'() {
         expect:
         true
@@ -279,8 +274,7 @@ local | 1
     '''
 
     then:
-    1 * listener.testStarted { it.methodName == "a = 0, b = 1" }
-    1 * listener.testStarted { it.methodName == "a = 2, b = 2" }
+    result.tests().finished().list().testDescriptor.displayName == ["a = 0, b = 1", "a = 2, b = 2" ]
   }
 
   def "cells can't reference next cells"() {

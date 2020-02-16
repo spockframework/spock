@@ -50,9 +50,9 @@ class Spec2 extends Spec1 {
     def result = runner.runClasses(specs)
 
     then:
-    result.runCount == runCount
-    result.failureCount == 0
-    result.ignoreCount == ignoreCount // cannot prevent JUnit from running excluded specs, so they get ignored
+    result.testsSucceededCount == runCount
+    result.testsFailedCount == 0
+    result.testsSkippedCount == 0
 
     where:
     annotationTypes << [[Slow], [Fast], [Slow, Fast]]
@@ -71,9 +71,9 @@ class Spec2 extends Spec1 {
     def result = runner.runClasses(specs)
 
     then:
-    result.runCount == runCount
-    result.failureCount == 0
-    result.ignoreCount == ignoreCount // cannot prevent JUnit from running excluded specs, so they get ignored
+    result.testsSucceededCount == runCount
+    result.testsFailedCount == 0
+    result.testsSkippedCount == 0
 
     where:
     annotationTypes << [[Slow], [Fast], [Slow, Fast]]

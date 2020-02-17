@@ -29,7 +29,7 @@ class RequiresExtension extends EmbeddedSpecification {
     when:
     def results = runner.runClass(RequiresExtensionExamples)
     then:
-    results.testsSucceededCount == 5
+    results.testsSucceededCount == 6
     results.testsFailedCount == 0
     results.testsSkippedCount == 2
     results.tests().skipped().list().testDescriptor.displayName == [
@@ -69,6 +69,18 @@ class RequiresExtension extends EmbeddedSpecification {
     @Requires({ sys.containsKey("java.version") })
     def "provides access to system properties"() {
       expect: true
+    }
+
+    @Requires({ a == 2 })
+    def 'can evaluate for single iterations if data variables are accessed'() {
+      expect: a == 2
+      where: a << [1, 2]
+    }
+
+    @Requires({ false })
+    def 'can skip data providers completely if no data variables are accessed'() {
+      expect: false
+      where: a = { throw new RuntimeException() }.call()
     }
 
     @Issue("https://github.com/spockframework/spock/issues/535")

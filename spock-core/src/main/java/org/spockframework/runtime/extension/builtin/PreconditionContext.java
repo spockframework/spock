@@ -17,10 +17,12 @@
 package org.spockframework.runtime.extension.builtin;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.regex.Pattern;
 
+import groovy.lang.MissingPropertyException;
 import spock.util.environment.Jvm;
 import spock.util.environment.OperatingSystem;
 
@@ -29,6 +31,19 @@ import spock.util.environment.OperatingSystem;
  */
 public class PreconditionContext {
   private static final Pattern JAVA_VERSION = Pattern.compile("(\\d+\\.\\d+).*");
+
+  private final Map<String, Object> dataVariables = new HashMap<>();
+
+  public Object propertyMissing(String propertyName) {
+    if (dataVariables.containsKey(propertyName)) {
+      return dataVariables.get(propertyName);
+    }
+    throw new MissingPropertyException(propertyName, getClass());
+  }
+
+  public void setDataVariable(String name, Object value) {
+    dataVariables.put(name, value);
+  }
 
   /**
    * Returns the current JVM's environment variables.

@@ -16,8 +16,8 @@
 
 package org.spockframework.runtime.extension.builtin;
 
-import org.spockframework.runtime.GroovyRuntimeUtil;
-import org.spockframework.runtime.extension.*;
+import org.opentest4j.TestAbortedException;
+import org.spockframework.runtime.extension.IMethodInvocation;
 import org.spockframework.runtime.model.*;
 import spock.lang.Requires;
 
@@ -26,41 +26,30 @@ import groovy.lang.Closure;
 /**
  * @author Peter Niederwieser
  */
-public class RequiresExtension extends AbstractAnnotationDrivenExtension<Requires> {
-	@Override
-	public void visitSpecAnnotation(Requires annotation, SpecInfo spec) {
-    doVisit(annotation, spec);
+public class RequiresExtension extends ConditionalExtension<Requires> {
+  @Override
+  protected Class<? extends Closure> getConditionClass(Requires annotation) {
+    return annotation.value();
   }
 
   @Override
-  public void visitFeatureAnnotation(Requires annotation, FeatureInfo feature) {
-    doVisit(annotation, feature);
-  }
-
-  private void doVisit(Requires annotation, ISkippable skippable) {
-    Closure condition = createCondition(annotation.value());
-    Object result = evaluateCondition(condition);
-    if (!GroovyRuntimeUtil.isTruthy(result)) {
-      skippable.skip("Ignored via @Requires");
+  protected void specConditionResult(boolean result, Requires annotation, SpecInfo spec) {
+    if (!result) {
+      spec.skip("Ignored via @Requires");
     }
   }
 
-  private Closure createCondition(Class<? extends Closure> clazz) {
-    try {
-      return clazz.getConstructor(Object.class, Object.class).newInstance(null, null);
-    } catch (Exception e) {
-      throw new ExtensionException("Failed to instantiate @Requires condition", e);
+  @Override
+  protected void featureConditionResult(boolean result, Requires annotation, FeatureInfo feature) {
+    if (!result) {
+      feature.skip("Ignored via @Requires");
     }
   }
 
-  private Object evaluateCondition(Closure condition) {
-    condition.setDelegate(new PreconditionContext());
-    condition.setResolveStrategy(Closure.DELEGATE_ONLY);
-
-    try {
-      return condition.call();
-    } catch (Exception e) {
-      throw new ExtensionException("Failed to evaluate @Requires condition", e);
+  @Override
+  protected void iterationConditionResult(boolean result, Requires annotation, IMethodInvocation invocation) {
+    if (!result) {
+      throw new TestAbortedException("Ignored via @Requires");
     }
   }
 }

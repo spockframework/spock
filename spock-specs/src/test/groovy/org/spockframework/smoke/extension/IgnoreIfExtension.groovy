@@ -47,6 +47,18 @@ class IgnoreIfExtension extends Specification {
     expect: false
   }
 
+  @IgnoreIf({ a == 1 })
+  def 'can evaluate for single iterations if data variables are accessed'() {
+    expect: a == 2
+    where: a << [1, 2]
+  }
+
+  @IgnoreIf({ true })
+  def 'can skip data providers completely if no data variables are accessed'() {
+    expect: false
+    where: a = { throw new RuntimeException() }.call()
+  }
+
   @Issue("https://github.com/spockframework/spock/issues/535")
   @Requires({ false })
   @IgnoreIf({ false })

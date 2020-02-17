@@ -16,8 +16,8 @@
 
 package org.spockframework.runtime.extension.builtin;
 
-import org.spockframework.runtime.GroovyRuntimeUtil;
-import org.spockframework.runtime.extension.*;
+import org.opentest4j.TestAbortedException;
+import org.spockframework.runtime.extension.IMethodInvocation;
 import org.spockframework.runtime.model.*;
 import spock.lang.IgnoreIf;
 
@@ -26,42 +26,30 @@ import groovy.lang.Closure;
 /**
  * @author Peter Niederwieser
  */
-public class IgnoreIfExtension extends AbstractAnnotationDrivenExtension<IgnoreIf> {
-	@Override
-	public void visitSpecAnnotation(IgnoreIf annotation, SpecInfo spec) {
-    doVisit(annotation, spec);
+public class IgnoreIfExtension extends ConditionalExtension<IgnoreIf> {
+  @Override
+  protected Class<? extends Closure> getConditionClass(IgnoreIf annotation) {
+    return annotation.value();
   }
 
   @Override
-  public void visitFeatureAnnotation(IgnoreIf annotation, FeatureInfo feature) {
-    doVisit(annotation, feature);
-  }
-
-  private void doVisit(IgnoreIf annotation, ISkippable skippable) {
-    Closure condition = createCondition(annotation.value());
-    Object result = evaluateCondition(condition);
-    if (GroovyRuntimeUtil.isTruthy(result)) {
-      skippable.skip("Ignored via @IgnoreIf");
+  protected void specConditionResult(boolean result, IgnoreIf annotation, SpecInfo spec) {
+    if (result) {
+      spec.skip("Ignored via @IgnoreIf");
     }
   }
 
-  private Closure createCondition(Class<? extends Closure> clazz) {
-    try {
-      return clazz.getConstructor(Object.class, Object.class).newInstance(null, null);
-    } catch (Exception e) {
-      throw new ExtensionException("Failed to instantiate @IgnoreIf condition", e);
+  @Override
+  protected void featureConditionResult(boolean result, IgnoreIf annotation, FeatureInfo feature) {
+    if (result) {
+      feature.skip("Ignored via @IgnoreIf");
     }
   }
 
-  private Object evaluateCondition(Closure condition) {
-    PreconditionContext context = new PreconditionContext();
-    condition.setDelegate(context);
-    condition.setResolveStrategy(Closure.DELEGATE_ONLY);
-
-    try {
-      return condition.call(context);
-    } catch (Exception e) {
-      throw new ExtensionException("Failed to evaluate @IgnoreIf condition", e);
+  @Override
+  protected void iterationConditionResult(boolean result, IgnoreIf annotation, IMethodInvocation invocation) {
+    if (result) {
+      throw new TestAbortedException("Ignored via @IgnoreIf");
     }
   }
 }

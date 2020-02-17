@@ -25,15 +25,25 @@ import groovy.lang.Closure;
 
 import org.spockframework.runtime.extension.ExtensionAnnotation;
 import org.spockframework.runtime.extension.builtin.IgnoreIfExtension;
+import org.spockframework.runtime.extension.builtin.PreconditionContext;
 
 /**
- * Ignores the annotated spec or feature if the given condition holds.
+ * Ignores the annotated spec, feature or selected iterations if the given condition holds.
  * Same as {@link Requires} except that the condition is inverted.
  *
- * The configured closure is called with a delegate of type
- * {@link org.spockframework.runtime.extension.builtin.PreconditionContext}
+ * <p>The configured closure is called with a delegate of type {@link PreconditionContext}
  * which provides access to system properties, environment variables, the type
  * of operating system and JVM.
+ *
+ * <p>If applied to a data driven feature, the closure can also access the data variables.
+ * If the closure does not reference any actual data variables or is applied to a spec,
+ * the whole annotated element is skipped up-front, no fixtures, data providers or anything
+ * else will be executed. But if the closure actually does reference valid data variables,
+ * the whole workflow is followed up to the feature method invocation, where then the closure
+ * is checked and it is decided whether to abort the specific iteration or not.
+ *
+ * @see Requires
+ * @see PreconditionContext
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE, ElementType.METHOD})

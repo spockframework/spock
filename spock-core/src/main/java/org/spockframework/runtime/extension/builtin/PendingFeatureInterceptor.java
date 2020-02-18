@@ -1,5 +1,6 @@
 package org.spockframework.runtime.extension.builtin;
 
+import org.opentest4j.TestAbortedException;
 import org.spockframework.runtime.extension.*;
 
 /**
@@ -15,16 +16,18 @@ class PendingFeatureInterceptor extends PendingFeatureBaseInterceptor implements
   public void intercept(IMethodInvocation invocation) throws Throwable {
     try {
       invocation.proceed();
+    } catch (TestAbortedException e) {
+      throw e;
     } catch (AssertionError e) {
-      throw assumptionViolation();
+      throw testAborted(e.getStackTrace());
     } catch (Throwable e) {
       if (isExpected(e)) {
-        throw assumptionViolation();
+        throw testAborted(e.getStackTrace());
       } else {
         throw e;
       }
     }
-    throw featurePassedUnexpectedly();
+    throw featurePassedUnexpectedly(null);
   }
 
 }

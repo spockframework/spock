@@ -21,6 +21,14 @@ subscriber.receive(_) >> _
 
 JUnit Plafform 1.6 (https://junit.org/junit5/docs/5.6.0/release-notes/index.html#deprecations-and-breaking-changes[deprecated]) methods (from experimental API)  in `EngineExecutionResults` that Spock was using. To keep runtime compatibility with JUnit 5.6 and incoming 5.7 the implementation has been switched to the new methods. As a result, Spock 2.0-M3 cannot work with JUnit 5.5 and lower. The problem might only occur if a project overrides default JUnit Platform version provided by Spock.
 
+// tag::renamed-iteration-count-token[]
+==== Renamed iterationCount token
+
+The token `#iterationCount` in unroll patterns was renamed to `#iterationIndex`.
+If you use it somewhere, you have to manually change it to the new name
+or you will get an `#Error:iterationCount` rendering instead.
+// end::renamed-iteration-count-token[]
+
 === Misc
 
 - Upgrade JUnit 4 to 4.13
@@ -50,7 +58,18 @@ a ; b ;; c
 1 ; 2 ;; 3
 ----
 
-- `IterationInfo` now has a property for a map of data variable names to values.
+// tag::fancy-iteration-naming[]
+- The default unroll pattern changed from the rather generic `#featureName[#iterationIndex]` to a more fancy
+  version that lists all data variables and their values additionally to the feature name and iteration index.
+  If you prefer to retain the old behaviour, you can set the system property `spock.globalUnrollPattern`
+  to the value `#featureName[#iterationIndex]` and you will get the same result as previously.
+// end::fancy-iteration-naming[]
+
+- If neither a parameter to the `@Unroll` annotation is given, nor the method name contains a `#`,
+  now the system property `spock.globalUnrollPattern` is inspected. If it is set to a non-blank string,
+  this value is used as unroll pattern.
+
+- `IterationInfo` now has a property for the `iterationIndex` and one for a map of data variable names to values.
   This is typically not interesting for the average user, but might be helpful for authors of Spock extensions.
 
 == 2.0-M2 (2020-02-10)

@@ -19,17 +19,21 @@ import org.spockframework.util.DataVariableMap;
 import java.lang.reflect.AnnotatedElement;
 import java.util.*;
 
+import static java.util.Collections.unmodifiableMap;
+
 /**
  * Runtime information about an iteration of a feature method.
  */
 public class IterationInfo extends NodeInfo<FeatureInfo, AnnotatedElement> {
+  private final int iterationIndex;
   private final Object[] dataValues;
   private final int estimatedNumIterations;
   private final List<Runnable> cleanups = new ArrayList<>();
   private Map<String, Object> dataVariables;
 
-  public IterationInfo(FeatureInfo feature, Object[] dataValues, int estimatedNumIterations) {
+  public IterationInfo(FeatureInfo feature, int iterationIndex, Object[] dataValues, int estimatedNumIterations) {
     setParent(feature);
+    this.iterationIndex = iterationIndex;
     this.dataValues = dataValues;
     this.estimatedNumIterations = estimatedNumIterations;
   }
@@ -54,6 +58,16 @@ public class IterationInfo extends NodeInfo<FeatureInfo, AnnotatedElement> {
   @Override
   public String getName() {
     return super.getName();
+  }
+
+  /**
+   * Return this iterations's index in the sequence of iterations of the owning feature
+   * method. The index starts with 0 for the first iteration and then counts up continuously.
+   *
+   * @return this iteration's index in the sequence of iterations of the owning feature method
+   */
+  public int getIterationIndex() {
+    return iterationIndex;
   }
 
   /**

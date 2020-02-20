@@ -14,13 +14,12 @@
 
 package org.spockframework.runtime;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
 import org.spockframework.runtime.model.*;
+
+import static java.lang.String.format;
 
 public class SafeIterationNameProvider implements NameProvider<IterationInfo> {
   private final NameProvider<IterationInfo> delegate;
-  private AtomicInteger iterationCount = new AtomicInteger();
 
   public SafeIterationNameProvider(NameProvider<IterationInfo> delegate) {
     this.delegate = delegate;
@@ -28,17 +27,20 @@ public class SafeIterationNameProvider implements NameProvider<IterationInfo> {
 
   @Override
   public String getName(IterationInfo iteration) {
-    String safeName = iteration.getParent().isReportIterations() ?
-        String.format("%s[%d]", iteration.getParent().getName(), iterationCount.getAndIncrement()) : iteration.getParent().getName();
-
-    if (delegate == null) return safeName;
+    if (delegate == null) return getFallbackName(iteration);
 
     try {
       String name = delegate.getName(iteration);
       if (name != null) return name;
-      return safeName;
+      return getFallbackName(iteration);
     } catch (Exception e) {
-      return safeName;
+      return getFallbackName(iteration);
     }
+  }
+
+  private String getFallbackName(IterationInfo iteration) {
+    return iteration.getFeature().isReportIterations()
+      ? format("%s [#%d]", iteration.getFeature().getName(), iteration.getIterationIndex())
+      : iteration.getFeature().getName();
   }
 }

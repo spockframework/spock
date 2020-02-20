@@ -111,11 +111,11 @@ class Parameterizations extends EmbeddedSpecification {
 
   def "can use data variables named like special @Unroll variables"() {
     expect:
-    iterationCount == featureName * 2
+    iterationIndex == featureName * 2
 
     where:
     featureName << [1, 2, 3]
-    iterationCount << [2, 4, 6]
+    iterationIndex << [2, 4, 6]
   }
 
   @Issue("https://github.com/spockframework/spock/issues/396")

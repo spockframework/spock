@@ -100,11 +100,11 @@ class DataSpec extends Specification {
 // tag::combined-variable-assignment[]
     where:
     a | _
-    3 | _
+    1 | _
     7 | _
     0 | _
 
-    b << [5, 0, 0]
+    b << [3, 4, 0]
 
     c = a > b ? a : b
 // end::combined-variable-assignment[]

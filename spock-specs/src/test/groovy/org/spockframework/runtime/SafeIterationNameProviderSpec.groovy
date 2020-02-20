@@ -24,7 +24,9 @@ import spock.lang.Specification
 
 class SafeIterationNameProviderSpec extends Specification {
   def feature = new FeatureInfo()
-  def iteration = new IterationInfo(feature, [] as Object[], 3)
+  IterationInfo iteration = Stub {
+    getFeature() >> feature
+  }
   def other = Mock(NameProvider)
   def provider = new SafeIterationNameProvider(other)
 
@@ -35,47 +37,71 @@ class SafeIterationNameProviderSpec extends Specification {
   def "delegates to other provider"() {
     when:
     provider.getName(iteration)
-    
+
     then:
     1 * other.getName(iteration)
   }
-  
+
   def "returns default if there is no other provider"() {
-    provider = new SafeIterationNameProvider(null)  
-    
+    provider = new SafeIterationNameProvider(null)
+
     expect:
     provider.getName(iteration) == "feature"
   }
-  
+
   def "returns default if other provider returns nothing"() {
     other.getName(iteration) >> null
 
     expect:
     provider.getName(iteration) == "feature"
   }
-  
+
   def "returns default if other provider blows up"() {
     other.getName(iteration) >> { throw new RuntimeException() }
 
     expect:
     provider.getName(iteration) == "feature"
   }
-  
+
   def "iteration name defaults to feature name when iterations aren't reported"() {
     feature.reportIterations = false
 
     expect:
     provider.getName(iteration) == "feature"
-    provider.getName(iteration) == "feature"
-    provider.getName(iteration) == "feature"
+
+    when:
+    def result = provider.getName(iteration)
+
+    then:
+    iteration.getIterationIndex() >> 1
+    result == "feature"
+
+    when:
+    result = provider.getName(iteration)
+
+    then:
+    iteration.getIterationIndex() >> 2
+    result == "feature"
   }
 
   def "iteration name defaults to indexed feature name when iterations are reported"() {
     feature.reportIterations = true
 
     expect:
-    provider.getName(iteration) == "feature[0]"
-    provider.getName(iteration) == "feature[1]"
-    provider.getName(iteration) == "feature[2]"
+    provider.getName(iteration) == "feature [#0]"
+
+    when:
+    def result = provider.getName(iteration)
+
+    then:
+    iteration.getIterationIndex() >> 1
+    result == "feature [#1]"
+
+    when:
+    result = provider.getName(iteration)
+
+    then:
+    iteration.getIterationIndex() >> 2
+    result == "feature [#2]"
   }
 }

@@ -20,6 +20,7 @@ import org.spockframework.EmbeddedSpecification
 import org.spockframework.runtime.SpockExecutionException
 import spock.lang.IgnoreRest
 import spock.lang.Issue
+import spock.util.environment.RestoreSystemProperties
 
 /**
  * @author Peter Niederwieser
@@ -49,7 +50,7 @@ def foo() {
     result.testsSkippedCount == 0
   }
 
-  def "iterations of an unrolled feature foo are named foo[0], foo[1], etc."() {
+  def "iterations of an unrolled feature foo are named 'foo [x: 1, #0]', 'foo [x: 2, #1]', etc."() {
     when:
     def result = runner.runSpecBody """
 @Unroll
@@ -62,7 +63,7 @@ def foo() {
     """
 
     then:
-    result.tests().started().list().testDescriptor.displayName == (0..2).collect {"foo[${it}]" }
+    result.tests().started().list().testDescriptor.displayName == (0..2).collect {"foo [x: ${it + 1}, #$it]" }
   }
 
   def "a feature with an empty data provider causes the same error regardless if it's unrolled or not"() {
@@ -129,10 +130,10 @@ def foo() {
                                                                    "one c two 3 three"]
   }
 
-  def "naming pattern may refer to feature name and iteration count"() {
+  def "naming pattern may refer to feature name and iteration index"() {
     when:
     def result = runner.runSpecBody("""
-@Unroll("one #featureName two #iterationCount three")
+@Unroll("one #featureName two #iterationIndex three")
 def foo() {
   expect: true
 
@@ -146,6 +147,52 @@ def foo() {
     result.tests().started().list().testDescriptor.displayName == ["one foo two 0 three",
                                                                    "one foo two 1 three",
                                                                    "one foo two 2 three"]
+  }
+
+  @RestoreSystemProperties
+  def "old iteration naming should be restorable using system property"() {
+    given:
+    System.properties.'spock.globalUnrollPattern' = '#featureName[#iterationIndex]'
+
+    when:
+    def result = runner.runSpecBody("""
+@Unroll
+def foo() {
+  expect: true
+
+  where:
+  x << [1, 2, 3]
+  y << ["a", "b", "c"]
+}
+    """)
+
+    then:
+    result.tests().started().list().testDescriptor.displayName == ["foo[0]",
+                                                                   "foo[1]",
+                                                                   "foo[2]"]
+  }
+
+  @RestoreSystemProperties
+  def "default iteration naming should be configurable using system property"() {
+    given:
+    System.properties.'spock.globalUnrollPattern' = '#featureName'
+
+    when:
+    def result = runner.runSpecBody("""
+@Unroll
+def foo() {
+  expect: true
+
+  where:
+  x << [1, 2, 3]
+  y << ["a", "b", "c"]
+}
+    """)
+
+    then:
+    result.tests().started().list().testDescriptor.displayName == ["foo",
+                                                                   "foo",
+                                                                   "foo"]
   }
 
   @Issue("https://github.com/spockframework/spock/issues/187")

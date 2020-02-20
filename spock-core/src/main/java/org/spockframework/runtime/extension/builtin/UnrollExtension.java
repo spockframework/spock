@@ -14,6 +14,8 @@
 
 package org.spockframework.runtime.extension.builtin;
 
+import org.spockframework.runtime.DataVariablesIterationNameProvider;
+import org.spockframework.runtime.GroovyRuntimeUtil;
 import org.spockframework.runtime.extension.AbstractAnnotationDrivenExtension;
 import org.spockframework.runtime.model.FeatureInfo;
 import org.spockframework.runtime.model.IterationInfo;
@@ -23,6 +25,13 @@ import org.spockframework.runtime.model.SpecInfo;
 import spock.lang.Unroll;
 
 public class UnrollExtension extends AbstractAnnotationDrivenExtension<Unroll> {
+  private final String globalUnrollPattern;
+
+  public UnrollExtension() {
+    String globalUnrollPattern = System.getProperty("spock.globalUnrollPattern");
+    this.globalUnrollPattern = GroovyRuntimeUtil.isTruthy(globalUnrollPattern) ? globalUnrollPattern : null;
+  }
+
   @Override
   public void visitSpecAnnotation(Unroll unroll, SpecInfo spec) {
     for (FeatureInfo feature : spec.getFeatures()) {
@@ -42,11 +51,14 @@ public class UnrollExtension extends AbstractAnnotationDrivenExtension<Unroll> {
 
   private NameProvider<IterationInfo> chooseNameProvider(Unroll unroll, FeatureInfo feature) {
     if (unroll.value().length() > 0) {
-      return new UnrollNameProvider(feature, unroll.value());
+      return new UnrollIterationNameProvider(feature, unroll.value());
     }
     if (feature.getName().contains("#")) {
-      return new UnrollNameProvider(feature, feature.getName());
+      return new UnrollIterationNameProvider(feature, feature.getName());
     }
-    return null;
+    if (globalUnrollPattern != null) {
+      return new UnrollIterationNameProvider(feature, globalUnrollPattern);
+    }
+    return new DataVariablesIterationNameProvider();
   }
 }

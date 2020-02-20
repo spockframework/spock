@@ -194,7 +194,8 @@ class PublisherSpec extends Specification {
 
     then:
 // tag::argConstraints[]
-    1 * subscriber.receive(endsWith("lo")) // any non-null argument that is-a String
+    1 * subscriber.receive(endsWith("lo")) // an argument matching the given Hamcrest matcher
+                                           // a String argument ending with "lo" in this case
 // end::argConstraints[]
   }
 

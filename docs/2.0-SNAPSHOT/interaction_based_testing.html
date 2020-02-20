@@ -310,7 +310,8 @@ _ * subscriber.receive(<span class="string"><span class="delimiter">&quot;</span
 <span class="integer">1</span> * subscriber.receive(*_)             <span class="comment">// any argument list (including the empty argument list)</span>
 <span class="integer">1</span> * subscriber.receive(!<span class="predefined-constant">null</span>)          <span class="comment">// any non-null argument</span>
 <span class="integer">1</span> * subscriber.receive(_ <span class="keyword">as</span> <span class="predefined-type">String</span>)    <span class="comment">// any non-null argument that is-a String</span>
-<span class="integer">1</span> * subscriber.receive(endsWith(<span class="string"><span class="delimiter">&quot;</span><span class="content">lo</span><span class="delimiter">&quot;</span></span>)) <span class="comment">// any non-null argument that is-a String</span>
+<span class="integer">1</span> * subscriber.receive(endsWith(<span class="string"><span class="delimiter">&quot;</span><span class="content">lo</span><span class="delimiter">&quot;</span></span>)) <span class="comment">// an argument matching the given Hamcrest matcher</span>
+                                       <span class="comment">// a String argument ending with &quot;lo&quot; in this case</span>
 <span class="integer">1</span> * subscriber.receive({ <span class="local-variable">it</span>.size() &gt; <span class="integer">3</span> &amp;&amp; <span class="local-variable">it</span>.contains(<span class="string"><span class="delimiter">'</span><span class="content">a</span><span class="delimiter">'</span></span>) })
 <span class="comment">// an argument that satisfies the given predicate, meaning that</span>
 <span class="comment">// code argument constraints need to return true of false</span>
@@ -1498,7 +1499,7 @@ mock.nature == MockNature.MOCK</code></pre>
 <div id="footer">
 <div id="footer-text">
 Version 2.0-SNAPSHOT<br>
-Last updated 2020-02-16 21:29:35 UTC
+Last updated 2020-02-20 19:30:40 UTC
 </div>
 </div>
 </body>

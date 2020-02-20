@@ -42,7 +42,7 @@ class UseJUnitTestNameRule extends Specification {
   @Unroll
   def "data-driven, unrolled w/o name pattern"() {
     expect:
-    name.methodName == "data-driven, unrolled w/o name pattern[${i-1}]"
+    name.methodName == "data-driven, unrolled w/o name pattern [i: $i, iterationIndex: ${i-1}]"
 
     where:
     i << (1..3)
@@ -57,10 +57,10 @@ class UseJUnitTestNameRule extends Specification {
     pattern << ["foo", "bar", "baz"]
   }
 
-  @Unroll("data-driven, unrolled w/ closure pattern #pattern")
+  @Unroll("data-driven, unrolled w/ annotation pattern #pattern")
   def foo() {
     expect:
-    name.methodName == "data-driven, unrolled w/ closure pattern $pattern"
+    name.methodName == "data-driven, unrolled w/ annotation pattern $pattern"
 
     where:
     pattern << ["foo", "bar", "baz"]

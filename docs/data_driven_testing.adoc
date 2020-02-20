@@ -130,15 +130,15 @@ Note that unrolling has no effect on how the method gets executed; it is only an
 Depending on the execution environment, the output will look something like:
 
 ----
-maximum of two numbers[0]   PASSED
-maximum of two numbers[1]   FAILED
+maximum of two numbers [a: 1, b: 3, c: 3, iterationIndex: 0]   PASSED
+maximum of two numbers [a: 7, b: 4, c: 7, iterationIndex: 1]   FAILED
 
 Math.max(a, b) == c
     |    |  |  |  |
     |    7  4  |  7
     42         false
 
-maximum of two numbers[2]   PASSED
+maximum of two numbers [a: 0, b: 0, c: 0, iterationIndex: 2]   PASSED
 ----
 
 This tells us that the second iteration (with index 1) failed. With a bit of effort, we can do even better:
@@ -153,7 +153,7 @@ This method name uses placeholders, denoted by a leading hash sign (`#`), to ref
 and `c`. In the output, the placeholders will be replaced with concrete values:
 
 ----
-maximum of 3 and 5 is 5   PASSED
+maximum of 1 and 3 is 3   PASSED
 maximum of 7 and 4 is 7   FAILED
 
 Math.max(a, b) == c
@@ -258,8 +258,7 @@ such a method.
 
 An unrolled method name is similar to a Groovy `GString`, except for the following differences:
 
-* Expressions are denoted with `#` instead of `$` footnote:[Groovy syntax does not allow dollar signs in method names.],
-  and there is no equivalent for the `${...}` syntax.
+* Expressions are denoted with `#` instead of `$`, and there is no equivalent for the `${...}` syntax.
 * Expressions only support property access and zero-arg method calls.
 
 Given a class `Person` with properties `name` and `age`, and a data variable `person` of type `Person`, the
@@ -289,3 +288,35 @@ include::{sourcedir}/datadriven/DataSpec.groovy[tag=unrolled-3a]
     ...
 include::{sourcedir}/datadriven/DataSpec.groovy[tag=unrolled-3b]
 ----
+
+Additionally to the data variables the tokens `#featureName` and `#iterationIndex` are supported.
+The former does not make much sense inside an actual feature name, but there are two other places
+where an unroll pattern can be defined, where it is more useful.
+
+[source,groovy,indent=0]
+----
+def "#person is #person.age years old [iterationIndex: #iterationIndex]"() {
+----
+
+Alternatively to specifying the unroll pattern as method name, it can be given as parameter
+to the `@Unroll` annotation which takes precedence over the method name:
+
+[source,groovy,indent=0]
+----
+@Unroll("#featureName[#iterationIndex] (#person.name is #person.age years old)")
+def "person age should be calculated properly"() {
+----
+
+If neither a parameter to the annotation is given, nor the method name contains a `#`,
+the system property `spock.globalUnrollPattern` is inspected. If it is set to a non-blank
+string, this value is used as unroll pattern. This could for example be set to
+
+- `#featureName` to have all iterations reported with the same name, or
+- `#featureName[#iterationIndex]` to have a simply indexed iteration name, or
+- `#iterationName` if you make sure that in each data-driven feature you also set
+  a data variable called `iterationName` that is then used for reporting
+
+If none of the three described ways is used to set a custom unroll pattern, by default
+the feature name is used, suffixed with all data variable names and their values and
+finally the iteration index, so the result will be for example
+`my feature [x: 1, y: 2, z: 3, iterationIndex: 0]`.

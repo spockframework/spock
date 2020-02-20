@@ -17,6 +17,24 @@ With the new behavior, you can have a `Mock` or `Spy` return the same value as a
 subscriber.receive(_) >> _
 ----
 
+=== Misc
+
+- The default unroll pattern changed from the rather generic `#featureName[#iterationIndex]` to a more fancy
+  version that lists all data variables and their values additionally to the feature name and iteration index.
+  If you prefer to retain the old behaviour, you can set the system property `spock.globalUnrollPattern`
+  to the value `#featureName[#iterationIndex]` and you will get the same result as previously.
+
+- If neither a parameter to the `@Unroll` annotation is given, nor the method name contains a `#`,
+  now the system property `spock.globalUnrollPattern` is inspected. If it is set to a non-blank string,
+  this value is used as unroll pattern.
+
+- The token `#iterationCount` in unroll patterns was deprecated and you should use the replacement token
+  `#iterationIndex` instead. If you still use the old token somewhere, a warning will be printed to
+  `System.err` for each occurrence.
+
+- `IterationInfo` now has a property for the `iterationIndex` and one for a map of data variable names to values.
+  This is typically not interesting for the average user, but might be helpful for authors of Spock extensions.
+
 == 2.0-M2 (2020-02-10)
 
 === Groovy-3.0 Support
@@ -173,7 +191,7 @@ a == b
 Additional message
 ----
 
-If you relied on this behavior to hide some output, or to prevent a stack overflow due to a self referenceing
+If you relied on this behavior to hide some output, or to prevent a stack overflow due to a self referencing
 data structure, then you need to move the condition into a separate method that just returns the boolean result.
 
 

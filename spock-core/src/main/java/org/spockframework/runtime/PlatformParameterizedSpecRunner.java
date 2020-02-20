@@ -160,7 +160,7 @@ public class PlatformParameterizedSpecRunner extends PlatformSpecRunner {
 
     int iterationIndex = 0;
     while (haveNext(context, iterators)) {
-      IterationInfo iterationInfo = createIterationInfo(context, nextArgs(context, iterators), estimatedNumIterations);
+      IterationInfo iterationInfo = createIterationInfo(context, iterationIndex, nextArgs(context, iterators), estimatedNumIterations);
       IterationNode iterationNode = new IterationNode(context.getParentId().append("iteration",String.valueOf(iterationIndex++)), iterationInfo);
 
       if (context.getErrorInfoCollector().hasErrors()) {

@@ -3,6 +3,17 @@ include::include.adoc[]
 
 This page explains incompatible changes between successive versions and provides suggestions on how to deal with them.
 
+== 2.0
+
+The default unroll pattern changed from the rather generic `#featureName[#iterationIndex]` to a more fancy
+version that lists all data variables and their values additionally to the feature name and iteration index.
+If you prefer to retain the old behaviour, you can set the system property `spock.globalUnrollPattern`
+to the value `#featureName[#iterationIndex]` and you will get the same result as previously.
+
+The token `#iterationCount` in unroll patterns was deprecated and you should use the replacement token
+`#iterationIndex` instead. If you still use the old token somewhere, a warning will be printed to
+`System.err` for each occurrence.
+
 == 1.0
 
 Specs, Spec base classes and third-party extensions may have be recompiled in order to work with Spock 1.0.

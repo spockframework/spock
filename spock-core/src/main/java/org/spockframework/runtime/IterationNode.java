@@ -1,5 +1,8 @@
 package org.spockframework.runtime;
 
+import org.junit.platform.engine.TestDescriptor;
+import org.junit.platform.engine.TestExecutionResult;
+import org.opentest4j.TestAbortedException;
 import org.spockframework.runtime.model.IterationInfo;
 
 import org.junit.platform.engine.UniqueId;
@@ -52,6 +55,27 @@ public class IterationNode extends SpockNode {
   @Override
   public void around(SpockExecutionContext context, Invocation<SpockExecutionContext> invocation) {
     context.getRunner().runIteration(context, iterationInfo, () -> sneakyInvoke(invocation, context));
+  }
+
+  @Override
+  public void nodeSkipped(SpockExecutionContext context, TestDescriptor testDescriptor, SkipResult result) {
+    context.addAbortion(new TestAbortedException(result.getReason().orElse(null)));
+  }
+
+  @Override
+  public void nodeFinished(SpockExecutionContext context, TestDescriptor testDescriptor, TestExecutionResult result) {
+    switch (result.getStatus()) {
+      case FAILED:
+        context.addFailure(result.getThrowable().orElse(null));
+        break;
+
+      case SUCCESSFUL:
+        context.setHadSuccess();
+        break;
+
+      case ABORTED:
+        context.addAbortion(result.getThrowable().orElseThrow(AssertionError::new));
+    }
   }
 
   @Override

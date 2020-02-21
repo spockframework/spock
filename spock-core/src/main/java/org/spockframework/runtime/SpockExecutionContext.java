@@ -7,6 +7,12 @@ import spock.lang.Specification;
 import org.junit.platform.engine.*;
 import org.junit.platform.engine.support.hierarchical.EngineExecutionContext;
 
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+import static java.util.Collections.unmodifiableList;
+
 public class SpockExecutionContext implements EngineExecutionContext, Cloneable {
   private EngineExecutionListener engineExecutionListener;
 
@@ -28,6 +34,12 @@ public class SpockExecutionContext implements EngineExecutionContext, Cloneable 
 
   private ErrorInfoCollector errorInfoCollector;
 
+  private final AtomicBoolean hadSuccess = new AtomicBoolean();
+
+  private final List<Throwable> abortions = new CopyOnWriteArrayList<>();
+
+  private final List<Throwable> failures = new CopyOnWriteArrayList<>();
+
   public SpockExecutionContext(EngineExecutionListener engineExecutionListener) {
     this.engineExecutionListener = engineExecutionListener;
   }
@@ -48,6 +60,11 @@ public class SpockExecutionContext implements EngineExecutionContext, Cloneable 
   }
 
   private SpockExecutionContext setCurrentFeature(FeatureInfo currentFeature) {
+    if (this.currentFeature != currentFeature) {
+      hadSuccess.set(false);
+      abortions.clear();
+      failures.clear();
+    }
     this.currentFeature = currentFeature;
     return this;
   }
@@ -75,6 +92,18 @@ public class SpockExecutionContext implements EngineExecutionContext, Cloneable 
   public SpockExecutionContext setErrorInfoCollector(ErrorInfoCollector errorInfoCollector) {
     this.errorInfoCollector = errorInfoCollector;
     return this;
+  }
+
+  public void setHadSuccess() {
+    hadSuccess.set(true);
+  }
+
+  public void addAbortion(Throwable abortion) {
+    abortions.add(abortion);
+  }
+
+  public void addFailure(Throwable failure) {
+    failures.add(failure);
   }
 
   @Override
@@ -156,5 +185,17 @@ public class SpockExecutionContext implements EngineExecutionContext, Cloneable 
 
   public ErrorInfoCollector getErrorInfoCollector() {
     return errorInfoCollector;
+  }
+
+  public boolean hadSuccess() {
+    return hadSuccess.get();
+  }
+
+  public List<Throwable> getAbortions() {
+    return unmodifiableList(abortions);
+  }
+
+  public List<Throwable> getFailures() {
+    return unmodifiableList(failures);
   }
 }

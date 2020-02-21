@@ -1,10 +1,14 @@
 package org.spockframework.runtime;
 
+import org.opentest4j.MultipleFailuresError;
+import org.opentest4j.TestAbortedException;
 import org.spockframework.runtime.model.FeatureInfo;
 
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.junit.platform.engine.*;
+import org.spockframework.util.ExceptionUtil;
 
 public class ParameterizedFeatureNode extends FeatureNode {
 
@@ -34,8 +38,37 @@ public class ParameterizedFeatureNode extends FeatureNode {
   }
 
   @Override
+  public void after(SpockExecutionContext context) throws Exception {
+    List<Throwable> failures = context.getFailures();
+    if (!failures.isEmpty()) {
+      Throwable failure;
+      if (failures.size() == 1) {
+        failure = failures.get(0);
+      } else {
+        failure = new MultipleFailuresError(null, failures);
+      }
+
+      if (context.getCurrentFeature().isReportIterations()) {
+        throw new SpockAssertionError("At least one iteration failed", failure);
+      } else {
+        ExceptionUtil.sneakyThrow(failure);
+      }
+    } else if (!context.hadSuccess()) {
+      List<Throwable> abortions = context.getAbortions();
+      Throwable abortion;
+      if (abortions.size() == 1) {
+        abortion = abortions.get(0);
+      } else {
+        abortion = new MultipleFailuresError(null, abortions);
+      }
+
+      throw new TestAbortedException("All iterations were aborted", abortion);
+    }
+  }
+
+  @Override
   public Type getType() {
-    return Type.CONTAINER;
+    return featureInfo.isReportIterations() ? Type.CONTAINER_AND_TEST : Type.TEST;
   }
 
   class ChildExecutor implements DynamicTestExecutor {

@@ -106,4 +106,39 @@ class UnrollNameProviderSpec extends Specification {
     e.message == 'Error in @Unroll expression: dataVar.foo'
     e.cause.message == 'No such property: foo for class: java.lang.String'
   }
+
+  @Issue("https://github.com/spockframework/spock/issues/1098")
+  @RestoreSystemProperties
+  def "non-unique method name evaluation throws an exception if spock.assertUnrollUniqueNames is set to true"() {
+    given:
+    def feature = new FeatureInfo()
+    System.setProperty('spock.assertUnrollUniqueNames', 'true')
+    feature.addParameterName("dataVar")
+    def nameGenerator = new UnrollNameProvider(feature, "foo #dataVar bar")
+
+    when:
+    nameGenerator.nameFor('1') == "foo 1 bar"
+    nameGenerator.nameFor('1') == "foo 1 bar"
+
+    then:
+    def e = thrown(SpockAssertionError)
+    e.message == "Test method name 'foo 1 bar' is not unique"
+  }
+
+  @Issue("https://github.com/spockframework/spock/issues/1098")
+  @RestoreSystemProperties
+  def "non-unique method name evaluation is successful"() {
+    given:
+    def feature = new FeatureInfo()
+    feature.addParameterName("dataVar")
+    def nameGenerator = new UnrollNameProvider(feature, "foo #dataVar bar")
+
+    when:
+    def name1 = nameGenerator.nameFor('1')
+    def name2 = nameGenerator.nameFor('1')
+
+    then:
+    name1 == 'foo 1 bar'
+    name2 == name1
+  }
 }

@@ -19,6 +19,8 @@ package org.spockframework.runtime.extension.builtin;
 import org.spockframework.runtime.*;
 import org.spockframework.runtime.model.*;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.regex.*;
 
 /**
@@ -27,9 +29,11 @@ import java.util.regex.*;
 public class UnrollNameProvider implements NameProvider<IterationInfo> {
   private static final Pattern EXPRESSION_PATTERN = Pattern.compile("#([a-zA-Z_$]([\\w$.]|\\(\\))*)");
 
+  private final boolean assertUnrollUniqueNames = Boolean.getBoolean("spock.assertUnrollUniqueNames");
   private final boolean assertUnrollExpressions = Boolean.getBoolean("spock.assertUnrollExpressions");
   private final FeatureInfo feature;
   private final Matcher expressionMatcher;
+  private final Set<String> unrolledNames = new HashSet<>();
   private int iterationCount;
 
   public UnrollNameProvider(FeatureInfo feature, String namePattern) {
@@ -55,7 +59,13 @@ public class UnrollNameProvider implements NameProvider<IterationInfo> {
 
     expressionMatcher.appendTail(result);
     iterationCount++;
-    return result.toString();
+
+    String name = result.toString();
+    if (assertUnrollUniqueNames && !unrolledNames.add(name)) {
+      throw new SpockAssertionError("Test method name '" + name + "' is not unique");
+    }
+
+    return name;
   }
 
   private String evaluateExpression(String expr, Object[] dataValues) {

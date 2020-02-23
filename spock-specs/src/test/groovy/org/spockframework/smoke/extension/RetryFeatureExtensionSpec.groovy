@@ -72,8 +72,6 @@ class Foo extends Specification {
     featureCounter.get() == 4
   }
 
-
-  @Unroll
   def "@Retry mode #mode executes setup and cleanup #expectedCount times"(String mode, int expectedCount) {
     given:
     setupCounter.set(0)
@@ -218,7 +216,6 @@ class Foo extends Specification {
 import spock.lang.Retry
 
 class Foo extends Specification {
-  @Unroll
   @Retry
   def bar() {
     org.spockframework.smoke.extension.RetryFeatureExtensionSpec.featureCounter.incrementAndGet()
@@ -265,7 +262,6 @@ class Foo extends Specification {
 import spock.lang.Retry
 
 class Foo extends Specification {
-  @Unroll
   @Retry
   def bar() {
     expect: test
@@ -337,7 +333,6 @@ class Foo extends Specification {
 import spock.lang.Retry
 
 class Foo extends Specification {
-  @Unroll
   @Retry(condition = { failure.message.contains('1') })
   def "bar #message"() {
     org.spockframework.smoke.extension.RetryFeatureExtensionSpec.featureCounter.incrementAndGet()
@@ -363,7 +358,6 @@ class Foo extends Specification {
 import spock.lang.Retry
 
 class Foo extends Specification {
-  @Unroll
   @Retry(exceptions = IllegalArgumentException, condition = { failure.message.contains('1') })
   def "bar #exceptionClass #message"() {
     org.spockframework.smoke.extension.RetryFeatureExtensionSpec.featureCounter.incrementAndGet()
@@ -396,7 +390,6 @@ import spock.lang.Retry
 
 class Foo extends Specification {
   int value
-  @Unroll
   @Retry(condition = { instance.value == 2 })
   def "bar #input"() {
     org.spockframework.smoke.extension.RetryFeatureExtensionSpec.featureCounter.incrementAndGet()

@@ -1,3 +1,5 @@
 org.spockframework.runtime.extension.builtin.IncludeExcludeExtension
 org.spockframework.runtime.extension.builtin.OptimizeRunOrderExtension
+org.spockframework.runtime.extension.builtin.RollupExtension$AutoApply
+org.spockframework.runtime.extension.builtin.UnrollExtension$AutoApply
 org.spockframework.report.log.ReportLogExtension

@@ -4,7 +4,6 @@ import groovy.sql.Sql
 import groovy.transform.ToString
 import spock.lang.Shared
 import spock.lang.Specification
-import spock.lang.Unroll
 
 class DataSpec extends Specification {
 
@@ -122,7 +121,6 @@ class DataSpec extends Specification {
 // end::data-pipes[]
   }
 
-  @Unroll
 // tag::unrolled-1[]
   def "#person is #person.age years old"() { // property access
 // end::unrolled-1[]
@@ -133,7 +131,6 @@ class DataSpec extends Specification {
     person << [new Person(age: 14, name: 'Phil Cole')]
   }
 
-  @Unroll
 // tag::unrolled-2[]
   def "#person.name.toUpperCase()"() { // zero-arg method call
 // end::unrolled-2[]
@@ -145,9 +142,8 @@ class DataSpec extends Specification {
   }
 
 
-  @Unroll
 // tag::unrolled-3a[]
-  def "#lastName"() { // zero-arg method call
+  def "#lastName"() {
 // end::unrolled-3a[]
     expect:
     person

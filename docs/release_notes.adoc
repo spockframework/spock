@@ -39,6 +39,14 @@ subscriber.receive(_) >> _
 - `IterationInfo` now has a property for the `iterationIndex` and one for a map of data variable names to values.
   This is typically not interesting for the average user, but might be helpful for authors of Spock extensions.
 
+- Data driven features are now unrolled by default. `@Unroll` can still be used to specify a custom naming pattern.
+
+- `@Rollup` can now be used on feature and spec level to explicitly roll any feature where the reporting of single
+  iterations is not wanted.
+
+- The system property `spock.globalRollup` can be set to `true` to roll all features by default if not overwritten
+  by explicit `@Unroll` annotations and thus reinstate the pre Spock 2.0 behaviour.
+
 == 2.0-M2 (2020-02-10)
 
 === Groovy-3.0 Support

@@ -23,7 +23,7 @@ import org.spockframework.runtime.model.FeatureInfo
 import spock.lang.Specification
 
 class SafeIterationNameProviderSpec extends Specification {
-  def feature = new FeatureInfo()
+  def feature = new FeatureInfo().tap { it.reportIterations = false }
   IterationInfo iteration = Stub {
     getFeature() >> feature
   }

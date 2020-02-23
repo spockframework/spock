@@ -24,7 +24,7 @@ import spock.lang.*
 @Stepwise
 class MethodExecutionOrder extends Specification {
   @Shared order = []
-	
+
   def cleanup() {
     getOrder() << "c"
   }
@@ -83,6 +83,6 @@ class MethodExecutionOrder extends Specification {
   def "parameterized feature"() {
     getOrder() << x
     expect: 1
-    where : x << [8, 9, 10]
+    where: x << [8, 9, 10]
   }
 }

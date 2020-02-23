@@ -19,35 +19,36 @@ package org.spockframework.smoke.parameterization
 import org.spockframework.EmbeddedSpecification
 import spock.lang.*
 
+@Rollup
 class Parameterizations extends EmbeddedSpecification {
   def "multi-parameterization"() {
     expect: a == b
-    where :
+    where:
       [a, b] << [[1, 1], [2, 2], [3, 3]]
   }
 
   def "multi-parameterization with placeholder in first position"() {
     expect: a == b
-    where :
+    where:
       [_, a, b] << [[9, 1, 1], [9, 2, 2], [9, 3, 3]]
   }
 
   def "multi-parameterization with placeholder in second position"() {
     expect: a == b
-    where :
+    where:
       [a, _, b] << [[1, 9, 1], [2, 9, 2], [3, 9, 3]]
   }
 
   def "multi-parameterization with placeholder in last position"() {
     expect: a == b
-    where :
+    where:
       [a, b, _] << [[1, 1, 9], [2, 2, 9], [3, 3, 9]]
   }
 
   @FailsWith(org.spockframework.runtime.ConditionNotSatisfiedError)
   def "multi-parameterization with placeholder in wrong position"() {
     expect: a == b
-    where :
+    where:
       [a, b, _] << [[1, 9, 1]]
   }
 
@@ -79,10 +80,10 @@ class Parameterizations extends EmbeddedSpecification {
   def 'arguments may not be used before they have been assigned'() {
     when:
     runner.runFeatureBody '''
-      expect: true
-      where:
-        b = a
-        a = 1
+expect: true
+where:
+  b = a
+  a = 1
     '''
 
     then:

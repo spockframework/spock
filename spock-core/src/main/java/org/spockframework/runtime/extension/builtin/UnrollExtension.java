@@ -16,12 +16,15 @@ package org.spockframework.runtime.extension.builtin;
 
 import org.spockframework.runtime.DataVariablesIterationNameProvider;
 import org.spockframework.runtime.GroovyRuntimeUtil;
+import org.spockframework.runtime.InvalidSpecException;
 import org.spockframework.runtime.extension.AbstractAnnotationDrivenExtension;
+import org.spockframework.runtime.extension.AbstractGlobalExtension;
 import org.spockframework.runtime.model.FeatureInfo;
 import org.spockframework.runtime.model.IterationInfo;
 import org.spockframework.runtime.model.NameProvider;
 import org.spockframework.runtime.model.SpecInfo;
 
+import spock.lang.Rollup;
 import spock.lang.Unroll;
 
 public class UnrollExtension extends AbstractAnnotationDrivenExtension<Unroll> {
@@ -34,23 +37,39 @@ public class UnrollExtension extends AbstractAnnotationDrivenExtension<Unroll> {
 
   @Override
   public void visitSpecAnnotation(Unroll unroll, SpecInfo spec) {
+    visitSpecAnnotation(unroll, spec, true);
+  }
+
+  private void visitSpecAnnotation(Unroll unroll, SpecInfo spec, boolean direct) {
+    if (direct && (spec.getAnnotation(Rollup.class) != null)) {
+      throw new InvalidSpecException("@Unroll and @Rollup must not be used on the same element");
+    }
+
     for (FeatureInfo feature : spec.getFeatures()) {
       if (feature.isParameterized()) {
-        visitFeatureAnnotation(unroll, feature);
+        visitFeatureAnnotation(unroll, feature, false);
       }
     }
   }
 
   @Override
   public void visitFeatureAnnotation(Unroll unroll, FeatureInfo feature) {
-    if (!feature.isParameterized()) return; // could also throw exception
+    visitFeatureAnnotation(unroll, feature, true);
+  }
+
+  private void visitFeatureAnnotation(Unroll unroll, FeatureInfo feature, boolean direct) {
+    if (direct && (feature.getFeatureMethod().getAnnotation(Rollup.class) != null)) {
+      throw new InvalidSpecException("@Unroll and @Rollup must not be used on the same element");
+    }
+
+    if (!feature.isParameterized()) return; // could also throw exception if direct
 
     feature.setReportIterations(true);
     feature.setIterationNameProvider(chooseNameProvider(unroll, feature));
   }
 
   private NameProvider<IterationInfo> chooseNameProvider(Unroll unroll, FeatureInfo feature) {
-    if (unroll.value().length() > 0) {
+    if ((unroll != null) && unroll.value().length() > 0) {
       return new UnrollIterationNameProvider(feature, unroll.value());
     }
     if (feature.getName().contains("#")) {
@@ -60,5 +79,16 @@ public class UnrollExtension extends AbstractAnnotationDrivenExtension<Unroll> {
       return new UnrollIterationNameProvider(feature, globalUnrollPattern);
     }
     return new DataVariablesIterationNameProvider();
+  }
+
+  public static class AutoApply extends AbstractGlobalExtension {
+    private final boolean globalRollup = Boolean.getBoolean("spock.globalRollup");
+
+    @Override
+    public void visitSpec(SpecInfo spec) {
+      if (!globalRollup && spec.getAnnotation(Rollup.class) == null) {
+        new UnrollExtension().visitSpecAnnotation(null, spec, false);
+      }
+    }
   }
 }

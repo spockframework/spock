@@ -21,7 +21,6 @@ import org.opentest4j.TestAbortedException
 import org.spockframework.EmbeddedSpecification
 import org.spockframework.runtime.SpockAssertionError
 import org.spockframework.runtime.SpockComparisonFailure
-import spock.lang.PendingFeature
 
 class ParameterizedFeatureNodeStatuses extends EmbeddedSpecification {
   def setup() {
@@ -29,7 +28,6 @@ class ParameterizedFeatureNodeStatuses extends EmbeddedSpecification {
     runner.throwFailure = false
   }
 
-  @PendingFeature
   def 'should be skipped if all not-unrolled iterations are skipped'() {
     when:
     def result = runner.runSpecBody """
@@ -67,7 +65,6 @@ def 'a feature'() {
     }
   }
 
-  @PendingFeature
   def 'should be successful if some not-unrolled iterations are successful and some skipped'() {
     when:
     def result = runner.runSpecBody """
@@ -103,7 +100,6 @@ def 'a feature'() {
     }
   }
 
-  @PendingFeature
   def 'should be failing if some not-unrolled iterations are failing and some skipped'() {
     when:
     def result = runner.runSpecBody """
@@ -141,7 +137,6 @@ def 'a feature'() {
     }
   }
 
-  @PendingFeature
   def 'should be error if some not-unrolled iterations are erroring and some skipped'() {
     when:
     def result = runner.runSpecBody """
@@ -180,7 +175,6 @@ def 'a feature'() {
     }
   }
 
-  @PendingFeature
   def 'should be successful if all not-unrolled iterations are successful'() {
     when:
     def result = runner.runSpecBody """
@@ -215,7 +209,6 @@ def 'a feature'() {
     }
   }
 
-  @PendingFeature
   def 'should be failing if some not-unrolled iterations are failing and some successful'() {
     when:
     def result = runner.runSpecBody """
@@ -252,7 +245,6 @@ def 'a feature'() {
     }
   }
 
-  @PendingFeature
   def 'should be error if some not-unrolled iterations are erroring and some successful'() {
     when:
     def result = runner.runSpecBody """
@@ -290,7 +282,6 @@ def 'a feature'() {
     }
   }
 
-  @PendingFeature
   def 'should be failing if all not-unrolled iterations are failing'() {
     when:
     def result = runner.runSpecBody """
@@ -330,7 +321,6 @@ def 'a feature'() {
     }
   }
 
-  @PendingFeature
   def 'should be failing if some not-unrolled iterations are erroring and some failing'() {
     when:
     def result = runner.runSpecBody """
@@ -371,7 +361,6 @@ def 'a feature'() {
     }
   }
 
-  @PendingFeature
   def 'should be failing if all not-unrolled iterations are erroring'() {
     when:
     def result = runner.runSpecBody """
@@ -414,13 +403,10 @@ def 'a feature'() {
 
   def 'should be skipped if all unrolled iterations are skipped'() {
     when:
-    def result = runner.runSpecBody """
-@Unroll
-def 'a feature'() {
-  throw new TestAbortedException()
-  expect: a in [1, 2]
-  where: a << [1, 2]
-}
+    def result = runner.runFeatureBody """
+throw new TestAbortedException()
+expect: a in [1, 2]
+where: a << [1, 2]
 """
 
     then:
@@ -449,13 +435,10 @@ def 'a feature'() {
 
   def 'should be successful if some unrolled iterations are successful and some skipped'() {
     when:
-    def result = runner.runSpecBody """
-@Unroll
-def 'a feature'() {
-  if (a == 1) throw new TestAbortedException()
-  expect: a == 2
-  where: a << [1, 2]
-}
+    def result = runner.runFeatureBody """
+if (a == 1) throw new TestAbortedException()
+expect: a == 2
+where: a << [1, 2]
 """
 
     then:
@@ -484,13 +467,10 @@ def 'a feature'() {
 
   def 'should be failing if some unrolled iterations are failing and some skipped'() {
     when:
-    def result = runner.runSpecBody """
-@Unroll
-def 'a feature'() {
-  if (a == 1) throw new TestAbortedException()
-  expect: a == 3
-  where: a << [1, 2]
-}
+    def result = runner.runFeatureBody """
+if (a == 1) throw new TestAbortedException()
+expect: a == 3
+where: a << [1, 2]
 """
 
     then:
@@ -521,14 +501,11 @@ def 'a feature'() {
 
   def 'should be failing if some unrolled iterations are erroring and some skipped'() {
     when:
-    def result = runner.runSpecBody """
-@Unroll
-def 'a feature'() {
-  if (a == 1) throw new TestAbortedException()
-  throw new Error()
-  expect: true
-  where: a << [1, 2]
-}
+    def result = runner.runFeatureBody """
+if (a == 1) throw new TestAbortedException()
+throw new Error()
+expect: true
+where: a << [1, 2]
 """
 
     then:
@@ -559,12 +536,9 @@ def 'a feature'() {
 
   def 'should be successful if all unrolled iterations are successful'() {
     when:
-    def result = runner.runSpecBody """
-@Unroll
-def 'a feature'() {
-  expect: a in [1, 2]
-  where: a << [1, 2]
-}
+    def result = runner.runFeatureBody """
+expect: a in [1, 2]
+where: a << [1, 2]
 """
 
     then:
@@ -593,12 +567,9 @@ def 'a feature'() {
 
   def 'should be failing if some unrolled iterations are failing and some successful'() {
     when:
-    def result = runner.runSpecBody """
-@Unroll
-def 'a feature'() {
-  expect: a == 1
-  where: a << [1, 2]
-}
+    def result = runner.runFeatureBody """
+expect: a == 1
+where: a << [1, 2]
 """
 
     then:
@@ -629,13 +600,10 @@ def 'a feature'() {
 
   def 'should be failing if some unrolled iterations are erroring and some successful'() {
     when:
-    def result = runner.runSpecBody """
-@Unroll
-def 'a feature'() {
-  if (a == 1) throw new Error()
-  expect: a == 2
-  where: a << [1, 2]
-}
+    def result = runner.runFeatureBody """
+if (a == 1) throw new Error()
+expect: a == 2
+where: a << [1, 2]
 """
 
     then:
@@ -666,12 +634,9 @@ def 'a feature'() {
 
   def 'should be failing if all unrolled iterations are failing'() {
     when:
-    def result = runner.runSpecBody """
-@Unroll
-def 'a feature'() {
-  expect: a == 3
-  where: a << [1, 2]
-}
+    def result = runner.runFeatureBody """
+expect: a == 3
+where: a << [1, 2]
 """
 
     then:
@@ -708,13 +673,10 @@ def 'a feature'() {
 
   def 'should be failing if some unrolled iterations are erroring and some failing'() {
     when:
-    def result = runner.runSpecBody """
-@Unroll
-def 'a feature'() {
-  if (a == 1) throw new Error()
-  expect: a == 3
-  where: a << [1, 2]
-}
+    def result = runner.runFeatureBody """
+if (a == 1) throw new Error()
+expect: a == 3
+where: a << [1, 2]
 """
 
     then:
@@ -751,13 +713,10 @@ def 'a feature'() {
 
   def 'should be failing if all unrolled iterations are erroring'() {
     when:
-    def result = runner.runSpecBody """
-@Unroll
-def 'a feature'() {
-  throw new Error()
-  expect: a in [1, 2]
-  where: a << [1, 2]
-}
+    def result = runner.runFeatureBody """
+throw new Error()
+expect: a in [1, 2]
+where: a << [1, 2]
 """
 
     then:

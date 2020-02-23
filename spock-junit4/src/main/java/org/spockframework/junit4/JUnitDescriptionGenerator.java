@@ -43,7 +43,7 @@ public class JUnitDescriptionGenerator {
       if (feature.isExcluded()) {
         continue;
       }
-      if (feature.isReportIterations()) {
+      if (feature.isParameterized() && feature.isReportIterations()) {
         continue; // don't report up-front because IDEs don't handle this well
       }
       desc.addChild(describeFeature(feature, spec));

@@ -16,6 +16,7 @@
 
 package org.spockframework.example
 
+import spock.lang.Rollup
 import spock.lang.Specification
 import spock.lang.Unroll
 
@@ -23,6 +24,7 @@ import spock.lang.Unroll
  * @author Peter Niederwieser
  */
 class FeatureUnrolling extends Specification {
+  @Rollup
   def "without unrolling"() {
     expect:
     name.size() == length
@@ -32,7 +34,6 @@ class FeatureUnrolling extends Specification {
     length << [4, 5, 6]
   }
 
-  @Unroll
   def "with unrolling"() {
     expect:
     name.size() == length

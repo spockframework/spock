@@ -21,10 +21,13 @@ import org.spockframework.EmbeddedSpecification
 import org.spockframework.runtime.SpockExecutionException
 import spock.lang.FailsWith
 import spock.lang.Issue
+import spock.lang.Rollup
+import spock.lang.Unroll
 
 /**
  * @author Peter Niederwieser
  */
+@Rollup
 class MethodParameters extends EmbeddedSpecification {
   def "no parameters"() {
     expect:
@@ -102,6 +105,7 @@ def foo(x, y, z) {
   }
 
   @Issue("https://github.com/spockframework/spock/issues/652")
+  @Unroll
   def "data variable that is not a parameter"() {
     expect:
     runner.runSpecBody """

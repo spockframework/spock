@@ -23,7 +23,7 @@ public class FeatureInfo extends SpecElementInfo<SpecInfo, AnnotatedElement> {
   private NameProvider<IterationInfo> iterationNameProvider;
   private final List<DataProviderInfo> dataProviders = new ArrayList<>();
 
-  private boolean reportIterations = false;
+  private boolean reportIterations = true;
 
   public SpecInfo getSpec() {
     return getParent();

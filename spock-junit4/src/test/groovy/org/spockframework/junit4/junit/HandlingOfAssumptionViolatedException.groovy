@@ -41,15 +41,12 @@ def foo() {
 
   def "reported in data-driven unrolled feature method"() {
     when:
-    def result = runner.runSpecBody """
-@Unroll
-def foo() {
-  setup:
-  assumeTrue(false)
+    def result = runner.runFeatureBody """
+setup:
+assumeTrue(false)
 
-  where:
-  i << (1..2)
-}
+where:
+i << (1..2)
     """
 
     then:

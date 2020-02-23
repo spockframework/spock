@@ -17,10 +17,7 @@
 package org.spockframework.smoke.parameterization
 
 import org.spockframework.EmbeddedSpecification
-import org.spockframework.runtime.SpockExecutionException
-import spock.lang.IgnoreRest
 import spock.lang.Issue
-import spock.util.environment.RestoreSystemProperties
 
 /**
  * @author Peter Niederwieser
@@ -34,14 +31,11 @@ class UnrolledFeatureMethods extends EmbeddedSpecification {
 
   def "iterations of an unrolled feature count as separate tests"() {
     when:
-    def result = runner.runSpecBody("""
-@Unroll
-def foo() {
-  expect: true
+    def result = runner.runFeatureBody("""
+expect: true
 
-  where:
-  x << [1, 2, 3]
-}
+where:
+x << [1, 2, 3]
     """)
 
     then:
@@ -53,7 +47,6 @@ def foo() {
   def "iterations of an unrolled feature foo are named 'foo [x: 1, #0]', 'foo [x: 2, #1]', etc."() {
     when:
     def result = runner.runSpecBody """
-@Unroll
 def foo() {
   expect: true
 
@@ -66,38 +59,16 @@ def foo() {
     result.testEvents().started().list().testDescriptor.displayName == ["foo"] + (0..2).collect {"foo [x: ${it + 1}, #$it]" }
   }
 
-  def "a feature with an empty data provider causes the same error regardless if it's unrolled or not"() {
-    when:
-    runner.runSpecBody """
-$annotation
-def foo() {
-  expect: true
-
-  where:
-  x << []
-}
-    """
-
-    then:
-    SpockExecutionException e = thrown()
-
-    where:
-    annotation << ["", "@Unroll"]
-  }
-
   def "if creation of a data provider fails, feature isn't unrolled"() {
     runner.throwFailure = false
 
     when:
-    def result = runner.runSpecBody("""
-@Unroll
-def foo() {
-  expect: true
+    def result = runner.runFeatureBody("""
+expect: true
 
-  where:
-  x << [1]
-  y << { throw new Exception() }()
-}
+where:
+x << [1]
+y << { throw new Exception() }()
     """)
 
     then:
@@ -107,7 +78,7 @@ def foo() {
     result.testsSkippedCount == 0
     result.containersStartedCount == 1 + 1 + 1 // engine + spec + unrolled feature
     result.containersFailedCount == 1
-    result.containerEvents().failed().list().testDescriptor.displayName == ["foo"]
+    result.containerEvents().failed().list().testDescriptor.displayName == ["a feature"]
   }
 
   def "naming pattern may refer to data variables"() {
@@ -151,10 +122,13 @@ def foo() {
                                                                         "one foo two 2 three"]
   }
 
-  @RestoreSystemProperties
-  def "old iteration naming is restorable using system property"() {
+  def "old iteration naming is restorable using configuration script"() {
     given:
-    System.properties.'spock.globalUnrollPattern' = '#featureName[#iterationIndex]'
+    runner.configurationScript {
+      unroll {
+        defaultPattern '#featureName[#iterationIndex]'
+      }
+    }
 
     when:
     def result = runner.runSpecBody("""
@@ -175,10 +149,13 @@ def foo() {
                                                                         "foo[2]"]
   }
 
-  @RestoreSystemProperties
-  def "default iteration naming is configurable using system property"() {
+  def "default iteration naming is configurable using configuration script"() {
     given:
-    System.properties.'spock.globalUnrollPattern' = '#featureName'
+    runner.configurationScript {
+      unroll {
+        defaultPattern '#featureName'
+      }
+    }
 
     when:
     def result = runner.runSpecBody("""
@@ -254,7 +231,14 @@ def foo() {
                                                                         "one 4 two"]
   }
 
-  def "expressions in naming pattern that can't be evaluated are prefixed with 'Error:'"() {
+  def "expressions in naming pattern that can't be evaluated are prefixed with '#Error:' if expressions asserting is disabled"() {
+    given:
+    runner.configurationScript {
+      unroll {
+        expressionsAsserted false
+      }
+    }
+
     when:
     def result = runner.runSpecBody("""
 @Unroll("#obj #obj.ok() #obj.bang() #obj.missing() #missing")
@@ -275,7 +259,6 @@ def foo() {
   def "method name can act as naming pattern"() {
     when:
     def result = runner.runSpecBody("""
-@Unroll
 def "one #actor.details.name.size() two"() {
   expect: true
 
@@ -309,23 +292,13 @@ def "#actor.details.age"() {
   }
 
   @Issue("https://github.com/spockframework/spock/issues/354")
-  def "can unroll a whole class at once"() {
+  def "method-level unroll annotation wins over class-level annotation"() {
     when:
     def result = runner.runWithImports("""
-@Unroll
+@Unroll("a feature")
 class Foo extends Specification {
-  def "#actor.details.name"() {
-    expect: true
-
-    where:
-    actor = new Actor()
-  }
-
-  def "not data-driven"() {
-    expect: true
-  }
-
-  def "#actor.details.age"() {
+  @Unroll("#actor.details.name")
+  def method() {
     expect: true
 
     where:
@@ -335,20 +308,66 @@ class Foo extends Specification {
     """)
 
     then:
-    result.testEvents().started().list().testDescriptor.displayName == ["#actor.details.name",
-                                                                        "fred",
-                                                                        "not data-driven",
-                                                                        "#actor.details.age",
-                                                                        "30"]
+    result.testEvents().started().list().testDescriptor.displayName == ["method",
+                                                                        "fred"]
   }
 
-  @Issue("https://github.com/spockframework/spock/issues/354")
-  def "method-level unroll annotation wins over class-level annotation"() {
+  def "method-level unroll annotation wins over class-level uproll annotation"() {
     when:
     def result = runner.runWithImports("""
-@Unroll
+@Rollup
 class Foo extends Specification {
   @Unroll("#actor.details.name")
+  def method() {
+    expect: true
+
+    where:
+    actor = new Actor()
+  }
+}
+    """)
+
+    then:
+    result.testEvents().started().list().testDescriptor.displayName == ["method",
+                                                                        "fred"]
+  }
+
+  def "method-level unroll annotation wins over configuration script"() {
+    given:
+    runner.configurationScript {
+      unroll {
+        enabledByDefault false
+      }
+    }
+
+    when:
+    def result = runner.runSpecBody("""
+@Unroll("#actor.details.name")
+def method() {
+  expect: true
+
+  where:
+  actor = new Actor()
+}
+    """)
+
+    then:
+    result.testEvents().started().list().testDescriptor.displayName == ["method",
+                                                                        "fred"]
+  }
+
+  def "class-level unroll annotation wins over configuration script"() {
+    given:
+    runner.configurationScript {
+      unroll {
+        enabledByDefault false
+      }
+    }
+
+    when:
+    def result = runner.runWithImports("""
+@Unroll("#actor.details.name")
+class Foo extends Specification {
   def method() {
     expect: true
 
@@ -367,7 +386,6 @@ class Foo extends Specification {
   def "method name can still contain parentheses"() {
     when:
     def result = runner.runSpecBody("""
-@Unroll
 def "an actor (named #actor.getName()) age #actor.getAge()"() {
   expect: true
 

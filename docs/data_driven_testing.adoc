@@ -144,27 +144,34 @@ include::{sourcedir}/datadriven/v7/MathSpec.groovy[tag=example]
 
 Let's assume that our implementation of the `max` method has a flaw, and one of the iterations fails:
 
-[source,groovy]
 ----
-maximum of two numbers   FAILED
+maximum of two numbers [a: 1, b: 3, c: 3, #0]   PASSED
+maximum of two numbers [a: 7, b: 4, c: 7, #1]   FAILED
 
 Condition not satisfied:
 
 Math.max(a, b) == c
-    |    |  |  |  |
-    |    7  4  |  7
-    42         false
+|    |   |  |  |  |
+|    |   7  4  |  7
+|    42        false
+class java.lang.Math
+
+maximum of two numbers [a: 0, b: 0, c: 0, #2]   PASSED
 ----
 
 The obvious question is: Which iteration failed, and what are its data values? In our example, it isn't hard to figure
-out that it's the second iteration that failed. At other times this can be more difficult or even impossible.
-footnote:[For example, a feature method could use data variables in its `given:` block, but not in any conditions.]
-In any case, it would be nice if Spock made it loud and clear which iteration failed, rather than just reporting the
-failure. This is the purpose of the `@Unroll` annotation.
+out that it's the second iteration (with index 1) that failed even from the rich condition rendering. At other times
+this can be more difficult or even impossible.footnote:[For example, a feature method could use data variables in its
+`given:` block, but not in any conditions.] In any case, Spock makes it loud and clear which iteration failed, rather
+than just reporting the failure. Iterations of a feature method are by default unrolled with a rich naming pattern.
+This pattern can also be configured as documented at <<Unrolled Iteration Names>> or the unrolling can be disabled
+like described in the following section.
 
-== Method Unrolling
+== Method Uprolling and Unrolling
 
-A method annotated with `@Unroll` will have its iterations reported independently:
+A method annotated with `@Rollup` will have its iterations not reported independently but only aggregated within the
+feature. This can for example be used if you produce many test cases from calculations or if you use external data
+like the contents of a database as test data and do not want the test count to vary:
 
 [source,groovy,indent=0]
 ----
@@ -172,60 +179,60 @@ include::{sourcedir}/datadriven/v4/MathSpec.groovy[tag=example]
   ...
 ----
 
-.Why isn't `@Unroll` the default?
-****
-One reason why `@Unroll` isn't the default is that some execution environments (in particular IDEs) expect to be
-told the number of test methods in advance, and have certain problems if the actual number varies. Another reason
-is that `@Unroll` can drastically change the number of reported tests, which may not always be desirable.
-****
-
-Note that unrolling has no effect on how the method gets executed; it is only an alternation in reporting.
+Note that up- and unrolling has no effect on how the method gets executed; it is only an alternation in reporting.
 Depending on the execution environment, the output will look something like:
 
 ----
-maximum of two numbers [a: 1, b: 3, c: 3, #0]   PASSED
-maximum of two numbers [a: 7, b: 4, c: 7, #1]   FAILED
+maximum of two numbers   FAILED
+
+Condition not satisfied:
 
 Math.max(a, b) == c
-    |    |  |  |  |
-    |    7  4  |  7
-    42         false
-
-maximum of two numbers [a: 0, b: 0, c: 0, #2]   PASSED
+|    |   |  |  |  |
+|    |   7  4  |  7
+|    42        false
+class java.lang.Math
 ----
 
-This tells us that the second iteration (with index 1) failed. With a bit of effort, we can do even better:
+The `@Rollup` annotation can also be placed on a spec.
+This has the same effect as placing it on each data-driven feature method of the spec that does not have an
+`@Unroll` annotation.
 
-[source,groovy,indent=0]
+Alternatively the <<extensions.adoc#_spock_configuration_file,configuration file>> setting `enabledByDefault`
+in the `unroll` section can be set to `false` to roll up all features automatically unless
+they are annotated with `@Unroll` or are contained in an ``@Unroll``ed spec and thus reinstate the pre Spock 2.0
+behavior where this was the default.
+
+.Disable Default Unrolling
+[source,groovy]
 ----
-include::{sourcedir}/datadriven/v5/MathSpec.groovy[tag=example]
-  ...
-----
-
-This method name uses placeholders, denoted by a leading hash sign (`#`), to refer to data variables `a`, `b`,
-and `c`. In the output, the placeholders will be replaced with concrete values:
-
-----
-maximum of 1 and 3 is 3   PASSED
-maximum of 7 and 4 is 7   FAILED
-
-Math.max(a, b) == c
-    |    |  |  |  |
-    |    7  4  |  7
-    42         false
-
-maximum of 0 and 0 is 0   PASSED
+unroll {
+    enabledByDefault false
+}
 ----
 
-Now we can tell at a glance that the `max` method failed for inputs `7` and `4`. See <<More on Unrolled Method Names>>
-for further details on this topic.
+It is illegal to annotate a spec or a feature with both the `@Unroll` and the `@Rollup` annotation and if detected
+this will cause an exception to be thrown.
 
-The `@Unroll` annotation can also be placed on a spec. This has the same effect as placing it on each data-driven
-feature method of the spec.
 
-TIP: You can set the system property `spock.assertUnrollExpressions` to `true`,
-     to let tests fail that have invalid unroll expressions.
-     This can be used to help catch errors during refactoring.
+'''
+
+To summarize:
+
+A feature will be uprolled
+
+- if the method is annotated with `@Rollup`
+- if the method is not annotated with `@Unroll` and the spec is annotated with `@Rollup`
+- if neither the method nor the spec is annotated with `@Unroll`
+  and the configuration option `unroll { enabledByDefault }` is set to `false`
+
+A feature will be unrolled
+
+- if the method is annotated with `@Unroll`
+- if the method is not annotated with `@Rollup` and the spec is annotated with `@Unroll`
+- if neither the method nor the spec is annotated with `@Rollup`
+  and the configuration option `unroll { enabledByDefault }` is set to its default value `true`
+
 
 == Data Pipes
 
@@ -376,7 +383,40 @@ exactly one iteration.
 After all iterations have completed, the zero-argument `close` method is called on all data providers that have
 such a method.
 
-== More on Unrolled Method Names
+== Unrolled Iteration Names
+
+By default the names of unrolled iterations are the name of the feature, plus the data variables and the iteration
+index. This will always produce unique names and should enable you to identify easily the failing data variable
+combination.
+
+The example at <<Reporting of Failures>> for example shows with `maximum of two numbers [a: 7, b: 4, c: 7, #1]`,
+that the second iteration (`#1`) where the data variables have the values `7`, `4` and `7` failed.
+
+With a bit of effort, we can do even better:
+
+[source,groovy,indent=0]
+----
+include::{sourcedir}/datadriven/v5/MathSpec.groovy[tag=example]
+  ...
+----
+
+This method name uses placeholders, denoted by a leading hash sign (`#`), to refer to data variables `a`, `b`, and `c`.
+In the output, the placeholders will be replaced with concrete values:
+
+----
+maximum of 1 and 3 is 3   PASSED
+maximum of 7 and 4 is 7   FAILED
+
+Math.max(a, b) == c
+|    |   |  |  |  |
+|    |   7  4  |  7
+|    42        false
+class java.lang.Math
+
+maximum of 0 and 0 is 0   PASSED
+----
+
+Now we can tell at a glance that the `max` method failed for inputs `7` and `4`.
 
 An unrolled method name is similar to a Groovy `GString`, except for the following differences:
 
@@ -402,7 +442,7 @@ def "#person.name.split(' ')[1]" {  // cannot have method arguments
 def "#person.age / 2" {  // cannot use operators
 ----
 
-If necessary, additional data variables can be introduced to hold more complex expression:
+If necessary, additional data variables can be introduced to hold more complex expressions:
 
 [source,groovy,indent=0]
 ----
@@ -430,7 +470,8 @@ def "person age should be calculated properly"() {
 ----
 
 If neither a parameter to the annotation is given, nor the method name contains a `#`,
-the system property `spock.globalUnrollPattern` is inspected. If it is set to a non-blank
+the <<extensions.adoc#_spock_configuration_file,configuration file>> setting `defaultPattern`
+in the `unroll` section is inspected. If it is set to a non-`null`
 string, this value is used as unroll pattern. This could for example be set to
 
 - `#featureName` to have all iterations reported with the same name, or
@@ -438,7 +479,33 @@ string, this value is used as unroll pattern. This could for example be set to
 - `#iterationName` if you make sure that in each data-driven feature you also set
   a data variable called `iterationName` that is then used for reporting
 
+.Set Default Unroll Pattern
+[source,groovy]
+----
+unroll {
+    defaultPattern '#featureName[#iterationIndex]'
+}
+----
+
 If none of the three described ways is used to set a custom unroll pattern, by default
 the feature name is used, suffixed with all data variable names and their values and
 finally the iteration index, so the result will be for example
 `my feature [x: 1, y: 2, z: 3, #0]`.
+
+If there is an error in an unroll expression, for example typo in variable name, exception during
+evaluation of a property or method in the expression and so on, the test will fail. This is not
+true for the automatic fall back rendering of the data variables if there is no unroll pattern
+set in any way, this will never fail the test, no matter what happens.
+
+The failing of test with errors in the unroll expression can be disabled by setting the
+<<extensions.adoc#_spock_configuration_file,configuration file>> setting `expressionsAsserted`
+in the `unroll` section to `false`. If this is done and an error happens, the erroneous expression
+`#foo.bar` will be substituted by `#Error:foo.bar`.
+
+.Disable Unroll Pattern Expression Asserting
+[source,groovy]
+----
+unroll {
+    expressionsAsserted false
+}
+----

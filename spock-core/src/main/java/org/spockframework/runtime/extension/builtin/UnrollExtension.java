@@ -15,49 +15,88 @@
 package org.spockframework.runtime.extension.builtin;
 
 import org.spockframework.runtime.DataVariablesIterationNameProvider;
-import org.spockframework.runtime.GroovyRuntimeUtil;
-import org.spockframework.runtime.extension.AbstractAnnotationDrivenExtension;
-import org.spockframework.runtime.model.FeatureInfo;
-import org.spockframework.runtime.model.IterationInfo;
-import org.spockframework.runtime.model.NameProvider;
-import org.spockframework.runtime.model.SpecInfo;
+import org.spockframework.runtime.InvalidSpecException;
+import org.spockframework.runtime.extension.AbstractGlobalExtension;
+import org.spockframework.runtime.model.*;
 
+import spock.lang.Rollup;
 import spock.lang.Unroll;
 
-public class UnrollExtension extends AbstractAnnotationDrivenExtension<Unroll> {
-  private final String globalUnrollPattern;
-
-  public UnrollExtension() {
-    String globalUnrollPattern = System.getProperty("spock.globalUnrollPattern");
-    this.globalUnrollPattern = GroovyRuntimeUtil.isTruthy(globalUnrollPattern) ? globalUnrollPattern : null;
-  }
+public class UnrollExtension extends AbstractGlobalExtension {
+  private UnrollConfiguration unrollConfiguration;
 
   @Override
-  public void visitSpecAnnotation(Unroll unroll, SpecInfo spec) {
-    for (FeatureInfo feature : spec.getFeatures()) {
-      if (feature.isParameterized()) {
-        visitFeatureAnnotation(unroll, feature);
-      }
+  public void visitSpec(SpecInfo spec) {
+    Unroll unroll = spec.getAnnotation(Unroll.class);
+    boolean unrollSpec = unroll != null;
+    boolean rollupSpec = spec.getAnnotation(Rollup.class) != null;
+
+    if (unrollSpec && rollupSpec) {
+      throw new InvalidSpecException("@Unroll and @Rollup must not be used on the same spec: " + spec.getName());
     }
+
+    boolean doUnrollSpec;
+    String specUnrollPattern;
+    if (unrollSpec) {
+      doUnrollSpec = true;
+      specUnrollPattern = unroll.value();
+    } else if (rollupSpec) {
+      doUnrollSpec = false;
+      specUnrollPattern = "";
+    } else {
+      doUnrollSpec = unrollConfiguration.enabledByDefault;
+      specUnrollPattern = "";
+    }
+
+    spec
+      .getFeatures()
+      .stream()
+      .filter(FeatureInfo::isParameterized)
+      .forEach(feature -> visitFeature(feature, doUnrollSpec, specUnrollPattern));
   }
 
-  @Override
-  public void visitFeatureAnnotation(Unroll unroll, FeatureInfo feature) {
-    if (!feature.isParameterized()) return; // could also throw exception
+  private void visitFeature(FeatureInfo feature, boolean doUnrollSpec, String specUnrollPattern) {
+    MethodInfo featureMethod = feature.getFeatureMethod();
+    Unroll unroll = featureMethod.getAnnotation(Unroll.class);
+    boolean unrollFeature = unroll != null;
+    boolean rollupFeature = featureMethod.getAnnotation(Rollup.class) != null;
 
-    feature.setReportIterations(true);
-    feature.setIterationNameProvider(chooseNameProvider(unroll, feature));
+    if (unrollFeature && rollupFeature) {
+      throw new InvalidSpecException("@Unroll and @Rollup must not be used on the same feature: " + feature.getName());
+    }
+
+    boolean doUnrollFeature;
+    String featureUnrollPattern;
+    if (unrollFeature) {
+      doUnrollFeature = true;
+      featureUnrollPattern = unroll.value();
+    } else if (rollupFeature) {
+      doUnrollFeature = false;
+      featureUnrollPattern = "";
+    } else {
+      doUnrollFeature = doUnrollSpec;
+      featureUnrollPattern = "";
+    }
+
+    feature.setReportIterations(doUnrollFeature);
+    feature.setIterationNameProvider(doUnrollFeature
+      ? chooseNameProvider(specUnrollPattern, featureUnrollPattern, feature)
+      : null);
   }
 
-  private NameProvider<IterationInfo> chooseNameProvider(Unroll unroll, FeatureInfo feature) {
-    if (unroll.value().length() > 0) {
-      return new UnrollIterationNameProvider(feature, unroll.value());
+  private NameProvider<IterationInfo> chooseNameProvider(String specUnrollPattern, String featureUnrollPattern,
+                                                         FeatureInfo feature) {
+    if (!featureUnrollPattern.isEmpty()) {
+      return new UnrollIterationNameProvider(feature, featureUnrollPattern, unrollConfiguration.expressionsAsserted);
     }
     if (feature.getName().contains("#")) {
-      return new UnrollIterationNameProvider(feature, feature.getName());
+      return new UnrollIterationNameProvider(feature, feature.getName(), unrollConfiguration.expressionsAsserted);
     }
-    if (globalUnrollPattern != null) {
-      return new UnrollIterationNameProvider(feature, globalUnrollPattern);
+    if (!specUnrollPattern.isEmpty()) {
+      return new UnrollIterationNameProvider(feature, specUnrollPattern, unrollConfiguration.expressionsAsserted);
+    }
+    if (unrollConfiguration.defaultPattern != null) {
+      return new UnrollIterationNameProvider(feature, unrollConfiguration.defaultPattern, unrollConfiguration.expressionsAsserted);
     }
     return new DataVariablesIterationNameProvider();
   }

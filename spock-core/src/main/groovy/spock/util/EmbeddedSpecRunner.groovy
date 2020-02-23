@@ -50,6 +50,10 @@ class EmbeddedSpecRunner {
   List<Class> extensionClasses = []
   boolean inheritParentExtensions = true
 
+  void configurationScript(Closure configurationScript) {
+    this.configurationScript = configurationScript
+  }
+
   void addPackageImport(String pkg) {
     compiler.addPackageImport(pkg)
   }

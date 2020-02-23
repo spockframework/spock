@@ -19,6 +19,7 @@ package org.spockframework.runtime.extension.builtin;
 import org.spockframework.runtime.*;
 import org.spockframework.runtime.model.*;
 
+import java.util.Map;
 import java.util.regex.*;
 
 import static org.spockframework.util.RenderUtil.toStringOrDump;
@@ -29,28 +30,29 @@ import static org.spockframework.util.RenderUtil.toStringOrDump;
 public class UnrollIterationNameProvider implements NameProvider<IterationInfo> {
   private static final Pattern EXPRESSION_PATTERN = Pattern.compile("#([a-zA-Z_$]([\\w$.]|\\(\\))*)");
 
-  private final boolean assertUnrollExpressions = Boolean.getBoolean("spock.assertUnrollExpressions");
+  private final boolean expressionsAsserted;
   private final FeatureInfo feature;
   private final Matcher expressionMatcher;
 
-  public UnrollIterationNameProvider(FeatureInfo feature, String namePattern) {
+  public UnrollIterationNameProvider(FeatureInfo feature, String namePattern, boolean expressionsAsserted) {
     this.feature = feature;
+    this.expressionsAsserted = expressionsAsserted;
     expressionMatcher = EXPRESSION_PATTERN.matcher(namePattern);
   }
 
   // always returns a name
   @Override
   public String getName(IterationInfo iterationInfo) {
-    return nameFor(iterationInfo.getIterationIndex(), iterationInfo.getDataValues());
+    return nameFor(iterationInfo.getIterationIndex(), iterationInfo.getDataVariables());
   }
 
-  String nameFor(int iterationIndex, Object... dataValues) {
+  private String nameFor(int iterationIndex, Map<String, Object> dataVariables) {
     StringBuffer result = new StringBuffer();
     expressionMatcher.reset();
 
     while (expressionMatcher.find()) {
       String expr = expressionMatcher.group(1);
-      String value = evaluateExpression(expr, iterationIndex, dataValues);
+      String value = evaluateExpression(expr, iterationIndex, dataVariables);
       expressionMatcher.appendReplacement(result, Matcher.quoteReplacement(value));
     }
 
@@ -58,7 +60,7 @@ public class UnrollIterationNameProvider implements NameProvider<IterationInfo> 
     return result.toString();
   }
 
-  private String evaluateExpression(String expr, int iterationIndex, Object[] dataValues) {
+  private String evaluateExpression(String expr, int iterationIndex, Map<String, Object> dataVariables) {
     String[] exprParts = expr.split("\\.");
     String firstPart = exprParts[0];
     Object result;
@@ -73,14 +75,13 @@ public class UnrollIterationNameProvider implements NameProvider<IterationInfo> 
         break;
 
       default:
-        int index = feature.getDataVariables().indexOf(firstPart);
-        if (index < 0) {
-          if (assertUnrollExpressions) {
+        if (!dataVariables.containsKey(firstPart)) {
+          if (expressionsAsserted) {
             throw new SpockAssertionError("Error in @Unroll, could not find matching variable for expression: " + expr);
           }
           return "#Error:" + expr;
         }
-        result = dataValues[index];
+        result = dataVariables.get(firstPart);
         break;
     }
 
@@ -95,7 +96,7 @@ public class UnrollIterationNameProvider implements NameProvider<IterationInfo> 
       }
       return toStringOrDump(result);
     } catch (Exception e) {
-      if (assertUnrollExpressions) {
+      if (expressionsAsserted) {
         throw new SpockAssertionError("Error in @Unroll expression: " + expr, e);
       }
       return "#Error:" + expr;

@@ -25,7 +25,6 @@ import org.spockframework.EmbeddedSpecification
  * @author Peter Niederwieser
  */
 class SpecRecognition extends EmbeddedSpecification {
-  @Unroll
   def "is properly recognized"() {
     when:
     runner.run """

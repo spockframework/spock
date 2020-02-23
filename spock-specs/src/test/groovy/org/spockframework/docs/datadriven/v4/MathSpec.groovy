@@ -1,11 +1,11 @@
 package org.spockframework.docs.datadriven.v4
 
+import spock.lang.Rollup
 import spock.lang.Specification
-import spock.lang.Unroll
 
 class MathSpec extends Specification {
 // tag::example[]
-  @Unroll
+  @Rollup
   def "maximum of two numbers"() {
 // end::example[]
     expect:

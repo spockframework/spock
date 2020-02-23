@@ -9,6 +9,8 @@ include::release_notes.adoc[tag=fancy-iteration-naming]
 
 include::release_notes.adoc[tag=renamed-iteration-count-token]
 
+include::release_notes.adoc[tag=assert-unroll-expressions-by-default]
+
 == 1.0
 
 Specs, Spec base classes and third-party extensions may have be recompiled in order to work with Spock 1.0.

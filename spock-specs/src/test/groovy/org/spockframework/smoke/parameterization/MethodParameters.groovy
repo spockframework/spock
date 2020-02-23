@@ -19,10 +19,13 @@ package org.spockframework.smoke.parameterization
 import org.codehaus.groovy.runtime.typehandling.GroovyCastException
 import org.spockframework.EmbeddedSpecification
 import org.spockframework.compiler.InvalidSpecCompileException
+import spock.lang.Rollup
+import spock.lang.Unroll
 
 /**
  * @author Peter Niederwieser
  */
+@Rollup
 class MethodParameters extends EmbeddedSpecification {
   def "no parameters"() {
     expect:
@@ -68,7 +71,7 @@ class MethodParameters extends EmbeddedSpecification {
     x << [1, 2]
     y << [1, 2]
   }
-  
+
   def "fewer parameters than data variables"() {
     when:
     compiler.compileSpecBody """
@@ -120,6 +123,7 @@ def foo(x, a) {
     thrown(InvalidSpecCompileException)
   }
 
+  @Unroll
   def "data variable that is not a parameter"() {
     when:
     compiler.compileSpecBody """

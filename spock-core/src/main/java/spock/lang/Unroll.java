@@ -8,7 +8,8 @@ import java.lang.annotation.*;
 /**
  * Indicates that iterations of a data-driven feature should be made visible
  * as separate features to the outside world (IDEs, reports, etc.). By default,
- * the name of an iteration is the feature's name followed by a consecutive number.
+ * the name of an iteration is the feature's name followed by the data variables
+ * and their values and the iteration index.
  * This can be changed by providing a naming pattern after @Unroll. A naming pattern
  * may refer to data variables by prepending their names with #. Example:
  *
@@ -42,7 +43,6 @@ import java.lang.annotation.*;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE, ElementType.METHOD})
-@ExtensionAnnotation(UnrollExtension.class)
 public @interface Unroll {
   String value() default "";
 }

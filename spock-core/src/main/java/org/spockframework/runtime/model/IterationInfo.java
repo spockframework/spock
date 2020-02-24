@@ -17,16 +17,20 @@ package org.spockframework.runtime.model;
 import java.lang.reflect.AnnotatedElement;
 import java.util.*;
 
+import static java.util.Collections.unmodifiableMap;
+
 /**
  * Runtime information about an iteration of a feature method.
  */
 public class IterationInfo extends NodeInfo<FeatureInfo, AnnotatedElement> {
+  private final int iterationIndex;
   private final Object[] dataValues;
   private final int estimatedNumIterations;
   private final List<Runnable> cleanups = new ArrayList<>();
 
-  public IterationInfo(FeatureInfo feature, Object[] dataValues, int estimatedNumIterations) {
+  public IterationInfo(FeatureInfo feature, int iterationIndex, Object[] dataValues, int estimatedNumIterations) {
     setParent(feature);
+    this.iterationIndex = iterationIndex;
     this.dataValues = dataValues;
     this.estimatedNumIterations = estimatedNumIterations;
   }
@@ -54,6 +58,16 @@ public class IterationInfo extends NodeInfo<FeatureInfo, AnnotatedElement> {
   }
 
   /**
+   * Return this iterations's index in the sequence of iterations of the owning feature
+   * method. The index starts with 0 for the first iteration and then counts up continuously.
+   *
+   * @return this iteration's index in the sequence of iterations of the owning feature method
+   */
+  public int getIterationIndex() {
+    return iterationIndex;
+  }
+
+  /**
    * Return this iteration's data values for the ongoing execution of the
    * owning feature method. The names of the data values (in the same order)
    * are available through {@link FeatureInfo#getDataVariables}.
@@ -63,6 +77,30 @@ public class IterationInfo extends NodeInfo<FeatureInfo, AnnotatedElement> {
    */
   public Object[] getDataValues() {
     return dataValues;
+  }
+
+  /**
+   * Return an unmodifiable map of data variable names to values with the same iteration
+   * order as {@link FeatureInfo#getDataVariables} and {@link #getDataValues()}. The returned
+   * map is not backed by the actual data values array, but represents a snapshot of the current
+   * state when calling this method.
+   *
+   * <p>If {@code getDataValues()} returns {@code null}, this method does too which is for example
+   * the case if there was an exception in a data provider.
+   *
+   * @return an unmodifiable map of data variable names to values
+   */
+  public Map<String, Object> getDataVariables() {
+    if (dataValues == null) {
+      return null;
+    }
+
+    List<String> dataVariableNames = getFeature().getDataVariables();
+    Map<String, Object> dataVariables = new LinkedHashMap<>();
+    for (int i = 0, size = dataValues.length; i < size; i++) {
+      dataVariables.put(dataVariableNames.get(i), dataValues[i]);
+    }
+    return unmodifiableMap(dataVariables);
   }
 
   /**

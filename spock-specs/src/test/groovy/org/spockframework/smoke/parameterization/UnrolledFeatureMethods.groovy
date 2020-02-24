@@ -45,7 +45,7 @@ def foo() {
     """)
 
     then:
-    result.testsSucceededCount == 3
+    result.testsSucceededCount == 4
     result.testsFailedCount == 0
     result.testsSkippedCount == 0
   }
@@ -63,7 +63,7 @@ def foo() {
     """
 
     then:
-    result.testEvents().started().list().testDescriptor.displayName == (0..2).collect {"foo [x: ${it + 1}, #$it]" }
+    result.testEvents().started().list().testDescriptor.displayName == ["foo"] + (0..2).collect {"foo [x: ${it + 1}, #$it]" }
   }
 
   def "a feature with an empty data provider causes the same error regardless if it's unrolled or not"() {
@@ -103,7 +103,7 @@ def foo() {
     then:
 
     result.testsSucceededCount == 0
-    result.testsFailedCount == 0
+    result.testsFailedCount == 1
     result.testsSkippedCount == 0
     result.containersStartedCount == 1 + 1 + 1 // engine + spec + unrolled feature
     result.containersFailedCount == 1
@@ -125,9 +125,10 @@ def foo() {
 
     then:
 
-    result.testEvents().started().list().testDescriptor.displayName == ["one a two 1 three",
-                                                                   "one b two 2 three",
-                                                                   "one c two 3 three"]
+    result.testEvents().started().list().testDescriptor.displayName == ["foo",
+                                                                        "one a two 1 three",
+                                                                        "one b two 2 three",
+                                                                        "one c two 3 three"]
   }
 
   def "naming pattern may refer to feature name and iteration index"() {
@@ -144,9 +145,10 @@ def foo() {
     """)
 
     then:
-    result.testEvents().started().list().testDescriptor.displayName == ["one foo two 0 three",
-                                                                   "one foo two 1 three",
-                                                                   "one foo two 2 three"]
+    result.testEvents().started().list().testDescriptor.displayName == ["foo",
+                                                                        "one foo two 0 three",
+                                                                        "one foo two 1 three",
+                                                                        "one foo two 2 three"]
   }
 
   @RestoreSystemProperties
@@ -167,7 +169,8 @@ def foo() {
     """)
 
     then:
-    result.testEvents().started().list().testDescriptor.displayName == ["foo[0]",
+    result.testEvents().started().list().testDescriptor.displayName == ["foo",
+                                                                        "foo[0]",
                                                                         "foo[1]",
                                                                         "foo[2]"]
   }
@@ -192,6 +195,7 @@ def foo() {
     then:
     result.testEvents().started().list().testDescriptor.displayName == ["foo",
                                                                         "foo",
+                                                                        "foo",
                                                                         "foo"]
   }
 
@@ -210,7 +214,8 @@ def foo() {
     """)
 
     then:
-    result.testEvents().started().list().testDescriptor.displayName == ["one 1 two null three"]
+    result.testEvents().started().list().testDescriptor.displayName == ["foo",
+                                                                        "one 1 two null three"]
   }
 
   @Issue("https://github.com/spockframework/spock/issues/353")
@@ -227,7 +232,8 @@ def foo() {
     """)
 
     then:
-    result.testEvents().started().list().testDescriptor.displayName == ["one fred two"]
+    result.testEvents().started().list().testDescriptor.displayName == ["foo",
+                                                                        "one fred two"]
   }
 
   @Issue("https://github.com/spockframework/spock/issues/353")
@@ -244,7 +250,8 @@ def foo() {
     """)
 
     then:
-    result.testEvents().started().list().testDescriptor.displayName == ["one 4 two"]
+    result.testEvents().started().list().testDescriptor.displayName == ["foo",
+                                                                        "one 4 two"]
   }
 
   def "expressions in naming pattern that can't be evaluated are prefixed with 'Error:'"() {
@@ -260,7 +267,8 @@ def foo() {
     """)
 
     then:
-    result.testEvents().started().list().testDescriptor.displayName == ["#Error:obj ok #Error:obj.bang() #Error:obj.missing() #Error:missing"]
+    result.testEvents().started().list().testDescriptor.displayName == ["foo",
+                                                                        "#Error:obj ok #Error:obj.bang() #Error:obj.missing() #Error:missing"]
   }
 
   @Issue("https://github.com/spockframework/spock/issues/353")
@@ -277,7 +285,8 @@ def "one #actor.details.name.size() two"() {
     """)
 
     then:
-    result.testEvents().started().list().testDescriptor.displayName == ["one 4 two"]
+    result.testEvents().started().list().testDescriptor.displayName == ["one #actor.details.name.size() two",
+                                                                        "one 4 two"]
   }
 
 
@@ -295,7 +304,8 @@ def "#actor.details.age"() {
     """)
 
     then:
-    result.testEvents().started().list().testDescriptor.displayName == ["fred"]
+    result.testEvents().started().list().testDescriptor.displayName == ["#actor.details.age",
+                                                                        "fred"]
   }
 
   @Issue("https://github.com/spockframework/spock/issues/354")
@@ -325,9 +335,11 @@ class Foo extends Specification {
     """)
 
     then:
-    result.testEvents().started().list().testDescriptor.displayName == ["fred",
-                                                                   "not data-driven",
-                                                                   "30"]
+    result.testEvents().started().list().testDescriptor.displayName == ["#actor.details.name",
+                                                                        "fred",
+                                                                        "not data-driven",
+                                                                        "#actor.details.age",
+                                                                        "30"]
   }
 
   @Issue("https://github.com/spockframework/spock/issues/354")
@@ -347,7 +359,8 @@ class Foo extends Specification {
     """)
 
     then:
-    result.testEvents().started().list().testDescriptor.displayName == ["fred"]
+    result.testEvents().started().list().testDescriptor.displayName == ["method",
+                                                                        "fred"]
   }
 
   @Issue("https://github.com/spockframework/spock/issues/390")
@@ -364,7 +377,8 @@ def "an actor (named #actor.getName()) age #actor.getAge()"() {
     """)
 
     then:
-    result.testEvents().started().list().testDescriptor.displayName == ["an actor (named fred) age 30"]
+    result.testEvents().started().list().testDescriptor.displayName == ["an actor (named #actor.getName()) age #actor.getAge()",
+                                                                        "an actor (named fred) age 30"]
 
   }
 

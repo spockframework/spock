@@ -179,6 +179,26 @@ class EmbeddedSpecRunner {
         .map{it.timestamp.toEpochMilli()}.orElseGet {0}
     }
 
+    long getDynamicallyRegisteredCount() {
+      return results.allEvents().dynamicallyRegistered().count()
+    }
+
+    long getTotalStartedCount() {
+      return results.allEvents().started().count()
+    }
+
+    long getTotalSkippedCount() {
+      return results.allEvents().skipped().count()
+    }
+
+    long getTotalAbortedCount() {
+      return results.allEvents().aborted().count()
+    }
+
+    long getTotalSucceededCount() {
+      return results.allEvents().succeeded().count()
+    }
+
     @Override
     long getTotalFailureCount() {
       return results.allEvents().failed().count()

@@ -55,7 +55,7 @@ class SpockHelloWorldTest {
 
   @Test
   void verifyUnrollExample() {
-    execute(selectClass(UnrollTestCase.class), stats -> stats.started(12).succeeded(12));
+    execute(selectClass(UnrollTestCase.class), stats -> stats.started(16).succeeded(16));
   }
 
   @Test

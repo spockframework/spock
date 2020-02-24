@@ -81,11 +81,11 @@ def bar() {
 
     then:
     notThrown(AssertionError)
-    result.testsStartedCount == 1
+    result.testsStartedCount == 2
     result.testsFailedCount == 0
     result.testsSkippedCount == 0
     result.testsAbortedCount == 1
-    result.testsSucceededCount == 0
+    result.testsSucceededCount == 1
   }
 
   def "@PendingFeatureIf marks passing feature as failed if the data variable accessing conditional expression returns true"() {
@@ -129,10 +129,10 @@ def bar() {
 
     then:
     notThrown(AssertionError)
-    result.testsStartedCount == 1
+    result.testsStartedCount == 2
     result.testsFailedCount == 0
     result.testsSkippedCount == 0
     result.testsAbortedCount == 0
-    result.testsSucceededCount == 1
+    result.testsSucceededCount == 2
   }
 }

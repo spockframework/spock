@@ -435,7 +435,7 @@ local ; 1
     '''
 
     then:
-    result.testEvents().finished().list().testDescriptor.displayName == ["a = 0, b = 1", "a = 2, b = 2" ]
+    result.testEvents().finished().list().testDescriptor.displayName == ["a = 0, b = 1", "a = 2, b = 2", "a = #a, b = #b" ]
   }
 
   def "cells can't reference next cells"() {

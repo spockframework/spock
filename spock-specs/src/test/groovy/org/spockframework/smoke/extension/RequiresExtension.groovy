@@ -30,11 +30,14 @@ class RequiresExtension extends EmbeddedSpecification {
     when:
     def results = runner.runClass(RequiresExtensionExamples)
     then:
-    results.testsSucceededCount == 7
+    results.testsSucceededCount == 8
     results.testsFailedCount == 0
-    results.testsSkippedCount == 2
+    results.testsSkippedCount == 3
     results.testEvents().skipped().list().testDescriptor.displayName == [
-      "skips feature if precondition is not satisfied", "allows determinate use of multiple filters"]
+      "skips feature if precondition is not satisfied",
+      "can skip data providers completely if no data variables are accessed",
+      "allows determinate use of multiple filters"
+    ]
   }
 
 

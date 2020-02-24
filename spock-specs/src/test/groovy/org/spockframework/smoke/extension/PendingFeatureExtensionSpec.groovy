@@ -123,7 +123,7 @@ class Foo extends Specification {
     result.testsSucceededCount == 3
     result.testsFailedCount == 0
     result.testsSkippedCount == 0
-    result.containersAbortedCount == 1
+    result.testsAbortedCount == 1
   }
 
 
@@ -147,7 +147,7 @@ class Foo extends Specification {
     result.testsSucceededCount == 3
     result.testsFailedCount == 0
     result.testsSkippedCount == 0
-    result.containersAbortedCount == 1
+    result.testsAbortedCount == 1
   }
 
 

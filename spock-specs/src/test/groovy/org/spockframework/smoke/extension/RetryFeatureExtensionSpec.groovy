@@ -177,7 +177,7 @@ class Foo extends Specification {
   def bar() {
     expect:
     throw new IllegalArgumentException()
-    
+
     where:
     ignore << [1, 2]
   }
@@ -206,7 +206,7 @@ class Foo extends Specification {
     """)
 
     then:
-    result.testsSucceededCount == 0
+    result.testsSucceededCount == 1
     result.testsFailedCount == 2
     result.testsSkippedCount == 0
     featureCounter.get() == 8
@@ -231,7 +231,7 @@ class Foo extends Specification {
     """)
 
     then:
-    result.testsSucceededCount == 2
+    result.testsSucceededCount == 3
     result.testsFailedCount == 1
     result.testsSkippedCount == 0
     featureCounter.get() == 4 + 2
@@ -254,7 +254,7 @@ class Foo extends Specification {
     """)
 
     then:
-    result.testsSucceededCount == 3
+    result.testsSucceededCount == 4
     result.testsFailedCount == 0
     result.testsSkippedCount == 0
   }
@@ -277,7 +277,7 @@ class Foo extends Specification {
     """)
 
     then:
-    result.testsSucceededCount == 3
+    result.testsSucceededCount == 4
     result.testsFailedCount == 0
     result.testsSkippedCount == 0
   }
@@ -324,8 +324,8 @@ class Foo extends Specification {
     def duration = System.currentTimeMillis() - start
     duration > 300
     duration < 1000
-    result.testsStartedCount == 3
-    result.testsSucceededCount == 2
+    result.testsStartedCount == 4
+    result.testsSucceededCount == 3
     result.testsFailedCount == 1
     result.testsSkippedCount == 0
     featureCounter.get() == 4 + 2
@@ -351,8 +351,8 @@ class Foo extends Specification {
     """)
 
     then:
-    result.testsStartedCount == 3
-    result.testsSucceededCount == 0
+    result.testsStartedCount == 4
+    result.testsSucceededCount == 1
     result.testsFailedCount == 3
     featureCounter.get() == 4 + 1 + 1
   }
@@ -383,8 +383,8 @@ class Foo extends Specification {
     """)
 
     then:
-    result.testsStartedCount == 6
-    result.testsSucceededCount == 0
+    result.testsStartedCount == 7
+    result.testsSucceededCount == 1
     result.testsFailedCount == 6
     featureCounter.get() == (4 + 1) + (1 + 1) + (1 + 1)
   }
@@ -401,7 +401,7 @@ class Foo extends Specification {
   def "bar #input"() {
     org.spockframework.smoke.extension.RetryFeatureExtensionSpec.featureCounter.incrementAndGet()
     value = input
-    
+
     expect:
     false
 
@@ -412,8 +412,8 @@ class Foo extends Specification {
     """)
 
     then:
-    result.testsStartedCount == 3
-    result.testsSucceededCount == 0
+    result.testsStartedCount == 4
+    result.testsSucceededCount == 1
     result.testsFailedCount == 3
     featureCounter.get() == 1 + 4 + 1
   }

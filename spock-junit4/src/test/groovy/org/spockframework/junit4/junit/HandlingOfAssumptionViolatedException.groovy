@@ -53,8 +53,8 @@ def foo() {
     """
 
     then:
-    result.testsStartedCount == 2
-    result.testsAbortedCount == 2
+    result.testsStartedCount == 3
+    result.testsAbortedCount == 3
     result.testsFailedCount == 0
   }
 

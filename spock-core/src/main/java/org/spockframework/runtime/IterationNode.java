@@ -1,11 +1,15 @@
 package org.spockframework.runtime;
 
+import org.junit.platform.engine.TestDescriptor;
+import org.junit.platform.engine.TestExecutionResult;
+import org.opentest4j.TestAbortedException;
 import org.spockframework.runtime.model.IterationInfo;
 
 import org.junit.platform.engine.UniqueId;
 
 public class IterationNode extends SpockNode {
   private final IterationInfo iterationInfo;
+  private TestExecutionResult result;
 
   protected IterationNode(UniqueId uniqueId, IterationInfo iterationInfo) {
     super(uniqueId, iterationInfo.getName(), featureToMethodSource(iterationInfo.getFeature()));
@@ -55,6 +59,16 @@ public class IterationNode extends SpockNode {
   }
 
   @Override
+  public void nodeSkipped(SpockExecutionContext context, TestDescriptor testDescriptor, SkipResult result) {
+    this.result = TestExecutionResult.aborted(result.getReason().map(TestAbortedException::new).orElse(null));
+  }
+
+  @Override
+  public void nodeFinished(SpockExecutionContext context, TestDescriptor testDescriptor, TestExecutionResult result) {
+    this.result = result;
+  }
+
+  @Override
   public Type getType() {
     return Type.TEST;
   }
@@ -62,5 +76,9 @@ public class IterationNode extends SpockNode {
   @Override
   public SkipResult shouldBeSkipped(SpockExecutionContext context) throws Exception {
     return shouldBeSkipped(iterationInfo.getFeature());
+  }
+
+  public TestExecutionResult getResult() {
+    return result;
   }
 }

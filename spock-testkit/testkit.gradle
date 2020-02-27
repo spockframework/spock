@@ -55,3 +55,29 @@ task consoleLauncherTest(type: JavaExec) {
   args("--reports-dir", reportsDir)
 //  systemProperty("java.util.logging.manager", "org.apache.logging.log4j.jul.LogManager")
 }
+
+task errorTestCaseTest(type: JavaExec) {
+  dependsOn(testClasses)
+  def reportsDir = file("$buildDir/test-results")
+  outputs.dir(reportsDir)
+  classpath = sourceSets["test"].runtimeClasspath
+  main = "org.junit.platform.console.ConsoleLauncher"
+  args("--select-class", "spock.testkit.testsources.ErrorTestCase")
+  args("--details", "tree")
+  args("--details-theme", "ascii")
+  args("--include-classname", ".*TestCase")
+  args("--reports-dir", reportsDir)
+  ignoreExitValue = true
+  def out = new ByteArrayOutputStream()
+  errorOutput = out
+  standardOutput = out
+
+  doLast {
+    def output = out.toString()
+    println output
+    if (!output.contains("No such property: b for class")) {
+      throw new IllegalStateException("build should have logged proper error message")
+    }
+  }
+}
+tasks.check.dependsOn errorTestCaseTest

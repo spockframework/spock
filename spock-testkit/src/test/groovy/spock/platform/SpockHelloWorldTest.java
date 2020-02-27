@@ -40,7 +40,7 @@ class SpockHelloWorldTest {
 
   @Test
   void packageSelectorsAreResolved() {
-    assertEquals(6, execute(selectPackage(ExampleTestCase.class.getPackage().getName()))
+    assertEquals(7, execute(selectPackage(ExampleTestCase.class.getPackage().getName()))
       .containers()
       .filter(event -> event.getType() == EventType.STARTED)
       .filter(event -> "spec".equals(event.getTestDescriptor().getUniqueId().getLastSegment().getType()))

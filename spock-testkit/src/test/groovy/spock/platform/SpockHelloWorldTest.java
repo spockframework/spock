@@ -1,5 +1,11 @@
 package spock.platform;
 
+import org.junit.platform.launcher.Launcher;
+import org.junit.platform.launcher.TestPlan;
+import org.junit.platform.launcher.core.LauncherConfig;
+import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder;
+import org.junit.platform.launcher.core.LauncherFactory;
+import org.spockframework.runtime.SpockEngine;
 import spock.testkit.testsources.*;
 
 import java.util.function.Consumer;
@@ -40,7 +46,7 @@ class SpockHelloWorldTest {
 
   @Test
   void packageSelectorsAreResolved() {
-    assertEquals(6, execute(selectPackage(ExampleTestCase.class.getPackage().getName()))
+    assertEquals(7, execute(selectPackage(ExampleTestCase.class.getPackage().getName()))
       .containers()
       .filter(event -> event.getType() == EventType.STARTED)
       .filter(event -> "spec".equals(event.getTestDescriptor().getUniqueId().getLastSegment().getType()))
@@ -54,6 +60,21 @@ class SpockHelloWorldTest {
 
   @Test
   void verifyStepwiseExample() {
+    execute(selectClass(StepwiseTestCase.class), stats -> stats.started(4).succeeded(3).failed(1).skipped(1));
+  }
+
+  @Test
+  void verifyErrorExample() {
+    Launcher launcher = LauncherFactory.create(LauncherConfig.builder()
+      .enableTestEngineAutoRegistration(false)
+      .enableTestExecutionListenerAutoRegistration(false)
+      .addTestEngines(new SpockEngine())
+      .build());
+    TestPlan testPlan = launcher.discover(LauncherDiscoveryRequestBuilder.request()
+      .selectors(selectClass(ErrorTestCase.class))
+      .build());
+    assertEquals(1, testPlan.getChildren(testPlan.getRoots().iterator().next()).size());
+
     execute(selectClass(StepwiseTestCase.class), stats -> stats.started(4).succeeded(3).failed(1).skipped(1));
   }
 

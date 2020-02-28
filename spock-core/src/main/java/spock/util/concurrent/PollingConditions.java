@@ -19,6 +19,7 @@ import groovy.lang.Closure;
 import org.spockframework.lang.ConditionBlock;
 import org.spockframework.runtime.GroovyRuntimeUtil;
 import org.spockframework.runtime.SpockTimeoutError;
+import org.spockframework.runtime.UnallowedExceptionThrownError;
 import org.spockframework.util.Beta;
 
 /**
@@ -53,6 +54,7 @@ public class PollingConditions {
   private double initialDelay = 0;
   private double delay = 0.1;
   private double factor = 1.0;
+  private boolean strict = false;
 
   /**
    * Returns the timeout (in seconds) until which the conditions have to be satisfied.
@@ -129,10 +131,17 @@ public class PollingConditions {
   }
 
   /**
+   * Returns if is strict mode. If strict mode is enabled, will fail if any exception rather than {@link AssertionError} is thrown.
+   * Defaults to {@code false}
+   */
+  public boolean isStrict() {
+    return strict;
+  }
+
+  /**
    * Repeatedly evaluates the specified conditions until they are satisfied or the timeout has elapsed.
    *
    * @param conditions the conditions to evaluate
-   *
    * @throws InterruptedException if evaluation is interrupted
    */
   @ConditionBlock
@@ -144,11 +153,10 @@ public class PollingConditions {
    * Repeatedly evaluates the specified conditions until they are satisfied or the specified timeout (in seconds) has elapsed.
    *
    * @param conditions the conditions to evaluate
-   *
    * @throws InterruptedException if evaluation is interrupted
    */
   @ConditionBlock
-  public void within(double seconds, Closure<?> conditions) throws InterruptedException  {
+  public void within(double seconds, Closure<?> conditions) throws InterruptedException {
     long timeoutMillis = toMillis(seconds);
     long start = System.currentTimeMillis();
     long lastAttempt = 0;
@@ -157,13 +165,16 @@ public class PollingConditions {
     long currDelay = toMillis(delay);
     int attempts = 0;
 
-    while(true) {
+    while (true) {
       try {
         attempts++;
         lastAttempt = System.currentTimeMillis();
         GroovyRuntimeUtil.invokeClosure(conditions);
         return;
       } catch (Throwable e) {
+        if (strict && !(e instanceof AssertionError)) {
+          throw new UnallowedExceptionThrownError(e.getClass(), e);
+        }
         long elapsedTime = lastAttempt - start;
         if (elapsedTime >= timeoutMillis) {
           String msg = String.format("Condition not satisfied after %1.2f seconds and %d attempts", elapsedTime / 1000d, attempts);

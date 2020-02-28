@@ -99,7 +99,7 @@ public @interface Retry {
     ITERATION,
 
     /**
-     * Retry the the feature together with the setup and cleanup methods.
+     * Retry the feature together with the setup and cleanup methods.
      */
     SETUP_FEATURE_CLEANUP
   }

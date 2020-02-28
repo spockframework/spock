@@ -16,6 +16,7 @@ package spock.util.concurrent
 
 import org.spockframework.runtime.ConditionNotSatisfiedError
 import org.spockframework.runtime.SpockTimeoutError
+import org.spockframework.runtime.UnallowedExceptionThrownError
 import spock.lang.Issue
 import spock.lang.PendingFeature
 import spock.lang.Specification
@@ -154,10 +155,47 @@ class PollingConditionsSpec extends Specification {
     then:
     condition.eventually {
       try {
-        sleep 200;
-        assert secondAttempt;
+        sleep 200
+        assert secondAttempt
       } finally {
         secondAttempt = true
+      }
+    }
+  }
+
+  def "fails if an exception is thrown while polling"() {
+    given:
+    def iteration = 0
+
+    when:
+    new PollingConditions(strict: true).eventually {
+      try {
+        if (iteration < 2) {
+          throw new IllegalStateException("An exception is thrown")
+        }
+        assert true
+      } finally {
+        iteration++
+      }
+    }
+    then:
+    def ex = thrown(UnallowedExceptionThrownError)
+    ex.unallowed == IllegalStateException
+  }
+
+  def "swallow intermediate exceptions while polling"() {
+    given:
+    def iteration = 0
+
+    expect:
+    new PollingConditions(strict: false).eventually {
+      try {
+        if (iteration < 2) {
+          throw new IllegalStateException("An exception is thrown")
+        }
+        assert true
+      } finally {
+        iteration++
       }
     }
   }

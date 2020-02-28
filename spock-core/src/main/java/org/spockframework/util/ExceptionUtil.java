@@ -24,20 +24,26 @@ import org.jetbrains.annotations.Contract;
 public class ExceptionUtil {
   /**
    * Allows to throw an unchecked exception without declaring it in a throws clause.
+   * The given {@code Throwable} will be unconditionally thrown.
+   * The return type is only present to be able to use the method as
+   * last statement in a method or lambda that needs a value returned,
+   * but the method will never return successfully.
+   *
+   * @param throwable the throwable to be thrown
+   * @param <R>       the fake return type
+   * @param <T>       the class of the throwable that will be thrown
+   * @return nothing as the method will never return successfully
+   * @throws T unconditionally
    */
-  public static void sneakyThrow(Throwable t) {
-    ExceptionUtil.<RuntimeException>doSneakyThrow(t);
+  @SuppressWarnings("unchecked")
+  public static <R, T extends Throwable> R sneakyThrow(Throwable t) throws T {
+    throw (T) t;
   }
 
   public static String printStackTrace(Throwable t) {
     StringWriter writer = new StringWriter();
     t.printStackTrace(new PrintWriter(writer));
     return writer.toString();
-  }
-
-  @SuppressWarnings("unchecked")
-  private static <T extends Throwable> void doSneakyThrow(Throwable t) throws T {
-    throw (T) t;
   }
 
   @Contract("!null, _ -> fail; _, !null -> fail")

@@ -136,8 +136,7 @@ public abstract class GroovyRuntimeUtil {
     try {
       return InvokerHelper.getProperty(target, property);
     } catch (InvokerInvocationException e) {
-      ExceptionUtil.sneakyThrow(e.getCause());
-      return null; // never reached
+      return ExceptionUtil.sneakyThrow(e.getCause());
     }
   }
 
@@ -159,8 +158,7 @@ public abstract class GroovyRuntimeUtil {
     try {
       return InvokerHelper.invokeConstructorOf(clazz, args);
     } catch (InvokerInvocationException e) {
-      ExceptionUtil.sneakyThrow(e.getCause());
-      return null; // never reached
+      return ExceptionUtil.sneakyThrow(e.getCause());
     }
   }
 
@@ -171,8 +169,7 @@ public abstract class GroovyRuntimeUtil {
     try {
       return InvokerHelper.invokeMethod(target, method, args);
     } catch (InvokerInvocationException e) {
-      ExceptionUtil.sneakyThrow(e.getCause());
-      return null; // never reached
+      return ExceptionUtil.sneakyThrow(e.getCause());
     }
   }
 
@@ -180,8 +177,7 @@ public abstract class GroovyRuntimeUtil {
     try {
       return InvokerHelper.invokeMethodSafe(target, method, args);
     } catch (InvokerInvocationException e) {
-      ExceptionUtil.sneakyThrow(e.getCause());
-      return null; // never reached
+      return ExceptionUtil.sneakyThrow(e.getCause());
     }
   }
 
@@ -201,8 +197,7 @@ public abstract class GroovyRuntimeUtil {
     try {
       return closure.call(args);
     } catch (InvokerInvocationException e) {
-      ExceptionUtil.sneakyThrow(e.getCause());
-      return null; // never reached
+      return ExceptionUtil.sneakyThrow(e.getCause());
     }
   }
 
@@ -214,8 +209,7 @@ public abstract class GroovyRuntimeUtil {
       Constructor<T> constructor = closureType.getConstructor(Object.class, Object.class);
       return constructor.newInstance(owner, thisObject);
     } catch (Exception e) {
-      ExceptionUtil.sneakyThrow(e.getCause());
-      return null; // never reached
+      return ExceptionUtil.sneakyThrow(e.getCause());
     }
   }
 
@@ -226,8 +220,7 @@ public abstract class GroovyRuntimeUtil {
     try {
       return InvokerHelper.asIterator(object);
     } catch (InvokerInvocationException e) {
-      ExceptionUtil.sneakyThrow(e.getCause());
-      return null; // never reached
+      return ExceptionUtil.sneakyThrow(e.getCause());
     }
   }
 
@@ -292,8 +285,7 @@ public abstract class GroovyRuntimeUtil {
     try {
       return InvokerHelper.getAttribute(target, name);
     } catch (InvokerInvocationException e) {
-      ExceptionUtil.sneakyThrow(e.getCause());
-      return null; // never reached
+      return ExceptionUtil.sneakyThrow(e.getCause());
     }
   }
 

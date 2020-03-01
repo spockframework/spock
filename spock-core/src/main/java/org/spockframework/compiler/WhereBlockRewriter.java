@@ -32,6 +32,7 @@ import org.codehaus.groovy.control.SourceUnit;
 import org.codehaus.groovy.syntax.*;
 import org.objectweb.asm.Opcodes;
 
+import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.*;
 import static org.spockframework.compiler.AstUtil.createGetAtMethod;
 import static org.spockframework.compiler.AstUtil.createGetMethod;
@@ -579,16 +580,27 @@ public class WhereBlockRewriter {
 
   private void handleFeatureParameters() {
     Parameter[] parameters = whereBlock.getParent().getAst().getParameters();
-    if (parameters.length == 0)
+    if (parameters.length == 0) {
       addFeatureParameters();
-    else
+    } else {
       checkAllParametersAreDataVariables(parameters);
+      sortFeatureParameters(parameters);
+    }
   }
 
   private void checkAllParametersAreDataVariables(Parameter[] parameters) {
     for (Parameter param : parameters)
       if (!isDataProcessorVariable(param.getName()))
         resources.getErrorReporter().error(param, "Parameter '%s' does not refer to a data variable", param.getName());
+  }
+
+  private void sortFeatureParameters(Parameter[] parameters) {
+    List<String> dataVariableNames = dataProcessorVars
+      .stream()
+      .map(VariableExpression::getName)
+      .collect(toList());
+    Arrays.sort(parameters, comparing(parameter -> dataVariableNames.indexOf(parameter.getName())));
+    whereBlock.getParent().getAst().setParameters(parameters);
   }
 
   private void addFeatureParameters() {

@@ -812,9 +812,9 @@ When using data driven features (methods with a `where:` block), the user of you
 restrictions, if parameters should be injected by your extension:
 
 * all data variables and all to-be-injected parameters have to be defined as method parameters
-* all method parameters have to be assigned a value in the `where:` block
-* the order of the method parameters has to be identical to the order of the data variables in the `where:` block
-* the to-be-injected parameters have to be set to any value in the `where:` block, for example `null`
+* all method parameters have to be assigned a value in the `where:` block, for example `null`
+* *pre Spock 2.0:* the order of the method parameters has to be identical to the order of the data
+  variables in the `where:` block
 +
 of course you can also make your extension only inject a value if none is set already, as the `where:` block
 assignments happen before the method interceptor is called

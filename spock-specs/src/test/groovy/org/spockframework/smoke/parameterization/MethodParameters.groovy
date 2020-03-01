@@ -19,6 +19,7 @@ package org.spockframework.smoke.parameterization
 import org.codehaus.groovy.runtime.typehandling.GroovyCastException
 import org.spockframework.EmbeddedSpecification
 import org.spockframework.compiler.InvalidSpecCompileException
+import spock.lang.Issue
 
 /**
  * @author Peter Niederwieser
@@ -68,7 +69,7 @@ class MethodParameters extends EmbeddedSpecification {
     x << [1, 2]
     y << [1, 2]
   }
-  
+
   def "fewer parameters than data variables"() {
     when:
     compiler.compileSpecBody """
@@ -86,7 +87,6 @@ def foo(x) {
     thrown(InvalidSpecCompileException)
   }
 
-
   def "more parameters than data variables"() {
     when:
     compiler.compileSpecBody """
@@ -103,6 +103,7 @@ def foo(x, y, z) {
     then:
     thrown(InvalidSpecCompileException)
   }
+
 
   def "parameter that is not a data variable"() {
     when:
@@ -167,5 +168,15 @@ def foo(x, ClassLoader y) {
 
     then:
     thrown(GroovyCastException)
+  }
+
+  @Issue("https://github.com/spockframework/spock/issues/651")
+  def "data values are injected by name, not order"(y, x) {
+    expect:
+    2 * x == y
+
+    where:
+    x << [1, 2]
+    y << [2, 4]
   }
 }

@@ -151,6 +151,12 @@ public class SpecInfoBuilder {
 
     if (dataProcessorMethod != null) {
       feature.setDataProcessorMethod(dataProcessorMethod);
+
+      DataProcessorMetadata dataProcessorMetadata = dataProcessorMethod.getAnnotation(DataProcessorMetadata.class);
+      for (String dataVariable : dataProcessorMetadata.dataVariables()) {
+        feature.addDataVariable(dataVariable);
+      }
+
       int providerCount = 0;
       String providerMethodName = InternalIdentifiers.getDataProviderName(method.getName(), providerCount++);
       MethodInfo providerMethod = createMethod(providerMethodName, MethodKind.DATA_PROVIDER);

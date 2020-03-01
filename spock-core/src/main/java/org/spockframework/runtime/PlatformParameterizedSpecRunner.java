@@ -83,8 +83,8 @@ public class PlatformParameterizedSpecRunner extends PlatformSpecRunner {
   private int getDataTableOffset(SpockExecutionContext context, DataProviderInfo dataProviderInfo) {
     int result = 0;
     for (String variableName : dataProviderInfo.getDataVariables()) {
-      for (String parameterName : context.getCurrentFeature().getParameterNames()) {
-        if (variableName.equals(parameterName)) {
+      for (String dataVariable : context.getCurrentFeature().getDataVariables()) {
+        if (variableName.equals(dataVariable)) {
           return result;
         } else {
           result++;
@@ -93,7 +93,7 @@ public class PlatformParameterizedSpecRunner extends PlatformSpecRunner {
     }
     throw new IllegalStateException(String.format("Variable name not defined (%s not in %s)!",
       dataProviderInfo.getDataVariables(),
-      context.getCurrentFeature().getParameterNames()));
+      context.getCurrentFeature().getDataVariables()));
   }
 
   private Iterator[] createIterators(SpockExecutionContext context, Object[] dataProviders) {

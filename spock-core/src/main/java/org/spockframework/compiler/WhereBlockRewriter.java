@@ -17,6 +17,7 @@
 package org.spockframework.compiler;
 
 import org.spockframework.compiler.model.WhereBlock;
+import org.spockframework.runtime.model.DataProcessorMetadata;
 import org.spockframework.runtime.model.DataProviderMetadata;
 import org.spockframework.util.*;
 
@@ -29,6 +30,7 @@ import org.codehaus.groovy.control.SourceUnit;
 import org.codehaus.groovy.syntax.*;
 import org.objectweb.asm.Opcodes;
 
+import static java.util.stream.Collectors.toList;
 import static org.spockframework.compiler.AstUtil.createGetAtMethod;
 
 /**
@@ -366,14 +368,30 @@ public class WhereBlockRewriter {
     BlockStatement blockStat = new BlockStatement(dataProcessorStats, new VariableScope());
     new DataProcessorVariableRewriter().visitBlockStatement(blockStat);
 
-    whereBlock.getParent().getParent().getAst().addMethod(
-      new MethodNode(
-          InternalIdentifiers.getDataProcessorName(whereBlock.getParent().getAst().getName()),
-          Opcodes.ACC_PUBLIC | Opcodes.ACC_SYNTHETIC,
-          ClassHelper.OBJECT_TYPE,
-          dataProcessorParams.toArray(new Parameter[dataProcessorParams.size()]),
-          ClassNode.EMPTY_ARRAY,
-          blockStat));
+    MethodNode dataProcessorMethod = new MethodNode(
+      InternalIdentifiers.getDataProcessorName(whereBlock.getParent().getAst().getName()),
+      Opcodes.ACC_PUBLIC | Opcodes.ACC_SYNTHETIC,
+      ClassHelper.OBJECT_TYPE,
+      dataProcessorParams.toArray(Parameter.EMPTY_ARRAY),
+      ClassNode.EMPTY_ARRAY,
+      blockStat);
+    dataProcessorMethod.addAnnotation(createDataProcessorAnnotation());
+
+    whereBlock.getParent().getParent().getAst().addMethod(dataProcessorMethod);
+  }
+
+  private AnnotationNode createDataProcessorAnnotation() {
+    AnnotationNode ann = new AnnotationNode(resources.getAstNodeCache().DataProcessorMetadata);
+    ann.addMember(
+      DataProcessorMetadata.DATA_VARIABLES,
+      new ListExpression(
+        dataProcessorVars
+          .stream()
+          .map(VariableExpression::getName)
+          .map(ConstantExpression::new)
+          .collect(toList())
+      ));
+    return ann;
   }
 
   private static void notAParameterization(ASTNode stat) throws InvalidSpecCompileException {

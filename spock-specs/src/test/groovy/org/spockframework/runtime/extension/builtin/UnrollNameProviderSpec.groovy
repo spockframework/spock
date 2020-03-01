@@ -24,7 +24,7 @@ class UnrollNameProviderSpec extends Specification {
   def "regex-like data values are substituted correctly (i.e. literally)"() {
     given:
     def feature = new FeatureInfo()
-    feature.addParameterName("dataVar")
+    feature.addDataVariable("dataVar")
     def nameGenerator = new UnrollNameProvider(feature, "foo #dataVar bar")
 
     expect:
@@ -39,7 +39,7 @@ class UnrollNameProviderSpec extends Specification {
   def "data values are converted to strings in Groovy style"() {
     given:
     def feature = new FeatureInfo()
-    feature.addParameterName("dataVar")
+    feature.addDataVariable("dataVar")
     def nameGenerator = new UnrollNameProvider(feature, "foo #dataVar bar")
 
     expect:
@@ -54,7 +54,7 @@ class UnrollNameProviderSpec extends Specification {
   def "missing variables are rendered as #Error:dataVars"() {
     given:
     def feature = new FeatureInfo()
-    feature.addParameterName("dataVar")
+    feature.addDataVariable("dataVar")
     def nameGenerator = new UnrollNameProvider(feature, "foo #dataVars bar")
 
     expect:
@@ -64,7 +64,7 @@ class UnrollNameProviderSpec extends Specification {
   def "exceptions during variable eval are rendered as #Error:dataVars"() {
     given:
     def feature = new FeatureInfo()
-    feature.addParameterName("dataVar")
+    feature.addDataVariable("dataVar")
     def nameGenerator = new UnrollNameProvider(feature, "foo #dataVar.foo bar")
 
     expect:
@@ -77,7 +77,7 @@ class UnrollNameProviderSpec extends Specification {
     given:
     System.setProperty('spock.assertUnrollExpressions', 'true')
     def feature = new FeatureInfo()
-    feature.addParameterName("dataVar")
+    feature.addDataVariable("dataVar")
     def nameGenerator = new UnrollNameProvider(feature, "foo #dataVars bar")
 
     when:
@@ -95,7 +95,7 @@ class UnrollNameProviderSpec extends Specification {
     given:
     def feature = new FeatureInfo()
     System.setProperty('spock.assertUnrollExpressions', 'true')
-    feature.addParameterName("dataVar")
+    feature.addDataVariable("dataVar")
     def nameGenerator = new UnrollNameProvider(feature, "foo #dataVar.foo bar")
 
     when:

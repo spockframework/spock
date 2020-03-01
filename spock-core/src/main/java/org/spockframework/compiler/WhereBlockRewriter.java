@@ -17,6 +17,7 @@
 package org.spockframework.compiler;
 
 import org.spockframework.compiler.model.WhereBlock;
+import org.spockframework.runtime.model.DataProcessorMetadata;
 import org.spockframework.runtime.model.DataProviderMetadata;
 import org.spockframework.util.*;
 
@@ -609,14 +610,30 @@ public class WhereBlockRewriter {
 
     BlockStatement blockStat = new BlockStatement(dataProcessorStats, null);
 
-    whereBlock.getParent().getParent().getAst().addMethod(
-      new MethodNode(
-          InternalIdentifiers.getDataProcessorName(whereBlock.getParent().getAst().getName()),
-          Opcodes.ACC_PUBLIC | Opcodes.ACC_SYNTHETIC,
-          ClassHelper.OBJECT_TYPE,
-          dataProcessorParams.toArray(new Parameter[dataProcessorParams.size()]),
-          ClassNode.EMPTY_ARRAY,
-          blockStat));
+    MethodNode dataProcessorMethod = new MethodNode(
+      InternalIdentifiers.getDataProcessorName(whereBlock.getParent().getAst().getName()),
+      Opcodes.ACC_PUBLIC | Opcodes.ACC_SYNTHETIC,
+      ClassHelper.OBJECT_TYPE,
+      dataProcessorParams.toArray(Parameter.EMPTY_ARRAY),
+      ClassNode.EMPTY_ARRAY,
+      blockStat);
+    dataProcessorMethod.addAnnotation(createDataProcessorAnnotation());
+
+    whereBlock.getParent().getParent().getAst().addMethod(dataProcessorMethod);
+  }
+
+  private AnnotationNode createDataProcessorAnnotation() {
+    AnnotationNode ann = new AnnotationNode(resources.getAstNodeCache().DataProcessorMetadata);
+    ann.addMember(
+      DataProcessorMetadata.DATA_VARIABLES,
+      new ListExpression(
+        dataProcessorVars
+          .stream()
+          .map(VariableExpression::getName)
+          .map(ConstantExpression::new)
+          .collect(toList())
+      ));
+    return ann;
   }
 
   private static InvalidSpecCompileException notAParameterization(ASTNode stat) {

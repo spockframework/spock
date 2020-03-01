@@ -60,6 +60,14 @@ b = a
 ----
 // end::no-access-to-data-variables-in-data-pipes[]
 
+==== For extension developers
+
+- `FeatureInfo#getDataVariables()` and `FeatureInfo#getParameterNames()` used to return the
+  same value, the parameter names, in the order of the method parameters. This can disturb some calculations like method
+  argument determination and so on and is plainly wrong, as some parameters could be injected by extensions like
+  injecting mock objects or test proxies or similar. `FeatureInfo#getDataVariables()` now only returns the actual data
+  variables and in the order how they are defined in the `where` block.
+
 === Misc
 
 - Upgrade JUnit 4 to 4.13

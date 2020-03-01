@@ -72,6 +72,7 @@ public class AstNodeCache {
   public final ClassNode FieldMetadata = ClassHelper.makeWithoutCaching(FieldMetadata.class);
   public final ClassNode FeatureMetadata = ClassHelper.makeWithoutCaching(FeatureMetadata.class);
   public final ClassNode DataProviderMetadata = ClassHelper.makeWithoutCaching(DataProviderMetadata.class);
+  public final ClassNode DataProcessorMetadata = ClassHelper.makeWithoutCaching(DataProcessorMetadata.class);
   public final ClassNode BlockMetadata = ClassHelper.makeWithoutCaching(BlockMetadata.class);
   public final ClassNode BlockKind = ClassHelper.makeWithoutCaching(BlockKind.class);
 

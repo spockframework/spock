@@ -43,7 +43,7 @@ ext {
   groovyConsoleExtraDependency = [
     "org.codehaus.groovy:groovy-console:${groovyVersion}"
   ]
-  maxGroovyVersion = snapshotVersion ? "3.9.99" : maxGroovyVersion
+  maxGroovyVersion = snapshotVersion ? "4.9.99" : maxGroovyVersion
   if (System.getProperty("groovyVersion")) {
     groovyVersion = System.getProperty("groovyVersion")
   }

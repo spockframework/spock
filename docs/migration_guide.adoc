@@ -3,6 +3,31 @@ include::include.adoc[]
 
 This page explains incompatible changes between successive versions and provides suggestions on how to deal with them.
 
+== 2.0
+
+include::release_notes.adoc[tag=no-access-to-data-variables-in-data-pipes]
++
+If you switch your tests that are fully green to use Spock 2.0 and get any ``MissingPropertyException``s, you are
+probably hitting this change, you should then change to a derived data variable there instead of a data pipe.
++
+If you for example had:
++
+[source,groovy]
+----
+where:
+a << [1, 2]
+b << a
+----
++
+what you want instead is
++
+[source,groovy]
+----
+where:
+a << [1, 2]
+b = a
+----
+
 == 1.0
 
 Specs, Spec base classes and third-party extensions may have be recompiled in order to work with Spock 1.0.

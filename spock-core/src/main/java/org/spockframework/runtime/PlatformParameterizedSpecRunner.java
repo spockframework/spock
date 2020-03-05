@@ -22,6 +22,8 @@ import java.util.*;
 
 import org.junit.platform.engine.support.hierarchical.Node;
 
+import static java.util.stream.Collectors.toList;
+
 /**
  * Adds the ability to run parameterized features.
  *
@@ -63,12 +65,32 @@ public class PlatformParameterizedSpecRunner extends PlatformSpecRunner {
         DataProviderInfo dataProviderInfo = dataProviderInfos.get(i);
 
         MethodInfo method = dataProviderInfo.getDataProviderMethod();
-        Object[] arguments = Arrays.copyOf(dataProviders, getDataTableOffset(context, dataProviderInfo));
-        Object provider = invokeRaw(context, context.getCurrentInstance(), method, arguments);
+
+        List<String> dataProviderVariables = dataProviderInfos
+          .stream()
+          .map(DataProviderInfo::getDataVariables)
+          .flatMap(List::stream)
+          .collect(toList());
+
+        List<Object> arguments = new ArrayList<>();
+        outerLoop:
+        for (String previousDataTableVariable : dataProviderInfo.getPreviousDataTableVariables()) {
+          for (int j = 0; j < dataProviderVariables.size(); j++) {
+            String dataProviderVariable = dataProviderVariables.get(j);
+            if (previousDataTableVariable.equals(dataProviderVariable)) {
+              arguments.add(dataProviders[j]);
+              continue outerLoop;
+            }
+          }
+          throw new IllegalStateException(String.format("Variable name not defined (%s not in %s)!",
+            previousDataTableVariable, dataProviderVariables));
+        }
+
+        Object provider = invokeRaw(context, context.getCurrentInstance(), method, arguments.toArray());
 
         if (context.getErrorInfoCollector().hasErrors()) {
           return null;
-        } else if (provider == null && context.getErrorInfoCollector().isEmpty()) {
+        } else if (provider == null) {
           SpockExecutionException error = new SpockExecutionException("Data provider is null!");
           supervisor.error(context.getErrorInfoCollector(), new ErrorInfo(method, error));
           return null;
@@ -78,22 +100,6 @@ public class PlatformParameterizedSpecRunner extends PlatformSpecRunner {
     }
 
     return dataProviders;
-  }
-
-  private int getDataTableOffset(SpockExecutionContext context, DataProviderInfo dataProviderInfo) {
-    int result = 0;
-    for (String variableName : dataProviderInfo.getDataVariables()) {
-      for (String parameterName : context.getCurrentFeature().getParameterNames()) {
-        if (variableName.equals(parameterName)) {
-          return result;
-        } else {
-          result++;
-        }
-      }
-    }
-    throw new IllegalStateException(String.format("Variable name not defined (%s not in %s)!",
-      dataProviderInfo.getDataVariables(),
-      context.getCurrentFeature().getParameterNames()));
   }
 
   private Iterator[] createIterators(SpockExecutionContext context, Object[] dataProviders) {

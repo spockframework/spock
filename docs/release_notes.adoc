@@ -6,16 +6,30 @@ include::include.adoc[]
 === Breaking Changes
 
 ==== New meaning of `>> _`
-The meaning of `>> _` has changed form "use the default response" to "return a stubbed value" (<<interaction_based_testing.adoc#_returning_a_default_response,Docs>>).
-The original behavior was only ever documented in the Javadocs and was basically the same to just omitting it.
-The only use-case was chained responses `>> "a" >> _ >> "b"`,
-but even here it is clearer to just use `null` or `{ callRealMethod() }` explicitly.
-With the new behavior, you can have a `Mock` or `Spy` return the same value as a `Stub` would.
-
+- The meaning of `>> _` has changed form "use the default response" to "return a stubbed value" (<<interaction_based_testing.adoc#_returning_a_default_response,Docs>>).
+  The original behavior was only ever documented in the Javadocs and was basically the same to just omitting it.
+  The only use-case was chained responses `>> "a" >> _ >> "b"`,
+  but even here it is clearer to just use `null` or `{ callRealMethod() }` explicitly.
+  With the new behavior, you can have a `Mock` or `Spy` return the same value as a `Stub` would.
++
 [source,groovy]
 ----
 subscriber.receive(_) >> _
 ----
+
+// tag::no-access-to-data-variables-in-data-pipes[]
+- It is not possible anymore to access any data variable from a data pipe or anything else but a previous data table
+  column in a data table cell. This access was partly possible, but could easily prematurely drain iterators, access
+  data providers sooner as expected, behaved differently depending on the concrete code construct used. All these
+  points are more confusing than necessary. If you want to calculate a data variable from others, you can always use
+  a derived data variable that has full access to all previous data variables and can also call helper methods for
+  more complex logic.
+// end::no-access-to-data-variables-in-data-pipes[]
+
+=== Misc
+
+- Accessing previous data table columns was broken in some cases, now it should work properly,
+  even cross-table and without being disturbed by previous derived data variables.
 
 == 2.0-M2 (2020-02-10)
 

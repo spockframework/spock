@@ -21,9 +21,23 @@ subscriber.receive(_) >> _
 
 JUnit Plafform 1.6 (https://junit.org/junit5/docs/5.6.0/release-notes/index.html#deprecations-and-breaking-changes[deprecated]) methods (from experimental API)  in `EngineExecutionResults` that Spock was using. To keep runtime compatibility with JUnit 5.6 and incoming 5.7 the implementation has been switched to the new methods. As a result, Spock 2.0-M3 cannot work with JUnit 5.5 and lower. The problem might only occur if a project overrides default JUnit Platform version provided by Spock.
 
+// tag::no-access-to-data-variables-in-data-pipes[]
+==== No access to data variables in data pipes anymore
+
+It is not possible anymore to access any data variable from a data pipe or anything else but a previous data table
+column in a data table cell. This access was partly possible, but could easily prematurely drain iterators, access
+data providers sooner as expected, behaved differently depending on the concrete code construct used. All these
+points are more confusing than necessary. If you want to calculate a data variable from others, you can always use
+a derived data variable that has full access to all previous data variables and can also call helper methods for
+more complex logic.
+// end::no-access-to-data-variables-in-data-pipes[]
+
 === Misc
 
 - Upgrade JUnit 4 to 4.13
+
+- Accessing previous data table columns was broken in some cases, now it should work properly,
+  even cross-table and without being disturbed by previous derived data variables.
 
 == 2.0-M2 (2020-02-10)
 

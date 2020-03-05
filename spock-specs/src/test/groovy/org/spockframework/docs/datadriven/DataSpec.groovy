@@ -83,8 +83,6 @@ class DataSpec extends Specification {
 
 // tag::sql-data-variable-assignment[]
     where:
-
-    where:
     row << sql.rows("select * from maxdata")
     // pick apart columns
     a = row.a
@@ -93,20 +91,56 @@ class DataSpec extends Specification {
 // end::sql-data-variable-assignment[]
   }
 
+  def "maximum of two numbers previous column access"() {
+    expect:
+    Math.max(a, b) == b
+
+// tag::previous-column-access[]
+    where:
+    a | b
+    3 | a + 1
+    7 | a + 2
+    0 | a + 3
+// end::previous-column-access[]
+  }
+
+  def "maximum of two numbers previous column access over multiple tables"() {
+    expect:
+    Math.max(a, b) == b
+    Math.max(d, e) == e
+
+// tag::previous-column-access-multi-table[]
+    where:
+    a | b
+    3 | a + 1
+    7 | a + 2
+    0 | a + 3
+
+    and:
+    c = 1
+
+    and:
+    d     | e
+    a * 2 | b * 2
+    a * 3 | b * 3
+    a * 4 | b * 4
+// end::previous-column-access-multi-table[]
+  }
+
   def "maximum of two numbers combined assignment"() {
     expect:
-    Math.max(a, b) == c
+    Math.max(a, c) == d
 
 // tag::combined-variable-assignment[]
     where:
-    a | _
-    3 | _
-    7 | _
-    0 | _
+    a | b
+    3 | a + 1
+    7 | a + 2
+    0 | a + 3
 
-    b << [5, 0, 0]
+    c << [5, 0, 0]
 
-    c = a > b ? a : b
+    d = a > c ? a : c
 // end::combined-variable-assignment[]
   }
 

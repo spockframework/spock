@@ -309,29 +309,9 @@ public abstract class AstUtil {
     return type == null || type == ClassHelper.DYNAMIC_TYPE ? ConstantExpression.NULL : new ClassExpression(type);
   }
 
-  public static void fixUpLocalVariables(Variable[] localVariables, VariableScope scope, boolean isClosureScope) {
-    fixUpLocalVariables(Arrays.asList(localVariables), scope, isClosureScope);
-  }
-
   public static MethodCallExpression createGetAtMethod(Expression expression, int index) {
     return new MethodCallExpression(expression,
                                     GET_AT_METHOD_NAME,
                                     new ConstantExpression(index));
-  }
-
-  /**
-   * Fixes up scope references to variables that used to be free or class variables,
-   * and have been changed to local variables.
-   */
-  public static void fixUpLocalVariables(List<? extends Variable> localVariables, VariableScope scope, boolean isClosureScope) {
-    for (Variable localVar : localVariables) {
-      Variable scopeVar = scope.getReferencedClassVariable(localVar.getName());
-      if (scopeVar instanceof DynamicVariable) {
-        scope.removeReferencedClassVariable(localVar.getName());
-        scope.putReferencedLocalVariable(localVar);
-        if (isClosureScope)
-          localVar.setClosureSharedVariable(true);
-      }
-    }
   }
 }

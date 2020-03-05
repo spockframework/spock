@@ -32,7 +32,7 @@ class RequiresExtension extends EmbeddedSpecification {
     results.testsSucceededCount == 5
     results.testsFailedCount == 0
     results.testsSkippedCount == 2
-    results.tests().skipped().list().testDescriptor.displayName == [
+    results.testEvents().skipped().list().testDescriptor.displayName == [
       "skips feature if precondition is not satisfied", "allows determinate use of multiple filters"]
   }
 

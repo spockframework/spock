@@ -265,16 +265,16 @@ local | 1
       @Unroll def 'a = #a, b = #b'() {
         expect:
         true
-        
+
         where:
         a | b
         0 | a + 1
-        2 | a 
+        2 | a
       }
     '''
 
     then:
-    result.tests().finished().list().testDescriptor.displayName == ["a = 0, b = 1", "a = 2, b = 2" ]
+    result.testEvents().finished().list().testDescriptor.displayName == ["a = 0, b = 1", "a = 2, b = 2" ]
   }
 
   def "cells can't reference next cells"() {
@@ -282,7 +282,7 @@ local | 1
     runner.runFeatureBody '''
       expect:
       false
-      
+
       where:
       a | b
       b | 1
@@ -297,7 +297,7 @@ local | 1
     runner.runFeatureBody '''
       expect:
       false
-      
+
       where:
       a | b
       1 | b + 1
@@ -335,21 +335,21 @@ local | 1
     runner.runFeatureBody '''
       expect:
       g == 12
-  
+
       where:
       a = 1
       b = a + 1
-      
+
       c << [b + 1]
-      
+
       d = c + 1
-      
+
       e         | f
       b + c + d | e + 1
-      
+
       g << [f + 1]
-      
-      h = g + 1       
+
+      h = g + 1
     '''
   }
 

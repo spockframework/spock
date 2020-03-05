@@ -57,7 +57,7 @@ ext {
     cglib: "cglib:cglib-nodep:3.2.10",
     groovy: groovyDependencies,
     h2database: "com.h2database:h2:1.3.176",
-    junit4: "junit:junit:4.12",
+    junit4: "junit:junit:4.13",
     junitBom: "org.junit:junit-bom:5.5.2",
     jupiter: "org.junit.jupiter:junit-jupiter",
     junitPlatform: "org.junit.platform:junit-platform-engine",

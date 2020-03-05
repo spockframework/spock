@@ -73,9 +73,16 @@ ext {
     log4j: "log4j:log4j:1.2.17",
     objenesis: "org.objenesis:objenesis:3.0.1"
   ]
-  Date buildTimeAndDate = new Date()
-  buildDate = new SimpleDateFormat('yyyy-MM-dd').format(buildTimeAndDate)
-  buildTime = new SimpleDateFormat('HH:mm:ss.SSSZ').format(buildTimeAndDate)
+  if (snapshotVersion && System.env.CI != "true") {
+    //build time is not crucial for local SNAPSHOT builds, unless published from CI server
+    //speed up local development by leveraging Gradle caching mechanism
+    buildDate = "2020-02-02"
+    buildTime = "20:20:02.020Z"
+  } else {
+    Date buildTimeAndDate = new Date()
+    buildDate = new SimpleDateFormat('yyyy-MM-dd').format(buildTimeAndDate)
+    buildTime = new SimpleDateFormat('HH:mm:ss.SSSZ').format(buildTimeAndDate)
+  }
 }
 
 allprojects {

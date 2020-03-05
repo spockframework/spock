@@ -67,7 +67,7 @@ class SpockHelloWorldTest {
 
   private void execute(DiscoverySelector selector, Consumer<EventStatistics> statisticsConsumer) {
     execute(selector)
-      .tests()
+      .testEvents()
       .debug()
       .assertStatistics(statisticsConsumer);
   }

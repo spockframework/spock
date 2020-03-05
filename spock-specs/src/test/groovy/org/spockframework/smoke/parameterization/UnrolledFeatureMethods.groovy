@@ -62,7 +62,7 @@ def foo() {
     """
 
     then:
-    result.tests().started().list().testDescriptor.displayName == (0..2).collect {"foo[${it}]" }
+    result.testEvents().started().list().testDescriptor.displayName == (0..2).collect {"foo[${it}]" }
   }
 
   def "a feature with an empty data provider causes the same error regardless if it's unrolled or not"() {
@@ -106,7 +106,7 @@ def foo() {
     result.testsSkippedCount == 0
     result.containersStartedCount == 1 + 1 + 1 // engine + spec + unrolled feature
     result.containersFailedCount == 1
-    result.containers().failed().list().testDescriptor.displayName == ["foo"]
+    result.containerEvents().failed().list().testDescriptor.displayName == ["foo"]
   }
 
   def "naming pattern may refer to data variables"() {
@@ -124,7 +124,7 @@ def foo() {
 
     then:
 
-    result.tests().started().list().testDescriptor.displayName == ["one a two 1 three",
+    result.testEvents().started().list().testDescriptor.displayName == ["one a two 1 three",
                                                                    "one b two 2 three",
                                                                    "one c two 3 three"]
   }
@@ -143,7 +143,7 @@ def foo() {
     """)
 
     then:
-    result.tests().started().list().testDescriptor.displayName == ["one foo two 0 three",
+    result.testEvents().started().list().testDescriptor.displayName == ["one foo two 0 three",
                                                                    "one foo two 1 three",
                                                                    "one foo two 2 three"]
   }
@@ -163,7 +163,7 @@ def foo() {
     """)
 
     then:
-    result.tests().started().list().testDescriptor.displayName == ["one 1 two null three"]
+    result.testEvents().started().list().testDescriptor.displayName == ["one 1 two null three"]
   }
 
   @Issue("https://github.com/spockframework/spock/issues/353")
@@ -180,7 +180,7 @@ def foo() {
     """)
 
     then:
-    result.tests().started().list().testDescriptor.displayName == ["one fred two"]
+    result.testEvents().started().list().testDescriptor.displayName == ["one fred two"]
   }
 
   @Issue("https://github.com/spockframework/spock/issues/353")
@@ -197,7 +197,7 @@ def foo() {
     """)
 
     then:
-    result.tests().started().list().testDescriptor.displayName == ["one 4 two"]
+    result.testEvents().started().list().testDescriptor.displayName == ["one 4 two"]
   }
 
   def "expressions in naming pattern that can't be evaluated are prefixed with 'Error:'"() {
@@ -213,7 +213,7 @@ def foo() {
     """)
 
     then:
-    result.tests().started().list().testDescriptor.displayName == ["#Error:obj ok #Error:obj.bang() #Error:obj.missing() #Error:missing"]
+    result.testEvents().started().list().testDescriptor.displayName == ["#Error:obj ok #Error:obj.bang() #Error:obj.missing() #Error:missing"]
   }
 
   @Issue("https://github.com/spockframework/spock/issues/353")
@@ -230,7 +230,7 @@ def "one #actor.details.name.size() two"() {
     """)
 
     then:
-    result.tests().started().list().testDescriptor.displayName == ["one 4 two"]
+    result.testEvents().started().list().testDescriptor.displayName == ["one 4 two"]
   }
 
 
@@ -248,7 +248,7 @@ def "#actor.details.age"() {
     """)
 
     then:
-    result.tests().started().list().testDescriptor.displayName == ["fred"]
+    result.testEvents().started().list().testDescriptor.displayName == ["fred"]
   }
 
   @Issue("https://github.com/spockframework/spock/issues/354")
@@ -278,7 +278,7 @@ class Foo extends Specification {
     """)
 
     then:
-    result.tests().started().list().testDescriptor.displayName == ["fred",
+    result.testEvents().started().list().testDescriptor.displayName == ["fred",
                                                                    "not data-driven",
                                                                    "30"]
   }
@@ -300,7 +300,7 @@ class Foo extends Specification {
     """)
 
     then:
-    result.tests().started().list().testDescriptor.displayName == ["fred"]
+    result.testEvents().started().list().testDescriptor.displayName == ["fred"]
   }
 
   @Issue("https://github.com/spockframework/spock/issues/390")
@@ -317,7 +317,7 @@ def "an actor (named #actor.getName()) age #actor.getAge()"() {
     """)
 
     then:
-    result.tests().started().list().testDescriptor.displayName == ["an actor (named fred) age 30"]
+    result.testEvents().started().list().testDescriptor.displayName == ["an actor (named fred) age 30"]
 
   }
 

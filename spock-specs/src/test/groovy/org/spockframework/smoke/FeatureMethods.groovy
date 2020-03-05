@@ -46,8 +46,8 @@ def "original name"() { expect: true }
     """)
 
     then:
-    result.tests().started().list() [0].testDescriptor.displayName == "original name"
-    result.tests().finished().list() [0].testDescriptor.displayName == "original name"
+    result.testEvents().started().list() [0].testDescriptor.displayName == "original name"
+    result.testEvents().finished().list() [0].testDescriptor.displayName == "original name"
   }
 
   def "can.have?names#con/tain!ing~any`char(act \\ers?!"() {
@@ -64,8 +64,8 @@ def "can.have?names#con/tain!ing~any`char(act \\\\ers?!"() { expect: true }
 
     then:
 
-    result.tests().started().list() [0].testDescriptor.displayName == "can.have?names#con/tain!ing~any`char(act \\ers?!"
-    result.tests().finished().list() [0].testDescriptor.displayName == "can.have?names#con/tain!ing~any`char(act \\ers?!"
+    result.testEvents().started().list() [0].testDescriptor.displayName == "can.have?names#con/tain!ing~any`char(act \\ers?!"
+    result.testEvents().finished().list() [0].testDescriptor.displayName == "can.have?names#con/tain!ing~any`char(act \\ers?!"
   }
 
   def featureMethod() {

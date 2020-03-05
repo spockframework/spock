@@ -17,6 +17,14 @@ With the new behavior, you can have a `Mock` or `Spy` return the same value as a
 subscriber.receive(_) >> _
 ----
 
+==== Upgrade to JUnit 5.6 (and JUnit Platform 1.6)
+
+JUnit Plafform 1.6 (https://junit.org/junit5/docs/5.6.0/release-notes/index.html#deprecations-and-breaking-changes[deprecated]) methods (from experimental API)  in `EngineExecutionResults` that Spock was using. To keep runtime compatibility with JUnit 5.6 and incoming 5.7 the implementation has been switched to the new methods. As a result, Spock 2.0-M3 cannot work with JUnit 5.5 and lower. The problem might only occur if a project overrides default JUnit Platform version provided by Spock.
+
+=== Misc
+
+- Upgrade JUnit 4 to 4.13
+
 == 2.0-M2 (2020-02-10)
 
 === Groovy-3.0 Support

@@ -139,7 +139,7 @@ class EmbeddedSpecRunner {
       .selectors(*selectors)
       .execute()
     if (throwFailure) {
-      def first = executionResults.all().executions().failed().stream().findFirst()
+      def first = executionResults.allEvents().executions().failed().stream().findFirst()
       if (first.present) {
         throw first.get().terminationInfo.executionResult.throwable.get()
       }
@@ -148,7 +148,7 @@ class EmbeddedSpecRunner {
   }
 
   static class SummarizedEngineExecutionResults implements TestExecutionSummary {
-    @Delegate(deprecated = true) // enable deprecated delegation https://github.com/spockframework/spock/issues/1073
+    @Delegate
     private final EngineExecutionResults results
 
     SummarizedEngineExecutionResults(EngineExecutionResults results) {
@@ -157,34 +157,34 @@ class EmbeddedSpecRunner {
 
     @Deprecated
     int getFailureCount() {
-      return results.tests().failed().count()
+      return results.testEvents().failed().count()
     }
 
     @Deprecated
     int getRunCount() {
-      return results.tests().started().count()
+      return results.testEvents().started().count()
     }
 
     @Deprecated
     int getIgnoreCount() {
-      return results.tests().skipped().count()
+      return results.testEvents().skipped().count()
     }
 
     @Override
     long getTimeStarted() {
-      return results.all().started().stream().findFirst().map{it.timestamp.toEpochMilli()}.orElseGet {0}
+      return results.allEvents().started().stream().findFirst().map{it.timestamp.toEpochMilli()}.orElseGet {0}
     }
 
     @Override
     long getTimeFinished() {
-      return results.all().finished().stream()
+      return results.allEvents().finished().stream()
         .reduce{first, second -> second} // fancy for .last()
         .map{it.timestamp.toEpochMilli()}.orElseGet {0}
     }
 
     @Override
     long getTotalFailureCount() {
-      return results.all().failed().count()
+      return results.allEvents().failed().count()
     }
 
     @Override
@@ -194,27 +194,27 @@ class EmbeddedSpecRunner {
 
     @Override
     long getContainersStartedCount() {
-      return results.containers().started().count()
+      return results.containerEvents().started().count()
     }
 
     @Override
     long getContainersSkippedCount() {
-      return results.containers().skipped().count()
+      return results.containerEvents().skipped().count()
     }
 
     @Override
     long getContainersAbortedCount() {
-      return results.containers().aborted().count()
+      return results.containerEvents().aborted().count()
     }
 
     @Override
     long getContainersSucceededCount() {
-      return results.containers().succeeded().count()
+      return results.containerEvents().succeeded().count()
     }
 
     @Override
     long getContainersFailedCount() {
-      return results.containers().failed().count()
+      return results.containerEvents().failed().count()
     }
 
     @Override
@@ -224,27 +224,27 @@ class EmbeddedSpecRunner {
 
     @Override
     long getTestsStartedCount() {
-      return results.tests().started().count()
+      return results.testEvents().started().count()
     }
 
     @Override
     long getTestsSkippedCount() {
-      return results.tests().skipped().count()
+      return results.testEvents().skipped().count()
     }
 
     @Override
     long getTestsAbortedCount() {
-      return results.tests().aborted().count()
+      return results.testEvents().aborted().count()
     }
 
     @Override
     long getTestsSucceededCount() {
-      return results.tests().succeeded().count()
+      return results.testEvents().succeeded().count()
     }
 
     @Override
     long getTestsFailedCount() {
-      return results.tests().failed().count()
+      return results.testEvents().failed().count()
     }
 
     @Override
@@ -259,7 +259,7 @@ class EmbeddedSpecRunner {
 
     @Override
     List<Failure> getFailures() {
-      return results.all().executions().failed()
+      return results.allEvents().executions().failed()
         .map{ it.terminationInfo.executionResult.throwable.get()}
         .map {new XFailure(it)}
         .collect(Collectors.toList())

@@ -19,6 +19,8 @@ dependencies {
   // otherwise we'll get:
   // java.lang.NoClassDefFoundError: junit/framework/AssertionFailedError
   testCompile libs.junit4
+  // for groovy.sql.Sql
+  testCompile groovyTestDependencies
 
   testRuntime libs.h2database
   testRuntime libs.log4j

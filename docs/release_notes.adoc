@@ -29,6 +29,37 @@ If you use it somewhere, you have to manually change it to the new name
 or you will get an `#Error:iterationCount` rendering instead.
 // end::renamed-iteration-count-token[]
 
+// tag::no-access-to-data-variables-in-data-pipes[]
+==== No access to data variables in data pipes anymore
+
+It is not possible anymore to access any data variable from a data pipe or anything else but a previous data table
+column in a data table cell. This access was partly possible, but could easily prematurely drain iterators, access
+data providers sooner as expected, behaved differently depending on the concrete code construct used. All these
+points are more confusing than necessary. If you want to calculate a data variable from others, you can always use
+a derived data variable that has full access to all previous data variables and can also call helper methods for
+more complex logic.
+
+If you switch your tests that are fully green to use Spock 2.0 and get any ``MissingPropertyException``s, you are probably hitting this change, you should then change to a derived data variable there instead of a data pipe.
+
+If you for example had:
+
+[source,groovy]
+----
+where:
+a << [1, 2]
+b << a
+----
+
+what you want instead is
+
+[source,groovy]
+----
+where:
+a << [1, 2]
+b = a
+----
+// end::no-access-to-data-variables-in-data-pipes[]
+
 === Misc
 
 - Upgrade JUnit 4 to 4.13
@@ -79,6 +110,9 @@ a ; b ;; c
 ----
 Spy(constructorArgs: [null as String, (Pattern) null])
 ----
+
+- Accessing previous data table columns was broken in some cases, now it should work properly,
+  even cross-table and without being disturbed by previous derived data variables.
 
 == 2.0-M2 (2020-02-10)
 

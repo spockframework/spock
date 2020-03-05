@@ -16,6 +16,7 @@
 
 package org.spockframework.compiler;
 
+import org.codehaus.groovy.classgen.VariableScopeVisitor;
 import org.spockframework.compiler.model.Spec;
 import org.spockframework.util.VersionChecker;
 
@@ -61,7 +62,7 @@ public class SpockTransform implements ASTTransformation {
         List<ClassNode> classes = module.getClasses();
 
         for (ClassNode clazz : classes)
-          if (isSpec(clazz)) processSpec(clazz, errorReporter, sourceLookup);
+          if (isSpec(clazz)) processSpec(sourceUnit, clazz, errorReporter, sourceLookup);
       } finally {
         sourceLookup.close();
       }
@@ -71,11 +72,15 @@ public class SpockTransform implements ASTTransformation {
       return clazz.isDerivedFrom(nodeCache.Specification);
     }
 
-    void processSpec(ClassNode clazz, ErrorReporter errorReporter, SourceLookup sourceLookup) {
+    void processSpec(SourceUnit sourceUnit, ClassNode clazz, ErrorReporter errorReporter, SourceLookup sourceLookup) {
       try {
         Spec spec = new SpecParser(errorReporter).build(clazz);
         spec.accept(new SpecRewriter(nodeCache, sourceLookup, errorReporter));
         spec.accept(new SpecAnnotator(nodeCache));
+        // if there were no errors so far, let the variable scope visitor fix up variable scopes
+        if (!sourceUnit.getErrorCollector().hasErrors()) {
+          new VariableScopeVisitor(sourceUnit).visitClass(clazz);
+        }
       } catch (Exception e) {
         errorReporter.error(
             "Unexpected error during compilation of spec '%s'. Maybe you have used invalid Spock syntax? Anyway, please file a bug report at http://issues.spockframework.org.",

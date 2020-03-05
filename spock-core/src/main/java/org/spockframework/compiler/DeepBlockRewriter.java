@@ -114,19 +114,8 @@ public class DeepBlockRewriter extends AbstractDeepBlockRewriter {
 
   @Override
   protected void doVisitClosureExpression(ClosureExpression expr) {
-    if (resources.getCurrentMethod() instanceof FeatureMethod) {
-      AstUtil.fixUpLocalVariables(resources.getCurrentMethod().getAst().getParameters(), expr.getVariableScope(), true);
-    }
     super.doVisitClosureExpression(expr);
     if (conditionFound || groupConditionFound) defineRecorders(expr, groupConditionFound);
-  }
-
-  @Override
-  public void visitBlockStatement(BlockStatement stat) {
-    super.visitBlockStatement(stat);
-    if (resources.getCurrentMethod() instanceof FeatureMethod) {
-      AstUtil.fixUpLocalVariables(resources.getCurrentMethod().getAst().getParameters(), stat.getVariableScope(), false);
-    }
   }
 
   @Override
@@ -270,11 +259,6 @@ public class DeepBlockRewriter extends AbstractDeepBlockRewriter {
     List<Expression> args = AstUtil.getArgumentList(expr);
     VariableExpression oldValue = resources.captureOldValue(args.get(0));
     args.set(0, oldValue);
-
-    if (currClosure != null) {
-      oldValue.setClosureSharedVariable(true);
-      currClosure.getVariableScope().putReferencedLocalVariable(oldValue);
-    }
 
     return true;
   }

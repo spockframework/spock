@@ -49,10 +49,6 @@ ext {
   javaVersions = [1.8, 11] // ensure that latest version is actually build on travis, otherwise no docs get published
   javaVersion = System.getProperty("java.specification.version") as BigDecimal
 
-  if (javaVersion >= 9) {
-    groovyDependencies += ["javax.xml.bind:jaxb-api:2.3.0"]
-  }
-
   libs = [
     jetbrainsAnnotations: "org.jetbrains:annotations:13.0",
     ant: "org.apache.ant:ant:1.10.5",
@@ -68,7 +64,8 @@ ext {
     junitPlatformTestkit: "org.junit.platform:junit-platform-testkit",
     junitPlatformConsole: "org.junit.platform:junit-platform-console",
     log4j: "log4j:log4j:1.2.17",
-    objenesis: "org.objenesis:objenesis:3.0.1"
+    objenesis: "org.objenesis:objenesis:3.0.1",
+    jaxb: "javax.xml.bind:jaxb-api:2.3.0"
   ]
   Date buildTimeAndDate = new Date()
   buildDate = new SimpleDateFormat('yyyy-MM-dd').format(buildTimeAndDate)

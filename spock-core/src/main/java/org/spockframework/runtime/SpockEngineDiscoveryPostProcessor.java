@@ -30,7 +30,7 @@ class SpockEngineDiscoveryPostProcessor {
   }
 
   private SpockNode describeSimpleFeature(UniqueId parentId, FeatureInfo feature) {
-    IterationInfo iterationInfo = new IterationInfo(feature, EMPTY_ARGS, 1);
+    IterationInfo iterationInfo = new IterationInfo(feature, 0, EMPTY_ARGS, 1);
     iterationInfo.setName(feature.getName());
     UniqueId uniqueId = toUniqueId(parentId, feature);
     IterationNode iterationNode = new IterationNode(toUniqueId(uniqueId, feature), iterationInfo);

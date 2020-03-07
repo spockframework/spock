@@ -221,9 +221,9 @@ public class PlatformSpecRunner {
     getSpecificationContext(context).setCurrentIteration(null); // TODO check if we really need to null here
   }
 
-  IterationInfo createIterationInfo(SpockExecutionContext context, Object[] dataValues, int estimatedNumIterations) {
+  IterationInfo createIterationInfo(SpockExecutionContext context, int iterationIndex, Object[] dataValues, int estimatedNumIterations) {
     FeatureInfo currentFeature = context.getCurrentFeature();
-    IterationInfo result = new IterationInfo(currentFeature, dataValues, estimatedNumIterations);
+    IterationInfo result = new IterationInfo(currentFeature, iterationIndex, dataValues, estimatedNumIterations);
     String iterationName = currentFeature.getIterationNameProvider().getName(result);
     result.setName(iterationName);
     Description description = Description.createTestDescription(context.getSpec().getReflection(),

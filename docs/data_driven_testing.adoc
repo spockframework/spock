@@ -58,6 +58,35 @@ Data tables must have at least two columns. A single-column table can be written
 include::{sourcedir}/datadriven/DataSpec.groovy[tag=single-column]
 ----
 
+A sequence of two or more underscores can be used to split one wide data table into multiple narrower ones.
+Without this separator and without any other data variable assignment in between there
+is no way to have multiple data tables in one `where` block, the second table would just
+be further iterations of the first table, including the seemingly header row:
+
+[source,groovy,indent=0]
+----
+include::{sourcedir}/datadriven/DataSpec.groovy[tag=multiple-tables]
+----
+
+This is semantically exactly the same, just as one wider combined data table:
+
+[source,groovy,indent=0]
+----
+include::{sourcedir}/datadriven/DataSpec.groovy[tag=multiple-tables-combined]
+----
+
+The sequence of two or more underscores can be used anywhere in the `where` block.
+It will be ignored everywhere, except for in between two data tables, where it is
+used to separate the two data tables. This means that the separator can also be used
+as styling element in different ways. It can be used as separator line like shown in
+the last example or it can for example be used visually as top border of tables
+additionally to its effect of separating them:
+
+[source,groovy,indent=0]
+----
+include::{sourcedir}/datadriven/DataSpec.groovy[tag=multiple-tables-with-top-border]
+----
+
 == Isolated Execution of Iterations
 
 Iterations are isolated from each other in the same way as separate feature methods. Each iteration gets its own instance

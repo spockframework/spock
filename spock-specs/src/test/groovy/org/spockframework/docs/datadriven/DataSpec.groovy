@@ -45,6 +45,60 @@ class DataSpec extends Specification {
 // end::single-column[]
   }
 
+  def "multiple tables"() {
+    expect:
+    a >= 0
+    b < c
+
+// tag::multiple-tables[]
+    where:
+    a | _
+    1 | _
+    7 | _
+    0 | _
+    __
+
+    b | c
+    1 | 2
+    3 | 4
+    5 | 6
+// end::multiple-tables[]
+  }
+
+  def "multiple tables combined"() {
+    expect:
+    a >= 0
+    b < c
+
+// tag::multiple-tables-combined[]
+    where:
+    a | b | c
+    1 | 1 | 2
+    7 | 3 | 4
+    0 | 5 | 6
+// end::multiple-tables-combined[]
+  }
+
+  def "multiple tables with top border"() {
+    expect:
+    a >= 0
+    b < c
+
+// tag::multiple-tables-with-top-border[]
+    where:
+    _____
+    a | _
+    1 | _
+    7 | _
+    0 | _
+    _____
+    b | c
+    1 | 2
+    3 | 4
+    5 | 6
+// end::multiple-tables-with-top-border[]
+  }
+
 // tag::sql-data-pipe[]
   def "maximum of two numbers"() {
     expect:

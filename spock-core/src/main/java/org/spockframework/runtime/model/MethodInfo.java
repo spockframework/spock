@@ -16,6 +16,7 @@
 
 package org.spockframework.runtime.model;
 
+import org.spockframework.runtime.SpockExecutionException;
 import org.spockframework.runtime.extension.IMethodInterceptor;
 import org.spockframework.util.*;
 
@@ -28,6 +29,8 @@ import java.util.*;
  * @author Peter Niederwieser
  */
 public class MethodInfo extends NodeInfo<SpecInfo, Method> implements IExcludable, IInterceptable {
+  public static final Object MISSING_ARGUMENT = new Object();
+
   private MethodKind kind;
   private FeatureInfo feature;
   private IterationInfo iteration;
@@ -117,6 +120,19 @@ public class MethodInfo extends NodeInfo<SpecInfo, Method> implements IExcludabl
    * @return the return value of the method call
    */
   public Object invoke(Object target, Object... arguments) throws Throwable {
+    for (int i = 0, argCount = arguments.length; i < argCount; i++) {
+      if (arguments[i] == MISSING_ARGUMENT) {
+        StringJoiner missingArguments = new StringJoiner("', '", "No argument was provided for parameters: '", "'");
+        List<String> parameterNames = getFeature().getParameterNames();
+        missingArguments.add(parameterNames.get(i));
+        for (int j = i + 1; j < argCount; j++) {
+          if (arguments[j] == MISSING_ARGUMENT) {
+            missingArguments.add(parameterNames.get(j));
+          }
+        }
+        throw new SpockExecutionException(missingArguments.toString());
+      }
+    }
     return invoker.invoke(target, arguments);
   }
 }

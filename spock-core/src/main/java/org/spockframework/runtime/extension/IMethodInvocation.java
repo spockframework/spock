@@ -100,7 +100,10 @@ public interface IMethodInvocation {
 
   /**
    * Sets the arguments for this method invocation.
+   *
+   * @deprecated set the fields in the return value of {@link #getArguments()} instead
    */
+  @Deprecated
   void setArguments(Object[] arguments);
 
   /**

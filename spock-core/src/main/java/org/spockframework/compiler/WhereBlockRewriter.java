@@ -30,7 +30,9 @@ import org.codehaus.groovy.control.SourceUnit;
 import org.codehaus.groovy.syntax.*;
 import org.objectweb.asm.Opcodes;
 
-import static java.util.Comparator.comparing;
+import static java.lang.Boolean.FALSE;
+import static java.lang.Boolean.TRUE;
+import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.*;
 import static org.spockframework.compiler.AstUtil.createGetAtMethod;
 
@@ -318,13 +320,6 @@ public class WhereBlockRewriter {
 
     if (isDataProcessorVariable(varExpr.getName())) {
       resources.getErrorReporter().error(varExpr, "Duplicate declaration of data variable '%s'", varExpr.getName());
-      return;
-    }
-
-    if (whereBlock.getParent().getAst().getParameters().length > 0 && !(accessedVar instanceof Parameter)) {
-      resources.getErrorReporter().error(varExpr,
-          "Data variable '%s' needs to be declared as method parameter",
-          varExpr.getName());
     }
   }
 
@@ -337,34 +332,29 @@ public class WhereBlockRewriter {
 
   private void handleFeatureParameters() {
     Parameter[] parameters = whereBlock.getParent().getAst().getParameters();
-    if (parameters.length == 0) {
-      addFeatureParameters();
-    } else {
-      checkAllParametersAreDataVariables(parameters);
-      sortFeatureParameters(parameters);
-    }
-  }
+    Map<Boolean, List<Parameter>> declaredParameters = Arrays.stream(parameters).collect(
+      partitioningBy(parameter -> isDataProcessorVariable(parameter.getName())));
 
-  private void checkAllParametersAreDataVariables(Parameter[] parameters) {
-    for (Parameter param : parameters)
-      if (!isDataProcessorVariable(param.getName()))
-        resources.getErrorReporter().error(param, "Parameter '%s' does not refer to a data variable", param.getName());
-  }
-
-  private void sortFeatureParameters(Parameter[] parameters) {
-    List<String> dataVariableNames = dataProcessorVars
+    Map<String, Parameter> declaredDataVariableParameters = declaredParameters
+      .get(TRUE)
       .stream()
-      .map(VariableExpression::getName)
-      .collect(toList());
-    Arrays.sort(parameters, comparing(parameter -> dataVariableNames.indexOf(parameter.getName())));
-    whereBlock.getParent().getAst().setParameters(parameters);
-  }
+      .collect(toMap(Parameter::getName, identity()));
 
-  private void addFeatureParameters() {
-    Parameter[] parameters = new Parameter[dataProcessorVars.size()];
-    for (int i = 0; i < dataProcessorVars.size(); i++)
-      parameters[i] = new Parameter(ClassHelper.DYNAMIC_TYPE, dataProcessorVars.get(i).getName());
-    whereBlock.getParent().getAst().setParameters(parameters);
+    List<Parameter> auxiliaryParameters = declaredParameters.get(FALSE);
+
+    List<Parameter> newParameters = new ArrayList<>(dataProcessorVars.size() + auxiliaryParameters.size());
+    // first all data variables in order of where block
+    for (VariableExpression dataProcessorVar : dataProcessorVars) {
+      String name = dataProcessorVar.getName();
+      Parameter declaredDataVariableParameter = declaredDataVariableParameters.get(name);
+      newParameters.add(declaredDataVariableParameter == null
+        ? new Parameter(ClassHelper.DYNAMIC_TYPE, name)
+        : declaredDataVariableParameter);
+    }
+    // then all auxiliary parameters in declaration order
+    newParameters.addAll(auxiliaryParameters);
+
+    whereBlock.getParent().getAst().setParameters(newParameters.toArray(Parameter.EMPTY_ARRAY));
   }
 
   @SuppressWarnings("unchecked")

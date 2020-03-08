@@ -68,6 +68,10 @@ b = a
   injecting mock objects or test proxies or similar. `FeatureInfo#getDataVariables()` now only returns the actual data
   variables and in the order how they are defined in the `where` block.
 
+- Method arguments in `MethodInfo` now have a value of `MethodInfo.MISSING_ARGUMENT` if no value was set so far,
+  for example by some extensions or from data variables. If any of these is not replaced by some value, an exception
+  will be thrown at runtime.
+
 === Misc
 
 - Upgrade JUnit 4 to 4.13
@@ -124,6 +128,12 @@ Spy(constructorArgs: [null as String, (Pattern) null])
 
 - The order of parameters in a data-driven feature does no longer have to be identical to
   the declaration order in the `where` block. Data variables are now injected by name.
+
+- Data driven features do no longer have the requirement that either none or all data variables are declared as
+  parameters and that all parameters are also data variables. Now you can either declare none, some, or all data
+  variables as parameters and also have additional method parameters that are no data variables.
+  Those additional parameters must be provided by some Spock extension though. If they are not set at execution time,
+  an exception will be thrown.
 
 == 2.0-M2 (2020-02-10)
 

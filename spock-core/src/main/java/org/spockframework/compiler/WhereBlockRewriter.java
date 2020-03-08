@@ -75,27 +75,28 @@ public class WhereBlockRewriter {
   private void rewriteWhereStat(ListIterator<Statement> stats) throws InvalidSpecCompileException {
     Statement stat = stats.next();
     BinaryExpression binExpr = AstUtil.getExpression(stat, BinaryExpression.class);
-    if (binExpr == null || binExpr.getClass() != BinaryExpression.class) // don't allow subclasses like DeclarationExpression
-      notAParameterization(stat);
+    if (binExpr != null && binExpr.getClass() == BinaryExpression.class) // don't allow subclasses like DeclarationExpression
+    {
+      int type = binExpr.getOperation().getType();
 
-    int type = binExpr.getOperation().getType();
-
-    if (type == Types.LEFT_SHIFT) {
-      Expression leftExpr = binExpr.getLeftExpression();
-      if (leftExpr instanceof VariableExpression)
-        rewriteSimpleParameterization(binExpr, stat);
-      else if (leftExpr instanceof ListExpression)
-        rewriteMultiParameterization(binExpr, stat);
-      else
+      if (type == Types.LEFT_SHIFT) {
+        Expression leftExpr = binExpr.getLeftExpression();
+        if (leftExpr instanceof VariableExpression)
+          rewriteSimpleParameterization(binExpr, stat);
+        else if (leftExpr instanceof ListExpression)
+          rewriteMultiParameterization(binExpr, stat);
+        else
+          notAParameterization(stat);
+      } else if (type == Types.ASSIGN)
+        rewriteDerivedParameterization(binExpr, stat);
+      else if (getOrExpression(binExpr) != null) {
+        stats.previous();
+        rewriteTableLikeParameterization(stats);
+      } else
         notAParameterization(stat);
-    } else if (type == Types.ASSIGN)
-      rewriteDerivedParameterization(binExpr, stat);
-    else if (getOrExpression(binExpr) != null) {
-      stats.previous();
-      rewriteTableLikeParameterization(stats);
-    }
-    else
+    } else if (!AstUtil.isDataTableSeparator(AstUtil.getExpression(stat, Expression.class))) {
       notAParameterization(stat);
+    }
   }
 
   private void createDataProviderMethod(Expression dataProviderExpr, int nextDataVariableIndex) {
@@ -104,17 +105,17 @@ public class WhereBlockRewriter {
     dataProviderExpr = dataProviderExpr.transformExpression(new DataTablePreviousVariableTransformer());
 
     MethodNode method =
-        new MethodNode(
-            InternalIdentifiers.getDataProviderName(whereBlock.getParent().getAst().getName(), dataProviderCount++),
-            Opcodes.ACC_PUBLIC | Opcodes.ACC_SYNTHETIC,
-            ClassHelper.OBJECT_TYPE,
-            getPreviousParameters(nextDataVariableIndex),
-            ClassNode.EMPTY_ARRAY,
-            new BlockStatement(
-              Arrays.<Statement>asList(
-                new ReturnStatement(
-                  new ExpressionStatement(dataProviderExpr))),
-                new VariableScope()));
+      new MethodNode(
+        InternalIdentifiers.getDataProviderName(whereBlock.getParent().getAst().getName(), dataProviderCount++),
+        Opcodes.ACC_PUBLIC | Opcodes.ACC_SYNTHETIC,
+        ClassHelper.OBJECT_TYPE,
+        getPreviousParameters(nextDataVariableIndex),
+        ClassNode.EMPTY_ARRAY,
+        new BlockStatement(
+          Arrays.<Statement>asList(
+            new ReturnStatement(
+              new ExpressionStatement(dataProviderExpr))),
+          new VariableScope()));
 
     method.addAnnotation(createDataProviderAnnotation(dataProviderExpr, nextDataVariableIndex));
     whereBlock.getParent().getParent().getAst().addMethod(method);

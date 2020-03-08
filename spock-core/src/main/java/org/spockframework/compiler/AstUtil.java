@@ -22,6 +22,7 @@ import org.spockframework.util.*;
 import spock.lang.Specification;
 
 import java.util.*;
+import java.util.regex.Pattern;
 
 import org.codehaus.groovy.ast.*;
 import org.codehaus.groovy.ast.expr.*;
@@ -35,6 +36,7 @@ import org.objectweb.asm.Opcodes;
  * @author Peter Niederwieser
  */
 public abstract class AstUtil {
+  private static final Pattern DATA_TABLE_SEPARATOR = Pattern.compile("_++");
   private static String GET_AT_METHOD_NAME = new IntegerArrayGetAtMetaMethod().getName();
 
   /**
@@ -126,6 +128,14 @@ public abstract class AstUtil {
     if (!(accessedVar instanceof FieldNode)) return false;
 
     return ((FieldNode) accessedVar).getOwner().getName().equals(Specification.class.getName());
+  }
+
+  public static boolean isDataTableSeparator(Expression expr) {
+    VariableExpression varExpr = ObjectUtil.asInstance(expr, VariableExpression.class);
+    if (varExpr == null || !DATA_TABLE_SEPARATOR.matcher(varExpr.getName()).matches()) return false;
+
+    Variable accessedVar = varExpr.getAccessedVariable();
+    return accessedVar instanceof DynamicVariable;
   }
 
   public static boolean isJavaIdentifier(String id) {

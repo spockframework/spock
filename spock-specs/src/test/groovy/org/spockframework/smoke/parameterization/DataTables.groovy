@@ -389,6 +389,83 @@ a | b | c
     4 || 5 | 9
   }
 
+  def "two or more underscores can be used to separate multiple data tables"() {
+    expect:
+    runner.runFeatureBody """
+expect:
+a + b == c
+d + e == f
+
+where:
+a | b | c
+1 | 2 | 3
+4 | 5 | 9
+$dataTableSeparator
+d | e | f
+1 | 2 | 3
+4 | 5 | 9
+"""
+
+    where:
+    dataTableSeparator << (2..20).collect { '_' * it }
+  }
+
+  def "two or more underscores can not be used to separate multiple data tables if they represent a local variable"() {
+    when:
+    compiler.compileFeatureBody """
+def $dataTableSeparator = ''
+
+expect:
+a + b == c
+d + e == f
+
+where:
+a | b | c
+1 | 2 | 3
+4 | 5 | 9
+$dataTableSeparator
+d | e | f
+1 | 2 | 3
+4 | 5 | 9
+"""
+
+    then:
+    InvalidSpecCompileException isce = thrown()
+    isce.message.startsWith('where-blocks may only contain parameterizations')
+
+    where:
+    dataTableSeparator << (2..20).collect { '_' * it }
+  }
+
+  def "two or more underscores can not be used to separate multiple data tables if they represent a field"() {
+    when:
+    compiler.compileSpecBody """
+def $dataTableSeparator = ''
+
+def foo() {
+  expect:
+  a + b == c
+  d + e == f
+
+  where:
+  a | b | c
+  1 | 2 | 3
+  4 | 5 | 9
+  $dataTableSeparator
+  d | e | f
+  1 | 2 | 3
+  4 | 5 | 9
+}
+"""
+
+    then:
+    InvalidSpecCompileException isce = thrown()
+    isce.message.startsWith('where-blocks may only contain parameterizations')
+
+    where:
+    dataTableSeparator << (2..20).collect { '_' * it }
+  }
+
   static class Person {
     def age
   }

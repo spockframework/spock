@@ -17,6 +17,10 @@ With the new behavior, you can have a `Mock` or `Spy` return the same value as a
 subscriber.receive(_) >> _
 ----
 
+=== Misc
+
+- A sequence of two or more underscores can be used to separate multiple data tables in one `where` block.
+
 == 2.0-M2 (2020-02-10)
 
 === Groovy-3.0 Support

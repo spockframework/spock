@@ -178,13 +178,17 @@ public abstract class SpecInternals {
   }
 
   Object SpyImpl(String inferredName, Class<?> inferredType, Object instance) {
+    return SpyImpl(inferredName, inferredType, instance, null);
+  }
+
+  Object SpyImpl(String inferredName, Class<?> inferredType, Object instance, Closure closure) {
     if (instance == null) {
       throw new SpockException("Spy instance may not be null");
     }
     if (MOCK_UTIL.isMock(instance)) {
       throw new SpockException("Spy instance may not be another mock object.");
     }
-    return createMockImpl(inferredName, instance.getClass(), instance, MockNature.SPY, MockImplementation.JAVA, Collections.<String, Object>singletonMap("useObjenesis", true), null, null);
+    return createMockImpl(inferredName, instance.getClass(), instance, MockNature.SPY, MockImplementation.JAVA, Collections.<String, Object>singletonMap("useObjenesis", true), null, closure);
   }
 
   Object GroovyMockImpl(String inferredName, Class<?> inferredType) {

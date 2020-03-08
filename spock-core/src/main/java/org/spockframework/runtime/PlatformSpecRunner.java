@@ -24,6 +24,11 @@ import spock.lang.Specification;
 import org.junit.platform.engine.support.hierarchical.Node;
 import org.junit.runner.Description;
 
+import java.util.Arrays;
+
+import static java.lang.System.arraycopy;
+import static org.spockframework.runtime.model.MethodInfo.MISSING_ARGUMENT;
+
 /**
  * Executes a single Spec. Notifies its supervisor about overall execution
  * progress and every invocation of Spec code.
@@ -320,7 +325,16 @@ public class PlatformSpecRunner {
 
     MethodInfo featureIteration = new MethodInfo(context.getCurrentFeature().getFeatureMethod());
     featureIteration.setIteration(context.getCurrentIteration());
-    invoke(context, context.getCurrentInstance(), featureIteration, context.getCurrentIteration().getDataValues());
+
+    Class<?>[] parameterTypes = featureIteration.getReflection().getParameterTypes();
+    int parameterCount = parameterTypes.length;
+    Object[] dataValues = context.getCurrentIteration().getDataValues();
+
+    Object[] iterationArguments = new Object[parameterCount];
+    arraycopy(dataValues, 0, iterationArguments, 0, dataValues.length);
+    Arrays.fill(iterationArguments, dataValues.length, parameterCount, MISSING_ARGUMENT);
+
+    invoke(context, context.getCurrentInstance(), featureIteration, iterationArguments);
   }
 
   void runCleanup(SpockExecutionContext context) {

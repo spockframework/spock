@@ -88,6 +88,10 @@ public class MethodInvocation implements IMethodInvocation {
 
   @Override
   public void setArguments(Object[] arguments) {
+    if (arguments.length != this.arguments.length) {
+      throw new IllegalArgumentException(
+        "length of arguments array must not change from " + this.arguments.length + " to " + arguments.length);
+    }
     this.arguments = arguments;
   }
 

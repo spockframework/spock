@@ -76,11 +76,18 @@ spec, all of which can be kept in the same file. This achieves better isolation 
 
 == Syntactic Variations
 
-The previous code can be tweaked in a few ways. First, since the `where:` block already declares all data variables, the
-method parameters can be omitted.footnote:[The idea behind allowing method parameters is to enable better IDE support.
+The previous code can be tweaked in a few ways.
+
+First, since the `where:` block already declares all data variables, the method parameters can be
+omitted.footnote:[The idea behind allowing method parameters is to enable better IDE support.
 However, recent versions of IntelliJ IDEA recognize data variables automatically, and even infer their types from the
 values contained in the data table.]
+
+You can also omit some parameters and specify others, for example to have them typed.
+The order also is not important, data variables are matched by name to the specified method parameters.
+
 Second, inputs and expected outputs can be separated with a double pipe symbol (`||`) to visually set them apart.
+
 With this, the code becomes:
 
 [source,groovy,indent=0]

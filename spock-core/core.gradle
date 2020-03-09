@@ -29,7 +29,7 @@ dependencies {
     }
   }
 
-  coreConsoleRuntime groovyConsoleExtraDependency
+  coreConsoleRuntime groovyConsoleExtraDependencies
 }
 
 

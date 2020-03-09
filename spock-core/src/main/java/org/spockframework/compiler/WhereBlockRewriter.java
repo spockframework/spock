@@ -103,18 +103,22 @@ public class WhereBlockRewriter {
 
     dataProviderExpr = dataProviderExpr.transformExpression(new DataTablePreviousVariableTransformer());
 
+    ExpressionStatement exprStat = new ExpressionStatement(dataProviderExpr);
+    exprStat.setSourcePosition(dataProviderExpr);
+
+    ReturnStatement returnStat = new ReturnStatement(exprStat);
+    returnStat.setSourcePosition(dataProviderExpr);
+
     MethodNode method =
-        new MethodNode(
-            InternalIdentifiers.getDataProviderName(whereBlock.getParent().getAst().getName(), dataProviderCount++),
-            Opcodes.ACC_PUBLIC | Opcodes.ACC_SYNTHETIC,
-            ClassHelper.OBJECT_TYPE,
-            getPreviousParameters(nextDataVariableIndex),
-            ClassNode.EMPTY_ARRAY,
-            new BlockStatement(
-              Arrays.<Statement>asList(
-                new ReturnStatement(
-                  new ExpressionStatement(dataProviderExpr))),
-                new VariableScope()));
+      new MethodNode(
+        InternalIdentifiers.getDataProviderName(whereBlock.getParent().getAst().getName(), dataProviderCount++),
+        Opcodes.ACC_PUBLIC | Opcodes.ACC_SYNTHETIC,
+        ClassHelper.OBJECT_TYPE,
+        getPreviousParameters(nextDataVariableIndex),
+        ClassNode.EMPTY_ARRAY,
+        new BlockStatement(
+          Arrays.<Statement>asList(returnStat),
+          new VariableScope()));
 
     method.addAnnotation(createDataProviderAnnotation(dataProviderExpr, nextDataVariableIndex));
     whereBlock.getParent().getParent().getAst().addMethod(method);

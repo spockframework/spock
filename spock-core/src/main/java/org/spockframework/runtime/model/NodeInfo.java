@@ -82,6 +82,10 @@ public abstract class NodeInfo<P extends NodeInfo, R extends AnnotatedElement> {
     return getReflection().getAnnotation(clazz);
   }
 
+  public <T extends Annotation> T[] getAnnotationsByType(Class<T> clazz) {
+    return getReflection().getAnnotationsByType(clazz);
+  }
+
   public boolean isAnnotationPresent(Class<? extends Annotation> clazz) {
     return getReflection().isAnnotationPresent(clazz);
   }

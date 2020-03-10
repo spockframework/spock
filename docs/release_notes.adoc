@@ -250,6 +250,9 @@ def "I'll run everywhere but on Windows"() { ... }
   features by default if not overwritten by explicit `@Unroll` annotations and thus reinstate the pre
   Spock 2.0 behaviour.
 
+- Annotations for local extensions can now be defined as `@Repeatable` and applied multiple times to the same target.
+  Spock will handle this appropriately and call the extension once for each annotation.
+
 == 2.0-M2 (2020-02-10)
 
 === Groovy-3.0 Support

@@ -678,6 +678,14 @@ Your annotation can be applied to a specification, a feature method, a fixture m
 like helper methods or other places if the `@Target` is set accordingly, the annotation will be ignored and has no
 effect other than being visible in the source code.
 
+Since Spock 2.0 your annotation can also be defined as `@Repeatable` and applied multiple times to the same target.
+Spock will handle this appropriately and call your extension once for each annotation. If you want a repeatable
+annotation that is compatible with Spock before 2.0 you need to make the container annotation an extension annotation
+itself and handle all cases accordingly, but you need to make sure to only handle the container annotation if Spock
+version is before 2.0 or your annotations might be handled twice. Be aware that the repeatable annotation can be
+attached to the target directly, inside the container annotation or even both if the user added the container
+annotation manually and also attached one annotation directly.
+
 `IAnnotationDrivenExtension` has the following five methods, where in each you can prepare a specification with your
 extension magic, like attaching interceptors to various interception points as described in the chapter
 <<Interceptors>>:

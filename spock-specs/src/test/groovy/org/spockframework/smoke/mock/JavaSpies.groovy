@@ -162,6 +162,17 @@ class JavaSpies extends Specification {
     result == 7
   }
 
+  @Issue("https://github.com/spockframework/spock/issues/1028")
+  def "can define interactions for spy on instances directly with closure"() {
+    given:
+    def spy = Spy(new NoDefaultConstructor(42)) {
+      1 * it.value >> 7
+    }
+
+    expect:
+    spy.value == 7
+  }
+
   def "cannot spy on final classes"() {
     when:
     Spy(FinalPerson)

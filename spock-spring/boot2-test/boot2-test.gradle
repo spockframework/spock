@@ -30,6 +30,10 @@ dependencies {
   testCompile project(":spock-core")
   testCompile project(":spock-spring")
 
+  if (javaVersion >= 9) {
+    testCompile libs.jaxb
+  }
+
   runtime "com.h2database:h2"
 
 }

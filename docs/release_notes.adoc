@@ -177,6 +177,16 @@ def "I'll run everywhere but on Windows"() { ... }
 (a, b, _, c) = row
 ----
 
+- Multi-variable data pipes now also support nesting.
++
+[source,groovy]
+----
+[a, [_, b]] << [
+  [1, [5, 1]],
+  [2, [5, 2]]
+]
+----
+
 == 2.0-M2 (2020-02-10)
 
 === Groovy-3.0 Support

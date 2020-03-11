@@ -111,6 +111,15 @@ where :
     (b, _) = bAndBar
   }
 
+  def "nested multi-parameterization"() {
+    expect:
+    runner.runFeatureBody '''
+expect: a == b
+where:
+  [a, [_, b]] << [[3, [1, 3]]]
+'''
+  }
+
   def "derived parameterization"() {
     expect: a == b.toUpperCase()
     where:

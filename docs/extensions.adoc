@@ -102,13 +102,12 @@ later feature methods may depend on earlier feature methods having executed.
 
 === IgnoreIf
 
-To ignore a feature method under certain conditions, annotate it with `spock.lang.IgnoreIf`,
+To ignore a feature method or specification under certain conditions, annotate it with `spock.lang.IgnoreIf`,
 followed by a predicate:
 
-[source,groovy]
+[source,groovy,indent=0]
 ----
-@IgnoreIf({ System.getProperty("os.name").contains("windows") })
-def "I'll run everywhere but on Windows"() { ... }
+include::{sourcedir}/extension/IgnoreIfDocSpec.groovy[tag=example-a]
 ----
 
 To make predicates easier to read and write, the following properties are available inside the closure:
@@ -124,10 +123,17 @@ To make predicates easier to read and write, the following properties are availa
 
 Using the `os` property, the previous example can be rewritten as:
 
-[source,groovy]
+[source,groovy,indent=0]
 ----
-@IgnoreIf({ os.windows })
-def "I'll run everywhere but on Windows"() { ... }
+include::{sourcedir}/extension/IgnoreIfDocSpec.groovy[tag=example-b]
+----
+
+If multiple `@IgnoreIf` annotations are present, the annotated element is skipped if either of the
+conditions evaluates to `true`:
+
+[source,groovy,indent=0]
+----
+include::{sourcedir}/extension/IgnoreIfDocSpec.groovy[tag=example-c]
 ----
 
 Care should be taken when ignoring feature methods in a spec class annotated with `spock.lang.Stepwise` since
@@ -137,10 +143,9 @@ To use IDE support like code completion, you can also use the argument to the cl
 `org.spockframework.runtime.extension.builtin.PreconditionContext`. This enables the IDE with type information
 which is not available otherwise:
 
-[source,groovy]
+[source,groovy,indent=0]
 ----
-@IgnoreIf({ PreconditionContext it -> it.os.windows })
-def "I'll run everywhere but on Windows"() { ... }
+include::{sourcedir}/extension/IgnoreIfDocSpec.groovy[tag=example-d]
 ----
 
 If applied to a data driven feature, the closure can also access the data variables.

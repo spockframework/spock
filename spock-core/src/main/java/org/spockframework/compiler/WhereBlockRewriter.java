@@ -154,9 +154,21 @@ public class WhereBlockRewriter {
         throw notAParameterization(stat);
       }
     } else if (type == Types.ASSIGN) {
-      // derived data variable like:
+      // potentially a derived data variable like:
       // y = 2 * x
-      rewriteDerivedParameterization(binExpr, stat);
+      // or
+      // (y, z) = [2, x]
+      Expression leftExpr = binExpr.getLeftExpression();
+      if (leftExpr instanceof VariableExpression) {
+        // y = 2 * x
+        rewriteSimpleDerivedParameterization(binExpr, stat);
+      } else if (leftExpr instanceof TupleExpression) {
+        // (y, z) = [2, x]
+        rewriteMultiDerivedParameterization(binExpr, stat);
+      } else {
+        // neither of the other two
+        notAParameterization(stat);
+      }
     } else if (getOrExpression(binExpr) != null) {
       // header line of data table like:
       // x | y || z
@@ -331,7 +343,7 @@ public class WhereBlockRewriter {
     createDataProviderMethod(binExpr.getRightExpression(), nextDataVariableIndex, false);
   }
 
-  private void rewriteDerivedParameterization(BinaryExpression parameterization, Statement enclosingStat)
+  private void rewriteSimpleDerivedParameterization(BinaryExpression parameterization, Statement enclosingStat)
       throws InvalidSpecCompileException {
     VariableExpression dataVar = createDataProcessorVariable(parameterization.getLeftExpression(), enclosingStat);
 
@@ -344,6 +356,26 @@ public class WhereBlockRewriter {
 
     exprStat.setSourcePosition(enclosingStat);
     dataProcessorStats.add(exprStat);
+  }
+
+  private void rewriteMultiDerivedParameterization(BinaryExpression binExpr, Statement enclosingStat)
+      throws InvalidSpecCompileException {
+    TupleExpression tuple = (TupleExpression) binExpr.getLeftExpression();
+
+    List<Expression> tupleElems = tuple.getExpressions();
+    for (int i = 0; i < tupleElems.size(); i++) {
+      Expression tupleElem = tupleElems.get(i);
+      if (AstUtil.isWildcardRef(tupleElem)) continue;
+      VariableExpression dataVar = createDataProcessorVariable(tupleElem, enclosingStat);
+      ExpressionStatement exprStat =
+        new ExpressionStatement(
+          new DeclarationExpression(
+            dataVar,
+            Token.newSymbol(Types.ASSIGN, -1, -1),
+            createGetAtMethod(binExpr.getRightExpression(), i)));
+      exprStat.setSourcePosition(enclosingStat);
+      dataProcessorStats.add(exprStat);
+    }
   }
 
   private void rewriteBinaryTableLikeParameterization(ListIterator<Statement> stats) throws InvalidSpecCompileException {

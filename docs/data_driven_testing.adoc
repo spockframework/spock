@@ -317,6 +317,26 @@ This also includes columns in previous data tables in the same `where` block:
 include::{sourcedir}/datadriven/DataSpec.groovy[tag=previous-column-access-multi-table]
 ----
 
+== Multi-Variable Assignment
+
+Like with data pipes, you can also assign to multiple variables in one expression, if you have some object Groovy
+can iterate over. Unlike with data pipes, the syntax here is identical to standard Groovy multi-assignment syntax:
+
+[source,groovy,indent=0]
+----
+include::{sourcedir}/datadriven/DataSpec.groovy[tag=datasource]
+
+include::{sourcedir}/datadriven/DataSpec.groovy[tag=sql-multi-assignment]
+----
+
+Data values that aren't of interest can be ignored with an underscore (`_`):
+
+[source,groovy,indent=0]
+----
+    ...
+include::{sourcedir}/datadriven/DataSpec.groovy[tag=sql-multi-assignment-with-underscore]
+----
+
 == Combining Data Tables, Data Pipes, and Variable Assignments
 
 Data tables, data pipes, and variable assignments can be combined as needed:

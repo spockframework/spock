@@ -109,6 +109,14 @@ class Parameterizations extends EmbeddedSpecification {
     (b, _) = bAndBar
   }
 
+  def "nested multi-parameterization"() {
+    expect:
+    a == b
+
+    where:
+    [a, [_, b]] << [[3, [1, 3]]]
+  }
+
   def "derived parameterization"() {
     expect: a == b.toUpperCase()
     where:

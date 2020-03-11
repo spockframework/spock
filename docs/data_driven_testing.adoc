@@ -213,6 +213,19 @@ Data values that aren't of interest can be ignored with an underscore (`_`):
 include::{sourcedir}/datadriven/DataSpec.groovy[tag=sql-data-pipe-with-underscore]
 ----
 
+The multi-assignments can even be nested. The following example will generate the iterations
+
+- `a = [a1, a2]` / `b = b1` / `c = c1`
+- `a = [a2, a1]` / `b = b1` / `c = c1`
+- `a = [a1, a2]` / `b = b2` / `c = c2`
+- `a = [a2, a1]` / `b = b2` / `c = c2`
+
+[source,groovy,indent=0]
+----
+    ...
+include::{sourcedir}/datadriven/DataSpec.groovy[tag=nested-multi-variable-data-pipe]
+----
+
 == Data Variable Assignment
 
 A data variable can be directly assigned a value:

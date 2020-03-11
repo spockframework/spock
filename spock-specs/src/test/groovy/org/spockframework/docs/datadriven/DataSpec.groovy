@@ -65,6 +65,23 @@ class DataSpec extends Specification {
 // end::sql-data-pipe-with-underscore[]
   }
 
+  def "nested multi-variable data pipes"() {
+    expect:
+    a in [['a1', 'a2'], ['a2', 'a1']]
+    [b, c] in [['b1', 'c1'], ['b2', 'c2']]
+
+// tag::nested-multi-variable-data-pipe[]
+    where:
+    [a, [b, _, c]] << [
+      ['a1', 'a2'].permutations(),
+      [
+        ['b1', 'd1', 'c1'],
+        ['b2', 'd2', 'c2']
+      ]
+    ].combinations()
+// end::nested-multi-variable-data-pipe[]
+  }
+
   def "maximum of two numbers data variable assignment"() {
     expect:
     Math.max(a, b) == c

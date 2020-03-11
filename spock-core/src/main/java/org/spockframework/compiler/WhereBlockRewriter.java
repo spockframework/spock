@@ -88,9 +88,15 @@ public class WhereBlockRewriter {
         rewriteMultiParameterization(binExpr, stat);
       else
         notAParameterization(stat);
-    } else if (type == Types.ASSIGN)
-      rewriteDerivedParameterization(binExpr, stat);
-    else if (getOrExpression(binExpr) != null) {
+    } else if (type == Types.ASSIGN) {
+      Expression leftExpr = binExpr.getLeftExpression();
+      if (leftExpr instanceof VariableExpression)
+        rewriteSimpleDerivedParameterization(binExpr, stat);
+      else if (leftExpr instanceof TupleExpression)
+        rewriteMultiDerivedParameterization(binExpr, stat);
+      else
+        notAParameterization(stat);
+    } else if (getOrExpression(binExpr) != null) {
       stats.previous();
       rewriteTableLikeParameterization(stats);
     }
@@ -195,7 +201,7 @@ public class WhereBlockRewriter {
     createDataProviderMethod(binExpr.getRightExpression(), nextDataVariableIndex);
   }
 
-  private void rewriteDerivedParameterization(BinaryExpression parameterization, Statement enclosingStat)
+  private void rewriteSimpleDerivedParameterization(BinaryExpression parameterization, Statement enclosingStat)
       throws InvalidSpecCompileException {
     VariableExpression dataVar = createDataProcessorVariable(parameterization.getLeftExpression(), enclosingStat);
 
@@ -208,6 +214,26 @@ public class WhereBlockRewriter {
 
     exprStat.setSourcePosition(enclosingStat);
     dataProcessorStats.add(exprStat);
+  }
+
+  private void rewriteMultiDerivedParameterization(BinaryExpression binExpr, Statement enclosingStat)
+      throws InvalidSpecCompileException {
+    TupleExpression tuple = (TupleExpression) binExpr.getLeftExpression();
+
+    List<Expression> tupleElems = tuple.getExpressions();
+    for (int i = 0; i < tupleElems.size(); i++) {
+      Expression tupleElem = tupleElems.get(i);
+      if (AstUtil.isWildcardRef(tupleElem)) continue;
+      VariableExpression dataVar = createDataProcessorVariable(tupleElem, enclosingStat);
+      ExpressionStatement exprStat =
+        new ExpressionStatement(
+          new DeclarationExpression(
+            dataVar,
+            Token.newSymbol(Types.ASSIGN, -1, -1),
+            createGetAtMethod(binExpr.getRightExpression(), i)));
+      exprStat.setSourcePosition(enclosingStat);
+      dataProcessorStats.add(exprStat);
+    }
   }
 
   private void rewriteTableLikeParameterization(ListIterator<Statement> stats) throws InvalidSpecCompileException {

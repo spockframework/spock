@@ -93,6 +93,28 @@ class DataSpec extends Specification {
 // end::sql-data-variable-assignment[]
   }
 
+// tag::sql-multi-assignment[]
+  def "maximum of two numbers multi-assignment"() {
+    expect:
+    Math.max(a, b) == c
+
+    where:
+    row << sql.rows("select a, b, c from maxdata")
+    (a, b, c) = row
+  }
+// end::sql-multi-assignment[]
+
+  def "maximum of two numbers multi-assignment star"() {
+    expect:
+    Math.max(a, b) == c
+
+// tag::sql-multi-assignment-with-underscore[]
+    where:
+    row << sql.rows("select * from maxdata")
+    (a, b, _, c) = row
+// end::sql-multi-assignment-with-underscore[]
+  }
+
   def "maximum of two numbers combined assignment"() {
     expect:
     Math.max(a, b) == c

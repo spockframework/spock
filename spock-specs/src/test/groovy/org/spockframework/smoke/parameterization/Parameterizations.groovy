@@ -17,6 +17,7 @@
 package org.spockframework.smoke.parameterization
 
 import org.spockframework.EmbeddedSpecification
+import org.spockframework.runtime.ConditionNotSatisfiedError
 import spock.lang.*
 
 class Parameterizations extends EmbeddedSpecification {
@@ -26,10 +27,25 @@ class Parameterizations extends EmbeddedSpecification {
       [a, b] << [[1, 1], [2, 2], [3, 3]]
   }
 
+  def "multi-derived-parameterization"() {
+    expect:
+    a == b
+    where:
+    aAndB << [[1, 1], [2, 2], [3, 3]]
+    (a, b) = aAndB
+  }
+
   def "multi-parameterization with placeholder in first position"() {
     expect: a == b
     where :
       [_, a, b] << [[9, 1, 1], [9, 2, 2], [9, 3, 3]]
+  }
+
+  def "multi-derived-parameterization with placeholder in first position"() {
+    expect: a == b
+    where :
+      aAndB << [[9, 1, 1], [9, 2, 2], [9, 3, 3]]
+      (_, a, b) = aAndB
   }
 
   def "multi-parameterization with placeholder in second position"() {
@@ -38,17 +54,39 @@ class Parameterizations extends EmbeddedSpecification {
       [a, _, b] << [[1, 9, 1], [2, 9, 2], [3, 9, 3]]
   }
 
+  def "multi-derived-parameterization with placeholder in second position"() {
+    expect: a == b
+    where :
+      aAndB << [[1, 9, 1], [2, 9, 2], [3, 9, 3]]
+      (a, _, b) = aAndB
+  }
+
   def "multi-parameterization with placeholder in last position"() {
     expect: a == b
     where :
       [a, b, _] << [[1, 1, 9], [2, 2, 9], [3, 3, 9]]
   }
 
-  @FailsWith(org.spockframework.runtime.ConditionNotSatisfiedError)
+  def "multi-derived-parameterization with placeholder in last position"() {
+    expect: a == b
+    where :
+      aAndB << [[1, 1, 9], [2, 2, 9], [3, 3, 9]]
+      (a, b, _) = aAndB
+  }
+
+  @FailsWith(ConditionNotSatisfiedError)
   def "multi-parameterization with placeholder in wrong position"() {
     expect: a == b
     where :
       [a, b, _] << [[1, 9, 1]]
+  }
+
+  @FailsWith(ConditionNotSatisfiedError)
+  def "multi-derived-parameterization with placeholder in wrong position"() {
+    expect: a == b
+    where :
+      aAndB << [[1, 9, 1]]
+      (a, b, _) = aAndB
   }
 
   def "multi-parameterization with multiple placeholders"() {
@@ -58,6 +96,17 @@ class Parameterizations extends EmbeddedSpecification {
     where:
     [_, a] << [["foo", 3]]
     [b, _] << [[3, "bar"]]
+  }
+
+  def "multi-derived-parameterization with multiple placeholders"() {
+    expect:
+    a == b
+
+    where:
+    fooAndA << [["foo", 3]]
+    (_, a) = fooAndA
+    bAndBar << [[3, "bar"]]
+    (b, _) = bAndBar
   }
 
   def "derived parameterization"() {
@@ -89,12 +138,16 @@ class Parameterizations extends EmbeddedSpecification {
     thrown Exception
   }
 
-  def "simple, multi- and derived parameterizations used together"() {
-    expect: d == a * 3
+  def "simple, multi-, derived and multi-derived parameterizations used together"() {
+    expect:
+      d == a * 3
+      e == a
+      f == a
     where:
       a << [1, 2, 3]
       [b, _, c] << [[1, 9, 1], [2, 9, 2], [3, 9, 3]]
       d = a + b + c
+      (e, _, f) = [a, b, c]
   }
 
   @Issue("https://github.com/spockframework/spock/issues/271")

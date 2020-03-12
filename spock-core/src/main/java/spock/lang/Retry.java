@@ -44,6 +44,7 @@ import groovy.lang.Closure;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE, ElementType.METHOD})
 @ExtensionAnnotation(RetryExtension.class)
+@Repeatable(Retry.Container.class)
 public @interface Retry {
   /**
    * Configures which types of Exceptions should be retried.
@@ -102,5 +103,15 @@ public @interface Retry {
      * Retry the the feature together with the setup and cleanup methods.
      */
     SETUP_FEATURE_CLEANUP
+  }
+
+  /**
+   * @since 2.0
+   */
+  @Beta
+  @Retention(RetentionPolicy.RUNTIME)
+  @Target({ElementType.TYPE, ElementType.METHOD})
+  @interface Container {
+    Retry[] value();
   }
 }

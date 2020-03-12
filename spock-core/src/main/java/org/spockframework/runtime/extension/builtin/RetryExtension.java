@@ -44,7 +44,7 @@ public class RetryExtension extends AbstractAnnotationDrivenExtension<Retry> {
   }
 
   private boolean noRetryAnnotation(NodeInfo node) {
-    return !node.getReflection().isAnnotationPresent(Retry.class);
+    return !node.isAnnotationPresent(Retry.class);
   }
 
   @Override

@@ -8,6 +8,8 @@ include::include.adoc[]
 - Annotations for local extensions can now be defined as `@Repeatable` and applied multiple times to the same target.
   Spock will handle this appropriately and call the extension once for each annotation.
 
+- `@Retry` is now repeatable
+
 
 == 2.0-M3 (2020-06-11)
 

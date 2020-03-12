@@ -315,7 +315,7 @@ class FlakyIntegrationSpec extends Specification {
 }
 ----
 
-A {@code @Retry} annotation that is declared on a spec class is applied to all features in all subclasses as well,
+A `@Retry` annotation that is declared on a spec class is applied to all features in all subclasses as well,
 unless a subclass declares its own annotation. If so, the retries defined in the subclass are applied to all feature
 methods declared in the subclass as well as inherited ones.
 
@@ -343,6 +343,16 @@ class BarIntegrationSpec extends AbstractIntegrationSpec {
     ...
   }
 }
+----
+
+If multiple `@Retry` annotations are present, they can be used to have different retry settings
+for different situations:
+
+[source,groovy]
+----
+@Retry(exceptions = IllegalArgumentException, count = 2)
+@Retry(exceptions = IllegalAccessException, count = 4)
+def retryDependingOnException() { ... }
 ----
 
 Check https://github.com/spockframework/spock/blob/master/spock-specs/src/test/groovy/org/spockframework/smoke/extension/RetryFeatureExtensionSpec.groovy[RetryFeatureExtensionSpec] for more examples.

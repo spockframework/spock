@@ -39,12 +39,81 @@ def bar() {
     }
   }
 
+  def "@PendingFeature marks failing feature as skipped even if applied twice"() {
+    when:
+    def result = runner.runSpecBody """
+@PendingFeature
+@PendingFeature
+def bar() {
+  expect: false
+}
+"""
+
+    then:
+    verifyAll(result) {
+      testsStartedCount == 1
+      testsSucceededCount == 0
+      testsFailedCount == 0
+      testsSkippedCount == 0
+      testsAbortedCount == 1
+      testEvents().aborted().assertEventsMatchExactly(
+        abortedWithReason(message('Feature not yet implemented correctly.'))
+      )
+    }
+  }
+
   def "@PendingFeature includes reason in exception message"() {
     when:
     def result = runner.runSpecBody """
 @PendingFeature(reason='42')
 def bar() {
   expect: false
+}
+"""
+
+    then:
+    verifyAll(result) {
+      testsStartedCount == 1
+      testsSucceededCount == 0
+      testsFailedCount == 0
+      testsSkippedCount == 0
+      testsAbortedCount == 1
+      testEvents().aborted().assertEventsMatchExactly(
+        abortedWithReason(message('Feature not yet implemented correctly. Reason: 42'))
+      )
+    }
+  }
+
+  def "@PendingFeature includes last reason in exception message if applied twice"() {
+    when:
+    def result = runner.runSpecBody """
+@PendingFeature(reason='42')
+@PendingFeature(reason='4711')
+def bar() {
+  expect: false
+}
+"""
+
+    then:
+    verifyAll(result) {
+      testsStartedCount == 1
+      testsSucceededCount == 0
+      testsFailedCount == 0
+      testsSkippedCount == 0
+      testsAbortedCount == 1
+      testEvents().aborted().assertEventsMatchExactly(
+        abortedWithReason(message('Feature not yet implemented correctly. Reason: 4711'))
+      )
+    }
+  }
+
+  def "@PendingFeature includes reason of matching annotation in exception message if applied twice"() {
+    when:
+    def result = runner.runSpecBody """
+@PendingFeature(exceptions=IllegalArgumentException, reason='42')
+@PendingFeature(exceptions=IllegalAccessException, reason='4711')
+def bar() {
+  expect: throw new IllegalArgumentException()
 }
 """
 
@@ -107,9 +176,56 @@ def bar() {
     }
   }
 
+  def "@PendingFeature rethrows non handled exceptions even if applied twice"() {
+    when:
+    def result = runner.runSpecBody """
+@PendingFeature(exceptions=IndexOutOfBoundsException)
+@PendingFeature(exceptions=IllegalAccessException)
+def bar() {
+  expect:
+  throw new IllegalArgumentException()
+}
+"""
+
+    then:
+    verifyAll(result) {
+      testsStartedCount == 1
+      testsSucceededCount == 0
+      testsFailedCount == 1
+      testsSkippedCount == 0
+      testsAbortedCount == 0
+      testEvents().failed().assertEventsMatchExactly(
+        finishedWithFailure(instanceOf(IllegalArgumentException))
+      )
+    }
+  }
+
   def "@PendingFeature marks passing feature as failed"() {
     when:
     def result = runner.runSpecBody """
+@PendingFeature
+def bar() {
+  expect: true
+}
+"""
+
+    then:
+    verifyAll(result) {
+      testsStartedCount == 1
+      testsSucceededCount == 0
+      testsFailedCount == 1
+      testsSkippedCount == 0
+      testsAbortedCount == 0
+      testEvents().failed().assertEventsMatchExactly(
+        finishedWithFailure(message('Feature is marked with @PendingFeature but passes unexpectedly'))
+      )
+    }
+  }
+
+  def "@PendingFeature marks passing feature as failed even if applied twice"() {
+    when:
+    def result = runner.runSpecBody """
+@PendingFeature
 @PendingFeature
 def bar() {
   expect: true

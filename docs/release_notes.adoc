@@ -22,6 +22,8 @@ include::include.adoc[]
 
 - `@Use` is now repeatable
 
+- `@UseModules` is now repeatable
+
 - Fix https://github.com/spockframework/spock/issues/994[#994] nested closures in argument constraints are not treated as implicit assertions anymore
 
 

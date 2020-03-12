@@ -20,17 +20,19 @@ import org.spockframework.runtime.extension.IAnnotationDrivenExtension;
 import org.spockframework.runtime.model.*;
 import spock.lang.Retry;
 
+import java.util.List;
+
 /**
  * @author Leonard Brünings
  * @since 1.2
  */
 public class RetryExtension implements IAnnotationDrivenExtension<Retry> {
   @Override
-  public void visitSpecAnnotation(Retry annotation, SpecInfo spec) {
+  public void visitSpecAnnotations(List<Retry> annotations, SpecInfo spec) {
     if (noSubSpecWithRetryAnnotation(spec.getSubSpec())) {
       for (FeatureInfo feature : spec.getBottomSpec().getAllFeatures()) {
         if (noRetryAnnotation(feature.getFeatureMethod())) {
-          visitFeatureAnnotation(annotation, feature);
+          visitFeatureAnnotations(annotations, feature);
         }
       }
     }
@@ -44,7 +46,7 @@ public class RetryExtension implements IAnnotationDrivenExtension<Retry> {
   }
 
   private boolean noRetryAnnotation(NodeInfo node) {
-    return !node.getReflection().isAnnotationPresent(Retry.class);
+    return !node.isAnnotationPresent(Retry.class);
   }
 
   @Override

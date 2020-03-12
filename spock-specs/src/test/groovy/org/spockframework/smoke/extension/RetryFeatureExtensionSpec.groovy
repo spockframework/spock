@@ -66,6 +66,35 @@ def bar() {
     featureCounter.get() == 4
   }
 
+  def "@Retry works properly if applied multiple times"() {
+    when:
+    def result = runner.runSpecBody("""
+@Retry(exceptions = IllegalArgumentException, count = 2)
+@Retry(exceptions = IllegalAccessException, count = 4)
+def bar() {
+  featureCounter.incrementAndGet()
+  expect:
+  throw new ${exception.simpleName}()
+}
+    """)
+
+    then:
+    result.testsStartedCount == 1
+    result.testsSucceededCount == 0
+    result.testsFailedCount == 1
+    with(result.failures.exception[0], MultipleFailuresError) {
+      failures.size() == expectedCount
+      failures.every { exception.isInstance(it) }
+    }
+    result.testsSkippedCount == 0
+    featureCounter.get() == expectedCount
+
+    where:
+    exception                     || expectedCount
+    IllegalArgumentException      || 3
+    IllegalAccessException        || 5
+  }
+
   def "@Retry mode #mode executes setup and cleanup #expectedCount times"(String mode, int expectedCount) {
     given:
     setupCounter.set(0)

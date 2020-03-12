@@ -14,6 +14,8 @@
 
 package spock.lang;
 
+import org.spockframework.util.Beta;
+
 import java.lang.annotation.*;
 
 /**
@@ -27,6 +29,7 @@ import java.lang.annotation.*;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE, ElementType.FIELD, ElementType.LOCAL_VARIABLE})
+@Repeatable(Subject.Container.class)
 public @interface Subject {
   /**
    * The classes which are the subjects of the specification. Irrelevant if the
@@ -35,4 +38,14 @@ public @interface Subject {
    * @return the classes which are the subjects of the specification
    */
   Class<?>[] value() default Void.class;
+
+  /**
+   * @since 2.0
+   */
+  @Beta
+  @Retention(RetentionPolicy.RUNTIME)
+  @Target({ElementType.TYPE, ElementType.FIELD, ElementType.LOCAL_VARIABLE})
+  @interface Container {
+    Subject[] value();
+  }
 }

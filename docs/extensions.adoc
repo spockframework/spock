@@ -353,23 +353,15 @@ To activate one or more Groovy categories within the scope of a feature method o
 
 [source,groovy]
 ----
-class ListExtensions {
-  static avg(List list) { list.sum() / list.size() }
-}
-
-class MySpec extends Specification {
-  @Use(ListExtensions)
-  def "can use avg() method"() {
-    expect:
-    [1, 2, 3].avg() == 2
-  }
-}
+include::{sourcedir}/extension/UseDocSpec.groovy[tag=example]
 ----
 
 This can be useful for stubbing of dynamic methods, which are usually provided by the runtime environment (e.g. Grails).
 It has no effect when applied to a helper method. However, when applied to a spec class, it will also affect its helper
 methods.
 
+To use multiple categories, you can either give multiple categories to the `value` attribute
+of the annotation or you can apply the annotation multiple times to the same target.
 
 === ConfineMetaClassChanges
 

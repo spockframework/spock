@@ -19,12 +19,72 @@ import org.spockframework.mock.TooManyInvocationsError
 import spock.lang.*
 
 class InteractionsWithPropertySyntax extends Specification {
+  def lengthField = 20
+
   def "stubbing properties"() {
     def props = Mock(HasProperties)
     props.length >> 10
 
     expect:
     props.length == 10
+  }
+
+  def "stubbing properties in initializer closure with 'it'"() {
+    def props = Mock(HasProperties) {
+      it.length >> 10
+    }
+
+    expect:
+    props.length == 10
+  }
+
+  def "stubbing properties in initializer closure without 'it'"() {
+    def props = Mock(HasProperties) {
+      length >> 10
+    }
+
+    expect:
+    props.length == 10
+  }
+
+  def "stubbing properties in initializer closure without 'it' does not work if the property is also a parameter"(def length) {
+    def props = Mock(HasProperties) {
+      length >> 10
+    }
+
+    expect:
+    props.length == 0
+
+    where:
+    length = 20
+  }
+
+  def "stubbing properties in initializer closure without 'it' does not work if the property is also a local variable"() {
+    def length = 20
+    def props = Mock(HasProperties) {
+      length >> 10
+    }
+
+    expect:
+    props.length == 0
+  }
+
+  def "stubbing properties in initializer closure without 'it' does not work if the property is also a field"() {
+    def props = Mock(HasProperties) {
+      lengthField >> 10
+    }
+
+    expect:
+    props.lengthField == 0
+  }
+
+  def "stubbing properties in initializer closure without 'it' does not work if the property is also a spec property"() {
+    def props = Mock(HasProperties) {
+      lengthProperty >> 10
+    }
+
+    expect:
+    props.lengthProperty == 0
   }
 
   def "mocking properties"() {
@@ -82,9 +142,23 @@ class InteractionsWithPropertySyntax extends Specification {
     0 * _
   }
 
+  int getLengthProperty() {
+    lengthField
+  }
+
+  void setLengthProperty(int length) {
+    lengthField = length
+  }
+
   interface HasProperties {
     int getLength()
     void setLength(int length)
+
+    int getLengthField()
+    void setLengthField(int length)
+
+    int getLengthProperty()
+    void setLengthProperty(int length)
 
     boolean isEmpty()
     boolean getFull()

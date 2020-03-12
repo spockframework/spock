@@ -8,8 +8,9 @@ import org.spockframework.runtime.extension.*;
  */
 class PendingFeatureInterceptor extends PendingFeatureBaseInterceptor implements IMethodInterceptor {
 
-  public PendingFeatureInterceptor(Class<? extends Throwable>[] handledExceptions, String reason, String annotationUsedByExtension) {
-    super(handledExceptions, reason, annotationUsedByExtension);
+  public PendingFeatureInterceptor(Class<? extends Throwable>[] handledExceptions, String reason,
+                                   String annotationUsedByExtension, boolean secondary) {
+    super(handledExceptions, reason, annotationUsedByExtension, secondary);
   }
 
   @Override
@@ -27,7 +28,9 @@ class PendingFeatureInterceptor extends PendingFeatureBaseInterceptor implements
         throw e;
       }
     }
-    throw featurePassedUnexpectedly(null);
+    if (!secondary) {
+      throw featurePassedUnexpectedly(null);
+    }
   }
 
 }

@@ -166,7 +166,7 @@ class JavaSpies extends Specification {
   def "can define interactions for spy on instances directly with closure"() {
     given:
     def spy = Spy(new NoDefaultConstructor(42)) {
-      1 * it.value >> 7
+      1 * value >> 7
     }
 
     expect:

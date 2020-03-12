@@ -16,6 +16,7 @@
 
 package org.spockframework.compiler;
 
+import org.codehaus.groovy.ast.DynamicVariable;
 import org.spockframework.lang.Wildcard;
 import org.spockframework.mock.runtime.*;
 import org.spockframework.util.*;
@@ -131,6 +132,19 @@ public class InteractionRewriter {
         }
         implicitTarget = true;
       }
+
+      return true;
+    }
+
+    if (expr instanceof VariableExpression
+      && ((VariableExpression) expr).getAccessedVariable() instanceof DynamicVariable) {
+
+      if (activeWithOrMockClosure == null || !AstUtil.hasImplicitParameter(activeWithOrMockClosure)) {
+        throw new InvalidSpecCompileException(call, "Interaction is missing a target");
+      }
+      call = new PropertyExpression(new VariableExpression(new DynamicVariable("it", false)), ((VariableExpression) expr).getName());
+      call.setSourcePosition(expr);
+      implicitTarget = true;
 
       return true;
     }

@@ -97,7 +97,7 @@ def "maximum of two numbers"() { ... }
 ----
 
 For various reasons, the new syntax didn't work out as we had hoped, and eventually we decided to go back to the string
-based syntax. See <<improved-unroll-0.6,Improved `@Unroll`>> for recent improvements to that syntax.
+based syntax. See <<release_notes.adoc#improved-unroll-0.6,Improved `@Unroll`>> for recent improvements to that syntax.
 
 === Hamcrest matcher syntax
 

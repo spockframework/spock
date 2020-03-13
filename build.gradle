@@ -1,5 +1,7 @@
 import java.text.SimpleDateFormat
 
+import static groovy.io.FileType.FILES
+
 plugins {
   id 'com.gradle.build-scan' version '2.2.1'
   id "base"
@@ -362,6 +364,18 @@ asciidoctor {
   inputs.dir file("spock-spring/boot2-test/src/test/groovy/org/spockframework/boot2")
   inputs.dir file("spock-spring/spring3-test/src/test/groovy/org/spockframework/spring3")
   inputs.dir file("spock-spring/spring5-test/src/test/groovy/org/spockframework/spring5")
+
+  doFirst {
+    def errors = []
+    sourceDir.eachFileRecurse(FILES) {
+      if ((it.name =~ /(?<!^index)\.adoc$/) && (it.text =~ /<<[^>#]+\.adoc#,[^>]+>>/)) {
+        errors << "$it.name contains a cross-document link without anchor, this will break in one-page variant"
+      }
+    }
+    if (errors) {
+      throw new IllegalArgumentException(errors.join('\n'))
+    }
+  }
 }
 
 File script(String name) {

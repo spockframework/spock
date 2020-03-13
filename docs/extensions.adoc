@@ -1,4 +1,4 @@
-= Extensions
+= [[extensions]]Extensions
 include::include.adoc[]
 
 Spock comes with a powerful extension mechanism, which allows to hook into a spec's lifecycle to enrich or alter its

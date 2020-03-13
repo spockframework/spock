@@ -1,4 +1,4 @@
-= Data Driven Testing
+= [[data-driven-testing]]Data Driven Testing
 include::include.adoc[]
 
 Oftentimes, it is useful to exercise the same test code multiple times, with varying inputs and expected results.

@@ -792,10 +792,20 @@ SubscriberImpl subscriber = Spy(constructorArgs: ["Fred"])
 
 A spy is always based on a real object. Hence you must provide a class type rather
 than an interface type, along with any constructor arguments for the type.
-If no constructor arguments are provided, the type's default constructor will be used.
+If no constructor arguments are provided, the type's no-arg constructor will be used.
+
+If the given constructor arguments lead to an ambiguity, you can cast the constructor
+arguments as usual using `as`. If the testee for example has one constructor with a
+`String` parameter and one with a `Pattern` parameter and you want `null` as
+`constructorArg`:
+
+[source,groovy]
+----
+SubscriberImpl subscriber = Spy(constructorArgs: [null as String])
+----
 
 You may also create a spy from an instantiated object. This may be useful in cases
-where you do not have full control over the instatiation of types you are interested
+where you do not have full control over the instantiation of types you are interested
 in spying. (For example when testing within a Dependency Injection framework such as
 Spring or Guice.)
 

@@ -15,6 +15,8 @@
  */
 package org.spockframework.smoke.mock
 
+import java.util.regex.Pattern
+
 class JavaSpyBasics extends MockBasics {
   List createListDouble() {
     createArrayListDouble()
@@ -41,6 +43,23 @@ class JavaSpyBasics extends MockBasics {
     Spy(ArrayList) {
       1 * get(42) >> "foo"
     }
+  }
+
+  def 'can disambiguate constructors with null arguments'() {
+    given:
+    Foo verifier = Mock()
+
+    when:
+    Spy(Foo, constructorArgs: [null as String, verifier])
+
+    then:
+    1 * verifier.verify(String)
+
+    when:
+    Spy(Foo, constructorArgs: [null as Pattern, verifier])
+
+    then:
+    1 * verifier.verify(Pattern)
   }
 }
 
@@ -70,5 +89,35 @@ class GroovySpyBasics extends MockBasics {
     GroovySpy(ArrayList) {
       1 * get(42) >> "foo"
     }
+  }
+
+  def 'can disambiguate constructors with null arguments'() {
+    given:
+    Foo verifier = Mock()
+
+    when:
+    GroovySpy(Foo, constructorArgs: [null as String, verifier])
+
+    then:
+    1 * verifier.verify(String)
+
+    when:
+    GroovySpy(Foo, constructorArgs: [null as Pattern, verifier])
+
+    then:
+    1 * verifier.verify(Pattern)
+  }
+}
+
+class Foo {
+  Foo(String s, def verifier) {
+    verifier.verify(String)
+  }
+
+  Foo(Pattern p, def verifier) {
+    verifier.verify(Pattern)
+  }
+
+  def verify(def clazz) {
   }
 }

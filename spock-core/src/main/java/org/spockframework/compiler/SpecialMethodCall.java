@@ -14,15 +14,19 @@
 
 package org.spockframework.compiler;
 
+import org.jetbrains.annotations.NotNull;
 import org.spockframework.lang.ConditionBlock;
 import org.spockframework.util.*;
 
 import java.util.*;
+import java.util.stream.Stream;
 
 import org.codehaus.groovy.ast.*;
 import org.codehaus.groovy.ast.expr.*;
 import org.codehaus.groovy.ast.stmt.*;
 import org.codehaus.groovy.syntax.Types;
+
+import static java.util.stream.Collectors.toList;
 
 public class SpecialMethodCall implements ISpecialMethodCall {
   private final String methodName;
@@ -163,7 +167,8 @@ public class SpecialMethodCall implements ISpecialMethodCall {
     methodCallExpr.setMethod(new ConstantExpression(methodName + "Impl"));
   }
 
-  public static SpecialMethodCall parse(MethodCallExpression methodCallExpr, @Nullable BinaryExpression binaryExpr) {
+  public static SpecialMethodCall parse(MethodCallExpression methodCallExpr, @Nullable BinaryExpression binaryExpr,
+                                        AstNodeCache nodeCache) {
     boolean builtInCall = checkIsBuiltInMethodCall(methodCallExpr);
     boolean conditionBlock = checkIsConditionBlock(methodCallExpr);
 
@@ -190,8 +195,62 @@ public class SpecialMethodCall implements ISpecialMethodCall {
         closureExpr = (ClosureExpression) lastArg;
       }
     }
+    wrapCastedConstructorArgs(arguments, nodeCache);
 
     return new SpecialMethodCall(methodName, inferredName, inferredType, methodCallExpr, binaryExpr, closureExpr, conditionBlock);
+  }
+
+  private static void wrapCastedConstructorArgs(List<Expression> arguments, AstNodeCache nodeCache) {
+    arguments
+      .stream()
+      .filter(MapExpression.class::isInstance)
+      .map(MapExpression.class::cast)
+      .flatMap(SpecialMethodCall::entriesWithCastedConstructorArg)
+      .forEach(constructorArgsEntry -> wrapCastedConstructorArgs(constructorArgsEntry, nodeCache));
+  }
+
+  private static void wrapCastedConstructorArgs(MapEntryExpression constructorArgsEntry, AstNodeCache nodeCache) {
+    constructorArgsEntry
+      .setValueExpression(new ListExpression(
+        // get the constructor args
+        ((ListExpression) constructorArgsEntry.getValueExpression())
+          .getExpressions()
+          .stream()
+          .map(constructorArg -> {
+            // wrap them in a PojoWrapper if casted to transport
+            // the cast type to the constructor selection
+            // for example for "null as String"
+            return constructorArg instanceof CastExpression
+              ? wrapExpression(constructorArg, nodeCache)
+              : constructorArg;
+          })
+          .collect(toList())));
+  }
+
+  private static Expression wrapExpression(Expression expression, AstNodeCache nodeCache) {
+    ConstructorCallExpression wrapExpression = new ConstructorCallExpression(
+      nodeCache.PojoWrapper,
+      new ArgumentListExpression(
+        expression,
+        new ClassExpression(expression.getType())));
+    wrapExpression.setSourcePosition(expression);
+    return wrapExpression;
+  }
+
+  private static Stream<MapEntryExpression> entriesWithCastedConstructorArg(MapExpression map) {
+    return map
+      .getMapEntryExpressions()
+      .stream()
+      .filter(SpecialMethodCall::hasCastedConstructorArg);
+  }
+
+  private static boolean hasCastedConstructorArg(MapEntryExpression mapEntry) {
+    Expression key = mapEntry.getKeyExpression();
+    Expression value = mapEntry.getValueExpression();
+    return (key instanceof ConstantExpression)
+      && ((ConstantExpression) key).getValue().equals("constructorArgs")
+      && (value instanceof ListExpression)
+      && ((ListExpression) value).getExpressions().stream().anyMatch(CastExpression.class::isInstance);
   }
 
   public String toString() {

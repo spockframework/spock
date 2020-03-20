@@ -22,6 +22,7 @@ import org.codehaus.groovy.ast.expr.*;
 import org.codehaus.groovy.ast.stmt.*;
 
 public class AbstractDeepBlockRewriter extends StatementReplacingVisitorSupport {
+  private final AstNodeCache nodeCache;
   protected Block block;
   protected Statement currTopLevelStat;
   protected ExpressionStatement currExprStat;
@@ -38,8 +39,9 @@ public class AbstractDeepBlockRewriter extends StatementReplacingVisitorSupport 
   protected MethodCallExpression foundExceptionCondition;
   protected final List<Statement> thenBlockInteractionStats = new ArrayList<>();
 
-  public AbstractDeepBlockRewriter(Block block) {
+  public AbstractDeepBlockRewriter(Block block, AstNodeCache nodeCache) {
     this.block = block;
+    this.nodeCache = nodeCache;
   }
 
   public boolean isConditionFound() {
@@ -107,7 +109,7 @@ public class AbstractDeepBlockRewriter extends StatementReplacingVisitorSupport 
     currMethodCallExpr = expr;
 
     ISpecialMethodCall oldSpecialMethodCall = currSpecialMethodCall;
-    ISpecialMethodCall newSpecialMethodCall = SpecialMethodCall.parse(currMethodCallExpr, currBinaryExpr);
+    ISpecialMethodCall newSpecialMethodCall = SpecialMethodCall.parse(currMethodCallExpr, currBinaryExpr, nodeCache);
     if (newSpecialMethodCall != null) {
       currSpecialMethodCall = newSpecialMethodCall;
       if (newSpecialMethodCall.isMatch(currExprStat)) {

@@ -3,6 +3,8 @@ package org.spockframework.docs.interaction
 import org.spockframework.mock.TooFewInvocationsError
 import spock.lang.*
 
+import java.util.regex.Pattern
+
 import static org.hamcrest.CoreMatchers.endsWith
 
 class InteractionDocSpec extends Specification {
@@ -37,8 +39,34 @@ class InteractionDocSpec extends Specification {
     then:
     2 * _.receive(_)
   }
+
+  def "Spy 1"() {
+    given:
+// tag::spy1[]
+    SubscriberImpl subscriber = Spy(constructorArgs: [null as String])
+    SubscriberImpl subscriber2 = Spy(constructorArgs: [(Pattern) null])
+// end::spy1[]
+
+    when:
+    subscriber.receive("1")
+    subscriber2.receive("2")
+
+    then:
+    2 * _.receive(_)
+  }
 }
 
+class SubscriberImpl implements Subscriber {
+  SubscriberImpl(String s) {
+  }
+
+  SubscriberImpl(Pattern p) {
+  }
+
+  @Override
+  void receive(String message) {
+  }
+}
 
 // tag::examplesetup[]
 class Publisher {

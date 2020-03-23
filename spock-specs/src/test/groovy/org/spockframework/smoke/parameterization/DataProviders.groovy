@@ -114,7 +114,7 @@ where : $providers
 
     then:
     thrown(SpockExecutionException)
-    
+
     where:
     providers << [
         "x << [1, 2]; y << [1]",
@@ -156,6 +156,21 @@ y << []
       [x, y]
     }()
     b << [0, 1]
+  }
+
+  def 'data pipe consisting of single variable expression has line information in stack trace'() {
+    when:
+    runner.runFeatureBody '''
+expect: true
+where: a << b
+'''
+
+    then:
+    MissingPropertyException mpe = thrown()
+    verifyAll(mpe.stackTrace[0]) {
+      methodName == 'a feature'
+      lineNumber != -1
+    }
   }
 
   static class MyIterator implements Iterator {

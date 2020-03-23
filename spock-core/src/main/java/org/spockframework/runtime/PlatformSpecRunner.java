@@ -22,7 +22,6 @@ import org.spockframework.util.*;
 import spock.lang.Specification;
 
 import org.junit.platform.engine.support.hierarchical.Node;
-import org.junit.runner.Description;
 
 import java.util.Arrays;
 
@@ -231,8 +230,6 @@ public class PlatformSpecRunner {
     IterationInfo result = new IterationInfo(currentFeature, iterationIndex, dataValues, estimatedNumIterations);
     String iterationName = currentFeature.getIterationNameProvider().getName(result);
     result.setName(iterationName);
-    Description description = Description.createTestDescription(context.getSpec().getReflection(),
-        iterationName, currentFeature.getFeatureMethod().getAnnotations());
     return result;
   }
 

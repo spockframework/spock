@@ -17,14 +17,16 @@
 package spock.util
 
 import org.spockframework.runtime.SpecUtil
+import org.spockframework.util.JUnit4LegacyUtil
 import org.spockframework.util.NotThreadSafe
 import spock.lang.Specification
 
 import org.codehaus.groovy.control.MultipleCompilationErrorsException
 import org.intellij.lang.annotations.Language
-import org.junit.Test
-import org.junit.runner.RunWith
 import org.opentest4j.MultipleFailuresError
+
+import static org.spockframework.util.JUnit4LegacyUtil.junit4SupportAvailable
+
 /**
  * Utility class that allows to compile (fragments of) specs programmatically.
  * Mainly intended for spec'ing Spock itself.
@@ -110,11 +112,12 @@ class EmbeddedSpecCompiler {
     }
 
     loader.loadedClasses.findAll {
-      SpecUtil.isSpec(it) || isJUnitTest(it) // need JUnit tests sometimes
+      SpecUtil.isSpec(it) || isJUnit4Test(it) // need JUnit tests sometimes
     } as List
   }
 
-  private boolean isJUnitTest(Class clazz) {
-    clazz.isAnnotationPresent(RunWith) || clazz.methods.any { it.getAnnotation(Test) }
+  private boolean isJUnit4Test(Class clazz) {
+    isJunit4SupportAvailable() && (clazz.isAnnotationPresent(JUnit4LegacyUtil.RUN_WITH_ANNOTATION) ||
+      clazz.methods.any { it.getAnnotation(JUnit4LegacyUtil.TEST_ANNOTATION) })
   }
 }

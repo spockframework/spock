@@ -24,7 +24,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
 import java.util.*;
 
-import org.junit.*;
+import static org.spockframework.util.JUnit4LegacyUtil.isJunit4SupportAvailable;
 
 /**
  * Builds a SpecInfo from a Class instance.
@@ -226,18 +226,20 @@ public class SpecInfoBuilder {
     MethodInfo cleanupSpecMethod = createMethod(Identifiers.CLEANUP_SPEC_METHOD, MethodKind.CLEANUP_SPEC);
     if (cleanupSpecMethod != null) spec.addCleanupSpecMethod(cleanupSpecMethod);
 
-    for (Method method : clazz.getDeclaredMethods()) {
-      if (method.isAnnotationPresent(Before.class)) {
-        spec.addSetupMethod(createJUnitFixtureMethod(method, MethodKind.SETUP, Before.class));
-      }
-      if (method.isAnnotationPresent(After.class)) {
-        spec.addCleanupMethod(createJUnitFixtureMethod(method, MethodKind.CLEANUP, After.class));
-      }
-      if (method.isAnnotationPresent(BeforeClass.class)) {
-        spec.addSetupSpecMethod(createJUnitFixtureMethod(method, MethodKind.SETUP_SPEC, BeforeClass.class));
-      }
-      if (method.isAnnotationPresent(AfterClass.class)) {
-        spec.addCleanupSpecMethod(createJUnitFixtureMethod(method, MethodKind.CLEANUP_SPEC, AfterClass.class));
+    if (isJunit4SupportAvailable()) {
+      for (Method method : clazz.getDeclaredMethods()) {
+        if (method.isAnnotationPresent(JUnit4LegacyUtil.BEFORE_ANNOTATION)) {
+          spec.addSetupMethod(createJUnitFixtureMethod(method, MethodKind.SETUP, JUnit4LegacyUtil.BEFORE_ANNOTATION));
+        }
+        if (method.isAnnotationPresent(JUnit4LegacyUtil.AFTER_ANNOTATION)) {
+          spec.addCleanupMethod(createJUnitFixtureMethod(method, MethodKind.CLEANUP, JUnit4LegacyUtil.AFTER_ANNOTATION));
+        }
+        if (method.isAnnotationPresent(JUnit4LegacyUtil.BEFORE_CLASS_ANNOTATION)) {
+          spec.addSetupSpecMethod(createJUnitFixtureMethod(method, MethodKind.SETUP_SPEC, JUnit4LegacyUtil.BEFORE_CLASS_ANNOTATION));
+        }
+        if (method.isAnnotationPresent(JUnit4LegacyUtil.AFTER_CLASS_ANNOTATION)) {
+          spec.addCleanupSpecMethod(createJUnitFixtureMethod(method, MethodKind.CLEANUP_SPEC, JUnit4LegacyUtil.AFTER_CLASS_ANNOTATION));
+        }
       }
     }
 

@@ -15,20 +15,16 @@
 */
 package org.spockframework.smoke.traits
 
-trait MyTrait {
-  int x = 10
+import org.junit.*
 
-  def multiply(m, n) { m * n }
-
-  def setup() {
-    setupEvaluated = true
+trait MyTraitWithJUnit4Annotations {
+  @Before
+  void before() {
+    beforeEvaluated = true
   }
 
-  def cleanup() {
-    cleanupEvaluated = true
-  }
-
-  def setupSpec() {
-    setupSpecEvaluated = true
+  @After
+  void after() {
+    afterEvaluated = true
   }
 }

@@ -21,7 +21,6 @@ import spock.lang.*
 
 import javax.inject.Inject
 
-import org.junit.Test
 import org.springframework.cache.CacheManager
 import org.springframework.cache.annotation.*
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager
@@ -50,7 +49,6 @@ class SpringSpyWithAopProxyTests extends Specification {
 
   // TODO Fails with ByteBuddy
   @Requires({sys["org.spockframework.mock.ignoreByteBuddy"]})
-  @Test
   def 'verify use proxyTarget'() throws Exception {
     when:
     Long d1 = dateService.getDate(false)

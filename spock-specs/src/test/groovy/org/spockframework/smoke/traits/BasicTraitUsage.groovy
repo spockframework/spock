@@ -16,7 +16,9 @@
 
 package org.spockframework.smoke.traits
 
-import spock.lang.*
+
+import spock.lang.Shared
+import spock.lang.Specification
 
 class BasicTraitUsage extends Specification implements MyTrait {
   boolean setupEvaluated
@@ -24,9 +26,6 @@ class BasicTraitUsage extends Specification implements MyTrait {
   boolean cleanupEvaluated
   @Shared
   boolean setupSpecEvaluated
-  boolean beforeEvaluated
-  @Shared
-  boolean afterEvaluated
 
   def "call trait method"() {
     def result = multiply(4, 3)
@@ -67,15 +66,4 @@ class BasicTraitUsage extends Specification implements MyTrait {
     expect:
     setupSpecEvaluated
   }
-
-  def "mix in @Before method"() {
-    expect:
-    beforeEvaluated
-  }
-
-  def "mix in @After method"() {
-    expect:
-    afterEvaluated // for previous feature method(s)
-  }
 }
-

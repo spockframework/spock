@@ -13,22 +13,24 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
+
 package org.spockframework.smoke.traits
 
-trait MyTrait {
-  int x = 10
+import spock.lang.*
 
-  def multiply(m, n) { m * n }
+class BasicTraitUsageWithJUnit4Annotations extends Specification implements MyTraitWithJUnit4Annotations {
+  boolean beforeEvaluated
+  @Shared
+  boolean afterEvaluated
 
-  def setup() {
-    setupEvaluated = true
+  def "mix in @Before method"() {
+    expect:
+    beforeEvaluated
   }
 
-  def cleanup() {
-    cleanupEvaluated = true
-  }
-
-  def setupSpec() {
-    setupSpecEvaluated = true
+  def "mix in @After method"() {
+    expect:
+    afterEvaluated // for previous feature method(s)
   }
 }
+

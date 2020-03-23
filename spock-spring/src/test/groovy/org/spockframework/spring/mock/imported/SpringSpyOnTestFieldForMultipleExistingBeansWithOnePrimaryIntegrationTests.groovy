@@ -20,7 +20,6 @@ import org.spockframework.spring.SpringSpy
 import org.spockframework.spring.mock.imported.example.*
 import spock.lang.Specification
 
-import org.junit.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.*
 import org.springframework.test.context.ContextConfiguration
@@ -41,7 +40,6 @@ class SpringSpyOnTestFieldForMultipleExistingBeansWithOnePrimaryIntegrationTests
   @Autowired
   private ExampleGenericStringServiceCaller caller
 
-  @Test
   def 'test spying'() throws Exception {
     when:
     def result = caller.sayGreeting()

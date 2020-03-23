@@ -15,8 +15,6 @@
 package org.spockframework.smoke
 
 import org.junit.platform.engine.discovery.DiscoverySelectors
-import org.junit.runner.manipulation.Filter
-import org.junit.runner.Request
 
 import org.spockframework.EmbeddedSpecification
 import spock.lang.Issue

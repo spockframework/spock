@@ -22,8 +22,7 @@ dependencies {
   testCompile "org.springframework:spring-jdbc:$springVersion"
   testCompile "org.springframework:spring-tx:$springVersion"
   testCompile "javax.inject:javax.inject:1"
-  // for groovy.sql.Sql
-  testCompile groovyTestDependencies
+  testCompile libs.groovySql // for groovy.sql.Sql
 
   testRuntime libs.h2database
   testRuntime libs.log4j

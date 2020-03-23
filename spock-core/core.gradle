@@ -14,7 +14,7 @@ dependencies {
   compile libs.groovy // easiest way to add Groovy dependency to POM
   compile libs.junitPlatform
   compile libs.junitPlatformTestkit, optional
-  compileOnly libs.junit4
+  compile libs.hamcrest
 
   compile libs.jetbrainsAnnotations, optional
   compile libs.ant, optional

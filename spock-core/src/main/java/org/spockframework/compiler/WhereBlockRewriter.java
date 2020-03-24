@@ -21,6 +21,7 @@ import org.spockframework.runtime.model.DataProviderMetadata;
 import org.spockframework.util.*;
 
 import java.util.*;
+import java.util.function.Function;
 
 import org.codehaus.groovy.ast.*;
 import org.codehaus.groovy.ast.expr.*;
@@ -31,6 +32,7 @@ import org.objectweb.asm.Opcodes;
 
 import static org.spockframework.compiler.AstUtil.createGetAtMethod;
 import static org.spockframework.compiler.AstUtil.isDataTableSeparator;
+import static org.spockframework.compiler.AstUtil.getExpression;
 
 /**
  *
@@ -75,42 +77,40 @@ public class WhereBlockRewriter {
 
   private void rewriteWhereStat(ListIterator<Statement> stats) throws InvalidSpecCompileException {
     Statement stat = stats.next();
+
+    // binary expressions are potentially parameterizations
     BinaryExpression binExpr = AstUtil.getExpression(stat, BinaryExpression.class);
-    if (binExpr != null && binExpr.getClass() == BinaryExpression.class) { // don't allow subclasses like DeclarationExpression
-      // binary expressions are potentially parameterizations
+    if (binExpr != null) {
+      // don't allow subclasses like DeclarationExpression
+      if (binExpr.getClass() != BinaryExpression.class) {
+        throw notAParameterization(stat);
+      }
 
-      int type = binExpr.getOperation().getType();
+      stats.previous();
+      rewriteBinaryWhereStat(stats);
+      return;
+    }
 
-      if (type == Types.LEFT_SHIFT) {
-        // potentially a data pipe like:
-        // x << [1, 2, 3]
-        Expression leftExpr = binExpr.getLeftExpression();
-        if (leftExpr instanceof VariableExpression)
-          // x << [1, 2, 3]
-          rewriteSimpleParameterization(binExpr, stat);
-        else if (leftExpr instanceof ListExpression)
-          // [x, y, z] << [[1, 2, 3]]
-          rewriteMultiParameterization(binExpr, stat);
-        else
-          // neither of the other two
-          notAParameterization(stat);
-      } else if (type == Types.ASSIGN)
-        // derived data variable like:
-        // y = 2 * x
-        rewriteDerivedParameterization(binExpr, stat);
-      else if (getOrExpression(binExpr) != null) {
-        // header line of data table like:
-        // x | y || z
-        // 1 | 2 || 3
-        // 4 | 5 || 6
-        // push back header line
-        stats.previous();
-        // rewrite data table
-        rewriteTableLikeParameterization(stats);
-      } else
-        // binary expression is neither of type left-shift, nor assign => not a parameterization
-        notAParameterization(stat);
-    } else if (!isDataTableSeparator(stat)) {
+    // reposition before current statement
+    stats.previous();
+    // search for semicolon separated data table header row
+    List<Expression> potentialHeaderRow = getExpressionChain(stats);
+    // rewind
+    potentialHeaderRow
+      .stream()
+      .skip(1)
+      .forEach(expression -> stats.previous());
+
+    if (potentialHeaderRow.size() > 1) {
+      if (!potentialHeaderRow.stream().allMatch(VariableExpression.class::isInstance)) {
+        throw dataTableHeaderMayOnlyContainVariableNames(stat);
+      }
+      stats.previous();
+      rewriteExpressionTableLikeParameterization(stats);
+      return;
+    }
+
+    if (!isDataTableSeparator(stat)) {
       // if statement is a data table separator (two or more underscores)
       // just ignore it, it is mainly meant to separate two consecutive
       // data tables, but is allowed anywhere in the where block, for
@@ -121,8 +121,79 @@ public class WhereBlockRewriter {
       // 4 | 5 || 6
       //
       // otherwise => not a parameterization
-      notAParameterization(stat);
+      throw notAParameterization(stat);
     }
+  }
+
+  private void rewriteBinaryWhereStat(ListIterator<Statement> stats) throws InvalidSpecCompileException {
+    Statement stat = stats.next();
+    BinaryExpression binExpr = AstUtil.getExpression(stat, BinaryExpression.class);
+    int type = binExpr.getOperation().getType();
+
+    if (type == Types.LEFT_SHIFT) {
+      // potentially a data pipe like:
+      // x << [1, 2, 3]
+      Expression leftExpr = binExpr.getLeftExpression();
+      if (leftExpr instanceof VariableExpression) {
+        // x << [1, 2, 3]
+        rewriteSimpleParameterization(binExpr, stat);
+      } else if (leftExpr instanceof ListExpression) {
+        // [x, y, z] << [[1, 2, 3]]
+        rewriteMultiParameterization(binExpr, stat);
+      } else {
+        // neither of the other two
+        throw notAParameterization(stat);
+      }
+    } else if (type == Types.ASSIGN) {
+      // derived data variable like:
+      // y = 2 * x
+      rewriteDerivedParameterization(binExpr, stat);
+    } else if (getOrExpression(binExpr) != null) {
+      // header line of data table like:
+      // x | y || z
+      // 1 | 2 || 3
+      // 4 | 5 || 6
+      // push back header line
+      stats.previous();
+      // rewrite data table
+      rewriteBinaryTableLikeParameterization(stats);
+    } else {
+      // binary expression is neither of type left-shift, nor assign and not a data table
+      throw notAParameterization(stat);
+    }
+  }
+
+  private List<Expression> getExpressionChain(ListIterator<Statement> stats) {
+    List<Expression> result = new ArrayList<>();
+
+    if (!stats.hasNext()) {
+      return result;
+    }
+
+    Statement stat = stats.next();
+    while (true) {
+      Expression expr = getExpression(stat, Expression.class);
+      if (expr == null) {
+        stats.previous();
+        break;
+      }
+
+      result.add(expr);
+
+      if (!stats.hasNext()) {
+        break;
+      }
+
+      Statement nextStat = stats.next();
+      if (nextStat.getLineNumber() != stat.getLastLineNumber()) {
+        // new data table row
+        stats.previous();
+        break;
+      }
+      stat = nextStat;
+    }
+
+    return result;
   }
 
   private void createDataProviderMethod(Expression dataProviderExpr, int nextDataVariableIndex) {
@@ -237,21 +308,42 @@ public class WhereBlockRewriter {
     dataProcessorStats.add(exprStat);
   }
 
-  private void rewriteTableLikeParameterization(ListIterator<Statement> stats) throws InvalidSpecCompileException {
-    LinkedList<List<Expression>> rows = new LinkedList<>();
-
-    while (stats.hasNext()) {
+  private void rewriteBinaryTableLikeParameterization(ListIterator<Statement> stats) throws InvalidSpecCompileException {
+    rewriteTableLikeParameterization(stats, result -> {
       Statement stat = stats.next();
       BinaryExpression orExpr = getOrExpression(stat);
       if (orExpr == null) {
         stats.previous();
+        return true;
+      }
+      splitRow(orExpr, result);
+      return false;
+    });
+  }
+
+  private void rewriteExpressionTableLikeParameterization(ListIterator<Statement> stats) throws InvalidSpecCompileException {
+    rewriteTableLikeParameterization(stats, result -> {
+      List<Expression> row = getExpressionChain(stats);
+      if (row.size() <= 1) {
+        // rewind
+        row.forEach(expression -> stats.previous());
+        return true;
+      }
+      result.addAll(row);
+      return false;
+    });
+  }
+
+  private void rewriteTableLikeParameterization(ListIterator<Statement> stats, Function<List<Expression>, Boolean> rowExtractor) throws InvalidSpecCompileException {
+    LinkedList<List<Expression>> rows = new LinkedList<>();
+
+    while (stats.hasNext()) {
+      List<Expression> row = new ArrayList<>();
+      if (rowExtractor.apply(row)) {
         break;
       }
-
-      List<Expression> row = new ArrayList<>();
-      splitRow(orExpr, row);
       if (rows.size() > 0 && rows.getLast().size() != row.size())
-        throw new InvalidSpecCompileException(stat, String.format("Row in data table has wrong number of elements (%s instead of %s)", row.size(), rows.getLast().size()));
+        throw new InvalidSpecCompileException(row.get(0), String.format("Row in data table has wrong number of elements (%s instead of %s)", row.size(), rows.getLast().size()));
       rows.add(row);
     }
 
@@ -276,8 +368,7 @@ public class WhereBlockRewriter {
   private void turnIntoSimpleParameterization(List<Expression> column) throws InvalidSpecCompileException {
     VariableExpression varExpr = ObjectUtil.asInstance(column.get(0), VariableExpression.class);
     if (varExpr == null)
-      throw new InvalidSpecCompileException(column.get(0),
-          "Header of data table may only contain variable names");
+      throw dataTableHeaderMayOnlyContainVariableNames(column.get(0));
     if (AstUtil.isWildcardRef(varExpr)) {
       // assertion: column has a wildcard header, but the method's
       // explicit parameter list does not have a wildcard parameter
@@ -322,7 +413,7 @@ public class WhereBlockRewriter {
   private VariableExpression createDataProcessorVariable(Expression varExpr, ASTNode sourcePos)
       throws InvalidSpecCompileException {
     if (!(varExpr instanceof VariableExpression))
-      notAParameterization(sourcePos);
+      throw notAParameterization(sourcePos);
 
     VariableExpression typedVarExpr = (VariableExpression)varExpr;
     verifyDataProcessorVariable(typedVarExpr);
@@ -403,9 +494,13 @@ public class WhereBlockRewriter {
           blockStat));
   }
 
-  private static void notAParameterization(ASTNode stat) throws InvalidSpecCompileException {
-    throw new InvalidSpecCompileException(stat,
+  private static InvalidSpecCompileException notAParameterization(ASTNode stat) {
+    return new InvalidSpecCompileException(stat,
 "where-blocks may only contain parameterizations (e.g. 'salary << [1000, 5000, 9000]; salaryk = salary / 1000')");
+  }
+
+  private static InvalidSpecCompileException dataTableHeaderMayOnlyContainVariableNames(ASTNode stat) {
+    return new InvalidSpecCompileException(stat, "Header of data table may only contain variable names");
   }
 
   private class DataProcessorVariableRewriter extends ClassCodeVisitorSupport {

@@ -17,6 +17,18 @@ With the new behavior, you can have a `Mock` or `Spy` return the same value as a
 subscriber.receive(_) >> _
 ----
 
+=== Misc
+
+- Data tables now support any amount of semicolons to separate data table columns as alternative
+  to pipes and double pipes but cannot be mixed with them in one table:
++
+[source,groovy]
+----
+where:
+a ; b ;; c
+1 ; 2 ;; 3
+----
+
 == 2.0-M2 (2020-02-10)
 
 === Groovy-3.0 Support

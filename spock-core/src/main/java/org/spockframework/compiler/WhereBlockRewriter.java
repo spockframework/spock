@@ -30,6 +30,7 @@ import org.codehaus.groovy.syntax.*;
 import org.objectweb.asm.Opcodes;
 
 import static org.spockframework.compiler.AstUtil.createGetAtMethod;
+import static org.spockframework.compiler.AstUtil.getExpression;
 
 /**
  *
@@ -74,28 +75,93 @@ public class WhereBlockRewriter {
 
   private void rewriteWhereStat(ListIterator<Statement> stats) throws InvalidSpecCompileException {
     Statement stat = stats.next();
-    BinaryExpression binExpr = AstUtil.getExpression(stat, BinaryExpression.class);
-    if (binExpr == null || binExpr.getClass() != BinaryExpression.class) // don't allow subclasses like DeclarationExpression
-      notAParameterization(stat);
 
+    BinaryExpression binExpr = AstUtil.getExpression(stat, BinaryExpression.class);
+    if (binExpr != null) {
+      // don't allow subclasses like DeclarationExpression
+      if (binExpr.getClass() == BinaryExpression.class) {
+        stats.previous();
+        rewriteBinaryWhereStat(stats);
+        return;
+      } else {
+        notAParameterization(stat);
+      }
+    }
+
+    // reposition before current statement
+    stats.previous();
+    List<Expression> potentialHeaderRow = getExpressionChain(stats);
+    // rewind
+    potentialHeaderRow
+      .stream()
+      .skip(1)
+      .forEach(expression -> stats.previous());
+
+    if (potentialHeaderRow.size() <= 1) {
+      notAParameterization(stat);
+    }
+    if (!potentialHeaderRow.stream().allMatch(VariableExpression.class::isInstance)) {
+      dataTableHeaderMayOnlyContainVariableNames(stat);
+    }
+    stats.previous();
+    rewriteExpressionTableLikeParameterization(stats);
+  }
+
+  private void rewriteBinaryWhereStat(ListIterator<Statement> stats) throws InvalidSpecCompileException {
+    Statement stat = stats.next();
+    BinaryExpression binExpr = AstUtil.getExpression(stat, BinaryExpression.class);
     int type = binExpr.getOperation().getType();
 
     if (type == Types.LEFT_SHIFT) {
       Expression leftExpr = binExpr.getLeftExpression();
-      if (leftExpr instanceof VariableExpression)
+      if (leftExpr instanceof VariableExpression) {
         rewriteSimpleParameterization(binExpr, stat);
-      else if (leftExpr instanceof ListExpression)
+      } else if (leftExpr instanceof ListExpression) {
         rewriteMultiParameterization(binExpr, stat);
-      else
+      } else {
         notAParameterization(stat);
-    } else if (type == Types.ASSIGN)
+      }
+    } else if (type == Types.ASSIGN) {
       rewriteDerivedParameterization(binExpr, stat);
-    else if (getOrExpression(binExpr) != null) {
+    } else if (getOrExpression(binExpr) != null) {
       stats.previous();
-      rewriteTableLikeParameterization(stats);
-    }
-    else
+      rewriteBinaryTableLikeParameterization(stats);
+    } else {
       notAParameterization(stat);
+    }
+  }
+
+  private List<Expression> getExpressionChain(ListIterator<Statement> stats) {
+    List<Expression> result = new ArrayList<>();
+
+    if (!stats.hasNext()) {
+      return result;
+    }
+
+    Statement stat = stats.next();
+    while (true) {
+      Expression expr = getExpression(stat, Expression.class);
+      if (expr == null) {
+        stats.previous();
+        break;
+      }
+
+      result.add(expr);
+
+      if (!stats.hasNext()) {
+        break;
+      }
+
+      Statement nextStat = stats.next();
+      if (nextStat.getLineNumber() != stat.getLastLineNumber()) {
+        // new data table row
+        stats.previous();
+        break;
+      }
+      stat = nextStat;
+    }
+
+    return result;
   }
 
   private void createDataProviderMethod(Expression dataProviderExpr, int nextDataVariableIndex) {
@@ -210,7 +276,7 @@ public class WhereBlockRewriter {
     dataProcessorStats.add(exprStat);
   }
 
-  private void rewriteTableLikeParameterization(ListIterator<Statement> stats) throws InvalidSpecCompileException {
+  private void rewriteBinaryTableLikeParameterization(ListIterator<Statement> stats) throws InvalidSpecCompileException {
     LinkedList<List<Expression>> rows = new LinkedList<>();
 
     while (stats.hasNext()) {
@@ -225,6 +291,26 @@ public class WhereBlockRewriter {
       splitRow(orExpr, row);
       if (rows.size() > 0 && rows.getLast().size() != row.size())
         throw new InvalidSpecCompileException(stat, String.format("Row in data table has wrong number of elements (%s instead of %s)", row.size(), rows.getLast().size()));
+      rows.add(row);
+    }
+
+    for (List<Expression> column : transposeTable(rows))
+      turnIntoSimpleParameterization(column);
+  }
+
+  private void rewriteExpressionTableLikeParameterization(ListIterator<Statement> stats) throws InvalidSpecCompileException {
+    LinkedList<List<Expression>> rows = new LinkedList<>();
+
+    while (stats.hasNext()) {
+      List<Expression> row = getExpressionChain(stats);
+      if (row.size() <= 1) {
+        // rewind
+        row.forEach(expression -> stats.previous());
+        break;
+      }
+
+      if (rows.size() > 0 && rows.getLast().size() != row.size())
+        throw new InvalidSpecCompileException(row.get(0), String.format("Row in data table has wrong number of elements (%s instead of %s)", row.size(), rows.getLast().size()));
       rows.add(row);
     }
 
@@ -249,8 +335,7 @@ public class WhereBlockRewriter {
   private void turnIntoSimpleParameterization(List<Expression> column) throws InvalidSpecCompileException {
     VariableExpression varExpr = ObjectUtil.asInstance(column.get(0), VariableExpression.class);
     if (varExpr == null)
-      throw new InvalidSpecCompileException(column.get(0),
-          "Header of data table may only contain variable names");
+      dataTableHeaderMayOnlyContainVariableNames(column.get(0));
     if (AstUtil.isWildcardRef(varExpr)) {
       // assertion: column has a wildcard header, but the method's
       // explicit parameter list does not have a wildcard parameter
@@ -379,6 +464,10 @@ public class WhereBlockRewriter {
   private static void notAParameterization(ASTNode stat) throws InvalidSpecCompileException {
     throw new InvalidSpecCompileException(stat,
 "where-blocks may only contain parameterizations (e.g. 'salary << [1000, 5000, 9000]; salaryk = salary / 1000')");
+  }
+
+  private static void dataTableHeaderMayOnlyContainVariableNames(ASTNode stat) throws InvalidSpecCompileException {
+    throw new InvalidSpecCompileException(stat, "Header of data table may only contain variable names");
   }
 
   private class DataProcessorVariableRewriter extends ClassCodeVisitorSupport {

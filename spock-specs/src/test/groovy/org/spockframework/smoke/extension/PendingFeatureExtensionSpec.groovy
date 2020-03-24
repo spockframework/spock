@@ -45,7 +45,7 @@ class Foo extends Specification {
     result.testsFailedCount == 0
     result.testsSkippedCount == 0
     result.testsAbortedCount == 1
-    result.tests().aborted().assertEventsMatchExactly(abortedWithReason(message("Feature not yet implemented correctly. Reason: 42")))
+    result.testEvents().aborted().assertEventsMatchExactly(abortedWithReason(message("Feature not yet implemented correctly. Reason: 42")))
   }
 
   def "@PendingFeature marks feature that fails with exception as skipped"() {

@@ -323,7 +323,7 @@ the method will also fail if any other exception is thrown.
 ===== Interactions
 
 Whereas conditions describe an object's state, interactions describe how objects communicate with each other.
-Interactions and Interaction based testing are described in a separate <<interaction_based_testing.adoc#,chapter>>, so we only give a quick example here.
+Interactions and Interaction based testing are described in a separate <<interaction_based_testing.adoc#interaction-based-testing,chapter>>, so we only give a quick example here.
 Suppose we want to describe the flow of events from a publisher to its subscribers. Here is the code:
 
 [source,groovy]
@@ -424,7 +424,7 @@ and another one where `a` is 3, `b` is 9, and `c` is 9.
 
 Although it is declared last, the `where` block is evaluated before the feature method containing it runs.
 
-The `where` block is further explained in the <<data_driven_testing.adoc#,Data Driven Testing>> chapter.
+The `where` block is further explained in the <<data_driven_testing.adoc#data-driven-testing,Data Driven Testing>> chapter.
 
 == Helper Methods
 
@@ -659,7 +659,7 @@ activated by annotations called _directives_. Currently, Spock ships with the fo
 be resolved immediately. Second, to replace exception conditions in certain corner cases where the latter cannot be
 used (like specifying the behavior of exception conditions). In all other cases, exception conditions are preferable.
 
-Go to the <<extensions.adoc#,Extensions>> chapter to learn how to implement your own directives and extensions.
+Go to the <<extensions.adoc#extensions,Extensions>> chapter to learn how to implement your own directives and extensions.
 
 == Comparison to JUnit
 

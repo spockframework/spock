@@ -1,3 +1,4 @@
+[[extensions]]
 = Extensions
 include::include.adoc[]
 

@@ -2,14 +2,13 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Asciidoctor 1.5.8">
+<meta name="generator" content="Asciidoctor 2.0.10">
 <meta name="author" content="Peter Niederwieser, Leonard Brünings, The Spock Framework Team">
 <title>Spock Framework Reference Documentation</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <link rel="stylesheet" href="./asciidoctor.css">
-<link rel="stylesheet" href="./coderay-asciidoctor.css">
 </head>
 <body class="article toc2 toc-left">
 <div id="header">
@@ -52,7 +51,7 @@
 <li><a href="#_comparison_to_junit">Comparison to JUnit</a></li>
 </ul>
 </li>
-<li><a href="#_data_driven_testing">Data Driven Testing</a>
+<li><a href="#data-driven-testing">Data Driven Testing</a>
 <ul class="sectlevel2">
 <li><a href="#_introduction_2">Introduction</a></li>
 <li><a href="#data-tables">Data Tables</a></li>
@@ -70,7 +69,7 @@
 <li><a href="#_more_on_unrolled_method_names">More on Unrolled Method Names</a></li>
 </ul>
 </li>
-<li><a href="#_interaction_based_testing">Interaction Based Testing</a>
+<li><a href="#interaction-based-testing">Interaction Based Testing</a>
 <ul class="sectlevel2">
 <li><a href="#_creating_mock_objects">Creating Mock Objects</a></li>
 <li><a href="#_default_behavior_of_mock_objects">Default Behavior of Mock Objects</a></li>
@@ -130,7 +129,7 @@
 <li><a href="#_further_reading">Further Reading</a></li>
 </ul>
 </li>
-<li><a href="#_extensions_2">Extensions</a>
+<li><a href="#extensions">Extensions</a>
 <ul class="sectlevel2">
 <li><a href="#_spock_configuration_file">Spock Configuration File</a>
 <ul class="sectlevel3">
@@ -794,7 +793,7 @@ the method will also fail if any other exception is thrown.</p>
 <h6 id="_interactions"><a class="anchor" href="#_interactions"></a><a class="link" href="#_interactions">Interactions</a></h6>
 <div class="paragraph">
 <p>Whereas conditions describe an object&#8217;s state, interactions describe how objects communicate with each other.
-Interactions and Interaction based testing are described in a separate <a href="#">chapter</a>, so we only give a quick example here.
+Interactions and Interaction based testing are described in a separate <a href="#interaction-based-testing">chapter</a>, so we only give a quick example here.
 Suppose we want to describe the flow of events from a publisher to its subscribers. Here is the code:</p>
 </div>
 <div class="listingblock">
@@ -937,7 +936,7 @@ and another one where <code>a</code> is 3, <code>b</code> is 9, and <code>c</cod
 <p>Although it is declared last, the <code>where</code> block is evaluated before the feature method containing it runs.</p>
 </div>
 <div class="paragraph">
-<p>The <code>where</code> block is further explained in the <a href="#">Data Driven Testing</a> chapter.</p>
+<p>The <code>where</code> block is further explained in the <a href="#data-driven-testing">Data Driven Testing</a> chapter.</p>
 </div>
 </div>
 </div>
@@ -1225,7 +1224,7 @@ used (like specifying the behavior of exception conditions). In all other cases,
 </table>
 </div>
 <div class="paragraph">
-<p>Go to the <a href="#">Extensions</a> chapter to learn how to implement your own directives and extensions.</p>
+<p>Go to the <a href="#extensions">Extensions</a> chapter to learn how to implement your own directives and extensions.</p>
 </div>
 </div>
 <div class="sect2">
@@ -1298,7 +1297,7 @@ used (like specifying the behavior of exception conditions). In all other cases,
 </div>
 </div>
 <div class="sect1">
-<h2 id="_data_driven_testing"><a class="anchor" href="#_data_driven_testing"></a><a class="link" href="#_data_driven_testing">Data Driven Testing</a></h2>
+<h2 id="data-driven-testing"><a class="anchor" href="#data-driven-testing"></a><a class="link" href="#data-driven-testing">Data Driven Testing</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Oftentimes, it is useful to exercise the same test code multiple times, with varying inputs and expected results.
@@ -1753,7 +1752,7 @@ following are valid method names:</p>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_interaction_based_testing"><a class="anchor" href="#_interaction_based_testing"></a><a class="link" href="#_interaction_based_testing">Interaction Based Testing</a></h2>
+<h2 id="interaction-based-testing"><a class="anchor" href="#interaction-based-testing"></a><a class="link" href="#interaction-based-testing">Interaction Based Testing</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Interaction-based testing is a design and testing technique that emerged in the Extreme Programming
@@ -2351,7 +2350,7 @@ linked to the variable declaration. Hence it will just move the interaction, whi
 </div>
 <div class="paragraph">
 <p>One way to solve this problem is to move (at least) the variable declaration to before the <code>when:</code>
-block. (Fans of <a href="#">Data Driven Testing</a> might move the variable into a <code>where:</code> block.)
+block. (Fans of <a href="#data-driven-testing">Data Driven Testing</a> might move the variable into a <code>where:</code> block.)
 In our example, this would have the added benefit that we could use the same variable for sending the message.</p>
 </div>
 <div class="paragraph">
@@ -3191,7 +3190,7 @@ mock.nature == MockNature.MOCK</code></pre>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_extensions_2"><a class="anchor" href="#_extensions_2"></a><a class="link" href="#_extensions_2">Extensions</a></h2>
+<h2 id="extensions"><a class="anchor" href="#extensions"></a><a class="link" href="#extensions">Extensions</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Spock comes with a powerful extension mechanism, which allows to hook into a spec&#8217;s lifecycle to enrich or alter its
@@ -5783,8 +5782,8 @@ finally shooting for a professional logo and website. Stay tuned for announcemen
 It will gradually replace the documentation at <a href="http://wiki.spockframework.org" class="bare">http://wiki.spockframework.org</a>.
 Each Spock version is documented separately (e.g. <a href="http://docs.spockframework.org/en/spock-0.7-groovy-1.8" class="bare">http://docs.spockframework.org/en/spock-0.7-groovy-1.8</a>).
 Documentation for the latest Spock snapshot is at <a href="http://docs.spockframework.org/en/latest" class="bare">http://docs.spockframework.org/en/latest</a>.
-As of Spock 0.7, the chapters on <a href="#">Data Driven Testing</a> and
-<a href="#">Interaction Based Testing</a> are complete.</p>
+As of Spock 0.7, the chapters on <a href="#data-driven-testing">Data Driven Testing</a> and
+<a href="#interaction-based-testing">Interaction Based Testing</a> are complete.</p>
 </div>
 </div>
 <div class="sect3">
@@ -6745,8 +6744,9 @@ Math.signum(a &lt;=&gt; b) == result
 <div id="footer">
 <div id="footer-text">
 Version 2.0-SNAPSHOT<br>
-Last updated 2020-03-24 23:28:15 UTC
+Last updated 2020-03-25 22:40:14 UTC
 </div>
 </div>
+<link rel="stylesheet" href="./coderay-asciidoctor.css">
 </body>
 </html>

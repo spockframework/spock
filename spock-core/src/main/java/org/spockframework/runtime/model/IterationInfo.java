@@ -14,6 +14,8 @@
 
 package org.spockframework.runtime.model;
 
+import org.spockframework.util.DataVariableMap;
+
 import java.lang.reflect.AnnotatedElement;
 import java.util.*;
 
@@ -24,6 +26,7 @@ public class IterationInfo extends NodeInfo<FeatureInfo, AnnotatedElement> {
   private final Object[] dataValues;
   private final int estimatedNumIterations;
   private final List<Runnable> cleanups = new ArrayList<>();
+  private DataVariableMap dataVariables;
 
   public IterationInfo(FeatureInfo feature, Object[] dataValues, int estimatedNumIterations) {
     setParent(feature);
@@ -63,6 +66,20 @@ public class IterationInfo extends NodeInfo<FeatureInfo, AnnotatedElement> {
    */
   public Object[] getDataValues() {
     return dataValues;
+  }
+
+  /**
+   * Return an unmodifiable map of data variable names to values with the same iteration
+   * order as {@link FeatureInfo#getDataVariables} and {@link #getDataValues()}. The returned
+   * map is backed by the actual data values array, so updates are reflected in the returned map.
+   *
+   * @return an unmodifiable map of data variable names to values
+   */
+  public Map<String, Object> getDataVariables() {
+    if (dataVariables == null) {
+      dataVariables = new DataVariableMap(getFeature().getDataVariables(), dataValues);
+    }
+    return dataVariables;
   }
 
   /**

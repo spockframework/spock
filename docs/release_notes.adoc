@@ -25,6 +25,9 @@ JUnit Plafform 1.6 (https://junit.org/junit5/docs/5.6.0/release-notes/index.html
 
 - Upgrade JUnit 4 to 4.13
 
+- `IterationInfo` now has a property for a map of data variable names to values.
+  This is typically not interesting for the average user, but might be helpful for authors of Spock extensions.
+
 == 2.0-M2 (2020-02-10)
 
 === Groovy-3.0 Support
@@ -181,7 +184,7 @@ a == b
 Additional message
 ----
 
-If you relied on this behavior to hide some output, or to prevent a stack overflow due to a self referenceing
+If you relied on this behavior to hide some output, or to prevent a stack overflow due to a self referencing
 data structure, then you need to move the condition into a separate method that just returns the boolean result.
 
 

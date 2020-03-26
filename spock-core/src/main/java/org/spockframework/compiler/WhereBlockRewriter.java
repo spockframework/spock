@@ -30,6 +30,7 @@ import org.codehaus.groovy.syntax.*;
 import org.objectweb.asm.Opcodes;
 
 import static org.spockframework.compiler.AstUtil.createGetAtMethod;
+import static org.spockframework.compiler.AstUtil.isDataTableSeparator;
 
 /**
  *
@@ -75,27 +76,53 @@ public class WhereBlockRewriter {
   private void rewriteWhereStat(ListIterator<Statement> stats) throws InvalidSpecCompileException {
     Statement stat = stats.next();
     BinaryExpression binExpr = AstUtil.getExpression(stat, BinaryExpression.class);
-    if (binExpr == null || binExpr.getClass() != BinaryExpression.class) // don't allow subclasses like DeclarationExpression
-      notAParameterization(stat);
+    if (binExpr != null && binExpr.getClass() == BinaryExpression.class) { // don't allow subclasses like DeclarationExpression
+      // binary expressions are potentially parameterizations
 
-    int type = binExpr.getOperation().getType();
+      int type = binExpr.getOperation().getType();
 
-    if (type == Types.LEFT_SHIFT) {
-      Expression leftExpr = binExpr.getLeftExpression();
-      if (leftExpr instanceof VariableExpression)
-        rewriteSimpleParameterization(binExpr, stat);
-      else if (leftExpr instanceof ListExpression)
-        rewriteMultiParameterization(binExpr, stat);
-      else
+      if (type == Types.LEFT_SHIFT) {
+        // potentially a data pipe like:
+        // x << [1, 2, 3]
+        Expression leftExpr = binExpr.getLeftExpression();
+        if (leftExpr instanceof VariableExpression)
+          // x << [1, 2, 3]
+          rewriteSimpleParameterization(binExpr, stat);
+        else if (leftExpr instanceof ListExpression)
+          // [x, y, z] << [[1, 2, 3]]
+          rewriteMultiParameterization(binExpr, stat);
+        else
+          // neither of the other two
+          notAParameterization(stat);
+      } else if (type == Types.ASSIGN)
+        // derived data variable like:
+        // y = 2 * x
+        rewriteDerivedParameterization(binExpr, stat);
+      else if (getOrExpression(binExpr) != null) {
+        // header line of data table like:
+        // x | y || z
+        // 1 | 2 || 3
+        // 4 | 5 || 6
+        // push back header line
+        stats.previous();
+        // rewrite data table
+        rewriteTableLikeParameterization(stats);
+      } else
+        // binary expression is neither of type left-shift, nor assign => not a parameterization
         notAParameterization(stat);
-    } else if (type == Types.ASSIGN)
-      rewriteDerivedParameterization(binExpr, stat);
-    else if (getOrExpression(binExpr) != null) {
-      stats.previous();
-      rewriteTableLikeParameterization(stats);
-    }
-    else
+    } else if (!isDataTableSeparator(stat)) {
+      // if statement is a data table separator (two or more underscores)
+      // just ignore it, it is mainly meant to separate two consecutive
+      // data tables, but is allowed anywhere in the where block, for
+      // example to use it as top border for a data table like:
+      // __________
+      // x | y || z
+      // 1 | 2 || 3
+      // 4 | 5 || 6
+      //
+      // otherwise => not a parameterization
       notAParameterization(stat);
+    }
   }
 
   private void createDataProviderMethod(Expression dataProviderExpr, int nextDataVariableIndex) {

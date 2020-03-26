@@ -1,0 +1,39 @@
+[[utilities]]
+= Utilities
+include::include.adoc[]
+
+[[mutable-clock]]
+== Testing Time with `MutableClock`
+
+When working with dates or time we often have the problem of writing stable tests.
+Java only provides a `FixedClock` for testing.
+However, often time related code has to deal with the change of time,
+so a fixed clock is not enough or makes the test harder to follow.
+
+The prerequisite for using both `FixedClock` and Spocks `MutableClock` is that the production code,
+actually uses a configurable `Clock` and not just the parameterless `Instant.now()`
+or the corresponding methods in the other `java.time.*` classes.
+
+=== Example
+
+.Class under Test
+[source,groovy,indent=0]
+----
+include::{sourcedir}/utilities/AgeFilter.java[tag=age-filter-class]
+----
+<1> `Clock` is injected via constructor
+<2> `Clock` is used to get the current date
+
+.Test
+[source,groovy,indent=0]
+----
+include::{sourcedir}/utilities/MutableClockDocSpec.groovy[tag=age-filter-spec]
+----
+<1> `MutableClock` created with a well known time
+<2> `Clock` is injected via constructor
+<3> `age` is less than `18` so the result is `false`
+<4> the clock is advanced by one day
+<5> `age` is equal to `18` so the result is `true`
+
+There are many more ways to modify `MutableClock` just have a look at the JavaDocs, or the test code `spock.util.time.MutableClockSpec`.
+

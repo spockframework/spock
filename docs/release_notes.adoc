@@ -119,6 +119,8 @@ b = a
 
 === Misc
 
+-  A new `MutableClock` utility class to support time related testing, see <<utilities.adoc#mutable-clock, docs>>.
+
 - Defining interactions on property getters within Mock instantiation closures or `with` closures works now without
   the need to explicitly qualify the property access with `it.`:
 +

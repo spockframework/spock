@@ -4690,6 +4690,17 @@ With the new behavior, you can have a <code>Mock</code> or <code>Spy</code> retu
 <li>
 <p>Upgrade JUnit 4 to 4.13</p>
 </li>
+<li>
+<p>Defining interactions on property getters within Mock instantiation closures or <code>with</code> closures works now without
+the need to explicitly qualify the property access with <code>it.</code></p>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">Foo foo = <span class="predefined-type">Stub</span> {
+    bar &gt;&gt; <span class="string"><span class="delimiter">'</span><span class="content">my stubbed property</span><span class="delimiter">'</span></span>
+}</code></pre>
+</div>
+</div>
+</li>
 </ul>
 </div>
 </div>
@@ -6744,7 +6755,7 @@ Math.signum(a &lt;=&gt; b) == result
 <div id="footer">
 <div id="footer-text">
 Version 2.0-SNAPSHOT<br>
-Last updated 2020-03-25 22:45:34 UTC
+Last updated 2020-03-26 11:47:56 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./coderay-asciidoctor.css">

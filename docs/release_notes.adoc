@@ -25,6 +25,16 @@ JUnit Plafform 1.6 (https://junit.org/junit5/docs/5.6.0/release-notes/index.html
 
 - Upgrade JUnit 4 to 4.13
 
+- Defining interactions on property getters within Mock instantiation closures or `with` closures works now without
+  the need to explicitly qualify the property access with `it.`
++
+[source,groovy]
+----
+Foo foo = Stub {
+    bar >> 'my stubbed property'
+}
+----
+
 - A sequence of two or more underscores can be used to separate multiple data tables in one `where` block.
 
 == 2.0-M2 (2020-02-10)

@@ -239,7 +239,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
    * <pre>
    *   // type is Person.class, name is "person", returns hard-coded value for {@code name}, expects one call to {@code sing()}
    *   Person person = Mock {
-   *     it.name >> "Fred"
+   *     name >> "Fred"
    *     1 * sing()
    *   }
    * </pre>
@@ -264,7 +264,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
    * <pre>
    *   // type is Person.class, name is "myPerson", returns hard-coded value for {@code name}, expects one call to {@code sing()}
    *   Person person = Mock(name: "myPerson") {
-   *     it.name >> "Fred"
+   *     name >> "Fred"
    *     1 * sing()
    *   }
    * </pre>
@@ -290,7 +290,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
    * <pre>
    *   // name is "person", type is Person.class, returns hard-code value {@code name}, expects one call to {@code sing()}
    *   def person = Mock(Person) {
-   *     it.name >> "Fred"
+   *     name >> "Fred"
    *     1 * sing()
    *   }
    * </pre>
@@ -321,7 +321,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
    * <pre>
    *   // type is Person.class, name is "myPerson", returns hard-coded value {@code name}, expects one call to {@code sing()}
    *   def person = Mock(Person, name: "myPerson") {
-   *     it.name >> "Fred"
+   *     name >> "Fred"
    *     1 * sing()
    *   }
    * </pre>
@@ -460,7 +460,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
    * <pre>
    *   // type is Person.class, name is "person", returns hard-coded values for property {@code name} and method {@code sing()}
    *   Person person = Stub {
-   *     it.name >> "Fred"
+   *     name >> "Fred"
    *     sing() >> "Tra-la-la"
    *   }
    * </pre>
@@ -485,7 +485,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
    * <pre>
    *   // type is Person.class, name is "myPerson", returns hard-coded values for property {@code name} and method {@code sing()}
    *   Person person = Stub(name: "myPerson") {
-   *     it.name >> "Fred"
+   *     name >> "Fred"
    *     sing() >> "Tra-la-la"
    *   }
    * </pre>
@@ -519,7 +519,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
    * <pre>
    *   // name is "person", type is Person.class, returns hard-coded values for property {@code name} and method {@code sing()}
    *   def person = Stub(Person) {
-   *     it.name >> "Fred"
+   *     name >> "Fred"
    *     sing() >> "Tra-la-la"
    *   }
    * </pre>
@@ -550,7 +550,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
    * <pre>
    *   // type is Person.class, name is "myPerson", returns hard-coded values for property {@code name} and method {@code sing()}
    *   def person = Stub(Person, name: "myPerson") {
-   *     it.name >> "Fred"
+   *     name >> "Fred"
    *     sing() >> "Tra-la-la"
    *   }
    * </pre>
@@ -682,7 +682,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
    *
    * <pre>
    *   def person = Spy(new Person()) {
-   *     it.name >> "Fred"
+   *     name >> "Fred"
    *   }
    * </pre>
    *
@@ -743,7 +743,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
    * <pre>
    *   // type is Person.class, name is "person", returns hard-coded value for {@code name}, calls real method otherwise
    *   Person person = Spy {
-   *     it.name >> "Fred"
+   *     name >> "Fred"
    *   }
    * </pre>
    *
@@ -767,7 +767,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
    * <pre>
    *   // type is Person.class, name is "myPerson", returns hard-coded value for {@code name}, calls real method otherwise
    *   Person person = Spy(name: "myPerson") {
-   *     it.name >> "Fred"
+   *     name >> "Fred"
    *   }
    * </pre>
    *
@@ -800,7 +800,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
    * <pre>
    *   // name is "person", type is Person.class, returns hard-code value {@code name}, calls real method otherwise
    *   def person = Spy(Person) {
-   *     it.name >> "Fred"
+   *     name >> "Fred"
    *     1 * sing()
    *   }
    * </pre>
@@ -831,7 +831,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
    * <pre>
    *   // type is Person.class, name is "myPerson", returns hard-coded value {@code name}, calls real method otherwise
    *   def person = Spy(Person, name: "myPerson") {
-   *     it.name >> "Fred"
+   *     name >> "Fred"
    *   }
    * </pre>
    *
@@ -969,7 +969,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
    * <pre>
    *   // type is Person.class, name is "person", returns hard-coded value for {@code name}, expects one call to {@code sing()}
    *   Person person = GroovyMock {
-   *     it.name >> "Fred"
+   *     name >> "Fred"
    *     1 * sing()
    *   }
    * </pre>
@@ -994,7 +994,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
    * <pre>
    *   // type is Person.class, name is "myPerson", returns hard-coded value for {@code name}, expects one call to {@code sing()}
    *   Person person = GroovyMock(name: "myPerson") {
-   *     it.name >> "Fred"
+   *     name >> "Fred"
    *     1 * sing()
    *   }
    * </pre>
@@ -1029,7 +1029,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
    * <pre>
    *   // name is "person", type is Person.class, returns hard-code value {@code name}, expects one call to {@code sing()}
    *   def person = GroovyMock(Person) {
-   *     it.name >> "Fred"
+   *     name >> "Fred"
    *     1 * sing()
    *   }
    * </pre>
@@ -1060,7 +1060,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
    * <pre>
    *   // type is Person.class, name is "myPerson", returns hard-coded value {@code name}, expects one call to {@code sing()}
    *   def person = GroovyMock(Person, name: "myPerson") {
-   *     it.name >> "Fred"
+   *     name >> "Fred"
    *     1 * sing()
    *   }
    * </pre>
@@ -1200,7 +1200,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
    * <pre>
    *   // type is Person.class, name is "person", returns hard-coded values for property {@code name} and method {@code sing()}
    *   Person person = GroovyStub {
-   *     it.name >> "Fred"
+   *     name >> "Fred"
    *     sing() >> "Tra-la-la"
    *   }
    * </pre>
@@ -1225,7 +1225,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
    * <pre>
    *   // type is Person.class, name is "myPerson", returns hard-coded values for property {@code name} and method {@code sing()}
    *   Person person = GroovyStub(name: "myPerson") {
-   *     it.name >> "Fred"
+   *     name >> "Fred"
    *     sing() >> "Tra-la-la"
    *   }
    * </pre>
@@ -1260,7 +1260,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
    * <pre>
    *   // name is "person", type is Person.class, returns hard-coded values for property {@code name} and method {@code sing()}
    *   def person = GroovyStub(Person) {
-   *     it.name >> "Fred"
+   *     name >> "Fred"
    *     sing() >> "Tra-la-la"
    *   }
    * </pre>
@@ -1291,7 +1291,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
    * <pre>
    *   // type is Person.class, name is "myPerson", returns hard-coded values for property {@code name} and method {@code sing()}
    *   def person = GroovyStub(Person, name: "myPerson") {
-   *     it.name >> "Fred"
+   *     name >> "Fred"
    *     sing() >> "Tra-la-la"
    *   }
    * </pre>
@@ -1431,7 +1431,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
    * <pre>
    *   // type is Person.class, name is "person", returns hard-coded value for {@code name}, calls real method otherwise
    *   Person person = GroovySpy {
-   *     it.name >> "Fred"
+   *     name >> "Fred"
    *   }
    * </pre>
    *
@@ -1455,7 +1455,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
    * <pre>
    *   // type is Person.class, name is "myPerson", returns hard-coded value for {@code name}, calls real method otherwise
    *   Person person = GroovySpy(name: "myPerson") {
-   *     it.name >> "Fred"
+   *     name >> "Fred"
    *   }
    * </pre>
    *
@@ -1489,7 +1489,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
    * <pre>
    *   // name is "person", type is Person.class, returns hard-code value {@code name}, calls real method otherwise
    *   def person = GroovySpy(Person) {
-   *     it.name >> "Fred"
+   *     name >> "Fred"
    *     1 * sing()
    *   }
    * </pre>
@@ -1520,7 +1520,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
    * <pre>
    *   // type is Person.class, name is "myPerson", returns hard-coded value {@code name}, calls real method otherwise
    *   def person = GroovySpy(Person, name: "myPerson") {
-   *     it.name >> "Fred"
+   *     name >> "Fred"
    *   }
    * </pre>
    *

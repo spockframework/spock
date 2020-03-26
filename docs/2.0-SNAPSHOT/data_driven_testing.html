@@ -130,6 +130,62 @@ a | _
 <span class="integer">0</span> | _</code></pre>
 </div>
 </div>
+<div class="paragraph">
+<p>A sequence of two or more underscores can be used to split one wide data table into multiple narrower ones.
+Without this separator and without any other data variable assignment in between there
+is no way to have multiple data tables in one <code>where</code> block, the second table would just
+be further iterations of the first table, including the seemingly header row:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="key">where</span>:
+a | _
+<span class="integer">1</span> | _
+<span class="integer">7</span> | _
+<span class="integer">0</span> | _
+__
+
+b | c
+<span class="integer">1</span> | <span class="integer">2</span>
+<span class="integer">3</span> | <span class="integer">4</span>
+<span class="integer">5</span> | <span class="integer">6</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This is semantically exactly the same, just as one wider combined data table:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="key">where</span>:
+a | b | c
+<span class="integer">1</span> | <span class="integer">1</span> | <span class="integer">2</span>
+<span class="integer">7</span> | <span class="integer">3</span> | <span class="integer">4</span>
+<span class="integer">0</span> | <span class="integer">5</span> | <span class="integer">6</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The sequence of two or more underscores can be used anywhere in the <code>where</code> block.
+It will be ignored everywhere, except for in between two data tables, where it is
+used to separate the two data tables. This means that the separator can also be used
+as styling element in different ways. It can be used as separator line like shown in
+the last example or it can for example be used visually as top border of tables
+additionally to its effect of separating them:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="key">where</span>:
+_____
+a | _
+<span class="integer">1</span> | _
+<span class="integer">7</span> | _
+<span class="integer">0</span> | _
+_____
+b | c
+<span class="integer">1</span> | <span class="integer">2</span>
+<span class="integer">3</span> | <span class="integer">4</span>
+<span class="integer">5</span> | <span class="integer">6</span></code></pre>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -517,7 +573,7 @@ following are valid method names:</p>
 <div id="footer">
 <div id="footer-text">
 Version 2.0-SNAPSHOT<br>
-Last updated 2020-03-26 11:47:56 UTC
+Last updated 2020-03-26 15:18:41 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./coderay-asciidoctor.css">

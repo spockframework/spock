@@ -21,11 +21,12 @@ import org.spockframework.util.*;
 
 import java.util.*;
 
-import groovy.lang.Closure;
 import org.codehaus.groovy.ast.*;
 import org.codehaus.groovy.ast.expr.*;
 import org.codehaus.groovy.ast.stmt.*;
 import org.codehaus.groovy.syntax.Types;
+
+import static org.codehaus.groovy.ast.expr.MethodCallExpression.NO_ARGUMENTS;
 
 /**
  * Walks the statement and expression tree to:
@@ -217,13 +218,8 @@ public class DeepBlockRewriter extends AbstractDeepBlockRewriter {
   private MethodCallExpression referenceToCurrentClosure() {
     return new MethodCallExpression(
       new VariableExpression("this"),
-      new ConstantExpression("each"),
-      new ArgumentListExpression(
-        new PropertyExpression(
-          new ClassExpression(ClassHelper.makeWithoutCaching(Closure.class)),
-          new ConstantExpression("IDENTITY")
-        )
-      )
+      new ConstantExpression("find"),
+      NO_ARGUMENTS
     );
   }
 

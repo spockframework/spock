@@ -53,7 +53,7 @@ Modules
 * spock-core -- Core framework. This is the only mandatory module.
 * spock-specs -- Specifications for spock-core, implemented using Spock. Not required for using Spock.
 * spock-spring -- Integration with the [Spring TestContext Framework](https://docs.spring.io/spring/docs/4.1.5.RELEASE/spring-framework-reference/html/testing.html#testcontext-framework).
-* spock-tapestry -- Integration with the [Tapestry 5](https://tapestry.apache.org/tapestry5/) IoC container.
+* spock-tapestry -- Integration with the [Tapestry 5](https://tapestry.apache.org/) IoC container.
 * spock-guice -- Integration with [Guice](https://code.google.com/p/google-guice/) 2/3.
 * spock-unitils -- Integration with [Unitils](http://www.unitils.org/).
 * spock-report -- Interactive, business-friendly HTML reports.

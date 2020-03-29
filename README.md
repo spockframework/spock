@@ -12,7 +12,7 @@
 Spock Framework
 ===============
 
-Spock is a BDD-style developer testing and specification framework for Java and [Groovy](http://groovy-lang.org/) applications.
+Spock is a BDD-style developer testing and specification framework for Java and [Groovy](https://groovy-lang.org/) applications.
 To learn more about Spock, visit http://spockframework.org. To run a sample spec in your browser, go to
 http://webconsole.spockframework.org.
 
@@ -52,9 +52,9 @@ Modules
 -------
 * spock-core -- Core framework. This is the only mandatory module.
 * spock-specs -- Specifications for spock-core, implemented using Spock. Not required for using Spock.
-* spock-spring -- Integration with the [Spring TestContext Framework](http://docs.spring.io/spring/docs/4.1.5.RELEASE/spring-framework-reference/html/testing.html#testcontext-framework).
-* spock-tapestry -- Integration with the [Tapestry 5](http://tapestry.apache.org/tapestry5/) IoC container.
-* spock-guice -- Integration with [Guice](http://code.google.com/p/google-guice/) 2/3.
+* spock-spring -- Integration with the [Spring TestContext Framework](https://docs.spring.io/spring/docs/4.1.5.RELEASE/spring-framework-reference/html/testing.html#testcontext-framework).
+* spock-tapestry -- Integration with the [Tapestry 5](https://tapestry.apache.org/tapestry5/) IoC container.
+* spock-guice -- Integration with [Guice](https://code.google.com/p/google-guice/) 2/3.
 * spock-unitils -- Integration with [Unitils](http://www.unitils.org/).
 * spock-report -- Interactive, business-friendly HTML reports.
 
@@ -76,7 +76,7 @@ The groovy 2.4 and 2.5 variant should pass on all supported JDK versions:
 
 (Windows: `gradlew clean build`).
 All build dependencies, including
-the [build tool](http://www.gradle.org) itself, will be downloaded
+the [build tool](https://www.gradle.org) itself, will be downloaded
 automatically (unless already present).
 
 Contributing

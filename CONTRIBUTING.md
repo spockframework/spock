@@ -19,7 +19,7 @@ All forms of contribution are very much appreciated.
 
 ## Communication
 
-Good communication makes a big difference. We are always eager to listen, reflect, and discuss. Don't hesitate to get in touch via the [issue tracker](http://issues.spockframework.org), [user forum](http://forum.spockframework.org), or [dev forum](http://dev.forum.spockframework.org). Choose whatever medium feels most appropriate.
+Good communication makes a big difference. We are always eager to listen, reflect, and discuss. Don't hesitate to get in touch via the [issue tracker](http://issues.spockframework.org), [user forum](http://forum.spockframework.org), or [dev forum](http://dev-forum.spockframework.org). Choose whatever medium feels most appropriate.
 
 ## Triage Issues [![Open Source Helpers](https://www.codetriage.com/spockframework/spock/badges/users.svg)](https://www.codetriage.com/spockframework/spock)
 

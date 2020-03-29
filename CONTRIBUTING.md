@@ -27,7 +27,7 @@ You can triage issues which may include reproducing bug reports or asking for vi
 
 ## Contributing Code/Docs
 
-To contribute code or documentation, please submit a pull request to the [GitHub repository](https://github.spockframework.org/spock).
+To contribute code or documentation, please submit a pull request to the [GitHub repository](https://github.com/spockframework/spock).
 
 A good way to familiarize yourself with the codebase and contribution process is to look for and tackle low-hanging fruits in the [issue tracker](http://issues.spockframework.org). Before embarking on a more ambitious contribution, please quickly [get in touch](#communication) with us. This will help to make sure that the contribution is aligned with Spock's overall direction and goals, and gives us a chance to guide design and implementation where needed.
 
@@ -62,7 +62,7 @@ All tests are written in Spock. Tests for `spock-core` are located in the `spock
 
 ### Command Line Build
 
-Spock is built with [Gradle](https://www.gradle.org). The only prerequsite for executing the build is an installation of JDK 1.6 (or higher). After cloning the [GitHub repository](https://github.spockframework.org/spock), cd into the top directory and execute `./gradlew build` (Windows: `gradlew build`). The build should succeed without any errors. `gradlew tasks` lists the available tasks. Always use the Gradle Wrapper (`gradlew` command) rather than your own Gradle installation.
+Spock is built with [Gradle](https://www.gradle.org). The only prerequsite for executing the build is an installation of JDK 1.6 (or higher). After cloning the [GitHub repository](https://github.com/spockframework/spock), cd into the top directory and execute `./gradlew build` (Windows: `gradlew build`). The build should succeed without any errors. `gradlew tasks` lists the available tasks. Always use the Gradle Wrapper (`gradlew` command) rather than your own Gradle installation.
 
 ### CI Build
 

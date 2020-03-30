@@ -22,11 +22,6 @@ public class JUnit4LegacyUtil {
   public static final Class<? extends Annotation> AFTER_CLASS_ANNOTATION =
     (Class<? extends Annotation>) ReflectionUtil.loadClassIfAvailable("org.junit.AfterClass");
 
-  public static final Class<? extends Annotation> TEST_ANNOTATION =
-    (Class<? extends Annotation>) ReflectionUtil.loadClassIfAvailable("org.junit.Test");
-  public static final Class<? extends Annotation> RUN_WITH_ANNOTATION =
-    (Class<? extends Annotation>) ReflectionUtil.loadClassIfAvailable("org.junit.runner.RunWith");
-
   public static boolean isJunit4SupportAvailable() {
     return IS_JUNIT4_AVAILABLE;
   }

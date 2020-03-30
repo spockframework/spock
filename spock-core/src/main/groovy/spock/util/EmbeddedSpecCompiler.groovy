@@ -17,7 +17,6 @@
 package spock.util
 
 import org.spockframework.runtime.SpecUtil
-import org.spockframework.util.JUnit4LegacyUtil
 import org.spockframework.util.NotThreadSafe
 import spock.lang.Specification
 
@@ -112,12 +111,7 @@ class EmbeddedSpecCompiler {
     }
 
     loader.loadedClasses.findAll {
-      SpecUtil.isSpec(it) || isJUnit4Test(it) // need JUnit tests sometimes
+      SpecUtil.isSpec(it)
     } as List
-  }
-
-  private boolean isJUnit4Test(Class clazz) {
-    isJunit4SupportAvailable() && (clazz.isAnnotationPresent(JUnit4LegacyUtil.RUN_WITH_ANNOTATION) ||
-      clazz.methods.any { it.getAnnotation(JUnit4LegacyUtil.TEST_ANNOTATION) })
   }
 }

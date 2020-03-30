@@ -62,8 +62,7 @@ public class GroovyMockMetaClass extends DelegatingMetaClass implements Specific
   }
 
   private Object doInvokeMethod(Object target, String methodName, Object[] arguments, boolean isStatic) {
-    // get rid of PojoWrapper's; not sure where they come from, but they sometimes appear
-    arguments = GroovyRuntimeUtil.asUnwrappedArgumentArray(arguments);
+    arguments = GroovyRuntimeUtil.asArgumentArray(arguments);
 
     if (isGetMetaClassCallOnGroovyObject(target, methodName, arguments, isStatic)) {
       // We handle this case explicitly because strangely enough, delegate.pickMethod()
@@ -76,11 +75,13 @@ public class GroovyMockMetaClass extends DelegatingMetaClass implements Specific
 
     MetaMethod metaMethod = delegate.pickMethod(methodName, ReflectionUtil.getTypes(arguments));
     Method method = GroovyRuntimeUtil.toMethod(metaMethod);
+    // we evaluated the cast information from wrappers in getTypes above, now we need the pure arguments
+    Object[] unwrappedArgs = GroovyRuntimeUtil.asUnwrappedArgumentArray(arguments);
 
     if (method != null && method.getDeclaringClass().isAssignableFrom(configuration.getType())) {
       if (!isStatic && !ReflectionUtil.isFinalMethod(method) && !configuration.isGlobal()) {
         // use standard proxy dispatch
-        return metaMethod.invoke(target, arguments);
+        return metaMethod.invoke(target, unwrappedArgs);
       }
     }
 
@@ -89,13 +90,13 @@ public class GroovyMockMetaClass extends DelegatingMetaClass implements Specific
     // to check if a GroovyObject method was called
     if (metaMethod != null && metaMethod.getDeclaringClass().getTheClass() == GroovyObject.class) {
       if ("invokeMethod".equals(methodName)) {
-        return invokeMethod(target, (String) arguments[0], GroovyRuntimeUtil.asArgumentArray(arguments[1]));
+        return invokeMethod(target, (String) unwrappedArgs[0], GroovyRuntimeUtil.asArgumentArray(unwrappedArgs[1]));
       }
       if ("getProperty".equals(methodName)) {
-        return getProperty(target, (String) arguments[0]);
+        return getProperty(target, (String) unwrappedArgs[0]);
       }
       if ("setProperty".equals(methodName)) {
-        setProperty(target, (String) arguments[0], arguments[1]);
+        setProperty(target, (String) unwrappedArgs[0], unwrappedArgs[1]);
         return null;
       }
       // getMetaClass was already handled earlier; setMetaClass isn't handled specially

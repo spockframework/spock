@@ -44,9 +44,13 @@ public class JavaMockInterceptor implements IProxyBasedMockInterceptor {
       return mockObject;
     }
 
-    // sometimes we see an argument wrapped in PojoWrapper
-    // example is when GroovyObject.invokeMethod is invoked directly
-    Object[] normalizedArgs = GroovyRuntimeUtil.asUnwrappedArgumentArray(arguments);
+    // here no instances of org.codehaus.groovy.runtime.wrappers.Wrapper subclasses
+    // should arrive in the arguments array. If there are some found, it should first
+    // be investigated whether they should have made it until here. If it is correct
+    // that they arrived here, maybe GroovyRuntimeUtil.asUnwrappedArgumentArray needs
+    // to be used to unwrap the arguments. Wrapper subclasses are used to transport
+    // type cast information to select proper overloaded methods.
+    arguments = GroovyRuntimeUtil.asArgumentArray(arguments);
 
     if (target instanceof GroovyObject) {
       if (isMethod(method, "getMetaClass")) {
@@ -58,8 +62,8 @@ public class JavaMockInterceptor implements IProxyBasedMockInterceptor {
         if ("org.codehaus.groovy.runtime.ScriptBytecodeAdapter".equals(mockCaller.getClassName())) {
           // HACK: for some reason, runtime dispatches direct property access on mock classes via ScriptBytecodeAdapter
           // delegate to the corresponding setter method
-          String methodName = GroovyRuntimeUtil.propertyToMethodName("set", (String) normalizedArgs[0]);
-          return GroovyRuntimeUtil.invokeMethod(target, methodName, GroovyRuntimeUtil.asArgumentArray(normalizedArgs[1]));
+          String methodName = GroovyRuntimeUtil.propertyToMethodName("set", (String) arguments[0]);
+          return GroovyRuntimeUtil.invokeMethod(target, methodName, GroovyRuntimeUtil.asArgumentArray(arguments[1]));
         }
       }
       if (GroovyRuntimeUtil.isGroovy3orNewer()) {
@@ -72,7 +76,7 @@ public class JavaMockInterceptor implements IProxyBasedMockInterceptor {
           if (!("groovy.lang.GroovyObject$getProperty".equals(mockCaller.getClassName()) && "call".equals(mockCaller.getMethodName()))) {
             //HACK: Only explicit getter executions (go.foo and go.getFoo()) should be deeper processed.
             //go.getProperty("foo") is treated as is (to allow for its stubbing)
-            String methodName = GroovyRuntimeUtil.propertyToMethodName("get", (String) normalizedArgs[0]);
+            String methodName = GroovyRuntimeUtil.propertyToMethodName("get", (String) arguments[0]);
             return GroovyRuntimeUtil.invokeMethod(target, methodName);
           }
         }
@@ -80,7 +84,7 @@ public class JavaMockInterceptor implements IProxyBasedMockInterceptor {
     }
 
     IMockMethod mockMethod = new StaticMockMethod(method, mockConfiguration.getExactType());
-    IMockInvocation invocation = new MockInvocation(mockObject, mockMethod, Arrays.asList(normalizedArgs), realMethodInvoker);
+    IMockInvocation invocation = new MockInvocation(mockObject, mockMethod, Arrays.asList(arguments), realMethodInvoker);
     IMockController mockController = specification == null ? getFallbackMockController() :
                                                              specification.getSpecificationContext().getMockController();
 

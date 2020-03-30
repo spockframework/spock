@@ -43,35 +43,35 @@ public class GroovyMockInterceptor implements IProxyBasedMockInterceptor {
       return mockObject;
     }
 
-    // sometimes we see an argument wrapped in PojoWrapper
-    // example is when GroovyObject.invokeMethod is invoked directly
-    Object[] normalizedArgs = GroovyRuntimeUtil.asUnwrappedArgumentArray(arguments);
+    // we do not need the cast information from the wrappers here, the method selection
+    // is already done, so unwrap the argument array if there are still wrappers present
+    arguments = GroovyRuntimeUtil.asUnwrappedArgumentArray(arguments);
 
     if (isMethod(method, "getMetaClass")) {
       return mockMetaClass;
     }
     if (isMethod(method, "invokeMethod", String.class, Object.class)) {
       return GroovyRuntimeUtil.invokeMethod(target,
-          (String) normalizedArgs[0], GroovyRuntimeUtil.asArgumentArray(normalizedArgs[1]));
+          (String) arguments[0], GroovyRuntimeUtil.asArgumentArray(arguments[1]));
     }
     if (isMethod(method, "getProperty", String.class)) {
-      String methodName = GroovyRuntimeUtil.propertyToMethodName("get", (String) normalizedArgs[0]);
+      String methodName = GroovyRuntimeUtil.propertyToMethodName("get", (String) arguments[0]);
       return GroovyRuntimeUtil.invokeMethod(target, methodName);
     }
     if (isMethod(method, "setProperty", String.class, Object.class)) {
-      String methodName = GroovyRuntimeUtil.propertyToMethodName("set", (String) normalizedArgs[0]);
-      return GroovyRuntimeUtil.invokeMethod(target, methodName, normalizedArgs[1]);
+      String methodName = GroovyRuntimeUtil.propertyToMethodName("set", (String) arguments[0]);
+      return GroovyRuntimeUtil.invokeMethod(target, methodName, arguments[1]);
     }
     if (isMethod(method, "methodMissing", String.class, Object.class)) {
-      throw new MissingMethodException((String) normalizedArgs[0],
-          mockConfiguration.getType(), new Object[] {normalizedArgs[1]}, false);
+      throw new MissingMethodException((String) arguments[0],
+          mockConfiguration.getType(), new Object[] {arguments[1]}, false);
     }
     if (isMethod(method, "propertyMissing", String.class)) {
-      throw new MissingPropertyException((String) normalizedArgs[0], mockConfiguration.getType());
+      throw new MissingPropertyException((String) arguments[0], mockConfiguration.getType());
     }
 
     IMockMethod mockMethod = new StaticMockMethod(method, mockConfiguration.getExactType());
-    IMockInvocation invocation = new MockInvocation(mockObject, mockMethod, Arrays.asList(normalizedArgs), realMethodInvoker);
+    IMockInvocation invocation = new MockInvocation(mockObject, mockMethod, Arrays.asList(arguments), realMethodInvoker);
     IMockController controller = specification.getSpecificationContext().getMockController();
 
     return controller.handle(invocation);

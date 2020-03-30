@@ -6,6 +6,7 @@ import java.util.*;
 
 import groovy.lang.Range;
 import org.codehaus.groovy.runtime.DefaultGroovyMethods;
+import org.codehaus.groovy.runtime.wrappers.Wrapper;
 import org.w3c.dom.Element;
 
 public abstract class RenderUtil {
@@ -47,12 +48,20 @@ public abstract class RenderUtil {
     if (isHandledByInspectOrToString(value)) {
       return GroovyRuntimeUtil.toString(value);
     }
+    if (value instanceof Wrapper) {
+      Wrapper wrapper = (Wrapper) value;
+      return String.format("%s as %s", toStringOrDump(wrapper.unwrap()), wrapper.getType().getSimpleName());
+    }
     return dump(value);
   }
 
   public static String inspectOrDump(@Nullable Object value) {
     if (isHandledByInspectOrToString(value)) {
       return DefaultGroovyMethods.inspect(value);
+    }
+    if (value instanceof Wrapper) {
+      Wrapper wrapper = (Wrapper) value;
+      return String.format("%s as %s", inspectOrDump(wrapper.unwrap()), wrapper.getType().getSimpleName());
     }
     return dump(value);
   }

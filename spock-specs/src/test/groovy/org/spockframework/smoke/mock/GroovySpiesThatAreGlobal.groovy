@@ -15,7 +15,9 @@
 package org.spockframework.smoke.mock
 
 import java.lang.reflect.Modifier
+import java.util.regex.Pattern
 
+import spock.lang.Issue
 import spock.lang.Specification
 
 class GroovySpiesThatAreGlobal extends Specification {
@@ -209,6 +211,63 @@ class GroovySpiesThatAreGlobal extends Specification {
     0 * _
   }
 
+  @Issue("https://github.com/spockframework/spock/issues/871")
+  def "type casts are not swallowed"() {
+    given:
+    GroovySpy(PersonWithOverloadedMethods, global: true)
+
+    when:
+    def result = PersonWithOverloadedMethods.perform("null string" as String)
+
+    then:
+    result == "String"
+
+    when:
+    result = PersonWithOverloadedMethods.perform(null as Pattern)
+
+    then:
+    result == "Pattern"
+
+    when:
+    result = PersonWithOverloadedMethods.perform((String) null)
+
+    then:
+    result == "String"
+
+    when:
+    result = PersonWithOverloadedMethods.perform((Pattern) null)
+
+    then:
+    result == "Pattern"
+
+    when:
+    PersonWithOverloadedMethods.perform(_) >> "Foo"
+
+    and:
+    result = PersonWithOverloadedMethods.perform(null as String)
+
+    then:
+    result == "Foo"
+
+    when:
+    result = PersonWithOverloadedMethods.perform(null as Pattern)
+
+    then:
+    result == "Foo"
+
+    when:
+    result = PersonWithOverloadedMethods.perform((String) null)
+
+    then:
+    result == "Foo"
+
+    when:
+    result = PersonWithOverloadedMethods.perform((Pattern) null)
+
+    then:
+    result == "Foo"
+  }
+
   static class Person {
     String name
     int age
@@ -231,6 +290,16 @@ class GroovySpiesThatAreGlobal extends Specification {
     FinalPerson(String name = "fred", int age = 42) {
       this.name = name
       this.age = age
+    }
+  }
+
+  static class PersonWithOverloadedMethods {
+    static String perform(String work) {
+      "String"
+    }
+
+    static String perform(Pattern work) {
+      "Pattern"
     }
   }
 }

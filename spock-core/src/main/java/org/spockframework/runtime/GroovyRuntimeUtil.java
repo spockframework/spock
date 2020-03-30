@@ -225,7 +225,7 @@ public abstract class GroovyRuntimeUtil {
   }
 
   public static Object[] asUnwrappedArgumentArray(Object args) {
-    return InvokerHelper.asUnwrappedArray(args);
+    return InvokerHelper.asUnwrappedArray(InvokerHelper.asArray(args).clone());
   }
 
   /**

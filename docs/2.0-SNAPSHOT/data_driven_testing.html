@@ -248,6 +248,52 @@ With this, the code becomes:</p>
 }</code></pre>
 </div>
 </div>
+<div class="paragraph">
+<p>Alternatively to using single or double pipes you can also use any amount of semicolons to separate data columns
+from each other:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="type">class</span> <span class="class">MathSpec</span> <span class="directive">extends</span> Specification {
+  <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">maximum of two numbers</span><span class="delimiter">&quot;</span></span>() {
+    <span class="key">expect</span>:
+    <span class="predefined-type">Math</span>.max(a, b) == c
+
+    <span class="key">where</span>:
+    a ; b ;; c
+    <span class="integer">1</span> ; <span class="integer">3</span> ;; <span class="integer">3</span>
+    <span class="integer">7</span> ; <span class="integer">4</span> ;; <span class="integer">7</span>
+    <span class="integer">0</span> ; <span class="integer">0</span> ;; <span class="integer">0</span>
+  }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Pipes and semicolons as data column separator can not be mixed within one table.
+If the column separator changes, this starts a new stand-alone data table:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="type">class</span> <span class="class">MathSpec</span> <span class="directive">extends</span> Specification {
+  <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">maximum of two numbers</span><span class="delimiter">&quot;</span></span>() {
+    <span class="key">expect</span>:
+    <span class="predefined-type">Math</span>.max(a, b) == c
+    <span class="predefined-type">Math</span>.max(d, e) == f
+
+    <span class="key">where</span>:
+    a | b || c
+    <span class="integer">1</span> | <span class="integer">3</span> || <span class="integer">3</span>
+    <span class="integer">7</span> | <span class="integer">4</span> || <span class="integer">7</span>
+    <span class="integer">0</span> | <span class="integer">0</span> || <span class="integer">0</span>
+
+    d ; e ;; f
+    <span class="integer">1</span> ; <span class="integer">3</span> ;; <span class="integer">3</span>
+    <span class="integer">7</span> ; <span class="integer">4</span> ;; <span class="integer">7</span>
+    <span class="integer">0</span> ; <span class="integer">0</span> ;; <span class="integer">0</span>
+  }
+}</code></pre>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -573,7 +619,7 @@ following are valid method names:</p>
 <div id="footer">
 <div id="footer-text">
 Version 2.0-SNAPSHOT<br>
-Last updated 2020-03-31 22:09:50 UTC
+Last updated 2020-03-31 22:37:55 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./coderay-asciidoctor.css">

@@ -71,6 +71,17 @@ the need to explicitly qualify the property access with <code>it.</code></p>
 <p>Type casts in conditions are now properly carried over to properly disambiguate method calls.
 For more information see issue <a href="https://github.com/spockframework/spock/issues/1022">#1022</a>.</p>
 </li>
+<li>
+<p>Data tables now support any amount of semicolons to separate data table columns as alternative
+to pipes and double pipes, but cannot be mixed with them in one table:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="key">where</span>:
+a ; b ;; c
+<span class="integer">1</span> ; <span class="integer">2</span> ;; <span class="integer">3</span></code></pre>
+</div>
+</div>
+</li>
 </ul>
 </div>
 </div>
@@ -1744,7 +1755,7 @@ required; the only prerequisite for building Spock is a JDK installation (1.5 or
 <div id="footer">
 <div id="footer-text">
 Version 2.0-SNAPSHOT<br>
-Last updated 2020-03-31 22:09:50 UTC
+Last updated 2020-03-31 22:37:55 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./coderay-asciidoctor.css">

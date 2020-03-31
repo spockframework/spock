@@ -4760,6 +4760,10 @@ the need to explicitly qualify the property access with <code>it.</code></p>
 <li>
 <p>A sequence of two or more underscores can be used to separate multiple data tables in one <code>where</code> block.</p>
 </li>
+<li>
+<p>Type casts in conditions are now properly carried over to properly disambiguate method calls.
+For more information see issue <a href="https://github.com/spockframework/spock/issues/1022">#1022</a>.</p>
+</li>
 </ul>
 </div>
 </div>
@@ -6814,7 +6818,7 @@ Math.signum(a &lt;=&gt; b) == result
 <div id="footer">
 <div id="footer-text">
 Version 2.0-SNAPSHOT<br>
-Last updated 2020-03-26 15:18:41 UTC
+Last updated 2020-03-31 22:09:50 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./coderay-asciidoctor.css">

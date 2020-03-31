@@ -495,16 +495,24 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> i
 
   private Expression record(Expression expr) {
     // replace expr with $spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(recordCount++), <expr>)
-    return AstUtil.createDirectMethodCall(
-        new VariableExpression(SpockNames.VALUE_RECORDER),
-        resources.getAstNodeCache().ValueRecorder_Record,
-        new ArgumentListExpression(
-            AstUtil.createDirectMethodCall(
-                new VariableExpression(SpockNames.VALUE_RECORDER),
-                resources.getAstNodeCache().ValueRecorder_StartRecordingValue,
-                new ArgumentListExpression(new ConstantExpression(recordCount++))
-            ),
-            expr));
+    MethodCallExpression result = AstUtil.createDirectMethodCall(
+      new VariableExpression(SpockNames.VALUE_RECORDER),
+      resources.getAstNodeCache().ValueRecorder_Record,
+      new ArgumentListExpression(
+        AstUtil.createDirectMethodCall(
+          new VariableExpression(SpockNames.VALUE_RECORDER),
+          resources.getAstNodeCache().ValueRecorder_StartRecordingValue,
+          new ArgumentListExpression(new ConstantExpression(recordCount++))
+        ),
+        expr));
+
+    // maintain type casts to preserve method disambiguation
+    // for example when giving a casted null as argument
+    if (expr instanceof CastExpression) {
+      return new CastExpression(expr.getType(), result);
+    } else {
+      return result;
+    }
   }
 
   private Expression realizeNas(Expression expr) {

@@ -40,6 +40,16 @@ Foo foo = Stub {
 - Type casts in conditions are now properly carried over to properly disambiguate method calls.
   For more information see issue https://github.com/spockframework/spock/issues/1022[#1022].
 
+- Data tables now support any amount of semicolons to separate data table columns as alternative
+  to pipes and double pipes, but cannot be mixed with them in one table:
++
+[source,groovy]
+----
+where:
+a ; b ;; c
+1 ; 2 ;; 3
+----
+
 == 2.0-M2 (2020-02-10)
 
 === Groovy-3.0 Support

@@ -117,6 +117,22 @@ With this, the code becomes:
 include::{sourcedir}/datadriven/v3/MathSpec.groovy[tag=example]
 ----
 
+Alternatively to using single or double pipes you can also use any amount of semicolons to separate data columns
+from each other:
+
+[source,groovy,indent=0]
+----
+include::{sourcedir}/datadriven/v6/MathSpec.groovy[tag=example]
+----
+
+Pipes and semicolons as data column separator can not be mixed within one table.
+If the column separator changes, this starts a new stand-alone data table:
+
+[source,groovy,indent=0]
+----
+include::{sourcedir}/datadriven/v7/MathSpec.groovy[tag=example]
+----
+
 == Reporting of Failures
 
 Let's assume that our implementation of the `max` method has a flaw, and one of the iterations fails:

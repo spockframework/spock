@@ -109,6 +109,15 @@ this value is used as unroll pattern.</p>
 <p><code>IterationInfo</code> now has a property for the <code>iterationIndex</code> and one for a map of data variable names to values.
 This is typically not interesting for the average user, but might be helpful for authors of Spock extensions.</p>
 </li>
+<li>
+<p><code>constructorArgs</code> now properly transport type cast information to the constructor selection,
+for example to disambiguate multiple candidate constructors</p>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">Spy(<span class="key">constructorArgs</span>: [<span class="predefined-constant">null</span> <span class="keyword">as</span> <span class="predefined-type">String</span>, (<span class="predefined-type">Pattern</span>) <span class="predefined-constant">null</span>])</code></pre>
+</div>
+</div>
+</li>
 </ul>
 </div>
 </div>
@@ -1782,7 +1791,7 @@ required; the only prerequisite for building Spock is a JDK installation (1.5 or
 <div id="footer">
 <div id="footer-text">
 Version 2.0-SNAPSHOT<br>
-Last updated 2020-04-02 13:43:20 UTC
+Last updated 2020-04-02 21:58:10 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./coderay-asciidoctor.css">

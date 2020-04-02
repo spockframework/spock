@@ -1149,11 +1149,23 @@ If the response type of the method is a final class or if it requires a class-mo
 <div class="paragraph">
 <p>A spy is always based on a real object. Hence you must provide a class type rather
 than an interface type, along with any constructor arguments for the type.
-If no constructor arguments are provided, the type&#8217;s default constructor will be used.</p>
+If no constructor arguments are provided, the type&#8217;s no-arg constructor will be used.</p>
+</div>
+<div class="paragraph">
+<p>If the given constructor arguments lead to an ambiguity, you can cast the constructor
+arguments as usual using <code>as</code> or Java-style cast. If the testee for example has
+one constructor with a <code>String</code> parameter and one with a <code>Pattern</code> parameter
+and you want <code>null</code> as <code>constructorArg</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">SubscriberImpl subscriber = Spy(<span class="key">constructorArgs</span>: [<span class="predefined-constant">null</span> <span class="keyword">as</span> <span class="predefined-type">String</span>])
+SubscriberImpl subscriber2 = Spy(<span class="key">constructorArgs</span>: [(<span class="predefined-type">Pattern</span>) <span class="predefined-constant">null</span>])</code></pre>
+</div>
 </div>
 <div class="paragraph">
 <p>You may also create a spy from an instantiated object. This may be useful in cases
-where you do not have full control over the instatiation of types you are interested
+where you do not have full control over the instantiation of types you are interested
 in spying. (For example when testing within a Dependency Injection framework such as
 Spring or Guice.)</p>
 </div>
@@ -1498,7 +1510,7 @@ mock.nature == MockNature.MOCK</code></pre>
 <div id="footer">
 <div id="footer-text">
 Version 2.0-SNAPSHOT<br>
-Last updated 2020-04-02 13:43:20 UTC
+Last updated 2020-04-02 21:58:10 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./coderay-asciidoctor.css">

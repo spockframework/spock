@@ -16,9 +16,9 @@
 
 package org.spockframework.smoke.mock
 
-import spock.lang.Specification
+import org.spockframework.EmbeddedSpecification
 
-abstract class StubBasics extends Specification {
+abstract class StubBasics extends EmbeddedSpecification {
   abstract List createListDouble()
   abstract ArrayList createArrayListDouble()
   abstract List createAndStubListDouble()

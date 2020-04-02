@@ -316,6 +316,11 @@
 </li>
 <li><a href="#_migration_guide">Migration Guide</a>
 <ul class="sectlevel2">
+<li><a href="#_2_0">2.0</a>
+<ul class="sectlevel4">
+<li><a href="#_renamed_iterationcount_token_2">Renamed iterationCount token</a></li>
+</ul>
+</li>
 <li><a href="#_1_0">1.0</a></li>
 <li><a href="#_0_7">0.7</a></li>
 <li><a href="#_0_6">0.6</a>
@@ -1615,15 +1620,15 @@ Depending on the execution environment, the output will look something like:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>maximum of two numbers[0]   PASSED
-maximum of two numbers[1]   FAILED
+<pre>maximum of two numbers [a: 1, b: 3, c: 3, #0]   PASSED
+maximum of two numbers [a: 7, b: 4, c: 7, #1]   FAILED
 
 Math.max(a, b) == c
     |    |  |  |  |
     |    7  4  |  7
     42         false
 
-maximum of two numbers[2]   PASSED</pre>
+maximum of two numbers [a: 0, b: 0, c: 0, #2]   PASSED</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1642,7 +1647,7 @@ and <code>c</code>. In the output, the placeholders will be replaced with concre
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>maximum of 3 and 5 is 5   PASSED
+<pre>maximum of 1 and 3 is 3   PASSED
 maximum of 7 and 4 is 7   FAILED
 
 Math.max(a, b) == c
@@ -1773,11 +1778,11 @@ c = row.c</code></pre>
 <pre class="CodeRay highlight"><code data-lang="groovy">...
 where:
 a | _
-<span class="integer">3</span> | _
+<span class="integer">1</span> | _
 <span class="integer">7</span> | _
 <span class="integer">0</span> | _
 
-b &lt;&lt; [<span class="integer">5</span>, <span class="integer">0</span>, <span class="integer">0</span>]
+b &lt;&lt; [<span class="integer">3</span>, <span class="integer">4</span>, <span class="integer">0</span>]
 
 c = a &gt; b ? a : b</code></pre>
 </div>
@@ -1807,8 +1812,7 @@ such a method.</p>
 <div class="ulist">
 <ul>
 <li>
-<p>Expressions are denoted with <code>#</code> instead of <code>$</code> <sup class="footnote">[<a id="_footnoteref_3" class="footnote" href="#_footnotedef_3" title="View footnote.">3</a>]</sup>,
-and there is no equivalent for the <code>${&#8230;&#8203;}</code> syntax.</p>
+<p>Expressions are denoted with <code>#</code> instead of <code>$</code>, and there is no equivalent for the <code>${&#8230;&#8203;}</code> syntax.</p>
 </li>
 <li>
 <p>Expressions only support property access and zero-arg method calls.</p>
@@ -1849,6 +1853,51 @@ following are valid method names:</p>
   lastName = person.name.split(<span class="string"><span class="delimiter">'</span><span class="content"> </span><span class="delimiter">'</span></span>)[<span class="integer">1</span>]
 }</code></pre>
 </div>
+</div>
+<div class="paragraph">
+<p>Additionally to the data variables the tokens <code>#featureName</code> and <code>#iterationIndex</code> are supported.
+The former does not make much sense inside an actual feature name, but there are two other places
+where an unroll pattern can be defined, where it is more useful.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">#person is #person.age years old [iterationIndex: #iterationIndex]</span><span class="delimiter">&quot;</span></span>() {</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Alternatively to specifying the unroll pattern as method name, it can be given as parameter
+to the <code>@Unroll</code> annotation which takes precedence over the method name:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@Unroll</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">#featureName[#iterationIndex] (#person.name is #person.age years old)</span><span class="delimiter">&quot;</span></span>)
+<span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">person age should be calculated properly</span><span class="delimiter">&quot;</span></span>() {</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If neither a parameter to the annotation is given, nor the method name contains a <code>#</code>,
+the system property <code>spock.globalUnrollPattern</code> is inspected. If it is set to a non-blank
+string, this value is used as unroll pattern. This could for example be set to</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>#featureName</code> to have all iterations reported with the same name, or</p>
+</li>
+<li>
+<p><code>#featureName[#iterationIndex]</code> to have a simply indexed iteration name, or</p>
+</li>
+<li>
+<p><code>#iterationName</code> if you make sure that in each data-driven feature you also set
+a data variable called <code>iterationName</code> that is then used for reporting</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>If none of the three described ways is used to set a custom unroll pattern, by default
+the feature name is used, suffixed with all data variable names and their values and
+finally the iteration index, so the result will be for example
+<code>my feature [x: 1, y: 2, z: 3, #0]</code>.</p>
 </div>
 </div>
 </div>
@@ -1922,7 +1971,7 @@ We hope that by the end of this chapter, you will agree that we have achieved th
 <div class="sect2">
 <h3 id="_creating_mock_objects"><a class="anchor" href="#_creating_mock_objects"></a><a class="link" href="#_creating_mock_objects">Creating Mock Objects</a></h3>
 <div class="paragraph">
-<p>Mock objects are created with the <code>MockingApi.Mock()</code> method.<sup class="footnote">[<a id="_footnoteref_4" class="footnote" href="#_footnotedef_4" title="View footnote.">4</a>]</sup>
+<p>Mock objects are created with the <code>MockingApi.Mock()</code> method.<sup class="footnote">[<a id="_footnoteref_3" class="footnote" href="#_footnotedef_3" title="View footnote.">3</a>]</sup>
 Let&#8217;s create two mock subscribers:</p>
 </div>
 <div class="listingblock">
@@ -2369,7 +2418,7 @@ a cardinality (when mocking) or a response generator (when stubbing). Either of 
 </div>
 <div class="paragraph">
 <p>This feature is particularly attractive for <a href="#_stubbing">Stubbing</a> and with dedicated <a href="#Stubs">Stubs</a>. Note that the
-interactions don&#8217;t (and cannot <sup class="footnote">[<a id="_footnoteref_5" class="footnote" href="#_footnotedef_5" title="View footnote.">5</a>]</sup>) have a target constraint; it&#8217;s clear from the context which mock
+interactions don&#8217;t (and cannot <sup class="footnote">[<a id="_footnoteref_4" class="footnote" href="#_footnotedef_4" title="View footnote.">4</a>]</sup>) have a target constraint; it&#8217;s clear from the context which mock
 object they belong to.</p>
 </div>
 <div class="paragraph">
@@ -2757,7 +2806,7 @@ If the closure declares a single untyped parameter, it gets passed the method&#8
 <div class="paragraph">
 <p>In most cases it would be more convenient to have direct access to the method&#8217;s arguments. If the closure declares more
 than one parameter or a single <em>typed</em> parameter, method arguments will be mapped one-by-one to closure
-parameters:<sup class="footnote">[<a id="_footnoteref_6" class="footnote" href="#_footnotedef_6" title="View footnote.">6</a>]</sup></p>
+parameters:<sup class="footnote">[<a id="_footnoteref_5" class="footnote" href="#_footnotedef_5" title="View footnote.">5</a>]</sup></p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -3096,7 +3145,7 @@ dynamic methods as if they were physically declared methods:</p>
 <div class="paragraph">
 <p>Usually, Groovy mocks need to be injected into the code under specification just like regular mocks.
 However, when a Groovy mock is created as <em>global</em>, it automagically replaces all real instances
-of the mocked type for the duration of the feature method:<sup class="footnote">[<a id="_footnoteref_7" class="footnote" href="#_footnotedef_7" title="View footnote.">7</a>]</sup></p>
+of the mocked type for the duration of the feature method:<sup class="footnote">[<a id="_footnoteref_6" class="footnote" href="#_footnotedef_6" title="View footnote.">6</a>]</sup></p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -3218,7 +3267,7 @@ the mock&#8217;s instance isn&#8217;t really needed. In such a case one can just
 <p>At the end of the day, the <code>Mock()</code>, <code>Stub()</code>, and <code>Spy()</code> factory methods are just canned ways to
 create mock objects with a certain configuration. If you want more fine-grained control over a mock&#8217;s configuration,
 have a look at the <code>org.spockframework.mock.IMockConfiguration</code> interface. All properties of this interface
-<sup class="footnote">[<a id="_footnoteref_8" class="footnote" href="#_footnotedef_8" title="View footnote.">8</a>]</sup>
+<sup class="footnote">[<a id="_footnoteref_7" class="footnote" href="#_footnotedef_7" title="View footnote.">7</a>]</sup>
 can be passed as named arguments to the <code>Mock()</code> method. For example:</p>
 </div>
 <div class="listingblock">
@@ -4784,6 +4833,14 @@ With the new behavior, you can have a <code>Mock</code> or <code>Spy</code> retu
 <p>JUnit Plafform 1.6 (<a href="https://junit.org/junit5/docs/5.6.0/release-notes/index.html#deprecations-and-breaking-changes">deprecated</a>) methods (from experimental API)  in <code>EngineExecutionResults</code> that Spock was using. To keep runtime compatibility with JUnit 5.6 and incoming 5.7 the implementation has been switched to the new methods. As a result, Spock 2.0-M3 cannot work with JUnit 5.5 and lower. The problem might only occur if a project overrides default JUnit Platform version provided by Spock.</p>
 </div>
 </div>
+<div class="sect4">
+<h5 id="_renamed_iterationcount_token"><a class="anchor" href="#_renamed_iterationcount_token"></a><a class="link" href="#_renamed_iterationcount_token">Renamed iterationCount token</a></h5>
+<div class="paragraph">
+<p>The token <code>#iterationCount</code> in unroll patterns was renamed to <code>#iterationIndex</code>.
+If you use it somewhere, you have to manually change it to the new name
+or you will get an <code>#Error:iterationCount</code> rendering instead.</p>
+</div>
+</div>
 </div>
 <div class="sect3">
 <h4 id="_misc"><a class="anchor" href="#_misc"></a><a class="link" href="#_misc">Misc</a></h4>
@@ -4820,6 +4877,25 @@ a ; b ;; c
 <span class="integer">1</span> ; <span class="integer">2</span> ;; <span class="integer">3</span></code></pre>
 </div>
 </div>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The default unroll pattern changed from the rather generic <code>#featureName[#iterationIndex]</code> to a more fancy
+version that lists all data variables and their values additionally to the feature name and iteration index.
+If you prefer to retain the old behaviour, you can set the system property <code>spock.globalUnrollPattern</code>
+to the value <code>#featureName[#iterationIndex]</code> and you will get the same result as previously.</p>
+</li>
+<li>
+<p>If neither a parameter to the <code>@Unroll</code> annotation is given, nor the method name contains a <code>#</code>,
+now the system property <code>spock.globalUnrollPattern</code> is inspected. If it is set to a non-blank string,
+this value is used as unroll pattern.</p>
+</li>
+<li>
+<p><code>IterationInfo</code> now has a property for the <code>iterationIndex</code> and one for a map of data variable names to values.
+This is typically not interesting for the average user, but might be helpful for authors of Spock extensions.</p>
 </li>
 </ul>
 </div>
@@ -5057,7 +5133,7 @@ Additional message</pre>
 </div>
 </div>
 <div class="paragraph">
-<p>If you relied on this behavior to hide some output, or to prevent a stack overflow due to a self referenceing
+<p>If you relied on this behavior to hide some output, or to prevent a stack overflow due to a self referencing
 data structure, then you need to move the condition into a separate method that just returns the boolean result.</p>
 </div>
 </div>
@@ -6466,6 +6542,27 @@ required; the only prerequisite for building Spock is a JDK installation (1.5 or
 <p>This page explains incompatible changes between successive versions and provides suggestions on how to deal with them.</p>
 </div>
 <div class="sect2">
+<h3 id="_2_0"><a class="anchor" href="#_2_0"></a><a class="link" href="#_2_0">2.0</a></h3>
+<div class="ulist">
+<ul>
+<li>
+<p>The default unroll pattern changed from the rather generic <code>#featureName[#iterationIndex]</code> to a more fancy
+version that lists all data variables and their values additionally to the feature name and iteration index.
+If you prefer to retain the old behaviour, you can set the system property <code>spock.globalUnrollPattern</code>
+to the value <code>#featureName[#iterationIndex]</code> and you will get the same result as previously.</p>
+</li>
+</ul>
+</div>
+<div class="sect4">
+<h5 id="_renamed_iterationcount_token_2"><a class="anchor" href="#_renamed_iterationcount_token_2"></a><a class="link" href="#_renamed_iterationcount_token_2">Renamed iterationCount token</a></h5>
+<div class="paragraph">
+<p>The token <code>#iterationCount</code> in unroll patterns was renamed to <code>#iterationIndex</code>.
+If you use it somewhere, you have to manually change it to the new name
+or you will get an <code>#Error:iterationCount</code> rendering instead.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
 <h3 id="_1_0"><a class="anchor" href="#_1_0"></a><a class="link" href="#_1_0">1.0</a></h3>
 <div class="paragraph">
 <p>Specs, Spec base classes and third-party extensions may have be recompiled in order to work with Spock 1.0.</p>
@@ -6604,7 +6701,7 @@ This only affects the Groovy 1.8 and 2.0 variants.
 </div>
 <div class="paragraph">
 <p>For various reasons, the new syntax didn&#8217;t work out as we had hoped, and eventually we decided to go back to the string
-based syntax. See <a href="#improved-unroll-0.6">Improved <code>@Unroll</code></a> for recent improvements to that syntax.</p>
+based syntax. See <a href="release_notes.html#improved-unroll-0.6">Improved <code>@Unroll</code></a> for recent improvements to that syntax.</p>
 </div>
 </div>
 <div class="sect3">
@@ -6854,28 +6951,25 @@ Math.signum(a &lt;=&gt; b) == result
 <a href="#_footnoteref_2">2</a>. For example, a feature method could use data variables in its <code>given:</code> block, but not in any conditions.
 </div>
 <div class="footnote" id="_footnotedef_3">
-<a href="#_footnoteref_3">3</a>. Groovy syntax does not allow dollar signs in method names.
+<a href="#_footnoteref_3">3</a>. For additional ways to create mock objects, see <a href="#OtherKindsOfMockObjects">Other Kinds of Mock Objects</a> and <a href="#ALaCarteMocks">A la Carte Mocks</a>.
 </div>
 <div class="footnote" id="_footnotedef_4">
-<a href="#_footnoteref_4">4</a>. For additional ways to create mock objects, see <a href="#OtherKindsOfMockObjects">Other Kinds of Mock Objects</a> and <a href="#ALaCarteMocks">A la Carte Mocks</a>.
+<a href="#_footnoteref_4">4</a>. The <code>subscriber</code> variable cannot be referenced from the closure because it is being declared as part of the same statement.
 </div>
 <div class="footnote" id="_footnotedef_5">
-<a href="#_footnoteref_5">5</a>. The <code>subscriber</code> variable cannot be referenced from the closure because it is being declared as part of the same statement.
+<a href="#_footnoteref_5">5</a>. The destructuring semantics for closure arguments come straight from Groovy.
 </div>
 <div class="footnote" id="_footnotedef_6">
-<a href="#_footnoteref_6">6</a>. The destructuring semantics for closure arguments come straight from Groovy.
+<a href="#_footnoteref_6">6</a>. You may know this behavior from Groovy&#8217;s <a href="http://docs.groovy-lang.org/docs/groovy-2.4.1/html/gapi/groovy/mock/interceptor/MockFor.html">MockFor</a> and <a href="http://docs.groovy-lang.org/docs/groovy-2.4.1/html/gapi/groovy/mock/interceptor/StubFor.html">StubFor</a> facilities.
 </div>
 <div class="footnote" id="_footnotedef_7">
-<a href="#_footnoteref_7">7</a>. You may know this behavior from Groovy&#8217;s <a href="http://docs.groovy-lang.org/docs/groovy-2.4.1/html/gapi/groovy/mock/interceptor/MockFor.html">MockFor</a> and <a href="http://docs.groovy-lang.org/docs/groovy-2.4.1/html/gapi/groovy/mock/interceptor/StubFor.html">StubFor</a> facilities.
-</div>
-<div class="footnote" id="_footnotedef_8">
-<a href="#_footnoteref_8">8</a>. Because mock configurations are immutable, the interface contains just the properties' getters.
+<a href="#_footnoteref_7">7</a>. Because mock configurations are immutable, the interface contains just the properties' getters.
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
 Version 2.0-SNAPSHOT<br>
-Last updated 2020-03-31 22:37:55 UTC
+Last updated 2020-04-02 13:43:20 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./coderay-asciidoctor.css">

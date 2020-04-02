@@ -352,15 +352,15 @@ Depending on the execution environment, the output will look something like:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>maximum of two numbers[0]   PASSED
-maximum of two numbers[1]   FAILED
+<pre>maximum of two numbers [a: 1, b: 3, c: 3, #0]   PASSED
+maximum of two numbers [a: 7, b: 4, c: 7, #1]   FAILED
 
 Math.max(a, b) == c
     |    |  |  |  |
     |    7  4  |  7
     42         false
 
-maximum of two numbers[2]   PASSED</pre>
+maximum of two numbers [a: 0, b: 0, c: 0, #2]   PASSED</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -379,7 +379,7 @@ and <code>c</code>. In the output, the placeholders will be replaced with concre
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>maximum of 3 and 5 is 5   PASSED
+<pre>maximum of 1 and 3 is 3   PASSED
 maximum of 7 and 4 is 7   FAILED
 
 Math.max(a, b) == c
@@ -518,11 +518,11 @@ c = row.c</code></pre>
 <pre class="CodeRay highlight"><code data-lang="groovy">...
 where:
 a | _
-<span class="integer">3</span> | _
+<span class="integer">1</span> | _
 <span class="integer">7</span> | _
 <span class="integer">0</span> | _
 
-b &lt;&lt; [<span class="integer">5</span>, <span class="integer">0</span>, <span class="integer">0</span>]
+b &lt;&lt; [<span class="integer">3</span>, <span class="integer">4</span>, <span class="integer">0</span>]
 
 c = a &gt; b ? a : b</code></pre>
 </div>
@@ -558,8 +558,7 @@ such a method.</p>
 <div class="ulist">
 <ul>
 <li>
-<p>Expressions are denoted with <code>#</code> instead of <code>$</code> <sup class="footnote">[<a id="_footnoteref_3" class="footnote" href="#_footnotedef_3" title="View footnote.">3</a>]</sup>,
-and there is no equivalent for the <code>${&#8230;&#8203;}</code> syntax.</p>
+<p>Expressions are denoted with <code>#</code> instead of <code>$</code>, and there is no equivalent for the <code>${&#8230;&#8203;}</code> syntax.</p>
 </li>
 <li>
 <p>Expressions only support property access and zero-arg method calls.</p>
@@ -601,6 +600,51 @@ following are valid method names:</p>
 }</code></pre>
 </div>
 </div>
+<div class="paragraph">
+<p>Additionally to the data variables the tokens <code>#featureName</code> and <code>#iterationIndex</code> are supported.
+The former does not make much sense inside an actual feature name, but there are two other places
+where an unroll pattern can be defined, where it is more useful.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">#person is #person.age years old [iterationIndex: #iterationIndex]</span><span class="delimiter">&quot;</span></span>() {</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Alternatively to specifying the unroll pattern as method name, it can be given as parameter
+to the <code>@Unroll</code> annotation which takes precedence over the method name:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@Unroll</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">#featureName[#iterationIndex] (#person.name is #person.age years old)</span><span class="delimiter">&quot;</span></span>)
+<span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">person age should be calculated properly</span><span class="delimiter">&quot;</span></span>() {</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If neither a parameter to the annotation is given, nor the method name contains a <code>#</code>,
+the system property <code>spock.globalUnrollPattern</code> is inspected. If it is set to a non-blank
+string, this value is used as unroll pattern. This could for example be set to</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>#featureName</code> to have all iterations reported with the same name, or</p>
+</li>
+<li>
+<p><code>#featureName[#iterationIndex]</code> to have a simply indexed iteration name, or</p>
+</li>
+<li>
+<p><code>#iterationName</code> if you make sure that in each data-driven feature you also set
+a data variable called <code>iterationName</code> that is then used for reporting</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>If none of the three described ways is used to set a custom unroll pattern, by default
+the feature name is used, suffixed with all data variable names and their values and
+finally the iteration index, so the result will be for example
+<code>my feature [x: 1, y: 2, z: 3, #0]</code>.</p>
+</div>
 </div>
 </div>
 </div>
@@ -612,14 +656,11 @@ following are valid method names:</p>
 <div class="footnote" id="_footnotedef_2">
 <a href="#_footnoteref_2">2</a>. For example, a feature method could use data variables in its <code>given:</code> block, but not in any conditions.
 </div>
-<div class="footnote" id="_footnotedef_3">
-<a href="#_footnoteref_3">3</a>. Groovy syntax does not allow dollar signs in method names.
-</div>
 </div>
 <div id="footer">
 <div id="footer-text">
 Version 2.0-SNAPSHOT<br>
-Last updated 2020-03-31 22:37:55 UTC
+Last updated 2020-04-02 13:43:20 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./coderay-asciidoctor.css">

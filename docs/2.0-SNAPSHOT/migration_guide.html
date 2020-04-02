@@ -27,6 +27,29 @@
 </div>
 </div>
 <div class="sect1">
+<h2 id="_2_0"><a class="anchor" href="#_2_0"></a><a class="link" href="#_2_0">2.0</a></h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>The default unroll pattern changed from the rather generic <code>#featureName[#iterationIndex]</code> to a more fancy
+version that lists all data variables and their values additionally to the feature name and iteration index.
+If you prefer to retain the old behaviour, you can set the system property <code>spock.globalUnrollPattern</code>
+to the value <code>#featureName[#iterationIndex]</code> and you will get the same result as previously.</p>
+</li>
+</ul>
+</div>
+<div class="sect3">
+<h4 id="_renamed_iterationcount_token"><a class="anchor" href="#_renamed_iterationcount_token"></a><a class="link" href="#_renamed_iterationcount_token">Renamed iterationCount token</a></h4>
+<div class="paragraph">
+<p>The token <code>#iterationCount</code> in unroll patterns was renamed to <code>#iterationIndex</code>.
+If you use it somewhere, you have to manually change it to the new name
+or you will get an <code>#Error:iterationCount</code> rendering instead.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="_1_0"><a class="anchor" href="#_1_0"></a><a class="link" href="#_1_0">1.0</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
@@ -233,7 +256,7 @@ that answer, closeTo(<span class="integer">42</span>, <span class="float">0.001<
 <div id="footer">
 <div id="footer-text">
 Version 2.0-SNAPSHOT<br>
-Last updated 2020-03-31 22:37:55 UTC
+Last updated 2020-04-02 13:43:20 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./coderay-asciidoctor.css">

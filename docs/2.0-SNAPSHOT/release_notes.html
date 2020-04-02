@@ -45,6 +45,14 @@ With the new behavior, you can have a <code>Mock</code> or <code>Spy</code> retu
 <p>JUnit Plafform 1.6 (<a href="https://junit.org/junit5/docs/5.6.0/release-notes/index.html#deprecations-and-breaking-changes">deprecated</a>) methods (from experimental API)  in <code>EngineExecutionResults</code> that Spock was using. To keep runtime compatibility with JUnit 5.6 and incoming 5.7 the implementation has been switched to the new methods. As a result, Spock 2.0-M3 cannot work with JUnit 5.5 and lower. The problem might only occur if a project overrides default JUnit Platform version provided by Spock.</p>
 </div>
 </div>
+<div class="sect3">
+<h4 id="_renamed_iterationcount_token"><a class="anchor" href="#_renamed_iterationcount_token"></a><a class="link" href="#_renamed_iterationcount_token">Renamed iterationCount token</a></h4>
+<div class="paragraph">
+<p>The token <code>#iterationCount</code> in unroll patterns was renamed to <code>#iterationIndex</code>.
+If you use it somewhere, you have to manually change it to the new name
+or you will get an <code>#Error:iterationCount</code> rendering instead.</p>
+</div>
+</div>
 </div>
 <div class="sect2">
 <h3 id="_misc"><a class="anchor" href="#_misc"></a><a class="link" href="#_misc">Misc</a></h3>
@@ -81,6 +89,25 @@ a ; b ;; c
 <span class="integer">1</span> ; <span class="integer">2</span> ;; <span class="integer">3</span></code></pre>
 </div>
 </div>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The default unroll pattern changed from the rather generic <code>#featureName[#iterationIndex]</code> to a more fancy
+version that lists all data variables and their values additionally to the feature name and iteration index.
+If you prefer to retain the old behaviour, you can set the system property <code>spock.globalUnrollPattern</code>
+to the value <code>#featureName[#iterationIndex]</code> and you will get the same result as previously.</p>
+</li>
+<li>
+<p>If neither a parameter to the <code>@Unroll</code> annotation is given, nor the method name contains a <code>#</code>,
+now the system property <code>spock.globalUnrollPattern</code> is inspected. If it is set to a non-blank string,
+this value is used as unroll pattern.</p>
+</li>
+<li>
+<p><code>IterationInfo</code> now has a property for the <code>iterationIndex</code> and one for a map of data variable names to values.
+This is typically not interesting for the average user, but might be helpful for authors of Spock extensions.</p>
 </li>
 </ul>
 </div>
@@ -326,7 +353,7 @@ Additional message</pre>
 </div>
 </div>
 <div class="paragraph">
-<p>If you relied on this behavior to hide some output, or to prevent a stack overflow due to a self referenceing
+<p>If you relied on this behavior to hide some output, or to prevent a stack overflow due to a self referencing
 data structure, then you need to move the condition into a separate method that just returns the boolean result.</p>
 </div>
 </div>
@@ -1755,7 +1782,7 @@ required; the only prerequisite for building Spock is a JDK installation (1.5 or
 <div id="footer">
 <div id="footer-text">
 Version 2.0-SNAPSHOT<br>
-Last updated 2020-03-31 22:37:55 UTC
+Last updated 2020-04-02 13:43:20 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./coderay-asciidoctor.css">

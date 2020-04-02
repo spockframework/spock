@@ -44,7 +44,7 @@ public class DeepBlockRewriter extends AbstractDeepBlockRewriter {
   private boolean insideInteraction = false;
 
   public DeepBlockRewriter(IRewriteResources resources) {
-    super(resources.getCurrentBlock());
+    super(resources.getCurrentBlock(), resources.getAstNodeCache());
     this.resources = resources;
   }
 

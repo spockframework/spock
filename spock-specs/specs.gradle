@@ -6,6 +6,7 @@ apply plugin: "spock-base"
 
 configurations {
   junit
+  groovyConsole
 }
 
 dependencies {
@@ -21,6 +22,8 @@ dependencies {
   testRuntime libs.h2database
 
   junit libs.junit4
+
+  groovyConsole groovyConsoleExtraDependencies
 }
 
 sourceCompatibility = javaVersion
@@ -44,6 +47,6 @@ test {
 }
 
 task groovyConsole(type: JavaExec) {
-  main = "groovy.ui.Console"
-  classpath = sourceSets.test.runtimeClasspath
+  main = variant == 2.5 ? "groovy.ui.Console" : "groovy.console.ui.Console"
+  classpath = sourceSets.test.runtimeClasspath + configurations.groovyConsole
 }

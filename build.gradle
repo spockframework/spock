@@ -40,7 +40,9 @@ ext {
     "org.codehaus.groovy:groovy-sql:${groovyVersion}",  //for some Spring and Unitils tests
   ]
   groovyConsoleExtraDependencies = [
-    "org.codehaus.groovy:groovy-console:${groovyVersion}"
+    "org.codehaus.groovy:groovy-console:${groovyVersion}",
+    "org.codehaus.groovy:groovy-test-junit5:${groovyVersion}", // for executing specs
+    "org.apache.ivy:ivy:2.2.0" // for @Grab support
   ]
   maxGroovyVersion = snapshotVersion ? "9.9.99" : maxGroovyVersion
   if (System.getProperty("groovyVersion")) {

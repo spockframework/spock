@@ -57,7 +57,7 @@ public abstract class TypeToken<T> {
 	 * Gets type token for the given {@code Type} instance.
 	 */
 	public static TypeToken<?> get(Type type) {
-		return new SimpleTypeToken<Object>(type);
+		return new SimpleTypeToken<>(type);
 	}
 
 	private static class SimpleTypeToken<T> extends TypeToken<T> {

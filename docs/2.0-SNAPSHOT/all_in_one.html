@@ -63,6 +63,7 @@
 <li><a href="#_data_pipes">Data Pipes</a></li>
 <li><a href="#_multi_variable_data_pipes">Multi-Variable Data Pipes</a></li>
 <li><a href="#_data_variable_assignment">Data Variable Assignment</a></li>
+<li><a href="#_accessing_other_data_variables">Accessing Other Data Variables</a></li>
 <li><a href="#_combining_data_tables_data_pipes_and_variable_assignments">Combining Data Tables, Data Pipes, and Variable Assignments</a></li>
 <li><a href="#_number_of_iterations">Number of Iterations</a></li>
 <li><a href="#_closing_of_data_providers">Closing of Data Providers</a></li>
@@ -319,6 +320,7 @@
 <li><a href="#_2_0">2.0</a>
 <ul class="sectlevel4">
 <li><a href="#_renamed_iterationcount_token_2">Renamed iterationCount token</a></li>
+<li><a href="#_no_access_to_data_variables_in_data_pipes_anymore_2">No access to data variables in data pipes anymore</a></li>
 </ul>
 </li>
 <li><a href="#_1_0">1.0</a></li>
@@ -1758,13 +1760,68 @@ to other data variables:</p>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy">...
 where:
-
-<span class="key">where</span>:
 row &lt;&lt; sql.rows(<span class="string"><span class="delimiter">&quot;</span><span class="content">select * from maxdata</span><span class="delimiter">&quot;</span></span>)
 <span class="comment">// pick apart columns</span>
 a = row.a
 b = row.b
 c = row.c</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_accessing_other_data_variables"><a class="anchor" href="#_accessing_other_data_variables"></a><a class="link" href="#_accessing_other_data_variables">Accessing Other Data Variables</a></h3>
+<div class="paragraph">
+<p>There are only two possibilities to access one data variable from the calculation
+of another data variable.</p>
+</div>
+<div class="paragraph">
+<p>The first possibility are derived data variables like shown in the last section.
+Every data variable that is defined by a direct assignment can access all
+previously defined data variables, including the ones defined through data
+tables or data pipes:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">...
+where:
+a = <span class="integer">3</span>
+b = <span class="predefined-type">Math</span>.random() * <span class="integer">100</span>
+c = a &gt; b ? a : b</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The second possibility is to access previous columns within data tables:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">...
+where:
+a | b
+<span class="integer">3</span> | a + <span class="integer">1</span>
+<span class="integer">7</span> | a + <span class="integer">2</span>
+<span class="integer">0</span> | a + <span class="integer">3</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This also includes columns in previous data tables in the same <code>where</code> block:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">...
+where:
+a | b
+<span class="integer">3</span> | a + <span class="integer">1</span>
+<span class="integer">7</span> | a + <span class="integer">2</span>
+<span class="integer">0</span> | a + <span class="integer">3</span>
+
+<span class="key">and</span>:
+c = <span class="integer">1</span>
+
+<span class="key">and</span>:
+d     | e
+a * <span class="integer">2</span> | b * <span class="integer">2</span>
+a * <span class="integer">3</span> | b * <span class="integer">3</span>
+a * <span class="integer">4</span> | b * <span class="integer">4</span></code></pre>
 </div>
 </div>
 </div>
@@ -1777,14 +1834,14 @@ c = row.c</code></pre>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy">...
 where:
-a | _
-<span class="integer">1</span> | _
-<span class="integer">7</span> | _
-<span class="integer">0</span> | _
+a | b
+<span class="integer">1</span> | a + <span class="integer">1</span>
+<span class="integer">7</span> | a + <span class="integer">2</span>
+<span class="integer">0</span> | a + <span class="integer">3</span>
 
-b &lt;&lt; [<span class="integer">3</span>, <span class="integer">4</span>, <span class="integer">0</span>]
+c &lt;&lt; [<span class="integer">3</span>, <span class="integer">4</span>, <span class="integer">0</span>]
 
-c = a &gt; b ? a : b</code></pre>
+d = a &gt; c ? a : c</code></pre>
 </div>
 </div>
 </div>
@@ -4853,6 +4910,40 @@ If you use it somewhere, you have to manually change it to the new name
 or you will get an <code>#Error:iterationCount</code> rendering instead.</p>
 </div>
 </div>
+<div class="sect4">
+<h5 id="_no_access_to_data_variables_in_data_pipes_anymore"><a class="anchor" href="#_no_access_to_data_variables_in_data_pipes_anymore"></a><a class="link" href="#_no_access_to_data_variables_in_data_pipes_anymore">No access to data variables in data pipes anymore</a></h5>
+<div class="paragraph">
+<p>It is not possible anymore to access any data variable from a data pipe or anything else but a previous data table
+column in a data table cell. This access was partly possible, but could easily prematurely drain iterators, access
+data providers sooner as expected, behaved differently depending on the concrete code construct used. All these
+points are more confusing than necessary. If you want to calculate a data variable from others, you can always use
+a derived data variable that has full access to all previous data variables and can also call helper methods for
+more complex logic.</p>
+</div>
+<div class="paragraph">
+<p>If you switch your tests that are fully green to use Spock 2.0 and get any <code>MissingPropertyException</code>s, you are probably hitting this change, you should then change to a derived data variable there instead of a data pipe.</p>
+</div>
+<div class="paragraph">
+<p>If you for example had:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="key">where</span>:
+a &lt;&lt; [<span class="integer">1</span>, <span class="integer">2</span>]
+b &lt;&lt; a</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>what you want instead is</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="key">where</span>:
+a &lt;&lt; [<span class="integer">1</span>, <span class="integer">2</span>]
+b = a</code></pre>
+</div>
+</div>
+</div>
 </div>
 <div class="sect3">
 <h4 id="_misc"><a class="anchor" href="#_misc"></a><a class="link" href="#_misc">Misc</a></h4>
@@ -4917,6 +5008,10 @@ for example to disambiguate multiple candidate constructors</p>
 <pre class="CodeRay highlight"><code data-lang="groovy">Spy(<span class="key">constructorArgs</span>: [<span class="predefined-constant">null</span> <span class="keyword">as</span> <span class="predefined-type">String</span>, (<span class="predefined-type">Pattern</span>) <span class="predefined-constant">null</span>])</code></pre>
 </div>
 </div>
+</li>
+<li>
+<p>Accessing previous data table columns was broken in some cases, now it should work properly,
+even cross-table and without being disturbed by previous derived data variables.</p>
 </li>
 </ul>
 </div>
@@ -6582,6 +6677,40 @@ If you use it somewhere, you have to manually change it to the new name
 or you will get an <code>#Error:iterationCount</code> rendering instead.</p>
 </div>
 </div>
+<div class="sect4">
+<h5 id="_no_access_to_data_variables_in_data_pipes_anymore_2"><a class="anchor" href="#_no_access_to_data_variables_in_data_pipes_anymore_2"></a><a class="link" href="#_no_access_to_data_variables_in_data_pipes_anymore_2">No access to data variables in data pipes anymore</a></h5>
+<div class="paragraph">
+<p>It is not possible anymore to access any data variable from a data pipe or anything else but a previous data table
+column in a data table cell. This access was partly possible, but could easily prematurely drain iterators, access
+data providers sooner as expected, behaved differently depending on the concrete code construct used. All these
+points are more confusing than necessary. If you want to calculate a data variable from others, you can always use
+a derived data variable that has full access to all previous data variables and can also call helper methods for
+more complex logic.</p>
+</div>
+<div class="paragraph">
+<p>If you switch your tests that are fully green to use Spock 2.0 and get any <code>MissingPropertyException</code>s, you are probably hitting this change, you should then change to a derived data variable there instead of a data pipe.</p>
+</div>
+<div class="paragraph">
+<p>If you for example had:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="key">where</span>:
+a &lt;&lt; [<span class="integer">1</span>, <span class="integer">2</span>]
+b &lt;&lt; a</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>what you want instead is</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="key">where</span>:
+a &lt;&lt; [<span class="integer">1</span>, <span class="integer">2</span>]
+b = a</code></pre>
+</div>
+</div>
+</div>
 </div>
 <div class="sect2">
 <h3 id="_1_0"><a class="anchor" href="#_1_0"></a><a class="link" href="#_1_0">1.0</a></h3>
@@ -6990,7 +7119,7 @@ Math.signum(a &lt;=&gt; b) == result
 <div id="footer">
 <div id="footer-text">
 Version 2.0-SNAPSHOT<br>
-Last updated 2020-04-05 20:17:50 UTC
+Last updated 2020-04-05 20:37:00 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./coderay-asciidoctor.css">

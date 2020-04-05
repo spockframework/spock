@@ -47,6 +47,40 @@ If you use it somewhere, you have to manually change it to the new name
 or you will get an <code>#Error:iterationCount</code> rendering instead.</p>
 </div>
 </div>
+<div class="sect3">
+<h4 id="_no_access_to_data_variables_in_data_pipes_anymore"><a class="anchor" href="#_no_access_to_data_variables_in_data_pipes_anymore"></a><a class="link" href="#_no_access_to_data_variables_in_data_pipes_anymore">No access to data variables in data pipes anymore</a></h4>
+<div class="paragraph">
+<p>It is not possible anymore to access any data variable from a data pipe or anything else but a previous data table
+column in a data table cell. This access was partly possible, but could easily prematurely drain iterators, access
+data providers sooner as expected, behaved differently depending on the concrete code construct used. All these
+points are more confusing than necessary. If you want to calculate a data variable from others, you can always use
+a derived data variable that has full access to all previous data variables and can also call helper methods for
+more complex logic.</p>
+</div>
+<div class="paragraph">
+<p>If you switch your tests that are fully green to use Spock 2.0 and get any <code>MissingPropertyException</code>s, you are probably hitting this change, you should then change to a derived data variable there instead of a data pipe.</p>
+</div>
+<div class="paragraph">
+<p>If you for example had:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="key">where</span>:
+a &lt;&lt; [<span class="integer">1</span>, <span class="integer">2</span>]
+b &lt;&lt; a</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>what you want instead is</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="key">where</span>:
+a &lt;&lt; [<span class="integer">1</span>, <span class="integer">2</span>]
+b = a</code></pre>
+</div>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -256,7 +290,7 @@ that answer, closeTo(<span class="integer">42</span>, <span class="float">0.001<
 <div id="footer">
 <div id="footer-text">
 Version 2.0-SNAPSHOT<br>
-Last updated 2020-04-05 20:17:50 UTC
+Last updated 2020-04-05 20:37:00 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./coderay-asciidoctor.css">

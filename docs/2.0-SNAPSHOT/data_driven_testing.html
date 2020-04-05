@@ -496,13 +496,70 @@ to other data variables:</p>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy">...
 where:
-
-<span class="key">where</span>:
 row &lt;&lt; sql.rows(<span class="string"><span class="delimiter">&quot;</span><span class="content">select * from maxdata</span><span class="delimiter">&quot;</span></span>)
 <span class="comment">// pick apart columns</span>
 a = row.a
 b = row.b
 c = row.c</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_accessing_other_data_variables"><a class="anchor" href="#_accessing_other_data_variables"></a><a class="link" href="#_accessing_other_data_variables">Accessing Other Data Variables</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>There are only two possibilities to access one data variable from the calculation
+of another data variable.</p>
+</div>
+<div class="paragraph">
+<p>The first possibility are derived data variables like shown in the last section.
+Every data variable that is defined by a direct assignment can access all
+previously defined data variables, including the ones defined through data
+tables or data pipes:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">...
+where:
+a = <span class="integer">3</span>
+b = <span class="predefined-type">Math</span>.random() * <span class="integer">100</span>
+c = a &gt; b ? a : b</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The second possibility is to access previous columns within data tables:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">...
+where:
+a | b
+<span class="integer">3</span> | a + <span class="integer">1</span>
+<span class="integer">7</span> | a + <span class="integer">2</span>
+<span class="integer">0</span> | a + <span class="integer">3</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This also includes columns in previous data tables in the same <code>where</code> block:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">...
+where:
+a | b
+<span class="integer">3</span> | a + <span class="integer">1</span>
+<span class="integer">7</span> | a + <span class="integer">2</span>
+<span class="integer">0</span> | a + <span class="integer">3</span>
+
+<span class="key">and</span>:
+c = <span class="integer">1</span>
+
+<span class="key">and</span>:
+d     | e
+a * <span class="integer">2</span> | b * <span class="integer">2</span>
+a * <span class="integer">3</span> | b * <span class="integer">3</span>
+a * <span class="integer">4</span> | b * <span class="integer">4</span></code></pre>
 </div>
 </div>
 </div>
@@ -517,14 +574,14 @@ c = row.c</code></pre>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy">...
 where:
-a | _
-<span class="integer">1</span> | _
-<span class="integer">7</span> | _
-<span class="integer">0</span> | _
+a | b
+<span class="integer">1</span> | a + <span class="integer">1</span>
+<span class="integer">7</span> | a + <span class="integer">2</span>
+<span class="integer">0</span> | a + <span class="integer">3</span>
 
-b &lt;&lt; [<span class="integer">3</span>, <span class="integer">4</span>, <span class="integer">0</span>]
+c &lt;&lt; [<span class="integer">3</span>, <span class="integer">4</span>, <span class="integer">0</span>]
 
-c = a &gt; b ? a : b</code></pre>
+d = a &gt; c ? a : c</code></pre>
 </div>
 </div>
 </div>
@@ -660,7 +717,7 @@ finally the iteration index, so the result will be for example
 <div id="footer">
 <div id="footer-text">
 Version 2.0-SNAPSHOT<br>
-Last updated 2020-04-05 20:17:50 UTC
+Last updated 2020-04-05 20:37:00 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./coderay-asciidoctor.css">

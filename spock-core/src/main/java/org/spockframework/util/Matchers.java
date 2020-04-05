@@ -17,36 +17,25 @@ package org.spockframework.util;
 public class Matchers {
   @SafeVarargs
   public static <T> IMatcher<T> and(final IMatcher<? super T>... matchers) {
-    return new IMatcher<T>() {
-      @Override
-      public boolean matches(T item) {
-        for (IMatcher<? super T> matcher : matchers)
-          if (!matcher.matches(item)) return false;
+    return item -> {
+      for (IMatcher<? super T> matcher : matchers)
+        if (!matcher.matches(item)) return false;
 
-        return true;
-      }
+      return true;
     };
   }
 
   @SafeVarargs
   public static <T> IMatcher<T> or(final IMatcher<? super T>... matchers) {
-    return new IMatcher<T>() {
-      @Override
-      public boolean matches(T item) {
-        for (IMatcher<? super T> matcher : matchers)
-          if (matcher.matches(item)) return true;
+    return item -> {
+      for (IMatcher<? super T> matcher : matchers)
+        if (matcher.matches(item)) return true;
 
-        return false;
-      }
+      return false;
     };
   }
 
   public static <T> IMatcher<T> not(final IMatcher<T> matcher) {
-    return new IMatcher<T>() {
-      @Override
-      public boolean matches(T item) {
-        return !matcher.matches(item);
-      }
-    };
+    return item -> !matcher.matches(item);
   }
 }

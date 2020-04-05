@@ -20,11 +20,8 @@ import org.spockframework.util.IStoppable;
 import java.util.concurrent.*;
 
 public class AsyncRunListener implements IRunListener, IStoppable {
-  private static final Runnable STOP = new Runnable() {
-    @Override
-    public void run() {
-      throw new IllegalStateException("should never run");
-    }
+  private static final Runnable STOP = () -> {
+    throw new IllegalStateException("should never run");
   };
 
   private final IRunListener delegate;
@@ -64,92 +61,47 @@ public class AsyncRunListener implements IRunListener, IStoppable {
 
   @Override
   public void beforeSpec(final SpecInfo spec) {
-    addEvent(new Runnable() {
-      @Override
-      public void run() {
-        delegate.beforeSpec(spec);
-      }
-    });
+    addEvent(() -> delegate.beforeSpec(spec));
   }
 
   @Override
   public void beforeFeature(final FeatureInfo feature) {
-    addEvent(new Runnable() {
-      @Override
-      public void run() {
-        delegate.beforeFeature(feature);
-      }
-    });
+    addEvent(() -> delegate.beforeFeature(feature));
   }
 
   @Override
   public void beforeIteration(final IterationInfo iteration) {
-    addEvent(new Runnable() {
-      @Override
-      public void run() {
-        delegate.beforeIteration(iteration);
-      }
-    });
+    addEvent(() -> delegate.beforeIteration(iteration));
   }
 
   @Override
   public void afterIteration(final IterationInfo iteration) {
-    addEvent(new Runnable() {
-      @Override
-      public void run() {
-        delegate.afterIteration(iteration);
-      }
-    });
+    addEvent(() -> delegate.afterIteration(iteration));
   }
 
   @Override
   public void afterFeature(final FeatureInfo feature) {
-    addEvent(new Runnable() {
-      @Override
-      public void run() {
-        delegate.afterFeature(feature);
-      }
-    });
+    addEvent(() -> delegate.afterFeature(feature));
   }
 
   @Override
   public void afterSpec(final SpecInfo spec) {
-    addEvent(new Runnable() {
-      @Override
-      public void run() {
-        delegate.afterSpec(spec);
-      }
-    });
+    addEvent(() -> delegate.afterSpec(spec));
   }
 
   @Override
   public void error(final ErrorInfo error) {
-    addEvent(new Runnable() {
-      @Override
-      public void run() {
-        delegate.error(error);
-      }
-    });
+    addEvent(() -> delegate.error(error));
   }
 
   @Override
   public void specSkipped(final SpecInfo spec) {
-    addEvent(new Runnable() {
-      @Override
-      public void run() {
-        delegate.specSkipped(spec);
-      }
-    });
+    addEvent(() -> delegate.specSkipped(spec));
   }
 
   @Override
   public void featureSkipped(final FeatureInfo feature) {
-    addEvent(new Runnable() {
-      @Override
-      public void run() {
-        delegate.featureSkipped(feature);
-      }
-    });
+    addEvent(() -> delegate.featureSkipped(feature));
   }
 
   protected void addEvent(Runnable event) {

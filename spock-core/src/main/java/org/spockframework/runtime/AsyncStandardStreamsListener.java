@@ -24,21 +24,11 @@ public class AsyncStandardStreamsListener extends AsyncRunListener implements IS
 
   @Override
   public void standardOut(final String message) {
-    addEvent(new Runnable() {
-      @Override
-      public void run() {
-        streamsDelegate.standardOut(message);
-      }
-    });
+    addEvent(() -> streamsDelegate.standardOut(message));
   }
 
   @Override
   public void standardErr(final String message) {
-    addEvent(new Runnable() {
-      @Override
-      public void run() {
-        streamsDelegate.standardErr(message);
-      }
-    });
+    addEvent(() -> streamsDelegate.standardErr(message));
   }
 }

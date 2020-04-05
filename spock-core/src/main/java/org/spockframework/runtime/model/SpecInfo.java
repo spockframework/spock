@@ -307,7 +307,7 @@ public class SpecInfo extends SpecElementInfo<NodeInfo, Class<?>> implements IMe
 
   public void sortFeatures(final IFeatureSortOrder order) {
     List<FeatureInfo> features = getAllFeatures();
-    Collections.sort(features, order);
+    features.sort(order);
     for (int i = 0; i < features.size(); i++)
       features.get(i).setExecutionOrder(i);
   }

@@ -48,12 +48,7 @@ public class GroovyMockFactory implements IMockFactory {
           ". Global cannot add additionalInterfaces.");
       }
       GroovyRuntimeUtil.setMetaClass(type, newMetaClass);
-      specification.getSpecificationContext().getCurrentIteration().addCleanup(new Runnable() {
-        @Override
-        public void run() {
-          GroovyRuntimeUtil.setMetaClass(type, oldMetaClass);
-        }
-      });
+      specification.getSpecificationContext().getCurrentIteration().addCleanup(() -> GroovyRuntimeUtil.setMetaClass(type, oldMetaClass));
       return MockInstantiator.instantiate(type, type, configuration.getConstructorArgs(), configuration.isUseObjenesis());
     }
 

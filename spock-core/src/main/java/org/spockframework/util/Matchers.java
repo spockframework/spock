@@ -14,25 +14,17 @@
 
 package org.spockframework.util;
 
+import static java.util.Arrays.stream;
+
 public class Matchers {
   @SafeVarargs
   public static <T> IMatcher<T> and(final IMatcher<? super T>... matchers) {
-    return item -> {
-      for (IMatcher<? super T> matcher : matchers)
-        if (!matcher.matches(item)) return false;
-
-      return true;
-    };
+    return item -> stream(matchers).allMatch(matcher -> matcher.matches(item));
   }
 
   @SafeVarargs
   public static <T> IMatcher<T> or(final IMatcher<? super T>... matchers) {
-    return item -> {
-      for (IMatcher<? super T> matcher : matchers)
-        if (matcher.matches(item)) return true;
-
-      return false;
-    };
+    return item -> stream(matchers).anyMatch(matcher -> matcher.matches(item));
   }
 
   public static <T> IMatcher<T> not(final IMatcher<T> matcher) {

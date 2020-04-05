@@ -11,7 +11,7 @@ import java.util.LinkedHashMap;
  */
 public class LinkedHashMultiset<E> extends AbstractMultiset<E> {
   public LinkedHashMultiset() {
-    super(new LinkedHashMap<E, Integer>());
+    super(new LinkedHashMap<>());
   }
 
   public LinkedHashMultiset(Collection<? extends E> collection) {

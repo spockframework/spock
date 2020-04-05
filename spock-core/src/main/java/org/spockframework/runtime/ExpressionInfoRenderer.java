@@ -21,6 +21,8 @@ import org.spockframework.runtime.model.*;
 import java.util.*;
 import java.util.regex.Pattern;
 
+import static java.util.Comparator.comparingInt;
+
 /**
  * Creates a string representation of an assertion and its recorded values.
  *
@@ -60,10 +62,11 @@ public class ExpressionInfoRenderer {
   }
 
   private void placeValues() {
-    Comparator<ExpressionInfo> comparator = (expr1, expr2) -> expr2.getAnchor().getColumn() - expr1.getAnchor().getColumn();
+    Comparator<ExpressionInfo> comparator =
+      comparingInt((ExpressionInfo exprInfo) -> exprInfo.getAnchor().getColumn()).reversed();
 
-    for (ExpressionInfo expr : this.expr.inCustomOrder(true, comparator))
-      placeValue(expr);
+    for (ExpressionInfo exprInfo : this.expr.inCustomOrder(true, comparator))
+      placeValue(exprInfo);
   }
 
   private void placeValue(ExpressionInfo expr) {

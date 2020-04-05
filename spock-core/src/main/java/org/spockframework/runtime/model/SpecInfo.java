@@ -22,6 +22,8 @@ import org.spockframework.util.*;
 
 import java.util.*;
 
+import static java.util.Comparator.comparingInt;
+
 /**
  * Runtime information about a Spock specification.
  *
@@ -234,7 +236,7 @@ public class SpecInfo extends SpecElementInfo<NodeInfo, Class<?>> implements IMe
 
   public List<FeatureInfo> getAllFeaturesInExecutionOrder() {
     List<FeatureInfo> result = getAllFeatures();
-    result.sort(Comparator.comparingInt(FeatureInfo::getExecutionOrder));
+    result.sort(comparingInt(FeatureInfo::getExecutionOrder));
     return result;
   }
 

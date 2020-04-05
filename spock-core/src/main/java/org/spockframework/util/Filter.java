@@ -33,10 +33,7 @@ public class Filter<T> {
   }
 
   public void filterInPlace(List<? extends T> items) {
-    Iterator<? extends T> iter = items.iterator();
-    while (iter.hasNext())
-      if (!matcher.matches(iter.next()))
-        iter.remove();
+    items.removeIf(t -> !matcher.matches(t));
   }
 
   public static <T> Filter<T> create(IMatcher<T> matcher) {

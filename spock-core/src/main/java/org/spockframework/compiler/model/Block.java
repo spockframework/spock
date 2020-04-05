@@ -33,7 +33,7 @@ public abstract class Block extends Node<Method, List<Statement>> {
   private Block next;
 
   public Block(Method parent) {
-    super(parent, new ArrayList<Statement>());
+    super(parent, new ArrayList<>());
   }
 
   public List<String> getDescriptions() {

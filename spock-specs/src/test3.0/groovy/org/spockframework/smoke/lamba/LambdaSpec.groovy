@@ -2,6 +2,7 @@ package org.spockframework.smoke.lamba
 
 import spock.lang.Specification
 
+import static java.util.Comparator.comparingInt
 import static java.util.stream.Collectors.toList
 
 class LambdaSpec extends Specification {
@@ -18,7 +19,7 @@ class LambdaSpec extends Specification {
 
   def "allow to use method reference in spec"() {
     when:
-    List<String> namesFromShortest = names.stream().sorted(Comparator.comparingInt(String::length).reversed()).collect(toList())
+    List<String> namesFromShortest = names.stream().sorted(comparingInt(String::length).reversed()).collect(toList())
 
     then:
     namesFromShortest == ["Barney", "Wilma", "Betty", "Fred"]

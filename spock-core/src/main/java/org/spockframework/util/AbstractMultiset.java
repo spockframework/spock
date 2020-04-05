@@ -42,12 +42,7 @@ public abstract class AbstractMultiset<E> implements IMultiset<E> {
 
   @Override
   public boolean add(E element) {
-    Integer count = elements.get(element);
-    if (count == null) {
-      elements.put(element, 1);
-    } else {
-      elements.put(element, count + 1);
-    }
+    elements.merge(element, 1, Integer::sum);
     return true;
   }
 

@@ -348,11 +348,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
   private void moveInteractions(List<Statement> interactions, ThenBlock block) {
     if (interactions.isEmpty()) return;
 
-    ListIterator<Statement> listIterator = block.getAst().listIterator();
-    while (listIterator.hasNext()) {
-      Statement next = listIterator.next();
-      if (interactions.contains(next)) listIterator.remove();
-    }
+    block.getAst().removeIf(interactions::contains);
 
     List<Statement> statsBeforeWhenBlock = block.getPrevious(WhenBlock.class).getPrevious().getAst();
 

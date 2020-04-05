@@ -41,37 +41,34 @@ class ByteBuddyMockFactory {
 
     Class<?> enhancedType = CACHE.findOrInsert(classLoader,
       new TypeCache.SimpleKey(type, additionalInterfaces),
-      new Callable<Class<?>>() {
-        @Override
-        public Class<?> call() throws Exception {
-          String typeName = type.getName();
-          Class<?> targetClass = type;
-          if (shouldLoadIntoCodegenPackage(type)) {
-            typeName = CODEGEN_PACKAGE + "." + type.getSimpleName();
-            targetClass = CODEGEN_TARGET_CLASS;
-          }
-          int randomNumber = Math.abs(ThreadLocalRandom.current().nextInt());
-          String name = String.format("%s$%s$%d", typeName, "SpockMock", randomNumber);
-          ClassLoadingStrategy<ClassLoader> strategy = determineBestClassLoadingStrategy(targetClass);
-          return new ByteBuddy()
-            .with(TypeValidation.DISABLED) // https://github.com/spockframework/spock/issues/776
-            .ignore(none())
-            .subclass(type)
-            .name(name)
-            .implement(additionalInterfaces)
-            .implement(ISpockMockObject.class)
-            .method(any())
-            .intercept(MethodDelegation.withDefaultConfiguration()
-              .withBinders(Morph.Binder.install(ByteBuddyInvoker.class))
-              .to(ByteBuddyInterceptorAdapter.class))
-            .transform(Transformer.ForMethod.withModifiers(SynchronizationState.PLAIN, Visibility.PUBLIC)) // Overridden methods should be public and non-synchronized.
-            .implement(ByteBuddyInterceptorAdapter.InterceptorAccess.class)
-            .intercept(FieldAccessor.ofField("$spock_interceptor"))
-            .defineField("$spock_interceptor", IProxyBasedMockInterceptor.class, Visibility.PRIVATE, SyntheticState.SYNTHETIC)
-            .make()
-            .load(classLoader, strategy)
-            .getLoaded();
+      () -> {
+        String typeName = type.getName();
+        Class<?> targetClass = type;
+        if (shouldLoadIntoCodegenPackage(type)) {
+          typeName = CODEGEN_PACKAGE + "." + type.getSimpleName();
+          targetClass = CODEGEN_TARGET_CLASS;
         }
+        int randomNumber = Math.abs(ThreadLocalRandom.current().nextInt());
+        String name = String.format("%s$%s$%d", typeName, "SpockMock", randomNumber);
+        ClassLoadingStrategy<ClassLoader> strategy = determineBestClassLoadingStrategy(targetClass);
+        return new ByteBuddy()
+          .with(TypeValidation.DISABLED) // https://github.com/spockframework/spock/issues/776
+          .ignore(none())
+          .subclass(type)
+          .name(name)
+          .implement(additionalInterfaces)
+          .implement(ISpockMockObject.class)
+          .method(any())
+          .intercept(MethodDelegation.withDefaultConfiguration()
+            .withBinders(Morph.Binder.install(ByteBuddyInvoker.class))
+            .to(ByteBuddyInterceptorAdapter.class))
+          .transform(Transformer.ForMethod.withModifiers(SynchronizationState.PLAIN, Visibility.PUBLIC)) // Overridden methods should be public and non-synchronized.
+          .implement(ByteBuddyInterceptorAdapter.InterceptorAccess.class)
+          .intercept(FieldAccessor.ofField("$spock_interceptor"))
+          .defineField("$spock_interceptor", IProxyBasedMockInterceptor.class, Visibility.PRIVATE, SyntheticState.SYNTHETIC)
+          .make()
+          .load(classLoader, strategy)
+          .getLoaded();
       }, CACHE);
 
     Object proxy = MockInstantiator.instantiate(type, enhancedType, constructorArgs, useObjenesis);

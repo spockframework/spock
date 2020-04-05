@@ -95,12 +95,7 @@ public class SpecInfoBuilder {
       spec.addField(fieldInfo);
     }
 
-    Collections.sort(spec.getFields(), new Comparator<FieldInfo>() {
-      @Override
-      public int compare(FieldInfo f1, FieldInfo f2) {
-        return f1.getOrdinal() - f2.getOrdinal();
-      }
-    });
+    spec.getFields().sort(Comparator.comparingInt(FieldInfo::getOrdinal));
   }
 
   private void buildFeatures() {
@@ -111,12 +106,7 @@ public class SpecInfoBuilder {
       spec.addFeature(createFeature(method, metadata));
     }
 
-    Collections.sort(spec.getFeatures(), new IFeatureSortOrder() {
-      @Override
-      public int compare(FeatureInfo m1, FeatureInfo m2) {
-        return m1.getDeclarationOrder() - m2.getDeclarationOrder();
-      }
-    });
+    spec.getFeatures().sort((IFeatureSortOrder) (m1, m2) -> m1.getDeclarationOrder() - m2.getDeclarationOrder());
   }
 
   private FeatureInfo createFeature(Method method, FeatureMetadata featureMetadata) {

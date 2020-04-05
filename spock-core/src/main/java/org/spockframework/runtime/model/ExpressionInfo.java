@@ -132,13 +132,10 @@ public class ExpressionInfo implements Iterable<ExpressionInfo> {
   }
 
   public Iterable<ExpressionInfo> inPrefixOrder(final boolean skipIrrelevant) {
-    return new Iterable<ExpressionInfo>() {
-      @Override
-      public Iterator<ExpressionInfo> iterator() {
-        List<ExpressionInfo> list = new ArrayList<>();
-        collectPrefix(list, skipIrrelevant);
-        return list.iterator();
-      }
+    return () -> {
+      List<ExpressionInfo> list = new ArrayList<>();
+      collectPrefix(list, skipIrrelevant);
+      return list.iterator();
     };
   }
 
@@ -151,7 +148,7 @@ public class ExpressionInfo implements Iterable<ExpressionInfo> {
   public Iterable<ExpressionInfo> inCustomOrder(boolean skipIrrelevant, Comparator<ExpressionInfo> comparator) {
     List<ExpressionInfo> list = new ArrayList<>();
     collectPrefix(list, skipIrrelevant);
-    Collections.sort(list, comparator);
+    list.sort(comparator);
     return list;
   }
 

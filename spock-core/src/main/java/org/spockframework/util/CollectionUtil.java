@@ -146,22 +146,9 @@ public abstract class CollectionUtil {
     return map;
   }
 
-  public static Map filterNullValues(Map map) {
-    Iterator<Map.Entry> iterator = map.entrySet().iterator();
-    while(iterator.hasNext()) {
-      Map.Entry next = iterator.next();
-      if (next.getValue() == null) {
-        iterator.remove();
-      }
-    }
+  public static <K, V> Map<K, V> filterNullValues(Map<K, V> map) {
+    map.entrySet().removeIf(next -> next.getValue() == null);
     return map;
-  }
-
-  public static Map putAll(Map original, Map... others) {
-    for (Map other : others) {
-      original.putAll(other);
-    }
-    return original;
   }
 
   @SafeVarargs

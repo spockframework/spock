@@ -421,8 +421,8 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
 
     TryCatchStatement tryFinally =
         new TryCatchStatement(
-            new BlockStatement(featureStats, new VariableScope()),
-            new BlockStatement(cleanupStats, new VariableScope()));
+            new BlockStatement(featureStats, null),
+            new BlockStatement(cleanupStats, null));
     tryFinally.addCatch(featureCatchStat);
 
     method.getStatements().add(tryFinally);
@@ -455,7 +455,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
 
     TryCatchStatement tryCatchStat =
         new TryCatchStatement(
-            new BlockStatement(cleanupStats, new VariableScope()),
+            new BlockStatement(cleanupStats, null),
             EmptyStatement.INSTANCE);
 
     tryCatchStat.addCatch(createHandleSuppressedThrowableStatement(featureThrowableVar));
@@ -477,7 +477,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
             Arrays.asList(
               new ExpressionStatement(assignThrowableExpr),
               new ThrowStatement(new VariableExpression(catchParameter))),
-            new VariableScope()));
+          null));
   }
 
   private CatchStatement createHandleSuppressedThrowableStatement(VariableExpression featureThrowableVar) {
@@ -495,13 +495,13 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
       Collections.<Statement>singletonList(new ThrowStatement(new VariableExpression(catchParameter)));
 
     IfStatement ifFeatureNotNullStat = new IfStatement(new BooleanExpression(featureThrowableNotNullExpr),
-      new BlockStatement(addSuppressedStats, new VariableScope()),
-      new BlockStatement(throwFeatureStats, new VariableScope()));
+      new BlockStatement(addSuppressedStats, null),
+      new BlockStatement(throwFeatureStats, null));
 
     return new CatchStatement(catchParameter,
       new BlockStatement(
         Collections.<Statement>singletonList(ifFeatureNotNullStat),
-        new VariableScope()));
+        null));
   }
 
   // IRewriteResources members
@@ -548,7 +548,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
 
     stats.add(
       new TryCatchStatement(
-        new BlockStatement(allStats, new VariableScope()),
+        new BlockStatement(allStats, null),
         new ExpressionStatement(
           AstUtil.createDirectMethodCall(
             new VariableExpression(SpockNames.ERROR_COLLECTOR),
@@ -652,7 +652,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
 
     TryCatchStatement tryCatchStat =
         new TryCatchStatement(
-            new BlockStatement(tryStats, new VariableScope()),
+            new BlockStatement(tryStats, null),
             new BlockStatement());
 
     blockStats.add(tryCatchStat);
@@ -665,7 +665,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
                 new ExpressionStatement(
                   setThrownException(
                     new VariableExpression(SpockNames.SPOCK_EX)))),
-                new VariableScope())));
+              null)));
   }
 
   /*

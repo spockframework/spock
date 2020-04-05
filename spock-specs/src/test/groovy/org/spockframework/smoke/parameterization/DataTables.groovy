@@ -468,16 +468,6 @@ local ; 1
     thrown Exception
   }
 
-  def 'cell references are working with simple parameterization also'() {
-    expect:
-    c == 2
-
-    where:
-    a << [1, 2]
-    b << [3, 4]
-    c << [b - a, b - a]
-  }
-
   def 'data tables can be referenced from following variables'() {
     expect:
     c == 3
@@ -488,30 +478,6 @@ local ; 1
     1 | a + 1
 
     c = b + 1
-  }
-
-  @Ignore
-  def 'data table elements can reference each other'() {
-    expect:
-    runner.runFeatureBody '''
-      expect:
-      g == 12
-
-      where:
-      a = 1
-      b = a + 1
-
-      c << [b + 1]
-
-      d = c + 1
-
-      e         | f
-      b + c + d | e + 1
-
-      g << [f + 1]
-
-      h = g + 1
-    '''
   }
 
   def "rows must have same number of elements as header"() {
@@ -693,6 +659,65 @@ b | _
     then:
     SpockExecutionException see = thrown()
     see.message =~ 'fewer values than previous'
+  }
+
+  def "derived data variables do not break data table previous column references"() {
+    expect:
+    y == z
+
+    where:
+    x = 1
+
+    and:
+    y | z | a
+    1 | y | y + z
+    2 | y | y + z
+  }
+
+  def "data pipe variables do not break data table previous column references"() {
+    expect:
+    y == z
+
+    where:
+    x << [1, 2]
+
+    and:
+    y | z | a
+    3 | y | y + z
+    4 | y | y + z
+  }
+
+  def "data table previous column references work in closures"() {
+    expect:
+    x == y
+    z == 2 * x
+
+    where:
+    x | y       | z
+    1 | { x }() | x + y
+    2 | { x }() | x + y
+  }
+
+  def "data table previous column references work across data tables"() {
+    expect:
+    x == y
+    z == 2 * x
+    a == x
+    b == x
+    c == z
+
+    where:
+    x | y       | z
+    1 | x       | x + y
+    2 | { x }() | x + y
+
+    and:
+    f = 1
+
+    and:
+    a | b       | c
+    1 | { x }() | x + y
+    2 | { x }() | x + y
   }
 
   static class Person {

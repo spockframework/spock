@@ -278,6 +278,38 @@ to other data variables:
 include::{sourcedir}/datadriven/DataSpec.groovy[tag=sql-data-variable-assignment]
 ----
 
+== Accessing Other Data Variables
+
+There are only two possibilities to access one data variable from the calculation
+of another data variable.
+
+The first possibility are derived data variables like shown in the last section.
+Every data variable that is defined by a direct assignment can access all
+previously defined data variables, including the ones defined through data
+tables or data pipes:
+
+[source,groovy,indent=0]
+----
+    ...
+include::{sourcedir}/datadriven/DataSpec.groovy[tag=data-variable-assignment]
+----
+
+The second possibility is to access previous columns within data tables:
+
+[source,groovy,indent=0]
+----
+    ...
+include::{sourcedir}/datadriven/DataSpec.groovy[tag=previous-column-access]
+----
+
+This also includes columns in previous data tables in the same `where` block:
+
+[source,groovy,indent=0]
+----
+    ...
+include::{sourcedir}/datadriven/DataSpec.groovy[tag=previous-column-access-multi-table]
+----
+
 == Combining Data Tables, Data Pipes, and Variable Assignments
 
 Data tables, data pipes, and variable assignments can be combined as needed:

@@ -394,7 +394,7 @@ public class WhereBlockRewriter {
     if (rows.isEmpty()) return columns;
 
     for (int i = 0; i < rows.get(0).size(); i++)
-      columns.add(new ArrayList<Expression>());
+      columns.add(new ArrayList<>());
 
     for (List<Expression> row : rows)
       for (int i = 0; i < row.size(); i++)

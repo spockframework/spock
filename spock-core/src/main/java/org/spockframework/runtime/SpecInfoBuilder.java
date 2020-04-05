@@ -23,6 +23,8 @@ import spock.lang.Specification;
 import java.lang.reflect.*;
 import java.util.*;
 
+import static java.util.Comparator.comparingInt;
+
 /**
  * Builds a SpecInfo from a Class instance.
  *
@@ -95,7 +97,7 @@ public class SpecInfoBuilder {
       spec.addField(fieldInfo);
     }
 
-    spec.getFields().sort(Comparator.comparingInt(FieldInfo::getOrdinal));
+    spec.getFields().sort(comparingInt(FieldInfo::getOrdinal));
   }
 
   private void buildFeatures() {
@@ -106,7 +108,7 @@ public class SpecInfoBuilder {
       spec.addFeature(createFeature(method, metadata));
     }
 
-    spec.getFeatures().sort((IFeatureSortOrder) (m1, m2) -> m1.getDeclarationOrder() - m2.getDeclarationOrder());
+    spec.getFeatures().sort(comparingInt(FeatureInfo::getDeclarationOrder));
   }
 
   private FeatureInfo createFeature(Method method, FeatureMetadata featureMetadata) {

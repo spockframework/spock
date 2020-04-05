@@ -60,12 +60,7 @@ public class ExpressionInfoRenderer {
   }
 
   private void placeValues() {
-    Comparator<ExpressionInfo> comparator = new Comparator<ExpressionInfo>() {
-      @Override
-      public int compare(ExpressionInfo expr1, ExpressionInfo expr2) {
-        return expr2.getAnchor().getColumn() - expr1.getAnchor().getColumn();
-      }
-    };
+    Comparator<ExpressionInfo> comparator = (expr1, expr2) -> expr2.getAnchor().getColumn() - expr1.getAnchor().getColumn();
 
     for (ExpressionInfo expr : this.expr.inCustomOrder(true, comparator))
       placeValue(expr);

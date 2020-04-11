@@ -35,3 +35,5 @@ def nameBuildScriptsAfterProjectNames(projects) {
     nameBuildScriptsAfterProjectNames(prj.children)
   }
 }
+include 'spock-dubbo'
+

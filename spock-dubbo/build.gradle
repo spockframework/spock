@@ -1,0 +1,32 @@
+apply from: script("publishMaven")
+
+ext.displayName = "Spock Framework - apache.org.dubbo"
+
+def dubboVersion = "2.6.8"
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile project(":spock-spring")
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+jar {
+  manifest {
+    attributes(
+      'Created-By': "${System.properties['java.version']} (${System.properties['java.vendor']} ${System.properties['java.vm.version']})".toString(),
+      'Build-Date': buildDate,
+      'Build-Time': buildTime,
+      'Build-Revision': versioning.info.commit,
+      'Specification-Title': project.name,
+      'Specification-Version': baseVersion,
+      'Specification-Vendor': 'spockframework.org',
+      'Implementation-Title': project.name,
+      'Implementation-Version': variantLessVersion,
+      'Implementation-Vendor': 'spockframework.org',
+      'Automatic-Module-Name': 'org.spockframework.dubbo'
+    )
+  }
+}

@@ -35,5 +35,5 @@ def nameBuildScriptsAfterProjectNames(projects) {
     nameBuildScriptsAfterProjectNames(prj.children)
   }
 }
-include 'spock-dubbo'
+include 'spock-spring-dubbo'
 

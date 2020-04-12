@@ -34,7 +34,7 @@ public class SpockDubboMockPostprocessor implements BeanPostProcessor,Applicatio
   MockUtil mockUtil = new MockUtil();
   Object springBean;
   List<Annotation> referenceAnn = null;
-  final String  reference = "com.alibaba.dubbo.config.annotation.Reference";
+  final String  reference = "Reference";
 
   @Override
   public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
@@ -48,7 +48,7 @@ public class SpockDubboMockPostprocessor implements BeanPostProcessor,Applicatio
       try {
         //Get the mock bean from the spring container by name
         springBean = applicationContext.getBean(getBeanName(field));
-        referenceAnn = Arrays.asList(field.getAnnotations()).stream().filter(f -> (reference).equals(f.annotationType().getName())).collect(Collectors.toList());
+        referenceAnn = Arrays.asList(field.getAnnotations()).stream().filter(f -> f.annotationType().getName().contains(reference)).collect(Collectors.toList());
         if (!CollectionUtils.isEmpty(referenceAnn) && Objects.nonNull(springBean) && mockUtil.isMock(springBean)) {
           //If there is a member variable with annotation @Reference in the bean and the spring container has a
           // mock bean for that variable，the variable in the bean is replaced with the mock variable

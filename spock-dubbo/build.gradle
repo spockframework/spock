@@ -1,6 +1,10 @@
 apply from: script("publishMaven")
 
-ext.displayName = "Spock Framework - apache.org.dubbo"
+ext.displayName = "Spock Framework - spring and dubbo"
+
+
+description = "In some test scenarios, solve the problem that the member variable with annotation @Reference in the class cannot be mocked. " +
+  "Integration test is one of the scenarios"
 
 def dubboVersion = "2.6.8"
 sourceCompatibility = 1.8

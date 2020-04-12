@@ -18,8 +18,16 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
+ *
  * @author zhangfanghui
  * @since 2020-04-09
+ *
+ *
+ *  The main function of this class is to replace the member variable that depends on the annotation @Reference with
+ *  a mock bean。
+ *
+ *
+ *
  */
 public class SpockDubboMockPostprocessor implements BeanPostProcessor,ApplicationContextAware {
   private ApplicationContext applicationContext;
@@ -32,18 +40,18 @@ public class SpockDubboMockPostprocessor implements BeanPostProcessor,Applicatio
   public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
     Class<?> cls = bean.getClass();
     List<Field> fields = new ArrayList<>();
-    //当父类为null的时候说明到达了最上层的父类(Object类).
     while (cls != null) {
       fields.addAll(Arrays.asList(cls.getDeclaredFields()));
-      //得到父类,然后赋给自己
       cls = cls.getSuperclass();
     }
     for (Field field : fields) {
       try {
+        //Get the mock bean from the spring container by name
         springBean = applicationContext.getBean(getBeanName(field));
         referenceAnn = Arrays.asList(field.getAnnotations()).stream().filter(f -> (reference).equals(f.annotationType().getName())).collect(Collectors.toList());
         if (!CollectionUtils.isEmpty(referenceAnn) && Objects.nonNull(springBean) && mockUtil.isMock(springBean)) {
-          //设置允许反射访问属性
+          //If there is a member variable with annotation @Reference in the bean and the spring container has a
+          // mock bean for that variable，the variable in the bean is replaced with the mock variable
           field.setAccessible(true);
           ReflectionUtils.setField(field, bean, springBean);
         }

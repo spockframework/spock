@@ -111,11 +111,11 @@ class Parameterizations extends EmbeddedSpecification {
 
   def "can use data variables named like special @Unroll variables"() {
     expect:
-    iterationCount == featureName * 2
+    iterationIndex == featureName * 2
 
     where:
     featureName << [1, 2, 3]
-    iterationCount << [2, 4, 6]
+    iterationIndex << [2, 4, 6]
   }
 
   @Issue("https://github.com/spockframework/spock/issues/396")
@@ -134,5 +134,44 @@ class Parameterizations extends EmbeddedSpecification {
     a = { 1 }
     b = { i, j -> i + j }
     size = { 42 }
+  }
+
+  @Issue("https://github.com/spockframework/spock/issues/880")
+  def "variables in helper methods do not interfere with omitted data variables"() {
+    expect:
+    runner.runSpecBody '''
+def "#a <=> #b: #result"() {
+  expect:
+  Math.signum(a <=> b) == result
+
+  where:
+  a          | b          | result
+  "abcdef12" | "abcdef12" | 0
+}
+
+private double[] someOtherMethod() {
+  double[] result = new double[0]
+  return result
+}
+'''
+  }
+
+  @Issue("https://github.com/spockframework/spock/issues/880")
+  def "variables in helper methods do not interfere with typed data variables"() {
+    expect:
+    runner.runSpecBody '''
+def "roll #x"(Integer x) {
+    expect:
+    1 == x
+
+    where:
+    x << [1]
+}
+
+private int unused() {
+    String x = "4"
+    return 3
+}
+'''
   }
 }

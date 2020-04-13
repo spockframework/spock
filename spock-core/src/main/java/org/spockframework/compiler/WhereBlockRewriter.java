@@ -21,6 +21,8 @@ import org.spockframework.runtime.model.DataProviderMetadata;
 import org.spockframework.util.*;
 
 import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.codehaus.groovy.ast.*;
 import org.codehaus.groovy.ast.expr.*;
@@ -29,8 +31,12 @@ import org.codehaus.groovy.control.SourceUnit;
 import org.codehaus.groovy.syntax.*;
 import org.objectweb.asm.Opcodes;
 
+import static java.util.stream.Collectors.*;
 import static org.spockframework.compiler.AstUtil.createGetAtMethod;
+import static org.spockframework.compiler.AstUtil.createGetMethod;
 import static org.spockframework.compiler.AstUtil.isDataTableSeparator;
+import static org.spockframework.compiler.AstUtil.getExpression;
+import static org.spockframework.util.ExceptionUtil.sneakyThrow;
 
 /**
  *
@@ -42,6 +48,7 @@ public class WhereBlockRewriter {
   private final InstanceFieldAccessChecker instanceFieldAccessChecker;
 
   private int dataProviderCount = 0;
+  private final List<VariableExpression> dataTableVars = new ArrayList<>();
   // parameters of the data processor method (one for each data provider)
   private final List<Parameter> dataProcessorParams = new ArrayList<>();
   // statements of the data processor method (one for each parameterization variable)
@@ -75,42 +82,40 @@ public class WhereBlockRewriter {
 
   private void rewriteWhereStat(ListIterator<Statement> stats) throws InvalidSpecCompileException {
     Statement stat = stats.next();
+
+    // binary expressions are potentially parameterizations
     BinaryExpression binExpr = AstUtil.getExpression(stat, BinaryExpression.class);
-    if (binExpr != null && binExpr.getClass() == BinaryExpression.class) { // don't allow subclasses like DeclarationExpression
-      // binary expressions are potentially parameterizations
+    if (binExpr != null) {
+      // don't allow subclasses like DeclarationExpression
+      if (binExpr.getClass() != BinaryExpression.class) {
+        throw notAParameterization(stat);
+      }
 
-      int type = binExpr.getOperation().getType();
+      stats.previous();
+      rewriteBinaryWhereStat(stats);
+      return;
+    }
 
-      if (type == Types.LEFT_SHIFT) {
-        // potentially a data pipe like:
-        // x << [1, 2, 3]
-        Expression leftExpr = binExpr.getLeftExpression();
-        if (leftExpr instanceof VariableExpression)
-          // x << [1, 2, 3]
-          rewriteSimpleParameterization(binExpr, stat);
-        else if (leftExpr instanceof ListExpression)
-          // [x, y, z] << [[1, 2, 3]]
-          rewriteMultiParameterization(binExpr, stat);
-        else
-          // neither of the other two
-          notAParameterization(stat);
-      } else if (type == Types.ASSIGN)
-        // derived data variable like:
-        // y = 2 * x
-        rewriteDerivedParameterization(binExpr, stat);
-      else if (getOrExpression(binExpr) != null) {
-        // header line of data table like:
-        // x | y || z
-        // 1 | 2 || 3
-        // 4 | 5 || 6
-        // push back header line
-        stats.previous();
-        // rewrite data table
-        rewriteTableLikeParameterization(stats);
-      } else
-        // binary expression is neither of type left-shift, nor assign => not a parameterization
-        notAParameterization(stat);
-    } else if (!isDataTableSeparator(stat)) {
+    // reposition before current statement
+    stats.previous();
+    // search for semicolon separated data table header row
+    List<Expression> potentialHeaderRow = getExpressionChain(stats);
+    // rewind
+    potentialHeaderRow
+      .stream()
+      .skip(1)
+      .forEach(expression -> stats.previous());
+
+    if (potentialHeaderRow.size() > 1) {
+      if (!potentialHeaderRow.stream().allMatch(VariableExpression.class::isInstance)) {
+        throw dataTableHeaderMayOnlyContainVariableNames(stat);
+      }
+      stats.previous();
+      rewriteExpressionTableLikeParameterization(stats);
+      return;
+    }
+
+    if (!isDataTableSeparator(stat)) {
       // if statement is a data table separator (two or more underscores)
       // just ignore it, it is mainly meant to separate two consecutive
       // data tables, but is allowed anywhere in the where block, for
@@ -121,19 +126,85 @@ public class WhereBlockRewriter {
       // 4 | 5 || 6
       //
       // otherwise => not a parameterization
-      notAParameterization(stat);
+      throw notAParameterization(stat);
     }
   }
 
-  private void createDataProviderMethod(Expression dataProviderExpr, int nextDataVariableIndex) {
+  private void rewriteBinaryWhereStat(ListIterator<Statement> stats) throws InvalidSpecCompileException {
+    Statement stat = stats.next();
+    BinaryExpression binExpr = AstUtil.getExpression(stat, BinaryExpression.class);
+    int type = binExpr.getOperation().getType();
+
+    if (type == Types.LEFT_SHIFT) {
+      // potentially a data pipe like:
+      // x << [1, 2, 3]
+      Expression leftExpr = binExpr.getLeftExpression();
+      if (leftExpr instanceof VariableExpression) {
+        // x << [1, 2, 3]
+        rewriteSimpleParameterization(binExpr, stat, false);
+      } else if (leftExpr instanceof ListExpression) {
+        // [x, y, z] << [[1, 2, 3]]
+        rewriteMultiParameterization(binExpr, stat);
+      } else {
+        // neither of the other two
+        throw notAParameterization(stat);
+      }
+    } else if (type == Types.ASSIGN) {
+      // derived data variable like:
+      // y = 2 * x
+      rewriteDerivedParameterization(binExpr, stat);
+    } else if (getOrExpression(binExpr) != null) {
+      // header line of data table like:
+      // x | y || z
+      // 1 | 2 || 3
+      // 4 | 5 || 6
+      // push back header line
+      stats.previous();
+      // rewrite data table
+      rewriteBinaryTableLikeParameterization(stats);
+    } else {
+      // binary expression is neither of type left-shift, nor assign and not a data table
+      throw notAParameterization(stat);
+    }
+  }
+
+  private List<Expression> getExpressionChain(ListIterator<Statement> stats) {
+    List<Expression> result = new ArrayList<>();
+
+    if (!stats.hasNext()) {
+      return result;
+    }
+
+    Statement stat = stats.next();
+    while (true) {
+      Expression expr = getExpression(stat, Expression.class);
+      if (expr == null) {
+        stats.previous();
+        break;
+      }
+
+      result.add(expr);
+
+      if (!stats.hasNext()) {
+        break;
+      }
+
+      Statement nextStat = stats.next();
+      if (nextStat.getLineNumber() != stat.getLastLineNumber()) {
+        // new data table row
+        stats.previous();
+        break;
+      }
+      stat = nextStat;
+    }
+
+    return result;
+  }
+
+  private void createDataProviderMethod(Expression dataProviderExpr, int nextDataVariableIndex, boolean addDataTableParameters) {
     instanceFieldAccessChecker.check(dataProviderExpr);
 
-    dataProviderExpr = dataProviderExpr.transformExpression(new DataTablePreviousVariableTransformer());
-
-    ExpressionStatement exprStat = new ExpressionStatement(dataProviderExpr);
-    exprStat.setSourcePosition(dataProviderExpr);
-
-    ReturnStatement returnStat = new ReturnStatement(exprStat);
+    ReturnStatement returnStat = new ReturnStatement(dataProviderExpr);
     returnStat.setSourcePosition(dataProviderExpr);
 
     MethodNode method =
@@ -141,31 +212,66 @@ public class WhereBlockRewriter {
         InternalIdentifiers.getDataProviderName(whereBlock.getParent().getAst().getName(), dataProviderCount++),
         Opcodes.ACC_PUBLIC | Opcodes.ACC_SYNTHETIC,
         ClassHelper.OBJECT_TYPE,
-        getPreviousParameters(nextDataVariableIndex),
+        // only add parameters when generating a provider method for a data table column
+        addDataTableParameters ? createPreviousDataTableParameters(nextDataVariableIndex) : Parameter.EMPTY_ARRAY,
         ClassNode.EMPTY_ARRAY,
         new BlockStatement(
-          Arrays.<Statement>asList(returnStat),
-          new VariableScope()));
+          Arrays.asList(returnStat),
+          null));
 
-    method.addAnnotation(createDataProviderAnnotation(dataProviderExpr, nextDataVariableIndex));
+    method.addAnnotation(createDataProviderAnnotation(dataProviderExpr, nextDataVariableIndex, addDataTableParameters));
     whereBlock.getParent().getParent().getAst().addMethod(method);
   }
 
-  private Parameter[] getPreviousParameters(int nextDataVariableIndex) {
-    Parameter[] results = new Parameter[nextDataVariableIndex];
-    for (int i = 0; i < nextDataVariableIndex; i++)
-      results[i] = new Parameter(ClassHelper.DYNAMIC_TYPE,
-                                 dataProcessorVars.get(i).getName());
+  private Parameter[] createPreviousDataTableParameters(int nextDataVariableIndex) {
+    return getPreviousDataTableVariables(nextDataVariableIndex)
+      .stream()
+      .map(previousDataTableVariable -> new Parameter(
+        ClassHelper.LIST_TYPE.getPlainNodeReference(),
+        getDataTableParameterName(previousDataTableVariable)))
+      .toArray(Parameter[]::new);
+  }
+
+  private List<String> getPreviousDataTableVariables(int nextDataVariableIndex) {
+    List<String> results = new ArrayList<>(nextDataVariableIndex);
+    for (int i = 0; i < nextDataVariableIndex; i++) {
+      VariableExpression dataProcessorVar = dataProcessorVars.get(i);
+      if (dataTableVars
+        .stream()
+        .map(VariableExpression::getName)
+        .noneMatch(dataProcessorVar.getName()::equals)) {
+        continue;
+      }
+      results.add(dataProcessorVar.getName());
+    }
     return results;
   }
 
-  private AnnotationNode createDataProviderAnnotation(Expression dataProviderExpr, int nextDataVariableIndex) {
+  private String getDataTableParameterName(String dataTableVariable) {
+    return "$spock_p_" + dataTableVariable;
+  }
+
+  private AnnotationNode createDataProviderAnnotation(Expression dataProviderExpr, int nextDataVariableIndex,
+                                                      boolean addDataTableParameters) {
     AnnotationNode ann = new AnnotationNode(resources.getAstNodeCache().DataProviderMetadata);
+
     ann.addMember(DataProviderMetadata.LINE, new ConstantExpression(dataProviderExpr.getLineNumber()));
+
     List<Expression> dataVariableNames = new ArrayList<>();
     for (int i = nextDataVariableIndex; i < dataProcessorVars.size(); i++)
       dataVariableNames.add(new ConstantExpression(dataProcessorVars.get(i).getName()));
     ann.addMember(DataProviderMetadata.DATA_VARIABLES, new ListExpression(dataVariableNames));
+
+    if (addDataTableParameters) {
+      ListExpression previousDataTableVariables = getPreviousDataTableVariables(nextDataVariableIndex)
+        .stream()
+        .map(ConstantExpression::new)
+        .collect(collectingAndThen(
+          Collectors.<Expression>toList(),
+          ListExpression::new));
+      ann.addMember(DataProviderMetadata.PREVIOUS_DATA_TABLE_VARIABLES, previousDataTableVariables);
+    }
+
     return ann;
   }
 
@@ -176,7 +282,7 @@ public class WhereBlockRewriter {
   }
 
   // generates: arg = argMethodParam
-  private void rewriteSimpleParameterization(BinaryExpression binExpr, ASTNode sourcePos)
+  private void rewriteSimpleParameterization(BinaryExpression binExpr, ASTNode sourcePos, boolean addDataTableParameters)
       throws InvalidSpecCompileException {
     int nextDataVariableIndex = dataProcessorVars.size();
     Parameter dataProcessorParameter = createDataProcessorParameter();
@@ -191,7 +297,7 @@ public class WhereBlockRewriter {
     exprStat.setSourcePosition(sourcePos);
     dataProcessorStats.add(exprStat);
 
-    createDataProviderMethod(binExpr.getRightExpression(), nextDataVariableIndex);
+    createDataProviderMethod(binExpr.getRightExpression(), nextDataVariableIndex, addDataTableParameters);
   }
 
   // generates:
@@ -203,7 +309,6 @@ public class WhereBlockRewriter {
     Parameter dataProcessorParameter = createDataProcessorParameter();
     ListExpression list = (ListExpression) binExpr.getLeftExpression();
 
-    @SuppressWarnings("unchecked")
     List<Expression> listElems = list.getExpressions();
     for (int i = 0; i < listElems.size(); i++) {
       Expression listElem = listElems.get(i);
@@ -219,7 +324,7 @@ public class WhereBlockRewriter {
       dataProcessorStats.add(exprStat);
     }
 
-    createDataProviderMethod(binExpr.getRightExpression(), nextDataVariableIndex);
+    createDataProviderMethod(binExpr.getRightExpression(), nextDataVariableIndex, false);
   }
 
   private void rewriteDerivedParameterization(BinaryExpression parameterization, Statement enclosingStat)
@@ -237,21 +342,42 @@ public class WhereBlockRewriter {
     dataProcessorStats.add(exprStat);
   }
 
-  private void rewriteTableLikeParameterization(ListIterator<Statement> stats) throws InvalidSpecCompileException {
-    LinkedList<List<Expression>> rows = new LinkedList<>();
-
-    while (stats.hasNext()) {
+  private void rewriteBinaryTableLikeParameterization(ListIterator<Statement> stats) throws InvalidSpecCompileException {
+    rewriteTableLikeParameterization(stats, result -> {
       Statement stat = stats.next();
       BinaryExpression orExpr = getOrExpression(stat);
       if (orExpr == null) {
         stats.previous();
+        return true;
+      }
+      splitRow(orExpr, result);
+      return false;
+    });
+  }
+
+  private void rewriteExpressionTableLikeParameterization(ListIterator<Statement> stats) throws InvalidSpecCompileException {
+    rewriteTableLikeParameterization(stats, result -> {
+      List<Expression> row = getExpressionChain(stats);
+      if (row.size() <= 1) {
+        // rewind
+        row.forEach(expression -> stats.previous());
+        return true;
+      }
+      result.addAll(row);
+      return false;
+    });
+  }
+
+  private void rewriteTableLikeParameterization(ListIterator<Statement> stats, Function<List<Expression>, Boolean> rowExtractor) throws InvalidSpecCompileException {
+    LinkedList<List<Expression>> rows = new LinkedList<>();
+
+    while (stats.hasNext()) {
+      List<Expression> row = new ArrayList<>();
+      if (rowExtractor.apply(row)) {
         break;
       }
-
-      List<Expression> row = new ArrayList<>();
-      splitRow(orExpr, row);
       if (rows.size() > 0 && rows.getLast().size() != row.size())
-        throw new InvalidSpecCompileException(stat, String.format("Row in data table has wrong number of elements (%s instead of %s)", row.size(), rows.getLast().size()));
+        throw new InvalidSpecCompileException(row.get(0), String.format("Row in data table has wrong number of elements (%s instead of %s)", row.size(), rows.getLast().size()));
       rows.add(row);
     }
 
@@ -276,22 +402,113 @@ public class WhereBlockRewriter {
   private void turnIntoSimpleParameterization(List<Expression> column) throws InvalidSpecCompileException {
     VariableExpression varExpr = ObjectUtil.asInstance(column.get(0), VariableExpression.class);
     if (varExpr == null)
-      throw new InvalidSpecCompileException(column.get(0),
-          "Header of data table may only contain variable names");
+      throw dataTableHeaderMayOnlyContainVariableNames(column.get(0));
     if (AstUtil.isWildcardRef(varExpr)) {
       // assertion: column has a wildcard header, but the method's
       // explicit parameter list does not have a wildcard parameter
       return; // ignore column (see https://github.com/spockframework/spock/pull/48/)
     }
 
-    ListExpression listExpr = new ListExpression(column.subList(1, column.size()));
+    ListExpression listExpr = new ListExpression();
+
+    // get the previous data table column variables
+    List<String> previousVariables = getPreviousDataTableVariables(dataProcessorVars.size());
+    if (previousVariables.isEmpty()) {
+      // this is the first column,
+      // simply add the cell expressions to the data provider statement:
+      // x | y
+      // 1 | x + 1
+      // 2 | x + 2
+      // 3 | x + 3
+      // =>
+      // [
+      //   1,
+      //   2,
+      //   3
+      // ]
+      column.stream().skip(1).forEach(listExpr::addExpression);
+    } else {
+      // this is not the first column,
+      // cell expressions might reference previous columns,
+      // add statements that extract the correct row values for each expression,
+      // but only if they actually reference the previous column
+      // and wrap the whole thing in a closure and its call if necessary:
+      // x | y
+      // 1 | x + 1
+      // 2 | x + 2
+      // 3 | 3
+      // =>
+      // [
+      //   {
+      //     def x = $spock_p_x.get(0)
+      //     return x + 1
+      //   }(),
+      //
+      //   {
+      //     def x = $spock_p_x.get(1)
+      //     return x + 2
+      //   }(),
+      //
+      //   3
+      // ]
+      for (int row = 0, rows = column.size() - 1; row < rows; row++) {
+        Expression providerExpression = column.get(row + 1);
+        providerExpression.visit(new DataProviderInternalsVerifier());
+
+        List<String> referencedPreviousVariables = getReferencedPreviousVariables(previousVariables, providerExpression);
+
+        // no previous variables referenced => just use the expression
+        if (referencedPreviousVariables.isEmpty()) {
+          listExpr.addExpression(providerExpression);
+          continue;
+        }
+
+        // otherwise generate the extractors and closure
+        List<Statement> statements = new ArrayList<>();
+        generatePreviousColumnExtractorStatements(referencedPreviousVariables, row, statements);
+        ReturnStatement providerStatement = new ReturnStatement(providerExpression);
+        providerStatement.setSourcePosition(providerExpression);
+        statements.add(providerStatement);
+
+        ClosureExpression closureExpression = new ClosureExpression(
+          Parameter.EMPTY_ARRAY,
+          new BlockStatement(statements, null));
+
+        listExpr.addExpression(new MethodCallExpression(
+          closureExpression, "call", ArgumentListExpression.EMPTY_ARGUMENTS));
+      }
+    }
+
     BinaryExpression binExpr = new BinaryExpression(varExpr, Token.newSymbol(Types.LEFT_SHIFT, -1, -1), listExpr);
+    dataTableVars.add(new VariableExpression(varExpr.getName(), varExpr.getType()));
     // NOTE: varExpr may not be the "perfect" source position here, but as long as we rewrite data tables
     // into simple parameterizations, it seems like the best approximation; also this source position is
     // unlikely to make it into a compile error, because header variable has already been checked, and the
     // assignment itself is unlikely to cause a compile error. (It's more likely that the rval causes a
     // compile error, but the rval's source position is retained.)
-    rewriteSimpleParameterization(binExpr, varExpr);
+    rewriteSimpleParameterization(binExpr, varExpr, true);
+  }
+
+  private void generatePreviousColumnExtractorStatements(List<String> referencedPreviousVariables, int row,
+                                                         List<Statement> statements) {
+    for (String referencedPreviousVariable : referencedPreviousVariables) {
+      statements.add(new ExpressionStatement(
+        // def x = $spock_p_x.get(row)
+        new DeclarationExpression(
+          new VariableExpression(referencedPreviousVariable),
+          Token.newSymbol(Types.ASSIGN, -1, -1),
+          createGetMethod(new VariableExpression(getDataTableParameterName(referencedPreviousVariable)), row))));
+    }
+  }
+
+  private List<String> getReferencedPreviousVariables(List<String> previousVariables, Expression providerExpression) {
+    return previousVariables
+      .stream()
+      .map(PreviousDataTableVariableUsageTracker::new)
+      .peek(providerExpression::visit)
+      .filter(PreviousDataTableVariableUsageTracker::hasFound)
+      .map(PreviousDataTableVariableUsageTracker::getVariable)
+      .collect(toList());
   }
 
   private void splitRow(Expression row, List<Expression> parts) {
@@ -322,7 +539,7 @@ public class WhereBlockRewriter {
   private VariableExpression createDataProcessorVariable(Expression varExpr, ASTNode sourcePos)
       throws InvalidSpecCompileException {
     if (!(varExpr instanceof VariableExpression))
-      notAParameterization(sourcePos);
+      throw notAParameterization(sourcePos);
 
     VariableExpression typedVarExpr = (VariableExpression)varExpr;
     verifyDataProcessorVariable(typedVarExpr);
@@ -390,8 +607,7 @@ public class WhereBlockRewriter {
                 ClassHelper.OBJECT_TYPE,
                 (List) dataProcessorVars)));
 
-    BlockStatement blockStat = new BlockStatement(dataProcessorStats, new VariableScope());
-    new DataProcessorVariableRewriter().visitBlockStatement(blockStat);
+    BlockStatement blockStat = new BlockStatement(dataProcessorStats, null);
 
     whereBlock.getParent().getParent().getAst().addMethod(
       new MethodNode(
@@ -403,51 +619,59 @@ public class WhereBlockRewriter {
           blockStat));
   }
 
-  private static void notAParameterization(ASTNode stat) throws InvalidSpecCompileException {
-    throw new InvalidSpecCompileException(stat,
+  private static InvalidSpecCompileException notAParameterization(ASTNode stat) {
+    return new InvalidSpecCompileException(stat,
 "where-blocks may only contain parameterizations (e.g. 'salary << [1000, 5000, 9000]; salaryk = salary / 1000')");
   }
 
-  private class DataProcessorVariableRewriter extends ClassCodeVisitorSupport {
+  private static InvalidSpecCompileException dataTableHeaderMayOnlyContainVariableNames(ASTNode stat) {
+    return new InvalidSpecCompileException(stat, "Header of data table may only contain variable names");
+  }
+
+  private static class DataProviderInternalsVerifier extends ClassCodeVisitorSupport {
     @Override
     protected SourceUnit getSourceUnit() {
       throw new UnsupportedOperationException("getSourceUnit");
     }
 
     @Override
-    public void visitClosureExpression(ClosureExpression expr) {
-      super.visitClosureExpression(expr);
-      AstUtil.fixUpLocalVariables(dataProcessorVars, expr.getVariableScope(), true);
-    }
-
-    @Override
-    public void visitBlockStatement(BlockStatement stat) {
-      super.visitBlockStatement(stat);
-      AstUtil.fixUpLocalVariables(dataProcessorVars, stat.getVariableScope(), false);
+    public void visitVariableExpression(VariableExpression expression) {
+      super.visitVariableExpression(expression);
+      if (expression.getName().startsWith("$spock_p_")) {
+        sneakyThrow(new InvalidSpecCompileException(expression, "You should not try to use Spock internals"));
+      }
     }
   }
 
-  private class DataTablePreviousVariableTransformer extends ClassCodeExpressionTransformer {
-    private int depth = 0;
-    private int rowIndex = -1;
+  private static class PreviousDataTableVariableUsageTracker extends ClassCodeVisitorSupport {
+    private boolean found = false;
+    private final String variable;
+
+    public PreviousDataTableVariableUsageTracker(String variable) {
+      this.variable = variable;
+    }
+
+    boolean hasFound() {
+      return found;
+    }
+
+    String getVariable() {
+      return variable;
+    }
 
     @Override
-    protected SourceUnit getSourceUnit() { return null; }
+    protected SourceUnit getSourceUnit() {
+      throw new UnsupportedOperationException("getSourceUnit");
+    }
 
     @Override
-    public Expression transform(Expression expression) {
-      if (depth == 0)
-        rowIndex++;
-
-      if ((expression instanceof VariableExpression) && isDataProcessorVariable(expression.getText())) {
-        return AstUtil.createGetAtMethod(expression, rowIndex);
+    public void visitVariableExpression(VariableExpression expression) {
+      super.visitVariableExpression(expression);
+      if (((expression.getAccessedVariable() instanceof DynamicVariable)
+          ||(expression.getAccessedVariable() instanceof Parameter))
+          && expression.getName().equals(variable)) {
+        found = true;
       }
-
-      depth++;
-      Expression transform = super.transform(expression);
-      depth--;
-
-      return transform;
     }
   }
 }

@@ -17,6 +17,7 @@
 package org.spockframework.compiler;
 
 import org.spockframework.compiler.model.WhereBlock;
+import org.spockframework.runtime.model.DataProcessorMetadata;
 import org.spockframework.runtime.model.DataProviderMetadata;
 import org.spockframework.util.*;
 
@@ -31,6 +32,7 @@ import org.codehaus.groovy.control.SourceUnit;
 import org.codehaus.groovy.syntax.*;
 import org.objectweb.asm.Opcodes;
 
+import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.*;
 import static org.spockframework.compiler.AstUtil.createGetAtMethod;
 import static org.spockframework.compiler.AstUtil.createGetMethod;
@@ -578,16 +580,27 @@ public class WhereBlockRewriter {
 
   private void handleFeatureParameters() {
     Parameter[] parameters = whereBlock.getParent().getAst().getParameters();
-    if (parameters.length == 0)
+    if (parameters.length == 0) {
       addFeatureParameters();
-    else
+    } else {
       checkAllParametersAreDataVariables(parameters);
+      sortFeatureParameters(parameters);
+    }
   }
 
   private void checkAllParametersAreDataVariables(Parameter[] parameters) {
     for (Parameter param : parameters)
       if (!isDataProcessorVariable(param.getName()))
         resources.getErrorReporter().error(param, "Parameter '%s' does not refer to a data variable", param.getName());
+  }
+
+  private void sortFeatureParameters(Parameter[] parameters) {
+    List<String> dataVariableNames = dataProcessorVars
+      .stream()
+      .map(VariableExpression::getName)
+      .collect(toList());
+    Arrays.sort(parameters, comparing(parameter -> dataVariableNames.indexOf(parameter.getName())));
+    whereBlock.getParent().getAst().setParameters(parameters);
   }
 
   private void addFeatureParameters() {
@@ -609,14 +622,31 @@ public class WhereBlockRewriter {
 
     BlockStatement blockStat = new BlockStatement(dataProcessorStats, null);
 
-    whereBlock.getParent().getParent().getAst().addMethod(
-      new MethodNode(
-          InternalIdentifiers.getDataProcessorName(whereBlock.getParent().getAst().getName()),
-          Opcodes.ACC_PUBLIC | Opcodes.ACC_SYNTHETIC,
-          ClassHelper.OBJECT_TYPE,
-          dataProcessorParams.toArray(new Parameter[dataProcessorParams.size()]),
-          ClassNode.EMPTY_ARRAY,
-          blockStat));
+    MethodNode dataProcessorMethod = new MethodNode(
+      InternalIdentifiers.getDataProcessorName(whereBlock.getParent().getAst().getName()),
+      Opcodes.ACC_PUBLIC | Opcodes.ACC_SYNTHETIC,
+      ClassHelper.OBJECT_TYPE,
+      dataProcessorParams.toArray(Parameter.EMPTY_ARRAY),
+      ClassNode.EMPTY_ARRAY,
+      blockStat);
+    dataProcessorMethod.addAnnotation(createDataProcessorAnnotation());
+
+    whereBlock.getParent().getParent().getAst().addMethod(dataProcessorMethod);
+  }
+
+  private AnnotationNode createDataProcessorAnnotation() {
+    AnnotationNode ann = new AnnotationNode(resources.getAstNodeCache().DataProcessorMetadata);
+    ann.addMember(
+      DataProcessorMetadata.DATA_VARIABLES,
+      dataProcessorVars
+        .stream()
+        .map(VariableExpression::getName)
+        .map(ConstantExpression::new)
+        .collect(collectingAndThen(
+          Collectors.<Expression>toList(),
+          ListExpression::new))
+      );
+    return ann;
   }
 
   private static InvalidSpecCompileException notAParameterization(ASTNode stat) {

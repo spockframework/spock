@@ -14,6 +14,7 @@ public class FeatureInfo extends SpecElementInfo<SpecInfo, AnnotatedElement> {
   private int executionOrder;   // per spec inheritance chain
 
   private List<String> parameterNames = new ArrayList<>();
+  private List<String> dataVariables = new ArrayList<>();
   private final List<BlockInfo> blocks = new ArrayList<>();
   private final List<IMethodInterceptor> iterationInterceptors = new ArrayList<>();
 
@@ -58,7 +59,11 @@ public class FeatureInfo extends SpecElementInfo<SpecInfo, AnnotatedElement> {
   }
 
   public List<String> getDataVariables() {
-    return parameterNames; // currently the same
+    return dataVariables;
+  }
+
+  public void addDataVariable(String dataVariable) {
+    dataVariables.add(dataVariable);
   }
 
   public List<BlockInfo> getBlocks() {
@@ -99,6 +104,7 @@ public class FeatureInfo extends SpecElementInfo<SpecInfo, AnnotatedElement> {
 
   public void addDataProvider(DataProviderInfo dataProvider) {
     dataProviders.add(dataProvider);
+
   }
 
   public boolean isParameterized() {

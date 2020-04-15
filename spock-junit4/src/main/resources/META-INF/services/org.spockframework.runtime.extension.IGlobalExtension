@@ -1,3 +1,4 @@
 org.spockframework.junit4.RuleExtension
 org.spockframework.junit4.ClassRuleExtension
+org.spockframework.junit4.JUnit4AnnotationLifecycleMethodsExtension
 org.spockframework.junit4.ExceptionAdapterExtension

@@ -24,8 +24,6 @@ import org.codehaus.groovy.control.MultipleCompilationErrorsException
 import org.intellij.lang.annotations.Language
 import org.opentest4j.MultipleFailuresError
 
-import static org.spockframework.util.JUnit4LegacyUtil.junit4SupportAvailable
-
 /**
  * Utility class that allows to compile (fragments of) specs programmatically.
  * Mainly intended for spec'ing Spock itself.

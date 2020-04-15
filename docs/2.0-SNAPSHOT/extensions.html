@@ -1040,13 +1040,11 @@ restrictions, if parameters should be injected by your extension:</p>
 <p>all data variables and all to-be-injected parameters have to be defined as method parameters</p>
 </li>
 <li>
-<p>all method parameters have to be assigned a value in the <code>where:</code> block</p>
+<p>all method parameters have to be assigned a value in the <code>where:</code> block, for example <code>null</code></p>
 </li>
 <li>
-<p>the order of the method parameters has to be identical to the order of the data variables in the <code>where:</code> block</p>
-</li>
-<li>
-<p>the to-be-injected parameters have to be set to any value in the <code>where:</code> block, for example <code>null</code></p>
+<p><strong>pre Spock 2.0:</strong> the order of the method parameters has to be identical to the order of the data
+variables in the <code>where:</code> block</p>
 <div class="paragraph">
 <p>of course you can also make your extension only inject a value if none is set already, as the <code>where:</code> block
 assignments happen before the method interceptor is called</p>
@@ -1085,7 +1083,7 @@ assignments happen before the method interceptor is called</p>
 <div id="footer">
 <div id="footer-text">
 Version 2.0-SNAPSHOT<br>
-Last updated 2020-04-05 20:37:00 UTC
+Last updated 2020-04-15 10:54:45 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./coderay-asciidoctor.css">

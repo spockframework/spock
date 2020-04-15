@@ -87,6 +87,20 @@ b = a</code></pre>
 </div>
 </div>
 </div>
+<div class="sect3">
+<h4 id="_for_extension_developers"><a class="anchor" href="#_for_extension_developers"></a><a class="link" href="#_for_extension_developers">For extension developers</a></h4>
+<div class="ulist">
+<ul>
+<li>
+<p><code>FeatureInfo#getDataVariables()</code> and <code>FeatureInfo#getParameterNames()</code> used to return the
+same value, the parameter names, in the order of the method parameters. This can disturb some calculations like method
+argument determination and so on and is plainly wrong, as some parameters could be injected by extensions like
+injecting mock objects or test proxies or similar. <code>FeatureInfo#getDataVariables()</code> now only returns the actual data
+variables and in the order how they are defined in the <code>where</code> block.</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
 <h3 id="_misc"><a class="anchor" href="#_misc"></a><a class="link" href="#_misc">Misc</a></h3>
@@ -155,6 +169,10 @@ for example to disambiguate multiple candidate constructors</p>
 <li>
 <p>Accessing previous data table columns was broken in some cases, now it should work properly,
 even cross-table and without being disturbed by previous derived data variables.</p>
+</li>
+<li>
+<p>The order of parameters in a data-driven feature does no longer have to be identical to
+the declaration order in the <code>where</code> block. Data variables are now injected by name.</p>
 </li>
 </ul>
 </div>
@@ -1829,7 +1847,7 @@ required; the only prerequisite for building Spock is a JDK installation (1.5 or
 <div id="footer">
 <div id="footer-text">
 Version 2.0-SNAPSHOT<br>
-Last updated 2020-04-05 20:37:00 UTC
+Last updated 2020-04-15 10:54:45 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./coderay-asciidoctor.css">

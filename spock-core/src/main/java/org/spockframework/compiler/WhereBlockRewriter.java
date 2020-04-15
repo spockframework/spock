@@ -638,13 +638,14 @@ public class WhereBlockRewriter {
     AnnotationNode ann = new AnnotationNode(resources.getAstNodeCache().DataProcessorMetadata);
     ann.addMember(
       DataProcessorMetadata.DATA_VARIABLES,
-      new ListExpression(
-        dataProcessorVars
-          .stream()
-          .map(VariableExpression::getName)
-          .map(ConstantExpression::new)
-          .collect(toList())
-      ));
+      dataProcessorVars
+        .stream()
+        .map(VariableExpression::getName)
+        .map(ConstantExpression::new)
+        .collect(collectingAndThen(
+          Collectors.<Expression>toList(),
+          ListExpression::new))
+      );
     return ann;
   }
 

@@ -122,6 +122,9 @@ Spy(constructorArgs: [null as String, (Pattern) null])
 - Accessing previous data table columns was broken in some cases, now it should work properly,
   even cross-table and without being disturbed by previous derived data variables.
 
+- The order of parameters in a data-driven feature does no longer have to be identical to
+  the declaration order in the `where` block. Data variables are now injected by name.
+
 == 2.0-M2 (2020-02-10)
 
 === Groovy-3.0 Support

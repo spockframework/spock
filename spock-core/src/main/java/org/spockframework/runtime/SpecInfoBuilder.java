@@ -20,11 +20,8 @@ import org.spockframework.runtime.model.*;
 import org.spockframework.util.*;
 import spock.lang.Specification;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
 import java.util.*;
-
-import static org.spockframework.util.JUnit4LegacyUtil.isJunit4SupportAvailable;
 
 /**
  * Builds a SpecInfo from a Class instance.
@@ -33,18 +30,10 @@ import static org.spockframework.util.JUnit4LegacyUtil.isJunit4SupportAvailable;
  */
 public class SpecInfoBuilder {
   private final Class<?> clazz;
-  private final Class<?> effectiveClass;
   private final SpecInfo spec = new SpecInfo();
-  private final LegacyJUnit4Support junit4SpecInfoEnhancer;
 
   public SpecInfoBuilder(Class<?> clazz) {
-    this(clazz, clazz);
-  }
-
-  private SpecInfoBuilder(Class<?> clazz, Class<?> effectiveClass) {
     this.clazz = clazz;
-    this.effectiveClass = effectiveClass;
-    this.junit4SpecInfoEnhancer = new LegacyJUnit4Support();
   }
 
   public SpecInfo build() {
@@ -74,7 +63,7 @@ public class SpecInfoBuilder {
     Class<?> superClass = clazz.getSuperclass();
     if (superClass == Object.class || superClass == Specification.class) return;
 
-    SpecInfo superSpec = new SpecInfoBuilder(superClass, clazz).doBuild();
+    SpecInfo superSpec = new SpecInfoBuilder(superClass).doBuild();
     spec.setSuperSpec(superSpec);
     superSpec.setSubSpec(spec);
   }
@@ -229,54 +218,9 @@ public class SpecInfoBuilder {
     MethodInfo cleanupSpecMethod = createMethod(Identifiers.CLEANUP_SPEC_METHOD, MethodKind.CLEANUP_SPEC);
     if (cleanupSpecMethod != null) spec.addCleanupSpecMethod(cleanupSpecMethod);
 
-    junit4SpecInfoEnhancer.addJUnit4FixtureMethodsIfJUnit4ExtensionIsAvailable();
-
     MethodInfo setupMethod = createMethod(Identifiers.SETUP_METHOD, MethodKind.SETUP);
     if (setupMethod != null) spec.addSetupMethod(setupMethod);
     MethodInfo setupSpecMethod = createMethod(Identifiers.SETUP_SPEC_METHOD, MethodKind.SETUP_SPEC);
     if (setupSpecMethod != null) spec.addSetupSpecMethod(setupSpecMethod);
-  }
-
-  private class LegacyJUnit4Support {
-
-    void addJUnit4FixtureMethodsIfJUnit4ExtensionIsAvailable() {
-      if (isJunit4SupportAvailable()) {
-        for (Method method : clazz.getDeclaredMethods()) {
-          if (method.isAnnotationPresent(JUnit4LegacyUtil.BEFORE_ANNOTATION)) {
-            spec.addSetupMethod(createJUnitFixtureMethod(method, MethodKind.SETUP, JUnit4LegacyUtil.BEFORE_ANNOTATION));
-          }
-          if (method.isAnnotationPresent(JUnit4LegacyUtil.AFTER_ANNOTATION)) {
-            spec.addCleanupMethod(createJUnitFixtureMethod(method, MethodKind.CLEANUP, JUnit4LegacyUtil.AFTER_ANNOTATION));
-          }
-          if (method.isAnnotationPresent(JUnit4LegacyUtil.BEFORE_CLASS_ANNOTATION)) {
-            spec.addSetupSpecMethod(createJUnitFixtureMethod(method, MethodKind.SETUP_SPEC, JUnit4LegacyUtil.BEFORE_CLASS_ANNOTATION));
-          }
-          if (method.isAnnotationPresent(JUnit4LegacyUtil.AFTER_CLASS_ANNOTATION)) {
-            spec.addCleanupSpecMethod(createJUnitFixtureMethod(method, MethodKind.CLEANUP_SPEC, JUnit4LegacyUtil.AFTER_CLASS_ANNOTATION));
-          }
-        }
-      }
-    }
-
-    private MethodInfo createJUnitFixtureMethod(Method method, MethodKind kind, Class<? extends Annotation> annotation) {
-      MethodInfo methodInfo = createMethod(method, kind, method.getName());
-      methodInfo.setExcluded(isOverriddenJUnitFixtureMethod(method, annotation));
-      return methodInfo;
-    }
-
-    private boolean isOverriddenJUnitFixtureMethod(Method method, Class<? extends Annotation> annotation) {
-      if (Modifier.isPrivate(method.getModifiers())) return false;
-
-      for (Class<?> currClass = effectiveClass; currClass != clazz; currClass = currClass.getSuperclass()) {
-        for (Method currMethod : currClass.getDeclaredMethods()) {
-          if (!currMethod.isAnnotationPresent(annotation)) continue;
-          if (!currMethod.getName().equals(method.getName())) continue;
-          if (!Arrays.deepEquals(currMethod.getParameterTypes(), method.getParameterTypes())) continue;
-          return true;
-        }
-      }
-
-      return false;
-    }
   }
 }

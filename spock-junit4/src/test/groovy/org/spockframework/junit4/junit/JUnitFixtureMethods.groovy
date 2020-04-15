@@ -45,9 +45,9 @@ class JUnitFixtureMethods extends JUnitBaseSpec {
 
     then:
     invocations == [
-      "beforeClass", "setupSpec",
-      "before", "setup", "cleanup", "after",
-      "before", "setup", "cleanup", "after",
+      "setupSpec", "beforeClass",
+      "setup", "before", "cleanup", "after",
+      "setup", "before", "cleanup", "after",
       "cleanupSpec", "afterClass"
     ]
   }

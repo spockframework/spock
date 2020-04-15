@@ -92,8 +92,6 @@ b = a
 
 === Misc
 
-- Upgrade JUnit 4 to 4.13
-
 - Defining interactions on property getters within Mock instantiation closures or `with` closures works now without
   the need to explicitly qualify the property access with `it.`
 +
@@ -146,6 +144,10 @@ Spy(constructorArgs: [null as String, (Pattern) null])
 
 - The order of parameters in a data-driven feature does no longer have to be identical to
   the declaration order in the `where` block. Data variables are now injected by name.
+
+- Upgrade JUnit 4 to 4.13 (in `spock-junit4`)
+
+- Upgrade Hamcrest to 2.2 (from 1.3 provied previously by `junit4.jar`)
 
 == 2.0-M2 (2020-02-10)
 

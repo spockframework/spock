@@ -16,12 +16,12 @@
 
 package org.spockframework.runtime;
 
+import org.spockframework.runtime.ParameterizedFeatureNode.ChildExecutor;
 import org.spockframework.runtime.extension.*;
 import org.spockframework.runtime.model.*;
 import org.spockframework.util.*;
 import spock.lang.Specification;
 
-import org.junit.platform.engine.support.hierarchical.Node;
 
 import java.util.Arrays;
 
@@ -249,7 +249,7 @@ public class PlatformSpecRunner {
     return result;
   }
 
-  void runParameterizedFeature(SpockExecutionContext context, Node.DynamicTestExecutor dynamicTestExecutor) throws InterruptedException  {
+  void runParameterizedFeature(SpockExecutionContext context, ChildExecutor childExecutor) throws InterruptedException  {
     throw new UnsupportedOperationException("This runner cannot run parameterized features");
   }
 

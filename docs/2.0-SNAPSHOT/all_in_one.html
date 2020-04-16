@@ -1501,10 +1501,21 @@ spec, all of which can be kept in the same file. This achieves better isolation 
 <div class="sect2">
 <h3 id="_syntactic_variations"><a class="anchor" href="#_syntactic_variations"></a><a class="link" href="#_syntactic_variations">Syntactic Variations</a></h3>
 <div class="paragraph">
-<p>The previous code can be tweaked in a few ways. First, since the <code>where:</code> block already declares all data variables, the
-method parameters can be omitted.<sup class="footnote">[<a id="_footnoteref_1" class="footnote" href="#_footnotedef_1" title="View footnote.">1</a>]</sup>
-Second, inputs and expected outputs can be separated with a double pipe symbol (<code>||</code>) to visually set them apart.
-With this, the code becomes:</p>
+<p>The previous code can be tweaked in a few ways.</p>
+</div>
+<div class="paragraph">
+<p>First, since the <code>where:</code> block already declares all data variables, the method parameters can be
+omitted.<sup class="footnote">[<a id="_footnoteref_1" class="footnote" href="#_footnotedef_1" title="View footnote.">1</a>]</sup></p>
+</div>
+<div class="paragraph">
+<p>You can also omit some parameters and specify others, for example to have them typed.
+The order also is not important, data variables are matched by name to the specified method parameters.</p>
+</div>
+<div class="paragraph">
+<p>Second, inputs and expected outputs can be separated with a double pipe symbol (<code>||</code>) to visually set them apart.</p>
+</div>
+<div class="paragraph">
+<p>With this, the code becomes:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -4372,9 +4383,24 @@ annotated with a special annotation or some test helper that injects objects of 
 prepared for usage automatically.</p>
 </div>
 <div class="paragraph">
-<p><code>invocation.arguments</code> may be an empty array or an array of arbitrary length, depending on what interceptors were run
-before that maybe also have manipulated this array for parameter injection. So if you for example investigated the
-method parameters with <code>invocation.method.reflection.parameters</code> and found that you want to inject the fifth parameter,
+<p>When called from at least Spock 2.0, the <code>arguments</code> array will always have the size of the method parameter count,
+so you can directly set the arguments you want to set. You cannot change the size of the <code>arguments</code> array either.
+All parameters that did not yet get any value injected, either from data variables or some extension, will have the
+value <code>MethodInfo.MISSING_ARGUMENT</code> and if any of those remain, after all interceptors were run, an exception will be
+thrown.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>When your extension might be used with a version before Spock 2.0, the <code>arguments</code> array may be an empty array
+or an array of arbitrary length, depending on what interceptors were run before that maybe also have manipulated
+this array for parameter injection. If you for example investigated the method parameters with
+<code>invocation.method.reflection.parameters</code> and found that you want to inject the fifth parameter,
 you should first check whether the <code>arguments</code> array is at least five elements long. If not, you should assign it a new
 array that is at least five elements long and copy the contents of the old array into the new one. Then you can assign
 your objects to be injected.</p>
@@ -4405,6 +4431,10 @@ parameters.each { parameter, i -&gt;
 }</code></pre>
 </div>
 </div>
+</td>
+</tr>
+</table>
+</div>
 <div class="admonitionblock note">
 <table>
 <tr>
@@ -4413,7 +4443,7 @@ parameters.each { parameter, i -&gt;
 </td>
 <td class="content">
 <div class="paragraph">
-<p>When using data driven features (methods with a <code>where:</code> block), the user of your extension has to follow some
+<p><strong>Pre Spock 2.0 only:</strong> When using data driven features (methods with a <code>where:</code> block), the user of your extension has to follow some
 restrictions, if parameters should be injected by your extension:</p>
 </div>
 <div class="ulist">
@@ -4425,8 +4455,10 @@ restrictions, if parameters should be injected by your extension:</p>
 <p>all method parameters have to be assigned a value in the <code>where:</code> block, for example <code>null</code></p>
 </li>
 <li>
-<p><strong>pre Spock 2.0:</strong> the order of the method parameters has to be identical to the order of the data
-variables in the <code>where:</code> block</p>
+<p>the order of the method parameters has to be identical to the order of the data variables in the <code>where:</code> block</p>
+</li>
+</ul>
+</div>
 <div class="paragraph">
 <p>of course you can also make your extension only inject a value if none is set already, as the <code>where:</code> block
 assignments happen before the method interceptor is called</p>
@@ -4434,11 +4466,8 @@ assignments happen before the method interceptor is called</p>
 <div class="paragraph">
 <p>for this simply check whether <code>invocation.arguments[i]</code> is <code>null</code> or not</p>
 </div>
-</li>
-</ul>
-</div>
 <div class="listingblock">
-<div class="title">Data Driven Feature with Injected Parameter</div>
+<div class="title">Data Driven Feature with Injected Parameter pre Spock 2.0</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> <span class="string"><span class="delimiter">'</span><span class="content">test parameter injection</span><span class="delimiter">'</span></span>(a, b, MyInjectable myInjectable) {
   <span class="key">expect</span>: myInjectable
@@ -4450,6 +4479,19 @@ assignments happen before the method interceptor is called</p>
 
   <span class="key">and</span>:
   myInjectable = <span class="predefined-constant">null</span>
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Data Driven Feature with Injected Parameter post Spock 2.0</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> <span class="string"><span class="delimiter">'</span><span class="content">test parameter injection</span><span class="delimiter">'</span></span>(MyInjectable myInjectable) {
+  <span class="key">expect</span>: myInjectable
+
+  <span class="key">where</span>:
+  a    | b
+  <span class="string"><span class="delimiter">'</span><span class="content">a1</span><span class="delimiter">'</span></span> | <span class="string"><span class="delimiter">'</span><span class="content">b1</span><span class="delimiter">'</span></span>
+  <span class="string"><span class="delimiter">'</span><span class="content">a2</span><span class="delimiter">'</span></span> | <span class="string"><span class="delimiter">'</span><span class="content">b2</span><span class="delimiter">'</span></span>
 }</code></pre>
 </div>
 </div>
@@ -4953,6 +4995,11 @@ argument determination and so on and is plainly wrong, as some parameters could 
 injecting mock objects or test proxies or similar. <code>FeatureInfo#getDataVariables()</code> now only returns the actual data
 variables and in the order how they are defined in the <code>where</code> block.</p>
 </li>
+<li>
+<p>Method arguments in <code>MethodInfo</code> now have a value of <code>MethodInfo.MISSING_ARGUMENT</code> if no value was set so far,
+for example by some extensions or from data variables. If any of these is not replaced by some value, an exception
+will be thrown at runtime.</p>
+</li>
 </ul>
 </div>
 </div>
@@ -5028,6 +5075,13 @@ even cross-table and without being disturbed by previous derived data variables.
 <li>
 <p>The order of parameters in a data-driven feature does no longer have to be identical to
 the declaration order in the <code>where</code> block. Data variables are now injected by name.</p>
+</li>
+<li>
+<p>Data driven features do no longer have the requirement that either none or all data variables are declared as
+parameters and that all parameters are also data variables. Now you can either declare none, some, or all data
+variables as parameters and also have additional method parameters that are no data variables.
+Those additional parameters must be provided by some Spock extension though. If they are not set at execution time,
+an exception will be thrown.</p>
 </li>
 </ul>
 </div>
@@ -7135,7 +7189,7 @@ Math.signum(a &lt;=&gt; b) == result
 <div id="footer">
 <div id="footer-text">
 Version 2.0-SNAPSHOT<br>
-Last updated 2020-04-15 10:54:45 UTC
+Last updated 2020-04-16 19:29:01 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./coderay-asciidoctor.css">

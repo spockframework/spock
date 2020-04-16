@@ -227,10 +227,21 @@ spec, all of which can be kept in the same file. This achieves better isolation 
 <h2 id="_syntactic_variations"><a class="anchor" href="#_syntactic_variations"></a><a class="link" href="#_syntactic_variations">Syntactic Variations</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The previous code can be tweaked in a few ways. First, since the <code>where:</code> block already declares all data variables, the
-method parameters can be omitted.<sup class="footnote">[<a id="_footnoteref_1" class="footnote" href="#_footnotedef_1" title="View footnote.">1</a>]</sup>
-Second, inputs and expected outputs can be separated with a double pipe symbol (<code>||</code>) to visually set them apart.
-With this, the code becomes:</p>
+<p>The previous code can be tweaked in a few ways.</p>
+</div>
+<div class="paragraph">
+<p>First, since the <code>where:</code> block already declares all data variables, the method parameters can be
+omitted.<sup class="footnote">[<a id="_footnoteref_1" class="footnote" href="#_footnotedef_1" title="View footnote.">1</a>]</sup></p>
+</div>
+<div class="paragraph">
+<p>You can also omit some parameters and specify others, for example to have them typed.
+The order also is not important, data variables are matched by name to the specified method parameters.</p>
+</div>
+<div class="paragraph">
+<p>Second, inputs and expected outputs can be separated with a double pipe symbol (<code>||</code>) to visually set them apart.</p>
+</div>
+<div class="paragraph">
+<p>With this, the code becomes:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -717,7 +728,7 @@ finally the iteration index, so the result will be for example
 <div id="footer">
 <div id="footer-text">
 Version 2.0-SNAPSHOT<br>
-Last updated 2020-04-15 10:54:45 UTC
+Last updated 2020-04-16 19:29:01 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./coderay-asciidoctor.css">

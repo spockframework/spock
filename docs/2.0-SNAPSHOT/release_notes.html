@@ -98,6 +98,11 @@ argument determination and so on and is plainly wrong, as some parameters could 
 injecting mock objects or test proxies or similar. <code>FeatureInfo#getDataVariables()</code> now only returns the actual data
 variables and in the order how they are defined in the <code>where</code> block.</p>
 </li>
+<li>
+<p>Method arguments in <code>MethodInfo</code> now have a value of <code>MethodInfo.MISSING_ARGUMENT</code> if no value was set so far,
+for example by some extensions or from data variables. If any of these is not replaced by some value, an exception
+will be thrown at runtime.</p>
+</li>
 </ul>
 </div>
 </div>
@@ -173,6 +178,13 @@ even cross-table and without being disturbed by previous derived data variables.
 <li>
 <p>The order of parameters in a data-driven feature does no longer have to be identical to
 the declaration order in the <code>where</code> block. Data variables are now injected by name.</p>
+</li>
+<li>
+<p>Data driven features do no longer have the requirement that either none or all data variables are declared as
+parameters and that all parameters are also data variables. Now you can either declare none, some, or all data
+variables as parameters and also have additional method parameters that are no data variables.
+Those additional parameters must be provided by some Spock extension though. If they are not set at execution time,
+an exception will be thrown.</p>
 </li>
 </ul>
 </div>
@@ -1847,7 +1859,7 @@ required; the only prerequisite for building Spock is a JDK installation (1.5 or
 <div id="footer">
 <div id="footer-text">
 Version 2.0-SNAPSHOT<br>
-Last updated 2020-04-15 10:54:45 UTC
+Last updated 2020-04-16 19:29:01 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./coderay-asciidoctor.css">

@@ -14,6 +14,16 @@ public class ErrorSpecNode extends SpecNode {
   }
 
   @Override
+  public void prune() {
+    // prevent pruning of this node
+    // default logic would prune it as it
+    // - is no test,
+    // - has no test descendents and
+    // - may not register new tests during execution
+    // without this empty override, the node is thrown away and the error is not reported
+  }
+
+  @Override
   public SpockExecutionContext execute(SpockExecutionContext context, DynamicTestExecutor dynamicTestExecutor) throws Exception {
     return ExceptionUtil.sneakyThrow(error);
   }

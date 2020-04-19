@@ -29,7 +29,7 @@ class RequiresExtension extends EmbeddedSpecification {
     when:
     def results = runner.runClass(RequiresExtensionExamples)
     then:
-    results.testsSucceededCount == 5
+    results.testsSucceededCount == 6
     results.testsFailedCount == 0
     results.testsSkippedCount == 2
     results.testEvents().skipped().list().testDescriptor.displayName == [
@@ -68,6 +68,11 @@ class RequiresExtension extends EmbeddedSpecification {
 
     @Requires({ sys.containsKey("java.version") })
     def "provides access to system properties"() {
+      expect: true
+    }
+
+    @Requires({ it.sys.containsKey("java.version") })
+    def "can use closure argument for an easy option to typecast and use IDE support"() {
       expect: true
     }
 

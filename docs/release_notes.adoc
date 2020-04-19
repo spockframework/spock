@@ -135,6 +135,16 @@ Spy(constructorArgs: [null as String, (Pattern) null])
   Those additional parameters must be provided by some Spock extension though. If they are not set at execution time,
   an exception will be thrown.
 
+- Condition closures used in `@Requires`, `@IgnoreIf` and `@PendingFeatureIf` now also get the context passed
+  as argument, so you can use this, typed as `org.spockframework.runtime.extension.builtin.PreconditionContext` to
+  enable IDE support like code completion
++
+[source,groovy]
+----
+@IgnoreIf({ PreconditionContext it -> it.os.windows })
+def "I'll run everywhere but on Windows"() { ... }
+----
+
 == 2.0-M2 (2020-02-10)
 
 === Groovy-3.0 Support

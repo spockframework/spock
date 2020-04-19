@@ -5,7 +5,23 @@ include::include.adoc[]
 
 === Breaking Changes
 
+==== Sputnik Runner removed (an alternative)
+
+In 2.0-M1 the Sputnik runner was removed and the 2.0-M2 release notes explicitly mentioned that enhancements
+that extend `Sputnik` or use it as a delegate like for example the `PowerMockRunnerDelegate` will not work anymore.
+
+This is not the full truth though. There is a JUnit 4 runner provided by JUnit 5 called `JUnitPlatform` that can
+run any JUnit platform based tests - like Spock 2+ based tests - in a JUnit 4 environment. This is intended
+for situations where an IDE, build tool, CI server, or similar does not yet natively support JUnit platform.
+It is provided in the artifact `org.junit.platform:junit-platform-runner`.
+
+This means, if you make sure your tests are launched with JUnit 4 and you use `JUnitPlatform` where you before used
+`Sputnik`, all should work out properly. In case of PowerMock this means you annotate your specification with
+`@RunWith(PowerMockRunner)` and `@PowerMockRunnerDelegate(JUnitPlatform)` and make sure your tests are launched
+using JUnit 4.
+
 ==== New meaning of `>> _`
+
 The meaning of `>> _` has changed form "use the default response" to "return a stubbed value" (<<interaction_based_testing.adoc#_returning_a_default_response,Docs>>).
 The original behavior was only ever documented in the Javadocs and was basically the same to just omitting it.
 The only use-case was chained responses `>> "a" >> _ >> "b"`,

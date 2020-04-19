@@ -47,6 +47,11 @@ class IgnoreIfExtension extends Specification {
     expect: false
   }
 
+  @IgnoreIf({ !it.sys.contains("java.version") })
+  def "can use closure argument for an easy option to typecast and use IDE support"() {
+    expect: false
+  }
+
   @Issue("https://github.com/spockframework/spock/issues/535")
   @Requires({ false })
   @IgnoreIf({ false })

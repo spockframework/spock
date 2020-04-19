@@ -35,11 +35,12 @@ public class PendingFeatureIfExtension extends AbstractAnnotationDrivenExtension
   }
 
   private Object evaluateCondition(Closure condition) {
-    condition.setDelegate(new PreconditionContext());
+    PreconditionContext context = new PreconditionContext();
+    condition.setDelegate(context);
     condition.setResolveStrategy(Closure.DELEGATE_ONLY);
 
     try {
-      return condition.call();
+      return condition.call(context);
     } catch (Exception e) {
       throw new ExtensionException("Failed to evaluate @PendingFeatureIf condition", e);
     }

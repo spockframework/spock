@@ -1,14 +1,27 @@
 = Modules
 include::include.adoc[]
 
+== JUnit 4 Module
+
+Integration with JUnit 4 features for Spock 2+ (which internally uses JUnit Platform - part of JUnit 5).
+
+The module is required for:
+
+ - running JUnit 4 rules and class ruless (`@Rule`/`@ClassRule`)
+ - using JUnit 4's test fixture annotations (`@BeforeClass`, `@Before`, `@After`, `@AfterClass`)
+
+NOTE: This module does its best to support old features from JUnit 4, however, users are encouraged to migrate to the native Spock counterparts.
+
+
 == Guice Module
 
 Integration with the http://code.google.com/p/google-guice/[Guice] IoC container. For examples see the specs in the
 https://github.com/spockframework/spock/tree/master/spock-guice/src/test/groovy/org/spockframework/guice[codebase].
 
-With Spock 1.2 detached mocks are automatically attached to the `Specification` if they are injected via `@Inject`.
+With Spock 1.2+ detached mocks are automatically attached to the `Specification` if they are injected via `@Inject`.
 
 include::module_spring.adoc[leveloffset=+1]
+
 
 == Tapestry Module
 
@@ -20,6 +33,7 @@ https://github.com/spockframework/spock/tree/master/spock-tapestry/src/test/groo
 
 Integration with the http://www.unitils.org/[Unitils] library. For examples see the specs in the
 https://github.com/spockframework/spock/tree/master/spock-unitils/src/test/groovy/org/spockframework/unitils[codebase].
+
 
 == Grails Module
 

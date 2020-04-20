@@ -3567,6 +3567,17 @@ followed by a predicate:</p>
 <p>Care should be taken when ignoring feature methods in a spec class annotated with <code>spock.lang.Stepwise</code> since
 later feature methods may depend on earlier feature methods having executed.</p>
 </div>
+<div class="paragraph">
+<p>To use IDE support like code completion, you can also use the argument to the closure and have it typed as
+<code>org.spockframework.runtime.extension.builtin.PreconditionContext</code>. This enables the IDE with type information
+which is not available otherwise:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@IgnoreIf</span>({ PreconditionContext <span class="local-variable">it</span> -&gt; <span class="local-variable">it</span>.os.windows })
+<span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">I'll run everywhere but on Windows</span><span class="delimiter">&quot;</span></span>() { ... }</code></pre>
+</div>
+</div>
 </div>
 <div class="sect3">
 <h4 id="_requires"><a class="anchor" href="#_requires"></a><a class="link" href="#_requires">Requires</a></h4>
@@ -4974,7 +4985,7 @@ b &lt;&lt; a</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>what you want instead is</p>
+<p>what you want instead is:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -5013,7 +5024,7 @@ will be thrown at runtime.</p>
 </li>
 <li>
 <p>Defining interactions on property getters within Mock instantiation closures or <code>with</code> closures works now without
-the need to explicitly qualify the property access with <code>it.</code></p>
+the need to explicitly qualify the property access with <code>it.</code>:</p>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy">Foo foo = <span class="predefined-type">Stub</span> {
@@ -5061,7 +5072,7 @@ This is typically not interesting for the average user, but might be helpful for
 </li>
 <li>
 <p><code>constructorArgs</code> now properly transport type cast information to the constructor selection,
-for example to disambiguate multiple candidate constructors</p>
+for example to disambiguate multiple candidate constructors:</p>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy">Spy(<span class="key">constructorArgs</span>: [<span class="predefined-constant">null</span> <span class="keyword">as</span> <span class="predefined-type">String</span>, (<span class="predefined-type">Pattern</span>) <span class="predefined-constant">null</span>])</code></pre>
@@ -5082,6 +5093,17 @@ parameters and that all parameters are also data variables. Now you can either d
 variables as parameters and also have additional method parameters that are no data variables.
 Those additional parameters must be provided by some Spock extension though. If they are not set at execution time,
 an exception will be thrown.</p>
+</li>
+<li>
+<p>Condition closures used in <code>@Requires</code>, <code>@IgnoreIf</code> and <code>@PendingFeatureIf</code> now also get the context passed
+as argument, so you can use this, typed as <code>org.spockframework.runtime.extension.builtin.PreconditionContext</code> to
+enable IDE support like code completion:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@IgnoreIf</span>({ PreconditionContext <span class="local-variable">it</span> -&gt; <span class="local-variable">it</span>.os.windows })
+<span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">I'll run everywhere but on Windows</span><span class="delimiter">&quot;</span></span>() { ... }</code></pre>
+</div>
+</div>
 </li>
 </ul>
 </div>
@@ -6771,7 +6793,7 @@ b &lt;&lt; a</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>what you want instead is</p>
+<p>what you want instead is:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -7189,7 +7211,7 @@ Math.signum(a &lt;=&gt; b) == result
 <div id="footer">
 <div id="footer-text">
 Version 2.0-SNAPSHOT<br>
-Last updated 2020-04-17 00:29:14 UTC
+Last updated 2020-04-20 22:01:23 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./coderay-asciidoctor.css">

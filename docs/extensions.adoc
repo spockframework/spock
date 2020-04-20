@@ -115,6 +115,16 @@ def "I'll run everywhere but on Windows"() { ... }
 Care should be taken when ignoring feature methods in a spec class annotated with `spock.lang.Stepwise` since
 later feature methods may depend on earlier feature methods having executed.
 
+To use IDE support like code completion, you can also use the argument to the closure and have it typed as
+`org.spockframework.runtime.extension.builtin.PreconditionContext`. This enables the IDE with type information
+which is not available otherwise:
+
+[source,groovy]
+----
+@IgnoreIf({ PreconditionContext it -> it.os.windows })
+def "I'll run everywhere but on Windows"() { ... }
+----
+
 === Requires
 
 To execute a feature method under certain conditions, annotate it with `spock.lang.Requires`,

@@ -19,7 +19,6 @@ package org.spockframework.smoke.parameterization
 import org.opentest4j.MultipleFailuresError
 import org.opentest4j.TestAbortedException
 import org.spockframework.EmbeddedSpecification
-import org.spockframework.runtime.SpockAssertionError
 import org.spockframework.runtime.SpockComparisonFailure
 
 class ParameterizedFeatureNodeStatuses extends EmbeddedSpecification {
@@ -36,6 +35,43 @@ def 'a feature'() {
   throw new TestAbortedException()
   expect: a in [1, 2]
   where: a << [1, 2]
+}
+"""
+
+    then:
+    verifyAll(result) {
+      testEvents().executions().aborted().stream().forEach { it.terminationInfo.executionResult.throwable.get().printStackTrace() }
+
+      dynamicallyRegisteredCount == 0
+
+      containersStartedCount == 2
+      containersSkippedCount == 0
+      containersAbortedCount == 0
+      containersSucceededCount == 2
+      containersFailedCount == 0
+
+      testsStartedCount == 1
+      testsSkippedCount == 0
+      testsAbortedCount == 1
+      testsSucceededCount == 0
+      testsFailedCount == 0
+
+      totalStartedCount == 3
+      totalSkippedCount == 0
+      totalAbortedCount == 1
+      totalSucceededCount == 2
+      totalFailureCount == 0
+    }
+  }
+
+  def 'should be skipped if there is one uprolled iteration and it is skipped'() {
+    when:
+    def result = runner.runSpecBody """
+@Rollup
+def 'a feature'() {
+  throw new TestAbortedException()
+  expect: a in [1, 2]
+  where: a = 1
 }
 """
 
@@ -108,6 +144,42 @@ def 'a feature'() {
   if (a == 1) throw new TestAbortedException()
   expect: a == 3
   where: a << [1, 2]
+}
+"""
+
+    then:
+    verifyAll(result) {
+      failures.exception*.getClass() == [SpockComparisonFailure]
+
+      dynamicallyRegisteredCount == 0
+
+      containersStartedCount == 2
+      containersSkippedCount == 0
+      containersAbortedCount == 0
+      containersSucceededCount == 2
+      containersFailedCount == 0
+
+      testsStartedCount == 1
+      testsSkippedCount == 0
+      testsAbortedCount == 0
+      testsSucceededCount == 0
+      testsFailedCount == 1
+
+      totalStartedCount == 3
+      totalSkippedCount == 0
+      totalAbortedCount == 0
+      totalSucceededCount == 2
+      totalFailureCount == 1
+    }
+  }
+
+  def 'should be failing if there is one uprolled iteration and it is failing'() {
+    when:
+    def result = runner.runSpecBody """
+@Rollup
+def 'a feature'() {
+  expect: a == 3
+  where: a = 1
 }
 """
 

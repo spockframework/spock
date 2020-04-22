@@ -14,13 +14,7 @@ dependencies {
   testCompile "org.unitils:unitils-database:3.3",  {
     exclude module: "jta"
   }
-
-  // for some reason, groovyc needs junit dependency for compiling tests
-  // otherwise we'll get:
-  // java.lang.NoClassDefFoundError: junit/framework/AssertionFailedError
-  testCompile libs.junit4
-  // for groovy.sql.Sql
-  testCompile groovyTestDependencies
+  testCompile libs.groovySql // for groovy.sql.Sql
 
   testRuntime libs.h2database
   testRuntime libs.log4j

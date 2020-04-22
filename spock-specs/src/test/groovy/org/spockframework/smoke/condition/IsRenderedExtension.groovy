@@ -17,7 +17,7 @@ package org.spockframework.smoke.condition
 import java.lang.annotation.RetentionPolicy
 import java.lang.annotation.Retention
 
-import org.junit.ComparisonFailure
+import org.opentest4j.AssertionFailedError
 import org.spockframework.runtime.extension.IMethodInterceptor
 import org.spockframework.runtime.ConditionNotSatisfiedError
 import org.spockframework.runtime.extension.IMethodInvocation
@@ -41,7 +41,7 @@ class IsRenderedExtension extends AbstractAnnotationDrivenExtension<IsRendered> 
       } catch (ConditionNotSatisfiedError e) {
         def expected = annotation.value().trim()
         def actual = e.condition.rendering.trim()
-        if (expected != actual) throw new ComparisonFailure("Condition rendered incorrectly", expected, actual)
+        if (expected != actual) throw new AssertionFailedError("Condition rendered incorrectly", expected, actual)
       }
     } as IMethodInterceptor)
   }

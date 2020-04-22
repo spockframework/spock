@@ -23,10 +23,6 @@ class SharedVsStaticFields extends EmbeddedSpecification {
   def "shared fields are not shared between subsequent runs"() {
     setup:
     def clazz = compiler.compileWithImports("""
-import org.junit.runner.RunWith
-import org.junit.runners.Suite
-import org.junit.runners.Suite.SuiteClasses
-
 class SharedField extends Specification {
   @Shared x = 42
 
@@ -53,10 +49,6 @@ class SharedField extends Specification {
   def "static fields are shared between subsequent runs"() {
     setup:
     def clazz = compiler.compileWithImports("""
-import org.junit.runner.RunWith
-import org.junit.runners.Suite
-import org.junit.runners.Suite.SuiteClasses
-
 class StaticField extends Specification {
   static x = 42
 

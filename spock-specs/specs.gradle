@@ -5,15 +5,12 @@ description = "Spock specifications for the Core Module. Yes, we eat our own dog
 apply plugin: "spock-base"
 
 configurations {
-  junit
   groovyConsole
 }
 
 dependencies {
   testCompile project(":spock-core")
-  testCompile project(":spock-junit4")
-  // for groovy.sql.Sql and groovy.transform.NotYetImplemented
-  testCompile groovyTestDependencies
+  testCompile libs.groovySql  //for groovy.sql.Sql
 
   testRuntime libs.asm
   testRuntime libs.bytebuddy
@@ -21,19 +18,11 @@ dependencies {
   testRuntime libs.objenesis
   testRuntime libs.h2database
 
-  junit libs.junit4
-
   groovyConsole groovyConsoleExtraDependencies
 }
 
 sourceCompatibility = javaVersion
 targetCompatibility = javaVersion
-
-// necessary to make @NotYetImplemented transform work (transform that ships
-// with Groovy and statically references third-party class junit.framwork.AssertionFailedError)
-tasks.withType(GroovyCompile) {
-	groovyClasspath += configurations.junit
-}
 
 test {
   reports.junitXml.enabled = true

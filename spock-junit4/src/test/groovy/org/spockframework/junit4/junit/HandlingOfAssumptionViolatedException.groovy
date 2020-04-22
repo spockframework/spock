@@ -99,7 +99,7 @@ def foo() {
 }
 
 def bar() {
-  expect: true
+  expect: false
 }
     """
 

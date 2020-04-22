@@ -1,5 +1,5 @@
 /*
-* Copyright 2014 the original author or authors.
+* Copyright 2020 the original author or authors.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -15,20 +15,16 @@
 */
 package org.spockframework.smoke.traits
 
-trait MyTrait {
-  int x = 10
+import org.junit.*
 
-  def multiply(m, n) { m * n }
-
-  def setup() {
-    setupEvaluated = true
+trait MyTraitWithJUnit4Annotations {
+  @Before
+  void before() {
+    beforeEvaluated = true
   }
 
-  def cleanup() {
-    cleanupEvaluated = true
-  }
-
-  def setupSpec() {
-    setupSpecEvaluated = true
+  @After
+  void after() {
+    afterEvaluated = true
   }
 }

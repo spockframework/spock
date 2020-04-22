@@ -5,6 +5,32 @@ include::include.adoc[]
 
 === Breaking Changes
 
+==== Removal of JUnit 4 dependency from spock-core
+
+Spock 2.0 from the beginning has leveraged JUnit Platform to execute tests. However, starting with 2.0-M3 `junit4.jar` is no longer a transitive dependency of `spock-core`. This might affect people using `@Before/@After/...` instead of Spock-native `setup/cleanup/...` fixture methods. To keep it work the `spock-junit4` dependency has to be added.
+
+As a side effect of the removal, the order of the fixture methods execution has changed from:
+
+[source]
+----
+beforeClass, setupSpec, before, setup, cleanup, after, setup, before, cleanup, after, cleanupSpec, afterClass
+----
+
+to:
+
+[source]
+----
+setupSpec, beforeClass, setup, before, cleanup, after, setup, before, cleanup, after, cleanupSpec, afterClass
+----
+
+which should not be a problem in the majority of cases.
+
+At the same time, using JUnit 4's annotations is discouraged (and considered `deprecated`), the same using the other elements of JUnit 4 (as `(Class)Rule`s).
+
+==== Upgrade to JUnit 5.6 (and JUnit Platform 1.6)
+
+JUnit Platform 1.6 (https://junit.org/junit5/docs/5.6.0/release-notes/index.html#deprecations-and-breaking-changes[deprecated]) methods (from experimental API)  in `EngineExecutionResults` that Spock was using. To keep runtime compatibility with JUnit 5.6 and incoming 5.7 the implementation has been switched to the new methods. As a result, Spock 2.0-M3 cannot work with JUnit 5.5 and lower. The problem might only occur if a project overrides default JUnit Platform version provided by Spock.
+
 ==== New meaning of `>> _`
 The meaning of `>> _` has changed form "use the default response" to "return a stubbed value" (<<interaction_based_testing.adoc#_returning_a_default_response,Docs>>).
 The original behavior was only ever documented in the Javadocs and was basically the same to just omitting it.
@@ -16,10 +42,6 @@ With the new behavior, you can have a `Mock` or `Spy` return the same value as a
 ----
 subscriber.receive(_) >> _
 ----
-
-==== Upgrade to JUnit 5.6 (and JUnit Platform 1.6)
-
-JUnit Plafform 1.6 (https://junit.org/junit5/docs/5.6.0/release-notes/index.html#deprecations-and-breaking-changes[deprecated]) methods (from experimental API)  in `EngineExecutionResults` that Spock was using. To keep runtime compatibility with JUnit 5.6 and incoming 5.7 the implementation has been switched to the new methods. As a result, Spock 2.0-M3 cannot work with JUnit 5.5 and lower. The problem might only occur if a project overrides default JUnit Platform version provided by Spock.
 
 // tag::renamed-iteration-count-token[]
 ==== Renamed iterationCount token
@@ -73,8 +95,6 @@ b = a
   will be thrown at runtime.
 
 === Misc
-
-- Upgrade JUnit 4 to 4.13
 
 - Defining interactions on property getters within Mock instantiation closures or `with` closures works now without
   the need to explicitly qualify the property access with `it.`:
@@ -144,6 +164,10 @@ Spy(constructorArgs: [null as String, (Pattern) null])
 @IgnoreIf({ PreconditionContext it -> it.os.windows })
 def "I'll run everywhere but on Windows"() { ... }
 ----
+
+- Upgrade JUnit 4 to 4.13 (in `spock-junit4`)
+
+- Upgrade Hamcrest to 2.2 (from 1.3 provided previously by `junit4.jar`)
 
 == 2.0-M2 (2020-02-10)
 

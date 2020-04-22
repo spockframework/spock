@@ -54,11 +54,12 @@ public class IgnoreIfExtension extends AbstractAnnotationDrivenExtension<IgnoreI
   }
 
   private Object evaluateCondition(Closure condition) {
-    condition.setDelegate(new PreconditionContext());
+    PreconditionContext context = new PreconditionContext();
+    condition.setDelegate(context);
     condition.setResolveStrategy(Closure.DELEGATE_ONLY);
 
     try {
-      return condition.call();
+      return condition.call(context);
     } catch (Exception e) {
       throw new ExtensionException("Failed to evaluate @IgnoreIf condition", e);
     }

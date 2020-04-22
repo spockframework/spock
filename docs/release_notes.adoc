@@ -72,7 +72,7 @@ a << [1, 2]
 b << a
 ----
 
-what you want instead is
+what you want instead is:
 
 [source,groovy]
 ----
@@ -97,7 +97,7 @@ b = a
 === Misc
 
 - Defining interactions on property getters within Mock instantiation closures or `with` closures works now without
-  the need to explicitly qualify the property access with `it.`
+  the need to explicitly qualify the property access with `it.`:
 +
 [source,groovy]
 ----
@@ -136,7 +136,7 @@ a ; b ;; c
   This is typically not interesting for the average user, but might be helpful for authors of Spock extensions.
 
 - `constructorArgs` now properly transport type cast information to the constructor selection,
-  for example to disambiguate multiple candidate constructors
+  for example to disambiguate multiple candidate constructors:
 +
 [source,groovy]
 ----
@@ -154,6 +154,16 @@ Spy(constructorArgs: [null as String, (Pattern) null])
   variables as parameters and also have additional method parameters that are no data variables.
   Those additional parameters must be provided by some Spock extension though. If they are not set at execution time,
   an exception will be thrown.
+
+- Condition closures used in `@Requires`, `@IgnoreIf` and `@PendingFeatureIf` now also get the context passed
+  as argument, so you can use this, typed as `org.spockframework.runtime.extension.builtin.PreconditionContext` to
+  enable IDE support like code completion:
++
+[source,groovy]
+----
+@IgnoreIf({ PreconditionContext it -> it.os.windows })
+def "I'll run everywhere but on Windows"() { ... }
+----
 
 - Upgrade JUnit 4 to 4.13 (in `spock-junit4`)
 

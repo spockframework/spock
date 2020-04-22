@@ -177,6 +177,7 @@
 </li>
 <li><a href="#_modules">Modules</a>
 <ul class="sectlevel2">
+<li><a href="#_junit_4_module">JUnit 4 Module</a></li>
 <li><a href="#_guice_module">Guice Module</a></li>
 <li><a href="#_spring_module">Spring Module</a>
 <ul class="sectlevel3">
@@ -4519,13 +4520,44 @@ assignments happen before the method interceptor is called</p>
 <h2 id="_modules"><a class="anchor" href="#_modules"></a><a class="link" href="#_modules">Modules</a></h2>
 <div class="sectionbody">
 <div class="sect2">
+<h3 id="_junit_4_module"><a class="anchor" href="#_junit_4_module"></a><a class="link" href="#_junit_4_module">JUnit 4 Module</a></h3>
+<div class="paragraph">
+<p>Integration with JUnit 4 features for Spock 2+ (which internally uses JUnit Platform - part of JUnit 5).</p>
+</div>
+<div class="paragraph">
+<p>The module is required for:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>running JUnit 4 rules and class ruless (<code>@Rule</code>/<code>@ClassRule</code>)</p>
+</li>
+<li>
+<p>using JUnit 4&#8217;s test fixture annotations (<code>@BeforeClass</code>, <code>@Before</code>, <code>@After</code>, <code>@AfterClass</code>)</p>
+</li>
+</ul>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+This module does its best to support old features from JUnit 4, however, users are encouraged to migrate to the native Spock counterparts.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
 <h3 id="_guice_module"><a class="anchor" href="#_guice_module"></a><a class="link" href="#_guice_module">Guice Module</a></h3>
 <div class="paragraph">
 <p>Integration with the <a href="http://code.google.com/p/google-guice/">Guice</a> IoC container. For examples see the specs in the
 <a href="https://github.com/spockframework/spock/tree/master/spock-guice/src/test/groovy/org/spockframework/guice">codebase</a>.</p>
 </div>
 <div class="paragraph">
-<p>With Spock 1.2 detached mocks are automatically attached to the <code>Specification</code> if they are injected via <code>@Inject</code>.</p>
+<p>With Spock 1.2+ detached mocks are automatically attached to the <code>Specification</code> if they are injected via <code>@Inject</code>.</p>
 </div>
 </div>
 <div class="sect2">
@@ -4933,6 +4965,40 @@ Grails 2.3 and higher have built-in Spock support and do not require a plugin.
 <div class="sect3">
 <h4 id="_breaking_changes"><a class="anchor" href="#_breaking_changes"></a><a class="link" href="#_breaking_changes">Breaking Changes</a></h4>
 <div class="sect4">
+<h5 id="_removal_of_junit_4_dependency_from_spock_core"><a class="anchor" href="#_removal_of_junit_4_dependency_from_spock_core"></a><a class="link" href="#_removal_of_junit_4_dependency_from_spock_core">Removal of JUnit 4 dependency from spock-core</a></h5>
+<div class="paragraph">
+<p>Spock 2.0 from the beginning has leveraged JUnit Platform to execute tests. However, starting with 2.0-M3 <code>junit4.jar</code> is no longer a transitive dependency of <code>spock-core</code>. This might affect people using <code>@Before/@After/&#8230;&#8203;</code> instead of Spock-native <code>setup/cleanup/&#8230;&#8203;</code> fixture methods. To keep it work the <code>spock-junit4</code> dependency has to be added.</p>
+</div>
+<div class="paragraph">
+<p>As a side effect of the removal, the order of the fixture methods execution has changed from:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code>beforeClass, setupSpec, before, setup, cleanup, after, setup, before, cleanup, after, cleanupSpec, afterClass</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>to:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code>setupSpec, beforeClass, setup, before, cleanup, after, setup, before, cleanup, after, cleanupSpec, afterClass</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>which should not be a problem in the majority of cases.</p>
+</div>
+<div class="paragraph">
+<p>At the same time, using JUnit 4&#8217;s annotations is discouraged (and considered <code>deprecated</code>), the same using the other elements of JUnit 4 (as `(Class)Rule`s).</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_upgrade_to_junit_5_6_and_junit_platform_1_6"><a class="anchor" href="#_upgrade_to_junit_5_6_and_junit_platform_1_6"></a><a class="link" href="#_upgrade_to_junit_5_6_and_junit_platform_1_6">Upgrade to JUnit 5.6 (and JUnit Platform 1.6)</a></h5>
+<div class="paragraph">
+<p>JUnit Platform 1.6 (<a href="https://junit.org/junit5/docs/5.6.0/release-notes/index.html#deprecations-and-breaking-changes">deprecated</a>) methods (from experimental API)  in <code>EngineExecutionResults</code> that Spock was using. To keep runtime compatibility with JUnit 5.6 and incoming 5.7 the implementation has been switched to the new methods. As a result, Spock 2.0-M3 cannot work with JUnit 5.5 and lower. The problem might only occur if a project overrides default JUnit Platform version provided by Spock.</p>
+</div>
+</div>
+<div class="sect4">
 <h5 id="_new_meaning_of"><a class="anchor" href="#_new_meaning_of"></a><a class="link" href="#_new_meaning_of">New meaning of <code>&gt;&gt; _</code></a></h5>
 <div class="paragraph">
 <p>The meaning of <code>&gt;&gt; _</code> has changed form "use the default response" to "return a stubbed value" (<a href="#_returning_a_default_response">Docs</a>).
@@ -4945,12 +5011,6 @@ With the new behavior, you can have a <code>Mock</code> or <code>Spy</code> retu
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy">subscriber.receive(_) &gt;&gt; _</code></pre>
 </div>
-</div>
-</div>
-<div class="sect4">
-<h5 id="_upgrade_to_junit_5_6_and_junit_platform_1_6"><a class="anchor" href="#_upgrade_to_junit_5_6_and_junit_platform_1_6"></a><a class="link" href="#_upgrade_to_junit_5_6_and_junit_platform_1_6">Upgrade to JUnit 5.6 (and JUnit Platform 1.6)</a></h5>
-<div class="paragraph">
-<p>JUnit Plafform 1.6 (<a href="https://junit.org/junit5/docs/5.6.0/release-notes/index.html#deprecations-and-breaking-changes">deprecated</a>) methods (from experimental API)  in <code>EngineExecutionResults</code> that Spock was using. To keep runtime compatibility with JUnit 5.6 and incoming 5.7 the implementation has been switched to the new methods. As a result, Spock 2.0-M3 cannot work with JUnit 5.5 and lower. The problem might only occur if a project overrides default JUnit Platform version provided by Spock.</p>
 </div>
 </div>
 <div class="sect4">
@@ -5019,9 +5079,6 @@ will be thrown at runtime.</p>
 <h4 id="_misc"><a class="anchor" href="#_misc"></a><a class="link" href="#_misc">Misc</a></h4>
 <div class="ulist">
 <ul>
-<li>
-<p>Upgrade JUnit 4 to 4.13</p>
-</li>
 <li>
 <p>Defining interactions on property getters within Mock instantiation closures or <code>with</code> closures works now without
 the need to explicitly qualify the property access with <code>it.</code>:</p>
@@ -5104,6 +5161,12 @@ enable IDE support like code completion:</p>
 <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">I'll run everywhere but on Windows</span><span class="delimiter">&quot;</span></span>() { ... }</code></pre>
 </div>
 </div>
+</li>
+<li>
+<p>Upgrade JUnit 4 to 4.13 (in <code>spock-junit4</code>)</p>
+</li>
+<li>
+<p>Upgrade Hamcrest to 2.2 (from 1.3 provided previously by <code>junit4.jar</code>)</p>
 </li>
 </ul>
 </div>
@@ -7211,7 +7274,7 @@ Math.signum(a &lt;=&gt; b) == result
 <div id="footer">
 <div id="footer-text">
 Version 2.0-SNAPSHOT<br>
-Last updated 2020-04-20 22:01:23 UTC
+Last updated 2020-04-22 17:31:03 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./coderay-asciidoctor.css">

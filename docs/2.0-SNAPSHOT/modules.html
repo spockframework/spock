@@ -20,6 +20,39 @@
 </div>
 <div id="content">
 <div class="sect1">
+<h2 id="_junit_4_module"><a class="anchor" href="#_junit_4_module"></a><a class="link" href="#_junit_4_module">JUnit 4 Module</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Integration with JUnit 4 features for Spock 2+ (which internally uses JUnit Platform - part of JUnit 5).</p>
+</div>
+<div class="paragraph">
+<p>The module is required for:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>running JUnit 4 rules and class ruless (<code>@Rule</code>/<code>@ClassRule</code>)</p>
+</li>
+<li>
+<p>using JUnit 4&#8217;s test fixture annotations (<code>@BeforeClass</code>, <code>@Before</code>, <code>@After</code>, <code>@AfterClass</code>)</p>
+</li>
+</ul>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+This module does its best to support old features from JUnit 4, however, users are encouraged to migrate to the native Spock counterparts.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="_guice_module"><a class="anchor" href="#_guice_module"></a><a class="link" href="#_guice_module">Guice Module</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
@@ -27,7 +60,7 @@
 <a href="https://github.com/spockframework/spock/tree/master/spock-guice/src/test/groovy/org/spockframework/guice">codebase</a>.</p>
 </div>
 <div class="paragraph">
-<p>With Spock 1.2 detached mocks are automatically attached to the <code>Specification</code> if they are injected via <code>@Inject</code>.</p>
+<p>With Spock 1.2+ detached mocks are automatically attached to the <code>Specification</code> if they are injected via <code>@Inject</code>.</p>
 </div>
 </div>
 </div>
@@ -438,7 +471,7 @@ Grails 2.3 and higher have built-in Spock support and do not require a plugin.
 <div id="footer">
 <div id="footer-text">
 Version 2.0-SNAPSHOT<br>
-Last updated 2020-04-20 22:01:23 UTC
+Last updated 2020-04-22 17:31:03 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./coderay-asciidoctor.css">

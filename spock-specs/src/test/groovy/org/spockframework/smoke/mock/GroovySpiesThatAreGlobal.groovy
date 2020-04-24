@@ -216,56 +216,32 @@ class GroovySpiesThatAreGlobal extends Specification {
     given:
     GroovySpy(PersonWithOverloadedMethods, global: true)
 
-    when:
-    def result = PersonWithOverloadedMethods.perform("null string" as String)
+    expect:
+    action() == result
 
-    then:
-    result == "String"
+    where:
+    _ | action                                                           || result
+    _ | { PersonWithOverloadedMethods.perform("null string" as String) } || "String"
+    _ | { PersonWithOverloadedMethods.perform(null as Pattern) }         || "Pattern"
+    _ | { PersonWithOverloadedMethods.perform((String) null) }           || "String"
+    _ | { PersonWithOverloadedMethods.perform((Pattern) null) }          || "Pattern"
+  }
 
-    when:
-    result = PersonWithOverloadedMethods.perform(null as Pattern)
-
-    then:
-    result == "Pattern"
-
-    when:
-    result = PersonWithOverloadedMethods.perform((String) null)
-
-    then:
-    result == "String"
-
-    when:
-    result = PersonWithOverloadedMethods.perform((Pattern) null)
-
-    then:
-    result == "Pattern"
-
-    when:
+  @Issue("https://github.com/spockframework/spock/issues/871")
+  def "type casts are not swallowed when stubbing"() {
+    given:
+    GroovySpy(PersonWithOverloadedMethods, global: true)
     PersonWithOverloadedMethods.perform(_) >> "Foo"
 
-    and:
-    result = PersonWithOverloadedMethods.perform(null as String)
+    expect:
+    action() == "Foo"
 
-    then:
-    result == "Foo"
-
-    when:
-    result = PersonWithOverloadedMethods.perform(null as Pattern)
-
-    then:
-    result == "Foo"
-
-    when:
-    result = PersonWithOverloadedMethods.perform((String) null)
-
-    then:
-    result == "Foo"
-
-    when:
-    result = PersonWithOverloadedMethods.perform((Pattern) null)
-
-    then:
-    result == "Foo"
+    where:
+    _ | action
+    _ | { PersonWithOverloadedMethods.perform(null as String) }
+    _ | { PersonWithOverloadedMethods.perform(null as Pattern) }
+    _ | { PersonWithOverloadedMethods.perform((String) null) }
+    _ | { PersonWithOverloadedMethods.perform((Pattern) null) }
   }
 
   static class Person {

@@ -4,14 +4,16 @@ ext.displayName = "Spock Framework - Unitils Module"
 
 description = "Spock's Unitils Module makes it possible to use Unitils together with Spock."
 
+ext.unitilsVersion = "3.4.6"
+
 dependencies {
   compile project(":spock-core")
-  compile "org.unitils:unitils-core:3.3"
+  compile "org.unitils:unitils-core:${unitilsVersion}"
 
-  testCompile "org.unitils:unitils-dbunit:3.3", {
+  testCompile "org.unitils:unitils-dbunit:${unitilsVersion}", {
     exclude module: "jta"
   }
-  testCompile "org.unitils:unitils-database:3.3",  {
+  testCompile "org.unitils:unitils-database:${unitilsVersion}",  {
     exclude module: "jta"
   }
   testCompile libs.groovySql // for groovy.sql.Sql

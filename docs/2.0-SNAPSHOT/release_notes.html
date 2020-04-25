@@ -25,6 +25,33 @@
 <div class="sect2">
 <h3 id="_breaking_changes"><a class="anchor" href="#_breaking_changes"></a><a class="link" href="#_breaking_changes">Breaking Changes</a></h3>
 <div class="sect3">
+<h4 id="_sputnik_runner_removed_an_alternative"><a class="anchor" href="#_sputnik_runner_removed_an_alternative"></a><a class="link" href="#_sputnik_runner_removed_an_alternative">Sputnik Runner removed (an alternative)</a></h4>
+<div class="paragraph">
+<p>In 2.0-M1 the Sputnik runner was removed and the 2.0-M2 release notes explicitly mentioned that enhancements
+that extend <code>Sputnik</code> or use it as a delegate like for example the <code>PowerMockRunnerDelegate</code> will not work anymore.</p>
+</div>
+<div class="paragraph">
+<p>This is not the full truth though, but be aware that the information in this section is just for informational purpose.
+This is not a solution the Spock maintainers explicitly support or maintain. It is just mentioned as hint for those
+that have no other choice right now. It is strongly recommended to instead use native solutions or integrations. If
+those are not available, you might consider asking about proper integration with Spock for a proper long-term solution.
+As long as this is not available, the work-around described here is at least usable as fallback and mid-term solution
+as long as the JUnit team decides to maintain this legacy support module.</p>
+</div>
+<div class="paragraph">
+<p>There is a JUnit 4 runner provided by JUnit 5 called <code>JUnitPlatform</code> that can
+run any JUnit platform based tests - like Spock 2+ based tests - in a JUnit 4 environment. This is intended
+for situations where an IDE, build tool, CI server, or similar does not yet natively support JUnit platform.
+It is provided in the artifact <code>org.junit.platform:junit-platform-runner</code>.</p>
+</div>
+<div class="paragraph">
+<p>This means, if you make sure your tests are launched with JUnit 4 and you use <code>JUnitPlatform</code> where you before used
+<code>Sputnik</code>, all should work out properly. In case of PowerMock this means you annotate your specification with
+<code>@RunWith(PowerMockRunner)</code> and <code>@PowerMockRunnerDelegate(JUnitPlatform)</code> and make sure your tests are launched
+using JUnit 4.</p>
+</div>
+</div>
+<div class="sect3">
 <h4 id="_removal_of_junit_4_dependency_from_spock_core"><a class="anchor" href="#_removal_of_junit_4_dependency_from_spock_core"></a><a class="link" href="#_removal_of_junit_4_dependency_from_spock_core">Removal of JUnit 4 dependency from spock-core</a></h4>
 <div class="paragraph">
 <p>Spock 2.0 from the beginning has leveraged JUnit Platform to execute tests. However, starting with 2.0-M3 <code>junit4.jar</code> is no longer a transitive dependency of <code>spock-core</code>. This might affect people using <code>@Before/@After/&#8230;&#8203;</code> instead of Spock-native <code>setup/cleanup/&#8230;&#8203;</code> fixture methods. To keep it work the <code>spock-junit4</code> dependency has to be added.</p>
@@ -1901,7 +1928,7 @@ required; the only prerequisite for building Spock is a JDK installation (1.5 or
 <div id="footer">
 <div id="footer-text">
 Version 2.0-SNAPSHOT<br>
-Last updated 2020-04-24 17:17:38 UTC
+Last updated 2020-04-25 23:48:26 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./coderay-asciidoctor.css">

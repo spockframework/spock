@@ -188,6 +188,8 @@ Spy(constructorArgs: [null as String, (Pattern) null])
 def "I'll run everywhere but on Windows"() { ... }
 ----
 
+- Upgrade Groovy to 2.5.11 (improved Java 14+ support) and 3.0.3 (fixes #1127)
+
 - Upgrade JUnit 4 to 4.13 (in `spock-junit4`)
 
 - Upgrade Hamcrest to 2.2 (from 1.3 provided previously by `junit4.jar`)

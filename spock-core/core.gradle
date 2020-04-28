@@ -52,14 +52,14 @@ jar {
     'Export-Package': ['org.spockframework.*', 'spock.*'].join(','),
     'Embed-Dependency': ['groovy;inline=false', 'junit;inline=false'].join(','),
     'Import-Package': [
-      "groovy.*;version=\"[${groovyVersion},${org.gradle.util.VersionNumber.parse(groovyVersion).major + 1})\"",
-      "org.codehaus.groovy.*;version=\"[${groovyVersion},${org.gradle.util.VersionNumber.parse(groovyVersion).major + 1})\"",
-      "org.junit.*;version=\"[${libs.junitBom.version},${org.gradle.util.VersionNumber.parse(libs.junitBom.version).major + 1})\"",
-      "org.hamcrest.*;version=\"[${libs.hamcrest.version},${org.gradle.util.VersionNumber.parse(libs.hamcrest.version).major + 1})\";resolution:=optional",
-      "org.objenesis.*;version=\"[${libs.objenesis.version},${org.gradle.util.VersionNumber.parse(libs.objenesis.version).major + 1})\";resolution:=optional",
-      "net.bytebuddy.*;version=\"[${libs.bytebuddy.version},${org.gradle.util.VersionNumber.parse(libs.bytebuddy.version).major + 1})\";resolution:=optional",
-      "net.sf.cglib.*;version=\"[${libs.cglib.version},${org.gradle.util.VersionNumber.parse(libs.cglib.version).major + 1})\";resolution:=optional",
-      "org.objectweb.asm.*;version=\"[${libs.asm.version},${org.gradle.util.VersionNumber.parse(libs.asm.version).major + 1})\";resolution:=optional",
+      /groovy.*;version="[${groovyVersion},${org.gradle.util.VersionNumber.parse(groovyVersion).major + 1})"/,
+      /org.codehaus.groovy.*;version="[${groovyVersion},${org.gradle.util.VersionNumber.parse(groovyVersion).major + 1})"/,
+      /org.junit.*;version="[${libs.junitBom.version},${org.gradle.util.VersionNumber.parse(libs.junitBom.version).major + 1})"/,
+      /org.hamcrest.*;version="[${libs.hamcrest.version},${org.gradle.util.VersionNumber.parse(libs.hamcrest.version).major + 1})";resolution:=optional/,
+      /org.objenesis.*;version="[${libs.objenesis.version},${org.gradle.util.VersionNumber.parse(libs.objenesis.version).major + 1})";resolution:=optional/,
+      /net.bytebuddy.*;version="[${libs.bytebuddy.version},${org.gradle.util.VersionNumber.parse(libs.bytebuddy.version).major + 1})";resolution:=optional/,
+      /net.sf.cglib.*;version="[${libs.cglib.version},${org.gradle.util.VersionNumber.parse(libs.cglib.version).major + 1})";resolution:=optional/,
+      /org.objectweb.asm.*;version="[${libs.asm.version},${org.gradle.util.VersionNumber.parse(libs.asm.version).major + 1})";resolution:=optional/,
       'org.w3c.dom.*'].join(',')
   )
 }

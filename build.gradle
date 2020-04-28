@@ -3,13 +3,13 @@ import java.text.SimpleDateFormat
 import static groovy.io.FileType.FILES
 
 plugins {
-  id 'com.gradle.build-scan' version '2.2.1'
+  id 'com.gradle.build-scan'
   id "base"
-  id "org.asciidoctor.jvm.convert" version "3.2.0"
+  id "org.asciidoctor.jvm.convert"
   id "jacoco"
-  id "net.nemerosa.versioning" version "2.13.1"
-  id "de.marcphilipp.nexus-publish" version "0.3.1" apply false
-  id "com.github.ben-manes.versions" version "0.28.0"
+  id "net.nemerosa.versioning"
+  id "de.marcphilipp.nexus-publish" apply false
+  id "com.github.ben-manes.versions"
 }
 
 description = "Spock Framework"
@@ -33,12 +33,12 @@ ext {
   }
 
   groovyDependencies = [
-    "org.codehaus.groovy:groovy:${groovyVersion}",
+    [group: "org.codehaus.groovy", name: "groovy", version: groovyVersion]
   ]
   groovyConsoleExtraDependencies = [
-    "org.codehaus.groovy:groovy-console:${groovyVersion}",
-    "org.codehaus.groovy:groovy-test-junit5:${groovyVersion}", // for executing specs
-    "org.apache.ivy:ivy:2.5.0" // for @Grab support
+    [group: "org.codehaus.groovy", name: "groovy-console", version: groovyVersion],
+    [group: "org.codehaus.groovy", name: "groovy-test-junit5", version: groovyVersion], // for executing specs
+    [group: "org.apache.ivy", name: "ivy", version: "2.5.0"] // for @Grab support
   ]
   maxGroovyVersion = snapshotVersion ? "9.9.99" : maxGroovyVersion
   if (System.getProperty("groovyVersion")) {
@@ -50,25 +50,25 @@ ext {
   javaVersion = System.getProperty("java.specification.version") as BigDecimal
 
   libs = [
-    jetbrainsAnnotations: "org.jetbrains:annotations:19.0.0",
-    ant: "org.apache.ant:ant:1.10.7",
-    asm: "org.ow2.asm:asm:8.0.1",
-    bytebuddy: "net.bytebuddy:byte-buddy:1.10.9",
-    cglib: "cglib:cglib-nodep:3.3.0",
-    groovy: groovyDependencies,
-    groovySql: "org.codehaus.groovy:groovy-sql:${groovyVersion}", //for some Spring and Unitils tests
-    groovyTest: "org.codehaus.groovy:groovy-test:${groovyVersion}", //for @NotYetImplemented
-    h2database: "com.h2database:h2:1.4.200",
-    hamcrest: "org.hamcrest:hamcrest-core:2.2",
-    jaxb: "javax.xml.bind:jaxb-api:2.3.0",
-    junit4: "junit:junit:4.13",
-    junitBom: "org.junit:junit-bom:5.6.1",
-    jupiter: "org.junit.jupiter:junit-jupiter",
-    junitPlatform: "org.junit.platform:junit-platform-engine",
-    junitPlatformTestkit: "org.junit.platform:junit-platform-testkit",
-    junitPlatformConsole: "org.junit.platform:junit-platform-console",
-    log4j: "log4j:log4j:1.2.17",
-    objenesis: "org.objenesis:objenesis:3.1"
+    jetbrainsAnnotations: [group: "org.jetbrains", name: "annotations", version: "19.0.0"],
+    asm                 : [group: 'org.ow2.asm', name: 'asm', version: '8.0.1'],
+    bytebuddy           : [group: 'net.bytebuddy', name: 'byte-buddy', version: '1.10.9'],
+    cglib               : [group: 'cglib', name: 'cglib-nodep', version: '3.3.0'],
+    groovy              : groovyDependencies,
+    groovySql           : [group: 'org.codehaus.groovy', name: 'groovy-sql', version: groovyVersion], //for some Spring and Unitils tests
+    groovyTest          : [group: 'org.codehaus.groovy', name: 'groovy-test', version: groovyVersion], //for @NotYetImplemented
+    h2database          : [group: 'com.h2database', name: 'h2', version: '1.4.200'],
+    hamcrest            : [group: 'org.hamcrest', name: 'hamcrest-core', version: '2.2'],
+    jaxb                : [group: 'javax.xml.bind', name: 'jaxb-api', version: '2.3.0'],
+    junit4              : [group: 'junit', name: 'junit', version: '4.13'],
+    junitBom            : [group: 'org.junit', name: 'junit-bom', version: '5.6.1'],
+    jupiter             : [group: 'org.junit.jupiter', name: 'junit-jupiter'],
+    junitPlatform       : [group: 'org.junit.platform', name: 'junit-platform-engine'],
+    junitPlatformTestkit: [group: 'org.junit.platform', name: 'junit-platform-testkit'],
+    junitPlatformConsole: [group: 'org.junit.platform', name: 'junit-platform-console'],
+    log4j               : [group: 'log4j', name: 'log4j', version: '1.2.17'],
+    objenesis           : [group: 'org.objenesis', name: 'objenesis', version: '3.1']
+
   ]
   if (snapshotVersion && System.env.CI != "true") {
     //build time is not crucial for local SNAPSHOT builds, unless published from CI server

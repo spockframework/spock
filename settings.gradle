@@ -1,3 +1,15 @@
+
+pluginManagement {
+  plugins {
+    id 'com.gradle.build-scan' version '2.2.1'
+    id "org.asciidoctor.jvm.convert" version "3.2.0"
+    id "net.nemerosa.versioning" version "2.13.1"
+    id "de.marcphilipp.nexus-publish" version "0.3.1"
+    id "com.github.ben-manes.versions" version "0.28.0"
+    id "biz.aQute.bnd.builder" version "5.0.1"
+  }
+}
+
 include "spock-bom"
 include "spock-core"
 include "spock-specs"

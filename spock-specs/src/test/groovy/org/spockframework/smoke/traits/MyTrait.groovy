@@ -15,8 +15,6 @@
 */
 package org.spockframework.smoke.traits
 
-import org.junit.*
-
 trait MyTrait {
   int x = 10
 
@@ -32,15 +30,5 @@ trait MyTrait {
 
   def setupSpec() {
     setupSpecEvaluated = true
-  }
-
-  @Before
-  void before() {
-    beforeEvaluated = true
-  }
-
-  @After
-  void after() {
-    afterEvaluated = true
   }
 }

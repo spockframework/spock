@@ -28,7 +28,6 @@ import org.junit.platform.engine.DiscoverySelector
 import org.junit.platform.launcher.TestIdentifier
 import org.junit.platform.launcher.listeners.TestExecutionSummary
 import org.junit.platform.testkit.engine.*
-import org.junit.runner.notification.RunListener
 
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClass
 
@@ -43,8 +42,6 @@ class EmbeddedSpecRunner {
   private final EmbeddedSpecCompiler compiler = new EmbeddedSpecCompiler(unwrapCompileException: false)
 
   boolean throwFailure = true
-
-  List<RunListener> listeners = []
 
   Closure configurationScript = null
   List<Class> extensionClasses = []

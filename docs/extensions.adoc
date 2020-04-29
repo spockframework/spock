@@ -115,6 +115,16 @@ def "I'll run everywhere but on Windows"() { ... }
 Care should be taken when ignoring feature methods in a spec class annotated with `spock.lang.Stepwise` since
 later feature methods may depend on earlier feature methods having executed.
 
+To use IDE support like code completion, you can also use the argument to the closure and have it typed as
+`org.spockframework.runtime.extension.builtin.PreconditionContext`. This enables the IDE with type information
+which is not available otherwise:
+
+[source,groovy]
+----
+@IgnoreIf({ PreconditionContext it -> it.os.windows })
+def "I'll run everywhere but on Windows"() { ... }
+----
+
 === Requires
 
 To execute a feature method under certain conditions, annotate it with `spock.lang.Requires`,
@@ -773,9 +783,18 @@ If your interceptor should support custom method parameters for wrapped methods,
 annotated with a special annotation or some test helper that injects objects of a specific type that are created and
 prepared for usage automatically.
 
-`invocation.arguments` may be an empty array or an array of arbitrary length, depending on what interceptors were run
-before that maybe also have manipulated this array for parameter injection. So if you for example investigated the
-method parameters with `invocation.method.reflection.parameters` and found that you want to inject the fifth parameter,
+When called from at least Spock 2.0, the `arguments` array will always have the size of the method parameter count,
+so you can directly set the arguments you want to set. You cannot change the size of the `arguments` array either.
+All parameters that did not yet get any value injected, either from data variables or some extension, will have the
+value `MethodInfo.MISSING_ARGUMENT` and if any of those remain, after all interceptors were run, an exception will be
+thrown.
+
+[NOTE]
+--
+When your extension might be used with a version before Spock 2.0, the `arguments` array may be an empty array
+or an array of arbitrary length, depending on what interceptors were run before that maybe also have manipulated
+this array for parameter injection. If you for example investigated the method parameters with
+`invocation.method.reflection.parameters` and found that you want to inject the fifth parameter,
 you should first check whether the `arguments` array is at least five elements long. If not, you should assign it a new
 array that is at least five elements long and copy the contents of the old array into the new one. Then you can assign
 your objects to be injected.
@@ -805,23 +824,23 @@ parameters.each { parameter, i ->
   invocation.arguments[i] = new MyInjectable(parameter)
 }
 ----
+--
 
 [NOTE]
 --
-When using data driven features (methods with a `where:` block), the user of your extension has to follow some
+*Pre Spock 2.0 only:* When using data driven features (methods with a `where:` block), the user of your extension has to follow some
 restrictions, if parameters should be injected by your extension:
 
 * all data variables and all to-be-injected parameters have to be defined as method parameters
-* all method parameters have to be assigned a value in the `where:` block
+* all method parameters have to be assigned a value in the `where:` block, for example `null`
 * the order of the method parameters has to be identical to the order of the data variables in the `where:` block
-* the to-be-injected parameters have to be set to any value in the `where:` block, for example `null`
-+
+
 of course you can also make your extension only inject a value if none is set already, as the `where:` block
 assignments happen before the method interceptor is called
-+
+
 for this simply check whether `invocation.arguments[i]` is `null` or not
 
-.Data Driven Feature with Injected Parameter
+.Data Driven Feature with Injected Parameter pre Spock 2.0
 [source, groovy]
 ----
 def 'test parameter injection'(a, b, MyInjectable myInjectable) {
@@ -834,6 +853,19 @@ def 'test parameter injection'(a, b, MyInjectable myInjectable) {
 
   and:
   myInjectable = null
+}
+----
+
+.Data Driven Feature with Injected Parameter post Spock 2.0
+[source, groovy]
+----
+def 'test parameter injection'(MyInjectable myInjectable) {
+  expect: myInjectable
+
+  where:
+  a    | b
+  'a1' | 'b1'
+  'a2' | 'b2'
 }
 ----
 --

@@ -15,7 +15,6 @@
 package org.spockframework.smoke.extension
 
 import org.junit.platform.engine.discovery.DiscoverySelectors
-import org.junit.runner.Request
 
 import org.spockframework.EmbeddedSpecification
 

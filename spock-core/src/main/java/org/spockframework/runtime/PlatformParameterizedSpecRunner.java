@@ -22,6 +22,8 @@ import java.util.*;
 
 import org.junit.platform.engine.support.hierarchical.Node;
 
+import static java.util.stream.Collectors.toList;
+
 /**
  * Adds the ability to run parameterized features.
  *
@@ -46,7 +48,6 @@ public class PlatformParameterizedSpecRunner extends PlatformSpecRunner {
       dynamicTestExecutor.awaitFinished();
     } finally {
       closeDataProviders(dataProviders);
-
     }
   }
 
@@ -56,44 +57,59 @@ public class PlatformParameterizedSpecRunner extends PlatformSpecRunner {
     }
 
     List<DataProviderInfo> dataProviderInfos = context.getCurrentFeature().getDataProviders();
+    if (dataProviderInfos.isEmpty()) {
+      return new Object[0];
+    }
+
+    List<String> dataProviderVariables = dataProviderInfos
+      .stream()
+      .map(DataProviderInfo::getDataVariables)
+      .flatMap(List::stream)
+      .collect(toList());
+
     Object[] dataProviders = new Object[dataProviderInfos.size()];
 
-    if (!dataProviderInfos.isEmpty()) {
-      for (int i = 0; i < dataProviderInfos.size(); i++) {
-        DataProviderInfo dataProviderInfo = dataProviderInfos.get(i);
+    for (int i = 0, size = dataProviderInfos.size(); i < size; i++) {
+      DataProviderInfo dataProviderInfo = dataProviderInfos.get(i);
+      MethodInfo method = dataProviderInfo.getDataProviderMethod();
 
-        MethodInfo method = dataProviderInfo.getDataProviderMethod();
-        Object[] arguments = Arrays.copyOf(dataProviders, getDataTableOffset(context, dataProviderInfo));
-        Object provider = invokeRaw(context, context.getCurrentInstance(), method, arguments);
+      Object provider = invokeRaw(
+        context, context.getCurrentInstance(), method,
+        getPreviousDataTableProviders(dataProviderVariables, dataProviders, dataProviderInfo));
 
-        if (context.getErrorInfoCollector().hasErrors()) {
-          return null;
-        } else if (provider == null && context.getErrorInfoCollector().isEmpty()) {
-          SpockExecutionException error = new SpockExecutionException("Data provider is null!");
-          supervisor.error(context.getErrorInfoCollector(), new ErrorInfo(method, error));
-          return null;
+      if (context.getErrorInfoCollector().hasErrors()) {
+        if (provider != null) {
+          dataProviders[i] = provider;
         }
-        dataProviders[i] = provider;
+        break;
+      } else if (provider == null) {
+        SpockExecutionException error = new SpockExecutionException("Data provider is null!");
+        supervisor.error(context.getErrorInfoCollector(), new ErrorInfo(method, error));
+        break;
       }
+
+      dataProviders[i] = provider;
     }
 
     return dataProviders;
   }
 
-  private int getDataTableOffset(SpockExecutionContext context, DataProviderInfo dataProviderInfo) {
-    int result = 0;
-    for (String variableName : dataProviderInfo.getDataVariables()) {
-      for (String parameterName : context.getCurrentFeature().getParameterNames()) {
-        if (variableName.equals(parameterName)) {
-          return result;
-        } else {
-          result++;
+  private Object[] getPreviousDataTableProviders(List<String> dataProviderVariables, Object[] dataProviders,
+                                                 DataProviderInfo dataProviderInfo) {
+    List<Object> result = new ArrayList<>();
+    previousDataTableVariablesLoop:
+    for (String previousDataTableVariable : dataProviderInfo.getPreviousDataTableVariables()) {
+      for (int i = 0, size = dataProviderVariables.size(); i < size; i++) {
+        String dataProviderVariable = dataProviderVariables.get(i);
+        if (previousDataTableVariable.equals(dataProviderVariable)) {
+          result.add(dataProviders[i]);
+          continue previousDataTableVariablesLoop;
         }
       }
+      throw new IllegalStateException(String.format("Variable name not defined (%s not in %s)!",
+        previousDataTableVariable, dataProviderVariables));
     }
-    throw new IllegalStateException(String.format("Variable name not defined (%s not in %s)!",
-      dataProviderInfo.getDataVariables(),
-      context.getCurrentFeature().getParameterNames()));
+    return result.toArray();
   }
 
   private Iterator[] createIterators(SpockExecutionContext context, Object[] dataProviders) {
@@ -121,7 +137,7 @@ public class PlatformParameterizedSpecRunner extends PlatformSpecRunner {
 
   // -1 => unknown
   private int estimateNumIterations(SpockExecutionContext context, Object[] dataProviders) {
-    if (context.getErrorInfoCollector().hasErrors() || dataProviders == null) {
+    if (context.getErrorInfoCollector().hasErrors()) {
       return -1;
     }
     if (dataProviders.length == 0) {
@@ -160,7 +176,7 @@ public class PlatformParameterizedSpecRunner extends PlatformSpecRunner {
 
     int iterationIndex = 0;
     while (haveNext(context, iterators)) {
-      IterationInfo iterationInfo = createIterationInfo(context, nextArgs(context, iterators), estimatedNumIterations);
+      IterationInfo iterationInfo = createIterationInfo(context, iterationIndex, nextArgs(context, iterators), estimatedNumIterations);
       IterationNode iterationNode = new IterationNode(context.getParentId().append("iteration",String.valueOf(iterationIndex++)), iterationInfo);
 
       if (context.getErrorInfoCollector().hasErrors()) {

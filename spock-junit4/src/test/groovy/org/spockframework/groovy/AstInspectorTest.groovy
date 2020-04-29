@@ -19,9 +19,11 @@ package org.spockframework.groovy
 import org.codehaus.groovy.ast.expr.BinaryExpression
 import org.codehaus.groovy.ast.stmt.ForStatement
 import org.codehaus.groovy.control.CompilePhase
-import org.spockframework.util.inspector.*
-import org.junit.Test
 import org.junit.Before
+import org.junit.Test
+import org.spockframework.util.inspector.AstInspector
+import org.spockframework.util.inspector.AstInspectorException
+import org.spockframework.util.inspector.Inspect
 
 import static org.junit.Assert.*
 
@@ -66,7 +68,7 @@ class Foo {
   void inspectScript() {
     assertEquals(2, inspector.scriptStatements.size())
     assertEquals(1, inspector.scriptExpressions.size())
-    
+
     def scriptLoop = inspector.getStatement("scriptLoop")
     assertTrue(scriptLoop instanceof ForStatement)
 
@@ -95,7 +97,7 @@ class Foo {
   void inspectConstructor() {
     def ctor = inspector.getConstructor("Foo")
     assertTrue(inspector.getExpressions(ctor)[0] instanceof BinaryExpression)
-    
+
     def param = inspector.getMarkedNode("param")
     def init1 = inspector.getExpression("init1")
     def init2 = inspector.getExpression("init2")
@@ -139,7 +141,7 @@ class Foo {
     assertEquals(Inspect.name, method.annotations[0].classNode.name)
   }
 
-  @Test(expected=AstInspectorException.class)
+  @Test(expected = AstInspectorException.class)
   void throwOnNodeNotFound() {
     inspector.getMethod("notExisting")
   }

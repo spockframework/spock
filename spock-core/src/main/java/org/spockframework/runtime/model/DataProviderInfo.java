@@ -10,6 +10,7 @@ import java.util.List;
  */
 public class DataProviderInfo extends NodeInfo<FeatureInfo, AnnotatedElement> {
   private List<String> dataVariables;
+  private List<String> previousDataTableVariables;
   private MethodInfo dataProviderMethod;
 
   @Override
@@ -23,6 +24,14 @@ public class DataProviderInfo extends NodeInfo<FeatureInfo, AnnotatedElement> {
 
   public void setDataVariables(List<String> dataVariables) {
     this.dataVariables = dataVariables;
+  }
+
+  public List<String> getPreviousDataTableVariables() {
+    return previousDataTableVariables;
+  }
+
+  public void setPreviousDataTableVariables(List<String> previousDataTableVariables) {
+    this.previousDataTableVariables = previousDataTableVariables;
   }
 
   public MethodInfo getDataProviderMethod() {

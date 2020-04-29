@@ -18,7 +18,9 @@ package org.spockframework.smoke.parameterization
 
 import org.codehaus.groovy.runtime.typehandling.GroovyCastException
 import org.spockframework.EmbeddedSpecification
-import org.spockframework.compiler.InvalidSpecCompileException
+import org.spockframework.runtime.SpockExecutionException
+import spock.lang.FailsWith
+import spock.lang.Issue
 
 /**
  * @author Peter Niederwieser
@@ -68,61 +70,41 @@ class MethodParameters extends EmbeddedSpecification {
     x << [1, 2]
     y << [1, 2]
   }
-  
-  def "fewer parameters than data variables"() {
-    when:
-    compiler.compileSpecBody """
-def foo(x) {
-  expect:
-  x == y
 
-  where:
-  x << [1, 2]
-  y << [1, 2]
-}
-    """
+  @Issue("https://github.com/spockframework/spock/issues/652")
+  def "fewer parameters than data variables"(x) {
+    expect:
+    x == y
 
-    then:
-    thrown(InvalidSpecCompileException)
+    where:
+    x << [1, 2]
+    y << [1, 2]
   }
 
-
-  def "more parameters than data variables"() {
+  @Issue("https://github.com/spockframework/spock/issues/652")
+  def "more parameters than data variables throw exception if not injected by some extension"() {
     when:
-    compiler.compileSpecBody """
+    runner.runSpecBody '''
 def foo(x, y, z) {
   expect:
   x == y
+  z == null
 
   where:
   x << [1, 2]
   y << [1, 2]
 }
-    """
+'''
 
     then:
-    thrown(InvalidSpecCompileException)
+    SpockExecutionException see = thrown()
+    see.message == /No argument was provided for parameters: 'z'/
   }
 
-  def "parameter that is not a data variable"() {
-    when:
-    compiler.compileSpecBody """
-def foo(x, a) {
-  expect:
-  x == x
-
-  where:
-  x << [1, 2]
-}
-    """
-
-    then:
-    thrown(InvalidSpecCompileException)
-  }
-
+  @Issue("https://github.com/spockframework/spock/issues/652")
   def "data variable that is not a parameter"() {
-    when:
-    compiler.compileSpecBody """
+    expect:
+    runner.runSpecBody """
 def foo(x) {
   expect:
   x == y
@@ -132,13 +114,10 @@ def foo(x) {
 }
     """
 
-    then:
-    thrown(InvalidSpecCompileException)
-
     where:
     parameterizations << [
         "x << [1,2]; y << [1, 2]",
-        "[x, y] << [[1, 2], [1, 2]]",
+        "[x, y] << [[1, 1], [2, 2]]",
         "x << [1, 2]; y = x"
     ]
   }
@@ -167,5 +146,30 @@ def foo(x, ClassLoader y) {
 
     then:
     thrown(GroovyCastException)
+  }
+
+  @Issue("https://github.com/spockframework/spock/issues/651")
+  def "data values are injected by name, not order"(y, x) {
+    expect:
+    2 * x == y
+
+    where:
+    x << [1, 2]
+    y << [2, 4]
+  }
+
+  @Issue("https://github.com/spockframework/spock/issues/652")
+  def "method parameters that are eventually provided by extensions throw an exception at runtime if not set"() {
+    when:
+    runner.runSpecBody '''
+def foo(x, y) {
+  expect:
+  x == y
+}
+  '''
+
+    then:
+    SpockExecutionException see = thrown()
+    see.message == /No argument was provided for parameters: 'x', 'y'/
   }
 }

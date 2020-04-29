@@ -16,6 +16,7 @@
 
 package org.spockframework.compiler;
 
+import org.codehaus.groovy.runtime.wrappers.PojoWrapper;
 import org.spockframework.runtime.*;
 import org.spockframework.runtime.model.*;
 import org.spockframework.util.Identifiers;
@@ -71,6 +72,7 @@ public class AstNodeCache {
   public final ClassNode FieldMetadata = ClassHelper.makeWithoutCaching(FieldMetadata.class);
   public final ClassNode FeatureMetadata = ClassHelper.makeWithoutCaching(FeatureMetadata.class);
   public final ClassNode DataProviderMetadata = ClassHelper.makeWithoutCaching(DataProviderMetadata.class);
+  public final ClassNode DataProcessorMetadata = ClassHelper.makeWithoutCaching(DataProcessorMetadata.class);
   public final ClassNode BlockMetadata = ClassHelper.makeWithoutCaching(BlockMetadata.class);
   public final ClassNode BlockKind = ClassHelper.makeWithoutCaching(BlockKind.class);
 
@@ -79,4 +81,5 @@ public class AstNodeCache {
 
   // external types
   public final ClassNode Throwable = ClassHelper.makeWithoutCaching(Throwable.class);
+  public final ClassNode PojoWrapper = ClassHelper.makeWithoutCaching(PojoWrapper.class);
 }

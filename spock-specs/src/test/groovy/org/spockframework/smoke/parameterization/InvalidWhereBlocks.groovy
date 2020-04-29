@@ -149,4 +149,99 @@ def foo() {
     "[1, instanceField, 2]" |_
     "{ -> { -> [instanceField] }() }()" |_
   }
+
+  def 'referencing a data variable in a data provider is not allowed'() {
+    when:
+    runner.runFeatureBody """
+expect:
+true
+
+where:
+x << [1, 2].iterator()
+y << x
+"""
+
+    then:
+    thrown(MissingPropertyException)
+  }
+
+  def 'referencing a data variable in a closure in a data provider is not allowed'() {
+    when:
+    runner.runFeatureBody """
+expect:
+true
+
+where:
+x << [1, 2].iterator()
+y << { x }()
+"""
+
+    then:
+    thrown(MissingPropertyException)
+  }
+
+  def 'referencing a data table variable in a data table like data provider is not allowed'() {
+    when:
+    runner.runFeatureBody """
+expect:
+true
+
+where:
+a | b
+1 | 2
+3 | 4
+
+c << [a, 5]
+"""
+
+    then:
+    thrown(MissingPropertyException)
+  }
+
+  def 'referencing a data table parameter in a data table cell is not allowed'() {
+    when:
+    compiler.compileFeatureBody '''
+expect:
+true
+
+where:
+a | b
+1 | $spock_p_a
+'''
+
+    then:
+    thrown(InvalidSpecCompileException)
+  }
+
+  def 'referencing a data table parameter in a closure in a data table cell is not allowed'() {
+    when:
+    compiler.compileFeatureBody '''
+expect:
+true
+
+where:
+a | b
+1 | { $spock_p_a }()
+'''
+
+    then:
+    thrown(InvalidSpecCompileException)
+  }
+
+  def 'referencing a data table parameter in a data provider is not allowed'() {
+    when:
+    runner.runFeatureBody '''
+expect:
+true
+
+where:
+a | _
+1 | _
+
+c << $spock_p_a
+'''
+
+    then:
+    thrown(MissingPropertyException)
+  }
 }

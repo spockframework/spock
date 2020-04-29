@@ -16,28 +16,30 @@
 package org.spockframework.smoke.groovy
 
 import groovy.transform.NotYetImplemented
-
 import junit.framework.AssertionFailedError
-
+import spock.lang.Issue
 import spock.lang.Specification
 import spock.lang.FailsWith
 
-// make sure that Groovy's @NotYetImplemented works with Spock
-class UsageOfNotYetImplemented extends Specification {
-  @NotYetImplemented
-  def "expected to fail"() {
-    expect: false  
-  }  
+//See UsageOfNotYetImplemented for new groovy.test.NotYetImplemented tests
+@Issue("https://github.com/spockframework/spock/issues/1127")
+@Deprecated
+class UsageOfDeprecatedNotYetImplemented extends Specification {
 
   @NotYetImplemented
-  def "allowed to raise arbitrary exception"() {
+  def "expected to fail (legacy transformation)"() {
+    expect: false
+  }
+
+  @NotYetImplemented
+  def "allowed to raise arbitrary exception (legacy transformation)"() {
     setup:
     throw new IOException("ouch")
   }
-  
+
   @FailsWith(AssertionFailedError)
   @NotYetImplemented
-  def "not allowed to pass"() {
+  def "not allowed to pass (legacy transformation)"() {
     expect: true
   }
 }

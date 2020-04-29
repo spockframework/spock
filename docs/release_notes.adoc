@@ -5,7 +5,56 @@ include::include.adoc[]
 
 === Breaking Changes
 
+==== Sputnik Runner removed (an alternative)
+
+In 2.0-M1 the Sputnik runner was removed and the 2.0-M2 release notes explicitly mentioned that enhancements
+that extend `Sputnik` or use it as a delegate like for example the `PowerMockRunnerDelegate` will not work anymore.
+
+This is not the full truth though, but be aware that the information in this section is just for informational purpose.
+This is not a solution the Spock maintainers explicitly support or maintain. It is just mentioned as hint for those
+that have no other choice right now. It is strongly recommended to instead use native solutions or integrations. If
+those are not available, you might consider asking about proper integration with Spock for a proper long-term solution.
+As long as this is not available, the work-around described here is at least usable as fallback and mid-term solution
+as long as the JUnit team decides to maintain this legacy support module.
+
+There is a JUnit 4 runner provided by JUnit 5 called `JUnitPlatform` that can
+run any JUnit platform based tests - like Spock 2+ based tests - in a JUnit 4 environment. This is intended
+for situations where an IDE, build tool, CI server, or similar does not yet natively support JUnit platform.
+It is provided in the artifact `org.junit.platform:junit-platform-runner`.
+
+This means, if you make sure your tests are launched with JUnit 4 and you use `JUnitPlatform` where you before used
+`Sputnik`, all should work out properly. In case of PowerMock this means you annotate your specification with
+`@RunWith(PowerMockRunner)` and `@PowerMockRunnerDelegate(JUnitPlatform)` and make sure your tests are launched
+using JUnit 4.
+
+==== Removal of JUnit 4 dependency from spock-core
+
+Spock 2.0 from the beginning has leveraged JUnit Platform to execute tests. However, starting with 2.0-M3 `junit4.jar` is no longer a transitive dependency of `spock-core`. This might affect people using `@Before/@After/...` instead of Spock-native `setup/cleanup/...` fixture methods. To keep it work the `spock-junit4` dependency has to be added.
+
+As a side effect of the removal, the order of the fixture methods execution has changed from:
+
+[source]
+----
+beforeClass, setupSpec, before, setup, cleanup, after, setup, before, cleanup, after, cleanupSpec, afterClass
+----
+
+to:
+
+[source]
+----
+setupSpec, beforeClass, setup, before, cleanup, after, setup, before, cleanup, after, cleanupSpec, afterClass
+----
+
+which should not be a problem in the majority of cases.
+
+At the same time, using JUnit 4's annotations is discouraged (and considered `deprecated`), the same using the other elements of JUnit 4 (as `(Class)Rule`s).
+
+==== Upgrade to JUnit 5.6 (and JUnit Platform 1.6)
+
+JUnit Platform 1.6 (https://junit.org/junit5/docs/5.6.0/release-notes/index.html#deprecations-and-breaking-changes[deprecated]) methods (from experimental API)  in `EngineExecutionResults` that Spock was using. To keep runtime compatibility with JUnit 5.6 and incoming 5.7 the implementation has been switched to the new methods. As a result, Spock 2.0-M3 cannot work with JUnit 5.5 and lower. The problem might only occur if a project overrides default JUnit Platform version provided by Spock.
+
 ==== New meaning of `>> _`
+
 The meaning of `>> _` has changed form "use the default response" to "return a stubbed value" (<<interaction_based_testing.adoc#_returning_a_default_response,Docs>>).
 The original behavior was only ever documented in the Javadocs and was basically the same to just omitting it.
 The only use-case was chained responses `>> "a" >> _ >> "b"`,
@@ -17,16 +66,61 @@ With the new behavior, you can have a `Mock` or `Spy` return the same value as a
 subscriber.receive(_) >> _
 ----
 
-==== Upgrade to JUnit 5.6 (and JUnit Platform 1.6)
+// tag::renamed-iteration-count-token[]
+==== Renamed iterationCount token
 
-JUnit Plafform 1.6 (https://junit.org/junit5/docs/5.6.0/release-notes/index.html#deprecations-and-breaking-changes[deprecated]) methods (from experimental API)  in `EngineExecutionResults` that Spock was using. To keep runtime compatibility with JUnit 5.6 and incoming 5.7 the implementation has been switched to the new methods. As a result, Spock 2.0-M3 cannot work with JUnit 5.5 and lower. The problem might only occur if a project overrides default JUnit Platform version provided by Spock.
+The token `#iterationCount` in unroll patterns was renamed to `#iterationIndex`.
+If you use it somewhere, you have to manually change it to the new name
+or you will get an `#Error:iterationCount` rendering instead.
+// end::renamed-iteration-count-token[]
+
+// tag::no-access-to-data-variables-in-data-pipes[]
+==== No access to data variables in data pipes anymore
+
+It is not possible anymore to access any data variable from a data pipe or anything else but a previous data table
+column in a data table cell. This access was partly possible, but could easily prematurely drain iterators, access
+data providers sooner as expected, behaved differently depending on the concrete code construct used. All these
+points are more confusing than necessary. If you want to calculate a data variable from others, you can always use
+a derived data variable that has full access to all previous data variables and can also call helper methods for
+more complex logic.
+
+If you switch your tests that are fully green to use Spock 2.0 and get any ``MissingPropertyException``s, you are probably hitting this change, you should then change to a derived data variable there instead of a data pipe.
+
+If you for example had:
+
+[source,groovy]
+----
+where:
+a << [1, 2]
+b << a
+----
+
+what you want instead is:
+
+[source,groovy]
+----
+where:
+a << [1, 2]
+b = a
+----
+// end::no-access-to-data-variables-in-data-pipes[]
+
+==== For extension developers
+
+- `FeatureInfo#getDataVariables()` and `FeatureInfo#getParameterNames()` used to return the
+  same value, the parameter names, in the order of the method parameters. This can disturb some calculations like method
+  argument determination and so on and is plainly wrong, as some parameters could be injected by extensions like
+  injecting mock objects or test proxies or similar. `FeatureInfo#getDataVariables()` now only returns the actual data
+  variables and in the order how they are defined in the `where` block.
+
+- Method arguments in `MethodInfo` now have a value of `MethodInfo.MISSING_ARGUMENT` if no value was set so far,
+  for example by some extensions or from data variables. If any of these is not replaced by some value, an exception
+  will be thrown at runtime.
 
 === Misc
 
-- Upgrade JUnit 4 to 4.13
-
 - Defining interactions on property getters within Mock instantiation closures or `with` closures works now without
-  the need to explicitly qualify the property access with `it.`
+  the need to explicitly qualify the property access with `it.`:
 +
 [source,groovy]
 ----
@@ -36,6 +130,69 @@ Foo foo = Stub {
 ----
 
 - A sequence of two or more underscores can be used to separate multiple data tables in one `where` block.
+
+- Type casts in conditions are now properly carried over to properly disambiguate method calls.
+  For more information see issue https://github.com/spockframework/spock/issues/1022[#1022].
+
+- Data tables now support any amount of semicolons to separate data table columns as alternative
+  to pipes and double pipes, but cannot be mixed with them in one table:
++
+[source,groovy]
+----
+where:
+a ; b ;; c
+1 ; 2 ;; 3
+----
+
+// tag::fancy-iteration-naming[]
+- The default unroll pattern changed from the rather generic `#featureName[#iterationIndex]` to a more fancy
+  version that lists all data variables and their values additionally to the feature name and iteration index.
+  If you prefer to retain the old behaviour, you can set the system property `spock.globalUnrollPattern`
+  to the value `#featureName[#iterationIndex]` and you will get the same result as previously.
+// end::fancy-iteration-naming[]
+
+- If neither a parameter to the `@Unroll` annotation is given, nor the method name contains a `#`,
+  now the system property `spock.globalUnrollPattern` is inspected. If it is set to a non-blank string,
+  this value is used as unroll pattern.
+
+- `IterationInfo` now has a property for the `iterationIndex` and one for a map of data variable names to values.
+  This is typically not interesting for the average user, but might be helpful for authors of Spock extensions.
+
+- `constructorArgs` now properly transport type cast information to the constructor selection,
+  for example to disambiguate multiple candidate constructors:
++
+[source,groovy]
+----
+Spy(constructorArgs: [null as String, (Pattern) null])
+----
+
+- Accessing previous data table columns was broken in some cases, now it should work properly,
+  even cross-table and without being disturbed by previous derived data variables.
+
+- The order of parameters in a data-driven feature does no longer have to be identical to
+  the declaration order in the `where` block. Data variables are now injected by name.
+
+- Data driven features do no longer have the requirement that either none or all data variables are declared as
+  parameters and that all parameters are also data variables. Now you can either declare none, some, or all data
+  variables as parameters and also have additional method parameters that are no data variables.
+  Those additional parameters must be provided by some Spock extension though. If they are not set at execution time,
+  an exception will be thrown.
+
+- Condition closures used in `@Requires`, `@IgnoreIf` and `@PendingFeatureIf` now also get the context passed
+  as argument, so you can use this, typed as `org.spockframework.runtime.extension.builtin.PreconditionContext` to
+  enable IDE support like code completion:
++
+[source,groovy]
+----
+@IgnoreIf({ PreconditionContext it -> it.os.windows })
+def "I'll run everywhere but on Windows"() { ... }
+----
+
+- Upgrade Groovy to 2.5.11 (improved Java 14+ support) and 3.0.3 (fixes #1127)
+
+- Upgrade JUnit 4 to 4.13 (in `spock-junit4`)
+
+- Upgrade Hamcrest to 2.2 (from 1.3 provided previously by `junit4.jar`)
 
 == 2.0-M2 (2020-02-10)
 
@@ -193,7 +350,7 @@ a == b
 Additional message
 ----
 
-If you relied on this behavior to hide some output, or to prevent a stack overflow due to a self referenceing
+If you relied on this behavior to hide some output, or to prevent a stack overflow due to a self referencing
 data structure, then you need to move the condition into a separate method that just returns the boolean result.
 
 

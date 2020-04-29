@@ -22,7 +22,11 @@ import org.spockframework.util.*;
 import spock.lang.Specification;
 
 import org.junit.platform.engine.support.hierarchical.Node;
-import org.junit.runner.Description;
+
+import java.util.Arrays;
+
+import static java.lang.System.arraycopy;
+import static org.spockframework.runtime.model.MethodInfo.MISSING_ARGUMENT;
 
 /**
  * Executes a single Spec. Notifies its supervisor about overall execution
@@ -221,13 +225,11 @@ public class PlatformSpecRunner {
     getSpecificationContext(context).setCurrentIteration(null); // TODO check if we really need to null here
   }
 
-  IterationInfo createIterationInfo(SpockExecutionContext context, Object[] dataValues, int estimatedNumIterations) {
+  IterationInfo createIterationInfo(SpockExecutionContext context, int iterationIndex, Object[] dataValues, int estimatedNumIterations) {
     FeatureInfo currentFeature = context.getCurrentFeature();
-    IterationInfo result = new IterationInfo(currentFeature, dataValues, estimatedNumIterations);
+    IterationInfo result = new IterationInfo(currentFeature, iterationIndex, dataValues, estimatedNumIterations);
     String iterationName = currentFeature.getIterationNameProvider().getName(result);
     result.setName(iterationName);
-    Description description = Description.createTestDescription(context.getSpec().getReflection(),
-        iterationName, currentFeature.getFeatureMethod().getAnnotations());
     return result;
   }
 
@@ -320,7 +322,16 @@ public class PlatformSpecRunner {
 
     MethodInfo featureIteration = new MethodInfo(context.getCurrentFeature().getFeatureMethod());
     featureIteration.setIteration(context.getCurrentIteration());
-    invoke(context, context.getCurrentInstance(), featureIteration, context.getCurrentIteration().getDataValues());
+
+    Class<?>[] parameterTypes = featureIteration.getReflection().getParameterTypes();
+    int parameterCount = parameterTypes.length;
+    Object[] dataValues = context.getCurrentIteration().getDataValues();
+
+    Object[] iterationArguments = new Object[parameterCount];
+    arraycopy(dataValues, 0, iterationArguments, 0, dataValues.length);
+    Arrays.fill(iterationArguments, dataValues.length, parameterCount, MISSING_ARGUMENT);
+
+    invoke(context, context.getCurrentInstance(), featureIteration, iterationArguments);
   }
 
   void runCleanup(SpockExecutionContext context) {

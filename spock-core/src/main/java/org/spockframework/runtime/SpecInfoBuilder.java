@@ -20,11 +20,8 @@ import org.spockframework.runtime.model.*;
 import org.spockframework.util.*;
 import spock.lang.Specification;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
 import java.util.*;
-
-import org.junit.*;
 
 /**
  * Builds a SpecInfo from a Class instance.
@@ -33,16 +30,10 @@ import org.junit.*;
  */
 public class SpecInfoBuilder {
   private final Class<?> clazz;
-  private final Class<?> effectiveClass;
   private final SpecInfo spec = new SpecInfo();
 
   public SpecInfoBuilder(Class<?> clazz) {
-    this(clazz, clazz);
-  }
-
-  private SpecInfoBuilder(Class<?> clazz, Class<?> effectiveClass) {
     this.clazz = clazz;
-    this.effectiveClass = effectiveClass;
   }
 
   public SpecInfo build() {
@@ -72,7 +63,7 @@ public class SpecInfoBuilder {
     Class<?> superClass = clazz.getSuperclass();
     if (superClass == Object.class || superClass == Specification.class) return;
 
-    SpecInfo superSpec = new SpecInfoBuilder(superClass, clazz).doBuild();
+    SpecInfo superSpec = new SpecInfoBuilder(superClass).doBuild();
     spec.setSuperSpec(superSpec);
     superSpec.setSubSpec(spec);
   }
@@ -151,6 +142,12 @@ public class SpecInfoBuilder {
 
     if (dataProcessorMethod != null) {
       feature.setDataProcessorMethod(dataProcessorMethod);
+
+      DataProcessorMetadata dataProcessorMetadata = dataProcessorMethod.getAnnotation(DataProcessorMetadata.class);
+      for (String dataVariable : dataProcessorMetadata.dataVariables()) {
+        feature.addDataVariable(dataVariable);
+      }
+
       int providerCount = 0;
       String providerMethodName = InternalIdentifiers.getDataProviderName(method.getName(), providerCount++);
       MethodInfo providerMethod = createMethod(providerMethodName, MethodKind.DATA_PROVIDER);
@@ -178,6 +175,7 @@ public class SpecInfoBuilder {
     provider.setParent(feature);
     provider.setLine(metadata.line());
     provider.setDataVariables(Arrays.asList(metadata.dataVariables()));
+    provider.setPreviousDataTableVariables(Arrays.asList(metadata.previousDataTableVariables()));
     provider.setDataProviderMethod(method);
     return provider;
   }
@@ -195,12 +193,6 @@ public class SpecInfoBuilder {
     methodInfo.setName(name);
     methodInfo.setReflection(method);
     methodInfo.setKind(kind);
-    return methodInfo;
-  }
-
-  private MethodInfo createJUnitFixtureMethod(Method method, MethodKind kind, Class<? extends Annotation> annotation) {
-    MethodInfo methodInfo = createMethod(method, kind, method.getName());
-    methodInfo.setExcluded(isOverriddenJUnitFixtureMethod(method, annotation));
     return methodInfo;
   }
 
@@ -226,39 +218,9 @@ public class SpecInfoBuilder {
     MethodInfo cleanupSpecMethod = createMethod(Identifiers.CLEANUP_SPEC_METHOD, MethodKind.CLEANUP_SPEC);
     if (cleanupSpecMethod != null) spec.addCleanupSpecMethod(cleanupSpecMethod);
 
-    for (Method method : clazz.getDeclaredMethods()) {
-      if (method.isAnnotationPresent(Before.class)) {
-        spec.addSetupMethod(createJUnitFixtureMethod(method, MethodKind.SETUP, Before.class));
-      }
-      if (method.isAnnotationPresent(After.class)) {
-        spec.addCleanupMethod(createJUnitFixtureMethod(method, MethodKind.CLEANUP, After.class));
-      }
-      if (method.isAnnotationPresent(BeforeClass.class)) {
-        spec.addSetupSpecMethod(createJUnitFixtureMethod(method, MethodKind.SETUP_SPEC, BeforeClass.class));
-      }
-      if (method.isAnnotationPresent(AfterClass.class)) {
-        spec.addCleanupSpecMethod(createJUnitFixtureMethod(method, MethodKind.CLEANUP_SPEC, AfterClass.class));
-      }
-    }
-
     MethodInfo setupMethod = createMethod(Identifiers.SETUP_METHOD, MethodKind.SETUP);
     if (setupMethod != null) spec.addSetupMethod(setupMethod);
     MethodInfo setupSpecMethod = createMethod(Identifiers.SETUP_SPEC_METHOD, MethodKind.SETUP_SPEC);
     if (setupSpecMethod != null) spec.addSetupSpecMethod(setupSpecMethod);
-  }
-
-  private boolean isOverriddenJUnitFixtureMethod(Method method, Class<? extends Annotation> annotation) {
-    if (Modifier.isPrivate(method.getModifiers())) return false;
-
-    for (Class<?> currClass = effectiveClass; currClass != clazz; currClass = currClass.getSuperclass()) {
-      for (Method currMethod : currClass.getDeclaredMethods()) {
-        if (!currMethod.isAnnotationPresent(annotation)) continue;
-        if (!currMethod.getName().equals(method.getName())) continue;
-        if (!Arrays.deepEquals(currMethod.getParameterTypes(), method.getParameterTypes())) continue;
-        return true;
-      }
-    }
-
-    return false;
   }
 }

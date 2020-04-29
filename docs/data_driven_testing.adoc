@@ -105,16 +105,39 @@ spec, all of which can be kept in the same file. This achieves better isolation 
 
 == Syntactic Variations
 
-The previous code can be tweaked in a few ways. First, since the `where:` block already declares all data variables, the
-method parameters can be omitted.footnote:[The idea behind allowing method parameters is to enable better IDE support.
+The previous code can be tweaked in a few ways.
+
+First, since the `where:` block already declares all data variables, the method parameters can be
+omitted.footnote:[The idea behind allowing method parameters is to enable better IDE support.
 However, recent versions of IntelliJ IDEA recognize data variables automatically, and even infer their types from the
 values contained in the data table.]
+
+You can also omit some parameters and specify others, for example to have them typed.
+The order also is not important, data variables are matched by name to the specified method parameters.
+
 Second, inputs and expected outputs can be separated with a double pipe symbol (`||`) to visually set them apart.
+
 With this, the code becomes:
 
 [source,groovy,indent=0]
 ----
 include::{sourcedir}/datadriven/v3/MathSpec.groovy[tag=example]
+----
+
+Alternatively to using single or double pipes you can also use any amount of semicolons to separate data columns
+from each other:
+
+[source,groovy,indent=0]
+----
+include::{sourcedir}/datadriven/v6/MathSpec.groovy[tag=example]
+----
+
+Pipes and semicolons as data column separator can not be mixed within one table.
+If the column separator changes, this starts a new stand-alone data table:
+
+[source,groovy,indent=0]
+----
+include::{sourcedir}/datadriven/v7/MathSpec.groovy[tag=example]
 ----
 
 == Reporting of Failures
@@ -160,15 +183,15 @@ Note that unrolling has no effect on how the method gets executed; it is only an
 Depending on the execution environment, the output will look something like:
 
 ----
-maximum of two numbers[0]   PASSED
-maximum of two numbers[1]   FAILED
+maximum of two numbers [a: 1, b: 3, c: 3, #0]   PASSED
+maximum of two numbers [a: 7, b: 4, c: 7, #1]   FAILED
 
 Math.max(a, b) == c
     |    |  |  |  |
     |    7  4  |  7
     42         false
 
-maximum of two numbers[2]   PASSED
+maximum of two numbers [a: 0, b: 0, c: 0, #2]   PASSED
 ----
 
 This tells us that the second iteration (with index 1) failed. With a bit of effort, we can do even better:
@@ -183,7 +206,7 @@ This method name uses placeholders, denoted by a leading hash sign (`#`), to ref
 and `c`. In the output, the placeholders will be replaced with concrete values:
 
 ----
-maximum of 3 and 5 is 5   PASSED
+maximum of 1 and 3 is 3   PASSED
 maximum of 7 and 4 is 7   FAILED
 
 Math.max(a, b) == c
@@ -262,6 +285,38 @@ to other data variables:
 include::{sourcedir}/datadriven/DataSpec.groovy[tag=sql-data-variable-assignment]
 ----
 
+== Accessing Other Data Variables
+
+There are only two possibilities to access one data variable from the calculation
+of another data variable.
+
+The first possibility are derived data variables like shown in the last section.
+Every data variable that is defined by a direct assignment can access all
+previously defined data variables, including the ones defined through data
+tables or data pipes:
+
+[source,groovy,indent=0]
+----
+    ...
+include::{sourcedir}/datadriven/DataSpec.groovy[tag=data-variable-assignment]
+----
+
+The second possibility is to access previous columns within data tables:
+
+[source,groovy,indent=0]
+----
+    ...
+include::{sourcedir}/datadriven/DataSpec.groovy[tag=previous-column-access]
+----
+
+This also includes columns in previous data tables in the same `where` block:
+
+[source,groovy,indent=0]
+----
+    ...
+include::{sourcedir}/datadriven/DataSpec.groovy[tag=previous-column-access-multi-table]
+----
+
 == Combining Data Tables, Data Pipes, and Variable Assignments
 
 Data tables, data pipes, and variable assignments can be combined as needed:
@@ -288,8 +343,7 @@ such a method.
 
 An unrolled method name is similar to a Groovy `GString`, except for the following differences:
 
-* Expressions are denoted with `#` instead of `$` footnote:[Groovy syntax does not allow dollar signs in method names.],
-  and there is no equivalent for the `${...}` syntax.
+* Expressions are denoted with `#` instead of `$`, and there is no equivalent for the `${...}` syntax.
 * Expressions only support property access and zero-arg method calls.
 
 Given a class `Person` with properties `name` and `age`, and a data variable `person` of type `Person`, the
@@ -319,3 +373,35 @@ include::{sourcedir}/datadriven/DataSpec.groovy[tag=unrolled-3a]
     ...
 include::{sourcedir}/datadriven/DataSpec.groovy[tag=unrolled-3b]
 ----
+
+Additionally to the data variables the tokens `#featureName` and `#iterationIndex` are supported.
+The former does not make much sense inside an actual feature name, but there are two other places
+where an unroll pattern can be defined, where it is more useful.
+
+[source,groovy,indent=0]
+----
+def "#person is #person.age years old [iterationIndex: #iterationIndex]"() {
+----
+
+Alternatively to specifying the unroll pattern as method name, it can be given as parameter
+to the `@Unroll` annotation which takes precedence over the method name:
+
+[source,groovy,indent=0]
+----
+@Unroll("#featureName[#iterationIndex] (#person.name is #person.age years old)")
+def "person age should be calculated properly"() {
+----
+
+If neither a parameter to the annotation is given, nor the method name contains a `#`,
+the system property `spock.globalUnrollPattern` is inspected. If it is set to a non-blank
+string, this value is used as unroll pattern. This could for example be set to
+
+- `#featureName` to have all iterations reported with the same name, or
+- `#featureName[#iterationIndex]` to have a simply indexed iteration name, or
+- `#iterationName` if you make sure that in each data-driven feature you also set
+  a data variable called `iterationName` that is then used for reporting
+
+If none of the three described ways is used to set a custom unroll pattern, by default
+the feature name is used, suffixed with all data variable names and their values and
+finally the iteration index, so the result will be for example
+`my feature [x: 1, y: 2, z: 3, #0]`.

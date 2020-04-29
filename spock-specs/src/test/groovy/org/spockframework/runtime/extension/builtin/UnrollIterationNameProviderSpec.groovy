@@ -19,16 +19,16 @@ import org.spockframework.runtime.model.FeatureInfo
 import spock.lang.*
 import spock.util.environment.RestoreSystemProperties
 
-class UnrollNameProviderSpec extends Specification {
+class UnrollIterationNameProviderSpec extends Specification {
   @Issue("https://github.com/spockframework/spock/issues/237")
   def "regex-like data values are substituted correctly (i.e. literally)"() {
     given:
     def feature = new FeatureInfo()
-    feature.addParameterName("dataVar")
-    def nameGenerator = new UnrollNameProvider(feature, "foo #dataVar bar")
+    feature.addDataVariable("dataVar")
+    def nameGenerator = new UnrollIterationNameProvider(feature, "foo #dataVar bar")
 
     expect:
-    nameGenerator.nameFor(value) == name
+    nameGenerator.nameFor(0, value) == name
 
     where:
     value                   | name
@@ -39,11 +39,11 @@ class UnrollNameProviderSpec extends Specification {
   def "data values are converted to strings in Groovy style"() {
     given:
     def feature = new FeatureInfo()
-    feature.addParameterName("dataVar")
-    def nameGenerator = new UnrollNameProvider(feature, "foo #dataVar bar")
+    feature.addDataVariable("dataVar")
+    def nameGenerator = new UnrollIterationNameProvider(feature, "foo #dataVar bar")
 
     expect:
-    nameGenerator.nameFor(value) == name
+    nameGenerator.nameFor(0, value) == name
 
     where:
     value                   | name
@@ -54,21 +54,21 @@ class UnrollNameProviderSpec extends Specification {
   def "missing variables are rendered as #Error:dataVars"() {
     given:
     def feature = new FeatureInfo()
-    feature.addParameterName("dataVar")
-    def nameGenerator = new UnrollNameProvider(feature, "foo #dataVars bar")
+    feature.addDataVariable("dataVar")
+    def nameGenerator = new UnrollIterationNameProvider(feature, "foo #dataVars bar")
 
     expect:
-    nameGenerator.nameFor('1') == "foo #Error:dataVars bar"
+    nameGenerator.nameFor(0, '1') == "foo #Error:dataVars bar"
   }
 
   def "exceptions during variable eval are rendered as #Error:dataVars"() {
     given:
     def feature = new FeatureInfo()
-    feature.addParameterName("dataVar")
-    def nameGenerator = new UnrollNameProvider(feature, "foo #dataVar.foo bar")
+    feature.addDataVariable("dataVar")
+    def nameGenerator = new UnrollIterationNameProvider(feature, "foo #dataVar.foo bar")
 
     expect:
-    nameGenerator.nameFor('1') == "foo #Error:dataVar.foo bar"
+    nameGenerator.nameFor(0, '1') == "foo #Error:dataVar.foo bar"
   }
 
   @Issue("https://github.com/spockframework/spock/issues/767")
@@ -77,11 +77,11 @@ class UnrollNameProviderSpec extends Specification {
     given:
     System.setProperty('spock.assertUnrollExpressions', 'true')
     def feature = new FeatureInfo()
-    feature.addParameterName("dataVar")
-    def nameGenerator = new UnrollNameProvider(feature, "foo #dataVars bar")
+    feature.addDataVariable("dataVar")
+    def nameGenerator = new UnrollIterationNameProvider(feature, "foo #dataVars bar")
 
     when:
-    nameGenerator.nameFor('1') == "foo #Error:dataVars bar"
+    nameGenerator.nameFor(0, '1') == "foo #Error:dataVars bar"
 
     then:
     def e = thrown(SpockAssertionError)
@@ -95,11 +95,11 @@ class UnrollNameProviderSpec extends Specification {
     given:
     def feature = new FeatureInfo()
     System.setProperty('spock.assertUnrollExpressions', 'true')
-    feature.addParameterName("dataVar")
-    def nameGenerator = new UnrollNameProvider(feature, "foo #dataVar.foo bar")
+    feature.addDataVariable("dataVar")
+    def nameGenerator = new UnrollIterationNameProvider(feature, "foo #dataVar.foo bar")
 
     when:
-    nameGenerator.nameFor('1') == "foo #Error:dataVar.foo bar"
+    nameGenerator.nameFor(0, '1') == "foo #Error:dataVar.foo bar"
 
     then:
     def e = thrown(SpockAssertionError)

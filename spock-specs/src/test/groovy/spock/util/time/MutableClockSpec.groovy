@@ -31,8 +31,8 @@ class MutableClockSpec extends Specification {
 
     expect:
     with(mutableClock.instant()) {
-      it.isAfter(start) || it == start
-      it.isBefore(end) || it == end
+      !it.isBefore(start)
+      !it.isAfter(end)
     }
     mutableClock.zone == ZoneId.systemDefault()
   }
@@ -46,8 +46,8 @@ class MutableClockSpec extends Specification {
 
     expect:
     with(mutableClock.instant()) {
-      it.isAfter(start) || it == start
-      it.isBefore(end) || it == end
+      !it.isBefore(start)
+      !it.isAfter(end)
     }
     mutableClock.zone == zoneId
   }
@@ -77,7 +77,7 @@ class MutableClockSpec extends Specification {
     new MutableClock(instant, zone, changeAmount)
 
     then:
-    thrown(AssertionError)
+    thrown(NullPointerException)
 
     where:
     [instant, zone, changeAmount] << [

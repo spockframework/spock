@@ -2,6 +2,7 @@ package spock.util.time;
 
 import java.time.*;
 import java.time.temporal.*;
+import java.util.Objects;
 import java.util.function.BiFunction;
 
 /**
@@ -53,12 +54,9 @@ public class MutableClock extends Clock {
   }
 
   public MutableClock(Instant instant, ZoneId zone, TemporalAmount changeAmount) {
-    assert instant != null : "instant may not be null";
-    assert zone != null : "zone may not be null";
-    assert changeAmount != null : "changeAmount may not be null";
-    this.instant = instant;
-    this.zone = zone;
-    this.changeAmount = changeAmount;
+    this.instant = Objects.requireNonNull(instant,"instant may not be null");
+    this.zone = Objects.requireNonNull(zone, "zone may not be null");
+    this.changeAmount = Objects.requireNonNull(changeAmount, "changeAmount may not be null");
   }
 
   /**
@@ -82,15 +80,6 @@ public class MutableClock extends Clock {
   @Override
   public Instant instant() {
     return instant;
-  }
-
-  @Override
-  public String toString() {
-    return "MutableClock{" +
-      "zone=" + zone +
-      ", instant=" + instant +
-      ", changeAmount=" + changeAmount +
-      '}';
   }
 
   public void setChangeAmount(TemporalAmount changeAmount) {
@@ -163,5 +152,14 @@ public class MutableClock extends Clock {
    */
   public MutableClock previous() {
     return minus(changeAmount);
+  }
+
+  @Override
+  public String toString() {
+    return "MutableClock{" +
+      "zone=" + zone +
+      ", instant=" + instant +
+      ", changeAmount=" + changeAmount +
+      '}';
   }
 }

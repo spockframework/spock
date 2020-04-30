@@ -175,6 +175,15 @@
 </li>
 </ul>
 </li>
+<li><a href="#utilities">Utilities</a>
+<ul class="sectlevel2">
+<li><a href="#mutable-clock">Testing Time with <code>MutableClock</code></a>
+<ul class="sectlevel3">
+<li><a href="#_example">Example</a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li><a href="#_modules">Modules</a>
 <ul class="sectlevel2">
 <li><a href="#_junit_4_module">JUnit 4 Module</a></li>
@@ -4517,6 +4526,102 @@ assignments happen before the method interceptor is called</p>
 </div>
 </div>
 <div class="sect1">
+<h2 id="utilities"><a class="anchor" href="#utilities"></a><a class="link" href="#utilities">Utilities</a></h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="mutable-clock"><a class="anchor" href="#mutable-clock"></a><a class="link" href="#mutable-clock">Testing Time with <code>MutableClock</code></a></h3>
+<div class="paragraph">
+<p>When working with dates or time we often have the problem of writing stable tests.
+Java only provides a <code>FixedClock</code> for testing.
+However, often time related code has to deal with the change of time,
+so a fixed clock is not enough or makes the test harder to follow.</p>
+</div>
+<div class="paragraph">
+<p>The prerequisite for using both <code>FixedClock</code> and Spocks <code>MutableClock</code> is that the production code,
+actually uses a configurable <code>Clock</code> and not just the parameterless <code>Instant.now()</code>
+or the corresponding methods in the other <code>java.time.*</code> classes.</p>
+</div>
+<div class="sect3">
+<h4 id="_example"><a class="anchor" href="#_example"></a><a class="link" href="#_example">Example</a></h4>
+<div class="listingblock">
+<div class="title">Class under Test</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="directive">public</span> <span class="type">class</span> <span class="class">AgeFilter</span> <span class="directive">implements</span> <span class="predefined-type">Predicate</span>&lt;LocalDate&gt; {
+  <span class="directive">private</span> <span class="directive">final</span> Clock clock;
+  <span class="directive">private</span> <span class="directive">final</span> <span class="type">int</span> age;
+
+  <span class="directive">public</span> AgeFilter(Clock clock, <span class="type">int</span> age) {                                       // <b class="conum">(1)</b>
+    <span class="local-variable">this</span>.clock = clock;
+    <span class="local-variable">this</span>.age = age;
+  }
+
+  <span class="annotation">@Override</span>
+  <span class="directive">public</span> <span class="type">boolean</span> test(LocalDate date) {
+    <span class="keyword">return</span> Period.between(date, LocalDate.now(clock)).getYears() &gt;= age;         // <b class="conum">(2)</b>
+  }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<ol>
+<li>
+<p><code>Clock</code> is injected via constructor</p>
+</li>
+<li>
+<p><code>Clock</code> is used to get the current date</p>
+</li>
+</ol>
+</div>
+<div class="listingblock">
+<div class="title">Test</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">  <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">AgeFilter reacts to time</span><span class="delimiter">&quot;</span></span>() {
+    <span class="key">given</span>:
+    ZonedDateTime defaultTime = ZonedDateTime.of(<span class="integer">2018</span>, <span class="integer">6</span>, <span class="integer">5</span>, <span class="integer">0</span>, <span class="integer">0</span>, <span class="integer">0</span>, <span class="integer">0</span>, ZoneId.of(<span class="string"><span class="delimiter">'</span><span class="content">UTC</span><span class="delimiter">'</span></span>))
+    MutableClock clock = <span class="keyword">new</span> MutableClock(defaultTime)                                       // <b class="conum">(1)</b>
+    AgeFilter ageFilter = <span class="keyword">new</span> AgeFilter(clock,<span class="integer">18</span>)                                            // <b class="conum">(2)</b>
+
+    LocalDate birthday = defaultTime.minusYears(<span class="integer">18</span>).plusDays(<span class="integer">1</span>).toLocalDate()
+
+    <span class="key">expect</span>:
+    !ageFilter.test(birthday)                                                                // <b class="conum">(3)</b>
+
+    <span class="key">when</span>:
+    clock + <span class="predefined-type">Duration</span>.ofDays(<span class="integer">1</span>)                                                               // <b class="conum">(4)</b>
+
+    <span class="key">then</span>:
+    ageFilter.test(birthday)                                                                 // <b class="conum">(5)</b>
+  }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<ol>
+<li>
+<p><code>MutableClock</code> created with a well known time</p>
+</li>
+<li>
+<p><code>Clock</code> is injected via constructor</p>
+</li>
+<li>
+<p><code>age</code> is less than <code>18</code> so the result is <code>false</code></p>
+</li>
+<li>
+<p>the clock is advanced by one day</p>
+</li>
+<li>
+<p><code>age</code> is equal to <code>18</code> so the result is <code>true</code></p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>There are many more ways to modify <code>MutableClock</code> just have a look at the JavaDocs, or the test code <code>spock.util.time.MutableClockSpec</code>.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="_modules"><a class="anchor" href="#_modules"></a><a class="link" href="#_modules">Modules</a></h2>
 <div class="sectionbody">
 <div class="sect2">
@@ -5113,6 +5218,9 @@ If you are still using spock with <code>ant</code>, then you can just copy the c
 <h4 id="_misc"><a class="anchor" href="#_misc"></a><a class="link" href="#_misc">Misc</a></h4>
 <div class="ulist">
 <ul>
+<li>
+<p>A new <code>MutableClock</code> utility class to support time related testing, see <a href="#mutable-clock">docs</a>.</p>
+</li>
 <li>
 <p>Defining interactions on property getters within Mock instantiation closures or <code>with</code> closures works now without
 the need to explicitly qualify the property access with <code>it.</code>:</p>
@@ -7311,7 +7419,7 @@ Math.signum(a &lt;=&gt; b) == result
 <div id="footer">
 <div id="footer-text">
 Version 2.0-SNAPSHOT<br>
-Last updated 2020-04-30 16:58:30 UTC
+Last updated 2020-04-30 20:11:01 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./coderay-asciidoctor.css">

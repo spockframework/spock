@@ -62,22 +62,19 @@ public class SpecRunHistory implements Comparable<SpecRunHistory> {
   }
 
   public void sortFeatures(SpecInfo spec) {
-    spec.sortFeatures(new IFeatureSortOrder() {
-      @Override
-      public int compare(FeatureInfo f1, FeatureInfo f2) {
-        Integer confidence1 = data.featureConfidences.get(f1.getName());
-        if (confidence1 == null) return -1;
+    spec.sortFeatures((f1, f2) -> {
+      Integer confidence1 = data.featureConfidences.get(f1.getName());
+      if (confidence1 == null) return -1;
 
-        Integer confidence2 = data.featureConfidences.get(f2.getName());
-        if (confidence2 == null) return 1;
+      Integer confidence2 = data.featureConfidences.get(f2.getName());
+      if (confidence2 == null) return 1;
 
-        if (!confidence1.equals(confidence2))
-          return confidence1 - confidence2;
+      if (!confidence1.equals(confidence2))
+        return confidence1 - confidence2;
 
-        long duration1 = data.featureDurations.get(f1.getName()); // never null
-        long duration2 = data.featureDurations.get(f2.getName()); // never null
-        return duration1 < duration2 ? -1 : 1;
-      }
+      long duration1 = data.featureDurations.get(f1.getName()); // never null
+      long duration2 = data.featureDurations.get(f2.getName()); // never null
+      return duration1 < duration2 ? -1 : 1;
     });
   }
 

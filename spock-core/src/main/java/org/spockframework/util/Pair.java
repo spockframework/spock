@@ -14,8 +14,10 @@
 
 package org.spockframework.util;
 
+import java.util.Objects;
+
 /**
- * An immmutable pair of elements.
+ * An immutable pair of elements.
  *
  * @author Peter Niederwieser
  */
@@ -43,10 +45,7 @@ public class Pair<E1, E2> {
 
     Pair tuple2 = (Pair) other;
 
-    if (first != null ? !first.equals(tuple2.first) : tuple2.first != null) return false;
-    if (second != null ? !second.equals(tuple2.second) : tuple2.second != null) return false;
-
-    return true;
+    return Objects.equals(first, tuple2.first) && Objects.equals(second, tuple2.second);
   }
 
   @Override

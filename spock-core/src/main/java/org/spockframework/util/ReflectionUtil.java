@@ -74,7 +74,7 @@ public abstract class ReflectionUtil {
   }
 
   public static <T extends Annotation> List<T> collectAnnotationRecursive(Class<?> cls, Class<T> annotationClass) {
-    return collectAnnotationRecursive(cls, annotationClass, new ArrayList<T>());
+    return collectAnnotationRecursive(cls, annotationClass, new ArrayList<>());
   }
 
   private static <T extends Annotation> List<T> collectAnnotationRecursive(Class<?> cls, Class<T> annotationClass,

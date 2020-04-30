@@ -73,28 +73,25 @@ public abstract class CollectionUtil {
   }
 
   public static <T> Iterable<T> reverse(final List<T> list) {
-    return new Iterable<T>() {
-      @Override
-      public Iterator<T> iterator() {
-        final ListIterator<T> listIterator = list.listIterator(list.size());
+    return () -> {
+      final ListIterator<T> listIterator = list.listIterator(list.size());
 
-        return new Iterator<T>() {
-          @Override
-          public boolean hasNext() {
-            return listIterator.hasPrevious();
-          }
+      return new Iterator<T>() {
+        @Override
+        public boolean hasNext() {
+          return listIterator.hasPrevious();
+        }
 
-          @Override
-          public T next() {
-            return listIterator.previous();
-          }
+        @Override
+        public T next() {
+          return listIterator.previous();
+        }
 
-          @Override
-          public void remove() {
-            listIterator.remove();
-          }
-        };
-      }
+        @Override
+        public void remove() {
+          listIterator.remove();
+        }
+      };
     };
   }
 
@@ -149,22 +146,9 @@ public abstract class CollectionUtil {
     return map;
   }
 
-  public static Map filterNullValues(Map map) {
-    Iterator<Map.Entry> iterator = map.entrySet().iterator();
-    while(iterator.hasNext()) {
-      Map.Entry next = iterator.next();
-      if (next.getValue() == null) {
-        iterator.remove();
-      }
-    }
+  public static <K, V> Map<K, V> filterNullValues(Map<K, V> map) {
+    map.entrySet().removeIf(next -> next.getValue() == null);
     return map;
-  }
-
-  public static Map putAll(Map original, Map... others) {
-    for (Map other : others) {
-      original.putAll(other);
-    }
-    return original;
   }
 
   @SafeVarargs
@@ -173,40 +157,35 @@ public abstract class CollectionUtil {
   }
 
   public static <T> Iterable<T> concat(final List<Iterable<? extends T>> iterables) {
-    return new Iterable<T>() {
+    return () -> new Iterator<T>() {
+      Iterator<? extends T> iter;
+      int pos = 0;
+
       @Override
-      public Iterator<T> iterator() {
-        return new Iterator<T>() {
-          Iterator<? extends T> iter;
-          int pos = 0;
+      public boolean hasNext() {
+        while (pos < iterables.size()) {
+          if (iter == null) iter = iterables.get(pos).iterator();
+          if (iter.hasNext()) return true;
+          iter = null;
+          pos++;
+        }
+        return false;
+      }
 
-          @Override
-          public boolean hasNext() {
-            while (pos < iterables.size()) {
-              if (iter == null) iter = iterables.get(pos).iterator();
-              if (iter.hasNext()) return true;
-              iter = null;
-              pos++;
-            }
-            return false;
-          }
+      @Override
+      public T next() {
+        while (pos < iterables.size()) {
+          if (iter == null) iter = iterables.get(pos).iterator();
+          if (iter.hasNext()) return iter.next();
+          iter = null;
+          pos++;
+        }
+        throw new NoSuchElementException();
+      }
 
-          @Override
-          public T next() {
-            while (pos < iterables.size()) {
-              if (iter == null) iter = iterables.get(pos).iterator();
-              if (iter.hasNext()) return iter.next();
-              iter = null;
-              pos++;
-            }
-            throw new NoSuchElementException();
-          }
-
-          @Override
-          public void remove() {
-            throw new UnsupportedOperationException("remove");
-          }
-        };
+      @Override
+      public void remove() {
+        throw new UnsupportedOperationException("remove");
       }
     };
   }

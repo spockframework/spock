@@ -10,7 +10,7 @@ import java.util.HashMap;
  */
 public class HashMultiset<E> extends AbstractMultiset<E> {
   public HashMultiset() {
-    super(new HashMap<E, Integer>());
+    super(new HashMap<>());
   }
 
   public HashMultiset(Collection<? extends E> collection) {

@@ -475,7 +475,7 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 </dd>
 <dt><a href="spock/lang/IgnoreIf.html" title="annotation in spock.lang"><span class="typeNameLink">IgnoreIf</span></a> - Annotation Type in <a href="spock/lang/package-summary.html">spock.lang</a></dt>
 <dd>
-<div class="block">Ignores the annotated spec or feature if the given condition holds.</div>
+<div class="block">Ignores the annotated spec, feature or selected iterations if the given condition holds.</div>
 </dd>
 <dt><a href="spock/lang/IgnoreRest.html" title="annotation in spock.lang"><span class="typeNameLink">IgnoreRest</span></a> - Annotation Type in <a href="spock/lang/package-summary.html">spock.lang</a></dt>
 <dd>
@@ -814,7 +814,8 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 </dd>
 <dt><a href="spock/lang/PendingFeatureIf.html" title="annotation in spock.lang"><span class="typeNameLink">PendingFeatureIf</span></a> - Annotation Type in <a href="spock/lang/package-summary.html">spock.lang</a></dt>
 <dd>
-<div class="block">Marks the annotated spec or feature as <a href="spock/lang/PendingFeature.html" title="annotation in spock.lang"><code>PendingFeature</code></a> if the given condition holds.</div>
+<div class="block">Marks the annotated feature or selected iterations as <a href="spock/lang/PendingFeature.html" title="annotation in spock.lang"><code>PendingFeature</code></a> if the
+ given condition holds.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="spock/util/time/MutableClock.html#plus(java.time.temporal.TemporalAmount)">plus(TemporalAmount)</a></span> - Method in class spock.util.time.<a href="spock/util/time/MutableClock.html" title="class in spock.util.time">MutableClock</a></dt>
 <dd>
@@ -858,7 +859,7 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 </dd>
 <dt><a href="spock/lang/Requires.html" title="annotation in spock.lang"><span class="typeNameLink">Requires</span></a> - Annotation Type in <a href="spock/lang/package-summary.html">spock.lang</a></dt>
 <dd>
-<div class="block">Ignores the annotated spec or feature unless the given condition holds.</div>
+<div class="block">Ignores the annotated spec, feature or selected iterations unless the given condition holds.</div>
 </dd>
 <dt><a href="spock/util/environment/RestoreSystemProperties.html" title="annotation in spock.util.environment"><span class="typeNameLink">RestoreSystemProperties</span></a> - Annotation Type in <a href="spock/util/environment/package-summary.html">spock.util.environment</a></dt>
 <dd>
@@ -1183,9 +1184,7 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dt><span class="memberNameLink"><a href="spock/lang/PendingFeatureIf.html#value()">value()</a></span> - Method in annotation type spock.lang.<a href="spock/lang/PendingFeatureIf.html" title="annotation in spock.lang">PendingFeatureIf</a></dt>
 <dd>
 <div class="block">If this condition holds true, the feature will be considered "Pending"
- and will behave the same way as if it were annotated as a <a href="spock/lang/PendingFeature.html" title="annotation in spock.lang"><code>PendingFeature</code></a>
-
- If the condition is false, it will not be treated as pending</div>
+ and will behave the same way as if it were annotated as a <a href="spock/lang/PendingFeature.html" title="annotation in spock.lang"><code>PendingFeature</code></a></div>
 </dd>
 <dt><span class="memberNameLink"><a href="spock/lang/Requires.html#value()">value()</a></span> - Method in annotation type spock.lang.<a href="spock/lang/Requires.html" title="annotation in spock.lang">Requires</a></dt>
 <dd>&nbsp;</dd>

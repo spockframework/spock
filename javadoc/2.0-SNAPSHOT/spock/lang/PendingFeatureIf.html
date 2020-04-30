@@ -119,17 +119,22 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 @Retention(RUNTIME)
 @Target(METHOD)
 public @interface <span class="memberNameLabel">PendingFeatureIf</span></pre>
-<div class="block">Marks the annotated spec or feature as <a href="PendingFeature.html" title="annotation in spock.lang"><code>PendingFeature</code></a> if the given condition holds.
- Otherwise it will be treated like a normal feature.
- <p/>
- <p/>
- The configured closure is called with a delegate of type
- <code>PreconditionContext</code>
+<div class="block">Marks the annotated feature or selected iterations as <a href="PendingFeature.html" title="annotation in spock.lang"><code>PendingFeature</code></a> if the
+ given condition holds. Otherwise it will be treated like a normal feature or iteration.
+
+ <p>The configured closure is called with a delegate of type <code>PreconditionContext</code>
  which provides access to system properties, environment variables, the type
  of operating system and JVM.
- <p/>
- <p/>
- Relates annotations (extensions): <a href="Requires.html" title="annotation in spock.lang"><code>Requires</code></a>, <a href="IgnoreIf.html" title="annotation in spock.lang"><code>IgnoreIf</code></a></div>
+
+ <p>If applied to a data driven feature, the closure can also access the data variables.
+ If the closure does not reference any actual data variables, the whole feature is deemed pending
+ and only if all iterations become successful will be marked as failing. But if the closure actually
+ does reference valid data variables, the individual iterations where the condition holds are
+ deemed pending and each will individually fail as soon as it would be successful without this annotation.</div>
+<dl>
+<dt><span class="seeLabel">See Also:</span></dt>
+<dd><code>PreconditionContext</code></dd>
+</dl>
 </li>
 </ul>
 </div>
@@ -155,9 +160,7 @@ public @interface <span class="memberNameLabel">PendingFeatureIf</span></pre>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#value()">value</a></span></code></th>
 <td class="colLast">
 <div class="block">If this condition holds true, the feature will be considered "Pending"
- and will behave the same way as if it were annotated as a <a href="PendingFeature.html" title="annotation in spock.lang"><code>PendingFeature</code></a>
-
- If the condition is false, it will not be treated as pending</div>
+ and will behave the same way as if it were annotated as a <a href="PendingFeature.html" title="annotation in spock.lang"><code>PendingFeature</code></a></div>
 </td>
 </tr>
 </table>
@@ -219,7 +222,7 @@ public @interface <span class="memberNameLabel">PendingFeatureIf</span></pre>
 <div class="block">If this condition holds true, the feature will be considered "Pending"
  and will behave the same way as if it were annotated as a <a href="PendingFeature.html" title="annotation in spock.lang"><code>PendingFeature</code></a>
 
- If the condition is false, it will not be treated as pending</div>
+ <p>If the condition is false, it will not be treated as pending</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>Closure to be evaluated</dd>
@@ -241,7 +244,7 @@ public @interface <span class="memberNameLabel">PendingFeatureIf</span></pre>
 <pre>java.lang.Class&lt;? extends java.lang.Throwable&gt;[]&nbsp;exceptions</pre>
 <div class="block">Configures which types of Exceptions are expected in the pending feature.
 
- Subclasses are included if their parent class is listed.</div>
+ <p>Subclasses are included if their parent class is listed.</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>array of Exception classes to ignore.</dd>

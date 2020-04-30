@@ -70,16 +70,6 @@ ext {
     objenesis           : [group: 'org.objenesis', name: 'objenesis', version: '3.1']
 
   ]
-  if (snapshotVersion && System.env.CI != "true") {
-    //build time is not crucial for local SNAPSHOT builds, unless published from CI server
-    //speed up local development by leveraging Gradle caching mechanism
-    buildDate = "1970-01-01"
-    buildTime = "00:00:00.000Z"
-  } else {
-    Date buildTimeAndDate = new Date()
-    buildDate = new SimpleDateFormat('yyyy-MM-dd').format(buildTimeAndDate)
-    buildTime = new SimpleDateFormat('HH:mm:ss.SSSZ').format(buildTimeAndDate)
-  }
 }
 
 allprojects {

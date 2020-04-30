@@ -50,7 +50,6 @@ jar {
   }
   bnd(
     'Export-Package': ['org.spockframework.*', 'spock.*'].join(','),
-    'Embed-Dependency': ['groovy;inline=false', 'junit;inline=false'].join(','),
     'Import-Package': [
       /groovy.*;version="[${groovyVersion},${org.gradle.util.VersionNumber.parse(groovyVersion).major + 1})"/,
       /org.codehaus.groovy.*;version="[${groovyVersion},${org.gradle.util.VersionNumber.parse(groovyVersion).major + 1})"/,

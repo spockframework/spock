@@ -83,13 +83,11 @@ public class MutableClock extends Clock {
   }
 
   public void setChangeAmount(TemporalAmount changeAmount) {
-    assert changeAmount != null : "changeAmount may not be null";
-    this.changeAmount = changeAmount;
+    this.changeAmount = Objects.requireNonNull(changeAmount, "changeAmount may not be null");
   }
 
   public void setInstant(Instant instant) {
-    assert instant != null : "instant may not be null";
-    this.instant = instant;
+    this.instant = Objects.requireNonNull(instant,"instant may not be null");
   }
 
   /**

@@ -224,8 +224,12 @@ public abstract class GroovyRuntimeUtil {
     }
   }
 
+  /**
+   * If args is an array it is cloned and the clone is modified.
+   * The original array is not changed.
+   */
   public static Object[] asUnwrappedArgumentArray(Object args) {
-    return InvokerHelper.asUnwrappedArray(args);
+    return InvokerHelper.asUnwrappedArray(InvokerHelper.asArray(args).clone());
   }
 
   /**

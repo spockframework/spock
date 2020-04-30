@@ -3,7 +3,7 @@
 There are many ways to contribute to Spock:
 
 * Spreading the word by talking, tweeting, blogging, presenting, submitting talks, writing tutorials or articles (or a book!), sharing success stories, adding your project/company to [Who is Using Spock](http://wiki.spockframework.org/WhoIsUsingSpock), etc.
-* Helping other users by participating in [forum](http://forum.spockframework.org) discussions, answering [Spock questions](http://stackoverflow.com/questions/tagged/spock) on Stack Overflow, etc.
+* Helping other users by participating in [forum](http://forum.spockframework.org) discussions, answering [Spock questions](https://stackoverflow.com/questions/tagged/spock) on Stack Overflow, etc.
 * Providing early feedback on [development snapshots](https://oss.sonatype.org/content/repositories/snapshots/org/spockframework/) and new features
 * Improving and extending the [reference documentation](http://docs.spockframework.org) [(source)](https://github.com/spockframework/spock/tree/master/docs)
 * Translating blog posts, articles, and the reference documentation to other languages (with permission of the authors)
@@ -11,7 +11,7 @@ There are many ways to contribute to Spock:
 * Proposing, discussing, and implementing new features
 * Building the next generation of [Spock Web Console](http://webconsole.spockframework.org), or an interactive Spock tutorial
 * Designing a Spock logo and/or website (Disclaimer: Our expectations are high on this one, and obviously we'll need to be heavily involved)
-* Hiring us for Spock/[Geb](http://gebish.org) related training and consulting
+* Hiring us for Spock/[Geb](https://gebish.org) related training and consulting
 * Donating money to fund further development
 * Suprising us with some other form of contribution!
 
@@ -19,7 +19,7 @@ All forms of contribution are very much appreciated.
 
 ## Communication
 
-Good communication makes a big difference. We are always eager to listen, reflect, and discuss. Don't hesitate to get in touch via the [issue tracker](http://issues.spockframework.org), [user forum](http://forum.spockframework.org), or [dev forum](http://dev.forum.spockframework.org). Choose whatever medium feels most appropriate.
+Good communication makes a big difference. We are always eager to listen, reflect, and discuss. Don't hesitate to get in touch via the [issue tracker](http://issues.spockframework.org), [user forum](http://forum.spockframework.org), or [dev forum](http://dev-forum.spockframework.org). Choose whatever medium feels most appropriate.
 
 ## Triage Issues [![Open Source Helpers](https://www.codetriage.com/spockframework/spock/badges/users.svg)](https://www.codetriage.com/spockframework/spock)
 
@@ -27,7 +27,7 @@ You can triage issues which may include reproducing bug reports or asking for vi
 
 ## Contributing Code/Docs
 
-To contribute code or documentation, please submit a pull request to the [GitHub repository](http://github.spockframework.org/spock).
+To contribute code or documentation, please submit a pull request to the [GitHub repository](https://github.com/spockframework/spock).
 
 A good way to familiarize yourself with the codebase and contribution process is to look for and tackle low-hanging fruits in the [issue tracker](http://issues.spockframework.org). Before embarking on a more ambitious contribution, please quickly [get in touch](#communication) with us. This will help to make sure that the contribution is aligned with Spock's overall direction and goals, and gives us a chance to guide design and implementation where needed.
 
@@ -42,7 +42,7 @@ When reviewing pull requests, we value the following qualities (in no particular
 * New code blends in well with existing code, respecting established coding standards and practices
 * Tests are updated/added along with the code, communicate intent and cover important cases (see [Tests](#tests) for additional information)
 * Documentation (Javadoc, Groovydoc, reference documentation) is updated/added along with the code
-* A good commit message that follows the [seven rules](http://chris.beams.io/posts/git-commit/)
+* A good commit message that follows the [seven rules](https://chris.beams.io/posts/git-commit/)
 
 Don't be intimidated by these words. Pull requests that satisfy Spock's overall direction and goals (see above), are crafted carefully, and aren't aiming too high, have a good chance of getting accepted. Before doing so, we may ask for some concrete improvements to be made, in which case we hope for your cooperation.
 
@@ -62,7 +62,7 @@ All tests are written in Spock. Tests for `spock-core` are located in the `spock
 
 ### Command Line Build
 
-Spock is built with [Gradle](http://www.gradle.org). The only prerequsite for executing the build is an installation of JDK 1.6 (or higher). After cloning the [GitHub repository](http://github.spockframework.org/spock), cd into the top directory and execute `./gradlew build` (Windows: `gradlew build`). The build should succeed without any errors. `gradlew tasks` lists the available tasks. Always use the Gradle Wrapper (`gradlew` command) rather than your own Gradle installation.
+Spock is built with [Gradle](https://www.gradle.org). The only prerequsite for executing the build is an installation of JDK 1.6 (or higher). After cloning the [GitHub repository](https://github.com/spockframework/spock), cd into the top directory and execute `./gradlew build` (Windows: `gradlew build`). The build should succeed without any errors. `gradlew tasks` lists the available tasks. Always use the Gradle Wrapper (`gradlew` command) rather than your own Gradle installation.
 
 ### CI Build
 
@@ -95,7 +95,7 @@ Note: Unfortunately there are currently [some issues](https://github.com/spockfr
 
 #### Eclipse
 
-Eclipse 3.7+ with latest [Groovy plugin](http://groovy.codehaus.org/Eclipse+Plugin) should work reasonably well for developing Spock. To import the Gradle build into Eclipse, either run `gradlew eclipse` and import the generated Eclipse projects via `File->Import->General->Existing Project into Workspace`, or install the [Eclipse Gradle Tooling](https://github.com/spring-projects/eclipse-integration-gradle/) and import via `File->Import->Gradle->Gradle Project`. Either method should result in an IDE setup where:
+Eclipse 3.7+ with latest [Groovy plugin](https://github.com/groovy/groovy-eclipse/wiki) should work reasonably well for developing Spock. To import the Gradle build into Eclipse, either run `gradlew eclipse` and import the generated Eclipse projects via `File->Import->General->Existing Project into Workspace`, or install the [Eclipse Gradle Tooling](https://github.com/spring-projects/eclipse-integration-gradle/) and import via `File->Import->Gradle->Gradle Project`. Either method should result in an IDE setup where:
 
 * Both Java and Groovy code compiles without problems
 * All tests can be run without problems

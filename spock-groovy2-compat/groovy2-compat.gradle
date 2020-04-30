@@ -11,9 +11,6 @@ description = "Spock's Groovy 2 Compatibility Module provides support for using 
 jar {
   manifest {
     attributes(
-      'Created-By': "${System.properties['java.version']} (${System.properties['java.vendor']} ${System.properties['java.vm.version']})".toString(),
-      'Build-Date': buildDate,
-      'Build-Time': buildTime,
       'Build-Revision': versioning.info.commit,
       'Specification-Title': project.name,
       'Specification-Version': baseVersion,

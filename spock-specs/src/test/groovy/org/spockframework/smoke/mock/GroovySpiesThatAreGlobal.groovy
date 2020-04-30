@@ -15,7 +15,9 @@
 package org.spockframework.smoke.mock
 
 import java.lang.reflect.Modifier
+import java.util.regex.Pattern
 
+import spock.lang.Issue
 import spock.lang.Specification
 
 class GroovySpiesThatAreGlobal extends Specification {
@@ -209,6 +211,39 @@ class GroovySpiesThatAreGlobal extends Specification {
     0 * _
   }
 
+  @Issue("https://github.com/spockframework/spock/issues/871")
+  def "type casts are not swallowed"() {
+    given:
+    GroovySpy(PersonWithOverloadedMethods, global: true)
+
+    expect:
+    action() == result
+
+    where:
+    _ | action                                                           || result
+    _ | { PersonWithOverloadedMethods.perform("null string" as String) } || "String"
+    _ | { PersonWithOverloadedMethods.perform(null as Pattern) }         || "Pattern"
+    _ | { PersonWithOverloadedMethods.perform((String) null) }           || "String"
+    _ | { PersonWithOverloadedMethods.perform((Pattern) null) }          || "Pattern"
+  }
+
+  @Issue("https://github.com/spockframework/spock/issues/871")
+  def "type casts are not swallowed when stubbing"() {
+    given:
+    GroovySpy(PersonWithOverloadedMethods, global: true)
+    PersonWithOverloadedMethods.perform(_) >> "Foo"
+
+    expect:
+    action() == "Foo"
+
+    where:
+    _ | action
+    _ | { PersonWithOverloadedMethods.perform(null as String) }
+    _ | { PersonWithOverloadedMethods.perform(null as Pattern) }
+    _ | { PersonWithOverloadedMethods.perform((String) null) }
+    _ | { PersonWithOverloadedMethods.perform((Pattern) null) }
+  }
+
   static class Person {
     String name
     int age
@@ -231,6 +266,16 @@ class GroovySpiesThatAreGlobal extends Specification {
     FinalPerson(String name = "fred", int age = 42) {
       this.name = name
       this.age = age
+    }
+  }
+
+  static class PersonWithOverloadedMethods {
+    static String perform(String work) {
+      "String"
+    }
+
+    static String perform(Pattern work) {
+      "Pattern"
     }
   }
 }

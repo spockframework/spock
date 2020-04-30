@@ -27,6 +27,7 @@ dist: precise # downgrade to avoid jdk7 SSL Bug https://github.com/docker-librar
 jdk: # if you modify these also modify the `javaVersions` list in build.gradle
   - oraclejdk8
   - openjdk11
+  - openjdk14
 
 env:
   matrix:

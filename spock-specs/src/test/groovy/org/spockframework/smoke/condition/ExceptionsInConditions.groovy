@@ -1,8 +1,7 @@
 package org.spockframework.smoke.condition
 
 import org.spockframework.EmbeddedSpecification
-import org.spockframework.runtime.ConditionNotSatisfiedError
-import org.spockframework.runtime.SpockException
+import org.spockframework.runtime.*
 
 class ExceptionsInConditions extends EmbeddedSpecification {
   private static final String SCRIPT_EXECUTION_LINE_PATTERN = ~/[Ss]cript_?+\p{XDigit}++\.groovy:[\d]++/
@@ -25,9 +24,9 @@ class ExceptionsInConditions extends EmbeddedSpecification {
         |   |          |
         [:] null       java.lang.NullPointerException: Cannot invoke method length() on null object
                        \tat apackage.ASpec.a feature($NORMALIZED_SCRIPT_EXECUTION_LINE)
-    """.stripIndent()
-    unifyScriptExecutionLineInStacktrace(e.getCondition().getRendering()) == expected
-    e.getCause() instanceof NullPointerException
+        """.stripIndent()
+    unifyScriptExecutionLineInStacktrace(e.condition.rendering) == expected
+    e.cause instanceof NullPointerException
   }
 
   private String unifyScriptExecutionLineInStacktrace(String stacktrace) {
@@ -51,9 +50,9 @@ class ExceptionsInConditions extends EmbeddedSpecification {
         |   |          |
         [:] null       java.lang.NullPointerException: Cannot invoke method isEmpty() on null object
                        \tat apackage.ASpec.a feature($NORMALIZED_SCRIPT_EXECUTION_LINE)
-    """.stripIndent()
-    unifyScriptExecutionLineInStacktrace(e.getCondition().getRendering()) == expected
-    e.getCause() instanceof NullPointerException
+        """.stripIndent()
+    unifyScriptExecutionLineInStacktrace(e.condition.rendering) == expected
+    e.cause instanceof NullPointerException
   }
 
   def "exception while invoking condition"() {
@@ -82,10 +81,10 @@ class ExceptionsInConditions extends EmbeddedSpecification {
         java.lang.IllegalArgumentException: key does not exists
         \tat apackage.ASpec.a feature_closure1($NORMALIZED_SCRIPT_EXECUTION_LINE)
         \tat apackage.ASpec.a feature($NORMALIZED_SCRIPT_EXECUTION_LINE)
-    """.stripIndent()
-    unifyScriptExecutionLineInStacktrace(e.getCondition().getRendering()) == expected
+        """.stripIndent()
+    unifyScriptExecutionLineInStacktrace(e.condition.rendering) == expected
 
-    e.getCause() instanceof IllegalArgumentException
+    e.cause instanceof IllegalArgumentException
   }
 
 
@@ -110,10 +109,10 @@ class ExceptionsInConditions extends EmbeddedSpecification {
         result
         |
         null
-    """.stripIndent()
-    e.getCondition().getRendering() == expected
+        """.stripIndent()
+    e.condition.rendering == expected
 
-    e.getCause() == null
+    e.cause == null
   }
 
   def "spock exceptions should be processed as is"() {
@@ -134,7 +133,7 @@ class ExceptionsInConditions extends EmbeddedSpecification {
 
     then:
     SpockException e = thrown()
-    e.getMessage() == "key does not exists"
+    e.message == "key does not exists"
   }
 
   def "deep nesting"() {
@@ -155,7 +154,7 @@ class ExceptionsInConditions extends EmbeddedSpecification {
         |   |          |
         [:] null       java.lang.NullPointerException: Cannot get property 'b' on null object
                        \tat apackage.ASpec.a feature($NORMALIZED_SCRIPT_EXECUTION_LINE)
-    """.stripIndent()
-    unifyScriptExecutionLineInStacktrace(e.getMessage()) == expected
+        """.stripIndent()
+    unifyScriptExecutionLineInStacktrace(e.message) == expected
   }
 }

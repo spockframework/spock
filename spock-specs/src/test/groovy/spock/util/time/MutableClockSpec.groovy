@@ -122,7 +122,7 @@ class MutableClockSpec extends Specification {
     mutableClock.instant = null
 
     then:
-    thrown(AssertionError)
+    thrown(NullPointerException)
   }
 
   def "MutableClock can be advanced with plus"(int amount) {
@@ -192,7 +192,7 @@ class MutableClockSpec extends Specification {
     mutableClock.changeAmount = null
 
     then:
-    thrown(AssertionError)
+    thrown(NullPointerException)
   }
 
   def "MutableClock can be adjusted with TemporalAdjuster"(TemporalAdjuster adjuster, ZonedDateTime expected) {

@@ -266,6 +266,23 @@ Data values that aren't of interest can be ignored with an underscore (`_`):
 include::{sourcedir}/datadriven/DataSpec.groovy[tag=sql-data-pipe-with-underscore]
 ----
 
+The multi-assignments can even be nested. The following example will generate these iterations:
+
+[%header, cols=3*a]
+|===
+| a              | b      | c
+| `['a1', 'a2']` | `'b1'` | `'c1'`
+| `['a2', 'a1']` | `'b1'` | `'c1'`
+| `['a1', 'a2']` | `'b2'` | `'c2'`
+| `['a2', 'a1']` | `'b2'` | `'c2'`
+|===
+
+[source,groovy,indent=0]
+----
+    ...
+include::{sourcedir}/datadriven/DataSpec.groovy[tag=nested-multi-variable-data-pipe]
+----
+
 == Data Variable Assignment
 
 A data variable can be directly assigned a value:
@@ -315,6 +332,26 @@ This also includes columns in previous data tables in the same `where` block:
 ----
     ...
 include::{sourcedir}/datadriven/DataSpec.groovy[tag=previous-column-access-multi-table]
+----
+
+== Multi-Variable Assignment
+
+Like with data pipes, you can also assign to multiple variables in one expression, if you have some object Groovy
+can iterate over. Unlike with data pipes, the syntax here is identical to standard Groovy multi-assignment syntax:
+
+[source,groovy,indent=0]
+----
+include::{sourcedir}/datadriven/DataSpec.groovy[tag=datasource]
+
+include::{sourcedir}/datadriven/DataSpec.groovy[tag=sql-multi-assignment]
+----
+
+Data values that aren't of interest can be ignored with an underscore (`_`):
+
+[source,groovy,indent=0]
+----
+    ...
+include::{sourcedir}/datadriven/DataSpec.groovy[tag=sql-multi-assignment-with-underscore]
 ----
 
 == Combining Data Tables, Data Pipes, and Variable Assignments

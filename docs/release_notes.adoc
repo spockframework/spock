@@ -201,6 +201,24 @@ def "I'll run everywhere but on Windows"() { ... }
 
 - Upgrade Hamcrest to 2.2 (from 1.3 provided previously by `junit4.jar`)
 
+- Derived data variables (assignments in `where` blocks) now also support multi-assignment syntax, including ignoring
+  some values with the wildcard expression.
++
+[source,groovy]
+----
+(a, b, _, c) = row
+----
+
+- Multi-variable data pipes now also support nesting.
++
+[source,groovy]
+----
+[a, [_, b]] << [
+  [1, [5, 1]],
+  [2, [5, 2]]
+]
+----
+
 == 2.0-M2 (2020-02-10)
 
 === Groovy-3.0 Support

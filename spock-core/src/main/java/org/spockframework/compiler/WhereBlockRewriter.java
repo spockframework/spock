@@ -59,6 +59,7 @@ public class WhereBlockRewriter {
   private final List<Statement> dataProcessorStats = new ArrayList<>();
   // parameterization variables of the data processor method
   private final List<VariableExpression> dataProcessorVars = new ArrayList<>();
+  private int localVariableCount = 0;
 
   private WhereBlockRewriter(WhereBlock whereBlock, IRewriteResources resources) {
     this.whereBlock = whereBlock;
@@ -154,9 +155,21 @@ public class WhereBlockRewriter {
         throw notAParameterization(stat);
       }
     } else if (type == Types.ASSIGN) {
-      // derived data variable like:
+      // potentially a derived data variable like:
       // y = 2 * x
-      rewriteDerivedParameterization(binExpr, stat);
+      // or
+      // (y, z) = [2, x]
+      Expression leftExpr = binExpr.getLeftExpression();
+      if (leftExpr instanceof VariableExpression) {
+        // y = 2 * x
+        rewriteSimpleDerivedParameterization(binExpr, stat);
+      } else if (leftExpr instanceof TupleExpression) {
+        // (y, z) = [2, x]
+        rewriteMultiDerivedParameterization(binExpr, stat);
+      } else {
+        // neither of the other two
+        notAParameterization(stat);
+      }
     } else if (getOrExpression(binExpr) != null) {
       // header line of data table like:
       // x | y || z
@@ -291,16 +304,8 @@ public class WhereBlockRewriter {
     int nextDataVariableIndex = dataProcessorVars.size();
     Parameter dataProcessorParameter = createDataProcessorParameter();
     VariableExpression arg = (VariableExpression) binExpr.getLeftExpression();
-
     VariableExpression dataVar = createDataProcessorVariable(arg, sourcePos);
-    ExpressionStatement exprStat = new ExpressionStatement(
-        new DeclarationExpression(
-            dataVar,
-            Token.newSymbol(Types.ASSIGN, -1, -1),
-            new VariableExpression(dataProcessorParameter)));
-    exprStat.setSourcePosition(sourcePos);
-    dataProcessorStats.add(exprStat);
-
+    createDataProcessorStatement(dataVar, new VariableExpression(dataProcessorParameter), sourcePos);
     createDataProviderMethod(binExpr.getRightExpression(), nextDataVariableIndex, addDataTableParameters);
   }
 
@@ -312,37 +317,57 @@ public class WhereBlockRewriter {
     int nextDataVariableIndex = dataProcessorVars.size();
     Parameter dataProcessorParameter = createDataProcessorParameter();
     ListExpression list = (ListExpression) binExpr.getLeftExpression();
+    rewriteMultiParameterization(list, new VariableExpression(dataProcessorParameter), enclosingStat);
+    createDataProviderMethod(binExpr.getRightExpression(), nextDataVariableIndex, false);
+  }
 
+  private void rewriteMultiParameterization(ListExpression list, Expression rightBase, Statement enclosingStat)
+      throws InvalidSpecCompileException {
     List<Expression> listElems = list.getExpressions();
     for (int i = 0; i < listElems.size(); i++) {
       Expression listElem = listElems.get(i);
       if (AstUtil.isWildcardRef(listElem)) continue;
-      VariableExpression dataVar = createDataProcessorVariable(listElem, enclosingStat);
-      ExpressionStatement exprStat =
-          new ExpressionStatement(
-              new DeclarationExpression(
-                  dataVar,
-                  Token.newSymbol(Types.ASSIGN, -1, -1),
-                  createGetAtMethod(new VariableExpression(dataProcessorParameter), i)));
-      exprStat.setSourcePosition(enclosingStat);
-      dataProcessorStats.add(exprStat);
-    }
 
-    createDataProviderMethod(binExpr.getRightExpression(), nextDataVariableIndex, false);
+      if (listElem instanceof VariableExpression) {
+        VariableExpression variable = createDataProcessorVariable(listElem, enclosingStat);
+        createDataProcessorStatement(variable, createGetAtMethod(rightBase, i), enclosingStat);
+      } else if (listElem instanceof ListExpression) {
+        VariableExpression variable = new VariableExpression("$spock_l" + localVariableCount++);
+        createDataProcessorStatement(variable, createGetAtMethod(rightBase, i), enclosingStat);
+        rewriteMultiParameterization(((ListExpression) listElem), variable, enclosingStat);
+      } else {
+        notAParameterization(enclosingStat);
+      }
+    }
   }
 
-  private void rewriteDerivedParameterization(BinaryExpression parameterization, Statement enclosingStat)
+  private void rewriteSimpleDerivedParameterization(BinaryExpression parameterization, Statement enclosingStat)
       throws InvalidSpecCompileException {
     VariableExpression dataVar = createDataProcessorVariable(parameterization.getLeftExpression(), enclosingStat);
+    createDataProcessorStatement(dataVar, parameterization.getRightExpression(), enclosingStat);
+  }
 
+  private void rewriteMultiDerivedParameterization(BinaryExpression binExpr, Statement enclosingStat)
+      throws InvalidSpecCompileException {
+    TupleExpression tuple = (TupleExpression) binExpr.getLeftExpression();
+
+    List<Expression> tupleElems = tuple.getExpressions();
+    for (int i = 0; i < tupleElems.size(); i++) {
+      Expression tupleElem = tupleElems.get(i);
+      if (AstUtil.isWildcardRef(tupleElem)) continue;
+      VariableExpression dataVar = createDataProcessorVariable(tupleElem, enclosingStat);
+      createDataProcessorStatement(dataVar, createGetAtMethod(binExpr.getRightExpression(), i), enclosingStat);
+    }
+  }
+
+  private void createDataProcessorStatement(VariableExpression variable, Expression right, ASTNode sourcePos) {
     ExpressionStatement exprStat =
-        new ExpressionStatement(
-            new DeclarationExpression(
-                dataVar,
-                Token.newSymbol(Types.ASSIGN, -1, -1),
-                parameterization.getRightExpression()));
-
-    exprStat.setSourcePosition(enclosingStat);
+      new ExpressionStatement(
+        new DeclarationExpression(
+          variable,
+          Token.newSymbol(Types.ASSIGN, -1, -1),
+          right));
+    exprStat.setSourcePosition(sourcePos);
     dataProcessorStats.add(exprStat);
   }
 

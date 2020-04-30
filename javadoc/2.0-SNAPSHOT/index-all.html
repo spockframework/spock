@@ -97,6 +97,10 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 </a>
 <h2 class="title">A</h2>
 <dl>
+<dt><span class="memberNameLink"><a href="spock/util/time/MutableClock.html#adjust(java.time.temporal.TemporalAdjuster)">adjust(TemporalAdjuster)</a></span> - Method in class spock.util.time.<a href="spock/util/time/MutableClock.html" title="class in spock.util.time">MutableClock</a></dt>
+<dd>
+<div class="block">Applies the given <code>TemporalAdjuster</code> to the internal time.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="spock/config/IncludeExcludeCriteria.html#annotations">annotations</a></span> - Variable in class spock.config.<a href="spock/config/IncludeExcludeCriteria.html" title="class in spock.config">IncludeExcludeCriteria</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="spock/util/concurrent/AsyncConditions.html" title="class in spock.util.concurrent"><span class="typeNameLink">AsyncConditions</span></a> - Class in <a href="spock/util/concurrent/package-summary.html">spock.util.concurrent</a></dt>
@@ -342,6 +346,8 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>
 <div class="block">Returns the version of the operating system, as returned by the <code>os.version</code> system property.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="spock/util/time/MutableClock.html#getZone()">getZone()</a></span> - Method in class spock.util.time.<a href="spock/util/time/MutableClock.html" title="class in spock.util.time">MutableClock</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="spock/mock/MockingApi.html#GroovyMock()">GroovyMock()</a></span> - Method in class spock.mock.<a href="spock/mock/MockingApi.html" title="class in spock.mock">MockingApi</a></dt>
 <dd>
 <div class="block">Creates a Groovy mock whose type and name are inferred from the left-hand side of the enclosing variable assignment.</div>
@@ -484,6 +490,8 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
  included/excluded from a spec run.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="spock/config/IncludeExcludeCriteria.html#%3Cinit%3E(java.lang.Class...)">IncludeExcludeCriteria(Class&lt;?&gt;...)</a></span> - Constructor for class spock.config.<a href="spock/config/IncludeExcludeCriteria.html" title="class in spock.config">IncludeExcludeCriteria</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="spock/util/time/MutableClock.html#instant()">instant()</a></span> - Method in class spock.util.time.<a href="spock/util/time/MutableClock.html" title="class in spock.util.time">MutableClock</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="spock/mock/MockingApi.html#interaction(groovy.lang.Closure)">interaction(Closure)</a></span> - Method in class spock.mock.<a href="spock/mock/MockingApi.html" title="class in spock.mock">MockingApi</a></dt>
 <dd>
@@ -638,6 +646,10 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>
 <div class="block">A Mac OS operating system.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="spock/util/time/MutableClock.html#minus(java.time.temporal.TemporalAmount)">minus(TemporalAmount)</a></span> - Method in class spock.util.time.<a href="spock/util/time/MutableClock.html" title="class in spock.util.time">MutableClock</a></dt>
+<dd>
+<div class="block">Subtracts the given <code>TemporalAmount</code> from the internal time.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="spock/mock/MockingApi.html#Mock()">Mock()</a></span> - Method in class spock.mock.<a href="spock/mock/MockingApi.html" title="class in spock.mock">MockingApi</a></dt>
 <dd>
 <div class="block">Creates a mock whose type and name are inferred from the left-hand side of the enclosing variable assignment.</div>
@@ -711,6 +723,36 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>
 <div class="block">Retry mode, controls what is retried.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="spock/util/time/MutableClock.html#modify(java.util.function.BiFunction)">modify(BiFunction&lt;Instant, ZoneId, Instant&gt;)</a></span> - Method in class spock.util.time.<a href="spock/util/time/MutableClock.html" title="class in spock.util.time">MutableClock</a></dt>
+<dd>
+<div class="block">Sets the internal time based on the result of the modification.</div>
+</dd>
+<dt><a href="spock/util/time/MutableClock.html" title="class in spock.util.time"><span class="typeNameLink">MutableClock</span></a> - Class in <a href="spock/util/time/package-summary.html">spock.util.time</a></dt>
+<dd>
+<div class="block">A mutable implementation of <code>Clock</code> for testing purposes.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="spock/util/time/MutableClock.html#%3Cinit%3E()">MutableClock()</a></span> - Constructor for class spock.util.time.<a href="spock/util/time/MutableClock.html" title="class in spock.util.time">MutableClock</a></dt>
+<dd>
+<div class="block">Initializes a with <code>Instant.now()</code> and <code>ZoneId.systemDefault()</code> and 1 second <a href="spock/util/time/MutableClock.html#changeAmount"><code>MutableClock.changeAmount</code></a>.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="spock/util/time/MutableClock.html#%3Cinit%3E(java.time.Instant)">MutableClock(Instant)</a></span> - Constructor for class spock.util.time.<a href="spock/util/time/MutableClock.html" title="class in spock.util.time">MutableClock</a></dt>
+<dd>
+<div class="block">Initializes a with given instant and <code>ZoneId.systemDefault()</code> and 1 second <a href="spock/util/time/MutableClock.html#changeAmount"><code>MutableClock.changeAmount</code></a>.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="spock/util/time/MutableClock.html#%3Cinit%3E(java.time.Instant,java.time.ZoneId)">MutableClock(Instant, ZoneId)</a></span> - Constructor for class spock.util.time.<a href="spock/util/time/MutableClock.html" title="class in spock.util.time">MutableClock</a></dt>
+<dd>
+<div class="block">Initializes a with 1 second <a href="spock/util/time/MutableClock.html#changeAmount"><code>MutableClock.changeAmount</code></a> and given parameters.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="spock/util/time/MutableClock.html#%3Cinit%3E(java.time.Instant,java.time.ZoneId,java.time.temporal.TemporalAmount)">MutableClock(Instant, ZoneId, TemporalAmount)</a></span> - Constructor for class spock.util.time.<a href="spock/util/time/MutableClock.html" title="class in spock.util.time">MutableClock</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="spock/util/time/MutableClock.html#%3Cinit%3E(java.time.ZonedDateTime)">MutableClock(ZonedDateTime)</a></span> - Constructor for class spock.util.time.<a href="spock/util/time/MutableClock.html" title="class in spock.util.time">MutableClock</a></dt>
+<dd>
+<div class="block">Initializes a with instant and zone from <code>ZonedDateTime</code> and 1 second <a href="spock/util/time/MutableClock.html#changeAmount"><code>MutableClock.changeAmount</code></a>.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="spock/util/time/MutableClock.html#%3Cinit%3E(java.time.ZoneId)">MutableClock(ZoneId)</a></span> - Constructor for class spock.util.time.<a href="spock/util/time/MutableClock.html" title="class in spock.util.time">MutableClock</a></dt>
+<dd>
+<div class="block">Initializes a with <code>Instant.now()</code> and given zone and 1 second <a href="spock/util/time/MutableClock.html#changeAmount"><code>MutableClock.changeAmount</code></a>.</div>
+</dd>
 </dl>
 <a id="I:N">
 <!--   -->
@@ -720,6 +762,10 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dt><a href="spock/lang/Narrative.html" title="annotation in spock.lang"><span class="typeNameLink">Narrative</span></a> - Annotation Type in <a href="spock/lang/package-summary.html">spock.lang</a></dt>
 <dd>
 <div class="block">Allows to attach a natural-language description to a spec.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="spock/util/time/MutableClock.html#next()">next()</a></span> - Method in class spock.util.time.<a href="spock/util/time/MutableClock.html" title="class in spock.util.time">MutableClock</a></dt>
+<dd>
+<div class="block">Adds <a href="spock/util/time/MutableClock.html#changeAmount"><code>MutableClock.changeAmount</code></a> to internal time.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="spock/lang/Specification.html#noExceptionThrown()">noExceptionThrown()</a></span> - Method in class spock.lang.<a href="spock/lang/Specification.html" title="class in spock.lang">Specification</a></dt>
 <dd>
@@ -770,12 +816,20 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>
 <div class="block">Marks the annotated spec or feature as <a href="spock/lang/PendingFeature.html" title="annotation in spock.lang"><code>PendingFeature</code></a> if the given condition holds.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="spock/util/time/MutableClock.html#plus(java.time.temporal.TemporalAmount)">plus(TemporalAmount)</a></span> - Method in class spock.util.time.<a href="spock/util/time/MutableClock.html" title="class in spock.util.time">MutableClock</a></dt>
+<dd>
+<div class="block">Adds the given <code>TemporalAmount</code> to the internal time.</div>
+</dd>
 <dt><a href="spock/util/concurrent/PollingConditions.html" title="class in spock.util.concurrent"><span class="typeNameLink">PollingConditions</span></a> - Class in <a href="spock/util/concurrent/package-summary.html">spock.util.concurrent</a></dt>
 <dd>
 <div class="block">Repeatedly evaluates one or more conditions until they are satisfied or a timeout has elapsed.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="spock/util/concurrent/PollingConditions.html#%3Cinit%3E()">PollingConditions()</a></span> - Constructor for class spock.util.concurrent.<a href="spock/util/concurrent/PollingConditions.html" title="class in spock.util.concurrent">PollingConditions</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="spock/util/time/MutableClock.html#previous()">previous()</a></span> - Method in class spock.util.time.<a href="spock/util/time/MutableClock.html" title="class in spock.util.time">MutableClock</a></dt>
+<dd>
+<div class="block">Subtracts <a href="spock/util/time/MutableClock.html#changeAmount"><code>MutableClock.changeAmount</code></a> from internal time.</div>
+</dd>
 </dl>
 <a id="I:Q">
 <!--   -->
@@ -837,6 +891,8 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>
 <div class="block">Sets a value for this variable.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="spock/util/time/MutableClock.html#setChangeAmount(java.time.temporal.TemporalAmount)">setChangeAmount(TemporalAmount)</a></span> - Method in class spock.util.time.<a href="spock/util/time/MutableClock.html" title="class in spock.util.time">MutableClock</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="spock/util/concurrent/PollingConditions.html#setDelay(double)">setDelay(double)</a></span> - Method in class spock.util.concurrent.<a href="spock/util/concurrent/PollingConditions.html" title="class in spock.util.concurrent">PollingConditions</a></dt>
 <dd>
 <div class="block">Sets the delay (in seconds) between successive evaluations of the conditions.</div>
@@ -849,6 +905,8 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>
 <div class="block">Sets the initial delay (in seconds) before first evaluating the conditions.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="spock/util/time/MutableClock.html#setInstant(java.time.Instant)">setInstant(Instant)</a></span> - Method in class spock.util.time.<a href="spock/util/time/MutableClock.html" title="class in spock.util.time">MutableClock</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="spock/util/concurrent/PollingConditions.html#setTimeout(double)">setTimeout(double)</a></span> - Method in class spock.util.concurrent.<a href="spock/util/concurrent/PollingConditions.html" title="class in spock.util.concurrent">PollingConditions</a></dt>
 <dd>
 <div class="block">Sets the timeout (in seconds) until which the conditions have to be satisfied.</div>
@@ -908,6 +966,8 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>
 <div class="block">Utilities related to Groovy meta programming.</div>
 </dd>
+<dt><a href="spock/util/time/package-summary.html">spock.util.time</a> - package spock.util.time</dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="spock/mock/MockingApi.html#Spy()">Spy()</a></span> - Method in class spock.mock.<a href="spock/mock/MockingApi.html" title="class in spock.mock">MockingApi</a></dt>
 <dd>
 <div class="block">Creates a spy whose type and name are inferred from the left-hand side of the enclosing variable assignment.</div>
@@ -1062,6 +1122,8 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>
 <div class="block">Allows to attach a natural-language name to a spec.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="spock/util/time/MutableClock.html#toString()">toString()</a></span> - Method in class spock.util.time.<a href="spock/util/time/MutableClock.html" title="class in spock.util.time">MutableClock</a></dt>
+<dd>&nbsp;</dd>
 </dl>
 <a id="I:U">
 <!--   -->
@@ -1208,6 +1270,8 @@ the order they are declared.</div>
 <dd>
 <div class="block">Repeatedly evaluates the specified conditions until they are satisfied or the specified timeout (in seconds) has elapsed.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="spock/util/time/MutableClock.html#withZone(java.time.ZoneId)">withZone(ZoneId)</a></span> - Method in class spock.util.time.<a href="spock/util/time/MutableClock.html" title="class in spock.util.time">MutableClock</a></dt>
+<dd>&nbsp;</dd>
 </dl>
 <a id="I:_">
 <!--   -->

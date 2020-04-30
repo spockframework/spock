@@ -7,6 +7,7 @@ include::include.adoc[]
 . <<data_driven_testing.adoc#,Data Driven Testing>>
 . <<interaction_based_testing.adoc#,Interaction Based Testing>>
 . <<extensions.adoc#,Extensions>>
+. <<utilities.adoc#,Utilities>>
 . <<modules.adoc#,Modules>>
 . <<release_notes.adoc#,Release Notes>>
 . <<migration_guide.adoc#,Migration Guide>>

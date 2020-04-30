@@ -34,3 +34,4 @@ stacktrace.log
 /shippable/
 
 Foo.*
+/.shelf/

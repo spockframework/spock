@@ -62,10 +62,9 @@ public class GroovyMockMetaClass extends DelegatingMetaClass implements Specific
   }
 
   private Object doInvokeMethod(Object target, String methodName, Object[] arguments, boolean isStatic) {
-    // get rid of PojoWrapper's; not sure where they come from, but they sometimes appear
-    arguments = GroovyRuntimeUtil.asUnwrappedArgumentArray(arguments);
+    Object[] args = GroovyRuntimeUtil.asArgumentArray(arguments);
 
-    if (isGetMetaClassCallOnGroovyObject(target, methodName, arguments, isStatic)) {
+    if (isGetMetaClassCallOnGroovyObject(target, methodName, args, isStatic)) {
       // We handle this case explicitly because strangely enough, delegate.pickMethod()
       // selects DGM.getMetaClass() even for GroovyObject's. This would result in getMetaClass()
       // being mockable, but only Groovy callers would see the returned value (Groovy runtime would
@@ -74,13 +73,15 @@ public class GroovyMockMetaClass extends DelegatingMetaClass implements Specific
       return ((GroovyObject) target).getMetaClass();
     }
 
-    MetaMethod metaMethod = delegate.pickMethod(methodName, ReflectionUtil.getTypes(arguments));
+    MetaMethod metaMethod = delegate.pickMethod(methodName, ReflectionUtil.getTypes(args));
     Method method = GroovyRuntimeUtil.toMethod(metaMethod);
+    // we evaluated the cast information from wrappers in getTypes above, now we need the pure arguments
+    Object[] unwrappedArgs = GroovyRuntimeUtil.asUnwrappedArgumentArray(args);
 
     if (method != null && method.getDeclaringClass().isAssignableFrom(configuration.getType())) {
       if (!isStatic && !ReflectionUtil.isFinalMethod(method) && !configuration.isGlobal()) {
         // use standard proxy dispatch
-        return metaMethod.invoke(target, arguments);
+        return metaMethod.invoke(target, unwrappedArgs);
       }
     }
 
@@ -89,19 +90,19 @@ public class GroovyMockMetaClass extends DelegatingMetaClass implements Specific
     // to check if a GroovyObject method was called
     if (metaMethod != null && metaMethod.getDeclaringClass().getTheClass() == GroovyObject.class) {
       if ("invokeMethod".equals(methodName)) {
-        return invokeMethod(target, (String) arguments[0], GroovyRuntimeUtil.asArgumentArray(arguments[1]));
+        return invokeMethod(target, (String) unwrappedArgs[0], GroovyRuntimeUtil.asArgumentArray(unwrappedArgs[1]));
       }
       if ("getProperty".equals(methodName)) {
-        return getProperty(target, (String) arguments[0]);
+        return getProperty(target, (String) unwrappedArgs[0]);
       }
       if ("setProperty".equals(methodName)) {
-        setProperty(target, (String) arguments[0], arguments[1]);
+        setProperty(target, (String) unwrappedArgs[0], unwrappedArgs[1]);
         return null;
       }
       // getMetaClass was already handled earlier; setMetaClass isn't handled specially
     }
 
-    IMockInvocation invocation = createMockInvocation(metaMethod, target, methodName, arguments, isStatic);
+    IMockInvocation invocation = createMockInvocation(metaMethod, target, methodName, args, isStatic);
     IMockController controller = specification.getSpecificationContext().getMockController();
     return controller.handle(invocation);
   }

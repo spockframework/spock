@@ -117,6 +117,11 @@ b = a
   for example by some extensions or from data variables. If any of these is not replaced by some value, an exception
   will be thrown at runtime.
 
+==== Ant support removed
+
+`SpecClassFileSelector` was removed, which was the only class that required `ant`.
+If you are still using spock with `ant`, then you can just copy the class from the spock source code into your build.
+
 === Misc
 
 - Defining interactions on property getters within Mock instantiation closures or `with` closures works now without

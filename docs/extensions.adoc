@@ -125,6 +125,13 @@ which is not available otherwise:
 def "I'll run everywhere but on Windows"() { ... }
 ----
 
+If applied to a data driven feature, the closure can also access the data variables.
+If the closure does not reference any actual data variables or is applied to a spec,
+the whole annotated element is skipped up-front, no fixtures, data providers or anything
+else will be executed. But if the closure actually does reference valid data variables,
+the whole workflow is followed up to the feature method invocation, where then the closure
+is checked and it is decided whether to abort the specific iteration or not.
+
 === Requires
 
 To execute a feature method under certain conditions, annotate it with `spock.lang.Requires`,
@@ -171,17 +178,23 @@ def "not implemented yet"() { ... }
 To conditionally indicate that a feature is not fully implemented, and should not be reported as an error you can annotate
 it as `spock.lang.PendingFeatureIf` and include a precondition similar to `IgnoreIf` or `Requires`
 
-If the conditional expression _passes_ it behaves the same way as `PendingFeature` - otherwise it does nothing.
+If the conditional expression _passes_ it behaves the same way as `PendingFeature`, otherwise it does nothing.
 
-(For instance, annotating a feature as `@PendingFeatureIf({false})` effectively does nothing - but annotating it as
- `@PendingFeatureIf({true}) behaves the same was as if it was marked as `@PendingFeature`)
+For instance, annotating a feature as `@PendingFeatureIf({ false })` effectively does nothing, but annotating it as
+`@PendingFeatureIf({ true })` behaves the same was as if it was marked as `@PendingFeature`
+
+If applied to a data driven feature, the closure can also access the data variables.
+If the closure does not reference any actual data variables, the whole feature is deemed pending
+and only if all iterations become successful will be marked as failing. But if the closure actually
+does reference valid data variables, the individual iterations where the condition holds are
+deemed pending and each will individually fail as soon as it would be successful without this annotation.
 
 [source,groovy]
 ----
 @PendingFeatureIf({ os.windows })
 def "I'm not yet implemented on windows, but I am on other operating systems"() { ... }
 
-@PendingFeatureIf({ sys["targetEnvironment"] == "prod" })
+@PendingFeatureIf({ sys.targetEnvironment == "prod" })
 def "This feature isn't deployed out to production yet, and isn't expected to pass"() { ... }
 ----
 

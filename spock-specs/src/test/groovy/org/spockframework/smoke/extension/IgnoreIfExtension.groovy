@@ -16,9 +16,11 @@
 
 package org.spockframework.smoke.extension
 
+import org.spockframework.EmbeddedSpecification
+import org.spockframework.runtime.extension.ExtensionException
 import spock.lang.*
 
-class IgnoreIfExtension extends Specification {
+class IgnoreIfExtension extends EmbeddedSpecification {
   @IgnoreIf({ 1 < 2 })
   def "basic usage"() {
     expect: false
@@ -52,12 +54,112 @@ class IgnoreIfExtension extends Specification {
     expect: false
   }
 
+  @IgnoreIf({ a == 1 })
+  def 'can evaluate for single iterations if data variables are accessed'() {
+    expect: a == 2
+    where: a << [1, 2]
+  }
+
+  @IgnoreIf({ true })
+  def 'can skip data providers completely if no data variables are accessed'() {
+    expect: false
+    where: a = { throw new RuntimeException() }.call()
+  }
+
+  def 'fails directly when referencing an unknown variable'() {
+    when:
+    runner.runSpecBody """
+@IgnoreIf({ b })
+def foo() {
+    expect: false
+    where: a = { throw new RuntimeException() }.call()
+}
+"""
+
+    then:
+    ExtensionException ee = thrown()
+    ee.cause instanceof MissingPropertyException
+  }
+
+  def 'fails directly when throwing an arbitrary exception'() {
+    when:
+    runner.runSpecBody """
+@IgnoreIf({ throw new UnsupportedOperationException() })
+def foo() {
+    expect: false
+    where: a = { throw new RuntimeException() }.call()
+}
+"""
+
+    then:
+    ExtensionException ee = thrown()
+    ee.cause instanceof UnsupportedOperationException
+  }
+
   @Issue("https://github.com/spockframework/spock/issues/535")
   @Requires({ false })
   @IgnoreIf({ false })
   def "allows determinate use of multiple filters" () {
     expect: false
   }
+
+  def "spec usage with true"() {
+    when:
+    def result = runner.runWithImports """
+@IgnoreIf({ 1 < 2 })
+class Foo extends Specification {
+  def "basic usage"() {
+    expect: false
+  }
+}
+"""
+
+    then:
+    result.testsStartedCount == 0
+    result.testsFailedCount == 0
+    result.testsSkippedCount == 0
+    result.testsAbortedCount == 0
+    result.testsSucceededCount == 0
+  }
+
+  def "spec usage with false"() {
+    when:
+    def result = runner.runWithImports """
+@IgnoreIf({ 1 > 2 })
+class Foo extends Specification {
+  def "basic usage"() {
+    expect: true
+  }
+}
+"""
+
+    then:
+    result.testsStartedCount == 1
+    result.testsFailedCount == 0
+    result.testsSkippedCount == 0
+    result.testsAbortedCount == 0
+    result.testsSucceededCount == 1
+  }
+
+  def "fails if condition cannot be instantiated"() {
+    when:
+    runner.runWithImports """
+class Foo extends Specification {
+  @IgnoreIf(Bar)
+  def "basic usage"() {
+    expect: false
+  }
 }
 
+class Bar extends Closure {
+  Bar(Object owner) {
+    super(owner)
+  }
+}
+"""
 
+    then:
+    ExtensionException ee = thrown()
+    ee.message == 'Failed to instantiate condition'
+  }
+}

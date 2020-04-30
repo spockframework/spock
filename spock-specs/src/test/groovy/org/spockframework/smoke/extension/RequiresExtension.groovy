@@ -17,7 +17,8 @@
 package org.spockframework.smoke.extension
 
 import org.spockframework.EmbeddedSpecification
-
+import org.spockframework.runtime.extension.ExtensionException
+import spock.lang.FailsWith
 import spock.lang.IgnoreIf
 import spock.lang.Issue
 import spock.lang.Requires
@@ -29,11 +30,102 @@ class RequiresExtension extends EmbeddedSpecification {
     when:
     def results = runner.runClass(RequiresExtensionExamples)
     then:
-    results.testsSucceededCount == 6
+    results.testsSucceededCount == 7
     results.testsFailedCount == 0
     results.testsSkippedCount == 2
     results.testEvents().skipped().list().testDescriptor.displayName == [
       "skips feature if precondition is not satisfied", "allows determinate use of multiple filters"]
+  }
+
+
+  def 'fails directly when referencing an unknown variable'() {
+    when:
+    runner.runSpecBody """
+@Requires({ b })
+def foo() {
+    expect: false
+    where: a = { throw new RuntimeException() }.call()
+}
+"""
+
+    then:
+    ExtensionException ee = thrown()
+    ee.cause instanceof MissingPropertyException
+  }
+
+  def 'fails directly when throwing an arbitrary exception'() {
+    when:
+    runner.runSpecBody """
+@Requires({ throw new UnsupportedOperationException() })
+def foo() {
+    expect: false
+    where: a = { throw new RuntimeException() }.call()
+}
+"""
+
+    then:
+    ExtensionException ee = thrown()
+    ee.cause instanceof UnsupportedOperationException
+  }
+
+  def "spec usage with true"() {
+    when:
+    def result = runner.runWithImports """
+@Requires({ 1 < 2 })
+class Foo extends Specification {
+  def "basic usage"() {
+    expect: true
+  }
+}
+"""
+
+    then:
+    result.testsStartedCount == 1
+    result.testsFailedCount == 0
+    result.testsSkippedCount == 0
+    result.testsAbortedCount == 0
+    result.testsSucceededCount == 1
+  }
+
+  def "spec usage with false"() {
+    when:
+    def result = runner.runWithImports """
+@Requires({ 1 > 2 })
+class Foo extends Specification {
+  def "basic usage"() {
+    expect: false
+  }
+}
+"""
+
+    then:
+    result.testsStartedCount == 0
+    result.testsFailedCount == 0
+    result.testsSkippedCount == 0
+    result.testsAbortedCount == 0
+    result.testsSucceededCount == 0
+  }
+
+  def "fails if condition cannot be instantiated"() {
+    when:
+    runner.runWithImports """
+class Foo extends Specification {
+  @Requires(Bar)
+  def "basic usage"() {
+    expect: false
+  }
+}
+
+class Bar extends Closure {
+  Bar(Object owner) {
+    super(owner)
+  }
+}
+"""
+
+    then:
+    ExtensionException ee = thrown()
+    ee.message == 'Failed to instantiate condition'
   }
 
   static class RequiresExtensionExamples extends Specification {
@@ -74,6 +166,18 @@ class RequiresExtension extends EmbeddedSpecification {
     @Requires({ it.sys.containsKey("java.version") })
     def "can use closure argument for an easy option to typecast and use IDE support"() {
       expect: true
+    }
+
+    @Requires({ a == 2 })
+    def 'can evaluate for single iterations if data variables are accessed'() {
+      expect: a == 2
+      where: a << [1, 2]
+    }
+
+    @Requires({ false })
+    def 'can skip data providers completely if no data variables are accessed'() {
+      expect: false
+      where: a = { throw new RuntimeException() }.call()
     }
 
     @Issue("https://github.com/spockframework/spock/issues/535")

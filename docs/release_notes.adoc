@@ -219,6 +219,10 @@ def "I'll run everywhere but on Windows"() { ... }
 ]
 ----
 
+- The condition closures for `@IgnoreIf`, `@Requires` and `@PendingFeatureIf` can now access data variables
+  if applied to a data driven feature. This has further implications that are documented in the respective
+  documentation parts and JavaDocs.
+
 == 2.0-M2 (2020-02-10)
 
 === Groovy-3.0 Support

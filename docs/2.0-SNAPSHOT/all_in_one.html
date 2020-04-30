@@ -64,6 +64,7 @@
 <li><a href="#_multi_variable_data_pipes">Multi-Variable Data Pipes</a></li>
 <li><a href="#_data_variable_assignment">Data Variable Assignment</a></li>
 <li><a href="#_accessing_other_data_variables">Accessing Other Data Variables</a></li>
+<li><a href="#_multi_variable_assignment">Multi-Variable Assignment</a></li>
 <li><a href="#_combining_data_tables_data_pipes_and_variable_assignments">Combining Data Tables, Data Pipes, and Variable Assignments</a></li>
 <li><a href="#_number_of_iterations">Number of Iterations</a></li>
 <li><a href="#_closing_of_data_providers">Closing of Data Providers</a></li>
@@ -1758,6 +1759,82 @@ where:
 [a, b, _, c] &lt;&lt; sql.rows(<span class="string"><span class="delimiter">&quot;</span><span class="content">select * from maxdata</span><span class="delimiter">&quot;</span></span>)</code></pre>
 </div>
 </div>
+<div class="paragraph">
+<p>The multi-assignments can even be nested. The following example will generate these iterations:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">a</th>
+<th class="tableblock halign-left valign-top">b</th>
+<th class="tableblock halign-left valign-top">c</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>['a1', 'a2']</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>'b1'</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>'c1'</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>['a2', 'a1']</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>'b1'</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>'c1'</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>['a1', 'a2']</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>'b2'</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>'c2'</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>['a2', 'a1']</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>'b2'</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>'c2'</code></p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">...
+where:
+[a, [b, _, c]] &lt;&lt; [
+  [<span class="string"><span class="delimiter">'</span><span class="content">a1</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">a2</span><span class="delimiter">'</span></span>].permutations(),
+  [
+    [<span class="string"><span class="delimiter">'</span><span class="content">b1</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">d1</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">c1</span><span class="delimiter">'</span></span>],
+    [<span class="string"><span class="delimiter">'</span><span class="content">b2</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">d2</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">c2</span><span class="delimiter">'</span></span>]
+  ]
+].combinations()</code></pre>
+</div>
+</div>
 </div>
 <div class="sect2">
 <h3 id="_data_variable_assignment"><a class="anchor" href="#_data_variable_assignment"></a><a class="link" href="#_data_variable_assignment">Data Variable Assignment</a></h3>
@@ -1843,6 +1920,38 @@ d     | e
 a * <span class="integer">2</span> | b * <span class="integer">2</span>
 a * <span class="integer">3</span> | b * <span class="integer">3</span>
 a * <span class="integer">4</span> | b * <span class="integer">4</span></code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_multi_variable_assignment"><a class="anchor" href="#_multi_variable_assignment"></a><a class="link" href="#_multi_variable_assignment">Multi-Variable Assignment</a></h3>
+<div class="paragraph">
+<p>Like with data pipes, you can also assign to multiple variables in one expression, if you have some object Groovy
+can iterate over. Unlike with data pipes, the syntax here is identical to standard Groovy multi-assignment syntax:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@Shared</span> sql = Sql.newInstance(<span class="string"><span class="delimiter">&quot;</span><span class="content">jdbc:h2:mem:</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">org.h2.Driver</span><span class="delimiter">&quot;</span></span>)
+
+<span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">maximum of two numbers multi-assignment</span><span class="delimiter">&quot;</span></span>() {
+  <span class="key">expect</span>:
+  <span class="predefined-type">Math</span>.max(a, b) == c
+
+  <span class="key">where</span>:
+  row &lt;&lt; sql.rows(<span class="string"><span class="delimiter">&quot;</span><span class="content">select a, b, c from maxdata</span><span class="delimiter">&quot;</span></span>)
+  (a, b, c) = row
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Data values that aren&#8217;t of interest can be ignored with an underscore (<code>_</code>):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">...
+where:
+row &lt;&lt; sql.rows(<span class="string"><span class="delimiter">&quot;</span><span class="content">select * from maxdata</span><span class="delimiter">&quot;</span></span>)
+(a, b, _, c) = row</code></pre>
 </div>
 </div>
 </div>
@@ -5313,6 +5422,26 @@ enable IDE support like code completion:</p>
 <li>
 <p>Upgrade Hamcrest to 2.2 (from 1.3 provided previously by <code>junit4.jar</code>)</p>
 </li>
+<li>
+<p>Derived data variables (assignments in <code>where</code> blocks) now also support multi-assignment syntax, including ignoring
+some values with the wildcard expression.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">(a, b, _, c) = row</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Multi-variable data pipes now also support nesting.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">[a, [_, b]] &lt;&lt; [
+  [<span class="integer">1</span>, [<span class="integer">5</span>, <span class="integer">1</span>]],
+  [<span class="integer">2</span>, [<span class="integer">5</span>, <span class="integer">2</span>]]
+]</code></pre>
+</div>
+</div>
+</li>
 </ul>
 </div>
 </div>
@@ -7419,7 +7548,7 @@ Math.signum(a &lt;=&gt; b) == result
 <div id="footer">
 <div id="footer-text">
 Version 2.0-SNAPSHOT<br>
-Last updated 2020-04-30 20:11:01 UTC
+Last updated 2020-04-30 20:30:27 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./coderay-asciidoctor.css">

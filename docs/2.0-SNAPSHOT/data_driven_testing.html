@@ -482,6 +482,82 @@ where:
 [a, b, _, c] &lt;&lt; sql.rows(<span class="string"><span class="delimiter">&quot;</span><span class="content">select * from maxdata</span><span class="delimiter">&quot;</span></span>)</code></pre>
 </div>
 </div>
+<div class="paragraph">
+<p>The multi-assignments can even be nested. The following example will generate these iterations:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">a</th>
+<th class="tableblock halign-left valign-top">b</th>
+<th class="tableblock halign-left valign-top">c</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>['a1', 'a2']</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>'b1'</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>'c1'</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>['a2', 'a1']</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>'b1'</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>'c1'</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>['a1', 'a2']</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>'b2'</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>'c2'</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>['a2', 'a1']</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>'b2'</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>'c2'</code></p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">...
+where:
+[a, [b, _, c]] &lt;&lt; [
+  [<span class="string"><span class="delimiter">'</span><span class="content">a1</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">a2</span><span class="delimiter">'</span></span>].permutations(),
+  [
+    [<span class="string"><span class="delimiter">'</span><span class="content">b1</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">d1</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">c1</span><span class="delimiter">'</span></span>],
+    [<span class="string"><span class="delimiter">'</span><span class="content">b2</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">d2</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">c2</span><span class="delimiter">'</span></span>]
+  ]
+].combinations()</code></pre>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -571,6 +647,40 @@ d     | e
 a * <span class="integer">2</span> | b * <span class="integer">2</span>
 a * <span class="integer">3</span> | b * <span class="integer">3</span>
 a * <span class="integer">4</span> | b * <span class="integer">4</span></code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_multi_variable_assignment"><a class="anchor" href="#_multi_variable_assignment"></a><a class="link" href="#_multi_variable_assignment">Multi-Variable Assignment</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Like with data pipes, you can also assign to multiple variables in one expression, if you have some object Groovy
+can iterate over. Unlike with data pipes, the syntax here is identical to standard Groovy multi-assignment syntax:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@Shared</span> sql = Sql.newInstance(<span class="string"><span class="delimiter">&quot;</span><span class="content">jdbc:h2:mem:</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">org.h2.Driver</span><span class="delimiter">&quot;</span></span>)
+
+<span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">maximum of two numbers multi-assignment</span><span class="delimiter">&quot;</span></span>() {
+  <span class="key">expect</span>:
+  <span class="predefined-type">Math</span>.max(a, b) == c
+
+  <span class="key">where</span>:
+  row &lt;&lt; sql.rows(<span class="string"><span class="delimiter">&quot;</span><span class="content">select a, b, c from maxdata</span><span class="delimiter">&quot;</span></span>)
+  (a, b, c) = row
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Data values that aren&#8217;t of interest can be ignored with an underscore (<code>_</code>):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">...
+where:
+row &lt;&lt; sql.rows(<span class="string"><span class="delimiter">&quot;</span><span class="content">select * from maxdata</span><span class="delimiter">&quot;</span></span>)
+(a, b, _, c) = row</code></pre>
 </div>
 </div>
 </div>
@@ -728,7 +838,7 @@ finally the iteration index, so the result will be for example
 <div id="footer">
 <div id="footer-text">
 Version 2.0-SNAPSHOT<br>
-Last updated 2020-04-30 20:11:01 UTC
+Last updated 2020-04-30 20:30:27 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./coderay-asciidoctor.css">

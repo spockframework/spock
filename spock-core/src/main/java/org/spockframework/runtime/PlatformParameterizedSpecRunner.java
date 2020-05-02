@@ -16,7 +16,6 @@
 
 package org.spockframework.runtime;
 
-import org.spockframework.runtime.ParameterizedFeatureNode.ChildExecutor;
 import org.spockframework.runtime.model.*;
 
 import java.util.*;
@@ -34,7 +33,7 @@ public class PlatformParameterizedSpecRunner extends PlatformSpecRunner {
   }
 
   @Override
-  void runParameterizedFeature(SpockExecutionContext context, ChildExecutor childExecutor) throws InterruptedException {
+  void runParameterizedFeature(SpockExecutionContext context, ParameterizedFeatureChildExecutor childExecutor) throws InterruptedException {
     if (context.getErrorInfoCollector().hasErrors()) {
       return;
     }
@@ -168,7 +167,7 @@ public class PlatformParameterizedSpecRunner extends PlatformSpecRunner {
     return result == Integer.MAX_VALUE ? -1 : result;
   }
 
-  private void runIterations(SpockExecutionContext context, ChildExecutor childExecutor, Iterator[] iterators, int estimatedNumIterations) {
+  private void runIterations(SpockExecutionContext context, ParameterizedFeatureChildExecutor childExecutor, Iterator[] iterators, int estimatedNumIterations) {
     if (context.getErrorInfoCollector().hasErrors()) {
       return;
     }

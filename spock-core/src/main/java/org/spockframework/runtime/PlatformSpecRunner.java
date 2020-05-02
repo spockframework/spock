@@ -16,7 +16,6 @@
 
 package org.spockframework.runtime;
 
-import org.spockframework.runtime.ParameterizedFeatureNode.ChildExecutor;
 import org.spockframework.runtime.extension.*;
 import org.spockframework.runtime.model.*;
 import org.spockframework.util.*;
@@ -249,7 +248,7 @@ public class PlatformSpecRunner {
     return result;
   }
 
-  void runParameterizedFeature(SpockExecutionContext context, ChildExecutor childExecutor) throws InterruptedException  {
+  void runParameterizedFeature(SpockExecutionContext context, ParameterizedFeatureChildExecutor childExecutor) throws InterruptedException  {
     throw new UnsupportedOperationException("This runner cannot run parameterized features");
   }
 

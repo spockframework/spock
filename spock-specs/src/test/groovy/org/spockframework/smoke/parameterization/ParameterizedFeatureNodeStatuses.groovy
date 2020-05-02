@@ -40,8 +40,6 @@ def 'a feature'() {
 
     then:
     verifyAll(result) {
-      testEvents().executions().aborted().stream().forEach { it.terminationInfo.executionResult.throwable.get().printStackTrace() }
-
       dynamicallyRegisteredCount == 0
 
       containersStartedCount == 2
@@ -77,8 +75,6 @@ def 'a feature'() {
 
     then:
     verifyAll(result) {
-      testEvents().executions().aborted().stream().forEach { it.terminationInfo.executionResult.throwable.get().printStackTrace() }
-
       dynamicallyRegisteredCount == 0
 
       containersStartedCount == 2

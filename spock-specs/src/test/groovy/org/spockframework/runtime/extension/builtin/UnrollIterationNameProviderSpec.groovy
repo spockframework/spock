@@ -79,7 +79,7 @@ class UnrollIterationNameProviderSpec extends Specification {
   }
 
   @Issue("https://github.com/spockframework/spock/issues/767")
-  def "missing variables throw an exception if expressionsAsserted is set to true"() {
+  def "missing variables throw an exception if validateExpressions is set to true"() {
     given:
     def nameGenerator = new UnrollIterationNameProvider(null, "foo #dataVars bar", true)
 
@@ -93,7 +93,7 @@ class UnrollIterationNameProviderSpec extends Specification {
   }
 
   @Issue("https://github.com/spockframework/spock/issues/767")
-  def "exceptions during variable eval throw an exception if expressionsAsserted is set to true"() {
+  def "exceptions during variable eval throw an exception if validateExpressions is set to true"() {
     given:
     def nameGenerator = new UnrollIterationNameProvider(null, "foo #dataVar.foo bar", true)
     IterationInfo iterationInfo = Stub {

@@ -30,13 +30,13 @@ import static org.spockframework.util.RenderUtil.toStringOrDump;
 public class UnrollIterationNameProvider implements NameProvider<IterationInfo> {
   private static final Pattern EXPRESSION_PATTERN = Pattern.compile("#([a-zA-Z_$]([\\w$.]|\\(\\))*)");
 
-  private final boolean expressionsAsserted;
+  private final boolean validateExpressions;
   private final FeatureInfo feature;
   private final Matcher expressionMatcher;
 
-  public UnrollIterationNameProvider(FeatureInfo feature, String namePattern, boolean expressionsAsserted) {
+  public UnrollIterationNameProvider(FeatureInfo feature, String namePattern, boolean validateExpressions) {
     this.feature = feature;
-    this.expressionsAsserted = expressionsAsserted;
+    this.validateExpressions = validateExpressions;
     expressionMatcher = EXPRESSION_PATTERN.matcher(namePattern);
   }
 
@@ -76,7 +76,7 @@ public class UnrollIterationNameProvider implements NameProvider<IterationInfo> 
 
       default:
         if (!dataVariables.containsKey(firstPart)) {
-          if (expressionsAsserted) {
+          if (validateExpressions) {
             throw new SpockAssertionError("Error in @Unroll, could not find matching variable for expression: " + expr);
           }
           return "#Error:" + expr;
@@ -96,7 +96,7 @@ public class UnrollIterationNameProvider implements NameProvider<IterationInfo> 
       }
       return toStringOrDump(result);
     } catch (Exception e) {
-      if (expressionsAsserted) {
+      if (validateExpressions) {
         throw new SpockAssertionError("Error in @Unroll expression: " + expr, e);
       }
       return "#Error:" + expr;

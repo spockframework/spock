@@ -24,9 +24,9 @@ import spock.config.IncludeExcludeCriteria;
  * <p>Example:
  * <pre>
  * unroll {
- *   enabledByDefault false // default true
+ *   unrollByDefault false // default true
  *   defaultPattern '#featureName[#iterationIndex]' // default null
- *   expressionsAsserted false // default true
+ *   validateExpressions false // default true
  * }
  * </pre>
  *
@@ -35,7 +35,7 @@ import spock.config.IncludeExcludeCriteria;
 @Beta
 @ConfigurationObject("unroll")
 public class UnrollConfiguration {
-  public boolean enabledByDefault = true;
+  public boolean unrollByDefault = true;
   public String defaultPattern = null;
-  public boolean expressionsAsserted = true;
+  public boolean validateExpressions = true;
 }

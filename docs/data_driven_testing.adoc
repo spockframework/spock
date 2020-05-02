@@ -198,7 +198,7 @@ The `@Rollup` annotation can also be placed on a spec.
 This has the same effect as placing it on each data-driven feature method of the spec that does not have an
 `@Unroll` annotation.
 
-Alternatively the <<extensions.adoc#_spock_configuration_file,configuration file>> setting `enabledByDefault`
+Alternatively the <<extensions.adoc#_spock_configuration_file,configuration file>> setting `unrollByDefault`
 in the `unroll` section can be set to `false` to roll up all features automatically unless
 they are annotated with `@Unroll` or are contained in an ``@Unroll``ed spec and thus reinstate the pre Spock 2.0
 behavior where this was the default.
@@ -207,7 +207,7 @@ behavior where this was the default.
 [source,groovy]
 ----
 unroll {
-    enabledByDefault false
+    unrollByDefault false
 }
 ----
 
@@ -224,14 +224,14 @@ A feature will be uprolled
 - if the method is annotated with `@Rollup`
 - if the method is not annotated with `@Unroll` and the spec is annotated with `@Rollup`
 - if neither the method nor the spec is annotated with `@Unroll`
-  and the configuration option `unroll { enabledByDefault }` is set to `false`
+  and the configuration option `unroll { unrollByDefault }` is set to `false`
 
 A feature will be unrolled
 
 - if the method is annotated with `@Unroll`
 - if the method is not annotated with `@Rollup` and the spec is annotated with `@Unroll`
 - if neither the method nor the spec is annotated with `@Rollup`
-  and the configuration option `unroll { enabledByDefault }` is set to its default value `true`
+  and the configuration option `unroll { unrollByDefault }` is set to its default value `true`
 
 
 == Data Pipes
@@ -498,7 +498,7 @@ true for the automatic fall back rendering of the data variables if there is no 
 set in any way, this will never fail the test, no matter what happens.
 
 The failing of test with errors in the unroll expression can be disabled by setting the
-<<extensions.adoc#_spock_configuration_file,configuration file>> setting `expressionsAsserted`
+<<extensions.adoc#_spock_configuration_file,configuration file>> setting `validateExpressions`
 in the `unroll` section to `false`. If this is done and an error happens, the erroneous expression
 `#foo.bar` will be substituted by `#Error:foo.bar`.
 
@@ -506,6 +506,6 @@ in the `unroll` section to `false`. If this is done and an error happens, the er
 [source,groovy]
 ----
 unroll {
-    expressionsAsserted false
+    validateExpressions false
 }
 ----

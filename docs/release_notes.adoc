@@ -113,7 +113,7 @@ The system property `spock.assertUnrollExpressions` is not supported anymore.
 Instead the new default behavior is equal to having this property set to `true`.
 This means tests that were successful but had an `#Error:` name rendering will now fail.
 It can be set back to the old pre Spock 2.0 behaviour by setting
-`unroll { expressionsAsserted false }` in the Spock configuration file.
+`unroll { validateExpressions false }` in the Spock configuration file.
 // end::assert-unroll-expressions-by-default[]
 
 ==== For extension developers
@@ -237,14 +237,14 @@ def "I'll run everywhere but on Windows"() { ... }
 
 - Data driven features are now unrolled by default. `@Unroll` can still be used to specify a custom naming pattern.
   A simple `@Unroll` without argument is not needed anymore except when undoing a spec-level `@Rollup` annotation
-  or if uprolling is disabled globally, so any simple `@Unroll` annotations can be removed from existing code. You
+  or if unrolling by default is disabled, so any simple `@Unroll` annotations can be removed from existing code. You
   can verify this by looking at the test count which should not have been changed after you removed the simple
   `@Unroll` annotations.
 
 - `@Rollup` can now be used on feature and spec level to explicitly roll up any feature where the reporting of single
   iterations is not wanted.
 
-- The setting `unroll { enabledByDefault false }` in the Spock configuration file can be set to roll up all
+- The setting `unroll { unrollByDefault false }` in the Spock configuration file can be set to roll up all
   features by default if not overwritten by explicit `@Unroll` annotations and thus reinstate the pre
   Spock 2.0 behaviour.
 

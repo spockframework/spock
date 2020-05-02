@@ -14,6 +14,7 @@
 
 package org.spockframework.runtime.extension.builtin;
 
+import groovy.transform.TailRecursive;
 import org.spockframework.runtime.DataVariablesIterationNameProvider;
 import org.spockframework.runtime.InvalidSpecException;
 import org.spockframework.runtime.extension.AbstractGlobalExtension;
@@ -44,7 +45,7 @@ public class UnrollExtension extends AbstractGlobalExtension {
       doUnrollSpec = false;
       specUnrollPattern = "";
     } else {
-      doUnrollSpec = unrollConfiguration.enabledByDefault;
+      doUnrollSpec = unrollConfiguration.unrollByDefault;
       specUnrollPattern = "";
     }
 
@@ -53,6 +54,11 @@ public class UnrollExtension extends AbstractGlobalExtension {
       .stream()
       .filter(FeatureInfo::isParameterized)
       .forEach(feature -> visitFeature(feature, doUnrollSpec, specUnrollPattern));
+
+    SpecInfo superSpec = spec.getSuperSpec();
+    if (superSpec != null) {
+      visitSpec(superSpec);
+    }
   }
 
   private void visitFeature(FeatureInfo feature, boolean doUnrollSpec, String specUnrollPattern) {
@@ -87,16 +93,16 @@ public class UnrollExtension extends AbstractGlobalExtension {
   private NameProvider<IterationInfo> chooseNameProvider(String specUnrollPattern, String featureUnrollPattern,
                                                          FeatureInfo feature) {
     if (!featureUnrollPattern.isEmpty()) {
-      return new UnrollIterationNameProvider(feature, featureUnrollPattern, unrollConfiguration.expressionsAsserted);
+      return new UnrollIterationNameProvider(feature, featureUnrollPattern, unrollConfiguration.validateExpressions);
     }
     if (feature.getName().contains("#")) {
-      return new UnrollIterationNameProvider(feature, feature.getName(), unrollConfiguration.expressionsAsserted);
+      return new UnrollIterationNameProvider(feature, feature.getName(), unrollConfiguration.validateExpressions);
     }
     if (!specUnrollPattern.isEmpty()) {
-      return new UnrollIterationNameProvider(feature, specUnrollPattern, unrollConfiguration.expressionsAsserted);
+      return new UnrollIterationNameProvider(feature, specUnrollPattern, unrollConfiguration.validateExpressions);
     }
     if (unrollConfiguration.defaultPattern != null) {
-      return new UnrollIterationNameProvider(feature, unrollConfiguration.defaultPattern, unrollConfiguration.expressionsAsserted);
+      return new UnrollIterationNameProvider(feature, unrollConfiguration.defaultPattern, unrollConfiguration.validateExpressions);
     }
     return new DataVariablesIterationNameProvider();
   }

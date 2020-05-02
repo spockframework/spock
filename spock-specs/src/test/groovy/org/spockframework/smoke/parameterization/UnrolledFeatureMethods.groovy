@@ -18,6 +18,8 @@ package org.spockframework.smoke.parameterization
 
 import org.spockframework.EmbeddedSpecification
 import spock.lang.Issue
+import spock.lang.Specification
+import spock.lang.Unroll
 
 /**
  * @author Peter Niederwieser
@@ -235,7 +237,7 @@ def foo() {
     given:
     runner.configurationScript {
       unroll {
-        expressionsAsserted false
+        validateExpressions false
       }
     }
 
@@ -336,7 +338,7 @@ class Foo extends Specification {
     given:
     runner.configurationScript {
       unroll {
-        enabledByDefault false
+        unrollByDefault false
       }
     }
 
@@ -360,7 +362,7 @@ def method() {
     given:
     runner.configurationScript {
       unroll {
-        enabledByDefault false
+        unrollByDefault false
       }
     }
 
@@ -380,6 +382,37 @@ class Foo extends Specification {
     then:
     result.testEvents().started().list().testDescriptor.displayName == ["method",
                                                                         "fred"]
+  }
+
+  def "unroll annotations are not inheritable"() {
+    given:
+    runner.configurationScript {
+      unroll {
+        unrollByDefault false
+        defaultPattern '#featureName: #actor.details.name'
+      }
+    }
+    runner.addClassImport(Base)
+
+    when:
+    def result = runner.runWithImports("""
+class Sub extends Base {
+  def methodSub() {
+    expect: true
+
+    where:
+    actor = new Actor()
+  }
+}
+    """)
+
+    then:
+    result.testEvents().started().list().testDescriptor.displayName == [
+      "methodRoot",
+      "methodBase",
+      "methodBase: fred",
+      "methodSub"
+    ]
   }
 
   @Issue("https://github.com/spockframework/spock/issues/390")
@@ -409,5 +442,22 @@ def "an actor (named #actor.getName()) age #actor.getAge()"() {
     int age = 30
   }
 
+  static class Root extends Specification {
+    def methodRoot() {
+      expect: true
 
+      where:
+      actor = new Actor()
+    }
+  }
+
+  @Unroll
+  static class Base extends Root {
+    def methodBase() {
+      expect: true
+
+      where:
+      actor = new Actor()
+    }
+  }
 }

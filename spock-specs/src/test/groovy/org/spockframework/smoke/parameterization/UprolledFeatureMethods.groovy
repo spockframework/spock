@@ -19,6 +19,9 @@ package org.spockframework.smoke.parameterization
 import org.spockframework.EmbeddedSpecification
 import org.spockframework.runtime.InvalidSpecException
 import org.spockframework.runtime.SpockExecutionException
+import spock.lang.Rollup
+import spock.lang.Specification
+import spock.lang.Unroll
 
 class UprolledFeatureMethods extends EmbeddedSpecification {
   def setup() {
@@ -154,7 +157,7 @@ def method() {
     given:
     runner.configurationScript {
       unroll {
-        enabledByDefault true
+        unrollByDefault true
       }
     }
 
@@ -177,7 +180,7 @@ def method() {
     given:
     runner.configurationScript {
       unroll {
-        enabledByDefault true
+        unrollByDefault true
       }
     }
 
@@ -198,7 +201,57 @@ class Foo extends Specification {
     result.testEvents().started().list().testDescriptor.displayName == ["method"]
   }
 
+  def "rollup annotations are not inheritable"() {
+    given:
+    runner.configurationScript {
+      unroll {
+        defaultPattern '#featureName: #actor.details.name'
+      }
+    }
+    runner.addClassImport(Base)
+
+    when:
+    def result = runner.runWithImports("""
+class Sub extends Base {
+  def methodSub() {
+    expect: true
+
+    where:
+    actor = new Actor()
+  }
+}
+    """)
+
+    then:
+    result.testEvents().started().list().testDescriptor.displayName == [
+      "methodRoot",
+      "methodRoot: fred",
+      "methodBase",
+      "methodSub",
+      "methodSub: fred"
+    ]
+  }
+
   static class Actor {
     Map details = [name: "fred", age: 30]
+  }
+
+  static class Root extends Specification {
+    def methodRoot() {
+      expect: true
+
+      where:
+      actor = new Actor()
+    }
+  }
+
+  @Rollup
+  static class Base extends Root {
+    def methodBase() {
+      expect: true
+
+      where:
+      actor = new Actor()
+    }
   }
 }

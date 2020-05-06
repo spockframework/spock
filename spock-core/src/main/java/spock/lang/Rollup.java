@@ -28,6 +28,9 @@ import java.lang.annotation.Target;
  * effect as putting it on every data-driven feature method that is not already
  * annotated with {@code Rollup}.
  *
+ * <p>Having {@code @Rollup} on a super spec does not influence the features of sub specs,
+ * that is {@code @Rollup} is not inheritable.
+ *
  * @since 2.0
  */
 @Beta

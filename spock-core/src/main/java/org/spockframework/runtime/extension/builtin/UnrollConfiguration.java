@@ -16,7 +16,6 @@ package org.spockframework.runtime.extension.builtin;
 
 import org.spockframework.util.Beta;
 import spock.config.ConfigurationObject;
-import spock.config.IncludeExcludeCriteria;
 
 /**
  * Configuration settings for the unroll extension.

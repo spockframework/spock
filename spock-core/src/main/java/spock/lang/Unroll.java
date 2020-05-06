@@ -1,8 +1,5 @@
 package spock.lang;
 
-import org.spockframework.runtime.extension.ExtensionAnnotation;
-import org.spockframework.runtime.extension.builtin.UnrollExtension;
-
 import java.lang.annotation.*;
 
 /**
@@ -38,6 +35,9 @@ import java.lang.annotation.*;
  * effect as putting it on every data-driven feature method that is not already
  * annotated with {@code Unroll}. By embedding the naming pattern in the method
  * names, each method can still have its own pattern.
+ *
+ * <p>Having {@code @Unroll} on a super spec does not influence the features of sub specs,
+ * that is {@code @Unroll} is not inheritable.
  *
  * @author Peter Niederwieser
  */

@@ -19,8 +19,6 @@ import org.spockframework.util.DataVariableMap;
 import java.lang.reflect.AnnotatedElement;
 import java.util.*;
 
-import static java.util.Collections.unmodifiableMap;
-
 /**
  * Runtime information about an iteration of a feature method.
  */

@@ -9,7 +9,6 @@ import org.opentest4j.TestAbortedException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.platform.engine.TestExecutionResult.Status.ABORTED;

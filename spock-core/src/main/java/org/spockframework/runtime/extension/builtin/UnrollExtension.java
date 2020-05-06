@@ -14,7 +14,6 @@
 
 package org.spockframework.runtime.extension.builtin;
 
-import groovy.transform.TailRecursive;
 import org.spockframework.runtime.DataVariablesIterationNameProvider;
 import org.spockframework.runtime.InvalidSpecException;
 import org.spockframework.runtime.extension.AbstractGlobalExtension;

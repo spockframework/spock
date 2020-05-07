@@ -34,8 +34,9 @@
 <li>
 <p>The default unroll pattern changed from the rather generic <code>#featureName[#iterationIndex]</code> to a more fancy
 version that lists all data variables and their values additionally to the feature name and iteration index.
-If you prefer to retain the old behaviour, you can set the system property <code>spock.globalUnrollPattern</code>
-to the value <code>#featureName[#iterationIndex]</code> and you will get the same result as previously.</p>
+If you prefer to retain the old behaviour, you can set the setting
+<code>unroll { defaultPattern '#featureName[#iterationIndex]' }</code> in the Spock configuration file
+and you will get the same result as previously.</p>
 </li>
 </ul>
 </div>
@@ -44,7 +45,8 @@ to the value <code>#featureName[#iterationIndex]</code> and you will get the sam
 <div class="paragraph">
 <p>The token <code>#iterationCount</code> in unroll patterns was renamed to <code>#iterationIndex</code>.
 If you use it somewhere, you have to manually change it to the new name
-or you will get an <code>#Error:iterationCount</code> rendering instead.</p>
+or the test will fail unless you disabled expression asserting,
+then you will get an <code>#Error:iterationCount</code> rendering instead.</p>
 </div>
 </div>
 <div class="sect3">
@@ -79,6 +81,16 @@ b &lt;&lt; a</code></pre>
 a &lt;&lt; [<span class="integer">1</span>, <span class="integer">2</span>]
 b = a</code></pre>
 </div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_assert_unroll_expressions_by_default"><a class="anchor" href="#_assert_unroll_expressions_by_default"></a><a class="link" href="#_assert_unroll_expressions_by_default">Assert unroll expressions by default</a></h4>
+<div class="paragraph">
+<p>The system property <code>spock.assertUnrollExpressions</code> is not supported anymore.
+Instead the new default behavior is equal to having this property set to <code>true</code>.
+This means tests that were successful but had an <code>#Error:</code> name rendering will now fail.
+It can be set back to the old pre Spock 2.0 behaviour by setting
+<code>unroll { validateExpressions false }</code> in the Spock configuration file.</p>
 </div>
 </div>
 </div>
@@ -290,7 +302,7 @@ that answer, closeTo(<span class="integer">42</span>, <span class="float">0.001<
 <div id="footer">
 <div id="footer-text">
 Version 2.0-SNAPSHOT<br>
-Last updated 2020-04-30 23:44:14 UTC
+Last updated 2020-05-07 21:41:41 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./coderay-asciidoctor.css">

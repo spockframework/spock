@@ -105,7 +105,8 @@ With the new behavior, you can have a <code>Mock</code> or <code>Spy</code> retu
 <div class="paragraph">
 <p>The token <code>#iterationCount</code> in unroll patterns was renamed to <code>#iterationIndex</code>.
 If you use it somewhere, you have to manually change it to the new name
-or you will get an <code>#Error:iterationCount</code> rendering instead.</p>
+or the test will fail unless you disabled expression asserting,
+then you will get an <code>#Error:iterationCount</code> rendering instead.</p>
 </div>
 </div>
 <div class="sect3">
@@ -140,6 +141,16 @@ b &lt;&lt; a</code></pre>
 a &lt;&lt; [<span class="integer">1</span>, <span class="integer">2</span>]
 b = a</code></pre>
 </div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_assert_unroll_expressions_by_default"><a class="anchor" href="#_assert_unroll_expressions_by_default"></a><a class="link" href="#_assert_unroll_expressions_by_default">Assert unroll expressions by default</a></h4>
+<div class="paragraph">
+<p>The system property <code>spock.assertUnrollExpressions</code> is not supported anymore.
+Instead the new default behavior is equal to having this property set to <code>true</code>.
+This means tests that were successful but had an <code>#Error:</code> name rendering will now fail.
+It can be set back to the old pre Spock 2.0 behaviour by setting
+<code>unroll { validateExpressions false }</code> in the Spock configuration file.</p>
 </div>
 </div>
 <div class="sect3">
@@ -212,12 +223,13 @@ a ; b ;; c
 <li>
 <p>The default unroll pattern changed from the rather generic <code>#featureName[#iterationIndex]</code> to a more fancy
 version that lists all data variables and their values additionally to the feature name and iteration index.
-If you prefer to retain the old behaviour, you can set the system property <code>spock.globalUnrollPattern</code>
-to the value <code>#featureName[#iterationIndex]</code> and you will get the same result as previously.</p>
+If you prefer to retain the old behaviour, you can set the setting
+<code>unroll { defaultPattern '#featureName[#iterationIndex]' }</code> in the Spock configuration file
+and you will get the same result as previously.</p>
 </li>
 <li>
 <p>If neither a parameter to the <code>@Unroll</code> annotation is given, nor the method name contains a <code>#</code>,
-now the system property <code>spock.globalUnrollPattern</code> is inspected. If it is set to a non-blank string,
+now the configuration file setting <code>unroll { defaultPattern }</code> is inspected. If it is set to a non-<code>null</code> string,
 this value is used as unroll pattern.</p>
 </li>
 <li>
@@ -292,6 +304,22 @@ some values with the wildcard expression.</p>
 <p>The condition closures for <code>@IgnoreIf</code>, <code>@Requires</code> and <code>@PendingFeatureIf</code> can now access data variables
 if applied to a data driven feature. This has further implications that are documented in the respective
 documentation parts and JavaDocs.</p>
+</li>
+<li>
+<p>Data driven features are now unrolled by default. <code>@Unroll</code> can still be used to specify a custom naming pattern.
+A simple <code>@Unroll</code> without argument is not needed anymore except when undoing a spec-level <code>@Rollup</code> annotation
+or if unrolling by default is disabled, so any simple <code>@Unroll</code> annotations can be removed from existing code. You
+can verify this by looking at the test count which should not have been changed after you removed the simple
+<code>@Unroll</code> annotations.</p>
+</li>
+<li>
+<p><code>@Rollup</code> can now be used on feature and spec level to explicitly roll up any feature where the reporting of single
+iterations is not wanted.</p>
+</li>
+<li>
+<p>The setting <code>unroll { unrollByDefault false }</code> in the Spock configuration file can be set to roll up all
+features by default if not overwritten by explicit <code>@Unroll</code> annotations and thus reinstate the pre
+Spock 2.0 behaviour.</p>
 </li>
 </ul>
 </div>
@@ -1966,7 +1994,7 @@ required; the only prerequisite for building Spock is a JDK installation (1.5 or
 <div id="footer">
 <div id="footer-text">
 Version 2.0-SNAPSHOT<br>
-Last updated 2020-04-30 23:44:14 UTC
+Last updated 2020-05-07 21:41:41 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./coderay-asciidoctor.css">

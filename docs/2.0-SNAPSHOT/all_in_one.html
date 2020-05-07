@@ -59,7 +59,7 @@
 <li><a href="#_sharing_of_objects_between_iterations">Sharing of Objects between Iterations</a></li>
 <li><a href="#_syntactic_variations">Syntactic Variations</a></li>
 <li><a href="#_reporting_of_failures">Reporting of Failures</a></li>
-<li><a href="#_method_unrolling">Method Unrolling</a></li>
+<li><a href="#_method_uprolling_and_unrolling">Method Uprolling and Unrolling</a></li>
 <li><a href="#_data_pipes">Data Pipes</a></li>
 <li><a href="#_multi_variable_data_pipes">Multi-Variable Data Pipes</a></li>
 <li><a href="#_data_variable_assignment">Data Variable Assignment</a></li>
@@ -68,7 +68,7 @@
 <li><a href="#_combining_data_tables_data_pipes_and_variable_assignments">Combining Data Tables, Data Pipes, and Variable Assignments</a></li>
 <li><a href="#_number_of_iterations">Number of Iterations</a></li>
 <li><a href="#_closing_of_data_providers">Closing of Data Providers</a></li>
-<li><a href="#_more_on_unrolled_method_names">More on Unrolled Method Names</a></li>
+<li><a href="#_unrolled_iteration_names">Unrolled Iteration Names</a></li>
 </ul>
 </li>
 <li><a href="#interaction-based-testing">Interaction Based Testing</a>
@@ -332,6 +332,7 @@
 <ul class="sectlevel4">
 <li><a href="#_renamed_iterationcount_token_2">Renamed iterationCount token</a></li>
 <li><a href="#_no_access_to_data_variables_in_data_pipes_anymore_2">No access to data variables in data pipes anymore</a></li>
+<li><a href="#_assert_unroll_expressions_by_default_2">Assert unroll expressions by default</a></li>
 </ul>
 </li>
 <li><a href="#_1_0">1.0</a></li>
@@ -1598,111 +1599,120 @@ If the column separator changes, this starts a new stand-alone data table:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">maximum of two numbers   FAILED
-
-<span class="predefined-type">Condition</span> not <span class="key">satisfied</span>:
-
-<span class="predefined-type">Math</span>.max(a, b) == c
-    |    |  |  |  |
-    |    <span class="integer">7</span>  <span class="integer">4</span>  |  <span class="integer">7</span>
-    <span class="integer">42</span>         <span class="predefined-constant">false</span></code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>The obvious question is: Which iteration failed, and what are its data values? In our example, it isn&#8217;t hard to figure
-out that it&#8217;s the second iteration that failed. At other times this can be more difficult or even impossible.
-<sup class="footnote">[<a id="_footnoteref_2" class="footnote" href="#_footnotedef_2" title="View footnote.">2</a>]</sup>
-In any case, it would be nice if Spock made it loud and clear which iteration failed, rather than just reporting the
-failure. This is the purpose of the <code>@Unroll</code> annotation.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_method_unrolling"><a class="anchor" href="#_method_unrolling"></a><a class="link" href="#_method_unrolling">Method Unrolling</a></h3>
-<div class="paragraph">
-<p>A method annotated with <code>@Unroll</code> will have its iterations reported independently:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@Unroll</span>
-<span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">maximum of two numbers</span><span class="delimiter">&quot;</span></span>() {
-...</code></pre>
-</div>
-</div>
-<div class="sidebarblock">
-<div class="content">
-<div class="title">Why isn&#8217;t <code>@Unroll</code> the default?</div>
-<div class="paragraph">
-<p>One reason why <code>@Unroll</code> isn&#8217;t the default is that some execution environments (in particular IDEs) expect to be
-told the number of test methods in advance, and have certain problems if the actual number varies. Another reason
-is that <code>@Unroll</code> can drastically change the number of reported tests, which may not always be desirable.</p>
-</div>
-</div>
-</div>
-<div class="paragraph">
-<p>Note that unrolling has no effect on how the method gets executed; it is only an alternation in reporting.
-Depending on the execution environment, the output will look something like:</p>
-</div>
-<div class="listingblock">
-<div class="content">
 <pre>maximum of two numbers [a: 1, b: 3, c: 3, #0]   PASSED
 maximum of two numbers [a: 7, b: 4, c: 7, #1]   FAILED
 
+Condition not satisfied:
+
 Math.max(a, b) == c
-    |    |  |  |  |
-    |    7  4  |  7
-    42         false
+|    |   |  |  |  |
+|    |   7  4  |  7
+|    42        false
+class java.lang.Math
 
 maximum of two numbers [a: 0, b: 0, c: 0, #2]   PASSED</pre>
 </div>
 </div>
 <div class="paragraph">
-<p>This tells us that the second iteration (with index 1) failed. With a bit of effort, we can do even better:</p>
+<p>The obvious question is: Which iteration failed, and what are its data values? In our example, it isn&#8217;t hard to figure
+out that it&#8217;s the second iteration (with index 1) that failed even from the rich condition rendering. At other times
+this can be more difficult or even impossible.<sup class="footnote">[<a id="_footnoteref_2" class="footnote" href="#_footnotedef_2" title="View footnote.">2</a>]</sup> In any case, Spock makes it loud and clear which iteration failed, rather
+than just reporting the failure. Iterations of a feature method are by default unrolled with a rich naming pattern.
+This pattern can also be configured as documented at <a href="#_unrolled_iteration_names">Unrolled Iteration Names</a> or the unrolling can be disabled
+like described in the following section.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_method_uprolling_and_unrolling"><a class="anchor" href="#_method_uprolling_and_unrolling"></a><a class="link" href="#_method_uprolling_and_unrolling">Method Uprolling and Unrolling</a></h3>
+<div class="paragraph">
+<p>A method annotated with <code>@Rollup</code> will have its iterations not reported independently but only aggregated within the
+feature. This can for example be used if you produce many test cases from calculations or if you use external data
+like the contents of a database as test data and do not want the test count to vary:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@Unroll</span>
-<span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">maximum of #a and #b is #c</span><span class="delimiter">&quot;</span></span>() {
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@Rollup</span>
+<span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">maximum of two numbers</span><span class="delimiter">&quot;</span></span>() {
 ...</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>This method name uses placeholders, denoted by a leading hash sign (<code>#</code>), to refer to data variables <code>a</code>, <code>b</code>,
-and <code>c</code>. In the output, the placeholders will be replaced with concrete values:</p>
+<p>Note that up- and unrolling has no effect on how the method gets executed; it is only an alternation in reporting.
+Depending on the execution environment, the output will look something like:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>maximum of 1 and 3 is 3   PASSED
-maximum of 7 and 4 is 7   FAILED
+<pre>maximum of two numbers   FAILED
+
+Condition not satisfied:
 
 Math.max(a, b) == c
-    |    |  |  |  |
-    |    7  4  |  7
-    42         false
-
-maximum of 0 and 0 is 0   PASSED</pre>
+|    |   |  |  |  |
+|    |   7  4  |  7
+|    42        false
+class java.lang.Math</pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Now we can tell at a glance that the <code>max</code> method failed for inputs <code>7</code> and <code>4</code>. See <a href="#_more_on_unrolled_method_names">More on Unrolled Method Names</a>
-for further details on this topic.</p>
+<p>The <code>@Rollup</code> annotation can also be placed on a spec.
+This has the same effect as placing it on each data-driven feature method of the spec that does not have an
+<code>@Unroll</code> annotation.</p>
 </div>
 <div class="paragraph">
-<p>The <code>@Unroll</code> annotation can also be placed on a spec. This has the same effect as placing it on each data-driven
-feature method of the spec.</p>
+<p>Alternatively the <a href="#_spock_configuration_file">configuration file</a> setting <code>unrollByDefault</code>
+in the <code>unroll</code> section can be set to <code>false</code> to roll up all features automatically unless
+they are annotated with <code>@Unroll</code> or are contained in an <code>@Unroll</code>ed spec and thus reinstate the pre Spock 2.0
+behavior where this was the default.</p>
 </div>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<div class="title">Tip</div>
-</td>
-<td class="content">
-You can set the system property <code>spock.assertUnrollExpressions</code> to <code>true</code>,
-     to let tests fail that have invalid unroll expressions.
-     This can be used to help catch errors during refactoring.
-</td>
-</tr>
-</table>
+<div class="listingblock">
+<div class="title">Disable Default Unrolling</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">unroll {
+    unrollByDefault <span class="predefined-constant">false</span>
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>It is illegal to annotate a spec or a feature with both the <code>@Unroll</code> and the <code>@Rollup</code> annotation and if detected
+this will cause an exception to be thrown.</p>
+</div>
+<hr>
+<div class="paragraph">
+<p>To summarize:</p>
+</div>
+<div class="paragraph">
+<p>A feature will be uprolled</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>if the method is annotated with <code>@Rollup</code></p>
+</li>
+<li>
+<p>if the method is not annotated with <code>@Unroll</code> and the spec is annotated with <code>@Rollup</code></p>
+</li>
+<li>
+<p>if neither the method nor the spec is annotated with <code>@Unroll</code>
+and the configuration option <code>unroll { unrollByDefault }</code> is set to <code>false</code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>A feature will be unrolled</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>if the method is annotated with <code>@Unroll</code></p>
+</li>
+<li>
+<p>if the method is not annotated with <code>@Rollup</code> and the spec is annotated with <code>@Unroll</code></p>
+</li>
+<li>
+<p>if neither the method nor the spec is annotated with <code>@Rollup</code>
+and the configuration option <code>unroll { unrollByDefault }</code> is set to its default value <code>true</code></p>
+</li>
+</ul>
 </div>
 </div>
 <div class="sect2">
@@ -1992,7 +2002,46 @@ such a method.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_more_on_unrolled_method_names"><a class="anchor" href="#_more_on_unrolled_method_names"></a><a class="link" href="#_more_on_unrolled_method_names">More on Unrolled Method Names</a></h3>
+<h3 id="_unrolled_iteration_names"><a class="anchor" href="#_unrolled_iteration_names"></a><a class="link" href="#_unrolled_iteration_names">Unrolled Iteration Names</a></h3>
+<div class="paragraph">
+<p>By default the names of unrolled iterations are the name of the feature, plus the data variables and the iteration
+index. This will always produce unique names and should enable you to identify easily the failing data variable
+combination.</p>
+</div>
+<div class="paragraph">
+<p>The example at <a href="#_reporting_of_failures">Reporting of Failures</a> for example shows with <code>maximum of two numbers [a: 7, b: 4, c: 7, #1]</code>,
+that the second iteration (<code>#1</code>) where the data variables have the values <code>7</code>, <code>4</code> and <code>7</code> failed.</p>
+</div>
+<div class="paragraph">
+<p>With a bit of effort, we can do even better:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">maximum of #a and #b is #c</span><span class="delimiter">&quot;</span></span>() {
+...</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This method name uses placeholders, denoted by a leading hash sign (<code>#</code>), to refer to data variables <code>a</code>, <code>b</code>, and <code>c</code>.
+In the output, the placeholders will be replaced with concrete values:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>maximum of 1 and 3 is 3   PASSED
+maximum of 7 and 4 is 7   FAILED
+
+Math.max(a, b) == c
+|    |   |  |  |  |
+|    |   7  4  |  7
+|    42        false
+class java.lang.Math
+
+maximum of 0 and 0 is 0   PASSED</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Now we can tell at a glance that the <code>max</code> method failed for inputs <code>7</code> and <code>4</code>.</p>
+</div>
 <div class="paragraph">
 <p>An unrolled method name is similar to a Groovy <code>GString</code>, except for the following differences:</p>
 </div>
@@ -2029,11 +2078,11 @@ following are valid method names:</p>
 </div>
 </div>
 <div class="paragraph">
-<p>If necessary, additional data variables can be introduced to hold more complex expression:</p>
+<p>If necessary, additional data variables can be introduced to hold more complex expressions:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">#lastName</span><span class="delimiter">&quot;</span></span>() { <span class="comment">// zero-arg method call</span>
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">#lastName</span><span class="delimiter">&quot;</span></span>() {
   ...
   where:
   person &lt;&lt; [<span class="keyword">new</span> Person(<span class="key">age</span>: <span class="integer">14</span>, <span class="key">name</span>: <span class="string"><span class="delimiter">'</span><span class="content">Phil Cole</span><span class="delimiter">'</span></span>)]
@@ -2063,7 +2112,8 @@ to the <code>@Unroll</code> annotation which takes precedence over the method na
 </div>
 <div class="paragraph">
 <p>If neither a parameter to the annotation is given, nor the method name contains a <code>#</code>,
-the system property <code>spock.globalUnrollPattern</code> is inspected. If it is set to a non-blank
+the <a href="#_spock_configuration_file">configuration file</a> setting <code>defaultPattern</code>
+in the <code>unroll</code> section is inspected. If it is set to a non-<code>null</code>
 string, this value is used as unroll pattern. This could for example be set to</p>
 </div>
 <div class="ulist">
@@ -2080,11 +2130,39 @@ a data variable called <code>iterationName</code> that is then used for reportin
 </li>
 </ul>
 </div>
+<div class="listingblock">
+<div class="title">Set Default Unroll Pattern</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">unroll {
+    defaultPattern <span class="string"><span class="delimiter">'</span><span class="content">#featureName[#iterationIndex]</span><span class="delimiter">'</span></span>
+}</code></pre>
+</div>
+</div>
 <div class="paragraph">
 <p>If none of the three described ways is used to set a custom unroll pattern, by default
 the feature name is used, suffixed with all data variable names and their values and
 finally the iteration index, so the result will be for example
 <code>my feature [x: 1, y: 2, z: 3, #0]</code>.</p>
+</div>
+<div class="paragraph">
+<p>If there is an error in an unroll expression, for example typo in variable name, exception during
+evaluation of a property or method in the expression and so on, the test will fail. This is not
+true for the automatic fall back rendering of the data variables if there is no unroll pattern
+set in any way, this will never fail the test, no matter what happens.</p>
+</div>
+<div class="paragraph">
+<p>The failing of test with errors in the unroll expression can be disabled by setting the
+<a href="#_spock_configuration_file">configuration file</a> setting <code>validateExpressions</code>
+in the <code>unroll</code> section to <code>false</code>. If this is done and an error happens, the erroneous expression
+<code>#foo.bar</code> will be substituted by <code>#Error:foo.bar</code>.</p>
+</div>
+<div class="listingblock">
+<div class="title">Disable Unroll Pattern Expression Asserting</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">unroll {
+    validateExpressions <span class="predefined-constant">false</span>
+}</code></pre>
+</div>
 </div>
 </div>
 </div>
@@ -5274,7 +5352,8 @@ With the new behavior, you can have a <code>Mock</code> or <code>Spy</code> retu
 <div class="paragraph">
 <p>The token <code>#iterationCount</code> in unroll patterns was renamed to <code>#iterationIndex</code>.
 If you use it somewhere, you have to manually change it to the new name
-or you will get an <code>#Error:iterationCount</code> rendering instead.</p>
+or the test will fail unless you disabled expression asserting,
+then you will get an <code>#Error:iterationCount</code> rendering instead.</p>
 </div>
 </div>
 <div class="sect4">
@@ -5309,6 +5388,16 @@ b &lt;&lt; a</code></pre>
 a &lt;&lt; [<span class="integer">1</span>, <span class="integer">2</span>]
 b = a</code></pre>
 </div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_assert_unroll_expressions_by_default"><a class="anchor" href="#_assert_unroll_expressions_by_default"></a><a class="link" href="#_assert_unroll_expressions_by_default">Assert unroll expressions by default</a></h5>
+<div class="paragraph">
+<p>The system property <code>spock.assertUnrollExpressions</code> is not supported anymore.
+Instead the new default behavior is equal to having this property set to <code>true</code>.
+This means tests that were successful but had an <code>#Error:</code> name rendering will now fail.
+It can be set back to the old pre Spock 2.0 behaviour by setting
+<code>unroll { validateExpressions false }</code> in the Spock configuration file.</p>
 </div>
 </div>
 <div class="sect4">
@@ -5381,12 +5470,13 @@ a ; b ;; c
 <li>
 <p>The default unroll pattern changed from the rather generic <code>#featureName[#iterationIndex]</code> to a more fancy
 version that lists all data variables and their values additionally to the feature name and iteration index.
-If you prefer to retain the old behaviour, you can set the system property <code>spock.globalUnrollPattern</code>
-to the value <code>#featureName[#iterationIndex]</code> and you will get the same result as previously.</p>
+If you prefer to retain the old behaviour, you can set the setting
+<code>unroll { defaultPattern '#featureName[#iterationIndex]' }</code> in the Spock configuration file
+and you will get the same result as previously.</p>
 </li>
 <li>
 <p>If neither a parameter to the <code>@Unroll</code> annotation is given, nor the method name contains a <code>#</code>,
-now the system property <code>spock.globalUnrollPattern</code> is inspected. If it is set to a non-blank string,
+now the configuration file setting <code>unroll { defaultPattern }</code> is inspected. If it is set to a non-<code>null</code> string,
 this value is used as unroll pattern.</p>
 </li>
 <li>
@@ -5461,6 +5551,22 @@ some values with the wildcard expression.</p>
 <p>The condition closures for <code>@IgnoreIf</code>, <code>@Requires</code> and <code>@PendingFeatureIf</code> can now access data variables
 if applied to a data driven feature. This has further implications that are documented in the respective
 documentation parts and JavaDocs.</p>
+</li>
+<li>
+<p>Data driven features are now unrolled by default. <code>@Unroll</code> can still be used to specify a custom naming pattern.
+A simple <code>@Unroll</code> without argument is not needed anymore except when undoing a spec-level <code>@Rollup</code> annotation
+or if unrolling by default is disabled, so any simple <code>@Unroll</code> annotations can be removed from existing code. You
+can verify this by looking at the test count which should not have been changed after you removed the simple
+<code>@Unroll</code> annotations.</p>
+</li>
+<li>
+<p><code>@Rollup</code> can now be used on feature and spec level to explicitly roll up any feature where the reporting of single
+iterations is not wanted.</p>
+</li>
+<li>
+<p>The setting <code>unroll { unrollByDefault false }</code> in the Spock configuration file can be set to roll up all
+features by default if not overwritten by explicit <code>@Unroll</code> annotations and thus reinstate the pre
+Spock 2.0 behaviour.</p>
 </li>
 </ul>
 </div>
@@ -7113,8 +7219,9 @@ required; the only prerequisite for building Spock is a JDK installation (1.5 or
 <li>
 <p>The default unroll pattern changed from the rather generic <code>#featureName[#iterationIndex]</code> to a more fancy
 version that lists all data variables and their values additionally to the feature name and iteration index.
-If you prefer to retain the old behaviour, you can set the system property <code>spock.globalUnrollPattern</code>
-to the value <code>#featureName[#iterationIndex]</code> and you will get the same result as previously.</p>
+If you prefer to retain the old behaviour, you can set the setting
+<code>unroll { defaultPattern '#featureName[#iterationIndex]' }</code> in the Spock configuration file
+and you will get the same result as previously.</p>
 </li>
 </ul>
 </div>
@@ -7123,7 +7230,8 @@ to the value <code>#featureName[#iterationIndex]</code> and you will get the sam
 <div class="paragraph">
 <p>The token <code>#iterationCount</code> in unroll patterns was renamed to <code>#iterationIndex</code>.
 If you use it somewhere, you have to manually change it to the new name
-or you will get an <code>#Error:iterationCount</code> rendering instead.</p>
+or the test will fail unless you disabled expression asserting,
+then you will get an <code>#Error:iterationCount</code> rendering instead.</p>
 </div>
 </div>
 <div class="sect4">
@@ -7158,6 +7266,16 @@ b &lt;&lt; a</code></pre>
 a &lt;&lt; [<span class="integer">1</span>, <span class="integer">2</span>]
 b = a</code></pre>
 </div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_assert_unroll_expressions_by_default_2"><a class="anchor" href="#_assert_unroll_expressions_by_default_2"></a><a class="link" href="#_assert_unroll_expressions_by_default_2">Assert unroll expressions by default</a></h5>
+<div class="paragraph">
+<p>The system property <code>spock.assertUnrollExpressions</code> is not supported anymore.
+Instead the new default behavior is equal to having this property set to <code>true</code>.
+This means tests that were successful but had an <code>#Error:</code> name rendering will now fail.
+It can be set back to the old pre Spock 2.0 behaviour by setting
+<code>unroll { validateExpressions false }</code> in the Spock configuration file.</p>
 </div>
 </div>
 </div>
@@ -7568,7 +7686,7 @@ Math.signum(a &lt;=&gt; b) == result
 <div id="footer">
 <div id="footer-text">
 Version 2.0-SNAPSHOT<br>
-Last updated 2020-04-30 23:44:14 UTC
+Last updated 2020-05-07 21:41:41 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./coderay-asciidoctor.css">

@@ -47,7 +47,7 @@ class SpockHelloWorldTest {
   @Test
   void packageSelectorsAreResolved() {
     assertEquals(7, execute(selectPackage(ExampleTestCase.class.getPackage().getName()))
-      .containers()
+      .containerEvents()
       .filter(event -> event.getType() == EventType.STARTED)
       .filter(event -> "spec".equals(event.getTestDescriptor().getUniqueId().getLastSegment().getType()))
       .count());
@@ -55,7 +55,7 @@ class SpockHelloWorldTest {
 
   @Test
   void verifyUnrollExample() {
-    execute(selectClass(UnrollTestCase.class), stats -> stats.started(12).succeeded(12));
+    execute(selectClass(UnrollTestCase.class), stats -> stats.started(13).succeeded(13));
   }
 
   @Test

@@ -1,14 +1,12 @@
 package spock.lang;
 
-import org.spockframework.runtime.extension.ExtensionAnnotation;
-import org.spockframework.runtime.extension.builtin.UnrollExtension;
-
 import java.lang.annotation.*;
 
 /**
  * Indicates that iterations of a data-driven feature should be made visible
  * as separate features to the outside world (IDEs, reports, etc.). By default,
- * the name of an iteration is the feature's name followed by a consecutive number.
+ * the name of an iteration is the feature's name followed by the data variables
+ * and their values and the iteration index.
  * This can be changed by providing a naming pattern after @Unroll. A naming pattern
  * may refer to data variables by prepending their names with #. Example:
  *
@@ -38,11 +36,13 @@ import java.lang.annotation.*;
  * annotated with {@code Unroll}. By embedding the naming pattern in the method
  * names, each method can still have its own pattern.
  *
+ * <p>Having {@code @Unroll} on a super spec does not influence the features of sub specs,
+ * that is {@code @Unroll} is not inheritable.
+ *
  * @author Peter Niederwieser
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE, ElementType.METHOD})
-@ExtensionAnnotation(UnrollExtension.class)
 public @interface Unroll {
   String value() default "";
 }

@@ -17,6 +17,7 @@
 package org.spockframework.idea
 
 import spock.lang.Ignore
+import spock.lang.Rollup
 import spock.lang.Specification
 import spock.lang.Unroll
 
@@ -24,6 +25,7 @@ import spock.lang.Unroll
 @Ignore
 class IntelliJIdeaSpec extends Specification {
   // both inference and formatting work
+  @Rollup
   def "single-pipe data tables"() {
     expect:
     Math.max(a, b) == c
@@ -36,6 +38,7 @@ class IntelliJIdeaSpec extends Specification {
   }
 
   // formatting works, inference doesn't
+  @Rollup
   def "double-pipe data tables"() {
     expect:
     Math.max(a, b) == c
@@ -61,7 +64,6 @@ class IntelliJIdeaSpec extends Specification {
   }
 
   // unroll inference doesn't work
-  @Unroll
   def "max of #a and #b is #c"() {
     expect:
     Math.max(a, b) == c
@@ -87,7 +89,6 @@ class IntelliJIdeaSpec extends Specification {
   }
 
   // unroll inference doesn't work
-  @Unroll
   def "max of #a and #b is #c (2)"() {
     expect:
     Math.max(a, b) == c

@@ -21,8 +21,10 @@ import org.spockframework.runtime.SpockExecutionException
 
 import spock.lang.Ignore
 import spock.lang.Issue
+import spock.lang.Rollup
 import spock.lang.Shared
 
+@Rollup
 class DataTables extends EmbeddedSpecification {
   static staticField = 42
 
@@ -423,7 +425,7 @@ local ; 1
   def "cell references are evaluated correctly in the method's name"() {
     when:
     def result = runner.runSpecBody '''
-      @Unroll def 'a = #a, b = #b'() {
+      def 'a = #a, b = #b'() {
         expect:
         true
 
@@ -435,7 +437,7 @@ local ; 1
     '''
 
     then:
-    result.testEvents().finished().list().testDescriptor.displayName == ["a = 0, b = 1", "a = 2, b = 2" ]
+    result.testEvents().finished().list().testDescriptor.displayName == ["a = 0, b = 1", "a = 2, b = 2", "a = #a, b = #b" ]
   }
 
   def "cells can't reference next cells"() {

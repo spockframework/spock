@@ -52,7 +52,6 @@ class JUnitFixtureMethods extends JUnitBaseSpec {
     ]
   }
 
-  @Unroll
   def "multiple of #fixtureType"() {
     when:
     runSpecBody """
@@ -70,7 +69,6 @@ class JUnitFixtureMethods extends JUnitBaseSpec {
     fixtureType << ["beforeClass", "before", "after", "afterClass"]
   }
 
-  @Unroll
   def "inheritance for #fixtureType"() {
     when:
     run """
@@ -98,7 +96,6 @@ class JUnitFixtureMethods extends JUnitBaseSpec {
     "afterClass"  | ["child", "parent"]
   }
 
-  @Unroll
   def "inheritance with overriding for #fixtureType"() {
     when:
     run """

@@ -14,7 +14,6 @@
 
 package org.spockframework.compiler;
 
-import org.jetbrains.annotations.NotNull;
 import org.spockframework.lang.ConditionBlock;
 import org.spockframework.util.*;
 

@@ -18,6 +18,7 @@ import org.junit.Rule
 import org.junit.rules.TestName
 
 import spock.lang.Issue
+import spock.lang.Rollup
 import spock.lang.Specification
 import spock.lang.Unroll
 
@@ -31,6 +32,7 @@ class UseJUnitTestNameRule extends Specification {
     name.methodName == "not data-driven"
   }
 
+  @Rollup
   def "data-driven, not unrolled"() {
     expect:
     name.methodName == "data-driven, not unrolled"
@@ -39,7 +41,6 @@ class UseJUnitTestNameRule extends Specification {
     i << (1..3)
   }
 
-  @Unroll
   def "data-driven, unrolled w/o name pattern"() {
     expect:
     name.methodName == "data-driven, unrolled w/o name pattern [i: $i, #${i-1}]"
@@ -48,7 +49,6 @@ class UseJUnitTestNameRule extends Specification {
     i << (1..3)
   }
 
-  @Unroll
   def "data-driven, unrolled w/ name pattern #pattern"() {
     expect:
     name.methodName == "data-driven, unrolled w/ name pattern $pattern"

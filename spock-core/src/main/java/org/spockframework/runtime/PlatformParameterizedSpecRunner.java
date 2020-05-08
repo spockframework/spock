@@ -20,8 +20,6 @@ import org.spockframework.runtime.model.*;
 
 import java.util.*;
 
-import org.junit.platform.engine.support.hierarchical.Node;
-
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -35,7 +33,7 @@ public class PlatformParameterizedSpecRunner extends PlatformSpecRunner {
   }
 
   @Override
-  void runParameterizedFeature(SpockExecutionContext context, Node.DynamicTestExecutor dynamicTestExecutor) throws InterruptedException {
+  void runParameterizedFeature(SpockExecutionContext context, ParameterizedFeatureChildExecutor childExecutor) throws InterruptedException {
     if (context.getErrorInfoCollector().hasErrors()) {
       return;
     }
@@ -43,9 +41,9 @@ public class PlatformParameterizedSpecRunner extends PlatformSpecRunner {
     Object[] dataProviders = createDataProviders(context);
     int numIterations = estimateNumIterations(context, dataProviders);
     Iterator[] iterators = createIterators(context, dataProviders);
-    runIterations(context, dynamicTestExecutor, iterators, numIterations);
+    runIterations(context, childExecutor, iterators, numIterations);
     try {
-      dynamicTestExecutor.awaitFinished();
+      childExecutor.awaitFinished();
     } finally {
       closeDataProviders(dataProviders);
     }
@@ -169,7 +167,7 @@ public class PlatformParameterizedSpecRunner extends PlatformSpecRunner {
     return result == Integer.MAX_VALUE ? -1 : result;
   }
 
-  private void runIterations(SpockExecutionContext context, Node.DynamicTestExecutor dynamicTestExecutor, Iterator[] iterators, int estimatedNumIterations) {
+  private void runIterations(SpockExecutionContext context, ParameterizedFeatureChildExecutor childExecutor, Iterator[] iterators, int estimatedNumIterations) {
     if (context.getErrorInfoCollector().hasErrors()) {
       return;
     }
@@ -182,7 +180,7 @@ public class PlatformParameterizedSpecRunner extends PlatformSpecRunner {
       if (context.getErrorInfoCollector().hasErrors()) {
         return;
       }
-      dynamicTestExecutor.execute(iterationNode);
+      childExecutor.execute(iterationNode);
 
       // no iterators => no data providers => only derived parameterizations => limit to one iteration
       if (iterators.length == 0) {

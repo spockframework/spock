@@ -56,7 +56,6 @@ def baz() {
     ignored << [2            , 1            , 0            ]
   }
 
-  @Unroll
   def "@IgnoreRest in base and/or derived class"() {
     def classes = compiler.compileWithImports("""
 class Base extends Specification {

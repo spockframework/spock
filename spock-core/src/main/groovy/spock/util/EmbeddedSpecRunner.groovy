@@ -47,6 +47,10 @@ class EmbeddedSpecRunner {
   List<Class> extensionClasses = []
   boolean inheritParentExtensions = true
 
+  void configurationScript(Closure configurationScript) {
+    this.configurationScript = configurationScript
+  }
+
   void addPackageImport(String pkg) {
     compiler.addPackageImport(pkg)
   }
@@ -177,6 +181,26 @@ class EmbeddedSpecRunner {
       return results.allEvents().finished().stream()
         .reduce{first, second -> second} // fancy for .last()
         .map{it.timestamp.toEpochMilli()}.orElseGet {0}
+    }
+
+    long getDynamicallyRegisteredCount() {
+      return results.allEvents().dynamicallyRegistered().count()
+    }
+
+    long getTotalStartedCount() {
+      return results.allEvents().started().count()
+    }
+
+    long getTotalSkippedCount() {
+      return results.allEvents().skipped().count()
+    }
+
+    long getTotalAbortedCount() {
+      return results.allEvents().aborted().count()
+    }
+
+    long getTotalSucceededCount() {
+      return results.allEvents().succeeded().count()
     }
 
     @Override

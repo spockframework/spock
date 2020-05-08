@@ -72,8 +72,6 @@ class Foo extends Specification {
     featureCounter.get() == 4
   }
 
-
-  @Unroll
   def "@Retry mode #mode executes setup and cleanup #expectedCount times"(String mode, int expectedCount) {
     given:
     setupCounter.set(0)
@@ -177,7 +175,7 @@ class Foo extends Specification {
   def bar() {
     expect:
     throw new IllegalArgumentException()
-    
+
     where:
     ignore << [1, 2]
   }
@@ -206,7 +204,7 @@ class Foo extends Specification {
     """)
 
     then:
-    result.testsSucceededCount == 0
+    result.testsSucceededCount == 1
     result.testsFailedCount == 2
     result.testsSkippedCount == 0
     featureCounter.get() == 8
@@ -218,7 +216,6 @@ class Foo extends Specification {
 import spock.lang.Retry
 
 class Foo extends Specification {
-  @Unroll
   @Retry
   def bar() {
     org.spockframework.smoke.extension.RetryFeatureExtensionSpec.featureCounter.incrementAndGet()
@@ -231,7 +228,7 @@ class Foo extends Specification {
     """)
 
     then:
-    result.testsSucceededCount == 2
+    result.testsSucceededCount == 3
     result.testsFailedCount == 1
     result.testsSkippedCount == 0
     featureCounter.get() == 4 + 2
@@ -254,7 +251,7 @@ class Foo extends Specification {
     """)
 
     then:
-    result.testsSucceededCount == 3
+    result.testsSucceededCount == 4
     result.testsFailedCount == 0
     result.testsSkippedCount == 0
   }
@@ -265,7 +262,6 @@ class Foo extends Specification {
 import spock.lang.Retry
 
 class Foo extends Specification {
-  @Unroll
   @Retry
   def bar() {
     expect: test
@@ -277,7 +273,7 @@ class Foo extends Specification {
     """)
 
     then:
-    result.testsSucceededCount == 3
+    result.testsSucceededCount == 4
     result.testsFailedCount == 0
     result.testsSkippedCount == 0
   }
@@ -324,8 +320,8 @@ class Foo extends Specification {
     def duration = System.currentTimeMillis() - start
     duration > 300
     duration < 1000
-    result.testsStartedCount == 3
-    result.testsSucceededCount == 2
+    result.testsStartedCount == 4
+    result.testsSucceededCount == 3
     result.testsFailedCount == 1
     result.testsSkippedCount == 0
     featureCounter.get() == 4 + 2
@@ -337,7 +333,6 @@ class Foo extends Specification {
 import spock.lang.Retry
 
 class Foo extends Specification {
-  @Unroll
   @Retry(condition = { failure.message.contains('1') })
   def "bar #message"() {
     org.spockframework.smoke.extension.RetryFeatureExtensionSpec.featureCounter.incrementAndGet()
@@ -351,8 +346,8 @@ class Foo extends Specification {
     """)
 
     then:
-    result.testsStartedCount == 3
-    result.testsSucceededCount == 0
+    result.testsStartedCount == 4
+    result.testsSucceededCount == 1
     result.testsFailedCount == 3
     featureCounter.get() == 4 + 1 + 1
   }
@@ -363,7 +358,6 @@ class Foo extends Specification {
 import spock.lang.Retry
 
 class Foo extends Specification {
-  @Unroll
   @Retry(exceptions = IllegalArgumentException, condition = { failure.message.contains('1') })
   def "bar #exceptionClass #message"() {
     org.spockframework.smoke.extension.RetryFeatureExtensionSpec.featureCounter.incrementAndGet()
@@ -383,8 +377,8 @@ class Foo extends Specification {
     """)
 
     then:
-    result.testsStartedCount == 6
-    result.testsSucceededCount == 0
+    result.testsStartedCount == 7
+    result.testsSucceededCount == 1
     result.testsFailedCount == 6
     featureCounter.get() == (4 + 1) + (1 + 1) + (1 + 1)
   }
@@ -396,12 +390,11 @@ import spock.lang.Retry
 
 class Foo extends Specification {
   int value
-  @Unroll
   @Retry(condition = { instance.value == 2 })
   def "bar #input"() {
     org.spockframework.smoke.extension.RetryFeatureExtensionSpec.featureCounter.incrementAndGet()
     value = input
-    
+
     expect:
     false
 
@@ -412,8 +405,8 @@ class Foo extends Specification {
     """)
 
     then:
-    result.testsStartedCount == 3
-    result.testsSucceededCount == 0
+    result.testsStartedCount == 4
+    result.testsSucceededCount == 1
     result.testsFailedCount == 3
     featureCounter.get() == 1 + 4 + 1
   }

@@ -36,14 +36,14 @@ where: x << null
 
   def "literal"() {
     expect: x == 1
-    where : x << 1
+    where: x << 1
   }
 
   def "empty list"() {
     when:
     runner.runFeatureBody """
 expect: true
-where : x << []
+where: x << []
     """
 
     then:
@@ -52,64 +52,64 @@ where : x << []
 
   def "single-element list"() {
     expect: x == 1
-    where : x << [1]
+    where: x << [1]
   }
 
   def "multi-element list"() {
     expect: [1, 2, 3].contains x
-    where : x << [3, 2, 1]
+    where: x << [3, 2, 1]
   }
 
   def "array"() {
     expect: [1, 2, 3].contains x
-    where : x << ([3, 2, 1] as int[])
+    where: x << ([3, 2, 1] as int[])
   }
 
   def "map"() {
     expect: x.value == x.key.toUpperCase()
-    where : x << ["vienna":"VIENNA", "tokyo":"TOKYO"]
+    where: x << ["vienna":"VIENNA", "tokyo":"TOKYO"]
   }
 
   def "matcher"() {
     expect: x.startsWith "a"
-    where : x << ("a1a2a3" =~ /a./)
+    where: x << ("a1a2a3" =~ /a./)
   }
 
   def "string"() {
     expect: "abc".contains x
-    where : x << "cba"
+    where: x << "cba"
   }
 
   def "iterator"() {
     expect: [1, 2, 3].contains x
-    where : x << new MyIterator()
+    where: x << new MyIterator()
   }
 
   def "iterable"() {
     expect: [1, 2, 3].contains x
-    where : x << new MyIterable()
+    where: x << new MyIterable()
   }
 
   def "disguised iterable"() {
     expect: [1, 2, 3].contains x
-    where : x << new MyDisguisedIterable()
+    where: x << new MyDisguisedIterable()
   }
 
   def "enumeration"() {
     expect: ["a", "b", "c"].contains x
-    where : x << new StringTokenizer("b c a")
+    where: x << new StringTokenizer("b c a")
   }
 
   def "data providers with same number of values"() {
     expect: x == y
-    where : x << [1, 2, 3]; y << [1, 2, 3]
+    where: x << [1, 2, 3]; y << [1, 2, 3]
   }
 
   def "data providers with different number of values"() {
     when:
     runner.runFeatureBody """
 expect: x == y
-where : $providers
+where: $providers
     """
 
     then:
@@ -139,7 +139,7 @@ y << []
 
   def "different kinds of data providers used together"() {
     expect: a + b + c + d + e == "abcde"
-    where :
+    where:
       a << "a"
       b << ["b"]
       c << ("c" =~ /./)

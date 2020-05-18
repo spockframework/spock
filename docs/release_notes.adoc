@@ -207,6 +207,8 @@ Spy(constructorArgs: [null as String, (Pattern) null])
 def "I'll run everywhere but on Windows"() { ... }
 ----
 
+- Execution with an unsupported Groovy version can allowed with `-Dspock.iKnowWhatImDoing.disableGroovyVersionCheck=true`
+
 - Upgrade Groovy to 2.5.11 (improved Java 14+ support) and 3.0.3 (fixes #1127)
 
 - Upgrade JUnit 4 to 4.13 (in `spock-junit4`)

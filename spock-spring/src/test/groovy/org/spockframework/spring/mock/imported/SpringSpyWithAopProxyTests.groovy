@@ -17,6 +17,7 @@
 package org.spockframework.spring.mock.imported
 
 import org.spockframework.spring.*
+import org.springframework.core.SpringVersion
 import spock.lang.*
 
 import javax.inject.Inject
@@ -46,9 +47,12 @@ class SpringSpyWithAopProxyTests extends Specification {
   @Inject
   private DateService dateService
 
-
-  // TODO Fails with ByteBuddy
-  @Requires({sys["org.spockframework.mock.ignoreByteBuddy"]})
+  @PendingFeatureIf(
+    reason = 'Spring before 5.0.0.RELEASE has an incompatibility with ByteBuddy',
+    value = {
+      (SpringVersion.getVersion().split(/\./, 2).first().toInteger() < 5) &&
+        !sys.'org.spockframework.mock.ignoreByteBuddy'?.toBoolean()
+    })
   def 'verify use proxyTarget'() throws Exception {
     when:
     Long d1 = dateService.getDate(false)

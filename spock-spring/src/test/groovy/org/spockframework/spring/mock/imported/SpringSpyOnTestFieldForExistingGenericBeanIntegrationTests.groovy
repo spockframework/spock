@@ -42,8 +42,6 @@ class SpringSpyOnTestFieldForExistingGenericBeanIntegrationTests extends Specifi
   @Autowired
   private ExampleGenericServiceCaller caller
 
-  // TODO Fails with ByteBuddy
-  @Requires({sys["org.spockframework.mock.ignoreByteBuddy"]})
   def 'test spying'() throws Exception {
     when:
     def result = caller.sayGreeting()

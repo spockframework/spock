@@ -200,11 +200,22 @@ Math.signum(a &lt;=&gt; b) == result
 </div>
 </div>
 </div>
+<div class="sect1">
+<h2 id="_groovy_version_compatibility"><a class="anchor" href="#_groovy_version_compatibility"></a><a class="link" href="#_groovy_version_compatibility">Groovy version compatibility</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>By default, Spock can only be used with the Groovy version it was compiled with. It means that Spock <code>2.0-groovy-2.5</code> can only executed with Groovy 2.5.x, <code>2.0-groovy-3.0</code> with 3.0.x, etc. That restriction was introduced to help users find an appropriate Groovy variant and limit number of reported invalid issues caused by the incompatibilities between the major Groovy versions.</p>
+</div>
+<div class="paragraph">
+<p>However, occasionally it might be useful to be able to play with the next (officially unsupported) Groovy version, especially that usually, in the majority of cases, it should just work fine. Starting with Groovy 2.0 that restriction has been relaxed in the Spock SNAPSHOT versions. In addition, the early adopters can implicitly disable that check - also in the production versions - providing the system property <code>-Dspock.iKnowWhatImDoing.disableGroovyVersionCheck=true</code>. <strong>Please bear in mind, however, that it is completely unsupported and might lead to some unexpected errors</strong>.</p>
+</div>
+</div>
+</div>
 </div>
 <div id="footer">
 <div id="footer-text">
 Version 2.0-SNAPSHOT<br>
-Last updated 2020-05-26 09:39:40 UTC
+Last updated 2020-05-29 20:33:56 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./coderay-asciidoctor.css">

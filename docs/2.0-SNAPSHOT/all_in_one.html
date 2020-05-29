@@ -351,6 +351,7 @@
 <li><a href="#_usage_of_final_in_a_feature_method_with_cleanup_1017">Usage of <code>final</code> in a feature method with <code>cleanup</code> #1017</a></li>
 <li><a href="#_using_traits_with_specifications">Using Traits with Specifications</a></li>
 <li><a href="#_type_confusion_when_using_data_driven_features_880">Type confusion when using Data-Driven features #880</a></li>
+<li><a href="#_groovy_version_compatibility">Groovy version compatibility</a></li>
 </ul>
 </li>
 </ul>
@@ -5519,6 +5520,9 @@ enable IDE support like code completion:</p>
 </div>
 </li>
 <li>
+<p>Execution with an unsupported Groovy version can allowed with <code>-Dspock.iKnowWhatImDoing.disableGroovyVersionCheck=true</code></p>
+</li>
+<li>
 <p>Upgrade Groovy to 2.5.11 (improved Java 14+ support) and 3.0.3 (fixes #1127)</p>
 </li>
 <li>
@@ -7656,6 +7660,15 @@ Math.signum(a &lt;=&gt; b) == result
 <p>This issue was introduced by groovy-2.5, previous versions worked fine.</p>
 </div>
 </div>
+<div class="sect2">
+<h3 id="_groovy_version_compatibility"><a class="anchor" href="#_groovy_version_compatibility"></a><a class="link" href="#_groovy_version_compatibility">Groovy version compatibility</a></h3>
+<div class="paragraph">
+<p>By default, Spock can only be used with the Groovy version it was compiled with. It means that Spock <code>2.0-groovy-2.5</code> can only executed with Groovy 2.5.x, <code>2.0-groovy-3.0</code> with 3.0.x, etc. That restriction was introduced to help users find an appropriate Groovy variant and limit number of reported invalid issues caused by the incompatibilities between the major Groovy versions.</p>
+</div>
+<div class="paragraph">
+<p>However, occasionally it might be useful to be able to play with the next (officially unsupported) Groovy version, especially that usually, in the majority of cases, it should just work fine. Starting with Groovy 2.0 that restriction has been relaxed in the Spock SNAPSHOT versions. In addition, the early adopters can implicitly disable that check - also in the production versions - providing the system property <code>-Dspock.iKnowWhatImDoing.disableGroovyVersionCheck=true</code>. <strong>Please bear in mind, however, that it is completely unsupported and might lead to some unexpected errors</strong>.</p>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -7686,7 +7699,7 @@ Math.signum(a &lt;=&gt; b) == result
 <div id="footer">
 <div id="footer-text">
 Version 2.0-SNAPSHOT<br>
-Last updated 2020-05-26 09:39:40 UTC
+Last updated 2020-05-29 20:33:56 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./coderay-asciidoctor.css">

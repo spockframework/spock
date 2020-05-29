@@ -40,7 +40,7 @@ import org.codehaus.groovy.transform.*;
 @GroovyASTTransformation(phase = CompilePhase.SEMANTIC_ANALYSIS)
 public class SpockTransform implements ASTTransformation {
   public SpockTransform() {
-    VersionChecker.checkGroovyVersion("compiler plugin");
+    new VersionChecker().checkGroovyVersion("compiler plugin");
   }
 
   @Override

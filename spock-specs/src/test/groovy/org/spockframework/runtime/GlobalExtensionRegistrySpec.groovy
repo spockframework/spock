@@ -19,10 +19,8 @@ package org.spockframework.runtime
 import org.spockframework.runtime.extension.AbstractAnnotationDrivenExtension
 import org.spockframework.runtime.extension.AbstractGlobalExtension
 import org.spockframework.runtime.extension.ExtensionException
-import org.spockframework.runtime.extension.IGlobalExtension
 import org.spockframework.runtime.extension.builtin.IgnoreExtension
 import org.spockframework.runtime.extension.builtin.IncludeExcludeExtension
-import org.spockframework.runtime.model.SpecInfo
 import org.spockframework.util.InternalSpockError
 
 import spock.config.ConfigurationObject

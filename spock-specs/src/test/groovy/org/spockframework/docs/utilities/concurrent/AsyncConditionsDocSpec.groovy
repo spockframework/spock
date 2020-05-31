@@ -8,7 +8,7 @@ import java.util.concurrent.TimeUnit
 class AsyncConditionsDocSpec extends Specification {
 
 // tag::async-conditions-spec[]
-  def "example for single passing evaluation"() {
+  def "example of single passing evaluation"() {
     def conditions = new AsyncConditions() // <1>
 
     when:
@@ -22,7 +22,7 @@ class AsyncConditionsDocSpec extends Specification {
     conditions.await() // <4>
   }
 
-  def "example for multiple passing evaluations"() {
+  def "example of multiple passing evaluations"() {
     def conditions = new AsyncConditions(3) // <5>
 
     when:

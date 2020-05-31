@@ -37,3 +37,32 @@ include::{sourcedir}/utilities/MutableClockDocSpec.groovy[tag=age-filter-spec]
 
 There are many more ways to modify `MutableClock` just have a look at the JavaDocs, or the test code `spock.util.time.MutableClockSpec`.
 
+[[async-conditions]]
+== Evaluating conditions asynchronously with `AsyncConditions`
+
+The utility class `AsyncConditions` can be helpful when working with asynchronous assertions. These are assertions made
+from a different thread than the one running the test, for example when working with callback functions.
+The individual assertions are collected, and in the asserting block, e.g. `then`, the `await` method is called to
+verify the individual results. If any of the results is not available when `await` is called, it will also fail.
+The amount of seconds to wait for can be specified as a parameter, see the example below. The default is `1.0` seconds.
+Additionally, the number of expected evaluations must be provided initially, the default value is `1`.
+
+=== Example
+
+.Test
+[source,groovy,indent=0]
+----
+include::{sourcedir}/utilities/concurrent/AsyncConditionsDocSpec.groovy[tag=async-conditions-spec]
+----
+<1> create a default `AsyncConditions` object (expecting a single evaluation)
+<2> A new thread is created, and code is passed to be run from it. This could also happen implicitly, when working with
+a method expecting a callback parameter.
+<3> pass any code that wants to do assertions to the `evaluate` method
+<4> finally, call the `await` method
+
+<5> create an `AsyncConditions` object (expecting three evaluations)
+<6> call `evaluate` multiple times
+<7> call `await` in the end, specifying 2.5 seconds as the timeout
+
+For more information have a look at the test code `spock.util.concurrent.AsyncConditionsSpec`.
+

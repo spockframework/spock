@@ -44,8 +44,8 @@ The utility class `AsyncConditions` can be helpful when working with asynchronou
 from a different thread than the one running the test, for example when working with callback functions.
 The individual assertions are collected, and in the asserting block, e.g. `then`, the `await` method is called to
 verify the individual results. If any of the results is not available when `await` is called, it will also fail.
-The amount of seconds to wait for can be specified as a parameter, see the example below. The default is `1.0` seconds.
-Additionally, the number of expected evaluations must be provided initially, the default value is `1`.
+The maximum amount of seconds to wait for can be specified as a parameter, see the example below. The default is `1.0`
+seconds. Additionally, the number of expected evaluations must be provided initially, the default value is `1`.
 
 === Example
 
@@ -65,4 +65,54 @@ a method expecting a callback parameter.
 <7> call `await` in the end, specifying 2.5 seconds as the timeout
 
 For more information have a look at the test code `spock.util.concurrent.AsyncConditionsSpec`.
+
+[[polling-conditions]]
+== Polling until conditions are fulfilled with `PollingConditions`
+
+If you need more fine grained control over asynchronous evaluation, the `PollingConditions` utility can be used in a
+similar way to `AsyncConditions`. `PollingConditions` allows to configure the timeout, delay and a delay increasing factor
+for the check. A single block of code is passed to the `eventually` method, which will evaluate this code, according to
+given time parameters, and either pass or throw one of the appropriate Spock exceptions.
+The `within` method can be used to override the timeout for a single invocation.
+There are some caveats when using this class with the `def` keyword, see the test code `spock.util.concurrent.PollingConditionsSpec`.
+
+=== Example
+
+.Test
+[source,groovy,indent=0]
+----
+include::{sourcedir}/utilities/concurrent/PollingConditionsDocSpec.groovy[tag=polling-conditions-spec]
+----
+<1> create a `PollingConditions` object, avoid the `def` keyword (see comment above)
+<2> values are set to variables in an asynchronous way
+<3> block of code containing assertions, passed in a `when` step
+<4> verify the result by checking for exceptions
+<5> only the last failed evaluation will be reported
+
+[[blocking-variables]]
+== Evaluating asynchronous variables with `BlockingVariable` and `BlockingVariables`
+
+The two utility classes `BlockingVariable` and `BlockingVariables` are there to help with collecting variables that are
+written asynchronously, e.g. from another thread. Reading the variable(s) will block the current thread until a value is
+available and returned.
+For a single variable, a type parameter can be provided, see the example below.
+The maximum amount of seconds to wait for can be specified as a parameter, the default is `1.0` seconds.
+
+=== Example
+
+.Test
+[source,groovy,indent=0]
+----
+include::{sourcedir}/utilities/concurrent/BlockingVariablesDocSpec.groovy[tag=blocking-variables-spec]
+----
+<1> create a `BlockingVariable` object, providing an optional type parameter
+<2> A new thread is created, and immediately put to sleep for some time. Afterwards it will set the value.
+<3> The value is accessed via the `get` method. This happens immediately, as the main thread is never interrupted. The
+method will block until the value is available.
+
+<4> create a `BlockingVariables` object for multiple variables, providing an optional timeout
+<5> set values for `foo`, `bar` and `baz` at some point in the future
+<6> compare the variables, blocking this thread until they are available
+
+For more information have a look at the test code `spock.util.concurrent.BlockingVariableSpec`.
 

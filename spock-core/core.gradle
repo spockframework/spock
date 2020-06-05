@@ -1,3 +1,7 @@
+import aQute.bnd.gradle.BundleTaskConvention
+import aQute.bnd.gradle.FileSetRepositoryConvention
+import aQute.bnd.gradle.Resolve
+
 plugins {
   id "biz.aQute.bnd.builder"
 }
@@ -81,4 +85,29 @@ task coreConsole(type: JavaExec,
   doFirst {
     workingDir.mkdirs()
   }
+}
+
+def osgiPropertiesFile = file("$buildDir/verifyOSGiProperties.bndrun")
+
+// Bnd's Resolve task uses a properties file for its configuration. This
+// task writes out the properties necessary for it to verify the OSGi
+// metadata.
+tasks.register("osgiProperties", WriteProperties) {
+  outputFile = osgiPropertiesFile
+  property("-standalone", true)
+  property("-runee", "JavaSE-${javaVersion}")
+  property("-runrequires", "osgi.identity;filter:='(osgi.identity=${project.name})'")
+}
+
+// Bnd's Resolve task is what verifies that a jar can be used in OSGi and
+// that its metadata is valid. If the metadata is invalid this task will
+// fail.
+tasks.register("verifyOSGi", Resolve) {
+  dependsOn(osgiProperties)
+  setBndrun(osgiPropertiesFile)
+  reportOptional = false
+}
+
+tasks.check {
+  dependsOn(verifyOSGi)
 }

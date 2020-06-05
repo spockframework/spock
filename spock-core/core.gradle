@@ -15,6 +15,7 @@ configurations { coreConsoleRuntime }
 
 dependencies {
   compile libs.groovy // easiest way to add Groovy dependency to POM
+  compile libs.assertj
   compile libs.junitPlatform
   compile libs.junitPlatformTestkit, optional
   compile libs.hamcrest
@@ -51,15 +52,16 @@ jar {
   bnd(
     'Export-Package': ['org.spockframework.*', 'spock.*'].join(','),
     'Import-Package': [
-      /groovy.*;version="[${groovyVersion},${org.gradle.util.VersionNumber.parse(groovyVersion).major + 1})"/,
-      /org.codehaus.groovy.*;version="[${groovyVersion},${org.gradle.util.VersionNumber.parse(groovyVersion).major + 1})"/,
-      /org.junit.*;version="[${libs.junitBom.version},${org.gradle.util.VersionNumber.parse(libs.junitBom.version).major + 1})"/,
-      /org.hamcrest.*;version="[${libs.hamcrest.version},${org.gradle.util.VersionNumber.parse(libs.hamcrest.version).major + 1})";resolution:=optional/,
-      /org.objenesis.*;version="[${libs.objenesis.version},${org.gradle.util.VersionNumber.parse(libs.objenesis.version).major + 1})";resolution:=optional/,
-      /net.bytebuddy.*;version="[${libs.bytebuddy.version},${org.gradle.util.VersionNumber.parse(libs.bytebuddy.version).major + 1})";resolution:=optional/,
-      /net.sf.cglib.*;version="[${libs.cglib.version},${org.gradle.util.VersionNumber.parse(libs.cglib.version).major + 1})";resolution:=optional/,
-      /org.objectweb.asm.*;version="[${libs.asm.version},${org.gradle.util.VersionNumber.parse(libs.asm.version).major + 1})";resolution:=optional/,
-      'org.w3c.dom.*'].join(',')
+      /org.hamcrest.*;resolution:=optional/,
+      /org.objenesis.*;resolution:=optional/,
+      /net.bytebuddy.*;resolution:=optional/,
+      /net.sf.cglib.*;resolution:=optional/,
+      /org.objectweb.asm.*;resolution:=optional/,
+      '*'
+    ].join(','),
+    '-noclassforname': 'true',
+    '-noextraheaders': 'true',
+    '-removeheaders': 'Private-Package'
   )
 }
 

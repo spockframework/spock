@@ -48,6 +48,7 @@ ext {
 
   libs = [
     jetbrainsAnnotations: [group: "org.jetbrains", name: "annotations", version: "19.0.0"],
+    assertj             : [group: "org.assertj", name: "assertj-core", version: "3.16.1"],
     asm                 : [group: 'org.ow2.asm', name: 'asm', version: '8.0.1'],
     bytebuddy           : [group: 'net.bytebuddy', name: 'byte-buddy', version: '1.10.10'],
     cglib               : [group: 'cglib', name: 'cglib-nodep', version: '3.3.0'],

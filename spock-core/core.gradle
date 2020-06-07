@@ -56,6 +56,8 @@ jar {
   bnd(
     'Export-Package': ['org.spockframework.*', 'spock.*'].join(','),
     'Import-Package': [
+      /org.assertj.core.*;resolution:=optional/,
+      /org.junit.platform.testkit.*;resolution:=optional/,
       /org.hamcrest.*;resolution:=optional/,
       /org.objenesis.*;resolution:=optional/,
       /net.bytebuddy.*;resolution:=optional/,

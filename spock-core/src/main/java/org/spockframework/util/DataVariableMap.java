@@ -1,6 +1,5 @@
 package org.spockframework.util;
 
-import org.assertj.core.util.Streams;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -120,7 +119,7 @@ public class DataVariableMap extends AbstractMap<String, Object> {
     @NotNull
     @Override
     public Object[] toArray() {
-      return Streams.stream(iterator()).toArray();
+      return toArray(new Object[0]);
     }
 
     @SuppressWarnings("unchecked")

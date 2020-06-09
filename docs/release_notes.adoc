@@ -213,7 +213,9 @@ Spy(constructorArgs: [null as String, (Pattern) null])
 def "I'll run everywhere but on Windows"() { ... }
 ----
 
-- Execution with an unsupported Groovy version can allowed with `-Dspock.iKnowWhatImDoing.disableGroovyVersionCheck=true`
+- Execution with an unsupported Groovy version can allowed with `-Dspock.iKnowWhatImDoing.disableGroovyVersionCheck=true` (#1164) 
+
+- Relax maximum allowed Groovy version in snapshot builds (#1108)
 
 - Upgrade Groovy to 2.5.12 (improved Java 14+ support) and 3.0.4 (fixes #1127)
 
@@ -267,8 +269,6 @@ def "I'll run everywhere but on Windows"() { ... }
 - Set source position for return statement in data provider method (#1116)
 
 - Add `Spy(T obj, Closure interactions)` (#1115)
-
-- Relax maximum allowed Groovy version in snapshot builds (#1108)
 
 - Reduce number of Groovy dependencies to just groovy.jar (#1109)
 

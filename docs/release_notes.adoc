@@ -49,6 +49,12 @@ which should not be a problem in the majority of cases.
 
 At the same time, using JUnit 4's annotations is discouraged (and considered `deprecated`), the same using the other elements of JUnit 4 (as `(Class)Rule`s).
 
+==== Reduce spock-core direct groovy dependencies
+
+`spock-core` now only depends on `groovy.jar` all other groovy dependencies have been removed,
+this should make dependency management a bit easier.
+If you relied on other groovy dependencies transitively, you will need to add them directly.
+
 ==== Upgrade to JUnit 5.6 (and JUnit Platform 1.6)
 
 JUnit Platform 1.6 (https://junit.org/junit5/docs/5.6.0/release-notes/index.html#deprecations-and-breaking-changes[deprecated]) methods (from experimental API)  in `EngineExecutionResults` that Spock was using. To keep runtime compatibility with JUnit 5.6 and incoming 5.7 the implementation has been switched to the new methods. As a result, Spock 2.0-M3 cannot work with JUnit 5.5 and lower. The problem might only occur if a project overrides default JUnit Platform version provided by Spock.
@@ -275,6 +281,8 @@ def "I'll run everywhere but on Windows"() { ... }
 - Remove unnecessary reflection for Java 8 types in `EmptyOrDummyResponse` (#1091)
 
 - Update old Issue annotations to point to migrated github issues (#1003)
+
+- Test Spock with Java 14 (#1155)
 
 Thanks to all the contributors to this release: Björn Kautler, Marcin Zajączkowski, Raymond Augé, Roman Tretiak, Camilo Jorquera, Shil Sinha
 

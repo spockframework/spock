@@ -250,6 +250,35 @@ def "I'll run everywhere but on Windows"() { ... }
   features by default if not overwritten by explicit `@Unroll` annotations and thus reinstate the pre
   Spock 2.0 behaviour.
 
+- Updated OSGI support with using `bnd` (#1154, #1175)
+
+- Fix `@PendingFeature` logic (#1103)
+
+- Do not strip type information from arguments (#1134)
+
+- Simplify work-around to get the reference to the current closure (#1131)
+
+- Set source position for return statement in data provider method (#1116)
+
+- Add `Spy(T obj, Closure interactions)` (#1115)
+
+- Relax maximum allowed Groovy version in snapshot builds (#1108)
+
+- Reduce number of Groovy dependencies to just groovy.jar (#1109)
+
+- Improve `ExceptionUtil.sneakyThrow` declaration (#1077)
+
+- Print up to 5 last mock invocations for a wrong oder error (#1093)
+
+- Fix `EmptyOrDummyResponse` returning mock instance for `Object` (#1092)
+
+- Remove unnecessary reflection for Java 8 types in `EmptyOrDummyResponse` (#1091)
+
+- Update old Issue annotations to point to migrated github issues (#1003)
+
+Thanks to all the contributors to this release: Björn Kautler, Marcin Zajączkowski, Raymond Augé, Roman Tretiak, Camilo Jorquera, Shil Sinha
+
+
 == 2.0-M2 (2020-02-10)
 
 === Groovy-3.0 Support

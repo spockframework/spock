@@ -51,7 +51,7 @@ At the same time, using JUnit 4's annotations is discouraged (and considered `de
 
 ==== Reduce spock-core direct groovy dependencies
 
-`spock-core` now only depends on `groovy.jar` all other groovy dependencies have been removed,
+`spock-core` now only depends on `groovy.jar`. All other Groovy dependencies have been removed,
 this should make dependency management a bit easier.
 If you relied on other groovy dependencies transitively, you will need to add them directly.
 
@@ -213,7 +213,7 @@ Spy(constructorArgs: [null as String, (Pattern) null])
 def "I'll run everywhere but on Windows"() { ... }
 ----
 
-- Execution with an unsupported Groovy version can allowed with `-Dspock.iKnowWhatImDoing.disableGroovyVersionCheck=true` (#1164) 
+- Execution with an unsupported Groovy version can be allowed with `-Dspock.iKnowWhatImDoing.disableGroovyVersionCheck=true` (#1164) 
 
 - Relax maximum allowed Groovy version in snapshot builds (#1108)
 

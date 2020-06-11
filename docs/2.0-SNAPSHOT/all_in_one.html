@@ -5328,6 +5328,14 @@ using JUnit 4.</p>
 </div>
 </div>
 <div class="sect4">
+<h5 id="_reduce_spock_core_direct_groovy_dependencies"><a class="anchor" href="#_reduce_spock_core_direct_groovy_dependencies"></a><a class="link" href="#_reduce_spock_core_direct_groovy_dependencies">Reduce spock-core direct groovy dependencies</a></h5>
+<div class="paragraph">
+<p><code>spock-core</code> now only depends on <code>groovy.jar</code>. All other Groovy dependencies have been removed,
+this should make dependency management a bit easier.
+If you relied on other groovy dependencies transitively, you will need to add them directly.</p>
+</div>
+</div>
+<div class="sect4">
 <h5 id="_upgrade_to_junit_5_6_and_junit_platform_1_6"><a class="anchor" href="#_upgrade_to_junit_5_6_and_junit_platform_1_6"></a><a class="link" href="#_upgrade_to_junit_5_6_and_junit_platform_1_6">Upgrade to JUnit 5.6 (and JUnit Platform 1.6)</a></h5>
 <div class="paragraph">
 <p>JUnit Platform 1.6 (<a href="https://junit.org/junit5/docs/5.6.0/release-notes/index.html#deprecations-and-breaking-changes">deprecated</a>) methods (from experimental API)  in <code>EngineExecutionResults</code> that Spock was using. To keep runtime compatibility with JUnit 5.6 and incoming 5.7 the implementation has been switched to the new methods. As a result, Spock 2.0-M3 cannot work with JUnit 5.5 and lower. The problem might only occur if a project overrides default JUnit Platform version provided by Spock.</p>
@@ -5520,7 +5528,10 @@ enable IDE support like code completion:</p>
 </div>
 </li>
 <li>
-<p>Execution with an unsupported Groovy version can allowed with <code>-Dspock.iKnowWhatImDoing.disableGroovyVersionCheck=true</code></p>
+<p>Execution with an unsupported Groovy version can be allowed with <code>-Dspock.iKnowWhatImDoing.disableGroovyVersionCheck=true</code> (#1164)</p>
+</li>
+<li>
+<p>Relax maximum allowed Groovy version in snapshot builds (#1108)</p>
 </li>
 <li>
 <p>Upgrade Groovy to 2.5.12 (improved Java 14+ support) and 3.0.4 (fixes #1127)</p>
@@ -5572,7 +5583,49 @@ iterations is not wanted.</p>
 features by default if not overwritten by explicit <code>@Unroll</code> annotations and thus reinstate the pre
 Spock 2.0 behaviour.</p>
 </li>
+<li>
+<p>Updated OSGI support with using <code>bnd</code> (#1154, #1175)</p>
+</li>
+<li>
+<p>Fix <code>@PendingFeature</code> logic (#1103)</p>
+</li>
+<li>
+<p>Do not strip type information from arguments (#1134)</p>
+</li>
+<li>
+<p>Simplify work-around to get the reference to the current closure (#1131)</p>
+</li>
+<li>
+<p>Set source position for return statement in data provider method (#1116)</p>
+</li>
+<li>
+<p>Add <code>Spy(T obj, Closure interactions)</code> (#1115)</p>
+</li>
+<li>
+<p>Reduce number of Groovy dependencies to just groovy.jar (#1109)</p>
+</li>
+<li>
+<p>Improve <code>ExceptionUtil.sneakyThrow</code> declaration (#1077)</p>
+</li>
+<li>
+<p>Print up to 5 last mock invocations for a wrong order error (#1093)</p>
+</li>
+<li>
+<p>Fix <code>EmptyOrDummyResponse</code> returning mock instance for <code>Object</code> (#1092)</p>
+</li>
+<li>
+<p>Remove unnecessary reflection for Java 8 types in <code>EmptyOrDummyResponse</code> (#1091)</p>
+</li>
+<li>
+<p>Update old Issue annotations to point to migrated github issues (#1003)</p>
+</li>
+<li>
+<p>Test Spock with Java 14 (#1155)</p>
+</li>
 </ul>
+</div>
+<div class="paragraph">
+<p>Thanks to all the contributors to this release: Björn Kautler, Marcin Zajączkowski, Raymond Augé, Roman Tretiak, Camilo Jorquera, Shil Sinha</p>
 </div>
 </div>
 </div>
@@ -7699,7 +7752,7 @@ Math.signum(a &lt;=&gt; b) == result
 <div id="footer">
 <div id="footer-text">
 Version 2.0-SNAPSHOT<br>
-Last updated 2020-06-09 18:16:19 UTC
+Last updated 2020-06-11 01:32:53 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./coderay-asciidoctor.css">

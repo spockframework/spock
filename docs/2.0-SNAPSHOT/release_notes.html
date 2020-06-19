@@ -96,13 +96,13 @@ If you relied on other groovy dependencies transitively, you will need to add th
 <div class="sect3">
 <h4 id="_upgrade_to_junit_5_6_and_junit_platform_1_6"><a class="anchor" href="#_upgrade_to_junit_5_6_and_junit_platform_1_6"></a><a class="link" href="#_upgrade_to_junit_5_6_and_junit_platform_1_6">Upgrade to JUnit 5.6 (and JUnit Platform 1.6)</a></h4>
 <div class="paragraph">
-<p>JUnit Platform 1.6 (<a href="https://junit.org/junit5/docs/5.6.0/release-notes/index.html#deprecations-and-breaking-changes">deprecated</a>) methods (from experimental API)  in <code>EngineExecutionResults</code> that Spock was using. To keep runtime compatibility with JUnit 5.6 and incoming 5.7 the implementation has been switched to the new methods. As a result, Spock 2.0-M3 cannot work with JUnit 5.5 and lower. The problem might only occur if a project overrides default JUnit Platform version provided by Spock.</p>
+<p>JUnit Platform 1.6 <a href="https://junit.org/junit5/docs/5.6.0/release-notes/index.html#deprecations-and-breaking-changes">deprecated</a> methods (from experimental API)  in <code>EngineExecutionResults</code> that Spock was using. To keep runtime compatibility with JUnit 5.6 and incoming 5.7 the implementation has been switched to the new methods. As a result, Spock 2.0-M3 cannot work with JUnit 5.5 and lower. The problem might only occur if a project overrides default JUnit Platform version provided by Spock.</p>
 </div>
 </div>
 <div class="sect3">
 <h4 id="_new_meaning_of"><a class="anchor" href="#_new_meaning_of"></a><a class="link" href="#_new_meaning_of">New meaning of <code>&gt;&gt; _</code></a></h4>
 <div class="paragraph">
-<p>The meaning of <code>&gt;&gt; _</code> has changed form "use the default response" to "return a stubbed value" (<a href="interaction_based_testing.html#_returning_a_default_response">Docs</a>).
+<p>The meaning of <code>&gt;&gt; _</code> has changed from "use the default response" to "return a stubbed value" (<a href="interaction_based_testing.html#_returning_a_default_response">Docs</a>).
 The original behavior was only ever documented in the Javadocs and was basically the same to just omitting it.
 The only use-case was chained responses <code>&gt;&gt; "a" &gt;&gt; _ &gt;&gt; "b"</code>,
 but even here it is clearer to just use <code>null</code> or <code>{ callRealMethod() }</code> explicitly.
@@ -2056,7 +2056,7 @@ required; the only prerequisite for building Spock is a JDK installation (1.5 or
 <div id="footer">
 <div id="footer-text">
 Version 2.0-SNAPSHOT<br>
-Last updated 2020-06-16 09:46:31 UTC
+Last updated 2020-06-19 09:23:17 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./coderay-asciidoctor.css">

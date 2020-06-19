@@ -16,8 +16,8 @@ package org.spockframework.runtime;
 
 import org.spockframework.runtime.extension.IGlobalExtension;
 
-import java.util.List;
+import java.util.Set;
 
 public interface IExtensionRegistry {
-  List<IGlobalExtension> getGlobalExtensions();
+  Set<IGlobalExtension> getGlobalExtensions();
 }

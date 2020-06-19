@@ -159,6 +159,27 @@ class GlobalExtensionRegistrySpec extends Specification {
     e.message.contains("unknown configuration class")
   }
 
+  // See https://github.com/spockframework/spock/issues/817
+  def "Extensions discovered later in the classpath are ignored if already processed earlier"() {
+    when:
+    def registry = new GlobalExtensionRegistry(extensionClasses, [])
+    registry.initializeGlobalExtensions()
+
+    then:
+    registry.globalExtensions*.class == expectedExtensionClasses
+
+    where:
+    // Ignore subsequent additions, even if they appear later in the list
+    extensionClasses                                                 || expectedExtensionClasses
+    [MyExtension, MyExtension]                                       || [MyExtension]
+    [SpringExtension, MyExtension, SpringExtension]                  || [SpringExtension, MyExtension]
+    [SpringExtension, SpringExtension, MyExtension, SpringExtension] || [SpringExtension, MyExtension]
+  }
+
+  static class SpringExtension extends AbstractGlobalExtension {
+
+  }
+
   static class MyExtension extends AbstractGlobalExtension {
     static instantiated = false
 

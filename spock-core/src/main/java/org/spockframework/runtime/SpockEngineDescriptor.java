@@ -21,4 +21,8 @@ public class SpockEngineDescriptor extends EngineDescriptor implements Node<Spoc
   public void after(SpockExecutionContext context) throws Exception {
     runContext.stop();
   }
+
+  RunContext getRunContext() {
+    return runContext;
+  }
 }

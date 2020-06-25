@@ -23,7 +23,8 @@ import java.util.*;
 
 //TODO: should not be generic
 public abstract class SpecElementInfo<P extends NodeInfo, R extends AnnotatedElement>
-    extends NodeInfo<P, R> implements ISkippable, IExcludable, ITaggable, IAttachmentContainer, IInterceptable {
+    extends NodeInfo<P, R>
+    implements ISkippable, IExcludable, ITaggable, IAttachmentContainer, IInterceptable, IParallelInfo {
   private boolean skipped = false;
 
   private String skipReason;

@@ -60,5 +60,4 @@ public class SpecNode extends SpockNode {
   public void around(SpockExecutionContext context, Invocation<SpockExecutionContext> invocation) throws Exception {
     context.getRunner().runSpec(context, () -> sneakyInvoke(invocation, context));
   }
-
 }

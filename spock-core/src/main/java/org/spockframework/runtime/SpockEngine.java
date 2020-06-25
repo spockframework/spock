@@ -6,7 +6,7 @@ import java.util.Optional;
 
 import org.junit.platform.engine.*;
 import org.junit.platform.engine.support.discovery.EngineDiscoveryRequestResolver;
-import org.junit.platform.engine.support.hierarchical.HierarchicalTestEngine;
+import org.junit.platform.engine.support.hierarchical.*;
 
 public class SpockEngine extends HierarchicalTestEngine<SpockExecutionContext> {
 
@@ -33,6 +33,13 @@ public class SpockEngine extends HierarchicalTestEngine<SpockExecutionContext> {
   @Override
   protected SpockExecutionContext createExecutionContext(ExecutionRequest request) {
     return new SpockExecutionContext(request.getEngineExecutionListener());
+  }
+
+  @Override
+  protected HierarchicalTestExecutorService createExecutorService(ExecutionRequest request) {
+    SpockEngineDescriptor rootTestDescriptor = (SpockEngineDescriptor)request.getRootTestDescriptor();
+//    rootTestDescriptor.getRunContext().getConfiguration()
+    return super.createExecutorService(request);
   }
 
   @Override

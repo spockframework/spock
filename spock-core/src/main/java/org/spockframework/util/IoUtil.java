@@ -15,55 +15,18 @@
 package org.spockframework.util;
 
 import java.io.*;
-import java.net.Socket;
 import java.util.*;
 
 public class IoUtil {
-  public static void closeQuietly(@Nullable Closeable... closeables) {
-    if (closeables == null) return;
-
-    for (Closeable closeable : closeables) {
-      if (closeable == null) return;
-
-      try {
-        closeable.close();
-      } catch (IOException ignored) {}
-    }
-  }
-
-  // In JDK 1.6, java.net.Socket doesn't implement Closeable, so we have this overload.
-  public static void closeQuietly(@Nullable final Socket... sockets) {
-    if (sockets == null) return;
-
-    for (Socket socket : sockets) {
-      if (socket == null) return;
-
-      try {
-        socket.close();
-      } catch (IOException ignored) {}
-    }
-  }
-
-  public static void stopQuietly(@Nullable IStoppable... stoppables) {
-    if (stoppables == null) return;
-
-    for (IStoppable stoppable : stoppables) {
-      if (stoppable == null) return;
-
-      try {
-        stoppable.stop();
-      } catch (Exception ignored) {}
-    }
-  }
 
   /**
    * Returns the text read from the given reader as a String.
    * Closes the given reader upon return.
    */
   public static String getText(Reader reader) throws IOException {
-    try {
+    try(BufferedReader buffered = new BufferedReader(reader)) {
       StringBuilder source = new StringBuilder();
-      BufferedReader buffered = new BufferedReader(reader);
+
       String line = buffered.readLine();
 
       while (line != null) {
@@ -73,8 +36,6 @@ public class IoUtil {
       }
 
       return source.toString();
-    } finally {
-      closeQuietly(reader);
     }
   }
 
@@ -101,14 +62,12 @@ public class IoUtil {
   public static void copyStream(InputStream in, OutputStream out) throws IOException {
     byte[] buffer = new byte[8192];
 
-    try {
-      int read = in.read(buffer);
+    try (InputStream is = in; OutputStream os = out) {
+      int read = is.read(buffer);
       while (read > 0) {
-        out.write(buffer, 0, read);
-        read = in.read(buffer);
+        os.write(buffer, 0, read);
+        read = is.read(buffer);
       }
-    } finally {
-      IoUtil.closeQuietly(in, out);
     }
   }
 
@@ -132,7 +91,7 @@ public class IoUtil {
   @Nullable
   public static String getFileExtension(String filename) {
     int index = filename.lastIndexOf('.');
-    return index == -1 ? null : filename.substring(index + 1, filename.length());
+    return index == -1 ? null : filename.substring(index + 1);
   }
 
   private static void doListFilesRecursively(File baseDir, List<File> result) throws IOException {
@@ -141,29 +100,24 @@ public class IoUtil {
     if (files == null) {
       throw new IOException("Failed to list files of directory '" + baseDir + "'");
     }
-    for (File file: files) {
+    for (File file : files) {
       if (file.isFile()) {
         result.add(file);
       } else {
         dirs.add(file);
       }
     }
-    for (File dir: dirs) {
+    for (File dir : dirs) {
       doListFilesRecursively(dir, result);
     }
   }
 
   private static void doCopyFile(File source, File target) throws IOException {
-    FileInputStream in = null;
-    FileOutputStream out = null;
 
-    try {
-      in = new FileInputStream(source);
-      out = new FileOutputStream(target);
+    try (FileInputStream in = new FileInputStream(source);
+         FileOutputStream out = new FileOutputStream(target)) {
       // instead of checking transferred size, we'll compare file sizes in checkSameSize()
       in.getChannel().transferTo(0, Long.MAX_VALUE, out.getChannel());
-    } finally {
-      IoUtil.closeQuietly(in, out);
     }
   }
 
@@ -173,7 +127,7 @@ public class IoUtil {
 
     if (fromSize != toSize)
       throw new IOException(String.format(
-          "Error copying file %s to %s; source file size is %d, but target file size is %d",
-          source, target, fromSize, toSize));
+        "Error copying file %s to %s; source file size is %d, but target file size is %d",
+        source, target, fromSize, toSize));
   }
 }

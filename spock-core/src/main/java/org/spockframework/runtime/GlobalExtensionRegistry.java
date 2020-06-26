@@ -23,6 +23,8 @@ import spock.config.ConfigurationObject;
 import java.lang.reflect.Field;
 import java.util.*;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * Maintains a registry of global Spock extensions and their configuration objects,
  * which can be used to configure other extensions.
@@ -36,19 +38,20 @@ public class GlobalExtensionRegistry implements IExtensionRegistry, IConfigurati
 
   private final List<IGlobalExtension> globalExtensions = new ArrayList<>();
 
-  GlobalExtensionRegistry(List<Class<?>> globalExtensionClasses, List<?> initialConfigurations) {
+  GlobalExtensionRegistry(List<Class<?>> globalExtensionClasses, List<Class<?>> initialConfigurations) {
     this.globalExtensionClasses = globalExtensionClasses;
     initializeConfigurations(initialConfigurations);
   }
 
-  private void initializeConfigurations(List<?> initialConfigurations) {
-    for (Object configuration : initialConfigurations) {
-      ConfigurationObject annotation = configuration.getClass().getAnnotation(ConfigurationObject.class);
+  private void initializeConfigurations(List<Class<?>> initialConfigurations) {
+    for (Class<?> configuration : initialConfigurations) {
+      ConfigurationObject annotation = configuration.getAnnotation(ConfigurationObject.class);
       if (annotation == null) {
-        throw new InternalSpockError("Not a @ConfigurationObject: %s").withArgs(configuration.getClass());
+        throw new InternalSpockError("Not a @ConfigurationObject: %s").withArgs(configuration);
       }
-      configurationsByType.put(configuration.getClass(), configuration);
-      configurationsByName.put(annotation.value(), configuration);
+      Object instance = createConfiguration(configuration);
+      configurationsByType.put(configuration, instance);
+      configurationsByName.put(annotation.value(), instance);
     }
   }
 
@@ -85,7 +88,7 @@ public class GlobalExtensionRegistry implements IExtensionRegistry, IConfigurati
 
   private IGlobalExtension instantiateGlobalExtension(Class<?> clazz) {
     try {
-      return (IGlobalExtension) clazz.newInstance();
+      return (IGlobalExtension) clazz.getDeclaredConstructor().newInstance();
     } catch (Exception e) {
       throw new ExtensionException("Failed to instantiate extension '%s'", e).withArgs(clazz.getName());
     }
@@ -139,12 +142,19 @@ public class GlobalExtensionRegistry implements IExtensionRegistry, IConfigurati
           .withArgs(extension.getClass(), type);
     }
 
+    return createConfiguration(type);
+  }
+
+  @NotNull
+  private Object createConfiguration(Class<?> type) {
     try {
-      return type.newInstance();
+      return type.getDeclaredConstructor().newInstance();
     } catch (InstantiationException e) {
-      throw new ExtensionException("Cannot instantiate configuration class %s").withArgs(type);
-    } catch (IllegalAccessException e) {
-      throw new ExtensionException("Configuration class '%s' has no public no-arg constructor").withArgs(type);
+      throw new ExtensionException("Cannot instantiate configuration class %s", e).withArgs(type);
+    } catch (IllegalAccessException | NoSuchMethodException e) {
+      throw new ExtensionException("Configuration class '%s' has no public no-arg constructor", e).withArgs(type);
+    } catch (Exception e) {
+      throw new ExtensionException("Failed to instantiate configuration '%s'", e).withArgs(type.getName());
     }
   }
 }

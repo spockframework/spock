@@ -39,7 +39,7 @@ class RunContextSpec extends Specification {
     def dir = new File("new", "home")
 
     expect:
-    RunContext.withNewContext("new name", dir, null, [], false, {
+    RunContext.withNewContext("new name", dir, null, [], [], false, {
       def context = RunContext.get()
       assert context.name == "new name"
       assert context.spockUserHome == dir

@@ -720,9 +720,11 @@ type. Spock will then automatically create exactly one instance of the configura
 settings from the configuration file to it (before the `start()` methods of global extensions are called) and inject
 that instance into the extension class instances.
 
-A configuration object cannot be used exclusively in an annotation driven local extension, but it has to be used in at
-least one global extension to properly get initialized and populated with the settings from the configuration file. But
-if the configuration object is used in a global extension, you can also use it just fine in an annotation driven local
+If a configuration object should be used exclusively in an annotation driven local extension you must register it in
+`META-INF/services/spock.config.ConfigurationObject`.
+This is similar to a global extension, put the fully-qualified class name of the annotated class on a new line in the file.
+This will cause the configuration object to properly get initialized and populated with the settings from the configuration file.
+However, if the configuration object is used in a global extension, you can also use it just fine in an annotation driven local
 extension. If the configuration object is only used in an annotation driven local extension, you will get an exception
 when then configuration object is to be injected into the extension and you will also get an error when the
 configuration file is evaluated and it contains the section, as the configuration object is not properly registered yet.

@@ -45,6 +45,7 @@ class EmbeddedSpecRunner {
 
   Closure configurationScript = null
   List<Class> extensionClasses = []
+  List<Class> configClasses = []
   boolean inheritParentExtensions = true
 
   void configurationScript(Closure configurationScript) {
@@ -85,7 +86,7 @@ class EmbeddedSpecRunner {
     }
   }
 
-  SummarizedEngineExecutionResults runClasses(List classes) {
+  SummarizedEngineExecutionResults runClasses(List<Class<?>> classes) {
     withNewContext {
       doRunRequest(classes.findAll { !Modifier.isAbstract(it.modifiers) }.collect {selectClass(it)})
     }
@@ -125,8 +126,8 @@ class EmbeddedSpecRunner {
     def newSpockUserHome = new File(context.spockUserHome, "EmbeddedSpecRunner")
     def script = configurationScript ?
         new ConfigurationScriptLoader(newSpockUserHome).loadClosureBasedScript(configurationScript) : null
-    RunContext.withNewContext(newContextName, newSpockUserHome, script,
-        extensionClasses, inheritParentExtensions, block as IThrowableFunction)
+    (T)RunContext.withNewContext(newContextName, newSpockUserHome, script,
+        extensionClasses, configClasses, inheritParentExtensions, block as IThrowableFunction)
   }
 
   private SummarizedEngineExecutionResults doRunRequest(List<DiscoverySelector> selectors) {

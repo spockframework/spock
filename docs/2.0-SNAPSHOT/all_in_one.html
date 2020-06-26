@@ -4519,9 +4519,11 @@ settings from the configuration file to it (before the <code>start()</code> meth
 that instance into the extension class instances.</p>
 </div>
 <div class="paragraph">
-<p>A configuration object cannot be used exclusively in an annotation driven local extension, but it has to be used in at
-least one global extension to properly get initialized and populated with the settings from the configuration file. But
-if the configuration object is used in a global extension, you can also use it just fine in an annotation driven local
+<p>If a configuration object should be used exclusively in an annotation driven local extension you must register it in
+<code>META-INF/services/spock.config.ConfigurationObject</code>.
+This is similar to a global extension, put the fully-qualified class name of the annotated class on a new line in the file.
+This will cause the configuration object to properly get initialized and populated with the settings from the configuration file.
+However, if the configuration object is used in a global extension, you can also use it just fine in an annotation driven local
 extension. If the configuration object is only used in an annotation driven local extension, you will get an exception
 when then configuration object is to be injected into the extension and you will also get an error when the
 configuration file is evaluated and it contains the section, as the configuration object is not properly registered yet.</p>
@@ -5270,7 +5272,13 @@ Grails 2.3 and higher have built-in Spock support and do not require a plugin.
 <div class="sectionbody">
 <div class="sect2">
 <h3 id="_2_0_m4_tbd"><a class="anchor" href="#_2_0_m4_tbd"></a><a class="link" href="#_2_0_m4_tbd">2.0-M4 (tbd)</a></h3>
-
+<div class="ulist">
+<ul>
+<li>
+<p>Add a way to register <code>ConfigurationObject</code> globally without the need for a Global Extension</p>
+</li>
+</ul>
+</div>
 </div>
 <div class="sect2">
 <h3 id="_2_0_m3_2020_06_11"><a class="anchor" href="#_2_0_m3_2020_06_11"></a><a class="link" href="#_2_0_m3_2020_06_11">2.0-M3 (2020-06-11)</a></h3>
@@ -7711,7 +7719,7 @@ This is due to how groovy implements traits and AST transformations.</p>
 <div id="footer">
 <div id="footer-text">
 Version 2.0-SNAPSHOT<br>
-Last updated 2020-06-19 09:23:17 UTC
+Last updated 2020-06-26 14:12:30 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./coderay-asciidoctor.css">

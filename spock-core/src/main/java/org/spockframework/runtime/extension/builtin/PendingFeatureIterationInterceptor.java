@@ -11,9 +11,8 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 class PendingFeatureIterationInterceptor extends PendingFeatureBaseInterceptor implements IMethodInterceptor {
 
-  public PendingFeatureIterationInterceptor(Class<? extends Throwable>[] expectedExceptions, String reason,
-                                            String annotationUsed, boolean failIfSuccessful) {
-    super(expectedExceptions, reason, annotationUsed, failIfSuccessful);
+  public PendingFeatureIterationInterceptor(Class<? extends Throwable>[] expectedExceptions, String reason, String annotationUsed) {
+    super(expectedExceptions, reason, annotationUsed);
   }
 
   @Override
@@ -23,8 +22,7 @@ class PendingFeatureIterationInterceptor extends PendingFeatureBaseInterceptor i
     AtomicBoolean expectedFailure = new AtomicBoolean(false);
     AtomicBoolean unexpectedFailure = new AtomicBoolean(false);
     invocation.getFeature().getFeatureMethod().addInterceptor(new InnerIterationInterceptor(
-      featureStackTrace, success, expectedFailure, unexpectedFailure,
-      expectedExceptions, reason, annotationUsed));
+      featureStackTrace, success, expectedFailure, unexpectedFailure, expectedExceptions, reason, annotationUsed));
     invocation.proceed();
 
     // unexpected failure happened => do nothing, iteration is red
@@ -37,7 +35,7 @@ class PendingFeatureIterationInterceptor extends PendingFeatureBaseInterceptor i
       } else {
         // no unexpected failure, no expected failure and at least one success,
         // that is not all iterations are aborted => fail, annotation should be removed
-        if (failIfSuccessful && success.get()) {
+        if (success.get()) {
           throw featurePassedUnexpectedly(featureStackTrace.get());
         }
       }
@@ -54,7 +52,7 @@ class PendingFeatureIterationInterceptor extends PendingFeatureBaseInterceptor i
                                      AtomicBoolean expectedFailure, AtomicBoolean unexpectedFailure,
                                      Class<? extends Throwable>[] expectedExceptions,
                                      String reason, String annotationUsed) {
-      super(expectedExceptions, reason, annotationUsed, false);
+      super(expectedExceptions, reason, annotationUsed);
       this.featureStackTrace = featureStackTrace;
       this.success = success;
       this.expectedFailure = expectedFailure;
@@ -66,6 +64,8 @@ class PendingFeatureIterationInterceptor extends PendingFeatureBaseInterceptor i
       try {
         invocation.proceed();
         success.set(true);
+      } catch (PendingFeatureSuccessfulError e) {
+        throw e;
       } catch (TestAbortedException e) {
         // if no expected failure set a stack trace, set it from an abort
         // that is better than the stack trace in the base interceptor

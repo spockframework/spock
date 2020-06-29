@@ -18,14 +18,10 @@ public class PendingFeatureIfExtension extends ConditionalExtension<PendingFeatu
   protected void featureConditionResult(boolean result, PendingFeatureIf annotation, FeatureInfo feature) {
     if (result) {
       if (feature.isParameterized()) {
-        feature.addInterceptor(new PendingFeatureIterationInterceptor(
-          annotation.exceptions(), annotation.reason(), PENDING_FEATURE_IF,
-          feature.getInterceptors().stream().noneMatch(PendingFeatureIterationInterceptor.class::isInstance)));
+        feature.addInterceptor(new PendingFeatureIterationInterceptor(annotation.exceptions(), annotation.reason(), PENDING_FEATURE_IF));
       } else {
         feature.getFeatureMethod().addInterceptor(
-          new PendingFeatureInterceptor(
-            annotation.exceptions(), annotation.reason(), PENDING_FEATURE_IF,
-            feature.getFeatureMethod().getInterceptors().stream().noneMatch(PendingFeatureInterceptor.class::isInstance)));
+          new PendingFeatureInterceptor(annotation.exceptions(), annotation.reason(), PENDING_FEATURE_IF));
       }
     }
   }
@@ -33,8 +29,7 @@ public class PendingFeatureIfExtension extends ConditionalExtension<PendingFeatu
   @Override
   protected void iterationConditionResult(boolean result, PendingFeatureIf annotation, IMethodInvocation invocation) throws Throwable {
     if (result) {
-      new PendingFeatureInterceptor(annotation.exceptions(), annotation.reason(), PENDING_FEATURE_IF, true)
-        .intercept(invocation);
+      new PendingFeatureInterceptor(annotation.exceptions(), annotation.reason(), PENDING_FEATURE_IF).intercept(invocation);
     }
   }
 }

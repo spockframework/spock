@@ -14,14 +14,10 @@ public class PendingFeatureExtension extends AbstractAnnotationDrivenExtension<P
   @Override
   public void visitFeatureAnnotation(PendingFeature annotation, FeatureInfo feature) {
     if (feature.isParameterized()) {
-      feature.addInterceptor(new PendingFeatureIterationInterceptor(
-        annotation.exceptions(), annotation.reason(), PENDING_FEATURE,
-        feature.getInterceptors().stream().noneMatch(PendingFeatureIterationInterceptor.class::isInstance)));
+      feature.addInterceptor(new PendingFeatureIterationInterceptor(annotation.exceptions(), annotation.reason(), PENDING_FEATURE));
     } else {
       feature.getFeatureMethod().addInterceptor(
-        new PendingFeatureInterceptor(
-          annotation.exceptions(), annotation.reason(), PENDING_FEATURE,
-          feature.getFeatureMethod().getInterceptors().stream().noneMatch(PendingFeatureInterceptor.class::isInstance)));
+        new PendingFeatureInterceptor(annotation.exceptions(), annotation.reason(), PENDING_FEATURE));
     }
   }
 

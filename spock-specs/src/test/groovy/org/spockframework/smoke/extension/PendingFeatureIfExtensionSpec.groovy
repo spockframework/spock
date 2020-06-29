@@ -49,7 +49,23 @@ def bar() {
 
     then:
     AssertionError e = thrown()
-    e.message == "Feature is marked with @PendingFeature but passes unexpectedly"
+    e.message == "Feature is marked with @PendingFeatureIf but passes unexpectedly"
+  }
+
+  def "@PendingFeatureIf marks passing parameterized feature as failed if the conditional expression returns true even if @PendingFeature is applied first"() {
+    when:
+    runner.runSpecBody """
+@PendingFeature
+@PendingFeatureIf({true})
+def bar() {
+  expect: true
+  where: a = 1
+}
+"""
+
+    then:
+    AssertionError e = thrown()
+    e.message == "Feature is marked with @PendingFeatureIf but passes unexpectedly"
   }
 
   def "@PendingFeatureIf marks passing feature as failed if the data variable accessing conditional expression returns true even if @PendingFeature is applied first"() {
@@ -80,7 +96,23 @@ def bar() {
 
     then:
     AssertionError e = thrown()
-    e.message == "Feature is marked with @PendingFeatureIf but passes unexpectedly"
+    e.message == "Feature is marked with @PendingFeature but passes unexpectedly"
+  }
+
+  def "@PendingFeatureIf marks passing parameterized feature as failed if the conditional expression returns true even if @PendingFeature is applied after it"() {
+    when:
+    runner.runSpecBody """
+@PendingFeatureIf({true})
+@PendingFeature
+def bar() {
+  expect: true
+  where: a = 1
+}
+"""
+
+    then:
+    AssertionError e = thrown()
+    e.message == "Feature is marked with @PendingFeature but passes unexpectedly"
   }
 
   def "@PendingFeatureIf marks passing feature as failed if the data variable accessing conditional expression returns true even if @PendingFeature is applied after it"() {

@@ -9,14 +9,11 @@ public class PendingFeatureBaseInterceptor {
   protected final Class<? extends Throwable>[] expectedExceptions;
   protected final String reason;
   protected final String annotationUsed;
-  protected final boolean failIfSuccessful;
 
-  public PendingFeatureBaseInterceptor(Class<? extends Throwable>[] expectedExceptions, String reason,
-                                       String annotationUsed, boolean failIfSuccessful) {
+  public PendingFeatureBaseInterceptor(Class<? extends Throwable>[] expectedExceptions, String reason, String annotationUsed) {
     this.expectedExceptions = expectedExceptions;
     this.reason = reason;
     this.annotationUsed = annotationUsed;
-    this.failIfSuccessful = failIfSuccessful;
   }
 
   protected boolean isExpected(Throwable e) {
@@ -27,8 +24,8 @@ public class PendingFeatureBaseInterceptor {
     }
     return false;
   }
-  protected AssertionError featurePassedUnexpectedly(StackTraceElement[] stackTrace) {
-    AssertionError assertionError = new AssertionError("Feature is marked with " + annotationUsed + " but passes unexpectedly");
+  protected PendingFeatureSuccessfulError featurePassedUnexpectedly(StackTraceElement[] stackTrace) {
+    PendingFeatureSuccessfulError assertionError = new PendingFeatureSuccessfulError("Feature is marked with " + annotationUsed + " but passes unexpectedly");
     if (stackTrace != null) {
       assertionError.setStackTrace(stackTrace);
     }

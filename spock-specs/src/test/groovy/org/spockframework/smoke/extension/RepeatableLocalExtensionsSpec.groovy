@@ -48,7 +48,7 @@ class FooSpec extends Specification {
     }
   }
 
-  def "should work properly on spec"() {
+  def "repeated annotations work properly on spec"() {
     expect:
     runner.runWithImports """
 ${buildContainer(contained, containerWithList)}
@@ -88,7 +88,7 @@ class FooSpec extends Specification {
     1          | 2         | true              || 3
   }
 
-  def "should work properly on feature"() {
+  def "repeated annotations work properly on feature"() {
     expect:
     runner.runSpec """
 ${buildContainer(contained, containerWithList)}
@@ -121,7 +121,7 @@ def foo() {
     1          | 2         | true              || 3
   }
 
-  def "should work properly on fixture"() {
+  def "repeated annotations work properly on fixture"() {
     expect:
     runner.runSpec """
 ${buildContainer(contained, containerWithList)}
@@ -157,7 +157,7 @@ def foo() {
     1          | 2         | true              || 3
   }
 
-  def "should work properly on field"() {
+  def "repeated annotations work properly on field"() {
     expect:
     runner.runSpec """
 ${buildContainer(contained, containerWithList)}

@@ -19,8 +19,19 @@ package org.spockframework.runtime.extension;
 import org.spockframework.util.Beta;
 
 import java.lang.annotation.*;
+import java.lang.reflect.AnnotatedElement;
 
 /**
+ * This annotation carries the information which repeatable annotations are actually repeated from the
+ * AST transformation phase to the runtime phase. As repeated annotations are wrapped inside a container
+ * annotation and even can be wrapped in the container but also be once applied directly,
+ * you cannot simply use {@link AnnotatedElement#getAnnotations()} but also have to check each annotation
+ * whether it is a container annotation for a repeatable extension annotation and then use its {@code value}
+ * attribute. To save doing this effort at runtime using reflection, it is done during AST transformation,
+ * and the result carried over to runtime phase using this annotation.
+ *
+ * <p>This annotation is just for internal usage and should not be applied manually.
+ *
  * @since 2.0
  */
 @Beta

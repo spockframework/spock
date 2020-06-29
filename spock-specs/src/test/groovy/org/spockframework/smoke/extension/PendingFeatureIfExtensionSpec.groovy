@@ -23,6 +23,27 @@ def bar() {
     result.testsSucceededCount == 0
   }
 
+  def "@PendingFeatureIf marks failing feature as skipped if the condition passes and the test fails even if applied twice"() {
+    when:
+    def result = runner.runWithImports("""import spock.lang.PendingFeature
+import spock.lang.PendingFeatureIf
+
+class Foo extends Specification {
+  @PendingFeatureIf({true})
+  @PendingFeatureIf({true})
+  def bar() {
+    expect: false
+  }
+}
+    """)
+
+    then:
+    notThrown(AssertionError)
+    result.runCount == 1
+    result.failureCount == 0
+    result.ignoreCount == 0
+  }
+
   def "@PendingFeatureIf marks passing feature as failed if the conditional expression returns true"() {
     when:
     runner.runSpecBody """
@@ -35,6 +56,24 @@ def bar() {
     then:
     AssertionError e = thrown()
     e.message == "Feature is marked with @PendingFeatureIf but passes unexpectedly"
+  }
+
+  def "@PendingFeatureIf marks passing feature as failed if the conditional expression returns true even if applied twice"() {
+    when:
+    def result = runner.runWithImports("""import spock.lang.PendingFeature
+import spock.lang.PendingFeatureIf
+
+class Foo extends Specification {
+  @PendingFeatureIf({true})
+  @PendingFeatureIf({true})
+  def bar() {
+    expect: true
+  }
+}
+    """)
+    then:
+        AssertionError e = thrown(AssertionError)
+        e.message == "Feature is marked with @PendingFeatureIf but passes unexpectedly"
   }
 
   def "@PendingFeatureIf marks passing feature as failed if the conditional expression returns true even if @PendingFeature is applied first"() {
@@ -182,9 +221,45 @@ def bar() {
     result.testsSucceededCount == 1
   }
 
+  def "@PendingFeatureIf marks failing feature as skipped if the data variable accessing condition passes and the test fails even if applied twice"() {
+    when:
+    def result = runner.runSpecBody """
+@PendingFeatureIf({ a == 1 })
+@PendingFeatureIf({ a == 1 })
+def bar() {
+  expect: a == 2
+  where: a = 1
+}
+"""
+
+    then:
+    notThrown(AssertionError)
+    result.testsStartedCount == 2
+    result.testsFailedCount == 0
+    result.testsSkippedCount == 0
+    result.testsAbortedCount == 1
+    result.testsSucceededCount == 1
+  }
+
   def "@PendingFeatureIf marks passing feature as failed if the data variable accessing conditional expression returns true"() {
     when:
     runner.runSpecBody """
+@PendingFeatureIf({ a == 2 })
+def bar() {
+  expect: a == 2
+  where: a = 2
+}
+"""
+
+    then:
+    AssertionError e = thrown()
+    e.message == "Feature is marked with @PendingFeatureIf but passes unexpectedly"
+  }
+
+  def "@PendingFeatureIf marks passing feature as failed if the data variable accessing conditional expression returns true even if applied twice"() {
+    when:
+    runner.runSpecBody """
+@PendingFeatureIf({ a == 2 })
 @PendingFeatureIf({ a == 2 })
 def bar() {
   expect: a == 2

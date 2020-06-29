@@ -189,15 +189,20 @@ and only if all iterations become successful will be marked as failing. But if t
 does reference valid data variables, the individual iterations where the condition holds are
 deemed pending and each will individually fail as soon as it would be successful without this annotation.
 
-[source,groovy]
+[source,groovy,indent=0]
 ----
-@PendingFeatureIf({ os.windows })
-def "I'm not yet implemented on windows, but I am on other operating systems"() { ... }
+include::{sourcedir}/extension/PendingFeatureIfDocSpec.groovy[tag=example-a]
 
-@PendingFeatureIf({ sys.targetEnvironment == "prod" })
-def "This feature isn't deployed out to production yet, and isn't expected to pass"() { ... }
+include::{sourcedir}/extension/PendingFeatureIfDocSpec.groovy[tag=example-b]
 ----
 
+It is also supported to have multiple `@PendingFeatureIf` annotations or a mixture of `@PendingFeatureIf` and
+`@PendingFeature`, for example to ignore certain exceptions only under certain conditions.
+
+[source,groovy,indent=0]
+----
+include::{sourcedir}/extension/PendingFeatureIfDocSpec.groovy[tag=example-c]
+----
 
 === Stepwise
 

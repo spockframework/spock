@@ -9,14 +9,14 @@ public class PendingFeatureBaseInterceptor {
   protected final Class<? extends Throwable>[] expectedExceptions;
   protected final String reason;
   protected final String annotationUsed;
-  protected final boolean secondary;
+  protected final boolean failIfSuccessful;
 
   public PendingFeatureBaseInterceptor(Class<? extends Throwable>[] expectedExceptions, String reason,
-                                       String annotationUsed, boolean secondary) {
+                                       String annotationUsed, boolean failIfSuccessful) {
     this.expectedExceptions = expectedExceptions;
     this.reason = reason;
     this.annotationUsed = annotationUsed;
-    this.secondary = secondary;
+    this.failIfSuccessful = failIfSuccessful;
   }
 
   protected boolean isExpected(Throwable e) {

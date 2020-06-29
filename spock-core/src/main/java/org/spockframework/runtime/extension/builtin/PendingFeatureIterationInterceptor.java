@@ -12,8 +12,8 @@ import java.util.concurrent.atomic.AtomicReference;
 class PendingFeatureIterationInterceptor extends PendingFeatureBaseInterceptor implements IMethodInterceptor {
 
   public PendingFeatureIterationInterceptor(Class<? extends Throwable>[] expectedExceptions, String reason,
-                                            String annotationUsed, boolean secondary) {
-    super(expectedExceptions, reason, annotationUsed, secondary);
+                                            String annotationUsed, boolean failIfSuccessful) {
+    super(expectedExceptions, reason, annotationUsed, failIfSuccessful);
   }
 
   @Override
@@ -24,7 +24,7 @@ class PendingFeatureIterationInterceptor extends PendingFeatureBaseInterceptor i
     AtomicBoolean unexpectedFailure = new AtomicBoolean(false);
     invocation.getFeature().getFeatureMethod().addInterceptor(new InnerIterationInterceptor(
       featureStackTrace, success, expectedFailure, unexpectedFailure,
-      expectedExceptions, reason, annotationUsed, secondary));
+      expectedExceptions, reason, annotationUsed));
     invocation.proceed();
 
     // unexpected failure happened => do nothing, iteration is red
@@ -37,7 +37,7 @@ class PendingFeatureIterationInterceptor extends PendingFeatureBaseInterceptor i
       } else {
         // no unexpected failure, no expected failure and at least one success,
         // that is not all iterations are aborted => fail, annotation should be removed
-        if (!secondary && success.get()) {
+        if (failIfSuccessful && success.get()) {
           throw featurePassedUnexpectedly(featureStackTrace.get());
         }
       }
@@ -53,8 +53,8 @@ class PendingFeatureIterationInterceptor extends PendingFeatureBaseInterceptor i
     public InnerIterationInterceptor(AtomicReference<StackTraceElement[]> featureStackTrace, AtomicBoolean success,
                                      AtomicBoolean expectedFailure, AtomicBoolean unexpectedFailure,
                                      Class<? extends Throwable>[] expectedExceptions,
-                                     String reason, String annotationUsed, boolean secondary) {
-      super(expectedExceptions, reason, annotationUsed, secondary);
+                                     String reason, String annotationUsed) {
+      super(expectedExceptions, reason, annotationUsed, false);
       this.featureStackTrace = featureStackTrace;
       this.success = success;
       this.expectedFailure = expectedFailure;

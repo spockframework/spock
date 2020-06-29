@@ -18,6 +18,8 @@ include::include.adoc[]
 
 - `@IgnoreIf` is now repeatable
 
+- `@PendingFeatureIf` is now repeatable
+
 - `@Requires` is now repeatable
 
 - `@See` is now repeatable

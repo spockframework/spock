@@ -24,8 +24,8 @@ public class PendingFeatureBaseInterceptor {
     }
     return false;
   }
-  protected AssertionError featurePassedUnexpectedly(StackTraceElement[] stackTrace) {
-    AssertionError assertionError = new AssertionError("Feature is marked with " + annotationUsed + " but passes unexpectedly");
+  protected PendingFeatureSuccessfulError featurePassedUnexpectedly(StackTraceElement[] stackTrace) {
+    PendingFeatureSuccessfulError assertionError = new PendingFeatureSuccessfulError("Feature is marked with " + annotationUsed + " but passes unexpectedly");
     if (stackTrace != null) {
       assertionError.setStackTrace(stackTrace);
     }

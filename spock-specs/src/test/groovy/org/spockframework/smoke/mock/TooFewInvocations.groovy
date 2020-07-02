@@ -307,6 +307,119 @@ One or more arguments(s) didn't match:
     """.trim()
   }
 
+  def "can describe code argument mismatch in with block"() {
+    when:
+    runner.addClassImport(Person)
+    runner.runFeatureBody("""
+def fred = Mock(Person)
+
+when:
+fred.wife("Wilma", "Flintstone", 30, "Bedrock")
+
+then:
+with (fred) {
+  1 * wife("Wilma", "Flintstone", { it < 30}, "Bedrock")
+}
+    """)
+
+    then:
+    TooFewInvocationsError e = thrown()
+    e.message.trim() == """
+Too few invocations for:
+
+1 * fred.wife("Wilma", "Flintstone", { it < 30}, "Bedrock")   (0 invocations)
+
+Unmatched invocations (ordered by similarity):
+
+1 * fred.wife('Wilma', 'Flintstone', 30, 'Bedrock')
+One or more arguments(s) didn't match:
+0: <matches>
+1: <matches>
+2: Condition not satisfied:
+   
+   it < 30
+   |  |
+   30 false
+3: <matches>
+    """.trim()
+  }
+
+  def "can describe code argument mismatch in mock definition"() {
+    when:
+    runner.addClassImport(Person)
+    runner.runFeatureBody("""
+def fred = Mock(Person) {
+  1 * wife("Wilma", "Flintstone", { it < 30}, "Bedrock")
+}
+
+when:
+fred.wife("Wilma", "Flintstone", 30, "Bedrock")
+
+then:
+true
+    """)
+
+    then:
+    TooFewInvocationsError e = thrown()
+    e.message.trim() == """
+Too few invocations for:
+
+1 * fred.wife("Wilma", "Flintstone", { it < 30}, "Bedrock")   (0 invocations)
+
+Unmatched invocations (ordered by similarity):
+
+1 * fred.wife('Wilma', 'Flintstone', 30, 'Bedrock')
+One or more arguments(s) didn't match:
+0: <matches>
+1: <matches>
+2: Condition not satisfied:
+   
+   it < 30
+   |  |
+   30 false
+3: <matches>
+    """.trim()
+  }
+
+  def "can describe code argument mismatch with nested closures in mock definition"() {
+    when:
+    runner.addClassImport(Person)
+    runner.runFeatureBody("""
+def ages = [10, 20, 40]
+def fred = Mock(Person) {  
+  1 * wife("Wilma", "Flintstone", { age -> ages.find { it == age} }, "Bedrock")
+}
+
+when:
+fred.wife("Wilma", "Flintstone", 30, "Bedrock")
+
+then:
+true
+    """)
+
+    then:
+    TooFewInvocationsError e = thrown()
+    e.message.trim() == """
+Too few invocations for:
+
+1 * fred.wife("Wilma", "Flintstone", { age -> ages.find { it == age} }, "Bedrock")   (0 invocations)
+
+Unmatched invocations (ordered by similarity):
+
+1 * fred.wife('Wilma', 'Flintstone', 30, 'Bedrock')
+One or more arguments(s) didn't match:
+0: <matches>
+1: <matches>
+2: Condition not satisfied:
+   
+   ages.find { it == age}
+   |    |
+   |    null
+   [10, 20, 40]
+3: <matches>
+    """.trim()
+  }
+
   def "can describe code argument mismatch with nested closures"() {
     when:
     runner.addClassImport(Person)

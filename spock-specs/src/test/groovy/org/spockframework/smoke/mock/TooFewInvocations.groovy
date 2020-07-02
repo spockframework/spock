@@ -307,6 +307,43 @@ One or more arguments(s) didn't match:
     """.trim()
   }
 
+  def "can describe code argument mismatch with nested closures"() {
+    when:
+    runner.addClassImport(Person)
+    runner.runFeatureBody("""
+def fred = Mock(Person)
+def ages = [10, 20, 40]
+
+when:
+fred.wife("Wilma", "Flintstone", 30, "Bedrock")
+
+then:
+1 * fred.wife("Wilma", "Flintstone", { age -> ages.find { it == age} }, "Bedrock")
+    """)
+
+    then:
+    TooFewInvocationsError e = thrown()
+    e.message.trim() == """
+Too few invocations for:
+
+1 * fred.wife("Wilma", "Flintstone", { age -> ages.find { it == age} }, "Bedrock")   (0 invocations)
+
+Unmatched invocations (ordered by similarity):
+
+1 * fred.wife('Wilma', 'Flintstone', 30, 'Bedrock')
+One or more arguments(s) didn't match:
+0: <matches>
+1: <matches>
+2: Condition not satisfied:
+   
+   ages.find { it == age}
+   |    |
+   |    null
+   [10, 20, 40]
+3: <matches>
+    """.trim()
+  }
+
   def "can describe code argument explicit assertion mismatch"() {
     when:
     runner.addClassImport(Person)
@@ -398,7 +435,7 @@ then:
                 firstname == 'Willam'
                 name == 'Kirk'
                 age == 35
-              } 
+              }
 } )
     """)
 
@@ -413,7 +450,7 @@ Too few invocations for:
                 firstname == 'Willam'
                 name == 'Kirk'
                 age == 35
-              } 
+              }
 } )   (0 invocations)
 
 Unmatched invocations (ordered by similarity):

@@ -42,6 +42,7 @@ import static org.codehaus.groovy.ast.expr.MethodCallExpression.NO_ARGUMENTS;
 public class DeepBlockRewriter extends AbstractDeepBlockRewriter {
   private final IRewriteResources resources;
   private boolean insideInteraction = false;
+  private int closureDepth = 0;
 
   public DeepBlockRewriter(IRewriteResources resources) {
     super(resources.getCurrentBlock(), resources.getAstNodeCache());
@@ -114,8 +115,10 @@ public class DeepBlockRewriter extends AbstractDeepBlockRewriter {
 
   @Override
   protected void doVisitClosureExpression(ClosureExpression expr) {
+    closureDepth++;
     super.doVisitClosureExpression(expr);
     if (conditionFound || groupConditionFound) defineRecorders(expr, groupConditionFound);
+    closureDepth--;
   }
 
   @Override
@@ -175,7 +178,7 @@ public class DeepBlockRewriter extends AbstractDeepBlockRewriter {
         || currSpecialMethodCall.isWithCall()
         || currSpecialMethodCall.isConditionBlock()
         || currSpecialMethodCall.isGroupConditionBlock()
-        || insideInteraction)) {
+        || (insideInteraction && closureDepth == 1))) {
       return false;
     }
     if (!isImplicitCondition(stat)) return false;

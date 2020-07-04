@@ -28,6 +28,32 @@ import java.lang.annotation.Repeatable
 import java.lang.annotation.Retention
 import java.lang.annotation.RetentionPolicy
 
+/**
+ * The tests in this class use a repeatable annotation {@code @Foo} with a
+ * container annotation {@code @FooContainer} and an extension {@code @FooExtension}
+ * that sets static fields in the ran specification to count how often the extension
+ * was triggered by the annotations.
+ *
+ * <p>The tests are all data-driven features that test a different scenario
+ * (applied to spec, feature, fixture, field) with different combinations of
+ * individual standalone {@code @Foo} annotations and ones contained within the
+ * container annotation.
+ *
+ * <p>The data variables meanings are:
+ * <dl>
+ *   <dt>individual</dt>
+ *   <dd>How many individual standalone annotations to generate</dd>
+ *
+ *   <dt>contained</dt>
+ *   <dd>How many contained annotations to generate (-1 means omit the container completely)</dd>
+ *
+ *   <dt>containerWithList</dt>
+ *   <dd>Whether to use list syntax for the container value or not</dd>
+ *
+ *   <dt>expected</dt>
+ *   <dd>How many extension invocations are expected</dd>
+ * </dl>
+ */
 @ConfineMetaClassChanges(EmbeddedSpecRunner)
 class RepeatableLocalExtensionsSpec extends EmbeddedSpecification {
   def setup() {
@@ -192,6 +218,27 @@ def foo() {
     1          | 2         | true              || 3
   }
 
+  /**
+   * Builds the annotation container {@code @FooContainer} with the given amount of
+   * {@code @Foo} annotations, either in a list or plain. An amount of {@code -1} means
+   * no container annotation at all. With list {@code false} only makes sense for counts
+   * less than {@code 2}, otherwise invalid syntax is produced.
+   *
+   * <p><b>Examples:</b>
+   * <table>
+   *   <th><td> contained </td><td> containerWithList </td><td> returnValue                   </td></th>
+   *   <tr><td> -1        </td><td> n/a               </td><td> ''                            </td></tr>
+   *   <tr><td> 0         </td><td> false             </td><td> '@FooContainer()'             </td></tr>
+   *   <tr><td> 0         </td><td> true              </td><td> '@FooContainer([])'           </td></tr>
+   *   <tr><td> 1         </td><td> false             </td><td> '@FooContainer(@Foo)'         </td></tr>
+   *   <tr><td> 1         </td><td> true              </td><td> '@FooContainer([@Foo])'       </td></tr>
+   *   <tr><td> 2         </td><td> true              </td><td> '@FooContainer([@Foo, @Foo])' </td></tr>
+   * </table>
+   *
+   * @param contained the amount of {@code @Foo} annotations to include
+   * @param containerWithList whether to wrap the annotations in a {@code List} or have a plain value
+   * @return the built container annotation
+   */
   static buildContainer(contained, containerWithList) {
     contained < 0 ? '' :
       '@FooContainer(' +

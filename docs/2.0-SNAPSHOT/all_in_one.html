@@ -4454,6 +4454,15 @@ like helper methods or other places if the <code>@Target</code> is set according
 effect other than being visible in the source code.</p>
 </div>
 <div class="paragraph">
+<p>Since Spock 2.0 your annotation can also be defined as <code>@Repeatable</code> and applied multiple times to the same target.
+Spock will handle this appropriately and call your extension once for each annotation. If you want a repeatable
+annotation that is compatible with Spock before 2.0 you need to make the container annotation an extension annotation
+itself and handle all cases accordingly, but you need to make sure to only handle the container annotation if Spock
+version is before 2.0 or your annotations might be handled twice. Be aware that the repeatable annotation can be
+attached to the target directly, inside the container annotation or even both if the user added the container
+annotation manually and also attached one annotation directly.</p>
+</div>
+<div class="paragraph">
 <p><code>IAnnotationDrivenExtension</code> has the following five methods, where in each you can prepare a specification with your
 extension magic, like attaching interceptors to various interception points as described in the chapter
 <a href="#_interceptors">Interceptors</a>:</p>
@@ -5276,6 +5285,10 @@ Grails 2.3 and higher have built-in Spock support and do not require a plugin.
 <ul>
 <li>
 <p>Add a way to register <code>ConfigurationObject</code> globally without the need for a Global Extension</p>
+</li>
+<li>
+<p>Annotations for local extensions can now be defined as <code>@Repeatable</code> and applied multiple times to the same target.
+Spock will handle this appropriately and call the extension once for each annotation.</p>
 </li>
 </ul>
 </div>
@@ -7719,7 +7732,7 @@ This is due to how groovy implements traits and AST transformations.</p>
 <div id="footer">
 <div id="footer-text">
 Version 2.0-SNAPSHOT<br>
-Last updated 2020-06-26 14:12:30 UTC
+Last updated 2020-07-09 12:42:52 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./coderay-asciidoctor.css">

@@ -27,6 +27,10 @@
 <li>
 <p>Add a way to register <code>ConfigurationObject</code> globally without the need for a Global Extension</p>
 </li>
+<li>
+<p>Annotations for local extensions can now be defined as <code>@Repeatable</code> and applied multiple times to the same target.
+Spock will handle this appropriately and call the extension once for each annotation.</p>
+</li>
 </ul>
 </div>
 </div>
@@ -2062,7 +2066,7 @@ required; the only prerequisite for building Spock is a JDK installation (1.5 or
 <div id="footer">
 <div id="footer-text">
 Version 2.0-SNAPSHOT<br>
-Last updated 2020-06-26 14:12:30 UTC
+Last updated 2020-07-09 12:42:52 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./coderay-asciidoctor.css">

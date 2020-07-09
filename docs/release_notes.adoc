@@ -3,10 +3,14 @@ include::include.adoc[]
 
 == 2.0-M4 (tbd)
 
-- Add a way to register `ConfigurationObject` globally without the need for a Global Extension
+- Add a way to register `ConfigurationObject` globally without the need for a global extension.
 
 - Annotations for local extensions can now be defined as `@Repeatable` and applied multiple times to the same target.
-  Spock will handle this appropriately and call the extension once for each annotation.
+  Spock will handle this appropriately and call the extensions `visitSpecAnnotations` method with all annotations.
+  If these methods are not overwritten, they forward to the usual `visitSpecAnnotation` methods once for each annotation.
+
+- `AbstractAnnotationDrivenExtension` is now deprecated and its logic was moved to `default` methods of
+  `IAnnotationDrivenExtension` which should be implemented directly now instead of extending the abstract class.
 
 
 == 2.0-M3 (2020-06-11)

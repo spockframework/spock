@@ -16,13 +16,13 @@
 
 package org.spockframework.runtime.extension.builtin;
 
-import org.spockframework.runtime.extension.AbstractAnnotationDrivenExtension;
+import org.spockframework.runtime.extension.IAnnotationDrivenExtension;
 import org.spockframework.runtime.model.*;
 import spock.util.mop.Use;
 
 import java.util.Arrays;
 
-public class UseExtension extends AbstractAnnotationDrivenExtension<Use> {
+public class UseExtension implements IAnnotationDrivenExtension<Use> {
   @Override
   public void visitSpecAnnotation(Use annotation, SpecInfo spec) {
     addInterceptor(annotation, spec.getBottomSpec());

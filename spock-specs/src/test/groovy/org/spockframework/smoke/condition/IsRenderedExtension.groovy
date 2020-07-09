@@ -14,6 +14,8 @@
 
 package org.spockframework.smoke.condition
 
+import org.spockframework.runtime.extension.IAnnotationDrivenExtension
+
 import java.lang.annotation.RetentionPolicy
 import java.lang.annotation.Retention
 
@@ -22,7 +24,6 @@ import org.spockframework.runtime.extension.IMethodInterceptor
 import org.spockframework.runtime.ConditionNotSatisfiedError
 import org.spockframework.runtime.extension.IMethodInvocation
 import org.spockframework.runtime.model.FeatureInfo
-import org.spockframework.runtime.extension.AbstractAnnotationDrivenExtension
 import org.spockframework.runtime.extension.ExtensionAnnotation
 
 @Retention(RetentionPolicy.RUNTIME)
@@ -31,7 +32,7 @@ import org.spockframework.runtime.extension.ExtensionAnnotation
   String value()
 }
 
-class IsRenderedExtension extends AbstractAnnotationDrivenExtension<IsRendered> {
+class IsRenderedExtension implements IAnnotationDrivenExtension<IsRendered> {
   @Override
   void visitFeatureAnnotation(IsRendered annotation, FeatureInfo feature) {
     feature.featureMethod.interceptors.add({ IMethodInvocation invocation ->

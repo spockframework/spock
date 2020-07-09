@@ -17,12 +17,23 @@
 package org.spockframework.compiler;
 
 import org.spockframework.compiler.model.*;
+import org.spockframework.runtime.extension.ExtensionAnnotation;
+import org.spockframework.runtime.extension.RepeatedExtensionAnnotations;
 import org.spockframework.runtime.model.*;
 
 import java.io.File;
+import java.lang.annotation.Repeatable;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.codehaus.groovy.ast.*;
 import org.codehaus.groovy.ast.expr.*;
+
+import static java.util.stream.Collectors.*;
+import static org.spockframework.compiler.AstUtil.*;
+import static org.spockframework.util.ObjectUtil.asInstance;
 
 /**
  * Puts all spec information required at runtime into annotations
@@ -41,6 +52,7 @@ public class SpecAnnotator extends AbstractSpecVisitor {
   @Override
   public void visitSpec(Spec spec) throws Exception {
     addSpecMetadata(spec);
+    addRepeatedExtensionAnnotations(spec.getAst());
   }
 
   private void addSpecMetadata(Spec spec) {
@@ -55,6 +67,7 @@ public class SpecAnnotator extends AbstractSpecVisitor {
   @Override
   public void visitField(Field field) throws Exception {
     addFieldMetadata(field);
+    addRepeatedExtensionAnnotations(field.getAst());
   }
 
   private void addFieldMetadata(Field field) {
@@ -70,6 +83,103 @@ public class SpecAnnotator extends AbstractSpecVisitor {
   public void visitMethod(Method method) throws Exception {
     if (method instanceof FeatureMethod)
       addFeatureMetadata((FeatureMethod)method);
+    if ((method instanceof FeatureMethod) || (method instanceof FixtureMethod))
+      addRepeatedExtensionAnnotations(method.getAst());
+  }
+
+  private void addRepeatedExtensionAnnotations(AnnotatedNode annotatedNode) {
+    ListExpression repeatedExtensionAnnotations = annotatedNode
+      // get all repeatable extension annotations flattened
+      .getAnnotations()
+      .stream()
+      .flatMap(this::flattenRepeatableExtensionAnnotationContainer)
+      .filter(this::isRepeatableExtensionAnnotation)
+      // find the annotations that occur multiple times
+      .collect(groupingBy(AnnotationNode::getClassNode))
+      .entrySet()
+      .stream()
+      .filter(entry -> entry.getValue().size() > 1)
+      // put them to a ListExpression
+      .map(Map.Entry::getKey)
+      .map(ClassExpression::new)
+      .collect(collectingAndThen(Collectors.<Expression>toList(), ListExpression::new));
+
+    // if any were found, put them to a RepeatedExtensionAnnotations annotation as runtime hint
+    if (repeatedExtensionAnnotations.getExpressions().size() != 0) {
+      AnnotationNode ann = new AnnotationNode(nodeCache.RepeatedExtensionAnnotations);
+      ann.setMember(RepeatedExtensionAnnotations.VALUE, repeatedExtensionAnnotations);
+      annotatedNode.addAnnotation(ann);
+    }
+  }
+
+  private Stream<? extends AnnotationNode> flattenRepeatableExtensionAnnotationContainer(AnnotationNode container) {
+    // supply the container itself, it could also be a valid extension annotation
+    Stream<? extends AnnotationNode> result = Stream.of(container);
+
+    Expression value = container.getMember("value");
+    if (value instanceof ListExpression) {
+      List<Expression> valueExpressions = asInstance(value, ListExpression.class).getExpressions();
+      switch (valueExpressions.size()) {
+        case 0:
+          // no value, nothing to do
+          break;
+
+        case 1:
+          result = handleSingleContainedAnnotation(container, result, valueExpressions.get(0));
+          break;
+
+        default:
+          result = handleMultipleContainedAnnotations(container, result, valueExpressions);
+          break;
+      }
+    } else if (value instanceof AnnotationConstantExpression) {
+      result = handleSingleContainedAnnotation(container, result, value);
+    }
+
+    return result;
+  }
+
+  private Stream<? extends AnnotationNode> handleSingleContainedAnnotation(AnnotationNode container,
+                                                                           Stream<? extends AnnotationNode> result,
+                                                                           Expression value) {
+    if (notRepeatedAnnotation(value, container)) {
+      return result;
+    }
+
+    AnnotationNode annotationNode = asInstance(
+      asInstance(value, AnnotationConstantExpression.class).getValue(),
+      AnnotationNode.class);
+    // supply annotation twice in case there is only the container annotation
+    // with one contained annotation and no annotation besides it
+    // in that case we also need the RepeatedExtensionAnnotations at runtime
+    // to unwrap the container
+    return Stream.concat(result, Stream.of(annotationNode, annotationNode));
+  }
+
+  private Stream<? extends AnnotationNode> handleMultipleContainedAnnotations(AnnotationNode container,
+                                                                              Stream<? extends AnnotationNode> result,
+                                                                              List<Expression> valueExpressions) {
+    if (notRepeatedAnnotation(valueExpressions.get(0), container)) {
+      return result;
+    }
+
+    return Stream.concat(result, valueExpressions
+      .stream()
+      .map(AnnotationConstantExpression.class::cast)
+      .map(AnnotationConstantExpression::getValue)
+      .map(AnnotationNode.class::cast));
+  }
+
+  private boolean notRepeatedAnnotation(Expression clazz, AnnotationNode container) {
+    AnnotationNode repeatableAnnotation = getAnnotation(clazz.getType(), Repeatable.class);
+    return (repeatableAnnotation == null) ||
+      !repeatableAnnotation.getMember("value").getType().equals(container.getClassNode());
+  }
+
+  private boolean isRepeatableExtensionAnnotation(AnnotationNode annotation) {
+    ClassNode annotationClass = annotation.getClassNode();
+    return hasAnnotation(annotationClass, ExtensionAnnotation.class) &&
+      hasAnnotation(annotationClass, Repeatable.class);
   }
 
   private void addFeatureMetadata(FeatureMethod feature) {

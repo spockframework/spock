@@ -16,28 +16,22 @@
 
 package org.spockframework.runtime
 
-import org.spockframework.runtime.extension.AbstractAnnotationDrivenExtension
-import org.spockframework.runtime.extension.AbstractGlobalExtension
-import org.spockframework.runtime.extension.ExtensionException
-import org.spockframework.runtime.extension.builtin.IgnoreExtension
-import org.spockframework.runtime.extension.builtin.IncludeExcludeExtension
+import org.spockframework.runtime.extension.*
+import org.spockframework.runtime.extension.builtin.*
 import org.spockframework.util.InternalSpockError
-
-import spock.config.ConfigurationObject
-import spock.config.RunnerConfiguration
-import spock.lang.Ignore
-import spock.lang.Specification
+import spock.config.*
+import spock.lang.*
 
 class GlobalExtensionRegistrySpec extends Specification {
   def "only accepts configuration objects annotated with @ConfigurationObject"() {
     when:
-    new GlobalExtensionRegistry([], [new RunnerConfiguration()])
+    new GlobalExtensionRegistry([], [RunnerConfiguration])
 
     then:
     noExceptionThrown()
 
     when:
-    new GlobalExtensionRegistry([], [new Object() {}])
+    new GlobalExtensionRegistry([], [Object])
 
     then:
     thrown(InternalSpockError)
@@ -80,19 +74,16 @@ class GlobalExtensionRegistrySpec extends Specification {
     registry.globalExtensions*.getClass() == [MyExtension, InjectableExtension]
   }
 
-  def "provides access to initial configuration objects"() {
-    def config = new RunnerConfiguration()
-    def settings = new MySettings()
-
+  def "auto-instantiates and provides access to global configuration objects"() {
     when:
-    def registry = new GlobalExtensionRegistry([], [config, settings])
+    def registry = new GlobalExtensionRegistry([], [RunnerConfiguration, MySettings])
 
     then:
-    registry.getConfigurationByName("runner").is(config)
-    registry.getConfigurationByType(RunnerConfiguration).is(config)
+    registry.getConfigurationByName("runner") instanceof RunnerConfiguration
+    registry.getConfigurationByType(RunnerConfiguration) instanceof RunnerConfiguration
 
-    registry.getConfigurationByName("settings").is(settings)
-    registry.getConfigurationByType(MySettings).is(settings)
+    registry.getConfigurationByName("settings") instanceof MySettings
+    registry.getConfigurationByType(MySettings) instanceof MySettings
   }
 
   def "auto-instantiates and provides access to configuration objects referenced by extensions"() {
@@ -109,15 +100,14 @@ class GlobalExtensionRegistrySpec extends Specification {
   }
 
   def "injects configuration objects into extensions"() {
-    def config = new RunnerConfiguration()
-    def registry = new GlobalExtensionRegistry([InjectableExtension], [config])
+    def registry = new GlobalExtensionRegistry([InjectableExtension], [RunnerConfiguration])
 
     when:
     registry.initializeGlobalExtensions()
 
     then:
     with(registry.globalExtensions[0], InjectableExtension) {
-      config.is(config)
+      config instanceof RunnerConfiguration
       settings instanceof MySettings
     }
   }
@@ -134,8 +124,7 @@ class GlobalExtensionRegistrySpec extends Specification {
   }
 
   def "allows to configure local extensions"() {
-    def runnerConfig = new RunnerConfiguration()
-    def registry = new GlobalExtensionRegistry([], [runnerConfig])
+    def registry = new GlobalExtensionRegistry([], [RunnerConfiguration])
     registry.initializeGlobalExtensions()
 
     when:
@@ -143,7 +132,7 @@ class GlobalExtensionRegistrySpec extends Specification {
     registry.configureExtension(extension)
 
     then:
-    extension.config.is(runnerConfig)
+    extension.config instanceof RunnerConfiguration
   }
 
   def "complains if local extension references unknown configuration class"() {
@@ -180,7 +169,7 @@ class GlobalExtensionRegistrySpec extends Specification {
     MySettings settings
   }
 
-  static class LocalExtension extends AbstractAnnotationDrivenExtension<Ignore> {
+  static class LocalExtension implements IAnnotationDrivenExtension<Ignore> {
     RunnerConfiguration config
   }
 

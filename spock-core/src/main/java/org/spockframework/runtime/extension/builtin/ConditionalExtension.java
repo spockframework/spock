@@ -19,8 +19,8 @@ package org.spockframework.runtime.extension.builtin;
 import groovy.lang.Closure;
 import groovy.lang.MissingPropertyException;
 import org.spockframework.runtime.GroovyRuntimeUtil;
-import org.spockframework.runtime.extension.AbstractAnnotationDrivenExtension;
 import org.spockframework.runtime.extension.ExtensionException;
+import org.spockframework.runtime.extension.IAnnotationDrivenExtension;
 import org.spockframework.runtime.extension.IMethodInterceptor;
 import org.spockframework.runtime.extension.IMethodInvocation;
 import org.spockframework.runtime.model.FeatureInfo;
@@ -31,7 +31,7 @@ import java.util.Map;
 
 import static java.util.Collections.emptyMap;
 
-public abstract class ConditionalExtension<T extends Annotation> extends AbstractAnnotationDrivenExtension<T> {
+public abstract class ConditionalExtension<T extends Annotation> implements IAnnotationDrivenExtension<T> {
   protected abstract Class<? extends Closure> getConditionClass(T annotation);
 
   protected void specConditionResult(boolean result, T annotation, SpecInfo spec) {

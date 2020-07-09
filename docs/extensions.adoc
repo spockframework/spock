@@ -665,38 +665,66 @@ methods in the interface, so that only the needed ones need to be overridden.
 
 === Annotation Driven Local Extensions
 
-To create an annotation driven local extension you need to create a class that implements the interface
-`IAnnotationDrivenExtension`. As type argument to the interface you need to supply an annotation class that has
-`@Retention` set to `RUNTIME`, `@Target` set to one or more of `FIELD`, `METHOD` and `TYPE` - depending on where you
+To create an annotation driven local extension you need to create a class implementing the interface
+`IAnnotationDrivenExtension`. As type argument to the interface you need to supply an annotation class having
+`@Retention` set to `RUNTIME`, `@Target` set to one or more of `FIELD`, `METHOD`, and `TYPE` - depending on where you
 want your annotation to be applicable - and `@ExtensionAnnotation` applied, with the `IAnnotationDrivenExtension` class
 as argument. Of course the annotation class can have some attributes with which the user can further configure the
-behaviour of the extension for each annotation application. For convenience there is also the class
-`AbstractAnnotationDrivenExtension`, which provides empty implementations for all methods in the interface, so that only
-the needed ones need to be overridden.
+behaviour of the extension for each annotation application.
 
 Your annotation can be applied to a specification, a feature method, a fixture method or a field. On all other places
 like helper methods or other places if the `@Target` is set accordingly, the annotation will be ignored and has no
-effect other than being visible in the source code.
+effect other than being visible in the source code, except you check its existence in other places yourself.
 
-`IAnnotationDrivenExtension` has the following five methods, where in each you can prepare a specification with your
+Since Spock 2.0 your annotation can also be defined as `@Repeatable` and applied multiple times to the same target.
+`IAnnotationDrivenExtension` has `visit...Annotations` methods that are called by Spock with all annotations of the
+extension applied to the same target. Their default implementations will then call the respective singular
+`visit...Annotation` method once for each annotation. If you want a repeatable annotation that is compatible with
+Spock before 2.0 you need to make the container annotation an extension annotation itself and handle all cases
+accordingly, but you need to make sure to only handle the container annotation if Spock version is before 2.0,
+or your annotations might be handled twice. Be aware that the repeatable annotation can be attached to the target
+directly, inside the container annotation or even both if the user added the container annotation manually
+and also attached one annotation directly.
+
+`IAnnotationDrivenExtension` has the following nine methods, where in each you can prepare a specification with your
 extension magic, like attaching interceptors to various interception points as described in the chapter
 <<Interceptors>>:
 
+`visitSpecAnnotations(List<T> annotations, SpecInfo spec)`::
+  This is called once for each specification where the annotation is applied one or multiple times
+  with the annotation instances as first parameter and the specification info object as second parameter.
+  The default implementation calls `visitSpecAnnotation` once for each given annotation.
+
 `visitSpecAnnotation(T annotation, SpecInfo spec)`::
-  This is called once for each specification where the annotation is applied with the annotation instance as first
-  parameter and the specification info object as second parameter.
+  This is used as singular delegate for `visitSpecAnnotations` and is otherwise not called by Spock directly.
+  The default implementation throws an exception.
 
-`visitFeatureAnnotation(T annotation, FeatureInfo feature)`::
-  This is called once for each feature method where the annotation is applied with the annotation instance as first
-  parameter and the feature info object as second parameter.
-
-`visitFixtureAnnotation(T annotation, MethodInfo fixtureMethod)`::
-  This is called once for each fixture method where the annotation is applied with the annotation instance as first
-  parameter and the fixture method info object as second parameter.
+`visitFieldAnnotations(List<T> annotations, FieldInfo field)`::
+  This is called once for each field where the annotation is applied one or multiple times
+  with the annotation instances as first parameter and the field info object as second parameter.
+  The default implementation calls `visitFieldAnnotation` once for each given annotation.
 
 `visitFieldAnnotation(T annotation, FieldInfo field)`::
-  This is called once for each field where the annotation is applied with the annotation instance as first parameter and
-  the field info object as second parameter.
+  This is used as singular delegate for `visitFieldAnnotations` and is otherwise not called by Spock directly.
+  The default implementation throws an exception.
+
+`visitFixtureAnnotations(List<T> annotations, MethodInfo fixtureMethod)`::
+  This is called once for each fixture method where the annotation is applied one or multiple times
+  with the annotation instances as first parameter and the fixture method info object as second parameter.
+  The default implementation calls `visitFixtureAnnotation` once for each given annotation.
+
+`visitFixtureAnnotation(T annotation, MethodInfo fixtureMethod)`::
+  This is used as singular delegate for `visitFixtureAnnotations` and is otherwise not called by Spock directly.
+  The default implementation throws an exception.
+
+`visitFeatureAnnotations(List<T> annotations, FeatureInfo feature)`::
+  This is called once for each feature method where the annotation is applied one or multiple times
+  with the annotation instances as first parameter and the feature info object as second parameter.
+  The default implementation calls `visitFeatureAnnotation` once for each given annotation.
+
+`visitFeatureAnnotation(T annotation, FeatureInfo feature)`::
+  This is used as singular delegate for `visitFeatureAnnotations` and is otherwise not called by Spock directly.
+  The default implementation throws an exception.
 
 `visitSpec(SpecInfo spec)`::
   This is called once for each specification within which the annotation is applied to at least one of the supported
@@ -720,9 +748,11 @@ type. Spock will then automatically create exactly one instance of the configura
 settings from the configuration file to it (before the `start()` methods of global extensions are called) and inject
 that instance into the extension class instances.
 
-A configuration object cannot be used exclusively in an annotation driven local extension, but it has to be used in at
-least one global extension to properly get initialized and populated with the settings from the configuration file. But
-if the configuration object is used in a global extension, you can also use it just fine in an annotation driven local
+If a configuration object should be used exclusively in an annotation driven local extension you must register it in
+`META-INF/services/spock.config.ConfigurationObject`.
+This is similar to a global extension, put the fully-qualified class name of the annotated class on a new line in the file.
+This will cause the configuration object to properly get initialized and populated with the settings from the configuration file.
+However, if the configuration object is used in a global extension, you can also use it just fine in an annotation driven local
 extension. If the configuration object is only used in an annotation driven local extension, you will get an exception
 when then configuration object is to be injected into the extension and you will also get an error when the
 configuration file is evaluated and it contains the section, as the configuration object is not properly registered yet.

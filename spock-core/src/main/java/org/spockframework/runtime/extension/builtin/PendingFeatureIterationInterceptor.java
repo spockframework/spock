@@ -64,6 +64,8 @@ class PendingFeatureIterationInterceptor extends PendingFeatureBaseInterceptor i
       try {
         invocation.proceed();
         success.set(true);
+      } catch (PendingFeatureSuccessfulError e) {
+        throw e;
       } catch (TestAbortedException e) {
         // if no expected failure set a stack trace, set it from an abort
         // that is better than the stack trace in the base interceptor

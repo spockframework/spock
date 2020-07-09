@@ -18,6 +18,7 @@ package org.spockframework.compiler;
 
 import org.codehaus.groovy.runtime.wrappers.PojoWrapper;
 import org.spockframework.runtime.*;
+import org.spockframework.runtime.extension.RepeatedExtensionAnnotations;
 import org.spockframework.runtime.model.*;
 import org.spockframework.util.Identifiers;
 import spock.lang.Specification;
@@ -68,6 +69,7 @@ public class AstNodeCache {
       ErrorCollector.getDeclaredMethods(org.spockframework.runtime.ErrorCollector.VALIDATE_COLLECTED_ERRORS).get(0);
 
   // annotations and annotation elements
+  public final ClassNode RepeatedExtensionAnnotations = ClassHelper.makeWithoutCaching(RepeatedExtensionAnnotations.class);
   public final ClassNode SpecMetadata = ClassHelper.makeWithoutCaching(SpecMetadata.class);
   public final ClassNode FieldMetadata = ClassHelper.makeWithoutCaching(FieldMetadata.class);
   public final ClassNode FeatureMetadata = ClassHelper.makeWithoutCaching(FeatureMetadata.class);

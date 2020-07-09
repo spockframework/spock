@@ -16,7 +16,7 @@ class PendingFeatureInterceptor extends PendingFeatureBaseInterceptor implements
   public void intercept(IMethodInvocation invocation) throws Throwable {
     try {
       invocation.proceed();
-    } catch (TestAbortedException e) {
+    } catch (TestAbortedException | PendingFeatureSuccessfulError e) {
       throw e;
     } catch (AssertionError e) {
       throw testAborted(e.getStackTrace());

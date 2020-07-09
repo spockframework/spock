@@ -16,13 +16,13 @@
 
 package org.spockframework.runtime.extension.builtin;
 
-import org.spockframework.runtime.extension.AbstractAnnotationDrivenExtension;
+import org.spockframework.runtime.extension.IAnnotationDrivenExtension;
 import org.spockframework.runtime.model.FeatureInfo;
 import org.spockframework.runtime.model.SpecInfo;
 
 import spock.util.environment.RestoreSystemProperties;
 
-public class RestoreSystemPropertiesExtension extends AbstractAnnotationDrivenExtension<RestoreSystemProperties> {
+public class RestoreSystemPropertiesExtension implements IAnnotationDrivenExtension<RestoreSystemProperties> {
   @Override
   public void visitSpecAnnotation(RestoreSystemProperties annotation, SpecInfo spec) {
     for (FeatureInfo feature : spec.getFeatures()) {

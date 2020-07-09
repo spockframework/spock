@@ -16,7 +16,7 @@
 
 package org.spockframework.runtime.extension.builtin;
 
-import org.spockframework.runtime.extension.AbstractAnnotationDrivenExtension;
+import org.spockframework.runtime.extension.IAnnotationDrivenExtension;
 import org.spockframework.runtime.model.FeatureInfo;
 import org.spockframework.runtime.model.IInterceptable;
 import org.spockframework.runtime.model.SpecInfo;
@@ -28,12 +28,12 @@ import spock.util.mop.ConfineMetaClassChanges;
  * @author Luke Daley
  * @author Peter Niederwieser
  */
-public class ConfineMetaClassChangesExtension extends AbstractAnnotationDrivenExtension<ConfineMetaClassChanges> {
+public class ConfineMetaClassChangesExtension implements IAnnotationDrivenExtension<ConfineMetaClassChanges> {
   @Override
   public void visitSpecAnnotation(ConfineMetaClassChanges annotation, SpecInfo spec) {
     addInterceptor(annotation, spec.getBottomSpec());
   }
-  
+
   @Override
   public void visitFeatureAnnotation(ConfineMetaClassChanges annotation, FeatureInfo feature) {
     addInterceptor(annotation, feature.getFeatureMethod());

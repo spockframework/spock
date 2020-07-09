@@ -19,6 +19,9 @@ import org.spockframework.runtime.model.*;
 
 import java.lang.annotation.Annotation;
 import java.util.*;
+import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * Runs global and local extensions for a spec.
@@ -84,9 +87,12 @@ public class ExtensionRunner {
   private void doRunAnnotationDrivenExtensions(NodeInfo<?, ?> node) {
     RepeatedExtensionAnnotations repeatedExtensionAnnotations = node.getAnnotation(RepeatedExtensionAnnotations.class);
 
-    List<Annotation> annotations;
+    List<List<Annotation>> annotations;
     if (repeatedExtensionAnnotations == null) {
-      annotations = Arrays.asList(node.getAnnotations());
+      annotations = Arrays
+        .stream(node.getAnnotations())
+        .map(Collections::singletonList)
+        .collect(toList());
     } else {
       annotations = new ArrayList<>();
       List<Class<? extends Annotation>> repeatedAnnotations = Arrays.asList(repeatedExtensionAnnotations.value());
@@ -96,11 +102,12 @@ public class ExtensionRunner {
         .filter(annotation -> repeatedAnnotations
           .stream()
           .noneMatch(repeatedAnnotation -> repeatedAnnotation.isInstance(annotation)))
+        .map(Collections::singletonList)
         .forEach(annotations::add);
 
       // add all annotations marked as repeated
       for (Class<? extends Annotation> repeatedAnnotation : repeatedAnnotations) {
-        annotations.addAll(Arrays.asList(node.getAnnotationsByType(repeatedAnnotation)));
+        annotations.add(Arrays.asList(node.getAnnotationsByType(repeatedAnnotation)));
       }
     }
 
@@ -108,22 +115,22 @@ public class ExtensionRunner {
   }
 
   @SuppressWarnings("unchecked")
-  private void doRunAnnotationDrivenExtensions(NodeInfo<?, ?> node, List<Annotation> annotations) {
-    for (Annotation ann : annotations) {
-      ExtensionAnnotation extAnn = ann.annotationType().getAnnotation(ExtensionAnnotation.class);
+  private void doRunAnnotationDrivenExtensions(NodeInfo<?, ?> node, List<List<Annotation>> annotations) {
+    for (List<Annotation> ann : annotations) {
+      ExtensionAnnotation extAnn = ann.get(0).annotationType().getAnnotation(ExtensionAnnotation.class);
       if (extAnn == null) continue;
       IAnnotationDrivenExtension extension = getOrCreateExtension(extAnn.value());
       if (node instanceof SpecInfo) {
-        extension.visitSpecAnnotation(ann, (SpecInfo) node);
+        extension.visitSpecAnnotations(ann, (SpecInfo) node);
       } else if (node instanceof MethodInfo) {
         MethodInfo method = (MethodInfo) node;
         if (method.getKind() == MethodKind.FEATURE) {
-          extension.visitFeatureAnnotation(ann, method.getFeature());
+          extension.visitFeatureAnnotations(ann, method.getFeature());
         } else {
-          extension.visitFixtureAnnotation(ann, method);
+          extension.visitFixtureAnnotations(ann, method);
         }
       } else {
-        extension.visitFieldAnnotation(ann, (FieldInfo) node);
+        extension.visitFieldAnnotations(ann, (FieldInfo) node);
       }
     }
   }

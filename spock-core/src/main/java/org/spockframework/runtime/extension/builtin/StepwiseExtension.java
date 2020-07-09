@@ -15,13 +15,13 @@
 package org.spockframework.runtime.extension.builtin;
 
 import org.spockframework.runtime.AbstractRunListener;
-import org.spockframework.runtime.extension.AbstractAnnotationDrivenExtension;
+import org.spockframework.runtime.extension.IAnnotationDrivenExtension;
 import org.spockframework.runtime.model.*;
 
 import java.lang.annotation.Annotation;
 import java.util.List;
 
-public class StepwiseExtension extends AbstractAnnotationDrivenExtension {
+public class StepwiseExtension implements IAnnotationDrivenExtension {
   @Override
   public void visitSpecAnnotation(Annotation annotation, final SpecInfo spec) {
     sortFeaturesInDeclarationOrder(spec);

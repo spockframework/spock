@@ -19,7 +19,7 @@ import org.spockframework.runtime.extension.*;
 import org.spockframework.runtime.model.*;
 import spock.lang.Specification;
 
-public class AutoAttachExtension extends AbstractAnnotationDrivenExtension<AutoAttach> {
+public class AutoAttachExtension implements IAnnotationDrivenExtension<AutoAttach> {
   private static MockUtil MOCK_UTIL = new MockUtil();
 
   @Override

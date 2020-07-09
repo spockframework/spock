@@ -169,7 +169,7 @@ class GlobalExtensionRegistrySpec extends Specification {
     MySettings settings
   }
 
-  static class LocalExtension extends AbstractAnnotationDrivenExtension<Ignore> {
+  static class LocalExtension implements IAnnotationDrivenExtension<Ignore> {
     RunnerConfiguration config
   }
 

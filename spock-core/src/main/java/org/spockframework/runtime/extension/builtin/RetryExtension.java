@@ -16,7 +16,7 @@
 
 package org.spockframework.runtime.extension.builtin;
 
-import org.spockframework.runtime.extension.AbstractAnnotationDrivenExtension;
+import org.spockframework.runtime.extension.IAnnotationDrivenExtension;
 import org.spockframework.runtime.model.*;
 import spock.lang.Retry;
 
@@ -24,7 +24,7 @@ import spock.lang.Retry;
  * @author Leonard Brünings
  * @since 1.2
  */
-public class RetryExtension extends AbstractAnnotationDrivenExtension<Retry> {
+public class RetryExtension implements IAnnotationDrivenExtension<Retry> {
   @Override
   public void visitSpecAnnotation(Retry annotation, SpecInfo spec) {
     if (noSubSpecWithRetryAnnotation(spec.getSubSpec())) {

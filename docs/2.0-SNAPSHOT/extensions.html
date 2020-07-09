@@ -848,55 +848,79 @@ like attaching interceptors to various interception points as described in the c
 <div class="sect2">
 <h3 id="_annotation_driven_local_extensions"><a class="anchor" href="#_annotation_driven_local_extensions"></a><a class="link" href="#_annotation_driven_local_extensions">Annotation Driven Local Extensions</a></h3>
 <div class="paragraph">
-<p>To create an annotation driven local extension you need to create a class that implements the interface
-<code>IAnnotationDrivenExtension</code>. As type argument to the interface you need to supply an annotation class that has
-<code>@Retention</code> set to <code>RUNTIME</code>, <code>@Target</code> set to one or more of <code>FIELD</code>, <code>METHOD</code> and <code>TYPE</code> - depending on where you
+<p>To create an annotation driven local extension you need to create a class implementing the interface
+<code>IAnnotationDrivenExtension</code>. As type argument to the interface you need to supply an annotation class having
+<code>@Retention</code> set to <code>RUNTIME</code>, <code>@Target</code> set to one or more of <code>FIELD</code>, <code>METHOD</code>, and <code>TYPE</code> - depending on where you
 want your annotation to be applicable - and <code>@ExtensionAnnotation</code> applied, with the <code>IAnnotationDrivenExtension</code> class
 as argument. Of course the annotation class can have some attributes with which the user can further configure the
-behaviour of the extension for each annotation application. For convenience there is also the class
-<code>AbstractAnnotationDrivenExtension</code>, which provides empty implementations for all methods in the interface, so that only
-the needed ones need to be overridden.</p>
+behaviour of the extension for each annotation application.</p>
 </div>
 <div class="paragraph">
 <p>Your annotation can be applied to a specification, a feature method, a fixture method or a field. On all other places
 like helper methods or other places if the <code>@Target</code> is set accordingly, the annotation will be ignored and has no
-effect other than being visible in the source code.</p>
+effect other than being visible in the source code, except you check its existence in other places yourself.</p>
 </div>
 <div class="paragraph">
 <p>Since Spock 2.0 your annotation can also be defined as <code>@Repeatable</code> and applied multiple times to the same target.
-Spock will handle this appropriately and call your extension once for each annotation. If you want a repeatable
-annotation that is compatible with Spock before 2.0 you need to make the container annotation an extension annotation
-itself and handle all cases accordingly, but you need to make sure to only handle the container annotation if Spock
-version is before 2.0 or your annotations might be handled twice. Be aware that the repeatable annotation can be
-attached to the target directly, inside the container annotation or even both if the user added the container
-annotation manually and also attached one annotation directly.</p>
+<code>IAnnotationDrivenExtension</code> has <code>visit&#8230;&#8203;Annotations</code> methods that are called by Spock with all annotations of the
+extension applied to the same target. Their default implementations will then call the respective singular
+<code>visit&#8230;&#8203;Annotation</code> method once for each annotation. If you want a repeatable annotation that is compatible with
+Spock before 2.0 you need to make the container annotation an extension annotation itself and handle all cases
+accordingly, but you need to make sure to only handle the container annotation if Spock version is before 2.0,
+or your annotations might be handled twice. Be aware that the repeatable annotation can be attached to the target
+directly, inside the container annotation or even both if the user added the container annotation manually
+and also attached one annotation directly.</p>
 </div>
 <div class="paragraph">
-<p><code>IAnnotationDrivenExtension</code> has the following five methods, where in each you can prepare a specification with your
+<p><code>IAnnotationDrivenExtension</code> has the following nine methods, where in each you can prepare a specification with your
 extension magic, like attaching interceptors to various interception points as described in the chapter
 <a href="#_interceptors">Interceptors</a>:</p>
 </div>
 <div class="dlist">
 <dl>
+<dt class="hdlist1"><code>visitSpecAnnotations(List&lt;T&gt; annotations, SpecInfo spec)</code></dt>
+<dd>
+<p>This is called once for each specification where the annotation is applied one or multiple times
+with the annotation instances as first parameter and the specification info object as second parameter.
+The default implementation calls <code>visitSpecAnnotation</code> once for each given annotation.</p>
+</dd>
 <dt class="hdlist1"><code>visitSpecAnnotation(T annotation, SpecInfo spec)</code></dt>
 <dd>
-<p>This is called once for each specification where the annotation is applied with the annotation instance as first
-parameter and the specification info object as second parameter.</p>
+<p>This is used as singular delegate for <code>visitSpecAnnotations</code> and is otherwise not called by Spock directly.
+The default implementation throws an exception.</p>
 </dd>
-<dt class="hdlist1"><code>visitFeatureAnnotation(T annotation, FeatureInfo feature)</code></dt>
+<dt class="hdlist1"><code>visitFieldAnnotations(List&lt;T&gt; annotations, FieldInfo field)</code></dt>
 <dd>
-<p>This is called once for each feature method where the annotation is applied with the annotation instance as first
-parameter and the feature info object as second parameter.</p>
-</dd>
-<dt class="hdlist1"><code>visitFixtureAnnotation(T annotation, MethodInfo fixtureMethod)</code></dt>
-<dd>
-<p>This is called once for each fixture method where the annotation is applied with the annotation instance as first
-parameter and the fixture method info object as second parameter.</p>
+<p>This is called once for each field where the annotation is applied one or multiple times
+with the annotation instances as first parameter and the field info object as second parameter.
+The default implementation calls <code>visitFieldAnnotation</code> once for each given annotation.</p>
 </dd>
 <dt class="hdlist1"><code>visitFieldAnnotation(T annotation, FieldInfo field)</code></dt>
 <dd>
-<p>This is called once for each field where the annotation is applied with the annotation instance as first parameter and
-the field info object as second parameter.</p>
+<p>This is used as singular delegate for <code>visitFieldAnnotations</code> and is otherwise not called by Spock directly.
+The default implementation throws an exception.</p>
+</dd>
+<dt class="hdlist1"><code>visitFixtureAnnotations(List&lt;T&gt; annotations, MethodInfo fixtureMethod)</code></dt>
+<dd>
+<p>This is called once for each fixture method where the annotation is applied one or multiple times
+with the annotation instances as first parameter and the fixture method info object as second parameter.
+The default implementation calls <code>visitFixtureAnnotation</code> once for each given annotation.</p>
+</dd>
+<dt class="hdlist1"><code>visitFixtureAnnotation(T annotation, MethodInfo fixtureMethod)</code></dt>
+<dd>
+<p>This is used as singular delegate for <code>visitFixtureAnnotations</code> and is otherwise not called by Spock directly.
+The default implementation throws an exception.</p>
+</dd>
+<dt class="hdlist1"><code>visitFeatureAnnotations(List&lt;T&gt; annotations, FeatureInfo feature)</code></dt>
+<dd>
+<p>This is called once for each feature method where the annotation is applied one or multiple times
+with the annotation instances as first parameter and the feature info object as second parameter.
+The default implementation calls <code>visitFeatureAnnotation</code> once for each given annotation.</p>
+</dd>
+<dt class="hdlist1"><code>visitFeatureAnnotation(T annotation, FeatureInfo feature)</code></dt>
+<dd>
+<p>This is used as singular delegate for <code>visitFeatureAnnotations</code> and is otherwise not called by Spock directly.
+The default implementation throws an exception.</p>
 </dd>
 <dt class="hdlist1"><code>visitSpec(SpecInfo spec)</code></dt>
 <dd>
@@ -1151,7 +1175,7 @@ assignments happen before the method interceptor is called</p>
 <div id="footer">
 <div id="footer-text">
 Version 2.0-SNAPSHOT<br>
-Last updated 2020-07-09 12:42:52 UTC
+Last updated 2020-07-09 16:42:44 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./coderay-asciidoctor.css">

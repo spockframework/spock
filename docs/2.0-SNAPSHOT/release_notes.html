@@ -25,11 +25,16 @@
 <div class="ulist">
 <ul>
 <li>
-<p>Add a way to register <code>ConfigurationObject</code> globally without the need for a Global Extension</p>
+<p>Add a way to register <code>ConfigurationObject</code> globally without the need for a global extension.</p>
 </li>
 <li>
 <p>Annotations for local extensions can now be defined as <code>@Repeatable</code> and applied multiple times to the same target.
-Spock will handle this appropriately and call the extension once for each annotation.</p>
+Spock will handle this appropriately and call the extensions <code>visitSpecAnnotations</code> method with all annotations.
+If these methods are not overwritten, they forward to the usual <code>visitSpecAnnotation</code> methods once for each annotation.</p>
+</li>
+<li>
+<p><code>AbstractAnnotationDrivenExtension</code> is now deprecated and its logic was moved to <code>default</code> methods of
+<code>IAnnotationDrivenExtension</code> which should be implemented directly now instead of extending the abstract class.</p>
 </li>
 </ul>
 </div>
@@ -2066,7 +2071,7 @@ required; the only prerequisite for building Spock is a JDK installation (1.5 or
 <div id="footer">
 <div id="footer-text">
 Version 2.0-SNAPSHOT<br>
-Last updated 2020-07-09 12:42:52 UTC
+Last updated 2020-07-09 16:42:44 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./coderay-asciidoctor.css">

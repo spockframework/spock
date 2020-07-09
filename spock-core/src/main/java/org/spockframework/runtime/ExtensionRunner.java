@@ -81,9 +81,35 @@ public class ExtensionRunner {
     }
   }
 
-  @SuppressWarnings("unchecked")
   private void doRunAnnotationDrivenExtensions(NodeInfo<?, ?> node) {
-    for (Annotation ann : node.getAnnotations()) {
+    RepeatedExtensionAnnotations repeatedExtensionAnnotations = node.getAnnotation(RepeatedExtensionAnnotations.class);
+
+    List<Annotation> annotations;
+    if (repeatedExtensionAnnotations == null) {
+      annotations = Arrays.asList(node.getAnnotations());
+    } else {
+      annotations = new ArrayList<>();
+      List<Class<? extends Annotation>> repeatedAnnotations = Arrays.asList(repeatedExtensionAnnotations.value());
+
+      // add all direct annotations except those marked as repeated
+      Arrays.stream(node.getAnnotations())
+        .filter(annotation -> repeatedAnnotations
+          .stream()
+          .noneMatch(repeatedAnnotation -> repeatedAnnotation.isInstance(annotation)))
+        .forEach(annotations::add);
+
+      // add all annotations marked as repeated
+      for (Class<? extends Annotation> repeatedAnnotation : repeatedAnnotations) {
+        annotations.addAll(Arrays.asList(node.getAnnotationsByType(repeatedAnnotation)));
+      }
+    }
+
+    doRunAnnotationDrivenExtensions(node, annotations);
+  }
+
+  @SuppressWarnings("unchecked")
+  private void doRunAnnotationDrivenExtensions(NodeInfo<?, ?> node, List<Annotation> annotations) {
+    for (Annotation ann : annotations) {
       ExtensionAnnotation extAnn = ann.annotationType().getAnnotation(ExtensionAnnotation.class);
       if (extAnn == null) continue;
       IAnnotationDrivenExtension extension = getOrCreateExtension(extAnn.value());

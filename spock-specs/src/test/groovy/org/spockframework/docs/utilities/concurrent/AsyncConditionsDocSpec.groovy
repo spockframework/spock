@@ -6,7 +6,7 @@ import spock.util.concurrent.AsyncConditions
 class AsyncConditionsDocSpec extends Specification {
 
   // tag::async-conditions-spec[]
-  def "example of single passing evaluation"() {
+  def "example of single passing explicit evaluation"() {
     def conditions = new AsyncConditions()          // <1>
 
     when:
@@ -20,24 +20,24 @@ class AsyncConditionsDocSpec extends Specification {
     conditions.await()          // <4>
   }
 
-  def "example of multiple passing evaluations"() {
-    def conditions = new AsyncConditions(3)          // <5>
+  def "example of multiple passing implicit evaluations"() {
+    AsyncConditions conditions = new AsyncConditions(3)          // <5>
 
     when:
     Thread.start {
       conditions.evaluate {          // <6>
-        assert true
-        assert true
+        true
+        true
       }
       conditions.evaluate {          // <6>
-        assert true
+        true
       }
     }
 
     and:
     Thread.start {
       conditions.evaluate {          // <6>
-        assert true
+        true
       }
     }
 

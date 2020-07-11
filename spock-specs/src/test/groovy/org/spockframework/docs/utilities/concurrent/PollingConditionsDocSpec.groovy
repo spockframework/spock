@@ -23,34 +23,51 @@ class PollingConditionsDocSpec extends Specification {
   }
 
   def "succeeds if all conditions are eventually satisfied"() {
-    num = 42
+
+    when:
     Thread.start {
+      num = 42
       sleep(500)          // <2>
       str = "hello"
     }
 
-    when:
+    then:
     conditions.eventually {          // <3>
       num == 42
+    }
+
+    and:
+    conditions.eventually {          // <3>
       str == "hello"
     }
 
-    then:
+    and:
     noExceptionThrown()          // <4>
   }
 
   def "fails if any condition isn't satisfied in time"() {
-    num = 42
+
+    given:
+    Thread.start {
+      num = 42
+      sleep(500) // milliseconds     <2>
+      str = "hello"
+    }
+
+    expect:
+    conditions.within(0.1) { // seconds     <5>
+      num == 42
+    }
 
     when:
-    conditions.eventually {
-      num == 42
+    conditions.eventually {          // <3>
+      num == 0
       str == "bye"
     }
 
     then:
     def error = thrown(SpockTimeoutError)
-    error.cause instanceof ConditionNotSatisfiedError          // <5>
+    error.cause.message.contains('num == 0')          // <6>
   }
   // end::polling-conditions-spec[]
 }

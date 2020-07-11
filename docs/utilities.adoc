@@ -104,7 +104,7 @@ include::{sourcedir}/utilities/concurrent/PollingConditionsDocSpec.groovy[tag=po
 
 The two utility classes `BlockingVariable` and `BlockingVariables` are there to help with collecting variables that are
 written asynchronously, e.g. from another thread. Reading the variable(s) will block the current thread until a value is
-available and returned.
+available and returned or the timeout is reached.
 For a single variable, a type parameter can be provided, see the example below.
 An instance of `BlockingVariables` allows setting properties to it dynamically, and comparisons (i.e. assertions) can be
 made for the individual properties, accessing them by their name.

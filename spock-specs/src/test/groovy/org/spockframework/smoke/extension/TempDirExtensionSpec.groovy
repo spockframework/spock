@@ -115,4 +115,44 @@ class Foo extends Specification {
     assertTmpPathsNotExist()
   }
 
+  def "have unwritable directory in temp directory"() {
+    when:
+    def result = runner.runWithImports("""import spock.lang.Shared
+import spock.lang.Stepwise
+
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.Paths
+import java.nio.file.attribute.FileAttribute
+import java.nio.file.attribute.PosixFileAttributes
+import java.nio.file.attribute.PosixFilePermissions
+
+@Stepwise
+class Foo extends Specification {
+
+  @TempDir
+  Path dir
+
+  def test1() {
+    expect:
+    def aaa = dir.resolve("aaa")
+    def aaabbb = aaa.resolve("bbb")
+    def tempFile = aaabbb.resolve("tmp.txt")
+    Files.createDirectories(dir.resolve("aaa").resolve("bbb"),
+      PosixFilePermissions.asFileAttribute(PosixFilePermissions.fromString("rwxr-----")))
+    Files.write(tempFile, "ewfwf".getBytes())
+    Files.setPosixFilePermissions(aaabbb, PosixFilePermissions.fromString("r-xr-----"))
+    Files.setPosixFilePermissions(aaa, PosixFilePermissions.fromString("r-xr-----"))
+    org.spockframework.smoke.extension.TempDirExtensionSpec.tmpPaths.add(dir)
+  }
+
+}
+""")
+
+    then:
+    result.testsStartedCount == 1
+    result.testsSucceededCount == 1
+    assertTmpPathsNotExist()
+  }
+
 }

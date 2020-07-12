@@ -462,6 +462,28 @@ annotated object. To prevent cleanup exceptions from being reported, override th
 def ignoreMyExceptions
 ----
 
+=== TempDir
+
+Generate temp directory for test, and clean them after test.
+
+`TempDir` can be applied to annotate a member field of type `java.io.File` or `java.nio.file.Path`
+in a spec class. If annotated field is shared, the temp directory will be shared in this spec, otherwise every
+feature will have its' own temp directory:
+
+[source,groovy]
+----
+class TempDirSpec {
+  // all feature will share the same temp directory `path1`
+  @TempDir
+  @Shared
+  Path path1
+
+  // every feature have its' own `path2`
+  @TempDir
+  Path path2
+}
+----
+
 === Title and Narrative
 
 To attach a natural-language name to a spec, use `spock.lang.Title`:

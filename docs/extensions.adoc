@@ -478,7 +478,7 @@ class TempDirSpec {
   @Shared
   Path path1
 
-  // every feature have its' own `path2`
+  // every feature have its own `path2`
   @TempDir
   Path path2
 }

@@ -4077,8 +4077,8 @@ methods.</p>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@Stepwise</span>
-<span class="type">class</span> <span class="class">FooSpec</span> <span class="directive">extends</span> Specification {
-  <span class="annotation">@ConfineMetaClassChanges</span>([<span class="predefined-type">String</span>])
+<span class="type">class</span> <span class="class">ConfineMetaClassChangesDocSpec</span> <span class="directive">extends</span> Specification {
+  <span class="annotation">@ConfineMetaClassChanges</span>(<span class="predefined-type">String</span>)
   <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">I run first</span><span class="delimiter">&quot;</span></span>() {
     <span class="key">when</span>:
     <span class="predefined-type">String</span>.metaClass.someMethod = { delegate }
@@ -4104,6 +4104,10 @@ after <code>cleanupSpec</code> is executed.</p>
 <div class="paragraph">
 <p>When applied to a feature method, the meta classes are restored to as they were after <code>setup</code> was executed,
 before <code>cleanup</code> is executed.</p>
+</div>
+<div class="paragraph">
+<p>To confine meta class changes for multiple classes, you can either give multiple classes to the <code>value</code> attribute
+of the annotation or you can apply the annotation multiple times to the same target.</p>
 </div>
 <div class="admonitionblock caution">
 <table>
@@ -5318,6 +5322,9 @@ If these methods are not overwritten, they forward to the usual <code>visitSpecA
 <li>
 <p><code>AbstractAnnotationDrivenExtension</code> is now deprecated and its logic was moved to <code>default</code> methods of
 <code>IAnnotationDrivenExtension</code> which should be implemented directly now instead of extending the abstract class.</p>
+</li>
+<li>
+<p><code>@ConfineMetaClassChanges</code> is now repeatable</p>
 </li>
 </ul>
 </div>
@@ -7761,7 +7768,7 @@ This is due to how groovy implements traits and AST transformations.</p>
 <div id="footer">
 <div id="footer-text">
 Version 2.0-SNAPSHOT<br>
-Last updated 2020-07-09 16:42:44 UTC
+Last updated 2020-07-13 18:43:20 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./coderay-asciidoctor.css">

@@ -20,9 +20,12 @@ import org.spockframework.runtime.extension.IAnnotationDrivenExtension;
 import org.spockframework.runtime.model.FeatureInfo;
 import org.spockframework.runtime.model.IInterceptable;
 import org.spockframework.runtime.model.SpecInfo;
-import org.spockframework.util.CollectionUtil;
-
 import spock.util.mop.ConfineMetaClassChanges;
+
+import java.util.Arrays;
+import java.util.List;
+
+import static java.util.stream.Collectors.toSet;
 
 /**
  * @author Luke Daley
@@ -30,16 +33,21 @@ import spock.util.mop.ConfineMetaClassChanges;
  */
 public class ConfineMetaClassChangesExtension implements IAnnotationDrivenExtension<ConfineMetaClassChanges> {
   @Override
-  public void visitSpecAnnotation(ConfineMetaClassChanges annotation, SpecInfo spec) {
-    addInterceptor(annotation, spec.getBottomSpec());
+  public void visitSpecAnnotations(List<ConfineMetaClassChanges> annotations, SpecInfo spec) {
+    addInterceptor(annotations, spec.getBottomSpec());
   }
 
   @Override
-  public void visitFeatureAnnotation(ConfineMetaClassChanges annotation, FeatureInfo feature) {
-    addInterceptor(annotation, feature.getFeatureMethod());
+  public void visitFeatureAnnotations(List<ConfineMetaClassChanges> annotations, FeatureInfo feature) {
+    addInterceptor(annotations, feature.getFeatureMethod());
   }
 
-  private void addInterceptor(ConfineMetaClassChanges annotation, IInterceptable interceptable) {
-    interceptable.addInterceptor(new ConfineMetaClassChangesInterceptor(CollectionUtil.asSet(annotation.value())));
+  private void addInterceptor(List<ConfineMetaClassChanges> annotations, IInterceptable interceptable) {
+    interceptable.addInterceptor(new ConfineMetaClassChangesInterceptor(
+      annotations
+        .stream()
+        .map(ConfineMetaClassChanges::value)
+        .flatMap(Arrays::stream)
+        .collect(toSet())));
   }
 }

@@ -20,6 +20,7 @@ import java.lang.annotation.*;
 
 import org.spockframework.runtime.extension.ExtensionAnnotation;
 import org.spockframework.runtime.extension.builtin.ConfineMetaClassChangesExtension;
+import org.spockframework.util.Beta;
 
 /**
  * Confines any changes made to the meta classes of the specified classes to the
@@ -35,15 +36,26 @@ import org.spockframework.runtime.extension.builtin.ConfineMetaClassChangesExten
  * <p>If a feature method is annotated, the meta classes are restored to as they
  * were after <tt>setup()</tt> was executed, before <tt>cleanup() is executed.
  * For a data-driven feature method, meta classes are restored after each iteration.
- * 
+ *
  * @author Luke Daley
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE, ElementType.METHOD})
 @ExtensionAnnotation(ConfineMetaClassChangesExtension.class)
+@Repeatable(ConfineMetaClassChanges.Container.class)
 public @interface ConfineMetaClassChanges {
   /**
    * The classes whose meta class changes are to be confined.
    */
   Class<?>[] value();
+
+  /**
+   * @since 2.0
+   */
+  @Beta
+  @Retention(RetentionPolicy.RUNTIME)
+  @Target({ElementType.TYPE, ElementType.METHOD})
+  @interface Container {
+    ConfineMetaClassChanges[] value();
+  }
 }

@@ -468,7 +468,7 @@ Generate temp directory for test, and clean them after test.
 
 `TempDir` can be applied to annotate a member field of type `java.io.File` or `java.nio.file.Path`
 in a spec class. If the annotated field is shared, the temp directory will be shared in this spec, otherwise every
-feature will have its' own temp directory:
+feature will have its own temp directory:
 
 [source,groovy]
 ----

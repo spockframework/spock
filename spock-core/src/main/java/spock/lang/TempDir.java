@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
 /**
  * Generate temp directory for test, and clean them after test.
  *
- * <p>@TempDir can be applied to annotate a member field of type {@link java.io.File} or {@link java.nio.file.Path}
+ * <p>`@TempDir` can be applied to annotate a member field of type {@link File} or {@link Path}
  * in a spec class. If annotated field is shared, the temp directory will be shared in this spec, otherwise every
  * feature will have its' own temp directory.
  *

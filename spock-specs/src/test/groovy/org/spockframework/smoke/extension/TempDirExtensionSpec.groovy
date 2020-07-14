@@ -1,158 +1,104 @@
 package org.spockframework.smoke.extension
 
-import org.spockframework.EmbeddedSpecification
+import org.spockframework.util.Beta
+import spock.lang.Shared
+import spock.lang.Specification
+import spock.lang.Stepwise
+import spock.lang.TempDir
 
 import java.nio.file.Files
 import java.nio.file.Path
+import java.nio.file.Paths
+import java.nio.file.attribute.PosixFilePermissions
 
 /**
- * @author: dqyuan
- * @date: 2020/07/12
+ * @author dqyuan
  */
-class TempDirExtensionSpec extends EmbeddedSpecification {
+@Beta
+@Stepwise
+class TempDirExtensionSpec extends Specification {
 
-  static List<Path> tmpPaths = []
+  @Shared
+  @TempDir
+  Path sharedDir
+  static Path preShared
 
-  def setup() {
-    tmpPaths.clear()
+  @TempDir
+  File iterationDir
+  static File preIteration
+
+  @TempDir(baseDir = "build")
+  Path customerTempDir
+
+  @TempDir(baseDir = "build", reserveAfterTest = { true })
+  Path reserveDir
+  static Path reserveFile
+
+  def "temp dir exist"() {
+    preShared = sharedDir
+    preIteration = iterationDir
+    reserveFile = reserveDir.resolve("test.txt")
+    Files.write(reserveFile, "aaa".getBytes())
+    expect:
+    assert Files.exists(sharedDir)
+    assert Files.exists(Paths.get(iterationDir.toURI()))
+    assert Files.exists(customerTempDir)
+    assert Files.exists(reserveDir)
+    assert customerTempDir.parent.toString().startsWith("build")
+    assert reserveDir.parent.toString().startsWith("build")
   }
 
-  def assertTmpPathsNotExist() {
-    tmpPaths.each {
-      path -> assert !Files.exists(path)
-    }
+  def "reserve temp directory when reserveAfterTest is true"() {
+    expect:
+    assert Files.exists(reserveFile)
   }
 
   def "@TempDir creates only one dir for one spec, if the annotated field is 'shared'"() {
-    when:
-    def result = runner.runWithImports("""import spock.lang.Shared
-import spock.lang.Stepwise
-
-import java.nio.file.Files
-import java.nio.file.Path
-import java.nio.file.Paths
-
-@Stepwise
-class Foo extends Specification {
-
-  @Shared
-  @TempDir
-  Path dir1
-
-  @Shared
-  @TempDir
-  File dir2
-
-  static String testContent = UUID.randomUUID().toString()
-
-  static String subFile = "dirtest.txt"
-
-  def test1() {
     expect:
-    Path testTxt = dir1.resolve(subFile)
-    Files.write(testTxt, testContent.getBytes())
-    File testTxt2 = new File(dir2, subFile)
-    Files.write(Paths.get(testTxt2.toURI()), testContent.getBytes())
-    org.spockframework.smoke.extension.TempDirExtensionSpec.tmpPaths.add(dir1)
-    org.spockframework.smoke.extension.TempDirExtensionSpec.tmpPaths.add(Paths.get(dir2.toURI()))
+    assert sharedDir == preShared
+    assert iterationDir != preIteration
+    assert !Files.exists(Paths.get(preIteration.toURI()))
   }
 
-  def test2() {
+  def "@TempDir creates one temp directory per iteration for normal field"(String foo, int bar) {
+    expect:
+    assert iterationDir != preIteration
+
     when:
-    def txt1 = Files.readAllLines(dir1.resolve(subFile))[0]
-    def txt2 = Files.readAllLines(Paths.get(dir2.toURI()).resolve(subFile))[0]
+    preIteration = iterationDir
 
     then:
-    txt1 == testContent
-    txt2 == testContent
+    assert foo == "fo"
+    assert bar == 1
+
+    where:
+    foo  | bar
+    "fo" | 1
+    "fo" | 1
+    "fo" | 1
   }
 
-}
-""")
-
-    then:
-    result.testsStartedCount == 2
-    result.testsSucceededCount == 2
-    assertTmpPathsNotExist()
-  }
-
-  def "@TempDir creates one temp dir for one feature method, if the annotated field is not 'shared'"() {
-    when:
-    def result = runner.runWithImports("""import spock.lang.Shared
-import spock.lang.Stepwise
-
-import java.nio.file.Files
-import java.nio.file.Path
-import java.nio.file.Paths
-
-@Stepwise
-class Foo extends Specification {
-
-  @TempDir
-  Path dir
-
-  def test1() {
+  def "have unwritable directory in temp directory"(int i) {
     expect:
-    assert Files.exists(dir)
-    org.spockframework.smoke.extension.TempDirExtensionSpec.tmpPaths.add(dir)
-  }
+    if (i == 0) {
+      def dir = Paths.get(iterationDir.toURI())
+      def aaa = dir.resolve("aaa")
+      def aaabbb = aaa.resolve("bbb")
+      def tempFile = aaabbb.resolve("tmp.txt")
+      Files.createDirectories(dir.resolve("aaa").resolve("bbb"),
+        PosixFilePermissions.asFileAttribute(PosixFilePermissions.fromString("rwxr-----")))
+      Files.write(tempFile, "ewfwf".getBytes())
+      Files.setPosixFilePermissions(aaabbb, PosixFilePermissions.fromString("r-xr-----"))
+      Files.setPosixFilePermissions(aaa, PosixFilePermissions.fromString("r-xr-----"))
+      preIteration = iterationDir
+    } else if (i == 1) {
+      assert !Files.exists(Paths.get(preIteration.toURI()))
+    }
 
-  def test2() {
-    expect:
-    Path prePath = org.spockframework.smoke.extension.TempDirExtensionSpec.tmpPaths[0]
-    assert prePath != dir
-    assert !Files.exists(prePath)
-    assert Files.exists(dir)
-    org.spockframework.smoke.extension.TempDirExtensionSpec.tmpPaths.add(dir)
-  }
-
-}
-""")
-
-    then:
-    result.testsStartedCount == 2
-    result.testsSucceededCount == 2
-    assertTmpPathsNotExist()
-  }
-
-  def "have unwritable directory in temp directory"() {
-    when:
-    def result = runner.runWithImports("""import spock.lang.Shared
-import spock.lang.Stepwise
-
-import java.nio.file.Files
-import java.nio.file.Path
-import java.nio.file.Paths
-import java.nio.file.attribute.FileAttribute
-import java.nio.file.attribute.PosixFileAttributes
-import java.nio.file.attribute.PosixFilePermissions
-
-@Stepwise
-class Foo extends Specification {
-
-  @TempDir
-  Path dir
-
-  def test1() {
-    expect:
-    def aaa = dir.resolve("aaa")
-    def aaabbb = aaa.resolve("bbb")
-    def tempFile = aaabbb.resolve("tmp.txt")
-    Files.createDirectories(dir.resolve("aaa").resolve("bbb"),
-      PosixFilePermissions.asFileAttribute(PosixFilePermissions.fromString("rwxr-----")))
-    Files.write(tempFile, "ewfwf".getBytes())
-    Files.setPosixFilePermissions(aaabbb, PosixFilePermissions.fromString("r-xr-----"))
-    Files.setPosixFilePermissions(aaa, PosixFilePermissions.fromString("r-xr-----"))
-    org.spockframework.smoke.extension.TempDirExtensionSpec.tmpPaths.add(dir)
-  }
-
-}
-""")
-
-    then:
-    result.testsStartedCount == 1
-    result.testsSucceededCount == 1
-    assertTmpPathsNotExist()
+    where:
+    i | _
+    0 | _
+    1 | _
   }
 
 }

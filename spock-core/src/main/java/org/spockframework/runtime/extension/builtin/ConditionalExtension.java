@@ -25,11 +25,9 @@ import org.spockframework.runtime.extension.IMethodInterceptor;
 import org.spockframework.runtime.extension.IMethodInvocation;
 import org.spockframework.runtime.model.FeatureInfo;
 import org.spockframework.runtime.model.SpecInfo;
+import org.spockframework.util.ConditionUtil;
 
 import java.lang.annotation.Annotation;
-import java.util.Map;
-
-import static java.util.Collections.emptyMap;
 
 public abstract class ConditionalExtension<T extends Annotation> implements IAnnotationDrivenExtension<T> {
   protected abstract Class<? extends Closure> getConditionClass(T annotation);
@@ -48,17 +46,17 @@ public abstract class ConditionalExtension<T extends Annotation> implements IAnn
 
   @Override
   public void visitSpecAnnotation(T annotation, SpecInfo spec) {
-    Closure condition = createCondition(annotation);
-    Object result = evaluateCondition(condition);
+    Closure condition = ConditionUtil.createCondition(getConditionClass(annotation));
+    Object result = ConditionUtil.evaluateCondition(condition);
     specConditionResult(GroovyRuntimeUtil.isTruthy(result), annotation, spec);
   }
 
   @Override
   public void visitFeatureAnnotation(T annotation, FeatureInfo feature) {
-    Closure condition = createCondition(annotation);
+    Closure condition = ConditionUtil.createCondition(getConditionClass(annotation));
 
     try {
-      Object result = evaluateCondition(condition);
+      Object result = ConditionUtil.evaluateCondition(condition);
       featureConditionResult(GroovyRuntimeUtil.isTruthy(result), annotation, feature);
     } catch (ExtensionException ee) {
       if (!(ee.getCause() instanceof MissingPropertyException)) {
@@ -69,31 +67,6 @@ public abstract class ConditionalExtension<T extends Annotation> implements IAnn
         throw ee;
       }
       feature.getFeatureMethod().addInterceptor(new IterationCondition(condition, annotation));
-    }
-  }
-
-  private Closure createCondition(T annotation) {
-    Class<? extends Closure> clazz = getConditionClass(annotation);
-    try {
-      return clazz.getConstructor(Object.class, Object.class).newInstance(null, null);
-    } catch (Exception e) {
-      throw new ExtensionException("Failed to instantiate condition", e);
-    }
-  }
-
-  private static Object evaluateCondition(Closure condition) {
-    return evaluateCondition(condition, emptyMap());
-  }
-
-  private static Object evaluateCondition(Closure condition, Map<String, Object> dataVariables) {
-    PreconditionContext context = new PreconditionContext(dataVariables);
-    condition.setDelegate(context);
-    condition.setResolveStrategy(Closure.DELEGATE_ONLY);
-
-    try {
-      return condition.call(context);
-    } catch (Exception e) {
-      throw new ExtensionException("Failed to evaluate condition", e);
     }
   }
 
@@ -108,7 +81,7 @@ public abstract class ConditionalExtension<T extends Annotation> implements IAnn
 
     @Override
     public void intercept(IMethodInvocation invocation) throws Throwable {
-      Object result = evaluateCondition(condition, invocation.getIteration().getDataVariables());
+      Object result = ConditionUtil.evaluateCondition(condition, invocation.getIteration().getDataVariables());
       iterationConditionResult(GroovyRuntimeUtil.isTruthy(result), annotation, invocation);
       invocation.proceed();
     }

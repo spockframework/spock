@@ -14,6 +14,8 @@ include::include.adoc[]
 
 - `@ConfineMetaClassChanges` is now repeatable
 
+- `@Issue` is now repeatable
+
 
 == 2.0-M3 (2020-06-11)
 

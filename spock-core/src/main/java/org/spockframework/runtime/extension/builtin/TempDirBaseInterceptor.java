@@ -7,9 +7,8 @@ import org.spockframework.runtime.model.SpecInfo;
 import org.spockframework.util.WrappedException;
 
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.nio.file.*;
-import java.nio.file.attribute.BasicFileAttributes;
+import java.util.function.BiConsumer;
 
 import static java.nio.file.FileVisitResult.CONTINUE;
 
@@ -21,14 +20,15 @@ public abstract class TempDirBaseInterceptor extends AbstractMethodInterceptor {
   private static final String TEMP_DIR_PREFIX = "spock";
 
   private final Class<?> fieldType;
-  private final Field reflection;
+  private final BiConsumer<Object, Object> fieldSetter;
   private final String parentDir;
   private final boolean reserveAfterTest;
   private Path tempPath;
 
-  TempDirBaseInterceptor(Class<?> fieldType, Field reflection, String parentDir, boolean reserveAfterTest) {
+  TempDirBaseInterceptor(Class<?> fieldType, BiConsumer<Object, Object> fieldSetter,
+                         String parentDir, boolean reserveAfterTest) {
     this.fieldType = fieldType;
-    this.reflection = reflection;
+    this.fieldSetter = fieldSetter;
     this.parentDir = parentDir;
     this.reserveAfterTest = reserveAfterTest;
   }
@@ -44,22 +44,24 @@ public abstract class TempDirBaseInterceptor extends AbstractMethodInterceptor {
     }
   }
 
-  void setUp(IMethodInvocation invocation, boolean execute)  throws Throwable {
+  protected void setUp(Object specInst) {
     tempPath = generateTempDir(parentDir);
-    reflection.setAccessible(true);
-    reflection.set(invocation.getInstance(), fieldType == Path.class ? tempPath : tempPath.toFile());
-    if (execute)
-      invocation.proceed();
+    fieldSetter.accept(specInst, fieldType.isAssignableFrom(Path.class) ?
+      tempPath : tempPath.toFile());
   }
 
-  void destroy(IMethodInvocation invocation, boolean execute) throws Throwable {
+  protected void destroy() throws IOException {
+    if (!reserveAfterTest) {
+      deleteTempDir();
+    }
+  }
+
+  protected void invoke(IMethodInvocation invocation) throws Throwable {
+    setUp(invocation.getInstance());
     try {
-      if (execute)
-        invocation.proceed();
+      invocation.proceed();
     } finally {
-      if (!reserveAfterTest) {
-        deleteTempDir();
-      }
+      destroy();
     }
   }
 

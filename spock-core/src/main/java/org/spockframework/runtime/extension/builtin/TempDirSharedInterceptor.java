@@ -3,7 +3,7 @@ package org.spockframework.runtime.extension.builtin;
 import org.spockframework.runtime.extension.IMethodInvocation;
 import org.spockframework.runtime.model.SpecInfo;
 
-import java.lang.reflect.Field;
+import java.util.function.BiConsumer;
 
 /**
  * @author dqyuan
@@ -11,24 +11,18 @@ import java.lang.reflect.Field;
  */
 public class TempDirSharedInterceptor extends TempDirBaseInterceptor {
 
-  public TempDirSharedInterceptor(Class<?> fieldType, Field reflection, String parentDir, boolean reserveAfterTest) {
-    super(fieldType, reflection, parentDir, reserveAfterTest);
+  TempDirSharedInterceptor(Class<?> fieldType, BiConsumer<Object, Object> fieldSetter, String parentDir, boolean reserveAfterTest) {
+    super(fieldType, fieldSetter, parentDir, reserveAfterTest);
   }
 
   @Override
   void install(SpecInfo specInfo) {
-    specInfo.addSetupSpecInterceptor(this);
-    specInfo.addCleanupSpecInterceptor(this);
+    specInfo.addInterceptor(this);
   }
 
   @Override
-  public void interceptSetupSpecMethod(IMethodInvocation invocation) throws Throwable {
-    setUp(invocation, true);
-  }
-
-  @Override
-  public void interceptCleanupSpecMethod(IMethodInvocation invocation) throws Throwable {
-    destroy(invocation, true);
+  public void interceptSpecExecution(IMethodInvocation invocation) throws Throwable {
+    invoke(invocation);
   }
 
 }

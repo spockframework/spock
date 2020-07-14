@@ -22,13 +22,13 @@ public class TempDirExtension implements IAnnotationDrivenExtension<TempDir> {
   @Override
   public void visitFieldAnnotation(TempDir annotation, FieldInfo field) {
     Class<?> fieldType = field.getType();
-    if (!File.class.equals(fieldType) && !Path.class.equals(fieldType)) {
+    if (!fieldType.isAssignableFrom(File.class) && !fieldType.isAssignableFrom(Path.class)) {
       throw new InvalidSpecException("@TempDir can only be used on File field or Path field");
     }
     TempDirBaseInterceptor interceptor = field.isShared()?
-      new TempDirSharedInterceptor(fieldType, field.getReflection(),
+      new TempDirSharedInterceptor(fieldType, field::writeValue,
         annotation.baseDir(), evaluateCondition(annotation)):
-      new TempDirIterationInterceptor(fieldType, field.getReflection(),
+      new TempDirIterationInterceptor(fieldType, field::writeValue,
         annotation.baseDir(), evaluateCondition(annotation));
     interceptor.install(field.getParent());
   }

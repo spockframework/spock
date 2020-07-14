@@ -4,7 +4,7 @@ import org.spockframework.runtime.extension.IMethodInvocation;
 import org.spockframework.runtime.model.FeatureInfo;
 import org.spockframework.runtime.model.SpecInfo;
 
-import java.lang.reflect.Field;
+import java.util.function.BiConsumer;
 
 /**
  * @author dqyuan
@@ -12,8 +12,8 @@ import java.lang.reflect.Field;
  */
 public class TempDirIterationInterceptor extends TempDirBaseInterceptor {
 
-  public TempDirIterationInterceptor(Class<?> fieldType, Field reflection, String parentDir, boolean reserveAfterTest) {
-    super(fieldType, reflection, parentDir, reserveAfterTest);
+  TempDirIterationInterceptor(Class<?> fieldType, BiConsumer<Object, Object> fieldSetter, String parentDir, boolean reserveAfterTest) {
+    super(fieldType, fieldSetter, parentDir, reserveAfterTest);
   }
 
   @Override
@@ -25,12 +25,7 @@ public class TempDirIterationInterceptor extends TempDirBaseInterceptor {
 
   @Override
   public void interceptIterationExecution(IMethodInvocation invocation) throws Throwable {
-    setUp(invocation, false);
-    try {
-      invocation.proceed();
-    } finally {
-      destroy(invocation, false);
-    }
+    invoke(invocation);
   }
 
 }

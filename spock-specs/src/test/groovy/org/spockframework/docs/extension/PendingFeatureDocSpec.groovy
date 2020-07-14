@@ -1,6 +1,5 @@
 package org.spockframework.docs.extension
 
-import org.spockframework.runtime.extension.builtin.PreconditionContext
 import spock.lang.PendingFeature
 import spock.lang.PendingFeatureIf
 import spock.lang.Specification
@@ -15,6 +14,17 @@ class PendingFeatureDocSpec extends Specification {
   }
 
 // tag::example-b[]
+  @PendingFeature(exceptions = [
+    UnsupportedOperationException,
+    IllegalArgumentException
+  ])
+  def "I throw one of two exceptions"() {
+// end::example-b[]
+    expect:
+    throw new IllegalArgumentException()
+  }
+
+// tag::example-c[]
   @PendingFeature(
     exceptions = UnsupportedOperationException,
     reason = 'operation not yet supported')
@@ -25,7 +35,7 @@ class PendingFeatureDocSpec extends Specification {
     value = { os.windows },
     reason = 'Does not yet work on Windows')
   def "I have various problems in certain situations"() {
-// end::example-b[]
+// end::example-c[]
     expect:
     throw new IllegalArgumentException()
   }

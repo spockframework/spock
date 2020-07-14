@@ -110,8 +110,8 @@ Using the `os` property, the previous example can be rewritten as:
 include::{sourcedir}/extension/IgnoreIfDocSpec.groovy[tag=example-b]
 ----
 
-If multiple `@IgnoreIf` annotations are present, the annotated element is skipped if either of the
-conditions evaluates to `true`:
+If multiple `@IgnoreIf` annotations are present, they are effectively combined with a logical "or".
+The annotated element is skipped if any of the conditions evaluates to `true`:
 
 [source,groovy,indent=0]
 ----

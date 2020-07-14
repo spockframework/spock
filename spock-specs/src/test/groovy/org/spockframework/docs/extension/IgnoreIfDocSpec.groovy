@@ -15,7 +15,7 @@ class IgnoreIfDocSpec extends Specification {
 
 // tag::example-b[]
   @IgnoreIf({ os.windows })
-  def "I'll run everywhere but on Windows too"() {
+  def "I will run everywhere but on Windows"() {
 // end::example-b[]
     expect:
     true
@@ -24,7 +24,7 @@ class IgnoreIfDocSpec extends Specification {
 // tag::example-c[]
   @IgnoreIf({ os.windows })
   @IgnoreIf({ jvm.java8 })
-  def "I'll run everywhere but on Windows except on Java 8"() {
+  def "I'll run everywhere but on Windows or anywhere on Java 8"() {
 // end::example-c[]
     expect:
     true
@@ -32,7 +32,7 @@ class IgnoreIfDocSpec extends Specification {
 
 // tag::example-d[]
   @IgnoreIf({ PreconditionContext it -> it.os.windows })
-  def "I'll run everywhere but on Windows as well"() {
+  def "I will run everywhere but not on Windows"() {
 // end::example-d[]
     expect:
     true

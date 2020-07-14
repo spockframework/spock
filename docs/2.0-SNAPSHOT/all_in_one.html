@@ -4249,12 +4249,22 @@ So that bar
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@Issue</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">http://my.issues.org/FOO-1</span><span class="delimiter">&quot;</span></span>)
-<span class="type">class</span> <span class="class">MySpec</span> {
+<span class="type">class</span> <span class="class">IssueDocSpec</span> <span class="directive">extends</span> Specification {
   <span class="annotation">@Issue</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">http://my.issues.org/FOO-2</span><span class="delimiter">&quot;</span></span>)
-  <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">Foo should do bar</span><span class="delimiter">&quot;</span></span>() { ... }
+  <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">Foo should do bar</span><span class="delimiter">&quot;</span></span>() {
+    <span class="key">expect</span>: <span class="predefined-constant">true</span>
+  }
 
   <span class="annotation">@Issue</span>([<span class="string"><span class="delimiter">&quot;</span><span class="content">http://my.issues.org/FOO-3</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">http://my.issues.org/FOO-4</span><span class="delimiter">&quot;</span></span>])
-  <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">I have two related issues</span><span class="delimiter">&quot;</span></span>() { ... }
+  <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">I have two related issues</span><span class="delimiter">&quot;</span></span>() {
+    <span class="key">expect</span>: <span class="predefined-constant">true</span>
+  }
+
+  <span class="annotation">@Issue</span>([<span class="string"><span class="delimiter">&quot;</span><span class="content">http://my.issues.org/FOO-5</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">http://my.issues.org/FOO-6</span><span class="delimiter">&quot;</span></span>])
+  <span class="annotation">@Issue</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">http://my.issues.org/FOO-7</span><span class="delimiter">&quot;</span></span>)
+  <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">I have three related issues</span><span class="delimiter">&quot;</span></span>() {
+    <span class="key">expect</span>: <span class="predefined-constant">true</span>
+  }
 }</code></pre>
 </div>
 </div>
@@ -5325,6 +5335,9 @@ If these methods are not overwritten, they forward to the usual <code>visitSpecA
 </li>
 <li>
 <p><code>@ConfineMetaClassChanges</code> is now repeatable</p>
+</li>
+<li>
+<p><code>@Issue</code> is now repeatable</p>
 </li>
 </ul>
 </div>
@@ -7768,7 +7781,7 @@ This is due to how groovy implements traits and AST transformations.</p>
 <div id="footer">
 <div id="footer-text">
 Version 2.0-SNAPSHOT<br>
-Last updated 2020-07-13 18:43:20 UTC
+Last updated 2020-07-14 14:45:25 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./coderay-asciidoctor.css">

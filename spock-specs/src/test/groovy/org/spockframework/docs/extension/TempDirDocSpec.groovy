@@ -14,6 +14,10 @@ import java.nio.file.Path
 class TempDirDocSpec extends Specification {
 // end::example-common[]
 
+  def placeholder() {
+    expect: true
+  }
+
 // tag::example-a[]
   // all feature will share the same temp directory path1
   @TempDir
@@ -27,6 +31,10 @@ class TempDirDocSpec extends Specification {
 // end::example-a[]
 
 class TempDirParamSpec extends Specification {
+
+  def placeholder() {
+    expect:true
+  }
 
 // tag::example-b[]
   // generate temp directory in "build" directory relative to project path

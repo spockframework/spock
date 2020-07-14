@@ -58,7 +58,7 @@ public class TempDirExtension implements IAnnotationDrivenExtension<TempDir> {
     void setUp(IMethodInvocation invocation)  throws Throwable {
       tempPath = generateTempDir();
       reflection.setAccessible(true);
-      reflection.set(invocation.getInstance(), fieldType == Path.class? tempPath: tempPath.toFile());
+      reflection.set(invocation.getInstance(), fieldType == Path.class ? tempPath : tempPath.toFile());
       invocation.proceed();
     }
 

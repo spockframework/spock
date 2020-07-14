@@ -170,11 +170,18 @@ class Bar extends Closure {
     expect: false
   }
 
-  @IgnoreIf({ false })
-  @IgnoreIf({ false })
-  @FailsWith(ConditionNotSatisfiedError)
   def "feature is not ignored if all IgnoreIf annotations are false"() {
-    expect: false
+    when:
+    runner.runSpecBody """
+@IgnoreIf({ false })
+@IgnoreIf({ false })
+def foo() {
+  expect: false
+}
+"""
+
+    then:
+    thrown(ConditionNotSatisfiedError)
   }
 
   @IgnoreIf({ a == 1 })

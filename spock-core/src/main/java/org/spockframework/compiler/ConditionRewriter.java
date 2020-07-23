@@ -29,6 +29,8 @@ import org.codehaus.groovy.ast.stmt.*;
 import org.codehaus.groovy.classgen.BytecodeExpression;
 import org.codehaus.groovy.syntax.Types;
 
+import static org.spockframework.compiler.AstUtil.createDirectMethodCall;
+
 // NOTE: currently some conversions reference old expression objects rather than copying them;
 // this can potentially lead to aliasing problems (e.g. for Condition.originalExpression)
 // background: it was found that transformExpression() cannot be used to copy all expressions
@@ -118,7 +120,6 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> i
   }
 
   @Override
-  @SuppressWarnings("unchecked")
   public void visitArgumentlistExpression(ArgumentListExpression expr) {
     ArgumentListExpression conversion =
         new ArgumentListExpression(
@@ -208,16 +209,16 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> i
   public void visitBinaryExpression(BinaryExpression expr) {
     // order of convert calls is important or indexes and thus recorded values get confused
     Expression convertedLeftExpression = Types.ofType(expr.getOperation().getType(), Types.ASSIGNMENT_OPERATOR) ?
-        // prevent lvalue from getting turned into record(lvalue), which can no longer be assigned to
-        convertAndRecordNa(expr.getLeftExpression()) :
-        convert(expr.getLeftExpression());
+      // prevent lvalue from getting turned into record(lvalue), which can no longer be assigned to
+      convertAndRecordNa(expr.getLeftExpression()) :
+      convert(expr.getLeftExpression());
     Expression convertedRightExpression = convert(expr.getRightExpression());
 
     Expression conversion =
-        Types.ofType(expr.getOperation().getType(), Types.KEYWORD_INSTANCEOF) ?
-            // morph instanceof expression to isInstance method call to be able to record rvalue
-            new MethodCallExpression(convertedRightExpression, "isInstance", convertedLeftExpression):
-            new BinaryExpression(convertedLeftExpression, expr.getOperation(), convertedRightExpression);
+      Types.ofType(expr.getOperation().getType(), Types.KEYWORD_INSTANCEOF) ?
+        // morph instanceof expression to isInstance method call to be able to record rvalue
+        createDirectMethodCall(convertedRightExpression, resources.getAstNodeCache().Class_IsInstance, convertedLeftExpression) :
+        new BinaryExpression(convertedLeftExpression, expr.getOperation(), convertedRightExpression);
 
     conversion.setSourcePosition(expr);
     result = record(conversion);
@@ -495,11 +496,11 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> i
 
   private Expression record(Expression expr) {
     // replace expr with $spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(recordCount++), <expr>)
-    MethodCallExpression result = AstUtil.createDirectMethodCall(
+    MethodCallExpression result = createDirectMethodCall(
       new VariableExpression(SpockNames.VALUE_RECORDER),
       resources.getAstNodeCache().ValueRecorder_Record,
       new ArgumentListExpression(
-        AstUtil.createDirectMethodCall(
+        createDirectMethodCall(
           new VariableExpression(SpockNames.VALUE_RECORDER),
           resources.getAstNodeCache().ValueRecorder_StartRecordingValue,
           new ArgumentListExpression(new ConstantExpression(recordCount++))
@@ -516,7 +517,7 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> i
   }
 
   private Expression realizeNas(Expression expr) {
-    return AstUtil.createDirectMethodCall(
+    return createDirectMethodCall(
         new VariableExpression(SpockNames.VALUE_RECORDER),
         resources.getAstNodeCache().ValueRecorder_RealizeNas,
         new ArgumentListExpression(new ConstantExpression(recordCount), expr));
@@ -672,7 +673,7 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> i
         new CatchStatement(
             new Parameter(new ClassNode(Throwable.class), "throwable"),
             new ExpressionStatement(
-                AstUtil.createDirectMethodCall(
+                createDirectMethodCall(
                     new ClassExpression(resources.getAstNodeCache().SpockRuntime),
                     resources.getAstNodeCache().SpockRuntime_ConditionFailedWithException,
                     new ArgumentListExpression(Arrays.asList(
@@ -701,7 +702,7 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> i
       new CatchStatement(
         new Parameter(new ClassNode(Throwable.class), "throwable"),
         new ExpressionStatement(
-          AstUtil.createDirectMethodCall(
+          createDirectMethodCall(
             new ClassExpression(resources.getAstNodeCache().SpockRuntime),
             resources.getAstNodeCache().SpockRuntime_GroupConditionFailedWithException,
             new ArgumentListExpression(Arrays.<Expression>asList(
@@ -719,12 +720,12 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> i
       List<Expression> additionalArgs) {
     List<Expression> args = new ArrayList<>();
 
-    MethodCallExpression result = AstUtil.createDirectMethodCall(
+    MethodCallExpression result = createDirectMethodCall(
         new ClassExpression(resources.getAstNodeCache().SpockRuntime), method,
         new ArgumentListExpression(args));
 
     args.add(new VariableExpression(SpockNames.ERROR_COLLECTOR, resources.getAstNodeCache().ErrorCollector));
-    args.add(AstUtil.createDirectMethodCall(
+    args.add(createDirectMethodCall(
             new VariableExpression(SpockNames.VALUE_RECORDER),
             resources.getAstNodeCache().ValueRecorder_Reset,
             ArgumentListExpression.EMPTY_ARGUMENTS));

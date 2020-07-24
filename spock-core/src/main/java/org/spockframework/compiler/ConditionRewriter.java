@@ -388,7 +388,7 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> i
         new ArrayExpression(
             expr.getElementType(),
             convertAll(expr.getExpressions()),
-            convertAll(expr.getSizeExpression()));
+            expr.getSizeExpression() == null ? null : convertAll(expr.getSizeExpression()));
 
     conversion.setSourcePosition(expr);
     result = record(conversion);

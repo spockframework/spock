@@ -45,7 +45,7 @@ class TempDirExtensionSpec extends Specification {
     assert Files.exists(customerTempDir)
     assert Files.exists(reserveDir)
     customerTempDir.parent.fileName == 'build'
-    assert reserveDir.parent.toString().startsWith("build")
+    reserveDir.parent.fileName == 'build'
   }
 
   def "reserve temp directory when reserveAfterTest is true"() {

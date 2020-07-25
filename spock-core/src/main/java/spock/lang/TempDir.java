@@ -15,11 +15,11 @@ import java.nio.file.Path;
 import org.spockframework.runtime.extension.builtin.PreconditionContext;
 
 /**
- * Generate temp directory for test, and clean them after test.
+ * Generate a temp directory for test, and delete it after test.
  *
- * <p>{@code @TempDir} can be applied to annotate a member field of type {@link File} or {@link Path}
- * in a spec class. If annotated field is shared, the temp directory will be shared in this spec, otherwise every
- * iteration will have its own temp directory.
+ * <p>{@code @TempDir} can be applied to annotate a member field of type {@link File}, {@link Path} or untyped like def
+ * in a spec class (untyped field will be injected with {@link Path}). If the annotated field is shared,
+ * the temp directory will be shared in this spec, otherwise every iteration will have its own temp directory.
  *
  *
  * @author dqyuan
@@ -32,7 +32,7 @@ import org.spockframework.runtime.extension.builtin.PreconditionContext;
 @ExtensionAnnotation(TempDirExtension.class)
 public @interface TempDir {
   /**
-   * The parent directory for the temporary folder, default is system temp directory
+   * The parent directory for the temporary folder, default is system temp directory.
    * @return the parent directory for the temporary folder
    */
   String baseDir() default "";
@@ -49,7 +49,7 @@ public @interface TempDir {
 
   /**
    *
-   * Closure to evaluate whether reserve temp directory or not after test, default is not
+   * Closure to evaluate whether reserve temp directory or not after test, default is not.
    *
    * The configured closure is called with a delegate of type {@link PreconditionContext}
    * which provides access to system properties, environment variables, the type
@@ -57,5 +57,5 @@ public @interface TempDir {
    *
    * @return Closure to evaluate whether reserve temp directory or not after test, default is not
    */
-  Class<? extends Closure> reserveAfterTest() default DefaultClosure.class;
+  Class<? extends Closure> keep() default DefaultClosure.class;
 }

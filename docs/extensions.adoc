@@ -464,25 +464,28 @@ def ignoreMyExceptions
 
 === TempDir
 
-Generate a temp directory for test, and delete it after test.
-
-`TempDir` can be applied to annotate a member field of type `java.io.File` or `java.nio.file.Path`
-in a spec class. If the annotated field is shared, the temp directory will be shared in this spec, otherwise every
+To generate a temp directory for test, and delete it after test,
+annotate a member field of type `java.io.File`, `java.nio.file.Path`
+or untyped using `def`in a spec class. If the annotated field is shared,
+the temp directory will be shared in this spec, otherwise every
 iteration will have its own temp directory:
 
-[source,groovy]
+[source,groovy,indent=0]
 ----
-include::{sourcedir}/extension/TempDirDocSpec.groovy[tag=example-common]
 include::{sourcedir}/extension/TempDirDocSpec.groovy[tag=example-a]
 ----
 
-Other optional parameters:
+To configure where the temp dirs are created and
+whether they should survive for investigation,
+`baseDir` and `keep` can be provided:
 
-[source,groovy]
+[source,groovy,indent=0]
 ----
-include::{sourcedir}/extension/TempDirDocSpec.groovy[tag=example-common]
 include::{sourcedir}/extension/TempDirDocSpec.groovy[tag=example-b]
 ----
+
+Param `keep` is a delegate of type `org.spockframework.runtime.extension.builtin.PreconditionContext`,
+which works exactly like param of `IgnoreIf`.
 
 === Title and Narrative
 

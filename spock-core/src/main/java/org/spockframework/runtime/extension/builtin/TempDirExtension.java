@@ -23,18 +23,16 @@ public class TempDirExtension implements IAnnotationDrivenExtension<TempDir> {
   public void visitFieldAnnotation(TempDir annotation, FieldInfo field) {
     Class<?> fieldType = field.getType();
     if (!fieldType.isAssignableFrom(File.class) && !fieldType.isAssignableFrom(Path.class)) {
-      throw new InvalidSpecException("@TempDir can only be used on File field or Path field");
+      throw new InvalidSpecException("@TempDir can only be used on File, Path or untyped field");
     }
     TempDirBaseInterceptor interceptor = field.isShared() ?
-      new TempDirSharedInterceptor(fieldType, field::writeValue,
-        annotation.baseDir(), evaluateCondition(annotation)) :
-      new TempDirIterationInterceptor(fieldType, field::writeValue,
-        annotation.baseDir(), evaluateCondition(annotation));
+      new TempDirSharedInterceptor(fieldType, field, annotation.baseDir(), evaluateCondition(annotation)) :
+      new TempDirIterationInterceptor(fieldType, field, annotation.baseDir(), evaluateCondition(annotation));
     interceptor.install(field.getParent());
   }
 
   private boolean evaluateCondition(TempDir annotation) {
-    Closure condition = ConditionUtil.createCondition(annotation.reserveAfterTest());
+    Closure condition = ConditionUtil.createCondition(annotation.keep());
     Object result = ConditionUtil.evaluateCondition(condition);
     return GroovyRuntimeUtil.isTruthy(result);
   }

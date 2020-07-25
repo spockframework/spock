@@ -10,7 +10,9 @@ import static java.util.Collections.emptyMap;
 
 /**
  * @author dqyuan
+ * @since 2.0
  */
+@Beta
 public class ConditionUtil {
 
   public static Closure createCondition(Class<? extends Closure> clazz) {

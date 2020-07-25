@@ -10,9 +10,7 @@ import java.nio.file.Path
  * @author dqyuan
  * @since 2.0
  */
-// tag::example-common[]
 class TempDirDocSpec extends Specification {
-// end::example-common[]
 
   def placeholder() {
     expect: true
@@ -24,11 +22,16 @@ class TempDirDocSpec extends Specification {
   @Shared
   Path path1
 
-  // every iteration have its own path2
+  // every iteration will have its own path2
   @TempDir
   Path path2
-}
+
+  // will be injected using java.nio.file.Path
+  @TempDir
+  def path3
 // end::example-a[]
+}
+
 
 class TempDirParamSpec extends Specification {
 
@@ -39,7 +42,8 @@ class TempDirParamSpec extends Specification {
 // tag::example-b[]
   // generate temp directory in "build" directory relative to project path
   // and keep it after test
-  @TempDir(baseDir = "build", reserveAfterTest = {true})
+  @TempDir(baseDir = "build", keep = {true})
   Path tempPath
-}
 // end::example-b[]
+}
+

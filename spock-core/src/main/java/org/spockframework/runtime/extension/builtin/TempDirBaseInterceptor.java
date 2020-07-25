@@ -3,12 +3,12 @@ package org.spockframework.runtime.extension.builtin;
 import org.codehaus.groovy.runtime.ResourceGroovyMethods;
 import org.spockframework.runtime.extension.AbstractMethodInterceptor;
 import org.spockframework.runtime.extension.IMethodInvocation;
+import org.spockframework.runtime.model.FieldInfo;
 import org.spockframework.runtime.model.SpecInfo;
-import org.spockframework.util.WrappedException;
+import org.spockframework.util.Beta;
 
 import java.io.IOException;
 import java.nio.file.*;
-import java.util.function.BiConsumer;
 
 import static java.nio.file.FileVisitResult.CONTINUE;
 
@@ -16,42 +16,39 @@ import static java.nio.file.FileVisitResult.CONTINUE;
  * @author dqyuan
  * @since 2.0
  */
+@Beta
 public abstract class TempDirBaseInterceptor extends AbstractMethodInterceptor {
   private static final String TEMP_DIR_PREFIX = "spock";
 
   private final Class<?> fieldType;
-  private final BiConsumer<Object, Object> fieldSetter;
+  private final FieldInfo fieldInfo;
   private final String parentDir;
-  private final boolean reserveAfterTest;
+  private final boolean keep;
   private Path tempPath;
 
-  TempDirBaseInterceptor(Class<?> fieldType, BiConsumer<Object, Object> fieldSetter,
-                         String parentDir, boolean reserveAfterTest) {
+  TempDirBaseInterceptor(Class<?> fieldType, FieldInfo fieldInfo,
+                         String parentDir, boolean keep) {
     this.fieldType = fieldType;
-    this.fieldSetter = fieldSetter;
+    this.fieldInfo = fieldInfo;
     this.parentDir = parentDir;
-    this.reserveAfterTest = reserveAfterTest;
+    this.keep = keep;
   }
 
-  private Path generateTempDir(String parentDir) {
-    try {
-      if (parentDir == null || "".equals(parentDir)) {
-        return Files.createTempDirectory(TEMP_DIR_PREFIX);
-      }
-      return Files.createTempDirectory(Paths.get(parentDir), TEMP_DIR_PREFIX);
-    } catch (IOException e) {
-      throw new WrappedException(e);
+  private Path generateTempDir() throws IOException {
+    if (parentDir == null || "".equals(parentDir)) {
+      return Files.createTempDirectory(TEMP_DIR_PREFIX);
     }
+    return Files.createTempDirectory(Paths.get(parentDir), TEMP_DIR_PREFIX);
   }
 
-  protected void setUp(Object specInst) {
-    tempPath = generateTempDir(parentDir);
-    fieldSetter.accept(specInst, fieldType.isAssignableFrom(Path.class) ?
+  protected void setUp(Object specInst) throws IOException {
+    tempPath = generateTempDir();
+    fieldInfo.writeValue(specInst, fieldType.isAssignableFrom(Path.class) ?
       tempPath : tempPath.toFile());
   }
 
   protected void destroy() throws IOException {
-    if (!reserveAfterTest) {
+    if (!keep) {
       deleteTempDir();
     }
   }

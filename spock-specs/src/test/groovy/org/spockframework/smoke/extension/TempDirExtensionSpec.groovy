@@ -1,6 +1,6 @@
 package org.spockframework.smoke.extension
 
-import org.spockframework.util.Beta
+
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Stepwise
@@ -9,67 +9,75 @@ import spock.lang.TempDir
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
-import java.nio.file.attribute.PosixFilePermissions
 
 /**
  * @author dqyuan
  */
-@Beta
 @Stepwise
 class TempDirExtensionSpec extends Specification {
 
   @Shared
   @TempDir
   Path sharedDir
-  static Path preShared
+  @Shared
+  Path previousShared
 
   @TempDir
   File iterationDir
-  static File preIteration
+  @Shared
+  File previousIteration
 
   @TempDir(baseDir = "build")
   Path customerTempDir
 
-  @TempDir(baseDir = "build", reserveAfterTest = { true })
+  @TempDir(baseDir = "build", keep = { true })
   Path reserveDir
-  static Path reserveFile
+
+  @Shared
+  Path reserveFile
+
+  @TempDir
+  def untypedPath
 
   def "temp dir exist"() {
-    preShared = sharedDir
-    preIteration = iterationDir
+    previousShared = sharedDir
+    previousIteration = iterationDir
     reserveFile = reserveDir.resolve("test.txt")
     Files.write(reserveFile, "aaa".getBytes())
     expect:
-    assert Files.exists(sharedDir)
-    assert Files.exists(Paths.get(iterationDir.toURI()))
-    assert Files.exists(customerTempDir)
-    assert Files.exists(reserveDir)
-    customerTempDir.parent.fileName == 'build'
-    reserveDir.parent.fileName == 'build'
+    Files.exists(sharedDir)
+    iterationDir.exists()
+    Files.exists(customerTempDir)
+    Files.exists(reserveDir)
+    untypedPath instanceof Path
+    customerTempDir.parent.fileName.toString() == 'build'
+    reserveDir.parent.fileName.toString() == 'build'
   }
 
   def "reserve temp directory when reserveAfterTest is true"() {
     expect:
-    assert Files.exists(reserveFile)
+    Files.exists(reserveFile)
   }
 
   def "@TempDir creates only one dir for one spec, if the annotated field is 'shared'"() {
     expect:
-    assert sharedDir == preShared
-    assert iterationDir != preIteration
-    assert !Files.exists(Paths.get(preIteration.toURI()))
+    sharedDir == previousShared
+  }
+
+  def "get a different path for non-shared field, and previous was deleted"() {
+    expect:
+    iterationDir != previousIteration
+    !previousIteration.exists()
   }
 
   def "@TempDir creates one temp directory per iteration for normal field"(String foo, int bar) {
     expect:
-    assert iterationDir != preIteration
+    iterationDir != previousIteration
+    foo == "fo"
+    bar == 1
 
-    when:
-    preIteration = iterationDir
-
-    then:
-    assert foo == "fo"
-    assert bar == 1
+    cleanup:
+    previousIteration = iterationDir
 
     where:
     foo  | bar
@@ -85,14 +93,13 @@ class TempDirExtensionSpec extends Specification {
       def aaa = dir.resolve("aaa")
       def aaabbb = aaa.resolve("bbb")
       def tempFile = aaabbb.resolve("tmp.txt")
-      Files.createDirectories(dir.resolve("aaa").resolve("bbb"),
-        PosixFilePermissions.asFileAttribute(PosixFilePermissions.fromString("rwxr-----")))
+      Files.createDirectories(aaabbb)
       Files.write(tempFile, "ewfwf".getBytes())
-      Files.setPosixFilePermissions(aaabbb, PosixFilePermissions.fromString("r-xr-----"))
-      Files.setPosixFilePermissions(aaa, PosixFilePermissions.fromString("r-xr-----"))
-      preIteration = iterationDir
+      aaabbb.toFile().setWritable(false)
+      aaa.toFile().setWritable(false)
+      previousIteration = iterationDir
     } else if (i == 1) {
-      assert !Files.exists(Paths.get(preIteration.toURI()))
+      assert !previousIteration.exists()
     }
 
     where:

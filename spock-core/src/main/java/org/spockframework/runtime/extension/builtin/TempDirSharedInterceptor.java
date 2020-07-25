@@ -1,18 +1,20 @@
 package org.spockframework.runtime.extension.builtin;
 
 import org.spockframework.runtime.extension.IMethodInvocation;
+import org.spockframework.runtime.model.FieldInfo;
 import org.spockframework.runtime.model.SpecInfo;
-
-import java.util.function.BiConsumer;
+import org.spockframework.util.Beta;
 
 /**
  * @author dqyuan
  * @since 2.0
  */
+@Beta
 public class TempDirSharedInterceptor extends TempDirBaseInterceptor {
 
-  TempDirSharedInterceptor(Class<?> fieldType, BiConsumer<Object, Object> fieldSetter, String parentDir, boolean reserveAfterTest) {
-    super(fieldType, fieldSetter, parentDir, reserveAfterTest);
+  TempDirSharedInterceptor(Class<?> fieldType, FieldInfo fieldInfo,
+                           String parentDir, boolean reserveAfterTest) {
+    super(fieldType, fieldInfo, parentDir, reserveAfterTest);
   }
 
   @Override

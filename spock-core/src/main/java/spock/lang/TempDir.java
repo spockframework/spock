@@ -17,7 +17,7 @@ import org.spockframework.runtime.extension.builtin.PreconditionContext;
 /**
  * Generate temp directory for test, and clean them after test.
  *
- * <p>`@TempDir` can be applied to annotate a member field of type {@link File} or {@link Path}
+ * <p>{@code @TempDir} can be applied to annotate a member field of type {@link File} or {@link Path}
  * in a spec class. If annotated field is shared, the temp directory will be shared in this spec, otherwise every
  * iteration will have its own temp directory.
  *

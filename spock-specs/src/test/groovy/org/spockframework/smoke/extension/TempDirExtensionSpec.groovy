@@ -44,9 +44,11 @@ class TempDirExtensionSpec extends Specification {
     previousIteration = iterationDir
     reserveFile = reserveDir.resolve("test.txt")
     Files.write(reserveFile, "aaa".getBytes())
+
     expect:
     Files.exists(sharedDir)
     iterationDir.exists()
+    iterationDir.directory
     Files.exists(customerTempDir)
     Files.exists(reserveDir)
     untypedPath instanceof Path

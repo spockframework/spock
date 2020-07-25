@@ -25,7 +25,7 @@ public class TempDirExtension implements IAnnotationDrivenExtension<TempDir> {
     if (!fieldType.isAssignableFrom(File.class) && !fieldType.isAssignableFrom(Path.class)) {
       throw new InvalidSpecException("@TempDir can only be used on File field or Path field");
     }
-    TempDirBaseInterceptor interceptor = field.isShared()?
+    TempDirBaseInterceptor interceptor = field.isShared() ?
       new TempDirSharedInterceptor(fieldType, field::writeValue,
         annotation.baseDir(), evaluateCondition(annotation)):
       new TempDirIterationInterceptor(fieldType, field::writeValue,

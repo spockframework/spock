@@ -27,7 +27,7 @@ public class TempDirExtension implements IAnnotationDrivenExtension<TempDir> {
     }
     TempDirBaseInterceptor interceptor = field.isShared() ?
       new TempDirSharedInterceptor(fieldType, field::writeValue,
-        annotation.baseDir(), evaluateCondition(annotation)):
+        annotation.baseDir(), evaluateCondition(annotation)) :
       new TempDirIterationInterceptor(fieldType, field::writeValue,
         annotation.baseDir(), evaluateCondition(annotation));
     interceptor.install(field.getParent());

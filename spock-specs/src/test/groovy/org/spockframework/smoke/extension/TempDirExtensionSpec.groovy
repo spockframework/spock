@@ -44,7 +44,7 @@ class TempDirExtensionSpec extends Specification {
     assert Files.exists(Paths.get(iterationDir.toURI()))
     assert Files.exists(customerTempDir)
     assert Files.exists(reserveDir)
-    assert customerTempDir.parent.toString().startsWith("build")
+    customerTempDir.parent.fileName == 'build'
     assert reserveDir.parent.toString().startsWith("build")
   }
 

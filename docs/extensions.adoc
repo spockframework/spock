@@ -651,6 +651,20 @@ report {
 }
 ----
 
+=== Temp Directory
+
+Spock can generate a temp directory for test and delete it after test,
+which is related with <<TempDir,`@TempDir`>>.
+
+.Temp Directory Configuration
+[source,groovy]
+----
+tempdir {
+    baseDir false // default null, which means System.getProperty("java.io.tmpdir")
+    keep { os.windows } // default { false }, which is called with a delegate of type PreconditionContext
+}
+----
+
 == Third-Party Extensions
 
 You can find a list of third-party extensions in the https://github.com/spockframework/spock/wiki/Third-Party-Extensions[Spock Wiki].

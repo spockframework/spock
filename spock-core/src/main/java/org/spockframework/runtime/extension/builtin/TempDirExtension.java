@@ -4,7 +4,11 @@ import groovy.lang.Closure;
 import org.spockframework.runtime.GroovyRuntimeUtil;
 import org.spockframework.runtime.InvalidSpecException;
 import org.spockframework.runtime.extension.IAnnotationDrivenExtension;
+import org.spockframework.runtime.model.FeatureInfo;
 import org.spockframework.runtime.model.FieldInfo;
+import org.spockframework.runtime.model.MethodKind;
+import org.spockframework.runtime.model.SpecInfo;
+import org.spockframework.tempdir.TempDirConfiguration;
 import org.spockframework.util.Beta;
 import org.spockframework.util.ConditionUtil;
 import spock.lang.TempDir;
@@ -18,6 +22,7 @@ import java.nio.file.Path;
  */
 @Beta
 public class TempDirExtension implements IAnnotationDrivenExtension<TempDir> {
+  private TempDirConfiguration configuration;
 
   @Override
   public void visitFieldAnnotation(TempDir annotation, FieldInfo field) {
@@ -25,14 +30,23 @@ public class TempDirExtension implements IAnnotationDrivenExtension<TempDir> {
     if (!fieldType.isAssignableFrom(File.class) && !fieldType.isAssignableFrom(Path.class)) {
       throw new InvalidSpecException("@TempDir can only be used on File, Path or untyped field");
     }
-    TempDirBaseInterceptor interceptor = field.isShared() ?
-      new TempDirSharedInterceptor(fieldType, field, annotation.baseDir(), evaluateCondition(annotation)) :
-      new TempDirIterationInterceptor(fieldType, field, annotation.baseDir(), evaluateCondition(annotation));
-    interceptor.install(field.getParent());
+    MethodKind interceptPoint = field.isShared() ? MethodKind.SPEC_EXECUTION : MethodKind.ITERATION_EXECUTION;
+    TempDirInterceptor interceptor = new TempDirInterceptor(fieldType, field, interceptPoint,
+      configuration.baseDir, evaluateCondition());
+
+    // attach interceptor
+    SpecInfo specInfo = field.getParent();
+    if (field.isShared()) {
+      specInfo.addInterceptor(interceptor);
+    } else {
+      for (FeatureInfo featureInfo : specInfo.getAllFeatures()) {
+        featureInfo.addIterationInterceptor(interceptor);
+      }
+    }
   }
 
-  private boolean evaluateCondition(TempDir annotation) {
-    Closure condition = ConditionUtil.createCondition(annotation.keep());
+  private boolean evaluateCondition() {
+    Closure condition = ConditionUtil.createCondition(configuration.keep);
     Object result = ConditionUtil.evaluateCondition(condition);
     return GroovyRuntimeUtil.isTruthy(result);
   }

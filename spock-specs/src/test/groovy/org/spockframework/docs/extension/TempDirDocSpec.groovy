@@ -42,7 +42,7 @@ class TempDirParamSpec extends Specification {
 // tag::example-b[]
   // generate temp directory in "build" directory relative to project path
   // and keep it after test
-  @TempDir(baseDir = "build", keep = {true})
+  @TempDir
   Path tempPath
 // end::example-b[]
 }

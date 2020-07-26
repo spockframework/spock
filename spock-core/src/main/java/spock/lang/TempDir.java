@@ -31,31 +31,4 @@ import org.spockframework.runtime.extension.builtin.PreconditionContext;
 @Target(ElementType.FIELD)
 @ExtensionAnnotation(TempDirExtension.class)
 public @interface TempDir {
-  /**
-   * The parent directory for the temporary folder, default is system temp directory.
-   * @return the parent directory for the temporary folder
-   */
-  String baseDir() default "";
-
-  class DefaultClosure extends Closure {
-    public DefaultClosure(Object owner, Object thisObject) {
-      super(owner, thisObject);
-    }
-
-    public Object doCall(Object args) {
-      return false;
-    }
-  }
-
-  /**
-   *
-   * Closure to evaluate whether reserve temp directory or not after test, default is not.
-   *
-   * The configured closure is called with a delegate of type {@link PreconditionContext}
-   * which provides access to system properties, environment variables, the type
-   * of operating system and JVM.
-   *
-   * @return Closure to evaluate whether reserve temp directory or not after test, default is not
-   */
-  Class<? extends Closure> keep() default DefaultClosure.class;
 }

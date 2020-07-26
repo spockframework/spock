@@ -475,18 +475,6 @@ iteration will have its own temp directory:
 include::{sourcedir}/extension/TempDirDocSpec.groovy[tag=example-a]
 ----
 
-To configure where the temp dirs are created and
-whether they should survive for investigation,
-`baseDir` and `keep` can be provided:
-
-[source,groovy,indent=0]
-----
-include::{sourcedir}/extension/TempDirDocSpec.groovy[tag=example-b]
-----
-
-Param `keep` is a delegate of type `org.spockframework.runtime.extension.builtin.PreconditionContext`,
-which works exactly like param of `IgnoreIf`.
-
 === Title and Narrative
 
 To attach a natural-language name to a spec, use `spock.lang.Title`:

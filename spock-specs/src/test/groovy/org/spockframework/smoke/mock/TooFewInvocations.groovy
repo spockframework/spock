@@ -885,10 +885,10 @@ Mock for type 'Person' named 'fred'
 def fred = Mock(Person)
 
 when:
-fred.familiy(null)
+fred.family(null)
 
 then:
-1 * fred.familiy(!null)
+1 * fred.family(!null)
     """)
 
     then:
@@ -897,11 +897,11 @@ then:
     def expected = normalize("""
 Too few invocations for:
 
-1 * fred.familiy(!null)   (0 invocations)
+1 * fred.family(!null)   (0 invocations)
 
 Unmatched invocations (ordered by similarity):
 
-1 * fred.familiy(null)
+1 * fred.family(null)
 One or more arguments(s) didn't match:
 0: <not> EqualArgument (matched)
     """.trim())
@@ -915,11 +915,11 @@ One or more arguments(s) didn't match:
 def fred = Mock(Person)
 
 when:
-fred.familiy([:])
+fred.family([:])
 
 then:
-1 * fred.familiy(!{ it.size() == 0 })
-1 * fred.familiy(!(_ as Map))
+1 * fred.family(!{ it.size() == 0 })
+1 * fred.family(!(_ as Map))
     """)
 
     then:
@@ -928,21 +928,21 @@ then:
     def expected = normalize("""
 Too few invocations for:
 
-1 * fred.familiy(!{ it.size() == 0 })   (0 invocations)
+1 * fred.family(!{ it.size() == 0 })   (0 invocations)
 
 Unmatched invocations (ordered by similarity):
 
-1 * fred.familiy([:])
+1 * fred.family([:])
 One or more arguments(s) didn't match:
 0: <not> CodeArgument (matched)
 
 Too few invocations for:
 
-1 * fred.familiy(!(_ as Map))   (0 invocations)
+1 * fred.family(!(_ as Map))   (0 invocations)
 
 Unmatched invocations (ordered by similarity):
 
-1 * fred.familiy([:])
+1 * fred.family([:])
 One or more arguments(s) didn't match:
 0: <not> TypeArgument (matched)
     """.trim())
@@ -985,10 +985,10 @@ Unmatched invocations (ordered by similarity):
 def fred = Mock(Person)
 
 when:
-fred.familiy(firstName: "Wilma", surname: "Flintstone", age: 30, address: "Quarry")
+fred.family(firstName: "Wilma", surname: "Flintstone", age: 30, address: "Quarry")
 
 then:
-1 * fred.familiy(firstName: "Wilma", surname: "Flintstone", age: _ as String, address: "Bedrock")
+1 * fred.family(firstName: "Wilma", surname: "Flintstone", age: _ as String, address: "Bedrock")
     """)
 
     then:
@@ -997,11 +997,11 @@ then:
     def expected = normalize("""
 Too few invocations for:
 
-1 * fred.familiy(firstName: "Wilma", surname: "Flintstone", age: _ as String, address: "Bedrock")   (0 invocations)
+1 * fred.family(firstName: "Wilma", surname: "Flintstone", age: _ as String, address: "Bedrock")   (0 invocations)
 
 Unmatched invocations (ordered by similarity):
 
-1 * fred.familiy(['firstName':'Wilma', 'surname':'Flintstone', 'age':30, 'address':'Quarry'])
+1 * fred.family(['firstName':'Wilma', 'surname':'Flintstone', 'age':30, 'address':'Quarry'])
 One or more arguments(s) didn't match:
 [age]: argument instanceof java.lang.String
        |        |          |
@@ -1025,12 +1025,12 @@ One or more arguments(s) didn't match:
 def fred = Mock(Person)
 
 when:
-fred.familiy(firstName: "Wilma", surname: "Flintstone")
+fred.family(firstName: "Wilma", surname: "Flintstone")
 
 then:
-1 * fred.familiy(firstName: "Wilma", surname: "Flintstone", address: "Bedrock")
-1 * fred.familiy(firstName: "Wilma")
-1 * fred.familiy(surname: "Flintstone", address: "Quarry")
+1 * fred.family(firstName: "Wilma", surname: "Flintstone", address: "Bedrock")
+1 * fred.family(firstName: "Wilma")
+1 * fred.family(surname: "Flintstone", address: "Quarry")
     """)
 
     then:
@@ -1039,33 +1039,33 @@ then:
     def expected = normalize("""
 Too few invocations for:
 
-1 * fred.familiy(firstName: "Wilma", surname: "Flintstone", address: "Bedrock")   (0 invocations)
+1 * fred.family(firstName: "Wilma", surname: "Flintstone", address: "Bedrock")   (0 invocations)
 
 Unmatched invocations (ordered by similarity):
 
-1 * fred.familiy(['firstName':'Wilma', 'surname':'Flintstone'])
+1 * fred.family(['firstName':'Wilma', 'surname':'Flintstone'])
 One or more arguments(s) didn't match:
 [address]: <missing>
 
 
 Too few invocations for:
 
-1 * fred.familiy(firstName: "Wilma")   (0 invocations)
+1 * fred.family(firstName: "Wilma")   (0 invocations)
 
 Unmatched invocations (ordered by similarity):
 
-1 * fred.familiy(['firstName':'Wilma', 'surname':'Flintstone'])
+1 * fred.family(['firstName':'Wilma', 'surname':'Flintstone'])
 One or more arguments(s) didn't match:
 [surname]: <unexpected argument>
 
 
 Too few invocations for:
 
-1 * fred.familiy(surname: "Flintstone", address: "Quarry")   (0 invocations)
+1 * fred.family(surname: "Flintstone", address: "Quarry")   (0 invocations)
 
 Unmatched invocations (ordered by similarity):
 
-1 * fred.familiy(['firstName':'Wilma', 'surname':'Flintstone'])
+1 * fred.family(['firstName':'Wilma', 'surname':'Flintstone'])
 One or more arguments(s) didn't match:
 [address]: <missing>
 [firstName]: <unexpected argument>
@@ -1169,7 +1169,7 @@ then:
       return ''
     }
 
-    String familiy(Map args) {
+    String family(Map args) {
       return ''
     }
 

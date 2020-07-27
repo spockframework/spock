@@ -19,9 +19,13 @@ package org.spockframework.smoke.mock
 import org.spockframework.EmbeddedSpecification
 import org.spockframework.mock.TooFewInvocationsError
 
+import java.util.regex.Pattern
+
 import org.hamcrest.CoreMatchers
 
 class TooFewInvocations extends EmbeddedSpecification {
+  static Pattern EMPTY_LINE = Pattern.compile(/^ ++$/,Pattern.MULTILINE)
+
   def "shows unmatched invocations, ordered by similarity"() {
     when:
     runner.runFeatureBody("""
@@ -42,7 +46,8 @@ then:
 
     then:
     TooFewInvocationsError e = thrown()
-    e.message.trim() == '''
+    def exceptionMessage = normalize(e.message)
+    def expected = normalize('''
 Too few invocations for:
 
 1 * list.add(2)   (0 invocations)
@@ -91,7 +96,8 @@ size       false
            (add-)
 
 <too few arguments>
-    '''.trim()
+    '''.trim())
+    exceptionMessage == expected
   }
 
   def "makes it clear if no unmatched invocations exist"() {
@@ -108,7 +114,8 @@ then:
 
     then:
     TooFewInvocationsError e = thrown()
-    e.message.trim() == """
+    def exceptionMessage = normalize(e.message)
+    def expected = normalize("""
 Too few invocations for:
 
 1 * list.add(_)   (0 invocations)
@@ -116,7 +123,8 @@ Too few invocations for:
 Unmatched invocations (ordered by similarity):
 
 None
-    """.trim()
+    """.trim())
+    exceptionMessage == expected
   }
 
   def "shows all unsatisfied interactions"() {
@@ -135,7 +143,8 @@ then:
 
     then:
     TooFewInvocationsError e = thrown()
-    e.message.trim() == """
+    def exceptionMessage = normalize(e.message)
+    def expected = normalize("""
 Too few invocations for:
 
 1 * list.add(1)   (0 invocations)
@@ -187,7 +196,8 @@ One or more arguments(s) didn't match:
    |        |  |
    2        |  1
             false
-    """.trim()
+    """.trim())
+    exceptionMessage == expected
   }
 
   def "does not show unverified invocations"() {
@@ -244,7 +254,8 @@ then:
 
     then:
     TooFewInvocationsError e = thrown()
-    e.message.trim() == """
+    def exceptionMessage = normalize(e.message)
+    def expected = normalize("""
 Too few invocations for:
 
 1 * fred.wife("Wilma", "Flintstone", 30, "Bedrock")   (0 invocations)
@@ -269,7 +280,8 @@ One or more arguments(s) didn't match:
             6 differences (14% similarity)
             (Qua)r(ry-)
             (Bed)r(ock)
-    """.trim()
+    """.trim())
+    exceptionMessage == expected
   }
 
   def "can describe code argument mismatch"() {
@@ -287,7 +299,8 @@ then:
 
     then:
     TooFewInvocationsError e = thrown()
-    e.message.trim() == """
+    def exceptionMessage = normalize(e.message)
+    def expected = normalize("""
 Too few invocations for:
 
 1 * fred.wife("Wilma", "Flintstone", { it < 30}, "Bedrock")   (0 invocations)
@@ -299,12 +312,13 @@ One or more arguments(s) didn't match:
 0: <matches>
 1: <matches>
 2: Condition not satisfied:
-   
+
    it < 30
    |  |
    30 false
 3: <matches>
-    """.trim()
+    """.trim())
+    exceptionMessage == expected
   }
 
   def "can describe code argument mismatch in with block"() {
@@ -324,10 +338,11 @@ with (fred) {
 
     then:
     TooFewInvocationsError e = thrown()
-    e.message.trim() == """
+    def exceptionMessage = normalize(e.message)
+    def expected = normalize("""
 Too few invocations for:
 
-1 * fred.wife("Wilma", "Flintstone", { it < 30}, "Bedrock")   (0 invocations)
+1 * wife("Wilma", "Flintstone", { it < 30}, "Bedrock")   (0 invocations)
 
 Unmatched invocations (ordered by similarity):
 
@@ -336,12 +351,13 @@ One or more arguments(s) didn't match:
 0: <matches>
 1: <matches>
 2: Condition not satisfied:
-   
+
    it < 30
    |  |
    30 false
 3: <matches>
-    """.trim()
+    """.trim())
+    exceptionMessage == expected
   }
 
   def "can describe code argument mismatch in mock definition"() {
@@ -361,10 +377,11 @@ true
 
     then:
     TooFewInvocationsError e = thrown()
-    e.message.trim() == """
+    def exceptionMessage = normalize(e.message)
+    def expected = normalize("""
 Too few invocations for:
 
-1 * fred.wife("Wilma", "Flintstone", { it < 30}, "Bedrock")   (0 invocations)
+1 * wife("Wilma", "Flintstone", { it < 30}, "Bedrock")   (0 invocations)
 
 Unmatched invocations (ordered by similarity):
 
@@ -373,12 +390,13 @@ One or more arguments(s) didn't match:
 0: <matches>
 1: <matches>
 2: Condition not satisfied:
-   
+
    it < 30
    |  |
    30 false
 3: <matches>
-    """.trim()
+    """.trim())
+    exceptionMessage == expected
   }
 
   def "can describe code argument mismatch with nested closures in mock definition"() {
@@ -386,7 +404,7 @@ One or more arguments(s) didn't match:
     runner.addClassImport(Person)
     runner.runFeatureBody("""
 def ages = [10, 20, 40]
-def fred = Mock(Person) {  
+def fred = Mock(Person) {
   1 * wife("Wilma", "Flintstone", { age -> ages.find { it == age} }, "Bedrock")
 }
 
@@ -399,10 +417,11 @@ true
 
     then:
     TooFewInvocationsError e = thrown()
-    e.message.trim() == """
+    def exceptionMessage = normalize(e.message)
+    def expected = normalize("""
 Too few invocations for:
 
-1 * fred.wife("Wilma", "Flintstone", { age -> ages.find { it == age} }, "Bedrock")   (0 invocations)
+1 * wife("Wilma", "Flintstone", { age -> ages.find { it == age} }, "Bedrock")   (0 invocations)
 
 Unmatched invocations (ordered by similarity):
 
@@ -411,13 +430,14 @@ One or more arguments(s) didn't match:
 0: <matches>
 1: <matches>
 2: Condition not satisfied:
-   
+
    ages.find { it == age}
    |    |
    |    null
    [10, 20, 40]
 3: <matches>
-    """.trim()
+    """.trim())
+    exceptionMessage == expected
   }
 
   def "can describe code argument mismatch with nested closures"() {
@@ -436,7 +456,8 @@ then:
 
     then:
     TooFewInvocationsError e = thrown()
-    e.message.trim() == """
+    def exceptionMessage = normalize(e.message)
+    def expected = normalize("""
 Too few invocations for:
 
 1 * fred.wife("Wilma", "Flintstone", { age -> ages.find { it == age} }, "Bedrock")   (0 invocations)
@@ -448,13 +469,14 @@ One or more arguments(s) didn't match:
 0: <matches>
 1: <matches>
 2: Condition not satisfied:
-   
+
    ages.find { it == age}
    |    |
    |    null
    [10, 20, 40]
 3: <matches>
-    """.trim()
+    """.trim())
+    exceptionMessage == expected
   }
 
   def "can describe code argument explicit assertion mismatch"() {
@@ -472,7 +494,8 @@ then:
 
     then:
     TooFewInvocationsError e = thrown()
-    e.message.trim() == """
+    def exceptionMessage = normalize(e.message)
+    def expected = normalize("""
 Too few invocations for:
 
 1 * fred.wife("Wilma", "Flintstone", { assert it < 30}, "Bedrock")   (0 invocations)
@@ -484,12 +507,13 @@ One or more arguments(s) didn't match:
 0: <matches>
 1: <matches>
 2: Condition not satisfied:
-   
+
    it < 30
    |  |
    30 false
 3: <matches>
-    """.trim()
+    """.trim())
+    exceptionMessage == expected
   }
 
 
@@ -512,7 +536,8 @@ then:
 
     then:
     TooFewInvocationsError e = thrown()
-    e.message.trim() == """
+    def exceptionMessage = normalize(e.message)
+    def expected = normalize("""
 Too few invocations for:
 
 1 * list.add({
@@ -526,12 +551,13 @@ Unmatched invocations (ordered by similarity):
 1 * list.add(Person)
 One or more arguments(s) didn't match:
 0: Condition not satisfied:
-   
+
    it.age == 35
    |  |   |
    |  45  false
    Person
-    """.trim()
+    """.trim())
+    exceptionMessage == expected
   }
   def "can describe code argument with verifyAll"() {
     when:
@@ -554,8 +580,8 @@ then:
 
     then:
     TooFewInvocationsError e = thrown()
-    def normalizedMessage = e.message.normalize().trim()
-    normalizedMessage == """
+    def exceptionMessage = normalize(e.message)
+    def expected = normalize("""
 Too few invocations for:
 
 1 * list.add({
@@ -572,20 +598,21 @@ Unmatched invocations (ordered by similarity):
 One or more arguments(s) didn't match:
 0: Multiple Failures (2 failures)
    \torg.spockframework.runtime.ConditionNotSatisfiedError: Condition not satisfied:
-   
+
    firstname == 'Willam'
    |         |
    Willam T. false
              3 differences (66% similarity)
              Willam( T.)
              Willam(---)
-   
+
    \torg.spockframework.runtime.ConditionNotSatisfiedError: Condition not satisfied:
-   
+
    age == 35
    |   |
    45  false
-    """.trim()
+    """.trim())
+    exceptionMessage == expected
   }
 
   def "can describe hamcrest matcher argument mismatch"() {
@@ -604,7 +631,8 @@ then:
 
     then:
     TooFewInvocationsError e = thrown()
-    e.message.trim() == """
+    def exceptionMessage = normalize(e.message)
+    def expected = normalize("""
 Too few invocations for:
 
 1 * fred.wife("Wilma", "Flintstone", CoreMatchers.equalTo(20), "Bedrock")   (0 invocations)
@@ -618,7 +646,8 @@ One or more arguments(s) didn't match:
 2: Expected: <20>
         but: was <30>
 3: <matches>
-    """.trim()
+    """.trim())
+    exceptionMessage == expected
   }
 
   def "can describe type argument mismatch"() {
@@ -636,7 +665,8 @@ then:
 
     then:
     TooFewInvocationsError e = thrown()
-    e.message.trim() == """
+    def exceptionMessage = normalize(e.message)
+    def expected = normalize("""
 Too few invocations for:
 
 1 * fred.wife("Wilma", "Flintstone", _ as String, _ as String)   (0 invocations)
@@ -652,7 +682,8 @@ One or more arguments(s) didn't match:
    |        false      class java.lang.String
    30 (java.lang.Integer)
 3: <matches>
-    """.trim()
+    """.trim())
+    exceptionMessage == expected
   }
 
   def "can describe type not enough args"() {
@@ -670,7 +701,8 @@ then:
 
     then:
     TooFewInvocationsError e = thrown()
-    e.message.trim() == """
+    def exceptionMessage = normalize(e.message)
+    def expected = normalize("""
 Too few invocations for:
 
 1 * fred.wife("Wilma", "Flintstone",30, "Bedrock", _ as String)   (0 invocations)
@@ -679,7 +711,8 @@ Unmatched invocations (ordered by similarity):
 
 1 * fred.wife('Wilma', 'Flintstone', 30, 'Bedrock')
 <too few arguments>
-    """.trim()
+    """.trim())
+    exceptionMessage == expected
   }
 
   def "can describe type too many args"() {
@@ -697,7 +730,8 @@ then:
 
     then:
     TooFewInvocationsError e = thrown()
-    e.message.trim() == """
+    def exceptionMessage = normalize(e.message)
+    def expected = normalize("""
 Too few invocations for:
 
 1 * fred.wife("Wilma", "Flintstone",30)   (0 invocations)
@@ -706,7 +740,8 @@ Unmatched invocations (ordered by similarity):
 
 1 * fred.wife('Wilma', 'Flintstone', 30, 'Bedrock')
 <too many arguments>
-    """.trim()
+    """.trim())
+    exceptionMessage == expected
   }
 
   def "can describe regex method name mismatch"() {
@@ -724,7 +759,8 @@ then:
 
     then:
     TooFewInvocationsError e = thrown()
-    e.message.trim() == """
+    def exceptionMessage = normalize(e.message)
+    def expected = normalize("""
 Too few invocations for:
 
 1 * fred./kids?/("Wilma", "Flintstone", 30, "Bedrock")   (0 invocations)
@@ -735,7 +771,8 @@ Unmatched invocations (ordered by similarity):
 methodName ==~ /kids?/
 |          |
 wife       false
-    """.trim()
+    """.trim())
+    exceptionMessage == expected
   }
 
   def "can describe regex property name mismatch"() {
@@ -753,7 +790,8 @@ then:
 
     then:
     TooFewInvocationsError e = thrown()
-    e.message.trim() == """
+    def exceptionMessage = normalize(e.message)
+    def expected = normalize("""
 Too few invocations for:
 
 1 * fred./name?/   (0 invocations)
@@ -764,7 +802,8 @@ Unmatched invocations (ordered by similarity):
 propertyName ==~ /name?/
 |            |
 age          false
-    """.trim()
+    """.trim())
+    exceptionMessage == expected
   }
 
 
@@ -783,7 +822,8 @@ then:
 
     then:
     TooFewInvocationsError e = thrown()
-    e.message.trim() == """
+    def exceptionMessage = normalize(e.message)
+    def expected = normalize("""
 Too few invocations for:
 
 1 * fred.name   (0 invocations)
@@ -797,7 +837,8 @@ age          false
              2 differences (50% similarity)
              (-)a(g)e
              (n)a(m)e
-    """.trim()
+    """.trim())
+    exceptionMessage == expected
   }
 
   def "can describe target mismatch"() {
@@ -816,7 +857,8 @@ then:
 
     then:
     TooFewInvocationsError e = thrown()
-    e.message.trim() == """
+    def exceptionMessage = normalize(e.message)
+    def expected = normalize("""
 Too few invocations for:
 
 1 * barney.name   (0 invocations)
@@ -832,7 +874,8 @@ instance == target
 |        Mock for type 'Person' named '(f-)r(-)e(d)'
 |        Mock for type 'Person' named '(ba)r(n)e(y)'
 Mock for type 'Person' named 'fred'
-    """.trim()
+    """.trim())
+    exceptionMessage == expected
   }
 
   def "can describe not equal mismatch"() {
@@ -850,7 +893,8 @@ then:
 
     then:
     TooFewInvocationsError e = thrown()
-    e.message.trim() == """
+    def exceptionMessage = normalize(e.message)
+    def expected = normalize("""
 Too few invocations for:
 
 1 * fred.familiy(!null)   (0 invocations)
@@ -860,7 +904,8 @@ Unmatched invocations (ordered by similarity):
 1 * fred.familiy(null)
 One or more arguments(s) didn't match:
 0: <not> EqualArgument (matched)
-    """.trim()
+    """.trim())
+    exceptionMessage == expected
   }
 
   def "can describe not other mismatch"() {
@@ -879,7 +924,8 @@ then:
 
     then:
     TooFewInvocationsError e = thrown()
-    e.message.trim() == """
+    def exceptionMessage = normalize(e.message)
+    def expected = normalize("""
 Too few invocations for:
 
 1 * fred.familiy(!{ it.size() == 0 })   (0 invocations)
@@ -899,7 +945,8 @@ Unmatched invocations (ordered by similarity):
 1 * fred.familiy([:])
 One or more arguments(s) didn't match:
 0: <not> TypeArgument (matched)
-    """.trim()
+    """.trim())
+    exceptionMessage == expected
   }
 
   def "can describe namedArgument on normal method mismatch"() {
@@ -917,7 +964,8 @@ then:
 
     then:
     TooFewInvocationsError e = thrown()
-    e.message.trim() == """
+    def exceptionMessage = normalize(e.message)
+    def expected = normalize("""
 Too few invocations for:
 
 1 * fred.wife(firstName: "Wilma", surname: "Flintstone", age: _ as String, address: _ as String)   (0 invocations)
@@ -926,7 +974,8 @@ Unmatched invocations (ordered by similarity):
 
 1 * fred.wife('Wilma', 'Flintstone', 30, 'Bedrock')
 <named arguments expected>
-    """.trim()
+    """.trim())
+    exceptionMessage == expected
   }
 
   def "can describe namedArgument on map method mismatch"() {
@@ -944,7 +993,8 @@ then:
 
     then:
     TooFewInvocationsError e = thrown()
-    e.message.trim() == """
+    def exceptionMessage = normalize(e.message)
+    def expected = normalize("""
 Too few invocations for:
 
 1 * fred.familiy(firstName: "Wilma", surname: "Flintstone", age: _ as String, address: "Bedrock")   (0 invocations)
@@ -964,7 +1014,8 @@ One or more arguments(s) didn't match:
                     6 differences (14% similarity)
                     (Qua)r(ry-)
                     (Bed)r(ock)
-    """.trim()
+    """.trim())
+    exceptionMessage == expected
   }
 
   def "can describe namedArgument on map method size mismatch"() {
@@ -984,7 +1035,8 @@ then:
 
     then:
     TooFewInvocationsError e = thrown()
-    e.message.trim() == """
+    def exceptionMessage = normalize(e.message)
+    def expected = normalize("""
 Too few invocations for:
 
 1 * fred.familiy(firstName: "Wilma", surname: "Flintstone", address: "Bedrock")   (0 invocations)
@@ -1017,7 +1069,8 @@ Unmatched invocations (ordered by similarity):
 One or more arguments(s) didn't match:
 [address]: <missing>
 [firstName]: <unexpected argument>
-    """.trim()
+    """.trim())
+    exceptionMessage == expected
   }
 
 
@@ -1036,7 +1089,8 @@ then:
 
     then:
     TooFewInvocationsError e = thrown()
-    e.message.trim() == """
+    def exceptionMessage = normalize(e.message)
+    def expected = normalize("""
 Too few invocations for:
 
 1 * fred.named("Pebbles", "Flintstone", age: _ as String, address: "Bedrock")   (0 invocations)
@@ -1060,7 +1114,8 @@ One or more arguments(s) didn't match:
             (Wi--)l(ma)
             (Pebb)l(es)
 2: <matches>
-    """.trim()
+    """.trim())
+    exceptionMessage == expected
   }
 
   def "can compute similarity between an interaction and a completely different invocation (without blowing up)"() {
@@ -1098,7 +1153,12 @@ then:
 
     then:
     TooFewInvocationsError e = thrown()
-    e.message.trim() =~ /(?m)^\Q1 * list.add(<org.spockframework.smoke.mock.TooFewInvocations\E.Person@\w+ name=Foo age=18>\)$/
+    def exceptionMessage = normalize(e.message)
+    exceptionMessage =~ /(?m)^\Q1 * list.add(<org.spockframework.smoke.mock.TooFewInvocations\E.Person@\w+ name=Foo age=18>\)$/
+  }
+
+  String normalize(String str) {
+    EMPTY_LINE.matcher(str.normalize().trim()).replaceAll('')
   }
 
   static class Person {

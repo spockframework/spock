@@ -21,7 +21,7 @@ import org.spockframework.util.*;
 
 import java.util.*;
 
-import org.codehaus.groovy.ast.*;
+import org.codehaus.groovy.ast.Parameter;
 import org.codehaus.groovy.ast.expr.*;
 import org.codehaus.groovy.ast.stmt.*;
 import org.codehaus.groovy.syntax.Types;
@@ -115,10 +115,10 @@ public class DeepBlockRewriter extends AbstractDeepBlockRewriter {
 
   @Override
   protected void doVisitClosureExpression(ClosureExpression expr) {
-    closureDepth++;
+    if (insideInteraction) closureDepth++;
     super.doVisitClosureExpression(expr);
     if (conditionFound || groupConditionFound) defineRecorders(expr, groupConditionFound);
-    closureDepth--;
+    if (insideInteraction) closureDepth--;
   }
 
   @Override

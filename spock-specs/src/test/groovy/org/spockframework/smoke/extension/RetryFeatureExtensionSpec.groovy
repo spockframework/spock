@@ -15,21 +15,19 @@ class RetryFeatureExtensionSpec extends EmbeddedSpecification {
   static AtomicInteger featureCounter = new AtomicInteger()
 
   def setup() {
+    runner.addClassImport(Retry)
+    runner.addClassMemberImport(getClass())
     runner.throwFailure = false
     featureCounter.set(0)
   }
 
   def "@Retry fails after retries are exhausted"() {
     when:
-    def result = runner.runWithImports("""
-import spock.lang.Retry
-
-class Foo extends Specification {
-  @Retry
-  def bar() {
-    org.spockframework.smoke.extension.RetryFeatureExtensionSpec.featureCounter.incrementAndGet()
-    expect: false
-  }
+    def result = runner.runSpecBody("""
+@Retry
+def bar() {
+  featureCounter.incrementAndGet()
+  expect: false
 }
     """)
 
@@ -47,16 +45,12 @@ class Foo extends Specification {
 
   def "@Retry works for normal exceptions"() {
     when:
-    def result = runner.runWithImports("""
-import spock.lang.Retry
-
-class Foo extends Specification {
-  @Retry
-  def bar() {
-    org.spockframework.smoke.extension.RetryFeatureExtensionSpec.featureCounter.incrementAndGet()
-    expect:
-    throw new IOException()
-  }
+    def result = runner.runSpecBody("""
+@Retry
+def bar() {
+  featureCounter.incrementAndGet()
+  expect:
+  throw new IOException()
 }
     """)
 
@@ -72,30 +66,55 @@ class Foo extends Specification {
     featureCounter.get() == 4
   }
 
+  def "@Retry works properly if applied multiple times"() {
+    when:
+    def result = runner.runSpecBody("""
+@Retry(exceptions = IllegalArgumentException, count = 2)
+@Retry(exceptions = IllegalAccessException, count = 4)
+def bar() {
+  featureCounter.incrementAndGet()
+  expect:
+  throw new ${exception.simpleName}()
+}
+    """)
+
+    then:
+    result.testsStartedCount == 1
+    result.testsSucceededCount == 0
+    result.testsFailedCount == 1
+    with(result.failures.exception[0], MultipleFailuresError) {
+      failures.size() == expectedCount
+      failures.every { exception.isInstance(it) }
+    }
+    result.testsSkippedCount == 0
+    featureCounter.get() == expectedCount
+
+    where:
+    exception                     || expectedCount
+    IllegalArgumentException      || 3
+    IllegalAccessException        || 5
+  }
+
   def "@Retry mode #mode executes setup and cleanup #expectedCount times"(String mode, int expectedCount) {
     given:
     setupCounter.set(0)
     cleanupCounter.set(0)
 
     when:
-    def result = runner.runWithImports("""
-import spock.lang.Retry
+    def result = runner.runSpecBody("""
+def setup() {
+  setupCounter.incrementAndGet()
+}
 
-class Foo extends Specification {
-  def setup() {
-    org.spockframework.smoke.extension.RetryFeatureExtensionSpec.setupCounter.incrementAndGet()
-  }
+@Retry(mode = Retry.Mode.${mode})
+def bar() {
+  featureCounter.incrementAndGet()
+  expect:
+  throw new IOException()
+}
 
-  @Retry(mode = Retry.Mode.${mode})
-  def bar() {
-    org.spockframework.smoke.extension.RetryFeatureExtensionSpec.featureCounter.incrementAndGet()
-    expect:
-    throw new IOException()
-  }
-
-  def cleanup() {
-    org.spockframework.smoke.extension.RetryFeatureExtensionSpec.cleanupCounter.incrementAndGet()
-  }
+def cleanup() {
+  cleanupCounter.incrementAndGet()
 }
     """)
 
@@ -120,15 +139,12 @@ class Foo extends Specification {
 
   def "@Retry count can be changed"() {
     when:
-    def result = runner.runWithImports("""import spock.lang.Retry
-
-class Foo extends Specification {
-  @Retry(count = 5)
-  def bar() {
-    org.spockframework.smoke.extension.RetryFeatureExtensionSpec.featureCounter.incrementAndGet()
-    expect:
-    throw new Exception()
-  }
+    def result = runner.runSpecBody("""
+@Retry(count = 5)
+def bar() {
+  featureCounter.incrementAndGet()
+  expect:
+  throw new Exception()
 }
     """)
 
@@ -146,15 +162,11 @@ class Foo extends Specification {
     runner.throwFailure = true
 
     when:
-    def result = runner.runWithImports("""
-import spock.lang.Retry
-
-class Foo extends Specification {
-  @Retry(exceptions=[IndexOutOfBoundsException])
-  def bar() {
-    expect:
-    throw new IllegalArgumentException()
-  }
+    def result = runner.runSpecBody("""
+@Retry(exceptions=[IndexOutOfBoundsException])
+def bar() {
+  expect:
+  throw new IllegalArgumentException()
 }
     """)
 
@@ -167,18 +179,14 @@ class Foo extends Specification {
     runner.throwFailure = true
 
     when:
-    def result = runner.runWithImports("""
-import spock.lang.Retry
+    def result = runner.runSpecBody("""
+@Retry(exceptions=[IndexOutOfBoundsException])
+def bar() {
+  expect:
+  throw new IllegalArgumentException()
 
-class Foo extends Specification {
-  @Retry(exceptions=[IndexOutOfBoundsException])
-  def bar() {
-    expect:
-    throw new IllegalArgumentException()
-
-    where:
-    ignore << [1, 2]
-  }
+  where:
+  ignore << [1, 2]
 }
     """)
 
@@ -188,18 +196,14 @@ class Foo extends Specification {
 
   def "@Retry works for data driven features"() {
     when:
-    def result = runner.runWithImports("""
-import spock.lang.Retry
+    def result = runner.runSpecBody("""
+@Retry
+def bar() {
+  featureCounter.incrementAndGet()
+  expect: test
 
-class Foo extends Specification {
-  @Retry
-  def bar() {
-    org.spockframework.smoke.extension.RetryFeatureExtensionSpec.featureCounter.incrementAndGet()
-    expect: test
-
-    where:
-    test << [false, false]
-  }
+  where:
+  test << [false, false]
 }
     """)
 
@@ -212,18 +216,14 @@ class Foo extends Specification {
 
   def "@Retry for @Unroll'ed data driven feature"() {
     when:
-    def result = runner.runWithImports("""
-import spock.lang.Retry
+    def result = runner.runSpecBody("""
+@Retry
+def bar() {
+  featureCounter.incrementAndGet()
+  expect: test
 
-class Foo extends Specification {
-  @Retry
-  def bar() {
-    org.spockframework.smoke.extension.RetryFeatureExtensionSpec.featureCounter.incrementAndGet()
-    expect: test
-
-    where:
-    test << [false, true, true]
-  }
+  where:
+  test << [false, true, true]
 }
     """)
 
@@ -236,17 +236,13 @@ class Foo extends Specification {
 
   def "@Retry doesn't affect data driven feature where all iterations pass"() {
     when:
-    def result = runner.runWithImports("""
-import spock.lang.Retry
+    def result = runner.runSpecBody("""
+@Retry
+def bar() {
+  expect: test
 
-class Foo extends Specification {
-  @Retry
-  def bar() {
-    expect: test
-
-    where:
-    test << [true, true, true]
-  }
+  where:
+  test << [true, true, true]
 }
     """)
 
@@ -258,17 +254,13 @@ class Foo extends Specification {
 
   def "@Retry doesn't affect @Unroll'ed data driven feature where all iterations pass"() {
     when:
-    def result = runner.runWithImports("""
-import spock.lang.Retry
+    def result = runner.runSpecBody("""
+@Retry
+def bar() {
+  expect: test
 
-class Foo extends Specification {
-  @Retry
-  def bar() {
-    expect: test
-
-    where:
-    test << [true, true, true]
-  }
+  where:
+  test << [true, true, true]
 }
     """)
 
@@ -280,15 +272,11 @@ class Foo extends Specification {
 
   def "@Retry mode SETUP_FEATURE_CLEANUP ignores previous failures if a retry succeeds"() {
     when:
-    def result = runner.runWithImports("""
-import spock.lang.Retry
-
-class Foo extends Specification {
-  static int counter
-  @Retry(mode = Retry.Mode.SETUP_FEATURE_CLEANUP)
-  def bar() {
-    expect: counter++ > 0
-  }
+    def result = runner.runSpecBody("""
+static int counter
+@Retry(mode = Retry.Mode.SETUP_FEATURE_CLEANUP)
+def bar() {
+  expect: counter++ > 0
 }
     """)
 
@@ -301,18 +289,14 @@ class Foo extends Specification {
   def "@Retry can add delay between iteration executions"() {
     when:
     long start = System.currentTimeMillis()
-    def result = runner.runWithImports("""
-import spock.lang.Retry
+    def result = runner.runSpecBody("""
+@Retry(delay = 100)
+def bar() {
+  featureCounter.incrementAndGet()
+  expect: test
 
-class Foo extends Specification {
-  @Retry(delay = 100)
-  def bar() {
-    org.spockframework.smoke.extension.RetryFeatureExtensionSpec.featureCounter.incrementAndGet()
-    expect: test
-
-    where:
-    test << [false, true, true]
-  }
+  where:
+  test << [false, true, true]
 }
     """)
 
@@ -329,19 +313,15 @@ class Foo extends Specification {
 
   def "@Retry evaluates condition"() {
     when:
-    def result = runner.runWithImports("""
-import spock.lang.Retry
+    def result = runner.runSpecBody("""
+@Retry(condition = { failure.message.contains('1') })
+def "bar #message"() {
+  featureCounter.incrementAndGet()
+  expect:
+  assert false : message
 
-class Foo extends Specification {
-  @Retry(condition = { failure.message.contains('1') })
-  def "bar #message"() {
-    org.spockframework.smoke.extension.RetryFeatureExtensionSpec.featureCounter.incrementAndGet()
-    expect:
-    assert false : message
-
-    where:
-    message << ['1', '2', '3']
-  }
+  where:
+  message << ['1', '2', '3']
 }
     """)
 
@@ -354,25 +334,21 @@ class Foo extends Specification {
 
   def "@Retry does not evaluate condition if exception type is unexpected"() {
     when:
-    def result = runner.runWithImports("""
-import spock.lang.Retry
+    def result = runner.runSpecBody("""
+@Retry(exceptions = IllegalArgumentException, condition = { failure.message.contains('1') })
+def "bar #exceptionClass #message"() {
+  featureCounter.incrementAndGet()
+  expect:
+  throw exceptionClass.newInstance(message as String)
 
-class Foo extends Specification {
-  @Retry(exceptions = IllegalArgumentException, condition = { failure.message.contains('1') })
-  def "bar #exceptionClass #message"() {
-    org.spockframework.smoke.extension.RetryFeatureExtensionSpec.featureCounter.incrementAndGet()
-    expect:
-    throw exceptionClass.newInstance(message as String)
-
-    where:
-    exceptionClass           | message
-    IllegalArgumentException | 1
-    IllegalArgumentException | 2
-    IllegalStateException    | 1
-    IllegalStateException    | 2
-    RuntimeException         | 1
-    RuntimeException         | 2
-  }
+  where:
+  exceptionClass           | message
+  IllegalArgumentException | 1
+  IllegalArgumentException | 2
+  IllegalStateException    | 1
+  IllegalStateException    | 2
+  RuntimeException         | 1
+  RuntimeException         | 2
 }
     """)
 
@@ -385,22 +361,18 @@ class Foo extends Specification {
 
   def "@Retry provides condition access to Specification instance"() {
     when:
-    def result = runner.runWithImports("""
-import spock.lang.Retry
+    def result = runner.runSpecBody("""
+int value
+@Retry(condition = { instance.value == 2 })
+def "bar #input"() {
+  featureCounter.incrementAndGet()
+  value = input
 
-class Foo extends Specification {
-  int value
-  @Retry(condition = { instance.value == 2 })
-  def "bar #input"() {
-    org.spockframework.smoke.extension.RetryFeatureExtensionSpec.featureCounter.incrementAndGet()
-    value = input
+  expect:
+  false
 
-    expect:
-    false
-
-    where:
-    input << [1, 2, 3]
-  }
+  where:
+  input << [1, 2, 3]
 }
     """)
 
@@ -414,23 +386,21 @@ class Foo extends Specification {
   def "@Retry can be declared on a spec class"() {
     when:
     def result = runner.runWithImports("""
-import spock.lang.Retry
-
 @Retry
 class Foo extends Specification {
   def foo() {
-    org.spockframework.smoke.extension.RetryFeatureExtensionSpec.featureCounter.incrementAndGet()
+    featureCounter.incrementAndGet()
     expect:
     false
   }
   def bar() {
-    org.spockframework.smoke.extension.RetryFeatureExtensionSpec.featureCounter.incrementAndGet()
+    featureCounter.incrementAndGet()
     expect:
     true
   }
   @Retry(count = 1)
   def baz() {
-    org.spockframework.smoke.extension.RetryFeatureExtensionSpec.featureCounter.incrementAndGet()
+    featureCounter.incrementAndGet()
     expect:
     false
   }
@@ -447,14 +417,12 @@ class Foo extends Specification {
   def "@Retry declared on a spec class is inherited"() {
     when:
     def result = runner.runWithImports("""
-import spock.lang.Retry
-
 @Retry(count = 1)
 abstract class Foo extends Specification {
 }
 class Bar extends Foo {
   def bar() {
-    org.spockframework.smoke.extension.RetryFeatureExtensionSpec.featureCounter.incrementAndGet()
+    featureCounter.incrementAndGet()
     expect:
     false
   }
@@ -471,11 +439,9 @@ class Bar extends Foo {
   def "@Retry declared on a subclass is applied to all features"() {
     when:
     def result = runner.runWithImports("""
-import spock.lang.Retry
-
 abstract class Foo extends Specification {
   def foo() {
-    org.spockframework.smoke.extension.RetryFeatureExtensionSpec.featureCounter.incrementAndGet()
+    featureCounter.incrementAndGet()
     expect:
     false
   }
@@ -483,7 +449,7 @@ abstract class Foo extends Specification {
 @Retry(count = 1)
 class Bar extends Foo {
   def bar() {
-    org.spockframework.smoke.extension.RetryFeatureExtensionSpec.featureCounter.incrementAndGet()
+    featureCounter.incrementAndGet()
     expect:
     false
   }
@@ -500,20 +466,19 @@ class Bar extends Foo {
   def "@Retry declared on a spec class can be overridden"() {
     when:
     def result = runner.runWithImports("""
-import spock.lang.Retry
-
 @Retry(count = 1)
 abstract class Foo extends Specification {
   def foo() {
-    org.spockframework.smoke.extension.RetryFeatureExtensionSpec.featureCounter.incrementAndGet()
+    featureCounter.incrementAndGet()
     expect:
     false
   }
 }
+
 @Retry(count = 2)
 class Bar extends Foo {
   def bar() {
-    org.spockframework.smoke.extension.RetryFeatureExtensionSpec.featureCounter.incrementAndGet()
+    featureCounter.incrementAndGet()
     expect:
     false
   }

@@ -35,6 +35,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD})
 @ExtensionAnnotation(PendingFeatureExtension.class)
+@Repeatable(PendingFeature.Container.class)
 public @interface PendingFeature {
   /**
    * Configures which types of Exceptions are expected in the pending feature.
@@ -51,4 +52,14 @@ public @interface PendingFeature {
    * @return reason why this feature is pending
    */
   String reason() default "";
+
+  /**
+   * @since 2.0
+   */
+  @Beta
+  @Retention(RetentionPolicy.RUNTIME)
+  @Target({ElementType.METHOD})
+  @interface Container {
+    PendingFeature[] value();
+  }
 }

@@ -156,7 +156,7 @@ The main difference to `Ignore` is that the test are executed, but test failures
 If the test passes without an error, then it will be reported as failure since the `PendingFeature` annotation should be removed.
 This way the tests will become part of the normal tests instead of being ignored forever.
 
-Groovy has the `groovy.transform.NotYetImplemented` annotation which is similar but behaves a differently.
+Groovy has the `groovy.transform.NotYetImplemented` annotation which is similar but behaves differently.
 
 * it will mark failing tests as passed
 * if at least one iteration of a data-driven test passes it will be reported as error
@@ -167,10 +167,26 @@ Groovy has the `groovy.transform.NotYetImplemented` annotation which is similar 
 * if at least one iteration of a data-driven test fails it will be reported as skipped
 * if every iteration of a data-driven test passes it will be reported as error
 
-[source,groovy]
+[source,groovy,indent=0]
 ----
-@PendingFeature
-def "not implemented yet"() { ... }
+include::{sourcedir}/extension/PendingFeatureDocSpec.groovy[tag=example-a]
+----
+
+You can also list one or multiple exceptions that are expected and cause the test to be skipped.
+If other exceptions occur, the test fails as if no annotation would be present.
+
+[source,groovy,indent=0]
+----
+include::{sourcedir}/extension/PendingFeatureDocSpec.groovy[tag=example-b]
+----
+
+It is also supported to have multiple `@PendingFeature` annotations or a mixture of `@PendingFeature` and
+`@PendingFeatureIf`, for example to ignore certain exceptions only under certain conditions or show different
+reasons for different exceptions.
+
+[source,groovy,indent=0]
+----
+include::{sourcedir}/extension/PendingFeatureDocSpec.groovy[tag=example-c]
 ----
 
 === PendingFeatureIf

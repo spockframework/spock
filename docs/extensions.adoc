@@ -648,8 +648,8 @@ which is related with <<TempDir,`@TempDir`>>.
 [source,groovy]
 ----
 tempdir {
-    baseDir false // default null, which means System.getProperty("java.io.tmpdir")
-    keep { os.windows } // default { false }, which is called with a delegate of type PreconditionContext
+  baseDir Paths.get(System.getProperty("java.io.tmpdir")) // java.nio.Path object, default null, which means {@code System.getProperty("java.io.tmpdir")}
+  keep true // boolean, default {@code Boolean.getBoolean("spock.tempDir.keep")}, which means not keep temp directory after test
 }
 ----
 

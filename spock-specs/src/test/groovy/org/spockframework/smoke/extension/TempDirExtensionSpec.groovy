@@ -1,8 +1,7 @@
 package org.spockframework.smoke.extension
 
-
+import org.spockframework.EmbeddedSpecification
 import spock.lang.Shared
-import spock.lang.Specification
 import spock.lang.Stepwise
 import spock.lang.TempDir
 
@@ -14,7 +13,7 @@ import java.nio.file.Paths
  * @author dqyuan
  */
 @Stepwise
-class TempDirExtensionSpec extends Specification {
+class TempDirExtensionSpec extends EmbeddedSpecification {
 
   @Shared
   @TempDir
@@ -81,9 +80,45 @@ class TempDirExtensionSpec extends Specification {
     }
 
     where:
-    i | _
-    0 | _
-    1 | _
+    i << [0, 1]
+  }
+
+  static Path pathFromEmbedded
+
+  def "define temp directory location and keep temp directory using using configuration script"() {
+    given:
+    def userDefinedBase = Paths.get("build")
+    runner.configurationScript {
+      tempdir {
+        baseDir userDefinedBase
+        keep true
+      }
+    }
+    runner.addClassImport(Path)
+    runner.addClassImport(TempDir)
+    runner.addClassImport(getClass())
+
+    when:
+    def result = runner.runSpecBody("""
+
+@TempDir
+Path temp
+
+def method1() {
+  expect:
+  temp.getParent().getFileName().toString() == "build"
+
+  cleanup:
+  TempDirExtensionSpec.pathFromEmbedded = temp
+}
+""")
+
+    then:
+    result.testsSucceededCount == 1
+    Files.exists(pathFromEmbedded)
+
+    cleanup:
+    Files.delete(pathFromEmbedded)
   }
 
 }

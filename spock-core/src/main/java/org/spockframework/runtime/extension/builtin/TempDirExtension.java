@@ -32,7 +32,7 @@ public class TempDirExtension implements IAnnotationDrivenExtension<TempDir> {
     }
     MethodKind interceptPoint = field.isShared() ? MethodKind.SPEC_EXECUTION : MethodKind.ITERATION_EXECUTION;
     TempDirInterceptor interceptor = new TempDirInterceptor(fieldType, field, interceptPoint,
-      configuration.baseDir, evaluateCondition());
+      configuration.baseDir, configuration.keep);
 
     // attach interceptor
     SpecInfo specInfo = field.getParent();
@@ -43,12 +43,6 @@ public class TempDirExtension implements IAnnotationDrivenExtension<TempDir> {
         featureInfo.addIterationInterceptor(interceptor);
       }
     }
-  }
-
-  private boolean evaluateCondition() {
-    Closure condition = ConditionUtil.createCondition(configuration.keep);
-    Object result = ConditionUtil.evaluateCondition(condition);
-    return GroovyRuntimeUtil.isTruthy(result);
   }
 
 }

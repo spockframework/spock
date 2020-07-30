@@ -2,6 +2,7 @@ package org.spockframework.runtime
 
 import org.spockframework.report.log.ReportLogExtension
 import org.spockframework.runtime.extension.builtin.*
+import org.spockframework.tempdir.TempDirConfiguration
 import spock.config.RunnerConfiguration
 import spock.lang.Specification
 
@@ -20,6 +21,6 @@ class ExtensionClassesLoaderSpec extends Specification {
     def result = new ExtensionClassesLoader().loadConfigClassesFromDefaultLocation()
 
     then:
-    result == [RunnerConfiguration]
+    result == [RunnerConfiguration, TempDirConfiguration]
   }
 }

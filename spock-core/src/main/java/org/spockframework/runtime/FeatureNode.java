@@ -4,12 +4,10 @@ import org.spockframework.runtime.model.FeatureInfo;
 
 import org.junit.platform.engine.*;
 
-public abstract class FeatureNode extends SpockNode {
-  protected final FeatureInfo featureInfo;
+public abstract class FeatureNode extends SpockNode<FeatureInfo> {
 
   public FeatureNode(UniqueId uniqueId, String displayName, TestSource source, FeatureInfo featureInfo) {
-    super(uniqueId, displayName, source);
-    this.featureInfo = featureInfo;
+    super(uniqueId, displayName, source, featureInfo);
   }
 
   @Override
@@ -19,7 +17,7 @@ public abstract class FeatureNode extends SpockNode {
 
   @Override
   public SkipResult shouldBeSkipped(SpockExecutionContext context) throws Exception {
-    return shouldBeSkipped(featureInfo);
+    return shouldBeSkipped(getNodeInfo());
   }
 
   @Override
@@ -32,6 +30,6 @@ public abstract class FeatureNode extends SpockNode {
 
   @Override
   public boolean mayRegisterTests() {
-    return featureInfo.isParameterized();
+    return getNodeInfo().isParameterized();
   }
 }

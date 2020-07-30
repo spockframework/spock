@@ -13,14 +13,18 @@ import org.junit.platform.engine.support.descriptor.*;
 import org.junit.platform.engine.support.hierarchical.*;
 import org.opentest4j.TestAbortedException;
 
-public abstract class SpockNode extends AbstractTestDescriptor implements Node<SpockExecutionContext> {
+public abstract class SpockNode<T extends SpecElementInfo<?,?>>
+  extends AbstractTestDescriptor implements Node<SpockExecutionContext> {
 
-  protected SpockNode(UniqueId uniqueId, String displayName) {
-    super(uniqueId, displayName);
+  private final T nodeInfo;
+
+  protected SpockNode(UniqueId uniqueId, String displayName, TestSource source, T nodeInfo) {
+    super(uniqueId, displayName, source);
+    this.nodeInfo = nodeInfo;
   }
 
-  protected SpockNode(UniqueId uniqueId, String displayName, TestSource source) {
-    super(uniqueId, displayName, source);
+  public T getNodeInfo() {
+    return nodeInfo;
   }
 
   protected void sneakyInvoke(Invocation<SpockExecutionContext> invocation, SpockExecutionContext context) {
@@ -42,7 +46,12 @@ public abstract class SpockNode extends AbstractTestDescriptor implements Node<S
   }
 
   protected Optional<ExecutionMode> getExplicitExecutionMode() {
-    return Optional.empty();
+    return nodeInfo.getExecutionMode().map(SpockNode::toExecutionMode);
+  }
+
+  @Override
+  public Set<ExclusiveResource> getExclusiveResources() {
+    return toExclusiveResources(nodeInfo.getExclusiveResources());
   }
 
   protected static MethodSource featureToMethodSource(FeatureInfo info) {

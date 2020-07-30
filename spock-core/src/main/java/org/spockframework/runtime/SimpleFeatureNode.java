@@ -28,7 +28,7 @@ public class SimpleFeatureNode extends FeatureNode {
   @Override
   public SpockExecutionContext prepare(SpockExecutionContext context) throws Exception {
     return delegate.prepare(
-      context.withCurrentFeature(featureInfo)
+      context.withCurrentFeature(getNodeInfo())
       //.withParentId(getUniqueId())
     );
   }
@@ -52,7 +52,7 @@ public class SimpleFeatureNode extends FeatureNode {
 
   @Override
   public SpockExecutionContext execute(SpockExecutionContext context, DynamicTestExecutor dynamicTestExecutor) throws Exception {
-    verifyNotSkipped(featureInfo);
+    verifyNotSkipped(getNodeInfo());
     delegate.execute(context, dynamicTestExecutor);
     return context;
   }

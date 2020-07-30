@@ -1,15 +1,12 @@
 package org.spockframework.runtime;
 
-import org.junit.platform.engine.EngineExecutionListener;
-import org.junit.platform.engine.TestDescriptor;
-import org.junit.platform.engine.TestExecutionResult;
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import org.junit.platform.engine.*;
 import org.junit.platform.engine.support.hierarchical.Node.DynamicTestExecutor;
 import org.opentest4j.TestAbortedException;
-
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.platform.engine.TestExecutionResult.Status.ABORTED;
 
@@ -30,7 +27,7 @@ class ParameterizedFeatureChildExecutor {
     // if we are not going to report single iterations,
     // we will need a listener for the child executions
     // so create it here once and use it repeatedly later on
-    if (!parameterizedFeatureNode.featureInfo.isReportIterations()) {
+    if (!parameterizedFeatureNode.getNodeInfo().isReportIterations()) {
       executionListener = new EngineExecutionListener() {
         @Override
         public void executionSkipped(TestDescriptor testDescriptor, String reason) {
@@ -52,7 +49,7 @@ class ParameterizedFeatureChildExecutor {
   public void execute(TestDescriptor testDescriptor) {
     executionCounter.incrementAndGet();
     parameterizedFeatureNode.addChild(testDescriptor);
-    if (parameterizedFeatureNode.featureInfo.isReportIterations()) {
+    if (parameterizedFeatureNode.getNodeInfo().isReportIterations()) {
       delegate.execute(testDescriptor);
     } else {
       delegate.execute(testDescriptor, executionListener);

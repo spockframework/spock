@@ -1,15 +1,14 @@
 package org.spockframework.runtime;
 
-import org.junit.platform.engine.TestExecutionResult.Status;
-import org.opentest4j.MultipleFailuresError;
-import org.opentest4j.TestAbortedException;
 import org.spockframework.runtime.model.FeatureInfo;
 
 import java.util.*;
 
-import org.junit.platform.engine.*;
+import org.junit.platform.engine.TestExecutionResult.Status;
+import org.junit.platform.engine.UniqueId;
+import org.opentest4j.*;
 
-import static java.util.stream.Collectors.*;
+import static java.util.stream.Collectors.toList;
 import static org.junit.platform.engine.TestExecutionResult.Status.*;
 import static org.spockframework.util.ExceptionUtil.sneakyThrow;
 
@@ -22,13 +21,13 @@ public class ParameterizedFeatureNode extends FeatureNode {
 
   @Override
   public SpockExecutionContext prepare(SpockExecutionContext context) throws Exception {
-    featureInfo.setIterationNameProvider(new SafeIterationNameProvider(featureInfo.getIterationNameProvider()));
-    return context.withCurrentFeature(featureInfo).withParentId(getUniqueId());
+    getNodeInfo().setIterationNameProvider(new SafeIterationNameProvider(getNodeInfo().getIterationNameProvider()));
+    return context.withCurrentFeature(getNodeInfo()).withParentId(getUniqueId());
   }
 
   @Override
   public SpockExecutionContext execute(SpockExecutionContext context, DynamicTestExecutor dynamicTestExecutor) throws Exception {
-    verifyNotSkipped(featureInfo);
+    verifyNotSkipped(getNodeInfo());
     ErrorInfoCollector errorInfoCollector = new ErrorInfoCollector();
     context = context.withErrorInfoCollector(errorInfoCollector);
     ParameterizedFeatureChildExecutor childExecutor = new ParameterizedFeatureChildExecutor(this, dynamicTestExecutor);
@@ -39,7 +38,7 @@ public class ParameterizedFeatureNode extends FeatureNode {
     }
 
     // do not try to aggregate iteration results if they are reported individually
-    if (featureInfo.isReportIterations()) {
+    if (getNodeInfo().isReportIterations()) {
       return context;
     }
 
@@ -117,6 +116,6 @@ public class ParameterizedFeatureNode extends FeatureNode {
 
   @Override
   public Type getType() {
-    return featureInfo.isReportIterations() ? Type.CONTAINER_AND_TEST : Type.TEST;
+    return getNodeInfo().isReportIterations() ? Type.CONTAINER_AND_TEST : Type.TEST;
   }
 }

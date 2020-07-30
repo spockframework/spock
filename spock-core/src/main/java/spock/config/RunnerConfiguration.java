@@ -36,6 +36,7 @@ package spock.config;
 public class RunnerConfiguration {
   public IncludeExcludeCriteria include = new IncludeExcludeCriteria();
   public IncludeExcludeCriteria exclude = new IncludeExcludeCriteria();
+  public ParallelConfiguration parallel = new ParallelConfiguration();
   public boolean filterStackTrace = true;
   public boolean optimizeRunOrder = false;
 }

@@ -45,11 +45,11 @@ class SpockEngineDiscoveryPostProcessor {
     if (child instanceof SpecNode) {
       SpecNode specNode = (SpecNode) child;
       try {
-        runContext.createExtensionRunner(specNode.getSpecInfo()).run();
+        runContext.createExtensionRunner(specNode.getNodeInfo()).run();
       } catch (Exception e) {
-        return new ErrorSpecNode(specNode.getUniqueId(), specNode.getSpecInfo(), e);
+        return new ErrorSpecNode(specNode.getUniqueId(), specNode.getNodeInfo(), e);
       }
-      specNode.getSpecInfo().getAllFeaturesInExecutionOrder().stream()
+      specNode.getNodeInfo().getAllFeaturesInExecutionOrder().stream()
         .filter(featureInfo -> !featureInfo.isExcluded())
         .map(featureInfo -> createNode(specNode, featureInfo))
         .forEach(specNode::addChild);

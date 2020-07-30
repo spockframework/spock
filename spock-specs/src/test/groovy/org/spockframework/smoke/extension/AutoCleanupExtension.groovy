@@ -15,9 +15,13 @@
 package org.spockframework.smoke.extension
 
 import org.spockframework.EmbeddedSpecification
+import spock.lang.Execution
 
 import org.opentest4j.MultipleFailuresError
 
+import static org.spockframework.runtime.model.parallel.ExecutionMode.SAME_THREAD
+
+@Execution(SAME_THREAD)
 class AutoCleanupExtension extends EmbeddedSpecification {
   static closable
   static disposable

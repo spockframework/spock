@@ -33,7 +33,7 @@ public class MethodSelectorResolver implements SelectorResolver {
   private TestDescriptor handle(TestDescriptor testDescriptor, Predicate<FeatureInfo> filter) {
     if (testDescriptor instanceof SpecNode) {
       SpecNode specNode = (SpecNode) testDescriptor;
-      long count = specNode.getSpecInfo().getAllFeaturesInExecutionOrder().stream()
+      long count = specNode.getNodeInfo().getAllFeaturesInExecutionOrder().stream()
         .filter(filter)
         .peek(featureInfo -> featureInfo.setExcluded(false))
         .count();

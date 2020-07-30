@@ -8,6 +8,9 @@ import java.util.concurrent.atomic.AtomicInteger
 
 import org.opentest4j.MultipleFailuresError
 
+import static org.spockframework.runtime.model.parallel.ExecutionMode.SAME_THREAD
+
+@Execution(SAME_THREAD)
 class RetryFeatureExtensionSpec extends EmbeddedSpecification {
 
   static AtomicInteger setupCounter = new AtomicInteger()

@@ -16,8 +16,11 @@
 
 package org.spockframework.runtime
 
-import spock.lang.Specification
+import org.spockframework.runtime.model.parallel.Resources
+import spock.lang.*
 
+@ResourceLock(Resources.SYSTEM_OUT)
+@ResourceLock(Resources.SYSTEM_ERR)
 class StandardStreamsCapturerSpec extends Specification {
   def capturer = new StandardStreamsCapturer()
   def listener = Mock(IStandardStreamsListener)

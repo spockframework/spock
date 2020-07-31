@@ -12,7 +12,7 @@ class BlockingVariablesDocSpec extends Specification {
 
     when:
     Thread.start {
-      Thread.sleep(250)          // <2>
+      Thread.sleep(25)          // <2>
       println "calling set"
       list.set([1, 2, 3])
     }
@@ -27,13 +27,13 @@ class BlockingVariablesDocSpec extends Specification {
 
     when:
     Thread.start {
-      Thread.sleep(500)          // <5>
+      Thread.sleep(50)          // <5>
       println "setting bar and baz"
       vars.bar = 2
       vars.baz = 3
     }
     Thread.start {
-      Thread.sleep(250)          // <5>
+      Thread.sleep(25)          // <5>
       println "setting foo"
       vars.foo = 1
     }

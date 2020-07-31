@@ -27,7 +27,7 @@ class PollingConditionsDocSpec extends Specification {
     when:
     Thread.start {
       num = 42
-      sleep(500)          // <2>
+      sleep(25)          // <2>
       str = "hello"
     }
 
@@ -50,12 +50,12 @@ class PollingConditionsDocSpec extends Specification {
     given:
     Thread.start {
       num = 42
-      sleep(500) // milliseconds     <2>
+      sleep(25) // milliseconds     <2>
       str = "hello"
     }
 
     expect:
-    conditions.within(0.1) { // seconds     <5>
+    conditions.within(0.05) { // seconds     <5>
       num == 42
     }
 

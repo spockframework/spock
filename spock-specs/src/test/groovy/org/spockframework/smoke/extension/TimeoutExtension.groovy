@@ -16,18 +16,18 @@
 
 package org.spockframework.smoke.extension
 
-import java.util.concurrent.TimeUnit
-
-import org.spockframework.runtime.SpockTimeoutError
 import org.spockframework.EmbeddedSpecification
-
+import org.spockframework.runtime.SpockTimeoutError
 import spock.lang.*
 
-import static java.util.concurrent.TimeUnit.*
+import java.util.concurrent.TimeUnit
 
+import static java.util.concurrent.TimeUnit.MILLISECONDS
+import static org.spockframework.runtime.model.parallel.ExecutionMode.SAME_THREAD
 /**
  * @author Peter Niederwieser
  */
+@Execution(SAME_THREAD)
 @Retry
 class TimeoutExtension extends EmbeddedSpecification {
   @Shared Thread testFrameworkThread = Thread.currentThread()

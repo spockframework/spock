@@ -18,6 +18,7 @@ package org.spockframework.runtime.extension.builtin;
 
 import org.spockframework.runtime.extension.IAnnotationDrivenExtension;
 import org.spockframework.runtime.model.*;
+import org.spockframework.runtime.model.parallel.ExecutionMode;
 import spock.util.mop.Use;
 
 import java.util.Arrays;
@@ -26,11 +27,13 @@ public class UseExtension implements IAnnotationDrivenExtension<Use> {
   @Override
   public void visitSpecAnnotation(Use annotation, SpecInfo spec) {
     addInterceptor(annotation, spec.getBottomSpec());
+    spec.setExecutionMode(ExecutionMode.SAME_THREAD);
   }
 
   @Override
   public void visitFeatureAnnotation(Use annotation, FeatureInfo feature) {
     addInterceptor(annotation, feature.getFeatureMethod());
+    feature.setExecutionMode(ExecutionMode.SAME_THREAD);
   }
 
   @Override

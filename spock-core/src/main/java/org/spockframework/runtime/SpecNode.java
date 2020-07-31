@@ -1,14 +1,15 @@
 package org.spockframework.runtime;
 
 import org.spockframework.runtime.model.SpecInfo;
+import spock.config.RunnerConfiguration;
 
 import org.junit.platform.engine.UniqueId;
 import org.junit.platform.engine.support.descriptor.ClassSource;
 
 public class SpecNode extends SpockNode<SpecInfo> {
 
-  protected SpecNode(UniqueId uniqueId, SpecInfo specInfo) {
-    super(uniqueId, specInfo.getName(), ClassSource.from(specInfo.getReflection()), specInfo);
+  protected SpecNode(UniqueId uniqueId, RunnerConfiguration configuration, SpecInfo specInfo) {
+    super(uniqueId, specInfo.getName(), ClassSource.from(specInfo.getReflection()), configuration, specInfo);
   }
 
   @Override
@@ -52,5 +53,11 @@ public class SpecNode extends SpockNode<SpecInfo> {
   @Override
   public void around(SpockExecutionContext context, Invocation<SpockExecutionContext> invocation) throws Exception {
     context.getRunner().runSpec(context, () -> sneakyInvoke(invocation, context));
+  }
+
+  @Override
+  public ExecutionMode getExecutionMode() {
+    return getExplicitExecutionMode()
+      .orElseGet( ()-> toExecutionMode(getConfiguration().parallel.defaultClassesExecutionMode));
   }
 }

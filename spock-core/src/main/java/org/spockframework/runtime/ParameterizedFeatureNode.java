@@ -1,6 +1,7 @@
 package org.spockframework.runtime;
 
 import org.spockframework.runtime.model.FeatureInfo;
+import spock.config.RunnerConfiguration;
 
 import java.util.*;
 
@@ -14,8 +15,8 @@ import static org.spockframework.util.ExceptionUtil.sneakyThrow;
 
 public class ParameterizedFeatureNode extends FeatureNode {
 
-  protected ParameterizedFeatureNode(UniqueId uniqueId, FeatureInfo featureInfo) {
-    super(uniqueId, featureInfo.getName(),featureToMethodSource(featureInfo), featureInfo);
+  protected ParameterizedFeatureNode(UniqueId uniqueId, RunnerConfiguration configuration, FeatureInfo featureInfo) {
+    super(uniqueId, featureInfo.getName(),featureToMethodSource(featureInfo), configuration, featureInfo);
   }
 
 

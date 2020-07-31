@@ -1,8 +1,8 @@
 package org.spockframework.runtime
 
-import org.junit.platform.engine.TestDescriptor
-import org.junit.platform.engine.UniqueId
 import spock.lang.Specification
+
+import org.junit.platform.engine.*
 
 class ErrorSpecNodeSpec extends Specification {
   def 'should not be pruned'() {
@@ -10,6 +10,7 @@ class ErrorSpecNodeSpec extends Specification {
     TestDescriptor parent = Mock()
     def testee = new ErrorSpecNode(
       UniqueId.forEngine("test"),
+      null,
       new SpecInfoBuilder(getClass()).build(),
       null)
     testee.setParent(parent)

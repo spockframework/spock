@@ -17,6 +17,7 @@
 package org.spockframework.runtime;
 
 import org.spockframework.runtime.model.*;
+import spock.config.RunnerConfiguration;
 
 import java.util.*;
 
@@ -60,10 +61,10 @@ public class PlatformParameterizedSpecRunner extends PlatformSpecRunner {
     }
 
     List<String> dataProviderVariables = dataProviderInfos
-      .stream()
-      .map(DataProviderInfo::getDataVariables)
-      .flatMap(List::stream)
-      .collect(toList());
+        .stream()
+        .map(DataProviderInfo::getDataVariables)
+        .flatMap(List::stream)
+        .collect(toList());
 
     Object[] dataProviders = new Object[dataProviderInfos.size()];
 
@@ -72,8 +73,8 @@ public class PlatformParameterizedSpecRunner extends PlatformSpecRunner {
       MethodInfo method = dataProviderInfo.getDataProviderMethod();
 
       Object provider = invokeRaw(
-        context, context.getCurrentInstance(), method,
-        getPreviousDataTableProviders(dataProviderVariables, dataProviders, dataProviderInfo));
+          context, context.getCurrentInstance(), method,
+          getPreviousDataTableProviders(dataProviderVariables, dataProviders, dataProviderInfo));
 
       if (context.getErrorInfoCollector().hasErrors()) {
         if (provider != null) {
@@ -105,7 +106,7 @@ public class PlatformParameterizedSpecRunner extends PlatformSpecRunner {
         }
       }
       throw new IllegalStateException(String.format("Variable name not defined (%s not in %s)!",
-        previousDataTableVariable, dataProviderVariables));
+          previousDataTableVariable, dataProviderVariables));
     }
     return result.toArray();
   }
@@ -175,7 +176,9 @@ public class PlatformParameterizedSpecRunner extends PlatformSpecRunner {
     int iterationIndex = 0;
     while (haveNext(context, iterators)) {
       IterationInfo iterationInfo = createIterationInfo(context, iterationIndex, nextArgs(context, iterators), estimatedNumIterations);
-      IterationNode iterationNode = new IterationNode(context.getParentId().append("iteration",String.valueOf(iterationIndex++)), iterationInfo);
+      IterationNode iterationNode = new IterationNode(
+          context.getParentId().append("iteration", String.valueOf(iterationIndex++)),
+          context.getRunContext().getConfiguration(RunnerConfiguration.class), iterationInfo);
 
       if (context.getErrorInfoCollector().hasErrors()) {
         return;
@@ -214,7 +217,7 @@ public class PlatformParameterizedSpecRunner extends PlatformSpecRunner {
         } else if (haveNext != hasNext) {
           DataProviderInfo provider = context.getCurrentFeature().getDataProviders().get(i);
           supervisor.error(context.getErrorInfoCollector(), new ErrorInfo(provider.getDataProviderMethod(),
-            createDifferentNumberOfDataValuesException(provider, hasNext)));
+              createDifferentNumberOfDataValuesException(provider, hasNext)));
           return false;
         }
 
@@ -229,12 +232,12 @@ public class PlatformParameterizedSpecRunner extends PlatformSpecRunner {
   private SpockExecutionException createDifferentNumberOfDataValuesException(DataProviderInfo provider,
                                                                              boolean hasNext) {
     String msg = String.format("Data provider for variable '%s' has %s values than previous data provider(s)",
-      provider.getDataVariables().get(0), hasNext ? "more" : "fewer");
+        provider.getDataVariables().get(0), hasNext ? "more" : "fewer");
     SpockExecutionException exception = new SpockExecutionException(msg);
     FeatureInfo feature = provider.getParent();
     SpecInfo spec = feature.getParent();
     StackTraceElement elem = new StackTraceElement(spec.getReflection().getName(),
-      feature.getName(), spec.getFilename(), provider.getLine());
+        feature.getName(), spec.getFilename(), provider.getLine());
     exception.setStackTrace(new StackTraceElement[]{elem});
     return exception;
   }

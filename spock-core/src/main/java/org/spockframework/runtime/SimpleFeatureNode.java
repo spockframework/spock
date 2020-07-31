@@ -1,6 +1,7 @@
 package org.spockframework.runtime;
 
 import org.spockframework.runtime.model.FeatureInfo;
+import spock.config.RunnerConfiguration;
 
 import org.junit.platform.engine.*;
 
@@ -15,8 +16,9 @@ public class SimpleFeatureNode extends FeatureNode {
 
   private final IterationNode delegate;
 
-  public SimpleFeatureNode(UniqueId uniqueId, FeatureInfo featureInfo, IterationNode delegate) {
-    super(uniqueId, featureInfo.getName(), featureToMethodSource(featureInfo), featureInfo);
+  public SimpleFeatureNode(UniqueId uniqueId, RunnerConfiguration configuration,
+                           FeatureInfo featureInfo, IterationNode delegate) {
+    super(uniqueId, featureInfo.getName(), featureToMethodSource(featureInfo), configuration, featureInfo);
     this.delegate = delegate;
   }
 

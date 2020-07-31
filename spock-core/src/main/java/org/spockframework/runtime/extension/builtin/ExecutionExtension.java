@@ -11,7 +11,6 @@ public class ExecutionExtension implements IAnnotationDrivenExtension<Execution>
   @Override
   public void visitSpecAnnotation(Execution annotation, SpecInfo spec) {
     spec.setExecutionMode(annotation.value());
-    spec.getAllFeatures().forEach(featureInfo -> featureInfo.setExecutionMode(annotation.value()));
   }
 
   @Override

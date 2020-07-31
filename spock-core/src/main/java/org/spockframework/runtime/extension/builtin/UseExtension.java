@@ -27,7 +27,9 @@ public class UseExtension implements IAnnotationDrivenExtension<Use> {
   @Override
   public void visitSpecAnnotation(Use annotation, SpecInfo spec) {
     addInterceptor(annotation, spec.getBottomSpec());
-    spec.setExecutionMode(ExecutionMode.SAME_THREAD);
+
+    // Disable parallel child execution for category tests
+    spec.setChildExecutionMode(ExecutionMode.SAME_THREAD);
   }
 
   @Override

@@ -44,6 +44,7 @@ public class SpecInfo extends SpecElementInfo<NodeInfo, Class<?>> implements IMe
   private final Set<ExclusiveResource> exclusiveResources = new HashSet<>();
 
   private ExecutionMode executionMode = null;
+  private ExecutionMode childExecutionMode = null;
 
   private String pkg;
   private String filename;
@@ -323,6 +324,14 @@ public class SpecInfo extends SpecElementInfo<NodeInfo, Class<?>> implements IMe
   @Override
   public Optional<ExecutionMode> getExecutionMode() {
     return Optional.ofNullable(executionMode);
+  }
+
+  public Optional<ExecutionMode> getChildExecutionMode() {
+    return Optional.ofNullable(childExecutionMode);
+  }
+
+  public void setChildExecutionMode(ExecutionMode childExecutionMode) {
+    this.childExecutionMode = childExecutionMode;
   }
 
   public void filterFeatures(final IFeatureFilter filter) {

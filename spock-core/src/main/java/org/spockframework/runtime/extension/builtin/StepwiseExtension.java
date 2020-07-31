@@ -29,8 +29,8 @@ public class StepwiseExtension implements IAnnotationDrivenExtension {
     includeFeaturesBeforeLastIncludedFeature(spec);
     skipFeaturesAfterFirstFailingFeature(spec);
 
-    // Disable parallel Execution for Stepwise tests
-    spec.setExecutionMode(ExecutionMode.SAME_THREAD);
+    // Disable parallel child execution for @Stepwise tests
+    spec.setChildExecutionMode(ExecutionMode.SAME_THREAD);
   }
 
   private void sortFeaturesInDeclarationOrder(SpecInfo spec) {

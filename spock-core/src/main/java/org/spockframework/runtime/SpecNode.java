@@ -3,6 +3,8 @@ package org.spockframework.runtime;
 import org.spockframework.runtime.model.SpecInfo;
 import spock.config.RunnerConfiguration;
 
+import java.util.Optional;
+
 import org.junit.platform.engine.UniqueId;
 import org.junit.platform.engine.support.descriptor.ClassSource;
 
@@ -59,5 +61,10 @@ public class SpecNode extends SpockNode<SpecInfo> {
   public ExecutionMode getExecutionMode() {
     return getExplicitExecutionMode()
       .orElseGet( ()-> toExecutionMode(getConfiguration().parallel.defaultClassesExecutionMode));
+  }
+
+  @Override
+  protected Optional<ExecutionMode> getDefaultChildExecutionMode() {
+    return getNodeInfo().getChildExecutionMode().map(SpockNode::toExecutionMode);
   }
 }

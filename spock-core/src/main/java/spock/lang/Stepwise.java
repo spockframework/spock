@@ -14,10 +14,10 @@
 
 package spock.lang;
 
-import java.lang.annotation.*;
-
 import org.spockframework.runtime.extension.ExtensionAnnotation;
 import org.spockframework.runtime.extension.builtin.StepwiseExtension;
+
+import java.lang.annotation.*;
 
 /**
  * Indicates that a spec's feature methods should be run sequentially
@@ -30,6 +30,10 @@ import org.spockframework.runtime.extension.builtin.StepwiseExtension;
  * (logical) dependencies between methods. In particular, it helps to avoid
  * consecutive errors after a method has failed, which makes it easier to
  * understand what really went wrong.
+ *
+ * <p>Note: If this extension is applied on the Specification, then it will use
+ * {@link org.spockframework.runtime.model.parallel.ExecutionMode#SAME_THREAD}
+ * for the whole Spec.
  *
  * @author Peter Niederwieser
  */

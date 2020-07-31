@@ -37,6 +37,12 @@ import java.lang.annotation.*;
  * were after <tt>setup()</tt> was executed, before <tt>cleanup() is executed.
  * For a data-driven feature method, meta classes are restored after each iteration.
  *
+ *
+ * <p>Note: If this extension is applied, then it will use acquire a lock for
+ * {@link org.spockframework.runtime.model.parallel.Resources#META_CLASS_REGISTRY}
+ *
+ * @see spock.lang.ResourceLock
+ *
  * @author Luke Daley
  */
 @Retention(RetentionPolicy.RUNTIME)

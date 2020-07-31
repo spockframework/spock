@@ -18,6 +18,7 @@ package spock.lang;
 
 import org.spockframework.runtime.extension.ExtensionAnnotation;
 import org.spockframework.runtime.extension.builtin.IssueExtension;
+import org.spockframework.util.Beta;
 
 import java.lang.annotation.*;
 
@@ -30,6 +31,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE, ElementType.METHOD})
 @ExtensionAnnotation(IssueExtension.class)
+@Repeatable(Issue.Container.class)
 public @interface Issue {
   /**
    * The IDs of the issues that the annotated element relates to.
@@ -37,4 +39,14 @@ public @interface Issue {
    * @return the IDs of the issues that the annotated element relates to
    */
   String[] value();
+
+  /**
+   * @since 2.0
+   */
+  @Beta
+  @Retention(RetentionPolicy.RUNTIME)
+  @Target({ElementType.TYPE, ElementType.METHOD})
+  @interface Container {
+    Issue[] value();
+  }
 }

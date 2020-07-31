@@ -23,28 +23,28 @@ import spock.lang.*
  */
 @Stepwise
 class ConfineMetaClassChangesSpec extends EmbeddedSpecification {
-  
+
   def setupSpec() {
     newValue = 1
   }
-  
+
   def "change the metaclass"() {
     expect: value == 1
     when: newValue = 2
     then: value == 2
   }
-  
+
   def "value is still changed value"() {
     expect: value == 2
   }
-  
+
   @ConfineMetaClassChanges(String)
   def "change it again, but with restore annotation"() {
     expect: value == 2
     when: newValue = 3
     then: value == 3
   }
-  
+
   def "changes have been reverted"() {
     expect: value == 2
   }
@@ -56,7 +56,7 @@ class ConfineMetaClassChangesSpec extends EmbeddedSpecification {
 
   @ConfineMetaClassChanges([String, Integer])
   def "change more than one type"() {
-    expect: 
+    expect:
     value == 2
 
     when:
@@ -67,7 +67,7 @@ class ConfineMetaClassChangesSpec extends EmbeddedSpecification {
     getValue("") == 3
     getValue(1) == 3
   }
-  
+
   def "changes are reverted on both"() {
     expect:
     getValue("") == 2
@@ -78,7 +78,33 @@ class ConfineMetaClassChangesSpec extends EmbeddedSpecification {
     then:
     thrown(MissingMethodException)
   }
-  
+
+  @ConfineMetaClassChanges(String)
+  @ConfineMetaClassChanges(Integer)
+  def "change more than one type with multiple annotations"() {
+    expect:
+    value == 2
+
+    when:
+    setNewValue(3, String)
+    setNewValue(3, Integer)
+
+    then:
+    getValue("") == 3
+    getValue(1) == 3
+  }
+
+  def "changes are still reverted on both"() {
+    expect:
+    getValue("") == 2
+
+    when:
+    getValue(1)
+
+    then:
+    thrown(MissingMethodException)
+  }
+
   def "exercise a spec level restore"() {
     setup:
     newValue = 2
@@ -112,7 +138,7 @@ class ConfineMetaClassChangesSpec extends EmbeddedSpecification {
     ""                          | 3
     "@ConfineMetaClassChanges(String)" | 2
   }
-  
+
   @ConfineMetaClassChanges(String)
   def "meta classes are restored after each iteration"() {
     expect:
@@ -126,27 +152,27 @@ class ConfineMetaClassChangesSpec extends EmbeddedSpecification {
     where:
     i << [2,2]
   }
-  
+
   def "meta class was restored after parameterised"() {
     expect:
     value == 2
   }
-  
+
   @ConfineMetaClassChanges([])
   def "annotation with empty list/array value doesn't cause an error"(){
     expect: true
   }
-  
+
   def cleanupSpec() {
     [String, Integer].each {
       GroovySystem.metaClassRegistry.removeMetaClass(it)
     }
   }
-  
+
   static setNewValue(value, type = String) {
     type.metaClass.getIsolateMetaClassExtensionValue = { -> value }
   }
-  
+
   static getValue(seed = "") {
     seed.getIsolateMetaClassExtensionValue()
   }

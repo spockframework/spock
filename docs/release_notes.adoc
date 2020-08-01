@@ -20,6 +20,8 @@ include::include.adoc[]
 
 - `@Subject` is now repeatable
 
+- `@Use` is now repeatable
+
 - Fix https://github.com/spockframework/spock/issues/994[#994] nested closures in argument constraints are not treated as implicit assertions anymore
 
 

@@ -490,11 +490,7 @@ To link to one or more references to external information related to a specifica
 
 [source,groovy]
 ----
-@See("http://spockframework.org/spec")
-class MoreInformationAvailableSpec extends Specification {
-  @See(["http://en.wikipedia.org/wiki/Levenshtein_distance", "http://www.levenshtein.net/"])
-  def "Even more information is available on the feature"() { ... }
-}
+include::{sourcedir}/extension/SeeDocSpec.groovy[tag=example]
 ----
 
 === Issue
@@ -527,15 +523,23 @@ To indicate one or more subjects of a spec, use `spock.lang.Subject`:
 
 [source,groovy]
 ----
-@Subject([Foo, Bar]) { ... }
+include::{sourcedir}/extension/SubjectDocSpec.groovy[tag=example-a]
+include::{sourcedir}/extension/SubjectDocSpec.groovy[tag=example-common]
+----
+
+You can also use multiple `@Subject` annotations:
+
+[source,groovy]
+----
+include::{sourcedir}/extension/SubjectDocSpec.groovy[tag=example-b]
+include::{sourcedir}/extension/SubjectDocSpec.groovy[tag=example-common]
 ----
 
 Additionally, `Subject` can be applied to fields and local variables:
 
-[source,groovy]
+[source,groovy,indent=0]
 ----
-@Subject
-Foo myFoo
+include::{sourcedir}/extension/SubjectDocSpec.groovy[tag=example-c]
 ----
 
 `Subject` currently has only informational purposes.

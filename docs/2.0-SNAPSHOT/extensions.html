@@ -459,7 +459,7 @@ Running <code>BarIntegrationSpec</code> will execute <code>inherited</code> and 
   <span class="directive">static</span> avg(<span class="predefined-type">List</span> list) { list.sum() / list.size() }
 }
 
-<span class="type">class</span> <span class="class">MySpec</span> <span class="directive">extends</span> Specification {
+<span class="type">class</span> <span class="class">UseDocSpec</span> <span class="directive">extends</span> Specification {
   <span class="annotation">@Use</span>(ListExtensions)
   <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">can use avg() method</span><span class="delimiter">&quot;</span></span>() {
     <span class="key">expect</span>:
@@ -472,6 +472,10 @@ Running <code>BarIntegrationSpec</code> will execute <code>inherited</code> and 
 <p>This can be useful for stubbing of dynamic methods, which are usually provided by the runtime environment (e.g. Grails).
 It has no effect when applied to a helper method. However, when applied to a spec class, it will also affect its helper
 methods.</p>
+</div>
+<div class="paragraph">
+<p>To use multiple categories, you can either give multiple categories to the <code>value</code> attribute
+of the annotation or you can apply the annotation multiple times to the same target.</p>
 </div>
 </div>
 <div class="sect2">
@@ -1208,7 +1212,7 @@ assignments happen before the method interceptor is called</p>
 <div id="footer">
 <div id="footer-text">
 Version 2.0-SNAPSHOT<br>
-Last updated 2020-08-01 13:00:08 UTC
+Last updated 2020-08-01 20:08:12 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./coderay-asciidoctor.css">

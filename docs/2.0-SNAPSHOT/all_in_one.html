@@ -4301,7 +4301,18 @@ issue.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@Subject</span>([Foo, Bar]) { ... }</code></pre>
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@Subject</span>([Foo, Bar])
+<span class="type">class</span> <span class="class">SubjectDocSpec</span> <span class="directive">extends</span> Specification {</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You can also use multiple <code>@Subject</code> annotations:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@Subject</span>(Foo)
+<span class="annotation">@Subject</span>(Bar)
+<span class="type">class</span> <span class="class">SubjectDocSpec</span> <span class="directive">extends</span> Specification {</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -5349,6 +5360,9 @@ If these methods are not overwritten, they forward to the usual <code>visitSpecA
 </li>
 <li>
 <p><code>@See</code> is now repeatable</p>
+</li>
+<li>
+<p><code>@Subject</code> is now repeatable</p>
 </li>
 <li>
 <p>Fix <a href="https://github.com/spockframework/spock/issues/994">#994</a> nested closures in argument constraints are not treated as implicit assertions anymore</p>
@@ -7795,7 +7809,7 @@ This is due to how groovy implements traits and AST transformations.</p>
 <div id="footer">
 <div id="footer-text">
 Version 2.0-SNAPSHOT<br>
-Last updated 2020-08-01 08:48:15 UTC
+Last updated 2020-08-01 13:00:08 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./coderay-asciidoctor.css">

@@ -510,15 +510,23 @@ To indicate one or more subjects of a spec, use `spock.lang.Subject`:
 
 [source,groovy]
 ----
-@Subject([Foo, Bar]) { ... }
+include::{sourcedir}/extension/SubjectDocSpec.groovy[tag=example-a]
+include::{sourcedir}/extension/SubjectDocSpec.groovy[tag=example-common]
+----
+
+You can also use multiple `@Subject` annotations:
+
+[source,groovy]
+----
+include::{sourcedir}/extension/SubjectDocSpec.groovy[tag=example-b]
+include::{sourcedir}/extension/SubjectDocSpec.groovy[tag=example-common]
 ----
 
 Additionally, `Subject` can be applied to fields and local variables:
 
-[source,groovy]
+[source,groovy,indent=0]
 ----
-@Subject
-Foo myFoo
+include::{sourcedir}/extension/SubjectDocSpec.groovy[tag=example-c]
 ----
 
 `Subject` currently has only informational purposes.

@@ -639,9 +639,17 @@ So that bar
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@See</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">http://spockframework.org/spec</span><span class="delimiter">&quot;</span></span>)
-<span class="type">class</span> <span class="class">MoreInformationAvailableSpec</span> <span class="directive">extends</span> Specification {
+<span class="type">class</span> <span class="class">SeeDocSpec</span> <span class="directive">extends</span> Specification {
   <span class="annotation">@See</span>([<span class="string"><span class="delimiter">&quot;</span><span class="content">http://en.wikipedia.org/wiki/Levenshtein_distance</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">http://www.levenshtein.net/</span><span class="delimiter">&quot;</span></span>])
-  <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">Even more information is available on the feature</span><span class="delimiter">&quot;</span></span>() { ... }
+  <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">Even more information is available on the feature</span><span class="delimiter">&quot;</span></span>() {
+    <span class="key">expect</span>: <span class="predefined-constant">true</span>
+  }
+
+  <span class="annotation">@See</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">http://www.levenshtein.de/</span><span class="delimiter">&quot;</span></span>)
+  <span class="annotation">@See</span>([<span class="string"><span class="delimiter">&quot;</span><span class="content">http://en.wikipedia.org/wiki/Levenshtein_distance</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">http://www.levenshtein.net/</span><span class="delimiter">&quot;</span></span>])
+  <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">And even more information is available on the feature</span><span class="delimiter">&quot;</span></span>() {
+    <span class="key">expect</span>: <span class="predefined-constant">true</span>
+  }
 }</code></pre>
 </div>
 </div>
@@ -1189,7 +1197,7 @@ assignments happen before the method interceptor is called</p>
 <div id="footer">
 <div id="footer-text">
 Version 2.0-SNAPSHOT<br>
-Last updated 2020-07-28 00:50:56 UTC
+Last updated 2020-08-01 08:48:15 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./coderay-asciidoctor.css">

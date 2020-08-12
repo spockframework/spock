@@ -38,6 +38,36 @@ class SeeExtension extends EmbeddedSpecification {
     attachments[1].url == "http://spockframework.org/two"
   }
 
+  @See("http://spockframework.org/one")
+  @See("http://spockframework.org/two")
+  def "adds attachment for each URL, if multiple see annotations are applied"() {
+    def attachments = specificationContext.currentFeature.attachments
+
+    expect:
+    attachments.size() == 2
+    attachments[0].name == "http://spockframework.org/one"
+    attachments[0].url == "http://spockframework.org/one"
+    attachments[1].name == "http://spockframework.org/two"
+    attachments[1].url == "http://spockframework.org/two"
+  }
+
+  @See(["http://spockframework.org/one", "http://spockframework.org/two"])
+  @See(["http://spockframework.org/three", "http://spockframework.org/four"])
+  def "adds attachment for each URL, if multiple see annotations with multiple values are applied"() {
+    def attachments = specificationContext.currentFeature.attachments
+
+    expect:
+    attachments.size() == 4
+    attachments[0].name == "http://spockframework.org/one"
+    attachments[0].url == "http://spockframework.org/one"
+    attachments[1].name == "http://spockframework.org/two"
+    attachments[1].url == "http://spockframework.org/two"
+    attachments[2].name == "http://spockframework.org/three"
+    attachments[2].url == "http://spockframework.org/three"
+    attachments[3].name == "http://spockframework.org/four"
+    attachments[3].url == "http://spockframework.org/four"
+  }
+
   def "barks if @See is used on anything other than a spec or feature"() {
     when:
     runner.runSpecBody(

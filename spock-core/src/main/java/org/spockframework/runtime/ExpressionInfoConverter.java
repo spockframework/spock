@@ -361,10 +361,11 @@ public class ExpressionInfoConverter extends AbstractExpressionConverter<Express
   }
 
   @Override
-  @SuppressWarnings("unchecked")
   public void visitArrayExpression(ArrayExpression expr) {
     List<ExpressionInfo> children = convertAll(expr.getExpressions());
-    children.addAll(convertAll(expr.getSizeExpression()));
+    if (expr.getSizeExpression() != null) {
+      children.addAll(convertAll(expr.getSizeExpression()));
+    }
 
     result = new ExpressionInfo(
         TextRegion.of(expr),

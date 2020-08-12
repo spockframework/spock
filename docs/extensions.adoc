@@ -353,23 +353,15 @@ To activate one or more Groovy categories within the scope of a feature method o
 
 [source,groovy]
 ----
-class ListExtensions {
-  static avg(List list) { list.sum() / list.size() }
-}
-
-class MySpec extends Specification {
-  @Use(ListExtensions)
-  def "can use avg() method"() {
-    expect:
-    [1, 2, 3].avg() == 2
-  }
-}
+include::{sourcedir}/extension/UseDocSpec.groovy[tag=example]
 ----
 
 This can be useful for stubbing of dynamic methods, which are usually provided by the runtime environment (e.g. Grails).
 It has no effect when applied to a helper method. However, when applied to a spec class, it will also affect its helper
 methods.
 
+To use multiple categories, you can either give multiple categories to the `value` attribute
+of the annotation or you can apply the annotation multiple times to the same target.
 
 === ConfineMetaClassChanges
 
@@ -477,11 +469,7 @@ To link to one or more references to external information related to a specifica
 
 [source,groovy]
 ----
-@See("http://spockframework.org/spec")
-class MoreInformationAvailableSpec extends Specification {
-  @See(["http://en.wikipedia.org/wiki/Levenshtein_distance", "http://www.levenshtein.net/"])
-  def "Even more information is available on the feature"() { ... }
-}
+include::{sourcedir}/extension/SeeDocSpec.groovy[tag=example]
 ----
 
 === Issue
@@ -514,15 +502,23 @@ To indicate one or more subjects of a spec, use `spock.lang.Subject`:
 
 [source,groovy]
 ----
-@Subject([Foo, Bar]) { ... }
+include::{sourcedir}/extension/SubjectDocSpec.groovy[tag=example-a]
+include::{sourcedir}/extension/SubjectDocSpec.groovy[tag=example-common]
+----
+
+You can also use multiple `@Subject` annotations:
+
+[source,groovy]
+----
+include::{sourcedir}/extension/SubjectDocSpec.groovy[tag=example-b]
+include::{sourcedir}/extension/SubjectDocSpec.groovy[tag=example-common]
 ----
 
 Additionally, `Subject` can be applied to fields and local variables:
 
-[source,groovy]
+[source,groovy,indent=0]
 ----
-@Subject
-Foo myFoo
+include::{sourcedir}/extension/SubjectDocSpec.groovy[tag=example-c]
 ----
 
 `Subject` currently has only informational purposes.

@@ -58,6 +58,15 @@ class ArgumentMatching extends Specification {
     1 * list.add({ it.length() > 1 })
   }
 
+  def "match nested closure in code argument"() {
+    List list = Mock()
+
+    when:
+    list.add(['foo'])
+    then:
+    1 * list.add({ it.find { it == 'foo'} })
+  }
+
   @FailsWith(value = TooFewInvocationsError, reason = "Should not fail with ConditionNotSatisfiedError from assert")
   def "match code argument as assertions"() {
     List list = Mock()

@@ -17,7 +17,6 @@
 package org.spockframework.compiler;
 
 import org.spockframework.lang.Wildcard;
-import org.spockframework.runtime.SpockRuntime;
 import org.spockframework.util.*;
 import spock.lang.Specification;
 
@@ -245,14 +244,15 @@ public abstract class AstUtil {
     if (spreadArgs.isEmpty())
       return new ArrayExpression(ClassHelper.OBJECT_TYPE, argList);
 
-    return new MethodCallExpression(
-        new ClassExpression(resources.getAstNodeCache().SpockRuntime),
-        new ConstantExpression(SpockRuntime.DESPREAD_LIST),
-        new ArgumentListExpression(
-            new ArrayExpression(ClassHelper.OBJECT_TYPE, normalArgs),
-            new ArrayExpression(ClassHelper.OBJECT_TYPE, spreadArgs),
-            new ArrayExpression(ClassHelper.int_TYPE, spreadPositions)
-        ));
+    AstNodeCache astNodeCache = resources.getAstNodeCache();
+    return createDirectMethodCall(
+      new ClassExpression(astNodeCache.SpockRuntime),
+      astNodeCache.SpockRuntime_DespreadList,
+      new ArgumentListExpression(
+        new ArrayExpression(ClassHelper.OBJECT_TYPE, normalArgs),
+        new ArrayExpression(ClassHelper.OBJECT_TYPE, spreadArgs),
+        new ArrayExpression(ClassHelper.int_TYPE, spreadPositions)
+      ));
   }
 
   public static void copySourcePosition(ASTNode from, ASTNode to) {
@@ -304,10 +304,18 @@ public abstract class AstUtil {
     return clazz.getModule().getUnit().getConfig().getJointCompilationOptions() != null;
   }
 
+  public static MethodCallExpression createMethodCall(Expression target, String methodName, Expression arguments) {
+    MethodCallExpression result = new MethodCallExpression(target, methodName, arguments);
+    // see http://groovy.329449.n5.nabble.com/Problem-with-latest-2-0-beta-3-snapshot-and-Spock-td5496353.html
+    // and https://github.com/spockframework/spock/issues/1200
+    // and https://issues.apache.org/jira/browse/GROOVY-9651
+    result.setImplicitThis(false);
+    return result;
+  }
+
   public static MethodCallExpression createDirectMethodCall(Expression target, MethodNode method, Expression arguments) {
-    MethodCallExpression result = new MethodCallExpression(target, method.getName(), arguments);
+    MethodCallExpression result = createMethodCall(target, method.getName(), arguments);
     result.setMethodTarget(method);
-    result.setImplicitThis(false); // see http://groovy.329449.n5.nabble.com/Problem-with-latest-2-0-beta-3-snapshot-and-Spock-td5496353.html
     return result;
   }
 
@@ -329,15 +337,7 @@ public abstract class AstUtil {
     return type == null || type == ClassHelper.DYNAMIC_TYPE ? ConstantExpression.NULL : new ClassExpression(type);
   }
 
-  public static MethodCallExpression createGetAtMethod(Expression expression, int index) {
-    return new MethodCallExpression(expression,
-                                    GET_AT_METHOD_NAME,
-                                    new ConstantExpression(index));
-  }
-
-  public static MethodCallExpression createGetMethod(Expression expression, int index) {
-    return new MethodCallExpression(expression,
-                                    GET_METHOD_NAME,
-                                    new ConstantExpression(index));
+  public static MethodCallExpression createGetAtMethodCall(Expression expression, int index) {
+    return createMethodCall(expression, GET_AT_METHOD_NAME, new ConstantExpression(index));
   }
 }

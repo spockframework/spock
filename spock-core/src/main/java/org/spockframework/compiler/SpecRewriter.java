@@ -30,6 +30,8 @@ import org.codehaus.groovy.runtime.MetaClassHelper;
 import org.codehaus.groovy.syntax.*;
 import org.objectweb.asm.Opcodes;
 
+import static org.spockframework.compiler.AstUtil.createDirectMethodCall;
+
 /**
  * A Spec visitor responsible for most of the rewriting of a Spec's AST.
  *
@@ -308,7 +310,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
 
     // for global required interactions
     if (method instanceof FeatureMethod)
-      method.getStatements().add(createMockControllerCall(MockController.LEAVE_SCOPE));
+      method.getStatements().add(createMockControllerCall(nodeCache.MockController_LeaveScope));
 
     if (methodHasCondition) {
       defineRecorders(method.getStatements(), false);
@@ -353,22 +355,18 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
     List<Statement> statsBeforeWhenBlock = block.getPrevious(WhenBlock.class).getPrevious().getAst();
 
     statsBeforeWhenBlock.add(createMockControllerCall(
-        block.isFirstInChain() ? MockController.ENTER_SCOPE : MockController.ADD_BARRIER));
+        block.isFirstInChain() ? nodeCache.MockController_EnterScope : nodeCache.MockController_AddBarrier));
 
     statsBeforeWhenBlock.addAll(interactions);
 
     if (block.isFirstInChain())
       // insert at beginning of then-block rather than end of when-block
       // s.t. it's outside of try-block inserted for exception conditions
-      block.getAst().add(0, createMockControllerCall(MockController.LEAVE_SCOPE));
+      block.getAst().add(0, createMockControllerCall(nodeCache.MockController_LeaveScope));
   }
 
-  private Statement createMockControllerCall(String methodName) {
-    return new ExpressionStatement(
-        new MethodCallExpression(
-            getMockInvocationMatcher(),
-            methodName,
-            ArgumentListExpression.EMPTY_ARGUMENTS));
+  private Statement createMockControllerCall(MethodNode method) {
+    return new ExpressionStatement(createDirectMethodCall(getMockInvocationMatcher(), method, ArgumentListExpression.EMPTY_ARGUMENTS));
   }
 
   /*
@@ -479,14 +477,14 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
   private CatchStatement createHandleSuppressedThrowableStatement(VariableExpression featureThrowableVar) {
     Parameter catchParameter = new Parameter(nodeCache.Throwable, "$spock_tmp_throwable");
 
-
-    MethodCallExpression addSuppressedCall = new MethodCallExpression(featureThrowableVar, "addSuppressed",
-      new ArgumentListExpression(new VariableExpression(catchParameter)));
-
     BinaryExpression featureThrowableNotNullExpr = createVariableNotNullExpression(featureThrowableVar);
 
     List<Statement> addSuppressedStats =
-      Collections.<Statement>singletonList(new ExpressionStatement(addSuppressedCall));
+      Collections.<Statement>singletonList(new ExpressionStatement(
+        createDirectMethodCall(
+          featureThrowableVar,
+          nodeCache.Throwable_AddSuppressed,
+          new ArgumentListExpression(new VariableExpression(catchParameter)))));
     List<Statement> throwFeatureStats =
       Collections.<Statement>singletonList(new ThrowStatement(new VariableExpression(catchParameter)));
 
@@ -546,7 +544,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
       new TryCatchStatement(
         new BlockStatement(allStats, null),
         new ExpressionStatement(
-          AstUtil.createDirectMethodCall(
+          createDirectMethodCall(
             new VariableExpression(SpockNames.ERROR_COLLECTOR),
             nodeCache.ErrorCollector_Validate,
             ArgumentListExpression.EMPTY_ARGUMENTS
@@ -569,24 +567,30 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
   }
 
   public MethodCallExpression getSpecificationContext() {
-    return AstUtil.createDirectMethodCall(VariableExpression.THIS_EXPRESSION,
+    return createDirectMethodCall(VariableExpression.THIS_EXPRESSION,
         nodeCache.SpecInternals_GetSpecificationContext, ArgumentListExpression.EMPTY_ARGUMENTS);
   }
 
   @Override
   public MethodCallExpression getMockInvocationMatcher() {
-    return new MethodCallExpression(getSpecificationContext(),
-        SpecificationContext.GET_MOCK_CONTROLLER, ArgumentListExpression.EMPTY_ARGUMENTS);
+    return createDirectMethodCall(
+      getSpecificationContext(),
+      nodeCache.SpecificationContext_GetMockController,
+      ArgumentListExpression.EMPTY_ARGUMENTS);
   }
 
   public MethodCallExpression setThrownException(Expression value) {
-    return new MethodCallExpression(getSpecificationContext(),
-        SpecificationContext.SET_THROWN_EXCEPTION, new ArgumentListExpression(value));
+    return createDirectMethodCall(
+      getSpecificationContext(),
+      nodeCache.SpecificationContext_SetThrownException,
+      new ArgumentListExpression(value));
   }
 
   public MethodCallExpression getSharedInstance() {
-    return new MethodCallExpression(getSpecificationContext(),
-        SpecificationContext.GET_SHARED_INSTANCE, ArgumentListExpression.EMPTY_ARGUMENTS);
+    return createDirectMethodCall(
+      getSpecificationContext(),
+      nodeCache.SpecificationContext_GetSharedInstance,
+      ArgumentListExpression.EMPTY_ARGUMENTS);
   }
 
   @Override

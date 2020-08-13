@@ -137,15 +137,21 @@ is checked and it is decided whether to abort the specific iteration or not.
 To execute a feature method under certain conditions, annotate it with `spock.lang.Requires`,
 followed by a predicate:
 
-[source,groovy]
+[source,groovy,indent=0]
 ----
-@Requires({ os.windows })
-def "I'll only run on Windows"() { ... }
+include::{sourcedir}/extension/RequiresDocSpec.groovy[tag=example-a]
 ----
 
 `Requires` works exactly like `IgnoreIf`, except that the predicate is inverted. In general, it is preferable
 to state the conditions under which a method gets executed, rather than the conditions under which it gets ignored.
 
+If multiple `@Requires` annotations are present, they are effectively combined with a logical "and".
+The annotated element is skipped if any of the conditions evaluates to `false`:
+
+[source,groovy,indent=0]
+----
+include::{sourcedir}/extension/RequiresDocSpec.groovy[tag=example-b]
+----
 
 === PendingFeature
 

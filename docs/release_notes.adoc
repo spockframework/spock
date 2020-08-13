@@ -16,6 +16,8 @@ include::include.adoc[]
 
 - `@Issue` is now repeatable
 
+- `@Requires` is now repeatable
+
 - `@See` is now repeatable
 
 - `@Subject` is now repeatable

@@ -3794,12 +3794,23 @@ followed by a predicate:</p>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@Requires</span>({ os.windows })
-<span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">I'll only run on Windows</span><span class="delimiter">&quot;</span></span>() { ... }</code></pre>
+<span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">I'll only run on Windows</span><span class="delimiter">&quot;</span></span>() {</code></pre>
 </div>
 </div>
 <div class="paragraph">
 <p><code>Requires</code> works exactly like <code>IgnoreIf</code>, except that the predicate is inverted. In general, it is preferable
 to state the conditions under which a method gets executed, rather than the conditions under which it gets ignored.</p>
+</div>
+<div class="paragraph">
+<p>If multiple <code>@Requires</code> annotations are present, they are effectively combined with a logical "and".
+The annotated element is skipped if any of the conditions evaluates to <code>false</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@Requires</span>({ os.windows })
+<span class="annotation">@Requires</span>({ jvm.java8 })
+<span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">I'll run only on Windows with Java 8</span><span class="delimiter">&quot;</span></span>() {</code></pre>
+</div>
 </div>
 </div>
 <div class="sect3">
@@ -5361,6 +5372,9 @@ If these methods are not overwritten, they forward to the usual <code>visitSpecA
 </li>
 <li>
 <p><code>@Issue</code> is now repeatable</p>
+</li>
+<li>
+<p><code>@Requires</code> is now repeatable</p>
 </li>
 <li>
 <p><code>@See</code> is now repeatable</p>
@@ -7819,7 +7833,7 @@ This is due to how groovy implements traits and AST transformations.</p>
 <div id="footer">
 <div id="footer-text">
 Version 2.0-SNAPSHOT<br>
-Last updated 2020-08-12 16:27:06 UTC
+Last updated 2020-08-13 11:24:32 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./coderay-asciidoctor.css">

@@ -62,7 +62,7 @@ class TempDirExtensionSpec extends EmbeddedSpecification {
     i << (1..3)
   }
 
-  def "have unwritable directory in temp directory"(int i) {
+  def "have unwritable directory and file in temp directory"() {
     expect:
     if (i == 0) {
       def dir = Paths.get(iterationDir.toURI())

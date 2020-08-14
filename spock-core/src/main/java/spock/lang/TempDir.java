@@ -1,6 +1,5 @@
 package spock.lang;
 
-import groovy.lang.Closure;
 import org.spockframework.runtime.extension.ExtensionAnnotation;
 import org.spockframework.runtime.extension.builtin.TempDirExtension;
 import org.spockframework.util.Beta;
@@ -12,8 +11,6 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.nio.file.Path;
 
-import org.spockframework.runtime.extension.builtin.PreconditionContext;
-
 /**
  * Generate a temp directory for test, and delete it after test.
  *
@@ -24,7 +21,6 @@ import org.spockframework.runtime.extension.builtin.PreconditionContext;
  *
  * @author dqyuan
  * @since 2.0
- * @see PreconditionContext
  */
 @Beta
 @Retention(RetentionPolicy.RUNTIME)

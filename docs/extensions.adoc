@@ -449,13 +449,28 @@ def ignoreMyExceptions
 
 To generate a temp directory for test and delete it after test,
 annotate a member field of type `java.io.File`, `java.nio.file.Path`
-or untyped using `def` in a spec class. If the annotated field is shared,
+or untyped using `def` in a spec class(`def` will inject a `Path`). If the annotated field is shared,
 the temp directory will be shared in this spec, otherwise every
 iteration will have its own temp directory:
 
 [source,groovy,indent=0]
 ----
-include::{sourcedir}/extension/TempDirDocSpec.groovy[tag=example-a]
+include::{sourcedir}/extension/TempDirDocSpec.groovy[tag=example]
+----
+
+If you want a customized parent directory to create temp directory,
+you can use the <<Spock Configuration File>> to set it up.
+
+If the `keep` is set `true`, it will keep the temp directory after test,
+default is system property "spock.tempDir.keep".
+
+.Temp Directory Configuration
+[source,groovy]
+----
+tempdir {
+  baseDir Paths.get(System.getProperty("java.io.tmpdir")) // java.nio.Path object, default null, which means system property "java.io.tmpdir"
+  keep true // boolean, default is system property "spock.tempDir.keep"
+}
 ----
 
 === Title and Narrative
@@ -608,7 +623,7 @@ separated by a dash. If the suffix contains the string `#timestamp`, this is rep
 `UTC` automatically. If you instead want to have your local date and time, you can use the setting from the example
 below.
 
-.Report Log Configuration
+.Report Log Confi`guration
 [source,groovy]
 ----
 report {
@@ -616,20 +631,6 @@ report {
     logFileDir '.'
     logFileName 'spock-report.json'
     logFileSuffix new Date().format('yyyy-MM-dd_HH_mm_ss')
-}
-----
-
-=== Temp Directory
-
-Spock can generate a temp directory for test and delete it after test,
-which is related with <<TempDir,`@TempDir`>>.
-
-.Temp Directory Configuration
-[source,groovy]
-----
-tempdir {
-  baseDir Paths.get(System.getProperty("java.io.tmpdir")) // java.nio.Path object, default null, which means {@code System.getProperty("java.io.tmpdir")}
-  keep true // boolean, default {@code Boolean.getBoolean("spock.tempDir.keep")}, which means not keep temp directory after test
 }
 ----
 

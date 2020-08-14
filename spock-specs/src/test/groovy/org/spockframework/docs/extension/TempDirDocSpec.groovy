@@ -16,7 +16,7 @@ class TempDirDocSpec extends Specification {
     expect: true
   }
 
-// tag::example-a[]
+// tag::example[]
   // all feature will share the same temp directory path1
   @TempDir
   @Shared
@@ -29,21 +29,5 @@ class TempDirDocSpec extends Specification {
   // will be injected using java.nio.file.Path
   @TempDir
   def path3
-// end::example-a[]
+// end::example[]
 }
-
-
-class TempDirParamSpec extends Specification {
-
-  def placeholder() {
-    expect:true
-  }
-
-// tag::example-b[]
-  // generate temp directory in "build" directory relative to project path
-  // and keep it after test
-  @TempDir
-  Path tempPath
-// end::example-b[]
-}
-

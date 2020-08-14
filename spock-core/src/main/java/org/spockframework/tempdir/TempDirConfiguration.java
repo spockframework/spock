@@ -12,8 +12,8 @@ import java.nio.file.Path;
  * <p>Example:
  * <pre>
  * tempdir {
- *   baseDir Paths.get(System.getProperty("java.io.tmpdir")) // java.nio.Path object, default null, which means {@code System.getProperty("java.io.tmpdir")}
- *   keep true // boolean, default {@code Boolean.getBoolean("spock.tempDir.keep")}, which means not keep temp directory after test
+ *   baseDir Paths.get("/tmp) // java.nio.Path object, default null, which means system property "java.io.tmpdir"
+ *   keep true // boolean, default is system property "spock.tempDir.keep"
  * }
  * </pre>
  * @author dqyuan
@@ -24,12 +24,12 @@ import java.nio.file.Path;
 public class TempDirConfiguration {
 
   /**
-   * The parent directory for the temporary folder, default is system temp directory.
+   * The parent directory for the temporary folder, default is system property "java.io.tmpdir".
    */
   public Path baseDir = null;
 
   /**
-   * Whether to keep the temp directory or not after test, default is not.
-   * */
+   * Whether to keep the temp directory or not after test, default is system property "spock.tempDir.keep".
+   */
   public boolean keep = Boolean.getBoolean("spock.tempDir.keep");
 }

@@ -1,7 +1,5 @@
 package org.spockframework.runtime.extension.builtin;
 
-import groovy.lang.Closure;
-import org.spockframework.runtime.GroovyRuntimeUtil;
 import org.spockframework.runtime.InvalidSpecException;
 import org.spockframework.runtime.extension.IAnnotationDrivenExtension;
 import org.spockframework.runtime.model.FeatureInfo;
@@ -10,7 +8,6 @@ import org.spockframework.runtime.model.MethodKind;
 import org.spockframework.runtime.model.SpecInfo;
 import org.spockframework.tempdir.TempDirConfiguration;
 import org.spockframework.util.Beta;
-import org.spockframework.util.ConditionUtil;
 import spock.lang.TempDir;
 
 import java.io.File;

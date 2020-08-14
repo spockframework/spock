@@ -42,10 +42,26 @@ public class TempDirInterceptor implements IMethodInterceptor {
     this.keep = keep;
   }
 
+  private String dirPrefix(IMethodInvocation invocation) {
+    StringBuilder prefix = new StringBuilder(TEMP_DIR_PREFIX);
+    prefix.append('_');
+    // for shared field, no iteration is set, so use the spec name
+    // otherwise use the iteration name
+    prefix.append(((invocation.getIteration() == null)
+      ? invocation.getSpec().getName()
+      : invocation.getIteration().getName())
+      .replaceAll("[^a-zA-Z0-9_.-]++", "_"));
+    if (prefix.length() > 25) {
+      prefix.setLength(25);
+    }
+    if (invocation.getIteration() != null) {
+      prefix.append('_').append(invocation.getIteration().getIterationIndex());
+    }
+    return prefix.append('_').append(fieldInfo.getName()).toString();
+  }
+
   private Path generateTempDir(IMethodInvocation invocation) throws IOException {
-    String prefix = TEMP_DIR_PREFIX + "_" + ((invocation.getIteration() == null) ?
-      invocation.getSpec().getName() : invocation.getIteration().getName())
-      .replaceAll("[^a-zA-Z0-9_.-]++", "_") + "_" + fieldInfo.getName();
+    String prefix = dirPrefix(invocation);
     if (parentDir == null) {
       return Files.createTempDirectory(prefix);
     }
@@ -64,7 +80,8 @@ public class TempDirInterceptor implements IMethodInterceptor {
     }
   }
 
-  private void invoke(IMethodInvocation invocation) throws Throwable {
+  @Override
+  public void intercept(IMethodInvocation invocation) throws Throwable {
     setUp(invocation);
     try {
       invocation.proceed();
@@ -101,12 +118,5 @@ public class TempDirInterceptor implements IMethodInterceptor {
         return CONTINUE;
       }
     });
-  }
-
-  @Override
-  public void intercept(IMethodInvocation invocation) throws Throwable {
-    if (invocation.getMethod().getKind() == interceptPoint) {
-      invoke(invocation);
-    }
   }
 }

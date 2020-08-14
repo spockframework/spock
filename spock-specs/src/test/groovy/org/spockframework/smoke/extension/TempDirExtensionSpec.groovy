@@ -85,7 +85,7 @@ class TempDirExtensionSpec extends EmbeddedSpecification {
 
   static Path pathFromEmbedded
 
-  def "define temp directory location and keep temp directory using using configuration script"() {
+  def "define temp directory location and keep temp directory using configuration script"() {
     given:
     def userDefinedBase = Paths.get("build")
     runner.configurationScript {

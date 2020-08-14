@@ -28,8 +28,12 @@ public class GuiceExtension implements IAnnotationDrivenExtension<UseModules> {
   private final Set<Class<? extends Module>> moduleClasses = new LinkedHashSet<>();
 
   @Override
-  public void visitSpecAnnotation(UseModules useModules, SpecInfo spec) {
-    moduleClasses.addAll(Arrays.asList(useModules.value()));
+  public void visitSpecAnnotations(List<UseModules> useModules, SpecInfo spec) {
+    useModules
+      .stream()
+      .map(UseModules::value)
+      .flatMap(Arrays::stream)
+      .forEach(moduleClasses::add);
   }
 
   @Override

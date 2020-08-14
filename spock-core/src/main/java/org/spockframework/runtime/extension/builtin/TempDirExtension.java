@@ -27,9 +27,7 @@ public class TempDirExtension implements IAnnotationDrivenExtension<TempDir> {
     if (!fieldType.isAssignableFrom(File.class) && !fieldType.isAssignableFrom(Path.class)) {
       throw new InvalidSpecException("@TempDir can only be used on File, Path or untyped field");
     }
-    MethodKind interceptPoint = field.isShared() ? MethodKind.SPEC_EXECUTION : MethodKind.ITERATION_EXECUTION;
-    TempDirInterceptor interceptor = new TempDirInterceptor(fieldType, field, interceptPoint,
-      configuration.baseDir, configuration.keep);
+    TempDirInterceptor interceptor = new TempDirInterceptor(fieldType, field, configuration.baseDir, configuration.keep);
 
     // attach interceptor
     SpecInfo specInfo = field.getParent();

@@ -27,18 +27,15 @@ public class TempDirInterceptor implements IMethodInterceptor {
   private final Class<?> fieldType;
   private final FieldInfo fieldInfo;
   private final Path parentDir;
-  private final MethodKind interceptPoint;
   private final boolean keep;
 
   private Path tempPath;
 
   TempDirInterceptor(Class<?> fieldType, FieldInfo fieldInfo,
-                     MethodKind interceptPoint, Path parentDir,
-                     boolean keep) {
+                     Path parentDir, boolean keep) {
     this.fieldType = fieldType;
     this.fieldInfo = fieldInfo;
     this.parentDir = parentDir;
-    this.interceptPoint = interceptPoint;
     this.keep = keep;
   }
 

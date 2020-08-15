@@ -24,7 +24,7 @@ import java.nio.file.Path;
 public class TempDirConfiguration {
 
   /**
-   * The parent directory for the temporary folder, default is system property "java.io.tmpdir".
+   * The parent directory for the temporary folder, default is system property {@code java.io.tmpdir}.
    */
   public Path baseDir = null;
 

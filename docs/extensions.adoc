@@ -462,7 +462,7 @@ If you want a customized parent directory to create temp directory,
 you can use the <<Spock Configuration File>> to set it up.
 
 If the `keep` is set `true`, it will keep the temp directory after test,
-default is system property "spock.tempDir.keep".
+default is system property `spock.tempDir.keep` or `false` if it is not set.
 
 .Temp Directory Configuration
 [source,groovy]

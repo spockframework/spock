@@ -29,7 +29,8 @@ public class TempDirConfiguration {
   public Path baseDir = null;
 
   /**
-   * Whether to keep the temp directory or not after test, default is system property "spock.tempDir.keep".
+   * Whether to keep the temp directory or not after test,
+   * default is system property {@code spock.tempDir.keep} or false if it is not set.
    */
   public boolean keep = Boolean.getBoolean("spock.tempDir.keep");
 }

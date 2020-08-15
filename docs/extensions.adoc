@@ -449,7 +449,7 @@ def ignoreMyExceptions
 
 To generate a temp directory for test and delete it after test,
 annotate a member field of type `java.io.File`, `java.nio.file.Path`
-or untyped using `def` in a spec class(`def` will inject a `Path`). If the annotated field is shared,
+or untyped using `def` in a spec class (`def` will inject a `Path`). If the annotated field is shared,
 the temp directory will be shared in this spec, otherwise every
 iteration will have its own temp directory:
 

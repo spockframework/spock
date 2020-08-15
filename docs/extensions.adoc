@@ -623,7 +623,7 @@ separated by a dash. If the suffix contains the string `#timestamp`, this is rep
 `UTC` automatically. If you instead want to have your local date and time, you can use the setting from the example
 below.
 
-.Report Log Confi`guration
+.Report Log Configuration
 [source,groovy]
 ----
 report {

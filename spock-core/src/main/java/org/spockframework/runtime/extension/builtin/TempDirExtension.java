@@ -4,7 +4,6 @@ import org.spockframework.runtime.InvalidSpecException;
 import org.spockframework.runtime.extension.IAnnotationDrivenExtension;
 import org.spockframework.runtime.model.FeatureInfo;
 import org.spockframework.runtime.model.FieldInfo;
-import org.spockframework.runtime.model.MethodKind;
 import org.spockframework.runtime.model.SpecInfo;
 import org.spockframework.tempdir.TempDirConfiguration;
 import org.spockframework.util.Beta;

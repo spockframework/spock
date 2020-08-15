@@ -468,8 +468,11 @@ default is system property `spock.tempDir.keep` or `false` if it is not set.
 [source,groovy]
 ----
 tempdir {
-  baseDir Paths.get(System.getProperty("java.io.tmpdir")) // java.nio.Path object, default null, which means system property "java.io.tmpdir"
-  keep true // boolean, default is system property "spock.tempDir.keep"
+  // java.nio.Path object, default null,
+  // which means system property "java.io.tmpdir"
+  baseDir Paths.get("/tmp")
+  // boolean, default is system property "spock.tempDir.keep"
+  keep true
 }
 ----
 

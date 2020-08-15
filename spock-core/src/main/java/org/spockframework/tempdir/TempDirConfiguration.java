@@ -12,8 +12,11 @@ import java.nio.file.Path;
  * <p>Example:
  * <pre>
  * tempdir {
- *   baseDir Paths.get("/tmp) // java.nio.Path object, default null, which means system property "java.io.tmpdir"
- *   keep true // boolean, default is system property "spock.tempDir.keep"
+ *   // java.nio.Path object, default null,
+ *   // which means system property "java.io.tmpdir"
+ *   baseDir Paths.get("/tmp")
+ *   // boolean, default is system property "spock.tempDir.keep"
+ *   keep true
  * }
  * </pre>
  * @author dqyuan

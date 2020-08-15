@@ -95,7 +95,6 @@ class TempDirExtensionSpec extends EmbeddedSpecification {
       }
     }
     runner.addClassImport(Path)
-    runner.addClassImport(TempDir)
     runner.addClassImport(getClass())
 
     when:

@@ -25,6 +25,10 @@ public class SpecNode extends SpockNode {
 
   @Override
   public SpockExecutionContext prepare(SpockExecutionContext context) throws Exception {
+    if (specInfo.isSkipped()) {
+      // Node.prepare is called before Node.shouldBeSkipped so we just skip the shared spec initialization
+      return context;
+    }
     PlatformParameterizedSpecRunner specRunner = context.getRunContext().createSpecRunner(specInfo);
     ErrorInfoCollector errorInfoCollector = new ErrorInfoCollector();
     context = context.withErrorInfoCollector(errorInfoCollector);

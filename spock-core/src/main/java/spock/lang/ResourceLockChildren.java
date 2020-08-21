@@ -7,28 +7,23 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import org.spockframework.runtime.extension.ExtensionAnnotation;
-import org.spockframework.runtime.extension.builtin.ResourceLockExtension;
+import org.spockframework.runtime.extension.builtin.ResourceLockChildrenExtension;
 import org.spockframework.runtime.model.parallel.ResourceAccessMode;
 import org.spockframework.util.Beta;
 
 /**
  * Allows to control access to a shared resource.
  *
- * If applied on class-level, the lock will be on the class,
- * covering shared fields and {@code setupSpec}/{@code cleanupSpec}.
- * This will also cause all features to run on the same thread
- * as the Specification.
- *
- * See {@link ResourceLockChildren}
+ * This is the same as applying {@link ResourceLock} on every child.
  *
  * @since 2.0
  */
 @Beta
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.TYPE, ElementType.METHOD})
-@ExtensionAnnotation(ResourceLockExtension.class)
-@Repeatable(ResourceLock.Container.class)
-public @interface ResourceLock {
+@Target({ElementType.TYPE})
+@ExtensionAnnotation(ResourceLockChildrenExtension.class)
+@Repeatable(ResourceLockChildren.Container.class)
+public @interface ResourceLockChildren {
   /**
    * The name of the resource.
    *
@@ -45,8 +40,8 @@ public @interface ResourceLock {
 
   @Beta
   @Retention(RetentionPolicy.RUNTIME)
-  @Target({ElementType.TYPE, ElementType.METHOD})
+  @Target({ElementType.TYPE})
   @interface Container {
-    ResourceLock[] value();
+    ResourceLockChildren[] value();
   }
 }

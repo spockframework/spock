@@ -12,10 +12,6 @@ import java.nio.file.Path
  */
 class TempDirDocSpec extends Specification {
 
-  def placeholder() {
-    expect: true
-  }
-
 // tag::example[]
   // all feature will share the same temp directory path1
   @TempDir
@@ -29,5 +25,13 @@ class TempDirDocSpec extends Specification {
   // will be injected using java.nio.file.Path
   @TempDir
   def path3
+
+  def demo() {
+    expect:
+    path1 instanceof Path
+    path2 instanceof File
+    path3 instanceof Path
+  }
+
 // end::example[]
 }

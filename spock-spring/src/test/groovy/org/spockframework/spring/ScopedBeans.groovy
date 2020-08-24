@@ -40,7 +40,7 @@ class SpecWithScope extends Specification {
   def "no exception"() {
     expect:
     true
-  }  
+  }
 }
 '''
 
@@ -68,7 +68,7 @@ class SpecWithScopes extends Specification {
   def "this will fail"() {
     expect:
     true
-  }  
+  }
 }
 '''
 
@@ -98,10 +98,10 @@ class SpecWithScopes extends Specification {
   def "this will not fail"() {
     when:
     service.generateQuickBrownFox()
-    
+
     then:
     1 * service.generateQuickBrownFox()
-  }  
+  }
 }
 ''')
 
@@ -113,7 +113,7 @@ class SpecWithScopes extends Specification {
   }
 
 
-  def "scopes to scan can be defined"(){
+  def "  scopes to scan can be defined"(){
     def runner = new EmbeddedSpecRunner()
 
     when:
@@ -135,10 +135,10 @@ class SpecWithScopes extends Specification {
   def "this will not fail"() {
     when:
     service.generateQuickBrownFox()
-    
+
     then:
     1 * service.generateQuickBrownFox()
-  }  
+  }
 }
 ''')
 

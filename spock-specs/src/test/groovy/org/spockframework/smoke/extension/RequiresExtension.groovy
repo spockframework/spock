@@ -17,6 +17,7 @@
 package org.spockframework.smoke.extension
 
 import org.spockframework.EmbeddedSpecification
+import org.spockframework.runtime.ConditionNotSatisfiedError
 import org.spockframework.runtime.extension.ExtensionException
 import spock.lang.FailsWith
 import spock.lang.IgnoreIf
@@ -30,13 +31,14 @@ class RequiresExtension extends EmbeddedSpecification {
     when:
     def results = runner.runClass(RequiresExtensionExamples)
     then:
-    results.testsSucceededCount == 8
+    results.testsSucceededCount == 9
     results.testsFailedCount == 0
-    results.testsSkippedCount == 3
+    results.testsSkippedCount == 4
     results.testEvents().skipped().list().testDescriptor.displayName == [
       "skips feature if precondition is not satisfied",
       "can skip data providers completely if no data variables are accessed",
-      "allows determinate use of multiple filters"
+      "allows determinate use of multiple filters",
+      "feature is ignored if at least one Requires annotation is false"
     ]
   }
 
@@ -190,6 +192,18 @@ class Bar extends Closure {
       expect: false
     }
 
+    @Requires({ false })
+    @Requires({ true })
+    def "feature is ignored if at least one Requires annotation is false" () {
+      expect: false
+    }
+
+    @Requires({ true })
+    @Requires({ true })
+    @FailsWith(ConditionNotSatisfiedError)
+    def "feature is not ignored if all Requires annotations are true" () {
+      expect: false
+    }
   }
 }
 

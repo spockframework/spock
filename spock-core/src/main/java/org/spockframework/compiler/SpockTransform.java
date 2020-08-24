@@ -57,9 +57,7 @@ public class SpockTransform implements ASTTransformation {
       SourceLookup sourceLookup = new SourceLookup(sourceUnit);
 
       try {
-        ModuleNode module = (ModuleNode) nodes[0];
-        @SuppressWarnings("unchecked")
-        List<ClassNode> classes = module.getClasses();
+        List<ClassNode> classes = sourceUnit.getAST().getClasses();
 
         for (ClassNode clazz : classes)
           if (isSpec(clazz)) processSpec(sourceUnit, clazz, errorReporter, sourceLookup);

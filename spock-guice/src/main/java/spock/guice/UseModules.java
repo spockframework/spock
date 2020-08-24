@@ -22,6 +22,7 @@ import org.spockframework.runtime.extension.ExtensionAnnotation;
 import java.lang.annotation.*;
 
 import com.google.inject.Module;
+import org.spockframework.util.Beta;
 
 /**
  * Activates <a href="http://code.google.com/p/google-guice/">Guice</a> integration for a specification.
@@ -34,6 +35,17 @@ import com.google.inject.Module;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @ExtensionAnnotation(GuiceExtension.class)
+@Repeatable(UseModules.Container.class)
 public @interface UseModules {
   Class<? extends Module>[] value();
+
+  /**
+   * @since 2.0
+   */
+  @Beta
+  @Retention(RetentionPolicy.RUNTIME)
+  @Target(ElementType.TYPE)
+  @interface Container {
+    UseModules[] value();
+  }
 }

@@ -445,6 +445,37 @@ annotated object. To prevent cleanup exceptions from being reported, override th
 def ignoreMyExceptions
 ----
 
+=== TempDir
+
+To generate a temp directory for test and delete it after test,
+annotate a member field of type `java.io.File`, `java.nio.file.Path`
+or untyped using `def` in a spec class (`def` will inject a `Path`). If the annotated field is shared,
+the temp directory will be shared in this spec, otherwise every
+iteration will have its own temp directory:
+
+[source,groovy,indent=0]
+----
+include::{sourcedir}/extension/TempDirDocSpec.groovy[tag=example]
+----
+
+If you want a customized parent directory to create temp directory,
+you can use the <<Spock Configuration File>> to set it up.
+
+If the `keep` is set `true`, it will keep the temp directory after test,
+default is system property `spock.tempDir.keep` or `false` if it is not set.
+
+.Temp Directory Configuration
+[source,groovy]
+----
+tempdir {
+  // java.nio.Path object, default null,
+  // which means system property "java.io.tmpdir"
+  baseDir Paths.get("/tmp")
+  // boolean, default is system property "spock.tempDir.keep"
+  keep true
+}
+----
+
 === Title and Narrative
 
 To attach a natural-language name to a spec, use `spock.lang.Title`:

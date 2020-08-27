@@ -6,6 +6,7 @@ Spock comes with a powerful extension mechanism, which allows to hook into a spe
 behavior. In this chapter, we will first learn about Spock's built-in extensions, and then dive into writing custom
 extensions.
 
+[[spock-configuration-file]]
 == Spock Configuration File
 
 Some extensions can be configured with options in a Spock configuration file. The description for each extension will
@@ -29,6 +30,19 @@ runner {
   filterStackTrace false
 }
 ----
+
+=== Parallel Execution Configuration
+
+[source,groovy]
+----
+runner {
+  parallel {
+    //...
+  }
+}
+----
+
+See the <<parallel-execution.adoc#parallel-execution,Parallel Execution>> section for a detailed description.
 
 == Built-In Extensions
 
@@ -218,6 +232,8 @@ failure are skipped.
 `Stepwise` does not override the behaviour of annotations such as `Ignore`, `IgnoreRest`, and `IgnoreIf`, so care
 should be taken when ignoring feature methods in spec classes annotated with `Stepwise`.
 
+NOTE: This will also set the execution mode to `SAME_THREAD`, see <<parallel-execution.adoc#parallel-execution, Parallel Execution>> for more information.
+
 === Timeout
 
 To fail a feature method, fixture, or class that exceeds a given execution duration, use `spock.lang.Timeout`,
@@ -371,6 +387,8 @@ It has no effect when applied to a helper method. However, when applied to a spe
 methods.
 
 
+NOTE: This will also set the execution mode to `SAME_THREAD` if applied on a `Specification`, see <<parallel-execution.adoc#parallel-execution, Parallel Execution>> for more information.
+
 === ConfineMetaClassChanges
 
 To confine meta class changes to the scope of a feature method or spec class, use `spock.util.mop.ConfineMetaClassChanges`:
@@ -393,6 +411,8 @@ CAUTION: Temporarily changing the meta classes is only safe when specs are
 run in a single thread per JVM. Even though many execution environments do limit themselves to one thread
 per JVM, keep in mind that Spock cannot enforce this.
 
+NOTE: This will acquire a `READ_WRITE` lock for `Resources.META_CLASS_REGISTRY`, see <<parallel-execution.adoc#parallel-execution, Parallel Execution>> for more information.
+
 === RestoreSystemProperties
 Saves system properties before the annotated feature method (including any setup and cleanup methods) gets run,
 and restores them afterwards.
@@ -414,6 +434,8 @@ def "determines family based on os.name system property"() {
 CAUTION: Temporarily changing the values of system properties is only safe when specs are
 run in a single thread per JVM. Even though many execution environments do limit themselves to one thread
 per JVM, keep in mind that Spock cannot enforce this.
+
+NOTE: This will acquire a `READ_WRITE` lock for `Resources.SYSTEM_PROPERTIES`, see <<parallel-execution.adoc#parallel-execution, Parallel Execution>> for more information.
 
 === AutoAttach
 

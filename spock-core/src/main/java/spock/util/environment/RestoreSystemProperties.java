@@ -16,10 +16,10 @@
 
 package spock.util.environment;
 
-import java.lang.annotation.*;
-
 import org.spockframework.runtime.extension.ExtensionAnnotation;
 import org.spockframework.runtime.extension.builtin.RestoreSystemPropertiesExtension;
+
+import java.lang.annotation.*;
 
 /**
  * Saves system properties before the annotated feature method (including any setup and cleanup methods) gets run,
@@ -30,6 +30,11 @@ import org.spockframework.runtime.extension.builtin.RestoreSystemPropertiesExten
  * <p><strong>Note:</strong> Temporarily changing the values of system properties is only safe when specs are
  * run in a single thread per JVM. Even though many execution environments do limit themselves to one thread
  * per JVM, keep in mind that Spock cannot enforce this.
+ *
+ * <p>Note: If this extension is applied, then it will use acquire a lock for
+ * {@link org.spockframework.runtime.model.parallel.Resources#SYSTEM_PROPERTIES}
+ *
+ * @see spock.lang.ResourceLock
  */
 @Inherited
 @Retention(RetentionPolicy.RUNTIME)

@@ -1,0 +1,15 @@
+[[parallel-execution]]
+= Parallel Execution
+include::include.adoc[]
+
+Parallel execution has the potential to reduce the overall test execution time.
+By default, Spock runs tests sequentially with a single thread.
+As of 2.0 Spock supports parallel execution based on the JUnit Platform.
+To enable parallel execution set the `runner.parallel.enabled` property `true`.
+See <<extensions.adoc#spock-configuration-file, Spock Configuration File>> for general information about this file.
+
+
+[source,groovy,indent=0]
+----
+include::{sourcedir}/parallel/ParallelConfigDoc.groovy[tag=enable]
+----

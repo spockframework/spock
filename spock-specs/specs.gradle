@@ -36,6 +36,10 @@ test {
   testLogging.events 'standard_out'
   testLogging.events 'standard_error'
   maxParallelForks = 1
+
+
+  // TODO Remove before commit
+  outputs.upToDateWhen {false}
 }
 
 task groovyConsole(type: JavaExec) {

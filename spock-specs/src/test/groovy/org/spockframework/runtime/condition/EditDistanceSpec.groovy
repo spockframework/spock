@@ -18,11 +18,12 @@ package org.spockframework.runtime.condition
 
 import spock.lang.*
 
+import java.util.concurrent.ThreadLocalRandom
+
 import static org.spockframework.runtime.condition.EditOperation.Kind.*
 
 @See(["http://en.wikipedia.org/wiki/Levenshtein_distance", "http://www.levenshtein.net/"])
 class EditDistanceSpec extends Specification {
-  @Shared Random random = new Random()
   @Shared chars = ('a'..'z') + ('A'..'Z') + ('0'..'9') + [' '] * 10
 
   def "matrix for 'sitting' and 'kitten'"() {
@@ -124,7 +125,7 @@ class EditDistanceSpec extends Specification {
 
   def "computed path has correct distance"() {
     def dist = new EditDistance(str1, str2)
-    
+
     expect:
     computeDistance(dist.calculatePath()) == dist.getDistance()
 
@@ -139,7 +140,7 @@ class EditDistanceSpec extends Specification {
   }
 
   def randomChar() {
-    chars[random.nextInt(chars.size())]
+    chars[ThreadLocalRandom.current().nextInt(chars.size())]
   }
 
   def randomString(int length) {
@@ -152,7 +153,7 @@ class EditDistanceSpec extends Specification {
     StringBuilder result = new StringBuilder()
 
     str.toCharArray().each {
-      switch (random.nextInt(4)) {
+      switch (ThreadLocalRandom.current().nextInt(4)) {
         case 0: // skip
           result.append(it)
           break

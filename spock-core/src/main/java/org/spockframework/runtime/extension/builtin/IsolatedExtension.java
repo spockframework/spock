@@ -7,13 +7,15 @@ import org.spockframework.runtime.model.parallel.ResourceAccessMode;
 
 import spock.lang.Isolated;
 
+import java.util.List;
+
 public class IsolatedExtension implements IAnnotationDrivenExtension<Isolated> {
 
   private static final ExclusiveResource GLOBAL_LOCK = new ExclusiveResource(
     "org.junit.platform.engine.support.hierarchical.ExclusiveResource.GLOBAL_KEY", ResourceAccessMode.READ_WRITE);
 
   @Override
-  public void visitSpec(SpecInfo spec) {
+  public void visitSpecAnnotations(List<Isolated> annotations, SpecInfo spec) {
     spec.addExclusiveResource(GLOBAL_LOCK);
   }
 }

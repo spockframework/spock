@@ -17,6 +17,7 @@ import org.spockframework.runtime.model.parallel.*
 import spock.lang.*
 import spock.util.environment.*
 
+@Isolated
 class OperatingSystemSpec extends Specification {
   @ResourceLock(value = Resources.SYSTEM_PROPERTIES, mode = ResourceAccessMode.READ)
   def "determines name based on os.name system property"() {

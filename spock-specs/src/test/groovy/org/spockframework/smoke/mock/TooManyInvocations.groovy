@@ -19,8 +19,6 @@ package org.spockframework.smoke.mock
 import org.spockframework.EmbeddedSpecification
 import org.spockframework.mock.TooManyInvocationsError
 
-import java.util.regex.Pattern
-
 class TooManyInvocations extends EmbeddedSpecification {
   def "shows matched invocations, ordered by last occurrence"() {
     when:
@@ -54,21 +52,27 @@ Matching invocations (ordered by last occurrence):
 
   def "casts are printed for mock invocations"() {
     given:
-    runner.addClassImport(Pattern)
+    runner.addClassImport(SomeStatic)
 
     when:
     runner.runFeatureBody """
-GroovyMock(Pattern, global: true)
+GroovyMock(SomeStatic, global: true)
 
 when:
-Pattern.compile(null as String)
+SomeStatic.compile(null as String)
 
 then:
-0 * Pattern.compile(_)
+0 * SomeStatic.compile(_)
 """
 
     then:
     TooManyInvocationsError e = thrown()
-    e.message.contains('<Pattern>.compile(null as String)')
+    e.message.contains('<SomeStatic>.compile(null as String)')
+  }
+}
+
+class SomeStatic {
+  static String compile(String str){
+    str
   }
 }

@@ -1,15 +1,86 @@
 [[parallel-execution]]
 = Parallel Execution
 include::include.adoc[]
+:xrefstyle: short
+
+WARNING: This is an experimental feature for Spock and also relies on an experimental implementation in the JUnit Platform.
 
 Parallel execution has the potential to reduce the overall test execution time.
+The actual achievable reduction will heavily depend on the respective codebase and can vary wildly.
+
 By default, Spock runs tests sequentially with a single thread.
 As of 2.0 Spock supports parallel execution based on the JUnit Platform.
-To enable parallel execution set the `runner.parallel.enabled` property `true`.
+To enable parallel execution set the `runner.parallel.enabled` setting `true`.
 See <<extensions.adoc#spock-configuration-file, Spock Configuration File>> for general information about this file.
 
 
+.SpockConfig.groovy
 [source,groovy,indent=0]
 ----
 include::{sourcedir}/parallel/ParallelConfigDoc.groovy[tag=enable]
 ----
+
+[[execution-modes]]
+== Execution modes
+Spock supports two execution modes `SAME_THREAD` and `CONCURRENT`.
+You can define the execution mode explicitly for a specification or feature via the `@Execution` extension.
+Otherwise, Spock will use the value of `defaultSpecificationExecutionMode` and `defaultExecutionMode` respectively.
+
+* `defaultSpecificationExecutionMode` controls what execution mode a specification will use by default.
+* `defaultExecutionMode` controls  what execution mode a feature and its iterations (if data driven) will use by default.
+
+<<sequential-squential-execution>>
+
+.Sequential Execution, either `runner.parallel.enabled=false` or `SAME_THREAD` Specifications, `SAME_THREAD` Tests
+[plantuml,images/sequential-squential-execution,svg]
+[[sequential-squential-execution]]
+....
+@startgantt
+scale 2
+[A.test1()] lasts 4 days
+then [A.test2()] lasts 8 days
+then [B.test1()] lasts 6 days
+then [B.test2()] lasts 4 days
+@endgantt
+....
+
+.`CONCURRENT` Specifications, `CONCURRENT` Tests
+[plantuml,images/concurrent-concurrent-execution,svg]
+[[concurrent-concurrent-execution]]
+....
+@startgantt
+scale 2
+[A.test1()] lasts 4 days
+[A.test2()] lasts 8 days
+[B.test1()] lasts 6 days
+[B.test2()] lasts 4 days
+@endgantt
+....
+
+
+.`CONCURRENT` Specifications, `SAME_THREAD` Tests
+[plantuml,images/concurrent-sequential-execution,svg]
+[[concurrent-sequential-execution]]
+....
+@startgantt
+scale 2
+[A.test1()] lasts 4 days
+then [A.test2()] lasts 8 days
+[B.test1()] lasts 6 days
+then [B.test2()] lasts 4 days
+@endgantt
+....
+
+
+.`SAME_THREAD` Specifications, `CONCURRENT` Tests
+[plantuml,images/sequential-concurrent-execution,svg]
+[[sequential-concurrent-execution]]
+....
+@startgantt
+scale 2
+[A.test1()] lasts 4 days
+[A.test2()] lasts 8 days
+[B.test1()] lasts 6 days and starts at [A.test2()]'s end
+[B.test2()] lasts 4 days and starts at [A.test2()]'s end
+@endgantt
+....

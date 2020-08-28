@@ -1,9 +1,9 @@
 package spock.config;
 
-import java.math.BigDecimal;
-
 import org.spockframework.runtime.DefaultParallelExecutionConfiguration;
 import org.spockframework.runtime.model.parallel.ExecutionMode;
+
+import java.math.BigDecimal;
 
 public class ParallelConfiguration {
   private static final int KEEP_ALIVE_SECONDS = 30;
@@ -12,7 +12,7 @@ public class ParallelConfiguration {
 
   public boolean enabled = Boolean.getBoolean("spock.parallel.enabled");
 
-  public ExecutionMode defaultClassesExecutionMode = ExecutionMode.CONCURRENT;
+  public ExecutionMode defaultSpecificationExecutionMode = ExecutionMode.CONCURRENT;
 
   public ExecutionMode defaultExecutionMode = ExecutionMode.CONCURRENT;
 

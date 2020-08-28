@@ -5,7 +5,7 @@ import org.spockframework.runtime.*
 import org.spockframework.runtime.model.parallel.ExecutionMode
 import spock.lang.*
 
-class ParallelConfigurationTest extends Specification implements ConfigSupport {
+class ParallelConfigurationSpec extends Specification implements ConfigSupport {
   @Shared
   int availableProcessors = Runtime.runtime.availableProcessors();
 
@@ -20,7 +20,7 @@ class ParallelConfigurationTest extends Specification implements ConfigSupport {
     expect:
     verifyAll(runnerConfiguration.parallel) {
       enabled == Boolean.getBoolean("spock.parallel.enabled")
-      defaultClassesExecutionMode == ExecutionMode.CONCURRENT
+      defaultSpecificationExecutionMode == ExecutionMode.CONCURRENT
       defaultExecutionMode == ExecutionMode.CONCURRENT
       parallelExecutionConfiguration.parallelism == Math.max(availableProcessors - 2, 1)
     }
@@ -32,7 +32,7 @@ class ParallelConfigurationTest extends Specification implements ConfigSupport {
       runner {
         parallel {
           enabled true
-          defaultClassesExecutionMode ExecutionMode.SAME_THREAD
+          defaultSpecificationExecutionMode ExecutionMode.SAME_THREAD
           defaultExecutionMode ExecutionMode.SAME_THREAD
         }
       }
@@ -43,7 +43,7 @@ class ParallelConfigurationTest extends Specification implements ConfigSupport {
     then:
     verifyAll(runnerConfiguration.parallel) {
       enabled
-      defaultClassesExecutionMode == ExecutionMode.SAME_THREAD
+      defaultSpecificationExecutionMode == ExecutionMode.SAME_THREAD
       defaultExecutionMode == ExecutionMode.SAME_THREAD
     }
   }

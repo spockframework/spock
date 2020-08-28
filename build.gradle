@@ -349,6 +349,12 @@ task groovydoc(type: Groovydoc) {
 
 configureGroovydoc(groovydoc)
 
+asciidoctorj {
+  modules {
+    diagram.use()
+  }
+}
+
 asciidoctor {
   sourceDir = "docs"
   baseDirFollowsSourceDir()

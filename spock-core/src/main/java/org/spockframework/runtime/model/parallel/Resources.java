@@ -6,11 +6,13 @@ import org.spockframework.util.Beta;
 /**
  * Common resource names for synchronizing test execution.
  *
+ * @see spock.lang.ResourceLock
+ * @see spock.lang.ResourceLockChildren
  * @see ExclusiveResource
  * @since 2.0
  */
 @Beta
-public class Resources {
+public final class Resources {
 
   /**
    * Represents Java's system properties.

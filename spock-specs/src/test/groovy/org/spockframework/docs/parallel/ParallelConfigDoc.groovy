@@ -16,7 +16,7 @@ class ParallelConfigDoc extends Specification implements ConfigSupport {
   }
 
 
-  def "check binding"() {
+  def "enable parallel"() {
     given:
     Closure closure = {
       // tag::enable[]

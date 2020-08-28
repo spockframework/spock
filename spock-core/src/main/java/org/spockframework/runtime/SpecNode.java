@@ -60,7 +60,7 @@ public class SpecNode extends SpockNode<SpecInfo> {
   @Override
   public ExecutionMode getExecutionMode() {
     return getExplicitExecutionMode()
-      .orElseGet( ()-> toExecutionMode(getConfiguration().parallel.defaultClassesExecutionMode));
+      .orElseGet( ()-> toExecutionMode(getConfiguration().parallel.defaultSpecificationExecutionMode));
   }
 
   @Override

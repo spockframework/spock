@@ -16,6 +16,7 @@
 
 package spock.util.mop
 
+import org.spockframework.runtime.model.parallel.ExecutionMode
 import spock.lang.Specification
 
 class UseOnMethods extends Specification {
@@ -29,6 +30,12 @@ class UseOnMethods extends Specification {
   def "can be applied to a feature method"() {
     expect:
     "foo".duplicate() == "foofoo"
+  }
+
+  @Use(StringExtensions)
+  def "sets featue execution mode to SAME_THREAD"() {
+    expect:
+    specificationContext.currentFeature.executionMode.get() == ExecutionMode.SAME_THREAD
   }
 
   @Use([StringExtensions, IntegerExtensions])
@@ -86,6 +93,10 @@ class UseOnClasses extends Specification {
 
     then:
     noExceptionThrown()
+  }
+
+  def "sets childExecutionMode to SAME_THREAD"() {
+    expect: specificationContext.currentSpec.childExecutionMode.get() == ExecutionMode.SAME_THREAD
   }
 
   def helper() {

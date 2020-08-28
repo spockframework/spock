@@ -1,15 +1,11 @@
 package spock.lang;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Repeatable;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
 import org.spockframework.runtime.extension.ExtensionAnnotation;
 import org.spockframework.runtime.extension.builtin.ResourceLockExtension;
 import org.spockframework.runtime.model.parallel.ResourceAccessMode;
 import org.spockframework.util.Beta;
+
+import java.lang.annotation.*;
 
 /**
  * Allows to control access to a shared resource.
@@ -19,7 +15,9 @@ import org.spockframework.util.Beta;
  * This will also cause all features to run on the same thread
  * as the Specification.
  *
- * See {@link ResourceLockChildren}
+ * @see ResourceLockChildren
+ * @see Isolated
+ * @see Execution
  *
  * @since 2.0
  */

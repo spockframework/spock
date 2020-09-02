@@ -13,12 +13,12 @@ import java.nio.file.Path
 class TempDirDocSpec extends Specification {
 
 // tag::example[]
-  // all feature will share the same temp directory path1
+  // all features will share the same temp directory path1
   @TempDir
   @Shared
   Path path1
 
-  // every iteration will have its own path2
+  // all features and iterations will have their own path2
   @TempDir
   File path2
 

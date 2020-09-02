@@ -447,24 +447,22 @@ def ignoreMyExceptions
 
 === TempDir
 
-To generate a temp directory for test and delete it after test,
-annotate a member field of type `java.io.File`, `java.nio.file.Path`
-or untyped using `def` in a spec class (`def` will inject a `Path`). If the annotated field is shared,
-the temp directory will be shared in this spec, otherwise every
-iteration will have its own temp directory:
+In order to generate a temporary directory for test and delete it after test, annotate a member field of type
+`java.io.File`, `java.nio.file.Path` or untyped using `def` in a spec class (`def` will inject a `Path`). If the
+annotated field is `@Shared`, the temporary directory will be shared in the corresponding specification, otherwise every
+feature method and every iteration per parametrized feature method will have their own temporary directories:
 
 [source,groovy,indent=0]
 ----
 include::{sourcedir}/extension/TempDirDocSpec.groovy[tag=example]
 ----
 
-If you want a customized parent directory to create temp directory,
-you can use the <<Spock Configuration File>> to set it up.
+If you want to customize the parent directory for temporary directories, you can use the <<Spock Configuration File>>.
 
-If the `keep` is set `true`, it will keep the temp directory after test,
-default is system property `spock.tempDir.keep` or `false` if it is not set.
+If `keep` is set to `true`, Spock will not delete temporary directories after tests. The default value is taken from
+system property `spock.tempDir.keep` or `false`, if undefined.
 
-.Temp Directory Configuration
+.Temporary Directory Configuration
 [source,groovy]
 ----
 tempdir {

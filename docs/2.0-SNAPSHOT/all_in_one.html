@@ -4218,20 +4218,19 @@ annotated object. To prevent cleanup exceptions from being reported, override th
 <div class="sect3">
 <h4 id="_tempdir"><a class="anchor" href="#_tempdir"></a><a class="link" href="#_tempdir">TempDir</a></h4>
 <div class="paragraph">
-<p>To generate a temp directory for test and delete it after test,
-annotate a member field of type <code>java.io.File</code>, <code>java.nio.file.Path</code>
-or untyped using <code>def</code> in a spec class (<code>def</code> will inject a <code>Path</code>). If the annotated field is shared,
-the temp directory will be shared in this spec, otherwise every
-iteration will have its own temp directory:</p>
+<p>In order to generate a temporary directory for test and delete it after test, annotate a member field of type
+<code>java.io.File</code>, <code>java.nio.file.Path</code> or untyped using <code>def</code> in a spec class (<code>def</code> will inject a <code>Path</code>). If the
+annotated field is <code>@Shared</code>, the temporary directory will be shared in the corresponding specification, otherwise every
+feature method and every iteration per parametrized feature method will have their own temporary directories:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="comment">// all feature will share the same temp directory path1</span>
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="comment">// all features will share the same temp directory path1</span>
 <span class="annotation">@TempDir</span>
 <span class="annotation">@Shared</span>
 Path path1
 
-<span class="comment">// every iteration will have its own path2</span>
+<span class="comment">// all features and iterations will have their own path2</span>
 <span class="annotation">@TempDir</span>
 <span class="predefined-type">File</span> path2
 
@@ -4248,15 +4247,14 @@ Path path1
 </div>
 </div>
 <div class="paragraph">
-<p>If you want a customized parent directory to create temp directory,
-you can use the <a href="#_spock_configuration_file">Spock Configuration File</a> to set it up.</p>
+<p>If you want to customize the parent directory for temporary directories, you can use the <a href="#_spock_configuration_file">Spock Configuration File</a>.</p>
 </div>
 <div class="paragraph">
-<p>If the <code>keep</code> is set <code>true</code>, it will keep the temp directory after test,
-default is system property <code>spock.tempDir.keep</code> or <code>false</code> if it is not set.</p>
+<p>If <code>keep</code> is set to <code>true</code>, Spock will not delete temporary directories after tests. The default value is taken from
+system property <code>spock.tempDir.keep</code> or <code>false</code>, if undefined.</p>
 </div>
 <div class="listingblock">
-<div class="title">Temp Directory Configuration</div>
+<div class="title">Temporary Directory Configuration</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy">tempdir {
   <span class="comment">// java.nio.Path object, default null,</span>
@@ -7887,7 +7885,7 @@ This is due to how groovy implements traits and AST transformations.</p>
 <div id="footer">
 <div id="footer-text">
 Version 2.0-SNAPSHOT<br>
-Last updated 2020-08-27 17:44:33 UTC
+Last updated 2020-09-02 19:55:43 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./coderay-asciidoctor.css">

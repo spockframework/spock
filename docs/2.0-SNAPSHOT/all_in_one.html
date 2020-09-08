@@ -348,6 +348,12 @@
 </li>
 </ul>
 </li>
+<li><a href="#_frequently_asked_questions_faq">Frequently Asked Questions (FAQ)</a>
+<ul class="sectlevel2">
+<li><a href="#_what_are_spocks_optional_dependencies_used_for">What are Spock&#8217;s optional dependencies used for?</a></li>
+<li><a href="#_why_are_there_two_options_bytebuddy_vs_cglib_for_mocking_classes">Why are there two options (ByteBuddy vs CGLIB) for mocking classes?</a></li>
+</ul>
+</li>
 <li><a href="#_known_issues_2">Known Issues</a>
 <ul class="sectlevel2">
 <li><a href="#_usage_of_final_in_a_feature_method_with_cleanup_1017">Usage of <code>final</code> in a feature method with <code>cleanup</code> #1017</a></li>
@@ -7714,6 +7720,47 @@ that answer, closeTo(<span class="integer">42</span>, <span class="float">0.001<
 </div>
 </div>
 <div class="sect1">
+<h2 id="_frequently_asked_questions_faq"><a class="anchor" href="#_frequently_asked_questions_faq"></a><a class="link" href="#_frequently_asked_questions_faq">Frequently Asked Questions (FAQ)</a></h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_what_are_spocks_optional_dependencies_used_for"><a class="anchor" href="#_what_are_spocks_optional_dependencies_used_for"></a><a class="link" href="#_what_are_spocks_optional_dependencies_used_for">What are Spock&#8217;s optional dependencies used for?</a></h3>
+<div class="paragraph">
+<p>Spock runs fine without optional dependencies, hence the term <em>optional</em>. So what are they used for?</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Objenesis (artifact <code>org.objenesis:objenesis</code>) is required for mocking classes without default constructors.</p>
+</li>
+<li>
+<p>Either ByteBuddy (artifact <code>net.bytebuddy:byte-buddy</code>) or CGLIB (artifact <code>cglib:cglib-nodep</code>) are required for mocking classes and not just interfaces.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>See also <a href="#_mocking_classes">Mocking Classes</a>.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_why_are_there_two_options_bytebuddy_vs_cglib_for_mocking_classes"><a class="anchor" href="#_why_are_there_two_options_bytebuddy_vs_cglib_for_mocking_classes"></a><a class="link" href="#_why_are_there_two_options_bytebuddy_vs_cglib_for_mocking_classes">Why are there two options (ByteBuddy vs CGLIB) for mocking classes?</a></h3>
+<div class="paragraph">
+<p>The main reason is backwards compatibility.
+CGLIB came first historically, ByteBuddy was added later.
+Both libraries basically provide identical features from a Spock user&#8217;s perspective.</p>
+</div>
+<div class="paragraph">
+<p>If you are starting with Spock now, we recommend ByteBuddy as our preferred choice.</p>
+</div>
+<div class="paragraph">
+<p>CGLIB is in legacy support mode, we will support it as long as the maintenance effort is relatively low.
+So you may continue to use CGLIB for now if e.g. your tests use it in another context already.
+If you have no compelling reasons to avoid ByteBuddy, you can just switch from CGLIB to ByteBuddy in an existing project.
+Your tests should continue to run like before.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="_known_issues_2"><a class="anchor" href="#_known_issues_2"></a><a class="link" href="#_known_issues_2">Known Issues</a></h2>
 <div class="sectionbody">
 <div class="sect2">
@@ -7885,7 +7932,7 @@ This is due to how groovy implements traits and AST transformations.</p>
 <div id="footer">
 <div id="footer-text">
 Version 2.0-SNAPSHOT<br>
-Last updated 2020-09-08 20:13:38 UTC
+Last updated 2020-09-08 21:02:22 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./coderay-asciidoctor.css">

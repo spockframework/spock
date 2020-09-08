@@ -6,7 +6,7 @@ include::include.adoc[]
 Spock runs fine without optional dependencies, hence the term _optional_. So what are they used for?
 
   * Objenesis (artifact `org.objenesis:objenesis`) is required for mocking classes without default constructors.
-  * Either CGLIB (artifact `cglib:cglib-nodep`) or ByteBuddy (artifact `net.bytebuddy:byte-buddy`) are required for
+  * Either ByteBuddy (artifact `net.bytebuddy:byte-buddy`) or CGLIB (artifact `cglib:cglib-nodep`) are required for
     mocking classes and not just interfaces.
 
 See also <<interaction_based_testing.adoc#_mocking_classes,Mocking Classes>>.

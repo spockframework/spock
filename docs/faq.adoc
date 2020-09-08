@@ -18,7 +18,7 @@ basically provide identical features from a Spock user's perspective.
 
 If you are starting with Spock now, we recommend ByteBuddy as our preferred choice.
 
-As of today there are no plans to remove CGLIB anytime soon, because the maintenance effort is relatively low. So you
-may safely continue to use CGLIB if e.g. your tests use it in another context already. If you have no compelling reasons
+CGLIB is in legacy support mode, we will support it as long as the maintenance effort is relatively low. So you
+may continue to use CGLIB for now if e.g. your tests use it in another context already. If you have no compelling reasons
 to avoid ByteBuddy, you can just switch from CGLIB to ByteBuddy in an existing project. Your tests should continue to
 run like before.

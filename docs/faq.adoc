@@ -11,7 +11,7 @@ Spock runs fine without optional dependencies, hence the term _optional_. So wha
 
 See also <<interaction_based_testing.adoc#_mocking_classes,Mocking Classes>>.
 
-== Why are there two options (CGLIB vs ByteBuddy) for mocking classes?
+== Why are there two options (ByteBuddy vs CGLIB) for mocking classes?
 
 The main reason is backwards compatibility. CGLIB came first historically, ByteBuddy was added later. Both libraries
 basically provide identical features from a Spock user's perspective.

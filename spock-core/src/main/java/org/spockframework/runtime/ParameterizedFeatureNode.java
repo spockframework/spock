@@ -1,15 +1,14 @@
 package org.spockframework.runtime;
 
-import org.junit.platform.engine.TestExecutionResult.Status;
-import org.opentest4j.MultipleFailuresError;
-import org.opentest4j.TestAbortedException;
 import org.spockframework.runtime.model.FeatureInfo;
 
 import java.util.*;
 
-import org.junit.platform.engine.*;
+import org.junit.platform.engine.TestExecutionResult.Status;
+import org.junit.platform.engine.UniqueId;
+import org.opentest4j.*;
 
-import static java.util.stream.Collectors.*;
+import static java.util.stream.Collectors.toList;
 import static org.junit.platform.engine.TestExecutionResult.Status.*;
 import static org.spockframework.util.ExceptionUtil.sneakyThrow;
 
@@ -22,6 +21,10 @@ public class ParameterizedFeatureNode extends FeatureNode {
 
   @Override
   public SpockExecutionContext prepare(SpockExecutionContext context) throws Exception {
+    if (featureInfo.isSkipped()) {
+      // Node.prepare is called before Node.shouldBeSkipped so we just skip the prepare
+      return context;
+    }
     featureInfo.setIterationNameProvider(new SafeIterationNameProvider(featureInfo.getIterationNameProvider()));
     return context.withCurrentFeature(featureInfo).withParentId(getUniqueId());
   }

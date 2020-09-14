@@ -84,3 +84,167 @@ scale 2
 [B.test2()] lasts 4 days and starts at [A.test2()]'s end
 @endgantt
 ....
+
+
+== Execution Hierarchy
+
+TODO: Explain the difference with inheritance of `@ExecutionMode` and also `@ResourceLock`.
+
+[plantuml,images/execution-hierarchy-same-thread,svg]
+....
+@startwbs
+skinparam shadowing false
+* SpockEngine
+** SpecA
+*** TestA1
+*** TestA2
+** SpecB
+*** TestB1
+*** TestB2
+**** TestB2[1]
+**** TestB2[2]
+@endwbs
+....
+
+[plantuml,images/execution-hierarchy-concurrent-sequential-execution,svg]
+....
+
+@startwbs
+<style>
+wbsDiagram {
+  node {
+    :depth(1) {
+      BackgroundColor #CEFEE6
+    }
+  }
+
+ .mexicoStyle * {
+     BackgroundColor Red
+     FontColor White
+     RoundCorner 10
+ }
+}
+</style>
+skinparam shadowing false
+* SpockEngine
+** SpecA
+*** TestA1
+*** TestA2
+** SpecB
+*** TestB1
+*** TestB2
+**** TestB2[1]
+**** TestB2[2]
+@endwbs
+....
+
+[plantuml,images/execution-hierarchy-sequential-concurrent-execution,svg]
+....
+
+@startwbs
+<style>
+wbsDiagram {
+  node {
+    :depth(2) {
+      BackgroundColor #CEFEE6
+    }
+    :depth(3) {
+      BackgroundColor #CEFEE6
+    }
+  }
+}
+</style>
+skinparam shadowing false
+* SpockEngine
+** SpecA
+*** TestA1
+*** TestA2
+** SpecB
+*** TestB1
+*** TestB2
+**** TestB2[1]
+**** TestB2[2]
+@endwbs
+....
+
+[plantuml,images/execution-hierarchy-concurrent-concurrent-execution,svg]
+....
+
+@startwbs
+<style>
+wbsDiagram {
+  node {
+    :depth(1) {
+      BackgroundColor #CEFEE6
+    }
+    :depth(2) {
+      BackgroundColor #CEFEE6
+    }
+    :depth(3) {
+      BackgroundColor #CEFEE6
+    }
+  }
+}
+</style>
+skinparam shadowing false
+* SpockEngine
+** SpecA
+*** TestA1
+*** TestA2
+** SpecB
+*** TestB1
+*** TestB2
+**** TestB2[1]
+**** TestB2[2]
+@endwbs
+....
+
+== Inheritance
+
+[plantuml,images/execution-hierarchy-inheritance-feature-execution,svg]
+....
+
+@startwbs
+<style>
+wbsDiagram {
+  .concurrent * {
+      BackgroundColor #CEFEE6
+  }
+}
+</style>
+skinparam shadowing false
+* SpockEngine
+** SpecA
+*** TestA1
+*** @ExecutionMode(Concurrent)\nTestA2 <<concurrent>>
+** SpecB
+*** TestB1
+*** @ExecutionMode(Concurrent)\nTestB2 <<concurrent>>
+**** TestB2[1]
+**** TestB2[2]
+@endwbs
+....
+
+[plantuml,images/execution-hierarchy-inheritance-spec-execution,svg]
+....
+
+@startwbs
+<style>
+wbsDiagram {
+  .concurrent * {
+      BackgroundColor #CEFEE6
+  }
+}
+</style>
+skinparam shadowing false
+* SpockEngine
+** SpecA
+*** TestA1
+*** TestA2
+** @ExecutionMode(Concurrent)\nTSpecB  <<concurrent>>
+*** TestB1
+*** TestB2
+**** TestB2[1]
+**** TestB2[2]
+@endwbs
+....

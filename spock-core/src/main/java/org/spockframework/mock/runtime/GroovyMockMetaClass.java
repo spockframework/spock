@@ -81,7 +81,7 @@ public class GroovyMockMetaClass extends DelegatingMetaClass implements Specific
     if (method != null && method.getDeclaringClass().isAssignableFrom(configuration.getType())) {
       if (!isStatic && !ReflectionUtil.isFinalMethod(method) && !configuration.isGlobal()) {
         // perform coercion of arguments, e.g. GString to String
-        Object[] coercedArgs = metaMethod.coerceArgumentsToClasses(arguments);
+        Object[] coercedArgs = metaMethod.coerceArgumentsToClasses(unwrappedArgs);
         // use standard proxy dispatch
         return metaMethod.invoke(target, coercedArgs);
       }

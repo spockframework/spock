@@ -93,6 +93,11 @@ TODO: Explain the difference with inheritance of `@ExecutionMode` and also `@Res
 [plantuml,images/execution-hierarchy-same-thread,svg]
 ....
 @startwbs
+<style>
+wbsDiagram {
+  BackgroundColor #DDCC77
+}
+</style>
 skinparam shadowing false
 * SpockEngine
 ** SpecA
@@ -108,21 +113,16 @@ skinparam shadowing false
 
 [plantuml,images/execution-hierarchy-concurrent-sequential-execution,svg]
 ....
-
 @startwbs
 <style>
 wbsDiagram {
+  BackgroundColor #DDCC77
   node {
     :depth(1) {
-      BackgroundColor #CEFEE6
+      BackgroundColor #88CCEE
+      RoundCorner 10
     }
   }
-
- .mexicoStyle * {
-     BackgroundColor Red
-     FontColor White
-     RoundCorner 10
- }
 }
 </style>
 skinparam shadowing false
@@ -144,12 +144,15 @@ skinparam shadowing false
 @startwbs
 <style>
 wbsDiagram {
+  BackgroundColor #DDCC77
   node {
     :depth(2) {
-      BackgroundColor #CEFEE6
+      BackgroundColor #88CCEE
+      RoundCorner 10
     }
     :depth(3) {
-      BackgroundColor #CEFEE6
+      BackgroundColor #88CCEE
+      RoundCorner 10
     }
   }
 }
@@ -173,15 +176,19 @@ skinparam shadowing false
 @startwbs
 <style>
 wbsDiagram {
+  BackgroundColor #DDCC77
   node {
     :depth(1) {
-      BackgroundColor #CEFEE6
+      BackgroundColor #88CCEE
+      RoundCorner 10
     }
     :depth(2) {
-      BackgroundColor #CEFEE6
+      BackgroundColor #88CCEE
+      RoundCorner 10
     }
     :depth(3) {
-      BackgroundColor #CEFEE6
+      BackgroundColor #88CCEE
+      RoundCorner 10
     }
   }
 }
@@ -203,12 +210,13 @@ skinparam shadowing false
 
 [plantuml,images/execution-hierarchy-inheritance-feature-execution,svg]
 ....
-
 @startwbs
 <style>
 wbsDiagram {
+  BackgroundColor #DDCC77
   .concurrent * {
-      BackgroundColor #CEFEE6
+      BackgroundColor #88CCEE
+      RoundCorner 10
   }
 }
 </style>
@@ -216,10 +224,10 @@ skinparam shadowing false
 * SpockEngine
 ** SpecA
 *** TestA1
-*** @ExecutionMode(Concurrent)\nTestA2 <<concurrent>>
+*** @ExecutionMode(CONCURRENT)\nTestA2 <<concurrent>>
 ** SpecB
 *** TestB1
-*** @ExecutionMode(Concurrent)\nTestB2 <<concurrent>>
+*** @ExecutionMode(CONCURRENT)\nTestB2 <<concurrent>>
 **** TestB2[1]
 **** TestB2[2]
 @endwbs
@@ -227,12 +235,13 @@ skinparam shadowing false
 
 [plantuml,images/execution-hierarchy-inheritance-spec-execution,svg]
 ....
-
 @startwbs
 <style>
 wbsDiagram {
+  BackgroundColor #DDCC77
   .concurrent * {
-      BackgroundColor #CEFEE6
+      BackgroundColor #88CCEE
+      RoundCorner 10
   }
 }
 </style>
@@ -241,8 +250,36 @@ skinparam shadowing false
 ** SpecA
 *** TestA1
 *** TestA2
-** @ExecutionMode(Concurrent)\nTSpecB  <<concurrent>>
+** @ExecutionMode(CONCURRENT)\nTSpecB  <<concurrent>>
 *** TestB1
+*** TestB2
+**** TestB2[1]
+**** TestB2[2]
+@endwbs
+....
+
+[plantuml,images/execution-hierarchy-inheritance-spec-feature-execution,svg]
+....
+@startwbs
+<style>
+wbsDiagram {
+  BackgroundColor #DDCC77
+  .concurrent * {
+      BackgroundColor #88CCEE
+      RoundCorner 10
+  }
+  .samethread * {
+      BackgroundColor #DDCC77
+  }
+}
+</style>
+skinparam shadowing false
+* SpockEngine
+** SpecA
+*** TestA1
+*** TestA2
+** @ExecutionMode(CONCURRENT)\nTSpecB  <<concurrent>>
+*** @ExecutionMode(SAME_THREAD)\nTTestB1 <<samethread>>
 *** TestB2
 **** TestB2[1]
 **** TestB2[2]

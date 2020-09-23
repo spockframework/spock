@@ -44,7 +44,7 @@ then [B.test2()] lasts 4 days
 @endgantt
 ....
 
-.`CONCURRENT` Specifications, `CONCURRENT` Tests
+.`CONCURRENT` Specifications, `CONCURRENT` Features
 [plantuml,images/concurrent-concurrent-execution,svg]
 [[concurrent-concurrent-execution]]
 ....
@@ -58,7 +58,7 @@ scale 2
 ....
 
 
-.`CONCURRENT` Specifications, `SAME_THREAD` Tests
+.`CONCURRENT` Specifications, `SAME_THREAD` Features
 [plantuml,images/concurrent-sequential-execution,svg]
 [[concurrent-sequential-execution]]
 ....
@@ -72,7 +72,7 @@ then [B.test2()] lasts 4 days
 ....
 
 
-.`SAME_THREAD` Specifications, `CONCURRENT` Tests
+.`SAME_THREAD` Specifications, `CONCURRENT` Features
 [plantuml,images/sequential-concurrent-execution,svg]
 [[sequential-concurrent-execution]]
 ....
@@ -86,10 +86,33 @@ scale 2
 ....
 
 
-== Execution Hierarchy
+=== Execution Hierarchy
 
-TODO: Explain the difference with inheritance of `@ExecutionMode` and also `@ResourceLock`.
+.Legend
+[plantuml,images/wbs-legend,svg]
+....
+@startwbs
+<style>
+wbsDiagram {
+  BackgroundColor #DDCC77
 
+  .concurrent * {
+      BackgroundColor #88CCEE
+      RoundCorner 10
+  }
+}
+</style>
+skinparam shadowing false
+* SpockEngine
+** Same Thread
+** Concurrent <<concurrent>>
+@endwbs
+....
+
+The node `Same Thread` will run in the same thread as its parent.
+The node `Concurrent` will be executed in another thread.
+
+.Single threaded execution
 [plantuml,images/execution-hierarchy-same-thread,svg]
 ....
 @startwbs
@@ -111,6 +134,9 @@ skinparam shadowing false
 @endwbs
 ....
 
+This is the default case when parallel execution is disabled (`runner.parallel.enabled=false`) or when both specifications (`defaultSpecificationExecutionMode`) and features (`defaultExecutionMode`) are set to `SAME_THREAD`.
+
+.Execution with `CONCURRENT` Specifications, `SAME_THREAD` Features
 [plantuml,images/execution-hierarchy-concurrent-sequential-execution,svg]
 ....
 @startwbs
@@ -138,6 +164,9 @@ skinparam shadowing false
 @endwbs
 ....
 
+With `defaultSpecificationExecutionMode=CONCURRENT` and `defaultExecutionMode=SAME_THREAD` the specifications will run concurrently but all features will run in the same thread as their specification.
+
+.Execution with `SAME_THREAD` Specifications, `CONCURRENT` Features
 [plantuml,images/execution-hierarchy-sequential-concurrent-execution,svg]
 ....
 
@@ -170,6 +199,10 @@ skinparam shadowing false
 @endwbs
 ....
 
+With `defaultSpecificationExecutionMode=SAME_THREAD` and `defaultExecutionMode=CONCURRENT` the specifications will run in the same thread, causing them to run one after the other.
+The features inside a specification will run concurrently.
+
+.Execution with `CONCURRENT` Specifications, `CONCURRENT` Features
 [plantuml,images/execution-hierarchy-concurrent-concurrent-execution,svg]
 ....
 
@@ -206,8 +239,19 @@ skinparam shadowing false
 @endwbs
 ....
 
-== Inheritance
+With `defaultSpecificationExecutionMode=CONCURRENT` and `defaultExecutionMode=CONCURRENT` both specifications and features will run concurrently.
 
+==== Execution Mode Inheritance
+
+If nothing else is explicit configured specifications will use `defaultSpecificationExecutionMode` and features use `defaultExecutionMode`.
+However, this changes when you set the execution mode explicitly via `@ExecutionMode`.
+Each node (specification, feature) checks first if it has an explicit execution mode set,
+otherwise it will check its parents for an explicit setting and fall back to the respective defaults otherwise.
+
+The following examples have `defaultSpecificationExecutionMode=SAME_THREAD` and `defaultExecutionMode=SAME_THREAD`.
+If you invert the values `SAME_THREAD` and `CONCURRENT` in these examples you will get the inverse result.
+
+.Execution with `SAME_THREAD` Specifications, `SAME_THREAD` Features and explicit `@ExecutionMode` on Features
 [plantuml,images/execution-hierarchy-inheritance-feature-execution,svg]
 ....
 @startwbs
@@ -233,6 +277,9 @@ skinparam shadowing false
 @endwbs
 ....
 
+Here `@ExecutionMode` is applied on the features and those features and iterations will execute concurrently while the rest will execute in the same thread.
+
+.Execution with `SAME_THREAD` Specifications, `SAME_THREAD` Features and explicit `@ExecutionMode` on a Specification
 [plantuml,images/execution-hierarchy-inheritance-spec-execution,svg]
 ....
 @startwbs
@@ -258,6 +305,10 @@ skinparam shadowing false
 @endwbs
 ....
 
+Here `@ExecutionMode` is applied on one specification causing the specification and all its features to run concurrently.
+The features execute concurrently since they inherit the explicit execution mode from the specification.
+
+.Execution with `SAME_THREAD` Specifications, `SAME_THREAD` Features and explicit `@ExecutionMode` on Features and Specifications
 [plantuml,images/execution-hierarchy-inheritance-spec-feature-execution,svg]
 ....
 @startwbs
@@ -270,6 +321,7 @@ wbsDiagram {
   }
   .samethread * {
       BackgroundColor #DDCC77
+      RoundCorner 0
   }
 }
 </style>
@@ -279,9 +331,232 @@ skinparam shadowing false
 *** TestA1
 *** TestA2
 ** @ExecutionMode(CONCURRENT)\nTSpecB  <<concurrent>>
-*** @ExecutionMode(SAME_THREAD)\nTTestB1 <<samethread>>
+*** @ExecutionMode(SAME_THREAD)\nTestB1 <<samethread>>
 *** TestB2
 **** TestB2[1]
 **** TestB2[2]
 @endwbs
 ....
+
+This example showcases the combined application of `@ExecutionMode` on a specification and some of its features.
+As in the previous example the specification and its features will execute concurrently except `TestB1` since it has its own explicit execution mode set.
+
+== Resource Locks
+
+With parallel execution comes a new set of challenges for testing, as shared state can be modified and consumed by multiple tests at the same time.
+
+A simple example would be two features that test the use a system property, both setting it to a specific value in the respective `given` block and then executing the code to test the expected behavior.
+If they run sequentially then both complete without issue. However, if the run at the same time both `given` blocks will run before the `when` blocks and one feature will fail since the system property did not contain the expected value.
+
+The above example could simply be fixed if both features are part of the same specification by setting them to run in the same thread with `@ExecutionMode(SAME_THREAD)`.
+However, this is not really practicable when the features are in separate specifications.
+To solve this issue Spock has support to coordinate access to shared resources via `@ResourceLock` and `@ResourceLockChildren`.
+
+With `@ResourceLock` you can define both a `key` and a `mode`. By default `@ResourceLock` assumes `ResourceAccessMode.READ_WRITE`, but you can weaken it to `ResourceAccessMode.READ`.
+
+* `ResourceAccessMode.READ_WRITE` will enforce exclusive access to the resource.
+* `ResourceAccessMode.READ` will prevent any `READ_WRITE` locks, but will allow other `READ` locks.
+
+`READ`-only locks will isolate tests from others that modify the shared resource, while at the same time allowing tests that also only read the resource to execute.
+You should not modify the shared resource when you only hold a `READ` lock, otherwise the assurances don't hold.
+
+
+.Two features with `@ResourceLock`
+[plantuml,images/lock-contention-basics,svg]
+....
+@startwbs
+<style>
+wbsDiagram {
+  BackgroundColor #88CCEE
+  RoundCorner 10
+  node {
+    :depth(0) {
+      BackgroundColor #DDCC77
+      RoundCorner 0
+    }
+  }
+
+  .write_lock * {
+      LineStyle 4
+      LineThickness 2.5
+      LineColor #117733
+  }
+}
+</style>
+skinparam shadowing false
+* SpockEngine
+** SpecA
+*** TestA1
+*** @ResourceLock("R")\nTestA2 <<write_lock>>
+** SpecB
+*** @ResourceLock("R")\nTestB1 <<write_lock>>
+*** TestB2
+**** TestB2[1]
+**** TestB2[2]
+@endwbs
+....
+
+
+=== Lock inheritance
+
+.Locks are passed on from the spec to the features
+[plantuml,images/lock-inherit-spec,svg]
+....
+@startwbs
+<style>
+wbsDiagram {
+  BackgroundColor #88CCEE
+  RoundCorner 10
+  node {
+    :depth(0) {
+      BackgroundColor #DDCC77
+      RoundCorner 0
+    }
+  }
+
+  .samethread * {
+      BackgroundColor #DDCC77
+      RoundCorner 0
+  }
+
+  .write_lock * {
+      LineStyle 4
+      LineThickness 2.5
+      LineColor #117733
+  }
+}
+</style>
+skinparam shadowing false
+* SpockEngine
+** SpecA
+*** TestA1
+*** TestA2
+** @ResourceLock("R")\nSpecB <<write_lock>>
+*** TestB1 <<samethread>>
+*** TestB2 <<samethread>>
+**** TestB2[1] <<samethread>>
+**** TestB2[2] <<samethread>>
+@endwbs
+....
+
+.Locks on data driven features
+[plantuml,images/lock-inherit-iterate-feature,svg]
+....
+@startwbs
+<style>
+wbsDiagram {
+  BackgroundColor #88CCEE
+  RoundCorner 10
+  node {
+    :depth(0) {
+      BackgroundColor #DDCC77
+      RoundCorner 0
+    }
+  }
+
+  .samethread * {
+      BackgroundColor #DDCC77
+      RoundCorner 0
+  }
+
+  .write_lock * {
+      LineStyle 4
+      LineThickness 2.5
+      LineColor #117733
+  }
+}
+</style>
+skinparam shadowing false
+* SpockEngine
+** SpecA
+*** TestA1
+*** TestA2
+** SpecB
+*** TestB1
+*** @ResourceLock("R")\nTestB2 <<write_lock>>
+**** TestB2[1] <<samethread>>
+**** TestB2[2] <<samethread>>
+@endwbs
+....
+
+
+=== Lock coarsening
+
+To avoid deadlocks, Spock pulls up locks to the specification, when locks are defined on both the specification and features.
+The Specification will then contain all defined locks.
+If the features both had `READ_WRITE` and `READ` locks for the same resource, then the `READ` will be merged into the `READ_WRITE`.
+
+.Lock coarsening - before
+[plantuml,images/lock-coarsening-before,svg]
+....
+@startwbs
+<style>
+wbsDiagram {
+  BackgroundColor #88CCEE
+  RoundCorner 10
+  node {
+    :depth(0) {
+      BackgroundColor #DDCC77
+      RoundCorner 0
+    }
+  }
+
+  .samethread * {
+      BackgroundColor #DDCC77
+      RoundCorner 0
+  }
+
+  .write_lock * {
+      LineStyle 4
+      LineThickness 2.5
+      LineColor #117733
+  }
+}
+</style>
+skinparam shadowing false
+* SpockEngine
+** @ResourceLock("S")\nSpecA <<write_lock>>
+*** @ResourceLock("A")\nTestA1 <<write_lock>>
+*** @ResourceLock("B")\nTestA2 <<write_lock>>
+@endwbs
+....
+
+
+.Lock coarsening - after
+[plantuml,images/lock-coarsening-after,svg]
+....
+@startwbs
+<style>
+wbsDiagram {
+  BackgroundColor #88CCEE
+  RoundCorner 10
+  node {
+    :depth(0) {
+      BackgroundColor #DDCC77
+      RoundCorner 0
+    }
+  }
+
+  .samethread * {
+      BackgroundColor #DDCC77
+      RoundCorner 0
+  }
+
+  .write_lock * {
+      LineStyle 4
+      LineThickness 2.5
+      LineColor #117733
+  }
+}
+</style>
+skinparam shadowing false
+* SpockEngine
+** @ResourceLock("A")\n@ResourceLock("B")\n@ResourceLock("S")\nSpecA <<write_lock>>
+*** TestA1 <<samethread>>
+*** TestA2 <<samethread>>
+@endwbs
+....
+
+
+// color palette is TOL from https://davidmathlogic.com/colorblind/
+// https://personal.sron.nl/~pault/ muted variant

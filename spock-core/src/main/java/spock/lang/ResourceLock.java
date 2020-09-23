@@ -28,7 +28,7 @@ import java.lang.annotation.*;
 @Repeatable(ResourceLock.Container.class)
 public @interface ResourceLock {
   /**
-   * The name of the resource.
+   * The key identifying the resource.
    *
    * @see org.spockframework.runtime.model.parallel.Resources for a list of standard resources
    * @return the key

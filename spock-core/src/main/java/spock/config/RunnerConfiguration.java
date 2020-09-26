@@ -29,6 +29,7 @@ package spock.config;
  *     baseClass IntegrationSpec
  *   }
  *   filterStackTrace true // this is the default
+ *   matchFirstInteraction true // this is the default
  * }
  * </pre>
  */
@@ -38,4 +39,5 @@ public class RunnerConfiguration {
   public IncludeExcludeCriteria exclude = new IncludeExcludeCriteria();
   public boolean filterStackTrace = true;
   public boolean optimizeRunOrder = false;
+  public boolean matchFirstInteraction = true;
 }

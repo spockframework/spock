@@ -6,7 +6,7 @@ pluginManagement {
     id "net.nemerosa.versioning" version "2.13.1"
     id "de.marcphilipp.nexus-publish" version "0.4.0"
     id "com.github.ben-manes.versions" version "0.28.0"
-    id "biz.aQute.bnd.builder" version "5.1.0"
+    id "biz.aQute.bnd.builder" version "5.1.2"
   }
 }
 

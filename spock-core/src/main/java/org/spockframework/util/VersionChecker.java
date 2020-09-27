@@ -25,7 +25,7 @@ public class VersionChecker {
   public void checkGroovyVersion(String whoIsChecking) {
     if (!isCompatibleGroovyVersion()) {
       if (isVersionCheckDisabled()) {
-        System.err.println(format("Executing Spock %s with NOT compatible Groovy version %s due to set %s system property set. " +
+        System.err.println(format("Executing Spock %s with NOT compatible Groovy version %s due to set %s system property. " +
           "This is unsupported and may result in weird runtime errors!", SpockReleaseInfo.getVersion(),
           GroovyReleaseInfo.getVersion(), DISABLE_GROOVY_VERSION_CHECK_PROPERTY_NAME));
       } else {

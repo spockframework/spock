@@ -43,13 +43,13 @@ ext {
   }
   fullVersion = baseVersion + ((!snapshotVersion && milestone) ? "-M$milestone" : "") + "-groovy-$variant" + (snapshotVersion ? "-SNAPSHOT" : '')
   variantLessVersion = baseVersion + (snapshotVersion ? "-SNAPSHOT" : (milestone ? "-M$milestone" : ""))
-  javaVersions = [1.8, 11, 14] // ensure that latest version is actually build on travis, otherwise no docs get published
+  javaVersions = [1.8, 11, 15] // ensure that latest version is actually build on travis, otherwise no docs get published
   javaVersion = System.getProperty("java.specification.version") as BigDecimal
 
   libs = [
     jetbrainsAnnotations: [group: "org.jetbrains", name: "annotations", version: "19.0.0"],
-    asm                 : [group: 'org.ow2.asm', name: 'asm', version: '8.0.1'],
-    bytebuddy           : [group: 'net.bytebuddy', name: 'byte-buddy', version: '1.10.10'],
+    asm                 : [group: 'org.ow2.asm', name: 'asm', version: '9.0'],
+    bytebuddy           : [group: 'net.bytebuddy', name: 'byte-buddy', version: '1.10.16'],
     cglib               : [group: 'cglib', name: 'cglib-nodep', version: '3.3.0'],
     groovy              : groovyDependencies,
     groovySql           : [group: 'org.codehaus.groovy', name: 'groovy-sql', version: groovyVersion], //for some Spring and Unitils tests
@@ -194,7 +194,7 @@ subprojects {
   }
 
   jacoco {
-    toolVersion = '0.8.5'
+    toolVersion = '0.8.6'
   }
 }
 

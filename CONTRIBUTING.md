@@ -13,7 +13,7 @@ There are many ways to contribute to Spock:
 * Designing a Spock logo and/or website (Disclaimer: Our expectations are high on this one, and obviously we'll need to be heavily involved)
 * Hiring us for Spock/[Geb](https://gebish.org) related training and consulting
 * Donating money to fund further development
-* Suprising us with some other form of contribution!
+* Surprising us with some other form of contribution!
 
 All forms of contribution are very much appreciated.
 
@@ -23,7 +23,7 @@ Good communication makes a big difference. We are always eager to listen, reflec
 
 ## Triage Issues [![Open Source Helpers](https://www.codetriage.com/spockframework/spock/badges/users.svg)](https://www.codetriage.com/spockframework/spock)
 
-You can triage issues which may include reproducing bug reports or asking for vital information, such as version numbers or reproduction instructions. If you would like to start triaging issues, one easy way to get started is to [subscribe to spock on CodeTriage](https://www.codetriage.com/spockframework/spock).
+You can triage issues which may include reproducing bug reports or asking for vital information, such as version numbers or reproduction instructions. If you would like to start triaging issues, one easy way to get started is to [subscribe to Spock on CodeTriage](https://www.codetriage.com/spockframework/spock).
 
 ## Contributing Code/Docs
 
@@ -62,7 +62,7 @@ All tests are written in Spock. Tests for `spock-core` are located in the `spock
 
 ### Command Line Build
 
-Spock is built with [Gradle](https://www.gradle.org). The only prerequsite for executing the build is an installation of JDK 1.6 (or higher). After cloning the [GitHub repository](https://github.com/spockframework/spock), cd into the top directory and execute `./gradlew build` (Windows: `gradlew build`). The build should succeed without any errors. `gradlew tasks` lists the available tasks. Always use the Gradle Wrapper (`gradlew` command) rather than your own Gradle installation.
+Spock is built with [Gradle](https://www.gradle.org). The only prerequisite for executing the build is an installation of JDK 1.6 (or higher). After cloning the [GitHub repository](https://github.com/spockframework/spock), cd into the top directory and execute `./gradlew build` (Windows: `gradlew build`). The build should succeed without any errors. `gradlew tasks` lists the available tasks. Always use the Gradle Wrapper (`gradlew` command) rather than your own Gradle installation.
 
 ### CI Build
 

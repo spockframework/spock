@@ -32,7 +32,7 @@ Development snapshots are available from [Sonatype OSS](https://oss.sonatype.org
 
 For intermediate stable builds we recommend to use [Jitpack](https://jitpack.io/#org.spockframework/spock) (go here for instructions):
 
-1. Add https://jitpack.io as a respository
+1. Add https://jitpack.io as a repository
 2. Use `org.spockframework.spock` as `groupId` and the normal `artifact-id`
 
 ```groovy

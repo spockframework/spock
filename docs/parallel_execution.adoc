@@ -709,7 +709,21 @@ skinparam shadowing false
 == Parallel Thread Pool
 
 With parallel execution enabled, specifications and features can execute concurrently.
+You can control the size of the thread pool that executes the features.
 
+* `dynamic(factor)` - Computes the desired parallelism based on the number of available processors/cores multiplied by the `factor`.
+* `dynamicWithReservedThreads(factor, reservedThreads)` - Same as `dynamic` but ensures that the given amount of `reservedThreads` is not used.
+* `fixed(parallelism)` - Uses the given amount of threads.
+* `custom(parallelism, minimumRunnable, maxPoolSize, corePoolSize, keepAliveSeconds)` - Allows complete control over the threadpool.
+  However, it should only be used when the other options are insufficient, and you need that extra bit of control.
+
+By default spock uses `dynamicWithReservedThreads(1.0, 2)` that is all your threads minus `2`.
+
+.SpockConfig.groovy
+[source,groovy,indent=0]
+----
+include::{sourcedir}/parallel/ParallelConfigDoc.groovy[tag=fixed]
+----
 
 
 // color palette is TOL from https://davidmathlogic.com/colorblind/

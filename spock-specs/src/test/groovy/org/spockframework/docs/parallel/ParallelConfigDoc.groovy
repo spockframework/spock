@@ -33,4 +33,24 @@ class ParallelConfigDoc extends Specification implements ConfigSupport {
     then:
     runnerConfiguration.parallel.enabled
   }
+
+  def "enable and fixed"() {
+    given:
+    Closure closure = {
+      // tag::fixed[]
+      runner {
+        parallel {
+          enabled true
+          fixed(4)
+        }
+      }
+      // end::fixed[]
+    }
+    when:
+    builder.build(configurationRegistry, closureToScript(closure))
+
+    then:
+    runnerConfiguration.parallel.enabled
+    runnerConfiguration.parallel.parallelExecutionConfiguration.parallelism == 4
+  }
 }

@@ -42,7 +42,7 @@ runner {
 }
 ----
 
-See the <<parallel-execution.adoc#parallel-execution,Parallel Execution>> section for a detailed description.
+See the <<parallel_execution.adoc#parallel-execution,Parallel Execution>> section for a detailed description.
 
 == Built-In Extensions
 

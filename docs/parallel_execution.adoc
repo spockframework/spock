@@ -10,7 +10,7 @@ The actual achievable reduction will heavily depend on the respective codebase a
 
 By default, Spock runs tests sequentially with a single thread.
 As of 2.0 Spock supports parallel execution based on the JUnit Platform.
-To enable parallel execution set the `runner.parallel.enabled` setting `true`.
+To enable parallel execution set the `runner.parallel.enabled` configuration to `true`.
 See <<extensions.adoc#spock-configuration-file, Spock Configuration File>> for general information about this file.
 
 
@@ -538,6 +538,11 @@ skinparam shadowing false
 @endwbs
 ....
 
+If you want to have a lock on all features it might be intuitive to apply `@ResourceLock` on the specification.
+However, with this you are actually applying the lock on the Specification level and force every feature to `SAME_THREAD` execution.
+To avoid this you can use `@ResourceLockChildren` on the specification, this behaves the same as applying `@ResourceLock` on every feature.
+As mentioned before, you will only notice a real difference if you are using `@ResourceLockChildren` with `READ`-only locks, as they allow concurrent execution.
+
 .Locks on children
 [[figure-lock-inherit-lock-children]]
 [plantuml,images/lock-inherit-lock-children,svg]
@@ -661,7 +666,10 @@ skinparam shadowing false
 
 === Isolated Execution
 
-With the `@Isolated` extension you can enforce, that only this feature runs without any other features running at the same time.
+Sometimes, you want to modify and test something that affects every other feature, you could put a `READ` `@ResourceLock` on _every_ feature, but that is impractical.
+The `@Isolated` extension enforces, that only this feature runs without any other features running at the same time.
+You can think of this as an implicit global lock.
+
 As with other locks, the features in an `@Isolated` specification will run in `SAME_THREAD` mode.
 `@Isolated` can only be applied at the specification level so if you have a large specification and only need it for a few features,
 you might want to consider splitting the spec into `@Isolated` and non isolated.
@@ -717,7 +725,7 @@ You can control the size of the thread pool that executes the features.
 * `custom(parallelism, minimumRunnable, maxPoolSize, corePoolSize, keepAliveSeconds)` - Allows complete control over the threadpool.
   However, it should only be used when the other options are insufficient, and you need that extra bit of control.
 
-By default spock uses `dynamicWithReservedThreads(1.0, 2)` that is all your threads minus `2`.
+By default spock uses `dynamicWithReservedThreads(1.0, 2)` that is all your logical processors minus `2`.
 
 .SpockConfig.groovy
 [source,groovy,indent=0]

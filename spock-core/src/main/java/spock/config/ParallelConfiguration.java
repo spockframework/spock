@@ -19,7 +19,7 @@ public class ParallelConfiguration {
   private DefaultParallelExecutionConfiguration parallelExecutionConfiguration;
 
   public ParallelConfiguration() {
-    dynamicWithReservedThreads(BigDecimal.ONE, 2);
+    dynamicWithReservedProcessors(BigDecimal.ONE, 2);
   }
 
   /**
@@ -36,30 +36,30 @@ public class ParallelConfiguration {
 
   /**
    * Computes the desired parallelism based on the number of available
-   * processors/cores multiplied by the {@code factor} however it makes sure to keep {@code reservedThreads} free.
+   * processors multiplied by the {@code factor} however it makes sure to keep {@code reservedProcessors} free.
    * <p>
    * Example:
    * <pre>
-   * Given a configuration of {@code dynamicWithReservedThreads(1, 2)}
+   * Given a configuration of {@code dynamicWithReservedProcessors(1, 2)}
    * On a system with 8 threads 6 threads will be used for testing.
    * On a system with 4 threads only 2 threads will be used for testing.
    * On a system with 1 or 2 threads only 1 thread will be used for testing, effectively deactivating parallel execution.
    * </pre>
    *
    * @param factor to use to determine parallelism (must be {@code <= 1})
-   * @param reservedThreads the number for threads to reserve for other things (must be {@code >= 0})
+   * @param reservedProcessors the number for processors to reserve for other things (must be {@code >= 0})
    */
-  public void dynamicWithReservedThreads(BigDecimal factor, int reservedThreads) {
-    if (factor.compareTo(BigDecimal.ONE) > 0 && reservedThreads > 0) {
+  public void dynamicWithReservedProcessors(BigDecimal factor, int reservedProcessors) {
+    if (factor.compareTo(BigDecimal.ONE) > 0 && reservedProcessors > 0) {
       throw new IllegalArgumentException("A factor larger than 1 with reserved threads is unsupported.");
     }
-    if (reservedThreads < 0) {
-      throw new IllegalArgumentException("A negative value for reservedThreads is illegal.");
+    if (reservedProcessors < 0) {
+      throw new IllegalArgumentException("A negative value for reservedProcessors is illegal.");
     }
     int availableProcessors = Runtime.getRuntime().availableProcessors();
     int wantedParallelism = Math.min(
       factor.multiply(BigDecimal.valueOf(availableProcessors)).intValue(),
-      availableProcessors - reservedThreads);
+      availableProcessors - reservedProcessors);
     int parallelism = Math.max(1, wantedParallelism);
     fixed(parallelism);
   }

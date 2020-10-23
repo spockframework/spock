@@ -718,14 +718,20 @@ skinparam shadowing false
 
 With parallel execution enabled, specifications and features can execute concurrently.
 You can control the size of the thread pool that executes the features.
+Spock uses `Runtime.getRuntime().availableProcessors()` to determine the available processors.
 
-* `dynamic(factor)` - Computes the desired parallelism based on the number of available processors/cores multiplied by the `factor`.
-* `dynamicWithReservedThreads(factor, reservedThreads)` - Same as `dynamic` but ensures that the given amount of `reservedThreads` is not used.
-* `fixed(parallelism)` - Uses the given amount of threads.
-* `custom(parallelism, minimumRunnable, maxPoolSize, corePoolSize, keepAliveSeconds)` - Allows complete control over the threadpool.
+* `dynamic(BigDecimal factor)` - Computes the desired parallelism based on the number of available processors multiplied by the `factor` and rounded down to the nearest integer.
+  For example a factor of `0.5` will use half your processors.
+* `dynamicWithReservedProcessors(BigDecimal factor, int reservedProcessors)` - Same as `dynamic` but ensures that the given amount of `reservedProcessors` is not used.
+  The `reservedProcessors` are counted against the available cores not the result of the factor.
+* `fixed(int parallelism)` - Uses the given amount of threads.
+* `custom(int parallelism, int minimumRunnable, int maxPoolSize, int corePoolSize, int keepAliveSeconds)` - Allows complete control over the threadpool.
   However, it should only be used when the other options are insufficient, and you need that extra bit of control.
+  Check the Javadoc of `spock.config.ParallelConfiguration` for a detailed description the parameters.
 
-By default spock uses `dynamicWithReservedThreads(1.0, 2)` that is all your logical processors minus `2`.
+By default, Spock uses `dynamicWithReservedProcessors(1.0, 2)` that is all your logical processors minus `2`.
+
+If the calculated parallelism is less than `2`, then Spock will execute single threaded, basically the same as `runner.parallel.enabled=false`.
 
 .SpockConfig.groovy
 [source,groovy,indent=0]

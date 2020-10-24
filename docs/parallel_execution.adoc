@@ -9,7 +9,7 @@ Parallel execution has the potential to reduce the overall test execution time.
 The actual achievable reduction will heavily depend on the respective codebase and can vary wildly.
 
 By default, Spock runs tests sequentially with a single thread.
-As of 2.0 Spock supports parallel execution based on the JUnit Platform.
+As of version 2.0, Spock supports parallel execution based on the JUnit Platform.
 To enable parallel execution set the `runner.parallel.enabled` configuration to `true`.
 See <<extensions.adoc#spock-configuration-file, Spock Configuration File>> for general information about this file.
 
@@ -22,17 +22,17 @@ include::{sourcedir}/parallel/ParallelConfigDoc.groovy[tag=enable]
 
 NOTE: JUnit Jupiter also supports  https://junit.org/junit5/docs/5.7.0/user-guide/#writing-tests-parallel-execution[parallel execution], both rely on the JUnit Platform implementation, but function independently of each other.
       If you enable parallel execution in Spock it won't affect Jupiter and vice versa.
-      The JUnit Platform executes the test engines (Spock, Jupiter) sequentially, so there should not be any cross interference between engines.
+      The JUnit Platform executes the test engines (Spock, Jupiter) sequentially, so there should not be any interference between engines.
 
 [[execution-modes]]
 == Execution modes
 Spock supports two execution modes `SAME_THREAD` and `CONCURRENT`.
-You can define the execution mode explicitly for a specification or feature via the `@Execution` extension.
+You can define the execution mode explicitly for a specification or feature via the `@Execution` annotation.
 Otherwise, Spock will use the value of `defaultSpecificationExecutionMode` and `defaultExecutionMode` respectively, both have `CONCURRENT` as default value.
 Certain <<extensions.adoc#extensions, extensions>> also set execution modes when they are applied.
 
 * `defaultSpecificationExecutionMode` controls what execution mode a specification will use by default.
-* `defaultExecutionMode` controls  what execution mode a feature and its iterations (if data driven) will use by default.
+* `defaultExecutionMode` controls what execution mode a feature and its iterations (if data driven) will use by default.
 
 .Sequential Execution, either `runner.parallel.enabled=false` or `SAME_THREAD` Specifications, `SAME_THREAD` Features
 [plantuml,images/sequential-squential-execution,svg]
@@ -289,7 +289,7 @@ skinparam shadowing false
 ==== Execution Mode Inheritance
 
 If nothing else is explicit configured, specifications will use `defaultSpecificationExecutionMode` and features use `defaultExecutionMode`.
-However, this changes when you set the execution mode explicitly via `@ExecutionMode`.
+However, this changes when you set the execution mode explicitly via `@Execution`.
 Each node (specification, feature) checks first if it has an explicit execution mode set,
 otherwise it will check its parents for an explicit setting and fall back to the respective defaults otherwise.
 

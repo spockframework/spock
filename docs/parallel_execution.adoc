@@ -296,7 +296,7 @@ otherwise it will check its parents for an explicit setting and fall back to the
 The following examples have `defaultSpecificationExecutionMode=SAME_THREAD` and `defaultExecutionMode=SAME_THREAD`.
 If you invert the values `SAME_THREAD` and `CONCURRENT` in these examples you will get the inverse result.
 
-.Execution with `SAME_THREAD` Specifications, `SAME_THREAD` Features and explicit `@ExecutionMode` on Features
+.Execution with `SAME_THREAD` Specifications, `SAME_THREAD` Features and explicit `@Execution` on Features
 [[figure-execution-hierarchy-inheritance-feature-execution]]
 [plantuml,images/execution-hierarchy-inheritance-feature-execution,svg]
 ....
@@ -314,18 +314,18 @@ skinparam shadowing false
 * SpockEngine
 ** SpecA
 *** TestA1
-*** @ExecutionMode(CONCURRENT)\nTestA2 <<concurrent>>
+*** @Execution(CONCURRENT)\nTestA2 <<concurrent>>
 ** SpecB
 *** TestB1
-*** @ExecutionMode(CONCURRENT)\nTestB2 <<concurrent>>
+*** @Execution(CONCURRENT)\nTestB2 <<concurrent>>
 **** TestB2[1]
 **** TestB2[2]
 @endwbs
 ....
 
-In <<figure-execution-hierarchy-inheritance-feature-execution>> `@ExecutionMode` is applied on the features and those features and iterations will execute concurrently while the rest will execute in the same thread.
+In <<figure-execution-hierarchy-inheritance-feature-execution>> `@Execution` is applied on the features and those features and iterations will execute concurrently while the rest will execute in the same thread.
 
-.Execution with `SAME_THREAD` Specifications, `SAME_THREAD` Features and explicit `@ExecutionMode` on a Specification
+.Execution with `SAME_THREAD` Specifications, `SAME_THREAD` Features and explicit `@Execution` on a Specification
 [[figure-execution-hierarchy-inheritance-spec-execution]]
 [plantuml,images/execution-hierarchy-inheritance-spec-execution,svg]
 ....
@@ -344,7 +344,7 @@ skinparam shadowing false
 ** SpecA
 *** TestA1
 *** TestA2
-** @ExecutionMode(CONCURRENT)\nSpecB  <<concurrent>>
+** @Execution(CONCURRENT)\nSpecB  <<concurrent>>
 *** TestB1
 *** TestB2
 **** TestB2[1]
@@ -352,10 +352,10 @@ skinparam shadowing false
 @endwbs
 ....
 
-In <<figure-execution-hierarchy-inheritance-spec-execution>> `@ExecutionMode` is applied on one specification causing the specification and all its features to run concurrently.
+In <<figure-execution-hierarchy-inheritance-spec-execution>> `@Execution` is applied on one specification causing the specification and all its features to run concurrently.
 The features execute concurrently since they inherit the explicit execution mode from the specification.
 
-.Execution with `SAME_THREAD` Specifications, `SAME_THREAD` Features and explicit `@ExecutionMode` on Features and Specifications
+.Execution with `SAME_THREAD` Specifications, `SAME_THREAD` Features and explicit `@Execution` on Features and Specifications
 [[figure-execution-hierarchy-inheritance-spec-feature-execution]]
 [plantuml,images/execution-hierarchy-inheritance-spec-feature-execution,svg]
 ....
@@ -378,15 +378,15 @@ skinparam shadowing false
 ** SpecA
 *** TestA1
 *** TestA2
-** @ExecutionMode(CONCURRENT)\nSpecB  <<concurrent>>
-*** @ExecutionMode(SAME_THREAD)\nTestB1 <<samethread>>
+** @Execution(CONCURRENT)\nSpecB  <<concurrent>>
+*** @Execution(SAME_THREAD)\nTestB1 <<samethread>>
 *** TestB2
 **** TestB2[1]
 **** TestB2[2]
 @endwbs
 ....
 
-<<figure-execution-hierarchy-inheritance-spec-feature-execution>> showcases the combined application of `@ExecutionMode` on a specification and some of its features.
+<<figure-execution-hierarchy-inheritance-spec-feature-execution>> showcases the combined application of `@Execution` on a specification and some of its features.
 As in the previous example the specification and its features will execute concurrently except `TestB1` since it has its own explicit execution mode set.
 
 == Resource Locks
@@ -396,7 +396,7 @@ With parallel execution comes a new set of challenges for testing, as shared sta
 A simple example would be two features that test the use a system property, both setting it to a specific value in the respective `given` block and then executing the code to test the expected behavior.
 If they run sequentially then both complete without issue. However, if the run at the same time both `given` blocks will run before the `when` blocks and one feature will fail since the system property did not contain the expected value.
 
-The above example could simply be fixed if both features are part of the same specification by setting them to run in the same thread with `@ExecutionMode(SAME_THREAD)`.
+The above example could simply be fixed if both features are part of the same specification by setting them to run in the same thread with `@Execution(SAME_THREAD)`.
 However, this is not really practicable when the features are in separate specifications.
 To solve this issue Spock has support to coordinate access to shared resources via `@ResourceLock` and `@ResourceLockChildren`.
 

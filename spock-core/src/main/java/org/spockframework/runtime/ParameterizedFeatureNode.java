@@ -22,8 +22,13 @@ public class ParameterizedFeatureNode extends FeatureNode {
 
   @Override
   public SpockExecutionContext prepare(SpockExecutionContext context) throws Exception {
+    if (getNodeInfo().isSkipped()) {
+      // Node.prepare is called before Node.shouldBeSkipped so we just skip the prepare
+      return context;
+    }
     getNodeInfo().setIterationNameProvider(new SafeIterationNameProvider(getNodeInfo().getIterationNameProvider()));
     return context.withCurrentFeature(getNodeInfo()).withParentId(getUniqueId());
+
   }
 
   @Override

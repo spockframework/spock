@@ -45,6 +45,14 @@ class UseOnMethods extends Specification {
     "foo".duplicate() == "foofoo"
   }
 
+  @Use(StringExtensions)
+  @Use(IntegerExtensions)
+  def "can use multiple categories in multiple annotations"() {
+    expect:
+    3.mul(4) == 12
+    "foo".duplicate() == "foofoo"
+  }
+
   def "has no effect when applied to a helper method"() {
     when:
     helper()

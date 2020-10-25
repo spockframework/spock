@@ -14,10 +14,8 @@
 
 package org.spockframework.smoke.mock
 
-import org.spockframework.mock.FinalJavaPerson
-import org.spockframework.mock.FinalMethodsJavaPerson
-
-import spock.lang.Specification
+import org.spockframework.mock.*
+import spock.lang.*
 
 class GroovyMocksForGroovyClasses extends Specification {
   def person = GroovyMock(Person)
@@ -27,7 +25,16 @@ class GroovyMocksForGroovyClasses extends Specification {
     person.sing("song")
 
     then:
-    person.sing("song")
+    1 * person.sing("song")
+  }
+
+  @Issue("https://github.com/spockframework/spock/issues/1216")
+  def "argument coercion"() {
+    when:
+    person.sing("song${1}")
+
+    then:
+    1 * person.sing('song1')
   }
 
   def "final physical method"() {

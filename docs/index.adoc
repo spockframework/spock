@@ -11,6 +11,7 @@ include::include.adoc[]
 . <<modules.adoc#,Modules>>
 . <<release_notes.adoc#,Release Notes>>
 . <<migration_guide.adoc#,Migration Guide>>
+. <<faq.adoc#,Frequently Asked Questions (FAQ)>>
 . <<known_issues.adoc#,Known Issues>>
 
 <<all_in_one.adoc#,Single Page Documentation>>

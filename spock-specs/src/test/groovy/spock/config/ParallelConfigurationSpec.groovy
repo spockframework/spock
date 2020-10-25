@@ -1,7 +1,7 @@
 package spock.config
 
 
-import org.spockframework.runtime.*
+import org.spockframework.runtime.IConfigurationRegistry
 import org.spockframework.runtime.model.parallel.ExecutionMode
 import spock.lang.*
 
@@ -97,14 +97,14 @@ class ParallelConfigurationSpec extends Specification implements ConfigSupport {
     }
   }
 
-  def "check dynamicWithReservedThreads"() {
+  def "check dynamicWithReservedProcessors"() {
     given:
     int expectedParallelism = Math.max(availableProcessors - 1, 1)
     Closure closure = {
       runner {
         parallel {
           enabled true
-          dynamicWithReservedThreads(1, 1)
+          dynamicWithReservedProcessors(1, 1)
         }
       }
     }
@@ -122,14 +122,14 @@ class ParallelConfigurationSpec extends Specification implements ConfigSupport {
     }
   }
 
-  def "dynamicWithReservedThreads throws for negative reservedThreads"() {
+  def "dynamicWithReservedProcessors throws for negative reservedThreads"() {
     given:
     int expectedParallelism = Math.max(availableProcessors - 1, 1)
     Closure closure = {
       runner {
         parallel {
           enabled true
-          dynamicWithReservedThreads(1, -1)
+          dynamicWithReservedProcessors(1, -1)
         }
       }
     }
@@ -142,14 +142,14 @@ class ParallelConfigurationSpec extends Specification implements ConfigSupport {
   }
 
 
-  def "dynamicWithReservedThreads throws for factor larger than 1"() {
+  def "dynamicWithReservedProcessors throws for factor larger than 1"() {
     given:
     int expectedParallelism = Math.max(availableProcessors - 1, 1)
     Closure closure = {
       runner {
         parallel {
           enabled true
-          dynamicWithReservedThreads(2, 1)
+          dynamicWithReservedProcessors(2, 1)
         }
       }
     }

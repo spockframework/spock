@@ -42,7 +42,7 @@ class ParallelSpec extends EmbeddedSpecification {
 
       def a() {
         when:
-        incrementAndBlock(atomicInteger, latch)
+        incrementAndBlock(atomicInteger, latch, 10000)
 
         then:
         atomicInteger.get() == 2
@@ -50,7 +50,7 @@ class ParallelSpec extends EmbeddedSpecification {
 
       def b() {
         when:
-        incrementAndBlock(atomicInteger, latch)
+        incrementAndBlock(atomicInteger, latch, 10000)
 
         then:
         atomicInteger.get() == 2
@@ -221,25 +221,85 @@ class ParallelSpec extends EmbeddedSpecification {
     result.testsSucceededCount == 2
   }
 
+  def "Execution can be set isolated"() {
+    when:
+    def result = runner.runWithImports '''
+      class ASpec extends Specification {
+        static AtomicInteger atomicInteger = new AtomicInteger()
+
+        static CountDownLatch latch = new CountDownLatch(6)
+
+        def writeA() {
+          expect:
+          storeAndBlockAndCheck(atomicInteger, latch)
+        }
+
+        def writeB() {
+          expect:
+          storeAndBlockAndCheck(atomicInteger, latch)
+        }
+      }
+
+      @Isolated
+      class BSpec extends Specification {
+
+        @Shared
+        String threadName
+
+        def setupSpec() {
+          threadName = Thread.currentThread().name
+        }
+
+        def writeA() {
+          expect:
+          threadName == Thread.currentThread().name
+          incrementBlockAndCheck(ASpec.atomicInteger, ASpec.latch)
+        }
+
+        def writeB() {
+          expect:
+          threadName == Thread.currentThread().name
+          incrementBlockAndCheck(ASpec.atomicInteger, ASpec.latch)
+        }
+      }
+
+      class CSpec extends Specification {
+
+        def writeA() {
+          expect:
+          storeAndBlockAndCheck(ASpec.atomicInteger, ASpec.latch)
+        }
+
+        def writeB() {
+          expect:
+          storeAndBlockAndCheck(ASpec.atomicInteger, ASpec.latch)
+        }
+      }
+    '''
+
+    then:
+    result.testsSucceededCount == 6
+  }
+
   static void incrementBlockAndCheck(AtomicInteger sharedResource, CountDownLatch countDownLatch)
     throws InterruptedException {
     int value = incrementAndBlock(sharedResource, countDownLatch)
     assert value == sharedResource.get()
   }
 
-  static int incrementAndBlock(AtomicInteger sharedResource, CountDownLatch countDownLatch)
+  static int incrementAndBlock(AtomicInteger sharedResource, CountDownLatch countDownLatch, long timeout = 100)
     throws InterruptedException {
     int value = sharedResource.incrementAndGet()
     countDownLatch.countDown()
-    countDownLatch.await(100, MILLISECONDS)
+    countDownLatch.await(timeout, MILLISECONDS)
     return value
   }
 
-  static void storeAndBlockAndCheck(AtomicInteger sharedResource, CountDownLatch countDownLatch)
+  static void storeAndBlockAndCheck(AtomicInteger sharedResource, CountDownLatch countDownLatch, long timeout = 100)
     throws InterruptedException {
     int value = sharedResource.get()
     countDownLatch.countDown()
-    countDownLatch.await(100, MILLISECONDS)
+    countDownLatch.await(timeout, MILLISECONDS)
     assert value == sharedResource.get()
   }
 }

@@ -26,4 +26,10 @@ import java.lang.annotation.*;
 @Target({ ElementType.TYPE})
 @ExtensionAnnotation(IsolatedExtension.class)
 public @interface Isolated {
+  /**
+   * The reason for isolating this specification.
+   * <p>
+   * Sometimes it is not readily apparent why a Spec was isolated, so you can add a reason here.
+   */
+  String value() default "";
 }

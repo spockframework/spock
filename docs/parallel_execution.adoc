@@ -138,7 +138,7 @@ skinparam shadowing false
 ** Same Thread <<samethread>>
 ** Concurrent <<concurrent>>
 ** ResourceLock <<write_lock>>
-*** Same Thread with lock <<samethread>>
+*** Same Thread with Lock <<samethread>>
 ** Data Driven Feature
 *** Data Driven Feature[1]
 *** Data Driven Feature[2]
@@ -149,7 +149,7 @@ skinparam shadowing false
 * The node `Same Thread` will run in the same thread as its parent.
 * The node `Concurrent` will be executed in another thread, all concurrent nodes can execute in different threads from each other.
 * The node `ResourceLock` will be executed in another thread, but will also acquire a lock.
-* The node `Same Thread with lock` will run in the same thread as its parent thus inheriting the lock.
+* The node `Same Thread with Lock` will run in the same thread as its parent thus inheriting the lock.
 * The node `Data Driven Feature` represents a data driven feature with `Data Driven Feature[1]` and `Data Driven Feature[2]` being the iterations.
 * The node `Isolated` will run exclusively, no other specifications or features will run at the same time.
 
@@ -733,7 +733,7 @@ By default, Spock uses `dynamicWithReservedProcessors(1.0, 2)` that is all your 
 
 If the calculated parallelism is less than `2`, then Spock will execute single threaded, basically the same as `runner.parallel.enabled=false`.
 
-.SpockConfig.groovy
+.Example SpockConfig.groovy with `fixed` setting
 [source,groovy,indent=0]
 ----
 include::{sourcedir}/parallel/ParallelConfigDoc.groovy[tag=fixed]

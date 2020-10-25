@@ -27,6 +27,7 @@ import static org.spockframework.runtime.model.parallel.ExecutionMode.SAME_THREA
 /**
  * @author Peter Niederwieser
  */
+@Isolated("The timings are quite tight and it can get flaky on weak machines if run in parallel.")
 @Execution(SAME_THREAD)
 @Retry
 class TimeoutExtension extends EmbeddedSpecification {

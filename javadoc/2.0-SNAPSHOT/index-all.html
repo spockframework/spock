@@ -168,9 +168,17 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><span class="member-name-link"><a href="spock/mock/DetachedMockFactory.html#createMock(java.lang.String,T,org.spockframework.mock.MockNature,java.util.Map)">createMock(String, T, MockNature, Map&lt;String, Object&gt;)</a></span> - Method in class spock.mock.<a href="spock/mock/DetachedMockFactory.html" title="class in spock.mock">DetachedMockFactory</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="member-name-link"><a href="spock/config/ParallelConfiguration.html#custom(int,int,int,int,int)">custom(int, int, int, int, int)</a></span> - Method in class spock.config.<a href="spock/config/ParallelConfiguration.html" title="class in spock.config">ParallelConfiguration</a></dt>
+<dd>
+<div class="block">Allows fine grained custom control over the parameters of the execution.</div>
+</dd>
 </dl>
 <h2 class="title" id="I:D">D</h2>
 <dl class="index">
+<dt><span class="member-name-link"><a href="spock/config/ParallelConfiguration.html#defaultExecutionMode">defaultExecutionMode</a></span> - Variable in class spock.config.<a href="spock/config/ParallelConfiguration.html" title="class in spock.config">ParallelConfiguration</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="member-name-link"><a href="spock/config/ParallelConfiguration.html#defaultSpecificationExecutionMode">defaultSpecificationExecutionMode</a></span> - Variable in class spock.config.<a href="spock/config/ParallelConfiguration.html" title="class in spock.config">ParallelConfiguration</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="member-name-link"><a href="spock/lang/Retry.html#delay()">delay()</a></span> - Method in annotation type spock.lang.<a href="spock/lang/Retry.html" title="annotation in spock.lang">Retry</a></dt>
 <dd>
 <div class="block">Delay between retries in millis, 0 to disable.</div>
@@ -182,9 +190,21 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><span class="member-name-link"><a href="spock/mock/DetachedMockFactory.html#%3Cinit%3E()">DetachedMockFactory()</a></span> - Constructor for class spock.mock.<a href="spock/mock/DetachedMockFactory.html" title="class in spock.mock">DetachedMockFactory</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="member-name-link"><a href="spock/config/ParallelConfiguration.html#dynamic(java.math.BigDecimal)">dynamic(BigDecimal)</a></span> - Method in class spock.config.<a href="spock/config/ParallelConfiguration.html" title="class in spock.config">ParallelConfiguration</a></dt>
+<dd>
+<div class="block">Computes the desired parallelism based on the number of available
+ processors/cores multiplied by the <code>factor</code>.</div>
+</dd>
+<dt><span class="member-name-link"><a href="spock/config/ParallelConfiguration.html#dynamicWithReservedProcessors(java.math.BigDecimal,int)">dynamicWithReservedProcessors(BigDecimal, int)</a></span> - Method in class spock.config.<a href="spock/config/ParallelConfiguration.html" title="class in spock.config">ParallelConfiguration</a></dt>
+<dd>
+<div class="block">Computes the desired parallelism based on the number of available
+ processors multiplied by the <code>factor</code> however it makes sure to keep <code>reservedProcessors</code> free.</div>
+</dd>
 </dl>
 <h2 class="title" id="I:E">E</h2>
 <dl class="index">
+<dt><span class="member-name-link"><a href="spock/config/ParallelConfiguration.html#enabled">enabled</a></span> - Variable in class spock.config.<a href="spock/config/ParallelConfiguration.html" title="class in spock.config">ParallelConfiguration</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="member-name-link"><a href="spock/util/concurrent/AsyncConditions.html#evaluate(java.lang.Runnable)">evaluate(Runnable)</a></span> - Method in class spock.util.concurrent.<a href="spock/util/concurrent/AsyncConditions.html" title="class in spock.util.concurrent">AsyncConditions</a></dt>
 <dd>
 <div class="block">Evaluates the specified block, which is expected to contain
@@ -212,6 +232,10 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><span class="member-name-link"><a href="spock/config/RunnerConfiguration.html#exclude">exclude</a></span> - Variable in class spock.config.<a href="spock/config/RunnerConfiguration.html" title="class in spock.config">RunnerConfiguration</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="spock/lang/Execution.html" title="annotation in spock.lang"><span class="type-name-link">Execution</span></a> - Annotation Type in <a href="spock/lang/package-summary.html">spock.lang</a></dt>
+<dd>
+<div class="block">Allows to set the execution mode.</div>
+</dd>
 <dt><span class="member-name-link"><a href="spock/util/matcher/HamcrestSupport.html#expect(T,org.hamcrest.Matcher)">expect(T, Matcher&lt;? super T&gt;)</a></span> - Static method in class spock.util.matcher.<a href="spock/util/matcher/HamcrestSupport.html" title="class in spock.util.matcher">HamcrestSupport</a></dt>
 <dd>
 <div class="block">Alias for <a href="spock/util/matcher/HamcrestSupport.html#that(T,org.hamcrest.Matcher)"><code>HamcrestSupport.that(Object, org.hamcrest.Matcher)</code></a> intended for use in then-blocks.</div>
@@ -225,6 +249,10 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><span class="member-name-link"><a href="spock/config/RunnerConfiguration.html#filterStackTrace">filterStackTrace</a></span> - Variable in class spock.config.<a href="spock/config/RunnerConfiguration.html" title="class in spock.config">RunnerConfiguration</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="member-name-link"><a href="spock/config/ParallelConfiguration.html#fixed(int)">fixed(int)</a></span> - Method in class spock.config.<a href="spock/config/ParallelConfiguration.html" title="class in spock.config">ParallelConfiguration</a></dt>
+<dd>
+<div class="block">Uses a fixed value for <code>parallelism</code>.</div>
+</dd>
 </dl>
 <h2 class="title" id="I:G">G</h2>
 <dl class="index">
@@ -271,6 +299,10 @@ loadScripts(document, 'script');</script>
 <dt><span class="member-name-link"><a href="spock/util/environment/OperatingSystem.html#getName()">getName()</a></span> - Method in class spock.util.environment.<a href="spock/util/environment/OperatingSystem.html" title="class in spock.util.environment">OperatingSystem</a></dt>
 <dd>
 <div class="block">Returns the name of the operating system, as returned by the <code>os.name</code> system property.</div>
+</dd>
+<dt><span class="member-name-link"><a href="spock/config/ParallelConfiguration.html#getParallelExecutionConfiguration()">getParallelExecutionConfiguration()</a></span> - Method in class spock.config.<a href="spock/config/ParallelConfiguration.html" title="class in spock.config">ParallelConfiguration</a></dt>
+<dd>
+<div class="block">Internal use only</div>
 </dd>
 <dt><span class="member-name-link"><a href="spock/util/Exceptions.html#getRootCause(java.lang.Throwable)">getRootCause(Throwable)</a></span> - Static method in class spock.util.<a href="spock/util/Exceptions.html" title="class in spock.util">Exceptions</a></dt>
 <dd>
@@ -531,6 +563,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Tells whether the operating system family is Mac OS.</div>
 </dd>
+<dt><a href="spock/lang/Isolated.html" title="annotation in spock.lang"><span class="type-name-link">Isolated</span></a> - Annotation Type in <a href="spock/lang/package-summary.html">spock.lang</a></dt>
+<dd>
+<div class="block">Allows the isolated execution of a Specification.</div>
+</dd>
 <dt><span class="member-name-link"><a href="spock/util/environment/OperatingSystem.html#isOther()">isOther()</a></span> - Method in class spock.util.environment.<a href="spock/util/environment/OperatingSystem.html" title="class in spock.util.environment">OperatingSystem</a></dt>
 <dd>
 <div class="block">Tells whether the operating system family is anything other than those listed above.</div>
@@ -648,6 +684,14 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><span class="member-name-link"><a href="spock/mock/MockingApi.html#%3Cinit%3E()">MockingApi()</a></span> - Constructor for class spock.mock.<a href="spock/mock/MockingApi.html" title="class in spock.mock">MockingApi</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="member-name-link"><a href="spock/lang/ResourceLock.html#mode()">mode()</a></span> - Method in annotation type spock.lang.<a href="spock/lang/ResourceLock.html" title="annotation in spock.lang">ResourceLock</a></dt>
+<dd>
+<div class="block">Controls the access mode of the resource.</div>
+</dd>
+<dt><span class="member-name-link"><a href="spock/lang/ResourceLockChildren.html#mode()">mode()</a></span> - Method in annotation type spock.lang.<a href="spock/lang/ResourceLockChildren.html" title="annotation in spock.lang">ResourceLockChildren</a></dt>
+<dd>
+<div class="block">Controls the access mode of the resource.</div>
+</dd>
 <dt><span class="member-name-link"><a href="spock/lang/Retry.html#mode()">mode()</a></span> - Method in annotation type spock.lang.<a href="spock/lang/Retry.html" title="annotation in spock.lang">Retry</a></dt>
 <dd>
 <div class="block">Retry mode, controls what is retried.</div>
@@ -728,6 +772,12 @@ loadScripts(document, 'script');</script>
 </dl>
 <h2 class="title" id="I:P">P</h2>
 <dl class="index">
+<dt><span class="member-name-link"><a href="spock/config/RunnerConfiguration.html#parallel">parallel</a></span> - Variable in class spock.config.<a href="spock/config/RunnerConfiguration.html" title="class in spock.config">RunnerConfiguration</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="spock/config/ParallelConfiguration.html" title="class in spock.config"><span class="type-name-link">ParallelConfiguration</span></a> - Class in <a href="spock/config/package-summary.html">spock.config</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="member-name-link"><a href="spock/config/ParallelConfiguration.html#%3Cinit%3E()">ParallelConfiguration()</a></span> - Constructor for class spock.config.<a href="spock/config/ParallelConfiguration.html" title="class in spock.config">ParallelConfiguration</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="spock/lang/PendingFeature.html" title="annotation in spock.lang"><span class="type-name-link">PendingFeature</span></a> - Annotation Type in <a href="spock/lang/package-summary.html">spock.lang</a></dt>
 <dd>
 <div class="block">Indicates that the feature is not fully implemented yet and should not be reported as error.</div>
@@ -776,6 +826,18 @@ loadScripts(document, 'script');</script>
 <div class="block">Ignores the annotated spec, feature or selected iterations unless the given condition holds.</div>
 </dd>
 <dt><a href="spock/lang/Requires.Container.html" title="annotation in spock.lang"><span class="type-name-link">Requires.Container</span></a> - Annotation Type in <a href="spock/lang/package-summary.html">spock.lang</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="spock/lang/ResourceLock.html" title="annotation in spock.lang"><span class="type-name-link">ResourceLock</span></a> - Annotation Type in <a href="spock/lang/package-summary.html">spock.lang</a></dt>
+<dd>
+<div class="block">Allows to control access to a shared resource.</div>
+</dd>
+<dt><a href="spock/lang/ResourceLock.Container.html" title="annotation in spock.lang"><span class="type-name-link">ResourceLock.Container</span></a> - Annotation Type in <a href="spock/lang/package-summary.html">spock.lang</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="spock/lang/ResourceLockChildren.html" title="annotation in spock.lang"><span class="type-name-link">ResourceLockChildren</span></a> - Annotation Type in <a href="spock/lang/package-summary.html">spock.lang</a></dt>
+<dd>
+<div class="block">Allows to control access to a shared resource.</div>
+</dd>
+<dt><a href="spock/lang/ResourceLockChildren.Container.html" title="annotation in spock.lang"><span class="type-name-link">ResourceLockChildren.Container</span></a> - Annotation Type in <a href="spock/lang/package-summary.html">spock.lang</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="spock/util/environment/RestoreSystemProperties.html" title="annotation in spock.util.environment"><span class="type-name-link">RestoreSystemProperties</span></a> - Annotation Type in <a href="spock/util/environment/package-summary.html">spock.util.environment</a></dt>
 <dd>
@@ -1088,6 +1150,8 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><span class="member-name-link"><a href="spock/lang/AutoCleanup.html#value()">value()</a></span> - Method in annotation type spock.lang.<a href="spock/lang/AutoCleanup.html" title="annotation in spock.lang">AutoCleanup</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="member-name-link"><a href="spock/lang/Execution.html#value()">value()</a></span> - Method in annotation type spock.lang.<a href="spock/lang/Execution.html" title="annotation in spock.lang">Execution</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="member-name-link"><a href="spock/lang/FailsWith.html#value()">value()</a></span> - Method in annotation type spock.lang.<a href="spock/lang/FailsWith.html" title="annotation in spock.lang">FailsWith</a></dt>
 <dd>
 <div class="block">The expected exception type.</div>
@@ -1098,6 +1162,10 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><span class="member-name-link"><a href="spock/lang/IgnoreIf.html#value()">value()</a></span> - Method in annotation type spock.lang.<a href="spock/lang/IgnoreIf.html" title="annotation in spock.lang">IgnoreIf</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="member-name-link"><a href="spock/lang/Isolated.html#value()">value()</a></span> - Method in annotation type spock.lang.<a href="spock/lang/Isolated.html" title="annotation in spock.lang">Isolated</a></dt>
+<dd>
+<div class="block">The reason for isolating this specification.</div>
+</dd>
 <dt><span class="member-name-link"><a href="spock/lang/Issue.Container.html#value()">value()</a></span> - Method in annotation type spock.lang.<a href="spock/lang/Issue.Container.html" title="annotation in spock.lang">Issue.Container</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="member-name-link"><a href="spock/lang/Issue.html#value()">value()</a></span> - Method in annotation type spock.lang.<a href="spock/lang/Issue.html" title="annotation in spock.lang">Issue</a></dt>
@@ -1115,6 +1183,18 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><span class="member-name-link"><a href="spock/lang/Requires.html#value()">value()</a></span> - Method in annotation type spock.lang.<a href="spock/lang/Requires.html" title="annotation in spock.lang">Requires</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="member-name-link"><a href="spock/lang/ResourceLock.Container.html#value()">value()</a></span> - Method in annotation type spock.lang.<a href="spock/lang/ResourceLock.Container.html" title="annotation in spock.lang">ResourceLock.Container</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="member-name-link"><a href="spock/lang/ResourceLock.html#value()">value()</a></span> - Method in annotation type spock.lang.<a href="spock/lang/ResourceLock.html" title="annotation in spock.lang">ResourceLock</a></dt>
+<dd>
+<div class="block">The key identifying the resource.</div>
+</dd>
+<dt><span class="member-name-link"><a href="spock/lang/ResourceLockChildren.Container.html#value()">value()</a></span> - Method in annotation type spock.lang.<a href="spock/lang/ResourceLockChildren.Container.html" title="annotation in spock.lang">ResourceLockChildren.Container</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="member-name-link"><a href="spock/lang/ResourceLockChildren.html#value()">value()</a></span> - Method in annotation type spock.lang.<a href="spock/lang/ResourceLockChildren.html" title="annotation in spock.lang">ResourceLockChildren</a></dt>
+<dd>
+<div class="block">The key identifying the resource.</div>
+</dd>
 <dt><span class="member-name-link"><a href="spock/lang/See.Container.html#value()">value()</a></span> - Method in annotation type spock.lang.<a href="spock/lang/See.Container.html" title="annotation in spock.lang">See.Container</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="member-name-link"><a href="spock/lang/See.html#value()">value()</a></span> - Method in annotation type spock.lang.<a href="spock/lang/See.html" title="annotation in spock.lang">See</a></dt>

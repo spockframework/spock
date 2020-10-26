@@ -85,7 +85,15 @@ public @interface <span class="type-name-label">ConfineMetaClassChanges</span></
 
  <p>If a feature method is annotated, the meta classes are restored to as they
  were after <tt>setup()</tt> was executed, before <tt>cleanup() is executed.
- For a data-driven feature method, meta classes are restored after each iteration.</div>
+ For a data-driven feature method, meta classes are restored after each iteration.
+
+
+ <p>Note: If this extension is applied, then it will use acquire a lock for
+ <code>Resources.META_CLASS_REGISTRY</code></div>
+<dl class="notes">
+<dt>See Also:</dt>
+<dd><a href="../../lang/ResourceLock.html" title="annotation in spock.lang"><code>ResourceLock</code></a></dd>
+</dl>
 </section>
 <section class="summary">
 <ul class="summary-list">

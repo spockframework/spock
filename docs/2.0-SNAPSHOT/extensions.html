@@ -29,7 +29,7 @@ extensions.</p>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_spock_configuration_file"><a class="anchor" href="#_spock_configuration_file"></a><a class="link" href="#_spock_configuration_file">Spock Configuration File</a></h2>
+<h2 id="spock-configuration-file"><a class="anchor" href="#spock-configuration-file"></a><a class="link" href="#spock-configuration-file">Spock Configuration File</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Some extensions can be configured with options in a Spock configuration file. The description for each extension will
@@ -54,6 +54,21 @@ is <code>true</code>.</p>
   filterStackTrace <span class="predefined-constant">false</span>
 }</code></pre>
 </div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_parallel_execution_configuration"><a class="anchor" href="#_parallel_execution_configuration"></a><a class="link" href="#_parallel_execution_configuration">Parallel Execution Configuration</a></h3>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">runner {
+  parallel {
+    <span class="comment">//...</span>
+  }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>See the <a href="parallel_execution.html#parallel-execution">Parallel Execution</a> section for a detailed description.</p>
 </div>
 </div>
 </div>
@@ -317,6 +332,18 @@ failure are skipped.</p>
 <p><code>Stepwise</code> does not override the behaviour of annotations such as <code>Ignore</code>, <code>IgnoreRest</code>, and <code>IgnoreIf</code>, so care
 should be taken when ignoring feature methods in spec classes annotated with <code>Stepwise</code>.</p>
 </div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+This will also set the execution mode to <code>SAME_THREAD</code>, see <a href="parallel-execution.html#parallel-execution">Parallel Execution</a> for more information.
+</td>
+</tr>
+</table>
+</div>
 </div>
 <div class="sect2">
 <h3 id="_timeout"><a class="anchor" href="#_timeout"></a><a class="link" href="#_timeout">Timeout</a></h3>
@@ -488,6 +515,18 @@ methods.</p>
 <p>To use multiple categories, you can either give multiple categories to the <code>value</code> attribute
 of the annotation or you can apply the annotation multiple times to the same target.</p>
 </div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+This will also set the execution mode to <code>SAME_THREAD</code> if applied on a <code>Specification</code>, see <a href="parallel-execution.html#parallel-execution">Parallel Execution</a> for more information.
+</td>
+</tr>
+</table>
+</div>
 </div>
 <div class="sect2">
 <h3 id="_confinemetaclasschanges"><a class="anchor" href="#_confinemetaclasschanges"></a><a class="link" href="#_confinemetaclasschanges">ConfineMetaClassChanges</a></h3>
@@ -543,6 +582,18 @@ per JVM, keep in mind that Spock cannot enforce this.
 </tr>
 </table>
 </div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+This will acquire a <code>READ_WRITE</code> lock for <code>Resources.META_CLASS_REGISTRY</code>, see <a href="parallel-execution.html#parallel-execution">Parallel Execution</a> for more information.
+</td>
+</tr>
+</table>
+</div>
 </div>
 <div class="sect2">
 <h3 id="_restoresystemproperties"><a class="anchor" href="#_restoresystemproperties"></a><a class="link" href="#_restoresystemproperties">RestoreSystemProperties</a></h3>
@@ -575,6 +626,18 @@ and restores them afterwards.</p>
 Temporarily changing the values of system properties is only safe when specs are
 run in a single thread per JVM. Even though many execution environments do limit themselves to one thread
 per JVM, keep in mind that Spock cannot enforce this.
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+This will acquire a <code>READ_WRITE</code> lock for <code>Resources.SYSTEM_PROPERTIES</code>, see <a href="parallel-execution.html#parallel-execution">Parallel Execution</a> for more information.
 </td>
 </tr>
 </table>
@@ -651,7 +714,7 @@ Path path1
 </div>
 </div>
 <div class="paragraph">
-<p>If you want to customize the parent directory for temporary directories, you can use the <a href="#_spock_configuration_file">Spock Configuration File</a>.</p>
+<p>If you want to customize the parent directory for temporary directories, you can use the <a href="#spock-configuration-file">Spock Configuration File</a>.</p>
 </div>
 <div class="paragraph">
 <p>If <code>keep</code> is set to <code>true</code>, Spock will not delete temporary directories after tests. The default value is taken from
@@ -748,7 +811,7 @@ So that bar
 </div>
 </div>
 <div class="paragraph">
-<p>If you have a common prefix URL for all issues in a project, you can use the <a href="#_spock_configuration_file">Spock Configuration File</a> to set it up
+<p>If you have a common prefix URL for all issues in a project, you can use the <a href="#spock-configuration-file">Spock Configuration File</a> to set it up
 for all at once. If it is set, it is prepended to the value of the <code>@Issue</code> annotation when building the URL.</p>
 </div>
 <div class="paragraph">
@@ -821,7 +884,7 @@ execution of <code>setupSpec</code> methods and the after-actions are done after
 <p>Spock is capable of including and excluding specifications according to their classes, super-classes and interfaces and
 according to annotations that are applied to the specification. Spock is also capable of including and excluding
 individual features according to annotations that are applied to the feature method. The configuration for what to
-include or exclude is done according to the <a href="#_spock_configuration_file">Spock Configuration File</a> section.</p>
+include or exclude is done according to the <a href="#spock-configuration-file">Spock Configuration File</a> section.</p>
 </div>
 <div class="listingblock">
 <div class="title">Include / Exclude Configuration</div>
@@ -845,7 +908,7 @@ runner {
 <p>Spock can remember which features last failed and how often successively and also how long a feature needed to be
 tested. For successive runs Spock will then first run features that failed at last run and first features that failed
 more often successively. Within the previously failed or non-failed features Spock will run the fastest tests first.
-This behaviour can be enabled according to the <a href="#_spock_configuration_file">Spock Configuration File</a> section. The default value is <code>false</code>.</p>
+This behaviour can be enabled according to the <a href="#spock-configuration-file">Spock Configuration File</a> section. The default value is <code>false</code>.</p>
 </div>
 <div class="listingblock">
 <div class="title">Optimize Run Order Configuration</div>
@@ -862,7 +925,7 @@ This behaviour can be enabled according to the <a href="#_spock_configuration_fi
 <p>Spock can create a report log of the executed tests in JSON format. This report contains also things like
 <a href="#_title_and_narrative"><code>@Title</code></a>, <a href="#_title_and_narrative"><code>@Narrative</code></a>, <a href="#_see"><code>@See</code></a> and <a href="#_issue"><code>@Issue</code></a> values or
 <a href="spock_primer.html#_blocks">block descriptors</a>.
-This report can be enabled according to the <a href="#_spock_configuration_file">Spock Configuration File</a> section. The default is to not generate this
+This report can be enabled according to the <a href="#spock-configuration-file">Spock Configuration File</a> section. The default is to not generate this
 report.</p>
 </div>
 <div class="paragraph">
@@ -1033,7 +1096,7 @@ other methods of this interface for each applied annotation are processed.</p>
 <div class="sect2">
 <h3 id="_configuration_objects"><a class="anchor" href="#_configuration_objects"></a><a class="link" href="#_configuration_objects">Configuration Objects</a></h3>
 <div class="paragraph">
-<p>You can add own sections in the <a href="#_spock_configuration_file">Spock Configuration File</a> for your extension by creating POJOs or POGOs that are
+<p>You can add own sections in the <a href="#spock-configuration-file">Spock Configuration File</a> for your extension by creating POJOs or POGOs that are
 annotated with <code>@ConfigurationObject</code> and have a default constructor (either implicitly or explicitly). The argument to
 the annotation is the name of the top-level section that is added to the Spock configuration file syntax. The default
 values for the configuration options are defined in the class by initializing the fields at declaration time or in the
@@ -1274,7 +1337,7 @@ assignments happen before the method interceptor is called</p>
 <div id="footer">
 <div id="footer-text">
 Version 2.0-SNAPSHOT<br>
-Last updated 2020-10-22 17:48:14 UTC
+Last updated 2020-10-26 10:07:00 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./coderay-asciidoctor.css">

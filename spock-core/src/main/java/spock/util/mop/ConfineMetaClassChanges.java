@@ -16,11 +16,11 @@
 
 package spock.util.mop;
 
-import java.lang.annotation.*;
-
 import org.spockframework.runtime.extension.ExtensionAnnotation;
 import org.spockframework.runtime.extension.builtin.ConfineMetaClassChangesExtension;
 import org.spockframework.util.Beta;
+
+import java.lang.annotation.*;
 
 /**
  * Confines any changes made to the meta classes of the specified classes to the
@@ -36,6 +36,12 @@ import org.spockframework.util.Beta;
  * <p>If a feature method is annotated, the meta classes are restored to as they
  * were after <tt>setup()</tt> was executed, before <tt>cleanup() is executed.
  * For a data-driven feature method, meta classes are restored after each iteration.
+ *
+ *
+ * <p>Note: If this extension is applied, then it will use acquire a lock for
+ * {@link org.spockframework.runtime.model.parallel.Resources#META_CLASS_REGISTRY}
+ *
+ * @see spock.lang.ResourceLock
  *
  * @author Luke Daley
  */

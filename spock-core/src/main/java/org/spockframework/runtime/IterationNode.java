@@ -1,14 +1,19 @@
 package org.spockframework.runtime;
 
-import org.spockframework.runtime.model.IterationInfo;
+import org.spockframework.runtime.model.*;
+import spock.config.RunnerConfiguration;
+
+import java.util.*;
 
 import org.junit.platform.engine.UniqueId;
+import org.junit.platform.engine.support.hierarchical.ExclusiveResource;
 
-public class IterationNode extends SpockNode {
+public class IterationNode extends SpockNode<FeatureInfo> {
   private final IterationInfo iterationInfo;
 
-  protected IterationNode(UniqueId uniqueId, IterationInfo iterationInfo) {
-    super(uniqueId, iterationInfo.getName(), featureToMethodSource(iterationInfo.getFeature()));
+  protected IterationNode(UniqueId uniqueId, RunnerConfiguration configuration, IterationInfo iterationInfo) {
+    super(uniqueId, iterationInfo.getName(), featureToMethodSource(iterationInfo.getFeature()), configuration,
+      iterationInfo.getFeature());
     this.iterationInfo = iterationInfo;
   }
 
@@ -66,5 +71,10 @@ public class IterationNode extends SpockNode {
   @Override
   public SkipResult shouldBeSkipped(SpockExecutionContext context) throws Exception {
     return shouldBeSkipped(iterationInfo.getFeature());
+  }
+
+  @Override
+  public Set<ExclusiveResource> getExclusiveResources() {
+    return Collections.emptySet();
   }
 }

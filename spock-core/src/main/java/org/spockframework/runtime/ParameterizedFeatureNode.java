@@ -1,6 +1,7 @@
 package org.spockframework.runtime;
 
 import org.spockframework.runtime.model.FeatureInfo;
+import spock.config.RunnerConfiguration;
 
 import java.util.*;
 
@@ -14,24 +15,25 @@ import static org.spockframework.util.ExceptionUtil.sneakyThrow;
 
 public class ParameterizedFeatureNode extends FeatureNode {
 
-  protected ParameterizedFeatureNode(UniqueId uniqueId, FeatureInfo featureInfo) {
-    super(uniqueId, featureInfo.getName(),featureToMethodSource(featureInfo), featureInfo);
+  protected ParameterizedFeatureNode(UniqueId uniqueId, RunnerConfiguration configuration, FeatureInfo featureInfo) {
+    super(uniqueId, featureInfo.getName(),featureToMethodSource(featureInfo), configuration, featureInfo);
   }
 
 
   @Override
   public SpockExecutionContext prepare(SpockExecutionContext context) throws Exception {
-    if (featureInfo.isSkipped()) {
+    if (getNodeInfo().isSkipped()) {
       // Node.prepare is called before Node.shouldBeSkipped so we just skip the prepare
       return context;
     }
-    featureInfo.setIterationNameProvider(new SafeIterationNameProvider(featureInfo.getIterationNameProvider()));
-    return context.withCurrentFeature(featureInfo).withParentId(getUniqueId());
+    getNodeInfo().setIterationNameProvider(new SafeIterationNameProvider(getNodeInfo().getIterationNameProvider()));
+    return context.withCurrentFeature(getNodeInfo()).withParentId(getUniqueId());
+
   }
 
   @Override
   public SpockExecutionContext execute(SpockExecutionContext context, DynamicTestExecutor dynamicTestExecutor) throws Exception {
-    verifyNotSkipped(featureInfo);
+    verifyNotSkipped(getNodeInfo());
     ErrorInfoCollector errorInfoCollector = new ErrorInfoCollector();
     context = context.withErrorInfoCollector(errorInfoCollector);
     ParameterizedFeatureChildExecutor childExecutor = new ParameterizedFeatureChildExecutor(this, dynamicTestExecutor);
@@ -42,7 +44,7 @@ public class ParameterizedFeatureNode extends FeatureNode {
     }
 
     // do not try to aggregate iteration results if they are reported individually
-    if (featureInfo.isReportIterations()) {
+    if (getNodeInfo().isReportIterations()) {
       return context;
     }
 
@@ -120,6 +122,6 @@ public class ParameterizedFeatureNode extends FeatureNode {
 
   @Override
   public Type getType() {
-    return featureInfo.isReportIterations() ? Type.CONTAINER_AND_TEST : Type.TEST;
+    return getNodeInfo().isReportIterations() ? Type.CONTAINER_AND_TEST : Type.TEST;
   }
 }

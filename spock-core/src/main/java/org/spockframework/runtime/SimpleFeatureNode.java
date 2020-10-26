@@ -1,6 +1,7 @@
 package org.spockframework.runtime;
 
 import org.spockframework.runtime.model.FeatureInfo;
+import spock.config.RunnerConfiguration;
 
 import org.junit.platform.engine.*;
 
@@ -15,8 +16,9 @@ public class SimpleFeatureNode extends FeatureNode {
 
   private final IterationNode delegate;
 
-  public SimpleFeatureNode(UniqueId uniqueId, FeatureInfo featureInfo, IterationNode delegate) {
-    super(uniqueId, featureInfo.getName(), featureToMethodSource(featureInfo), featureInfo);
+  public SimpleFeatureNode(UniqueId uniqueId, RunnerConfiguration configuration,
+                           FeatureInfo featureInfo, IterationNode delegate) {
+    super(uniqueId, featureInfo.getName(), featureToMethodSource(featureInfo), configuration, featureInfo);
     this.delegate = delegate;
   }
 
@@ -28,7 +30,7 @@ public class SimpleFeatureNode extends FeatureNode {
   @Override
   public SpockExecutionContext prepare(SpockExecutionContext context) throws Exception {
     return delegate.prepare(
-      context.withCurrentFeature(featureInfo)
+      context.withCurrentFeature(getNodeInfo())
       //.withParentId(getUniqueId())
     );
   }
@@ -52,7 +54,7 @@ public class SimpleFeatureNode extends FeatureNode {
 
   @Override
   public SpockExecutionContext execute(SpockExecutionContext context, DynamicTestExecutor dynamicTestExecutor) throws Exception {
-    verifyNotSkipped(featureInfo);
+    verifyNotSkipped(getNodeInfo());
     delegate.execute(context, dynamicTestExecutor);
     return context;
   }

@@ -14,9 +14,11 @@
 
 package org.spockframework.smoke.extension
 
-import spock.lang.Specification
+import org.spockframework.runtime.model.parallel.Resources
+import spock.lang.*
 import spock.util.environment.RestoreSystemProperties
 
+@ResourceLock(Resources.SYSTEM_PROPERTIES)
 class RestoreSystemPropertiesExtension extends Specification {
   def setupSpec() {
     System.setProperty("RestoreSystemPropertiesExtension.prop1", "original value")

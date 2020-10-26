@@ -17,14 +17,18 @@
 package org.spockframework.runtime.extension.builtin;
 
 import org.spockframework.runtime.extension.IAnnotationDrivenExtension;
-import org.spockframework.runtime.model.FeatureInfo;
-import org.spockframework.runtime.model.SpecInfo;
-
+import org.spockframework.runtime.model.*;
+import org.spockframework.runtime.model.parallel.*;
 import spock.util.environment.RestoreSystemProperties;
 
 public class RestoreSystemPropertiesExtension implements IAnnotationDrivenExtension<RestoreSystemProperties> {
+
+  private static final ExclusiveResource EXCLUSIVE_RESOURCE = new ExclusiveResource(Resources.SYSTEM_PROPERTIES,
+    ResourceAccessMode.READ_WRITE);
+
   @Override
   public void visitSpecAnnotation(RestoreSystemProperties annotation, SpecInfo spec) {
+    spec.addExclusiveResource(EXCLUSIVE_RESOURCE);
     for (FeatureInfo feature : spec.getFeatures()) {
       feature.addInterceptor(RestoreSystemPropertiesInterceptor.INSTANCE);
     }
@@ -33,5 +37,6 @@ public class RestoreSystemPropertiesExtension implements IAnnotationDrivenExtens
   @Override
   public void visitFeatureAnnotation(RestoreSystemProperties annotation, FeatureInfo feature) {
     feature.addInterceptor(RestoreSystemPropertiesInterceptor.INSTANCE);
+    feature.addExclusiveResource(EXCLUSIVE_RESOURCE);
   }
 }

@@ -15,8 +15,10 @@
 package spock.util.mop
 
 import org.spockframework.EmbeddedSpecification
-
-import spock.lang.*
+import org.spockframework.runtime.model.parallel.ExclusiveResource
+import org.spockframework.runtime.model.parallel.ResourceAccessMode
+import org.spockframework.runtime.model.parallel.Resources
+import spock.lang.Stepwise
 
 /**
  * @author Luke Daley
@@ -161,6 +163,14 @@ class ConfineMetaClassChangesSpec extends EmbeddedSpecification {
   @ConfineMetaClassChanges([])
   def "annotation with empty list/array value doesn't cause an error"(){
     expect: true
+  }
+
+  @ConfineMetaClassChanges(String)
+  def "ConfineMetaClassChanges automatically acquires a READ_WRITE lock for META_CLASS_REGISTRY"() {
+    expect:
+    specificationContext.currentFeature.exclusiveResources.contains(
+      new ExclusiveResource(Resources.META_CLASS_REGISTRY, ResourceAccessMode.READ_WRITE)
+    )
   }
 
   def cleanupSpec() {

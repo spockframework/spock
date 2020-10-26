@@ -13,7 +13,8 @@
  */
 package org.spockframework.util
 
-import spock.lang.Specification
+import org.spockframework.runtime.model.parallel.*
+import spock.lang.*
 import spock.util.environment.RestoreSystemProperties
 
 class VersionCheckerSpec extends Specification {
@@ -22,6 +23,7 @@ class VersionCheckerSpec extends Specification {
 
   private VersionChecker versionChecker = Spy()
 
+  @ResourceLock(value = Resources.SYSTEM_PROPERTIES, mode = ResourceAccessMode.READ)
   void "not throw exception on compatible Groovy version"() {
     when:
     versionChecker.checkGroovyVersion(WHO_IS_CHECKING)
@@ -30,6 +32,7 @@ class VersionCheckerSpec extends Specification {
     noExceptionThrown()
   }
 
+  @ResourceLock(value = Resources.SYSTEM_PROPERTIES, mode = ResourceAccessMode.READ)
   void "throw exception on incompatible Groovy version"() {
     given:
     versionChecker.isCompatibleGroovyVersion() >> false

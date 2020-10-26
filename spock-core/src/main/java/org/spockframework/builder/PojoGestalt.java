@@ -14,12 +14,12 @@
 
 package org.spockframework.builder;
 
+import java.lang.reflect.Type;
+import java.util.List;
+
 import org.spockframework.gentyref.GenericTypeReflector;
 import org.spockframework.runtime.GroovyRuntimeUtil;
 import org.spockframework.util.CollectionUtil;
-
-import java.lang.reflect.Type;
-import java.util.List;
 
 import groovy.lang.Closure;
 
@@ -65,10 +65,16 @@ public class PojoGestalt implements IGestalt {
   @Override
   public Object invokeMethod(String name, Object[] args) {
     ISlot slot = findSlot(name, args);
-    PojoGestalt gestalt = createGestalt(slot.getType(), args);
-    new Sculpturer().$form(gestalt);
-    slot.write(gestalt.getSubject());
-    return gestalt.getSubject();
+    if (slot != null) {
+      PojoGestalt gestalt = createGestalt(slot.getType(), args);
+      new Sculpturer().$form(gestalt);
+      slot.write(gestalt.getSubject());
+      return gestalt.getSubject();
+    }
+    if (GroovyRuntimeUtil.getMetaClass(pojo).getMetaMethod(name, args) != null) {
+      return GroovyRuntimeUtil.invokeMethod(pojo, name, args);
+    }
+    throw new RuntimeException(String.format("Cannot find a slot named '%s'", name));
   }
 
   private ISlot findSlot(String name, Object[] args) {
@@ -76,7 +82,7 @@ public class PojoGestalt implements IGestalt {
       ISlot slot = factory.create(pojo, pojoType, name);
       if (slot != null) return slot;
     }
-    throw new RuntimeException(String.format("Cannot find a slot named '%s'", name));
+    return null;
   }
 
   private PojoGestalt createGestalt(Type newType, Object[] args) {

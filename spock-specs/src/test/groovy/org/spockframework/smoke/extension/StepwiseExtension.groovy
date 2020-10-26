@@ -77,5 +77,22 @@ class Foo extends Specification {
     result.testsFailedCount == 0
     result.testsSkippedCount == 1
   }
+
+
+  def "sets childExecutionMode to SAME_THREAD"() {
+    when:
+    def result = runner.runWithImports("""
+import org.spockframework.runtime.model.parallel.ExecutionMode
+@Stepwise
+class Foo extends Specification {
+  def step1() { expect: specificationContext.currentSpec.childExecutionMode.get() == ExecutionMode.SAME_THREAD }
+}
+    """)
+
+    then:
+    result.testsSucceededCount == 1
+    result.testsFailedCount == 0
+    result.testsFailedCount == 0
+  }
 }
 

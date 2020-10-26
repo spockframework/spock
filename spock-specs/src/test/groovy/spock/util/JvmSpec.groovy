@@ -13,9 +13,11 @@
  */
 package spock.util
 
+import spock.lang.Isolated
 import spock.lang.Specification
 import spock.util.environment.*
 
+@Isolated
 @RestoreSystemProperties
 class JvmSpec extends Specification {
   def "can check for Java 8 version (old scheme)"() {

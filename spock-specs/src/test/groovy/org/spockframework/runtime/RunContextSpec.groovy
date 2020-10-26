@@ -17,9 +17,11 @@
 package org.spockframework.runtime
 
 import org.spockframework.util.IThrowableFunction
+import spock.lang.Isolated
 import spock.lang.Specification
 import spock.util.environment.RestoreSystemProperties
 
+@Isolated
 class RunContextSpec extends Specification {
   def "initial run context is named 'default'"() {
     expect:

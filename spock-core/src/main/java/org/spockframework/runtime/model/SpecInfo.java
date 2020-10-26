@@ -18,6 +18,7 @@ package org.spockframework.runtime.model;
 
 import org.spockframework.runtime.*;
 import org.spockframework.runtime.extension.IMethodInterceptor;
+import org.spockframework.runtime.model.parallel.*;
 import org.spockframework.util.*;
 
 import java.util.*;
@@ -39,6 +40,11 @@ public class SpecInfo extends SpecElementInfo<NodeInfo, Class<?>> implements IMe
   private final List<IMethodInterceptor> initializerInterceptors = new ArrayList<>();
 
   private final List<IRunListener> listeners = new ArrayList<>();
+
+  private final Set<ExclusiveResource> exclusiveResources = new HashSet<>();
+
+  private ExecutionMode executionMode = null;
+  private ExecutionMode childExecutionMode = null;
 
   private String pkg;
   private String filename;
@@ -170,7 +176,7 @@ public class SpecInfo extends SpecElementInfo<NodeInfo, Class<?>> implements IMe
     setupMethods.add(setupMethod);
   }
 
-  public List<MethodInfo>  getCleanupMethods() {
+  public List<MethodInfo> getCleanupMethods() {
     return cleanupMethods;
   }
 
@@ -300,8 +306,36 @@ public class SpecInfo extends SpecElementInfo<NodeInfo, Class<?>> implements IMe
     listeners.add(listener);
   }
 
+  @Override
+  public void addExclusiveResource(ExclusiveResource exclusiveResource) {
+    exclusiveResources.add(exclusiveResource);
+  }
+
+  @Override
+  public Set<ExclusiveResource> getExclusiveResources() {
+    return exclusiveResources;
+  }
+
+  @Override
+  public void setExecutionMode(ExecutionMode executionMode) {
+    this.executionMode = executionMode;
+  }
+
+  @Override
+  public Optional<ExecutionMode> getExecutionMode() {
+    return Optional.ofNullable(executionMode);
+  }
+
+  public Optional<ExecutionMode> getChildExecutionMode() {
+    return Optional.ofNullable(childExecutionMode);
+  }
+
+  public void setChildExecutionMode(ExecutionMode childExecutionMode) {
+    this.childExecutionMode = childExecutionMode;
+  }
+
   public void filterFeatures(final IFeatureFilter filter) {
-    for (FeatureInfo feature: getAllFeatures()) {
+    for (FeatureInfo feature : getAllFeatures()) {
       if (!filter.matches(feature))
         feature.setExcluded(true);
     }

@@ -21,6 +21,7 @@ import org.spockframework.runtime.model.FeatureInfo;
 import org.spockframework.runtime.model.IInterceptable;
 import org.spockframework.runtime.model.MethodInfo;
 import org.spockframework.runtime.model.SpecInfo;
+import org.spockframework.runtime.model.parallel.ExecutionMode;
 import spock.util.mop.Use;
 
 import java.util.Arrays;
@@ -32,11 +33,15 @@ public class UseExtension implements IAnnotationDrivenExtension<Use> {
   @Override
   public void visitSpecAnnotations(List<Use> annotations, SpecInfo spec) {
     addInterceptor(annotations, spec.getBottomSpec());
+
+    // Disable parallel child execution for category tests
+    spec.setChildExecutionMode(ExecutionMode.SAME_THREAD);
   }
 
   @Override
   public void visitFeatureAnnotations(List<Use> annotations, FeatureInfo feature) {
     addInterceptor(annotations, feature.getFeatureMethod());
+    feature.setExecutionMode(ExecutionMode.SAME_THREAD);
   }
 
   @Override

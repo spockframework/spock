@@ -19,7 +19,9 @@ package org.spockframework.smoke.traits
 
 import spock.lang.Shared
 import spock.lang.Specification
+import spock.lang.Stepwise
 
+@Stepwise
 class BasicTraitUsage extends Specification implements MyTrait {
   boolean setupEvaluated
   @Shared

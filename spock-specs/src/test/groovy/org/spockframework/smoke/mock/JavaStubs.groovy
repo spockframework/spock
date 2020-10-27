@@ -65,24 +65,7 @@ class JavaStubs extends Specification {
     person.age == 25
   }
 
-  @PendingFeatureIf(value = { GroovyRuntimeUtil.isGroovy2() }, exceptions = ConditionNotSatisfiedError,
-    reason = "It didn't work in Spock 1.3 and would require fragile hack to fix for Groovy 2.5")
   @Issue("https://github.com/spockframework/spock/issues/1076")
-  def "can stub property access for implicit getProperty() call (Groovy 2)"() {
-    given:
-    person = Stub(Person)
-
-    and:
-    person.getName() >> "fred"
-    person.age >> 25
-
-    expect:
-    person.getProperty("name") == "fred"
-    person.getProperty("age") == 25
-  }
-
-  @Issue("https://github.com/spockframework/spock/issues/1076")
-  @Requires({ GroovyRuntimeUtil.isGroovy3orNewer() })
   def "can stub property access for implicit getProperty() call"() {
     given:
     person = Stub(Person)

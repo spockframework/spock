@@ -8,6 +8,7 @@ include::include.adoc[]
 . <<interaction_based_testing.adoc#,Interaction Based Testing>>
 . <<extensions.adoc#,Extensions>>
 . <<utilities.adoc#,Utilities>>
+. <<parallel_execution.adoc#,Parallel Execution>>
 . <<modules.adoc#,Modules>>
 . <<release_notes.adoc#,Release Notes>>
 . <<migration_guide.adoc#,Migration Guide>>

@@ -479,7 +479,7 @@ feature method and every iteration per parametrized feature method will have the
 include::{sourcedir}/extension/TempDirDocSpec.groovy[tag=example]
 ----
 
-If you want to customize the parent directory for temporary directories, you can use the <<Spock Configuration File>>.
+If you want to customize the parent directory for temporary directories, you can use the <<spock-configuration-file,Spock Configuration File>>.
 
 If `keep` is set to `true`, Spock will not delete temporary directories after tests. The default value is taken from
 system property `spock.tempDir.keep` or `false`, if undefined.
@@ -538,7 +538,7 @@ To indicate that a feature or spec relates to one or more issues in an external 
 include::{sourcedir}/extension/IssueDocSpec.groovy[tag=example]
 ----
 
-If you have a common prefix URL for all issues in a project, you can use the <<Spock Configuration File>> to set it up
+If you have a common prefix URL for all issues in a project, you can use the <<spock-configuration-file,Spock Configuration File>> to set it up
 for all at once. If it is set, it is prepended to the value of the `@Issue` annotation when building the URL.
 
 If the `issueNamePrefix` is set, it is prepended to the value of the `@Issue` annotation when building the name for the
@@ -597,7 +597,7 @@ execution of `setupSpec` methods and the after-actions are done after the execut
 Spock is capable of including and excluding specifications according to their classes, super-classes and interfaces and
 according to annotations that are applied to the specification. Spock is also capable of including and excluding
 individual features according to annotations that are applied to the feature method. The configuration for what to
-include or exclude is done according to the <<Spock Configuration File>> section.
+include or exclude is done according to the <<spock-configuration-file,Spock Configuration File>> section.
 
 .Include / Exclude Configuration
 [source,groovy]
@@ -619,7 +619,7 @@ runner {
 Spock can remember which features last failed and how often successively and also how long a feature needed to be
 tested. For successive runs Spock will then first run features that failed at last run and first features that failed
 more often successively. Within the previously failed or non-failed features Spock will run the fastest tests first.
-This behaviour can be enabled according to the <<Spock Configuration File>> section. The default value is `false`.
+This behaviour can be enabled according to the <<spock-configuration-file,Spock Configuration File>> section. The default value is `false`.
 
 .Optimize Run Order Configuration
 [source,groovy]
@@ -634,7 +634,7 @@ runner {
 Spock can create a report log of the executed tests in JSON format. This report contains also things like
 <<Title and Narrative,`@Title`>>, <<Title and Narrative,`@Narrative`>>, <<See,`@See`>> and <<Issue,`@Issue`>> values or
 <<spock_primer.adoc#_blocks,block descriptors>>.
-This report can be enabled according to the <<Spock Configuration File>> section. The default is to not generate this
+This report can be enabled according to the <<spock-configuration-file,Spock Configuration File>> section. The default is to not generate this
 report.
 
 For the report to be generated, you have to enable it and set at least the `logFileDir` and `logFileName`. `enabled` can
@@ -764,7 +764,7 @@ extension magic, like attaching interceptors to various interception points as d
 
 === Configuration Objects
 
-You can add own sections in the <<Spock Configuration File>> for your extension by creating POJOs or POGOs that are
+You can add own sections in the <<spock-configuration-file,Spock Configuration File>> for your extension by creating POJOs or POGOs that are
 annotated with `@ConfigurationObject` and have a default constructor (either implicitly or explicitly). The argument to
 the annotation is the name of the top-level section that is added to the Spock configuration file syntax. The default
 values for the configuration options are defined in the class by initializing the fields at declaration time or in the

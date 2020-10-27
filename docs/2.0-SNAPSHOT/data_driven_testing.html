@@ -377,7 +377,7 @@ This has the same effect as placing it on each data-driven feature method of the
 <code>@Unroll</code> annotation.</p>
 </div>
 <div class="paragraph">
-<p>Alternatively the <a href="extensions.html#_spock_configuration_file">configuration file</a> setting <code>unrollByDefault</code>
+<p>Alternatively the <a href="extensions.html#spock-configuration-file">configuration file</a> setting <code>unrollByDefault</code>
 in the <code>unroll</code> section can be set to <code>false</code> to roll up all features automatically unless
 they are annotated with <code>@Unroll</code> or are contained in an <code>@Unroll</code>ed spec and thus reinstate the pre Spock 2.0
 behavior where this was the default.</p>
@@ -848,7 +848,7 @@ to the <code>@Unroll</code> annotation which takes precedence over the method na
 </div>
 <div class="paragraph">
 <p>If neither a parameter to the annotation is given, nor the method name contains a <code>#</code>,
-the <a href="extensions.html#_spock_configuration_file">configuration file</a> setting <code>defaultPattern</code>
+the <a href="extensions.html#spock-configuration-file">configuration file</a> setting <code>defaultPattern</code>
 in the <code>unroll</code> section is inspected. If it is set to a non-<code>null</code>
 string, this value is used as unroll pattern. This could for example be set to</p>
 </div>
@@ -888,7 +888,7 @@ set in any way, this will never fail the test, no matter what happens.</p>
 </div>
 <div class="paragraph">
 <p>The failing of test with errors in the unroll expression can be disabled by setting the
-<a href="extensions.html#_spock_configuration_file">configuration file</a> setting <code>validateExpressions</code>
+<a href="extensions.html#spock-configuration-file">configuration file</a> setting <code>validateExpressions</code>
 in the <code>unroll</code> section to <code>false</code>. If this is done and an error happens, the erroneous expression
 <code>#foo.bar</code> will be substituted by <code>#Error:foo.bar</code>.</p>
 </div>
@@ -915,7 +915,7 @@ in the <code>unroll</code> section to <code>false</code>. If this is done and an
 <div id="footer">
 <div id="footer-text">
 Version 2.0-SNAPSHOT<br>
-Last updated 2020-10-27 22:36:34 UTC
+Last updated 2020-10-27 23:01:36 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./coderay-asciidoctor.css">

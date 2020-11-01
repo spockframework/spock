@@ -85,18 +85,18 @@ public abstract class ConditionalExtension<T extends Annotation> implements IAnn
     return evaluateCondition(condition, null, emptyMap(), null);
   }
 
-  private static Object evaluateCondition(Closure condition, IMethodInvocation invocation,
+  private static Object evaluateCondition(Closure condition, Object instance,
                                           Map<String, Object> dataVariables) {
-    return evaluateCondition(condition, invocation, dataVariables, null);
+    return evaluateCondition(condition, instance, dataVariables, null);
   }
 
   private static Object evaluateCondition(Closure condition, Object owner) {
     return evaluateCondition(condition, null, emptyMap(), owner);
   }
 
-  private static Object evaluateCondition(Closure condition, IMethodInvocation invocation,
+  private static Object evaluateCondition(Closure condition, Object instance,
                                           Map<String, Object> dataVariables, Object owner) {
-    PreconditionContext context = new PreconditionContext(invocation, dataVariables);
+    PreconditionContext context = new PreconditionContext(instance, dataVariables);
     condition = condition.rehydrate(context, owner, null);
     condition.setResolveStrategy(Closure.DELEGATE_FIRST);
 
@@ -118,7 +118,7 @@ public abstract class ConditionalExtension<T extends Annotation> implements IAnn
 
     @Override
     public void intercept(IMethodInvocation invocation) throws Throwable {
-      Object result = evaluateCondition(condition, invocation, invocation.getIteration().getDataVariables());
+      Object result = evaluateCondition(condition, invocation.getInstance(), invocation.getIteration().getDataVariables());
       iterationConditionResult(GroovyRuntimeUtil.isTruthy(result), annotation, invocation);
       invocation.proceed();
     }

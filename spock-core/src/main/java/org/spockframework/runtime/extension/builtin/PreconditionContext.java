@@ -22,7 +22,6 @@ import java.util.Map;
 import java.util.Properties;
 
 import groovy.lang.MissingPropertyException;
-import org.spockframework.runtime.extension.IMethodInvocation;
 import spock.lang.IgnoreIf;
 import spock.lang.PendingFeatureIf;
 import spock.lang.Requires;
@@ -35,7 +34,7 @@ import static java.util.Collections.emptyMap;
  * The context (delegate) for a {@link Requires}, {@link IgnoreIf} or {@link PendingFeatureIf} condition.
  */
 public class PreconditionContext {
-  private final IMethodInvocation invocation;
+  private final Object theInstance;
   private final Map<String, Object> dataVariables = new HashMap<>();
 
   public PreconditionContext() {
@@ -46,12 +45,12 @@ public class PreconditionContext {
     this(null, dataVariables);
   }
 
-  public PreconditionContext(IMethodInvocation invocation) {
-    this(invocation, emptyMap());
+  public PreconditionContext(Object instance) {
+    this(instance, emptyMap());
   }
 
-  public PreconditionContext(IMethodInvocation invocation, Map<String, Object> dataVariables) {
-    this.invocation = invocation;
+  public PreconditionContext(Object instance, Map<String, Object> dataVariables) {
+    theInstance = instance;
     this.dataVariables.putAll(dataVariables);
   }
 
@@ -59,8 +58,8 @@ public class PreconditionContext {
     if (dataVariables.containsKey(propertyName)) {
       return dataVariables.get(propertyName);
     }
-    if ((invocation != null) && "instance".equals(propertyName)) {
-      return invocation.getInstance();
+    if ((theInstance != null) && "instance".equals(propertyName)) {
+      return theInstance;
     }
     throw new MissingPropertyException(propertyName, getClass());
   }

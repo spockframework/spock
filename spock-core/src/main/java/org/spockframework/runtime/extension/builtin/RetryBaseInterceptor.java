@@ -71,7 +71,7 @@ public class RetryBaseInterceptor {
       return true;
     }
     final Closure condition = this.condition.rehydrate(
-      new RetryConditionContext(invocation, failure),
+      new RetryConditionContext(invocation.getInstance(), failure),
       invocation.getSpec().getReflection(),
       null);
     condition.setResolveStrategy(Closure.DELEGATE_FIRST);

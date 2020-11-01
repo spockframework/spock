@@ -1,17 +1,15 @@
 package org.spockframework.runtime.extension.builtin;
 
-import org.spockframework.runtime.extension.IMethodInvocation;
-
 /**
  * The context (delegate) for a {@link spock.lang.Retry} condition.
  */
 public class RetryConditionContext {
 
-  private final IMethodInvocation invocation;
+  private final Object instance;
   private final Throwable failure;
 
-  RetryConditionContext(IMethodInvocation invocation, Throwable failure) {
-    this.invocation = invocation;
+  RetryConditionContext(Object instance, Throwable failure) {
+    this.instance = instance;
     this.failure = failure;
   }
 
@@ -30,7 +28,7 @@ public class RetryConditionContext {
    * @return the current {@code Specification} instance
    */
   public Object getInstance() {
-    return invocation.getInstance();
+    return instance;
   }
 
 }

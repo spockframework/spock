@@ -320,10 +320,28 @@ deemed pending and each will individually fail as soon as it would be successful
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@PendingFeatureIf</span>({ os.windows })
-<span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">I'm not yet implemented on windows, but I am on other operating systems</span><span class="delimiter">&quot;</span></span>() { ... }
+<span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">I'm not yet implemented on windows, but I am on other operating systems</span><span class="delimiter">&quot;</span></span>() {
 
 <span class="annotation">@PendingFeatureIf</span>({ sys.targetEnvironment == <span class="string"><span class="delimiter">&quot;</span><span class="content">prod</span><span class="delimiter">&quot;</span></span> })
-<span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">This feature isn't deployed out to production yet, and isn't expected to pass</span><span class="delimiter">&quot;</span></span>() { ... }</code></pre>
+<span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">This feature isn't deployed out to production yet, and isn't expected to pass</span><span class="delimiter">&quot;</span></span>() {</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>It is also supported to have multiple <code>@PendingFeatureIf</code> annotations or a mixture of <code>@PendingFeatureIf</code> and
+<code>@PendingFeature</code>, for example to ignore certain exceptions only under certain conditions.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@PendingFeature</span>(exceptions = <span class="exception">UnsupportedOperationException</span>)
+<span class="annotation">@PendingFeatureIf</span>(
+  exceptions = <span class="exception">IllegalArgumentException</span>,
+  value = { os.windows },
+  reason = <span class="string"><span class="delimiter">'</span><span class="content">Does not yet work on Windows</span><span class="delimiter">'</span></span>)
+<span class="annotation">@PendingFeatureIf</span>(
+  exceptions = <span class="exception">IllegalAccessException</span>,
+  value = { jvm.java8 },
+  reason = <span class="string"><span class="delimiter">'</span><span class="content">Does not yet work on Java 8</span><span class="delimiter">'</span></span>)
+<span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">I have various problems in certain situations</span><span class="delimiter">&quot;</span></span>() {</code></pre>
 </div>
 </div>
 </div>
@@ -1354,7 +1372,7 @@ assignments happen before the method interceptor is called</p>
 <div id="footer">
 <div id="footer-text">
 Version 2.0-SNAPSHOT<br>
-Last updated 2020-11-01 19:32:46 UTC
+Last updated 2020-11-01 20:06:31 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./coderay-asciidoctor.css">

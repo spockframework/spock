@@ -133,6 +133,33 @@ class Bar extends Closure {
     ee.message == 'Failed to instantiate condition'
   }
 
+  def "@Requires provides condition access to static Specification fields"() {
+    when:
+    def result = runner.runWithImports("""
+class Foo extends Specification {
+  static int value = 1
+
+  @Requires({ value == 1 })
+  def "bar"() {
+    expect:
+    true
+  }
+
+  @Requires({ value != 1 })
+  def "baz"() {
+    expect:
+    false
+  }
+}
+    """)
+
+    then:
+    result.testsStartedCount == 1
+    result.testsSkippedCount == 1
+    result.testsSucceededCount == 1
+    result.testsFailedCount == 0
+  }
+
   static class RequiresExtensionExamples extends Specification {
 
     @Requires({ 1 < 2 })

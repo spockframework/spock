@@ -58,7 +58,7 @@ public abstract class ConditionalExtension<T extends Annotation> implements IAnn
     Closure condition = createCondition(annotation);
 
     try {
-      Object result = evaluateCondition(condition);
+      Object result = evaluateCondition(condition, feature.getSpec().getReflection());
       featureConditionResult(GroovyRuntimeUtil.isTruthy(result), annotation, feature);
     } catch (ExtensionException ee) {
       if (!(ee.getCause() instanceof MissingPropertyException)) {
@@ -82,13 +82,21 @@ public abstract class ConditionalExtension<T extends Annotation> implements IAnn
   }
 
   private static Object evaluateCondition(Closure condition) {
-    return evaluateCondition(condition, emptyMap());
+    return evaluateCondition(condition, emptyMap(), null);
   }
 
   private static Object evaluateCondition(Closure condition, Map<String, Object> dataVariables) {
+    return evaluateCondition(condition, dataVariables, null);
+  }
+
+  private static Object evaluateCondition(Closure condition, Object owner) {
+    return evaluateCondition(condition, emptyMap(), owner);
+  }
+
+  private static Object evaluateCondition(Closure condition, Map<String, Object> dataVariables, Object owner) {
     PreconditionContext context = new PreconditionContext(dataVariables);
-    condition.setDelegate(context);
-    condition.setResolveStrategy(Closure.DELEGATE_ONLY);
+    condition = condition.rehydrate(context, owner, null);
+    condition.setResolveStrategy(Closure.DELEGATE_FIRST);
 
     try {
       return condition.call(context);

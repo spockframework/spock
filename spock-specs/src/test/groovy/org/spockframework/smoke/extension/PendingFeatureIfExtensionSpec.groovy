@@ -229,4 +229,32 @@ def bar() {
     result.testsAbortedCount == 0
     result.testsSucceededCount == 2
   }
+
+  def "@PendingFeatureIf provides condition access to static Specification fields"() {
+    when:
+    def result = runner.runWithImports("""
+class Foo extends Specification {
+  static int value = 1
+
+  @PendingFeatureIf({ value == 1 })
+  def "bar"() {
+    expect:
+    false
+  }
+
+  @PendingFeatureIf({ value != 1 })
+  def "baz"() {
+    expect:
+    true
+  }
+}
+    """)
+
+    then:
+    result.testsStartedCount == 2
+    result.testsFailedCount == 0
+    result.testsSkippedCount == 0
+    result.testsAbortedCount == 1
+    result.testsSucceededCount == 1
+  }
 }

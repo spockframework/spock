@@ -414,6 +414,32 @@ class Foo extends Specification {
     featureCounter.get() == 1 + 4 + 1
   }
 
+  def "@Retry provides condition access to static Specification fields"() {
+    when:
+    def result = runner.runWithImports("""
+class Foo extends Specification {
+  static int value
+  @Retry(condition = { value == 2 })
+  def "bar #input"() {
+    org.spockframework.smoke.extension.RetryFeatureExtensionSpec.featureCounter.incrementAndGet()
+    value = input
+
+    expect:
+    false
+
+    where:
+    input << [1, 2, 3]
+  }
+}
+    """)
+
+    then:
+    result.testsStartedCount == 4
+    result.testsSucceededCount == 1
+    result.testsFailedCount == 3
+    featureCounter.get() == 1 + 4 + 1
+  }
+
   def "@Retry can be declared on a spec class"() {
     when:
     def result = runner.runWithImports("""

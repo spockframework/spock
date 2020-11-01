@@ -70,8 +70,11 @@ public class RetryBaseInterceptor {
     if (condition == null) {
       return true;
     }
-    condition.setDelegate(new RetryConditionContext(invocation, failure));
-    condition.setResolveStrategy(Closure.DELEGATE_ONLY);
+    final Closure condition = this.condition.rehydrate(
+      new RetryConditionContext(invocation, failure),
+      invocation.getSpec().getReflection(),
+      null);
+    condition.setResolveStrategy(Closure.DELEGATE_FIRST);
 
     try {
       return GroovyRuntimeUtil.isTruthy(condition.call());

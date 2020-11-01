@@ -162,4 +162,31 @@ class Bar extends Closure {
     ExtensionException ee = thrown()
     ee.message == 'Failed to instantiate condition'
   }
+
+  def "@IgnoreIf provides condition access to static Specification fields"() {
+    when:
+    def result = runner.runWithImports("""
+class Foo extends Specification {
+  static int value = 1
+
+  @IgnoreIf({ value == 1 })
+  def "bar"() {
+    expect:
+    false
+  }
+
+  @IgnoreIf({ value != 1 })
+  def "baz"() {
+    expect:
+    true
+  }
+}
+    """)
+
+    then:
+    result.testsStartedCount == 1
+    result.testsSkippedCount == 1
+    result.testsSucceededCount == 1
+    result.testsFailedCount == 0
+  }
 }

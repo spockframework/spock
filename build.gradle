@@ -182,15 +182,6 @@ subprojects {
     //Required for building on Travis' container-based infrastructure to not be killed with
     //'exit code 137' - https://github.com/travis-ci/travis-ci/issues/5582
     jvmArgs '-Xmx512m'
-
-    //Workaround on https://github.com/junit-team/junit5/issues/1909 - to be removed once switched to junit 5.6
-    afterSuite { desc, result ->
-      if (!desc.parent) {
-        if (result.testCount == 0) {
-          throw new IllegalStateException("No tests were found. Failing the build")
-        }
-      }
-    }
   }
 
   jacoco {

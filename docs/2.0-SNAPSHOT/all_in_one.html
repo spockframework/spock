@@ -3790,6 +3790,12 @@ followed by a predicate:</p>
 <li>
 <p><code>jvm</code> Information about the JVM (see <code>spock.util.environment.Jvm</code>)</p>
 </li>
+<li>
+<p><code>instance</code> The specification instance if instance fields, shared fields or instance methods are needed.
+If this property is used, the whole annotated element cannot be skipped up-front without executing fixtures,
+data providers and similar. Instead the whole workflow is followed up to the feature method invocation,
+where then the closure is checked and it is decided whether to abort the specific iteration or not.</p>
+</li>
 </ul>
 </div>
 <div class="paragraph">
@@ -5893,6 +5899,10 @@ If these methods are not overwritten, they forward to the usual <code>visitSpecA
 </li>
 <li>
 <p>Fix <a href="https://github.com/spockframework/spock/issues/994">#994</a> nested closures in argument constraints are not treated as implicit assertions anymore</p>
+</li>
+<li>
+<p><code>@Requires</code>, <code>@IgnoreIf</code> and <code>@PendingFeatureIf</code> can now access instance fields, shared fields and instance methods
+by using the <code>instance.</code> qualifier inside the condition closure.</p>
 </li>
 </ul>
 </div>
@@ -8377,7 +8387,7 @@ This is due to how groovy implements traits and AST transformations.</p>
 <div id="footer">
 <div id="footer-text">
 Version 2.0-SNAPSHOT<br>
-Last updated 2020-11-01 11:53:56 UTC
+Last updated 2020-11-01 16:41:50 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./coderay-asciidoctor.css">

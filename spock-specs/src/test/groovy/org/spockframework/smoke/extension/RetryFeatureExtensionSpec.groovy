@@ -386,7 +386,36 @@ class Foo extends Specification {
     featureCounter.get() == (4 + 1) + (1 + 1) + (1 + 1)
   }
 
-  def "@Retry provides condition access to Specification instance"() {
+  def "@Retry provides condition access to Specification instance shared fields"() {
+    when:
+    def result = runner.runWithImports("""
+import spock.lang.Retry
+
+class Foo extends Specification {
+  @Shared
+  int value
+  @Retry(condition = { instance.value == 2 })
+  def "bar #input"() {
+    org.spockframework.smoke.extension.RetryFeatureExtensionSpec.featureCounter.incrementAndGet()
+    value = input
+
+    expect:
+    false
+
+    where:
+    input << [1, 2, 3]
+  }
+}
+    """)
+
+    then:
+    result.testsStartedCount == 4
+    result.testsSucceededCount == 1
+    result.testsFailedCount == 3
+    featureCounter.get() == 1 + 4 + 1
+  }
+
+  def "@Retry provides condition access to Specification instance fields"() {
     when:
     def result = runner.runWithImports("""
 import spock.lang.Retry
@@ -394,6 +423,32 @@ import spock.lang.Retry
 class Foo extends Specification {
   int value
   @Retry(condition = { instance.value == 2 })
+  def "bar #input"() {
+    org.spockframework.smoke.extension.RetryFeatureExtensionSpec.featureCounter.incrementAndGet()
+    value = input
+
+    expect:
+    false
+
+    where:
+    input << [1, 2, 3]
+  }
+}
+    """)
+
+    then:
+    result.testsStartedCount == 4
+    result.testsSucceededCount == 1
+    result.testsFailedCount == 3
+    featureCounter.get() == 1 + 4 + 1
+  }
+
+  def "@Retry provides condition access to static Specification fields"() {
+    when:
+    def result = runner.runWithImports("""
+class Foo extends Specification {
+  static int value
+  @Retry(condition = { value == 2 })
   def "bar #input"() {
     org.spockframework.smoke.extension.RetryFeatureExtensionSpec.featureCounter.incrementAndGet()
     value = input

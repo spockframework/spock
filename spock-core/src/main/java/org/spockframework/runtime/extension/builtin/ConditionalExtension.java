@@ -58,14 +58,14 @@ public abstract class ConditionalExtension<T extends Annotation> implements IAnn
     Closure condition = createCondition(annotation);
 
     try {
-      Object result = evaluateCondition(condition);
+      Object result = evaluateCondition(condition, feature.getSpec().getReflection());
       featureConditionResult(GroovyRuntimeUtil.isTruthy(result), annotation, feature);
     } catch (ExtensionException ee) {
       if (!(ee.getCause() instanceof MissingPropertyException)) {
         throw ee;
       }
       MissingPropertyException mpe = (MissingPropertyException) ee.getCause();
-      if (!feature.getDataVariables().contains(mpe.getProperty())) {
+      if (!"instance".equals(mpe.getProperty()) && !feature.getDataVariables().contains(mpe.getProperty())) {
         throw ee;
       }
       feature.getFeatureMethod().addInterceptor(new IterationCondition(condition, annotation));
@@ -82,13 +82,23 @@ public abstract class ConditionalExtension<T extends Annotation> implements IAnn
   }
 
   private static Object evaluateCondition(Closure condition) {
-    return evaluateCondition(condition, emptyMap());
+    return evaluateCondition(condition, null, emptyMap(), null);
   }
 
-  private static Object evaluateCondition(Closure condition, Map<String, Object> dataVariables) {
-    PreconditionContext context = new PreconditionContext(dataVariables);
-    condition.setDelegate(context);
-    condition.setResolveStrategy(Closure.DELEGATE_ONLY);
+  private static Object evaluateCondition(Closure condition, Object instance,
+                                          Map<String, Object> dataVariables) {
+    return evaluateCondition(condition, instance, dataVariables, null);
+  }
+
+  private static Object evaluateCondition(Closure condition, Object owner) {
+    return evaluateCondition(condition, null, emptyMap(), owner);
+  }
+
+  private static Object evaluateCondition(Closure condition, Object instance,
+                                          Map<String, Object> dataVariables, Object owner) {
+    PreconditionContext context = new PreconditionContext(instance, dataVariables);
+    condition = condition.rehydrate(context, owner, null);
+    condition.setResolveStrategy(Closure.DELEGATE_FIRST);
 
     try {
       return condition.call(context);
@@ -108,7 +118,7 @@ public abstract class ConditionalExtension<T extends Annotation> implements IAnn
 
     @Override
     public void intercept(IMethodInvocation invocation) throws Throwable {
-      Object result = evaluateCondition(condition, invocation.getIteration().getDataVariables());
+      Object result = evaluateCondition(condition, invocation.getInstance(), invocation.getIteration().getDataVariables());
       iterationConditionResult(GroovyRuntimeUtil.isTruthy(result), annotation, invocation);
       invocation.proceed();
     }

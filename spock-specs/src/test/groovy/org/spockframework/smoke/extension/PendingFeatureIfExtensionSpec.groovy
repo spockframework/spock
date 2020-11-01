@@ -229,4 +229,87 @@ def bar() {
     result.testsAbortedCount == 0
     result.testsSucceededCount == 2
   }
+
+  def "@PendingFeatureIf provides condition access to Specification instance shared fields"() {
+    when:
+    def result = runner.runWithImports("""
+class Foo extends Specification {
+  @Shared
+  int value
+  @PendingFeatureIf({ instance.value == 2 })
+  def "bar #input"() {
+    value = input
+
+    expect:
+    input != 3
+
+    where:
+    input << [1, 2, 3]
+  }
+}
+    """)
+
+    then:
+    result.testsStartedCount == 4
+    result.testsSucceededCount == 3
+    result.testsAbortedCount == 1
+  }
+
+  def "@PendingFeatureIf provides condition access to Specification instance fields"() {
+    when:
+    def result = runner.runWithImports("""
+class Foo extends Specification {
+  static int staticValue
+  int value
+
+  def setup() {
+    value = staticValue
+  }
+
+  @PendingFeatureIf({ instance.value == 2 })
+  def "bar #input"() {
+    staticValue = input
+
+    expect:
+    input != 3
+
+    where:
+    input << [1, 2, 3]
+  }
+}
+    """)
+
+    then:
+    result.testsStartedCount == 4
+    result.testsSucceededCount == 3
+    result.testsAbortedCount == 1
+  }
+
+  def "@PendingFeatureIf provides condition access to static Specification fields"() {
+    when:
+    def result = runner.runWithImports("""
+class Foo extends Specification {
+  static int value = 1
+
+  @PendingFeatureIf({ value == 1 })
+  def "bar"() {
+    expect:
+    false
+  }
+
+  @PendingFeatureIf({ value != 1 })
+  def "baz"() {
+    expect:
+    true
+  }
+}
+    """)
+
+    then:
+    result.testsStartedCount == 2
+    result.testsFailedCount == 0
+    result.testsSkippedCount == 0
+    result.testsAbortedCount == 1
+    result.testsSucceededCount == 1
+  }
 }

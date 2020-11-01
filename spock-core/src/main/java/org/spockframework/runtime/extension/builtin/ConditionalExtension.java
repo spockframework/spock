@@ -65,7 +65,7 @@ public abstract class ConditionalExtension<T extends Annotation> implements IAnn
         throw ee;
       }
       MissingPropertyException mpe = (MissingPropertyException) ee.getCause();
-      if (!feature.getDataVariables().contains(mpe.getProperty())) {
+      if (!"instance".equals(mpe.getProperty()) && !feature.getDataVariables().contains(mpe.getProperty())) {
         throw ee;
       }
       feature.getFeatureMethod().addInterceptor(new IterationCondition(condition, annotation));
@@ -82,19 +82,21 @@ public abstract class ConditionalExtension<T extends Annotation> implements IAnn
   }
 
   private static Object evaluateCondition(Closure condition) {
-    return evaluateCondition(condition, emptyMap(), null);
+    return evaluateCondition(condition, null, emptyMap(), null);
   }
 
-  private static Object evaluateCondition(Closure condition, Map<String, Object> dataVariables) {
-    return evaluateCondition(condition, dataVariables, null);
+  private static Object evaluateCondition(Closure condition, IMethodInvocation invocation,
+                                          Map<String, Object> dataVariables) {
+    return evaluateCondition(condition, invocation, dataVariables, null);
   }
 
   private static Object evaluateCondition(Closure condition, Object owner) {
-    return evaluateCondition(condition, emptyMap(), owner);
+    return evaluateCondition(condition, null, emptyMap(), owner);
   }
 
-  private static Object evaluateCondition(Closure condition, Map<String, Object> dataVariables, Object owner) {
-    PreconditionContext context = new PreconditionContext(dataVariables);
+  private static Object evaluateCondition(Closure condition, IMethodInvocation invocation,
+                                          Map<String, Object> dataVariables, Object owner) {
+    PreconditionContext context = new PreconditionContext(invocation, dataVariables);
     condition = condition.rehydrate(context, owner, null);
     condition.setResolveStrategy(Closure.DELEGATE_FIRST);
 
@@ -116,7 +118,7 @@ public abstract class ConditionalExtension<T extends Annotation> implements IAnn
 
     @Override
     public void intercept(IMethodInvocation invocation) throws Throwable {
-      Object result = evaluateCondition(condition, invocation.getIteration().getDataVariables());
+      Object result = evaluateCondition(condition, invocation, invocation.getIteration().getDataVariables());
       iterationConditionResult(GroovyRuntimeUtil.isTruthy(result), annotation, invocation);
       invocation.proceed();
     }

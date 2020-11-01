@@ -163,6 +163,61 @@ class Bar extends Closure {
     ee.message == 'Failed to instantiate condition'
   }
 
+  def "@IgnoreIf provides condition access to Specification instance shared fields"() {
+    when:
+    def result = runner.runWithImports("""
+class Foo extends Specification {
+  @Shared
+  int value
+  @IgnoreIf({ instance.value == 2 })
+  def "bar #input"() {
+    value = input
+
+    expect:
+    true
+
+    where:
+    input << [1, 2, 3]
+  }
+}
+    """)
+
+    then:
+    result.testsStartedCount == 4
+    result.testsSucceededCount == 3
+    result.testsAbortedCount == 1
+  }
+
+  def "@IgnoreIf provides condition access to Specification instance fields"() {
+    when:
+    def result = runner.runWithImports("""
+class Foo extends Specification {
+  static int staticValue
+  int value
+
+  def setup() {
+    value = staticValue
+  }
+
+  @IgnoreIf({ instance.value == 2 })
+  def "bar #input"() {
+    staticValue = input
+
+    expect:
+    true
+
+    where:
+    input << [1, 2, 3]
+  }
+}
+    """)
+
+    then:
+    result.testsStartedCount == 4
+    result.testsSucceededCount == 3
+    result.testsAbortedCount == 1
+  }
+
   def "@IgnoreIf provides condition access to static Specification fields"() {
     when:
     def result = runner.runWithImports("""

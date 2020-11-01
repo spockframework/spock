@@ -230,6 +230,61 @@ def bar() {
     result.testsSucceededCount == 2
   }
 
+  def "@PendingFeatureIf provides condition access to Specification instance shared fields"() {
+    when:
+    def result = runner.runWithImports("""
+class Foo extends Specification {
+  @Shared
+  int value
+  @PendingFeatureIf({ instance.value == 2 })
+  def "bar #input"() {
+    value = input
+
+    expect:
+    input != 3
+
+    where:
+    input << [1, 2, 3]
+  }
+}
+    """)
+
+    then:
+    result.testsStartedCount == 4
+    result.testsSucceededCount == 3
+    result.testsAbortedCount == 1
+  }
+
+  def "@PendingFeatureIf provides condition access to Specification instance fields"() {
+    when:
+    def result = runner.runWithImports("""
+class Foo extends Specification {
+  static int staticValue
+  int value
+
+  def setup() {
+    value = staticValue
+  }
+
+  @PendingFeatureIf({ instance.value == 2 })
+  def "bar #input"() {
+    staticValue = input
+
+    expect:
+    input != 3
+
+    where:
+    input << [1, 2, 3]
+  }
+}
+    """)
+
+    then:
+    result.testsStartedCount == 4
+    result.testsSucceededCount == 3
+    result.testsAbortedCount == 1
+  }
+
   def "@PendingFeatureIf provides condition access to static Specification fields"() {
     when:
     def result = runner.runWithImports("""

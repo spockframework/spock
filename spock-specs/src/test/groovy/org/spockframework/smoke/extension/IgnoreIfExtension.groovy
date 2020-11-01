@@ -17,6 +17,7 @@
 package org.spockframework.smoke.extension
 
 import org.spockframework.EmbeddedSpecification
+import org.spockframework.runtime.ConditionNotSatisfiedError
 import org.spockframework.runtime.extension.ExtensionException
 import spock.lang.*
 
@@ -161,6 +162,47 @@ class Bar extends Closure {
     then:
     ExtensionException ee = thrown()
     ee.message == 'Failed to instantiate condition'
+  }
+
+  @IgnoreIf({ true })
+  @IgnoreIf({ false })
+  def "feature is ignored if at least one IgnoreIf annotation is true"() {
+    expect: false
+  }
+
+  def "feature is not ignored if all IgnoreIf annotations are false"() {
+    when:
+    runner.runSpecBody """
+@IgnoreIf({ false })
+@IgnoreIf({ false })
+def foo() {
+  expect: false
+}
+"""
+
+    then:
+    thrown(ConditionNotSatisfiedError)
+  }
+
+  @IgnoreIf({ a == 1 })
+  @IgnoreIf({ false })
+  def "feature is ignored if data variable accessing IgnoreIf annotation is true"() {
+    expect: false
+    where: a = 1
+  }
+
+  @IgnoreIf({ a == 1 })
+  @IgnoreIf({ a != 1 })
+  def "feature is ignored if at least one data variable accessing IgnoreIf annotation is true"() {
+    expect: false
+    where: a = 1
+  }
+
+  @IgnoreIf({ true })
+  @IgnoreIf({ a != 1 })
+  def "feature is ignored if non data variable accessing IgnoreIf annotation is true"() {
+    expect: false
+    where: a = 1
   }
 
   def "@IgnoreIf provides condition access to Specification instance shared fields"() {

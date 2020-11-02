@@ -221,7 +221,8 @@
 </li>
 <li><a href="#_release_notes">Release Notes</a>
 <ul class="sectlevel2">
-<li><a href="#_2_0_m4_tbd">2.0-M4 (tbd)</a></li>
+<li><a href="#_2_0_m5_tbd">2.0-M5 (tbd)</a></li>
+<li><a href="#_2_0_m4_2020_11_01">2.0-M4 (2020-11-01)</a></li>
 <li><a href="#_2_0_m3_2020_06_11">2.0-M3 (2020-06-11)</a>
 <ul class="sectlevel3">
 <li><a href="#_breaking_changes">Breaking Changes</a></li>
@@ -5890,9 +5891,16 @@ Grails 2.3 and higher have built-in Spock support and do not require a plugin.
 <h2 id="_release_notes"><a class="anchor" href="#_release_notes"></a><a class="link" href="#_release_notes">Release Notes</a></h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_2_0_m4_tbd"><a class="anchor" href="#_2_0_m4_tbd"></a><a class="link" href="#_2_0_m4_tbd">2.0-M4 (tbd)</a></h3>
+<h3 id="_2_0_m5_tbd"><a class="anchor" href="#_2_0_m5_tbd"></a><a class="link" href="#_2_0_m5_tbd">2.0-M5 (tbd)</a></h3>
+
+</div>
+<div class="sect2">
+<h3 id="_2_0_m4_2020_11_01"><a class="anchor" href="#_2_0_m4_2020_11_01"></a><a class="link" href="#_2_0_m4_2020_11_01">2.0-M4 (2020-11-01)</a></h3>
 <div class="ulist">
 <ul>
+<li>
+<p><strong>Added <a href="#parallel-execution">Parallel Execution</a> support</strong></p>
+</li>
 <li>
 <p>Add a way to register <code>ConfigurationObject</code> globally without the need for a global extension.</p>
 </li>
@@ -5902,44 +5910,47 @@ Spock will handle this appropriately and call the extensions <code>visitSpecAnno
 If these methods are not overwritten, they forward to the usual <code>visitSpecAnnotation</code> methods once for each annotation.</p>
 </li>
 <li>
-<p><code>AbstractAnnotationDrivenExtension</code> is now deprecated and its logic was moved to <code>default</code> methods of
-<code>IAnnotationDrivenExtension</code> which should be implemented directly now instead of extending the abstract class.</p>
-</li>
-<li>
-<p><code>@ConfineMetaClassChanges</code> is now repeatable</p>
-</li>
-<li>
-<p><code>@Issue</code> is now repeatable</p>
-</li>
-<li>
-<p><code>@IgnoreIf</code> is now repeatable</p>
-</li>
-<li>
-<p><code>@PendingFeatureIf</code> is now repeatable</p>
-</li>
-<li>
-<p><code>@Requires</code> is now repeatable</p>
-</li>
-<li>
-<p><code>@See</code> is now repeatable</p>
-</li>
-<li>
-<p><code>@Subject</code> is now repeatable</p>
-</li>
-<li>
-<p><code>@Use</code> is now repeatable</p>
-</li>
-<li>
-<p><code>@UseModules</code> is now repeatable</p>
-</li>
-<li>
-<p>Fix <a href="https://github.com/spockframework/spock/issues/994">#994</a> nested closures in argument constraints are not treated as implicit assertions anymore</p>
+<p><code>@ConfineMetaClassChanges</code>, <code>@Issue</code>, <code>@IgnoreIf</code>, <code>@PendingFeatureIf</code>, <code>@Requires</code>, <code>@See</code>, <code>@Subject</code>, <code>@Use</code>, and <code>@UseModules</code> are now repeatable annotations</p>
 </li>
 <li>
 <p><code>@Requires</code>, <code>@IgnoreIf</code> and <code>@PendingFeatureIf</code> can now access instance fields, shared fields and instance methods
 by using the <code>instance.</code> qualifier inside the condition closure.</p>
 </li>
+<li>
+<p><code>AbstractAnnotationDrivenExtension</code> is now deprecated and its logic was moved to <code>default</code> methods of
+<code>IAnnotationDrivenExtension</code> which should be implemented directly now instead of extending the abstract class.</p>
+</li>
+<li>
+<p>Add <code>@TempDir</code> built-in extension</p>
+</li>
+<li>
+<p><code>@PendingFeature</code> and <code>@PendingFeatureIf</code> can now be used together</p>
+</li>
+<li>
+<p>Fix <a href="https://github.com/spockframework/spock/issues/1158">#1158</a> Fix strange bug with setter/getter handling of mocks in groovy</p>
+</li>
+<li>
+<p>Fix <a href="https://github.com/spockframework/spock/issues/1216">#1216</a> perform argument coercion for <code>GroovyMock</code> method arguments</p>
+</li>
+<li>
+<p>Fix <a href="https://github.com/spockframework/spock/issues/1169">#1169</a> check skipped state in Node.prepare and do nothing if already skipped</p>
+</li>
+<li>
+<p>Fix <a href="https://github.com/spockframework/spock/issues/1200">#1200</a> name clashes where variables that are named like method calls destroy the method call</p>
+</li>
+<li>
+<p>Fix <a href="https://github.com/spockframework/spock/issues/1202">#1202</a> NullPointerException with array initializers</p>
+</li>
+<li>
+<p>Fix <a href="https://github.com/spockframework/spock/issues/994">#994</a> don&#8217;t treat nested closures in argument constraints as implicit assertions anymore</p>
+</li>
+<li>
+<p>Replace <code>hamcrest-core</code> dependency by <code>hamcrest</code></p>
+</li>
 </ul>
+</div>
+<div class="paragraph">
+<p>Thanks to all the contributors to this release: Björn Kautler, Marcin Zajączkowski, DQYuan, Tom Wieczorek, Alexander Kriegisch, Jasper Vandemalle</p>
 </div>
 </div>
 <div class="sect2">
@@ -8422,7 +8433,7 @@ This is due to how groovy implements traits and AST transformations.</p>
 <div id="footer">
 <div id="footer-text">
 Version 2.0-SNAPSHOT<br>
-Last updated 2020-11-01 20:06:31 UTC
+Last updated 2020-11-02 00:47:37 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./coderay-asciidoctor.css">

@@ -1,13 +1,9 @@
 package org.spockframework.smoke.extension
 
 import org.spockframework.EmbeddedSpecification
-import spock.lang.Shared
-import spock.lang.Stepwise
-import spock.lang.TempDir
+import spock.lang.*
 
-import java.nio.file.Files
-import java.nio.file.Path
-import java.nio.file.Paths
+import java.nio.file.*
 
 /**
  * @author dqyuan
@@ -120,4 +116,16 @@ def method1() {
     Files.delete(pathFromEmbedded)
   }
 
+}
+
+abstract class TempDirBaseSpec extends Specification {
+  @TempDir Path tmp
+}
+
+@Issue("https://github.com/spockframework/spock/issues/1229")
+class TempDirInheritedSpec extends TempDirBaseSpec {
+  void "TempDir works for inherited fields"() {
+    expect:
+    tmp != null
+  }
 }

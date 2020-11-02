@@ -2,9 +2,7 @@ package org.spockframework.runtime.extension.builtin;
 
 import org.spockframework.runtime.InvalidSpecException;
 import org.spockframework.runtime.extension.IAnnotationDrivenExtension;
-import org.spockframework.runtime.model.FeatureInfo;
-import org.spockframework.runtime.model.FieldInfo;
-import org.spockframework.runtime.model.SpecInfo;
+import org.spockframework.runtime.model.*;
 import org.spockframework.tempdir.TempDirConfiguration;
 import org.spockframework.util.Beta;
 import spock.lang.TempDir;
@@ -33,7 +31,7 @@ public class TempDirExtension implements IAnnotationDrivenExtension<TempDir> {
     if (field.isShared()) {
       specInfo.addInterceptor(interceptor);
     } else {
-      for (FeatureInfo featureInfo : specInfo.getAllFeatures()) {
+      for (FeatureInfo featureInfo : specInfo.getBottomSpec().getAllFeatures()) {
         featureInfo.addIterationInterceptor(interceptor);
       }
     }

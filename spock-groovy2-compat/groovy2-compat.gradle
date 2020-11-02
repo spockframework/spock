@@ -18,7 +18,7 @@ jar {
       'Implementation-Title': project.name,
       'Implementation-Version': variantLessVersion,
       'Implementation-Vendor': 'spockframework.org',
-      'Automatic-Module-Name': 'org.spockframework.groovy2-compat'
+      'Automatic-Module-Name': 'org.spockframework.groovy2compat'
     )
   }
 }

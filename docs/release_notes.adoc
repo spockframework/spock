@@ -1,7 +1,7 @@
 = Release Notes
 include::include.adoc[]
 
-== 2.0-M4 (tbd)
+== 2.0-M4 (2020-11-01)
 
 - *Added <<parallel_execution.adoc#parallel-execution,Parallel Execution>> support*
 

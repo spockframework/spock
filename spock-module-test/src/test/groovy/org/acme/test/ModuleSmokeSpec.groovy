@@ -1,8 +1,8 @@
-package temp
+package org.acme.test
 
 import spock.lang.Specification
 
-class FirstSpec extends Specification{
+class ModuleSmokeSpec extends Specification{
 
   def "works"() {
     expect: true

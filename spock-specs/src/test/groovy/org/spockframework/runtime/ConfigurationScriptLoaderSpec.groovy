@@ -14,9 +14,14 @@
 
 package org.spockframework.runtime
 
-import spock.lang.*
-import spock.config.ConfigurationException
 
+import org.spockframework.runtime.model.parallel.Resources
+
+import spock.config.ConfigurationException
+import spock.lang.ResourceLock
+import spock.lang.Specification
+
+@ResourceLock(Resources.SYSTEM_PROPERTIES)
 class ConfigurationScriptLoaderSpec extends Specification {
   private static final String PROP_KEY = "spockConfigSystemProperty"
   private static final String VALID_CONFIG = "org/spockframework/runtime/ValidConfig.txt"

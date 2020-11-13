@@ -1,6 +1,6 @@
 package org.spockframework.runtime.extension.builtin;
 
-import org.spockframework.runtime.extension.AbstractAnnotationDrivenExtension;
+import org.spockframework.runtime.extension.IAnnotationDrivenExtension;
 import org.spockframework.runtime.model.Attachment;
 import org.spockframework.runtime.model.FeatureInfo;
 import org.spockframework.runtime.model.SpecElementInfo;
@@ -8,7 +8,7 @@ import org.spockframework.runtime.model.SpecInfo;
 
 import spock.lang.See;
 
-public class SeeExtension extends AbstractAnnotationDrivenExtension<See> {
+public class SeeExtension implements IAnnotationDrivenExtension<See> {
   @Override
   public void visitSpecAnnotation(See see, SpecInfo spec) {
     addAttachments(see, spec);

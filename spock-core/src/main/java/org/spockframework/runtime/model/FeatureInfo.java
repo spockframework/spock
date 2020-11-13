@@ -1,6 +1,7 @@
 package org.spockframework.runtime.model;
 
 import org.spockframework.runtime.extension.IMethodInterceptor;
+import org.spockframework.runtime.model.parallel.*;
 import org.spockframework.util.Nullable;
 
 import java.lang.reflect.AnnotatedElement;
@@ -17,6 +18,10 @@ public class FeatureInfo extends SpecElementInfo<SpecInfo, AnnotatedElement> {
   private List<String> dataVariables = new ArrayList<>();
   private final List<BlockInfo> blocks = new ArrayList<>();
   private final List<IMethodInterceptor> iterationInterceptors = new ArrayList<>();
+
+  private final Set<ExclusiveResource> exclusiveResources = new HashSet<>();
+
+  private ExecutionMode executionMode = null;
 
   private MethodInfo featureMethod;
   private MethodInfo dataProcessorMethod;
@@ -104,7 +109,26 @@ public class FeatureInfo extends SpecElementInfo<SpecInfo, AnnotatedElement> {
 
   public void addDataProvider(DataProviderInfo dataProvider) {
     dataProviders.add(dataProvider);
+  }
 
+  @Override
+  public void addExclusiveResource(ExclusiveResource exclusiveResource) {
+    exclusiveResources.add(exclusiveResource);
+  }
+
+  @Override
+  public Set<ExclusiveResource> getExclusiveResources() {
+    return exclusiveResources;
+  }
+
+  @Override
+  public void setExecutionMode(ExecutionMode executionMode) {
+    this.executionMode = executionMode;
+  }
+
+  @Override
+  public Optional<ExecutionMode> getExecutionMode() {
+    return Optional.ofNullable(executionMode);
   }
 
   public boolean isParameterized() {

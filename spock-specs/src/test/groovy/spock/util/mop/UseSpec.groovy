@@ -16,6 +16,7 @@
 
 package spock.util.mop
 
+import org.spockframework.runtime.model.parallel.ExecutionMode
 import spock.lang.Specification
 
 class UseOnMethods extends Specification {
@@ -31,8 +32,22 @@ class UseOnMethods extends Specification {
     "foo".duplicate() == "foofoo"
   }
 
+  @Use(StringExtensions)
+  def "sets featue execution mode to SAME_THREAD"() {
+    expect:
+    specificationContext.currentFeature.executionMode.get() == ExecutionMode.SAME_THREAD
+  }
+
   @Use([StringExtensions, IntegerExtensions])
   def "can use multiple categories"() {
+    expect:
+    3.mul(4) == 12
+    "foo".duplicate() == "foofoo"
+  }
+
+  @Use(StringExtensions)
+  @Use(IntegerExtensions)
+  def "can use multiple categories in multiple annotations"() {
     expect:
     3.mul(4) == 12
     "foo".duplicate() == "foofoo"
@@ -86,6 +101,10 @@ class UseOnClasses extends Specification {
 
     then:
     noExceptionThrown()
+  }
+
+  def "sets childExecutionMode to SAME_THREAD"() {
+    expect: specificationContext.currentSpec.childExecutionMode.get() == ExecutionMode.SAME_THREAD
   }
 
   def helper() {

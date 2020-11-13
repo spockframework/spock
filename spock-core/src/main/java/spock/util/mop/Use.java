@@ -16,13 +16,13 @@
 
 package spock.util.mop;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 
 import org.spockframework.runtime.extension.ExtensionAnnotation;
 import org.spockframework.runtime.extension.builtin.UseExtension;
+import org.spockframework.util.Beta;
+
+import java.lang.annotation.*;
 
 /**
  * Activates one or more Groovy categories while the annotated spec method
@@ -52,11 +52,26 @@ import org.spockframework.runtime.extension.builtin.UseExtension;
  * <p>Note: <tt>&#64;Use</tt> has no effect when applied to a helper method.
  * However, when applied to a spec class it will also affect its helper methods.
  *
+ * <p>Note: If this extension is applied on the Specification, then it will use
+ * {@link org.spockframework.runtime.model.parallel.ExecutionMode#SAME_THREAD}
+ * for the whole Spec.
+ *
  * @author Peter Niederwieser
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE, ElementType.METHOD})
 @ExtensionAnnotation(UseExtension.class)
+@Repeatable(Use.Container.class)
 public @interface Use {
   Class[] value();
+
+  /**
+   * @since 2.0
+   */
+  @Beta
+  @Retention(RetentionPolicy.RUNTIME)
+  @Target({ElementType.TYPE, ElementType.METHOD})
+  @interface Container {
+    Use[] value();
+  }
 }

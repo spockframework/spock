@@ -14,12 +14,12 @@
 
 package org.spockframework.smoke.mock
 
+import spock.lang.*
+
 import java.lang.reflect.Modifier
 import java.util.regex.Pattern
 
-import spock.lang.Issue
-import spock.lang.Specification
-
+@Isolated
 class GroovySpiesThatAreGlobal extends Specification {
   def "mock instance method"() {
     def myList = new ArrayList()

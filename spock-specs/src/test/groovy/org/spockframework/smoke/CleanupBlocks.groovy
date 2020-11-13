@@ -21,6 +21,9 @@ import spock.lang.*
 
 import org.codehaus.groovy.runtime.typehandling.GroovyCastException
 
+import static org.spockframework.runtime.model.parallel.ExecutionMode.SAME_THREAD
+
+@Execution(SAME_THREAD)
 class CleanupBlocks extends EmbeddedSpecification {
   static List log
 

@@ -1,6 +1,7 @@
 package org.spockframework.runtime;
 
 import org.spockframework.runtime.model.SpecInfo;
+import spock.config.RunnerConfiguration;
 
 import java.util.*;
 import java.util.function.*;
@@ -13,9 +14,11 @@ import org.junit.platform.engine.support.discovery.SelectorResolver;
 class ClassSelectorResolver implements SelectorResolver {
 
   private final Predicate<String> classNameFilter;
+  private final RunContext runContext;
 
-  ClassSelectorResolver(Predicate<String> classNameFilter) {
+  ClassSelectorResolver(Predicate<String> classNameFilter, RunContext runContext) {
     this.classNameFilter = classNameFilter;
+    this.runContext = runContext;
   }
 
   @Override
@@ -41,7 +44,9 @@ class ClassSelectorResolver implements SelectorResolver {
         .addToParent(parent -> {
           specInfo.getAllFeatures().forEach(featureInfo -> featureInfo.setExcluded(true));
           UniqueId uniqueId = parent.getUniqueId().append("spec", specInfo.getReflection().getName());
-          return Optional.of(new SpecNode(uniqueId, specInfo));
+          return Optional.of(new SpecNode(uniqueId,
+            runContext.getConfiguration(RunnerConfiguration.class),
+            specInfo));
         })
         .map(specNode -> toResolution(specInfo, specNode))
         .orElse(Resolution.unresolved());

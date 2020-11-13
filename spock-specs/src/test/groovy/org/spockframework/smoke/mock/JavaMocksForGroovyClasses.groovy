@@ -175,6 +175,70 @@ class JavaMocksForGroovyClasses extends Specification {
     then:
     1 * mockMe.someProperty
   }
+
+  def 'test setter on interface'() {
+    given:
+    def sut = Mock(IGMock)
+    when:
+    sut.foo = 'val'
+    then:
+    1 * sut.setFoo(_)
+  }
+
+  def 'test getter on interface'() {
+    given:
+    def sut = Mock(IGMock)
+    when:
+    sut.foo
+    then:
+    1 * sut.getFoo()
+  }
+
+  @Issue("https://github.com/spockframework/spock/issues/1158")
+  def 'test setter on abstract'() {
+    given:
+    def sut = Mock(AGMock)
+
+    when:
+    sut.foo = 'val'
+
+    then:
+    1 * sut.setFoo(_)
+  }
+
+  def 'test getter on abstract'() {
+    given:
+    def sut = Mock(AGMock)
+
+    when:
+    sut.foo
+
+    then:
+    1 * sut.getFoo()
+  }
+
+  @Issue("https://github.com/spockframework/spock/issues/1158")
+  def 'test setter on concrete'() {
+    given:
+    def sut = Mock(GMock)
+
+    when:
+    sut.foo = 'val'
+
+    then:
+    1 * sut.setFoo(_)
+  }
+
+  def 'test getter on concrete'() {
+    given:
+    def sut = Mock(GMock)
+
+    when:
+    sut.foo
+
+    then:
+    1 * sut.getFoo()
+  }
 }
 
 class MockMe {
@@ -182,3 +246,23 @@ class MockMe {
   String bar
 }
 
+interface IGMock {
+  String getFoo()
+  void setFoo(String val)
+}
+
+abstract class AGMock implements IGMock {
+  abstract String getFoo();
+  abstract void setFoo(String val);
+}
+
+class GMock extends AGMock {
+  private String prop
+  String getFoo() {
+    return prop
+  }
+
+  void setFoo(String val) {
+    this.prop = val
+  }
+}

@@ -15,7 +15,7 @@
 package org.spockframework.runtime;
 
 import org.spockframework.runtime.extension.*;
-import org.spockframework.util.IoUtil;
+import spock.config.ConfigurationObject;
 
 import java.io.*;
 import java.net.URL;
@@ -26,9 +26,14 @@ import java.util.*;
  */
 public class ExtensionClassesLoader {
   public static final String EXTENSION_DESCRIPTOR_PATH = "META-INF/services/" + IGlobalExtension.class.getName();
+  public static final String CONFIG_DESCRIPTOR_PATH = "META-INF/services/" + ConfigurationObject.class.getName();
 
-  public List<Class<?>> loadClassesFromDefaultLocation() {
+  public List<Class<?>> loadExtensionClassesFromDefaultLocation() {
     return loadClasses(EXTENSION_DESCRIPTOR_PATH);
+  }
+
+  public List<Class<?>> loadConfigClassesFromDefaultLocation() {
+    return loadClasses(CONFIG_DESCRIPTOR_PATH);
   }
 
   public List<Class<?>> loadClasses(String descriptorPath) {
@@ -57,10 +62,7 @@ public class ExtensionClassesLoader {
   }
 
   private List<String> readDescriptor(URL url) {
-    BufferedReader reader = null;
-
-    try {
-      reader = new BufferedReader(new InputStreamReader(url.openStream()));
+    try(BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()))) {
       List<String> lines = new ArrayList<>();
       String line = reader.readLine();
       while (line != null) {
@@ -72,8 +74,6 @@ public class ExtensionClassesLoader {
       return lines;
     } catch (IOException e) {
       throw new ExtensionException("Failed to read extension descriptor '%s'", e).withArgs(url);
-    } finally {
-      IoUtil.closeQuietly(reader);
     }
   }
 

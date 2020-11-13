@@ -13,16 +13,19 @@
  */
 package spock.util
 
-import spock.lang.Specification
-import spock.util.environment.OperatingSystem
-import spock.util.environment.RestoreSystemProperties
+import org.spockframework.runtime.model.parallel.*
+import spock.lang.*
+import spock.util.environment.*
 
+@Isolated
 class OperatingSystemSpec extends Specification {
+  @ResourceLock(value = Resources.SYSTEM_PROPERTIES, mode = ResourceAccessMode.READ)
   def "determines name based on os.name system property"() {
     expect:
     OperatingSystem.current.name == System.getProperty("os.name")
   }
 
+  @ResourceLock(value = Resources.SYSTEM_PROPERTIES, mode = ResourceAccessMode.READ)
   def "determines version based on os.name system property"() {
     expect:
     OperatingSystem.current.version == System.getProperty("os.version")

@@ -16,30 +16,42 @@
 
 package org.spockframework.runtime.extension.builtin;
 
-import org.spockframework.runtime.extension.AbstractAnnotationDrivenExtension;
-import org.spockframework.runtime.model.FeatureInfo;
-import org.spockframework.runtime.model.IInterceptable;
-import org.spockframework.runtime.model.SpecInfo;
-import org.spockframework.util.CollectionUtil;
-
+import org.spockframework.runtime.extension.IAnnotationDrivenExtension;
+import org.spockframework.runtime.model.*;
+import org.spockframework.runtime.model.parallel.*;
 import spock.util.mop.ConfineMetaClassChanges;
+
+import java.util.*;
+
+import static java.util.stream.Collectors.toSet;
 
 /**
  * @author Luke Daley
  * @author Peter Niederwieser
  */
-public class ConfineMetaClassChangesExtension extends AbstractAnnotationDrivenExtension<ConfineMetaClassChanges> {
+public class ConfineMetaClassChangesExtension implements IAnnotationDrivenExtension<ConfineMetaClassChanges> {
+
+  private static final ExclusiveResource EXCLUSIVE_RESOURCE = new ExclusiveResource(Resources.META_CLASS_REGISTRY,
+    ResourceAccessMode.READ_WRITE);
+
   @Override
-  public void visitSpecAnnotation(ConfineMetaClassChanges annotation, SpecInfo spec) {
-    addInterceptor(annotation, spec.getBottomSpec());
-  }
-  
-  @Override
-  public void visitFeatureAnnotation(ConfineMetaClassChanges annotation, FeatureInfo feature) {
-    addInterceptor(annotation, feature.getFeatureMethod());
+  public void visitSpecAnnotations(List<ConfineMetaClassChanges> annotations, SpecInfo spec) {
+    addInterceptor(annotations, spec.getBottomSpec());
+    spec.getBottomSpec().addExclusiveResource(EXCLUSIVE_RESOURCE);
   }
 
-  private void addInterceptor(ConfineMetaClassChanges annotation, IInterceptable interceptable) {
-    interceptable.addInterceptor(new ConfineMetaClassChangesInterceptor(CollectionUtil.asSet(annotation.value())));
+  @Override
+  public void visitFeatureAnnotations(List<ConfineMetaClassChanges> annotations, FeatureInfo feature) {
+    addInterceptor(annotations, feature.getFeatureMethod());
+    feature.addExclusiveResource(EXCLUSIVE_RESOURCE);
+  }
+
+  private void addInterceptor(List<ConfineMetaClassChanges> annotations, IInterceptable interceptable) {
+    interceptable.addInterceptor(new ConfineMetaClassChangesInterceptor(
+      annotations
+        .stream()
+        .map(ConfineMetaClassChanges::value)
+        .flatMap(Arrays::stream)
+        .collect(toSet())));
   }
 }

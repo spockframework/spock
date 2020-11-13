@@ -20,7 +20,6 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-import java.util.regex.Pattern;
 
 import groovy.lang.MissingPropertyException;
 import spock.lang.IgnoreIf;
@@ -29,18 +28,29 @@ import spock.lang.Requires;
 import spock.util.environment.Jvm;
 import spock.util.environment.OperatingSystem;
 
+import static java.util.Collections.emptyMap;
+
 /**
  * The context (delegate) for a {@link Requires}, {@link IgnoreIf} or {@link PendingFeatureIf} condition.
  */
 public class PreconditionContext {
-  private static final Pattern JAVA_VERSION = Pattern.compile("(\\d+\\.\\d+).*");
-
+  private final Object theInstance;
   private final Map<String, Object> dataVariables = new HashMap<>();
 
   public PreconditionContext() {
+    this(null, emptyMap());
   }
 
   public PreconditionContext(Map<String, Object> dataVariables) {
+    this(null, dataVariables);
+  }
+
+  public PreconditionContext(Object instance) {
+    this(instance, emptyMap());
+  }
+
+  public PreconditionContext(Object instance, Map<String, Object> dataVariables) {
+    theInstance = instance;
     this.dataVariables.putAll(dataVariables);
   }
 
@@ -48,15 +58,10 @@ public class PreconditionContext {
     if (dataVariables.containsKey(propertyName)) {
       return dataVariables.get(propertyName);
     }
+    if ((theInstance != null) && "instance".equals(propertyName)) {
+      return theInstance;
+    }
     throw new MissingPropertyException(propertyName, getClass());
-  }
-
-  public void setDataVariable(String name, Object value) {
-    dataVariables.put(name, value);
-  }
-
-  public void setDataVariables(Map<String, Object> dataVariables) {
-    this.dataVariables.putAll(dataVariables);
   }
 
   /**

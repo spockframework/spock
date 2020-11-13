@@ -15,18 +15,22 @@
 package org.spockframework.runtime.extension.builtin;
 
 import org.spockframework.runtime.AbstractRunListener;
-import org.spockframework.runtime.extension.AbstractAnnotationDrivenExtension;
+import org.spockframework.runtime.extension.IAnnotationDrivenExtension;
 import org.spockframework.runtime.model.*;
+import org.spockframework.runtime.model.parallel.ExecutionMode;
 
 import java.lang.annotation.Annotation;
 import java.util.List;
 
-public class StepwiseExtension extends AbstractAnnotationDrivenExtension {
+public class StepwiseExtension implements IAnnotationDrivenExtension {
   @Override
   public void visitSpecAnnotation(Annotation annotation, final SpecInfo spec) {
     sortFeaturesInDeclarationOrder(spec);
     includeFeaturesBeforeLastIncludedFeature(spec);
     skipFeaturesAfterFirstFailingFeature(spec);
+
+    // Disable parallel child execution for @Stepwise tests
+    spec.setChildExecutionMode(ExecutionMode.SAME_THREAD);
   }
 
   private void sortFeaturesInDeclarationOrder(SpecInfo spec) {

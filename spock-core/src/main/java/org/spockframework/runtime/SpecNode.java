@@ -1,21 +1,17 @@
 package org.spockframework.runtime;
 
 import org.spockframework.runtime.model.SpecInfo;
+import spock.config.RunnerConfiguration;
+
+import java.util.Optional;
 
 import org.junit.platform.engine.UniqueId;
 import org.junit.platform.engine.support.descriptor.ClassSource;
 
-public class SpecNode extends SpockNode {
+public class SpecNode extends SpockNode<SpecInfo> {
 
-  private final SpecInfo specInfo;
-
-  protected SpecNode(UniqueId uniqueId, SpecInfo specInfo) {
-    super(uniqueId, specInfo.getName(), ClassSource.from(specInfo.getReflection()));
-    this.specInfo = specInfo;
-  }
-
-  public SpecInfo getSpecInfo() {
-    return specInfo;
+  protected SpecNode(UniqueId uniqueId, RunnerConfiguration configuration, SpecInfo specInfo) {
+    super(uniqueId, specInfo.getName(), ClassSource.from(specInfo.getReflection()), configuration, specInfo);
   }
 
   @Override
@@ -25,10 +21,14 @@ public class SpecNode extends SpockNode {
 
   @Override
   public SpockExecutionContext prepare(SpockExecutionContext context) throws Exception {
-    PlatformParameterizedSpecRunner specRunner = context.getRunContext().createSpecRunner(specInfo);
+    if (getNodeInfo().isSkipped()) {
+      // Node.prepare is called before Node.shouldBeSkipped so we just skip the shared spec initialization
+      return context;
+    }
+    PlatformParameterizedSpecRunner specRunner = context.getRunContext().createSpecRunner(getNodeInfo());
     ErrorInfoCollector errorInfoCollector = new ErrorInfoCollector();
     context = context.withErrorInfoCollector(errorInfoCollector);
-    context = context.withRunner(specRunner).withSpec(specInfo);
+    context = context.withRunner(specRunner).withSpec(getNodeInfo());
     context = specRunner.runSharedSpec(context);
     errorInfoCollector.assertEmpty();
     return context;
@@ -36,7 +36,7 @@ public class SpecNode extends SpockNode {
 
   @Override
   public SkipResult shouldBeSkipped(SpockExecutionContext context) throws Exception {
-    return shouldBeSkipped(specInfo);
+    return shouldBeSkipped(getNodeInfo());
   }
 
   @Override
@@ -61,4 +61,14 @@ public class SpecNode extends SpockNode {
     context.getRunner().runSpec(context, () -> sneakyInvoke(invocation, context));
   }
 
+  @Override
+  public ExecutionMode getExecutionMode() {
+    return getExplicitExecutionMode()
+      .orElseGet( ()-> toExecutionMode(getConfiguration().parallel.defaultSpecificationExecutionMode));
+  }
+
+  @Override
+  protected Optional<ExecutionMode> getDefaultChildExecutionMode() {
+    return getNodeInfo().getChildExecutionMode().map(SpockNode::toExecutionMode);
+  }
 }

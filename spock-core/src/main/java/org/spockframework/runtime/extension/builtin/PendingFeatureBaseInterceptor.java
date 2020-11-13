@@ -24,12 +24,18 @@ public class PendingFeatureBaseInterceptor {
     }
     return false;
   }
-  protected AssertionError featurePassedUnexpectedly() {
-    return new AssertionError("Feature is marked with " + annotationUsed + " but passes unexpectedly");
+  protected PendingFeatureSuccessfulError featurePassedUnexpectedly(StackTraceElement[] stackTrace) {
+    PendingFeatureSuccessfulError assertionError = new PendingFeatureSuccessfulError("Feature is marked with " + annotationUsed + " but passes unexpectedly");
+    if (stackTrace != null) {
+      assertionError.setStackTrace(stackTrace);
+    }
+    return assertionError;
   }
 
-  protected TestAbortedException assumptionViolation() {
-    return new TestAbortedException("Feature not yet implemented correctly."
+  protected TestAbortedException testAborted(StackTraceElement[] stackTrace) {
+    TestAbortedException testAbortedException = new TestAbortedException("Feature not yet implemented correctly."
       + ("".equals(reason) ? "" : " Reason: " + reason));
+    testAbortedException.setStackTrace(stackTrace);
+    return testAbortedException;
   }
 }

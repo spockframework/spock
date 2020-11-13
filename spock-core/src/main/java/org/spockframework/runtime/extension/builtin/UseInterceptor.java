@@ -18,7 +18,9 @@ package org.spockframework.runtime.extension.builtin;
 
 import org.spockframework.runtime.extension.*;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import groovy.lang.Closure;
 import org.codehaus.groovy.runtime.DefaultGroovyMethods;
@@ -29,8 +31,8 @@ import org.codehaus.groovy.runtime.DefaultGroovyMethods;
 public class UseInterceptor implements IMethodInterceptor {
   private final List<Class> categories;
 
-  public UseInterceptor(List<Class> categories) {
-    this.categories = categories;
+  public UseInterceptor(Set<Class> categories) {
+    this.categories = new ArrayList<>(categories);
   }
 
   @Override

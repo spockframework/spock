@@ -17,6 +17,7 @@
 package org.spockframework.smoke.extension
 
 import org.spockframework.EmbeddedSpecification
+import org.spockframework.runtime.ConditionNotSatisfiedError
 import org.spockframework.runtime.extension.ExtensionException
 import spock.lang.FailsWith
 import spock.lang.IgnoreIf
@@ -30,13 +31,14 @@ class RequiresExtension extends EmbeddedSpecification {
     when:
     def results = runner.runClass(RequiresExtensionExamples)
     then:
-    results.testsSucceededCount == 8
+    results.testsSucceededCount == 9
     results.testsFailedCount == 0
-    results.testsSkippedCount == 3
+    results.testsSkippedCount == 4
     results.testEvents().skipped().list().testDescriptor.displayName == [
       "skips feature if precondition is not satisfied",
       "can skip data providers completely if no data variables are accessed",
-      "allows determinate use of multiple filters"
+      "allows determinate use of multiple filters",
+      "feature is ignored if at least one Requires annotation is false"
     ]
   }
 
@@ -131,6 +133,88 @@ class Bar extends Closure {
     ee.message == 'Failed to instantiate condition'
   }
 
+  def "@Requires provides condition access to Specification instance shared fields"() {
+    when:
+    def result = runner.runWithImports("""
+class Foo extends Specification {
+  @Shared
+  int value
+  @Requires({ instance.value != 2 })
+  def "bar #input"() {
+    value = input
+
+    expect:
+    true
+
+    where:
+    input << [1, 2, 3]
+  }
+}
+    """)
+
+    then:
+    result.testsStartedCount == 4
+    result.testsSucceededCount == 3
+    result.testsAbortedCount == 1
+  }
+
+  def "@Requires provides condition access to Specification instance fields"() {
+    when:
+    def result = runner.runWithImports("""
+class Foo extends Specification {
+  static int staticValue
+  int value
+
+  def setup() {
+    value = staticValue
+  }
+
+  @Requires({ instance.value != 2 })
+  def "bar #input"() {
+    staticValue = input
+
+    expect:
+    true
+
+    where:
+    input << [1, 2, 3]
+  }
+}
+    """)
+
+    then:
+    result.testsStartedCount == 4
+    result.testsSucceededCount == 3
+    result.testsAbortedCount == 1
+  }
+
+  def "@Requires provides condition access to static Specification fields"() {
+    when:
+    def result = runner.runWithImports("""
+class Foo extends Specification {
+  static int value = 1
+
+  @Requires({ value == 1 })
+  def "bar"() {
+    expect:
+    true
+  }
+
+  @Requires({ value != 1 })
+  def "baz"() {
+    expect:
+    false
+  }
+}
+    """)
+
+    then:
+    result.testsStartedCount == 1
+    result.testsSkippedCount == 1
+    result.testsSucceededCount == 1
+    result.testsFailedCount == 0
+  }
+
   static class RequiresExtensionExamples extends Specification {
 
     @Requires({ 1 < 2 })
@@ -190,6 +274,18 @@ class Bar extends Closure {
       expect: false
     }
 
+    @Requires({ false })
+    @Requires({ true })
+    def "feature is ignored if at least one Requires annotation is false" () {
+      expect: false
+    }
+
+    @Requires({ true })
+    @Requires({ true })
+    @FailsWith(ConditionNotSatisfiedError)
+    def "feature is not ignored if all Requires annotations are true" () {
+      expect: false
+    }
   }
 }
 

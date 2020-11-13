@@ -6,10 +6,7 @@ import org.spockframework.runtime.extension.builtin.PendingFeatureIfExtension;
 import org.spockframework.runtime.extension.builtin.PreconditionContext;
 import org.spockframework.util.Beta;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 
 /**
  * Marks the annotated feature or selected iterations as {@link PendingFeature} if the
@@ -31,6 +28,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD})
 @ExtensionAnnotation(PendingFeatureIfExtension.class)
+@Repeatable(PendingFeatureIf.Container.class)
 public @interface PendingFeatureIf {
 
   /**
@@ -58,4 +56,14 @@ public @interface PendingFeatureIf {
    * @return reason why this feature is pending
    */
   String reason() default "";
+
+  /**
+   * @since 2.0
+   */
+  @Beta
+  @Retention(RetentionPolicy.RUNTIME)
+  @Target({ElementType.METHOD})
+  @interface Container {
+    PendingFeatureIf[] value();
+  }
 }

@@ -103,43 +103,9 @@ ____
 Traits are not officially compatible with AST transformations. Some of them, like @CompileStatic will be applied on the trait itself (not on implementing classes), while others will apply on both the implementing class and the trait. There is absolutely no guarantee that an AST transformation will run on a trait as it does on a regular class, so use it at your own risk!
 ____
 
-== Type confusion when using Data-Driven features https://github.com/spockframework/spock/issues/880[#880]
 
-When using data-driven features and variables with the same name but different type in two places with at least one of them in a `where`-block,
-you'll encounter this problem.
+== Groovy version compatibility
 
-[source,groovy]
-----
-class MyTest extends Specification {
-    @Unroll
-    def "#a <=> #b: #result"() {
-        expect:
-        Math.signum(a <=> b) == result
+By default, Spock can only be used with the Groovy version it was compiled with. It means that Spock `2.0-groovy-2.5` can only executed with Groovy 2.5.x, `2.0-groovy-3.0` with 3.0.x, etc. That restriction was introduced to help users find an appropriate Groovy variant and limit number of reported invalid issues caused by the incompatibilities between the major Groovy versions.
 
-        where:
-        a            | b            | result
-        "abcdef12"   | "abcdef12"   | 0
-    }
-
-    private double[] someOtherMethod() {
-        double[] result = new double[0]
-        return result
-    }
-}
-----
-
-----
-abcdef12 <=> abcdef12: [0.0]
-Condition not satisfied:
-
-Math.signum(a <=> b) == result
-     |      | |   |  |  |
-     0.0    | 0   |  |  [0.0]
-            |     |  false
-            |     abcdef12
-            abcdef12
-
-	at MyTest.#a <=> #b: #result(MyTest.groovy:8)
-----
-
-This issue was introduced by groovy-2.5, previous versions worked fine.
+However, occasionally it might be useful to be able to play with the next (officially unsupported) Groovy version, especially that usually, in the majority of cases, it should just work fine. Starting with Groovy 2.0 that restriction has been relaxed in the Spock SNAPSHOT versions. In addition, the early adopters can implicitly disable that check - also in the production versions - providing the system property `-Dspock.iKnowWhatImDoing.disableGroovyVersionCheck=true`. **Please bear in mind, however, that it is completely unsupported and might lead to some unexpected errors**.

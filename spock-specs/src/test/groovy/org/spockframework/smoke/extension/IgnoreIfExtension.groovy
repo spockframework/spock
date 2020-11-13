@@ -17,6 +17,7 @@
 package org.spockframework.smoke.extension
 
 import org.spockframework.EmbeddedSpecification
+import org.spockframework.runtime.ConditionNotSatisfiedError
 import org.spockframework.runtime.extension.ExtensionException
 import spock.lang.*
 
@@ -161,5 +162,128 @@ class Bar extends Closure {
     then:
     ExtensionException ee = thrown()
     ee.message == 'Failed to instantiate condition'
+  }
+
+  @IgnoreIf({ true })
+  @IgnoreIf({ false })
+  def "feature is ignored if at least one IgnoreIf annotation is true"() {
+    expect: false
+  }
+
+  def "feature is not ignored if all IgnoreIf annotations are false"() {
+    when:
+    runner.runSpecBody """
+@IgnoreIf({ false })
+@IgnoreIf({ false })
+def foo() {
+  expect: false
+}
+"""
+
+    then:
+    thrown(ConditionNotSatisfiedError)
+  }
+
+  @IgnoreIf({ a == 1 })
+  @IgnoreIf({ false })
+  def "feature is ignored if data variable accessing IgnoreIf annotation is true"() {
+    expect: false
+    where: a = 1
+  }
+
+  @IgnoreIf({ a == 1 })
+  @IgnoreIf({ a != 1 })
+  def "feature is ignored if at least one data variable accessing IgnoreIf annotation is true"() {
+    expect: false
+    where: a = 1
+  }
+
+  @IgnoreIf({ true })
+  @IgnoreIf({ a != 1 })
+  def "feature is ignored if non data variable accessing IgnoreIf annotation is true"() {
+    expect: false
+    where: a = 1
+  }
+
+  def "@IgnoreIf provides condition access to Specification instance shared fields"() {
+    when:
+    def result = runner.runWithImports("""
+class Foo extends Specification {
+  @Shared
+  int value
+  @IgnoreIf({ instance.value == 2 })
+  def "bar #input"() {
+    value = input
+
+    expect:
+    true
+
+    where:
+    input << [1, 2, 3]
+  }
+}
+    """)
+
+    then:
+    result.testsStartedCount == 4
+    result.testsSucceededCount == 3
+    result.testsAbortedCount == 1
+  }
+
+  def "@IgnoreIf provides condition access to Specification instance fields"() {
+    when:
+    def result = runner.runWithImports("""
+class Foo extends Specification {
+  static int staticValue
+  int value
+
+  def setup() {
+    value = staticValue
+  }
+
+  @IgnoreIf({ instance.value == 2 })
+  def "bar #input"() {
+    staticValue = input
+
+    expect:
+    true
+
+    where:
+    input << [1, 2, 3]
+  }
+}
+    """)
+
+    then:
+    result.testsStartedCount == 4
+    result.testsSucceededCount == 3
+    result.testsAbortedCount == 1
+  }
+
+  def "@IgnoreIf provides condition access to static Specification fields"() {
+    when:
+    def result = runner.runWithImports("""
+class Foo extends Specification {
+  static int value = 1
+
+  @IgnoreIf({ value == 1 })
+  def "bar"() {
+    expect:
+    false
+  }
+
+  @IgnoreIf({ value != 1 })
+  def "baz"() {
+    expect:
+    true
+  }
+}
+    """)
+
+    then:
+    result.testsStartedCount == 1
+    result.testsSkippedCount == 1
+    result.testsSucceededCount == 1
+    result.testsFailedCount == 0
   }
 }

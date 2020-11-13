@@ -17,10 +17,14 @@ include::extensions.adoc[leveloffset=+1]
 
 include::utilities.adoc[leveloffset=+1]
 
+include::parallel_execution.adoc[leveloffset=+1]
+
 include::modules.adoc[leveloffset=+1]
 
 include::release_notes.adoc[leveloffset=+1]
 
 include::migration_guide.adoc[leveloffset=+1]
+
+include::faq.adoc[leveloffset=+1]
 
 include::known_issues.adoc[leveloffset=+1]

@@ -16,16 +16,14 @@
 
 package spock.lang;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 
 import groovy.lang.Closure;
 
 import org.spockframework.runtime.extension.ExtensionAnnotation;
 import org.spockframework.runtime.extension.builtin.PreconditionContext;
 import org.spockframework.runtime.extension.builtin.RequiresExtension;
+import org.spockframework.util.Beta;
 
 /**
  * Ignores the annotated spec, feature or selected iterations unless the given condition holds.
@@ -48,6 +46,17 @@ import org.spockframework.runtime.extension.builtin.RequiresExtension;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE, ElementType.METHOD})
 @ExtensionAnnotation(RequiresExtension.class)
+@Repeatable(Requires.Container.class)
 public @interface Requires {
   Class<? extends Closure> value();
+
+  /**
+   * @since 2.0
+   */
+  @Beta
+  @Retention(RetentionPolicy.RUNTIME)
+  @Target({ElementType.TYPE, ElementType.METHOD})
+  @interface Container {
+    Requires[] value();
+  }
 }

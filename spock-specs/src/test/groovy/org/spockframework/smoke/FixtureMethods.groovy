@@ -18,9 +18,11 @@ package org.spockframework.smoke
 
 import org.spockframework.EmbeddedSpecification
 import org.spockframework.compiler.InvalidSpecCompileException
+import spock.lang.*
 
-import spock.lang.Issue
+import static org.spockframework.runtime.model.parallel.ExecutionMode.SAME_THREAD
 
+@Execution(SAME_THREAD)
 class FixtureMethods extends EmbeddedSpecification {
   static List log
 

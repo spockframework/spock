@@ -33,17 +33,21 @@ public class RunContext implements EngineExecutionContext {
   private final File spockUserHome;
   private final DelegatingScript configurationScript;
   private final List<Class<?>> globalExtensionClasses;
+  private final List<Class<?>> globalConfigClasses;
   private final GlobalExtensionRegistry globalExtensionRegistry;
 
   private final IObjectRenderer<Object> diffedObjectRenderer = createDiffedObjectRenderer();
 
   private RunContext(String name, File spockUserHome,
-      @Nullable DelegatingScript configurationScript, List<Class<?>> globalExtensionClasses) {
+                     @Nullable DelegatingScript configurationScript,
+                     List<Class<?>> globalExtensionClasses,
+                     List<Class<?>> globalConfigClasses) {
     this.name = name;
     this.spockUserHome = spockUserHome;
     this.configurationScript = configurationScript;
     this.globalExtensionClasses = globalExtensionClasses;
-    globalExtensionRegistry = new GlobalExtensionRegistry(globalExtensionClasses, Collections.singletonList(new RunnerConfiguration()));
+    this.globalConfigClasses = globalConfigClasses;
+    globalExtensionRegistry = new GlobalExtensionRegistry(globalExtensionClasses, globalConfigClasses);
   }
 
   private void start() {
@@ -76,7 +80,7 @@ public class RunContext implements EngineExecutionContext {
 
   public PlatformParameterizedSpecRunner createSpecRunner(SpecInfo spec) {
     return new PlatformParameterizedSpecRunner(
-        new MasterRunSupervisor(spec, createStackTraceFilter(spec), diffedObjectRenderer));
+      new MasterRunSupervisor(spec, createStackTraceFilter(spec), diffedObjectRenderer));
   }
 
   @Nullable
@@ -122,13 +126,19 @@ public class RunContext implements EngineExecutionContext {
   }
 
   public static <T, U extends Throwable> T withNewContext(String name, File spockUserHome,
-      @Nullable DelegatingScript configurationScript,
-      List<Class<?>> extensionClasses, boolean inheritParentExtensions,
-      IThrowableFunction<RunContext, T, U> command) throws U {
+                                                          @Nullable DelegatingScript configurationScript,
+                                                          List<Class<?>> extensionClasses,
+                                                          List<Class<?>> configClasses,
+                                                          boolean inheritParentExtensions,
+                                                          IThrowableFunction<RunContext, T, U> command) throws U {
     List<Class<?>> allExtensionClasses = new ArrayList<>(extensionClasses);
-    if (inheritParentExtensions) allExtensionClasses.addAll(getCurrentExtensions());
+    List<Class<?>> allConfigClasses = new ArrayList<>(configClasses);
+    if (inheritParentExtensions) {
+      allExtensionClasses.addAll(getCurrentExtensions());
+      allConfigClasses.addAll(getCurrentConfigs());
+    }
 
-    RunContext context = new RunContext(name, spockUserHome, configurationScript, allExtensionClasses);
+    RunContext context = new RunContext(name, spockUserHome, configurationScript, allExtensionClasses, allConfigClasses);
     Deque<RunContext> contextStack = contextStacks.get();
     contextStack.addFirst(context);
     try {
@@ -148,12 +158,8 @@ public class RunContext implements EngineExecutionContext {
       contextStack.addFirst(context);
       final RunContext bottomContext = context;
       try {
-        Runtime.getRuntime().addShutdownHook(new Thread("org.spockframework.runtime.RunContext.stop()") {
-          @Override
-          public void run() {
-            bottomContext.stop();
-          }
-        });
+        Runtime.getRuntime().addShutdownHook(
+          new Thread(bottomContext::stop, "org.spockframework.runtime.RunContext.stop()"));
       } catch (AccessControlException ignored) {
         // GAE doesn't support creating a new thread
       }
@@ -168,6 +174,12 @@ public class RunContext implements EngineExecutionContext {
     return context.globalExtensionClasses;
   }
 
+  private static List<Class<?>> getCurrentConfigs() {
+    RunContext context = contextStacks.get().peek();
+    if (context == null) return Collections.emptyList();
+    return context.globalConfigClasses;
+  }
+
   // This context will stay around until the thread dies.
   // It would be more accurate to remove the context once the test run
   // has finished, but the JUnit Runner SPI doesn't provide an adequate hook.
@@ -176,7 +188,9 @@ public class RunContext implements EngineExecutionContext {
   static RunContext createBottomContext() {
     File spockUserHome = SpockUserHomeUtil.getSpockUserHome();
     DelegatingScript script = new ConfigurationScriptLoader(spockUserHome).loadAutoDetectedScript();
-    List<Class<?>> classes = new ExtensionClassesLoader().loadClassesFromDefaultLocation();
-    return new RunContext("default", spockUserHome, script, classes);
+    ExtensionClassesLoader extensionClassesLoader = new ExtensionClassesLoader();
+    List<Class<?>> classes = extensionClassesLoader.loadExtensionClassesFromDefaultLocation();
+    List<Class<?>> configs = extensionClassesLoader.loadConfigClassesFromDefaultLocation();
+    return new RunContext("default", spockUserHome, script, classes, configs);
   }
 }

@@ -1,0 +1,2 @@
+spock.config.RunnerConfiguration
+org.spockframework.tempdir.TempDirConfiguration

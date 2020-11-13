@@ -207,26 +207,24 @@ public class ExpressionReplacingVisitorSupport extends StatementReplacingVisitor
   }
 
   @Override
-  @SuppressWarnings("unchecked")
   public void visitTupleExpression(TupleExpression expr) {
     replaceAllExprs(expr.getExpressions());
   }
 
   @Override
-  @SuppressWarnings("unchecked")
   public void visitListExpression(ListExpression expr) {
     replaceAllExprs(expr.getExpressions());
   }
 
   @Override
-  @SuppressWarnings("unchecked")
   public void visitArrayExpression(ArrayExpression expr) {
     replaceAllExprs(expr.getExpressions());
-    replaceAllExprs(expr.getSizeExpression());
+    if (expr.getSizeExpression() != null) {
+      replaceAllExprs(expr.getSizeExpression());
+    }
   }
 
   @Override
-  @SuppressWarnings("unchecked")
   public void visitMapExpression(MapExpression expr) {
     replaceAllExprs(expr.getMapEntryExpressions());
 

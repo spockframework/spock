@@ -16,7 +16,7 @@
 
 package org.spockframework.guice;
 
-import org.spockframework.runtime.extension.AbstractAnnotationDrivenExtension;
+import org.spockframework.runtime.extension.IAnnotationDrivenExtension;
 import org.spockframework.runtime.model.SpecInfo;
 import spock.guice.UseModules;
 
@@ -24,12 +24,16 @@ import java.util.*;
 
 import com.google.inject.Module;
 
-public class GuiceExtension extends AbstractAnnotationDrivenExtension<UseModules> {
+public class GuiceExtension implements IAnnotationDrivenExtension<UseModules> {
   private final Set<Class<? extends Module>> moduleClasses = new LinkedHashSet<>();
 
   @Override
-  public void visitSpecAnnotation(UseModules useModules, SpecInfo spec) {
-    moduleClasses.addAll(Arrays.asList(useModules.value()));
+  public void visitSpecAnnotations(List<UseModules> useModules, SpecInfo spec) {
+    useModules
+      .stream()
+      .map(UseModules::value)
+      .flatMap(Arrays::stream)
+      .forEach(moduleClasses::add);
   }
 
   @Override

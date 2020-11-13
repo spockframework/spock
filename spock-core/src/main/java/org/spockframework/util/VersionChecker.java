@@ -14,16 +14,38 @@
 
 package org.spockframework.util;
 
-public class VersionChecker {
-  private static final boolean compatibleGroovyVersion =
-      SpockReleaseInfo.isCompatibleGroovyVersion(GroovyReleaseInfo.getVersion());
+import static java.lang.String.format;
 
-  public static void checkGroovyVersion(String whoIsChecking) {
-    if (!compatibleGroovyVersion) throw new IncompatibleGroovyVersionException(String.format(
-"The Spock %s cannot execute because Spock %s is not compatible with Groovy %s. For more information, see http://docs.spockframework.org\n" +
-"Spock artifact: %s\n" +
-"Groovy artifact: %s",
-        whoIsChecking, SpockReleaseInfo.getVersion(), GroovyReleaseInfo.getVersion(),
-        SpockReleaseInfo.getArtifactPath(), GroovyReleaseInfo.getArtifactPath()));
+public class VersionChecker {
+  //visibility for testing
+  static final String DISABLE_GROOVY_VERSION_CHECK_PROPERTY_NAME = "spock.iKnowWhatImDoing.disableGroovyVersionCheck";
+
+  private static final boolean compatibleGroovyVersion = SpockReleaseInfo.isCompatibleGroovyVersion(GroovyReleaseInfo.getVersion());
+
+  public void checkGroovyVersion(String whoIsChecking) {
+    if (!isCompatibleGroovyVersion()) {
+      if (isVersionCheckDisabled()) {
+        System.err.println(format("Executing Spock %s with NOT compatible Groovy version %s due to set %s system property. " +
+          "This is unsupported and may result in weird runtime errors!", SpockReleaseInfo.getVersion(),
+          GroovyReleaseInfo.getVersion(), DISABLE_GROOVY_VERSION_CHECK_PROPERTY_NAME));
+      } else {
+        throw new IncompatibleGroovyVersionException(format(
+        "The Spock %s cannot execute because Spock %s is not compatible with Groovy %s. For more information (including enforce mode), " +
+        "see http://docs.spockframework.org (section 'Known Issues').\n" +
+        "Spock artifact: %s\n" +
+        "Groovy artifact: %s",
+                whoIsChecking, SpockReleaseInfo.getVersion(), GroovyReleaseInfo.getVersion(),
+                SpockReleaseInfo.getArtifactPath(), GroovyReleaseInfo.getArtifactPath()));
+      }
+    }
+  }
+
+  //visibility for testing
+  boolean isCompatibleGroovyVersion() {
+    return compatibleGroovyVersion;
+  }
+
+  private boolean isVersionCheckDisabled() {
+    return "true".equals(System.getProperty(DISABLE_GROOVY_VERSION_CHECK_PROPERTY_NAME));
   }
 }

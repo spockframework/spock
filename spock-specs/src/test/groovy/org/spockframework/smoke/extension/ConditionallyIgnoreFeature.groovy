@@ -16,8 +16,11 @@
 
 package org.spockframework.smoke.extension
 
+import org.spockframework.runtime.model.parallel.ExecutionMode
+
 import spock.lang.*
 
+@Execution(ExecutionMode.SAME_THREAD)
 class ConditionallyIgnoreFeature extends Specification {
   @Shared log = []
 

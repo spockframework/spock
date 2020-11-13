@@ -16,29 +16,45 @@
 
 package org.spockframework.runtime.extension.builtin;
 
-import org.spockframework.runtime.extension.AbstractAnnotationDrivenExtension;
-import org.spockframework.runtime.model.*;
+import org.spockframework.runtime.extension.IAnnotationDrivenExtension;
+import org.spockframework.runtime.model.FeatureInfo;
+import org.spockframework.runtime.model.IInterceptable;
+import org.spockframework.runtime.model.MethodInfo;
+import org.spockframework.runtime.model.SpecInfo;
+import org.spockframework.runtime.model.parallel.ExecutionMode;
 import spock.util.mop.Use;
 
 import java.util.Arrays;
+import java.util.List;
 
-public class UseExtension extends AbstractAnnotationDrivenExtension<Use> {
+import static java.util.stream.Collectors.toSet;
+
+public class UseExtension implements IAnnotationDrivenExtension<Use> {
   @Override
-  public void visitSpecAnnotation(Use annotation, SpecInfo spec) {
-    addInterceptor(annotation, spec.getBottomSpec());
+  public void visitSpecAnnotations(List<Use> annotations, SpecInfo spec) {
+    addInterceptor(annotations, spec.getBottomSpec());
+
+    // Disable parallel child execution for category tests
+    spec.setChildExecutionMode(ExecutionMode.SAME_THREAD);
   }
 
   @Override
-  public void visitFeatureAnnotation(Use annotation, FeatureInfo feature) {
-    addInterceptor(annotation, feature.getFeatureMethod());
+  public void visitFeatureAnnotations(List<Use> annotations, FeatureInfo feature) {
+    addInterceptor(annotations, feature.getFeatureMethod());
+    feature.setExecutionMode(ExecutionMode.SAME_THREAD);
   }
 
   @Override
-  public void visitFixtureAnnotation(Use annotation, MethodInfo fixtureMethod) {
-    addInterceptor(annotation, fixtureMethod);
+  public void visitFixtureAnnotations(List<Use> annotations, MethodInfo fixtureMethod) {
+    addInterceptor(annotations, fixtureMethod);
   }
 
-  private void addInterceptor(Use annotation, IInterceptable interceptable) {
-    interceptable.addInterceptor(new UseInterceptor(Arrays.asList(annotation.value())));
+  private void addInterceptor(List<Use> annotations, IInterceptable interceptable) {
+    interceptable.addInterceptor(new UseInterceptor(
+      annotations
+        .stream()
+        .map(Use::value)
+        .flatMap(Arrays::stream)
+        .collect(toSet())));
   }
 }

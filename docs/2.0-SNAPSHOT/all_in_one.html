@@ -5205,7 +5205,7 @@ Certain <a href="#extensions">extensions</a> also set execution modes when they 
 </div>
 <div id="figure-execution-hierarchy-same-thread" class="imageblock">
 <div class="content">
-<img src="images/execution-hierarchy-same-thread.svg" alt="execution hierarchy same thread" width="305" height="324">
+<img src="images/execution-hierarchy-same-thread.svg" alt="execution hierarchy same thread" width="300" height="324">
 </div>
 <div class="title">Figure 7. Single threaded execution</div>
 </div>
@@ -5214,7 +5214,7 @@ Certain <a href="#extensions">extensions</a> also set execution modes when they 
 </div>
 <div id="figure-execution-hierarchy-concurrent-sequential-execution" class="imageblock">
 <div class="content">
-<img src="images/execution-hierarchy-concurrent-sequential-execution.svg" alt="execution hierarchy concurrent sequential execution" width="305" height="324">
+<img src="images/execution-hierarchy-concurrent-sequential-execution.svg" alt="execution hierarchy concurrent sequential execution" width="300" height="324">
 </div>
 <div class="title">Figure 8. Execution with <code>CONCURRENT</code> Specifications, <code>SAME_THREAD</code></div>
 </div>
@@ -5223,7 +5223,7 @@ Certain <a href="#extensions">extensions</a> also set execution modes when they 
 </div>
 <div id="figure-execution-hierarchy-sequential-concurrent-execution" class="imageblock">
 <div class="content">
-<img src="images/execution-hierarchy-sequential-concurrent-execution.svg" alt="execution hierarchy sequential concurrent execution" width="305" height="324">
+<img src="images/execution-hierarchy-sequential-concurrent-execution.svg" alt="execution hierarchy sequential concurrent execution" width="300" height="324">
 </div>
 <div class="title">Figure 9. Execution with <code>SAME_THREAD</code> Specifications, <code>CONCURRENT</code> Features</div>
 </div>
@@ -5233,7 +5233,7 @@ The features inside a specification will run concurrently.</p>
 </div>
 <div id="figure-execution-hierarchy-concurrent-concurrent-execution" class="imageblock">
 <div class="content">
-<img src="images/execution-hierarchy-concurrent-concurrent-execution.svg" alt="execution hierarchy concurrent concurrent execution" width="305" height="324">
+<img src="images/execution-hierarchy-concurrent-concurrent-execution.svg" alt="execution hierarchy concurrent concurrent execution" width="300" height="324">
 </div>
 <div class="title">Figure 10. Execution with <code>CONCURRENT</code> Specifications, <code>CONCURRENT</code> Features</div>
 </div>
@@ -5263,7 +5263,7 @@ If you invert the values <code>SAME_THREAD</code> and <code>CONCURRENT</code> in
 </div>
 <div id="figure-execution-hierarchy-inheritance-spec-execution" class="imageblock">
 <div class="content">
-<img src="images/execution-hierarchy-inheritance-spec-execution.svg" alt="execution hierarchy inheritance spec execution" width="369" height="338">
+<img src="images/execution-hierarchy-inheritance-spec-execution.svg" alt="execution hierarchy inheritance spec execution" width="364" height="338">
 </div>
 <div class="title">Figure 12. Execution with <code>SAME_THREAD</code> Specifications, <code>SAME_THREAD</code> Features and explicit <code>@Execution</code> on a Specification</div>
 </div>
@@ -5273,13 +5273,13 @@ The features execute concurrently since they inherit the explicit execution mode
 </div>
 <div id="figure-execution-hierarchy-inheritance-spec-feature-execution" class="imageblock">
 <div class="content">
-<img src="images/execution-hierarchy-inheritance-spec-feature-execution.svg" alt="execution hierarchy inheritance spec feature execution" width="440" height="352">
+<img src="images/execution-hierarchy-inheritance-spec-feature-execution.svg" alt="execution hierarchy inheritance spec feature execution" width="438" height="352">
 </div>
 <div class="title">Figure 13. Execution with <code>SAME_THREAD</code> Specifications, <code>SAME_THREAD</code> Features and explicit <code>@Execution</code> on Features and Specifications</div>
 </div>
 <div class="paragraph">
 <p><a href="#figure-execution-hierarchy-inheritance-spec-feature-execution">Figure 13</a> showcases the combined application of <code>@Execution</code> on a specification and some of its features.
-As in the previous example the specification and its features will execute concurrently except <code>TestB1</code> since it has its own explicit execution mode set.</p>
+As in the previous example the specification and its features will execute concurrently except <code>testB1</code> since it has its own explicit execution mode set.</p>
 </div>
 </div>
 </div>
@@ -5336,13 +5336,13 @@ However, if only <code>READ</code> locks are used, then it makes a difference wh
 </div>
 <div id="figure-lock-inherit-spec" class="imageblock">
 <div class="content">
-<img src="images/lock-inherit-spec.svg" alt="lock inherit spec" width="350" height="338">
+<img src="images/lock-inherit-spec.svg" alt="lock inherit spec" width="345" height="338">
 </div>
 <div class="title">Figure 15. Locks are passed on from the spec to the features</div>
 </div>
 <div id="figure-lock-inherit-iterate-feature" class="imageblock">
 <div class="content">
-<img src="images/lock-inherit-iterate-feature.svg" alt="lock inherit iterate feature" width="348" height="338">
+<img src="images/lock-inherit-iterate-feature.svg" alt="lock inherit iterate feature" width="344" height="338">
 </div>
 <div class="title">Figure 16. Locks on data driven features</div>
 </div>
@@ -5354,7 +5354,7 @@ As mentioned before, you will only notice a real difference if you are using <co
 </div>
 <div id="figure-lock-inherit-lock-children" class="imageblock">
 <div class="content">
-<img src="images/lock-inherit-lock-children.svg" alt="lock inherit lock children" width="421" height="338">
+<img src="images/lock-inherit-lock-children.svg" alt="lock inherit lock children" width="418" height="338">
 </div>
 <div class="title">Figure 17. Locks on children</div>
 </div>
@@ -5393,7 +5393,7 @@ you might want to consider splitting the spec into <code>@Isolated</code> and no
 </div>
 <div id="figure-isolated" class="imageblock">
 <div class="content">
-<img src="images/isolated.svg" alt="isolated" width="317" height="324">
+<img src="images/isolated.svg" alt="isolated" width="312" height="324">
 </div>
 <div class="title">Figure 20. <code>@Isolated</code> execution</div>
 </div>
@@ -8433,7 +8433,7 @@ This is due to how groovy implements traits and AST transformations.</p>
 <div id="footer">
 <div id="footer-text">
 Version 2.0-SNAPSHOT<br>
-Last updated 2020-11-19 17:51:13 UTC
+Last updated 2020-11-23 13:58:00 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./coderay-asciidoctor.css">

@@ -166,13 +166,13 @@ wbsDiagram {
 skinparam shadowing false
 * SpockEngine
 ** SpecA
-*** TestA1
-*** TestA2
+*** testA1
+*** testA2
 ** SpecB
-*** TestB1
-*** TestB2
-**** TestB2[1]
-**** TestB2[2]
+*** testB1
+*** testB2
+**** testB2[1]
+**** testB2[2]
 @endwbs
 ....
 
@@ -197,13 +197,13 @@ wbsDiagram {
 skinparam shadowing false
 * SpockEngine
 ** SpecA
-*** TestA1
-*** TestA2
+*** testA1
+*** testA2
 ** SpecB
-*** TestB1
-*** TestB2
-**** TestB2[1]
-**** TestB2[2]
+*** testB1
+*** testB2
+**** testB2[1]
+**** testB2[2]
 @endwbs
 ....
 
@@ -233,13 +233,13 @@ wbsDiagram {
 skinparam shadowing false
 * SpockEngine
 ** SpecA
-*** TestA1
-*** TestA2
+*** testA1
+*** testA2
 ** SpecB
-*** TestB1
-*** TestB2
-**** TestB2[1]
-**** TestB2[2]
+*** testB1
+*** testB2
+**** testB2[1]
+**** testB2[2]
 @endwbs
 ....
 
@@ -274,13 +274,13 @@ wbsDiagram {
 skinparam shadowing false
 * SpockEngine
 ** SpecA
-*** TestA1
-*** TestA2
+*** testA1
+*** testA2
 ** SpecB
-*** TestB1
-*** TestB2
-**** TestB2[1]
-**** TestB2[2]
+*** testB1
+*** testB2
+**** testB2[1]
+**** testB2[2]
 @endwbs
 ....
 
@@ -313,13 +313,13 @@ wbsDiagram {
 skinparam shadowing false
 * SpockEngine
 ** SpecA
-*** TestA1
-*** @Execution(CONCURRENT)\nTestA2 <<concurrent>>
+*** testA1
+*** @Execution(CONCURRENT)\ntestA2 <<concurrent>>
 ** SpecB
-*** TestB1
-*** @Execution(CONCURRENT)\nTestB2 <<concurrent>>
-**** TestB2[1]
-**** TestB2[2]
+*** testB1
+*** @Execution(CONCURRENT)\ntestB2 <<concurrent>>
+**** testB2[1]
+**** testB2[2]
 @endwbs
 ....
 
@@ -342,13 +342,13 @@ wbsDiagram {
 skinparam shadowing false
 * SpockEngine
 ** SpecA
-*** TestA1
-*** TestA2
+*** testA1
+*** testA2
 ** @Execution(CONCURRENT)\nSpecB  <<concurrent>>
-*** TestB1
-*** TestB2
-**** TestB2[1]
-**** TestB2[2]
+*** testB1
+*** testB2
+**** testB2[1]
+**** testB2[2]
 @endwbs
 ....
 
@@ -376,18 +376,18 @@ wbsDiagram {
 skinparam shadowing false
 * SpockEngine
 ** SpecA
-*** TestA1
-*** TestA2
+*** testA1
+*** testA2
 ** @Execution(CONCURRENT)\nSpecB  <<concurrent>>
-*** @Execution(SAME_THREAD)\nTestB1 <<samethread>>
-*** TestB2
-**** TestB2[1]
-**** TestB2[2]
+*** @Execution(SAME_THREAD)\ntestB1 <<samethread>>
+*** testB2
+**** testB2[1]
+**** testB2[2]
 @endwbs
 ....
 
 <<figure-execution-hierarchy-inheritance-spec-feature-execution>> showcases the combined application of `@Execution` on a specification and some of its features.
-As in the previous example the specification and its features will execute concurrently except `TestB1` since it has its own explicit execution mode set.
+As in the previous example the specification and its features will execute concurrently except `testB1` since it has its own explicit execution mode set.
 
 == Resource Locks
 
@@ -437,13 +437,13 @@ wbsDiagram {
 skinparam shadowing false
 * SpockEngine
 ** SpecA
-*** TestA1
-*** @ResourceLock("R")\nTestA2 <<write_lock>>
+*** testA1
+*** @ResourceLock("R")\ntestA2 <<write_lock>>
 ** SpecB
-*** @ResourceLock("R")\nTestB1 <<write_lock>>
-*** TestB2
-**** TestB2[1]
-**** TestB2[2]
+*** @ResourceLock("R")\ntestB1 <<write_lock>>
+*** testB2
+**** testB2[1]
+**** testB2[2]
 @endwbs
 ....
 
@@ -487,13 +487,13 @@ wbsDiagram {
 skinparam shadowing false
 * SpockEngine
 ** SpecA
-*** TestA1
-*** TestA2
+*** testA1
+*** testA2
 ** @ResourceLock("R")\nSpecB <<write_lock>>
-*** TestB1 <<samethread>>
-*** TestB2 <<samethread>>
-**** TestB2[1] <<samethread>>
-**** TestB2[2] <<samethread>>
+*** testB1 <<samethread>>
+*** testB2 <<samethread>>
+**** testB2[1] <<samethread>>
+**** testB2[2] <<samethread>>
 @endwbs
 ....
 
@@ -528,13 +528,13 @@ wbsDiagram {
 skinparam shadowing false
 * SpockEngine
 ** SpecA
-*** TestA1
-*** TestA2
+*** testA1
+*** testA2
 ** SpecB
-*** TestB1
-*** @ResourceLock("R")\nTestB2 <<write_lock>>
-**** TestB2[1] <<samethread>>
-**** TestB2[2] <<samethread>>
+*** testB1
+*** @ResourceLock("R")\ntestB2 <<write_lock>>
+**** testB2[1] <<samethread>>
+**** testB2[2] <<samethread>>
 @endwbs
 ....
 
@@ -574,13 +574,13 @@ wbsDiagram {
 skinparam shadowing false
 * SpockEngine
 ** @ResourceLock("R")\nSpecA  <<write_lock>>
-*** TestA1 <<samethread>>
-*** TestA2 <<samethread>>
+*** testA1 <<samethread>>
+*** testA2 <<samethread>>
 ** @ResourceLockChildren("R")\nSpecB
-*** TestB1 <<write_lock>>
-*** TestB2 <<write_lock>>
-**** TestB2[1] <<samethread>>
-**** TestB2[2] <<samethread>>
+*** testB1 <<write_lock>>
+*** testB2 <<write_lock>>
+**** testB2[1] <<samethread>>
+**** testB2[2] <<samethread>>
 @endwbs
 ....
 
@@ -622,8 +622,8 @@ wbsDiagram {
 skinparam shadowing false
 * SpockEngine
 ** @ResourceLock("S")\nSpecA <<write_lock>>
-*** @ResourceLock("A")\nTestA1 <<write_lock>>
-*** @ResourceLock("B")\nTestA2 <<write_lock>>
+*** @ResourceLock("A")\ntestA1 <<write_lock>>
+*** @ResourceLock("B")\ntestA2 <<write_lock>>
 @endwbs
 ....
 
@@ -659,8 +659,8 @@ wbsDiagram {
 skinparam shadowing false
 * SpockEngine
 ** @ResourceLock("A")\n@ResourceLock("B")\n@ResourceLock("S")\nSpecA <<write_lock>>
-*** TestA1 <<samethread>>
-*** TestA2 <<samethread>>
+*** testA1 <<samethread>>
+*** testA2 <<samethread>>
 @endwbs
 ....
 
@@ -703,13 +703,13 @@ wbsDiagram {
 skinparam shadowing false
 * SpockEngine
 ** @Isolated\nSpecA  <<isolated>>
-*** TestA1
-*** TestA2
+*** testA1
+*** testA2
 ** SpecB
-*** TestB1
-*** TestB2
-**** TestB2[1]
-**** TestB2[2]
+*** testB1
+*** testB2
+**** testB2[1]
+**** testB2[2]
 @endwbs
 ....
 

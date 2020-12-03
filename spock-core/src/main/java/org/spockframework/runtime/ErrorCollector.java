@@ -1,35 +1,29 @@
 package org.spockframework.runtime;
 
+import org.opentest4j.MultipleFailuresError;
+
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import org.opentest4j.MultipleFailuresError;
-
 public class ErrorCollector {
-  private final boolean errorCollectionEnabled;
-
   private final List<Throwable> throwables = new CopyOnWriteArrayList<>();
 
-  public ErrorCollector(boolean enabled) {
-    errorCollectionEnabled = enabled;
-  }
-
-
   public <T extends Throwable> void collectOrThrow(T error) throws T {
-    if (errorCollectionEnabled){
-      throwables.add(error);
-    }else {
-      throw error;
-    }
+    throwables.add(error);
   }
 
   public static final String VALIDATE_COLLECTED_ERRORS = "validateCollectedErrors";
 
-  public void validateCollectedErrors() {
-    if (errorCollectionEnabled){
-      if (!throwables.isEmpty()){
-        throw new MultipleFailuresError("",throwables);
-      }
+  public void validateCollectedErrors() throws Throwable {
+    switch (throwables.size()) {
+      case 0:
+        return;
+
+      case 1:
+        throw throwables.get(0);
+
+      default:
+        throw new MultipleFailuresError("", throwables);
     }
   }
 }

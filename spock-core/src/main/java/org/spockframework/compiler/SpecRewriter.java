@@ -313,8 +313,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
       method.getStatements().add(createMockControllerCall(nodeCache.MockController_LeaveScope));
 
     if (methodHasCondition) {
-      defineRecorders(method.getStatements(), false);
-      new RecorderScopeNameRewriter(getAstNodeCache()).visitMethod(method.getAst());
+      defineRecorders(method.getStatements(), false, "");
     }
   }
 
@@ -516,7 +515,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
   }
 
   @Override
-  public void defineRecorders(List<Statement> stats, boolean enableErrorCollector) {
+  public void defineRecorders(List<Statement> stats, boolean enableErrorCollector, String recorderSuffix) {
     // recorder variable needs to be defined in outermost scope,
     // hence we insert it at the beginning of the block
     List<Statement> allStats = new ArrayList<>(stats);
@@ -526,7 +525,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
     stats.add(0,
         new ExpressionStatement(
             new DeclarationExpression(
-                new VariableExpression(SpockNames.VALUE_RECORDER, nodeCache.ValueRecorder),
+                new VariableExpression(SpockNames.VALUE_RECORDER + recorderSuffix, nodeCache.ValueRecorder),
                 Token.newSymbol(Types.ASSIGN, -1, -1),
                 new ConstructorCallExpression(
                     nodeCache.ValueRecorder,
@@ -534,7 +533,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
     stats.add(0,
         new ExpressionStatement(
             new DeclarationExpression(
-                new VariableExpression(SpockNames.ERROR_COLLECTOR, nodeCache.ErrorCollector),
+                new VariableExpression(SpockNames.ERROR_COLLECTOR + recorderSuffix, nodeCache.ErrorCollector),
                 Token.newSymbol(Types.ASSIGN, -1, -1),
                 new ConstructorCallExpression(
                     enableErrorCollector ? nodeCache.ErrorCollector : nodeCache.ErrorRethrower,
@@ -546,7 +545,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
           new BlockStatement(allStats, null),
           new ExpressionStatement(
             createDirectMethodCall(
-              new VariableExpression(SpockNames.ERROR_COLLECTOR),
+              new VariableExpression(SpockNames.ERROR_COLLECTOR + recorderSuffix),
               nodeCache.ErrorCollector_Validate,
               ArgumentListExpression.EMPTY_ARGUMENTS
             ))));

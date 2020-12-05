@@ -1,5 +1,6 @@
 package org.spockframework.smoke
 
+import org.spockframework.EmbeddedSpecification
 import spock.lang.*
 
 import groovy.util.logging.Log
@@ -65,4 +66,32 @@ class RecorderScope extends Specification{
     return sq
   }
 
+}
+
+class RecorderScopeEmbedded extends EmbeddedSpecification {
+  @Issue("https://github.com/spockframework/spock/issues/1232")
+  def "nested conditions without top-level condition"() {
+    when:
+    runner.runSpecBody """
+      def foo() {
+        expect:
+        // there must not be any top-level condition in this test
+        with([1,2]) {
+          it.size() > 0
+          it.each { assert it > 0 }
+        }
+      }
+
+      def nestedAssert() {
+        // there must not be any top-level condition in this test
+        tap {
+          assert 0
+          tap { assert 0 }
+        }
+      }
+    """
+
+    then:
+    noExceptionThrown()
+  }
 }

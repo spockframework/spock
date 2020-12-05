@@ -37,7 +37,7 @@ public interface IRewriteResources {
   Method getCurrentMethod();
   Block getCurrentBlock();
 
-  void defineRecorders(List<Statement> stats, boolean enableErrorCollector);
+  void defineRecorders(List<Statement> stats, boolean enableErrorCollector, String recorderSuffix);
   VariableExpression captureOldValue(Expression oldValue);
   MethodCallExpression getMockInvocationMatcher();
 

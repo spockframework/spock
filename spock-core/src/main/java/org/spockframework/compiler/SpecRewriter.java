@@ -537,18 +537,22 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
                 new VariableExpression(SpockNames.ERROR_COLLECTOR, nodeCache.ErrorCollector),
                 Token.newSymbol(Types.ASSIGN, -1, -1),
                 new ConstructorCallExpression(
-                    nodeCache.ErrorCollector,
-                    new ArgumentListExpression(Collections.<Expression>singletonList(new ConstantExpression(enableErrorCollector, true)))))));
+                    enableErrorCollector ? nodeCache.ErrorCollector : nodeCache.ErrorRethrower,
+                    ArgumentListExpression.EMPTY_ARGUMENTS))));
 
-    stats.add(
-      new TryCatchStatement(
-        new BlockStatement(allStats, null),
-        new ExpressionStatement(
-          createDirectMethodCall(
-            new VariableExpression(SpockNames.ERROR_COLLECTOR),
-            nodeCache.ErrorCollector_Validate,
-            ArgumentListExpression.EMPTY_ARGUMENTS
-          ))));
+    if (enableErrorCollector) {
+      stats.add(
+        new TryCatchStatement(
+          new BlockStatement(allStats, null),
+          new ExpressionStatement(
+            createDirectMethodCall(
+              new VariableExpression(SpockNames.ERROR_COLLECTOR),
+              nodeCache.ErrorCollector_Validate,
+              ArgumentListExpression.EMPTY_ARGUMENTS
+            ))));
+    } else {
+      stats.addAll(allStats);
+    }
   }
 
   @Override

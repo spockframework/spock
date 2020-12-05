@@ -37,6 +37,7 @@ public class AstNodeCache {
   public final ClassNode SpockRuntime = ClassHelper.makeWithoutCaching(SpockRuntime.class);
   public final ClassNode ValueRecorder = ClassHelper.makeWithoutCaching(ValueRecorder.class);
   public final ClassNode ErrorCollector = ClassHelper.makeWithoutCaching(ErrorCollector.class);
+  public final ClassNode ErrorRethrower = ClassHelper.makeWithoutCaching(ErrorRethrower.class);
   public final ClassNode Specification = ClassHelper.makeWithoutCaching(Specification.class);
   public final ClassNode SpecInternals = ClassHelper.makeWithoutCaching(SpecInternals.class);
   public final ClassNode MockController = ClassHelper.makeWithoutCaching(MockController.class);

@@ -42,6 +42,7 @@ import static org.codehaus.groovy.ast.expr.MethodCallExpression.NO_ARGUMENTS;
 public class DeepBlockRewriter extends AbstractDeepBlockRewriter {
   private final IRewriteResources resources;
   private boolean insideInteraction = false;
+  private int interactionClosureDepth = 0;
   private int closureDepth = 0;
 
   public DeepBlockRewriter(IRewriteResources resources) {
@@ -59,7 +60,11 @@ public class DeepBlockRewriter extends AbstractDeepBlockRewriter {
     super.visitAssertStatement(stat);
     conditionFound = true;
     replaceVisitedStatementWith(
-        ConditionRewriter.rewriteExplicitCondition(stat, resources));
+        ConditionRewriter.rewriteExplicitCondition(stat, resources, getRecorderSuffix()));
+  }
+
+  private String getRecorderSuffix() {
+    return closureDepth == 0 ? "" : String.valueOf(closureDepth);
   }
 
   @Override
@@ -115,10 +120,12 @@ public class DeepBlockRewriter extends AbstractDeepBlockRewriter {
 
   @Override
   protected void doVisitClosureExpression(ClosureExpression expr) {
-    if (insideInteraction) closureDepth++;
+    if (insideInteraction) interactionClosureDepth++;
+    closureDepth++;
     super.doVisitClosureExpression(expr);
-    if (conditionFound || groupConditionFound) defineRecorders(expr, groupConditionFound);
-    if (insideInteraction) closureDepth--;
+    if (conditionFound || groupConditionFound) defineRecorders(expr);
+    closureDepth--;
+    if (insideInteraction) interactionClosureDepth--;
   }
 
   @Override
@@ -178,7 +185,7 @@ public class DeepBlockRewriter extends AbstractDeepBlockRewriter {
         || currSpecialMethodCall.isWithCall()
         || currSpecialMethodCall.isConditionBlock()
         || currSpecialMethodCall.isGroupConditionBlock()
-        || (insideInteraction && closureDepth == 1))) {
+        || (insideInteraction && interactionClosureDepth == 1))) {
       return false;
     }
     if (!isImplicitCondition(stat)) return false;
@@ -194,7 +201,7 @@ public class DeepBlockRewriter extends AbstractDeepBlockRewriter {
       replaceObjectExpressionWithCurrentClosure(stat);
     }
 
-    Statement condition = ConditionRewriter.rewriteImplicitCondition(stat, resources);
+    Statement condition = ConditionRewriter.rewriteImplicitCondition(stat, resources, getRecorderSuffix());
     replaceVisitedStatementWith(condition);
     return true;
   }
@@ -273,8 +280,8 @@ public class DeepBlockRewriter extends AbstractDeepBlockRewriter {
     return true;
   }
 
-  private void defineRecorders(ClosureExpression expr, boolean enableErrorCollector) {
-    resources.defineRecorders(AstUtil.getStatements(expr), enableErrorCollector);
+  private void defineRecorders(ClosureExpression expr) {
+    resources.defineRecorders(AstUtil.getStatements(expr), groupConditionFound, getRecorderSuffix());
   }
 
   // Forbid the use of super.foo() in fixture method foo,

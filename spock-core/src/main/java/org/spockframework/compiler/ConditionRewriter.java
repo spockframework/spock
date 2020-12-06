@@ -53,20 +53,28 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> i
 
   private final IRewriteResources resources;
 
+  private final String valueRecorderName;
+
+  private final String errorCollectorName;
+
   private int recordCount = 0;
 
-  private ConditionRewriter(IRewriteResources resources) {
+  private ConditionRewriter(IRewriteResources resources, String recorderSuffix) {
     this.resources = resources;
+    valueRecorderName = SpockNames.VALUE_RECORDER + recorderSuffix;
+    errorCollectorName = SpockNames.ERROR_COLLECTOR + recorderSuffix;
   }
 
-  public static Statement rewriteExplicitCondition(AssertStatement stat, IRewriteResources resources) {
-    ConditionRewriter rewriter = new ConditionRewriter(resources);
+  public static Statement rewriteExplicitCondition(AssertStatement stat, IRewriteResources resources,
+                                                   String recorderSuffix) {
+    ConditionRewriter rewriter = new ConditionRewriter(resources, recorderSuffix);
     Expression message = AstUtil.getAssertionMessage(stat);
     return rewriter.rewriteCondition(stat, stat.getBooleanExpression().getExpression(), message, true);
   }
 
-  public static Statement rewriteImplicitCondition(ExpressionStatement stat, IRewriteResources resources) {
-    ConditionRewriter rewriter = new ConditionRewriter(resources);
+  public static Statement rewriteImplicitCondition(ExpressionStatement stat, IRewriteResources resources,
+                                                   String recorderSuffix) {
+    ConditionRewriter rewriter = new ConditionRewriter(resources, recorderSuffix);
     return rewriter.rewriteCondition(stat, stat.getExpression(), null, false);
   }
 
@@ -497,11 +505,11 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> i
   private Expression record(Expression expr) {
     // replace expr with $spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(recordCount++), <expr>)
     MethodCallExpression result = createDirectMethodCall(
-      new VariableExpression(SpockNames.VALUE_RECORDER),
+      new VariableExpression(valueRecorderName),
       resources.getAstNodeCache().ValueRecorder_Record,
       new ArgumentListExpression(
         createDirectMethodCall(
-          new VariableExpression(SpockNames.VALUE_RECORDER),
+          new VariableExpression(valueRecorderName),
           resources.getAstNodeCache().ValueRecorder_StartRecordingValue,
           new ArgumentListExpression(new ConstantExpression(recordCount++))
         ),
@@ -518,7 +526,7 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> i
 
   private Expression realizeNas(Expression expr) {
     return createDirectMethodCall(
-        new VariableExpression(SpockNames.VALUE_RECORDER),
+        new VariableExpression(valueRecorderName),
         resources.getAstNodeCache().ValueRecorder_RealizeNas,
         new ArgumentListExpression(new ConstantExpression(recordCount), expr));
   }
@@ -553,7 +561,7 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> i
     Expression targetExpr = methodExpr.getObjectExpression();
     if (!(targetExpr instanceof VariableExpression)) return expr;
     VariableExpression var = (VariableExpression)targetExpr;
-    if (!SpockNames.VALUE_RECORDER.equals(var.getName())) return expr;
+    if (!valueRecorderName.equals(var.getName())) return expr;
     if(!ValueRecorder.RECORD.equals(methodExpr.getMethodAsString())) return expr;
     return ((ArgumentListExpression)methodExpr.getArguments()).getExpression(1);
   }
@@ -567,7 +575,7 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> i
     Expression targetExpr = methodExpr.getObjectExpression();
     if (!(targetExpr instanceof VariableExpression)) return -1;
     VariableExpression var = (VariableExpression)targetExpr;
-    if (!SpockNames.VALUE_RECORDER.equals(var.getName())) return -1;
+    if (!valueRecorderName.equals(var.getName())) return -1;
     if(!ValueRecorder.RECORD.equals(methodExpr.getMethodAsString())) return -1;
     Expression startRecordingEpr = ((ArgumentListExpression) methodExpr.getArguments()).getExpression(0);
     if (!(startRecordingEpr instanceof MethodCallExpression)) return -1;
@@ -677,13 +685,13 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> i
                     new ClassExpression(resources.getAstNodeCache().SpockRuntime),
                     resources.getAstNodeCache().SpockRuntime_ConditionFailedWithException,
                     new ArgumentListExpression(Arrays.asList(
-                        new VariableExpression(SpockNames.ERROR_COLLECTOR),
-                        new VariableExpression(SpockNames.VALUE_RECORDER), // recorder
-                        new ConstantExpression(resources.getSourceText(condition)),                                 // text
-                        new ConstantExpression(condition.getLineNumber()),                                          // line
-                        new ConstantExpression(condition.getColumnNumber()),                                        // column
-                        message == null ? ConstantExpression.NULL : message,                                        // message
-                        new VariableExpression("throwable")                                                         // throwable
+                        new VariableExpression(errorCollectorName),
+                      new VariableExpression(valueRecorderName),                      // recorder
+                        new ConstantExpression(resources.getSourceText(condition)),   // text
+                        new ConstantExpression(condition.getLineNumber()),            // line
+                        new ConstantExpression(condition.getColumnNumber()),          // column
+                        message == null ? ConstantExpression.NULL : message,          // message
+                        new VariableExpression("throwable")                           // throwable
                     ))
                 )
             )
@@ -706,8 +714,8 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> i
             new ClassExpression(resources.getAstNodeCache().SpockRuntime),
             resources.getAstNodeCache().SpockRuntime_GroupConditionFailedWithException,
             new ArgumentListExpression(Arrays.<Expression>asList(
-              new VariableExpression(SpockNames.ERROR_COLLECTOR),
-              new VariableExpression("throwable")                                                         // throwable
+              new VariableExpression(errorCollectorName),
+              new VariableExpression("throwable")                                     // throwable
             ))
           )
         )
@@ -724,9 +732,9 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> i
         new ClassExpression(resources.getAstNodeCache().SpockRuntime), method,
         new ArgumentListExpression(args));
 
-    args.add(new VariableExpression(SpockNames.ERROR_COLLECTOR, resources.getAstNodeCache().ErrorCollector));
+    args.add(new VariableExpression(errorCollectorName, resources.getAstNodeCache().ErrorCollector));
     args.add(createDirectMethodCall(
-            new VariableExpression(SpockNames.VALUE_RECORDER),
+            new VariableExpression(valueRecorderName),
             resources.getAstNodeCache().ValueRecorder_Reset,
             ArgumentListExpression.EMPTY_ARGUMENTS));
     args.add(new ConstantExpression(resources.getSourceText(condition)));

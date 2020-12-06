@@ -39,6 +39,31 @@ class VerifyAllSpecification extends EmbeddedSpecification {
     }
   }
 
+  def "verifyAll works with only explicit conditions"() {
+    when:
+    def result = runner.runSpecBody("""
+        def "test1"() {
+          expect:
+          verifyAll{
+            assert 1 == 2
+            assert 3 == 4
+          }
+        }""")
+    then:
+    result.failures.size() == 1
+    with(result.failures[0].exception, MultipleFailuresError) {
+      failures.size() == 2
+      with(failures[0], SpockComparisonFailure) {
+        expected.stringRepresentation.trim() == "2"
+        actual.stringRepresentation.trim() == "1"
+      }
+      with(failures[1], SpockComparisonFailure) {
+        expected.stringRepresentation.trim() == "4"
+        actual.stringRepresentation.trim() == "3"
+      }
+    }
+  }
+
   def "assertion blocks should work as expected (reported only once)"() {
     when:
     def result = runner.runWithImports("""
@@ -105,7 +130,7 @@ class VerifyAllSpecification extends EmbeddedSpecification {
         def "test1"() {
             given:
             Person p = new Person()
-            
+
             expect:
             verifyAll(p){
               name == 'Bob'
@@ -148,7 +173,7 @@ class VerifyAllSpecification extends EmbeddedSpecification {
         def "test1"() {
             given:
             Object p = new Person()
-            
+
             expect:
             verifyAll(p, Person){
               name == 'Bob'

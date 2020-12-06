@@ -324,7 +324,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
 
     DeepBlockRewriter deep = new DeepBlockRewriter(this);
     deep.visit(block);
-    methodHasCondition |= deep.isConditionFound() || deep.isGroupConditionFound();
+    methodHasCondition |= deep.isDeepConditionFound() || deep.isGroupConditionFound();
   }
 
   @Override
@@ -333,7 +333,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
 
     DeepBlockRewriter deep = new DeepBlockRewriter(this);
     deep.visit(block);
-    methodHasCondition |= deep.isConditionFound() || deep.isGroupConditionFound();
+    methodHasCondition |= deep.isDeepConditionFound() || deep.isGroupConditionFound();
 
     if (deep.isExceptionConditionFound()) {
       if (thenBlockChainHasExceptionCondition) {

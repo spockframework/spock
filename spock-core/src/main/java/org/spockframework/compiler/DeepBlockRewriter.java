@@ -58,22 +58,23 @@ public class DeepBlockRewriter extends AbstractDeepBlockRewriter {
   @Override
   public void visitAssertStatement(AssertStatement stat) {
     super.visitAssertStatement(stat);
-    conditionFound = true;
+    conditionFound();
     replaceVisitedStatementWith(
         ConditionRewriter.rewriteExplicitCondition(stat, resources, getRecorderSuffix()));
   }
 
   private String getRecorderSuffix() {
-    return closureDepth == 0 ? "" : String.valueOf(closureDepth);
+    return (!groupConditionFound || (closureDepth == 0)) ? "" : String.valueOf(closureDepth);
   }
 
   @Override
   protected void doVisitExpressionStatement(ExpressionStatement stat) {
     InteractionRewriter rewriter = visitInteractionAwareExpressionStatement(stat);
 
-    boolean handled = (stat == lastSpecialMethodCallStat && !(currSpecialMethodCall.isWithCall() || currSpecialMethodCall.isGroupConditionBlock())) // don't process further
-        || handleInteraction(rewriter, stat)
-        || handleImplicitCondition(stat);
+    if (!pastSpecialMethodCallStats.contains(stat) || currSpecialMethodCall.isWithCall() || currSpecialMethodCall.isGroupConditionBlock()) {
+      boolean handled = handleInteraction(rewriter, stat);
+      if (!handled) handleImplicitCondition(stat);
+    }
   }
 
   private InteractionRewriter visitInteractionAwareExpressionStatement(ExpressionStatement stat) {
@@ -123,7 +124,7 @@ public class DeepBlockRewriter extends AbstractDeepBlockRewriter {
     if (insideInteraction) interactionClosureDepth++;
     closureDepth++;
     super.doVisitClosureExpression(expr);
-    if (conditionFound || groupConditionFound) defineRecorders(expr);
+    if (groupConditionFound) resources.defineRecorders(AstUtil.getStatements(expr), true, getRecorderSuffix());
     closureDepth--;
     if (insideInteraction) interactionClosureDepth--;
   }
@@ -191,8 +192,7 @@ public class DeepBlockRewriter extends AbstractDeepBlockRewriter {
     if (!isImplicitCondition(stat)) return false;
 
     checkIsValidImplicitCondition(stat);
-    conditionFound = true;
-    groupConditionFound = currSpecialMethodCall.isGroupConditionBlock();
+    conditionFound();
 
     if ((currSpecialMethodCall.isWithCall() || currSpecialMethodCall.isGroupConditionBlock())
       && AstUtil.isInvocationWithImplicitThis(stat.getExpression())
@@ -278,10 +278,6 @@ public class DeepBlockRewriter extends AbstractDeepBlockRewriter {
 
     interactionFound = true;
     return true;
-  }
-
-  private void defineRecorders(ClosureExpression expr) {
-    resources.defineRecorders(AstUtil.getStatements(expr), groupConditionFound, getRecorderSuffix());
   }
 
   // Forbid the use of super.foo() in fixture method foo,

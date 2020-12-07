@@ -31,7 +31,7 @@ public abstract class SpockRuntime {
   public static final String VERIFY_CONDITION = "verifyCondition";
 
   // condition can be null too, but not in the sense of "not available"
-  public static void verifyCondition(@Nullable ErrorCollector errorCollector, @Nullable ValueRecorder recorder,
+  public static void verifyCondition(ErrorCollector errorCollector, @Nullable ValueRecorder recorder,
       @Nullable String text, int line, int column, @Nullable Object message, @Nullable Object condition) {
     if (!GroovyRuntimeUtil.isTruthy(condition)) {
       final ConditionNotSatisfiedError conditionNotSatisfiedError = new ConditionNotSatisfiedError(
@@ -42,7 +42,7 @@ public abstract class SpockRuntime {
 
   public static final String CONDITION_FAILED_WITH_EXCEPTION = "conditionFailedWithException";
 
-  public static void conditionFailedWithException(@Nullable ErrorCollector errorCollector, @Nullable ValueRecorder recorder, @Nullable String text, int line, int column, @Nullable Object message, Throwable throwable){
+  public static void conditionFailedWithException(ErrorCollector errorCollector, @Nullable ValueRecorder recorder, @Nullable String text, int line, int column, @Nullable Object message, Throwable throwable){
       if (throwable instanceof SpockAssertionError) {
         final SpockAssertionError spockAssertionError = (SpockAssertionError) throwable;
         errorCollector.collectOrThrow(spockAssertionError); // this is our exception - it already has good message
@@ -67,7 +67,7 @@ public abstract class SpockRuntime {
 
   public static final String GROUP_CONDITION_FAILED_WITH_EXCEPTION = "groupConditionFailedWithException";
 
-  public static void groupConditionFailedWithException(@Nullable ErrorCollector errorCollector, Throwable throwable){
+  public static void groupConditionFailedWithException(ErrorCollector errorCollector, Throwable throwable){
     if (throwable instanceof AssertionError) {
       final AssertionError assertionError = (AssertionError) throwable;
       errorCollector.collectOrThrow(assertionError); // this is our exception - it already has good message
@@ -84,7 +84,7 @@ public abstract class SpockRuntime {
   public static final String VERIFY_METHOD_CONDITION = "verifyMethodCondition";
 
   // method calls with spread-dot operator are not rewritten, hence this method doesn't have to care about spread-dot
-  public static void verifyMethodCondition(@Nullable ErrorCollector errorCollector, @Nullable ValueRecorder recorder, @Nullable String text, int line, int column,
+  public static void verifyMethodCondition(ErrorCollector errorCollector, @Nullable ValueRecorder recorder, @Nullable String text, int line, int column,
       @Nullable Object message, Object target, String method, Object[] args, boolean safe, boolean explicit, int lastVariableNum) {
     MatcherCondition matcherCondition = MatcherCondition.parse(target, method, args, safe);
     if (matcherCondition != null) {
@@ -151,7 +151,7 @@ public abstract class SpockRuntime {
       this.shortSyntax = shortSyntax;
     }
 
-    void verify(@Nullable ErrorCollector errorCollector, @Nullable List<Object> values, @Nullable String text, int line, int column, @Nullable String message) {
+    void verify(ErrorCollector errorCollector, @Nullable List<Object> values, @Nullable String text, int line, int column, @Nullable String message) {
       if (HamcrestFacade.matches(matcher, actual)) return;
 
       if (values != null) {

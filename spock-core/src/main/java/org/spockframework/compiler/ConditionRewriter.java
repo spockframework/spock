@@ -59,22 +59,22 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> i
 
   private int recordCount = 0;
 
-  private ConditionRewriter(IRewriteResources resources, String recorderSuffix) {
+  private ConditionRewriter(IRewriteResources resources, String valueRecorderSuffix, String errorCollectorSuffix) {
     this.resources = resources;
-    valueRecorderName = SpockNames.VALUE_RECORDER + recorderSuffix;
-    errorCollectorName = SpockNames.ERROR_COLLECTOR + recorderSuffix;
+    valueRecorderName = SpockNames.VALUE_RECORDER + valueRecorderSuffix;
+    errorCollectorName = SpockNames.ERROR_COLLECTOR + errorCollectorSuffix;
   }
 
   public static Statement rewriteExplicitCondition(AssertStatement stat, IRewriteResources resources,
-                                                   String recorderSuffix) {
-    ConditionRewriter rewriter = new ConditionRewriter(resources, recorderSuffix);
+                                                   String valueRecorderSuffix, String errorCollectorSuffix) {
+    ConditionRewriter rewriter = new ConditionRewriter(resources, valueRecorderSuffix, errorCollectorSuffix);
     Expression message = AstUtil.getAssertionMessage(stat);
     return rewriter.rewriteCondition(stat, stat.getBooleanExpression().getExpression(), message, true);
   }
 
   public static Statement rewriteImplicitCondition(ExpressionStatement stat, IRewriteResources resources,
-                                                   String recorderSuffix) {
-    ConditionRewriter rewriter = new ConditionRewriter(resources, recorderSuffix);
+                                                   String valueRecorderSuffix, String errorCollectorSuffix) {
+    ConditionRewriter rewriter = new ConditionRewriter(resources, valueRecorderSuffix, errorCollectorSuffix);
     return rewriter.rewriteCondition(stat, stat.getExpression(), null, false);
   }
 
@@ -316,7 +316,6 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> i
   }
 
   @Override
-  @SuppressWarnings("unchecked")
   public void visitListExpression(ListExpression expr) {
     ListExpression conversion =
         new ListExpression(

@@ -27,7 +27,6 @@ import groovy.lang.Closure;
 
 @SuppressWarnings("UnusedDeclaration")
 public abstract class SpecInternals {
-  public static final ErrorCollector $spock_errorCollector = new ErrorRethrower();
   private static final MockUtil MOCK_UTIL = new MockUtil();
   private final ISpecificationContext specificationContext = new SpecificationContext();
 

@@ -543,7 +543,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
         new DeclarationExpression(
           new VariableExpression(SpockNames.ERROR_COLLECTOR, nodeCache.ErrorCollector),
           Token.newSymbol(Types.ASSIGN, -1, -1),
-          new VariableExpression(SpockNames.ERROR_COLLECTOR))));
+          new PropertyExpression(new ClassExpression(nodeCache.ErrorRethrower), "INSTANCE"))));
   }
 
   @Override

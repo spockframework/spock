@@ -30,10 +30,11 @@ public class AbstractDeepBlockRewriter extends StatementReplacingVisitorSupport 
   protected MethodCallExpression currMethodCallExpr;
   protected ClosureExpression currClosure;
   protected ISpecialMethodCall currSpecialMethodCall = NoSpecialMethodCall.INSTANCE;
-  protected Statement lastSpecialMethodCallStat;
+  protected Collection<Statement> pastSpecialMethodCallStats = new HashSet<>();
 
   // following fields are filled in by subclasses
   protected boolean conditionFound;
+  protected boolean deepNonGroupedConditionFound;
   protected boolean groupConditionFound;
   protected boolean interactionFound;
   protected MethodCallExpression foundExceptionCondition;
@@ -42,6 +43,16 @@ public class AbstractDeepBlockRewriter extends StatementReplacingVisitorSupport 
   public AbstractDeepBlockRewriter(Block block, AstNodeCache nodeCache) {
     this.block = block;
     this.nodeCache = nodeCache;
+  }
+
+  protected void conditionFound() {
+    conditionFound = true;
+    groupConditionFound = currSpecialMethodCall.isGroupConditionBlock();
+    deepNonGroupedConditionFound |= !groupConditionFound;
+  }
+
+  public boolean isDeepNonGroupedConditionFound() {
+    return deepNonGroupedConditionFound;
   }
 
   public boolean isConditionFound() {
@@ -113,7 +124,7 @@ public class AbstractDeepBlockRewriter extends StatementReplacingVisitorSupport 
     if (newSpecialMethodCall != null) {
       currSpecialMethodCall = newSpecialMethodCall;
       if (newSpecialMethodCall.isMatch(currExprStat)) {
-        lastSpecialMethodCallStat = currExprStat;
+        pastSpecialMethodCallStats.add(currExprStat);
       }
     }
 

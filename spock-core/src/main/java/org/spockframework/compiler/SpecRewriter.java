@@ -16,19 +16,19 @@
 
 package org.spockframework.compiler;
 
-import org.spockframework.compiler.model.*;
-import org.spockframework.mock.runtime.MockController;
-import org.spockframework.runtime.SpecificationContext;
-import org.spockframework.util.*;
-
-import java.util.*;
-
 import org.codehaus.groovy.ast.*;
 import org.codehaus.groovy.ast.expr.*;
 import org.codehaus.groovy.ast.stmt.*;
 import org.codehaus.groovy.runtime.MetaClassHelper;
-import org.codehaus.groovy.syntax.*;
+import org.codehaus.groovy.syntax.Token;
+import org.codehaus.groovy.syntax.Types;
 import org.objectweb.asm.Opcodes;
+import org.spockframework.compiler.model.*;
+import org.spockframework.util.InternalIdentifiers;
+import org.spockframework.util.ObjectUtil;
+import org.spockframework.util.ReflectionUtil;
+
+import java.util.*;
 
 import static org.spockframework.compiler.AstUtil.createDirectMethodCall;
 
@@ -49,6 +49,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
   private Block block;
 
   private boolean methodHasCondition;
+  private boolean methodHasDeepNonGroupedCondition;
   private boolean movedStatsBackToMethod;
   private boolean thenBlockChainHasExceptionCondition; // reset once per chain of then-blocks
 
@@ -234,6 +235,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
   public void visitMethod(Method method) {
     this.method = method;
     methodHasCondition = false;
+    methodHasDeepNonGroupedCondition = false;
     movedStatsBackToMethod = false;
 
     if (method instanceof FixtureMethod) {
@@ -313,7 +315,10 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
       method.getStatements().add(createMockControllerCall(nodeCache.MockController_LeaveScope));
 
     if (methodHasCondition) {
-      defineRecorders(method.getStatements(), false, "");
+      defineValueRecorder(method.getStatements(), "");
+    }
+    if (methodHasDeepNonGroupedCondition) {
+      defineErrorRethrower(method.getStatements());
     }
   }
 
@@ -324,7 +329,8 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
 
     DeepBlockRewriter deep = new DeepBlockRewriter(this);
     deep.visit(block);
-    methodHasCondition |= deep.isConditionFound() || deep.isGroupConditionFound();
+    methodHasCondition |= deep.isConditionFound();
+    methodHasDeepNonGroupedCondition |= deep.isDeepNonGroupedConditionFound();
   }
 
   @Override
@@ -333,7 +339,8 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
 
     DeepBlockRewriter deep = new DeepBlockRewriter(this);
     deep.visit(block);
-    methodHasCondition |= deep.isConditionFound() || deep.isGroupConditionFound();
+    methodHasCondition |= deep.isConditionFound();
+    methodHasDeepNonGroupedCondition |= deep.isDeepNonGroupedConditionFound();
 
     if (deep.isExceptionConditionFound()) {
       if (thenBlockChainHasExceptionCondition) {
@@ -515,43 +522,56 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
   }
 
   @Override
-  public void defineRecorders(List<Statement> stats, boolean enableErrorCollector, String recorderSuffix) {
+  public void defineValueRecorder(List<Statement> stats, String variableNameSuffix) {
     // recorder variable needs to be defined in outermost scope,
+    // hence we insert it at the beginning of the block
+    stats.add(0,
+        new ExpressionStatement(
+            new DeclarationExpression(
+                new VariableExpression(SpockNames.VALUE_RECORDER + variableNameSuffix, nodeCache.ValueRecorder),
+                Token.newSymbol(Types.ASSIGN, -1, -1),
+                new ConstructorCallExpression(
+                    nodeCache.ValueRecorder,
+                    ArgumentListExpression.EMPTY_ARGUMENTS))));
+  }
+
+  // This is necessary as otherwise within `with(someMap) { ... }` the variable is resolved to `null`,
+  // but having this local variable beats the resolving against the closure delegate.
+  private void defineErrorRethrower(List<Statement> stats) {
+    stats.add(0,
+      new ExpressionStatement(
+        new DeclarationExpression(
+          new VariableExpression(SpockNames.ERROR_COLLECTOR, nodeCache.ErrorCollector),
+          Token.newSymbol(Types.ASSIGN, -1, -1),
+          new PropertyExpression(new ClassExpression(nodeCache.ErrorRethrower), "INSTANCE"))));
+  }
+
+  @Override
+  public void defineErrorCollector(List<Statement> stats, String variableNameSuffix) {
+    // collector variable needs to be defined in outermost scope,
     // hence we insert it at the beginning of the block
     List<Statement> allStats = new ArrayList<>(stats);
 
     stats.clear();
 
-    stats.add(0,
-        new ExpressionStatement(
-            new DeclarationExpression(
-                new VariableExpression(SpockNames.VALUE_RECORDER + recorderSuffix, nodeCache.ValueRecorder),
-                Token.newSymbol(Types.ASSIGN, -1, -1),
-                new ConstructorCallExpression(
-                    nodeCache.ValueRecorder,
-                    ArgumentListExpression.EMPTY_ARGUMENTS))));
-    stats.add(0,
-        new ExpressionStatement(
-            new DeclarationExpression(
-                new VariableExpression(SpockNames.ERROR_COLLECTOR + recorderSuffix, nodeCache.ErrorCollector),
-                Token.newSymbol(Types.ASSIGN, -1, -1),
-                new ConstructorCallExpression(
-                    enableErrorCollector ? nodeCache.ErrorCollector : nodeCache.ErrorRethrower,
-                    ArgumentListExpression.EMPTY_ARGUMENTS))));
+    stats.add(
+      new ExpressionStatement(
+        new DeclarationExpression(
+          new VariableExpression(SpockNames.ERROR_COLLECTOR + variableNameSuffix, nodeCache.ErrorCollector),
+          Token.newSymbol(Types.ASSIGN, -1, -1),
+          new ConstructorCallExpression(
+            nodeCache.ErrorCollector,
+            ArgumentListExpression.EMPTY_ARGUMENTS))));
 
-    if (enableErrorCollector) {
-      stats.add(
-        new TryCatchStatement(
-          new BlockStatement(allStats, null),
-          new ExpressionStatement(
-            createDirectMethodCall(
-              new VariableExpression(SpockNames.ERROR_COLLECTOR + recorderSuffix),
-              nodeCache.ErrorCollector_Validate,
-              ArgumentListExpression.EMPTY_ARGUMENTS
-            ))));
-    } else {
-      stats.addAll(allStats);
-    }
+    stats.add(
+      new TryCatchStatement(
+        new BlockStatement(allStats, null),
+        new ExpressionStatement(
+          createDirectMethodCall(
+            new VariableExpression(SpockNames.ERROR_COLLECTOR + variableNameSuffix),
+            nodeCache.ErrorCollector_Validate,
+            ArgumentListExpression.EMPTY_ARGUMENTS
+          ))));
   }
 
   @Override

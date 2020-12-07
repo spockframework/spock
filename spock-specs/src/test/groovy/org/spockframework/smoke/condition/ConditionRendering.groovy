@@ -850,6 +850,20 @@ ${func.dump()}
     }
   }
 
+  def "nested condition does not disturb rendering of outer condition"() {
+    expect:
+    isRendered """
+!list.every { assert 9 != 8; true }
+||    |
+||    true
+|[1, 2, 3]
+false
+        """, {
+      def list = [1, 2, 3]
+      assert !list.every { assert 9 != 8; true }
+    }
+  }
+
   /*
   def "MapEntryExpression"() {
       // tested as part of testMapExpression

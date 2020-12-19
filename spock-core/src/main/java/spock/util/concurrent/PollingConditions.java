@@ -148,27 +148,33 @@ public class PollingConditions {
    * @throws InterruptedException if evaluation is interrupted
    */
   @ConditionBlock
-  public void within(double seconds, Closure<?> conditions) throws InterruptedException  {
+  public void within(double seconds, Closure<?> conditions) throws InterruptedException {
     long timeoutMillis = toMillis(seconds);
     long start = System.currentTimeMillis();
     long lastAttempt = 0;
-    Thread.sleep(toMillis(initialDelay));
+    // Thread.sleep(0) would yield the processor to higher-priority threads,
+    // which would slow down a polling condition without initial delay unnecessarily
+    if (initialDelay > 0) {
+      Thread.sleep(toMillis(initialDelay));
+    }
 
     long currDelay = toMillis(delay);
     int attempts = 0;
+    long elapsedTime = 0;
+    Throwable testException = null;
 
-    while(true) {
+    while (elapsedTime <= timeoutMillis) {
       try {
-        attempts++;
-        lastAttempt = System.currentTimeMillis();
-        GroovyRuntimeUtil.invokeClosure(conditions);
+        try {
+          GroovyRuntimeUtil.invokeClosure(conditions);
+        } finally {
+          lastAttempt = System.currentTimeMillis();
+          attempts++;
+        }
         return;
       } catch (Throwable e) {
-        long elapsedTime = lastAttempt - start;
-        if (elapsedTime >= timeoutMillis) {
-          String msg = String.format("Condition not satisfied after %1.2f seconds and %d attempts", elapsedTime / 1000d, attempts);
-          throw new SpockTimeoutError(seconds, msg, e);
-        }
+        testException = e;
+        elapsedTime = lastAttempt - start;
         final long timeout = Math.min(currDelay, start + timeoutMillis - System.currentTimeMillis());
         if (timeout > 0) {
           Thread.sleep(timeout);
@@ -176,6 +182,9 @@ public class PollingConditions {
         currDelay *= factor;
       }
     }
+
+    String msg = String.format("Condition not satisfied after %1.2f seconds and %d attempts", elapsedTime / 1000d, attempts);
+    throw new SpockTimeoutError(seconds, msg, testException);
   }
 
   /**

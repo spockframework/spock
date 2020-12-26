@@ -148,18 +148,21 @@ class PollingConditionsSpec extends Specification {
   }
 
   def "correctly handles checks that take longer than given check interval"() {
-    when: "polling condition has a small timeout"
+    given: "polling condition with small timeout"
     def condition = new PollingConditions(timeout: 0.05)
     boolean secondAttempt = false
 
-    then: "if first attempt already takes longer than the timeout, there will be no second one"
+    when: "first attempt already takes longer than the timeout"
     condition.eventually {
       try {
-        assert !secondAttempt
         sleep 100
+        assert secondAttempt
       } finally {
         secondAttempt = true
       }
     }
+
+    then: "there will be no second one"
+    thrown SpockTimeoutError
   }
 }

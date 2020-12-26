@@ -151,9 +151,8 @@ public class PollingConditions {
   public void within(double seconds, Closure<?> conditions) throws InterruptedException {
     long timeoutMillis = toMillis(seconds);
     long start = System.currentTimeMillis();
-    long lastAttempt = 0;
-    // Thread.sleep(0) would yield the processor to higher-priority threads,
-    // which would slow down a polling condition without initial delay unnecessarily
+    // Thread.sleep(0) would yield the processor to higher-priority threads, which would slow down a polling condition
+    // without initial delay unnecessarily.
     if (initialDelay > 0) {
       Thread.sleep(toMillis(initialDelay));
     }
@@ -165,17 +164,16 @@ public class PollingConditions {
 
     while (elapsedTime <= timeoutMillis) {
       try {
-        try {
-          GroovyRuntimeUtil.invokeClosure(conditions);
-        } finally {
-          lastAttempt = System.currentTimeMillis();
-          attempts++;
-        }
+        attempts++;
+        GroovyRuntimeUtil.invokeClosure(conditions);
         return;
-      } catch (Throwable e) {
+      }
+      catch (Throwable e) {
+        elapsedTime = System.currentTimeMillis() - start;
         testException = e;
-        elapsedTime = lastAttempt - start;
         final long sleepMillis = Math.min(currDelay, start + timeoutMillis - System.currentTimeMillis());
+        // Thread.sleep(0) would yield the processor to higher-priority threads, which would slow down the polling
+        // condition unnecessarily. Thread.sleep(negativeValue) would even yield an exception.
         if (sleepMillis > 0) {
           Thread.sleep(sleepMillis);
         }

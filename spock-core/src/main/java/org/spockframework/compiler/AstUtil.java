@@ -300,6 +300,16 @@ public abstract class AstUtil {
     field.setModifiers(modifiers | visibility);
   }
 
+  public static void setFinal(FieldNode field, boolean isFinal) {
+    int modifiers = field.getModifiers();
+    if (isFinal) {
+      modifiers |= Opcodes.ACC_FINAL;
+    } else {
+      modifiers &= ~(Opcodes.ACC_FINAL);
+    }
+    field.setModifiers(modifiers);
+  }
+
   public static boolean isJointCompiled(ClassNode clazz) {
     return clazz.getModule().getUnit().getConfig().getJointCompilationOptions() != null;
   }

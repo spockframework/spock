@@ -175,9 +175,9 @@ public class PollingConditions {
       } catch (Throwable e) {
         testException = e;
         elapsedTime = lastAttempt - start;
-        final long timeout = Math.min(currDelay, start + timeoutMillis - System.currentTimeMillis());
-        if (timeout > 0) {
-          Thread.sleep(timeout);
+        final long sleepMillis = Math.min(currDelay, start + timeoutMillis - System.currentTimeMillis());
+        if (sleepMillis > 0) {
+          Thread.sleep(sleepMillis);
         }
         currDelay *= factor;
       }

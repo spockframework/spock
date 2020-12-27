@@ -1,0 +1,43 @@
+name: 'CI-Builds'
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - '*'
+
+env:
+  ORG_GRADLE_PROJECT_org.gradle.java.installations.auto-download: 'false'
+
+jobs:
+  build-and-verify:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        variant: ['2.5', '3.0']
+        java: ['8', '11', '15']
+    steps:
+      - uses: actions/checkout@v2
+      - name: Cache Gradle wrapper and dependencies
+        uses: actions/cache@v2
+        with:
+          path: |
+            /root/.gradle/caches/
+            /root/.gradle/wrapper/dists
+          key: test-${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle', '**/*.gradle.kts', '**/gradle.properties', 'gradle/**', 'buildSrc/src/main/**') }}
+          restore-keys: |
+            test-${{ runner.os }}-gradle-
+      - name: 'Set up JDK'
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ matrix.java }}
+      - name: 'Build Spock'
+        run: |
+          ./gradlew --no-daemon --no-parallel --version
+          ./gradlew --no-daemon --no-parallel ghActionsBuild -Dvariant=${{ matrix.variant }} --scan --stacktrace
+      - name: 'Upload to Codecov.io'
+        shell: bash
+        run: |
+          bash <(curl -s https://codecov.io/bash)

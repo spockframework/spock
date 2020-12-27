@@ -12,11 +12,15 @@ jobs:
   build-and-verify:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         variant: ['2.5', '3.0']
         java: ['8', '11', '15']
     steps:
       - uses: actions/checkout@v2
+        with:
+          # Codecov needs fetch-depth > 1
+          fetch-depth: 2
       - name: Cache Gradle wrapper and dependencies
         uses: actions/cache@v2
         with:

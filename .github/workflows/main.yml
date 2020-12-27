@@ -1,4 +1,4 @@
-name: 'CI-Builds'
+name: 'CI Builds'
 
 on:
   push:
@@ -7,9 +7,6 @@ on:
   pull_request:
     branches:
       - '*'
-
-env:
-  ORG_GRADLE_PROJECT_org.gradle.java.installations.auto-download: 'false'
 
 jobs:
   build-and-verify:
@@ -36,7 +33,7 @@ jobs:
       - name: 'Build Spock'
         run: |
           ./gradlew --no-daemon --no-parallel --version
-          ./gradlew --no-daemon --no-parallel ghActionsBuild -Dvariant=${{ matrix.variant }} --scan --stacktrace
+          ./gradlew --no-daemon --parallel ghActionsBuild -Dvariant=${{ matrix.variant }} --scan --stacktrace
       - name: 'Upload to Codecov.io'
         shell: bash
         run: |

@@ -53,7 +53,7 @@ jobs:
           ./gradlew --version
       - name: 'Build Spock'
         run: |
-          ./gradlew --no-parallel --scan --stacktrace --warning-mode=all ghActionsBuild "-Dvariant=${{ matrix.variant }}"
+          ./gradlew --no-parallel --scan --stacktrace ghActionsBuild "-Dvariant=${{ matrix.variant }}"
       - name: 'Stop Daemon'
         run: |
           ./gradlew --stop

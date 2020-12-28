@@ -48,10 +48,14 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: ${{ matrix.java }}
-      - name: 'Build Spock'
+      - name: 'Gradle Version'
         run: |
           ./gradlew --version
-          ./gradlew --no-parallel --scan --stacktrace --warning-mode=all ghActionsBuild -Dvariant=${{ matrix.variant }}
+      - name: 'Build Spock'
+        run: |
+          ./gradlew --no-parallel --scan --stacktrace --warning-mode=all ghActionsBuild "-Dvariant=${{ matrix.variant }}"
+      - name: 'Stop Daemon'
+        run: |
           ./gradlew --stop
       - name: 'Upload to Codecov.io'
         shell: bash

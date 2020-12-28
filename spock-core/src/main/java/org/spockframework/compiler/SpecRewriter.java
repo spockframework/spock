@@ -85,7 +85,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
   private void handleSharedField(Field field) {
     changeSharedFieldInternalName(field);
     createSharedFieldGetter(field);
-    if(!field.getAst().isFinal()) {
+    if (!field.getAst().isFinal()) {
       createSharedFieldSetter(field);
     }
     moveSharedFieldInitializer(field);
@@ -268,7 +268,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
     }
     if (field.getAst().getInitialValueExpression() != null) {
       moveInitializer(field, getInitializerMethod(), fieldInitializerCount++);
-    } else if(wasFinal) {
+    } else if (wasFinal) {
       errorReporter.error(field.getAst(),
               "Final field '%s' is not initialized.",
               field.getName());

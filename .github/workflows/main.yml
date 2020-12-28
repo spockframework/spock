@@ -41,9 +41,9 @@ jobs:
           path: |
             ~/.gradle/caches/
             ~/.gradle/wrapper/dists
-          key: test-${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle', '**/*.gradle.kts', '**/gradle.properties', 'gradle/**', 'buildSrc/src/main/**') }}
+          key: test-${{ runner.os }}-variant-${{ matrix.variant }}-gradle-${{ hashFiles('**/*.gradle', '**/*.gradle.kts', '**/gradle.properties', 'gradle/**', 'buildSrc/src/main/**') }}
           restore-keys: |
-            test-${{ runner.os }}-gradle-
+            test-${{ runner.os }}-variant-${{ matrix.variant }}-
       - name: 'Set up JDK'
         uses: actions/setup-java@v1
         with:

@@ -57,11 +57,17 @@ jobs:
 
       # Manually added: build
       # Build both variants, as they have different output directories it should work
-      - name: 'Build Spock Classes'
+      - name: 'Gradle Version'
         run: |
           ./gradlew --version
+      - name: 'Build Spock Classes Variant 2.5'
+        run: |
           ./gradlew --no-parallel --stacktrace testClasses -Dvariant=2.5
+      - name: 'Build Spock Classes Variant 3.0'
+        run: |
           ./gradlew --no-parallel --stacktrace testClasses -Dvariant=3.0
+      - name: 'Stop Daemon'
+        run: |
           ./gradlew --stop
 
       - name: Perform CodeQL Analysis

@@ -253,6 +253,31 @@ if (gradle.startParameter.taskNames == ["travisCiBuild"]) {
   }
 }
 
+if (gradle.startParameter.taskNames == ["ghActionsBuild"]) {
+  gradle.startParameter.taskNames = ["build", "codeCoverageReport"]
+  subprojects {
+    tasks.withType(Test) {
+      maxParallelForks = 2
+    }
+  }
+
+  if (System.getenv("GITHUB_BASE_REF") == null                                // GITHUB_BASE_REF is only set for Pull requests
+          && System.getenv("GITHUB_REF") == "refs/heads/master"
+          && System.getenv("GITHUB_REPOSITORY") == 'spockframework/spock') {
+    if (javaVersion == javaVersions.min()) {
+      gradle.startParameter.taskNames += ["publish"]
+      if (!snapshotVersion) {
+        gradle.startParameter.taskNames += ["tagRelease"]
+      }
+    }
+    if (javaVersion == javaVersions.max()) {
+      if (variant == variants.max()) {
+        gradle.startParameter.taskNames += ["publishJavadoc", "publishDocs"]
+      }
+    }
+  }
+}
+
 if (gradle.startParameter.taskNames == ["shippableCiBuild"]) {
   gradle.startParameter.taskNames = ["clean", "build"] // use clean because whole minion is cached
   task aggregateTestResults(type: Sync) {

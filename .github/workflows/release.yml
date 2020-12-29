@@ -1,0 +1,66 @@
+name: Spock Release
+on:
+  push:
+    tags:
+      - 'spock-*'
+
+jobs:
+  release-spock:
+    runs-on: ${{ matrix.os }}
+    needs: [ 'build-and-verify' ]
+    if: github.event_name == 'push' && github.repository == 'spockframework/spock' && startsWith(github.ref, 'refs/tags/spock-')
+    strategy:
+      matrix:
+        os: [ 'ubuntu-latest' ]
+        variant: [ '2.5', '3.0' ]   # publish needs to be done for both versions
+        java: [ '8' ]               # publish needs the min supported java version
+    steps:
+      - uses: actions/checkout@v2
+      - name: Cache Gradle wrapper and dependencies
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.gradle/caches/
+            ~/.gradle/wrapper/dists
+          key: test-${{ runner.os }}-variant-${{ matrix.variant }}-gradle-${{ hashFiles('**/*.gradle', '**/*.gradle.kts', '**/gradle.properties', 'gradle/**', 'buildSrc/src/main/**') }}
+          restore-keys: |
+            test-${{ runner.os }}-variant-${{ matrix.variant }}-
+      - name: 'Set up JDK'
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ matrix.java }}
+      - name: 'Gradle Version'
+        run: |
+          ./gradlew --version
+      - name: 'Publish Spock'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONATYPE_OSS_USER: ${{ secrets.SONATYPE_OSS_USER }}
+          SONATYPE_OSS_PASSWORD: ${{ secrets.SONATYPE_OSS_PASSWORD }}
+          SIGNING_PASSWORD: ${{ secrets.SIGNING_GPG_PASSWORD }}
+        run: |
+          ./gradlew --no-parallel --scan --stacktrace ghActionsPublish "-Dvariant=${{ matrix.variant }}"
+      - name: 'Stop Daemon'
+        run: |
+          ./gradlew --stop
+
+  create-release:
+    runs-on: ubuntu-latest
+    needs: [release-spock]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          body: |
+            Changes in this Release
+            - First Change
+            - Second Change
+          draft: true
+          prerelease: false

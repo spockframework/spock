@@ -71,7 +71,7 @@ publishing {
 nexusPublishing {
   repositories {
     sonatype {
-      username = "pniederw"
+      username = System.getenv("SONATYPE_OSS_USER")
       password = System.getenv("SONATYPE_OSS_PASSWORD")
     }
   }

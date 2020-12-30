@@ -534,7 +534,7 @@ Breaking Changes: Spock 1.2 drops support for Java 6, Groovy 2.0 and Groovy 2.3
 * Improve `verifyAll` can now also have a target same as `with`
 * Improve static type hints for `verifyAll` and `with`
 * Improve reporting of exceptions during cleanup, they are now properly reported as suppressed exceptions instead of hiding the real exception
-* Improve default responses for stubs, Java 8 types like `Optional` and `Streams` now return empty, `CompleteableFuture` completes with `null` result
+* Improve default responses for stubs, Java 8 types like `Optional` and `Streams` now return empty, `CompletableFuture` completes with `null` result
 * Improve support for builder pattern, stubs now return themselves if the return type matches the type of the stub
 * Improve tapestry support with by supporting `@ImportModule`
 * Improve `constructorArgs` for spies can now accept a map directly without the need to wrap it in a list
@@ -619,7 +619,7 @@ Breaking Changes: Spock 1.2 drops support for Java 6, Groovy 2.0 and Groovy 2.3
 * Improve `verifyAll` can now also have a target same as `with`
 * Improve static type hints for `verifyAll` and `with`
 * Improve reporting of exceptions during cleanup, they are now properly reported as suppressed exceptions instead of hiding the real exception
-* Improve default responses for stubs, Java 8 types like `Optional` and `Streams` now return empty, `CompleteableFuture` completes with `null` result
+* Improve default responses for stubs, Java 8 types like `Optional` and `Streams` now return empty, `CompletableFuture` completes with `null` result
 * Improve support for builder pattern, stubs now return themselves if the return type matches the type of the stub
 * Improve tapestry support with by supporting `@ImportModule`
 * Improve `constructorArgs` for spies can now accept a map directly without the need to wrap it in a list

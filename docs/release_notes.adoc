@@ -521,7 +521,7 @@ Breaking Changes: Spock 1.2 drops support for Java 6, Groovy 2.0 and Groovy 2.3
 * Add support for Java 11+ (https://github.com/spockframework/spock/issues/895[#895], https://github.com/spockframework/spock/issues/902[#902], https://github.com/spockframework/spock/issues/903[#903])
 * Add Groovy 2.5.0 Variant for better Java 10+ Support
 * Add `@SpringBean` and `@SpringSpy` inspired by `@MockBean`, Also add `@StubBeans` (<<extensions.adoc#_annotation_driven,Docs>>)
-* Add `@UnwrapAopProxy` to make automatically unwrap SpringAopProxie
+* Add `@UnwrapAopProxy` to make automatically unwrap SpringAopProxies
 * Add `@AutoAttach` extension  (<<extensions.adoc#_autoattach,Docs>>)
 * Add `@Retry` extension (<<extensions.adoc#_retry,Docs>>)
 * Add flag to UnrollNameProvider to assert unroll expressions (set the system property `spock.assertUnrollExpressions` to `true`) (https://github.com/spockframework/spock/issues/767[#767])
@@ -600,7 +600,7 @@ Breaking Changes: Spock 1.2 drops support for Java 6, Groovy 2.0 and Groovy 2.3
 
 * Add Groovy 2.5.0 Variant for better Java 10 Support
 * Add @SpringBean and @SpringSpy inspired by @MockBean, Also add @StubBeans
-* Add @UnwrapAopProxy to make automatically unwrap SpringAopProxie
+* Add @UnwrapAopProxy to make automatically unwrap SpringAopProxies
 * Add flag to UnrollNameProvider to assert unroll expressions (set the system property `spock.assertUnrollExpressions` to `true`) https://github.com/spockframework/spock/issues/767[#767]
 * Add automatic module name descriptors for Java 9
 * Add `@AutoAttach` extension (<<extensions.adoc#_autoattach,Docs>>)

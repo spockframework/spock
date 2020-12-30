@@ -547,7 +547,7 @@ Breaking Changes: Spock 1.2 drops support for Java 6, Groovy 2.0 and Groovy 2.3
 * Fix `Retry.Mode.FEATURE` and `Retry.Mode.SETUP_FEATURE_CLEANUP` to make a test pass if a retry was successful.
 * Fix issue with `@SpringBean` mocks throwing `InvocationTargetException` instead of actual declared exceptions (https://github.com/spockframework/spock/issues/878[#878], https://github.com/spockframework/spock/issues/887[#887])
 * Fix void methods with implicit targets failing in `with` and `verifyAll` (https://github.com/spockframework/spock/issues/886[#886])
-* Fix SpockAssertionErrors and its subclasses now are properly `Serializeable`
+* Fix SpockAssertionErrors and its subclasses now are properly `Serializable`
 * Fix Spring injection of JUnit Rules, due to the changes in 1.1 the rules where initialized before Spring could inject them,
   this has been fixed by performing the injection earlier in the process
 * Fix SpringMockTestExecutionListener initializes lazy beans
@@ -605,7 +605,7 @@ Breaking Changes: Spock 1.2 drops support for Java 6, Groovy 2.0 and Groovy 2.3
 * Add automatic module name descriptors for Java 9
 * Add `@AutoAttach` extension (<<extensions.adoc#_autoattach,Docs>>)
 * Add `@Retry` extension (<<extensions.adoc#_retry,Docs>>)
-* Fix SpockAssertionErrors and its subclasses now are properly `Serializeable`
+* Fix SpockAssertionErrors and its subclasses now are properly `Serializable`
 * Fix Spring injection of JUnit Rules, due to the changes in 1.1 the rules where initialized before Spring could inject them,
   this has been fixed by performing the injection earlier in the process
 * Fix SpringMockTestExecutionListener initializes lazy beans

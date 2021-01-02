@@ -64,7 +64,7 @@ abstract class MockExampleBase extends Specification {
     1 * serviceSpy.getGreeting()
   }
 
-  def "alternatice mock service"() {
+  def "alternative mock service"() {
     when:
     def result = alternativeMock.greeting
 

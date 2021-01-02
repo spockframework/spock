@@ -48,7 +48,7 @@ public @interface StubBeans {
   Class<?>[] value();
 
   /**
-   * Controlls if parent StubBean declarations should be inherited.
+   * Controls if parent StubBean declarations should be inherited.
    *
    * @return true if inherit false if only this one
    */

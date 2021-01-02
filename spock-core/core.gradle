@@ -76,7 +76,7 @@ processResources {
 }
 
 task coreConsole(type: JavaExec,
-                 description: 'Start a groovy Console with Spock Core Classpath, usefull for AST-Inspection') {
+                 description: 'Start a groovy Console with Spock Core Classpath, useful for AST-Inspection') {
   main = variant == 2.5 ? "groovy.ui.Console" : "groovy.console.ui.Console"
   classpath = sourceSets.main.runtimeClasspath + configurations.coreConsoleRuntime
   workingDir = file('build/console')

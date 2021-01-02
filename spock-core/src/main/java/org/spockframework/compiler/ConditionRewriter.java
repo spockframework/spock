@@ -199,7 +199,7 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> i
   @Override
   public void visitVariableExpression(VariableExpression expr) {
     if (expr instanceof OldValueExpression) {
-      Expression originalExpr = ((OldValueExpression)expr).getOrginalExpression();
+      Expression originalExpr = ((OldValueExpression)expr).getOriginalExpression();
       originalExpr.visit(this); // just to count up recordCount and produce the correct number of N/A values at runtime
       result = expr;
       return;

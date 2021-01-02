@@ -82,7 +82,7 @@ null == "foo"
     }
   }
   @Issue("https://github.com/spockframework/spock/issues/121")
-  def "large String comparision does not cause OOM-Error, difference at start"() {
+  def "large String comparison does not cause OOM-Error, difference at start"() {
     StringBuilder sb = largeStringBuilder()
     String a = sb.toString()
     sb.setCharAt(0, 'b'  as char)
@@ -99,7 +99,7 @@ null == "foo"
   }
 
   @Issue("https://github.com/spockframework/spock/issues/121")
-  def "large String comparision does not cause OOM-Error, difference in the middle"() {
+  def "large String comparison does not cause OOM-Error, difference in the middle"() {
     StringBuilder sb = largeStringBuilder()
     String a = sb.toString()
     sb.setCharAt(sb.length() / 2 as int, 'b'  as char)
@@ -116,7 +116,7 @@ null == "foo"
   }
 
   @Issue("https://github.com/spockframework/spock/issues/121")
-  def "large String comparision does not cause OOM-Error, difference at end"() {
+  def "large String comparison does not cause OOM-Error, difference at end"() {
     StringBuilder sb = largeStringBuilder()
     String a = sb.toString()
     sb.setCharAt(sb.length()-1, 'b'  as char)
@@ -134,7 +134,7 @@ null == "foo"
 
 
   @Issue("https://github.com/spockframework/spock/issues/121")
-  def "large String comparision does not cause OOM-Error, difference at start and  end"() {
+  def "large String comparison does not cause OOM-Error, difference at start and  end"() {
     StringBuilder sb = largeStringBuilder()
     String a = sb.toString()
     sb.setCharAt(0, 'b'  as char)
@@ -151,7 +151,7 @@ null == "foo"
 
 
   @Issue("https://github.com/spockframework/spock/issues/121")
-  def "large String comparision does not cause OOM-Error, complete difference"() {
+  def "large String comparison does not cause OOM-Error, complete difference"() {
     String a = largeStringBuilder()
     String b = largeStringBuilder("bbbbbbbbbbbbbbbb")
 
@@ -165,7 +165,7 @@ null == "foo"
   }
 
 
-  def "large String comparision without room for context"() {
+  def "large String comparison without room for context"() {
     int stringLength = Math.sqrt(FailedStringComparisonRenderer.MAX_EDIT_DISTANCE_MEMORY)
 
     String common = largeStringBuilder("cccccccccccccccc", stringLength)

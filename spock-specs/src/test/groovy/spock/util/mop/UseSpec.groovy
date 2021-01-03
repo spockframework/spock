@@ -33,7 +33,7 @@ class UseOnMethods extends Specification {
   }
 
   @Use(StringExtensions)
-  def "sets featue execution mode to SAME_THREAD"() {
+  def "sets feature execution mode to SAME_THREAD"() {
     expect:
     specificationContext.currentFeature.executionMode.get() == ExecutionMode.SAME_THREAD
   }

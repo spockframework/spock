@@ -294,7 +294,7 @@ public class AstInspector {
    * Returns the top-level statements in the specified closure definition.
    * If no such statements are found, an empty list is returned.
    *
-   * @param expr a ClosureExpression representing a closure defintion
+   * @param expr a ClosureExpression representing a closure definition
    * @return the top-level statements in the specified closure definition
    */
   public List<Statement> getStatements(ClosureExpression expr) {

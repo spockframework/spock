@@ -526,7 +526,7 @@ Breaking Changes: Spock 1.2 drops support for Java 6, Groovy 2.0 and Groovy 2.3
 * Add support for Java 11+ (https://github.com/spockframework/spock/issues/895[#895], https://github.com/spockframework/spock/issues/902[#902], https://github.com/spockframework/spock/issues/903[#903])
 * Add Groovy 2.5.0 Variant for better Java 10+ Support
 * Add `@SpringBean` and `@SpringSpy` inspired by `@MockBean`, Also add `@StubBeans` (<<extensions.adoc#_annotation_driven,Docs>>)
-* Add `@UnwrapAopProxy` to make automatically unwrap SpringAopProxie
+* Add `@UnwrapAopProxy` to make automatically unwrap SpringAopProxies
 * Add `@AutoAttach` extension  (<<extensions.adoc#_autoattach,Docs>>)
 * Add `@Retry` extension (<<extensions.adoc#_retry,Docs>>)
 * Add flag to UnrollNameProvider to assert unroll expressions (set the system property `spock.assertUnrollExpressions` to `true`) (https://github.com/spockframework/spock/issues/767[#767])
@@ -539,7 +539,7 @@ Breaking Changes: Spock 1.2 drops support for Java 6, Groovy 2.0 and Groovy 2.3
 * Improve `verifyAll` can now also have a target same as `with`
 * Improve static type hints for `verifyAll` and `with`
 * Improve reporting of exceptions during cleanup, they are now properly reported as suppressed exceptions instead of hiding the real exception
-* Improve default responses for stubs, Java 8 types like `Optional` and `Streams` now return empty, `CompleteableFuture` completes with `null` result
+* Improve default responses for stubs, Java 8 types like `Optional` and `Streams` now return empty, `CompletableFuture` completes with `null` result
 * Improve support for builder pattern, stubs now return themselves if the return type matches the type of the stub
 * Improve tapestry support with by supporting `@ImportModule`
 * Improve `constructorArgs` for spies can now accept a map directly without the need to wrap it in a list
@@ -552,7 +552,7 @@ Breaking Changes: Spock 1.2 drops support for Java 6, Groovy 2.0 and Groovy 2.3
 * Fix `Retry.Mode.FEATURE` and `Retry.Mode.SETUP_FEATURE_CLEANUP` to make a test pass if a retry was successful.
 * Fix issue with `@SpringBean` mocks throwing `InvocationTargetException` instead of actual declared exceptions (https://github.com/spockframework/spock/issues/878[#878], https://github.com/spockframework/spock/issues/887[#887])
 * Fix void methods with implicit targets failing in `with` and `verifyAll` (https://github.com/spockframework/spock/issues/886[#886])
-* Fix SpockAssertionErrors and its subclasses now are properly `Serializeable`
+* Fix SpockAssertionErrors and its subclasses now are properly `Serializable`
 * Fix Spring injection of JUnit Rules, due to the changes in 1.1 the rules where initialized before Spring could inject them,
   this has been fixed by performing the injection earlier in the process
 * Fix SpringMockTestExecutionListener initializes lazy beans
@@ -605,12 +605,12 @@ Breaking Changes: Spock 1.2 drops support for Java 6, Groovy 2.0 and Groovy 2.3
 
 * Add Groovy 2.5.0 Variant for better Java 10 Support
 * Add @SpringBean and @SpringSpy inspired by @MockBean, Also add @StubBeans
-* Add @UnwrapAopProxy to make automatically unwrap SpringAopProxie
+* Add @UnwrapAopProxy to make automatically unwrap SpringAopProxies
 * Add flag to UnrollNameProvider to assert unroll expressions (set the system property `spock.assertUnrollExpressions` to `true`) https://github.com/spockframework/spock/issues/767[#767]
 * Add automatic module name descriptors for Java 9
 * Add `@AutoAttach` extension (<<extensions.adoc#_autoattach,Docs>>)
 * Add `@Retry` extension (<<extensions.adoc#_retry,Docs>>)
-* Fix SpockAssertionErrors and its subclasses now are properly `Serializeable`
+* Fix SpockAssertionErrors and its subclasses now are properly `Serializable`
 * Fix Spring injection of JUnit Rules, due to the changes in 1.1 the rules where initialized before Spring could inject them,
   this has been fixed by performing the injection earlier in the process
 * Fix SpringMockTestExecutionListener initializes lazy beans
@@ -624,7 +624,7 @@ Breaking Changes: Spock 1.2 drops support for Java 6, Groovy 2.0 and Groovy 2.3
 * Improve `verifyAll` can now also have a target same as `with`
 * Improve static type hints for `verifyAll` and `with`
 * Improve reporting of exceptions during cleanup, they are now properly reported as suppressed exceptions instead of hiding the real exception
-* Improve default responses for stubs, Java 8 types like `Optional` and `Streams` now return empty, `CompleteableFuture` completes with `null` result
+* Improve default responses for stubs, Java 8 types like `Optional` and `Streams` now return empty, `CompletableFuture` completes with `null` result
 * Improve support for builder pattern, stubs now return themselves if the return type matches the type of the stub
 * Improve tapestry support with by supporting `@ImportModule`
 * Improve `constructorArgs` for spies can now accept a map directly without the need to wrap it in a list

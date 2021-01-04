@@ -10,7 +10,7 @@ import spock.lang.Execution;
 public class ExecutionExtension implements IAnnotationDrivenExtension<Execution> {
   @Override
   public void visitSpecAnnotation(Execution annotation, SpecInfo spec) {
-    spec.setExecutionMode(annotation.value());
+    spec.getBottomSpec().setExecutionMode(annotation.value());
   }
 
   @Override

@@ -67,11 +67,11 @@ class GlobalExtensionRegistrySpec extends Specification {
 
   def "provides access to extensions"() {
     when:
-    def registry = new GlobalExtensionRegistry([MyExtension, InjectableExtension], [])
+    def registry = new GlobalExtensionRegistry([MyExtension, FieldInjectableExtension], [])
     registry.initializeGlobalExtensions()
 
     then:
-    registry.globalExtensions*.getClass() == [MyExtension, InjectableExtension]
+    registry.globalExtensions*.getClass() == [MyExtension, FieldInjectableExtension]
   }
 
   def "auto-instantiates and provides access to global configuration objects"() {
@@ -88,7 +88,7 @@ class GlobalExtensionRegistrySpec extends Specification {
 
   def "auto-instantiates and provides access to configuration objects referenced by extensions"() {
     when:
-    def registry = new GlobalExtensionRegistry([InjectableExtension], [])
+    def registry = new GlobalExtensionRegistry([FieldInjectableExtension], [])
     registry.initializeGlobalExtensions()
 
     then:
@@ -99,21 +99,34 @@ class GlobalExtensionRegistrySpec extends Specification {
     registry.getConfigurationByType(MySettings) instanceof MySettings
   }
 
-  def "injects configuration objects into extensions"() {
-    def registry = new GlobalExtensionRegistry([InjectableExtension], [RunnerConfiguration])
+  def "injects configuration objects into extensions via fields"() {
+    def registry = new GlobalExtensionRegistry([FieldInjectableExtension], [RunnerConfiguration])
 
     when:
     registry.initializeGlobalExtensions()
 
     then:
-    with(registry.globalExtensions[0], InjectableExtension) {
+    with(registry.globalExtensions[0], FieldInjectableExtension) {
+      config instanceof RunnerConfiguration
+      settings instanceof MySettings
+    }
+  }
+
+  def "injects configuration objects into extensions via constructors"() {
+    def registry = new GlobalExtensionRegistry([ConstructorInjectableExtension], [RunnerConfiguration])
+
+    when:
+    registry.initializeGlobalExtensions()
+
+    then:
+    with(registry.globalExtensions[0], ConstructorInjectableExtension) {
       config instanceof RunnerConfiguration
       settings instanceof MySettings
     }
   }
 
   def "maintains a single instance of each configuration object type"() {
-    def registry = new GlobalExtensionRegistry([InjectableExtension, SettingsExtension], [])
+    def registry = new GlobalExtensionRegistry([FieldInjectableExtension, SettingsExtension], [])
 
     when:
     registry.initializeGlobalExtensions()
@@ -123,29 +136,37 @@ class GlobalExtensionRegistrySpec extends Specification {
     registry.globalExtensions[0].settings.is(registry.globalExtensions[1].settings)
   }
 
-  def "allows to configure local extensions"() {
+  def "allows to instantiate local extensions via #desc injection"(Class clazz) {
     def registry = new GlobalExtensionRegistry([], [RunnerConfiguration])
     registry.initializeGlobalExtensions()
 
     when:
-    def extension = new LocalExtension()
-    registry.configureExtension(extension)
+    def extension = registry.instantiateExtension(clazz)
 
     then:
     extension.config instanceof RunnerConfiguration
+
+    where:
+    clazz                     | desc
+    LocalFieldExtension       | 'field'
+    LocalConstructorExtension | 'constructor'
   }
 
-  def "complains if local extension references unknown configuration class"() {
+  def "complains if local extension references unknown configuration class (#desc injection)"(Class clazz) {
     def registry = new GlobalExtensionRegistry([], [])
     registry.initializeGlobalExtensions()
 
     when:
-    def extension = new LocalExtension()
-    registry.configureExtension(extension)
+    registry.instantiateExtension(clazz)
 
     then:
     ExtensionException e = thrown()
-    e.message.contains("unknown configuration class")
+    e.cause.message.contains("unknown configuration class")
+
+    where:
+    clazz                     | desc
+    LocalFieldExtension       | 'field'
+    LocalConstructorExtension | 'constructor'
   }
 
   static class MyExtension extends AbstractGlobalExtension {
@@ -160,17 +181,35 @@ class GlobalExtensionRegistrySpec extends Specification {
     MissingNoArgCtorExtension(int x) {}
   }
 
-  static class InjectableExtension extends AbstractGlobalExtension {
+  static class FieldInjectableExtension extends AbstractGlobalExtension {
     RunnerConfiguration config
     MySettings settings
+  }
+
+  static class ConstructorInjectableExtension extends AbstractGlobalExtension {
+    final RunnerConfiguration config
+    final MySettings settings
+
+    ConstructorInjectableExtension(RunnerConfiguration config, MySettings settings) {
+      this.config = config
+      this.settings = settings
+    }
   }
 
   static class SettingsExtension extends AbstractGlobalExtension {
     MySettings settings
   }
 
-  static class LocalExtension implements IAnnotationDrivenExtension<Ignore> {
+  static class LocalFieldExtension implements IAnnotationDrivenExtension<Ignore> {
     RunnerConfiguration config
+  }
+
+  static class LocalConstructorExtension implements IAnnotationDrivenExtension<Ignore> {
+    final RunnerConfiguration config
+
+    LocalConstructorExtension(RunnerConfiguration config) {
+      this.config = config
+    }
   }
 
   @ConfigurationObject("settings")

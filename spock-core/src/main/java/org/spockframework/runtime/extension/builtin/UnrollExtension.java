@@ -23,7 +23,11 @@ import spock.lang.Rollup;
 import spock.lang.Unroll;
 
 public class UnrollExtension extends AbstractGlobalExtension {
-  private UnrollConfiguration unrollConfiguration;
+  private final UnrollConfiguration unrollConfiguration;
+
+  public UnrollExtension(UnrollConfiguration unrollConfiguration) {
+    this.unrollConfiguration = unrollConfiguration;
+  }
 
   @Override
   public void visitSpec(SpecInfo spec) {

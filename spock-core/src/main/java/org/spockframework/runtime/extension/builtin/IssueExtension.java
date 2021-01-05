@@ -20,7 +20,11 @@ import org.spockframework.runtime.model.*;
 import spock.lang.Issue;
 
 public class IssueExtension implements IAnnotationDrivenExtension<Issue> {
-  private ReportLogConfiguration configuration;
+  private final ReportLogConfiguration configuration;
+
+  public IssueExtension(ReportLogConfiguration configuration) {
+    this.configuration = configuration;
+  }
 
   @Override
   public void visitSpecAnnotation(Issue issue, SpecInfo spec) {

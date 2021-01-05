@@ -26,7 +26,11 @@ import java.io.IOException;
  */
 @SuppressWarnings("UnusedDeclaration")
 public class OptimizeRunOrderExtension extends AbstractGlobalExtension {
-  private RunnerConfiguration configuration;
+  private final RunnerConfiguration configuration;
+
+  public OptimizeRunOrderExtension(RunnerConfiguration configuration) {
+    this.configuration = configuration;
+  }
 
   @Override
   public void visitSpec(SpecInfo spec) {

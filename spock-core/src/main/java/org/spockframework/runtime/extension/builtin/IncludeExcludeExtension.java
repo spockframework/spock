@@ -23,7 +23,11 @@ import java.util.List;
 
 @SuppressWarnings("UnusedDeclaration")
 public class IncludeExcludeExtension extends AbstractGlobalExtension {
-  private RunnerConfiguration config;
+  private final RunnerConfiguration config;
+
+  public IncludeExcludeExtension(RunnerConfiguration config) {
+    this.config = config;
+  }
 
   @Override
   public void visitSpec(SpecInfo spec) {
@@ -99,4 +103,3 @@ public class IncludeExcludeExtension extends AbstractGlobalExtension {
     return false;
   }
 }
-

@@ -19,7 +19,11 @@ package org.spockframework.report.log;
 import org.spockframework.runtime.extension.AbstractGlobalExtension;
 
 public class ReportLogExtension extends AbstractGlobalExtension {
-  ReportLogConfiguration reportConfig;
+  private final ReportLogConfiguration reportConfig;
+
+  public ReportLogExtension(ReportLogConfiguration reportConfig) {
+    this.reportConfig = reportConfig;
+  }
 
   // TODO integrate with JUnitPlatform ExecutionListener
 }

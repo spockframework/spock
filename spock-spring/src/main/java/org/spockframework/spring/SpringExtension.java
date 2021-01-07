@@ -17,7 +17,7 @@
 package org.spockframework.spring;
 
 import org.spockframework.runtime.AbstractRunListener;
-import org.spockframework.runtime.extension.AbstractGlobalExtension;
+import org.spockframework.runtime.extension.*;
 import org.spockframework.runtime.model.*;
 import org.spockframework.util.*;
 import org.springframework.test.annotation.DirtiesContext;
@@ -33,11 +33,11 @@ import org.springframework.test.annotation.ProfileValueUtils;
 import org.springframework.test.context.ContextConfiguration;
 
 @NotThreadSafe
-public class SpringExtension extends AbstractGlobalExtension {
+public class SpringExtension implements IGlobalExtension {
   // since Spring 3.2.2
   @SuppressWarnings("unchecked")
   private static final Class<? extends Annotation> contextHierarchyClass =
-      (Class) ReflectionUtil.loadClassIfAvailable("org.springframework.test.context.ContextHierarchy");
+    (Class)ReflectionUtil.loadClassIfAvailable("org.springframework.test.context.ContextHierarchy");
 
   // since Spring 4.0
   private static final Method findAnnotationDescriptorForTypesMethod;
@@ -45,14 +45,14 @@ public class SpringExtension extends AbstractGlobalExtension {
   // since Spring-Boot 1.4
   @SuppressWarnings("unchecked")
   private static final Class<? extends Annotation> bootstrapWithAnnotation =
-    (Class) ReflectionUtil.loadClassIfAvailable("org.springframework.test.context.BootstrapWith");
+    (Class)ReflectionUtil.loadClassIfAvailable("org.springframework.test.context.BootstrapWith");
 
   static {
     Class<?> metaAnnotationUtilsClass =
-        ReflectionUtil.loadClassIfAvailable("org.springframework.test.util.MetaAnnotationUtils");
+      ReflectionUtil.loadClassIfAvailable("org.springframework.test.util.MetaAnnotationUtils");
     findAnnotationDescriptorForTypesMethod = metaAnnotationUtilsClass == null ? null :
-        ReflectionUtil.getMethodBySignature(metaAnnotationUtilsClass,
-            "findAnnotationDescriptorForTypes", Class.class, Class[].class);
+      ReflectionUtil.getMethodBySignature(metaAnnotationUtilsClass,
+        "findAnnotationDescriptorForTypes", Class.class, Class[].class);
   }
 
   @Override
@@ -85,15 +85,15 @@ public class SpringExtension extends AbstractGlobalExtension {
 
     if (ReflectionUtil.isAnnotationPresentRecursive(spec.getReflection(), ContextConfiguration.class)) return true;
 
-    return  (contextHierarchyClass != null
+    return (contextHierarchyClass != null
       && ReflectionUtil.isAnnotationPresentRecursive(spec.getReflection(), contextHierarchyClass));
   }
 
   private boolean isSpringSpecUsingFindAnnotationDescriptorForTypes(SpecInfo spec) {
     return findAnnotationDescriptorForTypesMethod != null
-        && ReflectionUtil.invokeMethod(
-        null, findAnnotationDescriptorForTypesMethod, spec.getReflection(),
-        new Class[] {ContextConfiguration.class, contextHierarchyClass, bootstrapWithAnnotation}) != null;
+      && ReflectionUtil.invokeMethod(
+      null, findAnnotationDescriptorForTypesMethod, spec.getReflection(),
+      new Class[]{ContextConfiguration.class, contextHierarchyClass, bootstrapWithAnnotation}) != null;
   }
 
   private void verifySharedFieldsInjection(SpecInfo spec) {
@@ -128,12 +128,12 @@ public class SpringExtension extends AbstractGlobalExtension {
   private void checkNoSharedFieldsInjected(SpecInfo spec) {
     for (FieldInfo field : spec.getAllFields()) {
       if (field.getReflection().isAnnotationPresent(Shared.class)
-          && (field.getReflection().isAnnotationPresent(Autowired.class)
-          // avoid compile-time dependency on optional classes
-          || ReflectionUtil.isAnnotationPresent(field.getReflection(), "javax.annotation.Resource")
-          || ReflectionUtil.isAnnotationPresent(field.getReflection(), "javax.inject.Inject")))
+        && (field.getReflection().isAnnotationPresent(Autowired.class)
+        // avoid compile-time dependency on optional classes
+        || ReflectionUtil.isAnnotationPresent(field.getReflection(), "javax.annotation.Resource")
+        || ReflectionUtil.isAnnotationPresent(field.getReflection(), "javax.inject.Inject")))
         throw new SpringExtensionException(
-            "@Shared field injection is not enabled by default therefore '%s' field cannot be injected. Refer to " +
+          "@Shared field injection is not enabled by default therefore '%s' field cannot be injected. Refer to " +
               "javadoc of %s for information on how to opt-in for @Shared field injection.")
           .withArgs(field.getName(), EnableSharedInjection.class.getName());
     }
@@ -147,7 +147,7 @@ public class SpringExtension extends AbstractGlobalExtension {
 
     for (FeatureInfo feature : spec.getAllFeatures())
       if (!ProfileValueUtils.isTestEnabledInThisEnvironment(
-          feature.getFeatureMethod().getReflection(), spec.getReflection()))
+        feature.getFeatureMethod().getReflection(), spec.getReflection()))
         feature.setExcluded(true);
 
     return true;

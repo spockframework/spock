@@ -1,7 +1,7 @@
 package org.spockframework.runtime
 
 import org.spockframework.report.log.ReportLogConfiguration
-import org.spockframework.report.log.ReportLogExtension
+
 import org.spockframework.runtime.extension.builtin.*
 import org.spockframework.tempdir.TempDirConfiguration
 import spock.config.RunnerConfiguration

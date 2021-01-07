@@ -1,9 +1,9 @@
 package org.spockframework.junit4;
 
-import org.spockframework.runtime.extension.AbstractGlobalExtension;
+import org.spockframework.runtime.extension.*;
 import org.spockframework.runtime.model.*;
 
-public class ExceptionAdapterExtension extends AbstractGlobalExtension {
+public class ExceptionAdapterExtension implements IGlobalExtension {
 
   private static final ExceptionAdapterInterceptor exceptionAdapterInterceptor = new ExceptionAdapterInterceptor();
 

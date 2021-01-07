@@ -16,13 +16,13 @@ package org.spockframework.runtime.extension.builtin;
 
 import org.spockframework.runtime.DataVariablesIterationNameProvider;
 import org.spockframework.runtime.InvalidSpecException;
-import org.spockframework.runtime.extension.AbstractGlobalExtension;
+import org.spockframework.runtime.extension.*;
 import org.spockframework.runtime.model.*;
 
 import spock.lang.Rollup;
 import spock.lang.Unroll;
 
-public class UnrollExtension extends AbstractGlobalExtension {
+public class UnrollExtension implements IGlobalExtension {
   private final UnrollConfiguration unrollConfiguration;
 
   public UnrollExtension(UnrollConfiguration unrollConfiguration) {

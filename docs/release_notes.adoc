@@ -3,6 +3,9 @@ include::include.adoc[]
 
 == 2.0-M5 (tbd)
 
+- Add support for injection into `@Shared` fields in `spock-spring` module which users can opt-in for by adding
+  `@EnableSharedInjection` to the specification. https://github.com/spockframework/spock/issues/76[#76]
+
 == 2.0-M4 (2020-11-01)
 
 - *Added <<parallel_execution.adoc#parallel-execution,Parallel Execution>> support*

@@ -64,7 +64,8 @@ class SharedFieldsInjection extends Specification {
         }
 
         def test() {
-          expect: true
+          expect:
+          sharedService != null
         }
       }
     '''
@@ -146,7 +147,8 @@ class SharedFieldsInjection extends Specification {
         }
 
         def test() {
-          expect: true
+          expect:
+          sharedService != null
         }
       }
     """

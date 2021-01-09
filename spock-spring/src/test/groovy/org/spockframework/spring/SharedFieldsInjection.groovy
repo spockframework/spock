@@ -156,6 +156,39 @@ class SharedFieldsInjection extends Specification {
     classMode << [BEFORE_EACH_TEST_METHOD, AFTER_EACH_TEST_METHOD]
   }
 
+  def "shared fields cannot be injected if all feature methods dirty context based on a superclass annotation"() {
+    when:
+    runner.runWithImports """
+      import org.springframework.test.annotation.DirtiesContext
+
+      import static org.springframework.test.annotation.DirtiesContext.ClassMode.*
+
+      @DirtiesContext(classMode = ${classMode})
+      abstract class AbstractSharedInjectionSpec extends Specification {
+      }
+
+      @ContextConfiguration
+      @EnableSharedInjection
+      class Foo extends AbstractSharedInjectionSpec {
+        @Inject
+        @Shared
+        IService1 sharedService
+
+        def test() {
+          expect: true
+        }
+      }
+    """
+
+    then:
+    def e = thrown(SpringExtensionException)
+    e.message == "Shared field injection is not supported if feature methods make context dirty by using " +
+      "@DirtiesContext annotation"
+
+    where:
+    classMode << [BEFORE_EACH_TEST_METHOD, AFTER_EACH_TEST_METHOD]
+  }
+
   def "shared fields can be injected if context is dirtied but only by spec and not feature methods"() {
     when:
     runner.runWithImports """
@@ -193,6 +226,33 @@ class SharedFieldsInjection extends Specification {
       @EnableSharedInjection
       @Transactional
       class Foo extends Specification {
+        @Inject
+        @Shared
+        IService1 sharedService
+
+        def test() {
+          expect: true
+        }
+      }
+    """
+
+    then:
+    def e = thrown(SpringExtensionException)
+    e.message == "Shared field injection is not supported together with the use of @Transactional"
+  }
+
+  def "shared fields cannot be injected if the spec is transactional due to a superclass annotation"() {
+    when:
+    runner.runWithImports """
+      import org.springframework.transaction.annotation.Transactional
+
+      @Transactional
+      abstract class AbstractSharedInjectionSpec extends Specification {
+      }
+
+      @ContextConfiguration
+      @EnableSharedInjection
+      class Foo extends AbstractSharedInjectionSpec {
         @Inject
         @Shared
         IService1 sharedService

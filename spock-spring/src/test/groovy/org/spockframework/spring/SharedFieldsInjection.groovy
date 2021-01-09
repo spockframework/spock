@@ -74,6 +74,33 @@ class SharedFieldsInjection extends Specification {
     noExceptionThrown()
   }
 
+  def "shared fields can be injected if opted-in for on a superclass"() {
+    when:
+    runner.runWithImports '''
+      @EnableSharedInjection
+      abstract class AbstractSharedInjectionSpec extends Specification {
+        @Inject
+        @Shared
+        IService1 sharedService
+      }
+
+      @ContextConfiguration(locations = "/org/spockframework/spring/InjectionExamples-context.xml")
+      class SharedInjectionSpec extends AbstractSharedInjectionSpec {
+        def setupSpec() {
+          assert sharedService != null
+        }
+
+        def test() {
+          expect:
+          sharedService != null
+        }
+      }
+    '''
+
+    then:
+    noExceptionThrown()
+  }
+
   def "shared fields cannot be injected if a feature method dirties context"() {
     when:
     runner.runWithImports '''

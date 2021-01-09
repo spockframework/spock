@@ -2,10 +2,7 @@ package org.spockframework.spring;
 
 import org.spockframework.util.Beta;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 
 /**
  * By default attempting to inject beans into {@code @Shared} fields will lead to an exception. This is because there
@@ -30,5 +27,6 @@ import java.lang.annotation.Target;
 @Beta
 @Target({ ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
+@Inherited
 @interface EnableSharedInjection {
 }

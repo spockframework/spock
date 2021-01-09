@@ -5,6 +5,8 @@ import org.springframework.test.context.ContextConfiguration
 import spock.lang.Specification
 import spock.util.EmbeddedSpecRunner
 
+import javax.inject.Inject
+
 import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD
 import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD
 
@@ -14,13 +16,14 @@ class SharedFieldsInjection extends Specification {
 
   def setup() {
     runner.addClassImport(ContextConfiguration)
+    runner.addClassImport(Inject)
+    runner.addClassImport(EnableSharedInjection)
+    runner.addClassImport(IService1)
   }
 
   def "shared fields cannot be injected by default"() {
     when:
     runner.runWithImports """
-      import org.spockframework.spring.IService1
-
       @ContextConfiguration
       class Foo extends Specification {
         @$ann
@@ -49,11 +52,6 @@ class SharedFieldsInjection extends Specification {
   def "shared fields can be injected if opted-in for"() {
     when:
     runner.runWithImports '''
-      import org.spockframework.spring.EnableSharedInjection
-      import org.spockframework.spring.IService1
-
-      import javax.inject.Inject
-
       @ContextConfiguration(locations = "/org/spockframework/spring/InjectionExamples-context.xml")
       @EnableSharedInjection
       class Foo extends Specification {
@@ -78,11 +76,7 @@ class SharedFieldsInjection extends Specification {
   def "shared fields cannot be injected if a feature method dirties context"() {
     when:
     runner.runWithImports '''
-      import org.spockframework.spring.EnableSharedInjection
-      import org.spockframework.spring.IService1
       import org.springframework.test.annotation.DirtiesContext
-
-      import javax.inject.Inject
 
       @ContextConfiguration
       @EnableSharedInjection
@@ -107,11 +101,7 @@ class SharedFieldsInjection extends Specification {
   def "shared fields cannot be injected if all feature methods dirty context"() {
     when:
     runner.runWithImports """
-      import org.spockframework.spring.EnableSharedInjection
-      import org.spockframework.spring.IService1
       import org.springframework.test.annotation.DirtiesContext
-
-      import javax.inject.Inject
 
       import static org.springframework.test.annotation.DirtiesContext.ClassMode.*
 
@@ -141,11 +131,7 @@ class SharedFieldsInjection extends Specification {
   def "shared fields can be injected if context is dirtied but only by spec and not feature methods"() {
     when:
     runner.runWithImports """
-      import org.spockframework.spring.EnableSharedInjection
-      import org.spockframework.spring.IService1
       import org.springframework.test.annotation.DirtiesContext
-
-      import javax.inject.Inject
 
       @ContextConfiguration(locations = "/org/spockframework/spring/InjectionExamples-context.xml")
       @EnableSharedInjection
@@ -172,11 +158,7 @@ class SharedFieldsInjection extends Specification {
   def "shared fields cannot be injected if the spec is transactional"() {
     when:
     runner.runWithImports """
-      import org.spockframework.spring.EnableSharedInjection
-      import org.spockframework.spring.IService1
       import org.springframework.transaction.annotation.Transactional
-
-      import javax.inject.Inject
 
       @ContextConfiguration
       @EnableSharedInjection
@@ -200,11 +182,7 @@ class SharedFieldsInjection extends Specification {
   def "shared fields cannot be injected if a feature is transactional"() {
     when:
     runner.runWithImports """
-      import org.spockframework.spring.EnableSharedInjection
-      import org.spockframework.spring.IService1
       import org.springframework.transaction.annotation.Transactional
-
-      import javax.inject.Inject
 
       @ContextConfiguration
       @EnableSharedInjection

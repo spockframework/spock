@@ -111,7 +111,7 @@ public class SpringExtension extends AbstractGlobalExtension {
         throw sharedInjectionWithDirtiesContextException();
       }
     }
-    if (isTransactionalAnnoatationPresent(spec)) {
+    if (isTransactionalAnnotationPresent(spec)) {
       throw sharedInjectionWithTransactionalException();
     }
     for (FeatureInfo feature : spec.getAllFeatures()) {
@@ -119,7 +119,7 @@ public class SpringExtension extends AbstractGlobalExtension {
       if (featureMethod.isAnnotationPresent(DirtiesContext.class)) {
         throw sharedInjectionWithDirtiesContextException();
       }
-      if (isTransactionalAnnoatationPresent(featureMethod)) {
+      if (isTransactionalAnnotationPresent(featureMethod)) {
         throw sharedInjectionWithTransactionalException();
       }
     }
@@ -136,7 +136,7 @@ public class SpringExtension extends AbstractGlobalExtension {
       "Shared field injection is not supported together with the use of @Transactional");
   }
 
-  private <R extends AnnotatedElement> boolean isTransactionalAnnoatationPresent(NodeInfo<?, R> nodeInfo) {
+  private <R extends AnnotatedElement> boolean isTransactionalAnnotationPresent(NodeInfo<?, R> nodeInfo) {
     R reflection = nodeInfo.getReflection();
     return ReflectionUtil.isAnnotationPresent(reflection, "org.springframework.transaction.annotation.Transactional");
   }

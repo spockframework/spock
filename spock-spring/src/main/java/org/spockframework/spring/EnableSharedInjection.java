@@ -23,6 +23,8 @@ import java.lang.annotation.*;
  *     the spec or any of its feature methods are transactional which is signified by the use of {@code @Transactional}
  *   </li>
  * </ul>
+ *
+ * @since 2.0
  */
 @Beta
 @Target({ ElementType.TYPE })

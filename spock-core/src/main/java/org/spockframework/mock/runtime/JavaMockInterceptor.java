@@ -85,7 +85,7 @@ public class JavaMockInterceptor implements IProxyBasedMockInterceptor {
           if (metaMethod == null) {
             MetaMethod booleanVariant = metaClass
               .getMetaMethod(GroovyRuntimeUtil.propertyToMethodName("is", propertyName), GroovyRuntimeUtil.EMPTY_ARGUMENTS);
-            if (booleanVariant.getReturnType() == boolean.class) {
+            if (booleanVariant != null && booleanVariant.getReturnType() == boolean.class) {
               methodName = booleanVariant.getName();
             }
           }

@@ -239,6 +239,40 @@ class JavaMocksForGroovyClasses extends Specification {
     then:
     1 * sut.getFoo()
   }
+  
+  @Issue("https://github.com/spockframework/spock/issues/1256")
+  def "Test Mock Object Boolean accessor via dot-notation" () {
+
+    given: "Test Controller"
+    ExampleData mockData = Mock(ExampleData)
+    ExampleController controller = new ExampleController(data: mockData)
+
+    when: "call test method"
+    def result = controller.show1()
+
+    then: "should call mock data"
+    1 * mockData.isCurrent() >> true
+
+    and: "should equal"
+    result == "Data is current"
+  }
+
+  @Issue("https://github.com/spockframework/spock/issues/1256")
+  def "Test Mock Object Boolean accessor via method" () {
+
+    given: "Test Controller"
+    ExampleData mockData = Mock(ExampleData)
+    ExampleController controller = new ExampleController(data: mockData)
+
+    when: "call test method"
+    def result = controller.show2()
+
+    then: "should call mock data"
+    1 * mockData.isCurrent() >> true
+
+    and: "should equal"
+    result == "Data is current"
+  }
 }
 
 class MockMe {
@@ -264,5 +298,25 @@ class GMock extends AGMock {
 
   void setFoo(String val) {
     this.prop = val
+  }
+}
+
+class ExampleData {
+
+  boolean isCurrent() {
+    true
+  }
+}
+
+
+class ExampleController {
+  ExampleData data
+
+  def show1() {
+    data.current ? "Data is current" : "Data is not current"
+  }
+
+  def show2() {
+    data.isCurrent() ? "Data is current" : "Data is not current"
   }
 }

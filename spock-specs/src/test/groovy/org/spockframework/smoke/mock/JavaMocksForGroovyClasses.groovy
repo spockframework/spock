@@ -239,39 +239,53 @@ class JavaMocksForGroovyClasses extends Specification {
     then:
     1 * sut.getFoo()
   }
-  
+
   @Issue("https://github.com/spockframework/spock/issues/1256")
-  def "Test Mock Object Boolean accessor via dot-notation" () {
+  def "Mock object boolean (is) accessor via dot-notation" () {
 
-    given: "Test Controller"
+    given:
     ExampleData mockData = Mock(ExampleData)
-    ExampleController controller = new ExampleController(data: mockData)
 
-    when: "call test method"
-    def result = controller.show1()
+    when: "query via property syntax"
+    def result = mockData.current ? "Data is current" : "Data is not current"
 
-    then: "should call mock data"
+    then: "calls mock"
     1 * mockData.isCurrent() >> true
 
-    and: "should equal"
+    and:
     result == "Data is current"
   }
 
   @Issue("https://github.com/spockframework/spock/issues/1256")
-  def "Test Mock Object Boolean accessor via method" () {
+  def "Mock object boolean (get) accessor via dot-notation" () {
 
-    given: "Test Controller"
+    given:
     ExampleData mockData = Mock(ExampleData)
-    ExampleController controller = new ExampleController(data: mockData)
 
-    when: "call test method"
-    def result = controller.show2()
+    when: "query via property syntax"
+    def result = mockData.enabled ? "Data is current" : "Data is not current"
 
-    then: "should call mock data"
+    then: "calls mock"
+    1 * mockData.getEnabled() >> true
+
+    and:
+    result == "Data is current"
+  }
+
+  @Issue("https://github.com/spockframework/spock/issues/1256")
+  def "Mock object boolean accessor via method" () {
+
+    given:
+    ExampleData mockData = Mock(ExampleData)
+
+    when: "query via method syntax"
+    def result = mockData.isCurrent() ? "is enabled" : "is not enabled"
+
+    then: "calls mock"
     1 * mockData.isCurrent() >> true
 
-    and: "should equal"
-    result == "Data is current"
+    and:
+    result == "is enabled"
   }
 }
 
@@ -304,19 +318,10 @@ class GMock extends AGMock {
 class ExampleData {
 
   boolean isCurrent() {
-    true
-  }
-}
-
-
-class ExampleController {
-  ExampleData data
-
-  def show1() {
-    data.current ? "Data is current" : "Data is not current"
+    false
   }
 
-  def show2() {
-    data.isCurrent() ? "Data is current" : "Data is not current"
+  boolean getEnabled() {
+    false
   }
 }

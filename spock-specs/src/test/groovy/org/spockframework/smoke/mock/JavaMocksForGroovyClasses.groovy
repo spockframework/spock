@@ -242,7 +242,6 @@ class JavaMocksForGroovyClasses extends Specification {
 
   @Issue("https://github.com/spockframework/spock/issues/1256")
   def "Mock object boolean (is) accessor via dot-notation" () {
-
     given:
     ExampleData mockData = Mock(ExampleData)
 
@@ -258,7 +257,6 @@ class JavaMocksForGroovyClasses extends Specification {
 
   @Issue("https://github.com/spockframework/spock/issues/1256")
   def "Mock object boolean (get) accessor via dot-notation" () {
-
     given:
     ExampleData mockData = Mock(ExampleData)
 
@@ -273,8 +271,51 @@ class JavaMocksForGroovyClasses extends Specification {
   }
 
   @Issue("https://github.com/spockframework/spock/issues/1256")
-  def "Mock object boolean accessor via method" () {
+  def "Mock object boolean (get + is) accessor via dot-notation" () {
+    given:
+    ExampleData mockData = Mock(ExampleData)
 
+    when: "query via property syntax"
+    def result = mockData.active ? "Data is current" : "Data is not current"
+
+    then: "calls mock, preferring 'get' to 'is' for boolean getters (surprise!)"
+    1 * mockData.getActive() >> true
+    0 * mockData.isActive()
+
+    and:
+    result == "Data is current"
+  }
+
+  @Issue("https://github.com/spockframework/spock/issues/1256")
+  def "Mock object non-boolean (get + is) accessor via dot-notation" () {
+    given:
+    ExampleData mockData = Mock(ExampleData)
+
+    when: "query via property syntax"
+    def result = mockData.name ? "Data is current" : "Data is not current"
+
+    then: "calls mock, preferring 'get' to 'is' for non-boolean getters"
+    1 * mockData.getName() >> "X"
+    0 * mockData.isName()
+
+    and:
+    result == "Data is current"
+  }
+
+  @Issue("https://github.com/spockframework/spock/issues/1256")
+  def "Mock object non-boolean (is) pseudo accessor via dot-notation" () {
+    given:
+    ExampleData mockData = Mock(ExampleData)
+
+    when: "query via property syntax"
+    mockData.dummy
+
+    then: "non-boolean 'is' getter is illegal"
+    thrown MissingPropertyException
+  }
+
+  @Issue("https://github.com/spockframework/spock/issues/1256")
+  def "Mock object boolean accessor via method" () {
     given:
     ExampleData mockData = Mock(ExampleData)
 
@@ -316,12 +357,31 @@ class GMock extends AGMock {
 }
 
 class ExampleData {
-
   boolean isCurrent() {
     false
   }
 
   boolean getEnabled() {
     false
+  }
+
+  boolean isActive() {
+    false
+  }
+
+  boolean getActive() {
+    false
+  }
+
+  String isName() {
+    null
+  }
+
+  String getName() {
+    null
+  }
+
+  String isDummy() {
+    null
   }
 }

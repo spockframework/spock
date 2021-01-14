@@ -311,7 +311,8 @@ class JavaMocksForGroovyClasses extends Specification {
     mockData.dummy
 
     then: "non-boolean 'is' getter is illegal"
-    thrown MissingPropertyException
+    GroovyRuntimeException exception = thrown()
+    exception instanceof MissingPropertyException || exception instanceof MissingMethodException
   }
 
   @Issue("https://github.com/spockframework/spock/issues/1256")

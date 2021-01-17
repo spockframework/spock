@@ -19,6 +19,8 @@ package org.spockframework.smoke.mock
 import org.spockframework.mock.TooFewInvocationsError
 import spock.lang.*
 
+import java.util.function.Consumer
+
 class ArgumentMatching extends Specification {
   def "match identical argument"() {
     List list = Mock()
@@ -120,6 +122,18 @@ class ArgumentMatching extends Specification {
     list.add('foo')
     then:
     1 * list.add(!(_ as List))
+  }
+
+  @Issue("https://github.com/spockframework/spock/issues/1260")
+  def "allow list casting"() {
+    given:
+    Consumer consumer = Mock(Consumer)
+
+    when:
+    consumer.accept([] as Set)
+
+    then:
+    1 * consumer.accept([] as Set)
   }
 
   def "match negate code argument with type"() {

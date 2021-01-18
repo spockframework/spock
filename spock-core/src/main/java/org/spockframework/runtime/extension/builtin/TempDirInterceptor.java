@@ -45,8 +45,8 @@ public class TempDirInterceptor implements IMethodInterceptor {
     // for shared field, no iteration is set, so use the spec name
     // otherwise use the iteration name
     prefix.append(((invocation.getIteration() == null)
-      ? invocation.getSpec().getName()
-      : invocation.getIteration().getName())
+      ? invocation.getSpec().getDisplayName()
+      : invocation.getIteration().getDisplayName())
       .replaceAll("[^a-zA-Z0-9_.-]++", "_"));
     if (prefix.length() > 25) {
       prefix.setLength(25);

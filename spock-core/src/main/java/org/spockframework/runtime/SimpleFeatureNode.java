@@ -18,7 +18,7 @@ public class SimpleFeatureNode extends FeatureNode {
 
   public SimpleFeatureNode(UniqueId uniqueId, RunnerConfiguration configuration,
                            FeatureInfo featureInfo, IterationNode delegate) {
-    super(uniqueId, featureInfo.getName(), featureToMethodSource(featureInfo), configuration, featureInfo);
+    super(uniqueId, featureInfo.getDisplayName(), featureToMethodSource(featureInfo), configuration, featureInfo);
     this.delegate = delegate;
   }
 

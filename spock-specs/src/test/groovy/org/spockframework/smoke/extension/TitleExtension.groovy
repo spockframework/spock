@@ -21,6 +21,6 @@ import spock.lang.Title
 class TitleExtension extends Specification {
   def "sets @Title text as spec name"() {
     expect:
-    specificationContext.currentSpec.name == "A beautiful mind"
+    specificationContext.currentSpec.displayName == "A beautiful mind"
   }
 }

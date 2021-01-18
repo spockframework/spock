@@ -16,7 +16,7 @@ import static org.spockframework.util.ExceptionUtil.sneakyThrow;
 public class ParameterizedFeatureNode extends FeatureNode {
 
   protected ParameterizedFeatureNode(UniqueId uniqueId, RunnerConfiguration configuration, FeatureInfo featureInfo) {
-    super(uniqueId, featureInfo.getName(),featureToMethodSource(featureInfo), configuration, featureInfo);
+    super(uniqueId, featureInfo.getDisplayName(), featureToMethodSource(featureInfo), configuration, featureInfo);
   }
 
 

@@ -262,7 +262,7 @@ if (gradle.startParameter.taskNames == ["ghActionsPublish"] || gradle.startParam
   if (!(System.getenv("GITHUB_EVENT_NAME") == "push"
           && System.getenv("GITHUB_REF") == "refs/heads/master"
           && System.getenv("GITHUB_REPOSITORY") == 'spockframework/spock')) {
-    throw new IllegalArgumentException("""ghActionsPublish can only be run on branch master in repo spockframework/spock on push
+    throw new IllegalArgumentException("""ghActionsPublish can only be run on push to branch master in repo spockframework/spock
       event: ${System.getenv("GITHUB_EVENT_NAME")}
       ref: ${System.getenv("GITHUB_REF")}
       repo: ${System.getenv("GITHUB_REPOSITORY")}""")

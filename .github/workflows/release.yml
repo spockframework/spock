@@ -59,8 +59,6 @@ jobs:
           tag_name: ${{ github.ref }}
           release_name: Release ${{ github.ref }}
           body: |
-            Changes in this Release
-            - First Change
-            - Second Change
+            TODO: Add a link to the real release notes
           draft: true
           prerelease: false

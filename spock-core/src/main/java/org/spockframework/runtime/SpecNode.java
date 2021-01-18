@@ -11,7 +11,7 @@ import org.junit.platform.engine.support.descriptor.ClassSource;
 public class SpecNode extends SpockNode<SpecInfo> {
 
   protected SpecNode(UniqueId uniqueId, RunnerConfiguration configuration, SpecInfo specInfo) {
-    super(uniqueId, specInfo.getName(), ClassSource.from(specInfo.getReflection()), configuration, specInfo);
+    super(uniqueId, specInfo.getDisplayName(), ClassSource.from(specInfo.getReflection()), configuration, specInfo);
   }
 
   @Override

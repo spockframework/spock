@@ -322,7 +322,6 @@ class Foo extends Specification {
     then:
     def duration = System.currentTimeMillis() - start
     duration > 300
-    duration < 1000
     result.testsStartedCount == 4
     result.testsSucceededCount == 3
     result.testsFailedCount == 1

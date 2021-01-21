@@ -45,7 +45,7 @@ class ExceptionAdapterSpec extends JUnitBaseSpec {
     then:
     verifyAll(result) {
       testsStartedCount == testsStarted
-      testsAbortedCount == testsAbortet
+      testsAbortedCount == testsAborted
       testsSucceededCount == testsSucceeded
       containersAbortedCount == containersAborted
       containersStartedCount == 3 // engine + 2 specs
@@ -53,7 +53,7 @@ class ExceptionAdapterSpec extends JUnitBaseSpec {
     }
 
     where:
-    fixtureMethod | testsStarted | testsAbortet | testsSucceeded | containersAborted
+    fixtureMethod | testsStarted | testsAborted | testsSucceeded | containersAborted
     'setup'       | 3            | 3            | 0              | 0
     'cleanup'     | 3            | 3            | 0              | 0
     'setupSpec'   | 0            | 0            | 0              | 2

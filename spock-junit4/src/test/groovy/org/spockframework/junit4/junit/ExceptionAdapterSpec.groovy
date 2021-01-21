@@ -1,5 +1,7 @@
 package org.spockframework.junit4.junit
 
+import spock.lang.Issue
+
 import org.opentest4j.MultipleFailuresError
 
 class ExceptionAdapterSpec extends JUnitBaseSpec {
@@ -13,6 +15,49 @@ class ExceptionAdapterSpec extends JUnitBaseSpec {
 
     then:
     result.testsAbortedCount == 1
+  }
+
+  @Issue("https://github.com/spockframework/spock/issues/1263")
+  def "AssumptionViolationException is transformed to TestAbortedException for inherited specs"() {
+    given:
+    runner.throwFailure = false
+
+    when:
+    def result = runner.runWithImports("""
+      class SuperSpec extends Specification {
+          def $fixtureMethod() {
+            throw new org.junit.AssumptionViolatedException("skip")
+          }
+
+          def "super feature"() {
+              expect:
+              true
+          }
+      }
+      class SubSpec extends SuperSpec {
+          def "sub feature"() {
+              expect:
+              true
+          }
+      }
+    """)
+
+    then:
+    verifyAll(result) {
+      testsStartedCount == testsStarted
+      testsAbortedCount == testsAbortet
+      testsSucceededCount == testsSucceeded
+      containersAbortedCount == containersAborted
+      containersStartedCount == 3 // engine + 2 specs
+      testsFailedCount == 0
+    }
+
+    where:
+    fixtureMethod | testsStarted | testsAbortet | testsSucceeded | containersAborted
+    'setup'       | 3            | 3            | 0              | 0
+    'cleanup'     | 3            | 3            | 0              | 0
+    'setupSpec'   | 0            | 0            | 0              | 2
+    'cleanupSpec' | 3            | 0            | 3              | 2
   }
 
   def "MultipleFailureException is transformed to MultipleFailuresError"() {

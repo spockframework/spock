@@ -55,7 +55,7 @@ public class JUnitDescriptionGenerator {
   public static Description describeIteration(IterationInfo iteration, SpecInfo spec) {
     return Description.createTestDescription(
       spec.getReflection(),
-      iteration.getName(),
+      iteration.getDisplayName(),
       iteration.getFeature().getFeatureMethod().getAnnotations());
   }
 

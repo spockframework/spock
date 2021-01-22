@@ -17,9 +17,11 @@
 package org.spockframework.smoke.parameterization
 
 import org.spockframework.EmbeddedSpecification
-import spock.lang.Issue
-import spock.lang.Specification
-import spock.lang.Unroll
+import org.spockframework.runtime.extension.*
+import org.spockframework.runtime.model.*
+import spock.lang.*
+
+import java.lang.annotation.*
 
 /**
  * @author Peter Niederwieser
@@ -430,7 +432,38 @@ def "an actor (named #actor.getName()) age #actor.getAge()"() {
     then:
     result.testEvents().started().list().testDescriptor.displayName == ["an actor (named #actor.getName()) age #actor.getAge()",
                                                                         "an actor (named fred) age 30"]
+  }
 
+
+  @Issue("https://github.com/spockframework/spock/issues/1236")
+  def "custom name provider for both simple and parameterized features"() {
+    given:
+    runner.addClassImport(Suffixed)
+    when:
+    def result = runner.runWithImports("""
+@Suffixed
+class ExampleSpec extends Specification {
+
+    def "test"() {
+        expect:
+        true
+    }
+
+    def "parameterized"() {
+        expect:
+        true
+
+        where:
+        t << [0, 1]
+    }
+}
+    """)
+
+    then:
+    result.testEvents().started().list().testDescriptor.displayName == ["test [suffix]",
+                                                                        "parameterized [suffix]",
+                                                                        "parameterized [t: 0, #0] [suffix]",
+                                                                        "parameterized [t: 1, #1] [suffix]"]
   }
 
   static class Actor {
@@ -458,6 +491,31 @@ def "an actor (named #actor.getName()) age #actor.getAge()"() {
 
       where:
       actor = new Actor()
+    }
+  }
+}
+
+@Retention(RetentionPolicy.RUNTIME)
+@Target([ElementType.TYPE])
+@Inherited
+@ExtensionAnnotation(SuffixedExtension)
+@interface Suffixed {
+}
+class SuffixedExtension implements IAnnotationDrivenExtension<Suffixed> {
+
+  @Override
+  void visitSpecAnnotation(Suffixed annotation, SpecInfo spec) {
+
+    spec.features.each {
+      feature ->
+        feature.reportIterations = true
+        def currentIterationNameProvider = feature.iterationNameProvider
+        feature.iterationNameProvider = { IterationInfo it ->
+          def defaultName = currentIterationNameProvider == null ? feature.name : currentIterationNameProvider.getName(it)
+          defaultName + " [suffix]"
+        }
+
+        feature.displayName = feature.name  + " [suffix]"
     }
   }
 }

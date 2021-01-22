@@ -52,6 +52,9 @@ public class InternalIdentifiers {
   public static String getSharedFieldName(String baseName) {
     return "$spock_sharedField_" + baseName;
   }
+  public static String getFinalFieldName(String baseName) {
+    return "$spock_finalField_" + baseName;
+  }
 
   public static boolean isInternalName(String name) {
     return name.startsWith("$spock_");

@@ -14,6 +14,6 @@ public class IsolatedExtension implements IAnnotationDrivenExtension<Isolated> {
 
   @Override
   public void visitSpecAnnotations(List<Isolated> annotations, SpecInfo spec) {
-    spec.addExclusiveResource(GLOBAL_LOCK);
+    spec.getBottomSpec().addExclusiveResource(GLOBAL_LOCK);
   }
 }

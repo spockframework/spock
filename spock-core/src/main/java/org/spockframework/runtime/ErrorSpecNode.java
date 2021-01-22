@@ -25,7 +25,7 @@ public class ErrorSpecNode extends SpecNode {
   }
 
   @Override
-  public SpockExecutionContext execute(SpockExecutionContext context, DynamicTestExecutor dynamicTestExecutor) throws Exception {
+  public SpockExecutionContext prepare(SpockExecutionContext context) throws Exception {
     return ExceptionUtil.sneakyThrow(error);
   }
 }

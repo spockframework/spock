@@ -85,14 +85,21 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
   private void handleSharedField(Field field) {
     changeSharedFieldInternalName(field);
     createSharedFieldGetter(field);
-    createSharedFieldSetter(field);
+    if (!field.getAst().isFinal()) {
+      createSharedFieldSetter(field);
+    }
     moveSharedFieldInitializer(field);
     makeSharedFieldProtectedAndVolatile(field);
+    AstUtil.setFinal(field.getAst(), false);
   }
 
   // field.getAst().getName() changes, field.getName() remains the same
   private void changeSharedFieldInternalName(Field field) {
     field.getAst().rename(InternalIdentifiers.getSharedFieldName(field.getName()));
+  }
+
+  private void changeFinalFieldInternalName(Field field) {
+    field.getAst().rename(InternalIdentifiers.getFinalFieldName(field.getName()));
   }
 
   private void createSharedFieldGetter(Field field) {
@@ -116,6 +123,29 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
                     getSharedInstance(),
                     // use internal name
                     new ConstantExpression(field.getAst().getName())))));
+
+    getter.setSourcePosition(field.getAst());
+    spec.getAst().addMethod(getter);
+  }
+
+  private void createFinalFieldGetter(Field field) {
+    String getterName = "get" + MetaClassHelper.capitalize(field.getName());
+    MethodNode getter = spec.getAst().getMethod(getterName, Parameter.EMPTY_ARRAY);
+    if (getter != null) {
+      errorReporter.error(field.getAst(),
+          "Final field '%s' conflicts with method '%s'; please rename either of them",
+          field.getName(), getter.getName());
+      return;
+    }
+
+    BlockStatement getterBlock = new BlockStatement();
+    getter = new MethodNode(getterName, determineVisibilityForFinalFieldAccessor(field) | Opcodes.ACC_SYNTHETIC,
+        field.getAst().getType(), Parameter.EMPTY_ARRAY, ClassNode.EMPTY_ARRAY, getterBlock);
+
+    getterBlock.addStatement(
+        new ReturnStatement(
+            new ExpressionStatement(
+                new VariableExpression(field.getAst().getName(), field.getAst().getType()))));
 
     getter.setSourcePosition(field.getAst());
     spec.getAst().addMethod(getter);
@@ -162,9 +192,22 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
     }
   }
 
+  private int determineVisibilityForFinalFieldAccessor(Field field) {
+    if (field.getOwner() == null) { // true field
+      return AstUtil.getVisibility(field.getAst());
+    } else { // property
+      return Opcodes.ACC_PUBLIC;
+    }
+  }
+
   private void moveSharedFieldInitializer(Field field) {
-    if (field.getAst().getInitialValueExpression() != null)
+    if (field.getAst().getInitialValueExpression() != null) {
       moveInitializer(field, getSharedInitializerMethod(), sharedFieldInitializerCount++);
+    } else if (field.getAst().isFinal()) {
+      errorReporter.error(field.getAst(),
+              "@Shared final field '%s' is not initialized.",
+              field.getName());
+    }
   }
 
   /*
@@ -217,8 +260,19 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
   }
 
   private void handleNonSharedField(Field field) {
-    if (field.getAst().getInitialValueExpression() != null)
+    boolean wasFinal = field.getAst().isFinal();
+    if (wasFinal) {
+      changeFinalFieldInternalName(field);
+      createFinalFieldGetter(field);
+      AstUtil.setFinal(field.getAst(), false);
+    }
+    if (field.getAst().getInitialValueExpression() != null) {
       moveInitializer(field, getInitializerMethod(), fieldInitializerCount++);
+    } else if (wasFinal) {
+      errorReporter.error(field.getAst(),
+              "Final field '%s' is not initialized.",
+              field.getName());
+    }
   }
 
   /*

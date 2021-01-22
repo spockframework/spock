@@ -7,6 +7,31 @@ include::include.adoc[]
   This field can be set via extensions to change the reported name.
   The existing iteration `NameProvider` now also sets the `displayName` instead of the `name`.
   Modifying the `name` instead of `displayName` is now considered `deprecated` for extensions.
+  https://github.com/spockframework/spock/issues/1236[#1236]
+
+- Add support for constructor injection for extensions
+
+- Improve final field handling.
+  Final fields are now transformed similar to shared fields, so that we can still delay the initialization but keep them
+  unmodifiable to user code. https://github.com/spockframework/spock/issues/1011[#1011]
+
+- Improve parallel extensions to support inheritance https://github.com/spockframework/spock/issues/1245[#1245]
+
+- Deprecate `AbstractGlobalExtension` and replace with `IGlobalExtension`
+
+- Fix https://github.com/spockframework/spock/issues/1229[#1229] `@TempDir` not working for inherited fields
+
+- Fix https://github.com/spockframework/spock/issues/1232[#1232] compile error for nested conditions without top-level condition
+
+- Fix https://github.com/spockframework/spock/issues/1256[#1256] handling of `is` as getter for boolean properties on Mocks
+
+- Fix `ErrorSpecNode` to re-throw `Exception` in `prepare` instead of `execute`,
+  this fixes an issue that interceptors for `prepare`, `before`, and `around`
+  were still executed and any Exception they throw would hide the actual cause.
+
+- Fix https://github.com/spockframework/spock/issues/1263[#1263] ExceptionAdapterExtension to also handle inherited fixture methods
+
+Thanks to all the contributors to this release: Björn Kautler, Alexander Kriegisch, Josh Soref
 
 == 2.0-M4 (2020-11-01)
 

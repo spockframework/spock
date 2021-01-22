@@ -19,7 +19,7 @@ public class ResourceLockExtension implements IAnnotationDrivenExtension<Resourc
 
   @Override
   public void visitSpecAnnotations(List<ResourceLock> annotations, SpecInfo spec) {
-    annotations.forEach( lockResource -> spec.addExclusiveResource(
+    annotations.forEach( lockResource -> spec.getBottomSpec().addExclusiveResource(
       toExclusiveResource(lockResource)));
   }
 

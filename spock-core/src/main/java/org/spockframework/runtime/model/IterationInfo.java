@@ -22,12 +22,13 @@ import java.util.*;
 /**
  * Runtime information about an iteration of a feature method.
  */
-public class IterationInfo extends NodeInfo<FeatureInfo, AnnotatedElement> {
+public class IterationInfo extends NodeInfo<FeatureInfo, AnnotatedElement> implements INameable {
   private final int iterationIndex;
   private final Object[] dataValues;
   private final int estimatedNumIterations;
   private final List<Runnable> cleanups = new ArrayList<>();
   private Map<String, Object> dataVariables;
+  private String displayName;
 
   public IterationInfo(FeatureInfo feature, int iterationIndex, Object[] dataValues, int estimatedNumIterations) {
     setParent(feature);
@@ -43,19 +44,6 @@ public class IterationInfo extends NodeInfo<FeatureInfo, AnnotatedElement> {
   @Override
   public AnnotatedElement getReflection() {
     throw new UnsupportedOperationException("getReflection");
-  }
-
-  /**
-   * Returns the name of this iteration. No strong guarantees are provided for this name,
-   * except that it is non-null. For example, it may be the same as the feature name,
-   * and it may not be unique among iterations of the same feature execution.
-   * Nevertheless, this is generally the name that should be presented to the user (if any).
-   *
-   * @return the name of this iteration
-   */
-  @Override
-  public String getName() {
-    return super.getName();
   }
 
   /**
@@ -114,5 +102,23 @@ public class IterationInfo extends NodeInfo<FeatureInfo, AnnotatedElement> {
 
   public List<Runnable> getCleanups() {
     return cleanups;
+  }
+
+  /**
+   * Returns the name of this iteration. No strong guarantees are provided for this name,
+   * except that it is non-null. For example, it may be the same as the feature name,
+   * and it may not be unique among iterations of the same feature execution.
+   * Nevertheless, this is generally the name that should be presented to the user (if any).
+   *
+   * @return the name of this iteration
+   */
+  @Override
+  public String getDisplayName() {
+    return displayName == null ? getName() : displayName;
+  }
+
+  @Override
+  public void setDisplayName(String displayName) {
+    this.displayName = displayName;
   }
 }

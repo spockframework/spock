@@ -3,6 +3,9 @@ include::include.adoc[]
 
 == 2.0-M5 (tbd)
 
+- Add support for injection into `@Shared` fields in `spock-spring` module which users can opt-in for by adding
+  `@EnableSharedInjection` to the specification. https://github.com/spockframework/spock/issues/76[#76]
+
 - Add new `displayName` via `INameable` for `SpecInfo`, `FeatureInfo`, and `IterationInfo`.
   This field can be set via extensions to change the reported name.
   The existing iteration `NameProvider` now also sets the `displayName` instead of the `name`.
@@ -32,6 +35,7 @@ include::include.adoc[]
 - Fix https://github.com/spockframework/spock/issues/1263[#1263] ExceptionAdapterExtension to also handle inherited fixture methods
 
 Thanks to all the contributors to this release: Björn Kautler, Alexander Kriegisch, Josh Soref
+
 
 == 2.0-M4 (2020-11-01)
 

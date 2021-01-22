@@ -34,7 +34,7 @@ include::include.adoc[]
 
 - Fix https://github.com/spockframework/spock/issues/1263[#1263] ExceptionAdapterExtension to also handle inherited fixture methods
 
-Thanks to all the contributors to this release: Björn Kautler, Alexander Kriegisch, Josh Soref
+Thanks to all the contributors to this release: Marcin Erdmann, Björn Kautler, Alexander Kriegisch, Josh Soref
 
 
 == 2.0-M4 (2020-11-01)

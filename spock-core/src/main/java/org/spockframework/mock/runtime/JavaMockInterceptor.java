@@ -38,7 +38,7 @@ public class JavaMockInterceptor implements IProxyBasedMockInterceptor {
   @Override
   public Object intercept(Object target, Method method, Object[] arguments, IResponseGenerator realMethodInvoker) {
     IMockObject mockObject = new MockObject(mockConfiguration.getName(), mockConfiguration.getExactType(),
-        target, mockConfiguration.isVerified(), false, mockConfiguration.getDefaultResponse(), specification, this);
+      target, mockConfiguration.isVerified(), false, mockConfiguration.getDefaultResponse(), specification, this);
 
     if (method.getDeclaringClass() == ISpockMockObject.class) {
       return mockObject;
@@ -78,7 +78,17 @@ public class JavaMockInterceptor implements IProxyBasedMockInterceptor {
         if (!(mockCaller.getClassName().startsWith("groovy.lang.GroovyObject$getProperty") && "call".equals(mockCaller.getMethodName()))) {
           //HACK: Only explicit getter executions (go.foo and go.getFoo()) should be deeper processed.
           //go.getProperty("foo") is treated as is (to allow for its stubbing)
-          String methodName = GroovyRuntimeUtil.propertyToMethodName("get", (String)args[0]);
+          String propertyName = (String)args[0];
+          MetaClass metaClass = ((GroovyObject)target).getMetaClass();
+          String methodName = GroovyRuntimeUtil.propertyToMethodName("get", propertyName);
+          MetaMethod metaMethod = metaClass.getMetaMethod(methodName, GroovyRuntimeUtil.EMPTY_ARGUMENTS);
+          if (metaMethod == null) {
+            MetaMethod booleanVariant = metaClass
+              .getMetaMethod(GroovyRuntimeUtil.propertyToMethodName("is", propertyName), GroovyRuntimeUtil.EMPTY_ARGUMENTS);
+            if (booleanVariant != null && booleanVariant.getReturnType() == boolean.class) {
+              methodName = booleanVariant.getName();
+            }
+          }
           return GroovyRuntimeUtil.invokeMethod(target, methodName);
         }
       }
@@ -87,7 +97,7 @@ public class JavaMockInterceptor implements IProxyBasedMockInterceptor {
     IMockMethod mockMethod = new StaticMockMethod(method, mockConfiguration.getExactType());
     IMockInvocation invocation = new MockInvocation(mockObject, mockMethod, Arrays.asList(args), realMethodInvoker);
     IMockController mockController = specification == null ? getFallbackMockController() :
-                                                             specification.getSpecificationContext().getMockController();
+      specification.getSpecificationContext().getMockController();
 
     return mockController.handle(invocation);
   }
@@ -96,22 +106,21 @@ public class JavaMockInterceptor implements IProxyBasedMockInterceptor {
     return method.getName().equals(name) && Arrays.equals(method.getParameterTypes(), parameterTypes);
   }
 
-	@Override
+  @Override
   public void attach(Specification specification) {
-		this.specification = specification;
+    this.specification = specification;
 
-	}
+  }
 
-	@Override
+  @Override
   public void detach() {
-	  this.specification = null;
-	}
+    this.specification = null;
+  }
 
-	public MockController getFallbackMockController() {
-	  if (fallbackMockController == null) {
-	    fallbackMockController = new MockController();
-	  }
+  public MockController getFallbackMockController() {
+    if (fallbackMockController == null) {
+      fallbackMockController = new MockController();
+    }
     return fallbackMockController;
   }
 }
-

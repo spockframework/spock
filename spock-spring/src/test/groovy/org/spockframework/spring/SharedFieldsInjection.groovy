@@ -216,4 +216,43 @@ class SharedFieldsInjection extends Specification {
     then:
     result.testsSucceededCount == 1
   }
+
+  def "prepareTestInstance() should not be called for shared instance when shared injection is not enabled"() {
+    when:
+    def result = runner.runWithImports """
+      import org.springframework.test.context.TestExecutionListeners
+      import org.springframework.test.context.support.AbstractTestExecutionListener
+      import org.springframework.test.context.TestContext
+
+      import static org.springframework.test.context.TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS
+
+      @ContextConfiguration
+      @TestExecutionListeners(
+        value = [SinglePrepareTestInstanceAllowingTestListener],
+        mergeMode = MERGE_WITH_DEFAULTS
+      )
+      class Foo extends Specification {
+        def test() {
+          expect:
+          true
+        }
+      }
+
+      class SinglePrepareTestInstanceAllowingTestListener extends AbstractTestExecutionListener {
+
+        private int prepareTestInstanceCount
+
+        @Override
+        void prepareTestInstance(TestContext testContext) throws Exception {
+          prepareTestInstanceCount++
+          if (prepareTestInstanceCount > 1) {
+            throw new IllegalStateException("prepareTestInstance() should not be called more than once")
+          }
+        }
+      }
+    """
+
+    then:
+    result.testsSucceededCount == 1
+  }
 }

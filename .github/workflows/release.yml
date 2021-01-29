@@ -1,13 +1,75 @@
-name: Spock Release
+name: 'Build and Release Spock'
+
 on:
   push:
+    branches:
+      - master
     tags:
       - 'spock-*'
 
 jobs:
+  build-and-verify:
+    runs-on: ${{ matrix.os }}
+    if: github.repository == 'spockframework/spock' && github.ref == 'refs/heads/master'
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ 'ubuntu-latest' ]
+        variant: [ '2.5', '3.0' ]
+        java: [ '8', '11', '15' ]
+        include:
+          - os: 'windows-latest'
+            variant: '2.5'
+            java: '8'
+          - os: 'windows-latest'
+            variant: '3.0'
+            java: '8'
+          - os: 'macos-latest'
+            variant: '2.5'
+            java: '8'
+          - os: 'macos-latest'
+            variant: '3.0'
+            java: '8'
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          # Codecov needs fetch-depth > 1
+          fetch-depth: 2
+      - name: Cache Gradle wrapper and dependencies
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.gradle/caches/
+            ~/.gradle/wrapper/dists
+          key: test-${{ runner.os }}-variant-${{ matrix.variant }}-gradle-${{ hashFiles('**/*.gradle', '**/*.gradle.kts', '**/gradle.properties', 'gradle/**', 'buildSrc/src/main/**') }}
+          restore-keys: |
+            test-${{ runner.os }}-variant-${{ matrix.variant }}-
+      - name: 'Set up JDK'
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ matrix.java }}
+      - name: 'Gradle Version'
+        run: |
+          ./gradlew --version
+      - name: 'Build Spock'
+        run: |
+          ./gradlew --no-parallel --scan --stacktrace ghActionsBuild "-Dvariant=${{ matrix.variant }}"
+      - name: 'Stop Daemon'
+        run: |
+          ./gradlew --stop
+      - name: 'Upload to Codecov.io'
+        uses: codecov/codecov-action@v1
+
   release-spock:
     runs-on: ${{ matrix.os }}
-    if: github.event_name == 'push' && github.repository == 'spockframework/spock' && startsWith(github.ref, 'refs/tags/spock-')
+    needs: [ 'build-and-verify' ]
+    # Use always() and check needs result manually since we skip the 'build-and-verify' execution on a tag,
+    # but still want to depend on it on the main branch
+    if: |
+      always()
+      && (needs.'build-and-verify'.result == 'success' || needs.'build-and-verify'.result == 'skipped')
+      && github.event_name == 'push'
+      && github.repository == 'spockframework/spock'
     strategy:
       matrix:
         os: [ 'ubuntu-latest' ]
@@ -46,7 +108,6 @@ jobs:
   publish-release-docs:
     runs-on: ${{ matrix.os }}
     needs: ['release-spock']
-    if: github.event_name == 'push' && github.repository == 'spockframework/spock' && startsWith(github.ref, 'refs/tags/spock-')
     strategy:
       matrix:
         os: ['ubuntu-latest']
@@ -81,7 +142,7 @@ jobs:
 
   create-release:
     runs-on: ubuntu-latest
-    needs: [release-spock]
+    needs: ['release-spock']
     steps:
       - name: Checkout code
         uses: actions/checkout@v2

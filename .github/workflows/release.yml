@@ -7,7 +7,6 @@ on:
 jobs:
   release-spock:
     runs-on: ${{ matrix.os }}
-    needs: [ 'build-and-verify' ]
     if: github.event_name == 'push' && github.repository == 'spockframework/spock' && startsWith(github.ref, 'refs/tags/spock-')
     strategy:
       matrix:
@@ -40,6 +39,42 @@ jobs:
           SIGNING_PASSWORD: ${{ secrets.SIGNING_GPG_PASSWORD }}
         run: |
           ./gradlew --no-parallel --scan --stacktrace ghActionsPublish "-Dvariant=${{ matrix.variant }}"
+      - name: 'Stop Daemon'
+        run: |
+          ./gradlew --stop
+
+  publish-release-docs:
+    runs-on: ${{ matrix.os }}
+    needs: ['release-spock']
+    if: github.event_name == 'push' && github.repository == 'spockframework/spock' && startsWith(github.ref, 'refs/tags/spock-')
+    strategy:
+      matrix:
+        os: ['ubuntu-latest']
+        variant: ['3.0']      # docs need the highest variant
+        java: ['15']          # docs need the highest java version
+    steps:
+      - uses: actions/checkout@v2
+      - name: Cache Gradle wrapper and dependencies
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.gradle/caches/
+            ~/.gradle/wrapper/dists
+          key: test-${{ runner.os }}-variant-${{ matrix.variant }}-gradle-${{ hashFiles('**/*.gradle', '**/*.gradle.kts', '**/gradle.properties', 'gradle/**', 'buildSrc/src/main/**') }}
+          restore-keys: |
+            test-${{ runner.os }}-variant-${{ matrix.variant }}-
+      - name: 'Set up JDK'
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ matrix.java }}
+      - name: 'Gradle Version'
+        run: |
+          ./gradlew --version
+      - name: 'Publish Docs'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          ./gradlew --no-parallel --scan --stacktrace ghActionsDocs "-Dvariant=${{ matrix.variant }}"
       - name: 'Stop Daemon'
         run: |
           ./gradlew --stop

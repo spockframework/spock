@@ -34,7 +34,7 @@ public class OldValueExpression extends VariableExpression {
     this.originalExpression = originalExpression;
   }
 
-  public Expression getOrginalExpression() {
+  public Expression getOriginalExpression() {
     return originalExpression;
   }
 }

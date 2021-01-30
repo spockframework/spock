@@ -35,8 +35,8 @@ Certain <<extensions.adoc#extensions, extensions>> also set execution modes when
 * `defaultExecutionMode` controls what execution mode a feature and its iterations (if data driven) will use by default.
 
 .Sequential Execution, either `runner.parallel.enabled=false` or `SAME_THREAD` Specifications, `SAME_THREAD` Features
-[plantuml,images/sequential-squential-execution,svg]
-[[figure-sequential-squential-execution]]
+[plantuml,images/sequential-sequential-execution,svg]
+[[figure-sequential-sequential-execution]]
 ....
 @startgantt
 scale 2

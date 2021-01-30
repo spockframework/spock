@@ -21,7 +21,7 @@ import org.spockframework.util.Beta;
 import java.lang.annotation.*;
 
 /**
- * Wraps an exisiting bean in a Spock spy.
+ * Wraps an existing bean in a Spock spy.
  * <p>
  * Inspired by Springs {@code @SpyBean}, but adapted to Spock semantics.
  * <p>

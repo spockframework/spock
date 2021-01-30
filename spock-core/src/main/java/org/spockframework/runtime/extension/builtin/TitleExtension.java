@@ -22,6 +22,6 @@ import spock.lang.Title;
 public class TitleExtension implements IAnnotationDrivenExtension<Title> {
   @Override
   public void visitSpecAnnotation(Title title, SpecInfo spec) {
-    spec.setName(title.value().trim());
+    spec.setDisplayName(title.value().trim());
   }
 }

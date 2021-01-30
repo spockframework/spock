@@ -20,9 +20,12 @@ import org.spockframework.runtime.AbstractRunListener;
 import org.spockframework.runtime.extension.AbstractGlobalExtension;
 import org.spockframework.runtime.model.*;
 import org.spockframework.util.*;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import spock.lang.Shared;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Method;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,7 +59,7 @@ public class SpringExtension extends AbstractGlobalExtension {
   public void visitSpec(SpecInfo spec) {
     if (!isSpringSpec(spec)) return;
 
-    checkNoSharedFieldsInjected(spec);
+    verifySharedFieldsInjection(spec);
 
     if (!handleProfileValues(spec)) return;
 
@@ -93,6 +96,35 @@ public class SpringExtension extends AbstractGlobalExtension {
         new Class[] {ContextConfiguration.class, contextHierarchyClass, bootstrapWithAnnotation}) != null;
   }
 
+  private void verifySharedFieldsInjection(SpecInfo spec) {
+    if (spec.isAnnotationPresent(EnableSharedInjection.class)) {
+      verifySharedFieldsInjectionEnabled(spec);
+    } else {
+      checkNoSharedFieldsInjected(spec);
+    }
+  }
+
+  private void verifySharedFieldsInjectionEnabled(SpecInfo spec) {
+    if (spec.isAnnotationPresent(DirtiesContext.class)) {
+      ClassMode classMode = spec.getAnnotation(DirtiesContext.class).classMode();
+      if (classMode == ClassMode.BEFORE_EACH_TEST_METHOD || classMode == ClassMode.AFTER_EACH_TEST_METHOD) {
+        throw sharedInjectionWithDirtiesContextException();
+      }
+    }
+    for (FeatureInfo feature : spec.getAllFeatures()) {
+      MethodInfo featureMethod = feature.getFeatureMethod();
+      if (featureMethod.isAnnotationPresent(DirtiesContext.class)) {
+        throw sharedInjectionWithDirtiesContextException();
+      }
+    }
+  }
+
+  private SpringExtensionException sharedInjectionWithDirtiesContextException() {
+    return new SpringExtensionException(
+      "Shared field injection is not supported if feature methods make context dirty by using @DirtiesContext " +
+        "annotation");
+  }
+
   private void checkNoSharedFieldsInjected(SpecInfo spec) {
     for (FieldInfo field : spec.getAllFields()) {
       if (field.getReflection().isAnnotationPresent(Shared.class)
@@ -101,7 +133,9 @@ public class SpringExtension extends AbstractGlobalExtension {
           || ReflectionUtil.isAnnotationPresent(field.getReflection(), "javax.annotation.Resource")
           || ReflectionUtil.isAnnotationPresent(field.getReflection(), "javax.inject.Inject")))
         throw new SpringExtensionException(
-            "@Shared field '%s' cannot be injected; use an instance field instead").withArgs(field.getName());
+            "@Shared field injection is not enabled by default therefore '%s' field cannot be injected. Refer to " +
+              "javadoc of %s for information on how to opt-in for @Shared field injection.")
+          .withArgs(field.getName(), EnableSharedInjection.class.getName());
     }
   }
 

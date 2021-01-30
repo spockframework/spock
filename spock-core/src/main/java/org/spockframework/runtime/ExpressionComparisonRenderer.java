@@ -5,7 +5,7 @@ import org.spockframework.util.Nullable;
 
 public interface ExpressionComparisonRenderer {
   /**
-   * Renders a comparision expression.
+   * Renders a comparison expression.
    *
    * @param expr the expression to be rendered
    * @return the rendering or {@code null} if it can't be rendered by this renderer

@@ -12,7 +12,7 @@ public class IterationNode extends SpockNode<FeatureInfo> {
   private final IterationInfo iterationInfo;
 
   protected IterationNode(UniqueId uniqueId, RunnerConfiguration configuration, IterationInfo iterationInfo) {
-    super(uniqueId, iterationInfo.getName(), featureToMethodSource(iterationInfo.getFeature()), configuration,
+    super(uniqueId, iterationInfo.getDisplayName(), featureToMethodSource(iterationInfo.getFeature()), configuration,
       iterationInfo.getFeature());
     this.iterationInfo = iterationInfo;
   }

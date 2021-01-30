@@ -24,10 +24,11 @@ import java.util.*;
 //TODO: should not be generic
 public abstract class SpecElementInfo<P extends NodeInfo, R extends AnnotatedElement>
     extends NodeInfo<P, R>
-    implements ISkippable, IExcludable, ITaggable, IAttachmentContainer, IInterceptable, IParallelInfo {
+    implements ISkippable, IExcludable, ITaggable, IAttachmentContainer, IInterceptable, IParallelInfo, INameable {
   private boolean skipped = false;
 
   private String skipReason;
+  private String displayName;
 
   private boolean excluded = false;
   private final List<Tag> tags = new ArrayList<>();
@@ -52,6 +53,16 @@ public abstract class SpecElementInfo<P extends NodeInfo, R extends AnnotatedEle
   public void skip(String skipReason) {
     this.skipped = true;
     this.skipReason = skipReason;
+  }
+
+  @Override
+  public String getDisplayName() {
+    return displayName == null ? getName() : displayName;
+  }
+
+  @Override
+  public void setDisplayName(String displayName) {
+    this.displayName = displayName;
   }
 
   @Override

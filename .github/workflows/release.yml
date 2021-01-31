@@ -67,7 +67,7 @@ jobs:
     # but still want to depend on it on the main branch
     if: |
       always()
-      && (needs.'build-and-verify'.result == 'success' || needs.'build-and-verify'.result == 'skipped')
+      && (needs.build-and-verify.result == 'success' || needs.build-and-verify.result == 'skipped')
       && github.event_name == 'push'
       && github.repository == 'spockframework/spock'
     strategy:

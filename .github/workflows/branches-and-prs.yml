@@ -1,9 +1,10 @@
-name: 'CI Builds'
+name: 'Verify Branches and PRs'
 
 on:
   push:
-    branches:
+    branches-ignore:
       - master
+      - gh-pages
   pull_request:
     branches:
       - '*'

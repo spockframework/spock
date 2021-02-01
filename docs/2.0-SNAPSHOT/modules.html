@@ -220,7 +220,7 @@ GreeterService alternativeMock
   <span class="integer">1</span> * serviceSpy.getGreeting()
 }
 
-<span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">alternatice mock service</span><span class="delimiter">&quot;</span></span>() {
+<span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">alternative mock service</span><span class="delimiter">&quot;</span></span>() {
   <span class="key">when</span>:
   <span class="keyword">def</span> result = alternativeMock.greeting
 
@@ -427,6 +427,13 @@ The <code>request</code> and <code>session</code> scope will throw exceptions by
 <p>You can limit the scanning to certain scopes by using the <code>value</code> property of <code>@ScanScopedBeans</code>.</p>
 </div>
 </div>
+<div class="sect2">
+<h3 id="_shared_fields_injection"><a class="anchor" href="#_shared_fields_injection"></a><a class="link" href="#_shared_fields_injection">Shared fields injection</a></h3>
+<div class="paragraph">
+<p>Due to certain limitations, injection into shared fields is not enabled by default but can be opted-in to.
+Refer to javadoc of <code>org.spockframework.spring.EnableSharedInjection</code> for further information.</p>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -471,7 +478,7 @@ Grails 2.3 and higher have built-in Spock support and do not require a plugin.
 <div id="footer">
 <div id="footer-text">
 Version 2.0-SNAPSHOT<br>
-Last updated 2020-12-17 17:45:48 UTC
+Last updated 2021-02-01 11:14:52 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./coderay-asciidoctor.css">

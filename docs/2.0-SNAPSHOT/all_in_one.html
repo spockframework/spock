@@ -212,6 +212,7 @@
 <ul class="sectlevel3">
 <li><a href="#_mocks">Mocks</a></li>
 <li><a href="#_scopes">Scopes</a></li>
+<li><a href="#_shared_fields_injection">Shared fields injection</a></li>
 </ul>
 </li>
 <li><a href="#_tapestry_module">Tapestry Module</a></li>
@@ -5149,9 +5150,9 @@ Certain <a href="#extensions">extensions</a> also set execution modes when they 
 </li>
 </ul>
 </div>
-<div id="figure-sequential-squential-execution" class="imageblock">
+<div id="figure-sequential-sequential-execution" class="imageblock">
 <div class="content">
-<img src="images/sequential-squential-execution.svg" alt="sequential squential execution" width="708" height="164">
+<img src="images/sequential-sequential-execution.svg" alt="sequential sequential execution" width="708" height="164">
 </div>
 <div class="title">Figure 2. Sequential Execution, either <code>runner.parallel.enabled=false</code> or <code>SAME_THREAD</code> Specifications, <code>SAME_THREAD</code> Features</div>
 </div>
@@ -5645,7 +5646,7 @@ GreeterService alternativeMock
   <span class="integer">1</span> * serviceSpy.getGreeting()
 }
 
-<span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">alternatice mock service</span><span class="delimiter">&quot;</span></span>() {
+<span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">alternative mock service</span><span class="delimiter">&quot;</span></span>() {
   <span class="key">when</span>:
   <span class="keyword">def</span> result = alternativeMock.greeting
 
@@ -5852,6 +5853,13 @@ The <code>request</code> and <code>session</code> scope will throw exceptions by
 <p>You can limit the scanning to certain scopes by using the <code>value</code> property of <code>@ScanScopedBeans</code>.</p>
 </div>
 </div>
+<div class="sect3">
+<h4 id="_shared_fields_injection"><a class="anchor" href="#_shared_fields_injection"></a><a class="link" href="#_shared_fields_injection">Shared fields injection</a></h4>
+<div class="paragraph">
+<p>Due to certain limitations, injection into shared fields is not enabled by default but can be opted-in to.
+Refer to javadoc of <code>org.spockframework.spring.EnableSharedInjection</code> for further information.</p>
+</div>
+</div>
 </div>
 <div class="sect2">
 <h3 id="_tapestry_module"><a class="anchor" href="#_tapestry_module"></a><a class="link" href="#_tapestry_module">Tapestry Module</a></h3>
@@ -5892,7 +5900,55 @@ Grails 2.3 and higher have built-in Spock support and do not require a plugin.
 <div class="sectionbody">
 <div class="sect2">
 <h3 id="_2_0_m5_tbd"><a class="anchor" href="#_2_0_m5_tbd"></a><a class="link" href="#_2_0_m5_tbd">2.0-M5 (tbd)</a></h3>
-
+<div class="ulist">
+<ul>
+<li>
+<p>Add support for injection into <code>@Shared</code> fields in <code>spock-spring</code> module which users can opt-in for by adding
+<code>@EnableSharedInjection</code> to the specification. <a href="https://github.com/spockframework/spock/issues/76">#76</a></p>
+</li>
+<li>
+<p>Add new <code>displayName</code> via <code>INameable</code> for <code>SpecInfo</code>, <code>FeatureInfo</code>, and <code>IterationInfo</code>.
+This field can be set via extensions to change the reported name.
+The existing iteration <code>NameProvider</code> now also sets the <code>displayName</code> instead of the <code>name</code>.
+Modifying the <code>name</code> instead of <code>displayName</code> is now considered <code>deprecated</code> for extensions.
+<a href="https://github.com/spockframework/spock/issues/1236">#1236</a></p>
+</li>
+<li>
+<p>Add support for constructor injection for extensions</p>
+</li>
+<li>
+<p>Improve final field handling.
+Final fields are now transformed similar to shared fields, so that we can still delay the initialization but keep them
+unmodifiable to user code. <a href="https://github.com/spockframework/spock/issues/1011">#1011</a></p>
+</li>
+<li>
+<p>Improve parallel extensions to support inheritance <a href="https://github.com/spockframework/spock/issues/1245">#1245</a></p>
+</li>
+<li>
+<p>Deprecate <code>AbstractGlobalExtension</code> and replace with <code>IGlobalExtension</code></p>
+</li>
+<li>
+<p>Fix <a href="https://github.com/spockframework/spock/issues/1229">#1229</a> <code>@TempDir</code> not working for inherited fields</p>
+</li>
+<li>
+<p>Fix <a href="https://github.com/spockframework/spock/issues/1232">#1232</a> compile error for nested conditions without top-level condition</p>
+</li>
+<li>
+<p>Fix <a href="https://github.com/spockframework/spock/issues/1256">#1256</a> handling of <code>is</code> as getter for boolean properties on Mocks</p>
+</li>
+<li>
+<p>Fix <code>ErrorSpecNode</code> to re-throw <code>Exception</code> in <code>prepare</code> instead of <code>execute</code>,
+this fixes an issue that interceptors for <code>prepare</code>, <code>before</code>, and <code>around</code>
+were still executed and any Exception they throw would hide the actual cause.</p>
+</li>
+<li>
+<p>Fix <a href="https://github.com/spockframework/spock/issues/1263">#1263</a> ExceptionAdapterExtension to also handle inherited fixture methods</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Thanks to all the contributors to this release: Marcin Erdmann, Björn Kautler, Alexander Kriegisch, Josh Soref</p>
+</div>
 </div>
 <div class="sect2">
 <h3 id="_2_0_m4_2020_11_01"><a class="anchor" href="#_2_0_m4_2020_11_01"></a><a class="link" href="#_2_0_m4_2020_11_01">2.0-M4 (2020-11-01)</a></h3>
@@ -6635,7 +6691,7 @@ data structure, then you need to move the condition into a separate method that 
 <p>Add <code>@SpringBean</code> and <code>@SpringSpy</code> inspired by <code>@MockBean</code>, Also add <code>@StubBeans</code> (<a href="#_annotation_driven">Docs</a>)</p>
 </li>
 <li>
-<p>Add <code>@UnwrapAopProxy</code> to make automatically unwrap SpringAopProxie</p>
+<p>Add <code>@UnwrapAopProxy</code> to make automatically unwrap SpringAopProxies</p>
 </li>
 <li>
 <p>Add <code>@AutoAttach</code> extension  (<a href="#_autoattach">Docs</a>)</p>
@@ -6674,7 +6730,7 @@ data structure, then you need to move the condition into a separate method that 
 <p>Improve reporting of exceptions during cleanup, they are now properly reported as suppressed exceptions instead of hiding the real exception</p>
 </li>
 <li>
-<p>Improve default responses for stubs, Java 8 types like <code>Optional</code> and <code>Streams</code> now return empty, <code>CompleteableFuture</code> completes with <code>null</code> result</p>
+<p>Improve default responses for stubs, Java 8 types like <code>Optional</code> and <code>Streams</code> now return empty, <code>CompletableFuture</code> completes with <code>null</code> result</p>
 </li>
 <li>
 <p>Improve support for builder pattern, stubs now return themselves if the return type matches the type of the stub</p>
@@ -6713,7 +6769,7 @@ data structure, then you need to move the condition into a separate method that 
 <p>Fix void methods with implicit targets failing in <code>with</code> and <code>verifyAll</code> (<a href="https://github.com/spockframework/spock/issues/886">#886</a>)</p>
 </li>
 <li>
-<p>Fix SpockAssertionErrors and its subclasses now are properly <code>Serializeable</code></p>
+<p>Fix SpockAssertionErrors and its subclasses now are properly <code>Serializable</code></p>
 </li>
 <li>
 <p>Fix Spring injection of JUnit Rules, due to the changes in 1.1 the rules where initialized before Spring could inject them,
@@ -6827,7 +6883,7 @@ Burk Hufnagel, signalw, Martin Vseticka, Tilman Ginzel</p>
 <p>Add @SpringBean and @SpringSpy inspired by @MockBean, Also add @StubBeans</p>
 </li>
 <li>
-<p>Add @UnwrapAopProxy to make automatically unwrap SpringAopProxie</p>
+<p>Add @UnwrapAopProxy to make automatically unwrap SpringAopProxies</p>
 </li>
 <li>
 <p>Add flag to UnrollNameProvider to assert unroll expressions (set the system property <code>spock.assertUnrollExpressions</code> to <code>true</code>) <a href="https://github.com/spockframework/spock/issues/767">#767</a></p>
@@ -6842,7 +6898,7 @@ Burk Hufnagel, signalw, Martin Vseticka, Tilman Ginzel</p>
 <p>Add <code>@Retry</code> extension (<a href="#_retry">Docs</a>)</p>
 </li>
 <li>
-<p>Fix SpockAssertionErrors and its subclasses now are properly <code>Serializeable</code></p>
+<p>Fix SpockAssertionErrors and its subclasses now are properly <code>Serializable</code></p>
 </li>
 <li>
 <p>Fix Spring injection of JUnit Rules, due to the changes in 1.1 the rules where initialized before Spring could inject them,
@@ -6882,7 +6938,7 @@ this has been fixed by performing the injection earlier in the process</p>
 <p>Improve reporting of exceptions during cleanup, they are now properly reported as suppressed exceptions instead of hiding the real exception</p>
 </li>
 <li>
-<p>Improve default responses for stubs, Java 8 types like <code>Optional</code> and <code>Streams</code> now return empty, <code>CompleteableFuture</code> completes with <code>null</code> result</p>
+<p>Improve default responses for stubs, Java 8 types like <code>Optional</code> and <code>Streams</code> now return empty, <code>CompletableFuture</code> completes with <code>null</code> result</p>
 </li>
 <li>
 <p>Improve support for builder pattern, stubs now return themselves if the return type matches the type of the stub</p>
@@ -8433,7 +8489,7 @@ This is due to how groovy implements traits and AST transformations.</p>
 <div id="footer">
 <div id="footer-text">
 Version 2.0-SNAPSHOT<br>
-Last updated 2020-12-17 17:45:48 UTC
+Last updated 2021-02-01 11:14:52 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./coderay-asciidoctor.css">

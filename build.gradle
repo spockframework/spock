@@ -236,6 +236,7 @@ if (gradle.startParameter.taskNames == ["ghActionsBuild"]) {
 }
 
 if (gradle.startParameter.taskNames == ["ghActionsPublish"] || gradle.startParameter.taskNames == ["ghActionsDocs"] ) {
+  def originalStartParamteterTaskNames = gradle.startParameter.taskNames
   gradle.startParameter.taskNames = []
   boolean isMaster = System.getenv("GITHUB_REF") == "refs/heads/master"
   boolean isTag = System.getenv("GITHUB_REF")?.startsWith('refs/tags/spock-')
@@ -248,7 +249,7 @@ if (gradle.startParameter.taskNames == ["ghActionsPublish"] || gradle.startParam
       repo: ${System.getenv("GITHUB_REPOSITORY")}""")
   }
 
-  if (gradle.startParameter.taskNames == ["ghActionsPublish"]) {
+  if (originalStartParamteterTaskNames == ["ghActionsPublish"]) {
     if (javaVersion != javaVersions.min()) {
       throw new IllegalArgumentException("ghActionsPublish can only be run on Java ${javaVersions.min()} but was run on $javaVersion")
     }
@@ -262,7 +263,7 @@ if (gradle.startParameter.taskNames == ["ghActionsPublish"] || gradle.startParam
     }
   }
 
-  if (gradle.startParameter.taskNames == ["ghActionsDocs"] && (snapshotVersion || isTag)) {
+  if (originalStartParamteterTaskNames == ["ghActionsDocs"] && (snapshotVersion || isTag)) {
     if (javaVersion != javaVersions.max()) {
       throw new IllegalArgumentException("ghActionsPublish can only be run on Java ${javaVersions.max()} but was run on $javaVersion")
     }

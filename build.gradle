@@ -231,73 +231,47 @@ task codeCoverageReport (type: JacocoReport, group: 'Coverage reports') {
   }
 }
 
-if (gradle.startParameter.taskNames == ["travisCiBuild"]) {
-  gradle.startParameter.taskNames = ["build", "codeCoverageReport"]
-  subprojects {
-    tasks.withType(Test) {
-      maxParallelForks = 2
-    }
-  }
-  if (System.getenv("TRAVIS_PULL_REQUEST") == "false" && System.getenv("TRAVIS_BRANCH") == "master") {
-    if (javaVersion == javaVersions.min()) {
-      gradle.startParameter.taskNames += ["publish"]
-      if (!snapshotVersion) {
-        gradle.startParameter.taskNames += ["tagRelease"]
-      }
-    }
-    if (javaVersion == javaVersions.max()) {
-      if (variant == variants.max()) {
-        gradle.startParameter.taskNames += ["publishJavadoc", "publishDocs"]
-      }
-    }
-  }
-}
-
 if (gradle.startParameter.taskNames == ["ghActionsBuild"]) {
   gradle.startParameter.taskNames = ["build", "codeCoverageReport"]
-  subprojects {
-    tasks.withType(Test) {
-      maxParallelForks = 2
-    }
+}
+
+if (gradle.startParameter.taskNames == ["ghActionsPublish"] || gradle.startParameter.taskNames == ["ghActionsDocs"] ) {
+  def originalStartParamteterTaskNames = gradle.startParameter.taskNames
+  gradle.startParameter.taskNames = []
+  boolean isMaster = System.getenv("GITHUB_REF") == "refs/heads/master"
+  boolean isTag = System.getenv("GITHUB_REF")?.startsWith('refs/tags/spock-')
+  if (!(System.getenv("GITHUB_EVENT_NAME") == "push"
+          && (isMaster || isTag)
+          && System.getenv("GITHUB_REPOSITORY") == 'spockframework/spock')) {
+    throw new IllegalArgumentException("""ghActionsPublish can only be run on push to branch master or tag in repo spockframework/spock
+      event: ${System.getenv("GITHUB_EVENT_NAME")}
+      ref: ${System.getenv("GITHUB_REF")}
+      repo: ${System.getenv("GITHUB_REPOSITORY")}""")
   }
 
-  if (System.getenv("GITHUB_BASE_REF") == null                                // GITHUB_BASE_REF is only set for Pull requests
-          && System.getenv("GITHUB_REF") == "refs/heads/master"
-          && System.getenv("GITHUB_REPOSITORY") == 'spockframework/spock') {
-    if (javaVersion == javaVersions.min()) {
+  if (originalStartParamteterTaskNames == ["ghActionsPublish"]) {
+    if (javaVersion != javaVersions.min()) {
+      throw new IllegalArgumentException("ghActionsPublish can only be run on Java ${javaVersions.min()} but was run on $javaVersion")
+    }
+    /*
+      We want to release only snapshots directly from master, final releases will be tagged and then published from that tag.
+     */
+    if (snapshotVersion || isTag) {
       gradle.startParameter.taskNames += ["publish"]
-      if (!snapshotVersion) {
-        gradle.startParameter.taskNames += ["tagRelease"]
-      }
-    }
-    if (javaVersion == javaVersions.max()) {
-      if (variant == variants.max()) {
-        gradle.startParameter.taskNames += ["publishJavadoc", "publishDocs"]
-      }
+    } else {
+      gradle.startParameter.taskNames += ["tagRelease"]
     }
   }
-}
 
-if (gradle.startParameter.taskNames == ["shippableCiBuild"]) {
-  gradle.startParameter.taskNames = ["clean", "build"] // use clean because whole minion is cached
-  task aggregateTestResults(type: Sync) {
-    from { subprojects.test.reports.junitXml.destination }
-    into "shippable/testresults"
-    include "**/TEST-*.xml"
-  }
-  subprojects {
-    tasks.withType(Test) {
-      it.finalizedBy(aggregateTestResults)
+  if (originalStartParamteterTaskNames == ["ghActionsDocs"] && (snapshotVersion || isTag)) {
+    if (javaVersion != javaVersions.max()) {
+      throw new IllegalArgumentException("ghActionsPublish can only be run on Java ${javaVersions.max()} but was run on $javaVersion")
     }
+    if (variant != variants.max()) {
+      throw new IllegalArgumentException("ghActionsPublish can only be run with variant ${variants.max()} but was run with $variant")
+    }
+    gradle.startParameter.taskNames += ["publishJavadoc", "publishDocs"]
   }
-}
-
-if (gradle.startParameter.taskNames == ["appveyorCiBuild"]) {
-  gradle.startParameter.taskNames = ["build"]
-}
-
-if (gradle.startParameter.taskNames == ["circleCiBuild"]) {
-  gradle.startParameter.taskNames = ["build", "collectTestXml"]
 }
 
 task publishJavadoc(type: Exec) {

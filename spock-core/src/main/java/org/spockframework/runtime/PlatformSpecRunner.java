@@ -227,8 +227,9 @@ public class PlatformSpecRunner {
   IterationInfo createIterationInfo(SpockExecutionContext context, int iterationIndex, Object[] dataValues, int estimatedNumIterations) {
     FeatureInfo currentFeature = context.getCurrentFeature();
     IterationInfo result = new IterationInfo(currentFeature, iterationIndex, dataValues, estimatedNumIterations);
+    result.setName(currentFeature.getName());
     String iterationName = currentFeature.getIterationNameProvider().getName(result);
-    result.setName(iterationName);
+    result.setDisplayName(iterationName);
     return result;
   }
 

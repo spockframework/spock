@@ -71,7 +71,7 @@ publishing {
 nexusPublishing {
   repositories {
     sonatype {
-      username = "pniederw"
+      username = System.getenv("SONATYPE_OSS_USER")
       password = System.getenv("SONATYPE_OSS_PASSWORD")
     }
   }
@@ -88,6 +88,6 @@ signing {
   }
 }
 
-ext."signing.keyId" = "2EA0A67F"
+ext."signing.keyId" = "72EB75E1"
 ext."signing.password" = System.getenv("SIGNING_PASSWORD")
 ext."signing.secretKeyRingFile" = "$rootDir/config/code-signing-secring.gpg"

@@ -71,35 +71,4 @@ class Foo extends Specification {
     context != null
     context.getBean("myService1") instanceof IService1
   }
-
-  def "shared fields cannot be injected"() {
-    if (!ReflectionUtil.isClassAvailable(ann)) return
-
-    def runner = new EmbeddedSpecRunner()
-
-    when:
-    runner.runWithImports """
-import org.spockframework.spring.IService1
-import org.springframework.test.context.ContextConfiguration
-
-@ContextConfiguration
-class Foo extends Specification {
-  @$ann
-  @Shared
-  IService1 sharedService
-
-  def foo() {
-    expect: true
-  }
-}
-    """
-
-    then:
-    thrown(SpringExtensionException)
-
-    where:
-    ann << ["org.springframework.beans.factory.annotation.Autowired",
-            "javax.annotation.Resource",
-            "javax.inject.Inject"]
-  }
 }

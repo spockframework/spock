@@ -17,10 +17,10 @@
 package org.spockframework.runtime.extension.builtin;
 
 import org.spockframework.runtime.extension.*;
+import org.spockframework.runtime.model.MethodInfo;
 import spock.lang.Retry;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 import groovy.lang.Closure;
 import org.opentest4j.MultipleFailuresError;
@@ -30,47 +30,48 @@ import org.opentest4j.MultipleFailuresError;
  * @since 1.2
  */
 public class RetryIterationInterceptor extends RetryBaseInterceptor implements IMethodInterceptor {
-  public RetryIterationInterceptor(Retry retry) {
+
+  private boolean finalIteration;
+  private final InnerRetryInterceptor retryInterceptor;
+  private List<Throwable> throwables;
+
+  public RetryIterationInterceptor(Retry retry, MethodInfo featureMethod) {
     super(retry);
+    this.retryInterceptor = new InnerRetryInterceptor(retry, condition);
+    featureMethod.addInterceptor(retryInterceptor);
   }
 
   @Override
   public void intercept(IMethodInvocation invocation) throws Throwable {
-    List<Throwable> throwableList = new ArrayList<>();
-      Queue<Throwable> throwables = new ConcurrentLinkedQueue<>();
+    throwables = new ArrayList<>();
     for (int i = 0; i <= retry.count(); i++) {
-      throwables.clear();
-      invocation.getFeature().getFeatureMethod().addInterceptor(new InnerRetryInterceptor(retry, condition, throwables));
+      finalIteration = i == retry.count();
       invocation.proceed();
       if (throwables.isEmpty()) {
-        throwableList.clear();
         break;
       } else {
-        throwableList.addAll(throwables);
         if (retry.delay() > 0) Thread.sleep(retry.delay());
       }
     }
-    if (!throwableList.isEmpty()) {
-      throw new MultipleFailuresError("Retries exhausted", throwableList);
-    }
   }
 
-  static class InnerRetryInterceptor extends RetryBaseInterceptor implements IMethodInterceptor {
+  private class InnerRetryInterceptor extends RetryBaseInterceptor implements IMethodInterceptor {
 
-    private final Queue<Throwable> throwables;
-
-    public InnerRetryInterceptor(Retry retry, Closure condition, Queue<Throwable> throwables) {
+    public InnerRetryInterceptor(Retry retry, Closure condition) {
       super(retry, condition);
-      this.throwables = throwables;
     }
 
     @Override
     public void intercept(IMethodInvocation invocation) throws Throwable {
       try {
         invocation.proceed();
+        throwables.clear();
       } catch (Throwable e) {
         if (isExpected(invocation, e)) {
           throwables.add(e);
+          if (finalIteration) {
+            throw new MultipleFailuresError("Retries exhausted", throwables);
+          }
         } else {
           throw e;
         }

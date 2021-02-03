@@ -50,7 +50,7 @@ public class RetryExtension implements IAnnotationDrivenExtension<Retry> {
   @Override
   public void visitFeatureAnnotation(Retry annotation, FeatureInfo feature) {
     if (annotation.mode() == Retry.Mode.SETUP_FEATURE_CLEANUP) {
-      feature.addIterationInterceptor(new RetryIterationInterceptor(annotation));
+      feature.addIterationInterceptor(new RetryIterationInterceptor(annotation, feature.getFeatureMethod()));
     } else {
       feature.getFeatureMethod().addInterceptor(new RetryFeatureInterceptor(annotation));
     }

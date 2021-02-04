@@ -31,23 +31,20 @@ import org.opentest4j.MultipleFailuresError;
  */
 public class RetryIterationInterceptor extends RetryBaseInterceptor implements IMethodInterceptor {
 
-  private boolean finalIteration;
-  private final InnerRetryInterceptor retryInterceptor;
-  private List<Throwable> throwables;
+  private final IterationState iterationState = new IterationState();
 
   public RetryIterationInterceptor(Retry retry, MethodInfo featureMethod) {
     super(retry);
-    this.retryInterceptor = new InnerRetryInterceptor(retry, condition);
-    featureMethod.addInterceptor(retryInterceptor);
+    featureMethod.addInterceptor(new InnerRetryInterceptor(retry, condition));
   }
 
   @Override
   public void intercept(IMethodInvocation invocation) throws Throwable {
-    throwables = new ArrayList<>();
+    iterationState.startIteration();
     for (int i = 0; i <= retry.count(); i++) {
-      finalIteration = i == retry.count();
+      iterationState.setRetryAttempt(i);
       invocation.proceed();
-      if (throwables.isEmpty()) {
+      if (iterationState.notFailed()) {
         break;
       } else {
         if (retry.delay() > 0) Thread.sleep(retry.delay());
@@ -65,17 +62,38 @@ public class RetryIterationInterceptor extends RetryBaseInterceptor implements I
     public void intercept(IMethodInvocation invocation) throws Throwable {
       try {
         invocation.proceed();
-        throwables.clear();
+        iterationState.startIteration();
       } catch (Throwable e) {
         if (isExpected(invocation, e)) {
-          throwables.add(e);
-          if (finalIteration) {
-            throw new MultipleFailuresError("Retries exhausted", throwables);
-          }
+          iterationState.failIteration(e);
         } else {
           throw e;
         }
       }
+    }
+  }
+
+  private class IterationState {
+    private final ThreadLocal<Boolean> finalIteration = ThreadLocal.withInitial(() -> false);
+    private final ThreadLocal<List<Throwable>> throwables = new ThreadLocal<>();
+
+    void startIteration() {
+      throwables.set(new ArrayList<>());
+    }
+
+    void setRetryAttempt(int retryAttempt) {
+      finalIteration.set(retryAttempt == retry.count());
+    }
+
+    void failIteration(Throwable failure) {
+      throwables.get().add(failure);
+      if (finalIteration.get()) {
+        throw new MultipleFailuresError("Retries exhausted", throwables.get());
+      }
+    }
+
+    boolean notFailed() {
+      return throwables.get().isEmpty();
     }
   }
 }

@@ -83,10 +83,9 @@ class Foo extends Specification {
     featureCounter.get() == 4
   }
 
-  def "@Retry mode #mode executes setup and cleanup #expectedCount times"(String mode, int expectedCount) {
+  def "@Retry mode #mode executes setup and cleanup #expectedCount times (parallel: #parallel)"(String mode, int expectedCount) {
     given:
-    setupCounter.set(0)
-    cleanupCounter.set(0)
+    withParallelExecution(parallel)
 
     when:
     def result = runner.runWithImports("""
@@ -124,15 +123,16 @@ class Foo extends Specification {
     featureCounter.get() == 4
 
     where:
-    mode                                    || expectedCount
-    Retry.Mode.ITERATION.name()             || 1
-    Retry.Mode.SETUP_FEATURE_CLEANUP.name() || 4
+    mode                                    || expectedCount || parallel
+    Retry.Mode.ITERATION.name()             || 1             || false
+    Retry.Mode.SETUP_FEATURE_CLEANUP.name() || 4             || false
+    Retry.Mode.ITERATION.name()             || 1             || true
+    Retry.Mode.SETUP_FEATURE_CLEANUP.name() || 4             || true
   }
 
-  def "@Retry mode #mode executes setup and cleanup #expectedCount times for @Unroll'ed feature"(String mode, int expectedCount) {
+  def "@Retry mode #mode executes setup and cleanup #expectedCount times for @Unroll'ed feature (parallel: #parallel)"(String mode, int expectedCount) {
     given:
-    setupCounter.set(0)
-    cleanupCounter.set(0)
+    withParallelExecution(parallel)
 
     when:
     def result = runner.runWithImports("""
@@ -172,9 +172,11 @@ class Foo extends Specification {
     featureCounter.get() == 12
 
     where:
-    mode                                    || expectedCount
-    Retry.Mode.ITERATION.name()             || 3
-    Retry.Mode.SETUP_FEATURE_CLEANUP.name() || 12
+    mode                                    || expectedCount || parallel
+    Retry.Mode.ITERATION.name()             || 3             || false
+    Retry.Mode.SETUP_FEATURE_CLEANUP.name() || 12            || false
+    Retry.Mode.ITERATION.name()             || 3             || true
+    Retry.Mode.SETUP_FEATURE_CLEANUP.name() || 12            || true
   }
 
   def "@Retry count can be changed"() {
@@ -720,6 +722,17 @@ class Foo extends Specification {
       event(test("iteration:0"), finishedSuccessfully()),
       event(test("iteration:1"), finishedWithFailure())
     )
+  }
+
+  private def withParallelExecution(boolean enableParallelExecution) {
+    runner.configurationScript {
+      runner {
+        parallel {
+          enabled enableParallelExecution
+          fixed(4)
+        }
+      }
+    }
   }
 
 }

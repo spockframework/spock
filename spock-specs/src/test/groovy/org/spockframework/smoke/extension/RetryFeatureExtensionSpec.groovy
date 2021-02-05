@@ -8,6 +8,10 @@ import java.util.concurrent.atomic.AtomicInteger
 
 import org.opentest4j.MultipleFailuresError
 
+import static org.junit.platform.testkit.engine.EventConditions.event
+import static org.junit.platform.testkit.engine.EventConditions.finishedSuccessfully
+import static org.junit.platform.testkit.engine.EventConditions.finishedWithFailure
+import static org.junit.platform.testkit.engine.EventConditions.test
 import static org.spockframework.runtime.model.parallel.ExecutionMode.SAME_THREAD
 
 @Execution(SAME_THREAD)
@@ -16,10 +20,14 @@ class RetryFeatureExtensionSpec extends EmbeddedSpecification {
   static AtomicInteger setupCounter = new AtomicInteger()
   static AtomicInteger cleanupCounter = new AtomicInteger()
   static AtomicInteger featureCounter = new AtomicInteger()
+  static StringBuffer iterationBuffer
 
   def setup() {
     runner.throwFailure = false
+    setupCounter.set(0)
+    cleanupCounter.set(0)
     featureCounter.set(0)
+    iterationBuffer = new StringBuffer()
   }
 
   def "@Retry fails after retries are exhausted"() {
@@ -75,10 +83,9 @@ class Foo extends Specification {
     featureCounter.get() == 4
   }
 
-  def "@Retry mode #mode executes setup and cleanup #expectedCount times"(String mode, int expectedCount) {
+  def "@Retry mode #mode executes setup and cleanup #expectedCount times (parallel: #parallel)"(String mode, int expectedCount) {
     given:
-    setupCounter.set(0)
-    cleanupCounter.set(0)
+    withParallelExecution(parallel)
 
     when:
     def result = runner.runWithImports("""
@@ -116,9 +123,60 @@ class Foo extends Specification {
     featureCounter.get() == 4
 
     where:
-    mode                                    || expectedCount
-    Retry.Mode.ITERATION.name()             || 1
-    Retry.Mode.SETUP_FEATURE_CLEANUP.name() || 4
+    mode                                    || expectedCount || parallel
+    Retry.Mode.ITERATION.name()             || 1             || false
+    Retry.Mode.SETUP_FEATURE_CLEANUP.name() || 4             || false
+    Retry.Mode.ITERATION.name()             || 1             || true
+    Retry.Mode.SETUP_FEATURE_CLEANUP.name() || 4             || true
+  }
+
+  def "@Retry mode #mode executes setup and cleanup #expectedCount times for @Unroll'ed feature (parallel: #parallel)"(String mode, int expectedCount) {
+    given:
+    withParallelExecution(parallel)
+
+    when:
+    def result = runner.runWithImports("""
+import spock.lang.Retry
+
+class Foo extends Specification {
+  def setup() {
+    org.spockframework.smoke.extension.RetryFeatureExtensionSpec.setupCounter.incrementAndGet()
+  }
+
+  @Retry(mode = Retry.Mode.${mode})
+  def bar() {
+    org.spockframework.smoke.extension.RetryFeatureExtensionSpec.featureCounter.incrementAndGet()
+    expect:
+    throw new IOException()
+    where:
+    foo << [1, 2, 3]
+  }
+
+  def cleanup() {
+    org.spockframework.smoke.extension.RetryFeatureExtensionSpec.cleanupCounter.incrementAndGet()
+  }
+}
+    """)
+
+    then:
+    result.testsStartedCount == 4
+    result.testsSucceededCount == 1
+    result.testsFailedCount == 3
+    with(result.failures.exception[0], MultipleFailuresError) {
+      failures.size() == 4
+      failures.every { it instanceof IOException }
+    }
+    result.testsSkippedCount == 0
+    setupCounter.get() == expectedCount
+    cleanupCounter.get() == expectedCount
+    featureCounter.get() == 12
+
+    where:
+    mode                                    || expectedCount || parallel
+    Retry.Mode.ITERATION.name()             || 3             || false
+    Retry.Mode.SETUP_FEATURE_CLEANUP.name() || 12            || false
+    Retry.Mode.ITERATION.name()             || 3             || true
+    Retry.Mode.SETUP_FEATURE_CLEANUP.name() || 12            || true
   }
 
   def "@Retry count can be changed"() {
@@ -174,7 +232,7 @@ class Foo extends Specification {
 import spock.lang.Retry
 
 class Foo extends Specification {
-  @Retry(exceptions=[IndexOutOfBoundsException])
+  @Retry(exceptions=[IndexOutOfBoundsException], mode = Retry.Mode.${mode})
   def bar() {
     expect:
     throw new IllegalArgumentException()
@@ -187,6 +245,9 @@ class Foo extends Specification {
 
     then:
     thrown(IllegalArgumentException)
+
+    where:
+    mode << [Retry.Mode.ITERATION.name(), Retry.Mode.SETUP_FEATURE_CLEANUP.name()]
   }
 
   def "@Retry works for data driven features"() {
@@ -582,6 +643,96 @@ class Bar extends Foo {
     result.testsSucceededCount == 0
     result.testsFailedCount == 2
     featureCounter.get() == 3 + 3
+  }
+
+  def "@Retry mode SETUP_FEATURE_CLEANUP runs remaining iterations after a failed one for @Unroll'ed features"() {
+    when:
+    def result = runner.runWithImports("""
+import spock.lang.Retry
+
+class Foo extends Specification {
+  static int counter
+  @Retry(mode = Retry.Mode.SETUP_FEATURE_CLEANUP)
+  def bar() {
+    org.spockframework.smoke.extension.RetryFeatureExtensionSpec.iterationBuffer.append(iteration)
+    expect:
+    if (iteration == 2) {
+      throw new RuntimeException()
+    }
+    true
+    where:
+    iteration << [1, 2, 3, 4]
+  }
+}
+    """)
+
+    then:
+    result.testsSucceededCount == 4
+    result.testsFailedCount == 1
+    result.testsSkippedCount == 0
+    iterationBuffer.toString() == "1222234"
+  }
+
+  def "@Retry mode SETUP_FEATURE_CLEANUP runs all iterations for @Unroll'ed features"() {
+    when:
+    def result = runner.runWithImports("""
+import spock.lang.Retry
+
+class Foo extends Specification {
+  static int counter
+  @Retry(mode = Retry.Mode.SETUP_FEATURE_CLEANUP)
+  def bar() {
+    org.spockframework.smoke.extension.RetryFeatureExtensionSpec.iterationBuffer.append(iteration)
+    expect:
+    false
+    where:
+    iteration << [1, 2, 3]
+  }
+}
+    """)
+
+    then:
+    result.testsSucceededCount == 1
+    result.testsFailedCount == 3
+    result.testsSkippedCount == 0
+    iterationBuffer.toString() == "111122223333"
+  }
+
+  def "@Retry mode SETUP_FEATURE_CLEANUP correctly reports failed iterations for @Unroll'ed features"() {
+    when:
+    def result = runner.runWithImports("""
+import spock.lang.Retry
+
+class Foo extends Specification {
+  @Retry(mode = Retry.Mode.SETUP_FEATURE_CLEANUP)
+  def bar() {
+    expect:
+    result
+    where:
+    result << [true, false]
+  }
+}
+    """)
+
+    then:
+    result.testsSucceededCount == 2
+    result.testsFailedCount == 1
+    result.testsSkippedCount == 0
+    result.testEvents().finished().assertEventsMatchLoosely(
+      event(test("iteration:0"), finishedSuccessfully()),
+      event(test("iteration:1"), finishedWithFailure())
+    )
+  }
+
+  private def withParallelExecution(boolean enableParallelExecution) {
+    runner.configurationScript {
+      runner {
+        parallel {
+          enabled enableParallelExecution
+          fixed(4)
+        }
+      }
+    }
   }
 
 }

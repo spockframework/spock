@@ -19,7 +19,7 @@ import org.spockframework.util.UnreachableCodeError;
 public abstract class AbstractMethodInterceptor implements IMethodInterceptor {
   @Override
   public final void intercept(IMethodInvocation invocation) throws Throwable {
-    switch(invocation.getMethod().getKind()) {
+    switch (invocation.getMethod().getKind()) {
       case INITIALIZER:
         interceptInitializerMethod(invocation);
         break;
@@ -61,16 +61,51 @@ public abstract class AbstractMethodInterceptor implements IMethodInterceptor {
     }
   }
 
-  public void interceptInitializerMethod(IMethodInvocation invocation) throws Throwable {}
-  public void interceptSharedInitializerMethod(IMethodInvocation invocation) throws Throwable {}
-  public void interceptSetupMethod(IMethodInvocation invocation) throws Throwable {}
-  public void interceptCleanupMethod(IMethodInvocation invocation) throws Throwable {}
-  public void interceptSetupSpecMethod(IMethodInvocation invocation) throws Throwable {}
-  public void interceptCleanupSpecMethod(IMethodInvocation invocation) throws Throwable {}
-  public void interceptFeatureMethod(IMethodInvocation invocation) throws Throwable {}
-  public void interceptDataProviderMethod(IMethodInvocation invocation) throws Throwable {}
-  public void interceptDataProcessorMethod(IMethodInvocation invocation) throws Throwable {}
-  public void interceptIterationExecution(IMethodInvocation invocation) throws Throwable {}
-  public void interceptSpecExecution(IMethodInvocation invocation) throws Throwable {}
-  public void interceptFeatureExecution(IMethodInvocation invocation) throws Throwable {}
+  public void interceptInitializerMethod(IMethodInvocation invocation) throws Throwable {
+    invocation.proceed();
+  }
+
+  public void interceptSharedInitializerMethod(IMethodInvocation invocation) throws Throwable {
+    invocation.proceed();
+  }
+
+  public void interceptSetupMethod(IMethodInvocation invocation) throws Throwable {
+    invocation.proceed();
+  }
+
+  public void interceptCleanupMethod(IMethodInvocation invocation) throws Throwable {
+    invocation.proceed();
+  }
+
+  public void interceptSetupSpecMethod(IMethodInvocation invocation) throws Throwable {
+    invocation.proceed();
+  }
+
+  public void interceptCleanupSpecMethod(IMethodInvocation invocation) throws Throwable {
+    invocation.proceed();
+  }
+
+  public void interceptFeatureMethod(IMethodInvocation invocation) throws Throwable {
+    invocation.proceed();
+  }
+
+  public void interceptDataProviderMethod(IMethodInvocation invocation) throws Throwable {
+    invocation.proceed();
+  }
+
+  public void interceptDataProcessorMethod(IMethodInvocation invocation) throws Throwable {
+    invocation.proceed();
+  }
+
+  public void interceptIterationExecution(IMethodInvocation invocation) throws Throwable {
+    invocation.proceed();
+  }
+
+  public void interceptSpecExecution(IMethodInvocation invocation) throws Throwable {
+    invocation.proceed();
+  }
+
+  public void interceptFeatureExecution(IMethodInvocation invocation) throws Throwable {
+    invocation.proceed();
+  }
 }

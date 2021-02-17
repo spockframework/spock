@@ -64,8 +64,8 @@ ext {
     junitPlatformTestkit: [group: 'org.junit.platform', name: 'junit-platform-testkit'],
     junitPlatformConsole: [group: 'org.junit.platform', name: 'junit-platform-console'],
     log4j               : [group: 'log4j', name: 'log4j', version: '1.2.17'],
-    objenesis           : [group: 'org.objenesis', name: 'objenesis', version: '3.1']
-
+    objenesis           : [group: 'org.objenesis', name: 'objenesis', version: '3.1'],
+    jacocoAgent         : [group: 'org.jacoco', name: 'org.jacoco.agent', version: '0.8.6']
   ]
 }
 
@@ -185,7 +185,7 @@ subprojects {
   }
 
   jacoco {
-    toolVersion = '0.8.6'
+    toolVersion = libs.jacocoAgent.version
   }
 }
 
@@ -221,7 +221,7 @@ task codeCoverageReport (type: JacocoReport, group: 'Coverage reports') {
 
   additionalSourceDirs.from(reportingProjects.sourceSets.main.allSource.srcDirs)
   additionalClassDirs.from(reportingProjects.sourceSets.main.output)
-  executionData.from(files(reportingProjects.jacocoTestReport.executionData).filter { it.exists() })
+  executionData.from(files(reportingProjects.jacocoTestReport.executionData).filter { it.exists() }+ file('spock-specs/build/reports/jacoco/compileTestGroovy.exec'))
 
   reports {
     html.enabled = true

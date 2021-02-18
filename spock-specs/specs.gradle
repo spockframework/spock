@@ -6,7 +6,7 @@ apply plugin: "spock-base"
 
 configurations {
   groovyConsole
-  jacocoAgent
+  jacocoAgentRuntime
 }
 
 dependencies {
@@ -23,7 +23,7 @@ dependencies {
   testRuntime libs.h2database
 
   groovyConsole groovyConsoleExtraDependencies
-  jacocoAgent libs.jacocoAgent
+  jacocoAgentRuntime libs.jacocoAgent
 }
 
 sourceCompatibility = javaVersion
@@ -46,15 +46,9 @@ task groovyConsole(type: JavaExec) {
 }
 
 compileTestGroovy {
+  def compileTestGroovyExec = "$buildDir/jacoco/compileTestGroovy.exec"
+  groovyOptions.fork jvmArgs: ["-javaagent:${configurations.jacocoAgentRuntime.asPath}=destfile=$compileTestGroovyExec,dumponexit=true,includes=org.spockframework.*".toString()]
   doFirst {
-    def agentJar = fileOperations.zipTree(configurations.jacocoAgent.getSingleFile()).filter(new org.gradle.api.specs.Spec<File>() {
-      @Override
-      public boolean isSatisfiedBy(File file) {
-        return file.getName().equals("jacocoagent.jar");
-      }
-    }).getSingleFile()
-    def agentArgline =  "-javaagent:${agentJar}=destfile=$buildDir/reports/jacoco/compileTestGroovy.exec,dumponexit=true,includes=org.spockframework.*".toString()
-    println agentArgline
-    groovyOptions.fork jvmArgs: [agentArgline]
+    file(compileTestGroovyExec).delete()
   }
 }

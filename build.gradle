@@ -221,7 +221,8 @@ task codeCoverageReport (type: JacocoReport, group: 'Coverage reports') {
 
   additionalSourceDirs.from(reportingProjects.sourceSets.main.allSource.srcDirs)
   additionalClassDirs.from(reportingProjects.sourceSets.main.output)
-  executionData.from(files(reportingProjects.jacocoTestReport.executionData).filter { it.exists() } + file('spock-specs/build/jacoco/compileTestGroovy.exec'))
+  executionData.from(files(reportingProjects.jacocoTestReport.executionData).filter { it.exists() })
+  executionData.from(file('spock-specs/build/jacoco/compileTestGroovy.exec'))
 
   reports {
     html.enabled = true

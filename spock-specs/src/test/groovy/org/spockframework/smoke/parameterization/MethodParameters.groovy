@@ -178,10 +178,10 @@ def foo(x, y) {
   }
 
   @Issue("https://github.com/spockframework/spock/issues/1279")
-  def "data values are casted with type-coercion"(Integer x, Integer y) {
+  def "data values are casted with type-coercion"(Integer x, int y) {
     expect:
-    x instanceof Integer
-    y instanceof Integer
+    x.getClass() == Integer
+    y.getClass() == Integer
     x == 10
     y in [20, 30]
 

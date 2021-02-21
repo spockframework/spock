@@ -236,6 +236,17 @@ class DataSpec extends Specification {
 // end::combined-variable-assignment[]
   }
 
+// tag::type-coercion[]
+  def "type coercion for data variable values"(Integer i) {
+    expect:
+    i instanceof Integer
+    i == 10
+
+    where:
+    i = "10"
+  }
+// end::type-coercion[]
+
   def "data pipes"() {
     expect:
     Math.max(a, b) == c

@@ -176,4 +176,17 @@ def foo(x, y) {
     SpockExecutionException see = thrown()
     see.message == /No argument was provided for parameters: 'x', 'y'/
   }
+
+  @Issue("https://github.com/spockframework/spock/issues/1279")
+  def "data values are casted with type-coercion"(Integer x, Integer y) {
+    expect:
+    x instanceof Integer
+    y instanceof Integer
+    x == 10
+    y in [20, 30]
+
+    where:
+    x = "10"
+    y << ["20", "30"]
+  }
 }

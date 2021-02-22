@@ -383,6 +383,10 @@ applied to a feature).
 ----
 include::{sourcedir}/datadriven/DataSpec.groovy[tag=type-coercion]
 ----
+[source,groovy,indent=0]
+----
+include::{sourcedir}/datadriven/DataSpec.groovy[tag=type-coercion-with-custom-coercion]
+----
 
 == Number of Iterations
 

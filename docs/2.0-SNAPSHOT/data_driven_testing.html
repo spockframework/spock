@@ -717,6 +717,51 @@ d = a &gt; c ? a : c</code></pre>
 </div>
 </div>
 <div class="sect1">
+<h2 id="_type_coercion_for_data_variable_values"><a class="anchor" href="#_type_coercion_for_data_variable_values"></a><a class="link" href="#_type_coercion_for_data_variable_values">Type Coercion for Data Variable Values</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Data variable values are coerced to the declared parameter type using
+<a href="https://groovy-lang.org/operators.html#_coercion_operator">type coercion</a>. Due to that custom type conversions can be
+provided as <a href="https://groovy-lang.org/metaprogramming.html#_extension_modules">extension module</a> or with the help of
+the <a href="extensions.html#_use"><code>@Use</code></a> extension on the specification (as it has no effect to the <code>where:</code> block if
+applied to a feature).</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">type coercion for data variable values</span><span class="delimiter">&quot;</span></span>(<span class="predefined-type">Integer</span> i) {
+  <span class="key">expect</span>:
+  i <span class="keyword">instanceof</span> <span class="predefined-type">Integer</span>
+  i == <span class="integer">10</span>
+
+  <span class="key">where</span>:
+  i = <span class="string"><span class="delimiter">&quot;</span><span class="content">10</span><span class="delimiter">&quot;</span></span>
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@Use</span>(CoerceBazToBar)
+<span class="type">class</span> <span class="class">Foo</span> <span class="directive">extends</span> Specification {
+  <span class="keyword">def</span> <span class="function">foo</span>(Bar bar) {
+    <span class="key">expect</span>:
+    bar == Bar.FOO
+
+    <span class="key">where</span>:
+    bar = Baz.FOO
+  }
+}
+<span class="type">enum</span> Bar { FOO, BAR }
+<span class="type">enum</span> Baz { FOO, BAR }
+<span class="type">class</span> <span class="class">CoerceBazToBar</span> {
+  <span class="directive">static</span> Bar asType(Baz self, <span class="predefined-type">Class</span>&lt;Bar&gt; clazz) {
+    <span class="keyword">return</span> Bar.valueOf(self.name())
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="_number_of_iterations"><a class="anchor" href="#_number_of_iterations"></a><a class="link" href="#_number_of_iterations">Number of Iterations</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
@@ -915,7 +960,7 @@ in the <code>unroll</code> section to <code>false</code>. If this is done and an
 <div id="footer">
 <div id="footer-text">
 Version 2.0-SNAPSHOT<br>
-Last updated 2021-02-17 23:23:37 UTC
+Last updated 2021-02-23 19:58:15 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./coderay-asciidoctor.css">

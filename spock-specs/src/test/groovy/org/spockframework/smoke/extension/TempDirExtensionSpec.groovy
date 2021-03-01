@@ -129,3 +129,41 @@ class TempDirInheritedSpec extends TempDirBaseSpec {
     tmp != null
   }
 }
+
+@Issue("https://github.com/spockframework/spock/issues/1282")
+class ParallelTempDirSpec extends Specification {
+
+  @TempDir Path tmpDir
+
+  def "Try creating multiple dirs"() {
+    when:
+    def dir = Files.createDirectory(tmpDir.resolve(name))
+
+    then:
+    Files.exists(dir)
+
+    where:
+    name << ["aaa", "bbb", "ccc"]
+  }
+
+  def "Try creating single dir"() {
+    when:
+    def dir = Files.createDirectory(tmpDir.resolve("foo"))
+
+    then:
+    Files.exists(dir)
+  }
+
+  def "Do nothing just test the temp dir existance"() {
+    expect:
+    Files.exists(tmpDir)
+  }
+
+  def "Do nothing just test the temp dir existance this time with unroll"() {
+    expect:
+    Files.exists(tmpDir)
+
+    where:
+    n << [1, 2, 3]
+  }
+}

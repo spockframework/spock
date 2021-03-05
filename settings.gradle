@@ -24,7 +24,7 @@ def spockBuildCachePassword = ext.has('spockBuildCachePassword') ? ext['spockBui
 
 def accessKeysAreMissing() {
   File accessKeys = new File(gradle.gradleUserHomeDir, "enterprise/keys.properties")
-  return !System.env['GRADLE_ENTERPRISE_ACCESS_KEY'] || (!accessKeys.file || !accessKeys.text?.contains("ge.spockframework.org"))
+  return !System.env['GRADLE_ENTERPRISE_ACCESS_KEY'] && (!accessKeys.file || !accessKeys.text?.contains("ge.spockframework.org"))
 }
 
 gradleEnterprise {

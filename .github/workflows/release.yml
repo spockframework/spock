@@ -58,7 +58,7 @@ jobs:
           ./gradlew --version
       - name: 'Build Spock'
         run: |
-          ./gradlew --no-parallel --stacktrace ghActionsBuild "-Dvariant=${{ matrix.variant }}"  -Dscan.tag.main-build
+          ./gradlew --no-parallel --stacktrace ghActionsBuild "-Dvariant=${{ matrix.variant }}"  "-Dscan.tag.main-build"
       - name: 'Stop Daemon'
         run: |
           ./gradlew --stop
@@ -105,7 +105,7 @@ jobs:
           SONATYPE_OSS_PASSWORD: ${{ secrets.SONATYPE_OSS_PASSWORD }}
           SIGNING_PASSWORD: ${{ secrets.SIGNING_GPG_PASSWORD }}
         run: |
-          ./gradlew --no-parallel --stacktrace ghActionsPublish "-Dvariant=${{ matrix.variant }}"  -Dscan.tag.main-publish
+          ./gradlew --no-parallel --stacktrace ghActionsPublish "-Dvariant=${{ matrix.variant }}"  "-Dscan.tag.main-publish"
       - name: 'Stop Daemon'
         run: |
           ./gradlew --stop
@@ -140,7 +140,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          ./gradlew --no-parallel --stacktrace ghActionsDocs "-Dvariant=${{ matrix.variant }}" -Dscan.tag.main-docs
+          ./gradlew --no-parallel --stacktrace ghActionsDocs "-Dvariant=${{ matrix.variant }}" "-Dscan.tag.main-docs"
       - name: 'Stop Daemon'
         run: |
           ./gradlew --stop

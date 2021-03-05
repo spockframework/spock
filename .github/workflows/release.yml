@@ -7,11 +7,6 @@ on:
     tags:
       - 'spock-*'
 
-env:
-  ORG_GRADLE_PROJECT_spockBuildCacheUsername: ${{ secrets.SPOCK_BUILD_CACHE_USERNAME }}
-  ORG_GRADLE_PROJECT_spockBuildCachePassword: ${{ secrets.SPOCK_BUILD_CACHE_PASSWORD }}
-  GRADLE_ENTERPRISE_ACCESS_KEY: ${{ secrets.GRADLE_ENTERPRISE_ACCESS_KEY  }}
-
 jobs:
   build-and-verify:
     runs-on: ${{ matrix.os }}
@@ -57,6 +52,10 @@ jobs:
         run: |
           ./gradlew --version
       - name: 'Build Spock'
+        env:
+          ORG_GRADLE_PROJECT_spockBuildCacheUsername: ${{ secrets.SPOCK_BUILD_CACHE_USERNAME }}
+          ORG_GRADLE_PROJECT_spockBuildCachePassword: ${{ secrets.SPOCK_BUILD_CACHE_PASSWORD }}
+          GRADLE_ENTERPRISE_ACCESS_KEY: ${{ secrets.GRADLE_ENTERPRISE_ACCESS_KEY }}
         run: |
           ./gradlew --no-parallel --stacktrace ghActionsBuild "-Dvariant=${{ matrix.variant }}"  "-Dscan.tag.main-build"
       - name: 'Stop Daemon'
@@ -104,6 +103,9 @@ jobs:
           SONATYPE_OSS_USER: ${{ secrets.SONATYPE_OSS_USER }}
           SONATYPE_OSS_PASSWORD: ${{ secrets.SONATYPE_OSS_PASSWORD }}
           SIGNING_PASSWORD: ${{ secrets.SIGNING_GPG_PASSWORD }}
+          ORG_GRADLE_PROJECT_spockBuildCacheUsername: ${{ secrets.SPOCK_BUILD_CACHE_USERNAME }}
+          ORG_GRADLE_PROJECT_spockBuildCachePassword: ${{ secrets.SPOCK_BUILD_CACHE_PASSWORD }}
+          GRADLE_ENTERPRISE_ACCESS_KEY: ${{ secrets.GRADLE_ENTERPRISE_ACCESS_KEY }}
         run: |
           ./gradlew --no-parallel --stacktrace ghActionsPublish "-Dvariant=${{ matrix.variant }}"  "-Dscan.tag.main-publish"
       - name: 'Stop Daemon'
@@ -139,6 +141,9 @@ jobs:
       - name: 'Publish Docs'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ORG_GRADLE_PROJECT_spockBuildCacheUsername: ${{ secrets.SPOCK_BUILD_CACHE_USERNAME }}
+          ORG_GRADLE_PROJECT_spockBuildCachePassword: ${{ secrets.SPOCK_BUILD_CACHE_PASSWORD }}
+          GRADLE_ENTERPRISE_ACCESS_KEY: ${{ secrets.GRADLE_ENTERPRISE_ACCESS_KEY }}
         run: |
           ./gradlew --no-parallel --stacktrace ghActionsDocs "-Dvariant=${{ matrix.variant }}" "-Dscan.tag.main-docs"
       - name: 'Stop Daemon'

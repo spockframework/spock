@@ -18,7 +18,7 @@ plugins {
 }
 
 def gradleEnterpriseServer = "https://ge.spockframework.org"
-def isCiServer = System.getenv("CI") != null || System.getenv("GITHUB_ACTIONS") != null
+def isCiServer = System.env["CI"] || System.env["GITHUB_ACTIONS"]
 def spockBuildCacheUsername = ext.has('spockBuildCacheUsername') ? ext['spockBuildCacheUsername'] : null
 def spockBuildCachePassword = ext.has('spockBuildCachePassword') ? ext['spockBuildCachePassword'] : null
 

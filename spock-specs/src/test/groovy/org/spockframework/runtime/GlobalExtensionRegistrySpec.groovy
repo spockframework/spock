@@ -136,7 +136,7 @@ class GlobalExtensionRegistrySpec extends Specification {
     registry.globalExtensions[0].settings.is(registry.globalExtensions[1].settings)
   }
 
-  def "allows to instantiate local extensions via #desc injection"(Class clazz) {
+  def "allows to instantiate local extensions via #desc injection"() {
     def registry = new GlobalExtensionRegistry([], [RunnerConfiguration])
     registry.initializeGlobalExtensions()
 
@@ -152,7 +152,7 @@ class GlobalExtensionRegistrySpec extends Specification {
     LocalConstructorExtension | 'constructor'
   }
 
-  def "complains if local extension references unknown configuration class (#desc injection)"(Class clazz) {
+  def "complains if local extension references unknown configuration class (#desc injection)"() {
     def registry = new GlobalExtensionRegistry([], [])
     registry.initializeGlobalExtensions()
 
@@ -169,7 +169,7 @@ class GlobalExtensionRegistrySpec extends Specification {
     LocalConstructorExtension | 'constructor'
   }
 
-  static class MyExtension extends AbstractGlobalExtension {
+  static class MyExtension implements IGlobalExtension {
     static instantiated = false
 
     MyExtension() {
@@ -177,16 +177,16 @@ class GlobalExtensionRegistrySpec extends Specification {
     }
   }
 
-  static class MissingNoArgCtorExtension extends AbstractGlobalExtension {
+  static class MissingNoArgCtorExtension implements IGlobalExtension {
     MissingNoArgCtorExtension(int x) {}
   }
 
-  static class FieldInjectableExtension extends AbstractGlobalExtension {
+  static class FieldInjectableExtension implements IGlobalExtension {
     RunnerConfiguration config
     MySettings settings
   }
 
-  static class ConstructorInjectableExtension extends AbstractGlobalExtension {
+  static class ConstructorInjectableExtension implements IGlobalExtension {
     final RunnerConfiguration config
     final MySettings settings
 
@@ -196,7 +196,7 @@ class GlobalExtensionRegistrySpec extends Specification {
     }
   }
 
-  static class SettingsExtension extends AbstractGlobalExtension {
+  static class SettingsExtension implements IGlobalExtension {
     MySettings settings
   }
 

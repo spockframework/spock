@@ -32,13 +32,14 @@ import org.jetbrains.annotations.NotNull;
  * @author Peter Niederwieser
  */
 public class GlobalExtensionRegistry implements IExtensionRegistry, IConfigurationRegistry {
-  private final List<Class<?>> globalExtensionClasses;
+  private final List<Class<? extends IGlobalExtension>> globalExtensionClasses;
   private final Map<Class<?>, Object> configurationsByType = new HashMap<>();
   private final Map<String, Object> configurationsByName = new HashMap<>();
 
   private final List<IGlobalExtension> globalExtensions = new ArrayList<>();
 
-  GlobalExtensionRegistry(List<Class<?>> globalExtensionClasses, List<Class<?>> initialConfigurations) {
+  GlobalExtensionRegistry(List<Class<? extends IGlobalExtension>> globalExtensionClasses,
+                          List<Class<?>> initialConfigurations) {
     this.globalExtensionClasses = globalExtensionClasses;
     initializeConfigurations(initialConfigurations);
   }
@@ -54,7 +55,7 @@ public class GlobalExtensionRegistry implements IExtensionRegistry, IConfigurati
   }
 
   public void initializeGlobalExtensions() {
-    for (Class<?> clazz : globalExtensionClasses) {
+    for (Class<? extends IGlobalExtension> clazz : globalExtensionClasses) {
       verifyGlobalExtension(clazz);
       IGlobalExtension extension = instantiateAndConfigureGlobalExtension(clazz);
       globalExtensions.add(extension);
@@ -83,8 +84,8 @@ public class GlobalExtensionRegistry implements IExtensionRegistry, IConfigurati
       ).withArgs(clazz.getName(), IGlobalExtension.class.getName());
   }
 
-  private IGlobalExtension instantiateAndConfigureGlobalExtension(Class<?> clazz) {
-    return (IGlobalExtension)instantiateAndConfigureExtension(clazz);
+  private IGlobalExtension instantiateAndConfigureGlobalExtension(Class<? extends IGlobalExtension> clazz) {
+    return instantiateAndConfigureExtension(clazz);
   }
 
   private <T> T instantiateAndConfigureExtension(Class<T> clazz) {
@@ -94,13 +95,13 @@ public class GlobalExtensionRegistry implements IExtensionRegistry, IConfigurati
       if (declaredConstructor.getParameterCount() == 0) {
         Object extension = declaredConstructor.newInstance();
         configureExtension(extension);
-        return (T)extension;
+        return clazz.cast(extension);
       } else {
         Object[] args = Arrays.stream(declaredConstructor.getParameters())
-          .map((Parameter parameter) -> getInjectionParameter(parameter, clazz))
+          .map(parameter -> getInjectionParameter(parameter, clazz))
           .toArray();
 
-        return (T)declaredConstructor.newInstance(args);
+        return clazz.cast(declaredConstructor.newInstance(args));
       }
     } catch (Exception e) {
       throw new ExtensionException("Failed to instantiate extension '%s'", e).withArgs(clazz.getName());
@@ -179,7 +180,7 @@ public class GlobalExtensionRegistry implements IExtensionRegistry, IConfigurati
   }
 
   private Object getOrCreateConfiguration(Class<?> type, ConfigurationObject annotation) {
-    Object config = configurationsByType.get(type);
+    Object config = getConfigurationByType(type);
     if (config == null) {
       config = createAndStoreConfiguration(type, annotation);
     }

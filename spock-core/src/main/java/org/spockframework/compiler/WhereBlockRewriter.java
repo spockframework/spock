@@ -49,7 +49,9 @@ import static org.spockframework.util.ExceptionUtil.sneakyThrow;
 public class WhereBlockRewriter {
   private final WhereBlock whereBlock;
   private final IRewriteResources resources;
+  private final boolean defineErrorRethrower;
   private final InstanceFieldAccessChecker instanceFieldAccessChecker;
+  private final ErrorRethrowerUsageDetector errorRethrowerUsageDetector;
 
   private int dataProviderCount = 0;
   private final List<VariableExpression> dataTableVars = new ArrayList<>();
@@ -61,14 +63,16 @@ public class WhereBlockRewriter {
   private final List<VariableExpression> dataProcessorVars = new ArrayList<>();
   private int localVariableCount = 0;
 
-  private WhereBlockRewriter(WhereBlock whereBlock, IRewriteResources resources) {
+  private WhereBlockRewriter(WhereBlock whereBlock, IRewriteResources resources, boolean defineErrorRethrower) {
     this.whereBlock = whereBlock;
     this.resources = resources;
+    this.defineErrorRethrower = defineErrorRethrower;
     instanceFieldAccessChecker = new InstanceFieldAccessChecker(resources);
+    errorRethrowerUsageDetector = defineErrorRethrower ? new ErrorRethrowerUsageDetector() : null;
   }
 
-  public static void rewrite(WhereBlock block, IRewriteResources resources) {
-    new WhereBlockRewriter(block, resources).rewrite();
+  public static void rewrite(WhereBlock block, IRewriteResources resources, boolean defineErrorRethrower) {
+    new WhereBlockRewriter(block, resources, defineErrorRethrower).rewrite();
   }
 
   private void rewrite() {
@@ -221,8 +225,14 @@ public class WhereBlockRewriter {
   private void createDataProviderMethod(Expression dataProviderExpr, int nextDataVariableIndex, boolean addDataTableParameters) {
     instanceFieldAccessChecker.check(dataProviderExpr);
 
+    List<Statement> dataProviderStats = new ArrayList<>();
+    if (defineErrorRethrower && errorRethrowerUsageDetector.detectedErrorRethrowerUsage(dataProviderExpr)) {
+      resources.defineErrorRethrower(dataProviderStats);
+    }
+
     ReturnStatement returnStat = new ReturnStatement(dataProviderExpr);
     returnStat.setSourcePosition(dataProviderExpr);
+    dataProviderStats.add(returnStat);
 
     MethodNode method =
       new MethodNode(
@@ -232,9 +242,7 @@ public class WhereBlockRewriter {
         // only add parameters when generating a provider method for a data table column
         addDataTableParameters ? createPreviousDataTableParameters(nextDataVariableIndex) : Parameter.EMPTY_ARRAY,
         ClassNode.EMPTY_ARRAY,
-        new BlockStatement(
-          Arrays.asList(returnStat),
-          null));
+        new BlockStatement(dataProviderStats, null));
 
     method.addAnnotation(createDataProviderAnnotation(dataProviderExpr, nextDataVariableIndex, addDataTableParameters));
     whereBlock.getParent().getParent().getAst().addMethod(method);
@@ -641,6 +649,10 @@ public class WhereBlockRewriter {
     if (dataProcessorVars.isEmpty()) return;
 
     instanceFieldAccessChecker.check(dataProcessorStats);
+
+    if (defineErrorRethrower && errorRethrowerUsageDetector.detectedErrorRethrowerUsage(dataProcessorStats)) {
+      resources.defineErrorRethrower(dataProcessorStats);
+    }
 
     dataProcessorStats.add(
         new ReturnStatement(

@@ -352,8 +352,9 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
     Block block = method.getLastBlock();
     if (!(block instanceof WhereBlock)) return;
 
-    new DeepBlockRewriter(this).visit(block);
-    WhereBlockRewriter.rewrite((WhereBlock) block, this);
+    DeepBlockRewriter deep = new DeepBlockRewriter(this);
+    deep.visit(block);
+    WhereBlockRewriter.rewrite((WhereBlock) block, this, deep.isDeepNonGroupedConditionFound());
   }
 
   @Override
@@ -591,7 +592,8 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
 
   // This is necessary as otherwise within `with(someMap) { ... }` the variable is resolved to `null`,
   // but having this local variable beats the resolving against the closure delegate.
-  private void defineErrorRethrower(List<Statement> stats) {
+  @Override
+  public void defineErrorRethrower(List<Statement> stats) {
     stats.add(0,
       new ExpressionStatement(
         new DeclarationExpression(

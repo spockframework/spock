@@ -643,34 +643,6 @@ runner {
 }
 ----
 
-=== Report Log
-
-Spock can create a report log of the executed tests in JSON format. This report contains also things like
-<<Title and Narrative,`@Title`>>, <<Title and Narrative,`@Narrative`>>, <<See,`@See`>> and <<Issue,`@Issue`>> values or
-<<spock_primer.adoc#_blocks,block descriptors>>.
-This report can be enabled according to the <<spock-configuration-file,Spock Configuration File>> section. The default is to not generate this
-report.
-
-For the report to be generated, you have to enable it and set at least the `logFileDir` and `logFileName`. `enabled` can
-also be set via the system property `spock.logEnabled`, `logFileDir` can also be set via the system property
-`spock.logFileDir` and `logFileName` can also be set via the system property `spock.logFileName`.
-
-If a `logFileSuffix` is set (or the system property `spock.logFileSuffix`), it is appended to the base filename,
-separated by a dash. If the suffix contains the string `#timestamp`, this is replaced by the current date and time in
-`UTC` automatically. If you instead want to have your local date and time, you can use the setting from the example
-below.
-
-.Report Log Configuration
-[source,groovy]
-----
-report {
-    enabled true
-    logFileDir '.'
-    logFileName 'spock-report.json'
-    logFileSuffix new Date().format('yyyy-MM-dd_HH_mm_ss')
-}
-----
-
 == Third-Party Extensions
 
 You can find a list of third-party extensions in the https://github.com/spockframework/spock/wiki/Third-Party-Extensions[Spock Wiki].
@@ -706,8 +678,6 @@ running.
 
 `stop()`::
   This is called at least once at the very end of the Spock execution.
-
-NOTE: Build tools might trigger repeated executions, so those methods might be called more often than you might expect.
 
 === Annotation Driven Local Extensions
 

@@ -57,7 +57,7 @@ public class GlobalExtensionRegistry implements IExtensionRegistry, IConfigurati
   public void initializeGlobalExtensions() {
     for (Class<? extends IGlobalExtension> clazz : globalExtensionClasses) {
       verifyGlobalExtension(clazz);
-      IGlobalExtension extension = instantiateAndConfigureGlobalExtension(clazz);
+      IGlobalExtension extension = instantiateAndConfigureExtension(clazz);
       globalExtensions.add(extension);
     }
   }
@@ -82,10 +82,6 @@ public class GlobalExtensionRegistry implements IExtensionRegistry, IConfigurati
       throw new ExtensionException(
         "Class '%s' is not a valid global extension because it is not derived from '%s'"
       ).withArgs(clazz.getName(), IGlobalExtension.class.getName());
-  }
-
-  private IGlobalExtension instantiateAndConfigureGlobalExtension(Class<? extends IGlobalExtension> clazz) {
-    return instantiateAndConfigureExtension(clazz);
   }
 
   private <T> T instantiateAndConfigureExtension(Class<T> clazz) {

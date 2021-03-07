@@ -126,11 +126,12 @@ class EmbeddedSpecCompiler {
   }
 
   private String doAstToSource(@Language('Groovy') String source, Set showSet, CompilePhase phase) {
-    String result = new AstNodeToSourceConverter().compileToScript(source, phase.phaseNumber, showSet)
+    loader.clearCache()
+    String result = new AstNodeToSourceConverter().compileToScript(source, phase.phaseNumber, showSet, loader)
     // normalize result
     result = FILENAME_PATTERN.matcher(result).replaceAll("XXXXX")
     result = TRAILING_SPACES.matcher(result).replaceAll("")
-    result = result.trim()
+    result = result.stripIndent().trim()
     return result
   }
 

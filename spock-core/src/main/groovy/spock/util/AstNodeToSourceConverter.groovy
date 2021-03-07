@@ -137,14 +137,14 @@ enum Show {
 class AstNodeToScriptVisitor extends CompilationUnit.PrimaryClassNodeOperation implements GroovyClassVisitor, GroovyCodeVisitor, GroovyCodeVisitorCompat {
 
   public static final EnumSet<Show> CLASS_AND_MEMBERS = EnumSet.of(Show.CLASS, Show.METHODS, Show.FIELDS)
-  private final Writer _out
+  private final StringBuilderWriter _out
   Stack<String> classNameStack = new Stack<String>()
   String _indent = ''
   boolean readyToIndent = true
   boolean scriptHasBeenVisited
   Set<Show> show
 
-  AstNodeToScriptVisitor(Writer writer, Set<Show> show) {
+  AstNodeToScriptVisitor(StringBuilderWriter writer, Set<Show> show) {
     this._out = writer
     this.show = show
     this.scriptHasBeenVisited = false
@@ -210,7 +210,9 @@ class AstNodeToScriptVisitor extends CompilationUnit.PrimaryClassNodeOperation i
         output = output[1..-1]  // trim left
       }
     }
-    if (_out.toString().endsWith(' ')) {
+    // slightly more complicated than the original code, but avoids creating strings just to check for space at the end
+    def builder = _out.builder
+    if (builder.length() > 0 && builder.charAt(builder.length() - 1) == ' ' as Character) {
       if (output.startsWith(' ')) {
         output = output[1..-1]
       }
@@ -232,6 +234,7 @@ class AstNodeToScriptVisitor extends CompilationUnit.PrimaryClassNodeOperation i
       block()
     }
   }
+
   def showOnAll(Set<Show> s, Closure block) {
     if (show.containsAll(s)) {
       block()
@@ -319,10 +322,10 @@ class AstNodeToScriptVisitor extends CompilationUnit.PrimaryClassNodeOperation i
       visitType node.unresolvedSuperClass
       boolean first = true
       node.unresolvedInterfaces?.each {
-        if (!first) {
-          print ', '
-        } else {
+        if (first) {
           print ' implements '
+        } else {
+          print ', '
         }
         first = false
         visitType it
@@ -330,6 +333,8 @@ class AstNodeToScriptVisitor extends CompilationUnit.PrimaryClassNodeOperation i
       print ' {'
       printDoubleBreak()
     }
+
+    readyToIndent = true
 
     indented {
       showOn(Show.PROPERTIES) {

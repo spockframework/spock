@@ -14,10 +14,10 @@ class AstSpec extends EmbeddedSpecification {
     then:
     result == '''\
 @org.spockframework.runtime.model.FeatureMetadata(name = 'a feature', ordinal = 0, line = 1, blocks = [org.spockframework.runtime.model.BlockKind.SETUP[]], parameterNames = [])
-    public void $spock_feature_0_0() {
-        java.lang.Object nothing = null
-        this.getSpecificationContext().getMockController().leaveScope()
-    }'''
+public void $spock_feature_0_0() {
+    java.lang.Object nothing = null
+    this.getSpecificationContext().getMockController().leaveScope()
+}'''
   }
 
 
@@ -35,17 +35,17 @@ class AstSpec extends EmbeddedSpecification {
     then:
     result == '''\
 @org.spockframework.runtime.model.FieldMetadata(name = 'foo', ordinal = 0, line = 1, initializer = true)
-    private java.lang.Object foo
+private java.lang.Object foo
 
-    private java.lang.Object $spock_initializeFields() {
-        foo = 'bar\'
-    }
+private java.lang.Object $spock_initializeFields() {
+    foo = 'bar\'
+}
 
-    @org.spockframework.runtime.model.FeatureMetadata(name = 'a feature', ordinal = 0, line = 3, blocks = [org.spockframework.runtime.model.BlockKind.SETUP[]], parameterNames = [])
-    public void $spock_feature_0_0() {
-        java.lang.Object nothing = null
-        this.getSpecificationContext().getMockController().leaveScope()
-    }'''
+@org.spockframework.runtime.model.FeatureMetadata(name = 'a feature', ordinal = 0, line = 3, blocks = [org.spockframework.runtime.model.BlockKind.SETUP[]], parameterNames = [])
+public void $spock_feature_0_0() {
+    java.lang.Object nothing = null
+    this.getSpecificationContext().getMockController().leaveScope()
+}'''
   }
 
 

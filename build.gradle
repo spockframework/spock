@@ -52,8 +52,9 @@ ext {
     bytebuddy           : [group: 'net.bytebuddy', name: 'byte-buddy', version: '1.10.16'],
     cglib               : [group: 'cglib', name: 'cglib-nodep', version: '3.3.0'],
     groovy              : groovyDependencies,
-    groovySql           : [group: 'org.codehaus.groovy', name: 'groovy-sql', version: groovyVersion], //for some Spring and Unitils tests
-    groovyTest          : [group: 'org.codehaus.groovy', name: 'groovy-test', version: groovyVersion], //for @NotYetImplemented
+    groovySql           : [group: 'org.codehaus.groovy', name: 'groovy-sql', version: groovyVersion],     //for some Spring and Unitils tests
+    groovyTest          : [group: 'org.codehaus.groovy', name: 'groovy-test', version: groovyVersion],    //for @NotYetImplemented
+    groovyConsole       : [group: 'org.codehaus.groovy', name: 'groovy-console', version: groovyVersion], //for AstNodeToScriptAdapter
     h2database          : [group: 'com.h2database', name: 'h2', version: '1.4.200'],
     hamcrest            : [group: 'org.hamcrest', name: 'hamcrest', version: '2.2'],
     jaxb                : [group: 'javax.xml.bind', name: 'jaxb-api', version: '2.3.0'],

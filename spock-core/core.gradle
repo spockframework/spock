@@ -19,6 +19,7 @@ configurations { coreConsoleRuntime }
 
 dependencies {
   compile libs.groovy // easiest way to add Groovy dependency to POM
+  compile libs.groovyConsole, optional //for AstNodeToScriptAdapter
   compile libs.junitPlatform
   compile libs.junitPlatformTestkit, optional
   compile libs.hamcrest

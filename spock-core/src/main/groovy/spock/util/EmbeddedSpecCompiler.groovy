@@ -16,8 +16,9 @@
 
 package spock.util
 
-import org.spockframework.runtime.*
-import org.spockframework.util.*
+
+import org.spockframework.runtime.SpecUtil
+import org.spockframework.util.NotThreadSafe
 import spock.lang.Specification
 
 import java.util.regex.Pattern
@@ -34,9 +35,8 @@ import org.opentest4j.MultipleFailuresError
  */
 @NotThreadSafe
 class EmbeddedSpecCompiler {
-  static final FILENAME_PATTERN = Pattern.compile(/(?:(?<=filename = 'script)(\d+)(?=.groovy')|(?<=\w@)([a-z\d]+))/)
+  static final FILENAME_PATTERN = Pattern.compile(/(?<=filename = 'script)(\d+)(?=.groovy')/)
   static final TRAILING_SPACES = Pattern.compile(/ +(?=\n)/)
-  static final Class<?> AST_TRANSFORMER = ReflectionUtil.loadClassIfAvailable(GroovyReleaseInfo.version < VersionNumber.parse("3") ? 'groovy.inspect.swingui.AstNodeToScriptAdapter' : 'groovy.console.ui.AstNodeToScriptAdapter')
   final GroovyClassLoader loader = new GroovyClassLoader(getClass().classLoader)
 
   boolean unwrapCompileException = true
@@ -80,50 +80,53 @@ class EmbeddedSpecCompiler {
   }
 
   List<Class> compileWithImports(@Language('Groovy') String source) {
-    addPackageImport(Specification.package )
+    addPackageImport(Specification.package)
     // one-liner keeps line numbers intact
     doCompile "package apackage; $imports ${source.trim()}"
   }
 
   Class compileSpecBody(@Language(value = 'Groovy', prefix = 'class ASpec extends spock.lang.Specification { ', suffix = '\n }')
-                        String source) {
+                          String source) {
     // one-liner keeps line numbers intact; newline safeguards against source ending in a line comment
     compileWithImports("class ASpec extends Specification { ${source.trim() + '\n'} }")[0]
   }
 
   Class compileFeatureBody(@Language(value = 'Groovy', prefix = "def 'a feature'() { ", suffix = '\n }')
-                           String source) {
+                             String source) {
     // one-liner keeps line numbers intact; newline safeguards against source ending in a line comment
     compileSpecBody "def 'a feature'() { ${source.trim() + '\n'} }"
   }
 
-  String astToSourceWithImports(@Language('Groovy') String source, CompilePhase phase = CompilePhase.SEMANTIC_ANALYSIS) {
-    addPackageImport(Specification.package )
+  String astToSourceWithImports(@Language('Groovy') String source,
+                                Set showSet = EnumSet.of(Show.ANNOTATIONS, Show.CLASS, Show.METHODS, Show.FIELDS, Show.OBJECT_INITIALIZERS, Show.PROPERTIES),
+                                CompilePhase phase = CompilePhase.SEMANTIC_ANALYSIS) {
+    addPackageImport(Specification.package)
     // one-liner keeps line numbers intact
-    doAstToSource("package apackage; $imports ${source.trim()}", phase)
+    doAstToSource("package apackage; $imports ${source.trim()}", showSet, phase)
   }
 
   String astToSourceSpecBody(@Language(value = 'Groovy', prefix = 'class ASpec extends spock.lang.Specification { ', suffix = '\n }')
-                        String source, CompilePhase phase = CompilePhase.SEMANTIC_ANALYSIS) {
+                               String source,
+                             Set showSet = EnumSet.of(Show.ANNOTATIONS, Show.METHODS, Show.FIELDS, Show.OBJECT_INITIALIZERS, Show.PROPERTIES),
+                             CompilePhase phase = CompilePhase.SEMANTIC_ANALYSIS) {
     // one-liner keeps line numbers intact; newline safeguards against source ending in a line comment
-    astToSourceWithImports("class ASpec extends Specification { ${source.trim() + '\n'} }", phase)
+    astToSourceWithImports("class ASpec extends Specification { ${source.trim() + '\n'} }", showSet, phase)
   }
 
   String astToSourceFeatureBody(@Language(value = 'Groovy', prefix = "def 'a feature'() { ", suffix = '\n }')
-                           String source, CompilePhase phase = CompilePhase.SEMANTIC_ANALYSIS) {
+                                  String source,
+                                Set showSet = EnumSet.of(Show.ANNOTATIONS, Show.METHODS),
+                                CompilePhase phase = CompilePhase.SEMANTIC_ANALYSIS) {
     // one-liner keeps line numbers intact; newline safeguards against source ending in a line comment
-    astToSourceSpecBody ("def 'a feature'() { ${source.trim() + '\n'} }", phase)
+    astToSourceSpecBody("def 'a feature'() { ${source.trim() + '\n'} }", showSet, phase)
   }
 
-  String astToSource(@Language('Groovy') String source, CompilePhase phase = CompilePhase.SEMANTIC_ANALYSIS) {
-    doAstToSource(imports + source, phase)
+  String astToSource(@Language('Groovy') String source, Set showSet = Show.all(), CompilePhase phase = CompilePhase.SEMANTIC_ANALYSIS) {
+    doAstToSource(imports + source, showSet, phase)
   }
 
-  String doAstToSource(@Language('Groovy') String source, CompilePhase phase) {
-    if (AST_TRANSFORMER == null) {
-      throw new SpockException("To use any astToSource* method you need to add groovy-console as dependency.")
-    }
-    String result = AST_TRANSFORMER.getConstructor().newInstance().compileToScript(source, phase.phaseNumber)
+  private String doAstToSource(@Language('Groovy') String source, Set showSet, CompilePhase phase) {
+    String result = new AstNodeToSourceConverter().compileToScript(source, phase.phaseNumber, showSet)
     // normalize result
     result = FILENAME_PATTERN.matcher(result).replaceAll("XXXXX")
     result = TRAILING_SPACES.matcher(result).replaceAll("")
@@ -131,19 +134,18 @@ class EmbeddedSpecCompiler {
     return result
   }
 
-
   private List<Class> doCompile(@Language('Groovy') String source) {
     loader.clearCache()
 
     try {
-    loader.parseClass(source.trim())
+      loader.parseClass(source.trim())
     } catch (MultipleCompilationErrorsException e) {
       def errors = e.errorCollector.errors
       if (unwrapCompileException && errors.every { it.hasProperty("cause") })
         if (errors.size() == 1)
           throw errors[0].cause
         else
-          throw new MultipleFailuresError("Errors during compile",errors.cause)
+          throw new MultipleFailuresError("Errors during compile", errors.cause)
 
       throw e
     }

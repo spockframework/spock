@@ -10,7 +10,6 @@ configurations {
 
 dependencies {
   testCompile project(":spock-core")
-  testCompile libs.groovyConsole  //for AstNodeToScriptAdapter
   testCompile libs.groovySql      //for groovy.sql.Sql
   testCompile(libs.groovyTest) {  //for groovy.test.NotYetImplemented
     exclude group: 'junit'

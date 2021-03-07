@@ -16,7 +16,6 @@
 
 package spock.util
 
-
 import org.spockframework.runtime.SpecUtil
 import org.spockframework.util.NotThreadSafe
 import spock.lang.Specification
@@ -24,6 +23,7 @@ import spock.lang.Specification
 import java.util.regex.Pattern
 
 import org.codehaus.groovy.control.*
+import org.codehaus.groovy.runtime.StringGroovyMethods
 import org.intellij.lang.annotations.Language
 import org.opentest4j.MultipleFailuresError
 
@@ -131,7 +131,8 @@ class EmbeddedSpecCompiler {
     // normalize result
     result = FILENAME_PATTERN.matcher(result).replaceAll("XXXXX")
     result = TRAILING_SPACES.matcher(result).replaceAll("")
-    result = result.stripIndent().trim()
+    result = StringGroovyMethods.stripIndent((CharSequence)result) // Java 15 introduces `stripIndent` with a different behavior, so use explicit method call
+    result = result.trim()
     return result
   }
 

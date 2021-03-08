@@ -137,12 +137,14 @@ enum Show {
 class AstNodeToScriptVisitor extends CompilationUnit.PrimaryClassNodeOperation implements GroovyClassVisitor, GroovyCodeVisitor, GroovyCodeVisitorCompat {
 
   public static final EnumSet<Show> CLASS_AND_MEMBERS = EnumSet.of(Show.CLASS, Show.METHODS, Show.FIELDS)
+  private static final char SPACE = ' '
+  private static final char NEW_LINE = '\n'
   private final StringBuilderWriter _out
-  Stack<String> classNameStack = new Stack<String>()
-  String _indent = ''
-  boolean readyToIndent = true
-  boolean scriptHasBeenVisited
-  Set<Show> show
+  private final Set<Show> show
+  private Stack<String> classNameStack = new Stack<String>()
+  private String _indent = ''
+  private boolean readyToIndent = true
+  private boolean scriptHasBeenVisited
 
   AstNodeToScriptVisitor(StringBuilderWriter writer, Set<Show> show) {
     this._out = writer
@@ -210,9 +212,7 @@ class AstNodeToScriptVisitor extends CompilationUnit.PrimaryClassNodeOperation i
         output = output[1..-1]  // trim left
       }
     }
-    // slightly more complicated than the original code, but avoids creating strings just to check for space at the end
-    def builder = _out.builder
-    if (builder.length() > 0 && builder.charAt(builder.length() - 1) == ' ' as Character) {
+    if (outEndsWith(SPACE)) {
       if (output.startsWith(' ')) {
         output = output[1..-1]
       }
@@ -220,10 +220,26 @@ class AstNodeToScriptVisitor extends CompilationUnit.PrimaryClassNodeOperation i
     _out.print output
   }
 
+  // slightly more complicated than the original code, but avoids creating strings just to check for the end
+  boolean outEndsWith(Character character) {
+    def builder = _out.builder
+    return (builder.length() > 0 && builder.charAt(builder.length() - 1) == character)
+  }
+
+  boolean outEndsWith(String  str) {
+    def builder = _out.builder
+    return (builder.length() > str.size() && builder.substring(builder.length() - str.size()) == str)
+  }
+
+  void trimSpaceRight() {
+    while (outEndsWith(SPACE)) {
+      _out.builder.length = _out.builder.length() - 1
+    }
+  }
+
   def println(parameter) {
     throw new UnsupportedOperationException('Wrong API')
   }
-
 
   private boolean showAny(EnumSet<Show> set) {
     !Collections.disjoint(show, set)
@@ -249,18 +265,20 @@ class AstNodeToScriptVisitor extends CompilationUnit.PrimaryClassNodeOperation i
   }
 
   def printLineBreak() {
-    if (!_out.toString().endsWith('\n')) {
+    if (!outEndsWith(NEW_LINE)) {
+      trimSpaceRight()
       _out.print '\n'
     }
     readyToIndent = true
   }
 
   def printDoubleBreak() {
-    if (_out.toString().endsWith('\n\n')) {
+    if (outEndsWith('\n\n')) {
       // do nothing
-    } else if (_out.toString().endsWith('\n')) {
+    } else if (outEndsWith(NEW_LINE)) {
       _out.print '\n'
     } else {
+      trimSpaceRight()
       _out.print '\n'
       _out.print '\n'
     }

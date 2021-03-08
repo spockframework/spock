@@ -35,3 +35,7 @@ repositories {
   mavenCentral()
 }
 
+// Disable non-cachable tasks, that are irrelevant for running tests
+tasks.findByName('findMainClass').onlyIf { false }
+tasks.findByName('bootRepackage').onlyIf { false }
+

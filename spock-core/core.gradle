@@ -111,7 +111,8 @@ tasks.register('verifyOSGi', Resolve) {
   // workaround until https://github.com/bndtools/bnd/issues/4577 is fixed
   def taskMarker = file("$buildDir/verifyOSGi.marker")
   writeOnChanges = false
-  outputs.file(taskMarker)
+  outputs.cacheIf { true }
+  outputs.file(taskMarker).withPropertyName("taskMarker")
   doLast {
     taskMarker.text = "done"
   }

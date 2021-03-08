@@ -57,20 +57,20 @@ gradleEnterprise {
   }
 }
 
-// Disabled to gather baseline data
-//buildCache {
-//  local {
-//    enabled = !isCiServer
-//  }
-//  remote(HttpBuildCache) {
-//    url = uri("$gradleEnterpriseServer/cache/")
-//    push = isCiServer && spockBuildCacheUsername && spockBuildCachePassword
-//    credentials {
-//      username = spockBuildCacheUsername ?: null
-//      password = spockBuildCachePassword ?: null
-//    }
-//  }
-//}
+buildCache {
+  local {
+    enabled = !isCiServer
+  }
+  remote(HttpBuildCache) {
+    enabled = false // Disabled to gather baseline data
+    url = uri("$gradleEnterpriseServer/cache/")
+    push = isCiServer && spockBuildCacheUsername && spockBuildCachePassword
+    credentials {
+      username = spockBuildCacheUsername ?: null
+      password = spockBuildCachePassword ?: null
+    }
+  }
+}
 
 include "spock-bom"
 include "spock-core"

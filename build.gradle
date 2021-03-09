@@ -101,6 +101,13 @@ allprojects {
       options.noTimestamp()
     }
   }
+
+  // ignore mutable data that is irrelevant for compilation output
+  normalization {
+    runtimeClasspath {
+      ignore 'META-INF/MAMANIFEST.MF'
+    }
+  }
 }
 
 apply from: script("ide")

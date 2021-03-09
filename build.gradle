@@ -105,7 +105,7 @@ allprojects {
   // ignore mutable data that is irrelevant for compilation output
   normalization {
     runtimeClasspath {
-      ignore 'META-INF/MAMANIFEST.MF'
+      ignore 'META-INF/MANIFEST.MF'
     }
   }
 }

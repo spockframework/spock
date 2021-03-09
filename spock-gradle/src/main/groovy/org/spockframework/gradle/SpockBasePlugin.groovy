@@ -16,9 +16,8 @@
 
 package org.spockframework.gradle
 
-
-import org.gradle.api.Plugin
-import org.gradle.api.Project
+import org.gradle.api.*
+import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.testing.Test
 
 class SpockBasePlugin implements Plugin<Project> {
@@ -28,6 +27,8 @@ class SpockBasePlugin implements Plugin<Project> {
       def configFile = project.file("Spock${taskName}Config.groovy")
       if (configFile.exists()) {
         task.inputs.file(configFile)
+          .withPropertyName("spockConfig")
+          .withPathSensitivity(PathSensitivity.RELATIVE)
         task.systemProperty "spock.configuration", configFile
       }
     }

@@ -54,6 +54,7 @@ ext {
     groovy              : groovyDependencies,
     groovySql           : [group: 'org.codehaus.groovy', name: 'groovy-sql', version: groovyVersion], //for some Spring and Unitils tests
     groovyTest          : [group: 'org.codehaus.groovy', name: 'groovy-test', version: groovyVersion], //for @NotYetImplemented
+    groovyJmx           : [group: 'org.codehaus.groovy', name: 'groovy-jmx', version: groovyVersion],  //for triggering jacoco dump via jmx
     h2database          : [group: 'com.h2database', name: 'h2', version: '1.4.200'],
     hamcrest            : [group: 'org.hamcrest', name: 'hamcrest', version: '2.2'],
     jaxb                : [group: 'javax.xml.bind', name: 'jaxb-api', version: '2.3.0'],

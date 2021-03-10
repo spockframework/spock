@@ -40,7 +40,7 @@ public void $spock_feature_0_0() {
 private java.lang.Object foo
 
 private java.lang.Object $spock_initializeFields() {
-    foo = 'bar\'
+    foo = 'bar'
 }
 
 @org.spockframework.runtime.model.FeatureMetadata(name = 'a feature', ordinal = 0, line = 3, blocks = [org.spockframework.runtime.model.BlockKind.SETUP[]], parameterNames = [])
@@ -156,8 +156,8 @@ import groovy.transform.EqualsAndHashCode as EqualsAndHashCode
 public class apackage.Bar extends apackage.Foo {
 
     private static final [I ARR
-    private static final java.lang.String STR = 'str\'
-    private static final char CHR = ' \'
+    private static final java.lang.String STR = 'str'
+    private static final char CHR = ' '
     private static final int INT = 10
     private static int st
     private int order

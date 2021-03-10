@@ -36,7 +36,6 @@ import org.opentest4j.MultipleFailuresError
 @NotThreadSafe
 class EmbeddedSpecCompiler {
   static final FILENAME_PATTERN = Pattern.compile(/(?<=filename = 'script)(\d+)(?=.groovy')/)
-  static final TRAILING_SPACES = Pattern.compile(/ +(?=\n)/)
   final GroovyClassLoader loader = new GroovyClassLoader(getClass().classLoader)
 
   boolean unwrapCompileException = true
@@ -130,7 +129,6 @@ class EmbeddedSpecCompiler {
     String result = new AstNodeToSourceConverter().compileToScript(source, phase.phaseNumber, showSet, loader)
     // normalize result
     result = FILENAME_PATTERN.matcher(result).replaceAll("XXXXX")
-    result = TRAILING_SPACES.matcher(result).replaceAll("")
     result = StringGroovyMethods.stripIndent((CharSequence)result) // Java 15 introduces `stripIndent` with a different behavior, so use explicit method call
     result = result.trim()
     return result

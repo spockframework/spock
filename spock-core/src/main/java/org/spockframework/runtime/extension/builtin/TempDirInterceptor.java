@@ -1,18 +1,15 @@
 package org.spockframework.runtime.extension.builtin;
 
-import org.codehaus.groovy.runtime.ResourceGroovyMethods;
-import org.spockframework.runtime.extension.IMethodInterceptor;
-import org.spockframework.runtime.extension.IMethodInvocation;
+import org.spockframework.runtime.extension.*;
 import org.spockframework.runtime.model.FieldInfo;
-import org.spockframework.runtime.model.MethodKind;
 import org.spockframework.util.Beta;
 
 import java.io.IOException;
-import java.nio.file.FileVisitResult;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.SimpleFileVisitor;
+import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.regex.Pattern;
+
+import org.codehaus.groovy.runtime.ResourceGroovyMethods;
 
 import static java.nio.file.FileVisitResult.CONTINUE;
 
@@ -23,13 +20,12 @@ import static java.nio.file.FileVisitResult.CONTINUE;
 @Beta
 public class TempDirInterceptor implements IMethodInterceptor {
   private static final String TEMP_DIR_PREFIX = "spock";
+  private static final Pattern VALID_CHARS = Pattern.compile("[^a-zA-Z0-9_.-]++");
 
   private final Class<?> fieldType;
   private final FieldInfo fieldInfo;
   private final Path parentDir;
   private final boolean keep;
-
-  private Path tempPath;
 
   TempDirInterceptor(Class<?> fieldType, FieldInfo fieldInfo,
                      Path parentDir, boolean keep) {
@@ -44,10 +40,10 @@ public class TempDirInterceptor implements IMethodInterceptor {
     prefix.append('_');
     // for shared field, no iteration is set, so use the spec name
     // otherwise use the iteration name
-    prefix.append(((invocation.getIteration() == null)
+    String displayName = (invocation.getIteration() == null)
       ? invocation.getSpec().getDisplayName()
-      : invocation.getIteration().getDisplayName())
-      .replaceAll("[^a-zA-Z0-9_.-]++", "_"));
+      : invocation.getIteration().getDisplayName();
+    prefix.append(VALID_CHARS.matcher(displayName).replaceAll("_"));
     if (prefix.length() > 25) {
       prefix.setLength(25);
     }
@@ -65,29 +61,30 @@ public class TempDirInterceptor implements IMethodInterceptor {
     return Files.createTempDirectory(parentDir, prefix);
   }
 
-  protected void setUp(IMethodInvocation invocation) throws IOException {
-    tempPath = generateTempDir(invocation);
+  protected Path setUp(IMethodInvocation invocation) throws IOException {
+    Path tempPath = generateTempDir(invocation);
     fieldInfo.writeValue(invocation.getInstance(), fieldType.isAssignableFrom(Path.class) ?
       tempPath : tempPath.toFile());
+    return tempPath;
   }
 
-  protected void destroy() throws IOException {
+  protected void destroy(Path path) throws IOException {
     if (!keep) {
-      deleteTempDir();
+      deleteTempDir(path);
     }
   }
 
   @Override
   public void intercept(IMethodInvocation invocation) throws Throwable {
-    setUp(invocation);
+    Path path = setUp(invocation);
     try {
       invocation.proceed();
     } finally {
-      destroy();
+      destroy(path);
     }
   }
 
-  private void deleteTempDir() throws IOException {
+  private void deleteTempDir(Path tempPath) throws IOException {
     if (Files.notExists(tempPath)) {
       return;
     }
@@ -96,11 +93,11 @@ public class TempDirInterceptor implements IMethodInterceptor {
       return;
     }
 
-    tryMakeWritable();
+    tryMakeWritable(tempPath);
     ResourceGroovyMethods.deleteDir(tempPath.toFile());
   }
 
-  private void tryMakeWritable() throws IOException {
+  private void tryMakeWritable(Path tempPath) throws IOException {
     Files.walkFileTree(tempPath, new SimpleFileVisitor<Path>() {
 
       @Override

@@ -34,6 +34,8 @@ include::include.adoc[]
 
 - Fix https://github.com/spockframework/spock/issues/1263[#1263] ExceptionAdapterExtension to also handle inherited fixture methods
 
+- Fix https://github.com/spockframework/spock/issues/1279[#1279] Cast data variables with type coercion to the declared parameter type
+
 Thanks to all the contributors to this release: Marcin Erdmann, Björn Kautler, Alexander Kriegisch, Josh Soref
 
 

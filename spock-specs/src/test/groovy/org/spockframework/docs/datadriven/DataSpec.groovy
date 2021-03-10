@@ -2,10 +2,10 @@ package org.spockframework.docs.datadriven
 
 import groovy.sql.Sql
 import groovy.transform.ToString
+import org.spockframework.EmbeddedSpecification
 import spock.lang.Shared
-import spock.lang.Specification
 
-class DataSpec extends Specification {
+class DataSpec extends EmbeddedSpecification {
 
 // tag::datasource[]
   @Shared sql = Sql.newInstance("jdbc:h2:mem:", "org.h2.Driver")
@@ -234,6 +234,47 @@ class DataSpec extends Specification {
 
     d = a > c ? a : c
 // end::combined-variable-assignment[]
+  }
+
+// tag::type-coercion[]
+  def "type coercion for data variable values"(Integer i) {
+    expect:
+    i instanceof Integer
+    i == 10
+
+    where:
+    i = "10"
+  }
+// end::type-coercion[]
+
+  def "type coercion for data variable values with own coercion"() {
+    when:
+    runner.runWithImports '''
+import spock.util.mop.Use
+
+// tag::type-coercion-with-custom-coercion[]
+@Use(CoerceBazToBar)
+class Foo extends Specification {
+  def foo(Bar bar) {
+    expect:
+    bar == Bar.FOO
+
+    where:
+    bar = Baz.FOO
+  }
+}
+enum Bar { FOO, BAR }
+enum Baz { FOO, BAR }
+class CoerceBazToBar {
+  static Bar asType(Baz self, Class<Bar> clazz) {
+    return Bar.valueOf(self.name())
+  }
+}
+// end::type-coercion-with-custom-coercion[]
+'''
+
+    then:
+    noExceptionThrown()
   }
 
   def "data pipes"() {

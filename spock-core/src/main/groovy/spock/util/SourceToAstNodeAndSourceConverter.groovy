@@ -56,7 +56,7 @@ class SourceToAstNodeAndSourceConverter {
     def scriptName = 'script.groovy'
     GroovyCodeSource codeSource = new GroovyCodeSource(script, scriptName, '/groovy/script')
     CompilationUnit cu = new CompilationUnit((CompilerConfiguration)(config ?: CompilerConfiguration.DEFAULT), (CodeSource)codeSource.codeSource, (GroovyClassLoader)classLoader)
-    def captureVisitor = new AstNoteCaptureVisitor()
+    def captureVisitor = new AstNodeCaptureVisitor()
     cu.addPhaseOperation(captureVisitor, compilePhase)
     cu.addPhaseOperation(new AstNodeToScriptVisitor(writer, showSet), compilePhase)
     cu.addSource(codeSource.name, script)
@@ -145,7 +145,7 @@ class NodeCapture {
 }
 
 @CompileStatic
-class AstNoteCaptureVisitor extends CompilationUnit.PrimaryClassNodeOperation {
+class AstNodeCaptureVisitor extends CompilationUnit.PrimaryClassNodeOperation {
 
   final List<NodeCapture> nodeCaptures = []
 
@@ -922,8 +922,13 @@ class AstNodeToScriptVisitor extends CompilationUnit.PrimaryClassNodeOperation i
 
   @Override
   void visitGStringExpression(GStringExpression expression) {
-    // this loses enclosing ${}
-    print '"' + expression.text + '"'
+    // original groovy version loses enclosing ${}
+    // so we add it for everything, as the ${} style is always correct
+    def text = expression.text
+    expression.values.each {
+      text = text.replace("\$${it.text}", "\${${it.text}}")
+    }
+    print '"' + text + '"'
   }
 
   @Override

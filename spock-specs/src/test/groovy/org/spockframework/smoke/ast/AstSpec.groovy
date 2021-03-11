@@ -10,7 +10,7 @@ import org.codehaus.groovy.control.CompilePhase
 class AstSpec extends EmbeddedSpecification {
   def "astToSourceFeatureBody renders only methods and its annotation by default"() {
     when:
-    def result = compiler.compileToAstFeatureBody('''
+    def result = compiler.transpileToAstFeatureBody('''
     given:
     def nothing = null
     ''')
@@ -27,7 +27,7 @@ public void $spock_feature_0_0() {
 
   def "astToSourceSpecBody renders only methods, fields, properties, object initializers and their annotation by default"() {
     when:
-    def result = compiler.compileToAstSpecBody('''
+    def result = compiler.transpileToAstSpecBody('''
     def foo = 'bar'
 
     def 'a feature'() {
@@ -55,7 +55,7 @@ public void $spock_feature_0_0() {
 
   def "astToSourceFeatureBody can render everything"() {
     when:
-    def result = compiler.compileToAstFeatureBody('''
+    def result = compiler.transpileToAstFeatureBody('''
     given:
     def nothing = null
     ''', Show.all(), CompilePhase.INSTRUCTION_SELECTION)
@@ -79,7 +79,7 @@ public class apackage.ASpec extends spock.lang.Specification {
   }
   def "astToSourceFeatureBody shows compile error in source"() {
     when:
-    def result = compiler.compileToAstFeatureBody('''
+    def result = compiler.transpileToAstFeatureBody('''
     when:
     ''', Show.all(), CompilePhase.INSTRUCTION_SELECTION)
 
@@ -97,7 +97,7 @@ script.groovy: 2: unexpected token: } @ line 2, column 2.
   @Requires({ GroovyRuntimeUtil.groovy3orNewer })
   def "groovy 3 language features"() {
     when:
-    def result = compiler.compileToAst('''
+    def result = compiler.transpileToAst('''
 class Foo {
   void loop() {
     do {
@@ -154,7 +154,7 @@ public void blockStatements() {
 
   def "enums"() {
     when:
-    def result = compiler.compileToAst('''
+    def result = compiler.transpileToAst('''
     enum Alpha {
       A, B, C;
     }
@@ -215,7 +215,7 @@ public final class Alpha extends java.lang.Enum<Alpha> {
 
   def "full feature exercise"() {
     when:
-    def result = compiler.compileToAst('''
+    def result = compiler.transpileToAst('''
 @Ann
 package apackage.another
 
@@ -498,7 +498,7 @@ public class apackage.another.Bar extends apackage.another.Foo implements apacka
         java.lang.Integer d = +( c )
         java.lang.Object e = ['a': b , STR : c ]
         java.lang.Object f = [*: e , 'foo': 'bar']
-        java.lang.Object g = "a: $a and b: $e.a.compareTo(c)"
+        java.lang.Object g = "a: ${a} and b: ${e.a.compareTo(c)}"
         java.lang.Integer h = 1
         java.lang.Integer i = 2
         def (java.lang.Object j, java.lang.Object k) = x
@@ -514,7 +514,7 @@ public class apackage.another.Bar extends apackage.another.Foo implements apacka
         }
         java.lang.Object t = [:]
         java.lang.Object u = ++( c )
-        java.lang.Object v = this."$STR"(a)
+        java.lang.Object v = this."${STR}"(a)
         assert c == d : null
     }
 
@@ -531,7 +531,7 @@ public class apackage.another.Bar extends apackage.another.Foo implements apacka
     public void prop(java.util.List l, [I a) {
         java.lang.Object x = l*.foo
         java.lang.Object y = a?.length
-        java.lang.Object z = a."$STR"
+        java.lang.Object z = a."${STR}"
     }
 
 }

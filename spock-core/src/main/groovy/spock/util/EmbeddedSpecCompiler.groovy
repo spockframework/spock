@@ -94,46 +94,46 @@ class EmbeddedSpecCompiler {
   }
 
   @Beta
-  AstResult transpileToAstWithImports(@Language('Groovy') String source,
-                                    Set showSet = EnumSet.of(Show.ANNOTATIONS, Show.CLASS, Show.METHODS, Show.FIELDS, Show.OBJECT_INITIALIZERS, Show.PROPERTIES),
-                                    CompilePhase phase = CompilePhase.SEMANTIC_ANALYSIS) {
+  TranspileResult transpileWithImports(@Language('Groovy') String source,
+                                       Set showSet = EnumSet.of(Show.ANNOTATIONS, Show.CLASS, Show.METHODS, Show.FIELDS, Show.OBJECT_INITIALIZERS, Show.PROPERTIES),
+                                       CompilePhase phase = CompilePhase.SEMANTIC_ANALYSIS) {
     addPackageImport(Specification.package)
     // one-liner keeps line numbers intact
-    doTranspileToAst("package apackage; $imports ${source.trim()}", showSet, phase)
+    doTranspile("package apackage; $imports ${source.trim()}", showSet, phase)
   }
 
   @Beta
-  AstResult transpileToAstSpecBody(@Language(value = 'Groovy', prefix = 'class ASpec extends spock.lang.Specification { ', suffix = '\n }')
+  TranspileResult transpileSpecBody(@Language(value = 'Groovy', prefix = 'class ASpec extends spock.lang.Specification { ', suffix = '\n }')
                                    String source,
-                                 Set showSet = EnumSet.of(Show.ANNOTATIONS, Show.METHODS, Show.FIELDS, Show.OBJECT_INITIALIZERS, Show.PROPERTIES),
-                                 CompilePhase phase = CompilePhase.SEMANTIC_ANALYSIS) {
-    // one-liner keeps line numbers intact; newline safeguards against source ending in a line comment
-    transpileToAstWithImports("class ASpec extends Specification { ${source.trim() + '\n'} }", showSet, phase)
-  }
-
-  @Beta
-  AstResult transpileToAstFeatureBody(@Language(value = 'Groovy', prefix = "def 'a feature'() { ", suffix = '\n }')
-                                      String source,
-                                    Set showSet = EnumSet.of(Show.ANNOTATIONS, Show.METHODS),
+                                    Set showSet = EnumSet.of(Show.ANNOTATIONS, Show.METHODS, Show.FIELDS, Show.OBJECT_INITIALIZERS, Show.PROPERTIES),
                                     CompilePhase phase = CompilePhase.SEMANTIC_ANALYSIS) {
     // one-liner keeps line numbers intact; newline safeguards against source ending in a line comment
-    transpileToAstSpecBody("def 'a feature'() { ${source.trim() + '\n'} }", showSet, phase)
+    transpileWithImports("class ASpec extends Specification { ${source.trim() + '\n'} }", showSet, phase)
   }
 
   @Beta
-  AstResult transpileToAst(@Language('Groovy') String source, Set showSet = Show.all(), CompilePhase phase = CompilePhase.SEMANTIC_ANALYSIS) {
-    doTranspileToAst(imports + source, showSet, phase)
+  TranspileResult transpileFeatureBody(@Language(value = 'Groovy', prefix = "def 'a feature'() { ", suffix = '\n }')
+                                      String source,
+                                       Set showSet = EnumSet.of(Show.ANNOTATIONS, Show.METHODS),
+                                       CompilePhase phase = CompilePhase.SEMANTIC_ANALYSIS) {
+    // one-liner keeps line numbers intact; newline safeguards against source ending in a line comment
+    transpileSpecBody("def 'a feature'() { ${source.trim() + '\n'} }", showSet, phase)
   }
 
-  private AstResult doTranspileToAst(@Language('Groovy') String source, Set showSet, CompilePhase phase) {
+  @Beta
+  TranspileResult transpile(@Language('Groovy') String source, Set showSet = Show.all(), CompilePhase phase = CompilePhase.SEMANTIC_ANALYSIS) {
+    doTranspile(imports + source, showSet, phase)
+  }
+
+  private TranspileResult doTranspile(@Language('Groovy') String source, Set showSet, CompilePhase phase) {
     loader.clearCache()
-    AstResult ast = new SourceToAstNodeAndSourceConverter().compileScript(source, phase.phaseNumber, showSet, loader)
+    TranspileResult ast = new SourceToAstNodeAndSourceTranspiler().compileScript(source, phase.phaseNumber, showSet, loader)
     // normalize result
     String sourceResult = ast.source
     // Java 15 introduces `stripIndent` with a different behavior, so use explicit method call
     sourceResult = StringGroovyMethods.stripIndent((CharSequence)sourceResult)
     sourceResult = sourceResult.trim()
-    return new AstResult(sourceResult, ast.nodeCaptures)
+    return new TranspileResult(sourceResult, ast.nodeCaptures)
   }
 
   private List<Class> doCompile(@Language('Groovy') String source) {

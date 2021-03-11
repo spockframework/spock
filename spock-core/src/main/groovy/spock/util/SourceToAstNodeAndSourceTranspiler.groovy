@@ -21,6 +21,8 @@ import org.codehaus.groovy.syntax.Types
  * - Replaced getter access by property access
  * - Removed trailing whitespaces when directly followed by printLineBreak()
  * - Special handling of AnnotationConstantExpression in visitConstantExpression
+ * - Fix AnnotationNode rendering
+ * - Improve GString rendering
  */
 
 /**
@@ -28,7 +30,7 @@ import org.codehaus.groovy.syntax.Types
  * back to the groovy source.
  */
 @CompileStatic
-class SourceToAstNodeAndSourceConverter {
+class SourceToAstNodeAndSourceTranspiler {
 
   /**
    * This method takes source code, compiles it, then reverses it back to source.
@@ -47,7 +49,7 @@ class SourceToAstNodeAndSourceConverter {
    * @returns the source code from the AST state and the captured ast nodes
    */
 
-  AstResult compileScript(String script, int compilePhase, Set<Show> showSet, ClassLoader classLoader = null, CompilerConfiguration config = null) {
+  TranspileResult compileScript(String script, int compilePhase, Set<Show> showSet, ClassLoader classLoader = null, CompilerConfiguration config = null) {
 
     def writer = new StringBuilderWriter()
 
@@ -72,7 +74,7 @@ class SourceToAstNodeAndSourceConverter {
       writer.println 'Unable to produce AST for this phase due to an error:'
       writer.println t.message
     }
-    return new AstResult(writer.toString(), captureVisitor.nodeCaptures)
+    return new TranspileResult(writer.toString(), captureVisitor.nodeCaptures)
   }
 }
 
@@ -131,7 +133,7 @@ enum Show {
 
 @TupleConstructor
 @CompileStatic
-class AstResult {
+class TranspileResult {
   final String source
   final List<NodeCapture> nodeCaptures
 }

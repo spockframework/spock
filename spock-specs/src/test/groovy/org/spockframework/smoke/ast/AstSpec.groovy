@@ -251,6 +251,8 @@ class Bar extends Foo implements Ex, Serializable {
   static final int INT = 10
   static int st
   int order
+  String someString = "String with $STR"
+  String plainString = 'plain'
 
   Bar() {
     super(STR)
@@ -352,6 +354,9 @@ class Bar extends Foo implements Ex, Serializable {
 
 
 class Ext <T extends Serializable, V extends Cloneable> {
+  T[] arr
+  List<V> lst = []
+
   V foo (List<? super T> consumer){}
   @Ann <X extends Serializable & Comparable<T>> boolean saveCompare(X a, X b){}
 }
@@ -371,7 +376,7 @@ import java.nio.file.*
 
 public abstract class apackage.another.Foo extends java.lang.Object implements java.lang.Comparable {
 
-    private java.util.List<String> x
+    private java.util.List<String> x = new java.util.ArrayList()
 
     public apackage.another.Foo(java.lang.String initialValue) {
         x << initialValue
@@ -420,12 +425,14 @@ import java.nio.file.*
 @apackage.another.Ann
 public class apackage.another.Bar extends apackage.another.Foo implements apackage.another.Ex, java.io.Serializable {
 
-    private static final [I ARR
+    private static final [I ARR = (int[]) [1, 2, 3]
     private static final java.lang.String STR = 'str'
     private static final char CHR = ' '
     private static final int INT = 10
     private static int st
     private int order
+    private java.lang.String someString = String with $STR
+    private java.lang.String plainString = 'plain'
 
     public apackage.another.Bar() {
         super(apackage.another.Bar.STR)
@@ -542,6 +549,9 @@ import java.text.ParseException as ParseException
 import java.nio.file.*
 
 public class apackage.another.Ext<T extends java.io.Serializable, V extends java.lang.Cloneable> extends java.lang.Object {
+
+    private java.io.Serializable[] arr
+    private java.util.List<V> lst = []
 
     public java.lang.Cloneable<V extends java.lang.Cloneable> foo(java.util.List<? super java.io.Serializable<T extends java.io.Serializable>> consumer) {
     }

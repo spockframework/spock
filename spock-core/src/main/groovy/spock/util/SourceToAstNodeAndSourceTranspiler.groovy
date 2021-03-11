@@ -549,14 +549,13 @@ class AstNodeToScriptVisitor extends CompilationUnit.PrimaryClassNodeOperation i
     visitModifiers(node.modifiers)
     visitType node.type
     print " $node.name "
-    // do not print initial expression, as this is executed as part of the constructor, unless on static constant
+    // Groovy's version didn't render initialValueExpression with this explanation:
+    // > do not print initial expression, as this is executed as part of the constructor, unless on static constant
+    // but since we want to see what is going on, we do render it
     Expression exp = node.initialValueExpression
     if (exp instanceof ConstantExpression) exp = Verifier.transformToPrimitiveConstantIfPossible(exp)
     ClassNode type = exp?.type
-    if (Modifier.isStatic(node.modifiers) && Modifier.isFinal(node.modifiers)
-      && exp instanceof ConstantExpression
-      && type == node.type
-      && ClassHelper.isStaticConstantInitializerType(type)) {
+    if (exp) {
       // GROOVY-5150: final constants may be initialized directly
       print ' = '
       if (ClassHelper.STRING_TYPE == type) {

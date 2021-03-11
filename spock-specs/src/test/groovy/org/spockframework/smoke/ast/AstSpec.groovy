@@ -77,6 +77,22 @@ public class apackage.ASpec extends spock.lang.Specification {
 
 }'''
   }
+  def "astToSourceFeatureBody shows compile error in source"() {
+    when:
+    def result = compiler.compileToAstFeatureBody('''
+    when:
+    ''', Show.all(), CompilePhase.INSTRUCTION_SELECTION)
+
+    then:
+    result.source.normalize() == '''\
+Unable to produce AST for this phase due to earlier compilation error:
+startup failed:
+script.groovy: 2: unexpected token: } @ line 2, column 2.
+    }
+    ^
+
+1 error'''
+  }
 
   @Requires({ GroovyRuntimeUtil.groovy3orNewer })
   def "groovy 3 language features"() {
@@ -200,9 +216,17 @@ public final class Alpha extends java.lang.Enum<Alpha> {
   def "full feature exercise"() {
     when:
     def result = compiler.compileToAst('''
-    package apackage
+@Ann
+package apackage.another
 
-    import groovy.transform.EqualsAndHashCode
+import static java.util.Collections.emptyList
+import static java.nio.charset.StandardCharsets.*
+
+import java.nio.file.*
+@Ann
+import java.text.ParseException
+
+import groovy.transform.EqualsAndHashCode
 
     abstract class Foo implements Comparable {
       List<String> x = new ArrayList<>()
@@ -212,14 +236,14 @@ public final class Alpha extends java.lang.Enum<Alpha> {
     }
 
     interface Ex {
-      void ex() throws Exception;
+      void ex() throws IOException, ParseException;
     }
 
     @interface Ann {}
 
 
     @Ann
-    class Bar extends Foo implements Ex {
+    class Bar extends Foo implements Ex, Serializable {
       static final int[] ARR = [1, 2, 3] as int[]
       static final String STR = 'str'
       static final char CHR = ' '
@@ -302,7 +326,10 @@ public final class Alpha extends java.lang.Enum<Alpha> {
         def p = (1..5)
         def q = (1..<5)
         def r = x*.size()?.intersect([1])
-        def s = { x-> x*x}
+        def s = { x -> x*x }
+        def t = [:]
+        def u = ++c
+        def v = "$STR"(a)
         assert c == d
       }
 
@@ -312,52 +339,84 @@ public final class Alpha extends java.lang.Enum<Alpha> {
           return order <=> (o as Bar).order
         }
       }
+
+      void multix(Path a, @Ann int b, String desc = ''){}
     }
 
-    class Ext <T extends Serializable> {
-      def foo (List<? super T> consumer){}
+
+    class Ext <T extends Serializable, V extends Cloneable> {
+      V foo (List<? super T> consumer){}
+      @Ann <X extends Serializable & Comparable<T>> boolean saveCompare(X a, X b){}
     }
 
     ''')
 
     then:
     result.source == '''\
-package apackage
+@apackage.another.Ann
+package apackage.another
+
+import static java.util.Collections.emptyList
+import static java.nio.charset.StandardCharsets.*
 
 import groovy.transform.EqualsAndHashCode as EqualsAndHashCode
+@apackage.another.Ann
+import java.text.ParseException as ParseException
+import java.nio.file.*
 
-public abstract class apackage.Foo extends java.lang.Object implements java.lang.Comparable {
+public abstract class apackage.another.Foo extends java.lang.Object implements java.lang.Comparable {
 
     private java.util.List<String> x
 
-    public apackage.Foo(java.lang.String initialValue) {
+    public apackage.another.Foo(java.lang.String initialValue) {
         x << initialValue
     }
 
 }
-package apackage
+@apackage.another.Ann
+package apackage.another
+
+import static java.util.Collections.emptyList
+import static java.nio.charset.StandardCharsets.*
 
 import groovy.transform.EqualsAndHashCode as EqualsAndHashCode
+@apackage.another.Ann
+import java.text.ParseException as ParseException
+import java.nio.file.*
 
-public abstract interface apackage.Ex extends java.lang.Object {
+public abstract interface apackage.another.Ex extends java.lang.Object {
 
-    public abstract void ex() throws java.lang.Exception {
+    public abstract void ex() throws java.io.IOException, java.text.ParseException {
     }
 
 }
-package apackage
+@apackage.another.Ann
+package apackage.another
+
+import static java.util.Collections.emptyList
+import static java.nio.charset.StandardCharsets.*
 
 import groovy.transform.EqualsAndHashCode as EqualsAndHashCode
+@apackage.another.Ann
+import java.text.ParseException as ParseException
+import java.nio.file.*
 
-public abstract interface apackage.Ann extends java.lang.Object implements java.lang.annotation.Annotation {
+public abstract interface apackage.another.Ann extends java.lang.Object implements java.lang.annotation.Annotation {
 
 }
-package apackage
+@apackage.another.Ann
+package apackage.another
+
+import static java.util.Collections.emptyList
+import static java.nio.charset.StandardCharsets.*
 
 import groovy.transform.EqualsAndHashCode as EqualsAndHashCode
+@apackage.another.Ann
+import java.text.ParseException as ParseException
+import java.nio.file.*
 
-@apackage.Ann
-public class apackage.Bar extends apackage.Foo implements apackage.Ex {
+@apackage.another.Ann
+public class apackage.another.Bar extends apackage.another.Foo implements apackage.another.Ex, java.io.Serializable {
 
     private static final [I ARR
     private static final java.lang.String STR = 'str'
@@ -366,8 +425,8 @@ public class apackage.Bar extends apackage.Foo implements apackage.Ex {
     private static int st
     private int order
 
-    public apackage.Bar() {
-        super(apackage.Bar.STR)
+    public apackage.another.Bar() {
+        super(apackage.another.Bar.STR)
     }
 
     {
@@ -447,24 +506,41 @@ public class apackage.Bar extends apackage.Foo implements apackage.Ex {
         java.lang.Object s = { java.lang.Object x ->
             x * x
         }
+        java.lang.Object t = [:]
+        java.lang.Object u = ++( c )
+        java.lang.Object v = this."$STR"(a)
         assert c == d : null
     }
 
     @java.lang.Override
     public int compareTo(java.lang.Object o) {
         synchronized ( o ) {
-            return order <=> (( o ) as apackage.Bar).order
+            return order <=> (( o ) as apackage.another.Bar).order
         }
     }
 
+    public void multix(java.nio.file.Path a, @apackage.another.Ann int b, java.lang.String desc = '') {
+    }
+
 }
-package apackage
+@apackage.another.Ann
+package apackage.another
+
+import static java.util.Collections.emptyList
+import static java.nio.charset.StandardCharsets.*
 
 import groovy.transform.EqualsAndHashCode as EqualsAndHashCode
+@apackage.another.Ann
+import java.text.ParseException as ParseException
+import java.nio.file.*
 
-public class apackage.Ext<T extends java.io.Serializable> extends java.lang.Object {
+public class apackage.another.Ext<T extends java.io.Serializable, V extends java.lang.Cloneable> extends java.lang.Object {
 
-    public java.lang.Object foo(java.util.List<? super java.io.Serializable<T extends java.io.Serializable>> consumer) {
+    public java.lang.Cloneable<V extends java.lang.Cloneable> foo(java.util.List<? super java.io.Serializable<T extends java.io.Serializable>> consumer) {
+    }
+
+    @apackage.another.Ann
+    public boolean saveCompare(java.io.Serializable<X extends java.io.Serializable & java.lang.Comparable<T>> a, java.io.Serializable<X extends java.io.Serializable & java.lang.Comparable<T>> b) {
     }
 
 }'''

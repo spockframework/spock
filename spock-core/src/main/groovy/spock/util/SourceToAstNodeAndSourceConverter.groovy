@@ -5,9 +5,7 @@ import org.spockframework.compat.groovy2.GroovyCodeVisitorCompat
 import java.lang.reflect.Modifier
 import java.security.CodeSource
 
-import groovy.transform.CompileStatic
-import groovy.transform.Immutable
-import groovy.transform.TupleConstructor
+import groovy.transform.*
 import org.apache.groovy.io.StringBuilderWriter
 import org.codehaus.groovy.ast.*
 import org.codehaus.groovy.ast.expr.*
@@ -627,11 +625,7 @@ class AstNodeToScriptVisitor extends CompilationUnit.PrimaryClassNodeOperation i
       print ' : '
     }
 
-    if (statement?.collectionExpression instanceof ListExpression) {
-      statement?.collectionExpression?.visit this
-    } else {
-      statement?.collectionExpression?.visit this
-    }
+    statement?.collectionExpression?.visit this
     print ') {'
     printLineBreak()
     indented {
@@ -980,6 +974,7 @@ class AstNodeToScriptVisitor extends CompilationUnit.PrimaryClassNodeOperation i
     } else {
       print name
     }
+    // see if we can improve rendering for method parameters
     visitGenerics classNode?.genericsTypes
   }
 
@@ -1025,12 +1020,12 @@ class AstNodeToScriptVisitor extends CompilationUnit.PrimaryClassNodeOperation i
   @Override
   void visitMapEntryExpression(MapEntryExpression expression) {
     if (expression?.keyExpression instanceof SpreadMapExpression) {
-      print '*'            // is this correct?
+      expression?.keyExpression?.visit this
     } else {
       expression?.keyExpression?.visit this
+      print ': '
+      expression?.valueExpression?.visit this
     }
-    print ': '
-    expression?.valueExpression?.visit this
   }
 
   @Override

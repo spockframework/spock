@@ -3,6 +3,15 @@ include::include.adoc[]
 
 == 2.0-M5 (tbd)
 
+=== Breaking Changes
+
+- The `ReportLogExtension` vestiges were removed. As this extension was mostly used for an unreleased Spock module, this won't affect many users.
+  If you are using a <<extensions.adoc#spock-configuration-file,Spock Configuration File>> with a `report` section,
+  then you must delete everything from this section except for `issueNamePrefix` and `issueUrlPrefix`.
+  These two properties are still supported and used by the `@Issue` extension.
+
+=== Misc
+
 - Add support for injection into `@Shared` fields in `spock-spring` module which users can opt-in for by adding
   `@EnableSharedInjection` to the specification. https://github.com/spockframework/spock/issues/76[#76]
 

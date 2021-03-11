@@ -17,7 +17,7 @@ class AstSpec extends EmbeddedSpecification {
 
     then:
     result.source == '''\
-@org.spockframework.runtime.model.FeatureMetadata(name = 'a feature', ordinal = 0, line = 1, blocks = [org.spockframework.runtime.model.BlockKind.SETUP[]], parameterNames = [])
+@org.spockframework.runtime.model.FeatureMetadata(name = 'a feature', ordinal = 0, line = 1, blocks = [org.spockframework.runtime.model.BlockKind.SETUP[]@org.spockframework.runtime.model.BlockMetadata(kind = org.spockframework.runtime.model.BlockKind.SETUP, texts = [])], parameterNames = [])
 public void $spock_feature_0_0() {
     java.lang.Object nothing = null
     this.getSpecificationContext().getMockController().leaveScope()
@@ -45,7 +45,7 @@ private java.lang.Object $spock_initializeFields() {
     foo = 'bar'
 }
 
-@org.spockframework.runtime.model.FeatureMetadata(name = 'a feature', ordinal = 0, line = 3, blocks = [org.spockframework.runtime.model.BlockKind.SETUP[]], parameterNames = [])
+@org.spockframework.runtime.model.FeatureMetadata(name = 'a feature', ordinal = 0, line = 3, blocks = [org.spockframework.runtime.model.BlockKind.SETUP[]@org.spockframework.runtime.model.BlockMetadata(kind = org.spockframework.runtime.model.BlockKind.SETUP, texts = [])], parameterNames = [])
 public void $spock_feature_0_0() {
     java.lang.Object nothing = null
     this.getSpecificationContext().getMockController().leaveScope()
@@ -69,7 +69,7 @@ import spock.lang.*
 @org.spockframework.runtime.model.SpecMetadata(filename = 'script.groovy', line = 1)
 public class apackage.ASpec extends spock.lang.Specification {
 
-    @org.spockframework.runtime.model.FeatureMetadata(name = 'a feature', ordinal = 0, line = 1, blocks = [org.spockframework.runtime.model.BlockKind.SETUP[]], parameterNames = [])
+    @org.spockframework.runtime.model.FeatureMetadata(name = 'a feature', ordinal = 0, line = 1, blocks = [org.spockframework.runtime.model.BlockKind.SETUP[]@org.spockframework.runtime.model.BlockMetadata(kind = org.spockframework.runtime.model.BlockKind.SETUP, texts = [])], parameterNames = [])
     public void $spock_feature_0_0() {
         java.lang.Object nothing = null
         this.getSpecificationContext().getMockController().leaveScope()
@@ -81,15 +81,17 @@ public class apackage.ASpec extends spock.lang.Specification {
     when:
     def result = compiler.transpileToAstFeatureBody('''
     when:
+    foo()
+    expect: 'none'
     ''', Show.all(), CompilePhase.INSTRUCTION_SELECTION)
 
     then:
     result.source.normalize() == '''\
 Unable to produce AST for this phase due to earlier compilation error:
 startup failed:
-script.groovy: 2: unexpected token: } @ line 2, column 2.
-    }
-    ^
+script.groovy: 3: 'expect' is not allowed here; instead, use one of: [and, then] @ line 3, column 13.
+       expect: 'none'
+               ^
 
 1 error'''
   }
@@ -226,136 +228,134 @@ import java.nio.file.*
 @Ann
 import java.text.ParseException
 
-import groovy.transform.EqualsAndHashCode
 
-    abstract class Foo implements Comparable {
-      List<String> x = new ArrayList<>()
-      Foo(String initialValue) {
-        x << initialValue
+abstract class Foo implements Comparable {
+  List<String> x = new ArrayList<>()
+  Foo(String initialValue) {
+    x << initialValue
+  }
+}
+
+interface Ex {
+  void ex() throws IOException, ParseException;
+}
+
+@interface Ann {}
+
+
+@Ann
+class Bar extends Foo implements Ex, Serializable {
+  static final int[] ARR = [1, 2, 3] as int[]
+  static final String STR = 'str'
+  static final char CHR = ' '
+  static final int INT = 10
+  static int st
+  int order
+
+  Bar() {
+    super(STR)
+  }
+
+  static {
+    st = 42
+  }
+
+  {
+    order = 1
+  }
+
+  void loops() {
+    outer:
+    for (int i = 0; i < INT; i++) {
+      if(i % 2 == 0) {
+        print 'even'
+        continue outer
+      } else {
+        print 'odd'
       }
+      break outer
     }
-
-    interface Ex {
-      void ex() throws IOException, ParseException;
+    for(String y : x) {
+      print(y)
     }
-
-    @interface Ann {}
-
-
-    @Ann
-    class Bar extends Foo implements Ex, Serializable {
-      static final int[] ARR = [1, 2, 3] as int[]
-      static final String STR = 'str'
-      static final char CHR = ' '
-      static final int INT = 10
-      static int st
-      int order
-
-      Bar() {
-        super(STR)
-      }
-
-      static {
-        st = 42
-      }
-
-      {
-        order = 1
-      }
-
-      void loops() {
-        outer:
-        for (int i = 0; i < INT; i++) {
-          if(i % 2 == 0) {
-            print 'even'
-            continue outer
-          } else {
-            print 'odd'
-          }
-          break outer
-        }
-        for(String y : x) {
-          print(y)
-        }
-        while (true){
-          break
-        }
-      }
-
-      @Override
-      void ex() throws Exception {
-        try {
-            System.getProperty("Foo", STR)?.stripIndent()
-        } catch (RuntimeException e) {
-          throw new Exception(e)
-        } finally {
-          println 'executed ex'
-        }
-      }
-
-      String convert(String input) {
-        String result = ''
-        switch (input) {
-        case 'Alpha.A':
-          result = 'a'
-          break
-        case 'Alpha.B': // fallthrough
-        case ~/Alpha.*/:
-          result = 'c'
-          break
-        default:
-          result = 'shrug'
-        }
-        return result
-      }
-
-      void operators(){
-        int a = ~INT
-        boolean b = !a
-        int c = -a
-        int d = +c
-        def e = [a: b, (STR): c]
-        def f = [*:e, foo: 'bar']
-        def g = "a: $a and b: ${e.a.compareTo(c)}"
-        int h = 1, i = 2
-        def (j, k) = x
-        def l = b ? c : d
-        def m = c ?: d
-        def n = this.&convert
-        def o = this.@order
-        def p = (1..5)
-        def q = (1..<5)
-        def r = x*.size()?.intersect([1])
-        def s = { x -> x*x }
-        def t = [:]
-        def u = ++c
-        def v = "$STR"(a)
-        assert c == d
-      }
-
-      @Override
-      int compareTo(Object o) {
-        synchronized (o) {
-          return order <=> (o as Bar).order
-        }
-      }
-
-      void multix(Path a, @Ann int b, String desc = ''){}
-
-      void prop(List l, int[] a) {
-        def x = l*.foo
-        def y = a?.length
-        def z = a."$STR"
-      }
+    while (true){
+      break
     }
+  }
 
-
-    class Ext <T extends Serializable, V extends Cloneable> {
-      V foo (List<? super T> consumer){}
-      @Ann <X extends Serializable & Comparable<T>> boolean saveCompare(X a, X b){}
+  @Override
+  void ex() throws Exception {
+    try {
+        System.getProperty("Foo", STR)?.stripIndent()
+    } catch (RuntimeException e) {
+      throw new Exception(e)
+    } finally {
+      println 'executed ex'
     }
+  }
 
-    ''')
+  String convert(String input) {
+    String result = ''
+    switch (input) {
+    case 'Alpha.A':
+      result = 'a'
+      break
+    case 'Alpha.B': // fallthrough
+    case ~/Alpha.*/:
+      result = 'c'
+      break
+    default:
+      result = 'shrug'
+    }
+    return result
+  }
+
+  void operators(){
+    int a = ~INT
+    boolean b = !a
+    int c = -a
+    int d = +c
+    def e = [a: b, (STR): c]
+    def f = [*:e, foo: 'bar']
+    def g = "a: $a and b: ${e.a.compareTo(c)}"
+    int h = 1, i = 2
+    def (j, k) = x
+    def l = b ? c : d
+    def m = c ?: d
+    def n = this.&convert
+    def o = this.@order
+    def p = (1..5)
+    def q = (1..<5)
+    def r = x*.size()?.intersect([1])
+    def s = { x -> x*x }
+    def t = [:]
+    def u = ++c
+    def v = "$STR"(a)
+    assert c == d
+  }
+
+  @Override
+  int compareTo(Object o) {
+    synchronized (o) {
+      return order <=> (o as Bar).order
+    }
+  }
+
+  void multix(Path a, @Ann int b, String desc = ''){}
+
+  void prop(List l, int[] a) {
+    def x = l*.foo
+    def y = a?.length
+    def z = a."$STR"
+  }
+}
+
+
+class Ext <T extends Serializable, V extends Cloneable> {
+  V foo (List<? super T> consumer){}
+  @Ann <X extends Serializable & Comparable<T>> boolean saveCompare(X a, X b){}
+}
+''')
 
     then:
     result.source == '''\
@@ -365,7 +365,6 @@ package apackage.another
 import static java.util.Collections.emptyList
 import static java.nio.charset.StandardCharsets.*
 
-import groovy.transform.EqualsAndHashCode as EqualsAndHashCode
 @apackage.another.Ann
 import java.text.ParseException as ParseException
 import java.nio.file.*
@@ -385,7 +384,6 @@ package apackage.another
 import static java.util.Collections.emptyList
 import static java.nio.charset.StandardCharsets.*
 
-import groovy.transform.EqualsAndHashCode as EqualsAndHashCode
 @apackage.another.Ann
 import java.text.ParseException as ParseException
 import java.nio.file.*
@@ -402,7 +400,6 @@ package apackage.another
 import static java.util.Collections.emptyList
 import static java.nio.charset.StandardCharsets.*
 
-import groovy.transform.EqualsAndHashCode as EqualsAndHashCode
 @apackage.another.Ann
 import java.text.ParseException as ParseException
 import java.nio.file.*
@@ -416,7 +413,6 @@ package apackage.another
 import static java.util.Collections.emptyList
 import static java.nio.charset.StandardCharsets.*
 
-import groovy.transform.EqualsAndHashCode as EqualsAndHashCode
 @apackage.another.Ann
 import java.text.ParseException as ParseException
 import java.nio.file.*
@@ -541,7 +537,6 @@ package apackage.another
 import static java.util.Collections.emptyList
 import static java.nio.charset.StandardCharsets.*
 
-import groovy.transform.EqualsAndHashCode as EqualsAndHashCode
 @apackage.another.Ann
 import java.text.ParseException as ParseException
 import java.nio.file.*

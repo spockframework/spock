@@ -877,7 +877,8 @@ class AstNodeToScriptVisitor extends CompilationUnit.PrimaryClassNodeOperation i
 
   void visitConstantExpression(ConstantExpression expression, boolean unwrapQuotes = false) {
     if (expression instanceof AnnotationConstantExpression) {
-      return // does not convey any useful data in 2.5 and leads to inconsistencies with 3.0
+      visitAnnotationNode (expression.value as AnnotationNode)
+      return
     }
     if (expression.value instanceof String && !unwrapQuotes) {
       // string reverse escaping is very naive

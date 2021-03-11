@@ -341,6 +341,12 @@ import groovy.transform.EqualsAndHashCode
       }
 
       void multix(Path a, @Ann int b, String desc = ''){}
+
+      void prop(List l, int[] a) {
+        def x = l*.foo
+        def y = a?.length
+        def z = a."$STR"
+      }
     }
 
 
@@ -498,8 +504,8 @@ public class apackage.another.Bar extends apackage.another.Foo implements apacka
         def (java.lang.Object j, java.lang.Object k) = x
         java.lang.Object l = b ? c : d
         java.lang.Object m = c ? c : d
-        java.lang.Object n = this .&'convert'
-        java.lang.Object o = this .order
+        java.lang.Object n = this.&'convert'
+        java.lang.Object o = this.order
         java.lang.Object p = (1..5)
         java.lang.Object q = (1..<5)
         java.lang.Object r = x*.size()?.intersect([1])
@@ -520,6 +526,12 @@ public class apackage.another.Bar extends apackage.another.Foo implements apacka
     }
 
     public void multix(java.nio.file.Path a, @apackage.another.Ann int b, java.lang.String desc = '') {
+    }
+
+    public void prop(java.util.List l, [I a) {
+        java.lang.Object x = l*.foo
+        java.lang.Object y = a?.length
+        java.lang.Object z = a."$STR"
     }
 
 }

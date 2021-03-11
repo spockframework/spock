@@ -851,6 +851,7 @@ class AstNodeToScriptVisitor extends CompilationUnit.PrimaryClassNodeOperation i
   @Override
   void visitPropertyExpression(PropertyExpression expression) {
     expression?.objectExpression?.visit this
+    trimSpaceRight() // remove space inserted by previous expression
     if (expression?.spreadSafe) {
       print '*'
     } else if (expression?.safe) {
@@ -1169,6 +1170,7 @@ class AstNodeToScriptVisitor extends CompilationUnit.PrimaryClassNodeOperation i
   @Override
   void visitMethodPointerExpression(MethodPointerExpression expression) {
     expression?.expression?.visit this
+    trimSpaceRight() // remove space inserted by previous expression
     print '.&'
     expression?.methodName?.visit this
   }

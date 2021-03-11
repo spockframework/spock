@@ -10,7 +10,7 @@ import org.codehaus.groovy.control.CompilePhase
 class AstSpec extends EmbeddedSpecification {
   def "astToSourceFeatureBody renders only methods and its annotation by default"() {
     when:
-    def result = compiler.transpileToAstFeatureBody('''
+    def result = compiler.transpileFeatureBody('''
     given:
     def nothing = null
     ''')
@@ -27,7 +27,7 @@ public void $spock_feature_0_0() {
 
   def "astToSourceSpecBody renders only methods, fields, properties, object initializers and their annotation by default"() {
     when:
-    def result = compiler.transpileToAstSpecBody('''
+    def result = compiler.transpileSpecBody('''
     def foo = 'bar'
 
     def 'a feature'() {
@@ -55,7 +55,7 @@ public void $spock_feature_0_0() {
 
   def "astToSourceFeatureBody can render everything"() {
     when:
-    def result = compiler.transpileToAstFeatureBody('''
+    def result = compiler.transpileFeatureBody('''
     given:
     def nothing = null
     ''', Show.all(), CompilePhase.INSTRUCTION_SELECTION)
@@ -79,7 +79,7 @@ public class apackage.ASpec extends spock.lang.Specification {
   }
   def "astToSourceFeatureBody shows compile error in source"() {
     when:
-    def result = compiler.transpileToAstFeatureBody('''
+    def result = compiler.transpileFeatureBody('''
     when:
     foo()
     expect: 'none'
@@ -99,7 +99,7 @@ script.groovy: 3: 'expect' is not allowed here; instead, use one of: [and, then]
   @Requires({ GroovyRuntimeUtil.groovy3orNewer })
   def "groovy 3 language features"() {
     when:
-    def result = compiler.transpileToAst('''
+    def result = compiler.transpile('''
 class Foo {
   void loop() {
     do {
@@ -156,7 +156,7 @@ public void blockStatements() {
 
   def "enums"() {
     when:
-    def result = compiler.transpileToAst('''
+    def result = compiler.transpile('''
     enum Alpha {
       A, B, C;
     }
@@ -217,7 +217,7 @@ public final class Alpha extends java.lang.Enum<Alpha> {
 
   def "full feature exercise"() {
     when:
-    def result = compiler.transpileToAst('''
+    def result = compiler.transpile('''
 @Ann
 package apackage.another
 

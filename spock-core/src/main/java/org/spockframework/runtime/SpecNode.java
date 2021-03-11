@@ -58,7 +58,10 @@ public class SpecNode extends SpockNode<SpecInfo> {
 
   @Override
   public void around(SpockExecutionContext context, Invocation<SpockExecutionContext> invocation) throws Exception {
-    context.getRunner().runSpec(context, () -> sneakyInvoke(invocation, context));
+    ErrorInfoCollector errorInfoCollector = new ErrorInfoCollector();
+    SpockExecutionContext ctx = context.withErrorInfoCollector(errorInfoCollector);
+    ctx.getRunner().runSpec(ctx, () -> sneakyInvoke(invocation, ctx));
+    errorInfoCollector.assertEmpty();
   }
 
   @Override

@@ -17,10 +17,9 @@
 package spock.util
 
 import org.spockframework.runtime.SpecUtil
+import org.spockframework.util.Beta
 import org.spockframework.util.NotThreadSafe
 import spock.lang.Specification
-
-import java.util.regex.Pattern
 
 import org.codehaus.groovy.control.*
 import org.codehaus.groovy.runtime.StringGroovyMethods
@@ -35,7 +34,6 @@ import org.opentest4j.MultipleFailuresError
  */
 @NotThreadSafe
 class EmbeddedSpecCompiler {
-  static final FILENAME_PATTERN = Pattern.compile(/(?<=filename = 'script)(\d+)(?=.groovy')/)
   final GroovyClassLoader loader = new GroovyClassLoader(getClass().classLoader)
 
   boolean unwrapCompileException = true
@@ -96,42 +94,46 @@ class EmbeddedSpecCompiler {
     compileSpecBody "def 'a feature'() { ${source.trim() + '\n'} }"
   }
 
-  String astToSourceWithImports(@Language('Groovy') String source,
-                                Set showSet = EnumSet.of(Show.ANNOTATIONS, Show.CLASS, Show.METHODS, Show.FIELDS, Show.OBJECT_INITIALIZERS, Show.PROPERTIES),
-                                CompilePhase phase = CompilePhase.SEMANTIC_ANALYSIS) {
+  @Beta
+  AstResult compileToAstWithImports(@Language('Groovy') String source,
+                                    Set showSet = EnumSet.of(Show.ANNOTATIONS, Show.CLASS, Show.METHODS, Show.FIELDS, Show.OBJECT_INITIALIZERS, Show.PROPERTIES),
+                                    CompilePhase phase = CompilePhase.SEMANTIC_ANALYSIS) {
     addPackageImport(Specification.package)
     // one-liner keeps line numbers intact
     doAstToSource("package apackage; $imports ${source.trim()}", showSet, phase)
   }
 
-  String astToSourceSpecBody(@Language(value = 'Groovy', prefix = 'class ASpec extends spock.lang.Specification { ', suffix = '\n }')
+  @Beta
+  AstResult compileToAstSpecBody(@Language(value = 'Groovy', prefix = 'class ASpec extends spock.lang.Specification { ', suffix = '\n }')
                                String source,
-                             Set showSet = EnumSet.of(Show.ANNOTATIONS, Show.METHODS, Show.FIELDS, Show.OBJECT_INITIALIZERS, Show.PROPERTIES),
-                             CompilePhase phase = CompilePhase.SEMANTIC_ANALYSIS) {
+                                 Set showSet = EnumSet.of(Show.ANNOTATIONS, Show.METHODS, Show.FIELDS, Show.OBJECT_INITIALIZERS, Show.PROPERTIES),
+                                 CompilePhase phase = CompilePhase.SEMANTIC_ANALYSIS) {
     // one-liner keeps line numbers intact; newline safeguards against source ending in a line comment
-    astToSourceWithImports("class ASpec extends Specification { ${source.trim() + '\n'} }", showSet, phase)
+    compileToAstWithImports("class ASpec extends Specification { ${source.trim() + '\n'} }", showSet, phase)
   }
 
-  String astToSourceFeatureBody(@Language(value = 'Groovy', prefix = "def 'a feature'() { ", suffix = '\n }')
+  @Beta
+  AstResult compileToAstFeatureBody(@Language(value = 'Groovy', prefix = "def 'a feature'() { ", suffix = '\n }')
                                   String source,
-                                Set showSet = EnumSet.of(Show.ANNOTATIONS, Show.METHODS),
-                                CompilePhase phase = CompilePhase.SEMANTIC_ANALYSIS) {
+                                    Set showSet = EnumSet.of(Show.ANNOTATIONS, Show.METHODS),
+                                    CompilePhase phase = CompilePhase.SEMANTIC_ANALYSIS) {
     // one-liner keeps line numbers intact; newline safeguards against source ending in a line comment
-    astToSourceSpecBody("def 'a feature'() { ${source.trim() + '\n'} }", showSet, phase)
+    compileToAstSpecBody("def 'a feature'() { ${source.trim() + '\n'} }", showSet, phase)
   }
 
-  String astToSource(@Language('Groovy') String source, Set showSet = Show.all(), CompilePhase phase = CompilePhase.SEMANTIC_ANALYSIS) {
+  @Beta
+  AstResult compileToAst(@Language('Groovy') String source, Set showSet = Show.all(), CompilePhase phase = CompilePhase.SEMANTIC_ANALYSIS) {
     doAstToSource(imports + source, showSet, phase)
   }
 
-  private String doAstToSource(@Language('Groovy') String source, Set showSet, CompilePhase phase) {
+  private AstResult doAstToSource(@Language('Groovy') String source, Set showSet, CompilePhase phase) {
     loader.clearCache()
-    String result = new AstNodeToSourceConverter().compileToScript(source, phase.phaseNumber, showSet, loader)
+    AstResult ast = new SourceToAstNodeAndSourceConverter().compileScript(source, phase.phaseNumber, showSet, loader)
     // normalize result
-    result = FILENAME_PATTERN.matcher(result).replaceAll("XXXXX")
-    result = StringGroovyMethods.stripIndent((CharSequence)result) // Java 15 introduces `stripIndent` with a different behavior, so use explicit method call
-    result = result.trim()
-    return result
+    String sourceResult = ast.source
+    sourceResult = StringGroovyMethods.stripIndent((CharSequence)sourceResult) // Java 15 introduces `stripIndent` with a different behavior, so use explicit method call
+    sourceResult = sourceResult.trim()
+    return new AstResult(sourceResult, ast.nodeCaptures)
   }
 
   private List<Class> doCompile(@Language('Groovy') String source) {

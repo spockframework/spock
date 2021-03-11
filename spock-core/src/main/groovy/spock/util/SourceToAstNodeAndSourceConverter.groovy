@@ -6,6 +6,8 @@ import java.lang.reflect.Modifier
 import java.security.CodeSource
 
 import groovy.transform.CompileStatic
+import groovy.transform.Immutable
+import groovy.transform.TupleConstructor
 import org.apache.groovy.io.StringBuilderWriter
 import org.codehaus.groovy.ast.*
 import org.codehaus.groovy.ast.expr.*
@@ -16,7 +18,7 @@ import org.codehaus.groovy.syntax.Types
 
 /*
  * This has been adapted from https://github.com/apache/groovy/blob/5d2944523f198d96b6515e85a24d2b4e43ce665f/subprojects/groovy-console/src/main/groovy/groovy/console/ui/AstNodeToScriptAdapter.groovy
- * and made backwards compatible with groovy 2.4 via GroovyCodeVisitorCompat.
+ * and made backwards compatible with groovy 2.5 via GroovyCodeVisitorCompat.
  *
  * - Replaced getter access by property access
  * - Removed trailing whitespaces when directly followed by printLineBreak()
@@ -25,11 +27,10 @@ import org.codehaus.groovy.syntax.Types
 
 /**
  * This class takes Groovy source code, compiles it to a specific compile phase, and then decompiles it
- * back to the groovy source. It is used by GroovyConsole's AST Browser, but can also be invoked from
- * the command line.
+ * back to the groovy source.
  */
 @CompileStatic
-class AstNodeToSourceConverter {
+class SourceToAstNodeAndSourceConverter {
 
   /**
    * This method takes source code, compiles it, then reverses it back to source.
@@ -45,18 +46,20 @@ class AstNodeToSourceConverter {
    *    This parameter enables things like ASTBrowser to invoke this with the correct classpath
    * @param config
    *    optional compiler configuration
-   * @returns the source code from the AST state
+   * @returns the source code from the AST state and the captured ast nodes
    */
 
-  String compileToScript(String script, int compilePhase, Set<Show> showSet, ClassLoader classLoader = null, CompilerConfiguration config = null) {
+  AstResult compileScript(String script, int compilePhase, Set<Show> showSet, ClassLoader classLoader = null, CompilerConfiguration config = null) {
 
     def writer = new StringBuilderWriter()
 
     classLoader = classLoader ?: new GroovyClassLoader(getClass().classLoader)
 
-    def scriptName = 'script' + System.currentTimeMillis() + '.groovy'
+    def scriptName = 'script.groovy'
     GroovyCodeSource codeSource = new GroovyCodeSource(script, scriptName, '/groovy/script')
     CompilationUnit cu = new CompilationUnit((CompilerConfiguration)(config ?: CompilerConfiguration.DEFAULT), (CodeSource)codeSource.codeSource, (GroovyClassLoader)classLoader)
+    def captureVisitor = new AstNoteCaptureVisitor()
+    cu.addPhaseOperation(captureVisitor, compilePhase)
     cu.addPhaseOperation(new AstNodeToScriptVisitor(writer, showSet), compilePhase)
     cu.addSource(codeSource.name, script)
     try {
@@ -67,13 +70,11 @@ class AstNodeToSourceConverter {
       cfe.message.eachLine {
         writer.println it
       }
-      writer.println 'Fix the above error(s) and then press Refresh'
     } catch (Throwable t) {
       writer.println 'Unable to produce AST for this phase due to an error:'
       writer.println t.message
-      writer.println 'Fix the above error(s) and then press Refresh'
     }
-    return writer.toString()
+    return new AstResult(writer.toString(), captureVisitor.nodeCaptures)
   }
 }
 
@@ -129,6 +130,33 @@ enum Show {
     EnumSet.allOf(Show)
   }
 }
+
+@TupleConstructor
+@CompileStatic
+class AstResult {
+  final String source
+  final List<NodeCapture> nodeCaptures
+}
+
+
+@TupleConstructor
+@CompileStatic
+class NodeCapture {
+  final SourceUnit source
+  final ClassNode classNode
+}
+
+@CompileStatic
+class AstNoteCaptureVisitor extends CompilationUnit.PrimaryClassNodeOperation {
+
+  final List<NodeCapture> nodeCaptures = []
+
+  @Override
+  void call(SourceUnit source, GeneratorContext context, ClassNode classNode) throws CompilationFailedException {
+    nodeCaptures << new NodeCapture(source, classNode)
+  }
+}
+
 
 /**
  * An adapter from ASTNode tree to source code.
@@ -819,6 +847,9 @@ class AstNodeToScriptVisitor extends CompilationUnit.PrimaryClassNodeOperation i
     print '('
     expression?.from?.visit this
     print '..'
+    if (!expression?.inclusive) {
+      print '<'
+    }
     expression?.to?.visit this
     print ')'
   }
@@ -896,6 +927,7 @@ class AstNodeToScriptVisitor extends CompilationUnit.PrimaryClassNodeOperation i
 
   @Override
   void visitGStringExpression(GStringExpression expression) {
+    // this loses enclosing ${}
     print '"' + expression.text + '"'
   }
 

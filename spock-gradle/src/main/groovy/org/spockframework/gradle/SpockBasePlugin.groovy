@@ -29,7 +29,7 @@ class SpockBasePlugin implements Plugin<Project> {
         task.inputs.file(configFile)
           .withPropertyName("spockConfig")
           .withPathSensitivity(PathSensitivity.RELATIVE)
-        task.systemProperty "spock.configuration", configFile.toPath().relativize(project.projectDir.toPath())
+        task.systemProperty "spock.configuration", project.relativePath(configFile)
       }
     }
   }

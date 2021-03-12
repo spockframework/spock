@@ -103,9 +103,19 @@ tasks.register('osgiProperties', WriteProperties) {
 // that its metadata is valid. If the metadata is invalid this task will
 // fail.
 tasks.register('verifyOSGi', Resolve) {
+
   dependsOn(osgiProperties)
   setBndrun(osgiPropertiesFile)
   reportOptional = false
+
+  // workaround until https://github.com/bndtools/bnd/issues/4577 is fixed
+  def taskMarker = file("$buildDir/verifyOSGi.marker")
+  writeOnChanges = false
+  outputs.cacheIf { true }
+  outputs.file(taskMarker).withPropertyName("taskMarker")
+  doLast {
+    taskMarker.text = "done"
+  }
 }
 
 tasks.check {

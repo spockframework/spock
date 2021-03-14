@@ -345,27 +345,30 @@ class Bar extends Foo implements Ex, Serializable {
     def c = "gstring $a ..."
     def d = "gstring with brackets ${a.size()} ..."
     def e = "gstring with closure ${-> a} ... "
-    def f = """simple
+    def f = "with writer ${w -> w << a}"
+    def g = """simple
 multi
 line"""
-    def g =  """multi line gstring
+    def h =  """multi line gstring
 $a
 ..."""
-    def h = """multi line gstring
+    def i = """multi line gstring
  with brackets ${a.size()}
  with escaped brackets \\${a.size()}
  ..."""
-    def i = """multi line gstring
+    def j = """multi line gstring
  with closure ${-> a}
  with escaped closure \\${-> a}
  ... """
-    def j = """multi line gstring
+    def k = """multi line gstring
  with simple value $a
  with simple escaped value \\$a
  with brackets ${a.size()}
  with escaped brackets \\${a.size()}
  with closure ${-> a}
- with escaped closure ${-> a}
+ with escaped closure \\${-> a}
+ with writer ${w -> w << a}
+ with writer escaped \\${w -> w << a}
 ..."""
   }
 
@@ -569,17 +572,20 @@ public class apackage.another.Bar extends apackage.another.Foo implements apacka
         java.lang.Object e = "gstring with closure ${ ->
             a
         } ... "
-        java.lang.Object f = 'simple\\nmulti\\nline'
-        java.lang.Object g = "multi line gstring\\n${a}\\n..."
-        java.lang.Object h = "multi line gstring\\n with brackets ${a.size()}\\n with escaped brackets \\${a.size()}\\n ..."
-        java.lang.Object i = "multi line gstring\\n with closure ${ ->
+        java.lang.Object f = "with writer ${ java.lang.Object w ->
+            w << a
+        }"
+        java.lang.Object g = 'simple\\nmulti\\nline'
+        java.lang.Object h = "multi line gstring\\n${a}\\n..."
+        java.lang.Object i = "multi line gstring\\n with brackets ${a.size()}\\n with escaped brackets \\${a.size()}\\n ..."
+        java.lang.Object j = "multi line gstring\\n with closure ${ ->
             a
         }\\n with escaped closure \\${-> a}\\n ... "
-        java.lang.Object j = "multi line gstring\\n with simple value ${a}\\n with simple escaped value \\$a\\n with brackets ${a.size()}\\n with escaped brackets \\${a.size()}\\n with closure ${ ->
+        java.lang.Object k = "multi line gstring\\n with simple value ${a}\\n with simple escaped value \\$a\\n with brackets ${a.size()}\\n with escaped brackets \\${a.size()}\\n with closure ${ ->
             a
-        }\\n with escaped closure ${ ->
-            a
-        }\\n..."
+        }\\n with escaped closure \\${-> a}\\n with writer ${ java.lang.Object w ->
+            w << a
+        }\\n with writer escaped \\${w -> w << a}\\n..."
     }
 
     @java.lang.Override

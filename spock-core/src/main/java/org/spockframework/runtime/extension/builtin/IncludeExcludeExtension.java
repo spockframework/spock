@@ -14,7 +14,7 @@
 
 package org.spockframework.runtime.extension.builtin;
 
-import org.spockframework.runtime.extension.AbstractGlobalExtension;
+import org.spockframework.runtime.extension.*;
 import org.spockframework.runtime.model.*;
 import spock.config.*;
 
@@ -22,8 +22,12 @@ import java.lang.annotation.Annotation;
 import java.util.List;
 
 @SuppressWarnings("UnusedDeclaration")
-public class IncludeExcludeExtension extends AbstractGlobalExtension {
-  private RunnerConfiguration config;
+public class IncludeExcludeExtension implements IGlobalExtension {
+  private final RunnerConfiguration config;
+
+  public IncludeExcludeExtension(RunnerConfiguration config) {
+    this.config = config;
+  }
 
   @Override
   public void visitSpec(SpecInfo spec) {
@@ -42,7 +46,7 @@ public class IncludeExcludeExtension extends AbstractGlobalExtension {
     if (criteria.isEmpty()) return;
 
     if (!hasAnyAnnotation(spec, criteria.annotations)
-        && !hasAnyBaseClass(spec, criteria.baseClasses))
+      && !hasAnyBaseClass(spec, criteria.baseClasses))
       spec.setExcluded(true);
   }
 
@@ -50,7 +54,7 @@ public class IncludeExcludeExtension extends AbstractGlobalExtension {
     if (criteria.isEmpty()) return;
 
     if (hasAnyAnnotation(spec, criteria.annotations)
-        || hasAnyBaseClass(spec, criteria.baseClasses))
+      || hasAnyBaseClass(spec, criteria.baseClasses))
       spec.setExcluded(true);
   }
 
@@ -99,4 +103,3 @@ public class IncludeExcludeExtension extends AbstractGlobalExtension {
     return false;
   }
 }
-

@@ -4,7 +4,8 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.spockframework.runtime.extension.AbstractGlobalExtension;
+
+import org.spockframework.runtime.extension.*;
 import org.spockframework.runtime.model.MethodInfo;
 import org.spockframework.runtime.model.MethodKind;
 import org.spockframework.runtime.model.SpecInfo;
@@ -15,12 +16,10 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 
-public class JUnit4AnnotationLifecycleMethodsExtension extends AbstractGlobalExtension {
+public class JUnit4AnnotationLifecycleMethodsExtension implements IGlobalExtension {
 
   @Override
   public void visitSpec(SpecInfo spec) {
-    super.visitSpec(spec);
-
     Class<?> clazz = spec.getReflection();
     new JUnit4LifecycleSpecInfoEnhancer(spec, clazz, clazz).enhance();
   }

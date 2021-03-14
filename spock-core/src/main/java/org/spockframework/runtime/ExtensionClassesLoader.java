@@ -28,17 +28,17 @@ public class ExtensionClassesLoader {
   public static final String EXTENSION_DESCRIPTOR_PATH = "META-INF/services/" + IGlobalExtension.class.getName();
   public static final String CONFIG_DESCRIPTOR_PATH = "META-INF/services/" + ConfigurationObject.class.getName();
 
-  public List<Class<?>> loadExtensionClassesFromDefaultLocation() {
-    return loadClasses(EXTENSION_DESCRIPTOR_PATH);
+  public List<Class<? extends IGlobalExtension>> loadExtensionClassesFromDefaultLocation() {
+    return loadClasses(EXTENSION_DESCRIPTOR_PATH, IGlobalExtension.class);
   }
 
   public List<Class<?>> loadConfigClassesFromDefaultLocation() {
-    return loadClasses(CONFIG_DESCRIPTOR_PATH);
+    return loadClasses(CONFIG_DESCRIPTOR_PATH, Object.class);
   }
 
-  public List<Class<?>> loadClasses(String descriptorPath) {
+  public <T> List<Class<? extends T>> loadClasses(String descriptorPath, Class<T> baseClass) {
     Map<String, URL> discoveredClasses = new HashMap<>();
-    List<Class<?>> extClasses = new ArrayList<>();
+    List<Class<? extends T>> extClasses = new ArrayList<>();
     for (URL url : locateDescriptors(descriptorPath)) {
       for (String className : readDescriptor(url)) {
         if (discoveredClasses.containsKey(className)) {
@@ -47,7 +47,7 @@ public class ExtensionClassesLoader {
           ).withArgs(className, url, discoveredClasses.get(className));
         }
         discoveredClasses.put(className, url);
-        extClasses.add(loadExtensionClass(className));
+        extClasses.add(loadExtensionClass(className, baseClass));
       }
     }
     return extClasses;
@@ -77,9 +77,15 @@ public class ExtensionClassesLoader {
     }
   }
 
-  private Class<?> loadExtensionClass(String className) {
+  @SuppressWarnings("unchecked")
+  private <T> Class<? extends T> loadExtensionClass(String className, Class<T> baseClass) {
     try {
-      return RunContext.class.getClassLoader().loadClass(className);
+      Class<?> loadedClass = RunContext.class.getClassLoader().loadClass(className);
+      if (!baseClass.isAssignableFrom(loadedClass)) {
+        throw new ExtensionException("Failed to load extension class '%s' as it is not assignable to '%s'")
+          .withArgs(className, baseClass.getName());
+      }
+      return (Class<? extends T>)loadedClass;
     } catch (Exception e) {
       throw new ExtensionException("Failed to load extension class '%s'", e).withArgs(className);
     }

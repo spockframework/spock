@@ -23,5 +23,5 @@ public interface IConfigurationRegistry {
   @Nullable
   Object getConfigurationByName(String name);
 
-  void configureExtension(Object extension);
+  <T> T instantiateExtension(Class<T> extension);
 }

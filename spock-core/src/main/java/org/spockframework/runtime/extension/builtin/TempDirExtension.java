@@ -16,7 +16,11 @@ import java.nio.file.Path;
  */
 @Beta
 public class TempDirExtension implements IAnnotationDrivenExtension<TempDir> {
-  private TempDirConfiguration configuration;
+  private final TempDirConfiguration configuration;
+
+  public TempDirExtension(TempDirConfiguration configuration) {
+    this.configuration = configuration;
+  }
 
   @Override
   public void visitFieldAnnotation(TempDir annotation, FieldInfo field) {

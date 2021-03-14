@@ -138,14 +138,7 @@ public class ExtensionRunner {
   private IAnnotationDrivenExtension getOrCreateExtension(Class<? extends IAnnotationDrivenExtension> clazz) {
     IAnnotationDrivenExtension extension = localExtensions.get(clazz);
     if (extension == null) {
-      try {
-        extension = clazz.newInstance();
-      } catch (InstantiationException e) {
-        throw new ExtensionException("Failed to instantiate extension '%s'", e).withArgs(clazz);
-      } catch (IllegalAccessException e) {
-        throw new ExtensionException("No-arg constructor of extension '%s' is not public", e).withArgs(clazz);
-      }
-      configurationRegistry.configureExtension(extension);
+      extension = configurationRegistry.instantiateExtension(clazz);
       localExtensions.put(clazz, extension);
     }
     return extension;

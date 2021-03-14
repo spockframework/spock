@@ -20,7 +20,7 @@ import org.spockframework.runtime.extension.*;
 import org.spockframework.util.*;
 import spock.config.ConfigurationObject;
 
-import java.lang.reflect.Field;
+import java.lang.reflect.*;
 import java.util.*;
 
 import org.jetbrains.annotations.NotNull;
@@ -32,13 +32,14 @@ import org.jetbrains.annotations.NotNull;
  * @author Peter Niederwieser
  */
 public class GlobalExtensionRegistry implements IExtensionRegistry, IConfigurationRegistry {
-  private final List<Class<?>> globalExtensionClasses;
+  private final List<Class<? extends IGlobalExtension>> globalExtensionClasses;
   private final Map<Class<?>, Object> configurationsByType = new HashMap<>();
   private final Map<String, Object> configurationsByName = new HashMap<>();
 
   private final List<IGlobalExtension> globalExtensions = new ArrayList<>();
 
-  GlobalExtensionRegistry(List<Class<?>> globalExtensionClasses, List<Class<?>> initialConfigurations) {
+  GlobalExtensionRegistry(List<Class<? extends IGlobalExtension>> globalExtensionClasses,
+                          List<Class<?>> initialConfigurations) {
     this.globalExtensionClasses = globalExtensionClasses;
     initializeConfigurations(initialConfigurations);
   }
@@ -49,17 +50,14 @@ public class GlobalExtensionRegistry implements IExtensionRegistry, IConfigurati
       if (annotation == null) {
         throw new InternalSpockError("Not a @ConfigurationObject: %s").withArgs(configuration);
       }
-      Object instance = createConfiguration(configuration);
-      configurationsByType.put(configuration, instance);
-      configurationsByName.put(annotation.value(), instance);
+      createAndStoreConfiguration(configuration, annotation);
     }
   }
 
   public void initializeGlobalExtensions() {
-    for (Class<?> clazz : globalExtensionClasses) {
+    for (Class<? extends IGlobalExtension> clazz : globalExtensionClasses) {
       verifyGlobalExtension(clazz);
-      IGlobalExtension extension = instantiateGlobalExtension(clazz);
-      configureExtension(extension);
+      IGlobalExtension extension = instantiateAndConfigureExtension(clazz);
       globalExtensions.add(extension);
     }
   }
@@ -82,26 +80,57 @@ public class GlobalExtensionRegistry implements IExtensionRegistry, IConfigurati
   private void verifyGlobalExtension(Class<?> clazz) {
     if (!IGlobalExtension.class.isAssignableFrom(clazz))
       throw new ExtensionException(
-          "Class '%s' is not a valid global extension because it is not derived from '%s'"
+        "Class '%s' is not a valid global extension because it is not derived from '%s'"
       ).withArgs(clazz.getName(), IGlobalExtension.class.getName());
   }
 
-  private IGlobalExtension instantiateGlobalExtension(Class<?> clazz) {
+  private <T> T instantiateAndConfigureExtension(Class<T> clazz) {
     try {
-      return (IGlobalExtension) clazz.getDeclaredConstructor().newInstance();
+      Constructor<?>[] declaredConstructors = clazz.getDeclaredConstructors();
+      Constructor<?> declaredConstructor = findBestFittingConstructor(declaredConstructors);
+      if (declaredConstructor.getParameterCount() == 0) {
+        Object extension = declaredConstructor.newInstance();
+        configureExtension(extension);
+        return clazz.cast(extension);
+      } else {
+        Object[] args = Arrays.stream(declaredConstructor.getParameters())
+          .map(parameter -> getInjectionParameter(parameter, clazz))
+          .toArray();
+
+        return clazz.cast(declaredConstructor.newInstance(args));
+      }
     } catch (Exception e) {
       throw new ExtensionException("Failed to instantiate extension '%s'", e).withArgs(clazz.getName());
     }
+
+  }
+
+  private Constructor<?> findBestFittingConstructor(Constructor<?>[] declaredConstructors) {
+    return Arrays.stream(declaredConstructors)
+      .filter(constructor -> Arrays.stream(constructor.getParameterTypes()).allMatch(this::isInjectable))
+      .max(Comparator.comparing(Constructor::getParameterCount))
+      .orElseThrow(() -> new ExtensionException("No suitable constructor found, only injectable parameters are permissible."));
+  }
+
+  private boolean isInjectable(Class<?> aClass) {
+    ConfigurationObject annotation = aClass.getAnnotation(ConfigurationObject.class);
+    return annotation != null;
   }
 
   @Override
-  public void configureExtension(Object extension) {
-    for (Field field : extension.getClass().getDeclaredFields()) {
-      ConfigurationObject annotation = field.getType().getAnnotation(ConfigurationObject.class);
-      if (annotation != null) {
-        injectConfiguration(field, annotation.value(), extension);
-      }
-    }
+  public <T> T instantiateExtension(Class<T> extension) {
+    return instantiateAndConfigureExtension(extension);
+  }
+
+  private void configureExtension(Object extension) {
+    Arrays.stream(extension.getClass().getDeclaredFields())
+      .filter(field -> !Modifier.isFinal(field.getModifiers()))
+      .forEach(field -> {
+        ConfigurationObject annotation = field.getType().getAnnotation(ConfigurationObject.class);
+        if (annotation != null) {
+          injectConfiguration(field, annotation, extension);
+        }
+      });
   }
 
   public void startGlobalExtensions() {
@@ -116,8 +145,8 @@ public class GlobalExtensionRegistry implements IExtensionRegistry, IConfigurati
     }
   }
 
-  private void injectConfiguration(Field field, String name, Object extension) {
-    Object config = getOrCreateConfiguration(field.getType(), name, extension);
+  private void injectConfiguration(Field field, ConfigurationObject annotation, Object extension) {
+    Object config = getOrCreateConfig(field.getType(), annotation, extension.getClass());
     field.setAccessible(true);
     try {
       field.set(extension, config);
@@ -126,23 +155,39 @@ public class GlobalExtensionRegistry implements IExtensionRegistry, IConfigurati
     }
   }
 
-  private Object getOrCreateConfiguration(Class<?> type, String name, Object extension) {
-    Object config = configurationsByType.get(type);
-    if (config == null) {
-      config = createConfiguration(type, extension);
-      configurationsByType.put(type, config);
-      configurationsByName.put(name, config);
+  @NotNull
+  private Object getOrCreateConfig(Class<?> configType, ConfigurationObject annotation, Class<?> extensionClass) {
+    Object config;
+    if (IGlobalExtension.class.isAssignableFrom(extensionClass)) {
+      config = getOrCreateConfiguration(configType, annotation);
+    } else { // local extensions may not initialize configurations
+      config = getConfigurationByType(configType);
+      if (config == null) {
+        throw new ExtensionException("Extension '%s' references unknown configuration class '%s'")
+          .withArgs(extensionClass, configType);
+      }
     }
     return config;
   }
 
-  private Object createConfiguration(Class<?> type, Object extension) {
-    if (!(extension instanceof IGlobalExtension)) {
-      throw new ExtensionException("Extension '%s' references unknown configuration class '%s'")
-          .withArgs(extension.getClass(), type);
-    }
+  private Object getInjectionParameter(Parameter parameter, Class<?> extensionClass) {
+    ConfigurationObject annotation = parameter.getType().getAnnotation(ConfigurationObject.class);
+    return getOrCreateConfig(parameter.getType(), annotation, extensionClass);
+  }
 
-    return createConfiguration(type);
+  private Object getOrCreateConfiguration(Class<?> type, ConfigurationObject annotation) {
+    Object config = getConfigurationByType(type);
+    if (config == null) {
+      config = createAndStoreConfiguration(type, annotation);
+    }
+    return config;
+  }
+
+  private Object createAndStoreConfiguration(Class<?> configuration, ConfigurationObject annotation) {
+    Object instance = createConfiguration(configuration);
+    configurationsByType.put(configuration, instance);
+    configurationsByName.put(annotation.value(), instance);
+    return instance;
   }
 
   @NotNull

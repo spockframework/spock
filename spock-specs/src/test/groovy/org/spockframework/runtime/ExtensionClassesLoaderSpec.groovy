@@ -1,6 +1,7 @@
 package org.spockframework.runtime
 
-import org.spockframework.report.log.ReportLogExtension
+import org.spockframework.report.log.ReportLogConfiguration
+
 import org.spockframework.runtime.extension.builtin.*
 import org.spockframework.tempdir.TempDirConfiguration
 import spock.config.RunnerConfiguration
@@ -13,7 +14,7 @@ class ExtensionClassesLoaderSpec extends Specification {
     def result = new ExtensionClassesLoader().loadExtensionClassesFromDefaultLocation()
 
     then:
-    result == [IncludeExcludeExtension, OptimizeRunOrderExtension, UnrollExtension, ReportLogExtension]
+    result == [IncludeExcludeExtension, OptimizeRunOrderExtension, UnrollExtension]
   }
 
   def "loads global ConfigObjects"() {
@@ -21,6 +22,6 @@ class ExtensionClassesLoaderSpec extends Specification {
     def result = new ExtensionClassesLoader().loadConfigClassesFromDefaultLocation()
 
     then:
-    result == [RunnerConfiguration, TempDirConfiguration]
+    result == [RunnerConfiguration, ReportLogConfiguration, TempDirConfiguration]
   }
 }

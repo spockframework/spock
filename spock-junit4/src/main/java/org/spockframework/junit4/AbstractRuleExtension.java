@@ -17,12 +17,12 @@ package org.spockframework.junit4;
 import java.lang.annotation.Annotation;
 
 import org.spockframework.runtime.InvalidSpecException;
-import org.spockframework.runtime.extension.AbstractGlobalExtension;
+import org.spockframework.runtime.extension.*;
 import org.spockframework.runtime.model.FieldInfo;
 import org.spockframework.util.ReflectionUtil;
 import org.spockframework.util.Nullable;
 
-public abstract class AbstractRuleExtension extends AbstractGlobalExtension {
+public abstract class AbstractRuleExtension implements IGlobalExtension {
   @SuppressWarnings("unchecked")
   protected static Class<? extends Annotation> ruleClass = (Class) ReflectionUtil.loadClassIfAvailable("org.junit.Rule");
 

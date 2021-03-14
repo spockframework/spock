@@ -23,7 +23,7 @@ import org.spockframework.util.ReflectionUtil;
 import java.lang.annotation.Annotation;
 import java.util.*;
 
-import org.apache.tapestry5.ioc.annotations.SubModule;
+import org.apache.tapestry5.ioc.annotations.*;
 
 /**
  * Facilitates the creation of integration-level specifications for applications based
@@ -86,17 +86,17 @@ import org.apache.tapestry5.ioc.annotations.SubModule;
  *
  * @author Peter Niederwieser
  */
-public class TapestryExtension extends AbstractGlobalExtension {
+public class TapestryExtension implements IGlobalExtension {
 
   // since Tapestry 5.4
   @SuppressWarnings("unchecked")
   private static final Class<? extends Annotation> importModuleAnnotation =
-      (Class) ReflectionUtil.loadClassIfAvailable("org.apache.tapestry5.ioc.annotations.ImportModule");
+    (Class)ReflectionUtil.loadClassIfAvailable("org.apache.tapestry5.ioc.annotations.ImportModule");
 
   // deprecated as of Tapestry 5.4
   @SuppressWarnings("unchecked")
   private static final Class<? extends Annotation> submoduleAnnotation =
-      (Class) ReflectionUtil.loadClassIfAvailable("org.apache.tapestry5.ioc.annotations.SubModule");
+    (Class)ReflectionUtil.loadClassIfAvailable("org.apache.tapestry5.ioc.annotations.SubModule");
 
   @Override
   public void visitSpec(final SpecInfo spec) {
@@ -117,24 +117,24 @@ public class TapestryExtension extends AbstractGlobalExtension {
     Set<Class<?>> modules = null;
 
     for (SpecInfo curr : spec.getSpecsTopToBottom()) {
-      if (importModuleAnnotation != null && spec.isAnnotationPresent(importModuleAnnotation)){
-        org.apache.tapestry5.ioc.annotations.ImportModule importModule = curr
-            .getAnnotation(org.apache.tapestry5.ioc.annotations.ImportModule.class);
+      if (importModuleAnnotation != null && spec.isAnnotationPresent(importModuleAnnotation)) {
+        ImportModule importModule = curr
+          .getAnnotation(ImportModule.class);
         if (importModule != null) {
           if (modules == null) {
             modules = new HashSet<>();
           }
-          modules.addAll(Arrays.<Class<?>> asList(importModule.value()));
+          modules.addAll(Arrays.<Class<?>>asList(importModule.value()));
         }
       }
-      if (submoduleAnnotation != null && spec.isAnnotationPresent(submoduleAnnotation)){
+      if (submoduleAnnotation != null && spec.isAnnotationPresent(submoduleAnnotation)) {
         @SuppressWarnings("deprecation")
         SubModule subModule = curr.getAnnotation(SubModule.class);
         if (subModule != null) {
           if (modules == null) {
             modules = new HashSet<>();
           }
-          modules.addAll(Arrays.<Class<?>> asList(subModule.value()));
+          modules.addAll(Arrays.<Class<?>>asList(subModule.value()));
         }
       }
     }

@@ -16,6 +16,7 @@ package org.spockframework.runtime;
 
 import org.spockframework.builder.DelegatingScript;
 import org.spockframework.runtime.condition.*;
+import org.spockframework.runtime.extension.IGlobalExtension;
 import org.spockframework.runtime.model.SpecInfo;
 import org.spockframework.util.*;
 import spock.config.RunnerConfiguration;
@@ -32,7 +33,7 @@ public class RunContext implements EngineExecutionContext {
   private final String name;
   private final File spockUserHome;
   private final DelegatingScript configurationScript;
-  private final List<Class<?>> globalExtensionClasses;
+  private final List<Class<? extends IGlobalExtension>> globalExtensionClasses;
   private final List<Class<?>> globalConfigClasses;
   private final GlobalExtensionRegistry globalExtensionRegistry;
 
@@ -40,7 +41,7 @@ public class RunContext implements EngineExecutionContext {
 
   private RunContext(String name, File spockUserHome,
                      @Nullable DelegatingScript configurationScript,
-                     List<Class<?>> globalExtensionClasses,
+                     List<Class<? extends IGlobalExtension>> globalExtensionClasses,
                      List<Class<?>> globalConfigClasses) {
     this.name = name;
     this.spockUserHome = spockUserHome;
@@ -127,11 +128,11 @@ public class RunContext implements EngineExecutionContext {
 
   public static <T, U extends Throwable> T withNewContext(String name, File spockUserHome,
                                                           @Nullable DelegatingScript configurationScript,
-                                                          List<Class<?>> extensionClasses,
+                                                          List<Class<? extends IGlobalExtension>> extensionClasses,
                                                           List<Class<?>> configClasses,
                                                           boolean inheritParentExtensions,
                                                           IThrowableFunction<RunContext, T, U> command) throws U {
-    List<Class<?>> allExtensionClasses = new ArrayList<>(extensionClasses);
+    List<Class<? extends IGlobalExtension>> allExtensionClasses = new ArrayList<>(extensionClasses);
     List<Class<?>> allConfigClasses = new ArrayList<>(configClasses);
     if (inheritParentExtensions) {
       allExtensionClasses.addAll(getCurrentExtensions());
@@ -168,7 +169,7 @@ public class RunContext implements EngineExecutionContext {
     return context;
   }
 
-  private static List<Class<?>> getCurrentExtensions() {
+  private static List<Class<? extends IGlobalExtension>> getCurrentExtensions() {
     RunContext context = contextStacks.get().peek();
     if (context == null) return Collections.emptyList();
     return context.globalExtensionClasses;
@@ -189,7 +190,7 @@ public class RunContext implements EngineExecutionContext {
     File spockUserHome = SpockUserHomeUtil.getSpockUserHome();
     DelegatingScript script = new ConfigurationScriptLoader(spockUserHome).loadAutoDetectedScript();
     ExtensionClassesLoader extensionClassesLoader = new ExtensionClassesLoader();
-    List<Class<?>> classes = extensionClassesLoader.loadExtensionClassesFromDefaultLocation();
+    List<Class<? extends IGlobalExtension>> classes = extensionClassesLoader.loadExtensionClassesFromDefaultLocation();
     List<Class<?>> configs = extensionClassesLoader.loadConfigClassesFromDefaultLocation();
     return new RunContext("default", spockUserHome, script, classes, configs);
   }

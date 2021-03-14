@@ -364,12 +364,15 @@ public class WhereBlockRewriter {
   }
 
   private void createDataProcessorStatement(VariableExpression variable, Expression right, ASTNode sourcePos) {
+    CastExpression castExpression = new CastExpression(variable.getType(), right);
+    castExpression.setCoerce(true);
+
     ExpressionStatement exprStat =
       new ExpressionStatement(
         new DeclarationExpression(
           variable,
           Token.newSymbol(Types.ASSIGN, -1, -1),
-          right));
+          castExpression));
     exprStat.setSourcePosition(sourcePos);
     dataProcessorStats.add(exprStat);
   }
@@ -636,6 +639,8 @@ public class WhereBlockRewriter {
   @SuppressWarnings("unchecked")
   private void createDataProcessorMethod() {
     if (dataProcessorVars.isEmpty()) return;
+
+    instanceFieldAccessChecker.check(dataProcessorStats);
 
     dataProcessorStats.add(
         new ReturnStatement(

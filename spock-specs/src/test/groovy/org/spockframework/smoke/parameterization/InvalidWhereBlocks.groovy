@@ -150,6 +150,30 @@ def foo() {
     "{ -> { -> [instanceField] }() }()" |_
   }
 
+  def "right-hand side of data variable may not reference instance fields (only @Shared and static fields)"() {
+    when:
+    compiler.compileSpecBody """
+def instanceField
+
+def foo() {
+  expect:
+  x == 1
+
+  where:
+  x = $rhs
+}
+    """
+
+    then:
+    InvalidSpecCompileException e = thrown()
+    e.message.contains("@Shared")
+
+    where:
+    rhs |_
+    "instanceField" |_
+    "{ -> { -> instanceField }() }()" |_
+  }
+
   def 'referencing a data variable in a data provider is not allowed'() {
     when:
     runner.runFeatureBody """

@@ -1,7 +1,9 @@
+import com.gradle.enterprise.gradleplugin.internal.extension.BuildScanExtensionWithHiddenFeatures
 
 pluginManagement {
   plugins {
-    id "com.gradle.enterprise" version "3.2.1"
+    id "com.gradle.enterprise" version "3.5.2"
+    id "com.gradle.common-custom-user-data-gradle-plugin" version "1.1.2"
     id "org.asciidoctor.jvm.convert" version "3.2.0"
     id "net.nemerosa.versioning" version "2.13.1"
     id "de.marcphilipp.nexus-publish" version "0.4.0"
@@ -12,12 +14,60 @@ pluginManagement {
 
 plugins {
   id "com.gradle.enterprise"
+  id "com.gradle.common-custom-user-data-gradle-plugin"
+}
+
+def gradleEnterpriseServer = "https://ge.spockframework.org"
+def isCiServer = System.env["CI"] || System.env["GITHUB_ACTIONS"]
+def spockBuildCacheUsername = ext.has('spockBuildCacheUsername') ? ext['spockBuildCacheUsername'] : null
+def spockBuildCachePassword = ext.has('spockBuildCachePassword') ? ext['spockBuildCachePassword'] : null
+
+def accessKeysAreMissing() {
+  File accessKeys = new File(gradle.gradleUserHomeDir, "enterprise/keys.properties")
+  return !System.env['GRADLE_ENTERPRISE_ACCESS_KEY'] && (!accessKeys.file || !accessKeys.text?.contains("ge.spockframework.org"))
 }
 
 gradleEnterprise {
   buildScan {
-    termsOfServiceUrl = "https://gradle.com/terms-of-service"
-    termsOfServiceAgree = "yes"
+    captureTaskInputFiles = true
+    uploadInBackground = !isCiServer
+
+
+    if (gradle.startParameter.buildScan || (isCiServer && accessKeysAreMissing())) {
+      termsOfServiceUrl = "https://gradle.com/terms-of-service"
+    } else {
+      server = gradleEnterpriseServer
+      publishAlways()
+      (delegate as BuildScanExtensionWithHiddenFeatures).publishIfAuthenticated()
+    }
+
+    if (isCiServer) {
+      publishAlways()
+      termsOfServiceAgree = "yes"
+    }
+
+    obfuscation {
+      if (isCiServer) {
+        username { "github" }
+      } else {
+        hostname { null }
+        ipAddresses { [] }
+      }
+    }
+  }
+}
+
+buildCache {
+  local {
+    enabled = !isCiServer
+  }
+  remote(HttpBuildCache) {
+    url = uri("$gradleEnterpriseServer/cache/")
+    push = isCiServer && spockBuildCacheUsername && spockBuildCachePassword
+    credentials {
+      username = spockBuildCacheUsername ?: null
+      password = spockBuildCachePassword ?: null
+    }
   }
 }
 

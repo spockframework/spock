@@ -371,6 +371,23 @@ Data tables, data pipes, and variable assignments can be combined as needed:
 include::{sourcedir}/datadriven/DataSpec.groovy[tag=combined-variable-assignment]
 ----
 
+== Type Coercion for Data Variable Values
+
+Data variable values are coerced to the declared parameter type using
+https://groovy-lang.org/operators.html#_coercion_operator[type coercion]. Due to that custom type conversions can be
+provided as https://groovy-lang.org/metaprogramming.html#_extension_modules[extension module] or with the help of
+the <<extensions.adoc#_use,`@Use`>> extension on the specification (as it has no effect to the `where:` block if
+applied to a feature).
+
+[source,groovy,indent=0]
+----
+include::{sourcedir}/datadriven/DataSpec.groovy[tag=type-coercion]
+----
+[source,groovy,indent=0]
+----
+include::{sourcedir}/datadriven/DataSpec.groovy[tag=type-coercion-with-custom-coercion]
+----
+
 == Number of Iterations
 
 The number of iterations depends on how much data is available. Successive executions of the same method can

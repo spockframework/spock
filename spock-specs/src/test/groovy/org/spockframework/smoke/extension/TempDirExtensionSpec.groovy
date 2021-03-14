@@ -14,11 +14,13 @@ class TempDirExtensionSpec extends EmbeddedSpecification {
   @Shared
   @TempDir
   Path sharedDir
+
   @Shared
   Path previousShared
 
   @TempDir
   File iterationDir
+
   @Shared
   File previousIteration
 
@@ -58,7 +60,7 @@ class TempDirExtensionSpec extends EmbeddedSpecification {
     i << (1..3)
   }
 
-  def "have unwritable directory and file in temp directory"() {
+  def "have non-writeable directory and file in temp directory"() {
     expect:
     if (i == 0) {
       def dir = Paths.get(iterationDir.toURI())
@@ -66,10 +68,10 @@ class TempDirExtensionSpec extends EmbeddedSpecification {
       def aaabbb = aaa.resolve("bbb")
       def tempFile = aaabbb.resolve("tmp.txt")
       Files.createDirectories(aaabbb)
-      Files.write(tempFile, "ewfwf".getBytes())
-      aaabbb.toFile().setWritable(false)
-      aaa.toFile().setWritable(false)
-      tempFile.toFile().setWritable(false)
+      Files.write(tempFile, "ewfwf".bytes)
+      aaabbb.toFile().writable = false
+      aaa.toFile().writable = false
+      tempFile.toFile().writable = false
       previousIteration = iterationDir
     } else if (i == 1) {
       assert !previousIteration.exists()
@@ -101,7 +103,7 @@ Path temp
 
 def method1() {
   expect:
-  temp.getParent().getFileName().toString() == "build"
+  temp.parent.fileName.toString() == "build"
 
   cleanup:
   TempDirExtensionSpec.pathFromEmbedded = temp
@@ -127,5 +129,43 @@ class TempDirInheritedSpec extends TempDirBaseSpec {
   void "TempDir works for inherited fields"() {
     expect:
     tmp != null
+  }
+}
+
+@Issue("https://github.com/spockframework/spock/issues/1282")
+class ParallelTempDirSpec extends Specification {
+
+  @TempDir Path tmpDir
+
+  def "Try creating multiple dirs"() {
+    when:
+    def dir = Files.createDirectory(tmpDir.resolve(name))
+
+    then:
+    Files.exists(dir)
+
+    where:
+    name << ["aaa", "bbb", "ccc"]
+  }
+
+  def "Try creating single dir"() {
+    when:
+    def dir = Files.createDirectory(tmpDir.resolve("foo"))
+
+    then:
+    Files.exists(dir)
+  }
+
+  def "Do nothing just test the temp dir existence"() {
+    expect:
+    Files.exists(tmpDir)
+  }
+
+  def "Do nothing just test the temp dir existence this time with unroll"() {
+    expect:
+    Files.exists(tmpDir)
+
+    where:
+    n << [1, 2, 3]
   }
 }

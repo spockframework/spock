@@ -17,6 +17,7 @@
 package org.spockframework.smoke.mock
 
 import spock.lang.Specification
+
 import static spock.util.matcher.HamcrestMatchers.closeTo
 
 class PartialMockingInterfacesWithDefaultMethods extends Specification {

@@ -16,13 +16,12 @@
 
 package org.spockframework.compiler;
 
-import org.codehaus.groovy.ast.DynamicVariable;
-import org.codehaus.groovy.ast.MethodNode;
 import org.spockframework.lang.Wildcard;
 import org.spockframework.util.*;
 
 import java.util.*;
 
+import org.codehaus.groovy.ast.*;
 import org.codehaus.groovy.ast.expr.*;
 import org.codehaus.groovy.ast.stmt.ExpressionStatement;
 import org.codehaus.groovy.syntax.Types;
@@ -332,7 +331,14 @@ public class InteractionRewriter {
 
     if (arg instanceof CastExpression) {
       CastExpression cast = (CastExpression)arg;
-      addArg(cast.getExpression());
+
+      if (cast.getExpression() instanceof ListExpression) {
+        // keep casting expression so that `[] as Set` will still be correctly cast
+        call(resources.getAstNodeCache().InteractionBuilder_AddEqualArg, arg);
+      } else {
+        addArg(cast.getExpression());
+      }
+
       call(resources.getAstNodeCache().InteractionBuilder_TypeLastArg, new ClassExpression(cast.getType()));
       return;
     }

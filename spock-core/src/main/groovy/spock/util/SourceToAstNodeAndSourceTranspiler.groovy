@@ -504,6 +504,10 @@ class AstNodeToScriptVisitor extends CompilationUnit.PrimaryClassNodeOperation i
       print '{ ' // will already have 'static' from modifiers
       printLineBreak()
     } else {
+      if (node.genericsTypes) {
+        visitGenerics node.genericsTypes
+        print ' '
+      }
       visitType node.returnType
       print " $node.name("
       visitParameters(node.parameters)
@@ -553,18 +557,9 @@ class AstNodeToScriptVisitor extends CompilationUnit.PrimaryClassNodeOperation i
     // > do not print initial expression, as this is executed as part of the constructor, unless on static constant
     // but since we want to see what is going on, we do render it
     Expression exp = node.initialValueExpression
-    if (exp instanceof ConstantExpression) exp = Verifier.transformToPrimitiveConstantIfPossible(exp)
-    ClassNode type = exp?.type
     if (exp) {
-      // GROOVY-5150: final constants may be initialized directly
       print ' = '
-      if (ClassHelper.STRING_TYPE == type) {
-        print "'" + node.initialValueExpression.text.replace("'", "\\'") + "'"
-      } else if (ClassHelper.char_TYPE == type) {
-        print "'${node.initialValueExpression.text}'"
-      } else {
-        print node.initialValueExpression.text
-      }
+      exp.visit(this)
     }
     printLineBreak()
   }
@@ -807,8 +802,8 @@ class AstNodeToScriptVisitor extends CompilationUnit.PrimaryClassNodeOperation i
     print '{ '
     if (expression?.parameters) {
       visitParameters(expression?.parameters)
-      print ' ->'
     }
+    print ' ->'
     printLineBreak()
     indented {
       expression?.code?.visit this
@@ -876,17 +871,31 @@ class AstNodeToScriptVisitor extends CompilationUnit.PrimaryClassNodeOperation i
     print expression?.field?.name
   }
 
-  void visitConstantExpression(ConstantExpression expression, boolean unwrapQuotes = false) {
+  private static String escapeCharacters(String input) {
+    input
+      ?.replaceAll('\\\\', '\\\\\\\\')
+      ?.replaceAll('\b', '\\\\b')
+      ?.replaceAll('\f', '\\\\f')
+      ?.replaceAll('\n', '\\\\n')
+      ?.replaceAll('\r', '\\\\r')
+      ?.replaceAll('\t', '\\\\t')
+      ?.replaceAll("'", "\\\\'")
+      ?.replaceAll('"', '\\\\"')
+      ?.replaceAll('\\$', '\\\\\\$')
+  }
+
+  void visitConstantExpression(ConstantExpression expression, boolean unwrapQuotes = false, Boolean escapeChars = null) {
     if (expression instanceof AnnotationConstantExpression) {
       visitAnnotationNode (expression.value as AnnotationNode)
       return
     }
-    if (expression.value instanceof String && !unwrapQuotes) {
-      // string reverse escaping is very naive
-      def escaped = ((String)expression.value).replaceAll('\n', '\\\\n').replaceAll("'", "\\\\'")
-      print "'$escaped'"
+    if ((expression.value instanceof String || expression.value instanceof Character) && !unwrapQuotes) {
+      //noinspection GroovyPointlessBoolean
+      String value = escapeChars == false ? expression.value : escapeCharacters(expression.value as String)
+      print "'$value'"
     } else {
-      print expression.value
+      //noinspection GroovyPointlessBoolean
+      print escapeChars == true ? escapeCharacters(expression.value as String) : expression.value
     }
   }
 
@@ -924,13 +933,33 @@ class AstNodeToScriptVisitor extends CompilationUnit.PrimaryClassNodeOperation i
 
   @Override
   void visitGStringExpression(GStringExpression expression) {
-    // original groovy version loses enclosing ${}
-    // so we add it for everything, as the ${} style is always correct
-    def text = expression.text
-    expression.values.each {
-      text = text.replace("\$${it.text}", "\${${it.text}}")
-    }
-    print '"' + text + '"'
+    print '"'
+    ((expression.strings as Collection<Expression>) + expression.values)
+      .sort { left, right ->
+        left.lineNumber <=> right.lineNumber
+          ?: left.columnNumber <=> right.columnNumber
+      }
+      .each {
+        if (it in expression.values) {
+          if (it instanceof ClosureExpression) {
+            print '$'
+            it.visit(this)
+          } else {
+            print '${'
+            if (it instanceof VariableExpression) {
+              visitVariableExpression(it, false)
+            } else {
+              it.visit(this)
+            }
+            print '}'
+          }
+        } else if (it instanceof ConstantExpression) {
+          visitConstantExpression(it, true, true)
+        } else {
+          it.visit(this)
+        }
+      }
+    print '"'
   }
 
   @Override
@@ -962,12 +991,19 @@ class AstNodeToScriptVisitor extends CompilationUnit.PrimaryClassNodeOperation i
 
   @Override
   void visitCastExpression(CastExpression expression) {
-    print '(('
-    expression?.expression?.visit this
-    print ') as '
-    visitType(expression?.type)
-    print ')'
-
+    if (expression.coerce) {
+      print '(('
+      expression?.expression?.visit this
+      print ') as '
+      visitType(expression?.type)
+      print ')'
+    } else {
+      print '(('
+      visitType(expression?.type)
+      print ') '
+      expression?.expression?.visit this
+      print ')'
+    }
   }
 
   /**
@@ -975,15 +1011,12 @@ class AstNodeToScriptVisitor extends CompilationUnit.PrimaryClassNodeOperation i
    * @param classNode
    */
   void visitType(ClassNode classNode) {
-    def name = classNode.name
-    if (name =~ /^\[+L/ && name.endsWith(';')) {
-      int numDimensions = name.indexOf('L')
-      print "${classNode.name[(numDimensions + 1)..-2]}" + ('[]' * numDimensions)
+    if (classNode.array || classNode.genericsPlaceHolder) {
+      print classNode.toString(false)
     } else {
-      print name
+      print classNode.name
+      visitGenerics classNode?.genericsTypes
     }
-    // see if we can improve rendering for method parameters
-    visitGenerics classNode?.genericsTypes
   }
 
   void visitArgumentlistExpression(ArgumentListExpression expression, boolean showTypes = false) {
@@ -1210,7 +1243,11 @@ class AstNodeToScriptVisitor extends CompilationUnit.PrimaryClassNodeOperation i
         print ', '
       }
       first = false
-      ((ASTNode)it).visit this
+      if (it instanceof AnnotationConstantExpression) {
+        visitConstantExpression(it)
+      } else {
+        (it as ASTNode).visit this
+      }
     }
   }
 

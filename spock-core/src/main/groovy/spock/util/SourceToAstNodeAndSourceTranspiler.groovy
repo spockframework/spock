@@ -1243,6 +1243,12 @@ class AstNodeToScriptVisitor extends CompilationUnit.PrimaryClassNodeOperation i
         print ', '
       }
       first = false
+      /*
+      I have no idea why the AnnotationConstantExpression does it,
+      but it first visits the values of the members before it visits itself.
+      That's why you got org.spockframework.runtime.model.BlockKind.SETUP followed by [] followed by the actual correct representation.
+      https://issues.apache.org/jira/browse/GROOVY-9980
+       */
       if (it instanceof AnnotationConstantExpression) {
         visitConstantExpression(it)
       } else {

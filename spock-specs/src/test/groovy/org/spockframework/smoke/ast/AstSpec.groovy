@@ -17,7 +17,7 @@ class AstSpec extends EmbeddedSpecification {
 
     then:
     result.source == '''\
-@org.spockframework.runtime.model.FeatureMetadata(name = 'a feature', ordinal = 0, line = 1, blocks = [org.spockframework.runtime.model.BlockKind.SETUP[]@org.spockframework.runtime.model.BlockMetadata(kind = org.spockframework.runtime.model.BlockKind.SETUP, texts = [])], parameterNames = [])
+@org.spockframework.runtime.model.FeatureMetadata(name = 'a feature', ordinal = 0, line = 1, blocks = [@org.spockframework.runtime.model.BlockMetadata(kind = org.spockframework.runtime.model.BlockKind.SETUP, texts = [])], parameterNames = [])
 public void $spock_feature_0_0() {
     java.lang.Object nothing = null
     this.getSpecificationContext().getMockController().leaveScope()
@@ -45,7 +45,7 @@ private java.lang.Object $spock_initializeFields() {
     foo = 'bar'
 }
 
-@org.spockframework.runtime.model.FeatureMetadata(name = 'a feature', ordinal = 0, line = 3, blocks = [org.spockframework.runtime.model.BlockKind.SETUP[]@org.spockframework.runtime.model.BlockMetadata(kind = org.spockframework.runtime.model.BlockKind.SETUP, texts = [])], parameterNames = [])
+@org.spockframework.runtime.model.FeatureMetadata(name = 'a feature', ordinal = 0, line = 3, blocks = [@org.spockframework.runtime.model.BlockMetadata(kind = org.spockframework.runtime.model.BlockKind.SETUP, texts = [])], parameterNames = [])
 public void $spock_feature_0_0() {
     java.lang.Object nothing = null
     this.getSpecificationContext().getMockController().leaveScope()
@@ -69,7 +69,7 @@ import spock.lang.*
 @org.spockframework.runtime.model.SpecMetadata(filename = 'script.groovy', line = 1)
 public class apackage.ASpec extends spock.lang.Specification {
 
-    @org.spockframework.runtime.model.FeatureMetadata(name = 'a feature', ordinal = 0, line = 1, blocks = [org.spockframework.runtime.model.BlockKind.SETUP[]@org.spockframework.runtime.model.BlockMetadata(kind = org.spockframework.runtime.model.BlockKind.SETUP, texts = [])], parameterNames = [])
+    @org.spockframework.runtime.model.FeatureMetadata(name = 'a feature', ordinal = 0, line = 1, blocks = [@org.spockframework.runtime.model.BlockMetadata(kind = org.spockframework.runtime.model.BlockKind.SETUP, texts = [])], parameterNames = [])
     public void $spock_feature_0_0() {
         java.lang.Object nothing = null
         this.getSpecificationContext().getMockController().leaveScope()
@@ -333,7 +333,40 @@ class Bar extends Foo implements Ex, Serializable {
     def t = [:]
     def u = ++c
     def v = "$STR"(a)
+    def w = { println g }
+    def x = c as long
+    def y = (long)c
     assert c == d
+  }
+
+  void gstrings() {
+    def a = "simple"
+    def b = "normal string \\$a ..."
+    def c = "gstring $a ..."
+    def d = "gstring with brackets ${a.size()} ..."
+    def e = "gstring with closure ${-> a} ... "
+    def f = """simple
+multi
+line"""
+    def g =  """multi line gstring
+$a
+..."""
+    def h = """multi line gstring
+ with brackets ${a.size()}
+ with escaped brackets \\${a.size()}
+ ..."""
+    def i = """multi line gstring
+ with closure ${-> a}
+ with escaped closure \\${-> a}
+ ... """
+    def j = """multi line gstring
+ with simple value $a
+ with simple escaped value \\$a
+ with brackets ${a.size()}
+ with escaped brackets \\${a.size()}
+ with closure ${-> a}
+ with escaped closure ${-> a}
+..."""
   }
 
   @Override
@@ -350,6 +383,8 @@ class Bar extends Foo implements Ex, Serializable {
     def y = a?.length
     def z = a."$STR"
   }
+
+  static final void statMethod(String a) {}
 }
 
 
@@ -425,13 +460,13 @@ import java.nio.file.*
 @apackage.another.Ann
 public class apackage.another.Bar extends apackage.another.Foo implements apackage.another.Ex, java.io.Serializable {
 
-    private static final [I ARR = (int[]) [1, 2, 3]
+    private static final int[] ARR = (([1, 2, 3]) as int[])
     private static final java.lang.String STR = 'str'
     private static final char CHR = ' '
     private static final int INT = 10
     private static int st
     private int order
-    private java.lang.String someString = String with $STR
+    private java.lang.String someString = "String with ${STR}"
     private java.lang.String plainString = 'plain'
 
     public apackage.another.Bar() {
@@ -501,7 +536,7 @@ public class apackage.another.Bar extends apackage.another.Foo implements apacka
         java.lang.Integer d = +( c )
         java.lang.Object e = ['a': b , STR : c ]
         java.lang.Object f = [*: e , 'foo': 'bar']
-        java.lang.Object g = "a: ${a} and b: ${e.a.compareTo(c)}"
+        java.lang.Object g = "a: ${a} and b: ${ e.a.compareTo(c)}"
         java.lang.Integer h = 1
         java.lang.Integer i = 2
         def (java.lang.Object j, java.lang.Object k) = x
@@ -518,7 +553,33 @@ public class apackage.another.Bar extends apackage.another.Foo implements apacka
         java.lang.Object t = [:]
         java.lang.Object u = ++( c )
         java.lang.Object v = this."${STR}"(a)
+        java.lang.Object w = { ->
+            this.println(g)
+        }
+        java.lang.Object x = (( c ) as long)
+        java.lang.Object y = ((long) c )
         assert c == d : null
+    }
+
+    public void gstrings() {
+        java.lang.Object a = 'simple'
+        java.lang.Object b = 'normal string \\$a ...'
+        java.lang.Object c = "gstring ${a} ..."
+        java.lang.Object d = "gstring with brackets ${a.size()} ..."
+        java.lang.Object e = "gstring with closure ${ ->
+            a
+        } ... "
+        java.lang.Object f = 'simple\\nmulti\\nline'
+        java.lang.Object g = "multi line gstring\\n${a}\\n..."
+        java.lang.Object h = "multi line gstring\\n with brackets ${a.size()}\\n with escaped brackets \\${a.size()}\\n ..."
+        java.lang.Object i = "multi line gstring\\n with closure ${ ->
+            a
+        }\\n with escaped closure \\${-> a}\\n ... "
+        java.lang.Object j = "multi line gstring\\n with simple value ${a}\\n with simple escaped value \\$a\\n with brackets ${a.size()}\\n with escaped brackets \\${a.size()}\\n with closure ${ ->
+            a
+        }\\n with escaped closure ${ ->
+            a
+        }\\n..."
     }
 
     @java.lang.Override
@@ -531,10 +592,13 @@ public class apackage.another.Bar extends apackage.another.Foo implements apacka
     public void multix(java.nio.file.Path a, @apackage.another.Ann int b, java.lang.String desc = '') {
     }
 
-    public void prop(java.util.List l, [I a) {
+    public void prop(java.util.List l, int[] a) {
         java.lang.Object x = l*.foo
         java.lang.Object y = a?.length
         java.lang.Object z = a."${STR}"
+    }
+
+    public static final void statMethod(java.lang.String a) {
     }
 
 }
@@ -550,14 +614,14 @@ import java.nio.file.*
 
 public class apackage.another.Ext<T extends java.io.Serializable, V extends java.lang.Cloneable> extends java.lang.Object {
 
-    private java.io.Serializable[] arr
+    private T[] arr
     private java.util.List<V> lst = []
 
-    public java.lang.Cloneable<V extends java.lang.Cloneable> foo(java.util.List<? super java.io.Serializable<T extends java.io.Serializable>> consumer) {
+    public V foo(java.util.List<? super T> consumer) {
     }
 
     @apackage.another.Ann
-    public boolean saveCompare(java.io.Serializable<X extends java.io.Serializable & java.lang.Comparable<T>> a, java.io.Serializable<X extends java.io.Serializable & java.lang.Comparable<T>> b) {
+    public <X extends java.io.Serializable & java.lang.Comparable<T>> boolean saveCompare(X a, X b) {
     }
 
 }'''

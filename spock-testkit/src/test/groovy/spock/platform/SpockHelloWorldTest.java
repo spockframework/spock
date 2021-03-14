@@ -19,7 +19,7 @@ import org.junit.platform.testkit.engine.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.*;
 
-class SpockHelloWorldTest {
+class SpockHelloWorldTest extends SpockEngineBase {
 
   @Test
   void verifySimpleExample() {
@@ -85,19 +85,4 @@ class SpockHelloWorldTest {
     execute(selectClass(testClass), assertions);
     execute(selectUniqueId("[engine:spock]/[spec:" + testClass.getName() + "]"), assertions);
   }
-
-  private void execute(DiscoverySelector selector, Consumer<EventStatistics> statisticsConsumer) {
-    execute(selector)
-      .testEvents()
-      .debug()
-      .assertStatistics(statisticsConsumer);
-  }
-
-  private EngineExecutionResults execute(DiscoverySelector selector) {
-    return EngineTestKit
-      .engine("spock")
-      .selectors(selector)
-      .execute();
-  }
-
 }

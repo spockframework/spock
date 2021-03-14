@@ -32,6 +32,8 @@ import org.spockframework.util.UnreachableCodeError;
 
 import spock.lang.Shared;
 
+import java.util.Collection;
+
 // we don't currently check this.x and super.x because
 // it's not as clear how this should be done (for example,
 // 'x' could refer to a property)
@@ -44,6 +46,10 @@ public class InstanceFieldAccessChecker extends ClassCodeVisitorSupport {
 
   public void check(Expression expr) {
     expr.visit(this);
+  }
+
+  public void check(Collection<Statement> stats) {
+    stats.forEach(stat -> stat.visit(this));
   }
 
   public void check(Method method) {

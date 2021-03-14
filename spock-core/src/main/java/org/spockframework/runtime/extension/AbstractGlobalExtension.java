@@ -16,17 +16,12 @@
 
 package org.spockframework.runtime.extension;
 
-import org.spockframework.runtime.model.SpecInfo;
-
 /**
  * Convenience base class for global extensions that allows to implement
  * methods selectively.
+ * @deprecated The logic of this class has moved to default methods in {@link IGlobalExtension},
+ *             implement that interface directly instead of extending this class
  */
+@Deprecated
 public abstract class AbstractGlobalExtension implements IGlobalExtension {
-  @Override
-  public void start() {}
-  @Override
-  public void visitSpec(SpecInfo spec) {}
-  @Override
-  public void stop() {}
 }

@@ -19,10 +19,9 @@ package org.spockframework.runtime.extension;
 import org.spockframework.runtime.model.SpecInfo;
 
 // TODO: start/stop lifecycle
-// TODO: improve configuration injection (inject into ctor/start?)
 // TODO: design threading model
 public interface IGlobalExtension {
-  void start();
-  void visitSpec(SpecInfo spec);
-  void stop();
+  default void start() {};
+  default void visitSpec(SpecInfo spec){};
+  default void stop(){};
 }

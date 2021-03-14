@@ -18,7 +18,6 @@ import spock.config.ConfigurationObject;
 
 @ConfigurationObject("report")
 public class ReportLogConfiguration {
-  public boolean enabled = Boolean.getBoolean("spock.logEnabled");
   public String issueNamePrefix = "";
   public String issueUrlPrefix = "";
 }

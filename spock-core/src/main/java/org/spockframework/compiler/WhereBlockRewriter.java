@@ -640,6 +640,8 @@ public class WhereBlockRewriter {
   private void createDataProcessorMethod() {
     if (dataProcessorVars.isEmpty()) return;
 
+    instanceFieldAccessChecker.check(dataProcessorStats);
+
     dataProcessorStats.add(
         new ReturnStatement(
             new ArrayExpression(

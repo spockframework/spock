@@ -49,6 +49,9 @@ task groovyConsole(type: JavaExec) {
 
 compileTestGroovy {
   def compileTestGroovyExec = "$buildDir/jacoco/compileTestGroovy.exec"
-  groovyOptions.fork jvmArgs: ["-javaagent:${configurations.jacocoAgentRuntime.asPath}=destfile=$compileTestGroovyExec,dumponexit=false,append=false,jmx=true,includes=org.spockframework.*".toString()]
+  groovyOptions.fork jvmArgs: [
+    "-javaagent:${configurations.jacocoAgentRuntime.asPath}=destfile=$compileTestGroovyExec,dumponexit=false,append=false,jmx=true,includes=org.spockframework.*".toString(),
+    "-DJacocoAstDumpTrigger=true"
+  ]
   outputs.file(compileTestGroovyExec)
 }

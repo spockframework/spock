@@ -954,38 +954,6 @@ This behaviour can be enabled according to the <a href="#spock-configuration-fil
 </div>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_report_log"><a class="anchor" href="#_report_log"></a><a class="link" href="#_report_log">Report Log</a></h3>
-<div class="paragraph">
-<p>Spock can create a report log of the executed tests in JSON format. This report contains also things like
-<a href="#_title_and_narrative"><code>@Title</code></a>, <a href="#_title_and_narrative"><code>@Narrative</code></a>, <a href="#_see"><code>@See</code></a> and <a href="#_issue"><code>@Issue</code></a> values or
-<a href="spock_primer.html#_blocks">block descriptors</a>.
-This report can be enabled according to the <a href="#spock-configuration-file">Spock Configuration File</a> section. The default is to not generate this
-report.</p>
-</div>
-<div class="paragraph">
-<p>For the report to be generated, you have to enable it and set at least the <code>logFileDir</code> and <code>logFileName</code>. <code>enabled</code> can
-also be set via the system property <code>spock.logEnabled</code>, <code>logFileDir</code> can also be set via the system property
-<code>spock.logFileDir</code> and <code>logFileName</code> can also be set via the system property <code>spock.logFileName</code>.</p>
-</div>
-<div class="paragraph">
-<p>If a <code>logFileSuffix</code> is set (or the system property <code>spock.logFileSuffix</code>), it is appended to the base filename,
-separated by a dash. If the suffix contains the string <code>#timestamp</code>, this is replaced by the current date and time in
-<code>UTC</code> automatically. If you instead want to have your local date and time, you can use the setting from the example
-below.</p>
-</div>
-<div class="listingblock">
-<div class="title">Report Log Configuration</div>
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">report {
-    enabled <span class="predefined-constant">true</span>
-    logFileDir <span class="string"><span class="delimiter">'</span><span class="content">.</span><span class="delimiter">'</span></span>
-    logFileName <span class="string"><span class="delimiter">'</span><span class="content">spock-report.json</span><span class="delimiter">'</span></span>
-    logFileSuffix <span class="keyword">new</span> <span class="predefined-type">Date</span>().format(<span class="string"><span class="delimiter">'</span><span class="content">yyyy-MM-dd_HH_mm_ss</span><span class="delimiter">'</span></span>)
-}</code></pre>
-</div>
-</div>
-</div>
 </div>
 </div>
 <div class="sect1">
@@ -1006,7 +974,7 @@ methods. In your implementation of those methods you can set up the magic of you
 interceptors to various interception points that are described below.</p>
 </div>
 <div class="paragraph">
-<p>Which type of annotation you create depends on your use case. If you want to do something once during the Spock run - at
+<p>It depends on your use case which type of annotation you create. If you want to do something once during the Spock run - at
 the start or end - or want to apply something to all executed specifications without the user of the extension having to
 do anything besides including your extension in the classpath, then you should opt for a global extension. If you
 instead want to apply your magic only by choice of the user, then you should implement an annotation driven local
@@ -1018,8 +986,7 @@ extension.</p>
 <p>To create a global extension you need to create a class that implements the interface <code>IGlobalExtension</code> and put its
 fully-qualified class name in a file <code>META-INF/services/org.spockframework.runtime.extension.IGlobalExtension</code> in the
 class path. As soon as these two conditions are satisfied, the extension is automatically loaded and used when Spock is
-running. For convenience there is also the class <code>AbstractGlobalExtension</code>, which provides empty implementations for all
-methods in the interface, so that only the needed ones need to be overridden.</p>
+running.</p>
 </div>
 <div class="paragraph">
 <p><code>IGlobalExtension</code> has the following three methods:</p>
@@ -1037,7 +1004,7 @@ like attaching interceptors to various interception points as described in the c
 </dd>
 <dt class="hdlist1"><code>stop()</code></dt>
 <dd>
-<p>This is called once at the very end of the Spock execution.</p>
+<p>This is called at least once at the very end of the Spock execution.</p>
 </dd>
 </dl>
 </div>
@@ -1078,7 +1045,7 @@ extension magic, like attaching interceptors to various interception points as d
 <dt class="hdlist1"><code>visitSpecAnnotations(List&lt;T&gt; annotations, SpecInfo spec)</code></dt>
 <dd>
 <p>This is called once for each specification where the annotation is applied one or multiple times
-with the annotation instances as first parameter and the specification info object as second parameter.
+with the annotation instances as first parameter, and the specification info object as second parameter.
 The default implementation calls <code>visitSpecAnnotation</code> once for each given annotation.</p>
 </dd>
 <dt class="hdlist1"><code>visitSpecAnnotation(T annotation, SpecInfo spec)</code></dt>
@@ -1089,7 +1056,7 @@ The default implementation throws an exception.</p>
 <dt class="hdlist1"><code>visitFieldAnnotations(List&lt;T&gt; annotations, FieldInfo field)</code></dt>
 <dd>
 <p>This is called once for each field where the annotation is applied one or multiple times
-with the annotation instances as first parameter and the field info object as second parameter.
+with the annotation instances as first parameter, and the field info object as second parameter.
 The default implementation calls <code>visitFieldAnnotation</code> once for each given annotation.</p>
 </dd>
 <dt class="hdlist1"><code>visitFieldAnnotation(T annotation, FieldInfo field)</code></dt>
@@ -1100,7 +1067,7 @@ The default implementation throws an exception.</p>
 <dt class="hdlist1"><code>visitFixtureAnnotations(List&lt;T&gt; annotations, MethodInfo fixtureMethod)</code></dt>
 <dd>
 <p>This is called once for each fixture method where the annotation is applied one or multiple times
-with the annotation instances as first parameter and the fixture method info object as second parameter.
+with the annotation instances as first parameter, and the fixture method info object as second parameter.
 The default implementation calls <code>visitFixtureAnnotation</code> once for each given annotation.</p>
 </dd>
 <dt class="hdlist1"><code>visitFixtureAnnotation(T annotation, MethodInfo fixtureMethod)</code></dt>
@@ -1111,7 +1078,7 @@ The default implementation throws an exception.</p>
 <dt class="hdlist1"><code>visitFeatureAnnotations(List&lt;T&gt; annotations, FeatureInfo feature)</code></dt>
 <dd>
 <p>This is called once for each feature method where the annotation is applied one or multiple times
-with the annotation instances as first parameter and the feature info object as second parameter.
+with the annotation instances as first parameter, and the feature info object as second parameter.
 The default implementation calls <code>visitFeatureAnnotation</code> once for each given annotation.</p>
 </dd>
 <dt class="hdlist1"><code>visitFeatureAnnotation(T annotation, FeatureInfo feature)</code></dt>
@@ -1152,10 +1119,36 @@ Spock code.
 </table>
 </div>
 <div class="paragraph">
-<p>To use the values of the configuration object in your extension, just define an uninitialized instance field of that
-type. Spock will then automatically create exactly one instance of the configuration object per Spock run, apply the
+<p>To use the values of the configuration object in your extension, you can either use constructor injection or field injection.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>To use constructor injection just define a constructor with one or more configuration object parameters.</p>
+</li>
+<li>
+<p>To use field injection just define an uninitialized non-final instance field of that type.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Spock will then automatically create exactly one instance of the configuration object per Spock run, apply the
 settings from the configuration file to it (before the <code>start()</code> methods of global extensions are called) and inject
 that instance into the extension class instances.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+Constructor injection has a higher priority than field injection and Spock won&#8217;t inject any fields if it finds a suitable constructor.
+      If you want to support both Spock 1.x and 2.x you can either use only field injection (Spock 1.x only supports field injection),
+      or you can have both a default constructor and an injectable constructor, this way Spock 2.x will use constructor injection and Spock 1.x will use field injection.
+</td>
+</tr>
+</table>
 </div>
 <div class="paragraph">
 <p>If a configuration object should be used exclusively in an annotation driven local extension you must register it in
@@ -1164,8 +1157,8 @@ This is similar to a global extension, put the fully-qualified class name of the
 This will cause the configuration object to properly get initialized and populated with the settings from the configuration file.
 However, if the configuration object is used in a global extension, you can also use it just fine in an annotation driven local
 extension. If the configuration object is only used in an annotation driven local extension, you will get an exception
-when then configuration object is to be injected into the extension and you will also get an error when the
-configuration file is evaluated and it contains the section, as the configuration object is not properly registered yet.</p>
+when then configuration object is to be injected into the extension, and you will also get an error when the
+configuration file is evaluated, and it contains the section, as the configuration object is not properly registered yet.</p>
 </div>
 </div>
 <div class="sect2">
@@ -1173,7 +1166,7 @@ configuration file is evaluated and it contains the section, as the configuratio
 <div class="paragraph">
 <p>For applying the magic of your extension, there are various interception points, where you can attach interceptors from
 the extension methods described above to hook into the Spock lifecycle. For each interception point there can of course
-be multiple interceptors added by arbitrary Spock extensions (shipped or 3rd party). Their order is currently depending
+be multiple interceptors added by arbitrary Spock extensions (shipped or 3rd party). Their order currently depends
 on the order they are added, but there should not be made any order assumptions within one interception point.</p>
 </div>
 <div class="imageblock text-center">
@@ -1220,6 +1213,7 @@ each at addition time whether it is attached to the method interceptor or the ot
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="type">class</span> <span class="class">I</span> <span class="directive">extends</span> AbstractMethodInterceptor { I(<span class="keyword">def</span> s) {} }
 
+<span class="comment">// On SpecInfo</span>
 specInfo.addSharedInitializerInterceptor <span class="keyword">new</span> I(<span class="string"><span class="delimiter">'</span><span class="content">shared initializer</span><span class="delimiter">'</span></span>)
 specInfo.sharedInitializerMethod?.addInterceptor <span class="keyword">new</span> I(<span class="string"><span class="delimiter">'</span><span class="content">shared initializer method</span><span class="delimiter">'</span></span>)
 specInfo.addInterceptor <span class="keyword">new</span> I(<span class="string"><span class="delimiter">'</span><span class="content">specification</span><span class="delimiter">'</span></span>)
@@ -1236,7 +1230,12 @@ specInfo.addCleanupInterceptor <span class="keyword">new</span> I(<span class="s
 specInfo.cleanupMethods*.addInterceptor <span class="keyword">new</span> I(<span class="string"><span class="delimiter">'</span><span class="content">cleanup method</span><span class="delimiter">'</span></span>)
 specInfo.addCleanupSpecInterceptor <span class="keyword">new</span> I(<span class="string"><span class="delimiter">'</span><span class="content">cleanup spec</span><span class="delimiter">'</span></span>)
 specInfo.cleanupSpecMethods*.addInterceptor <span class="keyword">new</span> I(<span class="string"><span class="delimiter">'</span><span class="content">cleanup spec method</span><span class="delimiter">'</span></span>)
-specInfo.allFixtureMethods*.addInterceptor <span class="keyword">new</span> I(<span class="string"><span class="delimiter">'</span><span class="content">fixture method</span><span class="delimiter">'</span></span>)</code></pre>
+specInfo.allFixtureMethods*.addInterceptor <span class="keyword">new</span> I(<span class="string"><span class="delimiter">'</span><span class="content">fixture method</span><span class="delimiter">'</span></span>)
+
+<span class="comment">// on FeatureInfo</span>
+featureInfo.addInterceptor <span class="keyword">new</span> I(<span class="string"><span class="delimiter">'</span><span class="content">feature</span><span class="delimiter">'</span></span>)
+featureInfo.addIterationInterceptor <span class="keyword">new</span> I(<span class="string"><span class="delimiter">'</span><span class="content">iteration</span><span class="delimiter">'</span></span>)
+featureInfo.featureMethod.addInterceptor <span class="keyword">new</span> I(<span class="string"><span class="delimiter">'</span><span class="content">feature method</span><span class="delimiter">'</span></span>)</code></pre>
 </div>
 </div>
 <div class="sect3">
@@ -1244,7 +1243,7 @@ specInfo.allFixtureMethods*.addInterceptor <span class="keyword">new</span> I(<s
 <div class="paragraph">
 <p>If your interceptor should support custom method parameters for wrapped methods, this can be done by modifying
 <code>invocation.arguments</code>. Two use cases for this would be a mocking framework that can inject method parameters that are
-annotated with a special annotation or some test helper that injects objects of a specific type that are created and
+annotated with a special annotation, or some test helper that injects objects of a specific type that are created and
 prepared for usage automatically.</p>
 </div>
 <div class="paragraph">
@@ -1325,7 +1324,7 @@ restrictions, if parameters should be injected by your extension:</p>
 </ul>
 </div>
 <div class="paragraph">
-<p>of course you can also make your extension only inject a value if none is set already, as the <code>where:</code> block
+<p>Of course, you can also make your extension only inject a value if none is set already, as the <code>where:</code> block
 assignments happen before the method interceptor is called</p>
 </div>
 <div class="paragraph">
@@ -1372,7 +1371,7 @@ assignments happen before the method interceptor is called</p>
 <div id="footer">
 <div id="footer-text">
 Version 2.0-SNAPSHOT<br>
-Last updated 2021-03-12 14:58:08 UTC
+Last updated 2021-03-14 14:46:56 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./coderay-asciidoctor.css">

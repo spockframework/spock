@@ -336,6 +336,7 @@ class Bar extends Foo implements Ex, Serializable {
     def w = { println g }
     def x = c as long
     def y = (long)c
+    def z = [1, 2, 3][0]
     assert c == d
   }
 
@@ -561,6 +562,7 @@ public class apackage.another.Bar extends apackage.another.Foo implements apacka
         }
         java.lang.Object x = (( c ) as long)
         java.lang.Object y = ((long) c )
+        java.lang.Object z = [1, 2, 3] [ 0]
         assert c == d : null
     }
 

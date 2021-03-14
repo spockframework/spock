@@ -745,13 +745,7 @@ class AstNodeToScriptVisitor extends CompilationUnit.PrimaryClassNodeOperation i
   @Override
   void visitStaticMethodCallExpression(StaticMethodCallExpression expression) {
     print expression?.ownerType?.name + '.' + expression?.method
-    if (expression?.arguments instanceof VariableExpression || expression?.arguments instanceof MethodCallExpression) {
-      print '('
-      expression?.arguments?.visit this
-      print ')'
-    } else {
-      expression?.arguments?.visit this
-    }
+    expression?.arguments?.visit this
   }
 
   @Override
@@ -921,10 +915,6 @@ class AstNodeToScriptVisitor extends CompilationUnit.PrimaryClassNodeOperation i
       visitArgumentlistExpression((ArgumentListExpression)expression?.leftExpression, true)
       print " $expression.operation.text "
       expression.rightExpression.visit this
-
-      if (expression?.operation?.text == '[') {
-        print ']'
-      }
     } else {
       visitType expression?.leftExpression?.type
       visitBinaryExpression expression // is a BinaryExpression
@@ -955,8 +945,6 @@ class AstNodeToScriptVisitor extends CompilationUnit.PrimaryClassNodeOperation i
           }
         } else if (it instanceof ConstantExpression) {
           visitConstantExpression(it, true, true)
-        } else {
-          it.visit(this)
         }
       }
     print '"'

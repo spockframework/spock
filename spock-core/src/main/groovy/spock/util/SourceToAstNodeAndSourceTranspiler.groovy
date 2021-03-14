@@ -70,9 +70,6 @@ class SourceToAstNodeAndSourceTranspiler {
       cfe.message.eachLine {
         writer.println it
       }
-    } catch (Throwable t) {
-      writer.println 'Unable to produce AST for this phase due to an error:'
-      writer.println t.message
     }
     return new TranspileResult(writer.toString(), captureVisitor.nodeCaptures)
   }

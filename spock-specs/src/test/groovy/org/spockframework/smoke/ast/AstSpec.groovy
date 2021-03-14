@@ -415,7 +415,7 @@ import java.nio.file.*
 
 public abstract class apackage.another.Foo extends java.lang.Object implements java.lang.Comparable {
 
-    private java.util.List<String> x = new java.util.ArrayList()
+    private java.util.List<String> x = new java.util.ArrayList<>()
 
     public apackage.another.Foo(java.lang.String initialValue) {
         x << initialValue

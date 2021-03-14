@@ -425,7 +425,7 @@ class AstNodeToScriptVisitor extends CompilationUnit.PrimaryClassNodeOperation i
 
   private void visitGenerics(GenericsType[] generics) {
 
-    if (generics) {
+    if (generics != null) {
       print '<'
       boolean first = true
       generics.each { GenericsType it ->

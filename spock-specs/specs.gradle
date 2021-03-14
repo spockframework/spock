@@ -6,9 +6,12 @@ apply plugin: "spock-base"
 
 configurations {
   groovyConsole
+  jacocoAgentRuntime
 }
 
 dependencies {
+  compile libs.groovyJmx
+
   testCompile project(":spock-core")
   testCompile libs.groovySql  //for groovy.sql.Sql
   testCompile(libs.groovyTest) {  //for groovy.test.NotYetImplemented
@@ -22,6 +25,7 @@ dependencies {
   testRuntime libs.h2database
 
   groovyConsole groovyConsoleExtraDependencies
+  jacocoAgentRuntime libs.jacocoAgent
 }
 
 sourceCompatibility = javaVersion
@@ -41,4 +45,10 @@ test {
 task groovyConsole(type: JavaExec) {
   main = variant == 2.5 ? "groovy.ui.Console" : "groovy.console.ui.Console"
   classpath = sourceSets.test.runtimeClasspath + configurations.groovyConsole
+}
+
+compileTestGroovy {
+  def compileTestGroovyExec = "$buildDir/jacoco/compileTestGroovy.exec"
+  groovyOptions.fork jvmArgs: ["-javaagent:${configurations.jacocoAgentRuntime.asPath}=destfile=$compileTestGroovyExec,dumponexit=false,append=false,jmx=true,includes=org.spockframework.*".toString()]
+  outputs.file(compileTestGroovyExec)
 }

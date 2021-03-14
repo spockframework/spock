@@ -17,10 +17,11 @@
 package spock.util
 
 import org.spockframework.runtime.SpecUtil
-import org.spockframework.util.NotThreadSafe
+import org.spockframework.util.*
 import spock.lang.Specification
 
-import org.codehaus.groovy.control.MultipleCompilationErrorsException
+import org.codehaus.groovy.control.*
+import org.codehaus.groovy.runtime.StringGroovyMethods
 import org.intellij.lang.annotations.Language
 import org.opentest4j.MultipleFailuresError
 
@@ -75,35 +76,78 @@ class EmbeddedSpecCompiler {
   }
 
   List<Class> compileWithImports(@Language('Groovy') String source) {
-    addPackageImport(Specification.package )
+    addPackageImport(Specification.package)
     // one-liner keeps line numbers intact
     doCompile "package apackage; $imports ${source.trim()}"
   }
 
   Class compileSpecBody(@Language(value = 'Groovy', prefix = 'class ASpec extends spock.lang.Specification { ', suffix = '\n }')
-                        String source) {
+                          String source) {
     // one-liner keeps line numbers intact; newline safeguards against source ending in a line comment
     compileWithImports("class ASpec extends Specification { ${source.trim() + '\n'} }")[0]
   }
 
   Class compileFeatureBody(@Language(value = 'Groovy', prefix = "def 'a feature'() { ", suffix = '\n }')
-                           String source) {
+                             String source) {
     // one-liner keeps line numbers intact; newline safeguards against source ending in a line comment
     compileSpecBody "def 'a feature'() { ${source.trim() + '\n'} }"
+  }
+
+  @Beta
+  TranspileResult transpileWithImports(@Language('Groovy') String source,
+                                       Set showSet = EnumSet.of(Show.ANNOTATIONS, Show.CLASS, Show.METHODS, Show.FIELDS, Show.OBJECT_INITIALIZERS, Show.PROPERTIES),
+                                       CompilePhase phase = CompilePhase.SEMANTIC_ANALYSIS) {
+    addPackageImport(Specification.package)
+    // one-liner keeps line numbers intact
+    doTranspile("package apackage; $imports ${source.trim()}", showSet, phase)
+  }
+
+  @Beta
+  TranspileResult transpileSpecBody(@Language(value = 'Groovy', prefix = 'class ASpec extends spock.lang.Specification { ', suffix = '\n }')
+                                   String source,
+                                    Set showSet = EnumSet.of(Show.ANNOTATIONS, Show.METHODS, Show.FIELDS, Show.OBJECT_INITIALIZERS, Show.PROPERTIES),
+                                    CompilePhase phase = CompilePhase.SEMANTIC_ANALYSIS) {
+    // one-liner keeps line numbers intact; newline safeguards against source ending in a line comment
+    transpileWithImports("class ASpec extends Specification { ${source.trim() + '\n'} }", showSet, phase)
+  }
+
+  @Beta
+  TranspileResult transpileFeatureBody(@Language(value = 'Groovy', prefix = "def 'a feature'() { ", suffix = '\n }')
+                                      String source,
+                                       Set showSet = EnumSet.of(Show.ANNOTATIONS, Show.METHODS),
+                                       CompilePhase phase = CompilePhase.SEMANTIC_ANALYSIS) {
+    // one-liner keeps line numbers intact; newline safeguards against source ending in a line comment
+    transpileSpecBody("def 'a feature'() { ${source.trim() + '\n'} }", showSet, phase)
+  }
+
+  @Beta
+  TranspileResult transpile(@Language('Groovy') String source, Set showSet = Show.all(), CompilePhase phase = CompilePhase.SEMANTIC_ANALYSIS) {
+    doTranspile(imports + source, showSet, phase)
+  }
+
+  private TranspileResult doTranspile(@Language('Groovy') String source, Set showSet, CompilePhase phase) {
+    loader.clearCache()
+    TranspileResult ast = new SourceToAstNodeAndSourceTranspiler().compileScript(source, phase.phaseNumber, showSet, loader)
+    // normalize result
+    String sourceResult = ast.source
+    // Java 15 introduces `stripIndent` with a different behavior, so use explicit method call
+    sourceResult = StringGroovyMethods.stripIndent((CharSequence)sourceResult)
+    sourceResult = sourceResult.trim()
+    return new TranspileResult(sourceResult, ast.nodeCaptures)
   }
 
   private List<Class> doCompile(@Language('Groovy') String source) {
     loader.clearCache()
 
     try {
-    loader.parseClass(source.trim())
+      loader.parseClass(source.trim())
     } catch (MultipleCompilationErrorsException e) {
       def errors = e.errorCollector.errors
       if (unwrapCompileException && errors.every { it.hasProperty("cause") })
         if (errors.size() == 1)
           throw errors[0].cause
         else
-          throw new MultipleFailuresError("Errors during compile",errors.cause)
+          throw new MultipleFailuresError("Errors during compile", errors.cause)
 
       throw e
     }

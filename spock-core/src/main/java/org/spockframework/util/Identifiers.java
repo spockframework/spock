@@ -51,9 +51,11 @@ public abstract class Identifiers {
    */
   public static final String WHERE = "where";
 
+  public static final String COMBINE = "combine";
+
   public static final String AND = "and";
 
-  public static final List<String> BLOCK_LABELS = Arrays.asList(SETUP, GIVEN, EXPECT, WHEN, THEN, CLEANUP, WHERE, AND);
+  public static final List<String> BLOCK_LABELS = Arrays.asList(SETUP, GIVEN, EXPECT, WHEN, THEN, CLEANUP, WHERE, COMBINE, AND);
 
   public static final String SETUP_METHOD = "setup";
 

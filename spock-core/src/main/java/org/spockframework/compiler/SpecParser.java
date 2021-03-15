@@ -25,7 +25,6 @@ import org.codehaus.groovy.ast.*;
 import org.codehaus.groovy.ast.expr.ConstantExpression;
 import org.codehaus.groovy.ast.stmt.Statement;
 
-import static org.spockframework.compiler.WhereBlockRewriter.DATA_TABLE_CROSS_PRODUCT_LABEL;
 import static org.spockframework.util.Identifiers.*;
 
 /**
@@ -193,9 +192,7 @@ public class SpecParser implements GroovyClassVisitor {
 
     for (Statement stat : stats) {
       String statementLabel = stat.getStatementLabel();
-      if ((statementLabel == null)
-        || (statementLabel.equals(DATA_TABLE_CROSS_PRODUCT_LABEL) && (currBlock instanceof WhereBlock)))
-
+      if (statementLabel == null)
         currBlock.getAst().add(stat);
       else
         currBlock = addBlock(method, stat);

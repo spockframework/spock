@@ -103,7 +103,7 @@ a | b
     e.message == 'Data table must have more than just the header row @ line 5, column 1.'
   }
 
-  def "table with just a header in cross product is not allowed"() {
+  def "table with just a header in combination is not allowed"() {
     when:
     compiler.compileFeatureBody """
 expect:
@@ -112,7 +112,7 @@ true
 where:
 a | b
 1 | 2
-cross_product:
+combine:
 c | _
     """
 
@@ -136,7 +136,7 @@ a ; b
     e.message == 'Data table must have more than just the header row @ line 5, column 1.'
   }
 
-  def "table with just a header in cross product is not allowed with semicolon"() {
+  def "table with just a header in combination is not allowed with semicolon"() {
     when:
     compiler.compileFeatureBody """
 expect:
@@ -145,7 +145,7 @@ true
 where:
 a ; b
 1 ; 2
-cross_product:
+combine:
 c ; _
     """
 
@@ -563,7 +563,7 @@ a ; b ; c
     4 | 5 || 9
   }
 
-  def 'data tables with pipes can be cross multiplied'() {
+  def 'data tables with pipes can be combined'() {
     when:
     def results = runner.runSpecBody '''
       def 'a feature (#a #b #c)'() {
@@ -574,10 +574,10 @@ a ; b ; c
         a | _
         1 | _
         2 | _
-        cross_product:
+        combine:
         b | _
         3 | _
-        cross_product:
+        combine:
         c | _
         4 | _
         5 | _
@@ -598,7 +598,7 @@ a ; b ; c
     ]
   }
 
-  def 'data tables with pipes can be cross multiplied (transpiler test)'() {
+  def 'data tables with pipes can be combined (transpiler test)'() {
     when:
     def result = compiler.transpileFeatureBody '''
       expect:
@@ -608,10 +608,10 @@ a ; b ; c
       a | _
       1 | _
       2 | _
-      cross_product:
+      combine:
       b | _
       3 | _
-      cross_product:
+      combine:
       c | _
       4 | _
       5 | _
@@ -654,7 +654,7 @@ a ; b ; c
     '''.stripMargin().trim()
   }
 
-  def 'data tables with semicolons can be cross multiplied'() {
+  def 'data tables with semicolons can be combined'() {
     when:
     def results = runner.runSpecBody '''
       def 'a feature (#a #b #c)'() {
@@ -665,10 +665,10 @@ a ; b ; c
         a ; _
         1 ; _
         2 ; _
-        cross_product:
+        combine:
         b ; _
         3 ; _
-        cross_product:
+        combine:
         c ; _
         4 ; _
         5 ; _
@@ -689,7 +689,7 @@ a ; b ; c
     ]
   }
 
-  def 'data tables with semicolons can be cross multiplied (transpiler test)'() {
+  def 'data tables with semicolons can be combined (transpiler test)'() {
     when:
     def result = compiler.transpileFeatureBody '''
       expect:
@@ -699,10 +699,10 @@ a ; b ; c
       a ; _
       1 ; _
       2 ; _
-      cross_product:
+      combine:
       b ; _
       3 ; _
-      cross_product:
+      combine:
       c ; _
       4 ; _
       5 ; _
@@ -745,7 +745,7 @@ a ; b ; c
     '''.stripMargin().trim()
   }
 
-  def 'data tables with different widths can be cross multiplied'() {
+  def 'data tables with different widths can be combined'() {
     when:
     def results = runner.runSpecBody '''
       def 'a feature (#a #b #c #d #e)'() {
@@ -756,7 +756,7 @@ a ; b ; c
         a | b
         1 | 'b'
         2 | 'b'
-        cross_product:
+        combine:
         c | d   | e
         3 | 'd' | 'e'
       }

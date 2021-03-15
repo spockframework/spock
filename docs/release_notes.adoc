@@ -12,7 +12,7 @@ include::include.adoc[]
 
 === Misc
 
-- Add support for cross multiplying two or more data tables (https://github.com/spockframework/spock/issues/1062[#1062])
+- Add support for combining two or more data tables using cartesian product (https://github.com/spockframework/spock/issues/1062[#1062])
 
 - Add support for injection into `@Shared` fields in `spock-spring` module which users can opt-in for by adding
   `@EnableSharedInjection` to the specification. https://github.com/spockframework/spock/issues/76[#76]

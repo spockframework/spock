@@ -270,10 +270,10 @@ c << $spock_p_a
     thrown(MissingPropertyException)
   }
 
-  def 'using cross_product label outside where block is not allowed'() {
+  def 'using combine label outside where block is not allowed'() {
     when:
     def result = compiler.transpileFeatureBody '''
-      cross_product:
+      combine:
       true
 
       expect:
@@ -288,7 +288,7 @@ c << $spock_p_a
     result.source.normalize() == '''
       |Unable to produce AST for this phase due to earlier compilation error:
       |startup failed:
-      |script.groovy: 2: Unrecognized block label: cross_product @ line 2, column 7.
+      |script.groovy: 2: 'combine' is not allowed here; instead, use one of: [setup, given, expect, when, cleanup, where, end-of-method] @ line 2, column 7.
       |         true
       |         ^
       |
@@ -296,7 +296,7 @@ c << $spock_p_a
     '''.stripMargin().trim()
   }
 
-  def 'using cross_product label between data table and something else is not allowed'() {
+  def 'using combine label between data table and something else is not allowed'() {
     when:
     def result = compiler.transpileFeatureBody '''
       expect:
@@ -305,7 +305,7 @@ c << $spock_p_a
       where:
       a | _
       1 | _
-      cross_product:
+      combine:
       b = 1
     '''
 
@@ -313,7 +313,7 @@ c << $spock_p_a
     result.source.normalize() == '''
       |Unable to produce AST for this phase due to earlier compilation error:
       |startup failed:
-      |script.groovy: 8: Cross product label must only appear between two data tables with the same type of separator @ line 8, column 7.
+      |script.groovy: 8: Combine label must only appear between two data tables with the same type of separator @ line 8, column 7.
       |         b = 1
       |         ^
       |
@@ -322,7 +322,7 @@ c << $spock_p_a
   }
 
   @PendingFeature(reason = "not implemented yet and not planned, but if someone does, he will notice and can update the docs")
-  def 'using cross_product label between data tables with different separator type is not yet allowed'() {
+  def 'using combine label between data tables with different separator type is not yet allowed'() {
     when:
     def result = compiler.transpileFeatureBody '''
       expect:
@@ -331,26 +331,26 @@ c << $spock_p_a
       where:
       a | _
       1 | _
-      cross_product:
+      combine:
       b ; _
       1 ; _
-      cross_product:
+      combine:
       c | _
       1 | _
     '''
 
     then:
-    !result.source.contains('Cross product label must only appear between two data tables')
+    !result.source.contains('Combine label must only appear between two data tables')
   }
 
-  def 'using cross_product label within semicolon data table row is not yet allowed'() {
+  def 'using combine label within semicolon data table row is not allowed'() {
     when:
     def result = compiler.transpileFeatureBody '''
       expect:
       true
 
       where:
-      a ; cross_product: b
+      a ; combine: b
       1 ; 2
     '''
 
@@ -358,9 +358,9 @@ c << $spock_p_a
     result.source.normalize() == '''
       |Unable to produce AST for this phase due to earlier compilation error:
       |startup failed:
-      |script.groovy: 5: Cross product label must only appear between two data tables with the same type of separator @ line 5, column 26.
-      |         a ; cross_product: b
-      |                            ^
+      |script.groovy: 5: Combine label must only appear between two data tables with the same type of separator @ line 5, column 20.
+      |         a ; combine: b
+      |                      ^
       |
       |script.groovy: 6: Data table must have more than just the header row @ line 6, column 7.
       |         1 ; 2

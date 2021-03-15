@@ -40,14 +40,13 @@ import static org.spockframework.compiler.AstUtil.createGetAtMethodCall;
 import static org.spockframework.compiler.AstUtil.isDataTableSeparator;
 import static org.spockframework.compiler.AstUtil.getExpression;
 import static org.spockframework.util.ExceptionUtil.sneakyThrow;
+import static org.spockframework.util.Identifiers.COMBINE;
 
 /**
  *
  * @author Peter Niederwieser
  */
 public class WhereBlockRewriter {
-  public static final String DATA_TABLE_CROSS_PRODUCT_LABEL = "cross_product";
-
   private final WhereBlock whereBlock;
   private final IRewriteResources resources;
   private final boolean defineErrorRethrower;
@@ -92,8 +91,8 @@ public class WhereBlockRewriter {
 
   private void rewriteWhereStat(ListIterator<Statement> stats) throws InvalidSpecCompileException {
     Statement stat = stats.next();
-    if (DATA_TABLE_CROSS_PRODUCT_LABEL.equals(stat.getStatementLabel())) {
-      throw crossProductLabelMustOnlyAppearBetweenTwoDataTables(stat);
+    if (COMBINE.equals(stat.getStatementLabel())) {
+      throw combineLabelMustOnlyAppearBetweenTwoDataTables(stat);
     }
 
     // binary expressions are potentially parameterizations
@@ -217,8 +216,8 @@ public class WhereBlockRewriter {
         stats.previous();
         break;
       }
-      if (DATA_TABLE_CROSS_PRODUCT_LABEL.equals(nextStat.getStatementLabel())) {
-        throw crossProductLabelMustOnlyAppearBetweenTwoDataTables(nextStat);
+      if (COMBINE.equals(nextStat.getStatementLabel())) {
+        throw combineLabelMustOnlyAppearBetweenTwoDataTables(nextStat);
       }
       stat = nextStat;
     }
@@ -399,7 +398,7 @@ public class WhereBlockRewriter {
       }
       List<Expression> row = new ArrayList<>();
       splitRow(orExpr, row);
-      return new DataTableRow(row, DATA_TABLE_CROSS_PRODUCT_LABEL.equals(stat.getStatementLabel()));
+      return new DataTableRow(row, COMBINE.equals(stat.getStatementLabel()));
     });
   }
 
@@ -407,7 +406,7 @@ public class WhereBlockRewriter {
     rewriteTableLikeParameterization(stats, () -> {
       boolean headerRow;
       if (stats.hasNext()) {
-        headerRow = DATA_TABLE_CROSS_PRODUCT_LABEL.equals(stats.next().getStatementLabel());
+        headerRow = COMBINE.equals(stats.next().getStatementLabel());
         stats.previous();
       } else {
         headerRow = false;
@@ -745,8 +744,8 @@ public class WhereBlockRewriter {
 "where-blocks may only contain parameterizations (e.g. 'salary << [1000, 5000, 9000]; salaryk = salary / 1000')");
   }
 
-  private static InvalidSpecCompileException crossProductLabelMustOnlyAppearBetweenTwoDataTables(ASTNode stat) {
-    return new InvalidSpecCompileException(stat, "Cross product label must only appear between two data tables with the same type of separator");
+  private static InvalidSpecCompileException combineLabelMustOnlyAppearBetweenTwoDataTables(ASTNode stat) {
+    return new InvalidSpecCompileException(stat, "Combine label must only appear between two data tables with the same type of separator");
   }
 
   private static InvalidSpecCompileException dataTableHeaderMayOnlyContainVariableNames(ASTNode stat) {

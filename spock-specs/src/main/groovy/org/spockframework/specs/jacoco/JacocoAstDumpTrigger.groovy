@@ -13,7 +13,7 @@ import org.codehaus.groovy.transform.*
 @CompileStatic
 @GroovyASTTransformation(phase = CompilePhase.OUTPUT)
 class JacocoAstDumpTrigger implements ASTTransformation {
-  private static boolean enabled = Boolean.getBoolean(JacocoAstDumpTrigger.class.name)
+  private static boolean enabled = Boolean.getBoolean(JacocoAstDumpTrigger.class.simpleName)
   private boolean dumped = false
 
   @Override

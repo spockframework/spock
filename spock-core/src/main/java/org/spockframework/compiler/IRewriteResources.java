@@ -38,6 +38,7 @@ public interface IRewriteResources {
   Block getCurrentBlock();
 
   void defineValueRecorder(List<Statement> stats, String variableNameSuffix);
+  void defineErrorRethrower(List<Statement> stats);
   void defineErrorCollector(List<Statement> stats, String variableNameSuffix);
   VariableExpression captureOldValue(Expression oldValue);
   MethodCallExpression getMockInvocationMatcher();

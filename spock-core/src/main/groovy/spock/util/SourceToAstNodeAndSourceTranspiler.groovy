@@ -1,5 +1,6 @@
 package spock.util
 
+import org.intellij.lang.annotations.Language
 import org.spockframework.compat.groovy2.GroovyCodeVisitorCompat
 
 import java.lang.reflect.Modifier
@@ -131,6 +132,7 @@ enum Show {
 @TupleConstructor
 @CompileStatic
 class TranspileResult {
+  @Language('Groovy')
   final String source
   final List<NodeCapture> nodeCaptures
 }

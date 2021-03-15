@@ -23,6 +23,7 @@ import spock.lang.Ignore
 import spock.lang.Issue
 import spock.lang.Rollup
 import spock.lang.Shared
+import spock.util.Show
 
 @Rollup
 class DataTables extends EmbeddedSpecification {
@@ -87,9 +88,9 @@ a
     1 ; _
   }
 
-  def "table with just a header are not allowed"() {
+  def "table with just a header is not allowed"() {
     when:
-    runner.runFeatureBody """
+    compiler.compileFeatureBody """
 expect:
 true
 
@@ -98,12 +99,31 @@ a | b
     """
 
     then:
-    thrown(SpockExecutionException)
+    InvalidSpecCompileException e = thrown()
+    e.message == 'Data table must have more than just the header row @ line 5, column 1.'
   }
 
-  def "table with just a header are not allowed with semicolon"() {
+  def "table with just a header in cross product is not allowed"() {
     when:
-    runner.runFeatureBody """
+    compiler.compileFeatureBody """
+expect:
+true
+
+where:
+a | b
+1 | 2
+cross_product:
+c | _
+    """
+
+    then:
+    InvalidSpecCompileException e = thrown()
+    e.message == 'Data table must have more than just the header row @ line 8, column 1.'
+  }
+
+  def "table with just a header is not allowed with semicolon"() {
+    when:
+    compiler.compileFeatureBody """
 expect:
 true
 
@@ -112,7 +132,26 @@ a ; b
     """
 
     then:
-    thrown(SpockExecutionException)
+    InvalidSpecCompileException e = thrown()
+    e.message == 'Data table must have more than just the header row @ line 5, column 1.'
+  }
+
+  def "table with just a header in cross product is not allowed with semicolon"() {
+    when:
+    compiler.compileFeatureBody """
+expect:
+true
+
+where:
+a ; b
+1 ; 2
+cross_product:
+c ; _
+    """
+
+    then:
+    InvalidSpecCompileException e = thrown()
+    e.message == 'Data table must have more than just the header row @ line 8, column 1.'
   }
 
   def "header may only contain variable names"() {
@@ -142,8 +181,8 @@ a ; 1 ; b
     """
 
     then:
-    MultipleFailuresError e = thrown()
-    e.failures*.class == [InvalidSpecCompileException] * 6
+    InvalidSpecCompileException e = thrown()
+    e.message == 'Header of data table may only contain variable names @ line 5, column 5.'
   }
 
   def "header variable names must not clash with local variables"() {
@@ -522,6 +561,214 @@ a ; b ; c
     a | b || c
     1 | 2 || 3
     4 | 5 || 9
+  }
+
+  def 'data tables with pipes can be cross multiplied'() {
+    when:
+    def results = runner.runSpecBody '''
+      def 'a feature (#a #b #c)'() {
+        expect:
+        true
+
+        where:
+        a | _
+        1 | _
+        2 | _
+        cross_product:
+        b | _
+        3 | _
+        cross_product:
+        c | _
+        4 | _
+        5 | _
+        6 | _
+      }
+    '''
+
+    then:
+    results.testsStartedCount == 1 + 6
+    results.testEvents().started().list().testDescriptor.displayName == [
+      'a feature (#a #b #c)',
+      'a feature (1 3 4)',
+      'a feature (2 3 4)',
+      'a feature (1 3 5)',
+      'a feature (2 3 5)',
+      'a feature (1 3 6)',
+      'a feature (2 3 6)'
+    ]
+  }
+
+  def 'data tables with pipes can be cross multiplied (transpiler test)'() {
+    when:
+    def result = compiler.transpileFeatureBody '''
+      expect:
+      true
+
+      where:
+      a | _
+      1 | _
+      2 | _
+      cross_product:
+      b | _
+      3 | _
+      cross_product:
+      c | _
+      4 | _
+      5 | _
+      6 | _
+    ''', EnumSet.of(Show.METHODS)
+
+    then:
+    result.source == '''
+      |public void $spock_feature_0_0(java.lang.Object a, java.lang.Object b, java.lang.Object c) {
+      |    org.spockframework.runtime.ErrorCollector $spock_errorCollector = org.spockframework.runtime.ErrorRethrower.INSTANCE
+      |    org.spockframework.runtime.ValueRecorder $spock_valueRecorder = new org.spockframework.runtime.ValueRecorder()
+      |    try {
+      |        org.spockframework.runtime.SpockRuntime.verifyCondition($spock_errorCollector, $spock_valueRecorder.reset(), 'true', 2, 7, null, $spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(0), true))
+      |    }
+      |    catch (java.lang.Throwable throwable) {
+      |        org.spockframework.runtime.SpockRuntime.conditionFailedWithException($spock_errorCollector, $spock_valueRecorder, 'true', 2, 7, null, throwable)}
+      |    finally {
+      |    }
+      |    this.getSpecificationContext().getMockController().leaveScope()
+      |}
+      |
+      |public java.lang.Object $spock_feature_0_0prov0() {
+      |    return [1, 2, 1, 2, 1, 2]
+      |}
+      |
+      |public java.lang.Object $spock_feature_0_0prov1(java.util.List $spock_p_a) {
+      |    return [3, 3, 3, 3, 3, 3]
+      |}
+      |
+      |public java.lang.Object $spock_feature_0_0prov2(java.util.List $spock_p_a, java.util.List $spock_p_b) {
+      |    return [4, 4, 5, 5, 6, 6]
+      |}
+      |
+      |public java.lang.Object $spock_feature_0_0proc(java.lang.Object $spock_p0, java.lang.Object $spock_p1, java.lang.Object $spock_p2) {
+      |    java.lang.Object a = (( $spock_p0 ) as java.lang.Object)
+      |    java.lang.Object b = (( $spock_p1 ) as java.lang.Object)
+      |    java.lang.Object c = (( $spock_p2 ) as java.lang.Object)
+      |    return new java.lang.Object[]{ a , b , c }
+      |}
+    '''.stripMargin().trim()
+  }
+
+  def 'data tables with semicolons can be cross multiplied'() {
+    when:
+    def results = runner.runSpecBody '''
+      def 'a feature (#a #b #c)'() {
+        expect:
+        true
+
+        where:
+        a ; _
+        1 ; _
+        2 ; _
+        cross_product:
+        b ; _
+        3 ; _
+        cross_product:
+        c ; _
+        4 ; _
+        5 ; _
+        6 ; _
+      }
+    '''
+
+    then:
+    results.testsStartedCount == 1 + 6
+    results.testEvents().started().list().testDescriptor.displayName == [
+      'a feature (#a #b #c)',
+      'a feature (1 3 4)',
+      'a feature (2 3 4)',
+      'a feature (1 3 5)',
+      'a feature (2 3 5)',
+      'a feature (1 3 6)',
+      'a feature (2 3 6)'
+    ]
+  }
+
+  def 'data tables with semicolons can be cross multiplied (transpiler test)'() {
+    when:
+    def result = compiler.transpileFeatureBody '''
+      expect:
+      true
+
+      where:
+      a ; _
+      1 ; _
+      2 ; _
+      cross_product:
+      b ; _
+      3 ; _
+      cross_product:
+      c ; _
+      4 ; _
+      5 ; _
+      6 ; _
+    ''', EnumSet.of(Show.METHODS)
+
+    then:
+    result.source == '''
+      |public void $spock_feature_0_0(java.lang.Object a, java.lang.Object b, java.lang.Object c) {
+      |    org.spockframework.runtime.ErrorCollector $spock_errorCollector = org.spockframework.runtime.ErrorRethrower.INSTANCE
+      |    org.spockframework.runtime.ValueRecorder $spock_valueRecorder = new org.spockframework.runtime.ValueRecorder()
+      |    try {
+      |        org.spockframework.runtime.SpockRuntime.verifyCondition($spock_errorCollector, $spock_valueRecorder.reset(), 'true', 2, 7, null, $spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(0), true))
+      |    }
+      |    catch (java.lang.Throwable throwable) {
+      |        org.spockframework.runtime.SpockRuntime.conditionFailedWithException($spock_errorCollector, $spock_valueRecorder, 'true', 2, 7, null, throwable)}
+      |    finally {
+      |    }
+      |    this.getSpecificationContext().getMockController().leaveScope()
+      |}
+      |
+      |public java.lang.Object $spock_feature_0_0prov0() {
+      |    return [1, 2, 1, 2, 1, 2]
+      |}
+      |
+      |public java.lang.Object $spock_feature_0_0prov1(java.util.List $spock_p_a) {
+      |    return [3, 3, 3, 3, 3, 3]
+      |}
+      |
+      |public java.lang.Object $spock_feature_0_0prov2(java.util.List $spock_p_a, java.util.List $spock_p_b) {
+      |    return [4, 4, 5, 5, 6, 6]
+      |}
+      |
+      |public java.lang.Object $spock_feature_0_0proc(java.lang.Object $spock_p0, java.lang.Object $spock_p1, java.lang.Object $spock_p2) {
+      |    java.lang.Object a = (( $spock_p0 ) as java.lang.Object)
+      |    java.lang.Object b = (( $spock_p1 ) as java.lang.Object)
+      |    java.lang.Object c = (( $spock_p2 ) as java.lang.Object)
+      |    return new java.lang.Object[]{ a , b , c }
+      |}
+    '''.stripMargin().trim()
+  }
+
+  def 'data tables with different widths can be cross multiplied'() {
+    when:
+    def results = runner.runSpecBody '''
+      def 'a feature (#a #b #c #d #e)'() {
+        expect:
+        true
+
+        where:
+        a | b
+        1 | 'b'
+        2 | 'b'
+        cross_product:
+        c | d   | e
+        3 | 'd' | 'e'
+      }
+    '''
+
+    then:
+    results.testsStartedCount == 1 + 2
+    results.testEvents().started().list().testDescriptor.displayName == [
+      'a feature (#a #b #c #d #e)',
+      'a feature (1 b 3 d e)',
+      'a feature (2 b 3 d e)'
+    ]
   }
 
   def "cells can be separated with any amount of semicolons"() {

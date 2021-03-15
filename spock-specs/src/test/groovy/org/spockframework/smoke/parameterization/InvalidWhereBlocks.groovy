@@ -19,6 +19,7 @@ package org.spockframework.smoke.parameterization
 import org.spockframework.EmbeddedSpecification
 import org.spockframework.compiler.InvalidSpecCompileException
 import spock.lang.Issue
+import spock.lang.PendingFeature
 
 /**
  * @author Peter Niederwieser
@@ -267,5 +268,105 @@ c << $spock_p_a
 
     then:
     thrown(MissingPropertyException)
+  }
+
+  def 'using cross_product label outside where block is not allowed'() {
+    when:
+    def result = compiler.transpileFeatureBody '''
+      cross_product:
+      true
+
+      expect:
+      true
+
+      where:
+      a | _
+      1 | _
+    '''
+
+    then:
+    result.source.normalize() == '''
+      |Unable to produce AST for this phase due to earlier compilation error:
+      |startup failed:
+      |script.groovy: 2: Unrecognized block label: cross_product @ line 2, column 7.
+      |         true
+      |         ^
+      |
+      |1 error
+    '''.stripMargin().trim()
+  }
+
+  def 'using cross_product label between data table and something else is not allowed'() {
+    when:
+    def result = compiler.transpileFeatureBody '''
+      expect:
+      true
+
+      where:
+      a | _
+      1 | _
+      cross_product:
+      b = 1
+    '''
+
+    then:
+    result.source.normalize() == '''
+      |Unable to produce AST for this phase due to earlier compilation error:
+      |startup failed:
+      |script.groovy: 8: Cross product label must only appear between two data tables with the same type of separator @ line 8, column 7.
+      |         b = 1
+      |         ^
+      |
+      |1 error
+    '''.stripMargin().trim()
+  }
+
+  @PendingFeature(reason = "not implemented yet and not planned, but if someone does, he will notice and can update the docs")
+  def 'using cross_product label between data tables with different separator type is not yet allowed'() {
+    when:
+    def result = compiler.transpileFeatureBody '''
+      expect:
+      true
+
+      where:
+      a | _
+      1 | _
+      cross_product:
+      b ; _
+      1 ; _
+      cross_product:
+      c | _
+      1 | _
+    '''
+
+    then:
+    !result.source.contains('Cross product label must only appear between two data tables')
+  }
+
+  def 'using cross_product label within semicolon data table row is not yet allowed'() {
+    when:
+    def result = compiler.transpileFeatureBody '''
+      expect:
+      true
+
+      where:
+      a ; cross_product: b
+      1 ; 2
+    '''
+
+    then:
+    result.source.normalize() == '''
+      |Unable to produce AST for this phase due to earlier compilation error:
+      |startup failed:
+      |script.groovy: 5: Cross product label must only appear between two data tables with the same type of separator @ line 5, column 26.
+      |         a ; cross_product: b
+      |                            ^
+      |
+      |script.groovy: 6: Data table must have more than just the header row @ line 6, column 7.
+      |         1 ; 2
+      |         ^
+      |
+      |2 errors
+    '''.stripMargin().trim()
   }
 }

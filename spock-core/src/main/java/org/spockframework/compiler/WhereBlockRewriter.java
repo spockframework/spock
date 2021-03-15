@@ -22,7 +22,6 @@ import org.spockframework.runtime.model.DataProviderMetadata;
 import org.spockframework.util.*;
 
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.codehaus.groovy.ast.*;
@@ -47,6 +46,8 @@ import static org.spockframework.util.ExceptionUtil.sneakyThrow;
  * @author Peter Niederwieser
  */
 public class WhereBlockRewriter {
+  public static final String DATA_TABLE_CROSS_PRODUCT_LABEL = "cross_product";
+
   private final WhereBlock whereBlock;
   private final IRewriteResources resources;
   private final boolean defineErrorRethrower;
@@ -91,6 +92,9 @@ public class WhereBlockRewriter {
 
   private void rewriteWhereStat(ListIterator<Statement> stats) throws InvalidSpecCompileException {
     Statement stat = stats.next();
+    if (DATA_TABLE_CROSS_PRODUCT_LABEL.equals(stat.getStatementLabel())) {
+      throw crossProductLabelMustOnlyAppearBetweenTwoDataTables(stat);
+    }
 
     // binary expressions are potentially parameterizations
     BinaryExpression binExpr = AstUtil.getExpression(stat, BinaryExpression.class);
@@ -116,9 +120,6 @@ public class WhereBlockRewriter {
       .forEach(expression -> stats.previous());
 
     if (potentialHeaderRow.size() > 1) {
-      if (!potentialHeaderRow.stream().allMatch(VariableExpression.class::isInstance)) {
-        throw dataTableHeaderMayOnlyContainVariableNames(stat);
-      }
       stats.previous();
       rewriteExpressionTableLikeParameterization(stats);
       return;
@@ -189,7 +190,7 @@ public class WhereBlockRewriter {
     }
   }
 
-  private List<Expression> getExpressionChain(ListIterator<Statement> stats) {
+  private List<Expression> getExpressionChain(ListIterator<Statement> stats) throws InvalidSpecCompileException {
     List<Expression> result = new ArrayList<>();
 
     if (!stats.hasNext()) {
@@ -215,6 +216,9 @@ public class WhereBlockRewriter {
         // new data table row
         stats.previous();
         break;
+      }
+      if (DATA_TABLE_CROSS_PRODUCT_LABEL.equals(nextStat.getStatementLabel())) {
+        throw crossProductLabelMustOnlyAppearBetweenTwoDataTables(nextStat);
       }
       stat = nextStat;
     }
@@ -386,42 +390,89 @@ public class WhereBlockRewriter {
   }
 
   private void rewriteBinaryTableLikeParameterization(ListIterator<Statement> stats) throws InvalidSpecCompileException {
-    rewriteTableLikeParameterization(stats, result -> {
+    rewriteTableLikeParameterization(stats, () -> {
       Statement stat = stats.next();
       BinaryExpression orExpr = getOrExpression(stat);
       if (orExpr == null) {
         stats.previous();
-        return true;
+        return null;
       }
-      splitRow(orExpr, result);
-      return false;
+      List<Expression> row = new ArrayList<>();
+      splitRow(orExpr, row);
+      return new DataTableRow(row, DATA_TABLE_CROSS_PRODUCT_LABEL.equals(stat.getStatementLabel()));
     });
   }
 
   private void rewriteExpressionTableLikeParameterization(ListIterator<Statement> stats) throws InvalidSpecCompileException {
-    rewriteTableLikeParameterization(stats, result -> {
+    rewriteTableLikeParameterization(stats, () -> {
+      boolean headerRow;
+      if (stats.hasNext()) {
+        headerRow = DATA_TABLE_CROSS_PRODUCT_LABEL.equals(stats.next().getStatementLabel());
+        stats.previous();
+      } else {
+        headerRow = false;
+      }
+
       List<Expression> row = getExpressionChain(stats);
       if (row.size() <= 1) {
         // rewind
         row.forEach(expression -> stats.previous());
-        return true;
+        return null;
       }
-      result.addAll(row);
-      return false;
+      return new DataTableRow(row, headerRow);
     });
   }
 
-  private void rewriteTableLikeParameterization(ListIterator<Statement> stats, Function<List<Expression>, Boolean> rowExtractor) throws InvalidSpecCompileException {
+  private void rewriteTableLikeParameterization(
+    ListIterator<Statement> stats,
+    ThrowingSupplier<DataTableRow, InvalidSpecCompileException> rowExtractor) throws InvalidSpecCompileException {
+
+    List<List<Expression>> baseRows = null;
     LinkedList<List<Expression>> rows = new LinkedList<>();
+    int baseRowSize = 0;
+    ASTNode lastHeaderLocation = null;
 
     while (stats.hasNext()) {
-      List<Expression> row = new ArrayList<>();
-      if (rowExtractor.apply(row)) {
+      DataTableRow row = rowExtractor.get();
+      if (row == null) {
         break;
       }
-      if (rows.size() > 0 && rows.getLast().size() != row.size())
-        throw new InvalidSpecCompileException(row.get(0), String.format("Row in data table has wrong number of elements (%s instead of %s)", row.size(), rows.getLast().size()));
-      rows.add(row);
+
+      if (lastHeaderLocation == null) {
+        lastHeaderLocation = row.expressions.get(0);
+      }
+
+      if (row.isHeader) {
+        if (rows.size() == 1) {
+          throw new InvalidSpecCompileException(lastHeaderLocation, "Data table must have more than just the header row");
+        }
+
+        lastHeaderLocation = row.expressions.get(0);
+
+        List<Expression> combinedHeaderRow = new ArrayList<>(rows.get(0));
+        combinedHeaderRow.addAll(row.expressions);
+        baseRows = rows.subList(1, rows.size());
+        baseRowSize = baseRows.get(0).size();
+        rows = new LinkedList<>();
+        rows.add(combinedHeaderRow);
+      } else {
+        if (rows.size() > 0 && (rows.getLast().size() - baseRowSize) != row.expressions.size())
+          throw new InvalidSpecCompileException(row.expressions.get(0), "Row in data table has wrong number of elements (%s instead of %s)", row.expressions.size(), rows.getLast().size() - baseRowSize);
+
+        if (baseRows == null) {
+          rows.add(row.expressions);
+        } else {
+          for (List<Expression> baseRow : baseRows) {
+            List<Expression> combinedRow = new ArrayList<>(baseRow);
+            combinedRow.addAll(row.expressions);
+            rows.add(combinedRow);
+          }
+        }
+      }
+    }
+
+    if (rows.size() == 1) {
+      throw new InvalidSpecCompileException(lastHeaderLocation, "Data table must have more than just the header row");
     }
 
     for (List<Expression> column : transposeTable(rows))
@@ -694,6 +745,10 @@ public class WhereBlockRewriter {
 "where-blocks may only contain parameterizations (e.g. 'salary << [1000, 5000, 9000]; salaryk = salary / 1000')");
   }
 
+  private static InvalidSpecCompileException crossProductLabelMustOnlyAppearBetweenTwoDataTables(ASTNode stat) {
+    return new InvalidSpecCompileException(stat, "Cross product label must only appear between two data tables with the same type of separator");
+  }
+
   private static InvalidSpecCompileException dataTableHeaderMayOnlyContainVariableNames(ASTNode stat) {
     return new InvalidSpecCompileException(stat, "Header of data table may only contain variable names");
   }
@@ -742,6 +797,16 @@ public class WhereBlockRewriter {
           && expression.getName().equals(variable)) {
         found = true;
       }
+    }
+  }
+
+  private static class DataTableRow {
+    private final List<Expression> expressions;
+    private final boolean isHeader;
+
+    public DataTableRow(List<Expression> expressions, boolean isHeader) {
+      this.expressions = expressions;
+      this.isHeader = isHeader;
     }
   }
 }

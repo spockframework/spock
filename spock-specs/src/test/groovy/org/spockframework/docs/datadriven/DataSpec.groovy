@@ -98,6 +98,23 @@ class DataSpec extends EmbeddedSpecification {
 // end::multiple-tables-with-top-border[]
   }
 
+  def "multiple tables cross multiplied"() {
+    expect:
+    a >= 0
+    b < c
+
+// tag::multiple-tables-cross-multiplied[]
+    where:
+    a | _
+    1 | _
+    2 | _
+    cross_product:
+    b | c
+    3 | 5
+    4 | 6
+// end::multiple-tables-cross-multiplied[]
+  }
+
 // tag::sql-data-pipe[]
   def "maximum of two numbers"() {
     expect:

@@ -87,6 +87,15 @@ additionally to its effect of separating them:
 include::{sourcedir}/datadriven/DataSpec.groovy[tag=multiple-tables-with-top-border]
 ----
 
+Two or more consecutive data tables can also be cross multiplied using the `cross_product:`
+label between two or more consecutive data tables. The following will result in the four
+executed tests, `1 / 3 / 5`, `2 / 3 / 5`, `1 / 4 / 6`, and `2 / 4 / 6`:
+
+[source,groovy,indent=0]
+----
+include::{sourcedir}/datadriven/DataSpec.groovy[tag=multiple-tables-cross-multiplied]
+----
+
 == Isolated Execution of Iterations
 
 Iterations are isolated from each other in the same way as separate feature methods. Each iteration gets its own instance
@@ -139,6 +148,10 @@ If the column separator changes, this starts a new stand-alone data table:
 ----
 include::{sourcedir}/datadriven/v7/MathSpec.groovy[tag=example]
 ----
+
+Data tables with different types of separators (pipes vs. semicolons) can currently not be
+cross multiplied. Only pipe-separated with pipe-separated or semicolon-separated with
+semicolon-separated.
 
 == Reporting of Failures
 

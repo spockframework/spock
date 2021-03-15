@@ -13,11 +13,12 @@ import org.codehaus.groovy.transform.*
 @CompileStatic
 @GroovyASTTransformation(phase = CompilePhase.OUTPUT)
 class JacocoAstDumpTrigger implements ASTTransformation {
+  private static boolean enabled = Boolean.getBoolean(JacocoAstDumpTrigger.class.simpleName)
   private boolean dumped = false
 
   @Override
   void visit(ASTNode[] nodes, SourceUnit source) {
-    if(!dumped) {
+    if(enabled && !dumped) {
       dumped = true
       new GroovyMBean(ManagementFactory.platformMBeanServer, "org.jacoco:type=Runtime")
         .invokeMethod('dump', true)

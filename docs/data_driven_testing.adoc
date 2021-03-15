@@ -88,9 +88,13 @@ include::{sourcedir}/datadriven/DataSpec.groovy[tag=multiple-tables-with-top-bor
 ----
 
 Two or more consecutive data tables can also be combined using a cartesian product
-using the `combine:`
-label between two or more consecutive data tables. The following will result in the four
-executed tests, `1 / 3 / 5`, `2 / 3 / 5`, `1 / 4 / 6`, and `2 / 4 / 6`:
+using the `combine:` label between them. The following will result in these four
+executed tests
+
+- `a feature (1 3 5)`
+- `a feature (2 3 5)`
+- `a feature (1 4 6)`
+- `a feature (2 4 6)`
 
 [source,groovy,indent=0]
 ----

@@ -19,7 +19,6 @@ package org.spockframework.smoke.parameterization
 import org.spockframework.EmbeddedSpecification
 import org.spockframework.compiler.InvalidSpecCompileException
 import spock.lang.Issue
-import spock.lang.PendingFeature
 
 /**
  * @author Peter Niederwieser
@@ -313,34 +312,12 @@ c << $spock_p_a
     result.source.normalize() == '''
       |Unable to produce AST for this phase due to earlier compilation error:
       |startup failed:
-      |script.groovy: 8: Combine label must only appear between two data tables with the same type of separator @ line 8, column 7.
+      |script.groovy: 8: Combine label must only appear between two data tables @ line 8, column 7.
       |         b = 1
       |         ^
       |
       |1 error
     '''.stripMargin().trim()
-  }
-
-  @PendingFeature(reason = "not implemented yet and not planned, but if someone does, he will notice and can update the docs")
-  def 'using combine label between data tables with different separator type is not yet allowed'() {
-    when:
-    def result = compiler.transpileFeatureBody '''
-      expect:
-      true
-
-      where:
-      a | _
-      1 | _
-      combine:
-      b ; _
-      1 ; _
-      combine:
-      c | _
-      1 | _
-    '''
-
-    then:
-    !result.source.contains('Combine label must only appear between two data tables')
   }
 
   def 'using combine label within semicolon data table row is not allowed'() {
@@ -358,7 +335,7 @@ c << $spock_p_a
     result.source.normalize() == '''
       |Unable to produce AST for this phase due to earlier compilation error:
       |startup failed:
-      |script.groovy: 5: Combine label must only appear between two data tables with the same type of separator @ line 5, column 20.
+      |script.groovy: 5: Columns in data tables must not be labeled @ line 5, column 20.
       |         a ; combine: b
       |                      ^
       |

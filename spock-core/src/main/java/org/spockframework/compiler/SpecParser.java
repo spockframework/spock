@@ -191,8 +191,7 @@ public class SpecParser implements GroovyClassVisitor {
     Block currBlock = method.addBlock(new AnonymousBlock(method));
 
     for (Statement stat : stats) {
-      String statementLabel = stat.getStatementLabel();
-      if (statementLabel == null)
+      if (stat.getStatementLabel() == null)
         currBlock.getAst().add(stat);
       else
         currBlock = addBlock(method, stat);

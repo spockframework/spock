@@ -35,6 +35,8 @@ import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.*;
+import static org.codehaus.groovy.ast.tools.GeneralUtils.stmt;
+import static org.codehaus.groovy.ast.tools.GeneralUtils.varX;
 import static org.spockframework.compiler.AstUtil.createDirectMethodCall;
 import static org.spockframework.compiler.AstUtil.createGetAtMethodCall;
 import static org.spockframework.compiler.AstUtil.isDataTableSeparator;
@@ -216,8 +218,8 @@ public class WhereBlockRewriter {
         stats.previous();
         break;
       }
-      if (COMBINE.equals(nextStat.getStatementLabel())) {
-        throw combineLabelMustOnlyAppearBetweenTwoDataTables(nextStat);
+      if (nextStat.getStatementLabel() != null) {
+        throw columnsInDataTableMustNotBeLabeled(nextStat);
       }
       stat = nextStat;
     }
@@ -388,18 +390,48 @@ public class WhereBlockRewriter {
     dataProcessorStats.add(exprStat);
   }
 
-  private void rewriteBinaryTableLikeParameterization(ListIterator<Statement> stats) throws InvalidSpecCompileException {
-    rewriteTableLikeParameterization(stats, () -> {
+  private void rewriteBinaryTableLikeParameterization(ListIterator<Statement> stats) {
+    int[] i = { 0 };
+    while (stats.hasNext()) {
       Statement stat = stats.next();
       BinaryExpression orExpr = getOrExpression(stat);
       if (orExpr == null) {
         stats.previous();
-        return null;
+        break;
       }
       List<Expression> row = new ArrayList<>();
       splitRow(orExpr, row);
-      return new DataTableRow(row, COMBINE.equals(stat.getStatementLabel()));
-    });
+
+      // replace `a | b || c` by `a ; b ; c` so that they can be handled uniformly later
+      stats.remove();
+      for (int j = 0, rowSize = row.size(); j < rowSize; j++) {
+        Expression expr = row.get(j);
+        Statement exStat = stmt(expr);
+        exStat.setLineNumber(expr.getLineNumber());
+        exStat.setLastLineNumber(expr.getLastLineNumber());
+        exStat.setColumnNumber(expr.getColumnNumber());
+        exStat.setLastColumnNumber(expr.getLastColumnNumber());
+        if ((j == 0) && (stat.getStatementLabels() != null)) {
+          stat.getStatementLabels().forEach(exStat::addStatementLabel);
+        }
+        stats.add(exStat);
+        i[0]++;
+      }
+    }
+
+    if (stats.hasNext()) {
+      boolean nextStatementIsCombineLabeled = COMBINE.equals(stats.next().getStatementLabel());
+      stats.previous();
+      if (!nextStatementIsCombineLabeled) {
+        stats.add(stmt(varX(new DynamicVariable("__", false))));
+        i[0]++;
+      }
+    }
+
+    // rewind to before the added statements
+    for (int j = i[0]; j > 0; j--) {
+      stats.previous();
+    }
   }
 
   private void rewriteExpressionTableLikeParameterization(ListIterator<Statement> stats) throws InvalidSpecCompileException {
@@ -410,6 +442,10 @@ public class WhereBlockRewriter {
         stats.previous();
       } else {
         headerRow = false;
+      }
+
+      if (headerRow) {
+        rewriteBinaryTableLikeParameterization(stats);
       }
 
       List<Expression> row = getExpressionChain(stats);
@@ -455,18 +491,7 @@ public class WhereBlockRewriter {
         rows = new LinkedList<>();
         rows.add(combinedHeaderRow);
       } else {
-        if (rows.size() > 0 && (rows.getLast().size() - baseRowSize) != row.expressions.size())
-          throw new InvalidSpecCompileException(row.expressions.get(0), "Row in data table has wrong number of elements (%s instead of %s)", row.expressions.size(), rows.getLast().size() - baseRowSize);
-
-        if (baseRows == null) {
-          rows.add(row.expressions);
-        } else {
-          for (List<Expression> baseRow : baseRows) {
-            List<Expression> combinedRow = new ArrayList<>(baseRow);
-            combinedRow.addAll(row.expressions);
-            rows.add(combinedRow);
-          }
-        }
+        addRow(baseRows, baseRowSize, rows, row);
       }
     }
 
@@ -476,6 +501,22 @@ public class WhereBlockRewriter {
 
     for (List<Expression> column : transposeTable(rows))
       turnIntoSimpleParameterization(column);
+  }
+
+  private void addRow(List<List<Expression>> baseRows, int baseRowSize,
+                      LinkedList<List<Expression>> rows, DataTableRow row) throws InvalidSpecCompileException {
+    if (rows.size() > 0 && (rows.getLast().size() - baseRowSize) != row.expressions.size())
+      throw new InvalidSpecCompileException(row.expressions.get(0), "Row in data table has wrong number of elements (%s instead of %s)", row.expressions.size(), rows.getLast().size() - baseRowSize);
+
+    if (baseRows == null) {
+      rows.add(row.expressions);
+    } else {
+      for (List<Expression> baseRow : baseRows) {
+        List<Expression> combinedRow = new ArrayList<>(baseRow);
+        combinedRow.addAll(row.expressions);
+        rows.add(combinedRow);
+      }
+    }
   }
 
   List<List<Expression>> transposeTable(List<List<Expression>> rows) {
@@ -744,8 +785,12 @@ public class WhereBlockRewriter {
 "where-blocks may only contain parameterizations (e.g. 'salary << [1000, 5000, 9000]; salaryk = salary / 1000')");
   }
 
+  private static InvalidSpecCompileException columnsInDataTableMustNotBeLabeled(ASTNode stat) {
+    return new InvalidSpecCompileException(stat, "Columns in data tables must not be labeled");
+  }
+
   private static InvalidSpecCompileException combineLabelMustOnlyAppearBetweenTwoDataTables(ASTNode stat) {
-    return new InvalidSpecCompileException(stat, "Combine label must only appear between two data tables with the same type of separator");
+    return new InvalidSpecCompileException(stat, "Combine label must only appear between two data tables");
   }
 
   private static InvalidSpecCompileException dataTableHeaderMayOnlyContainVariableNames(ASTNode stat) {

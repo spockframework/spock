@@ -154,10 +154,6 @@ If the column separator changes, this starts a new stand-alone data table:
 include::{sourcedir}/datadriven/v7/MathSpec.groovy[tag=example]
 ----
 
-Data tables with different types of separators (pipes vs. semicolons) can currently not be
-combined using the `combine:` label. Only pipe-separated with pipe-separated or
-semicolon-separated with semicolon-separated.
-
 == Reporting of Failures
 
 Let's assume that our implementation of the `max` method has a flaw, and one of the iterations fails:

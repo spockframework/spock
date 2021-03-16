@@ -19,7 +19,6 @@ import org.spockframework.EmbeddedSpecification
 import org.spockframework.compiler.InvalidSpecCompileException
 import org.spockframework.runtime.SpockExecutionException
 
-import spock.lang.Ignore
 import spock.lang.Issue
 import spock.lang.Rollup
 import spock.lang.Shared
@@ -707,6 +706,126 @@ a ; b ; c
       4 ; _
       5 ; _
       6 ; _
+    ''', EnumSet.of(Show.METHODS)
+
+    then:
+    result.source == '''
+      |public void $spock_feature_0_0(java.lang.Object a, java.lang.Object b, java.lang.Object c) {
+      |    org.spockframework.runtime.ErrorCollector $spock_errorCollector = org.spockframework.runtime.ErrorRethrower.INSTANCE
+      |    org.spockframework.runtime.ValueRecorder $spock_valueRecorder = new org.spockframework.runtime.ValueRecorder()
+      |    try {
+      |        org.spockframework.runtime.SpockRuntime.verifyCondition($spock_errorCollector, $spock_valueRecorder.reset(), 'true', 2, 7, null, $spock_valueRecorder.record($spock_valueRecorder.startRecordingValue(0), true))
+      |    }
+      |    catch (java.lang.Throwable throwable) {
+      |        org.spockframework.runtime.SpockRuntime.conditionFailedWithException($spock_errorCollector, $spock_valueRecorder, 'true', 2, 7, null, throwable)}
+      |    finally {
+      |    }
+      |    this.getSpecificationContext().getMockController().leaveScope()
+      |}
+      |
+      |public java.lang.Object $spock_feature_0_0prov0() {
+      |    return [1, 2, 1, 2, 1, 2]
+      |}
+      |
+      |public java.lang.Object $spock_feature_0_0prov1(java.util.List $spock_p_a) {
+      |    return [3, 3, 3, 3, 3, 3]
+      |}
+      |
+      |public java.lang.Object $spock_feature_0_0prov2(java.util.List $spock_p_a, java.util.List $spock_p_b) {
+      |    return [4, 4, 5, 5, 6, 6]
+      |}
+      |
+      |public java.lang.Object $spock_feature_0_0proc(java.lang.Object $spock_p0, java.lang.Object $spock_p1, java.lang.Object $spock_p2) {
+      |    java.lang.Object a = (( $spock_p0 ) as java.lang.Object)
+      |    java.lang.Object b = (( $spock_p1 ) as java.lang.Object)
+      |    java.lang.Object c = (( $spock_p2 ) as java.lang.Object)
+      |    return new java.lang.Object[]{ a , b , c }
+      |}
+    '''.stripMargin().trim()
+  }
+
+  def 'combined data table columns can use previous data table column values'() {
+    expect:
+    a == b
+    c == "x$i"
+
+    where:
+    x    | _
+    'x1' | _
+    'x2' | _
+    'x3' | _
+    'x4' | _
+    'x5' | _
+    'x6' | _
+
+    i << (1..6)
+
+    a | _
+    1 | _
+    2 | _
+    combine:
+    b | _
+    a | _
+    combine:
+    c | _
+    x | _
+    x | _
+    x | _
+  }
+
+  def 'data tables with mixed separators can be combined'() {
+    when:
+    def results = runner.runSpecBody '''
+      def 'a feature (#a #b #c)'() {
+        expect:
+        true
+
+        where:
+        a | _
+        1 | _
+        2 | _
+        combine:
+        b ; _
+        3 ; _
+        combine:
+        c | _
+        4 | _
+        5 | _
+        6 | _
+      }
+    '''
+
+    then:
+    results.testsStartedCount == 1 + 6
+    results.testEvents().started().list().testDescriptor.displayName == [
+      'a feature (#a #b #c)',
+      'a feature (1 3 4)',
+      'a feature (2 3 4)',
+      'a feature (1 3 5)',
+      'a feature (2 3 5)',
+      'a feature (1 3 6)',
+      'a feature (2 3 6)'
+    ]
+  }
+
+  def 'data tables with mixed separators can be combined (transpiler test)'() {
+    when:
+    def result = compiler.transpileFeatureBody '''
+      expect:
+      true
+
+      where:
+      a | _
+      1 | _
+      2 | _
+      combine:
+      b ; _
+      3 ; _
+      combine:
+      c | _
+      4 | _
+      5 | _
+      6 | _
     ''', EnumSet.of(Show.METHODS)
 
     then:

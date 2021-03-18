@@ -44,7 +44,7 @@ ext {
   }
   fullVersion = baseVersion + ((!snapshotVersion && milestone) ? "-M$milestone" : "") + "-groovy-$variant" + (snapshotVersion ? "-SNAPSHOT" : '')
   variantLessVersion = baseVersion + (snapshotVersion ? "-SNAPSHOT" : (milestone ? "-M$milestone" : ""))
-  javaVersions = [1.8, 11, 15] // ensure that latest version is actually build on travis, otherwise no docs get published
+  javaVersions = [1.8, 11, 16] // ensure that latest version is actually build on github actions, otherwise no docs get published
   javaVersion = System.getProperty("java.specification.version") as BigDecimal
 
   libs = [

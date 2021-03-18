@@ -17,7 +17,7 @@ jobs:
       matrix:
         os: ['ubuntu-latest']
         variant: ['2.5', '3.0']
-        java: ['8', '11', '15']
+        java: ['8', '11', '16']
         include:
           - os: 'windows-latest'
             variant: '2.5'

@@ -59,7 +59,7 @@ jobs:
           ORG_GRADLE_PROJECT_spockBuildCachePassword: ${{ secrets.SPOCK_BUILD_CACHE_PASSWORD }}
           GRADLE_ENTERPRISE_ACCESS_KEY: ${{ secrets.GRADLE_ENTERPRISE_ACCESS_KEY }}
         run: |
-          ./gradlew --no-parallel --scan --stacktrace ghActionsBuild "-Dvariant=${{ matrix.variant }}"
+          ./gradlew --no-parallel --stacktrace ghActionsBuild "-Dvariant=${{ matrix.variant }}"
       - name: 'Stop Daemon'
         run: |
           ./gradlew --stop

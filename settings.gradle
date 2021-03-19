@@ -2,8 +2,8 @@ import com.gradle.enterprise.gradleplugin.internal.extension.BuildScanExtensionW
 
 pluginManagement {
   plugins {
-    id "com.gradle.enterprise" version "3.5.2"
-    id "com.gradle.common-custom-user-data-gradle-plugin" version "1.1.2"
+    id "com.gradle.enterprise" version "3.6"
+    id "com.gradle.common-custom-user-data-gradle-plugin" version "1.2.1"
     id "org.asciidoctor.jvm.convert" version "3.2.0"
     id "net.nemerosa.versioning" version "2.13.1"
     id "de.marcphilipp.nexus-publish" version "0.4.0"
@@ -23,8 +23,7 @@ def spockBuildCacheUsername = ext.has('spockBuildCacheUsername') ? ext['spockBui
 def spockBuildCachePassword = ext.has('spockBuildCachePassword') ? ext['spockBuildCachePassword'] : null
 
 def accessKeysAreMissing() {
-  File accessKeys = new File(gradle.gradleUserHomeDir, "enterprise/keys.properties")
-  return !System.env['GRADLE_ENTERPRISE_ACCESS_KEY'] && (!accessKeys.file || !accessKeys.text?.contains("ge.spockframework.org"))
+  return !(System.env['GRADLE_ENTERPRISE_ACCESS_KEY']?.trim())
 }
 
 gradleEnterprise {

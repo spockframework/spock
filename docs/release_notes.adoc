@@ -29,7 +29,27 @@ include::include.adoc[]
 
 - Improve parallel extensions to support inheritance https://github.com/spockframework/spock/issues/1245[#1245]
 
+- Improve PollingConditions
+
+- Improve some AST transformation code regarding error handling
+
 - Deprecate `AbstractGlobalExtension` and replace with `IGlobalExtension`
+
+- Remove unnecessary try-finally construct for assertions
+
+- Fix ErrorSpecNode throw Exception in `prepare` instead of `execute`
+  this fixes an issue that interceptors for `prepare`, `before`, and `around`
+  were still executed and any Exception they throw would hide the actual cause.
+
+- Fix https://github.com/spockframework/spock/issues/1294[#1294] swallowing of unrecoverable Errors
+
+- Fix https://github.com/spockframework/spock/issues/1260[#1260] Change InteractionRewriter to keep casting of ListExpressions intact
+
+- Fix https://github.com/spockframework/spock/issues/1282[#1282] Make TempDirInterceptor safe for parallel invocation of iterations
+
+- Fix https://github.com/spockframework/spock/issues/1267[#1267] Retry extension behavior for unrolled tests
+
+- Fix https://github.com/spockframework/spock/issues/1267[#1267] Retry extension behavior for unrolled tests
 
 - Fix https://github.com/spockframework/spock/issues/1229[#1229] `@TempDir` not working for inherited fields
 
@@ -45,7 +65,7 @@ include::include.adoc[]
 
 - Fix https://github.com/spockframework/spock/issues/1279[#1279] Cast data variables with type coercion to the declared parameter type
 
-Thanks to all the contributors to this release: Marcin Erdmann, Björn Kautler, Alexander Kriegisch, Josh Soref
+Thanks to all the contributors to this release: Marcin Erdmann, Björn Kautler, Alexander Kriegisch, Josh Soref, Vaidotas Valuckas
 
 
 == 2.0-M4 (2020-11-01)

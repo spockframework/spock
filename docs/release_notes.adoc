@@ -57,6 +57,8 @@ include::include.adoc[]
 
 - Fix https://github.com/spockframework/spock/issues/1256[#1256] handling of `is` as getter for boolean properties on Mocks
 
+- Fix https://github.com/spockframework/spock/issues/1270[#1270] handling of `is` as getter for boolean properties on GroovyMocks
+
 - Fix `ErrorSpecNode` to re-throw `Exception` in `prepare` instead of `execute`,
   this fixes an issue that interceptors for `prepare`, `before`, and `around`
   were still executed and any Exception they throw would hide the actual cause.

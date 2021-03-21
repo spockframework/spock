@@ -241,6 +241,83 @@ class GroovyMocksForGroovyClasses extends Specification {
     1 * person.setMetaClass(null)
   }
 
+  @Issue("https://github.com/spockframework/spock/issues/1270")
+  def "Mock object boolean (is) accessor via dot-notation" () {
+    given:
+    ExampleData mockData = GroovyMock(ExampleData)
+
+    when: "query via property syntax"
+    def result = mockData.current ? "Data is current" : "Data is not current"
+
+    then: "calls mock"
+    1 * mockData.isCurrent() >> true
+
+    and:
+    result == "Data is current"
+  }
+
+  @Issue("https://github.com/spockframework/spock/issues/1270")
+  def "Mock object boolean (get) accessor via dot-notation" () {
+    given:
+    ExampleData mockData = GroovyMock(ExampleData)
+
+    when: "query via property syntax"
+    def result = mockData.enabled ? "Data is current" : "Data is not current"
+
+    then: "calls mock"
+    1 * mockData.getEnabled() >> true
+
+    and:
+    result == "Data is current"
+  }
+
+  @Issue("https://github.com/spockframework/spock/issues/1270")
+  def "Mock object boolean (get + is) accessor via dot-notation" () {
+    given:
+    ExampleData mockData = GroovyMock(ExampleData)
+
+    when: "query via property syntax"
+    def result = mockData.active ? "Data is current" : "Data is not current"
+
+    then: "calls mock, preferring 'get' to 'is' for boolean getters (surprise!)"
+    1 * mockData.getActive() >> true
+    0 * mockData.isActive()
+
+    and:
+    result == "Data is current"
+  }
+
+  @Issue("https://github.com/spockframework/spock/issues/1270")
+  def "Mock object non-boolean (get + is) accessor via dot-notation" () {
+    given:
+    ExampleData mockData = GroovyMock(ExampleData)
+
+    when: "query via property syntax"
+    def result = mockData.name ? "Data is current" : "Data is not current"
+
+    then: "calls mock, preferring 'get' to 'is' for non-boolean getters"
+    1 * mockData.getName() >> "X"
+    0 * mockData.isName()
+
+    and:
+    result == "Data is current"
+  }
+
+  @Issue("https://github.com/spockframework/spock/issues/1270")
+  def "Mock object boolean accessor via method" () {
+    given:
+    ExampleData mockData = GroovyMock(ExampleData)
+
+    when: "query via method syntax"
+    def result = mockData.isCurrent() ? "is enabled" : "is not enabled"
+
+    then: "calls mock"
+    1 * mockData.isCurrent() >> true
+
+    and:
+    result == "is enabled"
+  }
+
   static class Person {
     void sing(String song) { throw new UnsupportedOperationException("sing") }
     String getName() { throw new UnsupportedOperationException("getName") }

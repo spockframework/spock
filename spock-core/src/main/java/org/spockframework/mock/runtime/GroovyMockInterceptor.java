@@ -23,7 +23,7 @@ import java.util.Arrays;
 
 import groovy.lang.*;
 
-public class GroovyMockInterceptor implements IProxyBasedMockInterceptor {
+public class GroovyMockInterceptor extends BaseMockInterceptor {
   private final IMockConfiguration mockConfiguration;
   private final Specification specification;
   private final MetaClass mockMetaClass;
@@ -37,7 +37,7 @@ public class GroovyMockInterceptor implements IProxyBasedMockInterceptor {
   @Override
   public Object intercept(Object target, Method method, Object[] arguments, IResponseGenerator realMethodInvoker) {
     IMockObject mockObject = new MockObject(mockConfiguration.getName(), mockConfiguration.getExactType(), target,
-        mockConfiguration.isVerified(), mockConfiguration.isGlobal(), mockConfiguration.getDefaultResponse(), specification, this);
+      mockConfiguration.isVerified(), mockConfiguration.isGlobal(), mockConfiguration.getDefaultResponse(), specification, this);
 
     if (method.getDeclaringClass() == ISpockMockObject.class) {
       return mockObject;
@@ -52,22 +52,24 @@ public class GroovyMockInterceptor implements IProxyBasedMockInterceptor {
     }
     if (isMethod(method, "invokeMethod", String.class, Object.class)) {
       return GroovyRuntimeUtil.invokeMethod(target,
-          (String) args[0], GroovyRuntimeUtil.asArgumentArray(args[1]));
+        (String)args[0], GroovyRuntimeUtil.asArgumentArray(args[1]));
     }
     if (isMethod(method, "getProperty", String.class)) {
-      String methodName = GroovyRuntimeUtil.propertyToMethodName("get", (String) args[0]);
-      return GroovyRuntimeUtil.invokeMethod(target, methodName);
+      String methodName = handleGetProperty((GroovyObject)target, args);
+      if (methodName != null) {
+        return GroovyRuntimeUtil.invokeMethod(target, methodName);
+      }
     }
     if (isMethod(method, "setProperty", String.class, Object.class)) {
       String methodName = GroovyRuntimeUtil.propertyToMethodName("set", (String) args[0]);
       return GroovyRuntimeUtil.invokeMethod(target, methodName, args[1]);
     }
     if (isMethod(method, "methodMissing", String.class, Object.class)) {
-      throw new MissingMethodException((String) args[0],
-          mockConfiguration.getType(), new Object[] {args[1]}, false);
+      throw new MissingMethodException((String)args[0],
+        mockConfiguration.getType(), new Object[]{args[1]}, false);
     }
     if (isMethod(method, "propertyMissing", String.class)) {
-      throw new MissingPropertyException((String) args[0], mockConfiguration.getType());
+      throw new MissingPropertyException((String)args[0], mockConfiguration.getType());
     }
 
     IMockMethod mockMethod = new StaticMockMethod(method, mockConfiguration.getExactType());
@@ -75,10 +77,6 @@ public class GroovyMockInterceptor implements IProxyBasedMockInterceptor {
     IMockController controller = specification.getSpecificationContext().getMockController();
 
     return controller.handle(invocation);
-  }
-
-  private boolean isMethod(Method method, String name, Class<?>... parameterTypes) {
-    return method.getName().equals(name) && Arrays.equals(method.getParameterTypes(), parameterTypes);
   }
 
   @Override

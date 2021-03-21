@@ -10,7 +10,10 @@ jobs:
   CodeQL-Build:
     # CodeQL runs on ubuntu-latest, windows-latest, and macos-latest
     runs-on: ubuntu-latest
-
+    strategy:
+      fail-fast: false
+      matrix:
+        variant: [ '2.5', '3.0' ]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -22,9 +25,9 @@ jobs:
           path: |
             ~/.gradle/caches/
             ~/.gradle/wrapper/dists
-          key: test-${{ runner.os }}-variant-2.5-gradle-${{ hashFiles('**/*.gradle', '**/*.gradle.kts', '**/gradle.properties', 'gradle/**', 'buildSrc/src/main/**') }}
+          key: test-${{ runner.os }}-variant-${{ matrix.variant }}-gradle-${{ hashFiles('**/*.gradle', '**/*.gradle.kts', '**/gradle.properties', 'gradle/**', 'buildSrc/src/main/**') }}
           restore-keys: |
-            test-${{ runner.os }}-variant-
+            test-${{ runner.os }}-variant-${{ matrix.variant }}-
 
       # Manually added:  Install and setup JDK
       - name: Setup JDK 8
@@ -56,19 +59,16 @@ jobs:
       #   make release
 
       # Manually added: build
-      # Build both variants, as they have different output directories it should work
+      # we have to disable build cache for now as it seems to be necessary for the compiler to run during the build
+      # https://docs.github.com/en/github/finding-security-vulnerabilities-and-errors-in-your-code/troubleshooting-the-codeql-workflow#no-code-found-during-the-build
       - name: 'Gradle Version'
         run: |
           ./gradlew --version
-      - name: 'Build Spock Classes Variant 2.5'
+      - name: 'Build Spock Classes'
         run: |
-          ./gradlew --no-parallel --stacktrace testClasses -Dvariant=2.5
-      - name: 'Build Spock Classes Variant 3.0'
-        run: |
-          ./gradlew --no-parallel --stacktrace testClasses -Dvariant=3.0
+          ./gradlew --stacktrace --no-build-cache testClasses "-Dvariant=${{ matrix.variant }}"
       - name: 'Stop Daemon'
         run: |
           ./gradlew --stop
-
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v1

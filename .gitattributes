@@ -1,0 +1,29 @@
+# based on https://github.com/alexkaratarakis/gitattributes
+* text=auto eol=lf
+
+# These are explicitly windows files and should use crlf
+*.bat      text eol=crlf
+*.cmd      text eol=crlf
+
+# sources
+*.java          text diff=java
+*.groovy        text diff=java
+*.gradle        text diff=java
+*.gradle.kts    text diff=java
+*.md            text diff=md
+
+# Graphics
+*.png      binary
+*.jpg      binary
+*.jpeg     binary
+*.gif      binary
+*.ico      binary
+
+#other
+*.jar      binary
+*.gpg      binary
+
+# Exclude files from exporting
+.gitattributes export-ignore
+.gitignore     export-ignore
+.gitkeep       export-ignore

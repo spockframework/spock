@@ -23,7 +23,7 @@ import java.lang.annotation.*;
  * specification. Initializing a shared field at the point of declaration
  * is encouraged; semantically, this is equivalent to initializing the field at
  * the very beginning of the <tt>setupSpec()</tt> method.
- * 
+ *
  * @author Peter Niederwieser
  */
 @Retention(RetentionPolicy.RUNTIME)

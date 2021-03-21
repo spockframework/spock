@@ -18,7 +18,7 @@ package org.spockframework.compiler.model;
 
 /**
  * Base class for all SpecL AST nodes.
- * 
+ *
  * @author Peter Niederwieser
  */
 public abstract class Node<P extends Node, A> {

@@ -16,12 +16,13 @@
 
 package org.spockframework.smoke.parameterization
 
+import spock.lang.*
+
 import groovy.sql.Sql
-import spock.lang.Shared
-import spock.lang.Specification
 
 class SqlDataSource extends Specification {
-   @Shared Sql sql = Sql.newInstance("jdbc:h2:mem:", "org.h2.Driver")
+  @Shared
+  Sql sql = Sql.newInstance("jdbc:h2:mem:", "org.h2.Driver")
 
   def setupSpec() {
     sql.execute("create table data (id int primary key, a int, c int, b int)") // intentionally use "strange" order
@@ -34,9 +35,9 @@ class SqlDataSource extends Specification {
 
     where:
     row << sql.rows("select * from data")
-	  a = row["a"]
-	  b = row["b"]
-	  c = row["c"]
+    a = row["a"]
+    b = row["b"]
+    c = row["c"]
   }
 
   def "multi-parameterization"() {

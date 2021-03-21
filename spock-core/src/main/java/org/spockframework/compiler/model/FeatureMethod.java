@@ -20,7 +20,7 @@ import org.codehaus.groovy.ast.MethodNode;
 
 /**
  * AST node representing a feature method.
- * 
+ *
  * @author Peter Niederwieser
  */
 public class FeatureMethod extends Method {

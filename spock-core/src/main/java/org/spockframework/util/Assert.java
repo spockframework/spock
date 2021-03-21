@@ -18,7 +18,7 @@ package org.spockframework.util;
 
 /**
  * Assertions for use within Spock code. Failures indicate internal errors.
- * 
+ *
  * @author Peter Niederwieser
  */
 public abstract class Assert {

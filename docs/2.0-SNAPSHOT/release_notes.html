@@ -62,7 +62,36 @@ unmodifiable to user code. <a href="https://github.com/spockframework/spock/issu
 <p>Improve parallel extensions to support inheritance <a href="https://github.com/spockframework/spock/issues/1245">#1245</a></p>
 </li>
 <li>
+<p>Improve PollingConditions</p>
+</li>
+<li>
+<p>Improve some AST transformation code regarding error handling</p>
+</li>
+<li>
 <p>Deprecate <code>AbstractGlobalExtension</code> and replace with <code>IGlobalExtension</code></p>
+</li>
+<li>
+<p>Remove unnecessary try-finally construct for assertions</p>
+</li>
+<li>
+<p>Fix ErrorSpecNode throw Exception in <code>prepare</code> instead of <code>execute</code>
+this fixes an issue that interceptors for <code>prepare</code>, <code>before</code>, and <code>around</code>
+were still executed and any Exception they throw would hide the actual cause.</p>
+</li>
+<li>
+<p>Fix <a href="https://github.com/spockframework/spock/issues/1294">#1294</a> swallowing of unrecoverable Errors</p>
+</li>
+<li>
+<p>Fix <a href="https://github.com/spockframework/spock/issues/1260">#1260</a> Change InteractionRewriter to keep casting of ListExpressions intact</p>
+</li>
+<li>
+<p>Fix <a href="https://github.com/spockframework/spock/issues/1282">#1282</a> Make TempDirInterceptor safe for parallel invocation of iterations</p>
+</li>
+<li>
+<p>Fix <a href="https://github.com/spockframework/spock/issues/1267">#1267</a> Retry extension behavior for unrolled tests</p>
+</li>
+<li>
+<p>Fix <a href="https://github.com/spockframework/spock/issues/1267">#1267</a> Retry extension behavior for unrolled tests</p>
 </li>
 <li>
 <p>Fix <a href="https://github.com/spockframework/spock/issues/1229">#1229</a> <code>@TempDir</code> not working for inherited fields</p>
@@ -87,7 +116,7 @@ were still executed and any Exception they throw would hide the actual cause.</p
 </ul>
 </div>
 <div class="paragraph">
-<p>Thanks to all the contributors to this release: Marcin Erdmann, Björn Kautler, Alexander Kriegisch, Josh Soref</p>
+<p>Thanks to all the contributors to this release: Marcin Erdmann, Björn Kautler, Alexander Kriegisch, Josh Soref, Vaidotas Valuckas</p>
 </div>
 </div>
 </div>
@@ -2184,7 +2213,7 @@ required; the only prerequisite for building Spock is a JDK installation (1.5 or
 <div id="footer">
 <div id="footer-text">
 Version 2.0-SNAPSHOT<br>
-Last updated 2021-03-19 12:53:33 UTC
+Last updated 2021-03-21 15:43:44 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./coderay-asciidoctor.css">

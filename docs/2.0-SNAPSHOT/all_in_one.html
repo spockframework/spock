@@ -6028,6 +6028,9 @@ were still executed and any Exception they throw would hide the actual cause.</p
 <p>Fix <a href="https://github.com/spockframework/spock/issues/1256">#1256</a> handling of <code>is</code> as getter for boolean properties on Mocks</p>
 </li>
 <li>
+<p>Fix <a href="https://github.com/spockframework/spock/issues/1270">#1270</a> handling of <code>is</code> as getter for boolean properties on GroovyMocks</p>
+</li>
+<li>
 <p>Fix <code>ErrorSpecNode</code> to re-throw <code>Exception</code> in <code>prepare</code> instead of <code>execute</code>,
 this fixes an issue that interceptors for <code>prepare</code>, <code>before</code>, and <code>around</code>
 were still executed and any Exception they throw would hide the actual cause.</p>
@@ -8584,7 +8587,7 @@ This is due to how groovy implements traits and AST transformations.</p>
 <div id="footer">
 <div id="footer-text">
 Version 2.0-SNAPSHOT<br>
-Last updated 2021-03-21 15:43:44 UTC
+Last updated 2021-03-22 17:29:23 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./coderay-asciidoctor.css">

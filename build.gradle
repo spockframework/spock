@@ -46,6 +46,7 @@ ext {
   variantLessVersion = baseVersion + (snapshotVersion ? "-SNAPSHOT" : (milestone ? "-M$milestone" : ""))
   javaVersions = [1.8, 11, 15] // ensure that latest version is actually build on travis, otherwise no docs get published
   javaVersion = System.getProperty("java.specification.version") as BigDecimal
+  buildScan.tag "Java $javaVersion"
 
   libs = [
     jetbrainsAnnotations: [group: "org.jetbrains", name: "annotations", version: "19.0.0"],
@@ -246,7 +247,7 @@ if (gradle.startParameter.taskNames == ["ghActionsBuild"]) {
 }
 
 if (gradle.startParameter.taskNames == ["ghActionsPublish"] || gradle.startParameter.taskNames == ["ghActionsDocs"] ) {
-  def originalStartParamteterTaskNames = gradle.startParameter.taskNames
+  def originalStartParameterTaskNames = gradle.startParameter.taskNames
   gradle.startParameter.taskNames = []
   boolean isMaster = System.getenv("GITHUB_REF") == "refs/heads/master"
   boolean isTag = System.getenv("GITHUB_REF")?.startsWith('refs/tags/spock-')
@@ -259,7 +260,7 @@ if (gradle.startParameter.taskNames == ["ghActionsPublish"] || gradle.startParam
       repo: ${System.getenv("GITHUB_REPOSITORY")}""")
   }
 
-  if (originalStartParamteterTaskNames == ["ghActionsPublish"]) {
+  if (originalStartParameterTaskNames == ["ghActionsPublish"]) {
     if (javaVersion != javaVersions.min()) {
       throw new IllegalArgumentException("ghActionsPublish can only be run on Java ${javaVersions.min()} but was run on $javaVersion")
     }
@@ -273,7 +274,7 @@ if (gradle.startParameter.taskNames == ["ghActionsPublish"] || gradle.startParam
     }
   }
 
-  if (originalStartParamteterTaskNames == ["ghActionsDocs"] && (snapshotVersion || isTag)) {
+  if (originalStartParameterTaskNames == ["ghActionsDocs"] && (snapshotVersion || isTag)) {
     if (javaVersion != javaVersions.max()) {
       throw new IllegalArgumentException("ghActionsPublish can only be run on Java ${javaVersions.max()} but was run on $javaVersion")
     }

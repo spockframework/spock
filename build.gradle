@@ -19,11 +19,11 @@ ext {
   variant = System.getProperty("variant") as BigDecimal ?: variants.first()
   buildScan.tag "groovy-$variant"
   if (variant == 2.5) {
-      groovyVersion = "2.5.12"
+      groovyVersion = "2.5.14"
       minGroovyVersion = "2.5.0"
       maxGroovyVersion = "2.9.99"
     } else if (variant == 3.0) {
-      groovyVersion = "3.0.6"
+      groovyVersion = "3.0.7"
       minGroovyVersion = "3.0.0"
       maxGroovyVersion = "3.9.99"
     } else {
@@ -49,9 +49,9 @@ ext {
   buildScan.tag "Java $javaVersion"
 
   libs = [
-    jetbrainsAnnotations: [group: "org.jetbrains", name: "annotations", version: "19.0.0"],
-    asm                 : [group: 'org.ow2.asm', name: 'asm', version: '9.0'],
-    bytebuddy           : [group: 'net.bytebuddy', name: 'byte-buddy', version: '1.10.16'],
+    jetbrainsAnnotations: [group: "org.jetbrains", name: "annotations", version: "20.1.0"],
+    asm                 : [group: 'org.ow2.asm', name: 'asm', version: '9.1'],
+    bytebuddy           : [group: 'net.bytebuddy', name: 'byte-buddy', version: '1.10.22'],
     cglib               : [group: 'cglib', name: 'cglib-nodep', version: '3.3.0'],
     groovy              : groovyDependencies,
     groovySql           : [group: 'org.codehaus.groovy', name: 'groovy-sql', version: groovyVersion], //for some Spring and Unitils tests
@@ -60,14 +60,14 @@ ext {
     h2database          : [group: 'com.h2database', name: 'h2', version: '1.4.200'],
     hamcrest            : [group: 'org.hamcrest', name: 'hamcrest', version: '2.2'],
     jaxb                : [group: 'javax.xml.bind', name: 'jaxb-api', version: '2.3.0'],
-    junit4              : [group: 'junit', name: 'junit', version: '4.13'],
-    junitBom            : [group: 'org.junit', name: 'junit-bom', version: '5.7.0'],
+    junit4              : [group: 'junit', name: 'junit', version: '4.13.2'],
+    junitBom            : [group: 'org.junit', name: 'junit-bom', version: '5.7.1'],
     jupiter             : [group: 'org.junit.jupiter', name: 'junit-jupiter'],
     junitPlatform       : [group: 'org.junit.platform', name: 'junit-platform-engine'],
     junitPlatformTestkit: [group: 'org.junit.platform', name: 'junit-platform-testkit'],
     junitPlatformConsole: [group: 'org.junit.platform', name: 'junit-platform-console'],
     log4j               : [group: 'log4j', name: 'log4j', version: '1.2.17'],
-    objenesis           : [group: 'org.objenesis', name: 'objenesis', version: '3.1'],
+    objenesis           : [group: 'org.objenesis', name: 'objenesis', version: '3.2'],
     jacocoAgent         : [group: 'org.jacoco', name: 'org.jacoco.agent', version: '0.8.6', classifier: 'runtime']
   ]
 }

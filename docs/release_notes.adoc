@@ -1,7 +1,7 @@
 = Release Notes
 include::include.adoc[]
 
-== 2.0-M5 (tbd)
+== 2.0-M5 (2021-03-23)
 
 === Breaking Changes
 

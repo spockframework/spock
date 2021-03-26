@@ -21,7 +21,6 @@ import org.spockframework.runtime.model.*;
 import org.spockframework.util.*;
 import spock.lang.Specification;
 
-
 import java.util.Arrays;
 
 import static java.lang.System.arraycopy;
@@ -323,15 +322,8 @@ public class PlatformSpecRunner {
     MethodInfo featureIteration = new MethodInfo(context.getCurrentFeature().getFeatureMethod());
     featureIteration.setIteration(context.getCurrentIteration());
 
-    Class<?>[] parameterTypes = featureIteration.getReflection().getParameterTypes();
-    int parameterCount = parameterTypes.length;
     Object[] dataValues = context.getCurrentIteration().getDataValues();
-
-    Object[] iterationArguments = new Object[parameterCount];
-    arraycopy(dataValues, 0, iterationArguments, 0, dataValues.length);
-    Arrays.fill(iterationArguments, dataValues.length, parameterCount, MISSING_ARGUMENT);
-
-    invoke(context, context.getCurrentInstance(), featureIteration, iterationArguments);
+    invoke(context, context.getCurrentInstance(), featureIteration, dataValues);
   }
 
   void runCleanup(SpockExecutionContext context) {
@@ -384,15 +376,26 @@ public class PlatformSpecRunner {
     if (method == null || method.isExcluded()) {
       return;
     }
+
+    Object[] methodArguments;
+    int parameterCount = method.getReflection() == null ? arguments.length : method.getReflection().getParameterCount();
+    if (arguments.length == parameterCount) {
+      methodArguments = arguments;
+    } else {
+      methodArguments = new Object[parameterCount];
+      arraycopy(arguments, 0, methodArguments, 0, arguments.length);
+      Arrays.fill(methodArguments, arguments.length, parameterCount, MISSING_ARGUMENT);
+    }
+
     // fast lane
     if (method.getInterceptors().isEmpty()) {
-      invokeRaw(context, target, method, arguments);
+      invokeRaw(context, target, method, methodArguments);
       return;
     }
 
     // slow lane
     MethodInvocation invocation = new MethodInvocation(context.getCurrentFeature(),
-      context.getCurrentIteration(), context.getSharedInstance(), context.getCurrentInstance(), target, method, arguments);
+      context.getCurrentIteration(), context.getSharedInstance(), context.getCurrentInstance(), target, method, methodArguments);
     try {
       invocation.proceed();
     } catch (Throwable throwable) {

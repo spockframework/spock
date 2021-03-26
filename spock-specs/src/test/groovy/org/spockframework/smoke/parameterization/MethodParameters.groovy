@@ -19,10 +19,17 @@ package org.spockframework.smoke.parameterization
 import org.codehaus.groovy.runtime.typehandling.GroovyCastException
 import org.spockframework.EmbeddedSpecification
 import org.spockframework.runtime.SpockExecutionException
-import spock.lang.FailsWith
+import org.spockframework.runtime.extension.ExtensionAnnotation
+import org.spockframework.runtime.extension.IAnnotationDrivenExtension
+import org.spockframework.runtime.model.MethodInfo
 import spock.lang.Issue
 import spock.lang.Rollup
 import spock.lang.Unroll
+
+import java.lang.annotation.Retention
+import java.lang.annotation.RetentionPolicy
+
+import static org.spockframework.runtime.model.MethodInfo.MISSING_ARGUMENT
 
 /**
  * @author Peter Niederwieser
@@ -189,4 +196,78 @@ def foo(x, y) {
     x = "10"
     y << ["20", "30"]
   }
+
+  @Unroll
+  @Issue("https://github.com/spockframework/spock/issues/1305")
+  def "method arguments in #fixtureMethod that are eventually provided by extensions throw an exception at runtime if not set"() {
+    when:
+    runner.runSpecBody '''
+def setup(x) {
+}
+
+def foo() {
+  expect:
+  true
+}
+  '''
+
+    then:
+    SpockExecutionException see = thrown()
+    see.message == /No argument was provided for parameters: 0/
+
+    where:
+    fixtureMethod << [
+      "setupSpec",
+      "setup",
+      "cleanup",
+      "cleanupSpec"
+    ]
+  }
+
+  @Unroll
+  @Issue("https://github.com/spockframework/spock/issues/1305")
+  def "method arguments in #fixtureMethod can be provided by extensions"() {
+    given:
+    runner.addClassImport(Foo)
+
+    when:
+    runner.runSpecBody """
+@Foo
+def $fixtureMethod(x) {
+  assert x == null
+}
+
+def foo() {
+  expect:
+  true
+}
+"""
+
+    then:
+    noExceptionThrown()
+
+    where:
+    fixtureMethod << [
+      "setupSpec",
+      "setup",
+      "cleanup",
+      "cleanupSpec"
+    ]
+  }
+
+  static class FooExtension implements IAnnotationDrivenExtension<Foo> {
+    @Override
+    void visitFixtureAnnotation(Foo annotation, MethodInfo fixtureMethod) {
+      fixtureMethod.addInterceptor {
+        assert it.arguments.size() == 1
+        assert it.arguments.first() == MISSING_ARGUMENT
+        it.arguments[0] = null
+      }
+    }
+  }
+}
+
+@Retention(RetentionPolicy.RUNTIME)
+@ExtensionAnnotation(MethodParameters.FooExtension)
+@interface Foo {
 }

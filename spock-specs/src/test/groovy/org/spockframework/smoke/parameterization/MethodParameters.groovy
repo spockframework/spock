@@ -202,7 +202,7 @@ def foo(x, y) {
   def "method arguments in #fixtureMethod that are eventually provided by extensions throw an exception at runtime if not set"() {
     when:
     runner.runSpecBody '''
-def setup(x) {
+def setup(x, y) {
 }
 
 def foo() {
@@ -213,7 +213,7 @@ def foo() {
 
     then:
     SpockExecutionException see = thrown()
-    see.message == /No argument was provided for parameters: 0/
+    see.message == /No argument was provided for parameters: 'arg0', 'arg1'/
 
     where:
     fixtureMethod << [
@@ -234,7 +234,7 @@ def foo() {
     runner.runSpecBody """
 @Foo
 def $fixtureMethod(x) {
-  assert x == null
+  assert x == 'foo'
 }
 
 def foo() {
@@ -261,7 +261,7 @@ def foo() {
       fixtureMethod.addInterceptor {
         assert it.arguments.size() == 1
         assert it.arguments.first() == MISSING_ARGUMENT
-        it.arguments[0] = null
+        it.arguments[0] = 'foo'
       }
     }
   }

@@ -21,7 +21,9 @@ import org.spockframework.runtime.extension.IMethodInterceptor;
 import org.spockframework.util.*;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
 import java.util.*;
+import java.util.function.Function;
 
 import static org.spockframework.runtime.model.MethodKind.FEATURE;
 
@@ -124,23 +126,20 @@ public class MethodInfo extends NodeInfo<SpecInfo, Method> implements IExcludabl
   public Object invoke(Object target, Object... arguments) throws Throwable {
     for (int i = 0, argCount = arguments.length; i < argCount; i++) {
       if (arguments[i] == MISSING_ARGUMENT) {
-        StringJoiner missingArguments;
+        Function<Integer, String> nameProvider;
         if (getKind() == FEATURE) {
-          missingArguments = new StringJoiner("', '", "No argument was provided for parameters: '", "'");
           List<String> parameterNames = getFeature().getParameterNames();
-          missingArguments.add(parameterNames.get(i));
-          for (int j = i + 1; j < argCount; j++) {
-            if (arguments[j] == MISSING_ARGUMENT) {
-              missingArguments.add(parameterNames.get(j));
-            }
-          }
+          nameProvider = parameterNames::get;
         } else {
-          missingArguments = new StringJoiner(", ", "No argument was provided for parameters: ", "");
-          missingArguments.add(String.valueOf(i));
-          for (int j = i + 1; j < argCount; j++) {
-            if (arguments[j] == MISSING_ARGUMENT) {
-              missingArguments.add(String.valueOf(j));
-            }
+          Parameter[] parameters = getReflection().getParameters();
+          nameProvider = index -> parameters[index].getName();
+        }
+
+        StringJoiner missingArguments = new StringJoiner("', '", "No argument was provided for parameters: '", "'");
+        missingArguments.add(nameProvider.apply(i));
+        for (int j = i + 1; j < argCount; j++) {
+          if (arguments[j] == MISSING_ARGUMENT) {
+            missingArguments.add(nameProvider.apply(j));
           }
         }
         throw new SpockExecutionException(missingArguments.toString());

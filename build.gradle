@@ -397,10 +397,10 @@ def configureJavadoc(task) {
     include "spock/**"
     configure(options) {
       options.addStringOption('source', '1.8')
-      links "http://docs.oracle.com/javase/8/docs/api/"
-      links "http://docs.groovy-lang.org/docs/groovy-$groovyVersion/html/gapi/"
-      links "http://junit.org/junit4/javadoc/latest/"
-      links "http://hamcrest.org/JavaHamcrest/javadoc/1.3/"
+      links "https://docs.oracle.com/javase/8/docs/api/"
+      links "https://docs.groovy-lang.org/docs/groovy-$groovyVersion/html/gapi/"
+      links "https://junit.org/junit4/javadoc/latest/"
+      links "http://hamcrest.org/JavaHamcrest/javadoc/2.2/"
     }
   }
 }

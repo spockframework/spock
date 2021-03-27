@@ -70,12 +70,12 @@ loadScripts(document, 'script');</script>
 <section class="description">
 <hr>
 <pre>@Beta
-<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/annotation/Retention.html" title="class or interface in java.lang.annotation" class="external-link">@Retention</a>(<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/annotation/RetentionPolicy.html#RUNTIME" title="class or interface in java.lang.annotation" class="external-link">RUNTIME</a>)
-<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/annotation/Target.html" title="class or interface in java.lang.annotation" class="external-link">@Target</a>(<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/annotation/ElementType.html#FIELD" title="class or interface in java.lang.annotation" class="external-link">FIELD</a>)
+<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/annotation/Retention.html" title="class or interface in java.lang.annotation" class="external-link">@Retention</a>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/annotation/RetentionPolicy.html#RUNTIME" title="class or interface in java.lang.annotation" class="external-link">RUNTIME</a>)
+<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/annotation/Target.html" title="class or interface in java.lang.annotation" class="external-link">@Target</a>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/annotation/ElementType.html#FIELD" title="class or interface in java.lang.annotation" class="external-link">FIELD</a>)
 public @interface <span class="type-name-label">TempDir</span></pre>
 <div class="block">Generate a temp directory for test, and delete it after test.
 
- <p><code>@TempDir</code> can be applied to annotate a member field of type <a href="http://docs.oracle.com/javase/8/docs/api/java/io/File.html" title="class or interface in java.io" class="external-link"><code>File</code></a>, <a href="http://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link"><code>Path</code></a> or untyped like <code>def</code>
+ <p><code>@TempDir</code> can be applied to annotate a member field of type <a href="https://docs.oracle.com/javase/8/docs/api/java/io/File.html" title="class or interface in java.io" class="external-link"><code>File</code></a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link"><code>Path</code></a> or untyped like <code>def</code>
  in a spec class (untyped field will be injected with <code>Path</code>). If the annotated field is shared,
  the temp directory will be shared in this spec, otherwise every iteration will have its own temp directory.</div>
 <dl class="notes">

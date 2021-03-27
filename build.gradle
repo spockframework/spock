@@ -108,14 +108,12 @@ allprojects {
   // ignore mutable data that is irrelevant for compilation output
   normalization {
     runtimeClasspath {
-      ignore 'META-INF/MANIFEST.MF'
+      metaInf {
+        ignoreManifest()
+      }
     }
   }
-}
 
-apply from: script("ide")
-
-allprojects {
   repositories {
     mavenCentral()
     maven {
@@ -126,6 +124,8 @@ allprojects {
     }
   }
 }
+
+apply from: script("ide")
 
 subprojects {
   apply plugin: "groovy"

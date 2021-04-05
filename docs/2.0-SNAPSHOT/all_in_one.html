@@ -206,7 +206,7 @@
 </li>
 <li><a href="#_modules">Modules</a>
 <ul class="sectlevel2">
-<li><a href="#_junit_4_module">JUnit 4 Module</a></li>
+<li><a href="#junit-4">JUnit 4 Module</a></li>
 <li><a href="#_guice_module">Guice Module</a></li>
 <li><a href="#_spring_module">Spring Module</a>
 <ul class="sectlevel3">
@@ -4571,7 +4571,7 @@ Foo myFoo</code></pre>
 <div class="sect3">
 <h4 id="_rule"><a class="anchor" href="#_rule"></a><a class="link" href="#_rule">Rule</a></h4>
 <div class="paragraph">
-<p>Spock understands <code>@org.junit.Rule</code> annotations on non-<code>@Shared</code> instance fields. The according rules are run at the
+<p>Spock understands <code>@org.junit.Rule</code> annotations on non-<code>@Shared</code> instance fields when the <a href="#junit-4">JUnit 4 module</a> is included. The according rules are run at the
 iteration interception point in the Spock lifecycle. This means that the rules before-actions are done before the
 execution of <code>setup</code> methods and the after-actions are done after the execution of <code>cleanup</code> methods.</p>
 </div>
@@ -4579,7 +4579,7 @@ execution of <code>setup</code> methods and the after-actions are done after the
 <div class="sect3">
 <h4 id="_classrule"><a class="anchor" href="#_classrule"></a><a class="link" href="#_classrule">ClassRule</a></h4>
 <div class="paragraph">
-<p>Spock understands <code>@org.junit.ClassRule</code> annotations on <code>@Shared</code> fields. The according rules are run at the
+<p>Spock understands <code>@org.junit.ClassRule</code> annotations on <code>@Shared</code> fields when the <a href="#junit-4">JUnit 4 module</a> is included. The according rules are run at the
 specification interception point in the Spock lifecycle. This means that the rules before-actions are done before the
 execution of <code>setupSpec</code> methods and the after-actions are done after the execution of <code>cleanupSpec</code> methods.</p>
 </div>
@@ -5499,7 +5499,7 @@ Check the Javadoc of <code>spock.config.ParallelConfiguration</code> for a detai
 <h2 id="_modules"><a class="anchor" href="#_modules"></a><a class="link" href="#_modules">Modules</a></h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_junit_4_module"><a class="anchor" href="#_junit_4_module"></a><a class="link" href="#_junit_4_module">JUnit 4 Module</a></h3>
+<h3 id="junit-4"><a class="anchor" href="#junit-4"></a><a class="link" href="#junit-4">JUnit 4 Module</a></h3>
 <div class="paragraph">
 <p>Integration with JUnit 4 features for Spock 2+ (which internally uses JUnit Platform - part of JUnit 5).</p>
 </div>
@@ -8592,7 +8592,7 @@ This is due to how groovy implements traits and AST transformations.</p>
 <div id="footer">
 <div id="footer-text">
 Version 2.0-SNAPSHOT<br>
-Last updated 2021-03-27 21:17:44 UTC
+Last updated 2021-04-05 18:03:48 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./coderay-asciidoctor.css">

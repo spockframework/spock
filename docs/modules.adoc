@@ -1,6 +1,7 @@
 = Modules
 include::include.adoc[]
 
+[[junit-4]]
 == JUnit 4 Module
 
 Integration with JUnit 4 features for Spock 2+ (which internally uses JUnit Platform - part of JUnit 5).

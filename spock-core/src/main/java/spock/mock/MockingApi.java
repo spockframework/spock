@@ -170,6 +170,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
       @NamedParam(value = "name", type = String.class),
       @NamedParam(value = "additionalInterfaces", type = List.class),
       @NamedParam(value = "defaultResponse", type = IDefaultResponse.class),
+      @NamedParam(value = "useLastMatchResponseStrategy", type = Boolean.class),
       @NamedParam(value = "verified", type = Boolean.class),
       @NamedParam(value = "useObjenesis", type = Boolean.class)
     })
@@ -222,6 +223,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
       @NamedParam(value = "name", type = String.class),
       @NamedParam(value = "additionalInterfaces", type = List.class),
       @NamedParam(value = "defaultResponse", type = IDefaultResponse.class),
+      @NamedParam(value = "useLastMatchResponseStrategy", type = Boolean.class),
       @NamedParam(value = "verified", type = Boolean.class),
       @NamedParam(value = "useObjenesis", type = Boolean.class)
     })
@@ -390,6 +392,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
       @NamedParam(value = "name", type = String.class),
       @NamedParam(value = "additionalInterfaces", type = List.class),
       @NamedParam(value = "defaultResponse", type = IDefaultResponse.class),
+      @NamedParam(value = "useLastMatchResponseStrategy", type = Boolean.class),
       @NamedParam(value = "verified", type = Boolean.class),
       @NamedParam(value = "useObjenesis", type = Boolean.class)
     })
@@ -443,6 +446,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
       @NamedParam(value = "name", type = String.class),
       @NamedParam(value = "additionalInterfaces", type = List.class),
       @NamedParam(value = "defaultResponse", type = IDefaultResponse.class),
+      @NamedParam(value = "useLastMatchResponseStrategy", type = Boolean.class),
       @NamedParam(value = "verified", type = Boolean.class),
       @NamedParam(value = "useObjenesis", type = Boolean.class)
     })
@@ -502,6 +506,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
       @NamedParam(value = "name", type = String.class),
       @NamedParam(value = "additionalInterfaces", type = List.class),
       @NamedParam(value = "defaultResponse", type = IDefaultResponse.class),
+      @NamedParam(value = "useLastMatchResponseStrategy", type = Boolean.class),
       @NamedParam(value = "verified", type = Boolean.class),
       @NamedParam(value = "useObjenesis", type = Boolean.class)
     })
@@ -568,6 +573,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
       @NamedParam(value = "name", type = String.class),
       @NamedParam(value = "additionalInterfaces", type = List.class),
       @NamedParam(value = "defaultResponse", type = IDefaultResponse.class),
+      @NamedParam(value = "useLastMatchResponseStrategy", type = Boolean.class),
       @NamedParam(value = "verified", type = Boolean.class),
       @NamedParam(value = "useObjenesis", type = Boolean.class)
     })
@@ -619,6 +625,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
       @NamedParam(value = "name", type = String.class),
       @NamedParam(value = "additionalInterfaces", type = List.class),
       @NamedParam(value = "defaultResponse", type = IDefaultResponse.class),
+      @NamedParam(value = "useLastMatchResponseStrategy", type = Boolean.class),
       @NamedParam(value = "verified", type = Boolean.class),
       @NamedParam(value = "useObjenesis", type = Boolean.class)
     })
@@ -726,6 +733,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
       @NamedParam(value = "name", type = String.class),
       @NamedParam(value = "additionalInterfaces", type = List.class),
       @NamedParam(value = "defaultResponse", type = IDefaultResponse.class),
+      @NamedParam(value = "useLastMatchResponseStrategy", type = Boolean.class),
       @NamedParam(value = "verified", type = Boolean.class),
       @NamedParam(value = "useObjenesis", type = Boolean.class)
     })
@@ -783,6 +791,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
       @NamedParam(value = "name", type = String.class),
       @NamedParam(value = "additionalInterfaces", type = List.class),
       @NamedParam(value = "defaultResponse", type = IDefaultResponse.class),
+      @NamedParam(value = "useLastMatchResponseStrategy", type = Boolean.class),
       @NamedParam(value = "verified", type = Boolean.class),
       @NamedParam(value = "useObjenesis", type = Boolean.class)
     })
@@ -848,6 +857,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
       @NamedParam(value = "name", type = String.class),
       @NamedParam(value = "additionalInterfaces", type = List.class),
       @NamedParam(value = "defaultResponse", type = IDefaultResponse.class),
+      @NamedParam(value = "useLastMatchResponseStrategy", type = Boolean.class),
       @NamedParam(value = "verified", type = Boolean.class),
       @NamedParam(value = "useObjenesis", type = Boolean.class)
     })
@@ -899,6 +909,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
       @NamedParam(value = "name", type = String.class),
       @NamedParam(value = "additionalInterfaces", type = List.class),
       @NamedParam(value = "defaultResponse", type = IDefaultResponse.class),
+      @NamedParam(value = "useLastMatchResponseStrategy", type = Boolean.class),
       @NamedParam(value = "verified", type = Boolean.class),
       @NamedParam(value = "useObjenesis", type = Boolean.class),
       @NamedParam(value = "global", type = Boolean.class)
@@ -951,6 +962,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
       @NamedParam(value = "name", type = String.class),
       @NamedParam(value = "additionalInterfaces", type = List.class),
       @NamedParam(value = "defaultResponse", type = IDefaultResponse.class),
+      @NamedParam(value = "useLastMatchResponseStrategy", type = Boolean.class),
       @NamedParam(value = "verified", type = Boolean.class),
       @NamedParam(value = "useObjenesis", type = Boolean.class),
       @NamedParam(value = "global", type = Boolean.class)
@@ -1011,6 +1023,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
       @NamedParam(value = "name", type = String.class),
       @NamedParam(value = "additionalInterfaces", type = List.class),
       @NamedParam(value = "defaultResponse", type = IDefaultResponse.class),
+      @NamedParam(value = "useLastMatchResponseStrategy", type = Boolean.class),
       @NamedParam(value = "verified", type = Boolean.class),
       @NamedParam(value = "useObjenesis", type = Boolean.class),
       @NamedParam(value = "global", type = Boolean.class)
@@ -1078,6 +1091,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
       @NamedParam(value = "name", type = String.class),
       @NamedParam(value = "additionalInterfaces", type = List.class),
       @NamedParam(value = "defaultResponse", type = IDefaultResponse.class),
+      @NamedParam(value = "useLastMatchResponseStrategy", type = Boolean.class),
       @NamedParam(value = "verified", type = Boolean.class),
       @NamedParam(value = "useObjenesis", type = Boolean.class),
       @NamedParam(value = "global", type = Boolean.class)
@@ -1130,6 +1144,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
       @NamedParam(value = "name", type = String.class),
       @NamedParam(value = "additionalInterfaces", type = List.class),
       @NamedParam(value = "defaultResponse", type = IDefaultResponse.class),
+      @NamedParam(value = "useLastMatchResponseStrategy", type = Boolean.class),
       @NamedParam(value = "verified", type = Boolean.class),
       @NamedParam(value = "useObjenesis", type = Boolean.class),
       @NamedParam(value = "global", type = Boolean.class)
@@ -1182,6 +1197,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
       @NamedParam(value = "name", type = String.class),
       @NamedParam(value = "additionalInterfaces", type = List.class),
       @NamedParam(value = "defaultResponse", type = IDefaultResponse.class),
+      @NamedParam(value = "useLastMatchResponseStrategy", type = Boolean.class),
       @NamedParam(value = "verified", type = Boolean.class),
       @NamedParam(value = "useObjenesis", type = Boolean.class),
       @NamedParam(value = "global", type = Boolean.class)
@@ -1242,6 +1258,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
       @NamedParam(value = "name", type = String.class),
       @NamedParam(value = "additionalInterfaces", type = List.class),
       @NamedParam(value = "defaultResponse", type = IDefaultResponse.class),
+      @NamedParam(value = "useLastMatchResponseStrategy", type = Boolean.class),
       @NamedParam(value = "verified", type = Boolean.class),
       @NamedParam(value = "useObjenesis", type = Boolean.class),
       @NamedParam(value = "global", type = Boolean.class)
@@ -1309,6 +1326,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
       @NamedParam(value = "name", type = String.class),
       @NamedParam(value = "additionalInterfaces", type = List.class),
       @NamedParam(value = "defaultResponse", type = IDefaultResponse.class),
+      @NamedParam(value = "useLastMatchResponseStrategy", type = Boolean.class),
       @NamedParam(value = "verified", type = Boolean.class),
       @NamedParam(value = "useObjenesis", type = Boolean.class),
       @NamedParam(value = "global", type = Boolean.class)
@@ -1361,6 +1379,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
       @NamedParam(value = "name", type = String.class),
       @NamedParam(value = "additionalInterfaces", type = List.class),
       @NamedParam(value = "defaultResponse", type = IDefaultResponse.class),
+      @NamedParam(value = "useLastMatchResponseStrategy", type = Boolean.class),
       @NamedParam(value = "verified", type = Boolean.class),
       @NamedParam(value = "useObjenesis", type = Boolean.class),
       @NamedParam(value = "global", type = Boolean.class)
@@ -1413,6 +1432,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
       @NamedParam(value = "name", type = String.class),
       @NamedParam(value = "additionalInterfaces", type = List.class),
       @NamedParam(value = "defaultResponse", type = IDefaultResponse.class),
+      @NamedParam(value = "useLastMatchResponseStrategy", type = Boolean.class),
       @NamedParam(value = "verified", type = Boolean.class),
       @NamedParam(value = "useObjenesis", type = Boolean.class),
       @NamedParam(value = "global", type = Boolean.class)
@@ -1471,6 +1491,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
       @NamedParam(value = "name", type = String.class),
       @NamedParam(value = "additionalInterfaces", type = List.class),
       @NamedParam(value = "defaultResponse", type = IDefaultResponse.class),
+      @NamedParam(value = "useLastMatchResponseStrategy", type = Boolean.class),
       @NamedParam(value = "verified", type = Boolean.class),
       @NamedParam(value = "useObjenesis", type = Boolean.class),
       @NamedParam(value = "global", type = Boolean.class)
@@ -1537,6 +1558,7 @@ public class MockingApi extends SpecInternals implements MockFactory {
       @NamedParam(value = "name", type = String.class),
       @NamedParam(value = "additionalInterfaces", type = List.class),
       @NamedParam(value = "defaultResponse", type = IDefaultResponse.class),
+      @NamedParam(value = "useLastMatchResponseStrategy", type = Boolean.class),
       @NamedParam(value = "verified", type = Boolean.class),
       @NamedParam(value = "useObjenesis", type = Boolean.class),
       @NamedParam(value = "global", type = Boolean.class)

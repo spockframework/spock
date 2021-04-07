@@ -30,18 +30,21 @@ public class MockObject implements IMockObject {
   private final boolean verified;
   private final boolean global;
   private final IDefaultResponse defaultResponse;
+  private final boolean useLastMatchResponseStrategy;
   private final SpecificationAttachable mockInterceptor;
 
   private Specification specification;
 
   public MockObject(@Nullable String name, Type type, Object instance, boolean verified, boolean global,
-      IDefaultResponse defaultResponse, Specification specification, SpecificationAttachable mockInterceptor) {
+      IDefaultResponse defaultResponse, boolean useLastMatchResponseStrategy, Specification specification,
+      SpecificationAttachable mockInterceptor) {
     this.name = name;
     this.type = type;
     this.instance = instance;
     this.verified = verified;
     this.global = global;
     this.defaultResponse = defaultResponse;
+    this.useLastMatchResponseStrategy = useLastMatchResponseStrategy;
     this.specification = specification;
     this.mockInterceptor = mockInterceptor;
   }
@@ -75,6 +78,11 @@ public class MockObject implements IMockObject {
   @Override
   public IDefaultResponse getDefaultResponse() {
     return defaultResponse;
+  }
+
+  @Override
+  public boolean useLastMatchResponseStrategy() {
+    return useLastMatchResponseStrategy;
   }
 
   @Override

@@ -66,6 +66,14 @@ public interface IMockObject extends SpecificationAttachable {
   IDefaultResponse getDefaultResponse();
 
   /**
+   * Tells whether this mock object supports last defined return value.
+   * By default Spock uses a match first algorithm to determine the defined return value of a method.
+   *
+   * @return whether this mock object supports last matched response
+   */
+  boolean useLastMatchResponseStrategy();
+
+  /**
    * Returns the specification that this mock object is attached to.
    *
    * @return the specification that this mock object is attached to

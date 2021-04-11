@@ -109,7 +109,7 @@ allprojects {
   normalization {
     runtimeClasspath {
       metaInf {
-        ignoreManifest()
+        ignoreAttribute("Build-Revision")
       }
     }
   }

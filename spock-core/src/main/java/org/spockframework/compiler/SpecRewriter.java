@@ -760,11 +760,26 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
           new BinaryExpression(
               copyLhsVariableExpressions(declExpr),
               Token.newSymbol(Types.ASSIGN, -1, -1),
-              declExpr.getRightExpression()));
+              transformRhsExpressionIfNecessary(declExpr)));
 
       declExpr.setRightExpression(createDefaultValueInitializer(declExpr));
       to.add(new ExpressionStatement(declExpr));
     }
+  }
+
+  private Expression transformRhsExpressionIfNecessary(DeclarationExpression declExpr) {
+    Expression rightExpression = declExpr.getRightExpression();
+    // The case of `def foo = foo()` will break if we split it up without changing the target,
+    // as groovy would now interpret it as a `foo.call()` invocation on the local variable.
+    if (rightExpression instanceof MethodCallExpression) {
+      MethodCallExpression methodCallExpression = (MethodCallExpression)rightExpression;
+      if (methodCallExpression.isImplicitThis() &&
+        declExpr.getVariableExpression().getName().equals(methodCallExpression.getMethod().getText())) {
+        // change to explicit `this` to turn the expression to `foo = this.foo()`
+        methodCallExpression.setImplicitThis(false);
+      }
+    }
+    return rightExpression;
   }
 
   private Expression createDefaultValueInitializer(DeclarationExpression expr) {

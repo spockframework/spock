@@ -269,4 +269,17 @@ thrown() == e
     x == 3
     y == 4
   }
+
+  @Issue("https://github.com/spockframework/spock/issues/1266")
+  def "thrown conditions don't destroy method reference when invocation is assigned to variable with the same name"() {
+    when:
+    def foobar = foobar()
+
+    then:
+    thrown(IllegalStateException)
+  }
+
+  def foobar() {
+    throw new IllegalStateException("foo")
+  }
 }

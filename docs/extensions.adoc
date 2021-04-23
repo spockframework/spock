@@ -481,6 +481,7 @@ annotated object. To prevent cleanup exceptions from being reported, override th
 def ignoreMyExceptions
 ----
 
+[[_temp_dir]]
 === TempDir
 
 In order to generate a temporary directory for test and delete it after test, annotate a member field of type

@@ -16,7 +16,7 @@
 
 package org.spockframework.tapestry
 
-import org.apache.tapestry5.ioc.ObjectLocator
+import org.apache.tapestry5.commons.ObjectLocator
 import org.apache.tapestry5.ioc.annotations.*
 
 import spock.lang.*

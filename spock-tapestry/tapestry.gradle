@@ -4,15 +4,15 @@ ext.displayName = "Spock Framework - Tapestry Module"
 
 description = "Spock's Tapestry Module provides support for testing Tapestry 5 based applications."
 
-def tapestryVersion54 = "5.4.3"
+def tapestryVersion57 = "5.7.2"
 
-def useTapestry54 = javaVersion >= 1.8
+def useTapestry57 = javaVersion >= 1.8
 
-def tapestryVersionTest = useTapestry54 ? tapestryVersion54 : "5.2.6"
+def tapestryVersionTest = useTapestry57 ? tapestryVersion57 : "5.2.6"
 
 dependencies {
   compile project(":spock-core")
-  compile "org.apache.tapestry:tapestry-ioc:$tapestryVersion54", provided
+  compile "org.apache.tapestry:tapestry-ioc:$tapestryVersion57", provided
 
   testCompile "javax.inject:javax.inject:1"
   testRuntime ("org.apache.tapestry:tapestry-ioc:$tapestryVersionTest"){
@@ -20,7 +20,7 @@ dependencies {
   }
 }
 
-if (!useTapestry54) {
+if (!useTapestry57) {
   tasks.withType(Test) {
     exclude '**/*WithImportModule.class'
   }

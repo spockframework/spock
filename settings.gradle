@@ -86,10 +86,7 @@ if ((System.getProperty("variant") as BigDecimal ?: 2.5) != 3.0) {
   include "spock-groovy2-compat"
 }
 
-// https://issues.apache.org/jira/projects/TAP5/issues/TAP5-2588
-if (JavaVersion.current().isJava8()) {
-  include "spock-tapestry"
-}
+include "spock-tapestry"
 
 include "spock-unitils"
 include "spock-gradle"

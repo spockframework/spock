@@ -27,6 +27,7 @@ import java.util.*;
 
 import org.apache.tapestry5.ioc.*;
 import org.apache.tapestry5.ioc.annotations.*;
+import org.apache.tapestry5.commons.AnnotationProvider;
 
 /**
  * Controls creation, startup and shutdown of the Tapestry container,

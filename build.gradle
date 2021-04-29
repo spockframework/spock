@@ -23,7 +23,7 @@ ext {
       minGroovyVersion = "2.5.0"
       maxGroovyVersion = "2.9.99"
     } else if (variant == 3.0) {
-      groovyVersion = "3.0.7"
+      groovyVersion = "3.0.8"
       minGroovyVersion = "3.0.0"
       maxGroovyVersion = "3.9.99"
     } else {
@@ -51,7 +51,7 @@ ext {
   libs = [
     jetbrainsAnnotations: [group: "org.jetbrains", name: "annotations", version: "20.1.0"],
     asm                 : [group: 'org.ow2.asm', name: 'asm', version: '9.1'],
-    bytebuddy           : [group: 'net.bytebuddy', name: 'byte-buddy', version: '1.10.22'],
+    bytebuddy           : [group: 'net.bytebuddy', name: 'byte-buddy', version: '1.11.0'],
     cglib               : [group: 'cglib', name: 'cglib-nodep', version: '3.3.0'],
     groovy              : groovyDependencies,
     groovySql           : [group: 'org.codehaus.groovy', name: 'groovy-sql', version: groovyVersion], //for some Spring and Unitils tests

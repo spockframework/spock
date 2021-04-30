@@ -181,4 +181,20 @@ def feature() {
     assert d == 1d
     assert bool
   }
+
+  @Issue("https://github.com/spockframework/spock/issues/1266")
+  def "cleanup blocks don't destroy method reference when invocation is assigned to variable with the same name"() {
+    when:
+    def foobar = foobar()
+
+    then:
+    println(foobar)
+
+    cleanup:
+    foobar.size()
+  }
+
+  def foobar() {
+    return "foo"
+  }
 }

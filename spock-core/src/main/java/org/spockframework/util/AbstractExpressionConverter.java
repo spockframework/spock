@@ -20,6 +20,7 @@ import java.util.*;
 
 import org.codehaus.groovy.ast.GroovyCodeVisitor;
 import org.codehaus.groovy.ast.expr.Expression;
+import org.codehaus.groovy.ast.expr.VariableExpression;
 import org.codehaus.groovy.ast.stmt.*;
 
 import static org.codehaus.groovy.ast.expr.VariableExpression.THIS_EXPRESSION;
@@ -45,7 +46,16 @@ public abstract class AbstractExpressionConverter<T> implements GroovyCodeVisito
   protected List<T> convertAll(List<? extends Expression> expressions) {
     List<T> converted = new ArrayList<>(expressions.size());
     // do not convert the implicit this expression like when calling the constructor of a non-static inner class
-    for (Expression expr : expressions) converted.add(expr == THIS_EXPRESSION ? (T) expr : convert(expr));
+    for (Expression expr : expressions) {
+      if (expr instanceof VariableExpression) {
+        VariableExpression varExpr = (VariableExpression) expr;
+        if (varExpr.isThisExpression() && varExpr.isDynamicTyped()) {
+          converted.add((T) varExpr);
+          continue;
+        }
+      }
+      converted.add(convert(expr));
+    }
     return converted;
   }
 

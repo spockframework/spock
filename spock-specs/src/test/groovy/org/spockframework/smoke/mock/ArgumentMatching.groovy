@@ -313,6 +313,18 @@ class ArgumentMatching extends Specification {
     1 * varargs.m("one")
   }
 
+  @FailsWith(TooFewInvocationsError)
+  def "expect non-matching Comparables"() {
+    ComparableExample bar = Mock()
+    Comparable baz = Mock()
+    Comparable qux = Mock()
+
+    when:
+    bar.foo(baz)
+    then:
+    1 * bar.foo(qux)
+  }
+
   interface Overloads {
     void m()
     void m(String one)
@@ -325,6 +337,10 @@ class ArgumentMatching extends Specification {
   interface NamedArgs {
     void m(Map args)
     void m(Map args, String a)
+  }
+
+  interface ComparableExample {
+    void foo(Comparable arg)
   }
 }
 

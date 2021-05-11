@@ -1,3 +1,4 @@
+[[_release_notes]]
 = Release Notes
 include::include.adoc[]
 
@@ -7,21 +8,25 @@ include::include.adoc[]
 
 === Breaking Changes
 
+// tag::breaking-change-report-log-extension-removed[]
 - The `ReportLogExtension` vestiges were removed. As this extension was mostly used for an unreleased Spock module, this won't affect many users.
   If you are using a <<extensions.adoc#spock-configuration-file,Spock Configuration File>> with a `report` section,
   then you must delete everything from this section except for `issueNamePrefix` and `issueUrlPrefix`.
   These two properties are still supported and used by the `@Issue` extension.
+// end::breaking-change-report-log-extension-removed[]
 
 === Misc
 
 - Add support for injection into `@Shared` fields in `spock-spring` module which users can opt-in for by adding
   `@EnableSharedInjection` to the specification. https://github.com/spockframework/spock/issues/76[#76]
 
+// tag::breaking-change-2-0-misc[]
 - Add new `displayName` via `INameable` for `SpecInfo`, `FeatureInfo`, and `IterationInfo`.
   This field can be set via extensions to change the reported name.
   The existing iteration `NameProvider` now also sets the `displayName` instead of the `name`.
   Modifying the `name` instead of `displayName` is now considered `deprecated` for extensions.
   https://github.com/spockframework/spock/issues/1236[#1236]
+// end::breaking-change-2-0-misc[]
 
 - Add support for constructor injection for extensions
 
@@ -158,16 +163,19 @@ which should not be a problem in the majority of cases.
 
 At the same time, using JUnit 4's annotations is discouraged (and considered `deprecated`), the same using the other elements of JUnit 4 (as `(Class)Rule`s).
 
+// tag::breaking-change-spock-core-reduced-dependencies[]
 ==== Reduce spock-core direct groovy dependencies
 
 `spock-core` now only depends on `groovy.jar`. All other Groovy dependencies have been removed,
 this should make dependency management a bit easier.
 If you relied on other groovy dependencies transitively, you will need to add them directly.
+// end::breaking-change-spock-core-reduced-dependencies[]
 
 ==== Upgrade to JUnit 5.6 (and JUnit Platform 1.6)
 
 JUnit Platform 1.6 https://junit.org/junit5/docs/5.6.0/release-notes/index.html#deprecations-and-breaking-changes[deprecated] methods (from experimental API)  in `EngineExecutionResults` that Spock was using. To keep runtime compatibility with JUnit 5.6 and incoming 5.7 the implementation has been switched to the new methods. As a result, Spock 2.0-M3 cannot work with JUnit 5.5 and lower. The problem might only occur if a project overrides default JUnit Platform version provided by Spock.
 
+// tag::breaking-change-changed-meaning-of_[]
 ==== New meaning of `>> _`
 
 The meaning of `>> _` has changed from "use the default response" to "return a stubbed value" (<<interaction_based_testing.adoc#_returning_a_default_response,Docs>>).
@@ -175,6 +183,7 @@ The original behavior was only ever documented in the Javadocs and was basically
 The only use-case was chained responses `>> "a" >> _ >> "b"`,
 but even here it is clearer to just use `null` or `{ callRealMethod() }` explicitly.
 With the new behavior, you can have a `Mock` or `Spy` return the same value as a `Stub` would.
+// end::breaking-change-changed-meaning-of_[]
 
 [source,groovy]
 ----
@@ -243,10 +252,11 @@ It can be set back to the old pre Spock 2.0 behaviour by setting
   for example by some extensions or from data variables. If any of these is not replaced by some value, an exception
   will be thrown at runtime.
 
+// tag::breaking-change-removed-ant-support[]
 ==== Ant support removed
-
 `SpecClassFileSelector` was removed, which was the only class that required `ant`.
 If you are still using spock with `ant`, then you can just copy the class from the spock source code into your build.
+// end::breaking-change-removed-ant-support[]
 
 === Misc
 
@@ -354,6 +364,7 @@ def "I'll run everywhere but on Windows"() { ... }
   if applied to a data driven feature. This has further implications that are documented in the respective
   documentation parts and JavaDocs.
 
+// tag::breaking-change-unroll[]
 - Data driven features are now unrolled by default. `@Unroll` can still be used to specify a custom naming pattern.
   A simple `@Unroll` without argument is not needed anymore except when undoing a spec-level `@Rollup` annotation
   or if unrolling by default is disabled, so any simple `@Unroll` annotations can be removed from existing code. You
@@ -366,6 +377,7 @@ def "I'll run everywhere but on Windows"() { ... }
 - The setting `unroll { unrollByDefault false }` in the Spock configuration file can be set to roll up all
   features by default if not overwritten by explicit `@Unroll` annotations and thus reinstate the pre
   Spock 2.0 behaviour.
+// end::breaking-change-unroll[]
 
 - Updated OSGI support with using `bnd` (#1154, #1175)
 
@@ -451,11 +463,15 @@ module that provides best effort support to ease migration.
 
 ==== Misc
 
+// tag::breaking-change-2-0-misc[]
 - Spock now requires at least Java 8
+// end::breaking-change-2-0-misc[]
 - All data-driven test iterations are always reported (unrolled), while `@Unroll` is not necessary anymore
   it can still be used to define the name template
+// tag::breaking-change-2-0-misc[]
 - `@Retry.Mode.FEATURE` didn't work anymore and has been removed
 - `spock-report` module has been removed, it was never officially released
+// end::breaking-change-2-0-misc[]
 - The `SpockReportingExtension` has been disabled until we can integrate it with JUnitPlatform
 - Removed testing for `spring-2.x` as it is incompatible
 - Fix some Javadocs

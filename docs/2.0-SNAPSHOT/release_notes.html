@@ -10,7 +10,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <link rel="stylesheet" href="./asciidoctor.css">
 </head>
-<body class="article">
+<body id="_release_notes" class="article">
 <div id="header">
 <h1>Release Notes</h1>
 <div class="details">
@@ -49,6 +49,10 @@ These two properties are still supported and used by the <code>@Issue</code> ext
 <p>Add support for injection into <code>@Shared</code> fields in <code>spock-spring</code> module which users can opt-in for by adding
 <code>@EnableSharedInjection</code> to the specification. <a href="https://github.com/spockframework/spock/issues/76">#76</a></p>
 </li>
+</ul>
+</div>
+<div class="ulist">
+<ul>
 <li>
 <p>Add new <code>displayName</code> via <code>INameable</code> for <code>SpecInfo</code>, <code>FeatureInfo</code>, and <code>IterationInfo</code>.
 This field can be set via extensions to change the reported name.
@@ -491,6 +495,10 @@ some values with the wildcard expression.</p>
 if applied to a data driven feature. This has further implications that are documented in the respective
 documentation parts and JavaDocs.</p>
 </li>
+</ul>
+</div>
+<div class="ulist">
+<ul>
 <li>
 <p>Data driven features are now unrolled by default. <code>@Unroll</code> can still be used to specify a custom naming pattern.
 A simple <code>@Unroll</code> without argument is not needed anymore except when undoing a spec-level <code>@Rollup</code> annotation
@@ -2222,7 +2230,7 @@ required; the only prerequisite for building Spock is a JDK installation (1.5 or
 <div id="footer">
 <div id="footer-text">
 Version 2.0-SNAPSHOT<br>
-Last updated 2021-05-02 14:07:43 UTC
+Last updated 2021-05-11 11:46:02 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./coderay-asciidoctor.css">

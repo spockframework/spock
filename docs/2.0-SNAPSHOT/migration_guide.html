@@ -29,6 +29,71 @@
 <div class="sect1">
 <h2 id="_2_0"><a class="anchor" href="#_2_0"></a><a class="link" href="#_2_0">2.0</a></h2>
 <div class="sectionbody">
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+This section only touches on the breaking changes, see the <a href="release_nodes.html#_release_notes">Release Notes</a> for a full list of changes and new features.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Spock 2.0 aims to be as compatible as possible for existing code bases, while making the necessary changes to stay a modern test framework.</p>
+</div>
+<div class="paragraph">
+<p>The biggest change is the switch from being a JUnit 4 Runner to a full-fledged JUnit Platform <code>TestEngine</code>.
+That means, that you&#8217;ll have to configure your build to use the JUnit Platform to execute tests.</p>
+</div>
+<div class="paragraph">
+<p>See the <a href="https://junit.org/junit5/docs/current/user-guide/#running-tests-build">JUnit Platform Guide</a> on how to configure your build to use the JUnit Platform.</p>
+</div>
+<div class="sect2">
+<h3 id="_junit_4_support"><a class="anchor" href="#_junit_4_support"></a><a class="link" href="#_junit_4_support">JUnit 4 support</a></h3>
+<div class="paragraph">
+<p>Support for JUnit 4 has been removed from <code>spock-core</code>, you can use the new <code>spock-junit4</code> module if you still need JUnit 4 features, such as <code>@Rule</code>.</p>
+</div>
+<div class="paragraph">
+<p>You can replace the <code>TemporaryFolder</code> rule with the new built-in <code>@TempDir</code> <a href="extensions.html#_temp_dir">extension</a>.</p>
+</div>
+<div class="paragraph">
+<p>Spock 2.0 also removed the <code>Sputnik</code> runner, so if you have used <code>PowerMockRunnerDelegate</code> or other things that relied on the runner, you&#8217;ll have to find other solutions.
+Take a look at <a href="https://github.com/spockframework/spock/wiki/Third-Party-Extensions">Third-Party-Extensions</a> for solutions.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_reduce_spock_core_direct_groovy_dependencies"><a class="anchor" href="#_reduce_spock_core_direct_groovy_dependencies"></a><a class="link" href="#_reduce_spock_core_direct_groovy_dependencies">Reduce spock-core direct groovy dependencies</a></h3>
+<div class="paragraph">
+<p><code>spock-core</code> now only depends on <code>groovy.jar</code>. All other Groovy dependencies have been removed,
+this should make dependency management a bit easier.
+If you relied on other groovy dependencies transitively, you will need to add them directly.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_unroll_changes"><a class="anchor" href="#_unroll_changes"></a><a class="link" href="#_unroll_changes">Unroll changes</a></h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Data driven features are now unrolled by default. <code>@Unroll</code> can still be used to specify a custom naming pattern.
+A simple <code>@Unroll</code> without argument is not needed anymore except when undoing a spec-level <code>@Rollup</code> annotation
+or if unrolling by default is disabled, so any simple <code>@Unroll</code> annotations can be removed from existing code. You
+can verify this by looking at the test count which should not have been changed after you removed the simple
+<code>@Unroll</code> annotations.</p>
+</li>
+<li>
+<p><code>@Rollup</code> can now be used on feature and spec level to explicitly roll up any feature where the reporting of single
+iterations is not wanted.</p>
+</li>
+<li>
+<p>The setting <code>unroll { unrollByDefault false }</code> in the Spock configuration file can be set to roll up all
+features by default if not overwritten by explicit <code>@Unroll</code> annotations and thus reinstate the pre
+Spock 2.0 behaviour.</p>
+</li>
+</ul>
+</div>
 <div class="ulist">
 <ul>
 <li>
@@ -40,8 +105,19 @@ and you will get the same result as previously.</p>
 </li>
 </ul>
 </div>
-<div class="sect3">
-<h4 id="_renamed_iterationcount_token"><a class="anchor" href="#_renamed_iterationcount_token"></a><a class="link" href="#_renamed_iterationcount_token">Renamed iterationCount token</a></h4>
+</div>
+<div class="sect2">
+<h3 id="_assert_unroll_expressions_by_default"><a class="anchor" href="#_assert_unroll_expressions_by_default"></a><a class="link" href="#_assert_unroll_expressions_by_default">Assert unroll expressions by default</a></h3>
+<div class="paragraph">
+<p>The system property <code>spock.assertUnrollExpressions</code> is not supported anymore.
+Instead the new default behavior is equal to having this property set to <code>true</code>.
+This means tests that were successful but had an <code>#Error:</code> name rendering will now fail.
+It can be set back to the old pre Spock 2.0 behaviour by setting
+<code>unroll { validateExpressions false }</code> in the Spock configuration file.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_renamed_iterationcount_token"><a class="anchor" href="#_renamed_iterationcount_token"></a><a class="link" href="#_renamed_iterationcount_token">Renamed iterationCount token</a></h3>
 <div class="paragraph">
 <p>The token <code>#iterationCount</code> in unroll patterns was renamed to <code>#iterationIndex</code>.
 If you use it somewhere, you have to manually change it to the new name
@@ -49,8 +125,18 @@ or the test will fail unless you disabled expression asserting,
 then you will get an <code>#Error:iterationCount</code> rendering instead.</p>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_no_access_to_data_variables_in_data_pipes_anymore"><a class="anchor" href="#_no_access_to_data_variables_in_data_pipes_anymore"></a><a class="link" href="#_no_access_to_data_variables_in_data_pipes_anymore">No access to data variables in data pipes anymore</a></h4>
+<div class="sect2">
+<h3 id="_new_meaning_of"><a class="anchor" href="#_new_meaning_of"></a><a class="link" href="#_new_meaning_of">New meaning of <code>&gt;&gt; _</code></a></h3>
+<div class="paragraph">
+<p>The meaning of <code>&gt;&gt; _</code> has changed from "use the default response" to "return a stubbed value" (<a href="interaction_based_testing.html#_returning_a_default_response">Docs</a>).
+The original behavior was only ever documented in the Javadocs and was basically the same to just omitting it.
+The only use-case was chained responses <code>&gt;&gt; "a" &gt;&gt; _ &gt;&gt; "b"</code>,
+but even here it is clearer to just use <code>null</code> or <code>{ callRealMethod() }</code> explicitly.
+With the new behavior, you can have a <code>Mock</code> or <code>Spy</code> return the same value as a <code>Stub</code> would.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_no_access_to_data_variables_in_data_pipes_anymore"><a class="anchor" href="#_no_access_to_data_variables_in_data_pipes_anymore"></a><a class="link" href="#_no_access_to_data_variables_in_data_pipes_anymore">No access to data variables in data pipes anymore</a></h3>
 <div class="paragraph">
 <p>It is not possible anymore to access any data variable from a data pipe or anything else but a previous data table
 column in a data table cell. This access was partly possible, but could easily prematurely drain iterators, access
@@ -83,14 +169,41 @@ b = a</code></pre>
 </div>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_assert_unroll_expressions_by_default"><a class="anchor" href="#_assert_unroll_expressions_by_default"></a><a class="link" href="#_assert_unroll_expressions_by_default">Assert unroll expressions by default</a></h4>
+<div class="sect2">
+<h3 id="_ant_support_removed"><a class="anchor" href="#_ant_support_removed"></a><a class="link" href="#_ant_support_removed">Ant support removed</a></h3>
 <div class="paragraph">
-<p>The system property <code>spock.assertUnrollExpressions</code> is not supported anymore.
-Instead the new default behavior is equal to having this property set to <code>true</code>.
-This means tests that were successful but had an <code>#Error:</code> name rendering will now fail.
-It can be set back to the old pre Spock 2.0 behaviour by setting
-<code>unroll { validateExpressions false }</code> in the Spock configuration file.</p>
+<p><code>SpecClassFileSelector</code> was removed, which was the only class that required <code>ant</code>.
+If you are still using spock with <code>ant</code>, then you can just copy the class from the spock source code into your build.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_other_breaking_changes"><a class="anchor" href="#_other_breaking_changes"></a><a class="link" href="#_other_breaking_changes">Other Breaking changes</a></h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Add new <code>displayName</code> via <code>INameable</code> for <code>SpecInfo</code>, <code>FeatureInfo</code>, and <code>IterationInfo</code>.
+This field can be set via extensions to change the reported name.
+The existing iteration <code>NameProvider</code> now also sets the <code>displayName</code> instead of the <code>name</code>.
+Modifying the <code>name</code> instead of <code>displayName</code> is now considered <code>deprecated</code> for extensions.
+<a href="https://github.com/spockframework/spock/issues/1236">#1236</a></p>
+</li>
+<li>
+<p>Spock now requires at least Java 8</p>
+</li>
+<li>
+<p><code>@Retry.Mode.FEATURE</code> didn&#8217;t work anymore and has been removed</p>
+</li>
+<li>
+<p><code>spock-report</code> module has been removed, it was never officially released
+:leveloffset: -1</p>
+</li>
+<li>
+<p>The <code>ReportLogExtension</code> vestiges were removed. As this extension was mostly used for an unreleased Spock module, this won&#8217;t affect many users.
+If you are using a <a href="extensions.html#spock-configuration-file">Spock Configuration File</a> with a <code>report</code> section,
+then you must delete everything from this section except for <code>issueNamePrefix</code> and <code>issueUrlPrefix</code>.
+These two properties are still supported and used by the <code>@Issue</code> extension.</p>
+</li>
+</ul>
 </div>
 </div>
 </div>
@@ -302,7 +415,7 @@ that answer, closeTo(<span class="integer">42</span>, <span class="float">0.001<
 <div id="footer">
 <div id="footer-text">
 Version 2.0-SNAPSHOT<br>
-Last updated 2021-05-02 14:07:43 UTC
+Last updated 2021-05-11 11:46:02 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./coderay-asciidoctor.css">

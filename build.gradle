@@ -269,9 +269,10 @@ if (gradle.startParameter.taskNames == ["ghActionsPublish"] || gradle.startParam
      */
     if (snapshotVersion || isTag) {
       gradle.startParameter.taskNames += ["publish"]
-    } else {
-      gradle.startParameter.taskNames += ["tagRelease"]
-    }
+    } // else {
+      // disable tag release for now as this is done with a token, that doesn't trigger other workflows
+      // gradle.startParameter.taskNames += ["tagRelease"]
+      // }
   }
 
   if (originalStartParameterTaskNames == ["ghActionsDocs"] && (snapshotVersion || isTag)) {

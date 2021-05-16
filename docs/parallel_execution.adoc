@@ -124,6 +124,12 @@ wbsDiagram {
       LineColor #117733
   }
 
+  .read_lock * {
+      LineStyle 2
+      LineThickness 2.5
+      LineColor #117733
+  }
+
   .isolated * {
       BackgroundColor #CC6677
       RoundCorner 0
@@ -137,7 +143,8 @@ skinparam shadowing false
 * SpockEngine
 ** Same Thread <<samethread>>
 ** Concurrent <<concurrent>>
-** ResourceLock <<write_lock>>
+** ResourceLock(READ) <<read_lock>>
+** ResourceLock(READ_WRITE) <<write_lock>>
 *** Same Thread with Lock <<samethread>>
 ** Data Driven Feature
 *** Data Driven Feature[1]
@@ -148,7 +155,8 @@ skinparam shadowing false
 
 * The node `Same Thread` will run in the same thread as its parent.
 * The node `Concurrent` will be executed in another thread, all concurrent nodes can execute in different threads from each other.
-* The node `ResourceLock` will be executed in another thread, but will also acquire a lock.
+* The node `ResourceLock(READ)` will be executed in another thread, but will also acquire a `READ`-lock for a resource.
+* The node `ResourceLock(READ_WRITE)` will be executed in another thread, but will also acquire a `READ_WRITE`-lock for a resource.
 * The node `Same Thread with Lock` will run in the same thread as its parent thus inheriting the lock.
 * The node `Data Driven Feature` represents a data driven feature with `Data Driven Feature[1]` and `Data Driven Feature[2]` being the iterations.
 * The node `Isolated` will run exclusively, no other specifications or features will run at the same time.
@@ -398,7 +406,7 @@ If they run sequentially then both complete without issue. However, if the run a
 
 The above example could simply be fixed if both features are part of the same specification by setting them to run in the same thread with `@Execution(SAME_THREAD)`.
 However, this is not really practicable when the features are in separate specifications.
-To solve this issue Spock has support to coordinate access to shared resources via `@ResourceLock` and `@ResourceLockChildren`.
+To solve this issue Spock has support to coordinate access to shared resources via `@ResourceLock`.
 
 With `@ResourceLock` you can define both a `key` and a `mode`. By default, `@ResourceLock` assumes `ResourceAccessMode.READ_WRITE`, but you can weaken it to `ResourceAccessMode.READ`.
 
@@ -450,52 +458,9 @@ skinparam shadowing false
 
 === Lock inheritance
 
-If a parent node has a lock, it forces its children to run in the same thread.
+If a parent node has a `READ_WRITE` lock, it forces its children to run in the same thread.
 As `READ_WRITE` locks cause serialized execution anyway, this is effectively not different from what would happen if the lock would be applied to every child directly.
-However, if only `READ` locks are used, then it makes a difference whether the lock is acquired on the parent or each child.
-
-https://github.com/junit-team/junit5/issues/2423
-
-.Locks are passed on from the spec to the features
-[[figure-lock-inherit-spec]]
-[plantuml,images/lock-inherit-spec,svg]
-....
-@startwbs
-<style>
-wbsDiagram {
-  BackgroundColor #88CCEE
-  RoundCorner 10
-  node {
-    :depth(0) {
-      BackgroundColor #DDCC77
-      RoundCorner 0
-    }
-  }
-
-  .samethread * {
-      BackgroundColor #DDCC77
-      RoundCorner 0
-  }
-
-  .write_lock * {
-      LineStyle 4
-      LineThickness 2.5
-      LineColor #117733
-  }
-}
-</style>
-skinparam shadowing false
-* SpockEngine
-** SpecA
-*** testA1
-*** testA2
-** @ResourceLock("R")\nSpecB <<write_lock>>
-*** testB1 <<samethread>>
-*** testB2 <<samethread>>
-**** testB2[1] <<samethread>>
-**** testB2[2] <<samethread>>
-@endwbs
-....
+However, if the parent node has only `READ` locks, then it allows parallel execution of its children.
 
 .Locks on data driven features
 [[figure-lock-inherit-iterate-feature]]
@@ -523,29 +488,33 @@ wbsDiagram {
       LineThickness 2.5
       LineColor #117733
   }
+
+  .read_lock * {
+      LineStyle 2
+      LineThickness 2.5
+      LineColor #117733
+  }
 }
 </style>
 skinparam shadowing false
 * SpockEngine
 ** SpecA
 *** testA1
-*** testA2
+*** @ResourceLock("R")\ntestA2 <<write_lock>>
+**** testA2[1] <<samethread>>
+**** testA2[2] <<samethread>>
 ** SpecB
 *** testB1
-*** @ResourceLock("R")\ntestB2 <<write_lock>>
-**** testB2[1] <<samethread>>
-**** testB2[2] <<samethread>>
+*** @ResourceLock(value="R", mode=READ)\nStestB2 <<read_lock>>
+**** testB2[1] <<read_lock>>
+**** testB2[2] <<read_lock>>
 @endwbs
 ....
 
-If you want to have a lock on all features it might be intuitive to apply `@ResourceLock` on the specification.
-However, with this you are actually applying the lock on the Specification level and force every feature to `SAME_THREAD` execution.
-To avoid this you can use `@ResourceLockChildren` on the specification, this behaves the same as applying `@ResourceLock` on every feature.
-As mentioned before, you will only notice a real difference if you are using `@ResourceLockChildren` with `READ`-only locks, as they allow concurrent execution.
 
-.Locks on children
-[[figure-lock-inherit-lock-children]]
-[plantuml,images/lock-inherit-lock-children,svg]
+.Locks on spec inherited by features
+[[figure-lock-inherit-spec]]
+[plantuml,images/lock-inherit-spec,svg]
 ....
 @startwbs
 <style>
@@ -569,21 +538,31 @@ wbsDiagram {
       LineThickness 2.5
       LineColor #117733
   }
+
+  .read_lock * {
+      LineStyle 2
+      LineThickness 2.5
+      LineColor #117733
+  }
 }
 </style>
 skinparam shadowing false
 * SpockEngine
-** @ResourceLock("R")\nSpecA  <<write_lock>>
-*** testA1 <<samethread>>
-*** testA2 <<samethread>>
-** @ResourceLockChildren("R")\nSpecB
-*** testB1 <<write_lock>>
-*** testB2 <<write_lock>>
+** SpecA
+*** testA1
+*** testA2
+** @ResourceLock("R")\nSpecB <<write_lock>>
+*** testB1 <<samethread>>
+*** testB2 <<samethread>>
 **** testB2[1] <<samethread>>
 **** testB2[2] <<samethread>>
+** @ResourceLock(value="R", mode=READ)\nSpecC <<read_lock>>
+*** testC1 <<read_lock>>
+*** testC2 <<read_lock>>
+**** testC2[1] <<read_lock>>
+**** testC2[2] <<read_lock>>
 @endwbs
 ....
-
 
 === Lock coarsening
 

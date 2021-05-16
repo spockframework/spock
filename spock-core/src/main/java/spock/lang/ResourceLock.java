@@ -15,7 +15,6 @@ import java.lang.annotation.*;
  * This will also cause all features to run on the same thread
  * as the Specification.
  *
- * @see ResourceLockChildren
  * @see Isolated
  * @see Execution
  *

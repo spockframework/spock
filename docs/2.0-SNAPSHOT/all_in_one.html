@@ -222,34 +222,37 @@
 </li>
 <li><a href="#_release_notes">Release Notes</a>
 <ul class="sectlevel2">
-<li><a href="#_2_0_m6_tbd">2.0-M6 (tbd)</a>
+<li><a href="#_2_0_2021_05_17">2.0 (2021-05-17)</a>
 <ul class="sectlevel3">
-<li><a href="#_breaking_changes">Breaking Changes</a></li>
+<li><a href="#_highlights">Highlights</a></li>
+<li><a href="#_migrating_from_1_x">Migrating from 1.x</a></li>
+<li><a href="#_breaking_changes_from_2_0_m5">Breaking Changes (from 2.0-M5)</a></li>
+<li><a href="#_misc">Misc</a></li>
 </ul>
 </li>
 <li><a href="#_2_0_m5_2021_03_23">2.0-M5 (2021-03-23)</a>
 <ul class="sectlevel3">
-<li><a href="#_breaking_changes_2">Breaking Changes</a></li>
-<li><a href="#_misc">Misc</a></li>
+<li><a href="#_breaking_changes">Breaking Changes</a></li>
+<li><a href="#_misc_2">Misc</a></li>
 </ul>
 </li>
 <li><a href="#_2_0_m4_2020_11_01">2.0-M4 (2020-11-01)</a></li>
 <li><a href="#_2_0_m3_2020_06_11">2.0-M3 (2020-06-11)</a>
 <ul class="sectlevel3">
-<li><a href="#_breaking_changes_3">Breaking Changes</a></li>
-<li><a href="#_misc_2">Misc</a></li>
+<li><a href="#_breaking_changes_2">Breaking Changes</a></li>
+<li><a href="#_misc_3">Misc</a></li>
 </ul>
 </li>
 <li><a href="#_2_0_m2_2020_02_10">2.0-M2 (2020-02-10)</a>
 <ul class="sectlevel3">
 <li><a href="#_groovy_3_0_support">Groovy-3.0 Support</a></li>
-<li><a href="#_breaking_changes_4">Breaking Changes</a></li>
-<li><a href="#_misc_3">Misc</a></li>
+<li><a href="#_breaking_changes_3">Breaking Changes</a></li>
+<li><a href="#_misc_4">Misc</a></li>
 </ul>
 </li>
 <li><a href="#_2_0_m1_2019_12_31">2.0-M1 (2019-12-31)</a>
 <ul class="sectlevel3">
-<li><a href="#_breaking_changes_5">Breaking Changes</a></li>
+<li><a href="#_breaking_changes_4">Breaking Changes</a></li>
 </ul>
 </li>
 <li><a href="#_1_3_2019_03_05">1.3 (2019-03-05)</a></li>
@@ -360,7 +363,7 @@
 </li>
 <li><a href="#_migration_guide">Migration Guide</a>
 <ul class="sectlevel2">
-<li><a href="#_2_0">2.0</a>
+<li><a href="#_migration_guide_2_0">2.0</a>
 <ul class="sectlevel3">
 <li><a href="#_junit_4_support">JUnit 4 support</a></li>
 <li><a href="#_reduce_spock_core_direct_groovy_dependencies_2">Reduce spock-core direct groovy dependencies</a></li>
@@ -5945,9 +5948,40 @@ Grails 2.3 and higher have built-in Spock support and do not require a plugin.
 <h2 id="_release_notes"><a class="anchor" href="#_release_notes"></a><a class="link" href="#_release_notes">Release Notes</a></h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_2_0_m6_tbd"><a class="anchor" href="#_2_0_m6_tbd"></a><a class="link" href="#_2_0_m6_tbd">2.0-M6 (tbd)</a></h3>
+<h3 id="_2_0_2021_05_17"><a class="anchor" href="#_2_0_2021_05_17"></a><a class="link" href="#_2_0_2021_05_17">2.0 (2021-05-17)</a></h3>
 <div class="sect3">
-<h4 id="_breaking_changes"><a class="anchor" href="#_breaking_changes"></a><a class="link" href="#_breaking_changes">Breaking Changes</a></h4>
+<h4 id="_highlights"><a class="anchor" href="#_highlights"></a><a class="link" href="#_highlights">Highlights</a></h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Spock is now a test engine based on the JUnit Platform</p>
+</li>
+<li>
+<p>Spock now supports <a href="#parallel-execution">Parallel Execution</a> on the spec and feature level, with powerful tools for shared resource access.</p>
+</li>
+<li>
+<p>Support for Groovy 3</p>
+</li>
+<li>
+<p>Data driven tests are now unrolled by default with a more informative naming scheme</p>
+</li>
+<li>
+<p>Data driven tests can now declare a subset of parameters, which are injected by name instead of position.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>... and many more, read the full release notes for every detail.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_migrating_from_1_x"><a class="anchor" href="#_migrating_from_1_x"></a><a class="link" href="#_migrating_from_1_x">Migrating from 1.x</a></h4>
+<div class="paragraph">
+<p>The <a href="#_migration_guide_2_0">Migration Guide 1.x - 2.0</a> covers the major breaking changes between 1.3 and 2.0</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_breaking_changes_from_2_0_m5"><a class="anchor" href="#_breaking_changes_from_2_0_m5"></a><a class="link" href="#_breaking_changes_from_2_0_m5">Breaking Changes (from 2.0-M5)</a></h4>
 <div class="ulist">
 <ul>
 <li>
@@ -5958,11 +5992,36 @@ If you are one of the few that have already used <code>@ResourceLockChildren</co
 </ul>
 </div>
 </div>
+<div class="sect3">
+<h4 id="_misc"><a class="anchor" href="#_misc"></a><a class="link" href="#_misc">Misc</a></h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Fix NPE if variable is initialized using a method with the same in features with cleanup blocks or using thrown condition <a href="https://github.com/spockframework/spock/issues/1266">#1266</a> <a href="https://github.com/spockframework/spock/issues/1313">#1313</a></p>
+</li>
+<li>
+<p>Fix implicit this conversion after bugfix in Groovy 3.0.8 <a href="https://github.com/spockframework/spock/issues/1318">#1318</a></p>
+</li>
+<li>
+<p>Fix extension-provided method arguments in fixture methods <a href="https://github.com/spockframework/spock/issues/1305">#1305</a></p>
+</li>
+<li>
+<p>Update <code>Jvm</code> helper to support versions up to 23 (next LTS release)</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Thanks to all the contributors (all 2.0 Milestones): Björn Kautler, Marcin Zajączkowski, DQYuan, Marcin Erdmann, Alexander Kriegisch, Jasper Vandemalle, Tom Wieczorek, Josh Soref, Vaidotas Valuckas, Raymond Augé, Roman Tretiak, Camilo Jorquera, Shil Sinha, Ryan Gardner, k3v1n0x90</p>
+</div>
+<div class="paragraph">
+<p>Special thanks goes to Marc Philipp who helped a lot with the integration of the JUnit Platform.</p>
+</div>
+</div>
 </div>
 <div class="sect2">
 <h3 id="_2_0_m5_2021_03_23"><a class="anchor" href="#_2_0_m5_2021_03_23"></a><a class="link" href="#_2_0_m5_2021_03_23">2.0-M5 (2021-03-23)</a></h3>
 <div class="sect3">
-<h4 id="_breaking_changes_2"><a class="anchor" href="#_breaking_changes_2"></a><a class="link" href="#_breaking_changes_2">Breaking Changes</a></h4>
+<h4 id="_breaking_changes"><a class="anchor" href="#_breaking_changes"></a><a class="link" href="#_breaking_changes">Breaking Changes</a></h4>
 <div class="ulist">
 <ul>
 <li>
@@ -5975,7 +6034,7 @@ These two properties are still supported and used by the <code>@Issue</code> ext
 </div>
 </div>
 <div class="sect3">
-<h4 id="_misc"><a class="anchor" href="#_misc"></a><a class="link" href="#_misc">Misc</a></h4>
+<h4 id="_misc_2"><a class="anchor" href="#_misc_2"></a><a class="link" href="#_misc_2">Misc</a></h4>
 <div class="ulist">
 <ul>
 <li>
@@ -6128,7 +6187,7 @@ by using the <code>instance.</code> qualifier inside the condition closure.</p>
 <div class="sect2">
 <h3 id="_2_0_m3_2020_06_11"><a class="anchor" href="#_2_0_m3_2020_06_11"></a><a class="link" href="#_2_0_m3_2020_06_11">2.0-M3 (2020-06-11)</a></h3>
 <div class="sect3">
-<h4 id="_breaking_changes_3"><a class="anchor" href="#_breaking_changes_3"></a><a class="link" href="#_breaking_changes_3">Breaking Changes</a></h4>
+<h4 id="_breaking_changes_2"><a class="anchor" href="#_breaking_changes_2"></a><a class="link" href="#_breaking_changes_2">Breaking Changes</a></h4>
 <div class="sect4">
 <h5 id="_sputnik_runner_removed_an_alternative"><a class="anchor" href="#_sputnik_runner_removed_an_alternative"></a><a class="link" href="#_sputnik_runner_removed_an_alternative">Sputnik Runner removed (an alternative)</a></h5>
 <div class="paragraph">
@@ -6294,7 +6353,7 @@ If you are still using spock with <code>ant</code>, then you can just copy the c
 </div>
 </div>
 <div class="sect3">
-<h4 id="_misc_2"><a class="anchor" href="#_misc_2"></a><a class="link" href="#_misc_2">Misc</a></h4>
+<h4 id="_misc_3"><a class="anchor" href="#_misc_3"></a><a class="link" href="#_misc_3">Misc</a></h4>
 <div class="ulist">
 <ul>
 <li>
@@ -6515,7 +6574,7 @@ As Groovy 3 is not backward compatible with Groovy 2, there is a layer of abstra
 </div>
 </div>
 <div class="sect3">
-<h4 id="_breaking_changes_4"><a class="anchor" href="#_breaking_changes_4"></a><a class="link" href="#_breaking_changes_4">Breaking Changes</a></h4>
+<h4 id="_breaking_changes_3"><a class="anchor" href="#_breaking_changes_3"></a><a class="link" href="#_breaking_changes_3">Breaking Changes</a></h4>
 <div class="sect4">
 <h5 id="_sputnik_runner_removed"><a class="anchor" href="#_sputnik_runner_removed"></a><a class="link" href="#_sputnik_runner_removed">Sputnik Runner removed</a></h5>
 <div class="paragraph">
@@ -6525,7 +6584,7 @@ or used it as a delegate runner will not work anymore, e.g, <code>PowerMockRunne
 </div>
 </div>
 <div class="sect3">
-<h4 id="_misc_3"><a class="anchor" href="#_misc_3"></a><a class="link" href="#_misc_3">Misc</a></h4>
+<h4 id="_misc_4"><a class="anchor" href="#_misc_4"></a><a class="link" href="#_misc_4">Misc</a></h4>
 <div class="ulist">
 <ul>
 <li>
@@ -6570,7 +6629,7 @@ requested parallel execution support.</p>
 <p>Please try it out and report any new bugs so that we can fix them for the final 2.0 release.</p>
 </div>
 <div class="sect3">
-<h4 id="_breaking_changes_5"><a class="anchor" href="#_breaking_changes_5"></a><a class="link" href="#_breaking_changes_5">Breaking Changes</a></h4>
+<h4 id="_breaking_changes_4"><a class="anchor" href="#_breaking_changes_4"></a><a class="link" href="#_breaking_changes_4">Breaking Changes</a></h4>
 <div class="sect4">
 <h5 id="_new_junit_platform"><a class="anchor" href="#_new_junit_platform"></a><a class="link" href="#_new_junit_platform">New JUnit Platform</a></h5>
 <div class="paragraph">
@@ -6584,7 +6643,7 @@ module that provides best effort support to ease migration.</p>
 </div>
 </div>
 <div class="sect4">
-<h5 id="_misc_4"><a class="anchor" href="#_misc_4"></a><a class="link" href="#_misc_4">Misc</a></h5>
+<h5 id="_misc_5"><a class="anchor" href="#_misc_5"></a><a class="link" href="#_misc_5">Misc</a></h5>
 <div class="ulist">
 <ul>
 <li>
@@ -8131,7 +8190,7 @@ required; the only prerequisite for building Spock is a JDK installation (1.5 or
 <p>This page explains incompatible changes between successive versions and provides suggestions on how to deal with them.</p>
 </div>
 <div class="sect2">
-<h3 id="_2_0"><a class="anchor" href="#_2_0"></a><a class="link" href="#_2_0">2.0</a></h3>
+<h3 id="_migration_guide_2_0"><a class="anchor" href="#_migration_guide_2_0"></a><a class="link" href="#_migration_guide_2_0">2.0</a></h3>
 <div class="admonitionblock note">
 <table>
 <tr>
@@ -8722,7 +8781,7 @@ This is due to how groovy implements traits and AST transformations.</p>
 <div id="footer">
 <div id="footer-text">
 Version 2.0-SNAPSHOT<br>
-Last updated 2021-05-17 14:42:54 UTC
+Last updated 2021-05-17 19:07:44 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./coderay-asciidoctor.css">

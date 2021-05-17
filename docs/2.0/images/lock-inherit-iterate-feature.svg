@@ -1,0 +1,127 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<svg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' contentScriptType='application/ecmascript' contentStyleType='text/css' height='346px' preserveAspectRatio='none' style='width:513px;height:346px;' version='1.1' viewBox='0 0 513 346' width='513px' zoomAndPan='magnify'>
+  <defs/>
+  <g>
+    <rect fill='#DDCC77' height='35.0938' style='stroke: #A80036; stroke-width: 1.5;' width='93' x='199.5' y='10'/>
+    <text fill='#000000' font-family='sans-serif' font-size='12' lengthAdjust='spacingAndGlyphs' textLength='73' x='209.5' y='32.457'>
+      SpockEngine
+    </text>
+    <line style='stroke: #A80036; stroke-width: 1.5;' x1='246' x2='246' y1='45.0938' y2='65.0938'/>
+    <line style='stroke: #A80036; stroke-width: 1.5;' x1='37.5' x2='37.5' y1='65.0938' y2='85.0938'/>
+    <rect fill='#88CCEE' height='35.0938' rx='5' ry='5' style='stroke: #A80036; stroke-width: 1.5;' width='55' x='10' y='85.0938'/>
+    <text fill='#000000' font-family='sans-serif' font-size='12' lengthAdjust='spacingAndGlyphs' textLength='35' x='20' y='107.5508'>
+      SpecA
+    </text>
+    <line style='stroke: #A80036; stroke-width: 1.5;' x1='37.5' x2='47.5' y1='152.7344' y2='152.7344'/>
+    <rect fill='#88CCEE' height='35.0938' rx='5' ry='5' style='stroke: #A80036; stroke-width: 1.5;' width='54' x='47.5' y='135.1875'/>
+    <text fill='#000000' font-family='sans-serif' font-size='12' lengthAdjust='spacingAndGlyphs' textLength='34' x='57.5' y='157.6445'>
+      testA1
+    </text>
+    <line style='stroke: #A80036; stroke-width: 1.5;' x1='37.5' x2='47.5' y1='210.375' y2='210.375'/>
+    <rect fill='#88CCEE' height='50.1875' rx='5' ry='5' style='stroke: #117733; stroke-width: 2.5; stroke-dasharray: 4.0,4.0;' width='137' x='47.5' y='185.2813'/>
+    <text fill='#000000' font-family='sans-serif' font-size='12' lengthAdjust='spacingAndGlyphs' textLength='117' x='57.5' y='207.7383'>
+      @ResourceLock("R")
+    </text>
+    <text fill='#000000' font-family='sans-serif' font-size='12' lengthAdjust='spacingAndGlyphs' textLength='34' x='57.5' y='222.832'>
+      testA2
+    </text>
+    <line style='stroke: #A80036; stroke-width: 1.5;' x1='116' x2='126' y1='268.0156' y2='268.0156'/>
+    <rect fill='#DDCC77' height='35.0938' style='stroke: #117733; stroke-width: 2.5; stroke-dasharray: 4.0,4.0;' width='67' x='126' y='250.4688'/>
+    <text fill='#000000' font-family='sans-serif' font-size='12' lengthAdjust='spacingAndGlyphs' textLength='47' x='136' y='272.9258'>
+      testA2[1]
+    </text>
+    <line style='stroke: #A80036; stroke-width: 1.5;' x1='116' x2='126' y1='318.1094' y2='318.1094'/>
+    <rect fill='#DDCC77' height='35.0938' style='stroke: #117733; stroke-width: 2.5; stroke-dasharray: 4.0,4.0;' width='67' x='126' y='300.5625'/>
+    <text fill='#000000' font-family='sans-serif' font-size='12' lengthAdjust='spacingAndGlyphs' textLength='47' x='136' y='323.0195'>
+      testA2[2]
+    </text>
+    <line style='stroke: #A80036; stroke-width: 1.5;' x1='116' x2='116' y1='235.4688' y2='318.1094'/>
+    <line style='stroke: #A80036; stroke-width: 1.5;' x1='37.5' x2='37.5' y1='120.1875' y2='210.375'/>
+    <line style='stroke: #A80036; stroke-width: 1.5;' x1='241' x2='241' y1='65.0938' y2='85.0938'/>
+    <rect fill='#88CCEE' height='35.0938' rx='5' ry='5' style='stroke: #A80036; stroke-width: 1.5;' width='56' x='213' y='85.0938'/>
+    <text fill='#000000' font-family='sans-serif' font-size='12' lengthAdjust='spacingAndGlyphs' textLength='36' x='223' y='107.5508'>
+      SpecB
+    </text>
+    <line style='stroke: #A80036; stroke-width: 1.5;' x1='241' x2='251' y1='152.7344' y2='152.7344'/>
+    <rect fill='#88CCEE' height='35.0938' rx='5' ry='5' style='stroke: #A80036; stroke-width: 1.5;' width='55' x='251' y='135.1875'/>
+    <text fill='#000000' font-family='sans-serif' font-size='12' lengthAdjust='spacingAndGlyphs' textLength='35' x='261' y='157.6445'>
+      testB1
+    </text>
+    <line style='stroke: #A80036; stroke-width: 1.5;' x1='241' x2='251' y1='210.375' y2='210.375'/>
+    <rect fill='#88CCEE' height='50.1875' rx='5' ry='5' style='stroke: #117733; stroke-width: 2.5; stroke-dasharray: 2.0,2.0;' width='251' x='251' y='185.2813'/>
+    <text fill='#000000' font-family='sans-serif' font-size='12' lengthAdjust='spacingAndGlyphs' textLength='231' x='261' y='207.7383'>
+      @ResourceLock(value="R", mode=READ)
+    </text>
+    <text fill='#000000' font-family='sans-serif' font-size='12' lengthAdjust='spacingAndGlyphs' textLength='43' x='261' y='222.832'>
+      StestB2
+    </text>
+    <line style='stroke: #A80036; stroke-width: 1.5;' x1='376.5' x2='386.5' y1='268.0156' y2='268.0156'/>
+    <rect fill='#88CCEE' height='35.0938' rx='5' ry='5' style='stroke: #117733; stroke-width: 2.5; stroke-dasharray: 2.0,2.0;' width='68' x='386.5' y='250.4688'/>
+    <text fill='#000000' font-family='sans-serif' font-size='12' lengthAdjust='spacingAndGlyphs' textLength='48' x='396.5' y='272.9258'>
+      testB2[1]
+    </text>
+    <line style='stroke: #A80036; stroke-width: 1.5;' x1='376.5' x2='386.5' y1='318.1094' y2='318.1094'/>
+    <rect fill='#88CCEE' height='35.0938' rx='5' ry='5' style='stroke: #117733; stroke-width: 2.5; stroke-dasharray: 2.0,2.0;' width='68' x='386.5' y='300.5625'/>
+    <text fill='#000000' font-family='sans-serif' font-size='12' lengthAdjust='spacingAndGlyphs' textLength='48' x='396.5' y='323.0195'>
+      testB2[2]
+    </text>
+    <line style='stroke: #A80036; stroke-width: 1.5;' x1='376.5' x2='376.5' y1='235.4688' y2='318.1094'/>
+    <line style='stroke: #A80036; stroke-width: 1.5;' x1='241' x2='241' y1='120.1875' y2='210.375'/>
+    <line style='stroke: #A80036; stroke-width: 1.5;' x1='37.5' x2='246' y1='65.0938' y2='65.0938'/>
+    <!--MD5=[4e18c953009934a334775e9f33055366]
+@startwbs
+<style>
+wbsDiagram {
+  BackgroundColor #88CCEE
+  RoundCorner 10
+  node {
+    :depth(0) {
+      BackgroundColor #DDCC77
+      RoundCorner 0
+    }
+  }
+
+  .samethread * {
+      BackgroundColor #DDCC77
+      RoundCorner 0
+  }
+
+  .write_lock * {
+      LineStyle 4
+      LineThickness 2.5
+      LineColor #117733
+  }
+
+  .read_lock * {
+      LineStyle 2
+      LineThickness 2.5
+      LineColor #117733
+  }
+}
+</style>
+skinparam shadowing false
+* SpockEngine
+** SpecA
+*** testA1
+*** @ResourceLock("R")\ntestA2 <<write_lock>>
+**** testA2[1] <<samethread>>
+**** testA2[2] <<samethread>>
+** SpecB
+*** testB1
+*** @ResourceLock(value="R", mode=READ)\nStestB2 <<read_lock>>
+**** testB2[1] <<read_lock>>
+**** testB2[2] <<read_lock>>
+@endwbs
+
+PlantUML version 1.2020.06(Sun Apr 05 14:38:32 CEST 2020)
+(APACHE source distribution)
+Java Runtime: OpenJDK Runtime Environment
+JVM: OpenJDK 64-Bit Server VM
+Java Version: 1.8.0_275-b01
+Operating System: Windows 10
+Default Encoding: windows-1252
+Language: de
+Country: DE
+-->
+  </g>
+</svg>

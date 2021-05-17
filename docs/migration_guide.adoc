@@ -3,6 +3,7 @@ include::include.adoc[]
 
 This page explains incompatible changes between successive versions and provides suggestions on how to deal with them.
 
+[[_migration_guide_2_0]]
 == 2.0
 
 NOTE: This section only touches on the breaking changes, see the <<release_nodes.adoc#_release_notes, Release Notes>> for a full list of changes and new features.

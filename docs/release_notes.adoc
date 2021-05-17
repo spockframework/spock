@@ -2,14 +2,38 @@
 = Release Notes
 include::include.adoc[]
 
-== 2.0-M6 (tbd)
+== 2.0 (2021-05-17)
 
+=== Highlights
 
-=== Breaking Changes
+- Spock is now a test engine based on the JUnit Platform
+- Spock now supports <<parallel_execution.adoc#parallel-execution,Parallel Execution>> on the spec and feature level, with powerful tools for shared resource access.
+- Support for Groovy 3
+- Data driven tests are now unrolled by default with a more informative naming scheme
+- Data driven tests can now declare a subset of parameters, which are injected by name instead of position.
+
+\... and many more, read the full release notes for every detail.
+
+=== Migrating from 1.x
+The <<migration_guide.adoc#_migration_guide_2_0,Migration Guide 1.x - 2.0>> covers the major breaking changes between 1.3 and 2.0
+
+=== Breaking Changes (from 2.0-M5)
 
 - Remove `@ResourceLockChildren` again, as JUnit Platform 5.7.2 makes it obsolete.
   With the update a `READ` lock on a parent node, does not force same thread execution on its children.
   If you are one of the few that have already used `@ResourceLockChildren`, just replace it with `@ResourceLock`.
+
+=== Misc
+
+- Fix NPE if variable is initialized using a method with the same in features with cleanup blocks or using thrown condition https://github.com/spockframework/spock/issues/1266[#1266] https://github.com/spockframework/spock/issues/1313[#1313]
+- Fix implicit this conversion after bugfix in Groovy 3.0.8 https://github.com/spockframework/spock/issues/1318[#1318]
+- Fix extension-provided method arguments in fixture methods https://github.com/spockframework/spock/issues/1305[#1305]
+- Update `Jvm` helper to support versions up to 23 (next LTS release)
+
+
+Thanks to all the contributors (all 2.0 Milestones): Björn Kautler, Marcin Zajączkowski, DQYuan, Marcin Erdmann, Alexander Kriegisch, Jasper Vandemalle, Tom Wieczorek, Josh Soref, Vaidotas Valuckas, Raymond Augé, Roman Tretiak, Camilo Jorquera, Shil Sinha, Ryan Gardner, k3v1n0x90
+
+Special thanks goes to Marc Philipp who helped a lot with the integration of the JUnit Platform.
 
 == 2.0-M5 (2021-03-23)
 

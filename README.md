@@ -11,17 +11,15 @@ Spock Framework
 ===============
 
 Spock is a BDD-style developer testing and specification framework for Java and [Groovy](https://groovy-lang.org/) applications.
-To learn more about Spock, visit http://spockframework.org. To run a sample spec in your browser, go to
-http://webconsole.spockframework.org.
+To learn more about Spock, visit https://spockframework.org. To run a sample spec in your browser, go to
+https://meetspock.appspot.com/.
 
 Latest Versions
 ---------------
-* The latest 1.x release version is **1.3** (1.3-groovy-2.4, 1.3-groovy-2.5), released on 2019-01-22.
-* The latest 2.0 release version is **2.0-M5** (2.0-M5-groovy-2.5, 2.0-M5-groovy-3.0), released on 2021-03-23.
-* The current development version is **2.0-SNAPSHOT** (2.0-groovy-2.5-SNAPSHOT, 2.0-groovy-3.0-SNAPSHOT).
+* The latest 2.0 release version is **2.0** (2.0-groovy-2.5, 2.0-groovy-3.0), released on 2021-05-17.
+* The current development version is **2.1-SNAPSHOT** (2.1-groovy-2.5-SNAPSHOT, 2.1-groovy-3.0-SNAPSHOT).
 
-**NOTE:** Spock 1.3 is the last release for 1.x based on JUnit 4. Spock 2.0 is based on the JUnit 5 Platform
-          and require Java 8/groovy-2.5
+**NOTE:** Spock 2.0 is based on the JUnit 5 Platform and require Java 8/groovy-2.5
 
 Releases are available from [Maven Central](https://search.maven.org/#search%7Cga%7C1%7Cg%3A%22org.spockframework%22).
 Development snapshots are available from [Sonatype OSS](https://oss.sonatype.org/content/repositories/snapshots/org/spockframework/).
@@ -40,8 +38,8 @@ repositories {
 }
 
 dependencies {
-        compile 'org.spockframework.spock:spock-core:spock-1.3'
-        compile 'org.spockframework.spock:spock-spring:spock-1.3'
+        compile 'org.spockframework.spock:spock-core:spock-2.0'
+        compile 'org.spockframework.spock:spock-spring:spock-2.0'
 }
 ```
 3. For intermediate releases you can also use the commit-hash as version, e.g. compile `com.github.spockframework.spock:spock-core:d91bf785a1`
@@ -60,13 +58,13 @@ Building
 --------
 
 ### Supported versions
-Spock is supported for Java version 7, and 8 (with Groovy 2.5 Java 9+ are supported as well).
+Spock is supported for Java version 8+.
 
-Spock is supported for Groovy version 2.4+
+Spock is supported for Groovy version 2.5 and 3.0
 
-The tests are testing spock with a specific versions (variants) of groovy. Default is groovy version 2.4
+The tests are testing spock with a specific versions (variants) of groovy. Default is groovy version 2.5
 
-The groovy 2.4 and 2.5 variant should pass on all supported JDK versions:
+The groovy 2.5 and 3.0 variant should pass on all supported JDK versions:
 
 ```
 ./gradlew clean build

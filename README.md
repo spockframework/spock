@@ -19,7 +19,7 @@ Latest Versions
 * The latest 2.0 release version is **2.0** (2.0-groovy-2.5, 2.0-groovy-3.0), released on 2021-05-17.
 * The current development version is **2.1-SNAPSHOT** (2.1-groovy-2.5-SNAPSHOT, 2.1-groovy-3.0-SNAPSHOT).
 
-**NOTE:** Spock 2.0 is based on the JUnit 5 Platform and require Java 8/groovy-2.5
+**NOTE:** Spock 2.0 is based on the JUnit 5 Platform and require Java 8+/groovy-2.5+ (Groovy 3.0 is recommended, especially in projects using Java 12+).
 
 Releases are available from [Maven Central](https://search.maven.org/#search%7Cga%7C1%7Cg%3A%22org.spockframework%22).
 Development snapshots are available from [Sonatype OSS](https://oss.sonatype.org/content/repositories/snapshots/org/spockframework/).
@@ -52,7 +52,6 @@ Modules
 * spock-tapestry -- Integration with the [Tapestry 5](https://tapestry.apache.org/) IoC container.
 * spock-guice -- Integration with [Guice](https://github.com/google/guice) 2/3.
 * spock-unitils -- Integration with [Unitils](http://www.unitils.org/).
-* spock-report -- Interactive, business-friendly HTML reports.
 
 Building
 --------
@@ -60,11 +59,11 @@ Building
 ### Supported versions
 Spock is supported for Java version 8+.
 
-Spock is supported for Groovy version 2.5 and 3.0
+Spock is supported for Groovy versions 2.5 and 3.0.
 
-The tests are testing spock with a specific versions (variants) of groovy. Default is groovy version 2.5
+The tests are testing Spock with the specific versions (variants) of Groovy and Java. Default Groovy version is 2.5.
 
-The groovy 2.5 and 3.0 variant should pass on all supported JDK versions:
+The Groovy 2.5 and 3.0 variant should pass on all supported JDK versions:
 
 ```
 ./gradlew clean build
@@ -72,8 +71,7 @@ The groovy 2.5 and 3.0 variant should pass on all supported JDK versions:
 
 (Windows: `gradlew clean build`).
 All build dependencies, including
-the [build tool](https://www.gradle.org) itself, will be downloaded
-automatically (unless already present).
+the [build tool](https://www.gradle.org) itself, will be downloaded automatically (unless already present).
 
 Contributing
 ------------
@@ -81,7 +79,7 @@ Contributions are welcome! Please see the [contributing page](https://github.com
 
 Support
 -------
-If you have any comments or questions, please direct them to the [user forum](http://forum.spockframework.org).
+If you have any comments or questions, please direct them to the [user forum](https://github.com/spockframework/spock/discussions).
 All feedback is appreciated!
 
 Java 9 Module Names
@@ -106,18 +104,14 @@ open module foo.bar {
 
 Links
 -----
-* Spock Homepage -- http://spockframework.org
-* Spock Web Console -- http://webconsole.spockframework.org
-* GitHub Organization -- http://github.spockframework.org
-* Reference Documentation -- http://docs.spockframework.org
-* Old Wiki -- http://wiki.spockframework.org
-* Javadoc -- http://javadoc.spockframework.org
-* User Forum -- http://forum.spockframework.org
-* Developer Forum -- http://dev-forum.spockframework.org
-* Issue Tracker -- http://issues.spockframework.org
-* Build Server -- http://builds.spockframework.org
+* Spock Homepage -- https://spockframework.org
+* Spock Web Console -- https://meetspock.appspot.com/
+* GitHub Organization -- https://github.com/spockframework
+* Reference Documentation -- https://docs.spockframework.org
+* User Forum -- https://github.com/spockframework/spock/discussions
+* Issue Tracker -- https://github.com/spockframework/spock/issues
 * Spock Example Project -- https://github.com/spockframework/spock-example
-* Twitter -- http://twitter.spockframework.org
+* Twitter -- https://twitter.com/SpockFramework
 
 Live Long And Prosper!
 

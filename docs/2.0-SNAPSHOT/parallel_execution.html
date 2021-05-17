@@ -116,7 +116,7 @@ Certain <a href="extensions.html#extensions">extensions</a> also set execution m
 <h3 id="_execution_hierarchy"><a class="anchor" href="#_execution_hierarchy"></a><a class="link" href="#_execution_hierarchy">Execution Hierarchy</a></h3>
 <div class="imageblock">
 <div class="content">
-<img src="images/wbs-legend.svg" alt="wbs legend" width="838" height="226">
+<img src="images/wbs-legend.svg" alt="wbs legend" width="1051" height="226">
 </div>
 <div class="title">Figure 5. Legend for the following figures</div>
 </div>
@@ -129,7 +129,10 @@ Certain <a href="extensions.html#extensions">extensions</a> also set execution m
 <p>The node <code>Concurrent</code> will be executed in another thread, all concurrent nodes can execute in different threads from each other.</p>
 </li>
 <li>
-<p>The node <code>ResourceLock</code> will be executed in another thread, but will also acquire a lock.</p>
+<p>The node <code>ResourceLock(READ)</code> will be executed in another thread, but will also acquire a <code>READ</code>-lock for a resource.</p>
+</li>
+<li>
+<p>The node <code>ResourceLock(READ_WRITE)</code> will be executed in another thread, but will also acquire a <code>READ_WRITE</code>-lock for a resource.</p>
 </li>
 <li>
 <p>The node <code>Same Thread with Lock</code> will run in the same thread as its parent thus inheriting the lock.</p>
@@ -237,7 +240,7 @@ If they run sequentially then both complete without issue. However, if the run a
 <div class="paragraph">
 <p>The above example could simply be fixed if both features are part of the same specification by setting them to run in the same thread with <code>@Execution(SAME_THREAD)</code>.
 However, this is not really practicable when the features are in separate specifications.
-To solve this issue Spock has support to coordinate access to shared resources via <code>@ResourceLock</code> and <code>@ResourceLockChildren</code>.</p>
+To solve this issue Spock has support to coordinate access to shared resources via <code>@ResourceLock</code>.</p>
 </div>
 <div class="paragraph">
 <p>With <code>@ResourceLock</code> you can define both a <code>key</code> and a <code>mode</code>. By default, <code>@ResourceLock</code> assumes <code>ResourceAccessMode.READ_WRITE</code>, but you can weaken it to <code>ResourceAccessMode.READ</code>.</p>
@@ -268,36 +271,21 @@ You should not modify the shared resource when you only hold a <code>READ</code>
 <div class="sect2">
 <h3 id="_lock_inheritance"><a class="anchor" href="#_lock_inheritance"></a><a class="link" href="#_lock_inheritance">Lock inheritance</a></h3>
 <div class="paragraph">
-<p>If a parent node has a lock, it forces its children to run in the same thread.
+<p>If a parent node has a <code>READ_WRITE</code> lock, it forces its children to run in the same thread.
 As <code>READ_WRITE</code> locks cause serialized execution anyway, this is effectively not different from what would happen if the lock would be applied to every child directly.
-However, if only <code>READ</code> locks are used, then it makes a difference whether the lock is acquired on the parent or each child.</p>
-</div>
-<div class="paragraph">
-<p><a href="https://github.com/junit-team/junit5/issues/2423" class="bare">https://github.com/junit-team/junit5/issues/2423</a></p>
-</div>
-<div id="figure-lock-inherit-spec" class="imageblock">
-<div class="content">
-<img src="images/lock-inherit-spec.svg" alt="lock inherit spec" width="345" height="338">
-</div>
-<div class="title">Figure 14. Locks are passed on from the spec to the features</div>
+However, if the parent node has only <code>READ</code> locks, then it allows parallel execution of its children.</p>
 </div>
 <div id="figure-lock-inherit-iterate-feature" class="imageblock">
 <div class="content">
-<img src="images/lock-inherit-iterate-feature.svg" alt="lock inherit iterate feature" width="344" height="338">
+<img src="images/lock-inherit-iterate-feature.svg" alt="lock inherit iterate feature" width="560" height="338">
 </div>
-<div class="title">Figure 15. Locks on data driven features</div>
+<div class="title">Figure 14. Locks on data driven features</div>
 </div>
-<div class="paragraph">
-<p>If you want to have a lock on all features it might be intuitive to apply <code>@ResourceLock</code> on the specification.
-However, with this you are actually applying the lock on the Specification level and force every feature to <code>SAME_THREAD</code> execution.
-To avoid this you can use <code>@ResourceLockChildren</code> on the specification, this behaves the same as applying <code>@ResourceLock</code> on every feature.
-As mentioned before, you will only notice a real difference if you are using <code>@ResourceLockChildren</code> with <code>READ</code>-only locks, as they allow concurrent execution.</p>
-</div>
-<div id="figure-lock-inherit-lock-children" class="imageblock">
+<div id="figure-lock-inherit-spec" class="imageblock">
 <div class="content">
-<img src="images/lock-inherit-lock-children.svg" alt="lock inherit lock children" width="418" height="338">
+<img src="images/lock-inherit-spec.svg" alt="lock inherit spec" width="642" height="338">
 </div>
-<div class="title">Figure 16. Locks on children</div>
+<div class="title">Figure 15. Locks on spec inherited by features</div>
 </div>
 </div>
 <div class="sect2">
@@ -311,13 +299,13 @@ If the features both had <code>READ_WRITE</code> and <code>READ</code> locks for
 <div class="content">
 <img src="images/lock-coarsening-before.svg" alt="lock coarsening before" width="253" height="268">
 </div>
-<div class="title">Figure 17. Lock coarsening - before</div>
+<div class="title">Figure 16. Lock coarsening - before</div>
 </div>
 <div id="figure-lock-coarsening-after" class="imageblock">
 <div class="content">
 <img src="images/lock-coarsening-after.svg" alt="lock coarsening after" width="169" height="268">
 </div>
-<div class="title">Figure 18. Lock coarsening - after</div>
+<div class="title">Figure 17. Lock coarsening - after</div>
 </div>
 </div>
 <div class="sect2">
@@ -336,7 +324,7 @@ you might want to consider splitting the spec into <code>@Isolated</code> and no
 <div class="content">
 <img src="images/isolated.svg" alt="isolated" width="312" height="324">
 </div>
-<div class="title">Figure 19. <code>@Isolated</code> execution</div>
+<div class="title">Figure 18. <code>@Isolated</code> execution</div>
 </div>
 </div>
 </div>
@@ -392,7 +380,7 @@ Check the Javadoc of <code>spock.config.ParallelConfiguration</code> for a detai
 <div id="footer">
 <div id="footer-text">
 Version 2.0-SNAPSHOT<br>
-Last updated 2021-05-13 13:27:50 UTC
+Last updated 2021-05-17 14:42:54 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./coderay-asciidoctor.css">

@@ -22,14 +22,25 @@
 <div class="sect1">
 <h2 id="_2_0_m6_tbd"><a class="anchor" href="#_2_0_m6_tbd"></a><a class="link" href="#_2_0_m6_tbd">2.0-M6 (tbd)</a></h2>
 <div class="sectionbody">
-
+<div class="sect2">
+<h3 id="_breaking_changes"><a class="anchor" href="#_breaking_changes"></a><a class="link" href="#_breaking_changes">Breaking Changes</a></h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Remove <code>@ResourceLockChildren</code> again, as JUnit Platform 5.7.2 makes it obsolete.
+With the update a <code>READ</code> lock on a parent node, does not force same thread execution on its children.
+If you are one of the few that have already used <code>@ResourceLockChildren</code>, just replace it with <code>@ResourceLock</code>.</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="_2_0_m5_2021_03_23"><a class="anchor" href="#_2_0_m5_2021_03_23"></a><a class="link" href="#_2_0_m5_2021_03_23">2.0-M5 (2021-03-23)</a></h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_breaking_changes"><a class="anchor" href="#_breaking_changes"></a><a class="link" href="#_breaking_changes">Breaking Changes</a></h3>
+<h3 id="_breaking_changes_2"><a class="anchor" href="#_breaking_changes_2"></a><a class="link" href="#_breaking_changes_2">Breaking Changes</a></h3>
 <div class="ulist">
 <ul>
 <li>
@@ -199,7 +210,7 @@ by using the <code>instance.</code> qualifier inside the condition closure.</p>
 <h2 id="_2_0_m3_2020_06_11"><a class="anchor" href="#_2_0_m3_2020_06_11"></a><a class="link" href="#_2_0_m3_2020_06_11">2.0-M3 (2020-06-11)</a></h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_breaking_changes_2"><a class="anchor" href="#_breaking_changes_2"></a><a class="link" href="#_breaking_changes_2">Breaking Changes</a></h3>
+<h3 id="_breaking_changes_3"><a class="anchor" href="#_breaking_changes_3"></a><a class="link" href="#_breaking_changes_3">Breaking Changes</a></h3>
 <div class="sect3">
 <h4 id="_sputnik_runner_removed_an_alternative"><a class="anchor" href="#_sputnik_runner_removed_an_alternative"></a><a class="link" href="#_sputnik_runner_removed_an_alternative">Sputnik Runner removed (an alternative)</a></h4>
 <div class="paragraph">
@@ -588,7 +599,7 @@ As Groovy 3 is not backward compatible with Groovy 2, there is a layer of abstra
 </div>
 </div>
 <div class="sect2">
-<h3 id="_breaking_changes_3"><a class="anchor" href="#_breaking_changes_3"></a><a class="link" href="#_breaking_changes_3">Breaking Changes</a></h3>
+<h3 id="_breaking_changes_4"><a class="anchor" href="#_breaking_changes_4"></a><a class="link" href="#_breaking_changes_4">Breaking Changes</a></h3>
 <div class="sect3">
 <h4 id="_sputnik_runner_removed"><a class="anchor" href="#_sputnik_runner_removed"></a><a class="link" href="#_sputnik_runner_removed">Sputnik Runner removed</a></h4>
 <div class="paragraph">
@@ -645,7 +656,7 @@ requested parallel execution support.</p>
 <p>Please try it out and report any new bugs so that we can fix them for the final 2.0 release.</p>
 </div>
 <div class="sect2">
-<h3 id="_breaking_changes_4"><a class="anchor" href="#_breaking_changes_4"></a><a class="link" href="#_breaking_changes_4">Breaking Changes</a></h3>
+<h3 id="_breaking_changes_5"><a class="anchor" href="#_breaking_changes_5"></a><a class="link" href="#_breaking_changes_5">Breaking Changes</a></h3>
 <div class="sect3">
 <h4 id="_new_junit_platform"><a class="anchor" href="#_new_junit_platform"></a><a class="link" href="#_new_junit_platform">New JUnit Platform</a></h4>
 <div class="paragraph">
@@ -2230,7 +2241,7 @@ required; the only prerequisite for building Spock is a JDK installation (1.5 or
 <div id="footer">
 <div id="footer-text">
 Version 2.0-SNAPSHOT<br>
-Last updated 2021-05-13 13:27:50 UTC
+Last updated 2021-05-17 14:42:54 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./coderay-asciidoctor.css">

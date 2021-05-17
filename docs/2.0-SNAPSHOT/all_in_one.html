@@ -222,30 +222,34 @@
 </li>
 <li><a href="#_release_notes">Release Notes</a>
 <ul class="sectlevel2">
-<li><a href="#_2_0_m6_tbd">2.0-M6 (tbd)</a></li>
-<li><a href="#_2_0_m5_2021_03_23">2.0-M5 (2021-03-23)</a>
+<li><a href="#_2_0_m6_tbd">2.0-M6 (tbd)</a>
 <ul class="sectlevel3">
 <li><a href="#_breaking_changes">Breaking Changes</a></li>
+</ul>
+</li>
+<li><a href="#_2_0_m5_2021_03_23">2.0-M5 (2021-03-23)</a>
+<ul class="sectlevel3">
+<li><a href="#_breaking_changes_2">Breaking Changes</a></li>
 <li><a href="#_misc">Misc</a></li>
 </ul>
 </li>
 <li><a href="#_2_0_m4_2020_11_01">2.0-M4 (2020-11-01)</a></li>
 <li><a href="#_2_0_m3_2020_06_11">2.0-M3 (2020-06-11)</a>
 <ul class="sectlevel3">
-<li><a href="#_breaking_changes_2">Breaking Changes</a></li>
+<li><a href="#_breaking_changes_3">Breaking Changes</a></li>
 <li><a href="#_misc_2">Misc</a></li>
 </ul>
 </li>
 <li><a href="#_2_0_m2_2020_02_10">2.0-M2 (2020-02-10)</a>
 <ul class="sectlevel3">
 <li><a href="#_groovy_3_0_support">Groovy-3.0 Support</a></li>
-<li><a href="#_breaking_changes_3">Breaking Changes</a></li>
+<li><a href="#_breaking_changes_4">Breaking Changes</a></li>
 <li><a href="#_misc_3">Misc</a></li>
 </ul>
 </li>
 <li><a href="#_2_0_m1_2019_12_31">2.0-M1 (2019-12-31)</a>
 <ul class="sectlevel3">
-<li><a href="#_breaking_changes_4">Breaking Changes</a></li>
+<li><a href="#_breaking_changes_5">Breaking Changes</a></li>
 </ul>
 </li>
 <li><a href="#_1_3_2019_03_05">1.3 (2019-03-05)</a></li>
@@ -5232,7 +5236,7 @@ Certain <a href="#extensions">extensions</a> also set execution modes when they 
 <h4 id="_execution_hierarchy"><a class="anchor" href="#_execution_hierarchy"></a><a class="link" href="#_execution_hierarchy">Execution Hierarchy</a></h4>
 <div class="imageblock">
 <div class="content">
-<img src="images/wbs-legend.svg" alt="wbs legend" width="838" height="226">
+<img src="images/wbs-legend.svg" alt="wbs legend" width="1051" height="226">
 </div>
 <div class="title">Figure 6. Legend for the following figures</div>
 </div>
@@ -5245,7 +5249,10 @@ Certain <a href="#extensions">extensions</a> also set execution modes when they 
 <p>The node <code>Concurrent</code> will be executed in another thread, all concurrent nodes can execute in different threads from each other.</p>
 </li>
 <li>
-<p>The node <code>ResourceLock</code> will be executed in another thread, but will also acquire a lock.</p>
+<p>The node <code>ResourceLock(READ)</code> will be executed in another thread, but will also acquire a <code>READ</code>-lock for a resource.</p>
+</li>
+<li>
+<p>The node <code>ResourceLock(READ_WRITE)</code> will be executed in another thread, but will also acquire a <code>READ_WRITE</code>-lock for a resource.</p>
 </li>
 <li>
 <p>The node <code>Same Thread with Lock</code> will run in the same thread as its parent thus inheriting the lock.</p>
@@ -5351,7 +5358,7 @@ If they run sequentially then both complete without issue. However, if the run a
 <div class="paragraph">
 <p>The above example could simply be fixed if both features are part of the same specification by setting them to run in the same thread with <code>@Execution(SAME_THREAD)</code>.
 However, this is not really practicable when the features are in separate specifications.
-To solve this issue Spock has support to coordinate access to shared resources via <code>@ResourceLock</code> and <code>@ResourceLockChildren</code>.</p>
+To solve this issue Spock has support to coordinate access to shared resources via <code>@ResourceLock</code>.</p>
 </div>
 <div class="paragraph">
 <p>With <code>@ResourceLock</code> you can define both a <code>key</code> and a <code>mode</code>. By default, <code>@ResourceLock</code> assumes <code>ResourceAccessMode.READ_WRITE</code>, but you can weaken it to <code>ResourceAccessMode.READ</code>.</p>
@@ -5382,36 +5389,21 @@ You should not modify the shared resource when you only hold a <code>READ</code>
 <div class="sect3">
 <h4 id="_lock_inheritance"><a class="anchor" href="#_lock_inheritance"></a><a class="link" href="#_lock_inheritance">Lock inheritance</a></h4>
 <div class="paragraph">
-<p>If a parent node has a lock, it forces its children to run in the same thread.
+<p>If a parent node has a <code>READ_WRITE</code> lock, it forces its children to run in the same thread.
 As <code>READ_WRITE</code> locks cause serialized execution anyway, this is effectively not different from what would happen if the lock would be applied to every child directly.
-However, if only <code>READ</code> locks are used, then it makes a difference whether the lock is acquired on the parent or each child.</p>
-</div>
-<div class="paragraph">
-<p><a href="https://github.com/junit-team/junit5/issues/2423" class="bare">https://github.com/junit-team/junit5/issues/2423</a></p>
-</div>
-<div id="figure-lock-inherit-spec" class="imageblock">
-<div class="content">
-<img src="images/lock-inherit-spec.svg" alt="lock inherit spec" width="345" height="338">
-</div>
-<div class="title">Figure 15. Locks are passed on from the spec to the features</div>
+However, if the parent node has only <code>READ</code> locks, then it allows parallel execution of its children.</p>
 </div>
 <div id="figure-lock-inherit-iterate-feature" class="imageblock">
 <div class="content">
-<img src="images/lock-inherit-iterate-feature.svg" alt="lock inherit iterate feature" width="344" height="338">
+<img src="images/lock-inherit-iterate-feature.svg" alt="lock inherit iterate feature" width="560" height="338">
 </div>
-<div class="title">Figure 16. Locks on data driven features</div>
+<div class="title">Figure 15. Locks on data driven features</div>
 </div>
-<div class="paragraph">
-<p>If you want to have a lock on all features it might be intuitive to apply <code>@ResourceLock</code> on the specification.
-However, with this you are actually applying the lock on the Specification level and force every feature to <code>SAME_THREAD</code> execution.
-To avoid this you can use <code>@ResourceLockChildren</code> on the specification, this behaves the same as applying <code>@ResourceLock</code> on every feature.
-As mentioned before, you will only notice a real difference if you are using <code>@ResourceLockChildren</code> with <code>READ</code>-only locks, as they allow concurrent execution.</p>
-</div>
-<div id="figure-lock-inherit-lock-children" class="imageblock">
+<div id="figure-lock-inherit-spec" class="imageblock">
 <div class="content">
-<img src="images/lock-inherit-lock-children.svg" alt="lock inherit lock children" width="418" height="338">
+<img src="images/lock-inherit-spec.svg" alt="lock inherit spec" width="642" height="338">
 </div>
-<div class="title">Figure 17. Locks on children</div>
+<div class="title">Figure 16. Locks on spec inherited by features</div>
 </div>
 </div>
 <div class="sect3">
@@ -5425,13 +5417,13 @@ If the features both had <code>READ_WRITE</code> and <code>READ</code> locks for
 <div class="content">
 <img src="images/lock-coarsening-before.svg" alt="lock coarsening before" width="253" height="268">
 </div>
-<div class="title">Figure 18. Lock coarsening - before</div>
+<div class="title">Figure 17. Lock coarsening - before</div>
 </div>
 <div id="figure-lock-coarsening-after" class="imageblock">
 <div class="content">
 <img src="images/lock-coarsening-after.svg" alt="lock coarsening after" width="169" height="268">
 </div>
-<div class="title">Figure 19. Lock coarsening - after</div>
+<div class="title">Figure 18. Lock coarsening - after</div>
 </div>
 </div>
 <div class="sect3">
@@ -5450,7 +5442,7 @@ you might want to consider splitting the spec into <code>@Isolated</code> and no
 <div class="content">
 <img src="images/isolated.svg" alt="isolated" width="312" height="324">
 </div>
-<div class="title">Figure 20. <code>@Isolated</code> execution</div>
+<div class="title">Figure 19. <code>@Isolated</code> execution</div>
 </div>
 </div>
 </div>
@@ -5954,12 +5946,23 @@ Grails 2.3 and higher have built-in Spock support and do not require a plugin.
 <div class="sectionbody">
 <div class="sect2">
 <h3 id="_2_0_m6_tbd"><a class="anchor" href="#_2_0_m6_tbd"></a><a class="link" href="#_2_0_m6_tbd">2.0-M6 (tbd)</a></h3>
-
+<div class="sect3">
+<h4 id="_breaking_changes"><a class="anchor" href="#_breaking_changes"></a><a class="link" href="#_breaking_changes">Breaking Changes</a></h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Remove <code>@ResourceLockChildren</code> again, as JUnit Platform 5.7.2 makes it obsolete.
+With the update a <code>READ</code> lock on a parent node, does not force same thread execution on its children.
+If you are one of the few that have already used <code>@ResourceLockChildren</code>, just replace it with <code>@ResourceLock</code>.</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
 <h3 id="_2_0_m5_2021_03_23"><a class="anchor" href="#_2_0_m5_2021_03_23"></a><a class="link" href="#_2_0_m5_2021_03_23">2.0-M5 (2021-03-23)</a></h3>
 <div class="sect3">
-<h4 id="_breaking_changes"><a class="anchor" href="#_breaking_changes"></a><a class="link" href="#_breaking_changes">Breaking Changes</a></h4>
+<h4 id="_breaking_changes_2"><a class="anchor" href="#_breaking_changes_2"></a><a class="link" href="#_breaking_changes_2">Breaking Changes</a></h4>
 <div class="ulist">
 <ul>
 <li>
@@ -6125,7 +6128,7 @@ by using the <code>instance.</code> qualifier inside the condition closure.</p>
 <div class="sect2">
 <h3 id="_2_0_m3_2020_06_11"><a class="anchor" href="#_2_0_m3_2020_06_11"></a><a class="link" href="#_2_0_m3_2020_06_11">2.0-M3 (2020-06-11)</a></h3>
 <div class="sect3">
-<h4 id="_breaking_changes_2"><a class="anchor" href="#_breaking_changes_2"></a><a class="link" href="#_breaking_changes_2">Breaking Changes</a></h4>
+<h4 id="_breaking_changes_3"><a class="anchor" href="#_breaking_changes_3"></a><a class="link" href="#_breaking_changes_3">Breaking Changes</a></h4>
 <div class="sect4">
 <h5 id="_sputnik_runner_removed_an_alternative"><a class="anchor" href="#_sputnik_runner_removed_an_alternative"></a><a class="link" href="#_sputnik_runner_removed_an_alternative">Sputnik Runner removed (an alternative)</a></h5>
 <div class="paragraph">
@@ -6512,7 +6515,7 @@ As Groovy 3 is not backward compatible with Groovy 2, there is a layer of abstra
 </div>
 </div>
 <div class="sect3">
-<h4 id="_breaking_changes_3"><a class="anchor" href="#_breaking_changes_3"></a><a class="link" href="#_breaking_changes_3">Breaking Changes</a></h4>
+<h4 id="_breaking_changes_4"><a class="anchor" href="#_breaking_changes_4"></a><a class="link" href="#_breaking_changes_4">Breaking Changes</a></h4>
 <div class="sect4">
 <h5 id="_sputnik_runner_removed"><a class="anchor" href="#_sputnik_runner_removed"></a><a class="link" href="#_sputnik_runner_removed">Sputnik Runner removed</a></h5>
 <div class="paragraph">
@@ -6567,7 +6570,7 @@ requested parallel execution support.</p>
 <p>Please try it out and report any new bugs so that we can fix them for the final 2.0 release.</p>
 </div>
 <div class="sect3">
-<h4 id="_breaking_changes_4"><a class="anchor" href="#_breaking_changes_4"></a><a class="link" href="#_breaking_changes_4">Breaking Changes</a></h4>
+<h4 id="_breaking_changes_5"><a class="anchor" href="#_breaking_changes_5"></a><a class="link" href="#_breaking_changes_5">Breaking Changes</a></h4>
 <div class="sect4">
 <h5 id="_new_junit_platform"><a class="anchor" href="#_new_junit_platform"></a><a class="link" href="#_new_junit_platform">New JUnit Platform</a></h5>
 <div class="paragraph">
@@ -8719,7 +8722,7 @@ This is due to how groovy implements traits and AST transformations.</p>
 <div id="footer">
 <div id="footer-text">
 Version 2.0-SNAPSHOT<br>
-Last updated 2021-05-13 13:27:50 UTC
+Last updated 2021-05-17 14:42:54 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./coderay-asciidoctor.css">

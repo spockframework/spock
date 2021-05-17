@@ -2,6 +2,8 @@
 = Release Notes
 include::include.adoc[]
 
+== 2.1 (tbd)
+
 == 2.0 (2021-05-17)
 
 === Highlights

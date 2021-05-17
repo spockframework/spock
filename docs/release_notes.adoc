@@ -4,6 +4,13 @@ include::include.adoc[]
 
 == 2.0-M6 (tbd)
 
+
+=== Breaking Changes
+
+- Remove `@ResourceLockChildren` again, as JUnit Platform 5.7.2 makes it obsolete.
+  With the update a `READ` lock on a parent node, does not force same thread execution on its children.
+  If you are one of the few that have already used `@ResourceLockChildren`, just replace it with `@ResourceLock`.
+
 == 2.0-M5 (2021-03-23)
 
 === Breaking Changes

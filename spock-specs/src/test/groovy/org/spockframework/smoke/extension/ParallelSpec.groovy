@@ -1,7 +1,5 @@
 package org.spockframework.smoke.extension
 
-import java.util.stream.Collectors
-
 import org.spockframework.EmbeddedSpecification
 import org.spockframework.runtime.model.parallel.*
 import spock.lang.*
@@ -12,7 +10,7 @@ import java.util.concurrent.atomic.AtomicInteger
 import static java.util.concurrent.TimeUnit.MILLISECONDS
 
 @Isolated("Isolate from other tests to have full access to cores for the embedded tests.")
-@Requires({Runtime.runtime.availableProcessors() >= 2})
+@Requires({ Runtime.runtime.availableProcessors() >= 2 })
 class ParallelSpec extends EmbeddedSpecification {
 
   def setup() {
@@ -116,11 +114,10 @@ class ParallelSpec extends EmbeddedSpecification {
     result.testsSucceededCount == 3
   }
 
-  // must be changed to write lock when https://github.com/junit-team/junit5/issues/2423 is implemented
-  def "a lock on the specification causes same thread execution"() {
+  def "a write lock on the specification causes same thread execution"() {
     when:
     def result = runner.runWithImports '''
-      @ResourceLock(value = "a", mode = ResourceAccessMode.READ)
+      @ResourceLock("a")
       class ASpec extends Specification {
         @Shared
         AtomicInteger atomicInteger = new AtomicInteger()
@@ -156,7 +153,7 @@ class ParallelSpec extends EmbeddedSpecification {
   def "@ResourceLock on specs is inherited"() {
     when:
     def result = runner.runWithImports '''
-      @ResourceLock(value = "a", mode = ResourceAccessMode.READ)
+      @ResourceLock("a")
       abstract class BaseSpec extends Specification {
         @Shared
         AtomicInteger atomicInteger = new AtomicInteger()
@@ -166,8 +163,8 @@ class ParallelSpec extends EmbeddedSpecification {
 
         @Shared
         String threadName
-      } 
-      
+      }
+
       class ASpec extends BaseSpec {
 
         def setupSpec() {
@@ -192,10 +189,10 @@ class ParallelSpec extends EmbeddedSpecification {
     result.testsSucceededCount == 2
   }
 
-  def "@ResourceLockChildren allows parallel execution"() {
+  def "@ResourceLock with only READ allows parallel execution"() {
     when:
     def result = runner.runWithImports '''
-      @ResourceLockChildren(value = "a", mode = ResourceAccessMode.READ)
+      @ResourceLock(value = "a", mode = ResourceAccessMode.READ)
       class ASpec extends Specification {
         @Shared
         AtomicInteger atomicInteger = new AtomicInteger()
@@ -206,7 +203,7 @@ class ParallelSpec extends EmbeddedSpecification {
         def writeA() {
           when:
           incrementAndBlock(atomicInteger, latch)
-  
+
           then:
           atomicInteger.get() == 2
         }
@@ -214,7 +211,7 @@ class ParallelSpec extends EmbeddedSpecification {
         def writeB() {
           when:
           incrementAndBlock(atomicInteger, latch)
-  
+
           then:
           atomicInteger.get() == 2
         }
@@ -225,26 +222,26 @@ class ParallelSpec extends EmbeddedSpecification {
     result.testsSucceededCount == 2
   }
 
-  def "@ResourceLockChildren can be combined with @ResourceLock"() {
+  def "@ResourceLock on Spec can be combined with @ResourceLock"() {
     when:
     def result = runner.runWithImports '''
-      @ResourceLockChildren(value = "a", mode = ResourceAccessMode.READ)
+      @ResourceLock(value = "a", mode = ResourceAccessMode.READ)
       class ASpec extends Specification {
         @Shared
         AtomicInteger atomicInteger = new AtomicInteger()
 
         @Shared
         CountDownLatch latch = new CountDownLatch(2)
-        
+
         def readA() {
           expect: storeAndBlockAndCheck(atomicInteger, latch)
         }
-  
+
         @ResourceLock("a")
         def writeB() {
           expect: incrementBlockAndCheck(atomicInteger, latch)
         }
-  
+
         def readC() {
           expect: storeAndBlockAndCheck(atomicInteger, latch)
         }
@@ -254,30 +251,60 @@ class ParallelSpec extends EmbeddedSpecification {
     then:
     result.testsSucceededCount == 3
   }
-  def "@ResourceLockChildren can be inherited"() {
+
+  def "@ResourceLock with only READ allows parallel execution of data-driven features"() {
     when:
     def result = runner.runWithImports '''
-      @ResourceLockChildren(value = "a", mode = ResourceAccessMode.READ)
-      abstract class BaseSpec extends Specification {
+      class ASpec extends Specification {
+        @Shared
+        AtomicInteger atomicInteger = new AtomicInteger()
+
+        @Shared
+        CountDownLatch latch = new CountDownLatch(3)
+
+        @ResourceLock(value = "a", mode = ResourceAccessMode.READ)
+        def writeA() {
+          when:
+          incrementAndBlock(atomicInteger, latch)
+
+          then:
+          atomicInteger.get() == 3
+
+          where:
+          i << (1..3)
+        }
+      }
+    '''
+
+    then:
+    result.testsSucceededCount == 4
+  }
+
+  def "@ResourceLock with only WRITE forces same thread execution of data-driven features"() {
+    when:
+    def result = runner.runWithImports '''
+      class ASpec extends Specification {
         @Shared
         AtomicInteger atomicInteger = new AtomicInteger()
 
         @Shared
         CountDownLatch latch = new CountDownLatch(2)
-      }
-      
-      class ASpec extends BaseSpec {
-        def readA() {
-          expect: storeAndBlockAndCheck(atomicInteger, latch)
+
+        @Shared
+        String threadName
+
+        def setupSpec() {
+          threadName = Thread.currentThread().name
         }
-  
+
         @ResourceLock("a")
-        def writeB() {
-          expect: incrementBlockAndCheck(atomicInteger, latch)
-        }
-  
-        def readC() {
-          expect: storeAndBlockAndCheck(atomicInteger, latch)
+        def writeA() {
+          expect:
+          threadName == Thread.currentThread().name
+          incrementBlockAndCheck(atomicInteger, latch)
+
+          where:
+          i << (1..2)
         }
       }
     '''
@@ -335,7 +362,7 @@ class ParallelSpec extends EmbeddedSpecification {
 
         @Shared
         String threadName
-     
+
       }
 
       class ASpec extends BaseSpec {
@@ -420,6 +447,7 @@ class ParallelSpec extends EmbeddedSpecification {
     then:
     result.testsSucceededCount == 6
   }
+
   def "@Isolated is inherited"() {
     when:
     def result = runner.runWithImports '''
@@ -439,7 +467,7 @@ class ParallelSpec extends EmbeddedSpecification {
         }
       }
 
-      @Isolated      
+      @Isolated
       abstract class BaseSpec extends Specification {
         @Shared
         String threadName

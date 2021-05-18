@@ -81,7 +81,7 @@ public class SpockTransform implements ASTTransformation {
         }
       } catch (Exception e) {
         errorReporter.error(
-            "Unexpected error during compilation of spec '%s'. Maybe you have used invalid Spock syntax? Anyway, please file a bug report at http://issues.spockframework.org.",
+            "Unexpected error during compilation of spec '%s'. Maybe you have used invalid Spock syntax? Anyway, please file a bug report at https://issues.spockframework.org.",
             e, clazz.getName());
       }
     }

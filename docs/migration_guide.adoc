@@ -6,7 +6,7 @@ This page explains incompatible changes between successive versions and provides
 [[_migration_guide_2_0]]
 == 2.0
 
-NOTE: This section only touches on the breaking changes, see the <<release_nodes.adoc#_release_notes, Release Notes>> for a full list of changes and new features.
+NOTE: This section only touches on the breaking changes, see the <<release_notes.adoc#_release_notes, Release Notes>> for a full list of changes and new features.
 
 Spock 2.0 aims to be as compatible as possible for existing code bases, while making the necessary changes to stay a modern test framework.
 

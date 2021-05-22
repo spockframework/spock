@@ -8,45 +8,46 @@ assignees: ''
 ---
 
 ## Describe the bug
-A clear and concise description of what the bug is.
+<!-- A clear and concise description of what the bug is. -->
 
 ## To Reproduce
+<!--
 Please provide a [minimal reproducible example](https://stackoverflow.com/help/minimal-reproducible-example).
 
->    …Minimal – Use as little code as possible that still produces the same problem
+>   …Minimal – Use as little code as possible that still produces the same problem
 >   …Complete – Provide all parts someone else needs to reproduce your problem in the question itself
 >   …Reproducible – Test the code you're about to provide to make sure it reproduces the problem
- 
+-->
 
 ## Expected behavior
-A clear and concise description of what you expected to happen.
+<!-- A clear and concise description of what you expected to happen. -->
+
+## Actual behavior
+<!-- A clear and concise description of what happened instead. -->
 
 ## Screenshots
-If applicable, add screenshots to help explain your problem.
+<!-- If applicable, add screenshots to help explain your problem. -->
 
-# Environment (please complete the following information):
+# Environment:
+<!-- (please complete the following information) -->
 
 ## Java/JDK
-`java -version`
-
-## Groovy version
->__Note that versions older than 2.5 are no longer supported.__
-
-`groovy -version`
+<!-- `java -version` -->
 
 ## Build tool version
+<!-- Remove unused sections -->
 
 ### Gradle
-`gradle -version`
+<!-- `gradlew -version` -->
 
 ### Apache Maven
-`mvn -version`
+<!-- `mvn -version` -->
 
 ## Operating System
-> Linux, Windows, Mac etc.
+<!--  Linux, Windows, Mac etc. -->
 
 ## IDE
-> IntelliJ, Eclipse etc.
+<!--  IntelliJ, Eclipse etc. -->
 
 ## Build-tool dependencies used
 
@@ -61,5 +62,5 @@ If applicable, add screenshots to help explain your problem.
     </dependency>
 
 
-**Additional context**
-Add any other context about the problem here.
+## Additional context
+<!-- Add any other context about the problem here. -->

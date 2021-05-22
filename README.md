@@ -1,6 +1,6 @@
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/spockframework/spock/blob/master/LICENSE)
 [![Maven Central](https://img.shields.io/maven-central/v/org.spockframework/spock-core.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:org.spockframework)
-[![Build](https://img.shields.io/github/checks-status/spockframework/spock/master?label=Build)](https://github.com/spockframework/spock/actions?query=workflow%3A%22CI+Builds%22+branch%3Amaster)
+[![GitHub Workflow Status (branch)](https://img.shields.io/github/workflow/status/spockframework/spock/Build%20and%20Release%20Spock/master)](https://github.com/spockframework/spock/actions?query=workflow%3A%22Build+and+Release+Spock%22+branch%3Amaster)
 [![Jitpack](https://jitpack.io/v/org.spockframework/spock.svg)](https://jitpack.io/#org.spockframework/spock)
 [![Codecov](https://codecov.io/gh/spockframework/spock/branch/master/graph/badge.svg)](https://codecov.io/gh/spockframework/spock)
 [![Gitter](https://badges.gitter.im/spockframework/spock.svg)](https://gitter.im/spockframework/spock?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)

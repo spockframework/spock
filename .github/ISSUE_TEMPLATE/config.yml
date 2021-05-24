@@ -3,9 +3,9 @@ contact_links:
   - name: Spock Gitter Chat
     url: https://gitter.im/spockframework/spock
     about: Please ask and answer questions here.
-  - name: Spock Stackoverflow
+  - name: Stack Overflow
     url: https://stackoverflow.com/questions/tagged/spock
     about: For questions of the type "why isn't this working".
-  - name: Spock Discussions
+  - name: Spock GitHub Discussions
     url: https://github.com/spockframework/spock/discussions
     about: For other questions and discussions.

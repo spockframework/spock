@@ -15,7 +15,7 @@ assignees: ''
 Please provide a [minimal reproducible example](https://stackoverflow.com/help/minimal-reproducible-example).
 
 >   …Minimal – Use as little code as possible that still produces the same problem
->   …Complete – Provide all parts someone else needs to reproduce your problem in the question itself
+>   …Complete – Provide all parts someone else needs to reproduce your problem in the issue itself
 >   …Reproducible – Test the code you're about to provide to make sure it reproduces the problem
 -->
 
@@ -38,10 +38,10 @@ Please provide a [minimal reproducible example](https://stackoverflow.com/help/m
 <!-- Remove unused sections -->
 
 ### Gradle
-<!-- `gradlew -version` -->
+<!-- `gradlew --version` -->
 
 ### Apache Maven
-<!-- `mvn -version` -->
+<!-- `mvn --version` -->
 
 ## Operating System
 <!--  Linux, Windows, Mac etc. -->
@@ -52,15 +52,14 @@ Please provide a [minimal reproducible example](https://stackoverflow.com/help/m
 ## Build-tool dependencies used
 
 ### Gradle/Grails
-    implementation 'org.spockframework:spock-core:2.0-groovy-3.0'
+    testImplementation 'org.spockframework:spock-core:2.0-groovy-3.0'
 
 ### Apache Maven
     <dependency>
       <groupId>org.spockframework</groupId>
       <artifactId>spock-core</artifactId>
       <version>2.0-groovy-3.0</version>
+        <scope>test</scope>
     </dependency>
-
-
 ## Additional context
 <!-- Add any other context about the problem here. -->

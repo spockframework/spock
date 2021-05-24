@@ -14,6 +14,7 @@ assignees: ''
 <!--
 Please provide a [minimal reproducible example](https://stackoverflow.com/help/minimal-reproducible-example).
 
+>Your code examples should be…
 >   …Minimal – Use as little code as possible that still produces the same problem
 >   …Complete – Provide all parts someone else needs to reproduce your problem in the issue itself
 >   …Reproducible – Test the code you're about to provide to make sure it reproduces the problem

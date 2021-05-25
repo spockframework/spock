@@ -147,6 +147,17 @@ class WithBlocks extends Specification {
     }
   }
 
+  @Issue("https://github.com/spockframework/spock/issues/1339")
+  def "implicit collection method call on a set"() {
+    given:
+    Set<String> x = ["a"]
+
+    expect:
+    with(x) {
+      find() == 'a'
+    }
+  }
+
   int size() {
     42
   }

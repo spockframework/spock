@@ -226,16 +226,7 @@ public class DeepBlockRewriter extends AbstractDeepBlockRewriter {
     MethodCallExpression methodCall = AstUtil.getExpression(stat, MethodCallExpression.class);
     if (methodCall == null) return;
 
-    MethodCallExpression target = referenceToCurrentClosure();
-    methodCall.setObjectExpression(target);
-  }
-
-  private MethodCallExpression referenceToCurrentClosure() {
-    return new MethodCallExpression(
-      new VariableExpression("this"),
-      new ConstantExpression("find"),
-      NO_ARGUMENTS
-    );
+    methodCall.setObjectExpression(new ClosureReferenceExpression());
   }
 
   private boolean handleMockCall(MethodCallExpression expr) {

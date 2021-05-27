@@ -41,6 +41,6 @@ public class ClassRuleInterceptor extends AbstractRuleInterceptor {
       stat = rule.apply(stat, description);
     }
 
-    stat.evaluate();
+    evaluateStatement(stat);
   }
 }

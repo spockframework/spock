@@ -40,6 +40,6 @@ public class TestRuleInterceptor extends AbstractRuleInterceptor {
       stat = rule.apply(stat, description);
     }
 
-    stat.evaluate();
+    evaluateStatement(stat);
   }
 }

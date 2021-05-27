@@ -14,7 +14,9 @@
 
 package org.spockframework.junit4;
 
-import org.junit.runners.model.Statement;
+import org.junit.internal.AssumptionViolatedException;
+import org.junit.runners.model.*;
+import org.opentest4j.*;
 
 import org.spockframework.runtime.extension.ExtensionException;
 import org.spockframework.runtime.extension.IMethodInterceptor;
@@ -43,12 +45,23 @@ public abstract class AbstractRuleInterceptor implements IMethodInterceptor {
     Object rule = field.readValue(fieldTarget);
     if (rule == null) {
       try {
-        rule = field.getType().newInstance();
+        rule = field.getType().getDeclaredConstructor().newInstance();
         field.writeValue(fieldTarget, rule);
       } catch (Exception e) {
         throw new ExtensionException("Auto-instantiating @Rule field '%s' failed. You may have to instantiate it manually.", e).withArgs(field.getName());
       }
     }
     return rule;
+  }
+
+  protected void evaluateStatement(Statement statement) throws Throwable {
+    try {
+      statement.evaluate();
+    } catch (AssumptionViolatedException assumption) {
+      throw new TestAbortedException(assumption.getMessage(), assumption);
+    } catch (MultipleFailureException mfe) {
+      throw new MultipleFailuresError("There were multiple errors", mfe.getFailures());
+    }
+
   }
 }

@@ -14,20 +14,23 @@
 
 package org.spockframework.junit4.junit
 
-import org.junit.Rule
-import org.junit.rules.TestName
-import org.junit.rules.TestRule
-import org.junit.runner.Description
-import org.junit.runners.model.Statement
 import org.spockframework.runtime.InvalidSpecException
 
+import org.junit.*
+import org.junit.rules.*
+import org.junit.runner.Description
+import org.junit.runners.model.Statement
+
 class JUnitRules extends JUnitBaseSpec {
-  @Rule MyRule rule1
-  @Rule MyRule rule2 = new MyRule(42)
+  @Rule
+  MyRule rule1
+  @Rule
+  MyRule rule2 = new MyRule(42)
 
   def setup() {
     runner.addClassImport(Rule)
     runner.addClassImport(TestName)
+    runner.addClassImport(AbortRule)
   }
 
   def "are instantiated automatically by default"() {
@@ -75,7 +78,27 @@ class JUnitRules extends JUnitBaseSpec {
     e.message.contains("cannot be @Shared")
   }
 
-  static @Rule TestName staticRule
+  def "exceptions in rules are translated"() {
+    given:
+    runner.throwFailure = false
+
+    when:
+    def result = runner.runSpecBody '''
+      @Rule
+      AbortRule skipRule
+
+      def "feature"() {
+      expect: false
+      }
+'''
+    then:
+    result.testsStartedCount == 1
+    result.testsFailedCount == 0
+    result.testsAbortedCount == 1
+  }
+
+  static @Rule
+  TestName staticRule
 
   def "static rules are not detected"() {
     expect:
@@ -96,6 +119,18 @@ class JUnitRules extends JUnitBaseSpec {
         @Override
         void evaluate() {
           base.evaluate()
+        }
+      }
+    }
+  }
+
+  static class AbortRule implements TestRule {
+
+    Statement apply(Statement base, Description description) {
+      new Statement() {
+        @Override
+        void evaluate() {
+          Assume.assumeTrue(false)
         }
       }
     }

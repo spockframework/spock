@@ -59,7 +59,7 @@ or use one of these commands to create a dependencies-report.txt and attach it
 * `./gradlew -q dependencies --configuration testRuntimeClasspath > dependencies-report.txt`
 * `mvn dependency:tree -DoutputFile=dependency-report.txt`
 
-Or if your build is public you can attach a gradle buildscan.
+Or if your build is public you can attach a Gradle build scan.
 -->
 
 ## Additional context

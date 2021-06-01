@@ -1,0 +1,11 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Spock Gitter Chat
+    url: https://gitter.im/spockframework/spock
+    about: Come here to chat, hang out, and ask smaller questions
+  - name: Stack Overflow
+    url: https://stackoverflow.com/questions/tagged/spock
+    about: For questions of the type "why isn't this working"
+  - name: Spock GitHub Discussions
+    url: https://github.com/spockframework/spock/discussions
+    about: For other questions and discussions

@@ -119,7 +119,6 @@ public class PlatformSpecRunner {
   }
 
   void runSetupSpec(SpockExecutionContext context) {
-    supervisor.beforeSpec(context.getSpec());
     runSetupSpec(context, context.getSpec());
   }
 
@@ -151,7 +150,6 @@ public class PlatformSpecRunner {
 
   void runCleanupSpec(SpockExecutionContext context) {
     runCleanupSpec(context.withCurrentInstance(context.getSharedInstance()), context.getSpec());
-    supervisor.afterSpec(context.getSpec());
   }
 
   private void runCleanupSpec(SpockExecutionContext context, SpecInfo spec) {

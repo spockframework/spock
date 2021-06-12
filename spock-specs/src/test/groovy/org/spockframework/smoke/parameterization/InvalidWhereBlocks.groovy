@@ -268,4 +268,82 @@ c << $spock_p_a
     then:
     thrown(MissingPropertyException)
   }
+
+  def 'using combine label outside where block is not allowed'() {
+    when:
+    def result = compiler.transpileFeatureBody '''
+      combine:
+      true
+
+      expect:
+      true
+
+      where:
+      a | _
+      1 | _
+    '''
+
+    then:
+    result.source.normalize() == '''
+      |Unable to produce AST for this phase due to earlier compilation error:
+      |startup failed:
+      |script.groovy: 2: 'combine' is not allowed here; instead, use one of: [setup, given, expect, when, cleanup, where, end-of-method] @ line 2, column 7.
+      |         true
+      |         ^
+      |
+      |1 error
+    '''.stripMargin().trim()
+  }
+
+  def 'using combine label between data table and something else is not allowed'() {
+    when:
+    def result = compiler.transpileFeatureBody '''
+      expect:
+      true
+
+      where:
+      a | _
+      1 | _
+      combine:
+      b = 1
+    '''
+
+    then:
+    result.source.normalize() == '''
+      |Unable to produce AST for this phase due to earlier compilation error:
+      |startup failed:
+      |script.groovy: 8: Combine label must only appear between two data tables @ line 8, column 7.
+      |         b = 1
+      |         ^
+      |
+      |1 error
+    '''.stripMargin().trim()
+  }
+
+  def 'using combine label within semicolon data table row is not allowed'() {
+    when:
+    def result = compiler.transpileFeatureBody '''
+      expect:
+      true
+
+      where:
+      a ; combine: b
+      1 ; 2
+    '''
+
+    then:
+    result.source.normalize() == '''
+      |Unable to produce AST for this phase due to earlier compilation error:
+      |startup failed:
+      |script.groovy: 5: Columns in data tables must not be labeled @ line 5, column 20.
+      |         a ; combine: b
+      |                      ^
+      |
+      |script.groovy: 6: Data table must have more than just the header row @ line 6, column 7.
+      |         1 ; 2
+      |         ^
+      |
+      |2 errors
+    '''.stripMargin().trim()
+  }
 }

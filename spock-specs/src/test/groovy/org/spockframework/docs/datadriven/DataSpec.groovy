@@ -64,18 +64,18 @@ class DataSpec extends EmbeddedSpecification {
 // end::multiple-tables[]
   }
 
-  def "multiple tables combined"() {
+  def "multiple tables joined"() {
     expect:
     a >= 0
     b < c
 
-// tag::multiple-tables-combined[]
+// tag::multiple-tables-joined[]
     where:
     a | b | c
     1 | 1 | 2
     7 | 3 | 4
     0 | 5 | 6
-// end::multiple-tables-combined[]
+// end::multiple-tables-joined[]
   }
 
   def "multiple tables with top border"() {
@@ -96,6 +96,23 @@ class DataSpec extends EmbeddedSpecification {
     3 | 4
     5 | 6
 // end::multiple-tables-with-top-border[]
+  }
+
+  def "multiple tables combined"() {
+    expect:
+    a >= 0
+    b < c
+
+// tag::multiple-tables-combined[]
+    where:
+    a | _
+    1 | _
+    2 | _
+    combine:
+    b | c
+    3 | 5
+    4 | 6
+// end::multiple-tables-combined[]
   }
 
 // tag::sql-data-pipe[]

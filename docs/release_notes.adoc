@@ -50,6 +50,8 @@ Special thanks goes to Marc Philipp who helped a lot with the integration of the
 
 === Misc
 
+- Add support for combining two or more data tables using cartesian product (https://github.com/spockframework/spock/issues/1062[#1062])
+
 - Add support for injection into `@Shared` fields in `spock-spring` module which users can opt-in for by adding
   `@EnableSharedInjection` to the specification. https://github.com/spockframework/spock/issues/76[#76]
 

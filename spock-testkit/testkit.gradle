@@ -16,6 +16,7 @@ dependencies {
   testRuntime libs.h2database
   testRuntime libs.junitPlatformConsole
   testCompile libs.junitPlatformTestkit
+
   testCompile libs.jupiter
 //  junit libs.junit4
 }

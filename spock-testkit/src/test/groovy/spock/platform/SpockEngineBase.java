@@ -11,10 +11,13 @@ import java.util.List;
 import java.util.function.Consumer;
 
 public class SpockEngineBase {
+
+  private static final Filter<?>[] FILTERS = new Filter<?>[0];
+
   protected void execute(DiscoverySelector selector, Consumer<EventStatistics> statisticsConsumer) {
     execute(selector, statisticsConsumer, Collections.emptyList());
   }
-  protected void execute(DiscoverySelector selector, Consumer<EventStatistics> statisticsConsumer, List<Filter> filters) {
+  protected void execute(DiscoverySelector selector, Consumer<EventStatistics> statisticsConsumer, List<Filter<?>> filters) {
     execute(selector, filters)
       .testEvents()
       .debug()
@@ -25,11 +28,11 @@ public class SpockEngineBase {
     return execute(selector, Collections.emptyList());
   }
 
-  protected EngineExecutionResults execute(DiscoverySelector selector, List<Filter> filters) {
+  protected EngineExecutionResults execute(DiscoverySelector selector, List<Filter<?>> filters) {
     return EngineTestKit
       .engine("spock")
       .selectors(selector)
-      .filters(filters.toArray(Filter[]::new))
+      .filters(filters.toArray(FILTERS))
       .execute();
   }
 }

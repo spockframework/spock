@@ -29,7 +29,7 @@ public class SpockEngineBase {
     return EngineTestKit
       .engine("spock")
       .selectors(selector)
-      .filters(filters.toArray(new Filter[]{}))
+      .filters(filters.toArray(Filter[]::new))
       .execute();
   }
 }

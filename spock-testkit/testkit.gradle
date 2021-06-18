@@ -16,8 +16,6 @@ dependencies {
   testRuntime libs.h2database
   testRuntime libs.junitPlatformConsole
   testCompile libs.junitPlatformTestkit
-  testCompile 'org.apache.maven.surefire:surefire-junit-platform:3.0.0-M5'
-  testCompile 'org.apache.maven.surefire:surefire-api:3.0.0-M5'
   testCompile libs.jupiter
 //  junit libs.junit4
 }

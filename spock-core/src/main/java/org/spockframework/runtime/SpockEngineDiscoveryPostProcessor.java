@@ -12,7 +12,7 @@ class SpockEngineDiscoveryPostProcessor {
   SpockEngineDescriptor postProcessEngineDescriptor(UniqueId uniqueId, RunContext runContext,
     SpockEngineDescriptor engineDescriptor) {
     SpockEngineDescriptor processedEngineDescriptor = new SpockEngineDescriptor(uniqueId, runContext);
-    engineDescriptor.getDescendants().stream()
+    engineDescriptor.getChildren().stream()
       .map(child -> processSpecNode(child, runContext))
       .forEach(processedEngineDescriptor::addChild);
     return processedEngineDescriptor;
@@ -20,23 +20,23 @@ class SpockEngineDiscoveryPostProcessor {
 
   private SpockNode createNode(SpecNode specNode, FeatureInfo feature, RunnerConfiguration configuration) {
     if (feature.isParameterized()) {
-      return describeParameterizedFeature(specNode, feature, configuration);
+      return describeParameterizedFeature(specNode.getUniqueId(), feature, configuration);
     } else {
-      return describeSimpleFeature(specNode, feature, configuration);
+      return describeSimpleFeature(specNode.getUniqueId(), feature, configuration);
     }
   }
 
-  private FeatureNode describeParameterizedFeature(SpecNode specNode, FeatureInfo feature,
+  private FeatureNode describeParameterizedFeature(UniqueId parentId, FeatureInfo feature,
                                                    RunnerConfiguration configuration) {
-    return new ParameterizedFeatureNode(specNode, toUniqueId(specNode.getUniqueId(), feature), configuration, feature);
+    return new ParameterizedFeatureNode(toUniqueId(parentId, feature), configuration, feature);
   }
 
-  private SpockNode describeSimpleFeature(SpecNode specNode, FeatureInfo feature, RunnerConfiguration configuration) {
+  private SpockNode describeSimpleFeature(UniqueId parentId, FeatureInfo feature, RunnerConfiguration configuration) {
     IterationInfo iterationInfo = new IterationInfo(feature, 0, EMPTY_ARGS, 1);
     iterationInfo.setName(feature.getName());
-    UniqueId uniqueId = toUniqueId(specNode.getUniqueId(), feature);
-    IterationNode iterationNode = new IterationNode(specNode, toUniqueId(uniqueId, feature), configuration, iterationInfo);
-    return new SimpleFeatureNode(specNode, uniqueId, configuration, feature, iterationNode);
+    UniqueId uniqueId = toUniqueId(parentId, feature);
+    IterationNode iterationNode = new IterationNode(toUniqueId(uniqueId, feature), configuration, iterationInfo);
+    return new SimpleFeatureNode(uniqueId, configuration, feature, iterationNode);
   }
 
   private UniqueId toUniqueId(UniqueId parentId, FeatureInfo feature) {

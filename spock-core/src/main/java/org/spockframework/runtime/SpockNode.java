@@ -88,19 +88,6 @@ public abstract class SpockNode<T extends SpecElementInfo<?,?>>
     return toExclusiveResources(nodeInfo.getExclusiveResources());
   }
 
-  protected static MethodSource featureToMethodSource(SpecNode specNode, FeatureInfo info) {
-    if (specNode.getSource().isPresent() && specNode.getSource().get() instanceof ClassSource) {
-      return MethodSource.from(((ClassSource) specNode.getSource().get()).getClassName(),
-        info.getName(),
-        ClassUtils.nullSafeToString(info.getFeatureMethod().getReflection().getParameterTypes()) // TODO replace interal API
-      );
-    }
-    return MethodSource.from(info.getSpec().getReflection().getName(),
-      info.getName(),
-      ClassUtils.nullSafeToString(info.getFeatureMethod().getReflection().getParameterTypes()) // TODO replace interal API
-    );
-  }
-
   protected static MethodSource featureToMethodSource(FeatureInfo info) {
     return MethodSource.from(info.getSpec().getReflection().getName(),
       info.getName(),

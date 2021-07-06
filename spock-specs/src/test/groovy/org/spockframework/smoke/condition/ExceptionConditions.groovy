@@ -279,7 +279,17 @@ thrown() == e
     thrown(IllegalStateException)
   }
 
+  @Issue("https://github.com/spockframework/spock/issues/1332")
+  def "thrown conditions don't destroy method reference when invocation is assigned to a multi-assignment with the same name"() {
+    when:
+    def (foobar, b) = foobar()
+
+    then:
+    thrown(Exception)
+  }
+
   def foobar() {
     throw new IllegalStateException("foo")
   }
+
 }

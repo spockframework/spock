@@ -2,7 +2,7 @@ package org.spockframework.runtime.extension.builtin;
 
 import org.spockframework.runtime.extension.*;
 import org.spockframework.runtime.model.FieldInfo;
-import org.spockframework.util.Beta;
+import org.spockframework.util.*;
 
 import java.io.IOException;
 import java.nio.file.*;
@@ -22,14 +22,14 @@ public class TempDirInterceptor implements IMethodInterceptor {
   private static final String TEMP_DIR_PREFIX = "spock";
   private static final Pattern VALID_CHARS = Pattern.compile("[^a-zA-Z0-9_.-]++");
 
-  private final Class<?> fieldType;
+  private final IThrowableFunction<Path, ?, Exception> pathToFieldMapper;
   private final FieldInfo fieldInfo;
   private final Path parentDir;
   private final boolean keep;
 
-  TempDirInterceptor(Class<?> fieldType, FieldInfo fieldInfo,
+  TempDirInterceptor(IThrowableFunction<Path, ?, Exception> pathToFieldMapper, FieldInfo fieldInfo,
                      Path parentDir, boolean keep) {
-    this.fieldType = fieldType;
+    this.pathToFieldMapper = pathToFieldMapper;
     this.fieldInfo = fieldInfo;
     this.parentDir = parentDir;
     this.keep = keep;
@@ -61,10 +61,9 @@ public class TempDirInterceptor implements IMethodInterceptor {
     return Files.createTempDirectory(parentDir, prefix);
   }
 
-  protected Path setUp(IMethodInvocation invocation) throws IOException {
+  protected Path setUp(IMethodInvocation invocation) throws Exception {
     Path tempPath = generateTempDir(invocation);
-    fieldInfo.writeValue(invocation.getInstance(), fieldType.isAssignableFrom(Path.class) ?
-      tempPath : tempPath.toFile());
+    fieldInfo.writeValue(invocation.getInstance(), pathToFieldMapper.apply(tempPath));
     return tempPath;
   }
 
@@ -98,19 +97,22 @@ public class TempDirInterceptor implements IMethodInterceptor {
   }
 
   private void tryMakeWritable(Path tempPath) throws IOException {
-    Files.walkFileTree(tempPath, new SimpleFileVisitor<Path>() {
+    Files.walkFileTree(tempPath, MakeWritableVisitor.INSTANCE);
+  }
 
-      @Override
-      public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-        file.toFile().setWritable(true);
-        return CONTINUE;
-      }
+  private static class MakeWritableVisitor extends SimpleFileVisitor<Path> {
+    static MakeWritableVisitor INSTANCE = new MakeWritableVisitor();
 
-      @Override
-      public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
-        dir.toFile().setWritable(true);
-        return CONTINUE;
-      }
-    });
+    @Override
+    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
+      file.toFile().setWritable(true);
+      return CONTINUE;
+    }
+
+    @Override
+    public FileVisitResult postVisitDirectory(Path dir, IOException exc) {
+      dir.toFile().setWritable(true);
+      return CONTINUE;
+    }
   }
 }

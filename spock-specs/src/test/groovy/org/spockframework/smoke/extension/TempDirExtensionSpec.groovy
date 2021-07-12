@@ -2,6 +2,7 @@ package org.spockframework.smoke.extension
 
 import org.spockframework.EmbeddedSpecification
 import spock.lang.*
+import spock.util.io.TestPath
 
 import java.nio.file.*
 
@@ -174,5 +175,41 @@ class ParallelTempDirSpec extends Specification {
 
     where:
     n << [1, 2, 3]
+  }
+}
+
+class TempDirHelperSpec extends Specification {
+  @TempDir
+  MyFile myFile
+
+  @TempDir
+  MyPath myPath
+
+  @TempDir
+  TestPath testPath
+
+  def "can use helper classes if they have a constructor accepting File or Path"() {
+    expect:
+    myPath.root != null
+    myFile.root != null
+    testPath.root != null
+  }
+
+}
+
+class MyFile {
+  File root
+
+  MyFile(File path) {
+    this.root = path
+  }
+}
+
+
+class MyPath {
+ Path root
+
+  MyPath(Path path) {
+    this.root = path
   }
 }

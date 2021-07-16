@@ -34,7 +34,7 @@ class IgnoreIfExtension extends EmbeddedSpecification {
 
   @IgnoreIf({
     jvm.java8 || jvm.java9 || jvm.java10 || jvm.java11 || jvm.java12 || jvm.java13 || jvm.java14 || jvm.java15 || jvm.java16 || jvm.java17 ||
-      jvm.java18 || jvm.java19  || jvm.java20 || jvm.java21 || jvm.java22  || jvm.java23
+      jvm.java18 || jvm.java19 || jvm.java20 || jvm.java21 || jvm.java22 || jvm.java23
   })
   def "provides JVM information"() {
     expect: false
@@ -57,14 +57,17 @@ class IgnoreIfExtension extends EmbeddedSpecification {
 
   @IgnoreIf({ a == 1 })
   def 'can evaluate for single iterations if data variables are accessed'() {
-    expect: a == 2
-    where: a << [1, 2]
+    expect:
+    a == 2
+    where:
+    a << [1, 2]
   }
 
   @IgnoreIf({ true })
   def 'can skip data providers completely if no data variables are accessed'() {
     expect: false
-    where: a = { throw new RuntimeException() }.call()
+    where:
+    a = { throw new RuntimeException() }.call()
   }
 
   def 'fails directly when referencing an unknown variable'() {
@@ -100,7 +103,7 @@ def foo() {
   @Issue("https://github.com/spockframework/spock/issues/535")
   @Requires({ false })
   @IgnoreIf({ false })
-  def "allows determinate use of multiple filters" () {
+  def "allows determinate use of multiple filters"() {
     expect: false
   }
 
@@ -140,6 +143,36 @@ class Foo extends Specification {
     result.testsSkippedCount == 0
     result.testsAbortedCount == 0
     result.testsSucceededCount == 1
+  }
+
+
+  def "spec usage with static class access"() {
+    when:
+    def result = runner.runWithImports """
+@IgnoreIf({ shouldNotRun() })
+class Foo extends Specification {
+  def "basic usage"() {
+    expect: true
+  }
+
+  static boolean shouldNotRun() {
+    ${shouldRun}
+  }
+}
+"""
+
+    then:
+    result.testsStartedCount == testStartAndSucceededCount
+    result.testsFailedCount == 0
+    result.testsSkippedCount == 0
+    result.testsAbortedCount == 0
+    result.testsSucceededCount == testStartAndSucceededCount
+    result.containersSkippedCount == specSkippedCount
+
+    where:
+    shouldRun | testStartAndSucceededCount | specSkippedCount
+    false     | 1                          | 0
+    true      | 0                          | 1
   }
 
   def "fails if condition cannot be instantiated"() {
@@ -188,21 +221,24 @@ def foo() {
   @IgnoreIf({ false })
   def "feature is ignored if data variable accessing IgnoreIf annotation is true"() {
     expect: false
-    where: a = 1
+    where:
+    a = 1
   }
 
   @IgnoreIf({ a == 1 })
   @IgnoreIf({ a != 1 })
   def "feature is ignored if at least one data variable accessing IgnoreIf annotation is true"() {
     expect: false
-    where: a = 1
+    where:
+    a = 1
   }
 
   @IgnoreIf({ true })
   @IgnoreIf({ a != 1 })
   def "feature is ignored if non data variable accessing IgnoreIf annotation is true"() {
     expect: false
-    where: a = 1
+    where:
+    a = 1
   }
 
   def "@IgnoreIf provides condition access to Specification instance shared fields"() {

@@ -3,22 +3,34 @@ package org.spockframework.runtime
 import spock.lang.Specification
 
 import org.junit.platform.engine.*
+import spock.lang.Subject
 
 class ErrorSpecNodeSpec extends Specification {
-  def 'should not be pruned'() {
-    given:
-    TestDescriptor parent = Mock()
-    def testee = new ErrorSpecNode(
-      UniqueId.forEngine("test"),
-      null,
-      new SpecInfoBuilder(getClass()).build(),
-      null)
-    testee.setParent(parent)
+  TestDescriptor tdParent = Mock()
 
+  @Subject
+  def errorSpecNode = new ErrorSpecNode(
+    UniqueId.forEngine("test"),
+    null,
+    new SpecInfoBuilder(getClass()).build(),
+    null).tap {
+    parent = tdParent
+  }
+
+
+  def 'should not be pruned'() {
     when:
-    testee.prune()
+    errorSpecNode.prune()
 
     then:
-    0 * parent.removeChild(*_)
+    0 * tdParent.removeChild(*_)
+  }
+
+  def 'should prevent removal of ErrorSpecNode'() {
+    when:
+    errorSpecNode.removeFromHierarchy()
+
+    then:
+    0 * tdParent.removeChild(*_)
   }
 }

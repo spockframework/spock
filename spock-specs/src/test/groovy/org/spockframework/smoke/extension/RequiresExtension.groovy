@@ -92,7 +92,7 @@ class Foo extends Specification {
     result.testsSucceededCount == 1
   }
 
-  def "spec usage with static class access"() {
+  def "spec usage with unqualified static method access"() {
     when:
     def result = runner.runWithImports """
 @Requires({ shouldRun() })
@@ -119,6 +119,89 @@ class Foo extends Specification {
     shouldRun | testStartAndSucceededCount | specSkippedCount
     true      | 1                          | 0
     false     | 0                          | 1
+  }
+
+  def "spec usage with unqualified static field access"() {
+    when:
+    def result = runner.runWithImports """
+@Requires({ shouldRun })
+class Foo extends Specification {
+  def "basic usage"() {
+    expect: true
+  }
+
+  static boolean shouldRun = ${shouldRun}
+}
+"""
+
+    then:
+    result.testsStartedCount == testStartAndSucceededCount
+    result.testsFailedCount == 0
+    result.testsSkippedCount == 0
+    result.testsAbortedCount == 0
+    result.testsSucceededCount == testStartAndSucceededCount
+    result.containersSkippedCount == specSkippedCount
+
+    where:
+    shouldRun | testStartAndSucceededCount | specSkippedCount
+    true      | 1                          | 0
+    false     | 0                          | 1
+  }
+
+  def "spec usage with shared field access"() {
+    when:
+    def result = runner.runWithImports """
+@Requires({ shared.shouldRun })
+class Foo extends Specification {
+  @Shared
+  boolean shouldRun = ${shouldRun}
+
+  def "basic usage"() {
+    expect: true
+  }
+}
+"""
+
+    then:
+    result.testsStartedCount == testStartAndSucceededCount
+    result.testsFailedCount == 0
+    result.testsSkippedCount == 0
+    result.testsAbortedCount == 0
+    result.testsSucceededCount == testStartAndSucceededCount
+    result.containersStartedCount == 2
+    result.containersAbortedCount == specAbortedCount
+
+    where:
+    shouldRun | testStartAndSucceededCount | specAbortedCount
+    true      | 1                          | 0
+    false     | 0                          | 1
+  }
+
+
+  def "spec usage with instance field access"() {
+    when:
+    def result = runner.runWithImports """
+@Requires({ instance.shouldRun })
+class Foo extends Specification {
+  boolean shouldRun = ${shouldRun}
+
+  def "basic usage"() {
+    expect: true
+  }
+}
+"""
+
+    then:
+    result.testsStartedCount == 1
+    result.testsFailedCount == 0
+    result.testsSkippedCount == 0
+    result.testsAbortedCount == testAbortedCount
+    result.testsSucceededCount == testSucceededCount
+
+    where:
+    shouldRun | testSucceededCount | testAbortedCount
+    true      | 1                  | 0
+    false     | 0                  | 1
   }
 
   def "spec usage with false"() {
@@ -169,6 +252,31 @@ class Foo extends Specification {
   @Shared
   int value
   @Requires({ instance.value != 2 })
+  def "bar #input"() {
+    value = input
+
+    expect:
+    true
+
+    where:
+    input << [1, 2, 3]
+  }
+}
+    """)
+
+    then:
+    result.testsStartedCount == 4
+    result.testsSucceededCount == 3
+    result.testsAbortedCount == 1
+  }
+
+  def "@Requires provides condition access to Specification shared fields"() {
+    when:
+    def result = runner.runWithImports("""
+class Foo extends Specification {
+  @Shared
+  int value
+  @Requires({ shared.value != 2 })
   def "bar #input"() {
     value = input
 

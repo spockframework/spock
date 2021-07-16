@@ -34,22 +34,16 @@ import static java.util.Collections.emptyMap;
  * The context (delegate) for a {@link Requires}, {@link IgnoreIf} or {@link PendingFeatureIf} condition.
  */
 public class PreconditionContext {
+  private final Object theSharedInstance;
   private final Object theInstance;
   private final Map<String, Object> dataVariables = new HashMap<>();
 
   public PreconditionContext() {
-    this(null, emptyMap());
+    this(null, null, emptyMap());
   }
 
-  public PreconditionContext(Map<String, Object> dataVariables) {
-    this(null, dataVariables);
-  }
-
-  public PreconditionContext(Object instance) {
-    this(instance, emptyMap());
-  }
-
-  public PreconditionContext(Object instance, Map<String, Object> dataVariables) {
+  public PreconditionContext(Object theSharedInstance, Object instance, Map<String, Object> dataVariables) {
+    this.theSharedInstance = theSharedInstance;
     theInstance = instance;
     this.dataVariables.putAll(dataVariables);
   }
@@ -60,6 +54,9 @@ public class PreconditionContext {
     }
     if ((theInstance != null) && "instance".equals(propertyName)) {
       return theInstance;
+    }
+    if ((theSharedInstance != null) && "shared".equals(propertyName)) {
+      return theSharedInstance;
     }
     throw new MissingPropertyException(propertyName, getClass());
   }

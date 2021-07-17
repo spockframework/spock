@@ -92,6 +92,35 @@ class Foo extends Specification {
     result.testsSucceededCount == 1
   }
 
+  def "spec usage with static class access"() {
+    when:
+    def result = runner.runWithImports """
+@Requires({ shouldRun() })
+class Foo extends Specification {
+  def "basic usage"() {
+    expect: true
+  }
+
+  static boolean shouldRun() {
+    ${shouldRun}
+  }
+}
+"""
+
+    then:
+    result.testsStartedCount == testStartAndSucceededCount
+    result.testsFailedCount == 0
+    result.testsSkippedCount == 0
+    result.testsAbortedCount == 0
+    result.testsSucceededCount == testStartAndSucceededCount
+    result.containersSkippedCount == specSkippedCount
+
+    where:
+    shouldRun | testStartAndSucceededCount | specSkippedCount
+    true      | 1                          | 0
+    false     | 0                          | 1
+  }
+
   def "spec usage with false"() {
     when:
     def result = runner.runWithImports """
@@ -257,14 +286,17 @@ class Foo extends Specification {
 
     @Requires({ a == 2 })
     def 'can evaluate for single iterations if data variables are accessed'() {
-      expect: a == 2
-      where: a << [1, 2]
+      expect:
+      a == 2
+      where:
+      a << [1, 2]
     }
 
     @Requires({ false })
     def 'can skip data providers completely if no data variables are accessed'() {
       expect: false
-      where: a = { throw new RuntimeException() }.call()
+      where:
+      a = { throw new RuntimeException() }.call()
     }
 
     @Issue("https://github.com/spockframework/spock/issues/535")
@@ -276,14 +308,14 @@ class Foo extends Specification {
 
     @Requires({ false })
     @Requires({ true })
-    def "feature is ignored if at least one Requires annotation is false" () {
+    def "feature is ignored if at least one Requires annotation is false"() {
       expect: false
     }
 
     @Requires({ true })
     @Requires({ true })
     @FailsWith(ConditionNotSatisfiedError)
-    def "feature is not ignored if all Requires annotations are true" () {
+    def "feature is not ignored if all Requires annotations are true"() {
       expect: false
     }
   }

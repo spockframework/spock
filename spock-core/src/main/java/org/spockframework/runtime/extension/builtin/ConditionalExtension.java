@@ -49,7 +49,7 @@ public abstract class ConditionalExtension<T extends Annotation> implements IAnn
   @Override
   public void visitSpecAnnotation(T annotation, SpecInfo spec) {
     Closure condition = createCondition(annotation);
-    Object result = evaluateCondition(condition);
+    Object result = evaluateCondition(condition, spec.getReflection());
     specConditionResult(GroovyRuntimeUtil.isTruthy(result), annotation, spec);
   }
 
@@ -79,10 +79,6 @@ public abstract class ConditionalExtension<T extends Annotation> implements IAnn
     } catch (Exception e) {
       throw new ExtensionException("Failed to instantiate condition", e);
     }
-  }
-
-  private static Object evaluateCondition(Closure condition) {
-    return evaluateCondition(condition, null, emptyMap(), null);
   }
 
   private static Object evaluateCondition(Closure condition, Object instance,

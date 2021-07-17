@@ -156,7 +156,7 @@ class Foo extends Specification {
   }
 
   static boolean shouldNotRun() {
-    ${shouldRun}
+    !${shouldRun}
   }
 }
 """
@@ -171,8 +171,8 @@ class Foo extends Specification {
 
     where:
     shouldRun | testStartAndSucceededCount | specSkippedCount
-    false     | 1                          | 0
-    true      | 0                          | 1
+    true      | 1                          | 0
+    false     | 0                          | 1
   }
 
   def "fails if condition cannot be instantiated"() {

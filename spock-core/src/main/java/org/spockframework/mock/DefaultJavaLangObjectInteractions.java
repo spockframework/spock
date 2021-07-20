@@ -25,7 +25,9 @@ public class DefaultJavaLangObjectInteractions implements IInteractionScope {
 
   private final List<DefaultInteraction> interactions = Arrays.asList(
       DefaultEqualsInteraction.INSTANCE, DefaultHashCodeInteraction.INSTANCE,
-      DefaultToStringInteraction.INSTANCE, DefaultFinalizeInteraction.INSTANCE);
+      DefaultToStringInteraction.INSTANCE, DefaultFinalizeInteraction.INSTANCE,
+      DefaultCompareToInteraction.INSTANCE
+  );
 
   @Override
   public void addInteraction(IMockInteraction interaction) {

@@ -194,7 +194,19 @@ def feature() {
     foobar.size()
   }
 
+  @Issue("https://github.com/spockframework/spock/issues/1332")
+  def "cleanup blocks don't destroy method reference when invocation is assigned to a multi-assignment with the same name"() {
+    when:
+    def (foobar, b) = foobar()
+
+    then:
+    println(foobar)
+
+    cleanup:
+    foobar.size()
+  }
+
   def foobar() {
-    return "foo"
+    return ["foo", "bar"]
   }
 }

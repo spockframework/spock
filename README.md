@@ -6,7 +6,6 @@
 [![Gitter](https://badges.gitter.im/spockframework/spock.svg)](https://gitter.im/spockframework/spock?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 [![Revved up by Gradle Enterprise](https://img.shields.io/badge/Revved%20up%20by-Gradle%20Enterprise-06A0CE?logo=Gradle&labelColor=02303A)](https://ge.spockframework.org/scans)
 
-
 Spock Framework
 ===============
 
@@ -38,8 +37,8 @@ repositories {
 }
 
 dependencies {
-        compile 'org.spockframework.spock:spock-core:spock-2.0'
-        compile 'org.spockframework.spock:spock-spring:spock-2.0'
+    testImplementation 'org.spockframework.spock:spock-core:spock-2.0'
+    testImplementation 'org.spockframework.spock:spock-spring:spock-2.0'
 }
 ```
 3. For intermediate releases you can also use the commit-hash as version, e.g. compile `com.github.spockframework.spock:spock-core:d91bf785a1`

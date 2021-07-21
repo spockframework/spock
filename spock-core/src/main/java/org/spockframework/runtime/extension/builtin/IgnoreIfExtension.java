@@ -27,6 +27,9 @@ import groovy.lang.Closure;
  * @author Peter Niederwieser
  */
 public class IgnoreIfExtension extends ConditionalExtension<IgnoreIf> {
+
+  private static final String DEFAULT_MESSAGE = "Ignored via @" + IgnoreIf.class.getSimpleName();
+
   @Override
   protected Class<? extends Closure> getConditionClass(IgnoreIf annotation) {
     return annotation.value();
@@ -35,21 +38,30 @@ public class IgnoreIfExtension extends ConditionalExtension<IgnoreIf> {
   @Override
   protected void specConditionResult(boolean result, IgnoreIf annotation, SpecInfo spec) {
     if (result) {
-      spec.skip("Ignored via @IgnoreIf");
+      spec.skip(ignoredMessage(annotation));
     }
   }
 
   @Override
   protected void featureConditionResult(boolean result, IgnoreIf annotation, FeatureInfo feature) {
     if (result) {
-      feature.skip("Ignored via @IgnoreIf");
+      feature.skip(ignoredMessage(annotation));
     }
   }
 
   @Override
   protected void iterationConditionResult(boolean result, IgnoreIf annotation, IMethodInvocation invocation) {
     if (result) {
-      throw new TestAbortedException("Ignored via @IgnoreIf");
+      throw new TestAbortedException(ignoredMessage(annotation));
+    }
+  }
+
+  private static String ignoredMessage(IgnoreIf annotation) {
+    String reason = annotation.reason();
+    if (reason.isEmpty()) {
+      return DEFAULT_MESSAGE;
+    } else {
+      return DEFAULT_MESSAGE + ": " + reason;
     }
   }
 }

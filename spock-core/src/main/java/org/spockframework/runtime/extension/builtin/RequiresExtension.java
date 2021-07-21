@@ -27,6 +27,9 @@ import groovy.lang.Closure;
  * @author Peter Niederwieser
  */
 public class RequiresExtension extends ConditionalExtension<Requires> {
+
+  private static final String DEFAULT_MESSAGE = "Ignored via @" + Requires.class.getSimpleName();
+
   @Override
   protected Class<? extends Closure> getConditionClass(Requires annotation) {
     return annotation.value();
@@ -35,21 +38,30 @@ public class RequiresExtension extends ConditionalExtension<Requires> {
   @Override
   protected void specConditionResult(boolean result, Requires annotation, SpecInfo spec) {
     if (!result) {
-      spec.skip("Ignored via @Requires");
+      spec.skip(ignoredMessage(annotation));
     }
   }
 
   @Override
   protected void featureConditionResult(boolean result, Requires annotation, FeatureInfo feature) {
     if (!result) {
-      feature.skip("Ignored via @Requires");
+      feature.skip(ignoredMessage(annotation));
     }
   }
 
   @Override
   protected void iterationConditionResult(boolean result, Requires annotation, IMethodInvocation invocation) {
     if (!result) {
-      throw new TestAbortedException("Ignored via @Requires");
+      throw new TestAbortedException(ignoredMessage(annotation));
+    }
+  }
+
+  private static String ignoredMessage(Requires annotation) {
+    String reason = annotation.reason();
+    if (reason.isEmpty()) {
+      return DEFAULT_MESSAGE;
+    } else {
+      return DEFAULT_MESSAGE + ": " + reason;
     }
   }
 }

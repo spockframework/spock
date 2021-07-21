@@ -145,6 +145,20 @@ class Foo extends Specification {
     result.testsSucceededCount == 1
   }
 
+  def "ignored spec contains custom message"() {
+    when:
+    def result = runner.runWithImports """
+@IgnoreIf(reason = "dummy message", value = { true })
+class Foo extends Specification {
+  def "basic usage"() {
+    expect: false
+  }
+}
+"""
+
+    then:
+    result.allEvents().skipped().list()[0].payload.get() == 'Ignored via @IgnoreIf: dummy message'
+  }
 
   def "spec usage with unqualified static method access"() {
     when:

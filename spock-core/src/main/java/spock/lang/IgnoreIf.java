@@ -48,7 +48,9 @@ import org.spockframework.util.Beta;
 @ExtensionAnnotation(IgnoreIfExtension.class)
 @Repeatable(IgnoreIf.Container.class)
 public @interface IgnoreIf {
-	Class<? extends Closure> value();
+  String reason() default "";
+
+  Class<? extends Closure> value();
 
   /**
    * @since 2.0

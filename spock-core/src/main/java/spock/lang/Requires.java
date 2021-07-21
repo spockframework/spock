@@ -48,6 +48,8 @@ import org.spockframework.util.Beta;
 @ExtensionAnnotation(RequiresExtension.class)
 @Repeatable(Requires.Container.class)
 public @interface Requires {
+  String reason() default "";
+
   Class<? extends Closure> value();
 
   /**

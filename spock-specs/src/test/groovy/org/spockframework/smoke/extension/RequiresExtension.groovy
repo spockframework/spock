@@ -223,6 +223,21 @@ class Foo extends Specification {
     result.testsSucceededCount == 0
   }
 
+  def "ignored spec contains custom message"() {
+    when:
+    def result = runner.runWithImports """
+@Requires(reason = "dummy message", value = { false })
+class Foo extends Specification {
+  def "basic usage"() {
+    expect: false
+  }
+}
+"""
+
+    then:
+    result.allEvents().skipped().list()[0].payload.get() == 'Ignored via @Requires: dummy message'
+  }
+
   def "fails if condition cannot be instantiated"() {
     when:
     runner.runWithImports """

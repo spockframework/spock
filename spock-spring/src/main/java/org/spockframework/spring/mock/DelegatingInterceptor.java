@@ -117,6 +117,11 @@ public class DelegatingInterceptor implements IProxyBasedMockInterceptor {
     }
 
     @Override
+    public boolean useLastMatchResponseStrategy() {
+      return false;
+    }
+
+    @Override
     public Specification getSpecification() {
       return null;
     }

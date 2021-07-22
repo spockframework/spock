@@ -31,6 +31,7 @@ public class MockConfiguration implements IMockConfiguration {
   private final List<Object> constructorArgs;
   private final List<Class<?>> additionalInterfaces;
   private final IDefaultResponse defaultResponse;
+  private final boolean useLastMatchResponseStrategy;
   private final boolean global;
   private final boolean verified;
   private final boolean useObjenesis;
@@ -51,6 +52,7 @@ public class MockConfiguration implements IMockConfiguration {
     this.constructorArgs = getOptionAsList(options, "constructorArgs");
     this.additionalInterfaces = getOption(options, "additionalInterfaces", List.class, Collections.emptyList());
     this.defaultResponse = getOption(options, "defaultResponse", IDefaultResponse.class, this.nature.getDefaultResponse());
+    this.useLastMatchResponseStrategy = getOption(options, "useLastMatchResponseStrategy", Boolean.class, false);
     this.global = getOption(options, "global", Boolean.class, false);
     this.verified = getOption(options, "verified", Boolean.class, this.nature.isVerified());
     this.useObjenesis = getOption(options, "useObjenesis", Boolean.class, this.nature.isUseObjenesis());
@@ -101,6 +103,11 @@ public class MockConfiguration implements IMockConfiguration {
   @Override
   public IDefaultResponse getDefaultResponse() {
     return defaultResponse;
+  }
+
+  @Override
+  public boolean useLastMatchResponseStrategy() {
+    return useLastMatchResponseStrategy;
   }
 
   @Override

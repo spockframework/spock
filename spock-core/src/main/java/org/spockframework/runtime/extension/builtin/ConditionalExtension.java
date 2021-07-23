@@ -38,6 +38,10 @@ public abstract class ConditionalExtension<T extends Annotation> implements IAnn
     throw new UnsupportedOperationException();
   }
 
+  protected void sharedConditionResult(boolean result, T annotation, IMethodInvocation invocation) throws Throwable {
+    iterationConditionResult(result, annotation, invocation);
+  }
+
   protected void featureConditionResult(boolean result, T annotation, FeatureInfo feature) {
     throw new UnsupportedOperationException();
   }
@@ -49,8 +53,24 @@ public abstract class ConditionalExtension<T extends Annotation> implements IAnn
   @Override
   public void visitSpecAnnotation(T annotation, SpecInfo spec) {
     Closure condition = createCondition(annotation);
-    Object result = evaluateCondition(condition);
-    specConditionResult(GroovyRuntimeUtil.isTruthy(result), annotation, spec);
+
+    try {
+      Object result = evaluateCondition(condition, spec.getReflection());
+      specConditionResult(GroovyRuntimeUtil.isTruthy(result), annotation, spec);
+    } catch (ExtensionException ee) {
+      if (!(ee.getCause() instanceof MissingPropertyException)) {
+        throw ee;
+      }
+      String missingProperty = ((MissingPropertyException) ee.getCause()).getProperty();
+      if ("shared".equals(missingProperty)) {
+        spec.addSetupSpecInterceptor(new SharedCondition(condition, annotation));
+      } else if ("instance".equals(missingProperty)) {
+        IterationCondition interceptor = new IterationCondition(condition, annotation);
+        spec.getAllFeatures().forEach(featureInfo -> featureInfo.addIterationInterceptor(interceptor));
+      } else {
+        throw ee;
+      }
+    }
   }
 
   @Override
@@ -64,8 +84,10 @@ public abstract class ConditionalExtension<T extends Annotation> implements IAnn
       if (!(ee.getCause() instanceof MissingPropertyException)) {
         throw ee;
       }
-      MissingPropertyException mpe = (MissingPropertyException) ee.getCause();
-      if (!"instance".equals(mpe.getProperty()) && !feature.getDataVariables().contains(mpe.getProperty())) {
+      String missingProperty = ((MissingPropertyException) ee.getCause()).getProperty();
+      if (!"shared".equals(missingProperty)
+        && !"instance".equals(missingProperty)
+        && !feature.getDataVariables().contains(missingProperty)) {
         throw ee;
       }
       feature.getFeatureMethod().addInterceptor(new IterationCondition(condition, annotation));
@@ -81,22 +103,22 @@ public abstract class ConditionalExtension<T extends Annotation> implements IAnn
     }
   }
 
-  private static Object evaluateCondition(Closure condition) {
-    return evaluateCondition(condition, null, emptyMap(), null);
-  }
-
-  private static Object evaluateCondition(Closure condition, Object instance,
+  private static Object evaluateCondition(Closure condition,
+                                          Object sharedInstance,
+                                          Object instance,
                                           Map<String, Object> dataVariables) {
-    return evaluateCondition(condition, instance, dataVariables, null);
+    return evaluateCondition(condition, sharedInstance, instance, dataVariables, null);
   }
 
   private static Object evaluateCondition(Closure condition, Object owner) {
-    return evaluateCondition(condition, null, emptyMap(), owner);
+    return evaluateCondition(condition, null, null, emptyMap(), owner);
   }
 
-  private static Object evaluateCondition(Closure condition, Object instance,
+  private static Object evaluateCondition(Closure condition,
+                                          Object sharedInstance,
+                                          Object instance,
                                           Map<String, Object> dataVariables, Object owner) {
-    PreconditionContext context = new PreconditionContext(instance, dataVariables);
+    PreconditionContext context = new PreconditionContext(sharedInstance, instance, dataVariables);
     condition = condition.rehydrate(context, owner, null);
     condition.setResolveStrategy(Closure.DELEGATE_FIRST);
 
@@ -107,18 +129,53 @@ public abstract class ConditionalExtension<T extends Annotation> implements IAnn
     }
   }
 
-  private class IterationCondition implements IMethodInterceptor {
-    private final Closure condition;
-    private final T annotation;
+  private abstract class ConditionInterceptor implements IMethodInterceptor {
+    protected final Closure condition;
+    protected final T annotation;
 
-    public IterationCondition(Closure condition, T annotation) {
+    public ConditionInterceptor(Closure condition, T annotation) {
       this.condition = condition;
       this.annotation = annotation;
+    }
+  }
+
+  private class SharedCondition extends ConditionInterceptor {
+    public SharedCondition(Closure condition, T annotation) {
+      super(condition, annotation);
     }
 
     @Override
     public void intercept(IMethodInvocation invocation) throws Throwable {
-      Object result = evaluateCondition(condition, invocation.getInstance(), invocation.getIteration().getDataVariables());
+      try {
+        Object result = evaluateCondition(condition, invocation.getSharedInstance(), null, emptyMap());
+        sharedConditionResult(GroovyRuntimeUtil.isTruthy(result), annotation, invocation);
+      } catch (ExtensionException ee) {
+        if (!(ee.getCause() instanceof MissingPropertyException)) {
+          throw ee;
+        }
+
+        String missingProperty = ((MissingPropertyException) ee.getCause()).getProperty();
+        if (!"instance".equals(missingProperty)) {
+          throw ee;
+        }
+        IterationCondition interceptor = new IterationCondition(condition, annotation);
+        invocation.getSpec().getAllFeatures().stream()
+          .map(FeatureInfo::getFeatureMethod)
+          .forEach(methodInfo -> methodInfo.addInterceptor(interceptor));
+      }
+      invocation.proceed();
+    }
+  }
+
+  private class IterationCondition extends ConditionInterceptor {
+    public IterationCondition(Closure condition, T annotation) {
+      super(condition, annotation);
+    }
+
+    @Override
+    public void intercept(IMethodInvocation invocation) throws Throwable {
+      Object result = evaluateCondition(condition, invocation.getSharedInstance(),
+        invocation.getInstance(), invocation.getIteration().getDataVariables());
       iterationConditionResult(GroovyRuntimeUtil.isTruthy(result), annotation, invocation);
       invocation.proceed();
     }

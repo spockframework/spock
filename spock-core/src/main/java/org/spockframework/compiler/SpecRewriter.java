@@ -16,19 +16,17 @@
 
 package org.spockframework.compiler;
 
+import org.spockframework.compiler.model.*;
+import org.spockframework.util.*;
+
+import java.util.*;
+
 import org.codehaus.groovy.ast.*;
 import org.codehaus.groovy.ast.expr.*;
 import org.codehaus.groovy.ast.stmt.*;
 import org.codehaus.groovy.runtime.MetaClassHelper;
-import org.codehaus.groovy.syntax.Token;
-import org.codehaus.groovy.syntax.Types;
+import org.codehaus.groovy.syntax.*;
 import org.objectweb.asm.Opcodes;
-import org.spockframework.compiler.model.*;
-import org.spockframework.util.InternalIdentifiers;
-import org.spockframework.util.ObjectUtil;
-import org.spockframework.util.ReflectionUtil;
-
-import java.util.*;
 
 import static org.spockframework.compiler.AstUtil.createDirectMethodCall;
 
@@ -773,11 +771,20 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
     // as groovy would now interpret it as a `foo.call()` invocation on the local variable.
     if (rightExpression instanceof MethodCallExpression) {
       MethodCallExpression methodCallExpression = (MethodCallExpression)rightExpression;
-      if (methodCallExpression.isImplicitThis() &&
-        declExpr.getVariableExpression().getName().equals(methodCallExpression.getMethod().getText())) {
-        // change to explicit `this` to turn the expression to `foo = this.foo()`
-        methodCallExpression.setImplicitThis(false);
-      }
+      if (methodCallExpression.isImplicitThis())
+        if (declExpr.isMultipleAssignmentDeclaration()) {
+          ArgumentListExpression argumentListExpression = (ArgumentListExpression)declExpr.getLeftExpression();
+          argumentListExpression.getExpressions().stream()
+            .filter(VariableExpression.class::isInstance)
+            .map(VariableExpression.class::cast)
+            .map(VariableExpression::getName)
+            .filter(methodCallExpression.getMethod().getText()::equals)
+            .findAny()
+            .ifPresent(ignore-> methodCallExpression.setImplicitThis(false));
+        } else if (declExpr.getVariableExpression().getName().equals(methodCallExpression.getMethod().getText())) {
+          // change to explicit `this` to turn the expression to `foo = this.foo()`
+          methodCallExpression.setImplicitThis(false);
+        }
     }
     return rightExpression;
   }

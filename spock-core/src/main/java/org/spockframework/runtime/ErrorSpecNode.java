@@ -25,6 +25,13 @@ public class ErrorSpecNode extends SpecNode {
   }
 
   @Override
+  public void removeFromHierarchy() {
+    // prevent removal of this node
+    // As the ErrorSpecNode does not have children it would get removed when trying to select specific tests methods.
+    // For example, gradle will report that no test were found, and not report the actual error.
+  }
+
+  @Override
   public SpockExecutionContext prepare(SpockExecutionContext context) throws Exception {
     return ExceptionUtil.sneakyThrow(error);
   }

@@ -192,7 +192,7 @@ class FsFixtureSpec extends Specification {
     expect:
     myPath.root != null
     myFile.root != null
-    fsFixture.root != null
+    fsFixture.currentPath != null
   }
 
   def "FsFixture can create a directory structure"() {
@@ -217,7 +217,35 @@ class FsFixtureSpec extends Specification {
     fsFixture.resolve('src/test/resources/META-INF/MANIFEST.MF').toFile().text == 'bogus entry'
   }
 
+  def "can copy files from classpath"() {
+    given:
+    File result = null
 
+    when:
+    fsFixture.create {
+      dir("target") {
+        result = copyFromClasspath("/org/spockframework/smoke/extension/SampleFile.txt", 'SampleFile.txt')
+      }
+    }
+
+    then:
+    result.text == 'HelloWorld\n'
+  }
+
+  def "can copy files from classpath using explicit context class"() {
+    given:
+    File result = null
+
+    when:
+    fsFixture.create {
+      dir("target") {
+        result = copyFromClasspath("SampleFile.txt", 'SampleFile.txt', FsFixtureSpec)
+      }
+    }
+
+    then:
+    result.text == 'HelloWorld\n'
+  }
 }
 
 class MyFile {

@@ -46,7 +46,8 @@ public interface DirectoryFixture {
     throws IOException;
 
   /**
-   * Creates a file object, but not the physical File, it will create parent directories if necessary.
+   * Creates a file object relative to the enclosing fixture or directory,
+   * but not the physical File, it will eagerly create parent directories if necessary.
    *
    * @param file the (path and) filename
    * @return the {@link File} object pointing to the file
@@ -54,8 +55,26 @@ public interface DirectoryFixture {
    */
   File file(String file) throws IOException;
 
-
+  /**
+   * Copies a file from classpath using the contextClass to load the resource.
+   * <p>
+   * This will use the {@link Closure#getOwner()} of the enclosing closure to determine the contextClass.
+   *
+   * @param resourcePath the path to the resource to load
+   * @param targetName the name of the target to use
+   * @return the {@link File} pointing to the copied file
+   * @throws IOException if the parent directories could not be created or the resource could not be found
+   */
   File copyFromClasspath(String resourcePath, String targetName) throws IOException;
 
+  /**
+   * Copies a file from classpath using the contextClass to load the resource.
+   *
+   * @param resourcePath the path to the resource to load
+   * @param targetName the name of the target to use
+   * @param contextClass the class to use to load the resource
+   * @return the {@link File} pointing to the copied file
+   * @throws IOException if the parent directories could not be created or the resource could not be found
+   */
   File copyFromClasspath(String resourcePath, String targetName, Class<?> contextClass) throws IOException;
 }

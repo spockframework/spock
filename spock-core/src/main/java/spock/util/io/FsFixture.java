@@ -9,24 +9,49 @@ import java.nio.file.*;
 import groovy.lang.*;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * FsFixture can be used to create temporary directories and files.
+ *
+ * It is intended to be used with {@link spock.lang.TempDir}.
+ */
 @Beta
 public class FsFixture implements DirectoryFixture {
-  private final Path root;
+  private final Path currentPath;
+  private final Class<?> contextClass;
 
-  public FsFixture(Path root) {
-    this.root = root;
+  public FsFixture(Path currentPath) {
+    this.currentPath = currentPath;
+    this.contextClass = FsFixture.class;
   }
 
-  public Path getRoot() {
-    return root;
+  private FsFixture(Path currentPath, Class<?> contextClass) {
+    this.currentPath = currentPath;
+    this.contextClass = contextClass;
   }
 
+  /**
+   * @return the path of the this fixture
+   */
+  public Path getCurrentPath() {
+    return currentPath;
+  }
+
+  /**
+   * A shorthand for {@code getCurrentPath().resolve(path)}
+   * @param path the path to resolve relative to currentPath
+   * @return the resolved path
+   */
   public Path resolve(String path) {
-    return root.resolve(path);
+    return currentPath.resolve(path);
   }
 
+  /**
+   * A shorthand for {@code getCurrentPath().resolve(path)}
+   * @param path the path to resolve relative to currentPath
+   * @return the resolved path
+   */
   public Path resolve(Path path) {
-    return root.resolve(path);
+    return currentPath.resolve(path);
   }
 
   /**
@@ -34,12 +59,12 @@ public class FsFixture implements DirectoryFixture {
    */
   public void create(@DelegatesTo(value = DirectoryFixture.class, strategy = Closure.DELEGATE_FIRST)
                        Closure<?> dirSpec) throws IOException {
-    callSpec(dirSpec, this);
+    callSpec(dirSpec, currentPath);
   }
 
   @Override
   public Path dir(String dir) throws IOException {
-    Path result = root.resolve(dir);
+    Path result = currentPath.resolve(dir);
     Files.createDirectories(result);
     return result;
   }
@@ -47,24 +72,20 @@ public class FsFixture implements DirectoryFixture {
   @Override
   public Path dir(String dir, Closure<?> dirSpec) throws IOException {
     Path result = dir(dir);
-    callSpec(dirSpec, new FsFixture(result));
+    callSpec(dirSpec, result);
     return result;
   }
 
   @Override
   public File file(String file) throws IOException {
-    Path result = root.resolve(file);
+    Path result = currentPath.resolve(file);
     Files.createDirectories(result.getParent());
     return result.toFile();
   }
 
   @Override
   public File copyFromClasspath(String resourcePath, String targetName) throws IOException {
-    URL resource = Thread.currentThread().getContextClassLoader().getResource(resourcePath);
-    if (resource == null) {
-      throw new IOException("Could not find resource: " + resourcePath);
-    }
-    return copyResource(resource, file(targetName));
+    return copyFromClasspath(resourcePath, targetName, contextClass);
   }
 
   @Override
@@ -84,7 +105,15 @@ public class FsFixture implements DirectoryFixture {
     return file;
   }
 
-  private void callSpec(Closure<?> dirSpec, FsFixture fsFixture) {
+  private void callSpec(Closure<?> dirSpec, Path path) {
+    Class<?> newContextClass = contextClass;
+    Object owner = dirSpec.getOwner();
+    if (owner instanceof Class) {
+      newContextClass = (Class<?>)owner;
+    } else if (owner != null) {
+      newContextClass = owner.getClass();
+    }
+    FsFixture fsFixture = new FsFixture(path, newContextClass);
     dirSpec.setResolveStrategy(Closure.DELEGATE_FIRST);
     dirSpec.setDelegate(fsFixture);
     dirSpec.call();

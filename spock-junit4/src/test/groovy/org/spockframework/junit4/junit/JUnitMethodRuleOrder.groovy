@@ -27,17 +27,17 @@ class JUnitMethodRuleOrder extends Specification {
 
   def setup() {
     // expect: setup is called during base.evaluate()
-    assert log == ["testRule2: before", "testRule1: before"]
+    assert log == ["testRule1: before", "testRule2: before"]
   }
 
-  def "rules declared later wrap around rules declared earlier"() {
+  def "rules declared earlier wrap around rules declared later"() {
     expect:
-    log == ["testRule2: before", "testRule1: before"]
+    log == ["testRule1: before", "testRule2: before"]
   }
 
   def cleanup() {
     // expect: cleanup is called before base.evaluate() leaves
-    assert log == ["testRule2: before", "testRule1: before"]
+    assert log == ["testRule1: before", "testRule2: before"]
   }
 
   static class LoggingRule implements MethodRule {

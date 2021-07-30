@@ -16,7 +16,7 @@ topLevelDirs = topLevelDirs.collect { it.substring(1) }
 
 idea {
   project {
-    languageLevel = "1.6"
+    languageLevel = "1.8"
     vcs = "Git"
     outputFile = file(outputFile.path.replace(".ipr", "-${variant}.ipr"))
     configure(modules) { module ->
@@ -31,7 +31,7 @@ idea {
             }
           }
         }
-      }      
+      }
       excludeDirs = prj.files(allLevelDirs) as Set
       if (prj == prj.rootProject) {
         excludeDirs += allLevelDirs.collect { prj.file("buildSrc/$it") }

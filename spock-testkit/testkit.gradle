@@ -1,6 +1,8 @@
-ext.displayName = "Spock Framework - Temp Specs for Core Module"
+plugins {
+  id 'org.spockframework.base'
+}
 
-apply plugin: "spock-base"
+ext.displayName = "Spock Framework - Temp Specs for Core Module"
 
 //configurations {
 //  junit

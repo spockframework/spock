@@ -1,10 +1,10 @@
-import org.spockframework.gradle.JacocoJavaagentProvider
+plugins {
+  id 'org.spockframework.base'
+}
 
 ext.displayName = "Spock Framework - Specs for Core Module"
 
 description = "Spock specifications for the Core Module. Yes, we eat our own dog food."
-
-apply plugin: "spock-base"
 
 configurations {
   groovyConsole
@@ -52,7 +52,7 @@ task groovyConsole(type: JavaExec) {
 }
 
 compileTestGroovy {
-  def jacocoAgent =objects.newInstance(JacocoJavaagentProvider)
+  def jacocoAgent =objects.newInstance(org.spockframework.gradle.JacocoJavaagentProvider)
   jacocoAgent.jacocoAgent = file(configurations.jacocoAgentRuntime.asPath)
   jacocoAgent.execResultFile = file("$buildDir/jacoco/compileTestGroovy.exec")
   groovyOptions.forkOptions.jvmArgumentProviders.add(jacocoAgent)

@@ -1,5 +1,6 @@
 plugins {
   id 'groovy-gradle-plugin'
+  id 'idea'
 }
 
 gradlePlugin {

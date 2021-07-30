@@ -94,7 +94,7 @@ if (JavaVersion.current().isJava8()) {
 include "spock-unitils"
 include "spock-gradle"
 
-include "spock-spring:boot-test"
+//include "spock-spring:boot-test"
 include "spock-spring:boot2-test"
 include "spock-spring:spring5-test"
 

@@ -1,3 +1,5 @@
+import org.spockframework.gradle.JacocoJavaagentProvider
+
 ext.displayName = "Spock Framework - Specs for Core Module"
 
 description = "Spock specifications for the Core Module. Yes, we eat our own dog food."
@@ -10,19 +12,21 @@ configurations {
 }
 
 dependencies {
-  compile libs.groovyJmx
+  implementation libs.groovyJmx
+  testImplementation libs.jetbrainsAnnotations
+  testImplementation libs.junitPlatformTestkit
 
-  testCompile project(":spock-core")
-  testCompile libs.groovySql  //for groovy.sql.Sql
-  testCompile(libs.groovyTest) {  //for groovy.test.NotYetImplemented
+  testImplementation project(":spock-core")
+  testImplementation libs.groovySql  //for groovy.sql.Sql
+  testImplementation(libs.groovyTest) {  //for groovy.test.NotYetImplemented
     exclude group: 'junit'
   }
 
-  testRuntime libs.asm
-  testRuntime libs.bytebuddy
-  testRuntime libs.cglib
-  testRuntime libs.objenesis
-  testRuntime libs.h2database
+  testRuntimeOnly libs.asm
+  testRuntimeOnly libs.bytebuddy
+  testRuntimeOnly libs.cglib
+  testRuntimeOnly libs.objenesis
+  testRuntimeOnly libs.h2database
 
   groovyConsole groovyConsoleExtraDependencies
   jacocoAgentRuntime libs.jacocoAgent
@@ -48,13 +52,8 @@ task groovyConsole(type: JavaExec) {
 }
 
 compileTestGroovy {
-  def compileTestGroovyExec = "$buildDir/jacoco/compileTestGroovy.exec"
-  doFirst {
-    // Workaround in doFirst as gradle currently does not provide another way to exclude jvmArgs from the compiler fork
-    groovyOptions.fork jvmArgs: [
-      "-javaagent:${configurations.jacocoAgentRuntime.asPath}=destfile=$compileTestGroovyExec,dumponexit=false,append=false,jmx=true,includes=org.spockframework.*".toString(),
-      "-DJacocoAstDumpTrigger=true"
-    ]
-  }
-  outputs.file(compileTestGroovyExec)
+  def jacocoAgent =objects.newInstance(JacocoJavaagentProvider)
+  jacocoAgent.jacocoAgent = file(configurations.jacocoAgentRuntime.asPath)
+  jacocoAgent.execResultFile = file("$buildDir/jacoco/compileTestGroovy.exec")
+  groovyOptions.forkOptions.jvmArgumentProviders.add(jacocoAgent)
 }

@@ -12,20 +12,20 @@ if (springVersion.startsWith("2.")) {
 }
 
 dependencies {
-  compile project(":spock-core")
-  compile "org.springframework:spring-test:$springVersion", provided
-  compile "org.springframework:spring-beans:$springVersion", provided
-  compile "org.springframework:spring-context:$springVersion", provided
+  api project(":spock-core")
+  implementation "org.springframework:spring-test:$springVersion", provided
+  implementation "org.springframework:spring-beans:$springVersion", provided
+  implementation "org.springframework:spring-context:$springVersion", provided
 
-  // not used directly at compile-time, but needed by groovyc
-  testCompile "org.springframework:spring-core:$springVersion"
-  testCompile "org.springframework:spring-jdbc:$springVersion"
-  testCompile "org.springframework:spring-tx:$springVersion"
-  testCompile "javax.inject:javax.inject:1"
-  testCompile libs.groovySql // for groovy.sql.Sql
+  // not used directly at implementation-time, but needed by groovyc
+  testImplementation "org.springframework:spring-core:$springVersion"
+  testImplementation "org.springframework:spring-jdbc:$springVersion"
+  testImplementation "org.springframework:spring-tx:$springVersion"
+  testImplementation "javax.inject:javax.inject:1"
+  testImplementation libs.groovySql // for groovy.sql.Sql
 
-  testRuntime libs.h2database
-  testRuntime libs.log4j
+  testRuntimeOnly libs.h2database
+  testRuntimeOnly libs.log4j
 }
 
 task testCglib(type: Test) {

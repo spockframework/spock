@@ -31,7 +31,7 @@ import org.springframework.web.context.annotation.RequestScope
  * Tests enabled scanning of scoped and proxied beans.
  */
 @ScanScopedBeans
-@SpringBootTest
+@SpringBootTest(properties = ['spring.main.allow-bean-definition-overriding=true'])
 class SpringBootTestAnnotationScopedProxyMockSpec extends Specification {
   @Autowired
   ApplicationContext context

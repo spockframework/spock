@@ -28,7 +28,8 @@ import org.springframework.context.ApplicationContext
  * SpringBootTest.webEnvironment needs to something other than {@link SpringBootTest.WebEnvironment.MOCK},
  * otherwise there is always a MockRequest active.
  */
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE,
+  properties = ['spring.main.allow-bean-definition-overriding=true'])
 class SpringBootTestAnnotationIntegrationSpec extends Specification {
   @Autowired
   ApplicationContext context

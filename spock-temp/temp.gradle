@@ -7,13 +7,13 @@ apply plugin: "spock-base"
 //}
 
 dependencies {
-  testCompile project(":spock-core")
+  testImplementation project(":spock-core")
 
-  testRuntime libs.asm
-  testRuntime libs.bytebuddy
-  testRuntime libs.cglib
-  testRuntime libs.objenesis
-  testRuntime libs.h2database
+  testRuntimeOnly libs.asm
+  testRuntimeOnly libs.bytebuddy
+  testRuntimeOnly libs.cglib
+  testRuntimeOnly libs.objenesis
+  testRuntimeOnly libs.h2database
 
 //  junit libs.junit4
 }

@@ -17,7 +17,8 @@
 package org.spockframework.gradle
 
 
-import groovy.transform.*
+import groovy.transform.CompileStatic
+import groovy.transform.TupleConstructor
 import org.gradle.api.*
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.testing.Test
@@ -44,6 +45,7 @@ class SpockConfigArgumentProvider implements CommandLineArgumentProvider, Named 
   @PathSensitive(PathSensitivity.RELATIVE)
   final File configFile
 
+  @Internal
   @Override
   String getName() {
     return 'spock.configuration'

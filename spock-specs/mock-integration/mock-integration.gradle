@@ -9,7 +9,7 @@ configurations {
 }
 
 dependencies {
-  testCompile(project(":spock-core")) {
+  testImplementation(project(":spock-core")) {
     exclude group: "cglib"
     exclude group: "net.bytebuddy"
     exclude group: "org.objenesis"

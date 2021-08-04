@@ -19,6 +19,7 @@ package org.spockframework.smoke.extension
 import org.spockframework.EmbeddedSpecification
 import org.spockframework.runtime.ConditionNotSatisfiedError
 import org.spockframework.runtime.extension.ExtensionException
+import org.spockframework.runtime.extension.builtin.PreconditionContext
 import spock.lang.FailsWith
 import spock.lang.IgnoreIf
 import spock.lang.Issue
@@ -43,7 +44,7 @@ class RequiresExtension extends EmbeddedSpecification {
   }
 
 
-  def 'fails directly when referencing an unknown variable'() {
+  def 'fails directly when referencing an unknown property'() {
     when:
     runner.runSpecBody """
 @Requires({ b })
@@ -56,6 +57,21 @@ def foo() {
     then:
     ExtensionException ee = thrown()
     ee.cause instanceof MissingPropertyException
+  }
+
+  def 'fails directly when referencing an unknown variable'() {
+    when:
+    runner.runSpecBody """
+@Requires({ data.b })
+def foo() {
+    expect: false
+    where: a = { throw new RuntimeException() }.call()
+}
+"""
+
+    then:
+    ExtensionException ee = thrown()
+    ee.cause instanceof PreconditionContext.DataVariableContextException
   }
 
   def 'fails directly when throwing an arbitrary exception'() {
@@ -407,7 +423,7 @@ class Foo extends Specification {
       expect: true
     }
 
-    @Requires({ a == 2 })
+    @Requires({ data.a == 2 })
     def 'can evaluate for single iterations if data variables are accessed'() {
       expect:
       a == 2

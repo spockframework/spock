@@ -18,7 +18,7 @@ package spock.lang;
 
 import java.lang.annotation.*;
 
-import groovy.lang.Closure;
+import groovy.lang.*;
 
 import org.spockframework.runtime.extension.ExtensionAnnotation;
 import org.spockframework.runtime.extension.builtin.PreconditionContext;
@@ -38,7 +38,7 @@ import org.spockframework.util.Beta;
  * the whole annotated element is skipped up-front, no fixtures, data providers or anything
  * else will be executed. But if the closure actually does reference valid data variables,
  * the whole workflow is followed up to the feature method invocation, where then the closure
- * is checked and it is decided whether to abort the specific iteration or not.
+ * is checked, and it is decided whether to abort the specific iteration or not.
  *
  * @see IgnoreIf
  * @see PreconditionContext

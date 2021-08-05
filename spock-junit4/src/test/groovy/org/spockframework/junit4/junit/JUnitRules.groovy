@@ -20,6 +20,8 @@ import org.junit.*
 import org.junit.rules.*
 import org.junit.runner.Description
 import org.junit.runners.model.Statement
+import spock.lang.Issue
+import spock.lang.ResourceLock
 
 class JUnitRules extends JUnitBaseSpec {
   @Rule
@@ -31,6 +33,7 @@ class JUnitRules extends JUnitBaseSpec {
     runner.addClassImport(Rule)
     runner.addClassImport(TestName)
     runner.addClassImport(AbortRule)
+    runner.addClassImport(JUnitClassRules.OrderTracker)
   }
 
   def "are instantiated automatically by default"() {
@@ -95,6 +98,41 @@ class JUnitRules extends JUnitBaseSpec {
     result.testsStartedCount == 1
     result.testsFailedCount == 0
     result.testsAbortedCount == 1
+  }
+
+  @ResourceLock("OrderTracker")
+  @Issue("https://github.com/spockframework/spock/issues/1050")
+  def "rules from parent fields should run before rules in child specs"() {
+    given:
+    JUnitClassRules.OrderTracker.invocations = []
+    when:
+    runner.runWithImports """
+abstract class Parent extends Specification {
+      @Rule OrderTracker parent1 = new OrderTracker("parent-1")
+      @Rule OrderTracker parent2 = new OrderTracker("parent-2")
+
+}
+class Child extends Parent {
+      @Rule OrderTracker child1 = new OrderTracker("child-1")
+      @Rule OrderTracker child2 = new OrderTracker("child-2")
+
+    def "test"() {
+        expect: true
+    }
+}
+    """
+
+    then:
+    JUnitClassRules.OrderTracker.invocations == [
+      "before parent-1",
+      "before parent-2",
+      "before child-1",
+      "before child-2",
+      "after child-2",
+      "after child-1",
+      "after parent-2",
+      "after parent-1",
+    ]
   }
 
   static @Rule

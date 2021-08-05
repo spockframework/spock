@@ -23,13 +23,18 @@ import org.spockframework.runtime.extension.IMethodInterceptor;
 import org.spockframework.runtime.extension.IMethodInvocation;
 import org.spockframework.runtime.model.FieldInfo;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public abstract class AbstractRuleInterceptor implements IMethodInterceptor {
   protected final List<FieldInfo> ruleFields;
 
   public AbstractRuleInterceptor(List<FieldInfo> ruleFields) {
-    this.ruleFields = ruleFields;
+    // we need to reverse here as we create the Statements in reversed order
+    ArrayList<FieldInfo> reversedFields = new ArrayList<>(ruleFields);
+    Collections.reverse(reversedFields);
+    this.ruleFields = reversedFields;
   }
 
   protected Statement createBaseStatement(final IMethodInvocation invocation) {

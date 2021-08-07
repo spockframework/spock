@@ -26,6 +26,7 @@ import spock.config.ConfigurationObject;
  *   unrollByDefault false // default true
  *   defaultPattern '#featureName[#iterationIndex]' // default null
  *   validateExpressions false // default true
+ *   includeFeatureNameForIterations false // default true
  * }
  * </pre>
  *
@@ -37,4 +38,5 @@ public class UnrollConfiguration {
   public boolean unrollByDefault = true;
   public String defaultPattern = null;
   public boolean validateExpressions = true;
+  public boolean includeFeatureNameForIterations = true;
 }

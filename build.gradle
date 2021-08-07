@@ -116,18 +116,13 @@ allprojects {
 
   repositories {
     mavenCentral()
-    maven {
-      url 'https://jitpack.io'
-      content {
-        includeGroup "com.github.junit-team.junit5"
-      }
-    }
   }
 }
 
 apply from: script("ide")
 
 subprojects {
+  apply plugin: "java-library"
   apply plugin: "groovy"
   apply plugin: "jacoco"
 
@@ -161,8 +156,8 @@ subprojects {
   }
 
   dependencies {
-    compile(platform(libs.junitBom))
-    compile(project.name == "spock-gradle" ? [] : libs.groovy)
+    implementation(platform(libs.junitBom))
+    implementation(project.name == "spock-gradle" ? [] : libs.groovy)
   }
 
   configureJavadoc(javadoc)

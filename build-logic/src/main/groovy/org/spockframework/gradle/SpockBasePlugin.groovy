@@ -16,12 +16,10 @@
 
 package org.spockframework.gradle
 
-
-import groovy.transform.*
-import org.gradle.api.*
-import org.gradle.api.tasks.*
+import groovy.transform.CompileStatic
+import org.gradle.api.Plugin
+import org.gradle.api.Project
 import org.gradle.api.tasks.testing.Test
-import org.gradle.process.CommandLineArgumentProvider
 
 @CompileStatic
 class SpockBasePlugin implements Plugin<Project> {
@@ -33,24 +31,5 @@ class SpockBasePlugin implements Plugin<Project> {
         task.jvmArgumentProviders.add(new SpockConfigArgumentProvider(configFile))
       }
     }
-  }
-}
-
-// Use argument provider to abstract system dependent path from build cache
-@CompileStatic
-@TupleConstructor
-class SpockConfigArgumentProvider implements CommandLineArgumentProvider, Named {
-  @InputFile
-  @PathSensitive(PathSensitivity.RELATIVE)
-  final File configFile
-
-  @Override
-  String getName() {
-    return 'spock.configuration'
-  }
-
-  @Override
-  Iterable<String> asArguments() {
-    ["-Dspock.configuration=${configFile.absolutePath}".toString()]
   }
 }

@@ -1,0 +1,13 @@
+plugins {
+  id 'groovy-gradle-plugin'
+  id 'idea'
+}
+
+gradlePlugin {
+  plugins {
+    spockBasePlugin {
+      id = 'org.spockframework.base'
+      implementationClass = 'org.spockframework.gradle.SpockBasePlugin'
+    }
+  }
+}

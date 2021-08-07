@@ -7,19 +7,19 @@ description = "Spock's Unitils Module makes it possible to use Unitils together 
 ext.unitilsVersion = "3.4.6"
 
 dependencies {
-  compile project(":spock-core")
-  compile "org.unitils:unitils-core:${unitilsVersion}"
+  api project(":spock-core")
+  implementation "org.unitils:unitils-core:${unitilsVersion}"
 
-  testCompile "org.unitils:unitils-dbunit:${unitilsVersion}", {
+  testImplementation "org.unitils:unitils-dbunit:${unitilsVersion}", {
     exclude module: "jta"
   }
-  testCompile "org.unitils:unitils-database:${unitilsVersion}",  {
+  testImplementation "org.unitils:unitils-database:${unitilsVersion}",  {
     exclude module: "jta"
   }
-  testCompile libs.groovySql // for groovy.sql.Sql
+  testImplementation libs.groovySql // for groovy.sql.Sql
 
-  testRuntime libs.h2database
-  testRuntime libs.log4j
+  testRuntimeOnly libs.h2database
+  testRuntimeOnly libs.log4j
 }
 
 jar {

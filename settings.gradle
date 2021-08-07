@@ -7,9 +7,11 @@ pluginManagement {
     id "org.asciidoctor.jvm.convert" version "3.3.2"
     id "net.nemerosa.versioning" version "2.14.0"
     id "de.marcphilipp.nexus-publish" version "0.4.0"
-    id "com.github.ben-manes.versions" version "0.38.0"
+    id "com.github.ben-manes.versions" version "0.39.0"
     id "biz.aQute.bnd.builder" version "5.3.0"
   }
+
+  includeBuild "build-logic"
 }
 
 plugins {
@@ -78,7 +80,6 @@ include "spock-spring"
 include "spock-spring:spring3-test"
 include "spock-guice"
 include "spock-junit4"
-include "spock-temp"
 include "spock-testkit"
 
 if ((System.getProperty("variant") as BigDecimal ?: 2.5) != 3.0) {
@@ -92,9 +93,7 @@ if (JavaVersion.current().isJava8()) {
 }
 
 include "spock-unitils"
-include "spock-gradle"
 
-include "spock-spring:boot-test"
 include "spock-spring:boot2-test"
 include "spock-spring:spring5-test"
 

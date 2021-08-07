@@ -18,6 +18,7 @@ package org.spockframework.boot2
 
 import org.spockframework.boot2.service.HelloWorldService
 import org.spockframework.spring.ScanScopedBeans
+import org.springframework.context.annotation.Primary
 import spock.lang.Specification
 import spock.mock.DetachedMockFactory
 
@@ -30,7 +31,7 @@ import org.springframework.context.annotation.Bean
  * Tests enabled scanning of scoped beans.
  */
 @ScanScopedBeans
-@SpringBootTest
+@SpringBootTest(properties = ['spring.main.allow-bean-definition-overriding=true'])
 class SpringBootTestAnnotationScopedMockSpec extends Specification {
   @Autowired
   ApplicationContext context

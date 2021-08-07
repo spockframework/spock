@@ -1,34 +1,29 @@
-ext.displayName = "Spock Framework - Temp Specs for Core Module"
+plugins {
+  id 'org.spockframework.base'
+}
 
-apply plugin: "spock-base"
+ext.displayName = "Spock Framework - Temp Specs for Core Module"
 
 //configurations {
 //  junit
 //}
 
 dependencies {
-  testCompile project(":spock-core")
+  api project(":spock-core")
 
-  testRuntime libs.asm
-  testRuntime libs.bytebuddy
-  testRuntime libs.cglib
-  testRuntime libs.objenesis
-  testRuntime libs.h2database
-  testRuntime libs.junitPlatformConsole
-  testCompile libs.junitPlatformTestkit
+  testRuntimeOnly libs.asm
+  testRuntimeOnly libs.bytebuddy
+  testRuntimeOnly libs.cglib
+  testRuntimeOnly libs.objenesis
+  testRuntimeOnly libs.h2database
+  testRuntimeOnly libs.junitPlatformConsole
+  testImplementation libs.junitPlatformTestkit
 
-  testCompile libs.jupiter
-//  junit libs.junit4
+  testImplementation libs.jupiter
 }
 
 sourceCompatibility = javaVersion
 targetCompatibility = javaVersion
-
-// necessary to make @NotYetImplemented transform work (transform that ships
-// with Groovy and statically references third-party class junit.framework.AssertionFailedError)
-//tasks.withType(GroovyCompile) {
-//	groovyClasspath += configurations.junit
-//}
 
 test {
   reports.junitXml.enabled = true

@@ -55,7 +55,7 @@
       Isolated
     </text>
     <line style='stroke: #A80036; stroke-width: 1.5;' x1='61.5' x2='1005.5' y1='63.9688' y2='63.9688'/>
-    <!--MD5=[0ca02b1484910f1bf65d025d16a874b0]
+    <!--MD5=[cfe12ba8608654856cc9e015f3ca6d55]
 @startwbs
 <style>
 wbsDiagram {
@@ -118,7 +118,7 @@ PlantUML version 1.2020.06(Sun Apr 05 12:38:32 UTC 2020)
 (APACHE source distribution)
 Java Runtime: OpenJDK Runtime Environment
 JVM: OpenJDK 64-Bit Server VM
-Java Version: 15.0.3+3
+Java Version: 15.0.4+5-MTS
 Operating System: Linux
 Default Encoding: UTF-8
 Language: en

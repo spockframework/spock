@@ -29,8 +29,10 @@ import static org.spockframework.util.RenderUtil.toStringOrDump;
  */
 public class UnrollIterationNameProvider implements NameProvider<IterationInfo> {
   private static final Pattern EXPRESSION_PATTERN = Pattern.compile("#([a-zA-Z_$]([\\w$.]|\\(\\))*)");
-  private static final DataVariablesIterationNameProvider DATA_VARIABLES_ITERATION_NAME_PROVIDER =
-    new DataVariablesIterationNameProvider(false);
+  private static final DataVariablesIterationNameProvider DATA_VARIABLES =
+    new DataVariablesIterationNameProvider(false, false);
+  private static final DataVariablesIterationNameProvider DATA_VARIABLES_WITH_INDEX =
+    new DataVariablesIterationNameProvider(false, true);
 
   private final boolean validateExpressions;
   private final FeatureInfo feature;
@@ -77,7 +79,11 @@ public class UnrollIterationNameProvider implements NameProvider<IterationInfo> 
         break;
 
       case "dataVariables":
-        result = DATA_VARIABLES_ITERATION_NAME_PROVIDER.getName(iterationInfo);
+        result = DATA_VARIABLES.getName(iterationInfo);
+        break;
+
+      case "dataVariablesWithIndex":
+        result = DATA_VARIABLES_WITH_INDEX.getName(iterationInfo);
         break;
 
       default:

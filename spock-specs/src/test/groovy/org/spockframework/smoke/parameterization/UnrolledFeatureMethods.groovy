@@ -141,6 +141,26 @@ def foo() {
 
     then:
     result.testEvents().started().list().testDescriptor.displayName == ["foo",
+                                                                        "one x: 1, y: a two",
+                                                                        "one x: 2, y: b two",
+                                                                        "one x: 3, y: c two"]
+  }
+
+  def "naming pattern may refer to dataVariablesWithIndex"() {
+    when:
+    def result = runner.runSpecBody("""
+@Unroll("one #dataVariablesWithIndex two")
+def foo() {
+  expect: true
+
+  where:
+  x << [1, 2, 3]
+  y << ["a", "b", "c"]
+}
+    """)
+
+    then:
+    result.testEvents().started().list().testDescriptor.displayName == ["foo",
                                                                         "one x: 1, y: a, #0 two",
                                                                         "one x: 2, y: b, #1 two",
                                                                         "one x: 3, y: c, #2 two"]

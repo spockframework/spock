@@ -361,7 +361,6 @@ asciidoctor {
   inputs.dir file("spock-specs/src/test/groovy/org/spockframework/docs")
   inputs.dir file("spock-spring/src/test/groovy/org/spockframework/spring/docs")
   inputs.dir file("spock-spring/src/test/resources/org/spockframework/spring/docs")
-  inputs.dir file("spock-spring/boot-test/src/test/groovy/org/spockframework/boot")
   inputs.dir file("spock-spring/boot2-test/src/test/groovy/org/spockframework/boot2")
   inputs.dir file("spock-spring/spring3-test/src/test/groovy/org/spockframework/spring3")
   inputs.dir file("spock-spring/spring5-test/src/test/groovy/org/spockframework/spring5")

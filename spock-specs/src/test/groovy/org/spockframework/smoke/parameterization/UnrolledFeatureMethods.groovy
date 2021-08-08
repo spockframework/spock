@@ -126,6 +126,26 @@ def foo() {
                                                                         "one foo two 2 three"]
   }
 
+  def "naming pattern may refer to dataVariables"() {
+    when:
+    def result = runner.runSpecBody("""
+@Unroll("one #dataVariables two")
+def foo() {
+  expect: true
+
+  where:
+  x << [1, 2, 3]
+  y << ["a", "b", "c"]
+}
+    """)
+
+    then:
+    result.testEvents().started().list().testDescriptor.displayName == ["foo",
+                                                                        "one x: 1, y: a, #0 two",
+                                                                        "one x: 2, y: b, #1 two",
+                                                                        "one x: 3, y: c, #2 two"]
+  }
+
   def "old iteration naming is restorable using configuration script"() {
     given:
     runner.configurationScript {

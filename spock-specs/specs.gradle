@@ -32,9 +32,6 @@ dependencies {
   jacocoAgentRuntime libs.jacocoAgent
 }
 
-sourceCompatibility = javaVersion
-targetCompatibility = javaVersion
-
 test {
   reports.junitXml.enabled = true
   reports.html.enabled = true

@@ -20,6 +20,7 @@ import org.spockframework.runtime.GroovyRuntimeUtil
 import org.spockframework.runtime.SpockComparisonFailure
 import spock.lang.Issue
 import spock.lang.Requires
+import spock.lang.ResourceLock
 
 import java.sql.Date
 
@@ -583,6 +584,7 @@ java.util./*.awt.*/List == java.lang.String
     }
   }
 
+  @ResourceLock("TimeZone.default")
   def "ClassExpression with different classes with same name"() {
     given:
     def defaultTimeZone = TimeZone.default
@@ -605,6 +607,7 @@ Thu Jan 01 00:00:00 UTC 1970
     TimeZone.default = defaultTimeZone
   }
 
+  @ResourceLock("TimeZone.default")
   def "instanceof expression"() {
     given:
     def defaultTimeZone = TimeZone.default

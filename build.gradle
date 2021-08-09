@@ -19,11 +19,11 @@ ext {
   variant = System.getProperty("variant") as BigDecimal ?: variants.first()
   buildScan.tag "groovy-$variant"
   if (variant == 2.5) {
-      groovyVersion = "2.5.14"
+      groovyVersion = "2.5.15"
       minGroovyVersion = "2.5.0"
       maxGroovyVersion = "2.9.99"
     } else if (variant == 3.0) {
-      groovyVersion = "3.0.8"
+      groovyVersion = "3.0.9"
       minGroovyVersion = "3.0.0"
       maxGroovyVersion = "3.9.99"
     } else {
@@ -44,8 +44,8 @@ ext {
   }
   fullVersion = baseVersion + ((!snapshotVersion && milestone) ? "-M$milestone" : "") + "-groovy-$variant" + (snapshotVersion ? "-SNAPSHOT" : '')
   variantLessVersion = baseVersion + (snapshotVersion ? "-SNAPSHOT" : (milestone ? "-M$milestone" : ""))
-  javaVersions = [1.8, 11, 15] // ensure that latest version is actually build on travis, otherwise no docs get published
-  javaVersion = System.getProperty("java.specification.version") as BigDecimal
+  javaVersions = [8, 11, 17] // ensure that latest version is actually build on travis, otherwise no docs get published
+  javaVersion = (System.getProperty("javaVersion") ?: 8) as int
   buildScan.tag "Java $javaVersion"
 
   libs = [
@@ -80,31 +80,6 @@ allprojects {
 
   apply from: script("common")
 
-  if (javaVersion == 1.8) {
-    tasks.withType(Javadoc) {
-      options.addStringOption('Xdoclint:none', '-quiet')
-      options.noTimestamp()
-    }
-  } else if (javaVersion >= 9){
-    tasks.withType(JavaCompile) {
-      sourceCompatibility = javaVersions.min()
-      targetCompatibility = javaVersions.min()
-      options.compilerArgs += ['--release', '8']
-      options.encoding = 'UTF-8'
-    }
-    tasks.withType(GroovyCompile) {
-      sourceCompatibility = javaVersions.min()
-      targetCompatibility = javaVersions.min()
-      options.compilerArgs += ['--release', '8']
-      options.encoding = 'UTF-8'
-    }
-
-    tasks.withType(Javadoc) {
-      options.addStringOption('Xdoclint:none', '-quiet')
-      options.noTimestamp()
-    }
-  }
-
   // ignore mutable data that is irrelevant for compilation output
   normalization {
     runtimeClasspath {
@@ -126,8 +101,33 @@ subprojects {
   apply plugin: "groovy"
   apply plugin: "jacoco"
 
-  sourceCompatibility = javaVersions.min()
-  targetCompatibility = javaVersions.min()
+  java {
+    toolchain {
+      languageVersion = JavaLanguageVersion.of(javaVersion)
+    }
+  }
+
+  if (javaVersion == 8) {
+    tasks.withType(Javadoc) {
+      options.addStringOption('Xdoclint:none', '-quiet')
+      options.noTimestamp()
+    }
+  } else if (javaVersion >= 9){
+    tasks.withType(JavaCompile) {
+      javaCompiler = javaToolchains.compilerFor {
+        languageVersion = JavaLanguageVersion.of(8)
+      }
+      options.encoding = 'UTF-8'
+    }
+    tasks.withType(GroovyCompile) {
+      options.encoding = 'UTF-8'
+    }
+
+    tasks.withType(Javadoc) {
+      options.addStringOption('Xdoclint:none', '-quiet')
+      options.noTimestamp()
+    }
+  }
 
   sourceSets.all { ss ->
     for (v in variants.findAll { it <= variant } ) {

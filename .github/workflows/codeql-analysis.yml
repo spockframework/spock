@@ -36,6 +36,7 @@ jobs:
           distribution: 'adopt'
           cache: 'gradle'
           java-version: 8
+          distribution: 'adopt'
 
       # Initializes the CodeQL tools for scanning.
       - name: Initialize CodeQL

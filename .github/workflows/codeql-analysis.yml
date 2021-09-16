@@ -31,8 +31,10 @@ jobs:
 
       # Manually added:  Install and setup JDK
       - name: Setup JDK 8
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v2
         with:
+          distribution: 'adopt'
+          cache: 'gradle'
           java-version: 8
 
       # Initializes the CodeQL tools for scanning.

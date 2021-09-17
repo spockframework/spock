@@ -16,12 +16,18 @@
 
 package org.spockframework.runtime;
 
+import static java.util.stream.Collectors.toList;
+
 import org.spockframework.runtime.model.*;
 import org.spockframework.util.*;
 
 import java.util.*;
+import java.util.regex.Pattern;
+import java.util.stream.*;
 
 import groovy.lang.Closure;
+import org.hamcrest.*;
+import org.hamcrest.collection.IsIterableContainingInAnyOrder;
 
 /**
  * @author Peter Niederwieser
@@ -92,6 +98,12 @@ public abstract class SpockRuntime {
       return;
     }
 
+    CollectionCondition collectionCondition = CollectionCondition.parse(target, method, args, safe);
+    if (collectionCondition != null) {
+      collectionCondition.verify(errorCollector, getValues(recorder), text, line, column, messageToString(message));
+      return;
+    }
+
     if (recorder != null) {
       recorder.startRecordingValue(lastVariableNum);
     }
@@ -107,6 +119,16 @@ public abstract class SpockRuntime {
           new Condition(values, text, TextPosition.create(line, column), messageToString(message), null, null));
       errorCollector.collectOrThrow(conditionNotSatisfiedError);
     }
+  }
+
+  public static final String MATCH_COLLECTIONS_AS_SET = "matchCollectionsAsSet";
+
+  public static void matchCollectionsAsSet(Object a, Object b) {
+  }
+
+  public static final String MATCH_COLLECTIONS_IN_ANY_ORDER = "matchCollectionsInAnyOrder";
+
+  public static void matchCollectionsInAnyOrder(Object a, Object b) {
   }
 
   private static boolean isVoidMethod(@Nullable Object target, String method, Object... args) {
@@ -198,6 +220,86 @@ public abstract class SpockRuntime {
         return new MatcherCondition(args[0], args[1], false);
       }
 
+      return null;
+    }
+  }
+
+  private static class CollectionCondition {
+
+    private final String method;
+    private final Object left;
+    private final Object right;
+
+    public CollectionCondition(String method, Object left, Object right) {
+      this.method = method;
+      this.left = left;
+      this.right = right;
+    }
+
+    void verify(ErrorCollector errorCollector, @Nullable List<Object> values, @Nullable String text, int line, int column, @Nullable String message) {
+      String description = null;
+      int idxActual = values.indexOf(left);
+      int idxExpected = values.indexOf(right);
+
+      if (left instanceof Iterable && right instanceof Iterable) {
+        if (SpockRuntime.MATCH_COLLECTIONS_AS_SET.equals(method)) {
+          Set<?> actual = GroovyRuntimeUtil.coerce(left, LinkedHashSet.class);
+          Set<?> expected = GroovyRuntimeUtil.coerce(right, LinkedHashSet.class);
+          if (GroovyRuntimeUtil.equals(actual, expected)) {
+            return;
+          }
+          // replace arguments with coerced Set values
+          values.set(idxActual, actual);
+          values.set(idxExpected, expected);
+
+        } else {
+          Matcher<?> matcher = StreamSupport.stream(((Iterable<?>)right).spliterator(), false)
+            .map(CoreMatchers::equalTo)
+            .collect(Collectors.collectingAndThen(toList(), IsIterableContainingInAnyOrder::containsInAnyOrder));
+
+          if (HamcrestFacade.matches(matcher, left)) {
+            return;
+          }
+          description = HamcrestFacade.getFailureDescription(matcher, left, message);
+        }
+        // we have a mismatch, so add false for the result
+        // due to the way the ValueRecorder works, we have two (n/a) values at the end, so we need to skip them
+        values.add(values.size() - 2, false);
+      } else {
+        Pattern pattern = Pattern.compile(right.toString());
+        java.util.regex.Matcher matcher = pattern.matcher(left.toString());
+
+        values.set(idxActual, left);
+        values.set(idxExpected, right);
+
+        if (SpockRuntime.MATCH_COLLECTIONS_AS_SET.equals(method)) {
+          if (matcher.find()) {
+            return;
+          }
+          values.set(3, matcher);
+        } else {
+          if (matcher.matches()) {
+            return;
+          }
+          values.set(3, false);
+        }
+      }
+
+      // this contains the synthetic method name, so remove it
+      values.remove(0);
+      Condition condition = new Condition(values, text, TextPosition.create(line, column), description, null, null);
+      errorCollector.collectOrThrow(new ConditionNotSatisfiedError(condition));
+    }
+
+    @Nullable
+    static CollectionCondition parse(Object target, String method, Object[] args, boolean safe) {
+      if (safe) return null;
+
+      if (target == SpockRuntime.class) {
+        if (SpockRuntime.MATCH_COLLECTIONS_AS_SET.equals(method) || SpockRuntime.MATCH_COLLECTIONS_IN_ANY_ORDER.equals(method)) {
+          return new CollectionCondition(method, args[0], args[1]);
+        }
+      }
       return null;
     }
   }

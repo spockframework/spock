@@ -16,6 +16,7 @@
 
 package org.spockframework.compiler;
 
+import org.codehaus.groovy.syntax.Token;
 import org.spockframework.compat.groovy2.GroovyCodeVisitorCompat;
 import org.spockframework.runtime.ValueRecorder;
 import org.spockframework.util.*;
@@ -593,6 +594,9 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> i
   }
 
   private Statement rewriteCondition(Expression expr, Expression message, boolean explicit) {
+    if (isSpecialCollectionCondition(expr)) { // todo check if we can better integrate it
+      expr = transformSpecialCollectionCondition(expr);
+    }
     // method conditions with spread operator are not lifted because MOP doesn't support spreading
     if (expr instanceof MethodCallExpression && !((MethodCallExpression) expr).isSpreadSafe()) {
       MethodCallExpression methodCallExpression = (MethodCallExpression)expr;
@@ -669,6 +673,54 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> i
         condition, message, Collections.singletonList(rewritten));
 
     return surroundWithTryCatch(condition, message, executeAndVerify);
+  }
+
+  private Expression transformSpecialCollectionCondition(Expression condition) {
+    BinaryExpression binaryExpression = (BinaryExpression) condition;
+    Token operation = binaryExpression.getOperation();
+    int operationType = operation.getType();
+    if(operationType == Types.FIND_REGEX) {
+      MethodCallExpression result = createDirectMethodCall(
+        new ClassExpression(resources.getAstNodeCache().SpockRuntime),
+        resources.getAstNodeCache().SpockRuntime_MatchCollectionsAsSet,
+        new ArgumentListExpression(Arrays.asList(
+          binaryExpression.getLeftExpression(),
+          binaryExpression.getRightExpression()
+        ))
+      );
+      result.setSourcePosition(condition);
+      return result;
+    } else if(operationType == Types.MATCH_REGEX) {
+      MethodCallExpression result = createDirectMethodCall(
+        new ClassExpression(resources.getAstNodeCache().SpockRuntime),
+        resources.getAstNodeCache().SpockRuntime_MatchCollectionsInAnyOrder,
+        new ArgumentListExpression(Arrays.asList(
+          binaryExpression.getLeftExpression(),
+          binaryExpression.getRightExpression()
+        ))
+      );
+      result.setSourcePosition(condition);
+      return result;
+    }
+    throw new IllegalStateException("This should never happen");
+  }
+
+  private boolean isSpecialCollectionCondition(Expression condition) {
+    if (!( condition instanceof BinaryExpression)) return false;
+    BinaryExpression binaryExpression = (BinaryExpression) condition;
+    int operationType = binaryExpression.getOperation().getType();
+
+    return (operationType == Types.MATCH_REGEX || operationType == Types.FIND_REGEX)
+      // we don't want to transform expressions where we already know that they are not collection conditions
+      && !(isStringLikeExpression(binaryExpression.getLeftExpression()) || isStringLikeExpression(binaryExpression.getRightExpression()));
+  }
+
+  private boolean isStringLikeExpression(Expression expression) {
+    if (expression instanceof ConstantExpression) {
+      return expression.getType().getTypeClass() == String.class;
+    }
+    if (expression instanceof GStringExpression) return true;
+    return false;
   }
 
   private TryCatchStatement surroundWithTryCatch(Expression condition, Expression message, Expression executeAndVerify) {

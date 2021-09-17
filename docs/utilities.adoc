@@ -37,3 +37,38 @@ include::{sourcedir}/utilities/MutableClockDocSpec.groovy[tag=age-filter-spec]
 
 There are many more ways to modify `MutableClock` just have a look at the JavaDocs, or the test code `spock.util.time.MutableClockSpec`.
 
+[[collection-conditions]]
+== Collection Conditions
+
+Sometimes, you want to assert the contents of a collection regardless of its order.
+The Groovy way to do this is to cast both to `Set`, i.e. `x as Set == [1, 2, 3] as Set`.
+While this works, it is very noisy.
+
+Since Spock 2.1 you can use two new conditions:
+
+* `x =~ [1, 2, 3]` is a lenient match, i.e., casting both to `Set` before comparing.
+* `x ==~ [1, 2, 3, 3]` is a strict match, using Hamcrest's `containsInAnyOrder` under the hood so that duplicate elements are verified as well.
+
+=== Lenient Match
+[source,groovy,indent=0]
+----
+include::{sourcedir}/utilities/CollectionConditions.groovy[tag=lenient-matcher]
+----
+
+[source,indent=0]
+----
+include::{sourcedir}/utilities/CollectionConditions.groovy[tag=lenient-matcher-result]
+----
+
+=== Strict Match
+[source,groovy,indent=0]
+----
+include::{sourcedir}/utilities/CollectionConditions.groovy[tag=strict-matcher]
+----
+[source,indent=0]
+----
+include::{sourcedir}/utilities/CollectionConditions.groovy[tag=strict-matcher-result]
+----
+
+NOTE: Both operands must be `Iterable` for this to work.
+      Otherwise, it will be treated like the standard groovy https://groovy-lang.org/operators.html#_find_operator[find operator] or https://groovy-lang.org/operators.html#_match_operator[match operators].

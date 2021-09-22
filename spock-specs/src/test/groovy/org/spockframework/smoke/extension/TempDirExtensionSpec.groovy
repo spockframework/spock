@@ -122,13 +122,20 @@ def method1() {
 
 abstract class TempDirBaseSpec extends Specification {
   @TempDir Path tmp
+  @TempDir @Shared Path sharedTmp
 }
 
-@Issue("https://github.com/spockframework/spock/issues/1229")
 class TempDirInheritedSpec extends TempDirBaseSpec {
+  @Issue("https://github.com/spockframework/spock/issues/1229")
   void "TempDir works for inherited fields"() {
     expect:
     tmp != null
+  }
+
+  @Issue("https://github.com/spockframework/spock/pull/1373")
+  void "TempDir works for inherited shared fields"() {
+    expect:
+    sharedTmp != null
   }
 }
 

@@ -33,7 +33,7 @@ public class TempDirExtension implements IAnnotationDrivenExtension<TempDir> {
     // attach interceptor
     SpecInfo specInfo = field.getParent();
     if (field.isShared()) {
-      specInfo.addInterceptor(interceptor);
+      specInfo.getBottomSpec().addInterceptor(interceptor);
     } else {
       for (FeatureInfo featureInfo : specInfo.getBottomSpec().getAllFeatures()) {
         featureInfo.addIterationInterceptor(interceptor);

@@ -23,6 +23,7 @@ dependencies {
   testImplementation "org.springframework:spring-tx:$springVersion"
   testImplementation "javax.inject:javax.inject:1"
   testImplementation libs.groovySql // for groovy.sql.Sql
+  testImplementation libs.junitPlatformTestkit
 
   testRuntimeOnly libs.h2database
   testRuntimeOnly libs.log4j

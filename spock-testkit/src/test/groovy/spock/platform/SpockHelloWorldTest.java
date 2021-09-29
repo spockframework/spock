@@ -8,6 +8,7 @@ import org.junit.platform.launcher.core.LauncherFactory;
 import org.spockframework.runtime.SpockEngine;
 import spock.testkit.testsources.*;
 
+import java.util.Arrays;
 import java.util.function.Consumer;
 
 import org.junit.jupiter.api.Test;
@@ -16,6 +17,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.junit.platform.engine.*;
 import org.junit.platform.testkit.engine.*;
 
+import static java.util.Arrays.asList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.*;
 
@@ -42,6 +44,21 @@ class SpockHelloWorldTest extends SpockEngineBase {
     execute(selectUniqueId(classUniqueId.append("feature", "$spock_feature_0_2")), assertions);
     execute(selectMethod(ExampleTestCase.class, "$spock_feature_0_2"), assertions);
     execute(selectMethod(ExampleTestCase.class, "ignoreMe"), assertions);
+  }
+  @Test
+  void selectorIssue() {
+    UniqueId classUniqueId = UniqueId.forEngine("spock").append("spec", StepwiseTestCase.class.getName());
+
+    Consumer<EventStatistics> assertions = stats -> stats.started(4).succeeded(3).failed(1).skipped(1);
+    execute(asList(
+      selectClass(StepwiseTestCase.class),
+      selectUniqueId(classUniqueId.append("feature", "$spock_feature_0_0"))
+      ), assertions);
+    execute(asList(
+      selectUniqueId(classUniqueId.append("feature", "$spock_feature_0_0")),
+      selectClass(StepwiseTestCase.class)
+      ), assertions);
+//    execute(selectMethod(ExampleTestCase.class, "$spock_feature_0_0"), assertions);
   }
 
   @Test

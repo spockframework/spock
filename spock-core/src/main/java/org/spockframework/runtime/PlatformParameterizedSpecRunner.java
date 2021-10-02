@@ -183,7 +183,9 @@ public class PlatformParameterizedSpecRunner extends PlatformSpecRunner {
       if (context.getErrorInfoCollector().hasErrors()) {
         return;
       }
-      childExecutor.execute(iterationNode);
+      if (iterationInfo.getFeature().getIterationFilter().isAllowed(iterationInfo.getIterationIndex())) {
+        childExecutor.execute(iterationNode);
+      }
 
       // no iterators => no data providers => only derived parameterizations => limit to one iteration
       if (iterators.length == 0) {

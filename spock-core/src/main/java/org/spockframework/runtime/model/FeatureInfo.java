@@ -27,6 +27,7 @@ public class FeatureInfo extends SpecElementInfo<SpecInfo, AnnotatedElement> {
   private MethodInfo dataProcessorMethod;
   private NameProvider<IterationInfo> iterationNameProvider;
   private final List<DataProviderInfo> dataProviders = new ArrayList<>();
+  private final IterationFilter iterationFilter = new IterationFilter();
 
   private boolean reportIterations = true;
 
@@ -150,6 +151,10 @@ public class FeatureInfo extends SpecElementInfo<SpecInfo, AnnotatedElement> {
 
   public void setIterationNameProvider(NameProvider<IterationInfo> provider) {
     iterationNameProvider = provider;
+  }
+
+  public IterationFilter getIterationFilter() {
+    return iterationFilter;
   }
 
   /**

@@ -71,8 +71,34 @@ class SpockHelloWorldTest extends SpockEngineBase {
   }
 
   @Test
+  void iterationsAreResolved() {
+    UniqueId featureMethodUniqueId = UniqueId.forEngine("spock")
+      .append("spec", UnrollTestCase.class.getName())
+      .append("feature", "$spock_feature_0_0");
+
+    execute(
+      selectUniqueId(featureMethodUniqueId.append("iteration", "1")),
+      stats -> stats.started(2).succeeded(1).failed(1)
+    );
+    execute(
+      asList(
+        selectUniqueId(featureMethodUniqueId.append("iteration", "0")),
+        selectUniqueId(featureMethodUniqueId.append("iteration", "2"))
+      ),
+      stats -> stats.started(3).succeeded(3)
+    );
+    execute(
+      asList(
+        selectUniqueId(featureMethodUniqueId.append("iteration", "0")),
+        selectUniqueId(featureMethodUniqueId)
+      ),
+      stats -> stats.started(4).succeeded(3).failed(1)
+    );
+  }
+
+  @Test
   void verifyUnrollExample() {
-    execute(selectClass(UnrollTestCase.class), stats -> stats.started(13).succeeded(13));
+    execute(selectClass(UnrollTestCase.class), stats -> stats.started(13).succeeded(12).failed(1));
   }
 
   @Test

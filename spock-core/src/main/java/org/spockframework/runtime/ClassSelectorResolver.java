@@ -39,23 +39,23 @@ class ClassSelectorResolver implements SelectorResolver {
 
   private Resolution resolveClass(Class<?> specClass, Context context) {
     if (SpecUtil.isRunnableSpec(specClass) && classNameFilter.test(specClass.getName())) {
-      SpecInfo specInfo = new SpecInfoBuilder(specClass).build();
       return context
         .addToParent(parent -> {
+          SpecInfo specInfo = new SpecInfoBuilder(specClass).build();
           specInfo.getAllFeatures().forEach(featureInfo -> featureInfo.setExcluded(true));
           UniqueId uniqueId = parent.getUniqueId().append("spec", specInfo.getReflection().getName());
           return Optional.of(new SpecNode(uniqueId,
             runContext.getConfiguration(RunnerConfiguration.class),
             specInfo));
         })
-        .map(specNode -> toResolution(specInfo, specNode))
+        .map(this::toResolution)
         .orElse(Resolution.unresolved());
     }
     return Resolution.unresolved();
   }
 
-  private Resolution toResolution(SpecInfo specInfo, SpecNode specNode) {
-    return Resolution.match(Match.exact(specNode, features(specInfo)));
+  private Resolution toResolution(SpecNode specNode) {
+    return Resolution.match(Match.exact(specNode, features(specNode.getNodeInfo())));
   }
 
   private Supplier<Set<? extends DiscoverySelector>> features(SpecInfo specInfo) {

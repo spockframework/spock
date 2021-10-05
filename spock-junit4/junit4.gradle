@@ -12,6 +12,7 @@ dependencies {
   api project(":spock-core")
   api libs.junit4
 
+  testImplementation libs.junitPlatformTestkit
   testImplementation libs.jetbrainsAnnotations
   testImplementation libs.groovyTest  //for @NotYetImplemented
 }

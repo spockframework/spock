@@ -6,7 +6,7 @@ description = "Spock's Tapestry Module provides support for testing Tapestry 5 b
 
 def tapestryVersion54 = "5.4.3"
 
-def useTapestry54 = javaVersion >= 1.8
+def useTapestry54 = javaVersion >= 8
 
 def tapestryVersionTest = useTapestry54 ? tapestryVersion54 : "5.2.6"
 

@@ -22,9 +22,6 @@ dependencies {
   testImplementation libs.jupiter
 }
 
-sourceCompatibility = javaVersion
-targetCompatibility = javaVersion
-
 test {
   reports.junitXml.enabled = true
   reports.html.enabled = false

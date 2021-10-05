@@ -93,7 +93,7 @@ def osgiPropertiesFile = file("$buildDir/verifyOSGiProperties.bndrun")
 tasks.register('osgiProperties', WriteProperties) {
   outputFile = osgiPropertiesFile
   property('-standalone', true)
-  property('-runee', "JavaSE-${javaVersion}")
+  property('-runee', "JavaSE-${javaVersion < 9 ? '1.' + javaVersion : javaVersion}")
   property('-runrequires', "osgi.identity;filter:='(osgi.identity=${project.name})'")
 }
 

@@ -1,5 +1,3 @@
-import aQute.bnd.gradle.BundleTaskConvention
-import aQute.bnd.gradle.FileSetRepositoryConvention
 import aQute.bnd.gradle.Resolve
 
 plugins {
@@ -50,21 +48,23 @@ jar {
       'Automatic-Module-Name': 'org.spockframework.core'
     )
   }
-  bnd(
-    'Export-Package': ['org.spockframework.*', 'spock.*'].join(','),
-    'Import-Package': [
-      'org.junit.platform.testkit.*;resolution:=optional',
-      'org.hamcrest.*;resolution:=optional',
-      'org.objenesis.*;resolution:=optional',
-      'net.bytebuddy.*;resolution:=optional',
-      'net.sf.cglib.*;resolution:=optional',
-      'org.objectweb.asm.*;resolution:=optional',
-      '*'
-    ].join(','),
-    '-noclassforname': 'true',
-    '-noextraheaders': 'true',
-    '-removeheaders': 'Private-Package'
-  )
+  bundle {
+    bnd(
+      'Export-Package': ['org.spockframework.*', 'spock.*'].join(','),
+      'Import-Package': [
+        'org.junit.platform.testkit.*;resolution:=optional',
+        'org.hamcrest.*;resolution:=optional',
+        'org.objenesis.*;resolution:=optional',
+        'net.bytebuddy.*;resolution:=optional',
+        'net.sf.cglib.*;resolution:=optional',
+        'org.objectweb.asm.*;resolution:=optional',
+        '*'
+      ].join(','),
+      '-noclassforname': 'true',
+      '-noextraheaders': 'true',
+      '-removeheaders': 'Private-Package'
+    )
+  }
 }
 
 processResources {
@@ -85,13 +85,11 @@ task coreConsole(type: JavaExec,
   }
 }
 
-def osgiPropertiesFile = file("$buildDir/verifyOSGiProperties.bndrun")
-
 // Bnd's Resolve task uses a properties file for its configuration. This
 // task writes out the properties necessary for it to verify the OSGi
 // metadata.
-tasks.register('osgiProperties', WriteProperties) {
-  outputFile = osgiPropertiesFile
+def osgiProperties = tasks.register('osgiProperties', WriteProperties) {
+  outputFile = layout.getBuildDirectory().file("verifyOSGiProperties.bndrun")
   property('-standalone', true)
   property('-runee', "JavaSE-${javaVersion < 9 ? '1.' + javaVersion : javaVersion}")
   property('-runrequires', "osgi.identity;filter:='(osgi.identity=${project.name})'")
@@ -100,22 +98,12 @@ tasks.register('osgiProperties', WriteProperties) {
 // Bnd's Resolve task is what verifies that a jar can be used in OSGi and
 // that its metadata is valid. If the metadata is invalid this task will
 // fail.
-tasks.register('verifyOSGi', Resolve) {
-
-  dependsOn(osgiProperties)
-  setBndrun(osgiPropertiesFile)
+def verifyOSGi = tasks.register('verifyOSGi', Resolve) {
+  getBndrun().fileProvider(osgiProperties.map { it.outputFile })
+  getOutputBndrun().set(layout.getBuildDirectory().file("resolvedOSGiProperties.bndrun"))
   reportOptional = false
-
-  // workaround until https://github.com/bndtools/bnd/issues/4577 is fixed
-  def taskMarker = file("$buildDir/verifyOSGi.marker")
-  writeOnChanges = false
-  outputs.cacheIf { true }
-  outputs.file(taskMarker).withPropertyName("taskMarker")
-  doLast {
-    taskMarker.text = "done"
-  }
 }
 
-tasks.check {
+tasks.named('check') {
   dependsOn(verifyOSGi)
 }

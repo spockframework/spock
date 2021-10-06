@@ -121,23 +121,36 @@ subprojects {
   }
 
   sourceSets.all { ss ->
-    for (v in variants.findAll { it <= variant } ) {
+    for (gv in variants.findAll { variant <= it } ) {
       java {
-        srcDir "src/${ss.name}$v/java"
+        srcDir "src/${ss.name}-groovy-le-$gv/java"
       }
       groovy {
-        srcDir "src/${ss.name}$v/groovy"
+        srcDir "src/${ss.name}-groovy-le-$gv/groovy"
       }
     }
-  }
-
-  sourceSets.all { ss ->
-    for (jv in javaVersions.findAll { it <= javaVersion } ) {
+    for (jv in javaVersions.findAll { javaVersion <= it } ) {
       java {
-        srcDir "src/${ss.name}.java$jv/java"
+        srcDir "src/${ss.name}-java-le-$jv/java"
       }
       groovy {
-        srcDir "src/${ss.name}.java$jv/groovy"
+        srcDir "src/${ss.name}-java-le-$jv/groovy"
+      }
+    }
+    for (gv in variants.findAll { variant >= it } ) {
+      java {
+        srcDir "src/${ss.name}-groovy-ge-$gv/java"
+      }
+      groovy {
+        srcDir "src/${ss.name}-groovy-ge-$gv/groovy"
+      }
+    }
+    for (jv in javaVersions.findAll { javaVersion >= it } ) {
+      java {
+        srcDir "src/${ss.name}-java-ge-$jv/java"
+      }
+      groovy {
+        srcDir "src/${ss.name}-java-ge-$jv/groovy"
       }
     }
   }

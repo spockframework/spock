@@ -107,12 +107,7 @@ subprojects {
     }
   }
 
-  if (javaVersion == 8) {
-    tasks.withType(Javadoc) {
-      options.addStringOption('Xdoclint:none', '-quiet')
-      options.noTimestamp()
-    }
-  } else if (javaVersion >= 9){
+  if (javaVersion >= 9) {
     tasks.withType(JavaCompile) {
       javaCompiler = javaToolchains.compilerFor {
         languageVersion = JavaLanguageVersion.of(8)
@@ -121,11 +116,6 @@ subprojects {
     }
     tasks.withType(GroovyCompile) {
       options.encoding = 'UTF-8'
-    }
-
-    tasks.withType(Javadoc) {
-      options.addStringOption('Xdoclint:none', '-quiet')
-      options.noTimestamp()
     }
   }
 
@@ -397,6 +387,10 @@ def configureJavadoc(task) {
   configure(task) {
     include "spock/**"
     configure(options) {
+      if (javaVersion >= 8) {
+        options.addStringOption('Xdoclint:none', '-quiet')
+        options.noTimestamp()
+      }
       options.addStringOption('source', '1.8')
       links "https://docs.oracle.com/javase/8/docs/api/"
       links "https://docs.groovy-lang.org/docs/groovy-$groovyVersion/html/gapi/"

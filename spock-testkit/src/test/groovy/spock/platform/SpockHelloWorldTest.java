@@ -1,5 +1,6 @@
 package spock.platform;
 
+import org.junit.platform.engine.discovery.MethodSelector;
 import org.junit.platform.launcher.Launcher;
 import org.junit.platform.launcher.TestPlan;
 import org.junit.platform.launcher.core.LauncherConfig;
@@ -71,7 +72,7 @@ class SpockHelloWorldTest extends SpockEngineBase {
   }
 
   @Test
-  void iterationsAreResolved() {
+  void iterationsAreResolvedViaUniqueIdSelector() {
     UniqueId featureMethodUniqueId = UniqueId.forEngine("spock")
       .append("spec", UnrollTestCase.class.getName())
       .append("feature", "$spock_feature_0_0");
@@ -93,6 +94,37 @@ class SpockHelloWorldTest extends SpockEngineBase {
         selectUniqueId(featureMethodUniqueId)
       ),
       stats -> stats.started(4).succeeded(3).failed(1)
+    );
+  }
+
+  @Test
+  void iterationsAreResolvedViaIterationSelector() {
+    UniqueId featureMethodUniqueId = UniqueId.forEngine("spock")
+      .append("spec", UnrollTestCase.class.getName())
+      .append("feature", "$spock_feature_0_0");
+    MethodSelector methodSelector = selectMethod(UnrollTestCase.class, "unrollMe");
+
+    execute(
+      selectIteration(methodSelector, 1),
+      stats -> stats.started(2).succeeded(1).failed(1)
+    );
+    execute(
+      selectIteration(methodSelector, 0, 2),
+      stats -> stats.started(3).succeeded(3)
+    );
+    execute(
+      asList(
+        selectIteration(methodSelector, 1),
+        selectUniqueId(featureMethodUniqueId)
+      ),
+      stats -> stats.started(4).succeeded(3).failed(1)
+    );
+    execute(
+      asList(
+        selectIteration(methodSelector, 0),
+        selectUniqueId(featureMethodUniqueId.append("iteration", "2"))
+      ),
+      stats -> stats.started(3).succeeded(3)
     );
   }
 

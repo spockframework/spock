@@ -107,16 +107,14 @@ subprojects {
     }
   }
 
-  if (javaVersion >= 9) {
-    tasks.withType(JavaCompile) {
-      javaCompiler = javaToolchains.compilerFor {
-        languageVersion = JavaLanguageVersion.of(8)
-      }
-      options.encoding = 'UTF-8'
+  tasks.withType(JavaCompile) {
+    javaCompiler = javaToolchains.compilerFor {
+      languageVersion = JavaLanguageVersion.of(8)
     }
-    tasks.withType(GroovyCompile) {
-      options.encoding = 'UTF-8'
-    }
+    options.encoding = 'UTF-8'
+  }
+  tasks.withType(GroovyCompile) {
+    options.encoding = 'UTF-8'
   }
 
   sourceSets.all { ss ->
@@ -387,10 +385,8 @@ def configureJavadoc(task) {
   configure(task) {
     include "spock/**"
     configure(options) {
-      if (javaVersion >= 8) {
-        options.addStringOption('Xdoclint:none', '-quiet')
-        options.noTimestamp()
-      }
+      options.addStringOption('Xdoclint:none', '-quiet')
+      options.noTimestamp()
       options.addStringOption('source', '1.8')
       links "https://docs.oracle.com/javase/8/docs/api/"
       links "https://docs.groovy-lang.org/docs/groovy-$groovyVersion/html/gapi/"

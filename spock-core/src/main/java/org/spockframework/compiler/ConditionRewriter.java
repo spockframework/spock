@@ -50,6 +50,7 @@ import static org.spockframework.compiler.AstUtil.createDirectMethodCall;
  */
 public class ConditionRewriter extends AbstractExpressionConverter<Expression> implements GroovyCodeVisitorCompat {
   private static final Pattern COMMENTS_PATTERN = Pattern.compile("/\\*.*?\\*/|//.*$");
+  private static final String THROWABLE = "$spock_condition_throwable";
 
   private final IRewriteResources resources;
 
@@ -678,7 +679,7 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> i
 
     tryCatchStatement.addCatch(
         new CatchStatement(
-            new Parameter(new ClassNode(Throwable.class), "throwable"),
+            new Parameter(new ClassNode(Throwable.class), THROWABLE),
             new ExpressionStatement(
                 createDirectMethodCall(
                     new ClassExpression(resources.getAstNodeCache().SpockRuntime),
@@ -690,7 +691,7 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> i
                         new ConstantExpression(condition.getLineNumber()),            // line
                         new ConstantExpression(condition.getColumnNumber()),          // column
                         message == null ? ConstantExpression.NULL : message,          // message
-                        new VariableExpression("throwable")                           // throwable
+                        new VariableExpression(THROWABLE)                             // throwable
                     ))
                 )
             )
@@ -707,14 +708,14 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> i
 
     tryCatchStatement.addCatch(
       new CatchStatement(
-        new Parameter(new ClassNode(Throwable.class), "throwable"),
+        new Parameter(new ClassNode(Throwable.class), THROWABLE),
         new ExpressionStatement(
           createDirectMethodCall(
             new ClassExpression(resources.getAstNodeCache().SpockRuntime),
             resources.getAstNodeCache().SpockRuntime_GroupConditionFailedWithException,
             new ArgumentListExpression(Arrays.<Expression>asList(
               new VariableExpression(errorCollectorName),
-              new VariableExpression("throwable")                                     // throwable
+              new VariableExpression(THROWABLE)                                     // throwable
             ))
           )
         )

@@ -12,9 +12,11 @@ If applied on the Specification level, this causes the shared field initializers
 and `setupSpec` methods to run.
 If a ConditionalExtension applied on the Specification level uses `instance.` it
 will now behave as if it was applied on every feature.
+
 - Set the owner for condition closures on spec annotations https://github.com/spockframework/spock/pull/1357[#1357]
 +
 This allows access to static methods when `@IgnoreIf`, `@Requires` and `@PendingFeatureIf` is used on a Specification.
+
 - Add exception translation to JUnit4 Rules https://github.com/spockframework/spock/pull/1342[#1342]
 - Update bnd Gradle plugin to 6.0.0 (OSGI) https://github.com/spockframework/spock/pull/1377[#1377]
 - Fix selector ordering issue https://github.com/spockframework/spock/pull/1375[#1375]
@@ -26,6 +28,7 @@ As the ErrorSpecNode does not have children it would get removed
 when trying to select specific tests methods
 For example, gradle will report that no test were found,
 and not report the actual error.
+
 - Fix double invocation of IRunListener.beforeSpec and IRunListener.afterSpec https://github.com/spockframework/spock/pull/1344[#1344]
 - Fix regression with multi-assignment of method call result https://github.com/spockframework/spock/pull/1333[#1333]
 - Fix Build MethodSource with the correct spec class name https://github.com/spockframework/spock/pull/1345[#1345]
@@ -37,6 +40,7 @@ methods, since they appeared to come from the declaring class instead of
 the current test class. In addition, the Maven Surefire provider failed
 to match such methods when executing tests matching a mask (e.g., via
 `-Dtest=*MaskTest`).
+- Automatically test on CI with JDK 17 (only `-groovy-3.0` variant)
 
 
 Thanks to all the contributors to this release: Marc Philipp, Miles Thomason, BJ Hargrave, Marcin Zajączkowski, Lőrinc Pap,  Felipe Pedrosa, Marcin Świerczyński

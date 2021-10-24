@@ -22,7 +22,80 @@
 <div class="sect1">
 <h2 id="_2_1_tbd"><a class="anchor" href="#_2_1_tbd"></a><a class="link" href="#_2_1_tbd">2.1 (tbd)</a></h2>
 <div class="sectionbody">
-
+<div class="ulist">
+<ul>
+<li>
+<p>Add support for selecting individual iterations. Individual iterations can now be selected via their unique ID. <a href="https://github.com/spockframework/spock/pull/1376">#1376</a></p>
+</li>
+<li>
+<p>Add optional reason to <code>@Requires</code> and <code>@IgnoreIf</code> <a href="https://github.com/spockframework/spock/pull/1362">#1362</a></p>
+</li>
+<li>
+<p>Add "shared." support to ConditionalExtensions <a href="https://github.com/spockframework/spock/pull/1359">#1359</a></p>
+<div class="paragraph">
+<p>ConditionalExtensions can now access shared fields via the <code>shared.</code> prefix.
+If applied on the Specification level, this causes the shared field initializers
+and <code>setupSpec</code> methods to run.
+If a ConditionalExtension applied on the Specification level uses <code>instance.</code> it
+will now behave as if it was applied on every feature.</p>
+</div>
+</li>
+<li>
+<p>Set the owner for condition closures on spec annotations <a href="https://github.com/spockframework/spock/pull/1357">#1357</a></p>
+<div class="paragraph">
+<p>This allows access to static methods when <code>@IgnoreIf</code>, <code>@Requires</code> and <code>@PendingFeatureIf</code> is used on a Specification.</p>
+</div>
+</li>
+<li>
+<p>Add exception translation to JUnit4 Rules <a href="https://github.com/spockframework/spock/pull/1342">#1342</a></p>
+</li>
+<li>
+<p>Update bnd Gradle plugin to 6.0.0 (OSGI) <a href="https://github.com/spockframework/spock/pull/1377">#1377</a></p>
+</li>
+<li>
+<p>Fix selector ordering issue <a href="https://github.com/spockframework/spock/pull/1375">#1375</a></p>
+</li>
+<li>
+<p>Fix <code>@TempDir</code> not working for <code>@Shared</code> inherited fields <a href="https://github.com/spockframework/spock/pull/1373">#1373</a></p>
+</li>
+<li>
+<p>Fix JUnit rule run order <a href="https://github.com/spockframework/spock/pull/1363">#1363</a></p>
+</li>
+<li>
+<p>Prevent removal of ErrorSpecNode from execution hierarchy <a href="https://github.com/spockframework/spock/pull/1358">#1358</a></p>
+<div class="paragraph">
+<p>As the ErrorSpecNode does not have children it would get removed
+when trying to select specific tests methods
+For example, gradle will report that no test were found,
+and not report the actual error.</p>
+</div>
+</li>
+<li>
+<p>Fix double invocation of IRunListener.beforeSpec and IRunListener.afterSpec <a href="https://github.com/spockframework/spock/pull/1344">#1344</a></p>
+</li>
+<li>
+<p>Fix regression with multi-assignment of method call result <a href="https://github.com/spockframework/spock/pull/1333">#1333</a></p>
+</li>
+<li>
+<p>Fix Build MethodSource with the correct spec class name <a href="https://github.com/spockframework/spock/pull/1345">#1345</a></p>
+<div class="paragraph">
+<p>Prior to this fix, all <code>SpockNode</code> that use a <code>MethodSource</code>
+did not use the actual test class of the discovered method, and
+instead used the declaring class. This was problematic for inherited test
+methods, since they appeared to come from the declaring class instead of
+the current test class. In addition, the Maven Surefire provider failed
+to match such methods when executing tests matching a mask (e.g., via
+<code>-Dtest=*MaskTest</code>).</p>
+</div>
+</li>
+<li>
+<p>Automatically test on CI with JDK 17 (only <code>-groovy-3.0</code> variant)</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Thanks to all the contributors to this release: Marc Philipp, Miles Thomason, BJ Hargrave, Marcin Zajączkowski, Lőrinc Pap,  Felipe Pedrosa, Marcin Świerczyński</p>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -2303,7 +2376,7 @@ required; the only prerequisite for building Spock is a JDK installation (1.5 or
 <div id="footer">
 <div id="footer-text">
 Version 2.1-SNAPSHOT<br>
-Last updated 2021-10-09 15:39:33 UTC
+Last updated 2021-10-24 15:40:07 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./coderay-asciidoctor.css">

@@ -176,7 +176,6 @@ def foo() {
 
     when:
     def result = runner.runSpecBody("""
-@Unroll
 def foo() {
   expect: true
 
@@ -203,7 +202,6 @@ def foo() {
 
     when:
     def result = runner.runSpecBody("""
-@Unroll
 def foo() {
   expect: true
 
@@ -218,6 +216,54 @@ def foo() {
                                                                         "foo",
                                                                         "foo",
                                                                         "foo"]
+  }
+
+  def "includeFeatureNameForIterations is configurable using configuration script"() {
+    given:
+    runner.configurationScript {
+      unroll {
+        includeFeatureNameForIterations false
+      }
+    }
+
+    when:
+    def result = runner.runSpecBody("""
+def foo() {
+  expect: true
+
+  where:
+  x << [1, 2, 3]
+  y << ["a", "b", "c"]
+}
+    """)
+
+    then:
+    result.testEvents().started().list().testDescriptor.displayName == ["foo",
+                                                                        "x: 1, y: a, #0",
+                                                                        "x: 2, y: b, #1",
+                                                                        "x: 3, y: c, #2"
+                                                                        ]
+  }
+
+  def "dataVariablesWithIndex can be used in @Unroll"() {
+    when:
+    def result = runner.runSpecBody("""
+@Unroll("#dataVariablesWithIndex")
+def foo() {
+  expect: true
+
+  where:
+  x << [1, 2, 3]
+  y << ["a", "b", "c"]
+}
+    """)
+
+    then:
+    result.testEvents().started().list().testDescriptor.displayName == ["foo",
+                                                                        "x: 1, y: a, #0",
+                                                                        "x: 2, y: b, #1",
+                                                                        "x: 3, y: c, #2"
+                                                                        ]
   }
 
   @Issue("https://github.com/spockframework/spock/issues/187")

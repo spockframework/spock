@@ -88,10 +88,6 @@ allprojects {
       }
     }
   }
-
-  repositories {
-    mavenCentral()
-  }
 }
 
 apply from: script("ide")

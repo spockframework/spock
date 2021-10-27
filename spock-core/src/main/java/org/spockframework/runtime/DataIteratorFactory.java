@@ -14,19 +14,19 @@ public class DataIteratorFactory {
     this.supervisor = supervisor;
   }
 
-  public DataIterator createDataProviderStream(SpockExecutionContext context) {
-    return new DataProviderIterator(supervisor, context);
+  public DataIterator createFeatureDataIterator(SpockExecutionContext context) {
+    return new FeatureDataProviderIterator(supervisor, context);
   }
 
-  private static class DataProviderIterator implements DataIterator {
+  private static class FeatureDataProviderIterator implements DataIterator {
     private final IRunSupervisor supervisor;
     private final SpockExecutionContext context;
     private final Object[] dataProviders;
-    private final Iterator[] iterators;
+    private final Iterator<?>[] iterators;
     private final int estimatedNumIterations;
     private int iteration = 0;
 
-    public DataProviderIterator(IRunSupervisor supervisor, SpockExecutionContext context) {
+    public FeatureDataProviderIterator(IRunSupervisor supervisor, SpockExecutionContext context) {
       this.supervisor = supervisor;
       this.context = context;
       // order is important as they rely on each other
@@ -211,12 +211,12 @@ public class DataIteratorFactory {
       return result.toArray();
     }
 
-    private Iterator[] createIterators() {
+    private Iterator<?>[] createIterators() {
       if (context.getErrorInfoCollector().hasErrors()) {
         return null;
       }
 
-      Iterator[] iterators = new Iterator<?>[dataProviders.length];
+      Iterator<?>[] iterators = new Iterator<?>[dataProviders.length];
       for (int i = 0; i < dataProviders.length; i++)
         try {
           Iterator<?> iter = GroovyRuntimeUtil.asIterator(dataProviders[i]);

@@ -16,8 +16,14 @@
 
 package org.spockframework.runtime;
 
+import org.spockframework.runtime.extension.IDataDriver;
+import org.spockframework.runtime.extension.IIterationRunner;
+import org.spockframework.runtime.model.ExecutionResult;
 import org.spockframework.runtime.model.IterationInfo;
 import spock.config.RunnerConfiguration;
+
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Adds the ability to run parameterized features.
@@ -35,8 +41,10 @@ public class PlatformParameterizedSpecRunner extends PlatformSpecRunner {
       return;
     }
 
-    try (DataIterator dataProviderStream = new DataIteratorFactory(supervisor).createDataProviderStream(context)) {
-      runIterations(context, childExecutor, dataProviderStream);
+    try (DataIterator dataIterator = new DataIteratorFactory(supervisor).createFeatureDataIterator(context)) {
+      IIterationRunner iterationRunner = createIterationRunner(context, childExecutor);
+      IDataDriver dataDriver = context.getCurrentFeature().getDataDriver();
+      dataDriver.runIterations(dataIterator, iterationRunner);
       childExecutor.awaitFinished();
     } catch (InterruptedException ie) {
       throw ie;
@@ -45,24 +53,25 @@ public class PlatformParameterizedSpecRunner extends PlatformSpecRunner {
     }
   }
 
-  private void runIterations(SpockExecutionContext context, ParameterizedFeatureChildExecutor childExecutor, DataIterator dataIterator) {
-    if (context.getErrorInfoCollector().hasErrors()) {
-      return;
-    }
+  private IIterationRunner createIterationRunner(SpockExecutionContext context, ParameterizedFeatureChildExecutor childExecutor) {
+    return new IIterationRunner() {
+      private final AtomicInteger iterationIndex = new AtomicInteger(0);
 
-    int iterationIndex = 0;
-    while (dataIterator.hasNext()) {
-      IterationInfo iterationInfo = createIterationInfo(context, iterationIndex, dataIterator.next(), dataIterator.getEstimatedNumIterations());
-      IterationNode iterationNode = new IterationNode(
-          context.getParentId().append("iteration", String.valueOf(iterationIndex++)),
+      @Override
+      public CompletableFuture<ExecutionResult> runIteration(Object[] args) {
+        IterationInfo iterationInfo = createIterationInfo(context, iterationIndex.get(), args, Integer.MAX_VALUE);
+        IterationNode iterationNode = new IterationNode(
+          context.getParentId().append("iteration", String.valueOf(iterationIndex.getAndIncrement())),
           context.getRunContext().getConfiguration(RunnerConfiguration.class), iterationInfo);
 
-      if (context.getErrorInfoCollector().hasErrors()) {
-        return;
+        if (context.getErrorInfoCollector().hasErrors()) {
+          return CompletableFuture.completedFuture(ExecutionResult.REJECTED);
+        }
+        if (iterationInfo.getFeature().getIterationFilter().isAllowed(iterationInfo.getIterationIndex())) {
+          return childExecutor.execute(iterationNode);
+        }
+        return null;
       }
-      if (iterationInfo.getFeature().getIterationFilter().isAllowed(iterationInfo.getIterationIndex())) {
-        childExecutor.execute(iterationNode);
-      }
-    }
+    };
   }
 }

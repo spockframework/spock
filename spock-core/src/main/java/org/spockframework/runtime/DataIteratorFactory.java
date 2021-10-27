@@ -1,10 +1,11 @@
 package org.spockframework.runtime;
 
-import static java.util.stream.Collectors.toList;
-
+import org.jetbrains.annotations.NotNull;
 import org.spockframework.runtime.model.*;
 
 import java.util.*;
+
+import static java.util.stream.Collectors.toList;
 
 public class DataIteratorFactory {
 
@@ -15,12 +16,79 @@ public class DataIteratorFactory {
   }
 
   public DataIterator createFeatureDataIterator(SpockExecutionContext context) {
-    return new FeatureDataProviderIterator(supervisor, context);
+    return new DataProcessorIterator(supervisor, context, new FeatureDataProviderIterator(supervisor, context));
   }
 
-  private static class FeatureDataProviderIterator implements DataIterator {
-    private final IRunSupervisor supervisor;
-    private final SpockExecutionContext context;
+  private static abstract class BaseDataIterator implements DataIterator {
+    protected final IRunSupervisor supervisor;
+    protected final SpockExecutionContext context;
+
+    public BaseDataIterator(IRunSupervisor supervisor, SpockExecutionContext context) {
+      this.supervisor = supervisor;
+      this.context = context;
+    }
+
+    protected Object invokeRaw(Object target, MethodInfo method, Object... arguments) {
+      try {
+        return method.invoke(target, arguments);
+      } catch (Throwable throwable) {
+        supervisor.error(context.getErrorInfoCollector(), new ErrorInfo(method, throwable));
+        return null;
+      }
+    }
+  }
+
+  private static class DataProcessorIterator extends BaseDataIterator {
+    private final DataIterator delegate;
+    private final List<String> dataVariableNames;
+
+    private DataProcessorIterator(IRunSupervisor supervisor, SpockExecutionContext context, DataIterator delegate) {
+      super(supervisor, context);
+      this.delegate = delegate;
+      this.dataVariableNames = readDataVariableNames();
+    }
+
+    @NotNull
+    private List<String> readDataVariableNames() {
+      return Collections.unmodifiableList(Arrays.asList(
+        context.getCurrentFeature().getDataProcessorMethod().getAnnotation(DataProcessorMetadata.class)
+          .dataVariables()));
+    }
+
+    @Override
+    public int getEstimatedNumIterations() {
+      return delegate.getEstimatedNumIterations();
+    }
+
+    @Override
+    public List<String> getDataVariableNames() {
+      return dataVariableNames;
+    }
+
+    @Override
+    public void close() throws Exception {
+      delegate.close();
+    }
+
+    @Override
+    public boolean hasNext() {
+      return delegate.hasNext();
+    }
+
+    @Override
+    public Object[] next() {
+      Object[] next = delegate.next();
+
+      try {
+        return (Object[]) invokeRaw(context.getSharedInstance(), context.getCurrentFeature().getDataProcessorMethod(), next);
+      } catch (Throwable t) {
+        supervisor.error(context.getErrorInfoCollector(), new ErrorInfo(context.getCurrentFeature().getDataProcessorMethod(), t));
+        return null;
+      }
+    }
+  }
+
+  private static class FeatureDataProviderIterator extends BaseDataIterator {
     private final Object[] dataProviders;
     private final Iterator<?>[] iterators;
     private final int estimatedNumIterations;
@@ -28,13 +96,12 @@ public class DataIteratorFactory {
     private int iteration = 0;
 
     public FeatureDataProviderIterator(IRunSupervisor supervisor, SpockExecutionContext context) {
-      this.supervisor = supervisor;
-      this.context = context;
+      super(supervisor, context);
       // order is important as they rely on each other
+      this.dataVariableNames = dataVariableNames();
       this.dataProviders = createDataProviders();
       this.estimatedNumIterations = estimateNumIterations();
       this.iterators = createIterators();
-      dataVariableNames = Collections.unmodifiableList(Arrays.asList(context.getCurrentFeature().getDataProcessorMethod().getAnnotation(DataProcessorMetadata.class).dataVariables()));
     }
 
     @Override
@@ -89,20 +156,15 @@ public class DataIteratorFactory {
 
       // advances iterators and computes args
       Object[] next = new Object[iterators.length];
-      for (int i = 0; i < iterators.length; i++)
+      for (int i = 0; i < iterators.length; i++) {
         try {
           next[i] = iterators[i].next();
         } catch (Throwable t) {
           supervisor.error(context.getErrorInfoCollector(), new ErrorInfo(context.getCurrentFeature().getDataProviders().get(i).getDataProviderMethod(), t));
           return null;
         }
-
-      try {
-        return (Object[])invokeRaw(context, context.getSharedInstance(), context.getCurrentFeature().getDataProcessorMethod(), next);
-      } catch (Throwable t) {
-        supervisor.error(context.getErrorInfoCollector(), new ErrorInfo(context.getCurrentFeature().getDataProcessorMethod(), t));
-        return null;
       }
+      return next;
     }
 
     @Override
@@ -137,7 +199,7 @@ public class DataIteratorFactory {
           continue;
         }
 
-        int size = ((Number)rawSize).intValue();
+        int size = ((Number) rawSize).intValue();
         if (size < 0 || size >= result) {
           continue;
         }
@@ -146,15 +208,6 @@ public class DataIteratorFactory {
       }
 
       return result == Integer.MAX_VALUE ? -1 : result;
-    }
-
-    private Object invokeRaw(SpockExecutionContext context, Object target, MethodInfo method, Object... arguments) {
-      try {
-        return method.invoke(target, arguments);
-      } catch (Throwable throwable) {
-        supervisor.error(context.getErrorInfoCollector(), new ErrorInfo(method, throwable));
-        return null;
-      }
     }
 
     private Object[] createDataProviders() {
@@ -167,11 +220,6 @@ public class DataIteratorFactory {
         return new Object[0];
       }
 
-      List<String> dataProviderVariables = dataProviderInfos
-        .stream()
-        .map(DataProviderInfo::getDataVariables)
-        .flatMap(List::stream)
-        .collect(toList());
 
       Object[] dataProviders = new Object[dataProviderInfos.size()];
 
@@ -180,8 +228,8 @@ public class DataIteratorFactory {
         MethodInfo method = dataProviderInfo.getDataProviderMethod();
 
         Object provider = invokeRaw(
-          context, context.getCurrentInstance(), method,
-          getPreviousDataTableProviders(dataProviderVariables, dataProviders, dataProviderInfo));
+          context.getCurrentInstance(), method,
+          getPreviousDataTableProviders(dataVariableNames, dataProviders, dataProviderInfo));
 
         if (context.getErrorInfoCollector().hasErrors()) {
           if (provider != null) {
@@ -198,6 +246,15 @@ public class DataIteratorFactory {
       }
 
       return dataProviders;
+    }
+
+    @NotNull
+    private List<String> dataVariableNames() {
+      return context.getCurrentFeature().getDataProviders()
+        .stream()
+        .map(DataProviderInfo::getDataVariables)
+        .flatMap(List::stream)
+        .collect(toList());
     }
 
     private Object[] getPreviousDataTableProviders(List<String> dataProviderVariables, Object[] dataProviders,

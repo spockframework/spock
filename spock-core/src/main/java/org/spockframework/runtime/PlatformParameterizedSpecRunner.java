@@ -19,6 +19,7 @@ package org.spockframework.runtime;
 import org.spockframework.runtime.extension.IDataDriver;
 import org.spockframework.runtime.extension.IIterationRunner;
 import org.spockframework.runtime.model.ExecutionResult;
+import org.spockframework.runtime.model.FeatureInfo;
 import org.spockframework.runtime.model.IterationInfo;
 import spock.config.RunnerConfiguration;
 
@@ -41,10 +42,11 @@ public class PlatformParameterizedSpecRunner extends PlatformSpecRunner {
       return;
     }
 
+    FeatureInfo feature = context.getCurrentFeature();
     try (DataIterator dataIterator = new DataIteratorFactory(supervisor).createFeatureDataIterator(context)) {
       IIterationRunner iterationRunner = createIterationRunner(context, childExecutor);
-      IDataDriver dataDriver = context.getCurrentFeature().getDataDriver();
-      dataDriver.runIterations(dataIterator, iterationRunner);
+      IDataDriver dataDriver = feature.getDataDriver();
+      dataDriver.runIterations(dataIterator, iterationRunner, feature.getFeatureMethod().getParameters());
       childExecutor.awaitFinished();
     } catch (InterruptedException ie) {
       throw ie;
@@ -59,7 +61,7 @@ public class PlatformParameterizedSpecRunner extends PlatformSpecRunner {
 
       @Override
       public CompletableFuture<ExecutionResult> runIteration(Object[] args) {
-        IterationInfo iterationInfo = createIterationInfo(context, iterationIndex.get(), args, Integer.MAX_VALUE);
+        IterationInfo iterationInfo = createIterationInfo(context, iterationIndex.get(), args, -1);
         IterationNode iterationNode = new IterationNode(
           context.getParentId().append("iteration", String.valueOf(iterationIndex.getAndIncrement())),
           context.getRunContext().getConfiguration(RunnerConfiguration.class), iterationInfo);

@@ -24,6 +24,7 @@ public class DataIteratorFactory {
     private final Object[] dataProviders;
     private final Iterator<?>[] iterators;
     private final int estimatedNumIterations;
+    private final List<String> dataVariableNames;
     private int iteration = 0;
 
     public FeatureDataProviderIterator(IRunSupervisor supervisor, SpockExecutionContext context) {
@@ -31,8 +32,9 @@ public class DataIteratorFactory {
       this.context = context;
       // order is important as they rely on each other
       this.dataProviders = createDataProviders();
-      this.iterators = createIterators();
       this.estimatedNumIterations = estimateNumIterations();
+      this.iterators = createIterators();
+      dataVariableNames = Collections.unmodifiableList(Arrays.asList(context.getCurrentFeature().getDataProcessorMethod().getAnnotation(DataProcessorMetadata.class).dataVariables()));
     }
 
     @Override
@@ -106,6 +108,11 @@ public class DataIteratorFactory {
     @Override
     public int getEstimatedNumIterations() {
       return estimatedNumIterations;
+    }
+
+    @Override
+    public List<String> getDataVariableNames() {
+      return dataVariableNames;
     }
 
     private int estimateNumIterations() {

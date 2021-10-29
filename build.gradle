@@ -5,7 +5,7 @@ plugins {
   id "org.asciidoctor.jvm.convert"
   id "jacoco"
   id "net.nemerosa.versioning"
-  id "de.marcphilipp.nexus-publish" apply false
+  id "io.github.gradle-nexus.publish-plugin"
   id "com.github.ben-manes.versions"
 }
 
@@ -252,8 +252,10 @@ if (gradle.startParameter.taskNames == ["ghActionsPublish"] || gradle.startParam
     /*
       We want to release only snapshots directly from master, final releases will be tagged and then published from that tag.
      */
-    if (snapshotVersion || isTag) {
-      gradle.startParameter.taskNames += ["publish"]
+    if (snapshotVersion) {
+      gradle.startParameter.taskNames += ["publishToSonatype"]
+    } else if (isTag) {
+      gradle.startParameter.taskNames += ["publishToSonatype", "closeSonatypeStagingRepository"]
     } // else {
       // disable tag release for now as this is done with a token, that doesn't trigger other workflows
       // gradle.startParameter.taskNames += ["tagRelease"]
@@ -369,6 +371,16 @@ asciidoctor {
     }
     if (errors) {
       throw new IllegalArgumentException(errors.join('\n'))
+    }
+  }
+}
+
+nexusPublishing {
+  packageGroup = 'org.spockframework'
+  repositories {
+    sonatype {
+      username = System.getenv("SONATYPE_OSS_USER")
+      password = System.getenv("SONATYPE_OSS_PASSWORD")
     }
   }
 }

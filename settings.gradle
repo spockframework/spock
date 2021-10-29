@@ -19,6 +19,12 @@ plugins {
   id "com.gradle.common-custom-user-data-gradle-plugin"
 }
 
+dependencyResolutionManagement {
+  repositories {
+    mavenCentral()
+  }
+}
+
 def gradleEnterpriseServer = "https://ge.spockframework.org"
 def isCiServer = System.env["CI"] || System.env["GITHUB_ACTIONS"]
 def spockBuildCacheUsername = ext.has('spockBuildCacheUsername') ? ext['spockBuildCacheUsername'] : null

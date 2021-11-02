@@ -87,6 +87,7 @@ public void $spock_feature_0_0() {
     this.getSpecificationContext().getMockController().leaveScope()
 }'''
   }
+
   def "regex match conditions are transformed correctly"() {
     when:
     def result = compiler.transpileFeatureBody('''

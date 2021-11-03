@@ -44,13 +44,7 @@ gradleEnterprise {
       termsOfServiceUrl = "https://gradle.com/terms-of-service"
     } else {
       server = gradleEnterpriseServer
-      publishAlways()
-      (delegate as BuildScanExtensionWithHiddenFeatures).publishIfAuthenticated()
-    }
-
-    if (isCiServer) {
-      publishAlways()
-      termsOfServiceAgree = "yes"
+    (delegate as BuildScanExtensionWithHiddenFeatures).publishIfAuthenticated()
     }
 
     obfuscation {

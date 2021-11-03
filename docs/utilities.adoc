@@ -40,7 +40,7 @@ There are many more ways to modify `MutableClock` just have a look at the JavaDo
 [[collection-conditions]]
 == Collection Conditions
 
-Sometimes, you want to assert the contents of a collection regardless of its order.
+Sometimes, you want to assert the elements of a collection regardless of their order.
 The Groovy way to do this is to cast both to `Set`, i.e. `x as Set == [1, 2, 3] as Set`.
 While this works, it is very noisy.
 

@@ -16,6 +16,8 @@
 
 package org.spockframework.util;
 
+import org.jetbrains.annotations.Contract;
+
 /**
  * Assertions for use within Spock code. Failures indicate internal errors.
  *
@@ -23,23 +25,27 @@ package org.spockframework.util;
  */
 public abstract class Assert {
   // IDEA: beef up error message ("please submit bug report", include caller in message in case stack trace is lost)
-
+  @Contract("null -> fail")
   public static void notNull(Object obj) {
     notNull(obj, "argument is null");
   }
 
+  @Contract("null, _, _ -> fail")
   public static void notNull(Object obj, String msg, Object... values) {
     if (obj == null) throw new InternalSpockError(String.format(msg, values));
   }
 
+  @Contract("false -> fail")
   public static void that(boolean condition) {
     that(condition, "internal error");
   }
 
+  @Contract("false, _, _ -> fail")
   public static void that(boolean condition, String msg, Object... values) {
     if (!condition) throw new InternalSpockError(String.format(msg, values));
   }
 
+  @Contract("_, _ -> fail")
   public static void fail(String msg, Object... values) {
     that(false, msg, values);
   }

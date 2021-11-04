@@ -156,6 +156,16 @@ public class ExpressionInfo implements Iterable<ExpressionInfo> {
     return "==".equals(operation) && children.size() == 2;
   }
 
+  public boolean isSetComparison() {
+    if ("=~".equals(operation) && children.size() == 2) {
+      Object value1 = children.get(0).getValue();
+      Object value2 = children.get(1).getValue();
+
+      return value1 instanceof Set && value2 instanceof Set;
+    }
+    return false;
+  }
+
   public boolean isInstanceOfComparison() {
     return "instanceof".equals(operation) && children.size() == 2;
   }

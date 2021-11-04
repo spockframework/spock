@@ -8,7 +8,7 @@ public class FailedSetEqualityComparisonRenderer implements ExpressionComparison
   @Override
   public String render(ExpressionInfo expr) {
     if (!(Boolean.FALSE.equals(expr.getValue()))) return null;
-    if (!expr.isEqualityComparison()) return null;
+    if (!(expr.isEqualityComparison() || expr.isSetComparison())) return null;
 
     Object value1 = expr.getChildren().get(0).getValue();
     Object value2 = expr.getChildren().get(1).getValue();

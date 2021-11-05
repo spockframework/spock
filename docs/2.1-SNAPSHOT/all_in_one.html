@@ -185,6 +185,12 @@
 <li><a href="#_example">Example</a></li>
 </ul>
 </li>
+<li><a href="#collection-conditions">Collection Conditions</a>
+<ul class="sectlevel3">
+<li><a href="#_lenient_match">Lenient Match</a></li>
+<li><a href="#_strict_match">Strict Match</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li><a href="#parallel-execution">Parallel Execution</a>
@@ -5143,6 +5149,80 @@ or the corresponding methods in the other <code>java.time.*</code> classes.</p>
 </div>
 </div>
 </div>
+<div class="sect2">
+<h3 id="collection-conditions"><a class="anchor" href="#collection-conditions"></a><a class="link" href="#collection-conditions">Collection Conditions</a></h3>
+<div class="paragraph">
+<p>Sometimes, you want to assert the elements of a collection regardless of their order.
+The Groovy way to do this is to cast both to <code>Set</code>, i.e. <code>x as Set == [1, 2, 3] as Set</code>.
+While this works, it is very noisy.</p>
+</div>
+<div class="paragraph">
+<p>Since Spock 2.1 you can use two new conditions:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>x =~ [1, 2, 3]</code> is a lenient match, i.e., checking that x contains at least one instance of every item in the list (same semantics as casting both to <code>Set</code> before comparing).</p>
+</li>
+<li>
+<p><code>x ==~ [1, 2, 3, 3]</code> is a strict match, i.e., checking that x contains exactly the items in the list regardless of their order (using Hamcrest&#8217;s <code>containsInAnyOrder</code> under the hood).</p>
+</li>
+</ul>
+</div>
+<div class="sect3">
+<h4 id="_lenient_match"><a class="anchor" href="#_lenient_match"></a><a class="link" href="#_lenient_match">Lenient Match</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> x = [<span class="integer">2</span>, <span class="integer">2</span>, <span class="integer">1</span>, <span class="integer">3</span>, <span class="integer">3</span>]
+<span class="keyword">assert</span> x =~ [<span class="integer">4</span>, <span class="integer">1</span>, <span class="integer">2</span>]</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code>x =~ [4, 1, 2]
+| |
+| false
+| 2 differences (66% similarity, 1 missing, 1 extra)
+| missing: [4]
+| extra: [3]
+[2, 1, 3]</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_strict_match"><a class="anchor" href="#_strict_match"></a><a class="link" href="#_strict_match">Strict Match</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> x = [<span class="integer">2</span>, <span class="integer">2</span>, <span class="integer">1</span>, <span class="integer">3</span>, <span class="integer">3</span>]
+<span class="keyword">assert</span> x ==~ [<span class="integer">4</span>, <span class="integer">1</span>, <span class="integer">2</span>]</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code>x ==~ [4, 1, 2]
+| |
+| false
+[2, 2, 1, 3, 3]
+
+Expected: iterable with items [&lt;4&gt;, &lt;1&gt;, &lt;2&gt;] in any order
+     but: not matched: <b class="conum">(2)</b></code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+Both operands must be <code>Iterable</code> for this to work.
+      Otherwise, it will be treated like the standard groovy <a href="https://groovy-lang.org/operators.html#_find_operator">find operator</a> or <a href="https://groovy-lang.org/operators.html#_match_operator">match operators</a>.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -8859,7 +8939,7 @@ This is due to how groovy implements traits and AST transformations.</p>
 <div id="footer">
 <div id="footer-text">
 Version 2.1-SNAPSHOT<br>
-Last updated 2021-10-29 09:25:02 UTC
+Last updated 2021-11-05 00:01:57 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./coderay-asciidoctor.css">

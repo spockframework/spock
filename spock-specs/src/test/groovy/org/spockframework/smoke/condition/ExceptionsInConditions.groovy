@@ -6,6 +6,8 @@ import org.spockframework.runtime.*
 class ExceptionsInConditions extends EmbeddedSpecification {
   private static final String SCRIPT_EXECUTION_LINE_PATTERN = ~/[Ss]cript_?+\p{XDigit}++\.groovy:[\d]++/
   private static final String NORMALIZED_SCRIPT_EXECUTION_LINE = "scriptXXX.groovy:X"
+  private static final String INDY_FROM_CACHE_EXECUTION_LINE_PATTERN =
+    /(?m)^\s+at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache\(IndyInterface.java:\d+\)\R/
 
   def "null pointer exception in condition"() {
     when:
@@ -31,6 +33,7 @@ class ExceptionsInConditions extends EmbeddedSpecification {
 
   private String unifyScriptExecutionLineInStacktrace(String stacktrace) {
     return stacktrace.replaceAll(SCRIPT_EXECUTION_LINE_PATTERN, NORMALIZED_SCRIPT_EXECUTION_LINE)
+      .replaceAll(INDY_FROM_CACHE_EXECUTION_LINE_PATTERN, "")
   }
 
   def "null pointer exception in method condition"() {

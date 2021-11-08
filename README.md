@@ -104,14 +104,16 @@ open module foo.bar {
 Links
 -----
 * Spock Homepage -- https://spockframework.org
-* Spock Web Console -- https://meetspock.appspot.com/
+* Spock Web Console -- https://gwc-experiment.appspot.com/
 * GitHub Organization -- https://github.com/spockframework
 * Reference Documentation -- https://docs.spockframework.org
 * User Forum -- https://github.com/spockframework/spock/discussions
+* Chat -- https://gitter.im/spockframework/spock
+* Stack Overflow -- https://stackoverflow.com/questions/tagged/spock
 * Issue Tracker -- https://github.com/spockframework/spock/issues
 * Spock Example Project -- https://github.com/spockframework/spock-example
 * Twitter -- https://twitter.com/SpockFramework
 
-Live Long And Prosper!
+🖖 Live Long And Prosper!
 
 The Spock Framework Team

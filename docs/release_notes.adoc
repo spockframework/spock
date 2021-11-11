@@ -2,7 +2,7 @@
 = Release Notes
 include::include.adoc[]
 
-== 2.1-RC1 (2021-11-12)
+== 2.1-M1 (2021-11-12)
 - Add support for selecting individual iterations. Individual iterations can now be selected via their unique ID. https://github.com/spockframework/spock/pull/1376[#1376]
 - Add <<utilities.adoc#collection-conditions, collection conditions>> https://github.com/spockframework/spock/issues/1372[#1372]
 - Add exception translation to JUnit4 Rules https://github.com/spockframework/spock/pull/1342[#1342]

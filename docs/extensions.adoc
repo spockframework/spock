@@ -110,16 +110,22 @@ followed by a predicate:
 include::{sourcedir}/extension/IgnoreIfDocSpec.groovy[tag=example-a]
 ----
 
+[[_precondition_context]]
+==== Precondition Context
 To make predicates easier to read and write, the following properties are available inside the closure:
 
-* `sys` A map of all system properties
-* `env` A map of all environment variables
-* `os` Information about the operating system (see `spock.util.environment.OperatingSystem`)
-* `jvm` Information about the JVM (see `spock.util.environment.Jvm`)
-* `instance` The specification instance if instance fields, shared fields or instance methods are needed.
+`sys`:: A map of all system properties
+`env`:: A map of all environment variables
+`os`:: Information about the operating system (see `spock.util.environment.OperatingSystem`)
+`jvm`:: Information about the JVM (see `spock.util.environment.Jvm`)
+`shared`:: The shared specification instance, only shared fields will have been initialized.
+  If this property is used, then the whole annotated element cannot be skipped up-front without initializing the shared instance.
+`instance`:: The specification instance, if instance fields, shared fields, or instance methods are needed.
   If this property is used, the whole annotated element cannot be skipped up-front without executing fixtures,
-  data providers and similar. Instead the whole workflow is followed up to the feature method invocation,
-  where then the closure is checked and it is decided whether to abort the specific iteration or not.
+  data providers and similar. Instead, the whole workflow is followed up to the feature method invocation,
+  where then the closure is checked, and it is decided whether to abort the specific iteration or not.
+`data`:: A map of all the data variables for the current iteration.
+  Similar to `instance` this will run the whole workflow and only skip individual iterations.
 
 Using the `os` property, the previous example can be rewritten as:
 
@@ -148,12 +154,16 @@ which is not available otherwise:
 include::{sourcedir}/extension/IgnoreIfDocSpec.groovy[tag=example-d]
 ----
 
-If applied to a data driven feature, the closure can also access the data variables.
-If the closure does not reference any actual data variables or is applied to a spec,
-the whole annotated element is skipped up-front, no fixtures, data providers or anything
-else will be executed. But if the closure actually does reference valid data variables,
-the whole workflow is followed up to the feature method invocation, where then the closure
-is checked and it is decided whether to abort the specific iteration or not.
+Using `data.*` to filter out iterations is especially helpful when using `.combinations()` to generate iterations.
+
+[source,groovy,indent=0]
+----
+include::{sourcedir}/extension/IgnoreIfDocSpec.groovy[tag=example-e]
+----
+
+Also note that the condition is split into separate `@IgnoreIf` annotations so that they can be evaluated independently.
+It is good practice ordering them based on their specificity, so that the least specific one is evaluated first, that is from static to shared to instance.
+If you need to combine the conditions in a single `@IgnoreIf` annotation, you should order them from least specific to most specific inside as well.
 
 === Requires
 

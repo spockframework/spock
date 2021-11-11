@@ -19,6 +19,7 @@ package org.spockframework.smoke.extension
 import org.spockframework.EmbeddedSpecification
 import org.spockframework.runtime.ConditionNotSatisfiedError
 import org.spockframework.runtime.extension.ExtensionException
+import org.spockframework.runtime.extension.builtin.PreconditionContext
 import spock.lang.*
 
 class IgnoreIfExtension extends EmbeddedSpecification {
@@ -55,7 +56,7 @@ class IgnoreIfExtension extends EmbeddedSpecification {
     expect: false
   }
 
-  @IgnoreIf({ a == 1 })
+  @IgnoreIf({ data.a == 1 })
   def 'can evaluate for single iterations if data variables are accessed'() {
     expect:
     a == 2
@@ -70,7 +71,7 @@ class IgnoreIfExtension extends EmbeddedSpecification {
     a = { throw new RuntimeException() }.call()
   }
 
-  def 'fails directly when referencing an unknown variable'() {
+  def 'fails directly when referencing an unknown property'() {
     when:
     runner.runSpecBody """
 @IgnoreIf({ b })
@@ -83,6 +84,21 @@ def foo() {
     then:
     ExtensionException ee = thrown()
     ee.cause instanceof MissingPropertyException
+  }
+
+  def 'fails directly when referencing an unknown variable'() {
+    when:
+    runner.runSpecBody """
+@IgnoreIf({ data.b })
+def foo() {
+    expect: false
+    where: a = { throw new RuntimeException() }.call()
+}
+"""
+
+    then:
+    ExtensionException ee = thrown()
+    ee.cause instanceof PreconditionContext.DataVariableContextException
   }
 
   def 'fails directly when throwing an arbitrary exception'() {
@@ -315,7 +331,7 @@ def foo() {
     thrown(ConditionNotSatisfiedError)
   }
 
-  @IgnoreIf({ a == 1 })
+  @IgnoreIf({ data.a == 1 })
   @IgnoreIf({ false })
   def "feature is ignored if data variable accessing IgnoreIf annotation is true"() {
     expect: false
@@ -323,8 +339,8 @@ def foo() {
     a = 1
   }
 
-  @IgnoreIf({ a == 1 })
-  @IgnoreIf({ a != 1 })
+  @IgnoreIf({ data.a == 1 })
+  @IgnoreIf({ data.a != 1 })
   def "feature is ignored if at least one data variable accessing IgnoreIf annotation is true"() {
     expect: false
     where:
@@ -332,7 +348,7 @@ def foo() {
   }
 
   @IgnoreIf({ true })
-  @IgnoreIf({ a != 1 })
+  @IgnoreIf({ data.a != 1 })
   def "feature is ignored if non data variable accessing IgnoreIf annotation is true"() {
     expect: false
     where:

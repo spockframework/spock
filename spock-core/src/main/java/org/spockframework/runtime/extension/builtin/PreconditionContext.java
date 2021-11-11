@@ -16,19 +16,18 @@
 
 package org.spockframework.runtime.extension.builtin;
 
-import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
+import static java.util.Collections.emptyMap;
 
-import groovy.lang.MissingPropertyException;
+import java.math.BigDecimal;
+import java.util.*;
+
 import spock.lang.IgnoreIf;
 import spock.lang.PendingFeatureIf;
 import spock.lang.Requires;
 import spock.util.environment.Jvm;
 import spock.util.environment.OperatingSystem;
 
-import static java.util.Collections.emptyMap;
+import groovy.lang.DelegatesTo;
 
 /**
  * The context (delegate) for a {@link Requires}, {@link IgnoreIf} or {@link PendingFeatureIf} condition.
@@ -36,29 +35,16 @@ import static java.util.Collections.emptyMap;
 public class PreconditionContext {
   private final Object theSharedInstance;
   private final Object theInstance;
-  private final Map<String, Object> dataVariables = new HashMap<>();
+  private final Map<String, Object> dataVariables;
 
   public PreconditionContext() {
     this(null, null, emptyMap());
   }
 
-  public PreconditionContext(Object theSharedInstance, Object instance, Map<String, Object> dataVariables) {
-    this.theSharedInstance = theSharedInstance;
-    theInstance = instance;
-    this.dataVariables.putAll(dataVariables);
-  }
-
-  public Object propertyMissing(String propertyName) {
-    if (dataVariables.containsKey(propertyName)) {
-      return dataVariables.get(propertyName);
-    }
-    if ((theInstance != null) && "instance".equals(propertyName)) {
-      return theInstance;
-    }
-    if ((theSharedInstance != null) && "shared".equals(propertyName)) {
-      return theSharedInstance;
-    }
-    throw new MissingPropertyException(propertyName, getClass());
+  public PreconditionContext(Object sharedInstance, Object instance, Map<String, Object> dataVariables) {
+    this.theSharedInstance = sharedInstance;
+    this.theInstance = instance;
+    this.dataVariables = new StrictHashMap<>(dataVariables);
   }
 
   /**
@@ -80,18 +66,6 @@ public class PreconditionContext {
   }
 
   /**
-   * Returns the current JVM's system properties.
-   *
-   * @return the current JVM's system properties
-   *
-   * @deprecated use {@link #getSys()} instead
-   */
-  @Deprecated
-  public Properties getProperties() {
-    return getSys();
-  }
-
-  /**
    * Returns the current operating system.
    *
    * @return the current operating system
@@ -110,6 +84,49 @@ public class PreconditionContext {
   }
 
   /**
+   * Returns the Test Instance
+   * <p>
+   * If accessed, the instance' setup will run before this can be evaluated.
+   * @since 2.0
+   * @return the test instance
+   */
+  public Object getInstance() {
+    if (theInstance == null) {
+      throw new InstanceContextException();
+    }
+    return theInstance;
+  }
+
+  /**
+   * Returns the Shared Test Instance
+   * <p>
+   * If accessed, the Specification will run and initialize the shared instance before this can be evaluated.
+   *
+   * @since 2.1
+   * @return the shared instance
+   */
+  public Object getShared() {
+    if (theSharedInstance == null) {
+      throw new SharedContextException();
+    }
+    return theSharedInstance;
+  }
+
+  /**
+   * Returns the data variables for data-driven features.
+   * <p>
+   * This cannot be used in a Specification level condition.
+   * <p>
+   * If accessed, the instance' setup will run before this can be evaluated.
+   *
+   * @since 2.1
+   * @return the data variables
+   */
+  public Map<String, Object> getData() {
+    return dataVariables;
+  }
+
+  /**
    * Returns the current JVM's Java specification version.
    * Examples for valid values are {@code 1.6} and {@code 1.7}.
    *
@@ -118,5 +135,37 @@ public class PreconditionContext {
   public BigDecimal getJavaVersion() {
     String version = System.getProperty("java.specification.version");
     return new BigDecimal(version);
+  }
+
+  private static class StrictHashMap<K, V> extends HashMap<K, V> {
+    public StrictHashMap(Map<K,V> map) {
+      super(map);
+    }
+
+    @Override
+    public V get(Object key) {
+      if (!containsKey(key)) {
+        throw new DataVariableContextException(key.toString());
+      }
+      return super.get(key);
+    }
+
+    @Override
+    public V put(K key, V value) {
+      throw new UnsupportedOperationException("Unmodifiable");
+    }
+  }
+
+  public static class PreconditionContextException extends RuntimeException {}
+  public static class SharedContextException extends PreconditionContextException {}
+  public static class InstanceContextException extends PreconditionContextException {}
+  public static class DataVariableContextException extends PreconditionContextException {
+    private final String dataVariable;
+
+    public DataVariableContextException(String dataVariable) {this.dataVariable = dataVariable;}
+
+    public String getDataVariable() {
+      return dataVariable;
+    }
   }
 }

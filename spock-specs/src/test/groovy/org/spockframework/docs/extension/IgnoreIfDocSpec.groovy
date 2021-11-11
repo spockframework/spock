@@ -37,4 +37,21 @@ class IgnoreIfDocSpec extends Specification {
     expect:
     true
   }
+
+
+// tag::example-e[]
+  @IgnoreIf({ os.windows })
+  @IgnoreIf({ data.a == 5 && data.b >= 6 })
+  def "I'll run everywhere but on Windows and only if a != 5 and b < 6"(int a, int b) {
+    // ...
+// end::example-e[]
+    expect:
+    true
+
+// tag::example-e[]
+    where:
+    [a, b] << [(1..10), (1..8)].combinations()
+  }
+// end::example-e[]
+
 }

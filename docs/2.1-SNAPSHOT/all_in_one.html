@@ -3957,30 +3957,47 @@ followed by a predicate:</p>
 <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">I'll run everywhere but on Windows</span><span class="delimiter">&quot;</span></span>() {</code></pre>
 </div>
 </div>
+<div class="sect4">
+<h5 id="_precondition_context"><a class="anchor" href="#_precondition_context"></a><a class="link" href="#_precondition_context">Precondition Context</a></h5>
 <div class="paragraph">
 <p>To make predicates easier to read and write, the following properties are available inside the closure:</p>
 </div>
-<div class="ulist">
-<ul>
-<li>
-<p><code>sys</code> A map of all system properties</p>
-</li>
-<li>
-<p><code>env</code> A map of all environment variables</p>
-</li>
-<li>
-<p><code>os</code> Information about the operating system (see <code>spock.util.environment.OperatingSystem</code>)</p>
-</li>
-<li>
-<p><code>jvm</code> Information about the JVM (see <code>spock.util.environment.Jvm</code>)</p>
-</li>
-<li>
-<p><code>instance</code> The specification instance if instance fields, shared fields or instance methods are needed.
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>sys</code></dt>
+<dd>
+<p>A map of all system properties</p>
+</dd>
+<dt class="hdlist1"><code>env</code></dt>
+<dd>
+<p>A map of all environment variables</p>
+</dd>
+<dt class="hdlist1"><code>os</code></dt>
+<dd>
+<p>Information about the operating system (see <code>spock.util.environment.OperatingSystem</code>)</p>
+</dd>
+<dt class="hdlist1"><code>jvm</code></dt>
+<dd>
+<p>Information about the JVM (see <code>spock.util.environment.Jvm</code>)</p>
+</dd>
+<dt class="hdlist1"><code>shared</code></dt>
+<dd>
+<p>The shared specification instance, only shared fields will have been initialized.
+If this property is used, then the whole annotated element cannot be skipped up-front without initializing the shared instance.</p>
+</dd>
+<dt class="hdlist1"><code>instance</code></dt>
+<dd>
+<p>The specification instance, if instance fields, shared fields, or instance methods are needed.
 If this property is used, the whole annotated element cannot be skipped up-front without executing fixtures,
-data providers and similar. Instead the whole workflow is followed up to the feature method invocation,
-where then the closure is checked and it is decided whether to abort the specific iteration or not.</p>
-</li>
-</ul>
+data providers and similar. Instead, the whole workflow is followed up to the feature method invocation,
+where then the closure is checked, and it is decided whether to abort the specific iteration or not.</p>
+</dd>
+<dt class="hdlist1"><code>data</code></dt>
+<dd>
+<p>A map of all the data variables for the current iteration.
+Similar to <code>instance</code> this will run the whole workflow and only skip individual iterations.</p>
+</dd>
+</dl>
 </div>
 <div class="paragraph">
 <p>Using the <code>os</code> property, the previous example can be rewritten as:</p>
@@ -4018,12 +4035,24 @@ which is not available otherwise:</p>
 </div>
 </div>
 <div class="paragraph">
-<p>If applied to a data driven feature, the closure can also access the data variables.
-If the closure does not reference any actual data variables or is applied to a spec,
-the whole annotated element is skipped up-front, no fixtures, data providers or anything
-else will be executed. But if the closure actually does reference valid data variables,
-the whole workflow is followed up to the feature method invocation, where then the closure
-is checked and it is decided whether to abort the specific iteration or not.</p>
+<p>Using <code>data.*</code> to filter out iterations is especially helpful when using <code>.combinations()</code> to generate iterations.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@IgnoreIf</span>({ os.windows })
+<span class="annotation">@IgnoreIf</span>({ data.a == <span class="integer">5</span> &amp;&amp; data.b &gt;= <span class="integer">6</span> })
+<span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">I'll run everywhere but on Windows and only if a != 5 and b &lt; 6</span><span class="delimiter">&quot;</span></span>(<span class="type">int</span> a, <span class="type">int</span> b) {
+  <span class="comment">// ...</span>
+  <span class="key">where</span>:
+  [a, b] &lt;&lt; [(<span class="integer">1</span>..<span class="integer">10</span>), (<span class="integer">1</span>..<span class="integer">8</span>)].combinations()
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Also note that the condition is split into separate <code>@IgnoreIf</code> annotations so that they can be evaluated independently.
+It is good practice ordering them based on their specificity, so that the least specific one is evaluated first, that is from static to shared to instance.
+If you need to combine the conditions in a single <code>@IgnoreIf</code> annotation, you should order them from least specific to most specific inside as well.</p>
+</div>
 </div>
 </div>
 <div class="sect3">
@@ -9052,7 +9081,7 @@ This is due to how groovy implements traits and AST transformations.</p>
 <div id="footer">
 <div id="footer-text">
 Version 2.1-SNAPSHOT<br>
-Last updated 2021-11-11 10:46:22 UTC
+Last updated 2021-11-11 20:25:13 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./coderay-asciidoctor.css">

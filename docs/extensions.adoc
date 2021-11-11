@@ -120,7 +120,7 @@ To make predicates easier to read and write, the following properties are availa
 * `jvm` Information about the JVM (see `spock.util.environment.Jvm`)
 * `shared` The shared specification instance, only shared fields will have been initialized.
   If this property is used, then the whole annotated element cannot be skipped up-front without initializing the shared instance.
-* `instance` The specification instance, if instance fields, shared fields or instance methods are needed.
+* `instance` The specification instance, if instance fields, shared fields, or instance methods are needed.
   If this property is used, the whole annotated element cannot be skipped up-front without executing fixtures,
   data providers and similar. Instead, the whole workflow is followed up to the feature method invocation,
   where then the closure is checked, and it is decided whether to abort the specific iteration or not.
@@ -161,7 +161,7 @@ Using `data.*` to filter out iterations is especially helpful when using `.combi
 include::{sourcedir}/extension/IgnoreIfDocSpec.groovy[tag=example-e]
 ----
 
-Also note that both `@IgnoreIf` annotations are split, so that they can be evaluated independently.
+Also note that the condition is split into separate `@IgnoreIf` annotations so that they can be evaluated independently.
 It is good practice ordering them based on their specificity, so that the least specific one is evaluated first, that is from static to shared to instance.
 If you need to combine the conditions in a single `@IgnoreIf` annotation, you should order them from least specific to most specific inside as well.
 

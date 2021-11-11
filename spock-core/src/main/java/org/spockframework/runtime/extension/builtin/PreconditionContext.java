@@ -86,7 +86,7 @@ public class PreconditionContext {
   /**
    * Returns the Test Instance
    * <p>
-   * If accessed, then the instance' setup will run before this can be evaluated.
+   * If accessed, the instance' setup will run before this can be evaluated.
    * @since 2.0
    * @return the test instance
    */
@@ -100,7 +100,7 @@ public class PreconditionContext {
   /**
    * Returns the Shared Test Instance
    * <p>
-   * If accessed, then the Specification will run and initialize the shared instance before this can be evaluated.
+   * If accessed, the Specification will run and initialize the shared instance before this can be evaluated.
    *
    * @since 2.1
    * @return the shared instance
@@ -117,7 +117,7 @@ public class PreconditionContext {
    * <p>
    * This cannot be used in a Specification level condition.
    * <p>
-   * If accessed, then the instance' setup will run before this can be evaluated.
+   * If accessed, the instance' setup will run before this can be evaluated.
    *
    * @since 2.1
    * @return the data variables

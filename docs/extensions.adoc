@@ -114,17 +114,17 @@ include::{sourcedir}/extension/IgnoreIfDocSpec.groovy[tag=example-a]
 ==== Precondition Context
 To make predicates easier to read and write, the following properties are available inside the closure:
 
-* `sys` A map of all system properties
-* `env` A map of all environment variables
-* `os` Information about the operating system (see `spock.util.environment.OperatingSystem`)
-* `jvm` Information about the JVM (see `spock.util.environment.Jvm`)
-* `shared` The shared specification instance, only shared fields will have been initialized.
+`sys`:: A map of all system properties
+`env`:: A map of all environment variables
+`os`:: Information about the operating system (see `spock.util.environment.OperatingSystem`)
+`jvm`:: Information about the JVM (see `spock.util.environment.Jvm`)
+`shared`:: The shared specification instance, only shared fields will have been initialized.
   If this property is used, then the whole annotated element cannot be skipped up-front without initializing the shared instance.
-* `instance` The specification instance, if instance fields, shared fields, or instance methods are needed.
+`instance`:: The specification instance, if instance fields, shared fields, or instance methods are needed.
   If this property is used, the whole annotated element cannot be skipped up-front without executing fixtures,
   data providers and similar. Instead, the whole workflow is followed up to the feature method invocation,
   where then the closure is checked, and it is decided whether to abort the specific iteration or not.
-* `data` A map of all the data variables for the current iteration.
+`data`:: A map of all the data variables for the current iteration.
   Similar to `instance` this will run the whole workflow and only skip individual iterations.
 
 Using the `os` property, the previous example can be rewritten as:

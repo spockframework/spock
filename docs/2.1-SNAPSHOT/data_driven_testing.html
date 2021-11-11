@@ -785,7 +785,7 @@ such a method.</p>
 <h2 id="_unrolled_iteration_names"><a class="anchor" href="#_unrolled_iteration_names"></a><a class="link" href="#_unrolled_iteration_names">Unrolled Iteration Names</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>By default the names of unrolled iterations are the name of the feature, plus the data variables and the iteration
+<p>By default, the names of unrolled iterations are the name of the feature, plus the data variables and the iteration
 index. This will always produce unique names and should enable you to identify easily the failing data variable
 combination.</p>
 </div>
@@ -872,30 +872,63 @@ following are valid method names:</p>
 </div>
 </div>
 <div class="paragraph">
-<p>Additionally to the data variables the tokens <code>#featureName</code> and <code>#iterationIndex</code> are supported.
+<p>Additionally, to the data variables the tokens <code>#featureName</code> and <code>#iterationIndex</code> are supported.
 The former does not make much sense inside an actual feature name, but there are two other places
-where an unroll pattern can be defined, where it is more useful.</p>
+where an unroll-pattern can be defined, where it is more useful.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">#person is #person.age years old [iterationIndex: #iterationIndex]</span><span class="delimiter">&quot;</span></span>() {</code></pre>
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">#person is #person.age years old [#iterationIndex]</span><span class="delimiter">&quot;</span></span>() {</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Alternatively to specifying the unroll pattern as method name, it can be given as parameter
+<p>will be reported as</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>╷
+└─ Spock ✔
+   └─ PersonSpec ✔
+      └─ #person.name is #person.age years old [#iterationIndex] ✔
+         ├─ Fred is 38 years old [0] ✔
+         ├─ Wilma is 36 years old [1] ✔
+         └─ Pebbles is 5 years old [2] ✔</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Alternatively, to specifying the unroll-pattern as method name, it can be given as parameter
 to the <code>@Unroll</code> annotation which takes precedence over the method name:</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@Unroll</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">#featureName[#iterationIndex] (#person.name is #person.age years old)</span><span class="delimiter">&quot;</span></span>)
-<span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">person age should be calculated properly</span><span class="delimiter">&quot;</span></span>() {</code></pre>
+<span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">person age should be calculated properly</span><span class="delimiter">&quot;</span></span>() {
+<span class="comment">// ...</span></code></pre>
 </div>
+</div>
+<div class="paragraph">
+<p>will be reported as</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>╷
+└─ Spock ✔
+   └─ PersonSpec ✔
+      └─ person age should be calculated properly ✔
+         ├─ person age should be calculated properly[0] (Fred is 38 years old) ✔
+         ├─ person age should be calculated properly[1] (Wilma is 36 years old) ✔
+         └─ person age should be calculated properly[2] (Pebbles is 5 years old) ✔</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The advantage is, that you can have a descriptive method name for the whole feature, while having a separate template for each iteration.
+Furthermore, the feature method name is not filled with placeholders and thus better readable.</p>
 </div>
 <div class="paragraph">
 <p>If neither a parameter to the annotation is given, nor the method name contains a <code>#</code>,
 the <a href="extensions.html#spock-configuration-file">configuration file</a> setting <code>defaultPattern</code>
 in the <code>unroll</code> section is inspected. If it is set to a non-<code>null</code>
-string, this value is used as unroll pattern. This could for example be set to</p>
+string, this value is used as unroll-pattern. This could for example be set to</p>
 </div>
 <div class="ulist">
 <ul>
@@ -911,8 +944,32 @@ a data variable called <code>iterationName</code> that is then used for reportin
 </li>
 </ul>
 </div>
+<div class="sect2">
+<h3 id="_special_tokens"><a class="anchor" href="#_special_tokens"></a><a class="link" href="#_special_tokens">Special Tokens</a></h3>
+<div class="paragraph">
+<p>This is the complete list of special tokens:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>#featureName</code> is the name of the feature (mostly useful for the <code>defaultPattern</code> setting)</p>
+</li>
+<li>
+<p><code>#iterationIndex</code> is the current iteration index</p>
+</li>
+<li>
+<p><code>#dataVariables</code> lists all data variables for this iteration, e.g. <code>x: 1, y: 2, z: 3</code></p>
+</li>
+<li>
+<p><code>#dataVariablesWithIndex</code> the same as <code>#dataVariables</code> but with an index at the end, e.g. <code>x: 1, y: 2, z: 3, #0</code></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_configuration"><a class="anchor" href="#_configuration"></a><a class="link" href="#_configuration">Configuration</a></h3>
 <div class="listingblock">
-<div class="title">Set Default Unroll Pattern</div>
+<div class="title">Set Default Unroll-Pattern</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy">unroll {
     defaultPattern <span class="string"><span class="delimiter">'</span><span class="content">#featureName[#iterationIndex]</span><span class="delimiter">'</span></span>
@@ -920,7 +977,7 @@ a data variable called <code>iterationName</code> that is then used for reportin
 </div>
 </div>
 <div class="paragraph">
-<p>If none of the three described ways is used to set a custom unroll pattern, by default
+<p>If none of the three described ways is used to set a custom unroll-pattern, by default
 the feature name is used, suffixed with all data variable names and their values and
 finally the iteration index, so the result will be for example
 <code>my feature [x: 1, y: 2, z: 3, #0]</code>.</p>
@@ -928,7 +985,7 @@ finally the iteration index, so the result will be for example
 <div class="paragraph">
 <p>If there is an error in an unroll expression, for example typo in variable name, exception during
 evaluation of a property or method in the expression and so on, the test will fail. This is not
-true for the automatic fall back rendering of the data variables if there is no unroll pattern
+true for the automatic fall back rendering of the data variables if there is no unroll-pattern
 set in any way, this will never fail the test, no matter what happens.</p>
 </div>
 <div class="paragraph">
@@ -938,11 +995,62 @@ in the <code>unroll</code> section to <code>false</code>. If this is done and an
 <code>#foo.bar</code> will be substituted by <code>#Error:foo.bar</code>.</p>
 </div>
 <div class="listingblock">
-<div class="title">Disable Unroll Pattern Expression Asserting</div>
+<div class="title">Disable Unroll-pattern Expression Asserting</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy">unroll {
     validateExpressions <span class="predefined-constant">false</span>
 }</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Some reporting frameworks, or IDEs support proper tree based reporting.
+For these cases it might be desirable to omit the feature name from the iteration reporting.</p>
+</div>
+<div class="listingblock">
+<div class="title">Disable repetition of feature name in iterations</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">unroll {
+    includeFeatureNameForIterations <span class="predefined-constant">false</span>
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>With <code>includeFeatureNameForIterations true</code></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>╷
+└─ Spock ✔
+   └─ ASpec ✔
+      └─ really long and informative test name that doesn't have to be repeated ✔
+         ├─ really long and informative test name that doesn't have to be repeated [x: 1, y: a, #0] ✔
+         ├─ really long and informative test name that doesn't have to be repeated [x: 2, y: b, #1] ✔
+         └─ really long and informative test name that doesn't have to be repeated [x: 3, y: c, #2] ✔</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">With <code>includeFeatureNameForIterations false</code></div>
+<div class="content">
+<pre>╷
+└─ Spock ✔
+   └─ ASpec ✔
+      └─ really long and informative test name that doesn't have to be repeated ✔
+         ├─ x: 1, y: a, #0 ✔
+         ├─ x: 2, y: b, #1 ✔
+         └─ x: 3, y: c, #2 ✔</pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+The same can be achieved for individual features by using <code>@Unroll('#dataVariablesWithIndex')</code>.
+</td>
+</tr>
+</table>
 </div>
 </div>
 </div>
@@ -960,7 +1068,7 @@ in the <code>unroll</code> section to <code>false</code>. If this is done and an
 <div id="footer">
 <div id="footer-text">
 Version 2.1-SNAPSHOT<br>
-Last updated 2021-11-10 19:16:01 UTC
+Last updated 2021-11-11 10:46:22 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./coderay-asciidoctor.css">

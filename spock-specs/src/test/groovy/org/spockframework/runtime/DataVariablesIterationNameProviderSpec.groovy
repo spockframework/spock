@@ -27,6 +27,7 @@ class DataVariablesIterationNameProviderSpec extends Specification {
     name = 'the feature'
     reportIterations = true
   }
+
   IterationInfo iteration = Stub {
     getFeature() >> feature
     getIterationIndex() >> 99
@@ -76,5 +77,41 @@ class DataVariablesIterationNameProviderSpec extends Specification {
 
     expect:
     testee.getName(iteration) == "$feature.name [x: #Error:RuntimeException during rendering, y: 2, z: 3, #$iteration.iterationIndex]"
+  }
+
+  def 'returns data variables and iteration index when reporting iterations and includeFeatureNameForIterations=false'() {
+    given:
+    testee = new DataVariablesIterationNameProvider(false)
+    iteration.getDataVariables() >> [x: 1, y: 2, z: 3]
+
+    expect:
+    testee.getName(iteration) == "x: 1, y: 2, z: 3, #$iteration.iterationIndex"
+  }
+
+  def 'returns data variables only when reporting iterations and includeFeatureNameForIterations=false, includeIterationIndex=false'() {
+    given:
+    testee = new DataVariablesIterationNameProvider(false, false)
+    iteration.getDataVariables() >> [x: 1, y: 2, z: 3]
+
+    expect:
+    testee.getName(iteration) == "x: 1, y: 2, z: 3"
+  }
+
+  def 'renders data variables in Groovy style and includeFeatureNameForIterations=false'() {
+    given:
+    testee = new DataVariablesIterationNameProvider(false)
+    iteration.getDataVariables() >> [x: [1], y: [a: 2], z: [3] as int[]]
+
+    expect:
+    testee.getName(iteration) == "x: [1], y: [a:2], z: [3], #$iteration.iterationIndex"
+  }
+
+  def 'returns iteration index when reporting iterations but data variables are null and includeFeatureNameForIterations=false'() {
+    given:
+    testee = new DataVariablesIterationNameProvider(false)
+    iteration.getDataVariables() >> null
+
+    expect:
+    testee.getName(iteration) == "#$iteration.iterationIndex"
   }
 }

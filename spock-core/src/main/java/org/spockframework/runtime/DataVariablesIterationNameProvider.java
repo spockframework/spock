@@ -14,17 +14,30 @@
 
 package org.spockframework.runtime;
 
-import org.spockframework.runtime.model.FeatureInfo;
-import org.spockframework.runtime.model.IterationInfo;
-import org.spockframework.runtime.model.NameProvider;
-
-import java.util.Map;
-import java.util.StringJoiner;
-
 import static java.lang.String.format;
 import static org.spockframework.util.RenderUtil.toStringOrDump;
 
+import org.spockframework.runtime.model.*;
+
+import java.util.*;
+
 public class DataVariablesIterationNameProvider implements NameProvider<IterationInfo> {
+  private final boolean includeFeatureNameForIterations;
+  private final boolean includeIterationIndex;
+
+  public DataVariablesIterationNameProvider() {
+    this(true, true);
+  }
+
+  public DataVariablesIterationNameProvider(boolean includeFeatureNameForIterations) {
+    this(includeFeatureNameForIterations, true);
+  }
+
+  public DataVariablesIterationNameProvider(boolean includeFeatureNameForIterations, boolean includeIterationIndex) {
+    this.includeFeatureNameForIterations = includeFeatureNameForIterations;
+    this.includeIterationIndex = includeIterationIndex;
+  }
+
   @Override
   public String getName(IterationInfo iteration) {
     FeatureInfo feature = iteration.getFeature();
@@ -32,11 +45,10 @@ public class DataVariablesIterationNameProvider implements NameProvider<Iteratio
       return feature.getName();
     }
 
-    StringJoiner nameJoiner = new StringJoiner(", ", "[", "]");
+    StringJoiner nameJoiner = new StringJoiner(", ");
     Map<String, Object> dataVariables = iteration.getDataVariables();
     if (dataVariables != null) {
-      dataVariables.forEach((name, value) ->
-      {
+      dataVariables.forEach((name, value) -> {
         String valueString;
         try {
           valueString = toStringOrDump(value);
@@ -46,7 +58,9 @@ public class DataVariablesIterationNameProvider implements NameProvider<Iteratio
         nameJoiner.add(format("%s: %s", name, valueString));
       });
     }
-    nameJoiner.add(format("#%d", iteration.getIterationIndex()));
-    return format("%s %s", feature.getName(), nameJoiner.toString());
+    if (includeIterationIndex) {
+      nameJoiner.add(format("#%d", iteration.getIterationIndex()));
+    }
+    return includeFeatureNameForIterations ? format("%s [%s]", feature.getName(), nameJoiner) : nameJoiner.toString();
   }
 }

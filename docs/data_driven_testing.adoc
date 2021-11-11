@@ -402,7 +402,7 @@ such a method.
 
 == Unrolled Iteration Names
 
-By default the names of unrolled iterations are the name of the feature, plus the data variables and the iteration
+By default, the names of unrolled iterations are the name of the feature, plus the data variables and the iteration
 index. This will always produce unique names and should enable you to identify easily the failing data variable
 combination.
 
@@ -468,35 +468,74 @@ include::{sourcedir}/datadriven/DataSpec.groovy[tag=unrolled-3a]
 include::{sourcedir}/datadriven/DataSpec.groovy[tag=unrolled-3b]
 ----
 
-Additionally to the data variables the tokens `#featureName` and `#iterationIndex` are supported.
+Additionally, to the data variables the tokens `#featureName` and `#iterationIndex` are supported.
 The former does not make much sense inside an actual feature name, but there are two other places
-where an unroll pattern can be defined, where it is more useful.
+where an unroll-pattern can be defined, where it is more useful.
 
 [source,groovy,indent=0]
 ----
-def "#person is #person.age years old [iterationIndex: #iterationIndex]"() {
+def "#person is #person.age years old [#iterationIndex]"() {
 ----
 
-Alternatively to specifying the unroll pattern as method name, it can be given as parameter
+will be reported as
+
+----
+╷
+└─ Spock ✔
+   └─ PersonSpec ✔
+      └─ #person.name is #person.age years old [#iterationIndex] ✔
+         ├─ Fred is 38 years old [0] ✔
+         ├─ Wilma is 36 years old [1] ✔
+         └─ Pebbles is 5 years old [2] ✔
+----
+
+Alternatively, to specifying the unroll-pattern as method name, it can be given as parameter
 to the `@Unroll` annotation which takes precedence over the method name:
 
 [source,groovy,indent=0]
 ----
 @Unroll("#featureName[#iterationIndex] (#person.name is #person.age years old)")
 def "person age should be calculated properly"() {
+// ...
 ----
+
+will be reported as
+
+----
+╷
+└─ Spock ✔
+   └─ PersonSpec ✔
+      └─ person age should be calculated properly ✔
+         ├─ person age should be calculated properly[0] (Fred is 38 years old) ✔
+         ├─ person age should be calculated properly[1] (Wilma is 36 years old) ✔
+         └─ person age should be calculated properly[2] (Pebbles is 5 years old) ✔
+----
+
+The advantage is, that you can have a descriptive method name for the whole feature, while having a separate template for each iteration.
+Furthermore, the feature method name is not filled with placeholders and thus better readable.
 
 If neither a parameter to the annotation is given, nor the method name contains a `#`,
 the <<extensions.adoc#spock-configuration-file,configuration file>> setting `defaultPattern`
 in the `unroll` section is inspected. If it is set to a non-`null`
-string, this value is used as unroll pattern. This could for example be set to
+string, this value is used as unroll-pattern. This could for example be set to
 
 - `#featureName` to have all iterations reported with the same name, or
 - `#featureName[#iterationIndex]` to have a simply indexed iteration name, or
 - `#iterationName` if you make sure that in each data-driven feature you also set
   a data variable called `iterationName` that is then used for reporting
 
-.Set Default Unroll Pattern
+=== Special Tokens
+
+This is the complete list of special tokens:
+
+- `#featureName` is the name of the feature (mostly useful for the `defaultPattern` setting)
+- `#iterationIndex` is the current iteration index
+- `#dataVariables` lists all data variables for this iteration, e.g. `x: 1, y: 2, z: 3`
+- `#dataVariablesWithIndex` the same as `#dataVariables` but with an index at the end, e.g. `x: 1, y: 2, z: 3, #0`
+
+=== Configuration
+
+.Set Default Unroll-Pattern
 [source,groovy]
 ----
 unroll {
@@ -504,14 +543,14 @@ unroll {
 }
 ----
 
-If none of the three described ways is used to set a custom unroll pattern, by default
+If none of the three described ways is used to set a custom unroll-pattern, by default
 the feature name is used, suffixed with all data variable names and their values and
 finally the iteration index, so the result will be for example
 `my feature [x: 1, y: 2, z: 3, #0]`.
 
 If there is an error in an unroll expression, for example typo in variable name, exception during
 evaluation of a property or method in the expression and so on, the test will fail. This is not
-true for the automatic fall back rendering of the data variables if there is no unroll pattern
+true for the automatic fall back rendering of the data variables if there is no unroll-pattern
 set in any way, this will never fail the test, no matter what happens.
 
 The failing of test with errors in the unroll expression can be disabled by setting the
@@ -519,10 +558,45 @@ The failing of test with errors in the unroll expression can be disabled by sett
 in the `unroll` section to `false`. If this is done and an error happens, the erroneous expression
 `#foo.bar` will be substituted by `#Error:foo.bar`.
 
-.Disable Unroll Pattern Expression Asserting
+.Disable Unroll-pattern Expression Asserting
 [source,groovy]
 ----
 unroll {
     validateExpressions false
 }
 ----
+
+Some reporting frameworks, or IDEs support proper tree based reporting.
+For these cases it might be desirable to omit the feature name from the iteration reporting.
+
+.Disable repetition of feature name in iterations
+[source,groovy]
+----
+unroll {
+    includeFeatureNameForIterations false
+}
+----
+
+With `includeFeatureNameForIterations true`
+----
+╷
+└─ Spock ✔
+   └─ ASpec ✔
+      └─ really long and informative test name that doesn't have to be repeated ✔
+         ├─ really long and informative test name that doesn't have to be repeated [x: 1, y: a, #0] ✔
+         ├─ really long and informative test name that doesn't have to be repeated [x: 2, y: b, #1] ✔
+         └─ really long and informative test name that doesn't have to be repeated [x: 3, y: c, #2] ✔
+----
+
+.With `includeFeatureNameForIterations false`
+----
+╷
+└─ Spock ✔
+   └─ ASpec ✔
+      └─ really long and informative test name that doesn't have to be repeated ✔
+         ├─ x: 1, y: a, #0 ✔
+         ├─ x: 2, y: b, #1 ✔
+         └─ x: 3, y: c, #2 ✔
+----
+
+NOTE: The same can be achieved for individual features by using `@Unroll('#dataVariablesWithIndex')`.

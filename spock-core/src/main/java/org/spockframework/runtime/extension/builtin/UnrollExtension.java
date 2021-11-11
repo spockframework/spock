@@ -107,6 +107,6 @@ public class UnrollExtension implements IGlobalExtension {
     if (unrollConfiguration.defaultPattern != null) {
       return new UnrollIterationNameProvider(feature, unrollConfiguration.defaultPattern, unrollConfiguration.validateExpressions);
     }
-    return new DataVariablesIterationNameProvider();
+    return new DataVariablesIterationNameProvider(unrollConfiguration.includeFeatureNameForIterations);
   }
 }

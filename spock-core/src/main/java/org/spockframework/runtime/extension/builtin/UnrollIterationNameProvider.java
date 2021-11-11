@@ -29,6 +29,10 @@ import static org.spockframework.util.RenderUtil.toStringOrDump;
  */
 public class UnrollIterationNameProvider implements NameProvider<IterationInfo> {
   private static final Pattern EXPRESSION_PATTERN = Pattern.compile("#([a-zA-Z_$]([\\w$.]|\\(\\))*)");
+  private static final DataVariablesIterationNameProvider DATA_VARIABLES =
+    new DataVariablesIterationNameProvider(false, false);
+  private static final DataVariablesIterationNameProvider DATA_VARIABLES_WITH_INDEX =
+    new DataVariablesIterationNameProvider(false, true);
 
   private final boolean validateExpressions;
   private final FeatureInfo feature;
@@ -43,16 +47,16 @@ public class UnrollIterationNameProvider implements NameProvider<IterationInfo> 
   // always returns a name
   @Override
   public String getName(IterationInfo iterationInfo) {
-    return nameFor(iterationInfo.getIterationIndex(), iterationInfo.getDataVariables());
+    return nameFor(iterationInfo.getDataVariables(), iterationInfo);
   }
 
-  private String nameFor(int iterationIndex, Map<String, Object> dataVariables) {
+  private String nameFor(Map<String, Object> dataVariables, IterationInfo iterationInfo) {
     StringBuffer result = new StringBuffer();
     expressionMatcher.reset();
 
     while (expressionMatcher.find()) {
       String expr = expressionMatcher.group(1);
-      String value = evaluateExpression(expr, iterationIndex, dataVariables);
+      String value = evaluateExpression(expr, dataVariables, iterationInfo);
       expressionMatcher.appendReplacement(result, Matcher.quoteReplacement(value));
     }
 
@@ -60,7 +64,7 @@ public class UnrollIterationNameProvider implements NameProvider<IterationInfo> 
     return result.toString();
   }
 
-  private String evaluateExpression(String expr, int iterationIndex, Map<String, Object> dataVariables) {
+  private String evaluateExpression(String expr, Map<String, Object> dataVariables, IterationInfo iterationInfo) {
     String[] exprParts = expr.split("\\.");
     String firstPart = exprParts[0];
     Object result;
@@ -71,7 +75,15 @@ public class UnrollIterationNameProvider implements NameProvider<IterationInfo> 
         break;
 
       case "iterationIndex":
-        result = String.valueOf(iterationIndex);
+        result = String.valueOf(iterationInfo.getIterationIndex());
+        break;
+
+      case "dataVariables":
+        result = DATA_VARIABLES.getName(iterationInfo);
+        break;
+
+      case "dataVariablesWithIndex":
+        result = DATA_VARIABLES_WITH_INDEX.getName(iterationInfo);
         break;
 
       default:

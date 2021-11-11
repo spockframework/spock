@@ -2,22 +2,23 @@
 = Release Notes
 include::include.adoc[]
 
-== 2.1 (tbd)
+== 2.1-RC1 (2021-11-12)
 - Add support for selecting individual iterations. Individual iterations can now be selected via their unique ID. https://github.com/spockframework/spock/pull/1376[#1376]
+- Add <<utilities.adoc#collection-conditions, collection conditions>> https://github.com/spockframework/spock/issues/1372[#1372]
+- Add exception translation to JUnit4 Rules https://github.com/spockframework/spock/pull/1342[#1342]
+- Add option to omit feature name from iterations https://github.com/spockframework/spock/pull/1386[#1386]
+and add additional <<data_driven_testing.adoc#unroll_tokens, Special Tokens>> to unroll patterns.
 - Add optional reason to `@Requires` and `@IgnoreIf` https://github.com/spockframework/spock/pull/1362[#1362]
-- Add "shared." support to ConditionalExtensions https://github.com/spockframework/spock/pull/1359[#1359]
-+
-ConditionalExtensions can now access shared fields via the `shared.` prefix.
-If applied on the Specification level, this causes the shared field initializers
-and `setupSpec` methods to run.
-If a ConditionalExtension applied on the Specification level uses `instance.` it
-will now behave as if it was applied on every feature.
+- Add `shared.` support to conditional extensions https://github.com/spockframework/spock/pull/1359[#1359].
+See <<extensions.adoc#precondition_context, Precondition Context>> for more details.
+- Add `data.` support to conditional extensions https://github.com/spockframework/spock/issues/1360[#1360].
+This replaces the  current behavior of accessing data variables without any prefix.
+See <<extensions.adoc#precondition_context, Precondition Context>> for more details.
 
 - Set the owner for condition closures on spec annotations https://github.com/spockframework/spock/pull/1357[#1357]
 +
 This allows access to static methods when `@IgnoreIf`, `@Requires` and `@PendingFeatureIf` is used on a Specification.
 
-- Add exception translation to JUnit4 Rules https://github.com/spockframework/spock/pull/1342[#1342]
 - Update bnd Gradle plugin to 6.0.0 (OSGI) https://github.com/spockframework/spock/pull/1377[#1377]
 - Fix selector ordering issue https://github.com/spockframework/spock/pull/1375[#1375]
 - Fix `@TempDir` not working for `@Shared` inherited fields https://github.com/spockframework/spock/pull/1373[#1373]
@@ -43,7 +44,7 @@ to match such methods when executing tests matching a mask (e.g., via
 - Automatically test on CI with JDK 17 (only `-groovy-3.0` variant)
 
 
-Thanks to all the contributors to this release: Marc Philipp, Miles Thomason, BJ Hargrave, Marcin Zajączkowski, Lőrinc Pap,  Felipe Pedrosa, Marcin Świerczyński
+Thanks to all the contributors to this release: Marc Philipp, Miles Thomason, BJ Hargrave, Marcin Zajączkowski, Lőrinc Pap, Felipe Pedrosa, Marcin Świerczyński, Benedikt Ritter
 
 == 2.0 (2021-05-17)
 

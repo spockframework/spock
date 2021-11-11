@@ -110,7 +110,7 @@ followed by a predicate:
 include::{sourcedir}/extension/IgnoreIfDocSpec.groovy[tag=example-a]
 ----
 
-[[_precondition_context]]
+[[precondition_context]]
 ==== Precondition Context
 To make predicates easier to read and write, the following properties are available inside the closure:
 

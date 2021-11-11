@@ -71,7 +71,7 @@
 <li><a href="#_closing_of_data_providers">Closing of Data Providers</a></li>
 <li><a href="#_unrolled_iteration_names">Unrolled Iteration Names</a>
 <ul class="sectlevel3">
-<li><a href="#_special_tokens">Special Tokens</a></li>
+<li><a href="#unroll_tokens">Special Tokens</a></li>
 <li><a href="#_configuration">Configuration</a></li>
 </ul>
 </li>
@@ -233,7 +233,7 @@
 </li>
 <li><a href="#_release_notes">Release Notes</a>
 <ul class="sectlevel2">
-<li><a href="#_2_1_tbd">2.1 (tbd)</a></li>
+<li><a href="#_2_1_rc1_2021_11_12">2.1-RC1 (2021-11-12)</a></li>
 <li><a href="#_2_0_2021_05_17">2.0 (2021-05-17)</a>
 <ul class="sectlevel3">
 <li><a href="#_highlights">Highlights</a></li>
@@ -2266,7 +2266,7 @@ a data variable called <code>iterationName</code> that is then used for reportin
 </ul>
 </div>
 <div class="sect3">
-<h4 id="_special_tokens"><a class="anchor" href="#_special_tokens"></a><a class="link" href="#_special_tokens">Special Tokens</a></h4>
+<h4 id="unroll_tokens"><a class="anchor" href="#unroll_tokens"></a><a class="link" href="#unroll_tokens">Special Tokens</a></h4>
 <div class="paragraph">
 <p>This is the complete list of special tokens:</p>
 </div>
@@ -3958,7 +3958,7 @@ followed by a predicate:</p>
 </div>
 </div>
 <div class="sect4">
-<h5 id="_precondition_context"><a class="anchor" href="#_precondition_context"></a><a class="link" href="#_precondition_context">Precondition Context</a></h5>
+<h5 id="precondition_context"><a class="anchor" href="#precondition_context"></a><a class="link" href="#precondition_context">Precondition Context</a></h5>
 <div class="paragraph">
 <p>To make predicates easier to read and write, the following properties are available inside the closure:</p>
 </div>
@@ -6171,33 +6171,39 @@ Grails 2.3 and higher have built-in Spock support and do not require a plugin.
 <h2 id="_release_notes"><a class="anchor" href="#_release_notes"></a><a class="link" href="#_release_notes">Release Notes</a></h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_2_1_tbd"><a class="anchor" href="#_2_1_tbd"></a><a class="link" href="#_2_1_tbd">2.1 (tbd)</a></h3>
+<h3 id="_2_1_rc1_2021_11_12"><a class="anchor" href="#_2_1_rc1_2021_11_12"></a><a class="link" href="#_2_1_rc1_2021_11_12">2.1-RC1 (2021-11-12)</a></h3>
 <div class="ulist">
 <ul>
 <li>
 <p>Add support for selecting individual iterations. Individual iterations can now be selected via their unique ID. <a href="https://github.com/spockframework/spock/pull/1376">#1376</a></p>
 </li>
 <li>
+<p>Add <a href="#collection-conditions">collection conditions</a> <a href="https://github.com/spockframework/spock/issues/1372">#1372</a></p>
+</li>
+<li>
+<p>Add exception translation to JUnit4 Rules <a href="https://github.com/spockframework/spock/pull/1342">#1342</a></p>
+</li>
+<li>
+<p>Add option to omit feature name from iterations <a href="https://github.com/spockframework/spock/pull/1386">#1386</a>
+and add additional <a href="#unroll_tokens">Special Tokens</a> to unroll patterns.</p>
+</li>
+<li>
 <p>Add optional reason to <code>@Requires</code> and <code>@IgnoreIf</code> <a href="https://github.com/spockframework/spock/pull/1362">#1362</a></p>
 </li>
 <li>
-<p>Add "shared." support to ConditionalExtensions <a href="https://github.com/spockframework/spock/pull/1359">#1359</a></p>
-<div class="paragraph">
-<p>ConditionalExtensions can now access shared fields via the <code>shared.</code> prefix.
-If applied on the Specification level, this causes the shared field initializers
-and <code>setupSpec</code> methods to run.
-If a ConditionalExtension applied on the Specification level uses <code>instance.</code> it
-will now behave as if it was applied on every feature.</p>
-</div>
+<p>Add <code>shared.</code> support to conditional extensions <a href="https://github.com/spockframework/spock/pull/1359">#1359</a>.
+See <a href="#precondition_context">Precondition Context</a> for more details.</p>
+</li>
+<li>
+<p>Add <code>data.</code> support to conditional extensions <a href="https://github.com/spockframework/spock/issues/1360">#1360</a>.
+This replaces the  current behavior of accessing data variables without any prefix.
+See <a href="#precondition_context">Precondition Context</a> for more details.</p>
 </li>
 <li>
 <p>Set the owner for condition closures on spec annotations <a href="https://github.com/spockframework/spock/pull/1357">#1357</a></p>
 <div class="paragraph">
 <p>This allows access to static methods when <code>@IgnoreIf</code>, <code>@Requires</code> and <code>@PendingFeatureIf</code> is used on a Specification.</p>
 </div>
-</li>
-<li>
-<p>Add exception translation to JUnit4 Rules <a href="https://github.com/spockframework/spock/pull/1342">#1342</a></p>
 </li>
 <li>
 <p>Update bnd Gradle plugin to 6.0.0 (OSGI) <a href="https://github.com/spockframework/spock/pull/1377">#1377</a></p>
@@ -6244,7 +6250,7 @@ to match such methods when executing tests matching a mask (e.g., via
 </ul>
 </div>
 <div class="paragraph">
-<p>Thanks to all the contributors to this release: Marc Philipp, Miles Thomason, BJ Hargrave, Marcin Zajączkowski, Lőrinc Pap,  Felipe Pedrosa, Marcin Świerczyński</p>
+<p>Thanks to all the contributors to this release: Marc Philipp, Miles Thomason, BJ Hargrave, Marcin Zajączkowski, Lőrinc Pap, Felipe Pedrosa, Marcin Świerczyński, Benedikt Ritter</p>
 </div>
 </div>
 <div class="sect2">
@@ -9081,7 +9087,7 @@ This is due to how groovy implements traits and AST transformations.</p>
 <div id="footer">
 <div id="footer-text">
 Version 2.1-SNAPSHOT<br>
-Last updated 2021-11-11 20:25:13 UTC
+Last updated 2021-11-11 23:46:49 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./coderay-asciidoctor.css">

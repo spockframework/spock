@@ -1,4 +1,4 @@
-apply plugin: "de.marcphilipp.nexus-publish"
+apply plugin: "maven-publish"
 apply plugin: "signing"
 
 def optionalDeps = []
@@ -64,15 +64,6 @@ publishing {
           }
         }
       }
-    }
-  }
-}
-
-nexusPublishing {
-  repositories {
-    sonatype {
-      username = System.getenv("SONATYPE_OSS_USER")
-      password = System.getenv("SONATYPE_OSS_PASSWORD")
     }
   }
 }

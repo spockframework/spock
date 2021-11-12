@@ -20,16 +20,37 @@
 </div>
 <div id="content">
 <div class="sect1">
-<h2 id="_2_1_rc1_2021_11_12"><a class="anchor" href="#_2_1_rc1_2021_11_12"></a><a class="link" href="#_2_1_rc1_2021_11_12">2.1-RC1 (2021-11-12)</a></h2>
+<h2 id="_2_1_m1_2021_11_12"><a class="anchor" href="#_2_1_m1_2021_11_12"></a><a class="link" href="#_2_1_m1_2021_11_12">2.1-M1 (2021-11-12)</a></h2>
 <div class="sectionbody">
+<div class="sect2">
+<h3 id="_highlights"><a class="anchor" href="#_highlights"></a><a class="link" href="#_highlights">Highlights</a></h3>
 <div class="ulist">
 <ul>
 <li>
-<p>Add support for selecting individual iterations. Individual iterations can now be selected via their unique ID. <a href="https://github.com/spockframework/spock/pull/1376">#1376</a></p>
-</li>
-<li>
 <p>Add <a href="utilities.html#collection-conditions">collection conditions</a> <a href="https://github.com/spockframework/spock/issues/1372">#1372</a></p>
 </li>
+<li>
+<p>Add support for selecting individual iterations via their unique ID (IDE support required). <a href="https://github.com/spockframework/spock/pull/1376">#1376</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_breaking_changes"><a class="anchor" href="#_breaking_changes"></a><a class="link" href="#_breaking_changes">Breaking Changes</a></h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Add <code>data.</code> support to conditional extensions <a href="https://github.com/spockframework/spock/issues/1360">#1360</a>.
+This replaces the  current behavior of accessing data variables without any prefix.
+See <a href="extensions.html#precondition_context">Precondition Context</a> for more details.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_misc"><a class="anchor" href="#_misc"></a><a class="link" href="#_misc">Misc</a></h3>
+<div class="ulist">
+<ul>
 <li>
 <p>Add exception translation to JUnit4 Rules <a href="https://github.com/spockframework/spock/pull/1342">#1342</a></p>
 </li>
@@ -42,11 +63,6 @@ and add additional <a href="data_driven_testing.html#unroll_tokens">Special Toke
 </li>
 <li>
 <p>Add <code>shared.</code> support to conditional extensions <a href="https://github.com/spockframework/spock/pull/1359">#1359</a>.
-See <a href="extensions.html#precondition_context">Precondition Context</a> for more details.</p>
-</li>
-<li>
-<p>Add <code>data.</code> support to conditional extensions <a href="https://github.com/spockframework/spock/issues/1360">#1360</a>.
-This replaces the  current behavior of accessing data variables without any prefix.
 See <a href="extensions.html#precondition_context">Precondition Context</a> for more details.</p>
 </li>
 <li>
@@ -104,11 +120,12 @@ to match such methods when executing tests matching a mask (e.g., via
 </div>
 </div>
 </div>
+</div>
 <div class="sect1">
 <h2 id="_2_0_2021_05_17"><a class="anchor" href="#_2_0_2021_05_17"></a><a class="link" href="#_2_0_2021_05_17">2.0 (2021-05-17)</a></h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_highlights"><a class="anchor" href="#_highlights"></a><a class="link" href="#_highlights">Highlights</a></h3>
+<h3 id="_highlights_2"><a class="anchor" href="#_highlights_2"></a><a class="link" href="#_highlights_2">Highlights</a></h3>
 <div class="ulist">
 <ul>
 <li>
@@ -151,7 +168,7 @@ If you are one of the few that have already used <code>@ResourceLockChildren</co
 </div>
 </div>
 <div class="sect2">
-<h3 id="_misc"><a class="anchor" href="#_misc"></a><a class="link" href="#_misc">Misc</a></h3>
+<h3 id="_misc_2"><a class="anchor" href="#_misc_2"></a><a class="link" href="#_misc_2">Misc</a></h3>
 <div class="ulist">
 <ul>
 <li>
@@ -181,7 +198,7 @@ If you are one of the few that have already used <code>@ResourceLockChildren</co
 <h2 id="_2_0_m5_2021_03_23"><a class="anchor" href="#_2_0_m5_2021_03_23"></a><a class="link" href="#_2_0_m5_2021_03_23">2.0-M5 (2021-03-23)</a></h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_breaking_changes"><a class="anchor" href="#_breaking_changes"></a><a class="link" href="#_breaking_changes">Breaking Changes</a></h3>
+<h3 id="_breaking_changes_2"><a class="anchor" href="#_breaking_changes_2"></a><a class="link" href="#_breaking_changes_2">Breaking Changes</a></h3>
 <div class="ulist">
 <ul>
 <li>
@@ -194,7 +211,7 @@ These two properties are still supported and used by the <code>@Issue</code> ext
 </div>
 </div>
 <div class="sect2">
-<h3 id="_misc_2"><a class="anchor" href="#_misc_2"></a><a class="link" href="#_misc_2">Misc</a></h3>
+<h3 id="_misc_3"><a class="anchor" href="#_misc_3"></a><a class="link" href="#_misc_3">Misc</a></h3>
 <div class="ulist">
 <ul>
 <li>
@@ -351,7 +368,7 @@ by using the <code>instance.</code> qualifier inside the condition closure.</p>
 <h2 id="_2_0_m3_2020_06_11"><a class="anchor" href="#_2_0_m3_2020_06_11"></a><a class="link" href="#_2_0_m3_2020_06_11">2.0-M3 (2020-06-11)</a></h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_breaking_changes_2"><a class="anchor" href="#_breaking_changes_2"></a><a class="link" href="#_breaking_changes_2">Breaking Changes</a></h3>
+<h3 id="_breaking_changes_3"><a class="anchor" href="#_breaking_changes_3"></a><a class="link" href="#_breaking_changes_3">Breaking Changes</a></h3>
 <div class="sect3">
 <h4 id="_sputnik_runner_removed_an_alternative"><a class="anchor" href="#_sputnik_runner_removed_an_alternative"></a><a class="link" href="#_sputnik_runner_removed_an_alternative">Sputnik Runner removed (an alternative)</a></h4>
 <div class="paragraph">
@@ -517,7 +534,7 @@ If you are still using spock with <code>ant</code>, then you can just copy the c
 </div>
 </div>
 <div class="sect2">
-<h3 id="_misc_3"><a class="anchor" href="#_misc_3"></a><a class="link" href="#_misc_3">Misc</a></h3>
+<h3 id="_misc_4"><a class="anchor" href="#_misc_4"></a><a class="link" href="#_misc_4">Misc</a></h3>
 <div class="ulist">
 <ul>
 <li>
@@ -740,7 +757,7 @@ As Groovy 3 is not backward compatible with Groovy 2, there is a layer of abstra
 </div>
 </div>
 <div class="sect2">
-<h3 id="_breaking_changes_3"><a class="anchor" href="#_breaking_changes_3"></a><a class="link" href="#_breaking_changes_3">Breaking Changes</a></h3>
+<h3 id="_breaking_changes_4"><a class="anchor" href="#_breaking_changes_4"></a><a class="link" href="#_breaking_changes_4">Breaking Changes</a></h3>
 <div class="sect3">
 <h4 id="_sputnik_runner_removed"><a class="anchor" href="#_sputnik_runner_removed"></a><a class="link" href="#_sputnik_runner_removed">Sputnik Runner removed</a></h4>
 <div class="paragraph">
@@ -750,7 +767,7 @@ or used it as a delegate runner will not work anymore, e.g, <code>PowerMockRunne
 </div>
 </div>
 <div class="sect2">
-<h3 id="_misc_4"><a class="anchor" href="#_misc_4"></a><a class="link" href="#_misc_4">Misc</a></h3>
+<h3 id="_misc_5"><a class="anchor" href="#_misc_5"></a><a class="link" href="#_misc_5">Misc</a></h3>
 <div class="ulist">
 <ul>
 <li>
@@ -797,7 +814,7 @@ requested parallel execution support.</p>
 <p>Please try it out and report any new bugs so that we can fix them for the final 2.0 release.</p>
 </div>
 <div class="sect2">
-<h3 id="_breaking_changes_4"><a class="anchor" href="#_breaking_changes_4"></a><a class="link" href="#_breaking_changes_4">Breaking Changes</a></h3>
+<h3 id="_breaking_changes_5"><a class="anchor" href="#_breaking_changes_5"></a><a class="link" href="#_breaking_changes_5">Breaking Changes</a></h3>
 <div class="sect3">
 <h4 id="_new_junit_platform"><a class="anchor" href="#_new_junit_platform"></a><a class="link" href="#_new_junit_platform">New JUnit Platform</a></h4>
 <div class="paragraph">
@@ -811,7 +828,7 @@ module that provides best effort support to ease migration.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_misc_5"><a class="anchor" href="#_misc_5"></a><a class="link" href="#_misc_5">Misc</a></h4>
+<h4 id="_misc_6"><a class="anchor" href="#_misc_6"></a><a class="link" href="#_misc_6">Misc</a></h4>
 <div class="ulist">
 <ul>
 <li>
@@ -2382,7 +2399,7 @@ required; the only prerequisite for building Spock is a JDK installation (1.5 or
 <div id="footer">
 <div id="footer-text">
 Version 2.1-SNAPSHOT<br>
-Last updated 2021-11-11 23:46:49 UTC
+Last updated 2021-11-12 12:16:37 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./coderay-asciidoctor.css">

@@ -2,7 +2,10 @@
 = Release Notes
 include::include.adoc[]
 
-== 2.1 (tbd)
+== 2.1-M2 (2021-11-12)
+
+* Fix issue with generated gradle module metadata that caused issues with consumers.
+* Update JUnit, ASM, ByteBuddy dependencies.
 
 == 2.1-M1 (2021-11-12)
 

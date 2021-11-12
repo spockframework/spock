@@ -15,7 +15,7 @@ https://meetspock.appspot.com/.
 
 Latest Versions
 ---------------
-* The latest 2.0 release version is **2.1-M1** (2.1-M1-groovy-2.5, 2.1-M1-groovy-3.0), released on 2021-11-12.
+* The latest 2.x release version is **2.1-M2** (2.1-M2-groovy-2.5, 2.1-M2-groovy-3.0), released on 2021-11-12.
 * The current development version is **2.1-SNAPSHOT** (2.1-groovy-2.5-SNAPSHOT, 2.1-groovy-3.0-SNAPSHOT).
 
 **NOTE:** Spock 2.0 is based on the JUnit 5 Platform and require Java 8+/groovy-2.5+ (Groovy 3.0 is recommended, especially in projects using Java 12+).
@@ -37,8 +37,8 @@ repositories {
 }
 
 dependencies {
-    testImplementation 'org.spockframework.spock:spock-core:spock-2.1-M1'
-    testImplementation 'org.spockframework.spock:spock-spring:spock-2.1-M1'
+    testImplementation 'org.spockframework.spock:spock-core:spock-2.1-M2'
+    testImplementation 'org.spockframework.spock:spock-spring:spock-2.1-M2'
 }
 ```
 3. For intermediate releases you can also use the commit-hash as version, e.g. compile `com.github.spockframework.spock:spock-core:d91bf785a1`

@@ -2,8 +2,9 @@
 = Release Notes
 include::include.adoc[]
 
-== 2.1-M1 (2021-11-12)
+== 2.1 (tbd)
 
+== 2.1-M1 (2021-11-12)
 
 === Highlights
 

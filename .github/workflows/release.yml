@@ -149,6 +149,9 @@ jobs:
       - name: Prepare JDK8 env var
         shell: bash
         run: echo "JDK8=$JAVA_HOME" >> $GITHUB_ENV
+      - name: 'Create Temporary Branch'
+        run: |
+          git checkout -b "docs-$GITHUB_SHA"
       - name: 'Gradle Version'
         run: |
           ./gradlew --version

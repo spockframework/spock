@@ -17,6 +17,7 @@ configurations { coreConsoleRuntime }
 
 dependencies {
   api libs.groovy // easiest way to add Groovy dependency to POM
+  api platform(libs.junitBom)
   api libs.junitPlatform
   api libs.hamcrest
   if (variant == 2.5) {

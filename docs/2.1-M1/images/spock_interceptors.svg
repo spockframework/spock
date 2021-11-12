@@ -1,0 +1,604 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="210mm"
+   height="297mm"
+   viewBox="0 0 744.09448819 1052.3622047"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.91 r13725"
+   sodipodi:docname="spock_interceptors.svg"
+   inkscape:export-filename="D:\Dokumente\spock_interceptors.png"
+   inkscape:export-xdpi="92"
+   inkscape:export-ydpi="92">
+  <defs
+     id="defs4">
+    <marker
+       inkscape:stockid="Arrow1Lstart"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="Arrow1Lstart"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         id="path4144"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1.0pt"
+         transform="scale(0.8) translate(12.5,0)" />
+    </marker>
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.875"
+     inkscape:cx="565.66676"
+     inkscape:cy="523.918"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     showguides="true"
+     inkscape:guide-bbox="true"
+     inkscape:window-width="1920"
+     inkscape:window-height="1017"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Ebene 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <rect
+       style="fill:#ffb9b9;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:2;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect4138"
+       width="801.99402"
+       height="95.469002"
+       x="-28.949764"
+       y="57.241096"
+       rx="15" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:20.55553246px;line-height:125%;font-family:sans-serif;text-align:start;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="-20.531912"
+       y="75.858482"
+       id="text4537-4"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan4539-71"
+         x="-20.531912"
+         y="75.858482">shared initializer interceptors</tspan></text>
+    <rect
+       style="fill:#fffbb9;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:2;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect4138-6"
+       width="781.99402"
+       height="59.716"
+       x="-18.949764"
+       y="82.993675"
+       rx="15" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:20.55553246px;line-height:125%;font-family:sans-serif;text-align:start;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="-10.53192"
+       y="101.61106"
+       id="text4537-4-8"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan4539-71-8"
+         x="-10.53192"
+         y="101.61106">shared initializer method interceptors</tspan></text>
+    <rect
+       style="fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:2;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect4138-6-9"
+       width="761.99402"
+       height="25.962999"
+       x="-8.9497652"
+       y="106.74626"
+       rx="0"
+       ry="0" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:20.55553246px;line-height:125%;font-family:sans-serif;text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="148.59813"
+       y="125.46402"
+       id="text4537"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan4539"
+         x="148.59813"
+         y="125.46402">Assignment of @Shared fields</tspan></text>
+    <rect
+       style="fill:#ffb9b9;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:2;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect4138-1"
+       width="801.99402"
+       height="800.52502"
+       x="-28.949764"
+       y="162.7101"
+       rx="15" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:20.55553246px;line-height:125%;font-family:sans-serif;text-align:start;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="-20.531919"
+       y="181.42784"
+       id="text4537-4-4"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         x="-20.531919"
+         y="181.42784"
+         id="tspan4811">specification interceptors</tspan></text>
+    <rect
+       style="fill:#fffbb9;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:2;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect4138-6-96"
+       width="781.99402"
+       height="110.453"
+       x="-18.949764"
+       y="188.56303"
+       rx="15" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:20.55553246px;line-height:125%;font-family:sans-serif;text-align:start;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="-10.531905"
+       y="206.60832"
+       id="text4537-4-4-1"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         x="-10.531905"
+         y="206.60832"
+         id="tspan4833">setup spec interceptors</tspan></text>
+    <rect
+       style="fill:#c1ffb9;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:2;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect4138-6-96-0"
+       width="761.99402"
+       height="61.706001"
+       x="-8.9497652"
+       y="213.74352"
+       rx="15" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:20.55553246px;line-height:125%;font-family:sans-serif;text-align:start;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="-0.53190517"
+       y="232.46127"
+       id="text4537-4-4-1-1"
+       sodipodi:linespacing="125%"
+       inkscape:export-xdpi="92"
+       inkscape:export-ydpi="92"><tspan
+         sodipodi:role="line"
+         x="-0.53190517"
+         y="232.46127"
+         id="tspan4230">setup spec method interceptors and fixture method interceptors</tspan></text>
+    <rect
+       style="fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:2;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect4138-6-9-8"
+       width="741.99402"
+       height="25.853001"
+       x="1.0502348"
+       y="239.59647"
+       rx="0"
+       ry="0" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:20.55553246px;line-height:125%;font-family:sans-serif;text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="357.28824"
+       y="258.31424"
+       id="text4537-3"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan4539-7"
+         x="357.28824"
+         y="258.31424">execution of one setup spec method like @BeforeClass or setupSpec</tspan><tspan
+         sodipodi:role="line"
+         x="357.28824"
+         y="284.00867"
+         id="tspan4630" /></text>
+    <rect
+       style="fill:#fffbb9;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:2;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect4138-6-96-6"
+       width="781.99402"
+       height="509.62799"
+       x="-18.949764"
+       y="309.01605"
+       rx="15" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:20.55553246px;line-height:125%;font-family:sans-serif;text-align:start;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="-10.321133"
+       y="327.7338"
+       id="text4537-4-4-4"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         x="-10.321133"
+         y="327.7338"
+         id="tspan4811-9">feature interceptors</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:40px;line-height:125%;font-family:sans-serif;text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="16.905704"
+       y="290.01593"
+       id="text4674"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan4676"
+         x="16.905704"
+         y="290.01593">...</tspan></text>
+    <rect
+       style="fill:#fffbb9;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:2;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect4138-6-96-60"
+       width="781.99402"
+       height="111.025"
+       x="-18.949764"
+       y="842.21021"
+       rx="15" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:20.55553246px;line-height:125%;font-family:sans-serif;text-align:start;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="-10.506819"
+       y="860.82758"
+       id="text4537-4-4-1-2"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         x="-10.506819"
+         y="860.82758"
+         id="tspan4873">cleanup spec interceptors</tspan></text>
+    <rect
+       style="fill:#c1ffb9;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:2;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect4138-6-96-0-8"
+       width="761.99402"
+       height="61.706001"
+       x="-8.9497652"
+       y="867.96277"
+       rx="15" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:20.55553246px;line-height:125%;font-family:sans-serif;text-align:start;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="-0.50684172"
+       y="886.68054"
+       id="text4537-4-4-1-1-8"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         x="-0.50684172"
+         y="886.68054"
+         id="tspan4833-3-9">cleanup spec method interceptors and fixture method interceptors</tspan></text>
+    <rect
+       style="fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:2;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect4138-6-9-8-4"
+       width="741.99402"
+       height="25.853001"
+       x="1.0502348"
+       y="893.81573"
+       rx="0"
+       ry="0" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:20.55553246px;line-height:125%;font-family:sans-serif;text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="371.80154"
+       y="912.53351"
+       id="text4537-3-0"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan4539-7-5"
+         x="371.80154"
+         y="912.53351">execution of one cleanup spec method like @AfterClass or cleanupSpec</tspan><tspan
+         sodipodi:role="line"
+         x="371.80154"
+         y="938.22791"
+         id="tspan4630-7" /></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:40px;line-height:125%;font-family:sans-serif;text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="16.905704"
+       y="944.23511"
+       id="text4674-3"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan4676-7"
+         x="16.905704"
+         y="944.23511">...</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:40px;line-height:125%;font-family:sans-serif;text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="6.9057035"
+       y="833.21021"
+       id="text4674-30"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan4676-5"
+         x="6.9057035"
+         y="833.21021">...</tspan></text>
+    <rect
+       style="fill:#c1ffb9;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:2;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect4138-6-96-0-1-8"
+       width="761.99402"
+       height="460.20901"
+       x="-8.9497652"
+       y="334.86899"
+       rx="15" />
+    <rect
+       style="fill:#b9fff3;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:2;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect4138-6-96-0-1"
+       width="741.99402"
+       height="95.469002"
+       x="1.0502348"
+       y="344.86899"
+       rx="15" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:20.55553246px;line-height:125%;font-family:sans-serif;text-align:start;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="9.1418962"
+       y="363.48639"
+       id="text4537-4-4-1-1-0"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         x="9.1418962"
+         y="363.48639"
+         id="tspan4833-3-0">initializer interceptors</tspan></text>
+    <rect
+       style="fill:#b9caff;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:2;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect4138-6-96-0-1-3"
+       width="721.99402"
+       height="59.716"
+       x="11.050235"
+       y="370.62158"
+       rx="15" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:20.55553246px;line-height:125%;font-family:sans-serif;text-align:start;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="19.14189"
+       y="389.23898"
+       id="text4537-4-4-1-1-0-2"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         x="19.14189"
+         y="389.23898"
+         id="tspan4833-3-0-4">initializer method interceptors</tspan></text>
+    <rect
+       style="fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:2;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect4138-6-9-2"
+       width="701.99402"
+       height="25.962999"
+       x="21.050236"
+       y="394.37418"
+       rx="0"
+       ry="0" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:20.55553246px;line-height:125%;font-family:sans-serif;text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="202.52605"
+       y="413.09192"
+       id="text4537-5"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan4539-4"
+         x="202.52605"
+         y="413.09192">Assignment of non-@Shared fields</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:40px;line-height:125%;font-family:sans-serif;text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="16.905704"
+       y="809.64423"
+       id="text4674-30-5"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan4676-5-0"
+         x="16.905704"
+         y="809.64423">...</tspan></text>
+    <rect
+       style="fill:#b9fff3;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:2;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect4138-6-96-0-1-5"
+       width="741.99402"
+       height="334.73999"
+       x="1.0502348"
+       y="450.33798"
+       rx="15" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:20.55553246px;line-height:125%;font-family:sans-serif;text-align:start;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="9.1419039"
+       y="468.38327"
+       id="text4537-4-4-1-1-0-22"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         x="9.1419039"
+         y="468.38327"
+         id="tspan4833-3-0-0">iteration interceptors</tspan></text>
+    <rect
+       style="fill:#b9c9ff;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:2.02815533;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect4138-6-96-0-1-3-0-2"
+       width="721.96582"
+       height="110.54261"
+       x="11.064077"
+       y="475.53253"
+       rx="15.426752" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:20.55553246px;line-height:125%;font-family:sans-serif;text-align:start;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="19.468096"
+       y="493.56378"
+       id="text4537-4-4-1-1-0-2-2-0"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         x="19.468096"
+         y="493.56378"
+         id="tspan4833-3-0-4-9-3">setup interceptors</tspan></text>
+    <rect
+       style="fill:#eab9ff;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:2.02895474;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect4138-6-96-0-9"
+       width="701.96503"
+       height="61.698875"
+       x="21.064478"
+       y="500.71344"
+       rx="15.439249" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:20.55553246px;line-height:125%;font-family:sans-serif;text-align:start;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="29.468079"
+       y="519.41669"
+       id="text4537-4-4-1-1-3"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         x="29.468079"
+         y="519.41669"
+         id="tspan4833-3-2">setup method interceptors and fixture method interceptors</tspan></text>
+    <rect
+       style="fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:2.02893543;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect4138-6-9-8-8"
+       width="681.37939"
+       height="25.84952"
+       x="31.357302"
+       y="526.56635"
+       rx="0"
+       ry="0" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:20.55553246px;line-height:125%;font-family:sans-serif;text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="308.63922"
+       y="545.26965"
+       id="text4537-3-6"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         x="308.63922"
+         y="545.26965"
+         id="tspan4630-3">execution of one setup method like @Before or setup</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:40px;line-height:125%;font-family:sans-serif;text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="46.905704"
+       y="576.97137"
+       id="text4674-38"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan4676-2"
+         x="46.905704"
+         y="576.97137">...</tspan></text>
+    <rect
+       style="fill:#b9c9ff;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:2.02815533;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect4138-6-96-0-9-0"
+       width="721.96582"
+       height="57.87656"
+       x="11.064077"
+       y="596.07422"
+       rx="15.426752" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:20.55553246px;line-height:125%;font-family:sans-serif;text-align:start;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="19.67886"
+       y="614.78925"
+       id="text4537-4-4-1-1-3-5"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         x="19.67886"
+         y="614.78925"
+         id="tspan4833-3-2-9">feature method interceptors</tspan></text>
+    <rect
+       style="fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:2.02893543;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect4138-6-9-8-8-3"
+       width="701.96509"
+       height="22.026033"
+       x="21.064468"
+       y="621.92609"
+       rx="0"
+       ry="0" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:20.55553246px;line-height:125%;font-family:sans-serif;text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="169.6653"
+       y="640.64221"
+       id="text4537-3-6-1"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         x="169.6653"
+         y="640.64221"
+         id="tspan4630-3-6">execution of feature method</tspan></text>
+    <rect
+       style="fill:#b9c9ff;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:2.02815533;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect4138-6-96-0-1-3-0-2-3"
+       width="721.96582"
+       height="111.11456"
+       x="11.064077"
+       y="663.94983"
+       rx="15.426752" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:20.55553246px;line-height:125%;font-family:sans-serif;text-align:start;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="19.493189"
+       y="682.57086"
+       id="text4537-4-4-1-1-0-2-2-0-1"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         x="19.493189"
+         y="682.57086"
+         id="tspan5270">cleanup interceptors</tspan></text>
+    <rect
+       style="fill:#eab9ff;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:2.02895474;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect4138-6-96-0-9-7"
+       width="701.96503"
+       height="61.698875"
+       x="21.064478"
+       y="689.69873"
+       rx="15.439249" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:20.55553246px;line-height:125%;font-family:sans-serif;text-align:start;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="29.493187"
+       y="708.42383"
+       id="text4537-4-4-1-1-3-1"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         x="29.493187"
+         y="708.42383"
+         id="tspan4833-3-2-5">cleanup method interceptors and fixture method interceptors</tspan></text>
+    <rect
+       style="fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:2.02893543;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect4138-6-9-8-8-32"
+       width="681.37939"
+       height="25.84952"
+       x="31.357302"
+       y="715.54803"
+       rx="0"
+       ry="0" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:20.55553246px;line-height:125%;font-family:sans-serif;text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="323.15256"
+       y="734.27679"
+       id="text4537-3-6-2"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         x="323.15256"
+         y="734.27679"
+         id="tspan4630-3-0">execution of one cleanup method like @After or cleanup</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:40px;line-height:125%;font-family:sans-serif;text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="46.905704"
+       y="765.97845"
+       id="text4674-38-5"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan4676-2-6"
+         x="46.905704"
+         y="765.97845">...</tspan></text>
+  </g>
+</svg>

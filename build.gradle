@@ -13,8 +13,8 @@ description = "Spock Framework"
 
 ext {
   baseVersion = "2.1"
-  snapshotVersion = false
-  milestone = 2
+  snapshotVersion = true
+  milestone = 0
   variants = [2.5, 3.0]
   variant = System.getProperty("variant") as BigDecimal ?: variants.first()
   buildScan.tag "groovy-$variant"

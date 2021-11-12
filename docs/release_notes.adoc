@@ -3,16 +3,26 @@
 include::include.adoc[]
 
 == 2.1-M1 (2021-11-12)
-- Add support for selecting individual iterations. Individual iterations can now be selected via their unique ID. https://github.com/spockframework/spock/pull/1376[#1376]
+
+
+=== Highlights
+
 - Add <<utilities.adoc#collection-conditions, collection conditions>> https://github.com/spockframework/spock/issues/1372[#1372]
+- Add support for selecting individual iterations via their unique ID (IDE support required). https://github.com/spockframework/spock/pull/1376[#1376]
+
+=== Breaking Changes
+
+- Add `data.` support to conditional extensions https://github.com/spockframework/spock/issues/1360[#1360].
+This replaces the  current behavior of accessing data variables without any prefix.
+See <<extensions.adoc#precondition_context, Precondition Context>> for more details.
+
+=== Misc
+
 - Add exception translation to JUnit4 Rules https://github.com/spockframework/spock/pull/1342[#1342]
 - Add option to omit feature name from iterations https://github.com/spockframework/spock/pull/1386[#1386]
 and add additional <<data_driven_testing.adoc#unroll_tokens, Special Tokens>> to unroll patterns.
 - Add optional reason to `@Requires` and `@IgnoreIf` https://github.com/spockframework/spock/pull/1362[#1362]
 - Add `shared.` support to conditional extensions https://github.com/spockframework/spock/pull/1359[#1359].
-See <<extensions.adoc#precondition_context, Precondition Context>> for more details.
-- Add `data.` support to conditional extensions https://github.com/spockframework/spock/issues/1360[#1360].
-This replaces the  current behavior of accessing data variables without any prefix.
 See <<extensions.adoc#precondition_context, Precondition Context>> for more details.
 
 - Set the owner for condition closures on spec annotations https://github.com/spockframework/spock/pull/1357[#1357]

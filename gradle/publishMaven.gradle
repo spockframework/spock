@@ -75,7 +75,7 @@ tasks.withType(AbstractPublishToMaven) {
 
 signing {
   sign(publishing.publications).each { task ->
-    task.onlyIf { gradle.taskGraph.hasTask(publish) }
+    task.onlyIf { gradle.taskGraph.hasTask(publishToSonatype) }
   }
 }
 

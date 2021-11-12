@@ -50,8 +50,8 @@ ext {
 
   libs = [
     jetbrainsAnnotations: [group: "org.jetbrains", name: "annotations", version: "20.1.0"],
-    asm                 : [group: 'org.ow2.asm', name: 'asm', version: '9.1'],
-    bytebuddy           : [group: 'net.bytebuddy', name: 'byte-buddy', version: '1.11.0'],
+    asm                 : [group: 'org.ow2.asm', name: 'asm', version: '9.2'],
+    bytebuddy           : [group: 'net.bytebuddy', name: 'byte-buddy', version: '1.12.1'],
     cglib               : [group: 'cglib', name: 'cglib-nodep', version: '3.3.0'],
     groovy              : groovyDependencies,
     groovySql           : [group: 'org.codehaus.groovy', name: 'groovy-sql', version: groovyVersion], //for some Spring and Unitils tests
@@ -61,7 +61,7 @@ ext {
     hamcrest            : [group: 'org.hamcrest', name: 'hamcrest', version: '2.2'],
     jaxb                : [group: 'javax.xml.bind', name: 'jaxb-api', version: '2.3.0'],
     junit4              : [group: 'junit', name: 'junit', version: '4.13.2'],
-    junitBom            : [group: 'org.junit', name: 'junit-bom', version: '5.7.2'],
+    junitBom            : [group: 'org.junit', name: 'junit-bom', version: '5.8.1'],
     jupiter             : [group: 'org.junit.jupiter', name: 'junit-jupiter'],
     junitPlatform       : [group: 'org.junit.platform', name: 'junit-platform-engine'],
     junitPlatformTestkit: [group: 'org.junit.platform', name: 'junit-platform-testkit'],

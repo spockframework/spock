@@ -280,14 +280,14 @@ task publishJavadoc(type: Exec) {
   git config user.email "dev@forum.spockframework.org"
   git config user.name "Spock Framework Robot"
   git fetch origin +gh-pages:gh-pages
-  git checkout gh-pages
+  git switch gh-pages
   rm -rf javadoc/$variantLessVersion
   mkdir -p javadoc/$variantLessVersion
   cp -r build/javadoc/$variantLessVersion javadoc/
   git add javadoc
   git commit -qm "Publish javadoc/$variantLessVersion"
   git push "https://\$GITHUB_TOKEN@github.com/spockframework/spock.git" gh-pages 2>&1 | sed "s/\$GITHUB_TOKEN/xxx/g"
-  git checkout master
+  git switch -
 """
 }
 task publishDocs(type: Exec) {
@@ -297,14 +297,14 @@ task publishDocs(type: Exec) {
   git config user.email "dev@forum.spockframework.org"
   git config user.name "Spock Framework Robot"
   git fetch origin +gh-pages:gh-pages
-  git checkout gh-pages
+  git switch gh-pages
   rm -rf docs/$variantLessVersion
   mkdir -p docs/$variantLessVersion
   cp -r build/docs/asciidoc/* docs/$variantLessVersion
   git add docs
   git commit -qm "Publish docs/$variantLessVersion"
   git push "https://\$GITHUB_TOKEN@github.com/spockframework/spock.git" gh-pages 2>&1 | sed "s/\$GITHUB_TOKEN/xxx/g"
-  git checkout master
+  git switch -
 """
 }
 task tagRelease(type: Exec) {

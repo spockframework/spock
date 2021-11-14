@@ -145,7 +145,7 @@ later feature methods may depend on earlier feature methods having executed.</p>
 <h3 id="_ignoreif"><a class="anchor" href="#_ignoreif"></a><a class="link" href="#_ignoreif">IgnoreIf</a></h3>
 <div class="paragraph">
 <p>To ignore a feature method or specification under certain conditions, annotate it with <code>spock.lang.IgnoreIf</code>,
-followed by a predicate:</p>
+followed by a predicate and an optional reason:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -202,6 +202,15 @@ Similar to <code>instance</code> this will run the whole workflow and only skip 
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@IgnoreIf</span>({ os.windows })
 <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">I will run everywhere but on Windows</span><span class="delimiter">&quot;</span></span>() {</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You can also give an optional <code>reason</code> why the given feature or specification is to be ignored:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@IgnoreIf</span>(value = { os.macOs }, reason = <span class="string"><span class="delimiter">&quot;</span><span class="content">No platform driver available</span><span class="delimiter">&quot;</span></span>)
+<span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">For the given reason, I will not run on MacOS</span><span class="delimiter">&quot;</span></span>() {</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1400,7 +1409,7 @@ assignments happen before the method interceptor is called</p>
 <div id="footer">
 <div id="footer-text">
 Version 2.1-SNAPSHOT<br>
-Last updated 2021-11-12 19:21:53 UTC
+Last updated 2021-11-14 21:09:36 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./coderay-asciidoctor.css">

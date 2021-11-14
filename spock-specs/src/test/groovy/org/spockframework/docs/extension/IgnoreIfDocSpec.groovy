@@ -54,4 +54,12 @@ class IgnoreIfDocSpec extends Specification {
   }
 // end::example-e[]
 
+// tag::example-f[]
+  @IgnoreIf(value = { os.macOs }, reason = "No platform driver available")
+  def "For the given reason, I will not run on MacOS"() {
+// end::example-f[]
+    expect:
+    true
+  }
+
 }

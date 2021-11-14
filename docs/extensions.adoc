@@ -103,7 +103,7 @@ later feature methods may depend on earlier feature methods having executed.
 === IgnoreIf
 
 To ignore a feature method or specification under certain conditions, annotate it with `spock.lang.IgnoreIf`,
-followed by a predicate:
+followed by a predicate and an optional reason:
 
 [source,groovy,indent=0]
 ----
@@ -132,6 +132,13 @@ Using the `os` property, the previous example can be rewritten as:
 [source,groovy,indent=0]
 ----
 include::{sourcedir}/extension/IgnoreIfDocSpec.groovy[tag=example-b]
+----
+
+You can also give an optional `reason` why the given feature or specification is to be ignored:
+
+[source,groovy,indent=0]
+----
+include::{sourcedir}/extension/IgnoreIfDocSpec.groovy[tag=example-f]
 ----
 
 If multiple `@IgnoreIf` annotations are present, they are effectively combined with a logical "or".

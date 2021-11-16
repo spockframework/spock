@@ -66,12 +66,12 @@ class IgnoreIfDocSpec extends EmbeddedSpecification {
     when:
     def result = runner.runWithImports (
       /* tag::example-g[] */"""
-@IgnoreIf(value = { os.macOs }, inherited = true)
+@IgnoreIf(value = { jvm.java8Compatible }, inherited = true)
 abstract class Foo extends Specification {
 }
 
 class Bar extends Foo {
-  def "I won't run on MacOs"() {
+  def "I won't run on Java 8 and above"() {
     expect: true
   }
 }

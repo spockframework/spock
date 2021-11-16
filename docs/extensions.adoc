@@ -78,6 +78,15 @@ class MySpec extends Specification { ... }
 
 In most execution environments, ignored feature methods and specs will be reported as "skipped".
 
+By default, `@Ignore` will only affect the annotated specification, by setting `inherited` to `true` you can configure it to apply to sub-specifications as well:
+
+[source,groovy]
+----
+@Ignore(inherited = true)
+class MySpec extends Specification { ... }
+class MySubSpec extends MySpec { ... }
+----
+
 Care should be taken when ignoring feature methods in a spec class annotated with `spock.lang.Stepwise` since
 later feature methods may depend on earlier feature methods having executed.
 
@@ -139,6 +148,13 @@ You can also give an optional `reason` why the given feature or specification is
 [source,groovy,indent=0]
 ----
 include::{sourcedir}/extension/IgnoreIfDocSpec.groovy[tag=example-f]
+----
+
+By default, `@IgnoreIf` will only affect the annotated specification, by setting `inherited` to `true` you can configure it to apply to sub-specifications as well:
+
+[source,groovy,indent=0]
+----
+include::{sourcedir}/extension/IgnoreIfDocSpec.groovy[tag=example-g]
 ----
 
 If multiple `@IgnoreIf` annotations are present, they are effectively combined with a logical "or".

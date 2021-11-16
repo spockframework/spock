@@ -66,6 +66,7 @@ public @interface IgnoreIf {
    * Whether this annotation should be inherited by child classes.
    *
    * For historic reasons, this is false by default.
+   * It has no special effect if used on a feature.
    *
    * @since 2.1
    * @return whether this annotation applies to child classes

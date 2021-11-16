@@ -31,7 +31,7 @@ public class IgnoreExtension implements IAnnotationDrivenExtension<Ignore> {
 
   @Override
   public void visitSpecAnnotation(Ignore ignore, SpecInfo spec) {
-    if (spec.getIsBottomSpec() || ignore.inherited()) spec.skip(ignore.value().isEmpty() ? DEFAULT_REASON : ignore.value());
+    if (spec.getIsBottomSpec() || ignore.inherited()) spec.getBottomSpec().skip(ignore.value().isEmpty() ? DEFAULT_REASON : ignore.value());
   }
 
   @Override

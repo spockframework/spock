@@ -38,7 +38,11 @@ public class RequiresExtension extends ConditionalExtension<Requires> {
   @Override
   protected void specConditionResult(boolean result, Requires annotation, SpecInfo spec) {
     if (!result) {
-      spec.skip(ignoredMessage(annotation));
+      if (annotation.inherited()) {
+        spec.getBottomSpec().skip(ignoredMessage(annotation));
+      } else {
+        spec.skip(ignoredMessage(annotation));
+      }
     }
   }
 

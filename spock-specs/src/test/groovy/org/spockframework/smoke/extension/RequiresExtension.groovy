@@ -383,6 +383,34 @@ class Foo extends Specification {
     result.testsFailedCount == 0
   }
 
+  def "Requires can be configured to be inherited"() {
+    when:
+    def result = runner.runWithImports """
+@Requires(value = { false }, inherited = ${inherited})
+abstract class Foo extends Specification {
+}
+
+class Bar extends Foo {
+  def "basic usage"() {
+    expect: true
+  }
+}
+"""
+
+    then:
+    result.testsStartedCount == testStartAndSucceededCount
+    result.testsFailedCount == 0
+    result.testsSkippedCount == 0
+    result.testsAbortedCount == 0
+    result.testsSucceededCount == testStartAndSucceededCount
+    result.containersSkippedCount == specSkippedCount
+
+    where:
+    inherited | testStartAndSucceededCount | specSkippedCount
+    false     | 1                          | 0
+    true      | 0                          | 1
+  }
+
   static class RequiresExtensionExamples extends Specification {
 
     @Requires({ 1 < 2 })

@@ -147,6 +147,34 @@ class Derived extends Base {
     result.testsFailedCount == 0
     result.testsSkippedCount == 0
   }
+
+  def "Ignore can be configured to be inherited"() {
+    when:
+    def result = runner.runWithImports """
+@Ignore(inherited = ${inherited})
+abstract class Foo extends Specification {
+}
+
+class Bar extends Foo {
+  def "basic usage"() {
+    expect: true
+  }
+}
+"""
+
+    then:
+    result.testsStartedCount == testStartAndSucceededCount
+    result.testsFailedCount == 0
+    result.testsSkippedCount == 0
+    result.testsAbortedCount == 0
+    result.testsSucceededCount == testStartAndSucceededCount
+    result.containersSkippedCount == specSkippedCount
+
+    where:
+    inherited | testStartAndSucceededCount | specSkippedCount
+    false     | 1                          | 0
+    true      | 0                          | 1
+  }
 }
 
 

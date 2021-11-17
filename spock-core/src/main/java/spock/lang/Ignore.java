@@ -33,7 +33,18 @@ public @interface Ignore {
   /**
    * The reason for ignoring this element.
    *
-   * @return the reason for ignoring this element
+   * @return the string to use for the skip message
    */
   String value() default "";
+
+  /**
+   * Whether this annotation should be inherited by child classes.
+   *
+   * For historic reasons, this is false by default.
+   * It has no special effect if used on a feature.
+   *
+   * @since 2.1
+   * @return whether this annotation applies to child classes
+   */
+  boolean inherited() default false;
 }

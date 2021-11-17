@@ -48,9 +48,30 @@ import org.spockframework.util.Beta;
 @ExtensionAnnotation(RequiresExtension.class)
 @Repeatable(Requires.Container.class)
 public @interface Requires {
+  /**
+   * The reason for ignoring this element.
+   *
+   * @return the string to use for the skip message
+   */
   String reason() default "";
 
+  /**
+   * The condition to check, {@link PreconditionContext} will be set as delegate and argument.
+   *
+   * @return the closure to evaluate
+   */
   Class<? extends Closure> value();
+
+  /**
+   * Whether this annotation should be inherited by child classes.
+   *
+   * For historic reasons, this is false by default.
+   * It has no special effect if used on a feature.
+   *
+   * @since 2.1
+   * @return whether this annotation applies to child classes
+   */
+  boolean inherited() default false;
 
   /**
    * @since 2.0

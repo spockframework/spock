@@ -20,7 +20,9 @@ import org.spockframework.EmbeddedSpecification
 import org.spockframework.runtime.ConditionNotSatisfiedError
 import org.spockframework.runtime.extension.ExtensionException
 import org.spockframework.runtime.extension.builtin.PreconditionContext
-import spock.lang.*
+import spock.lang.IgnoreIf
+import spock.lang.Issue
+import spock.lang.Requires
 
 class IgnoreIfExtension extends EmbeddedSpecification {
   @IgnoreIf({ 1 < 2 })
@@ -287,6 +289,34 @@ class Foo extends Specification {
     shouldRun | testSucceededCount | testAbortedCount
     false     | 1                  | 0
     true      | 0                  | 1
+  }
+
+  def "IgnoreIf can be configured to be inherited"() {
+    when:
+    def result = runner.runWithImports """
+@IgnoreIf(value = { true }, inherited = ${inherited})
+abstract class Foo extends Specification {
+}
+
+class Bar extends Foo {
+  def "basic usage"() {
+    expect: true
+  }
+}
+"""
+
+    then:
+    result.testsStartedCount == testStartAndSucceededCount
+    result.testsFailedCount == 0
+    result.testsSkippedCount == 0
+    result.testsAbortedCount == 0
+    result.testsSucceededCount == testStartAndSucceededCount
+    result.containersSkippedCount == specSkippedCount
+
+    where:
+    inherited | testStartAndSucceededCount | specSkippedCount
+    false     | 1                          | 0
+    true      | 0                          | 1
   }
 
   def "fails if condition cannot be instantiated"() {

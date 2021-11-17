@@ -114,6 +114,16 @@ meta-annotation.</p>
 <p>In most execution environments, ignored feature methods and specs will be reported as "skipped".</p>
 </div>
 <div class="paragraph">
+<p>By default, <code>@Ignore</code> will only affect the annotated specification, by setting <code>inherited</code> to <code>true</code> you can configure it to apply to sub-specifications as well:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@Ignore</span>(inherited = <span class="predefined-constant">true</span>)
+<span class="type">class</span> <span class="class">MySpec</span> <span class="directive">extends</span> Specification { ... }
+<span class="type">class</span> <span class="class">MySubSpec</span> <span class="directive">extends</span> MySpec { ... }</code></pre>
+</div>
+</div>
+<div class="paragraph">
 <p>Care should be taken when ignoring feature methods in a spec class annotated with <code>spock.lang.Stepwise</code> since
 later feature methods may depend on earlier feature methods having executed.</p>
 </div>
@@ -211,6 +221,22 @@ Similar to <code>instance</code> this will run the whole workflow and only skip 
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@IgnoreIf</span>(value = { os.macOs }, reason = <span class="string"><span class="delimiter">&quot;</span><span class="content">No platform driver available</span><span class="delimiter">&quot;</span></span>)
 <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">For the given reason, I will not run on MacOS</span><span class="delimiter">&quot;</span></span>() {</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>By default, <code>@IgnoreIf</code> will only affect the annotated specification, by setting <code>inherited</code> to <code>true</code> you can configure it to apply to sub-specifications as well:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@IgnoreIf</span>(value = { jvm.java8Compatible }, inherited = <span class="predefined-constant">true</span>)
+<span class="directive">abstract</span> <span class="type">class</span> <span class="class">Foo</span> <span class="directive">extends</span> Specification {
+}
+
+<span class="type">class</span> <span class="class">Bar</span> <span class="directive">extends</span> Foo {
+  <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">I won't run on Java 8 and above</span><span class="delimiter">&quot;</span></span>() {
+    <span class="key">expect</span>: <span class="predefined-constant">true</span>
+  }
+}</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1409,7 +1435,7 @@ assignments happen before the method interceptor is called</p>
 <div id="footer">
 <div id="footer-text">
 Version 2.1-SNAPSHOT<br>
-Last updated 2021-11-14 21:09:36 UTC
+Last updated 2021-11-17 16:36:24 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./coderay-asciidoctor.css">

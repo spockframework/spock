@@ -133,7 +133,9 @@ public @interface <span class="memberNameLabel">Requires</span></pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;? extends <a href="https://docs.groovy-lang.org/docs/groovy-3.0.9/html/gapi/groovy/lang/Closure.html?is-external=true" title="class or interface in groovy.lang">Closure</a>&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../spock/lang/Requires.html#value--">value</a></span></code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../spock/lang/Requires.html#value--">value</a></span></code>
+<div class="block">The condition to check, <code>PreconditionContext</code> will be set as delegate and argument.</div>
+</td>
 </tr>
 </table>
 </li>
@@ -151,8 +153,16 @@ public @interface <span class="memberNameLabel">Requires</span></pre>
 <th class="colLast" scope="col">Optional Element and Description</th>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../spock/lang/Requires.html#inherited--">inherited</a></span></code>
+<div class="block">Whether this annotation should be inherited by child classes.</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../spock/lang/Requires.html#reason--">reason</a></span></code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../spock/lang/Requires.html#reason--">reason</a></span></code>
+<div class="block">The reason for ignoring this element.</div>
+</td>
 </tr>
 </table>
 </li>
@@ -176,6 +186,11 @@ public @interface <span class="memberNameLabel">Requires</span></pre>
 <li class="blockList">
 <h4>value</h4>
 <pre>public abstract&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;? extends <a href="https://docs.groovy-lang.org/docs/groovy-3.0.9/html/gapi/groovy/lang/Closure.html?is-external=true" title="class or interface in groovy.lang">Closure</a>&gt;&nbsp;value</pre>
+<div class="block">The condition to check, <code>PreconditionContext</code> will be set as delegate and argument.</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the closure to evaluate</dd>
+</dl>
 </li>
 </ul>
 </li>
@@ -185,13 +200,44 @@ public @interface <span class="memberNameLabel">Requires</span></pre>
 <li class="blockList"><a name="reason--">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>reason</h4>
 <pre>public abstract&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;reason</pre>
+<div class="block">The reason for ignoring this element.</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the string to use for the skip message</dd>
+</dl>
 <dl>
 <dt>Default:</dt>
 <dd>""</dd>
+</dl>
+</li>
+</ul>
+</li>
+</ul>
+<ul class="blockList">
+<li class="blockList"><a name="inherited--">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>inherited</h4>
+<pre>public abstract&nbsp;boolean&nbsp;inherited</pre>
+<div class="block">Whether this annotation should be inherited by child classes.
+
+ For historic reasons, this is false by default.
+ It has no special effect if used on a feature.</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>whether this annotation applies to child classes</dd>
+<dt><span class="simpleTagLabel">Since:</span></dt>
+<dd>2.1</dd>
+</dl>
+<dl>
+<dt>Default:</dt>
+<dd>false</dd>
 </dl>
 </li>
 </ul>

@@ -12,6 +12,7 @@ import org.codehaus.groovy.ast.expr.*
 import org.codehaus.groovy.ast.stmt.*
 import org.codehaus.groovy.classgen.*
 import org.codehaus.groovy.control.*
+import org.codehaus.groovy.control.customizers.ImportCustomizer
 import org.codehaus.groovy.syntax.Types
 
 /*

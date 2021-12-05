@@ -35,6 +35,7 @@ public class StackTraceFilter implements IStackTraceFilter {
       "\\Qorg.codehaus.groovy.runtime.\\E.*" +
       "|\\Qorg.codehaus.groovy.reflection.\\E.*" +
       "|\\Qorg.codehaus.groovy.\\E.*MetaClass.*" +
+      "|\\Qorg.codehaus.groovy.vmplugin.v8.\\E.*" +
       "|groovy\\..*MetaClass.*" +
       "|groovy\\.lang\\.MetaMethod" +
       "|\\Qjava.lang.reflect.\\E.*" +

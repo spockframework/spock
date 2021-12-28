@@ -57,8 +57,7 @@ public class ObjectRendererService implements IObjectRendererService {
       if (superclass != null && superclass != Object.class) {
         parents.add(superclass);
       }
-      // cast required to compile with JDK 5
-      parents.addAll(Arrays.asList((Class<?>[]) type.getInterfaces()));
+      parents.addAll(Arrays.asList(type.getInterfaces()));
     }
 
     return parents;

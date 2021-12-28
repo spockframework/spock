@@ -16,9 +16,10 @@ runs:
     - name: Init Gradle Build Action
       uses: gradle/gradle-build-action@v2
       with:
+        # cache options only count for the first invocation
         cache-read-only: ${{ github.ref != 'refs/heads/master' }}
         arguments: --version
-    - name: 'Gradle Version'
-      shell: bash
-      run: |
-        ./gradlew javaToolchains
+    - name: 'Gradle javaToolchains'
+      uses: gradle/gradle-build-action@v2
+      with:
+        arguments: javaToolchains

@@ -40,24 +40,10 @@ jobs:
         with:
           # Codecov needs fetch-depth > 1
           fetch-depth: 2
-      - name: 'Set up JDK ${{ matrix.java }}'
-        uses: actions/setup-java@v2
-        if: matrix.java != 8
+      - name: 'Set up JDKs'
+        uses: ./.github/actions/setup-jdks
         with:
-          distribution: 'adopt'
-          java-version: ${{ matrix.java }}
-      - name: 'Prepare JDK${{ matrix.java }} env var'
-        shell: bash
-        run: echo "JDK${{ matrix.java }}=$JAVA_HOME" >> $GITHUB_ENV
-      - name: 'Set up JDK 8'
-        uses: actions/setup-java@v2
-        with:
-          java-version: 8
-          cache: 'gradle'
-          distribution: 'adopt'
-      - name: Prepare JDK8 env var
-        shell: bash
-        run: echo "JDK8=$JAVA_HOME" >> $GITHUB_ENV
+          additional-java-version: ${{ matrix.java }}
       - name: 'Gradle Version'
         run: |
           ./gradlew --version

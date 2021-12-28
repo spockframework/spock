@@ -28,7 +28,7 @@ public class DynamicProxyMockInterceptorAdapter implements InvocationHandler {
 
   @Override
   public Object invoke(Object target, Method method, Object[] arguments) throws Throwable {
-    IResponseGenerator realMethodInvoker = (ReflectionUtil.isDefault(method) || ReflectionUtil.isObjectMethod(method))
+    IResponseGenerator realMethodInvoker = (method.isDefault() || ReflectionUtil.isObjectMethod(method))
       ? new DefaultMethodInvoker(target, method, arguments)
       : new FailingRealMethodInvoker("Cannot invoke real method '" + method.getName() + "' on interface based mock object");
     return interceptor.intercept(target, method, arguments, realMethodInvoker);

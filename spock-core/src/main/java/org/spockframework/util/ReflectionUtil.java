@@ -92,19 +92,6 @@ public abstract class ReflectionUtil {
   }
 
   /**
-   * Returns {@code true} if the argument {@code m} is a default method; returns {@code false} otherwise.
-   * <br/>This method is used instead of {@link Method#isDefault()} in order to preserve the compatibility with Java versions prior to Java 8.
-   *
-   * @param m the method to be checked whether it is default or not
-   * @return true if and only if the argument {@code m} is a default method as defined by the Java Language Specification.
-   */
-  public static boolean isDefault(Method m) {
-    // Default methods are public non-abstract instance methods declared in an interface.
-    return ((m.getModifiers() & (Modifier.ABSTRACT | Modifier.PUBLIC | Modifier.STATIC)) ==
-      Modifier.PUBLIC) && m.getDeclaringClass().isInterface();
-  }
-
-  /**
    * Returns {@code true} if the argument {@code m} is a public method of java.lang.Object.
    */
   public static boolean isObjectMethod(Method m) {

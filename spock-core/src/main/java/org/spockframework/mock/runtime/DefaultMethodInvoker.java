@@ -14,14 +14,22 @@
 
 package org.spockframework.mock.runtime;
 
-import org.spockframework.mock.*;
+import org.spockframework.mock.CannotCreateMockException;
+import org.spockframework.mock.IMockInvocation;
+import org.spockframework.mock.IResponseGenerator;
 import org.spockframework.util.ExceptionUtil;
+import org.spockframework.util.Nullable;
+import org.spockframework.util.ReflectionUtil;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
-import java.lang.reflect.*;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
 
 public class DefaultMethodInvoker implements IResponseGenerator {
+  @Nullable // Available since Java 17
+  private static final Method INVOKE_DEFAULT = ReflectionUtil.getDeclaredMethodByName(InvocationHandler.class, "invokeDefault");
   private final Object target;
   private final Method method;
   private final Object[] arguments;
@@ -34,6 +42,14 @@ public class DefaultMethodInvoker implements IResponseGenerator {
 
   @Override
   public Object respond(IMockInvocation invocation) {
+    if (INVOKE_DEFAULT == null) {
+      return useInternalMethodHandle();
+    }
+    Object[] args = new Object[]{target, method, arguments};
+    return ReflectionUtil.invokeMethod(null, INVOKE_DEFAULT, args);
+  }
+
+  private Object useInternalMethodHandle() {
     MethodHandle methodHandle;
     try {
       final Field field = MethodHandles.Lookup.class.getDeclaredField("IMPL_LOOKUP");

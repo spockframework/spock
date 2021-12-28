@@ -44,7 +44,7 @@ public class DetachedMockFactory implements MockFactory {
      */
   @Override
   public <T> T Mock(Class<T> type) {
-    return createMock(inferNameFromType(type), type, MockNature.MOCK, Collections.<String, Object>emptyMap());
+    return createMock(inferNameFromType(type), type, MockNature.MOCK, Collections.emptyMap());
   }
 
   /**
@@ -83,7 +83,7 @@ public class DetachedMockFactory implements MockFactory {
      */
   @Override
   public <T> T Stub(Class<T> type) {
-    return createMock(inferNameFromType(type), type, MockNature.STUB, Collections.<String, Object>emptyMap());
+    return createMock(inferNameFromType(type), type, MockNature.STUB, Collections.emptyMap());
   }
 
   /**
@@ -122,12 +122,12 @@ public class DetachedMockFactory implements MockFactory {
      */
   @Override
   public <T> T Spy(Class<T> type) {
-    return createMock(inferNameFromType(type), type, MockNature.SPY, Collections.<String, Object>emptyMap());
+    return createMock(inferNameFromType(type), type, MockNature.SPY, Collections.emptyMap());
   }
 
   @Override
   public <T> T Spy(T obj) {
-    return createMock(inferNameFromType(obj.getClass()), obj, MockNature.SPY,  Collections.<String, Object>singletonMap("useObjenesis", true));
+    return createMock(inferNameFromType(obj.getClass()), obj, MockNature.SPY,  Collections.singletonMap("useObjenesis", true));
   }
 
   /**

@@ -488,7 +488,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
 
     CatchStatement featureCatchStat = createThrowableAssignmentAndRethrowCatchStatement(featureThrowableVar);
 
-    List<Statement> cleanupStats = Collections.<Statement>singletonList(
+    List<Statement> cleanupStats = Collections.singletonList(
         createCleanupTryCatch(block, featureThrowableVar));
 
     TryCatchStatement tryFinally =
@@ -558,13 +558,13 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
     BinaryExpression featureThrowableNotNullExpr = createVariableNotNullExpression(featureThrowableVar);
 
     List<Statement> addSuppressedStats =
-      Collections.<Statement>singletonList(new ExpressionStatement(
+      Collections.singletonList(new ExpressionStatement(
         createDirectMethodCall(
           featureThrowableVar,
           nodeCache.Throwable_AddSuppressed,
           new ArgumentListExpression(new VariableExpression(catchParameter)))));
     List<Statement> throwFeatureStats =
-      Collections.<Statement>singletonList(new ThrowStatement(new VariableExpression(catchParameter)));
+      Collections.singletonList(new ThrowStatement(new VariableExpression(catchParameter)));
 
     IfStatement ifFeatureNotNullStat = new IfStatement(new BooleanExpression(featureThrowableNotNullExpr),
       new BlockStatement(addSuppressedStats, null),
@@ -572,7 +572,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
 
     return new CatchStatement(catchParameter,
       new BlockStatement(
-        Collections.<Statement>singletonList(ifFeatureNotNullStat),
+        Collections.singletonList(ifFeatureNotNullStat),
         null));
   }
 
@@ -757,7 +757,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
         new CatchStatement(
             new Parameter(nodeCache.Throwable, SpockNames.SPOCK_EX),
             new BlockStatement(
-              Arrays.<Statement>asList(
+              Arrays.asList(
                 new ExpressionStatement(
                   setThrownException(
                     new VariableExpression(SpockNames.SPOCK_EX)))),

@@ -36,7 +36,7 @@ public class EqualPropertyNameConstraint extends PropertyNameConstraint {
 
   @Override
   public String describeMismatch(IMockInvocation invocation) {
-    Condition condition = new Condition(CollectionUtil.<Object>listOf(getPropertyName(invocation), propertyName, false),
+    Condition condition = new Condition(CollectionUtil.listOf(getPropertyName(invocation), propertyName, false),
       String.format("propertyName == \"%s\"", propertyName), null, null,
       null, null);
     return condition.getRendering();

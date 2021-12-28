@@ -385,7 +385,7 @@ public class AstInspector {
   @SuppressWarnings("unchecked")
   private static List<Statement> getStatements(BlockStatement blockStat) {
     return blockStat == null ?
-      Collections.<Statement> emptyList() :
+      Collections.emptyList() :
       blockStat.getStatements();
   }
 

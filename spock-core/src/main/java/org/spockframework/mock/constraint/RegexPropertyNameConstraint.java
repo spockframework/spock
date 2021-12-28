@@ -39,7 +39,7 @@ public class RegexPropertyNameConstraint extends PropertyNameConstraint {
 
   @Override
   public String describeMismatch(IMockInvocation invocation) {
-    Condition condition = new Condition(CollectionUtil.<Object>listOf(getPropertyName(invocation), pattern.pattern(), false),
+    Condition condition = new Condition(CollectionUtil.listOf(getPropertyName(invocation), pattern.pattern(), false),
       String.format("propertyName ==~ /%s/", pattern.pattern()), null, null,
       null, null);
     return condition.getRendering();

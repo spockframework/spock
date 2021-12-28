@@ -40,7 +40,7 @@ public class RegexMethodNameConstraint implements IInvocationConstraint {
 
   @Override
   public String describeMismatch(IMockInvocation invocation) {
-    Condition condition = new Condition(CollectionUtil.<Object>listOf(invocation.getMethod().getName(), pattern.pattern(), false),
+    Condition condition = new Condition(CollectionUtil.listOf(invocation.getMethod().getName(), pattern.pattern(), false),
       String.format("methodName ==~ /%s/", pattern.pattern()), null, null,
       null, null);
     return condition.getRendering();

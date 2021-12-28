@@ -92,12 +92,9 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: 'Set up JDKs'
-        uses: ./.github/actions/setup-jdks
+        uses: ./.github/actions/setup-build-env
         with:
           additional-java-version: ${{ matrix.java }}
-      - name: 'Gradle Version'
-        run: |
-          ./gradlew --version
       - name: 'Publish Spock'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -124,15 +121,12 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: 'Set up JDKs'
-        uses: ./.github/actions/setup-jdks
+        uses: ./.github/actions/setup-build-env
         with:
           additional-java-version: ${{ matrix.java }}
       - name: 'Create Temporary Branch'
         run: |
           git checkout -b "docs-$GITHUB_SHA"
-      - name: 'Gradle Version'
-        run: |
-          ./gradlew --version
       - name: 'Publish Docs'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

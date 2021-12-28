@@ -47,13 +47,9 @@ jobs:
           # Codecov needs fetch-depth > 1
           fetch-depth: 2
       - name: 'Set up JDKs'
-        uses: ./.github/actions/setup-jdks
+        uses: ./.github/actions/setup-build-env
         with:
           additional-java-version: ${{ matrix.java }}
-      - name: 'Gradle Version'
-        run: |
-          ./gradlew --version
-          ./gradlew javaToolchains
       - name: 'Build Spock'
         # secrets are not injected for pull requests
         env:

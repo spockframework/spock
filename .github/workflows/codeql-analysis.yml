@@ -19,12 +19,8 @@ jobs:
         uses: actions/checkout@v2
 
       # Manually added:  Install and setup JDK
-      - name: Setup JDK 8
-        uses: actions/setup-java@v2
-        with:
-          cache: 'gradle'
-          java-version: 8
-          distribution: 'adopt'
+      - name: 'Set up JDKs'
+        uses: ./.github/actions/setup-build-env
 
       # Initializes the CodeQL tools for scanning.
       - name: Initialize CodeQL
@@ -52,9 +48,6 @@ jobs:
       # Manually added: build
       # we have to disable build cache for now as it seems to be necessary for the compiler to run during the build
       # https://docs.github.com/en/github/finding-security-vulnerabilities-and-errors-in-your-code/troubleshooting-the-codeql-workflow#no-code-found-during-the-build
-      - name: 'Gradle Version'
-        run: |
-          ./gradlew --version
       - name: 'Build Spock Classes'
         run: |
           ./gradlew --stacktrace --no-build-cache testClasses "-Dvariant=${{ matrix.variant }}"

@@ -16,7 +16,6 @@ package org.spockframework.mock.runtime;
 
 import org.spockframework.mock.*;
 import org.spockframework.util.ExceptionUtil;
-import org.spockframework.util.ReflectionUtil;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;

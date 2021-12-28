@@ -17,7 +17,6 @@
 package org.spockframework.runtime.extension.builtin;
 
 import groovy.lang.Closure;
-import groovy.lang.MissingPropertyException;
 import org.spockframework.runtime.GroovyRuntimeUtil;
 import org.spockframework.runtime.extension.ExtensionException;
 import org.spockframework.runtime.extension.IAnnotationDrivenExtension;

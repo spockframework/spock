@@ -23,8 +23,6 @@ import org.codehaus.groovy.ast.expr.Expression;
 import org.codehaus.groovy.ast.expr.VariableExpression;
 import org.codehaus.groovy.ast.stmt.*;
 
-import static org.codehaus.groovy.ast.expr.VariableExpression.THIS_EXPRESSION;
-
 // IDEA: abstract method that provides default conversion if result not set
 public abstract class AbstractExpressionConverter<T> implements GroovyCodeVisitor {
   protected T result;

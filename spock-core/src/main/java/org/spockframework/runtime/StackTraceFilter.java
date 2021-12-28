@@ -45,6 +45,7 @@ public class StackTraceFilter implements IStackTraceFilter {
   );
 
   private static final Pattern CLOSURE_CLASS = Pattern.compile("(.+)\\$_(.+)_closure(\\d+)");
+  private static final StackTraceElement[] STACK_TRACE_ELEMENTS = new StackTraceElement[0];
 
   private final IMethodNameMapper mapper;
 
@@ -68,7 +69,7 @@ public class StackTraceFilter implements IStackTraceFilter {
       filteredTrace.add(elem);
     }
 
-    throwable.setStackTrace(filteredTrace.toArray(new StackTraceElement[filteredTrace.size()]));
+    throwable.setStackTrace(filteredTrace.toArray(STACK_TRACE_ELEMENTS));
 
     if (throwable.getCause() != null) filter(throwable.getCause());
   }

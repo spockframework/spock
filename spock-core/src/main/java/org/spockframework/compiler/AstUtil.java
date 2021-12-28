@@ -116,7 +116,7 @@ public abstract class AstUtil {
     if (expr instanceof StaticMethodCallExpression)
       return new ClassExpression(((StaticMethodCallExpression) expr).getOwnerType());
     if (expr instanceof ConstructorCallExpression)
-      return new ClassExpression(((ConstructorCallExpression) expr).getType());
+      return new ClassExpression(expr.getType());
     return null;
   }
 

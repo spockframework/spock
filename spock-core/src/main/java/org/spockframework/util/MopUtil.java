@@ -21,7 +21,6 @@ import org.codehaus.groovy.reflection.CachedMethod;
 import org.codehaus.groovy.runtime.metaclass.*;
 
 import groovy.lang.*;
-import org.spockframework.runtime.GroovyRuntimeUtil;
 
 public abstract class MopUtil {
   private static final Field ReflectionMetaMethod_method  = getDeclaredField(ReflectionMetaMethod.class, "method");

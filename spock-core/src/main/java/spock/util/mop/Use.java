@@ -16,8 +16,6 @@
 
 package spock.util.mop;
 
-import java.lang.annotation.*;
-
 import org.spockframework.runtime.extension.ExtensionAnnotation;
 import org.spockframework.runtime.extension.builtin.UseExtension;
 import org.spockframework.util.Beta;

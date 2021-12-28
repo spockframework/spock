@@ -27,8 +27,6 @@ import spock.lang.Requires;
 import spock.util.environment.Jvm;
 import spock.util.environment.OperatingSystem;
 
-import groovy.lang.DelegatesTo;
-
 /**
  * The context (delegate) for a {@link Requires}, {@link IgnoreIf} or {@link PendingFeatureIf} condition.
  */

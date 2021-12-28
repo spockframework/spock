@@ -164,7 +164,7 @@ public class InteractionRewriter {
     builderExpr = new ConstructorCallExpression(
         resources.getAstNodeCache().InteractionBuilder,
         new ArgumentListExpression(
-            Arrays.<Expression> asList(
+            Arrays.asList(
                 new ConstantExpression(expr.getLineNumber()),
                 new ConstantExpression(expr.getColumnNumber()),
                 new ConstantExpression(resources.getSourceText(expr)))));

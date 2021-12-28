@@ -765,7 +765,7 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> i
           createDirectMethodCall(
             new ClassExpression(resources.getAstNodeCache().SpockRuntime),
             resources.getAstNodeCache().SpockRuntime_GroupConditionFailedWithException,
-            new ArgumentListExpression(Arrays.<Expression>asList(
+            new ArgumentListExpression(Arrays.asList(
               new VariableExpression(errorCollectorName),
               new VariableExpression(THROWABLE)                                     // throwable
             ))

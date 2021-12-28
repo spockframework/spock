@@ -129,6 +129,6 @@ public class EmptyOrDummyResponse implements IDefaultResponse {
     Type genericType = invocation.getMethod().getExactReturnType();
     Specification spec = invocation.getMockObject().getSpecification();
     return spec.createMock("dummy", genericType, MockNature.STUB, GroovyObject.class.isAssignableFrom(type) ?
-        MockImplementation.GROOVY : MockImplementation.JAVA, Collections.<String, Object>emptyMap(), null);
+        MockImplementation.GROOVY : MockImplementation.JAVA, Collections.emptyMap(), null);
   }
 }

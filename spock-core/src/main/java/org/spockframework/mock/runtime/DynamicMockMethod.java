@@ -28,7 +28,7 @@ public class DynamicMockMethod implements IMockMethod {
   private final boolean isStatic;
 
   public DynamicMockMethod(String methodName, int argumentCount, boolean isStatic) {
-    this(methodName, Collections.<Type>nCopies(argumentCount , Object.class), Object.class, isStatic);
+    this(methodName, Collections.nCopies(argumentCount , Object.class), Object.class, isStatic);
   }
 
   public DynamicMockMethod(String methodName, List<Type> parameterTypes, Type returnType, boolean isStatic) {

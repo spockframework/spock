@@ -11,8 +11,10 @@ import java.util.List;
 
 class DynamicProxyMockFactory {
 
+  private static final Class<?>[] CLASSES = new Class<?>[0];
+
   static Object createMock(Class<?> mockType, List<Class<?>> additionalInterfaces,
-                                  List<Object> constructorArgs, IProxyBasedMockInterceptor mockInterceptor, ClassLoader classLoader) {
+                           List<Object> constructorArgs, IProxyBasedMockInterceptor mockInterceptor, ClassLoader classLoader) {
     if (constructorArgs != null) {
       throw new InvalidSpecException("Interface based mocks may not have constructor arguments");
     }
@@ -22,7 +24,7 @@ class DynamicProxyMockFactory {
     interfaces.add(ISpockMockObject.class);
     return Proxy.newProxyInstance(
         classLoader,
-        interfaces.toArray(new Class<?>[interfaces.size()]),
+        interfaces.toArray(CLASSES),
         new DynamicProxyMockInterceptorAdapter(mockInterceptor)
     );
   }

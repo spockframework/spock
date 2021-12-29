@@ -30,7 +30,7 @@ public interface IDataDriver {
    */
   IDataDriver DEFAULT = (dataIterator, iterationRunner, parameters) -> {
     while (dataIterator.hasNext()) {
-      iterationRunner.runIteration(dataIterator.next());
+      iterationRunner.runIteration(prepareArgumentArray(dataIterator.next(), parameters));
     }
   };
 
@@ -44,4 +44,33 @@ public interface IDataDriver {
    * @param parameters the parameters of the test method
    */
   void runIterations(DataIterator dataIterator, IIterationRunner iterationRunner, List<ParameterInfo> parameters);
+
+  /**
+   * Prepares the arguments for invocation of the test method.
+   * <p>
+   * It is possible to have fewer arguments produced by the data driver than the number of parameters.
+   * In this case, the missing arguments are filled with {@link MethodInfo#MISSING_ARGUMENT}.
+   * <p>
+   * Custom implementations of IDataDriver should use this method to prepare the argument array.
+   * <p>
+   * Important: The method relies on the fact that the data iterator produces the data in the same order as the parameters,
+   * with missing arguments being on the end. If a custom implementation of IDataDriver does not follow this convention,
+   * then it should not rely on this method. However, it must still follow the contract of setting the missing arguments as
+   * {@link MethodInfo#MISSING_ARGUMENT}.
+   *
+   * @param arguments the arguments created by the data driver
+   * @param parameters the parameters of the test method
+   * @return an array of arguments that can be passed to the test method
+   */
+  static Object[] prepareArgumentArray(Object[] arguments, List<ParameterInfo> parameters) {
+    int parameterCount = parameters.size();
+    if (arguments.length == parameterCount) {
+      return arguments;
+    }
+
+    Object[] methodArguments = new Object[parameterCount];
+    arraycopy(arguments, 0, methodArguments, 0, arguments.length);
+    Arrays.fill(methodArguments, arguments.length, parameterCount, MISSING_ARGUMENT);
+    return methodArguments;
+  }
 }

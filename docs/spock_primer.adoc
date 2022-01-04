@@ -680,4 +680,3 @@ Although Spock uses a different terminology, many of its concepts and features a
 |Exception condition   |`@Test(expected=...)`
 |Interaction           | Mock expectation (e.g. in Mockito)
 |===
-`

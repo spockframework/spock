@@ -171,11 +171,6 @@ subprojects {
     //Required for building on Travis' container-based infrastructure to not be killed with
     //'exit code 137' - https://github.com/travis-ci/travis-ci/issues/5582
     jvmArgs '-Xmx512m'
-
-    if (javaVersionNoShadow >= 17) {
-      // Workaround for Java 17 to enable mocking of default methods
-      jvmArgs("--add-opens", "java.base/java.lang.invoke=ALL-UNNAMED")
-    }
   }
 
   jacoco {

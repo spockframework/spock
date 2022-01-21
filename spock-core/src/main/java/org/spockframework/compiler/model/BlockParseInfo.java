@@ -16,7 +16,7 @@
 
 package org.spockframework.compiler.model;
 
-import java.util.EnumSet;
+import java.util.*;
 
 /**
  *
@@ -137,7 +137,7 @@ public enum BlockParseInfo {
   };
 
   public String toString() {
-    return super.toString().toLowerCase();
+    return super.toString().toLowerCase(Locale.ROOT);
   }
 
   public abstract Block addNewBlock(Method method);

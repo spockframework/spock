@@ -19,7 +19,7 @@ package org.spockframework.spring.xml;
 import org.spockframework.mock.MockNature;
 import spock.mock.DetachedMockFactory;
 
-import java.util.Collections;
+import java.util.*;
 
 import org.springframework.beans.factory.FactoryBean;
 
@@ -47,7 +47,7 @@ public class SpockMockFactoryBean<T> implements FactoryBean<T> {
   @SuppressWarnings("unchecked")
   public T getObject() throws Exception {
     if (instance == null) {
-      MockNature nature = MockNature.valueOf(mockNature.toUpperCase());
+      MockNature nature = MockNature.valueOf(mockNature.toUpperCase(Locale.ROOT));
       instance =  new DetachedMockFactory().createMock(name, targetClass, nature,
         Collections.<String, Object>emptyMap());
     }

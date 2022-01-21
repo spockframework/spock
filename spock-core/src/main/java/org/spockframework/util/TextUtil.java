@@ -154,10 +154,10 @@ public abstract class TextUtil {
       String uppers = matcher.group(2);
 
       if (uppers.length() == 0) {
-        result.append(lowers.toUpperCase());
+        result.append(lowers.toUpperCase(Locale.ROOT));
       } else {
         if (lowers.length() > 0) {
-          result.append(lowers.toUpperCase());
+          result.append(lowers.toUpperCase(Locale.ROOT));
           result.append('_');
         }
         if (uppers.length() > 1 && !matcher.hitEnd()) {

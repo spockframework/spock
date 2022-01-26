@@ -7,7 +7,7 @@ import java.util.concurrent.Executor
 import groovy.transform.CompileStatic
 import org.springframework.context.annotation.*
 
-@CompileStatic
+//@CompileStatic  //TODO: Explain why compilation started to fail with Groovy 4 and all supported JDKs
 @Configuration
 class TestConfig {
   @Bean

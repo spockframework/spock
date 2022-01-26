@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Bean
 import java.util.concurrent.Callable
 import java.util.concurrent.ExecutorService
 
-@CompileStatic
+//@CompileStatic  //TODO: Explain why compilation started to fail with Groovy 4, but only with JDK 8
 class NoMockConfig {
 
   @Bean

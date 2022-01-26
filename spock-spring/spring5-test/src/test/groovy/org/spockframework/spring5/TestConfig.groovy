@@ -7,7 +7,7 @@ import spock.mock.DetachedMockFactory
 
 import java.util.concurrent.Executor
 
-@CompileStatic
+//@CompileStatic  //TODO: Explain why compilation started to fail with Groovy 4, but only with JDK 8
 @Configuration
 class TestConfig {
   @Bean

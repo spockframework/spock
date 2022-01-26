@@ -30,7 +30,7 @@ ext {
       maxGroovyVersion = "3.9.99"
     }  else if (variant == 4.0) {
       groovyGroup = "org.apache.groovy"
-      groovyVersion = "4.0.0-rc-1"
+      groovyVersion = "4.0.0-rc-2"
       minGroovyVersion = "4.0.0"
       maxGroovyVersion = "4.9.99"
     } else {

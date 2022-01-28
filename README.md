@@ -23,6 +23,13 @@ Latest Versions
 Releases are available from [Maven Central](https://search.maven.org/#search%7Cga%7C1%7Cg%3A%22org.spockframework%22).
 Development snapshots are available from [Sonatype OSS](https://oss.sonatype.org/content/repositories/snapshots/org/spockframework/).
 
+### Signing Keys
+
+Official Spock artifacts are signed with either of these keys
+
+* `76E94E8FF0AB5AF3B6F8366972FEFD1572EB75E1`
+* `B7B6C746BFE0389172EAB86FAF0A94402EA0A67F`
+
 ### Ad-Hoc Intermediate Releases
 
 For intermediate stable builds we recommend to use [Jitpack](https://jitpack.io/#org.spockframework/spock) (go here for instructions):

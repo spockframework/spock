@@ -5765,7 +5765,7 @@ Check the Javadoc of <code>spock.config.ParallelConfiguration</code> for a detai
 <div class="sect2">
 <h3 id="junit-4"><a class="anchor" href="#junit-4"></a><a class="link" href="#junit-4">JUnit 4 Module</a></h3>
 <div class="paragraph">
-<p>Integration with JUnit 4 features for Spock 2+ (which internally uses JUnit Platform - part of JUnit 5).</p>
+<p>Integration with JUnit 4 features for Spock 2+ (which internally uses JUnit Platform - part of JUnit 5). Please add dependency <a href="https://search.maven.org/artifact/org.spockframework/spock-junit4"><code>org.spockframework:spock-junit4</code></a> to your project.</p>
 </div>
 <div class="paragraph">
 <p>The module is required for:</p>
@@ -5796,7 +5796,7 @@ This module does its best to support old features from JUnit 4, however, users a
 <div class="sect2">
 <h3 id="_guice_module"><a class="anchor" href="#_guice_module"></a><a class="link" href="#_guice_module">Guice Module</a></h3>
 <div class="paragraph">
-<p>Integration with the <a href="http://code.google.com/p/google-guice/">Guice</a> IoC container. For examples see the specs in the
+<p>Integration with the <a href="http://code.google.com/p/google-guice/">Guice</a> IoC container. Please add dependency <a href="https://search.maven.org/artifact/org.spockframework/spock-guice"><code>org.spockframework:spock-guice</code></a> to your project. For examples see the specs in the
 <a href="https://github.com/spockframework/spock/tree/master/spock-guice/src/test/groovy/org/spockframework/guice">codebase</a>.</p>
 </div>
 <div class="paragraph">
@@ -5807,7 +5807,7 @@ This module does its best to support old features from JUnit 4, however, users a
 <h3 id="_spring_module"><a class="anchor" href="#_spring_module"></a><a class="link" href="#_spring_module">Spring Module</a></h3>
 <div class="paragraph">
 <p>The Spring module enables integration with <a href="http://docs.spring.io/spring/docs/4.1.5.RELEASE/spring-framework-reference/html/testing.html#testcontext-framework">Spring TestContext Framework</a>.
-It supports the following spring annotations <code>@ContextConfiguration</code> and <code>@ContextHierarchy</code>. Furthermore, it supports the meta-annotation <code>@BootstrapWith</code> and so any annotation that is annotated with <code>@BootstrapWith</code> will also work, such as <code>@SpringBootTest</code>, <code>@WebMvcTest</code>.</p>
+It supports the following spring annotations <code>@ContextConfiguration</code> and <code>@ContextHierarchy</code>. Furthermore, it supports the meta-annotation <code>@BootstrapWith</code> and so any annotation that is annotated with <code>@BootstrapWith</code> will also work, such as <code>@SpringBootTest</code>, <code>@WebMvcTest</code>. Please add dependency <a href="https://search.maven.org/artifact/org.spockframework/spock-spring"><code>org.spockframework:spock-spring</code></a> to your project.</p>
 </div>
 <div class="sect3">
 <h4 id="_mocks"><a class="anchor" href="#_mocks"></a><a class="link" href="#_mocks">Mocks</a></h4>
@@ -6176,21 +6176,21 @@ Refer to javadoc of <code>org.spockframework.spring.EnableSharedInjection</code>
 <div class="sect2">
 <h3 id="_tapestry_module"><a class="anchor" href="#_tapestry_module"></a><a class="link" href="#_tapestry_module">Tapestry Module</a></h3>
 <div class="paragraph">
-<p>Integration with the <a href="http://tapestry.apache.org/tapestry5/">Tapestry5</a> IoC container. For examples see the specs in the
+<p>Integration with the <a href="http://tapestry.apache.org/tapestry5/">Tapestry5</a> IoC container. Please add dependency <a href="https://search.maven.org/artifact/org.spockframework/spock-tapestry"><code>org.spockframework:spock-tapestry</code></a> to your project. For examples see the specs in the
 <a href="https://github.com/spockframework/spock/tree/master/spock-tapestry/src/test/groovy/org/spockframework/tapestry">codebase</a>.</p>
 </div>
 </div>
 <div class="sect2">
 <h3 id="_unitils_module"><a class="anchor" href="#_unitils_module"></a><a class="link" href="#_unitils_module">Unitils Module</a></h3>
 <div class="paragraph">
-<p>Integration with the <a href="http://www.unitils.org/">Unitils</a> library. For examples see the specs in the
+<p>Integration with the <a href="http://www.unitils.org/">Unitils</a> library. Please add dependency <a href="https://search.maven.org/artifact/org.spockframework/spock-unitils"><code>org.spockframework:spock-unitils</code></a> to your project. For examples see the specs in the
 <a href="https://github.com/spockframework/spock/tree/master/spock-unitils/src/test/groovy/org/spockframework/unitils">codebase</a>.</p>
 </div>
 </div>
 <div class="sect2">
 <h3 id="_grails_module"><a class="anchor" href="#_grails_module"></a><a class="link" href="#_grails_module">Grails Module</a></h3>
 <div class="paragraph">
-<p>The Grails plugin has moved to its own <a href="https://github.com/spockframework/spock-grails">GitHub project</a>.</p>
+<p>The Grails plugin has moved to its own <a href="https://github.com/spockframework/spock-grails">GitHub project</a>. It has legacy status and was last released for <a href="https://search.maven.org/artifact/org.spockframework/spock-grails">Spock 0.7 and Groovy versions 1.8 and 2.0</a>, because it is no longer necessary.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -9161,7 +9161,7 @@ This is due to how groovy implements traits and AST transformations.</p>
 <div id="footer">
 <div id="footer-text">
 Version 2.1-SNAPSHOT<br>
-Last updated 2022-01-17 18:10:13 UTC
+Last updated 2022-02-01 19:58:34 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./coderay-asciidoctor.css">

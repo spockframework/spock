@@ -101,6 +101,11 @@ open module foo.bar {
 }
 ```
 
+Logo
+----
+
+The Spock Logo, created by created Ayşe Altınsoy (@AltinsoyAyse), is managed in the [spock-logo repository](https://github.com/spockframework/spock-logo).
+
 Links
 -----
 * Spock Homepage -- https://spockframework.org

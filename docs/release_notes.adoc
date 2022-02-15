@@ -2,7 +2,22 @@
 = Release Notes
 include::include.adoc[]
 
-== 2.1 (tbd)
+== 2.1 (2022-02-15)
+
+No functional changes to 2.1-M2.
+
+== Official Spock Logo
+
+image::images/spock-main-logo.png[Spock Logo, align=center, width=20%]
+
+The Spock Framework Project has an official logo.
+Many thanks to Ayşe Altınsoy (@AltinsoyAyse) for creating the logo through many iterations.
+
+== Misc
+* Documentation fixes
+* Build maintenance
+
+Thanks to all the contributors to this release: Marc Philipp, Miles Thomason, BJ Hargrave, Marcin Zajączkowski, Lőrinc Pap, Felipe Pedrosa, Marcin Świerczyński, Benedikt Ritter, Alexander Kriegisch, Jérôme Prinet, Pin Zhang
 
 == 2.1-M2 (2021-11-12)
 

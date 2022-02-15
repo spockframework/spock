@@ -1,0 +1,128 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<svg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' contentScriptType='application/ecmascript' contentStyleType='text/css' height='226px' preserveAspectRatio='none' style='width:1051px;height:226px;' version='1.1' viewBox='0 0 1051 226' width='1051px' zoomAndPan='magnify'>
+  <defs/>
+  <g>
+    <rect fill='#DDCC77' height='33.9688' style='stroke: #A80036; stroke-width: 1.5;' width='101' x='424.75' y='10'/>
+    <text fill='#000000' font-family='sans-serif' font-size='12' lengthAdjust='spacingAndGlyphs' textLength='81' x='434.75' y='31.1387'>
+      SpockEngine
+    </text>
+    <line style='stroke: #A80036; stroke-width: 1.5;' x1='475.25' x2='475.25' y1='43.9688' y2='63.9688'/>
+    <line style='stroke: #A80036; stroke-width: 1.5;' x1='61.5' x2='61.5' y1='63.9688' y2='83.9688'/>
+    <rect fill='#DDCC77' height='33.9688' style='stroke: #A80036; stroke-width: 1.5;' width='103' x='10' y='83.9688'/>
+    <text fill='#000000' font-family='sans-serif' font-size='12' lengthAdjust='spacingAndGlyphs' textLength='83' x='20' y='105.1074'>
+      Same Thread
+    </text>
+    <line style='stroke: #A80036; stroke-width: 1.5;' x1='178' x2='178' y1='63.9688' y2='83.9688'/>
+    <rect fill='#88CCEE' height='33.9688' rx='5' ry='5' style='stroke: #A80036; stroke-width: 1.5;' width='90' x='133' y='83.9688'/>
+    <text fill='#000000' font-family='sans-serif' font-size='12' lengthAdjust='spacingAndGlyphs' textLength='70' x='143' y='105.1074'>
+      Concurrent
+    </text>
+    <line style='stroke: #A80036; stroke-width: 1.5;' x1='318' x2='318' y1='63.9688' y2='83.9688'/>
+    <rect fill='#88CCEE' height='33.9688' rx='5' ry='5' style='stroke: #117733; stroke-width: 2.5; stroke-dasharray: 2.0,2.0;' width='150' x='243' y='83.9688'/>
+    <text fill='#000000' font-family='sans-serif' font-size='12' lengthAdjust='spacingAndGlyphs' textLength='130' x='253' y='105.1074'>
+      ResourceLock(READ)
+    </text>
+    <line style='stroke: #A80036; stroke-width: 1.5;' x1='509.5' x2='509.5' y1='63.9688' y2='83.9688'/>
+    <rect fill='#88CCEE' height='33.9688' rx='5' ry='5' style='stroke: #117733; stroke-width: 2.5; stroke-dasharray: 4.0,4.0;' width='193' x='413' y='83.9688'/>
+    <text fill='#000000' font-family='sans-serif' font-size='12' lengthAdjust='spacingAndGlyphs' textLength='173' x='423' y='105.1074'>
+      ResourceLock(READ_WRITE)
+    </text>
+    <line style='stroke: #A80036; stroke-width: 1.5;' x1='509.5' x2='519.5' y1='149.9219' y2='149.9219'/>
+    <rect fill='#DDCC77' height='33.9688' style='stroke: #117733; stroke-width: 2.5; stroke-dasharray: 4.0,4.0;' width='164' x='519.5' y='132.9375'/>
+    <text fill='#000000' font-family='sans-serif' font-size='12' lengthAdjust='spacingAndGlyphs' textLength='144' x='529.5' y='154.0762'>
+      Same Thread with Lock
+    </text>
+    <line style='stroke: #A80036; stroke-width: 1.5;' x1='509.5' x2='509.5' y1='117.9375' y2='149.9219'/>
+    <line style='stroke: #A80036; stroke-width: 1.5;' x1='776.5' x2='776.5' y1='63.9688' y2='83.9688'/>
+    <rect fill='#88CCEE' height='33.9688' rx='5' ry='5' style='stroke: #A80036; stroke-width: 1.5;' width='146' x='703.5' y='83.9688'/>
+    <text fill='#000000' font-family='sans-serif' font-size='12' lengthAdjust='spacingAndGlyphs' textLength='126' x='713.5' y='105.1074'>
+      Data Driven Feature
+    </text>
+    <line style='stroke: #A80036; stroke-width: 1.5;' x1='776.5' x2='786.5' y1='149.9219' y2='149.9219'/>
+    <rect fill='#88CCEE' height='33.9688' rx='5' ry='5' style='stroke: #A80036; stroke-width: 1.5;' width='164' x='786.5' y='132.9375'/>
+    <text fill='#000000' font-family='sans-serif' font-size='12' lengthAdjust='spacingAndGlyphs' textLength='144' x='796.5' y='154.0762'>
+      Data Driven Feature[1]
+    </text>
+    <line style='stroke: #A80036; stroke-width: 1.5;' x1='776.5' x2='786.5' y1='198.8906' y2='198.8906'/>
+    <rect fill='#88CCEE' height='33.9688' rx='5' ry='5' style='stroke: #A80036; stroke-width: 1.5;' width='164' x='786.5' y='181.9063'/>
+    <text fill='#000000' font-family='sans-serif' font-size='12' lengthAdjust='spacingAndGlyphs' textLength='144' x='796.5' y='203.0449'>
+      Data Driven Feature[2]
+    </text>
+    <line style='stroke: #A80036; stroke-width: 1.5;' x1='776.5' x2='776.5' y1='117.9375' y2='198.8906'/>
+    <line style='stroke: #A80036; stroke-width: 1.5;' x1='1005.5' x2='1005.5' y1='63.9688' y2='83.9688'/>
+    <rect fill='#CC6677' height='33.9688' style='stroke: #117733; stroke-width: 2.5; stroke-dasharray: 8.0,8.0;' width='70' x='970.5' y='83.9688'/>
+    <text fill='#000000' font-family='sans-serif' font-size='12' lengthAdjust='spacingAndGlyphs' textLength='50' x='980.5' y='105.1074'>
+      Isolated
+    </text>
+    <line style='stroke: #A80036; stroke-width: 1.5;' x1='61.5' x2='1005.5' y1='63.9688' y2='63.9688'/>
+    <!--MD5=[25fd36511e5d0c99a239d40fdcb77b5f]
+@startwbs
+<style>
+wbsDiagram {
+
+  BackgroundColor #88CCEE
+  RoundCorner 10
+
+  node {
+    :depth(0) {
+      BackgroundColor #DDCC77
+      RoundCorner 0
+    }
+  }
+
+  .concurrent * {
+      BackgroundColor #88CCEE
+      RoundCorner 10
+  }
+
+  .samethread * {
+      BackgroundColor #DDCC77
+      RoundCorner 0
+  }
+
+  .write_lock * {
+      LineStyle 4
+      LineThickness 2.5
+      LineColor #117733
+  }
+
+  .read_lock * {
+      LineStyle 2
+      LineThickness 2.5
+      LineColor #117733
+  }
+
+  .isolated * {
+      BackgroundColor #CC6677
+      RoundCorner 0
+      LineStyle 8
+      LineThickness 2.5
+      LineColor #117733
+  }
+}
+</style>
+skinparam shadowing false
+* SpockEngine
+** Same Thread <<samethread>>
+** Concurrent <<concurrent>>
+** ResourceLock(READ) <<read_lock>>
+** ResourceLock(READ_WRITE) <<write_lock>>
+*** Same Thread with Lock <<samethread>>
+** Data Driven Feature
+*** Data Driven Feature[1]
+*** Data Driven Feature[2]
+** Isolated <<isolated>>
+@endwbs
+
+PlantUML version 1.2020.06(Sun Apr 05 12:38:32 UTC 2020)
+(APACHE source distribution)
+Java Runtime: OpenJDK Runtime Environment
+JVM: OpenJDK 64-Bit Server VM
+Java Version: 1.8.0_292-b10
+Operating System: Linux
+Default Encoding: UTF-8
+Language: en
+Country: 
+-->
+  </g>
+</svg>

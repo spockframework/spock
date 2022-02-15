@@ -2,6 +2,8 @@
 = Release Notes
 include::include.adoc[]
 
+== 2.2 (tbd)
+
 == 2.1 (2022-02-15)
 
 No functional changes to 2.1-M2.

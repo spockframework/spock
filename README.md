@@ -15,8 +15,8 @@ https://meetspock.appspot.com/.
 
 Latest Versions
 ---------------
-* The latest 2.x release version is **2.1-M2** (2.1-M2-groovy-2.5, 2.1-M2-groovy-3.0), released on 2021-11-12.
-* The current development version is **2.1-SNAPSHOT** (2.1-groovy-2.5-SNAPSHOT, 2.1-groovy-3.0-SNAPSHOT).
+* The latest 2.x release version is **2.1** (2.1-M2-groovy-2.5, 2.1-M2-groovy-3.0), released on 2022-02-15.
+* The current development version is **2.2-SNAPSHOT** (2.2-groovy-2.5-SNAPSHOT, 2.2-groovy-3.0-SNAPSHOT).
 
 **NOTE:** Spock 2.0 is based on the JUnit 5 Platform and require Java 8+/groovy-2.5+ (Groovy 3.0 is recommended, especially in projects using Java 12+).
 

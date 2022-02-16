@@ -43,7 +43,7 @@ import static java.util.Arrays.asList;
  * @since 1.2
  */
 
-public class SpockMockPostprocessor extends InstantiationAwareBeanPostProcessorAdapter
+public class SpockMockPostprocessor extends BackwardsCompatibleInstantiationAwareBeanPostProcessorAdapter
   implements BeanFactoryPostProcessor, Ordered {
 
   private static final String FACTORY_BEAN_OBJECT_TYPE = "factoryBeanObjectType";
@@ -327,7 +327,7 @@ public class SpockMockPostprocessor extends InstantiationAwareBeanPostProcessorA
    * {@link BeanPostProcessor} to handle {@link SpringSpy} definitions. Registered as a
    * separate processor so that it can be ordered above AOP post processors.
    */
-  static class SpyPostProcessor extends InstantiationAwareBeanPostProcessorAdapter
+  static class SpyPostProcessor extends BackwardsCompatibleInstantiationAwareBeanPostProcessorAdapter
     implements PriorityOrdered {
 
     private static final String BEAN_NAME = SpyPostProcessor.class.getName();

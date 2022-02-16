@@ -38,7 +38,7 @@ public class EqualMethodNameConstraint implements IInvocationConstraint {
 
   @Override
   public String describeMismatch(IMockInvocation invocation) {
-    Condition condition = new Condition(CollectionUtil.<Object>listOf(invocation.getMethod().getName(), methodName, false),
+    Condition condition = new Condition(CollectionUtil.listOf(invocation.getMethod().getName(), methodName, false),
       String.format("methodName == \"%s\"", methodName), null, null,
       null, null);
     return condition.getRendering();

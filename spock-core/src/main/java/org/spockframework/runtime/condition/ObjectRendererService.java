@@ -32,7 +32,7 @@ public class ObjectRendererService implements IObjectRendererService {
     if (object == null) return "null\n";
 
     // explicit parameterization required although IDEA thinks it's redundant
-    Set<Class<?>> types = Collections.<Class<?>>singleton(object.getClass());
+    Set<Class<?>> types = Collections.singleton(object.getClass());
 
     while (!types.isEmpty()) {
       for (Class<?> type : types) {
@@ -57,8 +57,7 @@ public class ObjectRendererService implements IObjectRendererService {
       if (superclass != null && superclass != Object.class) {
         parents.add(superclass);
       }
-      // cast required to compile with JDK 5
-      parents.addAll(Arrays.asList((Class<?>[]) type.getInterfaces()));
+      parents.addAll(Arrays.asList(type.getInterfaces()));
     }
 
     return parents;

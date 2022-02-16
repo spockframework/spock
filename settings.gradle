@@ -88,7 +88,7 @@ include "spock-guice"
 include "spock-junit4"
 include "spock-testkit"
 
-if ((System.getProperty("variant") as BigDecimal ?: 2.5) != 3.0) {
+if ((System.getProperty("variant") as BigDecimal ?: 2.5) == 2.5) {
   //Remove once Groovy 2.5 support is dropped
   include "spock-groovy2-compat"
 }

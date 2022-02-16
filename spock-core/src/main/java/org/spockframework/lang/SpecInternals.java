@@ -82,11 +82,11 @@ public abstract class SpecInternals {
   }
 
   Object MockImpl(String inferredName, Class<?> inferredType) {
-    return createMockImpl(inferredName, inferredType, MockNature.MOCK, MockImplementation.JAVA, Collections.<String, Object>emptyMap(), null, null);
+    return createMockImpl(inferredName, inferredType, MockNature.MOCK, MockImplementation.JAVA, Collections.emptyMap(), null, null);
   }
 
   Object MockImpl(String inferredName, Class<?> inferredType, Closure closure) {
-    return createMockImpl(inferredName, inferredType, MockNature.MOCK, MockImplementation.JAVA, Collections.<String, Object>emptyMap(), null, closure);
+    return createMockImpl(inferredName, inferredType, MockNature.MOCK, MockImplementation.JAVA, Collections.emptyMap(), null, closure);
   }
 
   Object MockImpl(String inferredName, Class<?> inferredType, Map<String, Object> options) {
@@ -98,11 +98,11 @@ public abstract class SpecInternals {
   }
 
   Object MockImpl(String inferredName, Class<?> inferredType, Class<?> specifiedType) {
-    return createMockImpl(inferredName, inferredType, MockNature.MOCK, MockImplementation.JAVA, Collections.<String, Object>emptyMap(), specifiedType, null);
+    return createMockImpl(inferredName, inferredType, MockNature.MOCK, MockImplementation.JAVA, Collections.emptyMap(), specifiedType, null);
   }
 
   Object MockImpl(String inferredName, Class<?> inferredType, Class<?> specifiedType, Closure closure) {
-    return createMockImpl(inferredName, inferredType, MockNature.MOCK, MockImplementation.JAVA, Collections.<String, Object>emptyMap(), specifiedType, closure);
+    return createMockImpl(inferredName, inferredType, MockNature.MOCK, MockImplementation.JAVA, Collections.emptyMap(), specifiedType, closure);
   }
 
   Object MockImpl(String inferredName, Class<?> inferredType, Map<String, Object> options, Class<?> specifiedType) {
@@ -114,11 +114,11 @@ public abstract class SpecInternals {
   }
 
   Object StubImpl(String inferredName, Class<?> inferredType) {
-    return createMockImpl(inferredName, inferredType, MockNature.STUB, MockImplementation.JAVA, Collections.<String, Object>emptyMap(), null, null);
+    return createMockImpl(inferredName, inferredType, MockNature.STUB, MockImplementation.JAVA, Collections.emptyMap(), null, null);
   }
 
   Object StubImpl(String inferredName, Class<?> inferredType, Closure closure) {
-    return createMockImpl(inferredName, inferredType, MockNature.STUB, MockImplementation.JAVA, Collections.<String, Object>emptyMap(), null, closure);
+    return createMockImpl(inferredName, inferredType, MockNature.STUB, MockImplementation.JAVA, Collections.emptyMap(), null, closure);
   }
 
   Object StubImpl(String inferredName, Class<?> inferredType, Map<String, Object> options) {
@@ -130,11 +130,11 @@ public abstract class SpecInternals {
   }
 
   Object StubImpl(String inferredName, Class<?> inferredType, Class<?> specifiedType) {
-    return createMockImpl(inferredName, inferredType, MockNature.STUB, MockImplementation.JAVA, Collections.<String, Object>emptyMap(), specifiedType, null);
+    return createMockImpl(inferredName, inferredType, MockNature.STUB, MockImplementation.JAVA, Collections.emptyMap(), specifiedType, null);
   }
 
   Object StubImpl(String inferredName, Class<?> inferredType, Class<?> specifiedType, Closure closure) {
-    return createMockImpl(inferredName, inferredType, MockNature.STUB, MockImplementation.JAVA, Collections.<String, Object>emptyMap(), specifiedType, closure);
+    return createMockImpl(inferredName, inferredType, MockNature.STUB, MockImplementation.JAVA, Collections.emptyMap(), specifiedType, closure);
   }
 
   Object StubImpl(String inferredName, Class<?> inferredType, Map<String, Object> options, Class<?> specifiedType) {
@@ -146,11 +146,11 @@ public abstract class SpecInternals {
   }
 
   Object SpyImpl(String inferredName, Class<?> inferredType) {
-    return createMockImpl(inferredName, inferredType, MockNature.SPY, MockImplementation.JAVA, Collections.<String, Object>emptyMap(), null, null);
+    return createMockImpl(inferredName, inferredType, MockNature.SPY, MockImplementation.JAVA, Collections.emptyMap(), null, null);
   }
 
   Object SpyImpl(String inferredName, Class<?> inferredType, Closure closure) {
-    return createMockImpl(inferredName, inferredType, MockNature.SPY, MockImplementation.JAVA, Collections.<String, Object>emptyMap(), null, closure);
+    return createMockImpl(inferredName, inferredType, MockNature.SPY, MockImplementation.JAVA, Collections.emptyMap(), null, closure);
   }
 
   Object SpyImpl(String inferredName, Class<?> inferredType, Map<String, Object> options) {
@@ -162,11 +162,11 @@ public abstract class SpecInternals {
   }
 
   Object SpyImpl(String inferredName, Class<?> inferredType, Class<?> specifiedType) {
-    return createMockImpl(inferredName, inferredType, MockNature.SPY, MockImplementation.JAVA, Collections.<String, Object>emptyMap(), specifiedType, null);
+    return createMockImpl(inferredName, inferredType, MockNature.SPY, MockImplementation.JAVA, Collections.emptyMap(), specifiedType, null);
   }
 
   Object SpyImpl(String inferredName, Class<?> inferredType, Class<?> specifiedType, Closure closure) {
-    return createMockImpl(inferredName, inferredType, MockNature.SPY, MockImplementation.JAVA, Collections.<String, Object>emptyMap(), specifiedType, closure);
+    return createMockImpl(inferredName, inferredType, MockNature.SPY, MockImplementation.JAVA, Collections.emptyMap(), specifiedType, closure);
   }
 
   Object SpyImpl(String inferredName, Class<?> inferredType, Map<String, Object> options, Class<?> specifiedType) {
@@ -188,15 +188,15 @@ public abstract class SpecInternals {
     if (MOCK_UTIL.isMock(instance)) {
       throw new SpockException("Spy instance may not be another mock object.");
     }
-    return createMockImpl(inferredName, instance.getClass(), instance, MockNature.SPY, MockImplementation.JAVA, Collections.<String, Object>singletonMap("useObjenesis", true), null, closure);
+    return createMockImpl(inferredName, instance.getClass(), instance, MockNature.SPY, MockImplementation.JAVA, Collections.singletonMap("useObjenesis", true), null, closure);
   }
 
   Object GroovyMockImpl(String inferredName, Class<?> inferredType) {
-    return createMockImpl(inferredName, inferredType, MockNature.MOCK, MockImplementation.GROOVY, Collections.<String, Object>emptyMap(), null, null);
+    return createMockImpl(inferredName, inferredType, MockNature.MOCK, MockImplementation.GROOVY, Collections.emptyMap(), null, null);
   }
 
   Object GroovyMockImpl(String inferredName, Class<?> inferredType, Closure closure) {
-    return createMockImpl(inferredName, inferredType, MockNature.MOCK, MockImplementation.GROOVY, Collections.<String, Object>emptyMap(), null, closure);
+    return createMockImpl(inferredName, inferredType, MockNature.MOCK, MockImplementation.GROOVY, Collections.emptyMap(), null, closure);
   }
 
   Object GroovyMockImpl(String inferredName, Class<?> inferredType, Map<String, Object> options) {
@@ -208,11 +208,11 @@ public abstract class SpecInternals {
   }
 
   Object GroovyMockImpl(String inferredName, Class<?> inferredType, Class<?> specifiedType) {
-    return createMockImpl(inferredName, inferredType, MockNature.MOCK, MockImplementation.GROOVY, Collections.<String, Object>emptyMap(), specifiedType, null);
+    return createMockImpl(inferredName, inferredType, MockNature.MOCK, MockImplementation.GROOVY, Collections.emptyMap(), specifiedType, null);
   }
 
   Object GroovyMockImpl(String inferredName, Class<?> inferredType, Class<?> specifiedType, Closure closure) {
-    return createMockImpl(inferredName, inferredType, MockNature.MOCK, MockImplementation.GROOVY, Collections.<String, Object>emptyMap(), specifiedType, closure);
+    return createMockImpl(inferredName, inferredType, MockNature.MOCK, MockImplementation.GROOVY, Collections.emptyMap(), specifiedType, closure);
   }
 
   Object GroovyMockImpl(String inferredName, Class<?> inferredType, Map<String, Object> options, Class<?> specifiedType) {
@@ -224,11 +224,11 @@ public abstract class SpecInternals {
   }
 
   Object GroovyStubImpl(String inferredName, Class<?> inferredType) {
-    return createMockImpl(inferredName, inferredType, MockNature.STUB, MockImplementation.GROOVY, Collections.<String, Object>emptyMap(), null, null);
+    return createMockImpl(inferredName, inferredType, MockNature.STUB, MockImplementation.GROOVY, Collections.emptyMap(), null, null);
   }
 
   Object GroovyStubImpl(String inferredName, Class<?> inferredType, Closure closure) {
-    return createMockImpl(inferredName, inferredType, MockNature.STUB, MockImplementation.GROOVY, Collections.<String, Object>emptyMap(), null, closure);
+    return createMockImpl(inferredName, inferredType, MockNature.STUB, MockImplementation.GROOVY, Collections.emptyMap(), null, closure);
   }
 
   Object GroovyStubImpl(String inferredName, Class<?> inferredType, Map<String, Object> options) {
@@ -240,11 +240,11 @@ public abstract class SpecInternals {
   }
 
   Object GroovyStubImpl(String inferredName, Class<?> inferredType, Class<?> specifiedType) {
-    return createMockImpl(inferredName, inferredType, MockNature.STUB, MockImplementation.GROOVY, Collections.<String, Object>emptyMap(), specifiedType, null);
+    return createMockImpl(inferredName, inferredType, MockNature.STUB, MockImplementation.GROOVY, Collections.emptyMap(), specifiedType, null);
   }
 
   Object GroovyStubImpl(String inferredName, Class<?> inferredType, Class<?> specifiedType, Closure closure) {
-    return createMockImpl(inferredName, inferredType, MockNature.STUB, MockImplementation.GROOVY, Collections.<String, Object>emptyMap(), specifiedType, closure);
+    return createMockImpl(inferredName, inferredType, MockNature.STUB, MockImplementation.GROOVY, Collections.emptyMap(), specifiedType, closure);
   }
 
   Object GroovyStubImpl(String inferredName, Class<?> inferredType, Map<String, Object> options, Class<?> specifiedType) {
@@ -256,11 +256,11 @@ public abstract class SpecInternals {
   }
 
   Object GroovySpyImpl(String inferredName, Class<?> inferredType) {
-    return createMockImpl(inferredName, inferredType, MockNature.SPY, MockImplementation.GROOVY, Collections.<String, Object>emptyMap(), null, null);
+    return createMockImpl(inferredName, inferredType, MockNature.SPY, MockImplementation.GROOVY, Collections.emptyMap(), null, null);
   }
 
   Object GroovySpyImpl(String inferredName, Class<?> inferredType, Closure closure) {
-    return createMockImpl(inferredName, inferredType, MockNature.SPY, MockImplementation.GROOVY, Collections.<String, Object>emptyMap(), null, closure);
+    return createMockImpl(inferredName, inferredType, MockNature.SPY, MockImplementation.GROOVY, Collections.emptyMap(), null, closure);
   }
 
   Object GroovySpyImpl(String inferredName, Class<?> inferredType, Map<String, Object> options) {
@@ -272,11 +272,11 @@ public abstract class SpecInternals {
   }
 
   Object GroovySpyImpl(String inferredName, Class<?> inferredType, Class<?> specifiedType) {
-    return createMockImpl(inferredName, inferredType, MockNature.SPY, MockImplementation.GROOVY, Collections.<String, Object>emptyMap(), specifiedType, null);
+    return createMockImpl(inferredName, inferredType, MockNature.SPY, MockImplementation.GROOVY, Collections.emptyMap(), specifiedType, null);
   }
 
   Object GroovySpyImpl(String inferredName, Class<?> inferredType, Class<?> specifiedType, Closure closure) {
-    return createMockImpl(inferredName, inferredType, MockNature.SPY, MockImplementation.GROOVY, Collections.<String, Object>emptyMap(), specifiedType, closure);
+    return createMockImpl(inferredName, inferredType, MockNature.SPY, MockImplementation.GROOVY, Collections.emptyMap(), specifiedType, closure);
   }
 
   Object GroovySpyImpl(String inferredName, Class<?> inferredType, Map<String, Object> options, Class<?> specifiedType) {

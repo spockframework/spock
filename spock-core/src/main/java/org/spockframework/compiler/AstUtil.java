@@ -83,7 +83,7 @@ public abstract class AstUtil {
   public static List<Statement> getStatements(ClosureExpression closure) {
     BlockStatement blockStat = (BlockStatement)closure.getCode();
     return blockStat == null ?
-        Collections.<Statement> emptyList() : // it's not possible to add any statements to such a ClosureExpression, so immutable list is OK
+        Collections.emptyList() : // it's not possible to add any statements to such a ClosureExpression, so immutable list is OK
         blockStat.getStatements();
   }
 
@@ -116,7 +116,7 @@ public abstract class AstUtil {
     if (expr instanceof StaticMethodCallExpression)
       return new ClassExpression(((StaticMethodCallExpression) expr).getOwnerType());
     if (expr instanceof ConstructorCallExpression)
-      return new ClassExpression(((ConstructorCallExpression) expr).getType());
+      return new ClassExpression(expr.getType());
     return null;
   }
 
@@ -344,7 +344,20 @@ public abstract class AstUtil {
 
   public static Expression getVariableType(BinaryExpression assignment) {
     ClassNode type = assignment.getLeftExpression().getType();
-    return type == null || type == ClassHelper.DYNAMIC_TYPE ? ConstantExpression.NULL : new ClassExpression(type);
+    return type == null || isDynamicTypedExpression(assignment.getLeftExpression()) ? ConstantExpression.NULL : new ClassExpression(type);
+  }
+
+  private static boolean isDynamicTypedExpression(Expression leftExpression) {
+    if (leftExpression instanceof VariableExpression) {
+      return  ((VariableExpression) leftExpression).isDynamicTyped();
+    }
+    if (leftExpression instanceof FieldExpression) {
+      return  ((FieldExpression) leftExpression).isDynamicTyped();
+    }
+    if (leftExpression instanceof PropertyExpression) {
+      return  ((PropertyExpression) leftExpression).isDynamic();
+    }
+    return false;
   }
 
   public static MethodCallExpression createGetAtMethodCall(Expression expression, int index) {

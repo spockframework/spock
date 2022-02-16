@@ -14,12 +14,22 @@
 
 package org.spockframework.mock.runtime;
 
-import org.spockframework.mock.*;
+import org.spockframework.mock.CannotCreateMockException;
+import org.spockframework.mock.IMockInvocation;
+import org.spockframework.mock.IResponseGenerator;
+import org.spockframework.util.ExceptionUtil;
+import org.spockframework.util.Nullable;
 import org.spockframework.util.ReflectionUtil;
 
-import java.lang.reflect.*;
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
 
 public class DefaultMethodInvoker implements IResponseGenerator {
+  @Nullable // Available since Java 17
+  private static final Method INVOKE_DEFAULT = ReflectionUtil.getDeclaredMethodByName(InvocationHandler.class, "invokeDefault");
   private final Object target;
   private final Method method;
   private final Object[] arguments;
@@ -32,40 +42,28 @@ public class DefaultMethodInvoker implements IResponseGenerator {
 
   @Override
   public Object respond(IMockInvocation invocation) {
-    // This implementation uses classes from the java.lang.invoke package in order to invoke a default method.
-    // Without exception handling, the implementation is analogous to the following code:
-    //      final Field field = MethodHandles.Lookup.class.getDeclaredField("IMPL_LOOKUP");
-    //      field.setAccessible(true);
-    //      final MethodHandles.Lookup implLookup = (MethodHandles.Lookup) field.get(null);
-    //      return implLookup.unreflectSpecial(method, method.getDeclaringClass()).bindTo(target).invokeWithArguments((Object)arguments);
-    // The java.lang.invoke package is only available since Java 7. In order to preserve the compatibility of spock-core
-    // with older versions of Java, we rewrite the above code using reflection.
+    if (INVOKE_DEFAULT == null) {
+      return useInternalMethodHandle();
+    }
+    Object[] args = new Object[]{target, method, arguments};
+    return ReflectionUtil.invokeMethod(null, INVOKE_DEFAULT, args);
+  }
 
-    Object boundHandle = null;
-    Method invokeWithArgumentsMethod = null;
+  private Object useInternalMethodHandle() {
+    MethodHandle methodHandle;
     try {
-      // Get the private field Lookup.IMPL_LOOKUP, which is maximally privileged
-      Class<?> lookupClass = Class.forName("java.lang.invoke.MethodHandles$Lookup");
-      final Field field = lookupClass.getDeclaredField("IMPL_LOOKUP");
+      final Field field = MethodHandles.Lookup.class.getDeclaredField("IMPL_LOOKUP");
       field.setAccessible(true);
-      Object implLookup = field.get(null);
-
-      // Get a method handle for the default method
-      Method unreflectSpecialMethod = lookupClass.getMethod("unreflectSpecial", Method.class, Class.class);
-      Object specialHandle = unreflectSpecialMethod.invoke(implLookup, method, method.getDeclaringClass());
-
-      // Get a bound handle that prepends the target to the original arguments
-      Method bindToMethod = specialHandle.getClass().getMethod("bindTo", Object.class);
-      boundHandle = bindToMethod.invoke(specialHandle, target);
-
-      // Get the method MethodHandle.invokeWithArguments(Object...)
-      invokeWithArgumentsMethod = boundHandle.getClass().getMethod("invokeWithArguments", Object[].class);
+      final MethodHandles.Lookup implLookup = (MethodHandles.Lookup) field.get(null);
+      methodHandle = implLookup.unreflectSpecial(method, method.getDeclaringClass()).bindTo(target);
     } catch (Exception e) {
-      throw new CannotCreateMockException(target.getClass(), "Failed to invoke default method '" + method.getName() + "'", e);
+      throw new CannotCreateMockException(target.getClass(), "Failed to invoke default method '" + method.getName() + "'. Adding '--add-opens=java.base/java.lang.invoke=ALL-UNNAMED' might fix this.", e);
     }
 
-    // Call boundHandle.invokeWithArguments(arguments), sneaky throwing possible exceptions
-    Object result = ReflectionUtil.invokeMethod(boundHandle, invokeWithArgumentsMethod, (Object)arguments);
-    return result;
+    try {
+      return methodHandle.invokeWithArguments(arguments);
+    } catch (Throwable e) {
+      return ExceptionUtil.sneakyThrow(e);
+    }
   }
 }

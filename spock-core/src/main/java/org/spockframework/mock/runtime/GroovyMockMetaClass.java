@@ -119,7 +119,7 @@ public class GroovyMockMetaClass extends DelegatingMetaClass implements Specific
         configuration.isVerified(), configuration.isGlobal(), configuration.getDefaultResponse(), specification, this);
     IMockMethod mockMethod;
     if (metaMethod != null) {
-      List<Type> parameterTypes = Arrays.<Type>asList(metaMethod.getNativeParameterTypes());
+      List<Type> parameterTypes = Arrays.asList(metaMethod.getNativeParameterTypes());
       mockMethod = new DynamicMockMethod(methodName, parameterTypes, metaMethod.getReturnType(), isStatic);
     } else {
       mockMethod = new DynamicMockMethod(methodName, arguments.length, isStatic);

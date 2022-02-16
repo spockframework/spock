@@ -95,7 +95,7 @@ public class ExpressionInfoConverter extends AbstractExpressionConverter<Express
         TextPosition.startOf(expr.getProperty()),
         expr.getPropertyAsString(),
         expr.isImplicitThis() ?
-            Collections.<ExpressionInfo>emptyList() :
+            Collections.emptyList() :
             Collections.singletonList(convert(expr.getObjectExpression())));
   }
 

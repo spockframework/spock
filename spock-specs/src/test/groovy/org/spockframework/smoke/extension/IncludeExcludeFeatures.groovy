@@ -59,6 +59,30 @@ def feature3() {
     runCount        << [1,      1,      2           ]
   }
 
+  def "include methods based on annotations using different configuration style"() {
+    runner.configurationScript = {
+      runner {
+        include {
+          annotationTypes.each {
+            annotation(it)
+          }
+        }
+      }
+    }
+
+    when:
+    def result = runner.runClass(spec)
+
+    then:
+    result.testsSucceededCount == runCount
+    result.testsFailedCount == 0
+    result.testsSkippedCount == 0
+
+    where:
+    annotationTypes << [[Slow], [Fast], [Slow, Fast]]
+    runCount        << [1,      1,      2           ]
+  }
+
   def "exclude methods based on annotations"() {
     runner.configurationScript = {
       runner {

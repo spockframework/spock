@@ -1,3 +1,7 @@
+:spock-release-version: 2.2-M1
+:spock-release-date: 2022-02-16
+:spock-snapshot-version: 2.2
+
 https://github.com/spockframework/spock/blob/master/LICENSE[image:https://img.shields.io/badge/License-Apache%202.0-blue.svg[License]]
 https://search.maven.org/search?q=g:org.spockframework[image:https://img.shields.io/maven-central/v/org.spockframework/spock-core.svg?label=Maven%20Central[Maven
 Central]]
@@ -22,13 +26,13 @@ https://meetspock.appspot.com/[https://meetspock.appspot.com/].
 
 === Latest Versions
 
-* The latest 2.x release version is *2.1* (2.1-groovy-2.5,
-2.1-groovy-3.0), released on 2022-02-15.
-* The current development version is *2.2-SNAPSHOT*
-(2.2-groovy-2.5-SNAPSHOT, 2.2-groovy-3.0-SNAPSHOT).
+* The latest 2.x release version is *{spock-release-version}* ({spock-release-version}-groovy-2.5,
+{spock-release-version}-groovy-3.0, {spock-release-version}-groovy-4.0), released on {spock-release-date}.
+* The current development version is *{spock-snapshot-version}-SNAPSHOT*
+({spock-snapshot-version}-groovy-2.5-SNAPSHOT, {spock-snapshot-version}-groovy-3.0-SNAPSHOT, , {spock-snapshot-version}-groovy-4.0-SNAPSHOT).
 
 *NOTE:* Spock 2.x is based on the JUnit 5 Platform and require Java
-8+/groovy-2.5+ (Groovy 3.0 is recommended, especially in projects using
+8+/groovy-2.5+ (Groovy 3.0 or 4.0 is recommended, especially in projects using
 Java 12+).
 
 Releases are available from
@@ -47,7 +51,7 @@ instructions):
 . Use `org.spockframework.spock` as `groupId` and the normal
 `artifact-id`
 
-[source,groovy]
+[source,groovy,subs="attributes"]
 ----
 repositories {
     // ...
@@ -55,8 +59,8 @@ repositories {
 }
 
 dependencies {
-    testImplementation 'org.spockframework.spock:spock-core:spock-2.1'
-    testImplementation 'org.spockframework.spock:spock-spring:spock-2.1'
+    testImplementation 'org.spockframework.spock:spock-core:spock-{spock-release-version}'
+    testImplementation 'org.spockframework.spock:spock-spring:spock-{spock-release-version}'
 }
 ----
 
@@ -84,19 +88,25 @@ https://tapestry.apache.org/[Tapestry 5] IoC container.
 
 Spock is supported for Java version 8+.
 
-Spock is supported for Groovy versions 2.5 and 3.0.
+Spock is supported for Groovy versions 2.5, 3.0, and 4.0.
 
 The tests are testing Spock with the specific versions (variants) of
 Groovy and Java. Default Groovy version is 2.5.
 
-The Groovy 2.5 and 3.0 variant should pass on all supported JDK
-versions:
+The Groovy 3.0 and 4.0 variant should pass on all supported JDK versions,
+Groovy 2.5 does not work with Java 17+:
 
 ....
-./gradlew clean build
+./gradlew build
 ....
 
-(Windows: `gradlew clean build`). All build dependencies, including the
+To build a specific variant of Spock, use the variant name as a parameter
+
+....
+./gradlew build -Dvariant=4.0
+....
+
+(Windows: `gradlew build`). All build dependencies, including the
 https://www.gradle.org[build tool] itself, will be downloaded
 automatically (unless already present).
 

@@ -2,6 +2,8 @@
 = Release Notes
 include::include.adoc[]
 
+== 2.2 (tbd)
+
 == 2.2-M1 (2022-02-16)
 
 * Add Groovy 4 support https://github.com/spockframework/spock/pull/1382[#1382]

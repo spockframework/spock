@@ -301,7 +301,7 @@ public class WhereBlockRewriter {
   }
 
   private Parameter createDataProcessorParameter() {
-    Parameter p = new Parameter(ClassHelper.DYNAMIC_TYPE, "$spock_p" + dataProcessorParams.size());
+    Parameter p = new Parameter(ClassHelper.OBJECT_TYPE, "$spock_p" + dataProcessorParams.size());
     dataProcessorParams.add(p);
     return p;
   }
@@ -635,7 +635,7 @@ public class WhereBlockRewriter {
       String name = dataProcessorVar.getName();
       Parameter declaredDataVariableParameter = declaredDataVariableParameters.get(name);
       newParameters.add(declaredDataVariableParameter == null
-        ? new Parameter(ClassHelper.DYNAMIC_TYPE, name)
+        ? new Parameter(ClassHelper.OBJECT_TYPE, name)
         : declaredDataVariableParameter);
     }
     // then all auxiliary parameters in declaration order

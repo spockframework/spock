@@ -344,7 +344,20 @@ public abstract class AstUtil {
 
   public static Expression getVariableType(BinaryExpression assignment) {
     ClassNode type = assignment.getLeftExpression().getType();
-    return type == null || type == ClassHelper.DYNAMIC_TYPE ? ConstantExpression.NULL : new ClassExpression(type);
+    return type == null || isDynamicTypedExpression(assignment.getLeftExpression()) ? ConstantExpression.NULL : new ClassExpression(type);
+  }
+
+  private static boolean isDynamicTypedExpression(Expression leftExpression) {
+    if (leftExpression instanceof VariableExpression) {
+      return  ((VariableExpression) leftExpression).isDynamicTyped();
+    }
+    if (leftExpression instanceof FieldExpression) {
+      return  ((FieldExpression) leftExpression).isDynamicTyped();
+    }
+    if (leftExpression instanceof PropertyExpression) {
+      return  ((PropertyExpression) leftExpression).isDynamic();
+    }
+    return false;
   }
 
   public static MethodCallExpression createGetAtMethodCall(Expression expression, int index) {

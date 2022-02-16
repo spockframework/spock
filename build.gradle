@@ -15,27 +15,34 @@ ext {
   baseVersion = "2.2"
   snapshotVersion = true
   milestone = 0
-  variants = [2.5, 3.0]
+  variants = [2.5, 3.0, 4.0]
   variant = System.getProperty("variant") as BigDecimal ?: variants.first()
   buildScan.tag "groovy-$variant"
   if (variant == 2.5) {
+      groovyGroup = "org.codehaus.groovy"
       groovyVersion = "2.5.15"
       minGroovyVersion = "2.5.0"
       maxGroovyVersion = "2.9.99"
     } else if (variant == 3.0) {
+      groovyGroup = "org.codehaus.groovy"
       groovyVersion = "3.0.9"
       minGroovyVersion = "3.0.0"
       maxGroovyVersion = "3.9.99"
+    }  else if (variant == 4.0) {
+      groovyGroup = "org.apache.groovy"
+      groovyVersion = "4.0.0"
+      minGroovyVersion = "4.0.0"
+      maxGroovyVersion = "4.9.99"
     } else {
     throw new InvalidUserDataException("Unknown variant: $variant. Choose one of: $variants")
   }
 
   groovyDependencies = [
-    [group: "org.codehaus.groovy", name: "groovy", version: groovyVersion]
+    [group: groovyGroup, name: "groovy", version: groovyVersion]
   ]
   groovyConsoleExtraDependencies = [
-    [group: "org.codehaus.groovy", name: "groovy-console", version: groovyVersion],
-    [group: "org.codehaus.groovy", name: "groovy-test-junit5", version: groovyVersion], // for executing specs
+    [group: groovyGroup, name: "groovy-console", version: groovyVersion],
+    [group: groovyGroup, name: "groovy-test-junit5", version: groovyVersion], // for executing specs
     [group: "org.apache.ivy", name: "ivy", version: "2.5.0"] // for @Grab support
   ]
   maxGroovyVersion = snapshotVersion ? "9.9.99" : maxGroovyVersion
@@ -54,9 +61,9 @@ ext {
     bytebuddy           : [group: 'net.bytebuddy', name: 'byte-buddy', version: '1.12.1'],
     cglib               : [group: 'cglib', name: 'cglib-nodep', version: '3.3.0'],
     groovy              : groovyDependencies,
-    groovySql           : [group: 'org.codehaus.groovy', name: 'groovy-sql', version: groovyVersion], //for some Spring and Unitils tests
-    groovyTest          : [group: 'org.codehaus.groovy', name: 'groovy-test', version: groovyVersion], //for @NotYetImplemented
-    groovyJmx           : [group: 'org.codehaus.groovy', name: 'groovy-jmx', version: groovyVersion],  //for triggering jacoco dump via jmx
+    groovySql           : [group: groovyGroup, name: 'groovy-sql', version: groovyVersion], //for some Spring and Unitils tests
+    groovyTest          : [group: groovyGroup, name: 'groovy-test', version: groovyVersion], //for @NotYetImplemented
+    groovyJmx           : [group: groovyGroup, name: 'groovy-jmx', version: groovyVersion],  //for triggering jacoco dump via jmx
     h2database          : [group: 'com.h2database', name: 'h2', version: '1.4.200'],
     hamcrest            : [group: 'org.hamcrest', name: 'hamcrest', version: '2.2'],
     jaxb                : [group: 'javax.xml.bind', name: 'jaxb-api', version: '2.3.0'],
@@ -114,23 +121,36 @@ subprojects {
   }
 
   sourceSets.all { ss ->
-    for (v in variants.findAll { it <= variant } ) {
+    for (gv in variants.findAll { variant <= it } ) {
       java {
-        srcDir "src/${ss.name}$v/java"
+        srcDir "src/${ss.name}-groovy-le-$gv/java"
       }
       groovy {
-        srcDir "src/${ss.name}$v/groovy"
+        srcDir "src/${ss.name}-groovy-le-$gv/groovy"
       }
     }
-  }
-
-  sourceSets.all { ss ->
-    for (jv in javaVersions.findAll { it <= javaVersion } ) {
+    for (jv in javaVersions.findAll { javaVersion <= it } ) {
       java {
-        srcDir "src/${ss.name}.java$jv/java"
+        srcDir "src/${ss.name}-java-le-$jv/java"
       }
       groovy {
-        srcDir "src/${ss.name}.java$jv/groovy"
+        srcDir "src/${ss.name}-java-le-$jv/groovy"
+      }
+    }
+    for (gv in variants.findAll { variant >= it } ) {
+      java {
+        srcDir "src/${ss.name}-groovy-ge-$gv/java"
+      }
+      groovy {
+        srcDir "src/${ss.name}-groovy-ge-$gv/groovy"
+      }
+    }
+    for (jv in javaVersions.findAll { javaVersion >= it } ) {
+      java {
+        srcDir "src/${ss.name}-java-ge-$jv/java"
+      }
+      groovy {
+        srcDir "src/${ss.name}-java-ge-$jv/groovy"
       }
     }
   }

@@ -13,7 +13,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        variant: [ '2.5', '3.0' ]
+        variant: [ '2.5', '3.0', '4.0' ]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2

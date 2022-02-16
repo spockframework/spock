@@ -19,9 +19,7 @@ import spock.lang.Specification
 
 import groovy.transform.CompileStatic
 
-//@CompileStatic  //TODO: Explain why compilation started to fail with Groovy 4
-//                //      ..../WithBlocksStatic.groovy:16:15
-//                //      Groovyc: Access to java.lang.Object#windows is forbidden
+@CompileStatic
 class WithBlocksStatic extends Specification {
 
   def "can statically compile against type of the target"() {

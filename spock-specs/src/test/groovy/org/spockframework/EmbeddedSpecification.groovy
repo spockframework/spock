@@ -32,13 +32,7 @@ abstract class EmbeddedSpecification extends Specification {
 
   void stackTraceLooksLike(Throwable exception, String template) {
 
-    def trace
-
-    if (javaVersion >= 9) {
-      trace = exception.stackTrace.findAll { it['moduleName'] != "java.base" }
-    } else {
-      trace = exception.stackTrace
-    }
+    List<StackTraceElement> trace = filterStackTraceWithJavaSpecificCalls(exception)
 
     def lines = template.trim().split("\n")
     assert trace.size() == lines.size()
@@ -54,4 +48,16 @@ abstract class EmbeddedSpecification extends Specification {
       assert lineNumber == "-" || lineNumber as int == traceElem.lineNumber
     }
   }
+
+  private List<StackTraceElement> filterStackTraceWithJavaSpecificCalls(Throwable exception) {
+    List<StackTraceElement> stacktraceWithoutIndyCalls = exception.stackTrace
+      .findAll { it["fileName"] != "IndyInterface.java" || it['methodName'] != "fromCache" }
+
+    if (javaVersion >= 9) {
+      return stacktraceWithoutIndyCalls.findAll { it['moduleName'] != "java.base" }
+    } else {
+      return stacktraceWithoutIndyCalls
+    }
+  }
+
 }

@@ -2,8 +2,8 @@ import com.gradle.enterprise.gradleplugin.internal.extension.BuildScanExtensionW
 
 pluginManagement {
   plugins {
-    id "com.gradle.enterprise" version "3.6.1"
-    id "com.gradle.common-custom-user-data-gradle-plugin" version "1.2.1"
+    id "com.gradle.enterprise" version "3.8.1"
+    id "com.gradle.common-custom-user-data-gradle-plugin" version "1.6.2"
     id "org.asciidoctor.jvm.convert" version "3.3.2"
     id "net.nemerosa.versioning" version "2.14.0"
     id "io.github.gradle-nexus.publish-plugin" version "1.1.0"
@@ -88,7 +88,7 @@ include "spock-guice"
 include "spock-junit4"
 include "spock-testkit"
 
-if ((System.getProperty("variant") as BigDecimal ?: 2.5) != 3.0) {
+if ((System.getProperty("variant") as BigDecimal ?: 2.5) == 2.5) {
   //Remove once Groovy 2.5 support is dropped
   include "spock-groovy2-compat"
 }

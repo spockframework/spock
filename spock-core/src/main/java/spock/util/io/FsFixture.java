@@ -13,6 +13,9 @@ import org.jetbrains.annotations.NotNull;
  * FsFixture can be used to create temporary directories and files.
  *
  * It is intended to be used with {@link spock.lang.TempDir}.
+ *
+ * @author Leonard Brünings
+ * @since 2.2
  */
 @Beta
 public class FsFixture implements DirectoryFixture {

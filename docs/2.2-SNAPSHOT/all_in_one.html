@@ -5296,23 +5296,22 @@ or the corresponding methods in the other <code>java.time.*</code> classes.</p>
 <div class="listingblock">
 <div class="title">Test</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">  <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">AgeFilter reacts to time</span><span class="delimiter">&quot;</span></span>() {
-    <span class="key">given</span>:
-    ZonedDateTime defaultTime = ZonedDateTime.of(<span class="integer">2018</span>, <span class="integer">6</span>, <span class="integer">5</span>, <span class="integer">0</span>, <span class="integer">0</span>, <span class="integer">0</span>, <span class="integer">0</span>, ZoneId.of(<span class="string"><span class="delimiter">'</span><span class="content">UTC</span><span class="delimiter">'</span></span>))
-    MutableClock clock = <span class="keyword">new</span> MutableClock(defaultTime)                                       // <b class="conum">(1)</b>
-    AgeFilter ageFilter = <span class="keyword">new</span> AgeFilter(clock,<span class="integer">18</span>)                                            // <b class="conum">(2)</b>
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">AgeFilter reacts to time</span><span class="delimiter">&quot;</span></span>() {
+  <span class="key">given</span>:
+  ZonedDateTime defaultTime = ZonedDateTime.of(<span class="integer">2018</span>, <span class="integer">6</span>, <span class="integer">5</span>, <span class="integer">0</span>, <span class="integer">0</span>, <span class="integer">0</span>, <span class="integer">0</span>, ZoneId.of(<span class="string"><span class="delimiter">'</span><span class="content">UTC</span><span class="delimiter">'</span></span>))
+  MutableClock clock = <span class="keyword">new</span> MutableClock(defaultTime)                                       // <b class="conum">(1)</b>
+  AgeFilter ageFilter = <span class="keyword">new</span> AgeFilter(clock,<span class="integer">18</span>)                                            // <b class="conum">(2)</b>
 
-    LocalDate birthday = defaultTime.minusYears(<span class="integer">18</span>).plusDays(<span class="integer">1</span>).toLocalDate()
+  LocalDate birthday = defaultTime.minusYears(<span class="integer">18</span>).plusDays(<span class="integer">1</span>).toLocalDate()
 
-    <span class="key">expect</span>:
-    !ageFilter.test(birthday)                                                                // <b class="conum">(3)</b>
+  <span class="key">expect</span>:
+  !ageFilter.test(birthday)                                                                // <b class="conum">(3)</b>
 
-    <span class="key">when</span>:
-    clock + <span class="predefined-type">Duration</span>.ofDays(<span class="integer">1</span>)                                                               // <b class="conum">(4)</b>
+  <span class="key">when</span>:
+  clock + <span class="predefined-type">Duration</span>.ofDays(<span class="integer">1</span>)                                                               // <b class="conum">(4)</b>
 
-    <span class="key">then</span>:
-    ageFilter.test(birthday)                                                                 // <b class="conum">(5)</b>
-  }
+  <span class="key">then</span>:
+  ageFilter.test(birthday)                                                                 // <b class="conum">(5)</b>
 }</code></pre>
 </div>
 </div>
@@ -9220,7 +9219,7 @@ This is due to how groovy implements traits and AST transformations.</p>
 <div id="footer">
 <div id="footer-text">
 Version 2.2-SNAPSHOT<br>
-Last updated 2022-02-16 17:59:16 UTC
+Last updated 2022-02-21 20:51:51 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./coderay-asciidoctor.css">

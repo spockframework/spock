@@ -223,5 +223,5 @@ def foo() {
 
 @Retention(RetentionPolicy.RUNTIME)
 @interface FooContainer {
-  Foo[] value();
+  Foo[] value() default [];
 }

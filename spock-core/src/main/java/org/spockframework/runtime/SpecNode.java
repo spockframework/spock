@@ -12,6 +12,7 @@ public class SpecNode extends SpockNode<SpecInfo> {
 
   protected SpecNode(UniqueId uniqueId, RunnerConfiguration configuration, SpecInfo specInfo) {
     super(uniqueId, specInfo.getDisplayName(), ClassSource.from(specInfo.getReflection()), configuration, specInfo);
+    tags = getTags(specInfo.getReflection());
   }
 
   @Override

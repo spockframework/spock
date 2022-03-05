@@ -10,6 +10,7 @@ public abstract class FeatureNode extends SpockNode<FeatureInfo> {
   public FeatureNode(UniqueId uniqueId, String displayName, TestSource source, RunnerConfiguration configuration,
                      FeatureInfo featureInfo) {
     super(uniqueId, displayName, source, configuration, featureInfo);
+    tags = getTags(featureInfo.getFeatureMethod().getReflection());
   }
 
   @Override

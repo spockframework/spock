@@ -15,6 +15,7 @@ public class IterationNode extends SpockNode<FeatureInfo> {
     super(uniqueId, iterationInfo.getDisplayName(), featureToMethodSource(iterationInfo.getFeature()), configuration,
       iterationInfo.getFeature());
     this.iterationInfo = iterationInfo;
+    tags = getTags(iterationInfo.getFeature().getFeatureMethod().getReflection());
   }
 
   @Override

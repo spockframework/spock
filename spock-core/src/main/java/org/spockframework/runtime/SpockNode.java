@@ -5,6 +5,7 @@ import org.spockframework.runtime.model.parallel.ResourceAccessMode;
 import org.spockframework.util.ExceptionUtil;
 import spock.config.RunnerConfiguration;
 
+import java.lang.reflect.AnnotatedElement;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -14,11 +15,16 @@ import org.junit.platform.engine.support.descriptor.*;
 import org.junit.platform.engine.support.hierarchical.*;
 import org.opentest4j.TestAbortedException;
 
+import static java.util.stream.Collectors.collectingAndThen;
+import static java.util.stream.Collectors.toCollection;
+import static org.junit.platform.commons.util.AnnotationUtils.findRepeatableAnnotations;
+
 public abstract class SpockNode<T extends SpecElementInfo<?,?>>
   extends AbstractTestDescriptor implements Node<SpockExecutionContext> {
 
   private final RunnerConfiguration configuration;
   private final T nodeInfo;
+  protected Set<TestTag>  tags;
 
   protected SpockNode(UniqueId uniqueId, String displayName, TestSource source,
                       RunnerConfiguration configuration, T nodeInfo) {
@@ -125,5 +131,37 @@ public abstract class SpockNode<T extends SpecElementInfo<?,?>>
     return exclusiveResources.stream()
       .map(er -> new ExclusiveResource(er.getKey(), toLockMode(er.getMode())))
       .collect(Collectors.toSet());
+  }
+
+  protected static Set<TestTag> getTags(AnnotatedElement element) {
+    // TODO: AnnotationUtils is an internal JUnit framework class -> migrate away from it
+    return findRepeatableAnnotations(element, JUnitTag.class).stream()
+      .map(JUnitTag::value)
+      .filter(tag -> {
+        boolean isValid = TestTag.isValid(tag);
+        if (!isValid) {
+          // TODO Replace logging with precondition check once we have a proper mechanism for
+          // handling validation exceptions during the TestEngine discovery phase.
+          //
+          // As an alternative to a precondition check here, we could catch any
+          // PreconditionViolationException thrown by TestTag::create.
+          System.err.printf(
+            "Configuration error: invalid tag syntax in @JUnitTag(\"%s\") declaration on [%s]. Tag will be ignored.%n",
+            tag, element
+          );
+        }
+        return isValid;
+      })
+      .map(TestTag::create)
+      .collect(collectingAndThen(toCollection(LinkedHashSet::new), Collections::unmodifiableSet));
+  }
+
+  @Override
+  public Set<TestTag> getTags() {
+    // return modifiable copy
+    Set<TestTag> allTags = new LinkedHashSet<>(this.tags);
+    getParent().ifPresent(parentDescriptor -> allTags.addAll(parentDescriptor.getTags()));
+    //System.out.println("Tags for " + this + ": " + allTags);
+    return allTags;
   }
 }

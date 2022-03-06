@@ -1,5 +1,6 @@
 package org.spockframework.runtime;
 
+import org.spockframework.runtime.extension.builtin.TagExtension;
 import org.spockframework.runtime.model.*;
 import org.spockframework.runtime.model.parallel.ResourceAccessMode;
 import org.spockframework.util.ExceptionUtil;
@@ -19,6 +20,9 @@ public abstract class SpockNode<T extends SpecElementInfo<?,?>>
 
   private final RunnerConfiguration configuration;
   private final T nodeInfo;
+  // Cannot be final, because during constructor execution no tags have been added by annotation-driven
+  // extensions yet -> Lazy initialisation in 'getTags()'
+  private Set<TestTag> tags;
 
   protected SpockNode(UniqueId uniqueId, String displayName, TestSource source,
                       RunnerConfiguration configuration, T nodeInfo) {
@@ -125,5 +129,35 @@ public abstract class SpockNode<T extends SpecElementInfo<?,?>>
     return exclusiveResources.stream()
       .map(er -> new ExclusiveResource(er.getKey(), toLockMode(er.getMode())))
       .collect(Collectors.toSet());
+  }
+
+  @Override
+  public Set<TestTag> getTags() {
+    // Lazy initialisation
+    if (tags == null) {
+      tags = new HashSet<>();
+      SpecInfo specInfo;
+      // Node info can be either FeatureInfo or SpecInfo
+      if (getNodeInfo() instanceof FeatureInfo) {
+        FeatureInfo featureInfo = (FeatureInfo) getNodeInfo();
+        addTestTagsFrom(featureInfo.getTags());
+        specInfo = featureInfo.getSpec();
+      }
+      else {
+        specInfo = (SpecInfo) getNodeInfo();
+      }
+      while (specInfo != null) {
+        addTestTagsFrom(specInfo.getTags());
+        specInfo = specInfo.getSuperSpec();
+      }
+    }
+    return tags;
+  }
+
+  private void addTestTagsFrom(List<Tag> specElementTags) {
+    specElementTags.stream()
+      .filter(tag -> tag.getKey().equals(TagExtension.TAG_EXTENSION_KEY))
+      .map(tag -> TestTag.create(tag.getName()))
+      .forEach(tags::add);
   }
 }

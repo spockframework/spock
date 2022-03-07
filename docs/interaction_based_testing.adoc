@@ -700,6 +700,20 @@ You can of course use this with chaining as well. Here it might be useful for `S
 subscriber.receive(_) >>> ["ok", "fail"] >> _ >> "ok"
 ----
 
+An application of this is to let a `Mock` behave like a `Stub`, but still be able to do assertions.
+The default response will return the mock itself, if the return type of the method is assignable from the mock type (excluding object).
+This is useful when dealing with fluent APIs, like builders, which are otherwise really painful to mock.
+
+[source,groovy,indent=0]
+----
+
+include::{sourcedir}/interaction/BuilderExampleSpec.groovy[tag=builder]
+----
+
+The `_ >> _` instructs the mock to return the default response for all interactions.
+However, interactions defined in the `then` block will have precedence over the interactions defined in the `given` block,
+this lets us override and assert the interaction we actually care about.
+
 == Combining Mocking and Stubbing
 
 Mocking and stubbing go hand-in-hand:

@@ -27,7 +27,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Indicates that a feature method or specification belongs to a certain user-defined category.
+ * Indicates that a feature method or specification belongs to one or more user-defined categories.
  *
  * @since 2.2
  * @author Alexander Kriegisch
@@ -38,6 +38,14 @@ import java.lang.annotation.Target;
 @Repeatable(Tag.Container.class)
 public @interface Tag {
   /**
+   * <b>Syntax rules:</b> Even though tags are general-purpose, user-defined semantic categories, one of those purposes
+   * is that tags can also be mapped to JUnit platform tags, enabling users to filter their test classes and methods and
+   * run only the ones they want in any given build. In order to ensure interoperability with the JUnit 5 platform,
+   * please also obey the same syntax rules when naming tags, e.g. no whitespace inside tags ("my tag"), no commas,
+   * parentheses, ampersands, vertical bars, exclamation points.
+   * See <a href="https://junit.org/junit5/docs/current/user-guide/#running-tests-tag-syntax-rules">
+   *   JUnit syntax rules for tags</a> for more details.
+   *
    * @return the user-defined categories which the annotated element belongs to
    */
   String[] value();

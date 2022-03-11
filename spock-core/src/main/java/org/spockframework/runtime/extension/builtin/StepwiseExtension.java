@@ -33,6 +33,30 @@ public class StepwiseExtension implements IAnnotationDrivenExtension<Stepwise> {
     spec.setChildExecutionMode(ExecutionMode.SAME_THREAD);
   }
 
+  @Override
+  public void visitFeatureAnnotation(Stepwise annotation, FeatureInfo feature) {
+    // Disable parallel iteration execution for @Stepwise features
+    feature.setExecutionMode(ExecutionMode.SAME_THREAD);
+
+    // If an error occurs in this feature, skip remaining iterations
+    feature.getSpec().addListener(new FeatureSkippingErrorListener(feature));
+  }
+
+  private static class FeatureSkippingErrorListener extends AbstractRunListener {
+    private final FeatureInfo stepwiseFeature;
+
+    public FeatureSkippingErrorListener(FeatureInfo stepwiseFeature) {
+      this.stepwiseFeature = stepwiseFeature;
+    }
+
+    @Override
+    public void error(ErrorInfo error) {
+      FeatureInfo currentFeature = error.getMethod().getFeature();
+      if (currentFeature == stepwiseFeature)
+        currentFeature.skip("skipping subsequent iterations after failure");
+    }
+  }
+
   private void sortFeaturesInDeclarationOrder(SpecInfo spec) {
     for (FeatureInfo feature : spec.getFeatures())
       feature.setExecutionOrder(feature.getDeclarationOrder());

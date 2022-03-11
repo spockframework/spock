@@ -37,7 +37,7 @@ import java.lang.annotation.*;
  *
  * @author Peter Niederwieser
  */
-@Target(ElementType.TYPE)
+@Target({ ElementType.TYPE, ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
 @ExtensionAnnotation(StepwiseExtension.class)
 public @interface Stepwise {}

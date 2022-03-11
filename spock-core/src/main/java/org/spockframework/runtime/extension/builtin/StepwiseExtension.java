@@ -18,18 +18,18 @@ import org.spockframework.runtime.AbstractRunListener;
 import org.spockframework.runtime.extension.IAnnotationDrivenExtension;
 import org.spockframework.runtime.model.*;
 import org.spockframework.runtime.model.parallel.ExecutionMode;
+import spock.lang.Stepwise;
 
-import java.lang.annotation.Annotation;
 import java.util.List;
 
-public class StepwiseExtension implements IAnnotationDrivenExtension {
+public class StepwiseExtension implements IAnnotationDrivenExtension<Stepwise> {
   @Override
-  public void visitSpecAnnotation(Annotation annotation, final SpecInfo spec) {
+  public void visitSpecAnnotation(Stepwise annotation, final SpecInfo spec) {
     sortFeaturesInDeclarationOrder(spec);
     includeFeaturesBeforeLastIncludedFeature(spec);
     skipFeaturesAfterFirstFailingFeature(spec);
 
-    // Disable parallel child execution for @Stepwise tests
+    // Disable parallel child execution for @Stepwise specs
     spec.setChildExecutionMode(ExecutionMode.SAME_THREAD);
   }
 

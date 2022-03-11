@@ -287,6 +287,26 @@ should be taken when ignoring feature methods in spec classes annotated with `St
 
 NOTE: This will also set the execution mode to `SAME_THREAD`, see <<parallel-execution.adoc#parallel-execution, Parallel Execution>> for more information.
 
+Since Spock 2.2, `Stepwise` can also be applied to (iterated) feature methods, having the effect of executing them sequentially (even if concurrent test mode is active) and to skip subsequent iterations is one iteration fails:
+
+[source,groovy]
+----
+class MySpec extends Specification {
+  @Stepwise
+  def "iteration #count"()  {
+    expect:
+    count != 3
+
+    where:
+    count << (1..5)
+  }
+}
+----
+
+This will pass for the first two iterations, fail on the third and skip the remaining two. Without `Stepwise` on feature method level, the third iteration would fail and the remaining 4 iterations would pass.
+
+NOTE: For backward compatibility with Spock versions prior to 2.2, applying the annotation on spec level will _not_ automatically skip subsequent feature method iterations upon failure in a previous iteration. If you want that in addition to (or instead of) step-wise spec mode, you do have to annotate each individual feature method you wish to have that capability. This also conforms to the principle that if you want to skip tests under whatever conditions, you ought to document your intent explicitly.
+
 === Timeout
 
 To fail a feature method, fixture, or class that exceeds a given execution duration, use `spock.lang.Timeout`,

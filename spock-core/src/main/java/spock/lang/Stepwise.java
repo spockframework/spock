@@ -20,20 +20,39 @@ import org.spockframework.runtime.extension.builtin.StepwiseExtension;
 import java.lang.annotation.*;
 
 /**
- * Indicates that a spec's feature methods should be run sequentially
- * in their declared order (even in the presence of a parallel spec runner),
- * always starting from the first method. If a method fails, the remaining
- * methods will be skipped. Feature methods declared in super- and subspecs
- * are not affected.
+ * <b>When applied to a spec,</b> the annotation indicates that the spec's feature methods should be run sequentially
+ * in their declared order (even in the presence of a parallel spec runner), always starting from the first method.
+ * If a method fails, the remaining methods will be skipped. Feature methods declared in super- and subspecs are not
+ * affected.
  *
- * <p><tt>&#64;Stepwise</tt> is useful for specs with
- * (logical) dependencies between methods. In particular, it helps to avoid
- * consecutive errors after a method has failed, which makes it easier to
- * understand what really went wrong.
+ * <p><b>When applied to a feature method,</b> the annotation analogically indicates that the feature's iterations
+ * should be run sequentially in their declared order. If an iteration fails, the remaining iterations will be skipped.
  *
- * <p>Note: If this extension is applied on the Specification, then it will use
- * {@link org.spockframework.runtime.model.parallel.ExecutionMode#SAME_THREAD}
- * for the whole Spec.
+ * <p><tt>&#64;Stepwise</tt> is useful for specs with (logical) dependencies between methods. In particular, it helps to
+ * avoid consecutive errors after a method has failed, which makes it easier to understand what really went wrong.
+ * Analogically, it helps to avoid consecutive errors in subsequent iterations, when it is clear that the reason for one
+ * iteration failure usually also causes subsequent iterations to fail, such as the availability of an external resource
+ * in an integration test.
+ *
+ * <p><b><i>Please try to use this annotation as infrequently as possible</i></b> by refactoring to avoid dependencies
+ * between feature methods or iterations whenever possible. Otherwise, you will lose opportunities to get meaningful
+ * test results and good coverage.
+ *
+ * <p>Please note:
+ * <ul>
+ *   <li>Applying this annotation on a specification will activate
+ *   {@link org.spockframework.runtime.model.parallel.ExecutionMode#SAME_THREAD ExecutionMode.SAME_THREAD} for the whole
+ *   spec, all of its feature methods and their iterations (if any). If it is applied to an iterated feature method
+ *   only, it will set the same flag only per annotated method.
+ *  </li>
+ *  <li>
+ *    <tt>&#64;Stepwise</tt> can be applied to methods since Spock 2.2. Therefore, for backward compatibility applying
+ *    the annotation on spec level will <i>not</i> automatically skip subsequent feature method iterations upon failure
+ *    in a previous iteration. If you want that in addition to (or instead of) step-wise spec mode, you do have to
+ *    annotate each individual feature method you wish to have that capability. This also conforms to the principle that
+ *    if you want to skip tests under whatever conditions, you ought to document your intent explicitly.
+ *  </li>
+ * </ul>
  *
  * @author Peter Niederwieser
  */

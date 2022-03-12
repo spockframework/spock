@@ -42,7 +42,7 @@ import java.lang.annotation.*;
  * <ul>
  *   <li>Applying this annotation on a specification will activate
  *   {@link org.spockframework.runtime.model.parallel.ExecutionMode#SAME_THREAD ExecutionMode.SAME_THREAD} for the whole
- *   spec, all of its feature methods and their iterations (if any). If it is applied to an iterated feature method
+ *   spec, all of its feature methods and their iterations (if any). If it is applied to a data-driven feature method
  *   only, it will set the same flag only per annotated method.
  *  </li>
  *  <li>

@@ -4,7 +4,7 @@ include::include.adoc[]
 
 == 2.2 (tbd)
 
-* `@Stepwise` can be applied to (iterated) feature methods, having the effect of executing them sequentially (even if concurrent test mode is active) and to skip subsequent iterations is one iteration fails.
+* `@Stepwise` can be applied to data-driven feature methods, having the effect of executing them sequentially (even if concurrent test mode is active) and to skip subsequent iterations is one iteration fails.
 
 == 2.2-M1 (2022-02-16)
 

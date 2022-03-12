@@ -287,7 +287,7 @@ should be taken when ignoring feature methods in spec classes annotated with `St
 
 NOTE: This will also set the execution mode to `SAME_THREAD`, see <<parallel-execution.adoc#parallel-execution, Parallel Execution>> for more information.
 
-Since Spock 2.2, `Stepwise` can also be applied to (iterated) feature methods, having the effect of executing them sequentially (even if concurrent test mode is active) and to skip subsequent iterations is one iteration fails:
+Since Spock 2.2, `Stepwise` can be applied to data-driven feature methods, having the effect of executing them sequentially (even if concurrent test mode is active) and to skip subsequent iterations if one iteration fails:
 
 [source,groovy]
 ----

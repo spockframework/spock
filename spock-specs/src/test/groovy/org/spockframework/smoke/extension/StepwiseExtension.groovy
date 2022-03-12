@@ -19,7 +19,7 @@ import org.junit.platform.engine.discovery.DiscoverySelectors
 import org.spockframework.EmbeddedSpecification
 
 class StepwiseExtension extends EmbeddedSpecification {
-  def "basic usage"() {
+  def "[spec] basic usage"() {
     runner.throwFailure = false
 
     when:
@@ -39,7 +39,7 @@ class Foo extends Specification {
     result.testsSkippedCount == 1
   }
 
-  def "automatically runs excluded methods that lead up to an included method"() {
+  def "[spec] automatically runs excluded methods that lead up to an included method"() {
     def clazz = compiler.compileWithImports("""
 @Stepwise
 class Foo extends Specification {
@@ -55,10 +55,10 @@ class Foo extends Specification {
     then:
     result.testsSucceededCount == 3
     result.testsFailedCount == 0
-    result.testsFailedCount == 0
+    result.testsSkippedCount == 0
   }
 
-  def "honors method-level @Ignore"() {
+  def "[spec] honors method-level @Ignore"() {
     runner.throwFailure = false
 
     when:
@@ -78,8 +78,7 @@ class Foo extends Specification {
     result.testsSkippedCount == 1
   }
 
-
-  def "sets childExecutionMode to SAME_THREAD"() {
+  def "[spec] sets childExecutionMode to SAME_THREAD"() {
     when:
     def result = runner.runWithImports("""
 import org.spockframework.runtime.model.parallel.ExecutionMode
@@ -92,7 +91,6 @@ class Foo extends Specification {
     then:
     result.testsSucceededCount == 1
     result.testsFailedCount == 0
-    result.testsFailedCount == 0
+    result.testsSkippedCount == 0
   }
 }
-

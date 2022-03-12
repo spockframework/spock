@@ -93,4 +93,115 @@ class Foo extends Specification {
     result.testsFailedCount == 0
     result.testsSkippedCount == 0
   }
+
+  def "[feature] basic usage"() {
+    runner.throwFailure = false
+
+    when:
+    def result = runner.runWithImports("""
+class Foo extends Specification {
+  @Stepwise
+  def step1() {
+    expect: count != 3
+    where: count << (1..5)
+  }
+}
+    """)
+
+    then:
+    result.testsStartedCount == 3 + 1
+    result.testsSucceededCount == 2 + 1
+    result.testsFailedCount == 1
+    result.testsSkippedCount == 2
+  }
+
+  def "[feature] annotated non-data-driven features behave normally"() {
+    runner.throwFailure = false
+
+    when:
+    def result = runner.runWithImports("""
+class Foo extends Specification {
+  @Stepwise
+  def step1() { expect: true }
+  @Stepwise
+  def step2() { expect: false }
+  @Stepwise @Ignore
+  def step3() { expect: false }
+}
+    """)
+
+    then:
+    result.testsStartedCount == 2
+    result.testsSucceededCount == 1
+    result.testsFailedCount == 1
+    result.testsSkippedCount == 1
+  }
+
+  def "[feature] sets executionMode to SAME_THREAD"() {
+    when:
+    def result = runner.runWithImports("""
+import org.spockframework.runtime.model.parallel.ExecutionMode
+class Foo extends Specification {
+  @Stepwise
+  def step1() {
+    expect: specificationContext.currentFeature.executionMode.get() == ExecutionMode.SAME_THREAD
+    where: count << (1..2)
+  }
+}
+    """)
+
+    then:
+    result.testsStartedCount == 2 + 1
+    result.testsSucceededCount == 2 + 1
+    result.testsFailedCount == 0
+    result.testsSkippedCount == 0
+  }
+
+  def "[mixed] spec annotation does not skip iterations on non-annotated feature"() {
+    runner.throwFailure = false
+
+    when:
+    def result = runner.runWithImports("""
+@Stepwise
+class Foo extends Specification {
+  def step1() {
+    expect: count != 3
+    where: count << (1..5)
+  }
+}
+    """)
+
+    then:
+    // Ensure backward compatibility with pre-2.2 behaviour: If @Stepwise spec contains non-@Stepwise, data-driven
+    // features, those features do not inherit any "skip rest after failure" logic on feature level. Users do have to
+    // annotate individual features in order to activate skipping iterations after failure.
+    result.testsStartedCount == 5 + 1
+    result.testsSucceededCount == 4 + 1
+    result.testsFailedCount == 1
+    result.testsSkippedCount == 0
+  }
+
+  def "[mixed] annotations on both spec and feature work together"() {
+    runner.throwFailure = false
+
+    when:
+    def result = runner.runWithImports("""
+@Stepwise
+class Foo extends Specification {
+  def step1() { expect: true }
+  @Stepwise
+  def step2() {
+    expect: count != 3
+    where: count << (1..5)
+  }
+  def step3() { expect: true }
+}
+    """)
+
+    then:
+    result.testsStartedCount == 1 + 3 + 1
+    result.testsSucceededCount == 1 + 2 + 1
+    result.testsFailedCount == 1
+    result.testsSkippedCount == 2 + 1
+  }
 }

@@ -18,7 +18,6 @@ package spock.lang;
 
 import org.spockframework.runtime.extension.ExtensionAnnotation;
 import org.spockframework.runtime.extension.builtin.TagExtension;
-import org.spockframework.util.Beta;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Repeatable;
@@ -38,13 +37,14 @@ import java.lang.annotation.Target;
 @Repeatable(Tag.Container.class)
 public @interface Tag {
   /**
-   * <b>Syntax rules:</b> Even though tags are general-purpose, user-defined semantic categories, one of those purposes
-   * is that tags can also be mapped to JUnit platform tags, enabling users to filter their test classes and methods and
-   * run only the ones they want in any given build. In order to ensure interoperability with the JUnit 5 platform,
-   * please also obey the same syntax rules when naming tags, e.g. no whitespace inside tags ("my tag"), no commas,
-   * parentheses, ampersands, vertical bars, exclamation points.
-   * See <a href="https://junit.org/junit5/docs/current/user-guide/#running-tests-tag-syntax-rules">
-   *   JUnit syntax rules for tags</a> for more details.
+   * <b>Syntax rules:</b> Even though tags are general-purpose, user-defined categories, one of those purposes is to map
+   * them to JUnit platform tags, enabling users to filter their test classes and methods and run only the ones they
+   * want in any given build. In order to ensure interoperability with the JUnit 5 platform, Spock tags must conform to
+   * <a href="https://junit.org/junit5/docs/current/user-guide/#running-tests-tag-syntax-rules">
+   * JUnit syntax rules for tags</a>, e.g. no whitespace inside tags ("my tag"), no commas, parentheses, ampersands,
+   * vertical bars, exclamation points. If a Spock tag violates those syntax rules, an
+   * {@link org.spockframework.runtime.extension.builtin.TagExtension.InvalidTagNameException InvalidTagNameException}
+   * will be thrown during tag processing.
    *
    * @return the user-defined categories which the annotated element belongs to
    */
@@ -54,7 +54,6 @@ public @interface Tag {
    * @since 2.2
    * @author Alexander Kriegisch
    */
-  @Beta
   @Retention(RetentionPolicy.RUNTIME)
   @Target({ElementType.TYPE, ElementType.METHOD})
   @interface Container {

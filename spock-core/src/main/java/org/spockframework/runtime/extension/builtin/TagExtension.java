@@ -13,6 +13,8 @@
  */
 package org.spockframework.runtime.extension.builtin;
 
+import org.junit.platform.engine.TestTag;
+import org.spockframework.runtime.extension.ExtensionException;
 import org.spockframework.runtime.extension.IAnnotationDrivenExtension;
 import org.spockframework.runtime.model.FeatureInfo;
 import org.spockframework.runtime.model.SpecElementInfo;
@@ -26,9 +28,9 @@ import spock.lang.Tag;
  * {@link org.junit.platform.engine.TestTag platform tags} in order to enable filtering, e.g. from build tools like
  * Maven or Gradle.
  *
- * @see <a href="https://junit.org/junit5/docs/current/user-guide/#running-tests-tag-expressions">
- *   JUnit platform tag expression syntax</a>
  * @author Alexander Kriegisch
+ * @see <a href="https://junit.org/junit5/docs/current/user-guide/#running-tests-tag-expressions">
+ * JUnit platform tag expression syntax</a>
  * @since 2.2
  */
 public class TagExtension implements IAnnotationDrivenExtension<Tag> {
@@ -46,9 +48,15 @@ public class TagExtension implements IAnnotationDrivenExtension<Tag> {
 
   private void addTags(Tag tag, SpecElementInfo<?, ?> specElement) {
     for (String value : tag.value()) {
-      specElement.addTag(
-        new org.spockframework.runtime.model.Tag(value, TEST_TAG_KEY, value)
-      );
+      if (!TestTag.isValid(value))
+        throw new InvalidTagNameException("Tag '" + value + "' must conform to JUnit platform tag syntax");
+      specElement.addTag(new org.spockframework.runtime.model.Tag(value, TEST_TAG_KEY, value));
+    }
+  }
+
+  public static class InvalidTagNameException extends ExtensionException {
+    public InvalidTagNameException(String message) {
+      super(message);
     }
   }
 }

@@ -15,6 +15,7 @@
 package org.spockframework.runtime.extension.builtin;
 
 import org.spockframework.runtime.AbstractRunListener;
+import org.spockframework.runtime.InvalidSpecException;
 import org.spockframework.runtime.extension.IAnnotationDrivenExtension;
 import org.spockframework.runtime.model.*;
 import org.spockframework.runtime.model.parallel.ExecutionMode;
@@ -35,6 +36,13 @@ public class StepwiseExtension implements IAnnotationDrivenExtension<Stepwise> {
 
   @Override
   public void visitFeatureAnnotation(Stepwise annotation, FeatureInfo feature) {
+    if (!feature.isParameterized())
+      throw new InvalidSpecException(String.format(
+        "Cannot use @Stepwise, feature method %s.%s is not data-driven",
+        feature.getSpec().getReflection().getCanonicalName(),
+        feature.getDisplayName()
+      ));
+
     // Disable parallel iteration execution for @Stepwise features
     feature.setExecutionMode(ExecutionMode.SAME_THREAD);
 

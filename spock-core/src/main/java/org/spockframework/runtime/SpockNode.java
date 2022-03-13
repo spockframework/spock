@@ -156,7 +156,7 @@ public abstract class SpockNode<T extends SpecElementInfo<?,?>>
 
   private void addTestTagsFrom(List<Tag> specElementTags) {
     specElementTags.stream()
-      .filter(tag -> tag.getKey().equals(TagExtension.TAG_EXTENSION_KEY))
+      .filter(tag -> tag.getKey().equals(TagExtension.TEST_TAG_KEY))
       .map(Tag::getName)
       .map(TestTag::create)
       .forEach(tags::add);

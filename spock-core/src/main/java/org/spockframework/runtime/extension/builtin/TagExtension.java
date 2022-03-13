@@ -32,7 +32,7 @@ import spock.lang.Tag;
  * @since 2.2
  */
 public class TagExtension implements IAnnotationDrivenExtension<Tag> {
-  public static final String TAG_EXTENSION_KEY = "TagExtension";
+  public static final String TEST_TAG_KEY = "testTag";
 
   @Override
   public void visitSpecAnnotation(Tag tag, SpecInfo spec) {
@@ -47,7 +47,7 @@ public class TagExtension implements IAnnotationDrivenExtension<Tag> {
   private void addTags(Tag tag, SpecElementInfo<?, ?> specElement) {
     for (String value : tag.value()) {
       specElement.addTag(
-        new org.spockframework.runtime.model.Tag(value, TAG_EXTENSION_KEY, value)
+        new org.spockframework.runtime.model.Tag(value, TEST_TAG_KEY, value)
       );
     }
   }

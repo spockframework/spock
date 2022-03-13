@@ -270,13 +270,9 @@ include::{sourcedir}/extension/PendingFeatureIfDocSpec.groovy[tag=example-c]
 
 To execute features in the order that they are declared, annotate a spec class with `spock.lang.Stepwise`:
 
-[source,groovy]
+[source,groovy,indent=0]
 ----
-@Stepwise
-class RunInOrderSpec extends Specification {
-  def "I run first"()  { ... }
-  def "I run second"() { ... }
-}
+include::{sourcedir}/extension/StepwiseDocSpec.groovy[tag=example-a]
 ----
 
 `Stepwise` only affects the class carrying the annotation; not sub or super classes.  Features after the first
@@ -289,18 +285,9 @@ NOTE: This will also set the execution mode to `SAME_THREAD`, see <<parallel-exe
 
 Since Spock 2.2, `Stepwise` can be applied to data-driven feature methods, having the effect of executing them sequentially (even if concurrent test mode is active) and to skip subsequent iterations if one iteration fails:
 
-[source,groovy]
+[source,groovy,indent=0]
 ----
-class MySpec extends Specification {
-  @Stepwise
-  def "iteration #count"()  {
-    expect:
-    count != 3
-
-    where:
-    count << (1..5)
-  }
-}
+include::{sourcedir}/extension/StepwiseDocSpec.groovy[tag=example-b]
 ----
 
 This will pass for the first two iterations, fail on the third and skip the remaining two. Without `Stepwise` on feature method level, the third iteration would fail and the remaining 4 iterations would pass.

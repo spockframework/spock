@@ -31,12 +31,19 @@ class Foo extends Specification {
   }
 }
     """)
+    def expectedSkipMessagesCount = result.testEvents()
+      .filter({ event ->
+        event.payload.present &&
+          event.payload.get() == "skipping subsequent iterations after failure"
+      })
+      .count()
 
     then:
     result.testsStartedCount == 3 + 1
     result.testsSucceededCount == 2 + 1
     result.testsFailedCount == 1
     result.testsSkippedCount == 2
+    expectedSkipMessagesCount == 2
   }
 
   def "annotated feature must be data-driven"() {

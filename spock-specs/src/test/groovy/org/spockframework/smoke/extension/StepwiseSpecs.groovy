@@ -32,12 +32,19 @@ class Foo extends Specification {
   def step4() { expect: true }
 }
     """)
+    def expectedSkipMessagesCount = result.testEvents()
+      .filter({ event ->
+        event.payload.present &&
+          event.payload.get() == "Skipped due to previous Error (by @Stepwise)"
+      })
+      .count()
 
     then:
     result.testsSucceededCount == 1
     result.testsStartedCount == 2
     result.testsFailedCount == 1
     result.testsSkippedCount == 2
+    expectedSkipMessagesCount == 2
   }
 
   def "automatically runs excluded methods that lead up to an included method"() {

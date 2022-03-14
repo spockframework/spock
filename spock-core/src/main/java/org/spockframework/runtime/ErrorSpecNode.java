@@ -32,6 +32,13 @@ public class ErrorSpecNode extends SpecNode {
   }
 
   @Override
+  public boolean mayRegisterTests() {
+    // Maven Surefire removes nodes if org.junit.platform.launcher.TestPlan.containsTests is false.
+    // The easiest way to avoid this, is to return true here. This seems to work and not to bother Gradle either.
+    return true;
+  }
+
+  @Override
   public SpockExecutionContext prepare(SpockExecutionContext context) throws Exception {
     return ExceptionUtil.sneakyThrow(error);
   }

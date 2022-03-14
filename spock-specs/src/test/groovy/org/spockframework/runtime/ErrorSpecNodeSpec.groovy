@@ -1,6 +1,6 @@
 package org.spockframework.runtime
 
-import spock.lang.Specification
+import spock.lang.*
 
 import org.junit.platform.engine.*
 import spock.lang.Subject
@@ -32,5 +32,18 @@ class ErrorSpecNodeSpec extends Specification {
 
     then:
     0 * tdParent.removeChild(*_)
+  }
+
+  @Issue("https://github.com/spockframework/spock/issues/1444")
+  def 'make TestDescriptor think that an ErrorSpecNode contains tests'() {
+    given:
+    def errorSpecNodeSpy = Spy(errorSpecNode)
+
+    when:
+    def containsTests = TestDescriptor.containsTests(errorSpecNodeSpy)
+
+    then:
+    containsTests
+    1 * errorSpecNodeSpy.mayRegisterTests()
   }
 }

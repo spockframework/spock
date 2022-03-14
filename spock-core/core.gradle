@@ -2,6 +2,7 @@ import aQute.bnd.gradle.Resolve
 
 plugins {
   id "biz.aQute.bnd.builder"
+  id "org.gradle.test-retry"
 }
 
 apply from: script("publishMaven")
@@ -107,4 +108,19 @@ def verifyOSGi = tasks.register('verifyOSGi', Resolve) {
 
 tasks.named('check') {
   dependsOn(verifyOSGi)
+}
+
+boolean isCiServer = System.env["CI"] || System.env["GITHUB_ACTIONS"]
+if (isCiServer) {
+  test {
+    retry {
+      maxRetries = 2
+      maxFailures = 20
+
+      filter {
+        includeAnnotationClasses.add("spock.lang.Timeout")
+        includeAnnotationClasses.add("spock.lang.Isolated")
+      }
+    }
+  }
 }

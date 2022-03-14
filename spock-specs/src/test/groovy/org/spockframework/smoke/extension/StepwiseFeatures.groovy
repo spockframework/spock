@@ -46,6 +46,43 @@ class Foo extends Specification {
     expectedSkipMessagesCount == 2
   }
 
+  def "basic usage rolled-up"() {
+    runner.throwFailure = false
+    runner.addClassImport(RollupIterationCounter)
+    RollupIterationCounter.count.set(0)
+
+    when:
+    def result = runner.runWithImports("""
+class Foo extends Specification {
+  @Stepwise
+  @Rollup
+  def step1() {
+    // Keep track of the number of started iterations for later verification in the outer feature method
+    RollupIterationCounter.count.set(RollupIterationCounter.count.get() + 1)
+    expect: count != 3
+    where: count << (1..5)
+  }
+}
+    """)
+
+    then:
+    RollupIterationCounter.count.get() == 3
+    result.testsStartedCount == 1
+    result.testsSucceededCount == 0
+    result.testsFailedCount == 1
+    result.testsSkippedCount == 0
+  }
+
+  /**
+   * Has the sole purpose of reporting back the number of started iterations from the rolled-up, stepwise feature method
+   * used in the embedded spec under test in feature "basic usage rolled-up".
+   *
+   * TODO: find a better way to communicate with the embedded spec
+   */
+  private static class RollupIterationCounter {
+    static InheritableThreadLocal<Integer> count = new InheritableThreadLocal<>()
+  }
+
   def "annotated feature must be data-driven"() {
     when:
     def result = runner.runWithImports("""

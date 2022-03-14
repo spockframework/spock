@@ -33,4 +33,16 @@ class ErrorSpecNodeSpec extends Specification {
     then:
     0 * tdParent.removeChild(*_)
   }
+
+  def 'make TestDescriptor think that an ErrorSpecNode contains tests'() {
+    given:
+    def errorSpecNodeSpy = Spy(errorSpecNode)
+
+    when:
+    def containsTests = TestDescriptor.containsTests(errorSpecNodeSpy)
+
+    then:
+    containsTests
+    1 * errorSpecNodeSpy.mayRegisterTests()
+  }
 }

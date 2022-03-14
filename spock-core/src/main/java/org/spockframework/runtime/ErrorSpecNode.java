@@ -1,5 +1,7 @@
 package org.spockframework.runtime;
 
+import org.junit.platform.engine.TestDescriptor;
+import org.junit.platform.launcher.TestPlan;
 import org.spockframework.runtime.model.SpecInfo;
 import org.spockframework.util.ExceptionUtil;
 import spock.config.RunnerConfiguration;
@@ -14,30 +16,43 @@ public class ErrorSpecNode extends SpecNode {
     this.error = error;
   }
 
+  /**
+   * Prevent this node from being pruned. The default logic would prune it, as it
+   * <ul>
+   *   <li>is no test,</li>
+   *   <li>has no test descendents and</li>
+   *   <li>may not register new tests during execution</li>
+   * </ul>
+   *
+   * Without this empty override, the node is thrown away and the error is not reported.
+   */
   @Override
-  public void prune() {
-    // prevent pruning of this node
-    // default logic would prune it as it
-    // - is no test,
-    // - has no test descendents and
-    // - may not register new tests during execution
-    // without this empty override, the node is thrown away and the error is not reported
-  }
+  public void prune() {}
 
+  /**
+   *  Prevent this node from being removed. As it does not have any children, it would get removed when trying to select
+   *  specific tests methods. For example, Gradle will report that no test were found, and not report the actual error.
+   */
   @Override
-  public void removeFromHierarchy() {
-    // prevent removal of this node
-    // As the ErrorSpecNode does not have children it would get removed when trying to select specific tests methods.
-    // For example, gradle will report that no test were found, and not report the actual error.
-  }
+  public void removeFromHierarchy() {}
 
+  /**
+   * Maven Surefire removes nodes if {@link TestPlan#containsTests()} is <tt>false</tt>.
+   * In order to avoid this, we return <tt>true</tt> here, because it makes {@link #containsTests(TestDescriptor)}
+   * also return <tt>true</tt>, which in turn feeds into Maven's test plan.
+   * This seems to work and not to bother Gradle either.
+   *
+   * @return always <tt>true</tt> for error spec nodes
+   */
   @Override
   public boolean mayRegisterTests() {
-    // Maven Surefire removes nodes if org.junit.platform.launcher.TestPlan.containsTests is false.
-    // The easiest way to avoid this, is to return true here. This seems to work and not to bother Gradle either.
     return true;
   }
 
+  /**
+   * Always throws the error specified in {@link #ErrorSpecNode(UniqueId, RunnerConfiguration, SpecInfo, Throwable)},
+   * escalating it up the call stack.
+   */
   @Override
   public SpockExecutionContext prepare(SpockExecutionContext context) throws Exception {
     return ExceptionUtil.sneakyThrow(error);

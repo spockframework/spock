@@ -80,10 +80,11 @@ class EmbeddedSpecCompiler {
     doCompile(source, loader)
   }
 
-  List<Class> compileWithImports(@Language('Groovy') String source) {
+  List<Class> compileWithImports(@Language('Groovy') String source,
+                                 String packageDeclaration = "package apackage;") {
     addPackageImport(Specification.package)
     // one-liner keeps line numbers intact
-    doCompile ("package apackage;  ${source.trim()}", loaderWithImports)
+    doCompile("$packageDeclaration  ${source.trim()}", loaderWithImports)
   }
 
   Class compileSpecBody(@Language(value = 'Groovy', prefix = 'class ASpec extends spock.lang.Specification { ', suffix = '\n }')
@@ -101,10 +102,11 @@ class EmbeddedSpecCompiler {
   @Beta
   TranspileResult transpileWithImports(@Language('Groovy') String source,
                                        Set showSet = EnumSet.of(Show.ANNOTATIONS, Show.CLASS, Show.METHODS, Show.FIELDS, Show.OBJECT_INITIALIZERS, Show.PROPERTIES),
-                                       CompilePhase phase = CompilePhase.SEMANTIC_ANALYSIS) {
+                                       CompilePhase phase = CompilePhase.SEMANTIC_ANALYSIS,
+                                       String packageDeclaration = "package apackage;") {
     addPackageImport(Specification.package)
     // one-liner keeps line numbers intact
-    doTranspile("package apackage; ${source.trim()}", showSet, phase, loaderWithImports, compilerConfigurationWithImports)
+    doTranspile("$packageDeclaration ${source.trim()}", showSet, phase, loaderWithImports, compilerConfigurationWithImports)
   }
 
   @Beta

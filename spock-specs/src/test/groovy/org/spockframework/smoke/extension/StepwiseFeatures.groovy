@@ -76,11 +76,9 @@ class Foo extends Specification {
   /**
    * Has the sole purpose of reporting back the number of started iterations from the rolled-up, stepwise feature method
    * used in the embedded spec under test in feature "basic usage rolled-up".
-   *
-   * TODO: find a better way to communicate with the embedded spec
    */
   private static class RollupIterationCounter {
-    static InheritableThreadLocal<Integer> count = new InheritableThreadLocal<>()
+    static ThreadLocal<Integer> count = new ThreadLocal<>()
   }
 
   def "annotated feature must be data-driven"() {

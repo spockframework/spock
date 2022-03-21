@@ -91,23 +91,42 @@
 <li class="blockList">
 <hr>
 <br>
-<pre><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/annotation/Target.html?is-external=true" title="class or interface in java.lang.annotation">@Target</a>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/annotation/Target.html?is-external=true#value--" title="class or interface in java.lang.annotation">value</a>=<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/annotation/ElementType.html?is-external=true#TYPE" title="class or interface in java.lang.annotation">TYPE</a>)
+<pre><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/annotation/Target.html?is-external=true" title="class or interface in java.lang.annotation">@Target</a>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/annotation/Target.html?is-external=true#value--" title="class or interface in java.lang.annotation">value</a>={<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/annotation/ElementType.html?is-external=true#TYPE" title="class or interface in java.lang.annotation">TYPE</a>,<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/annotation/ElementType.html?is-external=true#METHOD" title="class or interface in java.lang.annotation">METHOD</a>})
  <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/annotation/Retention.html?is-external=true" title="class or interface in java.lang.annotation">@Retention</a>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/annotation/Retention.html?is-external=true#value--" title="class or interface in java.lang.annotation">value</a>=<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/annotation/RetentionPolicy.html?is-external=true#RUNTIME" title="class or interface in java.lang.annotation">RUNTIME</a>)
 public @interface <span class="memberNameLabel">Stepwise</span></pre>
-<div class="block">Indicates that a spec's feature methods should be run sequentially
- in their declared order (even in the presence of a parallel spec runner),
- always starting from the first method. If a method fails, the remaining
- methods will be skipped. Feature methods declared in super- and subspecs
- are not affected.
+<div class="block"><b>When applied to a spec,</b> the annotation indicates that the spec's feature methods should be run sequentially
+ in their declared order (even in the presence of a parallel spec runner), always starting from the first method.
+ If a method fails, the remaining methods will be skipped. Feature methods declared in super- and subspecs are not
+ affected.
 
- <p><tt>&#64;Stepwise</tt> is useful for specs with
- (logical) dependencies between methods. In particular, it helps to avoid
- consecutive errors after a method has failed, which makes it easier to
- understand what really went wrong.
+ <p><b>When applied to a feature method,</b> the annotation analogically indicates that the feature's iterations
+ should be run sequentially in their declared order. If an iteration fails, the remaining iterations will be skipped.
 
- <p>Note: If this extension is applied on the Specification, then it will use
- <code>ExecutionMode.SAME_THREAD</code>
- for the whole Spec.</div>
+ <p><tt>&#64;Stepwise</tt> is useful for specs with (logical) dependencies between methods. In particular, it helps to
+ avoid consecutive errors after a method has failed, which makes it easier to understand what really went wrong.
+ Analogically, it helps to avoid consecutive errors in subsequent iterations, when it is clear that the reason for one
+ iteration failure usually also causes subsequent iterations to fail, such as the availability of an external resource
+ in an integration test.
+
+ <p><b><i>Please try to use this annotation as infrequently as possible</i></b> by refactoring to avoid dependencies
+ between feature methods or iterations whenever possible. Otherwise, you will lose opportunities to get meaningful
+ test results and good coverage.
+
+ <p>Please note:
+ <ul>
+   <li>Applying this annotation on a specification will activate
+   <code>ExecutionMode.SAME_THREAD</code> for the whole
+   spec, all of its feature methods and their iterations (if any). If it is applied to a data-driven feature method
+   only, it will set the same flag only per annotated method.
+  </li>
+  <li>
+    <tt>&#64;Stepwise</tt> can be applied to methods since Spock 2.2. Therefore, for backward compatibility applying
+    the annotation on spec level will <i>not</i> automatically skip subsequent feature method iterations upon failure
+    in a previous iteration. If you want that in addition to (or instead of) step-wise spec mode, you do have to
+    annotate each individual feature method you wish to have that capability. This also conforms to the principle that
+    if you want to skip tests under whatever conditions, you ought to document your intent explicitly.
+  </li>
+ </ul></div>
 </li>
 </ul>
 </div>

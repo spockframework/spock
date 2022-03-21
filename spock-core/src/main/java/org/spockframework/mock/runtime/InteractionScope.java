@@ -83,6 +83,14 @@ public class InteractionScope implements IInteractionScope {
 
   @Override
   public IMockInteraction match(IMockInvocation invocation) {
+    final IMockObject mockObject = invocation.getMockObject();
+    if (mockObject.useLastMatchResponseStrategy())
+      return lastMatchStrategy(invocation);
+
+    return firstMatchStrategy(invocation);
+  }
+
+  private IMockInteraction firstMatchStrategy(IMockInvocation invocation) {
     IMockInteraction firstMatch = null;
     for (IMockInteraction interaction : interactions)
       if (interaction.matches(invocation)) {
@@ -91,6 +99,17 @@ public class InteractionScope implements IInteractionScope {
       }
 
     return firstMatch;
+  }
+
+  private IMockInteraction lastMatchStrategy(IMockInvocation invocation) {
+    IMockInteraction lastMatch = null;
+    for (IMockInteraction interaction : interactions)
+      if (interaction.matches(invocation)) {
+        if (!interaction.isExhausted() || lastMatch == null)
+          lastMatch = interaction;
+      }
+
+    return lastMatch;
   }
 
   @Override

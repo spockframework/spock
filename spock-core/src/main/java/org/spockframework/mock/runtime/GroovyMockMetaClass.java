@@ -116,7 +116,8 @@ public class GroovyMockMetaClass extends DelegatingMetaClass implements Specific
   private IMockInvocation createMockInvocation(MetaMethod metaMethod, Object target,
       String methodName, Object[] arguments, boolean isStatic) {
     IMockObject mockObject = new MockObject(configuration.getName(), configuration.getExactType(), target,
-        configuration.isVerified(), configuration.isGlobal(), configuration.getDefaultResponse(), specification, this);
+        configuration.isVerified(), configuration.isGlobal(), configuration.getDefaultResponse(),
+        configuration.useLastMatchResponseStrategy(), specification, this);
     IMockMethod mockMethod;
     if (metaMethod != null) {
       List<Type> parameterTypes = Arrays.asList(metaMethod.getNativeParameterTypes());

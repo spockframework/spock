@@ -89,6 +89,14 @@ public interface IMockConfiguration {
   IDefaultResponse getDefaultResponse();
 
   /**
+   * Tells whether this mock object supports last defined return value.
+   * By default Spock uses a match first algorithm to determine the defined return value of a method.
+   *
+   * @return whether this mock object supports last matched response
+   */
+  boolean useLastMatchResponseStrategy();
+
+  /**
    * Tells whether a mock object stands in for all objects of the mocked type, or just for itself.
    * This is an optional feature that may not be supported by a particular {@link MockImplementation}.
    *

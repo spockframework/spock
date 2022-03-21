@@ -60,7 +60,10 @@ public class IterationNode extends SpockNode<FeatureInfo> {
 
   @Override
   public void around(SpockExecutionContext context, Invocation<SpockExecutionContext> invocation) {
-    context.getRunner().runIteration(context, iterationInfo, () -> sneakyInvoke(invocation, context));
+    ErrorInfoCollector errorInfoCollector = new ErrorInfoCollector();
+    SpockExecutionContext innerContext = context.withErrorInfoCollector(errorInfoCollector);
+    innerContext.getRunner().runIteration(innerContext, iterationInfo, () -> sneakyInvoke(invocation, innerContext));
+    errorInfoCollector.assertEmpty();
   }
 
   @Override
@@ -69,7 +72,7 @@ public class IterationNode extends SpockNode<FeatureInfo> {
   }
 
   @Override
-  public SkipResult shouldBeSkipped(SpockExecutionContext context) throws Exception {
+  public SkipResult shouldBeSkipped(SpockExecutionContext context) {
     return shouldBeSkipped(iterationInfo.getFeature());
   }
 

@@ -1,5 +1,6 @@
 plugins {
   id 'org.spockframework.base'
+  id "org.gradle.test-retry"
 }
 
 ext.displayName = "Spock Framework - Specs for Core Module"
@@ -32,6 +33,7 @@ dependencies {
   jacocoAgentRuntime libs.jacocoAgent
 }
 
+boolean isCiServer = System.env["CI"] || System.env["GITHUB_ACTIONS"]
 test {
   reports.junitXml.enabled = true
   reports.html.enabled = true
@@ -41,6 +43,18 @@ test {
   testLogging.events 'standard_out'
   testLogging.events 'standard_error'
   maxParallelForks = 1
+
+  if (isCiServer) {
+    retry {
+      maxRetries = 2
+      maxFailures = 20
+
+      filter {
+        includeAnnotationClasses.add("spock.lang.Timeout")
+        includeAnnotationClasses.add("spock.lang.Isolated")
+      }
+    }
+  }
 }
 
 task groovyConsole(type: JavaExec) {

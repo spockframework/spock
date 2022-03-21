@@ -18,7 +18,7 @@ import org.junit.platform.engine.discovery.DiscoverySelectors
 
 import org.spockframework.EmbeddedSpecification
 
-class StepwiseExtension extends EmbeddedSpecification {
+class StepwiseSpecs extends EmbeddedSpecification {
   def "basic usage"() {
     runner.throwFailure = false
 
@@ -29,14 +29,22 @@ class Foo extends Specification {
   def step1() { expect: true }
   def step2() { expect: false }
   def step3() { expect: true }
+  def step4() { expect: true }
 }
     """)
+    def expectedSkipMessagesCount = result.testEvents()
+      .filter({ event ->
+        event.payload.present &&
+          event.payload.get() == "Skipped due to previous Error (by @Stepwise)"
+      })
+      .count()
 
     then:
     result.testsSucceededCount == 1
     result.testsStartedCount == 2
     result.testsFailedCount == 1
-    result.testsSkippedCount == 1
+    result.testsSkippedCount == 2
+    expectedSkipMessagesCount == 2
   }
 
   def "automatically runs excluded methods that lead up to an included method"() {
@@ -55,7 +63,7 @@ class Foo extends Specification {
     then:
     result.testsSucceededCount == 3
     result.testsFailedCount == 0
-    result.testsFailedCount == 0
+    result.testsSkippedCount == 0
   }
 
   def "honors method-level @Ignore"() {
@@ -78,7 +86,6 @@ class Foo extends Specification {
     result.testsSkippedCount == 1
   }
 
-
   def "sets childExecutionMode to SAME_THREAD"() {
     when:
     def result = runner.runWithImports("""
@@ -92,7 +99,6 @@ class Foo extends Specification {
     then:
     result.testsSucceededCount == 1
     result.testsFailedCount == 0
-    result.testsFailedCount == 0
+    result.testsSkippedCount == 0
   }
 }
-

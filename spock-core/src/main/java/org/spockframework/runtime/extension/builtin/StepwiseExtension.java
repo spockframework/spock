@@ -15,22 +15,47 @@
 package org.spockframework.runtime.extension.builtin;
 
 import org.spockframework.runtime.AbstractRunListener;
+import org.spockframework.runtime.InvalidSpecException;
 import org.spockframework.runtime.extension.IAnnotationDrivenExtension;
 import org.spockframework.runtime.model.*;
 import org.spockframework.runtime.model.parallel.ExecutionMode;
+import spock.lang.Stepwise;
 
-import java.lang.annotation.Annotation;
 import java.util.List;
 
-public class StepwiseExtension implements IAnnotationDrivenExtension {
+public class StepwiseExtension implements IAnnotationDrivenExtension<Stepwise> {
   @Override
-  public void visitSpecAnnotation(Annotation annotation, final SpecInfo spec) {
+  public void visitSpecAnnotation(Stepwise annotation, final SpecInfo spec) {
     sortFeaturesInDeclarationOrder(spec);
     includeFeaturesBeforeLastIncludedFeature(spec);
     skipFeaturesAfterFirstFailingFeature(spec);
 
-    // Disable parallel child execution for @Stepwise tests
+    // Disable parallel child execution for @Stepwise specs
     spec.setChildExecutionMode(ExecutionMode.SAME_THREAD);
+  }
+
+  @Override
+  public void visitFeatureAnnotation(Stepwise annotation, FeatureInfo feature) {
+    if (!feature.isParameterized())
+      throw new InvalidSpecException(String.format(
+        "Cannot use @Stepwise, feature method %s.%s is not data-driven",
+        feature.getSpec().getReflection().getCanonicalName(),
+        feature.getDisplayName()
+      ));
+
+    // Disable parallel iteration execution for @Stepwise features
+    feature.setExecutionMode(ExecutionMode.SAME_THREAD);
+
+    // If an error occurs in this feature, skip remaining iterations
+    feature.getFeatureMethod().addInterceptor(invocation -> {
+      try {
+        invocation.proceed();
+      }
+      catch (Throwable t) {
+        invocation.getFeature().skip("skipping subsequent iterations after failure");
+        throw t;
+      }
+    });
   }
 
   private void sortFeaturesInDeclarationOrder(SpecInfo spec) {

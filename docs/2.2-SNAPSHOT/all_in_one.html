@@ -4236,8 +4236,9 @@ deemed pending and each will individually fail as soon as it would be successful
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@Stepwise</span>
 <span class="type">class</span> <span class="class">RunInOrderSpec</span> <span class="directive">extends</span> Specification {
-  <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">I run first</span><span class="delimiter">&quot;</span></span>()  { ... }
-  <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">I run second</span><span class="delimiter">&quot;</span></span>() { ... }
+  <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">I run first</span><span class="delimiter">&quot;</span></span>()  { <span class="key">expect</span>: <span class="predefined-constant">true</span> }
+  <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">I run second</span><span class="delimiter">&quot;</span></span>() { <span class="key">expect</span>: <span class="predefined-constant">false</span> }
+  <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">I will be skipped</span><span class="delimiter">&quot;</span></span>() { <span class="key">expect</span>: <span class="predefined-constant">true</span> }
 }</code></pre>
 </div>
 </div>
@@ -4257,6 +4258,38 @@ should be taken when ignoring feature methods in spec classes annotated with <co
 </td>
 <td class="content">
 This will also set the execution mode to <code>SAME_THREAD</code>, see <a href="parallel-execution.html#parallel-execution">Parallel Execution</a> for more information.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Since Spock 2.2, <code>Stepwise</code> can be applied to data-driven feature methods, having the effect of executing them sequentially (even if concurrent test mode is active) and to skip subsequent iterations if one iteration fails:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="type">class</span> <span class="class">SkipAfterFailingIterationSpec</span> <span class="directive">extends</span> Specification {
+  <span class="annotation">@Stepwise</span>
+  <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">iteration #count</span><span class="delimiter">&quot;</span></span>()  {
+    <span class="key">expect</span>:
+    count != <span class="integer">3</span>
+
+    <span class="key">where</span>:
+    count &lt;&lt; (<span class="integer">1</span>..<span class="integer">5</span>)
+  }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This will pass for the first two iterations, fail on the third and skip the remaining two. Without <code>Stepwise</code> on feature method level, the third iteration would fail and the remaining 4 iterations would pass.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+For backward compatibility with Spock versions prior to 2.2, applying the annotation on spec level will <em>not</em> automatically skip subsequent feature method iterations upon failure in a previous iteration. If you want that in addition to (or instead of) step-wise spec mode, you do have to annotate each individual feature method you wish to have that capability. This also conforms to the principle that if you want to skip tests under whatever conditions, you ought to document your intent explicitly.
 </td>
 </tr>
 </table>
@@ -6220,7 +6253,13 @@ Grails 2.3 and higher have built-in Spock support and do not require a plugin.
 <div class="sectionbody">
 <div class="sect2">
 <h3 id="_2_2_tbd"><a class="anchor" href="#_2_2_tbd"></a><a class="link" href="#_2_2_tbd">2.2 (tbd)</a></h3>
-
+<div class="ulist">
+<ul>
+<li>
+<p><code>@Stepwise</code> can be applied to data-driven feature methods, having the effect of executing them sequentially (even if concurrent test mode is active) and to skip subsequent iterations is one iteration fails.</p>
+</li>
+</ul>
+</div>
 </div>
 <div class="sect2">
 <h3 id="_2_2_m1_2022_02_16"><a class="anchor" href="#_2_2_m1_2022_02_16"></a><a class="link" href="#_2_2_m1_2022_02_16">2.2-M1 (2022-02-16)</a></h3>
@@ -9219,7 +9258,7 @@ This is due to how groovy implements traits and AST transformations.</p>
 <div id="footer">
 <div id="footer-text">
 Version 2.2-SNAPSHOT<br>
-Last updated 2022-03-13 14:11:27 UTC
+Last updated 2022-03-21 21:10:16 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./coderay-asciidoctor.css">

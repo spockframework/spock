@@ -131,34 +131,23 @@ public abstract class SpockNode<T extends SpecElementInfo<?,?>>
       .collect(Collectors.toSet());
   }
 
+  /**
+   * Fetch this node's Spock tags including parent tags, filter for key {@link TagExtension#TEST_TAG_KEY} and convert
+   * them to a set of JUnit platform test tags.
+   *
+   * @return JUnit platform test tags for this node
+   */
   @Override
   public Set<TestTag> getTags() {
-    // Lazy initialisation
     if (tags == null) {
       tags = new HashSet<>();
-      SpecInfo specInfo;
-      // Node info can be either FeatureInfo or SpecInfo
-      if (getNodeInfo() instanceof FeatureInfo) {
-        FeatureInfo featureInfo = (FeatureInfo) getNodeInfo();
-        addTestTagsFrom(featureInfo.getTags());
-        specInfo = featureInfo.getSpec();
-      }
-      else {
-        specInfo = (SpecInfo) getNodeInfo();
-      }
-      while (specInfo != null) {
-        addTestTagsFrom(specInfo.getTags());
-        specInfo = specInfo.getSuperSpec();
-      }
+      getNodeInfo().getTags(true).stream()
+        .filter(tag -> TagExtension.TEST_TAG_KEY.equals(tag.getKey()))
+        .map(Tag::getName)
+        .map(TestTag::create)
+        .forEach(tags::add);
     }
+    // JUnit platform calls 'getTags' multiple times per test descriptor -> caching makes sense
     return tags;
-  }
-
-  private void addTestTagsFrom(List<Tag> specElementTags) {
-    specElementTags.stream()
-      .filter(tag -> tag.getKey().equals(TagExtension.TEST_TAG_KEY))
-      .map(Tag::getName)
-      .map(TestTag::create)
-      .forEach(tags::add);
   }
 }

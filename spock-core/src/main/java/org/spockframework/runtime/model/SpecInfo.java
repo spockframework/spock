@@ -367,4 +367,21 @@ public class SpecInfo extends SpecElementInfo<NodeInfo, Class<?>> implements IMe
         return feature.getName();
     return methodName;
   }
+
+  /**
+   * Returns the spec's tags, optionally including super spec tags.
+   *
+   * @param includeParents whether to recursively add super spec tags to the result
+   * @return the element's tags, optionally including super spec tags
+   * @since 2.2
+   */
+  @Override
+  public List<Tag> getTags(boolean includeParents) {
+    if (!includeParents)
+      return getTags();
+    List<Tag> tagsRecursive = getTags();
+    if (getSuperSpec() != null)
+      tagsRecursive.addAll(getSuperSpec().getTags(true));
+    return tagsRecursive;
+  }
 }

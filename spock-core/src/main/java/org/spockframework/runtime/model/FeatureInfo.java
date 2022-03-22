@@ -172,4 +172,20 @@ public class FeatureInfo extends SpecElementInfo<SpecInfo, AnnotatedElement> {
       if (provider.getDataProviderMethod().hasBytecodeName(name)) return true;
     return false;
   }
+
+  /**
+   * Returns the feature's tags, optionally including spec and super spec tags.
+   *
+   * @param includeParents whether to recursively add spec and super spec tags to the result
+   * @return the feature's tags, optionally including spec and super spec tags
+   * @since 2.2
+   */
+  @Override
+  public List<Tag> getTags(boolean includeParents) {
+    if (!includeParents)
+      return getTags();
+    List<Tag> tagsRecursive = getTags();
+    tagsRecursive.addAll(getSpec().getTags(true));
+    return tagsRecursive;
+  }
 }

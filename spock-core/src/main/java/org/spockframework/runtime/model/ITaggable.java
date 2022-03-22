@@ -16,6 +16,7 @@
 
 package org.spockframework.runtime.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -32,17 +33,17 @@ public interface ITaggable {
   /**
    * Returns the element's tags, optionally including parent tags.
    * <p>
-   * The default implementation simply returns the result of {@link #getTags()} for backward compatibility. Overriding
-   * classes are not required to remove any duplicates from the list, considering the fact that {@link Tag} currently
-   * does not override {@link Object#equals(Object)}. Furthermore, the notion of what constitutes a duplicate - e.g.
-   * duplicate key, duplicate key/value pair, duplicate name - might vary depending on the tag usage context.
+   * The default implementation simply returns a copy of the result of {@link #getTags()} for backward compatibility.
+   * Overriding classes are not required to remove any duplicates from the list, considering the fact that {@link Tag}
+   * currently does not override {@link Object#equals(Object)}. Furthermore, the notion of what constitutes a duplicate
+   * - e.g. duplicate key, duplicate key/value pair, duplicate name - might vary depending on the tag usage context.
    *
    * @param includeParents whether to recursively add parent tags to the result
    * @return the element's tags, optionally including parent tags
    * @since 2.2
    */
   default List<Tag> getTags(boolean includeParents) {
-    return getTags();
+    return new ArrayList<>(getTags());
   }
 
   /**

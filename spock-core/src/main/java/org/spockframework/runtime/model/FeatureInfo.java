@@ -182,10 +182,9 @@ public class FeatureInfo extends SpecElementInfo<SpecInfo, AnnotatedElement> {
    */
   @Override
   public List<Tag> getTags(boolean includeParents) {
-    if (!includeParents)
-      return getTags();
-    List<Tag> tagsRecursive = getTags();
-    tagsRecursive.addAll(getSpec().getTags(true));
+    List<Tag> tagsRecursive = super.getTags(includeParents);
+    if (includeParents)
+      tagsRecursive.addAll(getSpec().getTags(true));
     return tagsRecursive;
   }
 }

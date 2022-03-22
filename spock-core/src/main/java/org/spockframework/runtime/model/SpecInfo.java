@@ -377,10 +377,8 @@ public class SpecInfo extends SpecElementInfo<NodeInfo, Class<?>> implements IMe
    */
   @Override
   public List<Tag> getTags(boolean includeParents) {
-    if (!includeParents)
-      return getTags();
-    List<Tag> tagsRecursive = getTags();
-    if (getSuperSpec() != null)
+    List<Tag> tagsRecursive = super.getTags(includeParents);
+    if (includeParents && getSuperSpec() != null)
       tagsRecursive.addAll(getSuperSpec().getTags(true));
     return tagsRecursive;
   }

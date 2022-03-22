@@ -108,3 +108,4 @@ def verifyOSGi = tasks.register('verifyOSGi', Resolve) {
 tasks.named('check') {
   dependsOn(verifyOSGi)
 }
+

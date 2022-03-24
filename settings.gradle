@@ -2,8 +2,8 @@ import com.gradle.enterprise.gradleplugin.internal.extension.BuildScanExtensionW
 
 pluginManagement {
   plugins {
-    id "com.gradle.enterprise" version "3.8.1"
-    id "com.gradle.common-custom-user-data-gradle-plugin" version "1.6.3"
+    id "com.gradle.enterprise" version "3.9"
+    id "com.gradle.common-custom-user-data-gradle-plugin" version "1.6.4"
     id "org.asciidoctor.jvm.convert" version "3.3.2"
     id "net.nemerosa.versioning" version "2.14.0"
     id "io.github.gradle-nexus.publish-plugin" version "1.1.0"

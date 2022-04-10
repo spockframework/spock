@@ -9,9 +9,15 @@ runs:
   steps:
     - name: 'Set up JDK ${{ inputs.additional-java-version }}'
       uses: actions/setup-java@v2
-      if: inputs.additional-java-version != 8
+      if: inputs.additional-java-version != 8 && inputs.additional-java-version < 18
       with:
         distribution: 'adopt'
+        java-version: ${{ inputs.additional-java-version }}
+    - name: 'Set up JDK ${{ inputs.additional-java-version }}'
+      uses: actions/setup-java@v2
+      if: inputs.additional-java-version > 17
+      with:
+        distribution: 'temurin'
         java-version: ${{ inputs.additional-java-version }}
     - name: 'Prepare JDK${{ inputs.additional-java-version }} env var'
       shell: bash

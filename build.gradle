@@ -21,24 +21,24 @@ ext {
   variant = System.getProperty("variant") as BigDecimal ?: variants.first()
   buildScan.tag "groovy-$variant"
   if (variant == 2.5) {
-      groovyGroup = "org.codehaus.groovy"
-      groovyVersion = "2.5.16"
-      minGroovyVersion = "2.5.0"
-      maxGroovyVersion = "2.9.99"
-      if(javaVersion >= 17) {
-        throw new InvalidUserDataException("Groovy $variant is not compatible with Java $javaVersion")
-      }
-    } else if (variant == 3.0) {
-      groovyGroup = "org.codehaus.groovy"
-      groovyVersion = "3.0.10"
-      minGroovyVersion = "3.0.0"
-      maxGroovyVersion = "3.9.99"
-    }  else if (variant == 4.0) {
-      groovyGroup = "org.apache.groovy"
-      groovyVersion = "4.0.1"
-      minGroovyVersion = "4.0.0"
-      maxGroovyVersion = "4.9.99"
-    } else {
+    groovyGroup = "org.codehaus.groovy"
+    groovyVersion = "2.5.16"
+    minGroovyVersion = "2.5.0"
+    maxGroovyVersion = "2.9.99"
+    if (javaVersion >= 17) {
+      throw new InvalidUserDataException("Groovy $variant is not compatible with Java $javaVersion")
+    }
+  } else if (variant == 3.0) {
+    groovyGroup = "org.codehaus.groovy"
+    groovyVersion = "3.0.10"
+    minGroovyVersion = "3.0.0"
+    maxGroovyVersion = "3.9.99"
+  } else if (variant == 4.0) {
+    groovyGroup = "org.apache.groovy"
+    groovyVersion = "4.0.1"
+    minGroovyVersion = "4.0.0"
+    maxGroovyVersion = "4.9.99"
+  } else {
     throw new InvalidUserDataException("Unknown variant: $variant. Choose one of: $variants")
   }
 

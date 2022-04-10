@@ -41,6 +41,12 @@ jobs:
           - os: 'macos-latest'
             variant: '4.0'
             java: '8'
+          - os: 'ubuntu-latest'
+            variant: '3.0'
+            java: '18'
+          - os: 'ubuntu-latest'
+            variant: '4.0'
+            java: '18'
     steps:
       - uses: actions/checkout@v2
         with:

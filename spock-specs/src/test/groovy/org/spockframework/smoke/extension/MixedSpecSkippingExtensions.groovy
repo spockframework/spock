@@ -64,12 +64,14 @@ class Foo extends Specification {
     def result = runner.runWithImports """
 ${specAnnotation}inherited = $inherited)
 abstract class Foo extends Specification {
+  $featureAnnotation
   def "foo feature"() {
     expect: true
   }
 }
 
 abstract class Bar extends Foo {
+  $featureAnnotation
   def "bar feature"() {
     expect: true
   }

@@ -20,6 +20,9 @@ import org.spockframework.runtime.extension.IAnnotationDrivenExtension;
 import org.spockframework.runtime.model.*;
 import spock.lang.Ignore;
 
+import java.util.Collections;
+import java.util.List;
+
 /**
  * @author Peter Niederwieser
  */
@@ -31,7 +34,8 @@ public class IgnoreExtension implements IAnnotationDrivenExtension<Ignore> {
 
   @Override
   public void visitSpecAnnotation(Ignore ignore, SpecInfo spec) {
-    if (spec.getIsBottomSpec() || ignore.inherited()) spec.getBottomSpec().skip(ignore.value().isEmpty() ? DEFAULT_REASON : ignore.value());
+    List<SpecInfo> specsToSkip = ignore.inherited() ? spec.getSpecsToBottom() : Collections.singletonList(spec);
+    specsToSkip.forEach(toSkip -> toSkip.skip(ignore.value().isEmpty() ? DEFAULT_REASON : ignore.value()));
   }
 
   @Override

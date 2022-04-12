@@ -126,6 +126,16 @@ public class SpecInfo extends SpecElementInfo<NodeInfo, Class<?>> implements IMe
     return subSpec == null;
   }
 
+  public List<SpecInfo> getSpecsToBottom() {
+    List<SpecInfo> topToToBottom = getSpecsTopToBottom();
+    return topToToBottom.subList(topToToBottom.indexOf(this), topToToBottom.size());
+  }
+
+  public List<SpecInfo> getSpecsToTop() {
+    List<SpecInfo> bottomtoTop = getSpecsBottomToTop();
+    return bottomtoTop.subList(bottomtoTop.indexOf(this), bottomtoTop.size());
+  }
+
   public List<SpecInfo> getSpecsTopToBottom() {
     if (specsTopToBottom == null) {
       specsTopToBottom = new ArrayList<>();

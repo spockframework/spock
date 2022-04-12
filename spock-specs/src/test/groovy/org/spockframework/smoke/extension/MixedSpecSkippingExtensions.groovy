@@ -62,15 +62,21 @@ class Foo extends Specification {
 
     when:
     def result = runner.runWithImports """
+class Base extends Specification {
+  def "base feature"() {
+    expect: true
+  }
+}
+
 ${specAnnotation}inherited = $inherited)
-abstract class Foo extends Specification {
+class Foo extends Base {
   $featureAnnotation
   def "foo feature"() {
     expect: true
   }
 }
 
-abstract class Bar extends Foo {
+class Bar extends Foo {
   $featureAnnotation
   def "bar feature"() {
     expect: true
@@ -86,11 +92,11 @@ class Test extends Bar {
 """
 
     then:
-    result.testsStartedCount == 0
+    result.testsStartedCount == 1  // Base
     result.testsFailedCount == 0
     result.testsSkippedCount == 0
     result.testsAbortedCount == 0
-    result.testsSucceededCount == 0
+    result.testsSucceededCount == 1  // Base
     result.containersSkippedCount == containersSkippedCount
     result.containersFailedCount == containersFailedCount
 
@@ -100,8 +106,14 @@ class Test extends Bar {
       [true, false],
       ["@Requires({ undeclaredVariable })", "@IgnoreIf({ undeclaredVariable })", "@PendingFeatureIf({ undeclaredVariable })"]
     ].combinations()
-    containersSkippedCount = inherited ? 1 : 0
-    containersFailedCount = inherited ? 0 : 1
+
+    containersSkippedCount = inherited
+      ? 3  // Foo + child classes Bar, Test
+      : 1  // Foo (no child classes)
+
+    containersFailedCount = inherited
+      ? 0  // all fault conditions skipped
+      : 2  // faulty conditions in Bar, Test not skipped
 
     // Used in @Unroll
     specAnnotationName = specAnnotation.split("\\(")[0]

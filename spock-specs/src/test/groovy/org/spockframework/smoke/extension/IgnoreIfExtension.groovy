@@ -292,8 +292,14 @@ class Foo extends Specification {
   def "@IgnoreIf can be configured to be inherited"() {
     when:
     def result = runner.runWithImports """
+class Base extends Specification {
+  def "base feature"() {
+    expect: true
+  }
+}
+
 @IgnoreIf(value = { true }, inherited = ${inherited})
-class Foo extends Specification {
+class Foo extends Base {
   def "foo feature"() {
     expect: true
   }
@@ -322,8 +328,8 @@ class Test extends Bar {
 
     where:
     inherited | testStartAndSucceededCount | specSkippedCount
-    false     | 5                          | 1
-    true      | 0                          | 3
+    false     | 1 + 0 + 3 + 4              | 1
+    true      | 1                          | 3
   }
 
   def "fails if condition cannot be instantiated"() {

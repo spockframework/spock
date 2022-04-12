@@ -43,7 +43,6 @@ class RequiresExtension extends EmbeddedSpecification {
     ]
   }
 
-
   def 'fails directly when referencing an unknown property'() {
     when:
     runner.runSpecBody """
@@ -192,7 +191,6 @@ class Foo extends Specification {
     true      | 1                          | 0
     false     | 0                          | 1
   }
-
 
   def "spec usage with instance field access"() {
     when:
@@ -387,11 +385,20 @@ class Foo extends Specification {
     when:
     def result = runner.runWithImports """
 @Requires(value = { false }, inherited = ${inherited})
-abstract class Foo extends Specification {
+class Foo extends Specification {
+  def "foo feature"() {
+    expect: true
+  }
 }
 
 class Bar extends Foo {
-  def "basic usage"() {
+  def "bar feature"() {
+    expect: true
+  }
+}
+
+class Test extends Bar {
+  def "test feature"() {
     expect: true
   }
 }
@@ -407,8 +414,8 @@ class Bar extends Foo {
 
     where:
     inherited | testStartAndSucceededCount | specSkippedCount
-    false     | 1                          | 0
-    true      | 0                          | 1
+    false     | 5                          | 1
+    true      | 0                          | 3
   }
 
   static class RequiresExtensionExamples extends Specification {
@@ -487,5 +494,3 @@ class Bar extends Foo {
     }
   }
 }
-
-

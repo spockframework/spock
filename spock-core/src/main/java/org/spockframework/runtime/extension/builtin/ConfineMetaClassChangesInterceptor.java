@@ -48,8 +48,10 @@ public class ConfineMetaClassChangesInterceptor implements IMethodInterceptor {
     try {
       invocation.proceed();
     } finally {
-      for (MetaClass original : originalMetaClasses)
+      for (MetaClass original : originalMetaClasses) {
         registry.setMetaClass(original.getTheClass(), original);
+      }
+      originalMetaClasses.clear();
     }
   }
 }

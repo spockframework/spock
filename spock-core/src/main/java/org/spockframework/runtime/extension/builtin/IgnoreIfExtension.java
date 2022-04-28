@@ -40,8 +40,7 @@ public class IgnoreIfExtension extends ConditionalExtension<IgnoreIf> {
 
   @Override
   protected void specConditionResult(boolean result, IgnoreIf annotation, SpecInfo spec) {
-    if (!result)
-      return;
+    if (!result) return;
     List<SpecInfo> specsToSkip = annotation.inherited() ? spec.getSpecsToBottom() : Collections.singletonList(spec);
     specsToSkip.forEach(toSkip -> toSkip.skip(ignoredMessage(annotation)));
   }

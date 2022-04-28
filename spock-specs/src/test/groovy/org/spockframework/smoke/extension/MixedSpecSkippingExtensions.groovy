@@ -51,8 +51,8 @@ class Foo extends Specification {
     ].combinations()
 
     // Used in @Unroll
-    specAnnotationName = specAnnotation.split("\\(")[0]
-    featureAnnotationName = featureAnnotation.split("\\(")[0]
+    specAnnotationName = specAnnotation.split(/\(/)[0]
+    featureAnnotationName = featureAnnotation.split(/\(/)[0]
   }
 
   @Unroll("#specAnnotationName #skipsSpec, #featureAnnotationName on feature #isEvaluated")
@@ -116,8 +116,8 @@ class Test extends Bar {
       : 2  // faulty conditions in Bar, Test not skipped
 
     // Used in @Unroll
-    specAnnotationName = specAnnotation.split("\\(")[0]
-    featureAnnotationName = featureAnnotation.split("\\(")[0]
+    specAnnotationName = specAnnotation.split(/\(/)[0]
+    featureAnnotationName = featureAnnotation.split(/\(/)[0]
     skipsSpec = inherited ? "with inheritance skips spec" : "without inheritance does not skip spec"
     isEvaluated = inherited ? "not evaluated" : "evaluated"
   }

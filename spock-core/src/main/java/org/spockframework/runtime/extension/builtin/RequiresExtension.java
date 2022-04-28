@@ -40,8 +40,7 @@ public class RequiresExtension extends ConditionalExtension<Requires> {
 
   @Override
   protected void specConditionResult(boolean result, Requires annotation, SpecInfo spec) {
-    if (result)
-      return;
+    if (result) return;
     List<SpecInfo> specsToSkip = annotation.inherited() ? spec.getSpecsToBottom() : Collections.singletonList(spec);
     specsToSkip.forEach(toSkip -> toSkip.skip(ignoredMessage(annotation)));
   }

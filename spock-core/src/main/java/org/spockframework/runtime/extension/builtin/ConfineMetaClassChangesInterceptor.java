@@ -28,7 +28,6 @@ import groovy.lang.*;
  */
 public class ConfineMetaClassChangesInterceptor implements IMethodInterceptor {
   private final Collection<Class<?>> classes;
-  private final List<MetaClass> originalMetaClasses = new ArrayList<>();
 
   public ConfineMetaClassChangesInterceptor(Collection<Class<?>> classes) {
     this.classes = classes;
@@ -37,6 +36,7 @@ public class ConfineMetaClassChangesInterceptor implements IMethodInterceptor {
   @Override
   public void intercept(IMethodInvocation invocation) throws Throwable {
     MetaClassRegistry registry = GroovySystem.getMetaClassRegistry();
+    List<MetaClass> originalMetaClasses = new ArrayList<>();
 
     for (Class<?> clazz : classes) {
       originalMetaClasses.add(registry.getMetaClass(clazz));
@@ -48,10 +48,8 @@ public class ConfineMetaClassChangesInterceptor implements IMethodInterceptor {
     try {
       invocation.proceed();
     } finally {
-      for (MetaClass original : originalMetaClasses) {
+      for (MetaClass original : originalMetaClasses)
         registry.setMetaClass(original.getTheClass(), original);
-      }
-      originalMetaClasses.clear();
     }
   }
 }

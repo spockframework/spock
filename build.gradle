@@ -78,7 +78,7 @@ ext {
     junitPlatformConsole: [group: 'org.junit.platform', name: 'junit-platform-console'],
     log4j               : [group: 'log4j', name: 'log4j', version: '1.2.17'],
     objenesis           : [group: 'org.objenesis', name: 'objenesis', version: '3.2'],
-    jacocoAgent         : [group: 'org.jacoco', name: 'org.jacoco.agent', version: '0.8.7', classifier: 'runtime']
+    jacocoAgent         : [group: 'org.jacoco', name: 'org.jacoco.agent', version: '0.8.8', classifier: 'runtime']
   ]
 }
 

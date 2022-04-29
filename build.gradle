@@ -60,8 +60,8 @@ ext {
 
   libs = [
     jetbrainsAnnotations: [group: "org.jetbrains", name: "annotations", version: "20.1.0"],
-    asm                 : [group: 'org.ow2.asm', name: 'asm', version: '9.2'],
-    bytebuddy           : [group: 'net.bytebuddy', name: 'byte-buddy', version: '1.12.1'],
+    asm                 : [group: 'org.ow2.asm', name: 'asm', version: '9.3'],
+    bytebuddy           : [group: 'net.bytebuddy', name: 'byte-buddy', version: '1.12.9'],
     cglib               : [group: 'cglib', name: 'cglib-nodep', version: '3.3.0'],
     groovy              : groovyDependencies,
     groovySql           : [group: groovyGroup, name: 'groovy-sql', version: groovyVersion], //for some Spring and Unitils tests

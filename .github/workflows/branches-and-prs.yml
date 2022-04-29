@@ -46,6 +46,7 @@ jobs:
             java: '18'
           - os: 'ubuntu-latest'
             variant: '4.0'
+            # Switching to newer JDK version remember to adjust "org.gradle.java.installations.fromEnv" in gradle.properties
             java: '18'
     steps:
       - uses: actions/checkout@v2

@@ -27,7 +27,7 @@ class InheritedTest extends SpockEngineBase {
   /**
    * Copy relevant features of Maven Surefire Plugin's TestMethodFilter to recreate it here
    */
-  class TestMethodFilter
+  static class TestMethodFilter
     implements PostDiscoveryFilter {
 
     private final Pattern classPattern;

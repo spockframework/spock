@@ -19,6 +19,9 @@ import spock.lang.Specification;
 
 import java.util.*;
 
+import static java.util.Collections.emptyMap;
+import static java.util.Collections.singletonMap;
+
 /**
  * This factory allows the creations of mocks outside of a {@link spock.lang.Specification},
  * e.g., in a Spring configuration.
@@ -44,7 +47,7 @@ public class DetachedMockFactory implements MockFactory {
      */
   @Override
   public <T> T Mock(Class<T> type) {
-    return createMock(inferNameFromType(type), type, MockNature.MOCK, Collections.emptyMap());
+    return createMock(inferNameFromType(type), type, MockNature.MOCK, emptyMap());
   }
 
   /**
@@ -83,7 +86,7 @@ public class DetachedMockFactory implements MockFactory {
      */
   @Override
   public <T> T Stub(Class<T> type) {
-    return createMock(inferNameFromType(type), type, MockNature.STUB, Collections.emptyMap());
+    return createMock(inferNameFromType(type), type, MockNature.STUB, emptyMap());
   }
 
   /**
@@ -122,12 +125,12 @@ public class DetachedMockFactory implements MockFactory {
      */
   @Override
   public <T> T Spy(Class<T> type) {
-    return createMock(inferNameFromType(type), type, MockNature.SPY, Collections.emptyMap());
+    return createMock(inferNameFromType(type), type, MockNature.SPY, emptyMap());
   }
 
   @Override
   public <T> T Spy(T obj) {
-    return createMock(inferNameFromType(obj.getClass()), obj, MockNature.SPY,  Collections.singletonMap("useObjenesis", true));
+    return createMock(inferNameFromType(obj.getClass()), obj, MockNature.SPY,  singletonMap("useObjenesis", true));
   }
 
   /**

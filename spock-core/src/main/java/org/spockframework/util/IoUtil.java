@@ -17,6 +17,8 @@ package org.spockframework.util;
 import java.io.*;
 import java.util.*;
 
+import static java.util.Collections.emptyList;
+
 public class IoUtil {
 
   /**
@@ -81,7 +83,7 @@ public class IoUtil {
   }
 
   public static List<File> listFilesRecursively(File baseDir) throws IOException {
-    if (!baseDir.exists()) return Collections.emptyList();
+    if (!baseDir.exists()) return emptyList();
 
     List<File> result = new ArrayList<>();
     doListFilesRecursively(baseDir, result);

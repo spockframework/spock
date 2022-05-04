@@ -27,6 +27,8 @@ import java.util.*;
 
 import org.junit.platform.engine.support.hierarchical.EngineExecutionContext;
 
+import static java.util.Collections.emptyList;
+
 public class RunContext implements EngineExecutionContext {
   private static final ThreadLocal<LinkedList<RunContext>> contextStacks = ThreadLocal.withInitial(LinkedList::new);
 
@@ -171,13 +173,13 @@ public class RunContext implements EngineExecutionContext {
 
   private static List<Class<? extends IGlobalExtension>> getCurrentExtensions() {
     RunContext context = contextStacks.get().peek();
-    if (context == null) return Collections.emptyList();
+    if (context == null) return emptyList();
     return context.globalExtensionClasses;
   }
 
   private static List<Class<?>> getCurrentConfigs() {
     RunContext context = contextStacks.get().peek();
-    if (context == null) return Collections.emptyList();
+    if (context == null) return emptyList();
     return context.globalConfigClasses;
   }
 

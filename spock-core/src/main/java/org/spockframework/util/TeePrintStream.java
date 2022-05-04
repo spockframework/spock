@@ -22,12 +22,14 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import groovy.lang.MissingMethodException;
 
+import static java.util.Arrays.asList;
+
 @ThreadSafe
 public class TeePrintStream extends PrintStream {
   private final List<PrintStream> delegates;
 
   public TeePrintStream(PrintStream... delegates) {
-    this(Arrays.asList(delegates));
+    this(asList(delegates));
   }
 
   public TeePrintStream(List<PrintStream> delegates) {

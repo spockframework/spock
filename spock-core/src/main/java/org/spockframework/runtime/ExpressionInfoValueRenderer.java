@@ -22,8 +22,10 @@ import java.util.*;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
+import static java.util.Arrays.asList;
+
 public class ExpressionInfoValueRenderer {
-  private static final List<ExpressionComparisonRenderer> RENDERERS = Arrays.asList(
+  private static final List<ExpressionComparisonRenderer> RENDERERS = asList(
     new FailedStringComparisonRenderer(),
     new FailedSetEqualityComparisonRenderer(),
     new FailedEqualityComparisonRenderer(),

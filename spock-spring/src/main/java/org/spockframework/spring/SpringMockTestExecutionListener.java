@@ -19,14 +19,16 @@ package org.spockframework.spring;
 import org.spockframework.mock.MockUtil;
 import org.spockframework.spring.mock.SpockMockPostprocessor;
 import org.spockframework.util.ReflectionUtil;
-import spock.lang.Specification;
-
-import java.util.*;
-
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.TestExecutionListener;
+import spock.lang.Specification;
+
+import java.util.*;
+
+import static java.util.Arrays.asList;
+import static java.util.Collections.emptySet;
 
 /**
  * This {@link TestExecutionListener} takes care of attaching and detaching the
@@ -63,8 +65,9 @@ public class SpringMockTestExecutionListener extends AbstractSpringTestExecution
 
     Specification specification = (Specification)testInstance;
     ScanScopedBeans scanScopedBeans = ReflectionUtil.getAnnotationRecursive(specification.getClass(), ScanScopedBeans.class);
-    Set<String> scopes = scanScopedBeans == null ? Collections.<String>emptySet() :
-      new HashSet<>(Arrays.asList(scanScopedBeans.value()));
+    Set<String> scopes = scanScopedBeans == null
+      ? emptySet()
+      : new HashSet<>(asList(scanScopedBeans.value()));
 
     ApplicationContext applicationContext = testContext.getApplicationContext();
     String[] mockBeanNames = applicationContext.getBeanDefinitionNames();

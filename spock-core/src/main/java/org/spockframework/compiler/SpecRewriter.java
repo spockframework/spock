@@ -30,6 +30,8 @@ import org.codehaus.groovy.runtime.MetaClassHelper;
 import org.codehaus.groovy.syntax.*;
 import org.objectweb.asm.Opcodes;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static org.spockframework.compiler.AstUtil.createDirectMethodCall;
 
 /**
@@ -488,7 +490,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
 
     CatchStatement featureCatchStat = createThrowableAssignmentAndRethrowCatchStatement(featureThrowableVar);
 
-    List<Statement> cleanupStats = Collections.singletonList(
+    List<Statement> cleanupStats = singletonList(
         createCleanupTryCatch(block, featureThrowableVar));
 
     TryCatchStatement tryFinally =
@@ -546,7 +548,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
 
     return new CatchStatement(catchParameter,
         new BlockStatement(
-            Arrays.asList(
+            asList(
               new ExpressionStatement(assignThrowableExpr),
               new ThrowStatement(new VariableExpression(catchParameter))),
           null));
@@ -558,13 +560,13 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
     BinaryExpression featureThrowableNotNullExpr = createVariableNotNullExpression(featureThrowableVar);
 
     List<Statement> addSuppressedStats =
-      Collections.singletonList(new ExpressionStatement(
+      singletonList(new ExpressionStatement(
         createDirectMethodCall(
           featureThrowableVar,
           nodeCache.Throwable_AddSuppressed,
           new ArgumentListExpression(new VariableExpression(catchParameter)))));
     List<Statement> throwFeatureStats =
-      Collections.singletonList(new ThrowStatement(new VariableExpression(catchParameter)));
+      singletonList(new ThrowStatement(new VariableExpression(catchParameter)));
 
     IfStatement ifFeatureNotNullStat = new IfStatement(new BooleanExpression(featureThrowableNotNullExpr),
       new BlockStatement(addSuppressedStats, null),
@@ -572,7 +574,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
 
     return new CatchStatement(catchParameter,
       new BlockStatement(
-        Collections.singletonList(ifFeatureNotNullStat),
+        singletonList(ifFeatureNotNullStat),
         null));
   }
 
@@ -757,7 +759,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
         new CatchStatement(
             new Parameter(nodeCache.Throwable, SpockNames.SPOCK_EX),
             new BlockStatement(
-              Collections.singletonList(
+              singletonList(
                 new ExpressionStatement(
                   setThrownException(
                     new VariableExpression(SpockNames.SPOCK_EX)))),

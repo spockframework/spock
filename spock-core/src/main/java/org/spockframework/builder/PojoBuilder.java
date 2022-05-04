@@ -19,6 +19,8 @@ import java.util.List;
 
 import groovy.lang.Closure;
 
+import static java.util.Arrays.asList;
+
 // TODO: test building pojo enriched with expandometaclass/category property
 // TODO: test call to void varargs method in expect: block
 // (related: find all calls to MetaMethod.invoke and replace with doMethodInvoke)
@@ -28,7 +30,7 @@ import groovy.lang.Closure;
 public class PojoBuilder {
   private final GestaltBuilder gestaltBuilder = new GestaltBuilder();
   private final List<ISlotFactory> slotFactories =
-      Arrays.asList(new SetterSlotFactory(), new AddSlotFactory(), new CollectionSlotFactory());
+      asList(new SetterSlotFactory(), new AddSlotFactory(), new CollectionSlotFactory());
 
   public Object build(Object pojo, Closure closure) {
     return build(pojo, new ClosureBlueprint(closure, pojo));

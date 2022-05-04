@@ -15,6 +15,14 @@ class TagExtension extends Specification {
     expect:
     specificationContext.currentFeature.testTags.value =~ ["class-level", "method-level"]
   }
+
+  @Tag("multi-tags")
+  @Tag("method-level")
+  @Tag("method-level")
+  def "multi tags"() {
+    expect:
+    specificationContext.currentFeature.testTags.value =~ ["class-level", "method-level" , "multi-tags"]
+  }
 }
 
 class InheritedTagExtension extends TagExtension {

@@ -21,6 +21,8 @@ import org.spockframework.util.ReflectionUtil;
 import java.lang.reflect.*;
 import java.util.*;
 
+import static java.util.Arrays.asList;
+
 public class StaticMockMethod implements IMockMethod {
   private final Method method;
   private final Type mockType;
@@ -42,7 +44,7 @@ public class StaticMockMethod implements IMockMethod {
 
   @Override
   public List<Type> getExactParameterTypes() {
-    return Arrays.asList(GenericTypeReflector.getExactParameterTypes(method, mockType));
+    return asList(GenericTypeReflector.getExactParameterTypes(method, mockType));
   }
 
   @Override

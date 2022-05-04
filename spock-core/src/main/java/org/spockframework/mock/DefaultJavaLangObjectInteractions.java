@@ -18,12 +18,14 @@ import org.spockframework.util.UnreachableCodeError;
 
 import java.util.*;
 
+import static java.util.Arrays.asList;
+
 public class DefaultJavaLangObjectInteractions implements IInteractionScope {
   public static final DefaultJavaLangObjectInteractions INSTANCE = new DefaultJavaLangObjectInteractions();
 
   private DefaultJavaLangObjectInteractions() {}
 
-  private final List<DefaultInteraction> interactions = Arrays.asList(
+  private final List<DefaultInteraction> interactions = asList(
       DefaultEqualsInteraction.INSTANCE, DefaultHashCodeInteraction.INSTANCE,
       DefaultToStringInteraction.INSTANCE, DefaultFinalizeInteraction.INSTANCE);
 

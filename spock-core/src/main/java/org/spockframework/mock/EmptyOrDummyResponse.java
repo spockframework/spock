@@ -25,6 +25,8 @@ import java.util.stream.*;
 
 import groovy.lang.*;
 
+import static java.util.Collections.emptyMap;
+
 /**
  * A response strategy that returns zero, an "empty" object, or a "dummy" object,
  * depending on the method's declared return type.
@@ -129,6 +131,6 @@ public class EmptyOrDummyResponse implements IDefaultResponse {
     Type genericType = invocation.getMethod().getExactReturnType();
     Specification spec = invocation.getMockObject().getSpecification();
     return spec.createMock("dummy", genericType, MockNature.STUB, GroovyObject.class.isAssignableFrom(type) ?
-        MockImplementation.GROOVY : MockImplementation.JAVA, Collections.emptyMap(), null);
+        MockImplementation.GROOVY : MockImplementation.JAVA, emptyMap(), null);
   }
 }

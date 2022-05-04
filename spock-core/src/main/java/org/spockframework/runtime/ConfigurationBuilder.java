@@ -14,16 +14,17 @@
 
 package org.spockframework.runtime;
 
-import java.util.Arrays;
 import java.util.List;
 
 import org.spockframework.builder.*;
 
+import static java.util.Arrays.asList;
+
 public class ConfigurationBuilder {
   private final GestaltBuilder gestaltBuilder = new GestaltBuilder();
   private final List<ISlotFactory> slotFactories =
-      Arrays.asList(new SetterSlotFactory(), new AddSlotFactory(), new CollectionSlotFactory());
-  
+      asList(new SetterSlotFactory(), new AddSlotFactory(), new CollectionSlotFactory());
+
   public void build(IConfigurationRegistry configurationRegistry, DelegatingScript configScript) {
     IBlueprint blueprint = new DelegatingScriptBlueprint(configScript);
     IGestalt configGestalt = new SpockConfigurationGestalt(configurationRegistry, blueprint, slotFactories);

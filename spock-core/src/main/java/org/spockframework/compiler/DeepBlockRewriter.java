@@ -26,6 +26,7 @@ import org.codehaus.groovy.ast.expr.*;
 import org.codehaus.groovy.ast.stmt.*;
 import org.codehaus.groovy.syntax.Types;
 
+import static java.util.Arrays.asList;
 import static org.codehaus.groovy.ast.expr.MethodCallExpression.NO_ARGUMENTS;
 
 /**
@@ -158,7 +159,7 @@ public class DeepBlockRewriter extends AbstractDeepBlockRewriter {
     if (!expr.isImplicitThis()) return false;
 
     String methodName = expr.getMethodAsString();
-    List<Parameter> params = Arrays.asList(resources.getCurrentMethod().getAst().getParameters());
+    Parameter[] params = resources.getCurrentMethod().getAst().getParameters();
 
     for (Parameter param : params) {
       if (param.getName().equals(methodName)) {

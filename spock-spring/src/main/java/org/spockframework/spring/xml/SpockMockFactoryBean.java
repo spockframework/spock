@@ -17,11 +17,12 @@
 package org.spockframework.spring.xml;
 
 import org.spockframework.mock.MockNature;
+import org.springframework.beans.factory.FactoryBean;
 import spock.mock.DetachedMockFactory;
 
-import java.util.*;
+import java.util.Locale;
 
-import org.springframework.beans.factory.FactoryBean;
+import static java.util.Collections.emptyMap;
 
 /**
  * Takes care of instantiating detached spock Mocks.
@@ -48,8 +49,7 @@ public class SpockMockFactoryBean<T> implements FactoryBean<T> {
   public T getObject() throws Exception {
     if (instance == null) {
       MockNature nature = MockNature.valueOf(mockNature.toUpperCase(Locale.ROOT));
-      instance =  new DetachedMockFactory().createMock(name, targetClass, nature,
-        Collections.<String, Object>emptyMap());
+      instance = new DetachedMockFactory().createMock(name, targetClass, nature, emptyMap());
     }
     return instance;
   }

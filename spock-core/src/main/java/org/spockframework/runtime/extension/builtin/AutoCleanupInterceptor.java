@@ -21,6 +21,8 @@ import spock.lang.AutoCleanup;
 
 import java.util.*;
 
+import static java.util.Collections.reverse;
+
 /**
  * @author Peter Niederwieser
  */
@@ -34,7 +36,7 @@ public class AutoCleanupInterceptor implements IMethodInterceptor {
   public void install(List<IMethodInterceptor> interceptors) {
     if (fields.isEmpty()) return;
 
-    Collections.reverse(fields);
+    reverse(fields);
     interceptors.add(this);
   }
 

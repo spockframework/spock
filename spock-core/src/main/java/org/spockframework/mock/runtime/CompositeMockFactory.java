@@ -20,9 +20,11 @@ import spock.lang.Specification;
 
 import java.util.*;
 
+import static java.util.Arrays.asList;
+
 public class CompositeMockFactory implements IMockFactory {
   public static final CompositeMockFactory INSTANCE =
-      new CompositeMockFactory(Arrays.asList(JavaMockFactory.INSTANCE, GroovyMockFactory.INSTANCE));
+      new CompositeMockFactory(asList(JavaMockFactory.INSTANCE, GroovyMockFactory.INSTANCE));
 
   private final List<IMockFactory> mockFactories;
 

@@ -23,6 +23,8 @@ import java.util.Arrays;
 
 import groovy.lang.*;
 
+import static java.util.Arrays.asList;
+
 public class JavaMockInterceptor extends BaseMockInterceptor {
   private final IMockConfiguration mockConfiguration;
   private Specification specification;
@@ -77,7 +79,7 @@ public class JavaMockInterceptor extends BaseMockInterceptor {
     }
 
     IMockMethod mockMethod = new StaticMockMethod(method, mockConfiguration.getExactType());
-    IMockInvocation invocation = new MockInvocation(mockObject, mockMethod, Arrays.asList(args), realMethodInvoker);
+    IMockInvocation invocation = new MockInvocation(mockObject, mockMethod, asList(args), realMethodInvoker);
     IMockController mockController = specification == null ? getFallbackMockController() :
       specification.getSpecificationContext().getMockController();
 

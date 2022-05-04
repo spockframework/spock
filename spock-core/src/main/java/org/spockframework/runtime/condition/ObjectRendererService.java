@@ -18,6 +18,9 @@ import org.spockframework.util.InternalSpockError;
 
 import java.util.*;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.singleton;
+
 public class ObjectRendererService implements IObjectRendererService {
   private final HashMap<Class<?>, IObjectRenderer<?>> renderers = new HashMap<>();
 
@@ -32,7 +35,7 @@ public class ObjectRendererService implements IObjectRendererService {
     if (object == null) return "null\n";
 
     // explicit parameterization required although IDEA thinks it's redundant
-    Set<Class<?>> types = Collections.singleton(object.getClass());
+    Set<Class<?>> types = singleton(object.getClass());
 
     while (!types.isEmpty()) {
       for (Class<?> type : types) {
@@ -57,7 +60,7 @@ public class ObjectRendererService implements IObjectRendererService {
       if (superclass != null && superclass != Object.class) {
         parents.add(superclass);
       }
-      parents.addAll(Arrays.asList(type.getInterfaces()));
+      parents.addAll(asList(type.getInterfaces()));
     }
 
     return parents;

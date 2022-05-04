@@ -21,10 +21,12 @@ import org.spockframework.runtime.model.FieldInfo;
 
 import java.util.*;
 
+import static java.util.Collections.singletonList;
+
 abstract class SpockSpringProxyCreator {
 
   static Object create(FieldInfo fieldInfo) {
-    List<Class<?>> additionalInterfaces = Collections.<Class<?>>singletonList(SpockSpringProxy.class);
+    List<Class<?>> additionalInterfaces = singletonList(SpockSpringProxy.class);
     DelegatingInterceptor delegatingInterceptor = new DelegatingInterceptor(fieldInfo);
     Object proxy = ProxyBasedMockFactory.INSTANCE.create(fieldInfo.getType(), additionalInterfaces, null,
       delegatingInterceptor, SpockSpringProxyCreator.class.getClassLoader(), true);

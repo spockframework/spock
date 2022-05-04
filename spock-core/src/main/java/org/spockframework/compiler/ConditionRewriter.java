@@ -30,6 +30,8 @@ import org.codehaus.groovy.ast.stmt.*;
 import org.codehaus.groovy.classgen.BytecodeExpression;
 import org.codehaus.groovy.syntax.Types;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static org.spockframework.compiler.AstUtil.createDirectMethodCall;
 
 // NOTE: currently some conversions reference old expression objects rather than copying them;
@@ -670,7 +672,7 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> i
     Expression rewritten = convert(condition);
 
     final Expression executeAndVerify = rewriteToSpockRuntimeCall(resources.getAstNodeCache().SpockRuntime_VerifyCondition,
-        condition, message, Collections.singletonList(rewritten));
+        condition, message, singletonList(rewritten));
 
     return surroundWithTryCatch(condition, message, executeAndVerify);
   }
@@ -683,7 +685,7 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> i
       MethodCallExpression result = createDirectMethodCall(
         new ClassExpression(resources.getAstNodeCache().SpockRuntime),
         resources.getAstNodeCache().SpockRuntime_MatchCollectionsAsSet,
-        new ArgumentListExpression(Arrays.asList(
+        new ArgumentListExpression(asList(
           binaryExpression.getLeftExpression(),
           binaryExpression.getRightExpression()
         ))
@@ -694,7 +696,7 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> i
       MethodCallExpression result = createDirectMethodCall(
         new ClassExpression(resources.getAstNodeCache().SpockRuntime),
         resources.getAstNodeCache().SpockRuntime_MatchCollectionsInAnyOrder,
-        new ArgumentListExpression(Arrays.asList(
+        new ArgumentListExpression(asList(
           binaryExpression.getLeftExpression(),
           binaryExpression.getRightExpression()
         ))
@@ -736,7 +738,7 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> i
                 createDirectMethodCall(
                     new ClassExpression(resources.getAstNodeCache().SpockRuntime),
                     resources.getAstNodeCache().SpockRuntime_ConditionFailedWithException,
-                    new ArgumentListExpression(Arrays.asList(
+                    new ArgumentListExpression(asList(
                         new VariableExpression(errorCollectorName),
                       new VariableExpression(valueRecorderName),                      // recorder
                         new ConstantExpression(resources.getSourceText(condition)),   // text
@@ -765,7 +767,7 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> i
           createDirectMethodCall(
             new ClassExpression(resources.getAstNodeCache().SpockRuntime),
             resources.getAstNodeCache().SpockRuntime_GroupConditionFailedWithException,
-            new ArgumentListExpression(Arrays.asList(
+            new ArgumentListExpression(asList(
               new VariableExpression(errorCollectorName),
               new VariableExpression(THROWABLE)                                     // throwable
             ))

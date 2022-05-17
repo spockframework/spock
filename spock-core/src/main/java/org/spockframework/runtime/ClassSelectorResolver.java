@@ -13,12 +13,12 @@ import org.junit.platform.engine.support.discovery.SelectorResolver;
 
 import static java.util.Collections.emptySet;
 
-class ClassSelectorResolver implements SelectorResolver {
+public class ClassSelectorResolver implements SelectorResolver {
 
   private final Predicate<String> classNameFilter;
   private final RunContext runContext;
 
-  ClassSelectorResolver(Predicate<String> classNameFilter, RunContext runContext) {
+  public ClassSelectorResolver(Predicate<String> classNameFilter, RunContext runContext) {
     this.classNameFilter = classNameFilter;
     this.runContext = runContext;
   }

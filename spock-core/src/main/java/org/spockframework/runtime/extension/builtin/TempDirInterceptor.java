@@ -1,5 +1,7 @@
 package org.spockframework.runtime.extension.builtin;
 
+import org.spockframework.runtime.ErrorCollector;
+import org.spockframework.runtime.ErrorRethrower;
 import org.spockframework.runtime.extension.*;
 import org.spockframework.runtime.model.FieldInfo;
 import org.spockframework.util.*;
@@ -10,6 +12,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.regex.Pattern;
 
 import org.codehaus.groovy.runtime.ResourceGroovyMethods;
+import org.spockframework.util.ExceptionUtil;
 
 import static java.nio.file.FileVisitResult.CONTINUE;
 
@@ -58,6 +61,9 @@ public class TempDirInterceptor implements IMethodInterceptor {
     if (parentDir == null) {
       return Files.createTempDirectory(prefix);
     }
+    if (!Files.exists(parentDir)) {
+      Files.createDirectories(parentDir);
+    }
     return Files.createTempDirectory(parentDir, prefix);
   }
 
@@ -67,20 +73,31 @@ public class TempDirInterceptor implements IMethodInterceptor {
     return tempPath;
   }
 
-  protected void destroy(Path path) throws IOException {
+  protected void destroy(Path path) {
     if (!keep) {
-      deleteTempDir(path);
+      try {
+        deleteTempDir(path);
+      } catch (IOException e) {
+        ExceptionUtil.sneakyThrow(e);
+      }
     }
   }
 
   @Override
   public void intercept(IMethodInvocation invocation) throws Throwable {
     Path path = setUp(invocation);
-    try {
-      invocation.proceed();
-    } finally {
-      destroy(path);
+    if(fieldInfo.isShared()) {
+      invocation.getSpec().addCleanupSpecInterceptor(cleanupInvocation -> {
+        try {
+          cleanupInvocation.proceed();
+        } finally {
+          destroy(path);
+        }
+      });
+    } else {
+      invocation.getIteration().addCleanup(() -> destroy(path));
     }
+    invocation.proceed();
   }
 
   private void deleteTempDir(Path tempPath) throws IOException {

@@ -36,13 +36,15 @@ class Foo extends Specification {
 """
 
     then:
-    result.testsStartedCount == 0
-    result.testsFailedCount == 0
-    result.testsSkippedCount == 0
-    result.testsAbortedCount == 0
-    result.testsSucceededCount == 0
-    result.containersSkippedCount == 1
-    result.containersFailedCount == 0
+    with(result) {
+      testsStartedCount == 0
+      testsFailedCount == 0
+      testsSkippedCount == 0
+      testsAbortedCount == 0
+      testsSucceededCount == 0
+      containersSkippedCount == 1
+      containersFailedCount == 0
+    }
 
     where:
     [specAnnotation, featureAnnotation] << [
@@ -92,13 +94,15 @@ class Test extends Bar {
 """
 
     then:
-    result.testsStartedCount == 1  // Base
-    result.testsFailedCount == 0
-    result.testsSkippedCount == 0
-    result.testsAbortedCount == 0
-    result.testsSucceededCount == 1  // Base
-    result.containersSkippedCount == containersSkippedCount
-    result.containersFailedCount == containersFailedCount
+    with(result) {
+      testsStartedCount == 1  // Base
+      testsFailedCount == 0
+      testsSkippedCount == 0
+      testsAbortedCount == 0
+      testsSucceededCount == 1  // Base
+      containersSkippedCount == containersSkippedCount
+      containersFailedCount == containersFailedCount
+    }
 
     where:
     [specAnnotation, inherited, featureAnnotation] << [

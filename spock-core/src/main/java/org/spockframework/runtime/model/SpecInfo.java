@@ -128,14 +128,14 @@ public class SpecInfo extends SpecElementInfo<NodeInfo, Class<?>> implements IMe
     return subSpec == null;
   }
 
-  public List<SpecInfo> getSpecsToBottom() {
-    List<SpecInfo> topToToBottom = getSpecsTopToBottom();
-    return topToToBottom.subList(topToToBottom.indexOf(this), topToToBottom.size());
+  public List<SpecInfo> getSpecsCurrentToBottom() {
+    List<SpecInfo> topToBottom = getSpecsTopToBottom();
+    return topToBottom.subList(topToBottom.indexOf(this), topToBottom.size());
   }
 
-  public List<SpecInfo> getSpecsToTop() {
-    List<SpecInfo> bottomtoTop = getSpecsBottomToTop();
-    return bottomtoTop.subList(bottomtoTop.indexOf(this), bottomtoTop.size());
+  public List<SpecInfo> getSpecsCurrentToTop() {
+    List<SpecInfo> bottomToTop = getSpecsBottomToTop();
+    return bottomToTop.subList(bottomToTop.indexOf(this), bottomToTop.size());
   }
 
   public List<SpecInfo> getSpecsTopToBottom() {

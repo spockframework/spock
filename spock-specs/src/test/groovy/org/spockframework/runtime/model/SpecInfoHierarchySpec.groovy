@@ -1,36 +1,39 @@
 package org.spockframework.runtime.model
 
+import org.spockframework.runtime.SpecInfoBuilder
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
+import spock.util.EmbeddedSpecCompiler
 
 class SpecInfoHierarchySpec extends Specification {
 
-  @Shared def grandparent = new SpecInfo()
-  @Shared def parent = new SpecInfo()
-  @Shared def specInfo = new SpecInfo()
-  @Shared def child = new SpecInfo()
-  @Shared def grandchild = new SpecInfo()
+  @Shared def grandparent
+  @Shared def parent
+  @Shared def middle
+  @Shared def child
+  @Shared def grandchild
 
-  @Shared hierarchy = [grandparent, parent, specInfo, child, grandchild]
-  @Shared hierarchyNames = ["grandparent", "parent", "specInfo", "child", "grandchild"]
+  @Shared hierarchy
+  @Shared hierarchyNames = ["grandparent", "parent", "middle", "child", "grandchild"]
 
   def setupSpec() {
-    parent.superSpec = grandparent
-    grandparent.subSpec = parent
+    def classes = new EmbeddedSpecCompiler().compile("""import spock.lang.Specification
+class Grandparent extends  Specification {}
+class Parent extends Grandparent {}
+class Middle extends Parent {}
+class Child extends Middle {}
+class Grandchild extends Child {}
+""")
 
-    specInfo.superSpec = parent
-    parent.subSpec = specInfo
-
-    child.superSpec = specInfo
-    specInfo.subSpec = child
-
-    grandchild.superSpec = child
-    child.subSpec = grandchild
+    def grandchildClass = classes.find { it.simpleName == 'Grandchild' }
+    def specInfo = new SpecInfoBuilder(grandchildClass).build()
+    (grandparent, parent, middle, child, grandchild) = specInfo.getSpecsTopToBottom()
+    hierarchy = [grandparent, parent, middle, child, grandchild]
   }
 
   @Unroll("#name")
-  def "top spec"() {
+  def "top spec"(SpecInfo underTest) {
     expect:
     underTest.getTopSpec() == grandparent
 
@@ -40,7 +43,7 @@ class SpecInfoHierarchySpec extends Specification {
   }
 
   @Unroll("#name")
-  def "bottom spec"() {
+  def "bottom spec"(SpecInfo underTest) {
     expect:
     underTest.getBottomSpec() == grandchild
 
@@ -50,7 +53,7 @@ class SpecInfoHierarchySpec extends Specification {
   }
 
   @Unroll("#name")
-  def "specs top to bottom"() {
+  def "specs top to bottom"(SpecInfo underTest) {
     expect:
     underTest.specsTopToBottom == hierarchy
 
@@ -60,7 +63,7 @@ class SpecInfoHierarchySpec extends Specification {
   }
 
   @Unroll("#name")
-  def "specs bottom to top"() {
+  def "specs bottom to top"(SpecInfo underTest) {
     expect:
     underTest.specsBottomToTop == hierarchy.reverse()
 
@@ -70,25 +73,25 @@ class SpecInfoHierarchySpec extends Specification {
   }
 
   @Unroll("#name")
-  def "specs to bottom"() {
+  def "specs to bottom"(SpecInfo underTest) {
     expect:
-    underTest.specsToBottom == hierarchy.subList(hierarchy.indexOf(underTest), hierarchy.size())
+    underTest.specsCurrentToBottom == hierarchy[index..-1]
 
     where:
     underTest << hierarchy
     name << hierarchyNames
+    index << (0..4)
   }
 
   @Unroll("#name")
-  def "specs to top"() {
-    def reversedHierarchy = hierarchy.reverse()
-
+  def "specs to top"(SpecInfo underTest) {
     expect:
-    underTest.specsToTop == reversedHierarchy.subList(reversedHierarchy.indexOf(underTest), reversedHierarchy.size())
+    underTest.specsCurrentToTop == hierarchy[index..0]
 
     where:
     underTest << hierarchy
     name << hierarchyNames
+    index << (-5..-1)
   }
 
 }

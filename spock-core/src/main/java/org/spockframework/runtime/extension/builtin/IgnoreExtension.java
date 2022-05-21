@@ -34,7 +34,7 @@ public class IgnoreExtension implements IAnnotationDrivenExtension<Ignore> {
 
   @Override
   public void visitSpecAnnotation(Ignore ignore, SpecInfo spec) {
-    List<SpecInfo> specsToSkip = ignore.inherited() ? spec.getSpecsToBottom() : Collections.singletonList(spec);
+    List<SpecInfo> specsToSkip = ignore.inherited() ? spec.getSpecsCurrentToBottom() : Collections.singletonList(spec);
     specsToSkip.forEach(toSkip -> toSkip.skip(ignore.value().isEmpty() ? DEFAULT_REASON : ignore.value()));
   }
 

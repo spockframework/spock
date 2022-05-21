@@ -21,6 +21,8 @@ import java.io.IOException;
 import java.lang.reflect.*;
 import java.util.*;
 
+import static java.util.Collections.sort;
+
 /**
  * Utility methods related to specifications. Particularly useful when
  * integrating Spock with other environments (e.g. Grails).
@@ -90,7 +92,7 @@ public final class SpecUtil {
 
   public static List<String> optimizeRunOrder(List<String> specNames) {
     List<SpecRunHistory> histories = loadHistories(specNames);
-    Collections.sort(histories);
+    sort(histories);
     return extractNames(histories);
   }
 

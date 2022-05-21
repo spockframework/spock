@@ -8,6 +8,8 @@ import java.util.*;
 import org.junit.platform.engine.UniqueId;
 import org.junit.platform.engine.support.hierarchical.ExclusiveResource;
 
+import static java.util.Collections.emptySet;
+
 public class IterationNode extends SpockNode<FeatureInfo> {
   private final IterationInfo iterationInfo;
 
@@ -78,6 +80,6 @@ public class IterationNode extends SpockNode<FeatureInfo> {
 
   @Override
   public Set<ExclusiveResource> getExclusiveResources() {
-    return Collections.emptySet();
+    return emptySet();
   }
 }

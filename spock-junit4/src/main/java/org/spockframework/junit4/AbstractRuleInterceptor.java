@@ -27,13 +27,15 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static java.util.Collections.reverse;
+
 public abstract class AbstractRuleInterceptor implements IMethodInterceptor {
   protected final List<FieldInfo> ruleFields;
 
   public AbstractRuleInterceptor(List<FieldInfo> ruleFields) {
     // we need to reverse here as we create the Statements in reversed order
     ArrayList<FieldInfo> reversedFields = new ArrayList<>(ruleFields);
-    Collections.reverse(reversedFields);
+    reverse(reversedFields);
     this.ruleFields = reversedFields;
   }
 

@@ -18,6 +18,8 @@ package org.spockframework.util;
 
 import java.util.*;
 
+import static java.util.Arrays.asList;
+
 /**
  * Identifiers used throughout the core.
  *
@@ -53,7 +55,7 @@ public abstract class Identifiers {
 
   public static final String AND = "and";
 
-  public static final List<String> BLOCK_LABELS = Arrays.asList(SETUP, GIVEN, EXPECT, WHEN, THEN, CLEANUP, WHERE, AND);
+  public static final List<String> BLOCK_LABELS = asList(SETUP, GIVEN, EXPECT, WHEN, THEN, CLEANUP, WHERE, AND);
 
   public static final String SETUP_METHOD = "setup";
 
@@ -69,7 +71,7 @@ public abstract class Identifiers {
    */
   public static final String CLEANUP_SPEC_METHOD = "cleanupSpec";
 
-  public static final List<String> FIXTURE_METHODS = Arrays.asList(SETUP_METHOD, CLEANUP_METHOD,
+  public static final List<String> FIXTURE_METHODS = asList(SETUP_METHOD, CLEANUP_METHOD,
 		  SETUP_SPEC_METHOD, CLEANUP_SPEC_METHOD);
 
   public static final String GET_SPECIFICATION_CONTEXT = "getSpecificationContext";
@@ -93,11 +95,11 @@ public abstract class Identifiers {
 
   public static final String OLD = "old";
 
-  public static final Set<String> BUILT_IN_METHODS = new HashSet<>(Arrays.asList(THROWN, NOT_THROWN,
+  public static final Set<String> BUILT_IN_METHODS = new HashSet<>(asList(THROWN, NOT_THROWN,
     NO_EXCEPTION_THROWN, OLD, WITH, VERIFY_ALL, INTERACTION, STUB, MOCK, SPY, GROOVY_STUB, GROOVY_MOCK, GROOVY_SPY));
 
   public static final Set<String> TEST_DOUBLE_METHODS = new HashSet<>(
-    Arrays.asList(STUB, MOCK, SPY, GROOVY_STUB, GROOVY_MOCK, GROOVY_SPY));
+    asList(STUB, MOCK, SPY, GROOVY_STUB, GROOVY_MOCK, GROOVY_SPY));
 
-  public static final Set<String> EXCEPTION_CONDITION_METHODS = new HashSet<>(Arrays.asList(THROWN, NOT_THROWN, NO_EXCEPTION_THROWN));
+  public static final Set<String> EXCEPTION_CONDITION_METHODS = new HashSet<>(asList(THROWN, NOT_THROWN, NO_EXCEPTION_THROWN));
 }

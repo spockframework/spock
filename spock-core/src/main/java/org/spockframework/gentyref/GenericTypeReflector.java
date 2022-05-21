@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.lang.reflect.*;
 import java.util.*;
 
+import static java.util.Arrays.asList;
+
 /**
  * Utility class for doing reflection on types.
  *
@@ -144,7 +146,7 @@ public class GenericTypeReflector {
 		Class<?> clazz = variable.getGenericDeclaration();
 		Type superType = getExactSuperType(type, clazz);
 		if (superType instanceof ParameterizedType) {
-			int index = Arrays.asList(clazz.getTypeParameters()).indexOf(variable);
+			int index = asList(clazz.getTypeParameters()).indexOf(variable);
 			return ((ParameterizedType)superType).getActualTypeArguments()[index];
 		} else {
 			return null;

@@ -22,6 +22,8 @@ import java.util.*;
 import org.springframework.core.ResolvableType;
 import org.springframework.util.ObjectUtils;
 
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonMap;
 import static org.spockframework.spring.mock.FieldDefinition.MULTIPLIER;
 
 class StubDefinition implements MockDefinition {
@@ -34,7 +36,7 @@ class StubDefinition implements MockDefinition {
 
   @Override
   public Object createMock(String name) {
-    return detachedMockFactory.Stub(Collections.singletonMap("name", (Object)name), type.getRawClass());
+    return detachedMockFactory.Stub(singletonMap("name", (Object)name), type.getRawClass());
   }
 
   @Override
@@ -44,7 +46,7 @@ class StubDefinition implements MockDefinition {
 
   @Override
   public List<String> getAliases() {
-    return Collections.emptyList();
+    return emptyList();
   }
 
   @Override

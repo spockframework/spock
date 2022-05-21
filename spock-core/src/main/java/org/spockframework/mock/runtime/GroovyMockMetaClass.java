@@ -24,6 +24,8 @@ import java.util.*;
 
 import groovy.lang.*;
 
+import static java.util.Arrays.asList;
+
 public class GroovyMockMetaClass extends DelegatingMetaClass implements SpecificationAttachable {
   private final IMockConfiguration configuration;
   private final Specification specification;
@@ -119,12 +121,12 @@ public class GroovyMockMetaClass extends DelegatingMetaClass implements Specific
         configuration.isVerified(), configuration.isGlobal(), configuration.getDefaultResponse(), specification, this);
     IMockMethod mockMethod;
     if (metaMethod != null) {
-      List<Type> parameterTypes = Arrays.asList(metaMethod.getNativeParameterTypes());
+      List<Type> parameterTypes = asList(metaMethod.getNativeParameterTypes());
       mockMethod = new DynamicMockMethod(methodName, parameterTypes, metaMethod.getReturnType(), isStatic);
     } else {
       mockMethod = new DynamicMockMethod(methodName, arguments.length, isStatic);
     }
-    return new MockInvocation(mockObject, mockMethod, Arrays.asList(arguments), new GroovyRealMethodInvoker(getAdaptee()));
+    return new MockInvocation(mockObject, mockMethod, asList(arguments), new GroovyRealMethodInvoker(getAdaptee()));
   }
 
   @Override

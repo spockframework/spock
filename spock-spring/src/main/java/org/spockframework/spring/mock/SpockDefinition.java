@@ -25,6 +25,9 @@ import java.util.*;
 import org.springframework.core.ResolvableType;
 import org.springframework.util.ObjectUtils;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
+
 class SpockDefinition extends FieldDefinition implements MockDefinition {
 
   private final SpringBean annotation;
@@ -58,9 +61,9 @@ class SpockDefinition extends FieldDefinition implements MockDefinition {
   @Override
   public List<String> getAliases() {
     if (annotation.aliases().length == 0) {
-      return Collections.singletonList(getFieldInfo().getName());
+      return singletonList(getFieldInfo().getName());
     }
-    List<String> aliases = new ArrayList<>(Arrays.asList(annotation.aliases()));
+    List<String> aliases = new ArrayList<>(asList(annotation.aliases()));
     aliases.add(getFieldInfo().getName());
     return aliases;
   }

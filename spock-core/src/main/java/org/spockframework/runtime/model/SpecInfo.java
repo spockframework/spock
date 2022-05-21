@@ -22,6 +22,8 @@ import org.spockframework.runtime.model.parallel.*;
 import org.spockframework.util.*;
 
 import java.util.*;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 import static java.util.Comparator.comparingInt;
 
@@ -138,12 +140,7 @@ public class SpecInfo extends SpecElementInfo<NodeInfo, Class<?>> implements IMe
 
   public List<SpecInfo> getSpecsTopToBottom() {
     if (specsTopToBottom == null) {
-      specsTopToBottom = new ArrayList<>();
-      SpecInfo curr = getTopSpec();
-      while (curr != null) {
-        specsTopToBottom.add(curr);
-        curr = curr.getSubSpec();
-      }
+      specsTopToBottom = collectSpecHierarchy(this::getTopSpec, SpecInfo::getSubSpec);
     }
 
     return specsTopToBottom;
@@ -151,15 +148,20 @@ public class SpecInfo extends SpecElementInfo<NodeInfo, Class<?>> implements IMe
 
   public List<SpecInfo> getSpecsBottomToTop() {
     if (specsBottomToTop == null) {
-      specsBottomToTop = new ArrayList<>();
-      SpecInfo curr = getBottomSpec();
-      while (curr != null) {
-        specsBottomToTop.add(curr);
-        curr = curr.getSuperSpec();
-      }
+      specsBottomToTop = collectSpecHierarchy(this::getBottomSpec, SpecInfo::getSuperSpec);
     }
 
     return specsBottomToTop;
+  }
+
+  private List<SpecInfo> collectSpecHierarchy(Supplier<SpecInfo> start, Function<SpecInfo, SpecInfo> next) {
+    List<SpecInfo> specs = new ArrayList<>();
+    SpecInfo curr = start.get();
+    while (curr != null) {
+      specs.add(curr);
+      curr = next.apply(curr);
+    }
+    return specs;
   }
 
   public MethodInfo getInitializerMethod() {

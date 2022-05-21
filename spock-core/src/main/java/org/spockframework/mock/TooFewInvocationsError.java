@@ -21,6 +21,8 @@ import org.spockframework.util.*;
 import java.io.IOException;
 import java.util.*;
 
+import static java.util.Collections.sort;
+
 /**
  * Thrown to indicate that one or more mandatory interactions matched too few invocations.
  *
@@ -91,7 +93,7 @@ public class TooFewInvocationsError extends InteractionNotSatisfiedError {
     for (Map.Entry<IMockInvocation, Integer> entry : invocations.entrySet()) {
       result.add(new ScoredInvocation(entry.getKey(), entry.getValue(), interaction.computeSimilarityScore(entry.getKey())));
     }
-    Collections.sort(result);
+    sort(result);
     return result;
   }
 

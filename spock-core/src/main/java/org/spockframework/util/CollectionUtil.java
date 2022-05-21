@@ -17,6 +17,8 @@ package org.spockframework.util;
 import java.lang.reflect.Array;
 import java.util.*;
 
+import static java.util.Arrays.asList;
+
 public abstract class CollectionUtil {
   public static <E, F> ArrayList<F> filterMap(Collection<E> collection, IFunction<? super E, ? extends F> function) {
     ArrayList<F> result = new ArrayList<>(collection.size());
@@ -96,13 +98,13 @@ public abstract class CollectionUtil {
   }
 
   public static <T> Set<T> asSet(T[] values) {
-    return new HashSet<>(Arrays.asList(values));
+    return new HashSet<>(asList(values));
   }
 
   @SafeVarargs
   public static <E> List<E> listOf(E... elements) {
     List<E> result = new ArrayList<>(elements.length);
-    result.addAll(Arrays.asList(elements));
+    result.addAll(asList(elements));
     return result;
   }
 
@@ -153,7 +155,7 @@ public abstract class CollectionUtil {
 
   @SafeVarargs
   public static <T> Iterable<T> concat(Iterable<? extends T>... iterables) {
-    return concat(Arrays.asList(iterables));
+    return concat(asList(iterables));
   }
 
   public static <T> Iterable<T> concat(final List<Iterable<? extends T>> iterables) {

@@ -26,6 +26,7 @@ import org.codehaus.groovy.ast.expr.*;
 import org.codehaus.groovy.ast.stmt.ExpressionStatement;
 import org.codehaus.groovy.syntax.Types;
 
+import static java.util.Arrays.asList;
 import static org.spockframework.compiler.AstUtil.createDirectMethodCall;
 
 /**
@@ -164,7 +165,7 @@ public class InteractionRewriter {
     builderExpr = new ConstructorCallExpression(
         resources.getAstNodeCache().InteractionBuilder,
         new ArgumentListExpression(
-            Arrays.asList(
+            asList(
                 new ConstantExpression(expr.getLineNumber()),
                 new ConstantExpression(expr.getColumnNumber()),
                 new ConstantExpression(resources.getSourceText(expr)))));

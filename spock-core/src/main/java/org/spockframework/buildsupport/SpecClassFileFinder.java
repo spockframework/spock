@@ -19,6 +19,8 @@ package org.spockframework.buildsupport;
 import java.io.*;
 import java.util.*;
 
+import static java.util.Collections.sort;
+
 /**
  * Finds all class files below a base directory that contain a runnable spec.
  *
@@ -31,7 +33,7 @@ public class SpecClassFileFinder {
 
     List<File> specs = new ArrayList<>();
     doFindRunnableSpecs(baseDir, specs);
-    Collections.sort(specs);
+    sort(specs);
     return specs;
   }
 

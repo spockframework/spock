@@ -1,10 +1,12 @@
 package spock.platform;
 
+import static java.util.Collections.singletonList;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClass;
 
 import spock.testkit.testsources.InheritedChildTestCase;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.function.Consumer;
 import java.util.regex.Pattern;
 
@@ -19,7 +21,7 @@ class InheritedTest extends SpockEngineBase {
   @Test
   void verifyInheritedTests() {
     Consumer<EventStatistics> assertions = stats -> stats.started(3).succeeded(2).failed(1).skipped(1);
-    execute(selectClass(InheritedChildTestCase.class), assertions, Arrays.asList(new TestMethodFilter(Pattern.compile(".*InheritedChildTestCase"))));
+    execute(selectClass(InheritedChildTestCase.class), assertions, singletonList(new TestMethodFilter(Pattern.compile(".*InheritedChildTestCase"))));
   }
 
   /**

@@ -22,6 +22,8 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
 import java.util.*;
 
+import static java.util.Arrays.asList;
+
 public abstract class ReflectionUtil {
   /**
    * Determines the package name without calling {@code Class.getPackage()}
@@ -95,7 +97,7 @@ public abstract class ReflectionUtil {
    * Returns {@code true} if the argument {@code m} is a public method of java.lang.Object.
    */
   public static boolean isObjectMethod(Method m) {
-    return Arrays.asList(Object.class.getMethods()).contains(m);
+    return asList(Object.class.getMethods()).contains(m);
   }
 
   /**

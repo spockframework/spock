@@ -29,6 +29,7 @@ import org.junit.platform.launcher.TestIdentifier
 import org.junit.platform.launcher.listeners.TestExecutionSummary
 import org.junit.platform.testkit.engine.*
 
+import static java.util.Arrays.asList
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClass
 
 /**
@@ -78,7 +79,7 @@ class EmbeddedSpecRunner {
 
 
   SummarizedEngineExecutionResults runWithSelectors(DiscoverySelector... selectors) {
-    runWithSelectors(Arrays.asList(selectors))
+    runWithSelectors(asList(selectors))
   }
   SummarizedEngineExecutionResults runWithSelectors(List<DiscoverySelector> selectors) {
     withNewContext {

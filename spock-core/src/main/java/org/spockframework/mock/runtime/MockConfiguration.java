@@ -21,6 +21,9 @@ import org.spockframework.util.*;
 import java.lang.reflect.Type;
 import java.util.*;
 
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
+
 @Beta
 public class MockConfiguration implements IMockConfiguration {
   private final String name;
@@ -49,7 +52,7 @@ public class MockConfiguration implements IMockConfiguration {
     this.nature = getOption(options, "nature", MockNature.class, nature);
     this.implementation = getOption(options, "implementation", MockImplementation.class, implementation);
     this.constructorArgs = getOptionAsList(options, "constructorArgs");
-    this.additionalInterfaces = getOption(options, "additionalInterfaces", List.class, Collections.emptyList());
+    this.additionalInterfaces = getOption(options, "additionalInterfaces", List.class, emptyList());
     this.defaultResponse = getOption(options, "defaultResponse", IDefaultResponse.class, this.nature.getDefaultResponse());
     this.global = getOption(options, "global", Boolean.class, false);
     this.verified = getOption(options, "verified", Boolean.class, this.nature.isVerified());
@@ -126,7 +129,7 @@ public class MockConfiguration implements IMockConfiguration {
     if (options.containsKey(key)) {
       Object obj = options.get(key);
       if (obj instanceof Map) {
-        return Collections.singletonList((Map)obj);
+        return singletonList((Map)obj);
       }
       return (List)obj;
     }

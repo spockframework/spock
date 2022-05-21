@@ -234,7 +234,6 @@ class Foo extends Specification {
     false     | 0                          | 1
   }
 
-
   def "spec usage with shared field access"() {
     when:
     def result = runner.runWithImports """
@@ -264,7 +263,6 @@ class Foo extends Specification {
     true      | 0                          | 1
   }
 
-
   def "spec usage with instance field access"() {
     when:
     def result = runner.runWithImports """
@@ -291,15 +289,30 @@ class Foo extends Specification {
     true      | 0                  | 1
   }
 
-  def "IgnoreIf can be configured to be inherited"() {
+  def "@IgnoreIf can be configured to be inherited"() {
     when:
     def result = runner.runWithImports """
+class Base extends Specification {
+  def "base feature"() {
+    expect: true
+  }
+}
+
 @IgnoreIf(value = { true }, inherited = ${inherited})
-abstract class Foo extends Specification {
+class Foo extends Base {
+  def "foo feature"() {
+    expect: true
+  }
 }
 
 class Bar extends Foo {
-  def "basic usage"() {
+  def "bar feature"() {
+    expect: true
+  }
+}
+
+class Test extends Bar {
+  def "test feature"() {
     expect: true
   }
 }
@@ -315,8 +328,8 @@ class Bar extends Foo {
 
     where:
     inherited | testStartAndSucceededCount | specSkippedCount
-    false     | 1                          | 0
-    true      | 0                          | 1
+    false     | 1 + 0 + 3 + 4              | 1
+    true      | 1                          | 3
   }
 
   def "fails if condition cannot be instantiated"() {

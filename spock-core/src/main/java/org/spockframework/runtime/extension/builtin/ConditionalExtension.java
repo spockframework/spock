@@ -71,6 +71,9 @@ public abstract class ConditionalExtension<T extends Annotation> implements IAnn
 
   @Override
   public void visitFeatureAnnotation(T annotation, FeatureInfo feature) {
+    if (feature.getSpec().isSkipped())
+      return;
+
     Closure condition = createCondition(annotation);
 
     try {

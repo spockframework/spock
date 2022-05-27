@@ -10,6 +10,12 @@ public enum ExecutionResult {
 
   /**
    * Indicates that the execution of a test or container was
+   * <em>skipped</em>.
+   */
+  SKIPPED,
+
+  /**
+   * Indicates that the execution of a test or container was
    * <em>aborted</em> (started but not finished).
    */
   ABORTED,

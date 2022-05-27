@@ -72,7 +72,7 @@ public class PlatformParameterizedSpecRunner extends PlatformSpecRunner {
         if (iterationInfo.getFeature().getIterationFilter().isAllowed(iterationInfo.getIterationIndex())) {
           return childExecutor.execute(iterationNode);
         }
-        return null;
+        return CompletableFuture.completedFuture(ExecutionResult.SKIPPED);
       }
     };
   }

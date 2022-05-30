@@ -5,7 +5,7 @@ pluginManagement {
     id "com.gradle.enterprise" version "3.10"
     id "com.gradle.common-custom-user-data-gradle-plugin" version "1.6.5"
     id "org.asciidoctor.jvm.convert" version "3.3.2"
-    id "net.nemerosa.versioning" version "2.15.1"
+    id "net.nemerosa.versioning" version "3.0.0"
     id "io.github.gradle-nexus.publish-plugin" version "1.1.0"
     id "com.github.ben-manes.versions" version "0.42.0"
     id "biz.aQute.bnd.builder" version "6.2.0"

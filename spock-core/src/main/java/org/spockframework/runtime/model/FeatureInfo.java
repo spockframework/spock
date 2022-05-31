@@ -10,7 +10,7 @@ import java.util.*;
 /**
  * @author Peter Niederwieser
  */
-public class FeatureInfo extends SpecElementInfo<SpecInfo, AnnotatedElement> {
+public class FeatureInfo extends SpecElementInfo<SpecInfo, AnnotatedElement> implements ITestTaggable {
   private int declarationOrder; // per spec class
   private int executionOrder;   // per spec inheritance chain
 
@@ -20,6 +20,8 @@ public class FeatureInfo extends SpecElementInfo<SpecInfo, AnnotatedElement> {
   private final List<IMethodInterceptor> iterationInterceptors = new ArrayList<>();
 
   private final Set<ExclusiveResource> exclusiveResources = new HashSet<>();
+
+  private final Set<TestTag> testTags = new HashSet<>();
 
   private ExecutionMode executionMode = null;
 
@@ -171,5 +173,15 @@ public class FeatureInfo extends SpecElementInfo<SpecInfo, AnnotatedElement> {
     for (DataProviderInfo provider : dataProviders)
       if (provider.getDataProviderMethod().hasBytecodeName(name)) return true;
     return false;
+  }
+
+  @Override
+  public void addTestTag(TestTag tag) {
+    testTags.add(tag);
+  }
+
+  @Override
+  public Set<TestTag> getTestTags() {
+    return testTags;
   }
 }

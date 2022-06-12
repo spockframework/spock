@@ -23,7 +23,11 @@ public class GroovyReleaseInfo {
   }
 
   public static String getArtifactPath() {
-    return GroovyObject.class.getProtectionDomain().getCodeSource().getLocation().toString();
+    try {
+      return GroovyObject.class.getProtectionDomain().getCodeSource().getLocation().toString();
+    } catch (Exception e) {
+      return "unavailable";
+    }
   }
 }
 

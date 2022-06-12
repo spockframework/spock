@@ -5,7 +5,7 @@ pluginManagement {
     id "com.gradle.enterprise" version "3.10.2"
     id "com.gradle.common-custom-user-data-gradle-plugin" version "1.7.2"
     id "org.asciidoctor.jvm.convert" version "3.3.2"
-    id "net.nemerosa.versioning" version "2.15.1"
+    id "net.nemerosa.versioning" version "3.0.0"
     id "io.github.gradle-nexus.publish-plugin" version "1.1.0"
     id "com.github.ben-manes.versions" version "0.42.0"
     id "biz.aQute.bnd.builder" version "6.3.1"
@@ -25,6 +25,11 @@ dependencyResolutionManagement {
     mavenCentral()
   }
 }
+
+if (((System.getProperty("java.specification.version") ?: 8) as BigDecimal) < 11) {
+  throw new InvalidUserDataException("The spock build needs to be run with JDK 11 or higher, but was: ${System.getProperty("java.specification.version")}")
+}
+
 
 def gradleEnterpriseServer = "https://ge.spockframework.org"
 def isCiServer = System.env["CI"] || System.env["GITHUB_ACTIONS"]

@@ -1,9 +1,10 @@
 package org.spockframework.runtime;
 
-import org.jetbrains.annotations.NotNull;
 import org.spockframework.runtime.model.*;
 
 import java.util.*;
+
+import org.jetbrains.annotations.NotNull;
 
 import static java.util.stream.Collectors.toList;
 
@@ -19,7 +20,7 @@ public class DataIteratorFactory {
     return new DataProcessorIterator(supervisor, context, new FeatureDataProviderIterator(supervisor, context));
   }
 
-  private static abstract class BaseDataIterator implements DataIterator {
+  private abstract static class BaseDataIterator implements DataIterator {
     protected final IRunSupervisor supervisor;
     protected final SpockExecutionContext context;
 

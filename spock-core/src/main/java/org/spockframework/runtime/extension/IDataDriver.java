@@ -1,11 +1,10 @@
 package org.spockframework.runtime.extension;
 
-import org.spockframework.runtime.DataIterator;
-import org.spockframework.runtime.model.MethodInfo;
-import org.spockframework.runtime.model.ParameterInfo;
+import org.spockframework.runtime.IDataIterator;
+import org.spockframework.runtime.model.*;
+import org.spockframework.util.Beta;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 import static java.lang.System.arraycopy;
 import static org.spockframework.runtime.model.MethodInfo.MISSING_ARGUMENT;
@@ -22,6 +21,7 @@ import static org.spockframework.runtime.model.MethodInfo.MISSING_ARGUMENT;
  * @since 2.2
  * @author Leonard Brünings
  */
+@Beta
 public interface IDataDriver {
   /**
    * The default implementation of IDataDriver.
@@ -38,12 +38,15 @@ public interface IDataDriver {
    * Run all iterations of the test method.
    * <p>
    * A custom implementation of the DataDriver can choose to run fewer or more iterations than the data iterator provides.
+   * <p>
+   * An implementation doesn't have to wait on the futures returned by the {@code iterationRunner},
+   * the future can be used to make subsequent iterations depend on the outcome of previous iterations.
    *
    * @param dataIterator the data iterator giving access to the data from the data providers.
    * @param iterationRunner the iteration runner that will be used to run the test method for each iteration.
    * @param parameters the parameters of the test method
    */
-  void runIterations(DataIterator dataIterator, IIterationRunner iterationRunner, List<ParameterInfo> parameters);
+  void runIterations(IDataIterator dataIterator, IIterationRunner iterationRunner, List<ParameterInfo> parameters);
 
   /**
    * Prepares the arguments for invocation of the test method.

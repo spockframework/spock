@@ -16,11 +16,11 @@ public class DataIteratorFactory {
     this.supervisor = supervisor;
   }
 
-  public DataIterator createFeatureDataIterator(SpockExecutionContext context) {
+  public IDataIterator createFeatureDataIterator(SpockExecutionContext context) {
     return new DataProcessorIterator(supervisor, context, new FeatureDataProviderIterator(supervisor, context));
   }
 
-  private abstract static class BaseDataIterator implements DataIterator {
+  private abstract static class BaseDataIterator implements IDataIterator {
     protected final IRunSupervisor supervisor;
     protected final SpockExecutionContext context;
 
@@ -40,10 +40,10 @@ public class DataIteratorFactory {
   }
 
   private static class DataProcessorIterator extends BaseDataIterator {
-    private final DataIterator delegate;
+    private final IDataIterator delegate;
     private final List<String> dataVariableNames;
 
-    private DataProcessorIterator(IRunSupervisor supervisor, SpockExecutionContext context, DataIterator delegate) {
+    private DataProcessorIterator(IRunSupervisor supervisor, SpockExecutionContext context, IDataIterator delegate) {
       super(supervisor, context);
       this.delegate = delegate;
       this.dataVariableNames = readDataVariableNames();

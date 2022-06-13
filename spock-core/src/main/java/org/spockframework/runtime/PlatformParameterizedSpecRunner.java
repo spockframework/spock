@@ -16,11 +16,8 @@
 
 package org.spockframework.runtime;
 
-import org.spockframework.runtime.extension.IDataDriver;
-import org.spockframework.runtime.extension.IIterationRunner;
-import org.spockframework.runtime.model.ExecutionResult;
-import org.spockframework.runtime.model.FeatureInfo;
-import org.spockframework.runtime.model.IterationInfo;
+import org.spockframework.runtime.extension.*;
+import org.spockframework.runtime.model.*;
 import spock.config.RunnerConfiguration;
 
 import java.util.concurrent.CompletableFuture;
@@ -43,7 +40,7 @@ public class PlatformParameterizedSpecRunner extends PlatformSpecRunner {
     }
 
     FeatureInfo feature = context.getCurrentFeature();
-    try (DataIterator dataIterator = new DataIteratorFactory(supervisor).createFeatureDataIterator(context)) {
+    try (IDataIterator dataIterator = new DataIteratorFactory(supervisor).createFeatureDataIterator(context)) {
       IIterationRunner iterationRunner = createIterationRunner(context, childExecutor);
       IDataDriver dataDriver = feature.getDataDriver();
       dataDriver.runIterations(dataIterator, iterationRunner, feature.getFeatureMethod().getParameters());

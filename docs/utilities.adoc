@@ -71,7 +71,7 @@ include::{sourcedir}/utilities/CollectionConditions.groovy[tag=strict-matcher-re
 ----
 
 NOTE: Both operands must be `Iterable` for this to work.
-      Otherwise, it will be treated like the standard groovy https://groovy-lang.org/operators.html#_find_operator[find operator] or https://groovy-lang.org/operators.html#_match_operator[match operators].
+Otherwise, it will be treated like the standard groovy https://groovy-lang.org/operators.html#_find_operator[find operator] or https://groovy-lang.org/operators.html#_match_operator[match operators].
 
 [[fs-fixture]]
 == Interact with the file system using `FsFixture`
@@ -87,3 +87,5 @@ However, for more complex cases like creating a directory tree `FsFixture` offer
 ----
 include::{sourcedir}/utilities/FsFixtureSpec.groovy[tag=fs-fixture-usage]
 ----
+
+TIP: To get the nice Groovy methods for `Path`, you need to add a dependency on `groovy-nio`.

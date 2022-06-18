@@ -213,38 +213,46 @@ class FsFixtureSpec extends Specification {
     then:
     Files.isDirectory(fsFixture.resolve('src/main/groovy'))
     Files.isDirectory(fsFixture.resolve('src/test/resources/META-INF'))
-    fsFixture.resolve('src/main/groovy/HelloWorld.java').toFile().text == 'println "Hello World"'
-    fsFixture.resolve('src/test/resources/META-INF/MANIFEST.MF').toFile().text == 'bogus entry'
+    fsFixture.resolve('src/main/groovy/HelloWorld.java').text == 'println "Hello World"'
+    fsFixture.resolve('src/test/resources/META-INF/MANIFEST.MF').text == 'bogus entry'
   }
 
   def "can copy files from classpath"() {
     given:
-    File result = null
+    Path result = null
+    Path result2 = null
 
     when:
     fsFixture.create {
       dir("target") {
-        result = copyFromClasspath("/org/spockframework/smoke/extension/SampleFile.txt", 'SampleFile.txt')
+        result = copyFromClasspath("/org/spockframework/smoke/extension/SampleFile.txt")
+        result2 = copyFromClasspath("/org/spockframework/smoke/extension/SampleFile.txt", 'SampleFile2.txt')
       }
     }
 
     then:
+    result.fileName.toString() == "SampleFile.txt"
     result.text == 'HelloWorld\n'
+    result2.text == 'HelloWorld\n'
   }
 
   def "can copy files from classpath using explicit context class"() {
     given:
-    File result = null
+    Path result = null
+    Path result2 = null
 
     when:
     fsFixture.create {
       dir("target") {
-        result = copyFromClasspath("SampleFile.txt", 'SampleFile.txt', FsFixtureSpec)
+        result = copyFromClasspath("SampleFile.txt", FsFixtureSpec)
+        result2 = copyFromClasspath("SampleFile.txt", 'SampleFile2.txt', FsFixtureSpec)
       }
     }
 
     then:
+    result.fileName.toString() == "SampleFile.txt"
     result.text == 'HelloWorld\n'
+    result2.text == 'HelloWorld\n'
   }
 }
 

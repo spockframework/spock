@@ -41,6 +41,7 @@ public class FsFixture implements DirectoryFixture {
 
   /**
    * A shorthand for {@code getCurrentPath().resolve(path)}
+   *
    * @param path the path to resolve relative to currentPath
    * @return the resolved path
    */
@@ -50,6 +51,7 @@ public class FsFixture implements DirectoryFixture {
 
   /**
    * A shorthand for {@code getCurrentPath().resolve(path)}
+   *
    * @param path the path to resolve relative to currentPath
    * @return the resolved path
    */
@@ -61,7 +63,7 @@ public class FsFixture implements DirectoryFixture {
    * Basically the same as {@link DirectoryFixture#dir(String, Closure)}, but with the current root as base.
    */
   public void create(@DelegatesTo(value = DirectoryFixture.class, strategy = Closure.DELEGATE_FIRST)
-                       Closure<?> dirSpec) throws IOException {
+                     Closure<?> dirSpec) throws IOException {
     callSpec(dirSpec, currentPath);
   }
 
@@ -80,19 +82,34 @@ public class FsFixture implements DirectoryFixture {
   }
 
   @Override
-  public File file(String file) throws IOException {
+  public Path file(String file) throws IOException {
     Path result = currentPath.resolve(file);
     Files.createDirectories(result.getParent());
-    return result.toFile();
+    return result;
   }
 
   @Override
-  public File copyFromClasspath(String resourcePath, String targetName) throws IOException {
+  public Path copyFromClasspath(String resourcePath) throws IOException {
+    return copyFromClasspath(resourcePath, getTargetName(resourcePath));
+  }
+
+  @NotNull
+  private String getTargetName(String resourcePath) {
+    return resourcePath.substring(resourcePath.lastIndexOf('/') + 1);
+  }
+
+  @Override
+  public Path copyFromClasspath(String resourcePath, String targetName) throws IOException {
     return copyFromClasspath(resourcePath, targetName, contextClass);
   }
 
   @Override
-  public File copyFromClasspath(String resourcePath, String targetName, Class<?> contextClass) throws IOException {
+  public Path copyFromClasspath(String resourcePath, Class<?> contextClass) throws IOException {
+    return copyFromClasspath(resourcePath, getTargetName(resourcePath), contextClass);
+  }
+
+  @Override
+  public Path copyFromClasspath(String resourcePath, String targetName, Class<?> contextClass) throws IOException {
     URL resource = contextClass.getResource(resourcePath);
     if (resource == null) {
       throw new IOException("Could not find resource: " + resourcePath);
@@ -101,9 +118,9 @@ public class FsFixture implements DirectoryFixture {
   }
 
   @NotNull
-  private File copyResource(URL resource, File file) throws IOException {
+  private Path copyResource(URL resource, Path file) throws IOException {
     try (InputStream inputStream = resource.openStream()) {
-      Files.copy(inputStream, file.toPath());
+      Files.copy(inputStream, file);
     }
     return file;
   }

@@ -1,7 +1,6 @@
 package spock.util.io;
 
-import java.io.*;
-import java.net.URL;
+import java.io.IOException;
 import java.nio.file.Path;
 
 import groovy.lang.*;
@@ -50,10 +49,23 @@ public interface DirectoryFixture {
    * but not the physical File, it will eagerly create parent directories if necessary.
    *
    * @param file the (path and) filename
-   * @return the {@link File} object pointing to the file
+   * @return the {@link Path} object pointing to the file
    * @throws IOException if the parent directories could not be created.
    */
-  File file(String file) throws IOException;
+  Path file(String file) throws IOException;
+
+  /**
+   * Copies a file from classpath using the contextClass to load the resource.
+   * <p>
+   * This will use the {@link Closure#getOwner()} of the enclosing closure to determine the contextClass.
+   * <p>
+   * The target name will be the same as the last path element of the {@code resourcePath}.
+   *
+   * @param resourcePath the path to the resource to load
+   * @return the {@link Path} pointing to the copied file
+   * @throws IOException if the parent directories could not be created or the resource could not be found
+   */
+  Path copyFromClasspath(String resourcePath) throws IOException;
 
   /**
    * Copies a file from classpath using the contextClass to load the resource.
@@ -62,10 +74,22 @@ public interface DirectoryFixture {
    *
    * @param resourcePath the path to the resource to load
    * @param targetName the name of the target to use
-   * @return the {@link File} pointing to the copied file
+   * @return the {@link Path} pointing to the copied file
    * @throws IOException if the parent directories could not be created or the resource could not be found
    */
-  File copyFromClasspath(String resourcePath, String targetName) throws IOException;
+  Path copyFromClasspath(String resourcePath, String targetName) throws IOException;
+
+  /**
+   * Copies a file from classpath using the contextClass to load the resource.
+   * <p>
+   * The target name will be the same as the last path element of the {@code resourcePath}.
+   *
+   * @param resourcePath the path to the resource to load
+   * @param contextClass the class to use to load the resource
+   * @return the {@link Path} pointing to the copied file
+   * @throws IOException if the parent directories could not be created or the resource could not be found
+   */
+  Path copyFromClasspath(String resourcePath, Class<?> contextClass) throws IOException;
 
   /**
    * Copies a file from classpath using the contextClass to load the resource.
@@ -73,8 +97,8 @@ public interface DirectoryFixture {
    * @param resourcePath the path to the resource to load
    * @param targetName the name of the target to use
    * @param contextClass the class to use to load the resource
-   * @return the {@link File} pointing to the copied file
+   * @return the {@link Path} pointing to the copied file
    * @throws IOException if the parent directories could not be created or the resource could not be found
    */
-  File copyFromClasspath(String resourcePath, String targetName, Class<?> contextClass) throws IOException;
+  Path copyFromClasspath(String resourcePath, String targetName, Class<?> contextClass) throws IOException;
 }

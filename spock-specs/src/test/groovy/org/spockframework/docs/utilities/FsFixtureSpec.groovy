@@ -1,7 +1,6 @@
 package org.spockframework.docs.utilities
 
-import spock.lang.Specification
-import spock.lang.TempDir
+import spock.lang.*
 import spock.util.io.FsFixture
 
 import java.nio.file.Files
@@ -23,6 +22,7 @@ class FsFixtureSpec extends Specification {
         }
         dir('test/resources') {
           file('META-INF/MANIFEST.MF') << 'bogus entry'
+          copyFromClasspath('/org/spockframework/smoke/extension/SampleFile.txt')
         }
       }
     }
@@ -30,8 +30,9 @@ class FsFixtureSpec extends Specification {
     then:
     Files.isDirectory(fsFixture.resolve('src/main/groovy'))
     Files.isDirectory(fsFixture.resolve('src/test/resources/META-INF'))
-    fsFixture.resolve('src/main/groovy/HelloWorld.java').toFile().text == 'println "Hello World"'
-    fsFixture.resolve('src/test/resources/META-INF/MANIFEST.MF').toFile().text == 'bogus entry'
+    fsFixture.resolve('src/main/groovy/HelloWorld.java').text == 'println "Hello World"'
+    fsFixture.resolve('src/test/resources/META-INF/MANIFEST.MF').text == 'bogus entry'
+    fsFixture.resolve('src/test/resources/SampleFile.txt').text == 'HelloWorld\n'
   }
 // end::fs-fixture-usage[]
 

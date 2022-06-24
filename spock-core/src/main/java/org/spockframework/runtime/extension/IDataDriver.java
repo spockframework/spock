@@ -30,7 +30,12 @@ public interface IDataDriver {
    */
   IDataDriver DEFAULT = (dataIterator, iterationRunner, parameters) -> {
     while (dataIterator.hasNext()) {
-      iterationRunner.runIteration(prepareArgumentArray(dataIterator.next(), parameters));
+      Object[] arguments = dataIterator.next();
+
+      // dataIterator.next() will return null if an error occurs, so skip the iteration if it is null.
+      if (arguments != null) {
+        iterationRunner.runIteration(prepareArgumentArray(arguments, parameters));
+      }
     }
   };
 

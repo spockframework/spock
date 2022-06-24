@@ -6,6 +6,8 @@ import java.util.*;
 
 /**
  * A special iterator, that gives to the data produced by Spock's data providers.
+ * <p>
+ * The creator of the data iterator is responsible to close it.
  *
  * @author Leonard Brünings
  * @since 2.2

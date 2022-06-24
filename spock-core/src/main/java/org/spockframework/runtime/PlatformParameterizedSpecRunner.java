@@ -18,6 +18,7 @@ package org.spockframework.runtime;
 
 import org.spockframework.runtime.extension.*;
 import org.spockframework.runtime.model.*;
+import org.spockframework.util.ExceptionUtil;
 import spock.config.RunnerConfiguration;
 
 import java.util.concurrent.CompletableFuture;
@@ -48,7 +49,7 @@ public class PlatformParameterizedSpecRunner extends PlatformSpecRunner {
     } catch (InterruptedException ie) {
       throw ie;
     } catch (Exception e) {
-      // DataIterator.close doesn't throw
+      ExceptionUtil.sneakyThrow(e);
     }
   }
 
@@ -58,9 +59,10 @@ public class PlatformParameterizedSpecRunner extends PlatformSpecRunner {
 
       @Override
       public CompletableFuture<ExecutionResult> runIteration(Object[] args) {
-        IterationInfo iterationInfo = createIterationInfo(context, iterationIndex.get(), args, -1);
+        int currIterationIndex = iterationIndex.getAndIncrement();
+        IterationInfo iterationInfo = createIterationInfo(context, currIterationIndex, args, -1);
         IterationNode iterationNode = new IterationNode(
-          context.getParentId().append("iteration", String.valueOf(iterationIndex.getAndIncrement())),
+          context.getParentId().append("iteration", String.valueOf(currIterationIndex)),
           context.getRunContext().getConfiguration(RunnerConfiguration.class), iterationInfo);
 
         if (context.getErrorInfoCollector().hasErrors()) {

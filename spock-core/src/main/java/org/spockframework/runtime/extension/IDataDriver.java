@@ -42,7 +42,7 @@ public interface IDataDriver {
    * An implementation doesn't have to wait on the futures returned by the {@code iterationRunner},
    * the future can be used to make subsequent iterations depend on the outcome of previous iterations.
    *
-   * @param dataIterator the data iterator giving access to the data from the data providers.
+   * @param dataIterator the data iterator giving access to the data from the data providers. The data iterator is not to be closed by this method.
    * @param iterationRunner the iteration runner that will be used to run the test method for each iteration.
    * @param parameters the parameters of the test method
    */

@@ -84,6 +84,16 @@ https://tapestry.apache.org/[Tapestry 5] IoC container.
 
 === Building
 
+==== Prerequisites
+
+Spock needs both a JDK 8 and JDK 11+ installed.
+
+* JDK 8 is required to compile Spock via toolchains (automatic download is disabled).
+* The gradle build itself requires at least JDK 11 to run.
+
+JDK locations must be made known to toolchains via `JDK<version>=<PATH>` environment
+variable, e.g., `JDK8=/path/to/jdk8`.
+
 ==== Supported versions
 
 Spock is supported for Java version 8+.
@@ -104,6 +114,13 @@ To build a specific variant of Spock, use the variant name as a parameter
 
 ....
 ./gradlew build -Dvariant=4.0
+....
+
+To test against a specific Java version, use the java version name as a parameter, the path to the Java version must be set via an environment variable `JDK<version>=<PATH>`.
+Of course, this can combined with the variant selection from above.
+
+....
+./gradlew build -DjavaVersion=17
 ....
 
 (Windows: `gradlew build`). All build dependencies, including the

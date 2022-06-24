@@ -669,6 +669,24 @@ runner {
 }
 ----
 
+=== Tags
+
+Since version 2.2 Spock supports https://junit.org/junit5/docs/current/user-guide/#running-tests-tags[JUnit Platform tags].
+See the platform documentation for more information regarding valid tag values and how to configure your test execution to use them.
+
+The `@Tag` annotation can be used to tag a spec or feature with one or more tags.
+If applied on a spec, the tags are applied to all features in the spec.
+Tags are inherited from parent specs.
+If applied on a feature, the tags are applied to the feature.
+
+.Tag Extension
+[source,groovy]
+----
+include::{sourcedir}/extension/TagDocSpec.groovy[tag=tag-extension]
+----
+
+NOTE: JUnit Jupiter also has a `@Tag` annotation, but it will have no effect when used on a `Specification`.
+
 === Optimize Run Order
 
 Spock can remember which features last failed and how often successively and also how long a feature needed to be

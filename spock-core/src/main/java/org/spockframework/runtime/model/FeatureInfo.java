@@ -1,5 +1,6 @@
 package org.spockframework.runtime.model;
 
+import org.spockframework.runtime.extension.IDataDriver;
 import org.spockframework.runtime.extension.IMethodInterceptor;
 import org.spockframework.runtime.model.parallel.*;
 import org.spockframework.util.Nullable;
@@ -28,6 +29,7 @@ public class FeatureInfo extends SpecElementInfo<SpecInfo, AnnotatedElement> imp
   private MethodInfo featureMethod;
   private MethodInfo dataProcessorMethod;
   private NameProvider<IterationInfo> iterationNameProvider;
+  private IDataDriver dataDriver = IDataDriver.DEFAULT;
   private final List<DataProviderInfo> dataProviders = new ArrayList<>();
   private final IterationFilter iterationFilter = new IterationFilter();
 
@@ -157,6 +159,14 @@ public class FeatureInfo extends SpecElementInfo<SpecInfo, AnnotatedElement> imp
 
   public IterationFilter getIterationFilter() {
     return iterationFilter;
+  }
+
+  public IDataDriver getDataDriver() {
+    return dataDriver;
+  }
+
+  public void setDataDriver(IDataDriver dataDriver) {
+    this.dataDriver = dataDriver;
   }
 
   /**

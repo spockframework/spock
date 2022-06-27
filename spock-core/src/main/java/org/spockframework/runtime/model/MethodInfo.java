@@ -16,6 +16,7 @@
 
 package org.spockframework.runtime.model;
 
+import org.jetbrains.annotations.NotNull;
 import org.spockframework.runtime.SpockExecutionException;
 import org.spockframework.runtime.extension.IMethodInterceptor;
 import org.spockframework.util.*;
@@ -41,6 +42,7 @@ public class MethodInfo extends NodeInfo<SpecInfo, Method> implements IExcludabl
   private boolean excluded = false;
   private final List<IMethodInterceptor> interceptors = new ArrayList<>();
   private Invoker invoker;
+  private List<ParameterInfo> parameters;
 
   public MethodInfo() {
     invoker = (Object target, Object... arguments) ->
@@ -115,6 +117,19 @@ public class MethodInfo extends NodeInfo<SpecInfo, Method> implements IExcludabl
     return getReflection().getName().equals(name);
   }
 
+  public List<ParameterInfo> getParameters() {
+    if (parameters == null) {
+      Function<Integer, String> nameProvider = getNameProvider();
+      Parameter[] params = getReflection().getParameters();
+      List<ParameterInfo> result = new ArrayList<>(params.length);
+      for (int i = 0; i < params.length; i++) {
+        result.add(new ParameterInfo(this, nameProvider.apply(i), params[i]));
+      }
+      parameters = Collections.unmodifiableList(result);
+    }
+    return parameters;
+  }
+
   /**
    * Invokes this method on the specified target and with the specified arguments.
    * Does <em>not</em> handle interceptors.
@@ -126,14 +141,7 @@ public class MethodInfo extends NodeInfo<SpecInfo, Method> implements IExcludabl
   public Object invoke(Object target, Object... arguments) throws Throwable {
     for (int i = 0, argCount = arguments.length; i < argCount; i++) {
       if (arguments[i] == MISSING_ARGUMENT) {
-        Function<Integer, String> nameProvider;
-        if (getKind() == FEATURE) {
-          List<String> parameterNames = getFeature().getParameterNames();
-          nameProvider = parameterNames::get;
-        } else {
-          Parameter[] parameters = getReflection().getParameters();
-          nameProvider = index -> parameters[index].getName();
-        }
+        Function<Integer, String> nameProvider = getNameProvider();
 
         StringJoiner missingArguments = new StringJoiner("', '", "No argument was provided for parameters: '", "'");
         missingArguments.add(nameProvider.apply(i));
@@ -146,5 +154,16 @@ public class MethodInfo extends NodeInfo<SpecInfo, Method> implements IExcludabl
       }
     }
     return invoker.invoke(target, arguments);
+  }
+
+  @NotNull
+  private Function<Integer, String> getNameProvider() {
+    if (getKind() == FEATURE) {
+      List<String> parameterNames = getFeature().getParameterNames();
+      return parameterNames::get;
+    } else {
+      Parameter[] parameters = getReflection().getParameters();
+      return index -> parameters[index].getName();
+    }
   }
 }

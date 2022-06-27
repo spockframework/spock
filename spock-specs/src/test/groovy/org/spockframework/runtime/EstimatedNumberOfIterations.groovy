@@ -16,34 +16,151 @@
 
 package org.spockframework.runtime
 
+import org.spockframework.runtime.model.*
 import spock.lang.Specification
 
+import org.junit.platform.engine.EngineExecutionListener
+
 class EstimatedNumberOfIterations extends Specification {
-  def runner = new PlatformParameterizedSpecRunner(null)
-  def context = new SpockExecutionContext().withErrorInfoCollector(new ErrorInfoCollector())
+
+  def context = new SpockExecutionContext(Stub(EngineExecutionListener))
+    .withErrorInfoCollector(new ErrorInfoCollector())
+    .withCurrentInstance(this)
+  def factory = new DataIteratorFactory(Stub(IRunSupervisor))
 
   def "w/o data provider"() {
+    given:
+    FeatureInfo featureInfo = Stub {
+      getDataProcessorMethod() >> methodInfoFor('dataProcessor1')
+      getDataProviders() >> []
+    }
+
     expect: "estimation is 1"
-      runner.estimateNumIterations(context, new Object[0]) == 1
+    factory.createFeatureDataIterator(context.withCurrentFeature(featureInfo)).estimatedNumIterations == 1
+  }
+
+
+  @DataProcessorMetadata(dataVariables = [])
+  Object[] dataProcessor1(Object[] args) {
+    return new Object[0]
   }
 
   def "w/ data provider that doesn't respond to size"() {
+    given:
+    FeatureInfo featureInfo = Stub {
+      getDataProcessorMethod() >> methodInfoFor('dataProcessor2')
+      getDataProviders() >> [new DataProviderInfo(dataVariables: ['a'], previousDataTableVariables: [], dataProviderMethod: methodInfoFor('dataProvider2'))]
+    }
+
     expect: "estimation is 'unknown', represented as -1"
-      runner.estimateNumIterations(context, [1] as Object[]) == -1
+    factory.createFeatureDataIterator(context.withCurrentFeature(featureInfo)).estimatedNumIterations == -1
+  }
+
+
+  @DataProviderMetadata(dataVariables = ['a'])
+  Iterator<String> dataProvider2() {
+    ['a'].iterator()
+  }
+
+  @DataProcessorMetadata(dataVariables = ['a'])
+  Object[] dataProcessor2(Object[] args) {
+    return args
   }
 
   def "w/ data provider that responds to size"() {
+    given:
+    FeatureInfo featureInfo = Stub {
+      getDataProcessorMethod() >> methodInfoFor('dataProcessor3')
+      getDataProviders() >> [new DataProviderInfo(dataVariables: ['a'], previousDataTableVariables: [], dataProviderMethod: methodInfoFor('dataProvider3'))]
+    }
     expect: "estimation is size"
-      runner.estimateNumIterations(context, [[1, 2, 3]] as Object[]) == 3
+    factory.createFeatureDataIterator(context.withCurrentFeature(featureInfo)).estimatedNumIterations == 3
   }
+
+  @DataProviderMetadata(dataVariables = ['a'])
+  List<String> dataProvider3() {
+    ['a', 'b', 'c']
+  }
+
+  @DataProcessorMetadata(dataVariables = ['a'])
+  Object[] dataProcessor3(Object[] args) {
+    return args
+  }
+
 
   def "w/ multiple data providers, all of which respond to size"() {
+    given:
+    FeatureInfo featureInfo = Stub {
+      getDataProcessorMethod() >> methodInfoFor('dataProcessor4')
+      getDataProviders() >> [
+        new DataProviderInfo(dataVariables: ['a'], previousDataTableVariables: [], dataProviderMethod: methodInfoFor('dataProvider4_1')),
+        new DataProviderInfo(dataVariables: ['b'], previousDataTableVariables: [], dataProviderMethod: methodInfoFor('dataProvider4_2')),
+        new DataProviderInfo(dataVariables: ['c'], previousDataTableVariables: [], dataProviderMethod: methodInfoFor('dataProvider4_3'))
+      ]
+    }
     expect: "estimation is minimum"
-      runner.estimateNumIterations(context, [[1], [1, 2], [1, 2, 3]] as Object[]) == 1
+    factory.createFeatureDataIterator(context.withCurrentFeature(featureInfo)).estimatedNumIterations == 1
   }
 
+
+  @DataProviderMetadata(dataVariables = ['a'])
+  List<String> dataProvider4_1() {
+    ['a']
+  }
+
+  @DataProviderMetadata(dataVariables = ['b'])
+  Range<Integer> dataProvider4_2() {
+    (1..3)
+  }
+
+  @DataProviderMetadata(dataVariables = ['c'])
+  Iterable<Integer> dataProvider4_3() {
+    [1, 2]
+  }
+
+  @DataProcessorMetadata(dataVariables = ['a', 'b', 'c'])
+  Object[] dataProcessor4(Object[] args) {
+    return args
+  }
+
+
   def "w/ multiple data providers, one of which doesn't respond to size"() {
-  expect: "estimation is minimum of others"
-    runner.estimateNumIterations(context, [1, [1, 2], [1, 2, 3]] as Object[]) == 2
+
+    given:
+    FeatureInfo featureInfo = Stub {
+      getDataProcessorMethod() >> methodInfoFor('dataProcessor5')
+      getDataProviders() >> [
+        new DataProviderInfo(dataVariables: ['a'], previousDataTableVariables: [], dataProviderMethod: methodInfoFor('dataProvider5_1')),
+        new DataProviderInfo(dataVariables: ['b'], previousDataTableVariables: [], dataProviderMethod: methodInfoFor('dataProvider5_2')),
+        new DataProviderInfo(dataVariables: ['c'], previousDataTableVariables: [], dataProviderMethod: methodInfoFor('dataProvider5_3'))
+      ]
+    }
+    expect: "estimation is minimum of others"
+    factory.createFeatureDataIterator(context.withCurrentFeature(featureInfo)).estimatedNumIterations == 2
+  }
+
+
+  @DataProviderMetadata(dataVariables = ['a'])
+  Iterator<String> dataProvider5_1() {
+    ['a'].iterator()
+  }
+
+  @DataProviderMetadata(dataVariables = ['b'])
+  Range<Integer> dataProvider5_2() {
+    (1..3)
+  }
+
+  @DataProviderMetadata(dataVariables = ['c'])
+  Iterable<Integer> dataProvider5_3() {
+    [1, 2]
+  }
+
+  @DataProcessorMetadata(dataVariables = ['a', 'b', 'c'])
+  Object[] dataProcessor5(Object[] args) {
+    return args
+  }
+
+  private MethodInfo methodInfoFor(String methodName) {
+    EstimatedNumberOfIterations.declaredMethods.find { it.name == methodName }.with { new MethodInfo(reflection: it) }
   }
 }

@@ -61,7 +61,7 @@ public class HamcrestSupport {
    *
    * <p>The matchers that ship with JUnit aren't very useful per se.
    * Instead, you will want to use matchers from Hamcrest
-   * (https://code.google.com/p/hamcrest/) or other libraries. Both Hamcrest
+   * (https://hamcrest.org/JavaHamcrest/) or other libraries. Both Hamcrest
    * 1.1 and 1.2 are supported. You can also write your own matchers,
    * building up a matcher library that's specific to the needs of your project.
    *

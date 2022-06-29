@@ -1339,7 +1339,7 @@ Caused by: java.io.FileNotFoundException: ...
 === `HamcrestSupport.expect`
 
 Class `spock.util.matcher.HamcrestSupport` has a new `expect` method that makes
-https://code.google.com/p/hamcrest/[Hamcrest] assertions read better in then-blocks:
+https://hamcrest.org/JavaHamcrest/[Hamcrest] assertions read better in then-blocks:
 
 [source,groovy]
 ----
@@ -1376,7 +1376,7 @@ foo.bar() >> { throw new IOException() } >>> [1, 2, 3] >> { throw new RuntimeExc
 
 It's now possible to match any argument list (including the empty list) with `foo.bar(*_)`.
 
-Method arguments can now be constrained with https://code.google.com/p/hamcrest/[Hamcrest] matchers:
+Method arguments can now be constrained with https://hamcrest.org/JavaHamcrest/[Hamcrest] matchers:
 
 [source,groovy]
 ----

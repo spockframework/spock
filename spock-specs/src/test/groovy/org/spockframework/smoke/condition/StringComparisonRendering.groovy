@@ -16,7 +16,7 @@
 
 package org.spockframework.smoke.condition
 
-import org.spockframework.runtime.ExpressionInfoValueRenderer
+
 import org.spockframework.runtime.FailedStringComparisonRenderer
 import spock.lang.Issue
 
@@ -81,11 +81,12 @@ null == "foo"
       assert ("the quick" == "the quick") instanceof String
     }
   }
+
   @Issue("https://github.com/spockframework/spock/issues/121")
   def "large String comparison does not cause OOM-Error, difference at start"() {
     StringBuilder sb = largeStringBuilder()
     String a = sb.toString()
-    sb.setCharAt(0, 'b'  as char)
+    sb.setCharAt(0, 'b' as char)
     String b = sb.toString()
 
     expect:
@@ -102,7 +103,7 @@ null == "foo"
   def "large String comparison does not cause OOM-Error, difference in the middle"() {
     StringBuilder sb = largeStringBuilder()
     String a = sb.toString()
-    sb.setCharAt(sb.length() / 2 as int, 'b'  as char)
+    sb.setCharAt(sb.length() / 2 as int, 'b' as char)
     String b = sb.toString()
 
     expect:
@@ -119,7 +120,7 @@ null == "foo"
   def "large String comparison does not cause OOM-Error, difference at end"() {
     StringBuilder sb = largeStringBuilder()
     String a = sb.toString()
-    sb.setCharAt(sb.length()-1, 'b'  as char)
+    sb.setCharAt(sb.length() - 1, 'b' as char)
     String b = sb.toString()
 
     expect:
@@ -132,13 +133,12 @@ null == "foo"
   }
 
 
-
   @Issue("https://github.com/spockframework/spock/issues/121")
   def "large String comparison does not cause OOM-Error, difference at start and  end"() {
     StringBuilder sb = largeStringBuilder()
     String a = sb.toString()
-    sb.setCharAt(0, 'b'  as char)
-    sb.setCharAt(sb.length()-1, 'b'  as char)
+    sb.setCharAt(0, 'b' as char)
+    sb.setCharAt(sb.length() - 1, 'b' as char)
     String b = sb.toString()
 
     expect:
@@ -221,13 +221,14 @@ null == "foo"
   @Issue("https://github.com/spockframework/spock/issues/737")
   def 'shows differences between string literals with newline escapes'() {
     expect:
+    // whitespace is important
     isRendered '''
 """foo  """ == """bar  """
             |
             false
             3 differences (40% similarity)
-            (foo)
-            (bar)
+            (foo)  
+            (bar)  
 ''', {
       assert """\
 foo  \
@@ -251,7 +252,7 @@ bar  \
       assert """\\
 foo\
 """ == """\\
-foo
+foo       
 """
     }
   }
@@ -276,7 +277,7 @@ foo
 $a\
 
 """ == """\\\
-$b
+$b 
 """
     }
   }

@@ -650,8 +650,8 @@ execution of `setupSpec` methods and the after-actions are done after the execut
 === Include and Exclude
 
 Spock is capable of including and excluding specifications according to their classes, super-classes and interfaces and
-according to annotations that are applied to the specification. Spock is also capable of including and excluding
-individual features according to annotations that are applied to the feature method. The configuration for what to
+according to annotations that are applied to the specification.Spock is also capable of including and excluding
+individual features according to annotations that are applied to the feature method.The configuration for what to
 include or exclude is done according to the <<spock-configuration-file,Spock Configuration File>> section.
 
 .Include / Exclude Configuration
@@ -669,6 +669,7 @@ runner {
 }
 ----
 
+[[test-tag-extension]]
 === Tags
 
 Since version 2.2 Spock supports https://junit.org/junit5/docs/current/user-guide/#running-tests-tags[JUnit Platform tags].

@@ -4,7 +4,21 @@ include::include.adoc[]
 
 == 2.2-M2 (tbd)
 
-* Improve `@Stepwise` can be applied to data-driven feature methods, having the effect of executing them sequentially (even if concurrent test mode is active) and to skip subsequent iterations is one iteration fails.
+* Add junit-platform TestTag support spockPull:1467[]
+* Add `IDataDriver` extension point and refactor data provider handling spockPull:1479[]
+* Improve `@Stepwise` can be applied to data-driven feature methods, having the effect of executing them sequentially (even if concurrent test mode is active) and to skip subsequent iterations is one iteration fails. spockPull:1442[]
+* Improve EmbeddedSpecCompiler by making package declaration configurable in EmbeddedSpecCompiler
+* Improve do not evaluate feature-skipping conditions for skipped specs spockPull:1459[]
+* Improve behavior when trying to run Spock with unsupported Groovy version in IDEA spockIssue:1421[]
+* Fix compatibility with certain locales, for example `tr_TR` spockIssue:1414[]
+* Fix Spring 6 incompatibility spockIssue:1428[]
+* Fix test reporting issue with Maven, where an error on the Specification level was not visible spockIssue:1444[]
+* Fix context pollution in `IterationNode.around()` spockIssue:1441[]
+* Fix Discard unnecessary state in ConfineMetaClassChangesInterceptor spockPull:1460[]
+* Fix make EnableSharedInjection public spockPull:1472[]
+* Remove runtime dependency on Jetbrains Annotations spockPull:1468[]
+
+Thanks to all the contributors to this release: Alexander Kriegisch, Marcin Zajączkowski, Jonny Carter, alopukhov, Jerome Prinet, Matthew Moss, BJ Hargrave
 
 == 2.2-M1 (2022-02-16)
 

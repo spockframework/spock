@@ -355,6 +355,15 @@ task groovydoc(type: Groovydoc) {
 
 configureGroovydoc(groovydoc)
 
+configurations {
+  asciidoctorExtensions
+}
+
+dependencies {
+  // local extension from build-logic/asciidoc-extensions
+  asciidoctorExtensions 'spockbuild:asciidoc-extensions'
+}
+
 asciidoctorj {
   modules {
     diagram.use()
@@ -362,6 +371,7 @@ asciidoctorj {
 }
 
 asciidoctor {
+  configurations 'asciidoctorExtensions'
   sourceDir = "docs"
   baseDirFollowsSourceDir()
   logDocuments = true

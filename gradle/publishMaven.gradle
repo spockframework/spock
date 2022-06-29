@@ -1,13 +1,8 @@
 apply plugin: "maven-publish"
 apply plugin: "signing"
 
-def optionalDeps = []
-def providedDeps = []
-
 ext {
   packaging = null // use the default ("jar")
-  optional = { optionalDeps << it; it }
-  provided = { providedDeps << it; it }
 }
 
 publishing {
@@ -19,15 +14,6 @@ publishing {
           from(components.java)
           artifact(sourcesJar)
           artifact(javadocJar)
-          pom.withXml {
-            def dependencies = asNode().dependencies[0]
-            optionalDeps.each { dep ->
-              dependencies.find { it.artifactId.text() == dep.name }.appendNode("optional", true)
-            }
-            providedDeps.each { dep ->
-              dependencies.find { it.artifactId.text() == dep.name }.scope[0].value = "provided"
-            }
-          }
         }
       }
       pom {

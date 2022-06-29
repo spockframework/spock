@@ -15,6 +15,6 @@
  */
 
 /**
- * Utilities for using (<a href="http://code.google.com/p/hamcrest/">Hamcrest</a>) matchers.
+ * Utilities for using (<a href="https://code.google.com/p/hamcrest/">Hamcrest</a>) matchers.
  */
 package spock.util.matcher;

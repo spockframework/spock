@@ -23,7 +23,7 @@ import java.util.Set;
 import org.unitils.core.UnitilsException;
 import static org.unitils.thirdparty.org.apache.commons.dbutils.DbUtils.closeQuietly;
 
-// Copied from: http://jira.unitils.org/browse/UNI-79
+// Copied from: https://jira.unitils.org/browse/UNI-79
 /**
  * Implementation of {@link org.unitils.core.dbsupport.DbSupport} for a H2
  * database

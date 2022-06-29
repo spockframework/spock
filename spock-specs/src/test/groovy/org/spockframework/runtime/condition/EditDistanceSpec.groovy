@@ -22,7 +22,7 @@ import java.util.concurrent.ThreadLocalRandom
 
 import static org.spockframework.runtime.condition.EditOperation.Kind.*
 
-@See(["http://en.wikipedia.org/wiki/Levenshtein_distance", "http://www.levenshtein.net/"])
+@See(["https://en.wikipedia.org/wiki/Levenshtein_distance", "https://www.levenshtein.net/"])
 class EditDistanceSpec extends Specification {
   @Shared chars = ('a'..'z') + ('A'..'Z') + ('0'..'9') + [' '] * 10
 

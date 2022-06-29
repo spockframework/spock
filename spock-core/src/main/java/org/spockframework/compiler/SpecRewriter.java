@@ -187,7 +187,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
   }
 
   // we try to use the visibility of the original field, but change
-  // private to protected to solve http://issues.spockframework.org/detail?id=151
+  // private to protected to solve https://issues.spockframework.org/detail?id=151
   private int determineVisibilityForSharedFieldAccessor(Field field) {
     if (field.getOwner() == null) { // true field
       int visibility = AstUtil.getVisibility(field.getAst());

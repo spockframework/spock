@@ -30,7 +30,7 @@ import org.springframework.transaction.annotation.Transactional
  *
  * To learn more about transaction management in the Spring TestContext
  * framework, see:
- * http://static.springsource.org/spring/docs/3.0.x/reference/testing.html#testcontext-tx
+ * https://static.springsource.org/spring/docs/3.0.x/reference/testing.html#testcontext-tx
  *
  * Note: Due to the way Spring's TestContext framework is designed,
  * @Shared fields cannot be injected. This also means that

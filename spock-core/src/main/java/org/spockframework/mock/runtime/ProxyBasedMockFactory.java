@@ -22,7 +22,7 @@ import java.util.*;
 /**
  * Some implementation details of this class and the classes it references are inspired from Spring, EasyMock
  * Class Extensions, JMock, Mockito, and this thread:
- * http://www.nabble.com/Callbacks%2C-classes-and-instances-to4092596.html
+ * https://www.nabble.com/Callbacks%2C-classes-and-instances-to4092596.html
  *
  * @author Peter Niederwieser
  */

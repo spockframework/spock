@@ -299,7 +299,7 @@ public class GenericTypeReflector {
 	}
 
 	private static Type[] getArrayExactDirectSuperTypes(Type arrayType) {
-		// see http://java.sun.com/docs/books/jls/third_edition/html/typesValues.html#4.10.3
+		// see https://java.sun.com/docs/books/jls/third_edition/html/typesValues.html#4.10.3
 		Type typeComponent = getArrayComponentType(arrayType);
 
 		Type[] result;

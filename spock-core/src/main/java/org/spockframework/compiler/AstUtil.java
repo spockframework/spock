@@ -320,7 +320,6 @@ public abstract class AstUtil {
 
   public static MethodCallExpression createMethodCall(Expression target, String methodName, Expression arguments) {
     MethodCallExpression result = new MethodCallExpression(target, methodName, arguments);
-    // see http://groovy.329449.n5.nabble.com/Problem-with-latest-2-0-beta-3-snapshot-and-Spock-td5496353.html
     // and https://github.com/spockframework/spock/issues/1200
     // and https://issues.apache.org/jira/browse/GROOVY-9651
     result.setImplicitThis(false);

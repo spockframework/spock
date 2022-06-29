@@ -25,7 +25,7 @@ import com.google.inject.Module;
 import org.spockframework.util.Beta;
 
 /**
- * Activates <a href="http://code.google.com/p/google-guice/">Guice</a> integration for a specification.
+ * Activates <a href="https://code.google.com/p/google-guice/">Guice</a> integration for a specification.
  * The specified modules will be started before and stopped after the specification's execution.
  * Services will be injected into the specification based on regular Guice annotations.
  *

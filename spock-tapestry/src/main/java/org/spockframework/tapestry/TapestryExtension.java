@@ -45,7 +45,7 @@ import org.apache.tapestry5.ioc.annotations.*;
  *
  * Related Tapestry annotations, such as <tt>&#64;Service</tt> and <tt>&#64;Symbol</tt>,
  * are also supported. For information on their use, see the
- * <a href="http://tapestry.apache.org/tapestry5/tapestry-ioc/">Tapestry IoC documentation</a>.
+ * <a href="https://tapestry.apache.org/tapestry5/tapestry-ioc/">Tapestry IoC documentation</a>.
  * To interact directly with the Tapestry registry, an injection point of type
  * <tt>ObjectLocator</tt> may be defined. However, this should be rarely needed.
  *

@@ -13,6 +13,6 @@
  */
 
 /**
- * Integration with <a href="http://code.google.com/p/google-guice/">Guice</a> 2/3.
+ * Integration with <a href="https://code.google.com/p/google-guice/">Guice</a> 2/3.
  */
 package spock.guice;

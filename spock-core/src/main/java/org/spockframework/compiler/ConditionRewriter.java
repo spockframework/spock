@@ -419,7 +419,7 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> i
   @Override
   public void visitSpreadMapExpression(SpreadMapExpression expr) {
     // to not record the underlying MapExpression twice, we do nothing here
-    // see http://jira.codehaus.org/browse/GROOVY-3421
+    // see https://jira.codehaus.org/browse/GROOVY-3421
     result = recordNa(expr);
   }
 

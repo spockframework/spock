@@ -20,7 +20,7 @@ import static org.spockframework.runtime.condition.EditOperation.Kind.*;
 
 /**
  * Calculates Levenshtein distance and corresponding edit path between two character sequences.
- * Inspired from: http://etorreborre.blogspot.com/2008/06/edit-distance-in-scala_245.html
+ * Inspired from: https://etorreborre.blogspot.com/2008/06/edit-distance-in-scala_245.html
  *
  * Ideas for improvements:
  * - Favor fewer EditOperationS when calculating distance and/or path

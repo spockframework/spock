@@ -19,7 +19,7 @@ import org.spockframework.runtime.InvalidSpecException
 
 import spock.lang.Issue
 
-@Issue("http://my.issues.org/FOO-123")
+@Issue("https://my.issues.org/FOO-123")
 class IssueExtension extends EmbeddedSpecification {
   def "spec-level @Issue annotation is converted to tag"() {
     def tags = specificationContext.currentSpec.tags
@@ -30,11 +30,11 @@ class IssueExtension extends EmbeddedSpecification {
       name == "FOO-123"
       key == "issue"
       value == "FOO-123"
-      url == "http://my.issues.org/FOO-123"
+      url == "https://my.issues.org/FOO-123"
     }
   }
 
-  @Issue("http://my.issues.org/FOO-456")
+  @Issue("https://my.issues.org/FOO-456")
   def "feature-level @Issue annotation is converted to tag"() {
     def tags = specificationContext.currentFeature.tags
 
@@ -44,11 +44,11 @@ class IssueExtension extends EmbeddedSpecification {
       name == "FOO-456"
       key == "issue"
       value == "FOO-456"
-      url == "http://my.issues.org/FOO-456"
+      url == "https://my.issues.org/FOO-456"
     }
   }
 
-  @Issue(["http://my.issues.org/FOO-1", "http://my.issues.org/FOO-2"])
+  @Issue(["https://my.issues.org/FOO-1", "https://my.issues.org/FOO-2"])
   def "if multiple issues are listed, all of them are converted to a tag"() {
     def tags = specificationContext.currentFeature.tags
 
@@ -58,18 +58,18 @@ class IssueExtension extends EmbeddedSpecification {
       name == "FOO-1"
       key == "issue"
       value == "FOO-1"
-      url == "http://my.issues.org/FOO-1"
+      url == "https://my.issues.org/FOO-1"
     }
     with(tags[1]) {
       name == "FOO-2"
       key == "issue"
       value == "FOO-2"
-      url == "http://my.issues.org/FOO-2"
+      url == "https://my.issues.org/FOO-2"
     }
   }
 
-  @Issue("http://my.issues.org/FOO-1")
-  @Issue("http://my.issues.org/FOO-2")
+  @Issue("https://my.issues.org/FOO-1")
+  @Issue("https://my.issues.org/FOO-2")
   def "if multiple issue annotations are applied, all of them are converted to a tag"() {
     def tags = specificationContext.currentFeature.tags
 
@@ -79,18 +79,18 @@ class IssueExtension extends EmbeddedSpecification {
       name == "FOO-1"
       key == "issue"
       value == "FOO-1"
-      url == "http://my.issues.org/FOO-1"
+      url == "https://my.issues.org/FOO-1"
     }
     with(tags[1]) {
       name == "FOO-2"
       key == "issue"
       value == "FOO-2"
-      url == "http://my.issues.org/FOO-2"
+      url == "https://my.issues.org/FOO-2"
     }
   }
 
-  @Issue(["http://my.issues.org/FOO-1", "http://my.issues.org/FOO-2"])
-  @Issue(["http://my.issues.org/FOO-3", "http://my.issues.org/FOO-4"])
+  @Issue(["https://my.issues.org/FOO-1", "https://my.issues.org/FOO-2"])
+  @Issue(["https://my.issues.org/FOO-3", "https://my.issues.org/FOO-4"])
   def "if multiple issue annotations with multiple issues are applied, all of them are converted to a tag"() {
     def tags = specificationContext.currentFeature.tags
 
@@ -100,25 +100,25 @@ class IssueExtension extends EmbeddedSpecification {
       name == "FOO-1"
       key == "issue"
       value == "FOO-1"
-      url == "http://my.issues.org/FOO-1"
+      url == "https://my.issues.org/FOO-1"
     }
     with(tags[1]) {
       name == "FOO-2"
       key == "issue"
       value == "FOO-2"
-      url == "http://my.issues.org/FOO-2"
+      url == "https://my.issues.org/FOO-2"
     }
     with(tags[2]) {
       name == "FOO-3"
       key == "issue"
       value == "FOO-3"
-      url == "http://my.issues.org/FOO-3"
+      url == "https://my.issues.org/FOO-3"
     }
     with(tags[3]) {
       name == "FOO-4"
       key == "issue"
       value == "FOO-4"
-      url == "http://my.issues.org/FOO-4"
+      url == "https://my.issues.org/FOO-4"
     }
   }
 
@@ -126,7 +126,7 @@ class IssueExtension extends EmbeddedSpecification {
     when:
     runner.runSpecBody(
         """
-@Issue("http://foo")
+@Issue("https://foo")
 def setup() {}
 
 def feature() {

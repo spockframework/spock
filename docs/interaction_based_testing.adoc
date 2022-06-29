@@ -28,13 +28,13 @@ collaborators, and can generate mock implementations of collaborators that verif
 .How Are Mock Implementations Generated?
 ****
 Like most Java mocking frameworks, Spock uses
-http://docs.oracle.com/javase/7/docs/api/java/lang/reflect/Proxy.html[JDK dynamic proxies] (when mocking interfaces)
-and http://bytebuddy.net/[Byte Buddy] or https://github.com/cglib/cglib[CGLIB] proxies (when mocking classes) to generate mock implementations at runtime.
+https://docs.oracle.com/javase/7/docs/api/java/lang/reflect/Proxy.html[JDK dynamic proxies] (when mocking interfaces)
+and https://bytebuddy.net/[Byte Buddy] or https://github.com/cglib/cglib[CGLIB] proxies (when mocking classes) to generate mock implementations at runtime.
 Compared to implementations based on Groovy meta-programming, this has the advantage that it also works for testing Java code.
 ****
 
-The Java world has no shortage of popular and mature mocking frameworks: http://www.jmock.org/[JMock],
-http://www.easymock.org[EasyMock], http://mockito.org/[Mockito], to name just a few.
+The Java world has no shortage of popular and mature mocking frameworks: https://www.jmock.org/[JMock],
+https://www.easymock.org[EasyMock], https://mockito.org/[Mockito], to name just a few.
 Although each of these tools can be used together with Spock, we decided to roll our own mocking framework,
 tightly integrated with Spock's specification language. This decision was driven by the desire to leverage all of
 Groovy's capabilities to make interaction-based tests easier to write, more readable, and ultimately more fun.
@@ -919,8 +919,8 @@ Subscriber subscriber = GroovyMock()
 Usually, Groovy mocks need to be injected into the code under specification just like regular mocks.
 However, when a Groovy mock is created as _global_, it automagically replaces all real instances
 of the mocked type for the duration of the feature method:footnote:[You may know this behavior from Groovy's
-http://docs.groovy-lang.org/docs/groovy-2.4.1/html/gapi/groovy/mock/interceptor/MockFor.html[MockFor] and
-http://docs.groovy-lang.org/docs/groovy-2.4.1/html/gapi/groovy/mock/interceptor/StubFor.html[StubFor] facilities.]
+https://docs.groovy-lang.org/docs/groovy-2.4.1/html/gapi/groovy/mock/interceptor/MockFor.html[MockFor] and
+https://docs.groovy-lang.org/docs/groovy-2.4.1/html/gapi/groovy/mock/interceptor/StubFor.html[StubFor] facilities.]
 
 [source,groovy]
 ----
@@ -1060,14 +1060,14 @@ mock.nature == MockNature.MOCK
 
 If you would like to dive deeper into interaction-based testing, we recommend the following resources:
 
-http://www.ccs.neu.edu/research/demeter/related-work/extreme-programming/MockObjectsFinal.PDF[Endo-Testing: Unit Testing with Mock Objects]::
+https://www.ccs.neu.edu/research/demeter/related-work/extreme-programming/MockObjectsFinal.PDF[Endo-Testing: Unit Testing with Mock Objects]::
   Paper from the XP2000 conference that introduces the concept of mock objects.
 
-http://www.jmock.org/oopsla2004.pdf[Mock Roles, not Objects]::
+https://www.jmock.org/oopsla2004.pdf[Mock Roles, not Objects]::
   Paper from the OOPSLA2004 conference that explains how to do mocking _right_.
 
-http://martinfowler.com/articles/mocksArentStubs.html[Mocks Aren't Stubs]::
+https://martinfowler.com/articles/mocksArentStubs.html[Mocks Aren't Stubs]::
   Martin Fowler's take on mocking.
 
-http://www.growing-object-oriented-software.com[Growing Object-Oriented Software Guided by Tests]::
+https://www.growing-object-oriented-software.com[Growing Object-Oriented Software Guided by Tests]::
   TDD pioneers Steve Freeman and Nat Pryce explain in detail how test-driven development and mocking work in the real world.

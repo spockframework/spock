@@ -135,7 +135,7 @@ public abstract class TextUtil {
   }
 
   // taken from:
-  // http://stackoverflow.com/questions/1660501/what-is-a-good-64bit-hash-function-in-java-for-textual-strings
+  // https://stackoverflow.com/questions/1660501/what-is-a-good-64bit-hash-function-in-java-for-textual-strings
   public static long longHashCode(String string) {
     long h = 1125899906842597L;
     int len = string.length();

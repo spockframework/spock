@@ -4,7 +4,7 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -59,7 +59,7 @@ public class EditPathRenderer {
             String part2 = TextUtil.escape(seq2.charAt(index2++));
             line1.append(part1);
             line2.append(part2);
-            if (part1.length() < part2.length()) line1.append('~'); 
+            if (part1.length() < part2.length()) line1.append('~');
             else if (part2.length() < part1.length()) line2.append('~');
           }
           break;

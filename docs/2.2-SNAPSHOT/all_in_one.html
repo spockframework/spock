@@ -234,7 +234,7 @@
 </li>
 <li><a href="#_release_notes">Release Notes</a>
 <ul class="sectlevel2">
-<li><a href="#_2_2_tbd">2.2 (tbd)</a></li>
+<li><a href="#_2_2_m2_tbd">2.2-M2 (tbd)</a></li>
 <li><a href="#_2_2_m1_2022_02_16">2.2-M1 (2022-02-16)</a></li>
 <li><a href="#_2_1_2022_02_15">2.1 (2022-02-15)</a></li>
 <li><a href="#_official_spock_logo">Official Spock Logo</a></li>
@@ -420,7 +420,7 @@
 </li>
 <li><a href="#_known_issues_2">Known Issues</a>
 <ul class="sectlevel2">
-<li><a href="#_usage_of_final_in_a_feature_method_with_cleanup_1017">Usage of <code>final</code> in a feature method with <code>cleanup</code> #1017</a></li>
+<li><a href="#_usage_of_final_in_a_feature_method_with_cleanup_spockissue1017">Usage of <code>final</code> in a feature method with <code>cleanup</code> spockIssue:1017[]</a></li>
 <li><a href="#_using_traits_with_specifications">Using Traits with Specifications</a></li>
 <li><a href="#_groovy_version_compatibility">Groovy version compatibility</a></li>
 </ul>
@@ -6294,11 +6294,11 @@ Grails 2.3 and higher have built-in Spock support and do not require a plugin.
 <h2 id="_release_notes"><a class="anchor" href="#_release_notes"></a><a class="link" href="#_release_notes">Release Notes</a></h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_2_2_tbd"><a class="anchor" href="#_2_2_tbd"></a><a class="link" href="#_2_2_tbd">2.2 (tbd)</a></h3>
+<h3 id="_2_2_m2_tbd"><a class="anchor" href="#_2_2_m2_tbd"></a><a class="link" href="#_2_2_m2_tbd">2.2-M2 (tbd)</a></h3>
 <div class="ulist">
 <ul>
 <li>
-<p><code>@Stepwise</code> can be applied to data-driven feature methods, having the effect of executing them sequentially (even if concurrent test mode is active) and to skip subsequent iterations is one iteration fails.</p>
+<p>Improve <code>@Stepwise</code> can be applied to data-driven feature methods, having the effect of executing them sequentially (even if concurrent test mode is active) and to skip subsequent iterations is one iteration fails.</p>
 </li>
 </ul>
 </div>
@@ -6308,7 +6308,7 @@ Grails 2.3 and higher have built-in Spock support and do not require a plugin.
 <div class="ulist">
 <ul>
 <li>
-<p>Add Groovy 4 support <a href="https://github.com/spockframework/spock/pull/1382">#1382</a></p>
+<p>Add Groovy 4 support spockPull:1382[]</p>
 </li>
 </ul>
 </div>
@@ -6373,10 +6373,10 @@ Many thanks to Ayşe Altınsoy (@AltinsoyAyse) for creating the logo through man
 <div class="ulist">
 <ul>
 <li>
-<p>Add <a href="#collection-conditions">collection conditions</a> <a href="https://github.com/spockframework/spock/issues/1372">#1372</a></p>
+<p>Add <a href="#collection-conditions">collection conditions</a> spockIssue:1372[]</p>
 </li>
 <li>
-<p>Add support for selecting individual iterations via their unique ID (IDE support required). <a href="https://github.com/spockframework/spock/pull/1376">#1376</a></p>
+<p>Add support for selecting individual iterations via their unique ID (IDE support required). spockPull:1376[]</p>
 </li>
 </ul>
 </div>
@@ -6386,7 +6386,7 @@ Many thanks to Ayşe Altınsoy (@AltinsoyAyse) for creating the logo through man
 <div class="ulist">
 <ul>
 <li>
-<p>Add <code>data.</code> support to conditional extensions <a href="https://github.com/spockframework/spock/issues/1360">#1360</a>.
+<p>Add <code>data.</code> support to conditional extensions spockIssue:1360[].
 This replaces the  current behavior of accessing data variables without any prefix.
 See <a href="#precondition_context">Precondition Context</a> for more details.</p>
 </li>
@@ -6398,39 +6398,39 @@ See <a href="#precondition_context">Precondition Context</a> for more details.</
 <div class="ulist">
 <ul>
 <li>
-<p>Add exception translation to JUnit4 Rules <a href="https://github.com/spockframework/spock/pull/1342">#1342</a></p>
+<p>Add exception translation to JUnit4 Rules spockPull:1342[]</p>
 </li>
 <li>
-<p>Add option to omit feature name from iterations <a href="https://github.com/spockframework/spock/pull/1386">#1386</a>
+<p>Add option to omit feature name from iterations spockPull:1386[]
 and add additional <a href="#unroll_tokens">Special Tokens</a> to unroll patterns.</p>
 </li>
 <li>
-<p>Add optional reason to <code>@Requires</code> and <code>@IgnoreIf</code> <a href="https://github.com/spockframework/spock/pull/1362">#1362</a></p>
+<p>Add optional reason to <code>@Requires</code> and <code>@IgnoreIf</code> spockPull:1362[]</p>
 </li>
 <li>
-<p>Add <code>shared.</code> support to conditional extensions <a href="https://github.com/spockframework/spock/pull/1359">#1359</a>.
+<p>Add <code>shared.</code> support to conditional extensions spockPull:1359[].
 See <a href="#precondition_context">Precondition Context</a> for more details.</p>
 </li>
 <li>
-<p>Set the owner for condition closures on spec annotations <a href="https://github.com/spockframework/spock/pull/1357">#1357</a></p>
+<p>Set the owner for condition closures on spec annotations spockPull:1357[]</p>
 <div class="paragraph">
 <p>This allows access to static methods when <code>@IgnoreIf</code>, <code>@Requires</code> and <code>@PendingFeatureIf</code> is used on a Specification.</p>
 </div>
 </li>
 <li>
-<p>Update bnd Gradle plugin to 6.0.0 (OSGI) <a href="https://github.com/spockframework/spock/pull/1377">#1377</a></p>
+<p>Update bnd Gradle plugin to 6.0.0 (OSGI) spockPull:1377[]</p>
 </li>
 <li>
-<p>Fix selector ordering issue <a href="https://github.com/spockframework/spock/pull/1375">#1375</a></p>
+<p>Fix selector ordering issue spockPull:1375[]</p>
 </li>
 <li>
-<p>Fix <code>@TempDir</code> not working for <code>@Shared</code> inherited fields <a href="https://github.com/spockframework/spock/pull/1373">#1373</a></p>
+<p>Fix <code>@TempDir</code> not working for <code>@Shared</code> inherited fields spockPull:1373[]</p>
 </li>
 <li>
-<p>Fix JUnit rule run order <a href="https://github.com/spockframework/spock/pull/1363">#1363</a></p>
+<p>Fix JUnit rule run order spockPull:1363[]</p>
 </li>
 <li>
-<p>Prevent removal of ErrorSpecNode from execution hierarchy <a href="https://github.com/spockframework/spock/pull/1358">#1358</a></p>
+<p>Prevent removal of ErrorSpecNode from execution hierarchy spockPull:1358[]</p>
 <div class="paragraph">
 <p>As the ErrorSpecNode does not have children it would get removed
 when trying to select specific tests methods
@@ -6439,13 +6439,13 @@ and not report the actual error.</p>
 </div>
 </li>
 <li>
-<p>Fix double invocation of IRunListener.beforeSpec and IRunListener.afterSpec <a href="https://github.com/spockframework/spock/pull/1344">#1344</a></p>
+<p>Fix double invocation of IRunListener.beforeSpec and IRunListener.afterSpec spockPull:1344[]</p>
 </li>
 <li>
-<p>Fix regression with multi-assignment of method call result <a href="https://github.com/spockframework/spock/pull/1333">#1333</a></p>
+<p>Fix regression with multi-assignment of method call result spockPull:1333[]</p>
 </li>
 <li>
-<p>Fix Build MethodSource with the correct spec class name <a href="https://github.com/spockframework/spock/pull/1345">#1345</a></p>
+<p>Fix Build MethodSource with the correct spec class name spockPull:1345[]</p>
 <div class="paragraph">
 <p>Prior to this fix, all <code>SpockNode</code> that use a <code>MethodSource</code>
 did not use the actual test class of the discovered method, and
@@ -6516,13 +6516,13 @@ If you are one of the few that have already used <code>@ResourceLockChildren</co
 <div class="ulist">
 <ul>
 <li>
-<p>Fix NPE if variable is initialized using a method with the same in features with cleanup blocks or using thrown condition <a href="https://github.com/spockframework/spock/issues/1266">#1266</a> <a href="https://github.com/spockframework/spock/issues/1313">#1313</a></p>
+<p>Fix NPE if variable is initialized using a method with the same in features with cleanup blocks or using thrown condition spockIssue:1266[] spockIssue:1313[]</p>
 </li>
 <li>
-<p>Fix implicit this conversion after bugfix in Groovy 3.0.8 <a href="https://github.com/spockframework/spock/issues/1318">#1318</a></p>
+<p>Fix implicit this conversion after bugfix in Groovy 3.0.8 spockIssue:1318[]</p>
 </li>
 <li>
-<p>Fix extension-provided method arguments in fixture methods <a href="https://github.com/spockframework/spock/issues/1305">#1305</a></p>
+<p>Fix extension-provided method arguments in fixture methods spockIssue:1305[]</p>
 </li>
 <li>
 <p>Update <code>Jvm</code> helper to support versions up to 23 (next LTS release)</p>
@@ -6558,7 +6558,7 @@ These two properties are still supported and used by the <code>@Issue</code> ext
 <ul>
 <li>
 <p>Add support for injection into <code>@Shared</code> fields in <code>spock-spring</code> module which users can opt-in for by adding
-<code>@EnableSharedInjection</code> to the specification. <a href="https://github.com/spockframework/spock/issues/76">#76</a></p>
+<code>@EnableSharedInjection</code> to the specification. spockIssue:76[]</p>
 </li>
 </ul>
 </div>
@@ -6569,7 +6569,7 @@ These two properties are still supported and used by the <code>@Issue</code> ext
 This field can be set via extensions to change the reported name.
 The existing iteration <code>NameProvider</code> now also sets the <code>displayName</code> instead of the <code>name</code>.
 Modifying the <code>name</code> instead of <code>displayName</code> is now considered <code>deprecated</code> for extensions.
-<a href="https://github.com/spockframework/spock/issues/1236">#1236</a></p>
+spockIssue:1236[]</p>
 </li>
 <li>
 <p>Add support for constructor injection for extensions</p>
@@ -6577,10 +6577,10 @@ Modifying the <code>name</code> instead of <code>displayName</code> is now consi
 <li>
 <p>Improve final field handling.
 Final fields are now transformed similar to shared fields, so that we can still delay the initialization but keep them
-unmodifiable to user code. <a href="https://github.com/spockframework/spock/issues/1011">#1011</a></p>
+unmodifiable to user code. spockIssue:1011[]</p>
 </li>
 <li>
-<p>Improve parallel extensions to support inheritance <a href="https://github.com/spockframework/spock/issues/1245">#1245</a></p>
+<p>Improve parallel extensions to support inheritance spockIssue:1245[]</p>
 </li>
 <li>
 <p>Improve PollingConditions</p>
@@ -6600,31 +6600,31 @@ this fixes an issue that interceptors for <code>prepare</code>, <code>before</co
 were still executed and any Exception they throw would hide the actual cause.</p>
 </li>
 <li>
-<p>Fix <a href="https://github.com/spockframework/spock/issues/1294">#1294</a> swallowing of unrecoverable Errors</p>
+<p>Fix spockIssue:1294[] swallowing of unrecoverable Errors</p>
 </li>
 <li>
-<p>Fix <a href="https://github.com/spockframework/spock/issues/1260">#1260</a> Change InteractionRewriter to keep casting of ListExpressions intact</p>
+<p>Fix spockIssue:1260[] Change InteractionRewriter to keep casting of ListExpressions intact</p>
 </li>
 <li>
-<p>Fix <a href="https://github.com/spockframework/spock/issues/1282">#1282</a> Make TempDirInterceptor safe for parallel invocation of iterations</p>
+<p>Fix spockIssue:1282[] Make TempDirInterceptor safe for parallel invocation of iterations</p>
 </li>
 <li>
-<p>Fix <a href="https://github.com/spockframework/spock/issues/1267">#1267</a> Retry extension behavior for unrolled tests</p>
+<p>Fix spockIssue:1267[] Retry extension behavior for unrolled tests</p>
 </li>
 <li>
-<p>Fix <a href="https://github.com/spockframework/spock/issues/1267">#1267</a> Retry extension behavior for unrolled tests</p>
+<p>Fix spockIssue:1267[] Retry extension behavior for unrolled tests</p>
 </li>
 <li>
-<p>Fix <a href="https://github.com/spockframework/spock/issues/1229">#1229</a> <code>@TempDir</code> not working for inherited fields</p>
+<p>Fix spockIssue:1229[] <code>@TempDir</code> not working for inherited fields</p>
 </li>
 <li>
-<p>Fix <a href="https://github.com/spockframework/spock/issues/1232">#1232</a> compile error for nested conditions without top-level condition</p>
+<p>Fix spockIssue:1232[] compile error for nested conditions without top-level condition</p>
 </li>
 <li>
-<p>Fix <a href="https://github.com/spockframework/spock/issues/1256">#1256</a> handling of <code>is</code> as getter for boolean properties on Mocks</p>
+<p>Fix spockIssue:1256[] handling of <code>is</code> as getter for boolean properties on Mocks</p>
 </li>
 <li>
-<p>Fix <a href="https://github.com/spockframework/spock/issues/1270">#1270</a> handling of <code>is</code> as getter for boolean properties on GroovyMocks</p>
+<p>Fix spockIssue:1270[] handling of <code>is</code> as getter for boolean properties on GroovyMocks</p>
 </li>
 <li>
 <p>Fix <code>ErrorSpecNode</code> to re-throw <code>Exception</code> in <code>prepare</code> instead of <code>execute</code>,
@@ -6632,10 +6632,10 @@ this fixes an issue that interceptors for <code>prepare</code>, <code>before</co
 were still executed and any Exception they throw would hide the actual cause.</p>
 </li>
 <li>
-<p>Fix <a href="https://github.com/spockframework/spock/issues/1263">#1263</a> ExceptionAdapterExtension to also handle inherited fixture methods</p>
+<p>Fix spockIssue:1263[] ExceptionAdapterExtension to also handle inherited fixture methods</p>
 </li>
 <li>
-<p>Fix <a href="https://github.com/spockframework/spock/issues/1279">#1279</a> Cast data variables with type coercion to the declared parameter type</p>
+<p>Fix spockIssue:1279[] Cast data variables with type coercion to the declared parameter type</p>
 </li>
 </ul>
 </div>
@@ -6677,22 +6677,22 @@ by using the <code>instance.</code> qualifier inside the condition closure.</p>
 <p><code>@PendingFeature</code> and <code>@PendingFeatureIf</code> can now be used together</p>
 </li>
 <li>
-<p>Fix <a href="https://github.com/spockframework/spock/issues/1158">#1158</a> Fix strange bug with setter/getter handling of mocks in groovy</p>
+<p>Fix spockIssue:1158[] Fix strange bug with setter/getter handling of mocks in groovy</p>
 </li>
 <li>
-<p>Fix <a href="https://github.com/spockframework/spock/issues/1216">#1216</a> perform argument coercion for <code>GroovyMock</code> method arguments</p>
+<p>Fix spockIssue:1216[] perform argument coercion for <code>GroovyMock</code> method arguments</p>
 </li>
 <li>
-<p>Fix <a href="https://github.com/spockframework/spock/issues/1169">#1169</a> check skipped state in Node.prepare and do nothing if already skipped</p>
+<p>Fix spockIssue:1169[] check skipped state in Node.prepare and do nothing if already skipped</p>
 </li>
 <li>
-<p>Fix <a href="https://github.com/spockframework/spock/issues/1200">#1200</a> name clashes where variables that are named like method calls destroy the method call</p>
+<p>Fix spockIssue:1200[] name clashes where variables that are named like method calls destroy the method call</p>
 </li>
 <li>
-<p>Fix <a href="https://github.com/spockframework/spock/issues/1202">#1202</a> NullPointerException with array initializers</p>
+<p>Fix spockIssue:1202[] NullPointerException with array initializers</p>
 </li>
 <li>
-<p>Fix <a href="https://github.com/spockframework/spock/issues/994">#994</a> don&#8217;t treat nested closures in argument constraints as implicit assertions anymore</p>
+<p>Fix spockIssue:994[] don&#8217;t treat nested closures in argument constraints as implicit assertions anymore</p>
 </li>
 <li>
 <p>Replace <code>hamcrest-core</code> dependency by <code>hamcrest</code></p>
@@ -6894,7 +6894,7 @@ the need to explicitly qualify the property access with <code>it.</code>:</p>
 </li>
 <li>
 <p>Type casts in conditions are now properly carried over to properly disambiguate method calls.
-For more information see issue <a href="https://github.com/spockframework/spock/issues/1022">#1022</a>.</p>
+For more information see issue spockIssue:1022[].</p>
 </li>
 <li>
 <p>Data tables now support any amount of semicolons to separate data table columns as alternative
@@ -7113,7 +7113,7 @@ or used it as a delegate runner will not work anymore, e.g, <code>PowerMockRunne
 <p>Fail-fast for invalid <code>Stub</code> interactions, added new validation that catches more invalid usage of <code>Stub</code></p>
 </li>
 <li>
-<p>Forbid spying on <code>Spy</code> instances, as this doesn&#8217;t work anyway and leads to wrong expectations (<a href="https://github.com/spockframework/spock/issues/1029">#1029</a>)</p>
+<p>Forbid spying on <code>Spy</code> instances, as this doesn&#8217;t work anyway and leads to wrong expectations (spockIssue:1029[])</p>
 </li>
 <li>
 <p>Update <code>Jvm</code> helper utility to include new Java versions, removed pre 8 versions</p>
@@ -7380,7 +7380,7 @@ data structure, then you need to move the condition into a separate method that 
 <div class="ulist">
 <ul>
 <li>
-<p>Add support for Java 11+ (<a href="https://github.com/spockframework/spock/issues/895">#895</a>, <a href="https://github.com/spockframework/spock/issues/902">#902</a>, <a href="https://github.com/spockframework/spock/issues/903">#903</a>)</p>
+<p>Add support for Java 11+ (spockIssue:895[], spockIssue:902[], spockIssue:903[])</p>
 </li>
 <li>
 <p>Add Groovy 2.5.0 Variant for better Java 10+ Support</p>
@@ -7398,7 +7398,7 @@ data structure, then you need to move the condition into a separate method that 
 <p>Add <code>@Retry</code> extension (<a href="#_retry">Docs</a>)</p>
 </li>
 <li>
-<p>Add flag to UnrollNameProvider to assert unroll expressions (set the system property <code>spock.assertUnrollExpressions</code> to <code>true</code>) (<a href="https://github.com/spockframework/spock/issues/767">#767</a>)</p>
+<p>Add flag to UnrollNameProvider to assert unroll expressions (set the system property <code>spock.assertUnrollExpressions</code> to <code>true</code>) (spockIssue:767[])</p>
 </li>
 <li>
 <p>Add automatic module name descriptors for Java 9</p>
@@ -7407,13 +7407,13 @@ data structure, then you need to move the condition into a separate method that 
 <p>Add configurable <code>condition</code> to <code>@Retry</code> extension to allow for customizing when retries should be attempted (<a href="#_retry">Docs</a>)</p>
 </li>
 <li>
-<p>Improve <code>@PendingFeature</code> to now have an optional <code>reason</code> attribute (<a href="https://github.com/spockframework/spock/issues/907">#907</a>)</p>
+<p>Improve <code>@PendingFeature</code> to now have an optional <code>reason</code> attribute (spockIssue:907[])</p>
 </li>
 <li>
 <p>Improve <code>@Retry</code> to be declarable on a spec class which will apply it to all feature methods in that class and subclasses (<a href="#_retry">Docs</a>)</p>
 </li>
 <li>
-<p>Improve StepwiseExtension mark only subsequent features as skipped in case of failure (<a href="https://github.com/spockframework/spock/issues/893">#893</a>)</p>
+<p>Improve StepwiseExtension mark only subsequent features as skipped in case of failure (spockIssue:893[])</p>
 </li>
 <li>
 <p>Improve in assertions Spock now uses <code>DefaultGroovyMethods.dump</code> instead of <code>toString</code> if a class doesn&#8217;t override the default <code>Object.toString</code>.</p>
@@ -7449,22 +7449,22 @@ data structure, then you need to move the condition into a separate method that 
 <p>Improve spying on concrete instances to enable partial mocking</p>
 </li>
 <li>
-<p>Fix use String renderer for Class instances (<a href="https://github.com/spockframework/spock/issues/909">#909</a>)</p>
+<p>Fix use String renderer for Class instances (spockIssue:909[])</p>
 </li>
 <li>
-<p>Fix mark new Spring extensions as @Beta (<a href="https://github.com/spockframework/spock/issues/890">#890</a>)</p>
+<p>Fix mark new Spring extensions as @Beta (spockIssue:890[])</p>
 </li>
 <li>
-<p>Fix exclude groovy-groovysh from compile dependencies (<a href="https://github.com/spockframework/spock/issues/882">#882</a>)</p>
+<p>Fix exclude groovy-groovysh from compile dependencies (spockIssue:882[])</p>
 </li>
 <li>
 <p>Fix <code>Retry.Mode.FEATURE</code> and <code>Retry.Mode.SETUP_FEATURE_CLEANUP</code> to make a test pass if a retry was successful.</p>
 </li>
 <li>
-<p>Fix issue with <code>@SpringBean</code> mocks throwing <code>InvocationTargetException</code> instead of actual declared exceptions (<a href="https://github.com/spockframework/spock/issues/878">#878</a>, <a href="https://github.com/spockframework/spock/issues/887">#887</a>)</p>
+<p>Fix issue with <code>@SpringBean</code> mocks throwing <code>InvocationTargetException</code> instead of actual declared exceptions (spockIssue:878[], spockIssue:887[])</p>
 </li>
 <li>
-<p>Fix void methods with implicit targets failing in <code>with</code> and <code>verifyAll</code> (<a href="https://github.com/spockframework/spock/issues/886">#886</a>)</p>
+<p>Fix void methods with implicit targets failing in <code>with</code> and <code>verifyAll</code> (spockIssue:886[])</p>
 </li>
 <li>
 <p>Fix SpockAssertionErrors and its subclasses now are properly <code>Serializable</code></p>
@@ -7480,7 +7480,7 @@ this has been fixed by performing the injection earlier in the process</p>
 <p>Fix OSGi Import-Package header</p>
 </li>
 <li>
-<p>Fix re-declare recorder variables (<a href="https://github.com/spockframework/spock/issues/783">#783</a>), this caused annotations such as <code>@Slf4j</code> to break Specifications</p>
+<p>Fix re-declare recorder variables (spockIssue:783[]), this caused annotations such as <code>@Slf4j</code> to break Specifications</p>
 </li>
 <li>
 <p>Fix MissingFieldException in DiffedObjectAsBeanRenderer</p>
@@ -7489,7 +7489,7 @@ this has been fixed by performing the injection earlier in the process</p>
 <p>Fix problems with nested <code>with</code> and <code>verifyAll</code> method calls</p>
 </li>
 <li>
-<p>Fix assertion of mock invocation order with nested invocations (<a href="https://github.com/spockframework/spock/issues/475">#475</a>)</p>
+<p>Fix assertion of mock invocation order with nested invocations (spockIssue:475[])</p>
 </li>
 <li>
 <p>Fix ignore inferred type for Spies on existing instance</p>
@@ -7584,7 +7584,7 @@ Burk Hufnagel, signalw, Martin Vseticka, Tilman Ginzel</p>
 <p>Add @UnwrapAopProxy to make automatically unwrap SpringAopProxies</p>
 </li>
 <li>
-<p>Add flag to UnrollNameProvider to assert unroll expressions (set the system property <code>spock.assertUnrollExpressions</code> to <code>true</code>) <a href="https://github.com/spockframework/spock/issues/767">#767</a></p>
+<p>Add flag to UnrollNameProvider to assert unroll expressions (set the system property <code>spock.assertUnrollExpressions</code> to <code>true</code>) spockIssue:767[]</p>
 </li>
 <li>
 <p>Add automatic module name descriptors for Java 9</p>
@@ -8866,7 +8866,7 @@ If you are still using spock with <code>ant</code>, then you can just copy the c
 This field can be set via extensions to change the reported name.
 The existing iteration <code>NameProvider</code> now also sets the <code>displayName</code> instead of the <code>name</code>.
 Modifying the <code>name</code> instead of <code>displayName</code> is now considered <code>deprecated</code> for extensions.
-<a href="https://github.com/spockframework/spock/issues/1236">#1236</a></p>
+spockIssue:1236[]</p>
 </li>
 <li>
 <p>Spock now requires at least Java 8</p>
@@ -9132,7 +9132,7 @@ Your tests should continue to run like before.</p>
 <h2 id="_known_issues_2"><a class="anchor" href="#_known_issues_2"></a><a class="link" href="#_known_issues_2">Known Issues</a></h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_usage_of_final_in_a_feature_method_with_cleanup_1017"><a class="anchor" href="#_usage_of_final_in_a_feature_method_with_cleanup_1017"></a><a class="link" href="#_usage_of_final_in_a_feature_method_with_cleanup_1017">Usage of <code>final</code> in a feature method with <code>cleanup</code> <a href="https://github.com/spockframework/spock/issues/1017">#1017</a></a></h3>
+<h3 id="_usage_of_final_in_a_feature_method_with_cleanup_spockissue1017"><a class="anchor" href="#_usage_of_final_in_a_feature_method_with_cleanup_spockissue1017"></a><a class="link" href="#_usage_of_final_in_a_feature_method_with_cleanup_spockissue1017">Usage of <code>final</code> in a feature method with <code>cleanup</code> spockIssue:1017[]</a></h3>
 <div class="paragraph">
 <p>You might run into issues if you use <code>final</code> in your Specification.
 Groovy 2.5 introduced a final checker which broke previously compiling code.</p>
@@ -9300,7 +9300,7 @@ This is due to how groovy implements traits and AST transformations.</p>
 <div id="footer">
 <div id="footer-text">
 Version 2.2-SNAPSHOT<br>
-Last updated 2022-06-27 09:57:44 UTC
+Last updated 2022-06-29 15:56:35 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./coderay-asciidoctor.css">

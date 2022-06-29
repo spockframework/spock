@@ -16,7 +16,7 @@ NOTE: This module does its best to support old features from JUnit 4, however, u
 
 == Guice Module
 
-Integration with the https://code.google.com/p/google-guice/[Guice] IoC container. Please add dependency https://search.maven.org/artifact/org.spockframework/spock-guice[`org.spockframework:spock-guice`] to your project. For examples see the specs in the
+Integration with the https://github.com/google/guice[Guice] IoC container. Please add dependency https://search.maven.org/artifact/org.spockframework/spock-guice[`org.spockframework:spock-guice`] to your project. For examples see the specs in the
 https://github.com/spockframework/spock/tree/master/spock-guice/src/test/groovy/org/spockframework/guice[codebase].
 
 With Spock 1.2+ detached mocks are automatically attached to the `Specification` if they are injected via `@Inject`.

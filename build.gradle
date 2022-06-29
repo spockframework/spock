@@ -83,6 +83,12 @@ ext {
   ]
 }
 
+nohttp {
+  source.exclude "**/out/**"
+  source.exclude "**/build*/**"
+  source.exclude "**/.shelf/**"
+}
+
 allprojects {
   ext.displayName = null
 

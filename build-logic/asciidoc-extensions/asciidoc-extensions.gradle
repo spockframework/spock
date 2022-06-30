@@ -8,3 +8,12 @@ dependencies {
   compileOnly 'org.asciidoctor:asciidoctorj:2.5.4'
 }
 
+tasks.register('installAsciidocExtension', Copy) {
+  from(tasks.named('jar'))
+  into('../../.asciidoctor/lib')
+}
+
+tasks.named('ideaModule').configure {
+  it.dependsOn('installAsciidocExtension')
+}
+

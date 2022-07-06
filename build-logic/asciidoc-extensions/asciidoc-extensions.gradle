@@ -13,7 +13,7 @@ tasks.register('installAsciidocExtension', Copy) {
   into('../../.asciidoctor/lib')
 }
 
-tasks.named('ideaModule').configure {
+tasks.named('ideaModule') {
   it.dependsOn('installAsciidocExtension')
 }
 

@@ -3362,6 +3362,35 @@ This will use the same logic to compute a response as <code>Stub</code> (see <a 
 <pre class="CodeRay highlight"><code data-lang="groovy">subscriber.receive(_) &gt;&gt;&gt; [<span class="string"><span class="delimiter">&quot;</span><span class="content">ok</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">fail</span><span class="delimiter">&quot;</span></span>] &gt;&gt; _ &gt;&gt; <span class="string"><span class="delimiter">&quot;</span><span class="content">ok</span><span class="delimiter">&quot;</span></span></code></pre>
 </div>
 </div>
+<div class="paragraph">
+<p>An application of this is to let a <code>Mock</code> behave like a <code>Stub</code>, but still be able to do assertions.
+The default response will return the mock itself, if the return type of the method is assignable from the mock type (excluding object).
+This is useful when dealing with fluent APIs, like builders, which are otherwise really painful to mock.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="key">given</span>:
+ThingBuilder builder = Mock() {
+  _ &gt;&gt; _
+}
+
+<span class="key">when</span>:
+Thing thing = builder
+  .id(<span class="string"><span class="delimiter">&quot;</span><span class="content">id-42</span><span class="delimiter">&quot;</span></span>)
+  .name(<span class="string"><span class="delimiter">&quot;</span><span class="content">spock</span><span class="delimiter">&quot;</span></span>)
+  .weight(<span class="integer">100</span>)
+  .build()
+
+<span class="key">then</span>:
+<span class="integer">1</span> * builder.build() &gt;&gt; <span class="keyword">new</span> Thing(<span class="key">id</span>: <span class="string"><span class="delimiter">'</span><span class="content">id-1337</span><span class="delimiter">'</span></span>)
+thing.id == <span class="string"><span class="delimiter">'</span><span class="content">id-1337</span><span class="delimiter">'</span></span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The <code>_ &gt;&gt; _</code> instructs the mock to return the default response for all interactions.
+However, interactions defined in the <code>then</code> block will have precedence over the interactions defined in the <code>given</code> block,
+this lets us override and assert the interaction we actually care about.</p>
+</div>
 </div>
 </div>
 <div class="sect2">
@@ -9342,7 +9371,7 @@ This is due to how groovy implements traits and AST transformations.</p>
 <div id="footer">
 <div id="footer-text">
 Version 2.2-SNAPSHOT<br>
-Last updated 2022-06-30 08:07:14 UTC
+Last updated 2022-07-07 16:13:47 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./coderay-asciidoctor.css">

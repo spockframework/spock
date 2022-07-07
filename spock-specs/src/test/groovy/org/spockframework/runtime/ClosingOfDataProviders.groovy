@@ -16,8 +16,10 @@
 
 package org.spockframework.runtime
 
+import spock.lang.Ignore
 import spock.lang.Specification
 
+@Ignore("Method removed from PlatformParameterizedSpecRunner")
 class ClosingOfDataProviders extends Specification {
   def runner = new PlatformParameterizedSpecRunner(null)
 

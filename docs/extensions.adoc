@@ -650,8 +650,8 @@ execution of `setupSpec` methods and the after-actions are done after the execut
 === Include and Exclude
 
 Spock is capable of including and excluding specifications according to their classes, super-classes and interfaces and
-according to annotations that are applied to the specification. Spock is also capable of including and excluding
-individual features according to annotations that are applied to the feature method. The configuration for what to
+according to annotations that are applied to the specification.Spock is also capable of including and excluding
+individual features according to annotations that are applied to the feature method.The configuration for what to
 include or exclude is done according to the <<spock-configuration-file,Spock Configuration File>> section.
 
 .Include / Exclude Configuration
@@ -668,6 +668,25 @@ runner {
   }
 }
 ----
+
+[[test-tag-extension]]
+=== Tags
+
+Since version 2.2 Spock supports https://junit.org/junit5/docs/current/user-guide/#running-tests-tags[JUnit Platform tags].
+See the platform documentation for more information regarding valid tag values and how to configure your test execution to use them.
+
+The `@Tag` annotation can be used to tag a spec or feature with one or more tags.
+If applied on a spec, the tags are applied to all features in the spec.
+Tags are inherited from parent specs.
+If applied on a feature, the tags are applied to the feature.
+
+.Tag Extension
+[source,groovy]
+----
+include::{sourcedir}/extension/TagDocSpec.groovy[tag=tag-extension]
+----
+
+NOTE: JUnit Jupiter also has a `@Tag` annotation, but it will have no effect when used on a `Specification`.
 
 === Optimize Run Order
 

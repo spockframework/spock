@@ -36,10 +36,7 @@ import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.*;
-import static org.spockframework.compiler.AstUtil.createDirectMethodCall;
-import static org.spockframework.compiler.AstUtil.createGetAtMethodCall;
-import static org.spockframework.compiler.AstUtil.isDataTableSeparator;
-import static org.spockframework.compiler.AstUtil.getExpression;
+import static org.spockframework.compiler.AstUtil.*;
 import static org.spockframework.util.ExceptionUtil.sneakyThrow;
 
 /**
@@ -306,6 +303,7 @@ public class WhereBlockRewriter {
     return p;
   }
 
+   //from: x << [1, 2, 3]
   // generates: arg = argMethodParam
   private void rewriteSimpleParameterization(BinaryExpression binExpr, ASTNode sourcePos, boolean addDataTableParameters)
       throws InvalidSpecCompileException {
@@ -317,6 +315,7 @@ public class WhereBlockRewriter {
     createDataProviderMethod(binExpr.getRightExpression(), nextDataVariableIndex, addDataTableParameters);
   }
 
+  // from: [x, y, z] << [[1, 2, 3]]
   // generates:
   // arg0 = argMethodParam.getAt(0)
   // arg1 = argMethodParam.getAt(1)
@@ -338,7 +337,7 @@ public class WhereBlockRewriter {
 
       if (listElem instanceof VariableExpression) {
         VariableExpression variable = createDataProcessorVariable(listElem, enclosingStat);
-        createDataProcessorStatement(variable, createGetAtMethodCall(rightBase, i), enclosingStat);
+        createDataProcessorStatement(variable, createGetAtWithMapSupportMethodCall(rightBase, i, variable.getName()), enclosingStat);
       } else if (listElem instanceof ListExpression) {
         VariableExpression variable = new VariableExpression("$spock_l" + localVariableCount++);
         createDataProcessorStatement(variable, createGetAtMethodCall(rightBase, i), enclosingStat);

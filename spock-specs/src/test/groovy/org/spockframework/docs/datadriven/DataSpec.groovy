@@ -135,6 +135,44 @@ class DataSpec extends EmbeddedSpecification {
 // end::nested-multi-variable-data-pipe[]
   }
 
+  def "named multi-variable data pipes"() {
+    expect:
+    a in [1, 2]
+    b in [3, 4]
+    c in [5, 6]
+
+// tag::named-multi-variable-data-pipe[]
+    where:
+    [a, b, c] << [
+      [
+        a: 1,
+        b: 3,
+        c: 5
+      ],
+      [
+        a: 2,
+        b: 4,
+        c: 6
+      ]
+    ]
+// end::named-multi-variable-data-pipe[]
+  }
+
+  def "nested and named multi-variable data pipes"() {
+    expect:
+    a in [1, 2]
+    b in [3, 4]
+    c in [5, 6]
+
+// tag::nested-and-named-multi-variable-data-pipe[]
+    where:
+    [a, [b, c]] << [
+      [1, [b: 3, c: 5]],
+      [2, [c: 6, b: 4]]
+    ]
+// end::nested-and-named-multi-variable-data-pipe[]
+  }
+
   def "maximum of two numbers data variable assignment"() {
     expect:
     Math.max(a, b) == c

@@ -16,6 +16,7 @@
 
 package org.spockframework.compiler;
 
+import org.codehaus.groovy.syntax.Token;
 import org.spockframework.lang.Wildcard;
 import org.spockframework.util.*;
 import spock.lang.Specification;
@@ -365,5 +366,15 @@ public abstract class AstUtil {
 
   public static MethodCallExpression createGetAtMethodCall(Expression expression, int index) {
     return createMethodCall(expression, GET_AT_METHOD_NAME, new ConstantExpression(index));
+  }
+  public static MethodCallExpression createGetAtMethodCall(Expression expression, String key) {
+    return createMethodCall(expression, GET_AT_METHOD_NAME, new ConstantExpression(key));
+  }
+  public static Expression createGetAtWithMapSupportMethodCall(Expression expression, int index, String key) {
+    return new TernaryExpression(
+      new BooleanExpression(new BinaryExpression(expression, Token.newKeyword("instanceof", -1, -1), new ClassExpression(ClassHelper.MAP_TYPE))),
+      createMethodCall(expression, GET_AT_METHOD_NAME, new ConstantExpression(key)),
+      createMethodCall(expression, GET_AT_METHOD_NAME, new ConstantExpression(index))
+    );
   }
 }

@@ -61,7 +61,11 @@
 <li><a href="#_reporting_of_failures">Reporting of Failures</a></li>
 <li><a href="#_method_uprolling_and_unrolling">Method Uprolling and Unrolling</a></li>
 <li><a href="#_data_pipes">Data Pipes</a></li>
-<li><a href="#_multi_variable_data_pipes">Multi-Variable Data Pipes</a></li>
+<li><a href="#_multi_variable_data_pipes">Multi-Variable Data Pipes</a>
+<ul class="sectlevel3">
+<li><a href="#multi-data-pipe-named">Named deconstruction of data pipes</a></li>
+</ul>
+</li>
 <li><a href="#_data_variable_assignment">Data Variable Assignment</a></li>
 <li><a href="#_accessing_other_data_variables">Accessing Other Data Variables</a></li>
 <li><a href="#_multi_variable_assignment">Multi-Variable Assignment</a></li>
@@ -1917,6 +1921,45 @@ where:
     [<span class="string"><span class="delimiter">'</span><span class="content">b2</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">d2</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">c2</span><span class="delimiter">'</span></span>]
   ]
 ].combinations()</code></pre>
+</div>
+</div>
+<div class="sect3">
+<h4 id="multi-data-pipe-named"><a class="anchor" href="#multi-data-pipe-named"></a><a class="link" href="#multi-data-pipe-named">Named deconstruction of data pipes</a></h4>
+<div class="paragraph">
+<p>Since Spock 2.2, multi variable data pipes can also be deconstructed from maps.
+This is useful when the data provider returns a map with named keys.
+Or, if you have long values that don&#8217;t fit well into a data-table, then using the maps makes it easier to read.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">...
+where:
+[a, b, c] &lt;&lt; [
+  [
+    <span class="key">a</span>: <span class="integer">1</span>,
+    <span class="key">b</span>: <span class="integer">3</span>,
+    <span class="key">c</span>: <span class="integer">5</span>
+  ],
+  [
+    <span class="key">a</span>: <span class="integer">2</span>,
+    <span class="key">b</span>: <span class="integer">4</span>,
+    <span class="key">c</span>: <span class="integer">6</span>
+  ]
+]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You can use named deconstruction with nested data pipes, but only on the innermost nesting level.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">...
+where:
+[a, [b, c]] &lt;&lt; [
+  [<span class="integer">1</span>, [<span class="key">b</span>: <span class="integer">3</span>, <span class="key">c</span>: <span class="integer">5</span>]],
+  [<span class="integer">2</span>, [<span class="key">c</span>: <span class="integer">6</span>, <span class="key">b</span>: <span class="integer">4</span>]]
+]</code></pre>
+</div>
 </div>
 </div>
 </div>
@@ -6333,6 +6376,10 @@ Grails 2.3 and higher have built-in Spock support and do not require a plugin.
 <p>Add <code>IDataDriver</code> extension point and refactor data provider handling <a href="https://github.com/spockframework/spock/pull/1479">#1479</a></p>
 </li>
 <li>
+<p>Add <a href="data-driven-testing.html#multi-data-pipe-named">named deconstruction</a> for multi variable datapipes.
+This might lead to changed behavior results if the data object implements <code>Map</code> but supports both positional <code>getAt(int)</code> and named <code>getAt(String)</code> access. In earlier versions, the positional access was used, but now the named access will be used. <a href="https://github.com/spockframework/spock/pull/1463">#1463</a></p>
+</li>
+<li>
 <p>Improve <code>@Stepwise</code> can be applied to data-driven feature methods, having the effect of executing them sequentially (even if concurrent test mode is active) and to skip subsequent iterations is one iteration fails. <a href="https://github.com/spockframework/spock/pull/1442">#1442</a></p>
 </li>
 <li>
@@ -9371,7 +9418,7 @@ This is due to how groovy implements traits and AST transformations.</p>
 <div id="footer">
 <div id="footer-text">
 Version 2.2-SNAPSHOT<br>
-Last updated 2022-07-07 16:13:47 UTC
+Last updated 2022-07-07 16:57:56 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./coderay-asciidoctor.css">

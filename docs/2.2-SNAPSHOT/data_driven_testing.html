@@ -567,6 +567,45 @@ where:
 ].combinations()</code></pre>
 </div>
 </div>
+<div class="sect2">
+<h3 id="multi-data-pipe-named"><a class="anchor" href="#multi-data-pipe-named"></a><a class="link" href="#multi-data-pipe-named">Named deconstruction of data pipes</a></h3>
+<div class="paragraph">
+<p>Since Spock 2.2, multi variable data pipes can also be deconstructed from maps.
+This is useful when the data provider returns a map with named keys.
+Or, if you have long values that don&#8217;t fit well into a data-table, then using the maps makes it easier to read.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">...
+where:
+[a, b, c] &lt;&lt; [
+  [
+    <span class="key">a</span>: <span class="integer">1</span>,
+    <span class="key">b</span>: <span class="integer">3</span>,
+    <span class="key">c</span>: <span class="integer">5</span>
+  ],
+  [
+    <span class="key">a</span>: <span class="integer">2</span>,
+    <span class="key">b</span>: <span class="integer">4</span>,
+    <span class="key">c</span>: <span class="integer">6</span>
+  ]
+]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You can use named deconstruction with nested data pipes, but only on the innermost nesting level.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">...
+where:
+[a, [b, c]] &lt;&lt; [
+  [<span class="integer">1</span>, [<span class="key">b</span>: <span class="integer">3</span>, <span class="key">c</span>: <span class="integer">5</span>]],
+  [<span class="integer">2</span>, [<span class="key">c</span>: <span class="integer">6</span>, <span class="key">b</span>: <span class="integer">4</span>]]
+]</code></pre>
+</div>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -1068,7 +1107,7 @@ The same can be achieved for individual features by using <code>@Unroll('#dataVa
 <div id="footer">
 <div id="footer-text">
 Version 2.2-SNAPSHOT<br>
-Last updated 2022-07-07 16:13:47 UTC
+Last updated 2022-07-07 16:57:56 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./coderay-asciidoctor.css">

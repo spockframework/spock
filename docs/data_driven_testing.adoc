@@ -290,6 +290,27 @@ The multi-assignments can even be nested. The following example will generate th
 include::{sourcedir}/datadriven/DataSpec.groovy[tag=nested-multi-variable-data-pipe]
 ----
 
+[[multi-data-pipe-named]]
+=== Named deconstruction of data pipes
+
+Since Spock 2.2, multi variable data pipes can also be deconstructed from maps.
+This is useful when the data provider returns a map with named keys.
+Or, if you have long values that don't fit well into a data-table, then using the maps makes it easier to read.
+
+[source,groovy,indent=0]
+----
+    ...
+include::{sourcedir}/datadriven/DataSpec.groovy[tag=named-multi-variable-data-pipe]
+----
+
+You can use named deconstruction with nested data pipes, but only on the innermost nesting level.
+
+[source,groovy,indent=0]
+----
+    ...
+include::{sourcedir}/datadriven/DataSpec.groovy[tag=nested-and-named-multi-variable-data-pipe]
+----
+
 == Data Variable Assignment
 
 A data variable can be directly assigned a value:

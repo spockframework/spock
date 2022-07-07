@@ -38,6 +38,14 @@ where :
 '''
   }
 
+  def "multi-parameterization with named parameters"() {
+    expect:
+    a == b
+    where:
+    [a, b] << [[a: 1, b: 1], [a: 2, b: 2], [b: 3, a: 3]]
+  }
+
+
   def "multi-parameterization with placeholder in first position"() {
     expect: a == b
     where:
@@ -118,6 +126,15 @@ where :
 expect: a == b
 where:
   [a, [_, b]] << [[3, [1, 3]]]
+'''
+  }
+
+  def "nested multi-parameterization with named parameters"() {
+    expect:
+    runner.runFeatureBody '''
+expect: a == b
+where:
+  [a, [_, b]] << [[3, [c:1, b:3]]]
 '''
   }
 

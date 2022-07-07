@@ -22,7 +22,7 @@ ext {
   buildScan.tag "groovy-$variant"
   if (variant == 2.5) {
       groovyGroup = "org.codehaus.groovy"
-      groovyVersion = "2.5.16"
+      groovyVersion = "2.5.17"
       minGroovyVersion = "2.5.0"
       maxGroovyVersion = "2.9.99"
       if(javaVersion >= 17) {
@@ -30,7 +30,7 @@ ext {
       }
     } else if (variant == 3.0) {
       groovyGroup = "org.codehaus.groovy"
-      groovyVersion = "3.0.10"
+      groovyVersion = "3.0.11"
       minGroovyVersion = "3.0.0"
       maxGroovyVersion = "3.9.99"
     }  else if (variant == 4.0) {
@@ -355,6 +355,15 @@ task groovydoc(type: Groovydoc) {
 
 configureGroovydoc(groovydoc)
 
+configurations {
+  asciidoctorExtensions
+}
+
+dependencies {
+  // local extension from build-logic/asciidoc-extensions
+  asciidoctorExtensions 'spockbuild:asciidoc-extensions'
+}
+
 asciidoctorj {
   modules {
     diagram.use()
@@ -362,6 +371,7 @@ asciidoctorj {
 }
 
 asciidoctor {
+  configurations 'asciidoctorExtensions'
   sourceDir = "docs"
   baseDirFollowsSourceDir()
   logDocuments = true

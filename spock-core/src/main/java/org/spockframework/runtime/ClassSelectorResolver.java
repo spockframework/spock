@@ -11,6 +11,8 @@ import org.junit.platform.engine.*;
 import org.junit.platform.engine.discovery.*;
 import org.junit.platform.engine.support.discovery.SelectorResolver;
 
+import static java.util.Collections.emptySet;
+
 class ClassSelectorResolver implements SelectorResolver {
 
   private final Predicate<String> classNameFilter;
@@ -61,7 +63,7 @@ class ClassSelectorResolver implements SelectorResolver {
   private Supplier<Set<? extends DiscoverySelector>> features(SpecInfo specInfo) {
     return () -> {
       specInfo.getAllFeatures().forEach(featureInfo -> featureInfo.setExcluded(false));
-      return Collections.emptySet();
+      return emptySet();
     };
   }
 }

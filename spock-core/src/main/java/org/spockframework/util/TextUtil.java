@@ -20,6 +20,8 @@ import java.io.*;
 import java.util.*;
 import java.util.regex.*;
 
+import static java.util.Arrays.asList;
+
 /**
  * Utility methods for text processing.
  *
@@ -50,7 +52,7 @@ public abstract class TextUtil {
   }
 
   public static String changeSubsequentIndent(String block, int delta, String lineSeparator) {
-    List<String> lines = Arrays.asList(block.split(lineSeparator));
+    List<String> lines = asList(block.split(lineSeparator));
     if (lines.size() == 1) {
       return block;
     }
@@ -89,16 +91,17 @@ public abstract class TextUtil {
 
   public static String join(String separator, List<?> objects) {
     StringBuilder builder = new StringBuilder();
-    for (int i = 0; i < objects.size(); i++) {
+    int size = objects.size();
+    for (int i = 0; i < size; i++) {
       builder.append(objects.get(i));
-      if (i != objects.size() - 1)
+      if (i != size - 1)
         builder.append(separator);
     }
     return builder.toString();
   }
 
   public static String join(String separator, Object... objects) {
-    return join(separator, Arrays.asList(objects));
+    return join(separator, asList(objects));
   }
 
   public static int countOccurrences(String text, char symbol) {

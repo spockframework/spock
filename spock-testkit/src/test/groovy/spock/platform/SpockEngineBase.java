@@ -11,19 +11,23 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
+
 public class SpockEngineBase {
 
   private static final Filter<?>[] FILTERS = new Filter<?>[0];
   private static final DiscoverySelector[] SELECTORS = new DiscoverySelector[0];
 
   protected void execute(DiscoverySelector selector, Consumer<EventStatistics> statisticsConsumer) {
-    execute(selector, statisticsConsumer, Collections.emptyList());
+    execute(selector, statisticsConsumer, emptyList());
   }
   protected void execute(List<DiscoverySelector> selector, Consumer<EventStatistics> statisticsConsumer) {
-    execute(selector, statisticsConsumer, Collections.emptyList());
+    execute(selector, statisticsConsumer, emptyList());
   }
   protected void execute(DiscoverySelector selector, Consumer<EventStatistics> statisticsConsumer, List<Filter<?>> filters) {
-    execute(Collections.singletonList(selector), statisticsConsumer, filters);
+    execute(singletonList(selector), statisticsConsumer, filters);
   }
   protected void execute(List<DiscoverySelector> selector, Consumer<EventStatistics> statisticsConsumer, List<Filter<?>> filters) {
     execute(selector, filters)
@@ -33,7 +37,7 @@ public class SpockEngineBase {
   }
 
   protected EngineExecutionResults execute(DiscoverySelector... selector) {
-    return execute(Arrays.asList(selector), Collections.emptyList());
+    return execute(asList(selector), emptyList());
   }
 
   protected EngineExecutionResults execute(List<DiscoverySelector> selectors, List<Filter<?>> filters) {

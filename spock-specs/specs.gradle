@@ -14,7 +14,7 @@ configurations {
 
 dependencies {
   implementation libs.groovyJmx
-  testImplementation libs.jetbrainsAnnotations
+  testCompileOnly libs.jetbrainsAnnotations
   testImplementation libs.junitPlatformTestkit
 
   testImplementation project(":spock-core")

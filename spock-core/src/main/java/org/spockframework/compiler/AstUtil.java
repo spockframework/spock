@@ -30,6 +30,9 @@ import org.codehaus.groovy.ast.stmt.*;
 import org.codehaus.groovy.runtime.dgmimpl.arrays.IntegerArrayGetAtMetaMethod;
 import org.objectweb.asm.Opcodes;
 
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
+
 /**
  * Utility methods for AST processing.
  *
@@ -84,7 +87,7 @@ public abstract class AstUtil {
   public static List<Statement> getStatements(ClosureExpression closure) {
     BlockStatement blockStat = (BlockStatement)closure.getCode();
     return blockStat == null ?
-        Collections.emptyList() : // it's not possible to add any statements to such a ClosureExpression, so immutable list is OK
+        emptyList() : // it's not possible to add any statements to such a ClosureExpression, so immutable list is OK
         blockStat.getStatements();
   }
 
@@ -217,7 +220,7 @@ public abstract class AstUtil {
 
     if (arguments instanceof NamedArgumentListExpression)
       // return same result as for NamedArgumentListExpression wrapped in TupleExpression
-      return Collections.singletonList(arguments);
+      return singletonList(arguments);
 
     return ((TupleExpression) arguments).getExpressions();
   }

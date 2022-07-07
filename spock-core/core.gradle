@@ -24,8 +24,9 @@ dependencies {
     api project(':spock-groovy2-compat')
   }
 
+  compileOnly libs.jetbrainsAnnotations
+
   implementation libs.junitPlatformTestkit, optional
-  implementation libs.jetbrainsAnnotations, optional
   implementation libs.asm, optional
   implementation libs.bytebuddy, optional
   implementation libs.cglib, optional

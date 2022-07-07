@@ -16,16 +16,23 @@
 
 package org.spockframework.runtime;
 
-import org.spockframework.compat.groovy2.GroovyCodeVisitorCompat;
-import org.spockframework.runtime.model.*;
-import org.spockframework.util.AbstractExpressionConverter;
-
-import java.util.*;
-
 import org.codehaus.groovy.ast.ASTNode;
 import org.codehaus.groovy.ast.expr.*;
 import org.codehaus.groovy.classgen.BytecodeExpression;
 import org.codehaus.groovy.syntax.Types;
+import org.spockframework.compat.groovy2.GroovyCodeVisitorCompat;
+import org.spockframework.runtime.model.ExpressionInfo;
+import org.spockframework.runtime.model.TextPosition;
+import org.spockframework.runtime.model.TextRegion;
+import org.spockframework.util.AbstractExpressionConverter;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
 
 // NOTE: expressions which don't produce a value are handled as follows:
 // - exactly one child: don't create ExpressionInfo (replace with child's ExpressionInfo)
@@ -94,9 +101,9 @@ public class ExpressionInfoConverter extends AbstractExpressionConverter<Express
         TextRegion.of(expr),
         TextPosition.startOf(expr.getProperty()),
         expr.getPropertyAsString(),
-        expr.isImplicitThis() ?
-            Collections.emptyList() :
-            Collections.singletonList(convert(expr.getObjectExpression())));
+        expr.isImplicitThis()
+          ? emptyList()
+          : singletonList(convert(expr.getObjectExpression())));
   }
 
   @Override
@@ -274,7 +281,7 @@ public class ExpressionInfoConverter extends AbstractExpressionConverter<Express
         startOf("?", expr.getTrueExpression()),
         "?:",
         convertAll(
-            Arrays.asList(
+            asList(
                 expr.getBooleanExpression(),
                 expr.getTrueExpression(),
                 expr.getFalseExpression()))

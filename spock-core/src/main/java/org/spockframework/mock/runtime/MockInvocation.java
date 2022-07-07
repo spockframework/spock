@@ -21,6 +21,8 @@ import org.spockframework.util.*;
 
 import java.util.*;
 
+import static java.util.Arrays.asList;
+
 /**
  *
  * @author Peter Niederwieser
@@ -64,7 +66,7 @@ public class MockInvocation implements IMockInvocation {
       return realMethodInvoker.respond(new DelegatingMockInvocation(this) {
         @Override
         public List<Object> getArguments() {
-          return Arrays.asList(arguments);
+          return asList(arguments);
         }
       });
   }

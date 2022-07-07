@@ -63,6 +63,10 @@ public class SpockReleaseInfo {
   }
 
   public static String getArtifactPath() {
-    return SpockReleaseInfo.class.getProtectionDomain().getCodeSource().getLocation().toString();
+    try {
+      return SpockReleaseInfo.class.getProtectionDomain().getCodeSource().getLocation().toString();
+    } catch (Exception e) {
+      return "unavailable";
+    }
   }
 }

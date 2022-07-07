@@ -3,6 +3,8 @@ package org.spockframework.gentyref;
 import java.lang.reflect.*;
 import java.util.*;
 
+import static java.util.Arrays.asList;
+
 class CaptureTypeImpl implements CaptureType {
 	private final WildcardType wildcard;
 	private final TypeVariable<?> variable;
@@ -25,9 +27,9 @@ class CaptureTypeImpl implements CaptureType {
 	 * This is needed for type variable bounds referring to each other: we need the capture of the argument.
 	 */
 	void init(VarMap varMap) {
-		ArrayList<Type> upperBoundsList = new ArrayList<>(Arrays.asList(varMap.map(variable.getBounds())));
+		ArrayList<Type> upperBoundsList = new ArrayList<>(asList(varMap.map(variable.getBounds())));
 
-    List<Type> wildcardUpperBounds = Arrays.asList(wildcard.getUpperBounds());
+    List<Type> wildcardUpperBounds = asList(wildcard.getUpperBounds());
 		if (wildcardUpperBounds.size() > 0 && wildcardUpperBounds.get(0) == Object.class) {
 			// skip the Object bound, we already have a first upper bound from 'variable'
 			upperBoundsList.addAll(wildcardUpperBounds.subList(1, wildcardUpperBounds.size()));

@@ -5,6 +5,10 @@ import spock.config.RunnerConfiguration;
 
 import org.junit.platform.engine.*;
 
+import java.util.Set;
+
+import static java.util.stream.Collectors.toSet;
+
 public abstract class FeatureNode extends SpockNode<FeatureInfo> {
 
   public FeatureNode(UniqueId uniqueId, String displayName, TestSource source, RunnerConfiguration configuration,
@@ -15,6 +19,14 @@ public abstract class FeatureNode extends SpockNode<FeatureInfo> {
   @Override
   public Type getType() {
     return Type.CONTAINER;
+  }
+
+  @Override
+  public Set<TestTag> getTags() {
+    return getNodeInfo().getTestTags().stream()
+      .map(org.spockframework.runtime.model.TestTag::getValue)
+      .map(TestTag::create)
+      .collect(toSet());
   }
 
   @Override

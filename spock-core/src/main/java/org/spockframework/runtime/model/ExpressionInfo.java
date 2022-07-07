@@ -20,6 +20,8 @@ import org.spockframework.util.*;
 
 import java.util.*;
 
+import static java.util.Arrays.asList;
+
 /**
  * @author Peter Niederwieser
  */
@@ -62,7 +64,7 @@ public class ExpressionInfo implements Iterable<ExpressionInfo> {
 
   public ExpressionInfo(TextRegion region, TextPosition anchor, @Nullable String operation,
       ExpressionInfo... children) {
-    this(region, anchor, operation, Arrays.asList(children));
+    this(region, anchor, operation, asList(children));
   }
 
   public TextRegion getRegion() {

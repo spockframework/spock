@@ -23,6 +23,10 @@ import spock.lang.Requires;
 
 import groovy.lang.Closure;
 
+import java.util.List;
+
+import static java.util.Collections.singletonList;
+
 /**
  * @author Peter Niederwieser
  */
@@ -37,13 +41,9 @@ public class RequiresExtension extends ConditionalExtension<Requires> {
 
   @Override
   protected void specConditionResult(boolean result, Requires annotation, SpecInfo spec) {
-    if (!result) {
-      if (annotation.inherited()) {
-        spec.getBottomSpec().skip(ignoredMessage(annotation));
-      } else {
-        spec.skip(ignoredMessage(annotation));
-      }
-    }
+    if (result) return;
+    List<SpecInfo> specsToSkip = annotation.inherited() ? spec.getSpecsCurrentToBottom() : singletonList(spec);
+    specsToSkip.forEach(toSkip -> toSkip.skip(ignoredMessage(annotation)));
   }
 
   @Override

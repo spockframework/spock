@@ -27,6 +27,8 @@ import org.codehaus.groovy.runtime.*;
 import org.codehaus.groovy.runtime.metaclass.MetaClassRegistryImpl;
 import org.codehaus.groovy.runtime.typehandling.*;
 
+import static java.util.Arrays.asList;
+
 /**
  * Provides convenient access to Groovy language and runtime features.
  * By convention, all usages of Groovy's InvokerHelper and
@@ -242,7 +244,7 @@ public abstract class GroovyRuntimeUtil {
 
   public static List<Object> asArgumentList(Object args) {
     // there may be a better impl than this (maybe on some Groovy class)
-    return Arrays.asList(GroovyRuntimeUtil.asArgumentArray(args));
+    return asList(GroovyRuntimeUtil.asArgumentArray(args));
   }
 
   public static Object[] despreadList(Object[] args, Object[] spreads, int[] positions) {

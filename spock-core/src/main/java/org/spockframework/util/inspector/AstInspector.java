@@ -16,18 +16,25 @@
 
 package org.spockframework.util.inspector;
 
-import org.spockframework.compiler.AstUtil;
-
-import java.io.*;
-import java.security.CodeSource;
-import java.util.*;
-
 import groovy.lang.GroovyClassLoader;
 import org.codehaus.groovy.ast.*;
 import org.codehaus.groovy.ast.expr.*;
-import org.codehaus.groovy.ast.stmt.*;
+import org.codehaus.groovy.ast.stmt.BlockStatement;
+import org.codehaus.groovy.ast.stmt.ExpressionStatement;
+import org.codehaus.groovy.ast.stmt.Statement;
 import org.codehaus.groovy.control.*;
 import org.intellij.lang.annotations.Language;
+import org.spockframework.compiler.AstUtil;
+
+import java.io.File;
+import java.io.IOException;
+import java.security.CodeSource;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static java.util.Collections.emptyList;
 
 /**
  * Utility class for inspecting the abstract syntax tree (AST) produced by
@@ -384,9 +391,9 @@ public class AstInspector {
 
   @SuppressWarnings("unchecked")
   private static List<Statement> getStatements(BlockStatement blockStat) {
-    return blockStat == null ?
-      Collections.emptyList() :
-      blockStat.getStatements();
+    return blockStat == null
+      ? emptyList()
+      : blockStat.getStatements();
   }
 
   private static List<Expression> getExpressions(List<Statement> statements) {

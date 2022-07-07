@@ -20,6 +20,7 @@ import org.spockframework.runtime.model.*;
 import java.lang.annotation.Annotation;
 import java.util.*;
 
+import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -94,7 +95,7 @@ public class ExtensionRunner {
         .collect(toList());
     } else {
       annotations = new ArrayList<>();
-      List<Class<? extends Annotation>> repeatedAnnotations = Arrays.asList(repeatedExtensionAnnotations.value());
+      List<Class<? extends Annotation>> repeatedAnnotations = asList(repeatedExtensionAnnotations.value());
 
       // add all direct annotations except those marked as repeated
       Arrays.stream(node.getAnnotations())
@@ -106,7 +107,7 @@ public class ExtensionRunner {
 
       // add all annotations marked as repeated
       for (Class<? extends Annotation> repeatedAnnotation : repeatedAnnotations) {
-        annotations.add(Arrays.asList(node.getAnnotationsByType(repeatedAnnotation)));
+        annotations.add(asList(node.getAnnotationsByType(repeatedAnnotation)));
       }
     }
 

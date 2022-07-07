@@ -17,14 +17,15 @@
 package org.spockframework.spring.xml;
 
 import org.spockframework.mock.MockNature;
-import spock.mock.DetachedMockFactory;
-
-import java.util.Collections;
-
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
-import org.springframework.beans.factory.config.*;
-import org.springframework.beans.factory.support.*;
+import org.springframework.beans.factory.config.BeanPostProcessor;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.beans.factory.support.BeanDefinitionRegistry;
+import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
+import spock.mock.DetachedMockFactory;
+
+import static java.util.Collections.emptyMap;
 
 /**
  * Wraps a given Spring bean with a detached Spock spy
@@ -50,8 +51,7 @@ public class SpockSpyBeanPostProcessor implements BeanPostProcessor, BeanDefinit
     @Override
     public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
         if (this.beanName.equals(beanName)) {
-            return new DetachedMockFactory().createMock(beanName, bean, MockNature.SPY,
-                    Collections.<String, Object>emptyMap());
+            return new DetachedMockFactory().createMock(beanName, bean, MockNature.SPY, emptyMap());
         } else {
             return bean;
         }

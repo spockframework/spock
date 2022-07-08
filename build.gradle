@@ -158,10 +158,6 @@ subprojects {
     }
   }
 
-  configurations {
-    all*.exclude module: "junit-dep"
-  }
-
   dependencies {
     implementation(project.name == "spock-gradle" ? [] : libs.groovy)
   }

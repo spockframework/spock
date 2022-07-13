@@ -8,7 +8,7 @@ ext.unitilsVersion = "3.4.6"
 
 dependencies {
   api project(":spock-core")
-  implementation "org.unitils:unitils-core:${unitilsVersion}"
+  compileOnly "org.unitils:unitils-core:${unitilsVersion}"
 
   testImplementation "org.unitils:unitils-dbunit:${unitilsVersion}", {
     exclude module: "jta"

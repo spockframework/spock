@@ -13,11 +13,14 @@ if (springVersion.startsWith("2.")) {
 
 dependencies {
   api project(":spock-core")
-  implementation "org.springframework:spring-test:$springVersion", provided
-  implementation "org.springframework:spring-beans:$springVersion", provided
-  implementation "org.springframework:spring-context:$springVersion", provided
+  compileOnly "org.springframework:spring-test:$springVersion"
+  compileOnly "org.springframework:spring-beans:$springVersion"
+  compileOnly "org.springframework:spring-context:$springVersion"
 
   // not used directly at implementation-time, but needed by groovyc
+  testImplementation "org.springframework:spring-test:$springVersion"
+  testImplementation "org.springframework:spring-beans:$springVersion"
+  testImplementation "org.springframework:spring-context:$springVersion"
   testImplementation "org.springframework:spring-core:$springVersion"
   testImplementation "org.springframework:spring-jdbc:$springVersion"
   testImplementation "org.springframework:spring-tx:$springVersion"
@@ -27,6 +30,9 @@ dependencies {
 
   testRuntimeOnly libs.h2database
   testRuntimeOnly libs.log4j
+  testRuntimeOnly libs.bytebuddy
+  testRuntimeOnly libs.cglib
+  testRuntimeOnly libs.objenesis
 }
 
 task testCglib(type: Test) {

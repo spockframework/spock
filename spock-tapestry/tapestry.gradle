@@ -12,10 +12,10 @@ def tapestryVersionTest = useTapestry54 ? tapestryVersion54 : "5.2.6"
 
 dependencies {
   api project(":spock-core")
-  implementation "org.apache.tapestry:tapestry-ioc:$tapestryVersion54", provided
+  compileOnly "org.apache.tapestry:tapestry-ioc:$tapestryVersion54"
 
   testImplementation "javax.inject:javax.inject:1"
-  testRuntimeOnly ("org.apache.tapestry:tapestry-ioc:$tapestryVersionTest"){
+  testImplementation ("org.apache.tapestry:tapestry-ioc:$tapestryVersionTest"){
     force = true
   }
 }

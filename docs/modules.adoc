@@ -16,7 +16,7 @@ NOTE: This module does its best to support old features from JUnit 4, however, u
 
 == Guice Module
 
-Integration with the http://code.google.com/p/google-guice/[Guice] IoC container. Please add dependency https://search.maven.org/artifact/org.spockframework/spock-guice[`org.spockframework:spock-guice`] to your project. For examples see the specs in the
+Integration with the https://github.com/google/guice[Guice] IoC container. Please add dependency https://search.maven.org/artifact/org.spockframework/spock-guice[`org.spockframework:spock-guice`] to your project. For examples see the specs in the
 https://github.com/spockframework/spock/tree/master/spock-guice/src/test/groovy/org/spockframework/guice[codebase].
 
 With Spock 1.2+ detached mocks are automatically attached to the `Specification` if they are injected via `@Inject`.
@@ -26,13 +26,13 @@ include::module_spring.adoc[leveloffset=+1]
 
 == Tapestry Module
 
-Integration with the http://tapestry.apache.org/tapestry5/[Tapestry5] IoC container. Please add dependency https://search.maven.org/artifact/org.spockframework/spock-tapestry[`org.spockframework:spock-tapestry`] to your project. For examples see the specs in the
+Integration with the https://tapestry.apache.org/tapestry5/[Tapestry5] IoC container. Please add dependency https://search.maven.org/artifact/org.spockframework/spock-tapestry[`org.spockframework:spock-tapestry`] to your project. For examples see the specs in the
 https://github.com/spockframework/spock/tree/master/spock-tapestry/src/test/groovy/org/spockframework/tapestry[codebase].
 
 
 == Unitils Module
 
-Integration with the http://www.unitils.org/[Unitils] library. Please add dependency https://search.maven.org/artifact/org.spockframework/spock-unitils[`org.spockframework:spock-unitils`] to your project. For examples see the specs in the
+Integration with the https://www.unitils.org/[Unitils] library. Please add dependency https://search.maven.org/artifact/org.spockframework/spock-unitils[`org.spockframework:spock-unitils`] to your project. For examples see the specs in the
 https://github.com/spockframework/spock/tree/master/spock-unitils/src/test/groovy/org/spockframework/unitils[codebase].
 
 

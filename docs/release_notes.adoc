@@ -936,7 +936,7 @@ that now is the time to join the party!
 
 A special thanks goes to all our tireless speakers and supporters, only a few of which are listed here: Andres Almiray,
 Cédric Champeau, David Dawson, Rob Fletcher, Sean Gilligan, Ken Kousen, Guillaume Laforge,
-http://www.nofluffjuststuff.com/home/main[NFJS Tour], Graeme Rocher, Baruch Sadogursky, Odin Hole Standal,
+https://www.nofluffjuststuff.com/home/main[NFJS Tour], Graeme Rocher, Baruch Sadogursky, Odin Hole Standal,
 Howard M. Lewis Ship, Ken Sipe, Venkat Subramaniam, Russel Winder.
 
 === What's New In This Release
@@ -944,22 +944,22 @@ Howard M. Lewis Ship, Ken Sipe, Venkat Subramaniam, Russel Winder.
 * <<Contributors,17 contributors>>, <<Resolved Issues,21 resolved issues>>, <<Merged Pull Requests,18 merged pull requests>>,
   <<Ongoing Work,some ongoing work>>. No ground-breaking new features, but significant improvements and fixes across the board.
 * Minimum runtime requirements raised to JRE 1.6 and Groovy 2.0.
-* Improved and restyled reference documentation at http://docs.spockframework.org. Generated with
-  http://asciidoctor.org/[Asciidoctor] (what else?).
+* Improved and restyled reference documentation at https://docs.spockframework.org. Generated with
+  https://asciidoctor.org/[Asciidoctor] (what else?).
 * Maven plugin removed. Just let Maven Surefire run your Spock specs like your JUnit tests
-  (see http://examples.spockframework.org[spock-example] project).
+  (see https://examples.spockframework.org[spock-example] project).
 * Official support for Java 1.8, Groovy 2.3 and Groovy 2.4. Make sure to pick the `groovy-2.0` binaries for Groovy
   2.0/2.1/2.2, `groovy-2.3` binaries for Groovy 2.3, and `groovy-2.4` binaries for Groovy 2.4 and higher.
 * Improved infrastructure to allow for easier community involvement: Switch to
-  http://issues.spockframework.org[GitHub issue tracker], http://winbuilds.spockframework.org[Windows] and
-  http://builds.spockframework.org[Linux] CI builds, pull requests automatically tested, all development on `master`
+  https://issues.spockframework.org[GitHub issue tracker], https://winbuilds.spockframework.org[Windows] and
+  https://builds.spockframework.org[Linux] CI builds, pull requests automatically tested, all development on `master`
   branch (bye-bye `groovy-x.y` branches!).
 
 === Other News
 
-* Follow our new http://twitter.spockframework.org[Twitter account]
+* Follow our new https://twitter.spockframework.org[Twitter account]
 * Try these <<New Third Party Extensions,new third-party extensions>>
-* Check out the upcoming http://manning.com/kapelonis/[Java Testing with Spock] book from Manning
+* Check out the upcoming https://manning.com/kapelonis/[Java Testing with Spock] book from Manning
 
 === What's Up Next?
 
@@ -1055,7 +1055,7 @@ These awesome extensions have been published or updated:
 
 These great features didn't make it into this release (but hopefully the next!):
 
-* http://spockframework.github.io/spock/sampleReports/Ninja%20Commander.html[Spock reports]
+* https://spockframework.github.io/spock/sampleReports/Ninja%20Commander.html[Spock reports]
 * https://github.com/spockframework/spock/pull/49[Render exceptions in conditions as condition failure]
 * https://github.com/spockframework/spock/pull/50[Soft asserts: check all then throw all failures]
 * https://github.com/spockframework/spock/pull/17[Detached mocks]
@@ -1068,10 +1068,10 @@ Spock snapshots are now available from https://oss.sonatype.org/content/reposito
 
 === New Reference Documentation
 
-The new Spock reference documentation is available at http://docs.spockframework.org.
-It will gradually replace the documentation at http://wiki.spockframework.org.
-Each Spock version is documented separately (e.g. http://docs.spockframework.org/en/spock-0.7-groovy-1.8).
-Documentation for the latest Spock snapshot is at http://docs.spockframework.org/en/latest.
+The new Spock reference documentation is available at https://docs.spockframework.org.
+It will gradually replace the documentation at https://wiki.spockframework.org.
+Each Spock version is documented separately (e.g. https://docs.spockframework.org/en/spock-0.7-groovy-1.8).
+Documentation for the latest Spock snapshot is at https://docs.spockframework.org/en/latest.
 As of Spock 0.7, the chapters on <<data_driven_testing.adoc#data-driven-testing,Data Driven Testing>> and
 <<interaction_based_testing.adoc#interaction-based-testing,Interaction Based Testing>> are complete.
 
@@ -1339,7 +1339,7 @@ Caused by: java.io.FileNotFoundException: ...
 === `HamcrestSupport.expect`
 
 Class `spock.util.matcher.HamcrestSupport` has a new `expect` method that makes
-http://code.google.com/p/hamcrest/[Hamcrest] assertions read better in then-blocks:
+https://hamcrest.org/JavaHamcrest/[Hamcrest] assertions read better in then-blocks:
 
 [source,groovy]
 ----
@@ -1376,7 +1376,7 @@ foo.bar() >> { throw new IOException() } >>> [1, 2, 3] >> { throw new RuntimeExc
 
 It's now possible to match any argument list (including the empty list) with `foo.bar(*_)`.
 
-Method arguments can now be constrained with http://code.google.com/p/hamcrest/[Hamcrest] matchers:
+Method arguments can now be constrained with https://hamcrest.org/JavaHamcrest/[Hamcrest] matchers:
 
 [source,groovy]
 ----
@@ -1416,7 +1416,7 @@ as an addition or alternative to Spock's own fixture methods. This was particula
 
 === Tapestry 5.3 Support
 
-Thanks to a contribution from http://howardlewisship.com/[Howard Lewis Ship], the Tapestry module is now compatible
+Thanks to a contribution from https://howardlewisship.com/[Howard Lewis Ship], the Tapestry module is now compatible
 with Tapestry 5.3. Older 5.x versions are still supported.
 
 === IBM JDK Support
@@ -1485,12 +1485,12 @@ a | b || sum
 
 Spock 0.6 ships in three variants for Groovy 1.7, 1.8, and 2.0. Make sure to pick the right version - for example,
 for Groovy 1.8 you need to use spock-core-0.6-groovy-1.8 (likewise for all other modules). The Groovy 2.0 variant
-is based on Groovy 2.0-beta-3-SNAPSHOT and only available from http://m2repo.spockframework.org. The Groovy 1.7 and
+is based on Groovy 2.0-beta-3-SNAPSHOT and only available from https://m2repo.spockframework.org. The Groovy 1.7 and
 1.8 variants are also available from Maven Central. The next version of Spock will no longer support Groovy 1.7.
 
 === Grails 2.0 Support
 
-Spock's Grails plugin was split off into a separate project and now lives at http://github.spockframework.org/spock-grails.
+Spock's Grails plugin was split off into a separate project and now lives at https://github.spockframework.org/spock-grails.
 The plugin supports both Grails 1.3 and 2.0.
 
 The Spock Grails plugin supports all of the new Grails 2.0 test mixins, effectively deprecating the existing unit
@@ -1498,22 +1498,22 @@ testing classes (e.g. UnitSpec). For integration testing, IntegrationSpec must s
 
 === IntelliJ IDEA Integration
 
-The folks from http://www.jetbrains.com[JetBrains] have added a few handy features around data tables. Data tables
+The folks from https://www.jetbrains.com[JetBrains] have added a few handy features around data tables. Data tables
 will now be layed out automatically when reformatting code. Data variables are no longer shown as "unknown" and have
 their types inferred from the values in the table (!).
 
 === GitHub Repository
 
-All source code has moved to http://github.spockframework.org/. The http://github.spockframework.org/spock-grails[Grails Spock plugin],
-http://github.spockframework.org/spock-example[Spock Example] project, and
-http://github.spockframework.org/spockwebconsole[Spock Web Console] now have their own GitHub projects.
+All source code has moved to https://github.spockframework.org/. The https://github.spockframework.org/spock-grails[Grails Spock plugin],
+https://github.spockframework.org/spock-example[Spock Example] project, and
+https://github.spockframework.org/spockwebconsole[Spock Web Console] now have their own GitHub projects.
 Also available are slides and code for various Spock presentations (such as
-http://github.spockframework.org/smarter-testing-with-spock[this one]).
+https://github.spockframework.org/smarter-testing-with-spock[this one]).
 
 === Gradle Build
 
 Spock is now exclusively built with Gradle. Building Spock yourself is as easy as cloning the
-http://github.spockframework.org/spock[Github repo] and executing `gradlew build`. No build tool installation is
+https://github.spockframework.org/spock[Github repo] and executing `gradlew build`. No build tool installation is
 required; the only prerequisite for building Spock is a JDK installation (1.5 or higher).
 
 === Fixed Issues

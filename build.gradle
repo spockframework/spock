@@ -7,6 +7,7 @@ plugins {
   id "net.nemerosa.versioning"
   id "io.github.gradle-nexus.publish-plugin"
   id "com.github.ben-manes.versions"
+  id "io.spring.nohttp"
 }
 
 description = "Spock Framework"
@@ -80,6 +81,12 @@ ext {
     objenesis           : [group: 'org.objenesis', name: 'objenesis', version: '3.2'],
     jacocoAgent         : [group: 'org.jacoco', name: 'org.jacoco.agent', version: '0.8.7', classifier: 'runtime']
   ]
+}
+
+nohttp {
+  source.exclude "**/out/**"
+  source.exclude "**/build*/**"
+  source.exclude "**/.shelf/**"
 }
 
 allprojects {
@@ -427,7 +434,7 @@ def configureJavadoc(task) {
       links "https://docs.oracle.com/javase/8/docs/api/"
       links "https://docs.groovy-lang.org/docs/groovy-$groovyVersion/html/gapi/"
       links "https://junit.org/junit4/javadoc/latest/"
-      links "http://hamcrest.org/JavaHamcrest/javadoc/2.2/"
+      links "https://hamcrest.org/JavaHamcrest/javadoc/2.2/"
     }
   }
 }

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -30,7 +30,7 @@ import org.springframework.transaction.annotation.Transactional
  *
  * To learn more about transaction management in the Spring TestContext
  * framework, see:
- * http://static.springsource.org/spring/docs/3.0.x/reference/testing.html#testcontext-tx
+ * https://static.springsource.org/spring/docs/3.0.x/reference/testing.html#testcontext-tx
  *
  * Note: Due to the way Spring's TestContext framework is designed,
  * @Shared fields cannot be injected. This also means that

@@ -4,7 +4,7 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -61,7 +61,7 @@ public class HamcrestSupport {
    *
    * <p>The matchers that ship with JUnit aren't very useful per se.
    * Instead, you will want to use matchers from Hamcrest
-   * (http://code.google.com/p/hamcrest/) or other libraries. Both Hamcrest
+   * (https://hamcrest.org/JavaHamcrest/) or other libraries. Both Hamcrest
    * 1.1 and 1.2 are supported. You can also write your own matchers,
    * building up a matcher library that's specific to the needs of your project.
    *

@@ -4,7 +4,7 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -108,7 +108,7 @@ public abstract class GroovyRuntimeUtil {
    * This method differs from Groovy 1.6.8 in that the latter
    * doesn't support the "is" prefix for static boolean properties;
    * however, that seems more like a bug.
-   * See http://jira.codehaus.org/browse/GROOVY-4206
+   * See https://jira.codehaus.org/browse/GROOVY-4206
    */
   @Nullable
   public static String getterMethodToPropertyName(String methodName, List<Class<?>> parameterTypes, Class<?> returnType) {
@@ -268,7 +268,7 @@ public abstract class GroovyRuntimeUtil {
     // from java.lang.Object, and since we operate on a best effort basis, that's OK
     // also we will choose a static method like Foo.getName() over the equally
     // named method on java.lang.Class, but this is consistent with current Groovy semantics
-    // (see http://jira.codehaus.org/browse/GROOVY-3548)
+    // (see https://jira.codehaus.org/browse/GROOVY-3548)
     // in the end it's probably best to rely on NullAwareInvokeMethodSpec to tell us if
     // everything is OK
     MetaClass metaClass = target instanceof Class ?

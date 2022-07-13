@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -50,7 +50,7 @@ class WhenThenBlocks extends Specification {
     when: x = 1
     and: y = 2
     then: x == 1
-    then: "y is 2" 
+    then: "y is 2"
       y == 2
   }
 
@@ -61,7 +61,7 @@ class WhenThenBlocks extends Specification {
     and: y == 2
     then: z == 3
   }
-  
+
   def "multiple when-thens"() {
     def x
     when: x = 1

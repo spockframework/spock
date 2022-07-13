@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -25,7 +25,7 @@ import com.google.inject.Module;
 import org.spockframework.util.Beta;
 
 /**
- * Activates <a href="http://code.google.com/p/google-guice/">Guice</a> integration for a specification.
+ * Activates <a href="https://github.com/google/guice">Guice</a> integration for a specification.
  * The specified modules will be started before and stopped after the specification's execution.
  * Services will be injected into the specification based on regular Guice annotations.
  *

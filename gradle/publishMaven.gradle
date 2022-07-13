@@ -19,18 +19,18 @@ publishing {
       pom {
         name = provider { project.ext.displayName }
         description = provider { project.description }
-        url = "http://spockframework.org"
+        url = "https://spockframework.org"
         licenses {
           license {
             name = "The Apache Software License, Version 2.0"
-            url = "http://www.apache.org/licenses/LICENSE-2.0.txt"
+            url = "https://www.apache.org/licenses/LICENSE-2.0.txt"
             distribution = "repo"
           }
         }
         scm {
           connection = "scm:git:git://github.com/spockframework/spock.git"
           developerConnection = "scm:git:ssh://git@github.com/spockframework/spock.git"
-          url = "http://github.spockframework.org/spock"
+          url = "https://github.spockframework.org/spock"
         }
         developers {
           developer {

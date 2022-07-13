@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -28,16 +28,16 @@ class InvalidUsageSpec extends Specification {
     runner.run('''
     import org.spockframework.spring.*
     import spock.lang.Specification
-    
+
     import org.springframework.beans.factory.annotation.Autowired
     import org.springframework.test.context.ContextConfiguration
-    
+
     @ContextConfiguration(classes = org.spockframework.spring.mock.DemoMockContext)
     class ASpec extends Specification {
-    
+
       @SpringBean
       Service2 service2
-      
+
       def test() {
         expect: true
       }
@@ -55,16 +55,16 @@ class InvalidUsageSpec extends Specification {
     runner.run('''
     import org.spockframework.spring.*
     import spock.lang.Specification
-    
+
     import org.springframework.beans.factory.annotation.Autowired
     import org.springframework.test.context.ContextConfiguration
-    
+
     @ContextConfiguration(classes = org.spockframework.spring.mock.DemoMockContext)
     class ASpec extends Specification {
-    
+
       @SpringBean
       def service2 = Mock(Service2)
-      
+
       def test() {
         expect: true
       }
@@ -81,16 +81,16 @@ class InvalidUsageSpec extends Specification {
     runner.run('''
     import org.spockframework.spring.*
     import spock.lang.Specification
-    
+
     import org.springframework.beans.factory.annotation.Autowired
     import org.springframework.test.context.ContextConfiguration
-    
+
     @ContextConfiguration(classes = org.spockframework.spring.mock.DemoMockContext)
     class ASpec extends Specification {
-    
+
       @SpringSpy
       def service2
-      
+
       def test() {
         expect: true
       }
@@ -107,16 +107,16 @@ class InvalidUsageSpec extends Specification {
     runner.run('''
     import org.spockframework.spring.*
     import spock.lang.Specification
-    
+
     import org.springframework.beans.factory.annotation.Autowired
     import org.springframework.test.context.ContextConfiguration
-    
+
     @ContextConfiguration(classes = org.spockframework.spring.mock.DemoMockContext)
     class ASpec extends Specification {
-    
+
       @SpringSpy
       Service2 service2 = Mock()
-      
+
       def test() {
         expect: true
       }

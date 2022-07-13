@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -78,14 +78,14 @@ class SpreadWildcardUsage extends Specification {
     then:
     0 * varargs.m("one", "two", "three", "four", *_)
   }
-  
+
   @FailsWith(InvalidSpecException)
   def "may only be used at the end of an argument list"() {
     Overloads overloads = Mock()
 
     when:
     overloads.m("one", "two", "three")
-    
+
     then:
     1 * overloads.m("one", *_, "three")
   }

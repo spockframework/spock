@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -419,7 +419,7 @@ public class ConditionRewriter extends AbstractExpressionConverter<Expression> i
   @Override
   public void visitSpreadMapExpression(SpreadMapExpression expr) {
     // to not record the underlying MapExpression twice, we do nothing here
-    // see http://jira.codehaus.org/browse/GROOVY-3421
+    // see https://jira.codehaus.org/browse/GROOVY-3421
     result = recordNa(expr);
   }
 

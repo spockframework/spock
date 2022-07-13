@@ -4,7 +4,7 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -47,7 +47,7 @@ class MockNames extends Specification {
   def "if a mock isn't assigned to a variable at the point of its creation, it doesn't have a name"() {
     when:
     Mock(List).get(0)
-    
+
     then:
     1 * _ >> { IMockInvocation inv -> assert inv.mockObject.name == null }
   }

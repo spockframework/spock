@@ -526,9 +526,8 @@ def ignoreMyExceptions
 
 In order to generate a temporary directory for test and delete it after test, annotate a member field of type
 `java.io.File`, `java.nio.file.Path` or untyped using `def` in a spec class (`def` will inject a `Path`).
-Alternatively, you can annotate a field with a custom type that has a public constructor accepting either `java.io.File` or `java.nio.file.Path` as its single parameter (see <<utilities.adoc#fs-fixture, FsFixture>> for an example). If the
-annotated field is `@Shared`, the temporary directory will be shared in the corresponding specification, otherwise every
-feature method and every iteration per parametrized feature method will have their own temporary directories:
+Alternatively, you can annotate a field with a custom type that has a public constructor accepting either `java.io.File` or `java.nio.file.Path` as its single parameter (see <<utilities.adoc#file-stystem-fixture, FileSystemFixture>> for an example).
+If the annotated field is `@Shared`, the temporary directory will be shared in the corresponding specification, otherwise every feature method and every iteration per parametrized feature method will have their own temporary directories:
 
 [source,groovy,indent=0]
 ----

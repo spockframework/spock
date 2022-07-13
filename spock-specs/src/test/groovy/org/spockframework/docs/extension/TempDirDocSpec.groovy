@@ -1,7 +1,7 @@
 package org.spockframework.docs.extension
 
 import spock.lang.*
-import spock.util.io.FsFixture
+import spock.util.io.FileSystemFixture
 
 import java.nio.file.Path
 
@@ -27,14 +27,14 @@ class TempDirDocSpec extends Specification {
 
   // use a custom class that accepts java.nio.file.Path as sole constructor parameter
   @TempDir
-  FsFixture path4
+  FileSystemFixture path4
 
   def demo() {
     expect:
     path1 instanceof Path
     path2 instanceof File
     path3 instanceof Path
-    path4 instanceof FsFixture
+    path4 instanceof FileSystemFixture
   }
 
 // end::example[]

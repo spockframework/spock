@@ -65,6 +65,7 @@ include::{sourcedir}/utilities/CollectionConditions.groovy[tag=lenient-matcher-r
 ----
 include::{sourcedir}/utilities/CollectionConditions.groovy[tag=strict-matcher]
 ----
+
 [source,indent=0]
 ----
 include::{sourcedir}/utilities/CollectionConditions.groovy[tag=strict-matcher-result]
@@ -73,19 +74,19 @@ include::{sourcedir}/utilities/CollectionConditions.groovy[tag=strict-matcher-re
 NOTE: Both operands must be `Iterable` for this to work.
 Otherwise, it will be treated like the standard groovy https://groovy-lang.org/operators.html#_find_operator[find operator] or https://groovy-lang.org/operators.html#_match_operator[match operators].
 
-[[fs-fixture]]
-== Interact with the file system using `FsFixture`
+[[file-stystem-fixture]]
+== Interact with the file system using `FileSystemFixture`
 
 In integration tests you often have to prepare the file system for a test.
 For trivial cases like creating a single temp directory, you can use the <<extensions.adoc#_temp_dir,@TempDir>> extension directly.
-However, for more complex cases like creating a directory tree `FsFixture` offers convenience and better readability.
+However, for more complex cases like creating a directory tree `FileSystemFixture` offers convenience and better readability.
 
 === Examples
 
 .Creating a directory tree
 [source,groovy,indent=0]
 ----
-include::{sourcedir}/utilities/FsFixtureSpec.groovy[tag=fs-fixture-usage]
+include::{sourcedir}/utilities/FileSystemFixtureSpec.groovy[tag=fs-fixture-usage]
 ----
 
 TIP: To get the nice Groovy methods for `Path`, you need to add a dependency on `groovy-nio`.

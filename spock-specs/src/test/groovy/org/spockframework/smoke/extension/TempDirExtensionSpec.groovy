@@ -2,7 +2,7 @@ package org.spockframework.smoke.extension
 
 import org.spockframework.EmbeddedSpecification
 import spock.lang.*
-import spock.util.io.FsFixture
+import spock.util.io.FileSystemFixture
 
 import java.nio.file.*
 
@@ -178,7 +178,7 @@ class ParallelTempDirSpec extends Specification {
   }
 }
 
-class FsFixtureSpec extends Specification {
+class FileSystemFixtureSpec extends Specification {
   @TempDir
   MyFile myFile
 
@@ -186,7 +186,7 @@ class FsFixtureSpec extends Specification {
   MyPath myPath
 
   @TempDir
-  FsFixture fsFixture
+  FileSystemFixture fsFixture
 
   def "can use helper classes if they have a constructor accepting File or Path"() {
     expect:
@@ -195,7 +195,7 @@ class FsFixtureSpec extends Specification {
     fsFixture.currentPath != null
   }
 
-  def "FsFixture can create a directory structure"() {
+  def "FileSystemFixture can create a directory structure"() {
     when:
     fsFixture.create {
       dir('src') {
@@ -244,8 +244,8 @@ class FsFixtureSpec extends Specification {
     when:
     fsFixture.create {
       dir("target") {
-        result = copyFromClasspath("SampleFile.txt", FsFixtureSpec)
-        result2 = copyFromClasspath("SampleFile.txt", 'SampleFile2.txt', FsFixtureSpec)
+        result = copyFromClasspath("SampleFile.txt", FileSystemFixtureSpec)
+        result2 = copyFromClasspath("SampleFile.txt", 'SampleFile2.txt', FileSystemFixtureSpec)
       }
     }
 

@@ -1,17 +1,17 @@
 package org.spockframework.docs.utilities
 
 import spock.lang.*
-import spock.util.io.FsFixture
+import spock.util.io.FileSystemFixture
 
 import java.nio.file.Files
 
-class FsFixtureSpec extends Specification {
+class FileSystemFixtureSpec extends Specification {
 
 // tag::fs-fixture-usage[]
   @TempDir
-  FsFixture fsFixture
+  FileSystemFixture fsFixture
 
-  def "FsFixture can create a directory structure"() {
+  def "FileSystemFixture can create a directory structure"() {
     when:
     fsFixture.create {
       dir('src') {

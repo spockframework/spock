@@ -10,7 +10,7 @@ import groovy.lang.*;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * FsFixture can be used to create temporary directories and files.
+ * FileSystemFixture can be used to create temporary directories and files.
  *
  * It is intended to be used with {@link spock.lang.TempDir}.
  *
@@ -18,16 +18,16 @@ import org.jetbrains.annotations.NotNull;
  * @since 2.2
  */
 @Beta
-public class FsFixture implements DirectoryFixture {
+public class FileSystemFixture implements DirectoryFixture {
   private final Path currentPath;
   private final Class<?> contextClass;
 
-  public FsFixture(Path currentPath) {
+  public FileSystemFixture(Path currentPath) {
     this.currentPath = currentPath;
-    this.contextClass = FsFixture.class;
+    this.contextClass = FileSystemFixture.class;
   }
 
-  private FsFixture(Path currentPath, Class<?> contextClass) {
+  private FileSystemFixture(Path currentPath, Class<?> contextClass) {
     this.currentPath = currentPath;
     this.contextClass = contextClass;
   }
@@ -133,9 +133,9 @@ public class FsFixture implements DirectoryFixture {
     } else if (owner != null) {
       newContextClass = owner.getClass();
     }
-    FsFixture fsFixture = new FsFixture(path, newContextClass);
+    FileSystemFixture fileSystemFixture = new FileSystemFixture(path, newContextClass);
     dirSpec.setResolveStrategy(Closure.DELEGATE_FIRST);
-    dirSpec.setDelegate(fsFixture);
+    dirSpec.setDelegate(fileSystemFixture);
     dirSpec.call();
   }
 }

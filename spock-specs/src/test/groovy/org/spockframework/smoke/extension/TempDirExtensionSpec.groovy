@@ -2,6 +2,7 @@ package org.spockframework.smoke.extension
 
 import org.spockframework.EmbeddedSpecification
 import spock.lang.*
+import spock.util.io.FileSystemFixture
 
 import java.nio.file.*
 
@@ -174,5 +175,100 @@ class ParallelTempDirSpec extends Specification {
 
     where:
     n << [1, 2, 3]
+  }
+}
+
+class FileSystemFixtureSpec extends Specification {
+  @TempDir
+  MyFile myFile
+
+  @TempDir
+  MyPath myPath
+
+  @TempDir
+  FileSystemFixture fsFixture
+
+  def "can use helper classes if they have a constructor accepting File or Path"() {
+    expect:
+    myPath.root != null
+    myFile.root != null
+    fsFixture.currentPath != null
+  }
+
+  def "FileSystemFixture can create a directory structure"() {
+    when:
+    fsFixture.create {
+      dir('src') {
+        dir('main') {
+          dir('groovy') {
+            file('HelloWorld.java') << 'println "Hello World"'
+          }
+        }
+        dir('test/resources') {
+          file('META-INF/MANIFEST.MF') << 'bogus entry'
+        }
+      }
+    }
+
+    then:
+    Files.isDirectory(fsFixture.resolve('src/main/groovy'))
+    Files.isDirectory(fsFixture.resolve('src/test/resources/META-INF'))
+    fsFixture.resolve('src/main/groovy/HelloWorld.java').text == 'println "Hello World"'
+    fsFixture.resolve('src/test/resources/META-INF/MANIFEST.MF').text == 'bogus entry'
+  }
+
+  def "can copy files from classpath"() {
+    given:
+    Path result = null
+    Path result2 = null
+
+    when:
+    fsFixture.create {
+      dir("target") {
+        result = copyFromClasspath("/org/spockframework/smoke/extension/SampleFile.txt")
+        result2 = copyFromClasspath("/org/spockframework/smoke/extension/SampleFile.txt", 'SampleFile2.txt')
+      }
+    }
+
+    then:
+    result.fileName.toString() == "SampleFile.txt"
+    result.text == 'HelloWorld\n'
+    result2.text == 'HelloWorld\n'
+  }
+
+  def "can copy files from classpath using explicit context class"() {
+    given:
+    Path result = null
+    Path result2 = null
+
+    when:
+    fsFixture.create {
+      dir("target") {
+        result = copyFromClasspath("SampleFile.txt", FileSystemFixtureSpec)
+        result2 = copyFromClasspath("SampleFile.txt", 'SampleFile2.txt', FileSystemFixtureSpec)
+      }
+    }
+
+    then:
+    result.fileName.toString() == "SampleFile.txt"
+    result.text == 'HelloWorld\n'
+    result2.text == 'HelloWorld\n'
+  }
+}
+
+class MyFile {
+  File root
+
+  MyFile(File path) {
+    this.root = path
+  }
+}
+
+
+class MyPath {
+ Path root
+
+  MyPath(Path path) {
+    this.root = path
   }
 }

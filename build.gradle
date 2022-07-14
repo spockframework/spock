@@ -65,6 +65,7 @@ ext {
     bytebuddy           : [group: 'net.bytebuddy', name: 'byte-buddy', version: '1.12.1'],
     cglib               : [group: 'cglib', name: 'cglib-nodep', version: '3.3.0'],
     groovy              : groovyDependencies,
+    groovyNio           : [group: groovyGroup, name: 'groovy-nio', version: groovyVersion], //for groovy methods on Path
     groovySql           : [group: groovyGroup, name: 'groovy-sql', version: groovyVersion], //for some Spring and Unitils tests
     groovyTest          : [group: groovyGroup, name: 'groovy-test', version: groovyVersion], //for @NotYetImplemented
     groovyJmx           : [group: groovyGroup, name: 'groovy-jmx', version: groovyVersion],  //for triggering jacoco dump via jmx

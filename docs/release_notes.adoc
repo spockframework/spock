@@ -9,6 +9,8 @@ include::include.adoc[]
 * Add support for `IterationSelector` to run individual iterations
 * Update to JUnit 5.9.0-RC1
 
+Thanks to all the contributors to this release: Marc Philipp
+
 == 2.2-M2 (2022-07-15)
 
 * Add junit-platform `TestTag` support with the <<extensions.adoc#test-tag-extension,@Tag>> extension spockPull:1467[]

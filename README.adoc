@@ -1,4 +1,4 @@
-:spock-release-version: 2.2-M2
+:spock-release-version: 2.2-M3
 :spock-release-date: 2022-07-15
 :spock-snapshot-version: 2.2
 

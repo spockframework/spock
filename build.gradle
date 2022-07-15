@@ -346,7 +346,7 @@ task javadoc(type: Javadoc) {
   classpath = files(subprojects.javadoc.classpath)
 }
 
-configureJavadoc(javadoc)
+configureJavadoc(javadoc, true)
 
 task groovydoc(type: Groovydoc) {
   docTitle "Spock Framework API Documentation ($variantLessVersion)"
@@ -425,17 +425,19 @@ File script(String name) {
   project.file("gradle/${name}.gradle")
 }
 
-def configureJavadoc(task) {
+def configureJavadoc(task, boolean root = false) {
   configure(task) {
     include "spock/**"
     configure(options) {
       options.addStringOption('Xdoclint:none', '-quiet')
       options.noTimestamp()
       options.addStringOption('source', '1.8')
-      links "https://docs.oracle.com/javase/8/docs/api/"
       links "https://docs.groovy-lang.org/docs/groovy-$groovyVersion/html/gapi/"
       links "https://junit.org/junit4/javadoc/latest/"
-      links "https://hamcrest.org/JavaHamcrest/javadoc/2.2/"
+      // Use offline package list, as the JavaVersion is fixed to 8 for the time being
+      // and Hamcrest has certificate issues for their domain.
+      linksOffline("https://docs.oracle.com/javase/8/docs/api/", "${root ? '' : '../'}javadoc/java-8")
+      linksOffline("https://hamcrest.org/JavaHamcrest/javadoc/2.2/", "${root ? '' : '../'}javadoc/hamcrest-2.2")
     }
   }
 }

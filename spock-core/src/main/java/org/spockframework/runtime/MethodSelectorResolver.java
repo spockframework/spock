@@ -20,8 +20,7 @@ public class MethodSelectorResolver implements SelectorResolver {
 
     String methodName = selector.getMethodName();
     Predicate<FeatureInfo> filter = feature ->
-      feature.getFeatureMethod().getReflection().getName().equals(methodName)
-        || methodName.equals(feature.getName());
+      reflectionNameOrMethodNameEquals(methodName, feature);
 
     DiscoverySelector parentSelector = selectClass(selector.getJavaClass());
     return resolveAllowingAllIndexes(context, parentSelector, filter);
@@ -51,6 +50,21 @@ public class MethodSelectorResolver implements SelectorResolver {
       );
     }
     return Resolution.unresolved();
+  }
+
+  @Override
+  public Resolution resolve(IterationSelector selector, Context context) {
+    if (selector.getParentSelector() instanceof MethodSelector) {
+      MethodSelector methodSelector = (MethodSelector) selector.getParentSelector();
+
+      return resolveWithIterationFilter(
+        context,
+        selectClass(methodSelector.getJavaClass()),
+        feature -> reflectionNameOrMethodNameEquals(methodSelector.getMethodName(), feature),
+        iterationFilter -> selector.getIterationIndices().forEach(iterationFilter::allow)
+      );
+    }
+    return SelectorResolver.super.resolve(selector, context);
   }
 
   private Resolution resolveAllowingAllIndexes(Context context, DiscoverySelector parentSelector, Predicate<FeatureInfo> featureFilter) {
@@ -89,5 +103,10 @@ public class MethodSelectorResolver implements SelectorResolver {
       return count == 0 ? null : testDescriptor;
     }
     return null;
+  }
+
+  private static boolean reflectionNameOrMethodNameEquals(String methodName, FeatureInfo feature) {
+    return feature.getFeatureMethod().getReflection().getName().equals(methodName)
+      || methodName.equals(feature.getName());
   }
 }

@@ -6,6 +6,7 @@ spock.unitils
 spock.util
 spock.util.concurrent
 spock.util.environment
+spock.util.io
 spock.util.matcher
 spock.util.mop
 spock.util.time

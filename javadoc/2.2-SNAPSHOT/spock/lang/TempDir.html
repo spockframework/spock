@@ -120,9 +120,30 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 public @interface <span class="memberNameLabel">TempDir</span></pre>
 <div class="block">Generate a temp directory for test, and delete it after test.
 
- <p><code>@TempDir</code> can be applied to annotate a member field of type <a href="https://docs.oracle.com/javase/8/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io" class="externalLink"><code>File</code></a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file" class="externalLink"><code>Path</code></a> or untyped like <code>def</code>
- in a spec class (untyped field will be injected with <code>Path</code>). If the annotated field is shared,
- the temp directory will be shared in this spec, otherwise every iteration will have its own temp directory.</div>
+ <p>
+ <code>@TempDir</code> can be used to annotate a member field of type <a href="https://docs.oracle.com/javase/8/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io" class="externalLink"><code>File</code></a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file" class="externalLink"><code>Path</code></a>,
+ or untyped like <code>def</code>/<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang" class="externalLink"><code>Object</code></a> in a spec class (untyped field will be injected with <code>Path</code>).
+ <p>
+ Alternatively, you can use it with any class that has a public constructor with a single <a href="https://docs.oracle.com/javase/8/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io" class="externalLink"><code>File</code></a> or <a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file" class="externalLink"><code>Path</code></a>
+ parameter, like <a href="../util/io/FileSystemFixture.html" title="class in spock.util.io"><code>FileSystemFixture</code></a> this way you can use your own utility classes for file manipulation.
+ <p>
+ If the annotated field is shared, the temp directory will be shared in this spec,
+ otherwise every iteration will have its own temp directory.
+ <p>
+ Example:
+ <pre><code>
+ &#64;TempDir
+ File testFile // will inject a File
+
+ &#64;TempDir
+ Path testPath // will inject a Path
+
+ &#64;TempDir
+ def testPath // will inject a Path
+
+ &#64;TempDir
+ FileSystemFixture fsFixture // will inject an instance of FileSystemFixture with the temp path injected via constructor
+ </code></pre></div>
 <dl>
 <dt><span class="simpleTagLabel">Since:</span></dt>
 <dd>2.0</dd>

@@ -1,0 +1,98 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<svg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' contentScriptType='application/ecmascript' contentStyleType='text/css' height='354px' preserveAspectRatio='none' style='width:412px;height:354px;' version='1.1' viewBox='0 0 412 354' width='412px' zoomAndPan='magnify'>
+  <defs/>
+  <g>
+    <rect fill='#DDCC77' height='34.1328' style='stroke: #A80036; stroke-width: 1.5;' width='92' x='149.5' y='10'/>
+    <text fill='#000000' font-family='sans-serif' font-size='12' lengthAdjust='spacingAndGlyphs' textLength='72' x='159.5' y='31.6016'>
+      SpockEngine
+    </text>
+    <line style='stroke: #A80036; stroke-width: 1.5;' x1='195.5' x2='195.5' y1='44.1328' y2='64.1328'/>
+    <line style='stroke: #A80036; stroke-width: 1.5;' x1='37.5' x2='37.5' y1='64.1328' y2='84.1328'/>
+    <rect fill='#DDCC77' height='34.1328' style='stroke: #A80036; stroke-width: 1.5;' width='55' x='10' y='84.1328'/>
+    <text fill='#000000' font-family='sans-serif' font-size='12' lengthAdjust='spacingAndGlyphs' textLength='35' x='20' y='105.7344'>
+      SpecA
+    </text>
+    <line style='stroke: #A80036; stroke-width: 1.5;' x1='37.5' x2='47.5' y1='150.332' y2='150.332'/>
+    <rect fill='#DDCC77' height='34.1328' style='stroke: #A80036; stroke-width: 1.5;' width='57' x='47.5' y='133.2656'/>
+    <text fill='#000000' font-family='sans-serif' font-size='12' lengthAdjust='spacingAndGlyphs' textLength='37' x='57.5' y='154.8672'>
+      testA1
+    </text>
+    <line style='stroke: #A80036; stroke-width: 1.5;' x1='37.5' x2='47.5' y1='199.4648' y2='199.4648'/>
+    <rect fill='#DDCC77' height='34.1328' style='stroke: #A80036; stroke-width: 1.5;' width='57' x='47.5' y='182.3984'/>
+    <text fill='#000000' font-family='sans-serif' font-size='12' lengthAdjust='spacingAndGlyphs' textLength='37' x='57.5' y='204'>
+      testA2
+    </text>
+    <line style='stroke: #A80036; stroke-width: 1.5;' x1='37.5' x2='37.5' y1='118.2656' y2='199.4648'/>
+    <line style='stroke: #A80036; stroke-width: 1.5;' x1='212' x2='212' y1='64.1328' y2='84.1328'/>
+    <rect fill='#88CCEE' height='48.2656' rx='5' ry='5' style='stroke: #A80036; stroke-width: 1.5;' width='175' x='124.5' y='84.1328'/>
+    <text fill='#000000' font-family='sans-serif' font-size='12' lengthAdjust='spacingAndGlyphs' textLength='155' x='134.5' y='105.7344'>
+      @Execution(CONCURRENT)
+    </text>
+    <text fill='#000000' font-family='sans-serif' font-size='12' lengthAdjust='spacingAndGlyphs' textLength='34' x='134.5' y='119.8672'>
+      SpecB
+    </text>
+    <line style='stroke: #A80036; stroke-width: 1.5;' x1='212' x2='222' y1='171.5313' y2='171.5313'/>
+    <rect fill='#DDCC77' height='48.2656' style='stroke: #A80036; stroke-width: 1.5;' width='179' x='222' y='147.3984'/>
+    <text fill='#000000' font-family='sans-serif' font-size='12' lengthAdjust='spacingAndGlyphs' textLength='159' x='232' y='169'>
+      @Execution(SAME_THREAD)
+    </text>
+    <text fill='#000000' font-family='sans-serif' font-size='12' lengthAdjust='spacingAndGlyphs' textLength='36' x='232' y='183.1328'>
+      testB1
+    </text>
+    <line style='stroke: #A80036; stroke-width: 1.5;' x1='212' x2='222' y1='227.7305' y2='227.7305'/>
+    <rect fill='#88CCEE' height='34.1328' rx='5' ry='5' style='stroke: #A80036; stroke-width: 1.5;' width='56' x='222' y='210.6641'/>
+    <text fill='#000000' font-family='sans-serif' font-size='12' lengthAdjust='spacingAndGlyphs' textLength='36' x='232' y='232.2656'>
+      testB2
+    </text>
+    <line style='stroke: #A80036; stroke-width: 1.5;' x1='250' x2='260' y1='276.8633' y2='276.8633'/>
+    <rect fill='#88CCEE' height='34.1328' rx='5' ry='5' style='stroke: #A80036; stroke-width: 1.5;' width='72' x='260' y='259.7969'/>
+    <text fill='#000000' font-family='sans-serif' font-size='12' lengthAdjust='spacingAndGlyphs' textLength='52' x='270' y='281.3984'>
+      testB2[1]
+    </text>
+    <line style='stroke: #A80036; stroke-width: 1.5;' x1='250' x2='260' y1='325.9961' y2='325.9961'/>
+    <rect fill='#88CCEE' height='34.1328' rx='5' ry='5' style='stroke: #A80036; stroke-width: 1.5;' width='72' x='260' y='308.9297'/>
+    <text fill='#000000' font-family='sans-serif' font-size='12' lengthAdjust='spacingAndGlyphs' textLength='52' x='270' y='330.5313'>
+      testB2[2]
+    </text>
+    <line style='stroke: #A80036; stroke-width: 1.5;' x1='250' x2='250' y1='244.7969' y2='325.9961'/>
+    <line style='stroke: #A80036; stroke-width: 1.5;' x1='212' x2='212' y1='132.3984' y2='227.7305'/>
+    <line style='stroke: #A80036; stroke-width: 1.5;' x1='37.5' x2='212' y1='64.1328' y2='64.1328'/>
+    <!--MD5=[c288e9fdab690076f9d8ede7a57665a5]
+@startwbs
+<style>
+wbsDiagram {
+  BackgroundColor #DDCC77
+  .concurrent * {
+      BackgroundColor #88CCEE
+      RoundCorner 10
+  }
+  .samethread * {
+      BackgroundColor #DDCC77
+      RoundCorner 0
+  }
+}
+</style>
+skinparam shadowing false
+* SpockEngine
+** SpecA
+*** testA1
+*** testA2
+** @Execution(CONCURRENT)\nSpecB  <<concurrent>>
+*** @Execution(SAME_THREAD)\ntestB1 <<samethread>>
+*** testB2
+**** testB2[1]
+**** testB2[2]
+@endwbs
+
+PlantUML version 1.2020.06(Sun Apr 05 14:38:32 CEST 2020)
+(APACHE source distribution)
+Java Runtime: OpenJDK Runtime Environment
+JVM: OpenJDK 64-Bit Server VM
+Java Version: 11.0.14.1+1
+Operating System: Mac OS X
+Default Encoding: UTF-8
+Language: en
+Country: DE
+-->
+  </g>
+</svg>

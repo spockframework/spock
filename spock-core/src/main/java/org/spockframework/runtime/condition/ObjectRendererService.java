@@ -4,7 +4,7 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,6 +17,9 @@ package org.spockframework.runtime.condition;
 import org.spockframework.util.InternalSpockError;
 
 import java.util.*;
+
+import static java.util.Arrays.asList;
+import static java.util.Collections.singleton;
 
 public class ObjectRendererService implements IObjectRendererService {
   private final HashMap<Class<?>, IObjectRenderer<?>> renderers = new HashMap<>();
@@ -32,7 +35,7 @@ public class ObjectRendererService implements IObjectRendererService {
     if (object == null) return "null\n";
 
     // explicit parameterization required although IDEA thinks it's redundant
-    Set<Class<?>> types = Collections.<Class<?>>singleton(object.getClass());
+    Set<Class<?>> types = singleton(object.getClass());
 
     while (!types.isEmpty()) {
       for (Class<?> type : types) {
@@ -57,8 +60,7 @@ public class ObjectRendererService implements IObjectRendererService {
       if (superclass != null && superclass != Object.class) {
         parents.add(superclass);
       }
-      // cast required to compile with JDK 5
-      parents.addAll(Arrays.asList((Class<?>[]) type.getInterfaces()));
+      parents.addAll(asList(type.getInterfaces()));
     }
 
     return parents;

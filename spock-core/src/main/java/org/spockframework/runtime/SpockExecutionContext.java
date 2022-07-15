@@ -157,4 +157,8 @@ public class SpockExecutionContext implements EngineExecutionContext, Cloneable 
   public ErrorInfoCollector getErrorInfoCollector() {
     return errorInfoCollector;
   }
+
+  public EngineExecutionListener getEngineExecutionListener() {
+    return engineExecutionListener;
+  }
 }

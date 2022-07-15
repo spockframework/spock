@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -43,7 +43,7 @@ import static java.util.Arrays.asList;
  * @since 1.2
  */
 
-public class SpockMockPostprocessor extends InstantiationAwareBeanPostProcessorAdapter
+public class SpockMockPostprocessor extends BackwardsCompatibleInstantiationAwareBeanPostProcessorAdapter
   implements BeanFactoryPostProcessor, Ordered {
 
   private static final String FACTORY_BEAN_OBJECT_TYPE = "factoryBeanObjectType";
@@ -327,7 +327,7 @@ public class SpockMockPostprocessor extends InstantiationAwareBeanPostProcessorA
    * {@link BeanPostProcessor} to handle {@link SpringSpy} definitions. Registered as a
    * separate processor so that it can be ordered above AOP post processors.
    */
-  static class SpyPostProcessor extends InstantiationAwareBeanPostProcessorAdapter
+  static class SpyPostProcessor extends BackwardsCompatibleInstantiationAwareBeanPostProcessorAdapter
     implements PriorityOrdered {
 
     private static final String BEAN_NAME = SpyPostProcessor.class.getName();

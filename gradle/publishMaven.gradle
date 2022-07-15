@@ -1,13 +1,8 @@
-apply plugin: "de.marcphilipp.nexus-publish"
+apply plugin: "maven-publish"
 apply plugin: "signing"
-
-def optionalDeps = []
-def providedDeps = []
 
 ext {
   packaging = null // use the default ("jar")
-  optional = { optionalDeps << it; it }
-  provided = { providedDeps << it; it }
 }
 
 publishing {
@@ -19,32 +14,23 @@ publishing {
           from(components.java)
           artifact(sourcesJar)
           artifact(javadocJar)
-          pom.withXml {
-            def dependencies = asNode().dependencies[0]
-            optionalDeps.each { dep ->
-              dependencies.find { it.artifactId.text() == dep.name }.appendNode("optional", true)
-            }
-            providedDeps.each { dep ->
-              dependencies.find { it.artifactId.text() == dep.name }.scope[0].value = "provided"
-            }
-          }
         }
       }
       pom {
         name = provider { project.ext.displayName }
         description = provider { project.description }
-        url = "http://spockframework.org"
+        url = "https://spockframework.org"
         licenses {
           license {
             name = "The Apache Software License, Version 2.0"
-            url = "http://www.apache.org/licenses/LICENSE-2.0.txt"
+            url = "https://www.apache.org/licenses/LICENSE-2.0.txt"
             distribution = "repo"
           }
         }
         scm {
           connection = "scm:git:git://github.com/spockframework/spock.git"
           developerConnection = "scm:git:ssh://git@github.com/spockframework/spock.git"
-          url = "http://github.spockframework.org/spock"
+          url = "https://github.spockframework.org/spock"
         }
         developers {
           developer {
@@ -68,15 +54,6 @@ publishing {
   }
 }
 
-nexusPublishing {
-  repositories {
-    sonatype {
-      username = System.getenv("SONATYPE_OSS_USER")
-      password = System.getenv("SONATYPE_OSS_PASSWORD")
-    }
-  }
-}
-
 // ensure all checks pass before publishing
 tasks.withType(AbstractPublishToMaven) {
   dependsOn(check)
@@ -84,7 +61,7 @@ tasks.withType(AbstractPublishToMaven) {
 
 signing {
   sign(publishing.publications).each { task ->
-    task.onlyIf { gradle.taskGraph.hasTask(publish) }
+    task.onlyIf { gradle.taskGraph.hasTask(publishToSonatype) }
   }
 }
 

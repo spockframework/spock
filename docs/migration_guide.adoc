@@ -144,7 +144,7 @@ based syntax. See <<release_notes.adoc#improved-unroll-0.6,Improved `@Unroll`>> 
 
 NOTE: This only affects users moving from the Groovy 1.7 to the 1.8 or 2.0 variant.
 
-Spock offers a very neat syntax for using http://code.google.com/p/hamcrest/[Hamcrest] matchers:
+Spock offers a very neat syntax for using https://hamcrest.org/JavaHamcrest/[Hamcrest] matchers:
 
 [source,groovy]
 ----

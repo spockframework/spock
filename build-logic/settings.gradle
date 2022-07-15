@@ -1,2 +1,19 @@
-rootProject.name = 'build-logic'
 rootProject.buildFileName = 'build-logic.gradle'
+
+dependencyResolutionManagement {
+  repositories {
+    mavenCentral()
+  }
+}
+
+include("base")
+include("asciidoc-extensions")
+
+nameBuildScriptsAfterProjectNames(rootProject.children)
+
+def nameBuildScriptsAfterProjectNames(projects) {
+  for (prj in projects) {
+    prj.buildFileName = prj.name + ".gradle"
+    nameBuildScriptsAfterProjectNames(prj.children)
+  }
+}

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -40,7 +40,7 @@ public class RegexMethodNameConstraint implements IInvocationConstraint {
 
   @Override
   public String describeMismatch(IMockInvocation invocation) {
-    Condition condition = new Condition(CollectionUtil.<Object>listOf(invocation.getMethod().getName(), pattern.pattern(), false),
+    Condition condition = new Condition(CollectionUtil.listOf(invocation.getMethod().getName(), pattern.pattern(), false),
       String.format("methodName ==~ /%s/", pattern.pattern()), null, null,
       null, null);
     return condition.getRendering();

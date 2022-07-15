@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -35,6 +35,7 @@ public class StackTraceFilter implements IStackTraceFilter {
       "\\Qorg.codehaus.groovy.runtime.\\E.*" +
       "|\\Qorg.codehaus.groovy.reflection.\\E.*" +
       "|\\Qorg.codehaus.groovy.\\E.*MetaClass.*" +
+      "|\\Qorg.codehaus.groovy.vmplugin.v8.\\E.*" +
       "|groovy\\..*MetaClass.*" +
       "|groovy\\.lang\\.MetaMethod" +
       "|\\Qjava.lang.reflect.\\E.*" +
@@ -44,6 +45,7 @@ public class StackTraceFilter implements IStackTraceFilter {
   );
 
   private static final Pattern CLOSURE_CLASS = Pattern.compile("(.+)\\$_(.+)_closure(\\d+)");
+  private static final StackTraceElement[] STACK_TRACE_ELEMENTS = new StackTraceElement[0];
 
   private final IMethodNameMapper mapper;
 
@@ -67,7 +69,7 @@ public class StackTraceFilter implements IStackTraceFilter {
       filteredTrace.add(elem);
     }
 
-    throwable.setStackTrace(filteredTrace.toArray(new StackTraceElement[filteredTrace.size()]));
+    throwable.setStackTrace(filteredTrace.toArray(STACK_TRACE_ELEMENTS));
 
     if (throwable.getCause() != null) filter(throwable.getCause());
   }

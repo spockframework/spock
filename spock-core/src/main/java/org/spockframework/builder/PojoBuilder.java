@@ -4,7 +4,7 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,6 +19,8 @@ import java.util.List;
 
 import groovy.lang.Closure;
 
+import static java.util.Arrays.asList;
+
 // TODO: test building pojo enriched with expandometaclass/category property
 // TODO: test call to void varargs method in expect: block
 // (related: find all calls to MetaMethod.invoke and replace with doMethodInvoke)
@@ -28,7 +30,7 @@ import groovy.lang.Closure;
 public class PojoBuilder {
   private final GestaltBuilder gestaltBuilder = new GestaltBuilder();
   private final List<ISlotFactory> slotFactories =
-      Arrays.asList(new SetterSlotFactory(), new AddSlotFactory(), new CollectionSlotFactory());
+      asList(new SetterSlotFactory(), new AddSlotFactory(), new CollectionSlotFactory());
 
   public Object build(Object pojo, Closure closure) {
     return build(pojo, new ClosureBlueprint(closure, pojo));

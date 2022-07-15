@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,6 +21,7 @@ import org.spockframework.util.*
 import spock.lang.Specification
 
 import org.codehaus.groovy.control.*
+import org.codehaus.groovy.control.customizers.ImportCustomizer
 import org.codehaus.groovy.runtime.StringGroovyMethods
 import org.intellij.lang.annotations.Language
 import org.opentest4j.MultipleFailuresError
@@ -33,14 +34,18 @@ import org.opentest4j.MultipleFailuresError
  */
 @NotThreadSafe
 class EmbeddedSpecCompiler {
+  final ImportCustomizer importCustomizer = new ImportCustomizer()
+  final CompilerConfiguration compilerConfigurationWithImports = new CompilerConfiguration().tap {
+    it.addCompilationCustomizers(importCustomizer)
+  }
+  final GroovyClassLoader loaderWithImports = new GroovyClassLoader(getClass().classLoader, compilerConfigurationWithImports)
   final GroovyClassLoader loader = new GroovyClassLoader(getClass().classLoader)
 
   boolean unwrapCompileException = true
 
-  String imports = ""
 
   void addPackageImport(String pkg) {
-    imports += "import $pkg.*;"
+    importCustomizer.addStarImports(pkg)
   }
 
   void addPackageImport(Package pkg) {
@@ -48,7 +53,7 @@ class EmbeddedSpecCompiler {
   }
 
   void addClassImport(String className) {
-    imports += "import $className;"
+    importCustomizer.addImports(className)
   }
 
   void addClassImport(Class<?> clazz) {
@@ -60,7 +65,7 @@ class EmbeddedSpecCompiler {
   }
 
   void addClassMemberImport(String className) {
-    imports += "import static $className.*;"
+    importCustomizer.addStaticStars(className)
   }
 
   void addClassMemberImport(Class<?> clazz) {
@@ -72,13 +77,14 @@ class EmbeddedSpecCompiler {
    * contained therein (but not other classes).
    */
   List<Class> compile(@Language('Groovy') String source) {
-    doCompile(imports + source)
+    doCompile(source, loader)
   }
 
-  List<Class> compileWithImports(@Language('Groovy') String source) {
+  List<Class> compileWithImports(@Language('Groovy') String source,
+                                 String packageDeclaration = "package apackage;") {
     addPackageImport(Specification.package)
     // one-liner keeps line numbers intact
-    doCompile "package apackage; $imports ${source.trim()}"
+    doCompile("$packageDeclaration  ${source.trim()}", loaderWithImports)
   }
 
   Class compileSpecBody(@Language(value = 'Groovy', prefix = 'class ASpec extends spock.lang.Specification { ', suffix = '\n }')
@@ -96,10 +102,11 @@ class EmbeddedSpecCompiler {
   @Beta
   TranspileResult transpileWithImports(@Language('Groovy') String source,
                                        Set showSet = EnumSet.of(Show.ANNOTATIONS, Show.CLASS, Show.METHODS, Show.FIELDS, Show.OBJECT_INITIALIZERS, Show.PROPERTIES),
-                                       CompilePhase phase = CompilePhase.SEMANTIC_ANALYSIS) {
+                                       CompilePhase phase = CompilePhase.SEMANTIC_ANALYSIS,
+                                       String packageDeclaration = "package apackage;") {
     addPackageImport(Specification.package)
     // one-liner keeps line numbers intact
-    doTranspile("package apackage; $imports ${source.trim()}", showSet, phase)
+    doTranspile("$packageDeclaration ${source.trim()}", showSet, phase, loaderWithImports, compilerConfigurationWithImports)
   }
 
   @Beta
@@ -122,12 +129,12 @@ class EmbeddedSpecCompiler {
 
   @Beta
   TranspileResult transpile(@Language('Groovy') String source, Set showSet = Show.all(), CompilePhase phase = CompilePhase.SEMANTIC_ANALYSIS) {
-    doTranspile(imports + source, showSet, phase)
+    doTranspile(source, showSet, phase, loader)
   }
 
-  private TranspileResult doTranspile(@Language('Groovy') String source, Set showSet, CompilePhase phase) {
-    loader.clearCache()
-    TranspileResult ast = new SourceToAstNodeAndSourceTranspiler().compileScript(source, phase.phaseNumber, showSet, loader)
+  private TranspileResult doTranspile(@Language('Groovy') String source, Set showSet, CompilePhase phase, GroovyClassLoader gcl, CompilerConfiguration config = null) {
+    gcl.clearCache()
+    TranspileResult ast = new SourceToAstNodeAndSourceTranspiler().compileScript(source, phase.phaseNumber, showSet, gcl, config)
     // normalize result
     String sourceResult = ast.source
     // Java 15 introduces `stripIndent` with a different behavior, so use explicit method call
@@ -136,11 +143,11 @@ class EmbeddedSpecCompiler {
     return new TranspileResult(sourceResult, ast.nodeCaptures)
   }
 
-  private List<Class> doCompile(@Language('Groovy') String source) {
-    loader.clearCache()
+  private List<Class> doCompile(@Language('Groovy') String source, GroovyClassLoader gcl) {
+    gcl.clearCache()
 
     try {
-      loader.parseClass(source.trim())
+      gcl.parseClass(source.trim())
     } catch (MultipleCompilationErrorsException e) {
       def errors = e.errorCollector.errors
       if (unwrapCompileException && errors.every { it.hasProperty("cause") })
@@ -152,7 +159,7 @@ class EmbeddedSpecCompiler {
       throw e
     }
 
-    loader.loadedClasses.findAll {
+    gcl.loadedClasses.findAll {
       SpecUtil.isSpec(it)
     } as List
   }

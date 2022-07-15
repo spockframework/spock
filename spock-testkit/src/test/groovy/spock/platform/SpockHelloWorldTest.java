@@ -64,7 +64,7 @@ class SpockHelloWorldTest extends SpockEngineBase {
 
   @Test
   void packageSelectorsAreResolved() {
-    assertEquals(9, execute(selectPackage(ExampleTestCase.class.getPackage().getName()))
+    assertEquals(11, execute(selectPackage(ExampleTestCase.class.getPackage().getName()))
       .containerEvents()
       .filter(event -> event.getType() == EventType.STARTED)
       .filter(event -> "spec".equals(event.getTestDescriptor().getUniqueId().getLastSegment().getType()))

@@ -2,7 +2,114 @@
 = Release Notes
 include::include.adoc[]
 
-== 2.1 (tbd)
+== 2.2-M3 (tbd)
+
+== 2.2-M2 (2022-07-15)
+
+* Add junit-platform `TestTag` support with the <<extensions.adoc#test-tag-extension,@Tag>> extension spockPull:1467[]
+* Add `IDataDriver` extension point and refactor data provider handling spockPull:1479[]
+* Add <<data-driven-testing.adoc#multi-data-pipe-named, named deconstruction>> for multi variable datapipes.
+  This might lead to changed behavior results if the data object implements `Map` but supports both positional `getAt(int)` and named `getAt(String)` access. In earlier versions, the positional access was used, but now the named access will be used. spockPull:1463[]
+* Add custom class support to `@TempDir`, you can use any class that has a single `java.io.File` or `java.nio.file.Path` as constructor parameter spockPull:1430[]
+* Improve `@Stepwise` can be applied to data-driven feature methods, having the effect of executing them sequentially (even if concurrent test mode is active) and to skip subsequent iterations is one iteration fails. spockPull:1442[]
+* Improve `EmbeddedSpecCompiler` by making package declaration configurable in `EmbeddedSpecCompiler`
+* Improve do not evaluate feature-skipping conditions for skipped specs spockPull:1459[]
+* Improve behavior when trying to run Spock with unsupported Groovy version in IDEA spockIssue:1421[]
+* Improve Java 17 compatibility by using new `invokeDefault` instead of reflection
+* Fix compatibility with certain locales, for example `tr_TR` spockIssue:1414[]
+* Fix Spring 6 incompatibility spockIssue:1428[]
+* Fix test reporting issue with Maven, where an error on the Specification level was not visible spockIssue:1444[]
+* Fix context pollution in `IterationNode.around()` spockIssue:1441[]
+* Fix Discard unnecessary state in `ConfineMetaClassChangesInterceptor` spockPull:1460[]
+* Fix make `EnableSharedInjection` public spockPull:1472[]
+* Fix gradle module metadata dependencies spockPull:1490[]
+* Remove runtime dependency on Jetbrains Annotations spockPull:1468[]
+
+Thanks to all the contributors to this release: Alexander Kriegisch, Marcin Zajączkowski, Jonny Carter, alopukhov, Jerome Prinet, Matthew Moss, BJ Hargrave
+
+
+== 2.2-M1 (2022-02-16)
+
+* Add Groovy 4 support spockPull:1382[]
+
+No other changes to the 2.1 release.
+
+Thanks to all the contributors to this release: Marcin Zajączkowski
+
+== 2.1 (2022-02-15)
+
+No functional changes to 2.1-M2.
+
+== Official Spock Logo
+
+image::images/spock-main-logo.png[Spock Logo, align=center, width=20%]
+
+The Spock Framework Project has an official logo.
+Many thanks to Ayşe Altınsoy (@AltinsoyAyse) for creating the logo through many iterations.
+
+== Misc
+* Documentation fixes
+* Build maintenance
+
+Thanks to all the contributors to this release: Marc Philipp, Miles Thomason, BJ Hargrave, Marcin Zajączkowski, Lőrinc Pap, Felipe Pedrosa, Marcin Świerczyński, Benedikt Ritter, Alexander Kriegisch, Jérôme Prinet, Pin Zhang
+
+== 2.1-M2 (2021-11-12)
+
+* Fix issue with generated gradle module metadata that caused issues with consumers.
+* Update JUnit, ASM, ByteBuddy dependencies.
+
+== 2.1-M1 (2021-11-12)
+
+=== Highlights
+
+- Add <<utilities.adoc#collection-conditions, collection conditions>> spockIssue:1372[]
+- Add support for selecting individual iterations via their unique ID (IDE support required). spockPull:1376[]
+
+=== Breaking Changes
+
+- Add `data.` support to conditional extensions spockIssue:1360[].
+This replaces the  current behavior of accessing data variables without any prefix.
+See <<extensions.adoc#precondition_context, Precondition Context>> for more details.
+
+=== Misc
+
+- Add exception translation to JUnit4 Rules spockPull:1342[]
+- Add option to omit feature name from iterations spockPull:1386[]
+and add additional <<data_driven_testing.adoc#unroll_tokens, Special Tokens>> to unroll patterns.
+- Add optional reason to `@Requires` and `@IgnoreIf` spockPull:1362[]
+- Add `shared.` support to conditional extensions spockPull:1359[].
+See <<extensions.adoc#precondition_context, Precondition Context>> for more details.
+
+- Set the owner for condition closures on spec annotations spockPull:1357[]
++
+This allows access to static methods when `@IgnoreIf`, `@Requires` and `@PendingFeatureIf` is used on a Specification.
+
+- Update bnd Gradle plugin to 6.0.0 (OSGI) spockPull:1377[]
+- Fix selector ordering issue spockPull:1375[]
+- Fix `@TempDir` not working for `@Shared` inherited fields spockPull:1373[]
+- Fix JUnit rule run order spockPull:1363[]
+- Prevent removal of ErrorSpecNode from execution hierarchy spockPull:1358[]
++
+As the ErrorSpecNode does not have children it would get removed
+when trying to select specific tests methods
+For example, gradle will report that no test were found,
+and not report the actual error.
+
+- Fix double invocation of IRunListener.beforeSpec and IRunListener.afterSpec spockPull:1344[]
+- Fix regression with multi-assignment of method call result spockPull:1333[]
+- Fix Build MethodSource with the correct spec class name spockPull:1345[]
++
+Prior to this fix, all `SpockNode` that use a `MethodSource`
+did not use the actual test class of the discovered method, and
+instead used the declaring class. This was problematic for inherited test
+methods, since they appeared to come from the declaring class instead of
+the current test class. In addition, the Maven Surefire provider failed
+to match such methods when executing tests matching a mask (e.g., via
+`-Dtest=*MaskTest`).
+- Automatically test on CI with JDK 17 (only `-groovy-3.0` variant)
+
+
+Thanks to all the contributors to this release: Marc Philipp, Miles Thomason, BJ Hargrave, Marcin Zajączkowski, Lőrinc Pap, Felipe Pedrosa, Marcin Świerczyński, Benedikt Ritter
 
 == 2.0 (2021-05-17)
 
@@ -27,9 +134,9 @@ The <<migration_guide.adoc#_migration_guide_2_0,Migration Guide 1.x - 2.0>> cove
 
 === Misc
 
-- Fix NPE if variable is initialized using a method with the same in features with cleanup blocks or using thrown condition https://github.com/spockframework/spock/issues/1266[#1266] https://github.com/spockframework/spock/issues/1313[#1313]
-- Fix implicit this conversion after bugfix in Groovy 3.0.8 https://github.com/spockframework/spock/issues/1318[#1318]
-- Fix extension-provided method arguments in fixture methods https://github.com/spockframework/spock/issues/1305[#1305]
+- Fix NPE if variable is initialized using a method with the same in features with cleanup blocks or using thrown condition spockIssue:1266[] spockIssue:1313[]
+- Fix implicit this conversion after bugfix in Groovy 3.0.8 spockIssue:1318[]
+- Fix extension-provided method arguments in fixture methods spockIssue:1305[]
 - Update `Jvm` helper to support versions up to 23 (next LTS release)
 
 
@@ -51,23 +158,23 @@ Special thanks goes to Marc Philipp who helped a lot with the integration of the
 === Misc
 
 - Add support for injection into `@Shared` fields in `spock-spring` module which users can opt-in for by adding
-  `@EnableSharedInjection` to the specification. https://github.com/spockframework/spock/issues/76[#76]
+  `@EnableSharedInjection` to the specification. spockIssue:76[]
 
 // tag::breaking-change-2-0-misc[]
 - Add new `displayName` via `INameable` for `SpecInfo`, `FeatureInfo`, and `IterationInfo`.
   This field can be set via extensions to change the reported name.
   The existing iteration `NameProvider` now also sets the `displayName` instead of the `name`.
   Modifying the `name` instead of `displayName` is now considered `deprecated` for extensions.
-  https://github.com/spockframework/spock/issues/1236[#1236]
+  spockIssue:1236[]
 // end::breaking-change-2-0-misc[]
 
 - Add support for constructor injection for extensions
 
 - Improve final field handling.
   Final fields are now transformed similar to shared fields, so that we can still delay the initialization but keep them
-  unmodifiable to user code. https://github.com/spockframework/spock/issues/1011[#1011]
+  unmodifiable to user code. spockIssue:1011[]
 
-- Improve parallel extensions to support inheritance https://github.com/spockframework/spock/issues/1245[#1245]
+- Improve parallel extensions to support inheritance spockIssue:1245[]
 
 - Improve PollingConditions
 
@@ -81,31 +188,31 @@ Special thanks goes to Marc Philipp who helped a lot with the integration of the
   this fixes an issue that interceptors for `prepare`, `before`, and `around`
   were still executed and any Exception they throw would hide the actual cause.
 
-- Fix https://github.com/spockframework/spock/issues/1294[#1294] swallowing of unrecoverable Errors
+- Fix spockIssue:1294[] swallowing of unrecoverable Errors
 
-- Fix https://github.com/spockframework/spock/issues/1260[#1260] Change InteractionRewriter to keep casting of ListExpressions intact
+- Fix spockIssue:1260[] Change InteractionRewriter to keep casting of ListExpressions intact
 
-- Fix https://github.com/spockframework/spock/issues/1282[#1282] Make TempDirInterceptor safe for parallel invocation of iterations
+- Fix spockIssue:1282[] Make TempDirInterceptor safe for parallel invocation of iterations
 
-- Fix https://github.com/spockframework/spock/issues/1267[#1267] Retry extension behavior for unrolled tests
+- Fix spockIssue:1267[] Retry extension behavior for unrolled tests
 
-- Fix https://github.com/spockframework/spock/issues/1267[#1267] Retry extension behavior for unrolled tests
+- Fix spockIssue:1267[] Retry extension behavior for unrolled tests
 
-- Fix https://github.com/spockframework/spock/issues/1229[#1229] `@TempDir` not working for inherited fields
+- Fix spockIssue:1229[] `@TempDir` not working for inherited fields
 
-- Fix https://github.com/spockframework/spock/issues/1232[#1232] compile error for nested conditions without top-level condition
+- Fix spockIssue:1232[] compile error for nested conditions without top-level condition
 
-- Fix https://github.com/spockframework/spock/issues/1256[#1256] handling of `is` as getter for boolean properties on Mocks
+- Fix spockIssue:1256[] handling of `is` as getter for boolean properties on Mocks
 
-- Fix https://github.com/spockframework/spock/issues/1270[#1270] handling of `is` as getter for boolean properties on GroovyMocks
+- Fix spockIssue:1270[] handling of `is` as getter for boolean properties on GroovyMocks
 
 - Fix `ErrorSpecNode` to re-throw `Exception` in `prepare` instead of `execute`,
   this fixes an issue that interceptors for `prepare`, `before`, and `around`
   were still executed and any Exception they throw would hide the actual cause.
 
-- Fix https://github.com/spockframework/spock/issues/1263[#1263] ExceptionAdapterExtension to also handle inherited fixture methods
+- Fix spockIssue:1263[] ExceptionAdapterExtension to also handle inherited fixture methods
 
-- Fix https://github.com/spockframework/spock/issues/1279[#1279] Cast data variables with type coercion to the declared parameter type
+- Fix spockIssue:1279[] Cast data variables with type coercion to the declared parameter type
 
 Thanks to all the contributors to this release: Marcin Erdmann, Björn Kautler, Alexander Kriegisch, Josh Soref, Vaidotas Valuckas
 
@@ -132,17 +239,17 @@ Thanks to all the contributors to this release: Marcin Erdmann, Björn Kautler, 
 
 - `@PendingFeature` and `@PendingFeatureIf` can now be used together
 
-- Fix https://github.com/spockframework/spock/issues/1158[#1158] Fix strange bug with setter/getter handling of mocks in groovy
+- Fix spockIssue:1158[] Fix strange bug with setter/getter handling of mocks in groovy
 
-- Fix https://github.com/spockframework/spock/issues/1216[#1216] perform argument coercion for `GroovyMock` method arguments
+- Fix spockIssue:1216[] perform argument coercion for `GroovyMock` method arguments
 
-- Fix https://github.com/spockframework/spock/issues/1169[#1169] check skipped state in Node.prepare and do nothing if already skipped
+- Fix spockIssue:1169[] check skipped state in Node.prepare and do nothing if already skipped
 
-- Fix https://github.com/spockframework/spock/issues/1200[#1200] name clashes where variables that are named like method calls destroy the method call
+- Fix spockIssue:1200[] name clashes where variables that are named like method calls destroy the method call
 
-- Fix https://github.com/spockframework/spock/issues/1202[#1202] NullPointerException with array initializers
+- Fix spockIssue:1202[] NullPointerException with array initializers
 
-- Fix https://github.com/spockframework/spock/issues/994[#994] don't treat nested closures in argument constraints as implicit assertions anymore
+- Fix spockIssue:994[] don't treat nested closures in argument constraints as implicit assertions anymore
 
 - Replace `hamcrest-core` dependency by `hamcrest`
 
@@ -308,7 +415,7 @@ Foo foo = Stub {
 - A sequence of two or more underscores can be used to separate multiple data tables in one `where` block.
 
 - Type casts in conditions are now properly carried over to properly disambiguate method calls.
-  For more information see issue https://github.com/spockframework/spock/issues/1022[#1022].
+  For more information see issue spockIssue:1022[].
 
 - Data tables now support any amount of semicolons to separate data table columns as alternative
   to pipes and double pipes, but cannot be mixed with them in one table:
@@ -463,7 +570,7 @@ or used it as a delegate runner will not work anymore, e.g, `PowerMockRunnerDele
 
 - Add `@PendingFeatureIf` annotation (<<extensions.adoc#_pendingfeatureif,Docs>>)
 - Fail-fast for invalid `Stub` interactions, added new validation that catches more invalid usage of `Stub`
-- Forbid spying on `Spy` instances, as this doesn't work anyway and leads to wrong expectations (https://github.com/spockframework/spock/issues/1029[#1029])
+- Forbid spying on `Spy` instances, as this doesn't work anyway and leads to wrong expectations (spockIssue:1029[])
 - Update `Jvm` helper utility to include new Java versions, removed pre 8 versions
 - Update docs regarding ByteBuddy, cglib, objenesis
 - Provide compatibility to both JUnit 5.5.2 and 5.6.0
@@ -636,18 +743,18 @@ Breaking Changes: Spock 1.2 drops support for Java 6, Groovy 2.0 and Groovy 2.3
 
 === What's New In This release
 
-* Add support for Java 11+ (https://github.com/spockframework/spock/issues/895[#895], https://github.com/spockframework/spock/issues/902[#902], https://github.com/spockframework/spock/issues/903[#903])
+* Add support for Java 11+ (spockIssue:895[], spockIssue:902[], spockIssue:903[])
 * Add Groovy 2.5.0 Variant for better Java 10+ Support
 * Add `@SpringBean` and `@SpringSpy` inspired by `@MockBean`, Also add `@StubBeans` (<<extensions.adoc#_annotation_driven,Docs>>)
 * Add `@UnwrapAopProxy` to make automatically unwrap SpringAopProxies
 * Add `@AutoAttach` extension  (<<extensions.adoc#_autoattach,Docs>>)
 * Add `@Retry` extension (<<extensions.adoc#_retry,Docs>>)
-* Add flag to UnrollNameProvider to assert unroll expressions (set the system property `spock.assertUnrollExpressions` to `true`) (https://github.com/spockframework/spock/issues/767[#767])
+* Add flag to UnrollNameProvider to assert unroll expressions (set the system property `spock.assertUnrollExpressions` to `true`) (spockIssue:767[])
 * Add automatic module name descriptors for Java 9
 * Add configurable `condition` to `@Retry` extension to allow for customizing when retries should be attempted (<<extensions.adoc#_retry,Docs>>)
-* Improve `@PendingFeature` to now have an optional `reason` attribute (https://github.com/spockframework/spock/issues/907[#907])
+* Improve `@PendingFeature` to now have an optional `reason` attribute (spockIssue:907[])
 * Improve `@Retry` to be declarable on a spec class which will apply it to all feature methods in that class and subclasses (<<extensions.adoc#_retry,Docs>>)
-* Improve StepwiseExtension mark only subsequent features as skipped in case of failure (https://github.com/spockframework/spock/issues/893[#893])
+* Improve StepwiseExtension mark only subsequent features as skipped in case of failure (spockIssue:893[])
 * Improve in assertions Spock now uses `DefaultGroovyMethods.dump` instead of `toString` if a class doesn't override the default `Object.toString`.
 * Improve `verifyAll` can now also have a target same as `with`
 * Improve static type hints for `verifyAll` and `with`
@@ -659,21 +766,21 @@ Breaking Changes: Spock 1.2 drops support for Java 6, Groovy 2.0 and Groovy 2.3
 * Improve <<modules.adoc#_guice_module,Guice Module>> now automatically attaches detached mocks
 * Improve unmatched mock messages by using `dump` instead of `inspect` for classes which don't provide a custom `toString`
 * Improve spying on concrete instances to enable partial mocking
-* Fix use String renderer for Class instances (https://github.com/spockframework/spock/issues/909[#909])
-* Fix mark new Spring extensions as @Beta (https://github.com/spockframework/spock/issues/890[#890])
-* Fix exclude groovy-groovysh from compile dependencies (https://github.com/spockframework/spock/issues/882[#882])
+* Fix use String renderer for Class instances (spockIssue:909[])
+* Fix mark new Spring extensions as @Beta (spockIssue:890[])
+* Fix exclude groovy-groovysh from compile dependencies (spockIssue:882[])
 * Fix `Retry.Mode.FEATURE` and `Retry.Mode.SETUP_FEATURE_CLEANUP` to make a test pass if a retry was successful.
-* Fix issue with `@SpringBean` mocks throwing `InvocationTargetException` instead of actual declared exceptions (https://github.com/spockframework/spock/issues/878[#878], https://github.com/spockframework/spock/issues/887[#887])
-* Fix void methods with implicit targets failing in `with` and `verifyAll` (https://github.com/spockframework/spock/issues/886[#886])
+* Fix issue with `@SpringBean` mocks throwing `InvocationTargetException` instead of actual declared exceptions (spockIssue:878[], spockIssue:887[])
+* Fix void methods with implicit targets failing in `with` and `verifyAll` (spockIssue:886[])
 * Fix SpockAssertionErrors and its subclasses now are properly `Serializable`
 * Fix Spring injection of JUnit Rules, due to the changes in 1.1 the rules where initialized before Spring could inject them,
   this has been fixed by performing the injection earlier in the process
 * Fix SpringMockTestExecutionListener initializes lazy beans
 * Fix OSGi Import-Package header
-* Fix re-declare recorder variables (https://github.com/spockframework/spock/issues/783[#783]), this caused annotations such as `@Slf4j` to break Specifications
+* Fix re-declare recorder variables (spockIssue:783[]), this caused annotations such as `@Slf4j` to break Specifications
 * Fix MissingFieldException in DiffedObjectAsBeanRenderer
 * Fix problems with nested `with` and `verifyAll` method calls
-* Fix assertion of mock invocation order with nested invocations (https://github.com/spockframework/spock/issues/475[#475])
+* Fix assertion of mock invocation order with nested invocations (spockIssue:475[])
 * Fix ignore inferred type for Spies on existing instance
 * General dependency update
 
@@ -719,7 +826,7 @@ Breaking Changes: Spock 1.2 drops support for Java 6, Groovy 2.0 and Groovy 2.3
 * Add Groovy 2.5.0 Variant for better Java 10 Support
 * Add @SpringBean and @SpringSpy inspired by @MockBean, Also add @StubBeans
 * Add @UnwrapAopProxy to make automatically unwrap SpringAopProxies
-* Add flag to UnrollNameProvider to assert unroll expressions (set the system property `spock.assertUnrollExpressions` to `true`) https://github.com/spockframework/spock/issues/767[#767]
+* Add flag to UnrollNameProvider to assert unroll expressions (set the system property `spock.assertUnrollExpressions` to `true`) spockIssue:767[]
 * Add automatic module name descriptors for Java 9
 * Add `@AutoAttach` extension (<<extensions.adoc#_autoattach,Docs>>)
 * Add `@Retry` extension (<<extensions.adoc#_retry,Docs>>)
@@ -833,7 +940,7 @@ that now is the time to join the party!
 
 A special thanks goes to all our tireless speakers and supporters, only a few of which are listed here: Andres Almiray,
 Cédric Champeau, David Dawson, Rob Fletcher, Sean Gilligan, Ken Kousen, Guillaume Laforge,
-http://www.nofluffjuststuff.com/home/main[NFJS Tour], Graeme Rocher, Baruch Sadogursky, Odin Hole Standal,
+https://www.nofluffjuststuff.com/home/main[NFJS Tour], Graeme Rocher, Baruch Sadogursky, Odin Hole Standal,
 Howard M. Lewis Ship, Ken Sipe, Venkat Subramaniam, Russel Winder.
 
 === What's New In This Release
@@ -841,22 +948,22 @@ Howard M. Lewis Ship, Ken Sipe, Venkat Subramaniam, Russel Winder.
 * <<Contributors,17 contributors>>, <<Resolved Issues,21 resolved issues>>, <<Merged Pull Requests,18 merged pull requests>>,
   <<Ongoing Work,some ongoing work>>. No ground-breaking new features, but significant improvements and fixes across the board.
 * Minimum runtime requirements raised to JRE 1.6 and Groovy 2.0.
-* Improved and restyled reference documentation at http://docs.spockframework.org. Generated with
-  http://asciidoctor.org/[Asciidoctor] (what else?).
+* Improved and restyled reference documentation at https://docs.spockframework.org. Generated with
+  https://asciidoctor.org/[Asciidoctor] (what else?).
 * Maven plugin removed. Just let Maven Surefire run your Spock specs like your JUnit tests
-  (see http://examples.spockframework.org[spock-example] project).
+  (see https://examples.spockframework.org[spock-example] project).
 * Official support for Java 1.8, Groovy 2.3 and Groovy 2.4. Make sure to pick the `groovy-2.0` binaries for Groovy
   2.0/2.1/2.2, `groovy-2.3` binaries for Groovy 2.3, and `groovy-2.4` binaries for Groovy 2.4 and higher.
 * Improved infrastructure to allow for easier community involvement: Switch to
-  http://issues.spockframework.org[GitHub issue tracker], http://winbuilds.spockframework.org[Windows] and
-  http://builds.spockframework.org[Linux] CI builds, pull requests automatically tested, all development on `master`
+  https://issues.spockframework.org[GitHub issue tracker], https://winbuilds.spockframework.org[Windows] and
+  https://builds.spockframework.org[Linux] CI builds, pull requests automatically tested, all development on `master`
   branch (bye-bye `groovy-x.y` branches!).
 
 === Other News
 
-* Follow our new http://twitter.spockframework.org[Twitter account]
+* Follow our new https://twitter.spockframework.org[Twitter account]
 * Try these <<New Third Party Extensions,new third-party extensions>>
-* Check out the upcoming http://manning.com/kapelonis/[Java Testing with Spock] book from Manning
+* Check out the upcoming https://manning.com/kapelonis/[Java Testing with Spock] book from Manning
 
 === What's Up Next?
 
@@ -952,7 +1059,7 @@ These awesome extensions have been published or updated:
 
 These great features didn't make it into this release (but hopefully the next!):
 
-* http://spockframework.github.io/spock/sampleReports/Ninja%20Commander.html[Spock reports]
+* https://spockframework.github.io/spock/sampleReports/Ninja%20Commander.html[Spock reports]
 * https://github.com/spockframework/spock/pull/49[Render exceptions in conditions as condition failure]
 * https://github.com/spockframework/spock/pull/50[Soft asserts: check all then throw all failures]
 * https://github.com/spockframework/spock/pull/17[Detached mocks]
@@ -965,10 +1072,10 @@ Spock snapshots are now available from https://oss.sonatype.org/content/reposito
 
 === New Reference Documentation
 
-The new Spock reference documentation is available at http://docs.spockframework.org.
-It will gradually replace the documentation at http://wiki.spockframework.org.
-Each Spock version is documented separately (e.g. http://docs.spockframework.org/en/spock-0.7-groovy-1.8).
-Documentation for the latest Spock snapshot is at http://docs.spockframework.org/en/latest.
+The new Spock reference documentation is available at https://docs.spockframework.org.
+It will gradually replace the documentation at https://wiki.spockframework.org.
+Each Spock version is documented separately (e.g. https://docs.spockframework.org/en/spock-0.7-groovy-1.8).
+Documentation for the latest Spock snapshot is at https://docs.spockframework.org/en/latest.
 As of Spock 0.7, the chapters on <<data_driven_testing.adoc#data-driven-testing,Data Driven Testing>> and
 <<interaction_based_testing.adoc#interaction-based-testing,Interaction Based Testing>> are complete.
 
@@ -1236,7 +1343,7 @@ Caused by: java.io.FileNotFoundException: ...
 === `HamcrestSupport.expect`
 
 Class `spock.util.matcher.HamcrestSupport` has a new `expect` method that makes
-http://code.google.com/p/hamcrest/[Hamcrest] assertions read better in then-blocks:
+https://hamcrest.org/JavaHamcrest/[Hamcrest] assertions read better in then-blocks:
 
 [source,groovy]
 ----
@@ -1273,7 +1380,7 @@ foo.bar() >> { throw new IOException() } >>> [1, 2, 3] >> { throw new RuntimeExc
 
 It's now possible to match any argument list (including the empty list) with `foo.bar(*_)`.
 
-Method arguments can now be constrained with http://code.google.com/p/hamcrest/[Hamcrest] matchers:
+Method arguments can now be constrained with https://hamcrest.org/JavaHamcrest/[Hamcrest] matchers:
 
 [source,groovy]
 ----
@@ -1313,7 +1420,7 @@ as an addition or alternative to Spock's own fixture methods. This was particula
 
 === Tapestry 5.3 Support
 
-Thanks to a contribution from http://howardlewisship.com/[Howard Lewis Ship], the Tapestry module is now compatible
+Thanks to a contribution from https://howardlewisship.com/[Howard Lewis Ship], the Tapestry module is now compatible
 with Tapestry 5.3. Older 5.x versions are still supported.
 
 === IBM JDK Support
@@ -1382,12 +1489,12 @@ a | b || sum
 
 Spock 0.6 ships in three variants for Groovy 1.7, 1.8, and 2.0. Make sure to pick the right version - for example,
 for Groovy 1.8 you need to use spock-core-0.6-groovy-1.8 (likewise for all other modules). The Groovy 2.0 variant
-is based on Groovy 2.0-beta-3-SNAPSHOT and only available from http://m2repo.spockframework.org. The Groovy 1.7 and
+is based on Groovy 2.0-beta-3-SNAPSHOT and only available from https://m2repo.spockframework.org. The Groovy 1.7 and
 1.8 variants are also available from Maven Central. The next version of Spock will no longer support Groovy 1.7.
 
 === Grails 2.0 Support
 
-Spock's Grails plugin was split off into a separate project and now lives at http://github.spockframework.org/spock-grails.
+Spock's Grails plugin was split off into a separate project and now lives at https://github.spockframework.org/spock-grails.
 The plugin supports both Grails 1.3 and 2.0.
 
 The Spock Grails plugin supports all of the new Grails 2.0 test mixins, effectively deprecating the existing unit
@@ -1395,22 +1502,22 @@ testing classes (e.g. UnitSpec). For integration testing, IntegrationSpec must s
 
 === IntelliJ IDEA Integration
 
-The folks from http://www.jetbrains.com[JetBrains] have added a few handy features around data tables. Data tables
+The folks from https://www.jetbrains.com[JetBrains] have added a few handy features around data tables. Data tables
 will now be layed out automatically when reformatting code. Data variables are no longer shown as "unknown" and have
 their types inferred from the values in the table (!).
 
 === GitHub Repository
 
-All source code has moved to http://github.spockframework.org/. The http://github.spockframework.org/spock-grails[Grails Spock plugin],
-http://github.spockframework.org/spock-example[Spock Example] project, and
-http://github.spockframework.org/spockwebconsole[Spock Web Console] now have their own GitHub projects.
+All source code has moved to https://github.spockframework.org/. The https://github.spockframework.org/spock-grails[Grails Spock plugin],
+https://github.spockframework.org/spock-example[Spock Example] project, and
+https://github.spockframework.org/spockwebconsole[Spock Web Console] now have their own GitHub projects.
 Also available are slides and code for various Spock presentations (such as
-http://github.spockframework.org/smarter-testing-with-spock[this one]).
+https://github.spockframework.org/smarter-testing-with-spock[this one]).
 
 === Gradle Build
 
 Spock is now exclusively built with Gradle. Building Spock yourself is as easy as cloning the
-http://github.spockframework.org/spock[Github repo] and executing `gradlew build`. No build tool installation is
+https://github.spockframework.org/spock[Github repo] and executing `gradlew build`. No build tool installation is
 required; the only prerequisite for building Spock is a JDK installation (1.5 or higher).
 
 === Fixed Issues

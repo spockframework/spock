@@ -2,6 +2,8 @@ package org.spockframework.smoke.ast
 
 import org.spockframework.EmbeddedSpecification
 import org.spockframework.runtime.GroovyRuntimeUtil
+import org.spockframework.util.GroovyReleaseInfo
+import org.spockframework.util.VersionNumber
 import spock.lang.Requires
 import spock.util.Show
 
@@ -53,6 +55,8 @@ public void $spock_feature_0_0() {
   }
 
 
+
+  @Requires({ GroovyReleaseInfo.version < VersionNumber.parse("4.0.2")})
   def "astToSourceFeatureBody can render everything"() {
     when:
     def result = compiler.transpileFeatureBody('''
@@ -77,6 +81,33 @@ public class apackage.ASpec extends spock.lang.Specification {
 
 }'''
   }
+
+  @Requires({ GroovyReleaseInfo.version >= VersionNumber.parse("4.0.2")})
+  def "astToSourceFeatureBody can render everything (Groovy 4.0.2+)"() {
+    when:
+    def result = compiler.transpileFeatureBody('''
+    given:
+    def nothing = null
+    ''', Show.all(), CompilePhase.INSTRUCTION_SELECTION)
+
+    then:
+    result.source == '''\
+package apackage
+
+import spock.lang.*
+
+@org.spockframework.runtime.model.SpecMetadata(filename = 'script.groovy', line = 1)
+public class apackage.ASpec extends spock.lang.Specification implements groovy.lang.GroovyObject {
+
+    @org.spockframework.runtime.model.FeatureMetadata(name = 'a feature', ordinal = 0, line = 1, blocks = [@org.spockframework.runtime.model.BlockMetadata(kind = org.spockframework.runtime.model.BlockKind.SETUP, texts = [])], parameterNames = [])
+    public void $spock_feature_0_0() {
+        java.lang.Object nothing = null
+        this.getSpecificationContext().getMockController().leaveScope()
+    }
+
+}'''
+  }
+
   def "astToSourceFeatureBody shows compile error in source"() {
     when:
     def result = compiler.transpileFeatureBody('''

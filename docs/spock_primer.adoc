@@ -4,14 +4,14 @@ include::include.adoc[]
 This chapter assumes that you have a basic knowledge of Groovy and unit testing. If you are a Java developer but haven't
 heard about Groovy, don't worry - Groovy will feel very familiar to you! In fact, one of Groovy's main design goals is to
 be _the_ scripting language alongside Java. So just follow along and consult the
-http://groovy-lang.org/documentation.html[Groovy documentation] whenever you feel like it.
+https://groovy-lang.org/documentation.html[Groovy documentation] whenever you feel like it.
 
 The goals of this chapter are to teach you enough Spock to write real-world Spock specifications, and to
 whet your appetite for more.
 
-To learn more about Groovy, go to http://groovy-lang.org/.
+To learn more about Groovy, go to https://groovy-lang.org/.
 
-To learn more about unit testing, go to http://en.wikipedia.org/wiki/Unit_testing.
+To learn more about unit testing, go to https://en.wikipedia.org/wiki/Unit_testing.
 
 == Terminology
 
@@ -369,7 +369,7 @@ Math.max(1, 2) == 2
 Although both snippets are semantically equivalent, the second one is clearly preferable. As a guideline, use `when-then`
 to describe methods with side effects, and `expect` to describe purely functional methods.
 
-TIP: Leverage http://docs.groovy-lang.org/docs/latest/html/groovy-jdk/[Groovy JDK] methods like `any()` and `every()`
+TIP: Leverage https://docs.groovy-lang.org/docs/latest/html/groovy-jdk/[Groovy JDK] methods like `any()` and `every()`
 to create more expressive and succinct conditions.
 
 ==== Cleanup Blocks
@@ -680,4 +680,3 @@ Although Spock uses a different terminology, many of its concepts and features a
 |Exception condition   |`@Test(expected=...)`
 |Interaction           | Mock expectation (e.g. in Mockito)
 |===
-`

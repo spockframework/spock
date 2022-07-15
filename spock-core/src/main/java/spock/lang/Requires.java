@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,7 +18,7 @@ package spock.lang;
 
 import java.lang.annotation.*;
 
-import groovy.lang.Closure;
+import groovy.lang.*;
 
 import org.spockframework.runtime.extension.ExtensionAnnotation;
 import org.spockframework.runtime.extension.builtin.PreconditionContext;
@@ -38,7 +38,7 @@ import org.spockframework.util.Beta;
  * the whole annotated element is skipped up-front, no fixtures, data providers or anything
  * else will be executed. But if the closure actually does reference valid data variables,
  * the whole workflow is followed up to the feature method invocation, where then the closure
- * is checked and it is decided whether to abort the specific iteration or not.
+ * is checked, and it is decided whether to abort the specific iteration or not.
  *
  * @see IgnoreIf
  * @see PreconditionContext
@@ -48,9 +48,30 @@ import org.spockframework.util.Beta;
 @ExtensionAnnotation(RequiresExtension.class)
 @Repeatable(Requires.Container.class)
 public @interface Requires {
+  /**
+   * The reason for ignoring this element.
+   *
+   * @return the string to use for the skip message
+   */
   String reason() default "";
 
+  /**
+   * The condition to check, {@link PreconditionContext} will be set as delegate and argument.
+   *
+   * @return the closure to evaluate
+   */
   Class<? extends Closure> value();
+
+  /**
+   * Whether this annotation should be inherited by child classes.
+   *
+   * For historic reasons, this is false by default.
+   * It has no special effect if used on a feature.
+   *
+   * @since 2.1
+   * @return whether this annotation applies to child classes
+   */
+  boolean inherited() default false;
 
   /**
    * @since 2.0

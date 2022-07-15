@@ -86,7 +86,7 @@ class FinalFieldsInitializer extends EmbeddedSpecification {
 
         then:
         InvalidSpecCompileException e = thrown()
-        e.message == "Final field 'finalField' is not initialized. @ line 1, column 76."
+        e.message == "Final field 'finalField' is not initialized. @ line 1, column 56."
     }
 
     def "final shared fields need an initializer"() {
@@ -98,6 +98,6 @@ class FinalFieldsInitializer extends EmbeddedSpecification {
 
         then:
         InvalidSpecCompileException e = thrown()
-        e.message == "@Shared final field 'finalShared' is not initialized. @ line 1, column 76."
+        e.message == "@Shared final field 'finalShared' is not initialized. @ line 1, column 56."
     }
 }

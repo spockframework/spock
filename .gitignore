@@ -35,3 +35,6 @@ stacktrace.log
 
 Foo.*
 /.shelf/
+/.asciidoctor/
+
+!.idea/icon.png

@@ -3,13 +3,13 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:spock="http://www.spockframework.org/spring"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-           http://www.springframework.org/schema/beans/spring-beans.xsd
-           http://www.spockframework.org/spring http://www.spockframework.org/spring/spock.xsd">
+           https://www.springframework.org/schema/beans/spring-beans.xsd
+           http://www.spockframework.org/spring https://www.spockframework.org/spring/spock.xsd">
 
   <spock:mock id="serviceMock" class="org.spockframework.spring.docs.GreeterService"/>   <!--1-->
   <spock:stub id="serviceStub" class="org.spockframework.spring.docs.GreeterService"/>   <!--2-->
   <spock:spy id="serviceSpy" class="org.spockframework.spring.docs.GreeterServiceImpl"/> <!--3-->
-  
+
   <bean id="someExistingBean" class="java.util.ArrayList"/>                              <!--4-->
   <spock:wrapWithSpy ref="someExistingBean"/>                                            <!--4-->
 

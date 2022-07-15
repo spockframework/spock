@@ -2,14 +2,14 @@
 
 There are many ways to contribute to Spock:
 
-* Spreading the word by talking, tweeting, blogging, presenting, submitting talks, writing tutorials or articles (or a book!), sharing success stories, adding your project/company to [Who is Using Spock](http://wiki.spockframework.org/WhoIsUsingSpock), etc.
-* Helping other users by participating in [forum](http://forum.spockframework.org) discussions, answering [Spock questions](https://stackoverflow.com/questions/tagged/spock) on Stack Overflow, etc.
+* Spreading the word by talking, tweeting, blogging, presenting, submitting talks, writing tutorials or articles (or a book!), sharing success stories, adding your project/company to [Who is Using Spock](https://wiki.spockframework.org/WhoIsUsingSpock), etc.
+* Helping other users by participating in [forum](https://forum.spockframework.org) discussions, answering [Spock questions](https://stackoverflow.com/questions/tagged/spock) on Stack Overflow, etc.
 * Providing early feedback on [development snapshots](https://oss.sonatype.org/content/repositories/snapshots/org/spockframework/) and new features
-* Improving and extending the [reference documentation](http://docs.spockframework.org) [(source)](https://github.com/spockframework/spock/tree/master/docs)
+* Improving and extending the [reference documentation](https://docs.spockframework.org) [(source)](https://github.com/spockframework/spock/tree/master/docs)
 * Translating blog posts, articles, and the reference documentation to other languages (with permission of the authors)
-* Fixing open issues listed in the [issue tracker](http://issues.spockframework.org)
+* Fixing open issues listed in the [issue tracker](https://issues.spockframework.org)
 * Proposing, discussing, and implementing new features
-* Building the next generation of [Spock Web Console](http://webconsole.spockframework.org), or an interactive Spock tutorial
+* Building the next generation of [Spock Web Console](https://webconsole.spockframework.org), or an interactive Spock tutorial
 * Designing a Spock logo and/or website (Disclaimer: Our expectations are high on this one, and obviously we'll need to be heavily involved)
 * Hiring us for Spock/[Geb](https://gebish.org) related training and consulting
 * Donating money to fund further development
@@ -19,7 +19,7 @@ All forms of contribution are very much appreciated.
 
 ## Communication
 
-Good communication makes a big difference. We are always eager to listen, reflect, and discuss. Don't hesitate to get in touch via the [issue tracker](http://issues.spockframework.org), [user forum](http://forum.spockframework.org), or [dev forum](http://dev-forum.spockframework.org). Choose whatever medium feels most appropriate.
+Good communication makes a big difference. We are always eager to listen, reflect, and discuss. Don't hesitate to get in touch via the [issue tracker](https://issues.spockframework.org), [user forum](https://forum.spockframework.org), or [dev forum](https://dev-forum.spockframework.org). Choose whatever medium feels most appropriate.
 
 ## Triage Issues [![Open Source Helpers](https://www.codetriage.com/spockframework/spock/badges/users.svg)](https://www.codetriage.com/spockframework/spock)
 
@@ -29,7 +29,7 @@ You can triage issues which may include reproducing bug reports or asking for vi
 
 To contribute code or documentation, please submit a pull request to the [GitHub repository](https://github.com/spockframework/spock).
 
-A good way to familiarize yourself with the codebase and contribution process is to look for and tackle low-hanging fruits in the [issue tracker](http://issues.spockframework.org). Before embarking on a more ambitious contribution, please quickly [get in touch](#communication) with us. This will help to make sure that the contribution is aligned with Spock's overall direction and goals, and gives us a chance to guide design and implementation where needed.
+A good way to familiarize yourself with the codebase and contribution process is to look for and tackle low-hanging fruits in the [issue tracker](https://issues.spockframework.org). Before embarking on a more ambitious contribution, please quickly [get in touch](#communication) with us. This will help to make sure that the contribution is aligned with Spock's overall direction and goals, and gives us a chance to guide design and implementation where needed.
 
 **We appreciate your effort, and want to avoid a situation where a contribution requires extensive rework (by you or by us), sits in the queue for a long time, or cannot be accepted at all!**
 
@@ -66,7 +66,7 @@ Spock is built with [Gradle](https://www.gradle.org). The only prerequisite for 
 
 ### CI Build
 
-Each push to the official GitHub repository triggers a [Linux CI build](http://builds.spockframework.org) and [Windows CI build](http://winbuilds.spockframework.org). Pull requests are built as well.
+Each push to the official GitHub repository triggers a [Linux CI build](https://builds.spockframework.org) and [Windows CI build](https://winbuilds.spockframework.org). Pull requests are built as well.
 
 ### IDE Setup
 

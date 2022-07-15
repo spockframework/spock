@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,6 +16,7 @@
 
 package org.spockframework.compiler;
 
+import org.codehaus.groovy.syntax.Token;
 import org.spockframework.lang.Wildcard;
 import org.spockframework.util.*;
 import spock.lang.Specification;
@@ -28,6 +29,9 @@ import org.codehaus.groovy.ast.expr.*;
 import org.codehaus.groovy.ast.stmt.*;
 import org.codehaus.groovy.runtime.dgmimpl.arrays.IntegerArrayGetAtMetaMethod;
 import org.objectweb.asm.Opcodes;
+
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
 
 /**
  * Utility methods for AST processing.
@@ -83,7 +87,7 @@ public abstract class AstUtil {
   public static List<Statement> getStatements(ClosureExpression closure) {
     BlockStatement blockStat = (BlockStatement)closure.getCode();
     return blockStat == null ?
-        Collections.<Statement> emptyList() : // it's not possible to add any statements to such a ClosureExpression, so immutable list is OK
+        emptyList() : // it's not possible to add any statements to such a ClosureExpression, so immutable list is OK
         blockStat.getStatements();
   }
 
@@ -116,7 +120,7 @@ public abstract class AstUtil {
     if (expr instanceof StaticMethodCallExpression)
       return new ClassExpression(((StaticMethodCallExpression) expr).getOwnerType());
     if (expr instanceof ConstructorCallExpression)
-      return new ClassExpression(((ConstructorCallExpression) expr).getType());
+      return new ClassExpression(expr.getType());
     return null;
   }
 
@@ -216,7 +220,7 @@ public abstract class AstUtil {
 
     if (arguments instanceof NamedArgumentListExpression)
       // return same result as for NamedArgumentListExpression wrapped in TupleExpression
-      return Collections.singletonList(arguments);
+      return singletonList(arguments);
 
     return ((TupleExpression) arguments).getExpressions();
   }
@@ -316,7 +320,6 @@ public abstract class AstUtil {
 
   public static MethodCallExpression createMethodCall(Expression target, String methodName, Expression arguments) {
     MethodCallExpression result = new MethodCallExpression(target, methodName, arguments);
-    // see http://groovy.329449.n5.nabble.com/Problem-with-latest-2-0-beta-3-snapshot-and-Spock-td5496353.html
     // and https://github.com/spockframework/spock/issues/1200
     // and https://issues.apache.org/jira/browse/GROOVY-9651
     result.setImplicitThis(false);
@@ -344,10 +347,33 @@ public abstract class AstUtil {
 
   public static Expression getVariableType(BinaryExpression assignment) {
     ClassNode type = assignment.getLeftExpression().getType();
-    return type == null || type == ClassHelper.DYNAMIC_TYPE ? ConstantExpression.NULL : new ClassExpression(type);
+    return type == null || isDynamicTypedExpression(assignment.getLeftExpression()) ? ConstantExpression.NULL : new ClassExpression(type);
+  }
+
+  private static boolean isDynamicTypedExpression(Expression leftExpression) {
+    if (leftExpression instanceof VariableExpression) {
+      return  ((VariableExpression) leftExpression).isDynamicTyped();
+    }
+    if (leftExpression instanceof FieldExpression) {
+      return  ((FieldExpression) leftExpression).isDynamicTyped();
+    }
+    if (leftExpression instanceof PropertyExpression) {
+      return  ((PropertyExpression) leftExpression).isDynamic();
+    }
+    return false;
   }
 
   public static MethodCallExpression createGetAtMethodCall(Expression expression, int index) {
     return createMethodCall(expression, GET_AT_METHOD_NAME, new ConstantExpression(index));
+  }
+  public static MethodCallExpression createGetAtMethodCall(Expression expression, String key) {
+    return createMethodCall(expression, GET_AT_METHOD_NAME, new ConstantExpression(key));
+  }
+  public static Expression createGetAtWithMapSupportMethodCall(Expression expression, int index, String key) {
+    return new TernaryExpression(
+      new BooleanExpression(new BinaryExpression(expression, Token.newKeyword("instanceof", -1, -1), new ClassExpression(ClassHelper.MAP_TYPE))),
+      createMethodCall(expression, GET_AT_METHOD_NAME, new ConstantExpression(key)),
+      createMethodCall(expression, GET_AT_METHOD_NAME, new ConstantExpression(index))
+    );
   }
 }

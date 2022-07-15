@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,7 +19,10 @@ package org.spockframework.smoke.extension
 import org.spockframework.EmbeddedSpecification
 import org.spockframework.runtime.ConditionNotSatisfiedError
 import org.spockframework.runtime.extension.ExtensionException
-import spock.lang.*
+import org.spockframework.runtime.extension.builtin.PreconditionContext
+import spock.lang.IgnoreIf
+import spock.lang.Issue
+import spock.lang.Requires
 
 class IgnoreIfExtension extends EmbeddedSpecification {
   @IgnoreIf({ 1 < 2 })
@@ -55,7 +58,7 @@ class IgnoreIfExtension extends EmbeddedSpecification {
     expect: false
   }
 
-  @IgnoreIf({ a == 1 })
+  @IgnoreIf({ data.a == 1 })
   def 'can evaluate for single iterations if data variables are accessed'() {
     expect:
     a == 2
@@ -70,7 +73,7 @@ class IgnoreIfExtension extends EmbeddedSpecification {
     a = { throw new RuntimeException() }.call()
   }
 
-  def 'fails directly when referencing an unknown variable'() {
+  def 'fails directly when referencing an unknown property'() {
     when:
     runner.runSpecBody """
 @IgnoreIf({ b })
@@ -83,6 +86,21 @@ def foo() {
     then:
     ExtensionException ee = thrown()
     ee.cause instanceof MissingPropertyException
+  }
+
+  def 'fails directly when referencing an unknown variable'() {
+    when:
+    runner.runSpecBody """
+@IgnoreIf({ data.b })
+def foo() {
+    expect: false
+    where: a = { throw new RuntimeException() }.call()
+}
+"""
+
+    then:
+    ExtensionException ee = thrown()
+    ee.cause instanceof PreconditionContext.DataVariableContextException
   }
 
   def 'fails directly when throwing an arbitrary exception'() {
@@ -216,7 +234,6 @@ class Foo extends Specification {
     false     | 0                          | 1
   }
 
-
   def "spec usage with shared field access"() {
     when:
     def result = runner.runWithImports """
@@ -246,7 +263,6 @@ class Foo extends Specification {
     true      | 0                          | 1
   }
 
-
   def "spec usage with instance field access"() {
     when:
     def result = runner.runWithImports """
@@ -271,6 +287,49 @@ class Foo extends Specification {
     shouldRun | testSucceededCount | testAbortedCount
     false     | 1                  | 0
     true      | 0                  | 1
+  }
+
+  def "@IgnoreIf can be configured to be inherited"() {
+    when:
+    def result = runner.runWithImports """
+class Base extends Specification {
+  def "base feature"() {
+    expect: true
+  }
+}
+
+@IgnoreIf(value = { true }, inherited = ${inherited})
+class Foo extends Base {
+  def "foo feature"() {
+    expect: true
+  }
+}
+
+class Bar extends Foo {
+  def "bar feature"() {
+    expect: true
+  }
+}
+
+class Test extends Bar {
+  def "test feature"() {
+    expect: true
+  }
+}
+"""
+
+    then:
+    result.testsStartedCount == testStartAndSucceededCount
+    result.testsFailedCount == 0
+    result.testsSkippedCount == 0
+    result.testsAbortedCount == 0
+    result.testsSucceededCount == testStartAndSucceededCount
+    result.containersSkippedCount == specSkippedCount
+
+    where:
+    inherited | testStartAndSucceededCount | specSkippedCount
+    false     | 1 + 0 + 3 + 4              | 1
+    true      | 1                          | 3
   }
 
   def "fails if condition cannot be instantiated"() {
@@ -315,7 +374,7 @@ def foo() {
     thrown(ConditionNotSatisfiedError)
   }
 
-  @IgnoreIf({ a == 1 })
+  @IgnoreIf({ data.a == 1 })
   @IgnoreIf({ false })
   def "feature is ignored if data variable accessing IgnoreIf annotation is true"() {
     expect: false
@@ -323,8 +382,8 @@ def foo() {
     a = 1
   }
 
-  @IgnoreIf({ a == 1 })
-  @IgnoreIf({ a != 1 })
+  @IgnoreIf({ data.a == 1 })
+  @IgnoreIf({ data.a != 1 })
   def "feature is ignored if at least one data variable accessing IgnoreIf annotation is true"() {
     expect: false
     where:
@@ -332,7 +391,7 @@ def foo() {
   }
 
   @IgnoreIf({ true })
-  @IgnoreIf({ a != 1 })
+  @IgnoreIf({ data.a != 1 })
   def "feature is ignored if non data variable accessing IgnoreIf annotation is true"() {
     expect: false
     where:

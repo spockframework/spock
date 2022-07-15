@@ -2,13 +2,15 @@ import com.gradle.enterprise.gradleplugin.internal.extension.BuildScanExtensionW
 
 pluginManagement {
   plugins {
-    id "com.gradle.enterprise" version "3.6.1"
-    id "com.gradle.common-custom-user-data-gradle-plugin" version "1.2.1"
+    id "com.gradle.enterprise" version "3.10.3"
+    id "com.gradle.common-custom-user-data-gradle-plugin" version "1.7.2"
     id "org.asciidoctor.jvm.convert" version "3.3.2"
-    id "net.nemerosa.versioning" version "2.14.0"
-    id "de.marcphilipp.nexus-publish" version "0.4.0"
-    id "com.github.ben-manes.versions" version "0.39.0"
-    id "biz.aQute.bnd.builder" version "6.0.0"
+    id "net.nemerosa.versioning" version "3.0.0"
+    id "io.github.gradle-nexus.publish-plugin" version "1.1.0"
+    id "com.github.ben-manes.versions" version "0.42.0"
+    id "biz.aQute.bnd.builder" version "6.3.1"
+    id "org.gradle.test-retry" version "1.4.0"
+    id "io.spring.nohttp" version "0.0.10"
   }
 
   includeBuild "build-logic"
@@ -18,6 +20,17 @@ plugins {
   id "com.gradle.enterprise"
   id "com.gradle.common-custom-user-data-gradle-plugin"
 }
+
+dependencyResolutionManagement {
+  repositories {
+    mavenCentral()
+  }
+}
+
+if (((System.getProperty("java.specification.version") ?: 8) as BigDecimal) < 11) {
+  throw new InvalidUserDataException("The spock build needs to be run with JDK 11 or higher, but was: ${System.getProperty("java.specification.version")}")
+}
+
 
 def gradleEnterpriseServer = "https://ge.spockframework.org"
 def isCiServer = System.env["CI"] || System.env["GITHUB_ACTIONS"]
@@ -72,17 +85,17 @@ buildCache {
   }
 }
 
+includeBuild "build-logic"
 include "spock-bom"
 include "spock-core"
 include "spock-specs"
 include "spock-specs:mock-integration"
 include "spock-spring"
-include "spock-spring:spring3-test"
 include "spock-guice"
 include "spock-junit4"
 include "spock-testkit"
 
-if ((System.getProperty("variant") as BigDecimal ?: 2.5) != 3.0) {
+if ((System.getProperty("variant") as BigDecimal ?: 2.5) == 2.5) {
   //Remove once Groovy 2.5 support is dropped
   include "spock-groovy2-compat"
 }
@@ -95,7 +108,11 @@ if (((System.getProperty("javaVersion") ?: 8) as int) == 8) {
 include "spock-unitils"
 
 include "spock-spring:boot2-test"
+include "spock-spring:spring3-test"
 include "spock-spring:spring5-test"
+if (((System.getProperty("javaVersion") ?: 8) as int) >= 17) {
+  include "spock-spring:spring6-test"
+}
 
 rootProject.name = "spock"
 nameBuildScriptsAfterProjectNames(rootProject.children)

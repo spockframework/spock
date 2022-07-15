@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -23,6 +23,10 @@ import spock.lang.Requires;
 
 import groovy.lang.Closure;
 
+import java.util.List;
+
+import static java.util.Collections.singletonList;
+
 /**
  * @author Peter Niederwieser
  */
@@ -37,9 +41,9 @@ public class RequiresExtension extends ConditionalExtension<Requires> {
 
   @Override
   protected void specConditionResult(boolean result, Requires annotation, SpecInfo spec) {
-    if (!result) {
-      spec.skip(ignoredMessage(annotation));
-    }
+    if (result) return;
+    List<SpecInfo> specsToSkip = annotation.inherited() ? spec.getSpecsCurrentToBottom() : singletonList(spec);
+    specsToSkip.forEach(toSkip -> toSkip.skip(ignoredMessage(annotation)));
   }
 
   @Override

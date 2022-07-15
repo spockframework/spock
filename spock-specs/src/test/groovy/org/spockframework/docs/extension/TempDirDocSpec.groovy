@@ -1,8 +1,7 @@
 package org.spockframework.docs.extension
 
-import spock.lang.Shared
-import spock.lang.Specification
-import spock.lang.TempDir
+import spock.lang.*
+import spock.util.io.FileSystemFixture
 
 import java.nio.file.Path
 
@@ -26,11 +25,16 @@ class TempDirDocSpec extends Specification {
   @TempDir
   def path3
 
+  // use a custom class that accepts java.nio.file.Path as sole constructor parameter
+  @TempDir
+  FileSystemFixture path4
+
   def demo() {
     expect:
     path1 instanceof Path
     path2 instanceof File
     path3 instanceof Path
+    path4 instanceof FileSystemFixture
   }
 
 // end::example[]

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -23,6 +23,7 @@ import spock.lang.Specification;
 import java.lang.reflect.*;
 import java.util.*;
 
+import static java.util.Arrays.asList;
 import static java.util.Comparator.comparingInt;
 
 /**
@@ -153,7 +154,7 @@ public class SpecInfoBuilder {
     for (BlockMetadata blockMetadata : featureMetadata.blocks()) {
       BlockInfo block = new BlockInfo();
       block.setKind(blockMetadata.kind());
-      block.setTexts(Arrays.asList(blockMetadata.texts()));
+      block.setTexts(asList(blockMetadata.texts()));
       feature.addBlock(block);
     }
 
@@ -166,8 +167,8 @@ public class SpecInfoBuilder {
     DataProviderInfo provider = new DataProviderInfo();
     provider.setParent(feature);
     provider.setLine(metadata.line());
-    provider.setDataVariables(Arrays.asList(metadata.dataVariables()));
-    provider.setPreviousDataTableVariables(Arrays.asList(metadata.previousDataTableVariables()));
+    provider.setDataVariables(asList(metadata.dataVariables()));
+    provider.setPreviousDataTableVariables(asList(metadata.previousDataTableVariables()));
     provider.setDataProviderMethod(method);
     return provider;
   }

@@ -17,6 +17,8 @@ import java.util.List;
 
 class CglibMockFactory {
 
+  private static final Class<?>[] CLASSES = new Class<?>[0];
+
   static Object createMock(Class<?> type, List<Class<?>> additionalInterfaces, @Nullable List<Object> constructorArgs,
                            IProxyBasedMockInterceptor interceptor, ClassLoader classLoader, boolean useObjenesis) {
     Enhancer enhancer = new ConstructorFriendlyEnhancer();
@@ -24,7 +26,7 @@ class CglibMockFactory {
     enhancer.setSuperclass(type);
     List<Class<?>> interfaces = new ArrayList<>(additionalInterfaces);
     interfaces.add(ISpockMockObject.class);
-    enhancer.setInterfaces(interfaces.toArray(new Class<?>[interfaces.size()]));
+    enhancer.setInterfaces(interfaces.toArray(CLASSES));
     enhancer.setCallbackFilter(BridgeMethodAwareCallbackFilter.INSTANCE);
     MethodInterceptor cglibInterceptor = new CglibMockInterceptorAdapter(interceptor);
     enhancer.setCallbackTypes(new Class[] {cglibInterceptor.getClass(), NoOp.class});

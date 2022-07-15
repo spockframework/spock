@@ -53,7 +53,7 @@ public @interface PendingFeatureIf {
   /**
    * The reason why this feature is pending
    *
-   * @return reason why this feature is pending
+   * @return the string to use for the skip message
    */
   String reason() default "";
 

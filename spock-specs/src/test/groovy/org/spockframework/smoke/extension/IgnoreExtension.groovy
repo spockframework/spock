@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -113,7 +113,6 @@ class Derived extends Base {
     when:
     def result = runner.runClass(derived)
 
-
     then:
     result.testsSucceededCount == 2
     result.testsFailedCount == 0
@@ -141,13 +140,52 @@ class Derived extends Base {
     when:
     def result = runner.runClass(derived)
 
-
     then:
     result.testsSucceededCount == 2
     result.testsFailedCount == 0
     result.testsSkippedCount == 0
   }
+
+  def "Ignore can be configured to be inherited"() {
+    when:
+    def result = runner.runWithImports """
+class Base extends Specification {
+  def "base feature"() {
+    expect: true
+  }
 }
 
+@Ignore(inherited = ${inherited})
+class Foo extends Base {
+  def "foo feature"() {
+    expect: true
+  }
+}
 
+class Bar extends Foo {
+  def "bar feature"() {
+    expect: true
+  }
+}
 
+class Test extends Bar {
+  def "test feature"() {
+    expect: true
+  }
+}
+"""
+
+    then:
+    result.testsStartedCount == testStartAndSucceededCount
+    result.testsFailedCount == 0
+    result.testsSkippedCount == 0
+    result.testsAbortedCount == 0
+    result.testsSucceededCount == testStartAndSucceededCount
+    result.containersSkippedCount == specSkippedCount
+
+    where:
+    inherited | testStartAndSucceededCount | specSkippedCount
+    false     | 1 + 0 + 3 + 4              | 1
+    true      | 1                          | 3
+  }
+}

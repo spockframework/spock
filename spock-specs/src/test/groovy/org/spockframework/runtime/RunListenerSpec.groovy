@@ -18,7 +18,7 @@ class RunListenerSpec extends EmbeddedSpecification {
     runner.addClassImport(RegisterRunListener)
 
     when:
-    runner.run '''
+    runner.runWithImports '''
 @RegisterRunListener
 class ASpec extends Specification {
   def "a test"() {

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,8 +17,10 @@
 package org.spockframework.compiler;
 
 import org.spockframework.compiler.model.*;
+import org.spockframework.runtime.SpockException;
 import org.spockframework.util.*;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 import org.codehaus.groovy.ast.*;
@@ -28,6 +30,8 @@ import org.codehaus.groovy.runtime.MetaClassHelper;
 import org.codehaus.groovy.syntax.*;
 import org.objectweb.asm.Opcodes;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static org.spockframework.compiler.AstUtil.createDirectMethodCall;
 
 /**
@@ -37,6 +41,10 @@ import static org.spockframework.compiler.AstUtil.createDirectMethodCall;
  */
 // IDEA: mock controller / leaveScope calls should only be inserted when necessary (increases robustness)
 public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResources {
+  // https://issues.apache.org/jira/browse/GROOVY-10403
+  // needed for groovy-4 compatibility and only available since groovy-4
+  private static final java.lang.reflect.Method GET_PLAIN_NODE_REFERENCE = ReflectionUtil.getMethodBySignature(ClassNode.class, "getPlainNodeReference", boolean.class);
+
   private final AstNodeCache nodeCache;
   private final SourceLookup lookup;
   private final ErrorReporter errorReporter;
@@ -162,7 +170,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
 
     BlockStatement setterBlock = new BlockStatement();
     setter = new MethodNode(setterName, determineVisibilityForSharedFieldAccessor(field) | Opcodes.ACC_SYNTHETIC,
-        ClassHelper.VOID_TYPE, params, ClassNode.EMPTY_ARRAY, setterBlock);
+        getPlainReference(ClassHelper.VOID_TYPE), params, ClassNode.EMPTY_ARRAY, setterBlock);
 
     setterBlock.addStatement(
         new ExpressionStatement(
@@ -179,7 +187,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
   }
 
   // we try to use the visibility of the original field, but change
-  // private to protected to solve http://issues.spockframework.org/detail?id=151
+  // private to protected to solve https://github.com/spockframework/spock/issues/273
   private int determineVisibilityForSharedFieldAccessor(Field field) {
     if (field.getOwner() == null) { // true field
       int visibility = AstUtil.getVisibility(field.getAst());
@@ -330,7 +338,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
   private MethodNode copyMethod(MethodNode method, String newName) {
     // can't hurt to set return type to void
     MethodNode newMethod = new MethodNode(newName, method.getModifiers(),
-        ClassHelper.VOID_TYPE, method.getParameters(), method.getExceptions(), method.getCode());
+      getPlainReference(ClassHelper.VOID_TYPE), method.getParameters(), method.getExceptions(), method.getCode());
 
     newMethod.addAnnotations(method.getAnnotations());
     newMethod.setSynthetic(method.isSynthetic());
@@ -341,6 +349,19 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
     newMethod.setAnnotationDefault(method.hasAnnotationDefault());
 
     return newMethod;
+  }
+
+  private ClassNode getPlainReference(ClassNode type) {
+    // https://issues.apache.org/jira/browse/GROOVY-10403
+    // needed for groovy-4 compatibility
+    if (GET_PLAIN_NODE_REFERENCE != null) {
+      try {
+        return (ClassNode) GET_PLAIN_NODE_REFERENCE.invoke(type, false);
+      } catch (IllegalAccessException | InvocationTargetException e) {
+        throw new SpockException("Could not create plain reference");
+      }
+    }
+    return type;
   }
 
   // where block must be rewritten before all other blocks
@@ -469,7 +490,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
 
     CatchStatement featureCatchStat = createThrowableAssignmentAndRethrowCatchStatement(featureThrowableVar);
 
-    List<Statement> cleanupStats = Collections.<Statement>singletonList(
+    List<Statement> cleanupStats = singletonList(
         createCleanupTryCatch(block, featureThrowableVar));
 
     TryCatchStatement tryFinally =
@@ -527,7 +548,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
 
     return new CatchStatement(catchParameter,
         new BlockStatement(
-            Arrays.asList(
+            asList(
               new ExpressionStatement(assignThrowableExpr),
               new ThrowStatement(new VariableExpression(catchParameter))),
           null));
@@ -539,13 +560,13 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
     BinaryExpression featureThrowableNotNullExpr = createVariableNotNullExpression(featureThrowableVar);
 
     List<Statement> addSuppressedStats =
-      Collections.<Statement>singletonList(new ExpressionStatement(
+      singletonList(new ExpressionStatement(
         createDirectMethodCall(
           featureThrowableVar,
           nodeCache.Throwable_AddSuppressed,
           new ArgumentListExpression(new VariableExpression(catchParameter)))));
     List<Statement> throwFeatureStats =
-      Collections.<Statement>singletonList(new ThrowStatement(new VariableExpression(catchParameter)));
+      singletonList(new ThrowStatement(new VariableExpression(catchParameter)));
 
     IfStatement ifFeatureNotNullStat = new IfStatement(new BooleanExpression(featureThrowableNotNullExpr),
       new BlockStatement(addSuppressedStats, null),
@@ -553,7 +574,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
 
     return new CatchStatement(catchParameter,
       new BlockStatement(
-        Collections.<Statement>singletonList(ifFeatureNotNullStat),
+        singletonList(ifFeatureNotNullStat),
         null));
   }
 
@@ -679,7 +700,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
     if (spec.getInitializerMethod() == null) {
       // method is private s.t. multiple initializer methods along hierarchy can be called independently
       MethodNode gMethod = new MethodNode(InternalIdentifiers.INITIALIZER_METHOD, Opcodes.ACC_PRIVATE | Opcodes.ACC_SYNTHETIC,
-          ClassHelper.DYNAMIC_TYPE, Parameter.EMPTY_ARRAY, ClassNode.EMPTY_ARRAY, new BlockStatement());
+          getPlainReference(ClassHelper.OBJECT_TYPE), Parameter.EMPTY_ARRAY, ClassNode.EMPTY_ARRAY, new BlockStatement());
       spec.getAst().addMethod(gMethod);
       FixtureMethod method = new FixtureMethod(spec, gMethod);
       method.addBlock(new AnonymousBlock(method));
@@ -703,7 +724,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
     if (spec.getSharedInitializerMethod() == null) {
       // method is private s.t. multiple initializer methods along hierarchy can be called independently
       MethodNode gMethod = new MethodNode(InternalIdentifiers.SHARED_INITIALIZER_METHOD, Opcodes.ACC_PRIVATE | Opcodes.ACC_SYNTHETIC,
-          ClassHelper.DYNAMIC_TYPE, Parameter.EMPTY_ARRAY, ClassNode.EMPTY_ARRAY, new BlockStatement());
+        getPlainReference(ClassHelper.OBJECT_TYPE), Parameter.EMPTY_ARRAY, ClassNode.EMPTY_ARRAY, new BlockStatement());
       spec.getAst().addMethod(gMethod);
       FixtureMethod method = new FixtureMethod(spec, gMethod);
       method.addBlock(new AnonymousBlock(method));
@@ -738,7 +759,7 @@ public class SpecRewriter extends AbstractSpecVisitor implements IRewriteResourc
         new CatchStatement(
             new Parameter(nodeCache.Throwable, SpockNames.SPOCK_EX),
             new BlockStatement(
-              Arrays.<Statement>asList(
+              singletonList(
                 new ExpressionStatement(
                   setThrownException(
                     new VariableExpression(SpockNames.SPOCK_EX)))),

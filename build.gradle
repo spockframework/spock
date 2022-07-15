@@ -5,37 +5,50 @@ plugins {
   id "org.asciidoctor.jvm.convert"
   id "jacoco"
   id "net.nemerosa.versioning"
-  id "de.marcphilipp.nexus-publish" apply false
+  id "io.github.gradle-nexus.publish-plugin"
   id "com.github.ben-manes.versions"
+  id "io.spring.nohttp"
 }
 
 description = "Spock Framework"
 
 ext {
-  baseVersion = "2.1"
+  baseVersion = "2.2"
   snapshotVersion = true
   milestone = 0
-  variants = [2.5, 3.0]
+  javaVersions = [8, 11, 17] // ensure that latest version is actually build on travis, otherwise no docs get published
+  javaVersion = (System.getProperty("javaVersion") ?: 8) as int
+  variants = [2.5, 3.0, 4.0]
   variant = System.getProperty("variant") as BigDecimal ?: variants.first()
   buildScan.tag "groovy-$variant"
   if (variant == 2.5) {
-      groovyVersion = "2.5.15"
+      groovyGroup = "org.codehaus.groovy"
+      groovyVersion = "2.5.17"
       minGroovyVersion = "2.5.0"
       maxGroovyVersion = "2.9.99"
+      if(javaVersion >= 17) {
+        throw new InvalidUserDataException("Groovy $variant is not compatible with Java $javaVersion")
+      }
     } else if (variant == 3.0) {
-      groovyVersion = "3.0.9"
+      groovyGroup = "org.codehaus.groovy"
+      groovyVersion = "3.0.11"
       minGroovyVersion = "3.0.0"
       maxGroovyVersion = "3.9.99"
+    }  else if (variant == 4.0) {
+      groovyGroup = "org.apache.groovy"
+      groovyVersion = "4.0.2"
+      minGroovyVersion = "4.0.0"
+      maxGroovyVersion = "4.9.99"
     } else {
     throw new InvalidUserDataException("Unknown variant: $variant. Choose one of: $variants")
   }
 
   groovyDependencies = [
-    [group: "org.codehaus.groovy", name: "groovy", version: groovyVersion]
+    [group: groovyGroup, name: "groovy", version: groovyVersion]
   ]
   groovyConsoleExtraDependencies = [
-    [group: "org.codehaus.groovy", name: "groovy-console", version: groovyVersion],
-    [group: "org.codehaus.groovy", name: "groovy-test-junit5", version: groovyVersion], // for executing specs
+    [group: groovyGroup, name: "groovy-console", version: groovyVersion],
+    [group: groovyGroup, name: "groovy-test-junit5", version: groovyVersion], // for executing specs
     [group: "org.apache.ivy", name: "ivy", version: "2.5.0"] // for @Grab support
   ]
   maxGroovyVersion = snapshotVersion ? "9.9.99" : maxGroovyVersion
@@ -44,24 +57,23 @@ ext {
   }
   fullVersion = baseVersion + ((!snapshotVersion && milestone) ? "-M$milestone" : "") + "-groovy-$variant" + (snapshotVersion ? "-SNAPSHOT" : '')
   variantLessVersion = baseVersion + (snapshotVersion ? "-SNAPSHOT" : (milestone ? "-M$milestone" : ""))
-  javaVersions = [8, 11, 17] // ensure that latest version is actually build on travis, otherwise no docs get published
-  javaVersion = (System.getProperty("javaVersion") ?: 8) as int
   buildScan.tag "Java $javaVersion"
 
   libs = [
     jetbrainsAnnotations: [group: "org.jetbrains", name: "annotations", version: "20.1.0"],
-    asm                 : [group: 'org.ow2.asm', name: 'asm', version: '9.1'],
-    bytebuddy           : [group: 'net.bytebuddy', name: 'byte-buddy', version: '1.11.0'],
+    asm                 : [group: 'org.ow2.asm', name: 'asm', version: '9.2'],
+    bytebuddy           : [group: 'net.bytebuddy', name: 'byte-buddy', version: '1.12.1'],
     cglib               : [group: 'cglib', name: 'cglib-nodep', version: '3.3.0'],
     groovy              : groovyDependencies,
-    groovySql           : [group: 'org.codehaus.groovy', name: 'groovy-sql', version: groovyVersion], //for some Spring and Unitils tests
-    groovyTest          : [group: 'org.codehaus.groovy', name: 'groovy-test', version: groovyVersion], //for @NotYetImplemented
-    groovyJmx           : [group: 'org.codehaus.groovy', name: 'groovy-jmx', version: groovyVersion],  //for triggering jacoco dump via jmx
+    groovyNio           : [group: groovyGroup, name: 'groovy-nio', version: groovyVersion], //for groovy methods on Path
+    groovySql           : [group: groovyGroup, name: 'groovy-sql', version: groovyVersion], //for some Spring and Unitils tests
+    groovyTest          : [group: groovyGroup, name: 'groovy-test', version: groovyVersion], //for @NotYetImplemented
+    groovyJmx           : [group: groovyGroup, name: 'groovy-jmx', version: groovyVersion],  //for triggering jacoco dump via jmx
     h2database          : [group: 'com.h2database', name: 'h2', version: '1.4.200'],
     hamcrest            : [group: 'org.hamcrest', name: 'hamcrest', version: '2.2'],
     jaxb                : [group: 'javax.xml.bind', name: 'jaxb-api', version: '2.3.0'],
     junit4              : [group: 'junit', name: 'junit', version: '4.13.2'],
-    junitBom            : [group: 'org.junit', name: 'junit-bom', version: '5.9.0-M1'],
+    junitBom            : [group: 'org.junit', name: 'junit-bom', version: '5.9.0-RC1'],
     jupiter             : [group: 'org.junit.jupiter', name: 'junit-jupiter'],
     junitPlatform       : [group: 'org.junit.platform', name: 'junit-platform-engine'],
     junitPlatformTestkit: [group: 'org.junit.platform', name: 'junit-platform-testkit'],
@@ -70,6 +82,12 @@ ext {
     objenesis           : [group: 'org.objenesis', name: 'objenesis', version: '3.2'],
     jacocoAgent         : [group: 'org.jacoco', name: 'org.jacoco.agent', version: '0.8.7', classifier: 'runtime']
   ]
+}
+
+nohttp {
+  source.exclude "**/out/**"
+  source.exclude "**/build*/**"
+  source.exclude "**/.shelf/**"
 }
 
 allprojects {
@@ -88,10 +106,6 @@ allprojects {
       }
     }
   }
-
-  repositories {
-    mavenCentral()
-  }
 }
 
 apply from: script("ide")
@@ -107,56 +121,52 @@ subprojects {
     }
   }
 
-  if (javaVersion == 8) {
-    tasks.withType(Javadoc) {
-      options.addStringOption('Xdoclint:none', '-quiet')
-      options.noTimestamp()
+  tasks.withType(JavaCompile) {
+    javaCompiler = javaToolchains.compilerFor {
+      languageVersion = JavaLanguageVersion.of(8)
     }
-  } else if (javaVersion >= 9){
-    tasks.withType(JavaCompile) {
-      javaCompiler = javaToolchains.compilerFor {
-        languageVersion = JavaLanguageVersion.of(8)
-      }
-      options.encoding = 'UTF-8'
-    }
-    tasks.withType(GroovyCompile) {
-      options.encoding = 'UTF-8'
-    }
-
-    tasks.withType(Javadoc) {
-      options.addStringOption('Xdoclint:none', '-quiet')
-      options.noTimestamp()
-    }
+    options.encoding = 'UTF-8'
+  }
+  tasks.withType(GroovyCompile) {
+    options.encoding = 'UTF-8'
   }
 
   sourceSets.all { ss ->
-    for (v in variants.findAll { it <= variant } ) {
+    for (gv in variants.findAll { variant <= it } ) {
       java {
-        srcDir "src/${ss.name}$v/java"
+        srcDir "src/${ss.name}-groovy-le-$gv/java"
       }
       groovy {
-        srcDir "src/${ss.name}$v/groovy"
+        srcDir "src/${ss.name}-groovy-le-$gv/groovy"
       }
     }
-  }
-
-  sourceSets.all { ss ->
-    for (jv in javaVersions.findAll { it <= javaVersion } ) {
+    for (jv in javaVersions.findAll { javaVersion <= it } ) {
       java {
-        srcDir "src/${ss.name}.java$jv/java"
+        srcDir "src/${ss.name}-java-le-$jv/java"
       }
       groovy {
-        srcDir "src/${ss.name}.java$jv/groovy"
+        srcDir "src/${ss.name}-java-le-$jv/groovy"
       }
     }
-  }
-
-  configurations {
-    all*.exclude module: "junit-dep"
+    for (gv in variants.findAll { variant >= it } ) {
+      java {
+        srcDir "src/${ss.name}-groovy-ge-$gv/java"
+      }
+      groovy {
+        srcDir "src/${ss.name}-groovy-ge-$gv/groovy"
+      }
+    }
+    for (jv in javaVersions.findAll { javaVersion >= it } ) {
+      java {
+        srcDir "src/${ss.name}-java-ge-$jv/java"
+      }
+      groovy {
+        srcDir "src/${ss.name}-java-ge-$jv/groovy"
+      }
+    }
   }
 
   dependencies {
-    implementation(platform(libs.junitBom))
     implementation(project.name == "spock-gradle" ? [] : libs.groovy)
   }
 
@@ -188,11 +198,6 @@ subprojects {
     //Required for building on Travis' container-based infrastructure to not be killed with
     //'exit code 137' - https://github.com/travis-ci/travis-ci/issues/5582
     jvmArgs '-Xmx512m'
-
-    if (javaVersionNoShadow >= 17) {
-      // Workaround for Java 17 to enable mocking of default methods
-      jvmArgs("--add-opens", "java.base/java.lang.invoke=ALL-UNNAMED")
-    }
   }
 
   jacoco {
@@ -268,8 +273,10 @@ if (gradle.startParameter.taskNames == ["ghActionsPublish"] || gradle.startParam
     /*
       We want to release only snapshots directly from master, final releases will be tagged and then published from that tag.
      */
-    if (snapshotVersion || isTag) {
-      gradle.startParameter.taskNames += ["publish"]
+    if (snapshotVersion) {
+      gradle.startParameter.taskNames += ["publishToSonatype"]
+    } else if (isTag) {
+      gradle.startParameter.taskNames += ["publishToSonatype", "closeSonatypeStagingRepository"]
     } // else {
       // disable tag release for now as this is done with a token, that doesn't trigger other workflows
       // gradle.startParameter.taskNames += ["tagRelease"]
@@ -294,14 +301,14 @@ task publishJavadoc(type: Exec) {
   git config user.email "dev@forum.spockframework.org"
   git config user.name "Spock Framework Robot"
   git fetch origin +gh-pages:gh-pages
-  git checkout gh-pages
+  git switch gh-pages
   rm -rf javadoc/$variantLessVersion
   mkdir -p javadoc/$variantLessVersion
   cp -r build/javadoc/$variantLessVersion javadoc/
   git add javadoc
   git commit -qm "Publish javadoc/$variantLessVersion"
   git push "https://\$GITHUB_TOKEN@github.com/spockframework/spock.git" gh-pages 2>&1 | sed "s/\$GITHUB_TOKEN/xxx/g"
-  git checkout master
+  git switch -
 """
 }
 task publishDocs(type: Exec) {
@@ -311,14 +318,14 @@ task publishDocs(type: Exec) {
   git config user.email "dev@forum.spockframework.org"
   git config user.name "Spock Framework Robot"
   git fetch origin +gh-pages:gh-pages
-  git checkout gh-pages
+  git switch gh-pages
   rm -rf docs/$variantLessVersion
   mkdir -p docs/$variantLessVersion
   cp -r build/docs/asciidoc/* docs/$variantLessVersion
   git add docs
   git commit -qm "Publish docs/$variantLessVersion"
   git push "https://\$GITHUB_TOKEN@github.com/spockframework/spock.git" gh-pages 2>&1 | sed "s/\$GITHUB_TOKEN/xxx/g"
-  git checkout master
+  git switch -
 """
 }
 task tagRelease(type: Exec) {
@@ -339,7 +346,7 @@ task javadoc(type: Javadoc) {
   classpath = files(subprojects.javadoc.classpath)
 }
 
-configureJavadoc(javadoc)
+configureJavadoc(javadoc, true)
 
 task groovydoc(type: Groovydoc) {
   docTitle "Spock Framework API Documentation ($variantLessVersion)"
@@ -352,6 +359,15 @@ task groovydoc(type: Groovydoc) {
 
 configureGroovydoc(groovydoc)
 
+configurations {
+  asciidoctorExtensions
+}
+
+dependencies {
+  // local extension from build-logic/asciidoc-extensions
+  asciidoctorExtensions 'spockbuild:asciidoc-extensions'
+}
+
 asciidoctorj {
   modules {
     diagram.use()
@@ -359,6 +375,7 @@ asciidoctorj {
 }
 
 asciidoctor {
+  configurations 'asciidoctorExtensions'
   sourceDir = "docs"
   baseDirFollowsSourceDir()
   logDocuments = true
@@ -389,19 +406,38 @@ asciidoctor {
   }
 }
 
+nexusPublishing {
+  packageGroup = 'org.spockframework'
+  repositories {
+    sonatype {
+      username = System.getenv("SONATYPE_OSS_USER")
+      password = System.getenv("SONATYPE_OSS_PASSWORD")
+    }
+  }
+  transitionCheckOptions {
+    // closing checks take some time so increase the retries
+    // total time is maxRetries(180) * delayBetween(10s) = 30m
+    maxRetries.set(180)
+  }
+}
+
 File script(String name) {
   project.file("gradle/${name}.gradle")
 }
 
-def configureJavadoc(task) {
+def configureJavadoc(task, boolean root = false) {
   configure(task) {
     include "spock/**"
     configure(options) {
+      options.addStringOption('Xdoclint:none', '-quiet')
+      options.noTimestamp()
       options.addStringOption('source', '1.8')
-      links "https://docs.oracle.com/javase/8/docs/api/"
       links "https://docs.groovy-lang.org/docs/groovy-$groovyVersion/html/gapi/"
       links "https://junit.org/junit4/javadoc/latest/"
-      links "http://hamcrest.org/JavaHamcrest/javadoc/2.2/"
+      // Use offline package list, as the JavaVersion is fixed to 8 for the time being
+      // and Hamcrest has certificate issues for their domain.
+      linksOffline("https://docs.oracle.com/javase/8/docs/api/", "${root ? '' : '../'}javadoc/java-8")
+      linksOffline("https://hamcrest.org/JavaHamcrest/javadoc/2.2/", "${root ? '' : '../'}javadoc/hamcrest-2.2")
     }
   }
 }

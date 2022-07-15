@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -32,13 +32,7 @@ abstract class EmbeddedSpecification extends Specification {
 
   void stackTraceLooksLike(Throwable exception, String template) {
 
-    def trace
-
-    if (javaVersion >= 9) {
-      trace = exception.stackTrace.findAll { it['moduleName'] != "java.base" }
-    } else {
-      trace = exception.stackTrace
-    }
+    List<StackTraceElement> trace = filterStackTraceWithJavaSpecificCalls(exception)
 
     def lines = template.trim().split("\n")
     assert trace.size() == lines.size()
@@ -54,4 +48,16 @@ abstract class EmbeddedSpecification extends Specification {
       assert lineNumber == "-" || lineNumber as int == traceElem.lineNumber
     }
   }
+
+  private List<StackTraceElement> filterStackTraceWithJavaSpecificCalls(Throwable exception) {
+    List<StackTraceElement> stacktraceWithoutIndyCalls = exception.stackTrace
+      .findAll { it["fileName"] != "IndyInterface.java" || it['methodName'] != "fromCache" }
+
+    if (javaVersion >= 9) {
+      return stacktraceWithoutIndyCalls.findAll { it['moduleName'] != "java.base" }
+    } else {
+      return stacktraceWithoutIndyCalls
+    }
+  }
+
 }

@@ -4,7 +4,7 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,6 +23,8 @@ import java.lang.reflect.*;
 import java.util.*;
 
 import groovy.lang.*;
+
+import static java.util.Arrays.asList;
 
 public class GroovyMockMetaClass extends DelegatingMetaClass implements SpecificationAttachable {
   private final IMockConfiguration configuration;
@@ -119,12 +121,12 @@ public class GroovyMockMetaClass extends DelegatingMetaClass implements Specific
         configuration.isVerified(), configuration.isGlobal(), configuration.getDefaultResponse(), specification, this);
     IMockMethod mockMethod;
     if (metaMethod != null) {
-      List<Type> parameterTypes = Arrays.<Type>asList(metaMethod.getNativeParameterTypes());
+      List<Type> parameterTypes = asList(metaMethod.getNativeParameterTypes());
       mockMethod = new DynamicMockMethod(methodName, parameterTypes, metaMethod.getReturnType(), isStatic);
     } else {
       mockMethod = new DynamicMockMethod(methodName, arguments.length, isStatic);
     }
-    return new MockInvocation(mockObject, mockMethod, Arrays.asList(arguments), new GroovyRealMethodInvoker(getAdaptee()));
+    return new MockInvocation(mockObject, mockMethod, asList(arguments), new GroovyRealMethodInvoker(getAdaptee()));
   }
 
   @Override

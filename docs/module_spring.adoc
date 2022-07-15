@@ -1,8 +1,8 @@
 = Spring Module
 include::include.adoc[]
 
-The Spring module enables integration with http://docs.spring.io/spring/docs/4.1.5.RELEASE/spring-framework-reference/html/testing.html#testcontext-framework[Spring TestContext Framework].
-It supports the following spring annotations `@ContextConfiguration` and `@ContextHierarchy`. Furthermore, it supports the meta-annotation `@BootstrapWith` and so any annotation that is annotated with `@BootstrapWith` will also work, such as `@SpringBootTest`, `@WebMvcTest`.
+The Spring module enables integration with https://docs.spring.io/spring/docs/4.1.5.RELEASE/spring-framework-reference/html/testing.html#testcontext-framework[Spring TestContext Framework].
+It supports the following spring annotations `@ContextConfiguration` and `@ContextHierarchy`. Furthermore, it supports the meta-annotation `@BootstrapWith` and so any annotation that is annotated with `@BootstrapWith` will also work, such as `@SpringBootTest`, `@WebMvcTest`. Please add dependency https://search.maven.org/artifact/org.spockframework/spock-spring[`org.spockframework:spock-spring`] to your project.
 
 == Mocks
 
@@ -22,7 +22,7 @@ include::{sourcedir-spring}/DetachedJavaConfig.groovy[tag=javaconfig]
 
 === XML
 
-Spock has spring namespace support, so if you declare the spock namespace with `xmlns:spock="http://www.spockframework.org/spring"` you get access to the convenience functions for creating mocks.
+Spock has spring namespace support, so if you declare the spock namespace with `xmlns:spock="https://www.spockframework.org/spring"` you get access to the convenience functions for creating mocks.
 
 [source,xml,indent=0]
 ----

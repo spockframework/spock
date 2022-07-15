@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,12 +17,12 @@
 package org.spockframework.runtime.extension.builtin;
 
 import groovy.lang.Closure;
-import groovy.lang.MissingPropertyException;
 import org.spockframework.runtime.GroovyRuntimeUtil;
 import org.spockframework.runtime.extension.ExtensionException;
 import org.spockframework.runtime.extension.IAnnotationDrivenExtension;
 import org.spockframework.runtime.extension.IMethodInterceptor;
 import org.spockframework.runtime.extension.IMethodInvocation;
+import org.spockframework.runtime.extension.builtin.PreconditionContext.*;
 import org.spockframework.runtime.model.FeatureInfo;
 import org.spockframework.runtime.model.SpecInfo;
 
@@ -58,13 +58,9 @@ public abstract class ConditionalExtension<T extends Annotation> implements IAnn
       Object result = evaluateCondition(condition, spec.getReflection());
       specConditionResult(GroovyRuntimeUtil.isTruthy(result), annotation, spec);
     } catch (ExtensionException ee) {
-      if (!(ee.getCause() instanceof MissingPropertyException)) {
-        throw ee;
-      }
-      String missingProperty = ((MissingPropertyException) ee.getCause()).getProperty();
-      if ("shared".equals(missingProperty)) {
+      if (ee.getCause() instanceof SharedContextException) {
         spec.addSetupSpecInterceptor(new SharedCondition(condition, annotation));
-      } else if ("instance".equals(missingProperty)) {
+      } else if (ee.getCause() instanceof PreconditionContext.InstanceContextException) {
         IterationCondition interceptor = new IterationCondition(condition, annotation);
         spec.getAllFeatures().forEach(featureInfo -> featureInfo.addIterationInterceptor(interceptor));
       } else {
@@ -75,22 +71,24 @@ public abstract class ConditionalExtension<T extends Annotation> implements IAnn
 
   @Override
   public void visitFeatureAnnotation(T annotation, FeatureInfo feature) {
+    if (feature.getSpec().isSkipped())
+      return;
+
     Closure condition = createCondition(annotation);
 
     try {
       Object result = evaluateCondition(condition, feature.getSpec().getReflection());
       featureConditionResult(GroovyRuntimeUtil.isTruthy(result), annotation, feature);
     } catch (ExtensionException ee) {
-      if (!(ee.getCause() instanceof MissingPropertyException)) {
+      if (ee.getCause() instanceof PreconditionContextException) {
+        if (ee.getCause() instanceof DataVariableContextException
+        && !feature.getDataVariables().contains(((DataVariableContextException)ee.getCause()).getDataVariable())) {
+          throw ee;
+        }
+        feature.getFeatureMethod().addInterceptor(new IterationCondition(condition, annotation));
+      } else {
         throw ee;
       }
-      String missingProperty = ((MissingPropertyException) ee.getCause()).getProperty();
-      if (!"shared".equals(missingProperty)
-        && !"instance".equals(missingProperty)
-        && !feature.getDataVariables().contains(missingProperty)) {
-        throw ee;
-      }
-      feature.getFeatureMethod().addInterceptor(new IterationCondition(condition, annotation));
     }
   }
 
@@ -150,18 +148,14 @@ public abstract class ConditionalExtension<T extends Annotation> implements IAnn
         Object result = evaluateCondition(condition, invocation.getSharedInstance(), null, emptyMap());
         sharedConditionResult(GroovyRuntimeUtil.isTruthy(result), annotation, invocation);
       } catch (ExtensionException ee) {
-        if (!(ee.getCause() instanceof MissingPropertyException)) {
+        if (ee.getCause() instanceof PreconditionContext.InstanceContextException) {
+          IterationCondition interceptor = new IterationCondition(condition, annotation);
+          invocation.getSpec().getAllFeatures().stream()
+            .map(FeatureInfo::getFeatureMethod)
+            .forEach(methodInfo -> methodInfo.addInterceptor(interceptor));
+        } else {
           throw ee;
         }
-
-        String missingProperty = ((MissingPropertyException) ee.getCause()).getProperty();
-        if (!"instance".equals(missingProperty)) {
-          throw ee;
-        }
-        IterationCondition interceptor = new IterationCondition(condition, annotation);
-        invocation.getSpec().getAllFeatures().stream()
-          .map(FeatureInfo::getFeatureMethod)
-          .forEach(methodInfo -> methodInfo.addInterceptor(interceptor));
       }
       invocation.proceed();
     }

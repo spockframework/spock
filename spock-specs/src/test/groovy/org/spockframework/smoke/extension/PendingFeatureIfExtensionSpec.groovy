@@ -111,7 +111,7 @@ def bar() {
     when:
     runner.runSpecBody """
 @PendingFeature
-@PendingFeatureIf({a == 1})
+@PendingFeatureIf({data.a == 1})
 def bar() {
   expect: true
   where: a = 1
@@ -157,7 +157,7 @@ def bar() {
   def "@PendingFeatureIf marks passing feature as failed if the data variable accessing conditional expression returns true even if @PendingFeature is applied after it"() {
     when:
     runner.runSpecBody """
-@PendingFeatureIf({a == 1})
+@PendingFeatureIf({data.a == 1})
 @PendingFeature
 def bar() {
   expect: true
@@ -205,7 +205,7 @@ def bar() {
   def "@PendingFeatureIf marks failing feature as skipped if the data variable accessing condition passes and the test fails"() {
     when:
     def result = runner.runSpecBody """
-@PendingFeatureIf({ a == 1 })
+@PendingFeatureIf({ data.a == 1 })
 def bar() {
   expect: a == 2
   where: a = 1
@@ -224,8 +224,8 @@ def bar() {
   def "@PendingFeatureIf marks failing feature as skipped if the data variable accessing condition passes and the test fails even if applied twice"() {
     when:
     def result = runner.runSpecBody """
-@PendingFeatureIf({ a == 1 })
-@PendingFeatureIf({ a == 1 })
+@PendingFeatureIf({ data.a == 1 })
+@PendingFeatureIf({ data.a == 1 })
 def bar() {
   expect: a == 2
   where: a = 1
@@ -244,7 +244,7 @@ def bar() {
   def "@PendingFeatureIf marks passing feature as failed if the data variable accessing conditional expression returns true"() {
     when:
     runner.runSpecBody """
-@PendingFeatureIf({ a == 2 })
+@PendingFeatureIf({ data.a == 2 })
 def bar() {
   expect: a == 2
   where: a = 2
@@ -259,8 +259,8 @@ def bar() {
   def "@PendingFeatureIf marks passing feature as failed if the data variable accessing conditional expression returns true even if applied twice"() {
     when:
     runner.runSpecBody """
-@PendingFeatureIf({ a == 2 })
-@PendingFeatureIf({ a == 2 })
+@PendingFeatureIf({ data.a == 2 })
+@PendingFeatureIf({ data.a == 2 })
 def bar() {
   expect: a == 2
   where: a = 2
@@ -275,7 +275,7 @@ def bar() {
   def "@PendingFeatureIf marks failing feature as failed if the data variable accessing conditional expression returns false"() {
     when:
     runner.runSpecBody """
-@PendingFeatureIf({ a == 2 })
+@PendingFeatureIf({ data.a == 2 })
 def bar() {
   expect: a == 2
   where: a = 1
@@ -289,7 +289,7 @@ def bar() {
   def "@PendingFeatureIf marks passing feature as passed if the data variable accessing conditional expression returns false"() {
     when:
     def result = runner.runSpecBody """
-@PendingFeatureIf({ a == 1 })
+@PendingFeatureIf({ data.a == 1 })
 def bar() {
   expect: a == 2
   where: a = 2

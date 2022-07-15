@@ -13,22 +13,29 @@ What makes it stand out from the crowd is its beautiful and highly expressive sp
 Thanks to its JUnit runner, Spock is compatible with most IDEs, build tools, and continuous integration servers.
 Spock is inspired from JUnit, jMock, RSpec, Groovy, Scala, Vulcans, and other fascinating life forms.'''
 
-configurations { coreConsoleRuntime }
+configurations {
+  coreConsoleRuntime
+  osgiVerification {
+    extendsFrom configurations.compileClasspath
+  }
+}
 
 dependencies {
   api libs.groovy // easiest way to add Groovy dependency to POM
+  api platform(libs.junitBom)
   api libs.junitPlatform
   api libs.hamcrest
   if (variant == 2.5) {
     api project(':spock-groovy2-compat')
   }
 
-  implementation libs.junitPlatformTestkit, optional
-  implementation libs.jetbrainsAnnotations, optional
-  implementation libs.asm, optional
-  implementation libs.bytebuddy, optional
-  implementation libs.cglib, optional
-  implementation libs.objenesis, optional
+  compileOnly libs.jetbrainsAnnotations
+
+  compileOnly libs.junitPlatformTestkit
+  compileOnly libs.asm
+  compileOnly libs.bytebuddy
+  compileOnly libs.cglib
+  compileOnly libs.objenesis
 
 
   coreConsoleRuntime groovyConsoleExtraDependencies
@@ -102,8 +109,17 @@ def verifyOSGi = tasks.register('verifyOSGi', Resolve) {
   getBndrun().fileProvider(osgiProperties.map { it.outputFile })
   getOutputBndrun().set(layout.getBuildDirectory().file("resolvedOSGiProperties.bndrun"))
   reportOptional = false
+  // By default bnd will use jars found in:
+  // 1. project.sourceSets.main.runtimeClasspath
+  // 2. project.configurations.archives.artifacts.files
+  // to validate the metadata.
+  // This adds jars defined in `osgiVerification` also so that bnd
+  // can use them to validate the metadata without causing those to
+  // end up in the dependencies of those projects.
+  bundles(configurations.osgiVerification)
 }
 
 tasks.named('check') {
   dependsOn(verifyOSGi)
 }
+

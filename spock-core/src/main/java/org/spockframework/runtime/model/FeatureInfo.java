@@ -1,5 +1,6 @@
 package org.spockframework.runtime.model;
 
+import org.spockframework.runtime.extension.IDataDriver;
 import org.spockframework.runtime.extension.IMethodInterceptor;
 import org.spockframework.runtime.model.parallel.*;
 import org.spockframework.util.Nullable;
@@ -10,7 +11,7 @@ import java.util.*;
 /**
  * @author Peter Niederwieser
  */
-public class FeatureInfo extends SpecElementInfo<SpecInfo, AnnotatedElement> {
+public class FeatureInfo extends SpecElementInfo<SpecInfo, AnnotatedElement> implements ITestTaggable {
   private int declarationOrder; // per spec class
   private int executionOrder;   // per spec inheritance chain
 
@@ -21,11 +22,14 @@ public class FeatureInfo extends SpecElementInfo<SpecInfo, AnnotatedElement> {
 
   private final Set<ExclusiveResource> exclusiveResources = new HashSet<>();
 
+  private final Set<TestTag> testTags = new HashSet<>();
+
   private ExecutionMode executionMode = null;
 
   private MethodInfo featureMethod;
   private MethodInfo dataProcessorMethod;
   private NameProvider<IterationInfo> iterationNameProvider;
+  private IDataDriver dataDriver = IDataDriver.DEFAULT;
   private final List<DataProviderInfo> dataProviders = new ArrayList<>();
   private final IterationFilter iterationFilter = new IterationFilter();
 
@@ -157,6 +161,14 @@ public class FeatureInfo extends SpecElementInfo<SpecInfo, AnnotatedElement> {
     return iterationFilter;
   }
 
+  public IDataDriver getDataDriver() {
+    return dataDriver;
+  }
+
+  public void setDataDriver(IDataDriver dataDriver) {
+    this.dataDriver = dataDriver;
+  }
+
   /**
    * Tells if any of the methods associated with this feature has the specified
    * name in bytecode.
@@ -171,5 +183,15 @@ public class FeatureInfo extends SpecElementInfo<SpecInfo, AnnotatedElement> {
     for (DataProviderInfo provider : dataProviders)
       if (provider.getDataProviderMethod().hasBytecodeName(name)) return true;
     return false;
+  }
+
+  @Override
+  public void addTestTag(TestTag tag) {
+    testTags.add(tag);
+  }
+
+  @Override
+  public Set<TestTag> getTestTags() {
+    return testTags;
   }
 }

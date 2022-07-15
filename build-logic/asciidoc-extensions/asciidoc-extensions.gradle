@@ -1,0 +1,19 @@
+plugins {
+  id 'java-library'
+  id 'idea'
+}
+
+dependencies {
+  // sync with version from https://github.com/asciidoctor/asciidoctor-gradle-plugin/blob/master/jvm/build.gradle ?
+  compileOnly 'org.asciidoctor:asciidoctorj:2.5.4'
+}
+
+tasks.register('installAsciidocExtension', Copy) {
+  from(tasks.named('jar'))
+  into('../../.asciidoctor/lib')
+}
+
+tasks.named('ideaModule') {
+  it.dependsOn('installAsciidocExtension')
+}
+

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -20,6 +20,9 @@ import org.spockframework.runtime.extension.IAnnotationDrivenExtension;
 import org.spockframework.runtime.model.*;
 import spock.lang.Ignore;
 
+import java.util.Collections;
+import java.util.List;
+
 /**
  * @author Peter Niederwieser
  */
@@ -31,7 +34,8 @@ public class IgnoreExtension implements IAnnotationDrivenExtension<Ignore> {
 
   @Override
   public void visitSpecAnnotation(Ignore ignore, SpecInfo spec) {
-    if (spec.getIsBottomSpec()) spec.skip(ignore.value().isEmpty() ? DEFAULT_REASON : ignore.value());
+    List<SpecInfo> specsToSkip = ignore.inherited() ? spec.getSpecsCurrentToBottom() : Collections.singletonList(spec);
+    specsToSkip.forEach(toSkip -> toSkip.skip(ignore.value().isEmpty() ? DEFAULT_REASON : ignore.value()));
   }
 
   @Override

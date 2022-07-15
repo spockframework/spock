@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -45,7 +45,7 @@ import org.apache.tapestry5.ioc.annotations.*;
  *
  * Related Tapestry annotations, such as <tt>&#64;Service</tt> and <tt>&#64;Symbol</tt>,
  * are also supported. For information on their use, see the
- * <a href="http://tapestry.apache.org/tapestry5/tapestry-ioc/">Tapestry IoC documentation</a>.
+ * <a href="https://tapestry.apache.org/tapestry5/tapestry-ioc/">Tapestry IoC documentation</a>.
  * To interact directly with the Tapestry registry, an injection point of type
  * <tt>ObjectLocator</tt> may be defined. However, this should be rarely needed.
  *

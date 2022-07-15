@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -126,6 +126,46 @@ def foo() {
                                                                         "one foo two 2 three"]
   }
 
+  def "naming pattern may refer to dataVariables"() {
+    when:
+    def result = runner.runSpecBody("""
+@Unroll("one #dataVariables two")
+def foo() {
+  expect: true
+
+  where:
+  x << [1, 2, 3]
+  y << ["a", "b", "c"]
+}
+    """)
+
+    then:
+    result.testEvents().started().list().testDescriptor.displayName == ["foo",
+                                                                        "one x: 1, y: a two",
+                                                                        "one x: 2, y: b two",
+                                                                        "one x: 3, y: c two"]
+  }
+
+  def "naming pattern may refer to dataVariablesWithIndex"() {
+    when:
+    def result = runner.runSpecBody("""
+@Unroll("one #dataVariablesWithIndex two")
+def foo() {
+  expect: true
+
+  where:
+  x << [1, 2, 3]
+  y << ["a", "b", "c"]
+}
+    """)
+
+    then:
+    result.testEvents().started().list().testDescriptor.displayName == ["foo",
+                                                                        "one x: 1, y: a, #0 two",
+                                                                        "one x: 2, y: b, #1 two",
+                                                                        "one x: 3, y: c, #2 two"]
+  }
+
   def "old iteration naming is restorable using configuration script"() {
     given:
     runner.configurationScript {
@@ -136,7 +176,6 @@ def foo() {
 
     when:
     def result = runner.runSpecBody("""
-@Unroll
 def foo() {
   expect: true
 
@@ -163,7 +202,6 @@ def foo() {
 
     when:
     def result = runner.runSpecBody("""
-@Unroll
 def foo() {
   expect: true
 
@@ -178,6 +216,54 @@ def foo() {
                                                                         "foo",
                                                                         "foo",
                                                                         "foo"]
+  }
+
+  def "includeFeatureNameForIterations is configurable using configuration script"() {
+    given:
+    runner.configurationScript {
+      unroll {
+        includeFeatureNameForIterations false
+      }
+    }
+
+    when:
+    def result = runner.runSpecBody("""
+def foo() {
+  expect: true
+
+  where:
+  x << [1, 2, 3]
+  y << ["a", "b", "c"]
+}
+    """)
+
+    then:
+    result.testEvents().started().list().testDescriptor.displayName == ["foo",
+                                                                        "x: 1, y: a, #0",
+                                                                        "x: 2, y: b, #1",
+                                                                        "x: 3, y: c, #2"
+                                                                        ]
+  }
+
+  def "dataVariablesWithIndex can be used in @Unroll"() {
+    when:
+    def result = runner.runSpecBody("""
+@Unroll("#dataVariablesWithIndex")
+def foo() {
+  expect: true
+
+  where:
+  x << [1, 2, 3]
+  y << ["a", "b", "c"]
+}
+    """)
+
+    then:
+    result.testEvents().started().list().testDescriptor.displayName == ["foo",
+                                                                        "x: 1, y: a, #0",
+                                                                        "x: 2, y: b, #1",
+                                                                        "x: 3, y: c, #2"
+                                                                        ]
   }
 
   @Issue("https://github.com/spockframework/spock/issues/187")

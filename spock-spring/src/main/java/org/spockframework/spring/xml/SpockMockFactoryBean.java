@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,11 +17,12 @@
 package org.spockframework.spring.xml;
 
 import org.spockframework.mock.MockNature;
+import org.springframework.beans.factory.FactoryBean;
 import spock.mock.DetachedMockFactory;
 
-import java.util.Collections;
+import java.util.Locale;
 
-import org.springframework.beans.factory.FactoryBean;
+import static java.util.Collections.emptyMap;
 
 /**
  * Takes care of instantiating detached spock Mocks.
@@ -47,9 +48,8 @@ public class SpockMockFactoryBean<T> implements FactoryBean<T> {
   @SuppressWarnings("unchecked")
   public T getObject() throws Exception {
     if (instance == null) {
-      MockNature nature = MockNature.valueOf(mockNature.toUpperCase());
-      instance =  new DetachedMockFactory().createMock(name, targetClass, nature,
-        Collections.<String, Object>emptyMap());
+      MockNature nature = MockNature.valueOf(mockNature.toUpperCase(Locale.ROOT));
+      instance = new DetachedMockFactory().createMock(name, targetClass, nature, emptyMap());
     }
     return instance;
   }

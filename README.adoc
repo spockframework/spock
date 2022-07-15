@@ -21,8 +21,8 @@ Spock is a BDD-style developer testing and specification framework for
 Java and https://groovy-lang.org/[Groovy] applications. To learn more
 about Spock, visit
 https://spockframework.org[https://spockframework.org]. To run a sample
-spec in your browser, go to
-https://meetspock.appspot.com/[https://meetspock.appspot.com/].
+spec in your browser use the
+https://gwc-experiment.appspot.com/[Groovy Web Console].
 
 === Latest Versions
 

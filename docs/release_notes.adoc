@@ -2,12 +2,13 @@
 = Release Notes
 include::include.adoc[]
 
-== 2.2-M2 (tbd)
+== 2.2-M2 (2022-07-15)
 
 * Add junit-platform `TestTag` support with the <<extensions.adoc#test-tag-extension,@Tag>> extension spockPull:1467[]
 * Add `IDataDriver` extension point and refactor data provider handling spockPull:1479[]
 * Add <<data-driven-testing.adoc#multi-data-pipe-named, named deconstruction>> for multi variable datapipes.
   This might lead to changed behavior results if the data object implements `Map` but supports both positional `getAt(int)` and named `getAt(String)` access. In earlier versions, the positional access was used, but now the named access will be used. spockPull:1463[]
+* Add custom class support to `@TempDir`, you can use any class that has a single `java.io.File` or `java.nio.file.Path` as constructor parameter spockPull:1430[]
 * Improve `@Stepwise` can be applied to data-driven feature methods, having the effect of executing them sequentially (even if concurrent test mode is active) and to skip subsequent iterations is one iteration fails. spockPull:1442[]
 * Improve `EmbeddedSpecCompiler` by making package declaration configurable in `EmbeddedSpecCompiler`
 * Improve do not evaluate feature-skipping conditions for skipped specs spockPull:1459[]
@@ -19,6 +20,7 @@ include::include.adoc[]
 * Fix context pollution in `IterationNode.around()` spockIssue:1441[]
 * Fix Discard unnecessary state in `ConfineMetaClassChangesInterceptor` spockPull:1460[]
 * Fix make `EnableSharedInjection` public spockPull:1472[]
+* Fix gradle module metadata dependencies spockPull:1490[]
 * Remove runtime dependency on Jetbrains Annotations spockPull:1468[]
 
 Thanks to all the contributors to this release: Alexander Kriegisch, Marcin Zajączkowski, Jonny Carter, alopukhov, Jerome Prinet, Matthew Moss, BJ Hargrave

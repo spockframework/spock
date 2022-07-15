@@ -73,7 +73,7 @@ ext {
     hamcrest            : [group: 'org.hamcrest', name: 'hamcrest', version: '2.2'],
     jaxb                : [group: 'javax.xml.bind', name: 'jaxb-api', version: '2.3.0'],
     junit4              : [group: 'junit', name: 'junit', version: '4.13.2'],
-    junitBom            : [group: 'org.junit', name: 'junit-bom', version: '5.8.1'],
+    junitBom            : [group: 'org.junit', name: 'junit-bom', version: '5.9.0-RC1'],
     jupiter             : [group: 'org.junit.jupiter', name: 'junit-jupiter'],
     junitPlatform       : [group: 'org.junit.platform', name: 'junit-platform-engine'],
     junitPlatformTestkit: [group: 'org.junit.platform', name: 'junit-platform-testkit'],

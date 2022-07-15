@@ -2,7 +2,10 @@
 = Release Notes
 include::include.adoc[]
 
-== 2.2-M3 (tbd)
+== 2.2-M3 (2022-07-15)
+
+* Add support for `IterationSelector` to run individual iterations
+* Update to JUnit 5.9.0-RC1
 
 == 2.2-M2 (2022-07-15)
 

@@ -179,7 +179,63 @@ Expected: iterable with items [&lt;4&gt;, &lt;1&gt;, &lt;2&gt;] in any order
 </td>
 <td class="content">
 Both operands must be <code>Iterable</code> for this to work.
-      Otherwise, it will be treated like the standard groovy <a href="https://groovy-lang.org/operators.html#_find_operator">find operator</a> or <a href="https://groovy-lang.org/operators.html#_match_operator">match operators</a>.
+Otherwise, it will be treated like the standard groovy <a href="https://groovy-lang.org/operators.html#_find_operator">find operator</a> or <a href="https://groovy-lang.org/operators.html#_match_operator">match operators</a>.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="file-stystem-fixture"><a class="anchor" href="#file-stystem-fixture"></a><a class="link" href="#file-stystem-fixture">Interact with the file system using <code>FileSystemFixture</code></a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In integration tests you often have to prepare the file system for a test.
+For trivial cases like creating a single temp directory, you can use the <a href="extensions.html#_temp_dir">@TempDir</a> extension directly.
+However, for more complex cases like creating a directory tree <code>FileSystemFixture</code> offers convenience and better readability.</p>
+</div>
+<div class="sect2">
+<h3 id="_examples"><a class="anchor" href="#_examples"></a><a class="link" href="#_examples">Examples</a></h3>
+<div class="listingblock">
+<div class="title">Creating a directory tree</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@TempDir</span>
+FileSystemFixture fsFixture
+
+<span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">FileSystemFixture can create a directory structure</span><span class="delimiter">&quot;</span></span>() {
+  <span class="key">when</span>:
+  fsFixture.create {
+    dir(<span class="string"><span class="delimiter">'</span><span class="content">src</span><span class="delimiter">'</span></span>) {
+      dir(<span class="string"><span class="delimiter">'</span><span class="content">main</span><span class="delimiter">'</span></span>) {
+        dir(<span class="string"><span class="delimiter">'</span><span class="content">groovy</span><span class="delimiter">'</span></span>) {
+          file(<span class="string"><span class="delimiter">'</span><span class="content">HelloWorld.java</span><span class="delimiter">'</span></span>) &lt;&lt; <span class="string"><span class="delimiter">'</span><span class="content">println &quot;Hello World&quot;</span><span class="delimiter">'</span></span>
+        }
+      }
+      dir(<span class="string"><span class="delimiter">'</span><span class="content">test/resources</span><span class="delimiter">'</span></span>) {
+        file(<span class="string"><span class="delimiter">'</span><span class="content">META-INF/MANIFEST.MF</span><span class="delimiter">'</span></span>) &lt;&lt; <span class="string"><span class="delimiter">'</span><span class="content">bogus entry</span><span class="delimiter">'</span></span>
+        copyFromClasspath(<span class="string"><span class="delimiter">'</span><span class="content">/org/spockframework/smoke/extension/SampleFile.txt</span><span class="delimiter">'</span></span>)
+      }
+    }
+  }
+
+  <span class="key">then</span>:
+  Files.isDirectory(fsFixture.resolve(<span class="string"><span class="delimiter">'</span><span class="content">src/main/groovy</span><span class="delimiter">'</span></span>))
+  Files.isDirectory(fsFixture.resolve(<span class="string"><span class="delimiter">'</span><span class="content">src/test/resources/META-INF</span><span class="delimiter">'</span></span>))
+  fsFixture.resolve(<span class="string"><span class="delimiter">'</span><span class="content">src/main/groovy/HelloWorld.java</span><span class="delimiter">'</span></span>).text == <span class="string"><span class="delimiter">'</span><span class="content">println &quot;Hello World&quot;</span><span class="delimiter">'</span></span>
+  fsFixture.resolve(<span class="string"><span class="delimiter">'</span><span class="content">src/test/resources/META-INF/MANIFEST.MF</span><span class="delimiter">'</span></span>).text == <span class="string"><span class="delimiter">'</span><span class="content">bogus entry</span><span class="delimiter">'</span></span>
+  fsFixture.resolve(<span class="string"><span class="delimiter">'</span><span class="content">src/test/resources/SampleFile.txt</span><span class="delimiter">'</span></span>).text == <span class="string"><span class="delimiter">'</span><span class="content">HelloWorld\n</span><span class="delimiter">'</span></span>
+}</code></pre>
+</div>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Tip</div>
+</td>
+<td class="content">
+To get the nice Groovy methods for <code>Path</code>, you need to add a dependency on <code>groovy-nio</code>.
 </td>
 </tr>
 </table>
@@ -191,7 +247,7 @@ Both operands must be <code>Iterable</code> for this to work.
 <div id="footer">
 <div id="footer-text">
 Version 2.2-SNAPSHOT<br>
-Last updated 2022-07-12 12:55:22 UTC
+Last updated 2022-07-15 10:41:06 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./coderay-asciidoctor.css">

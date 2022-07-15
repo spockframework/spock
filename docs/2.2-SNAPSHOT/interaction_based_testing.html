@@ -67,15 +67,15 @@ collaborators, and can generate mock implementations of collaborators that verif
 <div class="title">How Are Mock Implementations Generated?</div>
 <div class="paragraph">
 <p>Like most Java mocking frameworks, Spock uses
-<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/reflect/Proxy.html">JDK dynamic proxies</a> (when mocking interfaces)
-and <a href="http://bytebuddy.net/">Byte Buddy</a> or <a href="https://github.com/cglib/cglib">CGLIB</a> proxies (when mocking classes) to generate mock implementations at runtime.
+<a href="https://docs.oracle.com/javase/7/docs/api/java/lang/reflect/Proxy.html">JDK dynamic proxies</a> (when mocking interfaces)
+and <a href="https://bytebuddy.net/">Byte Buddy</a> or <a href="https://github.com/cglib/cglib">CGLIB</a> proxies (when mocking classes) to generate mock implementations at runtime.
 Compared to implementations based on Groovy meta-programming, this has the advantage that it also works for testing Java code.</p>
 </div>
 </div>
 </div>
 <div class="paragraph">
-<p>The Java world has no shortage of popular and mature mocking frameworks: <a href="http://www.jmock.org/">JMock</a>,
-<a href="http://www.easymock.org">EasyMock</a>, <a href="http://mockito.org/">Mockito</a>, to name just a few.
+<p>The Java world has no shortage of popular and mature mocking frameworks: <a href="https://www.jmock.org/">JMock</a>,
+<a href="https://www.easymock.org">EasyMock</a>, <a href="https://mockito.org/">Mockito</a>, to name just a few.
 Although each of these tools can be used together with Spock, we decided to roll our own mocking framework,
 tightly integrated with Spock&#8217;s specification language. This decision was driven by the desire to leverage all of
 Groovy&#8217;s capabilities to make interaction-based tests easier to write, more readable, and ultimately more fun.
@@ -1497,19 +1497,19 @@ mock.nature == MockNature.MOCK</code></pre>
 </div>
 <div class="dlist">
 <dl>
-<dt class="hdlist1"><a href="http://www.ccs.neu.edu/research/demeter/related-work/extreme-programming/MockObjectsFinal.PDF">Endo-Testing: Unit Testing with Mock Objects</a></dt>
+<dt class="hdlist1"><a href="https://www.ccs.neu.edu/research/demeter/related-work/extreme-programming/MockObjectsFinal.PDF">Endo-Testing: Unit Testing with Mock Objects</a></dt>
 <dd>
 <p>Paper from the XP2000 conference that introduces the concept of mock objects.</p>
 </dd>
-<dt class="hdlist1"><a href="http://www.jmock.org/oopsla2004.pdf">Mock Roles, not Objects</a></dt>
+<dt class="hdlist1"><a href="https://www.jmock.org/oopsla2004.pdf">Mock Roles, not Objects</a></dt>
 <dd>
 <p>Paper from the OOPSLA2004 conference that explains how to do mocking <em>right</em>.</p>
 </dd>
-<dt class="hdlist1"><a href="http://martinfowler.com/articles/mocksArentStubs.html">Mocks Aren&#8217;t Stubs</a></dt>
+<dt class="hdlist1"><a href="https://martinfowler.com/articles/mocksArentStubs.html">Mocks Aren&#8217;t Stubs</a></dt>
 <dd>
 <p>Martin Fowler&#8217;s take on mocking.</p>
 </dd>
-<dt class="hdlist1"><a href="http://www.growing-object-oriented-software.com">Growing Object-Oriented Software Guided by Tests</a></dt>
+<dt class="hdlist1"><a href="https://www.growing-object-oriented-software.com">Growing Object-Oriented Software Guided by Tests</a></dt>
 <dd>
 <p>TDD pioneers Steve Freeman and Nat Pryce explain in detail how test-driven development and mocking work in the real world.</p>
 </dd>
@@ -1530,7 +1530,7 @@ mock.nature == MockNature.MOCK</code></pre>
 <a href="#_footnoteref_3">3</a>. The destructuring semantics for closure arguments come straight from Groovy.
 </div>
 <div class="footnote" id="_footnotedef_4">
-<a href="#_footnoteref_4">4</a>. You may know this behavior from Groovy&#8217;s <a href="http://docs.groovy-lang.org/docs/groovy-2.4.1/html/gapi/groovy/mock/interceptor/MockFor.html">MockFor</a> and <a href="http://docs.groovy-lang.org/docs/groovy-2.4.1/html/gapi/groovy/mock/interceptor/StubFor.html">StubFor</a> facilities.
+<a href="#_footnoteref_4">4</a>. You may know this behavior from Groovy&#8217;s <a href="https://docs.groovy-lang.org/docs/groovy-2.4.1/html/gapi/groovy/mock/interceptor/MockFor.html">MockFor</a> and <a href="https://docs.groovy-lang.org/docs/groovy-2.4.1/html/gapi/groovy/mock/interceptor/StubFor.html">StubFor</a> facilities.
 </div>
 <div class="footnote" id="_footnotedef_5">
 <a href="#_footnoteref_5">5</a>. Because mock configurations are immutable, the interface contains just the properties' getters.
@@ -1539,7 +1539,7 @@ mock.nature == MockNature.MOCK</code></pre>
 <div id="footer">
 <div id="footer-text">
 Version 2.2-SNAPSHOT<br>
-Last updated 2022-07-12 12:55:22 UTC
+Last updated 2022-07-15 10:41:06 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./coderay-asciidoctor.css">

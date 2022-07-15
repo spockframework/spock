@@ -818,9 +818,9 @@ annotated object. To prevent cleanup exceptions from being reported, override th
 <h3 id="_temp_dir"><a class="anchor" href="#_temp_dir"></a><a class="link" href="#_temp_dir">TempDir</a></h3>
 <div class="paragraph">
 <p>In order to generate a temporary directory for test and delete it after test, annotate a member field of type
-<code>java.io.File</code>, <code>java.nio.file.Path</code> or untyped using <code>def</code> in a spec class (<code>def</code> will inject a <code>Path</code>). If the
-annotated field is <code>@Shared</code>, the temporary directory will be shared in the corresponding specification, otherwise every
-feature method and every iteration per parametrized feature method will have their own temporary directories:</p>
+<code>java.io.File</code>, <code>java.nio.file.Path</code> or untyped using <code>def</code> in a spec class (<code>def</code> will inject a <code>Path</code>).
+Alternatively, you can annotate a field with a custom type that has a public constructor accepting either <code>java.io.File</code> or <code>java.nio.file.Path</code> as its single parameter (see <a href="utilities.html#file-stystem-fixture">FileSystemFixture</a> for an example).
+If the annotated field is <code>@Shared</code>, the temporary directory will be shared in the corresponding specification, otherwise every feature method and every iteration per parametrized feature method will have their own temporary directories:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -837,11 +837,16 @@ Path path1
 <span class="annotation">@TempDir</span>
 <span class="keyword">def</span> path3
 
+<span class="comment">// use a custom class that accepts java.nio.file.Path as sole constructor parameter</span>
+<span class="annotation">@TempDir</span>
+FileSystemFixture path4
+
 <span class="keyword">def</span> <span class="function">demo</span>() {
   <span class="key">expect</span>:
   path1 <span class="keyword">instanceof</span> Path
   path2 <span class="keyword">instanceof</span> <span class="predefined-type">File</span>
   path3 <span class="keyword">instanceof</span> Path
+  path4 <span class="keyword">instanceof</span> FileSystemFixture
 }</code></pre>
 </div>
 </div>
@@ -899,15 +904,15 @@ So that bar
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@See</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">http://spockframework.org/spec</span><span class="delimiter">&quot;</span></span>)
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@See</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">https://spockframework.org/spec</span><span class="delimiter">&quot;</span></span>)
 <span class="type">class</span> <span class="class">SeeDocSpec</span> <span class="directive">extends</span> Specification {
-  <span class="annotation">@See</span>([<span class="string"><span class="delimiter">&quot;</span><span class="content">http://en.wikipedia.org/wiki/Levenshtein_distance</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">http://www.levenshtein.net/</span><span class="delimiter">&quot;</span></span>])
+  <span class="annotation">@See</span>([<span class="string"><span class="delimiter">&quot;</span><span class="content">https://en.wikipedia.org/wiki/Levenshtein_distance</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">https://www.levenshtein.net/</span><span class="delimiter">&quot;</span></span>])
   <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">Even more information is available on the feature</span><span class="delimiter">&quot;</span></span>() {
     <span class="key">expect</span>: <span class="predefined-constant">true</span>
   }
 
-  <span class="annotation">@See</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">http://www.levenshtein.de/</span><span class="delimiter">&quot;</span></span>)
-  <span class="annotation">@See</span>([<span class="string"><span class="delimiter">&quot;</span><span class="content">http://en.wikipedia.org/wiki/Levenshtein_distance</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">http://www.levenshtein.net/</span><span class="delimiter">&quot;</span></span>])
+  <span class="annotation">@See</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">https://www.levenshtein.de/</span><span class="delimiter">&quot;</span></span>)
+  <span class="annotation">@See</span>([<span class="string"><span class="delimiter">&quot;</span><span class="content">https://en.wikipedia.org/wiki/Levenshtein_distance</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">https://www.levenshtein.net/</span><span class="delimiter">&quot;</span></span>])
   <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">And even more information is available on the feature</span><span class="delimiter">&quot;</span></span>() {
     <span class="key">expect</span>: <span class="predefined-constant">true</span>
   }
@@ -922,20 +927,20 @@ So that bar
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@Issue</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">http://my.issues.org/FOO-1</span><span class="delimiter">&quot;</span></span>)
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@Issue</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">https://my.issues.org/FOO-1</span><span class="delimiter">&quot;</span></span>)
 <span class="type">class</span> <span class="class">IssueDocSpec</span> <span class="directive">extends</span> Specification {
-  <span class="annotation">@Issue</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">http://my.issues.org/FOO-2</span><span class="delimiter">&quot;</span></span>)
+  <span class="annotation">@Issue</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">https://my.issues.org/FOO-2</span><span class="delimiter">&quot;</span></span>)
   <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">Foo should do bar</span><span class="delimiter">&quot;</span></span>() {
     <span class="key">expect</span>: <span class="predefined-constant">true</span>
   }
 
-  <span class="annotation">@Issue</span>([<span class="string"><span class="delimiter">&quot;</span><span class="content">http://my.issues.org/FOO-3</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">http://my.issues.org/FOO-4</span><span class="delimiter">&quot;</span></span>])
+  <span class="annotation">@Issue</span>([<span class="string"><span class="delimiter">&quot;</span><span class="content">https://my.issues.org/FOO-3</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">https://my.issues.org/FOO-4</span><span class="delimiter">&quot;</span></span>])
   <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">I have two related issues</span><span class="delimiter">&quot;</span></span>() {
     <span class="key">expect</span>: <span class="predefined-constant">true</span>
   }
 
-  <span class="annotation">@Issue</span>([<span class="string"><span class="delimiter">&quot;</span><span class="content">http://my.issues.org/FOO-5</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">http://my.issues.org/FOO-6</span><span class="delimiter">&quot;</span></span>])
-  <span class="annotation">@Issue</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">http://my.issues.org/FOO-7</span><span class="delimiter">&quot;</span></span>)
+  <span class="annotation">@Issue</span>([<span class="string"><span class="delimiter">&quot;</span><span class="content">https://my.issues.org/FOO-5</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">https://my.issues.org/FOO-6</span><span class="delimiter">&quot;</span></span>])
+  <span class="annotation">@Issue</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">https://my.issues.org/FOO-7</span><span class="delimiter">&quot;</span></span>)
   <span class="keyword">def</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">I have three related issues</span><span class="delimiter">&quot;</span></span>() {
     <span class="key">expect</span>: <span class="predefined-constant">true</span>
   }
@@ -955,7 +960,7 @@ issue.</p>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy">report {
     issueNamePrefix <span class="string"><span class="delimiter">'</span><span class="content">Bug </span><span class="delimiter">'</span></span>
-    issueUrlPrefix <span class="string"><span class="delimiter">'</span><span class="content">http://my.issues.org/</span><span class="delimiter">'</span></span>
+    issueUrlPrefix <span class="string"><span class="delimiter">'</span><span class="content">https://my.issues.org/</span><span class="delimiter">'</span></span>
 }</code></pre>
 </div>
 </div>
@@ -1509,7 +1514,7 @@ assignments happen before the method interceptor is called</p>
 <div id="footer">
 <div id="footer-text">
 Version 2.2-SNAPSHOT<br>
-Last updated 2022-07-12 12:55:22 UTC
+Last updated 2022-07-15 10:41:06 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./coderay-asciidoctor.css">

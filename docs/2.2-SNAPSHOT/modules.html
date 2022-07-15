@@ -56,7 +56,7 @@ This module does its best to support old features from JUnit 4, however, users a
 <h2 id="_guice_module"><a class="anchor" href="#_guice_module"></a><a class="link" href="#_guice_module">Guice Module</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Integration with the <a href="http://code.google.com/p/google-guice/">Guice</a> IoC container. Please add dependency <a href="https://search.maven.org/artifact/org.spockframework/spock-guice"><code>org.spockframework:spock-guice</code></a> to your project. For examples see the specs in the
+<p>Integration with the <a href="https://github.com/google/guice">Guice</a> IoC container. Please add dependency <a href="https://search.maven.org/artifact/org.spockframework/spock-guice"><code>org.spockframework:spock-guice</code></a> to your project. For examples see the specs in the
 <a href="https://github.com/spockframework/spock/tree/master/spock-guice/src/test/groovy/org/spockframework/guice">codebase</a>.</p>
 </div>
 <div class="paragraph">
@@ -68,7 +68,7 @@ This module does its best to support old features from JUnit 4, however, users a
 <h2 id="_spring_module"><a class="anchor" href="#_spring_module"></a><a class="link" href="#_spring_module">Spring Module</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The Spring module enables integration with <a href="http://docs.spring.io/spring/docs/4.1.5.RELEASE/spring-framework-reference/html/testing.html#testcontext-framework">Spring TestContext Framework</a>.
+<p>The Spring module enables integration with <a href="https://docs.spring.io/spring/docs/4.1.5.RELEASE/spring-framework-reference/html/testing.html#testcontext-framework">Spring TestContext Framework</a>.
 It supports the following spring annotations <code>@ContextConfiguration</code> and <code>@ContextHierarchy</code>. Furthermore, it supports the meta-annotation <code>@BootstrapWith</code> and so any annotation that is annotated with <code>@BootstrapWith</code> will also work, such as <code>@SpringBootTest</code>, <code>@WebMvcTest</code>. Please add dependency <a href="https://search.maven.org/artifact/org.spockframework/spock-spring"><code>org.spockframework:spock-spring</code></a> to your project.</p>
 </div>
 <div class="sect2">
@@ -124,7 +124,7 @@ Although the mocks can be created outside of a specification, they only work pro
 <div class="sect3">
 <h4 id="_xml"><a class="anchor" href="#_xml"></a><a class="link" href="#_xml">XML</a></h4>
 <div class="paragraph">
-<p>Spock has spring namespace support, so if you declare the spock namespace with <code>xmlns:spock="http://www.spockframework.org/spring"</code> you get access to the convenience functions for creating mocks.</p>
+<p>Spock has spring namespace support, so if you declare the spock namespace with <code>xmlns:spock="https://www.spockframework.org/spring"</code> you get access to the convenience functions for creating mocks.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -133,8 +133,8 @@ Although the mocks can be created outside of a specification, they only work pro
        <span class="attribute-name">xmlns:xsi</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://www.w3.org/2001/XMLSchema-instance</span><span class="delimiter">&quot;</span></span>
        <span class="attribute-name">xmlns:spock</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://www.spockframework.org/spring</span><span class="delimiter">&quot;</span></span>
        <span class="attribute-name">xsi:schemaLocation</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://www.springframework.org/schema/beans</span>
-           <span class="content">http://www.springframework.org/schema/beans/spring-beans.xsd</span>
-           <span class="content">http://www.spockframework.org/spring http://www.spockframework.org/spring/spock.xsd</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+           <span class="content">https://www.springframework.org/schema/beans/spring-beans.xsd</span>
+           <span class="content">http://www.spockframework.org/spring https://www.spockframework.org/spring/spock.xsd</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
 
   <span class="tag">&lt;spock:mock</span> <span class="attribute-name">id</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">serviceMock</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">class</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">org.spockframework.spring.docs.GreeterService</span><span class="delimiter">&quot;</span></span><span class="tag">/&gt;</span>   <b class="conum">(1)</b>
   <span class="tag">&lt;spock:stub</span> <span class="attribute-name">id</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">serviceStub</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">class</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">org.spockframework.spring.docs.GreeterService</span><span class="delimiter">&quot;</span></span><span class="tag">/&gt;</span>   <b class="conum">(2)</b>
@@ -440,7 +440,7 @@ Refer to javadoc of <code>org.spockframework.spring.EnableSharedInjection</code>
 <h2 id="_tapestry_module"><a class="anchor" href="#_tapestry_module"></a><a class="link" href="#_tapestry_module">Tapestry Module</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Integration with the <a href="http://tapestry.apache.org/tapestry5/">Tapestry5</a> IoC container. Please add dependency <a href="https://search.maven.org/artifact/org.spockframework/spock-tapestry"><code>org.spockframework:spock-tapestry</code></a> to your project. For examples see the specs in the
+<p>Integration with the <a href="https://tapestry.apache.org/tapestry5/">Tapestry5</a> IoC container. Please add dependency <a href="https://search.maven.org/artifact/org.spockframework/spock-tapestry"><code>org.spockframework:spock-tapestry</code></a> to your project. For examples see the specs in the
 <a href="https://github.com/spockframework/spock/tree/master/spock-tapestry/src/test/groovy/org/spockframework/tapestry">codebase</a>.</p>
 </div>
 </div>
@@ -449,7 +449,7 @@ Refer to javadoc of <code>org.spockframework.spring.EnableSharedInjection</code>
 <h2 id="_unitils_module"><a class="anchor" href="#_unitils_module"></a><a class="link" href="#_unitils_module">Unitils Module</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Integration with the <a href="http://www.unitils.org/">Unitils</a> library. Please add dependency <a href="https://search.maven.org/artifact/org.spockframework/spock-unitils"><code>org.spockframework:spock-unitils</code></a> to your project. For examples see the specs in the
+<p>Integration with the <a href="https://www.unitils.org/">Unitils</a> library. Please add dependency <a href="https://search.maven.org/artifact/org.spockframework/spock-unitils"><code>org.spockframework:spock-unitils</code></a> to your project. For examples see the specs in the
 <a href="https://github.com/spockframework/spock/tree/master/spock-unitils/src/test/groovy/org/spockframework/unitils">codebase</a>.</p>
 </div>
 </div>
@@ -478,7 +478,7 @@ Grails 2.3 and higher have built-in Spock support and do not require a plugin.
 <div id="footer">
 <div id="footer-text">
 Version 2.2-SNAPSHOT<br>
-Last updated 2022-07-12 12:55:22 UTC
+Last updated 2022-07-15 10:41:06 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./coderay-asciidoctor.css">

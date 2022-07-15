@@ -20,7 +20,13 @@
 </div>
 <div id="content">
 <div class="sect1">
-<h2 id="_2_2_m2_tbd"><a class="anchor" href="#_2_2_m2_tbd"></a><a class="link" href="#_2_2_m2_tbd">2.2-M2 (tbd)</a></h2>
+<h2 id="_2_2_m3_tbd"><a class="anchor" href="#_2_2_m3_tbd"></a><a class="link" href="#_2_2_m3_tbd">2.2-M3 (tbd)</a></h2>
+<div class="sectionbody">
+
+</div>
+</div>
+<div class="sect1">
+<h2 id="_2_2_m2_2022_07_15"><a class="anchor" href="#_2_2_m2_2022_07_15"></a><a class="link" href="#_2_2_m2_2022_07_15">2.2-M2 (2022-07-15)</a></h2>
 <div class="sectionbody">
 <div class="ulist">
 <ul>
@@ -33,6 +39,9 @@
 <li>
 <p>Add <a href="data-driven-testing.html#multi-data-pipe-named">named deconstruction</a> for multi variable datapipes.
 This might lead to changed behavior results if the data object implements <code>Map</code> but supports both positional <code>getAt(int)</code> and named <code>getAt(String)</code> access. In earlier versions, the positional access was used, but now the named access will be used. <a href="https://github.com/spockframework/spock/pull/1463">#1463</a></p>
+</li>
+<li>
+<p>Add custom class support to <code>@TempDir</code>, you can use any class that has a single <code>java.io.File</code> or <code>java.nio.file.Path</code> as constructor parameter <a href="https://github.com/spockframework/spock/pull/1430">#1430</a></p>
 </li>
 <li>
 <p>Improve <code>@Stepwise</code> can be applied to data-driven feature methods, having the effect of executing them sequentially (even if concurrent test mode is active) and to skip subsequent iterations is one iteration fails. <a href="https://github.com/spockframework/spock/pull/1442">#1442</a></p>
@@ -66,6 +75,9 @@ This might lead to changed behavior results if the data object implements <code>
 </li>
 <li>
 <p>Fix make <code>EnableSharedInjection</code> public <a href="https://github.com/spockframework/spock/pull/1472">#1472</a></p>
+</li>
+<li>
+<p>Fix gradle module metadata dependencies <a href="https://github.com/spockframework/spock/pull/1490">#1490</a></p>
 </li>
 <li>
 <p>Remove runtime dependency on Jetbrains Annotations <a href="https://github.com/spockframework/spock/pull/1468">#1468</a></p>
@@ -1659,7 +1671,7 @@ that now is the time to join the party!</p>
 <div class="paragraph">
 <p>A special thanks goes to all our tireless speakers and supporters, only a few of which are listed here: Andres Almiray,
 Cédric Champeau, David Dawson, Rob Fletcher, Sean Gilligan, Ken Kousen, Guillaume Laforge,
-<a href="http://www.nofluffjuststuff.com/home/main">NFJS Tour</a>, Graeme Rocher, Baruch Sadogursky, Odin Hole Standal,
+<a href="https://www.nofluffjuststuff.com/home/main">NFJS Tour</a>, Graeme Rocher, Baruch Sadogursky, Odin Hole Standal,
 Howard M. Lewis Ship, Ken Sipe, Venkat Subramaniam, Russel Winder.</p>
 </div>
 <div class="sect2">
@@ -1674,12 +1686,12 @@ Howard M. Lewis Ship, Ken Sipe, Venkat Subramaniam, Russel Winder.</p>
 <p>Minimum runtime requirements raised to JRE 1.6 and Groovy 2.0.</p>
 </li>
 <li>
-<p>Improved and restyled reference documentation at <a href="http://docs.spockframework.org" class="bare">http://docs.spockframework.org</a>. Generated with
-<a href="http://asciidoctor.org/">Asciidoctor</a> (what else?).</p>
+<p>Improved and restyled reference documentation at <a href="https://docs.spockframework.org" class="bare">https://docs.spockframework.org</a>. Generated with
+<a href="https://asciidoctor.org/">Asciidoctor</a> (what else?).</p>
 </li>
 <li>
 <p>Maven plugin removed. Just let Maven Surefire run your Spock specs like your JUnit tests
-(see <a href="http://examples.spockframework.org">spock-example</a> project).</p>
+(see <a href="https://examples.spockframework.org">spock-example</a> project).</p>
 </li>
 <li>
 <p>Official support for Java 1.8, Groovy 2.3 and Groovy 2.4. Make sure to pick the <code>groovy-2.0</code> binaries for Groovy
@@ -1687,8 +1699,8 @@ Howard M. Lewis Ship, Ken Sipe, Venkat Subramaniam, Russel Winder.</p>
 </li>
 <li>
 <p>Improved infrastructure to allow for easier community involvement: Switch to
-<a href="http://issues.spockframework.org">GitHub issue tracker</a>, <a href="http://winbuilds.spockframework.org">Windows</a> and
-<a href="http://builds.spockframework.org">Linux</a> CI builds, pull requests automatically tested, all development on <code>master</code>
+<a href="https://issues.spockframework.org">GitHub issue tracker</a>, <a href="https://winbuilds.spockframework.org">Windows</a> and
+<a href="https://builds.spockframework.org">Linux</a> CI builds, pull requests automatically tested, all development on <code>master</code>
 branch (bye-bye <code>groovy-x.y</code> branches!).</p>
 </li>
 </ul>
@@ -1699,13 +1711,13 @@ branch (bye-bye <code>groovy-x.y</code> branches!).</p>
 <div class="ulist">
 <ul>
 <li>
-<p>Follow our new <a href="http://twitter.spockframework.org">Twitter account</a></p>
+<p>Follow our new <a href="https://twitter.spockframework.org">Twitter account</a></p>
 </li>
 <li>
 <p>Try these <a href="#_new_third_party_extensions">new third-party extensions</a></p>
 </li>
 <li>
-<p>Check out the upcoming <a href="http://manning.com/kapelonis/">Java Testing with Spock</a> book from Manning</p>
+<p>Check out the upcoming <a href="https://manning.com/kapelonis/">Java Testing with Spock</a> book from Manning</p>
 </li>
 </ul>
 </div>
@@ -1947,7 +1959,7 @@ finally shooting for a professional logo and website. Stay tuned for announcemen
 <div class="ulist">
 <ul>
 <li>
-<p><a href="http://spockframework.github.io/spock/sampleReports/Ninja%20Commander.html">Spock reports</a></p>
+<p><a href="https://spockframework.github.io/spock/sampleReports/Ninja%20Commander.html">Spock reports</a></p>
 </li>
 <li>
 <p><a href="https://github.com/spockframework/spock/pull/49">Render exceptions in conditions as condition failure</a></p>
@@ -1975,10 +1987,10 @@ finally shooting for a professional logo and website. Stay tuned for announcemen
 <div class="sect2">
 <h3 id="_new_reference_documentation"><a class="anchor" href="#_new_reference_documentation"></a><a class="link" href="#_new_reference_documentation">New Reference Documentation</a></h3>
 <div class="paragraph">
-<p>The new Spock reference documentation is available at <a href="http://docs.spockframework.org" class="bare">http://docs.spockframework.org</a>.
-It will gradually replace the documentation at <a href="http://wiki.spockframework.org" class="bare">http://wiki.spockframework.org</a>.
-Each Spock version is documented separately (e.g. <a href="http://docs.spockframework.org/en/spock-0.7-groovy-1.8" class="bare">http://docs.spockframework.org/en/spock-0.7-groovy-1.8</a>).
-Documentation for the latest Spock snapshot is at <a href="http://docs.spockframework.org/en/latest" class="bare">http://docs.spockframework.org/en/latest</a>.
+<p>The new Spock reference documentation is available at <a href="https://docs.spockframework.org" class="bare">https://docs.spockframework.org</a>.
+It will gradually replace the documentation at <a href="https://wiki.spockframework.org" class="bare">https://wiki.spockframework.org</a>.
+Each Spock version is documented separately (e.g. <a href="https://docs.spockframework.org/en/spock-0.7-groovy-1.8" class="bare">https://docs.spockframework.org/en/spock-0.7-groovy-1.8</a>).
+Documentation for the latest Spock snapshot is at <a href="https://docs.spockframework.org/en/latest" class="bare">https://docs.spockframework.org/en/latest</a>.
 As of Spock 0.7, the chapters on <a href="data_driven_testing.html#data-driven-testing">Data Driven Testing</a> and
 <a href="interaction_based_testing.html#interaction-based-testing">Interaction Based Testing</a> are complete.</p>
 </div>
@@ -2295,7 +2307,7 @@ Caused by: java.io.FileNotFoundException: ...</pre>
 <h3 id="_hamcrestsupport_expect"><a class="anchor" href="#_hamcrestsupport_expect"></a><a class="link" href="#_hamcrestsupport_expect"><code>HamcrestSupport.expect</code></a></h3>
 <div class="paragraph">
 <p>Class <code>spock.util.matcher.HamcrestSupport</code> has a new <code>expect</code> method that makes
-<a href="http://code.google.com/p/hamcrest/">Hamcrest</a> assertions read better in then-blocks:</p>
+<a href="https://hamcrest.org/JavaHamcrest/">Hamcrest</a> assertions read better in then-blocks:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -2344,7 +2356,7 @@ return the numbers one, two, and three on the next calls, and throw a <code>Runt
 <p>It&#8217;s now possible to match any argument list (including the empty list) with <code>foo.bar(*_)</code>.</p>
 </div>
 <div class="paragraph">
-<p>Method arguments can now be constrained with <a href="http://code.google.com/p/hamcrest/">Hamcrest</a> matchers:</p>
+<p>Method arguments can now be constrained with <a href="https://hamcrest.org/JavaHamcrest/">Hamcrest</a> matchers:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -2394,7 +2406,7 @@ as an addition or alternative to Spock&#8217;s own fixture methods. This was par
 <div class="sect2">
 <h3 id="_tapestry_5_3_support"><a class="anchor" href="#_tapestry_5_3_support"></a><a class="link" href="#_tapestry_5_3_support">Tapestry 5.3 Support</a></h3>
 <div class="paragraph">
-<p>Thanks to a contribution from <a href="http://howardlewisship.com/">Howard Lewis Ship</a>, the Tapestry module is now compatible
+<p>Thanks to a contribution from <a href="https://howardlewisship.com/">Howard Lewis Ship</a>, the Tapestry module is now compatible
 with Tapestry 5.3. Older 5.x versions are still supported.</p>
 </div>
 </div>
@@ -2477,14 +2489,14 @@ a | b || sum
 <div class="paragraph">
 <p>Spock 0.6 ships in three variants for Groovy 1.7, 1.8, and 2.0. Make sure to pick the right version - for example,
 for Groovy 1.8 you need to use spock-core-0.6-groovy-1.8 (likewise for all other modules). The Groovy 2.0 variant
-is based on Groovy 2.0-beta-3-SNAPSHOT and only available from <a href="http://m2repo.spockframework.org" class="bare">http://m2repo.spockframework.org</a>. The Groovy 1.7 and
+is based on Groovy 2.0-beta-3-SNAPSHOT and only available from <a href="https://m2repo.spockframework.org" class="bare">https://m2repo.spockframework.org</a>. The Groovy 1.7 and
 1.8 variants are also available from Maven Central. The next version of Spock will no longer support Groovy 1.7.</p>
 </div>
 </div>
 <div class="sect2">
 <h3 id="_grails_2_0_support"><a class="anchor" href="#_grails_2_0_support"></a><a class="link" href="#_grails_2_0_support">Grails 2.0 Support</a></h3>
 <div class="paragraph">
-<p>Spock&#8217;s Grails plugin was split off into a separate project and now lives at <a href="http://github.spockframework.org/spock-grails" class="bare">http://github.spockframework.org/spock-grails</a>.
+<p>Spock&#8217;s Grails plugin was split off into a separate project and now lives at <a href="https://github.spockframework.org/spock-grails" class="bare">https://github.spockframework.org/spock-grails</a>.
 The plugin supports both Grails 1.3 and 2.0.</p>
 </div>
 <div class="paragraph">
@@ -2495,7 +2507,7 @@ testing classes (e.g. UnitSpec). For integration testing, IntegrationSpec must s
 <div class="sect2">
 <h3 id="_intellij_idea_integration"><a class="anchor" href="#_intellij_idea_integration"></a><a class="link" href="#_intellij_idea_integration">IntelliJ IDEA Integration</a></h3>
 <div class="paragraph">
-<p>The folks from <a href="http://www.jetbrains.com">JetBrains</a> have added a few handy features around data tables. Data tables
+<p>The folks from <a href="https://www.jetbrains.com">JetBrains</a> have added a few handy features around data tables. Data tables
 will now be layed out automatically when reformatting code. Data variables are no longer shown as "unknown" and have
 their types inferred from the values in the table (!).</p>
 </div>
@@ -2503,18 +2515,18 @@ their types inferred from the values in the table (!).</p>
 <div class="sect2">
 <h3 id="_github_repository"><a class="anchor" href="#_github_repository"></a><a class="link" href="#_github_repository">GitHub Repository</a></h3>
 <div class="paragraph">
-<p>All source code has moved to <a href="http://github.spockframework.org/" class="bare">http://github.spockframework.org/</a>. The <a href="http://github.spockframework.org/spock-grails">Grails Spock plugin</a>,
-<a href="http://github.spockframework.org/spock-example">Spock Example</a> project, and
-<a href="http://github.spockframework.org/spockwebconsole">Spock Web Console</a> now have their own GitHub projects.
+<p>All source code has moved to <a href="https://github.spockframework.org/" class="bare">https://github.spockframework.org/</a>. The <a href="https://github.spockframework.org/spock-grails">Grails Spock plugin</a>,
+<a href="https://github.spockframework.org/spock-example">Spock Example</a> project, and
+<a href="https://github.spockframework.org/spockwebconsole">Spock Web Console</a> now have their own GitHub projects.
 Also available are slides and code for various Spock presentations (such as
-<a href="http://github.spockframework.org/smarter-testing-with-spock">this one</a>).</p>
+<a href="https://github.spockframework.org/smarter-testing-with-spock">this one</a>).</p>
 </div>
 </div>
 <div class="sect2">
 <h3 id="_gradle_build"><a class="anchor" href="#_gradle_build"></a><a class="link" href="#_gradle_build">Gradle Build</a></h3>
 <div class="paragraph">
 <p>Spock is now exclusively built with Gradle. Building Spock yourself is as easy as cloning the
-<a href="http://github.spockframework.org/spock">Github repo</a> and executing <code>gradlew build</code>. No build tool installation is
+<a href="https://github.spockframework.org/spock">Github repo</a> and executing <code>gradlew build</code>. No build tool installation is
 required; the only prerequisite for building Spock is a JDK installation (1.5 or higher).</p>
 </div>
 </div>
@@ -2530,7 +2542,7 @@ required; the only prerequisite for building Spock is a JDK installation (1.5 or
 <div id="footer">
 <div id="footer-text">
 Version 2.2-SNAPSHOT<br>
-Last updated 2022-07-12 12:55:22 UTC
+Last updated 2022-07-15 10:41:06 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./coderay-asciidoctor.css">

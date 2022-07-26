@@ -102,6 +102,8 @@ public class SpockMockPostprocessor extends BackwardsCompatibleInstantiationAwar
     String transformedBeanName = BeanFactoryUtils.transformedBeanName(beanName);
     beanDefinition.getConstructorArgumentValues().addIndexedArgumentValue(1, beanName);
     if (registry.containsBeanDefinition(transformedBeanName)) {
+      BeanDefinition existing = registry.getBeanDefinition(transformedBeanName);
+      copyBeanDefinitionDetails(existing, beanDefinition);
       registry.removeBeanDefinition(transformedBeanName);
     }
     registry.registerBeanDefinition(transformedBeanName, beanDefinition);
@@ -153,10 +155,35 @@ public class SpockMockPostprocessor extends BackwardsCompatibleInstantiationAwar
     if (existingBeans.size() == 1) {
       return existingBeans.iterator().next();
     }
+    String primaryCandidate = determinePrimaryCandidate(registry, existingBeans, mockDefinition.getTypeToMock());
+    if (primaryCandidate != null) {
+      return primaryCandidate;
+    }
     throw new IllegalStateException(
       "Unable to register mock bean " + mockDefinition.getTypeToMock()
         + " expected a single matching bean to replace but found "
         + existingBeans);
+  }
+
+  private String determinePrimaryCandidate(BeanDefinitionRegistry registry, Collection<String> candidateBeanNames,
+                                           ResolvableType type) {
+    String primaryBeanName = null;
+    for (String candidateBeanName : candidateBeanNames) {
+      BeanDefinition beanDefinition = registry.getBeanDefinition(candidateBeanName);
+      if (beanDefinition.isPrimary()) {
+        if (primaryBeanName != null) {
+          throw new NoUniqueBeanDefinitionException(type.resolve(), candidateBeanNames.size(),
+            "more than one 'primary' bean found among candidates: "
+              + Collections.singletonList(candidateBeanNames));
+        }
+        primaryBeanName = candidateBeanName;
+      }
+    }
+    return primaryBeanName;
+  }
+
+  private void copyBeanDefinitionDetails(BeanDefinition from, BeanDefinition to) {
+    to.setPrimary(from.isPrimary());
   }
 
   private void registerSpy(ConfigurableListableBeanFactory beanFactory,

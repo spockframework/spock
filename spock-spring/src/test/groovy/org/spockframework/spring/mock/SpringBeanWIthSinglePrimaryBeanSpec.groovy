@@ -26,8 +26,8 @@ import org.springframework.context.annotation.Primary
 import org.springframework.test.context.ContextConfiguration
 import spock.lang.Specification
 
-@ContextConfiguration(classes = TwoService2BeansConfig)
-class SpringBeanOverridesPrimaryBeanSpec extends Specification {
+@ContextConfiguration(classes = TwoService2BeansWithPrimaryConfig)
+class SpringBeanWIthSinglePrimaryBeanSpec extends Specification {
 
   @SpringBean
   Service2 service2 = Mock() {
@@ -51,7 +51,7 @@ class SpringBeanOverridesPrimaryBeanSpec extends Specification {
     1 * service2.generateQuickBrownFox() >> "Foo"
   }
 
-  static class TwoService2BeansConfig {
+  static class TwoService2BeansWithPrimaryConfig {
 
     @Bean
     Service2 service2NotPrimary() {

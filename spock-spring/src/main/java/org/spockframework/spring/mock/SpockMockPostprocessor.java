@@ -148,12 +148,12 @@ public class SpockMockPostprocessor extends BackwardsCompatibleInstantiationAwar
     if (StringUtils.hasLength(mockDefinition.getName())) {
       return mockDefinition.getName();
     }
-    Set<String> existingBeans = findCandidateBeans(beanFactory, mockDefinition);
-    if (existingBeans.isEmpty()) {
+    String[] existingBeans = findCandidateBeans(beanFactory, mockDefinition);
+    if (existingBeans.length == 0) {
       return this.beanNameGenerator.generateBeanName(beanDefinition, registry);
     }
-    if (existingBeans.size() == 1) {
-      return existingBeans.iterator().next();
+    if (existingBeans.length == 1) {
+      return existingBeans[0];
     }
     String primaryCandidate = determinePrimaryCandidate(registry, existingBeans, mockDefinition.getTypeToMock());
     if (primaryCandidate != null) {
@@ -163,23 +163,6 @@ public class SpockMockPostprocessor extends BackwardsCompatibleInstantiationAwar
       "Unable to register mock bean " + mockDefinition.getTypeToMock()
         + " expected a single matching bean to replace but found "
         + existingBeans);
-  }
-
-  private String determinePrimaryCandidate(BeanDefinitionRegistry registry, Collection<String> candidateBeanNames,
-                                           ResolvableType type) {
-    String primaryBeanName = null;
-    for (String candidateBeanName : candidateBeanNames) {
-      BeanDefinition beanDefinition = registry.getBeanDefinition(candidateBeanName);
-      if (beanDefinition.isPrimary()) {
-        if (primaryBeanName != null) {
-          throw new NoUniqueBeanDefinitionException(type.resolve(), candidateBeanNames.size(),
-            "more than one 'primary' bean found among candidates: "
-              + Collections.singletonList(candidateBeanNames));
-        }
-        primaryBeanName = candidateBeanName;
-      }
-    }
-    return primaryBeanName;
   }
 
   private void copyBeanDefinitionDetails(BeanDefinition from, BeanDefinition to) {
@@ -199,8 +182,8 @@ public class SpockMockPostprocessor extends BackwardsCompatibleInstantiationAwar
     }
   }
 
-  private Set<String> findCandidateBeans(ConfigurableListableBeanFactory beanFactory,
-                                         MockDefinition mockDefinition) {
+  private String[] findCandidateBeans(ConfigurableListableBeanFactory beanFactory,
+                                      MockDefinition mockDefinition) {
     QualifierDefinition qualifier = mockDefinition.getQualifier();
     Set<String> candidates = new TreeSet<>();
     for (String candidate : getExistingBeans(beanFactory,
@@ -209,7 +192,7 @@ public class SpockMockPostprocessor extends BackwardsCompatibleInstantiationAwar
         candidates.add(candidate);
       }
     }
-    return candidates;
+    return candidates.toArray(new String[0]);
   }
 
   private String[] getExistingBeans(ConfigurableListableBeanFactory beanFactory,

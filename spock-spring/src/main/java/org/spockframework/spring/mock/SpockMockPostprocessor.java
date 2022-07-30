@@ -20,6 +20,7 @@ import org.spockframework.runtime.model.FieldInfo;
 import org.spockframework.spring.*;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.springframework.aop.scope.ScopedProxyUtils;
 import org.springframework.beans.BeansException;
@@ -342,6 +343,8 @@ public class SpockMockPostprocessor extends BackwardsCompatibleInstantiationAwar
 
     private static final String BEAN_NAME = SpyPostProcessor.class.getName();
 
+    private final Map<String, Object> earlySpyReferences = new ConcurrentHashMap<>(16);
+
     private final SpockMockPostprocessor spockMockPostprocessor;
 
     SpyPostProcessor(SpockMockPostprocessor spockMockPostprocessor) {
@@ -356,6 +359,10 @@ public class SpockMockPostprocessor extends BackwardsCompatibleInstantiationAwar
     @Override
     public Object getEarlyBeanReference(Object bean, String beanName)
       throws BeansException {
+      if (bean instanceof FactoryBean) {
+        return bean;
+      }
+      this.earlySpyReferences.put(getCacheKey(bean, beanName), bean);
       return createSpyIfNecessary(bean, beanName);
     }
 
@@ -365,11 +372,17 @@ public class SpockMockPostprocessor extends BackwardsCompatibleInstantiationAwar
       if (bean instanceof FactoryBean) {
         return bean;
       }
-      return createSpyIfNecessary(bean, beanName);
+      if (this.earlySpyReferences.remove(getCacheKey(bean, beanName)) != bean) {
+        return this.spockMockPostprocessor.createSpyIfNecessary(bean, beanName);
+      }
+      return bean;
     }
 
     private Object createSpyIfNecessary(Object bean, String beanName) {
       return this.spockMockPostprocessor.createSpyIfNecessary(bean, beanName);
+    }
+    private String getCacheKey(Object bean, String beanName) {
+      return StringUtils.hasLength(beanName) ? beanName : bean.getClass().getName();
     }
 
     static void register(BeanDefinitionRegistry registry) {

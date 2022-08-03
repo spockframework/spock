@@ -16,7 +16,6 @@
 
 package org.spockframework.spring.mock
 
-import org.springframework.beans.factory.NoUniqueBeanDefinitionException
 import spock.lang.Specification
 import spock.util.EmbeddedSpecRunner
 
@@ -63,10 +62,7 @@ class Foo extends Specification {
 
     then:
     result.totalFailureCount > 0
-//    result.failures[0].exception instanceof IllegalStateException
-//    result.failures[0].exception.message == "Failed to load ApplicationContext"
-//    result.failures[0].exception.cause instanceof IllegalStateException
-//    result.failures[0].exception.cause.message.contains("expected a single matching bean")
+    result.failures[0].exception.message.contains("Failed to load ApplicationContext")
   }
 
   def "rejects an attempt to mock a bean with more than one primary instance"() {
@@ -113,10 +109,7 @@ class Foo extends Specification {
 
     then:
     result.totalFailureCount > 0
-//    result.failures[0].exception instanceof IllegalStateException
-//    result.failures[0].exception.message == "Failed to load ApplicationContext"
-//    result.failures[0].exception.cause instanceof NoUniqueBeanDefinitionException
-//    result.failures[0].exception.cause.message.contains("more than one 'primary' bean found")
+    result.failures[0].exception.message.contains("Failed to load ApplicationContext")
   }
 
 }

@@ -34,7 +34,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.test.context.ContextConfiguration
 import spock.lang.Specification
 
-@ContextConfiguration(classes = TwoService2BeansWithMultiplePrimaryConfig)
+@ContextConfiguration(classes = TwoService2BeansNoPrimaryConfig)
 class Foo extends Specification {
 
   @SpringBean
@@ -45,15 +45,15 @@ class Foo extends Specification {
     1==1
   }
 
-  static class TwoService2BeansWithMultiplePrimaryConfig {
+  static class TwoService2BeansNoPrimaryConfig {
 
     @Bean
-    Service2 service2Primary1() {
+    Service2 service2instance1() {
       new Service2()
     }
 
     @Bean
-    Service2 service2Primary2() {
+    Service2 service2instance2() {
       new Service2()
     }
   }
@@ -79,7 +79,7 @@ import org.springframework.context.annotation.Primary
 import org.springframework.test.context.ContextConfiguration
 import spock.lang.Specification
 
-@ContextConfiguration(classes = TwoService2BeansWithMultiplePrimaryConfig)
+@ContextConfiguration(classes = TwoService2BeansBothPrimaryConfig)
 class Foo extends Specification {
 
   @SpringBean
@@ -90,7 +90,7 @@ class Foo extends Specification {
     1==1
   }
 
-  static class TwoService2BeansWithMultiplePrimaryConfig {
+  static class TwoService2BeansBothPrimaryConfig {
 
     @Primary
     @Bean

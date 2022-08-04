@@ -17,20 +17,31 @@
 package org.spockframework.spring.mock;
 
 import org.spockframework.runtime.model.FieldInfo;
-import org.spockframework.spring.*;
+import org.spockframework.spring.SpringBean;
+import org.spockframework.spring.SpringExtensionException;
+import org.spockframework.spring.SpringSpy;
+import org.springframework.aop.scope.ScopedProxyUtils;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.BeanFactoryUtils;
+import org.springframework.beans.factory.FactoryBean;
+import org.springframework.beans.factory.NoUniqueBeanDefinitionException;
+import org.springframework.beans.factory.config.*;
+import org.springframework.beans.factory.config.ConstructorArgumentValues.ValueHolder;
+import org.springframework.beans.factory.support.BeanDefinitionRegistry;
+import org.springframework.beans.factory.support.BeanNameGenerator;
+import org.springframework.beans.factory.support.DefaultBeanNameGenerator;
+import org.springframework.beans.factory.support.RootBeanDefinition;
+import org.springframework.context.ApplicationContext;
+import org.springframework.core.Ordered;
+import org.springframework.core.PriorityOrdered;
+import org.springframework.core.ResolvableType;
+import org.springframework.util.Assert;
+import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-
-import org.springframework.aop.scope.ScopedProxyUtils;
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.*;
-import org.springframework.beans.factory.config.*;
-import org.springframework.beans.factory.config.ConstructorArgumentValues.ValueHolder;
-import org.springframework.beans.factory.support.*;
-import org.springframework.context.ApplicationContext;
-import org.springframework.core.*;
-import org.springframework.util.*;
 
 import static java.util.Arrays.asList;
 
@@ -149,12 +160,12 @@ public class SpockMockPostprocessor extends BackwardsCompatibleInstantiationAwar
     if (StringUtils.hasLength(mockDefinition.getName())) {
       return mockDefinition.getName();
     }
-    String[] existingBeans = findCandidateBeans(beanFactory, mockDefinition);
-    if (existingBeans.length == 0) {
+    Set<String> existingBeans = getExistingBeans(beanFactory, mockDefinition);
+    if (existingBeans.isEmpty()) {
       return this.beanNameGenerator.generateBeanName(beanDefinition, registry);
     }
-    if (existingBeans.length == 1) {
-      return existingBeans[0];
+    if (existingBeans.size() == 1) {
+      return existingBeans.iterator().next();
     }
     String primaryCandidate = determinePrimaryCandidate(registry, existingBeans, mockDefinition.getTypeToMock());
     if (primaryCandidate != null) {
@@ -172,7 +183,7 @@ public class SpockMockPostprocessor extends BackwardsCompatibleInstantiationAwar
 
   private void registerSpy(ConfigurableListableBeanFactory beanFactory,
                            BeanDefinitionRegistry registry, SpyDefinition definition) {
-    String[] existingBeans = getExistingBeans(beanFactory, definition.getTypeToSpy());
+    Set<String> existingBeans = getExistingBeans(beanFactory, definition.getTypeToSpy());
     if (ObjectUtils.isEmpty(existingBeans)) {
       FieldInfo fieldInfo = definition.getFieldInfo();
       throw new SpringExtensionException(String.format("No matching bean found! " +
@@ -183,8 +194,8 @@ public class SpockMockPostprocessor extends BackwardsCompatibleInstantiationAwar
     }
   }
 
-  private String[] findCandidateBeans(ConfigurableListableBeanFactory beanFactory,
-                                      MockDefinition mockDefinition) {
+  private Set<String> getExistingBeans(ConfigurableListableBeanFactory beanFactory,
+                                       MockDefinition mockDefinition) {
     QualifierDefinition qualifier = mockDefinition.getQualifier();
     Set<String> candidates = new TreeSet<>();
     for (String candidate : getExistingBeans(beanFactory,
@@ -193,10 +204,10 @@ public class SpockMockPostprocessor extends BackwardsCompatibleInstantiationAwar
         candidates.add(candidate);
       }
     }
-    return candidates.toArray(new String[0]);
+    return candidates;
   }
 
-  private String[] getExistingBeans(ConfigurableListableBeanFactory beanFactory,
+  private Set<String> getExistingBeans(ConfigurableListableBeanFactory beanFactory,
                                     ResolvableType type) {
     Set<String> beans = new LinkedHashSet<>(
       asList(beanFactory.getBeanNamesForType(type)));
@@ -210,7 +221,7 @@ public class SpockMockPostprocessor extends BackwardsCompatibleInstantiationAwar
     }
 
     beans.removeIf(this::isScopedTarget);
-    return beans.toArray(new String[0]);
+    return beans;
   }
 
   private boolean isScopedTarget(String beanName) {
@@ -222,7 +233,7 @@ public class SpockMockPostprocessor extends BackwardsCompatibleInstantiationAwar
   }
 
   private void registerSpies(BeanDefinitionRegistry registry, SpyDefinition definition,
-                             String[] existingBeans) {
+                             Set<String> existingBeans) {
     try {
       registerSpy(definition,
         determineBeanName(existingBeans, definition, registry));
@@ -232,28 +243,28 @@ public class SpockMockPostprocessor extends BackwardsCompatibleInstantiationAwar
     }
   }
 
-  private String determineBeanName(String[] existingBeans, SpyDefinition definition,
+  private String determineBeanName(Collection<String> existingBeans, SpyDefinition definition,
                                    BeanDefinitionRegistry registry) {
     if (StringUtils.hasText(definition.getName())) {
       return definition.getName();
     }
-    if (existingBeans.length == 1) {
-      return existingBeans[0];
+    if (existingBeans.size() == 1) {
+      return existingBeans.iterator().next();
     }
     return determinePrimaryCandidate(registry, existingBeans, definition.getTypeToSpy());
   }
 
   private String determinePrimaryCandidate(BeanDefinitionRegistry registry,
-                                           String[] candidateBeanNames, ResolvableType type) {
+                                           Collection<String> candidateBeanNames, ResolvableType type) {
     String primaryBeanName = null;
     for (String candidateBeanName : candidateBeanNames) {
       BeanDefinition beanDefinition = registry.getBeanDefinition(candidateBeanName);
       if (beanDefinition.isPrimary()) {
         if (primaryBeanName != null) {
           throw new NoUniqueBeanDefinitionException(type.resolve(),
-            candidateBeanNames.length,
+            candidateBeanNames.size(),
             "more than one 'primary' bean found among candidates: "
-              + asList(candidateBeanNames));
+              + candidateBeanNames);
         }
         primaryBeanName = candidateBeanName;
       }

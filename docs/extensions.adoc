@@ -551,6 +551,7 @@ tempdir {
 }
 ----
 
+[[title-and-narrative-extension]]
 === Title and Narrative
 
 To attach a natural-language name to a spec, use `spock.lang.Title`:

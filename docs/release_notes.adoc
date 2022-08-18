@@ -4,6 +4,8 @@ include::include.adoc[]
 
 == 2.2 (tbd)
 
+* Fix issue that `displayName` values for the `Specification`, which were changed by extensions such as <<extensions.adoc#title-and-narrative-extension,@Title>>, not being picked up.
+
 == 2.2-M3 (2022-07-15)
 
 * Add support for `IterationSelector` to run individual iterations

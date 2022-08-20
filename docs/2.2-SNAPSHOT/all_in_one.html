@@ -166,7 +166,7 @@
 <li><a href="#_autoattach">AutoAttach</a></li>
 <li><a href="#_autocleanup">AutoCleanup</a></li>
 <li><a href="#_temp_dir">TempDir</a></li>
-<li><a href="#_title_and_narrative">Title and Narrative</a></li>
+<li><a href="#title-and-narrative-extension">Title and Narrative</a></li>
 <li><a href="#_see">See</a></li>
 <li><a href="#_issue">Issue</a></li>
 <li><a href="#_subject">Subject</a></li>
@@ -4769,7 +4769,7 @@ system property <code>spock.tempDir.keep</code> or <code>false</code>, if undefi
 </div>
 </div>
 <div class="sect3">
-<h4 id="_title_and_narrative"><a class="anchor" href="#_title_and_narrative"></a><a class="link" href="#_title_and_narrative">Title and Narrative</a></h4>
+<h4 id="title-and-narrative-extension"><a class="anchor" href="#title-and-narrative-extension"></a><a class="link" href="#title-and-narrative-extension">Title and Narrative</a></h4>
 <div class="paragraph">
 <p>To attach a natural-language name to a spec, use <code>spock.lang.Title</code>:</p>
 </div>
@@ -6433,7 +6433,13 @@ Grails 2.3 and higher have built-in Spock support and do not require a plugin.
 <div class="sectionbody">
 <div class="sect2">
 <h3 id="_2_2_tbd"><a class="anchor" href="#_2_2_tbd"></a><a class="link" href="#_2_2_tbd">2.2 (tbd)</a></h3>
-
+<div class="ulist">
+<ul>
+<li>
+<p>Fix issue that <code>displayName</code> values for the <code>Specification</code>, which were changed by extensions such as <a href="#title-and-narrative-extension">@Title</a>, not being picked up.</p>
+</li>
+</ul>
+</div>
 </div>
 <div class="sect2">
 <h3 id="_2_2_m3_2022_07_15"><a class="anchor" href="#_2_2_m3_2022_07_15"></a><a class="link" href="#_2_2_m3_2022_07_15">2.2-M3 (2022-07-15)</a></h3>
@@ -9510,7 +9516,7 @@ This is due to how groovy implements traits and AST transformations.</p>
 <div id="footer">
 <div id="footer-text">
 Version 2.2-SNAPSHOT<br>
-Last updated 2022-07-15 12:04:21 UTC
+Last updated 2022-08-20 17:03:15 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./coderay-asciidoctor.css">

@@ -14,13 +14,34 @@
 
 package org.spockframework.smoke.extension
 
-import spock.lang.Specification
+import org.spockframework.EmbeddedSpecification
+import org.spockframework.runtime.SpecNode
 import spock.lang.Title
 
+import static java.util.stream.Collectors.toList
+
 @Title("A beautiful mind")
-class TitleExtension extends Specification {
+class TitleExtension extends EmbeddedSpecification {
   def "sets @Title text as spec name"() {
     expect:
     specificationContext.currentSpec.displayName == "A beautiful mind"
+  }
+
+  def "@Title changes the reported display name"() {
+    when:
+    def result = runner.runWithImports('''
+@Title("A beautiful mind")
+class ASpec extends Specification {
+  def "a test"() {
+    expect: true
+  }
+}
+''')
+
+    then:
+    def containers = result.containerEvents().succeeded().filter { it.testDescriptor instanceof SpecNode }.collect(toList())
+    with(containers[0].testDescriptor, SpecNode) {
+      displayName == "A beautiful mind"
+    }
   }
 }

@@ -34,8 +34,6 @@ if (((System.getProperty("java.specification.version") ?: 8) as BigDecimal) < 11
 
 def gradleEnterpriseServer = "https://ge.spockframework.org"
 def isCiServer = System.env["CI"] || System.env["GITHUB_ACTIONS"]
-def spockBuildCacheUsername = ext.has('spockBuildCacheUsername') ? ext['spockBuildCacheUsername'] : null
-def spockBuildCachePassword = ext.has('spockBuildCachePassword') ? ext['spockBuildCachePassword'] : null
 
 def accessKeysAreMissing() {
   return !(System.env['GRADLE_ENTERPRISE_ACCESS_KEY']?.trim())
@@ -75,12 +73,14 @@ buildCache {
   local {
     enabled = !isCiServer
   }
-  remote(HttpBuildCache) {
-    url = uri("$gradleEnterpriseServer/cache/")
-    push = isCiServer && spockBuildCacheUsername && spockBuildCachePassword
-    credentials {
-      username = spockBuildCacheUsername ?: null
-      password = spockBuildCachePassword ?: null
+  if (gradle.startParameter.buildScan || (isCiServer && accessKeysAreMissing())) {
+    remote(HttpBuildCache) {
+      url = uri("$gradleEnterpriseServer/cache/")
+      push = false
+    }
+  } else {
+    remote(gradleEnterprise.buildCache) {
+      push = isCiServer
     }
   }
 }

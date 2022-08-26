@@ -17,30 +17,39 @@
 package org.spockframework.spring
 
 import org.spockframework.mock.MockUtil
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.test.context.ContextConfiguration
+import spock.lang.IgnoreIf
 import spock.lang.Specification
 
 import javax.inject.Named
 
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.test.context.ContextConfiguration
-
+@IgnoreIf(
+  value = { jvm.java17Compatible },
+  reason = "Spring 4s reflection doesn't work on 17+"
+)
 @ContextConfiguration(locations = "MockExamples-context.xml")
 class MockInjectionExample extends Specification {
 
-  @Autowired @Named('serviceMock')
+  @Autowired
+  @Named('serviceMock')
   IService1 serviceMock
 
 
-  @Autowired @Named('serviceStub')
+  @Autowired
+  @Named('serviceStub')
   IService1 serviceStub
 
-  @Autowired @Named('serviceSpy')
+  @Autowired
+  @Named('serviceSpy')
   IService2 serviceSpy
 
-  @Autowired @Named('service2')
+  @Autowired
+  @Named('service2')
   IService2 service2
 
-  @Autowired @Named('nonMock')
+  @Autowired
+  @Named('nonMock')
   ArrayList concreteSpy;
 
   def "Injected services are mocks"() {

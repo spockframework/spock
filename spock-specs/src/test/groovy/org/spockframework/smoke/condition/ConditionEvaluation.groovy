@@ -209,7 +209,7 @@ class ConditionEvaluation extends EmbeddedSpecification {
 
   def "PropertyExpression"() {
     expect:
-    [1, 2, 3].size == 3
+    new Person(age: 3).age == 3
     (new Properties().next.next.next.x = 10) == 10
     Integer.MIN_VALUE < Integer.MAX_VALUE
   }
@@ -404,4 +404,3 @@ class ConditionEvaluation extends EmbeddedSpecification {
     def eat(args) { args }
   }
 }
-

@@ -16,6 +16,7 @@ package org.spockframework.smoke.mock
 
 import org.spockframework.mock.CannotCreateMockException
 import org.spockframework.runtime.SpockException
+import org.spockframework.util.SpockDocLinks
 import spock.lang.*
 
 class JavaSpies extends Specification {
@@ -204,10 +205,11 @@ class JavaSpies extends Specification {
   @Issue("https://github.com/spockframework/spock/issues/822")
   def "inferred type is ignored for instance mocks"() {
     when:
-    List list = new ArrayList<>()
-    List second = Spy(list)
+    Being person = new Person()
+    Being second = Spy(person)
 
     then:
+    second instanceof Person
     noExceptionThrown()
   }
 
@@ -221,6 +223,20 @@ class JavaSpies extends Specification {
 
     then:
     thrown(SpockException)
+  }
+
+  @Requires(
+    value = { jvm.java17Compatible },
+    reason = "Only happens on 17+, without an explicit --add-opens"
+  )
+  def "known issue copy fields"() {
+    when:
+    List second = Spy(new ArrayList())
+
+    then:
+    CannotCreateMockException e = thrown()
+    e.message == "Cannot create mock for class java.util.ArrayList. Cannot copy fields.\n" +
+      SpockDocLinks.SPY_ON_JAVA_17.link
   }
 
   static class Constructable {
@@ -246,7 +262,11 @@ class JavaSpies extends Specification {
     }
   }
 
-  static class Person {
+  interface Being {
+
+  }
+
+  static class Person implements Being {
     String name
     int age
 

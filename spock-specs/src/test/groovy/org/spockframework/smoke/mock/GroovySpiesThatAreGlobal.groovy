@@ -15,6 +15,7 @@
 package org.spockframework.smoke.mock
 
 import spock.lang.*
+import spock.util.environment.Jvm
 
 import java.lang.reflect.Modifier
 import java.util.regex.Pattern
@@ -173,7 +174,8 @@ class GroovySpiesThatAreGlobal extends Specification {
   }
 
   def "mock static method"() {
-    GroovySpy(Collections, global: true)
+    // Use objenesis to create instance for Java 17 and later
+    GroovySpy(Collections, global: true, useObjenesis: Jvm.current.java17Compatible)
 
     when:
     Collections.emptyList()
@@ -186,7 +188,7 @@ class GroovySpiesThatAreGlobal extends Specification {
   }
 
   def "mock dynamic static method"() {
-    GroovySpy(Collections, global: true)
+    GroovySpy(Collections, global: true, useObjenesis: Jvm.current.java17Compatible)
 
     when:
     Collections.foo()

@@ -32,6 +32,6 @@ public class CannotCreateMockException extends RuntimeException {
   }
 
   public CannotCreateMockException(Class<?> mockType, String message, Throwable cause) {
-    super(String.format("Cannot create mock for %s %s", mockType, message), cause);
+    super(String.format("Cannot create mock for %s%s", mockType, message), cause);
   }
 }

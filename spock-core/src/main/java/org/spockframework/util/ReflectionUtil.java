@@ -258,21 +258,21 @@ public abstract class ReflectionUtil {
     Class<?> clazz = source.getClass();
     while (!clazz.equals(Object.class)) {
       Field[] fields = clazz.getDeclaredFields();
-      for (Field field : fields) {
-        copyField(field, source, target);
-      }
+      Arrays.stream(fields)
+        .filter(field -> !Modifier.isStatic(field.getModifiers()))
+        .forEach(field -> copyField(field, source, target));
       clazz = clazz.getSuperclass();
     }
   }
 
   private static void copyField(Field field, Object source, Object target) {
-    boolean accessible = field.isAccessible();
-    field.setAccessible(true);
-    try {
-      field.set(target, field.get(source));
-    } catch (IllegalAccessException e) {
-      // ignore
-    }
-    field.setAccessible(accessible);
+      boolean accessible = field.isAccessible();
+      field.setAccessible(true);
+      try {
+        field.set(target, field.get(source));
+      } catch (IllegalAccessException e) {
+        // ignore
+      }
+      field.setAccessible(accessible);
   }
 }

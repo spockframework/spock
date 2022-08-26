@@ -17,6 +17,7 @@ package org.spockframework.mock.runtime;
 import org.spockframework.mock.*;
 import org.spockframework.runtime.GroovyRuntimeUtil;
 import org.spockframework.util.ReflectionUtil;
+import org.spockframework.util.SpockDocLinks;
 import spock.lang.Specification;
 
 import java.lang.reflect.Modifier;
@@ -71,7 +72,13 @@ public class GroovyMockFactory implements IMockFactory {
       configuration.getConstructorArgs(), mockInterceptor, specification.getClass().getClassLoader(),
       configuration.isUseObjenesis());
     if ((configuration.getNature() == MockNature.SPY) && (configuration.getInstance() != null)) {
-      ReflectionUtil.deepCopyFields(configuration.getInstance(), proxy);
+      try {
+        ReflectionUtil.deepCopyFields(configuration.getInstance(), proxy);
+      } catch (Exception e) {
+        throw new CannotCreateMockException(type,
+          ". Cannot copy fields.\n" + SpockDocLinks.SPY_ON_JAVA_17.getLink(),
+          e);
+      }
     }
     return proxy;
   }

@@ -1,6 +1,7 @@
 = Known Issues
 include::include.adoc[]
 
+[#instance-spy-on-java-17]
 == Constructing a Spy from an existing instance on Java 17+
 
 Java continues to tighten up on reflection usage,

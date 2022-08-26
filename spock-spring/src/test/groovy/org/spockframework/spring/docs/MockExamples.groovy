@@ -16,6 +16,7 @@
 
 package org.spockframework.spring.docs
 
+import spock.lang.IgnoreIf
 import spock.lang.Specification
 
 import javax.inject.Named
@@ -81,6 +82,10 @@ class DetachedJavaConfigExample extends MockExampleBase {
 }
 
 
+@IgnoreIf(
+  value = { jvm.java17Compatible },
+  reason = "Spring 4s reflection doesn't work on 17+"
+)
 @ContextConfiguration(locations = "classpath:org/spockframework/spring/docs/MockDocu-context.xml")
 class DetachedXmlExample extends MockExampleBase {
 }

@@ -488,13 +488,13 @@ null
   def "PropertyExpression"() {
     expect:
     isRendered """
-a.size == null
-| |    |
-| 1    false
+a.empty == true
+| |     |
+| false false
 [9]
     """, {
       def a = [9]
-      assert a.size == null
+      assert a.empty == true
     }
 
     isRendered """
@@ -903,4 +903,3 @@ false
     String toString() { "p" }
   }
 }
-

@@ -249,9 +249,9 @@ public abstract class ReflectionUtil {
     Class<?> clazz = source.getClass();
     while (!clazz.equals(Object.class)) {
       Field[] fields = clazz.getDeclaredFields();
-      for (Field field : fields) {
-        copyField(field, source, target);
-      }
+      Arrays.stream(fields)
+        .filter(field -> !(Modifier.isStatic(field.getModifiers()) || Modifier.isFinal(field.getModifiers())))
+        .forEach(field -> copyField(field, source, target));
       clazz = clazz.getSuperclass();
     }
   }

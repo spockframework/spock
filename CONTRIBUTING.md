@@ -2,16 +2,13 @@
 
 There are many ways to contribute to Spock:
 
-* Spreading the word by talking, tweeting, blogging, presenting, submitting talks, writing tutorials or articles (or a book!), sharing success stories, adding your project/company to [Who is Using Spock](https://wiki.spockframework.org/WhoIsUsingSpock), etc.
-* Helping other users by participating in [forum](https://forum.spockframework.org) discussions, answering [Spock questions](https://stackoverflow.com/questions/tagged/spock) on Stack Overflow, etc.
+* Spreading the word by talking, tweeting, blogging, presenting, submitting talks, writing tutorials or articles (or a book!), sharing success stories, etc.
+* Helping other users by participating in [gitter](https://gitter.im/spockframework/spock) discussions, answering [Spock questions](https://stackoverflow.com/questions/tagged/spock) on Stack Overflow, etc.
 * Providing early feedback on [development snapshots](https://oss.sonatype.org/content/repositories/snapshots/org/spockframework/) and new features
 * Improving and extending the [reference documentation](https://docs.spockframework.org) [(source)](https://github.com/spockframework/spock/tree/master/docs)
 * Translating blog posts, articles, and the reference documentation to other languages (with permission of the authors)
 * Fixing open issues listed in the [issue tracker](https://issues.spockframework.org)
 * Proposing, discussing, and implementing new features
-* Building the next generation of [Spock Web Console](https://webconsole.spockframework.org), or an interactive Spock tutorial
-* Designing a Spock logo and/or website (Disclaimer: Our expectations are high on this one, and obviously we'll need to be heavily involved)
-* Hiring us for Spock/[Geb](https://gebish.org) related training and consulting
 * Donating money to fund further development
 * Surprising us with some other form of contribution!
 
@@ -74,13 +71,13 @@ Using an IDE is recommended but not mandatory. Whether or not you use an IDE, pl
 
 #### IntelliJ IDEA
 
-IntelliJ IDEA 14+ is the preferred IDE for developing Spock. To generate an IDEA project configuration:
+The latest IntelliJ IDEA (Community Edition) is the preferred IDE for developing Spock. To generate an IDEA project configuration:
 
 * `./gradlew cleanIdea idea`, followed by
 * `File -> Open` in Intellij, then
-* select the appropriate `spock-2.0.ipr`.
+* select the appropriate `spock-2.5.ipr`.
 
-Note: You can provide an optional 'variant' flag to the gradle build `-Dvariant=[2.0|2.3|2.4]` that specifies the version of groovy you wish to use. For example, if we wish to use groovy 2.4, we would run `./gradlew cleanIdea idea -Dvariant=2.4` and import the generated `spock-2.4.ipr` into Intellij.
+Note: You can provide an optional 'variant' flag to the gradle build `-Dvariant=[2.5|3.0|4.0]` that specifies the version of groovy you wish to use. For example, if we wish to use groovy 3.0, we would run `./gradlew cleanIdea idea -Dvariant=3.0` and import the generated `spock-3.0.ipr` into Intellij.
 
 This should result in a fully functional IDE setup where:
 
@@ -109,4 +106,3 @@ If you encounter any problems with the IDE setup, or want to make some improveme
 Thanks for reading this far. We are looking forward to your contributions!
 
 The Spock Framework Team
-

@@ -321,4 +321,3 @@ class JavaSpies extends Specification {
     }
   }
 }
-

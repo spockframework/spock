@@ -59,28 +59,30 @@ ext {
   variantLessVersion = baseVersion + (snapshotVersion ? "-SNAPSHOT" : (milestone ? "-M$milestone" : ""))
   buildScan.tag "Java $javaVersion"
 
+  jacocoVersion = '0.8.8'
+
   libs = [
-    jetbrainsAnnotations: [group: "org.jetbrains", name: "annotations", version: "20.1.0"],
-    asm                 : [group: 'org.ow2.asm', name: 'asm', version: '9.2'],
-    bytebuddy           : [group: 'net.bytebuddy', name: 'byte-buddy', version: '1.12.14'],
-    cglib               : [group: 'cglib', name: 'cglib-nodep', version: '3.3.0'],
+    jetbrainsAnnotations: "org.jetbrains:annotations:20.1.0",
+    asm                 : "org.ow2.asm:asm:9.2",
+    bytebuddy           : "net.bytebuddy:byte-buddy:1.12.14",
+    cglib               : "cglib:cglib-nodep:3.3.0",
     groovy              : groovyDependencies,
-    groovyNio           : [group: groovyGroup, name: 'groovy-nio', version: groovyVersion], //for groovy methods on Path
-    groovySql           : [group: groovyGroup, name: 'groovy-sql', version: groovyVersion], //for some Spring and Unitils tests
-    groovyTest          : [group: groovyGroup, name: 'groovy-test', version: groovyVersion], //for @NotYetImplemented
-    groovyJmx           : [group: groovyGroup, name: 'groovy-jmx', version: groovyVersion],  //for triggering jacoco dump via jmx
-    h2database          : [group: 'com.h2database', name: 'h2', version: '1.4.200'],
-    hamcrest            : [group: 'org.hamcrest', name: 'hamcrest', version: '2.2'],
-    jaxb                : [group: 'javax.xml.bind', name: 'jaxb-api', version: '2.3.0'],
-    junit4              : [group: 'junit', name: 'junit', version: '4.13.2'],
-    junitBom            : [group: 'org.junit', name: 'junit-bom', version: '5.9.0'],
-    jupiter             : [group: 'org.junit.jupiter', name: 'junit-jupiter'],
-    junitPlatform       : [group: 'org.junit.platform', name: 'junit-platform-engine'],
-    junitPlatformTestkit: [group: 'org.junit.platform', name: 'junit-platform-testkit'],
-    junitPlatformConsole: [group: 'org.junit.platform', name: 'junit-platform-console'],
-    log4j               : [group: 'log4j', name: 'log4j', version: '1.2.17'],
-    objenesis           : [group: 'org.objenesis', name: 'objenesis', version: '3.3'],
-    jacocoAgent         : [group: 'org.jacoco', name: 'org.jacoco.agent', version: '0.8.8', classifier: 'runtime']
+    groovyNio           : "$groovyGroup:groovy-nio:$groovyVersion", //for groovy methods on Path
+    groovySql           : "$groovyGroup:groovy-sql:$groovyVersion", //for some Spring and Unitils tests
+    groovyTest          : "$groovyGroup:groovy-test:$groovyVersion", //for @NotYetImplemented
+    groovyJmx           : "$groovyGroup:groovy-jmx:$groovyVersion",  //for triggering jacoco dump via jmx
+    h2database          : "com.h2database:h2:1.4.200",
+    hamcrest            : "org.hamcrest:hamcrest:2.2",
+    jaxb                : "javax.xml.bind:jaxb-api:2.3.0",
+    junit4              : "junit:junit:4.13.2",
+    junitBom            : "org.junit:junit-bom:5.9.0",
+    jupiter             : "org.junit.jupiter:junit-jupiter",
+    junitPlatform       : "org.junit.platform:junit-platform-engine",
+    junitPlatformTestkit: "org.junit.platform:junit-platform-testkit",
+    junitPlatformConsole: "org.junit.platform:junit-platform-console",
+    log4j               : "log4j:log4j:1.2.17",
+    objenesis           : "org.objenesis:objenesis:3.3",
+    jacocoAgent         : "org.jacoco:org.jacoco.agent:$jacocoVersion:runtime"
   ]
 }
 
@@ -122,8 +124,10 @@ subprojects {
   }
 
   tasks.withType(JavaCompile) {
-    javaCompiler = javaToolchains.compilerFor {
-      languageVersion = JavaLanguageVersion.of(8)
+    if (it.name == 'compileJava') {
+      javaCompiler = javaToolchains.compilerFor {
+        languageVersion = JavaLanguageVersion.of(8)
+      }
     }
     options.encoding = 'UTF-8'
   }
@@ -200,7 +204,7 @@ subprojects {
   }
 
   jacoco {
-    toolVersion = libs.jacocoAgent.version
+    toolVersion = jacocoVersion
   }
 }
 

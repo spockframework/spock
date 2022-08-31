@@ -1,3 +1,7 @@
+plugins {
+  id 'jvm-test-suite'
+}
+
 apply from: script("publishMaven")
 
 ext.displayName = "Spock Framework - Spring Module"
@@ -6,41 +10,94 @@ description = "Spock's Spring Module makes it possible to use Spring's TestConte
 Supports Spring 2.5.x, 3.x, and 4.x."
 
 def springVersion = "4.3.5.RELEASE"
-
-if (springVersion.startsWith("2.")) {
-  sourceSets.test.groovy.exclude "**/*ContextHierarchyExample.groovy"
-}
+def testSpringVersions = [
+  (springVersion): (8..11),
+  "5.0.2.RELEASE": (8..11),
+  "6.0.0"        : (17..17)
+].findAll { javaVersion in it.value }.keySet()
 
 dependencies {
   api project(":spock-core")
   compileOnly "org.springframework:spring-test:$springVersion"
   compileOnly "org.springframework:spring-beans:$springVersion"
   compileOnly "org.springframework:spring-context:$springVersion"
-
-  // not used directly at implementation-time, but needed by groovyc
-  testImplementation "org.springframework:spring-test:$springVersion"
-  testImplementation "org.springframework:spring-beans:$springVersion"
-  testImplementation "org.springframework:spring-context:$springVersion"
-  testImplementation "org.springframework:spring-core:$springVersion"
-  testImplementation "org.springframework:spring-jdbc:$springVersion"
-  testImplementation "org.springframework:spring-tx:$springVersion"
-  testImplementation "javax.inject:javax.inject:1"
-  testImplementation libs.groovySql // for groovy.sql.Sql
-  testImplementation libs.junitPlatformTestkit
-
-  testRuntimeOnly libs.h2database
-  testRuntimeOnly libs.log4j
-  testRuntimeOnly libs.bytebuddy
-  testRuntimeOnly libs.cglib
-  testRuntimeOnly libs.objenesis
 }
 
-task testCglib(type: Test) {
-  systemProperty("org.spockframework.mock.ignoreByteBuddy", "true")
-  mustRunAfter test
+testing {
+  suites {
+    all {
+      useJUnitJupiter()
+      dependencies {
+        implementation "javax.inject:javax.inject:1"
+        implementation libs.groovySql // for groovy.sql.Sql
+        implementation libs.junitPlatformTestkit
+        runtimeOnly libs.h2database
+        runtimeOnly libs.log4j
+        runtimeOnly libs.bytebuddy
+        runtimeOnly libs.cglib
+        runtimeOnly libs.objenesis
+      }
+    }
+
+    test {
+      targets {
+        all {
+          testTask.configure {
+            onlyIf { false } //skip normal test task
+          }
+        }
+      }
+    }
+
+    // Add a variant for each combination of spring version and cglib, if cglib is supported
+    def cgLibVariants = javaVersion <= 16 ? [false, true] : [false]
+    [testSpringVersions, cgLibVariants].combinations().each { testSpringVersion, forceCgLib ->
+      String testTaskName = "spring${testSpringVersion.charAt(0)}${(forceCgLib ? 'CgLib' : '')}Test"
+      "$testTaskName"(JvmTestSuite) {
+
+        sources {
+          java {
+            srcDir 'src/test/java'
+          }
+          groovy {
+            srcDir 'src/test/groovy'
+          }
+          resources {
+            srcDir 'src/test/resources'
+          }
+        }
+
+        dependencies {
+          implementation project(project.path)
+          implementation "org.springframework:spring-test:$testSpringVersion"
+          implementation "org.springframework:spring-beans:$testSpringVersion"
+          implementation "org.springframework:spring-context:$testSpringVersion"
+          implementation "org.springframework:spring-core:$testSpringVersion"
+          implementation "org.springframework:spring-jdbc:$testSpringVersion"
+          implementation "org.springframework:spring-tx:$testSpringVersion"
+        }
+
+        // ideally we would just define another test task for this suite, but jvm-test-suites doesn't support that yet
+        if (forceCgLib) {
+          targets {
+            all {
+              testTask.configure {
+                systemProperty("org.spockframework.mock.ignoreByteBuddy", "true")
+              }
+            }
+          }
+        }
+      }
+      check.dependsOn testTaskName
+    }
+  }
 }
 
-check.dependsOn testCglib
+["compileTestJava", "compileTestGroovy"].each { taskName ->
+  tasks.named(taskName).configure {
+    onlyIf { false } //skip normal test task
+  }
+}
 
 jar {
   manifest {

@@ -2,9 +2,13 @@
 = Release Notes
 include::include.adoc[]
 
-== 2.2 (tbd)
+== 2.2 (2022-08-31)
 
-* Fix issue that `displayName` values for the `Specification`, which were changed by extensions such as <<extensions.adoc#title-and-narrative-extension,@Title>>, not being picked up.
+* Support for @SpringMock marked with @Primary spockPull:1503[]
+* Fix issue that `displayName` values for the `Specification`, which were changed by extensions such as <<extensions.adoc#title-and-narrative-extension,@Title>>, not being picked up. spockPull:1509[]
+* Update to JUnit 5.9.0
+
+Thanks to all the contributors to this release: Alexander Kriegisch, Marcin Zajączkowski, Jonny Carter, alopukhov, Jerome Prinet, Matthew Moss, BJ Hargrave, konradczajka
 
 == 2.2-M3 (2022-07-15)
 

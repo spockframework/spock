@@ -201,6 +201,11 @@ class JavaSpies extends Specification {
     e.message.contains("global")
   }
 
+
+  @IgnoreIf(
+    value = { jvm.java17Compatible },
+    reason = "We can't access private fields in java.util anymore, without an explicit --add-opens"
+  )
   @Issue("https://github.com/spockframework/spock/issues/822")
   def "inferred type is ignored for instance mocks"() {
     when:
@@ -301,4 +306,3 @@ class JavaSpies extends Specification {
     }
   }
 }
-

@@ -122,8 +122,10 @@ subprojects {
   }
 
   tasks.withType(JavaCompile) {
-    javaCompiler = javaToolchains.compilerFor {
-      languageVersion = JavaLanguageVersion.of(8)
+    if (it.name == 'compileJava') {
+      javaCompiler = javaToolchains.compilerFor {
+        languageVersion = JavaLanguageVersion.of(8)
+      }
     }
     options.encoding = 'UTF-8'
   }
@@ -183,7 +185,6 @@ subprojects {
     from javadoc
   }
 
-  def javaVersionNoShadow = javaVersion // Test task also has javaVersion
   tasks.withType(Test) {
     useJUnitPlatform()
     def taskName = name

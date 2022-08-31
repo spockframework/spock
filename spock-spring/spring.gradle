@@ -1,3 +1,7 @@
+plugins {
+  id 'jvm-test-suite'
+}
+
 apply from: script("publishMaven")
 
 ext.displayName = "Spock Framework - Spring Module"
@@ -6,9 +10,22 @@ description = "Spock's Spring Module makes it possible to use Spring's TestConte
 Supports Spring 2.5.x, 3.x, and 4.x."
 
 def springVersion = "4.3.5.RELEASE"
+def testSpringVersions = [
+  "3.2.16.RELEASE": (8..8),
+  (springVersion): (8..11),
+  "5.0.2.RELEASE": (8..11),
+  "6.0.0-M5": (17..17)
+].findAll { javaVersion in it.value }
 
-if (springVersion.startsWith("2.")) {
-  sourceSets.test.groovy.exclude "**/*ContextHierarchyExample.groovy"
+// necessary until we have a final version of Spring 6
+repositories {
+  mavenCentral()
+  maven {
+    url = "https://repo.spring.io/artifactory/libs-milestone-local/"
+    content {
+      includeGroup "org.springframework"
+    }
+  }
 }
 
 dependencies {
@@ -16,23 +33,62 @@ dependencies {
   compileOnly "org.springframework:spring-test:$springVersion"
   compileOnly "org.springframework:spring-beans:$springVersion"
   compileOnly "org.springframework:spring-context:$springVersion"
+}
 
-  // not used directly at implementation-time, but needed by groovyc
-  testImplementation "org.springframework:spring-test:$springVersion"
-  testImplementation "org.springframework:spring-beans:$springVersion"
-  testImplementation "org.springframework:spring-context:$springVersion"
-  testImplementation "org.springframework:spring-core:$springVersion"
-  testImplementation "org.springframework:spring-jdbc:$springVersion"
-  testImplementation "org.springframework:spring-tx:$springVersion"
-  testImplementation "javax.inject:javax.inject:1"
-  testImplementation libs.groovySql // for groovy.sql.Sql
-  testImplementation libs.junitPlatformTestkit
+testing {
+  suites {
+    all {
+      useJUnitJupiter()
+      dependencies {
+        implementation "javax.inject:javax.inject:1"
+        implementation libs.groovySql // for groovy.sql.Sql
+        implementation libs.junitPlatformTestkit
+        runtimeOnly libs.h2database
+        runtimeOnly libs.log4j
+        runtimeOnly libs.bytebuddy
+        runtimeOnly libs.cglib
+        runtimeOnly libs.objenesis
+      }
+    }
 
-  testRuntimeOnly libs.h2database
-  testRuntimeOnly libs.log4j
-  testRuntimeOnly libs.bytebuddy
-  testRuntimeOnly libs.cglib
-  testRuntimeOnly libs.objenesis
+    test {
+      targets {
+        all {
+          testTask.configure {
+            onlyIf { false } //skip normal test task
+          }
+        }
+      }
+    }
+
+
+    testSpringVersions.each { testSpringVersion, __ ->
+      "spring${testSpringVersion.charAt(0)}"(JvmTestSuite) {
+
+        sources {
+          java {
+            srcDir 'src/test/java'
+          }
+          groovy {
+            srcDir 'src/test/groovy'
+          }
+          resources {
+            srcDir 'src/test/resources'
+          }
+        }
+
+        dependencies {
+          implementation project
+          implementation "org.springframework:spring-test:$testSpringVersion"
+          implementation "org.springframework:spring-beans:$testSpringVersion"
+          implementation "org.springframework:spring-context:$testSpringVersion"
+          implementation "org.springframework:spring-core:$testSpringVersion"
+          implementation "org.springframework:spring-jdbc:$testSpringVersion"
+          implementation "org.springframework:spring-tx:$testSpringVersion"
+        }
+      }
+    }
+  }
 }
 
 task testCglib(type: Test) {
@@ -41,6 +97,7 @@ task testCglib(type: Test) {
 }
 
 check.dependsOn testCglib
+check.dependsOn testSpringVersions.collect {k,v -> "spring${k.charAt(0)}" }
 
 jar {
   manifest {

@@ -14,7 +14,7 @@ description = "Spock Framework"
 
 ext {
   baseVersion = "2.2"
-  snapshotVersion = true
+  snapshotVersion = false
   milestone = 0
   javaVersions = [8, 11, 17] // ensure that latest version is actually build on travis, otherwise no docs get published
   javaVersion = (System.getProperty("javaVersion") ?: 8) as int

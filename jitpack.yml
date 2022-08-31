@@ -1,0 +1,10 @@
+before_install:
+  - sdk install java 8.0.345-tem
+  - sdk install java 11.0.16-tem
+  - sdk use java 11.0.16-tem
+  - export JAVA8=`sdk home java 8.0.345-tem`
+  - export JAVA11=`sdk home java 11.0.16-tem`
+install:
+  - ./gradlew build publishToMavenLocal -Dvariant=2.5
+  - ./gradlew build publishToMavenLocal -Dvariant=3.0
+  - ./gradlew build publishToMavenLocal -Dvariant=4.0

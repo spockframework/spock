@@ -2,6 +2,8 @@
 = Release Notes
 include::include.adoc[]
 
+== 2.3 (tbd)
+
 == 2.2 (2022-08-31)
 
 * Support for @SpringMock marked with @Primary spockPull:1503[]

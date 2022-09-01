@@ -6,7 +6,7 @@ include::include.adoc[]
 
 == 2.2 (2022-08-31)
 
-* Support for @SpringMock marked with @Primary spockPull:1503[]
+* Support for `@SpringBean` and `@SpringSpy` marked with `@Primary` spockPull:1503[]
 * Fix issue that `displayName` values for the `Specification`, which were changed by extensions such as <<extensions.adoc#title-and-narrative-extension,@Title>>, not being picked up. spockPull:1509[]
 * Update to JUnit 5.9.0
 

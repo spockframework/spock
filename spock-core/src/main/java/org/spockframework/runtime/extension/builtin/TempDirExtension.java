@@ -41,10 +41,10 @@ public class TempDirExtension implements IAnnotationDrivenExtension<TempDir> {
   }
 
   private IThrowableFunction<Path, ?, Exception> createPathToFieldTypeMapper(Class<?> fieldType) {
-    if (Path.class.isAssignableFrom(fieldType) || Object.class.equals(fieldType)) {
+    if (fieldType.isAssignableFrom(Path.class) || Object.class.equals(fieldType)) {
       return p -> p;
     }
-    if (File.class.isAssignableFrom(fieldType)) {
+    if (fieldType.isAssignableFrom(File.class)) {
       return Path::toFile;
     }
 

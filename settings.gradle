@@ -12,8 +12,6 @@ pluginManagement {
     id "org.gradle.test-retry" version "1.4.0"
     id "io.spring.nohttp" version "0.0.10"
   }
-
-  includeBuild "build-logic"
 }
 
 plugins {

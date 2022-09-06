@@ -16,15 +16,16 @@
 
 package org.spockframework.runtime;
 
+import static java.util.Arrays.asList;
+import static java.util.Comparator.comparingInt;
+
 import org.spockframework.runtime.model.*;
 import org.spockframework.util.*;
 import spock.lang.Specification;
 
 import java.lang.reflect.*;
 import java.util.*;
-
-import static java.util.Arrays.asList;
-import static java.util.Comparator.comparingInt;
+import java.util.stream.Collectors;
 
 /**
  * Builds a SpecInfo from a Class instance.
@@ -175,7 +176,7 @@ public class SpecInfoBuilder {
 
   @Nullable
   private MethodInfo createMethod(String name, MethodKind kind) {
-    Method reflection = findMethod(name);
+    Method reflection = findMethod(name, kind);
     if (reflection == null) return null;
     return createMethod(reflection, kind, name);
   }
@@ -189,20 +190,24 @@ public class SpecInfoBuilder {
     return methodInfo;
   }
 
-  private Method findMethod(String name) {
-    for (Method method : spec.getReflection().getDeclaredMethods())
-      if (method.getName().equals(name)) {
-        method.setAccessible(true);
-        return method;
-      }
-    return null;
+  private Method findMethod(String name, MethodKind kind) {
+    List<Method> methods = Arrays.stream(spec.getReflection().getDeclaredMethods()).filter(m -> m.getName().equals(name)).collect(Collectors.toList());
+    if (methods.isEmpty()) {return null;}
+    if (methods.size() > 1) {
+      methods.sort(comparingInt(Method::getParameterCount));
+      throw new SpockException(String.format("Multiple %s methods found in '%s'. Methods %s. There can only be one per specification class.", kind, spec.getReflection().getName(), methods));
+    }
+
+    Method method = methods.get(0);
+    method.setAccessible(true);
+    return method;
   }
 
   private void buildInitializerMethods() {
     MethodInfo initializerMethod = createMethod(InternalIdentifiers.INITIALIZER_METHOD, MethodKind.INITIALIZER);
-    if (initializerMethod != null) spec.setInitializerMethod(initializerMethod);
+    if (initializerMethod != null) {spec.setInitializerMethod(initializerMethod);}
     MethodInfo sharedInitializerMethod = createMethod(InternalIdentifiers.SHARED_INITIALIZER_METHOD, MethodKind.SHARED_INITIALIZER);
-    if (sharedInitializerMethod != null) spec.setSharedInitializerMethod(sharedInitializerMethod);
+    if (sharedInitializerMethod != null) {spec.setSharedInitializerMethod(sharedInitializerMethod);}
   }
 
   private void buildFixtureMethods() {

@@ -689,6 +689,11 @@ include::{sourcedir}/extension/TagDocSpec.groovy[tag=tag-extension]
 
 NOTE: JUnit Jupiter also has a `@Tag` annotation, but it will have no effect when used on a `Specification`.
 
+=== Repeat until failure
+
+Since version 2.3 the `@RepeatUntilFailure` annotation can be used to repeat a single feature until it fails or until it reaches the `maxAttempts` value.
+This is intended to aid in manual debugging of flaky tests and should not be committed to source control.
+
 === Optimize Run Order
 
 Spock can remember which features last failed and how often successively and also how long a feature needed to be

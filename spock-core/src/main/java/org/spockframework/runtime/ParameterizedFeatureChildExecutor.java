@@ -46,8 +46,18 @@ class ParameterizedFeatureChildExecutor {
         @Override
         public void executionFinished(TestDescriptor testDescriptor, TestExecutionResult testExecutionResult) {
           delegateEngineExecutionListener.executionFinished(testDescriptor, testExecutionResult);
-          ExecutionResult result = testExecutionResult.getStatus() == SUCCESSFUL ?
-            ExecutionResult.SUCCESSFUL : ExecutionResult.FAILED;
+          ExecutionResult result;
+          switch (testExecutionResult.getStatus()) {
+            case SUCCESSFUL:
+              result = ExecutionResult.SUCCESSFUL;
+              break;
+            case ABORTED:
+              result = ExecutionResult.ABORTED;
+              break;
+            default:
+              result = ExecutionResult.FAILED;
+              break;
+          }
           pending.remove(testDescriptor).complete(result);
         }
 

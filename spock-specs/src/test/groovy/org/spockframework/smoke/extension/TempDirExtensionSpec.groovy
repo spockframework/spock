@@ -256,6 +256,21 @@ class FileSystemFixtureSpec extends Specification {
   }
 }
 
+@Issue("https://github.com/spockframework/spock/issues/1518")
+class CustomTempDirSpec extends Specification {
+  @TempDir
+  TempFile tmpFile
+
+  @TempDir
+  TempPath tmpPath
+
+  def "can use custom dir objects"() {
+    expect:
+    tmpFile != null
+    tmpPath != null
+  }
+}
+
 class MyFile {
   File root
 
@@ -270,5 +285,21 @@ class MyPath {
 
   MyPath(Path path) {
     this.root = path
+  }
+}
+
+class TempFile extends File {
+  TempFile(File parent) {
+    super(parent.absolutePath)
+  }
+}
+
+class TempPath implements Path {
+
+  @Delegate
+  Path delegate
+
+  TempPath(Path delegate) {
+    this.delegate = delegate
   }
 }

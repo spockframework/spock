@@ -3,6 +3,7 @@ package org.spockframework.runtime.model;
 import org.spockframework.runtime.extension.IDataDriver;
 import org.spockframework.runtime.extension.IMethodInterceptor;
 import org.spockframework.runtime.model.parallel.*;
+import org.spockframework.util.Beta;
 import org.spockframework.util.Nullable;
 
 import java.lang.reflect.AnnotatedElement;
@@ -15,8 +16,8 @@ public class FeatureInfo extends SpecElementInfo<SpecInfo, AnnotatedElement> imp
   private int declarationOrder; // per spec class
   private int executionOrder;   // per spec inheritance chain
 
-  private List<String> parameterNames = new ArrayList<>();
-  private List<String> dataVariables = new ArrayList<>();
+  private final List<String> parameterNames = new ArrayList<>();
+  private final List<String> dataVariables = new ArrayList<>();
   private final List<BlockInfo> blocks = new ArrayList<>();
   private final List<IMethodInterceptor> iterationInterceptors = new ArrayList<>();
 
@@ -34,6 +35,8 @@ public class FeatureInfo extends SpecElementInfo<SpecInfo, AnnotatedElement> imp
   private final IterationFilter iterationFilter = new IterationFilter();
 
   private boolean reportIterations = true;
+
+  private boolean forceParameterized = false;
 
   public SpecInfo getSpec() {
     return getParent();
@@ -137,7 +140,23 @@ public class FeatureInfo extends SpecElementInfo<SpecInfo, AnnotatedElement> imp
   }
 
   public boolean isParameterized() {
-    return dataProcessorMethod != null;
+    return dataProcessorMethod != null || forceParameterized;
+  }
+
+
+  @Beta
+  public boolean isForceParameterized() {
+    return forceParameterized;
+  }
+
+  /**
+   * Forces this feature to behave as if it were parameterized, even if it has no data processor method.
+   *
+   * @since 2.3
+   */
+  @Beta
+  public void setForceParameterized(boolean forceParameterized) {
+    this.forceParameterized = forceParameterized;
   }
 
   public boolean isReportIterations() {

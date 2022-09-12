@@ -81,8 +81,8 @@ the field at the very beginning of the `setupSpec()` method.)
 static final PI = 3.141592654
 ----
 
-Static fields should only be used for constants. Otherwise shared fields are preferable, because their semantics with
-respect to sharing are more well-defined.
+Static fields should only be used for constants.
+Otherwise, shared fields are preferable, because their semantics with respect to sharing are more well-defined.
 
 == Fixture Methods
 
@@ -99,9 +99,10 @@ Usually it's a good idea to use a fresh fixture for every feature method, which 
 
 All fixture methods are optional.
 
-Occasionally it makes sense for feature methods to share a fixture, which is achieved by using shared
-fields together with the `setupSpec()` and `cleanupSpec()` methods.
+Occasionally it makes sense for feature methods to share a fixture, which is achieved by using shared fields together with the `setupSpec()` and `cleanupSpec()` methods.
 Note that `setupSpec()` and `cleanupSpec()` _may not_ reference instance fields unless they are annotated with `@Shared`.
+
+NOTE: There may be only one fixture method of each type per specification class.
 
 === Invocation Order
 

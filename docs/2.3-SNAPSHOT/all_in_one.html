@@ -581,8 +581,8 @@ the field at the very beginning of the <code>setupSpec()</code> method.)</p>
 </div>
 </div>
 <div class="paragraph">
-<p>Static fields should only be used for constants. Otherwise shared fields are preferable, because their semantics with
-respect to sharing are more well-defined.</p>
+<p>Static fields should only be used for constants.
+Otherwise, shared fields are preferable, because their semantics with respect to sharing are more well-defined.</p>
 </div>
 </div>
 <div class="sect2">
@@ -603,9 +603,20 @@ Usually it&#8217;s a good idea to use a fresh fixture for every feature method, 
 <p>All fixture methods are optional.</p>
 </div>
 <div class="paragraph">
-<p>Occasionally it makes sense for feature methods to share a fixture, which is achieved by using shared
-fields together with the <code>setupSpec()</code> and <code>cleanupSpec()</code> methods.
+<p>Occasionally it makes sense for feature methods to share a fixture, which is achieved by using shared fields together with the <code>setupSpec()</code> and <code>cleanupSpec()</code> methods.
 Note that <code>setupSpec()</code> and <code>cleanupSpec()</code> <em>may not</em> reference instance fields unless they are annotated with <code>@Shared</code>.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+There may be only one fixture method of each type per specification class.
+</td>
+</tr>
+</table>
 </div>
 <div class="sect3">
 <h4 id="_invocation_order"><a class="anchor" href="#_invocation_order"></a><a class="link" href="#_invocation_order">Invocation Order</a></h4>
@@ -9530,7 +9541,7 @@ This is due to how groovy implements traits and AST transformations.</p>
 <div id="footer">
 <div id="footer-text">
 Version 2.3-SNAPSHOT<br>
-Last updated 2022-09-01 14:49:38 UTC
+Last updated 2022-09-12 16:41:41 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./coderay-asciidoctor.css">

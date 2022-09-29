@@ -38,7 +38,7 @@ class JavaMocksDefaultBehavior extends Specification {
   //
   // See https://issues.apache.org/jira/browse/GROOVY-3364
   // and https://issues.apache.org/jira/browse/GROOVY-2334
-  @Issue("https://github.com/spockframework/spock/pull/1323")
+  @Issue("https://github.com/spockframework/spock/issues/1322")
   def "by default, a Comparable mock is only equal to itself"() {
     def mock = Mock(Baz)
     def anotherMockOfSameType = Mock(Baz)
